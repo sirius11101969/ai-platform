@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<!-- saved from url=(0135)file:///C:/Users/buyle/Documents/Codex/2026-04-30/task-title-create-phased-infrastructure-rollout/crm_ai_sprint_delivery_dashboard.html -->
+<html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CRM + AI Automation Platform — Sprint Tracker / Delivery Dashboard</title>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#050711;--panel:rgba(13,18,35,.94);--card:rgba(18,25,45,.92);--line:rgba(255,255,255,.08);
+      --text:#edf4ff;--muted:rgba(219,230,255,.70);--faint:rgba(188,203,236,.44);
+      --good:#28d17c;--warn:#f5aa2c;--risk:#ef4444;--info:#42c6ff;
+      --frontend:#8b5cf6;--backend:#22c55e;--ai:#d946ef;--devops:#f97316;--comms:#38bdf8;
+      --ease:cubic-bezier(.22,1,.36,1);
+    }
+    body{min-height:100vh;color:var(--text);background:radial-gradient(circle at 14% 7%,rgba(139,92,246,.22),transparent 29%),radial-gradient(circle at 84% 14%,rgba(56,189,248,.13),transparent 31%),linear-gradient(180deg,#050711,#03040a);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+    button{font:inherit}::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-thumb{background:rgba(66,198,255,.30);border-radius:999px}
+    .header{position:sticky;top:0;z-index:30;display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;padding:22px 28px 16px;border-bottom:1px solid var(--line);background:rgba(5,7,17,.95);backdrop-filter:blur(18px)}
+    .header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(139,92,246,.58),rgba(66,198,255,.45),transparent)}
+    .title{font-size:17px;font-weight:860}.subtitle{margin-top:4px;color:var(--faint);font-size:12px;line-height:1.4}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;align-items:center}.label{color:var(--faint);font-size:10px;font-weight:820;letter-spacing:.08em;text-transform:uppercase}
+    .pill{min-height:28px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.04);color:var(--muted);font-size:11px;font-weight:720;cursor:pointer;transition:all .18s var(--ease)}
+    .pill:hover,.pill.active{border-color:rgba(66,198,255,.45);background:rgba(66,198,255,.12);color:var(--text)}
+    .shell{width:min(1600px,calc(100% - 40px));margin:0 auto;padding:20px 0 44px}
+    .top-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;margin-bottom:16px}
+    .panel{border:1px solid var(--line);border-radius:14px;background:var(--panel);overflow:hidden}
+    .panel-head{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:13px 14px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.035)}
+    .panel-head h2{font-size:14px}.panel-head span{color:var(--faint);font-size:11px}
+    .goal{padding:16px}.goal h1{font-size:26px;line-height:1.1;margin-bottom:10px}.goal p{color:var(--muted);font-size:13px;line-height:1.55;max-width:90ch}
+    .goal-meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}
+    .tag{display:inline-flex;align-items:center;min-height:22px;padding:2px 7px;border-radius:999px;font-size:9.5px;font-weight:820;white-space:nowrap;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.045);color:var(--muted)}
+    .tag.good{border-color:rgba(40,209,124,.28);background:rgba(40,209,124,.10);color:rgba(139,255,190,.95)}.tag.warn{border-color:rgba(245,170,44,.32);background:rgba(245,170,44,.11);color:rgba(255,216,142,.95)}.tag.risk{border-color:rgba(239,68,68,.34);background:rgba(239,68,68,.12);color:rgba(255,180,180,.95)}.tag.info{border-color:rgba(66,198,255,.32);background:rgba(66,198,255,.11);color:rgba(154,224,255,.95)}
+    .metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:14px}
+    .metric{padding:13px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.025)}.metric strong{display:block;margin-bottom:6px;font-size:23px}.metric span{color:var(--faint);font-size:11px;line-height:1.35}
+    .bar{height:10px;overflow:hidden;border:1px solid rgba(255,255,255,.08);border-radius:999px;background:rgba(255,255,255,.045);margin-top:10px}.fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--frontend),var(--info),var(--good));transition:width .25s var(--ease)}
+    .main-grid{display:grid;grid-template-columns:minmax(0,1.15fr) 430px;gap:16px;align-items:start}
+    .board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:12px;overflow:auto}
+    .column{min-width:210px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.025);overflow:hidden}
+    .col-head{display:flex;justify-content:space-between;padding:9px 10px;border-bottom:1px solid var(--line);color:var(--muted);font-size:11px;font-weight:820}
+    .cards{display:grid;gap:8px;padding:8px}
+    .task{padding:10px;border:1px solid var(--line);border-radius:10px;background:rgba(0,0,0,.18);transition:opacity .18s var(--ease),border-color .18s var(--ease)}
+    .task.critical{border-color:rgba(239,68,68,.34);box-shadow:inset 3px 0 0 rgba(239,68,68,.8)}.task.dimmed,.sprint-row.dimmed{opacity:.18;filter:grayscale(.85)}
+    .task strong{display:block;margin-bottom:5px;font-size:11.5px;line-height:1.25}.task p{color:var(--faint);font-size:10px;line-height:1.35;margin-bottom:7px}
+    .mini-tags{display:flex;gap:4px;flex-wrap:wrap}
+    .side{display:grid;gap:16px;position:sticky;top:128px}
+    .burn{padding:14px}.chart{height:180px;display:grid;grid-template-columns:repeat(10,1fr);gap:7px;align-items:end;padding:10px;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.18)}
+    .barcol{display:flex;flex-direction:column;align-items:center;gap:5px}.barcol div{width:100%;border-radius:7px 7px 3px 3px;background:linear-gradient(180deg,var(--info),var(--good));min-height:4px}.barcol span{color:var(--faint);font-size:9px}
+    .list{display:grid;gap:8px;padding:12px}.item{padding:10px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.025)}.item strong{display:block;margin-bottom:5px;font-size:11.5px}.item p{color:var(--faint);font-size:10.5px;line-height:1.4}
+    .workload{padding:12px;display:grid;gap:10px}.role{display:grid;grid-template-columns:86px minmax(0,1fr) 42px;gap:8px;align-items:center;color:var(--muted);font-size:11px}.rolebar{height:9px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.045);overflow:hidden}.rolebar span{display:block;height:100%;border-radius:999px;background:var(--role)}
+    .sprints{display:grid;gap:10px;margin-top:16px}.sprint-row{display:grid;grid-template-columns:120px minmax(0,1fr) 180px;gap:10px;padding:12px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.025);transition:opacity .18s var(--ease)}.sprint-row h3{font-size:12px}.sprint-row p{color:var(--faint);font-size:10.5px;line-height:1.4}
+    @media(max-width:1220px){.top-grid,.main-grid{grid-template-columns:1fr}.side{position:static}.board{grid-template-columns:repeat(4,260px)}.toolbar{justify-content:flex-start;width:100%}}
+    @media(max-width:760px){.shell{width:min(100% - 24px,1600px)}.metrics{grid-template-columns:1fr}.sprint-row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div>
+      <div class="title">CRM + AI Automation Platform · Sprint Tracker / Delivery Dashboard</div>
+      <div class="subtitle">Sprint planning board · committed tasks · burn-up · blockers · milestones · delivery health · team workload</div>
+    </div>
+    <div class="toolbar">
+      <span class="label">Sprint</span>
+      <button class="pill active" data-sprint="Sprint 1">Sprint 1</button>
+      <button class="pill" data-sprint="Sprint 2">Sprint 2</button>
+      <button class="pill" data-sprint="Sprint 3">Sprint 3</button>
+      <button class="pill" data-sprint="Sprint 4">Sprint 4</button>
+      <button class="pill" data-sprint="Sprint 5">Sprint 5</button>
+      <button class="pill" data-sprint="Sprint 6">Sprint 6</button>
+      <button class="pill" data-sprint="All">All</button>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="top-grid">
+      <article class="panel">
+        <div class="panel-head"><h2>Current Sprint Goal</h2><span id="goalSprint">Sprint 1</span></div>
+        <div class="goal">
+          <h1 id="goalTitle">Establish the product foundation</h1>
+          <p id="goalText">Build the core PostgreSQL model, modular backend, Docker/hosting path, minimal observability, landing lead capture and first CRM dashboard slice.</p>
+          <div class="goal-meta" id="goalMeta"><span class="tag info">MVP</span><span class="tag info">Critical Path</span><span class="tag info">Foundation</span></div>
+        </div>
+      </article>
+      <article class="panel">
+        <div class="panel-head"><h2>Delivery Health</h2><span id="healthText">At Risk if schema/API slips</span></div>
+        <div class="metrics" id="metrics">
+        <article class="metric"><strong>6</strong><span>Committed tasks in selected sprint.</span><div class="bar"><div class="fill" style="width:100%"></div></div></article>
+        <article class="metric"><strong>17</strong><span>Total complexity points committed.</span><div class="bar"><div class="fill" style="width:68%"></div></div></article>
+        <article class="metric"><strong>2</strong><span>Tasks currently in progress or review.</span><div class="bar"><div class="fill" style="width:33%"></div></div></article>
+        <article class="metric"><strong>6</strong><span>Critical path tasks in scope.</span><div class="bar"><div class="fill" style="width:100%"></div></div></article>
+      </div>
+      </article>
+    </section>
+
+    <section class="main-grid">
+      <section class="panel">
+        <div class="panel-head"><div><h2>Sprint Planning Board</h2><span>Committed tasks grouped by delivery status.</span></div><span id="taskCount">6 tasks · 0% done</span></div>
+        <div class="board" id="board">
+          <section class="column">
+            <div class="col-head"><span>Backlog</span><span>1</span></div>
+            <div class="cards">
+              
+                <article class="task critical">
+                  <strong>S1-06 · CRM Kanban first slice</strong>
+                  <p>Render stages, lead cards and stage transition action.</p>
+                  <div class="mini-tags">
+                    <span class="tag">Frontend</span>
+                    <span class="tag info">C3</span>
+                    <span class="tag risk">Critical</span>
+                  </div>
+                </article>
+              
+            </div>
+          </section>
+        
+          <section class="column">
+            <div class="col-head"><span>Ready</span><span>3</span></div>
+            <div class="cards">
+              
+                <article class="task critical">
+                  <strong>S1-03 · Docker, hosting and health checks</strong>
+                  <p>Create Docker runtime, Vercel frontend path, backend hosting and health endpoints.</p>
+                  <div class="mini-tags">
+                    <span class="tag">DevOps</span>
+                    <span class="tag info">C3</span>
+                    <span class="tag risk">Critical</span>
+                  </div>
+                </article>
+              
+                <article class="task critical">
+                  <strong>S1-04 · Minimal observability</strong>
+                  <p>Configure Sentry, structured logs and core health checks.</p>
+                  <div class="mini-tags">
+                    <span class="tag">DevOps</span>
+                    <span class="tag info">C2</span>
+                    <span class="tag risk">Critical</span>
+                  </div>
+                </article>
+              
+                <article class="task critical">
+                  <strong>S1-05 · Landing lead capture</strong>
+                  <p>Build landing, CTA sections, pricing, forms and backend lead submission.</p>
+                  <div class="mini-tags">
+                    <span class="tag">Frontend</span>
+                    <span class="tag info">C2</span>
+                    <span class="tag risk">Critical</span>
+                  </div>
+                </article>
+              
+            </div>
+          </section>
+        
+          <section class="column">
+            <div class="col-head"><span>In Progress</span><span>2</span></div>
+            <div class="cards">
+              
+                <article class="task critical">
+                  <strong>S1-01 · Core PostgreSQL schema</strong>
+                  <p>Design workspaces, users, leads, pipeline, notes, appointments and proposals.</p>
+                  <div class="mini-tags">
+                    <span class="tag">Backend</span>
+                    <span class="tag info">C3</span>
+                    <span class="tag risk">Critical</span>
+                  </div>
+                </article>
+              
+                <article class="task critical">
+                  <strong>S1-02 · Backend API modular monolith</strong>
+                  <p>Scaffold FastAPI/NestJS modules for CRM, Telegram, agents, proposals and booking.</p>
+                  <div class="mini-tags">
+                    <span class="tag">Backend</span>
+                    <span class="tag info">C4</span>
+                    <span class="tag risk">Critical</span>
+                  </div>
+                </article>
+              
+            </div>
+          </section>
+        
+          <section class="column">
+            <div class="col-head"><span>Review</span><span>0</span></div>
+            <div class="cards">
+              <article class="task"><p>No tasks</p></article>
+            </div>
+          </section>
+        </div>
+      </section>
+      <aside class="side">
+        <section class="panel">
+          <div class="panel-head"><h2>Burn-up Visualization</h2><span>Committed vs completed</span></div>
+          <div class="burn"><div class="chart" id="chart">
+        <div class="barcol"><div style="height:6px"></div><span>D1</span></div>
+      
+        <div class="barcol"><div style="height:6px"></div><span>D2</span></div>
+      
+        <div class="barcol"><div style="height:9px"></div><span>D3</span></div>
+      
+        <div class="barcol"><div style="height:9px"></div><span>D4</span></div>
+      
+        <div class="barcol"><div style="height:9px"></div><span>D5</span></div>
+      
+        <div class="barcol"><div style="height:18px"></div><span>D6</span></div>
+      
+        <div class="barcol"><div style="height:27px"></div><span>D7</span></div>
+      
+        <div class="barcol"><div style="height:27px"></div><span>D8</span></div>
+      
+        <div class="barcol"><div style="height:36px"></div><span>D9</span></div>
+      
+        <div class="barcol"><div style="height:55px"></div><span>D10</span></div>
+      </div></div>
+        </section>
+        <section class="panel">
+          <div class="panel-head"><h2>Blockers</h2><span id="blockerCount">2 open</span></div>
+          <div class="list" id="blockers">
+        <article class="item"><strong>Backend framework decision</strong><p>FastAPI vs NestJS must be locked before API scaffold is finalized.</p><div class="mini-tags"><span class="tag risk">RISK</span><span class="tag">Sprint 1</span></div></article>
+      
+        <article class="item"><strong>Production hosting target</strong><p>Choose Hetzner/AWS/VPS path for backend deployment and secrets model.</p><div class="mini-tags"><span class="tag warn">WARN</span><span class="tag">Sprint 1</span></div></article>
+      </div>
+        </section>
+        <section class="panel">
+          <div class="panel-head"><h2>Team Workload by Role</h2><span>Complexity points</span></div>
+          <div class="workload" id="workload"><div class="role"><span>Frontend</span><div class="rolebar"><span style="width:71%;--role:var(--frontend)"></span></div><b>5</b></div><div class="role"><span>Backend</span><div class="rolebar"><span style="width:100%;--role:var(--backend)"></span></div><b>7</b></div><div class="role"><span>AI</span><div class="rolebar"><span style="width:0%;--role:var(--ai)"></span></div><b>0</b></div><div class="role"><span>DevOps</span><div class="rolebar"><span style="width:71%;--role:var(--devops)"></span></div><b>5</b></div></div>
+        </section>
+        <section class="panel">
+          <div class="panel-head"><h2>Milestone Tracking</h2><span>Delivery gates</span></div>
+          <div class="list" id="milestones">
+        <article class="item"><strong>M1 Paid Pilot Ready</strong><p>Landing, CRM, Telegram, AI secretary, proposals and booking work end-to-end.</p><div class="mini-tags"><span class="tag warn">In Progress</span><span class="tag">End Sprint 4</span></div></article>
+      
+        <article class="item"><strong>M2 Growth Operations Ready</strong><p>Queues, workers, voice agent, monitoring and analytics support 50–500 clients.</p><div class="mini-tags"><span class="tag info">Planned</span><span class="tag">End Sprint 8</span></div></article>
+      
+        <article class="item"><strong>M3 Scale Architecture Ready</strong><p>Service extraction, event bus, orchestration, memory/vector, tracing and replicas.</p><div class="mini-tags"><span class="tag info">Future</span><span class="tag">Sprint 13+</span></div></article>
+      </div>
+        </section>
+      </aside>
+    </section>
+
+    <section class="panel" style="margin-top:16px">
+      <div class="panel-head"><h2>Sprint Grouping Overview</h2><span>From master build order and engineering backlog</span></div>
+      <div class="list" id="sprintOverview"><article class="sprint-row "><h3>Sprint 1</h3><p>Establish the product foundation</p><p>6 tasks · 17 pts · 6 critical</p></article><article class="sprint-row dimmed"><h3>Sprint 2</h3><p>Make CRM operational and add Telegram intake</p><p>5 tasks · 13 pts · 4 critical</p></article><article class="sprint-row dimmed"><h3>Sprint 3</h3><p>Activate early automation</p><p>5 tasks · 13 pts · 5 critical</p></article><article class="sprint-row dimmed"><h3>Sprint 4</h3><p>Close the MVP revenue loop</p><p>5 tasks · 12 pts · 4 critical</p></article><article class="sprint-row dimmed"><h3>Sprint 5</h3><p>Introduce growth runtime controls</p><p>3 tasks · 11 pts · 3 critical</p></article><article class="sprint-row dimmed"><h3>Sprint 6</h3><p>Separate agent execution and harden operations</p><p>3 tasks · 10 pts · 3 critical</p></article></div>
+    </section>
+  </main>
+
+  <script>
+    const statuses = ["Backlog","Ready","In Progress","Review"];
+    const goals = {
+      "Sprint 1": {
+        title:"Establish the product foundation",
+        text:"Build the core PostgreSQL model, modular backend, Docker/hosting path, minimal observability, landing lead capture and first CRM dashboard slice.",
+        health:"At Risk if schema/API slips",
+        tags:["MVP","Critical Path","Foundation"]
+      },
+      "Sprint 2": {
+        title:"Make CRM operational and add Telegram intake",
+        text:"Complete CRM lead operations, add Telegram qualification, and prepare Redis adapter without taking on queue infrastructure yet.",
+        health:"Healthy with backend focus",
+        tags:["MVP","CRM","Telegram"]
+      },
+      "Sprint 3": {
+        title:"Activate early automation",
+        text:"Add n8n workflows and basic AI secretary agents so lead routing, reminders, summaries and follow-up tasks work inside CRM.",
+        health:"Watch AI scope",
+        tags:["MVP","AI","Automation"]
+      },
+      "Sprint 4": {
+        title:"Close the MVP revenue loop",
+        text:"Ship proposal automation, booking flow and minimal admin workspace control for paid pilots.",
+        health:"Healthy after Sprint 3",
+        tags:["MVP","Revenue Loop","Pilot Ready"]
+      },
+      "Sprint 5": {
+        title:"Introduce growth runtime controls",
+        text:"Add API gateway, Redis queues and background workers before scaling agents and voice workloads.",
+        health:"Critical infra migration",
+        tags:["Growth","Queues","Gateway"]
+      },
+      "Sprint 6": {
+        title:"Separate agent execution and harden operations",
+        text:"Move agent runtime into workers/services, add monitoring and enforce quotas/rate limits.",
+        health:"Depends on queues",
+        tags:["Growth","Agents","Monitoring"]
+      },
+      "All": {
+        title:"Full delivery plan",
+        text:"All committed and planned backlog items across MVP and Growth sprints, including scale gates where visible in the dashboard.",
+        health:"Portfolio view",
+        tags:["All Sprints","Roadmap","Planning"]
+      }
+    };
+
+    const tasks = [
+      t("S1-01","Core PostgreSQL schema","Design workspaces, users, leads, pipeline, notes, appointments and proposals.","Sprint 1","Backend",3,"In Progress",true,["None"],"Schema supports all MVP flows."),
+      t("S1-02","Backend API modular monolith","Scaffold FastAPI/NestJS modules for CRM, Telegram, agents, proposals and booking.","Sprint 1","Backend",4,"In Progress",true,["S1-01"],"Single deploy exposes documented contracts."),
+      t("S1-03","Docker, hosting and health checks","Create Docker runtime, Vercel frontend path, backend hosting and health endpoints.","Sprint 1","DevOps",3,"Ready",true,["S1-02"],"Staging/prod can run and failures are visible."),
+      t("S1-04","Minimal observability","Configure Sentry, structured logs and core health checks.","Sprint 1","DevOps",2,"Ready",true,["S1-02"],"Failures in forms, bot, API and workflows are visible."),
+      t("S1-05","Landing lead capture","Build landing, CTA sections, pricing, forms and backend lead submission.","Sprint 1","Frontend",2,"Ready",true,["S1-01","S1-02"],"Lead form creates attributed CRM lead."),
+      t("S1-06","CRM Kanban first slice","Render stages, lead cards and stage transition action.","Sprint 1","Frontend",3,"Backlog",true,["S1-01","S1-02"],"Manager can move lead through pipeline."),
+      t("S2-01","Lead detail popup","Show contact/service fields, notes and activity timeline.","Sprint 2","Frontend",3,"Backlog",true,["S1-06"],"Operator sees full lead context."),
+      t("S2-02","CRM assignment and timeline APIs","Persist manager assignment, notes and audit events.","Sprint 2","Backend",3,"Backlog",true,["S1-02"],"Assignment updates timeline."),
+      t("S2-03","Telegram webhook","Receive and route Telegram updates securely.","Sprint 2","Backend",2,"Backlog",true,["S1-02"],"Webhook reliably receives updates."),
+      t("S2-04","Telegram qualification flow","Collect sanitary service details and create/update CRM lead.","Sprint 2","Backend",3,"Backlog",true,["S2-03","S2-02"],"Qualified lead is created from Telegram."),
+      t("S2-05","Redis adapter stub","Define cache/session/queue interface and optional Redis config.","Sprint 2","Backend",2,"Backlog",false,["S1-02"],"Redis can be enabled without refactor."),
+      t("S3-01","n8n lead routing workflow","Route new leads, notify manager and record workflow action.","Sprint 3","AI",2,"Backlog",true,["S2-02","S2-04"],"New lead is routed automatically."),
+      t("S3-02","n8n reminder workflow","Schedule follow-up reminders and skip closed leads.","Sprint 3","AI",2,"Backlog",true,["S3-01"],"Reminder does not fire for closed leads."),
+      t("S3-03","AI agent service interface","Define agent input/output schema, confidence and CRM tool action contract.","Sprint 3","AI",3,"Backlog",true,["S2-02"],"Agents can be called consistently."),
+      t("S3-04","Qualification agent","Extract service/location/urgency and write CRM summary.","Sprint 3","AI",3,"Backlog",true,["S3-03"],"Lead gets structured qualification fields."),
+      t("S3-05","Follow-up agent","Generate next message and create follow-up task respecting CRM stage.","Sprint 3","AI",3,"Backlog",true,["S3-03","S3-02"],"Follow-up action is created."),
+      t("S4-01","Proposal template engine","Render commercial proposal from lead data and persist version.","Sprint 4","Backend",3,"Backlog",true,["S2-02"],"Proposal renders from CRM lead data."),
+      t("S4-02","Proposal UI action","Add generate/preview/send status flow in CRM.","Sprint 4","Frontend",2,"Backlog",true,["S4-01"],"Manager can generate and inspect proposal."),
+      t("S4-03","Appointment model","Create expert visit appointments, owner/status and no double-booking rules.","Sprint 4","Backend",2,"Backlog",true,["S1-01"],"Appointments persist safely."),
+      t("S4-04","Booking UI","Slot selector and booking action from lead detail.","Sprint 4","Frontend",3,"Backlog",true,["S4-03","S2-01"],"Manager can book visit from lead detail."),
+      t("S4-05","Minimal admin workspace control","Create workspace, users, roles and manual tariff flags.","Sprint 4","Backend",2,"Backlog",false,["S1-01","S1-02"],"Superadmin can manage pilot customers."),
+      t("S5-01","API gateway routing","Route dashboard, landing forms and webhook traffic through gateway.","Sprint 5","DevOps",3,"Backlog",true,["S1-03"],"All external traffic enters through gateway."),
+      t("S5-02","Redis queues","Implement queue abstraction, retry/DLQ and job status model.","Sprint 5","Backend",4,"Backlog",true,["S2-05"],"Jobs have status and retry policy."),
+      t("S5-03","Background workers","Create worker runtime and split AI/proposal/notification job handlers.","Sprint 5","Backend",4,"Backlog",true,["S5-02"],"Heavy jobs no longer block API."),
+      t("S6-01","Separated agent runtime","Move agent execution into worker/service boundary.","Sprint 6","AI",4,"Backlog",true,["S5-03","S3-03"],"Agent jobs run asynchronously."),
+      t("S6-02","Prometheus/Grafana monitoring","Add API, worker, queue, n8n and provider dashboards.","Sprint 6","DevOps",3,"Backlog",true,["S5-02","S5-03"],"Queue lag and provider errors are visible."),
+      t("S6-03","Rate limiting and quotas","Enforce per-workspace API, Telegram, AI and voice limits.","Sprint 6","Backend",3,"Backlog",true,["S5-01","S5-02"],"Overuse is throttled predictably.")
+    ];
+
+    const milestones = [
+      {name:"M1 Paid Pilot Ready", target:"End Sprint 4", status:"In Progress", health:"warn", desc:"Landing, CRM, Telegram, AI secretary, proposals and booking work end-to-end."},
+      {name:"M2 Growth Operations Ready", target:"End Sprint 8", status:"Planned", health:"info", desc:"Queues, workers, voice agent, monitoring and analytics support 50–500 clients."},
+      {name:"M3 Scale Architecture Ready", target:"Sprint 13+", status:"Future", health:"info", desc:"Service extraction, event bus, orchestration, memory/vector, tracing and replicas."}
+    ];
+
+    const blockers = [
+      {sprint:"Sprint 1", title:"Backend framework decision", desc:"FastAPI vs NestJS must be locked before API scaffold is finalized.", severity:"risk"},
+      {sprint:"Sprint 1", title:"Production hosting target", desc:"Choose Hetzner/AWS/VPS path for backend deployment and secrets model.", severity:"warn"},
+      {sprint:"Sprint 2", title:"Telegram bot token and webhook domain", desc:"Needed before webhook can be validated end-to-end.", severity:"warn"},
+      {sprint:"Sprint 3", title:"LLM provider and prompt safety baseline", desc:"Needed for AI secretary acceptance tests.", severity:"warn"},
+      {sprint:"Sprint 5", title:"Redis deployment choice", desc:"Managed Redis vs self-hosted Redis affects queue reliability and ops load.", severity:"warn"}
+    ];
+
+    function t(id,title,desc,sprint,role,complexity,status,critical,deps,done){
+      return {id,title,desc,sprint,role,complexity,status,critical,deps,done};
+    }
+
+    let selectedSprint = "Sprint 1";
+
+    function currentTasks(){
+      return selectedSprint === "All" ? tasks : tasks.filter(task => task.sprint === selectedSprint);
+    }
+
+    function renderGoal(){
+      const goal = goals[selectedSprint] || goals["Sprint 1"];
+      document.getElementById("goalSprint").textContent = selectedSprint;
+      document.getElementById("goalTitle").textContent = goal.title;
+      document.getElementById("goalText").textContent = goal.text;
+      document.getElementById("healthText").textContent = goal.health;
+      document.getElementById("goalMeta").innerHTML = goal.tags.map(tag => `<span class="tag info">${tag}</span>`).join("");
+    }
+
+    function renderMetrics(){
+      const list = currentTasks();
+      const committed = list.length;
+      const points = list.reduce((sum,t)=>sum+t.complexity,0);
+      const done = list.filter(t=>t.status==="Done").length;
+      const inFlight = list.filter(t=>t.status==="In Progress" || t.status==="Review").length;
+      const critical = list.filter(t=>t.critical).length;
+      const progress = committed ? Math.round((done / committed) * 100) : 0;
+      document.getElementById("metrics").innerHTML = `
+        <article class="metric"><strong>${committed}</strong><span>Committed tasks in selected sprint.</span><div class="bar"><div class="fill" style="width:${committed ? 100 : 0}%"></div></div></article>
+        <article class="metric"><strong>${points}</strong><span>Total complexity points committed.</span><div class="bar"><div class="fill" style="width:${Math.min(points * 4, 100)}%"></div></div></article>
+        <article class="metric"><strong>${inFlight}</strong><span>Tasks currently in progress or review.</span><div class="bar"><div class="fill" style="width:${committed ? Math.round(inFlight/committed*100) : 0}%"></div></div></article>
+        <article class="metric"><strong>${critical}</strong><span>Critical path tasks in scope.</span><div class="bar"><div class="fill" style="width:${committed ? Math.round(critical/committed*100) : 0}%"></div></div></article>
+      `;
+      document.getElementById("taskCount").textContent = `${committed} tasks · ${progress}% done`;
+    }
+
+    function renderBoard(){
+      const list = currentTasks();
+      document.getElementById("board").innerHTML = statuses.map(status => {
+        const items = list.filter(task => task.status === status);
+        return `
+          <section class="column">
+            <div class="col-head"><span>${status}</span><span>${items.length}</span></div>
+            <div class="cards">
+              ${items.map(task => `
+                <article class="task ${task.critical ? "critical" : ""}">
+                  <strong>${task.id} · ${task.title}</strong>
+                  <p>${task.desc}</p>
+                  <div class="mini-tags">
+                    <span class="tag">${task.role}</span>
+                    <span class="tag info">C${task.complexity}</span>
+                    ${task.critical ? `<span class="tag risk">Critical</span>` : ""}
+                  </div>
+                </article>
+              `).join("") || `<article class="task"><p>No tasks</p></article>`}
+            </div>
+          </section>
+        `;
+      }).join("");
+    }
+
+    function renderChart(){
+      const list = currentTasks();
+      const total = list.reduce((sum,t)=>sum+t.complexity,0) || 1;
+      const completedBase = list.filter(t=>t.status==="Done").reduce((sum,t)=>sum+t.complexity,0);
+      const increments = [0,.05,.1,.15,.22,.32,.44,.58,.74,1].map(x => Math.min(total, Math.round(completedBase + total*x*.35)));
+      document.getElementById("chart").innerHTML = increments.map((v,i) => `
+        <div class="barcol"><div style="height:${Math.max(6, Math.round(v/total*155))}px"></div><span>D${i+1}</span></div>
+      `).join("");
+    }
+
+    function renderBlockers(){
+      const list = selectedSprint === "All" ? blockers : blockers.filter(b => b.sprint === selectedSprint);
+      document.getElementById("blockerCount").textContent = `${list.length} open`;
+      document.getElementById("blockers").innerHTML = list.map(b => `
+        <article class="item"><strong>${b.title}</strong><p>${b.desc}</p><div class="mini-tags"><span class="tag ${b.severity}">${b.severity.toUpperCase()}</span><span class="tag">${b.sprint}</span></div></article>
+      `).join("") || `<article class="item"><p>No active blockers for this sprint.</p></article>`;
+    }
+
+    function renderWorkload(){
+      const list = currentTasks();
+      const roles = ["Frontend","Backend","AI","DevOps"];
+      const max = Math.max(1,...roles.map(role => list.filter(t=>t.role===role).reduce((sum,t)=>sum+t.complexity,0)));
+      const colors = {Frontend:"var(--frontend)",Backend:"var(--backend)",AI:"var(--ai)",DevOps:"var(--devops)"};
+      document.getElementById("workload").innerHTML = roles.map(role => {
+        const points = list.filter(t=>t.role===role).reduce((sum,t)=>sum+t.complexity,0);
+        return `<div class="role"><span>${role}</span><div class="rolebar"><span style="width:${Math.round(points/max*100)}%;--role:${colors[role]}"></span></div><b>${points}</b></div>`;
+      }).join("");
+    }
+
+    function renderMilestones(){
+      document.getElementById("milestones").innerHTML = milestones.map(m => `
+        <article class="item"><strong>${m.name}</strong><p>${m.desc}</p><div class="mini-tags"><span class="tag ${m.health}">${m.status}</span><span class="tag">${m.target}</span></div></article>
+      `).join("");
+    }
+
+    function renderSprintOverview(){
+      const sprints = [...new Set(tasks.map(t=>t.sprint))];
+      document.getElementById("sprintOverview").innerHTML = sprints.map(sprint => {
+        const list = tasks.filter(t=>t.sprint===sprint);
+        const points = list.reduce((sum,t)=>sum+t.complexity,0);
+        const critical = list.filter(t=>t.critical).length;
+        return `<article class="sprint-row ${selectedSprint!=="All" && selectedSprint!==sprint ? "dimmed" : ""}"><h3>${sprint}</h3><p>${goals[sprint]?.title || "Planned sprint"}</p><p>${list.length} tasks · ${points} pts · ${critical} critical</p></article>`;
+      }).join("");
+    }
+
+    function renderAll(){
+      renderGoal();renderMetrics();renderBoard();renderChart();renderBlockers();renderWorkload();renderMilestones();renderSprintOverview();
+    }
+
+    document.querySelectorAll(".pill").forEach(pill => {
+      pill.addEventListener("click", () => {
+        document.querySelectorAll(".pill").forEach(x=>x.classList.remove("active"));
+        pill.classList.add("active");
+        selectedSprint = pill.dataset.sprint;
+        renderAll();
+      });
+    });
+    renderAll();
+  </script>
+
+
+</body></html>
