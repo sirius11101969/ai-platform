@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<!-- saved from url=(0162)file:///C:/Users/buyle/Documents/Codex/2026-04-30/task-title-create-phased-infrastructure-rollout/docs/architecture/crm_ai_phased_infrastructure_architecture.html -->
+<html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CRM + AI Automation Platform — Phased Infrastructure Architecture</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #050711;
+      --bg2: #090d1a;
+      --panel: rgba(13, 18, 35, .92);
+      --card: rgba(18, 25, 45, .88);
+      --line: rgba(255, 255, 255, .08);
+      --text: #edf4ff;
+      --muted: rgba(219, 230, 255, .68);
+      --faint: rgba(188, 203, 236, .42);
+      --build: #28d17c;
+      --stub: #f5aa2c;
+      --scale: #42c6ff;
+      --product: #8b5cf6;
+      --ai: #d946ef;
+      --data: #22c55e;
+      --ops: #f97316;
+      --comm: #38bdf8;
+      --danger: #ef4444;
+      --ease: cubic-bezier(.22, 1, .36, 1);
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 16% 7%, rgba(139, 92, 246, .22), transparent 28%),
+        radial-gradient(circle at 83% 13%, rgba(56, 189, 248, .13), transparent 30%),
+        radial-gradient(circle at 62% 92%, rgba(34, 197, 94, .08), transparent 32%),
+        linear-gradient(180deg, #050711, #03040a);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      overflow-x: hidden;
+    }
+
+    button { font: inherit; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-thumb { background: rgba(66, 198, 255, .28); border-radius: 999px; }
+
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      padding: 22px 28px 16px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(5, 7, 17, .94);
+      backdrop-filter: blur(18px);
+    }
+
+    .header::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(139, 92, 246, .58), rgba(66, 198, 255, .45), transparent);
+    }
+
+    .title {
+      font-size: 17px;
+      font-weight: 830;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin-top: 4px;
+      color: var(--faint);
+      font-size: 12px;
+    }
+
+    .toolbar {
+      display: grid;
+      gap: 8px;
+      justify-items: end;
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .filter-label {
+      align-self: center;
+      color: var(--faint);
+      font-size: 10px;
+      font-weight: 760;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .pill {
+      min-height: 27px;
+      padding: 4px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .04);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 680;
+      cursor: pointer;
+      transition: all .18s var(--ease);
+    }
+
+    .pill:hover,
+    .pill.active {
+      border-color: rgba(66, 198, 255, .45);
+      background: rgba(66, 198, 255, .12);
+      color: var(--text);
+    }
+
+    .layout {
+      display: flex;
+      height: calc(100vh - 112px);
+    }
+
+    .diagram-area {
+      flex: 1;
+      overflow: auto;
+      padding: 20px;
+    }
+
+    .diagram {
+      min-width: 1080px;
+      max-width: 1560px;
+      margin: 0 auto;
+      padding: 8px;
+    }
+
+    .detail-panel {
+      width: 370px;
+      flex-shrink: 0;
+      overflow-y: auto;
+      border-left: 1px solid var(--line);
+      background: rgba(8, 12, 25, .96);
+      backdrop-filter: blur(18px);
+      transition: width .28s var(--ease);
+    }
+
+    .detail-panel.hidden {
+      width: 0;
+      overflow: hidden;
+      border-left: 0;
+    }
+
+    .legend {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+      padding: 11px 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(0, 0, 0, .24);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--faint);
+      font-size: 10.5px;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex: 0 0 auto;
+    }
+
+    .stage-band {
+      display: grid;
+      grid-template-columns: 190px minmax(0, 1fr);
+      gap: 14px;
+      margin-bottom: 16px;
+      transition: opacity .18s var(--ease);
+    }
+
+    .stage-info {
+      position: sticky;
+      left: 0;
+      align-self: start;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.025)), rgba(0,0,0,.20);
+    }
+
+    .stage-no {
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      margin-bottom: 12px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--product), var(--comm));
+      color: #fff;
+      font-weight: 850;
+      font-size: 13px;
+    }
+
+    .stage-info h2 {
+      margin-bottom: 6px;
+      font-size: 17px;
+      line-height: 1.14;
+      letter-spacing: 0;
+    }
+
+    .stage-info p {
+      color: var(--faint);
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    .layers {
+      display: grid;
+      gap: 12px;
+    }
+
+    .layer {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.022);
+      padding: 12px;
+      transition: opacity .18s var(--ease);
+    }
+
+    .layer-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      color: var(--faint);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .layer-head::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,.055);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 9px;
+    }
+
+    .card {
+      position: relative;
+      min-height: 122px;
+      padding: 12px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)), var(--card);
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+      transition: transform .2s var(--ease), border-color .2s var(--ease), box-shadow .2s var(--ease), opacity .18s;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent, var(--product));
+      opacity: .88;
+    }
+
+    .card:hover,
+    .card.selected {
+      transform: translateY(-2px);
+      border-color: color-mix(in srgb, var(--accent, var(--product)) 72%, white 8%);
+      box-shadow: 0 12px 30px rgba(0,0,0,.40), 0 0 20px color-mix(in srgb, var(--accent, var(--product)) 22%, transparent);
+    }
+
+    .card.selected {
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent, var(--product)) 38%, transparent), 0 12px 30px rgba(0,0,0,.40);
+    }
+
+    .card.dimmed,
+    .layer.dimmed,
+    .stage-band.dimmed {
+      opacity: .18;
+      filter: grayscale(.88);
+    }
+
+    .icon {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      margin-bottom: 8px;
+      border-radius: 8px;
+      background: color-mix(in srgb, var(--accent, var(--product)) 16%, transparent);
+      color: color-mix(in srgb, var(--accent, var(--product)) 80%, white 20%);
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .name {
+      margin-bottom: 5px;
+      font-size: 12.5px;
+      font-weight: 820;
+      line-height: 1.18;
+    }
+
+    .desc {
+      min-height: 31px;
+      color: var(--faint);
+      font-size: 10px;
+      line-height: 1.38;
+    }
+
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 8px;
+    }
+
+    .badge {
+      padding: 1px 6px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 999px;
+      background: rgba(255,255,255,.045);
+      color: var(--faint);
+      font-size: 9px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    .badge.build { border-color: rgba(40,209,124,.28); background: rgba(40,209,124,.10); color: rgba(139,255,190,.94); }
+    .badge.stub { border-color: rgba(245,170,44,.32); background: rgba(245,170,44,.11); color: rgba(255,216,142,.95); }
+    .badge.scale { border-color: rgba(66,198,255,.32); background: rgba(66,198,255,.11); color: rgba(154,224,255,.95); }
+
+    .flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 5px 0 16px 204px;
+      color: var(--faint);
+      font-size: 10px;
+    }
+
+    .flow::before,
+    .flow::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,.06);
+    }
+
+    .flow strong {
+      color: rgba(154,224,255,.88);
+      font-weight: 760;
+    }
+
+    .dp-header {
+      padding: 18px 18px 15px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .close {
+      float: right;
+      border: 0;
+      background: none;
+      color: var(--faint);
+      font-size: 18px;
+      cursor: pointer;
+      transition: color .16s;
+    }
+
+    .close:hover { color: var(--text); }
+
+    .dp-icon {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      margin-bottom: 10px;
+      border-radius: 12px;
+      background: rgba(66,198,255,.11);
+      color: var(--comm);
+      font-size: 14px;
+      font-weight: 860;
+    }
+
+    .dp-name {
+      margin-bottom: 5px;
+      font-size: 17px;
+      font-weight: 850;
+    }
+
+    .dp-role {
+      color: var(--faint);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .dp-body {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 16px 18px 22px;
+    }
+
+    .section-title {
+      margin-bottom: 8px;
+      color: var(--faint);
+      font-size: 10px;
+      font-weight: 820;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 2px 9px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .status-pill.build { background: rgba(40,209,124,.12); color: rgba(139,255,190,.95); border: 1px solid rgba(40,209,124,.28); }
+    .status-pill.stub { background: rgba(245,170,44,.12); color: rgba(255,216,142,.95); border: 1px solid rgba(245,170,44,.32); }
+    .status-pill.scale { background: rgba(66,198,255,.12); color: rgba(154,224,255,.95); border: 1px solid rgba(66,198,255,.32); }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .kpi {
+      min-height: 70px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(255,255,255,.035);
+      text-align: center;
+    }
+
+    .kpi-n {
+      margin-bottom: 3px;
+      font-size: 16px;
+      font-weight: 850;
+      color: var(--text);
+    }
+
+    .kpi-l {
+      color: var(--faint);
+      font-size: 10px;
+      line-height: 1.3;
+    }
+
+    .list {
+      display: grid;
+      gap: 5px;
+    }
+
+    .list-item {
+      display: grid;
+      grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+      gap: 9px;
+      padding: 7px 9px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.03);
+      font-size: 11px;
+    }
+
+    .list-item code {
+      color: var(--muted);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 10.5px;
+      white-space: normal;
+    }
+
+    .list-item span {
+      color: var(--faint);
+      line-height: 1.35;
+    }
+
+    .text-box {
+      padding: 11px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(0,0,0,.26);
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
+    .matrix {
+      margin-top: 18px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(0,0,0,.22);
+    }
+
+    .matrix-title {
+      margin-bottom: 10px;
+      color: var(--faint);
+      font-size: 10px;
+      font-weight: 820;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chip {
+      padding: 4px 8px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 7px;
+      background: rgba(255,255,255,.04);
+      color: var(--faint);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 10px;
+    }
+
+    @media (max-width: 980px) {
+      .layout { display: block; height: auto; }
+      .detail-panel { width: 100% !important; border-left: 0; border-top: 1px solid var(--line); }
+      .diagram { min-width: 760px; }
+      .toolbar { justify-items: start; width: 100%; }
+      .filter-row { justify-content: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div>
+      <div class="title">CRM + AI Automation Platform · Phased Infrastructure Architecture</div>
+      <div class="subtitle">Санитарные и экологические сервисные компании · лидогенерация · CRM · AI агенты · звонки · предложения · аналитика</div>
+    </div>
+    <div class="toolbar" aria-label="Фильтры схемы">
+      <div class="filter-row">
+        <span class="filter-label">Phase</span>
+        <button class="pill active" data-filter="phase" data-value="all">Все</button>
+        <button class="pill" data-filter="phase" data-value="mvp">MVP 0–50</button>
+        <button class="pill" data-filter="phase" data-value="growth">Growth 50–500</button>
+        <button class="pill" data-filter="phase" data-value="scale">Scale 500+</button>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">Status</span>
+        <button class="pill" data-filter="status" data-value="build">Build Now</button>
+        <button class="pill" data-filter="status" data-value="stub">Stub Now / Add Later</button>
+        <button class="pill" data-filter="status" data-value="scale">Scale Only</button>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">Layer</span>
+        <button class="pill" data-filter="layer" data-value="product">Product</button>
+        <button class="pill" data-filter="layer" data-value="ai">AI / Automation</button>
+        <button class="pill" data-filter="layer" data-value="data">Data</button>
+        <button class="pill" data-filter="layer" data-value="integration">Comms</button>
+        <button class="pill" data-filter="layer" data-value="ops">Ops</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="diagram-area">
+      <div class="diagram">
+        <div class="legend">
+          <div class="legend-item"><span class="dot" style="background:var(--build)"></span>Build Now</div>
+          <div class="legend-item"><span class="dot" style="background:var(--stub)"></span>Stub Now / Add Later</div>
+          <div class="legend-item"><span class="dot" style="background:var(--scale)"></span>Scale Only</div>
+          <div class="legend-item"><span class="dot" style="background:var(--product)"></span>Product modules</div>
+          <div class="legend-item"><span class="dot" style="background:var(--ai)"></span>AI / automation</div>
+          <div class="legend-item"><span class="dot" style="background:var(--data)"></span>Data / storage</div>
+          <div class="legend-item"><span class="dot" style="background:var(--ops)"></span>Infra / observability</div>
+        </div>
+
+        <section class="stage-band" data-phase="mvp">
+          <aside class="stage-info">
+            <div class="stage-no">01</div>
+            <h2>Phase 1 · MVP / Early Stage</h2>
+            <p>0–50 клиентов. Быстрая сборка: монолит или простые сервисы, n8n workflows, базовые AI агенты, shared PostgreSQL, минимальная observability.</p>
+          </aside>
+          <div class="layers">
+            <div class="layer" data-layer="product">
+              <div class="layer-head">Product surface</div>
+              <div class="cards">
+                <button class="card" data-id="landing" data-phase="mvp" data-status="build" data-layer="product" style="--accent:var(--product)"><div class="icon">WEB</div><div class="name">Public Landing Website</div><div class="desc">Маркетинг, формы лидов, CTA, pricing, integrations showcase</div><div class="badges"><span class="badge build">Build Now</span><span class="badge">Next.js</span></div></button>
+                <button class="card" data-id="telegram" data-phase="mvp" data-status="build" data-layer="integration" style="--accent:var(--comm)"><div class="icon">TG</div><div class="name">Telegram Bot Interface</div><div class="desc">Онбординг, квалификация, FAQ, уведомления, статусы</div><div class="badges"><span class="badge build">Build Now</span><span class="badge">Telegram API</span></div></button>
+                <button class="card selected" data-id="crm" data-phase="mvp" data-status="build" data-layer="product" style="--accent:var(--product)"><div class="icon">CRM</div><div class="name">CRM Dashboard</div><div class="desc">Leads, Kanban, detail popup, assignment, notes, timeline</div><div class="badges"><span class="badge build">Build Now</span><span class="badge">Core</span></div></button>
+                <button class="card" data-id="admin" data-phase="mvp" data-status="stub" data-layer="product" style="--accent:var(--product)"><div class="icon">ADM</div><div class="name">Admin / Superadmin Panel</div><div class="desc">Workspaces, users, RBAC, tariffs, subscriptions</div><div class="badges"><span class="badge stub">Stub Later</span><span class="badge">RBAC</span></div></button>
+              </div>
+            </div>
+
+            <div class="layer" data-layer="ai">
+              <div class="layer-head">AI / automation core</div>
+              <div class="cards">
+                <button class="card" data-id="aiSecretary" data-phase="mvp" data-status="build" data-layer="ai" style="--accent:var(--ai)"><div class="icon">AI</div><div class="name">AI Secretary / Agent Layer</div><div class="desc">Qualification, communication, follow-up, re-engagement agents</div><div class="badges"><span class="badge build">Build Now</span><span class="badge">Basic agents</span></div></button>
+                <button class="card" data-id="n8n" data-phase="mvp" data-status="build" data-layer="ai" style="--accent:var(--ai)"><div class="icon">WF</div><div class="name">n8n Workflows</div><div class="desc">Lead routing, reminders, proposal sending, status automations</div><div class="badges"><span class="badge build">Build Now</span><span class="badge">Workflow</span></div></button>
+                <button class="card" data-id="proposal" data-phase="mvp" data-status="build" data-layer="product" style="--accent:var(--product)"><div class="icon">DOC</div><div class="name">Proposal Automation</div><div class="desc">Генерация КП, отправка email/messenger, tracking opens/clicks</div><div class="badges"><span class="badge build">Build Now</span><span class="badge">Sales</span></div></button>
+                <button class="card" data-id="calendar" data-phase="mvp" data-status="build" data-layer="product" style="--accent:var(--product)"><div class="icon">CAL</div><div class="name">Calendar / Booking</div><div class="desc">Визиты санитарного эксперта, appointments, manager calendars</div><div class="badges"><span class="badge build">Build Now</span><span class="badge">Booking</span></div></button>
+              </div>
+            </div>
+
+            <div class="layer" data-layer="data">
+              <div class="layer-head">Shared data and runtime</div>
+              <div class="cards">
+                <button class="card" data-id="apiMonolith" data-phase="mvp" data-status="build" data-layer="ops" style="--accent:var(--ops)"><div class="icon">API</div><div class="name">Backend API Monolith</div><div class="desc">FastAPI или NestJS, один deployable backend, модули по доменам</div><div class="badges"><span class="badge build">Build Now</span><span class="badge">API</span></div></button>
+                <button class="card" data-id="postgres" data-phase="mvp" data-status="build" data-layer="data" style="--accent:var(--data)"><div class="icon">DB</div><div class="name">PostgreSQL Shared DB</div><div class="desc">Лиды, CRM, пользователи, workspaces, КП, appointments</div><div class="badges"><span class="badge build">Build Now</span><span class="badge">Shared DB</span></div></button>
+                <button class="card" data-id="redisSessions" data-phase="mvp" data-status="stub" data-layer="data" style="--accent:var(--data)"><div class="icon">RDS</div><div class="name">Redis Sessions / Cache</div><div class="desc">Сессии, rate hints, легкий cache; очереди позже</div><div class="badges"><span class="badge stub">Stub Later</span><span class="badge">Redis</span></div></button>
+                <button class="card" data-id="observabilityMin" data-phase="mvp" data-status="build" data-layer="ops" style="--accent:var(--ops)"><div class="icon">OBS</div><div class="name">Minimal Observability</div><div class="desc">Sentry/error tracking, базовые logs, health checks</div><div class="badges"><span class="badge build">Build Now</span><span class="badge">Sentry</span></div></button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="flow"><strong>Growth trigger: 50–500 клиентов, больше звонков, агентов, менеджеров и фоновых задач</strong></div>
+
+        <section class="stage-band" data-phase="growth">
+          <aside class="stage-info">
+            <div class="stage-no">02</div>
+            <h2>Phase 2 · Growth Stage</h2>
+            <p>50–500 клиентов. Выделяем agent services, Redis queues, workers, rate limiting, API gateway, мониторинг и фоновые задания.</p>
+          </aside>
+          <div class="layers">
+            <div class="layer" data-layer="ai">
+              <div class="layer-head">Separated automation services</div>
+              <div class="cards">
+                <button class="card" data-id="agentServices" data-phase="growth" data-status="build" data-layer="ai" style="--accent:var(--ai)"><div class="icon">AGS</div><div class="name">Separated Agent Services</div><div class="desc">AI qualification, communication, follow-up, re-engagement отдельно от API</div><div class="badges"><span class="badge build">Build Now</span><span class="badge">Agents</span></div></button>
+                <button class="card" data-id="voiceAgent" data-phase="growth" data-status="build" data-layer="integration" style="--accent:var(--comm)"><div class="icon">VOC</div><div class="name">Voice Calling Agent</div><div class="desc">Outbound calls, scripts, objections, booking, escalation to manager</div><div class="badges"><span class="badge build">Build Now</span><span class="badge">Voice API</span></div></button>
+                <button class="card" data-id="humanLoop" data-phase="growth" data-status="build" data-layer="ai" style="--accent:var(--ai)"><div class="icon">HITL</div><div class="name">Human-in-the-loop Escalation</div><div class="desc">Передача менеджеру при риске, возражениях или горячем лиде</div><div class="badges"><span class="badge build">Build Now</span><span class="badge">Escalation</span></div></button>
+                <button class="card" data-id="promptVersions" data-phase="growth" data-status="build" data-layer="ai" style="--accent:var(--ai)"><div class="icon">PRM</div><div class="name">Prompt / Version Management</div><div class="desc">Версии скриптов, промптов, сценариев квалификации и follow-up</div><div class="badges"><span class="badge build">Build Now</span><span class="badge">Versioning</span></div></button>
+              </div>
+            </div>
+
+            <div class="layer" data-layer="ops">
+              <div class="layer-head">Runtime and traffic control</div>
+              <div class="cards">
+                <button class="card" data-id="apiGateway" data-phase="growth" data-status="build" data-layer="ops" style="--accent:var(--ops)"><div class="icon">GW</div><div class="name">API Gateway</div><div class="desc">Routing, auth boundary, request limits, integration entrypoint</div><div class="badges"><span class="badge build">Build Now</span><span class="badge">Gateway</span></div></button>
+                <button class="card" data-id="redisQueues" data-phase="growth" data-status="build" data-layer="data" style="--accent:var(--data)"><div class="icon">QUE</div><div class="name">Redis Queues</div><div class="desc">Calls, proposals, follow-ups, sync jobs, notification retries</div><div class="badges"><span class="badge build">Build Now</span><span class="badge">Queue</span></div></button>
+                <button class="card" data-id="workers" data-phase="growth" data-status="build" data-layer="ops" style="--accent:var(--ops)"><div class="icon">WRK</div><div class="name">Background Job Workers</div><div class="desc">Асинхронные задачи CRM, AI, voice, proposal, analytics</div><div class="badges"><span class="badge build">Build Now</span><span class="badge">Workers</span></div></button>
+                <button class="card" data-id="rateLimit" data-phase="growth" data-status="build" data-layer="ops" style="--accent:var(--ops)"><div class="icon">LIM</div><div class="name">Rate Limiting</div><div class="desc">Ограничения по workspace, API, Telegram, voice, AI calls</div><div class="badges"><span class="badge build">Build Now</span><span class="badge">Limits</span></div></button>
+              </div>
+            </div>
+
+            <div class="layer" data-layer="product">
+              <div class="layer-head">Business reporting and integrations</div>
+              <div class="cards">
+                <button class="card" data-id="analytics" data-phase="growth" data-status="build" data-layer="product" style="--accent:var(--product)"><div class="icon">ANL</div><div class="name">Analytics / Reporting</div><div class="desc">Funnel, conversions, calls, agent performance, revenue dashboards</div><div class="badges"><span class="badge build">Build Now</span><span class="badge">Dashboards</span></div></button>
+                <button class="card" data-id="emailProvider" data-phase="growth" data-status="build" data-layer="integration" style="--accent:var(--comm)"><div class="icon">EML</div><div class="name">Email Provider</div><div class="desc">Отправка КП, follow-ups, open/click tracking, alerts</div><div class="badges"><span class="badge build">Build Now</span><span class="badge">Email</span></div></button>
+                <button class="card" data-id="fileStorage" data-phase="growth" data-status="build" data-layer="data" style="--accent:var(--data)"><div class="icon">S3</div><div class="name">S3-compatible Storage</div><div class="desc">Коммерческие предложения, вложения, call recordings, exports</div><div class="badges"><span class="badge build">Build Now</span><span class="badge">Files</span></div></button>
+                <button class="card" data-id="betterMonitoring" data-phase="growth" data-status="build" data-layer="ops" style="--accent:var(--ops)"><div class="icon">MON</div><div class="name">Better Monitoring</div><div class="desc">Prometheus, Grafana, Sentry, service health, job failures</div><div class="badges"><span class="badge build">Build Now</span><span class="badge">Grafana</span></div></button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="flow"><strong>Scale trigger: 500+ клиентов, горизонтальное масштабирование, много агентов, высокая стоимость сбоев</strong></div>
+
+        <section class="stage-band" data-phase="scale">
+          <aside class="stage-info">
+            <div class="stage-no">03</div>
+            <h2>Phase 3 · Scale Stage</h2>
+            <p>500+ клиентов. Microservice decomposition, Temporal/LangGraph orchestration, event bus, dedicated memory/vector stores, replicas, multi-region readiness, tracing.</p>
+          </aside>
+          <div class="layers">
+            <div class="layer" data-layer="ai">
+              <div class="layer-head">Advanced AI orchestration</div>
+              <div class="cards">
+                <button class="card" data-id="multiAgent" data-phase="scale" data-status="scale" data-layer="ai" style="--accent:var(--ai)"><div class="icon">MGA</div><div class="name">Multi-agent Orchestration</div><div class="desc">LangGraph / Temporal для сложных сценариев и durable execution</div><div class="badges"><span class="badge scale">Scale Only</span><span class="badge">LangGraph</span></div></button>
+                <button class="card" data-id="memoryStore" data-phase="scale" data-status="scale" data-layer="ai" style="--accent:var(--ai)"><div class="icon">MEM</div><div class="name">Agent Memory / Context Store</div><div class="desc">Dedicated memory, context, history для агентов и workspace</div><div class="badges"><span class="badge scale">Scale Only</span><span class="badge">Memory</span></div></button>
+                <button class="card" data-id="vectorStore" data-phase="scale" data-status="scale" data-layer="data" style="--accent:var(--data)"><div class="icon">VEC</div><div class="name">Dedicated Vector Store</div><div class="desc">Semantic search, RAG по FAQ, скриптам, КП, истории коммуникаций</div><div class="badges"><span class="badge scale">Scale Only</span><span class="badge">Vector</span></div></button>
+                <button class="card" data-id="agentAnalytics" data-phase="scale" data-status="scale" data-layer="ai" style="--accent:var(--ai)"><div class="icon">AKA</div><div class="name">Agent Analytics + Fallback</div><div class="desc">Agent KPIs, retry/fallback logic, model quality and cost tracking</div><div class="badges"><span class="badge scale">Scale Only</span><span class="badge">Quality</span></div></button>
+              </div>
+            </div>
+
+            <div class="layer" data-layer="ops">
+              <div class="layer-head">Scale infrastructure</div>
+              <div class="cards">
+                <button class="card" data-id="microservices" data-phase="scale" data-status="scale" data-layer="ops" style="--accent:var(--ops)"><div class="icon">MS</div><div class="name">Microservice Decomposition</div><div class="desc">CRM, agents, voice, proposals, analytics, admin/billing отдельно</div><div class="badges"><span class="badge scale">Scale Only</span><span class="badge">Services</span></div></button>
+                <button class="card" data-id="eventBus" data-phase="scale" data-status="scale" data-layer="data" style="--accent:var(--data)"><div class="icon">BUS</div><div class="name">Event Bus / Queue System</div><div class="desc">Lead events, call events, proposal events, agent events, analytics</div><div class="badges"><span class="badge scale">Scale Only</span><span class="badge">Events</span></div></button>
+                <button class="card" data-id="horizontalScaling" data-phase="scale" data-status="scale" data-layer="ops" style="--accent:var(--ops)"><div class="icon">HPA</div><div class="name">Horizontal Scaling</div><div class="desc">Containerized services, autoscaling backend, workers, agents</div><div class="badges"><span class="badge scale">Scale Only</span><span class="badge">Docker</span></div></button>
+                <button class="card" data-id="advancedTracing" data-phase="scale" data-status="scale" data-layer="ops" style="--accent:var(--ops)"><div class="icon">TRC</div><div class="name">Advanced Observability / Tracing</div><div class="desc">Distributed traces, SLOs, incident workflows, cost observability</div><div class="badges"><span class="badge scale">Scale Only</span><span class="badge">Tracing</span></div></button>
+              </div>
+            </div>
+
+            <div class="layer" data-layer="data">
+              <div class="layer-head">Scale data platform</div>
+              <div class="cards">
+                <button class="card" data-id="readReplicas" data-phase="scale" data-status="scale" data-layer="data" style="--accent:var(--data)"><div class="icon">REP</div><div class="name">PostgreSQL Read Replicas</div><div class="desc">Отчеты, CRM reads, dashboards без нагрузки на primary DB</div><div class="badges"><span class="badge scale">Scale Only</span><span class="badge">Replicas</span></div></button>
+                <button class="card" data-id="multiRegion" data-phase="scale" data-status="scale" data-layer="ops" style="--accent:var(--ops)"><div class="icon">REG</div><div class="name">Multi-region Readiness</div><div class="desc">Backups, failover strategy, regional latency and disaster recovery</div><div class="badges"><span class="badge scale">Scale Only</span><span class="badge">DR</span></div></button>
+                <button class="card" data-id="smsWhatsapp" data-phase="scale" data-status="stub" data-layer="integration" style="--accent:var(--comm)"><div class="icon">MSG</div><div class="name">SMS / WhatsApp Integrations</div><div class="desc">Future client communication channels for reminders and follow-up</div><div class="badges"><span class="badge stub">Stub Later</span><span class="badge">Future</span></div></button>
+                <button class="card" data-id="hosting" data-phase="scale" data-status="build" data-layer="ops" style="--accent:var(--ops)"><div class="icon">RUN</div><div class="name">Hosting / Containers</div><div class="desc">Vercel frontend, Hetzner/AWS/VPS backend, Docker services</div><div class="badges"><span class="badge build">Build Now</span><span class="badge">Docker</span></div></button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="matrix">
+          <div class="matrix-title">Stack locked to actual project scope</div>
+          <div class="chips">
+            <span class="chip">Next.js</span><span class="chip">Tailwind CSS</span><span class="chip">FastAPI / NestJS</span>
+            <span class="chip">PostgreSQL</span><span class="chip">Redis</span><span class="chip">S3-compatible storage</span>
+            <span class="chip">n8n</span><span class="chip">LangGraph / Temporal later</span><span class="chip">Telegram API</span>
+            <span class="chip">Email provider</span><span class="chip">Voice provider / SIP</span><span class="chip">STT / TTS / LLM voice pipeline</span>
+            <span class="chip">Grafana</span><span class="chip">Prometheus</span><span class="chip">Sentry</span>
+            <span class="chip">Vercel</span><span class="chip">Hetzner / AWS / VPS</span><span class="chip">Docker</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="detail-panel" id="detailPanel">
+      <div class="dp-header">
+        <button class="close" type="button" id="closePanel" aria-label="Закрыть">×</button>
+        <div class="dp-icon" id="dpIcon">CRM</div>
+        <div class="dp-name" id="dpName">CRM Dashboard</div>
+        <div class="dp-role" id="dpDescription">Центральный рабочий экран владельцев, менеджеров и операторов: leads, Kanban pipeline, lead popup, assignment, notes/history, activity timeline.</div>
+      </div>
+      <div class="dp-body" id="dpBody">
+        <div><span class="status-pill build">Build Now</span></div>
+        <div>
+          <div class="section-title">Responsibilities</div>
+          <div class="list"><div class="list-item"><code>Lead management</code><span>единая база заявок</span></div><div class="list-item"><code>Kanban pipeline</code><span>контроль стадий</span></div><div class="list-item"><code>Manager assignment</code><span>ответственные</span></div><div class="list-item"><code>Activity timeline</code><span>история касаний</span></div></div>
+        </div>
+        <div>
+          <div class="section-title">KPIs / Load Expectations</div>
+          <div class="kpis"><div class="kpi"><div class="kpi-n">Core</div><div class="kpi-l">главный модуль</div></div><div class="kpi"><div class="kpi-n">0–50</div><div class="kpi-l">shared DB ok</div></div><div class="kpi"><div class="kpi-n">Fast UI</div><div class="kpi-l">операторская работа</div></div><div class="kpi"><div class="kpi-n">Audit</div><div class="kpi-l">history required</div></div></div>
+        </div>
+        <div>
+          <div class="section-title">Migration Path</div>
+          <div class="text-box">MVP: модуль внутри backend monolith. Growth: background workers для activity/notifications. Scale: выделение CRM service только при отдельной нагрузке или команде.</div>
+        </div>
+        <div>
+          <div class="section-title">Placement</div>
+          <div class="list">
+            <div class="list-item"><code>Phase</code><span>MVP / Early Stage</span></div>
+            <div class="list-item"><code>Layer</code><span>Product</span></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    const statusLabels = {
+      build: "Build Now",
+      stub: "Stub Now / Add Later",
+      scale: "Scale Only"
+    };
+
+    const statusClass = {
+      build: "build",
+      stub: "stub",
+      scale: "scale"
+    };
+
+    const components = {
+      landing: {
+        icon: "WEB", status: "build", phase: "MVP / Early Stage", layer: "Product",
+        name: "Public Landing Website",
+        description: "Маркетинговый вход в платформу для санитарных и экологических сервисных компаний: страницы услуг, CTA funnels, pricing, plans, forms и showcase интеграций.",
+        responsibilities: [["Lead capture forms", "создание входящих лидов"], ["CTA funnels", "маршрутизация в CRM"], ["Pricing / plans", "коммерческая упаковка"], ["Integrations showcase", "доверие и partner story"]],
+        kpis: [["0–50", "клиентов MVP"], ["<2s", "цель загрузки"], ["Forms", "primary conversion"], ["SEO", "органический спрос"]],
+        migration: "MVP: Next.js + Tailwind, формы напрямую в backend API. Growth: A/B funnels, analytics events. Scale: CDN/edge optimization и отдельные маркетинговые эксперименты без влияния на CRM."
+      },
+      telegram: {
+        icon: "TG", status: "build", phase: "MVP / Early Stage", layer: "Comms",
+        name: "Telegram Bot Interface",
+        description: "Операционный канал для клиентского онбординга, квалификации лидов, FAQ/support, уведомлений и статусных обновлений.",
+        responsibilities: [["Onboarding", "первичный сбор данных"], ["Lead qualification", "вопросы и сегментация"], ["Notifications", "статусы и reminders"], ["Support / FAQ", "снижение нагрузки операторов"]],
+        kpis: [["<3s", "bot response"], ["24/7", "basic support"], ["Lead status", "sync to CRM"], ["MVP", "core channel"]],
+        migration: "MVP: Telegram API + backend handlers. Growth: вынести bot worker и retries в Redis queue. Scale: channel abstraction для Telegram, SMS, WhatsApp и email orchestration."
+      },
+      crm: {
+        icon: "CRM", status: "build", phase: "MVP / Early Stage", layer: "Product",
+        name: "CRM Dashboard",
+        description: "Центральный рабочий экран владельцев, менеджеров и операторов: leads, Kanban pipeline, lead popup, assignment, notes/history, activity timeline.",
+        responsibilities: [["Lead management", "единая база заявок"], ["Kanban pipeline", "контроль стадий"], ["Manager assignment", "ответственные"], ["Activity timeline", "история касаний"]],
+        kpis: [["Core", "главный модуль"], ["0–50", "shared DB ok"], ["Fast UI", "операторская работа"], ["Audit", "history required"]],
+        migration: "MVP: модуль внутри backend monolith. Growth: background workers для activity/notifications. Scale: выделение CRM service только при отдельной нагрузке или команде."
+      },
+      admin: {
+        icon: "ADM", status: "stub", phase: "MVP / Early Stage", layer: "Product",
+        name: "Admin / Superadmin Panel",
+        description: "Администрирование workspaces, пользователей, permissions/RBAC, subscription control, billing и тарифов.",
+        responsibilities: [["Workspace management", "компании-клиенты"], ["User management", "owners, managers, operators"], ["RBAC", "permissions"], ["Tariffs", "subscription control"]],
+        kpis: [["Stub", "минимум в MVP"], ["RBAC", "must be planned"], ["Billing", "manual first"], ["Audit", "later"]],
+        migration: "MVP: минимальная админка и ручное управление тарифами. Growth: роли и subscription logic. Scale: отдельный admin/billing boundary с audit trail."
+      },
+      aiSecretary: {
+        icon: "AI", status: "build", phase: "MVP / Early Stage", layer: "AI / Automation",
+        name: "AI Secretary / Agent Layer",
+        description: "Базовые AI агенты: qualification agent, client communication agent, follow-up agent, re-engagement agent.",
+        responsibilities: [["Qualification agent", "оценка лида"], ["Communication agent", "ответы клиенту"], ["Follow-up agent", "дожим"], ["Re-engagement agent", "возврат старых лидов"]],
+        kpis: [["Basic", "agents now"], ["Human fallback", "planned"], ["CRM sync", "обязательно"], ["Scripts", "версионировать позже"]],
+        migration: "MVP: простые агенты через backend/n8n. Growth: separated agent services, prompt versions, HITL. Scale: LangGraph/Temporal multi-agent orchestration."
+      },
+      n8n: {
+        icon: "WF", status: "build", phase: "MVP / Early Stage", layer: "AI / Automation",
+        name: "n8n Workflows",
+        description: "Практичный automation layer для быстрого запуска сценариев без преждевременной custom orchestration платформы.",
+        responsibilities: [["Lead routing", "куда отправить лид"], ["Reminders", "follow-up расписания"], ["Proposal sending", "отправка КП"], ["Status automations", "обновления CRM"]],
+        kpis: [["Fast", "low-code velocity"], ["0–50", "достаточно"], ["Retry basic", "workflow-level"], ["Replace later", "only when needed"]],
+        migration: "MVP: n8n как основной workflow engine. Growth: критичные jobs вынести в workers. Scale: Temporal/LangGraph для durable multi-step orchestration."
+      },
+      proposal: {
+        icon: "DOC", status: "build", phase: "MVP / Early Stage", layer: "Product",
+        name: "Proposal Automation",
+        description: "Генерация коммерческих предложений, отправка через email/messenger и отслеживание opens/clicks.",
+        responsibilities: [["Generate proposals", "КП по данным лида"], ["Send via channels", "email/messenger"], ["Track opens/clicks", "sales signal"], ["Store versions", "история КП"]],
+        kpis: [["Same day", "КП после квалификации"], ["Open/click", "conversion signals"], ["Templates", "быстрый старт"], ["S3 later", "files"]],
+        migration: "MVP: templates + backend generation. Growth: S3 storage, email provider tracking, worker sending. Scale: dedicated proposal service only if volume demands."
+      },
+      calendar: {
+        icon: "CAL", status: "build", phase: "MVP / Early Stage", layer: "Product",
+        name: "Calendar / Booking System",
+        description: "Планирование визитов санитарного эксперта, sync appointments и календари менеджеров.",
+        responsibilities: [["Schedule visits", "слоты экспертов"], ["Manager calendars", "доступность"], ["Status sync", "CRM stage update"], ["Reminders", "клиенту и менеджеру"]],
+        kpis: [["No double booking", "core rule"], ["CRM stage", "sync"], ["Reminder", "reduce no-show"], ["External sync", "later"]],
+        migration: "MVP: простые слоты и appointments в PostgreSQL. Growth: calendar sync jobs. Scale: отдельный booking service при большом числе филиалов/регионов."
+      },
+      apiMonolith: {
+        icon: "API", status: "build", phase: "MVP / Early Stage", layer: "Ops",
+        name: "Backend API Monolith",
+        description: "FastAPI или NestJS backend как один deployable сервис с доменными модулями для CRM, Telegram, agents, proposals, booking, admin.",
+        responsibilities: [["API contracts", "frontend/bot/admin"], ["Domain modules", "границы в коде"], ["Auth/RBAC hooks", "permissions"], ["Integrations", "providers"]],
+        kpis: [["1 deploy", "velocity"], ["Modular", "upgrade path"], ["Shared DB", "simple"], ["Docker", "portable"]],
+        migration: "MVP: monolith. Growth: gateway + workers + separated agent services. Scale: microservice decomposition по CRM/agents/voice/proposals/analytics/admin."
+      },
+      postgres: {
+        icon: "DB", status: "build", phase: "MVP / Early Stage", layer: "Data",
+        name: "PostgreSQL Shared DB",
+        description: "Основное хранилище CRM и продукта: leads, pipeline, users, workspaces, notes/history, appointments, proposals, subscriptions.",
+        responsibilities: [["CRM entities", "leads/pipeline/notes"], ["Workspace data", "multi-tenant records"], ["Appointments", "booking"], ["Proposal metadata", "tracking"]],
+        kpis: [["Shared", "MVP simplicity"], ["Backups", "required"], ["Indexes", "growth"], ["Replicas", "scale"]],
+        migration: "MVP: одна DB. Growth: индексы, pooling, query monitoring. Scale: read replicas для dashboards, затем service-owned data only where justified."
+      },
+      redisSessions: {
+        icon: "RDS", status: "stub", phase: "MVP / Early Stage", layer: "Data",
+        name: "Redis Sessions / Cache",
+        description: "Ранний stub для sessions/cache. Не превращать в обязательную инфраструктуру, пока нет нагрузки или queue needs.",
+        responsibilities: [["Sessions", "если нужно"], ["Light cache", "hot reads"], ["Rate hints", "pre-gateway"], ["Queue foundation", "growth"]],
+        kpis: [["Optional", "MVP"], ["Measured", "add on need"], ["TTL", "discipline"], ["Queue later", "growth"]],
+        migration: "MVP: можно stub. Growth: Redis queues, rate limiting, bot/agent sessions. Scale: dedicated queue/event system may replace part of Redis usage."
+      },
+      observabilityMin: {
+        icon: "OBS", status: "build", phase: "MVP / Early Stage", layer: "Ops",
+        name: "Minimal Observability",
+        description: "Минимально необходимая диагностика: Sentry/error tracking, базовые logs, health checks для backend, bot, n8n workflows.",
+        responsibilities: [["Error tracking", "Sentry"], ["Health checks", "uptime"], ["Basic logs", "debug"], ["Workflow failures", "n8n visibility"]],
+        kpis: [["MVP", "must have"], ["MTTR", "reduce"], ["No tracing", "yet"], ["Alerts", "critical only"]],
+        migration: "MVP: errors/logs/health. Growth: Prometheus/Grafana. Scale: distributed tracing, SLOs, incident workflows."
+      },
+      agentServices: {
+        icon: "AGS", status: "build", phase: "Growth Stage", layer: "AI / Automation",
+        name: "Separated Agent Services",
+        description: "Вынос AI qualification, communication, follow-up и re-engagement агентов из основного API, чтобы не блокировать CRM latency.",
+        responsibilities: [["Agent execution", "separate runtime"], ["CRM actions", "tool calls"], ["Retries", "controlled"], ["Cost tracking", "per workspace"]],
+        kpis: [["50–500", "target clients"], ["Async", "no API blocking"], ["Per-agent", "metrics"], ["Fallback", "growth"]],
+        migration: "Growth: отдельные services/workers. Scale: multi-agent orchestration через LangGraph/Temporal с memory/context store."
+      },
+      voiceAgent: {
+        icon: "VOC", status: "build", phase: "Growth Stage", layer: "Comms",
+        name: "Voice Calling Agent",
+        description: "Outbound calls to leads: qualification scripts, objections, booking appointments, escalation to human manager.",
+        responsibilities: [["Outbound calls", "lead qualification"], ["Scripts", "санитарная специфика"], ["Objection handling", "AI dialog"], ["Book appointments", "calendar sync"]],
+        kpis: [["Call rate", "workspace limits"], ["Booking %", "primary KPI"], ["Escalation", "hot leads"], ["Recordings", "storage"]],
+        migration: "Growth: voice provider/SIP + STT/TTS/LLM pipeline in workers. Scale: dedicated voice service, event stream for call analytics and QA."
+      },
+      humanLoop: {
+        icon: "HITL", status: "build", phase: "Growth Stage", layer: "AI / Automation",
+        name: "Human-in-the-loop Escalation",
+        description: "Контролируемая передача AI диалога менеджеру или оператору при горячем лиде, сложном возражении или низкой уверенности агента.",
+        responsibilities: [["Confidence threshold", "AI safety"], ["Manager handoff", "CRM assignment"], ["Escalation reason", "audit"], ["Notification", "Telegram/CRM"]],
+        kpis: [["Hot lead", "fast handoff"], ["Reason", "traceability"], ["<1 min", "target notify"], ["Quality", "reduce bad automation"]],
+        migration: "Growth: rules + queue notifications. Scale: policy engine and agent analytics for escalation quality."
+      },
+      promptVersions: {
+        icon: "PRM", status: "build", phase: "Growth Stage", layer: "AI / Automation",
+        name: "Prompt / Version Management",
+        description: "Управление версиями промптов, скриптов квалификации, голосовых сценариев, follow-up цепочек и re-engagement playbooks.",
+        responsibilities: [["Prompt versions", "controlled changes"], ["Scripts", "voice/telegram/email"], ["A/B quality", "later"], ["Rollback", "bad prompts"]],
+        kpis: [["Versioned", "no silent changes"], ["Rollback", "safe ops"], ["Per workspace", "customization"], ["Metrics", "scale"]],
+        migration: "Growth: prompt registry in DB/admin. Scale: prompt analytics, experiment tracking, model fallback and cost controls."
+      },
+      apiGateway: {
+        icon: "GW", status: "build", phase: "Growth Stage", layer: "Ops",
+        name: "API Gateway",
+        description: "Единая входная точка для dashboard, landing forms, Telegram webhooks, public integrations and future channels.",
+        responsibilities: [["Routing", "API/modules"], ["Auth boundary", "workspace context"], ["Rate limits", "protect AI/voice"], ["Webhook entry", "Telegram/email/voice"]],
+        kpis: [["50–500", "add"], ["Limits", "per workspace"], ["Webhook", "stable"], ["Gateway logs", "debug"]],
+        migration: "Growth: gateway before service split. Scale: gateway routes to CRM, agents, voice, proposal, analytics services."
+      },
+      redisQueues: {
+        icon: "QUE", status: "build", phase: "Growth Stage", layer: "Data",
+        name: "Redis Queues",
+        description: "Очереди для звонков, follow-ups, отправки КП, Telegram/email retries, sync jobs and analytics processing.",
+        responsibilities: [["Job queues", "async execution"], ["Retries", "delivery reliability"], ["DLQ", "failed jobs"], ["Priority", "hot leads"]],
+        kpis: [["Backpressure", "protect API"], ["Retry", "reliability"], ["DLQ", "ops"], ["Priority", "sales urgency"]],
+        migration: "Growth: Redis queues. Scale: event bus/queue system for durable lead/call/proposal/agent events."
+      },
+      workers: {
+        icon: "WRK", status: "build", phase: "Growth Stage", layer: "Ops",
+        name: "Background Job Workers",
+        description: "Отдельные worker процессы для тяжелых и нестабильных задач: AI, voice, proposals, notifications, analytics.",
+        responsibilities: [["AI jobs", "agent execution"], ["Voice jobs", "calls/STT/TTS"], ["Proposal jobs", "generation/sending"], ["Analytics jobs", "aggregation"]],
+        kpis: [["Horizontal", "worker scale"], ["No API block", "latency"], ["Job status", "visibility"], ["Retry", "required"]],
+        migration: "Growth: Dockerized workers. Scale: autoscaled worker pools per service and orchestration via Temporal/LangGraph."
+      },
+      rateLimit: {
+        icon: "LIM", status: "build", phase: "Growth Stage", layer: "Ops",
+        name: "Rate Limiting",
+        description: "Ограничения по workspace/client/channel для защиты Telegram, voice provider, AI calls, email provider and backend API.",
+        responsibilities: [["Workspace limits", "tariffs"], ["Provider protection", "AI/voice/email"], ["Abuse control", "public forms"], ["Fair usage", "multi-tenant"]],
+        kpis: [["Per workspace", "limits"], ["429 logic", "clear"], ["Provider caps", "avoid bans"], ["Billing link", "tariffs"]],
+        migration: "Growth: Redis/gateway limits. Scale: centralized quota service tied to tariffs, cost and provider capacity."
+      },
+      analytics: {
+        icon: "ANL", status: "build", phase: "Growth Stage", layer: "Product",
+        name: "Analytics / Reporting",
+        description: "Funnel metrics, conversion analytics, call metrics, agent performance and revenue dashboards.",
+        responsibilities: [["Funnel metrics", "lead to visit"], ["Call metrics", "voice quality"], ["Agent performance", "automation ROI"], ["Revenue dashboards", "owner view"]],
+        kpis: [["Conversion", "core"], ["Calls", "booking KPI"], ["Agent ROI", "automation value"], ["Revenue", "owner dashboard"]],
+        migration: "Growth: dashboard queries and aggregates. Scale: event bus + read replicas + dedicated analytics store if PostgreSQL becomes overloaded."
+      },
+      emailProvider: {
+        icon: "EML", status: "build", phase: "Growth Stage", layer: "Comms",
+        name: "Email Provider",
+        description: "Email delivery for proposals, follow-ups, notifications and tracking opens/clicks.",
+        responsibilities: [["Proposal send", "commercial flow"], ["Follow-up emails", "automation"], ["Open/click tracking", "sales signal"], ["Bounce handling", "deliverability"]],
+        kpis: [["Delivery", "provider SLA"], ["Open/click", "tracking"], ["Retries", "worker queue"], ["Templates", "managed"]],
+        migration: "Growth: provider integration with workers. Scale: channel service with email, Telegram, SMS/WhatsApp and delivery analytics."
+      },
+      fileStorage: {
+        icon: "S3", status: "build", phase: "Growth Stage", layer: "Data",
+        name: "S3-compatible Storage",
+        description: "Хранилище файлов: commercial proposals, attachments, call recordings, exports and generated documents.",
+        responsibilities: [["Proposal files", "PDF/doc assets"], ["Call recordings", "QA/legal"], ["Exports", "analytics/admin"], ["Signed URLs", "secure access"]],
+        kpis: [["Durable", "files"], ["Signed URL", "access"], ["Lifecycle", "cost"], ["Recordings", "voice QA"]],
+        migration: "Growth: S3/R2 bucket and signed URLs. Scale: lifecycle policies, retention, regional strategy and access audit."
+      },
+      betterMonitoring: {
+        icon: "MON", status: "build", phase: "Growth Stage", layer: "Ops",
+        name: "Better Monitoring",
+        description: "Prometheus, Grafana and Sentry coverage for backend, workers, queues, n8n, bot and voice pipeline health.",
+        responsibilities: [["Metrics", "Prometheus"], ["Dashboards", "Grafana"], ["Errors", "Sentry"], ["Queue health", "worker ops"]],
+        kpis: [["MTTR", "reduce"], ["Queue lag", "visible"], ["Provider errors", "visible"], ["Alerts", "actionable"]],
+        migration: "Growth: service dashboards and alerts. Scale: distributed tracing, SLOs, incident workflow, cost and provider observability."
+      },
+      multiAgent: {
+        icon: "MGA", status: "scale", phase: "Scale Stage", layer: "AI / Automation",
+        name: "Multi-agent Orchestration",
+        description: "LangGraph / Temporal для durable multi-agent workflows: qualification, communication, voice, follow-up, booking and proposal flows.",
+        responsibilities: [["Durable workflows", "long-running automation"], ["Agent coordination", "multi-step"], ["Retries/fallback", "systematic"], ["Human handoff", "stateful"]],
+        kpis: [["500+", "clients"], ["Durable", "execution"], ["Replay", "debug"], ["Fallback", "reliability"]],
+        migration: "Scale only. До этого достаточно n8n + workers. Вводить, когда workflow state, retries и audit становятся критичными."
+      },
+      memoryStore: {
+        icon: "MEM", status: "scale", phase: "Scale Stage", layer: "AI / Automation",
+        name: "Agent Memory / Context Store",
+        description: "Dedicated memory/context store для истории коммуникаций, preferences, workspace context and agent state.",
+        responsibilities: [["Agent context", "personalization"], ["Conversation history", "continuity"], ["Workspace knowledge", "company context"], ["State", "long workflows"]],
+        kpis: [["Context", "quality"], ["Tenant scoped", "security"], ["Low latency", "agent runtime"], ["Retention", "policy"]],
+        migration: "Scale: выделить из PostgreSQL/CRM history, когда агентам нужен быстрый контекст и специализированная memory model."
+      },
+      vectorStore: {
+        icon: "VEC", status: "scale", phase: "Scale Stage", layer: "Data",
+        name: "Dedicated Vector Store",
+        description: "Vector/memory infrastructure for semantic search and RAG over FAQ, sanitary scripts, proposals, call transcripts and communication history.",
+        responsibilities: [["RAG", "agent knowledge"], ["Semantic FAQ", "support"], ["Script retrieval", "voice/telegram"], ["Transcript search", "QA"]],
+        kpis: [["Relevance", "agent quality"], ["Tenant isolation", "must"], ["Embeddings", "pipeline"], ["Scale only", "avoid early burden"]],
+        migration: "MVP/Growth: structured prompts and DB text search. Scale: vector store when RAG quality materially improves agent performance."
+      },
+      agentAnalytics: {
+        icon: "AKA", status: "scale", phase: "Scale Stage", layer: "AI / Automation",
+        name: "Agent Analytics + Fallback",
+        description: "Agent performance, retry/fallback logic, model quality, cost tracking and conversion impact analytics.",
+        responsibilities: [["Agent KPIs", "quality"], ["Retry/fallback", "resilience"], ["Model cost", "unit economics"], ["Conversion impact", "business ROI"]],
+        kpis: [["Cost/lead", "AI economics"], ["Booking uplift", "value"], ["Fallback rate", "quality"], ["Retry success", "reliability"]],
+        migration: "Growth: basic metrics. Scale: dedicated analytics around agent outcomes, prompts, models, provider failures and conversion."
+      },
+      microservices: {
+        icon: "MS", status: "scale", phase: "Scale Stage", layer: "Ops",
+        name: "Microservice Decomposition",
+        description: "Разделение по реальным доменам проекта: CRM, agents, voice, proposals, analytics, admin/billing.",
+        responsibilities: [["CRM service", "pipeline core"], ["Agent service", "automation"], ["Voice service", "calls"], ["Analytics service", "reporting"]],
+        kpis: [["Team ownership", "trigger"], ["Independent scale", "trigger"], ["Release cadence", "trigger"], ["Contracts", "required"]],
+        migration: "Scale only. Сначала модульный монолит + workers. Делить сервисы только по нагрузке, ownership или независимым релизам."
+      },
+      eventBus: {
+        icon: "BUS", status: "scale", phase: "Scale Stage", layer: "Data",
+        name: "Event Bus / Queue System",
+        description: "Durable events for lead.created, call.completed, proposal.opened, appointment.booked, agent.escalated and revenue events.",
+        responsibilities: [["Lead events", "CRM"], ["Call events", "voice"], ["Proposal events", "sales"], ["Agent events", "automation analytics"]],
+        kpis: [["Durable", "events"], ["Consumers", "analytics/workflows"], ["Replay", "debug"], ["Schema", "discipline"]],
+        migration: "Growth: Redis queues for jobs. Scale: event bus when multiple services and analytics consumers need reliable event streams."
+      },
+      horizontalScaling: {
+        icon: "HPA", status: "scale", phase: "Scale Stage", layer: "Ops",
+        name: "Horizontal Scaling",
+        description: "Containerized services and autoscaling for backend, workers, agent services and voice pipelines.",
+        responsibilities: [["Docker services", "portable"], ["Autoscale workers", "queue lag"], ["Backend replicas", "traffic"], ["Provider capacity", "limits"]],
+        kpis: [["500+", "clients"], ["Queue lag", "scale signal"], ["Stateless API", "required"], ["Capacity", "planned"]],
+        migration: "MVP/Growth: Docker on VPS/Hetzner/AWS. Scale: autoscaling groups or orchestration only when operating load justifies it."
+      },
+      advancedTracing: {
+        icon: "TRC", status: "scale", phase: "Scale Stage", layer: "Ops",
+        name: "Advanced Observability / Tracing",
+        description: "Distributed traces, SLOs, incident workflows and provider cost observability across CRM, agents, voice, queues and integrations.",
+        responsibilities: [["Distributed tracing", "cross-service debug"], ["SLOs", "reliability"], ["Incident workflow", "ops"], ["Cost observability", "AI/voice providers"]],
+        kpis: [["MTTR", "lower"], ["SLO", "defined"], ["Trace", "end-to-end"], ["Cost", "per lead/client"]],
+        migration: "Scale: after services split. Before that, Prometheus/Grafana/Sentry and queue metrics are enough."
+      },
+      readReplicas: {
+        icon: "REP", status: "scale", phase: "Scale Stage", layer: "Data",
+        name: "PostgreSQL Read Replicas",
+        description: "Read replicas for analytics/reporting, CRM read-heavy screens and dashboards without loading primary transactional DB.",
+        responsibilities: [["Reporting reads", "offload primary"], ["Dashboards", "analytics"], ["CRM reads", "scale"], ["Failover option", "resilience"]],
+        kpis: [["Read load", "trigger"], ["Primary safe", "writes"], ["Lag", "monitor"], ["500+", "scale phase"]],
+        migration: "Growth: indexes and query tuning. Scale: replicas when analytics and CRM reads compete with writes."
+      },
+      multiRegion: {
+        icon: "REG", status: "scale", phase: "Scale Stage", layer: "Ops",
+        name: "Multi-region Readiness",
+        description: "Disaster recovery and regional strategy: backups, restore drills, failover design and provider-region planning.",
+        responsibilities: [["Backups", "restore tested"], ["Failover", "strategy"], ["Regional latency", "future"], ["DR process", "documented"]],
+        kpis: [["RPO/RTO", "defined"], ["Restore", "tested"], ["Backups", "automated"], ["Multi-region", "ready"]],
+        migration: "MVP/Growth: backups and restore. Scale: multi-region readiness before enterprise customers or regional expansion require it."
+      },
+      smsWhatsapp: {
+        icon: "MSG", status: "stub", phase: "Scale Stage", layer: "Comms",
+        name: "SMS / WhatsApp Integrations",
+        description: "Future channels for client communication, reminders, follow-up, re-engagement and status updates.",
+        responsibilities: [["SMS reminders", "appointments"], ["WhatsApp follow-up", "clients"], ["Delivery tracking", "channel KPI"], ["Consent", "compliance"]],
+        kpis: [["Future", "add later"], ["Opt-in", "required"], ["Delivery", "track"], ["Channel ROI", "measure"]],
+        migration: "Stub API/channel abstraction now. Add providers later when target clients need SMS/WhatsApp more than Telegram/email."
+      },
+      hosting: {
+        icon: "RUN", status: "build", phase: "Scale Stage", layer: "Ops",
+        name: "Hosting / Containers",
+        description: "Actual deployment stack: Vercel for frontend, Hetzner/AWS/VPS backend, Docker/containerized services.",
+        responsibilities: [["Vercel", "frontend"], ["VPS/Hetzner/AWS", "backend"], ["Docker", "services/workers"], ["Environments", "staging/prod"]],
+        kpis: [["Portable", "Docker"], ["Simple", "early ops"], ["Scale path", "containers"], ["Cost", "controlled"]],
+        migration: "Start with simple Dockerized backend on VPS/Hetzner/AWS and Vercel frontend. Scale horizontally only when traffic/queues require it."
+      }
+    };
+
+    const cards = [...document.querySelectorAll(".card")];
+    const stages = [...document.querySelectorAll(".stage-band")];
+    const layers = [...document.querySelectorAll(".layer")];
+    const pills = [...document.querySelectorAll(".pill")];
+    const panel = document.getElementById("detailPanel");
+
+    let activeFilter = { filter: "phase", value: "all" };
+
+    function renderDetails(id) {
+      const item = components[id];
+      if (!item) return;
+
+      document.getElementById("dpIcon").textContent = item.icon;
+      document.getElementById("dpName").textContent = item.name;
+      document.getElementById("dpDescription").textContent = item.description;
+
+      document.getElementById("dpBody").innerHTML = `
+        <div><span class="status-pill ${statusClass[item.status]}">${statusLabels[item.status]}</span></div>
+        <div>
+          <div class="section-title">Responsibilities</div>
+          <div class="list">${item.responsibilities.map(([a,b]) => `<div class="list-item"><code>${a}</code><span>${b}</span></div>`).join("")}</div>
+        </div>
+        <div>
+          <div class="section-title">KPIs / Load Expectations</div>
+          <div class="kpis">${item.kpis.map(([a,b]) => `<div class="kpi"><div class="kpi-n">${a}</div><div class="kpi-l">${b}</div></div>`).join("")}</div>
+        </div>
+        <div>
+          <div class="section-title">Migration Path</div>
+          <div class="text-box">${item.migration}</div>
+        </div>
+        <div>
+          <div class="section-title">Placement</div>
+          <div class="list">
+            <div class="list-item"><code>Phase</code><span>${item.phase}</span></div>
+            <div class="list-item"><code>Layer</code><span>${item.layer}</span></div>
+          </div>
+        </div>
+      `;
+
+      cards.forEach(card => card.classList.toggle("selected", card.dataset.id === id));
+      panel.classList.remove("hidden");
+    }
+
+    function applyFilter() {
+      cards.forEach(card => {
+        let dim = false;
+        if (activeFilter.filter === "phase" && activeFilter.value !== "all") dim = card.dataset.phase !== activeFilter.value;
+        if (activeFilter.filter === "status") dim = card.dataset.status !== activeFilter.value;
+        if (activeFilter.filter === "layer") dim = card.dataset.layer !== activeFilter.value;
+        card.classList.toggle("dimmed", dim);
+      });
+
+      stages.forEach(stage => {
+        const dim = activeFilter.filter === "phase" && activeFilter.value !== "all" && stage.dataset.phase !== activeFilter.value;
+        stage.classList.toggle("dimmed", dim);
+      });
+
+      layers.forEach(layer => {
+        const dim = activeFilter.filter === "layer" && layer.dataset.layer !== activeFilter.value;
+        layer.classList.toggle("dimmed", dim);
+      });
+    }
+
+    cards.forEach(card => {
+      card.addEventListener("click", () => renderDetails(card.dataset.id));
+    });
+
+    pills.forEach(pill => {
+      pill.addEventListener("click", () => {
+        pills.forEach(item => item.classList.remove("active"));
+        pill.classList.add("active");
+        activeFilter = { filter: pill.dataset.filter, value: pill.dataset.value };
+        applyFilter();
+      });
+    });
+
+    document.getElementById("closePanel").addEventListener("click", () => {
+      panel.classList.add("hidden");
+      cards.forEach(card => card.classList.remove("selected"));
+    });
+
+    renderDetails("crm");
+  </script>
+
+
+</body></html>
