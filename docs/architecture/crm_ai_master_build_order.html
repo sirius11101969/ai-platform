@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<!-- saved from url=(0128)file:///C:/Users/buyle/Documents/Codex/2026-04-30/task-title-create-phased-infrastructure-rollout/crm_ai_master_build_order.html -->
+<html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CRM + AI Automation Platform — Master Build Order</title>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#050711;--panel:rgba(13,18,35,.94);--card:rgba(18,25,45,.92);--line:rgba(255,255,255,.08);
+      --text:#edf4ff;--muted:rgba(219,230,255,.70);--faint:rgba(188,203,236,.44);
+      --critical:#ef4444;--mvp:#28d17c;--growth:#f5aa2c;--scale:#42c6ff;
+      --frontend:#8b5cf6;--backend:#22c55e;--ai:#d946ef;--devops:#f97316;--comms:#38bdf8;
+      --ease:cubic-bezier(.22,1,.36,1);
+    }
+    body{
+      min-height:100vh;color:var(--text);
+      background:
+        radial-gradient(circle at 14% 7%,rgba(139,92,246,.22),transparent 29%),
+        radial-gradient(circle at 84% 14%,rgba(56,189,248,.13),transparent 31%),
+        radial-gradient(circle at 62% 92%,rgba(34,197,94,.08),transparent 33%),
+        linear-gradient(180deg,#050711,#03040a);
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+    }
+    button{font:inherit}
+    ::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-thumb{background:rgba(66,198,255,.30);border-radius:999px}
+    .header{
+      position:sticky;top:0;z-index:30;display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;
+      padding:22px 28px 16px;border-bottom:1px solid var(--line);background:rgba(5,7,17,.95);backdrop-filter:blur(18px)
+    }
+    .header::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(139,92,246,.58),rgba(66,198,255,.45),transparent)}
+    .title{font-size:17px;font-weight:860}.subtitle{margin-top:4px;color:var(--faint);font-size:12px;line-height:1.4}
+    .toolbar{display:grid;gap:8px;justify-items:end}.filter-row{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+    .filter-label{align-self:center;color:var(--faint);font-size:10px;font-weight:820;letter-spacing:.08em;text-transform:uppercase}
+    .pill{min-height:27px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.04);color:var(--muted);font-size:11px;font-weight:720;cursor:pointer;transition:all .18s var(--ease)}
+    .pill:hover,.pill.active{border-color:rgba(66,198,255,.45);background:rgba(66,198,255,.12);color:var(--text)}
+    .shell{width:min(1600px,calc(100% - 40px));margin:0 auto;padding:20px 0 44px}
+    .metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:16px}
+    .metric{min-height:104px;padding:14px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.02)),rgba(0,0,0,.18)}
+    .metric strong{display:block;margin-bottom:7px;font-size:23px;line-height:1}.metric span{color:var(--muted);font-size:12px;line-height:1.42}
+    .grid{display:grid;grid-template-columns:minmax(0,1.25fr) 420px;gap:16px;align-items:start}
+    .panel{border:1px solid var(--line);border-radius:14px;background:var(--panel);overflow:hidden}
+    .panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 14px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.035)}
+    .panel-head h2{font-size:14px}.panel-head span{color:var(--faint);font-size:11px}
+    .sequence{display:grid;gap:10px;padding:14px}
+    .step{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:11px;align-items:start;padding:13px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.025);transition:opacity .18s var(--ease),border-color .18s var(--ease),box-shadow .18s var(--ease)}
+    .step.dimmed,.stream-card.dimmed,.sprint.dimmed{opacity:.18;filter:grayscale(.85)}
+    .step.critical{border-color:rgba(239,68,68,.38);box-shadow:inset 3px 0 0 rgba(239,68,68,.84)}
+    .num{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--frontend),var(--comms));font-size:12px;font-weight:900}
+    .step h3{margin-bottom:5px;font-size:13.5px;line-height:1.18}.step p{color:var(--faint);font-size:11px;line-height:1.42}
+    .meta{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;max-width:320px}
+    .tag{display:inline-flex;align-items:center;min-height:22px;padding:2px 7px;border-radius:999px;font-size:9.5px;font-weight:820;white-space:nowrap;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.045);color:var(--muted)}
+    .tag.mvp{border-color:rgba(40,209,124,.28);background:rgba(40,209,124,.10);color:rgba(139,255,190,.95)}
+    .tag.growth{border-color:rgba(245,170,44,.32);background:rgba(245,170,44,.11);color:rgba(255,216,142,.95)}
+    .tag.scale{border-color:rgba(66,198,255,.32);background:rgba(66,198,255,.11);color:rgba(154,224,255,.95)}
+    .tag.critical{border-color:rgba(239,68,68,.34);background:rgba(239,68,68,.12);color:rgba(255,180,180,.95)}
+    .details{grid-column:2 / -1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:2px}
+    .box{padding:8px;border:1px solid var(--line);border-radius:9px;background:rgba(0,0,0,.18);color:var(--faint);font-size:10.5px;line-height:1.38}
+    .box b{display:block;margin-bottom:3px;color:var(--muted);font-size:9.5px;text-transform:uppercase;letter-spacing:.06em}
+    .side{display:grid;gap:16px;position:sticky;top:128px}
+    .streams,.sprints,.milestones{display:grid;gap:10px;padding:12px;max-height:520px;overflow:auto}
+    .stream-card,.sprint{padding:11px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.025);transition:opacity .18s var(--ease)}
+    .stream-card h3,.sprint h3{margin-bottom:6px;font-size:12px}.stream-card p,.sprint p{color:var(--faint);font-size:10.5px;line-height:1.4}
+    .stream-items{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+    .rationale{margin-top:16px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .reason{padding:14px;border:1px solid var(--line);border-radius:14px;background:rgba(0,0,0,.22)}
+    .reason h3{margin-bottom:8px;font-size:14px}.reason ul{display:grid;gap:6px;padding-left:16px;color:var(--muted);font-size:11px;line-height:1.42}
+    @media(max-width:1220px){.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:1fr}.side{position:static}.rationale{grid-template-columns:1fr}.toolbar{justify-items:start;width:100%}.filter-row{justify-content:flex-start}}
+    @media(max-width:760px){.shell{width:min(100% - 24px,1600px)}.metrics{grid-template-columns:1fr}.step{grid-template-columns:38px 1fr}.meta,.details{grid-column:1 / -1;justify-content:flex-start}.details{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div>
+      <div class="title">CRM + AI Automation Platform · Master Build Order</div>
+      <div class="subtitle">Dependency-aware implementation sequence · MVP-first · critical path · parallel workstreams · sprint grouping</div>
+    </div>
+    <div class="toolbar">
+      <div class="filter-row">
+        <span class="filter-label">Phase</span>
+        <button class="pill active" data-filter="phase" data-value="all">Все</button>
+        <button class="pill" data-filter="phase" data-value="mvp">MVP</button>
+        <button class="pill" data-filter="phase" data-value="growth">Growth</button>
+        <button class="pill" data-filter="phase" data-value="scale">Scale</button>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">Stream</span>
+        <button class="pill" data-filter="stream" data-value="platform">Platform</button>
+        <button class="pill" data-filter="stream" data-value="product">Product</button>
+        <button class="pill" data-filter="stream" data-value="ai">AI</button>
+        <button class="pill" data-filter="stream" data-value="comms">Comms</button>
+        <button class="pill" data-filter="stream" data-value="data">Data</button>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">Focus</span>
+        <button class="pill" data-filter="critical" data-value="true">Critical Path</button>
+        <button class="pill" data-filter="sprint" data-value="Sprint 1">Sprint 1</button>
+        <button class="pill" data-filter="sprint" data-value="Sprint 2">Sprint 2</button>
+        <button class="pill" data-filter="sprint" data-value="Sprint 3">Sprint 3</button>
+        <button class="pill" data-filter="sprint" data-value="Sprint 4">Sprint 4</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="metrics" id="metrics">
+        <article class="metric"><strong>30</strong><span>Total ordered implementation steps.</span></article>
+        <article class="metric"><strong>21</strong><span>Critical path steps that unblock core delivery.</span></article>
+        <article class="metric"><strong>12</strong><span>MVP-first steps before growth infrastructure.</span></article>
+        <article class="metric"><strong>10</strong><span>Growth hardening steps for 50–500 clients.</span></article>
+        <article class="metric"><strong>8</strong><span>Scale-only steps for 500+ clients.</span></article>
+      </section>
+    <section class="grid">
+      <section class="panel">
+        <div class="panel-head">
+          <div><h2>Exact Recommended Implementation Sequence</h2><span>Ordered by dependency, product value and infrastructure burden.</span></div>
+          <span id="visibleCount">30 visible steps</span>
+        </div>
+        <div class="sequence" id="sequence">
+        <article class="step critical" data-phase="mvp" data-stream="platform">
+          <div class="num">01</div>
+          <div>
+            <h3>Core PostgreSQL data model</h3>
+            <p>Design workspaces, users, leads, pipeline, notes, timeline, appointments and proposals.</p>
+          </div>
+          <div class="meta">
+            <span class="tag mvp">MVP</span>
+            <span class="tag">platform</span>
+            <span class="tag">Sprint 1</span>
+            <span class="tag critical">Critical Path</span>
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>None</div>
+            <div class="box"><b>Definition of Done</b>Backend can store all MVP workflows</div>
+            <div class="box"><b>Why this order</b>All later product modules depend on stable entities.</div>
+          </div>
+        </article>
+      
+        <article class="step critical" data-phase="mvp" data-stream="platform">
+          <div class="num">02</div>
+          <div>
+            <h3>Backend API modular monolith</h3>
+            <p>Scaffold FastAPI/NestJS modules for CRM, Telegram, agents, proposals, booking and admin stub.</p>
+          </div>
+          <div class="meta">
+            <span class="tag mvp">MVP</span>
+            <span class="tag">platform</span>
+            <span class="tag">Sprint 1</span>
+            <span class="tag critical">Critical Path</span>
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Step 1</div>
+            <div class="box"><b>Definition of Done</b>Single deploy exposes documented contracts</div>
+            <div class="box"><b>Why this order</b>One backend keeps velocity high while preserving module boundaries.</div>
+          </div>
+        </article>
+      
+        <article class="step critical" data-phase="mvp" data-stream="platform">
+          <div class="num">03</div>
+          <div>
+            <h3>Hosting, Docker and minimal observability</h3>
+            <p>Create Docker runtime, Vercel frontend path, backend hosting, Sentry/logs/health checks.</p>
+          </div>
+          <div class="meta">
+            <span class="tag mvp">MVP</span>
+            <span class="tag">platform</span>
+            <span class="tag">Sprint 1</span>
+            <span class="tag critical">Critical Path</span>
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Step 2</div>
+            <div class="box"><b>Definition of Done</b>Staging/prod can run and failures are visible</div>
+            <div class="box"><b>Why this order</b>Paid pilots need deployability and diagnostics before feature depth.</div>
+          </div>
+        </article>
+      
+        <article class="step critical" data-phase="mvp" data-stream="product">
+          <div class="num">04</div>
+          <div>
+            <h3>Public landing lead capture</h3>
+            <p>Build Next.js/Tailwind landing, CTA funnels, pricing and lead forms wired to backend.</p>
+          </div>
+          <div class="meta">
+            <span class="tag mvp">MVP</span>
+            <span class="tag">product</span>
+            <span class="tag">Sprint 1</span>
+            <span class="tag critical">Critical Path</span>
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Steps 1–3</div>
+            <div class="box"><b>Definition of Done</b>Lead form creates attributed CRM lead</div>
+            <div class="box"><b>Why this order</b>Lead generation is the product entrypoint.</div>
+          </div>
+        </article>
+      
+        <article class="step critical" data-phase="mvp" data-stream="product">
+          <div class="num">05</div>
+          <div>
+            <h3>CRM dashboard MVP</h3>
+            <p>Build Kanban, lead detail popup, assignment, notes/history and activity timeline.</p>
+          </div>
+          <div class="meta">
+            <span class="tag mvp">MVP</span>
+            <span class="tag">product</span>
+            <span class="tag">Sprint 1–2</span>
+            <span class="tag critical">Critical Path</span>
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Steps 1–3</div>
+            <div class="box"><b>Definition of Done</b>Manager can operate full lead lifecycle</div>
+            <div class="box"><b>Why this order</b>AI and automation need real CRM state and operator workflow.</div>
+          </div>
+        </article>
+      
+        <article class="step critical" data-phase="mvp" data-stream="comms">
+          <div class="num">06</div>
+          <div>
+            <h3>Telegram bot qualification</h3>
+            <p>Implement webhook, onboarding, qualification, FAQ and CRM timeline sync.</p>
+          </div>
+          <div class="meta">
+            <span class="tag mvp">MVP</span>
+            <span class="tag">comms</span>
+            <span class="tag">Sprint 2</span>
+            <span class="tag critical">Critical Path</span>
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Steps 2,5</div>
+            <div class="box"><b>Definition of Done</b>Bot creates/updates lead and notifies manager</div>
+            <div class="box"><b>Why this order</b>Telegram is the lowest-cost automation channel.</div>
+          </div>
+        </article>
+      
+        <article class="step " data-phase="mvp" data-stream="data">
+          <div class="num">07</div>
+          <div>
+            <h3>Redis adapter stub</h3>
+            <p>Add cache/session/queue abstraction with no hard Redis dependency yet.</p>
+          </div>
+          <div class="meta">
+            <span class="tag mvp">MVP</span>
+            <span class="tag">data</span>
+            <span class="tag">Sprint 2</span>
+            
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Step 2</div>
+            <div class="box"><b>Definition of Done</b>Redis can be enabled without refactor</div>
+            <div class="box"><b>Why this order</b>Preserves upgrade path without adding infra burden.</div>
+          </div>
+        </article>
+      
+        <article class="step critical" data-phase="mvp" data-stream="ai">
+          <div class="num">08</div>
+          <div>
+            <h3>n8n workflow foundation</h3>
+            <p>Create lead routing, reminders, follow-up timers and proposal trigger workflows.</p>
+          </div>
+          <div class="meta">
+            <span class="tag mvp">MVP</span>
+            <span class="tag">ai</span>
+            <span class="tag">Sprint 3</span>
+            <span class="tag critical">Critical Path</span>
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Steps 5,6</div>
+            <div class="box"><b>Definition of Done</b>Core workflows are visible and manually retryable</div>
+            <div class="box"><b>Why this order</b>Low-code workflows accelerate early automation learning.</div>
+          </div>
+        </article>
+      
+        <article class="step critical" data-phase="mvp" data-stream="ai">
+          <div class="num">09</div>
+          <div>
+            <h3>Basic AI secretary agents</h3>
+            <p>Implement qualification, communication, follow-up and re-engagement functions with CRM tool actions.</p>
+          </div>
+          <div class="meta">
+            <span class="tag mvp">MVP</span>
+            <span class="tag">ai</span>
+            <span class="tag">Sprint 3</span>
+            <span class="tag critical">Critical Path</span>
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Steps 5,8</div>
+            <div class="box"><b>Definition of Done</b>Agent writes CRM summary and follow-up tasks</div>
+            <div class="box"><b>Why this order</b>Agents become useful only after CRM and workflows exist.</div>
+          </div>
+        </article>
+      
+        <article class="step critical" data-phase="mvp" data-stream="product">
+          <div class="num">10</div>
+          <div>
+            <h3>Proposal automation MVP</h3>
+            <p>Generate commercial proposals from lead data, preview/send, track open/click events.</p>
+          </div>
+          <div class="meta">
+            <span class="tag mvp">MVP</span>
+            <span class="tag">product</span>
+            <span class="tag">Sprint 4</span>
+            <span class="tag critical">Critical Path</span>
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Steps 5,8</div>
+            <div class="box"><b>Definition of Done</b>Proposal status appears in CRM timeline</div>
+            <div class="box"><b>Why this order</b>Turns qualified leads into sales-ready outputs.</div>
+          </div>
+        </article>
+      
+        <article class="step critical" data-phase="mvp" data-stream="product">
+          <div class="num">11</div>
+          <div>
+            <h3>Calendar and booking MVP</h3>
+            <p>Create appointment model, slot selection, CRM stage sync and reminder workflow.</p>
+          </div>
+          <div class="meta">
+            <span class="tag mvp">MVP</span>
+            <span class="tag">product</span>
+            <span class="tag">Sprint 4</span>
+            <span class="tag critical">Critical Path</span>
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Steps 5,8</div>
+            <div class="box"><b>Definition of Done</b>Expert visit can be booked without double booking</div>
+            <div class="box"><b>Why this order</b>Booking is the core conversion event for service companies.</div>
+          </div>
+        </article>
+      
+        <article class="step " data-phase="mvp" data-stream="product">
+          <div class="num">12</div>
+          <div>
+            <h3>Minimal admin / workspace control</h3>
+            <p>Add workspace management, users, roles and manual tariff/subscription flags.</p>
+          </div>
+          <div class="meta">
+            <span class="tag mvp">MVP</span>
+            <span class="tag">product</span>
+            <span class="tag">Sprint 4</span>
+            
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Steps 1,2</div>
+            <div class="box"><b>Definition of Done</b>Superadmin can manage pilot customers</div>
+            <div class="box"><b>Why this order</b>Needed for pilots, but deeper billing can wait.</div>
+          </div>
+        </article>
+      
+        <article class="step critical" data-phase="growth" data-stream="platform">
+          <div class="num">13</div>
+          <div>
+            <h3>API gateway and rate boundary</h3>
+            <p>Add routing, auth boundary, gateway logs and prepare quota enforcement.</p>
+          </div>
+          <div class="meta">
+            <span class="tag growth">GROWTH</span>
+            <span class="tag">platform</span>
+            <span class="tag">Sprint 5</span>
+            <span class="tag critical">Critical Path</span>
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Steps 2,3</div>
+            <div class="box"><b>Definition of Done</b>External traffic enters through gateway</div>
+            <div class="box"><b>Why this order</b>Gateway comes before separated services and provider-heavy features.</div>
+          </div>
+        </article>
+      
+        <article class="step critical" data-phase="growth" data-stream="data">
+          <div class="num">14</div>
+          <div>
+            <h3>Redis queues and background workers</h3>
+            <p>Introduce queues, retry/DLQ, job statuses and worker runtime for AI/proposals/notifications.</p>
+          </div>
+          <div class="meta">
+            <span class="tag growth">GROWTH</span>
+            <span class="tag">data</span>
+            <span class="tag">Sprint 5</span>
+            <span class="tag critical">Critical Path</span>
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Steps 7,13</div>
+            <div class="box"><b>Definition of Done</b>Heavy jobs no longer block API</div>
+            <div class="box"><b>Why this order</b>Queues are the first real scaling mechanism.</div>
+          </div>
+        </article>
+      
+        <article class="step critical" data-phase="growth" data-stream="ai">
+          <div class="num">15</div>
+          <div>
+            <h3>Separated agent services</h3>
+            <p>Move agent execution into worker/service boundary with job status and CRM action executor.</p>
+          </div>
+          <div class="meta">
+            <span class="tag growth">GROWTH</span>
+            <span class="tag">ai</span>
+            <span class="tag">Sprint 6</span>
+            <span class="tag critical">Critical Path</span>
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Steps 9,14</div>
+            <div class="box"><b>Definition of Done</b>Agent jobs run async and safely mutate CRM</div>
+            <div class="box"><b>Why this order</b>AI load must scale independently before voice expands.</div>
+          </div>
+        </article>
+      
+        <article class="step critical" data-phase="growth" data-stream="platform">
+          <div class="num">16</div>
+          <div>
+            <h3>Better monitoring</h3>
+            <p>Add Prometheus/Grafana dashboards for API, workers, queues, n8n, bot and provider failures.</p>
+          </div>
+          <div class="meta">
+            <span class="tag growth">GROWTH</span>
+            <span class="tag">platform</span>
+            <span class="tag">Sprint 6</span>
+            <span class="tag critical">Critical Path</span>
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Steps 13,14</div>
+            <div class="box"><b>Definition of Done</b>Queue lag and provider failures are visible</div>
+            <div class="box"><b>Why this order</b>Operational visibility is required before voice and higher automation volume.</div>
+          </div>
+        </article>
+      
+        <article class="step critical" data-phase="growth" data-stream="platform">
+          <div class="num">17</div>
+          <div>
+            <h3>Rate limiting and quota model</h3>
+            <p>Add per-workspace/API/Telegram/AI/voice quotas linked to tariffs.</p>
+          </div>
+          <div class="meta">
+            <span class="tag growth">GROWTH</span>
+            <span class="tag">platform</span>
+            <span class="tag">Sprint 6</span>
+            <span class="tag critical">Critical Path</span>
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Steps 13,14</div>
+            <div class="box"><b>Definition of Done</b>Overuse is throttled predictably</div>
+            <div class="box"><b>Why this order</b>Protects provider cost and multi-tenant fairness.</div>
+          </div>
+        </article>
+      
+        <article class="step critical" data-phase="growth" data-stream="ai">
+          <div class="num">18</div>
+          <div>
+            <h3>Human-in-the-loop escalation</h3>
+            <p>Add confidence thresholds, hot lead triggers, manager handoff and CRM escalation UI.</p>
+          </div>
+          <div class="meta">
+            <span class="tag growth">GROWTH</span>
+            <span class="tag">ai</span>
+            <span class="tag">Sprint 7</span>
+            <span class="tag critical">Critical Path</span>
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Steps 15,5</div>
+            <div class="box"><b>Definition of Done</b>Manager gets actionable escalation reason</div>
+            <div class="box"><b>Why this order</b>Keeps AI automation safe before voice calls.</div>
+          </div>
+        </article>
+      
+        <article class="step " data-phase="growth" data-stream="ai">
+          <div class="num">19</div>
+          <div>
+            <h3>Prompt/version management</h3>
+            <p>Version prompts, scripts and playbooks; attach prompt version to agent runs.</p>
+          </div>
+          <div class="meta">
+            <span class="tag growth">GROWTH</span>
+            <span class="tag">ai</span>
+            <span class="tag">Sprint 7</span>
+            
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Steps 12,15</div>
+            <div class="box"><b>Definition of Done</b>Agent output is traceable to prompt version</div>
+            <div class="box"><b>Why this order</b>Needed for quality control once agents become operational.</div>
+          </div>
+        </article>
+      
+        <article class="step " data-phase="growth" data-stream="comms">
+          <div class="num">20</div>
+          <div>
+            <h3>Email provider and S3 storage</h3>
+            <p>Add proposal delivery provider, tracking callbacks, S3/R2 files and signed URLs.</p>
+          </div>
+          <div class="meta">
+            <span class="tag growth">GROWTH</span>
+            <span class="tag">comms</span>
+            <span class="tag">Sprint 7</span>
+            
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Steps 10,14</div>
+            <div class="box"><b>Definition of Done</b>Proposal files and delivery events persist reliably</div>
+            <div class="box"><b>Why this order</b>Hardens proposal workflow after MVP validation.</div>
+          </div>
+        </article>
+      
+        <article class="step critical" data-phase="growth" data-stream="comms">
+          <div class="num">21</div>
+          <div>
+            <h3>Voice calling agent</h3>
+            <p>Integrate voice/SIP provider, STT/TTS/LLM pipeline, scripts, booking and escalation.</p>
+          </div>
+          <div class="meta">
+            <span class="tag growth">GROWTH</span>
+            <span class="tag">comms</span>
+            <span class="tag">Sprint 8</span>
+            <span class="tag critical">Critical Path</span>
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Steps 11,14,15,18</div>
+            <div class="box"><b>Definition of Done</b>Call outcome updates CRM with transcript</div>
+            <div class="box"><b>Why this order</b>Voice is powerful but costly, so it follows stable CRM, queues and HITL.</div>
+          </div>
+        </article>
+      
+        <article class="step " data-phase="growth" data-stream="product">
+          <div class="num">22</div>
+          <div>
+            <h3>Analytics and reporting</h3>
+            <p>Build funnel, conversion, call, agent performance and revenue dashboards.</p>
+          </div>
+          <div class="meta">
+            <span class="tag growth">GROWTH</span>
+            <span class="tag">product</span>
+            <span class="tag">Sprint 8</span>
+            
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Steps 5,10,21</div>
+            <div class="box"><b>Definition of Done</b>Owner sees conversion and automation impact</div>
+            <div class="box"><b>Why this order</b>Analytics is most useful after enough events exist.</div>
+          </div>
+        </article>
+      
+        <article class="step critical" data-phase="scale" data-stream="platform">
+          <div class="num">23</div>
+          <div>
+            <h3>Microservice extraction criteria</h3>
+            <p>Define and apply load/ownership/release gates before any service split.</p>
+          </div>
+          <div class="meta">
+            <span class="tag scale">SCALE</span>
+            <span class="tag">platform</span>
+            <span class="tag">Sprint 13</span>
+            <span class="tag critical">Critical Path</span>
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Steps 13–16</div>
+            <div class="box"><b>Definition of Done</b>First extraction candidate has explicit justification</div>
+            <div class="box"><b>Why this order</b>Prevents premature microservices.</div>
+          </div>
+        </article>
+      
+        <article class="step critical" data-phase="scale" data-stream="data">
+          <div class="num">24</div>
+          <div>
+            <h3>Event bus / durable events</h3>
+            <p>Introduce durable lead/call/proposal/appointment/agent events and first consumers.</p>
+          </div>
+          <div class="meta">
+            <span class="tag scale">SCALE</span>
+            <span class="tag">data</span>
+            <span class="tag">Sprint 14</span>
+            <span class="tag critical">Critical Path</span>
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Steps 14,23</div>
+            <div class="box"><b>Definition of Done</b>Multiple consumers process events independently</div>
+            <div class="box"><b>Why this order</b>Needed when services and analytics consumers multiply.</div>
+          </div>
+        </article>
+      
+        <article class="step critical" data-phase="scale" data-stream="ai">
+          <div class="num">25</div>
+          <div>
+            <h3>Temporal/LangGraph orchestration</h3>
+            <p>Pilot durable multi-agent workflow for qualification to booking with retries and handoff.</p>
+          </div>
+          <div class="meta">
+            <span class="tag scale">SCALE</span>
+            <span class="tag">ai</span>
+            <span class="tag">Sprint 14</span>
+            <span class="tag critical">Critical Path</span>
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Steps 15,18,24</div>
+            <div class="box"><b>Definition of Done</b>Workflow state is durable and replayable</div>
+            <div class="box"><b>Why this order</b>Only justified after async agents and domain events exist.</div>
+          </div>
+        </article>
+      
+        <article class="step " data-phase="scale" data-stream="platform">
+          <div class="num">26</div>
+          <div>
+            <h3>Horizontal scaling</h3>
+            <p>Make services stateless, autoscale API/worker/agent pools and validate with load test.</p>
+          </div>
+          <div class="meta">
+            <span class="tag scale">SCALE</span>
+            <span class="tag">platform</span>
+            <span class="tag">Sprint 15</span>
+            
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Steps 16,23</div>
+            <div class="box"><b>Definition of Done</b>Capacity grows without code changes</div>
+            <div class="box"><b>Why this order</b>Scaling follows measured traffic and queue pressure.</div>
+          </div>
+        </article>
+      
+        <article class="step " data-phase="scale" data-stream="ai">
+          <div class="num">27</div>
+          <div>
+            <h3>Agent memory/context store</h3>
+            <p>Create tenant-scoped memory store for conversation history and workspace context.</p>
+          </div>
+          <div class="meta">
+            <span class="tag scale">SCALE</span>
+            <span class="tag">ai</span>
+            <span class="tag">Sprint 15</span>
+            
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Steps 15,25</div>
+            <div class="box"><b>Definition of Done</b>Agents retrieve context without overloading CRM DB</div>
+            <div class="box"><b>Why this order</b>Context store follows proven agent value.</div>
+          </div>
+        </article>
+      
+        <article class="step critical" data-phase="scale" data-stream="platform">
+          <div class="num">28</div>
+          <div>
+            <h3>Advanced tracing and SLOs</h3>
+            <p>Instrument distributed traces, SLOs, incident workflow and provider cost observability.</p>
+          </div>
+          <div class="meta">
+            <span class="tag scale">SCALE</span>
+            <span class="tag">platform</span>
+            <span class="tag">Sprint 16</span>
+            <span class="tag critical">Critical Path</span>
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Steps 23–26</div>
+            <div class="box"><b>Definition of Done</b>Lead journey is traceable end-to-end</div>
+            <div class="box"><b>Why this order</b>Tracing pays off after service boundaries and event hops exist.</div>
+          </div>
+        </article>
+      
+        <article class="step " data-phase="scale" data-stream="data">
+          <div class="num">29</div>
+          <div>
+            <h3>Dedicated vector store</h3>
+            <p>Add tenant-isolated RAG over FAQ, scripts, proposals, transcripts and history.</p>
+          </div>
+          <div class="meta">
+            <span class="tag scale">SCALE</span>
+            <span class="tag">data</span>
+            <span class="tag">Sprint 16</span>
+            
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Steps 20,27</div>
+            <div class="box"><b>Definition of Done</b>RAG improves agent quality measurably</div>
+            <div class="box"><b>Why this order</b>Vector infra is deferred until retrieval improves outcomes.</div>
+          </div>
+        </article>
+      
+        <article class="step " data-phase="scale" data-stream="data">
+          <div class="num">30</div>
+          <div>
+            <h3>Read replicas and DR readiness</h3>
+            <p>Add PostgreSQL read replicas, restore drills, RPO/RTO and failover decision tree.</p>
+          </div>
+          <div class="meta">
+            <span class="tag scale">SCALE</span>
+            <span class="tag">data</span>
+            <span class="tag">Sprint 17</span>
+            
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>Steps 16,22</div>
+            <div class="box"><b>Definition of Done</b>Reporting load does not compete with primary writes</div>
+            <div class="box"><b>Why this order</b>Data scale work follows actual reporting pressure.</div>
+          </div>
+        </article>
+      </div>
+      </section>
+      <aside class="side">
+        <section class="panel">
+          <div class="panel-head"><div><h2>Parallelizable Workstreams</h2><span>Run these tracks in parallel after their gates are met.</span></div></div>
+          <div class="streams" id="streams">
+          <article class="stream-card ">
+            <h3>Platform / DevOps</h3>
+            <p>Backend + DevOps · 9 ordered steps. Can run in parallel after shared dependencies are available.</p>
+            <div class="stream-items"><span class="tag">Backend monolith</span><span class="tag">Hosting</span><span class="tag">Gateway</span><span class="tag">Workers</span><span class="tag">Monitoring</span><span class="tag">Scaling</span><span class="tag">Tracing</span></div>
+          </article>
+        
+          <article class="stream-card ">
+            <h3>Product / CRM</h3>
+            <p>Frontend + Backend · 6 ordered steps. Can run in parallel after shared dependencies are available.</p>
+            <div class="stream-items"><span class="tag">Landing</span><span class="tag">CRM Dashboard</span><span class="tag">Proposals</span><span class="tag">Booking</span><span class="tag">Admin</span><span class="tag">Analytics</span></div>
+          </article>
+        
+          <article class="stream-card ">
+            <h3>AI Automation</h3>
+            <p>AI + Backend · 7 ordered steps. Can run in parallel after shared dependencies are available.</p>
+            <div class="stream-items"><span class="tag">n8n</span><span class="tag">AI Secretary</span><span class="tag">Agent Services</span><span class="tag">HITL</span><span class="tag">Prompts</span><span class="tag">Orchestration</span><span class="tag">Memory</span></div>
+          </article>
+        
+          <article class="stream-card ">
+            <h3>Communication / Voice</h3>
+            <p>Backend + AI · 3 ordered steps. Can run in parallel after shared dependencies are available.</p>
+            <div class="stream-items"><span class="tag">Telegram</span><span class="tag">Email</span><span class="tag">S3 delivery</span><span class="tag">Voice Agent</span><span class="tag">Future SMS/WhatsApp</span></div>
+          </article>
+        
+          <article class="stream-card ">
+            <h3>Data Platform</h3>
+            <p>Backend + Data · 5 ordered steps. Can run in parallel after shared dependencies are available.</p>
+            <div class="stream-items"><span class="tag">PostgreSQL</span><span class="tag">Redis Stub</span><span class="tag">Queues</span><span class="tag">Event Bus</span><span class="tag">Vector Store</span><span class="tag">Read Replicas</span></div>
+          </article>
+        </div>
+        </section>
+        <section class="panel">
+          <div class="panel-head"><div><h2>Sprint Grouping</h2><span>Suggested delivery plan.</span></div></div>
+          <div class="sprints" id="sprints">
+          <article class="sprint ">
+            <h3>Sprint 1</h3>
+            <p>01 Core PostgreSQL data model · 02 Backend API modular monolith · 03 Hosting, Docker and minimal observability · 04 Public landing lead capture · 05 CRM dashboard MVP</p>
+          </article>
+        
+          <article class="sprint ">
+            <h3>Sprint 1–2</h3>
+            <p>05 CRM dashboard MVP</p>
+          </article>
+        
+          <article class="sprint ">
+            <h3>Sprint 2</h3>
+            <p>06 Telegram bot qualification · 07 Redis adapter stub</p>
+          </article>
+        
+          <article class="sprint ">
+            <h3>Sprint 3</h3>
+            <p>08 n8n workflow foundation · 09 Basic AI secretary agents</p>
+          </article>
+        
+          <article class="sprint ">
+            <h3>Sprint 4</h3>
+            <p>10 Proposal automation MVP · 11 Calendar and booking MVP · 12 Minimal admin / workspace control</p>
+          </article>
+        
+          <article class="sprint ">
+            <h3>Sprint 5</h3>
+            <p>13 API gateway and rate boundary · 14 Redis queues and background workers</p>
+          </article>
+        
+          <article class="sprint ">
+            <h3>Sprint 6</h3>
+            <p>15 Separated agent services · 16 Better monitoring · 17 Rate limiting and quota model</p>
+          </article>
+        
+          <article class="sprint ">
+            <h3>Sprint 7</h3>
+            <p>18 Human-in-the-loop escalation · 19 Prompt/version management · 20 Email provider and S3 storage</p>
+          </article>
+        
+          <article class="sprint ">
+            <h3>Sprint 8</h3>
+            <p>21 Voice calling agent · 22 Analytics and reporting</p>
+          </article>
+        
+          <article class="sprint ">
+            <h3>Sprint 13</h3>
+            <p>23 Microservice extraction criteria</p>
+          </article>
+        
+          <article class="sprint ">
+            <h3>Sprint 14</h3>
+            <p>24 Event bus / durable events · 25 Temporal/LangGraph orchestration</p>
+          </article>
+        
+          <article class="sprint ">
+            <h3>Sprint 15</h3>
+            <p>26 Horizontal scaling · 27 Agent memory/context store</p>
+          </article>
+        
+          <article class="sprint ">
+            <h3>Sprint 16</h3>
+            <p>28 Advanced tracing and SLOs · 29 Dedicated vector store</p>
+          </article>
+        
+          <article class="sprint ">
+            <h3>Sprint 17</h3>
+            <p>30 Read replicas and DR readiness</p>
+          </article>
+        </div>
+        </section>
+      </aside>
+    </section>
+
+    <section class="rationale">
+      <article class="reason">
+        <h3>Ordering Rationale</h3>
+        <ul>
+          <li>Data model, backend boundaries and hosting come first because every product surface depends on them.</li>
+          <li>CRM and landing are built before AI depth, because agents need real lead/pipeline state to act on.</li>
+          <li>Telegram and n8n come before voice: they validate qualification and follow-up logic at lower operational cost.</li>
+          <li>Queues and workers are introduced before service extraction, because async load is the first scaling pressure.</li>
+        </ul>
+      </article>
+      <article class="reason">
+        <h3>MVP-first Rules</h3>
+        <ul>
+          <li>Build one modular backend and one shared PostgreSQL database for MVP.</li>
+          <li>Use n8n for early workflow velocity instead of custom orchestration.</li>
+          <li>Stub Redis cache, admin/billing depth and future channels until pilots require them.</li>
+          <li>Keep monitoring minimal but present from the first paid pilot.</li>
+        </ul>
+      </article>
+      <article class="reason">
+        <h3>Scale Gates</h3>
+        <ul>
+          <li>Split services only by load, ownership or release cadence.</li>
+          <li>Add event bus only when multiple consumers need durable domain events.</li>
+          <li>Add memory/vector stores only after agent quality depends on retrieval/context.</li>
+          <li>Add read replicas and tracing when analytics and service boundaries justify the overhead.</li>
+        </ul>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const steps = [
+      s(1,"Core PostgreSQL data model","Design workspaces, users, leads, pipeline, notes, timeline, appointments and proposals.","mvp","platform","Sprint 1",true,"None","Backend can store all MVP workflows","All later product modules depend on stable entities."),
+      s(2,"Backend API modular monolith","Scaffold FastAPI/NestJS modules for CRM, Telegram, agents, proposals, booking and admin stub.","mvp","platform","Sprint 1",true,"Step 1","Single deploy exposes documented contracts","One backend keeps velocity high while preserving module boundaries."),
+      s(3,"Hosting, Docker and minimal observability","Create Docker runtime, Vercel frontend path, backend hosting, Sentry/logs/health checks.","mvp","platform","Sprint 1",true,"Step 2","Staging/prod can run and failures are visible","Paid pilots need deployability and diagnostics before feature depth."),
+      s(4,"Public landing lead capture","Build Next.js/Tailwind landing, CTA funnels, pricing and lead forms wired to backend.","mvp","product","Sprint 1",true,"Steps 1–3","Lead form creates attributed CRM lead","Lead generation is the product entrypoint."),
+      s(5,"CRM dashboard MVP","Build Kanban, lead detail popup, assignment, notes/history and activity timeline.","mvp","product","Sprint 1–2",true,"Steps 1–3","Manager can operate full lead lifecycle","AI and automation need real CRM state and operator workflow."),
+      s(6,"Telegram bot qualification","Implement webhook, onboarding, qualification, FAQ and CRM timeline sync.","mvp","comms","Sprint 2",true,"Steps 2,5","Bot creates/updates lead and notifies manager","Telegram is the lowest-cost automation channel."),
+      s(7,"Redis adapter stub","Add cache/session/queue abstraction with no hard Redis dependency yet.","mvp","data","Sprint 2",false,"Step 2","Redis can be enabled without refactor","Preserves upgrade path without adding infra burden."),
+      s(8,"n8n workflow foundation","Create lead routing, reminders, follow-up timers and proposal trigger workflows.","mvp","ai","Sprint 3",true,"Steps 5,6","Core workflows are visible and manually retryable","Low-code workflows accelerate early automation learning."),
+      s(9,"Basic AI secretary agents","Implement qualification, communication, follow-up and re-engagement functions with CRM tool actions.","mvp","ai","Sprint 3",true,"Steps 5,8","Agent writes CRM summary and follow-up tasks","Agents become useful only after CRM and workflows exist."),
+      s(10,"Proposal automation MVP","Generate commercial proposals from lead data, preview/send, track open/click events.","mvp","product","Sprint 4",true,"Steps 5,8","Proposal status appears in CRM timeline","Turns qualified leads into sales-ready outputs."),
+      s(11,"Calendar and booking MVP","Create appointment model, slot selection, CRM stage sync and reminder workflow.","mvp","product","Sprint 4",true,"Steps 5,8","Expert visit can be booked without double booking","Booking is the core conversion event for service companies."),
+      s(12,"Minimal admin / workspace control","Add workspace management, users, roles and manual tariff/subscription flags.","mvp","product","Sprint 4",false,"Steps 1,2","Superadmin can manage pilot customers","Needed for pilots, but deeper billing can wait."),
+      s(13,"API gateway and rate boundary","Add routing, auth boundary, gateway logs and prepare quota enforcement.","growth","platform","Sprint 5",true,"Steps 2,3","External traffic enters through gateway","Gateway comes before separated services and provider-heavy features."),
+      s(14,"Redis queues and background workers","Introduce queues, retry/DLQ, job statuses and worker runtime for AI/proposals/notifications.","growth","data","Sprint 5",true,"Steps 7,13","Heavy jobs no longer block API","Queues are the first real scaling mechanism."),
+      s(15,"Separated agent services","Move agent execution into worker/service boundary with job status and CRM action executor.","growth","ai","Sprint 6",true,"Steps 9,14","Agent jobs run async and safely mutate CRM","AI load must scale independently before voice expands."),
+      s(16,"Better monitoring","Add Prometheus/Grafana dashboards for API, workers, queues, n8n, bot and provider failures.","growth","platform","Sprint 6",true,"Steps 13,14","Queue lag and provider failures are visible","Operational visibility is required before voice and higher automation volume."),
+      s(17,"Rate limiting and quota model","Add per-workspace/API/Telegram/AI/voice quotas linked to tariffs.","growth","platform","Sprint 6",true,"Steps 13,14","Overuse is throttled predictably","Protects provider cost and multi-tenant fairness."),
+      s(18,"Human-in-the-loop escalation","Add confidence thresholds, hot lead triggers, manager handoff and CRM escalation UI.","growth","ai","Sprint 7",true,"Steps 15,5","Manager gets actionable escalation reason","Keeps AI automation safe before voice calls."),
+      s(19,"Prompt/version management","Version prompts, scripts and playbooks; attach prompt version to agent runs.","growth","ai","Sprint 7",false,"Steps 12,15","Agent output is traceable to prompt version","Needed for quality control once agents become operational."),
+      s(20,"Email provider and S3 storage","Add proposal delivery provider, tracking callbacks, S3/R2 files and signed URLs.","growth","comms","Sprint 7",false,"Steps 10,14","Proposal files and delivery events persist reliably","Hardens proposal workflow after MVP validation."),
+      s(21,"Voice calling agent","Integrate voice/SIP provider, STT/TTS/LLM pipeline, scripts, booking and escalation.","growth","comms","Sprint 8",true,"Steps 11,14,15,18","Call outcome updates CRM with transcript","Voice is powerful but costly, so it follows stable CRM, queues and HITL."),
+      s(22,"Analytics and reporting","Build funnel, conversion, call, agent performance and revenue dashboards.","growth","product","Sprint 8",false,"Steps 5,10,21","Owner sees conversion and automation impact","Analytics is most useful after enough events exist."),
+      s(23,"Microservice extraction criteria","Define and apply load/ownership/release gates before any service split.","scale","platform","Sprint 13",true,"Steps 13–16","First extraction candidate has explicit justification","Prevents premature microservices."),
+      s(24,"Event bus / durable events","Introduce durable lead/call/proposal/appointment/agent events and first consumers.","scale","data","Sprint 14",true,"Steps 14,23","Multiple consumers process events independently","Needed when services and analytics consumers multiply."),
+      s(25,"Temporal/LangGraph orchestration","Pilot durable multi-agent workflow for qualification to booking with retries and handoff.","scale","ai","Sprint 14",true,"Steps 15,18,24","Workflow state is durable and replayable","Only justified after async agents and domain events exist."),
+      s(26,"Horizontal scaling","Make services stateless, autoscale API/worker/agent pools and validate with load test.","scale","platform","Sprint 15",false,"Steps 16,23","Capacity grows without code changes","Scaling follows measured traffic and queue pressure."),
+      s(27,"Agent memory/context store","Create tenant-scoped memory store for conversation history and workspace context.","scale","ai","Sprint 15",false,"Steps 15,25","Agents retrieve context without overloading CRM DB","Context store follows proven agent value."),
+      s(28,"Advanced tracing and SLOs","Instrument distributed traces, SLOs, incident workflow and provider cost observability.","scale","platform","Sprint 16",true,"Steps 23–26","Lead journey is traceable end-to-end","Tracing pays off after service boundaries and event hops exist."),
+      s(29,"Dedicated vector store","Add tenant-isolated RAG over FAQ, scripts, proposals, transcripts and history.","scale","data","Sprint 16",false,"Steps 20,27","RAG improves agent quality measurably","Vector infra is deferred until retrieval improves outcomes."),
+      s(30,"Read replicas and DR readiness","Add PostgreSQL read replicas, restore drills, RPO/RTO and failover decision tree.","scale","data","Sprint 17",false,"Steps 16,22","Reporting load does not compete with primary writes","Data scale work follows actual reporting pressure.")
+    ];
+
+    const streams = [
+      {id:"platform", title:"Platform / DevOps", owner:"Backend + DevOps", items:["Backend monolith","Hosting","Gateway","Workers","Monitoring","Scaling","Tracing"]},
+      {id:"product", title:"Product / CRM", owner:"Frontend + Backend", items:["Landing","CRM Dashboard","Proposals","Booking","Admin","Analytics"]},
+      {id:"ai", title:"AI Automation", owner:"AI + Backend", items:["n8n","AI Secretary","Agent Services","HITL","Prompts","Orchestration","Memory"]},
+      {id:"comms", title:"Communication / Voice", owner:"Backend + AI", items:["Telegram","Email","S3 delivery","Voice Agent","Future SMS/WhatsApp"]},
+      {id:"data", title:"Data Platform", owner:"Backend + Data", items:["PostgreSQL","Redis Stub","Queues","Event Bus","Vector Store","Read Replicas"]}
+    ];
+
+    function s(order,title,summary,phase,stream,sprint,critical,depends,done,rationale){
+      return {order,title,summary,phase,stream,sprint,critical,depends,done,rationale};
+    }
+
+    let active = {filter:"phase", value:"all"};
+
+    function visible(step){
+      if(active.filter==="phase" && active.value!=="all") return step.phase===active.value;
+      if(active.filter==="stream") return step.stream===active.value;
+      if(active.filter==="critical") return step.critical;
+      if(active.filter==="sprint") return step.sprint===active.value || step.sprint.startsWith(active.value + "–");
+      return true;
+    }
+
+    function renderMetrics(){
+      const critical = steps.filter(x=>x.critical).length;
+      const mvp = steps.filter(x=>x.phase==="mvp").length;
+      const growth = steps.filter(x=>x.phase==="growth").length;
+      const scale = steps.filter(x=>x.phase==="scale").length;
+      document.getElementById("metrics").innerHTML = `
+        <article class="metric"><strong>${steps.length}</strong><span>Total ordered implementation steps.</span></article>
+        <article class="metric"><strong>${critical}</strong><span>Critical path steps that unblock core delivery.</span></article>
+        <article class="metric"><strong>${mvp}</strong><span>MVP-first steps before growth infrastructure.</span></article>
+        <article class="metric"><strong>${growth}</strong><span>Growth hardening steps for 50–500 clients.</span></article>
+        <article class="metric"><strong>${scale}</strong><span>Scale-only steps for 500+ clients.</span></article>
+      `;
+    }
+
+    function renderSequence(){
+      const visibleSteps = steps.filter(visible);
+      document.getElementById("visibleCount").textContent = `${visibleSteps.length} visible steps`;
+      document.getElementById("sequence").innerHTML = visibleSteps.map(step => `
+        <article class="step ${step.critical ? "critical" : ""}" data-phase="${step.phase}" data-stream="${step.stream}">
+          <div class="num">${String(step.order).padStart(2,"0")}</div>
+          <div>
+            <h3>${step.title}</h3>
+            <p>${step.summary}</p>
+          </div>
+          <div class="meta">
+            <span class="tag ${step.phase}">${step.phase.toUpperCase()}</span>
+            <span class="tag">${step.stream}</span>
+            <span class="tag">${step.sprint}</span>
+            ${step.critical ? `<span class="tag critical">Critical Path</span>` : ""}
+          </div>
+          <div class="details">
+            <div class="box"><b>Dependencies</b>${step.depends}</div>
+            <div class="box"><b>Definition of Done</b>${step.done}</div>
+            <div class="box"><b>Why this order</b>${step.rationale}</div>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function renderStreams(){
+      document.getElementById("streams").innerHTML = streams.map(stream => {
+        const count = steps.filter(s=>s.stream===stream.id).length;
+        return `
+          <article class="stream-card ${active.filter==="stream" && active.value!==stream.id ? "dimmed" : ""}">
+            <h3>${stream.title}</h3>
+            <p>${stream.owner} · ${count} ordered steps. Can run in parallel after shared dependencies are available.</p>
+            <div class="stream-items">${stream.items.map(item=>`<span class="tag">${item}</span>`).join("")}</div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderSprints(){
+      const sprintNames = [...new Set(steps.map(x=>x.sprint))].sort((a,b)=>{
+        const na = Number((a.match(/\d+/)||[99])[0]);
+        const nb = Number((b.match(/\d+/)||[99])[0]);
+        return na-nb;
+      });
+      document.getElementById("sprints").innerHTML = sprintNames.map(name => {
+        const items = steps.filter(x=>x.sprint===name || x.sprint.startsWith(name + "–"));
+        const shown = items.filter(visible).length;
+        return `
+          <article class="sprint ${shown===0 ? "dimmed" : ""}">
+            <h3>${name}</h3>
+            <p>${items.map(x=>`${String(x.order).padStart(2,"0")} ${x.title}`).join(" · ")}</p>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderAll(){renderMetrics();renderSequence();renderStreams();renderSprints();}
+    document.querySelectorAll(".pill").forEach(pill=>{
+      pill.addEventListener("click",()=>{
+        document.querySelectorAll(".pill").forEach(x=>x.classList.remove("active"));
+        pill.classList.add("active");
+        active = {filter:pill.dataset.filter, value:pill.dataset.value};
+        renderAll();
+      });
+    });
+    renderAll();
+  </script>
+
+
+</body></html>
