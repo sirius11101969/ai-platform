@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<!-- saved from url=(0157)file:///C:/Users/buyle/Documents/Codex/2026-04-30/task-title-create-phased-infrastructure-rollout/docs/architecture/crm_ai_development_execution_roadmap.html -->
+<html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CRM + AI Automation Platform — Development Execution Roadmap</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #050711;
+      --panel: rgba(13, 18, 35, .94);
+      --card: rgba(18, 25, 45, .9);
+      --line: rgba(255,255,255,.08);
+      --text: #edf4ff;
+      --muted: rgba(219,230,255,.68);
+      --faint: rgba(188,203,236,.42);
+      --build: #28d17c;
+      --stub: #f5aa2c;
+      --scale: #42c6ff;
+      --product: #8b5cf6;
+      --ai: #d946ef;
+      --data: #22c55e;
+      --ops: #f97316;
+      --comm: #38bdf8;
+      --risk: #ef4444;
+      --ease: cubic-bezier(.22, 1, .36, 1);
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 14% 8%, rgba(139,92,246,.22), transparent 30%),
+        radial-gradient(circle at 84% 14%, rgba(56,189,248,.13), transparent 32%),
+        linear-gradient(180deg, #050711, #03040a);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    }
+
+    button { font: inherit; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-thumb { background: rgba(66,198,255,.3); border-radius: 999px; }
+
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      padding: 22px 28px 16px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(5,7,17,.94);
+      backdrop-filter: blur(18px);
+    }
+
+    .header::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(139,92,246,.58), rgba(66,198,255,.45), transparent);
+    }
+
+    .title {
+      font-size: 17px;
+      font-weight: 850;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin-top: 4px;
+      color: var(--faint);
+      font-size: 12px;
+    }
+
+    .filters {
+      display: grid;
+      gap: 8px;
+      justify-items: end;
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .filter-label {
+      align-self: center;
+      color: var(--faint);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .pill {
+      min-height: 27px;
+      padding: 4px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .18s var(--ease);
+    }
+
+    .pill:hover,
+    .pill.active {
+      border-color: rgba(66,198,255,.45);
+      background: rgba(66,198,255,.12);
+      color: var(--text);
+    }
+
+    .shell {
+      width: min(1500px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 20px 0 42px;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .summary-card {
+      min-height: 112px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.02)), rgba(0,0,0,.18);
+    }
+
+    .summary-card strong {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .summary-card span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+      padding: 11px 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(0,0,0,.22);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--faint);
+      font-size: 10.5px;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex: 0 0 auto;
+    }
+
+    .phase {
+      margin-bottom: 22px;
+      transition: opacity .18s var(--ease);
+    }
+
+    .phase.dimmed {
+      opacity: .18;
+      filter: grayscale(.86);
+    }
+
+    .phase-head {
+      display: grid;
+      grid-template-columns: 78px minmax(0, 1fr) auto;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 10px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(0,0,0,.22);
+    }
+
+    .phase-no {
+      display: grid;
+      place-items: center;
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--product), var(--comm));
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .phase-title h2 {
+      margin-bottom: 4px;
+      font-size: 20px;
+      line-height: 1.15;
+    }
+
+    .phase-title p {
+      color: var(--faint);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .gate {
+      max-width: 340px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.45;
+      text-align: right;
+    }
+
+    .matrix {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--panel);
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1.05fr .7fr .72fr 1.45fr 1.3fr 1.25fr .9fr;
+      min-height: 78px;
+      border-bottom: 1px solid var(--line);
+      transition: opacity .18s var(--ease), background .18s var(--ease);
+    }
+
+    .row:last-child { border-bottom: 0; }
+    .row.dimmed { opacity: .18; filter: grayscale(.8); }
+
+    .row.header-row {
+      min-height: 44px;
+      background: rgba(255,255,255,.045);
+      color: var(--faint);
+      font-size: 10px;
+      font-weight: 830;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .cell {
+      min-width: 0;
+      padding: 11px 12px;
+      border-right: 1px solid var(--line);
+      font-size: 11.5px;
+      line-height: 1.42;
+    }
+
+    .cell:last-child { border-right: 0; }
+
+    .component {
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+    }
+
+    .icon {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      flex: 0 0 auto;
+      border-radius: 9px;
+      background: color-mix(in srgb, var(--accent, var(--product)) 16%, transparent);
+      color: color-mix(in srgb, var(--accent, var(--product)) 84%, white 16%);
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .component strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 12.5px;
+      line-height: 1.18;
+    }
+
+    .component span {
+      color: var(--faint);
+      font-size: 10px;
+      line-height: 1.35;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .tag.build { border: 1px solid rgba(40,209,124,.28); background: rgba(40,209,124,.10); color: rgba(139,255,190,.95); }
+    .tag.stub { border: 1px solid rgba(245,170,44,.32); background: rgba(245,170,44,.11); color: rgba(255,216,142,.95); }
+    .tag.scale { border: 1px solid rgba(66,198,255,.32); background: rgba(66,198,255,.11); color: rgba(154,224,255,.95); }
+    .tag.risk { border: 1px solid rgba(239,68,68,.32); background: rgba(239,68,68,.10); color: rgba(255,170,170,.95); }
+
+    .mono {
+      color: var(--muted);
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: 10.5px;
+    }
+
+    .muted { color: var(--faint); }
+
+    .milestones {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .milestone {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(0,0,0,.22);
+    }
+
+    .milestone h3 {
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .milestone ul {
+      display: grid;
+      gap: 6px;
+      padding-left: 16px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.42;
+    }
+
+    @media (max-width: 1100px) {
+      .summary,
+      .milestones { grid-template-columns: 1fr 1fr; }
+      .phase-head { grid-template-columns: 64px 1fr; }
+      .gate { grid-column: 1 / -1; max-width: none; text-align: left; }
+      .matrix { overflow-x: auto; }
+      .row { min-width: 1180px; }
+      .filters { justify-items: start; width: 100%; }
+      .filter-row { justify-content: flex-start; }
+    }
+
+    @media (max-width: 680px) {
+      .shell { width: min(100% - 24px, 1500px); }
+      .summary,
+      .milestones { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div>
+      <div class="title">CRM + AI Automation Platform · Development Execution Roadmap</div>
+      <div class="subtitle">Implementation matrix from phased infrastructure architecture · CTO planning · engineering roadmap · investor-ready sequencing</div>
+    </div>
+    <div class="filters" aria-label="Фильтры roadmap">
+      <div class="filter-row">
+        <span class="filter-label">Phase</span>
+        <button class="pill active" data-filter="phase" data-value="all">Все</button>
+        <button class="pill" data-filter="phase" data-value="mvp">MVP</button>
+        <button class="pill" data-filter="phase" data-value="growth">Growth</button>
+        <button class="pill" data-filter="phase" data-value="scale">Scale</button>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">Status</span>
+        <button class="pill" data-filter="status" data-value="build">Build Now</button>
+        <button class="pill" data-filter="status" data-value="stub">Stub Later</button>
+        <button class="pill" data-filter="status" data-value="scale">Scale Only</button>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">Layer</span>
+        <button class="pill" data-filter="layer" data-value="product">Product</button>
+        <button class="pill" data-filter="layer" data-value="ai">AI</button>
+        <button class="pill" data-filter="layer" data-value="data">Data</button>
+        <button class="pill" data-filter="layer" data-value="integration">Comms</button>
+        <button class="pill" data-filter="layer" data-value="ops">Ops</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="summary" aria-label="Roadmap summary">
+      <article class="summary-card"><strong>0–50</strong><span>MVP: собрать продаваемую CRM + AI automation без лишней инфраструктуры. Один backend, shared DB, n8n, базовые агенты.</span></article>
+      <article class="summary-card"><strong>50–500</strong><span>Growth: вынести тяжелые процессы в workers, добавить queues, voice, agent services, gateway, monitoring.</span></article>
+      <article class="summary-card"><strong>500+</strong><span>Scale: decomposed services, Temporal/LangGraph, event bus, dedicated memory/vector stores, replicas, tracing.</span></article>
+      <article class="summary-card"><strong>Rule</strong><span>Очереди и workers раньше микросервисов. Сервисы выделять только по нагрузке, ownership или независимым релизам.</span></article>
+    </section>
+
+    <section class="legend" aria-label="Legend">
+      <div class="legend-item"><span class="dot" style="background:var(--build)"></span>Build Now</div>
+      <div class="legend-item"><span class="dot" style="background:var(--stub)"></span>Stub Now / Add Later</div>
+      <div class="legend-item"><span class="dot" style="background:var(--scale)"></span>Scale Only</div>
+      <div class="legend-item"><span class="dot" style="background:var(--product)"></span>Product</div>
+      <div class="legend-item"><span class="dot" style="background:var(--ai)"></span>AI / Automation</div>
+      <div class="legend-item"><span class="dot" style="background:var(--data)"></span>Data</div>
+      <div class="legend-item"><span class="dot" style="background:var(--ops)"></span>Ops</div>
+    </section>
+
+    <section class="phase" data-phase="mvp">
+      <div class="phase-head">
+        <div class="phase-no">P1</div>
+        <div class="phase-title">
+          <h2>Phase 1 · MVP / Early Stage</h2>
+          <p>Цель: быстро запустить рабочий продукт для 0–50 клиентов с минимальной инфраструктурной нагрузкой.</p>
+        </div>
+        <div class="gate">Exit gate: первые клиенты ведут лиды в CRM, Telegram квалифицирует заявки, AI follow-up работает, КП и визиты создаются, базовая аналитика видна владельцу.</div>
+      </div>
+      <div class="matrix">
+        <div class="row header-row">
+          <div class="cell">Component</div><div class="cell">Status</div><div class="cell">Layer</div><div class="cell">Implementation</div><div class="cell">Dependencies</div><div class="cell">Definition of Done</div><div class="cell">Owner</div>
+        </div>
+        <div class="row item" data-phase="mvp" data-status="build" data-layer="product" style="--accent:var(--product)">
+          <div class="cell component"><div class="icon">WEB</div><div><strong>Public Landing Website</strong><span>Marketing pages, lead forms, CTA, pricing, integrations showcase.</span></div></div>
+          <div class="cell"><span class="tag build">Build Now</span></div><div class="cell">Product</div>
+          <div class="cell">Next.js + Tailwind pages, lead capture forms, source attribution, plan/pricing blocks, integration showcase.</div>
+          <div class="cell mono">Backend lead API, CRM lead schema</div>
+          <div class="cell">Lead form creates CRM lead with source, company, contact, requested service and consent.</div>
+          <div class="cell">Frontend + Backend</div>
+        </div>
+        <div class="row item" data-phase="mvp" data-status="build" data-layer="product" style="--accent:var(--product)">
+          <div class="cell component"><div class="icon">CRM</div><div><strong>CRM Dashboard</strong><span>Leads, Kanban, detail popup, manager assignment, notes, timeline.</span></div></div>
+          <div class="cell"><span class="tag build">Build Now</span></div><div class="cell">Product</div>
+          <div class="cell">Lead list, Kanban stages, lead card, assignment, comments/history, activity timeline, basic filters.</div>
+          <div class="cell mono">PostgreSQL, Auth/RBAC lite, Backend API</div>
+          <div class="cell">Manager can move lead through pipeline, assign owner, add note, see full activity history.</div>
+          <div class="cell">Full-stack</div>
+        </div>
+        <div class="row item" data-phase="mvp" data-status="build" data-layer="integration" style="--accent:var(--comm)">
+          <div class="cell component"><div class="icon">TG</div><div><strong>Telegram Bot Interface</strong><span>Client onboarding, qualification, FAQ/support, notifications, statuses.</span></div></div>
+          <div class="cell"><span class="tag build">Build Now</span></div><div class="cell">Comms</div>
+          <div class="cell">Webhook handlers, qualification script, lead creation/update, FAQ flow, manager notification, status update messages.</div>
+          <div class="cell mono">Telegram API, Backend API, CRM lead schema</div>
+          <div class="cell">Bot qualifies a lead and syncs conversation summary into CRM timeline.</div>
+          <div class="cell">Backend</div>
+        </div>
+        <div class="row item" data-phase="mvp" data-status="build" data-layer="ai" style="--accent:var(--ai)">
+          <div class="cell component"><div class="icon">AI</div><div><strong>AI Secretary / Agent Layer</strong><span>Qualification, communication, follow-up, re-engagement agents.</span></div></div>
+          <div class="cell"><span class="tag build">Build Now</span></div><div class="cell">AI</div>
+          <div class="cell">Basic prompt-driven agents behind service functions; CRM tool actions for qualification, notes, follow-up tasks.</div>
+          <div class="cell mono">Backend API, n8n, CRM entities</div>
+          <div class="cell">Agent can qualify lead, write CRM summary, schedule follow-up, and escalate uncertain cases.</div>
+          <div class="cell">AI + Backend</div>
+        </div>
+        <div class="row item" data-phase="mvp" data-status="build" data-layer="ai" style="--accent:var(--ai)">
+          <div class="cell component"><div class="icon">WF</div><div><strong>n8n Workflows</strong><span>Lead routing, reminders, proposal sending, status automation.</span></div></div>
+          <div class="cell"><span class="tag build">Build Now</span></div><div class="cell">AI</div>
+          <div class="cell">Workflows for new lead routing, manager reminders, follow-up timers, proposal delivery triggers.</div>
+          <div class="cell mono">Backend webhooks, Telegram, Email later</div>
+          <div class="cell">Core workflows are visible, testable, retryable manually, and documented for operators.</div>
+          <div class="cell">Automation</div>
+        </div>
+        <div class="row item" data-phase="mvp" data-status="build" data-layer="product" style="--accent:var(--product)">
+          <div class="cell component"><div class="icon">DOC</div><div><strong>Proposal Automation</strong><span>Generate/send commercial proposals, track opens/clicks.</span></div></div>
+          <div class="cell"><span class="tag build">Build Now</span></div><div class="cell">Product</div>
+          <div class="cell">Template-based proposal generation, CRM attachment metadata, manual/send action, basic tracking link.</div>
+          <div class="cell mono">CRM lead data, Email/messenger stub</div>
+          <div class="cell">Manager generates proposal from lead and sees sent/opened/clicked status in timeline.</div>
+          <div class="cell">Full-stack</div>
+        </div>
+        <div class="row item" data-phase="mvp" data-status="build" data-layer="product" style="--accent:var(--product)">
+          <div class="cell component"><div class="icon">CAL</div><div><strong>Calendar / Booking System</strong><span>Schedule sanitary expert visits and manager calendars.</span></div></div>
+          <div class="cell"><span class="tag build">Build Now</span></div><div class="cell">Product</div>
+          <div class="cell">Appointment model, available slots, booking from CRM, reminders through Telegram/n8n.</div>
+          <div class="cell mono">PostgreSQL, CRM stages, Telegram</div>
+          <div class="cell">Lead can be booked for expert visit without double booking and with CRM stage update.</div>
+          <div class="cell">Backend + Frontend</div>
+        </div>
+        <div class="row item" data-phase="mvp" data-status="build" data-layer="ops" style="--accent:var(--ops)">
+          <div class="cell component"><div class="icon">API</div><div><strong>Backend API Monolith</strong><span>FastAPI or NestJS, domain modules, one deployable backend.</span></div></div>
+          <div class="cell"><span class="tag build">Build Now</span></div><div class="cell">Ops</div>
+          <div class="cell">Modules for CRM, Telegram, agents, proposals, booking, admin stub; OpenAPI/schema validation.</div>
+          <div class="cell mono">PostgreSQL, Auth/RBAC lite</div>
+          <div class="cell">Single deploy supports landing, dashboard, bot and automation workflows with clean module boundaries.</div>
+          <div class="cell">Backend</div>
+        </div>
+        <div class="row item" data-phase="mvp" data-status="build" data-layer="data" style="--accent:var(--data)">
+          <div class="cell component"><div class="icon">DB</div><div><strong>PostgreSQL Shared DB</strong><span>Leads, CRM, users, workspaces, proposals, appointments.</span></div></div>
+          <div class="cell"><span class="tag build">Build Now</span></div><div class="cell">Data</div>
+          <div class="cell">Relational schema, migrations, indexes for lead/workspace/stage, backups and seed data.</div>
+          <div class="cell mono">Backend API</div>
+          <div class="cell">Migrations are repeatable; backup/restore path documented; core queries are indexed.</div>
+          <div class="cell">Backend</div>
+        </div>
+        <div class="row item" data-phase="mvp" data-status="stub" data-layer="data" style="--accent:var(--data)">
+          <div class="cell component"><div class="icon">RDS</div><div><strong>Redis Sessions / Cache</strong><span>Optional sessions/cache foundation; queues later.</span></div></div>
+          <div class="cell"><span class="tag stub">Stub Later</span></div><div class="cell">Data</div>
+          <div class="cell">Define adapter interface for cache/session/queue use; avoid hard dependency unless needed.</div>
+          <div class="cell mono">Backend runtime</div>
+          <div class="cell">Code can add Redis without refactoring business modules.</div>
+          <div class="cell">Backend</div>
+        </div>
+        <div class="row item" data-phase="mvp" data-status="build" data-layer="ops" style="--accent:var(--ops)">
+          <div class="cell component"><div class="icon">OBS</div><div><strong>Minimal Observability</strong><span>Sentry/error tracking, logs, health checks.</span></div></div>
+          <div class="cell"><span class="tag build">Build Now</span></div><div class="cell">Ops</div>
+          <div class="cell">Error tracking, structured logs for lead/agent/workflow events, uptime health endpoints.</div>
+          <div class="cell mono">Backend, bot, n8n</div>
+          <div class="cell">Failures in forms, bot, API and workflows are visible without SSH debugging.</div>
+          <div class="cell">DevOps</div>
+        </div>
+        <div class="row item" data-phase="mvp" data-status="stub" data-layer="product" style="--accent:var(--product)">
+          <div class="cell component"><div class="icon">ADM</div><div><strong>Admin / Superadmin Panel</strong><span>Workspace, users, RBAC, tariffs, subscriptions.</span></div></div>
+          <div class="cell"><span class="tag stub">Stub Later</span></div><div class="cell">Product</div>
+          <div class="cell">Build minimal internal admin: workspaces, users, manual tariff/subscription flags.</div>
+          <div class="cell mono">Auth, PostgreSQL</div>
+          <div class="cell">Admin can create workspace, add user, assign role and set current tariff manually.</div>
+          <div class="cell">Full-stack</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="phase" data-phase="growth">
+      <div class="phase-head">
+        <div class="phase-no">P2</div>
+        <div class="phase-title">
+          <h2>Phase 2 · Growth Stage</h2>
+          <p>Цель: выдержать 50–500 клиентов, рост коммуникаций, голосовых звонков, AI задач и фоновых процессов.</p>
+        </div>
+        <div class="gate">Entry gate: API latency страдает от AI/voice/jobs, появляются queue backlogs, нужна предсказуемая доставка уведомлений и отчетность по conversion/calls/agents.</div>
+      </div>
+      <div class="matrix">
+        <div class="row header-row">
+          <div class="cell">Component</div><div class="cell">Status</div><div class="cell">Layer</div><div class="cell">Implementation</div><div class="cell">Dependencies</div><div class="cell">Definition of Done</div><div class="cell">Owner</div>
+        </div>
+        <div class="row item" data-phase="growth" data-status="build" data-layer="ops" style="--accent:var(--ops)"><div class="cell component"><div class="icon">GW</div><div><strong>API Gateway</strong><span>Routing, auth boundary, request limits, webhooks.</span></div></div><div class="cell"><span class="tag build">Build Now</span></div><div class="cell">Ops</div><div class="cell">Gateway routing for dashboard, landing forms, Telegram webhooks, future public integrations.</div><div class="cell mono">Backend API, Auth, rate limits</div><div class="cell">All external traffic enters through gateway with logs, auth context and per-workspace limits.</div><div class="cell">Backend/DevOps</div></div>
+        <div class="row item" data-phase="growth" data-status="build" data-layer="data" style="--accent:var(--data)"><div class="cell component"><div class="icon">QUE</div><div><strong>Redis Queues</strong><span>Calls, proposals, follow-ups, sync jobs, retries.</span></div></div><div class="cell"><span class="tag build">Build Now</span></div><div class="cell">Data</div><div class="cell">Queues for voice calls, proposal sending, follow-ups, notification retries and analytics jobs.</div><div class="cell mono">Redis, workers, backend events</div><div class="cell">Jobs have status, retry policy, dead-letter handling and queue lag metrics.</div><div class="cell">Backend</div></div>
+        <div class="row item" data-phase="growth" data-status="build" data-layer="ops" style="--accent:var(--ops)"><div class="cell component"><div class="icon">WRK</div><div><strong>Background Job Workers</strong><span>Async CRM, AI, voice, proposal and analytics jobs.</span></div></div><div class="cell"><span class="tag build">Build Now</span></div><div class="cell">Ops</div><div class="cell">Dedicated worker processes for AI, voice, proposals, notifications, analytics aggregation.</div><div class="cell mono">Redis queues, Docker, monitoring</div><div class="cell">Heavy jobs no longer block API request path; workers can scale independently.</div><div class="cell">Backend/DevOps</div></div>
+        <div class="row item" data-phase="growth" data-status="build" data-layer="ai" style="--accent:var(--ai)"><div class="cell component"><div class="icon">AGS</div><div><strong>Separated Agent Services</strong><span>Qualification, communication, follow-up, re-engagement.</span></div></div><div class="cell"><span class="tag build">Build Now</span></div><div class="cell">AI</div><div class="cell">Move agent execution out of main API into worker/service boundary with CRM tool actions.</div><div class="cell mono">Queues, CRM API, prompt registry</div><div class="cell">Agent jobs run asynchronously, report status, and write summaries/actions to CRM.</div><div class="cell">AI/Backend</div></div>
+        <div class="row item" data-phase="growth" data-status="build" data-layer="integration" style="--accent:var(--comm)"><div class="cell component"><div class="icon">VOC</div><div><strong>Voice Calling Agent</strong><span>Outbound calls, scripts, objections, booking, escalation.</span></div></div><div class="cell"><span class="tag build">Build Now</span></div><div class="cell">Comms</div><div class="cell">Integrate voice provider/SIP, STT/TTS/LLM pipeline, call scripts, booking handoff.</div><div class="cell mono">Workers, calendar, CRM, provider</div><div class="cell">Agent can call lead, qualify, book appointment or escalate to manager with transcript.</div><div class="cell">AI/Backend</div></div>
+        <div class="row item" data-phase="growth" data-status="build" data-layer="ai" style="--accent:var(--ai)"><div class="cell component"><div class="icon">HITL</div><div><strong>Human-in-the-loop Escalation</strong><span>Manager handoff for hot or risky AI conversations.</span></div></div><div class="cell"><span class="tag build">Build Now</span></div><div class="cell">AI</div><div class="cell">Escalation rules, confidence thresholds, CRM assignment, manager notification, reason capture.</div><div class="cell mono">AI agents, CRM, Telegram/notifications</div><div class="cell">Manager receives actionable escalation with summary, reason and suggested next step.</div><div class="cell">AI/Product</div></div>
+        <div class="row item" data-phase="growth" data-status="build" data-layer="ai" style="--accent:var(--ai)"><div class="cell component"><div class="icon">PRM</div><div><strong>Prompt / Version Management</strong><span>Prompts, scripts, follow-up playbooks, rollback.</span></div></div><div class="cell"><span class="tag build">Build Now</span></div><div class="cell">AI</div><div class="cell">Prompt registry in DB/admin, version IDs on agent runs, rollback for bad prompts.</div><div class="cell mono">Admin panel, agents, CRM logs</div><div class="cell">Every agent response can be traced to prompt/script version.</div><div class="cell">AI/Backend</div></div>
+        <div class="row item" data-phase="growth" data-status="build" data-layer="ops" style="--accent:var(--ops)"><div class="cell component"><div class="icon">LIM</div><div><strong>Rate Limiting</strong><span>Workspace, API, Telegram, voice and AI call limits.</span></div></div><div class="cell"><span class="tag build">Build Now</span></div><div class="cell">Ops</div><div class="cell">Per-workspace quotas, provider caps, public form abuse control, tariff-linked usage counters.</div><div class="cell mono">Gateway, Redis, tariffs</div><div class="cell">Excessive usage is throttled predictably and surfaced in admin/billing views.</div><div class="cell">Backend</div></div>
+        <div class="row item" data-phase="growth" data-status="build" data-layer="product" style="--accent:var(--product)"><div class="cell component"><div class="icon">ANL</div><div><strong>Analytics / Reporting</strong><span>Funnel, conversion, call, agent and revenue dashboards.</span></div></div><div class="cell"><span class="tag build">Build Now</span></div><div class="cell">Product</div><div class="cell">Dashboards for owner/admin: lead funnel, conversion, booked visits, calls, agents, revenue.</div><div class="cell mono">CRM events, call data, proposals</div><div class="cell">Owner sees funnel conversion and automation impact by workspace and period.</div><div class="cell">Product/Data</div></div>
+        <div class="row item" data-phase="growth" data-status="build" data-layer="integration" style="--accent:var(--comm)"><div class="cell component"><div class="icon">EML</div><div><strong>Email Provider</strong><span>Proposal delivery, follow-ups, opens/clicks.</span></div></div><div class="cell"><span class="tag build">Build Now</span></div><div class="cell">Comms</div><div class="cell">Provider integration, templates, bounce handling, open/click tracking callbacks.</div><div class="cell mono">Proposal module, workers, S3</div><div class="cell">Proposal email delivery and tracking reliably update CRM timeline.</div><div class="cell">Backend</div></div>
+        <div class="row item" data-phase="growth" data-status="build" data-layer="data" style="--accent:var(--data)"><div class="cell component"><div class="icon">S3</div><div><strong>S3-compatible Storage</strong><span>Proposals, attachments, call recordings, exports.</span></div></div><div class="cell"><span class="tag build">Build Now</span></div><div class="cell">Data</div><div class="cell">Buckets, signed URLs, proposal files, call recordings, export storage, retention defaults.</div><div class="cell mono">Proposal, voice, analytics exports</div><div class="cell">Files are stored outside DB and linked securely from CRM/admin.</div><div class="cell">Backend/DevOps</div></div>
+        <div class="row item" data-phase="growth" data-status="build" data-layer="ops" style="--accent:var(--ops)"><div class="cell component"><div class="icon">MON</div><div><strong>Better Monitoring</strong><span>Prometheus, Grafana, Sentry, queue and service health.</span></div></div><div class="cell"><span class="tag build">Build Now</span></div><div class="cell">Ops</div><div class="cell">Metrics for API, workers, queues, n8n, bot, voice pipeline, provider errors.</div><div class="cell mono">All services/workers</div><div class="cell">Queue lag, failed jobs, provider errors and API health are visible in dashboards.</div><div class="cell">DevOps</div></div>
+      </div>
+    </section>
+
+    <section class="phase" data-phase="scale">
+      <div class="phase-head">
+        <div class="phase-no">P3</div>
+        <div class="phase-title">
+          <h2>Phase 3 · Scale Stage</h2>
+          <p>Цель: подготовить архитектуру к 500+ клиентам, горизонтальному росту, сложным AI сценариям и высокой цене отказов.</p>
+        </div>
+        <div class="gate">Entry gate: разные домены требуют независимого scale/release, аналитика нагружает primary DB, агентам нужен persistent context, отладка требует end-to-end traces.</div>
+      </div>
+      <div class="matrix">
+        <div class="row header-row">
+          <div class="cell">Component</div><div class="cell">Status</div><div class="cell">Layer</div><div class="cell">Implementation</div><div class="cell">Dependencies</div><div class="cell">Definition of Done</div><div class="cell">Owner</div>
+        </div>
+        <div class="row item" data-phase="scale" data-status="scale" data-layer="ai" style="--accent:var(--ai)"><div class="cell component"><div class="icon">MGA</div><div><strong>Multi-agent Orchestration</strong><span>LangGraph / Temporal durable workflows.</span></div></div><div class="cell"><span class="tag scale">Scale Only</span></div><div class="cell">AI</div><div class="cell">Introduce Temporal/LangGraph for long-running qualification, voice, follow-up, booking and proposal flows.</div><div class="cell mono">Workers, agent services, event model</div><div class="cell">Workflow state is durable, replayable, retryable and visible to support/admin.</div><div class="cell">AI Platform</div></div>
+        <div class="row item" data-phase="scale" data-status="scale" data-layer="ai" style="--accent:var(--ai)"><div class="cell component"><div class="icon">MEM</div><div><strong>Agent Memory / Context Store</strong><span>Workspace context, history and long-running agent state.</span></div></div><div class="cell"><span class="tag scale">Scale Only</span></div><div class="cell">AI</div><div class="cell">Dedicated store for conversation context, workspace knowledge, user preferences and agent state.</div><div class="cell mono">Agent services, CRM history, privacy policy</div><div class="cell">Agents retrieve tenant-scoped context without overloading CRM transactional tables.</div><div class="cell">AI/Data</div></div>
+        <div class="row item" data-phase="scale" data-status="scale" data-layer="data" style="--accent:var(--data)"><div class="cell component"><div class="icon">VEC</div><div><strong>Dedicated Vector Store</strong><span>RAG over FAQ, scripts, proposals, transcripts and history.</span></div></div><div class="cell"><span class="tag scale">Scale Only</span></div><div class="cell">Data</div><div class="cell">Embedding pipeline and tenant-isolated vector collections for agent retrieval and semantic search.</div><div class="cell mono">Memory/context, file storage, transcripts</div><div class="cell">Agent answer quality improves measurably from retrieval and remains tenant-isolated.</div><div class="cell">AI/Data</div></div>
+        <div class="row item" data-phase="scale" data-status="scale" data-layer="ai" style="--accent:var(--ai)"><div class="cell component"><div class="icon">AKA</div><div><strong>Agent Analytics + Fallback</strong><span>Agent quality, retry/fallback, model cost and ROI.</span></div></div><div class="cell"><span class="tag scale">Scale Only</span></div><div class="cell">AI</div><div class="cell">Track cost/lead, fallback rate, booking uplift, prompt/model performance and provider errors.</div><div class="cell mono">Agent events, analytics, event bus</div><div class="cell">Product can compare agents/prompts/models by conversion, cost and failure rate.</div><div class="cell">AI/Data</div></div>
+        <div class="row item" data-phase="scale" data-status="scale" data-layer="ops" style="--accent:var(--ops)"><div class="cell component"><div class="icon">MS</div><div><strong>Microservice Decomposition</strong><span>CRM, agents, voice, proposals, analytics, admin/billing.</span></div></div><div class="cell"><span class="tag scale">Scale Only</span></div><div class="cell">Ops</div><div class="cell">Extract domains only after clear ownership/load/release triggers; preserve API contracts.</div><div class="cell mono">Gateway, queues/event bus, observability</div><div class="cell">Extracted service has independent deploy, metrics, tests and backward-compatible contract.</div><div class="cell">Platform</div></div>
+        <div class="row item" data-phase="scale" data-status="scale" data-layer="data" style="--accent:var(--data)"><div class="cell component"><div class="icon">BUS</div><div><strong>Event Bus / Queue System</strong><span>Lead, call, proposal, appointment and agent events.</span></div></div><div class="cell"><span class="tag scale">Scale Only</span></div><div class="cell">Data</div><div class="cell">Durable event stream for CRM, voice, proposals, agents, analytics and downstream automation.</div><div class="cell mono">Domain events, service contracts</div><div class="cell">Multiple consumers can process events without coupling to transactional writes.</div><div class="cell">Platform/Data</div></div>
+        <div class="row item" data-phase="scale" data-status="scale" data-layer="ops" style="--accent:var(--ops)"><div class="cell component"><div class="icon">HPA</div><div><strong>Horizontal Scaling</strong><span>Containerized backend, workers, agents and voice pipelines.</span></div></div><div class="cell"><span class="tag scale">Scale Only</span></div><div class="cell">Ops</div><div class="cell">Autoscale stateless API replicas and worker pools based on traffic and queue lag.</div><div class="cell mono">Docker, metrics, provider capacity</div><div class="cell">Capacity can be increased without code changes or manual server cloning.</div><div class="cell">DevOps</div></div>
+        <div class="row item" data-phase="scale" data-status="scale" data-layer="data" style="--accent:var(--data)"><div class="cell component"><div class="icon">REP</div><div><strong>PostgreSQL Read Replicas</strong><span>Reporting and read-heavy CRM/dashboard workloads.</span></div></div><div class="cell"><span class="tag scale">Scale Only</span></div><div class="cell">Data</div><div class="cell">Read replicas for analytics/reporting queries and read-heavy CRM screens.</div><div class="cell mono">PostgreSQL monitoring, query routing</div><div class="cell">Reporting load no longer competes with primary write workload.</div><div class="cell">Data/DevOps</div></div>
+        <div class="row item" data-phase="scale" data-status="scale" data-layer="ops" style="--accent:var(--ops)"><div class="cell component"><div class="icon">REG</div><div><strong>Multi-region Readiness</strong><span>Backups, failover, restore drills and DR planning.</span></div></div><div class="cell"><span class="tag scale">Scale Only</span></div><div class="cell">Ops</div><div class="cell">RPO/RTO definitions, tested backups, failover plan, provider region strategy.</div><div class="cell mono">DB backups, storage, hosting</div><div class="cell">Restore process is tested and documented; failover decision tree exists.</div><div class="cell">DevOps</div></div>
+        <div class="row item" data-phase="scale" data-status="scale" data-layer="ops" style="--accent:var(--ops)"><div class="cell component"><div class="icon">TRC</div><div><strong>Advanced Observability / Tracing</strong><span>Distributed traces, SLOs, incidents and cost observability.</span></div></div><div class="cell"><span class="tag scale">Scale Only</span></div><div class="cell">Ops</div><div class="cell">End-to-end traces across gateway, services, queues, agents, voice provider and DB calls.</div><div class="cell mono">Service split, metrics, logs</div><div class="cell">A failed lead journey can be traced from landing/TG to CRM, agent, voice, proposal and analytics.</div><div class="cell">DevOps/SRE</div></div>
+        <div class="row item" data-phase="scale" data-status="stub" data-layer="integration" style="--accent:var(--comm)"><div class="cell component"><div class="icon">MSG</div><div><strong>SMS / WhatsApp Integrations</strong><span>Future channels for reminders and follow-up.</span></div></div><div class="cell"><span class="tag stub">Stub Later</span></div><div class="cell">Comms</div><div class="cell">Keep channel abstraction ready; add provider only when clients demand SMS/WhatsApp.</div><div class="cell mono">Notifications, consent model</div><div class="cell">New channel can be added without rewriting Telegram/email automations.</div><div class="cell">Backend</div></div>
+        <div class="row item" data-phase="scale" data-status="build" data-layer="ops" style="--accent:var(--ops)"><div class="cell component"><div class="icon">RUN</div><div><strong>Hosting / Containers</strong><span>Vercel frontend, Hetzner/AWS/VPS backend, Docker services.</span></div></div><div class="cell"><span class="tag build">Build Now</span></div><div class="cell">Ops</div><div class="cell">Keep Dockerized backend/workers and environment config clean from MVP onward.</div><div class="cell mono">CI/CD, secrets, deploy scripts</div><div class="cell">Services can run locally, in staging and in production from the same container contract.</div><div class="cell">DevOps</div></div>
+      </div>
+    </section>
+
+    <section class="milestones" aria-label="Delivery milestones">
+      <article class="milestone">
+        <h3>MVP delivery sequence</h3>
+        <ul>
+          <li>Data model: workspaces, users, leads, pipeline, notes, appointments, proposals.</li>
+          <li>Backend API + CRM dashboard + landing lead forms.</li>
+          <li>Telegram qualification + n8n lead routing and reminders.</li>
+          <li>Basic AI secretary, proposal generation and booking flow.</li>
+          <li>Sentry/logs/health checks before first paid pilots.</li>
+        </ul>
+      </article>
+      <article class="milestone">
+        <h3>Growth migration gates</h3>
+        <ul>
+          <li>Add queues when jobs slow API or require reliable retry.</li>
+          <li>Separate agents when AI execution needs independent scale or monitoring.</li>
+          <li>Add voice only after CRM + booking loop is stable.</li>
+          <li>Add Grafana/Prometheus when queue/provider failures need operational visibility.</li>
+          <li>Keep microservices out until team/load creates a real need.</li>
+        </ul>
+      </article>
+      <article class="milestone">
+        <h3>Scale readiness gates</h3>
+        <ul>
+          <li>Extract services only by load, ownership or release cadence.</li>
+          <li>Introduce event bus when multiple consumers need durable domain events.</li>
+          <li>Add vector/memory stores only when RAG/context measurably improves agent performance.</li>
+          <li>Use read replicas when reporting impacts transactional workload.</li>
+          <li>Adopt advanced tracing after service boundaries exist.</li>
+        </ul>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const pills = [...document.querySelectorAll(".pill")];
+    const rows = [...document.querySelectorAll(".row.item")];
+    const phases = [...document.querySelectorAll(".phase")];
+    let active = { filter: "phase", value: "all" };
+
+    function applyFilter() {
+      rows.forEach(row => {
+        let dim = false;
+        if (active.filter === "phase" && active.value !== "all") dim = row.dataset.phase !== active.value;
+        if (active.filter === "status") dim = row.dataset.status !== active.value;
+        if (active.filter === "layer") dim = row.dataset.layer !== active.value;
+        row.classList.toggle("dimmed", dim);
+      });
+
+      phases.forEach(phase => {
+        const dim = active.filter === "phase" && active.value !== "all" && phase.dataset.phase !== active.value;
+        phase.classList.toggle("dimmed", dim);
+      });
+    }
+
+    pills.forEach(pill => {
+      pill.addEventListener("click", () => {
+        pills.forEach(item => item.classList.remove("active"));
+        pill.classList.add("active");
+        active = { filter: pill.dataset.filter, value: pill.dataset.value };
+        applyFilter();
+      });
+    });
+  </script>
+
+
+</body></html>
