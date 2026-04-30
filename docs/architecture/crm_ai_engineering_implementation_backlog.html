@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0162)file:///C:/Users/buyle/Documents/Codex/2026-04-30/task-title-create-phased-infrastructure-rollout/docs/architecture/crm_ai_engineering_implementation_backlog.html -->
+<!-- saved from url=(0144)file:///C:/Users/buyle/Documents/Codex/2026-04-30/task-title-create-phased-infrastructure-rollout/crm_ai_engineering_implementation_backlog.html -->
 <html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -570,22 +570,22 @@
 
   <main class="shell">
     <section class="metrics" id="metrics">
-        <article class="metric"><strong>35</strong><span>Features decomposed from the execution roadmap.</span></article>
-        <article class="metric"><strong>105</strong><span>Technical tasks with subtasks, acceptance criteria and owners.</span></article>
-        <article class="metric"><strong>23</strong><span>Build Now features across MVP and Growth execution.</span></article>
+        <article class="metric"><strong>36</strong><span>Features decomposed from the execution roadmap.</span></article>
+        <article class="metric"><strong>108</strong><span>Technical tasks with subtasks, acceptance criteria and owners.</span></article>
+        <article class="metric"><strong>24</strong><span>Build Now features across MVP and Growth execution.</span></article>
         <article class="metric"><strong>23</strong><span>Critical path features highlighted in the backlog.</span></article>
         <article class="metric"><strong>2.6</strong><span>Average task complexity on a 1–5 scale.</span></article>
       </section>
     <section class="progress-shell">
-      <div class="progress-head"><span>Overall delivery progress</span><span id="progressText">4% planned progress baseline</span></div>
-      <div class="bar"><div class="bar-fill" id="progressFill" style="width: 4%;"></div></div>
+      <div class="progress-head"><span>Overall delivery progress</span><span id="progressText">3% planned progress baseline</span></div>
+      <div class="bar"><div class="bar-fill" id="progressFill" style="width: 3%;"></div></div>
     </section>
 
     <section class="layout">
       <section class="panel">
         <div class="panel-head">
           <div><h2>Implementation Backlog</h2><span>Every roadmap implementation item is decomposed into feature-level technical tasks.</span></div>
-          <span id="visibleCount">35 visible features</span>
+          <span id="visibleCount">36 visible features</span>
         </div>
         <div id="backlog">
           <article class="epic" style="--accent:var(--product)">
@@ -593,8 +593,8 @@
               <div class="epic-icon">CRM</div>
               <div class="epic-title"><strong>Product Core: Landing, CRM, Admin</strong><span>Customer-facing and operator-facing modules needed to sell, capture and manage sanitary service leads.</span></div>
               <div class="epic-meta">
-                <span class="tag neutral">3 features</span>
-                <span class="tag neutral">9 tasks</span>
+                <span class="tag neutral">4 features</span>
+                <span class="tag neutral">12 tasks</span>
               </div>
             </div>
             <div class="feature-list">
@@ -660,14 +660,14 @@
         <article class="feature critical" style="--accent:var(--product)">
           <div class="feature-head">
             <div>
-              <h3>CRM Dashboard</h3>
-              <p>Core operator workspace for leads, Kanban, assignment, notes and activity timeline.</p>
+              <h3>CRM Kanban First Slice</h3>
+              <p>First CRM slice for lead cards, pipeline stages and moving leads between stages.</p>
             </div>
             <div class="tags">
               <span class="tag build">Build Now</span>
               <span class="tag neutral">Frontend</span>
               <span class="tag neutral">C3</span>
-              <span class="tag neutral">Sprint 1–2</span>
+              <span class="tag neutral">Sprint 1</span>
               <span class="tag critical">Critical Path</span>
             </div>
           </div>
@@ -677,39 +677,97 @@
               <div class="task-grid">
                 <div class="mini"><b>Priority</b>P1</div>
                 <div class="mini"><b>Dependencies</b>PostgreSQL schema, Backend API, Auth/RBAC lite</div>
-                <div class="mini"><b>Sprint</b>Sprint 1–2</div>
+                <div class="mini"><b>Sprint</b>Sprint 1</div>
                 <div class="mini"><b>Acceptance</b>Lead can move across stages.</div>
               </div>
               <ul class="subtasks"><li>Create stage columns</li><li>Render lead cards</li><li>Support stage move action</li></ul>
             </div>
           
             <div class="task">
-              <div class="task-title"><strong>Build lead detail popup</strong><span class="tag neutral">P1 · C3 · Frontend</span></div>
+              <div class="task-title"><strong>Create lead card data contract</strong><span class="tag neutral">P2 · C2 · Backend</span></div>
+              <div class="task-grid">
+                <div class="mini"><b>Priority</b>P2</div>
+                <div class="mini"><b>Dependencies</b>PostgreSQL schema, Backend API, Auth/RBAC lite</div>
+                <div class="mini"><b>Sprint</b>Sprint 1</div>
+                <div class="mini"><b>Acceptance</b>Kanban can render saved leads.</div>
+              </div>
+              <ul class="subtasks"><li>Return lead summary fields</li><li>Return current stage</li><li>Return created timestamp</li></ul>
+            </div>
+          
+            <div class="task">
+              <div class="task-title"><strong>Create stage update API</strong><span class="tag neutral">P1 · C3 · Backend</span></div>
               <div class="task-grid">
                 <div class="mini"><b>Priority</b>P1</div>
                 <div class="mini"><b>Dependencies</b>PostgreSQL schema, Backend API, Auth/RBAC lite</div>
-                <div class="mini"><b>Sprint</b>Sprint 1–2</div>
+                <div class="mini"><b>Sprint</b>Sprint 1</div>
+                <div class="mini"><b>Acceptance</b>Frontend stage moves persist correctly.</div>
+              </div>
+              <ul class="subtasks"><li>Stage transition endpoint</li><li>Validate allowed stage</li><li>Write activity event</li></ul>
+            </div>
+          
+          <div class="task">
+            <div class="task-grid">
+              <div class="mini"><b>Feature Acceptance</b>Lead appears in CRM; Manager can move lead between stages; Pipeline stages are visible</div>
+              <div class="mini"><b>Owner Role</b>Frontend</div>
+              <div class="mini"><b>Suggested Sprint</b>Sprint 1</div>
+              <div class="mini"><b>Critical Path</b>Yes</div>
+            </div>
+          </div>
+        </article>
+      
+        <article class="feature critical" style="--accent:var(--product)">
+          <div class="feature-head">
+            <div>
+              <h3>CRM Operational Layer</h3>
+              <p>Lead detail popup, manager assignment, notes/activity timeline, filters/search and UX improvements.</p>
+            </div>
+            <div class="tags">
+              <span class="tag build">Build Now</span>
+              <span class="tag neutral">Frontend</span>
+              <span class="tag neutral">C3</span>
+              <span class="tag neutral">Sprint 2</span>
+              <span class="tag critical">Critical Path</span>
+            </div>
+          </div>
+          
+            <div class="task">
+              <div class="task-title"><strong>Build lead detail popup</strong><span class="tag neutral">P1 · C3 · Frontend</span></div>
+              <div class="task-grid">
+                <div class="mini"><b>Priority</b>P1</div>
+                <div class="mini"><b>Dependencies</b>CRM Kanban First Slice, Backend API</div>
+                <div class="mini"><b>Sprint</b>Sprint 2</div>
                 <div class="mini"><b>Acceptance</b>Operator sees full lead context in one popup.</div>
               </div>
               <ul class="subtasks"><li>Show contact/service fields</li><li>Render notes</li><li>Render activity timeline</li></ul>
             </div>
           
             <div class="task">
-              <div class="task-title"><strong>Create CRM lead APIs</strong><span class="tag neutral">P1 · C3 · Backend</span></div>
+              <div class="task-title"><strong>Add manager assignment</strong><span class="tag neutral">P2 · C2 · Backend</span></div>
               <div class="task-grid">
-                <div class="mini"><b>Priority</b>P1</div>
-                <div class="mini"><b>Dependencies</b>PostgreSQL schema, Backend API, Auth/RBAC lite</div>
-                <div class="mini"><b>Sprint</b>Sprint 1–2</div>
-                <div class="mini"><b>Acceptance</b>Frontend actions persist and audit correctly.</div>
+                <div class="mini"><b>Priority</b>P2</div>
+                <div class="mini"><b>Dependencies</b>CRM Kanban First Slice, Backend API</div>
+                <div class="mini"><b>Sprint</b>Sprint 2</div>
+                <div class="mini"><b>Acceptance</b>Lead has an accountable manager.</div>
               </div>
-              <ul class="subtasks"><li>CRUD leads</li><li>Stage transition endpoint</li><li>Assignment endpoint</li><li>Timeline write model</li></ul>
+              <ul class="subtasks"><li>Assignment endpoint</li><li>Responsible manager field</li><li>Assignment activity event</li></ul>
+            </div>
+          
+            <div class="task">
+              <div class="task-title"><strong>Add CRM filters and search</strong><span class="tag neutral">P2 · C2 · Frontend</span></div>
+              <div class="task-grid">
+                <div class="mini"><b>Priority</b>P2</div>
+                <div class="mini"><b>Dependencies</b>CRM Kanban First Slice, Backend API</div>
+                <div class="mini"><b>Sprint</b>Sprint 2</div>
+                <div class="mini"><b>Acceptance</b>Manager can find and prioritize leads.</div>
+              </div>
+              <ul class="subtasks"><li>Filter by stage</li><li>Search by contact/company</li><li>Improve empty/loading states</li></ul>
             </div>
           
           <div class="task">
             <div class="task-grid">
-              <div class="mini"><b>Feature Acceptance</b>Manager can move lead through pipeline; Lead popup shows notes/history; Assignment updates timeline</div>
+              <div class="mini"><b>Feature Acceptance</b>Manager can fully process and manage leads in CRM; Lead detail shows ownership, notes and activity; Managers can find leads with filters/search</div>
               <div class="mini"><b>Owner Role</b>Frontend</div>
-              <div class="mini"><b>Suggested Sprint</b>Sprint 1–2</div>
+              <div class="mini"><b>Suggested Sprint</b>Sprint 2</div>
               <div class="mini"><b>Critical Path</b>Yes</div>
             </div>
           </div>
@@ -790,14 +848,14 @@
         <article class="feature critical" style="--accent:var(--comm)">
           <div class="feature-head">
             <div>
-              <h3>Telegram Bot Interface</h3>
-              <p>Bot handles onboarding, qualification, FAQ, notifications and status updates.</p>
+              <h3>Telegram Intake &amp; Qualification</h3>
+              <p>Telegram webhook, bot infrastructure, qualification flow and CRM update from Telegram.</p>
             </div>
             <div class="tags">
               <span class="tag build">Build Now</span>
               <span class="tag neutral">Backend</span>
-              <span class="tag neutral">C2</span>
-              <span class="tag neutral">Sprint 2</span>
+              <span class="tag neutral">C3</span>
+              <span class="tag neutral">Sprint 3</span>
               <span class="tag critical">Critical Path</span>
             </div>
           </div>
@@ -807,7 +865,7 @@
               <div class="task-grid">
                 <div class="mini"><b>Priority</b>P2</div>
                 <div class="mini"><b>Dependencies</b>Telegram API, CRM lead schema, Backend API</div>
-                <div class="mini"><b>Sprint</b>Sprint 2</div>
+                <div class="mini"><b>Sprint</b>Sprint 3</div>
                 <div class="mini"><b>Acceptance</b>Webhook reliably receives Telegram updates.</div>
               </div>
               <ul class="subtasks"><li>Verify webhook secret</li><li>Parse updates</li><li>Route commands</li></ul>
@@ -818,7 +876,7 @@
               <div class="task-grid">
                 <div class="mini"><b>Priority</b>P1</div>
                 <div class="mini"><b>Dependencies</b>Telegram API, CRM lead schema, Backend API</div>
-                <div class="mini"><b>Sprint</b>Sprint 2</div>
+                <div class="mini"><b>Sprint</b>Sprint 3</div>
                 <div class="mini"><b>Acceptance</b>Qualified lead is created from Telegram.</div>
               </div>
               <ul class="subtasks"><li>Ask service questions</li><li>Collect contact/location</li><li>Create/update CRM lead</li></ul>
@@ -829,7 +887,7 @@
               <div class="task-grid">
                 <div class="mini"><b>Priority</b>P2</div>
                 <div class="mini"><b>Dependencies</b>Telegram API, CRM lead schema, Backend API</div>
-                <div class="mini"><b>Sprint</b>Sprint 2</div>
+                <div class="mini"><b>Sprint</b>Sprint 3</div>
                 <div class="mini"><b>Acceptance</b>CRM and Telegram remain synchronized.</div>
               </div>
               <ul class="subtasks"><li>Write timeline note</li><li>Notify manager</li><li>Send status update</li></ul>
@@ -837,9 +895,9 @@
           
           <div class="task">
             <div class="task-grid">
-              <div class="mini"><b>Feature Acceptance</b>Bot qualifies lead; Conversation summary appears in CRM; Manager receives notification</div>
+              <div class="mini"><b>Feature Acceptance</b>Telegram intake creates or updates qualified CRM leads automatically; Conversation summary appears in CRM; Manager can continue processing in CRM</div>
               <div class="mini"><b>Owner Role</b>Backend</div>
-              <div class="mini"><b>Suggested Sprint</b>Sprint 2</div>
+              <div class="mini"><b>Suggested Sprint</b>Sprint 3</div>
               <div class="mini"><b>Critical Path</b>Yes</div>
             </div>
           </div>
@@ -978,14 +1036,14 @@
         <article class="feature critical" style="--accent:var(--ai)">
           <div class="feature-head">
             <div>
-              <h3>AI Secretary / Agent Layer</h3>
-              <p>Basic agents qualify leads, communicate, follow up and re-engage.</p>
+              <h3>AI Qualification &amp; Follow-Up Agents</h3>
+              <p>AI qualification and follow-up agents for paid pilot readiness.</p>
             </div>
             <div class="tags">
               <span class="tag build">Build Now</span>
               <span class="tag neutral">AI</span>
               <span class="tag neutral">C3</span>
-              <span class="tag neutral">Sprint 3</span>
+              <span class="tag neutral">Sprint 4</span>
               <span class="tag critical">Critical Path</span>
             </div>
           </div>
@@ -994,8 +1052,8 @@
               <div class="task-title"><strong>Create agent service interface</strong><span class="tag neutral">P1 · C3 · AI</span></div>
               <div class="task-grid">
                 <div class="mini"><b>Priority</b>P1</div>
-                <div class="mini"><b>Dependencies</b>Backend API, n8n workflows, CRM entities</div>
-                <div class="mini"><b>Sprint</b>Sprint 3</div>
+                <div class="mini"><b>Dependencies</b>Telegram qualification flow, n8n workflows, CRM operational layer</div>
+                <div class="mini"><b>Sprint</b>Sprint 4</div>
                 <div class="mini"><b>Acceptance</b>Agents can be called consistently from backend/n8n.</div>
               </div>
               <ul class="subtasks"><li>Define agent input/output schema</li><li>Add CRM tool action contract</li><li>Return confidence and summary</li></ul>
@@ -1005,8 +1063,8 @@
               <div class="task-title"><strong>Implement qualification agent</strong><span class="tag neutral">P1 · C3 · AI</span></div>
               <div class="task-grid">
                 <div class="mini"><b>Priority</b>P1</div>
-                <div class="mini"><b>Dependencies</b>Backend API, n8n workflows, CRM entities</div>
-                <div class="mini"><b>Sprint</b>Sprint 3</div>
+                <div class="mini"><b>Dependencies</b>Telegram qualification flow, n8n workflows, CRM operational layer</div>
+                <div class="mini"><b>Sprint</b>Sprint 4</div>
                 <div class="mini"><b>Acceptance</b>Lead gets structured qualification fields.</div>
               </div>
               <ul class="subtasks"><li>Draft sanitary qualification prompt</li><li>Extract service/location/urgency</li><li>Generate CRM summary</li></ul>
@@ -1016,8 +1074,8 @@
               <div class="task-title"><strong>Implement follow-up agent</strong><span class="tag neutral">P1 · C3 · AI</span></div>
               <div class="task-grid">
                 <div class="mini"><b>Priority</b>P1</div>
-                <div class="mini"><b>Dependencies</b>Backend API, n8n workflows, CRM entities</div>
-                <div class="mini"><b>Sprint</b>Sprint 3</div>
+                <div class="mini"><b>Dependencies</b>Telegram qualification flow, n8n workflows, CRM operational layer</div>
+                <div class="mini"><b>Sprint</b>Sprint 4</div>
                 <div class="mini"><b>Acceptance</b>Follow-up action is created with clear rationale.</div>
               </div>
               <ul class="subtasks"><li>Generate next message</li><li>Create follow-up task</li><li>Respect CRM stage</li></ul>
@@ -1025,9 +1083,9 @@
           
           <div class="task">
             <div class="task-grid">
-              <div class="mini"><b>Feature Acceptance</b>Agent qualifies lead; Agent writes CRM summary; Agent schedules follow-up; Uncertain cases escalate</div>
+              <div class="mini"><b>Feature Acceptance</b>AI writes structured qualification summary to CRM; Follow-up action is created with rationale; Team can qualify and follow up leads for paid pilots</div>
               <div class="mini"><b>Owner Role</b>AI</div>
-              <div class="mini"><b>Suggested Sprint</b>Sprint 3</div>
+              <div class="mini"><b>Suggested Sprint</b>Sprint 4</div>
               <div class="mini"><b>Critical Path</b>Yes</div>
             </div>
           </div>
@@ -1398,14 +1456,14 @@
         <article class="feature critical" style="--accent:var(--product)">
           <div class="feature-head">
             <div>
-              <h3>Calendar / Booking System</h3>
-              <p>Schedule sanitary expert visits and sync appointments to CRM.</p>
+              <h3>Appointment Model &amp; Manual Booking</h3>
+              <p>Basic appointment model and manual scheduling UI for daily CRM operations.</p>
             </div>
             <div class="tags">
               <span class="tag build">Build Now</span>
               <span class="tag neutral">Backend</span>
               <span class="tag neutral">C3</span>
-              <span class="tag neutral">Sprint 4</span>
+              <span class="tag neutral">Sprint 2</span>
               <span class="tag critical">Critical Path</span>
             </div>
           </div>
@@ -1415,7 +1473,7 @@
               <div class="task-grid">
                 <div class="mini"><b>Priority</b>P2</div>
                 <div class="mini"><b>Dependencies</b>PostgreSQL, CRM stages, Telegram reminders</div>
-                <div class="mini"><b>Sprint</b>Sprint 4</div>
+                <div class="mini"><b>Sprint</b>Sprint 2</div>
                 <div class="mini"><b>Acceptance</b>Appointments persist with owner and status.</div>
               </div>
               <ul class="subtasks"><li>Appointment table</li><li>Expert/manager relation</li><li>Status enum</li></ul>
@@ -1426,7 +1484,7 @@
               <div class="task-grid">
                 <div class="mini"><b>Priority</b>P1</div>
                 <div class="mini"><b>Dependencies</b>PostgreSQL, CRM stages, Telegram reminders</div>
-                <div class="mini"><b>Sprint</b>Sprint 4</div>
+                <div class="mini"><b>Sprint</b>Sprint 2</div>
                 <div class="mini"><b>Acceptance</b>Manager can book visit from lead detail.</div>
               </div>
               <ul class="subtasks"><li>Slot selector</li><li>Lead booking action</li><li>Calendar list</li></ul>
@@ -1437,7 +1495,7 @@
               <div class="task-grid">
                 <div class="mini"><b>Priority</b>P2</div>
                 <div class="mini"><b>Dependencies</b>PostgreSQL, CRM stages, Telegram reminders</div>
-                <div class="mini"><b>Sprint</b>Sprint 4</div>
+                <div class="mini"><b>Sprint</b>Sprint 2</div>
                 <div class="mini"><b>Acceptance</b>Client and manager receive reminders.</div>
               </div>
               <ul class="subtasks"><li>Trigger n8n reminder</li><li>Send Telegram status</li><li>Write timeline</li></ul>
@@ -1445,9 +1503,9 @@
           
           <div class="task">
             <div class="task-grid">
-              <div class="mini"><b>Feature Acceptance</b>No double booking; Booking updates CRM stage; Reminder is scheduled</div>
+              <div class="mini"><b>Feature Acceptance</b>Manager can manually schedule sanitary expert visit; Appointment is linked to lead; Booking is visible in CRM</div>
               <div class="mini"><b>Owner Role</b>Backend</div>
-              <div class="mini"><b>Suggested Sprint</b>Sprint 4</div>
+              <div class="mini"><b>Suggested Sprint</b>Sprint 2</div>
               <div class="mini"><b>Critical Path</b>Yes</div>
             </div>
           </div>
@@ -1528,27 +1586,27 @@
         <article class="feature critical" style="--accent:var(--data)">
           <div class="feature-head">
             <div>
-              <h3>PostgreSQL Shared DB</h3>
-              <p>Core storage for CRM, workspaces, users, proposals and appointments.</p>
+              <h3>Simplified PostgreSQL Schema</h3>
+              <p>Only users, leads, lead_stages and notes/activity for the first working lead pipeline.</p>
             </div>
             <div class="tags">
               <span class="tag build">Build Now</span>
               <span class="tag neutral">Backend</span>
-              <span class="tag neutral">C3</span>
+              <span class="tag neutral">C2</span>
               <span class="tag neutral">Sprint 1</span>
               <span class="tag critical">Critical Path</span>
             </div>
           </div>
           
             <div class="task">
-              <div class="task-title"><strong>Design core relational schema</strong><span class="tag neutral">P1 · C3 · Backend</span></div>
+              <div class="task-title"><strong>Design simplified relational schema</strong><span class="tag neutral">P2 · C2 · Backend</span></div>
               <div class="task-grid">
-                <div class="mini"><b>Priority</b>P1</div>
+                <div class="mini"><b>Priority</b>P2</div>
                 <div class="mini"><b>Dependencies</b>Backend API</div>
                 <div class="mini"><b>Sprint</b>Sprint 1</div>
-                <div class="mini"><b>Acceptance</b>Schema supports all MVP flows.</div>
+                <div class="mini"><b>Acceptance</b>Schema supports first lead pipeline.</div>
               </div>
-              <ul class="subtasks"><li>Workspaces/users</li><li>Leads/pipeline</li><li>Notes/timeline</li><li>Appointments/proposals</li></ul>
+              <ul class="subtasks"><li>users</li><li>leads</li><li>lead_stages</li><li>notes/activity</li></ul>
             </div>
           
             <div class="task">
@@ -1563,80 +1621,22 @@
             </div>
           
             <div class="task">
-              <div class="task-title"><strong>Add backup/restore procedure</strong><span class="tag neutral">P2 · C2 · DevOps</span></div>
+              <div class="task-title"><strong>Add basic seed data</strong><span class="tag neutral">P2 · C1 · Backend</span></div>
               <div class="task-grid">
                 <div class="mini"><b>Priority</b>P2</div>
                 <div class="mini"><b>Dependencies</b>Backend API</div>
                 <div class="mini"><b>Sprint</b>Sprint 1</div>
-                <div class="mini"><b>Acceptance</b>Pilot data is recoverable.</div>
+                <div class="mini"><b>Acceptance</b>CRM can render pipeline immediately.</div>
               </div>
-              <ul class="subtasks"><li>Automated backup</li><li>Restore checklist</li><li>Retention policy</li></ul>
+              <ul class="subtasks"><li>Default lead stages</li><li>Initial admin user</li><li>Demo lead optional</li></ul>
             </div>
           
           <div class="task">
             <div class="task-grid">
-              <div class="mini"><b>Feature Acceptance</b>Migrations are repeatable; Backups are documented; Core queries are indexed</div>
+              <div class="mini"><b>Feature Acceptance</b>Lead can be saved with stage and activity history; Schema stays small enough for fast Sprint 1 delivery</div>
               <div class="mini"><b>Owner Role</b>Backend</div>
               <div class="mini"><b>Suggested Sprint</b>Sprint 1</div>
               <div class="mini"><b>Critical Path</b>Yes</div>
-            </div>
-          </div>
-        </article>
-      
-        <article class="feature " style="--accent:var(--data)">
-          <div class="feature-head">
-            <div>
-              <h3>Redis Sessions / Cache</h3>
-              <p>Stub foundation for sessions/cache and future queues.</p>
-            </div>
-            <div class="tags">
-              <span class="tag stub">Stub Later</span>
-              <span class="tag neutral">Backend</span>
-              <span class="tag neutral">C2</span>
-              <span class="tag neutral">Sprint 2</span>
-              
-            </div>
-          </div>
-          
-            <div class="task">
-              <div class="task-title"><strong>Define cache adapter interface</strong><span class="tag neutral">P2 · C1 · Backend</span></div>
-              <div class="task-grid">
-                <div class="mini"><b>Priority</b>P2</div>
-                <div class="mini"><b>Dependencies</b>Backend runtime</div>
-                <div class="mini"><b>Sprint</b>Sprint 2</div>
-                <div class="mini"><b>Acceptance</b>Business code depends on interface.</div>
-              </div>
-              <ul class="subtasks"><li>get/set/delete</li><li>TTL support</li><li>No-op implementation</li></ul>
-            </div>
-          
-            <div class="task">
-              <div class="task-title"><strong>Prepare Redis config</strong><span class="tag neutral">P2 · C1 · DevOps</span></div>
-              <div class="task-grid">
-                <div class="mini"><b>Priority</b>P2</div>
-                <div class="mini"><b>Dependencies</b>Backend runtime</div>
-                <div class="mini"><b>Sprint</b>Sprint 2</div>
-                <div class="mini"><b>Acceptance</b>Redis can be enabled by config.</div>
-              </div>
-              <ul class="subtasks"><li>Env vars</li><li>Docker service</li><li>Connection health check</li></ul>
-            </div>
-          
-            <div class="task">
-              <div class="task-title"><strong>Document usage rules</strong><span class="tag neutral">P2 · C1 · Backend</span></div>
-              <div class="task-grid">
-                <div class="mini"><b>Priority</b>P2</div>
-                <div class="mini"><b>Dependencies</b>Backend runtime</div>
-                <div class="mini"><b>Sprint</b>Sprint 2</div>
-                <div class="mini"><b>Acceptance</b>Team avoids premature caching.</div>
-              </div>
-              <ul class="subtasks"><li>When to cache</li><li>TTL conventions</li><li>Invalidation notes</li></ul>
-            </div>
-          
-          <div class="task">
-            <div class="task-grid">
-              <div class="mini"><b>Feature Acceptance</b>Redis can be added without refactoring business modules</div>
-              <div class="mini"><b>Owner Role</b>Backend</div>
-              <div class="mini"><b>Suggested Sprint</b>Sprint 2</div>
-              <div class="mini"><b>Critical Path</b>No</div>
             </div>
           </div>
         </article>
@@ -1645,7 +1645,7 @@
           <div class="feature-head">
             <div>
               <h3>Redis Queues</h3>
-              <p>Job queues for calls, proposals, follow-ups, sync jobs and retries.</p>
+              <p>Growth-stage queues for calls, proposals, follow-ups, sync jobs and retries.</p>
             </div>
             <div class="tags">
               <span class="tag build">Build Now</span>
@@ -1660,7 +1660,7 @@
               <div class="task-title"><strong>Implement queue abstraction</strong><span class="tag neutral">P1 · C3 · Backend</span></div>
               <div class="task-grid">
                 <div class="mini"><b>Priority</b>P1</div>
-                <div class="mini"><b>Dependencies</b>Redis, Workers, Backend events</div>
+                <div class="mini"><b>Dependencies</b>Backend runtime</div>
                 <div class="mini"><b>Sprint</b>Sprint 5</div>
                 <div class="mini"><b>Acceptance</b>Modules can enqueue jobs consistently.</div>
               </div>
@@ -1671,7 +1671,7 @@
               <div class="task-title"><strong>Add retry and DLQ policy</strong><span class="tag neutral">P1 · C3 · Backend</span></div>
               <div class="task-grid">
                 <div class="mini"><b>Priority</b>P1</div>
-                <div class="mini"><b>Dependencies</b>Redis, Workers, Backend events</div>
+                <div class="mini"><b>Dependencies</b>Backend runtime</div>
                 <div class="mini"><b>Sprint</b>Sprint 5</div>
                 <div class="mini"><b>Acceptance</b>Failed jobs are inspectable.</div>
               </div>
@@ -1682,7 +1682,7 @@
               <div class="task-title"><strong>Add queue metrics</strong><span class="tag neutral">P2 · C2 · DevOps</span></div>
               <div class="task-grid">
                 <div class="mini"><b>Priority</b>P2</div>
-                <div class="mini"><b>Dependencies</b>Redis, Workers, Backend events</div>
+                <div class="mini"><b>Dependencies</b>Backend runtime</div>
                 <div class="mini"><b>Sprint</b>Sprint 5</div>
                 <div class="mini"><b>Acceptance</b>Operations can monitor backlog.</div>
               </div>
@@ -1692,6 +1692,64 @@
           <div class="task">
             <div class="task-grid">
               <div class="mini"><b>Feature Acceptance</b>Jobs have status; Retry and DLQ work; Queue lag is measured</div>
+              <div class="mini"><b>Owner Role</b>Backend</div>
+              <div class="mini"><b>Suggested Sprint</b>Sprint 5</div>
+              <div class="mini"><b>Critical Path</b>Yes</div>
+            </div>
+          </div>
+        </article>
+      
+        <article class="feature critical" style="--accent:var(--data)">
+          <div class="feature-head">
+            <div>
+              <h3>Background Workers</h3>
+              <p>Growth-stage workers for AI, proposal, notification and analytics jobs after paid-pilot validation.</p>
+            </div>
+            <div class="tags">
+              <span class="tag build">Build Now</span>
+              <span class="tag neutral">Backend</span>
+              <span class="tag neutral">C4</span>
+              <span class="tag neutral">Sprint 5</span>
+              <span class="tag critical">Critical Path</span>
+            </div>
+          </div>
+          
+            <div class="task">
+              <div class="task-title"><strong>Create worker runtime</strong><span class="tag neutral">P1 · C3 · Backend</span></div>
+              <div class="task-grid">
+                <div class="mini"><b>Priority</b>P1</div>
+                <div class="mini"><b>Dependencies</b>Redis, Workers, Backend events</div>
+                <div class="mini"><b>Sprint</b>Sprint 5</div>
+                <div class="mini"><b>Acceptance</b>Workers process queued jobs safely.</div>
+              </div>
+              <ul class="subtasks"><li>Worker entrypoint</li><li>Job dispatch</li><li>Graceful shutdown</li></ul>
+            </div>
+          
+            <div class="task">
+              <div class="task-title"><strong>Split job handlers by domain</strong><span class="tag neutral">P1 · C3 · Backend</span></div>
+              <div class="task-grid">
+                <div class="mini"><b>Priority</b>P1</div>
+                <div class="mini"><b>Dependencies</b>Redis, Workers, Backend events</div>
+                <div class="mini"><b>Sprint</b>Sprint 5</div>
+                <div class="mini"><b>Acceptance</b>Handlers are independently testable.</div>
+              </div>
+              <ul class="subtasks"><li>AI handler</li><li>Proposal handler</li><li>Notification handler</li><li>Analytics handler</li></ul>
+            </div>
+          
+            <div class="task">
+              <div class="task-title"><strong>Add worker deployment config</strong><span class="tag neutral">P2 · C2 · DevOps</span></div>
+              <div class="task-grid">
+                <div class="mini"><b>Priority</b>P2</div>
+                <div class="mini"><b>Dependencies</b>Redis, Workers, Backend events</div>
+                <div class="mini"><b>Sprint</b>Sprint 5</div>
+                <div class="mini"><b>Acceptance</b>Workers deploy separately from API.</div>
+              </div>
+              <ul class="subtasks"><li>Docker command</li><li>Env vars</li><li>Replica count</li></ul>
+            </div>
+          
+          <div class="task">
+            <div class="task-grid">
+              <div class="mini"><b>Feature Acceptance</b>Heavy jobs no longer block API; Workers scale independently</div>
               <div class="mini"><b>Owner Role</b>Backend</div>
               <div class="mini"><b>Suggested Sprint</b>Sprint 5</div>
               <div class="mini"><b>Critical Path</b>Yes</div>
@@ -2006,54 +2064,54 @@
         <article class="feature critical" style="--accent:var(--ops)">
           <div class="feature-head">
             <div>
-              <h3>Backend API Monolith</h3>
-              <p>FastAPI or NestJS modular monolith serving landing, dashboard, bot and automation.</p>
+              <h3>Minimal Backend API</h3>
+              <p>Auth baseline, Leads CRUD and lead status update for the first working lead-to-CRM pipeline.</p>
             </div>
             <div class="tags">
               <span class="tag build">Build Now</span>
               <span class="tag neutral">Backend</span>
-              <span class="tag neutral">C4</span>
+              <span class="tag neutral">C3</span>
               <span class="tag neutral">Sprint 1</span>
               <span class="tag critical">Critical Path</span>
             </div>
           </div>
           
             <div class="task">
-              <div class="task-title"><strong>Scaffold backend modules</strong><span class="tag neutral">P1 · C3 · Backend</span></div>
-              <div class="task-grid">
-                <div class="mini"><b>Priority</b>P1</div>
-                <div class="mini"><b>Dependencies</b>PostgreSQL, Auth/RBAC lite</div>
-                <div class="mini"><b>Sprint</b>Sprint 1</div>
-                <div class="mini"><b>Acceptance</b>Modules are separated in code.</div>
-              </div>
-              <ul class="subtasks"><li>CRM module</li><li>Telegram module</li><li>Agents module</li><li>Proposals module</li><li>Booking module</li></ul>
-            </div>
-          
-            <div class="task">
-              <div class="task-title"><strong>Add auth and workspace context</strong><span class="tag neutral">P1 · C3 · Backend</span></div>
-              <div class="task-grid">
-                <div class="mini"><b>Priority</b>P1</div>
-                <div class="mini"><b>Dependencies</b>PostgreSQL, Auth/RBAC lite</div>
-                <div class="mini"><b>Sprint</b>Sprint 1</div>
-                <div class="mini"><b>Acceptance</b>API can enforce tenant boundaries.</div>
-              </div>
-              <ul class="subtasks"><li>Session/JWT handling</li><li>Workspace resolver</li><li>Role guard</li></ul>
-            </div>
-          
-            <div class="task">
-              <div class="task-title"><strong>Document API contract</strong><span class="tag neutral">P2 · C2 · Backend</span></div>
+              <div class="task-title"><strong>Add auth baseline</strong><span class="tag neutral">P2 · C2 · Backend</span></div>
               <div class="task-grid">
                 <div class="mini"><b>Priority</b>P2</div>
                 <div class="mini"><b>Dependencies</b>PostgreSQL, Auth/RBAC lite</div>
                 <div class="mini"><b>Sprint</b>Sprint 1</div>
-                <div class="mini"><b>Acceptance</b>Frontend and bot can integrate predictably.</div>
+                <div class="mini"><b>Acceptance</b>API has minimal authenticated access.</div>
               </div>
-              <ul class="subtasks"><li>OpenAPI or typed contract</li><li>Error shape</li><li>Pagination conventions</li></ul>
+              <ul class="subtasks"><li>Simple login/session or token baseline</li><li>Current user endpoint</li><li>Protect lead APIs</li></ul>
+            </div>
+          
+            <div class="task">
+              <div class="task-title"><strong>Implement Leads CRUD</strong><span class="tag neutral">P1 · C3 · Backend</span></div>
+              <div class="task-grid">
+                <div class="mini"><b>Priority</b>P1</div>
+                <div class="mini"><b>Dependencies</b>PostgreSQL, Auth/RBAC lite</div>
+                <div class="mini"><b>Sprint</b>Sprint 1</div>
+                <div class="mini"><b>Acceptance</b>Landing and CRM can persist leads.</div>
+              </div>
+              <ul class="subtasks"><li>Create lead</li><li>List leads</li><li>Read lead</li><li>Update lead</li></ul>
+            </div>
+          
+            <div class="task">
+              <div class="task-title"><strong>Implement lead status update</strong><span class="tag neutral">P2 · C2 · Backend</span></div>
+              <div class="task-grid">
+                <div class="mini"><b>Priority</b>P2</div>
+                <div class="mini"><b>Dependencies</b>PostgreSQL, Auth/RBAC lite</div>
+                <div class="mini"><b>Sprint</b>Sprint 1</div>
+                <div class="mini"><b>Acceptance</b>Kanban moves persist correctly.</div>
+              </div>
+              <ul class="subtasks"><li>Stage update endpoint</li><li>Validate stage</li><li>Write activity event</li></ul>
             </div>
           
           <div class="task">
             <div class="task-grid">
-              <div class="mini"><b>Feature Acceptance</b>Single deploy supports all MVP clients; Modules have clear boundaries; API contracts are documented</div>
+              <div class="mini"><b>Feature Acceptance</b>Landing can create leads; CRM can read leads; Manager can update lead status</div>
               <div class="mini"><b>Owner Role</b>Backend</div>
               <div class="mini"><b>Suggested Sprint</b>Sprint 1</div>
               <div class="mini"><b>Critical Path</b>Yes</div>
@@ -2061,76 +2119,76 @@
           </div>
         </article>
       
-        <article class="feature critical" style="--accent:var(--ops)">
+        <article class="feature " style="--accent:var(--ops)">
           <div class="feature-head">
             <div>
-              <h3>Minimal Observability</h3>
-              <p>Sentry/error tracking, structured logs and health checks.</p>
+              <h3>Optional Docker / Sentry / Hosting Baseline</h3>
+              <p>Stretch-only Sprint 1 hardening that must not block the first lead pipeline.</p>
             </div>
             <div class="tags">
-              <span class="tag build">Build Now</span>
+              <span class="tag stub">Stub Later</span>
               <span class="tag neutral">DevOps</span>
               <span class="tag neutral">C2</span>
               <span class="tag neutral">Sprint 1</span>
-              <span class="tag critical">Critical Path</span>
+              
             </div>
           </div>
           
             <div class="task">
-              <div class="task-title"><strong>Add error tracking</strong><span class="tag neutral">P2 · C2 · DevOps</span></div>
+              <div class="task-title"><strong>Add Docker baseline</strong><span class="tag neutral">P2 · C2 · DevOps</span></div>
               <div class="task-grid">
                 <div class="mini"><b>Priority</b>P2</div>
                 <div class="mini"><b>Dependencies</b>Backend, Bot, n8n</div>
                 <div class="mini"><b>Sprint</b>Sprint 1</div>
-                <div class="mini"><b>Acceptance</b>Production errors are captured safely.</div>
+                <div class="mini"><b>Acceptance</b>Developers can run baseline locally if time allows.</div>
               </div>
-              <ul class="subtasks"><li>Configure Sentry</li><li>Attach release/env</li><li>Mask sensitive data</li></ul>
+              <ul class="subtasks"><li>Backend Dockerfile</li><li>Local compose optional</li><li>Env example</li></ul>
             </div>
           
             <div class="task">
-              <div class="task-title"><strong>Add structured logs</strong><span class="tag neutral">P2 · C2 · Backend</span></div>
+              <div class="task-title"><strong>Add Sentry baseline</strong><span class="tag neutral">P2 · C1 · DevOps</span></div>
               <div class="task-grid">
                 <div class="mini"><b>Priority</b>P2</div>
                 <div class="mini"><b>Dependencies</b>Backend, Bot, n8n</div>
                 <div class="mini"><b>Sprint</b>Sprint 1</div>
-                <div class="mini"><b>Acceptance</b>Logs support debugging lead journeys.</div>
+                <div class="mini"><b>Acceptance</b>Errors can be captured without full monitoring stack.</div>
               </div>
-              <ul class="subtasks"><li>Request id</li><li>Lead id</li><li>Workspace id</li><li>Agent/job id</li></ul>
+              <ul class="subtasks"><li>Configure project</li><li>Capture backend errors</li><li>Mask sensitive data</li></ul>
             </div>
           
             <div class="task">
-              <div class="task-title"><strong>Add health checks</strong><span class="tag neutral">P2 · C1 · Backend</span></div>
+              <div class="task-title"><strong>Add basic hosting hardening</strong><span class="tag neutral">P2 · C2 · DevOps</span></div>
               <div class="task-grid">
                 <div class="mini"><b>Priority</b>P2</div>
                 <div class="mini"><b>Dependencies</b>Backend, Bot, n8n</div>
                 <div class="mini"><b>Sprint</b>Sprint 1</div>
-                <div class="mini"><b>Acceptance</b>Deployment can be monitored.</div>
+                <div class="mini"><b>Acceptance</b>Deployment path is clearer for pilot.</div>
               </div>
-              <ul class="subtasks"><li>API health</li><li>DB health</li><li>Bot/n8n status notes</li></ul>
+              <ul class="subtasks"><li>Env config</li><li>TLS/reverse proxy notes</li><li>Health endpoint optional</li></ul>
             </div>
           
           <div class="task">
             <div class="task-grid">
-              <div class="mini"><b>Feature Acceptance</b>Failures in forms, bot, API and workflows are visible</div>
+              <div class="mini"><b>Feature Acceptance</b>Optional infra does not block Sprint 1 success; Baseline can be completed if core pipeline is done early</div>
               <div class="mini"><b>Owner Role</b>DevOps</div>
               <div class="mini"><b>Suggested Sprint</b>Sprint 1</div>
-              <div class="mini"><b>Critical Path</b>Yes</div>
+              <div class="mini"><b>Critical Path</b>No</div>
             </div>
           </div>
         </article>
       
-        <article class="feature critical" style="--accent:var(--ops)">
+        <article class="feature " style="--accent:var(--ops)">
           <div class="feature-head">
             <div>
               <h3>Hosting / Containers</h3>
-              <p>Vercel frontend, Hetzner/AWS/VPS backend and Dockerized services.</p>
+              <p>Vercel frontend, Hetzner/AWS/VPS backend and Dockerized services after MVP flow is proven.</p>
             </div>
             <div class="tags">
               <span class="tag build">Build Now</span>
               <span class="tag neutral">DevOps</span>
               <span class="tag neutral">C3</span>
-              <span class="tag neutral">Sprint 1</span>
-              <span class="tag critical">Critical Path</span>
+              <span class="tag neutral">Sprint 5</span>
+              
             </div>
           </div>
           
@@ -2139,7 +2197,7 @@
               <div class="task-grid">
                 <div class="mini"><b>Priority</b>P1</div>
                 <div class="mini"><b>Dependencies</b>CI/CD, Secrets, Docker</div>
-                <div class="mini"><b>Sprint</b>Sprint 1</div>
+                <div class="mini"><b>Sprint</b>Sprint 5</div>
                 <div class="mini"><b>Acceptance</b>Developers can run stack locally.</div>
               </div>
               <ul class="subtasks"><li>Backend Dockerfile</li><li>Compose for local services</li><li>Env examples</li></ul>
@@ -2150,7 +2208,7 @@
               <div class="task-grid">
                 <div class="mini"><b>Priority</b>P2</div>
                 <div class="mini"><b>Dependencies</b>CI/CD, Secrets, Docker</div>
-                <div class="mini"><b>Sprint</b>Sprint 1</div>
+                <div class="mini"><b>Sprint</b>Sprint 5</div>
                 <div class="mini"><b>Acceptance</b>Frontend deploys from repository.</div>
               </div>
               <ul class="subtasks"><li>Vercel project</li><li>Env vars</li><li>Preview deployments</li></ul>
@@ -2161,7 +2219,7 @@
               <div class="task-grid">
                 <div class="mini"><b>Priority</b>P1</div>
                 <div class="mini"><b>Dependencies</b>CI/CD, Secrets, Docker</div>
-                <div class="mini"><b>Sprint</b>Sprint 1</div>
+                <div class="mini"><b>Sprint</b>Sprint 5</div>
                 <div class="mini"><b>Acceptance</b>Backend is reachable in staging/prod.</div>
               </div>
               <ul class="subtasks"><li>VPS/AWS/Hetzner runtime</li><li>Reverse proxy</li><li>TLS</li></ul>
@@ -2171,8 +2229,8 @@
             <div class="task-grid">
               <div class="mini"><b>Feature Acceptance</b>Services run locally, staging and production from same container contract</div>
               <div class="mini"><b>Owner Role</b>DevOps</div>
-              <div class="mini"><b>Suggested Sprint</b>Sprint 1</div>
-              <div class="mini"><b>Critical Path</b>Yes</div>
+              <div class="mini"><b>Suggested Sprint</b>Sprint 5</div>
+              <div class="mini"><b>Critical Path</b>No</div>
             </div>
           </div>
         </article>
@@ -2709,8 +2767,13 @@
           <div class="panel-head"><div><h2>Kanban Status</h2><span>Current execution flow</span></div></div>
           <div class="kanban" id="kanban">
           <section class="kanban-column">
-            <div class="kanban-head"><span>Backlog</span><span>25</span></div>
+            <div class="kanban-head"><span>Backlog</span><span>27</span></div>
             <div class="kanban-list">
+              
+                <div class="kanban-card critical">
+                  <strong>Telegram Intake &amp; Qualification</strong>
+                  <span>Sprint 3 · Backend · C3 · Critical</span>
+                </div>
               
                 <div class="kanban-card ">
                   <strong>Email Provider</strong>
@@ -2718,8 +2781,8 @@
                 </div>
               
                 <div class="kanban-card critical">
-                  <strong>AI Secretary / Agent Layer</strong>
-                  <span>Sprint 3 · AI · C3 · Critical</span>
+                  <strong>AI Qualification &amp; Follow-Up Agents</strong>
+                  <span>Sprint 4 · AI · C3 · Critical</span>
                 </div>
               
                 <div class="kanban-card critical">
@@ -2753,17 +2816,17 @@
                 </div>
               
                 <div class="kanban-card critical">
-                  <strong>Calendar / Booking System</strong>
-                  <span>Sprint 4 · Backend · C3 · Critical</span>
-                </div>
-              
-                <div class="kanban-card critical">
                   <strong>Voice Calling Agent</strong>
                   <span>Sprint 8 · AI · C5 · Critical</span>
                 </div>
               
                 <div class="kanban-card critical">
                   <strong>Redis Queues</strong>
+                  <span>Sprint 5 · Backend · C4 · Critical</span>
+                </div>
+              
+                <div class="kanban-card critical">
+                  <strong>Background Workers</strong>
                   <span>Sprint 5 · Backend · C4 · Critical</span>
                 </div>
               
@@ -2790,6 +2853,11 @@
                 <div class="kanban-card ">
                   <strong>PostgreSQL Read Replicas</strong>
                   <span>Sprint 17 · DevOps · C3</span>
+                </div>
+              
+                <div class="kanban-card ">
+                  <strong>Hosting / Containers</strong>
+                  <span>Sprint 5 · DevOps · C3</span>
                 </div>
               
                 <div class="kanban-card critical">
@@ -2841,17 +2909,17 @@
           </section>
         
           <section class="kanban-column">
-            <div class="kanban-head"><span>Ready</span><span>4</span></div>
+            <div class="kanban-head"><span>Ready</span><span>5</span></div>
             <div class="kanban-list">
+              
+                <div class="kanban-card critical">
+                  <strong>CRM Operational Layer</strong>
+                  <span>Sprint 2 · Frontend · C3 · Critical</span>
+                </div>
               
                 <div class="kanban-card ">
                   <strong>Admin / Superadmin Panel</strong>
                   <span>Sprint 4 · Backend · C2</span>
-                </div>
-              
-                <div class="kanban-card critical">
-                  <strong>Telegram Bot Interface</strong>
-                  <span>Sprint 2 · Backend · C2 · Critical</span>
                 </div>
               
                 <div class="kanban-card ">
@@ -2859,16 +2927,21 @@
                   <span>Sprint 18 · Backend · C2</span>
                 </div>
               
+                <div class="kanban-card critical">
+                  <strong>Appointment Model &amp; Manual Booking</strong>
+                  <span>Sprint 2 · Backend · C3 · Critical</span>
+                </div>
+              
                 <div class="kanban-card ">
-                  <strong>Redis Sessions / Cache</strong>
-                  <span>Sprint 2 · Backend · C2</span>
+                  <strong>Optional Docker / Sentry / Hosting Baseline</strong>
+                  <span>Sprint 1 · DevOps · C2</span>
                 </div>
               
             </div>
           </section>
         
           <section class="kanban-column">
-            <div class="kanban-head"><span>In Progress</span><span>6</span></div>
+            <div class="kanban-head"><span>In Progress</span><span>4</span></div>
             <div class="kanban-list">
               
                 <div class="kanban-card critical">
@@ -2877,28 +2950,18 @@
                 </div>
               
                 <div class="kanban-card critical">
-                  <strong>CRM Dashboard</strong>
-                  <span>Sprint 1–2 · Frontend · C3 · Critical</span>
+                  <strong>CRM Kanban First Slice</strong>
+                  <span>Sprint 1 · Frontend · C3 · Critical</span>
                 </div>
               
                 <div class="kanban-card critical">
-                  <strong>PostgreSQL Shared DB</strong>
+                  <strong>Simplified PostgreSQL Schema</strong>
+                  <span>Sprint 1 · Backend · C2 · Critical</span>
+                </div>
+              
+                <div class="kanban-card critical">
+                  <strong>Minimal Backend API</strong>
                   <span>Sprint 1 · Backend · C3 · Critical</span>
-                </div>
-              
-                <div class="kanban-card critical">
-                  <strong>Backend API Monolith</strong>
-                  <span>Sprint 1 · Backend · C4 · Critical</span>
-                </div>
-              
-                <div class="kanban-card critical">
-                  <strong>Minimal Observability</strong>
-                  <span>Sprint 1 · DevOps · C2 · Critical</span>
-                </div>
-              
-                <div class="kanban-card critical">
-                  <strong>Hosting / Containers</strong>
-                  <span>Sprint 1 · DevOps · C3 · Critical</span>
                 </div>
               
             </div>
@@ -2932,35 +2995,23 @@
                 </div>
               
                 <div class="sprint-card">
-                  <strong>PostgreSQL Shared DB</strong>
+                  <strong>CRM Kanban First Slice</strong>
+                  <span>Frontend · Build Now · C3 · Critical</span>
+                </div>
+              
+                <div class="sprint-card">
+                  <strong>Simplified PostgreSQL Schema</strong>
+                  <span>Backend · Build Now · C2 · Critical</span>
+                </div>
+              
+                <div class="sprint-card">
+                  <strong>Minimal Backend API</strong>
                   <span>Backend · Build Now · C3 · Critical</span>
                 </div>
               
                 <div class="sprint-card">
-                  <strong>Backend API Monolith</strong>
-                  <span>Backend · Build Now · C4 · Critical</span>
-                </div>
-              
-                <div class="sprint-card">
-                  <strong>Minimal Observability</strong>
-                  <span>DevOps · Build Now · C2 · Critical</span>
-                </div>
-              
-                <div class="sprint-card">
-                  <strong>Hosting / Containers</strong>
-                  <span>DevOps · Build Now · C3 · Critical</span>
-                </div>
-              
-            </div>
-          </section>
-        
-          <section class="sprint-group">
-            <div class="sprint-head">Sprint 1–2 · 1 features</div>
-            <div class="kanban-list">
-              
-                <div class="sprint-card">
-                  <strong>CRM Dashboard</strong>
-                  <span>Frontend · Build Now · C3 · Critical</span>
+                  <strong>Optional Docker / Sentry / Hosting Baseline</strong>
+                  <span>DevOps · Stub Later · C2</span>
                 </div>
               
             </div>
@@ -2971,13 +3022,13 @@
             <div class="kanban-list">
               
                 <div class="sprint-card">
-                  <strong>Telegram Bot Interface</strong>
-                  <span>Backend · Build Now · C2 · Critical</span>
+                  <strong>CRM Operational Layer</strong>
+                  <span>Frontend · Build Now · C3 · Critical</span>
                 </div>
               
                 <div class="sprint-card">
-                  <strong>Redis Sessions / Cache</strong>
-                  <span>Backend · Stub Later · C2</span>
+                  <strong>Appointment Model &amp; Manual Booking</strong>
+                  <span>Backend · Build Now · C3 · Critical</span>
                 </div>
               
             </div>
@@ -2988,8 +3039,8 @@
             <div class="kanban-list">
               
                 <div class="sprint-card">
-                  <strong>AI Secretary / Agent Layer</strong>
-                  <span>AI · Build Now · C3 · Critical</span>
+                  <strong>Telegram Intake &amp; Qualification</strong>
+                  <span>Backend · Build Now · C3 · Critical</span>
                 </div>
               
                 <div class="sprint-card">
@@ -3010,12 +3061,12 @@
                 </div>
               
                 <div class="sprint-card">
-                  <strong>Proposal Automation</strong>
-                  <span>Backend · Build Now · C3 · Critical</span>
+                  <strong>AI Qualification &amp; Follow-Up Agents</strong>
+                  <span>AI · Build Now · C3 · Critical</span>
                 </div>
               
                 <div class="sprint-card">
-                  <strong>Calendar / Booking System</strong>
+                  <strong>Proposal Automation</strong>
                   <span>Backend · Build Now · C3 · Critical</span>
                 </div>
               
@@ -3023,12 +3074,22 @@
           </section>
         
           <section class="sprint-group">
-            <div class="sprint-head">Sprint 5 · 3 features</div>
+            <div class="sprint-head">Sprint 5 · 5 features</div>
             <div class="kanban-list">
               
                 <div class="sprint-card">
                   <strong>Redis Queues</strong>
                   <span>Backend · Build Now · C4 · Critical</span>
+                </div>
+              
+                <div class="sprint-card">
+                  <strong>Background Workers</strong>
+                  <span>Backend · Build Now · C4 · Critical</span>
+                </div>
+              
+                <div class="sprint-card">
+                  <strong>Hosting / Containers</strong>
+                  <span>DevOps · Build Now · C3</span>
                 </div>
               
                 <div class="sprint-card">
@@ -3253,13 +3314,21 @@
               task("Connect lead capture forms", 2, "Frontend", ["Validate required contact fields", "Submit to backend lead endpoint", "Show success/failure states"], "Submitted lead appears in CRM."),
               task("Add tracking metadata", 2, "Backend", ["Persist source/utm fields", "Store consent timestamp", "Return lead id"], "CRM lead contains attribution fields.")
             ]),
-          feature("CRM Dashboard", "Core operator workspace for leads, Kanban, assignment, notes and activity timeline.", "mvp", "build", "Frontend", "Sprint 1–2", 3, true,
+          feature("CRM Kanban First Slice", "First CRM slice for lead cards, pipeline stages and moving leads between stages.", "mvp", "build", "Frontend", "Sprint 1", 3, true,
             ["PostgreSQL schema", "Backend API", "Auth/RBAC lite"],
-            ["Manager can move lead through pipeline", "Lead popup shows notes/history", "Assignment updates timeline"],
+            ["Lead appears in CRM", "Manager can move lead between stages", "Pipeline stages are visible"],
             [
               task("Implement Kanban pipeline UI", 3, "Frontend", ["Create stage columns", "Render lead cards", "Support stage move action"], "Lead can move across stages."),
+              task("Create lead card data contract", 2, "Backend", ["Return lead summary fields", "Return current stage", "Return created timestamp"], "Kanban can render saved leads."),
+              task("Create stage update API", 3, "Backend", ["Stage transition endpoint", "Validate allowed stage", "Write activity event"], "Frontend stage moves persist correctly.")
+            ]),
+          feature("CRM Operational Layer", "Lead detail popup, manager assignment, notes/activity timeline, filters/search and UX improvements.", "mvp", "build", "Frontend", "Sprint 2", 3, true,
+            ["CRM Kanban First Slice", "Backend API"],
+            ["Manager can fully process and manage leads in CRM", "Lead detail shows ownership, notes and activity", "Managers can find leads with filters/search"],
+            [
               task("Build lead detail popup", 3, "Frontend", ["Show contact/service fields", "Render notes", "Render activity timeline"], "Operator sees full lead context in one popup."),
-              task("Create CRM lead APIs", 3, "Backend", ["CRUD leads", "Stage transition endpoint", "Assignment endpoint", "Timeline write model"], "Frontend actions persist and audit correctly.")
+              task("Add manager assignment", 2, "Backend", ["Assignment endpoint", "Responsible manager field", "Assignment activity event"], "Lead has an accountable manager."),
+              task("Add CRM filters and search", 2, "Frontend", ["Filter by stage", "Search by contact/company", "Improve empty/loading states"], "Manager can find and prioritize leads.")
             ]),
           feature("Admin / Superadmin Panel", "Minimal workspace, users, roles and tariff administration.", "mvp", "stub", "Backend", "Sprint 4", 2, false,
             ["Auth/RBAC lite", "PostgreSQL workspace schema"],
@@ -3276,9 +3345,9 @@
         description: "Client communication channels for onboarding, qualification, reminders, proposals and future follow-up expansion.",
         phase: "mvp", status: "build", layer: "integration", accent: "var(--comm)",
         features: [
-          feature("Telegram Bot Interface", "Bot handles onboarding, qualification, FAQ, notifications and status updates.", "mvp", "build", "Backend", "Sprint 2", 2, true,
+          feature("Telegram Intake & Qualification", "Telegram webhook, bot infrastructure, qualification flow and CRM update from Telegram.", "mvp", "build", "Backend", "Sprint 3", 3, true,
             ["Telegram API", "CRM lead schema", "Backend API"],
-            ["Bot qualifies lead", "Conversation summary appears in CRM", "Manager receives notification"],
+            ["Telegram intake creates or updates qualified CRM leads automatically", "Conversation summary appears in CRM", "Manager can continue processing in CRM"],
             [
               task("Implement Telegram webhook", 2, "Backend", ["Verify webhook secret", "Parse updates", "Route commands"], "Webhook reliably receives Telegram updates."),
               task("Build qualification flow", 3, "Backend", ["Ask service questions", "Collect contact/location", "Create/update CRM lead"], "Qualified lead is created from Telegram."),
@@ -3307,9 +3376,9 @@
         description: "AI secretary and automation engine for qualification, communication, follow-up, re-engagement and safe human escalation.",
         phase: "mvp", status: "build", layer: "ai", accent: "var(--ai)",
         features: [
-          feature("AI Secretary / Agent Layer", "Basic agents qualify leads, communicate, follow up and re-engage.", "mvp", "build", "AI", "Sprint 3", 3, true,
-            ["Backend API", "n8n workflows", "CRM entities"],
-            ["Agent qualifies lead", "Agent writes CRM summary", "Agent schedules follow-up", "Uncertain cases escalate"],
+          feature("AI Qualification & Follow-Up Agents", "AI qualification and follow-up agents for paid pilot readiness.", "mvp", "build", "AI", "Sprint 4", 3, true,
+            ["Telegram qualification flow", "n8n workflows", "CRM operational layer"],
+            ["AI writes structured qualification summary to CRM", "Follow-up action is created with rationale", "Team can qualify and follow up leads for paid pilots"],
             [
               task("Create agent service interface", 3, "AI", ["Define agent input/output schema", "Add CRM tool action contract", "Return confidence and summary"], "Agents can be called consistently from backend/n8n."),
               task("Implement qualification agent", 3, "AI", ["Draft sanitary qualification prompt", "Extract service/location/urgency", "Generate CRM summary"], "Lead gets structured qualification fields."),
@@ -3370,9 +3439,9 @@
               task("Build proposal UI action", 2, "Frontend", ["Add generate button", "Show preview", "Show send status"], "Manager can generate and inspect proposal."),
               task("Implement tracking link", 2, "Backend", ["Create open/click endpoint", "Persist event", "Write CRM timeline"], "Tracking updates lead history.")
             ]),
-          feature("Calendar / Booking System", "Schedule sanitary expert visits and sync appointments to CRM.", "mvp", "build", "Backend", "Sprint 4", 3, true,
+          feature("Appointment Model & Manual Booking", "Basic appointment model and manual scheduling UI for daily CRM operations.", "mvp", "build", "Backend", "Sprint 2", 3, true,
             ["PostgreSQL", "CRM stages", "Telegram reminders"],
-            ["No double booking", "Booking updates CRM stage", "Reminder is scheduled"],
+            ["Manager can manually schedule sanitary expert visit", "Appointment is linked to lead", "Booking is visible in CRM"],
             [
               task("Create appointment model", 2, "Backend", ["Appointment table", "Expert/manager relation", "Status enum"], "Appointments persist with owner and status."),
               task("Build booking UI", 3, "Frontend", ["Slot selector", "Lead booking action", "Calendar list"], "Manager can book visit from lead detail."),
@@ -3393,29 +3462,29 @@
         description: "Transactional data, queues, files, analytics and future memory/vector stores.",
         phase: "mvp", status: "build", layer: "data", accent: "var(--data)",
         features: [
-          feature("PostgreSQL Shared DB", "Core storage for CRM, workspaces, users, proposals and appointments.", "mvp", "build", "Backend", "Sprint 1", 3, true,
+          feature("Simplified PostgreSQL Schema", "Only users, leads, lead_stages and notes/activity for the first working lead pipeline.", "mvp", "build", "Backend", "Sprint 1", 2, true,
             ["Backend API"],
-            ["Migrations are repeatable", "Backups are documented", "Core queries are indexed"],
+            ["Lead can be saved with stage and activity history", "Schema stays small enough for fast Sprint 1 delivery"],
             [
-              task("Design core relational schema", 3, "Backend", ["Workspaces/users", "Leads/pipeline", "Notes/timeline", "Appointments/proposals"], "Schema supports all MVP flows."),
+              task("Design simplified relational schema", 2, "Backend", ["users", "leads", "lead_stages", "notes/activity"], "Schema supports first lead pipeline."),
               task("Create migration pipeline", 2, "Backend", ["Migration command", "Seed data", "Rollback guidance"], "New environment can be created reliably."),
-              task("Add backup/restore procedure", 2, "DevOps", ["Automated backup", "Restore checklist", "Retention policy"], "Pilot data is recoverable.")
+              task("Add basic seed data", 1, "Backend", ["Default lead stages", "Initial admin user", "Demo lead optional"], "CRM can render pipeline immediately.")
             ]),
-          feature("Redis Sessions / Cache", "Stub foundation for sessions/cache and future queues.", "mvp", "stub", "Backend", "Sprint 2", 2, false,
+          feature("Redis Queues", "Growth-stage queues for calls, proposals, follow-ups, sync jobs and retries.", "growth", "build", "Backend", "Sprint 5", 4, true,
             ["Backend runtime"],
-            ["Redis can be added without refactoring business modules"],
-            [
-              task("Define cache adapter interface", 1, "Backend", ["get/set/delete", "TTL support", "No-op implementation"], "Business code depends on interface."),
-              task("Prepare Redis config", 1, "DevOps", ["Env vars", "Docker service", "Connection health check"], "Redis can be enabled by config."),
-              task("Document usage rules", 1, "Backend", ["When to cache", "TTL conventions", "Invalidation notes"], "Team avoids premature caching.")
-            ]),
-          feature("Redis Queues", "Job queues for calls, proposals, follow-ups, sync jobs and retries.", "growth", "build", "Backend", "Sprint 5", 4, true,
-            ["Redis", "Workers", "Backend events"],
             ["Jobs have status", "Retry and DLQ work", "Queue lag is measured"],
             [
               task("Implement queue abstraction", 3, "Backend", ["Enqueue API", "Job payload schema", "Status model"], "Modules can enqueue jobs consistently."),
               task("Add retry and DLQ policy", 3, "Backend", ["Retry count", "Backoff", "Dead-letter queue"], "Failed jobs are inspectable."),
               task("Add queue metrics", 2, "DevOps", ["Queue depth", "Lag", "Failure count"], "Operations can monitor backlog.")
+            ]),
+          feature("Background Workers", "Growth-stage workers for AI, proposal, notification and analytics jobs after paid-pilot validation.", "growth", "build", "Backend", "Sprint 5", 4, true,
+            ["Redis", "Workers", "Backend events"],
+            ["Heavy jobs no longer block API", "Workers scale independently"],
+            [
+              task("Create worker runtime", 3, "Backend", ["Worker entrypoint", "Job dispatch", "Graceful shutdown"], "Workers process queued jobs safely."),
+              task("Split job handlers by domain", 3, "Backend", ["AI handler", "Proposal handler", "Notification handler", "Analytics handler"], "Handlers are independently testable."),
+              task("Add worker deployment config", 2, "DevOps", ["Docker command", "Env vars", "Replica count"], "Workers deploy separately from API.")
             ]),
           feature("S3-compatible Storage", "Files for proposals, attachments, call recordings and exports.", "growth", "build", "Backend", "Sprint 7", 3, false,
             ["Proposal module", "Voice recordings", "Analytics exports"],
@@ -3464,23 +3533,23 @@
         description: "Backend runtime, hosting, queues, gateway, monitoring, scaling, tracing and resilience.",
         phase: "mvp", status: "build", layer: "ops", accent: "var(--ops)",
         features: [
-          feature("Backend API Monolith", "FastAPI or NestJS modular monolith serving landing, dashboard, bot and automation.", "mvp", "build", "Backend", "Sprint 1", 4, true,
+          feature("Minimal Backend API", "Auth baseline, Leads CRUD and lead status update for the first working lead-to-CRM pipeline.", "mvp", "build", "Backend", "Sprint 1", 3, true,
             ["PostgreSQL", "Auth/RBAC lite"],
-            ["Single deploy supports all MVP clients", "Modules have clear boundaries", "API contracts are documented"],
+            ["Landing can create leads", "CRM can read leads", "Manager can update lead status"],
             [
-              task("Scaffold backend modules", 3, "Backend", ["CRM module", "Telegram module", "Agents module", "Proposals module", "Booking module"], "Modules are separated in code."),
-              task("Add auth and workspace context", 3, "Backend", ["Session/JWT handling", "Workspace resolver", "Role guard"], "API can enforce tenant boundaries."),
-              task("Document API contract", 2, "Backend", ["OpenAPI or typed contract", "Error shape", "Pagination conventions"], "Frontend and bot can integrate predictably.")
+              task("Add auth baseline", 2, "Backend", ["Simple login/session or token baseline", "Current user endpoint", "Protect lead APIs"], "API has minimal authenticated access."),
+              task("Implement Leads CRUD", 3, "Backend", ["Create lead", "List leads", "Read lead", "Update lead"], "Landing and CRM can persist leads."),
+              task("Implement lead status update", 2, "Backend", ["Stage update endpoint", "Validate stage", "Write activity event"], "Kanban moves persist correctly.")
             ]),
-          feature("Minimal Observability", "Sentry/error tracking, structured logs and health checks.", "mvp", "build", "DevOps", "Sprint 1", 2, true,
+          feature("Optional Docker / Sentry / Hosting Baseline", "Stretch-only Sprint 1 hardening that must not block the first lead pipeline.", "mvp", "stub", "DevOps", "Sprint 1", 2, false,
             ["Backend", "Bot", "n8n"],
-            ["Failures in forms, bot, API and workflows are visible"],
+            ["Optional infra does not block Sprint 1 success", "Baseline can be completed if core pipeline is done early"],
             [
-              task("Add error tracking", 2, "DevOps", ["Configure Sentry", "Attach release/env", "Mask sensitive data"], "Production errors are captured safely."),
-              task("Add structured logs", 2, "Backend", ["Request id", "Lead id", "Workspace id", "Agent/job id"], "Logs support debugging lead journeys."),
-              task("Add health checks", 1, "Backend", ["API health", "DB health", "Bot/n8n status notes"], "Deployment can be monitored.")
+              task("Add Docker baseline", 2, "DevOps", ["Backend Dockerfile", "Local compose optional", "Env example"], "Developers can run baseline locally if time allows."),
+              task("Add Sentry baseline", 1, "DevOps", ["Configure project", "Capture backend errors", "Mask sensitive data"], "Errors can be captured without full monitoring stack."),
+              task("Add basic hosting hardening", 2, "DevOps", ["Env config", "TLS/reverse proxy notes", "Health endpoint optional"], "Deployment path is clearer for pilot.")
             ]),
-          feature("Hosting / Containers", "Vercel frontend, Hetzner/AWS/VPS backend and Dockerized services.", "mvp", "build", "DevOps", "Sprint 1", 3, true,
+          feature("Hosting / Containers", "Vercel frontend, Hetzner/AWS/VPS backend and Dockerized services after MVP flow is proven.", "growth", "build", "DevOps", "Sprint 5", 3, false,
             ["CI/CD", "Secrets", "Docker"],
             ["Services run locally, staging and production from same container contract"],
             [

@@ -75,18 +75,18 @@
       <article class="panel">
         <div class="panel-head"><h2>Current Sprint Goal</h2><span id="goalSprint">Sprint 1</span></div>
         <div class="goal">
-          <h1 id="goalTitle">Establish the product foundation</h1>
-          <p id="goalText">Build the core PostgreSQL model, modular backend, Docker/hosting path, minimal observability, landing lead capture and first CRM dashboard slice.</p>
-          <div class="goal-meta" id="goalMeta"><span class="tag info">MVP</span><span class="tag info">Critical Path</span><span class="tag info">Foundation</span></div>
+          <h1 id="goalTitle">First working lead pipeline</h1>
+          <p id="goalText">Deliver the fastest lead-to-CRM loop: user submits lead on landing, lead is saved in database, lead appears in CRM, and manager receives notification.</p>
+          <div class="goal-meta" id="goalMeta"><span class="tag info">MVP</span><span class="tag info">Critical Path</span><span class="tag info">Paid Pilot Path</span></div>
         </div>
       </article>
       <article class="panel">
-        <div class="panel-head"><h2>Delivery Health</h2><span id="healthText">At Risk if schema/API slips</span></div>
+        <div class="panel-head"><h2>Delivery Health</h2><span id="healthText">Healthy if infra stretch stays optional</span></div>
         <div class="metrics" id="metrics">
         <article class="metric"><strong>6</strong><span>Committed tasks in selected sprint.</span><div class="bar"><div class="fill" style="width:100%"></div></div></article>
-        <article class="metric"><strong>17</strong><span>Total complexity points committed.</span><div class="bar"><div class="fill" style="width:68%"></div></div></article>
+        <article class="metric"><strong>14</strong><span>Total complexity points committed.</span><div class="bar"><div class="fill" style="width:56%"></div></div></article>
         <article class="metric"><strong>2</strong><span>Tasks currently in progress or review.</span><div class="bar"><div class="fill" style="width:33%"></div></div></article>
-        <article class="metric"><strong>6</strong><span>Critical path tasks in scope.</span><div class="bar"><div class="fill" style="width:100%"></div></div></article>
+        <article class="metric"><strong>5</strong><span>Critical path tasks in scope.</span><div class="bar"><div class="fill" style="width:83%"></div></div></article>
       </div>
       </article>
     </section>
@@ -96,12 +96,12 @@
         <div class="panel-head"><div><h2>Sprint Planning Board</h2><span>Committed tasks grouped by delivery status.</span></div><span id="taskCount">6 tasks · 0% done</span></div>
         <div class="board" id="board">
           <section class="column">
-            <div class="col-head"><span>Backlog</span><span>1</span></div>
+            <div class="col-head"><span>Backlog</span><span>3</span></div>
             <div class="cards">
               
                 <article class="task critical">
-                  <strong>S1-06 · CRM Kanban first slice</strong>
-                  <p>Render stages, lead cards and stage transition action.</p>
+                  <strong>S1-04 · CRM Kanban first slice</strong>
+                  <p>Render lead cards, pipeline stages and move between stages.</p>
                   <div class="mini-tags">
                     <span class="tag">Frontend</span>
                     <span class="tag info">C3</span>
@@ -109,36 +109,36 @@
                   </div>
                 </article>
               
-            </div>
-          </section>
-        
-          <section class="column">
-            <div class="col-head"><span>Ready</span><span>3</span></div>
-            <div class="cards">
-              
                 <article class="task critical">
-                  <strong>S1-03 · Docker, hosting and health checks</strong>
-                  <p>Create Docker runtime, Vercel frontend path, backend hosting and health endpoints.</p>
+                  <strong>S1-05 · New lead notification</strong>
+                  <p>Send Telegram/email alert to manager when lead is created.</p>
                   <div class="mini-tags">
-                    <span class="tag">DevOps</span>
-                    <span class="tag info">C3</span>
-                    <span class="tag risk">Critical</span>
-                  </div>
-                </article>
-              
-                <article class="task critical">
-                  <strong>S1-04 · Minimal observability</strong>
-                  <p>Configure Sentry, structured logs and core health checks.</p>
-                  <div class="mini-tags">
-                    <span class="tag">DevOps</span>
+                    <span class="tag">Backend</span>
                     <span class="tag info">C2</span>
                     <span class="tag risk">Critical</span>
                   </div>
                 </article>
               
+                <article class="task ">
+                  <strong>S1-06 · Optional Docker/Sentry baseline</strong>
+                  <p>Stretch only: add Docker baseline or Sentry if core pipeline is done.</p>
+                  <div class="mini-tags">
+                    <span class="tag">DevOps</span>
+                    <span class="tag info">C2</span>
+                    
+                  </div>
+                </article>
+              
+            </div>
+          </section>
+        
+          <section class="column">
+            <div class="col-head"><span>Ready</span><span>1</span></div>
+            <div class="cards">
+              
                 <article class="task critical">
-                  <strong>S1-05 · Landing lead capture</strong>
-                  <p>Build landing, CTA sections, pricing, forms and backend lead submission.</p>
+                  <strong>S1-03 · Landing lead capture</strong>
+                  <p>Build landing page, CTA/forms and validation wired to backend.</p>
                   <div class="mini-tags">
                     <span class="tag">Frontend</span>
                     <span class="tag info">C2</span>
@@ -154,21 +154,21 @@
             <div class="cards">
               
                 <article class="task critical">
-                  <strong>S1-01 · Core PostgreSQL schema</strong>
-                  <p>Design workspaces, users, leads, pipeline, notes, appointments and proposals.</p>
+                  <strong>S1-01 · Simplified PostgreSQL schema</strong>
+                  <p>Create users, leads, lead_stages and notes/activity only.</p>
                   <div class="mini-tags">
                     <span class="tag">Backend</span>
-                    <span class="tag info">C3</span>
+                    <span class="tag info">C2</span>
                     <span class="tag risk">Critical</span>
                   </div>
                 </article>
               
                 <article class="task critical">
-                  <strong>S1-02 · Backend API modular monolith</strong>
-                  <p>Scaffold FastAPI/NestJS modules for CRM, Telegram, agents, proposals and booking.</p>
+                  <strong>S1-02 · Minimal backend API</strong>
+                  <p>Add auth baseline, Leads CRUD and lead status update.</p>
                   <div class="mini-tags">
                     <span class="tag">Backend</span>
-                    <span class="tag info">C4</span>
+                    <span class="tag info">C3</span>
                     <span class="tag risk">Critical</span>
                   </div>
                 </article>
@@ -192,19 +192,19 @@
       
         <div class="barcol"><div style="height:6px"></div><span>D2</span></div>
       
-        <div class="barcol"><div style="height:9px"></div><span>D3</span></div>
+        <div class="barcol"><div style="height:6px"></div><span>D3</span></div>
       
-        <div class="barcol"><div style="height:9px"></div><span>D4</span></div>
+        <div class="barcol"><div style="height:11px"></div><span>D4</span></div>
       
-        <div class="barcol"><div style="height:9px"></div><span>D5</span></div>
+        <div class="barcol"><div style="height:11px"></div><span>D5</span></div>
       
-        <div class="barcol"><div style="height:18px"></div><span>D6</span></div>
+        <div class="barcol"><div style="height:22px"></div><span>D6</span></div>
       
-        <div class="barcol"><div style="height:27px"></div><span>D7</span></div>
+        <div class="barcol"><div style="height:22px"></div><span>D7</span></div>
       
-        <div class="barcol"><div style="height:27px"></div><span>D8</span></div>
+        <div class="barcol"><div style="height:33px"></div><span>D8</span></div>
       
-        <div class="barcol"><div style="height:36px"></div><span>D9</span></div>
+        <div class="barcol"><div style="height:44px"></div><span>D9</span></div>
       
         <div class="barcol"><div style="height:55px"></div><span>D10</span></div>
       </div></div>
@@ -212,14 +212,14 @@
         <section class="panel">
           <div class="panel-head"><h2>Blockers</h2><span id="blockerCount">2 open</span></div>
           <div class="list" id="blockers">
-        <article class="item"><strong>Backend framework decision</strong><p>FastAPI vs NestJS must be locked before API scaffold is finalized.</p><div class="mini-tags"><span class="tag risk">RISK</span><span class="tag">Sprint 1</span></div></article>
+        <article class="item"><strong>Backend framework decision</strong><p>FastAPI vs NestJS must be locked before minimal lead API implementation starts.</p><div class="mini-tags"><span class="tag risk">RISK</span><span class="tag">Sprint 1</span></div></article>
       
-        <article class="item"><strong>Production hosting target</strong><p>Choose Hetzner/AWS/VPS path for backend deployment and secrets model.</p><div class="mini-tags"><span class="tag warn">WARN</span><span class="tag">Sprint 1</span></div></article>
+        <article class="item"><strong>Do not expand infra scope</strong><p>Docker, Sentry and hosting hardening are stretch only and must not block first lead pipeline success.</p><div class="mini-tags"><span class="tag warn">WARN</span><span class="tag">Sprint 1</span></div></article>
       </div>
         </section>
         <section class="panel">
           <div class="panel-head"><h2>Team Workload by Role</h2><span>Complexity points</span></div>
-          <div class="workload" id="workload"><div class="role"><span>Frontend</span><div class="rolebar"><span style="width:71%;--role:var(--frontend)"></span></div><b>5</b></div><div class="role"><span>Backend</span><div class="rolebar"><span style="width:100%;--role:var(--backend)"></span></div><b>7</b></div><div class="role"><span>AI</span><div class="rolebar"><span style="width:0%;--role:var(--ai)"></span></div><b>0</b></div><div class="role"><span>DevOps</span><div class="rolebar"><span style="width:71%;--role:var(--devops)"></span></div><b>5</b></div></div>
+          <div class="workload" id="workload"><div class="role"><span>Frontend</span><div class="rolebar"><span style="width:71%;--role:var(--frontend)"></span></div><b>5</b></div><div class="role"><span>Backend</span><div class="rolebar"><span style="width:100%;--role:var(--backend)"></span></div><b>7</b></div><div class="role"><span>AI</span><div class="rolebar"><span style="width:0%;--role:var(--ai)"></span></div><b>0</b></div><div class="role"><span>DevOps</span><div class="rolebar"><span style="width:29%;--role:var(--devops)"></span></div><b>2</b></div></div>
         </section>
         <section class="panel">
           <div class="panel-head"><h2>Milestone Tracking</h2><span>Delivery gates</span></div>
@@ -236,7 +236,7 @@
 
     <section class="panel" style="margin-top:16px">
       <div class="panel-head"><h2>Sprint Grouping Overview</h2><span>From master build order and engineering backlog</span></div>
-      <div class="list" id="sprintOverview"><article class="sprint-row "><h3>Sprint 1</h3><p>Establish the product foundation</p><p>6 tasks · 17 pts · 6 critical</p></article><article class="sprint-row dimmed"><h3>Sprint 2</h3><p>Make CRM operational and add Telegram intake</p><p>5 tasks · 13 pts · 4 critical</p></article><article class="sprint-row dimmed"><h3>Sprint 3</h3><p>Activate early automation</p><p>5 tasks · 13 pts · 5 critical</p></article><article class="sprint-row dimmed"><h3>Sprint 4</h3><p>Close the MVP revenue loop</p><p>5 tasks · 12 pts · 4 critical</p></article><article class="sprint-row dimmed"><h3>Sprint 5</h3><p>Introduce growth runtime controls</p><p>3 tasks · 11 pts · 3 critical</p></article><article class="sprint-row dimmed"><h3>Sprint 6</h3><p>Separate agent execution and harden operations</p><p>3 tasks · 10 pts · 3 critical</p></article></div>
+      <div class="list" id="sprintOverview"><article class="sprint-row "><h3>Sprint 1</h3><p>First working lead pipeline</p><p>6 tasks · 14 pts · 5 critical</p></article><article class="sprint-row dimmed"><h3>Sprint 2</h3><p>CRM operational layer</p><p>6 tasks · 15 pts · 5 critical</p></article><article class="sprint-row dimmed"><h3>Sprint 3</h3><p>Intake and qualification automation</p><p>5 tasks · 12 pts · 5 critical</p></article><article class="sprint-row dimmed"><h3>Sprint 4</h3><p>Paid pilot ready / revenue loop closure</p><p>6 tasks · 16 pts · 5 critical</p></article><article class="sprint-row dimmed"><h3>Sprint 5</h3><p>Growth infra starts after pilot loop</p><p>4 tasks · 14 pts · 2 critical</p></article><article class="sprint-row dimmed"><h3>Sprint 6</h3><p>Separate agent execution and harden operations</p><p>3 tasks · 10 pts · 3 critical</p></article></div>
     </section>
   </main>
 
@@ -244,34 +244,34 @@
     const statuses = ["Backlog","Ready","In Progress","Review"];
     const goals = {
       "Sprint 1": {
-        title:"Establish the product foundation",
-        text:"Build the core PostgreSQL model, modular backend, Docker/hosting path, minimal observability, landing lead capture and first CRM dashboard slice.",
-        health:"At Risk if schema/API slips",
-        tags:["MVP","Critical Path","Foundation"]
+        title:"First working lead pipeline",
+        text:"Deliver the fastest lead-to-CRM loop: user submits lead on landing, lead is saved in database, lead appears in CRM, and manager receives notification.",
+        health:"Healthy if infra stretch stays optional",
+        tags:["MVP","Critical Path","Paid Pilot Path"]
       },
       "Sprint 2": {
-        title:"Make CRM operational and add Telegram intake",
-        text:"Complete CRM lead operations, add Telegram qualification, and prepare Redis adapter without taking on queue infrastructure yet.",
+        title:"CRM operational layer",
+        text:"Make CRM usable for daily manager work: lead detail, assignment, notes/activity, filters/search, basic appointments and manual booking.",
         health:"Healthy with backend focus",
-        tags:["MVP","CRM","Telegram"]
+        tags:["MVP","CRM","Operations"]
       },
       "Sprint 3": {
-        title:"Activate early automation",
-        text:"Add n8n workflows and basic AI secretary agents so lead routing, reminders, summaries and follow-up tasks work inside CRM.",
-        health:"Watch AI scope",
-        tags:["MVP","AI","Automation"]
+        title:"Intake and qualification automation",
+        text:"Automate initial intake: Telegram webhook, qualification flow, CRM update from Telegram, n8n lead routing and reminder workflow.",
+        health:"Watch Telegram integration",
+        tags:["MVP","Telegram","n8n"]
       },
       "Sprint 4": {
-        title:"Close the MVP revenue loop",
-        text:"Ship proposal automation, booking flow and minimal admin workspace control for paid pilots.",
+        title:"Paid pilot ready / revenue loop closure",
+        text:"Prepare the system for first paid pilots: AI qualification, follow-up agent, proposal generation/send/track, booking automation and minimal admin workspace control.",
         health:"Healthy after Sprint 3",
         tags:["MVP","Revenue Loop","Pilot Ready"]
       },
       "Sprint 5": {
-        title:"Introduce growth runtime controls",
-        text:"Add API gateway, Redis queues and background workers before scaling agents and voice workloads.",
+        title:"Growth infra starts after pilot loop",
+        text:"Move Redis queues, background workers, API gateway, hardening and quota work here after Sprint 1–4 paid-pilot scope is validated.",
         health:"Critical infra migration",
-        tags:["Growth","Queues","Gateway"]
+        tags:["Growth","Queues","Gateway","Hardening"]
       },
       "Sprint 6": {
         title:"Separate agent execution and harden operations",
@@ -288,31 +288,34 @@
     };
 
     const tasks = [
-      t("S1-01","Core PostgreSQL schema","Design workspaces, users, leads, pipeline, notes, appointments and proposals.","Sprint 1","Backend",3,"In Progress",true,["None"],"Schema supports all MVP flows."),
-      t("S1-02","Backend API modular monolith","Scaffold FastAPI/NestJS modules for CRM, Telegram, agents, proposals and booking.","Sprint 1","Backend",4,"In Progress",true,["S1-01"],"Single deploy exposes documented contracts."),
-      t("S1-03","Docker, hosting and health checks","Create Docker runtime, Vercel frontend path, backend hosting and health endpoints.","Sprint 1","DevOps",3,"Ready",true,["S1-02"],"Staging/prod can run and failures are visible."),
-      t("S1-04","Minimal observability","Configure Sentry, structured logs and core health checks.","Sprint 1","DevOps",2,"Ready",true,["S1-02"],"Failures in forms, bot, API and workflows are visible."),
-      t("S1-05","Landing lead capture","Build landing, CTA sections, pricing, forms and backend lead submission.","Sprint 1","Frontend",2,"Ready",true,["S1-01","S1-02"],"Lead form creates attributed CRM lead."),
-      t("S1-06","CRM Kanban first slice","Render stages, lead cards and stage transition action.","Sprint 1","Frontend",3,"Backlog",true,["S1-01","S1-02"],"Manager can move lead through pipeline."),
-      t("S2-01","Lead detail popup","Show contact/service fields, notes and activity timeline.","Sprint 2","Frontend",3,"Backlog",true,["S1-06"],"Operator sees full lead context."),
-      t("S2-02","CRM assignment and timeline APIs","Persist manager assignment, notes and audit events.","Sprint 2","Backend",3,"Backlog",true,["S1-02"],"Assignment updates timeline."),
-      t("S2-03","Telegram webhook","Receive and route Telegram updates securely.","Sprint 2","Backend",2,"Backlog",true,["S1-02"],"Webhook reliably receives updates."),
-      t("S2-04","Telegram qualification flow","Collect sanitary service details and create/update CRM lead.","Sprint 2","Backend",3,"Backlog",true,["S2-03","S2-02"],"Qualified lead is created from Telegram."),
-      t("S2-05","Redis adapter stub","Define cache/session/queue interface and optional Redis config.","Sprint 2","Backend",2,"Backlog",false,["S1-02"],"Redis can be enabled without refactor."),
-      t("S3-01","n8n lead routing workflow","Route new leads, notify manager and record workflow action.","Sprint 3","AI",2,"Backlog",true,["S2-02","S2-04"],"New lead is routed automatically."),
-      t("S3-02","n8n reminder workflow","Schedule follow-up reminders and skip closed leads.","Sprint 3","AI",2,"Backlog",true,["S3-01"],"Reminder does not fire for closed leads."),
-      t("S3-03","AI agent service interface","Define agent input/output schema, confidence and CRM tool action contract.","Sprint 3","AI",3,"Backlog",true,["S2-02"],"Agents can be called consistently."),
-      t("S3-04","Qualification agent","Extract service/location/urgency and write CRM summary.","Sprint 3","AI",3,"Backlog",true,["S3-03"],"Lead gets structured qualification fields."),
-      t("S3-05","Follow-up agent","Generate next message and create follow-up task respecting CRM stage.","Sprint 3","AI",3,"Backlog",true,["S3-03","S3-02"],"Follow-up action is created."),
-      t("S4-01","Proposal template engine","Render commercial proposal from lead data and persist version.","Sprint 4","Backend",3,"Backlog",true,["S2-02"],"Proposal renders from CRM lead data."),
-      t("S4-02","Proposal UI action","Add generate/preview/send status flow in CRM.","Sprint 4","Frontend",2,"Backlog",true,["S4-01"],"Manager can generate and inspect proposal."),
-      t("S4-03","Appointment model","Create expert visit appointments, owner/status and no double-booking rules.","Sprint 4","Backend",2,"Backlog",true,["S1-01"],"Appointments persist safely."),
-      t("S4-04","Booking UI","Slot selector and booking action from lead detail.","Sprint 4","Frontend",3,"Backlog",true,["S4-03","S2-01"],"Manager can book visit from lead detail."),
-      t("S4-05","Minimal admin workspace control","Create workspace, users, roles and manual tariff flags.","Sprint 4","Backend",2,"Backlog",false,["S1-01","S1-02"],"Superadmin can manage pilot customers."),
-      t("S5-01","API gateway routing","Route dashboard, landing forms and webhook traffic through gateway.","Sprint 5","DevOps",3,"Backlog",true,["S1-03"],"All external traffic enters through gateway."),
-      t("S5-02","Redis queues","Implement queue abstraction, retry/DLQ and job status model.","Sprint 5","Backend",4,"Backlog",true,["S2-05"],"Jobs have status and retry policy."),
-      t("S5-03","Background workers","Create worker runtime and split AI/proposal/notification job handlers.","Sprint 5","Backend",4,"Backlog",true,["S5-02"],"Heavy jobs no longer block API."),
-      t("S6-01","Separated agent runtime","Move agent execution into worker/service boundary.","Sprint 6","AI",4,"Backlog",true,["S5-03","S3-03"],"Agent jobs run asynchronously."),
+      t("S1-01","Simplified PostgreSQL schema","Create users, leads, lead_stages and notes/activity only.","Sprint 1","Backend",2,"In Progress",true,["None"],"Lead can be saved with stage and activity history."),
+      t("S1-02","Minimal backend API","Add auth baseline, Leads CRUD and lead status update.","Sprint 1","Backend",3,"In Progress",true,["S1-01"],"Landing and CRM can create, read and update leads."),
+      t("S1-03","Landing lead capture","Build landing page, CTA/forms and validation wired to backend.","Sprint 1","Frontend",2,"Ready",true,["S1-02"],"User submits lead and it is saved in database."),
+      t("S1-04","CRM Kanban first slice","Render lead cards, pipeline stages and move between stages.","Sprint 1","Frontend",3,"Backlog",true,["S1-01","S1-02"],"Lead appears in CRM and can move between stages."),
+      t("S1-05","New lead notification","Send Telegram/email alert to manager when lead is created.","Sprint 1","Backend",2,"Backlog",true,["S1-02","S1-03"],"Manager receives notification for submitted lead."),
+      t("S1-06","Optional Docker/Sentry baseline","Stretch only: add Docker baseline or Sentry if core pipeline is done.","Sprint 1","DevOps",2,"Backlog",false,["S1-01","S1-05"],"Optional infra does not block Sprint 1 success."),
+      t("S2-01","Lead detail popup","Show full lead fields and action context.","Sprint 2","Frontend",3,"Backlog",true,["S1-04"],"Manager can inspect and process a lead."),
+      t("S2-02","Manager assignment","Assign leads to managers and show responsibility in CRM.","Sprint 2","Backend",2,"Backlog",true,["S1-02","S2-01"],"Lead has responsible manager."),
+      t("S2-03","Notes / activity timeline","Persist notes and visible activity history.","Sprint 2","Backend",3,"Backlog",true,["S1-01","S2-01"],"Manager can record and review lead history."),
+      t("S2-04","Filters / search / CRM UX improvements","Add practical filters, search and usability polish.","Sprint 2","Frontend",2,"Backlog",false,["S1-04","S2-01"],"Manager can find and prioritize leads."),
+      t("S2-05","Appointment model basic","Create basic appointment entity for manual scheduling.","Sprint 2","Backend",2,"Backlog",true,["S1-01"],"Appointment can be linked to a lead."),
+      t("S2-06","Booking UI manual scheduling","Add UI to schedule sanitary expert visit from CRM.","Sprint 2","Frontend",3,"Backlog",true,["S2-01","S2-05"],"Manager can manually schedule a visit."),
+      t("S3-01","Telegram webhook / bot infrastructure","Receive Telegram updates and route bot commands.","Sprint 3","Backend",2,"Backlog",true,["S1-02"],"Telegram updates reach backend reliably."),
+      t("S3-02","Telegram qualification flow","Collect service, contact, location and urgency through Telegram.","Sprint 3","Backend",3,"Backlog",true,["S3-01"],"Bot can qualify a lead conversation."),
+      t("S3-03","CRM update from Telegram","Create or update qualified CRM lead from Telegram intake.","Sprint 3","Backend",3,"Backlog",true,["S2-03","S3-02"],"Qualified Telegram lead appears in CRM with summary."),
+      t("S3-04","n8n lead routing workflow","Route new qualified leads to managers and record activity.","Sprint 3","AI",2,"Backlog",true,["S2-02","S3-03"],"Lead routing workflow runs and is visible."),
+      t("S3-05","Reminder workflow","Schedule manager/client follow-up reminders.","Sprint 3","AI",2,"Backlog",true,["S2-03","S3-04"],"Reminder is scheduled and skipped when not applicable."),
+      t("S4-01","AI qualification agent","Summarize and structure qualification data from CRM/Telegram.","Sprint 4","AI",3,"Backlog",true,["S3-02","S3-03"],"AI writes structured qualification summary to CRM."),
+      t("S4-02","Follow-up agent","Generate follow-up recommendation/message from CRM state.","Sprint 4","AI",3,"Backlog",true,["S2-03","S3-05","S4-01"],"Follow-up action is created with rationale."),
+      t("S4-03","Proposal template engine","Render commercial proposal from lead and service data.","Sprint 4","Backend",3,"Backlog",true,["S2-01","S4-01"],"Proposal renders from CRM lead data."),
+      t("S4-04","Proposal send/track UI","Add proposal send action and basic tracking UI.","Sprint 4","Frontend",3,"Backlog",true,["S4-03"],"Manager can send proposal and see tracking status."),
+      t("S4-05","Booking automation enhancements","Add reminder/status automation around booked visits.","Sprint 4","Backend",2,"Backlog",false,["S2-06","S3-05"],"Booking flow has basic automation hooks."),
+      t("S4-06","Minimal admin workspace control","Create workspace, users, roles and manual tariff flags.","Sprint 4","Backend",2,"Backlog",true,["S1-01","S1-02"],"Superadmin can manage first pilot workspaces."),
+      t("S5-01","Redis queues","Move heavy work into queues after paid-pilot loop is functional.","Sprint 5","Backend",4,"Backlog",true,["S4-01","S4-04"],"Jobs have status, retry and DLQ."),
+      t("S5-02","Background workers","Create worker runtime for AI/proposal/notification jobs.","Sprint 5","Backend",4,"Backlog",true,["S5-01"],"Heavy jobs no longer block API."),
+      t("S5-03","API gateway and rate limits","Add gateway, request limits and quotas for growth.","Sprint 5","DevOps",3,"Backlog",false,["S1-02"],"External traffic is protected and observable."),
+      t("S5-04","Advanced monitoring","Add Grafana/Prometheus after queues/workers exist.","Sprint 5","DevOps",3,"Backlog",false,["S5-01","S5-02"],"Queue/provider failures are visible."),
+      t("S6-01","Separated agent runtime","Move proven agents into dedicated worker/service boundary.","Sprint 6","AI",4,"Backlog",true,["S4-01","S4-02","S5-02"],"Agent jobs run asynchronously."),
       t("S6-02","Prometheus/Grafana monitoring","Add API, worker, queue, n8n and provider dashboards.","Sprint 6","DevOps",3,"Backlog",true,["S5-02","S5-03"],"Queue lag and provider errors are visible."),
       t("S6-03","Rate limiting and quotas","Enforce per-workspace API, Telegram, AI and voice limits.","Sprint 6","Backend",3,"Backlog",true,["S5-01","S5-02"],"Overuse is throttled predictably.")
     ];
@@ -324,8 +327,8 @@
     ];
 
     const blockers = [
-      {sprint:"Sprint 1", title:"Backend framework decision", desc:"FastAPI vs NestJS must be locked before API scaffold is finalized.", severity:"risk"},
-      {sprint:"Sprint 1", title:"Production hosting target", desc:"Choose Hetzner/AWS/VPS path for backend deployment and secrets model.", severity:"warn"},
+      {sprint:"Sprint 1", title:"Backend framework decision", desc:"FastAPI vs NestJS must be locked before minimal lead API implementation starts.", severity:"risk"},
+      {sprint:"Sprint 1", title:"Do not expand infra scope", desc:"Docker, Sentry and hosting hardening are stretch only and must not block first lead pipeline success.", severity:"warn"},
       {sprint:"Sprint 2", title:"Telegram bot token and webhook domain", desc:"Needed before webhook can be validated end-to-end.", severity:"warn"},
       {sprint:"Sprint 3", title:"LLM provider and prompt safety baseline", desc:"Needed for AI secretary acceptance tests.", severity:"warn"},
       {sprint:"Sprint 5", title:"Redis deployment choice", desc:"Managed Redis vs self-hosted Redis affects queue reliability and ops load.", severity:"warn"}
