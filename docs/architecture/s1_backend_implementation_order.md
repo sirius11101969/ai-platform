@@ -46,8 +46,8 @@ Out of scope:
 
 Implement and verify:
 
-* `001_sprint1_crm_mvp_schema.sql`
-* `001_default_lead_stages.sql`
+* 001_sprint1_crm_mvp_schema.sql
+* 001_default_lead_stages.sql
 
 Acceptance criteria:
 
@@ -55,7 +55,7 @@ Acceptance criteria:
 * Tables are created
 * Default lead stages exist
 * Foreign keys work
-* `updated_at` trigger works
+* updated_at trigger works
 
 ---
 
@@ -72,19 +72,19 @@ Create backend foundation:
 
 Suggested modules:
 
-core/
-auth/
-users/
-leads/
-lead_stages/
-lead_notes/
-activity_log/
-health/
+* core/
+* auth/
+* users/
+* leads/
+* lead_stages/
+* lead_notes/
+* activity_log/
+* health/
 
 Acceptance criteria:
 
 * Backend starts locally
-* `GET /health` returns `{ "status": "ok" }`
+* GET /health returns status ok
 * DB connection works
 
 ---
@@ -93,11 +93,11 @@ Acceptance criteria:
 
 Implement DB access layer:
 
-* `UserRepository`
-* `LeadRepository`
-* `LeadStageRepository`
-* `LeadNoteRepository`
-* `ActivityLogRepository`
+* UserRepository
+* LeadRepository
+* LeadStageRepository
+* LeadNoteRepository
+* ActivityLogRepository
 
 Acceptance criteria:
 
@@ -112,11 +112,11 @@ Acceptance criteria:
 
 Implement business logic:
 
-* `LeadService`
-* `LeadStageService`
-* `LeadNoteService`
-* `ActivityLogService`
-* `AuthService`
+* LeadService
+* LeadStageService
+* LeadNoteService
+* ActivityLogService
+* AuthService
 
 Acceptance criteria:
 
@@ -140,8 +140,8 @@ Implement minimal auth:
 
 Endpoints:
 
-POST /auth/login
-GET /auth/me
+* POST /auth/login
+* GET /auth/me
 
 Acceptance criteria:
 
@@ -156,7 +156,7 @@ Acceptance criteria:
 
 Implement:
 
-GET /lead-stages
+* GET /lead-stages
 
 Acceptance criteria:
 
@@ -170,7 +170,7 @@ Acceptance criteria:
 
 Implement:
 
-POST /public/leads
+* POST /public/leads
 
 Purpose:
 
@@ -178,10 +178,10 @@ Landing form lead capture.
 
 Validation:
 
-* `full_name` required
-* `phone` or `email` required
-* source default = `landing`
-* status default = `active`
+* full_name required
+* phone or email required
+* source default = landing
+* status default = active
 * default stage = first stage by position
 
 Protection:
@@ -195,7 +195,7 @@ Acceptance criteria:
 * Landing can submit lead
 * Lead appears in CRM
 * Duplicate submissions do not create uncontrolled spam
-* Activity log entry `lead_created` is created
+* Activity log entry lead_created is created
 
 ---
 
@@ -203,11 +203,11 @@ Acceptance criteria:
 
 Implement:
 
-GET /leads
-GET /leads/{lead_id}
-PATCH /leads/{lead_id}
-PATCH /leads/{lead_id}/stage
-PATCH /leads/{lead_id}/assign
+* GET /leads
+* GET /leads/{lead_id}
+* PATCH /leads/{lead_id}
+* PATCH /leads/{lead_id}/stage
+* PATCH /leads/{lead_id}/assign
 
 Acceptance criteria:
 
@@ -224,15 +224,15 @@ Acceptance criteria:
 
 Implement:
 
-GET /leads/{lead_id}/notes
-POST /leads/{lead_id}/notes
+* GET /leads/{lead_id}/notes
+* POST /leads/{lead_id}/notes
 
 Acceptance criteria:
 
 * Manager can add note
 * Notes are linked to lead
 * Note author is stored
-* Activity log entry `lead_note_added` is created
+* Activity log entry lead_note_added is created
 
 ---
 
@@ -240,7 +240,7 @@ Acceptance criteria:
 
 Implement:
 
-GET /leads/{lead_id}/activity
+* GET /leads/{lead_id}/activity
 
 Acceptance criteria:
 
@@ -254,15 +254,13 @@ Acceptance criteria:
 
 Standardize error format:
 
-```json
 {
-  "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "phone or email is required",
-    "details": {}
-  }
+"error": {
+"code": "VALIDATION_ERROR",
+"message": "phone or email is required",
+"details": {}
 }
-```
+}
 
 Required codes:
 
