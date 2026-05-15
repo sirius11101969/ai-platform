@@ -109,6 +109,22 @@ async function saveAttachment(userId, workspaceId, payload) {
   return normalizeAttachment(result.rows[0])
 }
 
+async function registerExistingAttachment(userId, workspaceId, payload) {
+  const leadId = normalizeText(payload.leadId)
+  const fileName = sanitizeFileName(payload.fileName || payload.name)
+  const mimeType = normalizeText(payload.mimeType || payload.type) || 'application/octet-stream'
+  const storagePath = normalizeText(payload.storagePath)
+  if (!fileName || !storagePath) throw Object.assign(new Error('Attachment file and content are required'), { statusCode: 400 })
+  if (!fs.existsSync(storagePath)) throw Object.assign(new Error('Материал пока не загружен на сервер'), { statusCode: 400 })
+  const result = await pool.query(
+    `INSERT INTO email_attachments(user_id, workspace_id, lead_id, file_name, mime_type, size_bytes, storage_path, metadata)
+     VALUES($1, $2, $3, $4, $5, $6, $7, $8)
+     RETURNING id, user_id, workspace_id, lead_id, file_name, mime_type, size_bytes, storage_path, created_at`,
+    [userId, workspaceId, leadId || null, fileName, mimeType, Number(payload.sizeBytes || fs.statSync(storagePath).size || 0), storagePath, payload.metadata || {}]
+  )
+  return normalizeAttachment(result.rows[0])
+}
+
 async function listAttachments(userId, workspaceId, leadId = null) {
   const params = [userId, workspaceId]
   let clause = ''
@@ -391,9 +407,9 @@ async function deliverEmail(emailId) {
     if (email.provider === 'gmail_api') await sendViaGmailApi(raw)
     else await sendViaSmtp(email, raw)
     await pool.query("UPDATE email_messages SET status = 'sent', sent_at = NOW(), error = NULL, updated_at = NOW() WHERE id = $1", [emailId])
-    await pool.query("INSERT INTO crm_activity(user_id, lead_id, type, title, body, metadata) VALUES($1, $2, 'email_sent', 'Письмо отправлено', $3, $4)", [email.userId, email.leadId, email.subject, { emailId, to: email.to, attachments: email.attachments.length }])
+    await pool.query("INSERT INTO crm_activity(user_id, workspace_id, lead_id, type, title, body, metadata) VALUES($1, $5, $2, 'email_sent', 'Письмо отправлено', $3, $4)", [email.userId, email.leadId, email.subject, { emailId, to: email.to, attachments: email.attachments.length }, email.workspaceId])
     if (email.attachments.length) {
-      await pool.query("INSERT INTO crm_activity(user_id, lead_id, type, title, body, metadata) VALUES($1, $2, 'attachment_sent', 'Вложения отправлены', $3, $4)", [email.userId, email.leadId, email.attachments.map((item) => item.fileName).join(', '), { emailId, to: email.to, attachments: email.attachments.map((item) => item.id) }])
+      await pool.query("INSERT INTO crm_activity(user_id, workspace_id, lead_id, type, title, body, metadata) VALUES($1, $5, $2, 'attachment_sent', 'Вложения отправлены', $3, $4)", [email.userId, email.leadId, email.attachments.map((item) => item.fileName).join(', '), { emailId, to: email.to, attachments: email.attachments.map((item) => item.id) }, email.workspaceId])
     }
     await logEmailStatus(pool, { ...email, id: emailId }, 'sent', null, { provider: email.provider, attachments: email.attachments.length })
     return { ...email, status: 'sent' }
@@ -407,7 +423,7 @@ async function deliverEmail(emailId) {
         WHERE id = $1`,
       [emailId, nextStatus, error.message, Math.min(30, 2 ** retry)]
     )
-    await pool.query("INSERT INTO crm_activity(user_id, lead_id, type, title, body, metadata) VALUES($1, $2, 'email_failed', 'Письмо не отправлено', $3, $4)", [email.userId, email.leadId, error.message, { emailId, to: email.to, retry, nextStatus }])
+    await pool.query("INSERT INTO crm_activity(user_id, workspace_id, lead_id, type, title, body, metadata) VALUES($1, $5, $2, 'email_failed', 'Письмо не отправлено', $3, $4)", [email.userId, email.leadId, error.message, { emailId, to: email.to, retry, nextStatus }, email.workspaceId])
     await logEmailStatus(pool, { ...email, id: emailId }, 'failed', error.message, { retry, nextStatus })
     throw error
   }
@@ -464,4 +480,4 @@ async function markOpened(token) {
   }
 }
 
-module.exports = { EMAIL_STATUSES, deliverEmail, enqueueEmail, listAttachments, listLeadEmails, markOpened, processEmailQueue, renderTemplate, saveAttachment, sendEmailNow, startEmailQueueWorker }
+module.exports = { EMAIL_STATUSES, deliverEmail, enqueueEmail, registerExistingAttachment, listAttachments, listLeadEmails, markOpened, processEmailQueue, renderTemplate, saveAttachment, sendEmailNow, startEmailQueueWorker }

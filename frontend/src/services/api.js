@@ -151,6 +151,13 @@ function translateApiError(message) {
     'OPENAI_API_KEY is required for CRM AI follow-up': 'Для AI follow-up нужен OPENAI_API_KEY на сервере',
     'OPENAI_API_KEY is required for Telegram AI sales reply': 'Для AI ответа в Telegram нужен OPENAI_API_KEY на сервере',
     'leadId is required': 'Выберите лида для AI действия',
+    'Материал пока не загружен на сервер': 'Материал пока не загружен на сервер',
+    'AI action must be approved before sending': 'Сначала одобрите AI действие',
+    'AI action not found': 'AI действие не найдено',
+    'Invalid AI action type': 'Недопустимый тип AI действия',
+    'Invalid AI action status': 'Недопустимый статус AI действия',
+    'Telegram bot token is not configured': 'Telegram Bot API не настроен на сервере',
+    'Lead has no Telegram chat id': 'У лида нет Telegram chat id',
   }
   if (exact[text]) return exact[text]
   if (text.startsWith('Status must be one of:')) return 'Статус должен быть одним из допустимых этапов CRM'
@@ -383,4 +390,36 @@ export function updateWorkspace(id, payload) {
 
 export function addWorkspaceMember(id, payload) {
   return request(`/workspaces/${id}/members`, { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export function fetchMaterials() {
+  return request('/materials')
+}
+
+export function fetchLeadActionCenter(leadId) {
+  return request(`/crm/leads/${leadId}/action-center`)
+}
+
+export function createLeadAiAction(leadId, payload) {
+  return request(`/crm/leads/${leadId}/actions`, { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export function updateLeadAiAction(actionId, payload) {
+  return request(`/crm/actions/${actionId}`, { method: 'PATCH', body: JSON.stringify(payload) })
+}
+
+export function approveLeadAiAction(actionId) {
+  return request(`/crm/actions/${actionId}/approve`, { method: 'POST' })
+}
+
+export function cancelLeadAiAction(actionId) {
+  return request(`/crm/actions/${actionId}/cancel`, { method: 'POST' })
+}
+
+export function sendLeadAiAction(actionId) {
+  return request(`/crm/actions/${actionId}/send`, { method: 'POST' })
+}
+
+export function sendLeadMaterials(leadId, payload) {
+  return request(`/leads/${leadId}/attachments/send`, { method: 'POST', body: JSON.stringify(payload) })
 }

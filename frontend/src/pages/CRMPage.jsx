@@ -15,8 +15,16 @@ import {
   fetchTelegramMessages,
   fetchEmailTemplates,
   fetchLeadEmails,
+  fetchLeadActionCenter,
+  fetchMaterials,
   generateLeadEmail,
   sendLeadEmail,
+  sendLeadAiAction,
+  approveLeadAiAction,
+  cancelLeadAiAction,
+  updateLeadAiAction,
+  createLeadAiAction,
+  sendLeadMaterials,
   uploadEmailAttachment,
   updateCrmLead,
   sendTelegramLeadMessage,
@@ -138,6 +146,19 @@ function getAiSummaryText(recommendation) {
   return recommendation.content || recommendation.rawText || 'AI рекомендация готова';
 }
 
+
+function actionStatusLabel(status) {
+  return ({ draft: 'черновик', pending_approval: 'ждёт одобрения', approved: 'одобрено', sent: 'отправлено', failed: 'ошибка', cancelled: 'отклонено' }[status] || status);
+}
+
+function actionTypeLabel(type) {
+  return ({ telegram_follow_up: 'Telegram follow-up', email_follow_up: 'Email follow-up', commercial_offer: 'Коммерческое предложение', send_presentation: 'Отправить презентацию', send_screenshots: 'Отправить скриншоты', send_demo_link: 'Отправить demo link', move_lead_stage: 'Переместить этап', create_reminder: 'Создать напоминание' }[type] || type);
+}
+
+function timelineTitle(event) {
+  return ({ telegram_inbound: 'Telegram inbound', telegram_outbound_ai: 'Telegram outbound AI', email_sent: 'Email отправлен', email_failed: 'Email не отправлен', ai_score_updated: 'AI score обновлён', follow_up_draft: 'Follow-up черновик', sent_follow_up: 'Follow-up отправлен', attachments_sent: 'Материалы отправлены', lead_moved: 'Этап изменён', note_added: 'Заметка', ai_action_sent: 'AI действие отправлено', ai_action_failed: 'AI действие не отправлено' }[event?.type] || event?.title || 'Событие');
+}
+
 export default function CRMPage() {
   const [leads, setLeads] = useState([]);
   const [stages, setStages] = useState(DEFAULT_CRM_STAGES);
@@ -164,6 +185,9 @@ export default function CRMPage() {
   const [emailComposer, setEmailComposer] = useState({ template: 'commercial_proposal', to: '', subject: '', text: '', html: '', attachmentIds: [] });
   const [emailAttachments, setEmailAttachments] = useState([]);
   const [emailBusy, setEmailBusy] = useState(false);
+  const [actionCenter, setActionCenter] = useState({ actions: [], timeline: [], attachments: [] });
+  const [materials, setMaterials] = useState([]);
+  const [executionBusy, setExecutionBusy] = useState({});
   const [aiActionBusy, setAiActionBusy] = useState({});
   const [inactiveQueueBusy, setInactiveQueueBusy] = useState(false);
   const [aiAnalysisBusy, setAiAnalysisBusy] = useState(false);
@@ -175,18 +199,20 @@ export default function CRMPage() {
     if (!silent) setLoading(true);
     setError("");
     try {
-      const [leadsResponse, stagesResponse, statsResponse, activityResponse, templatesResponse] = await Promise.all([
+      const [leadsResponse, stagesResponse, statsResponse, activityResponse, templatesResponse, materialsResponse] = await Promise.all([
         fetchCrmLeads(),
         fetchCrmStages(),
         fetchCrmStats(),
         fetchCrmActivity(),
         fetchEmailTemplates(),
+        fetchMaterials(),
       ]);
       setLeads(leadsResponse.leads || []);
       setStages((stagesResponse.stages?.length ? stagesResponse.stages : DEFAULT_CRM_STAGES));
       setStats(statsResponse.stats || null);
       setActivity(activityResponse.events || statsResponse.stats?.activity || []);
       setEmailTemplates(templatesResponse.templates || []);
+      setMaterials(materialsResponse.materials || []);
     } catch (requestError) {
       setError(requestError.message || "Не удалось загрузить CRM");
     } finally {
@@ -238,10 +264,20 @@ export default function CRMPage() {
   async function refreshLeadEmails(lead = selectedLead) {
     if (!lead) {
       setLeadEmails([]);
+      setActionCenter({ actions: [], timeline: [], attachments: [] });
       return;
     }
     const response = await fetchLeadEmails(lead.id);
     setLeadEmails(response.emails || []);
+  }
+
+  async function refreshActionCenter(lead = selectedLead) {
+    if (!lead) {
+      setActionCenter({ actions: [], timeline: [], attachments: [] });
+      return;
+    }
+    const response = await fetchLeadActionCenter(lead.id);
+    setActionCenter({ actions: response.actions || [], timeline: response.timeline || [], attachments: response.attachments || [] });
   }
 
   useEffect(() => {
@@ -252,6 +288,7 @@ export default function CRMPage() {
     setEmailAttachments([]);
     setEmailComposer((current) => ({ ...current, to: selectedLead.email || '', subject: '', text: '', html: '', attachmentIds: [] }));
     refreshLeadEmails(selectedLead).catch((requestError) => setError(requestError.message || 'Не удалось загрузить историю email'));
+    refreshActionCenter(selectedLead).catch((requestError) => setError(requestError.message || 'Не удалось загрузить AI Action Center'));
   }, [selectedLeadId]);
 
   async function handleGenerateEmail() {
@@ -304,6 +341,71 @@ export default function CRMPage() {
     } finally {
       setEmailBusy(false);
     }
+  }
+
+  async function handleCreateExecutionAction(lead, actionType) {
+    if (!lead) return;
+    const score = getLeadAiScore(lead);
+    const isEmail = actionType === 'email_follow_up' || actionType === 'commercial_offer';
+    const text = score?.nextBestAction || getAiSummaryText(getAiRecommendation(lead));
+    setExecutionBusy((current) => ({ ...current, create: true }));
+    setError('');
+    try {
+      await createLeadAiAction(lead.id, {
+        actionType,
+        channel: isEmail ? 'email' : actionType.startsWith('send_') ? (isTelegramLead(lead) ? 'telegram' : 'email') : 'crm',
+        title: actionType === 'commercial_offer' ? 'Коммерческое предложение' : actionType === 'send_presentation' ? 'Отправить презентацию' : actionType === 'send_screenshots' ? 'Отправить скриншоты' : 'AI follow-up',
+        generatedText: actionType === 'send_demo_link' ? 'Демо AS6 AI CRM Platform: https://www.as6.ru' : text,
+        payload: { subject: 'AS6 AI CRM Platform', to: lead.email || '' },
+      });
+      await Promise.all([refreshActionCenter(lead), loadCrm({ silent: true }), refreshMeta()]);
+    } catch (requestError) {
+      setError(requestError.message || 'Не удалось создать AI действие');
+    } finally {
+      setExecutionBusy((current) => ({ ...current, create: false }));
+    }
+  }
+
+  async function handleApproveExecutionAction(action) {
+    setExecutionBusy((current) => ({ ...current, [action.id]: true }));
+    setError('');
+    try { await approveLeadAiAction(action.id); await Promise.all([refreshActionCenter(selectedLead), loadCrm({ silent: true }), refreshMeta()]); }
+    catch (requestError) { setError(requestError.message || 'Не удалось одобрить действие'); }
+    finally { setExecutionBusy((current) => ({ ...current, [action.id]: false })); }
+  }
+
+  async function handleCancelExecutionAction(action) {
+    setExecutionBusy((current) => ({ ...current, [action.id]: true }));
+    setError('');
+    try { await cancelLeadAiAction(action.id); await Promise.all([refreshActionCenter(selectedLead), loadCrm({ silent: true }), refreshMeta()]); }
+    catch (requestError) { setError(requestError.message || 'Не удалось отклонить действие'); }
+    finally { setExecutionBusy((current) => ({ ...current, [action.id]: false })); }
+  }
+
+  async function handleSendExecutionAction(action) {
+    setExecutionBusy((current) => ({ ...current, [action.id]: true }));
+    setError('');
+    try { await sendLeadAiAction(action.id); await Promise.all([refreshActionCenter(selectedLead), refreshLeadEmails(selectedLead), refreshTelegramMessages(selectedLead), loadCrm({ silent: true }), refreshMeta()]); }
+    catch (requestError) { setError(requestError.message || 'Не удалось отправить действие'); }
+    finally { setExecutionBusy((current) => ({ ...current, [action.id]: false })); }
+  }
+
+  async function handleEditExecutionAction(action) {
+    const generatedText = window.prompt('Изменить текст AI действия', action.generatedText || '');
+    if (generatedText === null) return;
+    setExecutionBusy((current) => ({ ...current, [action.id]: true }));
+    setError('');
+    try { await updateLeadAiAction(action.id, { generatedText }); await refreshActionCenter(selectedLead); }
+    catch (requestError) { setError(requestError.message || 'Не удалось изменить действие'); }
+    finally { setExecutionBusy((current) => ({ ...current, [action.id]: false })); }
+  }
+
+  async function handleSendMaterials(lead, materialKeys, channel) {
+    setExecutionBusy((current) => ({ ...current, materials: true }));
+    setError('');
+    try { await sendLeadMaterials(lead.id, { materialKeys, channel, email: { to: lead.email || '' } }); await Promise.all([refreshActionCenter(lead), refreshLeadEmails(lead), loadCrm({ silent: true }), refreshMeta()]); }
+    catch (requestError) { setError(requestError.message || 'Материал пока не загружен на сервер'); }
+    finally { setExecutionBusy((current) => ({ ...current, materials: false })); }
   }
 
   useEffect(() => {
@@ -688,6 +790,15 @@ export default function CRMPage() {
           emailComposer={emailComposer}
           emailAttachments={emailAttachments}
           emailBusy={emailBusy}
+          actionCenter={actionCenter}
+          materials={materials}
+          executionBusy={executionBusy}
+          onCreateExecutionAction={(actionType) => handleCreateExecutionAction(selectedLead, actionType)}
+          onApproveExecutionAction={handleApproveExecutionAction}
+          onSendExecutionAction={handleSendExecutionAction}
+          onEditExecutionAction={handleEditExecutionAction}
+          onCancelExecutionAction={handleCancelExecutionAction}
+          onSendMaterials={(materialKeys, channel) => handleSendMaterials(selectedLead, materialKeys, channel)}
           onEmailComposerChange={setEmailComposer}
           onGenerateEmail={handleGenerateEmail}
           onUploadEmailAttachment={handleUploadEmailAttachment}
@@ -783,7 +894,7 @@ function LeadFormModal({ title, subtitle, stages, leadForm, setLeadForm, saving,
   );
 }
 
-function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDraftChange, onAddNote, onFollowUp, onAiAction, onAnalyzeLeadAi, aiActionBusy = {}, followUpLoading, onDelete, onEdit, onMove, telegramMessages = [], telegramDraft = '', telegramSending = false, onTelegramDraftChange, onSendTelegramReply, emailTemplates = [], leadEmails = [], emailComposer, emailAttachments = [], emailBusy = false, onEmailComposerChange, onGenerateEmail, onUploadEmailAttachment, onSendEmail, onClose }) {
+function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDraftChange, onAddNote, onFollowUp, onAiAction, onAnalyzeLeadAi, aiActionBusy = {}, followUpLoading, onDelete, onEdit, onMove, telegramMessages = [], telegramDraft = '', telegramSending = false, onTelegramDraftChange, onSendTelegramReply, emailTemplates = [], leadEmails = [], emailComposer, emailAttachments = [], emailBusy = false, onEmailComposerChange, onGenerateEmail, onUploadEmailAttachment, onSendEmail, actionCenter = { actions: [], timeline: [], attachments: [] }, materials = [], executionBusy = {}, onCreateExecutionAction, onApproveExecutionAction, onSendExecutionAction, onEditExecutionAction, onCancelExecutionAction, onSendMaterials, onClose }) {
   return (
     <div className="modal-backdrop crm-modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
       <section className="ai-task-modal lead-detail-modal" role="dialog" aria-modal="true" aria-labelledby="lead-detail-title">
@@ -852,20 +963,43 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
               {getLeadAiScore(lead) && <div className="ai-advisor-strip"><p><b>Рекомендуемый CTA:</b> {getLeadAiScore(lead).recommendedCta || "Назначить следующий шаг"}</p><p><b>Возражения:</b> {(getLeadAiScore(lead).objectionsDetected || []).join(", ") || "не обнаружены"}</p></div>}
             </div>
 
-            <div className="detail-section ai-action-center-card">
-              <h4>AI центр действий</h4>
+            <div className="detail-section ai-action-center-card execution-center-card">
+              <div className="execution-head">
+                <div><h4>AI Execution Center</h4><p>AI не отправляет сам: сначала черновик, затем «Одобрить» и только потом «Отправить».</p></div>
+                <span className="ai-glow-badge">APPROVE / SEND</span>
+              </div>
               <div className="ai-action-buttons">
                 <button className="ghost-button" type="button" onClick={onAnalyzeLeadAi} disabled={aiActionBusy[`${lead.id}:lead_ai_score`]}>{aiActionBusy[`${lead.id}:lead_ai_score`] ? "AI считает…" : "AI score + прогноз"}</button>
                 {[
-                  ['analyze_lead', 'Анализ лида'],
-                  ['generate_follow_up', 'Сгенерировать follow-up'],
-                  ['generate_commercial_offer', 'Сгенерировать КП'],
-                  ['generate_telegram_response', 'Ответ в Telegram'],
-                  ['generate_email_response', 'Ответ на email'],
-                ].map(([taskType, title]) => (
-                  <button className="ghost-button" type="button" key={taskType} onClick={() => onAiAction(taskType)} disabled={aiActionBusy[`${lead.id}:${taskType}`]}>
-                    {aiActionBusy[`${lead.id}:${taskType}`] ? 'AI работает…' : title}
-                  </button>
+                  ['telegram_follow_up', 'Telegram follow-up'],
+                  ['email_follow_up', 'Email follow-up'],
+                  ['commercial_offer', 'КП'],
+                  ['send_presentation', 'Презентация'],
+                  ['send_screenshots', 'Скриншоты'],
+                  ['send_demo_link', 'Demo link'],
+                  ['create_reminder', 'Напоминание'],
+                ].map(([actionType, title]) => <button className="ghost-button" type="button" key={actionType} onClick={() => onCreateExecutionAction(actionType)} disabled={executionBusy.create}>{title}</button>)}
+              </div>
+              <div className="execution-materials">
+                <strong>Материалы на сервере</strong>
+                <div>{materials.map((item) => <span className={item.exists ? 'material-ready' : 'material-missing'} key={item.key}>{item.exists ? '✓' : '!' } {item.fileName}</span>)}</div>
+                <button className="ghost-button compact" type="button" onClick={() => onSendMaterials(['presentation'], isTelegramLead(lead) ? 'telegram' : 'email')} disabled={executionBusy.materials}>Отправить презентацию</button>
+                <button className="ghost-button compact" type="button" onClick={() => onSendMaterials(['screenshot_1', 'screenshot_2'], isTelegramLead(lead) ? 'telegram' : 'email')} disabled={executionBusy.materials}>Отправить скриншоты</button>
+              </div>
+              <div className="execution-action-list">
+                {(actionCenter.actions || []).length === 0 && <p className="empty-state">Нет AI действий на одобрение. Создайте follow-up или материал.</p>}
+                {(actionCenter.actions || []).map((action) => (
+                  <article className={`execution-action ${action.status}`} key={action.id}>
+                    <div><strong>{actionTypeLabel(action.actionType)}</strong><span>{action.channel} · {actionStatusLabel(action.status)}</span></div>
+                    <p>{action.generatedText || action.title}</p>
+                    {action.error && <small className="email-error-text">Ошибка: {action.error}</small>}
+                    <div className="execution-buttons">
+                      <button type="button" className="ghost-button compact" onClick={() => onApproveExecutionAction(action)} disabled={executionBusy[action.id] || ['approved','sent','cancelled'].includes(action.status)}>Одобрить</button>
+                      <button type="button" className="btn primary compact" onClick={() => onSendExecutionAction(action)} disabled={executionBusy[action.id] || ['sent','failed','cancelled'].includes(action.status)}>Отправить</button>
+                      <button type="button" className="ghost-button compact" onClick={() => onEditExecutionAction(action)} disabled={executionBusy[action.id] || ['sent','cancelled'].includes(action.status)}>Изменить</button>
+                      <button type="button" className="ghost-button compact danger-action" onClick={() => onCancelExecutionAction(action)} disabled={executionBusy[action.id] || ['sent','cancelled'].includes(action.status)}>Отклонить</button>
+                    </div>
+                  </article>
                 ))}
               </div>
             </div>
@@ -973,14 +1107,17 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
               </div>
             </div>
 
+            <div className="detail-section attachment-history-card">
+              <h4>История вложений</h4>
+              {(actionCenter.attachments || []).length === 0 && <p className="empty-state">Материалы ещё не отправлялись.</p>}
+              {(actionCenter.attachments || []).map((item) => <p className="attachment-history-row" key={item.id}><b>{item.file_name}</b><small>{item.channel || '—'} · {item.status === 'sent' ? 'отправлено' : item.status} · {formatDate(item.sent_at || item.created_at)}</small></p>)}
+            </div>
+
             <div className="detail-section">
-              <h4>История активности</h4>
-              <div className="activity-preview crm-activity-feed detail-activity-feed">
-                {activity.length === 0 && (lead.aiActions || []).length === 0 && <p><span />Событий для лида пока нет</p>}
-                {getLeadAiScore(lead) && <p className="ai-timeline-item"><span />AI score обновлён<small>{getLeadAiScore(lead).score}/100 · вероятность {getLeadAiScore(lead).dealProbability}%<br />{formatDate(getLeadAiScore(lead).generatedAt)}</small></p>}
-                {(lead.aiFollowUpSequences || []).map((item) => <p className="ai-timeline-item" key={`seq-${item.id}`}><span />AI follow-up предложен<small>{item.generatedMessage}<br />{formatDate(item.recommendedAt)}</small></p>)}
-                {(lead.aiActions || []).map((action) => <p className="ai-timeline-item" key={action.id}><span />AI: {action.task_type}<small>{action.status === "queued" ? "в очереди" : action.status === "running" ? "в работе" : action.status === "completed" ? "готово" : "ошибка"}<br />{formatDate(action.created_at)}</small></p>)}
-                {activity.map((event) => <p key={event.id}><span />{getActivityTitle(event)}<small>{formatCrmText(event.body)}<br />{formatDate(event.createdAt)}</small></p>)}
+              <h4>Timeline memory</h4>
+              <div className="activity-preview crm-activity-feed detail-activity-feed timeline-memory-feed">
+                {(actionCenter.timeline || []).length === 0 && activity.length === 0 && <p><span />Событий для лида пока нет</p>}
+                {(actionCenter.timeline || []).map((event) => <p className={event.source === 'ai' ? 'ai-timeline-item' : ''} key={event.id}><span />{timelineTitle(event)}<small>{formatCrmText(event.body)}<br />{event.source} · {formatDate(event.createdAt)}</small></p>)}
               </div>
             </div>
           </aside>

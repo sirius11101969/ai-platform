@@ -11,6 +11,7 @@ const aiAgentRoutes = require('./routes/aiAgentRoutes')
 const telegramRoutes = require('./routes/telegramRoutes')
 const emailRoutes = require('./routes/emailRoutes')
 const workspaceRoutes = require('./routes/workspaceRoutes')
+const aiExecutionRoutes = require('./routes/aiExecutionRoutes')
 const { markOpened } = require('./controllers/emailController')
 const { startEmailQueueWorker } = require('./services/emailService')
 const { startLeadAnalysisWorker } = require('./services/leadAnalysisWorker')
@@ -37,6 +38,7 @@ app.use('/api/ai/agents', aiAgentRoutes)
 app.get('/api/email/open/:token', markOpened)
 app.use('/api/email', emailRoutes)
 app.use('/api/telegram', telegramRoutes)
+app.use('/api', aiExecutionRoutes)
 
 app.post('/api/lead', requireAuth, requireWorkspace, async (req, res, next) => {
   try {

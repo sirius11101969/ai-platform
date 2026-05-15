@@ -106,7 +106,7 @@ function buildMissingMaterialsReply(missingTypes) {
     screenshots: 'скриншотов',
   }
   const label = missingTypes.map((type) => labels[type] || type).join('/') || 'материалов'
-  return `Сейчас в системе нет загруженного файла ${label}. Могу отправить ссылку на демо-сайт и краткое описание.`
+  return `Материал пока не загружен на сервер: ${label}. Могу отправить ссылку на демо-сайт и краткое описание.`
 }
 
 const EMAIL_PATTERN = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i
@@ -425,15 +425,15 @@ async function sendTelegramFile(chatId, material) {
   return data
 }
 
-async function recordTelegramMaterialActivity({ userId, leadId, type, title, body, metadata }) {
+async function recordTelegramMaterialActivity({ userId, workspaceId, leadId, type, title, body, metadata }) {
   await pool.query(
     `INSERT INTO crm_activity(user_id, workspace_id, lead_id, type, title, body, metadata)
      VALUES($1, $2, $3, $4, $5, $6, $7)`,
-    [userId, leadId, type, title, body, metadata || {}]
+    [userId, workspaceId, leadId, type, title, body, metadata || {}]
   )
 }
 
-async function runTelegramMaterialWorkflow({ userId, leadId, chatId, incomingMessage }) {
+async function runTelegramMaterialWorkflow({ userId, workspaceId, leadId, chatId, incomingMessage }) {
   const intent = detectTelegramMaterialIntent(incomingMessage)
   if (!intent) return null
 
@@ -452,6 +452,7 @@ async function runTelegramMaterialWorkflow({ userId, leadId, chatId, incomingMes
   if (sent.length > 0) {
     await recordTelegramMaterialActivity({
       userId,
+      workspaceId,
       leadId,
       type: 'telegram_material_sent',
       title: 'Материалы отправлены в Telegram',
@@ -468,6 +469,7 @@ async function runTelegramMaterialWorkflow({ userId, leadId, chatId, incomingMes
     linkResponse = await sendTelegramMessage(chatId, DEMO_SITE_URL)
     await recordTelegramMaterialActivity({
       userId,
+      workspaceId,
       leadId,
       type: 'telegram_material_missing',
       title: 'Материалы отсутствуют для Telegram',
@@ -532,7 +534,7 @@ async function processTelegramUpdate(update) {
   }
 
   const memory = await crmModel.getTelegramMemory(crmResult.userId, crmResult.workspaceId, crmResult.lead.id, 10)
-  const materialWorkflow = await runTelegramMaterialWorkflow({ userId: crmResult.userId, leadId: crmResult.lead.id, chatId: telegram.chatId, incomingMessage: telegram.text })
+  const materialWorkflow = await runTelegramMaterialWorkflow({ userId: crmResult.userId, workspaceId: crmResult.workspaceId, leadId: crmResult.lead.id, chatId: telegram.chatId, incomingMessage: telegram.text })
   if (materialWorkflow?.handled) {
     await saveAiReply({
       userId: crmResult.userId,
