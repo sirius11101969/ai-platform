@@ -1,10 +1,12 @@
 const express = require('express')
 const { activity, addNote, createFollowUp, createLead, deleteLead, generateLeadEmail, listLeadEmails, listLeads, listStages, listTelegramMessages, sendLeadEmail, sendTelegramReply, stats, updateLead, updateStage } = require('../controllers/crmController')
 const { requireAuth } = require('../middleware/authMiddleware')
+const { requireWorkspace } = require('../middleware/workspaceMiddleware')
 
 const router = express.Router()
 
 router.use(requireAuth)
+router.use(requireWorkspace)
 router.get('/activity', activity)
 router.get('/stages', listStages)
 router.patch('/stages/:status', updateStage)

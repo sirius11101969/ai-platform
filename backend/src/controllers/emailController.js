@@ -3,14 +3,14 @@ const emailService = require('../services/emailService')
 
 async function uploadAttachment(req, res, next) {
   try {
-    const attachment = await emailService.saveAttachment(req.user.id, req.body)
+    const attachment = await emailService.saveAttachment(req.user.id, req.workspace.id, req.body)
     res.status(201).json({ attachment })
   } catch (error) { next(error) }
 }
 
 async function listAttachments(req, res, next) {
   try {
-    const attachments = await emailService.listAttachments(req.user.id, req.query.leadId)
+    const attachments = await emailService.listAttachments(req.user.id, req.workspace.id, req.query.leadId)
     res.json({ attachments })
   } catch (error) { next(error) }
 }
@@ -29,14 +29,14 @@ async function previewEmail(req, res, next) {
 
 async function sendEmail(req, res, next) {
   try {
-    const email = await emailService.enqueueEmail(req.user.id, { ...req.body, leadId: req.params.id })
+    const email = await emailService.enqueueEmail(req.user.id, { ...req.body, leadId: req.params.id, workspaceId: req.workspace.id })
     res.status(202).json({ email })
   } catch (error) { next(error) }
 }
 
 async function listLeadEmails(req, res, next) {
   try {
-    const emails = await emailService.listLeadEmails(req.user.id, req.params.id)
+    const emails = await emailService.listLeadEmails(req.user.id, req.workspace.id, req.params.id)
     res.json({ emails })
   } catch (error) { next(error) }
 }

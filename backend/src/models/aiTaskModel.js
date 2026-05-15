@@ -28,6 +28,7 @@ function normalizeTask(row) {
   return {
     id: row.id,
     user_id: row.user_id,
+    workspace_id: row.workspace_id || null,
     type: normalizeTaskType(row.type || row.task_type),
     prompt: row.prompt || row.input?.prompt || '',
     status: row.status,
@@ -73,19 +74,19 @@ function validateTaskPayload({ type = 'ai_content_generation', prompt }) {
   return { type: normalizedType, prompt: normalizedPrompt, creditsSpent: getTaskCost(normalizedType) }
 }
 
-async function listTasks(userId) {
+async function listTasks(userId, workspaceId) {
   const result = await pool.query(
-    `SELECT id, user_id, type, prompt, status, credits_spent, result, error, created_at, updated_at, task_type, input, output
+    `SELECT id, user_id, workspace_id, type, prompt, status, credits_spent, result, error, created_at, updated_at, task_type, input, output
        FROM ai_tasks
-      WHERE user_id = $1
+      WHERE user_id = $1 AND workspace_id = $2
       ORDER BY created_at DESC`,
-    [userId]
+    [userId, workspaceId]
   )
 
   return result.rows.map(normalizeTask)
 }
 
-async function findTaskById(userId, taskId) {
+async function findTaskById(userId, workspaceId, taskId) {
   if (!UUID_PATTERN.test(String(taskId || ''))) {
     const error = new Error('Invalid task id')
     error.statusCode = 400
@@ -93,26 +94,26 @@ async function findTaskById(userId, taskId) {
   }
 
   const result = await pool.query(
-    `SELECT id, user_id, type, prompt, status, credits_spent, result, error, created_at, updated_at, task_type, input, output
+    `SELECT id, user_id, workspace_id, type, prompt, status, credits_spent, result, error, created_at, updated_at, task_type, input, output
        FROM ai_tasks
-      WHERE user_id = $1 AND id = $2`,
-    [userId, taskId]
+      WHERE user_id = $1 AND workspace_id = $2 AND id = $3`,
+    [userId, workspaceId, taskId]
   )
 
   return normalizeTask(result.rows[0])
 }
 
-async function createTask(userId, payload) {
+async function createTask(userId, workspaceId, payload) {
   const { type, prompt, creditsSpent } = validateTaskPayload(payload)
   const client = await pool.connect()
 
   try {
     await client.query('BEGIN')
 
-    const userResult = await client.query('SELECT credits FROM users WHERE id = $1 FOR UPDATE', [userId])
+    const userResult = await client.query('SELECT credits_pool AS credits FROM workspaces WHERE id = $1 FOR UPDATE', [workspaceId])
     const user = userResult.rows[0]
     if (!user) {
-      const error = new Error('User not found')
+      const error = new Error('Workspace not found')
       error.statusCode = 401
       throw error
     }
@@ -124,25 +125,25 @@ async function createTask(userId, payload) {
     }
 
     const taskResult = await client.query(
-      `INSERT INTO ai_tasks(type, prompt, status, credits_spent, result, user_id, task_type, input, output, error)
-       VALUES($1, $2, 'processing', $3, NULL, $4, $1, $5, NULL, NULL)
-       RETURNING id, user_id, type, prompt, status, credits_spent, result, error, created_at, updated_at`,
-      [type, prompt, creditsSpent, userId, { prompt }]
+      `INSERT INTO ai_tasks(type, prompt, status, credits_spent, result, user_id, workspace_id, task_type, input, output, error)
+       VALUES($1, $2, 'processing', $3, NULL, $4, $6, $1, $5, NULL, NULL)
+       RETURNING id, user_id, workspace_id, type, prompt, status, credits_spent, result, error, created_at, updated_at`,
+      [type, prompt, creditsSpent, userId, { prompt }, workspaceId]
     )
 
     const creditResult = await client.query(
-      `UPDATE users
-          SET credits = credits - $1
+      `UPDATE workspaces
+          SET credits_pool = credits_pool - $1, updated_at = NOW()
         WHERE id = $2
-        RETURNING credits`,
-      [creditsSpent, userId]
+        RETURNING credits_pool AS credits`,
+      [creditsSpent, workspaceId]
     )
     const balanceAfter = creditResult.rows[0].credits
 
     await client.query(
-      `INSERT INTO credits_ledger(user_id, amount, reason, balance_after, metadata)
-       VALUES($1, $2, 'ai_task', $3, $4)`,
-      [userId, -creditsSpent, balanceAfter, { taskId: taskResult.rows[0].id, type, promptPreview: prompt.slice(0, 120) }]
+      `INSERT INTO credits_ledger(user_id, workspace_id, amount, reason, balance_after, metadata)
+       VALUES($1, $5, $2, 'ai_task', $3, $4)`,
+      [userId, -creditsSpent, balanceAfter, { taskId: taskResult.rows[0].id, type, promptPreview: prompt.slice(0, 120) }, workspaceId]
     )
 
     await client.query('COMMIT')
@@ -159,7 +160,7 @@ async function createTask(userId, payload) {
 async function processTask(taskId) {
   try {
     const processingResult = await pool.query(
-      `SELECT id, user_id, type, prompt, status, credits_spent, result, error, created_at, updated_at, task_type, input, output
+      `SELECT id, user_id, workspace_id, type, prompt, status, credits_spent, result, error, created_at, updated_at, task_type, input, output
          FROM ai_tasks
         WHERE id = $1 AND status = 'processing'`,
       [taskId]
@@ -173,7 +174,7 @@ async function processTask(taskId) {
       `UPDATE ai_tasks
           SET status = 'completed', result = $2, output = $2, error = NULL, updated_at = NOW()
         WHERE id = $1 AND status = 'processing'
-        RETURNING id, user_id, type, prompt, status, credits_spent, result, error, created_at, updated_at`,
+        RETURNING id, user_id, workspace_id, type, prompt, status, credits_spent, result, error, created_at, updated_at`,
       [taskId, result]
     )
 

@@ -1,4 +1,5 @@
 const { createUser, findUserByEmail, findUserById, toPublicUser } = require('../models/userModel')
+const { ensureDefaultWorkspace } = require('../models/workspaceModel')
 const { comparePassword, hashPassword } = require('./passwordService')
 const tokenService = require('./tokenService')
 
@@ -27,7 +28,8 @@ async function signup({ email, password }) {
 
   const hashedPassword = await hashPassword(password)
   const user = await createUser({ email: normalizedEmail, passwordHash: hashedPassword })
-  return { user: toPublicUser(user), token: signToken(user) }
+  const workspace = await ensureDefaultWorkspace(user.id)
+  return { user: toPublicUser(user), token: signToken(user), workspace }
 }
 
 async function login({ email, password }) {
@@ -40,7 +42,8 @@ async function login({ email, password }) {
     throw error
   }
 
-  return { user: toPublicUser(user), token: signToken(user) }
+  const workspace = await ensureDefaultWorkspace(user.id)
+  return { user: toPublicUser(user), token: signToken(user), workspace }
 }
 
 async function verifyToken(token) {

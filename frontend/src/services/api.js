@@ -1,6 +1,7 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
 const AUTH_STORAGE_KEY = 'ai-platform-auth'
 const LEGACY_TOKEN_KEYS = ['token', 'jwt', 'accessToken', 'authToken']
+const WORKSPACE_STORAGE_KEY = 'ai-platform-workspace-id'
 
 function canUseWebStorage() {
   return typeof window !== 'undefined'
@@ -56,6 +57,20 @@ export function getAuthToken() {
 
 export function getStoredUser() {
   return getStoredAuth()?.user || null
+}
+
+export function getActiveWorkspaceId() {
+  if (!canUseWebStorage()) return null
+  try { return window.localStorage.getItem(WORKSPACE_STORAGE_KEY) || null } catch (_error) { return null }
+}
+
+export function setActiveWorkspaceId(workspaceId) {
+  if (!canUseWebStorage() || !workspaceId) return
+  const previousWorkspaceId = getActiveWorkspaceId()
+  window.localStorage.setItem(WORKSPACE_STORAGE_KEY, workspaceId)
+  if (previousWorkspaceId !== workspaceId) {
+    window.dispatchEvent(new CustomEvent('ai-platform-workspace-updated', { detail: { workspaceId } }))
+  }
 }
 
 export function saveAuthSession(session, { remember = true } = {}) {
@@ -128,6 +143,10 @@ function translateApiError(message) {
     'Attachment file and content are required': 'Выберите файл вложения',
     'Email subject and body are required': 'Заполните тему и текст письма',
     'Lead email is required': 'В карточке лида нет email',
+    'Workspace name is required': 'Укажите название рабочего пространства',
+    'Workspace not found': 'Рабочее пространство не найдено',
+    'Workspace admin role is required': 'Нужна роль администратора пространства',
+    'Workspace team members limit reached': 'Достигнут лимит участников тарифа',
   }
   if (exact[text]) return exact[text]
   if (text.startsWith('Status must be one of:')) return 'Статус должен быть одним из допустимых этапов CRM'
@@ -140,6 +159,11 @@ function buildHeaders(options = {}) {
   const headers = {
     ...(options.body ? { 'Content-Type': 'application/json' } : {}),
     ...(options.headers || {}),
+  }
+
+  const workspaceId = options.workspaceId || getActiveWorkspaceId()
+  if (!options.skipWorkspace && workspaceId && !headers['X-Workspace-Id'] && !headers['x-workspace-id']) {
+    headers['X-Workspace-Id'] = workspaceId
   }
 
   const token = options.skipAuth ? null : getAuthToken()
@@ -304,4 +328,25 @@ export function sendLeadEmail(leadId, payload) {
     method: 'POST',
     body: JSON.stringify(payload),
   })
+}
+
+
+export function fetchWorkspaces() {
+  return request('/workspaces')
+}
+
+export function createWorkspace(payload) {
+  return request('/workspaces', { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export function fetchCurrentWorkspace() {
+  return request('/workspaces/current')
+}
+
+export function updateWorkspace(id, payload) {
+  return request(`/workspaces/${id}`, { method: 'PATCH', body: JSON.stringify(payload) })
+}
+
+export function addWorkspaceMember(id, payload) {
+  return request(`/workspaces/${id}/members`, { method: 'POST', body: JSON.stringify(payload) })
 }
