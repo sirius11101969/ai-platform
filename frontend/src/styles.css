@@ -372,3 +372,25 @@ button { font: inherit; }
   .modal-actions { align-items: stretch; flex-direction: column; }
   .ai-task-modal { border-radius: 24px; }
 }
+.production-crm-layout { grid-template-columns: minmax(0, 1fr) 390px; }
+.production-pipeline { grid-template-columns: repeat(6, minmax(260px, 1fr)); align-items: start; }
+.drop-stage { min-height: 420px; transition: border-color .2s ease, transform .2s ease, background .2s ease; }
+.drop-stage.drag-active { border-color: rgba(117,239,255,.42); background: rgba(117,239,255,.055); }
+.premium-lead-card { cursor: grab; transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+.premium-lead-card:hover { transform: translateY(-3px); border-color: rgba(117,239,255,.34); box-shadow: 0 18px 45px rgba(0,0,0,.22); }
+.premium-lead-card:active { cursor: grabbing; }
+.lead-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.lead-actions button, .form-actions .ghost-button { border: 1px solid rgba(255,255,255,.12); border-radius: 12px; background: rgba(255,255,255,.07); color: #dbe7ff; cursor: pointer; font-weight: 900; padding: 9px 10px; }
+.lead-actions button:hover { border-color: rgba(117,239,255,.38); color: #fff; }
+.lead-actions button:disabled { cursor: wait; opacity: .62; }
+.lead-actions .danger { color: #ffb8c4; }
+.lead-note-text { border-left: 2px solid rgba(117,239,255,.45); padding-left: 10px; white-space: pre-wrap; }
+.followup-history { display: grid; gap: 8px; margin: 12px 0; }
+.followup-history p { margin: 0; padding: 10px; border: 1px solid rgba(117,239,255,.13); border-radius: 14px; background: rgba(117,239,255,.06); color: #d7e6ff; line-height: 1.45; white-space: pre-wrap; }
+.followup-history b { color: #75efff; }
+.form-actions { display: flex; gap: 10px; align-items: center; }
+.crm-activity-feed p { display: grid; grid-template-columns: 9px 1fr; align-items: start; }
+.crm-activity-feed small { grid-column: 2; color: #91a2d6; line-height: 1.45; }
+.crm-stat-grid { grid-template-columns: repeat(5, minmax(150px, 1fr)); }
+@media (max-width: 1500px) { .production-pipeline { grid-template-columns: repeat(3, minmax(260px, 1fr)); } .crm-stat-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 900px) { .production-pipeline, .crm-stat-grid { grid-template-columns: 1fr; } }

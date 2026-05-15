@@ -115,6 +115,8 @@ function translateApiError(message) {
     'User not found': 'Пользователь не найден',
     'Lead name is required': 'Укажите имя лида',
     'Lead email or phone is required': 'Укажите эл. почту или телефон лида',
+    'Lead email, telegram or phone is required': 'Укажите эл. почту, Telegram или телефон лида',
+    'Note body is required': 'Введите текст заметки',
     'Lead value must be a non-negative number': 'Сумма лида должна быть неотрицательным числом',
     'Lead name cannot be blank': 'Имя лида не может быть пустым',
     'Prompt with at least 3 characters is required': 'Промпт должен содержать минимум 3 символа',
@@ -206,6 +208,19 @@ export function updateCrmLead(id, payload) {
     method: 'PATCH',
     body: JSON.stringify(payload),
   })
+}
+
+
+export function deleteCrmLead(id) {
+  return request(`/crm/leads/${id}`, { method: 'DELETE' })
+}
+
+export function createCrmFollowUp(id) {
+  return request(`/crm/leads/${id}/followups`, { method: 'POST' })
+}
+
+export function fetchCrmActivity() {
+  return request('/crm/activity')
 }
 
 export function addCrmLeadNote(id, body) {

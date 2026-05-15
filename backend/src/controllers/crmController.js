@@ -45,6 +45,25 @@ async function addNote(req, res, next) {
   }
 }
 
+
+async function createFollowUp(req, res, next) {
+  try {
+    const followUp = await crmModel.createFollowUp(req.user.id, req.params.id)
+    res.status(201).json({ followUp })
+  } catch (error) {
+    next(error)
+  }
+}
+
+async function activity(req, res, next) {
+  try {
+    const events = await crmModel.listActivity(req.user.id)
+    res.json({ events })
+  } catch (error) {
+    next(error)
+  }
+}
+
 async function stats(req, res, next) {
   try {
     const data = await crmModel.getStats(req.user.id)
@@ -55,7 +74,9 @@ async function stats(req, res, next) {
 }
 
 module.exports = {
+  activity,
   addNote,
+  createFollowUp,
   createLead,
   deleteLead,
   listLeads,
