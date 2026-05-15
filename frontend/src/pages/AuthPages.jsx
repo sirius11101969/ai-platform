@@ -24,7 +24,7 @@ function AuthCard({ mode }) {
       saveAuthSession(session);
       navigate("/dashboard");
     } catch (apiError) {
-      setError(apiError.status === 401 ? "Неверный email или пароль. Проверьте данные и попробуйте снова." : apiError.message);
+      setError(apiError.status === 401 ? "Неверная эл. почта или пароль. Проверьте данные и попробуйте снова." : apiError.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -36,17 +36,17 @@ function AuthCard({ mode }) {
       <div className="aurora aurora-two" />
       <section className="auth-copy">
         <BrandMark />
-        <span className="hero-badge">JWT auth v1 · PostgreSQL backend</span>
-        <h1>{isSignup ? "Создайте AI‑workspace для продаж" : "Вернитесь в AI‑workspace"}</h1>
-        <p>Единый доступ к dashboard, credits, AI-задачам и CRM pipeline в премиальном dark SaaS интерфейсе.</p>
+        <span className="hero-badge">JWT‑авторизация v1 · PostgreSQL‑бэкенд</span>
+        <h1>{isSignup ? "Создайте AI‑пространство для продаж" : "Вернитесь в AI‑пространство"}</h1>
+        <p>Единый доступ к дашборду, AI‑кредитам, AI‑задачам и CRM‑воронке в премиальном тёмном SaaS‑интерфейсе.</p>
         <div className="auth-benefits">
-          <span>✓ Protected layout</span>
-          <span>✓ CRM и AI follow-up</span>
-          <span>✓ Production-ready routing</span>
+          <span>✓ Защищённый рабочий контур</span>
+          <span>✓ CRM и AI‑дожим</span>
+          <span>✓ Готовая к продакшену навигация</span>
         </div>
       </section>
       <form className="auth-form shell-glow" onSubmit={handleSubmit}>
-        <span className="eyebrow">{isSignup ? "Signup" : "Login"}</span>
+        <span className="eyebrow">{isSignup ? "Регистрация" : "Вход"}</span>
         <h2>{isSignup ? "Начать работу" : "Войти в аккаунт"}</h2>
         {isSignup && (
           <label>
@@ -55,7 +55,7 @@ function AuthCard({ mode }) {
           </label>
         )}
         <label>
-          <span>Email</span>
+          <span>Эл. почта</span>
           <input type="email" name="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} required />
         </label>
         <label>
@@ -64,7 +64,7 @@ function AuthCard({ mode }) {
         </label>
         {error && <p className="auth-error" role="alert">{error}</p>}
         <button className="btn primary" type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Подключаемся..." : isSignup ? "Создать workspace" : "Войти"}
+          {isSubmitting ? "Подключаемся..." : isSignup ? "Создать рабочее пространство" : "Войти"}
         </button>
         <p className="auth-switch">
           {isSignup ? "Уже есть аккаунт?" : "Нет аккаунта?"} <Link to={isSignup ? "/login" : "/signup"}>{isSignup ? "Войти" : "Зарегистрироваться"}</Link>

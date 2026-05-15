@@ -17,7 +17,7 @@ const initialLeadForm = {
   phone: "",
   company: "",
   value: "",
-  source: "manual",
+  source: "ручной ввод",
 };
 
 function formatCurrency(value) {
@@ -121,8 +121,8 @@ export default function CRMPage() {
   return (
     <main className="workspace-page">
       <PageHeading
-        eyebrow="CRM pipeline"
-        title="Реальная CRM воронка"
+        eyebrow="CRM‑воронка"
+        title="Реальная CRM‑воронка"
         copy="Лиды, этапы, заметки и статистика загружаются из защищённого PostgreSQL API только для текущего пользователя."
         action={<button className="btn primary compact" type="button" onClick={() => document.getElementById("crm-lead-name")?.focus()}>Добавить лид</button>}
       />
@@ -130,9 +130,9 @@ export default function CRMPage() {
       {error && <p className="auth-error crm-alert">{error}</p>}
 
       <section className="dashboard-stats crm-stat-grid">
-        <StatCard label="Лидов" value={loading ? "…" : String(stats?.totalLeads || 0)} hint="в вашем pipeline" />
-        <StatCard label="Pipeline" value={loading ? "…" : formatCurrency(stats?.pipelineValue)} hint="общая сумма сделок" tone="violet" />
-        <StatCard label="Won" value={loading ? "…" : formatCurrency(stats?.wonValue)} hint="выигранные сделки" tone="pink" />
+        <StatCard label="Лидов" value={loading ? "…" : String(stats?.totalLeads || 0)} hint="в вашей воронке" />
+        <StatCard label="Воронка" value={loading ? "…" : formatCurrency(stats?.pipelineValue)} hint="общая сумма сделок" tone="violet" />
+        <StatCard label="Выиграно" value={loading ? "…" : formatCurrency(stats?.wonValue)} hint="выигранные сделки" tone="pink" />
       </section>
 
       <section className="crm-layout">
@@ -190,7 +190,7 @@ export default function CRMPage() {
 
         <aside className="crm-insights">
           <Panel>
-            <span className="eyebrow">Create lead</span>
+            <span className="eyebrow">Создать лид</span>
             <h3>Новый лид</h3>
             <form className="lead-form" onSubmit={handleCreateLead}>
               <label className="crm-field">
@@ -198,7 +198,7 @@ export default function CRMPage() {
                 <input id="crm-lead-name" value={leadForm.name} onChange={(event) => setLeadForm({ ...leadForm, name: event.target.value })} required />
               </label>
               <label className="crm-field">
-                <span>Email</span>
+                <span>Эл. почта</span>
                 <input type="email" value={leadForm.email} onChange={(event) => setLeadForm({ ...leadForm, email: event.target.value })} />
               </label>
               <label className="crm-field">
@@ -222,7 +222,7 @@ export default function CRMPage() {
           </Panel>
 
           <Panel>
-            <span className="eyebrow">Notes & activity</span>
+            <span className="eyebrow">Заметки и активность</span>
             <h3>Последние заметки</h3>
             <div className="activity-preview">
               {(stats?.recentNotes || []).length === 0 && <p><span />Заметок пока нет</p>}

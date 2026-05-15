@@ -5,24 +5,24 @@ import { createAiTask, fetchAiTask, fetchAiTasks, fetchProfile, updateStoredUser
 import { orders, quickActions, userProfile } from "../data/mockData";
 
 const taskTypeLabels = {
-  ai_content_generation: "AI content generation",
-  ai_sales_reply: "AI sales reply",
-  ai_telegram_outreach: "AI Telegram outreach",
-  ai_crm_follow_up: "AI CRM follow-up",
+  ai_content_generation: "Генерация AI‑контента",
+  ai_sales_reply: "AI‑ответ для продаж",
+  ai_telegram_outreach: "AI‑аутрич в Telegram",
+  ai_crm_follow_up: "AI‑дожим в CRM",
 };
 
 const taskTypeDescriptions = {
-  ai_content_generation: "Generate premium campaign copy, product angles, and CTAs.",
-  ai_sales_reply: "Draft a sharp consultative reply for warm sales conversations.",
-  ai_telegram_outreach: "Create concise Telegram outreach sequences for leads.",
-  ai_crm_follow_up: "Produce CRM notes, next actions, and follow-up cadence.",
+  ai_content_generation: "Создаёт премиальный текст кампании, продуктовые углы и призывы к действию.",
+  ai_sales_reply: "Готовит точный консультативный ответ для тёплой сделки.",
+  ai_telegram_outreach: "Собирает короткие Telegram‑цепочки для лидов.",
+  ai_crm_follow_up: "Формирует CRM‑заметки, следующие шаги и ритм дожима.",
 };
 
 const statusLabels = {
-  pending: "Pending",
-  processing: "Processing",
-  completed: "Completed",
-  failed: "Failed",
+  pending: "Ожидает",
+  processing: "В работе",
+  completed: "Готово",
+  failed: "Ошибка",
 };
 
 const initialTaskForm = {
@@ -40,12 +40,34 @@ function formatDate(value) {
   }).format(new Date(value));
 }
 
+
+function translateTaskResultText(value) {
+  return String(value)
+    .replace('Premium content draft for:', 'Премиальный черновик контента для:')
+    .replace('Hook: Open with the highest-impact business outcome.', 'Хук: начните с самого сильного бизнес‑результата.')
+    .replace('Angle: Make the promise specific, measurable, and credible.', 'Угол подачи: сделайте обещание конкретным, измеримым и убедительным.')
+    .replace('CTA: Invite the reader to launch the next AI workflow.', 'Призыв: предложите запустить следующий AI‑сценарий.')
+    .replace('Hi,', 'Здравствуйте,')
+    .replace('Thanks for the context:', 'Спасибо за контекст:')
+    .replace('The best reply is consultative: acknowledge the need, connect it to a clear ROI outcome, and suggest a short next step.', 'Лучший ответ — консультативный: подтвердите потребность, свяжите её с понятным ROI и предложите короткий следующий шаг.')
+    .replace('Recommended CTA:', 'Рекомендуемый призыв:')
+    .replace('Can we map the first automation this week?', 'Можем на этой неделе спроектировать первую автоматизацию?')
+    .replace('Quick Telegram sequence for:', 'Короткая Telegram‑цепочка для:')
+    .replace('1) Personal opener tied to their role/company.', '1) Персональный opener с привязкой к роли или компании.')
+    .replace('2) One-line pain point about missed follow-ups or slow CRM work.', '2) Одна строка о боли: пропущенный дожим или медленная работа CRM.')
+    .replace('3) Soft CTA: ask if they want a 2-minute workflow audit.', '3) Мягкий призыв: спросите, нужен ли 2‑минутный аудит процесса.')
+    .replace('Log context:', 'Зафиксируйте контекст:')
+    .replace('Create next action with a clear owner and due date.', 'Создайте следующий шаг с владельцем и сроком.')
+    .replace('Send a personalized recap within 2 hours.', 'Отправьте персональное резюме в течение 2 часов.')
+    .replace('Schedule the next touch based on lead priority.', 'Запланируйте следующее касание по приоритету лида.')
+}
+
 function renderTaskResult(result) {
-  if (!result) return "Result will appear after the AI worker finishes execution.";
-  if (result.content) return result.content;
-  if (result.message) return result.message;
-  if (Array.isArray(result.bullets)) return result.bullets.join("\n• ");
-  if (Array.isArray(result.steps)) return result.steps.join("\n• ");
+  if (!result) return "Результат появится после завершения работы AI‑воркера.";
+  if (result.content) return translateTaskResultText(result.content);
+  if (result.message) return translateTaskResultText(result.message);
+  if (Array.isArray(result.bullets)) return result.bullets.map(translateTaskResultText).join("\n• ");
+  if (Array.isArray(result.steps)) return result.steps.map(translateTaskResultText).join("\n• ");
   return JSON.stringify(result, null, 2);
 }
 
@@ -56,8 +78,8 @@ function buildActivityFeed(tasks) {
       {
         id: `${task.id}-created`,
         status: "pending",
-        title: `${label} created`,
-        detail: `${task.credits_spent} credits reserved and worker queued.`,
+        title: `${label} создана`,
+        detail: `${task.credits_spent} AI‑кредитов зарезервировано, задача поставлена в очередь.`,
         timestamp: task.created_at,
       },
     ];
@@ -66,8 +88,8 @@ function buildActivityFeed(tasks) {
       events.push({
         id: `${task.id}-processing`,
         status: "processing",
-        title: `${label} processing`,
-        detail: "AI execution engine picked up the task.",
+        title: `${label} выполняется`,
+        detail: "AI‑движок взял задачу в работу.",
         timestamp: task.updated_at || task.created_at,
       });
     }
@@ -76,8 +98,8 @@ function buildActivityFeed(tasks) {
       events.push({
         id: `${task.id}-${task.status}`,
         status: task.status,
-        title: task.status === "completed" ? `${label} completed` : `${label} failed`,
-        detail: task.status === "completed" ? "Result artifacts are ready in recent tasks." : "Worker returned an error. Try again with a refined prompt.",
+        title: task.status === "completed" ? `${label} завершено` : `${label} завершилась ошибкой`,
+        detail: task.status === "completed" ? "Результаты доступны в списке последних задач." : "Воркер вернул ошибку. Уточните промпт и попробуйте снова.",
         timestamp: task.updated_at || task.created_at,
       });
     }
@@ -106,7 +128,7 @@ export default function DashboardPage() {
       setTasks(tasksResponse.tasks || []);
       setCosts(tasksResponse.costs || {});
     } catch (requestError) {
-      setError(requestError.message || "Не удалось загрузить dashboard");
+      setError(requestError.message || "Не удалось загрузить дашборд");
     } finally {
       if (!silent) setLoading(false);
     }
@@ -158,12 +180,12 @@ export default function DashboardPage() {
       updateStoredUser({ credits: response.remainingCredits });
       setTaskForm(initialTaskForm);
       setModalOpen(false);
-      setMessage("AI task created, credits deducted, and execution worker started.");
+      setMessage("AI‑задача создана, AI‑кредиты списаны, воркер выполнения запущен.");
     } catch (requestError) {
       if (requestError.status === 402) {
         setError(`${requestError.message}. Пополните баланс или выберите задачу дешевле.`);
       } else {
-        setError(requestError.message || "Не удалось создать AI-задачу");
+        setError(requestError.message || "Не удалось создать AI‑задачу");
       }
     } finally {
       setSaving(false);
@@ -175,29 +197,29 @@ export default function DashboardPage() {
   return (
     <main className="workspace-page ai-os-page">
       <PageHeading
-        eyebrow="Dashboard"
-        title="AI operating system"
-        copy="Create, fund, execute, and monitor AI work from one premium JWT-protected workspace."
-        action={<button className="btn primary compact pulse-action" type="button" onClick={() => setModalOpen(true)}>Create AI task</button>}
+        eyebrow="Дашборд"
+        title="AI‑операционная система продаж"
+        copy="Создавайте, оплачивайте AI‑кредитами, запускайте и контролируйте AI‑работу из единого защищённого JWT рабочего пространства."
+        action={<button className="btn primary compact pulse-action" type="button" onClick={() => setModalOpen(true)}>Создать AI‑задачу</button>}
       />
 
       {error && <p className="auth-error dashboard-alert">{error}</p>}
       {message && <p className="success-alert dashboard-alert">{message}</p>}
 
       <section className="dashboard-stats">
-        <StatCard label="Credits balance" value={loading ? "…" : creditBalance.toLocaleString("ru-RU")} hint="Available for new AI execution" />
-        <StatCard label="AI tasks" value={loading ? "…" : String(tasks.length)} hint={`${activeTasks} active · ${completedTasks} completed`} tone="violet" />
-        <StatCard label="Credits spent" value={loading ? "…" : creditsSpent.toLocaleString("ru-RU")} hint="Deducted through credits ledger" tone="pink" />
+        <StatCard label="Баланс AI‑кредитов" value={loading ? "…" : creditBalance.toLocaleString("ru-RU")} hint="Доступно для новых AI‑запусков" />
+        <StatCard label="AI‑задачи" value={loading ? "…" : String(tasks.length)} hint={`${activeTasks} активных · ${completedTasks} завершено`} tone="violet" />
+        <StatCard label="Потрачено AI‑кредитов" value={loading ? "…" : creditsSpent.toLocaleString("ru-RU")} hint="Списано через журнал AI‑кредитов" tone="pink" />
       </section>
 
       <section className="app-grid two-columns">
         <Panel className="profile-card ai-command-card">
-          <span className="eyebrow">Command center</span>
+          <span className="eyebrow">Центр управления</span>
           <div className="profile-hero">
             <div className="profile-avatar">{String(displayProfile.email || displayProfile.name || "AI").slice(0, 2).toUpperCase()}</div>
             <div>
               <h3>{displayProfile.email || displayProfile.name}</h3>
-              <p>{displayProfile.plan || "free"} · JWT protected workspace</p>
+              <p>{displayProfile.plan || "бесплатный"} · защищённое JWT‑пространство</p>
               <span>{displayProfile.id || displayProfile.company}</span>
             </div>
           </div>
@@ -205,18 +227,18 @@ export default function DashboardPage() {
             {Object.keys(taskTypeLabels).map((type) => (
               <button type="button" key={type} onClick={() => { setTaskForm({ ...initialTaskForm, type }); setModalOpen(true); }}>
                 <b>{taskTypeLabels[type]}</b>
-                <span>{costs[type] || 0} credits</span>
+                <span>{costs[type] || 0} AI‑кредитов</span>
               </button>
             ))}
           </div>
         </Panel>
 
         <Panel className="credits-card ai-orb-card">
-          <span className="eyebrow">Execution capacity</span>
+          <span className="eyebrow">Ресурс выполнения</span>
           <div className="credits-orb"><span>{creditBalance.toLocaleString("ru-RU")}</span></div>
-          <p>{activeTasks > 0 ? `${activeTasks} AI tasks are executing right now` : "Balance is ready for the next AI task"}</p>
+          <p>{activeTasks > 0 ? `${activeTasks} AI‑задач выполняется сейчас` : "Баланс готов к следующей AI‑задаче"}</p>
           <div className="progress-track"><i style={{ width: `${creditsUsedPercent}%` }} /></div>
-          <small>{creditsUsedPercent}% of total allocated credits used</small>
+          <small>{creditsUsedPercent}% выделенных AI‑кредитов использовано</small>
         </Panel>
       </section>
 
@@ -224,19 +246,19 @@ export default function DashboardPage() {
         <Panel>
           <div className="panel-head">
             <div>
-              <span className="eyebrow">Recent tasks</span>
-              <h3>AI execution queue</h3>
+              <span className="eyebrow">Последние задачи</span>
+              <h3>Очередь AI‑выполнения</h3>
             </div>
-            <button className="ghost-button" type="button" onClick={() => loadDashboard()} disabled={loading}>Refresh</button>
+            <button className="ghost-button" type="button" onClick={() => loadDashboard()} disabled={loading}>Обновить</button>
           </div>
           <div className="task-list ai-history-list recent-task-widget">
             {loading && <div className="skeleton-stack"><i /><i /><i /></div>}
-            {!loading && recentTasks.length === 0 && <p className="empty-state">No AI tasks yet. Launch the first task from the modal.</p>}
+            {!loading && recentTasks.length === 0 && <p className="empty-state">AI‑задач пока нет. Запустите первую задачу из модального окна.</p>}
             {recentTasks.map((task) => (
               <article className={`task-card ai-task-row ${task.status}`} key={task.id}>
                 <div>
                   <strong>{taskTypeLabels[task.type] || task.type}</strong>
-                  <span>{statusLabels[task.status] || task.status} · {task.credits_spent} credits · {formatDate(task.created_at)}</span>
+                  <span>{statusLabels[task.status] || task.status} · {task.credits_spent} AI‑кредитов · {formatDate(task.created_at)}</span>
                   <small>{task.prompt}</small>
                   <pre>{renderTaskResult(task.result)}</pre>
                 </div>
@@ -249,14 +271,14 @@ export default function DashboardPage() {
         <Panel>
           <div className="panel-head">
             <div>
-              <span className="eyebrow">Live activity</span>
-              <h3>Worker feed</h3>
+              <span className="eyebrow">Живая активность</span>
+              <h3>Лента воркера</h3>
             </div>
-            <span className="live-pill"><i />Live</span>
+            <span className="live-pill"><i />Онлайн</span>
           </div>
           <div className="live-activity-feed">
             {loading && <div className="skeleton-stack"><i /><i /><i /></div>}
-            {!loading && activityFeed.length === 0 && <p className="empty-state">Activity feed is waiting for the first task event.</p>}
+            {!loading && activityFeed.length === 0 && <p className="empty-state">Лента активности ждёт первое событие задачи.</p>}
             {activityFeed.map((event) => (
               <article className={`activity-event ${event.status}`} key={event.id}>
                 <span />
@@ -274,10 +296,10 @@ export default function DashboardPage() {
       <Panel>
         <div className="panel-head">
           <div>
-            <span className="eyebrow">Orders & quick actions</span>
+            <span className="eyebrow">Оплаты и быстрые действия</span>
             <h3>Оплаты, тариф и быстрые действия</h3>
           </div>
-          <Link className="ghost-button" to="/crm">Open CRM</Link>
+          <Link className="ghost-button" to="/crm">Открыть CRM</Link>
         </div>
         <div className="order-list dashboard-orders">
           {orders.map((order) => (
@@ -301,8 +323,8 @@ export default function DashboardPage() {
             <div className="modal-glow" />
             <div className="panel-head">
               <div>
-                <span className="eyebrow">Create AI task</span>
-                <h3 id="ai-task-modal-title">Launch AI execution</h3>
+                <span className="eyebrow">Создать AI‑задачу</span>
+                <h3 id="ai-task-modal-title">Запустить AI‑выполнение</h3>
               </div>
               <button className="modal-close" type="button" onClick={() => setModalOpen(false)} disabled={saving}>×</button>
             </div>
@@ -319,23 +341,23 @@ export default function DashboardPage() {
                     />
                     <b>{taskTypeLabels[type]}</b>
                     <span>{taskTypeDescriptions[type]}</span>
-                    <small>{costs[type] || 0} credits</small>
+                    <small>{costs[type] || 0} AI‑кредитов</small>
                   </label>
                 ))}
               </div>
               <label className="crm-field">
-                <span>Execution prompt *</span>
+                <span>Промпт выполнения *</span>
                 <textarea
                   value={taskForm.prompt}
                   onChange={(event) => setTaskForm({ ...taskForm, prompt: event.target.value })}
-                  placeholder="Example: prepare a CRM follow-up for a SaaS lead after a demo; highlight ROI, next action, and Telegram touchpoint."
+                  placeholder="Пример: подготовь CRM‑дожим для SaaS‑лида после демо; подчеркни ROI, следующий шаг и касание в Telegram."
                   required
                 />
               </label>
               <div className="modal-actions">
-                <span>{selectedCost} credits will be deducted immediately</span>
+                <span>{selectedCost} AI‑кредитов будет списано сразу</span>
                 <button className="btn primary compact" disabled={saving || loading} type="submit">
-                  {saving ? <><i className="button-spinner" />Launching…</> : "Create and execute"}
+                  {saving ? <><i className="button-spinner" />Запускаем…</> : "Создать и выполнить"}
                 </button>
               </div>
             </form>
