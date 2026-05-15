@@ -7,6 +7,7 @@ const authRoutes = require('./routes/authRoutes')
 const dashboardRoutes = require('./routes/dashboardRoutes')
 const crmRoutes = require('./routes/crmRoutes')
 const aiTaskRoutes = require('./routes/aiTaskRoutes')
+const telegramRoutes = require('./routes/telegramRoutes')
 const { requireAuth } = require('./middleware/authMiddleware')
 const { errorHandler } = require('./middleware/errorHandler')
 
@@ -24,6 +25,7 @@ app.use('/api/auth', authRoutes)
 app.use('/api/dashboard', dashboardRoutes)
 app.use('/api/crm', crmRoutes)
 app.use('/api/ai', aiTaskRoutes)
+app.use('/api/telegram', telegramRoutes)
 
 app.post('/api/lead', requireAuth, async (req, res, next) => {
   try {

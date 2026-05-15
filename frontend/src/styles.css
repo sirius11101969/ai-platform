@@ -416,6 +416,10 @@ button { font: inherit; }
 .compact-pipeline-card .lead-topline span { font-size: 12px; white-space: nowrap; }
 .compact-pipeline-card p { margin: 0; color: #aebde8; font-size: 13px; line-height: 1.35; }
 .compact-pipeline-card small { display: inline-flex; align-items: center; gap: 7px; margin-top: 0; color: #d5e0ff; font-size: 12px; font-weight: 900; }
+.lead-card-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 2px; }
+.source-pill { display: inline-flex; align-items: center; justify-content: center; width: fit-content; border: 1px solid rgba(255,255,255,.12); border-radius: 999px; background: rgba(255,255,255,.07); color: #dbe7ff; font-size: 11px; font-weight: 950; letter-spacing: .03em; padding: 5px 8px; text-transform: uppercase; }
+.telegram-source { border-color: rgba(117,239,255,.34); background: rgba(117,239,255,.11); color: #75efff; box-shadow: 0 0 18px rgba(117,239,255,.12); }
+.detail-source-pill { margin-top: 10px; }
 .compact-pipeline-card small i { width: 8px; height: 8px; border-radius: 50%; background: #75ffda; box-shadow: 0 0 14px rgba(117,255,218,.7); }
 .crm-lead-modal { width: min(760px, 100%); }
 .modal-copy { margin: 8px 0 0; color: #aebde8; line-height: 1.6; }

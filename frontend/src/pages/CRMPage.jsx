@@ -57,12 +57,28 @@ function getActivityTitle(event) {
     ai_followup_generated: "AI‑дожим создан",
     note_added: "Заметка добавлена",
     lead_updated: "Лид обновлён",
+    telegram_lead_updated: "Telegram лид обновлён",
+    telegram_message_received: "Telegram сообщение получено",
+    telegram_ai_reply_sent: "AI ответ отправлен в Telegram",
   };
   return titles[event?.type] || event?.title || "Событие CRM";
 }
 
 function formatCrmText(value) {
-  return String(value || "").replace(/AI follow-up:/gi, "AI‑дожим:").replace(/AI follow‑up/gi, "AI‑дожим");
+  return String(value || "")
+    .replace(/AI follow-up:/gi, "AI‑дожим:")
+    .replace(/AI follow‑up/gi, "AI‑дожим")
+    .replace(/AI reply sent:/gi, "AI ответ отправлен:")
+    .replace(/Telegram message received/gi, "Telegram сообщение получено");
+}
+
+function formatLeadSource(source) {
+  if (source === "telegram") return "Telegram";
+  return source || "—";
+}
+
+function isTelegramLead(lead) {
+  return lead?.source === "telegram" || Boolean(lead?.telegram);
 }
 
 export default function CRMPage() {
@@ -109,6 +125,12 @@ export default function CRMPage() {
   }
 
   useEffect(() => { loadCrm(); }, []);
+
+  useEffect(() => {
+    const leadIdFromUrl = new URLSearchParams(window.location.search).get("lead");
+    if (!leadIdFromUrl || selectedLeadId || leads.length === 0) return;
+    if (leads.some((lead) => lead.id === leadIdFromUrl)) setSelectedLeadId(leadIdFromUrl);
+  }, [leads, selectedLeadId]);
 
   useEffect(() => {
     function handleOpenCreate() {
@@ -356,8 +378,8 @@ export default function CRMPage() {
                       key={lead.id}
                     >
                       <div className="lead-topline"><strong>{lead.name}</strong><span>{formatCurrency(lead.value)}</span></div>
-                      <p>{lead.company || "Компания не указана"}</p>
-                      <small><i />{stageMap[lead.status] || lead.status}</small>
+                      <p>{lead.company || (isTelegramLead(lead) ? lead.telegram || "Telegram контакт" : "Компания не указана")}</p>
+                      <div className="lead-card-meta"><small><i />{stageMap[lead.status] || lead.status}</small><span className={`source-pill ${lead.source === "telegram" ? "telegram-source" : ""}`}>{formatLeadSource(lead.source)}</span></div>
                     </article>
                   ))}
                 </div>
@@ -496,6 +518,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
             <span className="eyebrow">Карточка лида</span>
             <h3 id="lead-detail-title">{lead.name}</h3>
             <p className="modal-copy">{lead.company || "Компания не указана"} · {formatCurrency(lead.value)}</p>
+            <span className={`source-pill detail-source-pill ${lead.source === "telegram" ? "telegram-source" : ""}`}>{formatLeadSource(lead.source)}</span>
           </div>
           <button className="modal-close" type="button" onClick={onClose} aria-label="Закрыть">×</button>
         </div>
@@ -512,6 +535,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
               <dl className="lead-data-list">
                 <div><dt>Контакт</dt><dd>{lead.name}</dd></div>
                 <div><dt>Компания</dt><dd>{lead.company || "—"}</dd></div>
+                <div><dt>Источник</dt><dd>{formatLeadSource(lead.source)}</dd></div>
                 <div><dt>Telegram</dt><dd>{lead.telegram || "—"}</dd></div>
                 <div><dt>Email</dt><dd>{lead.email || "—"}</dd></div>
                 <div><dt>Этап</dt><dd>{stageMap[lead.status] || lead.status}</dd></div>
@@ -521,7 +545,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
             </div>
 
             <div className="detail-section">
-              <h4>Заметки</h4>
+              <h4>{isTelegramLead(lead) ? "Telegram диалог и заметки" : "Заметки"}</h4>
               {lead.notesText ? <p className="detail-notes-text">{formatCrmText(lead.notesText)}</p> : <p className="empty-state">Заметок пока нет</p>}
               <form className="detail-note-form" onSubmit={onAddNote}>
                 <textarea value={noteDraft} onChange={(event) => onNoteDraftChange(event.target.value)} placeholder="Добавить новую заметку по сделке" />
