@@ -182,11 +182,20 @@ async function processAction(actionId) {
          FROM workspace_members wm WHERE wm.workspace_id = $1 AND wm.role = 'owner' LIMIT 1`,
       [action.workspaceId, action.leadId, output.nextBestAction || output.message || output.rawText || 'AI action completed', { actionId: action.id, taskType: action.taskType }]
     )
+    if (action.taskType === 'analyze_lead') {
+      const owner = await pool.query("SELECT user_id FROM workspace_members WHERE workspace_id = $1 AND role = 'owner' LIMIT 1", [action.workspaceId])
+      if (owner.rows[0]) await crmModel.analyzeLeadIntelligence(owner.rows[0].user_id, action.workspaceId, action.leadId, output, { createFollowUp: true })
+    }
     if (action.taskType === 'generate_follow_up') {
       await pool.query(
         `INSERT INTO ai_followups(workspace_id, lead_id, action_id, task_type, status, priority, input_context, output_result)
          VALUES($1, $2, $3, 'generate_follow_up', 'queued', $4, $5, $6)`,
         [action.workspaceId, action.leadId, action.id, action.priority, action.inputContext, output]
+      )
+      await pool.query(
+        `INSERT INTO ai_followup_sequences(workspace_id, lead_id, status, followup_type, generated_message, scheduled_for, metadata)
+         VALUES($1, $2, 'draft', COALESCE(NULLIF($3, ''), 'telegram'), COALESCE(NULLIF($4, ''), 'AI подготовил follow-up'), NOW() + (COALESCE($5, 24)::int * INTERVAL '1 hour'), $6)`,
+        [action.workspaceId, action.leadId, output.channel === 'email' ? 'email' : output.channel === 'telegram' ? 'telegram' : 'reminder_task', output.message || output.draftMessage, output.sendAfterHours || 24, { actionId: action.id, reasoning: output.reasoning || null }]
       )
     }
     return normalizeAction({ ...action, status: 'completed', output_result: output })

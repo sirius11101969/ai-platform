@@ -265,6 +265,14 @@ export function createCrmFollowUp(id) {
   return request(`/crm/leads/${id}/followups`, { method: 'POST' })
 }
 
+export function analyzeCrmLeadAi(id) {
+  return request(`/crm/leads/${id}/ai-analysis`, { method: 'POST' })
+}
+
+export function analyzeCrmWorkspaceAi(payload = {}) {
+  return request('/crm/ai-analysis', { method: 'POST', body: JSON.stringify(payload) })
+}
+
 export function fetchCrmActivity() {
   return request('/crm/activity')
 }

@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Panel, PageHeading, StatCard } from "../components/AppShell";
 import {
   addCrmLeadNote,
+  analyzeCrmLeadAi,
+  analyzeCrmWorkspaceAi,
   createCrmFollowUp,
   createAiAgentAction,
   createCrmLead,
@@ -96,6 +98,35 @@ function isTelegramLead(lead) {
   return lead?.source === "telegram" || Boolean(lead?.telegram);
 }
 
+
+function getLeadAiScore(lead) {
+  return lead?.aiScore || null;
+}
+
+function riskLabel(level) {
+  return ({ low: 'Низкий риск', medium: 'Средний риск', high: 'Высокий риск' }[level] || 'Средний риск');
+}
+
+function urgencyLabel(level) {
+  return ({ low: 'Низкая срочность', medium: 'Средняя срочность', high: 'Высокая срочность' }[level] || 'Срочность не определена');
+}
+
+function tempLabel(level) {
+  return ({ cold: 'COLD', warm: 'WARM', hot: 'HOT' }[level] || 'AI');
+}
+
+function getAiBadges(lead) {
+  const score = getLeadAiScore(lead);
+  if (!score) return [];
+  return [
+    score.temperature === 'hot' && 'HOT',
+    score.score >= 80 && 'AI PRIORITY',
+    score.dealProbability >= 70 && 'HIGH PROBABILITY',
+    score.urgencyLevel === 'high' && 'FOLLOW-UP REQUIRED',
+    score.riskLevel === 'high' && 'AT RISK',
+  ].filter(Boolean);
+}
+
 function getAiRecommendation(lead) {
   return lead?.aiRecommendation || (lead?.aiActions || []).find((action) => action.task_type === 'analyze_lead' && action.status === 'completed')?.output_result || null;
 }
@@ -135,6 +166,7 @@ export default function CRMPage() {
   const [emailBusy, setEmailBusy] = useState(false);
   const [aiActionBusy, setAiActionBusy] = useState({});
   const [inactiveQueueBusy, setInactiveQueueBusy] = useState(false);
+  const [aiAnalysisBusy, setAiAnalysisBusy] = useState(false);
 
   const selectedLead = useMemo(() => leads.find((lead) => lead.id === selectedLeadId) || null, [leads, selectedLeadId]);
   const stageMap = useMemo(() => stages.reduce((acc, stage) => ({ ...acc, [stage.status]: stage.title }), {}), [stages]);
@@ -428,6 +460,35 @@ export default function CRMPage() {
     }
   }
 
+
+  async function handleAnalyzeWorkspaceAi() {
+    setError('');
+    setAiAnalysisBusy(true);
+    try {
+      await analyzeCrmWorkspaceAi({ limit: 25 });
+      await loadCrm({ silent: true });
+      await refreshMeta();
+    } catch (requestError) {
+      setError(requestError.message || 'Не удалось обновить AI score');
+    } finally {
+      setAiAnalysisBusy(false);
+    }
+  }
+
+  async function handleAnalyzeLeadAi(lead) {
+    setError('');
+    setAiActionBusy((current) => ({ ...current, [`${lead.id}:lead_ai_score`]: true }));
+    try {
+      await analyzeCrmLeadAi(lead.id);
+      await loadCrm({ silent: true });
+      await refreshMeta();
+    } catch (requestError) {
+      setError(requestError.message || 'Не удалось выполнить AI анализ лида');
+    } finally {
+      setAiActionBusy((current) => ({ ...current, [`${lead.id}:lead_ai_score`]: false }));
+    }
+  }
+
   async function handleQueueInactiveFollowUps() {
     setError('');
     setInactiveQueueBusy(true);
@@ -518,6 +579,9 @@ export default function CRMPage() {
         <StatCard label="AI сегодня" value={loading ? "…" : String(stats?.aiMetrics?.actionsToday || 0)} hint="AI действий сегодня" tone="pink" />
         <StatCard label="AI follow-up" value={loading ? "…" : String(stats?.aiMetrics?.generatedFollowUps || 0)} hint="сгенерировано AI" tone="violet" />
         <StatCard label="AI эффективность" value={loading ? "…" : `${stats?.aiMetrics?.efficiency || 0}%`} hint={`${stats?.aiMetrics?.assistedDeals || 0} AI‑сделок`} />
+        <StatCard label="Горячие лиды" value={loading ? "…" : String(stats?.aiMetrics?.hotLeads || 0)} hint={`средний score ${stats?.aiMetrics?.averageLeadScore || 0}/100`} tone="pink" />
+        <StatCard label="AI прогноз выручки" value={loading ? "…" : formatCurrency(stats?.aiMetrics?.predictedRevenue || 0)} hint={`forecast ${stats?.aiMetrics?.conversionForecast || 0}%`} tone="violet" />
+        <StatCard label="At-risk сделки" value={loading ? "…" : String(stats?.aiMetrics?.atRiskDeals || 0)} hint={`${stats?.aiMetrics?.followUpsPending || 0} follow-up ждут`} />
       </section>
 
       <section className="ai-action-center-panel">
@@ -526,7 +590,7 @@ export default function CRMPage() {
           <h3>Автономная очередь follow-up</h3>
           <p>AI анализирует неактивных лидов по реальному CRM контексту и готовит черновики без автоотправки.</p>
         </div>
-        <button className="btn primary compact" type="button" onClick={handleQueueInactiveFollowUps} disabled={inactiveQueueBusy}>{inactiveQueueBusy ? "AI ставит в очередь…" : "Поставить follow-up для неактивных"}</button>
+<div className="ai-action-center-buttons"><button className="ghost-button" type="button" onClick={handleAnalyzeWorkspaceAi} disabled={aiAnalysisBusy}>{aiAnalysisBusy ? "AI пересчитывает…" : "Пересчитать AI score"}</button><button className="btn primary compact" type="button" onClick={handleQueueInactiveFollowUps} disabled={inactiveQueueBusy}>{inactiveQueueBusy ? "AI ставит в очередь…" : "Поставить follow-up для неактивных"}</button></div>
       </section>
 
       <section className="crm-layout production-crm-layout">
@@ -564,14 +628,14 @@ export default function CRMPage() {
                   {stageLeads.length === 0 && <p className="empty-state">Перетащите лид на этот этап</p>}
                   {stageLeads.map((lead) => (
                     <article
-                      className={`lead-card premium-lead-card compact-pipeline-card ${draggedLeadId === lead.id ? "is-dragging" : ""}`}
+                      className={`lead-card premium-lead-card compact-pipeline-card ${getLeadAiScore(lead)?.riskLevel === "high" ? "at-risk-lead" : ""} ${draggedLeadId === lead.id ? "is-dragging" : ""}`}
                       draggable
                       onClick={() => openDetail(lead)}
                       onDragStart={(event) => handleLeadDragStart(event, lead)}
                       onDragEnd={handleLeadDragEnd}
                       key={lead.id}
                     >
-                      <div className="lead-topline"><strong>{lead.name}</strong><span>{formatCurrency(lead.value)}</span></div>
+                      <div className="lead-topline"><strong>{lead.name}</strong><span>{formatCurrency(lead.value)}</span></div>{getLeadAiScore(lead) && <div className="lead-ai-probability"><span>{getLeadAiScore(lead).dealProbability}% вероятность сделки</span><i style={{ width: `${getLeadAiScore(lead).dealProbability}%` }} /></div>}{getAiBadges(lead).length > 0 && <div className="ai-badge-row">{getAiBadges(lead).map((badge) => <b className="ai-neon-badge" key={badge}>{badge}</b>)}</div>}
                       <p>{lead.company || (isTelegramLead(lead) ? lead.telegram || "Telegram контакт" : "Компания не указана")}</p>
                       <div className="lead-card-meta"><small><i />{stageMap[lead.status] || lead.status}</small><span className={`source-pill ${lead.source === "telegram" ? "telegram-source" : ""}`}>{formatLeadSource(lead.source)}</span></div>{getAiRecommendation(lead) && <div className="ai-card-recommendation"><span>AI</span>{getAiSummaryText(getAiRecommendation(lead))}</div>}{isTelegramLead(lead) && <div className="telegram-card-status"><span className={`telegram-presence-dot ${lead.telegramOnline ? 'online' : 'offline'}`} />{lead.telegramOnline ? 'online' : 'offline'} · {lead.lastMessageAt ? formatDate(lead.lastMessageAt) : 'нет сообщений'}</div>}
                     </article>
@@ -608,6 +672,7 @@ export default function CRMPage() {
           onAddNote={(event) => handleAddNote(event, selectedLead)}
           onFollowUp={() => handleFollowUp(selectedLead)}
           onAiAction={(taskType) => handleAiAgentAction(selectedLead, taskType)}
+          onAnalyzeLeadAi={() => handleAnalyzeLeadAi(selectedLead)}
           aiActionBusy={aiActionBusy}
           followUpLoading={followUpLoading[selectedLead.id]}
           onDelete={() => handleDeleteLead(selectedLead)}
@@ -718,7 +783,7 @@ function LeadFormModal({ title, subtitle, stages, leadForm, setLeadForm, saving,
   );
 }
 
-function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDraftChange, onAddNote, onFollowUp, onAiAction, aiActionBusy = {}, followUpLoading, onDelete, onEdit, onMove, telegramMessages = [], telegramDraft = '', telegramSending = false, onTelegramDraftChange, onSendTelegramReply, emailTemplates = [], leadEmails = [], emailComposer, emailAttachments = [], emailBusy = false, onEmailComposerChange, onGenerateEmail, onUploadEmailAttachment, onSendEmail, onClose }) {
+function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDraftChange, onAddNote, onFollowUp, onAiAction, onAnalyzeLeadAi, aiActionBusy = {}, followUpLoading, onDelete, onEdit, onMove, telegramMessages = [], telegramDraft = '', telegramSending = false, onTelegramDraftChange, onSendTelegramReply, emailTemplates = [], leadEmails = [], emailComposer, emailAttachments = [], emailBusy = false, onEmailComposerChange, onGenerateEmail, onUploadEmailAttachment, onSendEmail, onClose }) {
   return (
     <div className="modal-backdrop crm-modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
       <section className="ai-task-modal lead-detail-modal" role="dialog" aria-modal="true" aria-labelledby="lead-detail-title">
@@ -740,7 +805,32 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
               <label className="crm-field"><span>Текущий этап</span><select value={lead.status} onChange={(event) => onMove(event.target.value)}>{stages.map((stage) => <option key={stage.status} value={stage.status}>{stage.title}</option>)}</select></label>
             </div>
 
-
+            {getLeadAiScore(lead) ? (
+              <div className="detail-section ai-deal-probability-panel">
+                <div className="ai-probability-head">
+                  <div>
+                    <span className="eyebrow">AI Deal Probability</span>
+                    <h4>{getLeadAiScore(lead).dealProbability}% вероятность сделки</h4>
+                    <p>{getLeadAiScore(lead).aiSummary}</p>
+                  </div>
+                  <span className={`urgency-badge ${getLeadAiScore(lead).urgencyLevel}`}>{urgencyLabel(getLeadAiScore(lead).urgencyLevel)}</span>
+                </div>
+                <div className="probability-bar"><i style={{ width: `${getLeadAiScore(lead).dealProbability}%` }} /></div>
+                <div className="ai-badge-row detail-ai-badges">{getAiBadges(lead).map((badge) => <b className="ai-neon-badge" key={badge}>{badge}</b>)}</div>
+                <div className="ai-recommendation-grid">
+                  <div><span>AI score</span><strong>{getLeadAiScore(lead).score}/100 · {tempLabel(getLeadAiScore(lead).temperature)}</strong></div>
+                  <div><span>Риск</span><strong>{riskLabel(getLeadAiScore(lead).riskLevel)}</strong></div>
+                  <div><span>Прогноз конверсии</span><strong>{getLeadAiScore(lead).dealProbability >= 70 ? 'Высокий шанс оплаты' : getLeadAiScore(lead).dealProbability >= 40 ? 'Нужно усилить доверие' : 'Низкая готовность к покупке'}</strong></div>
+                  <div><span>Идеальное время</span><strong>{getLeadAiScore(lead).idealContactTiming || 'сегодня'}</strong></div>
+                </div>
+              </div>
+            ) : (
+              <div className="detail-section ai-deal-probability-panel empty-ai-score">
+                <h4>AI Deal Probability</h4>
+                <p>Score ещё не рассчитан. Запустите анализ, чтобы увидеть вероятность сделки, риск и срочность.</p>
+                <button className="ghost-button" type="button" onClick={onAnalyzeLeadAi} disabled={aiActionBusy[`${lead.id}:lead_ai_score`]}>{aiActionBusy[`${lead.id}:lead_ai_score`] ? 'AI считает…' : 'Рассчитать AI score'}</button>
+              </div>
+            )}
 
             <div className="detail-section ai-recommendation-panel">
               <div className="telegram-chat-head">
@@ -759,11 +849,13 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                 </div>
               ) : <p className="empty-state">Запустите «Анализ лида», чтобы получить AI рекомендации.</p>}
               {Array.isArray(getAiRecommendation(lead)?.recommendations) && <ul className="ai-recommendation-list">{getAiRecommendation(lead).recommendations.map((item, index) => <li key={`${item}-${index}`}>{item}</li>)}</ul>}
+              {getLeadAiScore(lead) && <div className="ai-advisor-strip"><p><b>Рекомендуемый CTA:</b> {getLeadAiScore(lead).recommendedCta || "Назначить следующий шаг"}</p><p><b>Возражения:</b> {(getLeadAiScore(lead).objectionsDetected || []).join(", ") || "не обнаружены"}</p></div>}
             </div>
 
             <div className="detail-section ai-action-center-card">
               <h4>AI центр действий</h4>
               <div className="ai-action-buttons">
+                <button className="ghost-button" type="button" onClick={onAnalyzeLeadAi} disabled={aiActionBusy[`${lead.id}:lead_ai_score`]}>{aiActionBusy[`${lead.id}:lead_ai_score`] ? "AI считает…" : "AI score + прогноз"}</button>
                 {[
                   ['analyze_lead', 'Анализ лида'],
                   ['generate_follow_up', 'Сгенерировать follow-up'],
@@ -875,7 +967,8 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
             <div className="detail-section">
               <h4>AI‑дожим</h4>
               <div className="followup-history detail-followups">
-                {(lead.followUps || []).length === 0 && <p>AI‑дожим ещё не генерировался.</p>}
+                {(lead.followUps || []).length === 0 && (lead.aiFollowUpSequences || []).length === 0 && <p>AI‑дожим ещё не генерировался.</p>}
+                {(lead.aiFollowUpSequences || []).map((item) => <p className="ai-sequence-draft" key={item.id}><b>{item.followupType === "email" ? "Email" : item.followupType === "telegram" ? "Telegram" : "Задача"}:</b> {item.generatedMessage}<small>{item.status === "draft" ? "черновик" : item.status} · {formatDate(item.scheduledFor || item.recommendedAt)}</small></p>)}
                 {(lead.followUps || []).map((item) => <p key={item.id}><b>AI:</b> {item.message}<small>{formatDate(item.createdAt)}</small></p>)}
               </div>
             </div>
@@ -884,6 +977,8 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
               <h4>История активности</h4>
               <div className="activity-preview crm-activity-feed detail-activity-feed">
                 {activity.length === 0 && (lead.aiActions || []).length === 0 && <p><span />Событий для лида пока нет</p>}
+                {getLeadAiScore(lead) && <p className="ai-timeline-item"><span />AI score обновлён<small>{getLeadAiScore(lead).score}/100 · вероятность {getLeadAiScore(lead).dealProbability}%<br />{formatDate(getLeadAiScore(lead).generatedAt)}</small></p>}
+                {(lead.aiFollowUpSequences || []).map((item) => <p className="ai-timeline-item" key={`seq-${item.id}`}><span />AI follow-up предложен<small>{item.generatedMessage}<br />{formatDate(item.recommendedAt)}</small></p>)}
                 {(lead.aiActions || []).map((action) => <p className="ai-timeline-item" key={action.id}><span />AI: {action.task_type}<small>{action.status === "queued" ? "в очереди" : action.status === "running" ? "в работе" : action.status === "completed" ? "готово" : "ошибка"}<br />{formatDate(action.created_at)}</small></p>)}
                 {activity.map((event) => <p key={event.id}><span />{getActivityTitle(event)}<small>{formatCrmText(event.body)}<br />{formatDate(event.createdAt)}</small></p>)}
               </div>
