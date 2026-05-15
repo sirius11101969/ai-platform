@@ -67,4 +67,59 @@ async function generateCrmFollowUp(lead) {
   return { message, model, prompt: { ...prompt, openaiResponseId: data.id } }
 }
 
-module.exports = { generateCrmFollowUp }
+
+function fallbackTelegramSalesReply({ lead, incomingMessage }) {
+  const name = lead?.name || 'Здравствуйте'
+  const context = incomingMessage ? `Спасибо за сообщение: «${incomingMessage}».` : 'Спасибо за обращение.'
+  return [
+    `${name}, добрый день!`,
+    context,
+    'Я помогу подобрать решение под вашу задачу. Подскажите, пожалуйста, что для вас важнее сейчас: быстро запустить AI‑воронку, интегрировать CRM или посчитать экономику внедрения?',
+  ].join('\n\n')
+}
+
+async function generateTelegramSalesReply({ lead, incomingMessage }) {
+  const apiKey = process.env.OPENAI_API_KEY
+  const model = process.env.OPENAI_MODEL || 'gpt-4.1'
+  const prompt = {
+    role: 'telegram_sales_assistant',
+    language: 'ru-RU',
+    instruction: 'Ты AI sales assistant SaaS-платформы. Сгенерируй короткий дружелюбный ответ для Telegram: без markdown, без давления, максимум 2-4 предложения. Цель — квалифицировать запрос, показать ценность AI SaaS CRM и предложить следующий понятный шаг.',
+    lead: {
+      name: lead?.name,
+      telegram: lead?.telegram,
+      source: lead?.source,
+      stage: lead?.status,
+      notes: lead?.notes,
+    },
+    incomingMessage,
+  }
+
+  if (!apiKey) {
+    return { message: fallbackTelegramSalesReply({ lead, incomingMessage }), model: 'fallback-local', prompt }
+  }
+
+  const { data } = await axios.post(
+    OPENAI_RESPONSES_URL,
+    {
+      model,
+      input: [
+        { role: 'system', content: prompt.instruction },
+        { role: 'user', content: JSON.stringify({ lead: prompt.lead, incomingMessage }, null, 2) },
+      ],
+      temperature: 0.55,
+      max_output_tokens: 320,
+    },
+    {
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      timeout: Number(process.env.OPENAI_TIMEOUT_MS || 60000),
+    }
+  )
+
+  const message = extractResponseText(data)
+  if (!message) throw new Error('OpenAI returned an empty Telegram sales reply')
+  return { message, model, prompt: { ...prompt, openaiResponseId: data.id } }
+}
+
+
+module.exports = { generateCrmFollowUp, generateTelegramSalesReply }
