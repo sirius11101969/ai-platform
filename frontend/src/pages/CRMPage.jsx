@@ -50,6 +50,21 @@ function getLeadActivity(lead, activity) {
   return activity.filter((event) => event.leadId === lead?.id);
 }
 
+function getActivityTitle(event) {
+  const titles = {
+    lead_created: "Лид создан",
+    lead_moved: "Лид перемещён",
+    ai_followup_generated: "AI‑дожим создан",
+    note_added: "Заметка добавлена",
+    lead_updated: "Лид обновлён",
+  };
+  return titles[event?.type] || event?.title || "Событие CRM";
+}
+
+function formatCrmText(value) {
+  return String(value || "").replace(/AI follow-up:/gi, "AI‑дожим:").replace(/AI follow‑up/gi, "AI‑дожим");
+}
+
 export default function CRMPage() {
   const [leads, setLeads] = useState([]);
   const [stages, setStages] = useState(DEFAULT_CRM_STAGES);
@@ -67,6 +82,7 @@ export default function CRMPage() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [selectedLeadId, setSelectedLeadId] = useState(null);
   const [isEditingDetail, setIsEditingDetail] = useState(false);
+  const [isActivityOpen, setIsActivityOpen] = useState(false);
 
   const selectedLead = useMemo(() => leads.find((lead) => lead.id === selectedLeadId) || null, [leads, selectedLeadId]);
   const stageMap = useMemo(() => stages.reduce((acc, stage) => ({ ...acc, [stage.status]: stage.title }), {}), [stages]);
@@ -100,9 +116,21 @@ export default function CRMPage() {
       resetForm();
       setIsCreateOpen(true);
     }
+
+    function handleOpenActivityFeed() {
+      window.sessionStorage?.removeItem('crm-open-activity-feed');
+      setIsActivityOpen(true);
+      refreshMeta().catch((requestError) => setError(requestError.message || "Не удалось обновить ленту активности"));
+    }
+
     if (window.sessionStorage?.getItem('crm-open-create-lead') === '1') handleOpenCreate();
+    if (window.sessionStorage?.getItem('crm-open-activity-feed') === '1') handleOpenActivityFeed();
     window.addEventListener("crm-open-create-lead", handleOpenCreate);
-    return () => window.removeEventListener("crm-open-create-lead", handleOpenCreate);
+    window.addEventListener("crm-open-activity-feed", handleOpenActivityFeed);
+    return () => {
+      window.removeEventListener("crm-open-create-lead", handleOpenCreate);
+      window.removeEventListener("crm-open-activity-feed", handleOpenActivityFeed);
+    };
   }, []);
 
   const leadsByStage = useMemo(() => stages.reduce((acc, stage) => {
@@ -194,7 +222,7 @@ export default function CRMPage() {
     setFollowUpLoading((current) => ({ ...current, [lead.id]: true }));
     try {
       const response = await createCrmFollowUp(lead.id);
-      const noteBody = response.note?.body || (response.followUp?.message ? `AI follow-up: ${response.followUp.message}` : "");
+      const noteBody = response.note?.body || (response.followUp?.message ? `AI‑дожим: ${response.followUp.message}` : "");
       setLeads((current) => current.map((item) => item.id === lead.id ? {
         ...item,
         followUps: [response.followUp, ...(item.followUps || [])].filter(Boolean),
@@ -337,17 +365,6 @@ export default function CRMPage() {
             );
           })}
         </div>
-
-        <aside className="crm-insights compact-crm-insights">
-          <Panel>
-            <span className="eyebrow">Лента активности</span>
-            <h3>История CRM</h3>
-            <div className="activity-preview crm-activity-feed">
-              {activity.length === 0 && <p><span />Событий пока нет</p>}
-              {activity.map((event) => <p key={event.id}><span />{event.title}{event.leadName ? ` · ${event.leadName}` : ""}<small>{event.body}</small></p>)}
-            </div>
-          </Panel>
-        </aside>
       </section>
 
       {isCreateOpen && (
@@ -382,6 +399,13 @@ export default function CRMPage() {
         />
       )}
 
+      {isActivityOpen && (
+        <ActivityFeedDrawer
+          activity={activity}
+          onClose={() => setIsActivityOpen(false)}
+        />
+      )}
+
       {isEditingDetail && selectedLead && (
         <LeadFormModal
           title="Редактировать лид"
@@ -396,6 +420,41 @@ export default function CRMPage() {
         />
       )}
     </main>
+  );
+}
+
+function ActivityFeedDrawer({ activity, onClose }) {
+  return (
+    <div className="modal-backdrop crm-modal-backdrop activity-drawer-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
+      <section className="ai-task-modal crm-activity-drawer" role="dialog" aria-modal="true" aria-labelledby="crm-activity-title">
+        <div className="modal-glow" />
+        <div className="panel-head activity-drawer-head">
+          <div>
+            <span className="eyebrow">Лента активности</span>
+            <h3 id="crm-activity-title">Полная история CRM</h3>
+            <p className="modal-copy">Все ключевые события по лидам: создание, перемещение между этапами, AI‑дожимы и заметки.</p>
+          </div>
+          <button className="modal-close" type="button" onClick={onClose} aria-label="Закрыть">×</button>
+        </div>
+
+        <div className="activity-drawer-list crm-activity-feed">
+          {activity.length === 0 && <p className="activity-drawer-empty"><span />Событий пока нет<small>Когда лиды появятся в CRM, здесь будет полная хронология.</small></p>}
+          {activity.map((event) => (
+            <article className="activity-drawer-item" key={event.id}>
+              <span className="activity-dot" />
+              <div>
+                <div className="activity-row-title">
+                  <strong>{getActivityTitle(event)}</strong>
+                  <time dateTime={event.createdAt}>{formatDate(event.createdAt)}</time>
+                </div>
+                <p>{formatCrmText(event.body) || "Событие сохранено в CRM."}</p>
+                <small>{event.leadName ? `Лид: ${event.leadName}` : "Лид не указан"}</small>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    </div>
   );
 }
 
@@ -463,7 +522,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
 
             <div className="detail-section">
               <h4>Заметки</h4>
-              {lead.notesText ? <p className="detail-notes-text">{lead.notesText}</p> : <p className="empty-state">Заметок пока нет</p>}
+              {lead.notesText ? <p className="detail-notes-text">{formatCrmText(lead.notesText)}</p> : <p className="empty-state">Заметок пока нет</p>}
               <form className="detail-note-form" onSubmit={onAddNote}>
                 <textarea value={noteDraft} onChange={(event) => onNoteDraftChange(event.target.value)} placeholder="Добавить новую заметку по сделке" />
                 <button className="btn primary compact" type="submit">Добавить заметку</button>
@@ -479,7 +538,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
 
           <aside className="lead-detail-side">
             <div className="detail-section">
-              <h4>AI follow‑up</h4>
+              <h4>AI‑дожим</h4>
               <div className="followup-history detail-followups">
                 {(lead.followUps || []).length === 0 && <p>AI‑дожим ещё не генерировался.</p>}
                 {(lead.followUps || []).map((item) => <p key={item.id}><b>AI:</b> {item.message}<small>{formatDate(item.createdAt)}</small></p>)}
@@ -487,10 +546,10 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
             </div>
 
             <div className="detail-section">
-              <h4>Activity history</h4>
+              <h4>История активности</h4>
               <div className="activity-preview crm-activity-feed detail-activity-feed">
                 {activity.length === 0 && <p><span />Событий для лида пока нет</p>}
-                {activity.map((event) => <p key={event.id}><span />{event.title}<small>{event.body}<br />{formatDate(event.createdAt)}</small></p>)}
+                {activity.map((event) => <p key={event.id}><span />{getActivityTitle(event)}<small>{formatCrmText(event.body)}<br />{formatDate(event.createdAt)}</small></p>)}
               </div>
             </div>
           </aside>
