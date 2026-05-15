@@ -1,11 +1,13 @@
 const express = require('express')
-const { activity, addNote, createFollowUp, createLead, deleteLead, listLeads, stats, updateLead } = require('../controllers/crmController')
+const { activity, addNote, createFollowUp, createLead, deleteLead, listLeads, listStages, stats, updateLead, updateStage } = require('../controllers/crmController')
 const { requireAuth } = require('../middleware/authMiddleware')
 
 const router = express.Router()
 
 router.use(requireAuth)
 router.get('/activity', activity)
+router.get('/stages', listStages)
+router.patch('/stages/:status', updateStage)
 router.get('/leads', listLeads)
 router.post('/leads', createLead)
 router.patch('/leads/:id', updateLead)

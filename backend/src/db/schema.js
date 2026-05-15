@@ -100,6 +100,28 @@ async function migrate() {
       END IF;
     END $$;
 
+
+    CREATE TABLE IF NOT EXISTS crm_stages (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      status TEXT NOT NULL,
+      title TEXT NOT NULL,
+      position INTEGER NOT NULL DEFAULT 0,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      UNIQUE(user_id, status)
+    );
+
+    DO $$
+    BEGIN
+      IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint WHERE conname = 'crm_stages_status_valid'
+      ) THEN
+        ALTER TABLE crm_stages ADD CONSTRAINT crm_stages_status_valid
+          CHECK (status IN ('new', 'qualified', 'proposal', 'booked', 'won', 'lost'));
+      END IF;
+    END $$;
+
     CREATE TABLE IF NOT EXISTS crm_leads (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       user_id UUID REFERENCES users(id) ON DELETE SET NULL,
@@ -185,6 +207,7 @@ async function migrate() {
     CREATE INDEX IF NOT EXISTS idx_subscriptions_user_id ON subscriptions(user_id);
     CREATE INDEX IF NOT EXISTS idx_credits_ledger_user_id ON credits_ledger(user_id);
     CREATE INDEX IF NOT EXISTS idx_ai_tasks_user_id ON ai_tasks(user_id);
+    CREATE INDEX IF NOT EXISTS idx_crm_stages_user_id ON crm_stages(user_id);
     CREATE INDEX IF NOT EXISTS idx_crm_leads_user_id ON crm_leads(user_id);
     CREATE INDEX IF NOT EXISTS idx_crm_notes_lead_id ON crm_notes(lead_id);
     CREATE INDEX IF NOT EXISTS idx_crm_followups_user_id ON crm_followups(user_id);

@@ -40,6 +40,12 @@ export function ProtectedLayout({ children }) {
     };
   }, [navigate]);
 
+  function openCreateLead() {
+    window.sessionStorage?.setItem('crm-open-create-lead', '1');
+    navigate('/crm');
+    window.setTimeout(() => window.dispatchEvent(new CustomEvent('crm-open-create-lead')), 80);
+  }
+
   function handleLogout(event) {
     event.preventDefault();
     clearAuthSession();
@@ -56,6 +62,7 @@ export function ProtectedLayout({ children }) {
         <nav className="side-nav" aria-label="Основная навигация">
           <NavLink to="/dashboard" className={({ isActive }) => (isActive ? "active" : "")}>Дашборд</NavLink>
           <NavLink to="/crm" className={({ isActive }) => (isActive ? "active" : "")}>CRM‑воронка</NavLink>
+          <button className="sidebar-create-lead" type="button" onClick={openCreateLead}>+ Создать лид</button>
           <Link to="/login" onClick={handleLogout}>Выйти</Link>
         </nav>
         <CreditsMiniBlock credits={profile?.credits} />
