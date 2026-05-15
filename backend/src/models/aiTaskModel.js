@@ -9,6 +9,7 @@ const TASK_COSTS = {
 
 const TASK_TYPES = Object.keys(TASK_COSTS)
 const TASK_STATUSES = ['pending', 'processing', 'completed', 'failed']
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 
 function normalizeTask(row) {
   if (!row) return null
@@ -66,6 +67,12 @@ async function listTasks(userId) {
 }
 
 async function findTaskById(userId, taskId) {
+  if (!UUID_PATTERN.test(String(taskId || ''))) {
+    const error = new Error('Invalid task id')
+    error.statusCode = 400
+    throw error
+  }
+
   const result = await pool.query(
     `SELECT id, user_id, type, prompt, status, credits_spent, result, created_at, task_type, input, output
        FROM ai_tasks
@@ -116,7 +123,7 @@ async function createTask(userId, payload) {
     await client.query(
       `INSERT INTO credits_ledger(user_id, amount, reason, balance_after, metadata)
        VALUES($1, $2, 'ai_task', $3, $4)`,
-      [userId, -creditsSpent, balanceAfter, { taskId: taskResult.rows[0].id, type }]
+      [userId, -creditsSpent, balanceAfter, { taskId: taskResult.rows[0].id, type, promptPreview: prompt.slice(0, 120) }]
     )
 
     await client.query('COMMIT')

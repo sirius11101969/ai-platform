@@ -23,8 +23,15 @@ export function ProtectedLayout() {
       .catch(() => {
         if (active) setProfile(null);
       });
+
+    function handleProfileUpdate(event) {
+      setProfile((currentProfile) => ({ ...(currentProfile || {}), ...(event.detail || {}) }));
+    }
+
+    window.addEventListener("ai-platform-profile-updated", handleProfileUpdate);
     return () => {
       active = false;
+      window.removeEventListener("ai-platform-profile-updated", handleProfileUpdate);
     };
   }, []);
 

@@ -62,9 +62,17 @@ async function migrate() {
     UPDATE ai_tasks
        SET type = COALESCE(NULLIF(type, ''), NULLIF(task_type, ''), 'text_generation'),
            prompt = COALESCE(NULLIF(prompt, ''), input->>'prompt', ''),
-           status = CASE WHEN status = 'queued' THEN 'pending' ELSE status END,
+           status = CASE
+             WHEN status = 'queued' THEN 'pending'
+             WHEN status NOT IN ('pending', 'processing', 'completed', 'failed') THEN 'failed'
+             ELSE status
+           END,
            result = COALESCE(result, output)
-     WHERE type IS NULL OR prompt IS NULL OR status = 'queued' OR result IS NULL;
+     WHERE type IS NULL
+        OR prompt IS NULL
+        OR status = 'queued'
+        OR status NOT IN ('pending', 'processing', 'completed', 'failed')
+        OR result IS NULL;
     ALTER TABLE ai_tasks ALTER COLUMN type SET NOT NULL;
     ALTER TABLE ai_tasks ALTER COLUMN prompt SET NOT NULL;
     ALTER TABLE ai_tasks ALTER COLUMN status SET DEFAULT 'pending';
