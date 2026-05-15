@@ -5,10 +5,10 @@ import { createAiTask, fetchAiTask, fetchAiTasks, fetchProfile, updateStoredUser
 import { orders, quickActions, userProfile } from "../data/mockData";
 
 const taskTypeLabels = {
-  ai_content_generation: "Генерация AI‑контента",
-  ai_sales_reply: "AI‑ответ для продаж",
-  ai_telegram_outreach: "AI‑аутрич в Telegram",
-  ai_crm_follow_up: "AI‑дожим в CRM",
+  ai_content_generation: "Генерация текста",
+  ai_sales_reply: "Ответ клиенту",
+  ai_crm_follow_up: "Follow-up для CRM",
+  ai_telegram_outreach: "Telegram-сообщение",
 };
 
 const taskTypeDescriptions = {
@@ -64,6 +64,7 @@ function translateTaskResultText(value) {
 
 function renderTaskResult(result) {
   if (!result) return "Результат появится после завершения работы AI‑воркера.";
+  if (result.error) return `Ошибка выполнения: ${result.error}`;
   if (result.content) return translateTaskResultText(result.content);
   if (result.message) return translateTaskResultText(result.message);
   if (Array.isArray(result.bullets)) return result.bullets.map(translateTaskResultText).join("\n• ");
@@ -99,7 +100,7 @@ function buildActivityFeed(tasks) {
         id: `${task.id}-${task.status}`,
         status: task.status,
         title: task.status === "completed" ? `${label} завершено` : `${label} завершилась ошибкой`,
-        detail: task.status === "completed" ? "Результаты доступны в списке последних задач." : "Воркер вернул ошибку. Уточните промпт и попробуйте снова.",
+        detail: task.status === "completed" ? "Результат OpenAI доступен в списке последних задач." : (task.error || "Воркер вернул ошибку. Уточните промпт и попробуйте снова."),
         timestamp: task.updated_at || task.created_at,
       });
     }
@@ -180,7 +181,7 @@ export default function DashboardPage() {
       updateStoredUser({ credits: response.remainingCredits });
       setTaskForm(initialTaskForm);
       setModalOpen(false);
-      setMessage("AI‑задача создана, AI‑кредиты списаны, воркер выполнения запущен.");
+      setMessage("AI‑задача создана, AI‑кредиты списаны, выполнение через OpenAI запущено.");
     } catch (requestError) {
       if (requestError.status === 402) {
         setError(`${requestError.message}. Пополните баланс или выберите задачу дешевле.`);
@@ -261,6 +262,8 @@ export default function DashboardPage() {
                   <span>{statusLabels[task.status] || task.status} · {task.credits_spent} AI‑кредитов · {formatDate(task.created_at)}</span>
                   <small>{task.prompt}</small>
                   <pre>{renderTaskResult(task.result)}</pre>
+                  {task.result?.model && <small>OpenAI · {task.result.model}</small>}
+                  {task.error && <small className="task-error">{task.error}</small>}
                 </div>
                 <b>{statusLabels[task.status] || task.status}</b>
               </article>
