@@ -1,9 +1,9 @@
 export const userProfile = {
   name: "Анна Орлова",
-  role: "Head of Growth",
+  role: "Руководитель роста",
   company: "Northstar AI Lab",
   email: "anna@northstar.ai",
-  plan: "Pro Growth",
+  plan: "Профи Рост",
 };
 
 export const creditSummary = {
@@ -15,56 +15,56 @@ export const creditSummary = {
 
 export const aiTasks = [
   { title: "Скоринг входящих лидов", status: "В работе", value: "128 лидов", accent: "cyan" },
-  { title: "Персональные follow-up", status: "Запланировано", value: "42 письма", accent: "violet" },
+  { title: "Персональный дожим", status: "Запланировано", value: "42 письма", accent: "violet" },
   { title: "Резюме созвонов", status: "Готово", value: "16 заметок", accent: "pink" },
 ];
 
-export const quickActions = ["Создать AI-задачу", "Импортировать лиды", "Открыть CRM", "Пополнить credits"];
+export const quickActions = ["Создать AI‑задачу", "Импортировать лиды", "Открыть CRM", "Пополнить AI‑кредиты"];
 
 export const orders = [
-  { title: "Pro Growth", meta: "Подписка активна до 01.06.2026", amount: "9 900 ₽" },
-  { title: "Пакет credits x10k", meta: "Заказ #AI-1048 · Оплачен", amount: "4 900 ₽" },
+  { title: "Профи Рост", meta: "Подписка активна до 01.06.2026", amount: "9 900 ₽" },
+  { title: "Пакет 10k AI‑кредитов", meta: "Заказ #AI‑1048 · Оплачен", amount: "4 900 ₽" },
 ];
 
 export const pipelineStages = [
   {
     title: "Новые лиды",
-    total: "1.8M ₽",
+    total: "1,8 млн ₽",
     leads: [
-      { name: "SberCloud Lab", contact: "Илья · Telegram", value: "720k ₽", score: 94, note: "Нужен пилот AI support на 3 отдела" },
-      { name: "FinEdge", contact: "Мария · Website", value: "420k ₽", score: 81, note: "Запросили расчёт credits и SLA" },
+      { name: "SberCloud Lab", contact: "Илья · Telegram", value: "720 тыс. ₽", score: 94, note: "Нужен пилот AI‑поддержки на 3 отдела" },
+      { name: "FinEdge", contact: "Мария · сайт", value: "420 тыс. ₽", score: 81, note: "Запросили расчёт AI‑кредитов и SLA" },
     ],
   },
   {
     title: "Квалификация",
-    total: "2.4M ₽",
+    total: "2,4 млн ₽",
     leads: [
-      { name: "Retail Rocket", contact: "Олег · CRM import", value: "1.1M ₽", score: 88, note: "AI SDR собрал pain points" },
-      { name: "MedTech Plus", contact: "Елена · Email", value: "650k ₽", score: 76, note: "Ждут security checklist" },
+      { name: "Retail Rocket", contact: "Олег · импорт CRM", value: "1,1 млн ₽", score: 88, note: "AI SDR собрал болевые точки" },
+      { name: "MedTech Plus", contact: "Елена · email", value: "650 тыс. ₽", score: 76, note: "Ждут чек-лист безопасности" },
     ],
   },
   {
     title: "Демо",
-    total: "3.1M ₽",
+    total: "3,1 млн ₽",
     leads: [
-      { name: "EduFlow", contact: "Павел · Telegram", value: "980k ₽", score: 91, note: "Демо в пятницу, фокус на CRM" },
-      { name: "Logix Pro", contact: "Антон · Referral", value: "1.4M ₽", score: 86, note: "Нужен кастомный pipeline" },
+      { name: "EduFlow", contact: "Павел · Telegram", value: "980 тыс. ₽", score: 91, note: "Демо в пятницу, фокус на CRM" },
+      { name: "Logix Pro", contact: "Антон · рекомендация", value: "1,4 млн ₽", score: 86, note: "Нужна кастомная воронка" },
     ],
   },
   {
     title: "Предложение",
-    total: "2.0M ₽",
+    total: "2,0 млн ₽",
     leads: [
-      { name: "AeroDesk", contact: "Ксения · LinkedIn", value: "1.2M ₽", score: 93, note: "Коммерческое отправлено" },
-      { name: "MarketPulse", contact: "Никита · Webinar", value: "820k ₽", score: 79, note: "Согласуют бюджет" },
+      { name: "AeroDesk", contact: "Ксения · LinkedIn", value: "1,2 млн ₽", score: 93, note: "Коммерческое отправлено" },
+      { name: "MarketPulse", contact: "Никита · вебинар", value: "820 тыс. ₽", score: 79, note: "Согласуют бюджет" },
     ],
   },
 ];
 
 export const followUpSuggestions = [
   "Отправить SberCloud Lab короткое резюме пилота и предложить слот на вторник 11:00.",
-  "Для EduFlow подготовить демо-сценарий: импорт лидов → AI scoring → follow-up → заказ.",
-  "MarketPulse: напомнить о дедлайне тарифа Pro и приложить прогноз экономии credits.",
+  "Для EduFlow подготовить демо-сценарий: импорт лидов → AI‑скоринг → дожим → заказ.",
+  "MarketPulse: напомнить о дедлайне тарифа «Профи» и приложить прогноз экономии AI‑кредитов.",
 ];
 
 export const activityFeed = [

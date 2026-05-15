@@ -102,6 +102,32 @@ export function clearAuthSession() {
   window.dispatchEvent(new CustomEvent('ai-platform-auth-cleared'))
 }
 
+
+function translateApiError(message) {
+  const text = String(message || '')
+  const exact = {
+    'Missing bearer token': 'Не найден bearer‑токен авторизации',
+    'Invalid or expired token': 'Токен недействителен или истёк',
+    'Internal server error': 'Внутренняя ошибка сервера',
+    'Email and password with at least 8 characters are required': 'Укажите эл. почту и пароль минимум из 8 символов',
+    'User with this email already exists': 'Пользователь с такой эл. почтой уже существует',
+    'Invalid email or password': 'Неверная эл. почта или пароль',
+    'User not found': 'Пользователь не найден',
+    'Lead name is required': 'Укажите имя лида',
+    'Lead email or phone is required': 'Укажите эл. почту или телефон лида',
+    'Lead value must be a non-negative number': 'Сумма лида должна быть неотрицательным числом',
+    'Lead name cannot be blank': 'Имя лида не может быть пустым',
+    'Prompt with at least 3 characters is required': 'Промпт должен содержать минимум 3 символа',
+    'Prompt must be 4000 characters or fewer': 'Промпт должен быть не длиннее 4000 символов',
+    'Invalid task id': 'Некорректный идентификатор задачи',
+  }
+  if (exact[text]) return exact[text]
+  if (text.startsWith('Status must be one of:')) return 'Статус должен быть одним из допустимых этапов CRM'
+  if (text.startsWith('Task type must be one of:')) return 'Выберите допустимый тип AI‑задачи'
+  if (text.startsWith('Insufficient credits:')) return text.replace(/Insufficient credits: (\d+) credits required/, 'Недостаточно AI‑кредитов: требуется $1')
+  return text
+}
+
 function buildHeaders(options = {}) {
   const headers = {
     ...(options.body ? { 'Content-Type': 'application/json' } : {}),
@@ -130,7 +156,7 @@ async function request(path, options = {}) {
       clearAuthSession()
     }
 
-    const error = new Error(data.error || 'API request failed')
+    const error = new Error(translateApiError(data.error || 'Не удалось выполнить запрос к API'))
     error.status = response.status
     error.payload = data
     throw error

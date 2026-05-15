@@ -5,8 +5,8 @@ import { clearAuthSession, fetchProfile, getStoredUser } from "../services/api";
 
 export function BrandMark() {
   return (
-    <Link to="/" className="brand app-brand" aria-label="AI Bot Platform">
-      <span>AI</span> Bot Platform
+    <Link to="/" className="brand app-brand" aria-label="AI‑платформа для продаж">
+      <span>AI</span> Платформа продаж
     </Link>
   );
 }
@@ -54,8 +54,8 @@ export function ProtectedLayout({ children }) {
       <aside className="sidebar shell-glow">
         <BrandMark />
         <nav className="side-nav" aria-label="Основная навигация">
-          <NavLink to="/dashboard" className={({ isActive }) => (isActive ? "active" : "")}>Dashboard</NavLink>
-          <NavLink to="/crm" className={({ isActive }) => (isActive ? "active" : "")}>CRM pipeline</NavLink>
+          <NavLink to="/dashboard" className={({ isActive }) => (isActive ? "active" : "")}>Дашборд</NavLink>
+          <NavLink to="/crm" className={({ isActive }) => (isActive ? "active" : "")}>CRM‑воронка</NavLink>
           <Link to="/login" onClick={handleLogout}>Выйти</Link>
         </nav>
         <CreditsMiniBlock credits={profile?.credits} />
@@ -63,8 +63,8 @@ export function ProtectedLayout({ children }) {
       <div className="workspace">
         <header className="workspace-header shell-glow">
           <div>
-            <span className="eyebrow">Protected workspace</span>
-            <h1>AI Revenue OS</h1>
+            <span className="eyebrow">Защищённое рабочее пространство</span>
+            <h1>AI‑ОС выручки</h1>
           </div>
           <div className="profile-pill">
             <strong>{displayName}</strong>
@@ -80,10 +80,10 @@ export function ProtectedLayout({ children }) {
 function CreditsMiniBlock({ credits }) {
   const balance = Number.isFinite(Number(credits)) ? Number(credits) : creditSummary.balance;
   return (
-    <section className="credits-mini" aria-label="Баланс credits">
-      <span>AI credits</span>
+    <section className="credits-mini" aria-label="Баланс AI‑кредитов">
+      <span>AI‑кредиты</span>
       <strong>{balance.toLocaleString("ru-RU")}</strong>
-      <p>{Number.isFinite(Number(credits)) ? "Live balance from users table" : creditSummary.forecast}</p>
+      <p>{Number.isFinite(Number(credits)) ? "Живой баланс из профиля пользователя" : creditSummary.forecast}</p>
     </section>
   );
 }
