@@ -9,7 +9,8 @@
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "framer-motion": "file:./vendor/framer-motion"
+    "framer-motion": "file:./vendor/framer-motion",
+    "react-router-dom": "file:./vendor/react-router-dom"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.0",
