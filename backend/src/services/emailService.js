@@ -72,6 +72,14 @@ async function logActivity(client, userId, leadId, type, title, body = null, met
   )
 }
 
+async function logEmailStatus(client, email, status, error = null, metadata = {}) {
+  await client.query(
+    `INSERT INTO email_logs(user_id, email_id, recipient, subject, status, error, lead_id, metadata)
+     VALUES($1, $2, $3, $4, $5, $6, $7, $8)`,
+    [email.userId, email.id, email.to, email.subject, status, error, email.leadId, metadata]
+  )
+}
+
 async function getLead(userId, leadId, client = pool) {
   const result = await client.query('SELECT id, user_id, name, email, company, status, value, source, notes, metadata FROM crm_leads WHERE user_id = $1 AND id = $2', [userId, leadId])
   return result.rows[0] || null
@@ -156,11 +164,12 @@ async function enqueueEmail(userId, payload) {
       const attached = await client.query('SELECT id, file_name FROM email_attachments WHERE id = $1 AND user_id = $2', [attachmentId, userId])
       if (!attached.rows[0]) throw Object.assign(new Error('Attachment not found'), { statusCode: 404 })
       await client.query('INSERT INTO email_message_attachments(email_id, attachment_id) VALUES($1, $2) ON CONFLICT DO NOTHING', [emailResult.rows[0].id, attachmentId])
-      await logActivity(client, userId, lead.id, 'attachment_delivered', 'Вложение добавлено к письму', attached.rows[0].file_name, { emailId: emailResult.rows[0].id, attachmentId })
+      await logActivity(client, userId, lead.id, 'attachment_added', 'Вложение добавлено к письму', attached.rows[0].file_name, { emailId: emailResult.rows[0].id, attachmentId })
     }
     await logActivity(client, userId, lead.id, 'email_queued', 'Письмо поставлено в очередь', subject, { emailId: emailResult.rows[0].id, to })
+    await logEmailStatus(client, normalizeEmail(emailResult.rows[0]), 'queued')
     await client.query('COMMIT')
-    processEmailQueue().catch((error) => console.error('Email queue failed', error))
+    if (payload.deliverAsync !== false) processEmailQueue().catch((error) => console.error('Email queue failed', error))
     return normalizeEmail(emailResult.rows[0])
   } catch (error) {
     await client.query('ROLLBACK')
@@ -246,19 +255,36 @@ async function buildMime(email) {
   return `${parts.join('\r\n')}\r\n`
 }
 
-function smtpRead(socket) {
+function smtpRead(socket, timeoutMs = Number(process.env.SMTP_TIMEOUT_MS || 30000)) {
   return new Promise((resolve, reject) => {
     let data = ''
+    const cleanup = () => {
+      clearTimeout(timer)
+      socket.off('data', onData)
+      socket.off('error', onError)
+      socket.off('timeout', onTimeout)
+    }
+    const onError = (error) => {
+      cleanup()
+      reject(error)
+    }
+    const onTimeout = () => {
+      cleanup()
+      socket.destroy()
+      reject(new Error(`SMTP timeout after ${timeoutMs} ms`))
+    }
     const onData = (chunk) => {
       data += chunk.toString('utf8')
       const lines = data.split(/\r?\n/).filter(Boolean)
       if (lines.length && /^\d{3} /.test(lines[lines.length - 1])) {
-        socket.off('data', onData)
+        cleanup()
         resolve(data)
       }
     }
+    const timer = setTimeout(onTimeout, timeoutMs)
     socket.on('data', onData)
-    socket.once('error', reject)
+    socket.once('error', onError)
+    socket.once('timeout', onTimeout)
   })
 }
 
@@ -269,20 +295,52 @@ async function smtpCommand(socket, command, expected = /^[23]/) {
   return response
 }
 
+function smtpConnect(port, host, secure, timeoutMs) {
+  return new Promise((resolve, reject) => {
+    const socket = secure ? tls.connect({ port, host, servername: host }) : net.connect(port, host)
+    const cleanup = () => {
+      clearTimeout(timer)
+      socket.off('error', onError)
+      socket.off('connect', onConnect)
+      socket.off('secureConnect', onConnect)
+    }
+    const onError = (error) => {
+      cleanup()
+      reject(error)
+    }
+    const onConnect = () => {
+      cleanup()
+      socket.setTimeout(timeoutMs)
+      resolve(socket)
+    }
+    const timer = setTimeout(() => {
+      cleanup()
+      socket.destroy()
+      reject(new Error(`SMTP connection timeout after ${timeoutMs} ms`))
+    }, timeoutMs)
+    socket.once('error', onError)
+    socket.once(secure ? 'secureConnect' : 'connect', onConnect)
+  })
+}
+
 async function sendViaSmtp(email, raw) {
   const host = normalizeText(process.env.SMTP_HOST || (process.env.GMAIL_SMTP_USER ? 'smtp.gmail.com' : null))
   const port = Number(process.env.SMTP_PORT || 587)
   const user = normalizeText(process.env.SMTP_USER || process.env.GMAIL_SMTP_USER)
   const pass = normalizeText(process.env.SMTP_PASS || process.env.GMAIL_SMTP_APP_PASSWORD)
+  const secure = String(process.env.SMTP_SECURE || '').toLowerCase() === 'true' || port === 465
+  const timeoutMs = Number(process.env.SMTP_TIMEOUT_MS || 30000)
   if (!host || !user || !pass) throw new Error('SMTP/Gmail credentials are not configured')
 
-  let socket = net.connect(port, host)
-  socket.setTimeout(Number(process.env.SMTP_TIMEOUT_MS || 30000))
+  let socket = await smtpConnect(port, host, secure, timeoutMs)
   await smtpCommand(socket, null)
   await smtpCommand(socket, `EHLO ${process.env.SMTP_HELO || 'ai-platform.local'}`)
-  await smtpCommand(socket, 'STARTTLS')
-  socket = tls.connect({ socket, servername: host })
-  await smtpCommand(socket, `EHLO ${process.env.SMTP_HELO || 'ai-platform.local'}`)
+  if (!secure) {
+    await smtpCommand(socket, 'STARTTLS')
+    socket = tls.connect({ socket, servername: host })
+    socket.setTimeout(timeoutMs)
+    await smtpCommand(socket, `EHLO ${process.env.SMTP_HELO || 'ai-platform.local'}`)
+  }
   await smtpCommand(socket, 'AUTH LOGIN', /^334/)
   await smtpCommand(socket, Buffer.from(user).toString('base64'), /^334/)
   await smtpCommand(socket, Buffer.from(pass).toString('base64'), /^235/)
@@ -331,18 +389,31 @@ async function deliverEmail(emailId) {
     else await sendViaSmtp(email, raw)
     await pool.query("UPDATE email_messages SET status = 'sent', sent_at = NOW(), error = NULL, updated_at = NOW() WHERE id = $1", [emailId])
     await pool.query("INSERT INTO crm_activity(user_id, lead_id, type, title, body, metadata) VALUES($1, $2, 'email_sent', 'Письмо отправлено', $3, $4)", [email.userId, email.leadId, email.subject, { emailId, to: email.to, attachments: email.attachments.length }])
+    if (email.attachments.length) {
+      await pool.query("INSERT INTO crm_activity(user_id, lead_id, type, title, body, metadata) VALUES($1, $2, 'attachment_sent', 'Вложения отправлены', $3, $4)", [email.userId, email.leadId, email.attachments.map((item) => item.fileName).join(', '), { emailId, to: email.to, attachments: email.attachments.map((item) => item.id) }])
+    }
+    await logEmailStatus(pool, { ...email, id: emailId }, 'sent', null, { provider: email.provider, attachments: email.attachments.length })
     return { ...email, status: 'sent' }
   } catch (error) {
     const retry = email.retryCount + 1
     const failedPermanent = retry >= email.maxRetries
+    const nextStatus = failedPermanent ? 'failed' : 'queued'
     await pool.query(
       `UPDATE email_messages
           SET status = $2, retry_count = retry_count + 1, error = $3, next_retry_at = CASE WHEN $2 = 'queued' THEN NOW() + ($4 || ' minutes')::interval ELSE next_retry_at END, updated_at = NOW()
         WHERE id = $1`,
-      [emailId, failedPermanent ? 'failed' : 'queued', error.message, Math.min(30, 2 ** retry)]
+      [emailId, nextStatus, error.message, Math.min(30, 2 ** retry)]
     )
+    await pool.query("INSERT INTO crm_activity(user_id, lead_id, type, title, body, metadata) VALUES($1, $2, 'email_failed', 'Письмо не отправлено', $3, $4)", [email.userId, email.leadId, error.message, { emailId, to: email.to, retry, nextStatus }])
+    await logEmailStatus(pool, { ...email, id: emailId }, 'failed', error.message, { retry, nextStatus })
     throw error
   }
+}
+
+async function sendEmailNow(userId, payload) {
+  const queued = await enqueueEmail(userId, { ...payload, scheduledAt: null, deliverAsync: false })
+  const sent = await deliverEmail(queued.id)
+  return sent || loadEmail(queued.id)
 }
 
 let queueRunning = false
@@ -390,4 +461,4 @@ async function markOpened(token) {
   }
 }
 
-module.exports = { EMAIL_STATUSES, enqueueEmail, listAttachments, listLeadEmails, markOpened, processEmailQueue, renderTemplate, saveAttachment, startEmailQueueWorker }
+module.exports = { EMAIL_STATUSES, deliverEmail, enqueueEmail, listAttachments, listLeadEmails, markOpened, processEmailQueue, renderTemplate, saveAttachment, sendEmailNow, startEmailQueueWorker }

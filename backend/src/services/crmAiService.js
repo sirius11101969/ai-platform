@@ -84,7 +84,7 @@ async function generateTelegramSalesReply({ lead, incomingMessage, memory = [] }
   const prompt = {
     role: 'telegram_sales_assistant',
     language: 'ru-RU',
-    instruction: 'Ты AI sales assistant SaaS-платформы. Сгенерируй короткий дружелюбный ответ для Telegram: без markdown, без давления, максимум 2-4 предложения. Цель — квалифицировать запрос, показать ценность AI SaaS CRM и предложить следующий понятный шаг.',
+    instruction: 'Ты AI sales assistant SaaS-платформы. Сгенерируй короткий дружелюбный ответ для Telegram: без markdown, без давления, максимум 2-4 предложения. Цель — квалифицировать запрос, показать ценность AI SaaS CRM и предложить следующий понятный шаг. Важно: никогда не обещай, что email, презентация, КП, скриншоты или материалы уже отправлены; подтверждать отправку можно только текстом action executor после успешного SMTP send.',
     lead: {
       name: lead?.name,
       telegram: lead?.telegram,

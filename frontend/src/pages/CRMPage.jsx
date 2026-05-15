@@ -745,7 +745,15 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
               <div className="email-history">
                 <h5>История email</h5>
                 {leadEmails.length === 0 && <p className="empty-state">Писем пока нет</p>}
-                {leadEmails.map((email) => <article key={email.id}><strong>{email.subject}</strong><span>{email.status === 'sent' ? 'отправлено' : email.status === 'queued' ? 'в очереди' : email.status === 'failed' ? 'ошибка' : 'отправляется'} · {formatDate(email.createdAt)}</span><small>Кому: {email.to}{email.openedAt ? ` · открыто ${formatDate(email.openedAt)}` : ''}</small></article>)}
+                {leadEmails.map((email) => (
+                  <article className={`email-history-card ${email.status === 'failed' ? 'failed' : ''}`} key={email.id}>
+                    <strong>{email.subject}</strong>
+                    <span>{email.status === 'sent' ? 'отправлено' : email.status === 'queued' ? 'в очереди / повторная отправка' : email.status === 'failed' ? 'ошибка отправки' : 'отправляется'} · {formatDate(email.createdAt)}</span>
+                    <small>Кому: {email.to}{email.sentAt ? ` · SMTP ${formatDate(email.sentAt)}` : ''}{email.openedAt ? ` · открыто ${formatDate(email.openedAt)}` : ''}</small>
+                    {email.attachments?.length > 0 && <small>Вложения: {email.attachments.map((file) => file.fileName).join(', ')}</small>}
+                    {email.error && <small className="email-error-text">Ошибка: {email.error}</small>}
+                  </article>
+                ))}
               </div>
             </div>
 
