@@ -83,6 +83,9 @@ app.use(errorHandler)
 
 async function start() {
   if (!process.env.JWT_SECRET) {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('JWT_SECRET is required in production')
+    }
     process.env.JWT_SECRET = 'development-only-change-me'
     console.warn('JWT_SECRET is not set; using development fallback secret')
   }

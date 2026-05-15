@@ -155,11 +155,42 @@ async function migrate() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+
+
+    ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS telegram TEXT;
+    ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS notes TEXT;
+    UPDATE crm_leads SET stage = status WHERE stage IS NULL OR stage = '' OR stage <> status;
+
+    CREATE TABLE IF NOT EXISTS crm_followups (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      lead_id UUID NOT NULL REFERENCES crm_leads(id) ON DELETE CASCADE,
+      user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      message TEXT NOT NULL,
+      model TEXT NOT NULL,
+      prompt JSONB NOT NULL DEFAULT '{}'::jsonb,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS crm_activity (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      lead_id UUID REFERENCES crm_leads(id) ON DELETE CASCADE,
+      user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      type TEXT NOT NULL,
+      title TEXT NOT NULL,
+      body TEXT,
+      metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
     CREATE INDEX IF NOT EXISTS idx_subscriptions_user_id ON subscriptions(user_id);
     CREATE INDEX IF NOT EXISTS idx_credits_ledger_user_id ON credits_ledger(user_id);
     CREATE INDEX IF NOT EXISTS idx_ai_tasks_user_id ON ai_tasks(user_id);
     CREATE INDEX IF NOT EXISTS idx_crm_leads_user_id ON crm_leads(user_id);
     CREATE INDEX IF NOT EXISTS idx_crm_notes_lead_id ON crm_notes(lead_id);
+    CREATE INDEX IF NOT EXISTS idx_crm_followups_user_id ON crm_followups(user_id);
+    CREATE INDEX IF NOT EXISTS idx_crm_followups_lead_id ON crm_followups(lead_id);
+    CREATE INDEX IF NOT EXISTS idx_crm_activity_user_id ON crm_activity(user_id);
+    CREATE INDEX IF NOT EXISTS idx_crm_activity_lead_id ON crm_activity(lead_id);
   `)
 }
 

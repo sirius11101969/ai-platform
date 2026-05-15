@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Panel, PageHeading, StatCard } from "../components/AppShell";
-import { createAiTask, fetchAiTask, fetchAiTasks, fetchProfile, updateStoredUser } from "../services/api";
+import { createAiTask, fetchAiTask, fetchAiTasks, fetchCrmStats, fetchProfile, updateStoredUser } from "../services/api";
 import { orders, quickActions, userProfile } from "../data/mockData";
 
 const taskTypeLabels = {
@@ -112,6 +112,7 @@ function buildActivityFeed(tasks) {
 export default function DashboardPage() {
   const [profile, setProfile] = useState(null);
   const [tasks, setTasks] = useState([]);
+  const [crmStats, setCrmStats] = useState(null);
   const [costs, setCosts] = useState({});
   const [taskForm, setTaskForm] = useState(initialTaskForm);
   const [loading, setLoading] = useState(true);
@@ -124,10 +125,11 @@ export default function DashboardPage() {
     if (!silent) setLoading(true);
     setError("");
     try {
-      const [profileResponse, tasksResponse] = await Promise.all([fetchProfile(), fetchAiTasks()]);
+      const [profileResponse, tasksResponse, crmResponse] = await Promise.all([fetchProfile(), fetchAiTasks(), fetchCrmStats()]);
       setProfile(profileResponse.user || null);
       setTasks(tasksResponse.tasks || []);
       setCosts(tasksResponse.costs || {});
+      setCrmStats(crmResponse.stats || null);
     } catch (requestError) {
       setError(requestError.message || "Не удалось загрузить дашборд");
     } finally {
@@ -210,7 +212,8 @@ export default function DashboardPage() {
       <section className="dashboard-stats">
         <StatCard label="Баланс AI‑кредитов" value={loading ? "…" : creditBalance.toLocaleString("ru-RU")} hint="Доступно для новых AI‑запусков" />
         <StatCard label="AI‑задачи" value={loading ? "…" : String(tasks.length)} hint={`${activeTasks} активных · ${completedTasks} завершено`} tone="violet" />
-        <StatCard label="Потрачено AI‑кредитов" value={loading ? "…" : creditsSpent.toLocaleString("ru-RU")} hint="Списано через журнал AI‑кредитов" tone="pink" />
+        <StatCard label="Лидов в CRM" value={loading ? "…" : String(crmStats?.totalLeads || 0)} hint={`Конверсия ${crmStats?.conversionRate || 0}%`} tone="pink" />
+        <StatCard label="Воронка CRM" value={loading ? "…" : new Intl.NumberFormat("ru-RU", { style: "currency", currency: "RUB", maximumFractionDigits: 0 }).format(Number(crmStats?.pipelineValue || 0))} hint={`${crmStats?.wonDeals || 0} успешно · ${crmStats?.lostDeals || 0} потеряно`} />
       </section>
 
       <section className="app-grid two-columns">
