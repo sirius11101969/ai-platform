@@ -8,6 +8,9 @@ const dashboardRoutes = require('./routes/dashboardRoutes')
 const crmRoutes = require('./routes/crmRoutes')
 const aiTaskRoutes = require('./routes/aiTaskRoutes')
 const telegramRoutes = require('./routes/telegramRoutes')
+const emailRoutes = require('./routes/emailRoutes')
+const { markOpened } = require('./controllers/emailController')
+const { startEmailQueueWorker } = require('./services/emailService')
 const { requireAuth } = require('./middleware/authMiddleware')
 const { errorHandler } = require('./middleware/errorHandler')
 
@@ -15,7 +18,7 @@ const app = express()
 const port = Number(process.env.PORT || 3001)
 
 app.use(cors({ origin: process.env.CORS_ORIGIN || true }))
-app.use(express.json())
+app.use(express.json({ limit: process.env.JSON_BODY_LIMIT || '25mb' }))
 
 app.get('/health', (_, res) => {
   res.json({ status: 'OK' })
@@ -25,6 +28,8 @@ app.use('/api/auth', authRoutes)
 app.use('/api/dashboard', dashboardRoutes)
 app.use('/api/crm', crmRoutes)
 app.use('/api/ai', aiTaskRoutes)
+app.get('/api/email/open/:token', markOpened)
+app.use('/api/email', emailRoutes)
 app.use('/api/telegram', telegramRoutes)
 
 app.post('/api/lead', requireAuth, async (req, res, next) => {
@@ -95,6 +100,8 @@ async function start() {
   if (process.env.RUN_MIGRATIONS !== 'false') {
     await migrate()
   }
+
+  startEmailQueueWorker()
 
   app.listen(port, () => {
     console.log(`Backend started on port ${port}`)

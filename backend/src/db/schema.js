@@ -190,6 +190,63 @@ async function migrate() {
     ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS notes TEXT;
     UPDATE crm_leads SET stage = status WHERE stage IS NULL OR stage = '' OR stage <> status;
 
+
+
+    CREATE TABLE IF NOT EXISTS email_attachments (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      lead_id UUID REFERENCES crm_leads(id) ON DELETE SET NULL,
+      file_name TEXT NOT NULL,
+      mime_type TEXT NOT NULL DEFAULT 'application/octet-stream',
+      size_bytes INTEGER NOT NULL DEFAULT 0 CHECK (size_bytes >= 0),
+      storage_path TEXT NOT NULL,
+      metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS email_messages (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      lead_id UUID REFERENCES crm_leads(id) ON DELETE SET NULL,
+      to_email TEXT NOT NULL,
+      from_email TEXT,
+      subject TEXT NOT NULL,
+      text_body TEXT NOT NULL DEFAULT '',
+      html_body TEXT NOT NULL DEFAULT '',
+      template TEXT,
+      status TEXT NOT NULL DEFAULT 'queued',
+      provider TEXT NOT NULL DEFAULT 'smtp',
+      retry_count INTEGER NOT NULL DEFAULT 0 CHECK (retry_count >= 0),
+      max_retries INTEGER NOT NULL DEFAULT 3 CHECK (max_retries >= 0),
+      error TEXT,
+      tracking_token TEXT UNIQUE,
+      opened_at TIMESTAMPTZ,
+      scheduled_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      next_retry_at TIMESTAMPTZ,
+      sent_at TIMESTAMPTZ,
+      metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    DO $$
+    BEGIN
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'email_messages_status_valid') THEN
+        ALTER TABLE email_messages ADD CONSTRAINT email_messages_status_valid CHECK (status IN ('queued', 'sending', 'sent', 'failed'));
+      END IF;
+    END $$;
+
+    CREATE TABLE IF NOT EXISTS email_message_attachments (
+      email_id UUID NOT NULL REFERENCES email_messages(id) ON DELETE CASCADE,
+      attachment_id UUID NOT NULL REFERENCES email_attachments(id) ON DELETE CASCADE,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      PRIMARY KEY(email_id, attachment_id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_email_messages_queue ON email_messages(status, scheduled_at, next_retry_at);
+    CREATE INDEX IF NOT EXISTS idx_email_messages_lead ON email_messages(user_id, lead_id, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_email_attachments_user ON email_attachments(user_id, lead_id, created_at DESC);
+
     CREATE TABLE IF NOT EXISTS telegram_messages (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       lead_id UUID NOT NULL REFERENCES crm_leads(id) ON DELETE CASCADE,

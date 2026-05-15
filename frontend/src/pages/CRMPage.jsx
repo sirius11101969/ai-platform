@@ -10,6 +10,11 @@ import {
   fetchCrmStages,
   fetchCrmStats,
   fetchTelegramMessages,
+  fetchEmailTemplates,
+  fetchLeadEmails,
+  generateLeadEmail,
+  sendLeadEmail,
+  uploadEmailAttachment,
   updateCrmLead,
   sendTelegramLeadMessage,
   updateCrmStage,
@@ -62,6 +67,12 @@ function getActivityTitle(event) {
     telegram_lead_updated: "Telegram лид обновлён",
     telegram_message_received: "Telegram сообщение получено",
     telegram_ai_reply_sent: "AI ответ отправлен в Telegram",
+    meeting_scheduled: "Встреча запланирована",
+    follow_up_scheduled: "Follow‑up запланирован",
+    attachment_delivered: "Вложение доставлено",
+    email_opened: "Клиент открыл email",
+    email_sent: "Email отправлен",
+    email_queued: "Email поставлен в очередь",
   };
   return titles[event?.type] || event?.title || "Событие CRM";
 }
@@ -104,6 +115,11 @@ export default function CRMPage() {
   const [telegramMessages, setTelegramMessages] = useState([]);
   const [telegramDraft, setTelegramDraft] = useState('');
   const [telegramSending, setTelegramSending] = useState(false);
+  const [emailTemplates, setEmailTemplates] = useState([]);
+  const [leadEmails, setLeadEmails] = useState([]);
+  const [emailComposer, setEmailComposer] = useState({ template: 'commercial_proposal', to: '', subject: '', text: '', html: '', attachmentIds: [] });
+  const [emailAttachments, setEmailAttachments] = useState([]);
+  const [emailBusy, setEmailBusy] = useState(false);
 
   const selectedLead = useMemo(() => leads.find((lead) => lead.id === selectedLeadId) || null, [leads, selectedLeadId]);
   const stageMap = useMemo(() => stages.reduce((acc, stage) => ({ ...acc, [stage.status]: stage.title }), {}), [stages]);
@@ -112,16 +128,18 @@ export default function CRMPage() {
     if (!silent) setLoading(true);
     setError("");
     try {
-      const [leadsResponse, stagesResponse, statsResponse, activityResponse] = await Promise.all([
+      const [leadsResponse, stagesResponse, statsResponse, activityResponse, templatesResponse] = await Promise.all([
         fetchCrmLeads(),
         fetchCrmStages(),
         fetchCrmStats(),
         fetchCrmActivity(),
+        fetchEmailTemplates(),
       ]);
       setLeads(leadsResponse.leads || []);
       setStages((stagesResponse.stages?.length ? stagesResponse.stages : DEFAULT_CRM_STAGES));
       setStats(statsResponse.stats || null);
       setActivity(activityResponse.events || statsResponse.stats?.activity || []);
+      setEmailTemplates(templatesResponse.templates || []);
     } catch (requestError) {
       setError(requestError.message || "Не удалось загрузить CRM");
     } finally {
@@ -167,6 +185,78 @@ export default function CRMPage() {
     }
     const response = await fetchTelegramMessages(lead.id);
     setTelegramMessages(response.messages || []);
+  }
+
+
+  async function refreshLeadEmails(lead = selectedLead) {
+    if (!lead) {
+      setLeadEmails([]);
+      return;
+    }
+    const response = await fetchLeadEmails(lead.id);
+    setLeadEmails(response.emails || []);
+  }
+
+  useEffect(() => {
+    if (!selectedLead) {
+      setLeadEmails([]);
+      return;
+    }
+    setEmailAttachments([]);
+    setEmailComposer((current) => ({ ...current, to: selectedLead.email || '', subject: '', text: '', html: '', attachmentIds: [] }));
+    refreshLeadEmails(selectedLead).catch((requestError) => setError(requestError.message || 'Не удалось загрузить историю email'));
+  }, [selectedLeadId]);
+
+  async function handleGenerateEmail() {
+    if (!selectedLead) return;
+    setEmailBusy(true);
+    setError('');
+    try {
+      const response = await generateLeadEmail(selectedLead.id, { template: emailComposer.template, lead: selectedLead });
+      setEmailComposer((current) => ({ ...current, ...response.email, to: selectedLead.email || current.to }));
+    } catch (requestError) {
+      setError(requestError.message || 'Не удалось сгенерировать письмо');
+    } finally {
+      setEmailBusy(false);
+    }
+  }
+
+  async function handleUploadEmailAttachment(event) {
+    const file = event.target.files?.[0];
+    if (!file || !selectedLead) return;
+    setEmailBusy(true);
+    setError('');
+    try {
+      const contentBase64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || '').split(',')[1] || '');
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      const response = await uploadEmailAttachment({ leadId: selectedLead.id, fileName: file.name, mimeType: file.type || 'application/octet-stream', contentBase64 });
+      setEmailAttachments((current) => [response.attachment, ...current]);
+      setEmailComposer((current) => ({ ...current, attachmentIds: [...current.attachmentIds, response.attachment.id] }));
+    } catch (requestError) {
+      setError(requestError.message || 'Не удалось загрузить вложение');
+    } finally {
+      setEmailBusy(false);
+      event.target.value = '';
+    }
+  }
+
+  async function handleSendEmail(event) {
+    event.preventDefault();
+    if (!selectedLead) return;
+    setEmailBusy(true);
+    setError('');
+    try {
+      await sendLeadEmail(selectedLead.id, emailComposer);
+      await Promise.all([refreshLeadEmails(selectedLead), loadCrm({ silent: true }), refreshMeta()]);
+    } catch (requestError) {
+      setError(requestError.message || 'Не удалось поставить письмо в очередь');
+    } finally {
+      setEmailBusy(false);
+    }
   }
 
   useEffect(() => {
@@ -468,6 +558,15 @@ export default function CRMPage() {
           telegramSending={telegramSending}
           onTelegramDraftChange={setTelegramDraft}
           onSendTelegramReply={handleSendTelegramReply}
+          emailTemplates={emailTemplates}
+          leadEmails={leadEmails}
+          emailComposer={emailComposer}
+          emailAttachments={emailAttachments}
+          emailBusy={emailBusy}
+          onEmailComposerChange={setEmailComposer}
+          onGenerateEmail={handleGenerateEmail}
+          onUploadEmailAttachment={handleUploadEmailAttachment}
+          onSendEmail={handleSendEmail}
           onClose={() => { setSelectedLeadId(null); setIsEditingDetail(false); }}
         />
       )}
@@ -559,7 +658,7 @@ function LeadFormModal({ title, subtitle, stages, leadForm, setLeadForm, saving,
   );
 }
 
-function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDraftChange, onAddNote, onFollowUp, followUpLoading, onDelete, onEdit, onMove, telegramMessages = [], telegramDraft = '', telegramSending = false, onTelegramDraftChange, onSendTelegramReply, onClose }) {
+function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDraftChange, onAddNote, onFollowUp, followUpLoading, onDelete, onEdit, onMove, telegramMessages = [], telegramDraft = '', telegramSending = false, onTelegramDraftChange, onSendTelegramReply, emailTemplates = [], leadEmails = [], emailComposer, emailAttachments = [], emailBusy = false, onEmailComposerChange, onGenerateEmail, onUploadEmailAttachment, onSendEmail, onClose }) {
   return (
     <div className="modal-backdrop crm-modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
       <section className="ai-task-modal lead-detail-modal" role="dialog" aria-modal="true" aria-labelledby="lead-detail-title">
@@ -619,6 +718,36 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                 </form>
               </div>
             )}
+
+            <div className="detail-section email-composer-section">
+              <div className="telegram-chat-head">
+                <div>
+                  <h4>Email клиенту</h4>
+                  <p>AI генерирует письмо, очередь отправляет через SMTP/Gmail API, а CRM сохраняет статусы и открытия.</p>
+                </div>
+                <span className="telegram-badge">Email</span>
+              </div>
+              <form className="email-composer" onSubmit={onSendEmail}>
+                <div className="email-composer-row">
+                  <label className="crm-field"><span>Шаблон</span><select value={emailComposer.template} onChange={(event) => onEmailComposerChange({ ...emailComposer, template: event.target.value })}>{emailTemplates.map((template) => <option key={template.id} value={template.id}>{template.title}</option>)}</select></label>
+                  <label className="crm-field"><span>Кому</span><input type="email" value={emailComposer.to} onChange={(event) => onEmailComposerChange({ ...emailComposer, to: event.target.value })} placeholder="client@company.ru" required /></label>
+                </div>
+                <label className="crm-field"><span>Тема</span><input value={emailComposer.subject} onChange={(event) => onEmailComposerChange({ ...emailComposer, subject: event.target.value })} placeholder="Тема письма" required /></label>
+                <label className="crm-field"><span>Текст письма</span><textarea value={emailComposer.text} onChange={(event) => onEmailComposerChange({ ...emailComposer, text: event.target.value })} placeholder="AI preview появится здесь" required /></label>
+                <label className="crm-field"><span>HTML (опционально)</span><textarea value={emailComposer.html} onChange={(event) => onEmailComposerChange({ ...emailComposer, html: event.target.value })} placeholder="HTML версия письма" /></label>
+                <div className="email-attachment-row">
+                  <label className="ghost-button file-upload-button">Загрузить вложение<input type="file" onChange={onUploadEmailAttachment} /></label>
+                  <button className="ghost-button" type="button" onClick={onGenerateEmail} disabled={emailBusy}>{emailBusy ? 'AI готовит…' : 'AI сгенерировать письмо'}</button>
+                  <button className="btn primary compact" type="submit" disabled={emailBusy || !emailComposer.to || !emailComposer.subject}>{emailBusy ? 'Отправляем…' : 'Отправить email'}</button>
+                </div>
+                {emailAttachments.length > 0 && <div className="email-attachments-list">{emailAttachments.map((file) => <span key={file.id}>📎 {file.fileName}</span>)}</div>}
+              </form>
+              <div className="email-history">
+                <h5>История email</h5>
+                {leadEmails.length === 0 && <p className="empty-state">Писем пока нет</p>}
+                {leadEmails.map((email) => <article key={email.id}><strong>{email.subject}</strong><span>{email.status === 'sent' ? 'отправлено' : email.status === 'queued' ? 'в очереди' : email.status === 'failed' ? 'ошибка' : 'отправляется'} · {formatDate(email.createdAt)}</span><small>Кому: {email.to}{email.openedAt ? ` · открыто ${formatDate(email.openedAt)}` : ''}</small></article>)}
+              </div>
+            </div>
 
             <div className="detail-section">
               <h4>Заметки</h4>

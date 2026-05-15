@@ -2,6 +2,7 @@ const axios = require('axios')
 const pool = require('../db/pool')
 const { generateTelegramSalesReply } = require('./crmAiService')
 const crmModel = require('../models/crmModel')
+const emailService = require('./emailService')
 
 const TELEGRAM_API_BASE = 'https://api.telegram.org'
 
@@ -17,6 +18,33 @@ function buildTelegramName(from = {}) {
 function buildTelegramHandle(from = {}) {
   const username = normalizeText(from.username)
   return username ? `@${username.replace(/^@/, '')}` : null
+}
+
+
+function detectEmailMaterialIntent(text) {
+  const normalized = String(text || '').toLowerCase()
+  if (/(скрин|screenshot|screen)/i.test(normalized)) return { template: 'follow_up', label: 'скриншоты' }
+  if (/(презентац|presentation|презу)/i.test(normalized)) return { template: 'demo_invitation', label: 'презентацию' }
+  if (/(коммерческ|кп|предложен|proposal|quote)/i.test(normalized)) return { template: 'commercial_proposal', label: 'коммерческое предложение' }
+  return null
+}
+
+async function runTelegramEmailWorkflow({ userId, lead, incomingMessage }) {
+  const intent = detectEmailMaterialIntent(incomingMessage)
+  if (!intent) return null
+  const leadEmail = lead.email || lead.metadata?.email || null
+  if (!leadEmail) {
+    return {
+      requiresEmail: true,
+      message: `Клиент запросил ${intent.label}, но в карточке лида нет email. AI должен запросить email перед отправкой материалов.`,
+    }
+  }
+  return emailService.enqueueEmail(userId, {
+    leadId: lead.id,
+    to: leadEmail,
+    template: intent.template,
+    subject: `Материалы по AI‑платформе: ${intent.label}`,
+  })
 }
 
 function extractTelegramMessage(update = {}) {
@@ -257,11 +285,14 @@ async function processTelegramUpdate(update) {
   }
 
   const memory = await crmModel.getTelegramMemory(crmResult.userId, crmResult.lead.id, 10)
-  const generated = await generateTelegramSalesReply({ lead: crmResult.lead, incomingMessage: telegram.text, memory })
+  const emailWorkflow = await runTelegramEmailWorkflow({ userId: crmResult.userId, lead: crmResult.lead, incomingMessage: telegram.text })
+  const generated = await generateTelegramSalesReply({ lead: crmResult.lead, incomingMessage: emailWorkflow?.requiresEmail ? `${telegram.text}
+
+Важно: запроси email клиента для отправки материалов.` : telegram.text, memory })
   const telegramResponse = await sendTelegramMessage(telegram.chatId, generated.message)
   await saveAiReply({ userId: crmResult.userId, leadId: crmResult.lead.id, reply: generated.message, model: generated.model, prompt: generated.prompt, telegramResponse })
 
-  return { skipped: false, leadId: crmResult.lead.id, isNew: crmResult.isNew, telegramResponse }
+  return { skipped: false, leadId: crmResult.lead.id, isNew: crmResult.isNew, telegramResponse, emailWorkflow }
 }
 
 module.exports = {
