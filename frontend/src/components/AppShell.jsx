@@ -101,8 +101,8 @@ export function PageHeading({ eyebrow, title, copy, action }) {
   );
 }
 
-export function Panel({ className = "", children }) {
-  return <section className={`app-panel shell-glow ${className}`}>{children}</section>;
+export function Panel({ className = "", children, ...props }) {
+  return <section className={`app-panel shell-glow ${className}`} {...props}>{children}</section>;
 }
 
 export function StatCard({ label, value, hint, tone = "cyan" }) {

@@ -55,6 +55,7 @@ export default function CRMPage() {
   const [saving, setSaving] = useState(false);
   const [followUpLoading, setFollowUpLoading] = useState({});
   const [draggedLeadId, setDraggedLeadId] = useState(null);
+  const [dropTargetStage, setDropTargetStage] = useState(null);
   const [error, setError] = useState("");
 
   async function loadCrm({ silent = false } = {}) {
@@ -163,10 +164,38 @@ export default function CRMPage() {
       setLeads((current) => current.map((item) => item.id === lead.id ? { ...item, followUps: [response.followUp, ...(item.followUps || [])], updatedAt: new Date().toISOString() } : item));
       await refreshMeta();
     } catch (requestError) {
-      setError(requestError.message || "Не удалось создать AI follow-up");
+      setError(requestError.message || "Не удалось создать AI‑дожим");
     } finally {
       setFollowUpLoading((current) => ({ ...current, [lead.id]: false }));
     }
+  }
+
+  function handleLeadDragStart(event, lead) {
+    event.dataTransfer.effectAllowed = "move";
+    event.dataTransfer.setData("text/plain", lead.id);
+    event.dataTransfer.setData("text/lead-id", lead.id);
+    setDraggedLeadId(lead.id);
+  }
+
+  function handleStageDragOver(event, stageStatus) {
+    if (!draggedLeadId) return;
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+    setDropTargetStage(stageStatus);
+  }
+
+  function handleStageDrop(event, stageStatus) {
+    event.preventDefault();
+    const droppedLeadId = event.dataTransfer.getData("text/lead-id") || event.dataTransfer.getData("text/plain") || draggedLeadId;
+    const lead = leads.find((item) => item.id === droppedLeadId);
+    setDraggedLeadId(null);
+    setDropTargetStage(null);
+    moveLead(lead, stageStatus);
+  }
+
+  function handleLeadDragEnd() {
+    setDraggedLeadId(null);
+    setDropTargetStage(null);
   }
 
   return (
@@ -174,7 +203,7 @@ export default function CRMPage() {
       <PageHeading
         eyebrow="CRM‑воронка"
         title="AI‑CRM для продаж"
-        copy="Лиды, этапы, история, заметки и AI follow-up сохраняются в PostgreSQL и доступны только текущему пользователю через JWT."
+        copy="Лиды, этапы, история, заметки и AI‑дожим сохраняются в PostgreSQL и доступны только текущему пользователю через JWT."
         action={<button className="btn primary compact" type="button" onClick={() => { resetForm(); document.getElementById("crm-lead-name")?.focus(); }}>Добавить лид</button>}
       />
 
@@ -195,10 +224,12 @@ export default function CRMPage() {
             const stageTotal = stageLeads.reduce((total, lead) => total + Number(lead.value || 0), 0);
             return (
               <Panel
-                className={`stage-column drop-stage ${draggedLeadId ? "drag-active" : ""}`}
+                className={`stage-column drop-stage ${draggedLeadId ? "drag-active" : ""} ${dropTargetStage === stage.status ? "drop-hover" : ""}`}
                 key={stage.status}
-                onDragOver={(event) => event.preventDefault()}
-                onDrop={(event) => { event.preventDefault(); const lead = leads.find((item) => item.id === event.dataTransfer.getData("text/lead-id")); setDraggedLeadId(null); moveLead(lead, stage.status); }}
+                onDragEnter={() => draggedLeadId && setDropTargetStage(stage.status)}
+                onDragOver={(event) => handleStageDragOver(event, stage.status)}
+                onDragLeave={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setDropTargetStage(null); }}
+                onDrop={(event) => handleStageDrop(event, stage.status)}
               >
                 <div className="stage-head">
                   <div><h3>{stage.title}</h3><span>{stageLeads.length} · {formatCurrency(stageTotal)}</span></div>
@@ -208,10 +239,10 @@ export default function CRMPage() {
                   {stageLeads.length === 0 && <p className="empty-state">Перетащите лид на этот этап</p>}
                   {stageLeads.map((lead) => (
                     <article
-                      className="lead-card premium-lead-card"
+                      className={`lead-card premium-lead-card ${draggedLeadId === lead.id ? "is-dragging" : ""}`}
                       draggable
-                      onDragStart={(event) => { event.dataTransfer.setData("text/lead-id", lead.id); setDraggedLeadId(lead.id); }}
-                      onDragEnd={() => setDraggedLeadId(null)}
+                      onDragStart={(event) => handleLeadDragStart(event, lead)}
+                      onDragEnd={handleLeadDragEnd}
                       key={lead.id}
                     >
                       <div className="lead-topline"><strong>{lead.company || lead.name}</strong><span>{formatCurrency(lead.value)}</span></div>
@@ -219,7 +250,7 @@ export default function CRMPage() {
                       <small>Создано {formatDate(lead.createdAt)} · Обновлено {formatDate(lead.updatedAt)}</small>
                       <div className="lead-actions">
                         <button type="button" onClick={() => { setEditingLeadId(lead.id); setLeadForm(toForm(lead)); document.getElementById("crm-lead-name")?.focus(); }}>Изменить</button>
-                        <button type="button" onClick={() => handleFollowUp(lead)} disabled={followUpLoading[lead.id]}>{followUpLoading[lead.id] ? "AI думает…" : "AI Follow-up"}</button>
+                        <button type="button" onClick={() => handleFollowUp(lead)} disabled={followUpLoading[lead.id]}>{followUpLoading[lead.id] ? "AI думает…" : "AI‑дожим"}</button>
                         <button type="button" className="danger" onClick={() => handleDeleteLead(lead)}>Удалить</button>
                       </div>
                       <label className="crm-field compact-field"><span>Этап</span><select value={lead.status} onChange={(event) => moveLead(lead, event.target.value)}>{CRM_STAGES.map((option) => <option value={option.status} key={option.status}>{option.title}</option>)}</select></label>
