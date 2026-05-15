@@ -1,19 +1,25 @@
 const pool = require('../db/pool')
 
 const CRM_STATUSES = ['new', 'qualified', 'proposal', 'booked', 'won', 'lost']
-const LEAD_SELECT = `
-  id,
-  user_id,
-  name,
-  email,
-  phone,
-  company,
-  status,
-  value,
-  source,
-  created_at,
-  updated_at
-`
+const LEAD_COLUMNS = [
+  'id',
+  'user_id',
+  'name',
+  'email',
+  'phone',
+  'company',
+  'status',
+  'value',
+  'source',
+  'created_at',
+  'updated_at',
+]
+
+const LEAD_SELECT = LEAD_COLUMNS.join(', ')
+
+function leadSelect(alias) {
+  return LEAD_COLUMNS.map((column) => `${alias}.${column}`).join(', ')
+}
 
 function normalizeLead(row) {
   if (!row) return null
@@ -63,24 +69,24 @@ function normalizeValue(value) {
 
 async function listLeads(userId) {
   const result = await pool.query(
-    `SELECT ${LEAD_SELECT},
+    `SELECT ${leadSelect('l')},
             COALESCE(
               json_agg(
                 json_build_object(
-                  'id', crm_notes.id,
-                  'lead_id', crm_notes.lead_id,
-                  'user_id', crm_notes.user_id,
-                  'body', crm_notes.body,
-                  'created_at', crm_notes.created_at
-                ) ORDER BY crm_notes.created_at DESC
-              ) FILTER (WHERE crm_notes.id IS NOT NULL),
+                  'id', n.id,
+                  'lead_id', n.lead_id,
+                  'user_id', n.user_id,
+                  'body', n.body,
+                  'created_at', n.created_at
+                ) ORDER BY n.created_at DESC
+              ) FILTER (WHERE n.id IS NOT NULL),
               '[]'::json
             ) AS notes
-       FROM crm_leads
-       LEFT JOIN crm_notes ON crm_notes.lead_id = crm_leads.id AND crm_notes.user_id = crm_leads.user_id
-      WHERE crm_leads.user_id = $1
-      GROUP BY crm_leads.id
-      ORDER BY crm_leads.updated_at DESC, crm_leads.created_at DESC`,
+       FROM crm_leads AS l
+       LEFT JOIN crm_notes AS n ON n.lead_id = l.id AND n.user_id = l.user_id
+      WHERE l.user_id = $1
+      GROUP BY l.id
+      ORDER BY l.updated_at DESC, l.created_at DESC`,
     [userId]
   )
 
