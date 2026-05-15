@@ -1,10 +1,11 @@
 const pool = require('../db/pool')
+const { executeAiTask } = require('../services/aiTaskExecutorService')
 
 const TASK_COSTS = {
   ai_content_generation: 5,
   ai_sales_reply: 8,
-  ai_telegram_outreach: 9,
   ai_crm_follow_up: 12,
+  ai_telegram_outreach: 9,
 }
 
 const LEGACY_TASK_TYPE_ALIASES = {
@@ -12,6 +13,10 @@ const LEGACY_TASK_TYPE_ALIASES = {
   sales_email: 'ai_sales_reply',
   crm_summary: 'ai_crm_follow_up',
   lead_follow_up: 'ai_crm_follow_up',
+  'Генерация текста': 'ai_content_generation',
+  'Ответ клиенту': 'ai_sales_reply',
+  'Follow-up для CRM': 'ai_crm_follow_up',
+  'Telegram-сообщение': 'ai_telegram_outreach',
 }
 
 const TASK_TYPES = Object.keys(TASK_COSTS)
@@ -28,6 +33,7 @@ function normalizeTask(row) {
     status: row.status,
     credits_spent: Number(row.credits_spent || 0),
     result: row.result || row.output || null,
+    error: row.error || null,
     created_at: row.created_at,
     updated_at: row.updated_at,
   }
@@ -69,7 +75,7 @@ function validateTaskPayload({ type = 'ai_content_generation', prompt }) {
 
 async function listTasks(userId) {
   const result = await pool.query(
-    `SELECT id, user_id, type, prompt, status, credits_spent, result, created_at, updated_at, task_type, input, output
+    `SELECT id, user_id, type, prompt, status, credits_spent, result, error, created_at, updated_at, task_type, input, output
        FROM ai_tasks
       WHERE user_id = $1
       ORDER BY created_at DESC`,
@@ -87,7 +93,7 @@ async function findTaskById(userId, taskId) {
   }
 
   const result = await pool.query(
-    `SELECT id, user_id, type, prompt, status, credits_spent, result, created_at, updated_at, task_type, input, output
+    `SELECT id, user_id, type, prompt, status, credits_spent, result, error, created_at, updated_at, task_type, input, output
        FROM ai_tasks
       WHERE user_id = $1 AND id = $2`,
     [userId, taskId]
@@ -118,9 +124,9 @@ async function createTask(userId, payload) {
     }
 
     const taskResult = await client.query(
-      `INSERT INTO ai_tasks(type, prompt, status, credits_spent, result, user_id, task_type, input, output)
-       VALUES($1, $2, 'pending', $3, NULL, $4, $1, $5, NULL)
-       RETURNING id, user_id, type, prompt, status, credits_spent, result, created_at, updated_at`,
+      `INSERT INTO ai_tasks(type, prompt, status, credits_spent, result, user_id, task_type, input, output, error)
+       VALUES($1, $2, 'processing', $3, NULL, $4, $1, $5, NULL, NULL)
+       RETURNING id, user_id, type, prompt, status, credits_spent, result, error, created_at, updated_at`,
       [type, prompt, creditsSpent, userId, { prompt }]
     )
 
@@ -150,83 +156,35 @@ async function createTask(userId, payload) {
   }
 }
 
-function buildTaskResult(task) {
-  const prompt = task.prompt.trim()
-  const promptPreview = prompt.length > 220 ? `${prompt.slice(0, 220)}…` : prompt
-  const generatedAt = new Date().toISOString()
-
-  const templates = {
-    ai_content_generation: {
-      title: 'AI content generation',
-      content: `Premium content draft for: ${promptPreview}\n\nHook: Open with the highest-impact business outcome.\nAngle: Make the promise specific, measurable, and credible.\nCTA: Invite the reader to launch the next AI workflow.`,
-      artifacts: ['hook', 'value proposition', 'call to action'],
-    },
-    ai_sales_reply: {
-      title: 'AI sales reply',
-      subject: 'Re: next step for your AI workflow',
-      content: `Hi,\n\nThanks for the context: ${promptPreview}. The best reply is consultative: acknowledge the need, connect it to a clear ROI outcome, and suggest a short next step.\n\nRecommended CTA: “Can we map the first automation this week?”`,
-      artifacts: ['objection handling', 'ROI framing', 'meeting CTA'],
-    },
-    ai_telegram_outreach: {
-      title: 'AI Telegram outreach',
-      message: `Quick Telegram sequence for: ${promptPreview}\n\n1) Personal opener tied to their role/company.\n2) One-line pain point about missed follow-ups or slow CRM work.\n3) Soft CTA: ask if they want a 2-minute workflow audit.`,
-      artifacts: ['telegram opener', 'pain-point line', 'soft CTA'],
-    },
-    ai_crm_follow_up: {
-      title: 'AI CRM follow-up',
-      steps: [
-        `Log context: ${promptPreview}`,
-        'Create next action with a clear owner and due date.',
-        'Send a personalized recap within 2 hours.',
-        'Schedule the next touch based on lead priority.',
-      ],
-      artifacts: ['crm note', 'next action', 'follow-up cadence'],
-    },
-  }
-
-  return {
-    ...templates[task.type],
-    generatedAt,
-    model: 'ai-task-engine-v1',
-    creditsSpent: task.credits_spent,
-  }
-}
-
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
-
 async function processTask(taskId) {
   try {
     const processingResult = await pool.query(
-      `UPDATE ai_tasks
-          SET status = 'processing', updated_at = NOW()
-        WHERE id = $1 AND status = 'pending'
-        RETURNING id, user_id, type, prompt, status, credits_spent, result, created_at, updated_at`,
+      `SELECT id, user_id, type, prompt, status, credits_spent, result, error, created_at, updated_at, task_type, input, output
+         FROM ai_tasks
+        WHERE id = $1 AND status = 'processing'`,
       [taskId]
     )
 
     const task = normalizeTask(processingResult.rows[0])
     if (!task) return null
 
-    await sleep(Number(process.env.AI_TASK_PROCESSING_DELAY_MS || 1200))
-
-    const result = buildTaskResult(task)
+    const result = await executeAiTask(task)
     const completedResult = await pool.query(
       `UPDATE ai_tasks
-          SET status = 'completed', result = $2, output = $2, updated_at = NOW()
+          SET status = 'completed', result = $2, output = $2, error = NULL, updated_at = NOW()
         WHERE id = $1 AND status = 'processing'
-        RETURNING id, user_id, type, prompt, status, credits_spent, result, created_at, updated_at`,
+        RETURNING id, user_id, type, prompt, status, credits_spent, result, error, created_at, updated_at`,
       [taskId, result]
     )
 
     return normalizeTask(completedResult.rows[0])
   } catch (error) {
+    const message = error.response?.data?.error?.message || error.message || 'Task processing failed'
     await pool.query(
       `UPDATE ai_tasks
           SET status = 'failed', result = $2, output = $2, error = $3, updated_at = NOW()
         WHERE id = $1`,
-      [taskId, { error: 'Task processing failed' }, error.message]
+      [taskId, { error: message, provider: 'openai' }, message]
     )
     throw error
   }
