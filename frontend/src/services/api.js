@@ -310,6 +310,30 @@ export function createAiTask(payload) {
   })
 }
 
+export function fetchAiWorkers() {
+  return request('/ai/workers')
+}
+
+export function createAiWorker(payload) {
+  return request('/ai/workers', { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export function updateAiWorker(id, payload) {
+  return request(`/ai/workers/${id}`, { method: 'PATCH', body: JSON.stringify(payload) })
+}
+
+export function fetchAiWorkerRuns(id) {
+  return request(`/ai/workers/${id}/runs`)
+}
+
+export function runAiWorker(id) {
+  return request(`/ai/workers/${id}/run`, { method: 'POST' })
+}
+
+export function fetchAiCommandCenter() {
+  return request('/ai/command-center')
+}
+
 export function fetchTelegramMessages(leadId) {
   return request(`/crm/leads/${leadId}/telegram-messages`)
 }

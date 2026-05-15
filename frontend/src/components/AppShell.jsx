@@ -121,6 +121,7 @@ export function ProtectedLayout({ children }) {
         <nav className="side-nav" aria-label="Основная навигация">
           <NavLink to="/dashboard" className={({ isActive }) => (isActive ? "active" : "")}>Дашборд</NavLink>
           <NavLink to="/crm" className={({ isActive }) => (isActive ? "active" : "")}>CRM‑воронка</NavLink>
+          <NavLink to="/ai-workers" className={({ isActive }) => (isActive ? "active" : "")}>AI сотрудники</NavLink>
           <div className="sidebar-crm-actions" aria-label="Действия CRM">
             <button className="sidebar-create-lead" type="button" onClick={openCreateLead}>+ Создать лид</button>
             <button className="sidebar-activity-feed" type="button" onClick={openActivityFeed}>Лента активности</button>

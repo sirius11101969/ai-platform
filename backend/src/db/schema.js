@@ -516,6 +516,67 @@ async function migrate() {
     END $$;
 
 
+    CREATE TABLE IF NOT EXISTS ai_workers (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+      name TEXT NOT NULL,
+      type TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'active',
+      mode TEXT NOT NULL DEFAULT 'suggestion_only',
+      description TEXT NOT NULL DEFAULT '',
+      last_run_at TIMESTAMPTZ,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      UNIQUE(workspace_id, type)
+    );
+
+    CREATE TABLE IF NOT EXISTS ai_worker_runs (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      worker_id UUID NOT NULL REFERENCES ai_workers(id) ON DELETE CASCADE,
+      workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+      lead_id UUID REFERENCES crm_leads(id) ON DELETE SET NULL,
+      input_context JSONB NOT NULL DEFAULT '{}'::jsonb,
+      output_summary JSONB NOT NULL DEFAULT '{}'::jsonb,
+      status TEXT NOT NULL DEFAULT 'queued',
+      credits_spent INTEGER NOT NULL DEFAULT 0 CHECK (credits_spent >= 0),
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS ai_worker_queue (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      worker_id UUID NOT NULL REFERENCES ai_workers(id) ON DELETE CASCADE,
+      workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+      run_id UUID REFERENCES ai_worker_runs(id) ON DELETE SET NULL,
+      lead_id UUID REFERENCES crm_leads(id) ON DELETE SET NULL,
+      action_type TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'pending_approval',
+      title TEXT NOT NULL,
+      recommendation TEXT NOT NULL DEFAULT '',
+      payload JSONB NOT NULL DEFAULT '{}'::jsonb,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    DO $$
+    BEGIN
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_workers_status_valid') THEN
+        ALTER TABLE ai_workers ADD CONSTRAINT ai_workers_status_valid CHECK (status IN ('active', 'paused', 'error'));
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_workers_mode_valid') THEN
+        ALTER TABLE ai_workers ADD CONSTRAINT ai_workers_mode_valid CHECK (mode IN ('suggestion_only', 'approval_required', 'autonomous_ready'));
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_workers_type_valid') THEN
+        ALTER TABLE ai_workers ADD CONSTRAINT ai_workers_type_valid CHECK (type IN ('ai_sdr_agent', 'ai_followup_worker', 'ai_revenue_analyst', 'ai_crm_assistant', 'ai_email_assistant', 'ai_telegram_assistant'));
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_worker_runs_status_valid') THEN
+        ALTER TABLE ai_worker_runs ADD CONSTRAINT ai_worker_runs_status_valid CHECK (status IN ('queued', 'running', 'completed', 'failed'));
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_worker_queue_status_valid') THEN
+        ALTER TABLE ai_worker_queue ADD CONSTRAINT ai_worker_queue_status_valid CHECK (status IN ('pending_approval', 'queued', 'running', 'completed', 'failed', 'cancelled'));
+      END IF;
+    END $$;
+
+
     CREATE TABLE IF NOT EXISTS ai_action_queue (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
@@ -582,6 +643,10 @@ async function migrate() {
       END IF;
     END $$;
 
+    CREATE INDEX IF NOT EXISTS idx_ai_workers_workspace_type ON ai_workers(workspace_id, type);
+    CREATE INDEX IF NOT EXISTS idx_ai_worker_runs_worker ON ai_worker_runs(workspace_id, worker_id, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_status ON ai_worker_queue(workspace_id, status, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_lead ON ai_worker_queue(workspace_id, lead_id, created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_ai_action_queue_workspace_status ON ai_action_queue(workspace_id, status, created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_ai_action_queue_lead ON ai_action_queue(workspace_id, lead_id, created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_lead_timeline_events_lead ON lead_timeline_events(workspace_id, lead_id, created_at DESC);
