@@ -147,10 +147,15 @@ function translateApiError(message) {
     'Workspace not found': 'Рабочее пространство не найдено',
     'Workspace admin role is required': 'Нужна роль администратора пространства',
     'Workspace team members limit reached': 'Достигнут лимит участников тарифа',
+    'OPENAI_API_KEY is required for AI agent actions': 'Для AI Agent нужен OPENAI_API_KEY на сервере',
+    'OPENAI_API_KEY is required for CRM AI follow-up': 'Для AI follow-up нужен OPENAI_API_KEY на сервере',
+    'OPENAI_API_KEY is required for Telegram AI sales reply': 'Для AI ответа в Telegram нужен OPENAI_API_KEY на сервере',
+    'leadId is required': 'Выберите лида для AI действия',
   }
   if (exact[text]) return exact[text]
   if (text.startsWith('Status must be one of:')) return 'Статус должен быть одним из допустимых этапов CRM'
   if (text.startsWith('Task type must be one of:')) return 'Выберите допустимый тип AI‑задачи'
+  if (text.startsWith('AI agent task type must be one of:')) return 'Выберите допустимое AI действие'
   if (text.startsWith('Insufficient credits:')) return text.replace(/Insufficient credits: (\d+) credits required/, 'Недостаточно AI‑кредитов: требуется $1')
   return text
 }
@@ -330,6 +335,27 @@ export function sendLeadEmail(leadId, payload) {
   })
 }
 
+export function fetchAiAgentActions(leadId) {
+  return request(`/ai/agents/actions${leadId ? `?leadId=${encodeURIComponent(leadId)}` : ''}`)
+}
+
+export function createAiAgentAction(payload) {
+  return request('/ai/agents/actions', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
+export function queueInactiveAiFollowUps(payload = {}) {
+  return request('/ai/agents/followups/queue-inactive', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
+export function fetchAiAgentMetrics() {
+  return request('/ai/agents/metrics')
+}
 
 export function fetchWorkspaces() {
   return request('/workspaces')

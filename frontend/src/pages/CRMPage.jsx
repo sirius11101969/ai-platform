@@ -3,6 +3,7 @@ import { Panel, PageHeading, StatCard } from "../components/AppShell";
 import {
   addCrmLeadNote,
   createCrmFollowUp,
+  createAiAgentAction,
   createCrmLead,
   deleteCrmLead,
   fetchCrmActivity,
@@ -17,6 +18,7 @@ import {
   uploadEmailAttachment,
   updateCrmLead,
   sendTelegramLeadMessage,
+  queueInactiveAiFollowUps,
   updateCrmStage,
 } from "../services/api";
 
@@ -94,6 +96,17 @@ function isTelegramLead(lead) {
   return lead?.source === "telegram" || Boolean(lead?.telegram);
 }
 
+function getAiRecommendation(lead) {
+  return lead?.aiRecommendation || (lead?.aiActions || []).find((action) => action.task_type === 'analyze_lead' && action.status === 'completed')?.output_result || null;
+}
+
+function getAiSummaryText(recommendation) {
+  if (!recommendation) return 'AI анализ ещё не запускался';
+  if (recommendation.nextBestAction) return recommendation.nextBestAction;
+  if (Array.isArray(recommendation.recommendations) && recommendation.recommendations[0]) return recommendation.recommendations[0];
+  return recommendation.content || recommendation.rawText || 'AI рекомендация готова';
+}
+
 export default function CRMPage() {
   const [leads, setLeads] = useState([]);
   const [stages, setStages] = useState(DEFAULT_CRM_STAGES);
@@ -120,6 +133,8 @@ export default function CRMPage() {
   const [emailComposer, setEmailComposer] = useState({ template: 'commercial_proposal', to: '', subject: '', text: '', html: '', attachmentIds: [] });
   const [emailAttachments, setEmailAttachments] = useState([]);
   const [emailBusy, setEmailBusy] = useState(false);
+  const [aiActionBusy, setAiActionBusy] = useState({});
+  const [inactiveQueueBusy, setInactiveQueueBusy] = useState(false);
 
   const selectedLead = useMemo(() => leads.find((lead) => lead.id === selectedLeadId) || null, [leads, selectedLeadId]);
   const stageMap = useMemo(() => stages.reduce((acc, stage) => ({ ...acc, [stage.status]: stage.title }), {}), [stages]);
@@ -396,6 +411,37 @@ export default function CRMPage() {
     }
   }
 
+
+
+  async function handleAiAgentAction(lead, taskType) {
+    if (!lead) return;
+    setError('');
+    setAiActionBusy((current) => ({ ...current, [`${lead.id}:${taskType}`]: true }));
+    try {
+      await createAiAgentAction({ leadId: lead.id, taskType });
+      await loadCrm({ silent: true });
+      await refreshMeta();
+    } catch (requestError) {
+      setError(requestError.message || 'Не удалось запустить AI действие');
+    } finally {
+      setAiActionBusy((current) => ({ ...current, [`${lead.id}:${taskType}`]: false }));
+    }
+  }
+
+  async function handleQueueInactiveFollowUps() {
+    setError('');
+    setInactiveQueueBusy(true);
+    try {
+      await queueInactiveAiFollowUps({ inactiveHours: 24 });
+      await loadCrm({ silent: true });
+      await refreshMeta();
+    } catch (requestError) {
+      setError(requestError.message || 'Не удалось поставить follow-up в очередь');
+    } finally {
+      setInactiveQueueBusy(false);
+    }
+  }
+
   async function handleRenameStage(stage, title) {
     const nextTitle = title.trim();
     if (!nextTitle || nextTitle === stage.title) return;
@@ -469,6 +515,18 @@ export default function CRMPage() {
         <StatCard label="Успешно" value={loading ? "…" : String(stats?.wonDeals || 0)} hint={`${formatCurrency(stats?.wonValue)} выиграно`} tone="pink" />
         <StatCard label="Потеряно" value={loading ? "…" : String(stats?.lostDeals || 0)} hint={`${formatCurrency(stats?.lostValue)} потеряно`} />
         <StatCard label="Конверсия" value={loading ? "…" : `${stats?.conversionRate || 0}%`} hint="успешные сделки от всех лидов" tone="violet" />
+        <StatCard label="AI сегодня" value={loading ? "…" : String(stats?.aiMetrics?.actionsToday || 0)} hint="AI действий сегодня" tone="pink" />
+        <StatCard label="AI follow-up" value={loading ? "…" : String(stats?.aiMetrics?.generatedFollowUps || 0)} hint="сгенерировано AI" tone="violet" />
+        <StatCard label="AI эффективность" value={loading ? "…" : `${stats?.aiMetrics?.efficiency || 0}%`} hint={`${stats?.aiMetrics?.assistedDeals || 0} AI‑сделок`} />
+      </section>
+
+      <section className="ai-action-center-panel">
+        <div>
+          <span className="eyebrow">AI центр действий</span>
+          <h3>Автономная очередь follow-up</h3>
+          <p>AI анализирует неактивных лидов по реальному CRM контексту и готовит черновики без автоотправки.</p>
+        </div>
+        <button className="btn primary compact" type="button" onClick={handleQueueInactiveFollowUps} disabled={inactiveQueueBusy}>{inactiveQueueBusy ? "AI ставит в очередь…" : "Поставить follow-up для неактивных"}</button>
       </section>
 
       <section className="crm-layout production-crm-layout">
@@ -515,7 +573,7 @@ export default function CRMPage() {
                     >
                       <div className="lead-topline"><strong>{lead.name}</strong><span>{formatCurrency(lead.value)}</span></div>
                       <p>{lead.company || (isTelegramLead(lead) ? lead.telegram || "Telegram контакт" : "Компания не указана")}</p>
-                      <div className="lead-card-meta"><small><i />{stageMap[lead.status] || lead.status}</small><span className={`source-pill ${lead.source === "telegram" ? "telegram-source" : ""}`}>{formatLeadSource(lead.source)}</span></div>{isTelegramLead(lead) && <div className="telegram-card-status"><span className={`telegram-presence-dot ${lead.telegramOnline ? 'online' : 'offline'}`} />{lead.telegramOnline ? 'online' : 'offline'} · {lead.lastMessageAt ? formatDate(lead.lastMessageAt) : 'нет сообщений'}</div>}
+                      <div className="lead-card-meta"><small><i />{stageMap[lead.status] || lead.status}</small><span className={`source-pill ${lead.source === "telegram" ? "telegram-source" : ""}`}>{formatLeadSource(lead.source)}</span></div>{getAiRecommendation(lead) && <div className="ai-card-recommendation"><span>AI</span>{getAiSummaryText(getAiRecommendation(lead))}</div>}{isTelegramLead(lead) && <div className="telegram-card-status"><span className={`telegram-presence-dot ${lead.telegramOnline ? 'online' : 'offline'}`} />{lead.telegramOnline ? 'online' : 'offline'} · {lead.lastMessageAt ? formatDate(lead.lastMessageAt) : 'нет сообщений'}</div>}
                     </article>
                   ))}
                 </div>
@@ -549,6 +607,8 @@ export default function CRMPage() {
           onNoteDraftChange={(value) => setNoteDrafts((current) => ({ ...current, [selectedLead.id]: value }))}
           onAddNote={(event) => handleAddNote(event, selectedLead)}
           onFollowUp={() => handleFollowUp(selectedLead)}
+          onAiAction={(taskType) => handleAiAgentAction(selectedLead, taskType)}
+          aiActionBusy={aiActionBusy}
           followUpLoading={followUpLoading[selectedLead.id]}
           onDelete={() => handleDeleteLead(selectedLead)}
           onEdit={() => startDetailEdit(selectedLead)}
@@ -658,7 +718,7 @@ function LeadFormModal({ title, subtitle, stages, leadForm, setLeadForm, saving,
   );
 }
 
-function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDraftChange, onAddNote, onFollowUp, followUpLoading, onDelete, onEdit, onMove, telegramMessages = [], telegramDraft = '', telegramSending = false, onTelegramDraftChange, onSendTelegramReply, emailTemplates = [], leadEmails = [], emailComposer, emailAttachments = [], emailBusy = false, onEmailComposerChange, onGenerateEmail, onUploadEmailAttachment, onSendEmail, onClose }) {
+function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDraftChange, onAddNote, onFollowUp, onAiAction, aiActionBusy = {}, followUpLoading, onDelete, onEdit, onMove, telegramMessages = [], telegramDraft = '', telegramSending = false, onTelegramDraftChange, onSendTelegramReply, emailTemplates = [], leadEmails = [], emailComposer, emailAttachments = [], emailBusy = false, onEmailComposerChange, onGenerateEmail, onUploadEmailAttachment, onSendEmail, onClose }) {
   return (
     <div className="modal-backdrop crm-modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
       <section className="ai-task-modal lead-detail-modal" role="dialog" aria-modal="true" aria-labelledby="lead-detail-title">
@@ -678,6 +738,44 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
             <div className="detail-kpi-row">
               <div><span>Сумма сделки</span><strong>{formatCurrency(lead.value)}</strong></div>
               <label className="crm-field"><span>Текущий этап</span><select value={lead.status} onChange={(event) => onMove(event.target.value)}>{stages.map((stage) => <option key={stage.status} value={stage.status}>{stage.title}</option>)}</select></label>
+            </div>
+
+
+
+            <div className="detail-section ai-recommendation-panel">
+              <div className="telegram-chat-head">
+                <div>
+                  <h4>AI рекомендации</h4>
+                  <p>Рекомендации генерируются OpenAI только из CRM, Telegram, заметок и email истории.</p>
+                </div>
+                <span className="ai-glow-badge">AI мозг</span>
+              </div>
+              {getAiRecommendation(lead) ? (
+                <div className="ai-recommendation-grid">
+                  <div><span>Следующее лучшее действие</span><strong>{getAiRecommendation(lead).nextBestAction || 'Клиент готов к следующему касанию'}</strong></div>
+                  <div><span>Срочность</span><strong>{getAiRecommendation(lead).urgencyScore ?? '—'}%</strong></div>
+                  <div><span>Вероятность сделки</span><strong>{getAiRecommendation(lead).conversionProbability ?? '—'}%</strong></div>
+                  <div><span>Follow-up</span><strong>{getAiRecommendation(lead).followUpRecommendation || 'Рекомендуется follow-up через 24 часа'}</strong></div>
+                </div>
+              ) : <p className="empty-state">Запустите «Анализ лида», чтобы получить AI рекомендации.</p>}
+              {Array.isArray(getAiRecommendation(lead)?.recommendations) && <ul className="ai-recommendation-list">{getAiRecommendation(lead).recommendations.map((item, index) => <li key={`${item}-${index}`}>{item}</li>)}</ul>}
+            </div>
+
+            <div className="detail-section ai-action-center-card">
+              <h4>AI центр действий</h4>
+              <div className="ai-action-buttons">
+                {[
+                  ['analyze_lead', 'Анализ лида'],
+                  ['generate_follow_up', 'Сгенерировать follow-up'],
+                  ['generate_commercial_offer', 'Сгенерировать КП'],
+                  ['generate_telegram_response', 'Ответ в Telegram'],
+                  ['generate_email_response', 'Ответ на email'],
+                ].map(([taskType, title]) => (
+                  <button className="ghost-button" type="button" key={taskType} onClick={() => onAiAction(taskType)} disabled={aiActionBusy[`${lead.id}:${taskType}`]}>
+                    {aiActionBusy[`${lead.id}:${taskType}`] ? 'AI работает…' : title}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className="detail-section">
@@ -733,7 +831,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                   <label className="crm-field"><span>Кому</span><input type="email" value={emailComposer.to} onChange={(event) => onEmailComposerChange({ ...emailComposer, to: event.target.value })} placeholder="client@company.ru" required /></label>
                 </div>
                 <label className="crm-field"><span>Тема</span><input value={emailComposer.subject} onChange={(event) => onEmailComposerChange({ ...emailComposer, subject: event.target.value })} placeholder="Тема письма" required /></label>
-                <label className="crm-field"><span>Текст письма</span><textarea value={emailComposer.text} onChange={(event) => onEmailComposerChange({ ...emailComposer, text: event.target.value })} placeholder="AI preview появится здесь" required /></label>
+                <label className="crm-field"><span>Текст письма</span><textarea value={emailComposer.text} onChange={(event) => onEmailComposerChange({ ...emailComposer, text: event.target.value })} placeholder="AI‑черновик появится здесь" required /></label>
                 <label className="crm-field"><span>HTML (опционально)</span><textarea value={emailComposer.html} onChange={(event) => onEmailComposerChange({ ...emailComposer, html: event.target.value })} placeholder="HTML версия письма" /></label>
                 <div className="email-attachment-row">
                   <label className="ghost-button file-upload-button">Загрузить вложение<input type="file" onChange={onUploadEmailAttachment} /></label>
@@ -785,7 +883,8 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
             <div className="detail-section">
               <h4>История активности</h4>
               <div className="activity-preview crm-activity-feed detail-activity-feed">
-                {activity.length === 0 && <p><span />Событий для лида пока нет</p>}
+                {activity.length === 0 && (lead.aiActions || []).length === 0 && <p><span />Событий для лида пока нет</p>}
+                {(lead.aiActions || []).map((action) => <p className="ai-timeline-item" key={action.id}><span />AI: {action.task_type}<small>{action.status === "queued" ? "в очереди" : action.status === "running" ? "в работе" : action.status === "completed" ? "готово" : "ошибка"}<br />{formatDate(action.created_at)}</small></p>)}
                 {activity.map((event) => <p key={event.id}><span />{getActivityTitle(event)}<small>{formatCrmText(event.body)}<br />{formatDate(event.createdAt)}</small></p>)}
               </div>
             </div>

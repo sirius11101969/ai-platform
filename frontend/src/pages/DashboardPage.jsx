@@ -214,6 +214,8 @@ export default function DashboardPage() {
         <StatCard label="AI‑задачи" value={loading ? "…" : String(tasks.length)} hint={`${activeTasks} активных · ${completedTasks} завершено`} tone="violet" />
         <StatCard label="Лидов в CRM" value={loading ? "…" : String(crmStats?.totalLeads || 0)} hint={`Конверсия ${crmStats?.conversionRate || 0}%`} tone="pink" />
         <StatCard label="Воронка CRM" value={loading ? "…" : new Intl.NumberFormat("ru-RU", { style: "currency", currency: "RUB", maximumFractionDigits: 0 }).format(Number(crmStats?.pipelineValue || 0))} hint={`${crmStats?.wonDeals || 0} успешно · ${crmStats?.lostDeals || 0} потеряно`} />
+        <StatCard label="AI действий сегодня" value={loading ? "…" : String(crmStats?.aiMetrics?.actionsToday || 0)} hint={`${crmStats?.aiMetrics?.generatedFollowUps || 0} follow-up · ${crmStats?.aiMetrics?.efficiency || 0}% эффективность`} tone="violet" />
+        <StatCard label="AI‑сделки" value={loading ? "…" : String(crmStats?.aiMetrics?.assistedDeals || 0)} hint={`конверсия ${crmStats?.aiMetrics?.conversionRate || 0}%`} tone="pink" />
       </section>
 
       <section className="app-grid two-columns">
