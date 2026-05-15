@@ -1,10 +1,23 @@
+const fs = require('fs')
+const path = require('path')
 const axios = require('axios')
+const FormData = require('form-data')
 const pool = require('../db/pool')
 const { generateTelegramSalesReply } = require('./crmAiService')
 const crmModel = require('../models/crmModel')
 const emailService = require('./emailService')
 
 const TELEGRAM_API_BASE = 'https://api.telegram.org'
+const DEMO_SITE_URL = 'https://www.as6.ru'
+const MATERIALS_DIR = path.resolve(__dirname, '../../assets/materials')
+const MATERIAL_FILES = {
+  presentation: { fileName: 'presentation.pdf', method: 'sendDocument', field: 'document', label: 'презентация' },
+  video: { fileName: 'demo.mp4', method: 'sendVideo', field: 'video', label: 'видео' },
+  screenshots: [
+    { fileName: 'screenshot-1.png', method: 'sendPhoto', field: 'photo', label: 'скриншот 1' },
+    { fileName: 'screenshot-2.png', method: 'sendPhoto', field: 'photo', label: 'скриншот 2' },
+  ],
+}
 
 function normalizeText(value) {
   const normalized = String(value || '').trim()
@@ -20,6 +33,80 @@ function buildTelegramHandle(from = {}) {
   return username ? `@${username.replace(/^@/, '')}` : null
 }
 
+
+
+const TELEGRAM_DELIVERY_PATTERN = /(?:\btelegram\b|телеграм|сюда|здесь|в\s+(?:этот\s+)?чат|в\s+чат|прямо\s+сюда)/i
+const EMAIL_DELIVERY_PATTERN = /(?:email|e-mail|почт[ауые]|на\s+мейл|по\s+почте)/i
+const TELEGRAM_MATERIAL_ACTION_PATTERN = /(?:отправь|пришли|вышли|скинь|перешли|send)/i
+const MATERIAL_KEYWORD_PATTERNS = {
+  presentation: /(?:презентац|презу|presentation|pdf|слайды?)/i,
+  video: /(?:видео|video|ролик|demo\s*mp4|mp4)/i,
+  screenshots: /(?:скриншот|скрины|скрин|screenshots?|screen|фото|изображени)/i,
+  materials: /(?:материал|materials?|демо\s*материал)/i,
+}
+
+function detectTelegramMaterialIntent(text) {
+  const normalized = String(text || '')
+  if (!TELEGRAM_MATERIAL_ACTION_PATTERN.test(normalized)) return null
+  if (EMAIL_DELIVERY_PATTERN.test(normalized) && !TELEGRAM_DELIVERY_PATTERN.test(normalized)) return null
+  const hasTelegramDestination = TELEGRAM_DELIVERY_PATTERN.test(normalized)
+  const requested = []
+  for (const type of ['presentation', 'video', 'screenshots']) {
+    if (MATERIAL_KEYWORD_PATTERNS[type].test(normalized)) requested.push(type)
+  }
+  const asksForMaterials = MATERIAL_KEYWORD_PATTERNS.materials.test(normalized)
+  if (asksForMaterials && requested.length === 0) requested.push('presentation', 'video', 'screenshots')
+  if (!hasTelegramDestination || requested.length === 0) return null
+  return {
+    delivery: 'telegram',
+    requested: [...new Set(requested)],
+    label: buildMaterialLabel([...new Set(requested)]),
+  }
+}
+
+function buildMaterialLabel(types) {
+  const labels = {
+    presentation: 'презентация',
+    video: 'видео',
+    screenshots: 'скриншоты',
+  }
+  return types.map((type) => labels[type] || type).join(', ')
+}
+
+function materialEntriesForTypes(types) {
+  return types.flatMap((type) => {
+    const configured = MATERIAL_FILES[type]
+    if (!configured) return []
+    return Array.isArray(configured) ? configured : [configured]
+  })
+}
+
+function resolveMaterialFiles(types) {
+  const entries = materialEntriesForTypes(types)
+  const available = []
+  const missingTypes = []
+
+  for (const type of types) {
+    const typeEntries = materialEntriesForTypes([type])
+    const existing = typeEntries
+      .map((entry) => ({ ...entry, type, filePath: path.join(MATERIALS_DIR, entry.fileName) }))
+      .filter((entry) => fs.existsSync(entry.filePath))
+    if (existing.length > 0) available.push(...existing)
+    else missingTypes.push(type)
+  }
+
+  return { available, missingTypes, requestedFiles: entries.map((entry) => entry.fileName) }
+}
+
+function buildMissingMaterialsReply(missingTypes) {
+  const labels = {
+    presentation: 'презентации',
+    video: 'видео',
+    screenshots: 'скриншотов',
+  }
+  const label = missingTypes.map((type) => labels[type] || type).join('/') || 'материалов'
+  return `Сейчас в системе нет загруженного файла ${label}. Могу отправить ссылку на демо-сайт и краткое описание.`
+}
 
 const EMAIL_PATTERN = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i
 const MATERIAL_INTENT_RULES = [
@@ -299,15 +386,104 @@ async function saveAiReply({ userId, leadId, reply, model, prompt, telegramRespo
   }
 }
 
-async function sendTelegramMessage(chatId, text) {
+function getTelegramToken() {
   const token = normalizeText(process.env.TELEGRAM_BOT_TOKEN)
   if (!token) throw Object.assign(new Error('TELEGRAM_BOT_TOKEN is not configured'), { statusCode: 503 })
+  return token
+}
+
+async function sendTelegramMessage(chatId, text) {
+  const token = getTelegramToken()
   const { data } = await axios.post(`${TELEGRAM_API_BASE}/bot${token}/sendMessage`, {
     chat_id: chatId,
     text,
     disable_web_page_preview: true,
   }, { timeout: Number(process.env.TELEGRAM_TIMEOUT_MS || 15000) })
   return data
+}
+
+async function sendTelegramFile(chatId, material) {
+  const token = getTelegramToken()
+  const form = new FormData()
+  form.append('chat_id', String(chatId))
+  form.append(material.field, fs.createReadStream(material.filePath), material.fileName)
+  form.append('caption', material.label)
+
+  const { data } = await axios.post(`${TELEGRAM_API_BASE}/bot${token}/${material.method}`, form, {
+    headers: form.getHeaders(),
+    maxBodyLength: Infinity,
+    maxContentLength: Infinity,
+    timeout: Number(process.env.TELEGRAM_FILE_TIMEOUT_MS || process.env.TELEGRAM_TIMEOUT_MS || 30000),
+  })
+  return data
+}
+
+async function recordTelegramMaterialActivity({ userId, leadId, type, title, body, metadata }) {
+  await pool.query(
+    `INSERT INTO crm_activity(user_id, lead_id, type, title, body, metadata)
+     VALUES($1, $2, $3, $4, $5, $6)`,
+    [userId, leadId, type, title, body, metadata || {}]
+  )
+}
+
+async function runTelegramMaterialWorkflow({ userId, leadId, chatId, incomingMessage }) {
+  const intent = detectTelegramMaterialIntent(incomingMessage)
+  if (!intent) return null
+
+  const { available, missingTypes, requestedFiles } = resolveMaterialFiles(intent.requested)
+  const sent = []
+  for (const material of available) {
+    const telegramResponse = await sendTelegramFile(chatId, material)
+    sent.push({
+      type: material.type,
+      fileName: material.fileName,
+      method: material.method,
+      telegramMessageId: telegramResponse?.result?.message_id || telegramResponse?.message_id || null,
+    })
+  }
+
+  if (sent.length > 0) {
+    await recordTelegramMaterialActivity({
+      userId,
+      leadId,
+      type: 'telegram_material_sent',
+      title: 'Материалы отправлены в Telegram',
+      body: sent.map((item) => item.fileName).join(', '),
+      metadata: { intent, sent, missingTypes, requestedFiles },
+    })
+  }
+
+  let reply = null
+  let linkResponse = null
+  if (missingTypes.length > 0) {
+    reply = buildMissingMaterialsReply(missingTypes)
+    const missingResponse = await sendTelegramMessage(chatId, reply)
+    linkResponse = await sendTelegramMessage(chatId, DEMO_SITE_URL)
+    await recordTelegramMaterialActivity({
+      userId,
+      leadId,
+      type: 'telegram_material_missing',
+      title: 'Материалы отсутствуют для Telegram',
+      body: buildMaterialLabel(missingTypes),
+      metadata: { intent, missingTypes, requestedFiles, demoUrl: DEMO_SITE_URL },
+    })
+    return {
+      handled: true,
+      success: sent.length > 0,
+      intent,
+      sent,
+      missingTypes,
+      reply: sent.length > 0 ? `Отправил доступные материалы в Telegram. ${reply}
+${DEMO_SITE_URL}` : `${reply}
+${DEMO_SITE_URL}`,
+      telegramResponse: missingResponse,
+      linkResponse,
+    }
+  }
+
+  reply = `Готово, отправил ${intent.label} прямо сюда в Telegram.`
+  const telegramResponse = await sendTelegramMessage(chatId, reply)
+  return { handled: true, success: true, intent, sent, missingTypes, reply, telegramResponse }
 }
 
 async function sendTelegramMessageToLead({ userId, leadId, text }) {
@@ -349,6 +525,19 @@ async function processTelegramUpdate(update) {
   }
 
   const memory = await crmModel.getTelegramMemory(crmResult.userId, crmResult.lead.id, 10)
+  const materialWorkflow = await runTelegramMaterialWorkflow({ userId: crmResult.userId, leadId: crmResult.lead.id, chatId: telegram.chatId, incomingMessage: telegram.text })
+  if (materialWorkflow?.handled) {
+    await saveAiReply({
+      userId: crmResult.userId,
+      leadId: crmResult.lead.id,
+      reply: materialWorkflow.reply,
+      model: 'action-executor-telegram-materials',
+      prompt: { action: 'telegram_materials', intent: materialWorkflow.intent, sent: materialWorkflow.sent, missingTypes: materialWorkflow.missingTypes },
+      telegramResponse: materialWorkflow.telegramResponse,
+    })
+    return { skipped: false, leadId: crmResult.lead.id, isNew: crmResult.isNew, telegramResponse: materialWorkflow.telegramResponse, materialWorkflow }
+  }
+
   const emailWorkflow = await runTelegramEmailWorkflow({ userId: crmResult.userId, lead: crmResult.lead, incomingMessage: telegram.text })
   if (emailWorkflow?.handled) {
     const telegramResponse = await sendTelegramMessage(telegram.chatId, emailWorkflow.reply)
@@ -372,6 +561,7 @@ async function processTelegramUpdate(update) {
 
 module.exports = {
   detectEmailMaterialIntent,
+  detectTelegramMaterialIntent,
   extractEmail,
   extractTelegramMessage,
   processTelegramUpdate,
