@@ -381,6 +381,83 @@ async function migrate() {
     ALTER TABLE crm_activity ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE;
     UPDATE crm_activity a SET workspace_id = l.workspace_id FROM crm_leads l WHERE a.workspace_id IS NULL AND a.lead_id = l.id;
 
+
+
+    CREATE TABLE IF NOT EXISTS ai_agents (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+      name TEXT NOT NULL,
+      type TEXT NOT NULL DEFAULT 'sales',
+      status TEXT NOT NULL DEFAULT 'active',
+      config JSONB NOT NULL DEFAULT '{}'::jsonb,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      UNIQUE(workspace_id, type)
+    );
+
+    CREATE TABLE IF NOT EXISTS ai_agent_actions (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+      agent_id UUID REFERENCES ai_agents(id) ON DELETE SET NULL,
+      lead_id UUID REFERENCES crm_leads(id) ON DELETE CASCADE,
+      task_type TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'queued',
+      priority INTEGER NOT NULL DEFAULT 0,
+      input_context JSONB NOT NULL DEFAULT '{}'::jsonb,
+      output_result JSONB,
+      error TEXT,
+      retry_count INTEGER NOT NULL DEFAULT 0,
+      max_retries INTEGER NOT NULL DEFAULT 3,
+      next_retry_at TIMESTAMPTZ,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS ai_agent_runs (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+      action_id UUID REFERENCES ai_agent_actions(id) ON DELETE CASCADE,
+      lead_id UUID REFERENCES crm_leads(id) ON DELETE CASCADE,
+      task_type TEXT,
+      status TEXT NOT NULL DEFAULT 'queued',
+      priority INTEGER NOT NULL DEFAULT 0,
+      input_context JSONB NOT NULL DEFAULT '{}'::jsonb,
+      output_result JSONB,
+      execution_log JSONB NOT NULL DEFAULT '[]'::jsonb,
+      error TEXT,
+      started_at TIMESTAMPTZ,
+      finished_at TIMESTAMPTZ,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS ai_followups (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+      lead_id UUID REFERENCES crm_leads(id) ON DELETE CASCADE,
+      action_id UUID REFERENCES ai_agent_actions(id) ON DELETE SET NULL,
+      task_type TEXT NOT NULL DEFAULT 'generate_follow_up',
+      status TEXT NOT NULL DEFAULT 'queued',
+      priority INTEGER NOT NULL DEFAULT 0,
+      input_context JSONB NOT NULL DEFAULT '{}'::jsonb,
+      output_result JSONB,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    DO $$
+    BEGIN
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_agent_actions_status_valid') THEN
+        ALTER TABLE ai_agent_actions ADD CONSTRAINT ai_agent_actions_status_valid CHECK (status IN ('queued', 'running', 'completed', 'failed'));
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_agent_runs_status_valid') THEN
+        ALTER TABLE ai_agent_runs ADD CONSTRAINT ai_agent_runs_status_valid CHECK (status IN ('queued', 'running', 'completed', 'failed'));
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_followups_status_valid') THEN
+        ALTER TABLE ai_followups ADD CONSTRAINT ai_followups_status_valid CHECK (status IN ('queued', 'running', 'completed', 'failed'));
+      END IF;
+    END $$;
+
     CREATE INDEX IF NOT EXISTS idx_workspaces_owner_user_id ON workspaces(owner_user_id);
     CREATE INDEX IF NOT EXISTS idx_workspace_members_user_id ON workspace_members(user_id);
     CREATE INDEX IF NOT EXISTS idx_workspace_members_workspace_id ON workspace_members(workspace_id);
@@ -406,6 +483,12 @@ async function migrate() {
     CREATE INDEX IF NOT EXISTS idx_crm_followups_lead_id ON crm_followups(lead_id);
     CREATE INDEX IF NOT EXISTS idx_crm_activity_user_id ON crm_activity(user_id);
     CREATE INDEX IF NOT EXISTS idx_crm_activity_lead_id ON crm_activity(lead_id);
+    CREATE INDEX IF NOT EXISTS idx_ai_agents_workspace_type ON ai_agents(workspace_id, type);
+    CREATE INDEX IF NOT EXISTS idx_ai_agent_actions_queue ON ai_agent_actions(status, priority DESC, next_retry_at, created_at);
+    CREATE INDEX IF NOT EXISTS idx_ai_agent_actions_lead ON ai_agent_actions(workspace_id, lead_id, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_ai_agent_runs_action ON ai_agent_runs(action_id, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_ai_followups_lead ON ai_followups(workspace_id, lead_id, created_at DESC);
+
   `)
 }
 

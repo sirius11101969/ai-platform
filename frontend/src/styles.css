@@ -778,3 +778,91 @@ button { font: inherit; }
     justify-content: flex-start;
   }
 }
+
+.ai-action-center-panel,
+.ai-recommendation-panel,
+.ai-action-center-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(139, 92, 246, 0.28);
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(19, 23, 43, 0.78), rgba(70, 31, 116, 0.28));
+  box-shadow: 0 24px 70px rgba(76, 29, 149, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(18px);
+}
+
+.ai-action-center-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 22px;
+  margin: 0 0 22px;
+}
+
+.ai-action-center-panel h3,
+.ai-action-center-card h4,
+.ai-recommendation-panel h4 { margin: 0; }
+.ai-action-center-panel p,
+.ai-recommendation-panel p { color: var(--muted); margin: 6px 0 0; }
+
+.ai-card-recommendation {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 10px;
+  padding: 9px 10px;
+  border-radius: 14px;
+  color: #ede9fe;
+  background: rgba(124, 58, 237, 0.16);
+  border: 1px solid rgba(167, 139, 250, 0.28);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.ai-card-recommendation span,
+.ai-glow-badge {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  padding: 4px 8px;
+  color: #fff;
+  background: linear-gradient(135deg, #7c3aed, #ec4899);
+  box-shadow: 0 0 24px rgba(236, 72, 153, 0.45);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.ai-recommendation-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.ai-recommendation-grid div {
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ai-recommendation-grid span { display: block; color: var(--muted); font-size: 12px; margin-bottom: 6px; }
+.ai-recommendation-grid strong { color: #fff; font-size: 14px; }
+
+.ai-recommendation-list { margin: 14px 0 0; padding-left: 18px; color: #ddd6fe; }
+.ai-recommendation-list li + li { margin-top: 6px; }
+
+.ai-action-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.ai-action-buttons .ghost-button { justify-content: center; }
+.ai-timeline-item span { background: linear-gradient(135deg, #7c3aed, #ec4899) !important; box-shadow: 0 0 18px rgba(124, 58, 237, 0.6); }
+
+@media (max-width: 760px) {
+  .ai-action-center-panel { align-items: flex-start; flex-direction: column; }
+  .ai-recommendation-grid, .ai-action-buttons { grid-template-columns: 1fr; }
+}

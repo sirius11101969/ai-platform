@@ -42,7 +42,9 @@ async function generateCrmFollowUp(lead) {
   }
 
   if (!apiKey) {
-    return { message: fallbackFollowUp(lead), model: 'fallback-local', prompt }
+    const error = new Error('OPENAI_API_KEY is required for CRM AI follow-up')
+    error.statusCode = 500
+    throw error
   }
 
   const { data } = await axios.post(
@@ -97,7 +99,9 @@ async function generateTelegramSalesReply({ lead, incomingMessage, memory = [] }
   }
 
   if (!apiKey) {
-    return { message: fallbackTelegramSalesReply({ lead, incomingMessage }), model: 'fallback-local', prompt }
+    const error = new Error('OPENAI_API_KEY is required for Telegram AI sales reply')
+    error.statusCode = 500
+    throw error
   }
 
   const { data } = await axios.post(
