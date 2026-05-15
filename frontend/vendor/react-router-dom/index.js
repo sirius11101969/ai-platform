@@ -12,11 +12,19 @@ function toHref(to) {
   return typeof to === "string" ? to : to?.pathname || "/";
 }
 
+function readLocation() {
+  return {
+    pathname: window.location.pathname,
+    search: window.location.search,
+    hash: window.location.hash,
+  };
+}
+
 export function BrowserRouter({ children }) {
-  const [location, setLocation] = useState(() => window.location);
+  const [location, setLocation] = useState(readLocation);
 
   useEffect(() => {
-    const onPopState = () => setLocation(window.location);
+    const onPopState = () => setLocation(readLocation());
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
   }, []);
@@ -25,7 +33,7 @@ export function BrowserRouter({ children }) {
     const href = toHref(to);
     if (options.replace) window.history.replaceState(null, "", href);
     else window.history.pushState(null, "", href);
-    setLocation(window.location);
+    setLocation(readLocation());
   };
 
   const value = useMemo(() => ({ location, navigate }), [location]);

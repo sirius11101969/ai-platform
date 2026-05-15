@@ -24,7 +24,7 @@ function AuthCard({ mode }) {
       saveAuthSession(session);
       navigate("/dashboard");
     } catch (apiError) {
-      setError(apiError.message);
+      setError(apiError.status === 401 ? "Неверный email или пароль. Проверьте данные и попробуйте снова." : apiError.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -56,11 +56,11 @@ function AuthCard({ mode }) {
         )}
         <label>
           <span>Email</span>
-          <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required />
+          <input type="email" name="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} required />
         </label>
         <label>
           <span>Пароль</span>
-          <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} minLength="8" required />
+          <input type="password" name="password" autoComplete={isSignup ? "new-password" : "current-password"} value={password} onChange={(event) => setPassword(event.target.value)} minLength="8" required />
         </label>
         {error && <p className="auth-error" role="alert">{error}</p>}
         <button className="btn primary" type="submit" disabled={isSubmitting}>

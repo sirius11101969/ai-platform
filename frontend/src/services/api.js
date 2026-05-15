@@ -66,9 +66,11 @@ export function saveAuthSession(session, { remember = true } = {}) {
 
   const storage = remember ? window.localStorage : window.sessionStorage
   storage.setItem(AUTH_STORAGE_KEY, JSON.stringify(nextSession))
+  storage.setItem('token', nextSession.token)
 
   const fallbackStorage = remember ? window.sessionStorage : window.localStorage
   fallbackStorage.removeItem(AUTH_STORAGE_KEY)
+  fallbackStorage.removeItem('token')
 
   window.dispatchEvent(new CustomEvent('ai-platform-auth-updated', { detail: nextSession }))
   return nextSession

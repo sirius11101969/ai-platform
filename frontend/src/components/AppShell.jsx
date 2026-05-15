@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { creditSummary, userProfile } from "../data/mockData";
-import { clearAuthSession, fetchProfile } from "../services/api";
+import { clearAuthSession, fetchProfile, getStoredUser } from "../services/api";
 
 export function BrandMark() {
   return (
@@ -11,8 +11,8 @@ export function BrandMark() {
   );
 }
 
-export function ProtectedLayout() {
-  const [profile, setProfile] = useState(null);
+export function ProtectedLayout({ children }) {
+  const [profile, setProfile] = useState(() => getStoredUser());
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,8 +21,12 @@ export function ProtectedLayout() {
       .then((response) => {
         if (active) setProfile(response.user || null);
       })
-      .catch(() => {
-        if (active) setProfile(null);
+      .catch((error) => {
+        if (!active) return;
+        setProfile(null);
+        if (error.status === 401) {
+          navigate("/login", { replace: true });
+        }
       });
 
     function handleProfileUpdate(event) {
@@ -34,7 +38,7 @@ export function ProtectedLayout() {
       active = false;
       window.removeEventListener("ai-platform-profile-updated", handleProfileUpdate);
     };
-  }, []);
+  }, [navigate]);
 
   function handleLogout(event) {
     event.preventDefault();
@@ -67,7 +71,7 @@ export function ProtectedLayout() {
             <span>{displayPlan}</span>
           </div>
         </header>
-        <Outlet />
+        {children}
       </div>
     </div>
   );
