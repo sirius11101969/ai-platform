@@ -62,3 +62,32 @@ export function login({ email, password }) {
 export function fetchProfile() {
   return request('/auth/profile')
 }
+
+export function fetchCrmLeads() {
+  return request('/crm/leads')
+}
+
+export function createCrmLead(payload) {
+  return request('/crm/leads', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
+export function updateCrmLead(id, payload) {
+  return request(`/crm/leads/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+  })
+}
+
+export function addCrmLeadNote(id, body) {
+  return request(`/crm/leads/${id}/notes`, {
+    method: 'POST',
+    body: JSON.stringify({ body }),
+  })
+}
+
+export function fetchCrmStats() {
+  return request('/crm/stats')
+}

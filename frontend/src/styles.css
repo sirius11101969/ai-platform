@@ -246,3 +246,38 @@ button { font: inherit; }
   .auth-form { padding: 22px; }
   .pipeline-board { grid-template-columns: 1fr; overflow: visible; }
 }
+.crm-stat-grid { margin-bottom: 18px; }
+.crm-alert { margin: 0 0 18px; }
+.crm-skeleton { min-height: 260px; color: #aebde8; }
+.empty-state { margin: 0; padding: 14px; border: 1px dashed rgba(255,255,255,.12); border-radius: 18px; color: #91a2d6; }
+.lead-form { display: grid; gap: 12px; margin-top: 16px; }
+.crm-field { display: grid; gap: 7px; color: #d5e0ff; font-weight: 800; }
+.crm-field span { color: #91a2d6; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+.crm-field input, .crm-field select, .note-form input {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 14px;
+  outline: none;
+  background: rgba(255,255,255,.065);
+  color: #f7fbff;
+  padding: 0 12px;
+  font: inherit;
+}
+.crm-field select { cursor: pointer; }
+.compact-field { margin: 12px 0; }
+.compact-field select { min-height: 38px; }
+.notes-list { display: grid; gap: 8px; margin: 12px 0; }
+.notes-list p { display: flex; gap: 8px; margin: 0; padding: 9px; border-radius: 12px; background: rgba(117,255,218,.07); color: #d5e0ff; font-size: 13px; line-height: 1.45; }
+.notes-list span { flex: 0 0 7px; width: 7px; height: 7px; margin-top: 6px; border-radius: 50%; background: #75ffda; }
+.note-form { display: grid; grid-template-columns: minmax(0, 1fr) 38px; gap: 8px; }
+.note-form input { min-height: 38px; }
+.note-form button {
+  border: 0;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #7f5cff, #00ddff);
+  color: #fff;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: 950;
+}
