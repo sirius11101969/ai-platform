@@ -194,65 +194,124 @@ function daysSince(value) {
   return Math.floor((Date.now() - new Date(value).getTime()) / 86400000)
 }
 
+const EMPTY_DATA_SUMMARY = 'Нет данных для анализа. Добавьте лидов или дождитесь новых сообщений.'
+const EMPTY_PIPELINE_RECOMMENDATION = 'В воронке пока нет активных лидов. Добавьте первого лида или подключите Telegram-бота для автоматического сбора заявок.'
+
+function getLeadDisplayName(lead) {
+  return String(lead?.name || lead?.company || 'лид без имени').trim()
+}
+
+function formatRecommendation(item) {
+  const title = String(item.title || 'AI рекомендация').trim().replace(/[:：]\s*$/, '.')
+  const recommendation = String(item.recommendation || EMPTY_DATA_SUMMARY).trim().replace(/[:：]\s*$/, '.')
+  return {
+    ...item,
+    title,
+    recommendation,
+  }
+}
+
+function buildRevenueRecommendation(openLeads) {
+  const pipeline = openLeads.reduce((sum, lead) => sum + Number(lead.value || 0), 0)
+
+  if (pipeline === 0 && openLeads.length === 0) {
+    return formatRecommendation({
+      leadId: null,
+      actionType: 'pipeline_empty',
+      title: 'Воронка пока пустая',
+      recommendation: `${EMPTY_PIPELINE_RECOMMENDATION} Когда появятся первые лиды, запустите AI SDR Agent для приоритизации и подготовки следующего шага.`,
+      payload: {
+        openLeads: 0,
+        pipeline: 0,
+        suggestedActions: ['create_first_lead', 'connect_telegram_lead_capture', 'launch_ai_sdr_after_leads'],
+      },
+    })
+  }
+
+  const risky = openLeads.filter((lead) => daysSince(lead.updated_at) >= 7)
+  const riskSentence = risky.length
+    ? `Сделок с паузой 7+ дней — ${risky.length}. Проверьте следующий шаг и канал контакта.`
+    : 'Сделок с паузой 7+ дней нет. Продолжайте поддерживать регулярные касания.'
+
+  return formatRecommendation({
+    leadId: null,
+    actionType: 'pipeline_summary',
+    title: 'Сводка выручки под контролем AI',
+    recommendation: `В открытой воронке ${openLeads.length} лидов на ${pipeline.toLocaleString('ru-RU')} ₽. ${riskSentence}`,
+    payload: { openLeads: openLeads.length, pipeline, riskyLeads: risky.length },
+  })
+}
+
 function buildRecommendations(worker, leads) {
   const openLeads = leads.filter((lead) => !['won', 'lost'].includes(lead.status))
+  if (worker.type !== 'ai_revenue_analyst' && openLeads.length === 0) return []
+
   if (worker.type === 'ai_sdr_agent') {
-    return openLeads.filter((lead) => lead.status === 'new').slice(0, 5).map((lead) => ({
+    return openLeads.filter((lead) => lead.status === 'new').slice(0, 5).map((lead) => formatRecommendation({
       leadId: lead.id,
       actionType: 'lead_prioritization',
-      title: `Проверить нового лида: ${lead.name}`,
-      recommendation: `AI SDR рекомендует квалифицировать лида, уточнить бюджет и зафиксировать следующий шаг. Потенциал: ${lead.value || 0} ₽.`,
+      title: `Проверить нового лида — ${getLeadDisplayName(lead)}`,
+      recommendation: `AI SDR рекомендует квалифицировать лида, уточнить бюджет и зафиксировать следующий шаг. Потенциал — ${lead.value || 0} ₽.`,
       payload: { priority: lead.value >= 100000 ? 'high' : 'medium', channel: lead.telegram ? 'telegram' : lead.email ? 'email' : 'crm' },
     }))
   }
   if (worker.type === 'ai_followup_worker') {
-    return openLeads.filter((lead) => daysSince(lead.updated_at) >= 3).slice(0, 5).map((lead) => ({
+    return openLeads.filter((lead) => daysSince(lead.updated_at) >= 3).slice(0, 5).map((lead) => formatRecommendation({
       leadId: lead.id,
       actionType: 'follow_up_recommendation',
-      title: `Вернуть лида в диалог: ${lead.name}`,
+      title: `Вернуть лида в диалог — ${getLeadDisplayName(lead)}`,
       recommendation: `Лид не обновлялся ${daysSince(lead.updated_at)} дн. Подготовьте короткий follow-up с ценностью и одним CTA.`,
       payload: { inactiveDays: daysSince(lead.updated_at), suggestedChannel: lead.telegram ? 'telegram' : lead.email ? 'email' : 'crm' },
     }))
   }
   if (worker.type === 'ai_revenue_analyst') {
-    const pipeline = openLeads.reduce((sum, lead) => sum + Number(lead.value || 0), 0)
-    const risky = openLeads.filter((lead) => daysSince(lead.updated_at) >= 7)
-    return [{
-      leadId: null,
-      actionType: 'pipeline_summary',
-      title: 'Сводка выручки под контролем AI',
-      recommendation: `В открытой воронке ${openLeads.length} лидов на ${pipeline.toLocaleString('ru-RU')} ₽. ${risky.length} сделок требуют внимания из-за паузы 7+ дней.`,
-      payload: { openLeads: openLeads.length, pipeline, riskyLeads: risky.length },
-    }]
+    return [buildRevenueRecommendation(openLeads)]
   }
   if (worker.type === 'ai_crm_assistant') {
-    return openLeads.slice(0, 5).map((lead) => ({
+    return openLeads.slice(0, 5).map((lead) => formatRecommendation({
       leadId: lead.id,
       actionType: 'crm_next_action',
-      title: `Следующее CRM действие: ${lead.name}`,
-      recommendation: `Обновите этап ${lead.status}, добавьте заметку по боли клиента и назначьте следующий контакт в течение 24 часов.`,
+      title: `Следующее CRM действие — ${getLeadDisplayName(lead)}`,
+      recommendation: `Обновите этап ${lead.status || 'new'}, добавьте заметку по боли клиента и назначьте следующий контакт в течение 24 часов.`,
       payload: { currentStatus: lead.status, nextStep: 'create_reminder' },
     }))
   }
   if (worker.type === 'ai_email_assistant') {
-    return openLeads.filter((lead) => lead.email).slice(0, 5).map((lead) => ({
+    return openLeads.filter((lead) => lead.email).slice(0, 5).map((lead) => formatRecommendation({
       leadId: lead.id,
       actionType: 'email_draft',
-      title: `Email-черновик для ${lead.name}`,
-      recommendation: `Подготовьте письмо с персональным контекстом, ROI и предложением короткого созвона. Автоотправка отключена.`,
+      title: `Email-черновик — ${getLeadDisplayName(lead)}`,
+      recommendation: 'Подготовьте письмо с персональным контекстом, ROI и предложением короткого созвона. Автоотправка отключена.',
       payload: { to: lead.email, subject: `Следующий шаг по ${lead.company || 'вашему запросу'}` },
     }))
   }
   if (worker.type === 'ai_telegram_assistant') {
-    return openLeads.filter((lead) => lead.telegram).slice(0, 5).map((lead) => ({
+    return openLeads.filter((lead) => lead.telegram).slice(0, 5).map((lead) => formatRecommendation({
       leadId: lead.id,
       actionType: 'telegram_draft',
-      title: `Telegram-сценарий для ${lead.name}`,
-      recommendation: `Короткое сообщение: подтвердить контекст, дать одну ценность и спросить про удобное время. Автоотправка отключена.`,
+      title: `Telegram-сценарий — ${getLeadDisplayName(lead)}`,
+      recommendation: 'Короткое сообщение: подтвердить контекст, дать одну ценность и спросить про удобное время. Автоотправка отключена.',
       payload: { telegram: lead.telegram, tone: 'consultative' },
     }))
   }
   return []
+}
+
+function buildOutputSummary(worker, leads, recommendations) {
+  const openLeads = leads.filter((lead) => !['won', 'lost'].includes(lead.status))
+  const hasUsefulEmptyPipelineRecommendation = recommendations.some((item) => item.actionType === 'pipeline_empty')
+  const summary = recommendations.length === 0
+    ? EMPTY_DATA_SUMMARY
+    : hasUsefulEmptyPipelineRecommendation
+      ? EMPTY_PIPELINE_RECOMMENDATION
+      : `${recommendations.length} рекомендаций создано`
+
+  return {
+    summary,
+    recommendations,
+    openLeads: openLeads.length,
+    pipeline: openLeads.reduce((sum, lead) => sum + Number(lead.value || 0), 0),
+  }
 }
 
 async function runWorker({ userId, workspaceId, workerId }) {
@@ -269,12 +328,13 @@ async function runWorker({ userId, workspaceId, workerId }) {
       leadCount: leads.length,
       generatedBy: 'deterministic_v1',
     }
+    const outputSummary = buildOutputSummary(worker, leads, recommendations)
     const creditsSpent = Math.max(1, recommendations.length || 1)
     const runResult = await client.query(
       `INSERT INTO ai_worker_runs(worker_id, workspace_id, lead_id, input_context, output_summary, status, credits_spent)
        VALUES($1, $2, $3, $4, $5, 'completed', $6)
        RETURNING *`,
-      [worker.id, workspaceId, recommendations[0]?.leadId || null, inputContext, { summary: `${recommendations.length} рекомендаций создано`, recommendations }, creditsSpent]
+      [worker.id, workspaceId, recommendations[0]?.leadId || null, inputContext, outputSummary, creditsSpent]
     )
     const run = normalizeRun(runResult.rows[0])
     const queueItems = []
@@ -291,7 +351,7 @@ async function runWorker({ userId, workspaceId, workerId }) {
     await client.query(
       `INSERT INTO crm_activity(workspace_id, user_id, type, title, body, metadata)
        VALUES($1, $2, 'ai_worker_run_completed', $3, $4, $5)`,
-      [workspaceId, userId, `${worker.name} завершил запуск`, `${recommendations.length} AI рекомендаций ожидают решения.`, { workerId: worker.id, runId: run.id }]
+      [workspaceId, userId, `${worker.name} завершил запуск`, outputSummary.summary, { workerId: worker.id, runId: run.id }]
     )
     await client.query('COMMIT')
     return { run, queueItems }
