@@ -207,6 +207,8 @@ button { font: inherit; }
 .auth-form label { gap: 8px; }
 .auth-form input { min-height: 58px; font-size: 18px; }
 .auth-form .btn { border: 0; cursor: pointer; justify-content: center; }
+.auth-form .btn:disabled { cursor: wait; opacity: .72; transform: none; }
+.auth-error { margin: 0; padding: 12px 14px; border: 1px solid rgba(255, 99, 132, .32); border-radius: 16px; background: rgba(255, 99, 132, .1); color: #ffd7df; font-weight: 800; }
 .auth-switch { margin: 0; color: #aebde8; text-align: center; }
 .auth-switch a { color: #75efff; font-weight: 900; }
 .crm-layout { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 18px; align-items: start; }
