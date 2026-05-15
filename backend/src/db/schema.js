@@ -144,6 +144,13 @@ async function migrate() {
     ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS company TEXT;
     ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'new';
     ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS value NUMERIC(12, 2) NOT NULL DEFAULT 0;
+    ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS telegram_id TEXT;
+    ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS telegram_username TEXT;
+    ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS first_name TEXT;
+    ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS last_name TEXT;
+    ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS first_message TEXT;
+    ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS last_message_at TIMESTAMPTZ;
+    ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS last_seen_at TIMESTAMPTZ;
     ALTER TABLE crm_leads ALTER COLUMN contact DROP NOT NULL;
     UPDATE crm_leads
        SET status = COALESCE(NULLIF(status, ''), NULLIF(stage, ''), 'new'),
@@ -183,6 +190,16 @@ async function migrate() {
     ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS notes TEXT;
     UPDATE crm_leads SET stage = status WHERE stage IS NULL OR stage = '' OR stage <> status;
 
+    CREATE TABLE IF NOT EXISTS telegram_messages (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      lead_id UUID NOT NULL REFERENCES crm_leads(id) ON DELETE CASCADE,
+      user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+      role TEXT NOT NULL CHECK (role IN ('user', 'assistant')),
+      message TEXT NOT NULL,
+      telegram_message_id TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
     CREATE TABLE IF NOT EXISTS crm_followups (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       lead_id UUID NOT NULL REFERENCES crm_leads(id) ON DELETE CASCADE,
@@ -209,7 +226,11 @@ async function migrate() {
     CREATE INDEX IF NOT EXISTS idx_ai_tasks_user_id ON ai_tasks(user_id);
     CREATE INDEX IF NOT EXISTS idx_crm_stages_user_id ON crm_stages(user_id);
     CREATE INDEX IF NOT EXISTS idx_crm_leads_user_id ON crm_leads(user_id);
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_crm_leads_telegram_identity ON crm_leads(user_id, telegram_id) WHERE source = 'telegram' AND telegram_id IS NOT NULL;
+    CREATE INDEX IF NOT EXISTS idx_crm_leads_telegram_last_seen ON crm_leads(user_id, last_seen_at) WHERE source = 'telegram';
     CREATE INDEX IF NOT EXISTS idx_crm_notes_lead_id ON crm_notes(lead_id);
+    CREATE INDEX IF NOT EXISTS idx_telegram_messages_lead_id ON telegram_messages(lead_id, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_telegram_messages_user_id ON telegram_messages(user_id, created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_crm_followups_user_id ON crm_followups(user_id);
     CREATE INDEX IF NOT EXISTS idx_crm_followups_lead_id ON crm_followups(lead_id);
     CREATE INDEX IF NOT EXISTS idx_crm_activity_user_id ON crm_activity(user_id);

@@ -259,3 +259,14 @@ export function createAiTask(payload) {
     body: JSON.stringify(payload),
   })
 }
+
+export function fetchTelegramMessages(leadId) {
+  return request(`/crm/leads/${leadId}/telegram-messages`)
+}
+
+export function sendTelegramLeadMessage(leadId, message) {
+  return request(`/crm/leads/${leadId}/telegram-messages`, {
+    method: 'POST',
+    body: JSON.stringify({ message }),
+  })
+}

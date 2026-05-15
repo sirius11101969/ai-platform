@@ -1,4 +1,5 @@
 const crmModel = require('../models/crmModel')
+const { sendTelegramMessageToLead } = require('../services/telegramService')
 
 
 async function listStages(req, res, next) {
@@ -65,6 +66,24 @@ async function addNote(req, res, next) {
 }
 
 
+async function listTelegramMessages(req, res, next) {
+  try {
+    const messages = await crmModel.listTelegramMessages(req.user.id, req.params.id)
+    res.json({ messages })
+  } catch (error) {
+    next(error)
+  }
+}
+
+async function sendTelegramReply(req, res, next) {
+  try {
+    const result = await sendTelegramMessageToLead({ userId: req.user.id, leadId: req.params.id, text: req.body.message })
+    res.status(201).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
 async function createFollowUp(req, res, next) {
   try {
     const result = await crmModel.createFollowUp(req.user.id, req.params.id)
@@ -99,8 +118,10 @@ module.exports = {
   createLead,
   deleteLead,
   listLeads,
+  listTelegramMessages,
   listStages,
   stats,
+  sendTelegramReply,
   updateLead,
   updateStage,
 }

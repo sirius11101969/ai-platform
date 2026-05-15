@@ -11,7 +11,7 @@ const DEFAULT_STAGE_LABELS = {
   lost: 'Потеряно',
 }
 const STATUS_LABELS = DEFAULT_STAGE_LABELS
-const LEAD_COLUMNS = ['id', 'user_id', 'name', 'email', 'phone', 'telegram', 'company', 'status', 'value', 'source', 'notes', 'created_at', 'updated_at']
+const LEAD_COLUMNS = ['id', 'user_id', 'name', 'email', 'phone', 'telegram', 'telegram_id', 'telegram_username', 'first_name', 'last_name', 'first_message', 'last_message_at', 'last_seen_at', 'company', 'status', 'value', 'source', 'notes', 'metadata', 'created_at', 'updated_at']
 const LEAD_SELECT = LEAD_COLUMNS.join(', ')
 
 function leadSelect(alias) {
@@ -27,16 +27,26 @@ function normalizeLead(row) {
     email: row.email || '',
     phone: row.phone || '',
     telegram: row.telegram || '',
+    telegramId: row.telegram_id || row.metadata?.telegramUserId || '',
+    telegramUsername: row.telegram_username || row.telegram || '',
+    firstName: row.first_name || '',
+    lastName: row.last_name || '',
+    firstMessage: row.first_message || '',
+    lastMessageAt: row.last_message_at || row.metadata?.telegramLastMessageAt || null,
+    lastSeenAt: row.last_seen_at || row.last_message_at || null,
+    telegramOnline: Boolean(row.last_seen_at && Date.now() - new Date(row.last_seen_at).getTime() < 5 * 60 * 1000),
     company: row.company || '',
     status: row.status,
     statusLabel: STATUS_LABELS[row.status] || row.status,
     value: Number(row.value || 0),
     source: row.source || '',
+    metadata: row.metadata || {},
     notesText: row.notes || '',
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     notes: Array.isArray(row.notes_list) ? row.notes_list.map(normalizeNote).filter(Boolean) : [],
     followUps: Array.isArray(row.followups) ? row.followups.map(normalizeFollowUp).filter(Boolean) : [],
+    telegramMessages: Array.isArray(row.telegram_messages) ? row.telegram_messages.map(normalizeTelegramMessage).filter(Boolean) : [],
   }
 }
 
@@ -48,6 +58,11 @@ function normalizeNote(row) {
 function normalizeFollowUp(row) {
   if (!row) return null
   return { id: row.id, leadId: row.lead_id, userId: row.user_id, message: row.message, model: row.model, createdAt: row.created_at }
+}
+
+function normalizeTelegramMessage(row) {
+  if (!row) return null
+  return { id: row.id, leadId: row.lead_id, userId: row.user_id, role: row.role, message: row.message, telegramMessageId: row.telegram_message_id || '', createdAt: row.created_at }
 }
 
 function normalizeStage(row) {
@@ -141,7 +156,8 @@ async function listLeads(userId) {
   const result = await pool.query(
     `SELECT ${leadSelect('l')},
             COALESCE(json_agg(DISTINCT jsonb_build_object('id', n.id, 'lead_id', n.lead_id, 'user_id', n.user_id, 'body', n.body, 'created_at', n.created_at)) FILTER (WHERE n.id IS NOT NULL), '[]'::json) AS notes_list,
-            COALESCE(json_agg(DISTINCT jsonb_build_object('id', f.id, 'lead_id', f.lead_id, 'user_id', f.user_id, 'message', f.message, 'model', f.model, 'created_at', f.created_at)) FILTER (WHERE f.id IS NOT NULL), '[]'::json) AS followups
+            COALESCE(json_agg(DISTINCT jsonb_build_object('id', f.id, 'lead_id', f.lead_id, 'user_id', f.user_id, 'message', f.message, 'model', f.model, 'created_at', f.created_at)) FILTER (WHERE f.id IS NOT NULL), '[]'::json) AS followups,
+            COALESCE((SELECT json_agg(tm_row ORDER BY tm_row.created_at ASC) FROM (SELECT tm.id, tm.lead_id, tm.user_id, tm.role, tm.message, tm.telegram_message_id, tm.created_at FROM telegram_messages tm WHERE tm.lead_id = l.id AND tm.user_id = l.user_id ORDER BY tm.created_at DESC LIMIT 10) tm_row), '[]'::json) AS telegram_messages
        FROM crm_leads AS l
        LEFT JOIN crm_notes AS n ON n.lead_id = l.id AND n.user_id = l.user_id
        LEFT JOIN crm_followups AS f ON f.lead_id = l.id AND f.user_id = l.user_id
@@ -155,6 +171,7 @@ async function listLeads(userId) {
     const lead = normalizeLead(row)
     lead.notes.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     lead.followUps.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    lead.telegramMessages.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
     return lead
   })
 }
@@ -162,11 +179,12 @@ async function listLeads(userId) {
 async function findLead(userId, leadId, client = pool) {
   const result = await client.query(`SELECT ${LEAD_SELECT} FROM crm_leads WHERE user_id = $1 AND id = $2`, [userId, leadId])
   if (!result.rows[0]) return null
-  const [notes, followups] = await Promise.all([
+  const [notes, followups, telegramMessages] = await Promise.all([
     client.query('SELECT id, lead_id, user_id, body, created_at FROM crm_notes WHERE user_id = $1 AND lead_id = $2 ORDER BY created_at DESC', [userId, leadId]),
     client.query('SELECT id, lead_id, user_id, message, model, created_at FROM crm_followups WHERE user_id = $1 AND lead_id = $2 ORDER BY created_at DESC', [userId, leadId]),
+    client.query('SELECT id, lead_id, user_id, role, message, telegram_message_id, created_at FROM telegram_messages WHERE user_id = $1 AND lead_id = $2 ORDER BY created_at ASC LIMIT 200', [userId, leadId]),
   ])
-  return normalizeLead({ ...result.rows[0], notes_list: notes.rows, followups: followups.rows })
+  return normalizeLead({ ...result.rows[0], notes_list: notes.rows, followups: followups.rows, telegram_messages: telegramMessages.rows })
 }
 
 async function createLead(userId, payload) {
@@ -348,6 +366,64 @@ async function listActivity(userId) {
   return result.rows.map(normalizeActivity)
 }
 
+async function listTelegramMessages(userId, leadId) {
+  const lead = await findLead(userId, leadId)
+  if (!lead) throw Object.assign(new Error('Lead not found'), { statusCode: 404 })
+  const result = await pool.query(
+    'SELECT id, lead_id, user_id, role, message, telegram_message_id, created_at FROM telegram_messages WHERE user_id = $1 AND lead_id = $2 ORDER BY created_at ASC LIMIT 500',
+    [userId, leadId]
+  )
+  return result.rows.map(normalizeTelegramMessage)
+}
+
+async function addTelegramMessage(client, { userId, leadId, role, message, telegramMessageId = null, createdAt = null }) {
+  const executor = client || pool
+  const result = await executor.query(
+    `INSERT INTO telegram_messages(lead_id, user_id, role, message, telegram_message_id, created_at)
+     VALUES($1, $2, $3, $4, $5, COALESCE($6::timestamptz, NOW()))
+     RETURNING id, lead_id, user_id, role, message, telegram_message_id, created_at`,
+    [leadId, userId, role, message, telegramMessageId ? String(telegramMessageId) : null, createdAt]
+  )
+  return normalizeTelegramMessage(result.rows[0])
+}
+
+async function getTelegramMemory(userId, leadId, limit = 10) {
+  const result = await pool.query(
+    `SELECT role, message, created_at
+       FROM telegram_messages
+      WHERE user_id = $1 AND lead_id = $2
+      ORDER BY created_at DESC
+      LIMIT $3`,
+    [userId, leadId, limit]
+  )
+  return result.rows.reverse().map((row) => ({ role: row.role, content: row.message, createdAt: row.created_at }))
+}
+
+async function appendOutgoingTelegramMessage({ userId, leadId, message, telegramResponse = null }) {
+  const client = await pool.connect()
+  try {
+    await client.query('BEGIN')
+    const lead = await client.query('SELECT id FROM crm_leads WHERE id = $1 AND user_id = $2 FOR UPDATE', [leadId, userId])
+    if (!lead.rows[0]) throw Object.assign(new Error('Lead not found'), { statusCode: 404 })
+    const telegramMessage = await addTelegramMessage(client, {
+      userId,
+      leadId,
+      role: 'assistant',
+      message,
+      telegramMessageId: telegramResponse?.result?.message_id || telegramResponse?.message_id || null,
+    })
+    await client.query('UPDATE crm_leads SET updated_at = NOW() WHERE id = $1 AND user_id = $2', [leadId, userId])
+    await logActivity(client, userId, leadId, 'telegram_crm_reply_sent', 'Ответ отправлен в Telegram', message, { telegramMessageId: telegramMessage.telegramMessageId })
+    await client.query('COMMIT')
+    return telegramMessage
+  } catch (error) {
+    await client.query('ROLLBACK')
+    throw error
+  } finally {
+    client.release()
+  }
+}
+
 async function getStats(userId) {
   const [summaryResult, statusResult, activityResult] = await Promise.all([
     pool.query(
@@ -388,4 +464,4 @@ async function getStats(userId) {
   }
 }
 
-module.exports = { CRM_STATUSES, STATUS_LABELS, createFollowUp, createLead, createNote, deleteLead, getStats, listActivity, listLeads, listStages, updateLead, updateStage }
+module.exports = { CRM_STATUSES, STATUS_LABELS, addTelegramMessage, appendOutgoingTelegramMessage, createFollowUp, createLead, createNote, deleteLead, getStats, getTelegramMemory, listActivity, listLeads, listStages, listTelegramMessages, updateLead, updateStage }

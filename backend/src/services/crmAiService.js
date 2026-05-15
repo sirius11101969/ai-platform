@@ -78,7 +78,7 @@ function fallbackTelegramSalesReply({ lead, incomingMessage }) {
   ].join('\n\n')
 }
 
-async function generateTelegramSalesReply({ lead, incomingMessage }) {
+async function generateTelegramSalesReply({ lead, incomingMessage, memory = [] }) {
   const apiKey = process.env.OPENAI_API_KEY
   const model = process.env.OPENAI_MODEL || 'gpt-4.1'
   const prompt = {
@@ -93,6 +93,7 @@ async function generateTelegramSalesReply({ lead, incomingMessage }) {
       notes: lead?.notes,
     },
     incomingMessage,
+    memory,
   }
 
   if (!apiKey) {
@@ -104,7 +105,8 @@ async function generateTelegramSalesReply({ lead, incomingMessage }) {
     {
       model,
       input: [
-        { role: 'system', content: prompt.instruction },
+        { role: 'system', content: `${prompt.instruction} Используй историю последних сообщений как память диалога и не задавай повторно вопросы, на которые клиент уже ответил.` },
+        ...memory.map((item) => ({ role: item.role === 'assistant' ? 'assistant' : 'user', content: item.content })),
         { role: 'user', content: JSON.stringify({ lead: prompt.lead, incomingMessage }, null, 2) },
       ],
       temperature: 0.55,
