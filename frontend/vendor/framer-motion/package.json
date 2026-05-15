@@ -1,0 +1,10 @@
+{
+  "name": "framer-motion",
+  "version": "11.18.2",
+  "main": "index.js",
+  "module": "index.js",
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  }
+}
