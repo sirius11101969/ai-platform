@@ -1,5 +1,24 @@
 const crmModel = require('../models/crmModel')
 
+
+async function listStages(req, res, next) {
+  try {
+    const stages = await crmModel.listStages(req.user.id)
+    res.json({ stages })
+  } catch (error) {
+    next(error)
+  }
+}
+
+async function updateStage(req, res, next) {
+  try {
+    const stage = await crmModel.updateStage(req.user.id, req.params.status, req.body)
+    res.json({ stage })
+  } catch (error) {
+    next(error)
+  }
+}
+
 async function listLeads(req, res, next) {
   try {
     const leads = await crmModel.listLeads(req.user.id)
@@ -48,8 +67,8 @@ async function addNote(req, res, next) {
 
 async function createFollowUp(req, res, next) {
   try {
-    const followUp = await crmModel.createFollowUp(req.user.id, req.params.id)
-    res.status(201).json({ followUp })
+    const result = await crmModel.createFollowUp(req.user.id, req.params.id)
+    res.status(201).json(result)
   } catch (error) {
     next(error)
   }
@@ -80,6 +99,8 @@ module.exports = {
   createLead,
   deleteLead,
   listLeads,
+  listStages,
   stats,
   updateLead,
+  updateStage,
 }

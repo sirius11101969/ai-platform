@@ -2,7 +2,7 @@ const pool = require('../db/pool')
 const { generateCrmFollowUp } = require('../services/crmAiService')
 
 const CRM_STATUSES = ['new', 'qualified', 'proposal', 'booked', 'won', 'lost']
-const STATUS_LABELS = {
+const DEFAULT_STAGE_LABELS = {
   new: 'Новый',
   qualified: 'Квалификация',
   proposal: 'Предложение',
@@ -10,6 +10,7 @@ const STATUS_LABELS = {
   won: 'Успешно',
   lost: 'Потеряно',
 }
+const STATUS_LABELS = DEFAULT_STAGE_LABELS
 const LEAD_COLUMNS = ['id', 'user_id', 'name', 'email', 'phone', 'telegram', 'company', 'status', 'value', 'source', 'notes', 'created_at', 'updated_at']
 const LEAD_SELECT = LEAD_COLUMNS.join(', ')
 
@@ -49,6 +50,11 @@ function normalizeFollowUp(row) {
   return { id: row.id, leadId: row.lead_id, userId: row.user_id, message: row.message, model: row.model, createdAt: row.created_at }
 }
 
+function normalizeStage(row) {
+  if (!row) return null
+  return { status: row.status, title: row.title, position: Number(row.position || 0), updatedAt: row.updated_at }
+}
+
 function normalizeActivity(row) {
   if (!row) return null
   return {
@@ -79,6 +85,47 @@ function normalizeValue(value) {
   const amount = Number(value)
   if (!Number.isFinite(amount) || amount < 0) return null
   return amount
+}
+
+async function ensureDefaultStages(userId, client = pool) {
+  await client.query(
+    `INSERT INTO crm_stages(user_id, status, title, position)
+     SELECT $1, status, title, position
+       FROM UNNEST($2::text[], $3::text[], $4::int[]) AS defaults(status, title, position)
+     ON CONFLICT (user_id, status) DO NOTHING`,
+    [userId, CRM_STATUSES, CRM_STATUSES.map((status) => DEFAULT_STAGE_LABELS[status]), CRM_STATUSES.map((_, index) => index)]
+  )
+}
+
+async function listStages(userId) {
+  await ensureDefaultStages(userId)
+  const result = await pool.query(
+    'SELECT status, title, position, updated_at FROM crm_stages WHERE user_id = $1 ORDER BY position ASC',
+    [userId]
+  )
+  return result.rows.map(normalizeStage)
+}
+
+async function updateStage(userId, status, payload) {
+  const normalizedStatus = normalizeStatus(status)
+  if (!normalizedStatus) throw Object.assign(new Error(`Status must be one of: ${CRM_STATUSES.join(', ')}`), { statusCode: 400 })
+  const title = normalizeOptionalText(payload.title)
+  if (!title) throw Object.assign(new Error('Stage title is required'), { statusCode: 400 })
+  await ensureDefaultStages(userId)
+  const result = await pool.query(
+    `UPDATE crm_stages
+        SET title = $3, updated_at = NOW()
+      WHERE user_id = $1 AND status = $2
+      RETURNING status, title, position, updated_at`,
+    [userId, normalizedStatus, title]
+  )
+  return normalizeStage(result.rows[0])
+}
+
+async function getStageLabels(userId, client = pool) {
+  await ensureDefaultStages(userId, client)
+  const result = await client.query('SELECT status, title FROM crm_stages WHERE user_id = $1', [userId])
+  return result.rows.reduce((labels, row) => ({ ...labels, [row.status]: row.title }), { ...DEFAULT_STAGE_LABELS })
 }
 
 async function logActivity(client, userId, leadId, type, title, body = null, metadata = {}) {
@@ -140,13 +187,14 @@ async function createLead(userId, payload) {
   const client = await pool.connect()
   try {
     await client.query('BEGIN')
+    const stageLabels = await getStageLabels(userId, client)
     const result = await client.query(
       `INSERT INTO crm_leads(user_id, name, email, phone, telegram, company, status, value, source, notes, contact, stage)
        VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, COALESCE($5, $4, $3), $7)
        RETURNING ${LEAD_SELECT}`,
       [userId, name, email, phone, telegram, company, status, value, source, notes]
     )
-    await logActivity(client, userId, result.rows[0].id, 'lead_created', 'Лид создан', `${company || name} добавлен в этап «${STATUS_LABELS[status]}».`, { status, value })
+    await logActivity(client, userId, result.rows[0].id, 'lead_created', 'Лид создан', `${company || name} добавлен в этап «${stageLabels[status] || status}».`, { status, value })
     let noteRows = []
     if (notes) {
       const noteResult = await client.query(
@@ -206,6 +254,7 @@ async function updateLead(userId, leadId, payload) {
   const client = await pool.connect()
   try {
     await client.query('BEGIN')
+    const stageLabels = await getStageLabels(userId, client)
     const result = await client.query(
       `UPDATE crm_leads SET ${updates.join(', ')}, contact = COALESCE(telegram, phone, email, contact)
         WHERE user_id = $1 AND id = $2 RETURNING ${LEAD_SELECT}`,
@@ -213,7 +262,7 @@ async function updateLead(userId, leadId, payload) {
     )
     if (!result.rows[0]) throw Object.assign(new Error('Lead not found'), { statusCode: 404 })
     if (payload.status && previous.status !== payload.status) {
-      await logActivity(client, userId, leadId, 'lead_moved', 'Лид перемещён', `Из «${STATUS_LABELS[previous.status]}» в «${STATUS_LABELS[payload.status]}».`, { from: previous.status, to: payload.status })
+      await logActivity(client, userId, leadId, 'lead_moved', 'Лид перемещён', `Из «${stageLabels[previous.status] || previous.status}» в «${stageLabels[payload.status] || payload.status}».`, { from: previous.status, to: payload.status })
     } else {
       await logActivity(client, userId, leadId, 'lead_updated', 'Лид обновлён', 'Данные лида изменены.')
     }
@@ -268,10 +317,16 @@ async function createFollowUp(userId, leadId) {
        VALUES($1, $2, $3, $4, $5) RETURNING id, lead_id, user_id, message, model, created_at`,
       [leadId, userId, generated.message, generated.model, generated.prompt]
     )
-    await client.query('UPDATE crm_leads SET updated_at = NOW() WHERE id = $1 AND user_id = $2', [leadId, userId])
+    const noteBody = `AI follow-up: ${generated.message}`
+    const noteResult = await client.query(
+      `INSERT INTO crm_notes(lead_id, user_id, body)
+       VALUES($1, $2, $3) RETURNING id, lead_id, user_id, body, created_at`,
+      [leadId, userId, noteBody]
+    )
+    await client.query("UPDATE crm_leads SET notes = COALESCE(notes || E'\\n', '') || $3, updated_at = NOW() WHERE id = $1 AND user_id = $2", [leadId, userId, noteBody])
     await logActivity(client, userId, leadId, 'ai_followup_generated', 'AI follow-up создан', generated.message.slice(0, 240), { model: generated.model })
     await client.query('COMMIT')
-    return normalizeFollowUp(result.rows[0])
+    return { followUp: normalizeFollowUp(result.rows[0]), note: normalizeNote(noteResult.rows[0]) }
   } catch (error) {
     await client.query('ROLLBACK')
     throw error
@@ -333,4 +388,4 @@ async function getStats(userId) {
   }
 }
 
-module.exports = { CRM_STATUSES, STATUS_LABELS, createFollowUp, createLead, createNote, deleteLead, getStats, listActivity, listLeads, updateLead }
+module.exports = { CRM_STATUSES, STATUS_LABELS, createFollowUp, createLead, createNote, deleteLead, getStats, listActivity, listLeads, listStages, updateLead, updateStage }

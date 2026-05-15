@@ -196,6 +196,17 @@ export function fetchCrmLeads() {
   return request('/crm/leads')
 }
 
+export function fetchCrmStages() {
+  return request('/crm/stages')
+}
+
+export function updateCrmStage(status, payload) {
+  return request(`/crm/stages/${status}`, {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+  })
+}
+
 export function createCrmLead(payload) {
   return request('/crm/leads', {
     method: 'POST',
