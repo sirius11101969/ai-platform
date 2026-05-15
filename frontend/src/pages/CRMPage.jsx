@@ -9,7 +9,9 @@ import {
   fetchCrmLeads,
   fetchCrmStages,
   fetchCrmStats,
+  fetchTelegramMessages,
   updateCrmLead,
+  sendTelegramLeadMessage,
   updateCrmStage,
 } from "../services/api";
 
@@ -99,6 +101,9 @@ export default function CRMPage() {
   const [selectedLeadId, setSelectedLeadId] = useState(null);
   const [isEditingDetail, setIsEditingDetail] = useState(false);
   const [isActivityOpen, setIsActivityOpen] = useState(false);
+  const [telegramMessages, setTelegramMessages] = useState([]);
+  const [telegramDraft, setTelegramDraft] = useState('');
+  const [telegramSending, setTelegramSending] = useState(false);
 
   const selectedLead = useMemo(() => leads.find((lead) => lead.id === selectedLeadId) || null, [leads, selectedLeadId]);
   const stageMap = useMemo(() => stages.reduce((acc, stage) => ({ ...acc, [stage.status]: stage.title }), {}), [stages]);
@@ -154,6 +159,47 @@ export default function CRMPage() {
       window.removeEventListener("crm-open-activity-feed", handleOpenActivityFeed);
     };
   }, []);
+
+  async function refreshTelegramMessages(lead = selectedLead) {
+    if (!lead || !isTelegramLead(lead)) {
+      setTelegramMessages([]);
+      return;
+    }
+    const response = await fetchTelegramMessages(lead.id);
+    setTelegramMessages(response.messages || []);
+  }
+
+  useEffect(() => {
+    if (!selectedLead || !isTelegramLead(selectedLead)) {
+      setTelegramMessages([]);
+      return undefined;
+    }
+    setTelegramMessages(selectedLead.telegramMessages || []);
+    refreshTelegramMessages(selectedLead).catch((requestError) => setError(requestError.message || 'Не удалось загрузить Telegram переписку'));
+    const intervalId = window.setInterval(() => {
+      refreshTelegramMessages(selectedLead).catch(() => undefined);
+      loadCrm({ silent: true }).catch(() => undefined);
+    }, 7000);
+    return () => window.clearInterval(intervalId);
+  }, [selectedLeadId]);
+
+  async function handleSendTelegramReply(event) {
+    event.preventDefault();
+    const message = telegramDraft.trim();
+    if (!selectedLead || !message) return;
+    setTelegramSending(true);
+    setError('');
+    try {
+      const response = await sendTelegramLeadMessage(selectedLead.id, message);
+      setTelegramMessages((current) => [...current, response.telegramMessage].filter(Boolean));
+      setTelegramDraft('');
+      await Promise.all([refreshTelegramMessages(selectedLead), loadCrm({ silent: true }), refreshMeta()]);
+    } catch (requestError) {
+      setError(requestError.message || 'Не удалось отправить сообщение в Telegram');
+    } finally {
+      setTelegramSending(false);
+    }
+  }
 
   const leadsByStage = useMemo(() => stages.reduce((acc, stage) => {
     acc[stage.status] = leads.filter((lead) => lead.status === stage.status);
@@ -379,7 +425,7 @@ export default function CRMPage() {
                     >
                       <div className="lead-topline"><strong>{lead.name}</strong><span>{formatCurrency(lead.value)}</span></div>
                       <p>{lead.company || (isTelegramLead(lead) ? lead.telegram || "Telegram контакт" : "Компания не указана")}</p>
-                      <div className="lead-card-meta"><small><i />{stageMap[lead.status] || lead.status}</small><span className={`source-pill ${lead.source === "telegram" ? "telegram-source" : ""}`}>{formatLeadSource(lead.source)}</span></div>
+                      <div className="lead-card-meta"><small><i />{stageMap[lead.status] || lead.status}</small><span className={`source-pill ${lead.source === "telegram" ? "telegram-source" : ""}`}>{formatLeadSource(lead.source)}</span></div>{isTelegramLead(lead) && <div className="telegram-card-status"><span className={`telegram-presence-dot ${lead.telegramOnline ? 'online' : 'offline'}`} />{lead.telegramOnline ? 'online' : 'offline'} · {lead.lastMessageAt ? formatDate(lead.lastMessageAt) : 'нет сообщений'}</div>}
                     </article>
                   ))}
                 </div>
@@ -417,6 +463,11 @@ export default function CRMPage() {
           onDelete={() => handleDeleteLead(selectedLead)}
           onEdit={() => startDetailEdit(selectedLead)}
           onMove={(status) => moveLead(selectedLead, status)}
+          telegramMessages={telegramMessages}
+          telegramDraft={telegramDraft}
+          telegramSending={telegramSending}
+          onTelegramDraftChange={setTelegramDraft}
+          onSendTelegramReply={handleSendTelegramReply}
           onClose={() => { setSelectedLeadId(null); setIsEditingDetail(false); }}
         />
       )}
@@ -508,7 +559,7 @@ function LeadFormModal({ title, subtitle, stages, leadForm, setLeadForm, saving,
   );
 }
 
-function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDraftChange, onAddNote, onFollowUp, followUpLoading, onDelete, onEdit, onMove, onClose }) {
+function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDraftChange, onAddNote, onFollowUp, followUpLoading, onDelete, onEdit, onMove, telegramMessages = [], telegramDraft = '', telegramSending = false, onTelegramDraftChange, onSendTelegramReply, onClose }) {
   return (
     <div className="modal-backdrop crm-modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
       <section className="ai-task-modal lead-detail-modal" role="dialog" aria-modal="true" aria-labelledby="lead-detail-title">
@@ -536,7 +587,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                 <div><dt>Контакт</dt><dd>{lead.name}</dd></div>
                 <div><dt>Компания</dt><dd>{lead.company || "—"}</dd></div>
                 <div><dt>Источник</dt><dd>{formatLeadSource(lead.source)}</dd></div>
-                <div><dt>Telegram</dt><dd>{lead.telegram || "—"}</dd></div>
+                <div><dt>Telegram</dt><dd>{lead.telegram || "—"} {isTelegramLead(lead) && <span className={`telegram-presence ${lead.telegramOnline ? 'online' : 'offline'}`}>{lead.telegramOnline ? 'online' : 'offline'}</span>}</dd></div>
                 <div><dt>Email</dt><dd>{lead.email || "—"}</dd></div>
                 <div><dt>Этап</dt><dd>{stageMap[lead.status] || lead.status}</dd></div>
                 <div><dt>Создано</dt><dd>{formatDate(lead.createdAt)}</dd></div>
@@ -544,8 +595,33 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
               </dl>
             </div>
 
+            {isTelegramLead(lead) && (
+              <div className="detail-section telegram-chat-section">
+                <div className="telegram-chat-head">
+                  <div>
+                    <h4>Telegram переписка</h4>
+                    <p>Последние сообщения обновляются автоматически каждые 7 секунд.</p>
+                  </div>
+                  <span className="telegram-badge">Telegram</span>
+                </div>
+                <div className="telegram-chat-window" aria-live="polite">
+                  {telegramMessages.length === 0 && <p className="empty-state">Сообщений пока нет</p>}
+                  {telegramMessages.map((item) => (
+                    <article className={`telegram-chat-bubble ${item.role === 'assistant' ? 'assistant' : 'user'}`} key={item.id}>
+                      <p>{item.message}</p>
+                      <small>{item.role === 'assistant' ? 'CRM / AI' : lead.telegram || lead.name} · {formatDate(item.createdAt)}</small>
+                    </article>
+                  ))}
+                </div>
+                <form className="telegram-reply-form" onSubmit={onSendTelegramReply}>
+                  <textarea value={telegramDraft} onChange={(event) => onTelegramDraftChange(event.target.value)} placeholder="Ответить клиенту в Telegram из CRM" />
+                  <button className="btn primary compact" disabled={telegramSending || !telegramDraft.trim()} type="submit">{telegramSending ? 'Отправляем…' : 'Ответить в Telegram'}</button>
+                </form>
+              </div>
+            )}
+
             <div className="detail-section">
-              <h4>{isTelegramLead(lead) ? "Telegram диалог и заметки" : "Заметки"}</h4>
+              <h4>Заметки</h4>
               {lead.notesText ? <p className="detail-notes-text">{formatCrmText(lead.notesText)}</p> : <p className="empty-state">Заметок пока нет</p>}
               <form className="detail-note-form" onSubmit={onAddNote}>
                 <textarea value={noteDraft} onChange={(event) => onNoteDraftChange(event.target.value)} placeholder="Добавить новую заметку по сделке" />
