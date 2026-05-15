@@ -281,3 +281,31 @@ button { font: inherit; }
   font-size: 20px;
   font-weight: 950;
 }
+.dashboard-alert { margin: 0 0 18px; }
+.success-alert { margin: 0; padding: 12px 14px; border: 1px solid rgba(117, 255, 218, .32); border-radius: 16px; background: rgba(117, 255, 218, .1); color: #d8fff6; font-weight: 800; }
+.ai-task-form { display: grid; gap: 14px; }
+.crm-field textarea {
+  width: 100%;
+  min-height: 150px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 16px;
+  outline: none;
+  background: rgba(255,255,255,.065);
+  color: #f7fbff;
+  padding: 12px;
+  font: inherit;
+  resize: vertical;
+}
+.crm-field option { background: #0b1022; color: #f7fbff; }
+.ai-history-list { max-height: 640px; overflow: auto; padding-right: 4px; }
+.ai-task-row { align-items: flex-start; }
+.ai-task-row div { min-width: 0; }
+.ai-task-row small { display: block; margin-top: 10px; color: #d5e0ff; line-height: 1.5; }
+.ai-task-row pre { margin: 12px 0 0; white-space: pre-wrap; word-break: break-word; color: #aebde8; font: inherit; line-height: 1.5; }
+.ai-task-row.pending b { color: #ffe08a; }
+.ai-task-row.processing b { color: #75efff; }
+.ai-task-row.completed b { color: #75ffda; }
+.ai-task-row.failed b { color: #ff9aae; }
+.dashboard-orders { margin-bottom: 14px; }
+.dashboard-quick-actions { margin-top: 14px; }
+.btn.compact:disabled, .ghost-button:disabled { cursor: wait; opacity: .68; transform: none; }

@@ -91,3 +91,18 @@ export function addCrmLeadNote(id, body) {
 export function fetchCrmStats() {
   return request('/crm/stats')
 }
+
+export function fetchAiTasks() {
+  return request('/ai/tasks')
+}
+
+export function fetchAiTask(id) {
+  return request(`/ai/tasks/${id}`)
+}
+
+export function createAiTask(payload) {
+  return request('/ai/tasks', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}

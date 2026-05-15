@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, NavLink, Outlet } from "react-router-dom";
-import { userProfile, creditSummary } from "../data/mockData";
+import { creditSummary, userProfile } from "../data/mockData";
+import { fetchProfile } from "../services/api";
 
 export function BrandMark() {
   return (
@@ -11,6 +12,25 @@ export function BrandMark() {
 }
 
 export function ProtectedLayout() {
+  const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+    fetchProfile()
+      .then((response) => {
+        if (active) setProfile(response.user || null);
+      })
+      .catch(() => {
+        if (active) setProfile(null);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const displayName = profile?.email || userProfile.name;
+  const displayPlan = profile?.plan || userProfile.plan;
+
   return (
     <div className="app-shell">
       <aside className="sidebar shell-glow">
@@ -20,7 +40,7 @@ export function ProtectedLayout() {
           <NavLink to="/crm" className={({ isActive }) => (isActive ? "active" : "")}>CRM pipeline</NavLink>
           <Link to="/login" onClick={() => window.localStorage.removeItem("ai-platform-auth")}>Выйти</Link>
         </nav>
-        <CreditsMiniBlock />
+        <CreditsMiniBlock credits={profile?.credits} />
       </aside>
       <div className="workspace">
         <header className="workspace-header shell-glow">
@@ -29,8 +49,8 @@ export function ProtectedLayout() {
             <h1>AI Revenue OS</h1>
           </div>
           <div className="profile-pill">
-            <strong>{userProfile.name}</strong>
-            <span>{userProfile.plan}</span>
+            <strong>{displayName}</strong>
+            <span>{displayPlan}</span>
           </div>
         </header>
         <Outlet />
@@ -39,12 +59,13 @@ export function ProtectedLayout() {
   );
 }
 
-function CreditsMiniBlock() {
+function CreditsMiniBlock({ credits }) {
+  const balance = Number.isFinite(Number(credits)) ? Number(credits) : creditSummary.balance;
   return (
     <section className="credits-mini" aria-label="Баланс credits">
       <span>AI credits</span>
-      <strong>{creditSummary.balance.toLocaleString("ru-RU")}</strong>
-      <p>{creditSummary.forecast}</p>
+      <strong>{balance.toLocaleString("ru-RU")}</strong>
+      <p>{Number.isFinite(Number(credits)) ? "Live balance from users table" : creditSummary.forecast}</p>
     </section>
   );
 }
