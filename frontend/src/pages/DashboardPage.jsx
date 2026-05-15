@@ -5,14 +5,28 @@ import { createAiTask, fetchAiTask, fetchAiTasks, fetchProfile, updateStoredUser
 import { orders, quickActions, userProfile } from "../data/mockData";
 
 const taskTypeLabels = {
-  text_generation: "AI draft",
-  sales_email: "Sales email",
-  crm_summary: "CRM summary",
-  lead_follow_up: "Lead follow-up",
+  ai_content_generation: "AI content generation",
+  ai_sales_reply: "AI sales reply",
+  ai_telegram_outreach: "AI Telegram outreach",
+  ai_crm_follow_up: "AI CRM follow-up",
+};
+
+const taskTypeDescriptions = {
+  ai_content_generation: "Generate premium campaign copy, product angles, and CTAs.",
+  ai_sales_reply: "Draft a sharp consultative reply for warm sales conversations.",
+  ai_telegram_outreach: "Create concise Telegram outreach sequences for leads.",
+  ai_crm_follow_up: "Produce CRM notes, next actions, and follow-up cadence.",
+};
+
+const statusLabels = {
+  pending: "Pending",
+  processing: "Processing",
+  completed: "Completed",
+  failed: "Failed",
 };
 
 const initialTaskForm = {
-  type: "text_generation",
+  type: "ai_content_generation",
   prompt: "",
 };
 
@@ -26,22 +40,50 @@ function formatDate(value) {
   }).format(new Date(value));
 }
 
-function statusText(status) {
-  const labels = {
-    pending: "В очереди",
-    processing: "В работе",
-    completed: "Готово",
-    failed: "Ошибка",
-  };
-  return labels[status] || status;
-}
-
 function renderTaskResult(result) {
-  if (!result) return "Результат появится после обработки задачи.";
+  if (!result) return "Result will appear after the AI worker finishes execution.";
   if (result.content) return result.content;
+  if (result.message) return result.message;
   if (Array.isArray(result.bullets)) return result.bullets.join("\n• ");
   if (Array.isArray(result.steps)) return result.steps.join("\n• ");
   return JSON.stringify(result, null, 2);
+}
+
+function buildActivityFeed(tasks) {
+  return tasks.flatMap((task) => {
+    const label = taskTypeLabels[task.type] || task.type;
+    const events = [
+      {
+        id: `${task.id}-created`,
+        status: "pending",
+        title: `${label} created`,
+        detail: `${task.credits_spent} credits reserved and worker queued.`,
+        timestamp: task.created_at,
+      },
+    ];
+
+    if (["processing", "completed", "failed"].includes(task.status)) {
+      events.push({
+        id: `${task.id}-processing`,
+        status: "processing",
+        title: `${label} processing`,
+        detail: "AI execution engine picked up the task.",
+        timestamp: task.updated_at || task.created_at,
+      });
+    }
+
+    if (["completed", "failed"].includes(task.status)) {
+      events.push({
+        id: `${task.id}-${task.status}`,
+        status: task.status,
+        title: task.status === "completed" ? `${label} completed` : `${label} failed`,
+        detail: task.status === "completed" ? "Result artifacts are ready in recent tasks." : "Worker returned an error. Try again with a refined prompt.",
+        timestamp: task.updated_at || task.created_at,
+      });
+    }
+
+    return events;
+  }).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 8);
 }
 
 export default function DashboardPage() {
@@ -51,11 +93,12 @@ export default function DashboardPage() {
   const [taskForm, setTaskForm] = useState(initialTaskForm);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
-  async function loadDashboard() {
-    setLoading(true);
+  async function loadDashboard({ silent = false } = {}) {
+    if (!silent) setLoading(true);
     setError("");
     try {
       const [profileResponse, tasksResponse] = await Promise.all([fetchProfile(), fetchAiTasks()]);
@@ -65,7 +108,7 @@ export default function DashboardPage() {
     } catch (requestError) {
       setError(requestError.message || "Не удалось загрузить dashboard");
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   }
 
@@ -87,7 +130,7 @@ export default function DashboardPage() {
       } catch (_error) {
         // Keep the current task list visible; the next manual refresh can recover.
       }
-    }, 2500);
+    }, 1400);
 
     return () => window.clearInterval(interval);
   }, [tasks]);
@@ -99,6 +142,9 @@ export default function DashboardPage() {
   const creditsUsedPercent = Math.min(100, Math.round((creditsSpent / Math.max(creditBalance + creditsSpent, 1)) * 100));
 
   const sortedTasks = useMemo(() => tasks.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at)), [tasks]);
+  const recentTasks = sortedTasks.slice(0, 5);
+  const activityFeed = useMemo(() => buildActivityFeed(sortedTasks), [sortedTasks]);
+  const selectedCost = costs[taskForm.type] || 0;
 
   async function handleCreateTask(event) {
     event.preventDefault();
@@ -111,7 +157,8 @@ export default function DashboardPage() {
       setProfile((currentProfile) => currentProfile ? { ...currentProfile, credits: response.remainingCredits } : currentProfile);
       updateStoredUser({ credits: response.remainingCredits });
       setTaskForm(initialTaskForm);
-      setMessage("AI-задача создана, credits списаны, обработка запущена.");
+      setModalOpen(false);
+      setMessage("AI task created, credits deducted, and execution worker started.");
     } catch (requestError) {
       if (requestError.status === 402) {
         setError(`${requestError.message}. Пополните баланс или выберите задачу дешевле.`);
@@ -126,26 +173,26 @@ export default function DashboardPage() {
   const displayProfile = profile || userProfile;
 
   return (
-    <main className="workspace-page">
+    <main className="workspace-page ai-os-page">
       <PageHeading
         eyebrow="Dashboard"
-        title="Операционная панель AI‑команды"
-        copy="Профиль, credits, подписки и AI-задачи собраны в защищённой зоне для ежедневной работы growth-команды."
-        action={<Link className="btn primary compact" to="/crm">Открыть CRM</Link>}
+        title="AI operating system"
+        copy="Create, fund, execute, and monitor AI work from one premium JWT-protected workspace."
+        action={<button className="btn primary compact pulse-action" type="button" onClick={() => setModalOpen(true)}>Create AI task</button>}
       />
 
       {error && <p className="auth-error dashboard-alert">{error}</p>}
       {message && <p className="success-alert dashboard-alert">{message}</p>}
 
       <section className="dashboard-stats">
-        <StatCard label="Credits balance" value={loading ? "…" : creditBalance.toLocaleString("ru-RU")} hint="Доступно для новых AI-задач" />
-        <StatCard label="AI tasks" value={loading ? "…" : String(tasks.length)} hint={`${activeTasks} в обработке · ${completedTasks} готово`} tone="violet" />
-        <StatCard label="Credits spent" value={loading ? "…" : creditsSpent.toLocaleString("ru-RU")} hint="Списано через credits ledger" tone="pink" />
+        <StatCard label="Credits balance" value={loading ? "…" : creditBalance.toLocaleString("ru-RU")} hint="Available for new AI execution" />
+        <StatCard label="AI tasks" value={loading ? "…" : String(tasks.length)} hint={`${activeTasks} active · ${completedTasks} completed`} tone="violet" />
+        <StatCard label="Credits spent" value={loading ? "…" : creditsSpent.toLocaleString("ru-RU")} hint="Deducted through credits ledger" tone="pink" />
       </section>
 
       <section className="app-grid two-columns">
-        <Panel className="profile-card">
-          <span className="eyebrow">User profile</span>
+        <Panel className="profile-card ai-command-card">
+          <span className="eyebrow">Command center</span>
           <div className="profile-hero">
             <div className="profile-avatar">{String(displayProfile.email || displayProfile.name || "AI").slice(0, 2).toUpperCase()}</div>
             <div>
@@ -154,14 +201,22 @@ export default function DashboardPage() {
               <span>{displayProfile.id || displayProfile.company}</span>
             </div>
           </div>
+          <div className="task-type-grid">
+            {Object.keys(taskTypeLabels).map((type) => (
+              <button type="button" key={type} onClick={() => { setTaskForm({ ...initialTaskForm, type }); setModalOpen(true); }}>
+                <b>{taskTypeLabels[type]}</b>
+                <span>{costs[type] || 0} credits</span>
+              </button>
+            ))}
+          </div>
         </Panel>
 
-        <Panel className="credits-card">
-          <span className="eyebrow">Credits block</span>
-          <div className="credits-number">{creditBalance.toLocaleString("ru-RU")}</div>
-          <p>{activeTasks > 0 ? `${activeTasks} AI-задач обрабатываются сейчас` : "Баланс готов к новым AI-задачам"}</p>
+        <Panel className="credits-card ai-orb-card">
+          <span className="eyebrow">Execution capacity</span>
+          <div className="credits-orb"><span>{creditBalance.toLocaleString("ru-RU")}</span></div>
+          <p>{activeTasks > 0 ? `${activeTasks} AI tasks are executing right now` : "Balance is ready for the next AI task"}</p>
           <div className="progress-track"><i style={{ width: `${creditsUsedPercent}%` }} /></div>
-          <small>Использовано {creditsUsedPercent}% от суммарного доступного объёма</small>
+          <small>{creditsUsedPercent}% of total allocated credits used</small>
         </Panel>
       </section>
 
@@ -169,54 +224,47 @@ export default function DashboardPage() {
         <Panel>
           <div className="panel-head">
             <div>
-              <span className="eyebrow">Create AI task</span>
-              <h3>Новая AI-задача</h3>
+              <span className="eyebrow">Recent tasks</span>
+              <h3>AI execution queue</h3>
             </div>
+            <button className="ghost-button" type="button" onClick={() => loadDashboard()} disabled={loading}>Refresh</button>
           </div>
-          <form className="ai-task-form" onSubmit={handleCreateTask}>
-            <label className="crm-field">
-              <span>Тип задачи</span>
-              <select value={taskForm.type} onChange={(event) => setTaskForm({ ...taskForm, type: event.target.value })}>
-                {Object.keys(taskTypeLabels).map((type) => (
-                  <option value={type} key={type}>{taskTypeLabels[type]} · {costs[type] || 0} credits</option>
-                ))}
-              </select>
-            </label>
-            <label className="crm-field">
-              <span>Prompt *</span>
-              <textarea
-                value={taskForm.prompt}
-                onChange={(event) => setTaskForm({ ...taskForm, prompt: event.target.value })}
-                placeholder="Например: подготовь follow-up для лида после демо CRM automation"
-                required
-              />
-            </label>
-            <button className="btn primary compact" disabled={saving || loading} type="submit">
-              {saving ? "Запускаем…" : "Создать AI-задачу"}
-            </button>
-          </form>
+          <div className="task-list ai-history-list recent-task-widget">
+            {loading && <div className="skeleton-stack"><i /><i /><i /></div>}
+            {!loading && recentTasks.length === 0 && <p className="empty-state">No AI tasks yet. Launch the first task from the modal.</p>}
+            {recentTasks.map((task) => (
+              <article className={`task-card ai-task-row ${task.status}`} key={task.id}>
+                <div>
+                  <strong>{taskTypeLabels[task.type] || task.type}</strong>
+                  <span>{statusLabels[task.status] || task.status} · {task.credits_spent} credits · {formatDate(task.created_at)}</span>
+                  <small>{task.prompt}</small>
+                  <pre>{renderTaskResult(task.result)}</pre>
+                </div>
+                <b>{statusLabels[task.status] || task.status}</b>
+              </article>
+            ))}
+          </div>
         </Panel>
 
         <Panel>
           <div className="panel-head">
             <div>
-              <span className="eyebrow">Task statuses</span>
-              <h3>История AI-задач</h3>
+              <span className="eyebrow">Live activity</span>
+              <h3>Worker feed</h3>
             </div>
-            <button className="ghost-button" type="button" onClick={loadDashboard} disabled={loading}>Обновить</button>
+            <span className="live-pill"><i />Live</span>
           </div>
-          <div className="task-list ai-history-list">
-            {loading && <p className="empty-state">Загружаем AI-задачи…</p>}
-            {!loading && sortedTasks.length === 0 && <p className="empty-state">AI-задач пока нет. Создайте первую задачу слева.</p>}
-            {sortedTasks.map((task) => (
-              <article className={`task-card ai-task-row ${task.status}`} key={task.id}>
+          <div className="live-activity-feed">
+            {loading && <div className="skeleton-stack"><i /><i /><i /></div>}
+            {!loading && activityFeed.length === 0 && <p className="empty-state">Activity feed is waiting for the first task event.</p>}
+            {activityFeed.map((event) => (
+              <article className={`activity-event ${event.status}`} key={event.id}>
+                <span />
                 <div>
-                  <strong>{taskTypeLabels[task.type] || task.type}</strong>
-                  <span>{statusText(task.status)} · {task.credits_spent} credits · {formatDate(task.created_at)}</span>
-                  <small>{task.prompt}</small>
-                  <pre>{renderTaskResult(task.result)}</pre>
+                  <strong>{event.title}</strong>
+                  <p>{event.detail}</p>
+                  <small>{formatDate(event.timestamp)}</small>
                 </div>
-                <b>{task.status}</b>
               </article>
             ))}
           </div>
@@ -229,6 +277,7 @@ export default function DashboardPage() {
             <span className="eyebrow">Orders & quick actions</span>
             <h3>Оплаты, тариф и быстрые действия</h3>
           </div>
+          <Link className="ghost-button" to="/crm">Open CRM</Link>
         </div>
         <div className="order-list dashboard-orders">
           {orders.map((order) => (
@@ -245,6 +294,54 @@ export default function DashboardPage() {
           {quickActions.map((action) => <button type="button" key={action}>{action}</button>)}
         </div>
       </Panel>
+
+      {modalOpen && (
+        <div className="modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget && !saving) setModalOpen(false); }}>
+          <section className="ai-task-modal" role="dialog" aria-modal="true" aria-labelledby="ai-task-modal-title">
+            <div className="modal-glow" />
+            <div className="panel-head">
+              <div>
+                <span className="eyebrow">Create AI task</span>
+                <h3 id="ai-task-modal-title">Launch AI execution</h3>
+              </div>
+              <button className="modal-close" type="button" onClick={() => setModalOpen(false)} disabled={saving}>×</button>
+            </div>
+            <form className="ai-task-form" onSubmit={handleCreateTask}>
+              <div className="modal-task-types">
+                {Object.keys(taskTypeLabels).map((type) => (
+                  <label className={taskForm.type === type ? "selected" : ""} key={type}>
+                    <input
+                      type="radio"
+                      name="type"
+                      value={type}
+                      checked={taskForm.type === type}
+                      onChange={(event) => setTaskForm({ ...taskForm, type: event.target.value })}
+                    />
+                    <b>{taskTypeLabels[type]}</b>
+                    <span>{taskTypeDescriptions[type]}</span>
+                    <small>{costs[type] || 0} credits</small>
+                  </label>
+                ))}
+              </div>
+              <label className="crm-field">
+                <span>Execution prompt *</span>
+                <textarea
+                  value={taskForm.prompt}
+                  onChange={(event) => setTaskForm({ ...taskForm, prompt: event.target.value })}
+                  placeholder="Example: prepare a CRM follow-up for a SaaS lead after a demo; highlight ROI, next action, and Telegram touchpoint."
+                  required
+                />
+              </label>
+              <div className="modal-actions">
+                <span>{selectedCost} credits will be deducted immediately</span>
+                <button className="btn primary compact" disabled={saving || loading} type="submit">
+                  {saving ? <><i className="button-spinner" />Launching…</> : "Create and execute"}
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+      )}
     </main>
   );
 }

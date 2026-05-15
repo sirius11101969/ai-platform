@@ -56,7 +56,13 @@ ALTER TABLE ai_tasks ADD COLUMN IF NOT EXISTS output JSONB;
 ALTER TABLE ai_tasks ADD COLUMN IF NOT EXISTS error TEXT;
 ALTER TABLE ai_tasks ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
 UPDATE ai_tasks
-   SET type = COALESCE(NULLIF(type, ''), NULLIF(task_type, ''), 'text_generation'),
+   SET type = CASE COALESCE(NULLIF(type, ''), NULLIF(task_type, ''), 'ai_content_generation')
+             WHEN 'text_generation' THEN 'ai_content_generation'
+             WHEN 'sales_email' THEN 'ai_sales_reply'
+             WHEN 'crm_summary' THEN 'ai_crm_follow_up'
+             WHEN 'lead_follow_up' THEN 'ai_crm_follow_up'
+             ELSE COALESCE(NULLIF(type, ''), NULLIF(task_type, ''), 'ai_content_generation')
+           END,
        prompt = COALESCE(NULLIF(prompt, ''), input->>'prompt', ''),
        status = CASE
          WHEN status = 'queued' THEN 'pending'
