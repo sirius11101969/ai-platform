@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { creditSummary, userProfile } from "../data/mockData";
-import { fetchProfile } from "../services/api";
+import { clearAuthSession, fetchProfile } from "../services/api";
 
 export function BrandMark() {
   return (
@@ -13,6 +13,7 @@ export function BrandMark() {
 
 export function ProtectedLayout() {
   const [profile, setProfile] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     let active = true;
@@ -35,6 +36,12 @@ export function ProtectedLayout() {
     };
   }, []);
 
+  function handleLogout(event) {
+    event.preventDefault();
+    clearAuthSession();
+    navigate("/login", { replace: true });
+  }
+
   const displayName = profile?.email || userProfile.name;
   const displayPlan = profile?.plan || userProfile.plan;
 
@@ -45,7 +52,7 @@ export function ProtectedLayout() {
         <nav className="side-nav" aria-label="Основная навигация">
           <NavLink to="/dashboard" className={({ isActive }) => (isActive ? "active" : "")}>Dashboard</NavLink>
           <NavLink to="/crm" className={({ isActive }) => (isActive ? "active" : "")}>CRM pipeline</NavLink>
-          <Link to="/login" onClick={() => window.localStorage.removeItem("ai-platform-auth")}>Выйти</Link>
+          <Link to="/login" onClick={handleLogout}>Выйти</Link>
         </nav>
         <CreditsMiniBlock credits={profile?.credits} />
       </aside>
