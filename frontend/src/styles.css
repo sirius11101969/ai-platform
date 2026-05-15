@@ -620,3 +620,17 @@ button { font: inherit; }
     max-width: 94%;
   }
 }
+
+.email-composer-section { border: 1px solid rgba(99, 102, 241, 0.18); }
+.email-composer { display: grid; gap: 12px; margin-top: 14px; }
+.email-composer-row { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 12px; }
+.email-attachment-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.file-upload-button { position: relative; overflow: hidden; cursor: pointer; }
+.file-upload-button input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.email-attachments-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.email-attachments-list span { border: 1px solid rgba(148, 163, 184, 0.24); border-radius: 999px; padding: 6px 10px; color: var(--muted); background: rgba(15, 23, 42, 0.34); }
+.email-history { display: grid; gap: 10px; margin-top: 16px; }
+.email-history h5 { margin: 0; color: var(--text); }
+.email-history article { display: grid; gap: 4px; padding: 12px; border: 1px solid rgba(148, 163, 184, 0.16); border-radius: 16px; background: rgba(15, 23, 42, 0.28); }
+.email-history article span, .email-history article small { color: var(--muted); }
+@media (max-width: 760px) { .email-composer-row { grid-template-columns: 1fr; } }

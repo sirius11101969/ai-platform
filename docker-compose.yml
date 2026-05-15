@@ -14,6 +14,17 @@ services:
       TELEGRAM_MANAGER_CHAT_ID: ${TELEGRAM_MANAGER_CHAT_ID:-}
       TELEGRAM_CRM_USER_EMAIL: ${TELEGRAM_CRM_USER_EMAIL:-}
       APP_BASE_URL: ${APP_BASE_URL:-https://www.as6.ru}
+      PUBLIC_API_URL: ${PUBLIC_API_URL:-https://www.as6.ru}
+      EMAIL_FROM: ${EMAIL_FROM:-}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      GMAIL_ACCESS_TOKEN: ${GMAIL_ACCESS_TOKEN:-}
+      GMAIL_FROM: ${GMAIL_FROM:-}
+      FILE_STORAGE_DIR: /app/storage/attachments
+    volumes:
+      - attachment_storage:/app/storage
     depends_on:
       - db
 
@@ -41,3 +52,4 @@ services:
 
 volumes:
   postgres_data:
+  attachment_storage:

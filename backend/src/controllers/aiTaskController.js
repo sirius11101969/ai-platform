@@ -1,4 +1,5 @@
 const aiTaskModel = require('../models/aiTaskModel')
+const aiToolsService = require('../services/aiToolsService')
 
 function scheduleTaskProcessing(taskId) {
   setImmediate(() => {
@@ -6,6 +7,21 @@ function scheduleTaskProcessing(taskId) {
       console.error('AI task processing failed', error)
     })
   })
+}
+
+
+
+async function listTools(_req, res) {
+  res.json({ tools: aiToolsService.AI_TOOLS })
+}
+
+async function executeTool(req, res, next) {
+  try {
+    const result = await aiToolsService.executeTool(req.user.id, req.body)
+    res.status(202).json(result)
+  } catch (error) {
+    next(error)
+  }
 }
 
 async function createTask(req, res, next) {
@@ -41,6 +57,8 @@ async function getTask(req, res, next) {
 
 module.exports = {
   createTask,
+  executeTool,
   getTask,
   listTasks,
+  listTools,
 }

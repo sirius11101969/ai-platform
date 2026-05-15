@@ -1,5 +1,6 @@
 const crmModel = require('../models/crmModel')
 const { sendTelegramMessageToLead } = require('../services/telegramService')
+const emailService = require('../services/emailService')
 
 
 async function listStages(req, res, next) {
@@ -66,6 +67,37 @@ async function addNote(req, res, next) {
 }
 
 
+
+
+async function listLeadEmails(req, res, next) {
+  try {
+    const emails = await emailService.listLeadEmails(req.user.id, req.params.id)
+    res.json({ emails })
+  } catch (error) {
+    next(error)
+  }
+}
+
+async function generateLeadEmail(req, res, next) {
+  try {
+    const lead = (await crmModel.listLeads(req.user.id)).find((item) => item.id === req.params.id)
+    if (!lead) return res.status(404).json({ error: 'Lead not found' })
+    const email = emailService.renderTemplate(req.body.template || 'follow_up', lead, req.body)
+    res.json({ email })
+  } catch (error) {
+    next(error)
+  }
+}
+
+async function sendLeadEmail(req, res, next) {
+  try {
+    const email = await emailService.enqueueEmail(req.user.id, { ...req.body, leadId: req.params.id })
+    res.status(202).json({ email })
+  } catch (error) {
+    next(error)
+  }
+}
+
 async function listTelegramMessages(req, res, next) {
   try {
     const messages = await crmModel.listTelegramMessages(req.user.id, req.params.id)
@@ -117,10 +149,13 @@ module.exports = {
   createFollowUp,
   createLead,
   deleteLead,
+  generateLeadEmail,
+  listLeadEmails,
   listLeads,
   listTelegramMessages,
   listStages,
   stats,
+  sendLeadEmail,
   sendTelegramReply,
   updateLead,
   updateStage,

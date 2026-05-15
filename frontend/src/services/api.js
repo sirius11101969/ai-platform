@@ -122,6 +122,12 @@ function translateApiError(message) {
     'Prompt with at least 3 characters is required': 'Промпт должен содержать минимум 3 символа',
     'Prompt must be 4000 characters or fewer': 'Промпт должен быть не длиннее 4000 символов',
     'Invalid task id': 'Некорректный идентификатор задачи',
+    'SMTP/Gmail credentials are not configured': 'SMTP/Gmail не настроен на сервере',
+    'Attachment not found': 'Вложение не найдено',
+    'Attachment is too large': 'Файл слишком большой',
+    'Attachment file and content are required': 'Выберите файл вложения',
+    'Email subject and body are required': 'Заполните тему и текст письма',
+    'Lead email is required': 'В карточке лида нет email',
   }
   if (exact[text]) return exact[text]
   if (text.startsWith('Status must be one of:')) return 'Статус должен быть одним из допустимых этапов CRM'
@@ -268,5 +274,34 @@ export function sendTelegramLeadMessage(leadId, message) {
   return request(`/crm/leads/${leadId}/telegram-messages`, {
     method: 'POST',
     body: JSON.stringify({ message }),
+  })
+}
+
+export function fetchEmailTemplates() {
+  return request('/email/templates')
+}
+
+export function uploadEmailAttachment(payload) {
+  return request('/email/attachments', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
+export function fetchLeadEmails(leadId) {
+  return request(`/crm/leads/${leadId}/emails`)
+}
+
+export function generateLeadEmail(leadId, payload) {
+  return request(`/crm/leads/${leadId}/emails/generate`, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+}
+
+export function sendLeadEmail(leadId, payload) {
+  return request(`/crm/leads/${leadId}/emails`, {
+    method: 'POST',
+    body: JSON.stringify(payload),
   })
 }
