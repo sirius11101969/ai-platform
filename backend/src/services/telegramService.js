@@ -21,30 +21,94 @@ function buildTelegramHandle(from = {}) {
 }
 
 
+const EMAIL_PATTERN = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i
+const MATERIAL_INTENT_RULES = [
+  { pattern: /(отправь|пришли|вышли|скинь|send)\s+[^.?!\n]*(презентац|presentation|презу)/i, template: 'demo_invitation', label: 'презентацию', attachment: 'presentation' },
+  { pattern: /(отправь|пришли|вышли|скинь|send)\s+[^.?!\n]*(скрин|screenshots?|screen)/i, template: 'materials_pack', label: 'скриншоты', attachment: 'screenshots' },
+  { pattern: /(пришли|отправь|вышли|скинь|send)\s+[^.?!\n]*(кп|коммерческ|предложен|proposal|quote)/i, template: 'commercial_proposal', label: 'коммерческое предложение', attachment: 'pdf' },
+  { pattern: /(отправь|пришли|вышли|скинь|send)\s+[^.?!\n]*(материал|materials?)/i, template: 'materials_pack', label: 'материалы', attachment: 'materials' },
+]
+
+function extractEmail(text) {
+  const match = String(text || '').match(EMAIL_PATTERN)
+  return match ? match[0].toLowerCase() : null
+}
+
 function detectEmailMaterialIntent(text) {
-  const normalized = String(text || '').toLowerCase()
-  if (/(скрин|screenshot|screen)/i.test(normalized)) return { template: 'follow_up', label: 'скриншоты' }
-  if (/(презентац|presentation|презу)/i.test(normalized)) return { template: 'demo_invitation', label: 'презентацию' }
-  if (/(коммерческ|кп|предложен|proposal|quote)/i.test(normalized)) return { template: 'commercial_proposal', label: 'коммерческое предложение' }
-  return null
+  const normalized = String(text || '')
+  const rule = MATERIAL_INTENT_RULES.find((item) => item.pattern.test(normalized))
+  if (!rule) return null
+  return { ...rule, email: extractEmail(normalized) }
+}
+
+function attachmentMatchesIntent(attachment, intent) {
+  const name = String(attachment.fileName || '').toLowerCase()
+  const mime = String(attachment.mimeType || '').toLowerCase()
+  if (intent.attachment === 'screenshots') return mime.startsWith('image/') || /(screen|скрин|screenshot)/i.test(name)
+  if (intent.attachment === 'pdf') return mime === 'application/pdf' || /\.pdf$/i.test(name)
+  if (intent.attachment === 'presentation') return /pdf|presentation|powerpoint|officedocument|image/.test(mime) || /(презентац|presentation|demo|\.pdf$|\.png$|\.jpe?g$|\.webp$)/i.test(name)
+  return mime === 'application/pdf' || mime.startsWith('image/') || /(материал|materials?|presentation|презентац|screen|скрин|\.pdf$|\.png$|\.jpe?g$|\.webp$)/i.test(name)
+}
+
+async function resolveIntentAttachmentIds(userId, leadId, intent) {
+  const attachments = await emailService.listAttachments(userId, leadId)
+  return attachments.filter((attachment) => attachmentMatchesIntent(attachment, intent)).slice(0, 6).map((attachment) => attachment.id)
+}
+
+async function persistLeadEmailFromMessage(userId, leadId, email) {
+  if (!email) return
+  await pool.query(
+    `UPDATE crm_leads
+        SET email = COALESCE(email, $3),
+            contact = COALESCE(contact, $3),
+            metadata = COALESCE(metadata, '{}'::jsonb) || jsonb_build_object('emailFromTelegram', $3),
+            updated_at = NOW()
+      WHERE user_id = $1 AND id = $2`,
+    [userId, leadId, email]
+  )
 }
 
 async function runTelegramEmailWorkflow({ userId, lead, incomingMessage }) {
   const intent = detectEmailMaterialIntent(incomingMessage)
   if (!intent) return null
-  const leadEmail = lead.email || lead.metadata?.email || null
-  if (!leadEmail) {
+  const recipient = intent.email || lead.email || lead.metadata?.email || lead.metadata?.emailFromTelegram || null
+  if (!recipient) {
     return {
+      intent,
+      handled: true,
+      success: false,
       requiresEmail: true,
-      message: `Клиент запросил ${intent.label}, но в карточке лида нет email. AI должен запросить email перед отправкой материалов.`,
+      reply: 'Пришлите, пожалуйста, email — сразу отправлю материалы после успешной отправки письма.',
     }
   }
-  return emailService.enqueueEmail(userId, {
-    leadId: lead.id,
-    to: leadEmail,
-    template: intent.template,
-    subject: `Материалы по AI‑платформе: ${intent.label}`,
-  })
+
+  try {
+    await persistLeadEmailFromMessage(userId, lead.id, intent.email)
+    const attachmentIds = await resolveIntentAttachmentIds(userId, lead.id, intent)
+    const email = await emailService.sendEmailNow(userId, {
+      leadId: lead.id,
+      to: recipient,
+      template: intent.template,
+      subject: `Материалы по AI‑платформе AS6: ${intent.label}`,
+      attachmentIds,
+    })
+    return {
+      intent,
+      handled: true,
+      success: true,
+      email,
+      reply: `Готово, отправил материалы на ${recipient}.`,
+    }
+  } catch (error) {
+    console.error('Telegram email action failed', { leadId: lead.id, recipient, error: error.message })
+    return {
+      intent,
+      handled: true,
+      success: false,
+      error: error.message,
+      reply: 'Пока не удалось отправить письмо.',
+    }
+  }
 }
 
 function extractTelegramMessage(update = {}) {
@@ -286,9 +350,20 @@ async function processTelegramUpdate(update) {
 
   const memory = await crmModel.getTelegramMemory(crmResult.userId, crmResult.lead.id, 10)
   const emailWorkflow = await runTelegramEmailWorkflow({ userId: crmResult.userId, lead: crmResult.lead, incomingMessage: telegram.text })
-  const generated = await generateTelegramSalesReply({ lead: crmResult.lead, incomingMessage: emailWorkflow?.requiresEmail ? `${telegram.text}
+  if (emailWorkflow?.handled) {
+    const telegramResponse = await sendTelegramMessage(telegram.chatId, emailWorkflow.reply)
+    await saveAiReply({
+      userId: crmResult.userId,
+      leadId: crmResult.lead.id,
+      reply: emailWorkflow.reply,
+      model: 'action-executor-email',
+      prompt: { action: 'email_materials', intent: emailWorkflow.intent, success: emailWorkflow.success, error: emailWorkflow.error || null },
+      telegramResponse,
+    })
+    return { skipped: false, leadId: crmResult.lead.id, isNew: crmResult.isNew, telegramResponse, emailWorkflow }
+  }
 
-Важно: запроси email клиента для отправки материалов.` : telegram.text, memory })
+  const generated = await generateTelegramSalesReply({ lead: crmResult.lead, incomingMessage: telegram.text, memory })
   const telegramResponse = await sendTelegramMessage(telegram.chatId, generated.message)
   await saveAiReply({ userId: crmResult.userId, leadId: crmResult.lead.id, reply: generated.message, model: generated.model, prompt: generated.prompt, telegramResponse })
 
@@ -296,6 +371,8 @@ async function processTelegramUpdate(update) {
 }
 
 module.exports = {
+  detectEmailMaterialIntent,
+  extractEmail,
   extractTelegramMessage,
   processTelegramUpdate,
   sendTelegramMessageToLead,

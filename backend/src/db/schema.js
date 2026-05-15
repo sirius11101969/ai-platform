@@ -243,9 +243,24 @@ async function migrate() {
       PRIMARY KEY(email_id, attachment_id)
     );
 
+    CREATE TABLE IF NOT EXISTS email_logs (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+      email_id UUID REFERENCES email_messages(id) ON DELETE SET NULL,
+      recipient TEXT NOT NULL,
+      subject TEXT NOT NULL,
+      status TEXT NOT NULL CHECK (status IN ('queued', 'sending', 'sent', 'failed')),
+      error TEXT,
+      lead_id UUID REFERENCES crm_leads(id) ON DELETE SET NULL,
+      metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
     CREATE INDEX IF NOT EXISTS idx_email_messages_queue ON email_messages(status, scheduled_at, next_retry_at);
     CREATE INDEX IF NOT EXISTS idx_email_messages_lead ON email_messages(user_id, lead_id, created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_email_attachments_user ON email_attachments(user_id, lead_id, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_email_logs_lead ON email_logs(lead_id, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_email_logs_user ON email_logs(user_id, created_at DESC);
 
     CREATE TABLE IF NOT EXISTS telegram_messages (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
