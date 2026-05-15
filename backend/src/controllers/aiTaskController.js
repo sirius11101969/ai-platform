@@ -12,7 +12,7 @@ async function createTask(req, res, next) {
   try {
     const { task, remainingCredits } = await aiTaskModel.createTask(req.user.id, req.body)
     scheduleTaskProcessing(task.id)
-    res.status(201).json({ task, remainingCredits, costs: aiTaskModel.TASK_COSTS })
+    res.status(201).json({ task, remainingCredits, costs: aiTaskModel.TASK_COSTS, statuses: aiTaskModel.TASK_STATUSES })
   } catch (error) {
     next(error)
   }
@@ -21,7 +21,7 @@ async function createTask(req, res, next) {
 async function listTasks(req, res, next) {
   try {
     const tasks = await aiTaskModel.listTasks(req.user.id)
-    res.json({ tasks, costs: aiTaskModel.TASK_COSTS })
+    res.json({ tasks, costs: aiTaskModel.TASK_COSTS, statuses: aiTaskModel.TASK_STATUSES })
   } catch (error) {
     next(error)
   }

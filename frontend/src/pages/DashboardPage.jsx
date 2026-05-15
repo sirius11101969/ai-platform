@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Panel, PageHeading, StatCard } from "../components/AppShell";
-import { createAiTask, fetchAiTask, fetchAiTasks, fetchProfile } from "../services/api";
+import { createAiTask, fetchAiTask, fetchAiTasks, fetchProfile, updateStoredUser } from "../services/api";
 import { orders, quickActions, userProfile } from "../data/mockData";
 
 const taskTypeLabels = {
@@ -109,10 +109,15 @@ export default function DashboardPage() {
       const response = await createAiTask(taskForm);
       setTasks((currentTasks) => [response.task, ...currentTasks]);
       setProfile((currentProfile) => currentProfile ? { ...currentProfile, credits: response.remainingCredits } : currentProfile);
+      updateStoredUser({ credits: response.remainingCredits });
       setTaskForm(initialTaskForm);
       setMessage("AI-задача создана, credits списаны, обработка запущена.");
     } catch (requestError) {
-      setError(requestError.message || "Не удалось создать AI-задачу");
+      if (requestError.status === 402) {
+        setError(`${requestError.message}. Пополните баланс или выберите задачу дешевле.`);
+      } else {
+        setError(requestError.message || "Не удалось создать AI-задачу");
+      }
     } finally {
       setSaving(false);
     }

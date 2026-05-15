@@ -21,6 +21,18 @@ export function saveAuthSession(session) {
   window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session))
 }
 
+export function updateStoredUser(userPatch) {
+  const currentSession = getStoredAuth()
+  if (!currentSession?.user) return
+
+  const nextSession = {
+    ...currentSession,
+    user: { ...currentSession.user, ...userPatch },
+  }
+  saveAuthSession(nextSession)
+  window.dispatchEvent(new CustomEvent('ai-platform-profile-updated', { detail: nextSession.user }))
+}
+
 export function clearAuthSession() {
   window.localStorage.removeItem(AUTH_STORAGE_KEY)
 }
@@ -39,7 +51,10 @@ async function request(path, options = {}) {
   const data = await response.json().catch(() => ({}))
 
   if (!response.ok) {
-    throw new Error(data.error || 'API request failed')
+    const error = new Error(data.error || 'API request failed')
+    error.status = response.status
+    error.payload = data
+    throw error
   }
 
   return data
