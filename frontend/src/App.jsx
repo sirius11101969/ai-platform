@@ -6,9 +6,10 @@ import LandingPage from "./pages/LandingPage";
 import { LoginPage, SignupPage } from "./pages/AuthPages";
 import DashboardPage from "./pages/DashboardPage";
 import CRMPage from "./pages/CRMPage";
+import { getAuthToken } from "./services/api";
 
 function RequireAuth() {
-  const isAuthenticated = Boolean(window.localStorage.getItem("ai-platform-auth"));
+  const isAuthenticated = Boolean(getAuthToken());
   return isAuthenticated ? <ProtectedLayout /> : <Navigate to="/login" replace />;
 }
 

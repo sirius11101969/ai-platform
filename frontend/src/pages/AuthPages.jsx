@@ -1,16 +1,33 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { BrandMark } from "../components/AppShell";
+import { login, saveAuthSession, signup } from "../services/api";
 
 function AuthCard({ mode }) {
   const isSignup = mode === "signup";
   const navigate = useNavigate();
   const [email, setEmail] = useState("founder@company.ai");
+  const [password, setPassword] = useState("mock-password");
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    window.localStorage.setItem("ai-platform-auth", JSON.stringify({ email, mock: true }));
-    navigate("/dashboard");
+    setError("");
+    setIsSubmitting(true);
+
+    try {
+      const session = isSignup
+        ? await signup({ email, password })
+        : await login({ email, password });
+
+      saveAuthSession(session);
+      navigate("/dashboard");
+    } catch (apiError) {
+      setError(apiError.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -19,7 +36,7 @@ function AuthCard({ mode }) {
       <div className="aurora aurora-two" />
       <section className="auth-copy">
         <BrandMark />
-        <span className="hero-badge">Mock auth v1 · готово к backend JWT</span>
+        <span className="hero-badge">JWT auth v1 · PostgreSQL backend</span>
         <h1>{isSignup ? "Создайте AI‑workspace для продаж" : "Вернитесь в AI‑workspace"}</h1>
         <p>Единый доступ к dashboard, credits, AI-задачам и CRM pipeline в премиальном dark SaaS интерфейсе.</p>
         <div className="auth-benefits">
@@ -43,9 +60,12 @@ function AuthCard({ mode }) {
         </label>
         <label>
           <span>Пароль</span>
-          <input type="password" defaultValue="mock-password" minLength="8" required />
+          <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} minLength="8" required />
         </label>
-        <button className="btn primary" type="submit">{isSignup ? "Создать workspace" : "Войти"}</button>
+        {error && <p className="auth-error" role="alert">{error}</p>}
+        <button className="btn primary" type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Подключаемся..." : isSignup ? "Создать workspace" : "Войти"}
+        </button>
         <p className="auth-switch">
           {isSignup ? "Уже есть аккаунт?" : "Нет аккаунта?"} <Link to={isSignup ? "/login" : "/signup"}>{isSignup ? "Войти" : "Зарегистрироваться"}</Link>
         </p>

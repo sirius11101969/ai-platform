@@ -1,55 +1,102 @@
 const express = require('express')
 const cors = require('cors')
-const { Pool } = require('pg')
 const axios = require('axios')
+const pool = require('./db/pool')
+const { migrate } = require('./db/schema')
+const authRoutes = require('./routes/authRoutes')
+const dashboardRoutes = require('./routes/dashboardRoutes')
+const { requireAuth } = require('./middleware/authMiddleware')
+const { errorHandler } = require('./middleware/errorHandler')
 
 const app = express()
+const port = Number(process.env.PORT || 3001)
 
-const db = new Pool({
-  connectionString: process.env.DATABASE_URL,
-})
-
-app.use(cors())
+app.use(cors({ origin: process.env.CORS_ORIGIN || true }))
 app.use(express.json())
 
 app.get('/health', (_, res) => {
-  res.send('OK')
+  res.json({ status: 'OK' })
 })
 
-app.post('/api/lead', async (req, res) => {
-  const { name, contact } = req.body
+app.use('/api/auth', authRoutes)
+app.use('/api/dashboard', dashboardRoutes)
 
-  await db.query(
-    'INSERT INTO leads(name, contact) VALUES($1, $2)',
-    [name, contact]
-  )
+app.post('/api/lead', requireAuth, async (req, res, next) => {
+  try {
+    const { name, contact, source, metadata } = req.body
 
-  if (process.env.BITRIX_WEBHOOK) {
-    await axios.post(`${process.env.BITRIX_WEBHOOK}/crm.lead.add.json`, {
-      fields: {
-        TITLE: `Новый лид ${name}`,
-        NAME: name,
-        PHONE: [{ VALUE: contact, VALUE_TYPE: 'WORK' }]
-      }
-    })
+    if (!name || !contact) {
+      return res.status(400).json({ error: 'Name and contact are required' })
+    }
+
+    const result = await pool.query(
+      `INSERT INTO crm_leads(user_id, name, contact, source, metadata)
+       VALUES($1, $2, $3, $4, $5)
+       RETURNING id, name, contact, stage, source, metadata, created_at`,
+      [req.user.id, name, contact, source || 'website', metadata || {}]
+    )
+
+    if (process.env.BITRIX_WEBHOOK) {
+      await axios.post(`${process.env.BITRIX_WEBHOOK}/crm.lead.add.json`, {
+        fields: {
+          TITLE: `Новый лид ${name}`,
+          NAME: name,
+          PHONE: [{ VALUE: contact, VALUE_TYPE: 'WORK' }]
+        }
+      })
+    }
+
+    res.status(201).json({ success: true, lead: result.rows[0] })
+  } catch (error) {
+    next(error)
+  }
+})
+
+app.post('/api/subscribe', requireAuth, async (req, res, next) => {
+  try {
+    const { plan } = req.body
+
+    if (!plan) {
+      return res.status(400).json({ error: 'Plan is required' })
+    }
+
+    const paymentUrl = `https://yookassa.ru/pay/${req.user.id}-${plan}`
+
+    const result = await pool.query(
+      `INSERT INTO subscriptions(user_id, plan, payment_url)
+       VALUES($1, $2, $3)
+       RETURNING id, plan, status, payment_url, created_at`,
+      [req.user.id, plan, paymentUrl]
+    )
+
+    res.status(201).json({ success: true, subscription: result.rows[0], paymentUrl })
+  } catch (error) {
+    next(error)
+  }
+})
+
+app.use(errorHandler)
+
+async function start() {
+  if (!process.env.JWT_SECRET) {
+    process.env.JWT_SECRET = 'development-only-change-me'
+    console.warn('JWT_SECRET is not set; using development fallback secret')
   }
 
-  res.json({ success: true })
-})
+  if (process.env.RUN_MIGRATIONS !== 'false') {
+    await migrate()
+  }
 
-app.post('/api/subscribe', async (req, res) => {
-  const { userId, plan } = req.body
+  app.listen(port, () => {
+    console.log(`Backend started on port ${port}`)
+  })
+}
 
-  const paymentUrl = `https://yookassa.ru/pay/${userId}-${plan}`
+if (require.main === module) {
+  start().catch((error) => {
+    console.error('Failed to start backend', error)
+    process.exit(1)
+  })
+}
 
-  await db.query(
-    'INSERT INTO subscriptions(user_id, plan, payment_url) VALUES($1, $2, $3)',
-    [userId, plan, paymentUrl]
-  )
-
-  res.json({ success: true, paymentUrl })
-})
-
-app.listen(3001, () => {
-  console.log('Backend started on port 3001')
-})
+module.exports = { app, start }

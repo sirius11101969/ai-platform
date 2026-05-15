@@ -5,6 +5,8 @@ services:
     environment:
       DATABASE_URL: postgres://postgres:password@db:5432/aibot
       BITRIX_WEBHOOK: ${BITRIX_WEBHOOK}
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost}
     depends_on:
       - db
 
