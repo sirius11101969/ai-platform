@@ -383,6 +383,63 @@ async function migrate() {
 
 
 
+
+
+    CREATE TABLE IF NOT EXISTS lead_ai_scores (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+      lead_id UUID NOT NULL REFERENCES crm_leads(id) ON DELETE CASCADE,
+      score INTEGER NOT NULL DEFAULT 0 CHECK (score >= 0 AND score <= 100),
+      temperature TEXT NOT NULL DEFAULT 'cold',
+      deal_probability INTEGER NOT NULL DEFAULT 0 CHECK (deal_probability >= 0 AND deal_probability <= 100),
+      urgency_level TEXT NOT NULL DEFAULT 'low',
+      engagement_level TEXT NOT NULL DEFAULT 'cold',
+      ai_summary TEXT NOT NULL DEFAULT '',
+      next_best_action TEXT NOT NULL DEFAULT '',
+      risk_level TEXT NOT NULL DEFAULT 'medium',
+      ideal_contact_timing TEXT,
+      objections_detected JSONB NOT NULL DEFAULT '[]'::jsonb,
+      recommended_cta TEXT,
+      recommended_channel TEXT,
+      generated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS ai_followup_sequences (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+      lead_id UUID NOT NULL REFERENCES crm_leads(id) ON DELETE CASCADE,
+      status TEXT NOT NULL DEFAULT 'draft',
+      followup_type TEXT NOT NULL DEFAULT 'telegram',
+      generated_message TEXT NOT NULL,
+      recommended_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      scheduled_for TIMESTAMPTZ,
+      approved_by_user UUID REFERENCES users(id) ON DELETE SET NULL,
+      sent_at TIMESTAMPTZ,
+      metadata JSONB NOT NULL DEFAULT '{}'::jsonb
+    );
+
+    DO $$
+    BEGIN
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'lead_ai_scores_temperature_valid') THEN
+        ALTER TABLE lead_ai_scores ADD CONSTRAINT lead_ai_scores_temperature_valid CHECK (temperature IN ('cold', 'warm', 'hot'));
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'lead_ai_scores_urgency_valid') THEN
+        ALTER TABLE lead_ai_scores ADD CONSTRAINT lead_ai_scores_urgency_valid CHECK (urgency_level IN ('low', 'medium', 'high'));
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'lead_ai_scores_engagement_valid') THEN
+        ALTER TABLE lead_ai_scores ADD CONSTRAINT lead_ai_scores_engagement_valid CHECK (engagement_level IN ('cold', 'warm', 'hot'));
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'lead_ai_scores_risk_valid') THEN
+        ALTER TABLE lead_ai_scores ADD CONSTRAINT lead_ai_scores_risk_valid CHECK (risk_level IN ('low', 'medium', 'high'));
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_followup_sequences_status_valid') THEN
+        ALTER TABLE ai_followup_sequences ADD CONSTRAINT ai_followup_sequences_status_valid CHECK (status IN ('draft', 'queued', 'approved', 'sent', 'skipped'));
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_followup_sequences_type_valid') THEN
+        ALTER TABLE ai_followup_sequences ADD CONSTRAINT ai_followup_sequences_type_valid CHECK (followup_type IN ('telegram', 'email', 'reminder_task'));
+      END IF;
+    END $$;
+
     CREATE TABLE IF NOT EXISTS ai_agents (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
@@ -483,6 +540,8 @@ async function migrate() {
     CREATE INDEX IF NOT EXISTS idx_crm_followups_lead_id ON crm_followups(lead_id);
     CREATE INDEX IF NOT EXISTS idx_crm_activity_user_id ON crm_activity(user_id);
     CREATE INDEX IF NOT EXISTS idx_crm_activity_lead_id ON crm_activity(lead_id);
+    CREATE INDEX IF NOT EXISTS idx_lead_ai_scores_latest ON lead_ai_scores(workspace_id, lead_id, generated_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_ai_followup_sequences_pending ON ai_followup_sequences(workspace_id, status, scheduled_for DESC);
     CREATE INDEX IF NOT EXISTS idx_ai_agents_workspace_type ON ai_agents(workspace_id, type);
     CREATE INDEX IF NOT EXISTS idx_ai_agent_actions_queue ON ai_agent_actions(status, priority DESC, next_retry_at, created_at);
     CREATE INDEX IF NOT EXISTS idx_ai_agent_actions_lead ON ai_agent_actions(workspace_id, lead_id, created_at DESC);

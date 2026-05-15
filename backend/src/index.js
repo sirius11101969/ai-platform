@@ -13,6 +13,7 @@ const emailRoutes = require('./routes/emailRoutes')
 const workspaceRoutes = require('./routes/workspaceRoutes')
 const { markOpened } = require('./controllers/emailController')
 const { startEmailQueueWorker } = require('./services/emailService')
+const { startLeadAnalysisWorker } = require('./services/leadAnalysisWorker')
 const { requireAuth } = require('./middleware/authMiddleware')
 const { requireWorkspace } = require('./middleware/workspaceMiddleware')
 const { errorHandler } = require('./middleware/errorHandler')
@@ -107,6 +108,7 @@ async function start() {
   }
 
   startEmailQueueWorker()
+  startLeadAnalysisWorker()
 
   app.listen(port, () => {
     console.log(`Backend started on port ${port}`)
