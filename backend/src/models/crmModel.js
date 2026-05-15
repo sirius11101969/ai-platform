@@ -529,6 +529,12 @@ async function analyzeLeadIntelligence(userId, workspaceId, leadId, aiOutput = {
     let followUpSequence = null
     if (createFollowUp && (intelligence.urgencyLevel !== 'low' || intelligence.score >= 40)) {
       followUpSequence = await createAiFollowUpSequence(client, userId, workspaceId, leadId, context, intelligence)
+      const channel = intelligence.recommendedChannel === 'email' ? 'email' : 'telegram'
+      await client.query(
+        `INSERT INTO ai_action_queue(workspace_id, lead_id, user_id, action_type, channel, status, title, generated_text, payload)
+         VALUES($1, $2, $3, $4, $5, 'pending_approval', $6, $7, $8)`,
+        [workspaceId, leadId, userId, channel === 'email' ? 'email_follow_up' : 'telegram_follow_up', channel, 'AI follow-up ожидает одобрения', followUpSequence.generatedMessage, { aiScore: intelligence.score, dealProbability: intelligence.dealProbability, followUpSequenceId: followUpSequence.id }]
+      )
     }
     await client.query('COMMIT')
     return { score, followUpSequence, intelligence }
@@ -554,7 +560,7 @@ async function analyzeWorkspaceLeads(userId, workspaceId, limit = 25) {
 }
 
 async function getStats(userId, workspaceId) {
-  const [summaryResult, statusResult, activityResult, aiMetricsResult, aiRevenueResult] = await Promise.all([
+  const [summaryResult, statusResult, activityResult, aiMetricsResult, aiRevenueResult, aiExecutionResult] = await Promise.all([
     pool.query(
       `SELECT COUNT(*)::int AS total_leads,
               COALESCE(SUM(value) FILTER (WHERE status NOT IN ('won','lost')), 0)::numeric AS pipeline_value,
@@ -597,6 +603,17 @@ async function getStats(userId, workspaceId) {
           JOIN crm_leads l ON l.id = latest.lead_id`,
       [workspaceId]
     ),
+    pool.query(
+      `SELECT COUNT(*) FILTER (WHERE status = 'pending_approval')::int AS pending_approval,
+              COUNT(*) FILTER (WHERE status = 'sent' AND sent_at::date = CURRENT_DATE)::int AS sent_today,
+              COUNT(*) FILTER (WHERE status = 'failed')::int AS failed,
+              COUNT(*) FILTER (WHERE action_type IN ('telegram_follow_up','email_follow_up') AND status IN ('draft','pending_approval','approved'))::int AS followups_waiting,
+              COUNT(*) FILTER (WHERE status = 'sent')::int AS sent_total,
+              COUNT(*) FILTER (WHERE status IN ('sent','failed'))::int AS finished_total
+         FROM ai_action_queue aq
+        WHERE aq.workspace_id = $1 AND EXISTS (SELECT 1 FROM crm_leads l WHERE l.id = aq.lead_id AND l.user_id = $2)`,
+      [workspaceId, userId]
+    ),
   ])
   const byStatus = CRM_STATUSES.reduce((acc, status) => ({ ...acc, [status]: { count: 0, value: 0 } }), {})
   for (const row of statusResult.rows) byStatus[row.status] = { count: row.count, value: Number(row.value || 0) }
@@ -608,6 +625,8 @@ async function getStats(userId, workspaceId) {
   const aiTotal = Number(aiMetrics.total_actions || 0)
   const aiCompleted = Number(aiMetrics.completed_actions || 0)
   const aiRevenue = aiRevenueResult.rows[0] || {}
+  const aiExecution = aiExecutionResult.rows[0] || {}
+  const aiExecutionFinished = Number(aiExecution.finished_total || 0)
   return {
     totalLeads: total,
     pipelineValue: Number(summary.pipeline_value || 0),
@@ -628,6 +647,11 @@ async function getStats(userId, workspaceId) {
       followUpsPending: Number(aiRevenue.followups_pending || 0),
       averageLeadScore: Math.round(Number(aiRevenue.average_score || 0)),
       conversionForecast: Math.round(Number(aiRevenue.conversion_forecast || 0)),
+      pendingApproval: Number(aiExecution.pending_approval || 0),
+      sentToday: Number(aiExecution.sent_today || 0),
+      failedActions: Number(aiExecution.failed || 0),
+      followUpsWaiting: Number(aiExecution.followups_waiting || 0),
+      executionSuccessRate: aiExecutionFinished ? Math.round((Number(aiExecution.sent_total || 0) / aiExecutionFinished) * 100) : 0,
     },
     byStatus,
     activity: activityResult.rows.map(normalizeActivity),

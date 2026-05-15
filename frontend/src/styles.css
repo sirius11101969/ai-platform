@@ -988,3 +988,29 @@ button { font: inherit; }
   .ai-action-center-buttons,
   .ai-probability-head { flex-direction: column; align-items: stretch; }
 }
+
+.execution-center-card {
+  border: 1px solid rgba(125, 92, 255, 0.35);
+  background: linear-gradient(145deg, rgba(20, 22, 45, 0.88), rgba(16, 18, 34, 0.72));
+  box-shadow: 0 24px 80px rgba(94, 92, 255, 0.18), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+.execution-head { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; }
+.execution-head p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+.ai-glow-badge { padding: 7px 10px; border-radius: 999px; color: #dcd7ff; background: rgba(125, 92, 255, 0.16); border: 1px solid rgba(158, 137, 255, 0.38); box-shadow: 0 0 28px rgba(125, 92, 255, 0.38); font-size: 11px; letter-spacing: .08em; }
+.execution-materials { margin-top: 14px; padding: 12px; border-radius: 18px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); display: grid; gap: 10px; }
+.execution-materials > div { display: flex; gap: 8px; flex-wrap: wrap; }
+.material-ready, .material-missing { padding: 6px 9px; border-radius: 999px; font-size: 12px; }
+.material-ready { color: #9ff7c8; background: rgba(36, 214, 132, .12); border: 1px solid rgba(36, 214, 132, .25); }
+.material-missing { color: #ffd1d1; background: rgba(255, 92, 122, .12); border: 1px solid rgba(255, 92, 122, .25); }
+.execution-action-list { margin-top: 14px; display: grid; gap: 10px; }
+.execution-action { padding: 13px; border-radius: 18px; background: rgba(8, 10, 24, .48); border: 1px solid rgba(255,255,255,.08); }
+.execution-action.sent { border-color: rgba(36, 214, 132, .35); }
+.execution-action.failed { border-color: rgba(255, 92, 122, .4); }
+.execution-action > div:first-child { display: flex; justify-content: space-between; gap: 12px; }
+.execution-action span, .execution-action small { color: var(--muted); font-size: 12px; }
+.execution-action p { margin: 10px 0; white-space: pre-wrap; }
+.execution-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+.compact { padding: 8px 11px; min-height: auto; }
+.attachment-history-row { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.08); display: grid; gap: 4px; }
+.attachment-history-row small { color: var(--muted); }
+.timeline-memory-feed { max-height: 520px; overflow: auto; }
