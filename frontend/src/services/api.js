@@ -158,6 +158,7 @@ function translateApiError(message) {
     'Invalid AI action status': 'Недопустимый статус AI действия',
     'Telegram bot token is not configured': 'Telegram Bot API не настроен на сервере',
     'Lead has no Telegram chat id': 'У лида нет Telegram chat id',
+    'Демо-воронка уже создана.': 'Демо-воронка уже создана.',
   }
   if (exact[text]) return exact[text]
   if (text.startsWith('Status must be one of:')) return 'Статус должен быть одним из допустимых этапов CRM'
@@ -293,6 +294,10 @@ export function addCrmLeadNote(id, body) {
 
 export function fetchCrmStats() {
   return request('/crm/stats')
+}
+
+export function seedDemoSalesPipeline() {
+  return request('/demo/seed-sales-pipeline', { method: 'POST' })
 }
 
 export function fetchAiTasks() {

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Panel, PageHeading, StatCard } from "../components/AppShell";
-import { fetchAiCommandCenter, runAiWorker, updateAiWorker } from "../services/api";
+import { fetchAiCommandCenter, runAiWorker, seedDemoSalesPipeline, updateAiWorker } from "../services/api";
 
 const typeLabels = {
   ai_sdr_agent: "AI SDR Agent",
@@ -53,6 +53,7 @@ export default function AiWorkersPage() {
   const [commandCenter, setCommandCenter] = useState(null);
   const [loading, setLoading] = useState(true);
   const [busyWorker, setBusyWorker] = useState("");
+  const [demoBusy, setDemoBusy] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
@@ -72,6 +73,22 @@ export default function AiWorkersPage() {
   useEffect(() => {
     loadCommandCenter();
   }, []);
+
+
+  async function handleSeedDemoPipeline() {
+    setDemoBusy(true);
+    setError("");
+    setMessage("");
+    try {
+      const response = await seedDemoSalesPipeline();
+      setMessage(response.alreadyExists ? "Демо-воронка уже создана." : `Демо-воронка создана: добавлено ${response.created || 0} лидов с историей и AI scoring.`);
+      await loadCommandCenter({ silent: true });
+    } catch (requestError) {
+      setError(requestError.message || "Не удалось создать демо-воронку");
+    } finally {
+      setDemoBusy(false);
+    }
+  }
 
   async function handleRun(worker) {
     setBusyWorker(worker.id);
@@ -122,6 +139,19 @@ export default function AiWorkersPage() {
 
       {error && <p className="auth-error dashboard-alert">{error}</p>}
       {message && <p className="success-alert dashboard-alert">{message}</p>}
+
+
+      <Panel className="demo-pipeline-panel">
+        <div className="demo-pipeline-copy">
+          <span className="eyebrow">Безопасный демо-режим</span>
+          <h3>Создать демо-воронку для AI анализа</h3>
+          <p>Демо-данные будут добавлены только в текущий workspace.</p>
+          <small>Будут созданы 5 реалистичных CRM лидов с заметками, timeline, Telegram, email-событиями и AI scoring. Повторный запуск не дублирует данные.</small>
+        </div>
+        <button className="btn primary compact demo-pipeline-button" type="button" onClick={handleSeedDemoPipeline} disabled={demoBusy}>
+          {demoBusy ? "Создаём демо-воронку…" : "Создать демо-воронку"}
+        </button>
+      </Panel>
 
       <section className="dashboard-stats ai-workers-stats">
         <StatCard label="Активные AI сотрудники" value={loading ? "…" : `${metrics.activeWorkers || 0}/${metrics.totalWorkers || 0}`} hint="Видимые роли AI workforce" />
