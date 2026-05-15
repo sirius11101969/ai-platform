@@ -1,0 +1,843 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AS6 AI CRM Platform · Premium SaaS Deck</title>
+  <style>
+    :root {
+      --bg: #050713;
+      --panel: rgba(255, 255, 255, 0.08);
+      --panel-strong: rgba(255, 255, 255, 0.13);
+      --line: rgba(255, 255, 255, 0.16);
+      --text: #f8fbff;
+      --muted: rgba(226, 235, 255, 0.72);
+      --dim: rgba(226, 235, 255, 0.48);
+      --cyan: #2ee8ff;
+      --violet: #8d5cff;
+      --pink: #ff4ecd;
+      --green: #49f7a6;
+      --amber: #ffd166;
+      --shadow: 0 32px 120px rgba(0, 0, 0, 0.48);
+      --radius: 32px;
+      --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      scroll-snap-type: y mandatory;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(141, 92, 255, 0.30), transparent 34%),
+        radial-gradient(circle at 84% 20%, rgba(46, 232, 255, 0.22), transparent 28%),
+        radial-gradient(circle at 54% 92%, rgba(255, 78, 205, 0.18), transparent 30%),
+        linear-gradient(135deg, #050713 0%, #080b1d 48%, #060817 100%);
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; }
+
+    .deck {
+      width: 100%;
+    }
+
+    .slide {
+      position: relative;
+      min-height: 100vh;
+      width: 100%;
+      display: grid;
+      place-items: center;
+      padding: 34px;
+      scroll-snap-align: start;
+      overflow: hidden;
+      isolation: isolate;
+      page-break-after: always;
+    }
+
+    .slide::before {
+      content: "";
+      position: absolute;
+      inset: 1.4rem;
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 34px;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .slide::after {
+      content: "";
+      position: absolute;
+      width: 580px;
+      height: 580px;
+      border-radius: 999px;
+      background: conic-gradient(from 120deg, rgba(46, 232, 255, 0.22), rgba(141, 92, 255, 0.28), rgba(255, 78, 205, 0.20), rgba(46, 232, 255, 0.22));
+      filter: blur(74px);
+      opacity: 0.70;
+      right: -230px;
+      bottom: -260px;
+      z-index: -3;
+    }
+
+    .canvas {
+      position: relative;
+      width: min(100%, 1510px);
+      aspect-ratio: 16 / 9;
+      max-height: calc(100vh - 68px);
+      border-radius: 42px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.045)),
+        radial-gradient(circle at 8% 8%, rgba(141, 92, 255, 0.25), transparent 34%),
+        radial-gradient(circle at 88% 12%, rgba(46, 232, 255, 0.19), transparent 30%),
+        rgba(6, 8, 22, 0.74);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      padding: 64px;
+      display: flex;
+      flex-direction: column;
+      backdrop-filter: blur(28px);
+    }
+
+    .canvas.compact { padding: 56px; }
+
+    .noise {
+      position: absolute;
+      inset: 0;
+      opacity: 0.17;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.032) 1px, transparent 1px);
+      background-size: 46px 46px;
+      mask-image: radial-gradient(circle at center, #000, transparent 85%);
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(20px);
+      opacity: 0.8;
+      pointer-events: none;
+    }
+
+    .orb.cyan { background: rgba(46, 232, 255, 0.30); width: 170px; height: 170px; top: 80px; right: 160px; }
+    .orb.violet { background: rgba(141, 92, 255, 0.36); width: 220px; height: 220px; left: -70px; bottom: 100px; }
+    .orb.pink { background: rgba(255, 78, 205, 0.24); width: 180px; height: 180px; right: 32%; bottom: -80px; }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      width: fit-content;
+      padding: 10px 16px;
+      border-radius: 999px;
+      color: var(--cyan);
+      border: 1px solid rgba(46, 232, 255, 0.26);
+      background: rgba(46, 232, 255, 0.08);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+
+    .kicker::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 20px var(--green);
+    }
+
+    h1, h2, h3, p { margin: 0; }
+
+    h1 {
+      font-size: clamp(70px, 7vw, 118px);
+      line-height: 0.93;
+      letter-spacing: -0.075em;
+      max-width: 1060px;
+    }
+
+    h2 {
+      font-size: clamp(48px, 5.2vw, 82px);
+      line-height: 0.97;
+      letter-spacing: -0.06em;
+      max-width: 1040px;
+    }
+
+    h3 {
+      font-size: 28px;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+
+    .gradient-text {
+      color: transparent;
+      background: linear-gradient(110deg, #fff 5%, var(--cyan) 36%, var(--violet) 66%, var(--pink) 92%);
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+
+    .lead {
+      max-width: 820px;
+      color: var(--muted);
+      font-size: 25px;
+      line-height: 1.35;
+      letter-spacing: -0.02em;
+    }
+
+    .muted { color: var(--muted); }
+    .dim { color: var(--dim); }
+    .accent-cyan { color: var(--cyan); }
+    .accent-violet { color: var(--violet); }
+    .accent-pink { color: var(--pink); }
+    .accent-green { color: var(--green); }
+    .accent-amber { color: var(--amber); }
+
+    .topbar, .footerbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      color: var(--dim);
+      font-size: 14px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 800;
+      z-index: 2;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: #fff;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 13px;
+      background: linear-gradient(135deg, var(--cyan), var(--violet) 52%, var(--pink));
+      box-shadow: 0 0 38px rgba(46, 232, 255, 0.32);
+    }
+
+    .footerbar { margin-top: auto; }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      flex: 1;
+      display: grid;
+      align-items: center;
+      gap: 36px;
+    }
+
+    .split {
+      grid-template-columns: 1.02fr 0.98fr;
+      gap: 46px;
+    }
+
+    .split-wide {
+      grid-template-columns: 1.18fr 0.82fr;
+      gap: 42px;
+    }
+
+    .stack { display: flex; flex-direction: column; gap: 26px; }
+    .tight { gap: 18px; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 12px; }
+
+    .chip {
+      padding: 11px 15px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .chip.hot {
+      border-color: rgba(46, 232, 255, 0.40);
+      color: #fff;
+      background: linear-gradient(135deg, rgba(46, 232, 255, 0.18), rgba(141, 92, 255, 0.15));
+    }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+    .card {
+      position: relative;
+      padding: 24px;
+      border-radius: 26px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: 0 18px 80px rgba(0, 0, 0, 0.22);
+      backdrop-filter: blur(20px);
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(255,255,255,0.12), transparent 26%, transparent 70%, rgba(46,232,255,0.08));
+      opacity: 0.8;
+      pointer-events: none;
+    }
+
+    .card > * { position: relative; z-index: 1; }
+
+    .card strong {
+      display: block;
+      font-size: 22px;
+      letter-spacing: -0.03em;
+      margin-bottom: 8px;
+    }
+
+    .card p, .card li {
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.42;
+    }
+
+    .metric {
+      padding: 24px;
+      border-radius: 25px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .metric b {
+      display: block;
+      font-size: 44px;
+      line-height: 1;
+      letter-spacing: -0.06em;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .metric span { color: var(--muted); font-weight: 700; }
+
+    .bullets {
+      display: grid;
+      gap: 13px;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    .bullets li {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      color: var(--muted);
+      font-size: 22px;
+      line-height: 1.32;
+      letter-spacing: -0.02em;
+    }
+
+    .bullets li::before {
+      content: "";
+      width: 11px;
+      height: 11px;
+      flex: 0 0 11px;
+      margin-top: 9px;
+      border-radius: 999px;
+      background: var(--cyan);
+      box-shadow: 0 0 20px rgba(46,232,255,0.9);
+    }
+
+    .device {
+      border-radius: 32px;
+      padding: 16px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.18), rgba(255,255,255,0.04));
+      border: 1px solid rgba(255,255,255,0.18);
+      box-shadow: 0 40px 100px rgba(0,0,0,0.34);
+    }
+
+    .screen {
+      min-height: 450px;
+      border-radius: 24px;
+      overflow: hidden;
+      background: #080b1a;
+      border: 1px solid rgba(255,255,255,0.10);
+    }
+
+    .screen-head {
+      height: 52px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.09);
+      background: rgba(255,255,255,0.04);
+      color: var(--dim);
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .dot { width: 11px; height: 11px; border-radius: 999px; background: #ff5f57; }
+    .dot:nth-child(2) { background: #ffbd2e; }
+    .dot:nth-child(3) { background: #28c840; margin-right: 10px; }
+
+    .mock-body { padding: 20px; }
+
+    .hero-mock {
+      height: 460px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 18px;
+    }
+
+    .bars { display: flex; align-items: end; gap: 8px; height: 134px; padding-top: 18px; }
+    .bars i { flex: 1; border-radius: 999px 999px 6px 6px; background: linear-gradient(180deg, var(--cyan), var(--violet)); box-shadow: 0 0 22px rgba(46,232,255,0.18); }
+
+    .feed { display: grid; gap: 10px; }
+    .feed-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 11px;
+      align-items: center;
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, rgba(46,232,255,0.24), rgba(141,92,255,0.25));
+      color: #fff;
+      font-weight: 900;
+      font-size: 12px;
+    }
+
+    .kanban { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; height: 450px; }
+    .column { border-radius: 22px; background: rgba(255,255,255,0.055); border: 1px solid rgba(255,255,255,0.10); padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+    .column h4 { margin: 0; font-size: 15px; letter-spacing: -0.02em; display: flex; justify-content: space-between; }
+    .lead-card { padding: 13px; border-radius: 18px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.10); }
+    .lead-card b { display: block; font-size: 15px; margin-bottom: 6px; }
+    .lead-card span { display: block; color: var(--dim); font-size: 12px; margin-bottom: 8px; }
+    .score { display: inline-flex !important; padding: 5px 8px; border-radius: 99px; background: rgba(73,247,166,0.12); color: var(--green) !important; font-weight: 800; }
+
+    .detail-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 18px; }
+    .timeline { display: grid; gap: 11px; }
+    .memory-row { padding: 14px; border-radius: 17px; background: rgba(255,255,255,0.065); border: 1px solid rgba(255,255,255,0.09); }
+    .memory-row b { display: block; font-size: 15px; margin-bottom: 5px; }
+    .memory-row span { color: var(--muted); font-size: 13px; line-height: 1.35; }
+
+    .chat { display: grid; gap: 12px; align-content: end; min-height: 390px; }
+    .bubble { max-width: 82%; padding: 14px 16px; border-radius: 19px; color: #fff; font-size: 15px; line-height: 1.35; }
+    .bubble.user { justify-self: start; background: rgba(255,255,255,0.10); border-bottom-left-radius: 6px; }
+    .bubble.ai { justify-self: end; background: linear-gradient(135deg, rgba(46,232,255,0.24), rgba(141,92,255,0.28)); border-bottom-right-radius: 6px; border: 1px solid rgba(46,232,255,0.18); }
+
+    .email-ui { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 16px; min-height: 430px; }
+    .template-list { display: grid; gap: 11px; align-content: start; }
+    .template-item { padding: 14px; border-radius: 16px; background: rgba(255,255,255,0.065); color: var(--muted); font-size: 14px; border: 1px solid rgba(255,255,255,0.08); }
+    .composer { padding: 18px; border-radius: 22px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.10); }
+    .field { height: 38px; border-radius: 12px; background: rgba(3,6,16,0.55); border: 1px solid rgba(255,255,255,0.08); margin-bottom: 10px; color: var(--dim); padding: 10px 12px; font-size: 12px; }
+    .field.big { height: 124px; }
+
+    .architecture {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .arch-box { min-height: 150px; display: flex; flex-direction: column; justify-content: center; }
+    .arrow { color: var(--cyan); font-size: 40px; text-shadow: 0 0 22px rgba(46,232,255,0.8); }
+
+    .roadmap { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    .roadmap .card { min-height: 430px; }
+
+    .pricing { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .price-card { min-height: 370px; display: flex; flex-direction: column; gap: 16px; }
+    .price { font-size: 36px; font-weight: 950; letter-spacing: -0.05em; }
+
+    .cta-line {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      width: fit-content;
+      padding: 16px 22px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--cyan), var(--violet) 60%, var(--pink));
+      color: #030613;
+      font-weight: 950;
+      box-shadow: 0 20px 60px rgba(46,232,255,0.26);
+    }
+
+    .table { display: grid; gap: 10px; }
+    .table-row { display: grid; grid-template-columns: 0.78fr 1.22fr; gap: 14px; padding: 16px; border-radius: 18px; background: rgba(255,255,255,0.065); border: 1px solid rgba(255,255,255,0.08); }
+    .table-row b { font-size: 17px; }
+    .table-row span { color: var(--muted); font-size: 15px; line-height: 1.35; }
+
+    @media (max-width: 1100px) {
+      .slide { padding: 18px; }
+      .canvas { aspect-ratio: auto; min-height: calc(100vh - 36px); max-height: none; padding: 34px; }
+      .content, .split, .split-wide, .grid-2, .grid-3, .grid-4, .roadmap, .pricing, .architecture, .hero-mock, .detail-grid, .email-ui { grid-template-columns: 1fr; }
+      h1 { font-size: 58px; }
+      h2 { font-size: 44px; }
+      .lead { font-size: 20px; }
+      .kanban { grid-template-columns: 1fr; height: auto; }
+      .arrow { transform: rotate(90deg); }
+    }
+
+    @media print {
+      @page { size: 16in 9in; margin: 0; }
+      html, body { background: #050713 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .slide { width: 16in; height: 9in; min-height: 9in; padding: 0; break-after: page; page-break-after: always; }
+      .slide::before { display: none; }
+      .canvas { width: 16in; height: 9in; max-height: none; border-radius: 0; border: 0; box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck">
+    <section class="slide" id="slide-01">
+      <div class="canvas">
+        <div class="noise"></div><div class="orb cyan"></div><div class="orb violet"></div><div class="orb pink"></div>
+        <div class="topbar"><span class="brand"><span class="brand-mark"></span>AS6 AI CRM</span><span>Premium SaaS Deck · 2026</span></div>
+        <div class="content split-wide">
+          <div class="stack">
+            <span class="kicker">AI Sales CRM Platform</span>
+            <h1><span class="gradient-text">AS6 AI CRM</span><br>Platform</h1>
+            <p class="lead">AI-продажи, CRM-память и автоматические касания в одном SaaS-продукте для команд, которым нужна скорость реакции и управляемая выручка.</p>
+            <div class="chips"><span class="chip hot">Telegram AI Sales Bot</span><span class="chip">AI Tasks</span><span class="chip">AI Credits</span><span class="chip">PostgreSQL memory</span><span class="chip">Docker production</span></div>
+          </div>
+          <div class="device">
+            <div class="screen">
+              <div class="screen-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span>AI revenue cockpit</div>
+              <div class="mock-body hero-mock">
+                <div class="card">
+                  <strong>Pipeline revenue</strong><p>8,4 млн ₽ активная воронка</p>
+                  <div class="bars"><i style="height:42%"></i><i style="height:66%"></i><i style="height:51%"></i><i style="height:82%"></i><i style="height:74%"></i><i style="height:92%"></i></div>
+                </div>
+                <div class="feed">
+                  <div class="feed-row"><span class="avatar">TG</span><span>Новый лид из Telegram</span><b class="accent-green">92</b></div>
+                  <div class="feed-row"><span class="avatar">AI</span><span>AI SDR назначил демо</span><b class="accent-cyan">16:30</b></div>
+                  <div class="feed-row"><span class="avatar">CRM</span><span>Этап: предложение</span><b class="accent-pink">hot</b></div>
+                  <div class="feed-row"><span class="avatar">EM</span><span>Email отправлен</span><b class="accent-violet">sent</b></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footerbar"><span>Browser → Telegram → CRM → AI follow-up</span><span>01 / 15</span></div>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-02">
+      <div class="canvas compact"><div class="noise"></div><div class="orb violet"></div>
+        <div class="topbar"><span class="brand"><span class="brand-mark"></span>Problem</span><span>Разрозненные каналы продаж</span></div>
+        <div class="content split">
+          <div class="stack">
+            <span class="kicker">Market pain</span>
+            <h2>Продажи теряют скорость из-за ручного контекста</h2>
+            <p class="lead">Telegram, email, CRM, таблицы и личные заметки живут отдельно. Контекст распадается быстрее, чем менеджер успевает сделать следующий шаг.</p>
+          </div>
+          <div class="grid-2">
+            <div class="card"><strong>Лиды теряются</strong><p>Входящие сообщения из Telegram не всегда превращаются в карточки CRM и задачи.</p></div>
+            <div class="card"><strong>Follow-up вручную</strong><p>Дожим зависит от дисциплины менеджера, а не от повторяемого процесса.</p></div>
+            <div class="card"><strong>AI вне workflow</strong><p>Промпты живут отдельно от воронки, кредитов, email и истории сделки.</p></div>
+            <div class="card"><strong>Нет cockpit</strong><p>Руководитель не видит единую картину по AI-задачам, воронке и активности.</p></div>
+          </div>
+        </div>
+        <div class="footerbar"><span>Problem</span><span>02 / 15</span></div>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-03">
+      <div class="canvas compact"><div class="noise"></div><div class="orb cyan"></div><div class="orb pink"></div>
+        <div class="topbar"><span class="brand"><span class="brand-mark"></span>Solution</span><span>AI CRM как Revenue OS</span></div>
+        <div class="content split-wide">
+          <div class="stack">
+            <span class="kicker">Unified workflow</span>
+            <h2>AS6 соединяет CRM, Telegram, email и AI в один контур продаж</h2>
+            <p class="lead">Платформа захватывает лид, сохраняет память, генерирует следующий шаг и помогает менеджеру быстро провести сделку по pipeline.</p>
+          </div>
+          <div class="stack tight">
+            <div class="metric"><b class="gradient-text">1</b><span>Единая карточка лида с историей, заметками, email и AI-дожимами.</span></div>
+            <div class="metric"><b class="gradient-text">24/7</b><span>Telegram AI Sales Bot реагирует на входящие обращения и квалифицирует запрос.</span></div>
+            <div class="metric"><b class="gradient-text">Docker</b><span>Production deployment: backend, nginx/frontend, PostgreSQL и persistent storage.</span></div>
+          </div>
+        </div>
+        <div class="footerbar"><span>Capture → Memory → Action → Revenue</span><span>03 / 15</span></div>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-04">
+      <div class="canvas compact"><div class="noise"></div><div class="orb violet"></div>
+        <div class="topbar"><span class="brand"><span class="brand-mark"></span>Product overview</span><span>7 продуктовых слоёв</span></div>
+        <div class="content">
+          <div class="stack tight">
+            <span class="kicker">Platform map</span>
+            <h2>Единый workspace для роста выручки</h2>
+          </div>
+          <div class="grid-4">
+            <div class="card"><strong>Landing page</strong><p>Премиальная витрина, CTA в Telegram, лид-форма и тарифные пакеты.</p></div>
+            <div class="card"><strong>Dashboard</strong><p>AI Credits, AI Tasks, заказы, активность и быстрые действия.</p></div>
+            <div class="card"><strong>CRM Pipeline</strong><p>Этапы new → qualified → proposal → booked → won/lost.</p></div>
+            <div class="card"><strong>Lead detail</strong><p>Память сделки: данные, заметки, Telegram, email и follow-up.</p></div>
+            <div class="card"><strong>Telegram Bot</strong><p>AI SDR для входящих лидов и диалогов в Telegram.</p></div>
+            <div class="card"><strong>Email Actions</strong><p>AI-письма, вложения, очередь, SMTP/Gmail и tracking.</p></div>
+            <div class="card"><strong>AI Task Engine</strong><p>Контент, sales reply, CRM follow-up и Telegram outreach.</p></div>
+            <div class="card"><strong>PostgreSQL memory</strong><p>Лиды, сообщения, активности, credits ledger и история AI.</p></div>
+          </div>
+        </div>
+        <div class="footerbar"><span>Product overview</span><span>04 / 15</span></div>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-05">
+      <div class="canvas compact"><div class="noise"></div><div class="orb cyan"></div>
+        <div class="topbar"><span class="brand"><span class="brand-mark"></span>Landing page</span><span>Premium SaaS entry point</span></div>
+        <div class="content split">
+          <div class="stack">
+            <span class="kicker">Acquisition layer</span>
+            <h2>Витрина продукта продаёт AI-стек до первого демо</h2>
+            <ul class="bullets">
+              <li>Hero с обещанием управляемой выручки.</li>
+              <li>CTA «Открыть Telegram-бота» и расчёт ценности.</li>
+              <li>AI-агенты: AI SDR, поддержка, маркетолог.</li>
+              <li>Тарифы Start, Pro, Business на базе кредитов.</li>
+            </ul>
+          </div>
+          <div class="device">
+            <div class="screen">
+              <div class="screen-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span>as6.ru / landing</div>
+              <div class="mock-body stack">
+                <span class="kicker">Корпоративный AI-стек</span>
+                <h3 style="font-size:48px;max-width:520px">AI-платформа, которая превращает лиды в управляемую выручку</h3>
+                <p class="muted">CRM · Telegram · агенты · платежи</p>
+                <div class="grid-3"><div class="metric"><b>-42%</b><span>ручной рутины</span></div><div class="metric"><b>24/7</b><span>AI-агенты</span></div><div class="metric"><b>x3.2</b><span>скорость лидов</span></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footerbar"><span>Landing inspired by current UI</span><span>05 / 15</span></div>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-06">
+      <div class="canvas compact"><div class="noise"></div><div class="orb pink"></div>
+        <div class="topbar"><span class="brand"><span class="brand-mark"></span>Dashboard</span><span>Executive cockpit</span></div>
+        <div class="content split-wide">
+          <div class="device">
+            <div class="screen">
+              <div class="screen-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span>dashboard</div>
+              <div class="mock-body">
+                <div class="grid-2">
+                  <div class="card"><strong>AI Credits</strong><p>18 420 баланс · 71% использовано</p><div class="bars"><i style="height:72%"></i><i style="height:48%"></i><i style="height:88%"></i><i style="height:58%"></i></div></div>
+                  <div class="card"><strong>AI Tasks</strong><div class="feed"><div class="feed-row"><span class="avatar">AI</span><span>Скоринг лидов</span><b>128</b></div><div class="feed-row"><span class="avatar">FU</span><span>Персональный дожим</span><b>42</b></div><div class="feed-row"><span class="avatar">☎</span><span>Резюме созвонов</span><b>16</b></div></div></div>
+                  <div class="card"><strong>Quick actions</strong><p>Создать AI-задачу · Импортировать лиды · Открыть CRM · Пополнить кредиты</p></div>
+                  <div class="card"><strong>Orders</strong><p>Профи Рост · Пакет 10k AI-кредитов · подписка активна</p></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="stack">
+            <span class="kicker">Control plane</span>
+            <h2>Руководитель видит состояние AI-продаж на одном экране</h2>
+            <p class="lead">Dashboard объединяет кредиты, задачи, CRM-активность, заказы и быстрые действия — без переключения между инструментами.</p>
+          </div>
+        </div>
+        <div class="footerbar"><span>Dashboard inspired by current UI</span><span>06 / 15</span></div>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-07">
+      <div class="canvas compact"><div class="noise"></div><div class="orb cyan"></div>
+        <div class="topbar"><span class="brand"><span class="brand-mark"></span>CRM pipeline</span><span>AI-assisted selling</span></div>
+        <div class="content">
+          <div class="stack tight">
+            <span class="kicker">Pipeline</span>
+            <h2>Воронка, где AI работает рядом с менеджером</h2>
+          </div>
+          <div class="kanban">
+            <div class="column"><h4>Новые <span class="accent-cyan">1,8 млн ₽</span></h4><div class="lead-card"><b>SberCloud Lab</b><span>Илья · Telegram · 720 тыс. ₽</span><span class="score">score 94</span></div><div class="lead-card"><b>FinEdge</b><span>Мария · сайт · 420 тыс. ₽</span><span class="score">score 81</span></div></div>
+            <div class="column"><h4>Квалификация <span class="accent-violet">2,4 млн ₽</span></h4><div class="lead-card"><b>Retail Rocket</b><span>AI SDR собрал боли</span><span class="score">score 88</span></div><div class="lead-card"><b>MedTech Plus</b><span>Ждут security checklist</span><span class="score">score 76</span></div></div>
+            <div class="column"><h4>Демо <span class="accent-pink">3,1 млн ₽</span></h4><div class="lead-card"><b>EduFlow</b><span>Демо в пятницу</span><span class="score">score 91</span></div><div class="lead-card"><b>Logix Pro</b><span>Кастомная воронка</span><span class="score">score 86</span></div></div>
+            <div class="column"><h4>Предложение <span class="accent-green">2,0 млн ₽</span></h4><div class="lead-card"><b>AeroDesk</b><span>КП отправлено</span><span class="score">score 93</span></div><div class="lead-card"><b>MarketPulse</b><span>Согласуют бюджет</span><span class="score">score 79</span></div></div>
+          </div>
+        </div>
+        <div class="footerbar"><span>new → qualified → proposal → booked → won/lost</span><span>07 / 15</span></div>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-08">
+      <div class="canvas compact"><div class="noise"></div><div class="orb violet"></div><div class="orb pink"></div>
+        <div class="topbar"><span class="brand"><span class="brand-mark"></span>Lead detail</span><span>PostgreSQL memory</span></div>
+        <div class="content split">
+          <div class="stack">
+            <span class="kicker">Memory layer</span>
+            <h2>Карточка лида становится памятью сделки</h2>
+            <p class="lead">Контакт, источник, переписка, заметки, email, AI-дожимы и активность сохраняются в PostgreSQL и доступны менеджеру перед каждым касанием.</p>
+            <div class="chips"><span class="chip">crm_leads</span><span class="chip">telegram_messages</span><span class="chip">crm_followups</span><span class="chip">email_messages</span><span class="chip">crm_activity</span></div>
+          </div>
+          <div class="device">
+            <div class="screen"><div class="screen-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span>lead / sbercloud-lab</div>
+              <div class="mock-body detail-grid">
+                <div class="timeline"><div class="memory-row"><b>Илья · SberCloud Lab</b><span>Telegram · value 720 тыс. ₽ · stage qualified</span></div><div class="memory-row"><b>AI follow-up</b><span>Предложить 15-минутный созвон и зафиксировать критерии пилота.</span></div><div class="memory-row"><b>Email history</b><span>Commercial proposal · sent · opened</span></div></div>
+                <div class="timeline"><div class="memory-row"><b>Заметка</b><span>Нужен пилот AI-поддержки на 3 отдела.</span></div><div class="memory-row"><b>Telegram memory</b><span>Клиент уже спрашивал про интеграцию CRM и SLA.</span></div><div class="memory-row"><b>Activity</b><span>CRM обновила этап, AI создал следующий шаг.</span></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footerbar"><span>Lead detail and AI memory</span><span>08 / 15</span></div>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-09">
+      <div class="canvas compact"><div class="noise"></div><div class="orb cyan"></div>
+        <div class="topbar"><span class="brand"><span class="brand-mark"></span>Telegram AI assistant</span><span>AI SDR in messenger</span></div>
+        <div class="content split-wide">
+          <div class="device">
+            <div class="screen"><div class="screen-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span>telegram sales bot</div>
+              <div class="mock-body chat">
+                <div class="bubble user">Добрый день! Хотим запустить AI-воронку для входящих заявок из Telegram.</div>
+                <div class="bubble ai">Здравствуйте! Помогу подобрать сценарий. Что важнее на старте: быстро собирать лиды в CRM, автоматизировать дожим или посчитать экономику AI-кредитов?</div>
+                <div class="bubble user">Нужно связать Telegram и CRM, чтобы менеджер видел историю.</div>
+                <div class="bubble ai">Отлично. AS6 сохраняет диалог в карточке лида, показывает следующий шаг и позволяет ответить клиенту из CRM. Предлагаю короткое демо на 15 минут.</div>
+              </div>
+            </div>
+          </div>
+          <div class="stack">
+            <span class="kicker">Conversational capture</span>
+            <h2>Telegram AI Sales Bot реагирует мгновенно и сохраняет контекст</h2>
+            <ul class="bullets"><li>Создаёт или обновляет лида по Telegram identity.</li><li>Использует историю сообщений как память диалога.</li><li>Генерирует дружелюбный sales reply без давления.</li><li>Уведомляет менеджера и даёт ответить из CRM.</li></ul>
+          </div>
+        </div>
+        <div class="footerbar"><span>Telegram AI assistant</span><span>09 / 15</span></div>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-10">
+      <div class="canvas compact"><div class="noise"></div><div class="orb pink"></div>
+        <div class="topbar"><span class="brand"><span class="brand-mark"></span>Email actions</span><span>AI-generated outreach</span></div>
+        <div class="content split">
+          <div class="stack">
+            <span class="kicker">Email workflow</span>
+            <h2>AI-письма, вложения и контролируемая отправка</h2>
+            <p class="lead">Email Actions помогают менеджеру быстро подготовить письмо, добавить материалы, поставить отправку в очередь и увидеть историю касаний в карточке лида.</p>
+            <div class="chips"><span class="chip">SMTP</span><span class="chip">Gmail API</span><span class="chip">attachments</span><span class="chip">tracking token</span><span class="chip">opened_at</span></div>
+          </div>
+          <div class="device"><div class="screen"><div class="screen-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span>email composer</div>
+            <div class="mock-body email-ui"><div class="template-list"><div class="template-item">Commercial proposal</div><div class="template-item">Follow-up после демо</div><div class="template-item">Onboarding intro</div><div class="template-item">📎 AS6_platform.pdf</div></div><div class="composer"><div class="field">Кому: client@company.ru</div><div class="field">Тема: Пилот AS6 AI CRM для вашей команды</div><div class="field big">AI preview: краткое резюме запроса, ценность, следующий шаг и мягкий CTA...</div><div class="cta-line">AI сгенерировать письмо</div></div></div>
+          </div></div>
+        </div>
+        <div class="footerbar"><span>queued → sending → sent / failed</span><span>10 / 15</span></div>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-11">
+      <div class="canvas compact"><div class="noise"></div><div class="orb violet"></div>
+        <div class="topbar"><span class="brand"><span class="brand-mark"></span>AI task engine</span><span>Credits-driven automation</span></div>
+        <div class="content split-wide">
+          <div class="stack">
+            <span class="kicker">AI operations</span>
+            <h2>Универсальный двигатель AI-задач</h2>
+            <p class="lead">AI Task Engine превращает хаотичные промпты в повторяемые продуктовые workflow с результатом, статусом, моделью и списанием AI Credits.</p>
+          </div>
+          <div class="grid-2">
+            <div class="card"><strong>AI content generation</strong><p>Готовые маркетинговые и продуктовые тексты с CTA.</p></div>
+            <div class="card"><strong>AI sales reply</strong><p>Ответ клиенту: контекст, ценность, следующий шаг.</p></div>
+            <div class="card"><strong>AI CRM follow-up</strong><p>Заметка, канал контакта и тайминг касания.</p></div>
+            <div class="card"><strong>AI Telegram outreach</strong><p>Персональное короткое сообщение и альтернативы.</p></div>
+          </div>
+        </div>
+        <div class="footerbar"><span>AI Tasks + AI Credits</span><span>11 / 15</span></div>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-12">
+      <div class="canvas compact"><div class="noise"></div><div class="orb cyan"></div><div class="orb pink"></div>
+        <div class="topbar"><span class="brand"><span class="brand-mark"></span>Architecture</span><span>Production-ready Docker stack</span></div>
+        <div class="content">
+          <div class="stack tight"><span class="kicker">System design</span><h2>Практичный monolith-first SaaS-стек</h2></div>
+          <div class="architecture">
+            <div class="card arch-box"><strong>Channels</strong><p>Browser, Landing, Telegram, Email actions.</p></div><div class="arrow">→</div>
+            <div class="card arch-box"><strong>Frontend + nginx</strong><p>React/Vite UI, premium SaaS screens, nginx reverse proxy and static delivery.</p></div><div class="arrow">→</div>
+            <div class="card arch-box"><strong>Node.js API</strong><p>JWT Auth, CRM routes, AI tasks, Telegram webhook, email queue, OpenAI integration.</p></div>
+          </div>
+          <div class="architecture" style="grid-template-columns:1fr auto 1fr auto 1fr">
+            <div class="card arch-box"><strong>OpenAI Responses</strong><p>Sales reply, follow-up and task generation.</p></div><div class="arrow">↔</div>
+            <div class="card arch-box"><strong>PostgreSQL 15</strong><p>Users, credits ledger, CRM, messages, email logs, follow-ups.</p></div><div class="arrow">↔</div>
+            <div class="card arch-box"><strong>Volumes</strong><p>Persistent PostgreSQL data and attachment storage in Docker Compose.</p></div>
+          </div>
+        </div>
+        <div class="footerbar"><span>backend + db + nginx</span><span>12 / 15</span></div>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-13">
+      <div class="canvas compact"><div class="noise"></div><div class="orb violet"></div>
+        <div class="topbar"><span class="brand"><span class="brand-mark"></span>Roadmap</span><span>AI Revenue OS</span></div>
+        <div class="content">
+          <div class="stack tight"><span class="kicker">Roadmap</span><h2>От CRM MVP к AI Revenue OS</h2></div>
+          <div class="roadmap">
+            <div class="card"><strong class="accent-green">Now · product foundation</strong><ul class="bullets"><li>Landing, auth, dashboard, CRM pipeline.</li><li>Telegram lead capture и AI sales reply.</li><li>AI follow-up в карточке лида.</li><li>Email composer, attachments, queue и tracking.</li><li>AI Tasks, AI Credits и Docker deployment.</li></ul></div>
+            <div class="card"><strong class="accent-cyan">Next · SaaS leverage</strong><ul class="bullets"><li>Drag-and-drop pipeline и team workspace.</li><li>Advanced analytics по конверсии и AI ROI.</li><li>Календарь, звонки и автоматические cadences.</li><li>Marketplace шаблонов AI-задач.</li><li>Enterprise security controls и audit log.</li></ul></div>
+          </div>
+        </div>
+        <div class="footerbar"><span>Roadmap direction</span><span>13 / 15</span></div>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-14">
+      <div class="canvas compact"><div class="noise"></div><div class="orb cyan"></div>
+        <div class="topbar"><span class="brand"><span class="brand-mark"></span>Pricing direction</span><span>Subscription + AI Credits</span></div>
+        <div class="content">
+          <div class="stack tight"><span class="kicker">Monetization</span><h2>Клиент платит за revenue workflow, а не за «чат с AI»</h2></div>
+          <div class="pricing">
+            <div class="card price-card"><strong>Start</strong><div class="price">₽₽</div><p>1 AI-агент, Telegram-воронка, базовая CRM, стартовый пакет кредитов.</p></div>
+            <div class="card price-card"><strong>Pro</strong><div class="price accent-cyan">₽₽₽</div><p>3 AI-агента, CRM-автоматизация, email actions, расширенные AI Credits.</p></div>
+            <div class="card price-card"><strong>Business</strong><div class="price accent-violet">₽₽₽₽</div><p>Командная CRM, дашборды, внедрение, SLA и кастомные сценарии.</p></div>
+            <div class="card price-card"><strong>Enterprise</strong><div class="price accent-pink">Custom</div><p>Security, audit, интеграции, выделенные лимиты и premium support.</p></div>
+          </div>
+        </div>
+        <div class="footerbar"><span>AI Credits as consumption unit</span><span>14 / 15</span></div>
+      </div>
+    </section>
+
+    <section class="slide" id="slide-15">
+      <div class="canvas"><div class="noise"></div><div class="orb cyan"></div><div class="orb violet"></div><div class="orb pink"></div>
+        <div class="topbar"><span class="brand"><span class="brand-mark"></span>Final CTA</span><span>Launch pilot</span></div>
+        <div class="content split-wide">
+          <div class="stack">
+            <span class="kicker">Next step</span>
+            <h1>Запустить AI CRM, которая продаёт быстрее</h1>
+            <p class="lead">AS6 уже содержит основу премиального AI SaaS: витрина, dashboard, CRM pipeline, Telegram AI assistant, email actions, AI task engine, credits ledger, PostgreSQL memory и Docker production deployment.</p>
+            <div class="cta-line">Провести pilot launch для 1–2 команд продаж →</div>
+          </div>
+          <div class="stack tight">
+            <div class="metric"><b class="gradient-text">Time-to-response</b><span>Измерить скорость реакции на входящие Telegram и web-лиды.</span></div>
+            <div class="metric"><b class="gradient-text">Conversion uplift</b><span>Сравнить сделки с AI follow-up и без него.</span></div>
+            <div class="metric"><b class="gradient-text">Hours saved</b><span>Посчитать экономию времени на письмах, дожимах и заметках.</span></div>
+          </div>
+        </div>
+        <div class="footerbar"><span>AS6 — AI Sales CRM for the next generation of revenue teams</span><span>15 / 15</span></div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
