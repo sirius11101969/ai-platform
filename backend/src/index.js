@@ -9,9 +9,11 @@ const crmRoutes = require('./routes/crmRoutes')
 const aiTaskRoutes = require('./routes/aiTaskRoutes')
 const telegramRoutes = require('./routes/telegramRoutes')
 const emailRoutes = require('./routes/emailRoutes')
+const workspaceRoutes = require('./routes/workspaceRoutes')
 const { markOpened } = require('./controllers/emailController')
 const { startEmailQueueWorker } = require('./services/emailService')
 const { requireAuth } = require('./middleware/authMiddleware')
+const { requireWorkspace } = require('./middleware/workspaceMiddleware')
 const { errorHandler } = require('./middleware/errorHandler')
 
 const app = express()
@@ -26,13 +28,14 @@ app.get('/health', (_, res) => {
 
 app.use('/api/auth', authRoutes)
 app.use('/api/dashboard', dashboardRoutes)
+app.use('/api/workspaces', workspaceRoutes)
 app.use('/api/crm', crmRoutes)
 app.use('/api/ai', aiTaskRoutes)
 app.get('/api/email/open/:token', markOpened)
 app.use('/api/email', emailRoutes)
 app.use('/api/telegram', telegramRoutes)
 
-app.post('/api/lead', requireAuth, async (req, res, next) => {
+app.post('/api/lead', requireAuth, requireWorkspace, async (req, res, next) => {
   try {
     const { name, contact, source, metadata } = req.body
 
@@ -41,10 +44,10 @@ app.post('/api/lead', requireAuth, async (req, res, next) => {
     }
 
     const result = await pool.query(
-      `INSERT INTO crm_leads(user_id, name, contact, source, metadata)
-       VALUES($1, $2, $3, $4, $5)
+      `INSERT INTO crm_leads(user_id, workspace_id, name, contact, source, metadata)
+       VALUES($1, $6, $2, $3, $4, $5)
        RETURNING id, name, contact, stage, source, metadata, created_at`,
-      [req.user.id, name, contact, source || 'website', metadata || {}]
+      [req.user.id, name, contact, source || 'website', metadata || {}, req.workspace.id]
     )
 
     if (process.env.BITRIX_WEBHOOK) {

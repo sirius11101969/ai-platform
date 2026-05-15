@@ -13,6 +13,53 @@ async function migrate() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    CREATE TABLE IF NOT EXISTS workspaces (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      name TEXT NOT NULL,
+      owner_user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      plan TEXT NOT NULL DEFAULT 'free',
+      credits_pool INTEGER NOT NULL DEFAULT 0 CHECK (credits_pool >= 0),
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    DO $$
+    BEGIN
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'workspaces_plan_valid') THEN
+        ALTER TABLE workspaces ADD CONSTRAINT workspaces_plan_valid
+          CHECK (plan IN ('free', 'starter', 'pro', 'business', 'enterprise'));
+      END IF;
+    END $$;
+
+    CREATE TABLE IF NOT EXISTS workspace_members (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+      user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      role TEXT NOT NULL DEFAULT 'viewer',
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      UNIQUE(workspace_id, user_id)
+    );
+
+    DO $$
+    BEGIN
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'workspace_members_role_valid') THEN
+        ALTER TABLE workspace_members ADD CONSTRAINT workspace_members_role_valid
+          CHECK (role IN ('owner', 'admin', 'sales', 'viewer'));
+      END IF;
+    END $$;
+
+    INSERT INTO workspaces(name, owner_user_id, plan, credits_pool, created_at, updated_at)
+    SELECT split_part(email, '@', 1) || ' workspace', id, plan, credits, created_at, NOW()
+      FROM users u
+     WHERE NOT EXISTS (SELECT 1 FROM workspaces w WHERE w.owner_user_id = u.id);
+
+    INSERT INTO workspace_members(workspace_id, user_id, role, created_at)
+    SELECT w.id, w.owner_user_id, 'owner', w.created_at
+      FROM workspaces w
+     WHERE NOT EXISTS (
+       SELECT 1 FROM workspace_members wm WHERE wm.workspace_id = w.id AND wm.user_id = w.owner_user_id
+     );
+
     CREATE TABLE IF NOT EXISTS subscriptions (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -50,6 +97,11 @@ async function migrate() {
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    ALTER TABLE ai_tasks ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE SET NULL;
+    UPDATE ai_tasks t
+       SET workspace_id = wm.workspace_id
+      FROM workspace_members wm
+     WHERE t.workspace_id IS NULL AND wm.user_id = t.user_id AND wm.role = 'owner';
     ALTER TABLE ai_tasks ADD COLUMN IF NOT EXISTS type TEXT;
     ALTER TABLE ai_tasks ADD COLUMN IF NOT EXISTS prompt TEXT;
     ALTER TABLE ai_tasks ADD COLUMN IF NOT EXISTS credits_spent INTEGER NOT NULL DEFAULT 0;
@@ -104,13 +156,21 @@ async function migrate() {
     CREATE TABLE IF NOT EXISTS crm_stages (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE,
       status TEXT NOT NULL,
       title TEXT NOT NULL,
       position INTEGER NOT NULL DEFAULT 0,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-      UNIQUE(user_id, status)
+      UNIQUE(workspace_id, status)
     );
+
+    ALTER TABLE crm_stages DROP CONSTRAINT IF EXISTS crm_stages_user_id_status_key;
+    ALTER TABLE crm_stages ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE;
+    UPDATE crm_stages s
+       SET workspace_id = wm.workspace_id
+      FROM workspace_members wm
+     WHERE s.workspace_id IS NULL AND wm.user_id = s.user_id AND wm.role = 'owner';
 
     DO $$
     BEGIN
@@ -139,6 +199,11 @@ async function migrate() {
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE SET NULL;
+    UPDATE crm_leads l
+       SET workspace_id = wm.workspace_id
+      FROM workspace_members wm
+     WHERE l.workspace_id IS NULL AND wm.user_id = l.user_id AND wm.role = 'owner';
     ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS email TEXT;
     ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS phone TEXT;
     ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS company TEXT;
@@ -180,11 +245,15 @@ async function migrate() {
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       lead_id UUID NOT NULL REFERENCES crm_leads(id) ON DELETE CASCADE,
       user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+      workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE,
       body TEXT NOT NULL,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
 
+
+    ALTER TABLE crm_notes ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE;
+    UPDATE crm_notes n SET workspace_id = l.workspace_id FROM crm_leads l WHERE n.workspace_id IS NULL AND n.lead_id = l.id;
 
     ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS telegram TEXT;
     ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS notes TEXT;
@@ -293,13 +362,43 @@ async function migrate() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+
+    ALTER TABLE credits_ledger ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE SET NULL;
+    UPDATE credits_ledger c SET workspace_id = wm.workspace_id FROM workspace_members wm WHERE c.workspace_id IS NULL AND wm.user_id = c.user_id AND wm.role = 'owner';
+    ALTER TABLE email_attachments ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE SET NULL;
+    UPDATE email_attachments e SET workspace_id = l.workspace_id FROM crm_leads l WHERE e.workspace_id IS NULL AND e.lead_id = l.id;
+    UPDATE email_attachments e SET workspace_id = wm.workspace_id FROM workspace_members wm WHERE e.workspace_id IS NULL AND wm.user_id = e.user_id AND wm.role = 'owner';
+    ALTER TABLE email_messages ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE SET NULL;
+    UPDATE email_messages e SET workspace_id = l.workspace_id FROM crm_leads l WHERE e.workspace_id IS NULL AND e.lead_id = l.id;
+    UPDATE email_messages e SET workspace_id = wm.workspace_id FROM workspace_members wm WHERE e.workspace_id IS NULL AND wm.user_id = e.user_id AND wm.role = 'owner';
+    ALTER TABLE email_logs ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE SET NULL;
+    UPDATE email_logs e SET workspace_id = l.workspace_id FROM crm_leads l WHERE e.workspace_id IS NULL AND e.lead_id = l.id;
+    UPDATE email_logs e SET workspace_id = wm.workspace_id FROM workspace_members wm WHERE e.workspace_id IS NULL AND wm.user_id = e.user_id AND wm.role = 'owner';
+    ALTER TABLE telegram_messages ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE SET NULL;
+    UPDATE telegram_messages t SET workspace_id = l.workspace_id FROM crm_leads l WHERE t.workspace_id IS NULL AND t.lead_id = l.id;
+    ALTER TABLE crm_followups ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE;
+    UPDATE crm_followups f SET workspace_id = l.workspace_id FROM crm_leads l WHERE f.workspace_id IS NULL AND f.lead_id = l.id;
+    ALTER TABLE crm_activity ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE;
+    UPDATE crm_activity a SET workspace_id = l.workspace_id FROM crm_leads l WHERE a.workspace_id IS NULL AND a.lead_id = l.id;
+
+    CREATE INDEX IF NOT EXISTS idx_workspaces_owner_user_id ON workspaces(owner_user_id);
+    CREATE INDEX IF NOT EXISTS idx_workspace_members_user_id ON workspace_members(user_id);
+    CREATE INDEX IF NOT EXISTS idx_workspace_members_workspace_id ON workspace_members(workspace_id);
+    CREATE INDEX IF NOT EXISTS idx_crm_leads_workspace_id ON crm_leads(workspace_id);
+    CREATE INDEX IF NOT EXISTS idx_ai_tasks_workspace_id ON ai_tasks(workspace_id);
+    CREATE INDEX IF NOT EXISTS idx_credits_ledger_workspace_id ON credits_ledger(workspace_id);
+    CREATE INDEX IF NOT EXISTS idx_email_messages_workspace_id ON email_messages(workspace_id, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_telegram_messages_workspace_id ON telegram_messages(workspace_id, created_at DESC);
+
     CREATE INDEX IF NOT EXISTS idx_subscriptions_user_id ON subscriptions(user_id);
     CREATE INDEX IF NOT EXISTS idx_credits_ledger_user_id ON credits_ledger(user_id);
     CREATE INDEX IF NOT EXISTS idx_ai_tasks_user_id ON ai_tasks(user_id);
     CREATE INDEX IF NOT EXISTS idx_crm_stages_user_id ON crm_stages(user_id);
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_crm_stages_workspace_status ON crm_stages(workspace_id, status);
     CREATE INDEX IF NOT EXISTS idx_crm_leads_user_id ON crm_leads(user_id);
-    CREATE UNIQUE INDEX IF NOT EXISTS idx_crm_leads_telegram_identity ON crm_leads(user_id, telegram_id) WHERE source = 'telegram' AND telegram_id IS NOT NULL;
-    CREATE INDEX IF NOT EXISTS idx_crm_leads_telegram_last_seen ON crm_leads(user_id, last_seen_at) WHERE source = 'telegram';
+    DROP INDEX IF EXISTS idx_crm_leads_telegram_identity;
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_crm_leads_telegram_identity ON crm_leads(workspace_id, telegram_id) WHERE source = 'telegram' AND telegram_id IS NOT NULL;
+    CREATE INDEX IF NOT EXISTS idx_crm_leads_telegram_last_seen ON crm_leads(workspace_id, last_seen_at) WHERE source = 'telegram';
     CREATE INDEX IF NOT EXISTS idx_crm_notes_lead_id ON crm_notes(lead_id);
     CREATE INDEX IF NOT EXISTS idx_telegram_messages_lead_id ON telegram_messages(lead_id, created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_telegram_messages_user_id ON telegram_messages(user_id, created_at DESC);

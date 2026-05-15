@@ -5,6 +5,7 @@ const FormData = require('form-data')
 const pool = require('../db/pool')
 const { generateTelegramSalesReply } = require('./crmAiService')
 const crmModel = require('../models/crmModel')
+const { ensureDefaultWorkspace } = require('../models/workspaceModel')
 const emailService = require('./emailService')
 
 const TELEGRAM_API_BASE = 'https://api.telegram.org'
@@ -138,7 +139,8 @@ function attachmentMatchesIntent(attachment, intent) {
 }
 
 async function resolveIntentAttachmentIds(userId, leadId, intent) {
-  const attachments = await emailService.listAttachments(userId, leadId)
+  const workspace = await ensureDefaultWorkspace(userId)
+  const attachments = await emailService.listAttachments(userId, workspace.id, leadId)
   return attachments.filter((attachment) => attachmentMatchesIntent(attachment, intent)).slice(0, 6).map((attachment) => attachment.id)
 }
 
@@ -150,7 +152,7 @@ async function persistLeadEmailFromMessage(userId, leadId, email) {
             contact = COALESCE(contact, $3),
             metadata = COALESCE(metadata, '{}'::jsonb) || jsonb_build_object('emailFromTelegram', $3),
             updated_at = NOW()
-      WHERE user_id = $1 AND id = $2`,
+      WHERE user_id = $1 AND workspace_id = $11 AND id = $2`,
     [userId, leadId, email]
   )
 }
@@ -238,16 +240,16 @@ function leadUrl(leadId) {
   return `${baseUrl.replace(/\/$/, '')}/crm?lead=${leadId}`
 }
 
-async function logActivity(client, userId, leadId, type, title, body = null, metadata = {}) {
+async function logActivity(client, userId, workspaceId, leadId, type, title, body = null, metadata = {}) {
   await client.query(
-    `INSERT INTO crm_activity(user_id, lead_id, type, title, body, metadata)
-     VALUES($1, $2, $3, $4, $5, $6)`,
-    [userId, leadId, type, title, body, metadata]
+    `INSERT INTO crm_activity(user_id, workspace_id, lead_id, type, title, body, metadata)
+     VALUES($1, $2, $3, $4, $5, $6, $7)`,
+    [userId, workspaceId, leadId, type, title, body, metadata]
   )
 }
 
-async function findTelegramLead(client, userId, telegram) {
-  const params = [userId, telegram.userId]
+async function findTelegramLead(client, userId, workspaceId, telegram) {
+  const params = [userId, workspaceId, telegram.userId]
   let usernameClause = ''
   if (telegram.username) {
     params.push(telegram.username)
@@ -258,8 +260,9 @@ async function findTelegramLead(client, userId, telegram) {
     `SELECT id, user_id, name, email, phone, telegram, telegram_id, telegram_username, first_name, last_name, first_message, last_message_at, last_seen_at, company, status, value, source, notes, metadata, created_at, updated_at
        FROM crm_leads
       WHERE user_id = $1
+        AND workspace_id = $2
         AND source = 'telegram'
-        AND (telegram_id = $2 OR (metadata->>'telegramUserId') = $2 ${usernameClause})
+        AND (telegram_id = $3 OR (metadata->>'telegramUserId') = $3 ${usernameClause})
       ORDER BY updated_at DESC
       LIMIT 1
       FOR UPDATE`,
@@ -274,7 +277,9 @@ async function upsertLeadWithIncomingMessage(telegram) {
   try {
     await client.query('BEGIN')
     const userId = await resolveCrmUserId(client)
-    const existing = await findTelegramLead(client, userId, telegram)
+    const workspace = await ensureDefaultWorkspace(userId, client)
+    const workspaceId = workspace.id
+    const existing = await findTelegramLead(client, userId, workspaceId, telegram)
     let lead
     let isNew = false
 
@@ -301,12 +306,12 @@ async function upsertLeadWithIncomingMessage(telegram) {
                 last_message_at = $10::timestamptz,
                 last_seen_at = NOW(),
                 updated_at = NOW()
-          WHERE user_id = $1 AND id = $2
-          RETURNING id, user_id, name, email, phone, telegram, telegram_id, telegram_username, first_name, last_name, first_message, last_message_at, last_seen_at, company, status, value, source, notes, metadata, created_at, updated_at`,
-        [userId, existing.id, telegram.name, telegram.username, telegram.userId, telegram.firstName, telegram.lastName, noteBody, metadata, telegram.date]
+          WHERE user_id = $1 AND workspace_id = $11 AND id = $2
+          RETURNING id, user_id, workspace_id, name, email, phone, telegram, telegram_id, telegram_username, first_name, last_name, first_message, last_message_at, last_seen_at, company, status, value, source, notes, metadata, created_at, updated_at`,
+        [userId, existing.id, telegram.name, telegram.username, telegram.userId, telegram.firstName, telegram.lastName, noteBody, metadata, telegram.date, workspaceId]
       )
       lead = updated.rows[0]
-      await logActivity(client, userId, lead.id, 'telegram_lead_updated', 'Telegram лид обновлён', 'Лид обновлён новым сообщением Telegram.', { telegramUserId: telegram.userId, chatId: telegram.chatId })
+      await logActivity(client, userId, workspaceId, lead.id, 'telegram_lead_updated', 'Telegram лид обновлён', 'Лид обновлён новым сообщением Telegram.', { telegramUserId: telegram.userId, chatId: telegram.chatId })
     } else {
       isNew = true
       const metadata = {
@@ -316,32 +321,33 @@ async function upsertLeadWithIncomingMessage(telegram) {
         telegramLastMessageAt: telegram.date,
       }
       const created = await client.query(
-        `INSERT INTO crm_leads(user_id, name, telegram, telegram_id, telegram_username, first_name, last_name, first_message, status, value, source, notes, contact, stage, metadata, last_message_at, last_seen_at)
-         VALUES($1, $2, $3, $4, $3, $5, $6, $7, 'new', 0, 'telegram', $8, $3, 'new', $9::jsonb, $10::timestamptz, NOW())
-         RETURNING id, user_id, name, email, phone, telegram, telegram_id, telegram_username, first_name, last_name, first_message, last_message_at, last_seen_at, company, status, value, source, notes, metadata, created_at, updated_at`,
-        [userId, telegram.name, telegram.username || `tg:${telegram.userId}`, telegram.userId, telegram.firstName, telegram.lastName, telegram.text, noteBody, metadata, telegram.date]
+        `INSERT INTO crm_leads(user_id, workspace_id, name, telegram, telegram_id, telegram_username, first_name, last_name, first_message, status, value, source, notes, contact, stage, metadata, last_message_at, last_seen_at)
+         VALUES($1, $11, $2, $3, $4, $3, $5, $6, $7, 'new', 0, 'telegram', $8, $3, 'new', $9::jsonb, $10::timestamptz, NOW())
+         RETURNING id, user_id, workspace_id, name, email, phone, telegram, telegram_id, telegram_username, first_name, last_name, first_message, last_message_at, last_seen_at, company, status, value, source, notes, metadata, created_at, updated_at`,
+        [userId, telegram.name, telegram.username || `tg:${telegram.userId}`, telegram.userId, telegram.firstName, telegram.lastName, telegram.text, noteBody, metadata, telegram.date, workspaceId]
       )
       lead = created.rows[0]
-      await logActivity(client, userId, lead.id, 'lead_created', 'Лид создан', 'Новый Telegram лид добавлен в этап «Новый».', { source: 'telegram', stage: 'Новый' })
+      await logActivity(client, userId, workspaceId, lead.id, 'lead_created', 'Лид создан', 'Новый Telegram лид добавлен в этап «Новый».', { source: 'telegram', stage: 'Новый' })
     }
 
     const note = await client.query(
-      `INSERT INTO crm_notes(lead_id, user_id, body)
-       VALUES($1, $2, $3)
+      `INSERT INTO crm_notes(lead_id, user_id, workspace_id, body)
+       VALUES($1, $2, $4, $3)
        RETURNING id, lead_id, user_id, body, created_at`,
-      [lead.id, userId, noteBody]
+      [lead.id, userId, noteBody, workspaceId]
     )
     const telegramMessage = await crmModel.addTelegramMessage(client, {
       userId,
+      workspaceId,
       leadId: lead.id,
       role: 'user',
       message: telegram.text,
       telegramMessageId: telegram.messageId,
       createdAt: telegram.date,
     })
-    await logActivity(client, userId, lead.id, 'telegram_message_received', 'Telegram message received', telegram.text, { telegramUserId: telegram.userId, chatId: telegram.chatId, messageId: telegram.messageId })
+    await logActivity(client, userId, workspaceId, lead.id, 'telegram_message_received', 'Telegram message received', telegram.text, { telegramUserId: telegram.userId, chatId: telegram.chatId, messageId: telegram.messageId })
     await client.query('COMMIT')
-    return { lead, note: note.rows[0], telegramMessage, isNew, userId }
+    return { lead, note: note.rows[0], telegramMessage, isNew, userId, workspaceId }
   } catch (error) {
     await client.query('ROLLBACK')
     throw error
@@ -350,32 +356,33 @@ async function upsertLeadWithIncomingMessage(telegram) {
   }
 }
 
-async function saveAiReply({ userId, leadId, reply, model, prompt, telegramResponse }) {
+async function saveAiReply({ userId, workspaceId, leadId, reply, model, prompt, telegramResponse }) {
   const noteBody = `AI reply sent: ${reply}`
   const client = await pool.connect()
   try {
     await client.query('BEGIN')
     const followUp = await client.query(
-      `INSERT INTO crm_followups(lead_id, user_id, message, model, prompt)
-       VALUES($1, $2, $3, $4, $5)
+      `INSERT INTO crm_followups(lead_id, user_id, workspace_id, message, model, prompt)
+       VALUES($1, $2, $6, $3, $4, $5)
        RETURNING id, lead_id, user_id, message, model, created_at`,
-      [leadId, userId, reply, model, prompt]
+      [leadId, userId, reply, model, prompt, workspaceId]
     )
     const note = await client.query(
-      `INSERT INTO crm_notes(lead_id, user_id, body)
-       VALUES($1, $2, $3)
+      `INSERT INTO crm_notes(lead_id, user_id, workspace_id, body)
+       VALUES($1, $2, $4, $3)
        RETURNING id, lead_id, user_id, body, created_at`,
-      [leadId, userId, noteBody]
+      [leadId, userId, noteBody, workspaceId]
     )
     await crmModel.addTelegramMessage(client, {
       userId,
+      workspaceId,
       leadId,
       role: 'assistant',
       message: reply,
       telegramMessageId: telegramResponse?.result?.message_id || telegramResponse?.message_id || null,
     })
-    await client.query("UPDATE crm_leads SET notes = COALESCE(notes || E'\n', '') || $3, updated_at = NOW() WHERE id = $1 AND user_id = $2", [leadId, userId, noteBody])
-    await logActivity(client, userId, leadId, 'telegram_ai_reply_sent', 'AI reply sent', reply, { model })
+    await client.query("UPDATE crm_leads SET notes = COALESCE(notes || E'\n', '') || $3, updated_at = NOW() WHERE id = $1 AND user_id = $2 AND workspace_id = $4", [leadId, userId, noteBody, workspaceId])
+    await logActivity(client, userId, workspaceId, leadId, 'telegram_ai_reply_sent', 'AI reply sent', reply, { model })
     await client.query('COMMIT')
     return { followUp: followUp.rows[0], note: note.rows[0] }
   } catch (error) {
@@ -420,8 +427,8 @@ async function sendTelegramFile(chatId, material) {
 
 async function recordTelegramMaterialActivity({ userId, leadId, type, title, body, metadata }) {
   await pool.query(
-    `INSERT INTO crm_activity(user_id, lead_id, type, title, body, metadata)
-     VALUES($1, $2, $3, $4, $5, $6)`,
+    `INSERT INTO crm_activity(user_id, workspace_id, lead_id, type, title, body, metadata)
+     VALUES($1, $2, $3, $4, $5, $6, $7)`,
     [userId, leadId, type, title, body, metadata || {}]
   )
 }
@@ -486,15 +493,15 @@ ${DEMO_SITE_URL}`,
   return { handled: true, success: true, intent, sent, missingTypes, reply, telegramResponse }
 }
 
-async function sendTelegramMessageToLead({ userId, leadId, text }) {
+async function sendTelegramMessageToLead({ userId, workspaceId, leadId, text }) {
   const message = normalizeText(text)
   if (!message) throw Object.assign(new Error('Telegram message is required'), { statusCode: 400 })
-  const lead = await crmModel.listLeads(userId).then((leads) => leads.find((item) => item.id === leadId))
+  const lead = await crmModel.listLeads(userId, workspaceId).then((leads) => leads.find((item) => item.id === leadId))
   if (!lead) throw Object.assign(new Error('Lead not found'), { statusCode: 404 })
   const chatId = lead?.metadata?.telegramChatId || lead.telegramId || null
   if (!chatId) throw Object.assign(new Error('Lead has no Telegram chat id'), { statusCode: 400 })
   const telegramResponse = await sendTelegramMessage(chatId, message)
-  const telegramMessage = await crmModel.appendOutgoingTelegramMessage({ userId, leadId, message, telegramResponse })
+  const telegramMessage = await crmModel.appendOutgoingTelegramMessage({ userId, workspaceId, leadId, message, telegramResponse })
   return { telegramMessage, telegramResponse }
 }
 
@@ -524,11 +531,12 @@ async function processTelegramUpdate(update) {
     })
   }
 
-  const memory = await crmModel.getTelegramMemory(crmResult.userId, crmResult.lead.id, 10)
+  const memory = await crmModel.getTelegramMemory(crmResult.userId, crmResult.workspaceId, crmResult.lead.id, 10)
   const materialWorkflow = await runTelegramMaterialWorkflow({ userId: crmResult.userId, leadId: crmResult.lead.id, chatId: telegram.chatId, incomingMessage: telegram.text })
   if (materialWorkflow?.handled) {
     await saveAiReply({
       userId: crmResult.userId,
+      workspaceId: crmResult.workspaceId,
       leadId: crmResult.lead.id,
       reply: materialWorkflow.reply,
       model: 'action-executor-telegram-materials',
@@ -543,6 +551,7 @@ async function processTelegramUpdate(update) {
     const telegramResponse = await sendTelegramMessage(telegram.chatId, emailWorkflow.reply)
     await saveAiReply({
       userId: crmResult.userId,
+      workspaceId: crmResult.workspaceId,
       leadId: crmResult.lead.id,
       reply: emailWorkflow.reply,
       model: 'action-executor-email',
@@ -554,7 +563,7 @@ async function processTelegramUpdate(update) {
 
   const generated = await generateTelegramSalesReply({ lead: crmResult.lead, incomingMessage: telegram.text, memory })
   const telegramResponse = await sendTelegramMessage(telegram.chatId, generated.message)
-  await saveAiReply({ userId: crmResult.userId, leadId: crmResult.lead.id, reply: generated.message, model: generated.model, prompt: generated.prompt, telegramResponse })
+  await saveAiReply({ userId: crmResult.userId, workspaceId: crmResult.workspaceId, leadId: crmResult.lead.id, reply: generated.message, model: generated.model, prompt: generated.prompt, telegramResponse })
 
   return { skipped: false, leadId: crmResult.lead.id, isNew: crmResult.isNew, telegramResponse, emailWorkflow }
 }

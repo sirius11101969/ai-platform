@@ -29,6 +29,7 @@ function normalizeAttachment(row) {
   return {
     id: row.id,
     userId: row.user_id,
+    workspaceId: row.workspace_id || null,
     leadId: row.lead_id,
     fileName: row.file_name,
     mimeType: row.mime_type,
@@ -43,6 +44,7 @@ function normalizeEmail(row) {
   return {
     id: row.id,
     userId: row.user_id,
+    workspaceId: row.workspace_id || null,
     leadId: row.lead_id,
     to: row.to_email,
     from: row.from_email,
@@ -64,28 +66,28 @@ function normalizeEmail(row) {
   }
 }
 
-async function logActivity(client, userId, leadId, type, title, body = null, metadata = {}) {
+async function logActivity(client, userId, workspaceId, leadId, type, title, body = null, metadata = {}) {
   await client.query(
-    `INSERT INTO crm_activity(user_id, lead_id, type, title, body, metadata)
-     VALUES($1, $2, $3, $4, $5, $6)`,
-    [userId, leadId, type, title, body, metadata]
+    `INSERT INTO crm_activity(user_id, workspace_id, lead_id, type, title, body, metadata)
+     VALUES($1, $2, $3, $4, $5, $6, $7)`,
+    [userId, workspaceId, leadId, type, title, body, metadata]
   )
 }
 
 async function logEmailStatus(client, email, status, error = null, metadata = {}) {
   await client.query(
-    `INSERT INTO email_logs(user_id, email_id, recipient, subject, status, error, lead_id, metadata)
-     VALUES($1, $2, $3, $4, $5, $6, $7, $8)`,
-    [email.userId, email.id, email.to, email.subject, status, error, email.leadId, metadata]
+    `INSERT INTO email_logs(user_id, workspace_id, email_id, recipient, subject, status, error, lead_id, metadata)
+     VALUES($1, $9, $2, $3, $4, $5, $6, $7, $8)`,
+    [email.userId, email.id, email.to, email.subject, status, error, email.leadId, metadata, email.workspaceId || email.workspace_id || null]
   )
 }
 
-async function getLead(userId, leadId, client = pool) {
-  const result = await client.query('SELECT id, user_id, name, email, company, status, value, source, notes, metadata FROM crm_leads WHERE user_id = $1 AND id = $2', [userId, leadId])
+async function getLead(userId, workspaceId, leadId, client = pool) {
+  const result = await client.query('SELECT id, user_id, workspace_id, name, email, company, status, value, source, notes, metadata FROM crm_leads WHERE user_id = $1 AND workspace_id = $2 AND id = $3', [userId, workspaceId, leadId])
   return result.rows[0] || null
 }
 
-async function saveAttachment(userId, payload) {
+async function saveAttachment(userId, workspaceId, payload) {
   ensureStorage()
   const fileName = sanitizeFileName(payload.fileName || payload.name)
   const mimeType = normalizeText(payload.mimeType || payload.type) || 'application/octet-stream'
@@ -99,16 +101,16 @@ async function saveAttachment(userId, payload) {
   const storagePath = path.join(STORAGE_ROOT, `${id}-${fileName}`)
   await fs.promises.writeFile(storagePath, buffer, { flag: 'wx' })
   const result = await pool.query(
-    `INSERT INTO email_attachments(id, user_id, lead_id, file_name, mime_type, size_bytes, storage_path)
-     VALUES($1, $2, $3, $4, $5, $6, $7)
+    `INSERT INTO email_attachments(id, user_id, workspace_id, lead_id, file_name, mime_type, size_bytes, storage_path)
+     VALUES($1, $2, $8, $3, $4, $5, $6, $7)
      RETURNING id, user_id, lead_id, file_name, mime_type, size_bytes, storage_path, created_at`,
-    [id, userId, leadId || null, fileName, mimeType, buffer.length, storagePath]
+    [id, userId, leadId || null, fileName, mimeType, buffer.length, storagePath, workspaceId]
   )
   return normalizeAttachment(result.rows[0])
 }
 
-async function listAttachments(userId, leadId = null) {
-  const params = [userId]
+async function listAttachments(userId, workspaceId, leadId = null) {
+  const params = [userId, workspaceId]
   let clause = ''
   if (leadId) {
     params.push(leadId)
@@ -117,23 +119,23 @@ async function listAttachments(userId, leadId = null) {
   const result = await pool.query(
     `SELECT id, user_id, lead_id, file_name, mime_type, size_bytes, storage_path, created_at
        FROM email_attachments
-      WHERE user_id = $1 ${clause}
+      WHERE user_id = $1 AND workspace_id = $2 ${clause}
       ORDER BY created_at DESC LIMIT 100`,
     params
   )
   return result.rows.map(normalizeAttachment)
 }
 
-async function listLeadEmails(userId, leadId) {
+async function listLeadEmails(userId, workspaceId, leadId) {
   const result = await pool.query(
     `SELECT e.*, COALESCE(json_agg(a.*) FILTER (WHERE a.id IS NOT NULL), '[]'::json) AS attachments
        FROM email_messages e
        LEFT JOIN email_message_attachments ema ON ema.email_id = e.id
        LEFT JOIN email_attachments a ON a.id = ema.attachment_id AND a.user_id = e.user_id
-      WHERE e.user_id = $1 AND e.lead_id = $2
+      WHERE e.user_id = $1 AND e.workspace_id = $2 AND e.lead_id = $3
       GROUP BY e.id
       ORDER BY e.created_at DESC`,
-    [userId, leadId]
+    [userId, workspaceId, leadId]
   )
   return result.rows.map(normalizeEmail)
 }
@@ -142,7 +144,8 @@ async function enqueueEmail(userId, payload) {
   const client = await pool.connect()
   try {
     await client.query('BEGIN')
-    const lead = await getLead(userId, payload.leadId, client)
+    const workspaceId = payload.workspaceId
+    const lead = await getLead(userId, workspaceId, payload.leadId, client)
     if (!lead) throw Object.assign(new Error('Lead not found'), { statusCode: 404 })
     const to = normalizeText(payload.to || lead.email)
     if (!to) throw Object.assign(new Error('Lead email is required'), { statusCode: 400 })
@@ -154,19 +157,19 @@ async function enqueueEmail(userId, payload) {
     const from = normalizeText(payload.from || process.env.EMAIL_FROM || process.env.SMTP_FROM || process.env.GMAIL_FROM)
     const trackToken = crypto.randomBytes(24).toString('hex')
     const emailResult = await client.query(
-      `INSERT INTO email_messages(user_id, lead_id, to_email, from_email, subject, text_body, html_body, template, status, provider, tracking_token, scheduled_at)
-       VALUES($1, $2, $3, $4, $5, $6, $7, $8, 'queued', $9, $10, COALESCE($11::timestamptz, NOW()))
+      `INSERT INTO email_messages(user_id, workspace_id, lead_id, to_email, from_email, subject, text_body, html_body, template, status, provider, tracking_token, scheduled_at)
+       VALUES($1, $12, $2, $3, $4, $5, $6, $7, $8, 'queued', $9, $10, COALESCE($11::timestamptz, NOW()))
        RETURNING *`,
-      [userId, lead.id, to, from, subject, text || '', html || '', payload.template || null, chooseProvider(), trackToken, payload.scheduledAt || null]
+      [userId, lead.id, to, from, subject, text || '', html || '', payload.template || null, chooseProvider(), trackToken, payload.scheduledAt || null, workspaceId]
     )
     const attachmentIds = Array.isArray(payload.attachmentIds) ? payload.attachmentIds.filter(Boolean) : []
     for (const attachmentId of attachmentIds) {
-      const attached = await client.query('SELECT id, file_name FROM email_attachments WHERE id = $1 AND user_id = $2', [attachmentId, userId])
+      const attached = await client.query('SELECT id, file_name FROM email_attachments WHERE id = $1 AND user_id = $2 AND workspace_id = $3', [attachmentId, userId, workspaceId])
       if (!attached.rows[0]) throw Object.assign(new Error('Attachment not found'), { statusCode: 404 })
       await client.query('INSERT INTO email_message_attachments(email_id, attachment_id) VALUES($1, $2) ON CONFLICT DO NOTHING', [emailResult.rows[0].id, attachmentId])
-      await logActivity(client, userId, lead.id, 'attachment_added', 'Вложение добавлено к письму', attached.rows[0].file_name, { emailId: emailResult.rows[0].id, attachmentId })
+      await logActivity(client, userId, workspaceId, lead.id, 'attachment_added', 'Вложение добавлено к письму', attached.rows[0].file_name, { emailId: emailResult.rows[0].id, attachmentId })
     }
-    await logActivity(client, userId, lead.id, 'email_queued', 'Письмо поставлено в очередь', subject, { emailId: emailResult.rows[0].id, to })
+    await logActivity(client, userId, workspaceId, lead.id, 'email_queued', 'Письмо поставлено в очередь', subject, { emailId: emailResult.rows[0].id, to })
     await logEmailStatus(client, normalizeEmail(emailResult.rows[0]), 'queued')
     await client.query('COMMIT')
     if (payload.deliverAsync !== false) processEmailQueue().catch((error) => console.error('Email queue failed', error))
