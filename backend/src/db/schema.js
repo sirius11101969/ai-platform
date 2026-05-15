@@ -37,14 +37,54 @@ async function migrate() {
     CREATE TABLE IF NOT EXISTS ai_tasks (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-      task_type TEXT NOT NULL,
-      status TEXT NOT NULL DEFAULT 'queued',
+      type TEXT NOT NULL,
+      prompt TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'pending',
+      credits_spent INTEGER NOT NULL DEFAULT 0 CHECK (credits_spent >= 0),
+      result JSONB,
+      task_type TEXT,
       input JSONB NOT NULL DEFAULT '{}'::jsonb,
       output JSONB,
       error TEXT,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+
+    ALTER TABLE ai_tasks ADD COLUMN IF NOT EXISTS type TEXT;
+    ALTER TABLE ai_tasks ADD COLUMN IF NOT EXISTS prompt TEXT;
+    ALTER TABLE ai_tasks ADD COLUMN IF NOT EXISTS credits_spent INTEGER NOT NULL DEFAULT 0;
+    ALTER TABLE ai_tasks ADD COLUMN IF NOT EXISTS result JSONB;
+    ALTER TABLE ai_tasks ADD COLUMN IF NOT EXISTS task_type TEXT;
+    ALTER TABLE ai_tasks ADD COLUMN IF NOT EXISTS input JSONB NOT NULL DEFAULT '{}'::jsonb;
+    ALTER TABLE ai_tasks ADD COLUMN IF NOT EXISTS output JSONB;
+    ALTER TABLE ai_tasks ADD COLUMN IF NOT EXISTS error TEXT;
+    ALTER TABLE ai_tasks ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+    UPDATE ai_tasks
+       SET type = COALESCE(NULLIF(type, ''), NULLIF(task_type, ''), 'text_generation'),
+           prompt = COALESCE(NULLIF(prompt, ''), input->>'prompt', ''),
+           status = CASE WHEN status = 'queued' THEN 'pending' ELSE status END,
+           result = COALESCE(result, output)
+     WHERE type IS NULL OR prompt IS NULL OR status = 'queued' OR result IS NULL;
+    ALTER TABLE ai_tasks ALTER COLUMN type SET NOT NULL;
+    ALTER TABLE ai_tasks ALTER COLUMN prompt SET NOT NULL;
+    ALTER TABLE ai_tasks ALTER COLUMN status SET DEFAULT 'pending';
+    ALTER TABLE ai_tasks ALTER COLUMN task_type DROP NOT NULL;
+
+    DO $$
+    BEGIN
+      IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint WHERE conname = 'ai_tasks_status_valid'
+      ) THEN
+        ALTER TABLE ai_tasks ADD CONSTRAINT ai_tasks_status_valid
+          CHECK (status IN ('pending', 'processing', 'completed', 'failed'));
+      END IF;
+
+      IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint WHERE conname = 'ai_tasks_credits_spent_non_negative'
+      ) THEN
+        ALTER TABLE ai_tasks ADD CONSTRAINT ai_tasks_credits_spent_non_negative CHECK (credits_spent >= 0);
+      END IF;
+    END $$;
 
     CREATE TABLE IF NOT EXISTS crm_leads (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
