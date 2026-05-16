@@ -153,6 +153,10 @@ function translateApiError(message) {
     'leadId is required': 'Выберите лида для AI действия',
     'Материал пока не загружен на сервер': 'Материал пока не загружен на сервер',
     'AI action must be approved before sending': 'Сначала одобрите AI действие',
+    'Follow-up must be approved before sending': 'Сначала одобрите follow-up',
+    'Follow-up job not found': 'Follow-up не найден',
+    'Invalid follow-up status': 'Недопустимый статус follow-up',
+    'Invalid follow-up channel': 'Недопустимый канал follow-up',
     'AI action not found': 'AI действие не найдено',
     'Invalid AI action type': 'Недопустимый тип AI действия',
     'Invalid AI action status': 'Недопустимый статус AI действия',
@@ -473,4 +477,28 @@ export function sendLeadAiAction(actionId) {
 
 export function sendLeadMaterials(leadId, payload) {
   return request(`/leads/${leadId}/attachments/send`, { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export function fetchAiFollowups() {
+  return request('/ai/followups')
+}
+
+export function runAiFollowupScan() {
+  return request('/ai/followups/run-scan', { method: 'POST' })
+}
+
+export function updateAiFollowup(id, payload) {
+  return request(`/ai/followups/${id}`, { method: 'PATCH', body: JSON.stringify(payload) })
+}
+
+export function approveAiFollowup(id) {
+  return request(`/ai/followups/${id}/approve`, { method: 'POST' })
+}
+
+export function rejectAiFollowup(id) {
+  return request(`/ai/followups/${id}/reject`, { method: 'POST' })
+}
+
+export function sendAiFollowup(id) {
+  return request(`/ai/followups/${id}/send`, { method: 'POST' })
 }

@@ -513,6 +513,59 @@ async function migrate() {
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    CREATE TABLE IF NOT EXISTS ai_followup_rules (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+      rule_type TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'active',
+      suggested_channel TEXT,
+      generated_message TEXT NOT NULL DEFAULT '',
+      scheduled_for TIMESTAMPTZ,
+      approved_at TIMESTAMPTZ,
+      sent_at TIMESTAMPTZ,
+      config JSONB NOT NULL DEFAULT '{}'::jsonb,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      UNIQUE(workspace_id, rule_type)
+    );
+
+    CREATE TABLE IF NOT EXISTS ai_followup_jobs (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+      lead_id UUID NOT NULL REFERENCES crm_leads(id) ON DELETE CASCADE,
+      rule_type TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'suggested',
+      suggested_channel TEXT NOT NULL DEFAULT 'crm',
+      generated_message TEXT NOT NULL DEFAULT '',
+      scheduled_for TIMESTAMPTZ,
+      approved_at TIMESTAMPTZ,
+      sent_at TIMESTAMPTZ,
+      reason TEXT NOT NULL DEFAULT '',
+      urgency TEXT NOT NULL DEFAULT 'medium',
+      error TEXT,
+      metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS ai_followup_attempts (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+      lead_id UUID NOT NULL REFERENCES crm_leads(id) ON DELETE CASCADE,
+      job_id UUID REFERENCES ai_followup_jobs(id) ON DELETE SET NULL,
+      rule_type TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'suggested',
+      suggested_channel TEXT NOT NULL DEFAULT 'crm',
+      generated_message TEXT NOT NULL DEFAULT '',
+      scheduled_for TIMESTAMPTZ,
+      approved_at TIMESTAMPTZ,
+      sent_at TIMESTAMPTZ,
+      error TEXT,
+      metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
     DO $$
     BEGIN
       IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_agent_actions_status_valid') THEN
@@ -523,6 +576,21 @@ async function migrate() {
       END IF;
       IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_followups_status_valid') THEN
         ALTER TABLE ai_followups ADD CONSTRAINT ai_followups_status_valid CHECK (status IN ('queued', 'running', 'completed', 'failed'));
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_followup_rules_status_valid') THEN
+        ALTER TABLE ai_followup_rules ADD CONSTRAINT ai_followup_rules_status_valid CHECK (status IN ('active', 'paused', 'archived'));
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_followup_jobs_status_valid') THEN
+        ALTER TABLE ai_followup_jobs ADD CONSTRAINT ai_followup_jobs_status_valid CHECK (status IN ('suggested', 'approved', 'rejected', 'sent', 'failed'));
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_followup_attempts_status_valid') THEN
+        ALTER TABLE ai_followup_attempts ADD CONSTRAINT ai_followup_attempts_status_valid CHECK (status IN ('suggested', 'approved', 'rejected', 'sent', 'failed'));
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_followup_jobs_channel_valid') THEN
+        ALTER TABLE ai_followup_jobs ADD CONSTRAINT ai_followup_jobs_channel_valid CHECK (suggested_channel IN ('telegram', 'email', 'crm'));
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_followup_attempts_channel_valid') THEN
+        ALTER TABLE ai_followup_attempts ADD CONSTRAINT ai_followup_attempts_channel_valid CHECK (suggested_channel IN ('telegram', 'email', 'crm'));
       END IF;
     END $$;
 
@@ -707,6 +775,10 @@ async function migrate() {
     CREATE INDEX IF NOT EXISTS idx_ai_agent_actions_lead ON ai_agent_actions(workspace_id, lead_id, created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_ai_agent_runs_action ON ai_agent_runs(action_id, created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_ai_followups_lead ON ai_followups(workspace_id, lead_id, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_ai_followup_rules_workspace ON ai_followup_rules(workspace_id, rule_type);
+    CREATE INDEX IF NOT EXISTS idx_ai_followup_jobs_status ON ai_followup_jobs(workspace_id, status, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_ai_followup_jobs_dedup ON ai_followup_jobs(workspace_id, lead_id, rule_type, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_ai_followup_attempts_lead ON ai_followup_attempts(workspace_id, lead_id, created_at DESC);
 
   `)
 }

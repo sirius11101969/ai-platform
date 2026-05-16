@@ -44,6 +44,8 @@ async function listLeadTimeline(userId, workspaceId, leadId) {
        UNION ALL
        SELECT id::text, workspace_id, lead_id, approved_by_user AS user_id, CASE WHEN sent_at IS NULL THEN 'follow_up_draft' ELSE 'sent_follow_up' END AS event_type, CASE WHEN sent_at IS NULL THEN 'Follow-up draft' ELSE 'Sent follow-up' END AS title, generated_message AS body, 'ai' AS source, jsonb_build_object('status', status, 'followupType', followup_type, 'scheduledFor', scheduled_for) AS metadata, COALESCE(sent_at, recommended_at) AS created_at FROM ai_followup_sequences WHERE workspace_id = $1 AND lead_id = $2
        UNION ALL
+       SELECT id::text, workspace_id, lead_id, NULL::uuid AS user_id, 'follow_up_' || status AS event_type, 'AI follow-up ' || status AS title, COALESCE(error, generated_message) AS body, suggested_channel AS source, jsonb_build_object('status', status, 'ruleType', rule_type, 'reason', reason, 'urgency', urgency, 'scheduledFor', scheduled_for) AS metadata, COALESCE(sent_at, approved_at, updated_at, created_at) AS created_at FROM ai_followup_jobs WHERE workspace_id = $1 AND lead_id = $2
+       UNION ALL
        SELECT id::text, workspace_id, lead_id, user_id, CASE WHEN status = 'sent' THEN 'attachments_sent' ELSE 'attachment_' || status END AS event_type, CASE WHEN status = 'sent' THEN 'Attachments sent' ELSE 'Attachment event' END AS title, file_name AS body, 'attachment' AS source, metadata, COALESCE(sent_at, created_at) AS created_at FROM lead_attachments WHERE workspace_id = $1 AND lead_id = $2
      ) events ORDER BY created_at DESC LIMIT 200`,
     [workspaceId, leadId]

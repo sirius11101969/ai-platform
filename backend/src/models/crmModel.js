@@ -57,6 +57,7 @@ function normalizeLead(row) {
     aiScore: normalizeAiScore(row.ai_score || row.ai_score_row || null),
     aiFollowUpSequences: Array.isArray(row.ai_followup_sequences) ? row.ai_followup_sequences.map(normalizeAiFollowUpSequence).filter(Boolean) : [],
     aiActions: Array.isArray(row.ai_actions) ? row.ai_actions : [],
+    aiFollowupJobs: Array.isArray(row.ai_followup_jobs) ? row.ai_followup_jobs.map(normalizeAiFollowupJob).filter(Boolean) : [],
   }
 }
 
@@ -97,6 +98,28 @@ function normalizeAiFollowUpSequence(row) {
     approvedByUser: row.approved_by_user || row.approvedByUser || null,
     sentAt: row.sent_at || row.sentAt || null,
     metadata: row.metadata || {},
+  }
+}
+
+
+function normalizeAiFollowupJob(row) {
+  if (!row) return null
+  return {
+    id: row.id,
+    leadId: row.lead_id || row.leadId,
+    workspaceId: row.workspace_id || row.workspaceId,
+    ruleType: row.rule_type || row.ruleType,
+    status: row.status,
+    suggestedChannel: row.suggested_channel || row.suggestedChannel,
+    generatedMessage: row.generated_message || row.generatedMessage || '',
+    scheduledFor: row.scheduled_for || row.scheduledFor,
+    approvedAt: row.approved_at || row.approvedAt || null,
+    sentAt: row.sent_at || row.sentAt || null,
+    reason: row.reason || '',
+    urgency: row.urgency || 'medium',
+    error: row.error || '',
+    createdAt: row.created_at || row.createdAt,
+    updatedAt: row.updated_at || row.updatedAt,
   }
 }
 
@@ -210,6 +233,7 @@ async function listLeads(userId, workspaceId) {
             COALESCE((SELECT json_agg(tm_row ORDER BY tm_row.created_at ASC) FROM (SELECT tm.id, tm.lead_id, tm.user_id, tm.role, tm.message, tm.telegram_chat_id, tm.telegram_message_id, tm.created_at FROM telegram_messages tm WHERE tm.lead_id = l.id AND tm.user_id = l.user_id ORDER BY tm.created_at DESC LIMIT 10) tm_row), '[]'::json) AS telegram_messages,
             (SELECT to_jsonb(s) FROM (SELECT * FROM lead_ai_scores las WHERE las.workspace_id = l.workspace_id AND las.lead_id = l.id ORDER BY las.generated_at DESC LIMIT 1) s) AS ai_score,
             COALESCE((SELECT json_agg(seq_row ORDER BY seq_row.recommended_at DESC) FROM (SELECT * FROM ai_followup_sequences afs WHERE afs.workspace_id = l.workspace_id AND afs.lead_id = l.id ORDER BY afs.recommended_at DESC LIMIT 5) seq_row), '[]'::json) AS ai_followup_sequences,
+            COALESCE((SELECT json_agg(job_row ORDER BY job_row.created_at DESC) FROM (SELECT * FROM ai_followup_jobs afj WHERE afj.workspace_id = l.workspace_id AND afj.lead_id = l.id ORDER BY afj.created_at DESC LIMIT 10) job_row), '[]'::json) AS ai_followup_jobs,
             (SELECT a.output_result FROM ai_agent_actions a WHERE a.workspace_id = l.workspace_id AND a.lead_id = l.id AND a.task_type = 'analyze_lead' AND a.status = 'completed' ORDER BY a.created_at DESC LIMIT 1) AS ai_recommendation,
             COALESCE((SELECT json_agg(ai_row ORDER BY ai_row.created_at DESC) FROM (SELECT a.id, a.task_type, a.status, a.output_result, a.created_at FROM ai_agent_actions a WHERE a.workspace_id = l.workspace_id AND a.lead_id = l.id ORDER BY a.created_at DESC LIMIT 5) ai_row), '[]'::json) AS ai_actions
        FROM crm_leads AS l
@@ -233,16 +257,17 @@ async function listLeads(userId, workspaceId) {
 async function findLead(userId, workspaceId, leadId, client = pool) {
   const result = await client.query(`SELECT ${LEAD_SELECT} FROM crm_leads WHERE user_id = $1 AND workspace_id = $2 AND id = $3`, [userId, workspaceId, leadId])
   if (!result.rows[0]) return null
-  const [notes, followups, telegramMessages, aiScore, aiSequences] = await Promise.all([
+  const [notes, followups, telegramMessages, aiScore, aiSequences, aiFollowupJobs] = await Promise.all([
     client.query('SELECT id, lead_id, user_id, body, created_at FROM crm_notes WHERE user_id = $1 AND workspace_id = $3 AND lead_id = $2 ORDER BY created_at DESC', [userId, leadId, workspaceId]),
     client.query('SELECT id, lead_id, user_id, message, model, created_at FROM crm_followups WHERE user_id = $1 AND workspace_id = $3 AND lead_id = $2 ORDER BY created_at DESC', [userId, leadId, workspaceId]),
     client.query('SELECT id, lead_id, user_id, role, message, telegram_chat_id, telegram_message_id, created_at FROM telegram_messages WHERE user_id = $1 AND workspace_id = $3 AND lead_id = $2 ORDER BY created_at ASC LIMIT 200', [userId, leadId, workspaceId]),
     client.query('SELECT * FROM lead_ai_scores WHERE workspace_id = $1 AND lead_id = $2 ORDER BY generated_at DESC LIMIT 1', [workspaceId, leadId]),
     client.query('SELECT * FROM ai_followup_sequences WHERE workspace_id = $1 AND lead_id = $2 ORDER BY recommended_at DESC LIMIT 5', [workspaceId, leadId]),
+    client.query('SELECT * FROM ai_followup_jobs WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 10', [workspaceId, leadId]),
   ])
   const ai = await client.query("SELECT output_result FROM ai_agent_actions WHERE workspace_id = $1 AND lead_id = $2 AND task_type = 'analyze_lead' AND status = 'completed' ORDER BY created_at DESC LIMIT 1", [workspaceId, leadId])
   const aiActions = await client.query('SELECT id, task_type, status, output_result, created_at FROM ai_agent_actions WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 5', [workspaceId, leadId])
-  return normalizeLead({ ...result.rows[0], notes_list: notes.rows, followups: followups.rows, telegram_messages: telegramMessages.rows, ai_score: aiScore.rows[0] || null, ai_followup_sequences: aiSequences.rows, ai_recommendation: ai.rows[0]?.output_result || null, ai_actions: aiActions.rows })
+  return normalizeLead({ ...result.rows[0], notes_list: notes.rows, followups: followups.rows, telegram_messages: telegramMessages.rows, ai_score: aiScore.rows[0] || null, ai_followup_sequences: aiSequences.rows, ai_followup_jobs: aiFollowupJobs.rows, ai_recommendation: ai.rows[0]?.output_result || null, ai_actions: aiActions.rows })
 }
 
 async function createLead(userId, workspaceId, payload) {
@@ -565,7 +590,7 @@ async function analyzeWorkspaceLeads(userId, workspaceId, limit = 25) {
 }
 
 async function getStats(userId, workspaceId) {
-  const [summaryResult, statusResult, activityResult, aiMetricsResult, aiRevenueResult, aiExecutionResult, telegramResult] = await Promise.all([
+  const [summaryResult, statusResult, activityResult, aiMetricsResult, aiRevenueResult, aiExecutionResult, telegramResult, followupMetricsResult] = await Promise.all([
     pool.query(
       `SELECT COUNT(*)::int AS total_leads,
               COALESCE(SUM(value) FILTER (WHERE status NOT IN ('won','lost')), 0)::numeric AS pipeline_value,
@@ -602,7 +627,7 @@ async function getStats(userId, workspaceId) {
               COALESCE(AVG(score), 0)::numeric AS average_score,
               COALESCE(SUM(l.value * latest.deal_probability / 100.0) FILTER (WHERE c.status NOT IN ('won','lost')), 0)::numeric AS predicted_revenue,
               COALESCE(AVG(deal_probability), 0)::numeric AS conversion_forecast,
-              (SELECT COUNT(*)::int FROM ai_followup_sequences afs WHERE afs.workspace_id = $1 AND afs.status IN ('draft','queued','approved') AND afs.sent_at IS NULL) AS followups_pending
+              ((SELECT COUNT(*)::int FROM ai_followup_sequences afs WHERE afs.workspace_id = $1 AND afs.status IN ('draft','queued','approved') AND afs.sent_at IS NULL) + (SELECT COUNT(*)::int FROM ai_followup_jobs afj WHERE afj.workspace_id = $1 AND afj.status IN ('suggested','approved'))) AS followups_pending
           FROM latest
           JOIN crm_leads c ON c.id = latest.lead_id AND c.workspace_id = $1
           JOIN crm_leads l ON l.id = latest.lead_id`,
@@ -630,6 +655,18 @@ async function getStats(userId, workspaceId) {
         WHERE l.user_id = $1 AND l.workspace_id = $2`,
       [userId, workspaceId]
     ),
+    pool.query(
+      `WITH latest AS (SELECT DISTINCT ON (lead_id) lead_id, score FROM lead_ai_scores WHERE workspace_id = $1 ORDER BY lead_id, generated_at DESC), activity AS (
+         SELECT l.id, GREATEST(l.updated_at, COALESCE(MAX(tm.created_at), l.updated_at), COALESCE(MAX(em.created_at), l.updated_at), COALESCE(MAX(n.created_at), l.updated_at)) AS last_activity_at
+           FROM crm_leads l LEFT JOIN telegram_messages tm ON tm.lead_id = l.id AND tm.workspace_id = l.workspace_id LEFT JOIN email_messages em ON em.lead_id = l.id AND em.workspace_id = l.workspace_id LEFT JOIN crm_notes n ON n.lead_id = l.id AND n.workspace_id = l.workspace_id
+          WHERE l.user_id = $2 AND l.workspace_id = $1 AND l.status NOT IN ('won','lost') GROUP BY l.id
+       )
+       SELECT (SELECT COUNT(*)::int FROM ai_followup_jobs j JOIN crm_leads l ON l.id = j.lead_id AND l.workspace_id = j.workspace_id WHERE j.workspace_id = $1 AND l.user_id = $2 AND j.status IN ('suggested','approved')) AS pending,
+              (SELECT COUNT(*)::int FROM ai_followup_jobs j JOIN crm_leads l ON l.id = j.lead_id AND l.workspace_id = j.workspace_id WHERE j.workspace_id = $1 AND l.user_id = $2 AND j.status = 'sent' AND j.sent_at::date = CURRENT_DATE) AS sent_today,
+              COUNT(*) FILTER (WHERE latest.score >= 70 AND activity.last_activity_at < NOW() - INTERVAL '12 hours')::int AS hot_without_contact
+         FROM activity LEFT JOIN latest ON latest.lead_id = activity.id`,
+      [workspaceId, userId]
+    ),
   ])
   const byStatus = CRM_STATUSES.reduce((acc, status) => ({ ...acc, [status]: { count: 0, value: 0 } }), {})
   for (const row of statusResult.rows) byStatus[row.status] = { count: row.count, value: Number(row.value || 0) }
@@ -643,6 +680,7 @@ async function getStats(userId, workspaceId) {
   const aiRevenue = aiRevenueResult.rows[0] || {}
   const aiExecution = aiExecutionResult.rows[0] || {}
   const telegramStats = telegramResult.rows[0] || {}
+  const followupMetrics = followupMetricsResult.rows[0] || {}
   const aiExecutionFinished = Number(aiExecution.finished_total || 0)
   return {
     totalLeads: total,
@@ -675,6 +713,10 @@ async function getStats(userId, workspaceId) {
       failedActions: Number(aiExecution.failed || 0),
       followUpsWaiting: Number(aiExecution.followups_waiting || 0),
       executionSuccessRate: aiExecutionFinished ? Math.round((Number(aiExecution.sent_total || 0) / aiExecutionFinished) * 100) : 0,
+      autonomousFollowUpsPending: Number(followupMetrics.pending || 0),
+      hotLeadsWithoutContact: Number(followupMetrics.hot_without_contact || 0),
+      autonomousFollowUpsSentToday: Number(followupMetrics.sent_today || 0),
+      followUpConversionPlaceholder: 0,
     },
     byStatus,
     activity: activityResult.rows.map(normalizeActivity),
