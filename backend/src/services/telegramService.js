@@ -49,19 +49,33 @@ const MATERIAL_KEYWORD_PATTERNS = {
 function detectTelegramMaterialIntent(text) {
   const normalized = String(text || '')
   if (!TELEGRAM_MATERIAL_ACTION_PATTERN.test(normalized)) return null
-  if (EMAIL_DELIVERY_PATTERN.test(normalized) && !TELEGRAM_DELIVERY_PATTERN.test(normalized)) return null
+
+  const hasEmailDestination = EMAIL_DELIVERY_PATTERN.test(normalized)
+  const hasEmailAddress = Boolean(extractEmail(normalized))
   const hasTelegramDestination = TELEGRAM_DELIVERY_PATTERN.test(normalized)
+
+  // Explicit email requests must stay on the email path. Generic Telegram chat
+  // requests like “отправь презентацию” should not fall through to email just
+  // because the lead already has an email saved in CRM.
+  if (hasEmailDestination && !hasTelegramDestination) return null
+  if (hasEmailAddress && !hasTelegramDestination) return null
+
   const requested = []
   for (const type of ['presentation', 'video', 'screenshots']) {
     if (MATERIAL_KEYWORD_PATTERNS[type].test(normalized)) requested.push(type)
   }
+
+  // In Telegram, a generic “пришли материалы” means the primary presentation
+  // PDF. Do not try to send every optional demo asset or switch to email.
   const asksForMaterials = MATERIAL_KEYWORD_PATTERNS.materials.test(normalized)
-  if (asksForMaterials && requested.length === 0) requested.push('presentation', 'video', 'screenshots')
-  if (!hasTelegramDestination || requested.length === 0) return null
+  if (asksForMaterials && requested.length === 0) requested.push('presentation')
+
+  if (requested.length === 0) return null
+  const uniqueRequested = [...new Set(requested)]
   return {
     delivery: 'telegram',
-    requested: [...new Set(requested)],
-    label: buildMaterialLabel([...new Set(requested)]),
+    requested: uniqueRequested,
+    label: buildMaterialLabel(uniqueRequested),
   }
 }
 
@@ -100,13 +114,17 @@ function resolveMaterialFiles(types) {
 }
 
 function buildMissingMaterialsReply(missingTypes) {
+  if (missingTypes.length === 1 && missingTypes[0] === 'presentation') {
+    return `Презентация пока не загружена на сервер. Могу отправить ссылку на сайт: ${DEMO_SITE_URL}`
+  }
+
   const labels = {
     presentation: 'презентации',
     video: 'видео',
     screenshots: 'скриншотов',
   }
   const label = missingTypes.map((type) => labels[type] || type).join('/') || 'материалов'
-  return `Материал пока не загружен на сервер: ${label}. Могу отправить ссылку на демо-сайт и краткое описание.`
+  return `Материал пока не загружен на сервер: ${label}. Могу отправить ссылку на сайт: ${DEMO_SITE_URL}`
 }
 
 const EMAIL_PATTERN = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i
@@ -138,13 +156,13 @@ function attachmentMatchesIntent(attachment, intent) {
   return mime === 'application/pdf' || mime.startsWith('image/') || /(материал|materials?|presentation|презентац|screen|скрин|\.pdf$|\.png$|\.jpe?g$|\.webp$)/i.test(name)
 }
 
-async function resolveIntentAttachmentIds(userId, leadId, intent) {
-  const workspace = await ensureDefaultWorkspace(userId)
+async function resolveIntentAttachmentIds(userId, workspaceId, leadId, intent) {
+  const workspace = workspaceId ? { id: workspaceId } : await ensureDefaultWorkspace(userId)
   const attachments = await emailService.listAttachments(userId, workspace.id, leadId)
   return attachments.filter((attachment) => attachmentMatchesIntent(attachment, intent)).slice(0, 6).map((attachment) => attachment.id)
 }
 
-async function persistLeadEmailFromMessage(userId, leadId, email) {
+async function persistLeadEmailFromMessage(userId, workspaceId, leadId, email) {
   if (!email) return
   await pool.query(
     `UPDATE crm_leads
@@ -152,8 +170,8 @@ async function persistLeadEmailFromMessage(userId, leadId, email) {
             contact = COALESCE(contact, $3),
             metadata = COALESCE(metadata, '{}'::jsonb) || jsonb_build_object('emailFromTelegram', $3),
             updated_at = NOW()
-      WHERE user_id = $1 AND workspace_id = $11 AND id = $2`,
-    [userId, leadId, email]
+      WHERE user_id = $1 AND workspace_id = $4 AND id = $2`,
+    [userId, leadId, email, workspaceId]
   )
 }
 
@@ -172,9 +190,10 @@ async function runTelegramEmailWorkflow({ userId, lead, incomingMessage }) {
   }
 
   try {
-    await persistLeadEmailFromMessage(userId, lead.id, intent.email)
-    const attachmentIds = await resolveIntentAttachmentIds(userId, lead.id, intent)
+    await persistLeadEmailFromMessage(userId, lead.workspaceId, lead.id, intent.email)
+    const attachmentIds = await resolveIntentAttachmentIds(userId, lead.workspaceId, lead.id, intent)
     const email = await emailService.sendEmailNow(userId, {
+      workspaceId: lead.workspaceId,
       leadId: lead.id,
       to: recipient,
       template: intent.template,
@@ -445,15 +464,31 @@ async function runTelegramMaterialWorkflow({ userId, workspaceId, leadId, chatId
   if (!intent) return null
 
   const { available, missingTypes, requestedFiles } = resolveMaterialFiles(intent.requested)
+  await recordTelegramMaterialActivity({
+    userId,
+    workspaceId,
+    leadId,
+    type: 'telegram_material_requested',
+    title: 'Запрошены материалы в Telegram',
+    body: buildMaterialLabel(intent.requested),
+    metadata: { intent, requestedFiles },
+  })
+
   const sent = []
+  const failed = []
   for (const material of available) {
-    const telegramResponse = await sendTelegramFile(chatId, material)
-    sent.push({
-      type: material.type,
-      fileName: material.fileName,
-      method: material.method,
-      telegramMessageId: telegramResponse?.result?.message_id || telegramResponse?.message_id || null,
-    })
+    try {
+      const telegramResponse = await sendTelegramFile(chatId, material)
+      sent.push({
+        type: material.type,
+        fileName: material.fileName,
+        method: material.method,
+        telegramMessageId: telegramResponse?.result?.message_id || telegramResponse?.message_id || null,
+      })
+    } catch (error) {
+      console.error('Telegram material delivery failed', { leadId, fileName: material.fileName, error: error.message })
+      failed.push({ type: material.type, fileName: material.fileName, error: error.message })
+    }
   }
 
   if (sent.length > 0) {
@@ -464,16 +499,25 @@ async function runTelegramMaterialWorkflow({ userId, workspaceId, leadId, chatId
       type: 'telegram_material_sent',
       title: 'Материалы отправлены в Telegram',
       body: sent.map((item) => item.fileName).join(', '),
-      metadata: { intent, sent, missingTypes, requestedFiles },
+      metadata: { intent, sent, missingTypes, failed, requestedFiles },
     })
   }
 
-  let reply = null
-  let linkResponse = null
+  if (failed.length > 0) {
+    await recordTelegramMaterialActivity({
+      userId,
+      workspaceId,
+      leadId,
+      type: 'telegram_material_failed',
+      title: 'Не удалось отправить материалы в Telegram',
+      body: failed.map((item) => item.fileName).join(', '),
+      metadata: { intent, failed, sent, missingTypes, requestedFiles },
+    })
+  }
+
   if (missingTypes.length > 0) {
-    reply = buildMissingMaterialsReply(missingTypes)
+    const reply = buildMissingMaterialsReply(missingTypes)
     const missingResponse = await sendTelegramMessage(chatId, reply)
-    linkResponse = await sendTelegramMessage(chatId, DEMO_SITE_URL)
     await recordTelegramMaterialActivity({
       userId,
       workspaceId,
@@ -488,18 +532,24 @@ async function runTelegramMaterialWorkflow({ userId, workspaceId, leadId, chatId
       success: sent.length > 0,
       intent,
       sent,
+      failed,
       missingTypes,
-      reply: sent.length > 0 ? `Отправил доступные материалы в Telegram. ${reply}
-${DEMO_SITE_URL}` : `${reply}
-${DEMO_SITE_URL}`,
+      reply,
       telegramResponse: missingResponse,
-      linkResponse,
     }
   }
 
-  reply = `Готово, отправил ${intent.label} прямо сюда в Telegram.`
+  if (failed.length > 0) {
+    const reply = sent.length > 0
+      ? `Часть материалов отправил в Telegram, но не удалось отправить: ${failed.map((item) => item.fileName).join(', ')}.`
+      : `Пока не удалось отправить ${intent.label} в Telegram. Могу отправить ссылку на сайт: ${DEMO_SITE_URL}`
+    const telegramResponse = await sendTelegramMessage(chatId, reply)
+    return { handled: true, success: sent.length > 0, intent, sent, failed, missingTypes, reply, telegramResponse }
+  }
+
+  const reply = `Готово, отправил ${intent.label} прямо сюда в Telegram.`
   const telegramResponse = await sendTelegramMessage(chatId, reply)
-  return { handled: true, success: true, intent, sent, missingTypes, reply, telegramResponse }
+  return { handled: true, success: true, intent, sent, failed, missingTypes, reply, telegramResponse }
 }
 
 async function sendTelegramMessageToLead({ userId, workspaceId, leadId, text }) {
