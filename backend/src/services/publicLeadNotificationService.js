@@ -40,8 +40,8 @@ function buildLandingLeadNotificationMessage({ lead, aiScore = 'в очеред�
     `email: ${formatValue(lead.email)}`,
     `telegram: ${formatValue(lead.telegram)}`,
     `message: ${formatValue(lead.notes || lead.metadata?.message)}`,
-    `AI score: ${formatValue(aiScore)}`,
-    `recommended next step: ${formatValue(recommendedNextStep)}`,
+    `priority: ${formatValue(aiScore)}`,
+    `next step: ${formatValue(recommendedNextStep)}`,
     `CRM link: ${crmLink}`,
   ].join('\n')
 }

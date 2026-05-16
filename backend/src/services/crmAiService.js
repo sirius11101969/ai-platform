@@ -18,8 +18,8 @@ function fallbackFollowUp(lead) {
   const contact = lead.telegram || lead.email || 'удобный канал связи'
   return [
     `Здравствуйте, ${lead.name}!`,
-    `Возвращаюсь по вашему запросу${lead.company ? ` для ${lead.company}` : ''}. Предлагаю коротко согласовать следующий шаг по сделке на ${Number(lead.value || 0).toLocaleString('ru-RU')} ₽.`,
-    `Можем созвониться на 15 минут и зафиксировать результат, критерии успеха и дату старта? Напишите, пожалуйста, когда удобно ответить в ${contact}.`,
+    `Возвращаюсь по вашему запросу${lead.company ? ` для ${lead.company}` : ''}. Можно коротко обсудить, где автоматизация CRM и follow-up снимет ручную нагрузку с команды.`,
+    `Удобно созвониться на 15 минут на этой неделе? Если проще — напишите, когда лучше ответить в ${contact}.`,
   ].join('\n\n')
 }
 
@@ -29,14 +29,15 @@ async function generateCrmFollowUp(lead) {
   const prompt = {
     role: 'sales_assistant',
     language: 'ru-RU',
-    instruction: 'Сгенерируй короткое премиальное follow-up сообщение для B2B CRM лида. Только русский язык. Тон: уверенный, человечный, без давления. Включи контекст, ценность и конкретный следующий шаг.',
+    instruction: 'Сгенерируй короткое B2B follow-up сообщение на русском языке. Тон: человечный, деловой, спокойный, без давления и спама. Используй только структурированный контекст лида: имя, компанию, источник, заметки и бизнес-потребность. Не показывай внутренние поля и формулировки: intent summary, temperature, score, qualification, AI detected, Лид проявил интерес к темам. Превращай теги вроде crm/ai/follow-up в естественный бизнес-смысл. Не обещай интеграции, ROI или результаты, которых нет в контексте. Один понятный CTA.',
     lead: {
       name: lead.name,
       company: lead.company,
       telegram: lead.telegram,
       email: lead.email,
-      value: lead.value,
       stage: lead.status,
+      source: lead.source,
+      businessNeed: lead.businessNeed || lead.intentSummary || '',
       notes: lead.notesText || lead.notes?.map((note) => note.body).join('\n'),
     },
   }
@@ -86,7 +87,7 @@ async function generateTelegramSalesReply({ lead, incomingMessage, memory = [] }
   const prompt = {
     role: 'telegram_sales_assistant',
     language: 'ru-RU',
-    instruction: 'Ты AI sales assistant SaaS-платформы. Сгенерируй короткий дружелюбный ответ для Telegram: без markdown, без давления, максимум 2-4 предложения. Цель — квалифицировать запрос, показать ценность AI SaaS CRM и предложить следующий понятный шаг. Важно: никогда не обещай, что email, презентация, КП, скриншоты или материалы уже отправлены; подтверждать отправку можно только текстом action executor после успешного SMTP send.',
+    instruction: 'Ты sales assistant SaaS-платформы AS6 AI CRM. Сгенерируй естественный ответ для Telegram на русском: 2–5 коротких строк, без markdown, без давления, без спама. Используй имя, источник, контекст сообщения и понятный следующий шаг. Не показывай внутренние слова: intent summary, temperature, score, qualification, AI detected, Лид проявил интерес к темам. Теги crm/ai/follow-up превращай в бизнес-язык: автоматизация CRM, коммуникации, follow-up. Не обещай интеграции, ROI, отправку материалов или срочность, если этого нет в фактах.',
     lead: {
       name: lead?.name,
       telegram: lead?.telegram,

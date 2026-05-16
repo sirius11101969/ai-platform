@@ -1,5 +1,24 @@
 const pool = require('../db/pool')
 
+function humanizeTimelineBody(value) {
+  const text = String(value || '').trim()
+  if (!text) return ''
+  const cleaned = text
+    .replace(/лид\s+проявил\s+интерес\s+к\s+темам:?/gi, 'Запрос связан с')
+    .replace(/intent\s*summary/gi, '')
+    .replace(/temperature/gi, '')
+    .replace(/score/gi, '')
+    .replace(/qualification/gi, '')
+    .replace(/AI\s*detected/gi, '')
+    .replace(/crm/gi, 'автоматизацией CRM')
+    .replace(/\bai\b/gi, 'AI-автоматизацией')
+    .replace(/\.{2,}/g, '.')
+    .replace(/\s+([,.!?])/g, '$1')
+    .replace(/[\s:;,-]+$/g, '')
+    .trim()
+  return cleaned || 'Событие обновлено'
+}
+
 function normalizeEvent(row) {
   if (!row) return null
   return {
@@ -9,7 +28,7 @@ function normalizeEvent(row) {
     userId: row.user_id,
     type: row.event_type || row.type,
     title: row.title,
-    body: row.body || '',
+    body: humanizeTimelineBody(row.body),
     source: row.source || 'crm',
     metadata: row.metadata || {},
     createdAt: row.created_at,
@@ -40,11 +59,11 @@ async function listLeadTimeline(userId, workspaceId, leadId) {
        UNION ALL
        SELECT id::text, workspace_id, lead_id, user_id, CASE WHEN status = 'failed' THEN 'email_failed' ELSE 'email_sent' END AS event_type, CASE WHEN status = 'failed' THEN 'Email failed' ELSE 'Email sent' END AS title, COALESCE(error, subject) AS body, 'email' AS source, jsonb_build_object('status', status, 'to', to_email, 'subject', subject) AS metadata, COALESCE(sent_at, updated_at, created_at) AS created_at FROM email_messages WHERE workspace_id = $1 AND lead_id = $2 AND status IN ('sent','failed')
        UNION ALL
-       SELECT id::text, workspace_id, lead_id, NULL::uuid AS user_id, 'ai_score_updated' AS event_type, 'AI score update' AS title, (score::text || '/100 · вероятность ' || deal_probability::text || '%') AS body, 'ai' AS source, jsonb_build_object('score', score, 'dealProbability', deal_probability, 'urgencyLevel', urgency_level, 'riskLevel', risk_level) AS metadata, generated_at AS created_at FROM lead_ai_scores WHERE workspace_id = $1 AND lead_id = $2
+       SELECT id::text, workspace_id, lead_id, NULL::uuid AS user_id, 'ai_score_updated' AS event_type, 'Оценка лида обновлена' AS title, CASE WHEN COALESCE(ai_summary, '') <> '' THEN ai_summary ELSE 'Обновлены приоритет и следующий шаг по лиду' END AS body, 'ai' AS source, jsonb_build_object('score', score, 'dealProbability', deal_probability, 'urgencyLevel', urgency_level, 'riskLevel', risk_level) AS metadata, generated_at AS created_at FROM lead_ai_scores WHERE workspace_id = $1 AND lead_id = $2
        UNION ALL
-       SELECT id::text, workspace_id, lead_id, approved_by_user AS user_id, CASE WHEN sent_at IS NULL THEN 'follow_up_draft' ELSE 'sent_follow_up' END AS event_type, CASE WHEN sent_at IS NULL THEN 'Follow-up draft' ELSE 'Sent follow-up' END AS title, generated_message AS body, 'ai' AS source, jsonb_build_object('status', status, 'followupType', followup_type, 'scheduledFor', scheduled_for) AS metadata, COALESCE(sent_at, recommended_at) AS created_at FROM ai_followup_sequences WHERE workspace_id = $1 AND lead_id = $2
+       SELECT id::text, workspace_id, lead_id, approved_by_user AS user_id, CASE WHEN sent_at IS NULL THEN 'follow_up_draft' ELSE 'sent_follow_up' END AS event_type, CASE WHEN sent_at IS NULL THEN 'Черновик follow-up' ELSE 'Follow-up отправлен' END AS title, generated_message AS body, 'ai' AS source, jsonb_build_object('status', status, 'followupType', followup_type, 'scheduledFor', scheduled_for) AS metadata, COALESCE(sent_at, recommended_at) AS created_at FROM ai_followup_sequences WHERE workspace_id = $1 AND lead_id = $2
        UNION ALL
-       SELECT id::text, workspace_id, lead_id, NULL::uuid AS user_id, 'follow_up_' || status AS event_type, 'AI follow-up ' || status AS title, COALESCE(error, generated_message) AS body, suggested_channel AS source, jsonb_build_object('status', status, 'ruleType', rule_type, 'reason', reason, 'urgency', urgency, 'scheduledFor', scheduled_for) AS metadata, COALESCE(sent_at, approved_at, updated_at, created_at) AS created_at FROM ai_followup_jobs WHERE workspace_id = $1 AND lead_id = $2
+       SELECT id::text, workspace_id, lead_id, NULL::uuid AS user_id, 'follow_up_' || status AS event_type, CASE status WHEN 'suggested' THEN 'Follow-up предложен' WHEN 'approved' THEN 'Follow-up согласован' WHEN 'sent' THEN 'Follow-up отправлен' WHEN 'failed' THEN 'Follow-up не отправлен' ELSE 'Follow-up обновлён' END AS title, COALESCE(error, generated_message) AS body, suggested_channel AS source, jsonb_build_object('status', status, 'ruleType', rule_type, 'reason', reason, 'urgency', urgency, 'scheduledFor', scheduled_for) AS metadata, COALESCE(sent_at, approved_at, updated_at, created_at) AS created_at FROM ai_followup_jobs WHERE workspace_id = $1 AND lead_id = $2
        UNION ALL
        SELECT id::text, workspace_id, lead_id, user_id, CASE WHEN status = 'sent' THEN 'attachments_sent' ELSE 'attachment_' || status END AS event_type, CASE WHEN status = 'sent' THEN 'Attachments sent' ELSE 'Attachment event' END AS title, file_name AS body, 'attachment' AS source, metadata, COALESCE(sent_at, created_at) AS created_at FROM lead_attachments WHERE workspace_id = $1 AND lead_id = $2
      ) events ORDER BY created_at DESC LIMIT 200`,

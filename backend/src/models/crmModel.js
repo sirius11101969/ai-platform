@@ -605,7 +605,7 @@ async function analyzeLeadIntelligence(userId, workspaceId, leadId, aiOutput = {
   try {
     await client.query('BEGIN')
     const score = await saveLeadAiScore(client, workspaceId, leadId, intelligence)
-    await logActivity(client, userId, workspaceId, leadId, 'ai_score_updated', 'AI score обновлён', `${intelligence.score}/100 · ${intelligence.dealProbability}% вероятность сделки · ${intelligence.riskAlert}`, intelligence)
+    await logActivity(client, userId, workspaceId, leadId, 'ai_score_updated', 'Оценка лида обновлена', `${intelligence.riskAlert}. Рекомендуемый следующий шаг: ${intelligence.nextBestAction}`, intelligence)
     let followUpSequence = null
     if (createFollowUp && (intelligence.urgencyLevel !== 'low' || intelligence.score >= 40)) {
       followUpSequence = await createAiFollowUpSequence(client, userId, workspaceId, leadId, context, intelligence)

@@ -62,7 +62,21 @@ async function runHotLeadTest() {
   assert.ok(client.inserts.queue.every((item) => item.status === 'pending_approval'))
   assert.ok(client.inserts.queue.some((item) => item.action_type === 'telegram_draft' && /Иван, добрый день/.test(item.payload.text)))
   assert.ok(client.inserts.queue.some((item) => item.action_type === 'email_draft' && item.payload.subject && item.payload.cta))
+  const customerCopy = client.inserts.queue.map((item) => `${item.payload.subject || ''} ${item.payload.text || ''}`).join('\n')
+  assert.ok(/автоматизац|follow-up|CRM/i.test(customerCopy), 'drafts should translate tags into business language')
+  assert.ok(!/Лид проявил интерес к темам|intent summary|temperature|score|qualification|AI detected/i.test(customerCopy), 'customer-facing copy must not expose internal AI wording')
+  const telegramDrafts = client.inserts.queue.filter((item) => item.action_type === 'telegram_draft')
+  assert.ok(telegramDrafts.every((item) => item.payload.text.split('\n').length >= 2 && item.payload.text.split('\n').length <= 5), 'telegram drafts should be 2-5 short lines')
   assert.ok(client.inserts.jobs.every((job) => job.status === 'suggested' && job.generated_message))
+}
+
+async function runSanitizedIntentTest() {
+  const rawLead = { ...lead, notes: 'Лид проявил интерес к темам: crm, ai..', metadata: { message: 'intent summary: crm, ai, followup; temperature hot; score 92; qualification good; AI detected' } }
+  const telegram = service.buildTelegramDraft('followup_24h', rawLead, { intentSummary: 'Лид проявил интерес к темам: crm, ai..', score: 92, temperature: 'hot' })
+  const email = service.buildEmailDraft('demo_offer', rawLead, { aiSummary: 'intent summary crm ai followup temperature score qualification AI detected' })
+  const combined = `${telegram.text}\n${email.subject}\n${email.body}`
+  assert.ok(/автоматизац|CRM|follow-up/i.test(combined))
+  assert.ok(!/Лид проявил интерес к темам|intent summary|temperature|score|qualification|AI detected|crm, ai\.\./i.test(combined))
 }
 
 async function runWarmLeadTest() {
@@ -92,6 +106,7 @@ async function runDuplicateTest() {
 
 async function main() {
   await runHotLeadTest()
+  await runSanitizedIntentTest()
   await runWarmLeadTest()
   await runColdLeadTest()
   await runDuplicateTest()
