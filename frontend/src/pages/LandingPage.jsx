@@ -47,6 +47,7 @@ const initialLeadForm = {
   telegram: "",
   company: "",
   message: "",
+  website: "",
 };
 
 function getLandingTracking(source) {
@@ -97,11 +98,11 @@ function LeadCaptureForm({ source = "landing_cta", compact = false }) {
       <div className="lead-form-grid">
         <label>
           <span>Имя</span>
-          <input value={form.name} onChange={(event) => updateField("name", event.target.value)} placeholder="Ваше имя" autoComplete="name" />
+          <input value={form.name} onChange={(event) => updateField("name", event.target.value)} placeholder="Ваше имя" autoComplete="name" required />
         </label>
         <label>
           <span>Email *</span>
-          <input value={form.email} onChange={(event) => updateField("email", event.target.value)} placeholder="you@company.com" type="email" autoComplete="email" />
+          <input value={form.email} onChange={(event) => updateField("email", event.target.value)} placeholder="you@company.com" type="email" autoComplete="email" required />
         </label>
         <label>
           <span>Телефон</span>
@@ -117,10 +118,14 @@ function LeadCaptureForm({ source = "landing_cta", compact = false }) {
         </label>
         <label className="span-2">
           <span>Что хотите автоматизировать? *</span>
-          <textarea value={form.message} onChange={(event) => updateField("message", event.target.value)} placeholder="Например: заявки с сайта, Telegram, follow-ups, AI SDR" rows={compact ? 3 : 4} />
+          <textarea value={form.message} onChange={(event) => updateField("message", event.target.value)} placeholder="Например: заявки с сайта, Telegram, follow-ups, AI SDR" rows={compact ? 3 : 4} required />
         </label>
       </div>
-      <button className="btn primary" type="submit" disabled={status === "sending"}>{status === "sending" ? "Отправляем…" : "Отправить заявку"}</button>
+      <label className="lead-form-honeypot" aria-hidden="true" tabIndex="-1">
+        <span>Website</span>
+        <input value={form.website} onChange={(event) => updateField("website", event.target.value)} name="website" autoComplete="off" tabIndex="-1" />
+      </label>
+      <button className="btn primary" type="submit" disabled={status === "sending"}>{status === "sending" ? "Отправляем…" : "Оставить заявку"}</button>
       {feedback && <p className={status === "success" ? "success-alert" : "auth-error"}>{feedback}</p>}
     </form>
   );
@@ -326,7 +331,7 @@ function FinalCta() {
         <h2>Соберите AI‑операционную систему продаж за дни, не месяцы</h2>
         <p>Премиальный лендинг, CRM‑ядро, Telegram‑воронки, AI‑кредиты и агенты готовы стать фундаментом нового SaaS‑направления.</p>
         <div className="actions center">
-          <a className="btn primary" href="#lead-form">Запустить демо</a>
+          <a className="btn primary" href="#lead-form">Получить демо</a>
           <a className="btn secondary" href="#pricing">Сравнить тарифы</a>
         </div>
         <LeadCaptureForm source="final_cta" compact />

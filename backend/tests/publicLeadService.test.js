@@ -97,6 +97,25 @@ async function runFallbackWorkspaceTest() {
   assert.strictEqual(queries.length, 1)
 }
 
+
+async function runNormalizeValidationTest() {
+  const normalized = publicLeadService._private.normalizePayload({
+    name: '  Иван  ',
+    email: 'LEAD@EXAMPLE.COM ',
+    phone: ' 8 (999) 123-45-67 ',
+    telegram: 'https://t.me/Lead_User',
+    message: ' Хочу демо ',
+  })
+  assert.strictEqual(normalized.name, 'Иван')
+  assert.strictEqual(normalized.email, 'lead@example.com')
+  assert.strictEqual(normalized.phone, '+89991234567')
+  assert.strictEqual(normalized.telegram, '@lead_user')
+  assert.strictEqual(normalized.message, 'Хочу демо')
+
+  assert.throws(() => publicLeadService._private.normalizePayload({ name: '', email: 'lead@example.com', message: 'Need demo' }), /required/)
+  assert.throws(() => publicLeadService._private.normalizePayload({ name: 'Lead', email: 'lead@example.com', message: 'Need demo', website: 'bot.example' }), /Spam submission/)
+}
+
 async function runCreatePublicLeadWorkspaceConsistencyTest() {
   const originalConnect = pool.connect.bind(pool)
   const queries = []
@@ -117,6 +136,7 @@ async function runCreatePublicLeadWorkspaceConsistencyTest() {
 
       if (query === 'BEGIN' || query === 'COMMIT' || query === 'ROLLBACK') return { rows: [], rowCount: 0 }
       if (query.startsWith('SELECT * FROM workspaces')) return { rows: [makeWorkspace()], rowCount: 1 }
+      if (query.startsWith('SELECT id FROM crm_leads')) return { rows: [], rowCount: 0 }
       if (query.startsWith('INSERT INTO crm_leads(')) {
         workspaceUsages.lead = params[1]
         assert.strictEqual(params[0], ownerUserId, 'lead user_id should be workspace owner_user_id')
@@ -212,6 +232,7 @@ async function main() {
     await runEnvWorkspaceTest()
     await runInvalidEnvWorkspaceTest()
     await runFallbackWorkspaceTest()
+    await runNormalizeValidationTest()
     await runCreatePublicLeadWorkspaceConsistencyTest()
   } finally {
     console.info = originalInfo
