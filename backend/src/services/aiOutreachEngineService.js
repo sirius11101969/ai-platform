@@ -149,7 +149,7 @@ async function hasRecentFollowupJob(client, workspaceId, leadId, outreachType) {
   return result.rows[0] || null
 }
 
-async function createQueueItem(client, { workerId, workspaceId, lead, outreachType, actionType, title, recommendation, payload }) {
+async function createQueueItem(client, { workerId, workspaceId, userId, lead, outreachType, actionType, title, recommendation, payload }) {
   const existing = await hasRecentQueueDraft(client, workspaceId, lead.id, outreachType, actionType)
   if (existing) return { skipped: true, id: existing.id, actionType, outreachType }
   const result = await client.query(
@@ -158,6 +158,7 @@ async function createQueueItem(client, { workerId, workspaceId, lead, outreachTy
      RETURNING id`,
     [workerId, workspaceId, lead.id, actionType, title, recommendation, payload]
   )
+  await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'ai_draft_created', title: 'AI черновик создан', body: payload.text || payload.message || recommendation, source: 'ai', metadata: { queueId: result.rows[0].id, actionType, outreachType, channel: payload.channel } })
   return { id: result.rows[0].id, actionType, outreachType }
 }
 
@@ -215,6 +216,7 @@ async function generateOutreachForLead(client, { workspaceId, userId, lead, inte
     const telegramItem = await createQueueItem(client, {
       workerId: worker.id,
       workspaceId,
+      userId,
       lead,
       outreachType,
       actionType: 'telegram_draft',
@@ -225,6 +227,7 @@ async function generateOutreachForLead(client, { workspaceId, userId, lead, inte
     const emailItem = await createQueueItem(client, {
       workerId: worker.id,
       workspaceId,
+      userId,
       lead,
       outreachType,
       actionType: 'email_draft',

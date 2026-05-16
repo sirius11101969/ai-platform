@@ -596,6 +596,9 @@ async function migrate() {
     ALTER TABLE ai_followup_jobs ADD COLUMN IF NOT EXISTS error TEXT;
     ALTER TABLE ai_followup_jobs ADD COLUMN IF NOT EXISTS metadata JSONB NOT NULL DEFAULT '{}'::jsonb;
 
+    ALTER TABLE ai_followup_jobs DROP CONSTRAINT IF EXISTS ai_followup_jobs_status_valid;
+    ALTER TABLE ai_followup_attempts DROP CONSTRAINT IF EXISTS ai_followup_attempts_status_valid;
+
     DO $$
     BEGIN
       IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_agent_actions_status_valid') THEN
@@ -611,10 +614,10 @@ async function migrate() {
         ALTER TABLE ai_followup_rules ADD CONSTRAINT ai_followup_rules_status_valid CHECK (status IN ('active', 'paused', 'archived'));
       END IF;
       IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_followup_jobs_status_valid') THEN
-        ALTER TABLE ai_followup_jobs ADD CONSTRAINT ai_followup_jobs_status_valid CHECK (status IN ('suggested', 'approved', 'rejected', 'sent', 'failed'));
+        ALTER TABLE ai_followup_jobs ADD CONSTRAINT ai_followup_jobs_status_valid CHECK (status IN ('suggested', 'approved', 'rejected', 'sent', 'failed', 'replied'));
       END IF;
       IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_followup_attempts_status_valid') THEN
-        ALTER TABLE ai_followup_attempts ADD CONSTRAINT ai_followup_attempts_status_valid CHECK (status IN ('suggested', 'approved', 'rejected', 'sent', 'failed'));
+        ALTER TABLE ai_followup_attempts ADD CONSTRAINT ai_followup_attempts_status_valid CHECK (status IN ('suggested', 'approved', 'rejected', 'sent', 'failed', 'replied'));
       END IF;
       IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_followup_jobs_channel_valid') THEN
         ALTER TABLE ai_followup_jobs ADD CONSTRAINT ai_followup_jobs_channel_valid CHECK (suggested_channel IN ('telegram', 'email', 'crm'));

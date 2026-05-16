@@ -475,7 +475,7 @@ async function send(userId, workspaceId, id) {
     if (job.suggestedChannel === 'telegram') {
       result = await sendTelegramMessageToLead({ userId: leadOwnerUserId, workspaceId, leadId: job.leadId, text: job.generatedMessage })
     } else if (job.suggestedChannel === 'email') {
-      if (!lead.email) throw Object.assign(new Error('У лида нет email для отправки'), { statusCode: 400 })
+      if (!lead.email) throw Object.assign(new Error('У лида нет email для отправки.'), { statusCode: 400 })
       result = await emailService.sendEmailNow(leadOwnerUserId, { workspaceId, leadId: job.leadId, to: lead.email, subject: 'Следующий шаг по AS6 AI CRM', text: job.generatedMessage })
     } else {
       result = await crmModel.createNote(leadOwnerUserId, workspaceId, job.leadId, `AI follow-up reminder: ${job.generatedMessage}`)

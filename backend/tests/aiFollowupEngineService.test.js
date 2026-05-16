@@ -245,7 +245,7 @@ async function runSendEmailMissingAddressTest() {
 
   const response = await service.send(userId, workspaceId, jobId)
   assert.strictEqual(response.item.status, 'failed')
-  assert.strictEqual(response.error, 'У лида нет email для отправки')
+  assert.strictEqual(response.error, 'У лида нет email для отправки.')
 }
 
 async function main() {

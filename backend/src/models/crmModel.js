@@ -270,7 +270,7 @@ async function listLeads(userId, workspaceId) {
             (SELECT to_jsonb(s) FROM (SELECT * FROM lead_ai_scores las WHERE las.workspace_id = l.workspace_id AND las.lead_id = l.id ORDER BY las.generated_at DESC LIMIT 1) s) AS ai_score,
             COALESCE((SELECT json_agg(seq_row ORDER BY seq_row.recommended_at DESC) FROM (SELECT * FROM ai_followup_sequences afs WHERE afs.workspace_id = l.workspace_id AND afs.lead_id = l.id ORDER BY afs.recommended_at DESC LIMIT 5) seq_row), '[]'::json) AS ai_followup_sequences,
             COALESCE((SELECT json_agg(job_row ORDER BY job_row.created_at DESC) FROM (SELECT * FROM ai_followup_jobs afj WHERE afj.workspace_id = l.workspace_id AND afj.lead_id = l.id ORDER BY afj.created_at DESC LIMIT 10) job_row), '[]'::json) AS ai_followup_jobs,
-            COALESCE((SELECT json_agg(draft_row ORDER BY draft_row.created_at DESC) FROM (SELECT id, workspace_id, lead_id, action_type, status, title, recommendation, payload, created_at, updated_at FROM ai_worker_queue q WHERE q.workspace_id = l.workspace_id AND q.lead_id = l.id AND q.action_type IN ('telegram_draft','email_draft') ORDER BY q.created_at DESC LIMIT 20) draft_row), '[]'::json) AS ai_outreach_drafts,
+            COALESCE((SELECT json_agg(draft_row ORDER BY draft_row.created_at DESC) FROM (SELECT id, workspace_id, lead_id, action_type, status, title, recommendation, payload, created_at, updated_at FROM ai_worker_queue q WHERE q.workspace_id = l.workspace_id AND q.lead_id = l.id AND q.action_type IN ('telegram_draft','email_draft','followup_24h','followup_3d','demo_offer','meeting_request') ORDER BY q.created_at DESC LIMIT 20) draft_row), '[]'::json) AS ai_outreach_drafts,
             (SELECT a.output_result FROM ai_agent_actions a WHERE a.workspace_id = l.workspace_id AND a.lead_id = l.id AND a.task_type = 'analyze_lead' AND a.status = 'completed' ORDER BY a.created_at DESC LIMIT 1) AS ai_recommendation,
             COALESCE((SELECT json_agg(ai_row ORDER BY ai_row.created_at DESC) FROM (SELECT a.id, a.task_type, a.status, a.output_result, a.created_at FROM ai_agent_actions a WHERE a.workspace_id = l.workspace_id AND a.lead_id = l.id ORDER BY a.created_at DESC LIMIT 5) ai_row), '[]'::json) AS ai_actions
        FROM crm_leads AS l
@@ -301,7 +301,7 @@ async function findLead(userId, workspaceId, leadId, client = pool) {
     client.query('SELECT * FROM lead_ai_scores WHERE workspace_id = $1 AND lead_id = $2 ORDER BY generated_at DESC LIMIT 1', [workspaceId, leadId]),
     client.query('SELECT * FROM ai_followup_sequences WHERE workspace_id = $1 AND lead_id = $2 ORDER BY recommended_at DESC LIMIT 5', [workspaceId, leadId]),
     client.query('SELECT * FROM ai_followup_jobs WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 10', [workspaceId, leadId]),
-    client.query("SELECT id, workspace_id, lead_id, action_type, status, title, recommendation, payload, created_at, updated_at FROM ai_worker_queue WHERE workspace_id = $1 AND lead_id = $2 AND action_type IN ('telegram_draft','email_draft') ORDER BY created_at DESC LIMIT 20", [workspaceId, leadId]),
+    client.query("SELECT id, workspace_id, lead_id, action_type, status, title, recommendation, payload, created_at, updated_at FROM ai_worker_queue WHERE workspace_id = $1 AND lead_id = $2 AND action_type IN ('telegram_draft','email_draft','followup_24h','followup_3d','demo_offer','meeting_request') ORDER BY created_at DESC LIMIT 20", [workspaceId, leadId]),
   ])
   const ai = await client.query("SELECT output_result FROM ai_agent_actions WHERE workspace_id = $1 AND lead_id = $2 AND task_type = 'analyze_lead' AND status = 'completed' ORDER BY created_at DESC LIMIT 1", [workspaceId, leadId])
   const aiActions = await client.query('SELECT id, task_type, status, output_result, created_at FROM ai_agent_actions WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 5', [workspaceId, leadId])
@@ -701,6 +701,7 @@ async function getStats(userId, workspaceId) {
       `SELECT COUNT(DISTINCT l.id) FILTER (WHERE l.source = 'telegram' OR l.telegram_chat_id IS NOT NULL OR l.telegram IS NOT NULL)::int AS telegram_leads,
               COUNT(DISTINCT tm.id) FILTER (WHERE tm.created_at >= NOW() - INTERVAL '24 hours')::int AS recent_messages,
               COUNT(DISTINCT tm.id) FILTER (WHERE tm.role = 'assistant' AND tm.created_at::date = CURRENT_DATE)::int AS outbound_today,
+              COUNT(DISTINCT tm.id) FILTER (WHERE tm.role = 'user' AND tm.created_at::date = CURRENT_DATE)::int AS replies_today,
               COUNT(DISTINCT q.id) FILTER (WHERE q.status = 'completed' AND q.executed_at::date = CURRENT_DATE AND q.action_type IN ('telegram_draft','telegram_followup','telegram_follow_up','send_demo_link'))::int AS ai_actions_sent
          FROM crm_leads l
          LEFT JOIN telegram_messages tm ON tm.lead_id = l.id AND tm.workspace_id = l.workspace_id
@@ -722,6 +723,7 @@ async function getStats(userId, workspaceId) {
     ),
     pool.query(
       `SELECT COUNT(*) FILTER (WHERE q.created_at::date = CURRENT_DATE)::int AS generated_today,
+              COUNT(*) FILTER (WHERE q.status = 'completed' AND q.executed_at::date = CURRENT_DATE)::int AS sent_today,
               COUNT(*) FILTER (WHERE q.status = 'pending_approval')::int AS pending_approvals,
               COUNT(DISTINCT q.lead_id) FILTER (WHERE q.status = 'pending_approval')::int AS ready_leads,
               COUNT(DISTINCT q.lead_id)::int AS total_leads
@@ -729,7 +731,7 @@ async function getStats(userId, workspaceId) {
          JOIN crm_leads l ON l.id = q.lead_id AND l.workspace_id = q.workspace_id
         WHERE q.workspace_id = $1
           AND l.user_id = $2
-          AND q.action_type IN ('telegram_draft','email_draft')`,
+          AND q.action_type IN ('telegram_draft','email_draft','followup_24h','followup_3d','demo_offer','meeting_request')`,
       [workspaceId, userId]
     ),
     pool.query(
@@ -806,6 +808,10 @@ async function getStats(userId, workspaceId) {
       autonomousFollowUpsSentToday: Number(followupMetrics.sent_today || 0),
       followUpConversionPlaceholder: 0,
       outreachGeneratedToday: Number(outreachMetrics.generated_today || 0),
+      aiMessagesDraftedToday: Number(outreachMetrics.generated_today || 0),
+      aiMessagesSentToday: Number(outreachMetrics.sent_today || 0),
+      repliesReceivedToday: Number(telegramStats.replies_today || 0),
+      pendingApprovals: Number(outreachMetrics.pending_approvals || aiExecution.pending_approval || 0),
       outreachPendingApprovals: Number(outreachMetrics.pending_approvals || 0),
       aiResponseReadiness: Number(outreachMetrics.total_leads || 0) ? Math.round((Number(outreachMetrics.ready_leads || 0) / Number(outreachMetrics.total_leads || 1)) * 100) : 0,
     },

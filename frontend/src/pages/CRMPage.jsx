@@ -176,11 +176,11 @@ function actionStatusLabel(status) {
 }
 
 function actionTypeLabel(type) {
-  return ({ telegram_followup: 'Telegram follow-up', email_followup: 'Email follow-up', telegram_follow_up: 'Telegram follow-up', email_follow_up: 'Email follow-up', telegram_draft: 'Telegram follow-up', email_draft: 'Email follow-up', follow_up_recommendation: 'Follow-up', crm_next_action: 'CRM действие', lead_prioritization: 'Приоритизация', commercial_offer: 'Коммерческое предложение', send_presentation: 'Отправить презентацию', send_screenshots: 'Отправить скриншоты', send_demo_link: 'Отправить demo link', move_lead_stage: 'Переместить этап', create_reminder: 'Создать напоминание' }[type] || type);
+  return ({ telegram_followup: 'Telegram follow-up', email_followup: 'Email follow-up', telegram_follow_up: 'Telegram follow-up', email_follow_up: 'Email follow-up', telegram_draft: 'Telegram draft', email_draft: 'Email draft', followup_24h: 'Follow-up 24ч', followup_3d: 'Follow-up 3д', demo_offer: 'Demo offer', meeting_request: 'Запрос встречи', follow_up_recommendation: 'Follow-up', crm_next_action: 'CRM действие', lead_prioritization: 'Приоритизация', commercial_offer: 'Коммерческое предложение', send_presentation: 'Отправить презентацию', send_screenshots: 'Отправить скриншоты', send_demo_link: 'Отправить demo link', move_lead_stage: 'Переместить этап', create_reminder: 'Создать напоминание' }[type] || type);
 }
 
 function timelineTitle(event) {
-  return ({ telegram_inbound: 'Telegram inbound', telegram_outbound_ai: 'Telegram outbound AI', email_sent: 'Email отправлен', email_failed: 'Email не отправлен', ai_score_updated: 'AI score обновлён', follow_up_draft: 'Follow-up черновик', sent_follow_up: 'Follow-up отправлен', attachments_sent: 'Материалы отправлены', lead_moved: 'Этап изменён', note_added: 'Заметка', ai_action_sent: 'AI действие отправлено', ai_action_approved: 'AI действие одобрено', ai_action_rejected: 'AI действие отклонено', ai_action_executed: 'AI действие выполнено', ai_action_failed: 'AI действие не выполнено', follow_up_suggested: 'Follow-up suggested', follow_up_approved: 'Follow-up approved', follow_up_rejected: 'Follow-up rejected', follow_up_sent: 'Follow-up sent', follow_up_failed: 'Follow-up failed' }[event?.type] || event?.title || 'Событие');
+  return ({ telegram_inbound: 'Telegram inbound', telegram_outbound_ai: 'Telegram outbound AI', ai_draft_created: 'AI черновик создан', ai_draft_approved: 'AI черновик одобрен', telegram_sent: 'Telegram отправлен', lead_replied: 'Лид ответил', send_failed: 'Отправка не выполнена', ai_stage_suggested: 'AI предложил этап', email_sent: 'Email отправлен', email_failed: 'Email не отправлен', ai_score_updated: 'AI score обновлён', follow_up_draft: 'Follow-up черновик', sent_follow_up: 'Follow-up отправлен', attachments_sent: 'Материалы отправлены', lead_moved: 'Этап изменён', note_added: 'Заметка', ai_action_sent: 'AI действие отправлено', ai_action_approved: 'AI действие одобрено', ai_action_rejected: 'AI действие отклонено', ai_action_executed: 'AI действие выполнено', ai_action_failed: 'AI действие не выполнено', follow_up_suggested: 'Follow-up suggested', follow_up_approved: 'Follow-up approved', follow_up_rejected: 'Follow-up rejected', follow_up_sent: 'Follow-up sent', follow_up_failed: 'Follow-up failed' }[event?.type] || event?.title || 'Событие');
 }
 
 const modalCloseStack = [];
@@ -487,7 +487,7 @@ export default function CRMPage() {
   async function handleExecuteApprovalQueueItem(item) {
     setExecutionBusy((current) => ({ ...current, [item.id]: true }));
     setError('');
-    try { await executeAiApprovalQueueItem(item.id); await Promise.all([refreshActionCenter(selectedLead), refreshLeadEmails(selectedLead), refreshTelegramMessages(selectedLead), loadCrm({ silent: true }), refreshMeta()]); }
+    try { const response = await executeAiApprovalQueueItem(item.id); if (response?.error) setError(response.error); await Promise.all([refreshActionCenter(selectedLead), refreshLeadEmails(selectedLead), refreshTelegramMessages(selectedLead), loadCrm({ silent: true }), refreshMeta()]); }
     catch (requestError) { setError(requestError.message || 'Не удалось выполнить AI действие'); }
     finally { setExecutionBusy((current) => ({ ...current, [item.id]: false })); }
   }
@@ -1110,8 +1110,8 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                     <p>{item.recommendation || item.title}</p>
                     {item.errorMessage && <small className="email-error-text">Ошибка: {item.errorMessage}</small>}
                     <div className="execution-buttons">
-                      <button type="button" className="ghost-button compact" onClick={() => onApproveApprovalQueueItem(item)} disabled={executionBusy[item.id] || !['pending_approval','failed'].includes(item.status)}>Одобрить</button>
-                      <button type="button" className="btn primary compact" onClick={() => onExecuteApprovalQueueItem(item)} disabled={executionBusy[item.id] || item.status !== 'approved'}>Выполнить</button>
+                      <button type="button" className="ghost-button compact" onClick={() => onApproveApprovalQueueItem(item)} disabled={executionBusy[item.id] || !['pending_approval','failed'].includes(item.status)}>{executionBusy[item.id] ? 'Работаем…' : 'Одобрить'}</button>
+                      <button type="button" className="btn primary compact" onClick={() => onExecuteApprovalQueueItem(item)} disabled={executionBusy[item.id] || item.status !== 'approved'}>{executionBusy[item.id] ? 'Отправляем…' : 'Отправить'}</button>
                       <button type="button" className="ghost-button compact" onClick={() => onEditApprovalQueueItem(item)} disabled={executionBusy[item.id] || ['executing','completed'].includes(item.status)}>Изменить</button>
                       <button type="button" className="ghost-button compact danger-action" onClick={() => onRejectApprovalQueueItem(item)} disabled={executionBusy[item.id] || ['executing','completed','rejected'].includes(item.status)}>Отклонить</button>
                     </div>
@@ -1143,6 +1143,8 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                 <div><dt>Telegram</dt><dd>{lead.telegram || lead.telegramUsername || "—"} {isTelegramLead(lead) && <span className="telegram-badge inline">Telegram</span>} {isTelegramLead(lead) && <span className={`telegram-presence ${lead.telegramOnline ? 'online' : 'offline'}`}>{lead.telegramOnline ? 'online' : 'offline'}</span>}</dd></div>
                 <div><dt>Telegram username</dt><dd>{lead.telegramUsername || lead.telegram || "—"}</dd></div>
                 <div><dt>Chat id</dt><dd>{hasTelegramChatId(lead) ? <span className="telegram-chat-status ok">chat id сохранён</span> : <span className="telegram-chat-status missing">chat id отсутствует</span>}</dd></div>
+                <div><dt>Последний контакт</dt><dd>{formatDate(lead.lastMessageAt || lead.updatedAt)}</dd></div>
+                <div><dt>Следующее AI действие</dt><dd>{getLeadAiScore(lead)?.recommendedNextStep || getLeadAiScore(lead)?.nextBestAction || getAiSummaryText(getAiRecommendation(lead))}</dd></div>
                 <div><dt>Email</dt><dd>{lead.email || "—"}</dd></div>
                 <div><dt>Этап</dt><dd>{stageMap[lead.status] || lead.status}</dd></div>
                 <div><dt>Создано</dt><dd>{formatDate(lead.createdAt)}</dd></div>
@@ -1160,7 +1162,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
               </div>
               <div className="followup-history detail-followups">
                 {telegramOutreachDrafts.length === 0 && <p className="empty-state">Telegram черновики ещё не созданы.</p>}
-                {telegramOutreachDrafts.map((draft) => <p className="ai-sequence-draft" key={draft.id}><b>{outreachTypeLabel(draft.outreachType)}:</b> {draft.text}<small>{draft.status} · score {draft.score || '—'} · {draft.temperature || 'AI'} · {formatDate(draft.createdAt)}</small></p>)}
+                {telegramOutreachDrafts.map((draft) => <p className="ai-sequence-draft" key={draft.id}><b>{outreachTypeLabel(draft.outreachType)}:</b> {draft.text}<small>{actionStatusLabel(draft.status)} · score {draft.score || '—'} · {draft.temperature || 'AI'} · {formatDate(draft.createdAt)}</small><span className="execution-buttons"><button type="button" className="ghost-button compact" onClick={() => onApproveApprovalQueueItem(draft)} disabled={executionBusy[draft.id] || !['pending_approval','failed'].includes(draft.status)}>{executionBusy[draft.id] ? 'Работаем…' : 'Одобрить'}</button><button type="button" className="btn primary compact" onClick={() => onExecuteApprovalQueueItem(draft)} disabled={executionBusy[draft.id] || draft.status !== 'approved'}>{executionBusy[draft.id] ? 'Отправляем…' : 'Отправить'}</button></span></p>)}
               </div>
             </div>
 
@@ -1252,7 +1254,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
               <h4>AI‑дожим</h4>
               <div className="followup-history detail-followups">
                 {(lead.followUps || []).length === 0 && (lead.aiFollowUpSequences || []).length === 0 && (lead.aiFollowupJobs || []).length === 0 && (lead.aiOutreachDrafts || []).length === 0 && <p>AI‑дожим ещё не генерировался.</p>}
-                {(lead.aiOutreachDrafts || []).map((item) => <p className="ai-sequence-draft" key={item.id}><b>{item.channel === 'email' ? `Email · ${item.subject}` : 'Telegram'}:</b> {item.text}<small>{item.status} · {outreachTypeLabel(item.outreachType)} · {formatDate(item.createdAt)}</small></p>)}
+                {(lead.aiOutreachDrafts || []).map((item) => <p className="ai-sequence-draft" key={item.id}><b>{item.channel === 'email' ? `Email · ${item.subject}` : 'Telegram'}:</b> {item.text}<small>{actionStatusLabel(item.status)} · {outreachTypeLabel(item.outreachType)} · {formatDate(item.createdAt)}</small></p>)}
                 {(lead.aiFollowupJobs || []).map((item) => <p className="ai-sequence-draft" key={item.id}><b>{item.suggestedChannel === 'email' ? 'Email' : item.suggestedChannel === 'telegram' ? 'Telegram' : 'CRM reminder'}:</b> {item.generatedMessage}<small>{item.status} · {item.reason || item.ruleType} · срочность {item.urgency} · {formatDate(item.sentAt || item.approvedAt || item.scheduledFor || item.createdAt)}</small>{item.error && <small>Ошибка: {item.error}</small>}</p>)}
                 {(lead.aiFollowUpSequences || []).map((item) => <p className="ai-sequence-draft" key={item.id}><b>{item.followupType === "email" ? "Email" : item.followupType === "telegram" ? "Telegram" : "Задача"}:</b> {item.generatedMessage}<small>{item.status === "draft" ? "черновик" : item.status} · {formatDate(item.scheduledFor || item.recommendedAt)}</small></p>)}
                 {(lead.followUps || []).map((item) => <p key={item.id}><b>AI:</b> {item.message}<small>{formatDate(item.createdAt)}</small></p>)}
