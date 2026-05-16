@@ -1439,3 +1439,37 @@ button { font: inherit; }
 .followup-send-button[aria-busy="true"]:disabled { cursor: wait; opacity: .78; }
 .followup-send-hint { max-width: 190px; color: #ffcf8a; font-size: .76rem; font-weight: 800; line-height: 1.35; }
 .urgency-badge.critical { background: rgba(255, 92, 122, .18); color: #ffd0d8; border-color: rgba(255, 92, 122, .34); }
+
+.crm-modal-backdrop,
+.lead-detail-modal,
+.lead-modal-close {
+  pointer-events: auto;
+}
+
+.lead-modal-close {
+  position: absolute;
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+  font-size: 32px;
+  font-weight: 700;
+  z-index: 20;
+}
+
+.lead-modal-close span,
+.lead-modal-close svg {
+  display: block;
+  line-height: 1;
+  transform: translateY(-1px);
+}
+
+.lead-detail-bottom-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 18px;
+}
