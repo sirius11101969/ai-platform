@@ -210,12 +210,20 @@ async function migrate() {
     ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'new';
     ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS value NUMERIC(12, 2) NOT NULL DEFAULT 0;
     ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS telegram_id TEXT;
+    ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS telegram_chat_id TEXT;
     ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS telegram_username TEXT;
+    ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS telegram_first_name TEXT;
+    ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS telegram_last_name TEXT;
     ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS first_name TEXT;
     ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS last_name TEXT;
     ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS first_message TEXT;
     ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS last_message_at TIMESTAMPTZ;
     ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS last_seen_at TIMESTAMPTZ;
+    UPDATE crm_leads
+       SET telegram_chat_id = COALESCE(telegram_chat_id, metadata->>'telegramChatId'),
+           telegram_first_name = COALESCE(telegram_first_name, first_name),
+           telegram_last_name = COALESCE(telegram_last_name, last_name)
+     WHERE source = 'telegram' OR metadata ? 'telegramChatId';
     ALTER TABLE crm_leads ALTER COLUMN contact DROP NOT NULL;
     UPDATE crm_leads
        SET status = COALESCE(NULLIF(status, ''), NULLIF(stage, ''), 'new'),
@@ -337,6 +345,7 @@ async function migrate() {
       user_id UUID REFERENCES users(id) ON DELETE SET NULL,
       role TEXT NOT NULL CHECK (role IN ('user', 'assistant')),
       message TEXT NOT NULL,
+      telegram_chat_id TEXT,
       telegram_message_id TEXT,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
@@ -375,7 +384,9 @@ async function migrate() {
     UPDATE email_logs e SET workspace_id = l.workspace_id FROM crm_leads l WHERE e.workspace_id IS NULL AND e.lead_id = l.id;
     UPDATE email_logs e SET workspace_id = wm.workspace_id FROM workspace_members wm WHERE e.workspace_id IS NULL AND wm.user_id = e.user_id AND wm.role = 'owner';
     ALTER TABLE telegram_messages ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE SET NULL;
+    ALTER TABLE telegram_messages ADD COLUMN IF NOT EXISTS telegram_chat_id TEXT;
     UPDATE telegram_messages t SET workspace_id = l.workspace_id FROM crm_leads l WHERE t.workspace_id IS NULL AND t.lead_id = l.id;
+    UPDATE telegram_messages t SET telegram_chat_id = COALESCE(l.telegram_chat_id, l.metadata->>'telegramChatId') FROM crm_leads l WHERE t.telegram_chat_id IS NULL AND t.lead_id = l.id;
     ALTER TABLE crm_followups ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE;
     UPDATE crm_followups f SET workspace_id = l.workspace_id FROM crm_leads l WHERE f.workspace_id IS NULL AND f.lead_id = l.id;
     ALTER TABLE crm_activity ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE;
@@ -683,6 +694,8 @@ async function migrate() {
     CREATE INDEX IF NOT EXISTS idx_crm_notes_lead_id ON crm_notes(lead_id);
     CREATE INDEX IF NOT EXISTS idx_telegram_messages_lead_id ON telegram_messages(lead_id, created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_telegram_messages_user_id ON telegram_messages(user_id, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_crm_leads_telegram_chat_id ON crm_leads(workspace_id, telegram_chat_id);
+    CREATE INDEX IF NOT EXISTS idx_telegram_messages_chat_id ON telegram_messages(workspace_id, telegram_chat_id, created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_crm_followups_user_id ON crm_followups(user_id);
     CREATE INDEX IF NOT EXISTS idx_crm_followups_lead_id ON crm_followups(lead_id);
     CREATE INDEX IF NOT EXISTS idx_crm_activity_user_id ON crm_activity(user_id);

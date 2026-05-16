@@ -12,7 +12,7 @@ const DEFAULT_STAGE_LABELS = {
   lost: 'Потеряно',
 }
 const STATUS_LABELS = DEFAULT_STAGE_LABELS
-const LEAD_COLUMNS = ['id', 'user_id', 'workspace_id', 'name', 'email', 'phone', 'telegram', 'telegram_id', 'telegram_username', 'first_name', 'last_name', 'first_message', 'last_message_at', 'last_seen_at', 'company', 'status', 'value', 'source', 'notes', 'metadata', 'created_at', 'updated_at']
+const LEAD_COLUMNS = ['id', 'user_id', 'workspace_id', 'name', 'email', 'phone', 'telegram', 'telegram_id', 'telegram_chat_id', 'telegram_username', 'telegram_first_name', 'telegram_last_name', 'first_name', 'last_name', 'first_message', 'last_message_at', 'last_seen_at', 'company', 'status', 'value', 'source', 'notes', 'metadata', 'created_at', 'updated_at']
 const LEAD_SELECT = LEAD_COLUMNS.join(', ')
 
 function leadSelect(alias) {
@@ -30,9 +30,13 @@ function normalizeLead(row) {
     phone: row.phone || '',
     telegram: row.telegram || '',
     telegramId: row.telegram_id || row.metadata?.telegramUserId || '',
+    telegramChatId: row.telegram_chat_id || row.metadata?.telegramChatId || '',
+    hasTelegramChatId: Boolean(row.telegram_chat_id || row.metadata?.telegramChatId),
     telegramUsername: row.telegram_username || row.telegram || '',
-    firstName: row.first_name || '',
-    lastName: row.last_name || '',
+    telegramFirstName: row.telegram_first_name || row.first_name || '',
+    telegramLastName: row.telegram_last_name || row.last_name || '',
+    firstName: row.first_name || row.telegram_first_name || '',
+    lastName: row.last_name || row.telegram_last_name || '',
     firstMessage: row.first_message || '',
     lastMessageAt: row.last_message_at || row.metadata?.telegramLastMessageAt || null,
     lastSeenAt: row.last_seen_at || row.last_message_at || null,
@@ -108,7 +112,7 @@ function normalizeFollowUp(row) {
 
 function normalizeTelegramMessage(row) {
   if (!row) return null
-  return { id: row.id, leadId: row.lead_id, userId: row.user_id, role: row.role, message: row.message, telegramMessageId: row.telegram_message_id || '', createdAt: row.created_at }
+  return { id: row.id, leadId: row.lead_id, userId: row.user_id, role: row.role, message: row.message, telegramChatId: row.telegram_chat_id || '', telegramMessageId: row.telegram_message_id || '', createdAt: row.created_at }
 }
 
 function normalizeStage(row) {
@@ -203,7 +207,7 @@ async function listLeads(userId, workspaceId) {
     `SELECT ${leadSelect('l')},
             COALESCE(json_agg(DISTINCT jsonb_build_object('id', n.id, 'lead_id', n.lead_id, 'user_id', n.user_id, 'body', n.body, 'created_at', n.created_at)) FILTER (WHERE n.id IS NOT NULL), '[]'::json) AS notes_list,
             COALESCE(json_agg(DISTINCT jsonb_build_object('id', f.id, 'lead_id', f.lead_id, 'user_id', f.user_id, 'message', f.message, 'model', f.model, 'created_at', f.created_at)) FILTER (WHERE f.id IS NOT NULL), '[]'::json) AS followups,
-            COALESCE((SELECT json_agg(tm_row ORDER BY tm_row.created_at ASC) FROM (SELECT tm.id, tm.lead_id, tm.user_id, tm.role, tm.message, tm.telegram_message_id, tm.created_at FROM telegram_messages tm WHERE tm.lead_id = l.id AND tm.user_id = l.user_id ORDER BY tm.created_at DESC LIMIT 10) tm_row), '[]'::json) AS telegram_messages,
+            COALESCE((SELECT json_agg(tm_row ORDER BY tm_row.created_at ASC) FROM (SELECT tm.id, tm.lead_id, tm.user_id, tm.role, tm.message, tm.telegram_chat_id, tm.telegram_message_id, tm.created_at FROM telegram_messages tm WHERE tm.lead_id = l.id AND tm.user_id = l.user_id ORDER BY tm.created_at DESC LIMIT 10) tm_row), '[]'::json) AS telegram_messages,
             (SELECT to_jsonb(s) FROM (SELECT * FROM lead_ai_scores las WHERE las.workspace_id = l.workspace_id AND las.lead_id = l.id ORDER BY las.generated_at DESC LIMIT 1) s) AS ai_score,
             COALESCE((SELECT json_agg(seq_row ORDER BY seq_row.recommended_at DESC) FROM (SELECT * FROM ai_followup_sequences afs WHERE afs.workspace_id = l.workspace_id AND afs.lead_id = l.id ORDER BY afs.recommended_at DESC LIMIT 5) seq_row), '[]'::json) AS ai_followup_sequences,
             (SELECT a.output_result FROM ai_agent_actions a WHERE a.workspace_id = l.workspace_id AND a.lead_id = l.id AND a.task_type = 'analyze_lead' AND a.status = 'completed' ORDER BY a.created_at DESC LIMIT 1) AS ai_recommendation,
@@ -232,7 +236,7 @@ async function findLead(userId, workspaceId, leadId, client = pool) {
   const [notes, followups, telegramMessages, aiScore, aiSequences] = await Promise.all([
     client.query('SELECT id, lead_id, user_id, body, created_at FROM crm_notes WHERE user_id = $1 AND workspace_id = $3 AND lead_id = $2 ORDER BY created_at DESC', [userId, leadId, workspaceId]),
     client.query('SELECT id, lead_id, user_id, message, model, created_at FROM crm_followups WHERE user_id = $1 AND workspace_id = $3 AND lead_id = $2 ORDER BY created_at DESC', [userId, leadId, workspaceId]),
-    client.query('SELECT id, lead_id, user_id, role, message, telegram_message_id, created_at FROM telegram_messages WHERE user_id = $1 AND workspace_id = $3 AND lead_id = $2 ORDER BY created_at ASC LIMIT 200', [userId, leadId, workspaceId]),
+    client.query('SELECT id, lead_id, user_id, role, message, telegram_chat_id, telegram_message_id, created_at FROM telegram_messages WHERE user_id = $1 AND workspace_id = $3 AND lead_id = $2 ORDER BY created_at ASC LIMIT 200', [userId, leadId, workspaceId]),
     client.query('SELECT * FROM lead_ai_scores WHERE workspace_id = $1 AND lead_id = $2 ORDER BY generated_at DESC LIMIT 1', [workspaceId, leadId]),
     client.query('SELECT * FROM ai_followup_sequences WHERE workspace_id = $1 AND lead_id = $2 ORDER BY recommended_at DESC LIMIT 5', [workspaceId, leadId]),
   ])
@@ -359,7 +363,7 @@ async function createNote(userId, workspaceId, leadId, body) {
   const client = await pool.connect()
   try {
     await client.query('BEGIN')
-    const lead = await client.query('SELECT id FROM crm_leads WHERE id = $1 AND user_id = $2 AND workspace_id = $3 FOR UPDATE', [leadId, userId, workspaceId])
+    const lead = await client.query('SELECT id, telegram_chat_id, metadata FROM crm_leads WHERE id = $1 AND user_id = $2 AND workspace_id = $3 FOR UPDATE', [leadId, userId, workspaceId])
     if (!lead.rows[0]) throw Object.assign(new Error('Lead not found'), { statusCode: 404 })
     const note = await client.query(
       `INSERT INTO crm_notes(lead_id, user_id, workspace_id, body) VALUES($1, $2, $4, $3) RETURNING id, lead_id, user_id, body, created_at`,
@@ -424,19 +428,19 @@ async function listTelegramMessages(userId, workspaceId, leadId) {
   const lead = await findLead(userId, workspaceId, leadId)
   if (!lead) throw Object.assign(new Error('Lead not found'), { statusCode: 404 })
   const result = await pool.query(
-    'SELECT id, lead_id, user_id, role, message, telegram_message_id, created_at FROM telegram_messages WHERE user_id = $1 AND workspace_id = $2 AND lead_id = $3 ORDER BY created_at ASC LIMIT 500',
+    'SELECT id, lead_id, user_id, role, message, telegram_chat_id, telegram_message_id, created_at FROM telegram_messages WHERE user_id = $1 AND workspace_id = $2 AND lead_id = $3 ORDER BY created_at ASC LIMIT 500',
     [userId, workspaceId, leadId]
   )
   return result.rows.map(normalizeTelegramMessage)
 }
 
-async function addTelegramMessage(client, { userId, workspaceId, leadId, role, message, telegramMessageId = null, createdAt = null }) {
+async function addTelegramMessage(client, { userId, workspaceId, leadId, role, message, telegramChatId = null, telegramMessageId = null, createdAt = null }) {
   const executor = client || pool
   const result = await executor.query(
-    `INSERT INTO telegram_messages(lead_id, user_id, workspace_id, role, message, telegram_message_id, created_at)
-     VALUES($1, $2, $7, $3, $4, $5, COALESCE($6::timestamptz, NOW()))
-     RETURNING id, lead_id, user_id, role, message, telegram_message_id, created_at`,
-    [leadId, userId, role, message, telegramMessageId ? String(telegramMessageId) : null, createdAt, workspaceId]
+    `INSERT INTO telegram_messages(lead_id, user_id, workspace_id, role, message, telegram_chat_id, telegram_message_id, created_at)
+     VALUES($1, $2, $8, $3, $4, $5, $6, COALESCE($7::timestamptz, NOW()))
+     RETURNING id, lead_id, user_id, role, message, telegram_chat_id, telegram_message_id, created_at`,
+    [leadId, userId, role, message, telegramChatId ? String(telegramChatId) : null, telegramMessageId ? String(telegramMessageId) : null, createdAt, workspaceId]
   )
   return normalizeTelegramMessage(result.rows[0])
 }
@@ -457,7 +461,7 @@ async function appendOutgoingTelegramMessage({ userId, workspaceId, leadId, mess
   const client = await pool.connect()
   try {
     await client.query('BEGIN')
-    const lead = await client.query('SELECT id FROM crm_leads WHERE id = $1 AND user_id = $2 AND workspace_id = $3 FOR UPDATE', [leadId, userId, workspaceId])
+    const lead = await client.query('SELECT id, telegram_chat_id, metadata FROM crm_leads WHERE id = $1 AND user_id = $2 AND workspace_id = $3 FOR UPDATE', [leadId, userId, workspaceId])
     if (!lead.rows[0]) throw Object.assign(new Error('Lead not found'), { statusCode: 404 })
     const telegramMessage = await addTelegramMessage(client, {
       userId,
@@ -465,9 +469,10 @@ async function appendOutgoingTelegramMessage({ userId, workspaceId, leadId, mess
       leadId,
       role: 'assistant',
       message,
+      telegramChatId: lead.rows[0].telegram_chat_id || lead.rows[0].metadata?.telegramChatId || telegramResponse?.result?.chat?.id || null,
       telegramMessageId: telegramResponse?.result?.message_id || telegramResponse?.message_id || null,
     })
-    await client.query('UPDATE crm_leads SET updated_at = NOW() WHERE id = $1 AND user_id = $2 AND workspace_id = $3', [leadId, userId, workspaceId])
+    await client.query('UPDATE crm_leads SET last_message_at = NOW(), updated_at = NOW() WHERE id = $1 AND user_id = $2 AND workspace_id = $3', [leadId, userId, workspaceId])
     await logActivity(client, userId, workspaceId, leadId, 'telegram_crm_reply_sent', 'Ответ отправлен в Telegram', message, { telegramMessageId: telegramMessage.telegramMessageId })
     await client.query('COMMIT')
     return telegramMessage
@@ -560,7 +565,7 @@ async function analyzeWorkspaceLeads(userId, workspaceId, limit = 25) {
 }
 
 async function getStats(userId, workspaceId) {
-  const [summaryResult, statusResult, activityResult, aiMetricsResult, aiRevenueResult, aiExecutionResult] = await Promise.all([
+  const [summaryResult, statusResult, activityResult, aiMetricsResult, aiRevenueResult, aiExecutionResult, telegramResult] = await Promise.all([
     pool.query(
       `SELECT COUNT(*)::int AS total_leads,
               COALESCE(SUM(value) FILTER (WHERE status NOT IN ('won','lost')), 0)::numeric AS pipeline_value,
@@ -614,6 +619,17 @@ async function getStats(userId, workspaceId) {
         WHERE aq.workspace_id = $1 AND EXISTS (SELECT 1 FROM crm_leads l WHERE l.id = aq.lead_id AND l.user_id = $2)`,
       [workspaceId, userId]
     ),
+    pool.query(
+      `SELECT COUNT(DISTINCT l.id) FILTER (WHERE l.source = 'telegram' OR l.telegram_chat_id IS NOT NULL OR l.telegram IS NOT NULL)::int AS telegram_leads,
+              COUNT(DISTINCT tm.id) FILTER (WHERE tm.created_at >= NOW() - INTERVAL '24 hours')::int AS recent_messages,
+              COUNT(DISTINCT tm.id) FILTER (WHERE tm.role = 'assistant' AND tm.created_at::date = CURRENT_DATE)::int AS outbound_today,
+              COUNT(DISTINCT q.id) FILTER (WHERE q.status = 'completed' AND q.executed_at::date = CURRENT_DATE AND q.action_type IN ('telegram_draft','telegram_followup','telegram_follow_up','send_demo_link'))::int AS ai_actions_sent
+         FROM crm_leads l
+         LEFT JOIN telegram_messages tm ON tm.lead_id = l.id AND tm.workspace_id = l.workspace_id
+         LEFT JOIN ai_worker_queue q ON q.lead_id = l.id AND q.workspace_id = l.workspace_id
+        WHERE l.user_id = $1 AND l.workspace_id = $2`,
+      [userId, workspaceId]
+    ),
   ])
   const byStatus = CRM_STATUSES.reduce((acc, status) => ({ ...acc, [status]: { count: 0, value: 0 } }), {})
   for (const row of statusResult.rows) byStatus[row.status] = { count: row.count, value: Number(row.value || 0) }
@@ -626,6 +642,7 @@ async function getStats(userId, workspaceId) {
   const aiCompleted = Number(aiMetrics.completed_actions || 0)
   const aiRevenue = aiRevenueResult.rows[0] || {}
   const aiExecution = aiExecutionResult.rows[0] || {}
+  const telegramStats = telegramResult.rows[0] || {}
   const aiExecutionFinished = Number(aiExecution.finished_total || 0)
   return {
     totalLeads: total,
@@ -635,6 +652,12 @@ async function getStats(userId, workspaceId) {
     wonDeals,
     lostDeals,
     conversionRate: total ? Math.round((wonDeals / total) * 100) : 0,
+    telegram: {
+      leads: Number(telegramStats.telegram_leads || 0),
+      recentMessages: Number(telegramStats.recent_messages || 0),
+      outboundToday: Number(telegramStats.outbound_today || 0),
+      aiActionsSent: Number(telegramStats.ai_actions_sent || 0),
+    },
     aiMetrics: {
       actionsToday: Number(aiMetrics.actions_today || 0),
       generatedFollowUps: Number(aiMetrics.generated_followups || 0),

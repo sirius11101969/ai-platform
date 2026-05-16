@@ -249,7 +249,7 @@ async function logActivity(client, userId, workspaceId, leadId, type, title, bod
 }
 
 async function findTelegramLead(client, userId, workspaceId, telegram) {
-  const params = [userId, workspaceId, telegram.userId]
+  const params = [userId, workspaceId, telegram.userId, String(telegram.chatId)]
   let usernameClause = ''
   if (telegram.username) {
     params.push(telegram.username)
@@ -257,12 +257,12 @@ async function findTelegramLead(client, userId, workspaceId, telegram) {
   }
 
   const result = await client.query(
-    `SELECT id, user_id, name, email, phone, telegram, telegram_id, telegram_username, first_name, last_name, first_message, last_message_at, last_seen_at, company, status, value, source, notes, metadata, created_at, updated_at
+    `SELECT id, user_id, workspace_id, name, email, phone, telegram, telegram_id, telegram_chat_id, telegram_username, telegram_first_name, telegram_last_name, first_name, last_name, first_message, last_message_at, last_seen_at, company, status, value, source, notes, metadata, created_at, updated_at
        FROM crm_leads
       WHERE user_id = $1
         AND workspace_id = $2
         AND source = 'telegram'
-        AND (telegram_id = $3 OR (metadata->>'telegramUserId') = $3 ${usernameClause})
+        AND (telegram_id = $3 OR telegram_chat_id = $4 OR (metadata->>'telegramUserId') = $3 OR (metadata->>'telegramChatId') = $4 ${usernameClause})
       ORDER BY updated_at DESC
       LIMIT 1
       FOR UPDATE`,
@@ -296,9 +296,14 @@ async function upsertLeadWithIncomingMessage(telegram) {
             SET name = COALESCE(NULLIF($3, ''), name),
                 telegram = COALESCE($4, telegram),
                 telegram_id = $5,
+                telegram_chat_id = $12,
                 telegram_username = COALESCE($4, telegram_username),
+                telegram_first_name = COALESCE($6, telegram_first_name),
+                telegram_last_name = COALESCE($7, telegram_last_name),
                 first_name = COALESCE($6, first_name),
                 last_name = COALESCE($7, last_name),
+                status = COALESCE(NULLIF(status, ''), 'new'),
+                stage = COALESCE(NULLIF(stage, ''), 'new'),
                 source = 'telegram',
                 notes = COALESCE(notes || E'\n', '') || $8,
                 metadata = COALESCE(metadata, '{}'::jsonb) || $9::jsonb,
@@ -307,8 +312,8 @@ async function upsertLeadWithIncomingMessage(telegram) {
                 last_seen_at = NOW(),
                 updated_at = NOW()
           WHERE user_id = $1 AND workspace_id = $11 AND id = $2
-          RETURNING id, user_id, workspace_id, name, email, phone, telegram, telegram_id, telegram_username, first_name, last_name, first_message, last_message_at, last_seen_at, company, status, value, source, notes, metadata, created_at, updated_at`,
-        [userId, existing.id, telegram.name, telegram.username, telegram.userId, telegram.firstName, telegram.lastName, noteBody, metadata, telegram.date, workspaceId]
+          RETURNING id, user_id, workspace_id, name, email, phone, telegram, telegram_id, telegram_chat_id, telegram_username, telegram_first_name, telegram_last_name, first_name, last_name, first_message, last_message_at, last_seen_at, company, status, value, source, notes, metadata, created_at, updated_at`,
+        [userId, existing.id, telegram.name, telegram.username, telegram.userId, telegram.firstName, telegram.lastName, noteBody, metadata, telegram.date, workspaceId, String(telegram.chatId)]
       )
       lead = updated.rows[0]
       await logActivity(client, userId, workspaceId, lead.id, 'telegram_lead_updated', 'Telegram лид обновлён', 'Лид обновлён новым сообщением Telegram.', { telegramUserId: telegram.userId, chatId: telegram.chatId })
@@ -321,10 +326,10 @@ async function upsertLeadWithIncomingMessage(telegram) {
         telegramLastMessageAt: telegram.date,
       }
       const created = await client.query(
-        `INSERT INTO crm_leads(user_id, workspace_id, name, telegram, telegram_id, telegram_username, first_name, last_name, first_message, status, value, source, notes, contact, stage, metadata, last_message_at, last_seen_at)
-         VALUES($1, $11, $2, $3, $4, $3, $5, $6, $7, 'new', 0, 'telegram', $8, $3, 'new', $9::jsonb, $10::timestamptz, NOW())
-         RETURNING id, user_id, workspace_id, name, email, phone, telegram, telegram_id, telegram_username, first_name, last_name, first_message, last_message_at, last_seen_at, company, status, value, source, notes, metadata, created_at, updated_at`,
-        [userId, telegram.name, telegram.username || `tg:${telegram.userId}`, telegram.userId, telegram.firstName, telegram.lastName, telegram.text, noteBody, metadata, telegram.date, workspaceId]
+        `INSERT INTO crm_leads(user_id, workspace_id, name, telegram, telegram_id, telegram_chat_id, telegram_username, telegram_first_name, telegram_last_name, first_name, last_name, first_message, status, value, source, notes, contact, stage, metadata, last_message_at, last_seen_at)
+         VALUES($1, $11, $2, $3, $4, $12, $3, $5, $6, $5, $6, $7, 'new', 0, 'telegram', $8, $3, 'new', $9::jsonb, $10::timestamptz, NOW())
+         RETURNING id, user_id, workspace_id, name, email, phone, telegram, telegram_id, telegram_chat_id, telegram_username, telegram_first_name, telegram_last_name, first_name, last_name, first_message, last_message_at, last_seen_at, company, status, value, source, notes, metadata, created_at, updated_at`,
+        [userId, telegram.name, telegram.username || `tg:${telegram.userId}`, telegram.userId, telegram.firstName, telegram.lastName, telegram.text, noteBody, metadata, telegram.date, workspaceId, String(telegram.chatId)]
       )
       lead = created.rows[0]
       await logActivity(client, userId, workspaceId, lead.id, 'lead_created', 'Лид создан', 'Новый Telegram лид добавлен в этап «Новый».', { source: 'telegram', stage: 'Новый' })
@@ -342,6 +347,7 @@ async function upsertLeadWithIncomingMessage(telegram) {
       leadId: lead.id,
       role: 'user',
       message: telegram.text,
+      telegramChatId: telegram.chatId,
       telegramMessageId: telegram.messageId,
       createdAt: telegram.date,
     })
@@ -379,9 +385,10 @@ async function saveAiReply({ userId, workspaceId, leadId, reply, model, prompt, 
       leadId,
       role: 'assistant',
       message: reply,
+      telegramChatId: telegramResponse?.result?.chat?.id || null,
       telegramMessageId: telegramResponse?.result?.message_id || telegramResponse?.message_id || null,
     })
-    await client.query("UPDATE crm_leads SET notes = COALESCE(notes || E'\n', '') || $3, updated_at = NOW() WHERE id = $1 AND user_id = $2 AND workspace_id = $4", [leadId, userId, noteBody, workspaceId])
+    await client.query("UPDATE crm_leads SET notes = COALESCE(notes || E'\n', '') || $3, last_message_at = NOW(), updated_at = NOW() WHERE id = $1 AND user_id = $2 AND workspace_id = $4", [leadId, userId, noteBody, workspaceId])
     await logActivity(client, userId, workspaceId, leadId, 'telegram_ai_reply_sent', 'AI reply sent', reply, { model })
     await client.query('COMMIT')
     return { followUp: followUp.rows[0], note: note.rows[0] }
@@ -500,8 +507,8 @@ async function sendTelegramMessageToLead({ userId, workspaceId, leadId, text }) 
   if (!message) throw Object.assign(new Error('Telegram message is required'), { statusCode: 400 })
   const lead = await crmModel.listLeads(userId, workspaceId).then((leads) => leads.find((item) => item.id === leadId))
   if (!lead) throw Object.assign(new Error('Lead not found'), { statusCode: 404 })
-  const chatId = lead?.metadata?.telegramChatId || lead.telegramId || null
-  if (!chatId) throw Object.assign(new Error('Lead has no Telegram chat id'), { statusCode: 400 })
+  const chatId = lead.telegramChatId || lead?.metadata?.telegramChatId || null
+  if (!chatId) throw Object.assign(new Error('У лида нет Telegram chat id. Отправка в Telegram недоступна.'), { statusCode: 400 })
   const telegramResponse = await sendTelegramMessage(chatId, message)
   const telegramMessage = await crmModel.appendOutgoingTelegramMessage({ userId, workspaceId, leadId, message, telegramResponse })
   return { telegramMessage, telegramResponse }
