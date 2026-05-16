@@ -10,7 +10,12 @@ function errorHandler(error, req, res, next) {
     console.error(error)
   }
 
-  return res.status(statusCode).json({ error: message })
+  const payload = { error: message }
+  if (statusCode >= 500 && process.env.NODE_ENV !== 'production' && error.message && error.message !== message) {
+    payload.details = error.message
+  }
+
+  return res.status(statusCode).json(payload)
 }
 
 module.exports = { errorHandler }

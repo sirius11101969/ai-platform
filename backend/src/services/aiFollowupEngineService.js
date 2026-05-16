@@ -430,13 +430,30 @@ async function getWorkspaceLead(workspaceId, leadId) {
   return result.rows[0]
 }
 
+function normalizeNullableText(value) {
+  if (value === undefined || value === null) return ''
+  return String(value)
+}
+
 async function transition(userId, workspaceId, id, status, reason = '') {
   if (!STATUSES.includes(status)) throw Object.assign(new Error('Invalid follow-up status'), { statusCode: 400 })
+  const decisionReason = normalizeNullableText(reason)
   const current = await getFollowup(userId, workspaceId, id)
-  const result = await pool.query(`UPDATE ai_followup_jobs SET status = $3, approved_at = CASE WHEN $3 = 'approved' THEN NOW() ELSE approved_at END, updated_at = NOW(), metadata = metadata || jsonb_build_object('decisionReason', $4) WHERE workspace_id = $1 AND id = $2 RETURNING *`, [workspaceId, id, status, reason])
+  const result = await pool.query(
+    `UPDATE ai_followup_jobs
+        SET status = $3::text,
+            approved_at = CASE WHEN $3::text = 'approved' THEN NOW() ELSE approved_at END,
+            updated_at = NOW(),
+            metadata = COALESCE(metadata, '{}'::jsonb) || jsonb_build_object('decisionReason', $4::text)
+      WHERE workspace_id = $1 AND id = $2
+      RETURNING *`,
+    [workspaceId, id, status, decisionReason]
+  )
+  const updated = result.rows[0]
+  if (!updated) throw Object.assign(new Error('Follow-up job not found'), { statusCode: 404 })
   const titles = { approved: 'Follow-up approved', rejected: 'Follow-up rejected' }
-  await addTimelineEvent(pool, { workspaceId, leadId: current.leadId, userId, eventType: `follow_up_${status}`, title: titles[status] || 'Follow-up status changed', body: reason || current.generatedMessage, source: 'ai', metadata: { followupJobId: id, status } })
-  return normalize(result.rows[0])
+  await addTimelineEvent(pool, { workspaceId, leadId: current.leadId, userId, eventType: `follow_up_${status}`, title: titles[status] || 'Follow-up status changed', body: decisionReason || current.generatedMessage, source: 'ai', metadata: { followupJobId: id, status } })
+  return normalize(updated)
 }
 
 async function updateFollowup(userId, workspaceId, id, payload) {

@@ -206,7 +206,8 @@ async function request(path, options = {}) {
       clearAuthSession()
     }
 
-    const error = new Error(translateApiError(data.error || 'Не удалось выполнить запрос к API'))
+    const backendMessage = data.message || data.details || data.error
+    const error = new Error(translateApiError(backendMessage || 'Не удалось выполнить запрос к API'))
     error.status = response.status
     error.payload = data
     throw error
