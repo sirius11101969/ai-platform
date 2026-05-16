@@ -49,7 +49,7 @@ async function migrate() {
     END $$;
 
     INSERT INTO workspaces(name, owner_user_id, plan, credits_pool, created_at, updated_at)
-    SELECT split_part(email, '@', 1) || ' workspace', id, plan, credits, created_at, NOW()
+    SELECT split_part(u.email, '@', 1) || ' workspace', u.id, u.plan, u.credits, u.created_at, NOW()
       FROM users u
      WHERE NOT EXISTS (SELECT 1 FROM workspaces w WHERE w.owner_user_id = u.id);
 
@@ -457,18 +457,18 @@ async function migrate() {
     ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS risk_signals JSONB NOT NULL DEFAULT '[]'::jsonb;
     ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS ai_reasoning TEXT NOT NULL DEFAULT '';
     ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS next_best_action_code TEXT NOT NULL DEFAULT 'schedule_demo';
-    UPDATE lead_ai_scores
-       SET urgency = COALESCE(NULLIF(urgency, ''), urgency_level, 'low'),
-           intent_summary = COALESCE(NULLIF(intent_summary, ''), ai_summary, ''),
-           recommended_next_step = COALESCE(NULLIF(recommended_next_step, ''), next_best_action, ''),
-           confidence = CASE WHEN confidence = 0 THEN LEAST(100, GREATEST(0, score)) ELSE confidence END,
-           created_at = COALESCE(created_at, generated_at, NOW()),
-           engagement_score = CASE WHEN engagement_score = 0 THEN score ELSE engagement_score END,
-           probability_to_close = CASE WHEN lead_ai_scores.probability_to_close = 0 THEN lead_ai_scores.deal_probability ELSE lead_ai_scores.probability_to_close END,
-           expected_revenue = CASE WHEN lead_ai_scores.expected_revenue = 0 THEN COALESCE(l.value * COALESCE(NULLIF(lead_ai_scores.probability_to_close, 0), lead_ai_scores.deal_probability) / 100.0, 0) ELSE lead_ai_scores.expected_revenue END,
-           ai_reasoning = COALESCE(NULLIF(ai_reasoning, ''), ai_summary, '')
+    UPDATE lead_ai_scores s
+       SET urgency = COALESCE(NULLIF(s.urgency, ''), s.urgency_level, 'low'),
+           intent_summary = COALESCE(NULLIF(s.intent_summary, ''), s.ai_summary, ''),
+           recommended_next_step = COALESCE(NULLIF(s.recommended_next_step, ''), s.next_best_action, ''),
+           confidence = CASE WHEN s.confidence = 0 THEN LEAST(100, GREATEST(0, s.score)) ELSE s.confidence END,
+           created_at = COALESCE(s.created_at, s.generated_at, NOW()),
+           engagement_score = CASE WHEN s.engagement_score = 0 THEN s.score ELSE s.engagement_score END,
+           probability_to_close = CASE WHEN s.probability_to_close = 0 THEN s.deal_probability ELSE s.probability_to_close END,
+           expected_revenue = CASE WHEN s.expected_revenue = 0 THEN COALESCE(l.value * COALESCE(NULLIF(s.probability_to_close, 0), s.deal_probability) / 100.0, 0) ELSE s.expected_revenue END,
+           ai_reasoning = COALESCE(NULLIF(s.ai_reasoning, ''), s.ai_summary, '')
       FROM crm_leads l
-      WHERE l.id = lead_ai_scores.lead_id;
+      WHERE l.id = s.lead_id;
 
     CREATE TABLE IF NOT EXISTS ai_followup_sequences (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
