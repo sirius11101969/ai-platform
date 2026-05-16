@@ -284,21 +284,20 @@ async function handleTelegramStartPayload(telegram, payload) {
       return { skipped: false, startHandled: true, connected: false, reason: 'Lead not found', telegramResponse }
     }
 
-    const conflict = await client.query(
-      `SELECT id, name FROM crm_leads
+    await client.query(
+      `UPDATE crm_leads
+          SET telegram_chat_id = NULL,
+              telegram_id = CASE WHEN telegram_id = $4 THEN NULL ELSE telegram_id END,
+              metadata = CASE
+                WHEN metadata ? 'telegramChatId' THEN metadata - 'telegramChatId'
+                ELSE metadata
+              END,
+              updated_at = NOW()
         WHERE workspace_id = $1
           AND telegram_chat_id = $2
-          AND id <> $3
-          AND status <> 'lost'
-        LIMIT 1
-        FOR UPDATE`,
-      [lead.workspace_id, String(telegram.chatId), lead.id]
+          AND id <> $3`,
+      [lead.workspace_id, String(telegram.chatId), lead.id, telegram.userId]
     )
-    if (conflict.rows[0]) {
-      await client.query('ROLLBACK')
-      const telegramResponse = await sendTelegramMessage(telegram.chatId, 'Этот Telegram уже подключён к другой активной заявке. Напишите менеджеру AS6, если нужно переподключить чат.')
-      return { skipped: false, startHandled: true, connected: false, reason: 'Chat already attached', leadId: lead.id, conflictingLeadId: conflict.rows[0].id, telegramResponse }
-    }
 
     const metadata = {
       ...(lead.metadata || {}),
@@ -328,6 +327,7 @@ async function handleTelegramStartPayload(telegram, payload) {
     connectedLead = updated.rows[0]
     await logActivity(client, connectedLead.user_id, connectedLead.workspace_id, connectedLead.id, 'telegram_connected', 'Telegram подключён', 'Клиент открыл deep-link и нажал Start.', { chatId: telegram.chatId, telegramUserId: telegram.userId, payload })
     await addTimelineEvent(client, { workspaceId: connectedLead.workspace_id, leadId: connectedLead.id, userId: connectedLead.user_id, eventType: 'telegram_connected', title: 'Telegram подключён', body: 'Клиент открыл ссылку подключения и нажал Start.', source: 'telegram', metadata: { chatId: telegram.chatId, telegramUserId: telegram.userId, payload } })
+    console.info('[telegram] lead connected', { leadId: connectedLead.id, chatId: String(telegram.chatId) })
     await client.query('COMMIT')
   } catch (error) {
     await client.query('ROLLBACK')
@@ -370,14 +370,25 @@ async function logActivity(client, userId, workspaceId, leadId, type, title, bod
 
 async function findTelegramLead(client, userId, workspaceId, telegram) {
   const byChat = await client.query(
-    `SELECT id, user_id, workspace_id, name, email, phone, telegram, telegram_id, telegram_chat_id, telegram_username, telegram_first_name, telegram_last_name, first_name, last_name, first_message, last_message_at, last_seen_at, company, status, value, source, notes, metadata, created_at, updated_at
-       FROM crm_leads
-      WHERE user_id = $1
-        AND workspace_id = $2
-        AND telegram_chat_id = $3
-      ORDER BY CASE WHEN status <> 'lost' THEN 0 ELSE 1 END, updated_at DESC
+    `SELECT l.id, l.user_id, l.workspace_id, l.name, l.email, l.phone, l.telegram, l.telegram_id, l.telegram_chat_id, l.telegram_username, l.telegram_first_name, l.telegram_last_name, l.first_name, l.last_name, l.first_message, l.last_message_at, l.last_seen_at, l.company, l.status, l.value, l.source, l.notes, l.metadata, l.created_at, l.updated_at
+       FROM crm_leads l
+       LEFT JOIN LATERAL (
+         SELECT MAX(e.created_at) AS connected_at
+           FROM lead_timeline_events e
+          WHERE e.workspace_id = l.workspace_id
+            AND e.lead_id = l.id
+            AND e.event_type = 'telegram_connected'
+       ) telegram_connection ON true
+      WHERE l.user_id = $1
+        AND l.workspace_id = $2
+        AND l.telegram_chat_id = $3
+      ORDER BY
+        CASE WHEN LOWER(TRIM(COALESCE(NULLIF(l.stage, ''), NULLIF(l.status, ''), 'new'))) NOT IN ('won','lost','closed_won','closed_lost','successful','потеряно','успешно') THEN 0 ELSE 1 END,
+        telegram_connection.connected_at DESC NULLS LAST,
+        l.updated_at DESC,
+        l.created_at DESC
       LIMIT 1
-      FOR UPDATE`,
+      FOR UPDATE OF l`,
     [userId, workspaceId, String(telegram.chatId)]
   )
   if (byChat.rows[0]) return byChat.rows[0]
@@ -587,6 +598,7 @@ async function upsertLeadWithIncomingMessage(telegram) {
       telegramMessageId: telegram.messageId,
       createdAt: telegram.date,
     })
+    console.info('[telegram] inbound attached', { leadId: lead.id, chatId: String(telegram.chatId) })
     await logActivity(client, userId, workspaceId, lead.id, 'telegram_reply_received', 'Telegram reply received', telegram.text, { telegramUserId: telegram.userId, chatId: telegram.chatId, messageId: telegram.messageId })
     await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'telegram_reply_received', title: 'Получен ответ в Telegram', body: telegram.text, source: 'telegram', metadata: { telegramUserId: telegram.userId, chatId: telegram.chatId, messageId: telegram.messageId } })
     await createInboundReplyRecommendations(client, { userId, workspaceId, lead, telegram })
