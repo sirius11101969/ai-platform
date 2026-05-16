@@ -4,7 +4,8 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "node src/index.js",
-    "test:followups": "node tests/aiFollowupEngineService.test.js"
+    "test:followups": "node tests/aiFollowupEngineService.test.js",
+    "test:public-leads": "node tests/publicLeadService.test.js"
   },
   "dependencies": {
     "axios": "^1.6.0",
