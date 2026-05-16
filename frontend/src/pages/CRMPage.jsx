@@ -16,6 +16,11 @@ import {
   fetchEmailTemplates,
   fetchLeadEmails,
   fetchLeadActionCenter,
+  fetchAiApprovalQueue,
+  approveAiApprovalQueueItem,
+  rejectAiApprovalQueueItem,
+  updateAiApprovalQueueItem,
+  executeAiApprovalQueueItem,
   fetchMaterials,
   generateLeadEmail,
   sendLeadEmail,
@@ -148,15 +153,15 @@ function getAiSummaryText(recommendation) {
 
 
 function actionStatusLabel(status) {
-  return ({ draft: 'черновик', pending_approval: 'ждёт одобрения', approved: 'одобрено', sent: 'отправлено', failed: 'ошибка', cancelled: 'отклонено' }[status] || status);
+  return ({ draft: 'черновик', pending_approval: 'ждёт одобрения', approved: 'одобрено', executing: 'выполняется', completed: 'выполнено', rejected: 'отклонено', sent: 'отправлено', failed: 'ошибка', cancelled: 'отклонено' }[status] || status);
 }
 
 function actionTypeLabel(type) {
-  return ({ telegram_follow_up: 'Telegram follow-up', email_follow_up: 'Email follow-up', commercial_offer: 'Коммерческое предложение', send_presentation: 'Отправить презентацию', send_screenshots: 'Отправить скриншоты', send_demo_link: 'Отправить demo link', move_lead_stage: 'Переместить этап', create_reminder: 'Создать напоминание' }[type] || type);
+  return ({ telegram_followup: 'Telegram follow-up', email_followup: 'Email follow-up', telegram_follow_up: 'Telegram follow-up', email_follow_up: 'Email follow-up', telegram_draft: 'Telegram follow-up', email_draft: 'Email follow-up', follow_up_recommendation: 'Follow-up', crm_next_action: 'CRM действие', lead_prioritization: 'Приоритизация', commercial_offer: 'Коммерческое предложение', send_presentation: 'Отправить презентацию', send_screenshots: 'Отправить скриншоты', send_demo_link: 'Отправить demo link', move_lead_stage: 'Переместить этап', create_reminder: 'Создать напоминание' }[type] || type);
 }
 
 function timelineTitle(event) {
-  return ({ telegram_inbound: 'Telegram inbound', telegram_outbound_ai: 'Telegram outbound AI', email_sent: 'Email отправлен', email_failed: 'Email не отправлен', ai_score_updated: 'AI score обновлён', follow_up_draft: 'Follow-up черновик', sent_follow_up: 'Follow-up отправлен', attachments_sent: 'Материалы отправлены', lead_moved: 'Этап изменён', note_added: 'Заметка', ai_action_sent: 'AI действие отправлено', ai_action_failed: 'AI действие не отправлено' }[event?.type] || event?.title || 'Событие');
+  return ({ telegram_inbound: 'Telegram inbound', telegram_outbound_ai: 'Telegram outbound AI', email_sent: 'Email отправлен', email_failed: 'Email не отправлен', ai_score_updated: 'AI score обновлён', follow_up_draft: 'Follow-up черновик', sent_follow_up: 'Follow-up отправлен', attachments_sent: 'Материалы отправлены', lead_moved: 'Этап изменён', note_added: 'Заметка', ai_action_sent: 'AI действие отправлено', ai_action_approved: 'AI действие одобрено', ai_action_rejected: 'AI действие отклонено', ai_action_executed: 'AI действие выполнено', ai_action_failed: 'AI действие не выполнено' }[event?.type] || event?.title || 'Событие');
 }
 
 export default function CRMPage() {
@@ -185,7 +190,7 @@ export default function CRMPage() {
   const [emailComposer, setEmailComposer] = useState({ template: 'commercial_proposal', to: '', subject: '', text: '', html: '', attachmentIds: [] });
   const [emailAttachments, setEmailAttachments] = useState([]);
   const [emailBusy, setEmailBusy] = useState(false);
-  const [actionCenter, setActionCenter] = useState({ actions: [], timeline: [], attachments: [] });
+  const [actionCenter, setActionCenter] = useState({ actions: [], approvalItems: [], timeline: [], attachments: [] });
   const [materials, setMaterials] = useState([]);
   const [executionBusy, setExecutionBusy] = useState({});
   const [aiActionBusy, setAiActionBusy] = useState({});
@@ -264,7 +269,7 @@ export default function CRMPage() {
   async function refreshLeadEmails(lead = selectedLead) {
     if (!lead) {
       setLeadEmails([]);
-      setActionCenter({ actions: [], timeline: [], attachments: [] });
+      setActionCenter({ actions: [], approvalItems: [], timeline: [], attachments: [] });
       return;
     }
     const response = await fetchLeadEmails(lead.id);
@@ -273,11 +278,11 @@ export default function CRMPage() {
 
   async function refreshActionCenter(lead = selectedLead) {
     if (!lead) {
-      setActionCenter({ actions: [], timeline: [], attachments: [] });
+      setActionCenter({ actions: [], approvalItems: [], timeline: [], attachments: [] });
       return;
     }
-    const response = await fetchLeadActionCenter(lead.id);
-    setActionCenter({ actions: response.actions || [], timeline: response.timeline || [], attachments: response.attachments || [] });
+    const [response, approvalResponse] = await Promise.all([fetchLeadActionCenter(lead.id), fetchAiApprovalQueue({ leadId: lead.id })]);
+    setActionCenter({ actions: response.actions || [], approvalItems: approvalResponse.items || [], timeline: response.timeline || [], attachments: response.attachments || [] });
   }
 
   useEffect(() => {
@@ -398,6 +403,40 @@ export default function CRMPage() {
     try { await updateLeadAiAction(action.id, { generatedText }); await refreshActionCenter(selectedLead); }
     catch (requestError) { setError(requestError.message || 'Не удалось изменить действие'); }
     finally { setExecutionBusy((current) => ({ ...current, [action.id]: false })); }
+  }
+
+  async function handleApproveApprovalQueueItem(item) {
+    setExecutionBusy((current) => ({ ...current, [item.id]: true }));
+    setError('');
+    try { await approveAiApprovalQueueItem(item.id); await Promise.all([refreshActionCenter(selectedLead), loadCrm({ silent: true }), refreshMeta()]); }
+    catch (requestError) { setError(requestError.message || 'Не удалось одобрить AI действие'); }
+    finally { setExecutionBusy((current) => ({ ...current, [item.id]: false })); }
+  }
+
+  async function handleRejectApprovalQueueItem(item) {
+    setExecutionBusy((current) => ({ ...current, [item.id]: true }));
+    setError('');
+    try { await rejectAiApprovalQueueItem(item.id); await Promise.all([refreshActionCenter(selectedLead), loadCrm({ silent: true }), refreshMeta()]); }
+    catch (requestError) { setError(requestError.message || 'Не удалось отклонить AI действие'); }
+    finally { setExecutionBusy((current) => ({ ...current, [item.id]: false })); }
+  }
+
+  async function handleExecuteApprovalQueueItem(item) {
+    setExecutionBusy((current) => ({ ...current, [item.id]: true }));
+    setError('');
+    try { await executeAiApprovalQueueItem(item.id); await Promise.all([refreshActionCenter(selectedLead), refreshLeadEmails(selectedLead), refreshTelegramMessages(selectedLead), loadCrm({ silent: true }), refreshMeta()]); }
+    catch (requestError) { setError(requestError.message || 'Не удалось выполнить AI действие'); }
+    finally { setExecutionBusy((current) => ({ ...current, [item.id]: false })); }
+  }
+
+  async function handleEditApprovalQueueItem(item) {
+    const recommendation = window.prompt('Изменить AI рекомендацию', item.recommendation || item.title || '');
+    if (recommendation === null) return;
+    setExecutionBusy((current) => ({ ...current, [item.id]: true }));
+    setError('');
+    try { await updateAiApprovalQueueItem(item.id, { recommendation }); await refreshActionCenter(selectedLead); }
+    catch (requestError) { setError(requestError.message || 'Не удалось изменить AI действие'); }
+    finally { setExecutionBusy((current) => ({ ...current, [item.id]: false })); }
   }
 
   async function handleSendMaterials(lead, materialKeys, channel) {
@@ -799,6 +838,10 @@ export default function CRMPage() {
           onEditExecutionAction={handleEditExecutionAction}
           onCancelExecutionAction={handleCancelExecutionAction}
           onSendMaterials={(materialKeys, channel) => handleSendMaterials(selectedLead, materialKeys, channel)}
+          onApproveApprovalQueueItem={handleApproveApprovalQueueItem}
+          onRejectApprovalQueueItem={handleRejectApprovalQueueItem}
+          onExecuteApprovalQueueItem={handleExecuteApprovalQueueItem}
+          onEditApprovalQueueItem={handleEditApprovalQueueItem}
           onEmailComposerChange={setEmailComposer}
           onGenerateEmail={handleGenerateEmail}
           onUploadEmailAttachment={handleUploadEmailAttachment}
@@ -894,7 +937,7 @@ function LeadFormModal({ title, subtitle, stages, leadForm, setLeadForm, saving,
   );
 }
 
-function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDraftChange, onAddNote, onFollowUp, onAiAction, onAnalyzeLeadAi, aiActionBusy = {}, followUpLoading, onDelete, onEdit, onMove, telegramMessages = [], telegramDraft = '', telegramSending = false, onTelegramDraftChange, onSendTelegramReply, emailTemplates = [], leadEmails = [], emailComposer, emailAttachments = [], emailBusy = false, onEmailComposerChange, onGenerateEmail, onUploadEmailAttachment, onSendEmail, actionCenter = { actions: [], timeline: [], attachments: [] }, materials = [], executionBusy = {}, onCreateExecutionAction, onApproveExecutionAction, onSendExecutionAction, onEditExecutionAction, onCancelExecutionAction, onSendMaterials, onClose }) {
+function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDraftChange, onAddNote, onFollowUp, onAiAction, onAnalyzeLeadAi, aiActionBusy = {}, followUpLoading, onDelete, onEdit, onMove, telegramMessages = [], telegramDraft = '', telegramSending = false, onTelegramDraftChange, onSendTelegramReply, emailTemplates = [], leadEmails = [], emailComposer, emailAttachments = [], emailBusy = false, onEmailComposerChange, onGenerateEmail, onUploadEmailAttachment, onSendEmail, actionCenter = { actions: [], timeline: [], attachments: [] }, materials = [], executionBusy = {}, onCreateExecutionAction, onApproveExecutionAction, onSendExecutionAction, onEditExecutionAction, onCancelExecutionAction, onSendMaterials, onApproveApprovalQueueItem, onRejectApprovalQueueItem, onExecuteApprovalQueueItem, onEditApprovalQueueItem, onClose }) {
   return (
     <div className="modal-backdrop crm-modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
       <section className="ai-task-modal lead-detail-modal" role="dialog" aria-modal="true" aria-labelledby="lead-detail-title">
@@ -987,7 +1030,21 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                 <button className="ghost-button compact" type="button" onClick={() => onSendMaterials(['screenshot_1', 'screenshot_2'], isTelegramLead(lead) ? 'telegram' : 'email')} disabled={executionBusy.materials}>Отправить скриншоты</button>
               </div>
               <div className="execution-action-list">
-                {(actionCenter.actions || []).length === 0 && <p className="empty-state">Нет AI действий на одобрение. Создайте follow-up или материал.</p>}
+                {(actionCenter.approvalItems || []).length > 0 && <h5 className="approval-mini-title">Очередь AI сотрудников для этого лида</h5>}
+                {(actionCenter.approvalItems || []).map((item) => (
+                  <article className={`execution-action ${item.status}`} key={item.id}>
+                    <div><strong>{actionTypeLabel(item.executionType || item.actionType)}</strong><span>{item.workerName || 'AI сотрудник'} · {actionStatusLabel(item.status)}</span></div>
+                    <p>{item.recommendation || item.title}</p>
+                    {item.errorMessage && <small className="email-error-text">Ошибка: {item.errorMessage}</small>}
+                    <div className="execution-buttons">
+                      <button type="button" className="ghost-button compact" onClick={() => onApproveApprovalQueueItem(item)} disabled={executionBusy[item.id] || !['pending_approval','failed'].includes(item.status)}>Одобрить</button>
+                      <button type="button" className="btn primary compact" onClick={() => onExecuteApprovalQueueItem(item)} disabled={executionBusy[item.id] || item.status !== 'approved'}>Выполнить</button>
+                      <button type="button" className="ghost-button compact" onClick={() => onEditApprovalQueueItem(item)} disabled={executionBusy[item.id] || ['executing','completed'].includes(item.status)}>Изменить</button>
+                      <button type="button" className="ghost-button compact danger-action" onClick={() => onRejectApprovalQueueItem(item)} disabled={executionBusy[item.id] || ['executing','completed','rejected'].includes(item.status)}>Отклонить</button>
+                    </div>
+                  </article>
+                ))}
+                {(actionCenter.actions || []).length === 0 && (actionCenter.approvalItems || []).length === 0 && <p className="empty-state">Нет AI действий на одобрение. Создайте follow-up или материал.</p>}
                 {(actionCenter.actions || []).map((action) => (
                   <article className={`execution-action ${action.status}`} key={action.id}>
                     <div><strong>{actionTypeLabel(action.actionType)}</strong><span>{action.channel} · {actionStatusLabel(action.status)}</span></div>

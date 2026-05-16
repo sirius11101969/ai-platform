@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Panel, PageHeading, StatCard } from "../components/AppShell";
-import { fetchAiCommandCenter, runAiWorker, seedDemoSalesPipeline, updateAiWorker } from "../services/api";
+import { approveAiApprovalQueueItem, executeAiApprovalQueueItem, fetchAiApprovalQueue, fetchAiCommandCenter, rejectAiApprovalQueueItem, runAiWorker, seedDemoSalesPipeline, updateAiApprovalQueueItem, updateAiWorker } from "../services/api";
 
 const typeLabels = {
   ai_sdr_agent: "AI SDR Agent",
@@ -30,6 +30,30 @@ const runStatusLabels = {
   failed: "Ошибка",
 };
 
+const approvalStatusLabels = {
+  pending_approval: "Ждёт одобрения",
+  approved: "Одобрено",
+  rejected: "Отклонено",
+  executing: "Выполняется",
+  completed: "Выполнено",
+  failed: "Ошибка",
+  cancelled: "Отменено",
+};
+
+const actionTypeLabels = {
+  telegram_followup: "Telegram follow-up",
+  email_followup: "Email follow-up",
+  send_demo_link: "Demo link",
+  send_presentation: "Презентация",
+  create_reminder: "Напоминание",
+  move_lead_stage: "Смена этапа",
+  telegram_draft: "Telegram follow-up",
+  email_draft: "Email follow-up",
+  follow_up_recommendation: "Follow-up",
+  crm_next_action: "CRM действие",
+  lead_prioritization: "Приоритизация",
+};
+
 function formatDate(value) {
   if (!value) return "ещё не запускался";
   return new Intl.DateTimeFormat("ru-RU", {
@@ -56,13 +80,16 @@ export default function AiWorkersPage() {
   const [demoBusy, setDemoBusy] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [approvalQueue, setApprovalQueue] = useState({ items: [], metrics: {} });
+  const [busyAction, setBusyAction] = useState("");
 
   async function loadCommandCenter({ silent = false } = {}) {
     if (!silent) setLoading(true);
     setError("");
     try {
-      const response = await fetchAiCommandCenter();
+      const [response, approvalResponse] = await Promise.all([fetchAiCommandCenter(), fetchAiApprovalQueue()]);
       setCommandCenter(response.commandCenter || null);
+      setApprovalQueue({ items: approvalResponse.items || [], metrics: approvalResponse.metrics || {} });
     } catch (requestError) {
       setError(requestError.message || "Не удалось загрузить AI Command Center");
     } finally {
@@ -105,6 +132,39 @@ export default function AiWorkersPage() {
     }
   }
 
+  async function handleApprovalAction(item, action) {
+    setBusyAction(item.id);
+    setError("");
+    setMessage("");
+    try {
+      if (action === "approve") await approveAiApprovalQueueItem(item.id);
+      if (action === "reject") await rejectAiApprovalQueueItem(item.id);
+      if (action === "execute") await executeAiApprovalQueueItem(item.id);
+      setMessage(action === "execute" ? "AI действие выполнено или ошибка сохранена в карточке." : "Статус AI действия обновлён.");
+      await loadCommandCenter({ silent: true });
+    } catch (requestError) {
+      setError(requestError.message || "Не удалось обновить AI действие");
+    } finally {
+      setBusyAction("");
+    }
+  }
+
+  async function handleEditApprovalItem(item) {
+    const recommendation = window.prompt("Изменить рекомендацию AI", item.recommendation || item.title || "");
+    if (recommendation === null) return;
+    setBusyAction(item.id);
+    setError("");
+    try {
+      await updateAiApprovalQueueItem(item.id, { recommendation });
+      setMessage("AI рекомендация изменена.");
+      await loadCommandCenter({ silent: true });
+    } catch (requestError) {
+      setError(requestError.message || "Не удалось изменить AI действие");
+    } finally {
+      setBusyAction("");
+    }
+  }
+
   async function handlePause(worker) {
     setBusyWorker(worker.id);
     setError("");
@@ -125,6 +185,8 @@ export default function AiWorkersPage() {
   const queue = commandCenter?.queue || [];
   const recentRuns = commandCenter?.recentRuns || [];
   const metrics = commandCenter?.metrics || {};
+  const approvalItems = approvalQueue.items || [];
+  const approvalMetrics = approvalQueue.metrics || {};
   const pendingActions = useMemo(() => queue.filter((item) => item.status === "pending_approval"), [queue]);
   const failedActions = useMemo(() => queue.filter((item) => item.status === "failed"), [queue]);
 
@@ -160,6 +222,46 @@ export default function AiWorkersPage() {
         <StatCard label="AI эффективность" value={loading ? "…" : `${metrics.efficiency || 0}%`} hint="Доля успешных запусков AI работников" />
         <StatCard label="Выручка под контролем AI" value={loading ? "…" : formatMoney(metrics.revenueUnderAi)} hint="Плейсхолдер revenue impact по открытой воронке" tone="violet" />
       </section>
+
+      <Panel className="ai-approval-center-panel">
+        <div className="panel-head">
+          <div>
+            <span className="eyebrow">Human-in-the-loop</span>
+            <h3>Центр одобрения AI</h3>
+            <p>AI только рекомендует. Отправка и выполнение доступны после ручного одобрения менеджером.</p>
+          </div>
+          <span className="live-pill"><i />{approvalMetrics.waitingApproval || 0} ждут</span>
+        </div>
+        <div className="approval-metric-strip">
+          <span>Одобрено сегодня <b>{approvalMetrics.approvedToday || 0}</b></span>
+          <span>Выполнено сегодня <b>{approvalMetrics.executedToday || 0}</b></span>
+          <span>Ошибок сегодня <b>{approvalMetrics.failedToday || 0}</b></span>
+          <span>Success rate <b>{approvalMetrics.successRate || 0}%</b></span>
+        </div>
+        <div className="approval-table">
+          {approvalItems.length === 0 && <p className="empty-state">Нет AI действий на одобрение.</p>}
+          {approvalItems.slice(0, 12).map((item) => (
+            <article className={`approval-row approval-${item.status}`} key={item.id}>
+              <div className="approval-main">
+                <strong>{item.title}</strong>
+                <p>{shortRecommendation(item)}</p>
+                {item.errorMessage && <small className="email-error-text">Ошибка: {item.errorMessage}</small>}
+              </div>
+              <div><span>Лид</span><b>{item.lead?.name || "—"}</b></div>
+              <div><span>AI сотрудник</span><b>{item.workerName || "AI"}</b></div>
+              <div><span>Канал</span><b>{item.payload?.channel || item.payload?.suggestedChannel || (item.lead?.telegram ? "telegram" : item.lead?.email ? "email" : "crm")}</b></div>
+              <div><span>Тип</span><b>{actionTypeLabels[item.executionType] || actionTypeLabels[item.actionType] || item.actionType}</b></div>
+              <div><span>Статус</span><b className={`glow-status ${item.status}`}>{approvalStatusLabels[item.status] || item.status}</b><small>{formatDate(item.createdAt)}</small></div>
+              <div className="approval-actions">
+                <button type="button" className="ghost-button compact" onClick={() => handleApprovalAction(item, "approve")} disabled={busyAction === item.id || !["pending_approval","failed"].includes(item.status)}>Одобрить</button>
+                <button type="button" className="ghost-button compact" onClick={() => handleEditApprovalItem(item)} disabled={busyAction === item.id || ["executing","completed"].includes(item.status)}>Изменить</button>
+                <button type="button" className="ghost-button compact danger-action" onClick={() => handleApprovalAction(item, "reject")} disabled={busyAction === item.id || ["executing","completed","rejected"].includes(item.status)}>Отклонить</button>
+                <button type="button" className="btn primary compact" onClick={() => handleApprovalAction(item, "execute")} disabled={busyAction === item.id || item.status !== "approved"}>{busyAction === item.id ? "…" : "Выполнить"}</button>
+              </div>
+            </article>
+          ))}
+        </div>
+      </Panel>
 
       <section className="worker-card-grid">
         {loading && <Panel className="ai-worker-card"><p className="empty-state">Загружаем AI сотрудников…</p></Panel>}

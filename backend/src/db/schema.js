@@ -553,9 +553,18 @@ async function migrate() {
       title TEXT NOT NULL,
       recommendation TEXT NOT NULL DEFAULT '',
       payload JSONB NOT NULL DEFAULT '{}'::jsonb,
+      approved_by UUID REFERENCES users(id) ON DELETE SET NULL,
+      approved_at TIMESTAMPTZ,
+      executed_at TIMESTAMPTZ,
+      error_message TEXT,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+
+    ALTER TABLE ai_worker_queue ADD COLUMN IF NOT EXISTS approved_by UUID REFERENCES users(id) ON DELETE SET NULL;
+    ALTER TABLE ai_worker_queue ADD COLUMN IF NOT EXISTS approved_at TIMESTAMPTZ;
+    ALTER TABLE ai_worker_queue ADD COLUMN IF NOT EXISTS executed_at TIMESTAMPTZ;
+    ALTER TABLE ai_worker_queue ADD COLUMN IF NOT EXISTS error_message TEXT;
 
     DO $$
     BEGIN
@@ -571,9 +580,9 @@ async function migrate() {
       IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_worker_runs_status_valid') THEN
         ALTER TABLE ai_worker_runs ADD CONSTRAINT ai_worker_runs_status_valid CHECK (status IN ('queued', 'running', 'completed', 'failed'));
       END IF;
-      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_worker_queue_status_valid') THEN
-        ALTER TABLE ai_worker_queue ADD CONSTRAINT ai_worker_queue_status_valid CHECK (status IN ('pending_approval', 'queued', 'running', 'completed', 'failed', 'cancelled'));
-      END IF;
+      UPDATE ai_worker_queue SET status = 'executing' WHERE status IN ('queued', 'running');
+      ALTER TABLE ai_worker_queue DROP CONSTRAINT IF EXISTS ai_worker_queue_status_valid;
+      ALTER TABLE ai_worker_queue ADD CONSTRAINT ai_worker_queue_status_valid CHECK (status IN ('pending_approval', 'approved', 'rejected', 'executing', 'completed', 'failed', 'cancelled'));
     END $$;
 
 
