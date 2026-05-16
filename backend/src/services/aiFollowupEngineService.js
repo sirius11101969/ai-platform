@@ -125,43 +125,131 @@ function getLeadInactivityHours(lead) {
   return Math.max(0, (Date.now() - lastActivity.getTime()) / 36e5)
 }
 
-function leadSkipReason(lead, activeRules) {
-  const stage = getLeadStage(lead)
-  if (stage === 'won' || stage === 'lost') return `terminal status ${stage}`
-  if (!activeRules.length) return 'no active follow-up rules'
-  const inactiveHours = getLeadInactivityHours(lead)
-  const stageRules = activeRules.filter((rule) => rule.config?.stage && rule.config.stage !== stage).map((rule) => `${rule.ruleType}: stage ${stage} != ${rule.config.stage}`)
-  const thresholdRules = activeRules.filter((rule) => inactiveHours < Number(rule.config?.thresholdHours || 24)).map((rule) => `${rule.ruleType}: inactive ${Math.round(inactiveHours * 10) / 10}h < ${Number(rule.config?.thresholdHours || 24)}h`)
-  const scoreRules = activeRules.filter((rule) => rule.config?.minScore && !(lead.temperature === 'hot' || Number(lead.score || 0) >= Number(rule.config.minScore))).map((rule) => `${rule.ruleType}: score ${Number(lead.score || 0)} below ${Number(rule.config.minScore)}`)
-  return [...stageRules, ...thresholdRules, ...scoreRules].slice(0, 3).join('; ') || 'no rule matched'
+function getRuleThresholdHours(rule) {
+  const configured = Number(rule.config?.thresholdHours)
+  if (Number.isFinite(configured) && configured > 0) return configured
+  if (rule.ruleType === 'no_reply_3d') return 72
+  if (rule.ruleType === 'no_reply_7d') return 168
+  return 24
 }
 
-function leadMatchesRule(lead, rule) {
-  const inactiveHours = getLeadInactivityHours(lead)
-  const config = rule.config || {}
-  const thresholdHours = Number(config.thresholdHours || 24)
-  if (inactiveHours < thresholdHours) return null
+function getLeadAiScore(lead) {
+  return Number(lead.ai_score ?? lead.aiScore ?? lead.score ?? 0)
+}
 
-  if (config.stage && getLeadStage(lead) !== config.stage) return null
-  if (config.minScore && !(lead.temperature === 'hot' || Number(lead.score || 0) >= Number(config.minScore))) return null
+function isOpenLead(lead) {
+  const stage = getLeadStage(lead)
+  return stage !== 'won' && stage !== 'lost'
+}
 
-  return {
-    ...rule,
-    reason: rule.reason,
-    urgency: rule.urgency,
-    scheduledHours: rule.scheduledHours,
-    inactiveHours: Math.round(inactiveHours * 10) / 10,
+function describeRuleMismatch({ lead, rule, inactiveHours }) {
+  const stage = getLeadStage(lead)
+  const thresholdHours = getRuleThresholdHours(rule)
+  const score = getLeadAiScore(lead)
+  if (!isOpenLead(lead)) return `terminal status ${stage}`
+
+  switch (rule.ruleType) {
+    case 'proposal_no_reply':
+      if (stage !== 'proposal') return `stage ${stage} != proposal`
+      if (inactiveHours < thresholdHours) return `inactive ${inactiveHours}h < ${thresholdHours}h`
+      return 'matched'
+    case 'no_reply_24h':
+    case 'no_reply_3d':
+    case 'no_reply_7d':
+      if (inactiveHours < thresholdHours) return `inactive ${inactiveHours}h < ${thresholdHours}h`
+      return 'matched'
+    case 'meeting_no_next_step':
+      if (stage !== 'booked') return `stage ${stage} != booked`
+      if (inactiveHours < thresholdHours) return `inactive ${inactiveHours}h < ${thresholdHours}h`
+      return 'matched'
+    case 'hot_lead_inactive':
+      if (score < 70) return `ai score ${score} < 70`
+      if (inactiveHours < thresholdHours) return `inactive ${inactiveHours}h < ${thresholdHours}h`
+      return 'matched'
+    default:
+      if (rule.config?.stage && stage !== rule.config.stage) return `stage ${stage} != ${rule.config.stage}`
+      if (inactiveHours < thresholdHours) return `inactive ${inactiveHours}h < ${thresholdHours}h`
+      if (rule.config?.minScore && score < Number(rule.config.minScore)) return `ai score ${score} < ${Number(rule.config.minScore)}`
+      return 'matched'
   }
 }
 
-function buildRules(lead, activeRules) {
-  return activeRules.map((rule) => leadMatchesRule(lead, rule)).filter(Boolean)
+function evaluateRule(lead, rule) {
+  const inactiveHours = Math.round(getLeadInactivityHours(lead) * 10) / 10
+  const mismatchReason = describeRuleMismatch({ lead, rule, inactiveHours })
+  const matched = mismatchReason === 'matched'
+  return {
+    matched,
+    ruleType: rule.ruleType,
+    stage: getLeadStage(lead),
+    inactiveHours,
+    thresholdHours: getRuleThresholdHours(rule),
+    aiScore: getLeadAiScore(lead),
+    reason: matched ? 'matched' : mismatchReason,
+    rule: matched
+      ? {
+          ...rule,
+          reason: rule.reason,
+          urgency: rule.urgency,
+          scheduledHours: rule.scheduledHours,
+          inactiveHours,
+        }
+      : null,
+  }
+}
+
+function leadSkipReason(evaluations, activeRules) {
+  if (!activeRules.length) return 'no active follow-up rules'
+  return evaluations.filter((evaluation) => !evaluation.matched).map((evaluation) => `${evaluation.ruleType}: ${evaluation.reason}`).slice(0, 3).join('; ') || 'no rule matched'
+}
+
+function buildRuleEvaluations(lead, activeRules) {
+  return activeRules.map((rule) => evaluateRule(lead, rule))
+}
+
+async function getTableColumns(tableName) {
+  const result = await pool.query(
+    `SELECT column_name
+       FROM information_schema.columns
+      WHERE table_schema = current_schema() AND table_name = $1`,
+    [tableName]
+  )
+  return new Set(result.rows.map((row) => row.column_name))
+}
+
+async function insertFollowupJob({ workspaceId, leadId, rule, channel, message, metadata }) {
+  const columns = await getTableColumns('ai_followup_jobs')
+  const insertColumns = ['workspace_id', 'lead_id', 'rule_type', 'status', 'suggested_channel', 'generated_message', 'scheduled_for', 'metadata']
+  const values = [workspaceId, leadId, rule.ruleType, 'suggested', channel, message, rule.scheduledHours, metadata]
+  const placeholders = ['$1', '$2', '$3', '$4', '$5', '$6', "NOW() + ($7::int * INTERVAL '1 hour')", '$8']
+
+  if (columns.has('reason')) {
+    insertColumns.push('reason')
+    values.push(rule.reason)
+    placeholders.push(`$${values.length}`)
+  }
+  if (columns.has('urgency')) {
+    insertColumns.push('urgency')
+    values.push(rule.urgency)
+    placeholders.push(`$${values.length}`)
+  }
+
+  return pool.query(
+    `INSERT INTO ai_followup_jobs(${insertColumns.join(', ')})
+     VALUES(${placeholders.join(', ')}) RETURNING *`,
+    values
+  )
 }
 
 async function scanWorkspace(userId, workspaceId) {
   const seedResult = await ensureDefaultRulesForWorkspace(workspaceId)
   const activeRules = await loadActiveRules(workspaceId)
-  console.info('[ai-followups] scan started', { userId, workspaceId, activeRules: activeRules.map((rule) => rule.ruleType) })
+  console.info('[ai-followups] scan started', {
+    userId,
+    workspaceId,
+    activeRulesCount: activeRules.length,
+    activeRules: activeRules.map((rule) => ({ ruleType: rule.ruleType, thresholdHours: getRuleThresholdHours(rule), config: rule.config })),
+  })
   const leadsResult = await pool.query(
     `WITH activity AS (
        SELECT l.id AS lead_id,
@@ -187,41 +275,100 @@ async function scanWorkspace(userId, workspaceId) {
        FROM crm_leads l JOIN activity a ON a.lead_id = l.id LEFT JOIN latest_score s ON s.lead_id = l.id
       WHERE l.workspace_id = $1 AND COALESCE(NULLIF(l.stage, ''), NULLIF(l.status, ''), 'new') NOT IN ('won','lost')`, [workspaceId]
   )
-  const created = []
-  const skippedDuplicates = []
+  console.info('[ai-followups] leads loaded for scan', { userId, workspaceId, scannedLeadsCount: leadsResult.rows.length })
+
+  const createdJobs = []
+  const skippedDuplicateJobs = []
   let matchedLeadsCount = 0
   for (const row of leadsResult.rows) {
-    const lead = crmModel.CRM_STATUSES ? { ...row, id: row.id, status: getLeadStage(row) } : { ...row, status: getLeadStage(row) }
-    const matchedRules = buildRules(row, activeRules)
+    const stage = getLeadStage(row)
+    const inactiveHours = Math.round(getLeadInactivityHours(row) * 10) / 10
+    const aiScore = getLeadAiScore(row)
+    console.info('[ai-followups] scanning lead', { workspaceId, leadId: row.id, name: row.name, stage, inactiveHours, aiScore, lastActivityAt: row.last_activity_at })
+
+    const lead = crmModel.CRM_STATUSES ? { ...row, id: row.id, status: stage } : { ...row, status: stage }
+    const evaluations = buildRuleEvaluations(row, activeRules)
+    for (const evaluation of evaluations) {
+      console.info('[ai-followups] rule match evaluated', {
+        workspaceId,
+        leadId: row.id,
+        ruleType: evaluation.ruleType,
+        matched: evaluation.matched,
+        stage: evaluation.stage,
+        inactiveHours: evaluation.inactiveHours,
+        thresholdHours: evaluation.thresholdHours,
+        aiScore: evaluation.aiScore,
+        reason: evaluation.reason,
+      })
+    }
+
+    const matchedRules = evaluations.filter((evaluation) => evaluation.matched).map((evaluation) => evaluation.rule)
     if (!matchedRules.length) {
-      console.info('[ai-followups] lead skipped', { workspaceId, leadId: row.id, status: getLeadStage(row), reason: leadSkipReason(row, activeRules), lastActivityAt: row.last_activity_at })
+      console.info('[ai-followups] lead skipped', { workspaceId, leadId: row.id, stage, inactiveHours, reason: leadSkipReason(evaluations, activeRules), lastActivityAt: row.last_activity_at })
       continue
     }
+
     matchedLeadsCount += 1
     console.info('[ai-followups] lead matched rules', { workspaceId, leadId: row.id, ruleTypes: matchedRules.map((rule) => rule.ruleType) })
     for (const rule of matchedRules) {
-      console.info('[ai-followups] rule matched', { workspaceId, leadId: row.id, ruleType: rule.ruleType, inactiveHours: rule.inactiveHours })
-      const duplicate = await pool.query(`SELECT id FROM ai_followup_jobs WHERE workspace_id = $1 AND lead_id = $2 AND rule_type = $3 AND created_at > NOW() - INTERVAL '24 hours' AND status IN ('suggested','approved','sent') LIMIT 1`, [workspaceId, row.id, rule.ruleType])
+      const duplicate = await pool.query(
+        `SELECT id FROM ai_followup_jobs
+          WHERE workspace_id = $1 AND lead_id = $2 AND rule_type = $3 AND created_at > NOW() - INTERVAL '24 hours'
+          LIMIT 1`,
+        [workspaceId, row.id, rule.ruleType]
+      )
       if (duplicate.rows[0]) {
-        skippedDuplicates.push({ leadId: row.id, ruleType: rule.ruleType, jobId: duplicate.rows[0].id })
-        console.info('[ai-followups] lead skipped duplicate', { workspaceId, leadId: row.id, ruleType: rule.ruleType, duplicateJobId: duplicate.rows[0].id })
+        skippedDuplicateJobs.push({ leadId: row.id, ruleType: rule.ruleType, jobId: duplicate.rows[0].id })
+        console.info('[ai-followups] skipped duplicate job', { workspaceId, leadId: row.id, ruleType: rule.ruleType, duplicateJobId: duplicate.rows[0].id })
         continue
       }
+
       const context = await getLeadContext(workspaceId, row.id)
       const generation = await generateMessage({ lead, rule, context }).catch((error) => ({ message: fallbackMessage({ lead, rule }), model: 'fallback-openai-error', aiError: error.message }))
-      const channel = chooseChannel(row) || rule.suggestedChannel
-      const result = await pool.query(
-        `INSERT INTO ai_followup_jobs(workspace_id, lead_id, rule_type, status, suggested_channel, generated_message, scheduled_for, reason, urgency, metadata)
-         VALUES($1, $2, $3, 'suggested', $4, $5, NOW() + ($6::int * INTERVAL '1 hour'), $7, $8, $9) RETURNING *`,
-        [workspaceId, row.id, rule.ruleType, channel, generation.message, rule.scheduledHours, rule.reason, rule.urgency, { model: generation.model, openaiResponseId: generation.openaiResponseId, aiError: generation.aiError, lastActivityAt: row.last_activity_at, ruleConfig: rule.config, inactiveHours: rule.inactiveHours }]
-      )
-      console.info('[ai-followups] follow-up created', { workspaceId, leadId: row.id, ruleType: rule.ruleType, followupId: result.rows[0].id, channel })
-      await addTimelineEvent(pool, { workspaceId, leadId: row.id, userId, eventType: 'follow_up_suggested', title: 'Follow-up suggested', body: generation.message, source: 'ai', metadata: { ruleType: rule.ruleType, channel, reason: rule.reason, urgency: rule.urgency } })
-      created.push(normalize({ ...result.rows[0], lead_name: row.name, lead_company: row.company, lead_email: row.email, lead_status: getLeadStage(row), lead_telegram_chat_id: row.telegram_chat_id }))
+      const message = (generation.message || fallbackMessage({ lead, rule })).trim()
+      const channel = chooseChannel(row)
+      const metadata = {
+        model: generation.model,
+        openaiResponseId: generation.openaiResponseId,
+        aiError: generation.aiError,
+        lastActivityAt: row.last_activity_at,
+        ruleConfig: rule.config,
+        inactiveHours: rule.inactiveHours,
+        reason: rule.reason,
+        urgency: rule.urgency,
+      }
+      const result = await insertFollowupJob({ workspaceId, leadId: row.id, rule, channel, message, metadata })
+      console.info('[ai-followups] created job', { workspaceId, leadId: row.id, ruleType: rule.ruleType, jobId: result.rows[0].id, channel })
+      await addTimelineEvent(pool, { workspaceId, leadId: row.id, userId, eventType: 'follow_up_suggested', title: 'Follow-up suggested', body: message, source: 'ai', metadata: { ruleType: rule.ruleType, channel, reason: rule.reason, urgency: rule.urgency } })
+      createdJobs.push(normalize({ ...result.rows[0], lead_name: row.name, lead_company: row.company, lead_email: row.email, lead_status: stage, lead_telegram_chat_id: row.telegram_chat_id }))
     }
   }
-  const response = { scannedLeadsCount: leadsResult.rows.length, matchedLeadsCount, createdJobsCount: created.length, skippedDuplicatesCount: skippedDuplicates.length, created, skippedDuplicates, createdCount: created.length, skippedCount: skippedDuplicates.length, rulesSeeded: seedResult.seeded, seededRuleTypes: seedResult.seededRuleTypes }
-  console.info('[ai-followups] scan finished', { userId, workspaceId, scannedLeadsCount: response.scannedLeadsCount, matchedLeadsCount, createdJobsCount: response.createdJobsCount, skippedDuplicatesCount: response.skippedDuplicatesCount })
+
+  const response = {
+    scannedLeadsCount: leadsResult.rows.length,
+    matchedLeadsCount,
+    created: createdJobs.length,
+    skippedDuplicates: skippedDuplicateJobs.length,
+    activeRules: activeRules.length,
+    createdCount: createdJobs.length,
+    createdJobsCount: createdJobs.length,
+    skippedDuplicatesCount: skippedDuplicateJobs.length,
+    activeRulesCount: activeRules.length,
+    skippedCount: skippedDuplicateJobs.length,
+    createdJobs,
+    skippedDuplicateJobs,
+    rulesSeeded: seedResult.seeded,
+    seededRuleTypes: seedResult.seededRuleTypes,
+  }
+  console.info('[ai-followups] scan finished', {
+    userId,
+    workspaceId,
+    scannedLeadsCount: response.scannedLeadsCount,
+    matchedLeadsCount: response.matchedLeadsCount,
+    created: response.created,
+    skippedDuplicates: response.skippedDuplicates,
+    activeRules: response.activeRules,
+  })
   return response
 }
 

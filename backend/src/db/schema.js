@@ -566,6 +566,11 @@ async function migrate() {
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    ALTER TABLE ai_followup_jobs ADD COLUMN IF NOT EXISTS reason TEXT NOT NULL DEFAULT '';
+    ALTER TABLE ai_followup_jobs ADD COLUMN IF NOT EXISTS urgency TEXT NOT NULL DEFAULT 'medium';
+    ALTER TABLE ai_followup_jobs ADD COLUMN IF NOT EXISTS error TEXT;
+    ALTER TABLE ai_followup_jobs ADD COLUMN IF NOT EXISTS metadata JSONB NOT NULL DEFAULT '{}'::jsonb;
+
     DO $$
     BEGIN
       IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_agent_actions_status_valid') THEN

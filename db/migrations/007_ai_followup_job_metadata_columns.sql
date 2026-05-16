@@ -1,0 +1,4 @@
+ALTER TABLE ai_followup_jobs ADD COLUMN IF NOT EXISTS reason TEXT NOT NULL DEFAULT '';
+ALTER TABLE ai_followup_jobs ADD COLUMN IF NOT EXISTS urgency TEXT NOT NULL DEFAULT 'medium';
+ALTER TABLE ai_followup_jobs ADD COLUMN IF NOT EXISTS error TEXT;
+ALTER TABLE ai_followup_jobs ADD COLUMN IF NOT EXISTS metadata JSONB NOT NULL DEFAULT '{}'::jsonb;
