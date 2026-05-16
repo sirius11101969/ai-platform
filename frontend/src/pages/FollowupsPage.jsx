@@ -33,10 +33,6 @@ function isItemBusy(itemId, loadingAction) {
   return loadingAction?.startsWith(`${itemId}:`) || false;
 }
 
-function getActionButtonLabel(itemId, action, label, loadingAction) {
-  return isActionBusy(itemId, action, loadingAction) ? "Выполняем…" : label;
-}
-
 function getApproveButtonLabel(item, isApproving) {
   if (isApproving) return "Одобряем…";
   if (item.status === "approved") return "Одобрено";
@@ -45,6 +41,16 @@ function getApproveButtonLabel(item, isApproving) {
 
 function getEditButtonLabel(itemId, loadingAction) {
   return isActionBusy(itemId, "edit", loadingAction) ? "Сохраняем…" : "Изменить";
+}
+
+function getRejectButtonLabel(item, isRejecting) {
+  if (isRejecting) return "Отклоняем…";
+  if (item.status === "rejected") return "Отклонено";
+  return "Отклонить";
+}
+
+function isRejectButtonDisabled(item, isRejecting) {
+  return isRejecting || !["suggested", "failed"].includes(item.status);
 }
 
 function getSuggestedChannel(item) {
@@ -219,6 +225,7 @@ export default function FollowupsPage() {
           {items.map((item) => {
             const itemBusy = isItemBusy(item.id, loadingAction);
             const isApproving = loadingAction === `${item.id}:approve`;
+            const isRejecting = loadingAction === `${item.id}:reject`;
             const isSending = loadingAction === `${item.id}:send`;
             const disabledReason = getSendDisabledReason(item);
             const canSend = canSendFollowup(item);
@@ -255,7 +262,17 @@ export default function FollowupsPage() {
                   </button>
                 )}
                 <button className="ghost-button compact" type="button" onClick={() => handleEdit(item)} disabled={itemBusy || !["suggested", "approved", "failed"].includes(item.status)}>{getEditButtonLabel(item.id, loadingAction)}</button>
-                <button className="ghost-button compact danger-action" type="button" onClick={() => handleAction(item, "reject")} disabled={itemBusy || !["suggested", "failed"].includes(item.status)}>{getActionButtonLabel(item.id, "reject", "Отклонить", loadingAction)}</button>
+                {item.status !== "sent" && (
+                  <button
+                    className="ghost-button compact danger-action followup-reject-button"
+                    type="button"
+                    onClick={() => handleAction(item, "reject")}
+                    disabled={isRejectButtonDisabled(item, isRejecting)}
+                    aria-busy={isRejecting}
+                  >
+                    {getRejectButtonLabel(item, isRejecting)}
+                  </button>
+                )}
                 <div className="followup-send-action">
                   <button className="btn primary compact followup-send-button" type="button" onClick={() => handleAction(item, "send")} disabled={sendButtonDisabled} aria-busy={isSending}>
                     {isSending && <i className="button-spinner" aria-hidden="true" />}
