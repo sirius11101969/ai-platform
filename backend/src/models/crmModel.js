@@ -597,7 +597,9 @@ async function getStats(userId, workspaceId) {
               COALESCE(SUM(value) FILTER (WHERE status = 'won'), 0)::numeric AS won_value,
               COALESCE(SUM(value) FILTER (WHERE status = 'lost'), 0)::numeric AS lost_value,
               COUNT(*) FILTER (WHERE status = 'won')::int AS won_deals,
-              COUNT(*) FILTER (WHERE status = 'lost')::int AS lost_deals
+              COUNT(*) FILTER (WHERE status = 'lost')::int AS lost_deals,
+              COUNT(*) FILTER (WHERE source = 'landing' AND created_at::date = CURRENT_DATE)::int AS landing_leads_today,
+              COUNT(*) FILTER (WHERE status = 'new')::int AS new_leads_count
          FROM crm_leads WHERE user_id = $1 AND workspace_id = $2`,
       [userId, workspaceId]
     ),
@@ -690,6 +692,8 @@ async function getStats(userId, workspaceId) {
     wonDeals,
     lostDeals,
     conversionRate: total ? Math.round((wonDeals / total) * 100) : 0,
+    landingLeadsToday: Number(summary.landing_leads_today || 0),
+    newLeadsCount: Number(summary.new_leads_count || 0),
     telegram: {
       leads: Number(telegramStats.telegram_leads || 0),
       recentMessages: Number(telegramStats.recent_messages || 0),

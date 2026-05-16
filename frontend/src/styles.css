@@ -100,6 +100,22 @@
         .price-card ul { display: grid; gap: 12px; margin: 24px 0 28px; padding: 0; list-style: none; color: #d7e2ff; }
         .price-card li::before { content: "✓"; margin-right: 9px; color: #75ffda; }
         .price-card a { display: inline-flex; width: 100%; justify-content: center; padding: 15px 18px; border: 1px solid rgba(255,255,255,.15); border-radius: 17px; background: rgba(255,255,255,.08); font-weight: 900; }
+
+        .hero-form-stack { width: 100%; }
+        .lead-capture-form { display: grid; gap: 18px; width: 100%; padding: clamp(20px, 3vw, 30px); border-radius: 32px; }
+        .lead-capture-form.compact { max-width: 760px; margin: 30px auto 0; text-align: left; }
+        .lead-form-heading h3 { margin-bottom: 10px; font-size: clamp(26px, 3vw, 36px); letter-spacing: -.045em; }
+        .lead-form-heading p { margin: 0; color: #bfd0ff; line-height: 1.55; }
+        .lead-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+        .lead-form-grid label { display: grid; gap: 7px; color: #d5e0ff; font-weight: 850; }
+        .lead-form-grid label.span-2 { grid-column: span 2; }
+        .lead-form-grid span { color: #91a2d6; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+        .lead-form-grid input, .lead-form-grid textarea { width: 100%; border: 1px solid rgba(255,255,255,.14); border-radius: 16px; outline: none; background: rgba(255,255,255,.075); color: #f7fbff; padding: 0 14px; font: inherit; }
+        .lead-form-grid input { min-height: 48px; }
+        .lead-form-grid textarea { min-height: 118px; padding-top: 12px; resize: vertical; }
+        .lead-form-grid input::placeholder, .lead-form-grid textarea::placeholder { color: rgba(197, 210, 245, .52); }
+        .lead-capture-form .btn { width: 100%; border: 0; cursor: pointer; }
+        .lead-capture-form .btn:disabled { cursor: wait; opacity: .72; transform: none; }
         .trust-section { padding: 74px min(7vw, 108px); background: #050712; }
         .metrics-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
         .metric-card { padding: 26px; text-align: center; }
@@ -129,8 +145,8 @@
           .section, .trust-section, .final-cta { padding-left: 20px; padding-right: 20px; }
           .agent-grid, .pricing-grid, .metrics-grid, .workflow { grid-template-columns: 1fr; }
           .price-card.featured { transform: none; }
-          .dashboard-grid { grid-template-columns: 1fr; }
-          .span-2 { grid-column: span 1; }
+          .dashboard-grid, .lead-form-grid { grid-template-columns: 1fr; }
+          .span-2, .lead-form-grid label.span-2 { grid-column: span 1; }
           .footer { flex-direction: column; }
         }
         @media (max-width: 520px) {

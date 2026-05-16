@@ -217,7 +217,8 @@ export default function DashboardPage() {
       <section className="dashboard-stats">
         <StatCard label="Баланс AI‑кредитов" value={loading ? "…" : creditBalance.toLocaleString("ru-RU")} hint="Доступно для новых AI‑запусков" />
         <StatCard label="AI‑задачи" value={loading ? "…" : String(tasks.length)} hint={`${activeTasks} активных · ${completedTasks} завершено`} tone="violet" />
-        <StatCard label="Лидов в CRM" value={loading ? "…" : String(crmStats?.totalLeads || 0)} hint={`Конверсия ${crmStats?.conversionRate || 0}%`} tone="pink" />
+        <StatCard label="Лидов в CRM" value={loading ? "…" : String(crmStats?.totalLeads || 0)} hint={`Новые ${crmStats?.newLeadsCount || 0} · конверсия ${crmStats?.conversionRate || 0}%`} tone="pink" />
+        <StatCard label="Лиды с лендинга сегодня" value={loading ? "…" : String(crmStats?.landingLeadsToday || 0)} hint="Публичные формы → CRM → AI SDR" tone="violet" />
         <StatCard label="Воронка CRM" value={loading ? "…" : new Intl.NumberFormat("ru-RU", { style: "currency", currency: "RUB", maximumFractionDigits: 0 }).format(Number(crmStats?.pipelineValue || 0))} hint={`${crmStats?.wonDeals || 0} успешно · ${crmStats?.lostDeals || 0} потеряно`} />
         <StatCard label="AI действий сегодня" value={loading ? "…" : String(crmStats?.aiMetrics?.sentToday || crmStats?.aiMetrics?.actionsToday || 0)} hint={`${crmStats?.aiMetrics?.pendingApproval || 0} ждут одобрения · ${crmStats?.aiMetrics?.executionSuccessRate || crmStats?.aiMetrics?.efficiency || 0}% success`} tone="violet" />
         <StatCard label="AI‑сделки" value={loading ? "…" : String(crmStats?.aiMetrics?.assistedDeals || 0)} hint={`конверсия ${crmStats?.aiMetrics?.conversionRate || 0}%`} tone="pink" />

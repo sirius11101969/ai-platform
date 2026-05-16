@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
+import { submitPublicLead } from "../services/api";
 
 const fadeUp = {
   initial: { opacity: 0, y: 28 },
@@ -38,6 +39,92 @@ const metrics = [
   ["x3.2", "ускорение обработки лидов"],
   ["99%", "готовность к масштабированию"],
 ];
+
+const initialLeadForm = {
+  name: "",
+  email: "",
+  phone: "",
+  telegram: "",
+  company: "",
+  message: "",
+};
+
+function getLandingTracking(source) {
+  if (typeof window === "undefined") {
+    return { source, page_url: "", utm_source: "", utm_medium: "", utm_campaign: "" };
+  }
+  const params = new URLSearchParams(window.location.search);
+  return {
+    source,
+    page_url: window.location.href,
+    utm_source: params.get("utm_source") || "",
+    utm_medium: params.get("utm_medium") || "",
+    utm_campaign: params.get("utm_campaign") || "",
+  };
+}
+
+function LeadCaptureForm({ source = "landing_cta", compact = false }) {
+  const [form, setForm] = useState(initialLeadForm);
+  const [status, setStatus] = useState("idle");
+  const [feedback, setFeedback] = useState("");
+
+  function updateField(field, value) {
+    setForm((current) => ({ ...current, [field]: value }));
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    setStatus("sending");
+    setFeedback("");
+    try {
+      await submitPublicLead({ ...form, ...getLandingTracking(source) });
+      setStatus("success");
+      setFeedback("Заявка отправлена. Мы скоро свяжемся с вами.");
+      setForm(initialLeadForm);
+    } catch (_error) {
+      setStatus("error");
+      setFeedback("Не удалось отправить заявку. Попробуйте ещё раз.");
+    }
+  }
+
+  return (
+    <form className={`lead-capture-form shell-glow ${compact ? "compact" : ""}`} onSubmit={handleSubmit}>
+      <div className="lead-form-heading">
+        <span className="eyebrow">CRM lead capture</span>
+        <h3>Получить демо AS6 AI CRM</h3>
+        <p>Оставьте контакт — AI SDR создаст лида в CRM и подготовит рекомендацию для менеджера.</p>
+      </div>
+      <div className="lead-form-grid">
+        <label>
+          <span>Имя</span>
+          <input value={form.name} onChange={(event) => updateField("name", event.target.value)} placeholder="Ваше имя" autoComplete="name" />
+        </label>
+        <label>
+          <span>Email *</span>
+          <input value={form.email} onChange={(event) => updateField("email", event.target.value)} placeholder="you@company.com" type="email" autoComplete="email" />
+        </label>
+        <label>
+          <span>Телефон</span>
+          <input value={form.phone} onChange={(event) => updateField("phone", event.target.value)} placeholder="+7..." autoComplete="tel" />
+        </label>
+        <label>
+          <span>Telegram</span>
+          <input value={form.telegram} onChange={(event) => updateField("telegram", event.target.value)} placeholder="@username" />
+        </label>
+        <label className="span-2">
+          <span>Компания</span>
+          <input value={form.company} onChange={(event) => updateField("company", event.target.value)} placeholder="Название компании" autoComplete="organization" />
+        </label>
+        <label className="span-2">
+          <span>Что хотите автоматизировать? *</span>
+          <textarea value={form.message} onChange={(event) => updateField("message", event.target.value)} placeholder="Например: заявки с сайта, Telegram, follow-ups, AI SDR" rows={compact ? 3 : 4} />
+        </label>
+      </div>
+      <button className="btn primary" type="submit" disabled={status === "sending"}>{status === "sending" ? "Отправляем…" : "Отправить заявку"}</button>
+      {feedback && <p className={status === "success" ? "success-alert" : "auth-error"}>{feedback}</p>}
+    </form>
+  );
+}
 
 function FloatingParticles() {
   return (
@@ -121,7 +208,7 @@ function Hero() {
             ведите сделки в CRM и считайте экономику роста из единого премиального дашборда.
           </p>
           <div className="actions">
-            <a className="btn primary" href="https://t.me/" target="_blank" rel="noreferrer">Открыть Telegram‑бота</a>
+            <a className="btn primary" href="#lead-form">Получить демо</a>
             <a className="btn secondary" href="#calculator">Рассчитать выручку</a>
           </div>
           <div className="hero-proof">
@@ -131,7 +218,7 @@ function Hero() {
             <strong>Vite для продакшена</strong>
           </div>
         </motion.div>
-        <DashboardPreview />
+        <div id="lead-form" className="hero-form-stack"><LeadCaptureForm source="hero_demo" /></div>
       </div>
     </section>
   );
@@ -208,7 +295,7 @@ function PricingSection() {
             <div className="price">{plan.price}<small>/мес</small></div>
             <p>{plan.detail}</p>
             <ul>{plan.features.map((feature) => <li key={feature}>{feature}</li>)}</ul>
-            <a href="https://t.me/" target="_blank" rel="noreferrer">Выбрать тариф</a>
+            <a href="#lead-form">Выбрать тариф</a>
           </motion.article>
         ))}
       </div>
@@ -239,9 +326,10 @@ function FinalCta() {
         <h2>Соберите AI‑операционную систему продаж за дни, не месяцы</h2>
         <p>Премиальный лендинг, CRM‑ядро, Telegram‑воронки, AI‑кредиты и агенты готовы стать фундаментом нового SaaS‑направления.</p>
         <div className="actions center">
-          <a className="btn primary" href="https://t.me/" target="_blank" rel="noreferrer">Запустить демо</a>
+          <a className="btn primary" href="#lead-form">Запустить демо</a>
           <a className="btn secondary" href="#pricing">Сравнить тарифы</a>
         </div>
+        <LeadCaptureForm source="final_cta" compact />
       </motion.div>
     </section>
   );
