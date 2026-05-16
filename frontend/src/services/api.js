@@ -193,27 +193,42 @@ function buildHeaders(options = {}) {
 }
 
 async function request(path, options = {}) {
-  const { skipAuth, ...fetchOptions } = options
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...fetchOptions,
-    headers: buildHeaders(options),
-  })
+  const { skipAuth, timeoutMs, signal, ...fetchOptions } = options
+  const controller = !signal && timeoutMs ? new AbortController() : null
+  const timeoutId = controller ? globalThis.setTimeout(() => controller.abort(), timeoutMs) : null
 
-  const data = await response.json().catch(() => ({}))
+  try {
+    const response = await fetch(`${API_BASE_URL}${path}`, {
+      ...fetchOptions,
+      signal: signal || controller?.signal,
+      headers: buildHeaders(options),
+    })
 
-  if (!response.ok) {
-    if (response.status === 401) {
-      clearAuthSession()
+    const data = await response.json().catch(() => ({}))
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        clearAuthSession()
+      }
+
+      const backendMessage = data.message || data.details || data.error
+      const error = new Error(translateApiError(backendMessage || 'Не удалось выполнить запрос к API'))
+      error.status = response.status
+      error.payload = data
+      throw error
     }
 
-    const backendMessage = data.message || data.details || data.error
-    const error = new Error(translateApiError(backendMessage || 'Не удалось выполнить запрос к API'))
-    error.status = response.status
-    error.payload = data
+    return data
+  } catch (error) {
+    if (error?.name === 'AbortError') {
+      const timeoutError = new Error(`Превышено время ожидания запроса (${Math.round((timeoutMs || 0) / 1000)} сек.)`)
+      timeoutError.code = 'REQUEST_TIMEOUT'
+      throw timeoutError
+    }
     throw error
+  } finally {
+    if (timeoutId) globalThis.clearTimeout(timeoutId)
   }
-
-  return data
 }
 
 function publicRequest(path, options = {}) {
@@ -501,5 +516,5 @@ export function rejectAiFollowup(id) {
 }
 
 export function sendAiFollowup(id) {
-  return request(`/ai/followups/${id}/send`, { method: 'POST' })
+  return request(`/ai/followups/${id}/send`, { method: 'POST', timeoutMs: 20000 })
 }

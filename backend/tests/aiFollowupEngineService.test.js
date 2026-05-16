@@ -218,6 +218,36 @@ async function runSendFailureTest() {
   }
 }
 
+
+async function runSendRequiresApprovalTest() {
+  pool.query = async (sql) => {
+    const query = compact(sql)
+    if (query.startsWith('SELECT j.* FROM ai_followup_jobs')) return { rows: [makeJob({ status: 'suggested' })], rowCount: 1 }
+    throw new Error(`Unexpected query in send approval test: ${query}`)
+  }
+
+  await assert.rejects(
+    () => service.send(userId, workspaceId, jobId),
+    (error) => error.statusCode === 400 && error.message === 'Сначала одобрите follow-up'
+  )
+}
+
+async function runSendEmailMissingAddressTest() {
+  pool.query = async (sql, params = []) => {
+    const query = compact(sql)
+    if (query.startsWith('SELECT j.* FROM ai_followup_jobs')) return { rows: [makeJob({ status: 'approved', suggested_channel: 'email' })], rowCount: 1 }
+    if (query.startsWith('SELECT id, user_id, email FROM crm_leads')) return { rows: [{ id: leadId, user_id: userId, email: '' }], rowCount: 1 }
+    if (query.startsWith("UPDATE ai_followup_jobs SET status = 'failed'")) return { rows: [makeJob({ status: 'failed', error: params[2] })], rowCount: 1 }
+    if (query.startsWith('INSERT INTO ai_followup_attempts(')) return { rows: [], rowCount: 1 }
+    if (query.startsWith('INSERT INTO lead_timeline_events(')) return { rows: [], rowCount: 1 }
+    throw new Error(`Unexpected query in send missing email test: ${query}`)
+  }
+
+  const response = await service.send(userId, workspaceId, jobId)
+  assert.strictEqual(response.item.status, 'failed')
+  assert.strictEqual(response.error, 'У лида нет email для отправки')
+}
+
 async function main() {
   delete process.env.OPENAI_API_KEY
   const originalQuery = pool.query.bind(pool)
@@ -225,8 +255,10 @@ async function main() {
   try {
     await runScanTest()
     await runTransitionTest()
+    await runSendRequiresApprovalTest()
     await runSendSuccessTest()
     await runSendFailureTest()
+    await runSendEmailMissingAddressTest()
   } finally {
     pool.query = originalQuery
     await pool.end()
