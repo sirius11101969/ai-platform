@@ -70,28 +70,57 @@ function normalizePayload(payload = {}) {
   return normalized
 }
 
+const WORKSPACE_ID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+
 async function resolveWorkspace(client) {
   const envWorkspaceId = normalizeText(process.env.PUBLIC_LEADS_WORKSPACE_ID, 80)
-  const validEnvWorkspaceId = envWorkspaceId && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(envWorkspaceId) ? envWorkspaceId : null
-  const workspaceResult = validEnvWorkspaceId
-    ? await client.query('SELECT * FROM workspaces WHERE id = $1 LIMIT 1', [validEnvWorkspaceId])
-    : { rows: [] }
+  let workspace = null
+  let reason = 'preferred_workspace_name'
 
-  const workspace = workspaceResult.rows[0] || (await client.query('SELECT * FROM workspaces ORDER BY created_at ASC LIMIT 1')).rows[0]
+  if (envWorkspaceId) {
+    if (!WORKSPACE_ID_PATTERN.test(envWorkspaceId)) {
+      throw Object.assign(new Error('PUBLIC_LEADS_WORKSPACE_ID must be a valid workspace UUID'), { statusCode: 503 })
+    }
+
+    const workspaceResult = await client.query('SELECT * FROM workspaces WHERE id = $1 LIMIT 1', [envWorkspaceId])
+    workspace = workspaceResult.rows[0] || null
+    if (!workspace) {
+      throw Object.assign(new Error('PUBLIC_LEADS_WORKSPACE_ID workspace was not found'), { statusCode: 503 })
+    }
+    reason = 'PUBLIC_LEADS_WORKSPACE_ID'
+  } else {
+    const workspaceResult = await client.query(
+      `SELECT *
+         FROM workspaces
+        WHERE LOWER(name) NOT LIKE '%test%'
+          AND LOWER(name) NOT LIKE '%demo%'
+          AND LOWER(name) NOT LIKE '%sandbox%'
+        ORDER BY
+          CASE
+            WHEN LOWER(name) = 'buylesson workspace' THEN 0
+            WHEN LOWER(name) LIKE '%buylesson%' THEN 1
+            WHEN LOWER(name) = 'production' THEN 2
+            WHEN LOWER(name) LIKE '%production%' THEN 3
+            WHEN LOWER(name) = 'default' THEN 4
+            WHEN LOWER(name) LIKE '%default%' THEN 5
+            ELSE 6
+          END,
+          created_at ASC
+        LIMIT 1`
+    )
+    workspace = workspaceResult.rows[0] || null
+  }
+
   if (!workspace) throw Object.assign(new Error('Public leads workspace is not configured'), { statusCode: 503 })
+  if (!workspace.owner_user_id) throw Object.assign(new Error('Public leads workspace owner is not configured'), { statusCode: 503 })
 
-  const ownerResult = await client.query(
-    `SELECT wm.user_id
-       FROM workspace_members wm
-      WHERE wm.workspace_id = $1 AND wm.role IN ('owner', 'admin', 'sales')
-      ORDER BY CASE wm.role WHEN 'owner' THEN 0 WHEN 'admin' THEN 1 ELSE 2 END, wm.created_at ASC
-      LIMIT 1`,
-    [workspace.id]
-  )
-  const userId = ownerResult.rows[0]?.user_id || workspace.owner_user_id
-  if (!userId) throw Object.assign(new Error('Public leads workspace owner is not configured'), { statusCode: 503 })
+  console.info('[public-leads] workspace selected', {
+    workspaceId: workspace.id,
+    workspaceName: workspace.name,
+    reason,
+  })
 
-  return { workspaceId: workspace.id, userId }
+  return { workspaceId: workspace.id, workspaceName: workspace.name, userId: workspace.owner_user_id, reason }
 }
 
 async function ensureSdrWorker(client, workspaceId) {
@@ -231,4 +260,4 @@ function schedulePublicLeadAnalysis(actionId) {
   })
 }
 
-module.exports = { createPublicLead, schedulePublicLeadAnalysis }
+module.exports = { createPublicLead, schedulePublicLeadAnalysis, _private: { resolveWorkspace } }
