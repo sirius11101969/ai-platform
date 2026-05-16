@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Panel, PageHeading, StatCard } from "../components/AppShell";
 import {
   addCrmLeadNote,
@@ -168,6 +168,33 @@ function timelineTitle(event) {
   return ({ telegram_inbound: 'Telegram inbound', telegram_outbound_ai: 'Telegram outbound AI', email_sent: 'Email отправлен', email_failed: 'Email не отправлен', ai_score_updated: 'AI score обновлён', follow_up_draft: 'Follow-up черновик', sent_follow_up: 'Follow-up отправлен', attachments_sent: 'Материалы отправлены', lead_moved: 'Этап изменён', note_added: 'Заметка', ai_action_sent: 'AI действие отправлено', ai_action_approved: 'AI действие одобрено', ai_action_rejected: 'AI действие отклонено', ai_action_executed: 'AI действие выполнено', ai_action_failed: 'AI действие не выполнено', follow_up_suggested: 'Follow-up suggested', follow_up_approved: 'Follow-up approved', follow_up_rejected: 'Follow-up rejected', follow_up_sent: 'Follow-up sent', follow_up_failed: 'Follow-up failed' }[event?.type] || event?.title || 'Событие');
 }
 
+const modalCloseStack = [];
+
+function useModalCloseLifecycle(onClose, { canClose = true } = {}) {
+  useEffect(() => {
+    const stackToken = Symbol("crm-modal");
+    const previousBodyOverflow = document.body.style.overflow;
+    modalCloseStack.push(stackToken);
+    document.body.style.overflow = "hidden";
+
+    function handleEscape(event) {
+      const isTopModal = modalCloseStack[modalCloseStack.length - 1] === stackToken;
+      if (event.key === "Escape" && isTopModal && canClose) {
+        event.stopPropagation();
+        onClose();
+      }
+    }
+
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      const stackIndex = modalCloseStack.indexOf(stackToken);
+      if (stackIndex !== -1) modalCloseStack.splice(stackIndex, 1);
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = previousBodyOverflow;
+    };
+  }, [canClose, onClose]);
+}
+
 export default function CRMPage() {
   const [leads, setLeads] = useState([]);
   const [stages, setStages] = useState(DEFAULT_CRM_STAGES);
@@ -203,6 +230,10 @@ export default function CRMPage() {
 
   const selectedLead = useMemo(() => leads.find((lead) => lead.id === selectedLeadId) || null, [leads, selectedLeadId]);
   const stageMap = useMemo(() => stages.reduce((acc, stage) => ({ ...acc, [stage.status]: stage.title }), {}), [stages]);
+  const closeLeadDetail = useCallback(() => {
+    setSelectedLeadId(null);
+    setIsEditingDetail(false);
+  }, []);
 
   async function loadCrm({ silent = false } = {}) {
     if (!silent) setLoading(true);
@@ -850,7 +881,7 @@ export default function CRMPage() {
           onGenerateEmail={handleGenerateEmail}
           onUploadEmailAttachment={handleUploadEmailAttachment}
           onSendEmail={handleSendEmail}
-          onClose={() => { setSelectedLeadId(null); setIsEditingDetail(false); }}
+          onClose={closeLeadDetail}
         />
       )}
 
@@ -879,9 +910,11 @@ export default function CRMPage() {
 }
 
 function ActivityFeedDrawer({ activity, onClose }) {
+  useModalCloseLifecycle(onClose);
+
   return (
     <div className="modal-backdrop crm-modal-backdrop activity-drawer-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
-      <section className="ai-task-modal crm-activity-drawer" role="dialog" aria-modal="true" aria-labelledby="crm-activity-title">
+      <section className="ai-task-modal crm-activity-drawer" role="dialog" aria-modal="true" aria-labelledby="crm-activity-title" onMouseDown={(event) => event.stopPropagation()}>
         <div className="modal-glow" />
         <div className="panel-head activity-drawer-head">
           <div>
@@ -914,9 +947,11 @@ function ActivityFeedDrawer({ activity, onClose }) {
 }
 
 function LeadFormModal({ title, subtitle, stages, leadForm, setLeadForm, saving, submitLabel, onSubmit, onClose }) {
+  useModalCloseLifecycle(onClose, { canClose: !saving });
+
   return (
     <div className="modal-backdrop crm-modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && !saving && onClose()}>
-      <section className="ai-task-modal crm-lead-modal" role="dialog" aria-modal="true" aria-labelledby="crm-lead-modal-title">
+      <section className="ai-task-modal crm-lead-modal" role="dialog" aria-modal="true" aria-labelledby="crm-lead-modal-title" onMouseDown={(event) => event.stopPropagation()}>
         <div className="modal-glow" />
         <div className="panel-head">
           <div>
@@ -942,9 +977,11 @@ function LeadFormModal({ title, subtitle, stages, leadForm, setLeadForm, saving,
 }
 
 function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDraftChange, onAddNote, onFollowUp, onAiAction, onAnalyzeLeadAi, aiActionBusy = {}, followUpLoading, onDelete, onEdit, onMove, telegramMessages = [], telegramDraft = '', telegramSending = false, onTelegramDraftChange, onSendTelegramReply, emailTemplates = [], leadEmails = [], emailComposer, emailAttachments = [], emailBusy = false, onEmailComposerChange, onGenerateEmail, onUploadEmailAttachment, onSendEmail, actionCenter = { actions: [], timeline: [], attachments: [] }, materials = [], executionBusy = {}, onCreateExecutionAction, onApproveExecutionAction, onSendExecutionAction, onEditExecutionAction, onCancelExecutionAction, onSendMaterials, onApproveApprovalQueueItem, onRejectApprovalQueueItem, onExecuteApprovalQueueItem, onEditApprovalQueueItem, onClose }) {
+  useModalCloseLifecycle(onClose);
+
   return (
     <div className="modal-backdrop crm-modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
-      <section className="ai-task-modal lead-detail-modal" role="dialog" aria-modal="true" aria-labelledby="lead-detail-title">
+      <section className="ai-task-modal lead-detail-modal" role="dialog" aria-modal="true" aria-labelledby="lead-detail-title" onMouseDown={(event) => event.stopPropagation()}>
         <div className="modal-glow" />
         <div className="panel-head lead-detail-head">
           <div>
