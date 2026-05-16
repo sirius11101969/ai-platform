@@ -5,8 +5,8 @@ const { sendTelegramMessageToLead } = require('./telegramService')
 const { sendLeadAttachments } = require('./attachmentService')
 const { addTimelineEvent } = require('./timelineService')
 
-const STATUSES = ['pending_approval', 'approved', 'rejected', 'executing', 'completed', 'failed', 'cancelled']
-const EXECUTION_TYPES = ['telegram_followup', 'email_followup', 'send_demo_link', 'send_presentation', 'create_reminder', 'move_lead_stage', 'followup_24h', 'followup_3d', 'demo_offer', 'meeting_request']
+const STATUSES = ['pending_approval', 'approved', 'rejected', 'executing', 'completed', 'executed', 'failed', 'cancelled']
+const EXECUTION_TYPES = ['telegram_followup', 'email_followup', 'send_demo_link', 'send_presentation', 'create_reminder', 'move_lead_stage', 'stage_change_recommendation', 'followup_24h', 'followup_3d', 'demo_offer', 'meeting_request']
 
 const ACTION_ALIASES = {
   telegram_draft: 'telegram_followup',
@@ -19,6 +19,7 @@ const ACTION_ALIASES = {
   demo_offer: 'demo_offer',
   meeting_request: 'meeting_request',
   crm_next_action: 'create_reminder',
+  move_lead_stage: 'stage_change_recommendation',
   lead_prioritization: 'create_reminder',
 }
 
@@ -118,7 +119,7 @@ async function listQueue(userId, workspaceId, filters = {}) {
 
 async function updateQueueItem(userId, workspaceId, queueId, payload) {
   const current = await assertQueueItem(userId, workspaceId, queueId)
-  if (['executing', 'completed'].includes(current.status)) throw russianError('Нельзя изменить AI действие во время или после выполнения')
+  if (['executing', 'completed', 'executed'].includes(current.status)) throw russianError('Нельзя изменить AI действие во время или после выполнения')
   const updates = []
   const values = [workspaceId, queueId]
   function set(column, value) { values.push(value); updates.push(`${column} = $${values.length}`) }
@@ -136,9 +137,48 @@ async function updateQueueItem(userId, workspaceId, queueId, payload) {
   return assertQueueItem(userId, workspaceId, result.rows[0].id)
 }
 
+
+async function approveAndExecuteStageChange(userId, workspaceId, item) {
+  const nextStatus = item.payload.status || item.payload.nextStatus
+  if (!nextStatus) throw russianError('AI рекомендация этапа не содержит целевой этап')
+  const client = await pool.connect()
+  try {
+    await client.query('BEGIN')
+    await client.query(
+      `UPDATE ai_worker_queue
+          SET status = 'executing', approved_by = $3, approved_at = NOW(), error_message = NULL, updated_at = NOW()
+        WHERE workspace_id = $1 AND id = $2`,
+      [workspaceId, item.id, userId]
+    )
+    await saveAudit(client, { workspaceId, leadId: item.leadId, userId, type: 'stage_approved', title: 'AI stage change approved', body: item.recommendation || item.title, metadata: { queueId: item.id, actionType: item.actionType, from: item.payload.currentStatus, to: nextStatus, confidence: item.payload.confidence } })
+    await client.query('COMMIT')
+  } catch (error) {
+    await client.query('ROLLBACK')
+    client.release()
+    throw error
+  }
+  client.release()
+
+  try {
+    const result = await crmModel.updateLead(userId, workspaceId, item.leadId, { status: nextStatus })
+    const auditClient = await pool.connect()
+    try {
+      await auditClient.query('BEGIN')
+      await auditClient.query("UPDATE ai_worker_queue SET status = 'executed', executed_at = NOW(), error_message = NULL, updated_at = NOW() WHERE workspace_id = $1 AND id = $2", [workspaceId, item.id])
+      await saveAudit(auditClient, { workspaceId, leadId: item.leadId, userId, type: 'stage_changed', title: 'CRM stage changed by approved AI recommendation', body: `${item.payload.currentStatus || result.status} → ${nextStatus}`, metadata: { queueId: item.id, actionType: item.actionType, from: item.payload.currentStatus, to: nextStatus } })
+      await auditClient.query('COMMIT')
+    } catch (error) { await auditClient.query('ROLLBACK'); throw error } finally { auditClient.release() }
+    return assertQueueItem(userId, workspaceId, item.id)
+  } catch (error) {
+    await pool.query("UPDATE ai_worker_queue SET status = 'failed', error_message = $3, updated_at = NOW() WHERE workspace_id = $1 AND id = $2", [workspaceId, item.id, error.message || 'Stage change failed'])
+    throw error
+  }
+}
+
 async function approveQueueItem(userId, workspaceId, queueId) {
   const item = await assertQueueItem(userId, workspaceId, queueId)
   if (!['pending_approval', 'failed'].includes(item.status)) throw russianError('Одобрить можно только действие со статусом ожидания или ошибки')
+  if (item.executionType === 'stage_change_recommendation') return approveAndExecuteStageChange(userId, workspaceId, item)
   const client = await pool.connect()
   try {
     await client.query('BEGIN')
@@ -159,7 +199,7 @@ async function approveQueueItem(userId, workspaceId, queueId) {
 
 async function rejectQueueItem(userId, workspaceId, queueId) {
   const item = await assertQueueItem(userId, workspaceId, queueId)
-  if (['executing', 'completed'].includes(item.status)) throw russianError('Нельзя отклонить уже выполняемое или завершённое AI действие')
+  if (['executing', 'completed', 'executed'].includes(item.status)) throw russianError('Нельзя отклонить уже выполняемое или завершённое AI действие')
   const client = await pool.connect()
   try {
     await client.query('BEGIN')
@@ -198,7 +238,7 @@ async function executeByType(userId, workspaceId, item) {
   }
   if (type === 'send_presentation') return sendLeadAttachments({ userId, workspaceId, leadId: item.leadId, channel: channel === 'telegram' ? 'telegram' : 'email', materialKeys: item.payload.materialKeys || ['presentation'], email: { to: item.payload.to || item.lead?.email, subject: item.payload.subject || 'Презентация AS6 AI CRM Platform' } })
   if (type === 'create_reminder') return crmModel.createNote(userId, workspaceId, item.leadId, item.payload.reminderText || buildMessage(item) || 'AI напоминание')
-  if (type === 'move_lead_stage') return crmModel.updateLead(userId, workspaceId, item.leadId, { status: item.payload.status || item.payload.nextStatus })
+  if (type === 'move_lead_stage' || type === 'stage_change_recommendation') return crmModel.updateLead(userId, workspaceId, item.leadId, { status: item.payload.status || item.payload.nextStatus })
   throw russianError('Неподдерживаемый тип выполнения AI действия')
 }
 
@@ -214,7 +254,7 @@ async function executeQueueItem(userId, workspaceId, queueId) {
     const client = await pool.connect()
     try {
       await client.query('BEGIN')
-      await client.query("UPDATE ai_worker_queue SET status = 'completed', executed_at = NOW(), error_message = NULL, updated_at = NOW() WHERE workspace_id = $1 AND id = $2", [workspaceId, queueId])
+      await client.query("UPDATE ai_worker_queue SET status = $3, executed_at = NOW(), error_message = NULL, updated_at = NOW() WHERE workspace_id = $1 AND id = $2", [workspaceId, queueId, executionType === 'stage_change_recommendation' ? 'executed' : 'completed'])
       await saveAudit(client, { workspaceId, leadId: item.leadId, userId, type: executionType === 'email_followup' || item.payload.channel === 'email' ? 'email_sent' : executionType === 'telegram_followup' || item.payload.channel === 'telegram' ? 'telegram_sent' : 'ai_action_executed', title: executionType === 'email_followup' || item.payload.channel === 'email' ? 'Email отправлен' : executionType === 'telegram_followup' || item.payload.channel === 'telegram' ? 'Telegram отправлен' : 'AI действие выполнено', body: item.title, source: item.payload.channel || 'ai', metadata: { queueId, actionType: item.actionType, executionType } })
       await client.query('COMMIT')
     } catch (error) { await client.query('ROLLBACK'); throw error } finally { client.release() }
@@ -237,10 +277,10 @@ async function getMetrics(userId, workspaceId) {
     `SELECT
        COUNT(*) FILTER (WHERE status = 'pending_approval')::int AS waiting_approval,
        COUNT(*) FILTER (WHERE status = 'approved' AND approved_at::date = CURRENT_DATE)::int AS approved_today,
-       COUNT(*) FILTER (WHERE status = 'completed' AND executed_at::date = CURRENT_DATE)::int AS executed_today,
+       COUNT(*) FILTER (WHERE status IN ('completed','executed') AND executed_at::date = CURRENT_DATE)::int AS executed_today,
        COUNT(*) FILTER (WHERE status = 'failed' AND updated_at::date = CURRENT_DATE)::int AS failed_today,
-       COUNT(*) FILTER (WHERE status = 'completed')::int AS completed_total,
-       COUNT(*) FILTER (WHERE status IN ('completed','failed'))::int AS finished_total
+       COUNT(*) FILTER (WHERE status IN ('completed','executed'))::int AS completed_total,
+       COUNT(*) FILTER (WHERE status IN ('completed','executed','failed'))::int AS finished_total
      FROM ai_worker_queue q
      WHERE q.workspace_id = $1 AND EXISTS (SELECT 1 FROM workspace_members wm WHERE wm.workspace_id = q.workspace_id AND wm.user_id = $2)`,
     [workspaceId, userId]

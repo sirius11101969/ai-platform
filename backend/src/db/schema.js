@@ -219,6 +219,9 @@ async function migrate() {
     ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS first_message TEXT;
     ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS last_message_at TIMESTAMPTZ;
     ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS last_seen_at TIMESTAMPTZ;
+    ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS probability_to_close INTEGER NOT NULL DEFAULT 0;
+    ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS estimated_revenue NUMERIC(12, 2) NOT NULL DEFAULT 0;
+    ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS expected_close_date DATE;
     UPDATE crm_leads
        SET telegram_chat_id = COALESCE(telegram_chat_id, metadata->>'telegramChatId'),
            telegram_first_name = COALESCE(telegram_first_name, first_name),
@@ -246,6 +249,18 @@ async function migrate() {
         SELECT 1 FROM pg_constraint WHERE conname = 'crm_leads_value_non_negative'
       ) THEN
         ALTER TABLE crm_leads ADD CONSTRAINT crm_leads_value_non_negative CHECK (value >= 0);
+      END IF;
+
+      IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint WHERE conname = 'crm_leads_probability_to_close_valid'
+      ) THEN
+        ALTER TABLE crm_leads ADD CONSTRAINT crm_leads_probability_to_close_valid CHECK (probability_to_close >= 0 AND probability_to_close <= 100);
+      END IF;
+
+      IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint WHERE conname = 'crm_leads_estimated_revenue_non_negative'
+      ) THEN
+        ALTER TABLE crm_leads ADD CONSTRAINT crm_leads_estimated_revenue_non_negative CHECK (estimated_revenue >= 0);
       END IF;
     END $$;
 
@@ -694,7 +709,7 @@ async function migrate() {
       END IF;
       UPDATE ai_worker_queue SET status = 'executing' WHERE status IN ('queued', 'running');
       ALTER TABLE ai_worker_queue DROP CONSTRAINT IF EXISTS ai_worker_queue_status_valid;
-      ALTER TABLE ai_worker_queue ADD CONSTRAINT ai_worker_queue_status_valid CHECK (status IN ('pending_approval', 'approved', 'rejected', 'executing', 'completed', 'failed', 'cancelled'));
+      ALTER TABLE ai_worker_queue ADD CONSTRAINT ai_worker_queue_status_valid CHECK (status IN ('pending_approval', 'approved', 'rejected', 'executing', 'completed', 'executed', 'failed', 'cancelled'));
     END $$;
 
 
@@ -768,6 +783,7 @@ async function migrate() {
     CREATE INDEX IF NOT EXISTS idx_ai_worker_runs_worker ON ai_worker_runs(workspace_id, worker_id, created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_status ON ai_worker_queue(workspace_id, status, created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_lead ON ai_worker_queue(workspace_id, lead_id, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_stage_recommendations ON ai_worker_queue(workspace_id, lead_id, status, created_at DESC) WHERE action_type = 'stage_change_recommendation';
     CREATE INDEX IF NOT EXISTS idx_ai_action_queue_workspace_status ON ai_action_queue(workspace_id, status, created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_ai_action_queue_lead ON ai_action_queue(workspace_id, lead_id, created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_lead_timeline_events_lead ON lead_timeline_events(workspace_id, lead_id, created_at DESC);
@@ -778,6 +794,7 @@ async function migrate() {
     CREATE INDEX IF NOT EXISTS idx_workspace_members_user_id ON workspace_members(user_id);
     CREATE INDEX IF NOT EXISTS idx_workspace_members_workspace_id ON workspace_members(workspace_id);
     CREATE INDEX IF NOT EXISTS idx_crm_leads_workspace_id ON crm_leads(workspace_id);
+    CREATE INDEX IF NOT EXISTS idx_crm_leads_ai_forecast ON crm_leads(workspace_id, status, probability_to_close, expected_close_date);
     CREATE INDEX IF NOT EXISTS idx_ai_tasks_workspace_id ON ai_tasks(workspace_id);
     CREATE INDEX IF NOT EXISTS idx_credits_ledger_workspace_id ON credits_ledger(workspace_id);
     CREATE INDEX IF NOT EXISTS idx_email_messages_workspace_id ON email_messages(workspace_id, created_at DESC);

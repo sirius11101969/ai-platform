@@ -11,7 +11,7 @@ const WORKER_TYPES = [
 const STATUSES = ['active', 'paused', 'error']
 const MODES = ['suggestion_only', 'approval_required', 'autonomous_ready']
 const RUN_STATUSES = ['queued', 'running', 'completed', 'failed']
-const QUEUE_STATUSES = ['pending_approval', 'approved', 'rejected', 'executing', 'completed', 'failed', 'cancelled']
+const QUEUE_STATUSES = ['pending_approval', 'approved', 'rejected', 'executing', 'completed', 'executed', 'failed', 'cancelled']
 
 const DEFAULT_WORKERS = [
   {
