@@ -157,7 +157,7 @@ function translateApiError(message) {
     'Invalid AI action type': 'Недопустимый тип AI действия',
     'Invalid AI action status': 'Недопустимый статус AI действия',
     'Telegram bot token is not configured': 'Telegram Bot API не настроен на сервере',
-    'Lead has no Telegram chat id': 'У лида нет Telegram chat id',
+    'Lead has no Telegram chat id': 'У лида нет Telegram chat id. Это демо-лид, Telegram-сообщение отправить нельзя.',
     'Демо-воронка уже создана.': 'Демо-воронка уже создана.',
   }
   if (exact[text]) return exact[text]
