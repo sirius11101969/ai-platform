@@ -49,6 +49,7 @@ const actionTypeLabels = {
   create_reminder: "Напоминание",
   move_lead_stage: "Смена этапа",
   telegram_draft: "Черновик Telegram",
+  telegram_reply_draft: "Ответ Telegram",
   telegram_reply_analysis: "Анализ ответа Telegram",
   email_draft: "Черновик письма",
   follow_up_recommendation: "Следующий контакт",
@@ -95,6 +96,28 @@ function renderStageDetails(item) {
   );
 }
 
+function isTelegramReplyDraft(item) {
+  return item?.actionType === "telegram_reply_draft" || item?.executionType === "telegram_reply_draft";
+}
+
+function renderTelegramReplyDraft(item) {
+  if (!isTelegramReplyDraft(item)) return null;
+  const inbound = item.payload?.inboundMessage || item.payload?.customerMessage || "—";
+  const draft = item.payload?.text || item.payload?.message || item.recommendation || "—";
+  return (
+    <div className="telegram-reply-draft-card">
+      <div>
+        <span>Inbound message</span>
+        <p>{inbound}</p>
+      </div>
+      <div>
+        <span>AI draft response</span>
+        <p>{draft}</p>
+      </div>
+    </div>
+  );
+}
+
 function shortRecommendation(item) {
   const text = item.recommendation || item.title || "AI рекомендация ожидает решения";
   return text.length > 130 ? `${text.slice(0, 130)}…` : text;
@@ -113,7 +136,7 @@ const approvalActionLoadingLabels = {
 };
 
 const APPROVAL_ACTION_TIMEOUT_MS = 20000;
-const executableApprovalTypes = new Set(["telegram_followup", "email_followup", "send_demo_link", "send_presentation", "create_reminder", "move_lead_stage", "stage_change_recommendation"]);
+const executableApprovalTypes = new Set(["telegram_reply_draft", "telegram_followup", "email_followup", "send_demo_link", "send_presentation", "create_reminder", "move_lead_stage", "stage_change_recommendation"]);
 
 function isApprovalItemExecutable(item) {
   return executableApprovalTypes.has(item.executionType || item.actionType);
@@ -121,8 +144,8 @@ function isApprovalItemExecutable(item) {
 
 function formatApprovalErrorMessage(message) {
   const text = String(message || "").trim();
-  if (text === "Lead has no Telegram chat id" || text === "У лида нет Telegram chat id") {
-    return "У лида нет Telegram chat id. Это демо-лид, Telegram-сообщение отправить нельзя.";
+  if (text === "Lead has no Telegram chat id" || text === "У лида нет Telegram chat id" || text === "Telegram не подключён для этого лида.") {
+    return "Telegram не подключён для этого лида.";
   }
   return text || "Не удалось выполнить AI действие";
 }
@@ -261,13 +284,20 @@ export default function AiWorkersPage() {
   }
 
   async function handleEditApprovalItem(item) {
-    const recommendation = window.prompt("Изменить рекомендацию AI", item.recommendation || item.title || "");
-    if (recommendation === null) return;
+    const isTelegramReplyDraft = item.actionType === "telegram_reply_draft" || item.executionType === "telegram_reply_draft";
+    const currentText = isTelegramReplyDraft ? (item.payload?.text || item.payload?.message || item.recommendation || "") : (item.recommendation || item.title || "");
+    const nextText = window.prompt(isTelegramReplyDraft ? "Изменить AI draft response" : "Изменить рекомендацию AI", currentText);
+    if (nextText === null) return;
     setBusyAction({ itemId: item.id, action: "edit" });
     setError("");
     try {
-      await updateAiApprovalQueueItem(item.id, { recommendation });
-      setMessage("AI рекомендация изменена.");
+      if (isTelegramReplyDraft) {
+        await updateAiApprovalQueueItem(item.id, { payload: { ...(item.payload || {}), text: nextText, message: nextText, editedByManager: true } });
+        setMessage("AI draft response изменён.");
+      } else {
+        await updateAiApprovalQueueItem(item.id, { recommendation: nextText });
+        setMessage("AI рекомендация изменена.");
+      }
       await loadCommandCenter({ silent: true });
     } catch (requestError) {
       setError(requestError.message || "Не удалось изменить AI действие");
@@ -362,6 +392,7 @@ export default function AiWorkersPage() {
                 <strong>{item.title}</strong>
                 <p>{shortRecommendation(item)}</p>
                 {renderStageDetails(item)}
+                {renderTelegramReplyDraft(item)}
                 {item.errorMessage && <small className="email-error-text">Ошибка выполнения: {formatApprovalErrorMessage(item.errorMessage)}</small>}
               </div>
               <div><span>Лид</span><b>{item.lead?.name || "—"}</b></div>
@@ -378,7 +409,7 @@ export default function AiWorkersPage() {
                   <button type="button" className="ghost-button compact danger-action" onClick={() => handleApprovalAction(item, "reject")} disabled={isItemBusy}>{isItemBusy && busyAction.action === "reject" ? busyLabel : "Отклонить"}</button>
                 )}
                 {item.status === "approved" && isApprovalItemExecutable(item) && (
-                  <button type="button" className="btn primary compact" onClick={() => handleApprovalAction(item, "execute")} disabled={isItemBusy}>{isItemBusy && busyAction.action === "execute" ? busyLabel : "Выполнить"}</button>
+                  <button type="button" className="btn primary compact" onClick={() => handleApprovalAction(item, "execute")} disabled={isItemBusy}>{isItemBusy && busyAction.action === "execute" ? busyLabel : isTelegramReplyDraft(item) ? "Отправить" : "Выполнить"}</button>
                 )}
               </div>
             </article>
@@ -397,6 +428,7 @@ export default function AiWorkersPage() {
                     <strong>{item.title}</strong>
                     <p>{shortRecommendation(item)}</p>
                     {renderStageDetails(item)}
+                    {renderTelegramReplyDraft(item)}
                     {item.errorMessage && <small className="email-error-text">Ошибка выполнения: {formatApprovalErrorMessage(item.errorMessage)}</small>}
                   </div>
                   <div><span>Лид</span><b>{item.lead?.name || "—"}</b></div>

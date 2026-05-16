@@ -66,7 +66,10 @@ async function runExistingChatIdTest() {
       if (query.startsWith('UPDATE ai_followup_jobs')) return { rows: [], rowCount: 0 }
       if (query.startsWith('SELECT id FROM ai_worker_queue') && query.includes("action_type = 'telegram_reply_analysis'")) return { rows: [], rowCount: 0 }
       if (query.startsWith('INSERT INTO ai_worker_queue') && query.includes("'telegram_reply_analysis'")) return { rows: [{ id: 'queue-analysis-1' }], rowCount: 1 }
-      if (query.startsWith('SELECT id FROM ai_worker_queue') && query.includes("action_type = 'telegram_draft'")) return { rows: [{ id: 'queue-draft-existing' }], rowCount: 1 }
+      if (query.startsWith('SELECT id FROM ai_worker_queue') && query.includes("action_type = 'telegram_reply_draft'")) return { rows: [], rowCount: 0 }
+      if (query.startsWith('SELECT score, temperature, deal_probability')) return { rows: [{ score: 82, temperature: 'hot', deal_probability: 70, probability_to_close: 65, risk_level: 'low', recommended_next_step: 'Показать демо AS6 AI CRM', ai_summary: 'Интерес к демо', generated_at: new Date() }], rowCount: 1 }
+      if (query.startsWith('SELECT event_type, title, body, source, created_at')) return { rows: [{ event_type: 'telegram_reply_received', title: 'Получен ответ', body: 'Хочу посмотреть демо AI CRM', source: 'telegram', created_at: new Date() }], rowCount: 1 }
+      if (query.startsWith('INSERT INTO ai_worker_queue') && query.includes("'telegram_reply_draft'")) return { rows: [{ id: 'queue-draft-1' }], rowCount: 1 }
       if (query.startsWith('SELECT id FROM ai_worker_queue') && query.includes("action_type = 'stage_change_recommendation'")) return { rows: [], rowCount: 0 }
 
       throw new Error(`Unexpected query: ${query}`)
@@ -92,6 +95,7 @@ async function runExistingChatIdTest() {
     assert.strictEqual(result.isNew, false)
     assert.ok(queries.some(({ query }) => query.startsWith('INSERT INTO telegram_messages(')), 'inbound message should be inserted')
     assert.ok(queries.some(({ query }) => query.includes("'telegram_reply_analysis'")), 'telegram_reply_analysis queue item should be created')
+    assert.ok(queries.some(({ query }) => query.includes("'telegram_reply_draft'")), 'telegram_reply_draft queue item should be created')
     assert.ok(!queries.some(({ query }) => query.startsWith('INSERT INTO crm_leads(')), 'must not insert a lead when telegram_chat_id already exists')
     assert.ok(!queries.some(({ query }) => query.includes('telegram_chat_id = $12')), 'must not assign the same telegram_chat_id to another lead')
   } finally {

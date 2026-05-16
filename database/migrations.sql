@@ -340,3 +340,4 @@ CREATE INDEX IF NOT EXISTS idx_ai_workers_workspace_type ON ai_workers(workspace
 CREATE INDEX IF NOT EXISTS idx_ai_worker_runs_worker ON ai_worker_runs(workspace_id, worker_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_status ON ai_worker_queue(workspace_id, status, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_lead ON ai_worker_queue(workspace_id, lead_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_telegram_reply_draft ON ai_worker_queue(workspace_id, lead_id, ((payload->>'telegramMessageId')), status, created_at DESC) WHERE action_type = 'telegram_reply_draft';
