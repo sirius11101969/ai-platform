@@ -143,6 +143,7 @@ function translateApiError(message) {
     'Attachment file and content are required': 'Выберите файл вложения',
     'Email subject and body are required': 'Заполните тему и текст письма',
     'Lead email is required': 'В карточке лида нет email',
+    'У лида нет email для отправки.': 'У лида нет email для отправки.',
     'Workspace name is required': 'Укажите название рабочего пространства',
     'Workspace not found': 'Рабочее пространство не найдено',
     'Workspace admin role is required': 'Нужна роль администратора пространства',
@@ -161,8 +162,9 @@ function translateApiError(message) {
     'Invalid AI action type': 'Недопустимый тип AI действия',
     'Invalid AI action status': 'Недопустимый статус AI действия',
     'Telegram bot token is not configured': 'Telegram Bot API не настроен на сервере',
-    'Lead has no Telegram chat id': 'У лида нет Telegram chat id. Отправка в Telegram недоступна.',
-    'У лида нет Telegram chat id. Отправка в Telegram недоступна.': 'У лида нет Telegram chat id. Отправка в Telegram недоступна.',
+    'Lead has no Telegram chat id': 'У лида нет Telegram chat id. Можно отправить email или написать вручную.',
+    'У лида нет Telegram chat id. Отправка в Telegram недоступна.': 'У лида нет Telegram chat id. Можно отправить email или написать вручную.',
+    'У лида нет Telegram chat id. Можно отправить email или написать вручную.': 'У лида нет Telegram chat id. Можно отправить email или написать вручную.',
     'Демо-воронка уже создана.': 'Демо-воронка уже создана.',
   }
   if (exact[text]) return exact[text]

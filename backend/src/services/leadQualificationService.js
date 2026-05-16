@@ -118,6 +118,30 @@ async function qualifyLead(client, { lead, userId, workspaceId, queueId = null }
     console.error('AI outreach generation failed', { workspaceId, leadId: lead.id, error: error.message || error })
   }
 
+  let stageSuggestion = null
+  const nextStatus = lead.status === 'new' && intelligence.score >= 45 ? 'qualified' : lead.status === 'qualified' && intelligence.score >= 70 ? 'proposal' : null
+  if (nextStatus) {
+    const existingStage = await client.query(
+      `SELECT id FROM ai_worker_queue
+        WHERE workspace_id = $1 AND lead_id = $2 AND action_type = 'move_lead_stage'
+          AND payload->>'nextStatus' = $3
+          AND created_at > NOW() - INTERVAL '24 hours'
+          AND status IN ('pending_approval', 'approved', 'executing', 'completed')
+        LIMIT 1`,
+      [workspaceId, lead.id, nextStatus]
+    )
+    if (!existingStage.rows[0]) {
+      const suggested = await client.query(
+        `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
+         VALUES($1, $2, $3, 'move_lead_stage', 'pending_approval', $4, $5, $6)
+         RETURNING id`,
+        [lead.worker_id || (await ensureSdrWorker(client, workspaceId)).id, workspaceId, lead.id, `AI stage suggestion · ${lead.status} → ${nextStatus}`, `AI квалификация предлагает сменить этап ${lead.status} → ${nextStatus}. Требуется approval менеджера.`, { source: 'lead_qualification', currentStatus: lead.status, nextStatus, status: nextStatus, score: intelligence.score }]
+      )
+      stageSuggestion = suggested.rows[0]
+      await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'ai_stage_suggested', title: 'AI предложил смену этапа', body: `${lead.status} → ${nextStatus}`, source: 'ai', metadata: { queueId: stageSuggestion.id, nextStatus, score: intelligence.score } })
+    }
+  }
+
   let followUpJob = null
   if (intelligence.score > 75) {
     const draft = buildFollowUpDraft(context, intelligence)
@@ -138,11 +162,11 @@ async function qualifyLead(client, { lead, userId, workspaceId, queueId = null }
               payload = payload || $4::jsonb,
               updated_at = NOW()
         WHERE workspace_id = $1 AND id = $2`,
-      [workspaceId, queueId, recommendation, { score: intelligence.score, priority, recommendedChannel: intelligence.recommendedChannel, confidence, followUpJobId: followUpJob?.id || null, outreach }]
+      [workspaceId, queueId, recommendation, { score: intelligence.score, priority, recommendedChannel: intelligence.recommendedChannel, confidence, followUpJobId: followUpJob?.id || null, outreach, stageSuggestionId: stageSuggestion?.id || null }]
     )
   }
 
-  return { score: scoreResult.rows[0], intelligence, priority, recommendation, followUpJob, outreach }
+  return { score: scoreResult.rows[0], intelligence, priority, recommendation, followUpJob, outreach, stageSuggestion }
 }
 
 async function qualifyLeadById({ workspaceId, leadId, queueId = null }) {

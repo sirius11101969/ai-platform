@@ -4,6 +4,7 @@ const net = require('net')
 const path = require('path')
 const tls = require('tls')
 const axios = require('axios')
+const { addTimelineEvent } = require('./timelineService')
 const pool = require('../db/pool')
 const { renderTemplate } = require('./emailTemplates')
 
@@ -164,7 +165,7 @@ async function enqueueEmail(userId, payload) {
     const lead = await getLead(userId, workspaceId, payload.leadId, client)
     if (!lead) throw Object.assign(new Error('Lead not found'), { statusCode: 404 })
     const to = normalizeText(payload.to || lead.email)
-    if (!to) throw Object.assign(new Error('Lead email is required'), { statusCode: 400 })
+    if (!to) throw Object.assign(new Error('У лида нет email для отправки.'), { statusCode: 400 })
     const rendered = payload.template ? renderTemplate(payload.template, lead, payload) : payload
     const subject = normalizeText(rendered.subject)
     const text = normalizeText(rendered.text || rendered.body)
@@ -407,7 +408,9 @@ async function deliverEmail(emailId) {
     if (email.provider === 'gmail_api') await sendViaGmailApi(raw)
     else await sendViaSmtp(email, raw)
     await pool.query("UPDATE email_messages SET status = 'sent', sent_at = NOW(), error = NULL, updated_at = NOW() WHERE id = $1", [emailId])
+    await pool.query("UPDATE crm_leads SET last_message_at = NOW(), updated_at = NOW() WHERE id = $1 AND workspace_id = $2", [email.leadId, email.workspaceId])
     await pool.query("INSERT INTO crm_activity(user_id, workspace_id, lead_id, type, title, body, metadata) VALUES($1, $5, $2, 'email_sent', 'Письмо отправлено', $3, $4)", [email.userId, email.leadId, email.subject, { emailId, to: email.to, attachments: email.attachments.length }, email.workspaceId])
+    await addTimelineEvent(pool, { workspaceId: email.workspaceId, leadId: email.leadId, userId: email.userId, eventType: 'email_sent', title: 'Email отправлен', body: email.subject, source: 'email', metadata: { emailId, to: email.to, attachments: email.attachments.length } })
     if (email.attachments.length) {
       await pool.query("INSERT INTO crm_activity(user_id, workspace_id, lead_id, type, title, body, metadata) VALUES($1, $5, $2, 'attachment_sent', 'Вложения отправлены', $3, $4)", [email.userId, email.leadId, email.attachments.map((item) => item.fileName).join(', '), { emailId, to: email.to, attachments: email.attachments.map((item) => item.id) }, email.workspaceId])
     }
@@ -424,6 +427,7 @@ async function deliverEmail(emailId) {
       [emailId, nextStatus, error.message, Math.min(30, 2 ** retry)]
     )
     await pool.query("INSERT INTO crm_activity(user_id, workspace_id, lead_id, type, title, body, metadata) VALUES($1, $5, $2, 'email_failed', 'Письмо не отправлено', $3, $4)", [email.userId, email.leadId, error.message, { emailId, to: email.to, retry, nextStatus }, email.workspaceId])
+    await addTimelineEvent(pool, { workspaceId: email.workspaceId, leadId: email.leadId, userId: email.userId, eventType: 'send_failed', title: 'Отправка email не выполнена', body: error.message, source: 'email', metadata: { emailId, to: email.to, retry, nextStatus } })
     await logEmailStatus(pool, { ...email, id: emailId }, 'failed', error.message, { retry, nextStatus })
     throw error
   }
