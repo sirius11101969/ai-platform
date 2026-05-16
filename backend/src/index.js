@@ -19,6 +19,7 @@ const demoRoutes = require('./routes/demoRoutes')
 const { markOpened } = require('./controllers/emailController')
 const { startEmailQueueWorker } = require('./services/emailService')
 const { startLeadAnalysisWorker } = require('./services/leadAnalysisWorker')
+const { ensureDefaultRulesForAllWorkspaces } = require('./services/aiFollowupRulesService')
 const { requireAuth } = require('./middleware/authMiddleware')
 const { requireWorkspace } = require('./middleware/workspaceMiddleware')
 const { errorHandler } = require('./middleware/errorHandler')
@@ -115,6 +116,11 @@ async function start() {
 
   if (process.env.RUN_MIGRATIONS !== 'false') {
     await migrate()
+  }
+
+  const followupRuleSeed = await ensureDefaultRulesForAllWorkspaces()
+  if (followupRuleSeed.seeded) {
+    console.log(`Seeded ${followupRuleSeed.seeded} default AI follow-up rules across ${followupRuleSeed.workspaces} workspaces`)
   }
 
   startEmailQueueWorker()

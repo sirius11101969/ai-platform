@@ -1,5 +1,6 @@
 const pool = require('../db/pool')
 const { PLAN_KEYS, getPlanLimits } = require('../plans')
+const { ensureDefaultRulesForWorkspace } = require('../services/aiFollowupRulesService')
 
 const ROLES = ['owner', 'admin', 'sales', 'viewer']
 const WRITE_ROLES = ['owner', 'admin']
@@ -66,6 +67,7 @@ async function ensureDefaultWorkspace(userId, client = pool) {
     [name, userId, user.rows[0].plan || 'free', user.rows[0].credits || 0, user.rows[0].created_at]
   )
   await client.query('INSERT INTO workspace_members(workspace_id, user_id, role) VALUES($1, $2, $3) ON CONFLICT DO NOTHING', [workspace.rows[0].id, userId, 'owner'])
+  await ensureDefaultRulesForWorkspace(workspace.rows[0].id, client)
   return normalizeWorkspace({ ...workspace.rows[0], role: 'owner' })
 }
 
@@ -131,6 +133,7 @@ async function createWorkspace(userId, payload) {
       [name, userId, plan, creditsPool]
     )
     await client.query('INSERT INTO workspace_members(workspace_id, user_id, role) VALUES($1, $2, $3)', [result.rows[0].id, userId, 'owner'])
+    await ensureDefaultRulesForWorkspace(result.rows[0].id, client)
     await client.query('COMMIT')
     return normalizeWorkspace({ ...result.rows[0], role: 'owner' })
   } catch (error) {

@@ -49,7 +49,12 @@ export default function FollowupsPage() {
     setMessage("");
     try {
       const response = await runAiFollowupScan();
-      setMessage(`Сканирование завершено: создано ${response.created?.length || 0}, дублей пропущено ${response.skippedDuplicates?.length || 0}.`);
+      const createdCount = response.createdCount ?? response.created?.length ?? 0;
+      const skippedCount = response.skippedCount ?? response.skippedDuplicates?.length ?? 0;
+      const autoSeededMessage = response.rulesSeeded > 0
+        ? "Правила follow-up были созданы автоматически. "
+        : "";
+      setMessage(`${autoSeededMessage}Сканирование завершено: создано ${createdCount}, дублей пропущено ${skippedCount}.`);
       await load({ silent: true });
     } catch (requestError) {
       setError(requestError.message || "Не удалось выполнить сканирование");
