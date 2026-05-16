@@ -1425,6 +1425,9 @@ button { font: inherit; }
 .ai-output-box { white-space: pre-wrap; margin: 16px 0; padding: 16px; border-radius: 18px; border: 1px solid rgba(117, 91, 255, .22); background: rgba(117, 91, 255, .08); color: #edf3ff; font: inherit; line-height: 1.55; }
 .approval-meta { display: flex; flex-wrap: wrap; gap: 10px; color: #91a2d6; font-size: .9rem; }
 .approval-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+.followup-approve-button:disabled { cursor: not-allowed; opacity: 1; transform: none; }
+.followup-approve-button:disabled:hover { border-color: rgba(255,255,255,.12); background: rgba(255,255,255,.06); color: #dbe7ff; transform: none; }
+.followup-approve-button[aria-busy="true"]:disabled { cursor: wait; }
 .followup-send-action { display: grid; gap: 6px; justify-items: start; }
 .followup-send-button[aria-busy="false"]:disabled { cursor: not-allowed; opacity: .84; background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.16); box-shadow: none; color: #c8d3f4; }
 .followup-send-button[aria-busy="true"]:disabled { cursor: wait; opacity: .78; }

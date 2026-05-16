@@ -37,6 +37,12 @@ function getActionButtonLabel(itemId, action, label, loadingAction) {
   return isActionBusy(itemId, action, loadingAction) ? "Выполняем…" : label;
 }
 
+function getApproveButtonLabel(item, isApproving) {
+  if (isApproving) return "Одобряем…";
+  if (item.status === "approved") return "Одобрено";
+  return "Одобрить";
+}
+
 function getEditButtonLabel(itemId, loadingAction) {
   return isActionBusy(itemId, "edit", loadingAction) ? "Сохраняем…" : "Изменить";
 }
@@ -212,6 +218,7 @@ export default function FollowupsPage() {
         <div className="approval-list followup-center-list">
           {items.map((item) => {
             const itemBusy = isItemBusy(item.id, loadingAction);
+            const isApproving = loadingAction === `${item.id}:approve`;
             const isSending = loadingAction === `${item.id}:send`;
             const disabledReason = getSendDisabledReason(item);
             const canSend = canSendFollowup(item);
@@ -236,7 +243,17 @@ export default function FollowupsPage() {
                 {(itemError || item.error) && <span>Ошибка: {itemError || item.error}</span>}
               </div>
               <div className="approval-actions">
-                <button className="ghost-button compact" type="button" onClick={() => handleAction(item, "approve")} disabled={itemBusy || item.status !== "suggested"}>{getActionButtonLabel(item.id, "approve", "Одобрить", loadingAction)}</button>
+                {item.status !== "sent" && (
+                  <button
+                    className="ghost-button compact followup-approve-button"
+                    type="button"
+                    onClick={() => handleAction(item, "approve")}
+                    disabled={isApproving || item.status !== "suggested"}
+                    aria-busy={isApproving}
+                  >
+                    {getApproveButtonLabel(item, isApproving)}
+                  </button>
+                )}
                 <button className="ghost-button compact" type="button" onClick={() => handleEdit(item)} disabled={itemBusy || !["suggested", "approved", "failed"].includes(item.status)}>{getEditButtonLabel(item.id, loadingAction)}</button>
                 <button className="ghost-button compact danger-action" type="button" onClick={() => handleAction(item, "reject")} disabled={itemBusy || !["suggested", "failed"].includes(item.status)}>{getActionButtonLabel(item.id, "reject", "Отклонить", loadingAction)}</button>
                 <div className="followup-send-action">
