@@ -1,6 +1,7 @@
 const pool = require('../db/pool')
 const { generateCrmFollowUp } = require('../services/crmAiService')
 const { buildFollowUpDraft, scoreLeadContext } = require('../services/leadIntelligenceService')
+const { createQualificationQueueItem, ensureSdrWorker, scheduleLeadQualification } = require('../services/leadQualificationService')
 
 const CRM_STATUSES = ['new', 'qualified', 'proposal', 'booked', 'won', 'lost']
 const DEFAULT_STAGE_LABELS = {
@@ -58,6 +59,7 @@ function normalizeLead(row) {
     aiFollowUpSequences: Array.isArray(row.ai_followup_sequences) ? row.ai_followup_sequences.map(normalizeAiFollowUpSequence).filter(Boolean) : [],
     aiActions: Array.isArray(row.ai_actions) ? row.ai_actions : [],
     aiFollowupJobs: Array.isArray(row.ai_followup_jobs) ? row.ai_followup_jobs.map(normalizeAiFollowupJob).filter(Boolean) : [],
+    aiOutreachDrafts: Array.isArray(row.ai_outreach_drafts) ? row.ai_outreach_drafts.map(normalizeAiOutreachDraft).filter(Boolean) : [],
   }
 }
 
@@ -124,6 +126,34 @@ function normalizeAiFollowupJob(row) {
     reason: row.reason || '',
     urgency: row.urgency || 'medium',
     error: row.error || '',
+    createdAt: row.created_at || row.createdAt,
+    updatedAt: row.updated_at || row.updatedAt,
+  }
+}
+
+
+function normalizeAiOutreachDraft(row) {
+  if (!row) return null
+  const payload = row.payload || {}
+  return {
+    id: row.id,
+    leadId: row.lead_id || row.leadId,
+    workspaceId: row.workspace_id || row.workspaceId,
+    actionType: row.action_type || row.actionType,
+    status: row.status,
+    title: row.title || '',
+    recommendation: row.recommendation || '',
+    outreachType: payload.outreachType || row.outreach_type || '',
+    channel: payload.channel || (row.action_type === 'email_draft' ? 'email' : row.action_type === 'telegram_draft' ? 'telegram' : ''),
+    text: payload.text || payload.message || '',
+    subject: payload.subject || '',
+    cta: payload.cta || '',
+    demoProposal: payload.demoProposal || '',
+    score: Number(payload.score || 0),
+    temperature: payload.temperature || '',
+    detectedIntent: payload.detectedIntent || '',
+    recommendedChannel: payload.recommendedChannel || '',
+    payload,
     createdAt: row.created_at || row.createdAt,
     updatedAt: row.updated_at || row.updatedAt,
   }
@@ -240,6 +270,7 @@ async function listLeads(userId, workspaceId) {
             (SELECT to_jsonb(s) FROM (SELECT * FROM lead_ai_scores las WHERE las.workspace_id = l.workspace_id AND las.lead_id = l.id ORDER BY las.generated_at DESC LIMIT 1) s) AS ai_score,
             COALESCE((SELECT json_agg(seq_row ORDER BY seq_row.recommended_at DESC) FROM (SELECT * FROM ai_followup_sequences afs WHERE afs.workspace_id = l.workspace_id AND afs.lead_id = l.id ORDER BY afs.recommended_at DESC LIMIT 5) seq_row), '[]'::json) AS ai_followup_sequences,
             COALESCE((SELECT json_agg(job_row ORDER BY job_row.created_at DESC) FROM (SELECT * FROM ai_followup_jobs afj WHERE afj.workspace_id = l.workspace_id AND afj.lead_id = l.id ORDER BY afj.created_at DESC LIMIT 10) job_row), '[]'::json) AS ai_followup_jobs,
+            COALESCE((SELECT json_agg(draft_row ORDER BY draft_row.created_at DESC) FROM (SELECT id, workspace_id, lead_id, action_type, status, title, recommendation, payload, created_at, updated_at FROM ai_worker_queue q WHERE q.workspace_id = l.workspace_id AND q.lead_id = l.id AND q.action_type IN ('telegram_draft','email_draft') ORDER BY q.created_at DESC LIMIT 20) draft_row), '[]'::json) AS ai_outreach_drafts,
             (SELECT a.output_result FROM ai_agent_actions a WHERE a.workspace_id = l.workspace_id AND a.lead_id = l.id AND a.task_type = 'analyze_lead' AND a.status = 'completed' ORDER BY a.created_at DESC LIMIT 1) AS ai_recommendation,
             COALESCE((SELECT json_agg(ai_row ORDER BY ai_row.created_at DESC) FROM (SELECT a.id, a.task_type, a.status, a.output_result, a.created_at FROM ai_agent_actions a WHERE a.workspace_id = l.workspace_id AND a.lead_id = l.id ORDER BY a.created_at DESC LIMIT 5) ai_row), '[]'::json) AS ai_actions
        FROM crm_leads AS l
@@ -263,17 +294,18 @@ async function listLeads(userId, workspaceId) {
 async function findLead(userId, workspaceId, leadId, client = pool) {
   const result = await client.query(`SELECT ${LEAD_SELECT} FROM crm_leads WHERE user_id = $1 AND workspace_id = $2 AND id = $3`, [userId, workspaceId, leadId])
   if (!result.rows[0]) return null
-  const [notes, followups, telegramMessages, aiScore, aiSequences, aiFollowupJobs] = await Promise.all([
+  const [notes, followups, telegramMessages, aiScore, aiSequences, aiFollowupJobs, aiOutreachDrafts] = await Promise.all([
     client.query('SELECT id, lead_id, user_id, body, created_at FROM crm_notes WHERE user_id = $1 AND workspace_id = $3 AND lead_id = $2 ORDER BY created_at DESC', [userId, leadId, workspaceId]),
     client.query('SELECT id, lead_id, user_id, message, model, created_at FROM crm_followups WHERE user_id = $1 AND workspace_id = $3 AND lead_id = $2 ORDER BY created_at DESC', [userId, leadId, workspaceId]),
     client.query('SELECT id, lead_id, user_id, role, message, telegram_chat_id, telegram_message_id, created_at FROM telegram_messages WHERE user_id = $1 AND workspace_id = $3 AND lead_id = $2 ORDER BY created_at ASC LIMIT 200', [userId, leadId, workspaceId]),
     client.query('SELECT * FROM lead_ai_scores WHERE workspace_id = $1 AND lead_id = $2 ORDER BY generated_at DESC LIMIT 1', [workspaceId, leadId]),
     client.query('SELECT * FROM ai_followup_sequences WHERE workspace_id = $1 AND lead_id = $2 ORDER BY recommended_at DESC LIMIT 5', [workspaceId, leadId]),
     client.query('SELECT * FROM ai_followup_jobs WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 10', [workspaceId, leadId]),
+    client.query("SELECT id, workspace_id, lead_id, action_type, status, title, recommendation, payload, created_at, updated_at FROM ai_worker_queue WHERE workspace_id = $1 AND lead_id = $2 AND action_type IN ('telegram_draft','email_draft') ORDER BY created_at DESC LIMIT 20", [workspaceId, leadId]),
   ])
   const ai = await client.query("SELECT output_result FROM ai_agent_actions WHERE workspace_id = $1 AND lead_id = $2 AND task_type = 'analyze_lead' AND status = 'completed' ORDER BY created_at DESC LIMIT 1", [workspaceId, leadId])
   const aiActions = await client.query('SELECT id, task_type, status, output_result, created_at FROM ai_agent_actions WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 5', [workspaceId, leadId])
-  return normalizeLead({ ...result.rows[0], notes_list: notes.rows, followups: followups.rows, telegram_messages: telegramMessages.rows, ai_score: aiScore.rows[0] || null, ai_followup_sequences: aiSequences.rows, ai_followup_jobs: aiFollowupJobs.rows, ai_recommendation: ai.rows[0]?.output_result || null, ai_actions: aiActions.rows })
+  return normalizeLead({ ...result.rows[0], notes_list: notes.rows, followups: followups.rows, telegram_messages: telegramMessages.rows, ai_score: aiScore.rows[0] || null, ai_followup_sequences: aiSequences.rows, ai_followup_jobs: aiFollowupJobs.rows, ai_outreach_drafts: aiOutreachDrafts.rows, ai_recommendation: ai.rows[0]?.output_result || null, ai_actions: aiActions.rows })
 }
 
 async function createLead(userId, workspaceId, payload) {
@@ -292,6 +324,7 @@ async function createLead(userId, workspaceId, payload) {
   if (value === null) throw Object.assign(new Error('Lead value must be a non-negative number'), { statusCode: 400 })
 
   const client = await pool.connect()
+  let qualificationQueueId = null
   try {
     await client.query('BEGIN')
     const stageLabels = await getStageLabels(userId, workspaceId, client)
@@ -311,7 +344,18 @@ async function createLead(userId, workspaceId, payload) {
       noteRows = noteResult.rows
       await logActivity(client, userId, workspaceId, result.rows[0].id, 'note_added', 'Заметка добавлена', notes)
     }
+    const worker = await ensureSdrWorker(client, workspaceId)
+    const qualificationQueue = await createQualificationQueueItem(client, {
+      workspaceId,
+      leadId: result.rows[0].id,
+      workerId: worker.id,
+      title: `Квалифицировать лида — ${result.rows[0].name}`,
+      recommendation: 'AI квалификация поставлена в очередь: будет рассчитан score, приоритет, канал и следующий шаг.',
+      payload: { leadId: result.rows[0].id, source: 'crm', createdFrom: 'manual_crm' },
+    })
+    qualificationQueueId = qualificationQueue.id
     await client.query('COMMIT')
+    scheduleLeadQualification({ workspaceId, leadId: result.rows[0].id, queueId: qualificationQueueId })
     return normalizeLead({ ...result.rows[0], notes_list: noteRows, followups: [] })
   } catch (error) {
     await client.query('ROLLBACK')
@@ -596,7 +640,7 @@ async function analyzeWorkspaceLeads(userId, workspaceId, limit = 25) {
 }
 
 async function getStats(userId, workspaceId) {
-  const [summaryResult, statusResult, activityResult, aiMetricsResult, aiRevenueResult, aiExecutionResult, telegramResult, followupMetricsResult] = await Promise.all([
+  const [summaryResult, statusResult, activityResult, aiMetricsResult, aiRevenueResult, aiExecutionResult, telegramResult, followupMetricsResult, outreachMetricsResult] = await Promise.all([
     pool.query(
       `SELECT COUNT(*)::int AS total_leads,
               COALESCE(SUM(value) FILTER (WHERE status NOT IN ('won','lost')), 0)::numeric AS pipeline_value,
@@ -627,7 +671,7 @@ async function getStats(userId, workspaceId) {
     ),
     pool.query(
       `WITH latest AS (
-         SELECT DISTINCT ON (lead_id) lead_id, score, deal_probability, urgency_level, risk_level
+         SELECT DISTINCT ON (lead_id) lead_id, score, temperature, deal_probability, urgency_level, risk_level
            FROM lead_ai_scores WHERE workspace_id = $1 ORDER BY lead_id, generated_at DESC
        )
        SELECT COUNT(*) FILTER (WHERE COALESCE(temperature, CASE WHEN score >= 75 THEN 'hot' WHEN score >= 45 THEN 'warm' ELSE 'cold' END) = 'hot' OR score >= 75)::int AS hot_leads,
@@ -676,6 +720,18 @@ async function getStats(userId, workspaceId) {
          FROM activity LEFT JOIN latest ON latest.lead_id = activity.id`,
       [workspaceId, userId]
     ),
+    pool.query(
+      `SELECT COUNT(*) FILTER (WHERE q.created_at::date = CURRENT_DATE)::int AS generated_today,
+              COUNT(*) FILTER (WHERE q.status = 'pending_approval')::int AS pending_approvals,
+              COUNT(DISTINCT q.lead_id) FILTER (WHERE q.status = 'pending_approval')::int AS ready_leads,
+              COUNT(DISTINCT q.lead_id)::int AS total_leads
+         FROM ai_worker_queue q
+         JOIN crm_leads l ON l.id = q.lead_id AND l.workspace_id = q.workspace_id
+        WHERE q.workspace_id = $1
+          AND l.user_id = $2
+          AND q.action_type IN ('telegram_draft','email_draft')`,
+      [workspaceId, userId]
+    ),
   ])
   const byStatus = CRM_STATUSES.reduce((acc, status) => ({ ...acc, [status]: { count: 0, value: 0 } }), {})
   for (const row of statusResult.rows) byStatus[row.status] = { count: row.count, value: Number(row.value || 0) }
@@ -690,6 +746,7 @@ async function getStats(userId, workspaceId) {
   const aiExecution = aiExecutionResult.rows[0] || {}
   const telegramStats = telegramResult.rows[0] || {}
   const followupMetrics = followupMetricsResult.rows[0] || {}
+  const outreachMetrics = outreachMetricsResult.rows[0] || {}
   const aiExecutionFinished = Number(aiExecution.finished_total || 0)
   return {
     totalLeads: total,
@@ -730,6 +787,9 @@ async function getStats(userId, workspaceId) {
       hotLeadsWithoutContact: Number(followupMetrics.hot_without_contact || 0),
       autonomousFollowUpsSentToday: Number(followupMetrics.sent_today || 0),
       followUpConversionPlaceholder: 0,
+      outreachGeneratedToday: Number(outreachMetrics.generated_today || 0),
+      outreachPendingApprovals: Number(outreachMetrics.pending_approvals || 0),
+      aiResponseReadiness: Number(outreachMetrics.total_leads || 0) ? Math.round((Number(outreachMetrics.ready_leads || 0) / Number(outreachMetrics.total_leads || 1)) * 100) : 0,
     },
     byStatus,
     activity: activityResult.rows.map(normalizeActivity),

@@ -150,6 +150,15 @@ function getAiBadges(lead) {
   ].filter(Boolean);
 }
 
+
+function getOutreachDrafts(lead, channel) {
+  return (lead?.aiOutreachDrafts || []).filter((draft) => draft.channel === channel || draft.actionType === `${channel}_draft`);
+}
+
+function outreachTypeLabel(type) {
+  return ({ first_contact: 'Первый контакт', followup_24h: 'Follow-up 24ч', followup_3d: 'Follow-up 3д', meeting_request: 'Встреча', demo_offer: 'Demo offer', recommendation_only: 'Рекомендация' }[type] || type || 'Outreach');
+}
+
 function getAiRecommendation(lead) {
   return lead?.aiRecommendation || (lead?.aiActions || []).find((action) => action.task_type === 'analyze_lead' && action.status === 'completed')?.output_result || null;
 }
@@ -997,6 +1006,8 @@ function LeadFormModal({ title, subtitle, stages, leadForm, setLeadForm, saving,
 
 function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDraftChange, onAddNote, onFollowUp, onAiAction, onAnalyzeLeadAi, aiActionBusy = {}, followUpLoading, onDelete, onEdit, onMove, telegramMessages = [], telegramDraft = '', telegramSending = false, onTelegramDraftChange, onSendTelegramReply, emailTemplates = [], leadEmails = [], emailComposer, emailAttachments = [], emailBusy = false, onEmailComposerChange, onGenerateEmail, onUploadEmailAttachment, onSendEmail, actionCenter = { actions: [], timeline: [], attachments: [] }, materials = [], executionBusy = {}, onCreateExecutionAction, onApproveExecutionAction, onSendExecutionAction, onEditExecutionAction, onCancelExecutionAction, onSendMaterials, onApproveApprovalQueueItem, onRejectApprovalQueueItem, onExecuteApprovalQueueItem, onEditApprovalQueueItem, closeLeadModal }) {
   useModalCloseLifecycle(closeLeadModal);
+  const telegramOutreachDrafts = getOutreachDrafts(lead, 'telegram');
+  const emailOutreachDrafts = getOutreachDrafts(lead, 'email');
 
   return (
     <div className="modal-backdrop crm-modal-backdrop" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) closeLeadModal(); }}>
@@ -1065,7 +1076,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                 </div>
               ) : <p className="empty-state">Запустите «Анализ лида», чтобы получить AI рекомендации.</p>}
               {Array.isArray(getAiRecommendation(lead)?.recommendations) && <ul className="ai-recommendation-list">{getAiRecommendation(lead).recommendations.map((item, index) => <li key={`${item}-${index}`}>{item}</li>)}</ul>}
-              {getLeadAiScore(lead) && <div className="ai-advisor-strip"><p><b>AI рекомендация:</b> {getLeadAiScore(lead).recommendedNextStep || getLeadAiScore(lead).nextBestAction || "Назначить следующий шаг"}</p><p><b>Рекомендуемый CTA:</b> {getLeadAiScore(lead).recommendedCta || "Назначить следующий шаг"}</p><p><b>Возражения:</b> {(getLeadAiScore(lead).objectionsDetected || []).join(", ") || "не обнаружены"}</p></div>}
+              {getLeadAiScore(lead) && <div className="ai-advisor-strip"><p><b>AI рекомендация:</b> {getLeadAiScore(lead).recommendedNextStep || getLeadAiScore(lead).nextBestAction || "Назначить следующий шаг"}</p><p><b>Рекомендуемый CTA:</b> {getLeadAiScore(lead).recommendedCta || "Назначить следующий шаг"}</p><p><b>Возражения:</b> {(getLeadAiScore(lead).objectionsDetected || []).join(", ") || "не обнаружены"}</p><p><b>AI Outreach Engine:</b> {telegramOutreachDrafts.length + emailOutreachDrafts.length} черновиков ждут approval · readiness {getLeadAiScore(lead).temperature === 'hot' ? 'немедленно' : getLeadAiScore(lead).temperature === 'warm' ? 'первый контакт' : 'только рекомендация'}</p></div>}
             </div>
 
             <div className="detail-section ai-action-center-card execution-center-card">
@@ -1139,6 +1150,20 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
               </dl>
             </div>
 
+            <div className="detail-section telegram-chat-section">
+              <div className="telegram-chat-head">
+                <div>
+                  <h4>Telegram tab · AI outreach drafts</h4>
+                  <p>Автоматические короткие русские черновики после AI qualification. Отправка только после approval.</p>
+                </div>
+                <span className="telegram-badge">Telegram drafts</span>
+              </div>
+              <div className="followup-history detail-followups">
+                {telegramOutreachDrafts.length === 0 && <p className="empty-state">Telegram черновики ещё не созданы.</p>}
+                {telegramOutreachDrafts.map((draft) => <p className="ai-sequence-draft" key={draft.id}><b>{outreachTypeLabel(draft.outreachType)}:</b> {draft.text}<small>{draft.status} · score {draft.score || '—'} · {draft.temperature || 'AI'} · {formatDate(draft.createdAt)}</small></p>)}
+              </div>
+            </div>
+
             {isTelegramLead(lead) && (
               <div className="detail-section telegram-chat-section">
                 <div className="telegram-chat-head">
@@ -1171,6 +1196,10 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                   <p>AI генерирует письмо, очередь отправляет через SMTP/Gmail API, а CRM сохраняет статусы и открытия.</p>
                 </div>
                 <span className="telegram-badge">Email</span>
+              </div>
+              <div className="followup-history detail-followups">
+                {emailOutreachDrafts.length === 0 && <p className="empty-state">Email черновики ещё не созданы.</p>}
+                {emailOutreachDrafts.map((draft) => <p className="ai-sequence-draft" key={draft.id}><b>{outreachTypeLabel(draft.outreachType)} · {draft.subject}:</b> {draft.text}<small>{draft.status} · CTA: {draft.cta || '—'} · {formatDate(draft.createdAt)}</small>{draft.demoProposal && <small>{draft.demoProposal}</small>}</p>)}
               </div>
               <form className="email-composer" onSubmit={onSendEmail}>
                 <div className="email-composer-row">
@@ -1222,7 +1251,8 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
             <div className="detail-section">
               <h4>AI‑дожим</h4>
               <div className="followup-history detail-followups">
-                {(lead.followUps || []).length === 0 && (lead.aiFollowUpSequences || []).length === 0 && (lead.aiFollowupJobs || []).length === 0 && <p>AI‑дожим ещё не генерировался.</p>}
+                {(lead.followUps || []).length === 0 && (lead.aiFollowUpSequences || []).length === 0 && (lead.aiFollowupJobs || []).length === 0 && (lead.aiOutreachDrafts || []).length === 0 && <p>AI‑дожим ещё не генерировался.</p>}
+                {(lead.aiOutreachDrafts || []).map((item) => <p className="ai-sequence-draft" key={item.id}><b>{item.channel === 'email' ? `Email · ${item.subject}` : 'Telegram'}:</b> {item.text}<small>{item.status} · {outreachTypeLabel(item.outreachType)} · {formatDate(item.createdAt)}</small></p>)}
                 {(lead.aiFollowupJobs || []).map((item) => <p className="ai-sequence-draft" key={item.id}><b>{item.suggestedChannel === 'email' ? 'Email' : item.suggestedChannel === 'telegram' ? 'Telegram' : 'CRM reminder'}:</b> {item.generatedMessage}<small>{item.status} · {item.reason || item.ruleType} · срочность {item.urgency} · {formatDate(item.sentAt || item.approvedAt || item.scheduledFor || item.createdAt)}</small>{item.error && <small>Ошибка: {item.error}</small>}</p>)}
                 {(lead.aiFollowUpSequences || []).map((item) => <p className="ai-sequence-draft" key={item.id}><b>{item.followupType === "email" ? "Email" : item.followupType === "telegram" ? "Telegram" : "Задача"}:</b> {item.generatedMessage}<small>{item.status === "draft" ? "черновик" : item.status} · {formatDate(item.scheduledFor || item.recommendedAt)}</small></p>)}
                 {(lead.followUps || []).map((item) => <p key={item.id}><b>AI:</b> {item.message}<small>{formatDate(item.createdAt)}</small></p>)}

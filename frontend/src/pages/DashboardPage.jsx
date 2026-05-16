@@ -229,6 +229,9 @@ export default function DashboardPage() {
         <StatCard label="Очередь AI задач" value={loading ? "…" : String(aiCommandMetrics?.queueActive || 0)} hint="Видимые AI рекомендации и очередь исполнения" tone="violet" />
         <StatCard label="AI ждут одобрения" value={loading ? "…" : String(aiApprovalMetrics?.waitingApproval || aiCommandMetrics?.pendingActions || crmStats?.aiMetrics?.pendingApproval || 0)} hint={`${aiApprovalMetrics?.approvedToday || 0} одобрено сегодня · человек утверждает отправку`} tone="pink" />
         <StatCard label="AI выполнено сегодня" value={loading ? "…" : String(aiApprovalMetrics?.executedToday || 0)} hint={`${aiApprovalMetrics?.failedToday || 0} ошибок сегодня · success rate ${aiApprovalMetrics?.successRate || 0}%`} tone="violet" />
+        <StatCard label="Outreach generated today" value={loading ? "…" : String(crmStats?.aiMetrics?.outreachGeneratedToday || 0)} hint="Telegram/email drafts after AI qualification" tone="violet" />
+        <StatCard label="Outreach pending approvals" value={loading ? "…" : String(crmStats?.aiMetrics?.outreachPendingApprovals || 0)} hint="Черновики ждут ручного approval" tone="pink" />
+        <StatCard label="AI response readiness" value={loading ? "…" : `${crmStats?.aiMetrics?.aiResponseReadiness || 0}%`} hint="Доля лидов с готовыми AI ответами" />
         <StatCard label="Follow-ups pending" value={loading ? "…" : String(crmStats?.aiMetrics?.autonomousFollowUpsPending || 0)} hint="AI Follow-up Center ждёт решения" tone="pink" />
         <StatCard label="Hot leads without contact" value={loading ? "…" : String(crmStats?.aiMetrics?.hotLeadsWithoutContact || 0)} hint="горячие лиды без свежего касания" tone="violet" />
         <StatCard label="Follow-ups sent today" value={loading ? "…" : String(crmStats?.aiMetrics?.autonomousFollowUpsSentToday || 0)} hint="отправлено после ручного approval" />

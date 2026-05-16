@@ -839,6 +839,8 @@ async function migrate() {
     CREATE INDEX IF NOT EXISTS idx_ai_followup_rules_workspace ON ai_followup_rules(workspace_id, rule_type);
     CREATE INDEX IF NOT EXISTS idx_ai_followup_jobs_status ON ai_followup_jobs(workspace_id, status, created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_ai_followup_jobs_dedup ON ai_followup_jobs(workspace_id, lead_id, rule_type, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_outreach_dedup ON ai_worker_queue(workspace_id, lead_id, action_type, ((payload->>'outreachType')), created_at DESC) WHERE action_type IN ('telegram_draft', 'email_draft');
+    CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_outreach_dashboard ON ai_worker_queue(workspace_id, action_type, status, created_at DESC) WHERE action_type IN ('telegram_draft', 'email_draft');
     CREATE INDEX IF NOT EXISTS idx_ai_followup_attempts_lead ON ai_followup_attempts(workspace_id, lead_id, created_at DESC);
 
   `)
