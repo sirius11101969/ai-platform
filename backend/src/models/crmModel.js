@@ -863,15 +863,15 @@ async function getStats(userId, workspaceId) {
     ),
     pool.query(
       `WITH latest AS (
-         SELECT DISTINCT ON (lead_id) lead_id, score, temperature, deal_probability, probability_to_close, urgency_level, risk_level
-           FROM lead_ai_scores WHERE workspace_id = $1 ORDER BY lead_id, generated_at DESC
+         SELECT DISTINCT ON (s.lead_id) s.lead_id, s.score, s.temperature, s.deal_probability, s.probability_to_close, s.urgency_level, s.risk_level
+           FROM lead_ai_scores s WHERE s.workspace_id = $1 ORDER BY s.lead_id, s.generated_at DESC
        )
-       SELECT COUNT(*) FILTER (WHERE COALESCE(temperature, CASE WHEN score >= 75 THEN 'hot' WHEN score >= 45 THEN 'warm' ELSE 'cold' END) = 'hot' OR score >= 75)::int AS hot_leads,
-              COUNT(*) FILTER (WHERE COALESCE(temperature, CASE WHEN score >= 75 THEN 'hot' WHEN score >= 45 THEN 'warm' ELSE 'cold' END) = 'warm' OR (score >= 45 AND score < 75))::int AS warm_leads,
-              COUNT(*) FILTER (WHERE risk_level = 'high')::int AS at_risk_deals,
-              COALESCE(AVG(score), 0)::numeric AS average_score,
+       SELECT COUNT(*) FILTER (WHERE COALESCE(latest.temperature, CASE WHEN latest.score >= 75 THEN 'hot' WHEN latest.score >= 45 THEN 'warm' ELSE 'cold' END) = 'hot' OR latest.score >= 75)::int AS hot_leads,
+              COUNT(*) FILTER (WHERE COALESCE(latest.temperature, CASE WHEN latest.score >= 75 THEN 'hot' WHEN latest.score >= 45 THEN 'warm' ELSE 'cold' END) = 'warm' OR (latest.score >= 45 AND latest.score < 75))::int AS warm_leads,
+              COUNT(*) FILTER (WHERE latest.risk_level = 'high')::int AS at_risk_deals,
+              COALESCE(AVG(latest.score), 0)::numeric AS average_score,
               COALESCE(SUM(l.value * COALESCE(latest.probability_to_close, latest.deal_probability) / 100.0) FILTER (WHERE c.status NOT IN ('won','lost')), 0)::numeric AS predicted_revenue,
-              COALESCE(AVG(COALESCE(probability_to_close, deal_probability)), 0)::numeric AS conversion_forecast,
+              COALESCE(AVG(COALESCE(latest.probability_to_close, latest.deal_probability)), 0)::numeric AS conversion_forecast,
               ((SELECT COUNT(*)::int FROM ai_followup_sequences afs WHERE afs.workspace_id = $1 AND afs.status IN ('draft','queued','approved') AND afs.sent_at IS NULL) + (SELECT COUNT(*)::int FROM ai_followup_jobs afj WHERE afj.workspace_id = $1 AND afj.status IN ('suggested','approved'))) AS followups_pending
           FROM latest
           JOIN crm_leads c ON c.id = latest.lead_id AND c.workspace_id = $1
@@ -967,7 +967,7 @@ async function getStats(userId, workspaceId) {
               ) AS forecast_distribution
          FROM crm_leads l
          LEFT JOIN last_activity ON last_activity.id = l.id
-         LEFT JOIN LATERAL (SELECT deal_probability, probability_to_close, risk_level, expected_revenue, forecast_category FROM lead_ai_scores WHERE workspace_id = l.workspace_id AND lead_id = l.id ORDER BY generated_at DESC LIMIT 1) s ON true
+         LEFT JOIN LATERAL (SELECT las.deal_probability, las.probability_to_close, las.risk_level, las.expected_revenue, las.forecast_category FROM lead_ai_scores las WHERE las.workspace_id = l.workspace_id AND las.lead_id = l.id ORDER BY las.generated_at DESC LIMIT 1) s ON true
         WHERE l.user_id = $2 AND l.workspace_id = $1`,
       [workspaceId, userId]
     ),
