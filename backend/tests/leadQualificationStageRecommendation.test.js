@@ -33,13 +33,16 @@ async function testHotQualificationCreatesStageRecommendation() {
       if (query.startsWith('SELECT * FROM crm_leads')) return { rows: [lead], rowCount: 1 }
       if (query.startsWith('SELECT user_id FROM workspace_members')) return { rows: [{ user_id: 'user-1' }], rowCount: 1 }
       if (query.startsWith('INSERT INTO lead_ai_scores')) {
+        assert.ok(normalized.includes('$1::uuid, $2::uuid, $3::integer'), 'lead_ai_scores insert should cast uuid and integer params')
+        assert.ok(normalized.includes('$22::numeric'), 'lead_ai_scores insert should cast expected_revenue as numeric')
+        assert.ok(!params.some((param) => param === undefined), 'lead_ai_scores insert should not receive undefined params')
         insertedAiScore = {
           score: params[2],
           temperature: params[3],
-          probabilityToClose: params[10],
-          engagementScore: params[19],
-          expectedRevenue: params[20],
-          forecastCategory: params[21],
+          probabilityToClose: params[11],
+          engagementScore: params[20],
+          expectedRevenue: params[21],
+          forecastCategory: params[22],
         }
         return { rows: [{ id: 'score-1', score: params[2], temperature: params[3] }], rowCount: 1 }
       }

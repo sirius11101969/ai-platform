@@ -6,6 +6,69 @@ const { generateOutreachForLead } = require('./aiOutreachEngineService')
 let intervalId = null
 let running = false
 
+
+function toInt(value, fallback = 0) {
+  const number = Number(value)
+  return Number.isFinite(number) ? Math.round(number) : fallback
+}
+
+function toNumeric(value, fallback = 0) {
+  const number = Number(value)
+  return Number.isFinite(number) ? number : fallback
+}
+
+function toText(value, fallback = '') {
+  return value === undefined || value === null ? fallback : String(value)
+}
+
+function toJson(value, fallback) {
+  return JSON.stringify(value === undefined ? fallback : value)
+}
+
+function buildLeadAiScoreParams({ workspaceId, leadId, intelligence, priority, recommendation, confidence }) {
+  const probabilityToClose = toInt(intelligence.probabilityToClose ?? intelligence.dealProbability, 0)
+  const score = toInt(intelligence.score, 0)
+  const aiSummary = toText(intelligence.aiSummary, '')
+  const nextBestAction = toText(intelligence.nextBestAction, recommendation)
+  return [
+    workspaceId,
+    leadId,
+    score,
+    toText(priority || intelligence.temperature, 'cold'),
+    toText(intelligence.urgencyLevel, 'low'),
+    toInt(intelligence.budgetProbability ?? intelligence.dealProbability, probabilityToClose),
+    aiSummary,
+    toText(intelligence.recommendedChannel, 'crm_task'),
+    toText(recommendation, nextBestAction),
+    toInt(confidence ?? intelligence.confidence, 70),
+    toInt(intelligence.dealProbability ?? probabilityToClose, probabilityToClose),
+    probabilityToClose,
+    toText(intelligence.urgencyLevel, 'low'),
+    toText(intelligence.engagementLevel, 'cold'),
+    aiSummary,
+    nextBestAction,
+    toText(intelligence.riskLevel, 'medium'),
+    intelligence.idealContactTiming === undefined ? null : intelligence.idealContactTiming,
+    toJson(intelligence.objectionsDetected || [], []),
+    intelligence.recommendedCta === undefined ? null : intelligence.recommendedCta,
+    toInt(intelligence.engagementScore ?? score, score),
+    toNumeric(intelligence.expectedRevenue, 0),
+    toText(intelligence.forecastCategory, 'possible'),
+    toJson(intelligence.riskSignals || [], []),
+    toText(intelligence.aiReasoning, aiSummary),
+    toText(intelligence.nextBestActionCode, 'schedule_demo'),
+  ]
+}
+
+function logLeadQualificationFailure({ leadId, workspaceId, error }) {
+  console.error('[lead-qualification] failed', {
+    leadId,
+    workspaceId,
+    errorCode: error?.code || error?.statusCode || null,
+    errorMessage: error?.message || String(error),
+  })
+}
+
 function priorityFromScore(score) {
   if (score >= 75) return 'hot'
   if (score >= 45) return 'warm'
@@ -164,21 +227,40 @@ async function qualifyLead(client, { lead, userId, workspaceId, queueId = null }
   const priority = priorityFromScore(intelligence.score)
   const recommendation = buildRecommendation(lead, intelligence)
   const confidence = intelligence.confidence ?? Math.min(98, Math.max(45, Math.round(55 + intelligence.score * 0.35)))
+  const scoreParams = buildLeadAiScoreParams({ workspaceId, leadId: lead.id, intelligence, priority, recommendation, confidence })
   const scoreResult = await client.query(
-    `INSERT INTO lead_ai_scores(workspace_id, lead_id, score, temperature, urgency, budget_probability, intent_summary, recommended_channel, recommended_next_step, confidence, deal_probability, probability_to_close, urgency_level, engagement_level, ai_summary, next_best_action, risk_level, ideal_contact_timing, objections_detected, recommended_cta, engagement_score, expected_revenue, forecast_category, risk_signals, ai_reasoning, next_best_action_code)
-     VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25)
+    `INSERT INTO lead_ai_scores(
+       workspace_id, lead_id, score, temperature, urgency, budget_probability, intent_summary,
+       recommended_channel, recommended_next_step, confidence, deal_probability, probability_to_close,
+       urgency_level, engagement_level, ai_summary, next_best_action, risk_level, ideal_contact_timing,
+       objections_detected, recommended_cta, engagement_score, expected_revenue, forecast_category,
+       risk_signals, ai_reasoning, next_best_action_code
+     )
+     VALUES(
+       $1::uuid, $2::uuid, $3::integer, $4::text, $5::text, $6::integer, $7::text,
+       $8::text, $9::text, $10::integer, $11::integer, $12::integer,
+       $13::text, $14::text, $15::text, $16::text, $17::text, $18::text,
+       $19::jsonb, $20::text, $21::integer, $22::numeric, $23::text,
+       $24::jsonb, $25::text, $26::text
+     )
      RETURNING *`,
-    [workspaceId, lead.id, intelligence.score, priority, intelligence.urgencyLevel, intelligence.budgetProbability, intelligence.aiSummary, intelligence.recommendedChannel, recommendation, confidence, intelligence.probabilityToClose || intelligence.dealProbability, intelligence.urgencyLevel, intelligence.engagementLevel, intelligence.aiSummary, intelligence.nextBestAction || recommendation, intelligence.riskLevel, intelligence.idealContactTiming, JSON.stringify(intelligence.objectionsDetected || []), intelligence.recommendedCta, intelligence.engagementScore || intelligence.score, intelligence.expectedRevenue || 0, intelligence.forecastCategory || 'possible', JSON.stringify(intelligence.riskSignals || []), intelligence.aiReasoning || intelligence.aiSummary || '', intelligence.nextBestActionCode || 'schedule_demo']
+    scoreParams
   )
+  console.info('[lead-qualification] score saved', {
+    leadId: lead.id,
+    score: scoreParams[2],
+    probabilityToClose: scoreParams[11],
+    expectedRevenue: scoreParams[21],
+  })
 
   await client.query(
     `UPDATE crm_leads
-        SET probability_to_close = $3,
+        SET probability_to_close = $3::integer,
             estimated_revenue = value * ($3::numeric / 100.0),
             expected_close_date = COALESCE(expected_close_date, (CURRENT_DATE + INTERVAL '30 days')::date),
             updated_at = NOW()
-      WHERE workspace_id = $1 AND id = $2`,
-    [workspaceId, lead.id, intelligence.probabilityToClose || intelligence.dealProbability]
+      WHERE workspace_id = $1::uuid AND id = $2::uuid`,
+    [workspaceId, lead.id, scoreParams[11]]
   )
 
   const riskQueueItems = await createForecastRiskQueueItems(client, { workspaceId, lead, intelligence })
@@ -295,8 +377,9 @@ async function qualifyLead(client, { lead, userId, workspaceId, queueId = null }
 }
 
 async function qualifyLeadById({ workspaceId, leadId, queueId = null }) {
-  const client = await pool.connect()
+  let client
   try {
+    client = await pool.connect()
     await client.query('BEGIN')
     const leadResult = await client.query('SELECT * FROM crm_leads WHERE workspace_id = $1 AND id = $2 FOR UPDATE', [workspaceId, leadId])
     const lead = leadResult.rows[0]
@@ -307,17 +390,18 @@ async function qualifyLeadById({ workspaceId, leadId, queueId = null }) {
     await client.query('COMMIT')
     return result
   } catch (error) {
-    await client.query('ROLLBACK')
+    if (client) await client.query('ROLLBACK').catch(() => {})
+    logLeadQualificationFailure({ leadId, workspaceId, error })
     throw error
   } finally {
-    client.release()
+    client?.release()
   }
 }
 
 function scheduleLeadQualification({ workspaceId, leadId, queueId }) {
   if (process.env.AI_LEAD_QUALIFICATION_WORKER === 'false') return
   setImmediate(() => {
-    qualifyLeadById({ workspaceId, leadId, queueId }).catch((error) => console.error('Lead qualification worker failed', error.message || error))
+    qualifyLeadById({ workspaceId, leadId, queueId }).catch(() => {})
   })
 }
 
