@@ -37,8 +37,36 @@ function clean(value, fallback = '') {
   return normalized || fallback
 }
 
+function isRussianFirstName(value) {
+  return /^[А-ЯЁ][а-яё-]+$/.test(clean(value))
+}
+
+function looksLikeLeadLabel(name) {
+  const value = clean(name)
+  if (!value) return false
+  const normalized = value.toLowerCase()
+  const words = value.split(/\s+/).filter(Boolean)
+  const hasCyrillic = /[а-яё]/i.test(value)
+  const englishOnly = /^[a-z0-9\s._-]+$/i.test(value) && /[a-z]/i.test(value)
+  const technicalPhrase = /\b(copy|quality|test|lead|demo|draft|email|telegram|crm|ai|bot|user|sample|mock|qa)\b/i.test(value)
+
+  return (
+    /\btest\b|тест/i.test(normalized) ||
+    (words.length > 2 && (technicalPhrase || englishOnly || !hasCyrillic)) ||
+    (englishOnly && technicalPhrase)
+  )
+}
+
 function firstName(name) {
-  return clean(name, 'Коллеги').split(/\s+/)[0]
+  const value = clean(name)
+  if (!value || looksLikeLeadLabel(value)) return ''
+  const first = value.split(/\s+/)[0]
+  return isRussianFirstName(first) ? first : ''
+}
+
+function greetingFor(name) {
+  const nameForGreeting = firstName(name)
+  return nameForGreeting ? `${nameForGreeting}, добрый день!` : 'Здравствуйте!'
 }
 
 function normalizeChannel(channel, lead = {}) {
@@ -131,6 +159,7 @@ function buildCopyContext(lead = {}, intelligence = {}) {
 
   return {
     name: firstName(lead.name),
+    greeting: greetingFor(lead.name),
     company: clean(lead.company),
     companyContext: lead.company ? `для компании ${lead.company}` : 'для вашей команды',
     source: sourceLabel(lead.source),
@@ -148,13 +177,18 @@ function buildIntent(lead, intelligence = {}) {
 function buildTelegramDraft(type, lead, intelligence = {}) {
   const context = buildCopyContext(lead, intelligence)
   const painLine = context.painPointText ? `Можно быстро понять, как ${context.painPointText}.` : 'Можно быстро понять, где автоматизация даст пользу без лишнего внедрения.'
+  const firstContactIntro = context.name
+    ? `Увидел ${context.source} по ${context.businessNeed}.`
+    : context.company
+      ? `Видим ваш запрос от компании ${context.company} по ${context.businessNeed}.`
+      : `Увидел ${context.source} по ${context.businessNeed}.`
 
   const templates = {
-    first_contact: `${context.name}, добрый день!\nУвидел ${context.source} по ${context.businessNeed}.\n${painLine}\nАктуально обсудить автоматизацию follow-up?`,
-    followup_24h: `${context.name}, добрый день!\nВозвращаюсь к вашему запросу по ${context.businessNeed}.\nМогу предложить 2–3 практичных шага ${context.companyContext}.\nУдобно коротко обсудить на этой неделе?`,
-    followup_3d: `${context.name}, добрый день!\nАккуратно уточню: задача по ${context.businessNeed} ещё актуальна?\nЕсли да — подскажу самый простой следующий шаг.`,
-    meeting_request: `${context.name}, добрый день!\nПредлагаю 15 минут разобрать ваш сценарий ${context.companyContext}: лиды, Telegram/email и follow-up.\nУдобно созвониться на этой неделе?`,
-    demo_offer: `${context.name}, добрый день!\nМогу показать короткое демо AS6 AI CRM под задачу по ${context.businessNeed}.\nПокажу, как готовятся черновики и follow-up без спама.\nУдобно посмотреть на этой неделе?`,
+    first_contact: `${context.greeting}\n${firstContactIntro}\n${painLine}\nАктуально обсудить автоматизацию follow-up?`,
+    followup_24h: `${context.greeting}\nВозвращаюсь к вашему запросу по ${context.businessNeed}.\nМогу предложить 2–3 практичных шага ${context.companyContext}.\nУдобно коротко обсудить на этой неделе?`,
+    followup_3d: `${context.greeting}\nАккуратно уточню: задача по ${context.businessNeed} ещё актуальна?\nЕсли да — подскажу самый простой следующий шаг.`,
+    meeting_request: `${context.greeting}\nПредлагаю 15 минут разобрать ваш сценарий ${context.companyContext}: лиды, Telegram/email и follow-up.\nУдобно созвониться на этой неделе?`,
+    demo_offer: `${context.greeting}\nМогу показать короткое демо AS6 AI CRM под задачу по ${context.businessNeed}.\nПокажу, как готовятся черновики и follow-up без спама.\nУдобно посмотреть на этой неделе?`,
   }
 
   return { text: templates[type], channel: context.channel }
@@ -178,10 +212,15 @@ function buildEmailDraft(type, lead, intelligence = {}) {
     demo_offer: `Демо AS6 AI CRM под ваш сценарий`,
   }
 
-  const opener = `${context.name}, добрый день!`
+  const opener = context.greeting
+  const firstContactIntro = context.name
+    ? `Увидел ${context.source} по ${context.businessNeed}.`
+    : context.company
+      ? `Видим ваш запрос от компании ${context.company} по ${context.businessNeed}.`
+      : `Увидел ${context.source} по ${context.businessNeed}.`
   const painSentence = context.painPointText ? `По описанию может быть полезно ${context.painPointText}.` : 'Можно начать с небольшого сценария без сложного внедрения.'
   const bodyByType = {
-    first_contact: `${opener}\n\nУвидел ${context.source} по ${context.businessNeed}. ${painSentence}\n\nAS6 AI CRM помогает sales-командам готовить Telegram/email черновики, согласовывать отправку и не терять follow-up.`,
+    first_contact: `${opener} ${firstContactIntro} ${painSentence}\n\nAS6 AI CRM помогает sales-командам готовить email-черновики, согласовывать отправку и не терять follow-up.`,
     followup_24h: `${opener}\n\nВозвращаюсь к вашему запросу по ${context.businessNeed}. ${painSentence}\n\nМогу предложить короткий план запуска ${context.companyContext}: от входящего лида до согласованного follow-up.`,
     followup_3d: `${opener}\n\nАккуратно уточню, актуальна ли ещё задача по ${context.businessNeed}.\n\nЕсли приоритет сохранился, помогу выбрать самый простой следующий шаг. Если нет — всё ок, вернёмся позже.`,
     meeting_request: `${opener}\n\nПредлагаю коротко созвониться и разобрать ваш процесс: источники лидов, Telegram/email, правила follow-up и согласование черновиков.\n\nПосле разговора будет понятно, какой сценарий можно запустить первым.`,
@@ -197,7 +236,15 @@ function buildEmailDraft(type, lead, intelligence = {}) {
   }
 }
 
-function buildRecommendation(type, lead, intelligence = {}) {
+function recommendationActionText(type, actionType) {
+  if (type === 'meeting_request') return 'Предложить встречу'
+  if (type === 'demo_offer') return 'Предложить демо'
+  if (actionType === 'telegram_draft') return 'Подготовить короткое сообщение в Telegram'
+  if (actionType === 'email_draft') return 'Подготовить email-сообщение'
+  return 'Подготовить задачу менеджеру'
+}
+
+function buildRecommendation(type, lead, intelligence = {}, actionType = '') {
   const context = buildCopyContext(lead, intelligence)
   const timings = {
     first_contact: 'сегодня',
@@ -206,7 +253,10 @@ function buildRecommendation(type, lead, intelligence = {}) {
     meeting_request: 'после позитивного ответа клиента',
     demo_offer: 'когда клиент подтвердит интерес к разбору сценария',
   }
-  return `Подготовить ${context.channel === 'telegram' ? 'короткое сообщение в Telegram' : context.channel === 'email' ? 'короткое письмо' : 'задачу менеджеру'} ${timings[type]}. Фокус: ${context.businessNeed}${context.company ? ` для ${context.company}` : ''}.`
+  const details = type === 'demo_offer' && actionType === 'email_draft'
+    ? ' с коротким планом внедрения'
+    : ''
+  return `${recommendationActionText(type, actionType)}${details} ${timings[type]}. Фокус: ${context.businessNeed}${context.company ? ` для ${context.company}` : ''}.`
 }
 
 async function ensureOutreachWorker(client, workspaceId) {
@@ -301,7 +351,9 @@ async function generateOutreachForLead(client, { workspaceId, userId, lead, inte
     const copyContext = buildCopyContext(lead, { ...intelligence, temperature })
     const telegram = buildTelegramDraft(outreachType, lead, { ...intelligence, temperature })
     const email = buildEmailDraft(outreachType, lead, { ...intelligence, temperature })
-    const recommendation = buildRecommendation(outreachType, lead, { ...intelligence, temperature })
+    const telegramRecommendation = buildRecommendation(outreachType, lead, { ...intelligence, temperature }, 'telegram_draft')
+    const emailRecommendation = buildRecommendation(outreachType, lead, { ...intelligence, temperature }, 'email_draft')
+    const recommendation = buildRecommendation(outreachType, lead, { ...intelligence, temperature }, normalizeChannel(intelligence.recommendedChannel, lead) === 'email' ? 'email_draft' : 'telegram_draft')
     const basePayload = {
       source: 'ai_outreach_engine',
       outreachType,
@@ -324,8 +376,8 @@ async function generateOutreachForLead(client, { workspaceId, userId, lead, inte
       outreachType,
       actionType: 'telegram_draft',
       title: `Черновик Telegram · ${lead.name}`,
-      recommendation,
-      payload: { ...basePayload, channel: 'telegram', text: telegram.text, message: telegram.text },
+      recommendation: telegramRecommendation,
+      payload: { ...basePayload, channel: 'telegram', recommendation: telegramRecommendation, text: telegram.text, message: telegram.text },
     })
     const emailItem = await createQueueItem(client, {
       workerId: worker.id,
@@ -335,8 +387,8 @@ async function generateOutreachForLead(client, { workspaceId, userId, lead, inte
       outreachType,
       actionType: 'email_draft',
       title: `Черновик email · ${lead.name}`,
-      recommendation,
-      payload: { ...basePayload, channel: 'email', to: lead.email || '', subject: email.subject, text: email.body, message: email.body, cta: email.cta, demoProposal: email.demoProposal },
+      recommendation: emailRecommendation,
+      payload: { ...basePayload, channel: 'email', recommendation: emailRecommendation, to: lead.email || '', subject: email.subject, text: email.body, message: email.body, cta: email.cta, demoProposal: email.demoProposal },
     })
     for (const item of [telegramItem, emailItem]) item.skipped ? skipped.push(item) : createdQueueItems.push(item)
 
