@@ -1,6 +1,7 @@
 const pool = require('../db/pool')
 const { addTimelineEvent } = require('./timelineService')
 const { scoreLeadContext, buildFollowUpDraft } = require('./leadIntelligenceService')
+const { generateOutreachForLead } = require('./aiOutreachEngineService')
 
 let intervalId = null
 let running = false
@@ -110,6 +111,13 @@ async function qualifyLead(client, { lead, userId, workspaceId, queueId = null }
     metadata: { score: intelligence.score, priority, recommendedChannel: intelligence.recommendedChannel, confidence, queueId },
   })
 
+  let outreach = null
+  try {
+    outreach = await generateOutreachForLead(client, { workspaceId, userId, lead, intelligence: { ...intelligence, temperature: priority } })
+  } catch (error) {
+    console.error('AI outreach generation failed', { workspaceId, leadId: lead.id, error: error.message || error })
+  }
+
   let followUpJob = null
   if (intelligence.score > 75) {
     const draft = buildFollowUpDraft(context, intelligence)
@@ -130,11 +138,11 @@ async function qualifyLead(client, { lead, userId, workspaceId, queueId = null }
               payload = payload || $4::jsonb,
               updated_at = NOW()
         WHERE workspace_id = $1 AND id = $2`,
-      [workspaceId, queueId, recommendation, { score: intelligence.score, priority, recommendedChannel: intelligence.recommendedChannel, confidence, followUpJobId: followUpJob?.id || null }]
+      [workspaceId, queueId, recommendation, { score: intelligence.score, priority, recommendedChannel: intelligence.recommendedChannel, confidence, followUpJobId: followUpJob?.id || null, outreach }]
     )
   }
 
-  return { score: scoreResult.rows[0], intelligence, priority, recommendation, followUpJob }
+  return { score: scoreResult.rows[0], intelligence, priority, recommendation, followUpJob, outreach }
 }
 
 async function qualifyLeadById({ workspaceId, leadId, queueId = null }) {
