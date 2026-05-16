@@ -2,6 +2,7 @@ const pool = require('../db/pool')
 const { generateCrmFollowUp } = require('../services/crmAiService')
 const { buildFollowUpDraft, scoreLeadContext } = require('../services/leadIntelligenceService')
 const { createQualificationQueueItem, ensureSdrWorker, scheduleLeadQualification } = require('../services/leadQualificationService')
+const { addTimelineEvent } = require('../services/timelineService')
 
 const CRM_STATUSES = ['new', 'qualified', 'proposal', 'booked', 'won', 'lost']
 const DEFAULT_STAGE_LABELS = {
@@ -111,6 +112,12 @@ function normalizeAiScore(row) {
     recommendedCta: row.recommended_cta || row.recommendedCta || '',
     recommendedChannel: row.recommended_channel || row.recommendedChannel || '',
     confidence: Number(row.confidence ?? 0),
+    engagementScore: Number(row.engagement_score ?? row.engagementScore ?? row.score ?? 0),
+    expectedRevenue: Number(row.expected_revenue ?? row.expectedRevenue ?? 0),
+    forecastCategory: row.forecast_category || row.forecastCategory || 'possible',
+    riskSignals: row.risk_signals || row.riskSignals || [],
+    aiReasoning: row.ai_reasoning || row.aiReasoning || row.ai_summary || row.aiSummary || '',
+    nextBestActionCode: row.next_best_action_code || row.nextBestActionCode || '',
     generatedAt: row.generated_at || row.generatedAt || row.created_at || row.createdAt,
     createdAt: row.created_at || row.createdAt || row.generated_at || row.generatedAt,
   }
@@ -605,13 +612,47 @@ async function buildIntelligenceContext(userId, workspaceId, leadId) {
 
 async function saveLeadAiScore(client, workspaceId, leadId, intelligence) {
   const result = await client.query(
-    `INSERT INTO lead_ai_scores(workspace_id, lead_id, score, temperature, urgency, budget_probability, intent_summary, recommended_channel, recommended_next_step, confidence, deal_probability, urgency_level, engagement_level, ai_summary, next_best_action, risk_level, ideal_contact_timing, objections_detected, recommended_cta)
-     VALUES($1, $2, $3, $4, $6, $15, $8, $14, $9, $16, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+    `INSERT INTO lead_ai_scores(workspace_id, lead_id, score, temperature, urgency, budget_probability, intent_summary, recommended_channel, recommended_next_step, confidence, deal_probability, urgency_level, engagement_level, ai_summary, next_best_action, risk_level, ideal_contact_timing, objections_detected, recommended_cta, engagement_score, expected_revenue, forecast_category, risk_signals, ai_reasoning, next_best_action_code)
+     VALUES($1, $2, $3, $4, $6, $15, $8, $14, $9, $16, $5, $6, $7, $8, $9, $10, $11, $12, $13, $17, $18, $19, $20, $21, $22)
      RETURNING *`,
-    [workspaceId, leadId, intelligence.score, intelligence.temperature, intelligence.dealProbability, intelligence.urgencyLevel, intelligence.engagementLevel, intelligence.aiSummary, intelligence.nextBestAction, intelligence.riskLevel, intelligence.idealContactTiming, JSON.stringify(intelligence.objectionsDetected || []), intelligence.recommendedCta, intelligence.recommendedChannel, intelligence.budgetProbability || intelligence.dealProbability, intelligence.confidence || 70]
+    [workspaceId, leadId, intelligence.score, intelligence.temperature, intelligence.dealProbability, intelligence.urgencyLevel, intelligence.engagementLevel, intelligence.aiSummary, intelligence.nextBestAction, intelligence.riskLevel, intelligence.idealContactTiming, JSON.stringify(intelligence.objectionsDetected || []), intelligence.recommendedCta, intelligence.recommendedChannel, intelligence.budgetProbability || intelligence.dealProbability, intelligence.confidence || 70, intelligence.engagementScore || intelligence.score, intelligence.expectedRevenue || 0, intelligence.forecastCategory || 'possible', JSON.stringify(intelligence.riskSignals || []), intelligence.aiReasoning || intelligence.aiSummary || '', intelligence.nextBestActionCode || 'schedule_demo']
   )
   await client.query(`UPDATE crm_leads SET probability_to_close = $3, estimated_revenue = value * ($3::numeric / 100.0), expected_close_date = COALESCE(expected_close_date, (CURRENT_DATE + INTERVAL '30 days')::date), updated_at = NOW() WHERE workspace_id = $1 AND id = $2`, [workspaceId, leadId, intelligence.dealProbability])
   return normalizeAiScore(result.rows[0])
+}
+
+async function createDealIntelligenceQueueItems(client, userId, workspaceId, lead, intelligence) {
+  const worker = await ensureSdrWorker(client, workspaceId)
+  const basePayload = {
+    leadId: lead.id,
+    probabilityToClose: intelligence.dealProbability,
+    riskLevel: intelligence.riskLevel,
+    engagementScore: intelligence.engagementScore,
+    expectedRevenue: intelligence.expectedRevenue,
+    forecastCategory: intelligence.forecastCategory,
+    riskSignals: intelligence.riskSignals || [],
+    nextBestAction: intelligence.nextBestAction,
+    nextBestActionCode: intelligence.nextBestActionCode,
+    aiReasoning: intelligence.aiReasoning || intelligence.aiSummary,
+  }
+  const actionTypes = ['risk_review']
+  if (intelligence.riskLevel === 'high' || (intelligence.riskSignals || []).some((signal) => ['no_reply_3d', 'no_reply_7d', 'proposal_ignored', 'low_activity'].includes(signal))) actionTypes.push('stale_deal_followup')
+  if (['at_risk', 'lost_risk'].includes(intelligence.forecastCategory)) actionTypes.push('pipeline_health_alert')
+  const uniqueActionTypes = [...new Set(actionTypes)]
+  for (const actionType of uniqueActionTypes) {
+    const duplicate = await client.query(
+      `SELECT id FROM ai_worker_queue WHERE workspace_id = $1 AND lead_id = $2 AND action_type = $3 AND status IN ('pending_approval','approved','executing') AND created_at > NOW() - INTERVAL '24 hours' LIMIT 1`,
+      [workspaceId, lead.id, actionType]
+    )
+    if (duplicate.rows[0]) continue
+    const title = actionType === 'pipeline_health_alert' ? 'AI Pipeline Health Alert' : actionType === 'stale_deal_followup' ? 'AI Stale Deal Follow-up' : 'AI Risk Review'
+    const recommendation = `${intelligence.aiReasoning || intelligence.aiSummary} Next best action: ${intelligence.nextBestAction}.`
+    await client.query(
+      `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
+       VALUES($1, $2, $3, $4, 'pending_approval', $5, $6, $7)`,
+      [worker.id, workspaceId, lead.id, actionType, title, recommendation, { ...basePayload, actionType }]
+    )
+  }
 }
 
 async function createAiFollowUpSequence(client, userId, workspaceId, leadId, context, intelligence, status = 'draft') {
@@ -675,6 +716,10 @@ async function analyzeLeadIntelligence(userId, workspaceId, leadId, aiOutput = {
     await client.query('BEGIN')
     const score = await saveLeadAiScore(client, workspaceId, leadId, intelligence)
     await createAiStageRecommendation(client, userId, workspaceId, context.lead, intelligence)
+    await createDealIntelligenceQueueItems(client, userId, workspaceId, context.lead, intelligence)
+    await addTimelineEvent(client, { workspaceId, leadId, userId, eventType: 'ai_forecast_updated', title: 'AI forecast updated', body: `${intelligence.forecastCategory}: ${intelligence.dealProbability}% · ${intelligence.expectedRevenue}`, source: 'ai', metadata: intelligence })
+    if (intelligence.riskLevel !== 'low' || (intelligence.riskSignals || []).length) await addTimelineEvent(client, { workspaceId, leadId, userId, eventType: 'ai_risk_detected', title: 'AI risk detected', body: intelligence.aiReasoning || intelligence.aiSummary, source: 'ai', metadata: { riskLevel: intelligence.riskLevel, riskSignals: intelligence.riskSignals, forecastCategory: intelligence.forecastCategory } })
+    await addTimelineEvent(client, { workspaceId, leadId, userId, eventType: 'ai_next_action_generated', title: 'AI next action generated', body: intelligence.nextBestAction, source: 'ai', metadata: { nextBestActionCode: intelligence.nextBestActionCode, riskLevel: intelligence.riskLevel } })
     await logActivity(client, userId, workspaceId, leadId, 'ai_score_updated', 'Оценка лида обновлена', `${intelligence.riskAlert}. Рекомендуемый следующий шаг: ${intelligence.nextBestAction}`, intelligence)
     let followUpSequence = null
     if (createFollowUp && (intelligence.urgencyLevel !== 'low' || intelligence.score >= 40)) {
@@ -832,10 +877,20 @@ async function getStats(userId, workspaceId) {
        SELECT (SELECT COUNT(*)::int FROM ai_worker_queue q JOIN crm_leads ql ON ql.id = q.lead_id AND ql.workspace_id = q.workspace_id WHERE q.workspace_id = $1 AND q.action_type = 'stage_change_recommendation' AND q.status = 'pending_approval' AND ql.user_id = $2) AS stage_recommendations_pending,
               COUNT(DISTINCT l.id) FILTER (WHERE last_activity.last_activity_at < NOW() - INTERVAL '3 days')::int AS inactive_opportunities,
               COUNT(DISTINCT l.id) FILTER (WHERE COALESCE(s.risk_level, '') = 'high' OR last_activity.last_activity_at < NOW() - INTERVAL '7 days')::int AS deals_at_risk,
-              COALESCE(SUM(COALESCE(l.estimated_revenue, l.value * COALESCE(s.deal_probability, 0) / 100.0)) FILTER (WHERE l.status NOT IN ('won','lost')), 0)::numeric AS ai_forecasted_revenue
+              COUNT(DISTINCT l.id) FILTER (WHERE COALESCE(s.deal_probability, l.probability_to_close, 0) >= 70 AND l.status NOT IN ('won','lost'))::int AS high_probability_deals,
+              COUNT(DISTINCT l.id) FILTER (WHERE last_activity.last_activity_at < NOW() - INTERVAL '7 days' AND l.status NOT IN ('won','lost'))::int AS stalled_opportunities,
+              COALESCE(SUM(COALESCE(s.expected_revenue, l.estimated_revenue, l.value * COALESCE(s.deal_probability, 0) / 100.0)) FILTER (WHERE l.status NOT IN ('won','lost')), 0)::numeric AS ai_forecasted_revenue,
+              COALESCE(SUM(COALESCE(s.expected_revenue, l.estimated_revenue, l.value * COALESCE(s.deal_probability, 0) / 100.0)) FILTER (WHERE l.status NOT IN ('won','lost') AND (COALESCE(s.risk_level, '') = 'high' OR COALESCE(s.forecast_category, '') IN ('at_risk','lost_risk'))), 0)::numeric AS revenue_at_risk,
+              jsonb_build_object(
+                'committed', COUNT(DISTINCT l.id) FILTER (WHERE s.forecast_category = 'committed'),
+                'likely', COUNT(DISTINCT l.id) FILTER (WHERE s.forecast_category = 'likely'),
+                'possible', COUNT(DISTINCT l.id) FILTER (WHERE COALESCE(s.forecast_category, 'possible') = 'possible'),
+                'at_risk', COUNT(DISTINCT l.id) FILTER (WHERE s.forecast_category = 'at_risk'),
+                'lost_risk', COUNT(DISTINCT l.id) FILTER (WHERE s.forecast_category = 'lost_risk')
+              ) AS forecast_distribution
          FROM crm_leads l
          LEFT JOIN last_activity ON last_activity.id = l.id
-         LEFT JOIN LATERAL (SELECT deal_probability, risk_level FROM lead_ai_scores WHERE workspace_id = l.workspace_id AND lead_id = l.id ORDER BY generated_at DESC LIMIT 1) s ON true
+         LEFT JOIN LATERAL (SELECT deal_probability, risk_level, expected_revenue, forecast_category FROM lead_ai_scores WHERE workspace_id = l.workspace_id AND lead_id = l.id ORDER BY generated_at DESC LIMIT 1) s ON true
         WHERE l.user_id = $2 AND l.workspace_id = $1`,
       [workspaceId, userId]
     ),
@@ -887,6 +942,10 @@ async function getStats(userId, workspaceId) {
       aiForecastedRevenue: Number(pipelineHealth.ai_forecasted_revenue || aiRevenue.predicted_revenue || 0),
       atRiskDeals: Number(pipelineHealth.deals_at_risk || aiRevenue.at_risk_deals || 0),
       dealsAtRisk: Number(pipelineHealth.deals_at_risk || aiRevenue.at_risk_deals || 0),
+      revenueAtRisk: Number(pipelineHealth.revenue_at_risk || 0),
+      highProbabilityDeals: Number(pipelineHealth.high_probability_deals || 0),
+      stalledOpportunities: Number(pipelineHealth.stalled_opportunities || pipelineHealth.inactive_opportunities || 0),
+      forecastDistribution: pipelineHealth.forecast_distribution || { committed: 0, likely: 0, possible: 0, at_risk: 0, lost_risk: 0 },
       inactiveOpportunities: Number(pipelineHealth.inactive_opportunities || 0),
       stageRecommendationsPending: Number(pipelineHealth.stage_recommendations_pending || 0),
       pipelineHealth: Math.max(0, 100 - (Number(pipelineHealth.deals_at_risk || 0) * 12) - (Number(pipelineHealth.inactive_opportunities || 0) * 5)),

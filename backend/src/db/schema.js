@@ -432,6 +432,12 @@ async function migrate() {
       intent_summary TEXT NOT NULL DEFAULT '',
       recommended_next_step TEXT NOT NULL DEFAULT '',
       confidence INTEGER NOT NULL DEFAULT 0 CHECK (confidence >= 0 AND confidence <= 100),
+      engagement_score INTEGER NOT NULL DEFAULT 0 CHECK (engagement_score >= 0 AND engagement_score <= 100),
+      expected_revenue NUMERIC(12, 2) NOT NULL DEFAULT 0 CHECK (expected_revenue >= 0),
+      forecast_category TEXT NOT NULL DEFAULT 'possible',
+      risk_signals JSONB NOT NULL DEFAULT '[]'::jsonb,
+      ai_reasoning TEXT NOT NULL DEFAULT '',
+      next_best_action_code TEXT NOT NULL DEFAULT 'schedule_demo',
       generated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
@@ -442,12 +448,23 @@ async function migrate() {
     ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS recommended_next_step TEXT NOT NULL DEFAULT '';
     ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS confidence INTEGER NOT NULL DEFAULT 0 CHECK (confidence >= 0 AND confidence <= 100);
     ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+    ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS engagement_score INTEGER NOT NULL DEFAULT 0 CHECK (engagement_score >= 0 AND engagement_score <= 100);
+    ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS expected_revenue NUMERIC(12, 2) NOT NULL DEFAULT 0 CHECK (expected_revenue >= 0);
+    ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS forecast_category TEXT NOT NULL DEFAULT 'possible';
+    ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS risk_signals JSONB NOT NULL DEFAULT '[]'::jsonb;
+    ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS ai_reasoning TEXT NOT NULL DEFAULT '';
+    ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS next_best_action_code TEXT NOT NULL DEFAULT 'schedule_demo';
     UPDATE lead_ai_scores
        SET urgency = COALESCE(NULLIF(urgency, ''), urgency_level, 'low'),
            intent_summary = COALESCE(NULLIF(intent_summary, ''), ai_summary, ''),
            recommended_next_step = COALESCE(NULLIF(recommended_next_step, ''), next_best_action, ''),
            confidence = CASE WHEN confidence = 0 THEN LEAST(100, GREATEST(0, score)) ELSE confidence END,
-           created_at = COALESCE(created_at, generated_at, NOW());
+           created_at = COALESCE(created_at, generated_at, NOW()),
+           engagement_score = CASE WHEN engagement_score = 0 THEN score ELSE engagement_score END,
+           expected_revenue = CASE WHEN expected_revenue = 0 THEN COALESCE(l.value * deal_probability / 100.0, 0) ELSE expected_revenue END,
+           ai_reasoning = COALESCE(NULLIF(ai_reasoning, ''), ai_summary, '')
+      FROM crm_leads l
+      WHERE l.id = lead_ai_scores.lead_id;
 
     CREATE TABLE IF NOT EXISTS ai_followup_sequences (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -482,6 +499,12 @@ async function migrate() {
       END IF;
       IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'lead_ai_scores_risk_valid') THEN
         ALTER TABLE lead_ai_scores ADD CONSTRAINT lead_ai_scores_risk_valid CHECK (risk_level IN ('low', 'medium', 'high'));
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'lead_ai_scores_forecast_category_valid') THEN
+        ALTER TABLE lead_ai_scores ADD CONSTRAINT lead_ai_scores_forecast_category_valid CHECK (forecast_category IN ('committed', 'likely', 'possible', 'at_risk', 'lost_risk'));
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'lead_ai_scores_next_best_action_valid') THEN
+        ALTER TABLE lead_ai_scores ADD CONSTRAINT lead_ai_scores_next_best_action_valid CHECK (next_best_action_code IN ('schedule_demo', 'send_proposal', 'follow_up_in_telegram', 'escalate_to_manager', 'close_as_lost', 'request_budget_info'));
       END IF;
       IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_followup_sequences_status_valid') THEN
         ALTER TABLE ai_followup_sequences ADD CONSTRAINT ai_followup_sequences_status_valid CHECK (status IN ('draft', 'queued', 'approved', 'sent', 'skipped'));
@@ -795,6 +818,8 @@ async function migrate() {
     CREATE INDEX IF NOT EXISTS idx_workspace_members_workspace_id ON workspace_members(workspace_id);
     CREATE INDEX IF NOT EXISTS idx_crm_leads_workspace_id ON crm_leads(workspace_id);
     CREATE INDEX IF NOT EXISTS idx_crm_leads_ai_forecast ON crm_leads(workspace_id, status, probability_to_close, expected_close_date);
+    CREATE INDEX IF NOT EXISTS idx_lead_ai_scores_forecast ON lead_ai_scores(workspace_id, forecast_category, risk_level, generated_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_deal_intelligence ON ai_worker_queue(workspace_id, action_type, status, created_at DESC) WHERE action_type IN ('risk_review', 'pipeline_health_alert', 'stale_deal_followup');
     CREATE INDEX IF NOT EXISTS idx_ai_tasks_workspace_id ON ai_tasks(workspace_id);
     CREATE INDEX IF NOT EXISTS idx_credits_ledger_workspace_id ON credits_ledger(workspace_id);
     CREATE INDEX IF NOT EXISTS idx_email_messages_workspace_id ON email_messages(workspace_id, created_at DESC);
