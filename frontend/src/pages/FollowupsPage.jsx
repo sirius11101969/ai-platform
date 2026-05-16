@@ -17,6 +17,14 @@ function mergeItem(items, next) {
   return items.map((item) => item.id === next.id ? { ...item, ...next } : item);
 }
 
+function getActionError(error, fallback) {
+  return error?.message || error?.payload?.error || fallback;
+}
+
+function getActionButtonLabel(itemId, action, label, busy) {
+  return busy === `${itemId}:${action}` ? "Выполняем…" : label;
+}
+
 export default function FollowupsPage() {
   const [items, setItems] = useState([]);
   const [metrics, setMetrics] = useState({});
@@ -77,7 +85,7 @@ export default function FollowupsPage() {
       else setMessage(action === "approve" ? "Follow-up одобрен." : action === "reject" ? "Follow-up отклонён." : "Follow-up отправлен или создан как CRM reminder.");
       await load({ silent: true });
     } catch (requestError) {
-      setError(requestError.message || "Не удалось выполнить действие");
+      setError(getActionError(requestError, "Не удалось выполнить действие"));
     } finally {
       setBusy("");
     }
@@ -91,7 +99,7 @@ export default function FollowupsPage() {
       const response = await updateAiFollowup(item.id, { generatedMessage });
       if (response?.item) setItems((current) => mergeItem(current, response.item));
     } catch (requestError) {
-      setError(requestError.message || "Не удалось изменить follow-up");
+      setError(getActionError(requestError, "Не удалось изменить follow-up"));
     } finally {
       setBusy("");
     }
@@ -136,10 +144,10 @@ export default function FollowupsPage() {
                 {item.error && <span>Ошибка: {item.error}</span>}
               </div>
               <div className="approval-actions">
-                <button className="ghost-button compact" type="button" onClick={() => handleAction(item, "approve")} disabled={busy || item.status !== "suggested"}>Одобрить</button>
-                <button className="ghost-button compact" type="button" onClick={() => handleEdit(item)} disabled={busy || !["suggested", "approved", "failed"].includes(item.status)}>Изменить</button>
-                <button className="ghost-button compact danger-action" type="button" onClick={() => handleAction(item, "reject")} disabled={busy || !["suggested", "failed"].includes(item.status)}>Отклонить</button>
-                <button className="btn primary compact" type="button" onClick={() => handleAction(item, "send")} disabled={busy || item.status !== "approved"}>Отправить</button>
+                <button className="ghost-button compact" type="button" onClick={() => handleAction(item, "approve")} disabled={Boolean(busy) || item.status !== "suggested"}>{getActionButtonLabel(item.id, "approve", "Одобрить", busy)}</button>
+                <button className="ghost-button compact" type="button" onClick={() => handleEdit(item)} disabled={Boolean(busy) || !["suggested", "approved", "failed"].includes(item.status)}>{busy === `${item.id}:edit` ? "Сохраняем…" : "Изменить"}</button>
+                <button className="ghost-button compact danger-action" type="button" onClick={() => handleAction(item, "reject")} disabled={Boolean(busy) || !["suggested", "failed"].includes(item.status)}>{getActionButtonLabel(item.id, "reject", "Отклонить", busy)}</button>
+                <button className="btn primary compact" type="button" onClick={() => handleAction(item, "send")} disabled={Boolean(busy) || item.status !== "approved"}>{getActionButtonLabel(item.id, "send", "Отправить", busy)}</button>
                 <Link className="ghost-button compact" to={`/crm?lead=${item.leadId}`}>CRM</Link>
               </div>
             </article>
