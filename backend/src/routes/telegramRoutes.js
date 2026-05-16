@@ -1,8 +1,9 @@
 const express = require('express')
-const { webhook } = require('../controllers/telegramController')
+const { integrationWebhook, webhook } = require('../controllers/telegramController')
 
 const router = express.Router()
 
+router.post('/webhook', integrationWebhook)
 router.post('/webhook/:secret', webhook)
 
 module.exports = router

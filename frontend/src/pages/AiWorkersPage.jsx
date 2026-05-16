@@ -49,6 +49,7 @@ const actionTypeLabels = {
   create_reminder: "Напоминание",
   move_lead_stage: "Смена этапа",
   telegram_draft: "Черновик Telegram",
+  telegram_reply_analysis: "Анализ ответа Telegram",
   email_draft: "Черновик письма",
   follow_up_recommendation: "Следующий контакт",
   crm_next_action: "CRM действие",

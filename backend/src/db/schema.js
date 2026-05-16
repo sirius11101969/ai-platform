@@ -400,8 +400,11 @@ async function migrate() {
     UPDATE email_logs e SET workspace_id = wm.workspace_id FROM workspace_members wm WHERE e.workspace_id IS NULL AND wm.user_id = e.user_id AND wm.role = 'owner';
     ALTER TABLE telegram_messages ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE SET NULL;
     ALTER TABLE telegram_messages ADD COLUMN IF NOT EXISTS telegram_chat_id TEXT;
+    ALTER TABLE telegram_messages ADD COLUMN IF NOT EXISTS direction TEXT;
+    ALTER TABLE telegram_messages ADD COLUMN IF NOT EXISTS body TEXT;
     UPDATE telegram_messages t SET workspace_id = l.workspace_id FROM crm_leads l WHERE t.workspace_id IS NULL AND t.lead_id = l.id;
     UPDATE telegram_messages t SET telegram_chat_id = COALESCE(l.telegram_chat_id, l.metadata->>'telegramChatId') FROM crm_leads l WHERE t.telegram_chat_id IS NULL AND t.lead_id = l.id;
+    UPDATE telegram_messages SET direction = COALESCE(direction, CASE WHEN role = 'user' THEN 'inbound' ELSE 'outbound' END), body = COALESCE(body, message) WHERE direction IS NULL OR body IS NULL;
     ALTER TABLE crm_followups ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE;
     UPDATE crm_followups f SET workspace_id = l.workspace_id FROM crm_leads l WHERE f.workspace_id IS NULL AND f.lead_id = l.id;
     ALTER TABLE crm_activity ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE CASCADE;
@@ -846,6 +849,9 @@ async function migrate() {
     CREATE INDEX IF NOT EXISTS idx_telegram_messages_user_id ON telegram_messages(user_id, created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_crm_leads_telegram_chat_id ON crm_leads(workspace_id, telegram_chat_id);
     CREATE INDEX IF NOT EXISTS idx_telegram_messages_chat_id ON telegram_messages(workspace_id, telegram_chat_id, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_crm_leads_active_telegram_chat_id ON crm_leads(workspace_id, telegram_chat_id, status) WHERE telegram_chat_id IS NOT NULL AND status <> 'lost';
+    CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_telegram_reply_analysis ON ai_worker_queue(workspace_id, lead_id, status, created_at DESC) WHERE action_type = 'telegram_reply_analysis';
+    CREATE INDEX IF NOT EXISTS idx_lead_timeline_events_telegram_connect_reply ON lead_timeline_events(workspace_id, lead_id, event_type, created_at DESC) WHERE event_type IN ('telegram_connected', 'telegram_reply_received', 'telegram_message_sent');
     CREATE INDEX IF NOT EXISTS idx_crm_followups_user_id ON crm_followups(user_id);
     CREATE INDEX IF NOT EXISTS idx_crm_followups_lead_id ON crm_followups(lead_id);
     CREATE INDEX IF NOT EXISTS idx_crm_activity_user_id ON crm_activity(user_id);

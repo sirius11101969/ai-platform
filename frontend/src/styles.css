@@ -1547,3 +1547,9 @@ button { font: inherit; }
   font-size: 12px;
   line-height: 1.35;
 }
+
+.telegram-connect-card { display: grid; gap: 12px; margin: 14px 0; padding: 16px; border: 1px solid rgba(80, 190, 255, .28); border-radius: 18px; background: linear-gradient(135deg, rgba(14,165,233,.14), rgba(99,102,241,.1)); }
+.telegram-connect-card strong { color: #e0f2fe; font-size: 1rem; }
+.telegram-connect-card p { margin: 4px 0 0; color: rgba(226,232,240,.78); line-height: 1.45; }
+.telegram-connect-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.disabled-link { pointer-events: none; opacity: .55; }

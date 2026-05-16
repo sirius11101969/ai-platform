@@ -240,6 +240,106 @@ function extractTelegramMessage(update = {}) {
   }
 }
 
+
+function extractStartPayload(text) {
+  const match = String(text || '').trim().match(/^\/start(?:\s+(.+))?$/i)
+  return match ? normalizeText(match[1]) : null
+}
+
+function extractLeadIdFromStartPayload(payload) {
+  const match = String(payload || '').trim().match(/^lead_([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i)
+  return match ? match[1] : null
+}
+
+function buildReplyAnalysisRecommendation(lead, text) {
+  const normalized = String(text || '').toLowerCase()
+  if (/цен|стоимост|прайс|кп|предложен|budget|price/.test(normalized)) return 'Уточнить бюджет и отправить короткое коммерческое предложение с вариантами пилота.'
+  if (/демо|созвон|встреч|слот|завтра|сегодня|calendar|календар/.test(normalized)) return 'Предложить 2–3 слота для короткого demo и подтвердить ключевой сценарий клиента.'
+  if (/не актуально|не интересно|позже|нет бюджета|отказ/.test(normalized)) return 'Зафиксировать возражение, мягко уточнить причину и предложить вернуться к разговору позже.'
+  return `Ответить ${lead.name || 'лиду'} в Telegram: поблагодарить за сообщение, уточнить текущую задачу и предложить следующий шаг по AS6 AI CRM.`
+}
+
+async function handleTelegramStartPayload(telegram, payload) {
+  const leadId = extractLeadIdFromStartPayload(payload)
+  if (!leadId) {
+    const telegramResponse = await sendTelegramMessage(telegram.chatId, 'Не удалось найти заявку по этой ссылке. Напишите менеджеру AS6, и мы поможем подключить Telegram к CRM.')
+    return { skipped: false, startHandled: true, connected: false, reason: 'Invalid start payload', telegramResponse }
+  }
+
+  const client = await pool.connect()
+  let connectedLead = null
+  try {
+    await client.query('BEGIN')
+    const leadResult = await client.query(
+      `SELECT id, user_id, workspace_id, name, telegram_chat_id, telegram_username, telegram, metadata, status
+         FROM crm_leads
+        WHERE id = $1
+        FOR UPDATE`,
+      [leadId]
+    )
+    const lead = leadResult.rows[0]
+    if (!lead) {
+      await client.query('ROLLBACK')
+      const telegramResponse = await sendTelegramMessage(telegram.chatId, 'Заявка по этой ссылке не найдена. Напишите менеджеру AS6, и мы поможем подключить Telegram к CRM.')
+      return { skipped: false, startHandled: true, connected: false, reason: 'Lead not found', telegramResponse }
+    }
+
+    const conflict = await client.query(
+      `SELECT id, name FROM crm_leads
+        WHERE workspace_id = $1
+          AND telegram_chat_id = $2
+          AND id <> $3
+          AND status <> 'lost'
+        LIMIT 1
+        FOR UPDATE`,
+      [lead.workspace_id, String(telegram.chatId), lead.id]
+    )
+    if (conflict.rows[0]) {
+      await client.query('ROLLBACK')
+      const telegramResponse = await sendTelegramMessage(telegram.chatId, 'Этот Telegram уже подключён к другой активной заявке. Напишите менеджеру AS6, если нужно переподключить чат.')
+      return { skipped: false, startHandled: true, connected: false, reason: 'Chat already attached', leadId: lead.id, conflictingLeadId: conflict.rows[0].id, telegramResponse }
+    }
+
+    const metadata = {
+      ...(lead.metadata || {}),
+      telegramUserId: telegram.userId,
+      telegramChatId: String(telegram.chatId),
+      telegramConnectedAt: new Date().toISOString(),
+      telegramConnectPayload: payload,
+    }
+    const updated = await client.query(
+      `UPDATE crm_leads
+          SET telegram_chat_id = $2,
+              telegram_id = COALESCE(telegram_id, $3),
+              telegram_username = COALESCE($4, telegram_username, telegram),
+              telegram = COALESCE(telegram, $4),
+              telegram_first_name = COALESCE($5, telegram_first_name),
+              telegram_last_name = COALESCE($6, telegram_last_name),
+              first_name = COALESCE(first_name, $5),
+              last_name = COALESCE(last_name, $6),
+              contact = COALESCE(contact, telegram, phone, email, $4),
+              last_seen_at = NOW(),
+              metadata = COALESCE(metadata, '{}'::jsonb) || $7::jsonb,
+              updated_at = NOW()
+        WHERE id = $1
+        RETURNING id, user_id, workspace_id, name`,
+      [lead.id, String(telegram.chatId), telegram.userId, telegram.username, telegram.firstName, telegram.lastName, metadata]
+    )
+    connectedLead = updated.rows[0]
+    await logActivity(client, connectedLead.user_id, connectedLead.workspace_id, connectedLead.id, 'telegram_connected', 'Telegram подключён', 'Клиент открыл deep-link и нажал Start.', { chatId: telegram.chatId, telegramUserId: telegram.userId, payload })
+    await addTimelineEvent(client, { workspaceId: connectedLead.workspace_id, leadId: connectedLead.id, userId: connectedLead.user_id, eventType: 'telegram_connected', title: 'Telegram подключён', body: 'Клиент открыл ссылку подключения и нажал Start.', source: 'telegram', metadata: { chatId: telegram.chatId, telegramUserId: telegram.userId, payload } })
+    await client.query('COMMIT')
+  } catch (error) {
+    await client.query('ROLLBACK')
+    throw error
+  } finally {
+    client.release()
+  }
+
+  const telegramResponse = await sendTelegramMessage(telegram.chatId, 'Telegram подключён. Теперь менеджер сможет отправлять материалы и отвечать по вашей заявке.')
+  return { skipped: false, startHandled: true, connected: true, leadId: connectedLead.id, telegramResponse }
+}
+
 async function resolveCrmUserId(client = pool) {
   const configuredEmail = normalizeText(process.env.TELEGRAM_CRM_USER_EMAIL || process.env.CRM_DEFAULT_USER_EMAIL)
   if (configuredEmail) {
@@ -255,7 +355,7 @@ async function resolveCrmUserId(client = pool) {
 }
 
 function leadUrl(leadId) {
-  const baseUrl = normalizeText(process.env.APP_BASE_URL || process.env.PUBLIC_APP_URL || process.env.CORS_ORIGIN)
+  const baseUrl = normalizeText(process.env.PUBLIC_BASE_URL || process.env.APP_BASE_URL || process.env.PUBLIC_APP_URL || process.env.CORS_ORIGIN)
   if (!baseUrl || baseUrl === 'true' || baseUrl === '*') return null
   return `${baseUrl.replace(/\/$/, '')}/crm?lead=${leadId}`
 }
@@ -269,7 +369,20 @@ async function logActivity(client, userId, workspaceId, leadId, type, title, bod
 }
 
 async function findTelegramLead(client, userId, workspaceId, telegram) {
-  const params = [userId, workspaceId, telegram.userId, String(telegram.chatId)]
+  const byChat = await client.query(
+    `SELECT id, user_id, workspace_id, name, email, phone, telegram, telegram_id, telegram_chat_id, telegram_username, telegram_first_name, telegram_last_name, first_name, last_name, first_message, last_message_at, last_seen_at, company, status, value, source, notes, metadata, created_at, updated_at
+       FROM crm_leads
+      WHERE user_id = $1
+        AND workspace_id = $2
+        AND telegram_chat_id = $3
+      ORDER BY CASE WHEN status <> 'lost' THEN 0 ELSE 1 END, updated_at DESC
+      LIMIT 1
+      FOR UPDATE`,
+    [userId, workspaceId, String(telegram.chatId)]
+  )
+  if (byChat.rows[0]) return byChat.rows[0]
+
+  const params = [userId, workspaceId, telegram.userId]
   let usernameClause = ''
   if (telegram.username) {
     params.push(telegram.username)
@@ -282,7 +395,7 @@ async function findTelegramLead(client, userId, workspaceId, telegram) {
       WHERE user_id = $1
         AND workspace_id = $2
         AND source = 'telegram'
-        AND (telegram_id = $3 OR telegram_chat_id = $4 OR (metadata->>'telegramUserId') = $3 OR (metadata->>'telegramChatId') = $4 ${usernameClause})
+        AND (telegram_id = $3 OR (metadata->>'telegramUserId') = $3 ${usernameClause})
       ORDER BY updated_at DESC
       LIMIT 1
       FOR UPDATE`,
@@ -290,7 +403,6 @@ async function findTelegramLead(client, userId, workspaceId, telegram) {
   )
   return result.rows[0] || null
 }
-
 
 async function ensureTelegramApprovalWorker(client, workspaceId) {
   const result = await client.query(
@@ -331,6 +443,25 @@ async function createInboundReplyRecommendations(client, { userId, workspaceId, 
       WHERE workspace_id = $1 AND lead_id = $2 AND status IN ('suggested', 'approved') AND scheduled_for <= NOW() + INTERVAL '3 days'`,
     [workspaceId, lead.id, telegram.messageId]
   )
+
+  const existingAnalysis = await client.query(
+    `SELECT id FROM ai_worker_queue
+      WHERE workspace_id = $1 AND lead_id = $2 AND action_type = 'telegram_reply_analysis'
+        AND created_at > NOW() - INTERVAL '12 hours'
+        AND status IN ('pending_approval', 'approved', 'executing', 'completed')
+      LIMIT 1`,
+    [workspaceId, lead.id]
+  )
+  if (!existingAnalysis.rows[0]) {
+    const recommendation = buildReplyAnalysisRecommendation(lead, telegram.text)
+    const analysis = await client.query(
+      `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
+       VALUES($1, $2, $3, 'telegram_reply_analysis', 'pending_approval', $4, $5, $6)
+       RETURNING id`,
+      [worker.id, workspaceId, lead.id, `Проанализировать ответ Telegram — ${lead.name}`, recommendation, { source: 'telegram_inbound', channel: 'telegram', customerMessage: telegram.text, telegramMessageId: telegram.messageId, chatId: String(telegram.chatId), nextStep: recommendation }]
+    )
+    await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'ai_next_action_generated', title: 'AI подготовил анализ ответа Telegram', body: recommendation, source: 'ai', metadata: { queueId: analysis.rows[0].id, actionType: 'telegram_reply_analysis' } })
+  }
 
   const existingDraft = await client.query(
     `SELECT id FROM ai_worker_queue
@@ -456,8 +587,8 @@ async function upsertLeadWithIncomingMessage(telegram) {
       telegramMessageId: telegram.messageId,
       createdAt: telegram.date,
     })
-    await logActivity(client, userId, workspaceId, lead.id, 'telegram_message_received', 'Telegram message received', telegram.text, { telegramUserId: telegram.userId, chatId: telegram.chatId, messageId: telegram.messageId })
-    await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'lead_replied', title: 'Лид ответил', body: telegram.text, source: 'telegram', metadata: { telegramUserId: telegram.userId, chatId: telegram.chatId, messageId: telegram.messageId } })
+    await logActivity(client, userId, workspaceId, lead.id, 'telegram_reply_received', 'Telegram reply received', telegram.text, { telegramUserId: telegram.userId, chatId: telegram.chatId, messageId: telegram.messageId })
+    await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'telegram_reply_received', title: 'Получен ответ в Telegram', body: telegram.text, source: 'telegram', metadata: { telegramUserId: telegram.userId, chatId: telegram.chatId, messageId: telegram.messageId } })
     await createInboundReplyRecommendations(client, { userId, workspaceId, lead, telegram })
     await client.query('COMMIT')
     return { lead, note: note.rows[0], telegramMessage, isNew, userId, workspaceId }
@@ -670,6 +801,11 @@ async function notifyManager({ telegram, lead, isNew }) {
 async function processTelegramUpdate(update) {
   const telegram = extractTelegramMessage(update)
   if (!telegram) return { skipped: true, reason: 'No supported Telegram text message' }
+
+  if (/^\/start(?:\s|$)/i.test(telegram.text)) {
+    const startPayload = extractStartPayload(telegram.text)
+    return handleTelegramStartPayload(telegram, startPayload)
+  }
 
   const crmResult = await upsertLeadWithIncomingMessage(telegram)
   if (crmResult.isNew) {
