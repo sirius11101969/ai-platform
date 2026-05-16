@@ -640,7 +640,7 @@ async function analyzeWorkspaceLeads(userId, workspaceId, limit = 25) {
 }
 
 async function getStats(userId, workspaceId) {
-  const [summaryResult, statusResult, activityResult, aiMetricsResult, aiRevenueResult, aiExecutionResult, telegramResult, followupMetricsResult, outreachMetricsResult] = await Promise.all([
+  const [summaryResult, statusResult, activityResult, aiMetricsResult, aiRevenueResult, aiExecutionResult, telegramResult, followupMetricsResult, outreachMetricsResult, landingMetricsResult] = await Promise.all([
     pool.query(
       `SELECT COUNT(*)::int AS total_leads,
               COALESCE(SUM(value) FILTER (WHERE status NOT IN ('won','lost')), 0)::numeric AS pipeline_value,
@@ -732,6 +732,21 @@ async function getStats(userId, workspaceId) {
           AND q.action_type IN ('telegram_draft','email_draft')`,
       [workspaceId, userId]
     ),
+    pool.query(
+      `WITH latest AS (
+         SELECT DISTINCT ON (lead_id) lead_id, score, temperature
+           FROM lead_ai_scores
+          WHERE workspace_id = $2
+          ORDER BY lead_id, generated_at DESC
+       )
+       SELECT COUNT(*) FILTER (WHERE l.source = 'landing' AND l.created_at::date = CURRENT_DATE)::int AS today,
+              COUNT(*) FILTER (WHERE l.source = 'landing' AND l.status = 'new')::int AS pending,
+              COUNT(*) FILTER (WHERE l.source = 'landing' AND (latest.score >= 75 OR latest.temperature = 'hot'))::int AS hot
+         FROM crm_leads l
+         LEFT JOIN latest ON latest.lead_id = l.id
+        WHERE l.user_id = $1 AND l.workspace_id = $2`,
+      [userId, workspaceId]
+    ),
   ])
   const byStatus = CRM_STATUSES.reduce((acc, status) => ({ ...acc, [status]: { count: 0, value: 0 } }), {})
   for (const row of statusResult.rows) byStatus[row.status] = { count: row.count, value: Number(row.value || 0) }
@@ -747,6 +762,7 @@ async function getStats(userId, workspaceId) {
   const telegramStats = telegramResult.rows[0] || {}
   const followupMetrics = followupMetricsResult.rows[0] || {}
   const outreachMetrics = outreachMetricsResult.rows[0] || {}
+  const landingMetrics = landingMetricsResult.rows[0] || {}
   const aiExecutionFinished = Number(aiExecution.finished_total || 0)
   return {
     totalLeads: total,
@@ -756,7 +772,9 @@ async function getStats(userId, workspaceId) {
     wonDeals,
     lostDeals,
     conversionRate: total ? Math.round((wonDeals / total) * 100) : 0,
-    landingLeadsToday: Number(summary.landing_leads_today || 0),
+    landingLeadsToday: Number(landingMetrics.today || summary.landing_leads_today || 0),
+    hotLandingLeads: Number(landingMetrics.hot || 0),
+    pendingWebsiteLeads: Number(landingMetrics.pending || 0),
     newLeadsCount: Number(summary.new_leads_count || 0),
     telegram: {
       leads: Number(telegramStats.telegram_leads || 0),

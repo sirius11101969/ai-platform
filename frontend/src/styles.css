@@ -114,6 +114,7 @@
         .lead-form-grid input { min-height: 48px; }
         .lead-form-grid textarea { min-height: 118px; padding-top: 12px; resize: vertical; }
         .lead-form-grid input::placeholder, .lead-form-grid textarea::placeholder { color: rgba(197, 210, 245, .52); }
+        .lead-form-honeypot { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; }
         .lead-capture-form .btn { width: 100%; border: 0; cursor: pointer; }
         .lead-capture-form .btn:disabled { cursor: wait; opacity: .72; transform: none; }
         .trust-section { padding: 74px min(7vw, 108px); background: #050712; }

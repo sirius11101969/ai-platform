@@ -2,8 +2,10 @@ const pool = require('../db/pool')
 const aiAgentModel = require('../models/aiAgentModel')
 const { addTimelineEvent } = require('./timelineService')
 const { createQualificationQueueItem, ensureSdrWorker, scheduleLeadQualification } = require('./leadQualificationService')
+const { notifyLandingLeadManager } = require('./publicLeadNotificationService')
 
 const PUBLIC_LEAD_FIELDS = ['name', 'email', 'phone', 'telegram', 'company', 'message', 'source', 'page_url', 'utm_source', 'utm_medium', 'utm_campaign']
+const HONEYPOT_FIELDS = ['website', 'url', 'homepage', 'company_site', 'honeypot']
 const MAX_FIELD_LENGTHS = {
   name: 160,
   email: 254,
@@ -45,29 +47,84 @@ function normalizePageUrl(value) {
   }
 }
 
+function normalizePhone(value) {
+  const phone = normalizeText(value, MAX_FIELD_LENGTHS.phone)
+  if (!phone) return null
+  if (!/^[+()\-\s\d.]{5,64}$/.test(phone)) {
+    throw Object.assign(new Error('Invalid phone'), { statusCode: 400 })
+  }
+  const normalized = phone.replace(/[\s().-]/g, '')
+  if (!/^\+?\d{5,15}$/.test(normalized)) {
+    throw Object.assign(new Error('Invalid phone'), { statusCode: 400 })
+  }
+  return normalized.startsWith('+') ? normalized : `+${normalized}`
+}
+
+function normalizeTelegram(value) {
+  const raw = normalizeText(value, MAX_FIELD_LENGTHS.telegram)
+  if (!raw) return null
+  const withoutUrl = raw.replace(/^https?:\/\/(?:t\.me|telegram\.me)\//i, '').replace(/^@/, '').trim()
+  if (!/^[a-zA-Z0-9_]{3,64}$/.test(withoutUrl)) {
+    throw Object.assign(new Error('Invalid telegram'), { statusCode: 400 })
+  }
+  return `@${withoutUrl.toLowerCase()}`
+}
+
+function rejectHoneypot(payload = {}) {
+  if (HONEYPOT_FIELDS.some((field) => normalizeText(payload[field], 500))) {
+    throw Object.assign(new Error('Spam submission rejected'), { statusCode: 400 })
+  }
+}
+
 function normalizePayload(payload = {}) {
+  rejectHoneypot(payload)
   const normalized = {}
   for (const field of PUBLIC_LEAD_FIELDS) {
     if (field === 'email') normalized.email = normalizeEmail(payload.email)
+    else if (field === 'phone') normalized.phone = normalizePhone(payload.phone)
+    else if (field === 'telegram') normalized.telegram = normalizeTelegram(payload.telegram)
     else if (field === 'page_url') normalized.page_url = normalizePageUrl(payload.page_url)
     else normalized[field] = normalizeText(payload[field], MAX_FIELD_LENGTHS[field])
   }
 
-  const hasContact = Boolean(normalized.email || normalized.phone || normalized.telegram)
-  const hasIntent = Boolean(normalized.name || normalized.company || normalized.message)
-  if (!hasContact || !hasIntent) {
-    throw Object.assign(new Error('Lead contact and message context are required'), { statusCode: 400 })
-  }
-
-  if (normalized.phone && !/^[+()\-\s\d.]{5,64}$/.test(normalized.phone)) {
-    throw Object.assign(new Error('Invalid phone'), { statusCode: 400 })
-  }
-
-  if (normalized.telegram && !/^@?[a-zA-Z0-9_]{3,64}$/.test(normalized.telegram)) {
-    throw Object.assign(new Error('Invalid telegram'), { statusCode: 400 })
+  if (!normalized.name || !normalized.email || !normalized.message) {
+    throw Object.assign(new Error('Lead name, email and message are required'), { statusCode: 400 })
   }
 
   return normalized
+}
+
+
+function buildRepeatedSubmissionValues(input, requestMeta = {}) {
+  return {
+    email: input.email,
+    phone: input.phone,
+    telegram: input.telegram,
+    ip: normalizeText(requestMeta.ip, 120),
+    message: input.message,
+  }
+}
+
+async function rejectRepeatedSubmission(client, workspaceId, input, requestMeta = {}) {
+  const values = buildRepeatedSubmissionValues(input, requestMeta)
+  const result = await client.query(
+    `SELECT id
+       FROM crm_leads
+      WHERE workspace_id = $1
+        AND source = 'landing'
+        AND created_at >= NOW() - INTERVAL '30 minutes'
+        AND (
+          email = $2
+          OR ($3::text IS NOT NULL AND phone = $3)
+          OR ($4::text IS NOT NULL AND telegram = $4)
+          OR (metadata->'request'->>'ip' = $5 AND notes = $6)
+        )
+      LIMIT 1`,
+    [workspaceId, values.email, values.phone, values.telegram, values.ip, values.message]
+  )
+  if (result.rows[0]) {
+    throw Object.assign(new Error('Repeated public lead submission rejected'), { statusCode: 409 })
+  }
 }
 
 const WORKSPACE_ID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
@@ -173,6 +230,7 @@ async function createPublicLead(payload, requestMeta = {}) {
   try {
     await client.query('BEGIN')
     const { workspaceId, userId } = await resolveWorkspace(client)
+    await rejectRepeatedSubmission(client, workspaceId, input, requestMeta)
     const metadata = buildMetadata(input, requestMeta)
     const name = input.name || input.company || 'Лид с лендинга'
     const notes = input.message || null
@@ -230,6 +288,12 @@ async function createPublicLead(payload, requestMeta = {}) {
 
     await client.query('COMMIT')
     scheduleLeadQualification({ workspaceId, leadId: lead.id, queueId: queueItem.id })
+    notifyLandingLeadManager({
+      userId,
+      workspaceId,
+      lead,
+      recommendedNextStep: 'Связаться с лидом и подтвердить удобное время демо.',
+    }).catch((error) => console.warn('Landing lead manager notification failed', error.message || error))
     return { leadId: lead.id, workspaceId, actionId, queueId: queueItem.id }
   } catch (error) {
     await client.query('ROLLBACK')
@@ -246,4 +310,4 @@ function schedulePublicLeadAnalysis(actionId) {
   })
 }
 
-module.exports = { createPublicLead, schedulePublicLeadAnalysis, _private: { resolveWorkspace } }
+module.exports = { createPublicLead, schedulePublicLeadAnalysis, _private: { normalizePayload, rejectRepeatedSubmission, resolveWorkspace } }
