@@ -112,14 +112,37 @@ async function loadActiveRules(workspaceId) {
   return result.rows.map(normalizeRule)
 }
 
+function getLeadStage(lead) {
+  return lead.followup_stage || lead.stage || lead.status
+}
+
+function getLeadLastActivityAt(lead) {
+  return lead.last_activity_at ? new Date(lead.last_activity_at) : new Date(lead.last_message_at || lead.updated_at || lead.created_at)
+}
+
+function getLeadInactivityHours(lead) {
+  const lastActivity = getLeadLastActivityAt(lead)
+  return Math.max(0, (Date.now() - lastActivity.getTime()) / 36e5)
+}
+
+function leadSkipReason(lead, activeRules) {
+  const stage = getLeadStage(lead)
+  if (stage === 'won' || stage === 'lost') return `terminal status ${stage}`
+  if (!activeRules.length) return 'no active follow-up rules'
+  const inactiveHours = getLeadInactivityHours(lead)
+  const stageRules = activeRules.filter((rule) => rule.config?.stage && rule.config.stage !== stage).map((rule) => `${rule.ruleType}: stage ${stage} != ${rule.config.stage}`)
+  const thresholdRules = activeRules.filter((rule) => inactiveHours < Number(rule.config?.thresholdHours || 24)).map((rule) => `${rule.ruleType}: inactive ${Math.round(inactiveHours * 10) / 10}h < ${Number(rule.config?.thresholdHours || 24)}h`)
+  const scoreRules = activeRules.filter((rule) => rule.config?.minScore && !(lead.temperature === 'hot' || Number(lead.score || 0) >= Number(rule.config.minScore))).map((rule) => `${rule.ruleType}: score ${Number(lead.score || 0)} below ${Number(rule.config.minScore)}`)
+  return [...stageRules, ...thresholdRules, ...scoreRules].slice(0, 3).join('; ') || 'no rule matched'
+}
+
 function leadMatchesRule(lead, rule) {
-  const lastActivity = lead.last_activity_at ? new Date(lead.last_activity_at) : new Date(lead.updated_at || lead.created_at)
-  const inactiveHours = Math.max(0, (Date.now() - lastActivity.getTime()) / 36e5)
+  const inactiveHours = getLeadInactivityHours(lead)
   const config = rule.config || {}
   const thresholdHours = Number(config.thresholdHours || 24)
   if (inactiveHours < thresholdHours) return null
 
-  if (config.stage && lead.status !== config.stage) return null
+  if (config.stage && getLeadStage(lead) !== config.stage) return null
   if (config.minScore && !(lead.temperature === 'hot' || Number(lead.score || 0) >= Number(config.minScore))) return null
 
   return {
@@ -138,30 +161,52 @@ function buildRules(lead, activeRules) {
 async function scanWorkspace(userId, workspaceId) {
   const seedResult = await ensureDefaultRulesForWorkspace(workspaceId)
   const activeRules = await loadActiveRules(workspaceId)
+  console.info('[ai-followups] scan started', { userId, workspaceId, activeRules: activeRules.map((rule) => rule.ruleType) })
   const leadsResult = await pool.query(
     `WITH activity AS (
-       SELECT l.id AS lead_id, GREATEST(l.updated_at, COALESCE(MAX(n.created_at), l.updated_at), COALESCE(MAX(tm.created_at), l.updated_at), COALESCE(MAX(em.created_at), l.updated_at), COALESCE(MAX(te.created_at), l.updated_at)) AS last_activity_at
+       SELECT l.id AS lead_id,
+              COALESCE(
+                GREATEST(
+                  l.last_message_at,
+                  MAX(tm.created_at),
+                  MAX(em.created_at)
+                ),
+                l.last_message_at,
+                l.updated_at,
+                l.created_at
+              ) AS last_activity_at
          FROM crm_leads l
-         LEFT JOIN crm_notes n ON n.lead_id = l.id AND n.workspace_id = l.workspace_id
          LEFT JOIN telegram_messages tm ON tm.lead_id = l.id AND tm.workspace_id = l.workspace_id
          LEFT JOIN email_messages em ON em.lead_id = l.id AND em.workspace_id = l.workspace_id
-         LEFT JOIN lead_timeline_events te ON te.lead_id = l.id AND te.workspace_id = l.workspace_id
-        WHERE l.user_id = $1 AND l.workspace_id = $2 AND l.status NOT IN ('won','lost')
+        WHERE l.workspace_id = $1 AND COALESCE(NULLIF(l.stage, ''), NULLIF(l.status, ''), 'new') NOT IN ('won','lost')
         GROUP BY l.id
      ), latest_score AS (
-       SELECT DISTINCT ON (lead_id) lead_id, score, temperature FROM lead_ai_scores WHERE workspace_id = $2 ORDER BY lead_id, generated_at DESC
+       SELECT DISTINCT ON (lead_id) lead_id, score, temperature FROM lead_ai_scores WHERE workspace_id = $1 ORDER BY lead_id, generated_at DESC
      )
-     SELECT l.*, a.last_activity_at, s.score, s.temperature
+     SELECT l.*, COALESCE(NULLIF(l.stage, ''), NULLIF(l.status, ''), 'new') AS followup_stage, a.last_activity_at, s.score, s.temperature
        FROM crm_leads l JOIN activity a ON a.lead_id = l.id LEFT JOIN latest_score s ON s.lead_id = l.id
-      WHERE l.user_id = $1 AND l.workspace_id = $2`, [userId, workspaceId]
+      WHERE l.workspace_id = $1 AND COALESCE(NULLIF(l.stage, ''), NULLIF(l.status, ''), 'new') NOT IN ('won','lost')`, [workspaceId]
   )
   const created = []
   const skippedDuplicates = []
+  let matchedLeadsCount = 0
   for (const row of leadsResult.rows) {
-    const lead = crmModel.CRM_STATUSES ? { ...row, id: row.id } : row
-    for (const rule of buildRules(row, activeRules)) {
+    const lead = crmModel.CRM_STATUSES ? { ...row, id: row.id, status: getLeadStage(row) } : { ...row, status: getLeadStage(row) }
+    const matchedRules = buildRules(row, activeRules)
+    if (!matchedRules.length) {
+      console.info('[ai-followups] lead skipped', { workspaceId, leadId: row.id, status: getLeadStage(row), reason: leadSkipReason(row, activeRules), lastActivityAt: row.last_activity_at })
+      continue
+    }
+    matchedLeadsCount += 1
+    console.info('[ai-followups] lead matched rules', { workspaceId, leadId: row.id, ruleTypes: matchedRules.map((rule) => rule.ruleType) })
+    for (const rule of matchedRules) {
+      console.info('[ai-followups] rule matched', { workspaceId, leadId: row.id, ruleType: rule.ruleType, inactiveHours: rule.inactiveHours })
       const duplicate = await pool.query(`SELECT id FROM ai_followup_jobs WHERE workspace_id = $1 AND lead_id = $2 AND rule_type = $3 AND created_at > NOW() - INTERVAL '24 hours' AND status IN ('suggested','approved','sent') LIMIT 1`, [workspaceId, row.id, rule.ruleType])
-      if (duplicate.rows[0]) { skippedDuplicates.push({ leadId: row.id, ruleType: rule.ruleType }); continue }
+      if (duplicate.rows[0]) {
+        skippedDuplicates.push({ leadId: row.id, ruleType: rule.ruleType, jobId: duplicate.rows[0].id })
+        console.info('[ai-followups] lead skipped duplicate', { workspaceId, leadId: row.id, ruleType: rule.ruleType, duplicateJobId: duplicate.rows[0].id })
+        continue
+      }
       const context = await getLeadContext(workspaceId, row.id)
       const generation = await generateMessage({ lead, rule, context }).catch((error) => ({ message: fallbackMessage({ lead, rule }), model: 'fallback-openai-error', aiError: error.message }))
       const channel = chooseChannel(row) || rule.suggestedChannel
@@ -170,28 +215,37 @@ async function scanWorkspace(userId, workspaceId) {
          VALUES($1, $2, $3, 'suggested', $4, $5, NOW() + ($6::int * INTERVAL '1 hour'), $7, $8, $9) RETURNING *`,
         [workspaceId, row.id, rule.ruleType, channel, generation.message, rule.scheduledHours, rule.reason, rule.urgency, { model: generation.model, openaiResponseId: generation.openaiResponseId, aiError: generation.aiError, lastActivityAt: row.last_activity_at, ruleConfig: rule.config, inactiveHours: rule.inactiveHours }]
       )
+      console.info('[ai-followups] follow-up created', { workspaceId, leadId: row.id, ruleType: rule.ruleType, followupId: result.rows[0].id, channel })
       await addTimelineEvent(pool, { workspaceId, leadId: row.id, userId, eventType: 'follow_up_suggested', title: 'Follow-up suggested', body: generation.message, source: 'ai', metadata: { ruleType: rule.ruleType, channel, reason: rule.reason, urgency: rule.urgency } })
-      created.push(normalize({ ...result.rows[0], lead_name: row.name, lead_company: row.company, lead_email: row.email, lead_status: row.status, lead_telegram_chat_id: row.telegram_chat_id }))
+      created.push(normalize({ ...result.rows[0], lead_name: row.name, lead_company: row.company, lead_email: row.email, lead_status: getLeadStage(row), lead_telegram_chat_id: row.telegram_chat_id }))
     }
   }
-  return { created, skippedDuplicates, createdCount: created.length, skippedCount: skippedDuplicates.length, rulesSeeded: seedResult.seeded, seededRuleTypes: seedResult.seededRuleTypes }
+  const response = { scannedLeadsCount: leadsResult.rows.length, matchedLeadsCount, createdJobsCount: created.length, skippedDuplicatesCount: skippedDuplicates.length, created, skippedDuplicates, createdCount: created.length, skippedCount: skippedDuplicates.length, rulesSeeded: seedResult.seeded, seededRuleTypes: seedResult.seededRuleTypes }
+  console.info('[ai-followups] scan finished', { userId, workspaceId, scannedLeadsCount: response.scannedLeadsCount, matchedLeadsCount, createdJobsCount: response.createdJobsCount, skippedDuplicatesCount: response.skippedDuplicatesCount })
+  return response
 }
 
 async function listFollowups(userId, workspaceId) {
   const result = await pool.query(
     `SELECT j.*, l.name AS lead_name, l.company AS lead_company, l.email AS lead_email, l.status AS lead_status, l.telegram_chat_id AS lead_telegram_chat_id
        FROM ai_followup_jobs j JOIN crm_leads l ON l.id = j.lead_id AND l.workspace_id = j.workspace_id
-      WHERE j.workspace_id = $1 AND l.user_id = $2
-      ORDER BY CASE j.status WHEN 'suggested' THEN 1 WHEN 'approved' THEN 2 WHEN 'failed' THEN 3 ELSE 4 END, j.created_at DESC LIMIT 200`, [workspaceId, userId]
+      WHERE j.workspace_id = $1
+      ORDER BY CASE j.status WHEN 'suggested' THEN 1 WHEN 'approved' THEN 2 WHEN 'failed' THEN 3 ELSE 4 END, j.created_at DESC LIMIT 200`, [workspaceId]
   )
   const metrics = await getMetrics(userId, workspaceId)
   return { items: result.rows.map(normalize), metrics }
 }
 
 async function getFollowup(userId, workspaceId, id) {
-  const result = await pool.query(`SELECT j.* FROM ai_followup_jobs j JOIN crm_leads l ON l.id = j.lead_id AND l.workspace_id = j.workspace_id WHERE j.id = $1 AND j.workspace_id = $2 AND l.user_id = $3`, [id, workspaceId, userId])
+  const result = await pool.query(`SELECT j.* FROM ai_followup_jobs j JOIN crm_leads l ON l.id = j.lead_id AND l.workspace_id = j.workspace_id WHERE j.id = $1 AND j.workspace_id = $2`, [id, workspaceId])
   if (!result.rows[0]) throw Object.assign(new Error('Follow-up job not found'), { statusCode: 404 })
   return normalize(result.rows[0])
+}
+
+async function getWorkspaceLead(workspaceId, leadId) {
+  const result = await pool.query('SELECT id, user_id, email FROM crm_leads WHERE workspace_id = $1 AND id = $2', [workspaceId, leadId])
+  if (!result.rows[0]) throw Object.assign(new Error('Lead not found'), { statusCode: 404 })
+  return result.rows[0]
 }
 
 async function transition(userId, workspaceId, id, status, reason = '') {
@@ -216,11 +270,12 @@ async function send(userId, workspaceId, id) {
   if (job.status !== 'approved') throw Object.assign(new Error('Follow-up must be approved before sending'), { statusCode: 400 })
   try {
     let result
-    if (job.suggestedChannel === 'telegram') result = await sendTelegramMessageToLead({ userId, workspaceId, leadId: job.leadId, text: job.generatedMessage })
+    const lead = await getWorkspaceLead(workspaceId, job.leadId)
+    const leadOwnerUserId = lead.user_id
+    if (job.suggestedChannel === 'telegram') result = await sendTelegramMessageToLead({ userId: leadOwnerUserId, workspaceId, leadId: job.leadId, text: job.generatedMessage })
     else if (job.suggestedChannel === 'email') {
-      const lead = await crmModel.findLead(userId, workspaceId, job.leadId)
-      result = await emailService.sendEmailNow(userId, { workspaceId, leadId: job.leadId, to: lead.email, subject: 'Следующий шаг по AS6 AI CRM', text: job.generatedMessage })
-    } else result = await crmModel.createNote(userId, workspaceId, job.leadId, `AI follow-up reminder: ${job.generatedMessage}`)
+      result = await emailService.sendEmailNow(leadOwnerUserId, { workspaceId, leadId: job.leadId, to: lead.email, subject: 'Следующий шаг по AS6 AI CRM', text: job.generatedMessage })
+    } else result = await crmModel.createNote(leadOwnerUserId, workspaceId, job.leadId, `AI follow-up reminder: ${job.generatedMessage}`)
     const updated = await pool.query("UPDATE ai_followup_jobs SET status = 'sent', sent_at = NOW(), error = NULL, updated_at = NOW() WHERE workspace_id = $1 AND id = $2 RETURNING *", [workspaceId, id])
     await pool.query("INSERT INTO ai_followup_attempts(workspace_id, lead_id, job_id, rule_type, status, suggested_channel, generated_message, sent_at) VALUES($1,$2,$3,$4,'sent',$5,$6,NOW())", [workspaceId, job.leadId, id, job.ruleType, job.suggestedChannel, job.generatedMessage])
     await addTimelineEvent(pool, { workspaceId, leadId: job.leadId, userId, eventType: 'follow_up_sent', title: 'Follow-up sent', body: job.generatedMessage, source: job.suggestedChannel, metadata: { followupJobId: id, channel: job.suggestedChannel } })
@@ -238,12 +293,12 @@ async function getMetrics(userId, workspaceId) {
     `WITH latest AS (SELECT DISTINCT ON (lead_id) lead_id, score FROM lead_ai_scores WHERE workspace_id = $1 ORDER BY lead_id, generated_at DESC), activity AS (
        SELECT l.id, GREATEST(l.updated_at, COALESCE(MAX(tm.created_at), l.updated_at), COALESCE(MAX(em.created_at), l.updated_at), COALESCE(MAX(n.created_at), l.updated_at)) AS last_activity_at
        FROM crm_leads l LEFT JOIN telegram_messages tm ON tm.lead_id = l.id AND tm.workspace_id = l.workspace_id LEFT JOIN email_messages em ON em.lead_id = l.id AND em.workspace_id = l.workspace_id LEFT JOIN crm_notes n ON n.lead_id = l.id AND n.workspace_id = l.workspace_id
-       WHERE l.user_id = $2 AND l.workspace_id = $1 AND l.status NOT IN ('won','lost') GROUP BY l.id)
-     SELECT (SELECT COUNT(*)::int FROM ai_followup_jobs j JOIN crm_leads l ON l.id = j.lead_id AND l.workspace_id = j.workspace_id WHERE j.workspace_id = $1 AND l.user_id = $2 AND j.status IN ('suggested','approved')) AS pending,
-            (SELECT COUNT(*)::int FROM ai_followup_jobs j JOIN crm_leads l ON l.id = j.lead_id AND l.workspace_id = j.workspace_id WHERE j.workspace_id = $1 AND l.user_id = $2 AND j.status = 'sent' AND j.sent_at::date = CURRENT_DATE) AS sent_today,
+       WHERE l.workspace_id = $1 AND COALESCE(NULLIF(l.stage, ''), NULLIF(l.status, ''), 'new') NOT IN ('won','lost') GROUP BY l.id)
+     SELECT (SELECT COUNT(*)::int FROM ai_followup_jobs j JOIN crm_leads l ON l.id = j.lead_id AND l.workspace_id = j.workspace_id WHERE j.workspace_id = $1 AND j.status IN ('suggested','approved')) AS pending,
+            (SELECT COUNT(*)::int FROM ai_followup_jobs j JOIN crm_leads l ON l.id = j.lead_id AND l.workspace_id = j.workspace_id WHERE j.workspace_id = $1 AND j.status = 'sent' AND j.sent_at::date = CURRENT_DATE) AS sent_today,
             COUNT(*) FILTER (WHERE latest.score >= 70 AND activity.last_activity_at < NOW() - INTERVAL '12 hours')::int AS hot_without_contact,
             0::int AS conversion_placeholder
-       FROM activity LEFT JOIN latest ON latest.lead_id = activity.id`, [workspaceId, userId]
+       FROM activity LEFT JOIN latest ON latest.lead_id = activity.id`, [workspaceId]
   )
   const row = result.rows[0] || {}
   return { pending: Number(row.pending || 0), hotWithoutContact: Number(row.hot_without_contact || 0), sentToday: Number(row.sent_today || 0), conversionPlaceholder: Number(row.conversion_placeholder || 0) }
