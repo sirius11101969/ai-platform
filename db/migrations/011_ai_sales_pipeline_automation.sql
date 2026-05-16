@@ -3,13 +3,13 @@ ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS estimated_revenue NUMERIC(12, 2) 
 ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS expected_close_date DATE;
 
 UPDATE crm_leads l
-   SET probability_to_close = COALESCE(NULLIF(probability_to_close, 0), latest.deal_probability, 0),
-       estimated_revenue = CASE WHEN estimated_revenue = 0 THEN COALESCE(l.value * latest.deal_probability / 100.0, 0) ELSE estimated_revenue END,
-       expected_close_date = COALESCE(expected_close_date, (CURRENT_DATE + INTERVAL '30 days')::date)
+   SET probability_to_close = COALESCE(NULLIF(l.probability_to_close, 0), latest.deal_probability, 0),
+       estimated_revenue = CASE WHEN l.estimated_revenue = 0 THEN COALESCE(l.value * latest.deal_probability / 100.0, 0) ELSE l.estimated_revenue END,
+       expected_close_date = COALESCE(l.expected_close_date, (CURRENT_DATE + INTERVAL '30 days')::date)
   FROM (
-    SELECT DISTINCT ON (lead_id) lead_id, deal_probability
-      FROM lead_ai_scores
-     ORDER BY lead_id, generated_at DESC
+    SELECT DISTINCT ON (s.lead_id) s.lead_id, s.deal_probability
+      FROM lead_ai_scores s
+     ORDER BY s.lead_id, s.generated_at DESC
   ) latest
  WHERE latest.lead_id = l.id;
 
