@@ -20,6 +20,7 @@ const publicRoutes = require('./routes/publicRoutes')
 const { markOpened } = require('./controllers/emailController')
 const { startEmailQueueWorker } = require('./services/emailService')
 const { startLeadAnalysisWorker } = require('./services/leadAnalysisWorker')
+const { startLeadQualificationWorker } = require('./services/leadQualificationService')
 const { ensureDefaultRulesForAllWorkspaces } = require('./services/aiFollowupRulesService')
 const { requireAuth } = require('./middleware/authMiddleware')
 const { requireWorkspace } = require('./middleware/workspaceMiddleware')
@@ -127,6 +128,7 @@ async function start() {
 
   startEmailQueueWorker()
   startLeadAnalysisWorker()
+  startLeadQualificationWorker()
 
   app.listen(port, () => {
     console.log(`Backend started on port ${port}`)

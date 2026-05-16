@@ -133,11 +133,16 @@ function tempLabel(level) {
   return ({ cold: 'COLD', warm: 'WARM', hot: 'HOT' }[level] || 'AI');
 }
 
+function channelLabel(channel) {
+  return ({ telegram: 'Telegram', email: 'Email', phone: 'Phone', crm_task: 'CRM task', Telegram: 'Telegram', Email: 'Email', 'Задача менеджеру': 'CRM task' }[channel] || channel || 'CRM task');
+}
+
 function getAiBadges(lead) {
   const score = getLeadAiScore(lead);
   if (!score) return [];
   return [
     score.temperature === 'hot' && 'HOT',
+    score.temperature === 'warm' && 'WARM',
     score.score >= 80 && 'AI PRIORITY',
     score.dealProbability >= 70 && 'HIGH PROBABILITY',
     score.urgencyLevel === 'high' && 'FOLLOW-UP REQUIRED',
@@ -825,9 +830,9 @@ export default function CRMPage() {
                       onDragEnd={handleLeadDragEnd}
                       key={lead.id}
                     >
-                      <div className="lead-topline"><strong>{lead.name}</strong><span>{formatCurrency(lead.value)}</span></div>{getLeadAiScore(lead) && <div className="lead-ai-probability"><span>{getLeadAiScore(lead).dealProbability}% вероятность сделки</span><i style={{ width: `${getLeadAiScore(lead).dealProbability}%` }} /></div>}{getAiBadges(lead).length > 0 && <div className="ai-badge-row">{getAiBadges(lead).map((badge) => <b className="ai-neon-badge" key={badge}>{badge}</b>)}</div>}
+                      <div className="lead-topline"><strong>{lead.name}</strong><span>{formatCurrency(lead.value)}</span></div>{getLeadAiScore(lead) && <div className="lead-ai-probability"><span>AI Score {getLeadAiScore(lead).score}/100 · {tempLabel(getLeadAiScore(lead).temperature)} · {channelLabel(getLeadAiScore(lead).recommendedChannel)}</span><i style={{ width: `${getLeadAiScore(lead).score}%` }} /></div>}{getAiBadges(lead).length > 0 && <div className="ai-badge-row">{getAiBadges(lead).map((badge) => <b className="ai-neon-badge" key={badge}>{badge}</b>)}</div>}
                       <p>{lead.company || (isTelegramLead(lead) ? lead.telegram || "Telegram контакт" : "Компания не указана")}</p>
-                      <div className="lead-card-meta"><small><i />{stageMap[lead.status] || lead.status}</small><span className={`source-pill ${lead.source === "telegram" ? "telegram-source" : ""}`}>{formatLeadSource(lead.source)}</span></div>{getAiRecommendation(lead) && <div className="ai-card-recommendation"><span>AI</span>{getAiSummaryText(getAiRecommendation(lead))}</div>}{isTelegramLead(lead) && <div className="telegram-card-status"><span className={`telegram-presence-dot ${lead.telegramOnline ? 'online' : 'offline'}`} />{lead.telegramOnline ? 'online' : 'offline'} · {lead.lastMessageAt ? formatDate(lead.lastMessageAt) : 'нет сообщений'}</div>}
+                      <div className="lead-card-meta"><small><i />{stageMap[lead.status] || lead.status}</small><span className={`source-pill ${lead.source === "telegram" ? "telegram-source" : ""}`}>{formatLeadSource(lead.source)}</span></div>{getLeadAiScore(lead)?.recommendedNextStep && <div className="ai-card-recommendation"><span>AI</span>{getLeadAiScore(lead).recommendedNextStep}</div>}{!getLeadAiScore(lead)?.recommendedNextStep && getAiRecommendation(lead) && <div className="ai-card-recommendation"><span>AI</span>{getAiSummaryText(getAiRecommendation(lead))}</div>}{isTelegramLead(lead) && <div className="telegram-card-status"><span className={`telegram-presence-dot ${lead.telegramOnline ? 'online' : 'offline'}`} />{lead.telegramOnline ? 'online' : 'offline'} · {lead.lastMessageAt ? formatDate(lead.lastMessageAt) : 'нет сообщений'}</div>}
                     </article>
                   ))}
                 </div>
@@ -1028,6 +1033,8 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                 <div className="ai-badge-row detail-ai-badges">{getAiBadges(lead).map((badge) => <b className="ai-neon-badge" key={badge}>{badge}</b>)}</div>
                 <div className="ai-recommendation-grid">
                   <div><span>AI score</span><strong>{getLeadAiScore(lead).score}/100 · {tempLabel(getLeadAiScore(lead).temperature)}</strong></div>
+                  <div><span>Приоритет</span><strong>{tempLabel(getLeadAiScore(lead).temperature)}</strong></div>
+                  <div><span>Канал</span><strong>{channelLabel(getLeadAiScore(lead).recommendedChannel)}</strong></div>
                   <div><span>Риск</span><strong>{riskLabel(getLeadAiScore(lead).riskLevel)}</strong></div>
                   <div><span>Прогноз конверсии</span><strong>{getLeadAiScore(lead).dealProbability >= 70 ? 'Высокий шанс оплаты' : getLeadAiScore(lead).dealProbability >= 40 ? 'Нужно усилить доверие' : 'Низкая готовность к покупке'}</strong></div>
                   <div><span>Идеальное время</span><strong>{getLeadAiScore(lead).idealContactTiming || 'сегодня'}</strong></div>
@@ -1058,7 +1065,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                 </div>
               ) : <p className="empty-state">Запустите «Анализ лида», чтобы получить AI рекомендации.</p>}
               {Array.isArray(getAiRecommendation(lead)?.recommendations) && <ul className="ai-recommendation-list">{getAiRecommendation(lead).recommendations.map((item, index) => <li key={`${item}-${index}`}>{item}</li>)}</ul>}
-              {getLeadAiScore(lead) && <div className="ai-advisor-strip"><p><b>Рекомендуемый CTA:</b> {getLeadAiScore(lead).recommendedCta || "Назначить следующий шаг"}</p><p><b>Возражения:</b> {(getLeadAiScore(lead).objectionsDetected || []).join(", ") || "не обнаружены"}</p></div>}
+              {getLeadAiScore(lead) && <div className="ai-advisor-strip"><p><b>AI рекомендация:</b> {getLeadAiScore(lead).recommendedNextStep || getLeadAiScore(lead).nextBestAction || "Назначить следующий шаг"}</p><p><b>Рекомендуемый CTA:</b> {getLeadAiScore(lead).recommendedCta || "Назначить следующий шаг"}</p><p><b>Возражения:</b> {(getLeadAiScore(lead).objectionsDetected || []).join(", ") || "не обнаружены"}</p></div>}
             </div>
 
             <div className="detail-section ai-action-center-card execution-center-card">

@@ -71,16 +71,22 @@ function normalizeAiScore(row) {
     score: Number(row.score || 0),
     temperature: row.temperature || 'cold',
     dealProbability: Number(row.deal_probability ?? row.dealProbability ?? 0),
-    urgencyLevel: row.urgency_level || row.urgencyLevel || 'low',
+    urgency: row.urgency || row.urgency_level || row.urgencyLevel || 'low',
+    urgencyLevel: row.urgency_level || row.urgencyLevel || row.urgency || 'low',
     engagementLevel: row.engagement_level || row.engagementLevel || row.temperature || 'cold',
     riskLevel: row.risk_level || row.riskLevel || 'medium',
-    aiSummary: row.ai_summary || row.aiSummary || '',
-    nextBestAction: row.next_best_action || row.nextBestAction || '',
+    budgetProbability: Number(row.budget_probability ?? row.budgetProbability ?? row.deal_probability ?? row.dealProbability ?? 0),
+    aiSummary: row.ai_summary || row.aiSummary || row.intent_summary || row.intentSummary || '',
+    intentSummary: row.intent_summary || row.intentSummary || row.ai_summary || row.aiSummary || '',
+    nextBestAction: row.next_best_action || row.nextBestAction || row.recommended_next_step || row.recommendedNextStep || '',
+    recommendedNextStep: row.recommended_next_step || row.recommendedNextStep || row.next_best_action || row.nextBestAction || '',
     idealContactTiming: row.ideal_contact_timing || row.idealContactTiming || '',
     objectionsDetected: row.objections_detected || row.objectionsDetected || [],
     recommendedCta: row.recommended_cta || row.recommendedCta || '',
     recommendedChannel: row.recommended_channel || row.recommendedChannel || '',
-    generatedAt: row.generated_at || row.generatedAt,
+    confidence: Number(row.confidence ?? 0),
+    generatedAt: row.generated_at || row.generatedAt || row.created_at || row.createdAt,
+    createdAt: row.created_at || row.createdAt || row.generated_at || row.generatedAt,
   }
 }
 
@@ -529,10 +535,10 @@ async function buildIntelligenceContext(userId, workspaceId, leadId) {
 
 async function saveLeadAiScore(client, workspaceId, leadId, intelligence) {
   const result = await client.query(
-    `INSERT INTO lead_ai_scores(workspace_id, lead_id, score, temperature, deal_probability, urgency_level, engagement_level, ai_summary, next_best_action, risk_level, ideal_contact_timing, objections_detected, recommended_cta, recommended_channel)
-     VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+    `INSERT INTO lead_ai_scores(workspace_id, lead_id, score, temperature, urgency, budget_probability, intent_summary, recommended_channel, recommended_next_step, confidence, deal_probability, urgency_level, engagement_level, ai_summary, next_best_action, risk_level, ideal_contact_timing, objections_detected, recommended_cta)
+     VALUES($1, $2, $3, $4, $6, $15, $8, $14, $9, $16, $5, $6, $7, $8, $9, $10, $11, $12, $13)
      RETURNING *`,
-    [workspaceId, leadId, intelligence.score, intelligence.temperature, intelligence.dealProbability, intelligence.urgencyLevel, intelligence.engagementLevel, intelligence.aiSummary, intelligence.nextBestAction, intelligence.riskLevel, intelligence.idealContactTiming, JSON.stringify(intelligence.objectionsDetected || []), intelligence.recommendedCta, intelligence.recommendedChannel]
+    [workspaceId, leadId, intelligence.score, intelligence.temperature, intelligence.dealProbability, intelligence.urgencyLevel, intelligence.engagementLevel, intelligence.aiSummary, intelligence.nextBestAction, intelligence.riskLevel, intelligence.idealContactTiming, JSON.stringify(intelligence.objectionsDetected || []), intelligence.recommendedCta, intelligence.recommendedChannel, intelligence.budgetProbability || intelligence.dealProbability, intelligence.confidence || 70]
   )
   return normalizeAiScore(result.rows[0])
 }
@@ -624,7 +630,8 @@ async function getStats(userId, workspaceId) {
          SELECT DISTINCT ON (lead_id) lead_id, score, deal_probability, urgency_level, risk_level
            FROM lead_ai_scores WHERE workspace_id = $1 ORDER BY lead_id, generated_at DESC
        )
-       SELECT COUNT(*) FILTER (WHERE score >= 70)::int AS hot_leads,
+       SELECT COUNT(*) FILTER (WHERE COALESCE(temperature, CASE WHEN score >= 75 THEN 'hot' WHEN score >= 45 THEN 'warm' ELSE 'cold' END) = 'hot' OR score >= 75)::int AS hot_leads,
+              COUNT(*) FILTER (WHERE COALESCE(temperature, CASE WHEN score >= 75 THEN 'hot' WHEN score >= 45 THEN 'warm' ELSE 'cold' END) = 'warm' OR (score >= 45 AND score < 75))::int AS warm_leads,
               COUNT(*) FILTER (WHERE risk_level = 'high')::int AS at_risk_deals,
               COALESCE(AVG(score), 0)::numeric AS average_score,
               COALESCE(SUM(l.value * latest.deal_probability / 100.0) FILTER (WHERE c.status NOT IN ('won','lost')), 0)::numeric AS predicted_revenue,
@@ -707,11 +714,13 @@ async function getStats(userId, workspaceId) {
       conversionRate: total ? Math.round((wonDeals / total) * 100) : 0,
       assistedDeals: Number(aiMetrics.assisted_deals || 0),
       hotLeads: Number(aiRevenue.hot_leads || 0),
+      warmLeads: Number(aiRevenue.warm_leads || 0),
       predictedRevenue: Number(aiRevenue.predicted_revenue || 0),
       atRiskDeals: Number(aiRevenue.at_risk_deals || 0),
       followUpsPending: Number(aiRevenue.followups_pending || 0),
       averageLeadScore: Math.round(Number(aiRevenue.average_score || 0)),
       conversionForecast: Math.round(Number(aiRevenue.conversion_forecast || 0)),
+      conversionProbability: Math.round(Number(aiRevenue.conversion_forecast || 0)),
       pendingApproval: Number(aiExecution.pending_approval || 0),
       sentToday: Number(aiExecution.sent_today || 0),
       failedActions: Number(aiExecution.failed || 0),

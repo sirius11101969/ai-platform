@@ -1,7 +1,7 @@
 const pool = require('../db/pool')
 const aiAgentModel = require('../models/aiAgentModel')
 const { addTimelineEvent } = require('./timelineService')
-const { scoreLeadContext } = require('./leadIntelligenceService')
+const { createQualificationQueueItem, ensureSdrWorker, scheduleLeadQualification } = require('./leadQualificationService')
 
 const PUBLIC_LEAD_FIELDS = ['name', 'email', 'phone', 'telegram', 'company', 'message', 'source', 'page_url', 'utm_source', 'utm_medium', 'utm_campaign']
 const MAX_FIELD_LENGTHS = {
@@ -123,17 +123,6 @@ async function resolveWorkspace(client) {
   return { workspaceId: workspace.id, workspaceName: workspace.name, userId: workspace.owner_user_id, reason }
 }
 
-async function ensureSdrWorker(client, workspaceId) {
-  const result = await client.query(
-    `INSERT INTO ai_workers(workspace_id, name, type, status, mode, description)
-     VALUES($1, 'AI SDR', 'ai_sdr_agent', 'active', 'approval_required', 'Проверяет новых лидов с лендинга и готовит безопасные рекомендации для менеджера.')
-     ON CONFLICT (workspace_id, type) DO UPDATE SET updated_at = NOW()
-     RETURNING id`,
-    [workspaceId]
-  )
-  return result.rows[0]
-}
-
 function buildMetadata(input, requestMeta = {}) {
   return {
     landing: true,
@@ -214,13 +203,6 @@ async function createPublicLead(payload, requestMeta = {}) {
     })
 
     const context = buildLeadContext(lead, metadata)
-    const score = scoreLeadContext(context, {})
-    await client.query(
-      `INSERT INTO lead_ai_scores(workspace_id, lead_id, score, temperature, deal_probability, urgency_level, engagement_level, ai_summary, next_best_action, risk_level, ideal_contact_timing, objections_detected, recommended_cta, recommended_channel)
-       VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
-      [workspaceId, lead.id, score.score, score.temperature, score.dealProbability, score.urgencyLevel, score.engagementLevel, score.aiSummary, score.nextBestAction, score.riskLevel, score.idealContactTiming, JSON.stringify(score.objectionsDetected || []), score.recommendedCta, score.recommendedChannel]
-    )
-
     const agent = await client.query(
       `INSERT INTO ai_agents(workspace_id, name, type, status, config)
        VALUES($1, 'AI Sales Agent', 'sales', 'active', $2)
@@ -237,14 +219,18 @@ async function createPublicLead(payload, requestMeta = {}) {
     actionId = action.rows[0].id
 
     const worker = await ensureSdrWorker(client, workspaceId)
-    await client.query(
-      `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
-       VALUES($1, $2, $3, 'create_reminder', 'pending_approval', $4, $5, $6)`,
-      [worker.id, workspaceId, lead.id, 'Проверить нового лида', 'Новый лид с лендинга. Проверьте контактные данные, UTM-источник и запустите безопасный следующий шаг.', { leadId: lead.id, aiAgentActionId: actionId, source: 'landing', pageUrl: input.page_url, utm: metadata.utm, reminderText: 'Проверить нового лида с лендинга' }]
-    )
+    const queueItem = await createQualificationQueueItem(client, {
+      workspaceId,
+      leadId: lead.id,
+      workerId: worker.id,
+      title: `Квалифицировать лида — ${lead.name}`,
+      recommendation: 'AI квалификация поставлена в очередь: будет рассчитан score, приоритет, канал и следующий шаг.',
+      payload: { leadId: lead.id, aiAgentActionId: actionId, source: 'landing', pageUrl: input.page_url, utm: metadata.utm },
+    })
 
     await client.query('COMMIT')
-    return { leadId: lead.id, workspaceId, actionId }
+    scheduleLeadQualification({ workspaceId, leadId: lead.id, queueId: queueItem.id })
+    return { leadId: lead.id, workspaceId, actionId, queueId: queueItem.id }
   } catch (error) {
     await client.query('ROLLBACK')
     throw error

@@ -412,8 +412,27 @@ async function migrate() {
       objections_detected JSONB NOT NULL DEFAULT '[]'::jsonb,
       recommended_cta TEXT,
       recommended_channel TEXT,
-      generated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      urgency TEXT NOT NULL DEFAULT 'low',
+      budget_probability INTEGER NOT NULL DEFAULT 0 CHECK (budget_probability >= 0 AND budget_probability <= 100),
+      intent_summary TEXT NOT NULL DEFAULT '',
+      recommended_next_step TEXT NOT NULL DEFAULT '',
+      confidence INTEGER NOT NULL DEFAULT 0 CHECK (confidence >= 0 AND confidence <= 100),
+      generated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+
+    ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS urgency TEXT NOT NULL DEFAULT 'low';
+    ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS budget_probability INTEGER NOT NULL DEFAULT 0 CHECK (budget_probability >= 0 AND budget_probability <= 100);
+    ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS intent_summary TEXT NOT NULL DEFAULT '';
+    ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS recommended_next_step TEXT NOT NULL DEFAULT '';
+    ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS confidence INTEGER NOT NULL DEFAULT 0 CHECK (confidence >= 0 AND confidence <= 100);
+    ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+    UPDATE lead_ai_scores
+       SET urgency = COALESCE(NULLIF(urgency, ''), urgency_level, 'low'),
+           intent_summary = COALESCE(NULLIF(intent_summary, ''), ai_summary, ''),
+           recommended_next_step = COALESCE(NULLIF(recommended_next_step, ''), next_best_action, ''),
+           confidence = CASE WHEN confidence = 0 THEN LEAST(100, GREATEST(0, score)) ELSE confidence END,
+           created_at = COALESCE(created_at, generated_at, NOW());
 
     CREATE TABLE IF NOT EXISTS ai_followup_sequences (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -439,6 +458,12 @@ async function migrate() {
       END IF;
       IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'lead_ai_scores_engagement_valid') THEN
         ALTER TABLE lead_ai_scores ADD CONSTRAINT lead_ai_scores_engagement_valid CHECK (engagement_level IN ('cold', 'warm', 'hot'));
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'lead_ai_scores_urgency_alias_valid') THEN
+        ALTER TABLE lead_ai_scores ADD CONSTRAINT lead_ai_scores_urgency_alias_valid CHECK (urgency IN ('low', 'medium', 'high'));
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'lead_ai_scores_channel_valid') THEN
+        ALTER TABLE lead_ai_scores ADD CONSTRAINT lead_ai_scores_channel_valid CHECK (recommended_channel IS NULL OR recommended_channel IN ('telegram', 'email', 'phone', 'crm_task', 'Telegram', 'Email', 'Задача менеджеру'));
       END IF;
       IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'lead_ai_scores_risk_valid') THEN
         ALTER TABLE lead_ai_scores ADD CONSTRAINT lead_ai_scores_risk_valid CHECK (risk_level IN ('low', 'medium', 'high'));
@@ -774,6 +799,8 @@ async function migrate() {
     CREATE INDEX IF NOT EXISTS idx_crm_activity_user_id ON crm_activity(user_id);
     CREATE INDEX IF NOT EXISTS idx_crm_activity_lead_id ON crm_activity(lead_id);
     CREATE INDEX IF NOT EXISTS idx_lead_ai_scores_latest ON lead_ai_scores(workspace_id, lead_id, generated_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_lead_ai_scores_priority_dashboard ON lead_ai_scores(workspace_id, temperature, score DESC, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_lead_prioritization ON ai_worker_queue(workspace_id, action_type, status, created_at DESC) WHERE action_type = 'lead_prioritization';
     CREATE INDEX IF NOT EXISTS idx_ai_followup_sequences_pending ON ai_followup_sequences(workspace_id, status, scheduled_for DESC);
     CREATE INDEX IF NOT EXISTS idx_ai_agents_workspace_type ON ai_agents(workspace_id, type);
     CREATE INDEX IF NOT EXISTS idx_ai_agent_actions_queue ON ai_agent_actions(status, priority DESC, next_retry_at, created_at);
