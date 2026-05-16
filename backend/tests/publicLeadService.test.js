@@ -185,7 +185,7 @@ async function runCreatePublicLeadWorkspaceConsistencyTest() {
       if (query.startsWith('INSERT INTO ai_worker_queue(')) {
         workspaceUsages.queue = params[1]
         assert.strictEqual(params[3], 'Квалифицировать лида — Landing Lead')
-        assert.strictEqual(params[4].includes('AI квалификация'), true)
+        assert.strictEqual(params[4].includes('Анализ лида'), true)
         assert.strictEqual(params[5].leadId, leadId)
         return { rows: [{ id: 'queue-1' }], rowCount: 1 }
       }

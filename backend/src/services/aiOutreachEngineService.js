@@ -2,6 +2,35 @@ const { addTimelineEvent } = require('./timelineService')
 
 const OUTREACH_TYPES = ['first_contact', 'followup_24h', 'followup_3d', 'meeting_request', 'demo_offer']
 const QUEUE_ACTIONS = ['telegram_draft', 'email_draft']
+const INTERNAL_COPY_PATTERNS = [
+  /лид\s+проявил\s+интерес\s+к\s+темам:?/gi,
+  /intent\s*summary/gi,
+  /temperature/gi,
+  /score/gi,
+  /qualification/gi,
+  /ai\s*detected/gi,
+  /AI\s*detected/gi,
+]
+
+const TAG_MEANINGS = [
+  { pattern: /\bcrm\b|срм|воронк|pipeline/i, meaning: 'автоматизации CRM' },
+  { pattern: /follow\s*-?up|фоллоу|касани|напомин|догон/i, meaning: 'follow-up с клиентами' },
+  { pattern: /telegram|телеграм/i, meaning: 'коммуникаций в Telegram' },
+  { pattern: /email|почт|письм/i, meaning: 'email-коммуникаций' },
+  { pattern: /\bai\b|ии|нейро|автоматизац/i, meaning: 'AI-автоматизации продаж' },
+  { pattern: /интеграц|api|amo|bitrix|битрикс/i, meaning: 'связки с текущими инструментами' },
+  { pattern: /демо|demo|презентац|показ/i, meaning: 'демонстрации решения' },
+  { pattern: /стоим|цен|тариф|бюджет/i, meaning: 'оценки стоимости внедрения' },
+  { pattern: /лид|заявк|обращен/i, meaning: 'обработки входящих лидов' },
+]
+
+const PAIN_POINTS = [
+  { pattern: /ручн|рутин|оператор|менеджер/i, text: 'снизить ручную нагрузку на менеджеров' },
+  { pattern: /теря|пропуск|забы|не отвеч/i, text: 'не терять follow-up и ответы клиентов' },
+  { pattern: /скор|быстр|сразу|24/i, text: 'ускорить первые касания' },
+  { pattern: /telegram|телеграм|email|почт/i, text: 'вести Telegram/email без разрозненных черновиков' },
+  { pattern: /квалиф|приоритет|горяч|lead score/i, text: 'быстрее понимать приоритет лидов' },
+]
 
 function clean(value, fallback = '') {
   const normalized = String(value || '').trim()
@@ -34,85 +63,156 @@ function selectedOutreachTypes(score, temperature) {
   return []
 }
 
-function buildIntent(lead, intelligence = {}) {
+function unique(values) {
+  return [...new Set(values.filter(Boolean))]
+}
+
+function stripInternalCopy(value) {
+  let text = clean(value)
+  for (const pattern of INTERNAL_COPY_PATTERNS) text = text.replace(pattern, '')
+  return text
+    .replace(/\.{2,}/g, '.')
+    .replace(/\s+([,.!?])/g, '$1')
+    .replace(/[\s:;,-]+$/g, '')
+    .replace(/^[\s:;,-]+/g, '')
+    .trim()
+}
+
+function sourceLabel(source) {
+  const normalized = String(source || '').toLowerCase()
+  if (normalized === 'telegram') return 'сообщение в Telegram'
+  if (normalized === 'landing' || normalized === 'site' || normalized === 'website') return 'заявку с сайта'
+  if (normalized === 'email') return 'письмо'
+  if (normalized === 'referral') return 'рекомендацию'
+  return 'запрос'
+}
+
+function textFromLead(lead = {}, intelligence = {}) {
   const metadata = lead.metadata || {}
-  return clean(intelligence.intentSummary || intelligence.aiSummary || metadata.intent || metadata.message || lead.notes || lead.first_message, 'интерес к AI CRM и автоматизации продаж')
+  return [
+    intelligence.intentSummary,
+    intelligence.aiSummary,
+    intelligence.nextBestAction,
+    metadata.businessNeed,
+    metadata.intent,
+    metadata.message,
+    lead.notes,
+    lead.notesText,
+    lead.first_message,
+  ].filter(Boolean).join('\n')
+}
+
+function inferBusinessMeanings(text) {
+  const source = String(text || '')
+  return unique(TAG_MEANINGS.filter((item) => item.pattern.test(source)).map((item) => item.meaning))
+}
+
+function inferPainPoints(text, intelligence = {}) {
+  const detected = PAIN_POINTS.filter((item) => item.pattern.test(String(text || ''))).map((item) => item.text)
+  const objections = Array.isArray(intelligence.objectionsDetected) ? intelligence.objectionsDetected : []
+  if (objections.length) detected.push('аккуратно снять вопросы перед следующим шагом')
+  return unique(detected).slice(0, 2)
+}
+
+function humanJoin(items) {
+  const values = unique(items)
+  if (!values.length) return ''
+  if (values.length === 1) return values[0]
+  return `${values.slice(0, -1).join(', ')} и ${values[values.length - 1]}`
+}
+
+function buildCopyContext(lead = {}, intelligence = {}) {
+  const rawText = textFromLead(lead, intelligence)
+  const sanitizedText = stripInternalCopy(rawText)
+  const meanings = inferBusinessMeanings(rawText)
+  const painPoints = inferPainPoints(rawText, intelligence)
+  const inferredNeed = humanJoin(meanings.slice(0, 3)) || stripInternalCopy(sanitizedText) || 'автоматизации продаж и follow-up'
+  const businessNeed = inferredNeed.replace(/^интерес\s+к\s+/i, '').replace(/^по\s+/i, '')
+
+  return {
+    name: firstName(lead.name),
+    company: clean(lead.company),
+    companyContext: lead.company ? `для компании ${lead.company}` : 'для вашей команды',
+    source: sourceLabel(lead.source),
+    businessNeed,
+    painPoints,
+    painPointText: humanJoin(painPoints),
+    channel: normalizeChannel(intelligence.recommendedChannel, lead),
+  }
+}
+
+function buildIntent(lead, intelligence = {}) {
+  return buildCopyContext(lead, intelligence).businessNeed
 }
 
 function buildTelegramDraft(type, lead, intelligence = {}) {
-  const name = firstName(lead.name)
-  const company = clean(lead.company)
-  const source = clean(lead.source, 'CRM')
-  const intent = buildIntent(lead, intelligence)
-  const channel = normalizeChannel(intelligence.recommendedChannel, lead)
-  const context = company ? `для ${company}` : 'для вашей команды'
-  const sourceText = source === 'telegram' ? 'по вашему сообщению в Telegram' : source === 'landing' ? 'по заявке с сайта' : 'по вашему запросу'
+  const context = buildCopyContext(lead, intelligence)
+  const painLine = context.painPointText ? `Можно быстро понять, как ${context.painPointText}.` : 'Можно быстро понять, где автоматизация даст пользу без лишнего внедрения.'
 
   const templates = {
-    first_contact: `${name}, добрый день! Увидел ${sourceText} про ${intent}. Могу коротко показать, как AS6 AI CRM автоматизирует follow-up и коммуникации ${context} без спама.`,
-    followup_24h: `${name}, добрый день! Возвращаюсь к запросу про ${intent}. Если актуально, подскажу 2–3 быстрых шага для запуска AI follow-up ${context}.`,
-    followup_3d: `${name}, добрый день! Не хочу отвлекать лишним — просто уточню, актуальна ли ещё задача по ${intent}? Если да, предложу короткий план внедрения.`,
-    meeting_request: `${name}, добрый день! Предлагаю созвониться на 15 минут и разобрать, как AI CRM закроет ваш сценарий ${context}. Удобно сегодня или завтра?`,
-    demo_offer: `${name}, добрый день! Могу показать короткое demo AS6 AI CRM на примере ${intent}: лиды, Telegram/email черновики и follow-up очередь. Когда удобно посмотреть?`,
+    first_contact: `${context.name}, добрый день!\nУвидел ${context.source} по ${context.businessNeed}.\n${painLine}\nАктуально обсудить автоматизацию follow-up?`,
+    followup_24h: `${context.name}, добрый день!\nВозвращаюсь к вашему запросу по ${context.businessNeed}.\nМогу предложить 2–3 практичных шага ${context.companyContext}.\nУдобно коротко обсудить на этой неделе?`,
+    followup_3d: `${context.name}, добрый день!\nАккуратно уточню: задача по ${context.businessNeed} ещё актуальна?\nЕсли да — подскажу самый простой следующий шаг.`,
+    meeting_request: `${context.name}, добрый день!\nПредлагаю 15 минут разобрать ваш сценарий ${context.companyContext}: лиды, Telegram/email и follow-up.\nУдобно созвониться на этой неделе?`,
+    demo_offer: `${context.name}, добрый день!\nМогу показать короткое демо AS6 AI CRM под задачу по ${context.businessNeed}.\nПокажу, как готовятся черновики и follow-up без спама.\nУдобно посмотреть на этой неделе?`,
   }
 
-  return { text: templates[type], channel }
+  return { text: templates[type], channel: context.channel }
 }
 
 function buildEmailDraft(type, lead, intelligence = {}) {
-  const name = firstName(lead.name)
-  const company = clean(lead.company, 'вашей команды')
-  const intent = buildIntent(lead, intelligence)
-  const score = Number(intelligence.score || 0)
-  const temp = temperatureFrom(score, intelligence.temperature)
-  const cta = type === 'demo_offer'
-    ? 'Посмотреть короткое demo на 15 минут'
-    : type === 'meeting_request'
-      ? 'Согласовать 15-минутный созвон'
-      : 'Ответить, актуальна ли задача сейчас'
+  const context = buildCopyContext(lead, intelligence)
+  const ctaByType = {
+    first_contact: 'Актуально обсудить автоматизацию follow-up?',
+    followup_24h: 'Удобно показать 2–3 подходящих сценария на этой неделе?',
+    followup_3d: 'Подскажите, задача ещё актуальна?',
+    meeting_request: 'Удобно созвониться на 15 минут на этой неделе?',
+    demo_offer: 'Удобно показать демо на этой неделе?',
+  }
 
   const subjects = {
-    first_contact: `AI CRM для ${company}`,
-    followup_24h: `Следующий шаг по AI CRM`,
-    followup_3d: `Актуален ли запрос по AI CRM?`,
-    meeting_request: `15 минут про AI CRM и follow-up`,
-    demo_offer: `Demo AS6 AI CRM под ваш сценарий`,
+    first_contact: `AS6 AI CRM для ${context.company || 'вашей команды'}`,
+    followup_24h: `По вашему запросу про CRM и follow-up`,
+    followup_3d: `Актуальна ли автоматизация follow-up?`,
+    meeting_request: `15 минут про CRM и follow-up`,
+    demo_offer: `Демо AS6 AI CRM под ваш сценарий`,
   }
 
-  const opener = `${name}, добрый день!`
+  const opener = `${context.name}, добрый день!`
+  const painSentence = context.painPointText ? `По описанию может быть полезно ${context.painPointText}.` : 'Можно начать с небольшого сценария без сложного внедрения.'
   const bodyByType = {
-    first_contact: `${opener}\n\nУвидел ваш запрос: ${intent}. AS6 AI CRM помогает sales-командам автоматически квалифицировать лидов, готовить Telegram/email черновики и не терять follow-up.\n\nДля ${company} можно начать с простого сценария: лид → AI score → черновик → approval → отправка.`,
-    followup_24h: `${opener}\n\nВозвращаюсь к вашему запросу по ${intent}. Похоже, здесь можно быстро снять ручную нагрузку с менеджеров и ускорить первые касания.\n\nГотов предложить короткий план запуска без сложного внедрения.`,
-    followup_3d: `${opener}\n\nАккуратно уточню, актуальна ли ещё задача по ${intent}. Если приоритет изменился — всё ок. Если задача в работе, могу помочь выбрать самый быстрый next step.`,
-    meeting_request: `${opener}\n\nПредлагаю коротко созвониться и разобрать ваш процесс: источники лидов, Telegram/email, правила follow-up и approval. После встречи будет понятно, где AS6 AI CRM даст быстрый эффект.`,
-    demo_offer: `${opener}\n\nМогу показать demo AS6 AI CRM на близком к вашему сценарию примере: AI квалификация, score ${score || '70+'}, ${temp.toUpperCase()} priority, черновики Telegram/email и follow-up jobs.\n\nDemo займёт около 15 минут.`,
+    first_contact: `${opener}\n\nУвидел ${context.source} по ${context.businessNeed}. ${painSentence}\n\nAS6 AI CRM помогает sales-командам готовить Telegram/email черновики, согласовывать отправку и не терять follow-up.`,
+    followup_24h: `${opener}\n\nВозвращаюсь к вашему запросу по ${context.businessNeed}. ${painSentence}\n\nМогу предложить короткий план запуска ${context.companyContext}: от входящего лида до согласованного follow-up.`,
+    followup_3d: `${opener}\n\nАккуратно уточню, актуальна ли ещё задача по ${context.businessNeed}.\n\nЕсли приоритет сохранился, помогу выбрать самый простой следующий шаг. Если нет — всё ок, вернёмся позже.`,
+    meeting_request: `${opener}\n\nПредлагаю коротко созвониться и разобрать ваш процесс: источники лидов, Telegram/email, правила follow-up и согласование черновиков.\n\nПосле разговора будет понятно, какой сценарий можно запустить первым.`,
+    demo_offer: `${opener}\n\nМогу показать демо AS6 AI CRM на близком к вашему сценарию примере: входящий лид, черновик сообщения, согласование и follow-up.\n\nДемо займёт около 15 минут и без обещаний «магического ROI» — только практический сценарий.`,
   }
+  const cta = ctaByType[type]
 
   return {
     subject: subjects[type],
-    body: `${bodyByType[type]}\n\nCTA: ${cta}`,
+    body: `${bodyByType[type]}\n\n${cta}`,
     cta,
-    demoProposal: ['demo_offer', 'meeting_request'].includes(type) ? 'Предложить demo AS6 AI CRM на 15 минут' : '',
+    demoProposal: ['demo_offer', 'meeting_request'].includes(type) ? 'Предложить короткое демо AS6 AI CRM под сценарий клиента' : '',
   }
 }
 
 function buildRecommendation(type, lead, intelligence = {}) {
-  const channel = normalizeChannel(intelligence.recommendedChannel, lead)
-  const temp = temperatureFrom(intelligence.score, intelligence.temperature)
+  const context = buildCopyContext(lead, intelligence)
   const timings = {
-    first_contact: temp === 'hot' ? 'сразу' : 'сегодня',
-    followup_24h: 'через 24 часа, если нет ответа',
+    first_contact: 'сегодня',
+    followup_24h: 'через 24 часа, если клиент не ответит',
     followup_3d: 'через 3 дня без ответа',
-    meeting_request: 'после первого позитивного ответа',
-    demo_offer: 'когда лид подтвердит интерес или попросит детали',
+    meeting_request: 'после позитивного ответа клиента',
+    demo_offer: 'когда клиент подтвердит интерес к разбору сценария',
   }
-  return `Рекомендуемый канал: ${channel}. Тип: ${type}. Отправить ${timings[type]}. Контекст: ${buildIntent(lead, intelligence)}.`
+  return `Подготовить ${context.channel === 'telegram' ? 'короткое сообщение в Telegram' : context.channel === 'email' ? 'короткое письмо' : 'задачу менеджеру'} ${timings[type]}. Фокус: ${context.businessNeed}${context.company ? ` для ${context.company}` : ''}.`
 }
 
 async function ensureOutreachWorker(client, workspaceId) {
   const result = await client.query(
     `INSERT INTO ai_workers(workspace_id, name, type, status, mode, description)
-     VALUES($1, 'AI Outreach Engine', 'ai_crm_assistant', 'active', 'approval_required', 'Генерирует Telegram/email outreach drafts и follow-up jobs после AI квалификации лида.')
+     VALUES($1, 'AI Outreach Engine', 'ai_crm_assistant', 'active', 'approval_required', 'Готовит естественные Telegram/email черновики и follow-up задачи после анализа лида.')
      ON CONFLICT (workspace_id, type) DO UPDATE SET updated_at = NOW()
      RETURNING id`,
     [workspaceId]
@@ -158,7 +258,7 @@ async function createQueueItem(client, { workerId, workspaceId, userId, lead, ou
      RETURNING id`,
     [workerId, workspaceId, lead.id, actionType, title, recommendation, payload]
   )
-  await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'ai_draft_created', title: 'AI черновик создан', body: payload.text || payload.message || recommendation, source: 'ai', metadata: { queueId: result.rows[0].id, actionType, outreachType, channel: payload.channel } })
+  await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'ai_draft_created', title: actionType === 'email_draft' ? 'Черновик письма подготовлен' : 'Черновик Telegram подготовлен', body: payload.text || payload.message || recommendation, source: 'ai', metadata: { queueId: result.rows[0].id, actionType, outreachType, channel: payload.channel } })
   return { id: result.rows[0].id, actionType, outreachType }
 }
 
@@ -189,7 +289,8 @@ async function generateOutreachForLead(client, { workspaceId, userId, lead, inte
   const skipped = []
 
   if (!types.length) {
-    const recommendation = `Cold lead: активную отправку не генерировать. Сначала уточнить потребность и контактный канал. Контекст: ${buildIntent(lead, intelligence)}.`
+    const need = buildIntent(lead, intelligence)
+    const recommendation = `Пока не отправлять активное сообщение. Лучше уточнить потребность и удобный канал связи. Фокус: ${need}.`
     const job = await createFollowupJob(client, { workspaceId, lead, outreachType: 'recommendation_only', channel: 'crm', message: recommendation, recommendation, intelligence: { ...intelligence, temperature } })
     if (job.skipped) skipped.push(job)
     else createdFollowupJobs.push(job)
@@ -197,6 +298,7 @@ async function generateOutreachForLead(client, { workspaceId, userId, lead, inte
   }
 
   for (const outreachType of types) {
+    const copyContext = buildCopyContext(lead, { ...intelligence, temperature })
     const telegram = buildTelegramDraft(outreachType, lead, { ...intelligence, temperature })
     const email = buildEmailDraft(outreachType, lead, { ...intelligence, temperature })
     const recommendation = buildRecommendation(outreachType, lead, { ...intelligence, temperature })
@@ -206,7 +308,8 @@ async function generateOutreachForLead(client, { workspaceId, userId, lead, inte
       leadName: lead.name,
       company: lead.company || '',
       sourceLead: lead.source || '',
-      detectedIntent: buildIntent(lead, intelligence),
+      businessNeed: copyContext.businessNeed,
+      painPoints: copyContext.painPoints,
       recommendedChannel: normalizeChannel(intelligence.recommendedChannel, lead),
       score,
       temperature,
@@ -220,7 +323,7 @@ async function generateOutreachForLead(client, { workspaceId, userId, lead, inte
       lead,
       outreachType,
       actionType: 'telegram_draft',
-      title: `Telegram draft · ${outreachType} · ${lead.name}`,
+      title: `Черновик Telegram · ${lead.name}`,
       recommendation,
       payload: { ...basePayload, channel: 'telegram', text: telegram.text, message: telegram.text },
     })
@@ -231,7 +334,7 @@ async function generateOutreachForLead(client, { workspaceId, userId, lead, inte
       lead,
       outreachType,
       actionType: 'email_draft',
-      title: `Email draft · ${outreachType} · ${lead.name}`,
+      title: `Черновик email · ${lead.name}`,
       recommendation,
       payload: { ...basePayload, channel: 'email', to: lead.email || '', subject: email.subject, text: email.body, message: email.body, cta: email.cta, demoProposal: email.demoProposal },
     })
@@ -244,12 +347,12 @@ async function generateOutreachForLead(client, { workspaceId, userId, lead, inte
 
   await client.query(
     `INSERT INTO crm_activity(user_id, workspace_id, lead_id, type, title, body, metadata)
-     VALUES($1, $2, $3, 'ai_outreach_generated', 'AI outreach drafts generated', $4, $5)`,
-    [userId, workspaceId, lead.id, `${createdQueueItems.length} drafts · ${createdFollowupJobs.length} follow-up jobs · ${temperature.toUpperCase()}`, { source: 'ai_outreach_engine', outreachTypes: types, createdQueueItems, createdFollowupJobs, skipped, score, temperature }]
+     VALUES($1, $2, $3, 'ai_outreach_generated', 'Черновики сообщений подготовлены', $4, $5)`,
+    [userId, workspaceId, lead.id, `${createdQueueItems.length} черновиков и ${createdFollowupJobs.length} follow-up задач готовы к проверке`, { source: 'ai_outreach_engine', outreachTypes: types, createdQueueItems, createdFollowupJobs, skipped, score, temperature }]
   )
-  await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'ai_outreach_generated', title: 'AI outreach generated', body: `${types.join(', ')} · ${temperature.toUpperCase()}`, source: 'ai', metadata: { createdQueueItems, createdFollowupJobs, skipped, score, temperature } })
+  await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'ai_outreach_generated', title: 'Черновики сообщений подготовлены', body: `${createdQueueItems.length} черновиков готовы к проверке менеджером`, source: 'ai', metadata: { createdQueueItems, createdFollowupJobs, skipped, score, temperature } })
 
   return { temperature, outreachTypes: types, createdQueueItems, createdFollowupJobs, skipped }
 }
 
-module.exports = { OUTREACH_TYPES, QUEUE_ACTIONS, buildEmailDraft, buildTelegramDraft, generateOutreachForLead, selectedOutreachTypes, temperatureFrom }
+module.exports = { OUTREACH_TYPES, QUEUE_ACTIONS, buildCopyContext, buildEmailDraft, buildIntent, buildTelegramDraft, generateOutreachForLead, selectedOutreachTypes, stripInternalCopy, temperatureFrom }

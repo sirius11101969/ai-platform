@@ -295,7 +295,7 @@ async function findTelegramLead(client, userId, workspaceId, telegram) {
 async function ensureTelegramApprovalWorker(client, workspaceId) {
   const result = await client.query(
     `INSERT INTO ai_workers(workspace_id, name, type, status, mode, description)
-     VALUES($1, 'AI Telegram Reply Assistant', 'ai_telegram_assistant', 'active', 'approval_required', 'Готовит AI черновики ответов Telegram после входящих сообщений. Отправка только после approval менеджера.')
+     VALUES($1, 'AI Telegram Reply Assistant', 'ai_telegram_assistant', 'active', 'approval_required', 'Готовит черновики ответов Telegram после входящих сообщений. Отправка только после проверки менеджера.')
      ON CONFLICT (workspace_id, type) DO UPDATE SET updated_at = NOW()
      RETURNING id`,
     [workspaceId]
@@ -336,9 +336,9 @@ async function createInboundReplyRecommendations(client, { userId, workspaceId, 
       `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
        VALUES($1, $2, $3, 'telegram_draft', 'pending_approval', $4, $5, $6)
        RETURNING id`,
-      [worker.id, workspaceId, lead.id, `Telegram reply draft · ${lead.name}`, 'AI подготовил ответ на входящее сообщение. Менеджер должен одобрить перед отправкой.', { source: 'telegram_inbound', outreachType: 'inbound_reply_next_step', channel: 'telegram', text, message: text, detectedIntent: telegram.text }]
+      [worker.id, workspaceId, lead.id, `Telegram reply draft · ${lead.name}`, 'Ответ на входящее сообщение подготовлен и ожидает проверки менеджера.', { source: 'telegram_inbound', outreachType: 'inbound_reply_next_step', channel: 'telegram', text, message: text, customerMessage: telegram.text }]
     )
-    await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'ai_draft_created', title: 'AI черновик создан', body: text, source: 'ai', metadata: { queueId: draft.rows[0].id, actionType: 'telegram_draft', intent: 'inbound_reply_next_step' } })
+    await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'ai_draft_created', title: 'Черновик Telegram подготовлен', body: text, source: 'ai', metadata: { queueId: draft.rows[0].id, actionType: 'telegram_draft', outreachType: 'inbound_reply_next_step' } })
   }
 
   const nextStage = nextStageSuggestion(lead.status, telegram.text)
@@ -357,7 +357,7 @@ async function createInboundReplyRecommendations(client, { userId, workspaceId, 
         `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
          VALUES($1, $2, $3, 'move_lead_stage', 'pending_approval', $4, $5, $6)
          RETURNING id`,
-        [worker.id, workspaceId, lead.id, `AI stage suggestion · ${lead.status} → ${nextStage}`, `AI предлагает сменить этап ${lead.status} → ${nextStage} на основе ответа лида. Требуется approval менеджера.`, { source: 'telegram_inbound', currentStatus: lead.status, nextStatus: nextStage, status: nextStage, detectedIntent: telegram.text }]
+        [worker.id, workspaceId, lead.id, `AI stage suggestion · ${lead.status} → ${nextStage}`, `AI предлагает сменить этап ${lead.status} → ${nextStage} на основе ответа лида. Требуется approval менеджера.`, { source: 'telegram_inbound', currentStatus: lead.status, nextStatus: nextStage, status: nextStage, customerMessage: telegram.text }]
       )
       await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'ai_stage_suggested', title: 'AI предложил смену этапа', body: `${lead.status} → ${nextStage}`, source: 'ai', metadata: { queueId: stage.rows[0].id, nextStatus: nextStage } })
     }
@@ -696,7 +696,7 @@ async function processTelegramUpdate(update) {
     return { skipped: false, leadId: crmResult.lead.id, isNew: crmResult.isNew, telegramResponse, emailWorkflow }
   }
 
-  return { skipped: false, leadId: crmResult.lead.id, isNew: crmResult.isNew, approvalRequired: true, message: 'AI черновик создан и ожидает approval менеджера.', emailWorkflow }
+  return { skipped: false, leadId: crmResult.lead.id, isNew: crmResult.isNew, approvalRequired: true, message: 'Черновик создан и ожидает проверки менеджера.', emailWorkflow }
 }
 
 module.exports = {

@@ -37,7 +37,7 @@ function buildRecommendation(lead, intelligence) {
 async function ensureSdrWorker(client, workspaceId) {
   const result = await client.query(
     `INSERT INTO ai_workers(workspace_id, name, type, status, mode, description)
-     VALUES($1, 'AI SDR', 'ai_sdr_agent', 'active', 'approval_required', 'Автоматически квалифицирует новых лидов, считает AI score и готовит рекомендации менеджеру.')
+     VALUES($1, 'AI SDR', 'ai_sdr_agent', 'active', 'approval_required', 'Анализирует новых лидов, определяет приоритет и готовит рекомендации менеджеру.')
      ON CONFLICT (workspace_id, type) DO UPDATE SET updated_at = NOW()
      RETURNING id`,
     [workspaceId]
@@ -138,7 +138,7 @@ async function qualifyLead(client, { lead, userId, workspaceId, queueId = null }
         [lead.worker_id || (await ensureSdrWorker(client, workspaceId)).id, workspaceId, lead.id, `AI stage suggestion · ${lead.status} → ${nextStatus}`, `AI квалификация предлагает сменить этап ${lead.status} → ${nextStatus}. Требуется approval менеджера.`, { source: 'lead_qualification', currentStatus: lead.status, nextStatus, status: nextStatus, score: intelligence.score }]
       )
       stageSuggestion = suggested.rows[0]
-      await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'ai_stage_suggested', title: 'AI предложил смену этапа', body: `${lead.status} → ${nextStatus}`, source: 'ai', metadata: { queueId: stageSuggestion.id, nextStatus, score: intelligence.score } })
+      await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'ai_stage_suggested', title: 'Предложена смена этапа', body: `${lead.status} → ${nextStatus}`, source: 'ai', metadata: { queueId: stageSuggestion.id, nextStatus, score: intelligence.score } })
     }
   }
 
@@ -150,7 +150,7 @@ async function qualifyLead(client, { lead, userId, workspaceId, queueId = null }
       `INSERT INTO ai_followup_jobs(workspace_id, lead_id, rule_type, status, suggested_channel, generated_message, scheduled_for, reason, urgency, metadata)
        VALUES($1, $2, 'hot_lead_auto_qualification', 'suggested', $3, $4, $5, $6, 'high', $7)
        RETURNING *`,
-      [workspaceId, lead.id, suggestedChannel, draft.message, draft.scheduledFor, `AI score ${intelligence.score}/100: горячий лид требует быстрого касания`, { score: intelligence.score, priority, source: 'lead_qualification' }]
+      [workspaceId, lead.id, suggestedChannel, draft.message, draft.scheduledFor, 'Высокий приоритет: стоит быстро связаться с лидом', { score: intelligence.score, priority, source: 'lead_qualification' }]
     )
     followUpJob = followup.rows[0]
   }

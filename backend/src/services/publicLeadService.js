@@ -282,7 +282,7 @@ async function createPublicLead(payload, requestMeta = {}) {
       leadId: lead.id,
       workerId: worker.id,
       title: `Квалифицировать лида — ${lead.name}`,
-      recommendation: 'AI квалификация поставлена в очередь: будет рассчитан score, приоритет, канал и следующий шаг.',
+      recommendation: 'Анализ лида поставлен в очередь: система подготовит приоритет, канал связи и следующий шаг.',
       payload: { leadId: lead.id, aiAgentActionId: actionId, source: 'landing', pageUrl: input.page_url, utm: metadata.utm },
     })
 

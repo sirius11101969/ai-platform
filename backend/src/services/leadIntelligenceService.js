@@ -1,6 +1,18 @@
 const STAGE_WEIGHTS = { new: 18, qualified: 32, proposal: 52, booked: 68, won: 100, lost: 3 }
 
 const BUYING_KEYWORDS = ['demo', 'crm', 'automation', 'ai', 'sales', 'integration', 'команда', 'внедрение', 'тариф', 'стоимость']
+const KEYWORD_BUSINESS_MEANINGS = {
+  demo: 'демонстрацию решения',
+  crm: 'автоматизацию CRM',
+  automation: 'автоматизацию продаж',
+  ai: 'AI-помощника для продаж',
+  sales: 'процесс продаж',
+  integration: 'интеграцию с текущими инструментами',
+  'команда': 'работу отдела продаж',
+  'внедрение': 'запуск решения',
+  'тариф': 'стоимость и формат подключения',
+  'стоимость': 'стоимость и формат подключения',
+}
 const DISPOSABLE_DOMAINS = ['mailinator.com', '10minutemail.com', 'tempmail.com', 'guerrillamail.com', 'yopmail.com', 'trashmail.com']
 const FREE_EMAIL_DOMAINS = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'mail.ru', 'yandex.ru', 'icloud.com']
 
@@ -11,6 +23,22 @@ function clamp(value, min = 0, max = 100) {
 function hoursSince(value) {
   if (!value) return 9999
   return Math.max(0, (Date.now() - new Date(value).getTime()) / 36e5)
+}
+
+function humanJoin(values) {
+  const unique = [...new Set(values.filter(Boolean))]
+  if (!unique.length) return ''
+  if (unique.length === 1) return unique[0]
+  return `${unique.slice(0, -1).join(', ')} и ${unique[unique.length - 1]}`
+}
+
+function buildHumanLeadSummary({ keywordHits, positiveIntent, negativeIntent, spamLike }) {
+  const meanings = humanJoin(keywordHits.map((keyword) => KEYWORD_BUSINESS_MEANINGS[keyword] || keyword))
+  if (meanings) return `Запрос связан с ${meanings}.`
+  if (positiveIntent) return 'Клиент заинтересован в следующем шаге и готов обсудить детали.'
+  if (negativeIntent) return 'Есть сомнения или отложенное решение — лучше аккуратно уточнить актуальность.'
+  if (spamLike) return 'Сообщение похоже на нерелевантное обращение; лучше проверить вручную.'
+  return 'Контекст собран из CRM, Telegram, задач и email; стоит уточнить бизнес-потребность.'
 }
 
 function detectObjections(text) {
@@ -79,7 +107,7 @@ function scoreLeadContext(context, aiOutput = {}) {
   const nextBestAction = aiOutput.nextBestAction || aiOutput.followUpRecommendation || (urgencyLevel === 'high' ? `Срочно связаться через ${recommendedChannel === 'crm_task' ? 'CRM-задачу' : recommendedChannel} сегодня` : `Подготовить персональный follow-up через ${recommendedChannel === 'crm_task' ? 'CRM-задачу' : recommendedChannel}`)
   const idealContactTiming = urgencyLevel === 'high' ? 'в ближайшие 2 часа' : hoursInactive >= 24 ? 'сегодня до конца дня' : 'завтра утром'
   const recommendedCta = lead.stage === 'proposal' ? 'Подтвердить оплату или следующий шаг по КП' : lead.stage === 'booked' ? 'Зафиксировать итог встречи и дату решения' : 'Назначить короткий созвон / демо'
-  const aiSummary = aiOutput.reasoning || aiOutput.content || (keywordHits.length ? `Лид проявил интерес к темам: ${keywordHits.join(', ')}.` : positiveIntent ? 'Клиент демонстрирует интерес и готов к следующему шагу.' : negativeIntent ? 'Есть риск потери: обнаружены сомнения или отложенное решение.' : 'AI оценил активность по CRM, Telegram, задачам, timeline и email.')
+  const aiSummary = aiOutput.reasoning || aiOutput.content || buildHumanLeadSummary({ keywordHits, positiveIntent, negativeIntent, spamLike })
   const riskAlert = riskLevel === 'high' ? 'Риск потери через 48 часов' : riskLevel === 'medium' ? 'Нужен контроль следующего касания' : 'Клиент активно вовлечён'
 
   const confidence = clamp(55 + (lead.email ? 8 : 0) + (lead.company ? 8 : 0) + (lead.telegram ? 6 : 0) + Math.min(16, keywordHits.length * 3) + (isLongMessage ? 7 : 0) - (spamLike ? 20 : 0))
