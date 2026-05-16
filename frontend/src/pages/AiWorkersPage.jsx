@@ -73,6 +73,23 @@ function shortRecommendation(item) {
   return text.length > 130 ? `${text.slice(0, 130)}…` : text;
 }
 
+const approvalActionMessages = {
+  approve: "Действие одобрено",
+  reject: "Действие отклонено",
+  execute: "Действие выполнено",
+};
+
+const approvalActionLoadingLabels = {
+  approve: "Одобряем…",
+  reject: "Отклоняем…",
+  execute: "Выполняем…",
+};
+
+function mergeQueueItem(items, nextItem) {
+  if (!nextItem?.id) return items;
+  return items.map((item) => (item.id === nextItem.id ? { ...item, ...nextItem } : item));
+}
+
 export default function AiWorkersPage() {
   const [commandCenter, setCommandCenter] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -81,7 +98,7 @@ export default function AiWorkersPage() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [approvalQueue, setApprovalQueue] = useState({ items: [], metrics: {} });
-  const [busyAction, setBusyAction] = useState("");
+  const [busyAction, setBusyAction] = useState(null);
 
   async function loadCommandCenter({ silent = false } = {}) {
     if (!silent) setLoading(true);
@@ -133,26 +150,47 @@ export default function AiWorkersPage() {
   }
 
   async function handleApprovalAction(item, action) {
-    setBusyAction(item.id);
+    setBusyAction({ itemId: item.id, action });
     setError("");
     setMessage("");
     try {
-      if (action === "approve") await approveAiApprovalQueueItem(item.id);
-      if (action === "reject") await rejectAiApprovalQueueItem(item.id);
-      if (action === "execute") await executeAiApprovalQueueItem(item.id);
-      setMessage(action === "execute" ? "AI действие выполнено или ошибка сохранена в карточке." : "Статус AI действия обновлён.");
-      await loadCommandCenter({ silent: true });
+      let response;
+      if (action === "approve") response = await approveAiApprovalQueueItem(item.id);
+      if (action === "reject") response = await rejectAiApprovalQueueItem(item.id);
+      if (action === "execute") response = await executeAiApprovalQueueItem(item.id);
+
+      const updatedItem = response?.item || null;
+      if (updatedItem) {
+        setApprovalQueue((current) => ({
+          ...current,
+          items: mergeQueueItem(current.items || [], updatedItem),
+        }));
+        setCommandCenter((current) => current ? {
+          ...current,
+          queue: mergeQueueItem(current.queue || [], updatedItem),
+        } : current);
+      }
+
+      if (response?.error) {
+        setError(response.error || "Не удалось выполнить AI действие");
+      } else {
+        setMessage(approvalActionMessages[action] || "Статус AI действия обновлён");
+      }
+
+      loadCommandCenter({ silent: true }).catch((requestError) => {
+        setError(requestError.message || "Не удалось обновить очередь AI действий");
+      });
     } catch (requestError) {
-      setError(requestError.message || "Не удалось обновить AI действие");
+      setError(requestError.message || "Не удалось обновить AI действие. Попробуйте ещё раз.");
     } finally {
-      setBusyAction("");
+      setBusyAction(null);
     }
   }
 
   async function handleEditApprovalItem(item) {
     const recommendation = window.prompt("Изменить рекомендацию AI", item.recommendation || item.title || "");
     if (recommendation === null) return;
-    setBusyAction(item.id);
+    setBusyAction({ itemId: item.id, action: "edit" });
     setError("");
     try {
       await updateAiApprovalQueueItem(item.id, { recommendation });
@@ -161,7 +199,7 @@ export default function AiWorkersPage() {
     } catch (requestError) {
       setError(requestError.message || "Не удалось изменить AI действие");
     } finally {
-      setBusyAction("");
+      setBusyAction(null);
     }
   }
 
@@ -186,6 +224,8 @@ export default function AiWorkersPage() {
   const recentRuns = commandCenter?.recentRuns || [];
   const metrics = commandCenter?.metrics || {};
   const approvalItems = approvalQueue.items || [];
+  const activeApprovalItems = useMemo(() => approvalItems.filter((item) => !["rejected", "completed", "cancelled"].includes(item.status)), [approvalItems]);
+  const approvalHistoryItems = useMemo(() => approvalItems.filter((item) => ["rejected", "completed", "cancelled"].includes(item.status)), [approvalItems]);
   const approvalMetrics = approvalQueue.metrics || {};
   const pendingActions = useMemo(() => queue.filter((item) => item.status === "pending_approval"), [queue]);
   const failedActions = useMemo(() => queue.filter((item) => item.status === "failed"), [queue]);
@@ -239,8 +279,11 @@ export default function AiWorkersPage() {
           <span>Success rate <b>{approvalMetrics.successRate || 0}%</b></span>
         </div>
         <div className="approval-table">
-          {approvalItems.length === 0 && <p className="empty-state">Нет AI действий на одобрение.</p>}
-          {approvalItems.slice(0, 12).map((item) => (
+          {activeApprovalItems.length === 0 && <p className="empty-state">Нет AI действий на одобрение.</p>}
+          {activeApprovalItems.slice(0, 12).map((item) => {
+            const isItemBusy = busyAction?.itemId === item.id;
+            const busyLabel = isItemBusy ? approvalActionLoadingLabels[busyAction.action] : "";
+            return (
             <article className={`approval-row approval-${item.status}`} key={item.id}>
               <div className="approval-main">
                 <strong>{item.title}</strong>
@@ -253,14 +296,38 @@ export default function AiWorkersPage() {
               <div><span>Тип</span><b>{actionTypeLabels[item.executionType] || actionTypeLabels[item.actionType] || item.actionType}</b></div>
               <div><span>Статус</span><b className={`glow-status ${item.status}`}>{approvalStatusLabels[item.status] || item.status}</b><small>{formatDate(item.createdAt)}</small></div>
               <div className="approval-actions">
-                <button type="button" className="ghost-button compact" onClick={() => handleApprovalAction(item, "approve")} disabled={busyAction === item.id || !["pending_approval","failed"].includes(item.status)}>Одобрить</button>
-                <button type="button" className="ghost-button compact" onClick={() => handleEditApprovalItem(item)} disabled={busyAction === item.id || ["executing","completed"].includes(item.status)}>Изменить</button>
-                <button type="button" className="ghost-button compact danger-action" onClick={() => handleApprovalAction(item, "reject")} disabled={busyAction === item.id || ["executing","completed","rejected"].includes(item.status)}>Отклонить</button>
-                <button type="button" className="btn primary compact" onClick={() => handleApprovalAction(item, "execute")} disabled={busyAction === item.id || item.status !== "approved"}>{busyAction === item.id ? "…" : "Выполнить"}</button>
+                <button type="button" className="ghost-button compact" onClick={() => handleApprovalAction(item, "approve")} disabled={isItemBusy || !["pending_approval","failed"].includes(item.status)}>{isItemBusy && busyAction.action === "approve" ? busyLabel : "Одобрить"}</button>
+                <button type="button" className="ghost-button compact" onClick={() => handleEditApprovalItem(item)} disabled={isItemBusy || ["executing","completed"].includes(item.status)}>{isItemBusy && busyAction.action === "edit" ? "Сохраняем…" : "Изменить"}</button>
+                <button type="button" className="ghost-button compact danger-action" onClick={() => handleApprovalAction(item, "reject")} disabled={isItemBusy || ["executing","completed","rejected"].includes(item.status)}>{isItemBusy && busyAction.action === "reject" ? busyLabel : "Отклонить"}</button>
+                <button type="button" className="btn primary compact" onClick={() => handleApprovalAction(item, "execute")} disabled={isItemBusy || item.status !== "approved"}>{isItemBusy && busyAction.action === "execute" ? busyLabel : "Выполнить"}</button>
               </div>
             </article>
-          ))}
+          )})}
         </div>
+        {approvalHistoryItems.length > 0 && (
+          <div className="approval-history-section">
+            <div className="approval-history-head">
+              <h4>История</h4>
+              <span>{approvalHistoryItems.length} завершённых</span>
+            </div>
+            <div className="approval-table approval-history-table">
+              {approvalHistoryItems.slice(0, 8).map((item) => (
+                <article className={`approval-row approval-history-row approval-${item.status}`} key={item.id}>
+                  <div className="approval-main">
+                    <strong>{item.title}</strong>
+                    <p>{shortRecommendation(item)}</p>
+                  </div>
+                  <div><span>Лид</span><b>{item.lead?.name || "—"}</b></div>
+                  <div><span>AI сотрудник</span><b>{item.workerName || "AI"}</b></div>
+                  <div><span>Канал</span><b>{item.payload?.channel || item.payload?.suggestedChannel || (item.lead?.telegram ? "telegram" : item.lead?.email ? "email" : "crm")}</b></div>
+                  <div><span>Тип</span><b>{actionTypeLabels[item.executionType] || actionTypeLabels[item.actionType] || item.actionType}</b></div>
+                  <div><span>Статус</span><b className={`glow-status ${item.status}`}>{approvalStatusLabels[item.status] || item.status}</b><small>{formatDate(item.updatedAt || item.createdAt)}</small></div>
+                  <div className="approval-actions"><span className="approval-history-note">Действие завершено</span></div>
+                </article>
+              ))}
+            </div>
+          </div>
+        )}
       </Panel>
 
       <section className="worker-card-grid">

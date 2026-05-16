@@ -1365,6 +1365,24 @@ button { font: inherit; }
 .glow-status.completed { color: #86efac; }
 .glow-status.failed, .glow-status.rejected { color: #fda4af; }
 
+.approval-history-section {
+  border-top: 1px solid rgba(148, 163, 184, 0.14);
+  margin-top: 18px;
+  padding-top: 18px;
+}
+
+.approval-history-head {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.approval-history-head h4 { margin: 0; }
+.approval-history-head span, .approval-history-note { color: var(--muted-text); font-size: 0.82rem; font-weight: 800; }
+.approval-history-row { opacity: 0.76; }
+
 @media (max-width: 1100px) {
   .approval-row { grid-template-columns: 1fr; }
   .approval-actions { justify-content: flex-start; }
