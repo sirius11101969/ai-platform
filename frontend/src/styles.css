@@ -1376,6 +1376,10 @@ button { font: inherit; }
 
 .approval-row > div span { display: block; color: var(--muted-text); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; }
 .approval-main p { margin: 6px 0 0; color: var(--muted-text); line-height: 1.45; }
+.telegram-reply-draft-card { display: grid; gap: 8px; margin-top: 10px; padding: 10px; border-radius: 16px; background: rgba(14, 165, 233, 0.08); border: 1px solid rgba(56, 189, 248, 0.18); }
+.telegram-reply-draft-card div { padding: 8px; border-radius: 12px; background: rgba(15, 23, 42, 0.42); }
+.telegram-reply-draft-card span { text-transform: none !important; letter-spacing: 0 !important; color: #93c5fd !important; }
+.telegram-reply-draft-card p { margin-top: 4px; color: #e5eefc; white-space: pre-wrap; }
 .approval-stage-details { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 10px; margin-top: 10px; padding: 10px; border-radius: 14px; background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(129, 140, 248, 0.16); }
 .approval-stage-details span { text-transform: none !important; letter-spacing: 0 !important; }
 .approval-stage-details b { display: block; color: #fff; margin-top: 2px; }

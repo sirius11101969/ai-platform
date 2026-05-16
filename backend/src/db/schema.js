@@ -866,7 +866,8 @@ async function migrate() {
     CREATE INDEX IF NOT EXISTS idx_telegram_messages_chat_id ON telegram_messages(workspace_id, telegram_chat_id, created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_crm_leads_active_telegram_chat_id ON crm_leads(workspace_id, telegram_chat_id, status) WHERE telegram_chat_id IS NOT NULL AND status <> 'lost';
     CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_telegram_reply_analysis ON ai_worker_queue(workspace_id, lead_id, status, created_at DESC) WHERE action_type = 'telegram_reply_analysis';
-    CREATE INDEX IF NOT EXISTS idx_lead_timeline_events_telegram_connect_reply ON lead_timeline_events(workspace_id, lead_id, event_type, created_at DESC) WHERE event_type IN ('telegram_connected', 'telegram_reply_received', 'telegram_message_sent');
+    CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_telegram_reply_draft ON ai_worker_queue(workspace_id, lead_id, ((payload->>'telegramMessageId')), status, created_at DESC) WHERE action_type = 'telegram_reply_draft';
+    CREATE INDEX IF NOT EXISTS idx_lead_timeline_events_telegram_connect_reply ON lead_timeline_events(workspace_id, lead_id, event_type, created_at DESC) WHERE event_type IN ('telegram_connected', 'telegram_reply_received', 'telegram_message_sent', 'telegram_reply_analysis_created', 'ai_telegram_reply_drafted');
     CREATE INDEX IF NOT EXISTS idx_crm_followups_user_id ON crm_followups(user_id);
     CREATE INDEX IF NOT EXISTS idx_crm_followups_lead_id ON crm_followups(lead_id);
     CREATE INDEX IF NOT EXISTS idx_crm_activity_user_id ON crm_activity(user_id);

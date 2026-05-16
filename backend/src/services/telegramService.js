@@ -3,7 +3,7 @@ const path = require('path')
 const axios = require('axios')
 const FormData = require('form-data')
 const pool = require('../db/pool')
-const { generateTelegramSalesReply } = require('./crmAiService')
+const { generateTelegramReplyDraft, generateTelegramSalesReply } = require('./crmAiService')
 const crmModel = require('../models/crmModel')
 const { addTimelineEvent } = require('./timelineService')
 const { ensureDefaultWorkspace } = require('../models/workspaceModel')
@@ -461,6 +461,49 @@ function buildTelegramStageReason(currentStatus, nextStage, text) {
   return `AI предлагает сменить этап ${currentStatus} → ${nextStage} на основе ответа лида.`
 }
 
+async function getTelegramReplyDraftContext(client, { workspaceId, lead, telegram }) {
+  const [score, timeline] = await Promise.all([
+    client.query(
+      `SELECT score, temperature, deal_probability, probability_to_close, risk_level, recommended_next_step, ai_summary, generated_at
+         FROM lead_ai_scores
+        WHERE workspace_id = $1 AND lead_id = $2
+        ORDER BY generated_at DESC
+        LIMIT 1`,
+      [workspaceId, lead.id]
+    ),
+    client.query(
+      `SELECT event_type, title, body, source, created_at
+         FROM lead_timeline_events
+        WHERE workspace_id = $1 AND lead_id = $2
+        ORDER BY created_at DESC
+        LIMIT 8`,
+      [workspaceId, lead.id]
+    ),
+  ])
+  const latestScore = score.rows[0] || null
+  return {
+    latestInboundMessage: telegram.text,
+    lead: {
+      id: lead.id,
+      name: lead.name,
+      firstName: lead.first_name || lead.telegram_first_name || '',
+      company: lead.company || '',
+      currentStage: lead.status || '',
+    },
+    aiScore: latestScore ? {
+      score: latestScore.score,
+      temperature: latestScore.temperature,
+      dealProbability: latestScore.deal_probability,
+      probabilityToClose: latestScore.probability_to_close,
+      riskLevel: latestScore.risk_level,
+      summary: latestScore.ai_summary,
+      generatedAt: latestScore.generated_at,
+    } : null,
+    recommendedNextStep: latestScore?.recommended_next_step || buildReplyAnalysisRecommendation(lead, telegram.text),
+    timeline: timeline.rows.map((item) => ({ eventType: item.event_type, title: item.title, body: item.body, source: item.source, createdAt: item.created_at })),
+  }
+}
+
 async function createInboundReplyRecommendations(client, { userId, workspaceId, lead, telegram }) {
   const worker = await ensureTelegramApprovalWorker(client, workspaceId)
   await client.query(
@@ -486,28 +529,28 @@ async function createInboundReplyRecommendations(client, { userId, workspaceId, 
        RETURNING id`,
       [worker.id, workspaceId, lead.id, `Проанализировать ответ Telegram — ${lead.name}`, recommendation, { source: 'telegram_inbound', channel: 'telegram', customerMessage: telegram.text, telegramMessageId: telegram.messageId, chatId: String(telegram.chatId), nextStep: recommendation }]
     )
-    await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'ai_next_action_generated', title: 'AI подготовил анализ ответа Telegram', body: recommendation, source: 'ai', metadata: { queueId: analysis.rows[0].id, actionType: 'telegram_reply_analysis' } })
+    await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'telegram_reply_analysis_created', title: 'AI подготовил анализ ответа Telegram', body: recommendation, source: 'ai', metadata: { queueId: analysis.rows[0].id, actionType: 'telegram_reply_analysis', telegramMessageId: telegram.messageId } })
   }
 
   const existingDraft = await client.query(
     `SELECT id FROM ai_worker_queue
-      WHERE workspace_id = $1 AND lead_id = $2 AND action_type = 'telegram_draft'
-        AND payload->>'outreachType' = 'inbound_reply_next_step'
-        AND created_at > NOW() - INTERVAL '24 hours'
+      WHERE workspace_id = $1 AND lead_id = $2 AND action_type = 'telegram_reply_draft'
+        AND payload->>'telegramMessageId' = $3
         AND status IN ('pending_approval', 'approved', 'executing', 'completed')
       LIMIT 1`,
-    [workspaceId, lead.id]
+    [workspaceId, lead.id, String(telegram.messageId)]
   )
   if (!existingDraft.rows[0]) {
-    const name = String(lead.first_name || lead.telegram_first_name || lead.name || 'Коллеги').split(/\s+/)[0]
-    const text = `${name}, спасибо за ответ! Правильно понимаю, что сейчас главный следующий шаг — коротко разобрать ваш сценарий и показать, как AS6 AI CRM закроет Telegram/email follow-up без ручной рутины? Могу предложить 15 минут на demo.`
+    const context = await getTelegramReplyDraftContext(client, { workspaceId, lead, telegram })
+    const generated = await generateTelegramReplyDraft(context)
+    const text = generated.message
     const draft = await client.query(
       `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
-       VALUES($1, $2, $3, 'telegram_draft', 'pending_approval', $4, $5, $6)
+       VALUES($1, $2, $3, 'telegram_reply_draft', 'pending_approval', $4, $5, $6)
        RETURNING id`,
-      [worker.id, workspaceId, lead.id, `Telegram reply draft · ${lead.name}`, 'Ответ на входящее сообщение подготовлен и ожидает проверки менеджера.', { source: 'telegram_inbound', outreachType: 'inbound_reply_next_step', channel: 'telegram', text, message: text, customerMessage: telegram.text }]
+      [worker.id, workspaceId, lead.id, `Ответ в Telegram — ${lead.name}`, 'AI подготовил короткий человеческий ответ на последнее сообщение. Проверьте текст, при необходимости отредактируйте и отправьте после approval.', { source: 'telegram_inbound', outreachType: 'inbound_reply_next_step', channel: 'telegram', text, message: text, customerMessage: telegram.text, inboundMessage: telegram.text, telegramMessageId: String(telegram.messageId), chatId: String(telegram.chatId), leadName: lead.name, company: lead.company || '', currentStage: lead.status || '', lastAiScore: context.aiScore, recommendedNextStep: context.recommendedNextStep, timeline: context.timeline, model: generated.model, prompt: generated.prompt }]
     )
-    await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'ai_draft_created', title: 'Черновик Telegram подготовлен', body: text, source: 'ai', metadata: { queueId: draft.rows[0].id, actionType: 'telegram_draft', outreachType: 'inbound_reply_next_step' } })
+    await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'ai_telegram_reply_drafted', title: 'AI подготовил черновик Telegram', body: text, source: 'ai', metadata: { queueId: draft.rows[0].id, actionType: 'telegram_reply_draft', telegramMessageId: telegram.messageId } })
   }
 
   const nextStage = nextStageSuggestion(lead.status, telegram.text)
@@ -844,7 +887,7 @@ async function sendTelegramMessageToLead({ userId, workspaceId, leadId, text }) 
   const lead = await crmModel.listLeads(userId, workspaceId).then((leads) => leads.find((item) => item.id === leadId))
   if (!lead) throw Object.assign(new Error('Lead not found'), { statusCode: 404 })
   const chatId = lead.telegramChatId || lead?.metadata?.telegramChatId || null
-  if (!chatId) throw Object.assign(new Error('У лида нет Telegram chat id. Можно отправить email или написать вручную.'), { statusCode: 400 })
+  if (!chatId) throw Object.assign(new Error('Telegram не подключён для этого лида.'), { statusCode: 400 })
   const telegramResponse = await sendTelegramMessage(chatId, message)
   const telegramMessage = await crmModel.appendOutgoingTelegramMessage({ userId, workspaceId, leadId, message, telegramResponse })
   return { telegramMessage, telegramResponse }
