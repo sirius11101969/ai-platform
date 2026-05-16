@@ -119,9 +119,15 @@ function scoreLeadContext(context, aiOutput = {}) {
   if (signals.meetingMentioned && hoursInactive >= 24 && !signals.inboundAfterOutbound) riskSignals.push('meeting_without_next_step')
   if (signals.followupCount >= 3 && !signals.inboundAfterOutbound) riskSignals.push('repeated_followups_without_engagement')
   if (hoursInactive >= 72) riskSignals.push('low_activity')
+  if (Number(lead.value || 0) >= 100000 && hoursInactive >= 72) riskSignals.push('high_value_stalled')
   if (negativeIntent || (objections.length && !positiveIntent)) riskSignals.push('negative_signals')
   const normalizedScore = clamp(score - (riskSignals.includes('no_reply_7d') ? 18 : riskSignals.includes('no_reply_3d') ? 10 : 0) - (riskSignals.includes('negative_signals') ? 10 : 0))
-  const dealProbability = clamp(Number.isFinite(Number(aiOutput.conversionProbability)) ? aiOutput.conversionProbability : normalizedScore * 0.92)
+  const probabilityByTemperature = normalizedScore >= 75
+    ? clamp(70 + ((normalizedScore - 75) * 1.25), 70, 95)
+    : normalizedScore >= 45
+      ? clamp(40 + ((normalizedScore - 45) * (30 / 30)), 40, 70)
+      : clamp(10 + (normalizedScore * (30 / 45)), 10, 40)
+  const dealProbability = clamp(Number.isFinite(Number(aiOutput.conversionProbability)) ? aiOutput.conversionProbability : probabilityByTemperature)
   const budgetProbability = clamp((lead.value > 0 ? 72 : 42) + (lead.company ? 12 : 0) + (keywordHits.some((keyword) => ['тариф', 'стоимость', 'budget', 'бюджет'].includes(keyword)) ? 18 : 0) - (hasDisposableEmail ? 25 : 0))
   const urgencyLevel = normalizedScore >= 75 || riskSignals.length || hoursInactive >= 48 || (lead.stage === 'proposal' && hoursInactive >= 24) ? 'high' : normalizedScore >= 45 || hoursInactive >= 24 || objections.length ? 'medium' : 'low'
   const engagementScore = clamp(normalizedScore + Math.min(12, telegramMessages.length * 2) + (signals.inboundAfterOutbound ? 12 : 0) - (riskSignals.length * 8))

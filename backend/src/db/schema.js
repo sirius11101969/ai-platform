@@ -418,6 +418,7 @@ async function migrate() {
       score INTEGER NOT NULL DEFAULT 0 CHECK (score >= 0 AND score <= 100),
       temperature TEXT NOT NULL DEFAULT 'cold',
       deal_probability INTEGER NOT NULL DEFAULT 0 CHECK (deal_probability >= 0 AND deal_probability <= 100),
+      probability_to_close INTEGER NOT NULL DEFAULT 0 CHECK (probability_to_close >= 0 AND probability_to_close <= 100),
       urgency_level TEXT NOT NULL DEFAULT 'low',
       engagement_level TEXT NOT NULL DEFAULT 'cold',
       ai_summary TEXT NOT NULL DEFAULT '',
@@ -433,7 +434,7 @@ async function migrate() {
       recommended_next_step TEXT NOT NULL DEFAULT '',
       confidence INTEGER NOT NULL DEFAULT 0 CHECK (confidence >= 0 AND confidence <= 100),
       engagement_score INTEGER NOT NULL DEFAULT 0 CHECK (engagement_score >= 0 AND engagement_score <= 100),
-      expected_revenue NUMERIC(12, 2) NOT NULL DEFAULT 0 CHECK (expected_revenue >= 0),
+      expected_revenue NUMERIC(14, 2) NOT NULL DEFAULT 0 CHECK (expected_revenue >= 0),
       forecast_category TEXT NOT NULL DEFAULT 'possible',
       risk_signals JSONB NOT NULL DEFAULT '[]'::jsonb,
       ai_reasoning TEXT NOT NULL DEFAULT '',
@@ -448,8 +449,10 @@ async function migrate() {
     ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS recommended_next_step TEXT NOT NULL DEFAULT '';
     ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS confidence INTEGER NOT NULL DEFAULT 0 CHECK (confidence >= 0 AND confidence <= 100);
     ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+    ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS probability_to_close INTEGER NOT NULL DEFAULT 0 CHECK (probability_to_close >= 0 AND probability_to_close <= 100);
     ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS engagement_score INTEGER NOT NULL DEFAULT 0 CHECK (engagement_score >= 0 AND engagement_score <= 100);
-    ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS expected_revenue NUMERIC(12, 2) NOT NULL DEFAULT 0 CHECK (expected_revenue >= 0);
+    ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS expected_revenue NUMERIC(14, 2) NOT NULL DEFAULT 0 CHECK (expected_revenue >= 0);
+    ALTER TABLE lead_ai_scores ALTER COLUMN expected_revenue TYPE NUMERIC(14, 2);
     ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS forecast_category TEXT NOT NULL DEFAULT 'possible';
     ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS risk_signals JSONB NOT NULL DEFAULT '[]'::jsonb;
     ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS ai_reasoning TEXT NOT NULL DEFAULT '';
@@ -461,7 +464,8 @@ async function migrate() {
            confidence = CASE WHEN confidence = 0 THEN LEAST(100, GREATEST(0, score)) ELSE confidence END,
            created_at = COALESCE(created_at, generated_at, NOW()),
            engagement_score = CASE WHEN engagement_score = 0 THEN score ELSE engagement_score END,
-           expected_revenue = CASE WHEN expected_revenue = 0 THEN COALESCE(l.value * deal_probability / 100.0, 0) ELSE expected_revenue END,
+           probability_to_close = CASE WHEN lead_ai_scores.probability_to_close = 0 THEN lead_ai_scores.deal_probability ELSE lead_ai_scores.probability_to_close END,
+           expected_revenue = CASE WHEN lead_ai_scores.expected_revenue = 0 THEN COALESCE(l.value * COALESCE(NULLIF(lead_ai_scores.probability_to_close, 0), lead_ai_scores.deal_probability) / 100.0, 0) ELSE lead_ai_scores.expected_revenue END,
            ai_reasoning = COALESCE(NULLIF(ai_reasoning, ''), ai_summary, '')
       FROM crm_leads l
       WHERE l.id = lead_ai_scores.lead_id;
@@ -487,6 +491,9 @@ async function migrate() {
       END IF;
       IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'lead_ai_scores_urgency_valid') THEN
         ALTER TABLE lead_ai_scores ADD CONSTRAINT lead_ai_scores_urgency_valid CHECK (urgency_level IN ('low', 'medium', 'high'));
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'lead_ai_scores_probability_to_close_valid') THEN
+        ALTER TABLE lead_ai_scores ADD CONSTRAINT lead_ai_scores_probability_to_close_valid CHECK (probability_to_close >= 0 AND probability_to_close <= 100);
       END IF;
       IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'lead_ai_scores_engagement_valid') THEN
         ALTER TABLE lead_ai_scores ADD CONSTRAINT lead_ai_scores_engagement_valid CHECK (engagement_level IN ('cold', 'warm', 'hot'));

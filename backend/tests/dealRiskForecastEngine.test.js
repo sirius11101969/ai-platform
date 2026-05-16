@@ -29,7 +29,7 @@ function testHotLeadForecast() {
     activity: [],
   })
 
-  assert.ok(intelligence.dealProbability >= 70, 'hot lead should have high probability')
+  assert.ok(intelligence.dealProbability >= 70 && intelligence.dealProbability <= 95, 'hot lead should have 70-95 probability')
   assert.strictEqual(intelligence.expectedRevenue, Math.round(100000 * intelligence.dealProbability / 100))
   assert.ok(['committed', 'likely'].includes(intelligence.forecastCategory), `unexpected forecast category: ${intelligence.forecastCategory}`)
   assert.strictEqual(intelligence.riskLevel, 'low')
@@ -68,6 +68,7 @@ function testStalledProposalRisk() {
   assert.ok(intelligence.riskSignals.includes('no_reply_7d'))
   assert.ok(intelligence.riskSignals.includes('proposal_ignored'))
   assert.ok(intelligence.riskSignals.includes('repeated_followups_without_engagement'))
+  assert.ok(intelligence.riskSignals.includes('high_value_stalled'))
   assert.strictEqual(intelligence.nextBestActionCode, 'escalate_to_manager')
   assert.match(intelligence.aiReasoning, /Клиент перестал отвечать/)
 }
