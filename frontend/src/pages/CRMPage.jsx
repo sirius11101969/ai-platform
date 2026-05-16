@@ -137,6 +137,10 @@ function channelLabel(channel) {
   return ({ telegram: 'Telegram', email: 'Email', phone: 'Phone', crm_task: 'CRM task', Telegram: 'Telegram', Email: 'Email', 'Задача менеджеру': 'CRM task' }[channel] || channel || 'CRM task');
 }
 
+function forecastLabel(category) {
+  return ({ committed: 'Committed', likely: 'Likely', possible: 'Possible', at_risk: 'At risk', lost_risk: 'Lost risk' }[category] || 'Possible');
+}
+
 function getAiBadges(lead) {
   const score = getLeadAiScore(lead);
   if (!score) return [];
@@ -200,7 +204,7 @@ function getStageRecommendationConfidence(item) {
 }
 
 function timelineTitle(event) {
-  return ({ telegram_inbound: 'Telegram inbound', telegram_outbound_ai: 'Telegram outbound AI', ai_draft_created: 'AI черновик создан', ai_draft_approved: 'AI черновик одобрен', telegram_sent: 'Telegram отправлен', lead_replied: 'Лид ответил', send_failed: 'Отправка не выполнена', ai_stage_suggested: 'AI предложил этап', ai_stage_recommendation: 'AI рекомендовал этап', stage_approved: 'Этап одобрен', stage_changed: 'Этап изменён', opportunity_risk_detected: 'Риск сделки обнаружен', email_sent: 'Email отправлен', email_failed: 'Email не отправлен', ai_score_updated: 'AI score обновлён', follow_up_draft: 'Follow-up черновик', sent_follow_up: 'Follow-up отправлен', attachments_sent: 'Материалы отправлены', lead_moved: 'Этап изменён', note_added: 'Заметка', ai_action_sent: 'AI действие отправлено', ai_action_approved: 'AI действие одобрено', ai_action_rejected: 'AI действие отклонено', ai_action_executed: 'AI действие выполнено', ai_action_failed: 'AI действие не выполнено', follow_up_suggested: 'Follow-up suggested', follow_up_approved: 'Follow-up approved', follow_up_rejected: 'Follow-up rejected', follow_up_sent: 'Follow-up sent', follow_up_failed: 'Follow-up failed' }[event?.type] || event?.title || 'Событие');
+  return ({ telegram_inbound: 'Telegram inbound', telegram_outbound_ai: 'Telegram outbound AI', ai_draft_created: 'AI черновик создан', ai_draft_approved: 'AI черновик одобрен', telegram_sent: 'Telegram отправлен', lead_replied: 'Лид ответил', send_failed: 'Отправка не выполнена', ai_stage_suggested: 'AI предложил этап', ai_stage_recommendation: 'AI рекомендовал этап', stage_approved: 'Этап одобрен', stage_changed: 'Этап изменён', opportunity_risk_detected: 'Риск сделки обнаружен', ai_risk_detected: 'AI риск обнаружен', ai_forecast_updated: 'AI прогноз обновлён', ai_next_action_generated: 'AI следующий шаг', email_sent: 'Email отправлен', email_failed: 'Email не отправлен', ai_score_updated: 'AI score обновлён', follow_up_draft: 'Follow-up черновик', sent_follow_up: 'Follow-up отправлен', attachments_sent: 'Материалы отправлены', lead_moved: 'Этап изменён', note_added: 'Заметка', ai_action_sent: 'AI действие отправлено', ai_action_approved: 'AI действие одобрено', ai_action_rejected: 'AI действие отклонено', ai_action_executed: 'AI действие выполнено', ai_action_failed: 'AI действие не выполнено', follow_up_suggested: 'Follow-up suggested', follow_up_approved: 'Follow-up approved', follow_up_rejected: 'Follow-up rejected', follow_up_sent: 'Follow-up sent', follow_up_failed: 'Follow-up failed' }[event?.type] || event?.title || 'Событие');
 }
 
 const modalCloseStack = [];
@@ -804,8 +808,11 @@ export default function CRMPage() {
         <StatCard label="AI follow-up" value={loading ? "…" : String(stats?.aiMetrics?.generatedFollowUps || 0)} hint="сгенерировано AI" tone="violet" />
         <StatCard label="AI эффективность" value={loading ? "…" : `${stats?.aiMetrics?.efficiency || 0}%`} hint={`${stats?.aiMetrics?.assistedDeals || 0} AI‑сделок`} />
         <StatCard label="Горячие лиды" value={loading ? "…" : String(stats?.aiMetrics?.hotLeads || 0)} hint={`средний score ${stats?.aiMetrics?.averageLeadScore || 0}/100`} tone="pink" />
-        <StatCard label="AI прогноз выручки" value={loading ? "…" : formatCurrency(stats?.aiMetrics?.predictedRevenue || 0)} hint={`forecast ${stats?.aiMetrics?.conversionForecast || 0}%`} tone="violet" />
-        <StatCard label="At-risk сделки" value={loading ? "…" : String(stats?.aiMetrics?.atRiskDeals || 0)} hint={`${stats?.aiMetrics?.followUpsPending || 0} follow-up ждут`} />
+        <StatCard label="AI Forecast Revenue" value={loading ? "…" : formatCurrency(stats?.aiMetrics?.predictedRevenue || 0)} hint={`forecast ${stats?.aiMetrics?.conversionForecast || 0}%`} tone="violet" />
+        <StatCard label="Revenue At Risk" value={loading ? "…" : formatCurrency(stats?.aiMetrics?.revenueAtRisk || 0)} hint={`${stats?.aiMetrics?.atRiskDeals || 0} at-risk deals`} tone="pink" />
+        <StatCard label="High Probability Deals" value={loading ? "…" : String(stats?.aiMetrics?.highProbabilityDeals || 0)} hint="probability ≥ 70%" />
+        <StatCard label="Stalled Opportunities" value={loading ? "…" : String(stats?.aiMetrics?.stalledOpportunities || stats?.aiMetrics?.inactiveOpportunities || 0)} hint="нет активности более 7 дней" tone="pink" />
+        <StatCard label="AI Pipeline Health" value={loading ? "…" : `${stats?.aiMetrics?.pipelineHealth || 0}%`} hint="risk + activity forecast index" tone="violet" />
       </section>
 
       <section className="ai-action-center-panel">
@@ -859,8 +866,8 @@ export default function CRMPage() {
                       onDragEnd={handleLeadDragEnd}
                       key={lead.id}
                     >
-                      <div className="lead-topline"><strong>{lead.name}</strong><span>{formatCurrency(lead.value)}</span></div>{getLeadAiScore(lead) && <div className="lead-ai-probability"><span>AI Score {getLeadAiScore(lead).score}/100 · {tempLabel(getLeadAiScore(lead).temperature)} · {channelLabel(getLeadAiScore(lead).recommendedChannel)}</span><i style={{ width: `${getLeadAiScore(lead).score}%` }} /></div>}{getAiBadges(lead).length > 0 && <div className="ai-badge-row">{getAiBadges(lead).map((badge) => <b className="ai-neon-badge" key={badge}>{badge}</b>)}</div>}
-                      <p>{lead.company || (isTelegramLead(lead) ? lead.telegram || "Telegram контакт" : "Компания не указана")}</p>
+                      <div className="lead-topline"><strong>{lead.name}</strong><span>{formatCurrency(lead.value)}</span></div>{getLeadAiScore(lead) && <><div className="lead-intelligence-kpis"><b>{getLeadAiScore(lead).dealProbability}%</b><span>{riskLabel(getLeadAiScore(lead).riskLevel)}</span><em>{formatCurrency(getLeadAiScore(lead).expectedRevenue || lead.estimatedRevenue)}</em></div><div className="lead-ai-probability forecast-progress"><span>{forecastLabel(getLeadAiScore(lead).forecastCategory)} · engagement {getLeadAiScore(lead).engagementScore}/100</span><i style={{ width: `${getLeadAiScore(lead).dealProbability}%` }} /></div></>}{getAiBadges(lead).length > 0 && <div className="ai-badge-row">{getAiBadges(lead).map((badge) => <b className="ai-neon-badge" key={badge}>{badge}</b>)}</div>}
+                      <p>{lead.company || (isTelegramLead(lead) ? lead.telegram || "Telegram контакт" : "Компания не указана")}</p>{getLeadAiScore(lead)?.aiReasoning && <div className="ai-card-reasoning">{getLeadAiScore(lead).aiReasoning}</div>}
                       <div className="lead-card-meta"><small><i />{stageMap[lead.status] || lead.status}</small><span className={`source-pill ${lead.source === "telegram" ? "telegram-source" : ""}`}>{formatLeadSource(lead.source)}</span></div>{getLeadAiScore(lead)?.recommendedNextStep && <div className="ai-card-recommendation"><span>AI</span>{getLeadAiScore(lead).recommendedNextStep}</div>}{!getLeadAiScore(lead)?.recommendedNextStep && getAiRecommendation(lead) && <div className="ai-card-recommendation"><span>AI</span>{getAiSummaryText(getAiRecommendation(lead))}</div>}{isTelegramLead(lead) && <div className="telegram-card-status"><span className={`telegram-presence-dot ${lead.telegramOnline ? 'online' : 'offline'}`} />{lead.telegramOnline ? 'online' : 'offline'} · {lead.lastMessageAt ? formatDate(lead.lastMessageAt) : 'нет сообщений'}</div>}
                     </article>
                   ))}
@@ -1088,11 +1095,14 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                 <div className="ai-badge-row detail-ai-badges">{getAiBadges(lead).map((badge) => <b className="ai-neon-badge" key={badge}>{badge}</b>)}</div>
                 <div className="ai-recommendation-grid">
                   <div><span>AI score</span><strong>{getLeadAiScore(lead).score}/100 · {tempLabel(getLeadAiScore(lead).temperature)}</strong></div>
-                  <div><span>Приоритет</span><strong>{tempLabel(getLeadAiScore(lead).temperature)}</strong></div>
+                  <div><span>Expected revenue</span><strong>{formatCurrency(getLeadAiScore(lead).expectedRevenue || lead.estimatedRevenue)}</strong></div>
+                  <div><span>Forecast</span><strong>{forecastLabel(getLeadAiScore(lead).forecastCategory)}</strong></div>
+                  <div><span>Engagement</span><strong>{getLeadAiScore(lead).engagementScore}/100 · {tempLabel(getLeadAiScore(lead).temperature)}</strong></div>
                   <div><span>Канал</span><strong>{channelLabel(getLeadAiScore(lead).recommendedChannel)}</strong></div>
                   <div><span>Риск</span><strong>{riskLabel(getLeadAiScore(lead).riskLevel)}</strong></div>
                   <div><span>Прогноз конверсии</span><strong>{getLeadAiScore(lead).dealProbability >= 70 ? 'Высокий шанс оплаты' : getLeadAiScore(lead).dealProbability >= 40 ? 'Нужно усилить доверие' : 'Низкая готовность к покупке'}</strong></div>
                   <div><span>Идеальное время</span><strong>{getLeadAiScore(lead).idealContactTiming || 'сегодня'}</strong></div>
+                  <div><span>Next best action</span><strong>{getLeadAiScore(lead).nextBestAction}</strong></div>
                 </div>
               </div>
             ) : (

@@ -30,6 +30,10 @@ const initialTaskForm = {
   prompt: "",
 };
 
+function formatCurrency(value) {
+  return new Intl.NumberFormat("ru-RU", { style: "currency", currency: "RUB", maximumFractionDigits: 0 }).format(Number(value || 0));
+}
+
 function formatDate(value) {
   if (!value) return "—";
   return new Intl.DateTimeFormat("ru-RU", {
@@ -236,6 +240,9 @@ export default function DashboardPage() {
         <StatCard label="Ответы получены сегодня" value={loading ? "…" : String(crmStats?.aiMetrics?.repliesReceivedToday || 0)} hint="Inbound Telegram replies привязаны к лидам" />
         <StatCard label="Pending approvals" value={loading ? "…" : String(crmStats?.aiMetrics?.pendingApprovals || aiApprovalMetrics?.waitingApproval || 0)} hint="AI черновики и stage suggestions ждут менеджера" tone="pink" />
         <StatCard label="AI stage recommendations pending" value={loading ? "…" : String(crmStats?.aiMetrics?.stageRecommendationsPending || 0)} hint="stage_change_recommendation ждёт approval" tone="pink" />
+        <StatCard label="Revenue At Risk" value={loading ? "…" : formatCurrency(crmStats?.aiMetrics?.revenueAtRisk || 0)} hint="weighted forecast in at-risk/lost-risk deals" tone="pink" />
+        <StatCard label="High Probability Deals" value={loading ? "…" : String(crmStats?.aiMetrics?.highProbabilityDeals || 0)} hint="probability ≥ 70%" tone="violet" />
+        <StatCard label="Stalled Opportunities" value={loading ? "…" : String(crmStats?.aiMetrics?.stalledOpportunities || crmStats?.aiMetrics?.inactiveOpportunities || 0)} hint="нет активности более 7 дней" tone="pink" />
         <StatCard label="Deals at risk" value={loading ? "…" : String(crmStats?.aiMetrics?.dealsAtRisk || crmStats?.aiMetrics?.atRiskDeals || 0)} hint="stalled / no engagement / weak qualification" tone="violet" />
         <StatCard label="Inactive opportunities" value={loading ? "…" : String(crmStats?.aiMetrics?.inactiveOpportunities || 0)} hint="нет активности более 3 дней" tone="pink" />
         <StatCard label="Pipeline health" value={loading ? "…" : `${crmStats?.aiMetrics?.pipelineHealth || 0}%`} hint="AI риск‑индекс открытой воронки" />
@@ -247,11 +254,26 @@ export default function DashboardPage() {
         <StatCard label="Follow-ups sent today" value={loading ? "…" : String(crmStats?.aiMetrics?.autonomousFollowUpsSentToday || 0)} hint="отправлено после ручного approval" />
         <StatCard label="Follow-up conversion" value={`${crmStats?.aiMetrics?.followUpConversionPlaceholder || 0}%`} hint="placeholder до v2 attribution" tone="violet" />
         <StatCard label="AI эффективность" value={loading ? "…" : `${aiCommandMetrics?.efficiency || crmStats?.aiMetrics?.executionSuccessRate || crmStats?.aiMetrics?.efficiency || 0}%`} hint="Успешные запуски AI сотрудников" />
-        <StatCard label="Выручка под контролем AI" value={loading ? "…" : new Intl.NumberFormat("ru-RU", { style: "currency", currency: "RUB", maximumFractionDigits: 0 }).format(aiRevenueUnderControl)} hint="Плейсхолдер revenue impact по открытой воронке" tone="violet" />
+        <StatCard label="AI Forecast Revenue" value={loading ? "…" : formatCurrency(crmStats?.aiMetrics?.aiForecastedRevenue || crmStats?.aiMetrics?.predictedRevenue || 0)} hint="weighted expected revenue by AI probability" tone="violet" />
+        <StatCard label="Выручка под контролем AI" value={loading ? "…" : formatCurrency(aiRevenueUnderControl)} hint="Плейсхолдер revenue impact по открытой воронке" tone="violet" />
         <StatCard label="Telegram лиды" value={loading ? "…" : String(crmStats?.telegram?.leads || 0)} hint={`${crmStats?.telegram?.recentMessages || 0} последних сообщений за 24ч · ${crmStats?.telegram?.aiActionsSent || 0} AI Telegram actions sent`} tone="pink" />
       </section>
 
       <section className="app-grid two-columns">
+        <Panel className="forecast-distribution-card">
+          <span className="eyebrow">Forecast Distribution</span>
+          <h3>AI Pipeline Health by category</h3>
+          <div className="forecast-bars">
+            {['committed', 'likely', 'possible', 'at_risk', 'lost_risk'].map((category) => {
+              const distribution = crmStats?.aiMetrics?.forecastDistribution || {};
+              const value = Number(distribution[category] || 0);
+              const max = Math.max(1, ...Object.values(distribution).map((item) => Number(item || 0)));
+              const label = ({ committed: 'Committed', likely: 'Likely', possible: 'Possible', at_risk: 'At risk', lost_risk: 'Lost risk' })[category];
+              return <div className={`forecast-row ${category}`} key={category}><span>{label}</span><i><b style={{ width: `${Math.max(8, (value / max) * 100)}%` }} /></i><strong>{value}</strong></div>;
+            })}
+          </div>
+        </Panel>
+
         <Panel className="profile-card ai-command-card">
           <span className="eyebrow">Центр управления</span>
           <div className="profile-hero">
