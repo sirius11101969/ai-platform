@@ -27,7 +27,7 @@ const runStatusLabels = {
   queued: "В очереди",
   running: "В работе",
   completed: "Готово",
-  failed: "Ошибка",
+  failed: "Ошибка выполнения",
 };
 
 const approvalStatusLabels = {
@@ -36,20 +36,20 @@ const approvalStatusLabels = {
   rejected: "Отклонено",
   executing: "Выполняется",
   completed: "Выполнено",
-  failed: "Ошибка",
+  failed: "Ошибка выполнения",
   cancelled: "Отменено",
 };
 
 const actionTypeLabels = {
-  telegram_followup: "Telegram follow-up",
-  email_followup: "Email follow-up",
-  send_demo_link: "Demo link",
+  telegram_followup: "Сообщение в Telegram",
+  email_followup: "Письмо",
+  send_demo_link: "Демо-ссылка",
   send_presentation: "Презентация",
   create_reminder: "Напоминание",
   move_lead_stage: "Смена этапа",
-  telegram_draft: "Telegram follow-up",
-  email_draft: "Email follow-up",
-  follow_up_recommendation: "Follow-up",
+  telegram_draft: "Черновик Telegram",
+  email_draft: "Черновик письма",
+  follow_up_recommendation: "Следующий контакт",
   crm_next_action: "CRM действие",
   lead_prioritization: "Приоритизация",
 };
@@ -85,6 +85,32 @@ const approvalActionLoadingLabels = {
   execute: "Выполняем…",
 };
 
+const APPROVAL_ACTION_TIMEOUT_MS = 20000;
+const executableApprovalTypes = new Set(["telegram_followup", "email_followup", "send_demo_link", "send_presentation", "create_reminder", "move_lead_stage"]);
+
+function isApprovalItemExecutable(item) {
+  return executableApprovalTypes.has(item.executionType || item.actionType);
+}
+
+function formatApprovalErrorMessage(message) {
+  const text = String(message || "").trim();
+  if (text === "Lead has no Telegram chat id" || text === "У лида нет Telegram chat id") {
+    return "У лида нет Telegram chat id. Это демо-лид, Telegram-сообщение отправить нельзя.";
+  }
+  return text || "Не удалось выполнить AI действие";
+}
+
+function withApprovalActionTimeout(promise) {
+  let timeoutId;
+  const timeout = new Promise((_, reject) => {
+    timeoutId = window.setTimeout(() => {
+      reject(new Error("Запрос выполняется дольше 20 секунд. Обновляем очередь, чтобы показать актуальный статус."));
+    }, APPROVAL_ACTION_TIMEOUT_MS);
+  });
+
+  return Promise.race([promise, timeout]).finally(() => window.clearTimeout(timeoutId));
+}
+
 function mergeQueueItem(items, nextItem) {
   if (!nextItem?.id) return items;
   return items.map((item) => (item.id === nextItem.id ? { ...item, ...nextItem } : item));
@@ -101,8 +127,10 @@ export default function AiWorkersPage() {
   const [busyAction, setBusyAction] = useState(null);
 
   async function loadCommandCenter({ silent = false } = {}) {
-    if (!silent) setLoading(true);
-    setError("");
+    if (!silent) {
+      setLoading(true);
+      setError("");
+    }
     try {
       const [response, approvalResponse] = await Promise.all([fetchAiCommandCenter(), fetchAiApprovalQueue()]);
       setCommandCenter(response.commandCenter || null);
@@ -153,13 +181,16 @@ export default function AiWorkersPage() {
     setBusyAction({ itemId: item.id, action });
     setError("");
     setMessage("");
-    try {
-      let response;
-      if (action === "approve") response = await approveAiApprovalQueueItem(item.id);
-      if (action === "reject") response = await rejectAiApprovalQueueItem(item.id);
-      if (action === "execute") response = await executeAiApprovalQueueItem(item.id);
 
+    try {
+      let request;
+      if (action === "approve") request = approveAiApprovalQueueItem(item.id);
+      if (action === "reject") request = rejectAiApprovalQueueItem(item.id);
+      if (action === "execute") request = executeAiApprovalQueueItem(item.id);
+
+      const response = await withApprovalActionTimeout(request);
       const updatedItem = response?.item || null;
+
       if (updatedItem) {
         setApprovalQueue((current) => ({
           ...current,
@@ -171,19 +202,34 @@ export default function AiWorkersPage() {
         } : current);
       }
 
-      if (response?.error) {
-        setError(response.error || "Не удалось выполнить AI действие");
-      } else {
-        setMessage(approvalActionMessages[action] || "Статус AI действия обновлён");
+      if (updatedItem?.status === "failed" || response?.error) {
+        setError(formatApprovalErrorMessage(updatedItem?.errorMessage || response?.error));
+        return;
       }
 
-      loadCommandCenter({ silent: true }).catch((requestError) => {
-        setError(requestError.message || "Не удалось обновить очередь AI действий");
-      });
+      if (updatedItem?.status === "approved") {
+        setMessage("Одобрено");
+        return;
+      }
+      if (updatedItem?.status === "rejected") {
+        setMessage("Отклонено");
+        return;
+      }
+      if (updatedItem?.status === "completed") {
+        setMessage("Выполнено");
+        return;
+      }
+
+      setMessage(approvalActionMessages[action] || "Статус AI действия обновлён");
     } catch (requestError) {
       setError(requestError.message || "Не удалось обновить AI действие. Попробуйте ещё раз.");
     } finally {
       setBusyAction(null);
+      try {
+        await loadCommandCenter({ silent: true });
+      } catch (requestError) {
+        setError(requestError.message || "Не удалось обновить очередь AI действий");
+      }
     }
   }
 
@@ -224,8 +270,8 @@ export default function AiWorkersPage() {
   const recentRuns = commandCenter?.recentRuns || [];
   const metrics = commandCenter?.metrics || {};
   const approvalItems = approvalQueue.items || [];
-  const activeApprovalItems = useMemo(() => approvalItems.filter((item) => !["rejected", "completed", "cancelled"].includes(item.status)), [approvalItems]);
-  const approvalHistoryItems = useMemo(() => approvalItems.filter((item) => ["rejected", "completed", "cancelled"].includes(item.status)), [approvalItems]);
+  const activeApprovalItems = useMemo(() => approvalItems.filter((item) => !["rejected", "completed", "failed", "cancelled"].includes(item.status)), [approvalItems]);
+  const approvalHistoryItems = useMemo(() => approvalItems.filter((item) => ["rejected", "completed", "failed", "cancelled"].includes(item.status)), [approvalItems]);
   const approvalMetrics = approvalQueue.metrics || {};
   const pendingActions = useMemo(() => queue.filter((item) => item.status === "pending_approval"), [queue]);
   const failedActions = useMemo(() => queue.filter((item) => item.status === "failed"), [queue]);
@@ -266,7 +312,7 @@ export default function AiWorkersPage() {
       <Panel className="ai-approval-center-panel">
         <div className="panel-head">
           <div>
-            <span className="eyebrow">Human-in-the-loop</span>
+            <span className="eyebrow">Контроль человеком</span>
             <h3>Центр одобрения AI</h3>
             <p>AI только рекомендует. Отправка и выполнение доступны после ручного одобрения менеджером.</p>
           </div>
@@ -276,7 +322,7 @@ export default function AiWorkersPage() {
           <span>Одобрено сегодня <b>{approvalMetrics.approvedToday || 0}</b></span>
           <span>Выполнено сегодня <b>{approvalMetrics.executedToday || 0}</b></span>
           <span>Ошибок сегодня <b>{approvalMetrics.failedToday || 0}</b></span>
-          <span>Success rate <b>{approvalMetrics.successRate || 0}%</b></span>
+          <span>Успешность <b>{approvalMetrics.successRate || 0}%</b></span>
         </div>
         <div className="approval-table">
           {activeApprovalItems.length === 0 && <p className="empty-state">Нет AI действий на одобрение.</p>}
@@ -288,7 +334,7 @@ export default function AiWorkersPage() {
               <div className="approval-main">
                 <strong>{item.title}</strong>
                 <p>{shortRecommendation(item)}</p>
-                {item.errorMessage && <small className="email-error-text">Ошибка: {item.errorMessage}</small>}
+                {item.errorMessage && <small className="email-error-text">Ошибка выполнения: {formatApprovalErrorMessage(item.errorMessage)}</small>}
               </div>
               <div><span>Лид</span><b>{item.lead?.name || "—"}</b></div>
               <div><span>AI сотрудник</span><b>{item.workerName || "AI"}</b></div>
@@ -296,10 +342,16 @@ export default function AiWorkersPage() {
               <div><span>Тип</span><b>{actionTypeLabels[item.executionType] || actionTypeLabels[item.actionType] || item.actionType}</b></div>
               <div><span>Статус</span><b className={`glow-status ${item.status}`}>{approvalStatusLabels[item.status] || item.status}</b><small>{formatDate(item.createdAt)}</small></div>
               <div className="approval-actions">
-                <button type="button" className="ghost-button compact" onClick={() => handleApprovalAction(item, "approve")} disabled={isItemBusy || !["pending_approval","failed"].includes(item.status)}>{isItemBusy && busyAction.action === "approve" ? busyLabel : "Одобрить"}</button>
+                {item.status === "pending_approval" && (
+                  <button type="button" className="ghost-button compact" onClick={() => handleApprovalAction(item, "approve")} disabled={isItemBusy}>{isItemBusy && busyAction.action === "approve" ? busyLabel : "Одобрить"}</button>
+                )}
                 <button type="button" className="ghost-button compact" onClick={() => handleEditApprovalItem(item)} disabled={isItemBusy || ["executing","completed"].includes(item.status)}>{isItemBusy && busyAction.action === "edit" ? "Сохраняем…" : "Изменить"}</button>
-                <button type="button" className="ghost-button compact danger-action" onClick={() => handleApprovalAction(item, "reject")} disabled={isItemBusy || ["executing","completed","rejected"].includes(item.status)}>{isItemBusy && busyAction.action === "reject" ? busyLabel : "Отклонить"}</button>
-                <button type="button" className="btn primary compact" onClick={() => handleApprovalAction(item, "execute")} disabled={isItemBusy || item.status !== "approved"}>{isItemBusy && busyAction.action === "execute" ? busyLabel : "Выполнить"}</button>
+                {!["executing", "completed", "rejected"].includes(item.status) && (
+                  <button type="button" className="ghost-button compact danger-action" onClick={() => handleApprovalAction(item, "reject")} disabled={isItemBusy}>{isItemBusy && busyAction.action === "reject" ? busyLabel : "Отклонить"}</button>
+                )}
+                {item.status === "approved" && isApprovalItemExecutable(item) && (
+                  <button type="button" className="btn primary compact" onClick={() => handleApprovalAction(item, "execute")} disabled={isItemBusy}>{isItemBusy && busyAction.action === "execute" ? busyLabel : "Выполнить"}</button>
+                )}
               </div>
             </article>
           )})}
@@ -308,7 +360,7 @@ export default function AiWorkersPage() {
           <div className="approval-history-section">
             <div className="approval-history-head">
               <h4>История</h4>
-              <span>{approvalHistoryItems.length} завершённых</span>
+              <span>{approvalHistoryItems.length} в истории</span>
             </div>
             <div className="approval-table approval-history-table">
               {approvalHistoryItems.slice(0, 8).map((item) => (
@@ -316,13 +368,14 @@ export default function AiWorkersPage() {
                   <div className="approval-main">
                     <strong>{item.title}</strong>
                     <p>{shortRecommendation(item)}</p>
+                    {item.errorMessage && <small className="email-error-text">Ошибка выполнения: {formatApprovalErrorMessage(item.errorMessage)}</small>}
                   </div>
                   <div><span>Лид</span><b>{item.lead?.name || "—"}</b></div>
                   <div><span>AI сотрудник</span><b>{item.workerName || "AI"}</b></div>
                   <div><span>Канал</span><b>{item.payload?.channel || item.payload?.suggestedChannel || (item.lead?.telegram ? "telegram" : item.lead?.email ? "email" : "crm")}</b></div>
                   <div><span>Тип</span><b>{actionTypeLabels[item.executionType] || actionTypeLabels[item.actionType] || item.actionType}</b></div>
                   <div><span>Статус</span><b className={`glow-status ${item.status}`}>{approvalStatusLabels[item.status] || item.status}</b><small>{formatDate(item.updatedAt || item.createdAt)}</small></div>
-                  <div className="approval-actions"><span className="approval-history-note">Действие завершено</span></div>
+                  <div className="approval-actions"><span className="approval-history-note">{item.status === "failed" ? "Требуется внимание" : "Действие завершено"}</span></div>
                 </article>
               ))}
             </div>
