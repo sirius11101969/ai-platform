@@ -12,6 +12,10 @@ function priorityFromScore(score) {
   return 'cold'
 }
 
+function stageLabel(stage) {
+  return ({ new: 'New', qualified: 'Qualified', proposal: 'Proposal', booked: 'Booked', won: 'Won', lost: 'Lost' }[stage] || stage || 'New')
+}
+
 function buildRecommendation(lead, intelligence) {
   const channelLabel = {
     telegram: 'Telegram',
@@ -119,26 +123,30 @@ async function qualifyLead(client, { lead, userId, workspaceId, queueId = null }
   }
 
   let stageSuggestion = null
-  const nextStatus = lead.status === 'new' && intelligence.score >= 45 ? 'qualified' : lead.status === 'qualified' && intelligence.score >= 70 ? 'proposal' : null
-  if (nextStatus) {
+  const temperature = intelligence.temperature || priority
+  const shouldRecommendQualified = lead.status !== 'qualified' && !['won', 'lost'].includes(lead.status) && (intelligence.score >= 70 || temperature === 'hot')
+  if (shouldRecommendQualified) {
+    const fromStage = lead.status || 'new'
+    const toStage = 'qualified'
+    const reason = `${intelligence.aiSummary || 'Клиент проявил высокий интерес к AI CRM и запросил детали внедрения.'} Рекомендуется перевести лида в стадию Qualified.`
     const existingStage = await client.query(
       `SELECT id FROM ai_worker_queue
-        WHERE workspace_id = $1 AND lead_id = $2 AND action_type = 'move_lead_stage'
-          AND payload->>'nextStatus' = $3
+        WHERE workspace_id = $1 AND lead_id = $2 AND action_type = 'stage_change_recommendation'
+          AND COALESCE(payload->>'toStage', payload->>'nextStatus', payload->>'status') = $3
           AND created_at > NOW() - INTERVAL '24 hours'
           AND status IN ('pending_approval', 'approved', 'executing', 'completed')
         LIMIT 1`,
-      [workspaceId, lead.id, nextStatus]
+      [workspaceId, lead.id, toStage]
     )
     if (!existingStage.rows[0]) {
       const suggested = await client.query(
         `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
-         VALUES($1, $2, $3, 'move_lead_stage', 'pending_approval', $4, $5, $6)
+         VALUES($1, $2, $3, 'stage_change_recommendation', 'pending_approval', $4, $5, $6)
          RETURNING id`,
-        [lead.worker_id || (await ensureSdrWorker(client, workspaceId)).id, workspaceId, lead.id, `AI stage suggestion · ${lead.status} → ${nextStatus}`, `AI квалификация предлагает сменить этап ${lead.status} → ${nextStatus}. Требуется approval менеджера.`, { source: 'lead_qualification', currentStatus: lead.status, nextStatus, status: nextStatus, score: intelligence.score }]
+        [lead.worker_id || (await ensureSdrWorker(client, workspaceId)).id, workspaceId, lead.id, `Перевести лида в Qualified — ${lead.name}`, reason, { source: 'lead_qualification', leadId: lead.id, fromStage, toStage, currentStatus: fromStage, nextStatus: toStage, status: toStage, confidence, reason, score: intelligence.score, temperature }]
       )
       stageSuggestion = suggested.rows[0]
-      await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'ai_stage_suggested', title: 'Предложена смена этапа', body: `${lead.status} → ${nextStatus}`, source: 'ai', metadata: { queueId: stageSuggestion.id, nextStatus, score: intelligence.score } })
+      await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'ai_stage_recommendation', title: 'AI рекомендовал смену этапа', body: `AI рекомендовал перевести лида в стадию ${stageLabel(toStage)}.`, source: 'ai', metadata: { queueId: stageSuggestion.id, fromStage, toStage, confidence, reason, score: intelligence.score } })
     }
   }
 

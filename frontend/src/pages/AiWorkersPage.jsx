@@ -36,6 +36,7 @@ const approvalStatusLabels = {
   rejected: "Отклонено",
   executing: "Выполняется",
   completed: "Выполнено",
+  executed: "Исполнено",
   failed: "Ошибка выполнения",
   cancelled: "Отменено",
 };
@@ -52,6 +53,7 @@ const actionTypeLabels = {
   follow_up_recommendation: "Следующий контакт",
   crm_next_action: "CRM действие",
   lead_prioritization: "Приоритизация",
+  stage_change_recommendation: "AI рекомендация этапа",
 };
 
 function formatDate(value) {
@@ -66,6 +68,30 @@ function formatDate(value) {
 
 function formatMoney(value) {
   return new Intl.NumberFormat("ru-RU", { style: "currency", currency: "RUB", maximumFractionDigits: 0 }).format(Number(value || 0));
+}
+
+
+function stageLabel(stage) {
+  return ({ new: "New", qualified: "Qualified", proposal: "Proposal", booked: "Booked", won: "Won", lost: "Lost" }[stage] || stage || "—");
+}
+
+function isStageRecommendation(item) {
+  return (item.executionType || item.actionType) === "stage_change_recommendation" || item.actionType === "move_lead_stage";
+}
+
+function renderStageDetails(item) {
+  if (!isStageRecommendation(item)) return null;
+  const payload = item.payload || {};
+  const fromStage = payload.fromStage || payload.currentStatus || item.lead?.status || "new";
+  const toStage = payload.toStage || payload.nextStatus || payload.status || "qualified";
+  return (
+    <div className="approval-stage-details">
+      <span>From stage <b>{stageLabel(fromStage)}</b></span>
+      <span>To stage <b>{stageLabel(toStage)}</b></span>
+      <span>Confidence <b>{payload.confidence || "—"}%</b></span>
+      <span>Reason <b>{payload.reason || item.recommendation || "AI обнаружил сигнал для смены этапа."}</b></span>
+    </div>
+  );
 }
 
 function shortRecommendation(item) {
@@ -86,7 +112,7 @@ const approvalActionLoadingLabels = {
 };
 
 const APPROVAL_ACTION_TIMEOUT_MS = 20000;
-const executableApprovalTypes = new Set(["telegram_followup", "email_followup", "send_demo_link", "send_presentation", "create_reminder", "move_lead_stage"]);
+const executableApprovalTypes = new Set(["telegram_followup", "email_followup", "send_demo_link", "send_presentation", "create_reminder", "move_lead_stage", "stage_change_recommendation"]);
 
 function isApprovalItemExecutable(item) {
   return executableApprovalTypes.has(item.executionType || item.actionType);
@@ -270,8 +296,8 @@ export default function AiWorkersPage() {
   const recentRuns = commandCenter?.recentRuns || [];
   const metrics = commandCenter?.metrics || {};
   const approvalItems = approvalQueue.items || [];
-  const activeApprovalItems = useMemo(() => approvalItems.filter((item) => !["rejected", "completed", "failed", "cancelled"].includes(item.status)), [approvalItems]);
-  const approvalHistoryItems = useMemo(() => approvalItems.filter((item) => ["rejected", "completed", "failed", "cancelled"].includes(item.status)), [approvalItems]);
+  const activeApprovalItems = useMemo(() => approvalItems.filter((item) => !["rejected", "completed", "executed", "failed", "cancelled"].includes(item.status)), [approvalItems]);
+  const approvalHistoryItems = useMemo(() => approvalItems.filter((item) => ["rejected", "completed", "executed", "failed", "cancelled"].includes(item.status)), [approvalItems]);
   const approvalMetrics = approvalQueue.metrics || {};
   const pendingActions = useMemo(() => queue.filter((item) => item.status === "pending_approval"), [queue]);
   const failedActions = useMemo(() => queue.filter((item) => item.status === "failed"), [queue]);
@@ -334,6 +360,7 @@ export default function AiWorkersPage() {
               <div className="approval-main">
                 <strong>{item.title}</strong>
                 <p>{shortRecommendation(item)}</p>
+                {renderStageDetails(item)}
                 {item.errorMessage && <small className="email-error-text">Ошибка выполнения: {formatApprovalErrorMessage(item.errorMessage)}</small>}
               </div>
               <div><span>Лид</span><b>{item.lead?.name || "—"}</b></div>
@@ -368,6 +395,7 @@ export default function AiWorkersPage() {
                   <div className="approval-main">
                     <strong>{item.title}</strong>
                     <p>{shortRecommendation(item)}</p>
+                    {renderStageDetails(item)}
                     {item.errorMessage && <small className="email-error-text">Ошибка выполнения: {formatApprovalErrorMessage(item.errorMessage)}</small>}
                   </div>
                   <div><span>Лид</span><b>{item.lead?.name || "—"}</b></div>

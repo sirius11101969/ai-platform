@@ -181,12 +181,12 @@ function actionTypeLabel(type) {
 
 
 function getStageRecommendation(lead, actionCenter = {}) {
-  return lead?.aiStageRecommendation || (actionCenter.approvalItems || []).find((item) => (item.actionType || item.executionType) === 'stage_change_recommendation') || null;
+  return lead?.aiStageRecommendation || (actionCenter.approvalItems || []).find((item) => item.leadId === lead?.id && (item.actionType || item.executionType) === 'stage_change_recommendation') || null;
 }
 
 function getRecommendedStage(item) {
   const payload = item?.payload || item || {};
-  return payload.nextStatus || payload.recommendedStage || payload.status || item?.recommendedStage || '';
+  return payload.toStage || payload.nextStatus || payload.recommendedStage || payload.status || item?.recommendedStage || '';
 }
 
 function getStageRecommendationReason(item) {
@@ -1067,7 +1067,8 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                   <div><span>Reason</span><strong>{getStageRecommendationReason(getStageRecommendation(lead, actionCenter))}</strong></div>
                 </div>
                 <div className="execution-buttons">
-                  <button type="button" className="btn primary compact" onClick={() => onApproveApprovalQueueItem(getStageRecommendation(lead, actionCenter))} disabled={executionBusy[getStageRecommendation(lead, actionCenter).id] || !['pending_approval','failed'].includes(getStageRecommendation(lead, actionCenter).status)}>{executionBusy[getStageRecommendation(lead, actionCenter).id] ? 'Обновляем…' : 'Approve stage change'}</button>
+                  <button type="button" className="ghost-button compact" onClick={() => onApproveApprovalQueueItem(getStageRecommendation(lead, actionCenter))} disabled={executionBusy[getStageRecommendation(lead, actionCenter).id] || !['pending_approval','failed'].includes(getStageRecommendation(lead, actionCenter).status)}>{executionBusy[getStageRecommendation(lead, actionCenter).id] ? 'Обновляем…' : 'Approve stage change'}</button>
+                  <button type="button" className="btn primary compact" onClick={() => onExecuteApprovalQueueItem(getStageRecommendation(lead, actionCenter))} disabled={executionBusy[getStageRecommendation(lead, actionCenter).id] || getStageRecommendation(lead, actionCenter).status !== 'approved'}>{executionBusy[getStageRecommendation(lead, actionCenter).id] ? 'Выполняем…' : 'Execute stage change'}</button>
                   <button type="button" className="ghost-button compact danger-action" onClick={() => onRejectApprovalQueueItem(getStageRecommendation(lead, actionCenter))} disabled={executionBusy[getStageRecommendation(lead, actionCenter).id] || ['executing','completed','executed','rejected'].includes(getStageRecommendation(lead, actionCenter).status)}>Reject</button>
                 </div>
               </div>
