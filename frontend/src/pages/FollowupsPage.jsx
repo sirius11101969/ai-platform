@@ -41,11 +41,47 @@ function getEditButtonLabel(itemId, loadingAction) {
   return isActionBusy(itemId, "edit", loadingAction) ? "Сохраняем…" : "Изменить";
 }
 
-function getSendButtonLabel(item, isSending) {
-  if (isSending) return "Отправляем…";
+function getSuggestedChannel(item) {
+  return item?.suggestedChannel || item?.suggested_channel || "";
+}
+
+function getLeadEmail(item) {
+  return item?.lead?.email || item?.leadEmail || item?.lead_email || "";
+}
+
+function getLeadTelegramChatId(item) {
+  return item?.lead?.telegramChatId || item?.lead?.telegram_chat_id || item?.lead?.metadata?.telegramChatId || item?.leadTelegramChatId || item?.lead_telegram_chat_id || "";
+}
+
+function getSendDisabledReason(item) {
+  if (item.status !== "approved") return "not-approved";
+
+  const suggestedChannel = getSuggestedChannel(item);
+  if (suggestedChannel === "email" && !getLeadEmail(item)) return "missing-email";
+  if (suggestedChannel === "telegram" && !getLeadTelegramChatId(item)) return "missing-telegram-chat-id";
+  if (!["crm", "email", "telegram"].includes(suggestedChannel)) return "unavailable";
+  return null;
+}
+
+function canSendFollowup(item) {
+  return item.status === "approved" && !getSendDisabledReason(item);
+}
+
+function getSendButtonLabel(item, isSending, disabledReason) {
   if (item.status === "sent") return "Отправлено";
-  if (item.status === "failed") return "Повторить отправку";
+  if (isSending) return "Отправляем…";
+  if (disabledReason === "not-approved") return "Сначала одобрить";
+  if (disabledReason === "missing-email") return "Нет email";
+  if (disabledReason === "missing-telegram-chat-id") return "Нет Telegram chat id";
+  if (disabledReason) return "Недоступно";
   return "Отправить";
+}
+
+function getSendDisabledHint(disabledReason) {
+  if (disabledReason === "not-approved") return "Нужно сначала одобрить follow-up";
+  if (disabledReason === "missing-email") return "У лида нет email для отправки";
+  if (disabledReason === "missing-telegram-chat-id") return "У лида нет Telegram chat id";
+  return "";
 }
 
 export default function FollowupsPage() {
@@ -177,14 +213,17 @@ export default function FollowupsPage() {
           {items.map((item) => {
             const itemBusy = isItemBusy(item.id, loadingAction);
             const isSending = loadingAction === `${item.id}:send`;
-            const canSend = ["approved", "failed"].includes(item.status);
+            const disabledReason = getSendDisabledReason(item);
+            const canSend = canSendFollowup(item);
+            const sendButtonDisabled = isSending || item.status === "sent" || !canSend;
+            const sendDisabledHint = sendButtonDisabled && !isSending && item.status !== "sent" ? getSendDisabledHint(disabledReason) : "";
             const itemError = actionErrors[item.id];
 
             return (
             <article className={`approval-card followup-card ${item.status}`} key={item.id}>
               <div className="approval-card-head">
                 <div>
-                  <span className="eyebrow">{item.ruleType} · {channelLabels[item.suggestedChannel] || item.suggestedChannel}</span>
+                  <span className="eyebrow">{item.ruleType} · {channelLabels[getSuggestedChannel(item)] || getSuggestedChannel(item)}</span>
                   <h3>{item.lead?.name || "Лид"}{item.lead?.company ? ` · ${item.lead.company}` : ""}</h3>
                   <p>{item.reason || "AI обнаружил необходимость касания"}</p>
                 </div>
@@ -200,7 +239,13 @@ export default function FollowupsPage() {
                 <button className="ghost-button compact" type="button" onClick={() => handleAction(item, "approve")} disabled={itemBusy || item.status !== "suggested"}>{getActionButtonLabel(item.id, "approve", "Одобрить", loadingAction)}</button>
                 <button className="ghost-button compact" type="button" onClick={() => handleEdit(item)} disabled={itemBusy || !["suggested", "approved", "failed"].includes(item.status)}>{getEditButtonLabel(item.id, loadingAction)}</button>
                 <button className="ghost-button compact danger-action" type="button" onClick={() => handleAction(item, "reject")} disabled={itemBusy || !["suggested", "failed"].includes(item.status)}>{getActionButtonLabel(item.id, "reject", "Отклонить", loadingAction)}</button>
-                <button className="btn primary compact" type="button" onClick={() => handleAction(item, "send")} disabled={isSending || item.status === "sent" || !canSend} aria-busy={isSending}>{getSendButtonLabel(item, isSending)}</button>
+                <div className="followup-send-action">
+                  <button className="btn primary compact followup-send-button" type="button" onClick={() => handleAction(item, "send")} disabled={sendButtonDisabled} aria-busy={isSending}>
+                    {isSending && <i className="button-spinner" aria-hidden="true" />}
+                    {getSendButtonLabel(item, isSending, disabledReason)}
+                  </button>
+                  {sendDisabledHint && <small className="followup-send-hint">{sendDisabledHint}</small>}
+                </div>
                 <Link className="ghost-button compact" to={`/crm?lead=${item.leadId}`}>CRM</Link>
               </div>
             </article>
