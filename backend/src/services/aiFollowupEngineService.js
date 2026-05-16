@@ -112,12 +112,22 @@ async function loadActiveRules(workspaceId) {
   return result.rows.map(normalizeRule)
 }
 
+function normalizeComparable(value) {
+  return String(value ?? '').trim().toLowerCase()
+}
+
 function getLeadStage(lead) {
-  return lead.followup_stage || lead.stage || lead.status
+  return lead.followup_stage || lead.stage || lead.status || 'new'
+}
+
+function getNormalizedLeadStage(lead) {
+  return normalizeComparable(getLeadStage(lead) || 'new') || 'new'
 }
 
 function getLeadLastActivityAt(lead) {
-  return lead.last_activity_at ? new Date(lead.last_activity_at) : new Date(lead.last_message_at || lead.updated_at || lead.created_at)
+  const rawActivity = lead.last_message_at || lead.updated_at || lead.created_at
+  const lastActivity = rawActivity ? new Date(rawActivity) : new Date()
+  return Number.isNaN(lastActivity.getTime()) ? new Date() : lastActivity
 }
 
 function getLeadInactivityHours(lead) {
@@ -137,55 +147,73 @@ function getLeadAiScore(lead) {
   return Number(lead.ai_score ?? lead.aiScore ?? lead.score ?? 0)
 }
 
+const CLOSED_LEAD_STAGES = new Set(['won', 'lost', 'closed_won', 'closed_lost', 'successful', 'потеряно', 'успешно'])
+
 function isOpenLead(lead) {
-  const stage = getLeadStage(lead)
-  return stage !== 'won' && stage !== 'lost'
+  return !CLOSED_LEAD_STAGES.has(getNormalizedLeadStage(lead))
 }
 
-function describeRuleMismatch({ lead, rule, inactiveHours }) {
-  const stage = getLeadStage(lead)
-  const thresholdHours = getRuleThresholdHours(rule)
-  const score = getLeadAiScore(lead)
-  if (!isOpenLead(lead)) return `terminal status ${stage}`
-
-  switch (rule.ruleType) {
-    case 'proposal_no_reply':
-      if (stage !== 'proposal') return `stage ${stage} != proposal`
-      if (inactiveHours < thresholdHours) return `inactive ${inactiveHours}h < ${thresholdHours}h`
-      return 'matched'
-    case 'no_reply_24h':
-    case 'no_reply_3d':
-    case 'no_reply_7d':
-      if (inactiveHours < thresholdHours) return `inactive ${inactiveHours}h < ${thresholdHours}h`
-      return 'matched'
-    case 'meeting_no_next_step':
-      if (stage !== 'booked') return `stage ${stage} != booked`
-      if (inactiveHours < thresholdHours) return `inactive ${inactiveHours}h < ${thresholdHours}h`
-      return 'matched'
-    case 'hot_lead_inactive':
-      if (score < 70) return `ai score ${score} < 70`
-      if (inactiveHours < thresholdHours) return `inactive ${inactiveHours}h < ${thresholdHours}h`
-      return 'matched'
-    default:
-      if (rule.config?.stage && stage !== rule.config.stage) return `stage ${stage} != ${rule.config.stage}`
-      if (inactiveHours < thresholdHours) return `inactive ${inactiveHours}h < ${thresholdHours}h`
-      if (rule.config?.minScore && score < Number(rule.config.minScore)) return `ai score ${score} < ${Number(rule.config.minScore)}`
-      return 'matched'
-  }
+function buildSkipReason({ isOpen, stageMatches, inactivityMatches, scoreMatches }) {
+  if (!isOpen) return 'lead stage is closed'
+  if (!stageMatches) return 'stage mismatch'
+  if (!inactivityMatches) return 'inactivity below threshold'
+  if (!scoreMatches) return 'score below threshold'
+  return null
 }
 
 function evaluateRule(lead, rule) {
+  const leadStage = getLeadStage(lead)
+  const normalizedLeadStage = getNormalizedLeadStage(lead)
+  const configStage = rule.config?.stage
+  const normalizedConfigStage = normalizeComparable(configStage)
+  const thresholdHours = getRuleThresholdHours(rule)
   const inactiveHours = Math.round(getLeadInactivityHours(lead) * 10) / 10
-  const mismatchReason = describeRuleMismatch({ lead, rule, inactiveHours })
-  const matched = mismatchReason === 'matched'
+  const aiScore = getLeadAiScore(lead)
+  const minScore = Number(rule.config?.minScore)
+  const isOpen = isOpenLead(lead)
+  let stageMatches = true
+  let inactivityMatches = inactiveHours >= thresholdHours
+  let scoreMatches = true
+
+  switch (rule.ruleType) {
+    case 'proposal_no_reply':
+      stageMatches = normalizedLeadStage === normalizedConfigStage
+      inactivityMatches = inactiveHours >= Number(rule.config?.thresholdHours)
+      break
+    case 'no_reply_24h':
+    case 'no_reply_3d':
+    case 'no_reply_7d':
+      stageMatches = isOpen
+      break
+    case 'meeting_no_next_step':
+      stageMatches = normalizedLeadStage === normalizeComparable(configStage || 'booked')
+      break
+    case 'hot_lead_inactive':
+      scoreMatches = Number.isFinite(minScore) ? aiScore >= minScore : aiScore >= 70
+      break
+    default:
+      if (normalizedConfigStage) stageMatches = normalizedLeadStage === normalizedConfigStage
+      if (Number.isFinite(minScore)) scoreMatches = aiScore >= minScore
+      break
+  }
+
+  const matched = isOpen && stageMatches && inactivityMatches && scoreMatches
+  const skipReason = matched ? null : buildSkipReason({ isOpen, stageMatches, inactivityMatches, scoreMatches })
   return {
     matched,
+    finalMatch: matched,
     ruleType: rule.ruleType,
-    stage: getLeadStage(lead),
+    leadStage,
+    stage: leadStage,
+    configStage,
     inactiveHours,
-    thresholdHours: getRuleThresholdHours(rule),
-    aiScore: getLeadAiScore(lead),
-    reason: matched ? 'matched' : mismatchReason,
+    thresholdHours,
+    aiScore,
+    stageMatches,
+    inactivityMatches,
+    scoreMatches,
+    skipReason,
+    reason: matched ? 'matched' : skipReason,
     rule: matched
       ? {
           ...rule,
@@ -253,32 +281,23 @@ async function scanWorkspace(userId, workspaceId) {
   const leadsResult = await pool.query(
     `WITH activity AS (
        SELECT l.id AS lead_id,
-              COALESCE(
-                GREATEST(
-                  l.last_message_at,
-                  MAX(tm.created_at),
-                  MAX(em.created_at)
-                ),
-                l.last_message_at,
-                l.updated_at,
-                l.created_at
-              ) AS last_activity_at
+              COALESCE(l.last_message_at, l.updated_at, l.created_at) AS last_activity_at
          FROM crm_leads l
-         LEFT JOIN telegram_messages tm ON tm.lead_id = l.id AND tm.workspace_id = l.workspace_id
-         LEFT JOIN email_messages em ON em.lead_id = l.id AND em.workspace_id = l.workspace_id
-        WHERE l.workspace_id = $1 AND COALESCE(NULLIF(l.stage, ''), NULLIF(l.status, ''), 'new') NOT IN ('won','lost')
-        GROUP BY l.id
+        WHERE l.workspace_id = $1
+          AND LOWER(TRIM(COALESCE(NULLIF(l.stage, ''), NULLIF(l.status, ''), 'new'))) NOT IN ('won','lost','closed_won','closed_lost','successful','потеряно','успешно')
      ), latest_score AS (
        SELECT DISTINCT ON (lead_id) lead_id, score, temperature FROM lead_ai_scores WHERE workspace_id = $1 ORDER BY lead_id, generated_at DESC
      )
      SELECT l.*, COALESCE(NULLIF(l.stage, ''), NULLIF(l.status, ''), 'new') AS followup_stage, a.last_activity_at, s.score, s.temperature
        FROM crm_leads l JOIN activity a ON a.lead_id = l.id LEFT JOIN latest_score s ON s.lead_id = l.id
-      WHERE l.workspace_id = $1 AND COALESCE(NULLIF(l.stage, ''), NULLIF(l.status, ''), 'new') NOT IN ('won','lost')`, [workspaceId]
+      WHERE l.workspace_id = $1
+        AND LOWER(TRIM(COALESCE(NULLIF(l.stage, ''), NULLIF(l.status, ''), 'new'))) NOT IN ('won','lost','closed_won','closed_lost','successful','потеряно','успешно')`, [workspaceId]
   )
   console.info('[ai-followups] leads loaded for scan', { userId, workspaceId, scannedLeadsCount: leadsResult.rows.length })
 
   const createdJobs = []
   const skippedDuplicateJobs = []
+  const debugEvaluations = []
   let matchedLeadsCount = 0
   for (const row of leadsResult.rows) {
     const stage = getLeadStage(row)
@@ -289,17 +308,23 @@ async function scanWorkspace(userId, workspaceId) {
     const lead = crmModel.CRM_STATUSES ? { ...row, id: row.id, status: stage } : { ...row, status: stage }
     const evaluations = buildRuleEvaluations(row, activeRules)
     for (const evaluation of evaluations) {
-      console.info('[ai-followups] rule match evaluated', {
+      const debugEvaluation = {
         workspaceId,
         leadId: row.id,
+        leadName: row.name,
+        leadStage: evaluation.leadStage,
         ruleType: evaluation.ruleType,
-        matched: evaluation.matched,
-        stage: evaluation.stage,
-        inactiveHours: evaluation.inactiveHours,
+        configStage: evaluation.configStage,
         thresholdHours: evaluation.thresholdHours,
-        aiScore: evaluation.aiScore,
-        reason: evaluation.reason,
-      })
+        inactiveHours: evaluation.inactiveHours,
+        stageMatches: evaluation.stageMatches,
+        inactivityMatches: evaluation.inactivityMatches,
+        scoreMatches: evaluation.scoreMatches,
+        finalMatch: evaluation.finalMatch,
+        skipReason: evaluation.skipReason,
+      }
+      debugEvaluations.push(debugEvaluation)
+      console.info('[ai-followups] rule match evaluated', debugEvaluation)
     }
 
     const matchedRules = evaluations.filter((evaluation) => evaluation.matched).map((evaluation) => evaluation.rule)
@@ -313,7 +338,11 @@ async function scanWorkspace(userId, workspaceId) {
     for (const rule of matchedRules) {
       const duplicate = await pool.query(
         `SELECT id FROM ai_followup_jobs
-          WHERE workspace_id = $1 AND lead_id = $2 AND rule_type = $3 AND created_at > NOW() - INTERVAL '24 hours'
+          WHERE workspace_id = $1
+            AND lead_id = $2
+            AND rule_type = $3
+            AND created_at > NOW() - INTERVAL '24 hours'
+            AND status IN ('suggested', 'approved', 'sent')
           LIMIT 1`,
         [workspaceId, row.id, rule.ruleType]
       )
@@ -357,6 +386,12 @@ async function scanWorkspace(userId, workspaceId) {
     skippedCount: skippedDuplicateJobs.length,
     createdJobs,
     skippedDuplicateJobs,
+    debugSummary: {
+      evaluationsCount: debugEvaluations.length,
+      matchedEvaluationsCount: debugEvaluations.filter((evaluation) => evaluation.finalMatch).length,
+      skippedEvaluationsCount: debugEvaluations.filter((evaluation) => !evaluation.finalMatch).length,
+      evaluations: debugEvaluations.slice(0, 100),
+    },
     rulesSeeded: seedResult.seeded,
     seededRuleTypes: seedResult.seededRuleTypes,
   }
