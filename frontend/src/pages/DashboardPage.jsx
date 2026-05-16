@@ -44,6 +44,10 @@ function formatDate(value) {
   }).format(new Date(value));
 }
 
+function pipelineHealthLabel(status) {
+  return ({ healthy: "Healthy", warning: "Warning", critical: "Critical" }[status] || "Healthy");
+}
+
 
 function translateTaskResultText(value) {
   return String(value)
@@ -243,9 +247,10 @@ export default function DashboardPage() {
         <StatCard label="Revenue At Risk" value={loading ? "…" : formatCurrency(crmStats?.aiMetrics?.revenueAtRisk || 0)} hint="weighted forecast in at-risk/lost-risk deals" tone="pink" />
         <StatCard label="High Probability Deals" value={loading ? "…" : String(crmStats?.aiMetrics?.highProbabilityDeals || 0)} hint="probability ≥ 70%" tone="violet" />
         <StatCard label="Stalled Opportunities" value={loading ? "…" : String(crmStats?.aiMetrics?.stalledOpportunities || crmStats?.aiMetrics?.inactiveOpportunities || 0)} hint="нет активности более 7 дней" tone="pink" />
-        <StatCard label="Deals at risk" value={loading ? "…" : String(crmStats?.aiMetrics?.dealsAtRisk || crmStats?.aiMetrics?.atRiskDeals || 0)} hint="stalled / no engagement / weak qualification" tone="violet" />
+        <StatCard label="At-risk Deals" value={loading ? "…" : String(crmStats?.aiMetrics?.dealsAtRisk || crmStats?.aiMetrics?.atRiskDeals || 0)} hint="stalled / no engagement / weak qualification" tone="violet" />
+        <StatCard label="Avg Probability" value={loading ? "…" : `${crmStats?.aiMetrics?.averageProbability || crmStats?.aiMetrics?.avgProbability || crmStats?.aiMetrics?.conversionForecast || 0}%`} hint="active pipeline average probability" />
         <StatCard label="Inactive opportunities" value={loading ? "…" : String(crmStats?.aiMetrics?.inactiveOpportunities || 0)} hint="нет активности более 3 дней" tone="pink" />
-        <StatCard label="Pipeline Health" value={loading ? "…" : `${crmStats?.aiMetrics?.pipelineHealth || 0}%`} hint="AI риск‑индекс открытой воронки" />
+        <StatCard label="Pipeline Health" value={loading ? "…" : pipelineHealthLabel(crmStats?.aiMetrics?.pipelineHealthStatus)} hint={`risk revenue ${crmStats?.aiMetrics?.riskRevenueRatio || 0}% · score ${crmStats?.aiMetrics?.pipelineHealth || 0}%`} />
         <StatCard label="Outreach generated today" value={loading ? "…" : String(crmStats?.aiMetrics?.outreachGeneratedToday || 0)} hint="Telegram/email drafts after AI qualification" tone="violet" />
         <StatCard label="Outreach pending approvals" value={loading ? "…" : String(crmStats?.aiMetrics?.outreachPendingApprovals || 0)} hint="Черновики ждут ручного approval" tone="pink" />
         <StatCard label="AI response readiness" value={loading ? "…" : `${crmStats?.aiMetrics?.aiResponseReadiness || 0}%`} hint="Доля лидов с готовыми AI ответами" />

@@ -113,3 +113,30 @@ All reads/writes are scoped by `workspace_id`. The engine preserves existing out
 5. Confirm risk signals plus `ai_forecast_updated`, `ai_risk_detected`, and `ai_pipeline_health` timeline entries are created with readable Russian text.
 6. Confirm `risk_review`, `pipeline_health_alert`, and `stale_deal_followup` queue items are created for stale/risky examples.
 7. Confirm CRM dashboard metrics update: Forecast Revenue, Revenue At Risk, High Probability Deals, Stalled Opportunities, Pipeline Health, Forecast Distribution.
+
+## AS6 Forecast/Risk UI integration
+
+The AS6 CRM UI now surfaces the latest score fields from `lead_ai_scores` directly in the pipeline and lead modal:
+
+- CRM lead cards show `probability_to_close`, `expected_revenue`, `forecast_category`, `risk_level`, `engagement_score`, and the AI next best action.
+- Lead detail modal includes an **AI Forecast** section with `probability_to_close`, `engagement_score`, `expected_revenue`, `forecast_category`, `risk_level`, `recommended_next_step`, and the latest forecast/risk timeline event.
+- When no score exists, CRM cards and the modal show: `AI прогноз появится после квалификации лида.`
+
+The dashboard exposes dedicated KPI cards for:
+
+- AI Forecast Revenue
+- Revenue At Risk
+- High Probability Deals
+- At-risk Deals
+- Avg Probability
+- Pipeline Health
+
+Pipeline health is workspace-scoped and excludes `won` / `lost` from active-pipeline calculations. The status is intentionally simple and explainable:
+
+| Status | Rule |
+| --- | --- |
+| `healthy` | Risk revenue is ≤ 30% and only a small share of active deals are high risk. |
+| `warning` | Risk revenue is > 30% or the active pipeline has a meaningful high-risk share. |
+| `critical` | Risk revenue is > 50%. |
+
+SQL projections use explicit aliases for latest-score reads, for example `scores.probability_to_close AS probability_to_close`, to avoid ambiguous column names when joining `crm_leads`, timeline data, and latest `lead_ai_scores`.

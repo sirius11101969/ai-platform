@@ -299,7 +299,42 @@ async function listLeads(userId, workspaceId) {
             COALESCE(json_agg(DISTINCT jsonb_build_object('id', n.id, 'lead_id', n.lead_id, 'user_id', n.user_id, 'body', n.body, 'created_at', n.created_at)) FILTER (WHERE n.id IS NOT NULL), '[]'::json) AS notes_list,
             COALESCE(json_agg(DISTINCT jsonb_build_object('id', f.id, 'lead_id', f.lead_id, 'user_id', f.user_id, 'message', f.message, 'model', f.model, 'created_at', f.created_at)) FILTER (WHERE f.id IS NOT NULL), '[]'::json) AS followups,
             COALESCE((SELECT json_agg(tm_row ORDER BY tm_row.created_at ASC) FROM (SELECT tm.id, tm.lead_id, tm.user_id, tm.role, tm.message, tm.telegram_chat_id, tm.telegram_message_id, tm.created_at FROM telegram_messages tm WHERE tm.lead_id = l.id AND tm.user_id = l.user_id ORDER BY tm.created_at DESC LIMIT 10) tm_row), '[]'::json) AS telegram_messages,
-            (SELECT to_jsonb(s) FROM (SELECT * FROM lead_ai_scores las WHERE las.workspace_id = l.workspace_id AND las.lead_id = l.id ORDER BY las.generated_at DESC LIMIT 1) s) AS ai_score,
+            (SELECT to_jsonb(scores) FROM (
+              SELECT
+                las.id AS id,
+                las.lead_id AS lead_id,
+                las.workspace_id AS workspace_id,
+                las.score AS score,
+                las.temperature AS temperature,
+                las.deal_probability AS deal_probability,
+                las.probability_to_close AS probability_to_close,
+                las.urgency AS urgency,
+                las.urgency_level AS urgency_level,
+                las.engagement_level AS engagement_level,
+                las.risk_level AS risk_level,
+                las.budget_probability AS budget_probability,
+                las.ai_summary AS ai_summary,
+                las.intent_summary AS intent_summary,
+                las.next_best_action AS next_best_action,
+                las.recommended_next_step AS recommended_next_step,
+                las.ideal_contact_timing AS ideal_contact_timing,
+                las.objections_detected AS objections_detected,
+                las.recommended_cta AS recommended_cta,
+                las.recommended_channel AS recommended_channel,
+                las.confidence AS confidence,
+                las.engagement_score AS engagement_score,
+                las.expected_revenue AS expected_revenue,
+                las.forecast_category AS forecast_category,
+                las.risk_signals AS risk_signals,
+                las.ai_reasoning AS ai_reasoning,
+                las.next_best_action_code AS next_best_action_code,
+                las.generated_at AS generated_at,
+                las.created_at AS created_at
+              FROM lead_ai_scores las
+              WHERE las.workspace_id = l.workspace_id AND las.lead_id = l.id
+              ORDER BY las.generated_at DESC
+              LIMIT 1
+            ) scores) AS ai_score,
             COALESCE((SELECT json_agg(seq_row ORDER BY seq_row.recommended_at DESC) FROM (SELECT * FROM ai_followup_sequences afs WHERE afs.workspace_id = l.workspace_id AND afs.lead_id = l.id ORDER BY afs.recommended_at DESC LIMIT 5) seq_row), '[]'::json) AS ai_followup_sequences,
             COALESCE((SELECT json_agg(job_row ORDER BY job_row.created_at DESC) FROM (SELECT * FROM ai_followup_jobs afj WHERE afj.workspace_id = l.workspace_id AND afj.lead_id = l.id ORDER BY afj.created_at DESC LIMIT 10) job_row), '[]'::json) AS ai_followup_jobs,
             COALESCE((SELECT json_agg(draft_row ORDER BY draft_row.created_at DESC) FROM (SELECT id, workspace_id, lead_id, action_type, status, title, recommendation, payload, created_at, updated_at FROM ai_worker_queue q WHERE q.workspace_id = l.workspace_id AND q.lead_id = l.id AND q.action_type IN ('telegram_draft','email_draft','followup_24h','followup_3d','demo_offer','meeting_request') ORDER BY q.created_at DESC LIMIT 20) draft_row), '[]'::json) AS ai_outreach_drafts,
@@ -331,7 +366,40 @@ async function findLead(userId, workspaceId, leadId, client = pool) {
     client.query('SELECT id, lead_id, user_id, body, created_at FROM crm_notes WHERE user_id = $1 AND workspace_id = $3 AND lead_id = $2 ORDER BY created_at DESC', [userId, leadId, workspaceId]),
     client.query('SELECT id, lead_id, user_id, message, model, created_at FROM crm_followups WHERE user_id = $1 AND workspace_id = $3 AND lead_id = $2 ORDER BY created_at DESC', [userId, leadId, workspaceId]),
     client.query('SELECT id, lead_id, user_id, role, message, telegram_chat_id, telegram_message_id, created_at FROM telegram_messages WHERE user_id = $1 AND workspace_id = $3 AND lead_id = $2 ORDER BY created_at ASC LIMIT 200', [userId, leadId, workspaceId]),
-    client.query('SELECT * FROM lead_ai_scores WHERE workspace_id = $1 AND lead_id = $2 ORDER BY generated_at DESC LIMIT 1', [workspaceId, leadId]),
+    client.query(`SELECT
+      scores.id AS id,
+      scores.lead_id AS lead_id,
+      scores.workspace_id AS workspace_id,
+      scores.score AS score,
+      scores.temperature AS temperature,
+      scores.deal_probability AS deal_probability,
+      scores.probability_to_close AS probability_to_close,
+      scores.urgency AS urgency,
+      scores.urgency_level AS urgency_level,
+      scores.engagement_level AS engagement_level,
+      scores.risk_level AS risk_level,
+      scores.budget_probability AS budget_probability,
+      scores.ai_summary AS ai_summary,
+      scores.intent_summary AS intent_summary,
+      scores.next_best_action AS next_best_action,
+      scores.recommended_next_step AS recommended_next_step,
+      scores.ideal_contact_timing AS ideal_contact_timing,
+      scores.objections_detected AS objections_detected,
+      scores.recommended_cta AS recommended_cta,
+      scores.recommended_channel AS recommended_channel,
+      scores.confidence AS confidence,
+      scores.engagement_score AS engagement_score,
+      scores.expected_revenue AS expected_revenue,
+      scores.forecast_category AS forecast_category,
+      scores.risk_signals AS risk_signals,
+      scores.ai_reasoning AS ai_reasoning,
+      scores.next_best_action_code AS next_best_action_code,
+      scores.generated_at AS generated_at,
+      scores.created_at AS created_at
+     FROM lead_ai_scores scores
+     WHERE scores.workspace_id = $1 AND scores.lead_id = $2
+     ORDER BY scores.generated_at DESC
+     LIMIT 1`, [workspaceId, leadId]),
     client.query('SELECT * FROM ai_followup_sequences WHERE workspace_id = $1 AND lead_id = $2 ORDER BY recommended_at DESC LIMIT 5', [workspaceId, leadId]),
     client.query('SELECT * FROM ai_followup_jobs WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 10', [workspaceId, leadId]),
     client.query("SELECT id, workspace_id, lead_id, action_type, status, title, recommendation, payload, created_at, updated_at FROM ai_worker_queue WHERE workspace_id = $1 AND lead_id = $2 AND action_type IN ('telegram_draft','email_draft','followup_24h','followup_3d','demo_offer','meeting_request') ORDER BY created_at DESC LIMIT 20", [workspaceId, leadId]),
@@ -858,8 +926,10 @@ async function getStats(userId, workspaceId) {
               COUNT(*) FILTER (WHERE status = 'completed')::int AS completed_actions,
               COUNT(*)::int AS total_actions,
               COUNT(DISTINCT lead_id) FILTER (WHERE status = 'completed')::int AS assisted_deals
-         FROM ai_agent_actions WHERE workspace_id = $1`,
-      [workspaceId]
+         FROM ai_agent_actions aa
+        WHERE aa.workspace_id = $1
+          AND EXISTS (SELECT 1 FROM crm_leads l WHERE l.id = aa.lead_id AND l.workspace_id = aa.workspace_id AND l.user_id = $2)`,
+      [workspaceId, userId]
     ),
     pool.query(
       `WITH latest AS (
@@ -870,13 +940,12 @@ async function getStats(userId, workspaceId) {
               COUNT(*) FILTER (WHERE COALESCE(latest.temperature, CASE WHEN latest.score >= 75 THEN 'hot' WHEN latest.score >= 45 THEN 'warm' ELSE 'cold' END) = 'warm' OR (latest.score >= 45 AND latest.score < 75))::int AS warm_leads,
               COUNT(*) FILTER (WHERE latest.risk_level = 'high')::int AS at_risk_deals,
               COALESCE(AVG(latest.score), 0)::numeric AS average_score,
-              COALESCE(SUM(l.value * COALESCE(latest.probability_to_close, latest.deal_probability) / 100.0) FILTER (WHERE c.status NOT IN ('won','lost')), 0)::numeric AS predicted_revenue,
+              COALESCE(SUM(c.value * COALESCE(latest.probability_to_close, latest.deal_probability) / 100.0) FILTER (WHERE c.status NOT IN ('won','lost')), 0)::numeric AS predicted_revenue,
               COALESCE(AVG(COALESCE(latest.probability_to_close, latest.deal_probability)), 0)::numeric AS conversion_forecast,
               ((SELECT COUNT(*)::int FROM ai_followup_sequences afs WHERE afs.workspace_id = $1 AND afs.status IN ('draft','queued','approved') AND afs.sent_at IS NULL) + (SELECT COUNT(*)::int FROM ai_followup_jobs afj WHERE afj.workspace_id = $1 AND afj.status IN ('suggested','approved'))) AS followups_pending
           FROM latest
-          JOIN crm_leads c ON c.id = latest.lead_id AND c.workspace_id = $1
-          JOIN crm_leads l ON l.id = latest.lead_id`,
-      [workspaceId]
+          JOIN crm_leads c ON c.id = latest.lead_id AND c.workspace_id = $1 AND c.user_id = $2`,
+      [workspaceId, userId]
     ),
     pool.query(
       `SELECT COUNT(*) FILTER (WHERE status = 'pending_approval')::int AS pending_approval,
@@ -952,12 +1021,15 @@ async function getStats(userId, workspaceId) {
           GROUP BY l.id
        )
        SELECT (SELECT COUNT(*)::int FROM ai_worker_queue q JOIN crm_leads ql ON ql.id = q.lead_id AND ql.workspace_id = q.workspace_id WHERE q.workspace_id = $1 AND q.action_type = 'stage_change_recommendation' AND q.status = 'pending_approval' AND ql.user_id = $2) AS stage_recommendations_pending,
+              COUNT(DISTINCT l.id)::int AS active_pipeline_deals,
+              COUNT(DISTINCT l.id) FILTER (WHERE s.lead_id IS NOT NULL)::int AS forecasted_deals,
               COUNT(DISTINCT l.id) FILTER (WHERE last_activity.last_activity_at < NOW() - INTERVAL '3 days')::int AS inactive_opportunities,
               COUNT(DISTINCT l.id) FILTER (WHERE COALESCE(s.risk_level, '') = 'high' OR last_activity.last_activity_at < NOW() - INTERVAL '7 days')::int AS deals_at_risk,
-              COUNT(DISTINCT l.id) FILTER (WHERE COALESCE(s.probability_to_close, s.deal_probability, l.probability_to_close, 0) >= 70 AND l.status NOT IN ('won','lost'))::int AS high_probability_deals,
-              COUNT(DISTINCT l.id) FILTER (WHERE last_activity.last_activity_at < NOW() - INTERVAL '7 days' AND l.status NOT IN ('won','lost'))::int AS stalled_opportunities,
-              COALESCE(SUM(COALESCE(s.expected_revenue, l.estimated_revenue, l.value * COALESCE(s.probability_to_close, s.deal_probability, 0) / 100.0)) FILTER (WHERE l.status NOT IN ('won','lost')), 0)::numeric AS ai_forecasted_revenue,
-              COALESCE(SUM(COALESCE(s.expected_revenue, l.estimated_revenue, l.value * COALESCE(s.probability_to_close, s.deal_probability, 0) / 100.0)) FILTER (WHERE l.status NOT IN ('won','lost') AND (COALESCE(s.risk_level, '') = 'high' OR COALESCE(s.forecast_category, '') IN ('at_risk','lost_risk'))), 0)::numeric AS revenue_at_risk,
+              COUNT(DISTINCT l.id) FILTER (WHERE COALESCE(s.probability_to_close, s.deal_probability, l.probability_to_close, 0) >= 70)::int AS high_probability_deals,
+              COUNT(DISTINCT l.id) FILTER (WHERE last_activity.last_activity_at < NOW() - INTERVAL '7 days')::int AS stalled_opportunities,
+              COALESCE(SUM(COALESCE(s.expected_revenue, l.estimated_revenue, l.value * COALESCE(s.probability_to_close, s.deal_probability, 0) / 100.0)), 0)::numeric AS ai_forecasted_revenue,
+              COALESCE(SUM(COALESCE(s.expected_revenue, l.estimated_revenue, l.value * COALESCE(s.probability_to_close, s.deal_probability, 0) / 100.0)) FILTER (WHERE COALESCE(s.risk_level, '') = 'high' OR COALESCE(s.forecast_category, '') IN ('at_risk','lost_risk')), 0)::numeric AS revenue_at_risk,
+              COALESCE(AVG(COALESCE(s.probability_to_close, s.deal_probability, l.probability_to_close)) FILTER (WHERE s.lead_id IS NOT NULL OR l.probability_to_close IS NOT NULL), 0)::numeric AS avg_probability,
               jsonb_build_object(
                 'committed', COUNT(DISTINCT l.id) FILTER (WHERE s.forecast_category = 'committed'),
                 'likely', COUNT(DISTINCT l.id) FILTER (WHERE s.forecast_category = 'likely'),
@@ -967,8 +1039,20 @@ async function getStats(userId, workspaceId) {
               ) AS forecast_distribution
          FROM crm_leads l
          LEFT JOIN last_activity ON last_activity.id = l.id
-         LEFT JOIN LATERAL (SELECT las.deal_probability, las.probability_to_close, las.risk_level, las.expected_revenue, las.forecast_category FROM lead_ai_scores las WHERE las.workspace_id = l.workspace_id AND las.lead_id = l.id ORDER BY las.generated_at DESC LIMIT 1) s ON true
-        WHERE l.user_id = $2 AND l.workspace_id = $1`,
+         LEFT JOIN LATERAL (
+           SELECT
+             scores.lead_id AS lead_id,
+             scores.deal_probability AS deal_probability,
+             scores.probability_to_close AS probability_to_close,
+             scores.risk_level AS risk_level,
+             scores.expected_revenue AS expected_revenue,
+             scores.forecast_category AS forecast_category
+           FROM lead_ai_scores scores
+           WHERE scores.workspace_id = l.workspace_id AND scores.lead_id = l.id
+           ORDER BY scores.generated_at DESC
+           LIMIT 1
+         ) s ON true
+        WHERE l.user_id = $2 AND l.workspace_id = $1 AND l.status NOT IN ('won','lost')`,
       [workspaceId, userId]
     ),
   ])
@@ -989,6 +1073,14 @@ async function getStats(userId, workspaceId) {
   const landingMetrics = landingMetricsResult.rows[0] || {}
   const pipelineHealth = pipelineHealthResult.rows[0] || {}
   const aiExecutionFinished = Number(aiExecution.finished_total || 0)
+  const aiForecastedRevenue = Number(pipelineHealth.ai_forecasted_revenue || aiRevenue.predicted_revenue || 0)
+  const revenueAtRisk = Number(pipelineHealth.revenue_at_risk || 0)
+  const riskRevenueRatio = aiForecastedRevenue > 0 ? revenueAtRisk / aiForecastedRevenue : 0
+  const activePipelineDeals = Number(pipelineHealth.active_pipeline_deals || 0)
+  const dealsAtRisk = Number(pipelineHealth.deals_at_risk || aiRevenue.at_risk_deals || 0)
+  const riskDealRatio = activePipelineDeals > 0 ? dealsAtRisk / activePipelineDeals : 0
+  const pipelineHealthStatus = riskRevenueRatio > 0.5 ? 'critical' : riskRevenueRatio > 0.3 ? 'warning' : riskDealRatio <= 0.15 ? 'healthy' : 'warning'
+  const pipelineHealthScore = pipelineHealthStatus === 'critical' ? 35 : pipelineHealthStatus === 'warning' ? 68 : 92
   return {
     totalLeads: total,
     pipelineValue: Number(summary.pipeline_value || 0),
@@ -1015,17 +1107,23 @@ async function getStats(userId, workspaceId) {
       assistedDeals: Number(aiMetrics.assisted_deals || 0),
       hotLeads: Number(aiRevenue.hot_leads || 0),
       warmLeads: Number(aiRevenue.warm_leads || 0),
-      predictedRevenue: Number(pipelineHealth.ai_forecasted_revenue || aiRevenue.predicted_revenue || 0),
-      aiForecastedRevenue: Number(pipelineHealth.ai_forecasted_revenue || aiRevenue.predicted_revenue || 0),
-      atRiskDeals: Number(pipelineHealth.deals_at_risk || aiRevenue.at_risk_deals || 0),
-      dealsAtRisk: Number(pipelineHealth.deals_at_risk || aiRevenue.at_risk_deals || 0),
-      revenueAtRisk: Number(pipelineHealth.revenue_at_risk || 0),
+      predictedRevenue: aiForecastedRevenue,
+      aiForecastedRevenue,
+      atRiskDeals: dealsAtRisk,
+      dealsAtRisk,
+      revenueAtRisk,
       highProbabilityDeals: Number(pipelineHealth.high_probability_deals || 0),
+      averageProbability: Math.round(Number(pipelineHealth.avg_probability || aiRevenue.conversion_forecast || 0)),
+      avgProbability: Math.round(Number(pipelineHealth.avg_probability || aiRevenue.conversion_forecast || 0)),
+      activePipelineDeals,
+      forecastedDeals: Number(pipelineHealth.forecasted_deals || 0),
+      riskRevenueRatio: Math.round(riskRevenueRatio * 100),
+      pipelineHealthStatus,
       stalledOpportunities: Number(pipelineHealth.stalled_opportunities || pipelineHealth.inactive_opportunities || 0),
       forecastDistribution: pipelineHealth.forecast_distribution || { committed: 0, likely: 0, possible: 0, at_risk: 0, lost_risk: 0 },
       inactiveOpportunities: Number(pipelineHealth.inactive_opportunities || 0),
       stageRecommendationsPending: Number(pipelineHealth.stage_recommendations_pending || 0),
-      pipelineHealth: Math.max(0, 100 - (Number(pipelineHealth.deals_at_risk || 0) * 12) - (Number(pipelineHealth.inactive_opportunities || 0) * 5)),
+      pipelineHealth: pipelineHealthScore,
       followUpsPending: Number(aiRevenue.followups_pending || 0),
       averageLeadScore: Math.round(Number(aiRevenue.average_score || 0)),
       conversionForecast: Math.round(Number(aiRevenue.conversion_forecast || 0)),

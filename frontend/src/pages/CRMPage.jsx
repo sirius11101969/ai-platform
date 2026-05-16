@@ -91,6 +91,9 @@ function getActivityTitle(event) {
     email_opened: "Клиент открыл email",
     email_sent: "Email отправлен",
     email_queued: "Email поставлен в очередь",
+    ai_forecast_updated: "AI прогноз обновлён",
+    ai_risk_detected: "AI риск обнаружен",
+    ai_score_updated: "AI score обновлён",
   };
   return titles[event?.type] || event?.title || "Событие CRM";
 }
@@ -139,6 +142,10 @@ function channelLabel(channel) {
 
 function forecastLabel(category) {
   return ({ committed: 'Committed', likely: 'Likely', possible: 'Possible', at_risk: 'At risk', lost_risk: 'Lost risk' }[category] || 'Possible');
+}
+
+function getLatestForecastEvent(actionCenter = {}) {
+  return (actionCenter.timeline || []).find((event) => ['ai_forecast_updated', 'ai_risk_detected', 'ai_score_updated'].includes(event?.type));
 }
 
 function getAiBadges(lead) {
@@ -866,7 +873,12 @@ export default function CRMPage() {
                       onDragEnd={handleLeadDragEnd}
                       key={lead.id}
                     >
-                      <div className="lead-topline"><strong>{lead.name}</strong><span>{formatCurrency(lead.value)}</span></div>{getLeadAiScore(lead) && <><div className="lead-intelligence-kpis"><b>{getLeadAiScore(lead).dealProbability}%</b><span>{riskLabel(getLeadAiScore(lead).riskLevel)}</span><em>{formatCurrency(getLeadAiScore(lead).expectedRevenue || lead.estimatedRevenue)}</em></div><div className="lead-ai-probability forecast-progress"><span>{forecastLabel(getLeadAiScore(lead).forecastCategory)} · engagement {getLeadAiScore(lead).engagementScore}/100</span><i style={{ width: `${getLeadAiScore(lead).dealProbability}%` }} /></div></>}{getAiBadges(lead).length > 0 && <div className="ai-badge-row">{getAiBadges(lead).map((badge) => <b className="ai-neon-badge" key={badge}>{badge}</b>)}</div>}
+                      <div className="lead-topline"><strong>{lead.name}</strong><span>{formatCurrency(lead.value)}</span></div>
+                      {getLeadAiScore(lead) ? <>
+                        <div className="lead-intelligence-kpis"><b>{getLeadAiScore(lead).probabilityToClose}%</b><span>{riskLabel(getLeadAiScore(lead).riskLevel)}</span><em>{formatCurrency(getLeadAiScore(lead).expectedRevenue || lead.estimatedRevenue)}</em></div>
+                        <div className="lead-ai-probability forecast-progress"><span>{forecastLabel(getLeadAiScore(lead).forecastCategory)} · engagement {getLeadAiScore(lead).engagementScore}/100</span><i style={{ width: `${getLeadAiScore(lead).probabilityToClose}%` }} /></div>
+                      </> : <div className="ai-forecast-empty-card">AI прогноз появится после квалификации лида.</div>}
+                      {getAiBadges(lead).length > 0 && <div className="ai-badge-row">{getAiBadges(lead).map((badge) => <b className="ai-neon-badge" key={badge}>{badge}</b>)}</div>}
                       <p>{lead.company || (isTelegramLead(lead) ? lead.telegram || "Telegram контакт" : "Компания не указана")}</p>{getLeadAiScore(lead)?.aiReasoning && <div className="ai-card-reasoning">{getLeadAiScore(lead).aiReasoning}</div>}
                       <div className="lead-card-meta"><small><i />{stageMap[lead.status] || lead.status}</small><span className={`source-pill ${lead.source === "telegram" ? "telegram-source" : ""}`}>{formatLeadSource(lead.source)}</span></div>{getLeadAiScore(lead)?.recommendedNextStep && <div className="ai-card-recommendation"><span>AI</span>{getLeadAiScore(lead).recommendedNextStep}</div>}{!getLeadAiScore(lead)?.recommendedNextStep && getAiRecommendation(lead) && <div className="ai-card-recommendation"><span>AI</span>{getAiSummaryText(getAiRecommendation(lead))}</div>}{isTelegramLead(lead) && <div className="telegram-card-status"><span className={`telegram-presence-dot ${lead.telegramOnline ? 'online' : 'offline'}`} />{lead.telegramOnline ? 'online' : 'offline'} · {lead.lastMessageAt ? formatDate(lead.lastMessageAt) : 'нет сообщений'}</div>}
                     </article>
@@ -1085,30 +1097,31 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
               <div className="detail-section ai-deal-probability-panel">
                 <div className="ai-probability-head">
                   <div>
-                    <span className="eyebrow">AI Deal Probability</span>
-                    <h4>{getLeadAiScore(lead).dealProbability}% вероятность сделки</h4>
+                    <span className="eyebrow">AI Forecast</span>
+                    <h4>{getLeadAiScore(lead).probabilityToClose}% вероятность сделки</h4>
                     <p>{getLeadAiScore(lead).aiSummary}</p>
                   </div>
                   <span className={`urgency-badge ${getLeadAiScore(lead).urgencyLevel}`}>{urgencyLabel(getLeadAiScore(lead).urgencyLevel)}</span>
                 </div>
-                <div className="probability-bar"><i style={{ width: `${getLeadAiScore(lead).dealProbability}%` }} /></div>
+                <div className="probability-bar"><i style={{ width: `${getLeadAiScore(lead).probabilityToClose}%` }} /></div>
                 <div className="ai-badge-row detail-ai-badges">{getAiBadges(lead).map((badge) => <b className="ai-neon-badge" key={badge}>{badge}</b>)}</div>
                 <div className="ai-recommendation-grid">
-                  <div><span>AI score</span><strong>{getLeadAiScore(lead).score}/100 · {tempLabel(getLeadAiScore(lead).temperature)}</strong></div>
-                  <div><span>Expected revenue</span><strong>{formatCurrency(getLeadAiScore(lead).expectedRevenue || lead.estimatedRevenue)}</strong></div>
-                  <div><span>Forecast</span><strong>{forecastLabel(getLeadAiScore(lead).forecastCategory)}</strong></div>
-                  <div><span>Engagement</span><strong>{getLeadAiScore(lead).engagementScore}/100 · {tempLabel(getLeadAiScore(lead).temperature)}</strong></div>
-                  <div><span>Канал</span><strong>{channelLabel(getLeadAiScore(lead).recommendedChannel)}</strong></div>
-                  <div><span>Риск</span><strong>{riskLabel(getLeadAiScore(lead).riskLevel)}</strong></div>
+                  <div><span>probability_to_close</span><strong>{getLeadAiScore(lead).probabilityToClose}%</strong></div>
+                  <div><span>engagement_score</span><strong>{getLeadAiScore(lead).engagementScore}/100 · {tempLabel(getLeadAiScore(lead).temperature)}</strong></div>
+                  <div><span>expected_revenue</span><strong>{formatCurrency(getLeadAiScore(lead).expectedRevenue || lead.estimatedRevenue)}</strong></div>
+                  <div><span>forecast_category</span><strong>{forecastLabel(getLeadAiScore(lead).forecastCategory)}</strong></div>
+                  <div><span>risk_level</span><strong>{riskLabel(getLeadAiScore(lead).riskLevel)}</strong></div>
+                  <div><span>recommended_channel</span><strong>{channelLabel(getLeadAiScore(lead).recommendedChannel)}</strong></div>
                   <div><span>Прогноз конверсии</span><strong>{getLeadAiScore(lead).dealProbability >= 70 ? 'Высокий шанс оплаты' : getLeadAiScore(lead).dealProbability >= 40 ? 'Нужно усилить доверие' : 'Низкая готовность к покупке'}</strong></div>
                   <div><span>Идеальное время</span><strong>{getLeadAiScore(lead).idealContactTiming || 'сегодня'}</strong></div>
-                  <div><span>Next best action</span><strong>{getLeadAiScore(lead).nextBestAction}</strong></div>
+                  <div><span>recommended_next_step</span><strong>{getLeadAiScore(lead).recommendedNextStep || getLeadAiScore(lead).nextBestAction}</strong></div>
+                  <div><span>latest forecast timeline event</span><strong>{getLatestForecastEvent(actionCenter)?.title || '—'} · {formatDate(getLatestForecastEvent(actionCenter)?.createdAt)}</strong></div>
                 </div>
               </div>
             ) : (
               <div className="detail-section ai-deal-probability-panel empty-ai-score">
-                <h4>AI Deal Probability</h4>
-                <p>Score ещё не рассчитан. Запустите анализ, чтобы увидеть вероятность сделки, риск и срочность.</p>
+                <h4>AI Forecast</h4>
+                <p>AI прогноз появится после квалификации лида.</p>
                 <button className="ghost-button" type="button" onClick={onAnalyzeLeadAi} disabled={aiActionBusy[`${lead.id}:lead_ai_score`]}>{aiActionBusy[`${lead.id}:lead_ai_score`] ? 'AI считает…' : 'Рассчитать AI score'}</button>
               </div>
             )}
