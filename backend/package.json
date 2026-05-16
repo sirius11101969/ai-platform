@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "node src/index.js"
+    "dev": "node src/index.js",
+    "test:followups": "node tests/aiFollowupEngineService.test.js"
   },
   "dependencies": {
     "axios": "^1.6.0",
