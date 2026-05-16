@@ -44,6 +44,8 @@ function normalize(row) {
       company: row.lead_company || '',
       email: row.lead_email || '',
       telegram: row.lead_telegram || '',
+      telegramChatId: row.lead_telegram_chat_id || '',
+      hasTelegramChatId: Boolean(row.lead_telegram_chat_id),
       status: row.lead_status || '',
     } : null,
   }
@@ -60,7 +62,7 @@ function russianError(message) {
 
 async function assertQueueItem(userId, workspaceId, queueId, client = pool) {
   const result = await client.query(
-    `SELECT q.*, w.name AS worker_name, l.name AS lead_name, l.company AS lead_company, l.email AS lead_email, l.telegram AS lead_telegram, l.status AS lead_status
+    `SELECT q.*, w.name AS worker_name, l.name AS lead_name, l.company AS lead_company, l.email AS lead_email, l.telegram AS lead_telegram, l.telegram_chat_id AS lead_telegram_chat_id, l.status AS lead_status
        FROM ai_worker_queue q
        JOIN ai_workers w ON w.id = q.worker_id AND w.workspace_id = q.workspace_id
        LEFT JOIN crm_leads l ON l.id = q.lead_id AND l.workspace_id = q.workspace_id
@@ -98,7 +100,7 @@ async function listQueue(userId, workspaceId, filters = {}) {
     clauses.push(`q.status = $${values.length}`)
   }
   const result = await pool.query(
-    `SELECT q.*, w.name AS worker_name, l.name AS lead_name, l.company AS lead_company, l.email AS lead_email, l.telegram AS lead_telegram, l.status AS lead_status
+    `SELECT q.*, w.name AS worker_name, l.name AS lead_name, l.company AS lead_company, l.email AS lead_email, l.telegram AS lead_telegram, l.telegram_chat_id AS lead_telegram_chat_id, l.status AS lead_status
        FROM ai_worker_queue q
        JOIN ai_workers w ON w.id = q.worker_id AND w.workspace_id = q.workspace_id
        LEFT JOIN crm_leads l ON l.id = q.lead_id AND l.workspace_id = q.workspace_id
@@ -175,13 +177,14 @@ function buildMessage(item) {
 async function executeByType(userId, workspaceId, item) {
   if (!item.leadId && item.executionType !== 'create_reminder') throw russianError('Для выполнения нужен привязанный лид')
   const type = item.executionType
-  const channel = item.payload.channel || item.payload.suggestedChannel || (item.lead?.telegram ? 'telegram' : item.lead?.email ? 'email' : 'crm')
+  const channel = item.payload.channel || item.payload.suggestedChannel || (item.lead?.hasTelegramChatId ? 'telegram' : item.lead?.email ? 'email' : 'crm')
   if (type === 'telegram_followup') return sendTelegramMessageToLead({ userId, workspaceId, leadId: item.leadId, text: buildMessage(item) })
   if (type === 'email_followup') return emailService.sendEmailNow(userId, { workspaceId, leadId: item.leadId, to: item.payload.to || item.lead?.email, subject: item.payload.subject || item.title, text: buildMessage(item), html: item.payload.html || '' })
   if (type === 'send_demo_link') {
     const text = buildMessage({ ...item, recommendation: item.recommendation || 'Демо AS6 AI CRM Platform: https://www.as6.ru' })
-    if (channel === 'telegram') return sendTelegramMessageToLead({ userId, workspaceId, leadId: item.leadId, text })
-    if (channel === 'email') return emailService.sendEmailNow(userId, { workspaceId, leadId: item.leadId, to: item.payload.to || item.lead?.email, subject: item.payload.subject || 'Демо AS6 AI CRM Platform', text, html: item.payload.html || '' })
+    const demoChannel = item.lead?.hasTelegramChatId ? 'telegram' : channel
+    if (demoChannel === 'telegram') return sendTelegramMessageToLead({ userId, workspaceId, leadId: item.leadId, text })
+    if (demoChannel === 'email') return emailService.sendEmailNow(userId, { workspaceId, leadId: item.leadId, to: item.payload.to || item.lead?.email, subject: item.payload.subject || 'Демо AS6 AI CRM Platform', text, html: item.payload.html || '' })
     return crmModel.createNote(userId, workspaceId, item.leadId, text)
   }
   if (type === 'send_presentation') return sendLeadAttachments({ userId, workspaceId, leadId: item.leadId, channel: channel === 'telegram' ? 'telegram' : 'email', materialKeys: item.payload.materialKeys || ['presentation'], email: { to: item.payload.to || item.lead?.email, subject: item.payload.subject || 'Презентация AS6 AI CRM Platform' } })

@@ -229,6 +229,7 @@ export default function DashboardPage() {
         <StatCard label="AI выполнено сегодня" value={loading ? "…" : String(aiApprovalMetrics?.executedToday || 0)} hint={`${aiApprovalMetrics?.failedToday || 0} ошибок сегодня · success rate ${aiApprovalMetrics?.successRate || 0}%`} tone="violet" />
         <StatCard label="AI эффективность" value={loading ? "…" : `${aiCommandMetrics?.efficiency || crmStats?.aiMetrics?.executionSuccessRate || crmStats?.aiMetrics?.efficiency || 0}%`} hint="Успешные запуски AI сотрудников" />
         <StatCard label="Выручка под контролем AI" value={loading ? "…" : new Intl.NumberFormat("ru-RU", { style: "currency", currency: "RUB", maximumFractionDigits: 0 }).format(aiRevenueUnderControl)} hint="Плейсхолдер revenue impact по открытой воронке" tone="violet" />
+        <StatCard label="Telegram лиды" value={loading ? "…" : String(crmStats?.telegram?.leads || 0)} hint={`${crmStats?.telegram?.recentMessages || 0} последних сообщений за 24ч · ${crmStats?.telegram?.aiActionsSent || 0} AI Telegram actions sent`} tone="pink" />
       </section>
 
       <section className="app-grid two-columns">

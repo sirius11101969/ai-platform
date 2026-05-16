@@ -1388,3 +1388,27 @@ button { font: inherit; }
   .approval-actions { justify-content: flex-start; }
   .approval-metric-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+.telegram-badge.inline {
+  display: inline-flex;
+  margin-left: 0.35rem;
+  vertical-align: middle;
+}
+
+.telegram-chat-status {
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.18rem 0.55rem;
+}
+
+.telegram-chat-status.ok {
+  background: rgba(34, 197, 94, 0.14);
+  color: #86efac;
+}
+
+.telegram-chat-status.missing {
+  background: rgba(248, 113, 113, 0.14);
+  color: #fca5a5;
+}

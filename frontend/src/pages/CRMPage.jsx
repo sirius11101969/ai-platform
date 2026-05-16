@@ -108,7 +108,11 @@ function formatLeadSource(source) {
 }
 
 function isTelegramLead(lead) {
-  return lead?.source === "telegram" || Boolean(lead?.telegram);
+  return lead?.source === "telegram" || Boolean(lead?.telegram || lead?.telegramId || lead?.telegramChatId);
+}
+
+function hasTelegramChatId(lead) {
+  return Boolean(lead?.telegramChatId || lead?.hasTelegramChatId || lead?.metadata?.telegramChatId);
 }
 
 
@@ -1067,7 +1071,9 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                 <div><dt>Контакт</dt><dd>{lead.name}</dd></div>
                 <div><dt>Компания</dt><dd>{lead.company || "—"}</dd></div>
                 <div><dt>Источник</dt><dd>{formatLeadSource(lead.source)}</dd></div>
-                <div><dt>Telegram</dt><dd>{lead.telegram || "—"} {isTelegramLead(lead) && <span className={`telegram-presence ${lead.telegramOnline ? 'online' : 'offline'}`}>{lead.telegramOnline ? 'online' : 'offline'}</span>}</dd></div>
+                <div><dt>Telegram</dt><dd>{lead.telegram || lead.telegramUsername || "—"} {isTelegramLead(lead) && <span className="telegram-badge inline">Telegram</span>} {isTelegramLead(lead) && <span className={`telegram-presence ${lead.telegramOnline ? 'online' : 'offline'}`}>{lead.telegramOnline ? 'online' : 'offline'}</span>}</dd></div>
+                <div><dt>Telegram username</dt><dd>{lead.telegramUsername || lead.telegram || "—"}</dd></div>
+                <div><dt>Chat id</dt><dd>{hasTelegramChatId(lead) ? <span className="telegram-chat-status ok">chat id сохранён</span> : <span className="telegram-chat-status missing">chat id отсутствует</span>}</dd></div>
                 <div><dt>Email</dt><dd>{lead.email || "—"}</dd></div>
                 <div><dt>Этап</dt><dd>{stageMap[lead.status] || lead.status}</dd></div>
                 <div><dt>Создано</dt><dd>{formatDate(lead.createdAt)}</dd></div>
@@ -1080,7 +1086,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                 <div className="telegram-chat-head">
                   <div>
                     <h4>Telegram переписка</h4>
-                    <p>Последние сообщения обновляются автоматически каждые 7 секунд.</p>
+                    <p>{hasTelegramChatId(lead) ? 'Последние сообщения обновляются автоматически каждые 7 секунд.' : 'У лида нет Telegram chat id. Отправка в Telegram недоступна.'}</p>
                   </div>
                   <span className="telegram-badge">Telegram</span>
                 </div>
@@ -1095,7 +1101,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                 </div>
                 <form className="telegram-reply-form" onSubmit={onSendTelegramReply}>
                   <textarea value={telegramDraft} onChange={(event) => onTelegramDraftChange(event.target.value)} placeholder="Ответить клиенту в Telegram из CRM" />
-                  <button className="btn primary compact" disabled={telegramSending || !telegramDraft.trim()} type="submit">{telegramSending ? 'Отправляем…' : 'Ответить в Telegram'}</button>
+                  <button className="btn primary compact" disabled={telegramSending || !telegramDraft.trim() || !hasTelegramChatId(lead)} type="submit">{telegramSending ? 'Отправляем…' : 'Ответить в Telegram'}</button>
                 </form>
               </div>
             )}
