@@ -104,7 +104,6 @@ async function runCreatePublicLeadWorkspaceConsistencyTest() {
     lead: null,
     activity: null,
     timeline: null,
-    score: null,
     agent: null,
     action: null,
     worker: null,
@@ -151,10 +150,6 @@ async function runCreatePublicLeadWorkspaceConsistencyTest() {
         workspaceUsages.timeline = params[0]
         return { rows: [{ id: 'timeline-1', workspace_id: params[0], lead_id: params[1], user_id: params[2], event_type: params[3], title: params[4], body: params[5], source: params[6], metadata: params[7], created_at: new Date() }], rowCount: 1 }
       }
-      if (query.startsWith('INSERT INTO lead_ai_scores(')) {
-        workspaceUsages.score = params[0]
-        return { rows: [], rowCount: 1 }
-      }
       if (query.startsWith('INSERT INTO ai_agents(')) {
         workspaceUsages.agent = params[0]
         return { rows: [{ id: 'agent-1' }], rowCount: 1 }
@@ -169,7 +164,10 @@ async function runCreatePublicLeadWorkspaceConsistencyTest() {
       }
       if (query.startsWith('INSERT INTO ai_worker_queue(')) {
         workspaceUsages.queue = params[1]
-        return { rows: [], rowCount: 1 }
+        assert.strictEqual(params[3], 'Квалифицировать лида — Landing Lead')
+        assert.strictEqual(params[4].includes('AI квалификация'), true)
+        assert.strictEqual(params[5].leadId, leadId)
+        return { rows: [{ id: 'queue-1' }], rowCount: 1 }
       }
 
       throw new Error(`Unexpected query in public lead service test: ${query}`)
@@ -178,6 +176,9 @@ async function runCreatePublicLeadWorkspaceConsistencyTest() {
   }
 
   pool.connect = async () => client
+
+  const originalQualificationWorker = process.env.AI_LEAD_QUALIFICATION_WORKER
+  process.env.AI_LEAD_QUALIFICATION_WORKER = 'false'
 
   try {
     await withEnv(undefined, async () => {
@@ -190,9 +191,12 @@ async function runCreatePublicLeadWorkspaceConsistencyTest() {
       })
       assert.strictEqual(result.workspaceId, productionWorkspaceId)
       assert.strictEqual(result.actionId, 'action-1')
+      assert.strictEqual(result.queueId, 'queue-1')
     })
   } finally {
     pool.connect = originalConnect
+    if (originalQualificationWorker === undefined) delete process.env.AI_LEAD_QUALIFICATION_WORKER
+    else process.env.AI_LEAD_QUALIFICATION_WORKER = originalQualificationWorker
   }
 
   for (const [table, workspaceId] of Object.entries(workspaceUsages)) {
