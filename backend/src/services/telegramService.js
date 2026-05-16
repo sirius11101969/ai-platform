@@ -284,20 +284,22 @@ async function handleTelegramStartPayload(telegram, payload) {
       return { skipped: false, startHandled: true, connected: false, reason: 'Lead not found', telegramResponse }
     }
 
-    await client.query(
+    const clearedDuplicates = await client.query(
       `UPDATE crm_leads
           SET telegram_chat_id = NULL,
-              telegram_id = CASE WHEN telegram_id = $4 THEN NULL ELSE telegram_id END,
+              telegram_id = CASE WHEN telegram_id = $3 THEN NULL ELSE telegram_id END,
               metadata = CASE
                 WHEN metadata ? 'telegramChatId' THEN metadata - 'telegramChatId'
                 ELSE metadata
               END,
               updated_at = NOW()
-        WHERE workspace_id = $1
-          AND telegram_chat_id = $2
-          AND id <> $3`,
-      [lead.workspace_id, String(telegram.chatId), lead.id, telegram.userId]
+        WHERE telegram_chat_id = $1
+          AND id <> $2`,
+      [String(telegram.chatId), lead.id, telegram.userId]
     )
+    if (clearedDuplicates.rowCount > 0) {
+      console.warn('[telegram] duplicate chat_id prevented', { chatId: String(telegram.chatId) })
+    }
 
     const metadata = {
       ...(lead.metadata || {}),
@@ -366,6 +368,19 @@ async function logActivity(client, userId, workspaceId, leadId, type, title, bod
      VALUES($1, $2, $3, $4, $5, $6, $7)`,
     [userId, workspaceId, leadId, type, title, body, metadata]
   )
+}
+
+async function findExistingLeadByTelegramChatId(client, chatId) {
+  const result = await client.query(
+    `SELECT id, user_id, workspace_id, name, email, phone, telegram, telegram_id, telegram_chat_id, telegram_username, telegram_first_name, telegram_last_name, first_name, last_name, first_message, last_message_at, last_seen_at, company, status, value, source, notes, metadata, created_at, updated_at
+       FROM crm_leads
+      WHERE telegram_chat_id = $1
+      ORDER BY updated_at DESC
+      LIMIT 1
+      FOR UPDATE`,
+    [String(chatId)]
+  )
+  return result.rows[0] || null
 }
 
 async function findTelegramLead(client, userId, workspaceId, telegram) {
@@ -518,15 +533,26 @@ async function createInboundReplyRecommendations(client, { userId, workspaceId, 
   }
 }
 
-async function upsertLeadWithIncomingMessage(telegram) {
+async function upsertLeadWithIncomingMessage(telegram, retryOnDuplicate = true) {
   const noteBody = [`Telegram message received`, `From: ${telegram.name}${telegram.username ? ` (${telegram.username})` : ''}`, `Message: ${telegram.text}`].join('\n')
   const client = await pool.connect()
   try {
     await client.query('BEGIN')
-    const userId = await resolveCrmUserId(client)
-    const workspace = await ensureDefaultWorkspace(userId, client)
-    const workspaceId = workspace.id
-    const existing = await findTelegramLead(client, userId, workspaceId, telegram)
+    let userId
+    let workspaceId
+    let existing = await findExistingLeadByTelegramChatId(client, telegram.chatId)
+
+    if (existing) {
+      userId = existing.user_id
+      workspaceId = existing.workspace_id
+      console.info('[telegram] inbound existing lead found', { leadId: existing.id, chatId: String(telegram.chatId) })
+    } else {
+      userId = await resolveCrmUserId(client)
+      const workspace = await ensureDefaultWorkspace(userId, client)
+      workspaceId = workspace.id
+      existing = await findTelegramLead(client, userId, workspaceId, telegram)
+    }
+
     let lead
     let isNew = false
 
@@ -538,29 +564,40 @@ async function upsertLeadWithIncomingMessage(telegram) {
         telegramLastMessageId: telegram.messageId,
         telegramLastMessageAt: telegram.date,
       }
+      const alreadyConnectedToChat = String(existing.telegram_chat_id || '') === String(telegram.chatId)
       const updated = await client.query(
-        `UPDATE crm_leads
-            SET name = COALESCE(NULLIF($3, ''), name),
-                telegram = COALESCE($4, telegram),
-                telegram_id = $5,
-                telegram_chat_id = $12,
-                telegram_username = COALESCE($4, telegram_username),
-                telegram_first_name = COALESCE($6, telegram_first_name),
-                telegram_last_name = COALESCE($7, telegram_last_name),
-                first_name = COALESCE($6, first_name),
-                last_name = COALESCE($7, last_name),
-                status = COALESCE(NULLIF(status, ''), 'new'),
-                stage = COALESCE(NULLIF(stage, ''), 'new'),
-                source = 'telegram',
-                notes = COALESCE(notes || E'\n', '') || $8,
-                metadata = COALESCE(metadata, '{}'::jsonb) || $9::jsonb,
-                contact = COALESCE($4, telegram, phone, email, contact),
-                last_message_at = $10::timestamptz,
-                last_seen_at = NOW(),
-                updated_at = NOW()
-          WHERE user_id = $1 AND workspace_id = $11 AND id = $2
-          RETURNING id, user_id, workspace_id, name, email, phone, telegram, telegram_id, telegram_chat_id, telegram_username, telegram_first_name, telegram_last_name, first_name, last_name, first_message, last_message_at, last_seen_at, company, status, value, source, notes, metadata, created_at, updated_at`,
-        [userId, existing.id, telegram.name, telegram.username, telegram.userId, telegram.firstName, telegram.lastName, noteBody, metadata, telegram.date, workspaceId, String(telegram.chatId)]
+        alreadyConnectedToChat
+          ? `UPDATE crm_leads
+                SET last_message_at = $3::timestamptz,
+                    last_seen_at = NOW(),
+                    metadata = COALESCE(metadata, '{}'::jsonb) || $4::jsonb,
+                    updated_at = NOW()
+              WHERE user_id = $1 AND workspace_id = $5 AND id = $2
+              RETURNING id, user_id, workspace_id, name, email, phone, telegram, telegram_id, telegram_chat_id, telegram_username, telegram_first_name, telegram_last_name, first_name, last_name, first_message, last_message_at, last_seen_at, company, status, value, source, notes, metadata, created_at, updated_at`
+          : `UPDATE crm_leads
+                SET name = COALESCE(NULLIF($3, ''), name),
+                    telegram = COALESCE($4, telegram),
+                    telegram_id = $5,
+                    telegram_chat_id = $12,
+                    telegram_username = COALESCE($4, telegram_username),
+                    telegram_first_name = COALESCE($6, telegram_first_name),
+                    telegram_last_name = COALESCE($7, telegram_last_name),
+                    first_name = COALESCE($6, first_name),
+                    last_name = COALESCE($7, last_name),
+                    status = COALESCE(NULLIF(status, ''), 'new'),
+                    stage = COALESCE(NULLIF(stage, ''), 'new'),
+                    source = 'telegram',
+                    notes = COALESCE(notes || E'\n', '') || $8,
+                    metadata = COALESCE(metadata, '{}'::jsonb) || $9::jsonb,
+                    contact = COALESCE($4, telegram, phone, email, contact),
+                    last_message_at = $10::timestamptz,
+                    last_seen_at = NOW(),
+                    updated_at = NOW()
+              WHERE user_id = $1 AND workspace_id = $11 AND id = $2
+              RETURNING id, user_id, workspace_id, name, email, phone, telegram, telegram_id, telegram_chat_id, telegram_username, telegram_first_name, telegram_last_name, first_name, last_name, first_message, last_message_at, last_seen_at, company, status, value, source, notes, metadata, created_at, updated_at`,
+        alreadyConnectedToChat
+          ? [userId, existing.id, telegram.date, metadata, workspaceId]
+          : [userId, existing.id, telegram.name, telegram.username, telegram.userId, telegram.firstName, telegram.lastName, noteBody, metadata, telegram.date, workspaceId, String(telegram.chatId)]
       )
       lead = updated.rows[0]
       await logActivity(client, userId, workspaceId, lead.id, 'telegram_lead_updated', 'Telegram лид обновлён', 'Лид обновлён новым сообщением Telegram.', { telegramUserId: telegram.userId, chatId: telegram.chatId })
@@ -575,11 +612,25 @@ async function upsertLeadWithIncomingMessage(telegram) {
       const created = await client.query(
         `INSERT INTO crm_leads(user_id, workspace_id, name, telegram, telegram_id, telegram_chat_id, telegram_username, telegram_first_name, telegram_last_name, first_name, last_name, first_message, status, value, source, notes, contact, stage, metadata, last_message_at, last_seen_at)
          VALUES($1, $11, $2, $3, $4, $12, $3, $5, $6, $5, $6, $7, 'new', 0, 'telegram', $8, $3, 'new', $9::jsonb, $10::timestamptz, NOW())
-         RETURNING id, user_id, workspace_id, name, email, phone, telegram, telegram_id, telegram_chat_id, telegram_username, telegram_first_name, telegram_last_name, first_name, last_name, first_message, last_message_at, last_seen_at, company, status, value, source, notes, metadata, created_at, updated_at`,
+         ON CONFLICT (telegram_chat_id) WHERE telegram_chat_id IS NOT NULL DO UPDATE
+           SET last_message_at = EXCLUDED.last_message_at,
+               last_seen_at = NOW(),
+               metadata = COALESCE(crm_leads.metadata, '{}'::jsonb) || EXCLUDED.metadata,
+               updated_at = NOW()
+         RETURNING (xmax = 0) AS inserted, id, user_id, workspace_id, name, email, phone, telegram, telegram_id, telegram_chat_id, telegram_username, telegram_first_name, telegram_last_name, first_name, last_name, first_message, last_message_at, last_seen_at, company, status, value, source, notes, metadata, created_at, updated_at`,
         [userId, telegram.name, telegram.username || `tg:${telegram.userId}`, telegram.userId, telegram.firstName, telegram.lastName, telegram.text, noteBody, metadata, telegram.date, workspaceId, String(telegram.chatId)]
       )
       lead = created.rows[0]
-      await logActivity(client, userId, workspaceId, lead.id, 'lead_created', 'Лид создан', 'Новый Telegram лид добавлен в этап «Новый».', { source: 'telegram', stage: 'Новый' })
+      isNew = Boolean(lead.inserted)
+      if (isNew) {
+        console.info('[telegram] inbound new lead created', { leadId: lead.id, chatId: String(telegram.chatId) })
+        await logActivity(client, userId, workspaceId, lead.id, 'lead_created', 'Лид создан', 'Новый Telegram лид добавлен в этап «Новый».', { source: 'telegram', stage: 'Новый' })
+      } else {
+        userId = lead.user_id
+        workspaceId = lead.workspace_id
+        isNew = false
+        console.warn('[telegram] duplicate chat_id prevented', { chatId: String(telegram.chatId) })
+      }
     }
 
     const note = await client.query(
@@ -606,6 +657,10 @@ async function upsertLeadWithIncomingMessage(telegram) {
     return { lead, note: note.rows[0], telegramMessage, isNew, userId, workspaceId }
   } catch (error) {
     await client.query('ROLLBACK')
+    if (retryOnDuplicate && error?.code === '23505' && String(error.constraint || '').includes('telegram_chat_id')) {
+      console.warn('[telegram] duplicate chat_id prevented', { chatId: String(telegram.chatId) })
+      return upsertLeadWithIncomingMessage(telegram, false)
+    }
     throw error
   } finally {
     client.release()
@@ -866,4 +921,8 @@ module.exports = {
   extractTelegramMessage,
   processTelegramUpdate,
   sendTelegramMessageToLead,
+  _private: {
+    findExistingLeadByTelegramChatId,
+    upsertLeadWithIncomingMessage,
+  },
 }
