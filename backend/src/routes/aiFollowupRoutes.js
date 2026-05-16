@@ -1,0 +1,15 @@
+const express = require('express')
+const { approve, list, reject, scan, send, update } = require('../controllers/aiFollowupController')
+const { requireAuth } = require('../middleware/authMiddleware')
+const { requireWorkspace } = require('../middleware/workspaceMiddleware')
+
+const router = express.Router()
+router.use(requireAuth)
+router.use(requireWorkspace)
+router.get('/followups', list)
+router.post('/followups/run-scan', scan)
+router.patch('/followups/:id', update)
+router.post('/followups/:id/approve', approve)
+router.post('/followups/:id/reject', reject)
+router.post('/followups/:id/send', send)
+module.exports = router

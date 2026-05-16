@@ -7,6 +7,7 @@ import { LoginPage, SignupPage } from "./pages/AuthPages";
 import DashboardPage from "./pages/DashboardPage";
 import CRMPage from "./pages/CRMPage";
 import AiWorkersPage from "./pages/AiWorkersPage";
+import FollowupsPage from "./pages/FollowupsPage";
 import { getAuthToken, getStoredUser } from "./services/api";
 
 const AuthContext = createContext({ token: null, user: null, isAuthenticated: false });
@@ -85,6 +86,7 @@ export default function App() {
           <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path="/crm" element={<ProtectedRoute><CRMPage /></ProtectedRoute>} />
           <Route path="/ai-workers" element={<ProtectedRoute><AiWorkersPage /></ProtectedRoute>} />
+          <Route path="/followups" element={<ProtectedRoute><FollowupsPage /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
