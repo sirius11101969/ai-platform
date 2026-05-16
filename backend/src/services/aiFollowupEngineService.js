@@ -466,7 +466,7 @@ async function updateFollowup(userId, workspaceId, id, payload) {
 
 async function send(userId, workspaceId, id) {
   const job = await getFollowup(userId, workspaceId, id)
-  if (job.status !== 'approved') throw Object.assign(new Error('Сначала одобрите follow-up'), { statusCode: 400 })
+  if (!['approved', 'failed'].includes(job.status)) throw Object.assign(new Error('Сначала одобрите follow-up'), { statusCode: 400 })
 
   try {
     let result

@@ -21,26 +21,14 @@ function getActionError(error, fallback) {
   return error?.message || error?.payload?.error || fallback;
 }
 
-function getActionKey(itemId, action) {
-  return `${itemId}:${action}`;
-}
-
-function isActionBusy(itemId, action, loadingAction) {
-  return loadingAction === getActionKey(itemId, action);
-}
-
-function isItemBusy(itemId, loadingAction) {
-  return loadingAction?.startsWith(`${itemId}:`) || false;
-}
-
 function getApproveButtonLabel(item, isApproving) {
   if (isApproving) return "Одобряем…";
-  if (item.status === "approved") return "Одобрено";
+  if (["approved", "sent"].includes(item.status)) return "Одобрено";
   return "Одобрить";
 }
 
-function getEditButtonLabel(itemId, loadingAction) {
-  return isActionBusy(itemId, "edit", loadingAction) ? "Сохраняем…" : "Изменить";
+function getEditButtonLabel(isEditing) {
+  return isEditing ? "Сохраняем…" : "Изменить";
 }
 
 function getRejectButtonLabel(item, isRejecting) {
@@ -66,7 +54,7 @@ function getLeadTelegramChatId(item) {
 }
 
 function getSendDisabledReason(item) {
-  if (item.status !== "approved") return "not-approved";
+  if (!["approved", "failed"].includes(item.status)) return "not-approved";
 
   const suggestedChannel = getSuggestedChannel(item);
   if (suggestedChannel === "email" && !getLeadEmail(item)) return "missing-email";
@@ -76,16 +64,13 @@ function getSendDisabledReason(item) {
 }
 
 function canSendFollowup(item) {
-  return item.status === "approved" && !getSendDisabledReason(item);
+  return ["approved", "failed"].includes(item.status) && !getSendDisabledReason(item);
 }
 
-function getSendButtonLabel(item, isSending, disabledReason) {
-  if (item.status === "sent") return "Отправлено";
+function getSendButtonLabel(item, isSending) {
   if (isSending) return "Отправляем…";
-  if (disabledReason === "not-approved") return "Сначала одобрить";
-  if (disabledReason === "missing-email") return "Нет email";
-  if (disabledReason === "missing-telegram-chat-id") return "Нет Telegram chat id";
-  if (disabledReason) return "Недоступно";
+  if (item.status === "sent") return "Отправлено";
+  if (item.status === "failed") return "Повторить";
   return "Отправить";
 }
 
@@ -123,8 +108,6 @@ export default function FollowupsPage() {
 
   useEffect(() => { load(); }, []);
 
-  useEffect(() => { setLoadingAction(null); }, [items.length]);
-
   const pending = useMemo(() => items.filter((item) => ["suggested", "approved", "failed"].includes(item.status)), [items]);
 
   async function handleScan() {
@@ -148,8 +131,7 @@ export default function FollowupsPage() {
   }
 
   async function handleAction(item, action) {
-    const actionKey = getActionKey(item.id, action);
-    setLoadingAction(actionKey);
+    setLoadingAction(`${item.id}:${action}`);
     setActionErrors((current) => {
       const { [item.id]: _removed, ...remaining } = current;
       return remaining;
@@ -180,8 +162,7 @@ export default function FollowupsPage() {
   async function handleEdit(item) {
     const generatedMessage = window.prompt("Изменить follow-up сообщение", item.generatedMessage || "");
     if (generatedMessage === null) return;
-    const actionKey = getActionKey(item.id, "edit");
-    setLoadingAction(actionKey);
+    setLoadingAction(`${item.id}:edit`);
     setActionErrors((current) => {
       const { [item.id]: _removed, ...remaining } = current;
       return remaining;
@@ -223,10 +204,10 @@ export default function FollowupsPage() {
         {!loading && items.length === 0 && <p className="empty-state">Пока нет рекомендаций. Запустите scan, чтобы найти неактивных лидов.</p>}
         <div className="approval-list followup-center-list">
           {items.map((item) => {
-            const itemBusy = isItemBusy(item.id, loadingAction);
             const isApproving = loadingAction === `${item.id}:approve`;
             const isRejecting = loadingAction === `${item.id}:reject`;
             const isSending = loadingAction === `${item.id}:send`;
+            const isEditing = loadingAction === `${item.id}:edit`;
             const disabledReason = getSendDisabledReason(item);
             const canSend = canSendFollowup(item);
             const sendButtonDisabled = isSending || item.status === "sent" || !canSend;
@@ -261,7 +242,15 @@ export default function FollowupsPage() {
                     {getApproveButtonLabel(item, isApproving)}
                   </button>
                 )}
-                <button className="ghost-button compact" type="button" onClick={() => handleEdit(item)} disabled={itemBusy || !["suggested", "approved", "failed"].includes(item.status)}>{getEditButtonLabel(item.id, loadingAction)}</button>
+                <button
+                  className="ghost-button compact followup-edit-button"
+                  type="button"
+                  onClick={() => handleEdit(item)}
+                  disabled={isEditing || !["suggested", "approved", "failed"].includes(item.status)}
+                  aria-busy={isEditing}
+                >
+                  {getEditButtonLabel(isEditing)}
+                </button>
                 {item.status !== "sent" && (
                   <button
                     className="ghost-button compact danger-action followup-reject-button"
@@ -275,8 +264,7 @@ export default function FollowupsPage() {
                 )}
                 <div className="followup-send-action">
                   <button className="btn primary compact followup-send-button" type="button" onClick={() => handleAction(item, "send")} disabled={sendButtonDisabled} aria-busy={isSending}>
-                    {isSending && <i className="button-spinner" aria-hidden="true" />}
-                    {getSendButtonLabel(item, isSending, disabledReason)}
+                    {getSendButtonLabel(item, isSending)}
                   </button>
                   {sendDisabledHint && <small className="followup-send-hint">{sendDisabledHint}</small>}
                 </div>
