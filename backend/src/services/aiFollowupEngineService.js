@@ -466,24 +466,30 @@ async function updateFollowup(userId, workspaceId, id, payload) {
 
 async function send(userId, workspaceId, id) {
   const job = await getFollowup(userId, workspaceId, id)
-  if (job.status !== 'approved') throw Object.assign(new Error('Follow-up must be approved before sending'), { statusCode: 400 })
+  if (job.status !== 'approved') throw Object.assign(new Error('Сначала одобрите follow-up'), { statusCode: 400 })
+
   try {
     let result
     const lead = await getWorkspaceLead(workspaceId, job.leadId)
     const leadOwnerUserId = lead.user_id
-    if (job.suggestedChannel === 'telegram') result = await sendTelegramMessageToLead({ userId: leadOwnerUserId, workspaceId, leadId: job.leadId, text: job.generatedMessage })
-    else if (job.suggestedChannel === 'email') {
+    if (job.suggestedChannel === 'telegram') {
+      result = await sendTelegramMessageToLead({ userId: leadOwnerUserId, workspaceId, leadId: job.leadId, text: job.generatedMessage })
+    } else if (job.suggestedChannel === 'email') {
+      if (!lead.email) throw Object.assign(new Error('У лида нет email для отправки'), { statusCode: 400 })
       result = await emailService.sendEmailNow(leadOwnerUserId, { workspaceId, leadId: job.leadId, to: lead.email, subject: 'Следующий шаг по AS6 AI CRM', text: job.generatedMessage })
-    } else result = await crmModel.createNote(leadOwnerUserId, workspaceId, job.leadId, `AI follow-up reminder: ${job.generatedMessage}`)
+    } else {
+      result = await crmModel.createNote(leadOwnerUserId, workspaceId, job.leadId, `AI follow-up reminder: ${job.generatedMessage}`)
+    }
     const updated = await pool.query("UPDATE ai_followup_jobs SET status = 'sent', sent_at = NOW(), error = NULL, updated_at = NOW() WHERE workspace_id = $1 AND id = $2 RETURNING *", [workspaceId, id])
     await pool.query("INSERT INTO ai_followup_attempts(workspace_id, lead_id, job_id, rule_type, status, suggested_channel, generated_message, sent_at) VALUES($1,$2,$3,$4,'sent',$5,$6,NOW())", [workspaceId, job.leadId, id, job.ruleType, job.suggestedChannel, job.generatedMessage])
     await addTimelineEvent(pool, { workspaceId, leadId: job.leadId, userId, eventType: 'follow_up_sent', title: 'Follow-up sent', body: job.generatedMessage, source: job.suggestedChannel, metadata: { followupJobId: id, channel: job.suggestedChannel } })
     return { item: normalize(updated.rows[0]), result }
   } catch (error) {
-    const updated = await pool.query("UPDATE ai_followup_jobs SET status = 'failed', error = $3, updated_at = NOW() WHERE workspace_id = $1 AND id = $2 RETURNING *", [workspaceId, id, error.message])
-    await pool.query("INSERT INTO ai_followup_attempts(workspace_id, lead_id, job_id, rule_type, status, suggested_channel, generated_message, error) VALUES($1,$2,$3,$4,'failed',$5,$6,$7)", [workspaceId, job.leadId, id, job.ruleType, job.suggestedChannel, job.generatedMessage, error.message])
-    await addTimelineEvent(pool, { workspaceId, leadId: job.leadId, userId, eventType: 'follow_up_failed', title: 'Follow-up failed', body: error.message, source: job.suggestedChannel, metadata: { followupJobId: id, channel: job.suggestedChannel } })
-    return { item: normalize(updated.rows[0]), error: error.message }
+    const errorMessage = error.message || 'Не удалось отправить follow-up'
+    const updated = await pool.query("UPDATE ai_followup_jobs SET status = 'failed', error = $3, updated_at = NOW() WHERE workspace_id = $1 AND id = $2 RETURNING *", [workspaceId, id, errorMessage])
+    await pool.query("INSERT INTO ai_followup_attempts(workspace_id, lead_id, job_id, rule_type, status, suggested_channel, generated_message, error) VALUES($1,$2,$3,$4,'failed',$5,$6,$7)", [workspaceId, job.leadId, id, job.ruleType, job.suggestedChannel, job.generatedMessage, errorMessage])
+    await addTimelineEvent(pool, { workspaceId, leadId: job.leadId, userId, eventType: 'follow_up_failed', title: 'Follow-up failed', body: errorMessage, source: job.suggestedChannel, metadata: { followupJobId: id, channel: job.suggestedChannel } })
+    return { item: normalize(updated.rows[0]), error: errorMessage }
   }
 }
 

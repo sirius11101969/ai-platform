@@ -25,6 +25,10 @@ function getActionButtonLabel(itemId, action, label, busy) {
   return busy === `${itemId}:${action}` ? "Выполняем…" : label;
 }
 
+function isActionBusy(itemId, action, busy) {
+  return busy === `${itemId}:${action}`;
+}
+
 export default function FollowupsPage() {
   const [items, setItems] = useState([]);
   const [metrics, setMetrics] = useState({});
@@ -81,9 +85,11 @@ export default function FollowupsPage() {
       if (action === "reject") response = await rejectAiFollowup(item.id);
       if (action === "send") response = await sendAiFollowup(item.id);
       if (response?.item) setItems((current) => mergeItem(current, response.item));
-      if (response?.error) setError(response.error);
-      else setMessage(action === "approve" ? "Follow-up одобрен." : action === "reject" ? "Follow-up отклонён." : "Follow-up отправлен или создан как CRM reminder.");
+      const actionError = response?.error || "";
+      const actionMessage = action === "approve" ? "Follow-up одобрен." : action === "reject" ? "Follow-up отклонён." : "Follow-up отправлен";
       await load({ silent: true });
+      if (actionError) setError(actionError);
+      else setMessage(actionMessage);
     } catch (requestError) {
       setError(getActionError(requestError, "Не удалось выполнить действие"));
     } finally {
@@ -144,10 +150,10 @@ export default function FollowupsPage() {
                 {item.error && <span>Ошибка: {item.error}</span>}
               </div>
               <div className="approval-actions">
-                <button className="ghost-button compact" type="button" onClick={() => handleAction(item, "approve")} disabled={Boolean(busy) || item.status !== "suggested"}>{getActionButtonLabel(item.id, "approve", "Одобрить", busy)}</button>
-                <button className="ghost-button compact" type="button" onClick={() => handleEdit(item)} disabled={Boolean(busy) || !["suggested", "approved", "failed"].includes(item.status)}>{busy === `${item.id}:edit` ? "Сохраняем…" : "Изменить"}</button>
-                <button className="ghost-button compact danger-action" type="button" onClick={() => handleAction(item, "reject")} disabled={Boolean(busy) || !["suggested", "failed"].includes(item.status)}>{getActionButtonLabel(item.id, "reject", "Отклонить", busy)}</button>
-                <button className="btn primary compact" type="button" onClick={() => handleAction(item, "send")} disabled={Boolean(busy) || item.status !== "approved"}>{getActionButtonLabel(item.id, "send", "Отправить", busy)}</button>
+                <button className="ghost-button compact" type="button" onClick={() => handleAction(item, "approve")} disabled={isActionBusy(item.id, "approve", busy) || item.status !== "suggested"}>{getActionButtonLabel(item.id, "approve", "Одобрить", busy)}</button>
+                <button className="ghost-button compact" type="button" onClick={() => handleEdit(item)} disabled={isActionBusy(item.id, "edit", busy) || !["suggested", "approved", "failed"].includes(item.status)}>{busy === `${item.id}:edit` ? "Сохраняем…" : "Изменить"}</button>
+                <button className="ghost-button compact danger-action" type="button" onClick={() => handleAction(item, "reject")} disabled={isActionBusy(item.id, "reject", busy) || !["suggested", "failed"].includes(item.status)}>{getActionButtonLabel(item.id, "reject", "Отклонить", busy)}</button>
+                <button className="btn primary compact" type="button" onClick={() => handleAction(item, "send")} disabled={isActionBusy(item.id, "send", busy) || item.status !== "approved"}>{getActionButtonLabel(item.id, "send", "Отправить", busy)}</button>
                 <Link className="ghost-button compact" to={`/crm?lead=${item.leadId}`}>CRM</Link>
               </div>
             </article>
