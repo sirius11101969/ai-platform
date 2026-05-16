@@ -230,10 +230,11 @@ export default function CRMPage() {
 
   const selectedLead = useMemo(() => leads.find((lead) => lead.id === selectedLeadId) || null, [leads, selectedLeadId]);
   const stageMap = useMemo(() => stages.reduce((acc, stage) => ({ ...acc, [stage.status]: stage.title }), {}), [stages]);
-  const closeLeadDetail = useCallback(() => {
-    setSelectedLeadId(null);
-    setIsEditingDetail(false);
+  const setSelectedLead = useCallback((lead) => {
+    setSelectedLeadId(lead?.id || null);
+    if (!lead) setIsEditingDetail(false);
   }, []);
+  const closeLeadModal = () => setSelectedLead(null);
 
   async function loadCrm({ silent = false } = {}) {
     if (!silent) setLoading(true);
@@ -881,7 +882,7 @@ export default function CRMPage() {
           onGenerateEmail={handleGenerateEmail}
           onUploadEmailAttachment={handleUploadEmailAttachment}
           onSendEmail={handleSendEmail}
-          onClose={closeLeadDetail}
+          closeLeadModal={closeLeadModal}
         />
       )}
 
@@ -976,12 +977,12 @@ function LeadFormModal({ title, subtitle, stages, leadForm, setLeadForm, saving,
   );
 }
 
-function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDraftChange, onAddNote, onFollowUp, onAiAction, onAnalyzeLeadAi, aiActionBusy = {}, followUpLoading, onDelete, onEdit, onMove, telegramMessages = [], telegramDraft = '', telegramSending = false, onTelegramDraftChange, onSendTelegramReply, emailTemplates = [], leadEmails = [], emailComposer, emailAttachments = [], emailBusy = false, onEmailComposerChange, onGenerateEmail, onUploadEmailAttachment, onSendEmail, actionCenter = { actions: [], timeline: [], attachments: [] }, materials = [], executionBusy = {}, onCreateExecutionAction, onApproveExecutionAction, onSendExecutionAction, onEditExecutionAction, onCancelExecutionAction, onSendMaterials, onApproveApprovalQueueItem, onRejectApprovalQueueItem, onExecuteApprovalQueueItem, onEditApprovalQueueItem, onClose }) {
-  useModalCloseLifecycle(onClose);
+function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDraftChange, onAddNote, onFollowUp, onAiAction, onAnalyzeLeadAi, aiActionBusy = {}, followUpLoading, onDelete, onEdit, onMove, telegramMessages = [], telegramDraft = '', telegramSending = false, onTelegramDraftChange, onSendTelegramReply, emailTemplates = [], leadEmails = [], emailComposer, emailAttachments = [], emailBusy = false, onEmailComposerChange, onGenerateEmail, onUploadEmailAttachment, onSendEmail, actionCenter = { actions: [], timeline: [], attachments: [] }, materials = [], executionBusy = {}, onCreateExecutionAction, onApproveExecutionAction, onSendExecutionAction, onEditExecutionAction, onCancelExecutionAction, onSendMaterials, onApproveApprovalQueueItem, onRejectApprovalQueueItem, onExecuteApprovalQueueItem, onEditApprovalQueueItem, closeLeadModal }) {
+  useModalCloseLifecycle(closeLeadModal);
 
   return (
-    <div className="modal-backdrop crm-modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
-      <section className="ai-task-modal lead-detail-modal" role="dialog" aria-modal="true" aria-labelledby="lead-detail-title" onMouseDown={(event) => event.stopPropagation()}>
+    <div className="modal-backdrop crm-modal-backdrop" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) closeLeadModal(); }}>
+      <section className="ai-task-modal lead-detail-modal" role="dialog" aria-modal="true" aria-labelledby="lead-detail-title" onClick={(e) => e.stopPropagation()}>
         <div className="modal-glow" />
         <div className="panel-head lead-detail-head">
           <div>
@@ -990,7 +991,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
             <p className="modal-copy">{lead.company || "Компания не указана"} · {formatCurrency(lead.value)}</p>
             <span className={`source-pill detail-source-pill ${lead.source === "telegram" ? "telegram-source" : ""}`}>{formatLeadSource(lead.source)}</span>
           </div>
-          <button className="modal-close" type="button" onClick={onClose} aria-label="Закрыть">×</button>
+          <button className="modal-close lead-modal-close" type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); closeLeadModal(); }} aria-label="Закрыть карточку лида"><span aria-hidden="true">×</span></button>
         </div>
 
         <div className="lead-detail-grid">
@@ -1222,6 +1223,9 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
               </div>
             </div>
           </aside>
+        </div>
+        <div className="lead-detail-bottom-actions">
+          <button className="ghost-button" type="button" onClick={closeLeadModal}>Закрыть</button>
         </div>
       </section>
     </div>
