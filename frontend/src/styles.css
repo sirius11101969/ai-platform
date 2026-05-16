@@ -1428,6 +1428,9 @@ button { font: inherit; }
 .followup-approve-button:disabled { cursor: not-allowed; opacity: 1; transform: none; }
 .followup-approve-button:disabled:hover { border-color: rgba(255,255,255,.12); background: rgba(255,255,255,.06); color: #dbe7ff; transform: none; }
 .followup-approve-button[aria-busy="true"]:disabled { cursor: wait; }
+.followup-reject-button:disabled { cursor: not-allowed; opacity: 1; transform: none; }
+.followup-reject-button:disabled:hover { border-color: rgba(255,99,132,.22); background: rgba(255,255,255,.06); color: #ffb8c4; transform: none; }
+.followup-reject-button[aria-busy="true"]:disabled { cursor: wait; opacity: .78; }
 .followup-send-action { display: grid; gap: 6px; justify-items: start; }
 .followup-send-button[aria-busy="false"]:disabled { cursor: not-allowed; opacity: .84; background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.16); box-shadow: none; color: #c8d3f4; }
 .followup-send-button[aria-busy="true"]:disabled { cursor: wait; opacity: .78; }
