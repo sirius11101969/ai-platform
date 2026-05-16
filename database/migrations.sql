@@ -172,26 +172,22 @@ CREATE INDEX IF NOT EXISTS idx_subscriptions_user_id ON subscriptions(user_id);
 CREATE INDEX IF NOT EXISTS idx_credits_ledger_user_id ON credits_ledger(user_id);
 CREATE INDEX IF NOT EXISTS idx_ai_tasks_user_id ON ai_tasks(user_id);
 CREATE INDEX IF NOT EXISTS idx_crm_leads_user_id ON crm_leads(user_id);
-WITH ranked_telegram_chat_leads AS (
-  SELECT id,
-         ROW_NUMBER() OVER (
-           PARTITION BY telegram_chat_id
-           ORDER BY
-             CASE WHEN LOWER(TRIM(COALESCE(NULLIF(status, ''), 'new'))) NOT IN ('won','lost','closed_won','closed_lost','successful','потеряно','успешно') THEN 0 ELSE 1 END,
-             updated_at DESC,
-             created_at DESC
-         ) AS rn
-    FROM crm_leads
-   WHERE telegram_chat_id IS NOT NULL
-)
-UPDATE crm_leads l
-   SET telegram_chat_id = NULL,
-       updated_at = NOW()
-  FROM ranked_telegram_chat_leads r
- WHERE l.id = r.id
-   AND r.rn > 1;
-
-CREATE UNIQUE INDEX IF NOT EXISTS idx_crm_leads_unique_telegram_chat_id ON crm_leads(telegram_chat_id) WHERE telegram_chat_id IS NOT NULL;
+-- Do not backfill, deduplicate, or otherwise mutate crm_leads.telegram_chat_id during startup.
+-- Telegram chat ids are only connected by explicit Telegram flows; startup must preserve production links.
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+      FROM crm_leads
+     WHERE telegram_chat_id IS NOT NULL
+     GROUP BY telegram_chat_id
+    HAVING COUNT(*) > 1
+  ) THEN
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_crm_leads_unique_telegram_chat_id ON crm_leads(telegram_chat_id) WHERE telegram_chat_id IS NOT NULL;
+  ELSE
+    RAISE WARNING 'Skipping idx_crm_leads_unique_telegram_chat_id creation because duplicate telegram_chat_id values exist';
+  END IF;
+END $$;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_crm_leads_telegram_identity ON crm_leads(user_id, telegram_id) WHERE source = 'telegram' AND telegram_id IS NOT NULL;
 CREATE INDEX IF NOT EXISTS idx_crm_leads_telegram_last_seen ON crm_leads(user_id, last_seen_at) WHERE source = 'telegram';
 CREATE INDEX IF NOT EXISTS idx_crm_notes_lead_id ON crm_notes(lead_id);

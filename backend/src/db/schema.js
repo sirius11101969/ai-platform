@@ -223,10 +223,9 @@ async function migrate() {
     ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS estimated_revenue NUMERIC(12, 2) NOT NULL DEFAULT 0;
     ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS expected_close_date DATE;
     UPDATE crm_leads
-       SET telegram_chat_id = COALESCE(telegram_chat_id, metadata->>'telegramChatId'),
-           telegram_first_name = COALESCE(telegram_first_name, first_name),
+       SET telegram_first_name = COALESCE(telegram_first_name, first_name),
            telegram_last_name = COALESCE(telegram_last_name, last_name)
-     WHERE source = 'telegram' OR metadata ? 'telegramChatId';
+     WHERE source = 'telegram';
     ALTER TABLE crm_leads ALTER COLUMN contact DROP NOT NULL;
     UPDATE crm_leads
        SET status = COALESCE(NULLIF(status, ''), NULLIF(stage, ''), 'new'),
@@ -847,35 +846,22 @@ async function migrate() {
     CREATE INDEX IF NOT EXISTS idx_crm_notes_lead_id ON crm_notes(lead_id);
     CREATE INDEX IF NOT EXISTS idx_telegram_messages_lead_id ON telegram_messages(lead_id, created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_telegram_messages_user_id ON telegram_messages(user_id, created_at DESC);
-    WITH ranked_telegram_chat_leads AS (
-      SELECT l.id,
-             ROW_NUMBER() OVER (
-               PARTITION BY l.telegram_chat_id
-               ORDER BY
-                 CASE WHEN LOWER(TRIM(COALESCE(NULLIF(l.stage, ''), NULLIF(l.status, ''), 'new'))) NOT IN ('won','lost','closed_won','closed_lost','successful','потеряно','успешно') THEN 0 ELSE 1 END,
-                 telegram_connection.connected_at DESC NULLS LAST,
-                 l.updated_at DESC,
-                 l.created_at DESC
-             ) AS rn
-        FROM crm_leads l
-        LEFT JOIN (
-          SELECT workspace_id, lead_id, MAX(created_at) AS connected_at
-            FROM lead_timeline_events
-           WHERE event_type = 'telegram_connected'
-           GROUP BY workspace_id, lead_id
-        ) telegram_connection
-          ON telegram_connection.workspace_id = l.workspace_id
-         AND telegram_connection.lead_id = l.id
-       WHERE l.telegram_chat_id IS NOT NULL
-    )
-    UPDATE crm_leads l
-       SET telegram_chat_id = NULL,
-           updated_at = NOW()
-      FROM ranked_telegram_chat_leads r
-     WHERE l.id = r.id
-       AND r.rn > 1;
-
-    CREATE UNIQUE INDEX IF NOT EXISTS idx_crm_leads_unique_telegram_chat_id ON crm_leads(telegram_chat_id) WHERE telegram_chat_id IS NOT NULL;
+    -- Do not backfill, deduplicate, or otherwise mutate crm_leads.telegram_chat_id during startup.
+    -- Telegram chat ids are only connected by explicit Telegram flows; startup must preserve production links.
+    DO $$
+    BEGIN
+      IF NOT EXISTS (
+        SELECT 1
+          FROM crm_leads
+         WHERE telegram_chat_id IS NOT NULL
+         GROUP BY telegram_chat_id
+        HAVING COUNT(*) > 1
+      ) THEN
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_crm_leads_unique_telegram_chat_id ON crm_leads(telegram_chat_id) WHERE telegram_chat_id IS NOT NULL;
+      ELSE
+        RAISE WARNING 'Skipping idx_crm_leads_unique_telegram_chat_id creation because duplicate telegram_chat_id values exist';
+      END IF;
+    END $$;
     CREATE INDEX IF NOT EXISTS idx_crm_leads_telegram_chat_id ON crm_leads(workspace_id, telegram_chat_id);
     CREATE INDEX IF NOT EXISTS idx_telegram_messages_chat_id ON telegram_messages(workspace_id, telegram_chat_id, created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_crm_leads_active_telegram_chat_id ON crm_leads(workspace_id, telegram_chat_id, status) WHERE telegram_chat_id IS NOT NULL AND status <> 'lost';
@@ -931,6 +917,7 @@ async function migrate() {
     CREATE INDEX IF NOT EXISTS idx_ai_followup_attempts_lead ON ai_followup_attempts(workspace_id, lead_id, created_at DESC);
 
   `)
+  console.log('[schema] telegram migrations skipped safely')
 }
 
 module.exports = { migrate }
