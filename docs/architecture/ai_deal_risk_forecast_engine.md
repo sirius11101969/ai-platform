@@ -6,7 +6,7 @@ AS6 AI CRM now includes a workspace-scoped predictive revenue layer that turns l
 
 For every lead/opportunity the engine calculates and persists:
 
-- `probability_to_close` — 0–100 probability stored on `crm_leads` and mirrored from latest `lead_ai_scores.deal_probability`.
+- `probability_to_close` — 0–100 probability stored on `lead_ai_scores.probability_to_close`, mirrored into `crm_leads.probability_to_close`, and kept compatible with legacy `lead_ai_scores.deal_probability`.
 - `risk_level` — `low`, `medium`, or `high` based on inactivity, negative signals, ignored proposals, and engagement decay.
 - `engagement_score` — 0–100 signal score from Telegram/email/activity/CRM notes.
 - `expected_revenue` — `deal_value * probability_to_close / 100` stored in `lead_ai_scores.expected_revenue`; `crm_leads.estimated_revenue` remains the CRM-level forecast amount.
@@ -33,6 +33,18 @@ The generated reasoning is human-readable and supports Russian CRM examples, inc
 - “Есть Telegram engagement и быстрые ответы.”
 - “Сделка без активности 8 дней.”
 
+## Forecast probability bands
+
+The scoring service maps lead temperature into bounded forecast ranges before writing revenue math:
+
+| Temperature | Probability band |
+| --- | --- |
+| Hot | 70–95% |
+| Warm | 40–70% |
+| Cold | 10–40% |
+
+`expected_revenue` is always calculated as `deal_value * probability_to_close / 100`.
+
 ## Forecast categories
 
 | Category | Rule of thumb |
@@ -49,7 +61,8 @@ Every AI forecast recalculation writes timeline events:
 
 - `ai_forecast_updated` — probability, forecast category, expected revenue, and metadata snapshot.
 - `ai_risk_detected` — emitted when risk is not low or risk signals exist.
-- `ai_next_action_generated` — captures the generated next best action.
+- `ai_pipeline_health` — captures risk level, engagement score, forecast category, and queue actions for the pipeline-health feed.
+- `ai_next_action_generated` — captures the generated next best action for manual AI analysis flows.
 
 These events are stored in `lead_timeline_events` with `workspace_id`, `lead_id`, and `source = ai`.
 
@@ -57,7 +70,7 @@ These events are stored in `lead_timeline_events` with `workspace_id`, `lead_id`
 
 The engine adds approval-safe queue items in `ai_worker_queue`:
 
-- `risk_review` — every forecast review creates a manager-visible risk summary.
+- `risk_review` — manager-visible risk summary for risky, stalled, or high-value opportunities.
 - `pipeline_health_alert` — created for `at_risk` or `lost_risk` opportunities.
 - `stale_deal_followup` — created for stale/no-reply/ignored-proposal opportunities.
 
@@ -67,11 +80,11 @@ Queue items are deduplicated per workspace, lead, action type, and 24-hour windo
 
 CRM and Dashboard pages expose:
 
-- AI Forecast Revenue
+- Forecast Revenue
 - Revenue At Risk
 - High Probability Deals
 - Stalled Opportunities
-- AI Pipeline Health
+- Pipeline Health
 - Forecast Distribution
 
 The backend calculates these metrics in `getStats()` using latest `lead_ai_scores`, `crm_leads`, and activity tables filtered by `workspace_id` and current user.
@@ -97,5 +110,6 @@ All reads/writes are scoped by `workspace_id`. The engine preserves existing out
 2. Run lead AI analysis or workspace AI recalculation.
 3. Confirm the lead card shows probability, expected revenue, forecast category, AI reasoning, and next best action.
 4. Simulate inactivity/no reply by using old outbound/timeline/email activity and recalculate.
-5. Confirm risk signals, `ai_risk_detected`, `ai_forecast_updated`, and `ai_next_action_generated` timeline entries are created.
-6. Confirm CRM dashboard metrics update: AI Forecast Revenue, Revenue At Risk, High Probability Deals, Stalled Opportunities, AI Pipeline Health, Forecast Distribution.
+5. Confirm risk signals plus `ai_forecast_updated`, `ai_risk_detected`, and `ai_pipeline_health` timeline entries are created with readable Russian text.
+6. Confirm `risk_review`, `pipeline_health_alert`, and `stale_deal_followup` queue items are created for stale/risky examples.
+7. Confirm CRM dashboard metrics update: Forecast Revenue, Revenue At Risk, High Probability Deals, Stalled Opportunities, Pipeline Health, Forecast Distribution.

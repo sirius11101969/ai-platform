@@ -808,11 +808,11 @@ export default function CRMPage() {
         <StatCard label="AI follow-up" value={loading ? "…" : String(stats?.aiMetrics?.generatedFollowUps || 0)} hint="сгенерировано AI" tone="violet" />
         <StatCard label="AI эффективность" value={loading ? "…" : `${stats?.aiMetrics?.efficiency || 0}%`} hint={`${stats?.aiMetrics?.assistedDeals || 0} AI‑сделок`} />
         <StatCard label="Горячие лиды" value={loading ? "…" : String(stats?.aiMetrics?.hotLeads || 0)} hint={`средний score ${stats?.aiMetrics?.averageLeadScore || 0}/100`} tone="pink" />
-        <StatCard label="AI Forecast Revenue" value={loading ? "…" : formatCurrency(stats?.aiMetrics?.predictedRevenue || 0)} hint={`forecast ${stats?.aiMetrics?.conversionForecast || 0}%`} tone="violet" />
+        <StatCard label="Forecast Revenue" value={loading ? "…" : formatCurrency(stats?.aiMetrics?.aiForecastedRevenue || stats?.aiMetrics?.predictedRevenue || 0)} hint={`forecast ${stats?.aiMetrics?.conversionForecast || 0}%`} tone="violet" />
         <StatCard label="Revenue At Risk" value={loading ? "…" : formatCurrency(stats?.aiMetrics?.revenueAtRisk || 0)} hint={`${stats?.aiMetrics?.atRiskDeals || 0} at-risk deals`} tone="pink" />
         <StatCard label="High Probability Deals" value={loading ? "…" : String(stats?.aiMetrics?.highProbabilityDeals || 0)} hint="probability ≥ 70%" />
         <StatCard label="Stalled Opportunities" value={loading ? "…" : String(stats?.aiMetrics?.stalledOpportunities || stats?.aiMetrics?.inactiveOpportunities || 0)} hint="нет активности более 7 дней" tone="pink" />
-        <StatCard label="AI Pipeline Health" value={loading ? "…" : `${stats?.aiMetrics?.pipelineHealth || 0}%`} hint="risk + activity forecast index" tone="violet" />
+        <StatCard label="Pipeline Health" value={loading ? "…" : `${stats?.aiMetrics?.pipelineHealth || 0}%`} hint="risk + activity forecast index" tone="violet" />
       </section>
 
       <section className="ai-action-center-panel">

@@ -1,5 +1,6 @@
+ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS probability_to_close INTEGER NOT NULL DEFAULT 0 CHECK (probability_to_close >= 0 AND probability_to_close <= 100);
 ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS engagement_score INTEGER NOT NULL DEFAULT 0 CHECK (engagement_score >= 0 AND engagement_score <= 100);
-ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS expected_revenue NUMERIC(12, 2) NOT NULL DEFAULT 0 CHECK (expected_revenue >= 0);
+ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS expected_revenue NUMERIC(14, 2) NOT NULL DEFAULT 0 CHECK (expected_revenue >= 0);
 ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS forecast_category TEXT NOT NULL DEFAULT 'possible';
 ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS risk_signals JSONB NOT NULL DEFAULT '[]'::jsonb;
 ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS ai_reasoning TEXT NOT NULL DEFAULT '';
@@ -7,12 +8,13 @@ ALTER TABLE lead_ai_scores ADD COLUMN IF NOT EXISTS next_best_action_code TEXT N
 
 UPDATE lead_ai_scores s
    SET engagement_score = CASE WHEN s.engagement_score = 0 THEN s.score ELSE s.engagement_score END,
-       expected_revenue = CASE WHEN s.expected_revenue = 0 THEN COALESCE(l.value * s.deal_probability / 100.0, 0) ELSE s.expected_revenue END,
+       probability_to_close = CASE WHEN s.probability_to_close = 0 THEN COALESCE(s.deal_probability, 0) ELSE s.probability_to_close END,
+       expected_revenue = CASE WHEN s.expected_revenue = 0 THEN COALESCE(l.value * COALESCE(NULLIF(s.probability_to_close, 0), s.deal_probability) / 100.0, 0) ELSE s.expected_revenue END,
        forecast_category = CASE
          WHEN s.risk_level = 'high' THEN 'lost_risk'
          WHEN s.risk_level = 'medium' THEN 'at_risk'
-         WHEN s.deal_probability >= 80 THEN 'committed'
-         WHEN s.deal_probability >= 60 THEN 'likely'
+         WHEN COALESCE(NULLIF(s.probability_to_close, 0), s.deal_probability) >= 80 THEN 'committed'
+         WHEN COALESCE(NULLIF(s.probability_to_close, 0), s.deal_probability) >= 60 THEN 'likely'
          ELSE 'possible'
        END,
        ai_reasoning = COALESCE(NULLIF(s.ai_reasoning, ''), s.ai_summary, ''),
@@ -24,6 +26,8 @@ UPDATE lead_ai_scores s
        END
   FROM crm_leads l
  WHERE l.id = s.lead_id;
+
+ALTER TABLE lead_ai_scores ALTER COLUMN expected_revenue TYPE NUMERIC(14, 2);
 
 ALTER TABLE lead_ai_scores DROP CONSTRAINT IF EXISTS lead_ai_scores_forecast_category_valid;
 ALTER TABLE lead_ai_scores ADD CONSTRAINT lead_ai_scores_forecast_category_valid

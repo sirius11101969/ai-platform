@@ -245,7 +245,7 @@ export default function DashboardPage() {
         <StatCard label="Stalled Opportunities" value={loading ? "…" : String(crmStats?.aiMetrics?.stalledOpportunities || crmStats?.aiMetrics?.inactiveOpportunities || 0)} hint="нет активности более 7 дней" tone="pink" />
         <StatCard label="Deals at risk" value={loading ? "…" : String(crmStats?.aiMetrics?.dealsAtRisk || crmStats?.aiMetrics?.atRiskDeals || 0)} hint="stalled / no engagement / weak qualification" tone="violet" />
         <StatCard label="Inactive opportunities" value={loading ? "…" : String(crmStats?.aiMetrics?.inactiveOpportunities || 0)} hint="нет активности более 3 дней" tone="pink" />
-        <StatCard label="Pipeline health" value={loading ? "…" : `${crmStats?.aiMetrics?.pipelineHealth || 0}%`} hint="AI риск‑индекс открытой воронки" />
+        <StatCard label="Pipeline Health" value={loading ? "…" : `${crmStats?.aiMetrics?.pipelineHealth || 0}%`} hint="AI риск‑индекс открытой воронки" />
         <StatCard label="Outreach generated today" value={loading ? "…" : String(crmStats?.aiMetrics?.outreachGeneratedToday || 0)} hint="Telegram/email drafts after AI qualification" tone="violet" />
         <StatCard label="Outreach pending approvals" value={loading ? "…" : String(crmStats?.aiMetrics?.outreachPendingApprovals || 0)} hint="Черновики ждут ручного approval" tone="pink" />
         <StatCard label="AI response readiness" value={loading ? "…" : `${crmStats?.aiMetrics?.aiResponseReadiness || 0}%`} hint="Доля лидов с готовыми AI ответами" />
@@ -254,7 +254,7 @@ export default function DashboardPage() {
         <StatCard label="Follow-ups sent today" value={loading ? "…" : String(crmStats?.aiMetrics?.autonomousFollowUpsSentToday || 0)} hint="отправлено после ручного approval" />
         <StatCard label="Follow-up conversion" value={`${crmStats?.aiMetrics?.followUpConversionPlaceholder || 0}%`} hint="placeholder до v2 attribution" tone="violet" />
         <StatCard label="AI эффективность" value={loading ? "…" : `${aiCommandMetrics?.efficiency || crmStats?.aiMetrics?.executionSuccessRate || crmStats?.aiMetrics?.efficiency || 0}%`} hint="Успешные запуски AI сотрудников" />
-        <StatCard label="AI Forecast Revenue" value={loading ? "…" : formatCurrency(crmStats?.aiMetrics?.aiForecastedRevenue || crmStats?.aiMetrics?.predictedRevenue || 0)} hint="weighted expected revenue by AI probability" tone="violet" />
+        <StatCard label="Forecast Revenue" value={loading ? "…" : formatCurrency(crmStats?.aiMetrics?.aiForecastedRevenue || crmStats?.aiMetrics?.predictedRevenue || 0)} hint="weighted expected revenue by AI probability" tone="violet" />
         <StatCard label="Выручка под контролем AI" value={loading ? "…" : formatCurrency(aiRevenueUnderControl)} hint="Плейсхолдер revenue impact по открытой воронке" tone="violet" />
         <StatCard label="Telegram лиды" value={loading ? "…" : String(crmStats?.telegram?.leads || 0)} hint={`${crmStats?.telegram?.recentMessages || 0} последних сообщений за 24ч · ${crmStats?.telegram?.aiActionsSent || 0} AI Telegram actions sent`} tone="pink" />
       </section>
