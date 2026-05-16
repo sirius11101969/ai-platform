@@ -25,13 +25,17 @@ function getActionKey(itemId, action) {
   return `${itemId}:${action}`;
 }
 
+function getLoadingActionForItem(itemId, loadingActions) {
+  const itemPrefix = `${itemId}:`;
+  return Object.keys(loadingActions).find((key) => key.startsWith(itemPrefix)) || "";
+}
+
 function isActionBusy(itemId, action, loadingActions) {
   return Boolean(loadingActions[getActionKey(itemId, action)]);
 }
 
 function isItemBusy(itemId, loadingActions) {
-  const itemPrefix = `${itemId}:`;
-  return Object.keys(loadingActions).some((key) => key.startsWith(itemPrefix));
+  return Boolean(getLoadingActionForItem(itemId, loadingActions));
 }
 
 function getActionButtonLabel(itemId, action, label, loadingActions) {
@@ -40,6 +44,19 @@ function getActionButtonLabel(itemId, action, label, loadingActions) {
 
 function getEditButtonLabel(itemId, loadingActions) {
   return isActionBusy(itemId, "edit", loadingActions) ? "Сохраняем…" : "Изменить";
+}
+
+function getSendButtonContent(itemId, status, loadingAction) {
+  if (status === "sent") return "Отправлено";
+  if (loadingAction === getActionKey(itemId, "send")) {
+    return (
+      <>
+        <i className="button-spinner" aria-hidden="true" />
+        Отправляем…
+      </>
+    );
+  }
+  return "Отправить";
 }
 
 export default function FollowupsPage() {
@@ -172,7 +189,9 @@ export default function FollowupsPage() {
         {!loading && items.length === 0 && <p className="empty-state">Пока нет рекомендаций. Запустите scan, чтобы найти неактивных лидов.</p>}
         <div className="approval-list followup-center-list">
           {items.map((item) => {
+            const loadingAction = getLoadingActionForItem(item.id, loadingActions);
             const itemBusy = isItemBusy(item.id, loadingActions);
+            const sendBusy = loadingAction === getActionKey(item.id, "send");
             const itemError = actionErrors[item.id];
 
             return (
@@ -195,7 +214,7 @@ export default function FollowupsPage() {
                 <button className="ghost-button compact" type="button" onClick={() => handleAction(item, "approve")} disabled={itemBusy || item.status !== "suggested"}>{getActionButtonLabel(item.id, "approve", "Одобрить", loadingActions)}</button>
                 <button className="ghost-button compact" type="button" onClick={() => handleEdit(item)} disabled={itemBusy || !["suggested", "approved", "failed"].includes(item.status)}>{getEditButtonLabel(item.id, loadingActions)}</button>
                 <button className="ghost-button compact danger-action" type="button" onClick={() => handleAction(item, "reject")} disabled={itemBusy || !["suggested", "failed"].includes(item.status)}>{getActionButtonLabel(item.id, "reject", "Отклонить", loadingActions)}</button>
-                <button className="btn primary compact" type="button" onClick={() => handleAction(item, "send")} disabled={itemBusy || item.status !== "approved"}>{getActionButtonLabel(item.id, "send", "Отправить", loadingActions)}</button>
+                <button className="btn primary compact" type="button" onClick={() => handleAction(item, "send")} disabled={itemBusy || item.status !== "approved"} aria-busy={sendBusy}>{getSendButtonContent(item.id, item.status, loadingAction)}</button>
                 <Link className="ghost-button compact" to={`/crm?lead=${item.leadId}`}>CRM</Link>
               </div>
             </article>
