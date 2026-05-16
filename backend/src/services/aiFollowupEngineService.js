@@ -4,6 +4,7 @@ const crmModel = require('../models/crmModel')
 const emailService = require('./emailService')
 const { sendTelegramMessageToLead } = require('./telegramService')
 const { addTimelineEvent } = require('./timelineService')
+const { DEFAULT_FOLLOWUP_RULES, ensureDefaultRulesForWorkspace } = require('./aiFollowupRulesService')
 
 const OPENAI_RESPONSES_URL = 'https://api.openai.com/v1/responses'
 const STATUSES = ['suggested', 'approved', 'rejected', 'sent', 'failed']
@@ -46,7 +47,7 @@ function chooseChannel(lead) {
 }
 
 function fallbackMessage({ lead, rule }) {
-  const nextStep = rule.ruleType === 'meeting_booked_no_next_step' ? 'зафиксировать следующий шаг после встречи' : rule.ruleType === 'proposal_no_reply' ? 'обсудить предложение и вопросы' : 'коротко сверить актуальность задачи'
+  const nextStep = rule.ruleType === 'meeting_no_next_step' ? 'зафиксировать следующий шаг после встречи' : rule.ruleType === 'proposal_no_reply' ? 'обсудить предложение и вопросы' : 'коротко сверить актуальность задачи'
   return [`Здравствуйте, ${lead.name}!`, `Возвращаюсь по вашему запросу${lead.company ? ` для ${lead.company}` : ''}: ${rule.reason}.`, `Предлагаю ${nextStep}. Подскажите, пожалуйста, когда удобно продолжить?`].join('\n\n')
 }
 
@@ -87,20 +88,56 @@ async function getLeadContext(workspaceId, leadId) {
   return { telegramMessages: telegram.rows.reverse(), emailHistory: emails.rows, notes: notes.rows, previousAiRecommendations: aiActions.rows }
 }
 
-function buildRules(lead) {
+function normalizeRule(row) {
+  const fallback = DEFAULT_FOLLOWUP_RULES.find((rule) => rule.ruleType === row.rule_type) || {}
+  return {
+    ruleType: row.rule_type,
+    suggestedChannel: CHANNELS.includes(row.suggested_channel) ? row.suggested_channel : fallback.suggestedChannel || 'crm',
+    config: row.config || fallback.config || {},
+    reason: row.config?.reason || fallback.reason || 'AI обнаружил необходимость касания',
+    urgency: row.config?.urgency || fallback.urgency || 'medium',
+    scheduledHours: Number(row.config?.scheduledHours ?? fallback.scheduledHours ?? 1),
+  }
+}
+
+
+async function loadActiveRules(workspaceId) {
+  const result = await pool.query(
+    `SELECT rule_type, suggested_channel, config
+       FROM ai_followup_rules
+      WHERE workspace_id = $1 AND status = 'active'
+      ORDER BY created_at ASC`,
+    [workspaceId]
+  )
+  return result.rows.map(normalizeRule)
+}
+
+function leadMatchesRule(lead, rule) {
   const lastActivity = lead.last_activity_at ? new Date(lead.last_activity_at) : new Date(lead.updated_at || lead.created_at)
   const inactiveHours = Math.max(0, (Date.now() - lastActivity.getTime()) / 36e5)
-  const rules = []
-  if (inactiveHours >= 24) rules.push({ ruleType: 'inactive_24h', reason: 'нет активности больше 24 часов', urgency: 'medium', scheduledHours: 1 })
-  if (inactiveHours >= 72) rules.push({ ruleType: 'inactive_3d', reason: 'нет активности больше 3 дней', urgency: 'high', scheduledHours: 1 })
-  if (inactiveHours >= 168) rules.push({ ruleType: 'inactive_7d', reason: 'нет активности больше 7 дней', urgency: 'high', scheduledHours: 1 })
-  if (lead.status === 'proposal' && inactiveHours >= 24) rules.push({ ruleType: 'proposal_no_reply', reason: 'предложение отправлено, ответа пока нет', urgency: 'high', scheduledHours: 2 })
-  if (lead.status === 'booked' && inactiveHours >= 24) rules.push({ ruleType: 'meeting_booked_no_next_step', reason: 'встреча забронирована, следующий шаг не зафиксирован', urgency: 'high', scheduledHours: 2 })
-  if ((lead.temperature === 'hot' || Number(lead.score || 0) >= 70) && inactiveHours >= 12) rules.push({ ruleType: 'hot_lead_no_recent_contact', reason: 'горячий лид без свежего контакта', urgency: 'critical', scheduledHours: 1 })
-  return rules
+  const config = rule.config || {}
+  const thresholdHours = Number(config.thresholdHours || 24)
+  if (inactiveHours < thresholdHours) return null
+
+  if (config.stage && lead.status !== config.stage) return null
+  if (config.minScore && !(lead.temperature === 'hot' || Number(lead.score || 0) >= Number(config.minScore))) return null
+
+  return {
+    ...rule,
+    reason: rule.reason,
+    urgency: rule.urgency,
+    scheduledHours: rule.scheduledHours,
+    inactiveHours: Math.round(inactiveHours * 10) / 10,
+  }
+}
+
+function buildRules(lead, activeRules) {
+  return activeRules.map((rule) => leadMatchesRule(lead, rule)).filter(Boolean)
 }
 
 async function scanWorkspace(userId, workspaceId) {
+  const seedResult = await ensureDefaultRulesForWorkspace(workspaceId)
+  const activeRules = await loadActiveRules(workspaceId)
   const leadsResult = await pool.query(
     `WITH activity AS (
        SELECT l.id AS lead_id, GREATEST(l.updated_at, COALESCE(MAX(n.created_at), l.updated_at), COALESCE(MAX(tm.created_at), l.updated_at), COALESCE(MAX(em.created_at), l.updated_at), COALESCE(MAX(te.created_at), l.updated_at)) AS last_activity_at
@@ -122,22 +159,22 @@ async function scanWorkspace(userId, workspaceId) {
   const skippedDuplicates = []
   for (const row of leadsResult.rows) {
     const lead = crmModel.CRM_STATUSES ? { ...row, id: row.id } : row
-    for (const rule of buildRules(row)) {
+    for (const rule of buildRules(row, activeRules)) {
       const duplicate = await pool.query(`SELECT id FROM ai_followup_jobs WHERE workspace_id = $1 AND lead_id = $2 AND rule_type = $3 AND created_at > NOW() - INTERVAL '24 hours' AND status IN ('suggested','approved','sent') LIMIT 1`, [workspaceId, row.id, rule.ruleType])
       if (duplicate.rows[0]) { skippedDuplicates.push({ leadId: row.id, ruleType: rule.ruleType }); continue }
       const context = await getLeadContext(workspaceId, row.id)
       const generation = await generateMessage({ lead, rule, context }).catch((error) => ({ message: fallbackMessage({ lead, rule }), model: 'fallback-openai-error', aiError: error.message }))
-      const channel = chooseChannel(row)
+      const channel = chooseChannel(row) || rule.suggestedChannel
       const result = await pool.query(
         `INSERT INTO ai_followup_jobs(workspace_id, lead_id, rule_type, status, suggested_channel, generated_message, scheduled_for, reason, urgency, metadata)
          VALUES($1, $2, $3, 'suggested', $4, $5, NOW() + ($6::int * INTERVAL '1 hour'), $7, $8, $9) RETURNING *`,
-        [workspaceId, row.id, rule.ruleType, channel, generation.message, rule.scheduledHours, rule.reason, rule.urgency, { model: generation.model, openaiResponseId: generation.openaiResponseId, aiError: generation.aiError, lastActivityAt: row.last_activity_at }]
+        [workspaceId, row.id, rule.ruleType, channel, generation.message, rule.scheduledHours, rule.reason, rule.urgency, { model: generation.model, openaiResponseId: generation.openaiResponseId, aiError: generation.aiError, lastActivityAt: row.last_activity_at, ruleConfig: rule.config, inactiveHours: rule.inactiveHours }]
       )
       await addTimelineEvent(pool, { workspaceId, leadId: row.id, userId, eventType: 'follow_up_suggested', title: 'Follow-up suggested', body: generation.message, source: 'ai', metadata: { ruleType: rule.ruleType, channel, reason: rule.reason, urgency: rule.urgency } })
       created.push(normalize({ ...result.rows[0], lead_name: row.name, lead_company: row.company, lead_email: row.email, lead_status: row.status, lead_telegram_chat_id: row.telegram_chat_id }))
     }
   }
-  return { created, skippedDuplicates }
+  return { created, skippedDuplicates, createdCount: created.length, skippedCount: skippedDuplicates.length, rulesSeeded: seedResult.seeded, seededRuleTypes: seedResult.seededRuleTypes }
 }
 
 async function listFollowups(userId, workspaceId) {
