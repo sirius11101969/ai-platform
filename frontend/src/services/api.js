@@ -252,6 +252,14 @@ export function login({ email, password }) {
   })
 }
 
+export function submitPublicLead(payload) {
+  return publicRequest('/public/leads', {
+    method: 'POST',
+    skipWorkspace: true,
+    body: JSON.stringify(payload),
+  })
+}
+
 export function fetchProfile() {
   return request('/dashboard/profile')
 }
