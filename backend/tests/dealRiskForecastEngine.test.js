@@ -29,9 +29,9 @@ function testHotLeadForecast() {
     activity: [],
   })
 
-  assert.ok(intelligence.dealProbability >= 70 && intelligence.dealProbability <= 95, 'hot lead should have 70-95 probability')
+  assert.ok(intelligence.dealProbability >= 75 && intelligence.dealProbability <= 95, 'hot lead should have 75-95 probability')
   assert.strictEqual(intelligence.expectedRevenue, Math.round(100000 * intelligence.dealProbability / 100))
-  assert.ok(['committed', 'likely'].includes(intelligence.forecastCategory), `unexpected forecast category: ${intelligence.forecastCategory}`)
+  assert.strictEqual(intelligence.forecastCategory, 'likely')
   assert.strictEqual(intelligence.riskLevel, 'low')
   assert.strictEqual(intelligence.nextBestActionCode, 'schedule_demo')
 }
@@ -64,7 +64,7 @@ function testStalledProposalRisk() {
   })
 
   assert.strictEqual(intelligence.riskLevel, 'high')
-  assert.strictEqual(intelligence.forecastCategory, 'lost_risk')
+  assert.strictEqual(intelligence.forecastCategory, 'at_risk')
   assert.ok(intelligence.riskSignals.includes('no_reply_7d'))
   assert.ok(intelligence.riskSignals.includes('proposal_ignored'))
   assert.ok(intelligence.riskSignals.includes('repeated_followups_without_engagement'))
@@ -73,9 +73,41 @@ function testStalledProposalRisk() {
   assert.match(intelligence.aiReasoning, /Клиент перестал отвечать/)
 }
 
+
+function testForecastValidationLeadFallbackRevenue() {
+  const intelligence = scoreLeadContext({
+    lead: {
+      id: 'forecast-validation-lead',
+      name: 'Forecast Validation Lead',
+      email: 'forecast.validation@company.example',
+      telegram: '@forecast_validation',
+      company: 'Forecast Validation Co',
+      source: 'landing',
+      stage: 'new',
+      value: 0,
+      notesText: 'Нужна demo AI CRM для 60 managers, хотим обсудить внедрение, интеграцию и стоимость. Команда активно выбирает решение.',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      lastMessageAt: new Date().toISOString(),
+    },
+    telegramMessages: [],
+    emails: [],
+    notes: [],
+    activity: [],
+  })
+
+  assert.ok(intelligence.dealProbability > 0, 'probability_to_close should be populated')
+  assert.ok(intelligence.engagementScore > 0, 'engagement_score should be populated')
+  assert.ok(intelligence.expectedRevenue > 0, 'expected_revenue should use fallback deal value')
+  assert.strictEqual(intelligence.dealValue, 240000)
+  assert.ok(['likely', 'possible', 'committed'].includes(intelligence.forecastCategory), `unexpected forecast category: ${intelligence.forecastCategory}`)
+  assert.strictEqual(intelligence.riskLevel, 'low')
+}
+
 function main() {
   testHotLeadForecast()
   testStalledProposalRisk()
+  testForecastValidationLeadFallbackRevenue()
   console.log('dealRiskForecastEngine tests passed')
 }
 
