@@ -25,8 +25,9 @@ AI may recommend the following controlled transitions:
 Recommendations are created as `ai_worker_queue.action_type = 'stage_change_recommendation'` with:
 
 - `status = 'pending_approval'`
-- `payload.currentStatus`
-- `payload.nextStatus`
+- `payload.leadId`
+- `payload.fromStage` (also mirrored as `currentStatus` for older UI paths)
+- `payload.toStage = qualified` for hot/warm AI qualification promotions (also mirrored as `nextStatus`)
 - `payload.reason`
 - `payload.confidence`
 - forecast context such as probability and expected revenue where available
@@ -41,7 +42,7 @@ Supported approval statuses are:
 - `failed`
 - `cancelled`
 
-For stage recommendations, approval executes the stage change immediately and marks the queue item `executed`. This preserves the rule that AI cannot move CRM stages without a human approval action.
+For stage recommendations, approval only changes the queue item to `approved`. The manager must then click Execute; execution updates `crm_leads.stage`, stores `executed_at`, and marks the queue item `completed`. This preserves the rule that AI cannot move CRM stages without a human approval and execution action.
 
 ## Trigger conditions
 
@@ -54,7 +55,7 @@ Stage recommendations can be generated from:
 - Manual notes and CRM activity.
 - Positive intent (`интерес`, `демо`, `стоимость`, `договор`, etc.).
 - Negative intent (`не актуально`, `нет бюджета`, `отказ`, etc.).
-- AI qualification output and risk/urgency scores.
+- AI qualification output and risk/urgency scores: after qualification, a lead gets a `stage_change_recommendation` to `qualified` when `score >= 70` or `temperature = 'hot'`.
 - Inactivity/risk signals from follow-up automation.
 
 Example Russian reasons shown in CRM:
@@ -73,9 +74,9 @@ stage_change_recommendation
 
 Approval writes timeline/audit events:
 
-- `ai_stage_recommendation` when the recommendation is created.
-- `stage_approved` when a manager approves it.
-- `stage_changed` when CRM stage updates.
+- `ai_stage_recommendation` when the recommendation is created with text such as “AI рекомендовал перевести лида в стадию Qualified.”
+- `ai_action_approved` when a manager approves it.
+- `ai_stage_changed` when Execute updates CRM with text such as “Стадия изменена: New → Qualified.”
 - `opportunity_risk_detected` when inactivity automation flags risk.
 
 Rejected recommendations remain visible as rejected queue history and do not mutate the CRM lead stage.
@@ -141,11 +142,11 @@ These metrics are returned in `stats.aiMetrics` and remain workspace-scoped.
 1. Create a CRM lead.
 2. Approve outreach draft as before.
 3. Simulate or receive a Telegram reply with positive intent, such as asking for a demo or implementation details.
-4. AI creates a `stage_change_recommendation` queue item.
-5. Open the lead modal and review current stage, AI recommended stage, reason, and confidence.
+4. AI creates a `stage_change_recommendation` queue item with `leadId`, `fromStage`, `toStage = qualified`, `confidence`, and `reason`.
+5. Open the lead modal or AI Approval Center and review from stage, to stage, confidence, and reason.
 6. Approve the recommendation.
-7. CRM updates the lead stage and marks the queue item `executed`.
-8. Timeline shows recommendation, approval, and stage changed events.
+7. Click Execute.
+8. CRM updates `crm_leads.stage` to `qualified`, the queue item becomes `completed` with `executed_at`, and timeline shows recommendation, approval, and `ai_stage_changed` events.
 
 ## Deployment
 

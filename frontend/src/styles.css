@@ -1376,6 +1376,9 @@ button { font: inherit; }
 
 .approval-row > div span { display: block; color: var(--muted-text); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; }
 .approval-main p { margin: 6px 0 0; color: var(--muted-text); line-height: 1.45; }
+.approval-stage-details { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 10px; margin-top: 10px; padding: 10px; border-radius: 14px; background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(129, 140, 248, 0.16); }
+.approval-stage-details span { text-transform: none !important; letter-spacing: 0 !important; }
+.approval-stage-details b { display: block; color: #fff; margin-top: 2px; }
 .approval-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
 .glow-status { text-shadow: 0 0 18px rgba(168, 85, 247, 0.55); }
 .glow-status.pending_approval { color: #fbbf24; }
