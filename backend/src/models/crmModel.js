@@ -594,6 +594,60 @@ async function appendOutgoingTelegramMessage({ userId, workspaceId, leadId, mess
 }
 
 
+
+function leadAiScoreInt(value, fallback = 0) {
+  const number = Number(value)
+  return Number.isFinite(number) ? Math.round(number) : fallback
+}
+
+function leadAiScoreNumeric(value, fallback = 0) {
+  const number = Number(value)
+  return Number.isFinite(number) ? number : fallback
+}
+
+function leadAiScoreText(value, fallback = '') {
+  return value === undefined || value === null ? fallback : String(value)
+}
+
+function leadAiScoreJson(value, fallback) {
+  return JSON.stringify(value === undefined ? fallback : value)
+}
+
+function buildLeadAiScoreParams(workspaceId, leadId, intelligence) {
+  const probabilityToClose = leadAiScoreInt(intelligence.probabilityToClose ?? intelligence.dealProbability, 0)
+  const score = leadAiScoreInt(intelligence.score, 0)
+  const aiSummary = leadAiScoreText(intelligence.aiSummary, '')
+  const nextBestAction = leadAiScoreText(intelligence.nextBestAction, '')
+  return [
+    workspaceId,
+    leadId,
+    score,
+    leadAiScoreText(intelligence.temperature, 'cold'),
+    leadAiScoreText(intelligence.urgencyLevel, 'low'),
+    leadAiScoreInt(intelligence.budgetProbability ?? intelligence.dealProbability, probabilityToClose),
+    aiSummary,
+    leadAiScoreText(intelligence.recommendedChannel, 'crm_task'),
+    nextBestAction,
+    leadAiScoreInt(intelligence.confidence, 70),
+    leadAiScoreInt(intelligence.dealProbability ?? probabilityToClose, probabilityToClose),
+    probabilityToClose,
+    leadAiScoreText(intelligence.urgencyLevel, 'low'),
+    leadAiScoreText(intelligence.engagementLevel, 'cold'),
+    aiSummary,
+    nextBestAction,
+    leadAiScoreText(intelligence.riskLevel, 'medium'),
+    intelligence.idealContactTiming === undefined ? null : intelligence.idealContactTiming,
+    leadAiScoreJson(intelligence.objectionsDetected || [], []),
+    intelligence.recommendedCta === undefined ? null : intelligence.recommendedCta,
+    leadAiScoreInt(intelligence.engagementScore ?? score, score),
+    leadAiScoreNumeric(intelligence.expectedRevenue, 0),
+    leadAiScoreText(intelligence.forecastCategory, 'possible'),
+    leadAiScoreJson(intelligence.riskSignals || [], []),
+    leadAiScoreText(intelligence.aiReasoning, aiSummary),
+    leadAiScoreText(intelligence.nextBestActionCode, 'schedule_demo'),
+  ]
+}
+
 async function buildIntelligenceContext(userId, workspaceId, leadId) {
   const lead = await findLead(userId, workspaceId, leadId)
   if (!lead) throw Object.assign(new Error('Lead not found'), { statusCode: 404 })
@@ -612,13 +666,34 @@ async function buildIntelligenceContext(userId, workspaceId, leadId) {
 }
 
 async function saveLeadAiScore(client, workspaceId, leadId, intelligence) {
+  const scoreParams = buildLeadAiScoreParams(workspaceId, leadId, intelligence)
   const result = await client.query(
-    `INSERT INTO lead_ai_scores(workspace_id, lead_id, score, temperature, urgency, budget_probability, intent_summary, recommended_channel, recommended_next_step, confidence, deal_probability, probability_to_close, urgency_level, engagement_level, ai_summary, next_best_action, risk_level, ideal_contact_timing, objections_detected, recommended_cta, engagement_score, expected_revenue, forecast_category, risk_signals, ai_reasoning, next_best_action_code)
-     VALUES($1, $2, $3, $4, $6, $15, $8, $14, $9, $16, $5, $5, $6, $7, $8, $9, $10, $11, $12, $13, $17, $18, $19, $20, $21, $22)
+    `INSERT INTO lead_ai_scores(
+       workspace_id, lead_id, score, temperature, urgency, budget_probability, intent_summary,
+       recommended_channel, recommended_next_step, confidence, deal_probability, probability_to_close,
+       urgency_level, engagement_level, ai_summary, next_best_action, risk_level, ideal_contact_timing,
+       objections_detected, recommended_cta, engagement_score, expected_revenue, forecast_category,
+       risk_signals, ai_reasoning, next_best_action_code
+     )
+     VALUES(
+       $1::uuid, $2::uuid, $3::integer, $4::text, $5::text, $6::integer, $7::text,
+       $8::text, $9::text, $10::integer, $11::integer, $12::integer,
+       $13::text, $14::text, $15::text, $16::text, $17::text, $18::text,
+       $19::jsonb, $20::text, $21::integer, $22::numeric, $23::text,
+       $24::jsonb, $25::text, $26::text
+     )
      RETURNING *`,
-    [workspaceId, leadId, intelligence.score, intelligence.temperature, intelligence.probabilityToClose || intelligence.dealProbability, intelligence.urgencyLevel, intelligence.engagementLevel, intelligence.aiSummary, intelligence.nextBestAction, intelligence.riskLevel, intelligence.idealContactTiming, JSON.stringify(intelligence.objectionsDetected || []), intelligence.recommendedCta, intelligence.recommendedChannel, intelligence.budgetProbability || intelligence.dealProbability, intelligence.confidence || 70, intelligence.engagementScore || intelligence.score, intelligence.expectedRevenue || 0, intelligence.forecastCategory || 'possible', JSON.stringify(intelligence.riskSignals || []), intelligence.aiReasoning || intelligence.aiSummary || '', intelligence.nextBestActionCode || 'schedule_demo']
+    scoreParams
   )
-  await client.query(`UPDATE crm_leads SET probability_to_close = $3, estimated_revenue = value * ($3::numeric / 100.0), expected_close_date = COALESCE(expected_close_date, (CURRENT_DATE + INTERVAL '30 days')::date), updated_at = NOW() WHERE workspace_id = $1 AND id = $2`, [workspaceId, leadId, intelligence.probabilityToClose || intelligence.dealProbability])
+  await client.query(
+    `UPDATE crm_leads
+        SET probability_to_close = $3::integer,
+            estimated_revenue = value * ($3::numeric / 100.0),
+            expected_close_date = COALESCE(expected_close_date, (CURRENT_DATE + INTERVAL '30 days')::date),
+            updated_at = NOW()
+      WHERE workspace_id = $1::uuid AND id = $2::uuid`,
+    [workspaceId, leadId, scoreParams[11]]
+  )
   return normalizeAiScore(result.rows[0])
 }
 
