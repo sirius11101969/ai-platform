@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Panel, PageHeading, StatCard } from "../components/AppShell";
 import {
   addCrmLeadNote,
@@ -227,13 +228,25 @@ export default function CRMPage() {
   const [aiActionBusy, setAiActionBusy] = useState({});
   const [inactiveQueueBusy, setInactiveQueueBusy] = useState(false);
   const [aiAnalysisBusy, setAiAnalysisBusy] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const selectedLead = useMemo(() => leads.find((lead) => lead.id === selectedLeadId) || null, [leads, selectedLeadId]);
   const stageMap = useMemo(() => stages.reduce((acc, stage) => ({ ...acc, [stage.status]: stage.title }), {}), [stages]);
   const closeLeadModal = useCallback(() => {
     setSelectedLeadId(null);
     setIsEditingDetail(false);
-  }, []);
+
+    const params = new URLSearchParams(location.search);
+    const hadLeadParam = params.has("lead") || params.has("leadId");
+    params.delete("lead");
+    params.delete("leadId");
+
+    if (hadLeadParam) {
+      const search = params.toString();
+      navigate(`${location.pathname}${search ? `?${search}` : ""}${location.hash}`, { replace: true });
+    }
+  }, [location.hash, location.pathname, location.search, navigate]);
 
   async function loadCrm({ silent = false } = {}) {
     if (!silent) setLoading(true);
@@ -263,10 +276,11 @@ export default function CRMPage() {
   useEffect(() => { loadCrm(); }, []);
 
   useEffect(() => {
-    const leadIdFromUrl = new URLSearchParams(window.location.search).get("lead");
+    const params = new URLSearchParams(location.search);
+    const leadIdFromUrl = params.get("leadId") || params.get("lead");
     if (!leadIdFromUrl || selectedLeadId || leads.length === 0) return;
     if (leads.some((lead) => lead.id === leadIdFromUrl)) setSelectedLeadId(leadIdFromUrl);
-  }, [leads, selectedLeadId]);
+  }, [leads, location.search, selectedLeadId]);
 
   useEffect(() => {
     function handleOpenCreate() {
