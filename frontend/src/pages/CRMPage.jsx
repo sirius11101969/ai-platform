@@ -230,11 +230,10 @@ export default function CRMPage() {
 
   const selectedLead = useMemo(() => leads.find((lead) => lead.id === selectedLeadId) || null, [leads, selectedLeadId]);
   const stageMap = useMemo(() => stages.reduce((acc, stage) => ({ ...acc, [stage.status]: stage.title }), {}), [stages]);
-  const setSelectedLead = useCallback((lead) => {
-    setSelectedLeadId(lead?.id || null);
-    if (!lead) setIsEditingDetail(false);
+  const closeLeadModal = useCallback(() => {
+    setSelectedLeadId(null);
+    setIsEditingDetail(false);
   }, []);
-  const closeLeadModal = () => setSelectedLead(null);
 
   async function loadCrm({ silent = false } = {}) {
     if (!silent) setLoading(true);
