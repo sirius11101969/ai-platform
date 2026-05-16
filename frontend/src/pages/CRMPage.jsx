@@ -172,15 +172,35 @@ function getAiSummaryText(recommendation) {
 
 
 function actionStatusLabel(status) {
-  return ({ draft: 'черновик', pending_approval: 'ждёт одобрения', approved: 'одобрено', executing: 'выполняется', completed: 'выполнено', rejected: 'отклонено', sent: 'отправлено', failed: 'ошибка', cancelled: 'отклонено' }[status] || status);
+  return ({ draft: 'черновик', pending_approval: 'ждёт одобрения', approved: 'одобрено', executing: 'выполняется', completed: 'выполнено', executed: 'исполнено', rejected: 'отклонено', sent: 'отправлено', failed: 'ошибка', cancelled: 'отклонено' }[status] || status);
 }
 
 function actionTypeLabel(type) {
-  return ({ telegram_followup: 'Telegram follow-up', email_followup: 'Email follow-up', telegram_follow_up: 'Telegram follow-up', email_follow_up: 'Email follow-up', telegram_draft: 'Telegram draft', email_draft: 'Email draft', followup_24h: 'Follow-up 24ч', followup_3d: 'Follow-up 3д', demo_offer: 'Demo offer', meeting_request: 'Запрос встречи', follow_up_recommendation: 'Follow-up', crm_next_action: 'CRM действие', lead_prioritization: 'Приоритизация', commercial_offer: 'Коммерческое предложение', send_presentation: 'Отправить презентацию', send_screenshots: 'Отправить скриншоты', send_demo_link: 'Отправить demo link', move_lead_stage: 'Переместить этап', create_reminder: 'Создать напоминание' }[type] || type);
+  return ({ telegram_followup: 'Telegram follow-up', email_followup: 'Email follow-up', telegram_follow_up: 'Telegram follow-up', email_follow_up: 'Email follow-up', telegram_draft: 'Telegram draft', email_draft: 'Email draft', followup_24h: 'Follow-up 24ч', followup_3d: 'Follow-up 3д', demo_offer: 'Demo offer', meeting_request: 'Запрос встречи', follow_up_recommendation: 'Follow-up', crm_next_action: 'CRM действие', lead_prioritization: 'Приоритизация', commercial_offer: 'Коммерческое предложение', send_presentation: 'Отправить презентацию', send_screenshots: 'Отправить скриншоты', send_demo_link: 'Отправить demo link', move_lead_stage: 'Переместить этап', stage_change_recommendation: 'AI рекомендация этапа', create_reminder: 'Создать напоминание' }[type] || type);
+}
+
+
+function getStageRecommendation(lead, actionCenter = {}) {
+  return lead?.aiStageRecommendation || (actionCenter.approvalItems || []).find((item) => (item.actionType || item.executionType) === 'stage_change_recommendation') || null;
+}
+
+function getRecommendedStage(item) {
+  const payload = item?.payload || item || {};
+  return payload.nextStatus || payload.recommendedStage || payload.status || item?.recommendedStage || '';
+}
+
+function getStageRecommendationReason(item) {
+  const payload = item?.payload || item || {};
+  return payload.reason || item?.reason || item?.recommendation || 'AI обнаружил сигнал для смены этапа.';
+}
+
+function getStageRecommendationConfidence(item) {
+  const payload = item?.payload || item || {};
+  return Number(payload.confidence ?? item?.confidence ?? 0);
 }
 
 function timelineTitle(event) {
-  return ({ telegram_inbound: 'Telegram inbound', telegram_outbound_ai: 'Telegram outbound AI', ai_draft_created: 'AI черновик создан', ai_draft_approved: 'AI черновик одобрен', telegram_sent: 'Telegram отправлен', lead_replied: 'Лид ответил', send_failed: 'Отправка не выполнена', ai_stage_suggested: 'AI предложил этап', email_sent: 'Email отправлен', email_failed: 'Email не отправлен', ai_score_updated: 'AI score обновлён', follow_up_draft: 'Follow-up черновик', sent_follow_up: 'Follow-up отправлен', attachments_sent: 'Материалы отправлены', lead_moved: 'Этап изменён', note_added: 'Заметка', ai_action_sent: 'AI действие отправлено', ai_action_approved: 'AI действие одобрено', ai_action_rejected: 'AI действие отклонено', ai_action_executed: 'AI действие выполнено', ai_action_failed: 'AI действие не выполнено', follow_up_suggested: 'Follow-up suggested', follow_up_approved: 'Follow-up approved', follow_up_rejected: 'Follow-up rejected', follow_up_sent: 'Follow-up sent', follow_up_failed: 'Follow-up failed' }[event?.type] || event?.title || 'Событие');
+  return ({ telegram_inbound: 'Telegram inbound', telegram_outbound_ai: 'Telegram outbound AI', ai_draft_created: 'AI черновик создан', ai_draft_approved: 'AI черновик одобрен', telegram_sent: 'Telegram отправлен', lead_replied: 'Лид ответил', send_failed: 'Отправка не выполнена', ai_stage_suggested: 'AI предложил этап', ai_stage_recommendation: 'AI рекомендовал этап', stage_approved: 'Этап одобрен', stage_changed: 'Этап изменён', opportunity_risk_detected: 'Риск сделки обнаружен', email_sent: 'Email отправлен', email_failed: 'Email не отправлен', ai_score_updated: 'AI score обновлён', follow_up_draft: 'Follow-up черновик', sent_follow_up: 'Follow-up отправлен', attachments_sent: 'Материалы отправлены', lead_moved: 'Этап изменён', note_added: 'Заметка', ai_action_sent: 'AI действие отправлено', ai_action_approved: 'AI действие одобрено', ai_action_rejected: 'AI действие отклонено', ai_action_executed: 'AI действие выполнено', ai_action_failed: 'AI действие не выполнено', follow_up_suggested: 'Follow-up suggested', follow_up_approved: 'Follow-up approved', follow_up_rejected: 'Follow-up rejected', follow_up_sent: 'Follow-up sent', follow_up_failed: 'Follow-up failed' }[event?.type] || event?.title || 'Событие');
 }
 
 const modalCloseStack = [];
@@ -1030,6 +1050,29 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
               <label className="crm-field"><span>Текущий этап</span><select value={lead.status} onChange={(event) => onMove(event.target.value)}>{stages.map((stage) => <option key={stage.status} value={stage.status}>{stage.title}</option>)}</select></label>
             </div>
 
+            {getStageRecommendation(lead, actionCenter) && (
+              <div className="detail-section ai-stage-recommendation-panel">
+                <div className="execution-head">
+                  <div>
+                    <span className="eyebrow">AI Pipeline Automation</span>
+                    <h4>{stageMap[lead.status] || lead.status} → {stageMap[getRecommendedStage(getStageRecommendation(lead, actionCenter))] || getRecommendedStage(getStageRecommendation(lead, actionCenter))}</h4>
+                    <p>{getStageRecommendationReason(getStageRecommendation(lead, actionCenter))}</p>
+                  </div>
+                  <span className="ai-glow-badge">confidence {getStageRecommendationConfidence(getStageRecommendation(lead, actionCenter)) || '—'}%</span>
+                </div>
+                <div className="ai-recommendation-grid">
+                  <div><span>Текущий stage</span><strong>{stageMap[lead.status] || lead.status}</strong></div>
+                  <div><span>AI recommended stage</span><strong>{stageMap[getRecommendedStage(getStageRecommendation(lead, actionCenter))] || getRecommendedStage(getStageRecommendation(lead, actionCenter))}</strong></div>
+                  <div><span>Статус approval</span><strong>{actionStatusLabel(getStageRecommendation(lead, actionCenter).status)}</strong></div>
+                  <div><span>Reason</span><strong>{getStageRecommendationReason(getStageRecommendation(lead, actionCenter))}</strong></div>
+                </div>
+                <div className="execution-buttons">
+                  <button type="button" className="btn primary compact" onClick={() => onApproveApprovalQueueItem(getStageRecommendation(lead, actionCenter))} disabled={executionBusy[getStageRecommendation(lead, actionCenter).id] || !['pending_approval','failed'].includes(getStageRecommendation(lead, actionCenter).status)}>{executionBusy[getStageRecommendation(lead, actionCenter).id] ? 'Обновляем…' : 'Approve stage change'}</button>
+                  <button type="button" className="ghost-button compact danger-action" onClick={() => onRejectApprovalQueueItem(getStageRecommendation(lead, actionCenter))} disabled={executionBusy[getStageRecommendation(lead, actionCenter).id] || ['executing','completed','executed','rejected'].includes(getStageRecommendation(lead, actionCenter).status)}>Reject</button>
+                </div>
+              </div>
+            )}
+
             {getLeadAiScore(lead) ? (
               <div className="detail-section ai-deal-probability-panel">
                 <div className="ai-probability-head">
@@ -1104,7 +1147,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
               </div>
               <div className="execution-action-list">
                 {(actionCenter.approvalItems || []).length > 0 && <h5 className="approval-mini-title">Очередь AI сотрудников для этого лида</h5>}
-                {(actionCenter.approvalItems || []).map((item) => (
+                {(actionCenter.approvalItems || []).filter((item) => (item.actionType || item.executionType) !== 'stage_change_recommendation').map((item) => (
                   <article className={`execution-action ${item.status}`} key={item.id}>
                     <div><strong>{actionTypeLabel(item.executionType || item.actionType)}</strong><span>{item.workerName || 'AI сотрудник'} · {actionStatusLabel(item.status)}</span></div>
                     <p>{item.recommendation || item.title}</p>
@@ -1112,8 +1155,8 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                     <div className="execution-buttons">
                       <button type="button" className="ghost-button compact" onClick={() => onApproveApprovalQueueItem(item)} disabled={executionBusy[item.id] || !['pending_approval','failed'].includes(item.status)}>{executionBusy[item.id] ? 'Работаем…' : 'Одобрить'}</button>
                       <button type="button" className="btn primary compact" onClick={() => onExecuteApprovalQueueItem(item)} disabled={executionBusy[item.id] || item.status !== 'approved'}>{executionBusy[item.id] ? 'Отправляем…' : 'Отправить'}</button>
-                      <button type="button" className="ghost-button compact" onClick={() => onEditApprovalQueueItem(item)} disabled={executionBusy[item.id] || ['executing','completed'].includes(item.status)}>Изменить</button>
-                      <button type="button" className="ghost-button compact danger-action" onClick={() => onRejectApprovalQueueItem(item)} disabled={executionBusy[item.id] || ['executing','completed','rejected'].includes(item.status)}>Отклонить</button>
+                      <button type="button" className="ghost-button compact" onClick={() => onEditApprovalQueueItem(item)} disabled={executionBusy[item.id] || ['executing','completed','executed'].includes(item.status)}>Изменить</button>
+                      <button type="button" className="ghost-button compact danger-action" onClick={() => onRejectApprovalQueueItem(item)} disabled={executionBusy[item.id] || ['executing','completed','executed','rejected'].includes(item.status)}>Отклонить</button>
                     </div>
                   </article>
                 ))}

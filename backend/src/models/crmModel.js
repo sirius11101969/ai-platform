@@ -13,7 +13,7 @@ const DEFAULT_STAGE_LABELS = {
   lost: 'Потеряно',
 }
 const STATUS_LABELS = DEFAULT_STAGE_LABELS
-const LEAD_COLUMNS = ['id', 'user_id', 'workspace_id', 'name', 'email', 'phone', 'telegram', 'telegram_id', 'telegram_chat_id', 'telegram_username', 'telegram_first_name', 'telegram_last_name', 'first_name', 'last_name', 'first_message', 'last_message_at', 'last_seen_at', 'company', 'status', 'value', 'source', 'notes', 'metadata', 'created_at', 'updated_at']
+const LEAD_COLUMNS = ['id', 'user_id', 'workspace_id', 'name', 'email', 'phone', 'telegram', 'telegram_id', 'telegram_chat_id', 'telegram_username', 'telegram_first_name', 'telegram_last_name', 'first_name', 'last_name', 'first_message', 'last_message_at', 'last_seen_at', 'company', 'status', 'value', 'source', 'notes', 'metadata', 'probability_to_close', 'estimated_revenue', 'expected_close_date', 'created_at', 'updated_at']
 const LEAD_SELECT = LEAD_COLUMNS.join(', ')
 
 function leadSelect(alias) {
@@ -46,6 +46,9 @@ function normalizeLead(row) {
     status: row.status,
     statusLabel: STATUS_LABELS[row.status] || row.status,
     value: Number(row.value || 0),
+    probabilityToClose: Number(row.probability_to_close ?? row.probabilityToClose ?? row.ai_score?.deal_probability ?? 0),
+    estimatedRevenue: Number(row.estimated_revenue ?? row.estimatedRevenue ?? 0),
+    expectedCloseDate: row.expected_close_date || row.expectedCloseDate || null,
     source: row.source || '',
     metadata: row.metadata || {},
     notesText: row.notes || '',
@@ -55,6 +58,7 @@ function normalizeLead(row) {
     followUps: Array.isArray(row.followups) ? row.followups.map(normalizeFollowUp).filter(Boolean) : [],
     telegramMessages: Array.isArray(row.telegram_messages) ? row.telegram_messages.map(normalizeTelegramMessage).filter(Boolean) : [],
     aiRecommendation: row.ai_recommendation || null,
+    aiStageRecommendation: normalizeAiStageRecommendation(row.ai_stage_recommendation || null),
     aiScore: normalizeAiScore(row.ai_score || row.ai_score_row || null),
     aiFollowUpSequences: Array.isArray(row.ai_followup_sequences) ? row.ai_followup_sequences.map(normalizeAiFollowUpSequence).filter(Boolean) : [],
     aiActions: Array.isArray(row.ai_actions) ? row.ai_actions : [],
@@ -63,6 +67,26 @@ function normalizeLead(row) {
   }
 }
 
+function normalizeAiStageRecommendation(row) {
+  if (!row) return null
+  const payload = row.payload || {}
+  return {
+    id: row.id,
+    leadId: row.lead_id || row.leadId,
+    workspaceId: row.workspace_id || row.workspaceId,
+    actionType: row.action_type || row.actionType || 'stage_change_recommendation',
+    status: row.status || 'pending_approval',
+    currentStage: payload.currentStatus || payload.currentStage || payload.fromStage || '',
+    recommendedStage: payload.nextStatus || payload.recommendedStage || payload.status || '',
+    reason: payload.reason || row.recommendation || '',
+    confidence: Number(payload.confidence ?? 0),
+    riskType: payload.riskType || '',
+    title: row.title || '',
+    recommendation: row.recommendation || '',
+    createdAt: row.created_at || row.createdAt,
+    updatedAt: row.updated_at || row.updatedAt,
+  }
+}
 
 function normalizeAiScore(row) {
   if (!row) return null
@@ -271,6 +295,7 @@ async function listLeads(userId, workspaceId) {
             COALESCE((SELECT json_agg(seq_row ORDER BY seq_row.recommended_at DESC) FROM (SELECT * FROM ai_followup_sequences afs WHERE afs.workspace_id = l.workspace_id AND afs.lead_id = l.id ORDER BY afs.recommended_at DESC LIMIT 5) seq_row), '[]'::json) AS ai_followup_sequences,
             COALESCE((SELECT json_agg(job_row ORDER BY job_row.created_at DESC) FROM (SELECT * FROM ai_followup_jobs afj WHERE afj.workspace_id = l.workspace_id AND afj.lead_id = l.id ORDER BY afj.created_at DESC LIMIT 10) job_row), '[]'::json) AS ai_followup_jobs,
             COALESCE((SELECT json_agg(draft_row ORDER BY draft_row.created_at DESC) FROM (SELECT id, workspace_id, lead_id, action_type, status, title, recommendation, payload, created_at, updated_at FROM ai_worker_queue q WHERE q.workspace_id = l.workspace_id AND q.lead_id = l.id AND q.action_type IN ('telegram_draft','email_draft','followup_24h','followup_3d','demo_offer','meeting_request') ORDER BY q.created_at DESC LIMIT 20) draft_row), '[]'::json) AS ai_outreach_drafts,
+            (SELECT to_jsonb(stage_q) FROM (SELECT id, workspace_id, lead_id, action_type, status, title, recommendation, payload, created_at, updated_at FROM ai_worker_queue q WHERE q.workspace_id = l.workspace_id AND q.lead_id = l.id AND q.action_type = 'stage_change_recommendation' AND q.status IN ('pending_approval','approved','failed') ORDER BY q.created_at DESC LIMIT 1) stage_q) AS ai_stage_recommendation,
             (SELECT a.output_result FROM ai_agent_actions a WHERE a.workspace_id = l.workspace_id AND a.lead_id = l.id AND a.task_type = 'analyze_lead' AND a.status = 'completed' ORDER BY a.created_at DESC LIMIT 1) AS ai_recommendation,
             COALESCE((SELECT json_agg(ai_row ORDER BY ai_row.created_at DESC) FROM (SELECT a.id, a.task_type, a.status, a.output_result, a.created_at FROM ai_agent_actions a WHERE a.workspace_id = l.workspace_id AND a.lead_id = l.id ORDER BY a.created_at DESC LIMIT 5) ai_row), '[]'::json) AS ai_actions
        FROM crm_leads AS l
@@ -294,7 +319,7 @@ async function listLeads(userId, workspaceId) {
 async function findLead(userId, workspaceId, leadId, client = pool) {
   const result = await client.query(`SELECT ${LEAD_SELECT} FROM crm_leads WHERE user_id = $1 AND workspace_id = $2 AND id = $3`, [userId, workspaceId, leadId])
   if (!result.rows[0]) return null
-  const [notes, followups, telegramMessages, aiScore, aiSequences, aiFollowupJobs, aiOutreachDrafts] = await Promise.all([
+  const [notes, followups, telegramMessages, aiScore, aiSequences, aiFollowupJobs, aiOutreachDrafts, aiStageRecommendation] = await Promise.all([
     client.query('SELECT id, lead_id, user_id, body, created_at FROM crm_notes WHERE user_id = $1 AND workspace_id = $3 AND lead_id = $2 ORDER BY created_at DESC', [userId, leadId, workspaceId]),
     client.query('SELECT id, lead_id, user_id, message, model, created_at FROM crm_followups WHERE user_id = $1 AND workspace_id = $3 AND lead_id = $2 ORDER BY created_at DESC', [userId, leadId, workspaceId]),
     client.query('SELECT id, lead_id, user_id, role, message, telegram_chat_id, telegram_message_id, created_at FROM telegram_messages WHERE user_id = $1 AND workspace_id = $3 AND lead_id = $2 ORDER BY created_at ASC LIMIT 200', [userId, leadId, workspaceId]),
@@ -302,10 +327,11 @@ async function findLead(userId, workspaceId, leadId, client = pool) {
     client.query('SELECT * FROM ai_followup_sequences WHERE workspace_id = $1 AND lead_id = $2 ORDER BY recommended_at DESC LIMIT 5', [workspaceId, leadId]),
     client.query('SELECT * FROM ai_followup_jobs WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 10', [workspaceId, leadId]),
     client.query("SELECT id, workspace_id, lead_id, action_type, status, title, recommendation, payload, created_at, updated_at FROM ai_worker_queue WHERE workspace_id = $1 AND lead_id = $2 AND action_type IN ('telegram_draft','email_draft','followup_24h','followup_3d','demo_offer','meeting_request') ORDER BY created_at DESC LIMIT 20", [workspaceId, leadId]),
+    client.query("SELECT id, workspace_id, lead_id, action_type, status, title, recommendation, payload, created_at, updated_at FROM ai_worker_queue WHERE workspace_id = $1 AND lead_id = $2 AND action_type = 'stage_change_recommendation' AND status IN ('pending_approval','approved','failed') ORDER BY created_at DESC LIMIT 1", [workspaceId, leadId]),
   ])
   const ai = await client.query("SELECT output_result FROM ai_agent_actions WHERE workspace_id = $1 AND lead_id = $2 AND task_type = 'analyze_lead' AND status = 'completed' ORDER BY created_at DESC LIMIT 1", [workspaceId, leadId])
   const aiActions = await client.query('SELECT id, task_type, status, output_result, created_at FROM ai_agent_actions WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 5', [workspaceId, leadId])
-  return normalizeLead({ ...result.rows[0], notes_list: notes.rows, followups: followups.rows, telegram_messages: telegramMessages.rows, ai_score: aiScore.rows[0] || null, ai_followup_sequences: aiSequences.rows, ai_followup_jobs: aiFollowupJobs.rows, ai_outreach_drafts: aiOutreachDrafts.rows, ai_recommendation: ai.rows[0]?.output_result || null, ai_actions: aiActions.rows })
+  return normalizeLead({ ...result.rows[0], notes_list: notes.rows, followups: followups.rows, telegram_messages: telegramMessages.rows, ai_score: aiScore.rows[0] || null, ai_followup_sequences: aiSequences.rows, ai_followup_jobs: aiFollowupJobs.rows, ai_outreach_drafts: aiOutreachDrafts.rows, ai_stage_recommendation: aiStageRecommendation.rows[0] || null, ai_recommendation: ai.rows[0]?.output_result || null, ai_actions: aiActions.rows })
 }
 
 async function createLead(userId, workspaceId, payload) {
@@ -584,6 +610,7 @@ async function saveLeadAiScore(client, workspaceId, leadId, intelligence) {
      RETURNING *`,
     [workspaceId, leadId, intelligence.score, intelligence.temperature, intelligence.dealProbability, intelligence.urgencyLevel, intelligence.engagementLevel, intelligence.aiSummary, intelligence.nextBestAction, intelligence.riskLevel, intelligence.idealContactTiming, JSON.stringify(intelligence.objectionsDetected || []), intelligence.recommendedCta, intelligence.recommendedChannel, intelligence.budgetProbability || intelligence.dealProbability, intelligence.confidence || 70]
   )
+  await client.query(`UPDATE crm_leads SET probability_to_close = $3, estimated_revenue = value * ($3::numeric / 100.0), expected_close_date = COALESCE(expected_close_date, (CURRENT_DATE + INTERVAL '30 days')::date), updated_at = NOW() WHERE workspace_id = $1 AND id = $2`, [workspaceId, leadId, intelligence.dealProbability])
   return normalizeAiScore(result.rows[0])
 }
 
@@ -598,6 +625,48 @@ async function createAiFollowUpSequence(client, userId, workspaceId, leadId, con
   return normalizeAiFollowUpSequence(result.rows[0])
 }
 
+
+const STAGE_FLOW = { new: 'qualified', qualified: 'proposal', proposal: 'booked', booked: 'won' }
+
+function buildStageReason(lead, intelligence) {
+  const summary = String(intelligence.aiSummary || intelligence.intentSummary || '').trim()
+  if (intelligence.riskLevel === 'high' && lead.status === 'booked') return 'Лид не отвечает более 7 дней или встреча осталась без следующего шага.'
+  if (lead.status === 'proposal') return 'Клиент согласовал встречу или обсуждает следующий шаг после предложения.'
+  if (lead.status === 'qualified') return 'Клиент запросил детали предложения, стоимость или условия внедрения.'
+  if (lead.status === 'new') return summary || 'Клиент подтвердил интерес к демо и запросил детали внедрения.'
+  return summary || 'AI обнаружил сигналы для следующего этапа воронки.'
+}
+
+async function createAiStageRecommendation(client, userId, workspaceId, lead, intelligence) {
+  if (!lead || ['won', 'lost'].includes(lead.status)) return null
+  let nextStatus = STAGE_FLOW[lead.status]
+  if (lead.status === 'booked') nextStatus = intelligence.riskLevel === 'high' || intelligence.dealProbability < 25 ? 'lost' : 'won'
+  if (!nextStatus) return null
+  const shouldRecommend = intelligence.score >= 45 || intelligence.dealProbability >= 45 || intelligence.urgencyLevel === 'high' || intelligence.riskLevel === 'high'
+  if (!shouldRecommend) return null
+  const duplicate = await client.query(
+    `SELECT id FROM ai_worker_queue
+      WHERE workspace_id = $1 AND lead_id = $2 AND action_type = 'stage_change_recommendation'
+        AND payload->>'nextStatus' = $3
+        AND status IN ('pending_approval','approved','executing','executed','completed')
+        AND created_at > NOW() - INTERVAL '24 hours'
+      LIMIT 1`,
+    [workspaceId, lead.id, nextStatus]
+  )
+  if (duplicate.rows[0]) return null
+  const worker = await ensureSdrWorker(client, workspaceId)
+  const reason = buildStageReason(lead, intelligence)
+  const confidence = Math.max(55, Math.min(95, Number(intelligence.confidence || intelligence.score || 60)))
+  const result = await client.query(
+    `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
+     VALUES($1, $2, $3, 'stage_change_recommendation', 'pending_approval', $4, $5, $6)
+     RETURNING id`,
+    [worker.id, workspaceId, lead.id, `AI stage recommendation · ${lead.status} → ${nextStatus}`, reason, { source: 'ai_lead_analysis', currentStatus: lead.status, nextStatus, status: nextStatus, reason, confidence, probabilityToClose: intelligence.dealProbability, estimatedRevenue: Number(lead.value || 0) * (Number(intelligence.dealProbability || 0) / 100), expectedCloseDate: new Date(Date.now() + 30 * 864e5).toISOString().slice(0, 10) }]
+  )
+  await logActivity(client, userId, workspaceId, lead.id, 'ai_stage_recommendation', 'AI рекомендовал смену этапа', reason, { queueId: result.rows[0].id, from: lead.status, to: nextStatus, confidence })
+  return result.rows[0]
+}
+
 async function analyzeLeadIntelligence(userId, workspaceId, leadId, aiOutput = {}, { createFollowUp = true } = {}) {
   const context = await buildIntelligenceContext(userId, workspaceId, leadId)
   const intelligence = scoreLeadContext(context, aiOutput)
@@ -605,6 +674,7 @@ async function analyzeLeadIntelligence(userId, workspaceId, leadId, aiOutput = {
   try {
     await client.query('BEGIN')
     const score = await saveLeadAiScore(client, workspaceId, leadId, intelligence)
+    await createAiStageRecommendation(client, userId, workspaceId, context.lead, intelligence)
     await logActivity(client, userId, workspaceId, leadId, 'ai_score_updated', 'Оценка лида обновлена', `${intelligence.riskAlert}. Рекомендуемый следующий шаг: ${intelligence.nextBestAction}`, intelligence)
     let followUpSequence = null
     if (createFollowUp && (intelligence.urgencyLevel !== 'low' || intelligence.score >= 40)) {
@@ -640,7 +710,7 @@ async function analyzeWorkspaceLeads(userId, workspaceId, limit = 25) {
 }
 
 async function getStats(userId, workspaceId) {
-  const [summaryResult, statusResult, activityResult, aiMetricsResult, aiRevenueResult, aiExecutionResult, telegramResult, followupMetricsResult, outreachMetricsResult, landingMetricsResult] = await Promise.all([
+  const [summaryResult, statusResult, activityResult, aiMetricsResult, aiRevenueResult, aiExecutionResult, telegramResult, followupMetricsResult, outreachMetricsResult, landingMetricsResult, pipelineHealthResult] = await Promise.all([
     pool.query(
       `SELECT COUNT(*)::int AS total_leads,
               COALESCE(SUM(value) FILTER (WHERE status NOT IN ('won','lost')), 0)::numeric AS pipeline_value,
@@ -749,6 +819,26 @@ async function getStats(userId, workspaceId) {
         WHERE l.user_id = $1 AND l.workspace_id = $2`,
       [userId, workspaceId]
     ),
+    pool.query(
+      `WITH last_activity AS (
+         SELECT l.id, GREATEST(l.updated_at, COALESCE(MAX(tm.created_at), l.updated_at), COALESCE(MAX(em.created_at), l.updated_at), COALESCE(MAX(n.created_at), l.updated_at)) AS last_activity_at
+           FROM crm_leads l
+           LEFT JOIN telegram_messages tm ON tm.lead_id = l.id AND tm.workspace_id = l.workspace_id
+           LEFT JOIN email_messages em ON em.lead_id = l.id AND em.workspace_id = l.workspace_id
+           LEFT JOIN crm_notes n ON n.lead_id = l.id AND n.workspace_id = l.workspace_id
+          WHERE l.user_id = $2 AND l.workspace_id = $1 AND l.status NOT IN ('won','lost')
+          GROUP BY l.id
+       )
+       SELECT (SELECT COUNT(*)::int FROM ai_worker_queue q JOIN crm_leads ql ON ql.id = q.lead_id AND ql.workspace_id = q.workspace_id WHERE q.workspace_id = $1 AND q.action_type = 'stage_change_recommendation' AND q.status = 'pending_approval' AND ql.user_id = $2) AS stage_recommendations_pending,
+              COUNT(DISTINCT l.id) FILTER (WHERE last_activity.last_activity_at < NOW() - INTERVAL '3 days')::int AS inactive_opportunities,
+              COUNT(DISTINCT l.id) FILTER (WHERE COALESCE(s.risk_level, '') = 'high' OR last_activity.last_activity_at < NOW() - INTERVAL '7 days')::int AS deals_at_risk,
+              COALESCE(SUM(COALESCE(l.estimated_revenue, l.value * COALESCE(s.deal_probability, 0) / 100.0)) FILTER (WHERE l.status NOT IN ('won','lost')), 0)::numeric AS ai_forecasted_revenue
+         FROM crm_leads l
+         LEFT JOIN last_activity ON last_activity.id = l.id
+         LEFT JOIN LATERAL (SELECT deal_probability, risk_level FROM lead_ai_scores WHERE workspace_id = l.workspace_id AND lead_id = l.id ORDER BY generated_at DESC LIMIT 1) s ON true
+        WHERE l.user_id = $2 AND l.workspace_id = $1`,
+      [workspaceId, userId]
+    ),
   ])
   const byStatus = CRM_STATUSES.reduce((acc, status) => ({ ...acc, [status]: { count: 0, value: 0 } }), {})
   for (const row of statusResult.rows) byStatus[row.status] = { count: row.count, value: Number(row.value || 0) }
@@ -765,6 +855,7 @@ async function getStats(userId, workspaceId) {
   const followupMetrics = followupMetricsResult.rows[0] || {}
   const outreachMetrics = outreachMetricsResult.rows[0] || {}
   const landingMetrics = landingMetricsResult.rows[0] || {}
+  const pipelineHealth = pipelineHealthResult.rows[0] || {}
   const aiExecutionFinished = Number(aiExecution.finished_total || 0)
   return {
     totalLeads: total,
@@ -792,8 +883,13 @@ async function getStats(userId, workspaceId) {
       assistedDeals: Number(aiMetrics.assisted_deals || 0),
       hotLeads: Number(aiRevenue.hot_leads || 0),
       warmLeads: Number(aiRevenue.warm_leads || 0),
-      predictedRevenue: Number(aiRevenue.predicted_revenue || 0),
-      atRiskDeals: Number(aiRevenue.at_risk_deals || 0),
+      predictedRevenue: Number(pipelineHealth.ai_forecasted_revenue || aiRevenue.predicted_revenue || 0),
+      aiForecastedRevenue: Number(pipelineHealth.ai_forecasted_revenue || aiRevenue.predicted_revenue || 0),
+      atRiskDeals: Number(pipelineHealth.deals_at_risk || aiRevenue.at_risk_deals || 0),
+      dealsAtRisk: Number(pipelineHealth.deals_at_risk || aiRevenue.at_risk_deals || 0),
+      inactiveOpportunities: Number(pipelineHealth.inactive_opportunities || 0),
+      stageRecommendationsPending: Number(pipelineHealth.stage_recommendations_pending || 0),
+      pipelineHealth: Math.max(0, 100 - (Number(pipelineHealth.deals_at_risk || 0) * 12) - (Number(pipelineHealth.inactive_opportunities || 0) * 5)),
       followUpsPending: Number(aiRevenue.followups_pending || 0),
       averageLeadScore: Math.round(Number(aiRevenue.average_score || 0)),
       conversionForecast: Math.round(Number(aiRevenue.conversion_forecast || 0)),

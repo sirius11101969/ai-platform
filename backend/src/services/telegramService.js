@@ -308,7 +308,19 @@ function nextStageSuggestion(currentStatus, text) {
   if (currentStatus === 'new' && /(интерес|актуальн|нужно|хочу|да|расскаж|стоимост|цена|demo|демо)/i.test(normalized)) return 'qualified'
   if (currentStatus === 'qualified' && /(кп|предложен|стоимост|цена|proposal|смет|договор)/i.test(normalized)) return 'proposal'
   if (currentStatus === 'proposal' && /(встреч|созвон|демо|calendar|календар|завтра|сегодня|слот)/i.test(normalized)) return 'booked'
+  if (currentStatus === 'booked' && /(оплат|счет|счёт|договор|соглас|запуска|начинаем)/i.test(normalized)) return 'won'
+  if (currentStatus === 'booked' && /(отказ|не актуально|не интересно|не будем|нет бюджета)/i.test(normalized)) return 'lost'
   return null
+}
+
+
+function buildTelegramStageReason(currentStatus, nextStage, text) {
+  const normalized = String(text || '').toLowerCase()
+  if (/демо|внедрен|интерес|детал/.test(normalized)) return 'Клиент подтвердил интерес к демо и запросил детали внедрения.'
+  if (/встреч|созвон|слот|календар/.test(normalized)) return 'Клиент согласовал встречу.'
+  if (/не актуально|не интересно|отказ|нет бюджета/.test(normalized)) return 'Клиент дал негативный сигнал или отказался от следующего шага.'
+  if (nextStage === 'proposal') return 'Клиент обсуждает стоимость, предложение или условия внедрения.'
+  return `AI предлагает сменить этап ${currentStatus} → ${nextStage} на основе ответа лида.`
 }
 
 async function createInboundReplyRecommendations(client, { userId, workspaceId, lead, telegram }) {
@@ -345,7 +357,7 @@ async function createInboundReplyRecommendations(client, { userId, workspaceId, 
   if (nextStage) {
     const existingStage = await client.query(
       `SELECT id FROM ai_worker_queue
-        WHERE workspace_id = $1 AND lead_id = $2 AND action_type = 'move_lead_stage'
+        WHERE workspace_id = $1 AND lead_id = $2 AND action_type = 'stage_change_recommendation'
           AND payload->>'nextStatus' = $3
           AND created_at > NOW() - INTERVAL '24 hours'
           AND status IN ('pending_approval', 'approved', 'executing', 'completed')
@@ -355,9 +367,9 @@ async function createInboundReplyRecommendations(client, { userId, workspaceId, 
     if (!existingStage.rows[0]) {
       const stage = await client.query(
         `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
-         VALUES($1, $2, $3, 'move_lead_stage', 'pending_approval', $4, $5, $6)
+         VALUES($1, $2, $3, 'stage_change_recommendation', 'pending_approval', $4, $5, $6)
          RETURNING id`,
-        [worker.id, workspaceId, lead.id, `AI stage suggestion · ${lead.status} → ${nextStage}`, `AI предлагает сменить этап ${lead.status} → ${nextStage} на основе ответа лида. Требуется approval менеджера.`, { source: 'telegram_inbound', currentStatus: lead.status, nextStatus: nextStage, status: nextStage, customerMessage: telegram.text }]
+        [worker.id, workspaceId, lead.id, `AI stage suggestion · ${lead.status} → ${nextStage}`, buildTelegramStageReason(lead.status, nextStage, telegram.text), { source: 'telegram_inbound', currentStatus: lead.status, nextStatus: nextStage, status: nextStage, reason: buildTelegramStageReason(lead.status, nextStage, telegram.text), confidence: 82, customerMessage: telegram.text }]
       )
       await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'ai_stage_suggested', title: 'AI предложил смену этапа', body: `${lead.status} → ${nextStage}`, source: 'ai', metadata: { queueId: stage.rows[0].id, nextStatus: nextStage } })
     }

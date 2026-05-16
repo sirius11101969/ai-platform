@@ -368,7 +368,10 @@ async function scanWorkspace(userId, workspaceId) {
       }
       const result = await insertFollowupJob({ workspaceId, leadId: row.id, rule, channel, message, metadata })
       console.info('[ai-followups] created job', { workspaceId, leadId: row.id, ruleType: rule.ruleType, jobId: result.rows[0].id, channel })
-      await addTimelineEvent(pool, { workspaceId, leadId: row.id, userId, eventType: 'follow_up_suggested', title: 'Follow-up suggested', body: message, source: 'ai', metadata: { ruleType: rule.ruleType, channel, reason: rule.reason, urgency: rule.urgency } })
+      await addTimelineEvent(pool, { workspaceId, leadId: row.id, userId, eventType: 'follow_up_suggested', title: 'Follow-up suggested', body: message, source: 'ai', metadata: { ruleType: rule.ruleType, channel, reason: rule.reason, urgency: rule.urgency, reminderType: rule.ruleType } })
+      if (['no_reply_7d', 'proposal_no_reply', 'meeting_no_next_step', 'hot_lead_inactive'].includes(rule.ruleType) || rule.urgency === 'critical') {
+        await addTimelineEvent(pool, { workspaceId, leadId: row.id, userId, eventType: 'opportunity_risk_detected', title: 'Opportunity risk detected', body: `${rule.reason}. AI предлагает follow-up, reminder и escalation для менеджера.`, source: 'ai', metadata: { ruleType: rule.ruleType, inactiveHours: rule.inactiveHours, escalationSuggestion: true, reminderSuggestion: true, followUpSuggestion: true } })
+      }
       createdJobs.push(normalize({ ...result.rows[0], lead_name: row.name, lead_company: row.company, lead_email: row.email, lead_status: stage, lead_telegram_chat_id: row.telegram_chat_id }))
     }
   }
