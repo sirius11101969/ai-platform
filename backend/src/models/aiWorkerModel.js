@@ -11,7 +11,7 @@ const WORKER_TYPES = [
 const STATUSES = ['active', 'paused', 'error']
 const MODES = ['suggestion_only', 'approval_required', 'autonomous_ready']
 const RUN_STATUSES = ['queued', 'running', 'completed', 'failed']
-const QUEUE_STATUSES = ['pending_approval', 'queued', 'running', 'completed', 'failed', 'cancelled']
+const QUEUE_STATUSES = ['pending_approval', 'approved', 'rejected', 'executing', 'completed', 'failed', 'cancelled']
 
 const DEFAULT_WORKERS = [
   {
@@ -95,6 +95,12 @@ function normalizeQueueItem(row) {
     title: row.title,
     recommendation: row.recommendation,
     payload: row.payload || {},
+    approved_by: row.approved_by || null,
+    approved_at: row.approved_at || null,
+    executed_at: row.executed_at || null,
+    error_message: row.error_message || '',
+    worker_name: row.worker_name || '',
+    lead_name: row.lead_name || '',
     created_at: row.created_at,
     updated_at: row.updated_at,
   }
@@ -375,7 +381,7 @@ async function getCommandCenter(workspaceId) {
       `SELECT
         COUNT(*) FILTER (WHERE status = 'pending_approval')::int AS pending_actions,
         COUNT(*) FILTER (WHERE status = 'failed')::int AS failed_actions,
-        COUNT(*) FILTER (WHERE status IN ('pending_approval','queued','running'))::int AS queue_active
+        COUNT(*) FILTER (WHERE status IN ('pending_approval','approved','executing'))::int AS queue_active
        FROM ai_worker_queue WHERE workspace_id = $1`,
       [workspaceId]
     ),

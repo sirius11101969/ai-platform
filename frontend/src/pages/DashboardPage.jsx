@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Panel, PageHeading, StatCard } from "../components/AppShell";
-import { createAiTask, fetchAiCommandCenter, fetchAiTask, fetchAiTasks, fetchCrmStats, fetchProfile, updateStoredUser } from "../services/api";
+import { createAiTask, fetchAiApprovalQueue, fetchAiCommandCenter, fetchAiTask, fetchAiTasks, fetchCrmStats, fetchProfile, updateStoredUser } from "../services/api";
 import { orders, quickActions, userProfile } from "../data/mockData";
 
 const taskTypeLabels = {
@@ -114,6 +114,7 @@ export default function DashboardPage() {
   const [tasks, setTasks] = useState([]);
   const [crmStats, setCrmStats] = useState(null);
   const [aiCommandMetrics, setAiCommandMetrics] = useState(null);
+  const [aiApprovalMetrics, setAiApprovalMetrics] = useState(null);
   const [costs, setCosts] = useState({});
   const [taskForm, setTaskForm] = useState(initialTaskForm);
   const [loading, setLoading] = useState(true);
@@ -126,12 +127,13 @@ export default function DashboardPage() {
     if (!silent) setLoading(true);
     setError("");
     try {
-      const [profileResponse, tasksResponse, crmResponse, commandResponse] = await Promise.all([fetchProfile(), fetchAiTasks(), fetchCrmStats(), fetchAiCommandCenter()]);
+      const [profileResponse, tasksResponse, crmResponse, commandResponse, approvalResponse] = await Promise.all([fetchProfile(), fetchAiTasks(), fetchCrmStats(), fetchAiCommandCenter(), fetchAiApprovalQueue()]);
       setProfile(profileResponse.user || null);
       setTasks(tasksResponse.tasks || []);
       setCosts(tasksResponse.costs || {});
       setCrmStats(crmResponse.stats || null);
       setAiCommandMetrics(commandResponse.commandCenter?.metrics || null);
+      setAiApprovalMetrics(approvalResponse.metrics || null);
     } catch (requestError) {
       setError(requestError.message || "Не удалось загрузить дашборд");
     } finally {
@@ -223,7 +225,8 @@ export default function DashboardPage() {
         <StatCard label="AI прогноз выручки" value={loading ? "…" : new Intl.NumberFormat("ru-RU", { style: "currency", currency: "RUB", maximumFractionDigits: 0 }).format(Number(crmStats?.aiMetrics?.predictedRevenue || 0))} hint={`forecast ${crmStats?.aiMetrics?.conversionForecast || 0}%`} tone="violet" />
         <StatCard label="Активные AI сотрудники" value={loading ? "…" : String(aiCommandMetrics?.activeWorkers || 0)} hint={`${aiCommandMetrics?.totalWorkers || 0} ролей AI workforce`} />
         <StatCard label="Очередь AI задач" value={loading ? "…" : String(aiCommandMetrics?.queueActive || 0)} hint="Видимые AI рекомендации и очередь исполнения" tone="violet" />
-        <StatCard label="Действия на одобрение" value={loading ? "…" : String(aiCommandMetrics?.pendingActions || crmStats?.aiMetrics?.pendingApproval || 0)} hint={`${aiCommandMetrics?.failedActions || 0} ошибок · человек утверждает отправку`} tone="pink" />
+        <StatCard label="AI ждут одобрения" value={loading ? "…" : String(aiApprovalMetrics?.waitingApproval || aiCommandMetrics?.pendingActions || crmStats?.aiMetrics?.pendingApproval || 0)} hint={`${aiApprovalMetrics?.approvedToday || 0} одобрено сегодня · человек утверждает отправку`} tone="pink" />
+        <StatCard label="AI выполнено сегодня" value={loading ? "…" : String(aiApprovalMetrics?.executedToday || 0)} hint={`${aiApprovalMetrics?.failedToday || 0} ошибок сегодня · success rate ${aiApprovalMetrics?.successRate || 0}%`} tone="violet" />
         <StatCard label="AI эффективность" value={loading ? "…" : `${aiCommandMetrics?.efficiency || crmStats?.aiMetrics?.executionSuccessRate || crmStats?.aiMetrics?.efficiency || 0}%`} hint="Успешные запуски AI сотрудников" />
         <StatCard label="Выручка под контролем AI" value={loading ? "…" : new Intl.NumberFormat("ru-RU", { style: "currency", currency: "RUB", maximumFractionDigits: 0 }).format(aiRevenueUnderControl)} hint="Плейсхолдер revenue impact по открытой воронке" tone="violet" />
       </section>

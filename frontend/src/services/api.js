@@ -339,6 +339,27 @@ export function fetchAiCommandCenter() {
   return request('/ai/command-center')
 }
 
+export function fetchAiApprovalQueue(params = {}) {
+  const query = new URLSearchParams(Object.entries(params).filter(([, value]) => value !== undefined && value !== null && value !== '')).toString()
+  return request(`/ai/approval-queue${query ? `?${query}` : ''}`)
+}
+
+export function approveAiApprovalQueueItem(id) {
+  return request(`/ai/approval-queue/${id}/approve`, { method: 'POST' })
+}
+
+export function rejectAiApprovalQueueItem(id) {
+  return request(`/ai/approval-queue/${id}/reject`, { method: 'POST' })
+}
+
+export function updateAiApprovalQueueItem(id, payload) {
+  return request(`/ai/approval-queue/${id}`, { method: 'PATCH', body: JSON.stringify(payload) })
+}
+
+export function executeAiApprovalQueueItem(id) {
+  return request(`/ai/approval-queue/${id}/execute`, { method: 'POST' })
+}
+
 export function fetchTelegramMessages(leadId) {
   return request(`/crm/leads/${leadId}/telegram-messages`)
 }
