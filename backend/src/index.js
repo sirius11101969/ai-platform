@@ -32,9 +32,12 @@ const port = Number(process.env.PORT || 3001)
 app.use(cors({ origin: process.env.CORS_ORIGIN || true }))
 app.use(express.json({ limit: process.env.JSON_BODY_LIMIT || '25mb' }))
 
-app.get('/health', (_, res) => {
+const healthHandler = (_, res) => {
   res.json({ status: 'OK' })
-})
+}
+
+app.get('/health', healthHandler)
+app.get('/api/health', healthHandler)
 
 app.use('/api/public', publicRoutes)
 app.use('/api/auth', authRoutes)
