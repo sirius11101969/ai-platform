@@ -25,7 +25,11 @@ async function main() {
 
     if (query.startsWith('SELECT rule_type, suggested_channel, config FROM ai_followup_rules')) {
       return {
-        rows: DEFAULT_FOLLOWUP_RULES.map((rule) => ({ rule_type: rule.ruleType, suggested_channel: rule.suggestedChannel, config: rule.config })),
+        rows: DEFAULT_FOLLOWUP_RULES.map((rule) => ({
+          rule_type: rule.ruleType,
+          suggested_channel: rule.suggestedChannel,
+          config: rule.ruleType === 'proposal_no_reply' ? { stage: ' Proposal ', thresholdHours: '48' } : rule.config,
+        })),
         rowCount: DEFAULT_FOLLOWUP_RULES.length,
       }
     }
@@ -40,13 +44,13 @@ async function main() {
           company: 'ACME',
           email: 'alexey@example.com',
           telegram_chat_id: null,
-          stage: 'proposal',
+          stage: ' PROPOSAL ',
           status: 'proposal',
-          followup_stage: 'proposal',
-          last_message_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-          updated_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+          followup_stage: ' PROPOSAL ',
+          last_message_at: new Date(Date.now() - 96 * 60 * 60 * 1000),
+          updated_at: new Date(),
           created_at: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-          last_activity_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+          last_activity_at: new Date(Date.now() - 96 * 60 * 60 * 1000),
           score: null,
           temperature: null,
         }],
@@ -103,6 +107,11 @@ async function main() {
     assert.strictEqual(response.matchedLeadsCount, 1)
     assert.strictEqual(response.activeRules, DEFAULT_FOLLOWUP_RULES.length)
     assert.ok(response.created >= 1, 'inactive proposal lead should create at least one follow-up job')
+    assert.ok(response.debugSummary?.evaluationsCount >= DEFAULT_FOLLOWUP_RULES.length, 'scan response should include rule evaluation debug summary')
+    const proposalEvaluation = response.debugSummary.evaluations.find((evaluation) => evaluation.ruleType === 'proposal_no_reply')
+    assert.ok(proposalEvaluation?.stageMatches, 'proposal_no_reply should normalize stage before matching')
+    assert.ok(proposalEvaluation?.inactivityMatches, 'proposal_no_reply should use last_message_at inactivity hours')
+    assert.strictEqual(proposalEvaluation?.finalMatch, true, 'proposal_no_reply should match the production proposal inactivity case')
     assert.ok(insertedJobs.some((job) => job.rule_type === 'proposal_no_reply'), 'proposal_no_reply should create a job')
     assert.ok(insertedJobs.some((job) => job.rule_type === 'no_reply_3d'), 'no_reply_3d should create a job for a 5-day inactive open lead')
     assert.ok(insertedJobs.every((job) => job.status === 'suggested'), 'created jobs should be suggested')
