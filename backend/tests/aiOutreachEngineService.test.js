@@ -79,6 +79,41 @@ async function runSanitizedIntentTest() {
   assert.ok(!/Лид проявил интерес к темам|intent summary|temperature|score|qualification|AI detected|crm, ai\.\./i.test(combined))
 }
 
+
+async function runChannelAwareRecommendationAndGreetingTest() {
+  const testLead = {
+    ...lead,
+    id: 'lead-copy-quality',
+    name: 'Copy Quality Test Lead',
+    company: 'Copy Quality Co',
+    email: 'quality@example.com',
+    telegram: '@copy_quality',
+  }
+  const client = makeClient()
+  await service.generateOutreachForLead(client, { workspaceId, userId, lead: testLead, intelligence: { score: 91, temperature: 'hot', recommendedChannel: 'telegram', intentSummary: 'Нужно демо AI CRM и план внедрения' } })
+
+  const queueCopy = client.inserts.queue.map((item) => `${item.recommendation}\n${item.payload.text || ''}`).join('\n')
+  assert.ok(!/Copy, добрый день/.test(queueCopy), 'label-like English test lead names must not be used as personal greetings')
+  assert.ok(client.inserts.queue.every((item) => !/Copy, добрый день/.test(item.payload.text || '')))
+  assert.ok(client.inserts.queue.some((item) => item.action_type === 'telegram_draft' && /^Здравствуйте!/m.test(item.payload.text)))
+
+  const emailDrafts = client.inserts.queue.filter((item) => item.action_type === 'email_draft')
+  const telegramDrafts = client.inserts.queue.filter((item) => item.action_type === 'telegram_draft')
+  assert.ok(emailDrafts.some((item) => /^Подготовить email-сообщение/.test(item.recommendation)), 'email first/follow-up drafts should use email wording')
+  assert.ok(emailDrafts.every((item) => !/короткое сообщение в Telegram/i.test(item.recommendation)), 'email draft recommendations must not ask for a Telegram message')
+  assert.ok(telegramDrafts.some((item) => /^Подготовить короткое сообщение в Telegram/.test(item.recommendation)), 'telegram drafts can use Telegram wording')
+  assert.ok(emailDrafts.some((item) => item.payload.outreachType === 'demo_offer' && /^Предложить демо/.test(item.recommendation)))
+  assert.ok(client.inserts.timeline.every((item) => !/Copy, добрый день/.test(item.params[5] || '')), 'timeline body must use the safe greeting too')
+}
+
+function runCompanyOnlyGreetingTest() {
+  const companyLead = { ...lead, name: '', company: 'Ромашка' }
+  const telegram = service.buildTelegramDraft('first_contact', companyLead, { intentSummary: 'интерес к CRM', recommendedChannel: 'telegram' })
+  const email = service.buildEmailDraft('first_contact', companyLead, { intentSummary: 'интерес к CRM', recommendedChannel: 'email' })
+  assert.ok(/^Здравствуйте!\nВидим ваш запрос от компании Ромашка/.test(telegram.text))
+  assert.ok(/^Здравствуйте! Видим ваш запрос от компании Ромашка/.test(email.body))
+}
+
 async function runWarmLeadTest() {
   const client = makeClient()
   const result = await service.generateOutreachForLead(client, { workspaceId, userId, lead, intelligence: { score: 55, temperature: 'warm', recommendedChannel: 'email', aiSummary: 'интерес к CRM' } })
@@ -107,6 +142,8 @@ async function runDuplicateTest() {
 async function main() {
   await runHotLeadTest()
   await runSanitizedIntentTest()
+  await runChannelAwareRecommendationAndGreetingTest()
+  runCompanyOnlyGreetingTest()
   await runWarmLeadTest()
   await runColdLeadTest()
   await runDuplicateTest()
