@@ -67,7 +67,7 @@ async function createForecastRiskQueueItems(client, { workspaceId, lead, intelli
       source: 'ai_deal_risk_forecast_engine',
       leadId: lead.id,
       actionType,
-      probabilityToClose: intelligence.dealProbability,
+      probabilityToClose: intelligence.probabilityToClose || intelligence.dealProbability,
       engagementScore: intelligence.engagementScore,
       expectedRevenue: intelligence.expectedRevenue,
       forecastCategory: intelligence.forecastCategory,
@@ -168,7 +168,7 @@ async function qualifyLead(client, { lead, userId, workspaceId, queueId = null }
     `INSERT INTO lead_ai_scores(workspace_id, lead_id, score, temperature, urgency, budget_probability, intent_summary, recommended_channel, recommended_next_step, confidence, deal_probability, probability_to_close, urgency_level, engagement_level, ai_summary, next_best_action, risk_level, ideal_contact_timing, objections_detected, recommended_cta, engagement_score, expected_revenue, forecast_category, risk_signals, ai_reasoning, next_best_action_code)
      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25)
      RETURNING *`,
-    [workspaceId, lead.id, intelligence.score, priority, intelligence.urgencyLevel, intelligence.budgetProbability, intelligence.aiSummary, intelligence.recommendedChannel, recommendation, confidence, intelligence.dealProbability, intelligence.urgencyLevel, intelligence.engagementLevel, intelligence.aiSummary, intelligence.nextBestAction || recommendation, intelligence.riskLevel, intelligence.idealContactTiming, JSON.stringify(intelligence.objectionsDetected || []), intelligence.recommendedCta, intelligence.engagementScore || intelligence.score, intelligence.expectedRevenue || 0, intelligence.forecastCategory || 'possible', JSON.stringify(intelligence.riskSignals || []), intelligence.aiReasoning || intelligence.aiSummary || '', intelligence.nextBestActionCode || 'schedule_demo']
+    [workspaceId, lead.id, intelligence.score, priority, intelligence.urgencyLevel, intelligence.budgetProbability, intelligence.aiSummary, intelligence.recommendedChannel, recommendation, confidence, intelligence.probabilityToClose || intelligence.dealProbability, intelligence.urgencyLevel, intelligence.engagementLevel, intelligence.aiSummary, intelligence.nextBestAction || recommendation, intelligence.riskLevel, intelligence.idealContactTiming, JSON.stringify(intelligence.objectionsDetected || []), intelligence.recommendedCta, intelligence.engagementScore || intelligence.score, intelligence.expectedRevenue || 0, intelligence.forecastCategory || 'possible', JSON.stringify(intelligence.riskSignals || []), intelligence.aiReasoning || intelligence.aiSummary || '', intelligence.nextBestActionCode || 'schedule_demo']
   )
 
   await client.query(
@@ -178,7 +178,7 @@ async function qualifyLead(client, { lead, userId, workspaceId, queueId = null }
             expected_close_date = COALESCE(expected_close_date, (CURRENT_DATE + INTERVAL '30 days')::date),
             updated_at = NOW()
       WHERE workspace_id = $1 AND id = $2`,
-    [workspaceId, lead.id, intelligence.dealProbability]
+    [workspaceId, lead.id, intelligence.probabilityToClose || intelligence.dealProbability]
   )
 
   const riskQueueItems = await createForecastRiskQueueItems(client, { workspaceId, lead, intelligence })
@@ -189,9 +189,9 @@ async function qualifyLead(client, { lead, userId, workspaceId, queueId = null }
     userId,
     eventType: 'ai_forecast_updated',
     title: 'AI прогноз сделки обновлён',
-    body: `AI обновил прогноз: вероятность закрытия ${intelligence.dealProbability}%, ожидаемая выручка ${Number(intelligence.expectedRevenue || 0).toLocaleString('ru-RU')}, категория ${intelligence.forecastCategory}.`,
+    body: `AI обновил прогноз: вероятность закрытия ${intelligence.probabilityToClose || intelligence.dealProbability}%, ожидаемая выручка ${Number(intelligence.expectedRevenue || 0).toLocaleString('ru-RU')} ₽, категория ${intelligence.forecastCategory}.`,
     source: 'ai',
-    metadata: { probabilityToClose: intelligence.dealProbability, engagementScore: intelligence.engagementScore, expectedRevenue: intelligence.expectedRevenue, forecastCategory: intelligence.forecastCategory, riskLevel: intelligence.riskLevel },
+    metadata: { probabilityToClose: intelligence.probabilityToClose || intelligence.dealProbability, engagementScore: intelligence.engagementScore, expectedRevenue: intelligence.expectedRevenue, forecastCategory: intelligence.forecastCategory, riskLevel: intelligence.riskLevel },
   })
   if (intelligence.riskLevel !== 'low' || (intelligence.riskSignals || []).length) {
     await addTimelineEvent(client, {
@@ -287,7 +287,7 @@ async function qualifyLead(client, { lead, userId, workspaceId, queueId = null }
               payload = payload || $4::jsonb,
               updated_at = NOW()
         WHERE workspace_id = $1 AND id = $2`,
-      [workspaceId, queueId, recommendation, { score: intelligence.score, priority, recommendedChannel: intelligence.recommendedChannel, confidence, probabilityToClose: intelligence.dealProbability, engagementScore: intelligence.engagementScore, expectedRevenue: intelligence.expectedRevenue, forecastCategory: intelligence.forecastCategory, riskLevel: intelligence.riskLevel, riskQueueItemIds: riskQueueItems.map((item) => item.id), followUpJobId: followUpJob?.id || null, outreach, stageSuggestionId: stageSuggestion?.id || null }]
+      [workspaceId, queueId, recommendation, { score: intelligence.score, priority, recommendedChannel: intelligence.recommendedChannel, confidence, probabilityToClose: intelligence.probabilityToClose || intelligence.dealProbability, engagementScore: intelligence.engagementScore, expectedRevenue: intelligence.expectedRevenue, forecastCategory: intelligence.forecastCategory, riskLevel: intelligence.riskLevel, riskQueueItemIds: riskQueueItems.map((item) => item.id), followUpJobId: followUpJob?.id || null, outreach, stageSuggestionId: stageSuggestion?.id || null }]
     )
   }
 

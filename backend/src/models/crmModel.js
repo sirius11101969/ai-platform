@@ -616,9 +616,9 @@ async function saveLeadAiScore(client, workspaceId, leadId, intelligence) {
     `INSERT INTO lead_ai_scores(workspace_id, lead_id, score, temperature, urgency, budget_probability, intent_summary, recommended_channel, recommended_next_step, confidence, deal_probability, probability_to_close, urgency_level, engagement_level, ai_summary, next_best_action, risk_level, ideal_contact_timing, objections_detected, recommended_cta, engagement_score, expected_revenue, forecast_category, risk_signals, ai_reasoning, next_best_action_code)
      VALUES($1, $2, $3, $4, $6, $15, $8, $14, $9, $16, $5, $5, $6, $7, $8, $9, $10, $11, $12, $13, $17, $18, $19, $20, $21, $22)
      RETURNING *`,
-    [workspaceId, leadId, intelligence.score, intelligence.temperature, intelligence.dealProbability, intelligence.urgencyLevel, intelligence.engagementLevel, intelligence.aiSummary, intelligence.nextBestAction, intelligence.riskLevel, intelligence.idealContactTiming, JSON.stringify(intelligence.objectionsDetected || []), intelligence.recommendedCta, intelligence.recommendedChannel, intelligence.budgetProbability || intelligence.dealProbability, intelligence.confidence || 70, intelligence.engagementScore || intelligence.score, intelligence.expectedRevenue || 0, intelligence.forecastCategory || 'possible', JSON.stringify(intelligence.riskSignals || []), intelligence.aiReasoning || intelligence.aiSummary || '', intelligence.nextBestActionCode || 'schedule_demo']
+    [workspaceId, leadId, intelligence.score, intelligence.temperature, intelligence.probabilityToClose || intelligence.dealProbability, intelligence.urgencyLevel, intelligence.engagementLevel, intelligence.aiSummary, intelligence.nextBestAction, intelligence.riskLevel, intelligence.idealContactTiming, JSON.stringify(intelligence.objectionsDetected || []), intelligence.recommendedCta, intelligence.recommendedChannel, intelligence.budgetProbability || intelligence.dealProbability, intelligence.confidence || 70, intelligence.engagementScore || intelligence.score, intelligence.expectedRevenue || 0, intelligence.forecastCategory || 'possible', JSON.stringify(intelligence.riskSignals || []), intelligence.aiReasoning || intelligence.aiSummary || '', intelligence.nextBestActionCode || 'schedule_demo']
   )
-  await client.query(`UPDATE crm_leads SET probability_to_close = $3, estimated_revenue = value * ($3::numeric / 100.0), expected_close_date = COALESCE(expected_close_date, (CURRENT_DATE + INTERVAL '30 days')::date), updated_at = NOW() WHERE workspace_id = $1 AND id = $2`, [workspaceId, leadId, intelligence.dealProbability])
+  await client.query(`UPDATE crm_leads SET probability_to_close = $3, estimated_revenue = value * ($3::numeric / 100.0), expected_close_date = COALESCE(expected_close_date, (CURRENT_DATE + INTERVAL '30 days')::date), updated_at = NOW() WHERE workspace_id = $1 AND id = $2`, [workspaceId, leadId, intelligence.probabilityToClose || intelligence.dealProbability])
   return normalizeAiScore(result.rows[0])
 }
 
@@ -626,7 +626,7 @@ async function createDealIntelligenceQueueItems(client, userId, workspaceId, lea
   const worker = await ensureSdrWorker(client, workspaceId)
   const basePayload = {
     leadId: lead.id,
-    probabilityToClose: intelligence.dealProbability,
+    probabilityToClose: intelligence.probabilityToClose || intelligence.dealProbability,
     riskLevel: intelligence.riskLevel,
     engagementScore: intelligence.engagementScore,
     expectedRevenue: intelligence.expectedRevenue,
@@ -703,7 +703,7 @@ async function createAiStageRecommendation(client, userId, workspaceId, lead, in
     `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
      VALUES($1, $2, $3, 'stage_change_recommendation', 'pending_approval', $4, $5, $6)
      RETURNING id`,
-    [worker.id, workspaceId, lead.id, `AI stage recommendation · ${lead.status} → ${nextStatus}`, reason, { source: 'ai_lead_analysis', currentStatus: lead.status, nextStatus, status: nextStatus, reason, confidence, probabilityToClose: intelligence.dealProbability, estimatedRevenue: Number(lead.value || 0) * (Number(intelligence.dealProbability || 0) / 100), expectedCloseDate: new Date(Date.now() + 30 * 864e5).toISOString().slice(0, 10) }]
+    [worker.id, workspaceId, lead.id, `AI stage recommendation · ${lead.status} → ${nextStatus}`, reason, { source: 'ai_lead_analysis', currentStatus: lead.status, nextStatus, status: nextStatus, reason, confidence, probabilityToClose: intelligence.probabilityToClose || intelligence.dealProbability, estimatedRevenue: Number(lead.value || 0) * (Number(intelligence.dealProbability || 0) / 100), expectedCloseDate: new Date(Date.now() + 30 * 864e5).toISOString().slice(0, 10) }]
   )
   await logActivity(client, userId, workspaceId, lead.id, 'ai_stage_recommendation', 'AI рекомендовал смену этапа', reason, { queueId: result.rows[0].id, from: lead.status, to: nextStatus, confidence })
   return result.rows[0]
@@ -718,7 +718,7 @@ async function analyzeLeadIntelligence(userId, workspaceId, leadId, aiOutput = {
     const score = await saveLeadAiScore(client, workspaceId, leadId, intelligence)
     await createAiStageRecommendation(client, userId, workspaceId, context.lead, intelligence)
     await createDealIntelligenceQueueItems(client, userId, workspaceId, context.lead, intelligence)
-    await addTimelineEvent(client, { workspaceId, leadId, userId, eventType: 'ai_forecast_updated', title: 'AI прогноз сделки обновлён', body: `AI обновил прогноз: вероятность закрытия ${intelligence.dealProbability}%, ожидаемая выручка ${Number(intelligence.expectedRevenue || 0).toLocaleString('ru-RU')}, категория ${intelligence.forecastCategory}.`, source: 'ai', metadata: intelligence })
+    await addTimelineEvent(client, { workspaceId, leadId, userId, eventType: 'ai_forecast_updated', title: 'AI прогноз сделки обновлён', body: `AI обновил прогноз: вероятность закрытия ${intelligence.probabilityToClose || intelligence.dealProbability}%, ожидаемая выручка ${Number(intelligence.expectedRevenue || 0).toLocaleString('ru-RU')} ₽, категория ${intelligence.forecastCategory}.`, source: 'ai', metadata: intelligence })
     if (intelligence.riskLevel !== 'low' || (intelligence.riskSignals || []).length) await addTimelineEvent(client, { workspaceId, leadId, userId, eventType: 'ai_risk_detected', title: 'AI обнаружил риск сделки', body: `${intelligence.aiReasoning || intelligence.aiSummary}. Следующее лучшее действие: ${intelligence.nextBestAction}.`, source: 'ai', metadata: { riskLevel: intelligence.riskLevel, riskSignals: intelligence.riskSignals, forecastCategory: intelligence.forecastCategory } })
     await addTimelineEvent(client, { workspaceId, leadId, userId, eventType: 'ai_pipeline_health', title: 'AI оценил здоровье pipeline', body: `Pipeline health: риск ${intelligence.riskLevel}, engagement ${intelligence.engagementScore}/100, прогноз ${intelligence.forecastCategory}.`, source: 'ai', metadata: { riskLevel: intelligence.riskLevel, engagementScore: intelligence.engagementScore, forecastCategory: intelligence.forecastCategory } })
     await addTimelineEvent(client, { workspaceId, leadId, userId, eventType: 'ai_next_action_generated', title: 'AI следующий шаг создан', body: intelligence.nextBestAction, source: 'ai', metadata: { nextBestActionCode: intelligence.nextBestActionCode, riskLevel: intelligence.riskLevel } })
