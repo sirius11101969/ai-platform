@@ -21,6 +21,13 @@ function leadSelect(alias) {
   return LEAD_COLUMNS.map((column) => `${alias}.${column}`).join(', ')
 }
 
+
+function buildTelegramConnectLink(leadId) {
+  const username = String(process.env.TELEGRAM_BOT_USERNAME || '').trim().replace(/^@/, '')
+  if (!username || !leadId) return null
+  return `https://t.me/${encodeURIComponent(username)}?start=lead_${encodeURIComponent(leadId)}`
+}
+
 function normalizeLead(row) {
   if (!row) return null
   return {
@@ -34,6 +41,7 @@ function normalizeLead(row) {
     telegramId: row.telegram_id || row.metadata?.telegramUserId || '',
     telegramChatId: row.telegram_chat_id || row.metadata?.telegramChatId || '',
     hasTelegramChatId: Boolean(row.telegram_chat_id || row.metadata?.telegramChatId),
+    telegramConnectLink: (row.telegram_username || row.telegram) && !(row.telegram_chat_id || row.metadata?.telegramChatId) ? buildTelegramConnectLink(row.id) : null,
     telegramUsername: row.telegram_username || row.telegram || '',
     telegramFirstName: row.telegram_first_name || row.first_name || '',
     telegramLastName: row.telegram_last_name || row.last_name || '',
@@ -203,7 +211,7 @@ function normalizeFollowUp(row) {
 
 function normalizeTelegramMessage(row) {
   if (!row) return null
-  return { id: row.id, leadId: row.lead_id, userId: row.user_id, role: row.role, message: row.message, telegramChatId: row.telegram_chat_id || '', telegramMessageId: row.telegram_message_id || '', createdAt: row.created_at }
+  return { id: row.id, leadId: row.lead_id, userId: row.user_id, role: row.role, direction: row.direction || (row.role === 'user' ? 'inbound' : 'outbound'), message: row.message || row.body || '', telegramChatId: row.telegram_chat_id || '', telegramMessageId: row.telegram_message_id || '', createdAt: row.created_at }
 }
 
 function normalizeStage(row) {
@@ -298,7 +306,7 @@ async function listLeads(userId, workspaceId) {
     `SELECT ${leadSelect('l')},
             COALESCE(json_agg(DISTINCT jsonb_build_object('id', n.id, 'lead_id', n.lead_id, 'user_id', n.user_id, 'body', n.body, 'created_at', n.created_at)) FILTER (WHERE n.id IS NOT NULL), '[]'::json) AS notes_list,
             COALESCE(json_agg(DISTINCT jsonb_build_object('id', f.id, 'lead_id', f.lead_id, 'user_id', f.user_id, 'message', f.message, 'model', f.model, 'created_at', f.created_at)) FILTER (WHERE f.id IS NOT NULL), '[]'::json) AS followups,
-            COALESCE((SELECT json_agg(tm_row ORDER BY tm_row.created_at ASC) FROM (SELECT tm.id, tm.lead_id, tm.user_id, tm.role, tm.message, tm.telegram_chat_id, tm.telegram_message_id, tm.created_at FROM telegram_messages tm WHERE tm.lead_id = l.id AND tm.user_id = l.user_id ORDER BY tm.created_at DESC LIMIT 10) tm_row), '[]'::json) AS telegram_messages,
+            COALESCE((SELECT json_agg(tm_row ORDER BY tm_row.created_at ASC) FROM (SELECT tm.id, tm.lead_id, tm.user_id, tm.role, tm.direction, COALESCE(tm.message, tm.body) AS message, tm.telegram_chat_id, tm.telegram_message_id, tm.created_at FROM telegram_messages tm WHERE tm.lead_id = l.id AND tm.user_id = l.user_id ORDER BY tm.created_at DESC LIMIT 10) tm_row), '[]'::json) AS telegram_messages,
             (SELECT to_jsonb(scores) FROM (
               SELECT
                 las.id AS id,
@@ -605,7 +613,7 @@ async function listTelegramMessages(userId, workspaceId, leadId) {
   const lead = await findLead(userId, workspaceId, leadId)
   if (!lead) throw Object.assign(new Error('Lead not found'), { statusCode: 404 })
   const result = await pool.query(
-    'SELECT id, lead_id, user_id, role, message, telegram_chat_id, telegram_message_id, created_at FROM telegram_messages WHERE user_id = $1 AND workspace_id = $2 AND lead_id = $3 ORDER BY created_at ASC LIMIT 500',
+    'SELECT id, lead_id, user_id, role, direction, COALESCE(message, body) AS message, telegram_chat_id, telegram_message_id, created_at FROM telegram_messages WHERE user_id = $1 AND workspace_id = $2 AND lead_id = $3 ORDER BY created_at ASC LIMIT 500',
     [userId, workspaceId, leadId]
   )
   return result.rows.map(normalizeTelegramMessage)
@@ -614,9 +622,9 @@ async function listTelegramMessages(userId, workspaceId, leadId) {
 async function addTelegramMessage(client, { userId, workspaceId, leadId, role, message, telegramChatId = null, telegramMessageId = null, createdAt = null }) {
   const executor = client || pool
   const result = await executor.query(
-    `INSERT INTO telegram_messages(lead_id, user_id, workspace_id, role, message, telegram_chat_id, telegram_message_id, created_at)
-     VALUES($1, $2, $8, $3, $4, $5, $6, COALESCE($7::timestamptz, NOW()))
-     RETURNING id, lead_id, user_id, role, message, telegram_chat_id, telegram_message_id, created_at`,
+    `INSERT INTO telegram_messages(lead_id, user_id, workspace_id, role, direction, message, body, telegram_chat_id, telegram_message_id, created_at)
+     VALUES($1, $2, $8, $3, CASE WHEN $3 = 'user' THEN 'inbound' ELSE 'outbound' END, $4, $4, $5, $6, COALESCE($7::timestamptz, NOW()))
+     RETURNING id, lead_id, user_id, role, direction, COALESCE(message, body) AS message, telegram_chat_id, telegram_message_id, created_at`,
     [leadId, userId, role, message, telegramChatId ? String(telegramChatId) : null, telegramMessageId ? String(telegramMessageId) : null, createdAt, workspaceId]
   )
   return normalizeTelegramMessage(result.rows[0])
@@ -650,7 +658,8 @@ async function appendOutgoingTelegramMessage({ userId, workspaceId, leadId, mess
       telegramMessageId: telegramResponse?.result?.message_id || telegramResponse?.message_id || null,
     })
     await client.query('UPDATE crm_leads SET last_message_at = NOW(), updated_at = NOW() WHERE id = $1 AND user_id = $2 AND workspace_id = $3', [leadId, userId, workspaceId])
-    await logActivity(client, userId, workspaceId, leadId, 'telegram_crm_reply_sent', 'Ответ отправлен в Telegram', message, { telegramMessageId: telegramMessage.telegramMessageId })
+    await logActivity(client, userId, workspaceId, leadId, 'telegram_message_sent', 'Ответ отправлен в Telegram', message, { telegramMessageId: telegramMessage.telegramMessageId })
+    await addTimelineEvent(client, { workspaceId, leadId, userId, eventType: 'telegram_message_sent', title: 'Telegram сообщение отправлено', body: message, source: 'telegram', metadata: { telegramMessageId: telegramMessage.telegramMessageId } })
     await client.query('COMMIT')
     return telegramMessage
   } catch (error) {

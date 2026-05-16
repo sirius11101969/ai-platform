@@ -4,6 +4,15 @@ function normalizeSecret(value) {
   return String(value || '').trim()
 }
 
+async function integrationWebhook(req, res, next) {
+  try {
+    const result = await processTelegramUpdate(req.body)
+    res.json({ ok: true, ...result })
+  } catch (error) {
+    next(error)
+  }
+}
+
 async function webhook(req, res, next) {
   try {
     const expectedSecret = normalizeSecret(process.env.TELEGRAM_WEBHOOK_SECRET)
@@ -24,4 +33,4 @@ async function webhook(req, res, next) {
   }
 }
 
-module.exports = { webhook }
+module.exports = { integrationWebhook, webhook }

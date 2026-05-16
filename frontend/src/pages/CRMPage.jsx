@@ -84,6 +84,9 @@ function getActivityTitle(event) {
     lead_updated: "Лид обновлён",
     telegram_lead_updated: "Telegram лид обновлён",
     telegram_message_received: "Telegram сообщение получено",
+    telegram_reply_received: "Ответ Telegram получен",
+    telegram_connected: "Telegram подключён",
+    telegram_message_sent: "Telegram сообщение отправлено",
     telegram_ai_reply_sent: "AI ответ отправлен в Telegram",
     meeting_scheduled: "Встреча запланирована",
     follow_up_scheduled: "Follow‑up запланирован",
@@ -117,6 +120,10 @@ function isTelegramLead(lead) {
 
 function hasTelegramChatId(lead) {
   return Boolean(lead?.telegramChatId || lead?.hasTelegramChatId || lead?.metadata?.telegramChatId);
+}
+
+function getLeadTelegramConnectLink(lead) {
+  return lead?.telegramConnectLink || lead?.metadata?.telegramConnectLink || '';
 }
 
 
@@ -211,7 +218,7 @@ function getStageRecommendationConfidence(item) {
 }
 
 function timelineTitle(event) {
-  return ({ telegram_inbound: 'Telegram inbound', telegram_outbound_ai: 'Telegram outbound AI', ai_draft_created: 'AI черновик создан', ai_draft_approved: 'AI черновик одобрен', telegram_sent: 'Telegram отправлен', lead_replied: 'Лид ответил', send_failed: 'Отправка не выполнена', ai_stage_suggested: 'AI предложил этап', ai_stage_recommendation: 'AI рекомендовал этап', stage_approved: 'Этап одобрен', stage_changed: 'Этап изменён', opportunity_risk_detected: 'Риск сделки обнаружен', ai_risk_detected: 'AI риск обнаружен', ai_forecast_updated: 'AI прогноз обновлён', ai_next_action_generated: 'AI следующий шаг', email_sent: 'Email отправлен', email_failed: 'Email не отправлен', ai_score_updated: 'AI score обновлён', follow_up_draft: 'Follow-up черновик', sent_follow_up: 'Follow-up отправлен', attachments_sent: 'Материалы отправлены', lead_moved: 'Этап изменён', note_added: 'Заметка', ai_action_sent: 'AI действие отправлено', ai_action_approved: 'AI действие одобрено', ai_action_rejected: 'AI действие отклонено', ai_action_executed: 'AI действие выполнено', ai_action_failed: 'AI действие не выполнено', follow_up_suggested: 'Follow-up suggested', follow_up_approved: 'Follow-up approved', follow_up_rejected: 'Follow-up rejected', follow_up_sent: 'Follow-up sent', follow_up_failed: 'Follow-up failed' }[event?.type] || event?.title || 'Событие');
+  return ({ telegram_connected: 'Telegram подключён', telegram_reply_received: 'Ответ Telegram получен', telegram_message_sent: 'Telegram сообщение отправлено', telegram_inbound: 'Telegram inbound', telegram_outbound_ai: 'Telegram outbound AI', ai_draft_created: 'AI черновик создан', ai_draft_approved: 'AI черновик одобрен', telegram_sent: 'Telegram отправлен', lead_replied: 'Лид ответил', send_failed: 'Отправка не выполнена', ai_stage_suggested: 'AI предложил этап', ai_stage_recommendation: 'AI рекомендовал этап', stage_approved: 'Этап одобрен', stage_changed: 'Этап изменён', opportunity_risk_detected: 'Риск сделки обнаружен', ai_risk_detected: 'AI риск обнаружен', ai_forecast_updated: 'AI прогноз обновлён', ai_next_action_generated: 'AI следующий шаг', email_sent: 'Email отправлен', email_failed: 'Email не отправлен', ai_score_updated: 'AI score обновлён', follow_up_draft: 'Follow-up черновик', sent_follow_up: 'Follow-up отправлен', attachments_sent: 'Материалы отправлены', lead_moved: 'Этап изменён', note_added: 'Заметка', ai_action_sent: 'AI действие отправлено', ai_action_approved: 'AI действие одобрено', ai_action_rejected: 'AI действие отклонено', ai_action_executed: 'AI действие выполнено', ai_action_failed: 'AI действие не выполнено', follow_up_suggested: 'Follow-up suggested', follow_up_approved: 'Follow-up approved', follow_up_rejected: 'Follow-up rejected', follow_up_sent: 'Follow-up sent', follow_up_failed: 'Follow-up failed' }[event?.type] || event?.title || 'Событие');
 }
 
 const modalCloseStack = [];
@@ -1242,6 +1249,19 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                   </div>
                   <span className="telegram-badge">Telegram</span>
                 </div>
+                {!hasTelegramChatId(lead) && (
+                  <div className="telegram-connect-card">
+                    <div>
+                      <strong>Telegram не подключён</strong>
+                      <p>Клиент должен открыть ссылку и нажать Start, чтобы CRM могла отправлять сообщения.</p>
+                    </div>
+                    <label className="crm-field"><span>Ссылка подключения</span><input readOnly value={getLeadTelegramConnectLink(lead) || 'Укажите TELEGRAM_BOT_USERNAME на backend'} /></label>
+                    <div className="telegram-connect-actions">
+                      <button className="ghost-button compact" type="button" disabled={!getLeadTelegramConnectLink(lead)} onClick={() => navigator.clipboard?.writeText(getLeadTelegramConnectLink(lead))}>Скопировать</button>
+                      <a className={`btn primary compact ${!getLeadTelegramConnectLink(lead) ? 'disabled-link' : ''}`} href={getLeadTelegramConnectLink(lead) || undefined} target="_blank" rel="noreferrer" aria-disabled={!getLeadTelegramConnectLink(lead)}>Открыть Telegram</a>
+                    </div>
+                  </div>
+                )}
                 <div className="telegram-chat-window" aria-live="polite">
                   {telegramMessages.length === 0 && <p className="empty-state">Сообщений пока нет</p>}
                   {telegramMessages.map((item) => (
