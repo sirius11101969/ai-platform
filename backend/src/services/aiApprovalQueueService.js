@@ -5,6 +5,7 @@ const { sendTelegramMessageToLead } = require('./telegramService')
 const { sendLeadAttachments } = require('./attachmentService')
 const { addTimelineEvent } = require('./timelineService')
 const { findDuplicateQueueItem, logDuplicateSkipped } = require('./aiQueueDedupService')
+const { DEFAULT_TIMEZONE, buildMeetingDescription, buildStableIcsUid, generateMeetingIcs } = require('./calendarIcsService')
 
 const STATUSES = ['pending_approval', 'approved', 'rejected', 'executing', 'completed', 'executed', 'failed', 'cancelled']
 const TELEGRAM_MEETING_CONFIRMATION_DRAFT = 'telegram_meeting_confirmation_draft'
@@ -59,6 +60,17 @@ function normalize(row) {
       hasTelegramChatId: Boolean(row.lead_telegram_chat_id),
       status: row.lead_status || '',
     } : null,
+    meeting: row.meeting_id ? {
+      id: row.meeting_id,
+      title: row.meeting_title || '',
+      startsAt: row.meeting_starts_at || null,
+      durationMinutes: Number(row.meeting_duration_minutes || 30),
+      status: row.meeting_status || '',
+      calendarStatus: row.meeting_calendar_status || '',
+      calendarProvider: row.meeting_calendar_provider || '',
+      timezone: row.meeting_timezone || '',
+      hasIcs: Boolean(row.meeting_has_ics),
+    } : null,
   }
 }
 
@@ -86,10 +98,11 @@ function russianError(message) {
 
 async function assertQueueItem(userId, workspaceId, queueId, client = pool) {
   const result = await client.query(
-    `SELECT q.*, w.name AS worker_name, l.name AS lead_name, l.company AS lead_company, l.email AS lead_email, l.telegram AS lead_telegram, l.telegram_chat_id AS lead_telegram_chat_id, l.status AS lead_status
+    `SELECT q.*, w.name AS worker_name, l.name AS lead_name, l.company AS lead_company, l.email AS lead_email, l.telegram AS lead_telegram, l.telegram_chat_id AS lead_telegram_chat_id, l.status AS lead_status, m.id AS meeting_id, m.title AS meeting_title, m.starts_at AS meeting_starts_at, m.duration_minutes AS meeting_duration_minutes, m.status AS meeting_status, m.calendar_status AS meeting_calendar_status, m.calendar_provider AS meeting_calendar_provider, m.timezone AS meeting_timezone, (m.ics_content IS NOT NULL AND m.ics_content <> '') AS meeting_has_ics
        FROM ai_worker_queue q
        JOIN ai_workers w ON w.id = q.worker_id AND w.workspace_id = q.workspace_id
        LEFT JOIN crm_leads l ON l.id = q.lead_id AND l.workspace_id = q.workspace_id
+       LEFT JOIN crm_meetings m ON m.ai_worker_queue_id = q.id AND m.workspace_id = q.workspace_id
       WHERE q.id = $1 AND q.workspace_id = $2
         AND EXISTS (SELECT 1 FROM workspace_members wm WHERE wm.workspace_id = q.workspace_id AND wm.user_id = $3)`,
     [queueId, workspaceId, userId]
@@ -124,10 +137,11 @@ async function listQueue(userId, workspaceId, filters = {}) {
     clauses.push(`q.status = $${values.length}`)
   }
   const result = await pool.query(
-    `SELECT q.*, w.name AS worker_name, l.name AS lead_name, l.company AS lead_company, l.email AS lead_email, l.telegram AS lead_telegram, l.telegram_chat_id AS lead_telegram_chat_id, l.status AS lead_status
+    `SELECT q.*, w.name AS worker_name, l.name AS lead_name, l.company AS lead_company, l.email AS lead_email, l.telegram AS lead_telegram, l.telegram_chat_id AS lead_telegram_chat_id, l.status AS lead_status, m.id AS meeting_id, m.title AS meeting_title, m.starts_at AS meeting_starts_at, m.duration_minutes AS meeting_duration_minutes, m.status AS meeting_status, m.calendar_status AS meeting_calendar_status, m.calendar_provider AS meeting_calendar_provider, m.timezone AS meeting_timezone, (m.ics_content IS NOT NULL AND m.ics_content <> '') AS meeting_has_ics
        FROM ai_worker_queue q
        JOIN ai_workers w ON w.id = q.worker_id AND w.workspace_id = q.workspace_id
        LEFT JOIN crm_leads l ON l.id = q.lead_id AND l.workspace_id = q.workspace_id
+       LEFT JOIN crm_meetings m ON m.ai_worker_queue_id = q.id AND m.workspace_id = q.workspace_id
       WHERE ${clauses.join(' AND ')}
       ORDER BY q.created_at DESC
       LIMIT 200`,
@@ -227,6 +241,14 @@ async function ensureCrmMeetingsTable(client) {
     status TEXT DEFAULT 'scheduled',
     created_by_ai BOOLEAN DEFAULT TRUE,
     ai_worker_queue_id UUID REFERENCES ai_worker_queue(id) ON DELETE SET NULL,
+    description TEXT,
+    location TEXT,
+    meeting_url TEXT,
+    calendar_status TEXT DEFAULT 'pending',
+    calendar_provider TEXT DEFAULT 'internal',
+    ics_uid TEXT,
+    ics_content TEXT,
+    timezone TEXT DEFAULT 'Europe/Moscow',
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
   )`)
@@ -236,6 +258,14 @@ async function ensureCrmMeetingsTable(client) {
   await client.query("ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'scheduled'")
   await client.query("ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS created_by_ai BOOLEAN DEFAULT TRUE")
   await client.query("ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS ai_worker_queue_id UUID REFERENCES ai_worker_queue(id) ON DELETE SET NULL")
+  await client.query("ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS description TEXT")
+  await client.query("ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS location TEXT")
+  await client.query("ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS meeting_url TEXT")
+  await client.query("ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS calendar_status TEXT DEFAULT 'pending'")
+  await client.query("ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS calendar_provider TEXT DEFAULT 'internal'")
+  await client.query("ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS ics_uid TEXT")
+  await client.query("ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS ics_content TEXT")
+  await client.query("ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS timezone TEXT DEFAULT 'Europe/Moscow'")
   await client.query('CREATE INDEX IF NOT EXISTS idx_crm_meetings_workspace_lead ON crm_meetings(workspace_id, lead_id, starts_at DESC)')
   await client.query('CREATE UNIQUE INDEX IF NOT EXISTS idx_crm_meetings_unique_ai_worker_queue_id ON crm_meetings(ai_worker_queue_id) WHERE ai_worker_queue_id IS NOT NULL')
   await client.query('CREATE INDEX IF NOT EXISTS idx_crm_meetings_ai_worker_queue_id ON crm_meetings(ai_worker_queue_id)')
@@ -274,6 +304,12 @@ async function insertOptionalMeetingRecord(client, { workspaceId, item }) {
   const startTime = getMeetingStartTime(item.payload)
   const title = getMeetingTitle(item)
   const duration = getMeetingDurationMinutes(item.payload)
+  const timezone = item.payload.timeZone || DEFAULT_TIMEZONE
+  const sourceMessage = item.payload.inboundMessage || item.payload.customerMessage || ''
+  const channel = item.payload.channel || 'telegram'
+  const description = buildMeetingDescription({ leadName: item.lead?.name || item.payload.leadName || '', channel, sourceMessage })
+  const icsUid = buildStableIcsUid({ workspaceId, queueId: item.id, leadId: item.leadId })
+  const icsContent = generateMeetingIcs({ uid: icsUid, title, startsAt: startTime, durationMinutes: duration, description, timezone })
 
   const baseColumns = ['workspace_id', 'lead_id', 'title']
   const values = [workspaceId, item.leadId, title]
@@ -285,27 +321,51 @@ async function insertOptionalMeetingRecord(client, { workspaceId, item }) {
 
   addColumn(columns.has('starts_at') ? 'starts_at' : 'start_time', startTime)
   addColumn('duration_minutes', duration)
-  addColumn('channel', item.payload.channel || 'telegram')
+  addColumn('channel', channel)
   addColumn('status', 'scheduled')
   addColumn('created_by_ai', true)
   addColumn('ai_worker_queue_id', item.id)
+  addColumn('description', description)
+  addColumn('location', 'AS6 demo-созвон')
+  addColumn('meeting_url', item.payload.meetingUrl || item.payload.meeting_url || '')
+  addColumn('calendar_status', 'ics_ready')
+  addColumn('calendar_provider', 'ics')
+  addColumn('ics_uid', icsUid)
+  addColumn('ics_content', icsContent)
+  addColumn('timezone', timezone)
   addColumn('source', 'ai')
-  addColumn('metadata', { queueId: item.id, actionType: item.actionType, sourceMessageId: getProposalSourceMessageId(item), calendar: item.payload.calendar || { connectLater: true } })
+  addColumn('metadata', { queueId: item.id, actionType: item.actionType, sourceMessageId: getProposalSourceMessageId(item), calendar: { provider: 'ics', status: 'ics_ready', icsUid } })
 
   const placeholders = values.map((_, index) => `$${index + 1}${['starts_at', 'start_time'].includes(baseColumns[index]) ? '::timestamptz' : ''}`)
-  const conflict = columns.has('ai_worker_queue_id') ? 'ON CONFLICT DO NOTHING' : ''
+  const conflict = columns.has('ai_worker_queue_id')
+    ? `ON CONFLICT (ai_worker_queue_id) WHERE ai_worker_queue_id IS NOT NULL DO UPDATE SET
+         title = EXCLUDED.title,
+         starts_at = COALESCE(EXCLUDED.starts_at, crm_meetings.starts_at),
+         duration_minutes = EXCLUDED.duration_minutes,
+         channel = EXCLUDED.channel,
+         status = EXCLUDED.status,
+         description = EXCLUDED.description,
+         location = EXCLUDED.location,
+         meeting_url = EXCLUDED.meeting_url,
+         calendar_status = EXCLUDED.calendar_status,
+         calendar_provider = EXCLUDED.calendar_provider,
+         ics_uid = EXCLUDED.ics_uid,
+         ics_content = EXCLUDED.ics_content,
+         timezone = EXCLUDED.timezone,
+         updated_at = NOW()`
+    : ''
   const result = await client.query(
     `INSERT INTO crm_meetings(${baseColumns.join(', ')})
      VALUES(${placeholders.join(', ')})
      ${conflict}
-     RETURNING id`,
+     RETURNING id, calendar_status, calendar_provider, ics_uid`,
     values
   )
-  return { table: 'crm_meetings', id: result.rows[0]?.id || null }
+  return { table: 'crm_meetings', id: result.rows[0]?.id || null, calendarStatus: result.rows[0]?.calendar_status || 'ics_ready', calendarProvider: result.rows[0]?.calendar_provider || 'ics', icsUid }
 }
 
 function getMeetingTimezone(item) {
-  return item.payload.timeZone || process.env.APP_TIMEZONE || 'UTC'
+  return item.payload.timeZone || DEFAULT_TIMEZONE
 }
 
 function formatMeetingScheduleText(proposedStartTime, timeZone, { includeYear = false } = {}) {
@@ -323,10 +383,12 @@ function formatMeetingScheduleText(proposedStartTime, timeZone, { includeYear = 
   return `${date} в ${parts.hour}:${parts.minute}`
 }
 
-function buildMeetingConfirmationDraftText(item) {
+function buildMeetingConfirmationDraftText(item, { icsReady = false } = {}) {
   const proposedStartTime = getMeetingStartTime(item.payload)
-  if (!proposedStartTime) return 'Отлично, demo-созвон подтверждён. До встречи!'
-  return `Отлично, demo-созвон подтверждён на ${formatMeetingScheduleText(proposedStartTime, getMeetingTimezone(item))}. До встречи!`
+  const baseText = proposedStartTime
+    ? `Отлично, demo-созвон подтверждён на ${formatMeetingScheduleText(proposedStartTime, getMeetingTimezone(item))}. До встречи!`
+    : 'Отлично, demo-созвон подтверждён. До встречи!'
+  return icsReady ? `${baseText} Календарное приглашение готово, менеджер может отправить его отдельно.` : baseText
 }
 
 function buildMeetingScheduledTimelineBody(item, proposedStartTime) {
@@ -362,11 +424,13 @@ async function executeMeetingScheduleProposal(userId, workspaceId, item) {
   const title = getMeetingTitle(item)
   const durationMinutes = getMeetingDurationMinutes(item.payload)
   const sourceMessageId = getProposalSourceMessageId(item)
-  const confirmationText = buildMeetingConfirmationDraftText(item)
+  let confirmationText = buildMeetingConfirmationDraftText(item)
   try {
     await client.query('BEGIN')
     await client.query("SELECT pg_advisory_xact_lock(hashtext($1))", [`meeting-execute:${workspaceId}:${item.id}`])
     const meetingRecord = await insertOptionalMeetingRecord(client, { workspaceId, item })
+    const icsReady = meetingRecord.calendarStatus === 'ics_ready'
+    confirmationText = buildMeetingConfirmationDraftText(item, { icsReady })
     console.info('[meeting-execute] meeting created', { workspaceId, leadId: item.leadId, queueId: item.id, meetingId: meetingRecord.id })
     await client.query(
       `UPDATE crm_leads
@@ -382,6 +446,9 @@ async function executeMeetingScheduleProposal(userId, workspaceId, item) {
       [workspaceId, item.id]
     )
     await saveAudit(client, { workspaceId, leadId: item.leadId, userId, type: 'meeting_scheduled', title: 'Demo-созвон запланирован', body: buildMeetingScheduledTimelineBody(item, proposedStartTime), source: 'ai', metadata: { queueId: item.id, actionType: item.actionType, proposedStartTime, durationMinutes, meetingRecord } })
+    if (icsReady) {
+      await saveAudit(client, { workspaceId, leadId: item.leadId, userId, type: 'calendar_ics_created', title: 'ICS файл встречи создан', body: 'Календарное событие подготовлено для demo-созвона.', source: 'ai', metadata: { queueId: item.id, actionType: item.actionType, proposedStartTime, durationMinutes, meetingRecord } })
+    }
 
     if ((item.payload.channel || 'telegram').toLowerCase() === 'telegram') {
       const existingDraft = await findExistingMeetingConfirmationDraft(client, { ...item, workspaceId }, sourceMessageId)
@@ -407,7 +474,7 @@ async function executeMeetingScheduleProposal(userId, workspaceId, item) {
       }
     }
     await client.query('COMMIT')
-    return { scheduled: true, proposedStartTime, confirmationDraftCreated: (item.payload.channel || 'telegram').toLowerCase() === 'telegram' }
+    return { scheduled: true, proposedStartTime, meetingRecord, icsReady, confirmationDraftCreated: (item.payload.channel || 'telegram').toLowerCase() === 'telegram' }
   } catch (error) {
     await client.query('ROLLBACK')
     throw error

@@ -73,6 +73,33 @@ function normalizeLead(row) {
     aiActions: Array.isArray(row.ai_actions) ? row.ai_actions : [],
     aiFollowupJobs: Array.isArray(row.ai_followup_jobs) ? row.ai_followup_jobs.map(normalizeAiFollowupJob).filter(Boolean) : [],
     aiOutreachDrafts: Array.isArray(row.ai_outreach_drafts) ? row.ai_outreach_drafts.map(normalizeAiOutreachDraft).filter(Boolean) : [],
+    meetings: Array.isArray(row.meetings) ? row.meetings.map(normalizeMeeting).filter(Boolean) : [],
+  }
+}
+
+
+function normalizeMeeting(row) {
+  if (!row) return null
+  return {
+    id: row.id,
+    workspaceId: row.workspace_id || row.workspaceId,
+    leadId: row.lead_id || row.leadId,
+    title: row.title || '',
+    startsAt: row.starts_at || row.startsAt || null,
+    durationMinutes: Number(row.duration_minutes || row.durationMinutes || 30),
+    channel: row.channel || 'telegram',
+    status: row.status || 'scheduled',
+    description: row.description || '',
+    location: row.location || '',
+    meetingUrl: row.meeting_url || row.meetingUrl || '',
+    calendarStatus: row.calendar_status || row.calendarStatus || 'pending',
+    calendarProvider: row.calendar_provider || row.calendarProvider || 'internal',
+    icsUid: row.ics_uid || row.icsUid || '',
+    hasIcs: Boolean(row.has_ics ?? row.hasIcs ?? row.ics_content),
+    timezone: row.timezone || 'Europe/Moscow',
+    aiWorkerQueueId: row.ai_worker_queue_id || row.aiWorkerQueueId || null,
+    createdAt: row.created_at || row.createdAt,
+    updatedAt: row.updated_at || row.updatedAt,
   }
 }
 
@@ -345,6 +372,7 @@ async function listLeads(userId, workspaceId) {
             ) scores) AS ai_score,
             COALESCE((SELECT json_agg(seq_row ORDER BY seq_row.recommended_at DESC) FROM (SELECT * FROM ai_followup_sequences afs WHERE afs.workspace_id = l.workspace_id AND afs.lead_id = l.id ORDER BY afs.recommended_at DESC LIMIT 5) seq_row), '[]'::json) AS ai_followup_sequences,
             COALESCE((SELECT json_agg(job_row ORDER BY job_row.created_at DESC) FROM (SELECT * FROM ai_followup_jobs afj WHERE afj.workspace_id = l.workspace_id AND afj.lead_id = l.id ORDER BY afj.created_at DESC LIMIT 10) job_row), '[]'::json) AS ai_followup_jobs,
+            COALESCE((SELECT json_agg(meeting_row ORDER BY meeting_row.starts_at DESC NULLS LAST, meeting_row.created_at DESC) FROM (SELECT id, workspace_id, lead_id, title, starts_at, duration_minutes, channel, status, description, location, meeting_url, calendar_status, calendar_provider, ics_uid, timezone, ai_worker_queue_id, created_at, updated_at, (ics_content IS NOT NULL AND ics_content <> '') AS has_ics FROM crm_meetings m WHERE m.workspace_id = l.workspace_id AND m.lead_id = l.id ORDER BY m.starts_at DESC NULLS LAST, m.created_at DESC LIMIT 10) meeting_row), '[]'::json) AS meetings,
             COALESCE((SELECT json_agg(draft_row ORDER BY draft_row.created_at DESC) FROM (SELECT id, workspace_id, lead_id, action_type, status, title, recommendation, payload, created_at, updated_at FROM ai_worker_queue q WHERE q.workspace_id = l.workspace_id AND q.lead_id = l.id AND q.action_type IN ('telegram_draft','email_draft','followup_24h','followup_3d','demo_offer','meeting_request','meeting_schedule_proposal') ORDER BY q.created_at DESC LIMIT 20) draft_row), '[]'::json) AS ai_outreach_drafts,
             (SELECT to_jsonb(stage_q) FROM (SELECT id, workspace_id, lead_id, action_type, status, title, recommendation, payload, created_at, updated_at FROM ai_worker_queue q WHERE q.workspace_id = l.workspace_id AND q.lead_id = l.id AND q.action_type = 'stage_change_recommendation' AND q.status IN ('pending_approval','approved','failed') ORDER BY q.created_at DESC LIMIT 1) stage_q) AS ai_stage_recommendation,
             (SELECT a.output_result FROM ai_agent_actions a WHERE a.workspace_id = l.workspace_id AND a.lead_id = l.id AND a.task_type = 'analyze_lead' AND a.status = 'completed' ORDER BY a.created_at DESC LIMIT 1) AS ai_recommendation,
@@ -370,7 +398,7 @@ async function listLeads(userId, workspaceId) {
 async function findLead(userId, workspaceId, leadId, client = pool) {
   const result = await client.query(`SELECT ${LEAD_SELECT} FROM crm_leads WHERE user_id = $1 AND workspace_id = $2 AND id = $3`, [userId, workspaceId, leadId])
   if (!result.rows[0]) return null
-  const [notes, followups, telegramMessages, aiScore, aiSequences, aiFollowupJobs, aiOutreachDrafts, aiStageRecommendation] = await Promise.all([
+  const [notes, followups, telegramMessages, aiScore, aiSequences, aiFollowupJobs, meetings, aiOutreachDrafts, aiStageRecommendation] = await Promise.all([
     client.query('SELECT id, lead_id, user_id, body, created_at FROM crm_notes WHERE user_id = $1 AND workspace_id = $3 AND lead_id = $2 ORDER BY created_at DESC', [userId, leadId, workspaceId]),
     client.query('SELECT id, lead_id, user_id, message, model, created_at FROM crm_followups WHERE user_id = $1 AND workspace_id = $3 AND lead_id = $2 ORDER BY created_at DESC', [userId, leadId, workspaceId]),
     client.query('SELECT id, lead_id, user_id, role, message, telegram_chat_id, telegram_message_id, created_at FROM telegram_messages WHERE user_id = $1 AND workspace_id = $3 AND lead_id = $2 ORDER BY created_at ASC LIMIT 200', [userId, leadId, workspaceId]),
@@ -410,12 +438,13 @@ async function findLead(userId, workspaceId, leadId, client = pool) {
      LIMIT 1`, [workspaceId, leadId]),
     client.query('SELECT * FROM ai_followup_sequences WHERE workspace_id = $1 AND lead_id = $2 ORDER BY recommended_at DESC LIMIT 5', [workspaceId, leadId]),
     client.query('SELECT * FROM ai_followup_jobs WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 10', [workspaceId, leadId]),
-    client.query("SELECT id, workspace_id, lead_id, action_type, status, title, recommendation, payload, created_at, updated_at FROM ai_worker_queue WHERE workspace_id = $1 AND lead_id = $2 AND action_type IN ('telegram_draft','email_draft','followup_24h','followup_3d','demo_offer','meeting_request') ORDER BY created_at DESC LIMIT 20", [workspaceId, leadId]),
+    client.query("SELECT id, workspace_id, lead_id, title, starts_at, duration_minutes, channel, status, description, location, meeting_url, calendar_status, calendar_provider, ics_uid, timezone, ai_worker_queue_id, created_at, updated_at, (ics_content IS NOT NULL AND ics_content <> '') AS has_ics FROM crm_meetings WHERE workspace_id = $1 AND lead_id = $2 ORDER BY starts_at DESC NULLS LAST, created_at DESC LIMIT 10", [workspaceId, leadId]),
+    client.query("SELECT id, workspace_id, lead_id, action_type, status, title, recommendation, payload, created_at, updated_at FROM ai_worker_queue WHERE workspace_id = $1 AND lead_id = $2 AND action_type IN ('telegram_draft','email_draft','followup_24h','followup_3d','demo_offer','meeting_request','meeting_schedule_proposal') ORDER BY created_at DESC LIMIT 20", [workspaceId, leadId]),
     client.query("SELECT id, workspace_id, lead_id, action_type, status, title, recommendation, payload, created_at, updated_at FROM ai_worker_queue WHERE workspace_id = $1 AND lead_id = $2 AND action_type = 'stage_change_recommendation' AND status IN ('pending_approval','approved','failed') ORDER BY created_at DESC LIMIT 1", [workspaceId, leadId]),
   ])
   const ai = await client.query("SELECT output_result FROM ai_agent_actions WHERE workspace_id = $1 AND lead_id = $2 AND task_type = 'analyze_lead' AND status = 'completed' ORDER BY created_at DESC LIMIT 1", [workspaceId, leadId])
   const aiActions = await client.query('SELECT id, task_type, status, output_result, created_at FROM ai_agent_actions WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 5', [workspaceId, leadId])
-  return normalizeLead({ ...result.rows[0], notes_list: notes.rows, followups: followups.rows, telegram_messages: telegramMessages.rows, ai_score: aiScore.rows[0] || null, ai_followup_sequences: aiSequences.rows, ai_followup_jobs: aiFollowupJobs.rows, ai_outreach_drafts: aiOutreachDrafts.rows, ai_stage_recommendation: aiStageRecommendation.rows[0] || null, ai_recommendation: ai.rows[0]?.output_result || null, ai_actions: aiActions.rows })
+  return normalizeLead({ ...result.rows[0], notes_list: notes.rows, followups: followups.rows, telegram_messages: telegramMessages.rows, ai_score: aiScore.rows[0] || null, ai_followup_sequences: aiSequences.rows, ai_followup_jobs: aiFollowupJobs.rows, meetings: meetings.rows, ai_outreach_drafts: aiOutreachDrafts.rows, ai_stage_recommendation: aiStageRecommendation.rows[0] || null, ai_recommendation: ai.rows[0]?.output_result || null, ai_actions: aiActions.rows })
 }
 
 async function createLead(userId, workspaceId, payload) {
@@ -1164,4 +1193,17 @@ async function getStats(userId, workspaceId) {
   }
 }
 
-module.exports = { CRM_STATUSES, STATUS_LABELS, addTelegramMessage, analyzeLeadIntelligence, analyzeWorkspaceLeads, appendOutgoingTelegramMessage, createFollowUp, createLead, createNote, deleteLead, findLead, getStats, getTelegramMemory, listActivity, listLeads, listStages, listTelegramMessages, updateLead, updateStage }
+async function getMeetingIcs(userId, workspaceId, meetingId) {
+  const result = await pool.query(
+    `SELECT m.id, m.title, m.ics_content
+       FROM crm_meetings m
+       JOIN crm_leads l ON l.id = m.lead_id AND l.workspace_id = m.workspace_id
+      WHERE m.id = $1 AND m.workspace_id = $2 AND l.user_id = $3
+        AND m.ics_content IS NOT NULL AND m.ics_content <> ''`,
+    [meetingId, workspaceId, userId]
+  )
+  if (!result.rows[0]) throw Object.assign(new Error('ICS file not found'), { statusCode: 404 })
+  return { id: result.rows[0].id, title: result.rows[0].title || 'as6-demo-meeting', content: result.rows[0].ics_content }
+}
+
+module.exports = { CRM_STATUSES, STATUS_LABELS, addTelegramMessage, analyzeLeadIntelligence, analyzeWorkspaceLeads, appendOutgoingTelegramMessage, createFollowUp, createLead, createNote, deleteLead, findLead, getMeetingIcs, getStats, getTelegramMemory, listActivity, listLeads, listStages, listTelegramMessages, updateLead, updateStage }

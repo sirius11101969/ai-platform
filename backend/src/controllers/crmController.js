@@ -135,6 +135,18 @@ async function sendTelegramReply(req, res, next) {
   }
 }
 
+
+async function downloadMeetingIcs(req, res, next) {
+  try {
+    const meeting = await crmModel.getMeetingIcs(req.user.id, req.workspace.id, req.params.id)
+    res.setHeader('Content-Type', 'text/calendar; charset=utf-8')
+    res.setHeader('Content-Disposition', 'attachment; filename="as6-demo-meeting.ics"')
+    res.send(meeting.content)
+  } catch (error) {
+    next(error)
+  }
+}
+
 async function createFollowUp(req, res, next) {
   try {
     const result = await crmModel.createFollowUp(req.user.id, req.workspace.id, req.params.id)
@@ -170,6 +182,7 @@ module.exports = {
   createFollowUp,
   createLead,
   deleteLead,
+  downloadMeetingIcs,
   generateLeadEmail,
   listLeadEmails,
   listLeads,
