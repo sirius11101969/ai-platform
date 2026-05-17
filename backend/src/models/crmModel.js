@@ -1001,10 +1001,10 @@ async function getStats(userId, workspaceId) {
          SELECT DISTINCT ON (s.lead_id) s.lead_id, s.score, s.temperature, s.deal_probability, s.probability_to_close, s.urgency_level, s.risk_level
            FROM lead_ai_scores s WHERE s.workspace_id = $1 ORDER BY s.lead_id, s.generated_at DESC
        )
-       SELECT COUNT(*) FILTER (WHERE COALESCE(c.ai_priority, '') IN ('priority','urgent') OR COALESCE(c.ai_score, latest.score, 0) >= 76)::int AS priority_leads,
-              COUNT(*) FILTER (WHERE COALESCE(c.ai_temperature, latest.temperature, CASE WHEN COALESCE(c.ai_score, latest.score) >= 76 THEN 'priority' WHEN COALESCE(c.ai_score, latest.score) >= 51 THEN 'hot' WHEN COALESCE(c.ai_score, latest.score) >= 26 THEN 'warm' ELSE 'cold' END) IN ('hot','priority') OR COALESCE(c.ai_score, latest.score, 0) >= 51)::int AS hot_leads,
-              COUNT(*) FILTER (WHERE COALESCE(latest.temperature, CASE WHEN latest.score >= 75 THEN 'hot' WHEN latest.score >= 45 THEN 'warm' ELSE 'cold' END) = 'warm' OR (latest.score >= 45 AND latest.score < 75))::int AS warm_leads,
-              COUNT(*) FILTER (WHERE COALESCE(c.ai_risk_level, latest.risk_level) = 'high')::int AS at_risk_deals,
+       SELECT COUNT(*) FILTER (WHERE COALESCE(c.ai_priority, '') IN ('priority','urgent') AND c.status NOT IN ('won','lost','closed_won','closed_lost'))::int AS priority_leads,
+              COUNT(*) FILTER (WHERE COALESCE(c.ai_temperature, latest.temperature, CASE WHEN COALESCE(c.ai_score, latest.score) >= 85 THEN 'priority' WHEN COALESCE(c.ai_score, latest.score) >= 50 THEN 'hot' WHEN COALESCE(c.ai_score, latest.score) >= 25 THEN 'warm' ELSE 'cold' END) IN ('hot','priority') OR COALESCE(c.ai_score, latest.score, 0) >= 50)::int AS hot_leads,
+              COUNT(*) FILTER (WHERE COALESCE(latest.temperature, CASE WHEN latest.score >= 50 THEN 'hot' WHEN latest.score >= 25 THEN 'warm' ELSE 'cold' END) = 'warm' OR (latest.score >= 25 AND latest.score < 50))::int AS warm_leads,
+              COUNT(*) FILTER (WHERE COALESCE(c.ai_risk_level, latest.risk_level) IN ('medium','high'))::int AS at_risk_deals,
               COUNT(*) FILTER (WHERE COALESCE(c.ai_risk_level, latest.risk_level) IN ('medium','high') OR (c.status NOT IN ('won','lost') AND c.updated_at < NOW() - INTERVAL '3 days'))::int AS leads_needing_follow_up,
               COALESCE(AVG(COALESCE(c.ai_score, latest.score)), 0)::numeric AS average_score,
               COALESCE(SUM(c.value * COALESCE(c.ai_score, latest.probability_to_close, latest.deal_probability, 0) / 100.0) FILTER (WHERE c.status NOT IN ('won','lost')), 0)::numeric AS predicted_revenue,
