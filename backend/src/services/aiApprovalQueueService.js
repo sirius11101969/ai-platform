@@ -7,6 +7,7 @@ const { addTimelineEvent } = require('./timelineService')
 const { findDuplicateQueueItem, logDuplicateSkipped } = require('./aiQueueDedupService')
 const { DEFAULT_TIMEZONE, buildMeetingDescription, buildStableIcsUid, generateMeetingIcs } = require('./calendarIcsService')
 const { createGoogleCalendarEvent } = require('./googleCalendarService')
+const { scoreLead } = require('./aiLeadScoringService')
 
 const STATUSES = ['pending_approval', 'approved', 'rejected', 'executing', 'completed', 'executed', 'failed', 'cancelled']
 const TELEGRAM_MEETING_CONFIRMATION_DRAFT = 'telegram_meeting_confirmation_draft'
@@ -518,6 +519,7 @@ async function executeMeetingScheduleProposal(userId, workspaceId, item) {
       [workspaceId, item.id]
     )
     await saveAudit(client, { workspaceId, leadId: item.leadId, userId, type: 'meeting_scheduled', title: 'Demo-созвон запланирован', body: buildMeetingScheduledTimelineBody(item, proposedStartTime), source: 'ai', metadata: { queueId: item.id, actionType: item.actionType, proposedStartTime, durationMinutes, meetingRecord } })
+    await scoreLead({ userId, workspaceId, leadId: item.leadId, source: 'meeting_booked', client }).catch((error) => console.error('[lead-scoring] meeting trigger failed', error.message || error))
     if (icsReady) {
       await saveAudit(client, { workspaceId, leadId: item.leadId, userId, type: 'calendar_ics_created', title: 'ICS файл встречи создан', body: 'Календарное событие подготовлено для demo-созвона.', source: 'ai', metadata: { queueId: item.id, actionType: item.actionType, proposedStartTime, durationMinutes, meetingRecord } })
     }

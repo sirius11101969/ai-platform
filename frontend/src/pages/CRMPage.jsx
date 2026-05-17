@@ -3,8 +3,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Panel, PageHeading, StatCard } from "../components/AppShell";
 import {
   addCrmLeadNote,
-  analyzeCrmLeadAi,
-  analyzeCrmWorkspaceAi,
   createCrmFollowUp,
   createAiAgentAction,
   createCrmLead,
@@ -34,6 +32,8 @@ import {
   sendLeadMaterials,
   uploadEmailAttachment,
   updateCrmLead,
+  runCrmLeadScoring,
+  runCrmLeadScoringForLead,
   sendTelegramLeadMessage,
   queueInactiveAiFollowUps,
   updateCrmStage,
@@ -157,7 +157,7 @@ function urgencyLabel(level) {
 }
 
 function tempLabel(level) {
-  return ({ cold: 'COLD', warm: 'WARM', hot: 'HOT' }[level] || 'AI');
+  return ({ cold: 'COLD', warm: 'WARM', hot: 'HOT', priority: 'PRIORITY' }[level] || 'AI');
 }
 
 function channelLabel(channel) {
@@ -169,15 +169,17 @@ function forecastLabel(category) {
 }
 
 function getLatestForecastEvent(actionCenter = {}) {
-  return (actionCenter.timeline || []).find((event) => ['ai_forecast_updated', 'ai_risk_detected', 'ai_score_updated'].includes(event?.type));
+  return (actionCenter.timeline || []).find((event) => ['ai_forecast_updated', 'ai_risk_detected', 'ai_score_updated', 'lead_scored', 'lead_risk_detected'].includes(event?.type));
 }
 
 function getAiBadges(lead) {
   const score = getLeadAiScore(lead);
   if (!score) return [];
   return [
-    score.temperature === 'hot' && 'HOT',
-    score.temperature === 'warm' && 'WARM',
+    (lead.aiTemperature || score.temperature) === 'priority' && 'PRIORITY',
+    (lead.aiTemperature || score.temperature) === 'hot' && 'HOT',
+    (lead.aiTemperature || score.temperature) === 'warm' && 'WARM',
+    (lead.aiPriority || score.priority) && `PRIORITY: ${(lead.aiPriority || score.priority).toUpperCase()}`,
     score.score >= 80 && 'AI PRIORITY',
     score.dealProbability >= 70 && 'HIGH PROBABILITY',
     score.urgencyLevel === 'high' && 'FOLLOW-UP REQUIRED',
@@ -211,7 +213,7 @@ function actionStatusLabel(status) {
 }
 
 function actionTypeLabel(type) {
-  return ({ telegram_followup: 'Telegram follow-up', email_followup: 'Email follow-up', telegram_follow_up: 'Telegram follow-up', email_follow_up: 'Email follow-up', telegram_draft: 'Telegram draft', email_draft: 'Email draft', followup_24h: 'Follow-up 24ч', followup_3d: 'Follow-up 3д', demo_offer: 'Demo offer', meeting_request: 'Запрос встречи', follow_up_recommendation: 'Follow-up', crm_next_action: 'CRM действие', lead_prioritization: 'Приоритизация', commercial_offer: 'Коммерческое предложение', send_presentation: 'Отправить презентацию', send_screenshots: 'Отправить скриншоты', send_demo_link: 'Отправить demo link', move_lead_stage: 'Переместить этап', stage_change_recommendation: 'AI рекомендация этапа', create_reminder: 'Создать напоминание' }[type] || type);
+  return ({ telegram_followup: 'Telegram follow-up', email_followup: 'Email follow-up', telegram_follow_up: 'Telegram follow-up', email_follow_up: 'Email follow-up', telegram_draft: 'Telegram draft', email_draft: 'Email draft', followup_24h: 'Follow-up 24ч', followup_3d: 'Follow-up 3д', demo_offer: 'Demo offer', meeting_request: 'Запрос встречи', follow_up_recommendation: 'Follow-up', crm_next_action: 'CRM действие', lead_prioritization: 'Приоритизация', commercial_offer: 'Коммерческое предложение', send_presentation: 'Отправить презентацию', send_screenshots: 'Отправить скриншоты', send_demo_link: 'Отправить demo link', move_lead_stage: 'Переместить этап', stage_change_recommendation: 'AI рекомендация этапа', lead_priority_recommendation: 'AI рекомендация приоритета', lead_scoring_update: 'AI Lead Scoring', create_reminder: 'Создать напоминание' }[type] || type);
 }
 
 
@@ -739,11 +741,11 @@ export default function CRMPage() {
     setError('');
     setAiAnalysisBusy(true);
     try {
-      await analyzeCrmWorkspaceAi({ limit: 25 });
+      await runCrmLeadScoring({ limit: 500 });
       await loadCrm({ silent: true });
       await refreshMeta();
     } catch (requestError) {
-      setError(requestError.message || 'Не удалось обновить AI score');
+      setError(requestError.message || 'Не удалось запустить lead scoring');
     } finally {
       setAiAnalysisBusy(false);
     }
@@ -753,7 +755,7 @@ export default function CRMPage() {
     setError('');
     setAiActionBusy((current) => ({ ...current, [`${lead.id}:lead_ai_score`]: true }));
     try {
-      await analyzeCrmLeadAi(lead.id);
+      await runCrmLeadScoringForLead(lead.id);
       await loadCrm({ silent: true });
       await refreshMeta();
     } catch (requestError) {
@@ -853,7 +855,10 @@ export default function CRMPage() {
         <StatCard label="AI сегодня" value={loading ? "…" : String(stats?.aiMetrics?.actionsToday || 0)} hint="AI действий сегодня" tone="pink" />
         <StatCard label="AI follow-up" value={loading ? "…" : String(stats?.aiMetrics?.generatedFollowUps || 0)} hint="сгенерировано AI" tone="violet" />
         <StatCard label="AI эффективность" value={loading ? "…" : `${stats?.aiMetrics?.efficiency || 0}%`} hint={`${stats?.aiMetrics?.assistedDeals || 0} AI‑сделок`} />
-        <StatCard label="Горячие лиды" value={loading ? "…" : String(stats?.aiMetrics?.hotLeads || 0)} hint={`средний score ${stats?.aiMetrics?.averageLeadScore || 0}/100`} tone="pink" />
+        <StatCard label="Priority Leads" value={loading ? "…" : String(stats?.aiMetrics?.priorityLeads || 0)} hint="AI score 76+ или priority badge" tone="pink" />
+        <StatCard label="At-risk Deals" value={loading ? "…" : String(stats?.aiMetrics?.atRiskDeals || 0)} hint="ghosting / stalled / inactive risk" tone="violet" />
+        <StatCard label="Hot Leads" value={loading ? "…" : String(stats?.aiMetrics?.hotLeads || 0)} hint={`средний score ${stats?.aiMetrics?.averageLeadScore || 0}/100`} tone="pink" />
+        <StatCard label="Leads needing follow-up" value={loading ? "…" : String(stats?.aiMetrics?.leadsNeedingFollowUp || stats?.aiMetrics?.followUpsPending || 0)} hint="риск или нет свежего касания" />
         <StatCard label="Forecast Revenue" value={loading ? "…" : formatCurrency(stats?.aiMetrics?.aiForecastedRevenue || stats?.aiMetrics?.predictedRevenue || 0)} hint={`forecast ${stats?.aiMetrics?.conversionForecast || 0}%`} tone="violet" />
         <StatCard label="Revenue At Risk" value={loading ? "…" : formatCurrency(stats?.aiMetrics?.revenueAtRisk || 0)} hint={`${stats?.aiMetrics?.atRiskDeals || 0} at-risk deals`} tone="pink" />
         <StatCard label="High Probability Deals" value={loading ? "…" : String(stats?.aiMetrics?.highProbabilityDeals || 0)} hint="probability ≥ 70%" />
@@ -867,7 +872,7 @@ export default function CRMPage() {
           <h3>Автономная очередь follow-up</h3>
           <p>AI анализирует неактивных лидов по реальному CRM контексту и готовит черновики без автоотправки.</p>
         </div>
-<div className="ai-action-center-buttons"><button className="ghost-button" type="button" onClick={handleAnalyzeWorkspaceAi} disabled={aiAnalysisBusy}>{aiAnalysisBusy ? "AI пересчитывает…" : "Пересчитать AI score"}</button><button className="btn primary compact" type="button" onClick={handleQueueInactiveFollowUps} disabled={inactiveQueueBusy}>{inactiveQueueBusy ? "AI ставит в очередь…" : "Поставить follow-up для неактивных"}</button></div>
+<div className="ai-action-center-buttons"><button className="ghost-button" type="button" onClick={handleAnalyzeWorkspaceAi} disabled={aiAnalysisBusy}>{aiAnalysisBusy ? "Scoring запущен…" : "Запустить scoring"}</button><button className="btn primary compact" type="button" onClick={handleQueueInactiveFollowUps} disabled={inactiveQueueBusy}>{inactiveQueueBusy ? "AI ставит в очередь…" : "Поставить follow-up для неактивных"}</button></div>
       </section>
 
       <section className="crm-layout production-crm-layout">
@@ -914,7 +919,7 @@ export default function CRMPage() {
                     >
                       <div className="lead-topline"><strong>{lead.name}</strong><span>{formatCurrency(lead.value)}</span></div>
                       {getLeadAiScore(lead) ? <>
-                        <div className="lead-intelligence-kpis"><b>{getLeadAiScore(lead).probabilityToClose}%</b><span>{riskLabel(getLeadAiScore(lead).riskLevel)}</span><em>{formatCurrency(getLeadAiScore(lead).expectedRevenue || lead.estimatedRevenue)}</em></div>
+                        <div className="lead-intelligence-kpis"><b>AI {getLeadAiScore(lead).score}/100</b><span>{lead.aiPriority || getLeadAiScore(lead).priority || 'medium'}</span><em>{tempLabel(lead.aiTemperature || getLeadAiScore(lead).temperature)}</em></div>
                         <div className="lead-ai-probability forecast-progress"><span>{forecastLabel(getLeadAiScore(lead).forecastCategory)} · engagement {getLeadAiScore(lead).engagementScore}/100</span><i style={{ width: `${getLeadAiScore(lead).probabilityToClose}%` }} /></div>
                       </> : <div className="ai-forecast-empty-card">AI прогноз появится после квалификации лида.</div>}
                       {getAiBadges(lead).length > 0 && <div className="ai-badge-row">{getAiBadges(lead).map((badge) => <b className="ai-neon-badge" key={badge}>{badge}</b>)}</div>}
@@ -1148,6 +1153,11 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                 <div className="probability-bar"><i style={{ width: `${getLeadAiScore(lead).probabilityToClose}%` }} /></div>
                 <div className="ai-badge-row detail-ai-badges">{getAiBadges(lead).map((badge) => <b className="ai-neon-badge" key={badge}>{badge}</b>)}</div>
                 <div className="ai-recommendation-grid">
+                  <div><span>AI score</span><strong>{getLeadAiScore(lead).score}/100</strong></div>
+                  <div><span>priority_badge</span><strong>{lead.aiPriority || getLeadAiScore(lead).priority || 'medium'}</strong></div>
+                  <div><span>temperature</span><strong>{tempLabel(lead.aiTemperature || getLeadAiScore(lead).temperature)}</strong></div>
+                  <div><span>risk_badge</span><strong>{riskLabel(lead.aiRiskLevel || getLeadAiScore(lead).riskLevel)}</strong></div>
+                  <div><span>AI reasoning</span><strong>{lead.aiScoringReason || getLeadAiScore(lead).scoringReason || getLeadAiScore(lead).aiReasoning}</strong></div>
                   <div><span>probability_to_close</span><strong>{getLeadAiScore(lead).probabilityToClose}%</strong></div>
                   <div><span>engagement_score</span><strong>{getLeadAiScore(lead).engagementScore}/100 · {tempLabel(getLeadAiScore(lead).temperature)}</strong></div>
                   <div><span>expected_revenue</span><strong>{formatCurrency(getLeadAiScore(lead).expectedRevenue || lead.estimatedRevenue)}</strong></div>

@@ -223,6 +223,12 @@ async function migrate() {
     ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS estimated_revenue NUMERIC(12, 2) NOT NULL DEFAULT 0;
     ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS expected_close_date DATE;
     ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS next_step TEXT NOT NULL DEFAULT '';
+    ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS ai_score INTEGER DEFAULT 0;
+    ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS ai_priority VARCHAR(20) DEFAULT 'medium';
+    ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS ai_risk_level VARCHAR(20) DEFAULT 'low';
+    ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS ai_temperature VARCHAR(20) DEFAULT 'warm';
+    ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS ai_last_scored_at TIMESTAMPTZ;
+    ALTER TABLE crm_leads ADD COLUMN IF NOT EXISTS ai_scoring_reason TEXT;
     UPDATE crm_leads
        SET telegram_first_name = COALESCE(telegram_first_name, first_name),
            telegram_last_name = COALESCE(telegram_last_name, last_name)
@@ -261,6 +267,19 @@ async function migrate() {
         SELECT 1 FROM pg_constraint WHERE conname = 'crm_leads_estimated_revenue_non_negative'
       ) THEN
         ALTER TABLE crm_leads ADD CONSTRAINT crm_leads_estimated_revenue_non_negative CHECK (estimated_revenue >= 0);
+      END IF;
+
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'crm_leads_ai_score_range') THEN
+        ALTER TABLE crm_leads ADD CONSTRAINT crm_leads_ai_score_range CHECK (ai_score >= 0 AND ai_score <= 100);
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'crm_leads_ai_priority_valid') THEN
+        ALTER TABLE crm_leads ADD CONSTRAINT crm_leads_ai_priority_valid CHECK (ai_priority IN ('low', 'medium', 'high', 'priority', 'urgent'));
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'crm_leads_ai_risk_level_valid') THEN
+        ALTER TABLE crm_leads ADD CONSTRAINT crm_leads_ai_risk_level_valid CHECK (ai_risk_level IN ('low', 'medium', 'high'));
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'crm_leads_ai_temperature_valid') THEN
+        ALTER TABLE crm_leads ADD CONSTRAINT crm_leads_ai_temperature_valid CHECK (ai_temperature IN ('cold', 'warm', 'hot', 'priority'));
       END IF;
     END $$;
 
@@ -735,7 +754,7 @@ async function migrate() {
         ALTER TABLE ai_workers ADD CONSTRAINT ai_workers_mode_valid CHECK (mode IN ('suggestion_only', 'approval_required', 'autonomous_ready'));
       END IF;
       ALTER TABLE ai_workers DROP CONSTRAINT IF EXISTS ai_workers_type_valid;
-      ALTER TABLE ai_workers ADD CONSTRAINT ai_workers_type_valid CHECK (type IN ('ai_sdr_agent', 'ai_followup_worker', 'ai_revenue_analyst', 'ai_crm_assistant', 'ai_email_assistant', 'ai_telegram_assistant', 'ai_meeting_scheduler'));
+      ALTER TABLE ai_workers ADD CONSTRAINT ai_workers_type_valid CHECK (type IN ('ai_sdr_agent', 'ai_followup_worker', 'ai_revenue_analyst', 'ai_crm_assistant', 'ai_email_assistant', 'ai_telegram_assistant', 'ai_meeting_scheduler', 'ai_lead_scoring_engine'));
       IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_worker_runs_status_valid') THEN
         ALTER TABLE ai_worker_runs ADD CONSTRAINT ai_worker_runs_status_valid CHECK (status IN ('queued', 'running', 'completed', 'failed'));
       END IF;
@@ -949,6 +968,10 @@ async function migrate() {
     CREATE INDEX IF NOT EXISTS idx_lead_ai_scores_latest ON lead_ai_scores(workspace_id, lead_id, generated_at DESC);
     CREATE INDEX IF NOT EXISTS idx_lead_ai_scores_priority_dashboard ON lead_ai_scores(workspace_id, temperature, score DESC, created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_lead_prioritization ON ai_worker_queue(workspace_id, action_type, status, created_at DESC) WHERE action_type = 'lead_prioritization';
+    CREATE INDEX IF NOT EXISTS idx_crm_leads_ai_lead_scoring_dashboard ON crm_leads(workspace_id, ai_priority, ai_risk_level, ai_temperature, ai_score DESC, ai_last_scored_at DESC) WHERE status NOT IN ('won', 'lost');
+    CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_lead_scoring_update ON ai_worker_queue(workspace_id, lead_id, status, created_at DESC) WHERE action_type = 'lead_scoring_update';
+    CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_lead_priority_recommendation ON ai_worker_queue(workspace_id, lead_id, status, created_at DESC) WHERE action_type = 'lead_priority_recommendation';
+    CREATE INDEX IF NOT EXISTS idx_lead_timeline_events_lead_scoring ON lead_timeline_events(workspace_id, lead_id, event_type, created_at DESC) WHERE event_type IN ('lead_scored', 'lead_risk_detected');
     CREATE INDEX IF NOT EXISTS idx_ai_followup_sequences_pending ON ai_followup_sequences(workspace_id, status, scheduled_for DESC);
     CREATE INDEX IF NOT EXISTS idx_ai_agents_workspace_type ON ai_agents(workspace_id, type);
     CREATE INDEX IF NOT EXISTS idx_ai_agent_actions_queue ON ai_agent_actions(status, priority DESC, next_retry_at, created_at);

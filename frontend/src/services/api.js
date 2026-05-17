@@ -353,8 +353,16 @@ export function analyzeCrmLeadAi(id) {
   return request(`/crm/leads/${id}/ai-analysis`, { method: 'POST' })
 }
 
+export function runCrmLeadScoringForLead(id) {
+  return request(`/crm/leads/${id}/lead-scoring`, { method: 'POST' })
+}
+
 export function analyzeCrmWorkspaceAi(payload = {}) {
   return request('/crm/ai-analysis', { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export function runCrmLeadScoring(payload = {}) {
+  return request('/crm/lead-scoring/run', { method: 'POST', body: JSON.stringify(payload) })
 }
 
 export function fetchCrmActivity() {

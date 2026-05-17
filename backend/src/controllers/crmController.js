@@ -88,6 +88,25 @@ async function analyzeWorkspaceAi(req, res, next) {
   }
 }
 
+
+async function runLeadScoring(req, res, next) {
+  try {
+    const scored = await crmModel.runLeadScoring(req.user.id, req.workspace.id, req.body?.limit || 500)
+    res.status(202).json({ scored })
+  } catch (error) {
+    next(error)
+  }
+}
+
+async function runLeadScoringForLead(req, res, next) {
+  try {
+    const scoring = await crmModel.runLeadScoringForLead(req.user.id, req.workspace.id, req.params.id)
+    res.status(201).json({ scoring })
+  } catch (error) {
+    next(error)
+  }
+}
+
 async function listLeadEmails(req, res, next) {
   try {
     const emails = await emailService.listLeadEmails(req.user.id, req.workspace.id, req.params.id)
@@ -199,6 +218,8 @@ module.exports = {
   listLeads,
   listTelegramMessages,
   listStages,
+  runLeadScoring,
+  runLeadScoringForLead,
   stats,
   sendLeadEmail,
   sendTelegramReply,
