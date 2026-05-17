@@ -45,6 +45,7 @@ const approvalStatusLabels = {
 const actionTypeLabels = {
   telegram_followup: "Сообщение в Telegram",
   email_followup: "Письмо",
+  email_followup_draft: "Черновик email follow-up",
   send_demo_link: "Демо-ссылка",
   send_presentation: "Презентация",
   create_reminder: "Напоминание",
@@ -101,7 +102,7 @@ function renderStageDetails(item) {
 }
 
 function getDraftText(item) {
-  return item?.payload?.editedText || item?.payload?.edited_text || item?.payload?.suggestedText || item?.payload?.draftText || item?.payload?.text || item?.payload?.message || item?.recommendation || "";
+  return item?.payload?.editedText || item?.payload?.edited_text || item?.payload?.suggestedText || item?.payload?.draftText || item?.payload?.body || item?.payload?.text || item?.payload?.message || item?.recommendation || "";
 }
 
 function getInboundText(item) {
@@ -172,6 +173,10 @@ function isFollowupSequenceDraft(item) {
   return item?.actionType === "followup_sequence_draft" || item?.executionType === "followup_sequence_draft";
 }
 
+function isEmailFollowupDraft(item) {
+  return item?.actionType === "email_followup_draft" || item?.executionType === "email_followup_draft";
+}
+
 function isTelegramReplyDraft(item) {
   return item?.actionType === "telegram_reply_draft" || item?.executionType === "telegram_reply_draft" || isTelegramMeetingConfirmationDraft(item) || isFollowupSequenceDraft(item);
 }
@@ -231,6 +236,48 @@ function renderTelegramReplyDraft(item, { isEditing = false, editText = "", onEd
   );
 }
 
+function renderEmailFollowupDraft(item, { isEditing = false, editText = "", onEditTextChange, onSaveEdit, onCancelEdit, editBusy = false } = {}) {
+  if (!isEmailFollowupDraft(item)) return null;
+  const payload = item.payload || {};
+  const body = getDraftText(item) || "—";
+  const wasEdited = Boolean(payload.editedByManager || payload.editedText || payload.edited_text);
+  return (
+    <div className="telegram-reply-draft-card">
+      <div className="telegram-reply-card-head">
+        <span className="telegram-badge">Email</span>
+        <span className="telegram-meta-pill">Кому: {payload.email || payload.to || item.lead?.email || "—"}</span>
+        {wasEdited && <span className="telegram-meta-pill edited">Изменено менеджером</span>}
+      </div>
+      <div>
+        <span>Лид</span>
+        <p>{item.lead?.name || payload.leadName || "—"}</p>
+      </div>
+      <div>
+        <span>Email</span>
+        <p>{payload.email || payload.to || item.lead?.email || "—"}</p>
+      </div>
+      <div>
+        <span>Тема письма</span>
+        <p>{payload.subject || item.title || "—"}</p>
+      </div>
+      <div className="telegram-draft-body">
+        <span>Текст email follow-up</span>
+        {!isEditing ? (
+          <p>{body}</p>
+        ) : (
+          <div className="telegram-draft-editor">
+            <textarea value={editText} onChange={(event) => onEditTextChange(event.target.value)} autoFocus />
+            <div className="telegram-draft-editor-actions">
+              <button type="button" className="btn primary compact" onClick={onSaveEdit} disabled={editBusy || !editText.trim()}>{editBusy ? "Сохраняем…" : "Сохранить черновик"}</button>
+              <button type="button" className="ghost-button compact" onClick={onCancelEdit} disabled={editBusy}>Отмена</button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function shortRecommendation(item) {
   const text = item?.payload?.suggestedText || item.recommendation || item.title || "AI рекомендация ожидает решения";
   return text.length > 130 ? `${text.slice(0, 130)}…` : text;
@@ -253,7 +300,7 @@ const approvalActionLoadingLabels = {
 };
 
 const APPROVAL_ACTION_TIMEOUT_MS = 15000;
-const executableApprovalTypes = new Set(["followup_sequence_draft", "telegram_reply_draft", "telegram_meeting_confirmation_draft", "telegram_followup", "email_followup", "send_demo_link", "send_presentation", "create_reminder", "move_lead_stage", "stage_change_recommendation", "meeting_schedule_proposal"]);
+const executableApprovalTypes = new Set(["followup_sequence_draft", "email_followup_draft", "telegram_reply_draft", "telegram_meeting_confirmation_draft", "telegram_followup", "email_followup", "send_demo_link", "send_presentation", "create_reminder", "move_lead_stage", "stage_change_recommendation", "meeting_schedule_proposal"]);
 
 function isApprovalItemExecutable(item) {
   return executableApprovalTypes.has(item.executionType || item.actionType);
@@ -508,13 +555,13 @@ export default function AiWorkersPage() {
   async function handleApprovalAction(item, action) {
     const requestOptions = { timeoutMs: APPROVAL_ACTION_TIMEOUT_MS };
 
-    if (action === "execute" && isTelegramReplyDraft(item)) {
+    if (action === "execute" && (isTelegramReplyDraft(item) || isEmailFollowupDraft(item))) {
       console.log("[ai-workers-ui] send clicked", { actionId: item.id, actionType: getApprovalItemType(item), status: item.status });
       logTelegramSendViaExecute(item);
     }
 
     const executeApprovalItem = async () => {
-      if (isTelegramReplyDraft(item) && item.status === "pending_approval") {
+      if ((isTelegramReplyDraft(item) || isEmailFollowupDraft(item)) && item.status === "pending_approval") {
         await approveAiApprovalQueueItem(item.id, requestOptions);
       }
       return executeAiApprovalQueueItem(item.id, requestOptions);
@@ -539,7 +586,7 @@ export default function AiWorkersPage() {
         return;
       }
       if (["completed", "executed"].includes(updatedItem?.status)) {
-        setMessage(isTelegramReplyDraft(item) ? "Отправлено" : "Выполнено");
+        setMessage((isTelegramReplyDraft(item) || isEmailFollowupDraft(item)) ? "Отправлено" : "Выполнено");
         return;
       }
       setMessage(approvalActionMessages[action] || "Статус AI действия обновлён");
@@ -554,7 +601,7 @@ export default function AiWorkersPage() {
     }
 
     const isTelegramReplyDraftItem = isTelegramReplyDraft(item);
-    if (isTelegramReplyDraftItem || isFollowupSequenceDraft(item)) {
+    if (isTelegramReplyDraftItem || isFollowupSequenceDraft(item) || isEmailFollowupDraft(item)) {
       setEditingDraft({ itemId: item.id, text: getDraftText(item) });
       return;
     }
@@ -576,9 +623,9 @@ export default function AiWorkersPage() {
     let successMessage = "AI рекомендация изменена.";
     let localPatch = { ...item, updatedAt: new Date().toISOString() };
 
-    if (isTelegramReplyDraft(item) || isFollowupSequenceDraft(item)) {
+    if (isTelegramReplyDraft(item) || isFollowupSequenceDraft(item) || isEmailFollowupDraft(item)) {
       const normalizedText = String(nextText || "").trim();
-      payload = { payload: { ...(item.payload || {}), draftText: item.payload?.draftText || item.payload?.text || item.payload?.message || item.recommendation || "", editedText: normalizedText, edited_text: normalizedText, text: normalizedText, message: normalizedText, editedByManager: true } };
+      payload = { payload: { ...(item.payload || {}), draftText: item.payload?.draftText || item.payload?.body || item.payload?.text || item.payload?.message || item.recommendation || "", editedText: normalizedText, edited_text: normalizedText, body: isEmailFollowupDraft(item) ? normalizedText : item.payload?.body, text: normalizedText, message: normalizedText, editedByManager: true } };
       localPatch = { ...localPatch, payload: payload.payload, recommendation: normalizedText };
       successMessage = "AI draft response изменён.";
     } else if (isMeetingScheduleProposal(item)) {
@@ -697,9 +744,11 @@ export default function AiWorkersPage() {
             const isExecuteBusy = isExecuteActionBusy;
             const isTelegramDraftItem = isTelegramReplyDraft(item);
             const isFollowupDraftItem = isFollowupSequenceDraft(item);
+            const isEmailDraftItem = isEmailFollowupDraft(item);
             const telegramSendButtonState = isTelegramDraftItem ? getTelegramSendButtonState(item, loadingKey) : null;
             const sendDisabled = loadingKey === executeLoadingKey;
             const canShowTelegramSendButton = (isTelegramDraftItem || isFollowupDraftItem) && isTelegramSendAllowedStatus(item.status);
+            const canShowDraftSendButton = canShowTelegramSendButton || (isEmailDraftItem && isTelegramSendAllowedStatus(item.status));
             if (telegramSendButtonState) logTelegramSendButtonState(item, telegramSendButtonState);
             const isMeetingProposal = isMeetingScheduleProposal(item);
             const canEditItem = !isMeetingProposal || item.status === "pending_approval" || item.status === "failed";
@@ -713,6 +762,14 @@ export default function AiWorkersPage() {
                 {renderMeetingScheduleDetails(item, { onDownloadIcs: handleDownloadIcs })}
                 {renderFollowupSequenceDetails(item)}
                 {renderTelegramReplyDraft(item, {
+                  isEditing: isEditingThisDraft,
+                  editText: isEditingThisDraft ? editingDraft.text : getDraftText(item),
+                  onEditTextChange: (text) => setEditingDraft({ itemId: item.id, text }),
+                  onSaveEdit: () => saveApprovalItemEdit(item, editingDraft.text),
+                  onCancelEdit: () => setEditingDraft({ itemId: "", text: "" }),
+                  editBusy: isItemBusy,
+                })}
+                {renderEmailFollowupDraft(item, {
                   isEditing: isEditingThisDraft,
                   editText: isEditingThisDraft ? editingDraft.text : getDraftText(item),
                   onEditTextChange: (text) => setEditingDraft({ itemId: item.id, text }),
@@ -742,8 +799,8 @@ export default function AiWorkersPage() {
                 {canRejectItem && !["executing", "completed", "rejected"].includes(item.status) && (
                   <button type="button" className="ghost-button compact danger-action" onClick={() => handleApprovalAction(item, "reject")} disabled={isItemBusy}>{isRejectBusy ? busyLabel : "Отклонить"}</button>
                 )}
-                {(canShowTelegramSendButton || (item.status === "approved" && isApprovalItemExecutable(item))) && (
-                  canShowTelegramSendButton ? (
+                {(canShowDraftSendButton || (item.status === "approved" && isApprovalItemExecutable(item))) && (
+                  canShowDraftSendButton ? (
                     <button type="button" className="btn primary compact approval-send-button" onClick={() => handleApprovalAction(item, "execute")} disabled={sendDisabled} aria-busy={isExecuteActionBusy}>{isExecuteActionBusy ? approvalActionLoadingLabels.send : "Отправить"}</button>
                   ) : (
                     <button type="button" className="btn primary compact" onClick={() => handleApprovalAction(item, "execute")} disabled={isItemBusy || item.status !== "approved"}>{isExecuteBusy ? busyLabel : "Выполнить"}</button>

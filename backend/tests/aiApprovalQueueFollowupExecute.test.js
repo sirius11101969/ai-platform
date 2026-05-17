@@ -16,7 +16,7 @@ function installMocks({ lead, payload = {}, status = 'approved', telegramError =
   delete require.cache[timelinePath]
   delete require.cache[emailPath]
 
-  const calls = { telegram: [], email: [], queueUpdates: [], timeline: [], activity: [], telegramMessages: [] }
+  const calls = { telegram: [], email: [], queueUpdates: [], timeline: [], activity: [], telegramMessages: [], emailDrafts: [] }
   let queueStatus = status
   let executedAt = null
   const queuePayload = {
@@ -73,6 +73,10 @@ function installMocks({ lead, payload = {}, status = 'approved', telegramError =
     }
     if (sql.includes('FROM crm_leads') && sql.includes('telegram_chat_id')) {
       return { rows: lead ? [{ id: 'lead-1', user_id: 'owner-1', workspace_id: 'workspace-1', name: lead.name || 'Мария Кузнецова', email: lead.email || '', telegram_chat_id: lead.telegram_chat_id || '', metadata: lead.metadata || {}, status: 'qualified' }] : [], rowCount: lead ? 1 : 0 }
+    }
+    if (sql.includes('INSERT INTO ai_worker_queue(')) {
+      calls.emailDrafts.push({ sql, params })
+      return { rows: [{ id: `email-draft-${calls.emailDrafts.length}` }], rowCount: 1 }
     }
     if (sql.startsWith('INSERT INTO telegram_messages(')) {
       calls.telegramMessages.push({ sql, params })
@@ -168,23 +172,58 @@ async function testTelegramSendFailureDoesNotCreateSuccessTimeline() {
   assert.ok(calls.queueUpdates.some((update) => update.status === 'failed' && update.error === 'Telegram API unavailable'))
 }
 
-async function testNoChannelFailsClearly() {
-  const { service, calls, getStatus } = installMocks({ lead: { telegram_chat_id: '', email: '' } })
+async function testEmailFollowupCreatesDraftAndCompletes() {
+  const { service, calls, getStatus } = installMocks({
+    lead: { telegram_chat_id: '12345', email: 'maria@example.com' },
+    payload: { channel: 'email', subject: 'Следующий шаг' },
+  })
+  const result = await service.executeQueueItem('user-1', 'workspace-1', 'queue-1')
+
+  assert.strictEqual(result.success, true)
+  assert.strictEqual(result.status, 'completed')
+  assert.strictEqual(getStatus(), 'completed')
+  assert.strictEqual(calls.telegram.length, 0)
+  assert.strictEqual(calls.telegramMessages.length, 0)
+  assert.strictEqual(calls.email.length, 0)
+  assert.strictEqual(calls.emailDrafts.length, 1)
+  assert.match(calls.emailDrafts[0].sql, /INSERT INTO ai_worker_queue/)
+  assert.strictEqual(calls.emailDrafts[0].params[3], 'email_followup_draft')
+  assert.strictEqual(calls.emailDrafts[0].params[4], 'Email follow-up — Мария Кузнецова')
+  assert.strictEqual(calls.emailDrafts[0].params[5], 'Мария, добрый день! Возвращаюсь с follow-up.')
+  assert.deepStrictEqual(calls.emailDrafts[0].params[6], {
+    leadId: 'lead-1',
+    email: 'maria@example.com',
+    subject: 'Следующий шаг',
+    body: 'Мария, добрый день! Возвращаюсь с follow-up.',
+    draftText: 'Мария, добрый день! Возвращаюсь с follow-up.',
+    text: 'Мария, добрый день! Возвращаюсь с follow-up.',
+    message: 'Мария, добрый день! Возвращаюсь с follow-up.',
+    channel: 'email',
+    sourceFollowupActionId: 'queue-1',
+    sequenceStep: 'followup_24h',
+  })
+  assert.ok(calls.timeline.some((call) => call.event?.eventType === 'followup_email_drafted' && call.event.title === 'Email follow-up подготовлен'))
+}
+
+async function testEmailFollowupWithoutEmailFailsClearly() {
+  const { service, calls, getStatus } = installMocks({ lead: { telegram_chat_id: '', email: '' }, payload: { channel: 'email' } })
   const result = await service.executeQueueItem('user-1', 'workspace-1', 'queue-1')
 
   assert.strictEqual(result.success, false)
   assert.strictEqual(result.status, 'failed')
   assert.strictEqual(getStatus(), 'failed')
-  assert.strictEqual(result.error, 'No Telegram or email channel available')
+  assert.strictEqual(result.error, 'No email available for follow-up')
   assert.strictEqual(calls.telegram.length, 0)
   assert.strictEqual(calls.telegramMessages.length, 0)
-  assert.ok(calls.queueUpdates.some((update) => update.status === 'failed' && update.error === 'No Telegram or email channel available'))
+  assert.strictEqual(calls.emailDrafts.length, 0)
+  assert.ok(calls.queueUpdates.some((update) => update.status === 'failed' && update.error === 'No email available for follow-up'))
 }
 
 async function run() {
   await testTelegramFollowupExecutesAndCompletes()
   await testTelegramSendFailureDoesNotCreateSuccessTimeline()
-  await testNoChannelFailsClearly()
+  await testEmailFollowupCreatesDraftAndCompletes()
+  await testEmailFollowupWithoutEmailFailsClearly()
   console.log('ai approval queue followup execute tests passed')
 }
 
