@@ -293,6 +293,7 @@ export default function CRMPage() {
   const [aiActionBusy, setAiActionBusy] = useState({});
   const [inactiveQueueBusy, setInactiveQueueBusy] = useState(false);
   const [aiAnalysisBusy, setAiAnalysisBusy] = useState(false);
+  const [meetingIcsDownloadingId, setMeetingIcsDownloadingId] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -413,11 +414,14 @@ export default function CRMPage() {
 
   async function handleDownloadMeetingIcs(meeting) {
     if (!meeting?.id) return;
+    setMeetingIcsDownloadingId(meeting.id);
     setError('');
     try {
       await downloadCrmMeetingIcs(meeting.id);
     } catch (requestError) {
       setError(requestError.message || 'Не удалось скачать ICS');
+    } finally {
+      setMeetingIcsDownloadingId(null);
     }
   }
 
@@ -1199,7 +1203,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                     <span>{meeting.status || 'scheduled'}</span>
                   </div>
                   <div className="meeting-calendar-actions">
-                    <button type="button" className="btn primary compact" onClick={() => handleDownloadMeetingIcs(meeting)} disabled={!meeting.hasIcs}>{meeting.hasIcs ? 'Скачать .ics' : '.ics готовится'}</button>
+                    <button type="button" className="btn primary compact" onClick={() => handleDownloadMeetingIcs(meeting)} disabled={!meeting.hasIcs || meetingIcsDownloadingId === meeting.id}>{meetingIcsDownloadingId === meeting.id ? 'Скачиваем…' : meeting.hasIcs ? 'Скачать .ics' : '.ics готовится'}</button>
                     <span className="calendar-placeholder">Google Calendar скоро</span>
                   </div>
                 </article>

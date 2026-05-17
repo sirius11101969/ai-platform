@@ -271,9 +271,28 @@ export function fetchCrmLeads() {
 }
 
 
+function getFilenameFromContentDisposition(contentDisposition) {
+  if (!contentDisposition) return ''
+
+  const encodedMatch = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i)
+  if (encodedMatch?.[1]) {
+    try {
+      return decodeURIComponent(encodedMatch[1].trim().replace(/^\"|\"$/g, ''))
+    } catch (_error) {
+      return encodedMatch[1].trim().replace(/^\"|\"$/g, '')
+    }
+  }
+
+  const plainMatch = contentDisposition.match(/filename=(\"[^\"]+\"|[^;]+)/i)
+  return plainMatch?.[1]?.trim().replace(/^\"|\"$/g, '') || ''
+}
+
 export async function downloadCrmMeetingIcs(meetingId) {
+  const token = getAuthToken()
+  if (!token) throw new Error('Не найден bearer‑токен авторизации')
+
   const response = await fetch(`${API_BASE_URL}/crm/meetings/${meetingId}/ics`, {
-    headers: buildHeaders(),
+    headers: buildHeaders({ headers: { Authorization: `Bearer ${token}` } }),
   })
   if (!response.ok) {
     const data = await response.json().catch(() => ({}))
@@ -281,10 +300,11 @@ export async function downloadCrmMeetingIcs(meetingId) {
     throw new Error(translateApiError(backendMessage || 'Не удалось скачать ICS'))
   }
   const blob = await response.blob()
+  const filename = getFilenameFromContentDisposition(response.headers.get('Content-Disposition')) || 'as6-demo-meeting.ics'
   const url = window.URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.href = url
-  link.download = 'as6-demo-meeting.ics'
+  link.download = filename
   document.body.appendChild(link)
   link.click()
   link.remove()
