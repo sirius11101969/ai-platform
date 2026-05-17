@@ -1633,7 +1633,8 @@ button { font: inherit; }
 
 .meeting-calendar-meta span,
 .calendar-status,
-.ics-ready-badge {
+.ics-ready-badge,
+.google-synced-badge {
   border-radius: 999px;
   padding: 0.25rem 0.55rem;
   background: rgba(255, 255, 255, 0.08);
@@ -1648,6 +1649,24 @@ button { font: inherit; }
 .ics-ready-badge {
   background: rgba(69, 255, 179, 0.16);
   color: #7cffc4;
+}
+
+.calendar-status.synced,
+.google-synced-badge {
+  background: rgba(66, 133, 244, 0.18);
+  color: #8ab4ff;
+}
+
+.calendar-meet-url {
+  color: #8ab4ff;
+  font-size: 0.84rem;
+  overflow-wrap: anywhere;
+}
+
+.calendar-error {
+  color: #ff9aa8;
+  font-size: 0.82rem;
+  margin: 0;
 }
 
 .meeting-calendar-actions {

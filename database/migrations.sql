@@ -391,3 +391,6 @@ CREATE INDEX IF NOT EXISTS idx_crm_meetings_ai_worker_queue_id
 CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_source_message_dedup
   ON ai_worker_queue(workspace_id, lead_id, action_type, ((payload->>'sourceMessageId')), status, created_at DESC)
   WHERE action_type IN ('meeting_schedule_proposal', 'telegram_reply_draft', 'telegram_meeting_confirmation_draft');
+CREATE INDEX IF NOT EXISTS idx_crm_meetings_google_event_id
+  ON crm_meetings(workspace_id, google_event_id)
+  WHERE google_event_id IS NOT NULL AND google_event_id <> '';

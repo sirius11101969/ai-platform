@@ -287,6 +287,10 @@ function getFilenameFromContentDisposition(contentDisposition) {
   return plainMatch?.[1]?.trim().replace(/^\"|\"$/g, '') || ''
 }
 
+export function fetchCrmMeeting(meetingId) {
+  return request(`/crm/meetings/${meetingId}`)
+}
+
 export async function downloadCrmMeetingIcs(meetingId) {
   const token = getAuthToken()
   if (!token) throw new Error('Не найден bearer‑токен авторизации')

@@ -150,8 +150,10 @@ function renderMeetingScheduleDetails(item, { onDownloadIcs } = {}) {
       <span>Длительность <b>{meeting?.durationMinutes || payload.durationMinutes || 30} мин</b></span>
       <span>Confidence <b>{payload.confidence || "—"}%</b></span>
       <span>Канал <b>{payload.channel || "—"}</b></span>
-      {meeting && <span>CRM meeting <b>создан</b></span>}
+      {meeting && <span>CRM meeting <b>created</b></span>}
+      {meeting?.calendarStatus === "synced" && <span className="google-synced-badge">Google synced</span>}
       {meeting?.calendarStatus === "ics_ready" && <span className="ics-ready-badge">ICS ready</span>}
+      {meeting?.googleMeetUrl && <a className="ghost-button compact" href={meeting.googleMeetUrl} target="_blank" rel="noreferrer">Google Meet</a>}
       {meeting?.hasIcs && <button type="button" className="ghost-button compact" onClick={() => onDownloadIcs?.(meeting)}>Скачать .ics</button>}
     </div>
   );
