@@ -5,6 +5,7 @@ const path = require('path')
 const tls = require('tls')
 const axios = require('axios')
 const { addTimelineEvent } = require('./timelineService')
+const { assertCustomerSafeText } = require('./customerCopyGuard')
 const pool = require('../db/pool')
 const { renderTemplate } = require('./emailTemplates')
 
@@ -171,6 +172,7 @@ async function enqueueEmail(userId, payload) {
     const text = normalizeText(rendered.text || rendered.body)
     const html = normalizeText(rendered.html)
     if (!subject || (!text && !html)) throw Object.assign(new Error('Email subject and body are required'), { statusCode: 400 })
+    assertCustomerSafeText(text || html, { leadId: lead.id, channel: 'email' })
     const from = normalizeText(payload.from || process.env.EMAIL_FROM || process.env.SMTP_FROM || process.env.GMAIL_FROM)
     const trackToken = crypto.randomBytes(24).toString('hex')
     const emailResult = await client.query(

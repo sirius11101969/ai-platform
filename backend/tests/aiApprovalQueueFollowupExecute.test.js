@@ -220,7 +220,7 @@ async function testEmailFollowupWithoutEmailFailsClearly() {
   assert.ok(calls.queueUpdates.some((update) => update.status === 'failed' && update.error === 'No email available for follow-up'))
 }
 
-async function testPriorityInboxDirtyFollowupRegeneratesCleanCustomerText() {
+async function testPriorityInboxDirtyFollowupIsBlockedBeforeSend() {
   const { service, calls, getStatus } = installMocks({
     lead: { telegram_chat_id: '12345', email: 'maria@example.com' },
     payload: {
@@ -233,11 +233,11 @@ async function testPriorityInboxDirtyFollowupRegeneratesCleanCustomerText() {
   })
   const result = await service.executeQueueItem('user-1', 'workspace-1', 'queue-1')
 
-  assert.strictEqual(result.success, true)
-  assert.strictEqual(getStatus(), 'completed')
-  assert.strictEqual(calls.telegram.length, 1)
-  assert.strictEqual(calls.telegram[0].text, 'Здравствуйте! Могу отправить краткую информацию по тарифам и показать, какой вариант лучше подойдёт под вашу задачу.')
-  assert.ok(!/Плюсы:|Минусы:|Итог:|ai_score|score|intent|\+\d+/i.test(calls.telegram[0].text))
+  assert.strictEqual(result.success, false)
+  assert.strictEqual(getStatus(), 'failed')
+  assert.strictEqual(result.error, 'Blocked by copy guard: internal AI context leak')
+  assert.strictEqual(calls.telegram.length, 0)
+  assert.ok(calls.queueUpdates.some((update) => update.status === 'failed' && update.error === 'Blocked by copy guard: internal AI context leak'))
 }
 
 async function testNonPriorityDirtyFollowupIsBlockedBeforeSend() {
@@ -249,9 +249,9 @@ async function testNonPriorityDirtyFollowupIsBlockedBeforeSend() {
 
   assert.strictEqual(result.success, false)
   assert.strictEqual(getStatus(), 'failed')
-  assert.strictEqual(result.error, 'Outbound text contains internal AI context and was blocked')
+  assert.strictEqual(result.error, 'Blocked by copy guard: internal AI context leak')
   assert.strictEqual(calls.telegram.length, 0)
-  assert.ok(calls.queueUpdates.some((update) => update.status === 'failed' && update.error === 'Outbound text contains internal AI context and was blocked'))
+  assert.ok(calls.queueUpdates.some((update) => update.status === 'failed' && update.error === 'Blocked by copy guard: internal AI context leak'))
 }
 
 async function run() {
@@ -259,7 +259,7 @@ async function run() {
   await testTelegramSendFailureDoesNotCreateSuccessTimeline()
   await testEmailFollowupCreatesDraftAndCompletes()
   await testEmailFollowupWithoutEmailFailsClearly()
-  await testPriorityInboxDirtyFollowupRegeneratesCleanCustomerText()
+  await testPriorityInboxDirtyFollowupIsBlockedBeforeSend()
   await testNonPriorityDirtyFollowupIsBlockedBeforeSend()
   console.log('ai approval queue followup execute tests passed')
 }

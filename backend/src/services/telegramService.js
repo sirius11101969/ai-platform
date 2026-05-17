@@ -11,6 +11,7 @@ const emailService = require('./emailService')
 const { createMeetingScheduleProposal } = require('./aiMeetingSchedulerService')
 const { findDuplicateQueueItem, logDuplicateSkipped, normalizeSourceMessageId } = require('./aiQueueDedupService')
 const { scoreLead } = require('./aiLeadScoringService')
+const { assertCustomerSafeText } = require('./customerCopyGuard')
 
 const TELEGRAM_API_BASE = 'https://api.telegram.org'
 const DEMO_SITE_URL = 'https://www.as6.ru'
@@ -889,8 +890,7 @@ async function runTelegramMaterialWorkflow({ userId, workspaceId, leadId, chatId
 }
 
 async function sendTelegramMessageToLead({ userId, workspaceId, leadId, text, actionId = null }) {
-  const message = normalizeText(text)
-  if (!message) throw Object.assign(new Error('Telegram message is required'), { statusCode: 400 })
+  const message = assertCustomerSafeText(normalizeText(text), { actionId, leadId, channel: 'telegram' })
   const lead = await crmModel.listLeads(userId, workspaceId).then((leads) => leads.find((item) => item.id === leadId))
   if (!lead) throw Object.assign(new Error('Lead not found'), { statusCode: 404 })
   const chatId = lead.telegramChatId || lead?.metadata?.telegramChatId || null

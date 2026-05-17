@@ -155,6 +155,29 @@ For returned leads, the backend writes timeline events:
 
 Timeline event writes are best-effort and do not fail the inbox response if a timeline insert fails.
 
+## Customer-facing copy guard
+
+Outbound customer copy is protected by a reusable backend guard, `assertCustomerSafeText(text)`, before any customer-reachable execution path sends or queues text. The guard is intentionally conservative for AI-generated drafts and blocks internal scoring/debug context such as:
+
+- `Контекст:`, `Плюсы:`, `Минусы:`, `Итог:`
+- `ai_score`, `ai_priority`, `ai_risk_level`
+- `score`, `intent`, `priority`, `urgent`, `risk`, `confidence`
+- numeric scoring deltas like `+8` or `+18`
+
+The guard runs for Priority Inbox and approval-queue customer draft execution including `telegram_reply_draft`, `email_followup_draft`, `followup_sequence_draft`, and Telegram meeting confirmation drafts. It also protects direct Telegram/email service send paths.
+
+If unsafe copy is detected during queue execution, the send is not attempted. The queue item is marked `failed`, `error_message` is set to `Blocked by copy guard: internal AI context leak`, and the backend emits:
+
+```text
+[copy-guard] blocked internal context leak
+```
+
+Permanent regression coverage lives in the backend copy guard test suite and can be run with:
+
+```bash
+npm run test:copy-guard
+```
+
 ## Verification checklist
 
 - `/priority-inbox` loads for authenticated users.
