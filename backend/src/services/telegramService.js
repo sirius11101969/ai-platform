@@ -9,6 +9,7 @@ const { addTimelineEvent } = require('./timelineService')
 const { ensureDefaultWorkspace } = require('../models/workspaceModel')
 const emailService = require('./emailService')
 const { createMeetingScheduleProposal } = require('./aiMeetingSchedulerService')
+const { findDuplicateQueueItem, logDuplicateSkipped, normalizeSourceMessageId } = require('./aiQueueDedupService')
 
 const TELEGRAM_API_BASE = 'https://api.telegram.org'
 const DEMO_SITE_URL = 'https://www.as6.ru'
@@ -508,6 +509,7 @@ async function getTelegramReplyDraftContext(client, { workspaceId, lead, telegra
 
 async function createInboundReplyRecommendations(client, { userId, workspaceId, lead, telegram }) {
   const worker = await ensureTelegramApprovalWorker(client, workspaceId)
+  const sourceMessageId = normalizeSourceMessageId(telegram.sourceMessageId || telegram.messageId)
   await client.query(
     `UPDATE ai_followup_jobs
         SET status = 'replied', updated_at = NOW(), metadata = COALESCE(metadata, '{}'::jsonb) || jsonb_build_object('repliedAt', NOW(), 'telegramMessageId', $3::text)
@@ -529,20 +531,18 @@ async function createInboundReplyRecommendations(client, { userId, workspaceId, 
       `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
        VALUES($1, $2, $3, 'telegram_reply_analysis', 'pending_approval', $4, $5, $6)
        RETURNING id`,
-      [worker.id, workspaceId, lead.id, `Проанализировать ответ Telegram — ${lead.name}`, recommendation, { source: 'telegram_inbound', channel: 'telegram', customerMessage: telegram.text, telegramMessageId: telegram.messageId, chatId: String(telegram.chatId), nextStep: recommendation }]
+      [worker.id, workspaceId, lead.id, `Проанализировать ответ Telegram — ${lead.name}`, recommendation, { source: 'telegram_inbound', channel: 'telegram', customerMessage: telegram.text, sourceMessageId, telegramMessageId: sourceMessageId, chatId: String(telegram.chatId), nextStep: recommendation }]
     )
-    await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'telegram_reply_analysis_created', title: 'AI подготовил анализ ответа Telegram', body: recommendation, source: 'ai', metadata: { queueId: analysis.rows[0].id, actionType: 'telegram_reply_analysis', telegramMessageId: telegram.messageId } })
+    await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'telegram_reply_analysis_created', title: 'AI подготовил анализ ответа Telegram', body: recommendation, source: 'ai', metadata: { queueId: analysis.rows[0].id, actionType: 'telegram_reply_analysis', sourceMessageId, telegramMessageId: sourceMessageId } })
   }
 
-  const existingDraft = await client.query(
-    `SELECT id FROM ai_worker_queue
-      WHERE workspace_id = $1 AND lead_id = $2 AND action_type = 'telegram_reply_draft'
-        AND payload->>'telegramMessageId' = $3
-        AND status IN ('pending_approval', 'approved', 'executing', 'completed')
-      LIMIT 1`,
-    [workspaceId, lead.id, String(telegram.messageId)]
-  )
-  if (!existingDraft.rows[0]) {
+  const existingDraft = sourceMessageId
+    ? await findDuplicateQueueItem(client, { workspaceId, leadId: lead.id, actionType: 'telegram_reply_draft', sourceMessageId })
+    : null
+  if (existingDraft) {
+    logDuplicateSkipped({ workspaceId, leadId: lead.id, actionType: 'telegram_reply_draft', sourceMessageId, duplicateId: existingDraft.id })
+  }
+  if (!existingDraft) {
     const context = await getTelegramReplyDraftContext(client, { workspaceId, lead, telegram })
     const generated = await generateTelegramReplyDraft(context)
     const text = generated.message
@@ -550,9 +550,9 @@ async function createInboundReplyRecommendations(client, { userId, workspaceId, 
       `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
        VALUES($1, $2, $3, 'telegram_reply_draft', 'pending_approval', $4, $5, $6)
        RETURNING id`,
-      [worker.id, workspaceId, lead.id, `Ответ в Telegram — ${lead.name}`, 'AI подготовил короткий человеческий ответ на последнее сообщение. Проверьте текст, при необходимости отредактируйте и отправьте после approval.', { source: 'telegram_inbound', outreachType: 'inbound_reply_next_step', channel: 'telegram', draftText: text, inboundText: telegram.text, text, message: text, customerMessage: telegram.text, inboundMessage: telegram.text, telegramMessageId: String(telegram.messageId), chatId: String(telegram.chatId), leadName: lead.name, company: lead.company || '', currentStage: lead.status || '', leadStage: lead.status || '', lastAiScore: context.aiScore, forecastCategory: context.aiScore?.forecastCategory || null, riskLevel: context.aiScore?.riskLevel || null, recommendedNextStep: context.recommendedNextStep, timeline: context.timeline, model: generated.model, prompt: generated.prompt }]
+      [worker.id, workspaceId, lead.id, `Ответ в Telegram — ${lead.name}`, 'AI подготовил короткий человеческий ответ на последнее сообщение. Проверьте текст, при необходимости отредактируйте и отправьте после approval.', { source: 'telegram_inbound', outreachType: 'inbound_reply_next_step', channel: 'telegram', draftText: text, inboundText: telegram.text, text, message: text, customerMessage: telegram.text, inboundMessage: telegram.text, sourceMessageId, telegramMessageId: sourceMessageId, chatId: String(telegram.chatId), leadName: lead.name, company: lead.company || '', currentStage: lead.status || '', leadStage: lead.status || '', lastAiScore: context.aiScore, forecastCategory: context.aiScore?.forecastCategory || null, riskLevel: context.aiScore?.riskLevel || null, recommendedNextStep: context.recommendedNextStep, timeline: context.timeline, model: generated.model, prompt: generated.prompt }]
     )
-    await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'ai_telegram_reply_drafted', title: 'AI подготовил черновик Telegram', body: text, source: 'ai', metadata: { queueId: draft.rows[0].id, actionType: 'telegram_reply_draft', telegramMessageId: telegram.messageId } })
+    await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'ai_telegram_reply_drafted', title: 'AI подготовил черновик Telegram', body: text, source: 'ai', metadata: { queueId: draft.rows[0].id, actionType: 'telegram_reply_draft', sourceMessageId, telegramMessageId: sourceMessageId } })
   }
 
   const nextStage = nextStageSuggestion(lead.status, telegram.text)
@@ -697,8 +697,10 @@ async function upsertLeadWithIncomingMessage(telegram, retryOnDuplicate = true) 
     console.info('[telegram] inbound attached', { leadId: lead.id, chatId: String(telegram.chatId) })
     await logActivity(client, userId, workspaceId, lead.id, 'telegram_reply_received', 'Telegram reply received', telegram.text, { telegramUserId: telegram.userId, chatId: telegram.chatId, messageId: telegram.messageId })
     await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'telegram_reply_received', title: 'Получен ответ в Telegram', body: telegram.text, source: 'telegram', metadata: { telegramUserId: telegram.userId, chatId: telegram.chatId, messageId: telegram.messageId } })
-    await createMeetingScheduleProposal(client, { userId, workspaceId, lead, messageText: telegram.text, channel: 'telegram', sourceMessageId: telegram.messageId })
-    await createInboundReplyRecommendations(client, { userId, workspaceId, lead, telegram })
+    const sourceMessageId = normalizeSourceMessageId(telegram.messageId || telegramMessage.id)
+    const telegramWithSource = { ...telegram, sourceMessageId, messageId: sourceMessageId }
+    await createMeetingScheduleProposal(client, { userId, workspaceId, lead, messageText: telegram.text, channel: 'telegram', sourceMessageId })
+    await createInboundReplyRecommendations(client, { userId, workspaceId, lead, telegram: telegramWithSource })
     await client.query('COMMIT')
     return { lead, note: note.rows[0], telegramMessage, isNew, userId, workspaceId }
   } catch (error) {

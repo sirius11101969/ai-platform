@@ -1,4 +1,5 @@
 const { addTimelineEvent } = require('./timelineService')
+const { findDuplicateQueueItem, logDuplicateSkipped, normalizeSourceMessageId } = require('./aiQueueDedupService')
 
 const MEETING_ACTION_TYPE = 'meeting_schedule_proposal'
 const DEFAULT_TIMEZONE = process.env.APP_TIMEZONE || 'Europe/Moscow'
@@ -123,11 +124,13 @@ async function ensureMeetingSchedulerWorker(client, workspaceId) {
 
   const existing = await client.query(
     `SELECT id FROM ai_workers
-      WHERE type = 'ai_meeting_scheduler'
+      WHERE workspace_id = $1 AND type = 'ai_meeting_scheduler'
       ORDER BY created_at ASC, id ASC
-      LIMIT 1`
+      LIMIT 1`,
+    [workspaceId]
   )
   if (existing.rows[0]) {
+    await client.query('UPDATE ai_workers SET last_run_at = NOW(), updated_at = NOW() WHERE id = $1', [existing.rows[0].id])
     console.log('[meeting-scheduler] worker reused', { workerId: existing.rows[0].id })
     return existing.rows[0]
   }
@@ -140,17 +143,20 @@ async function ensureMeetingSchedulerWorker(client, workspaceId) {
     [workspaceId]
   )
   if (created.rows[0]) {
+    await client.query('UPDATE ai_workers SET last_run_at = NOW(), updated_at = NOW() WHERE id = $1', [created.rows[0].id])
     console.log('[meeting-scheduler] worker created', { workerId: created.rows[0].id })
     return created.rows[0]
   }
 
   const reused = await client.query(
     `SELECT id FROM ai_workers
-      WHERE type = 'ai_meeting_scheduler'
+      WHERE workspace_id = $1 AND type = 'ai_meeting_scheduler'
       ORDER BY created_at ASC, id ASC
-      LIMIT 1`
+      LIMIT 1`,
+    [workspaceId]
   )
   if (reused.rows[0]) {
+    await client.query('UPDATE ai_workers SET last_run_at = NOW(), updated_at = NOW() WHERE id = $1', [reused.rows[0].id])
     console.log('[meeting-scheduler] worker reused', { workerId: reused.rows[0].id })
     return reused.rows[0]
   }
@@ -161,16 +167,13 @@ async function ensureMeetingSchedulerWorker(client, workspaceId) {
 async function createMeetingScheduleProposal(client, { userId, workspaceId, lead, messageText, channel, sourceMessageId }) {
   const detected = detectSchedulingIntent(messageText)
   if (!detected || !lead?.id) return null
-  const sourceId = String(sourceMessageId || '')
-  const duplicate = await client.query(
-    `SELECT id FROM ai_worker_queue
-      WHERE workspace_id = $1 AND lead_id = $2 AND action_type = $3
-        AND COALESCE(payload->>'sourceMessageId', payload->>'telegramMessageId', payload->>'emailMessageId') = $4
-        AND status IN ('pending_approval', 'approved', 'executing', 'completed')
-      LIMIT 1`,
-    [workspaceId, lead.id, MEETING_ACTION_TYPE, sourceId]
-  )
-  if (duplicate.rows[0]) return null
+  const sourceId = normalizeSourceMessageId(sourceMessageId)
+  if (!sourceId) return null
+  const duplicate = await findDuplicateQueueItem(client, { workspaceId, leadId: lead.id, actionType: MEETING_ACTION_TYPE, sourceMessageId: sourceId })
+  if (duplicate) {
+    logDuplicateSkipped({ workspaceId, leadId: lead.id, actionType: MEETING_ACTION_TYPE, sourceMessageId: sourceId, duplicateId: duplicate.id })
+    return null
+  }
 
   const worker = await ensureMeetingSchedulerWorker(client, workspaceId)
   const proposedTitle = `Demo-созвон — ${lead.name}`

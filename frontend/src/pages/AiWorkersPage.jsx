@@ -503,6 +503,9 @@ export default function AiWorkersPage() {
             const isEditBusy = isItemBusy && busyAction.action === "edit";
             const isRejectBusy = isItemBusy && busyAction.action === "reject";
             const isExecuteBusy = isItemBusy && busyAction.action === "execute";
+            const isMeetingProposal = isMeetingScheduleProposal(item);
+            const canEditItem = !isMeetingProposal || item.status === "pending_approval" || item.status === "failed";
+            const canRejectItem = !isMeetingProposal || item.status === "pending_approval" || item.status === "failed";
             return (
             <article className={`approval-row approval-${item.status}`} key={item.id}>
               <div className="approval-main">
@@ -529,8 +532,10 @@ export default function AiWorkersPage() {
                 {["pending_approval", "failed"].includes(item.status) && (
                   <button type="button" className="ghost-button compact" onClick={() => handleApprovalAction(item, "approve")} disabled={isApproveBusy}>{isApproveBusy ? busyLabel : "Одобрить"}</button>
                 )}
-                <button type="button" className="ghost-button compact" onClick={() => handleEditApprovalItem(item)} disabled={isEditBusy || ["executing","completed"].includes(item.status)}>{isEditBusy ? "Сохраняем…" : "Изменить"}</button>
-                {!["executing", "completed", "rejected"].includes(item.status) && (
+                {canEditItem && (
+                  <button type="button" className="ghost-button compact" onClick={() => handleEditApprovalItem(item)} disabled={isEditBusy || ["executing","completed"].includes(item.status)}>{isEditBusy ? "Сохраняем…" : "Изменить"}</button>
+                )}
+                {canRejectItem && !["executing", "completed", "rejected"].includes(item.status) && (
                   <button type="button" className="ghost-button compact danger-action" onClick={() => handleApprovalAction(item, "reject")} disabled={isRejectBusy}>{isRejectBusy ? busyLabel : "Отклонить"}</button>
                 )}
                 {(isTelegramReplyDraft(item) || (item.status === "approved" && isApprovalItemExecutable(item))) && (
