@@ -1843,3 +1843,6 @@ button { font: inherit; }
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-2px); }
 }
+
+.internal-ai-context { display: none !important; }
+.internal-ai-context.internal-ai-debug-visible { display: block !important; border: 1px dashed rgba(251, 191, 36, .55); background: rgba(251, 191, 36, .08); }

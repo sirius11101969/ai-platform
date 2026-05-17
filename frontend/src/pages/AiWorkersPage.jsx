@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Panel, PageHeading, StatCard } from "../components/AppShell";
+import { isInternalAiDebugEnabled, sanitizeCustomerVisibleText, sanitizeVisibleAiText } from "../utils/uiSanitizer";
 import { approveAiApprovalQueueItem, downloadCrmMeetingIcs, executeAiApprovalQueueItem, fetchAiApprovalQueue, fetchAiCommandCenter, rejectAiApprovalQueueItem, runAiWorker, seedDemoSalesPipeline, updateAiApprovalQueueItem, updateAiWorker } from "../services/api";
 
 const typeLabels = {
@@ -104,7 +105,7 @@ function renderStageDetails(item) {
       <span>From stage <b>{stageLabel(fromStage)}</b></span>
       <span>To stage <b>{stageLabel(toStage)}</b></span>
       <span>Confidence <b>{payload.confidence || "—"}%</b></span>
-      <span>Reason <b>{payload.reason || item.recommendation || "AI обнаружил сигнал для смены этапа."}</b></span>
+      <span>Reason <b>{sanitizeVisibleAiText(payload.reason || item.recommendation || "AI обнаружил сигнал для смены этапа.")}</b></span>
     </div>
   );
 }
@@ -127,9 +128,9 @@ function getInternalAiContext(item) {
 
 function renderInternalAiContext(item) {
   const text = getInternalAiContext(item);
-  if (!text) return null;
+  if (!text || !isInternalAiDebugEnabled()) return null;
   return (
-    <div className="telegram-draft-body internal-ai-context">
+    <div className="telegram-draft-body internal-ai-context internal-ai-debug-visible">
       <span>Внутренний AI контекст</span>
       <p>{text}</p>
     </div>
@@ -180,7 +181,7 @@ function renderMeetingScheduleDetails(item, { onDownloadIcs } = {}) {
   return (
     <div className="approval-stage-details meeting-schedule-details">
       <span>Лид <b>{item.lead?.name || payload.leadName || "—"}</b></span>
-      <span>Входящее <b>{payload.inboundMessage || payload.customerMessage || "—"}</b></span>
+      <span>Входящее <b>{sanitizeCustomerVisibleText(payload.inboundMessage || payload.customerMessage || "—")}</b></span>
       <span>Дата/время <b>{payload.detectedDateText || "—"} {payload.detectedTimeText || "—"}</b></span>
       <span>Старт <b>{formatMeetingStart(meeting?.startsAt || payload.proposedStartTime)}</b></span>
       <span>Название <b>{meeting?.title || payload.proposedTitle || "Demo-созвон"}</b></span>
@@ -219,7 +220,7 @@ function renderFollowupSequenceDetails(item) {
     <div className="approval-stage-details meeting-schedule-details">
       <span>Sequence step <b>{payload.sequenceStep || "—"}</b></span>
       <span>Last touch <b>{payload.inactiveHours ? `${payload.inactiveHours} ч. назад` : "—"}</b></span>
-      <span>Last message <b>{payload.lastMessageText || "—"}</b></span>
+      <span>Last message <b>{sanitizeCustomerVisibleText(payload.lastMessageText || "—")}</b></span>
       <span>Confidence <b>{payload.confidence || "—"}</b></span>
     </div>
   );
@@ -227,8 +228,8 @@ function renderFollowupSequenceDetails(item) {
 
 function renderTelegramReplyDraft(item, { isEditing = false, editText = "", onEditTextChange, onSaveEdit, onCancelEdit, editBusy = false } = {}) {
   if (!isTelegramReplyDraft(item)) return null;
-  const inbound = getInboundText(item) || "—";
-  const draft = getDraftText(item) || "—";
+  const inbound = sanitizeCustomerVisibleText(getInboundText(item) || "—");
+  const draft = sanitizeCustomerVisibleText(getDraftText(item) || "—");
   const wasEdited = Boolean(item.payload?.editedByManager || item.payload?.editedText || item.payload?.edited_text);
   const forecastRiskBadge = getForecastRiskBadge(item);
   return (
@@ -241,7 +242,7 @@ function renderTelegramReplyDraft(item, { isEditing = false, editText = "", onEd
       </div>
       <div>
         <span>{isTelegramMeetingConfirmationDraft(item) ? "Лид" : isFollowupSequenceDraft(item) ? "Последнее касание" : "Последнее входящее сообщение"}</span>
-        <p>{isTelegramMeetingConfirmationDraft(item) ? (item.lead?.name || item.payload?.leadName || "—") : isFollowupSequenceDraft(item) ? (item.payload?.lastMessageText || "—") : inbound}</p>
+        <p>{isTelegramMeetingConfirmationDraft(item) ? (item.lead?.name || item.payload?.leadName || "—") : isFollowupSequenceDraft(item) ? sanitizeCustomerVisibleText(item.payload?.lastMessageText || "—") : inbound}</p>
       </div>
       {isTelegramMeetingConfirmationDraft(item) && (
         <div>
@@ -271,7 +272,7 @@ function renderTelegramReplyDraft(item, { isEditing = false, editText = "", onEd
 function renderEmailFollowupDraft(item, { isEditing = false, editText = "", onEditTextChange, onSaveEdit, onCancelEdit, editBusy = false } = {}) {
   if (!isEmailFollowupDraft(item)) return null;
   const payload = item.payload || {};
-  const body = getDraftText(item) || "—";
+  const body = sanitizeCustomerVisibleText(getDraftText(item) || "—");
   const wasEdited = Boolean(payload.editedByManager || payload.editedText || payload.edited_text);
   return (
     <div className="telegram-reply-draft-card">
@@ -290,7 +291,7 @@ function renderEmailFollowupDraft(item, { isEditing = false, editText = "", onEd
       </div>
       <div>
         <span>Тема письма</span>
-        <p>{payload.subject || item.title || "—"}</p>
+        <p>{sanitizeVisibleAiText(payload.subject || item.title || "—")}</p>
       </div>
       <div className="telegram-draft-body">
         <span>Customer-facing email follow-up text</span>
@@ -312,7 +313,7 @@ function renderEmailFollowupDraft(item, { isEditing = false, editText = "", onEd
 }
 
 function shortRecommendation(item) {
-  const text = item?.payload?.suggestedText || item.recommendation || item.title || "AI рекомендация ожидает решения";
+  const text = sanitizeVisibleAiText(item?.payload?.suggestedText || item.recommendation || item.title || "AI рекомендация ожидает решения");
   return text.length > 130 ? `${text.slice(0, 130)}…` : text;
 }
 
@@ -821,7 +822,7 @@ export default function AiWorkersPage() {
             return (
             <article ref={isHighlightedApprovalItem(item) ? highlightRef : null} className={`approval-row approval-${item.status} ${isHighlightedApprovalItem(item) ? "route-highlight" : ""}`} key={item.id}>
               <div className="approval-main">
-                <strong>{item.title}</strong>
+                <strong>{sanitizeVisibleAiText(item.title)}</strong>
                 <p>{shortRecommendation(item)}</p>
                 {renderStageDetails(item)}
                 {renderMeetingScheduleDetails(item, { onDownloadIcs: handleDownloadIcs })}
@@ -885,7 +886,7 @@ export default function AiWorkersPage() {
               {prioritizeHighlightedItems(approvalHistoryItems, 8).map((item) => (
                 <article ref={isHighlightedApprovalItem(item) ? highlightRef : null} className={`approval-row approval-history-row approval-${item.status} ${isHighlightedApprovalItem(item) ? "route-highlight" : ""}`} key={item.id}>
                   <div className="approval-main">
-                    <strong>{item.title}</strong>
+                    <strong>{sanitizeVisibleAiText(item.title)}</strong>
                     <p>{shortRecommendation(item)}</p>
                     {renderStageDetails(item)}
                     {renderMeetingScheduleDetails(item, { onDownloadIcs: handleDownloadIcs })}
@@ -948,7 +949,7 @@ export default function AiWorkersPage() {
             {prioritizeHighlightedItems(queue, 8).map((item) => (
               <article ref={isHighlightedApprovalItem(item) ? highlightRef : null} className={`ai-queue-item ${isHighlightedApprovalItem(item) ? "route-highlight" : ""}`} key={item.id}>
                 <div>
-                  <strong>{item.title}</strong>
+                  <strong>{sanitizeVisibleAiText(item.title)}</strong>
                   <p>{shortRecommendation(item)}</p>
                   <small>{formatDate(item.created_at)} · {item.action_type}</small>
                 </div>

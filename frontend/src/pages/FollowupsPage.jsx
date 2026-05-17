@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Panel, PageHeading, StatCard } from "../components/AppShell";
+import { sanitizeCustomerVisibleText, sanitizeVisibleAiText } from "../utils/uiSanitizer";
 import { approveAiFollowup, fetchAiFollowups, rejectAiFollowup, runAiFollowupScan, sendAiFollowup, updateAiFollowup } from "../services/api";
 
 const statusLabels = { suggested: "ждёт одобрения", approved: "одобрено", rejected: "отклонено", sent: "отправлено", failed: "ошибка" };
@@ -220,11 +221,11 @@ export default function FollowupsPage() {
                 <div>
                   <span className="eyebrow">{item.ruleType} · {channelLabels[getSuggestedChannel(item)] || getSuggestedChannel(item)}</span>
                   <h3>{item.lead?.name || "Лид"}{item.lead?.company ? ` · ${item.lead.company}` : ""}</h3>
-                  <p>{item.reason || "AI обнаружил необходимость касания"}</p>
+                  <p>{sanitizeVisibleAiText(item.reason || "AI обнаружил необходимость касания")}</p>
                 </div>
                 <span className={`urgency-badge ${item.urgency}`}>{urgencyLabels[item.urgency] || item.urgency}</span>
               </div>
-              <pre className="ai-output-box">{item.generatedMessage}</pre>
+              <pre className="ai-output-box">{sanitizeCustomerVisibleText(item.generatedMessage)}</pre>
               <div className="approval-meta">
                 <span>{statusLabels[item.status] || item.status}</span>
                 <span>Запланировано: {formatDate(item.scheduledFor)}</span>
