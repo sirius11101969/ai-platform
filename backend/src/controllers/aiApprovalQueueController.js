@@ -30,4 +30,12 @@ async function execute(req, res, next) {
   } catch (error) { next(error) }
 }
 
-module.exports = { approve, execute, list, reject, update }
+async function send(req, res, next) {
+  try {
+    console.info('[ai-workers-api] send route hit', { actionId: req.params.id })
+    const result = await service.executeQueueItem(req.user.id, req.workspace.id, req.params.id)
+    res.json({ success: Boolean(result.success), status: result.status || (result.success ? 'completed' : 'failed'), actionId: result.actionId, item: result.item, error: result.error })
+  } catch (error) { next(error) }
+}
+
+module.exports = { approve, execute, list, reject, send, update }

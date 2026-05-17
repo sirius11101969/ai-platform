@@ -436,6 +436,10 @@ export function executeAiApprovalQueueItem(id, options = {}) {
   return request(`/ai/approval-queue/${id}/execute`, { ...options, method: 'POST' })
 }
 
+export function sendAiApprovalQueueItem(id, options = {}) {
+  return request(`/ai/approval-queue/${id}/send`, { timeoutMs: 15000, ...options, method: 'POST' })
+}
+
 export function fetchTelegramMessages(leadId) {
   return request(`/crm/leads/${leadId}/telegram-messages`)
 }
