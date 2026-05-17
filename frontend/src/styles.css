@@ -1594,3 +1594,76 @@ button { font: inherit; }
   white-space: pre-wrap;
   line-height: 1.5;
 }
+
+.meeting-calendar-panel {
+  border: 1px solid rgba(87, 214, 255, 0.18);
+  background: linear-gradient(135deg, rgba(10, 20, 36, 0.72), rgba(24, 36, 58, 0.46));
+}
+
+.meeting-calendar-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 0.8rem;
+  align-items: center;
+  padding: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  margin-top: 0.75rem;
+}
+
+.meeting-calendar-card strong,
+.meeting-calendar-card small,
+.meeting-calendar-card span {
+  display: block;
+}
+
+.meeting-calendar-card small,
+.calendar-placeholder {
+  color: var(--muted-text);
+  margin-top: 0.2rem;
+}
+
+.meeting-calendar-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: flex-end;
+}
+
+.meeting-calendar-meta span,
+.calendar-status,
+.ics-ready-badge {
+  border-radius: 999px;
+  padding: 0.25rem 0.55rem;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--muted-text);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.calendar-status.ics_ready,
+.ics-ready-badge {
+  background: rgba(69, 255, 179, 0.16);
+  color: #7cffc4;
+}
+
+.meeting-calendar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+@media (max-width: 780px) {
+  .meeting-calendar-card {
+    grid-template-columns: 1fr;
+  }
+  .meeting-calendar-meta,
+  .meeting-calendar-actions {
+    justify-content: flex-start;
+  }
+}

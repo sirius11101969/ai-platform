@@ -270,6 +270,27 @@ export function fetchCrmLeads() {
   return request('/crm/leads')
 }
 
+
+export async function downloadCrmMeetingIcs(meetingId) {
+  const response = await fetch(`${API_BASE_URL}/crm/meetings/${meetingId}/ics`, {
+    headers: buildHeaders(),
+  })
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}))
+    const backendMessage = data.message || data.details || data.error
+    throw new Error(translateApiError(backendMessage || 'Не удалось скачать ICS'))
+  }
+  const blob = await response.blob()
+  const url = window.URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = 'as6-demo-meeting.ics'
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+  window.URL.revokeObjectURL(url)
+}
+
 export function fetchCrmStages() {
   return request('/crm/stages')
 }

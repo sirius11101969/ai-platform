@@ -804,6 +804,14 @@ async function migrate() {
       status TEXT DEFAULT 'scheduled',
       created_by_ai BOOLEAN DEFAULT TRUE,
       ai_worker_queue_id UUID REFERENCES ai_worker_queue(id) ON DELETE SET NULL,
+      description TEXT,
+      location TEXT,
+      meeting_url TEXT,
+      calendar_status TEXT DEFAULT 'pending',
+      calendar_provider TEXT DEFAULT 'internal',
+      ics_uid TEXT,
+      ics_content TEXT,
+      timezone TEXT DEFAULT 'Europe/Moscow',
       created_at TIMESTAMPTZ DEFAULT NOW(),
       updated_at TIMESTAMPTZ DEFAULT NOW()
     );
@@ -814,6 +822,14 @@ async function migrate() {
     ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'scheduled';
     ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS created_by_ai BOOLEAN DEFAULT TRUE;
     ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS ai_worker_queue_id UUID REFERENCES ai_worker_queue(id) ON DELETE SET NULL;
+    ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS description TEXT;
+    ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS location TEXT;
+    ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS meeting_url TEXT;
+    ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS calendar_status TEXT DEFAULT 'pending';
+    ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS calendar_provider TEXT DEFAULT 'internal';
+    ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS ics_uid TEXT;
+    ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS ics_content TEXT;
+    ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS timezone TEXT DEFAULT 'Europe/Moscow';
 
     CREATE TABLE IF NOT EXISTS lead_attachments (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -860,6 +876,7 @@ async function migrate() {
     CREATE INDEX IF NOT EXISTS idx_crm_meetings_workspace_lead ON crm_meetings(workspace_id, lead_id, starts_at DESC);
     CREATE UNIQUE INDEX IF NOT EXISTS idx_crm_meetings_unique_ai_worker_queue_id ON crm_meetings(ai_worker_queue_id) WHERE ai_worker_queue_id IS NOT NULL;
     CREATE INDEX IF NOT EXISTS idx_crm_meetings_ai_worker_queue_id ON crm_meetings(ai_worker_queue_id);
+    CREATE INDEX IF NOT EXISTS idx_crm_meetings_calendar_status ON crm_meetings(workspace_id, calendar_status, created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_source_message_dedup ON ai_worker_queue(workspace_id, lead_id, action_type, ((payload->>'sourceMessageId')), status, created_at DESC) WHERE action_type IN ('meeting_schedule_proposal', 'telegram_reply_draft', 'telegram_meeting_confirmation_draft');
     CREATE INDEX IF NOT EXISTS idx_lead_attachments_lead ON lead_attachments(workspace_id, lead_id, created_at DESC);
 
@@ -914,6 +931,7 @@ async function migrate() {
     CREATE INDEX IF NOT EXISTS idx_lead_timeline_events_telegram_connect_reply ON lead_timeline_events(workspace_id, lead_id, event_type, created_at DESC) WHERE event_type IN ('telegram_connected', 'telegram_reply_received', 'telegram_message_sent', 'telegram_reply_analysis_created', 'ai_telegram_reply_drafted');
     CREATE INDEX IF NOT EXISTS idx_lead_timeline_events_meeting_scheduler ON lead_timeline_events(workspace_id, lead_id, event_type, created_at DESC) WHERE event_type IN ('ai_meeting_schedule_proposed', 'meeting_scheduled');
     CREATE INDEX IF NOT EXISTS idx_lead_timeline_events_telegram_meeting_confirmation_sent ON lead_timeline_events(workspace_id, lead_id, event_type, created_at DESC) WHERE event_type = 'telegram_meeting_confirmation_sent';
+    CREATE INDEX IF NOT EXISTS idx_lead_timeline_events_calendar_ics_created ON lead_timeline_events(workspace_id, lead_id, event_type, created_at DESC) WHERE event_type = 'calendar_ics_created';
     CREATE INDEX IF NOT EXISTS idx_crm_followups_user_id ON crm_followups(user_id);
     CREATE INDEX IF NOT EXISTS idx_crm_followups_lead_id ON crm_followups(lead_id);
     CREATE INDEX IF NOT EXISTS idx_crm_activity_user_id ON crm_activity(user_id);

@@ -9,6 +9,7 @@ import {
   createAiAgentAction,
   createCrmLead,
   deleteCrmLead,
+  downloadCrmMeetingIcs,
   fetchCrmActivity,
   fetchCrmLeads,
   fetchCrmStages,
@@ -58,6 +59,15 @@ function formatDate(value) {
   return new Intl.DateTimeFormat("ru-RU", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(value));
 }
 
+
+function getScheduledMeetings(lead) {
+  return Array.isArray(lead?.meetings) ? lead.meetings.filter((meeting) => meeting.status !== 'cancelled') : [];
+}
+
+function calendarStatusLabel(status) {
+  return ({ pending: 'ожидает', ics_ready: 'ICS готов', synced: 'синхронизировано', failed: 'ошибка' }[status] || status || 'ожидает');
+}
+
 function toForm(lead) {
   return {
     name: lead?.name || "",
@@ -91,6 +101,7 @@ function getActivityTitle(event) {
     ai_telegram_reply_drafted: "AI Telegram черновик создан",
     telegram_reply_analysis_created: "AI анализ Telegram создан",
     meeting_scheduled: "Встреча запланирована",
+    calendar_ics_created: "ICS файл встречи создан",
     follow_up_scheduled: "Follow‑up запланирован",
     attachment_delivered: "Вложение доставлено",
     email_opened: "Клиент открыл email",
@@ -220,7 +231,7 @@ function getStageRecommendationConfidence(item) {
 }
 
 function timelineTitle(event) {
-  return ({ telegram_connected: 'Telegram подключён', telegram_reply_received: 'Ответ Telegram получен', telegram_message_sent: 'Telegram сообщение отправлено', telegram_inbound: 'Telegram inbound', telegram_outbound_ai: 'Telegram outbound AI', ai_draft_created: 'AI черновик создан', ai_draft_approved: 'AI черновик одобрен', telegram_sent: 'Telegram отправлен', lead_replied: 'Лид ответил', send_failed: 'Отправка не выполнена', ai_stage_suggested: 'AI предложил этап', ai_stage_recommendation: 'AI рекомендовал этап', stage_approved: 'Этап одобрен', stage_changed: 'Этап изменён', opportunity_risk_detected: 'Риск сделки обнаружен', ai_risk_detected: 'AI риск обнаружен', ai_forecast_updated: 'AI прогноз обновлён', ai_next_action_generated: 'AI следующий шаг', email_sent: 'Email отправлен', email_failed: 'Email не отправлен', ai_score_updated: 'AI score обновлён', follow_up_draft: 'Follow-up черновик', sent_follow_up: 'Follow-up отправлен', attachments_sent: 'Материалы отправлены', lead_moved: 'Этап изменён', note_added: 'Заметка', ai_action_sent: 'AI действие отправлено', ai_action_approved: 'AI действие одобрено', ai_action_rejected: 'AI действие отклонено', ai_action_executed: 'AI действие выполнено', ai_action_failed: 'AI действие не выполнено', ai_telegram_reply_drafted: 'AI Telegram черновик создан', telegram_reply_analysis_created: 'AI анализ Telegram создан', follow_up_suggested: 'Follow-up suggested', follow_up_approved: 'Follow-up approved', follow_up_rejected: 'Follow-up rejected', follow_up_sent: 'Follow-up sent', follow_up_failed: 'Follow-up failed' }[event?.type] || event?.title || 'Событие');
+  return ({ telegram_connected: 'Telegram подключён', telegram_reply_received: 'Ответ Telegram получен', telegram_message_sent: 'Telegram сообщение отправлено', telegram_inbound: 'Telegram inbound', telegram_outbound_ai: 'Telegram outbound AI', ai_draft_created: 'AI черновик создан', ai_draft_approved: 'AI черновик одобрен', telegram_sent: 'Telegram отправлен', lead_replied: 'Лид ответил', send_failed: 'Отправка не выполнена', ai_stage_suggested: 'AI предложил этап', ai_stage_recommendation: 'AI рекомендовал этап', stage_approved: 'Этап одобрен', stage_changed: 'Этап изменён', opportunity_risk_detected: 'Риск сделки обнаружен', ai_risk_detected: 'AI риск обнаружен', ai_forecast_updated: 'AI прогноз обновлён', ai_next_action_generated: 'AI следующий шаг', email_sent: 'Email отправлен', email_failed: 'Email не отправлен', ai_score_updated: 'AI score обновлён', follow_up_draft: 'Follow-up черновик', sent_follow_up: 'Follow-up отправлен', attachments_sent: 'Материалы отправлены', lead_moved: 'Этап изменён', note_added: 'Заметка', ai_action_sent: 'AI действие отправлено', ai_action_approved: 'AI действие одобрено', ai_action_rejected: 'AI действие отклонено', ai_action_executed: 'AI действие выполнено', ai_action_failed: 'AI действие не выполнено', ai_telegram_reply_drafted: 'AI Telegram черновик создан', telegram_reply_analysis_created: 'AI анализ Telegram создан', follow_up_suggested: 'Follow-up suggested', follow_up_approved: 'Follow-up approved', follow_up_rejected: 'Follow-up rejected', follow_up_sent: 'Follow-up sent', follow_up_failed: 'Follow-up failed', calendar_ics_created: 'ICS файл встречи создан' }[event?.type] || event?.title || 'Событие');
 }
 
 const modalCloseStack = [];
@@ -398,6 +409,17 @@ export default function CRMPage() {
     refreshLeadEmails(selectedLead).catch((requestError) => setError(requestError.message || 'Не удалось загрузить историю email'));
     refreshActionCenter(selectedLead).catch((requestError) => setError(requestError.message || 'Не удалось загрузить AI Action Center'));
   }, [selectedLeadId]);
+
+
+  async function handleDownloadMeetingIcs(meeting) {
+    if (!meeting?.id) return;
+    setError('');
+    try {
+      await downloadCrmMeetingIcs(meeting.id);
+    } catch (requestError) {
+      setError(requestError.message || 'Не удалось скачать ICS');
+    }
+  }
 
   async function handleGenerateEmail() {
     if (!selectedLead) return;
@@ -1154,6 +1176,34 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
               ) : <p className="empty-state">Запустите «Анализ лида», чтобы получить AI рекомендации.</p>}
               {Array.isArray(getAiRecommendation(lead)?.recommendations) && <ul className="ai-recommendation-list">{getAiRecommendation(lead).recommendations.map((item, index) => <li key={`${item}-${index}`}>{item}</li>)}</ul>}
               {getLeadAiScore(lead) && <div className="ai-advisor-strip"><p><b>AI рекомендация:</b> {getLeadAiScore(lead).recommendedNextStep || getLeadAiScore(lead).nextBestAction || "Назначить следующий шаг"}</p><p><b>Рекомендуемый CTA:</b> {getLeadAiScore(lead).recommendedCta || "Назначить следующий шаг"}</p><p><b>Возражения:</b> {(getLeadAiScore(lead).objectionsDetected || []).join(", ") || "не обнаружены"}</p><p><b>AI Outreach Engine:</b> {telegramOutreachDrafts.length + emailOutreachDrafts.length} черновиков ждут approval · readiness {getLeadAiScore(lead).temperature === 'hot' ? 'немедленно' : getLeadAiScore(lead).temperature === 'warm' ? 'первый контакт' : 'только рекомендация'}</p></div>}
+            </div>
+
+
+            <div className="detail-section meeting-calendar-panel">
+              <div className="telegram-chat-head">
+                <div>
+                  <h4>Запланированная встреча</h4>
+                  <p>Calendar Integration v1 готовит внутренний .ics без Google OAuth и без автоотправки файлов.</p>
+                </div>
+                <span className="telegram-badge">Calendar</span>
+              </div>
+              {getScheduledMeetings(lead).length === 0 && <p className="empty-state">Встречи ещё не запланированы.</p>}
+              {getScheduledMeetings(lead).map((meeting) => (
+                <article className="meeting-calendar-card" key={meeting.id}>
+                  <div>
+                    <strong>{meeting.title || 'Demo-созвон AS6'}</strong>
+                    <small>{formatDate(meeting.startsAt)} · {meeting.durationMinutes || 30} мин · {meeting.timezone || 'Europe/Moscow'}</small>
+                  </div>
+                  <div className="meeting-calendar-meta">
+                    <span className={`calendar-status ${meeting.calendarStatus || 'pending'}`}>{calendarStatusLabel(meeting.calendarStatus)}</span>
+                    <span>{meeting.status || 'scheduled'}</span>
+                  </div>
+                  <div className="meeting-calendar-actions">
+                    <button type="button" className="btn primary compact" onClick={() => handleDownloadMeetingIcs(meeting)} disabled={!meeting.hasIcs}>{meeting.hasIcs ? 'Скачать .ics' : '.ics готовится'}</button>
+                    <span className="calendar-placeholder">Google Calendar скоро</span>
+                  </div>
+                </article>
+              ))}
             </div>
 
             <div className="detail-section ai-action-center-card execution-center-card">

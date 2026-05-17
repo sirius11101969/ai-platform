@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Panel, PageHeading, StatCard } from "../components/AppShell";
-import { approveAiApprovalQueueItem, executeAiApprovalQueueItem, fetchAiApprovalQueue, fetchAiCommandCenter, rejectAiApprovalQueueItem, runAiWorker, seedDemoSalesPipeline, updateAiApprovalQueueItem, updateAiWorker } from "../services/api";
+import { approveAiApprovalQueueItem, downloadCrmMeetingIcs, executeAiApprovalQueueItem, fetchAiApprovalQueue, fetchAiCommandCenter, rejectAiApprovalQueueItem, runAiWorker, seedDemoSalesPipeline, updateAiApprovalQueueItem, updateAiWorker } from "../services/api";
 
 const typeLabels = {
   ai_sdr_agent: "AI SDR Agent",
@@ -136,19 +136,23 @@ function formatMeetingStart(value) {
   return new Intl.DateTimeFormat("ru-RU", { dateStyle: "short", timeStyle: "short" }).format(new Date(value));
 }
 
-function renderMeetingScheduleDetails(item) {
+function renderMeetingScheduleDetails(item, { onDownloadIcs } = {}) {
   if (!isMeetingScheduleProposal(item)) return null;
   const payload = item.payload || {};
+  const meeting = item.meeting || null;
   return (
     <div className="approval-stage-details meeting-schedule-details">
       <span>Лид <b>{item.lead?.name || payload.leadName || "—"}</b></span>
       <span>Входящее <b>{payload.inboundMessage || payload.customerMessage || "—"}</b></span>
       <span>Дата/время <b>{payload.detectedDateText || "—"} {payload.detectedTimeText || "—"}</b></span>
-      <span>Старт <b>{formatMeetingStart(payload.proposedStartTime)}</b></span>
-      <span>Название <b>{payload.proposedTitle || "Demo-созвон"}</b></span>
-      <span>Длительность <b>{payload.durationMinutes || 30} мин</b></span>
+      <span>Старт <b>{formatMeetingStart(meeting?.startsAt || payload.proposedStartTime)}</b></span>
+      <span>Название <b>{meeting?.title || payload.proposedTitle || "Demo-созвон"}</b></span>
+      <span>Длительность <b>{meeting?.durationMinutes || payload.durationMinutes || 30} мин</b></span>
       <span>Confidence <b>{payload.confidence || "—"}%</b></span>
       <span>Канал <b>{payload.channel || "—"}</b></span>
+      {meeting && <span>CRM meeting <b>создан</b></span>}
+      {meeting?.calendarStatus === "ics_ready" && <span className="ics-ready-badge">ICS ready</span>}
+      {meeting?.hasIcs && <button type="button" className="ghost-button compact" onClick={() => onDownloadIcs?.(meeting)}>Скачать .ics</button>}
     </div>
   );
 }
@@ -312,6 +316,18 @@ export default function AiWorkersPage() {
       setError(requestError.message || "Не удалось запустить AI сотрудника");
     } finally {
       setBusyWorker("");
+    }
+  }
+
+
+  async function handleDownloadIcs(meeting) {
+    setError("");
+    setMessage("");
+    try {
+      await downloadCrmMeetingIcs(meeting.id);
+      setMessage("ICS файл встречи скачан.");
+    } catch (requestError) {
+      setError(requestError.message || "Не удалось скачать ICS");
     }
   }
 
@@ -512,7 +528,7 @@ export default function AiWorkersPage() {
                 <strong>{item.title}</strong>
                 <p>{shortRecommendation(item)}</p>
                 {renderStageDetails(item)}
-                {renderMeetingScheduleDetails(item)}
+                {renderMeetingScheduleDetails(item, { onDownloadIcs: handleDownloadIcs })}
                 {renderTelegramReplyDraft(item, {
                   isEditing: isEditingThisDraft,
                   editText: isEditingThisDraft ? editingDraft.text : getDraftText(item),
@@ -558,7 +574,7 @@ export default function AiWorkersPage() {
                     <strong>{item.title}</strong>
                     <p>{shortRecommendation(item)}</p>
                     {renderStageDetails(item)}
-                    {renderMeetingScheduleDetails(item)}
+                    {renderMeetingScheduleDetails(item, { onDownloadIcs: handleDownloadIcs })}
                     {renderTelegramReplyDraft(item)}
                     {item.errorMessage && <small className="email-error-text">Ошибка выполнения: {formatApprovalErrorMessage(item.errorMessage)}</small>}
                   </div>
