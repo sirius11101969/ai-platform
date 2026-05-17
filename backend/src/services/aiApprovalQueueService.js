@@ -140,7 +140,22 @@ async function updateQueueItem(userId, workspaceId, queueId, payload) {
   function set(column, value) { values.push(value); updates.push(`${column} = $${values.length}`) }
   if (payload.title !== undefined) set('title', String(payload.title || current.title).trim() || current.title)
   if (payload.recommendation !== undefined) set('recommendation', String(payload.recommendation || ''))
-  if (payload.payload !== undefined) set('payload', payload.payload || {})
+  if (payload.payload !== undefined) {
+    const nextPayload = payload.payload || {}
+    if (current.executionType === 'telegram_reply_draft') {
+      const editedText = nextPayload.editedText ?? nextPayload.edited_text
+      const normalizedEditedText = editedText !== undefined ? String(editedText || '').trim() : ''
+      if (normalizedEditedText) {
+        nextPayload.editedText = normalizedEditedText
+        nextPayload.edited_text = normalizedEditedText
+        nextPayload.text = normalizedEditedText
+        nextPayload.message = normalizedEditedText
+        nextPayload.editedByManager = true
+        nextPayload.managerEditedAt = nextPayload.managerEditedAt || new Date().toISOString()
+      }
+    }
+    set('payload', nextPayload)
+  }
   if (payload.actionType !== undefined) {
     const nextType = normalizeActionType(payload.actionType)
     if (!EXECUTION_TYPES.includes(nextType)) throw russianError('Неподдерживаемый тип AI действия')
@@ -192,7 +207,10 @@ async function rejectQueueItem(userId, workspaceId, queueId) {
 
 function buildMessage(item) {
   if (item.executionType === 'send_demo_link') return item.recommendation || 'Демо AS6 AI CRM Platform: https://www.as6.ru'
-  return item.payload.text || item.payload.message || item.recommendation || item.title
+  if (item.executionType === 'telegram_reply_draft') {
+    return item.payload.editedText || item.payload.edited_text || item.payload.draftText || item.payload.text || item.payload.message || item.recommendation || item.title
+  }
+  return item.payload.editedText || item.payload.draftText || item.payload.text || item.payload.message || item.recommendation || item.title
 }
 
 async function executeByType(userId, workspaceId, item) {

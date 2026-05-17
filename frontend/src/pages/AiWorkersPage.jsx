@@ -96,23 +96,68 @@ function renderStageDetails(item) {
   );
 }
 
+function getDraftText(item) {
+  return item?.payload?.editedText || item?.payload?.edited_text || item?.payload?.draftText || item?.payload?.text || item?.payload?.message || item?.recommendation || "";
+}
+
+function getInboundText(item) {
+  return item?.payload?.inboundText || item?.payload?.inboundMessage || item?.payload?.customerMessage || "";
+}
+
+function riskLabel(level) {
+  return ({ low: "Низкий риск", medium: "Средний риск", high: "Высокий риск" }[level] || level || "");
+}
+
+function forecastLabel(category) {
+  return ({ committed: "Committed", likely: "Likely", possible: "Possible", at_risk: "At risk", lost_risk: "Lost risk" }[category] || category || "");
+}
+
+function getForecastRiskBadge(item) {
+  const payload = item?.payload || {};
+  const score = payload.lastAiScore || {};
+  const risk = payload.riskLevel || score.riskLevel;
+  const forecast = payload.forecastCategory || score.forecastCategory;
+  if (risk) return `Риск: ${riskLabel(risk)}`;
+  if (forecast) return `Forecast: ${forecastLabel(forecast)}`;
+  if (score.probabilityToClose || score.dealProbability) return `Вероятность: ${score.probabilityToClose || score.dealProbability}%`;
+  return "";
+}
+
 function isTelegramReplyDraft(item) {
   return item?.actionType === "telegram_reply_draft" || item?.executionType === "telegram_reply_draft";
 }
 
-function renderTelegramReplyDraft(item) {
+function renderTelegramReplyDraft(item, { isEditing = false, editText = "", onEditTextChange, onSaveEdit, onCancelEdit, editBusy = false } = {}) {
   if (!isTelegramReplyDraft(item)) return null;
-  const inbound = item.payload?.inboundMessage || item.payload?.customerMessage || "—";
-  const draft = item.payload?.text || item.payload?.message || item.recommendation || "—";
+  const inbound = getInboundText(item) || "—";
+  const draft = getDraftText(item) || "—";
+  const wasEdited = Boolean(item.payload?.editedByManager || item.payload?.editedText || item.payload?.edited_text);
+  const forecastRiskBadge = getForecastRiskBadge(item);
   return (
     <div className="telegram-reply-draft-card">
-      <div>
-        <span>Inbound message</span>
-        <p>{inbound}</p>
+      <div className="telegram-reply-card-head">
+        <span className="telegram-badge">Telegram</span>
+        <span className="telegram-meta-pill">Этап: {stageLabel(item.payload?.leadStage || item.payload?.currentStage || item.lead?.status)}</span>
+        {forecastRiskBadge && <span className="telegram-meta-pill risk">{forecastRiskBadge}</span>}
+        {wasEdited && <span className="telegram-meta-pill edited">Изменено менеджером</span>}
       </div>
       <div>
-        <span>AI draft response</span>
-        <p>{draft}</p>
+        <span>Последнее входящее сообщение</span>
+        <p>{inbound}</p>
+      </div>
+      <div className="telegram-draft-body">
+        <span>AI drafted reply text</span>
+        {!isEditing ? (
+          <p>{draft}</p>
+        ) : (
+          <div className="telegram-draft-editor">
+            <textarea value={editText} onChange={(event) => onEditTextChange(event.target.value)} autoFocus />
+            <div className="telegram-draft-editor-actions">
+              <button type="button" className="btn primary compact" onClick={onSaveEdit} disabled={editBusy || !editText.trim()}>{editBusy ? "Сохраняем…" : "Сохранить черновик"}</button>
+              <button type="button" className="ghost-button compact" onClick={onCancelEdit} disabled={editBusy}>Отмена</button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -127,12 +172,14 @@ const approvalActionMessages = {
   approve: "Действие одобрено",
   reject: "Действие отклонено",
   execute: "Действие выполнено",
+  edit: "Черновик сохранён",
 };
 
 const approvalActionLoadingLabels = {
   approve: "Одобряем…",
   reject: "Отклоняем…",
   execute: "Выполняем…",
+  edit: "Сохраняем…",
 };
 
 const APPROVAL_ACTION_TIMEOUT_MS = 20000;
@@ -175,6 +222,7 @@ export default function AiWorkersPage() {
   const [message, setMessage] = useState("");
   const [approvalQueue, setApprovalQueue] = useState({ items: [], metrics: {} });
   const [busyAction, setBusyAction] = useState(null);
+  const [editingDraft, setEditingDraft] = useState({ itemId: "", text: "" });
 
   async function loadCommandCenter({ silent = false } = {}) {
     if (!silent) {
@@ -283,16 +331,26 @@ export default function AiWorkersPage() {
     }
   }
 
-  async function handleEditApprovalItem(item) {
-    const isTelegramReplyDraft = item.actionType === "telegram_reply_draft" || item.executionType === "telegram_reply_draft";
-    const currentText = isTelegramReplyDraft ? (item.payload?.text || item.payload?.message || item.recommendation || "") : (item.recommendation || item.title || "");
-    const nextText = window.prompt(isTelegramReplyDraft ? "Изменить AI draft response" : "Изменить рекомендацию AI", currentText);
+  function handleEditApprovalItem(item) {
+    const isTelegramReplyDraftItem = item.actionType === "telegram_reply_draft" || item.executionType === "telegram_reply_draft";
+    if (isTelegramReplyDraftItem) {
+      setEditingDraft({ itemId: item.id, text: getDraftText(item) });
+      return;
+    }
+    const currentText = item.recommendation || item.title || "";
+    const nextText = window.prompt("Изменить рекомендацию AI", currentText);
     if (nextText === null) return;
+    saveApprovalItemEdit(item, nextText);
+  }
+
+  async function saveApprovalItemEdit(item, nextText) {
     setBusyAction({ itemId: item.id, action: "edit" });
     setError("");
     try {
-      if (isTelegramReplyDraft) {
-        await updateAiApprovalQueueItem(item.id, { payload: { ...(item.payload || {}), text: nextText, message: nextText, editedByManager: true } });
+      if (isTelegramReplyDraft(item)) {
+        const normalizedText = String(nextText || "").trim();
+        await updateAiApprovalQueueItem(item.id, { payload: { ...(item.payload || {}), draftText: item.payload?.draftText || item.payload?.text || item.payload?.message || item.recommendation || "", editedText: normalizedText, edited_text: normalizedText, text: normalizedText, message: normalizedText, editedByManager: true } });
+        setEditingDraft({ itemId: "", text: "" });
         setMessage("AI draft response изменён.");
       } else {
         await updateAiApprovalQueueItem(item.id, { recommendation: nextText });
@@ -327,8 +385,8 @@ export default function AiWorkersPage() {
   const recentRuns = commandCenter?.recentRuns || [];
   const metrics = commandCenter?.metrics || {};
   const approvalItems = approvalQueue.items || [];
-  const activeApprovalItems = useMemo(() => approvalItems.filter((item) => !["rejected", "completed", "executed", "failed", "cancelled"].includes(item.status)), [approvalItems]);
-  const approvalHistoryItems = useMemo(() => approvalItems.filter((item) => ["rejected", "completed", "executed", "failed", "cancelled"].includes(item.status)), [approvalItems]);
+  const activeApprovalItems = useMemo(() => approvalItems.filter((item) => !["rejected", "completed", "executed", "cancelled"].includes(item.status)), [approvalItems]);
+  const approvalHistoryItems = useMemo(() => approvalItems.filter((item) => ["rejected", "completed", "executed", "cancelled"].includes(item.status)), [approvalItems]);
   const approvalMetrics = approvalQueue.metrics || {};
   const pendingActions = useMemo(() => queue.filter((item) => item.status === "pending_approval"), [queue]);
   const failedActions = useMemo(() => queue.filter((item) => item.status === "failed"), [queue]);
@@ -386,13 +444,25 @@ export default function AiWorkersPage() {
           {activeApprovalItems.slice(0, 12).map((item) => {
             const isItemBusy = busyAction?.itemId === item.id;
             const busyLabel = isItemBusy ? approvalActionLoadingLabels[busyAction.action] : "";
+            const isEditingThisDraft = editingDraft.itemId === item.id;
+            const isApproveBusy = isItemBusy && busyAction.action === "approve";
+            const isEditBusy = isItemBusy && busyAction.action === "edit";
+            const isRejectBusy = isItemBusy && busyAction.action === "reject";
+            const isExecuteBusy = isItemBusy && busyAction.action === "execute";
             return (
             <article className={`approval-row approval-${item.status}`} key={item.id}>
               <div className="approval-main">
                 <strong>{item.title}</strong>
                 <p>{shortRecommendation(item)}</p>
                 {renderStageDetails(item)}
-                {renderTelegramReplyDraft(item)}
+                {renderTelegramReplyDraft(item, {
+                  isEditing: isEditingThisDraft,
+                  editText: isEditingThisDraft ? editingDraft.text : getDraftText(item),
+                  onEditTextChange: (text) => setEditingDraft({ itemId: item.id, text }),
+                  onSaveEdit: () => saveApprovalItemEdit(item, editingDraft.text),
+                  onCancelEdit: () => setEditingDraft({ itemId: "", text: "" }),
+                  editBusy: isEditBusy,
+                })}
                 {item.errorMessage && <small className="email-error-text">Ошибка выполнения: {formatApprovalErrorMessage(item.errorMessage)}</small>}
               </div>
               <div><span>Лид</span><b>{item.lead?.name || "—"}</b></div>
@@ -401,15 +471,15 @@ export default function AiWorkersPage() {
               <div><span>Тип</span><b>{actionTypeLabels[item.executionType] || actionTypeLabels[item.actionType] || item.actionType}</b></div>
               <div><span>Статус</span><b className={`glow-status ${item.status}`}>{approvalStatusLabels[item.status] || item.status}</b><small>{formatDate(item.createdAt)}</small></div>
               <div className="approval-actions">
-                {item.status === "pending_approval" && (
-                  <button type="button" className="ghost-button compact" onClick={() => handleApprovalAction(item, "approve")} disabled={isItemBusy}>{isItemBusy && busyAction.action === "approve" ? busyLabel : "Одобрить"}</button>
+                {["pending_approval", "failed"].includes(item.status) && (
+                  <button type="button" className="ghost-button compact" onClick={() => handleApprovalAction(item, "approve")} disabled={isApproveBusy}>{isApproveBusy ? busyLabel : "Одобрить"}</button>
                 )}
-                <button type="button" className="ghost-button compact" onClick={() => handleEditApprovalItem(item)} disabled={isItemBusy || ["executing","completed"].includes(item.status)}>{isItemBusy && busyAction.action === "edit" ? "Сохраняем…" : "Изменить"}</button>
+                <button type="button" className="ghost-button compact" onClick={() => handleEditApprovalItem(item)} disabled={isEditBusy || ["executing","completed"].includes(item.status)}>{isEditBusy ? "Сохраняем…" : "Изменить"}</button>
                 {!["executing", "completed", "rejected"].includes(item.status) && (
-                  <button type="button" className="ghost-button compact danger-action" onClick={() => handleApprovalAction(item, "reject")} disabled={isItemBusy}>{isItemBusy && busyAction.action === "reject" ? busyLabel : "Отклонить"}</button>
+                  <button type="button" className="ghost-button compact danger-action" onClick={() => handleApprovalAction(item, "reject")} disabled={isRejectBusy}>{isRejectBusy ? busyLabel : "Отклонить"}</button>
                 )}
-                {item.status === "approved" && isApprovalItemExecutable(item) && (
-                  <button type="button" className="btn primary compact" onClick={() => handleApprovalAction(item, "execute")} disabled={isItemBusy}>{isItemBusy && busyAction.action === "execute" ? busyLabel : isTelegramReplyDraft(item) ? "Отправить" : "Выполнить"}</button>
+                {(isTelegramReplyDraft(item) || (item.status === "approved" && isApprovalItemExecutable(item))) && (
+                  <button type="button" className="btn primary compact" onClick={() => handleApprovalAction(item, "execute")} disabled={isExecuteBusy || item.status !== "approved"}>{isExecuteBusy ? busyLabel : isTelegramReplyDraft(item) ? "Отправить" : "Выполнить"}</button>
                 )}
               </div>
             </article>
