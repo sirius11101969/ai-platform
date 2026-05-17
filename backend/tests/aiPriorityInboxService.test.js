@@ -12,6 +12,9 @@ function lead(overrides = {}) {
     aiTemperature: overrides.aiTemperature || 'hot',
     updatedAt: overrides.updatedAt || new Date().toISOString(),
     createdAt: overrides.createdAt || new Date().toISOString(),
+    telegramChatId: overrides.telegramChatId || '',
+    email: overrides.email || '',
+    company: overrides.company || '',
     meetings: overrides.meetings || [],
     aiFollowupJobs: overrides.aiFollowupJobs || [],
     telegramMessages: overrides.telegramMessages || [],
@@ -74,11 +77,40 @@ function testBookedMeetingDoesNotSuggestSchedulingDemoAgain() {
   assert.ok(['Подготовиться к встрече', 'Согласовать demo', 'Сделать follow-up после встречи'].includes(action.action), `unexpected booked action: ${action.action}`)
 }
 
+function testPriorityActionPayloads() {
+  const telegramLead = lead({ id: 'telegram-lead', name: 'Telegram Connect Test', telegramChatId: '12345', aiScoringReason: 'Клиент ждёт ответ' })
+  const telegramItem = item({ id: 'telegram-lead', name: 'Telegram Connect Test', telegramChatId: '12345', aiScoringReason: 'Клиент ждёт ответ' })
+  const telegramPayload = _private.buildPriorityActionPayload(telegramLead, telegramItem, 'telegram')
+  assert.strictEqual(telegramPayload.source, 'priority_inbox')
+  assert.strictEqual(telegramPayload.channel, 'telegram')
+  assert.strictEqual(telegramPayload.chatId, '12345')
+  assert.ok(telegramPayload.draftText.includes(telegramItem.nextBestAction))
+
+  const emailLead = lead({ id: 'maria', name: 'Maria', email: 'maria@example.com', aiScoringReason: 'Нужно отправить предложение' })
+  const emailItem = item({ id: 'maria', name: 'Maria', email: 'maria@example.com', aiScoringReason: 'Нужно отправить предложение' })
+  const emailPayload = _private.buildPriorityActionPayload(emailLead, emailItem, 'email')
+  assert.strictEqual(emailPayload.channel, 'email')
+  assert.strictEqual(emailPayload.email, 'maria@example.com')
+  assert.ok(emailPayload.subject)
+  assert.ok(emailPayload.body.includes(emailItem.nextBestAction))
+
+  const followupPayload = _private.buildPriorityActionPayload(emailLead, emailItem, 'followup')
+  assert.strictEqual(followupPayload.sequenceStep, 'manual_priority_followup')
+  assert.strictEqual(followupPayload.channel, 'email')
+  assert.strictEqual(followupPayload.noAutoSend, true)
+
+  const meetingPayload = _private.buildPriorityActionPayload(emailLead, emailItem, 'meeting')
+  assert.strictEqual(meetingPayload.suggestedTime, null)
+  assert.strictEqual(meetingPayload.source, 'priority_inbox')
+  assert.strictEqual(meetingPayload.proposalType, 'demo_scheduling')
+}
+
 function run() {
   testFocusModeHidesGenericHighNoise()
   testFocusMetricsDoNotCountGenericHighLeads()
   testFocusSortGroupsExecutiveSignals()
   testBookedMeetingDoesNotSuggestSchedulingDemoAgain()
+  testPriorityActionPayloads()
   console.log('aiPriorityInboxService tests passed')
 }
 

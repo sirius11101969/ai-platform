@@ -428,6 +428,10 @@ export function fetchAiPriorityInbox(params = {}) {
   return request(`/ai/priority-inbox${query ? `?${query}` : ''}`)
 }
 
+export function createPriorityInboxAction(payload) {
+  return request('/ai/priority-inbox/actions', { method: 'POST', body: JSON.stringify(payload) })
+}
+
 export function fetchAiApprovalQueue(params = {}) {
   const query = new URLSearchParams(Object.entries(params).filter(([, value]) => value !== undefined && value !== null && value !== '')).toString()
   return request(`/ai/approval-queue${query ? `?${query}` : ''}`)

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { PageHeading, Panel } from "../components/AppShell";
-import { createCrmFollowUp, fetchAiPriorityInbox } from "../services/api";
+import { createPriorityInboxAction, fetchAiPriorityInbox } from "../services/api";
 
 const TABS = [
   { key: "focus", label: "Focus" },
@@ -39,12 +39,14 @@ export default function PriorityInboxPage() {
   const [mode, setMode] = useState("focus");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [busyFollowUp, setBusyFollowUp] = useState({});
+  const [busyActions, setBusyActions] = useState({});
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
   async function loadInbox(nextMode = mode) {
     setLoading(true);
     setError("");
+    setMessage("");
     try {
       const response = await fetchAiPriorityInbox({ mode: nextMode });
       setInbox({
@@ -73,16 +75,28 @@ export default function PriorityInboxPage() {
     navigate(url);
   }
 
-  async function handleCreateFollowUp(lead) {
-    setBusyFollowUp((current) => ({ ...current, [lead.leadId]: true }));
+  function actionBusyKey(lead, actionType) {
+    return `${lead.leadId}:${actionType}`;
+  }
+
+  function isActionBusy(lead, actionType) {
+    return Boolean(busyActions[actionBusyKey(lead, actionType)]);
+  }
+
+  async function handlePriorityAction(lead, actionType) {
+    const busyKey = actionBusyKey(lead, actionType);
+    console.log("[priority-inbox] action button clicked", { leadId: lead.leadId, actionType });
+    setBusyActions((current) => ({ ...current, [busyKey]: true }));
     setError("");
+    setMessage("");
     try {
-      await createCrmFollowUp(lead.leadId);
-      await loadInbox(mode);
+      const result = await createPriorityInboxAction({ leadId: lead.leadId, actionType });
+      setMessage(result.duplicate ? "Действие уже ждёт approval — открываем AI Workers" : "AI действие создано — открываем approval center");
+      navigate(result.redirectTo || "/ai-workers");
     } catch (requestError) {
-      setError(requestError.message || "Не удалось создать follow-up");
+      setError(requestError.message || "Не удалось создать AI действие");
     } finally {
-      setBusyFollowUp((current) => ({ ...current, [lead.leadId]: false }));
+      setBusyActions((current) => ({ ...current, [busyKey]: false }));
     }
   }
 
@@ -96,6 +110,7 @@ export default function PriorityInboxPage() {
       />
 
       {error && <p className="auth-error">{error}</p>}
+      {message && <p className="success-alert">{message}</p>}
 
       <section className="priority-metrics" aria-label="Метрики AI Priority Inbox">
         {["urgentLeads", "focusLeads", "atRiskDeals", "meetingsToday", "followUpsNeeded"].map((key) => (
@@ -163,10 +178,10 @@ export default function PriorityInboxPage() {
             </div>
 
             <div className="priority-card-actions">
-              <button type="button" onClick={() => openLead(lead, "telegram")}>Telegram</button>
-              <button type="button" onClick={() => openLead(lead, "email")}>Email</button>
-              <button type="button" onClick={() => handleCreateFollowUp(lead)} disabled={busyFollowUp[lead.leadId]}>{busyFollowUp[lead.leadId] ? "Создаём…" : "Create Follow-up"}</button>
-              <button type="button" onClick={() => openLead(lead, "demo")}>Meeting</button>
+              <button type="button" onClick={() => handlePriorityAction(lead, "telegram")} disabled={isActionBusy(lead, "telegram")}>{isActionBusy(lead, "telegram") ? "Создаём…" : "Telegram"}</button>
+              <button type="button" onClick={() => handlePriorityAction(lead, "email")} disabled={isActionBusy(lead, "email")}>{isActionBusy(lead, "email") ? "Создаём…" : "Email"}</button>
+              <button type="button" onClick={() => handlePriorityAction(lead, "followup")} disabled={isActionBusy(lead, "followup")}>{isActionBusy(lead, "followup") ? "Создаём…" : "Create Follow-up"}</button>
+              <button type="button" onClick={() => handlePriorityAction(lead, "meeting")} disabled={isActionBusy(lead, "meeting")}>{isActionBusy(lead, "meeting") ? "Создаём…" : "Meeting"}</button>
               <button type="button" className="primary-card-action" onClick={() => openLead(lead, "lead")}>Open CRM Lead</button>
             </div>
           </Panel>
