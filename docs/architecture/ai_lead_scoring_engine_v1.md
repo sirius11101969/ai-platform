@@ -76,9 +76,40 @@ If a lead becomes high priority or high risk, the Approval Center receives:
 - `action_type = 'lead_priority_recommendation'`;
 - examples: “Высокий шанс сделки”, “Риск потери лида”, “Рекомендуется срочный follow-up”, “Lead готов к demo”.
 
+
+## v2 calibration (May 2026)
+
+The v2 calibration keeps the v1 data model and worker, but changes the scoring distribution so the sales queue is not flooded with 84–100 scores. The score is now an opportunity score, risk is tracked separately, and operational priority combines score with strong buying signals and risk.
+
+### Calibrated score bands
+
+| Score | Sales category | `ai_priority` | `ai_temperature` |
+| --- | --- | --- | --- |
+| 0–24 | cold | `low` | `cold` |
+| 25–49 | warm | `medium` | `warm` |
+| 50–69 | hot | `high` | `hot` |
+| 70–84 | priority | `priority` | `hot` |
+| 85–100 | urgent / top priority only | `urgent` only when there is a strong buying signal or high risk, otherwise `priority` | `priority` |
+
+### Calibrated factor weights
+
+Generic words no longer create inflated scores by themselves. Pricing intent alone adds `+10`, demo intent alone adds `+10`, and pricing plus demo together adds `+18`. Additional calibrated signals include meeting booked `+18`, explicit company/team context `+8`, enterprise/team size above 20 people `+12`, recent inbound `+8`, multiple inbound messages `+8`, Telegram connected `+5`, booked stage `+12`, and proposal stage `+14`.
+
+Inactivity penalties are tiered and skipped when a meeting is already booked: inactive for more than 3 days applies `-10`, more than 7 days applies `-20`, and more than 14 days applies `-35`. Closed-lost leads are capped at 20, forced to `ai_priority='low'`, and forced to `ai_temperature='cold'`. Closed-won leads keep their analytics score but are forced to `ai_priority='low'` so they do not pollute the active priority queue.
+
+### Risk and recommendations
+
+Risk no longer automatically boosts the opportunity score. `ai_risk_level` is `high` when a hot/proposal/booked-stage deal is inactive for more than 7 days, `medium` when any active lead is inactive for more than 3 days, and `low` otherwise. Other risk signals such as ghosting, bounced email, stalled deal, or no meeting outcome can still mark the lead as medium/high risk without increasing the score.
+
+The Approval Center now creates `lead_priority_recommendation` items only when `ai_priority` is `priority`/`urgent` or `ai_risk_level` is `medium`/`high`; won/lost leads are skipped. Reasoning text is compacted under 500 characters and lists positive signals, negative penalties, risks, and the final score/category.
+
+### Dashboard counting
+
+Priority Leads count only active leads whose latest `crm_leads.ai_priority` is `priority` or `urgent`; won/lost leads are excluded. At-risk Deals count both `medium` and `high` risk levels. This keeps won/lost deals and merely warm leads out of the priority dashboard while still surfacing stalled deals that need operational follow-up.
+
 ## Manual execution
 
-The CRM page has a **“Запустить scoring”** button. It calls `POST /crm/lead-scoring/run`, scans active leads (`status NOT IN ('won','lost')`), and recalculates scores.
+The CRM page has a **“Запустить scoring”** button. It calls `POST /crm/lead-scoring/run`, scans active leads (`status NOT IN ('won','lost','closed_won','closed_lost')`), and recalculates scores.
 
 Single-lead scoring is available through `POST /crm/leads/:id/lead-scoring` and is used by the lead detail scoring button.
 

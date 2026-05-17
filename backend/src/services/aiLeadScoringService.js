@@ -24,18 +24,46 @@ function textIncludes(text, patterns) {
 }
 
 function temperatureForScore(score) {
-  if (score <= 25) return 'cold'
-  if (score <= 50) return 'warm'
-  if (score <= 75) return 'hot'
+  if (score <= 24) return 'cold'
+  if (score <= 49) return 'warm'
+  if (score <= 84) return 'hot'
   return 'priority'
 }
 
-function priorityForScore(score, riskLevel) {
-  if (riskLevel === 'high' && score >= 35) return 'urgent'
-  if (score >= 76) return 'priority'
-  if (score >= 51) return 'high'
-  if (score >= 26) return 'medium'
+function priorityForScore(score, { hasStrongBuyingSignal = false, riskLevel = 'low', isClosedWon = false, isClosedLost = false } = {}) {
+  if (isClosedWon || isClosedLost) return 'low'
+  if (score >= 85 && (hasStrongBuyingSignal || riskLevel === 'high')) return 'urgent'
+  if (score >= 70) return 'priority'
+  if (score >= 50) return 'high'
+  if (score >= 25) return 'medium'
   return 'low'
+}
+
+function normalizeLeadStage(lead = {}) {
+  return String(lead.status || lead.stage || lead.pipeline_stage || lead.stage_code || '').toLowerCase()
+}
+
+function isClosedWonStage(stage) {
+  return ['won', 'closed_won'].includes(stage)
+}
+
+function isClosedLostStage(stage) {
+  return ['lost', 'closed_lost'].includes(stage)
+}
+
+function isMeetingBooked(lead, meetings) {
+  const stage = normalizeLeadStage(lead)
+  return ['booked', 'meeting_booked', 'demo_booked'].includes(stage) || meetings.some((m) => !['cancelled', 'canceled', 'completed', 'done'].includes(String(m.status || '').toLowerCase()))
+}
+
+function hasEnterpriseTeamSignal(text) {
+  return textIncludes(text, [/(?:team|команд[ауы]?|people|users|сотрудник(?:ов|а)?|человек|пользовател(?:ей|я))\D{0,18}(?:2[1-9]|[3-9]\d|\d{3,})/i, /(?:2[1-9]|[3-9]\d|\d{3,})\D{0,18}(?:team|команд[ауы]?|people|users|сотрудник(?:ов|а)?|человек|пользовател(?:ей|я))/i, /enterprise|энтерпрайз|корпоративн/i])
+}
+
+function compactReason(parts, fallback) {
+  const text = parts.filter(Boolean).join('; ') || fallback
+  if (text.length <= 500) return text
+  return `${text.slice(0, 497).trim()}...`
 }
 
 function normalizeMessage(row) {
@@ -54,19 +82,28 @@ function calculateLeadScoring(context = {}) {
   const followups = context.followups || []
   const meetings = context.meetings || []
   const notes = context.notes || []
-  const activity = context.activity || []
+  const activity = (context.activity || []).filter((a) => !['lead_scored', 'lead_risk_detected'].includes(String(a.type || a.event_type || '').toLowerCase()))
   const allText = [lead.notes, lead.notesText, lead.first_message, lead.firstMessage, lead.company, ...telegramMessages.map((m) => m.text), ...emails.map((m) => `${m.subject || ''} ${m.text || m.text_body || ''}`), ...notes.map((n) => n.body), ...activity.map((a) => `${a.title || ''} ${a.body || ''}`)].join('\n').toLowerCase()
   const inboundMessages = telegramMessages.filter((m) => m.direction === 'inbound' || m.role === 'user')
   const outboundMessages = telegramMessages.filter((m) => m.direction === 'outbound' || m.role === 'assistant')
   const lastInboundAt = inboundMessages.map((m) => m.createdAt).filter(Boolean).sort().at(-1) || null
   const lastOutboundAt = outboundMessages.map((m) => m.createdAt).filter(Boolean).sort().at(-1) || null
-  const lastActivityAt = [lead.updated_at, lead.updatedAt, lead.last_message_at, lead.lastMessageAt, lastInboundAt, lastOutboundAt, ...emails.map((m) => m.createdAt), ...followups.map((f) => f.created_at || f.createdAt), ...activity.map((a) => a.created_at || a.createdAt)].filter(Boolean).sort().at(-1) || null
-  const inactiveDays = daysSince(lastActivityAt || lead.updated_at || lead.updatedAt || lead.created_at || lead.createdAt)
+  const lastActivityAt = [lead.last_message_at, lead.lastMessageAt, lastInboundAt, lastOutboundAt, ...emails.map((m) => m.createdAt), ...followups.map((f) => f.created_at || f.createdAt), ...activity.map((a) => a.created_at || a.createdAt)].filter(Boolean).sort().at(-1) || lead.updated_at || lead.updatedAt || lead.created_at || lead.createdAt || null
+  const inactiveDays = daysSince(lastActivityAt)
   const lastInboundDays = daysSince(lastInboundAt)
   const lastOutboundDays = daysSince(lastOutboundAt)
-  const openMeetings = meetings.filter((m) => !['cancelled', 'canceled', 'completed', 'done'].includes(String(m.status || '').toLowerCase()))
+  const stage = normalizeLeadStage(lead)
+  const isClosedWon = isClosedWonStage(stage)
+  const isClosedLost = isClosedLostStage(stage)
+  const bookedMeeting = isMeetingBooked(lead, meetings)
   const scheduledMeetings = meetings.filter((m) => ['scheduled', 'confirmed'].includes(String(m.status || '').toLowerCase()))
   const pastScheduledMeetings = scheduledMeetings.filter((m) => m.starts_at && new Date(m.starts_at).getTime() < Date.now())
+  const hasPricingIntent = textIncludes(allText, [/цен[ауы]?|стоимост|прайс|price|pricing|budget|бюджет|тариф/i])
+  const hasDemoIntent = textIncludes(allText, [/demo|демо|созвон|встреч|звонок|meet|calendar|календар/i])
+  const hasCompanyIntent = Boolean(lead.company) || textIncludes(allText, [/команд|team|company|компан|отдел|менеджер|sales|crm/i])
+  const hasEnterpriseIntent = hasEnterpriseTeamSignal(allText)
+  const hasUrgencyIntent = textIncludes(allText, [/сроч|сегодня|завтра|urgent|asap|быстр|немедленно|this week|на этой неделе/i])
+  const hotStages = ['hot', 'proposal', 'booked', 'meeting_booked', 'demo_booked']
 
   const factors = []
   const risks = []
@@ -74,32 +111,46 @@ function calculateLeadScoring(context = {}) {
   const add = (code, points, reason) => { score += points; factors.push({ code, points, reason }) }
   const risk = (code, level, reason) => { risks.push({ code, level, reason }) }
 
-  if (lastInboundDays !== null && lastInboundDays <= 2) add('replied_recently', 18, 'Лид недавно ответил')
-  if (textIncludes(allText, [/цен[ауы]?|стоимост|прайс|price|pricing|budget|бюджет|тариф/i])) add('pricing_intent', 18, 'Есть вопрос о цене/бюджете')
-  if (textIncludes(allText, [/demo|демо|созвон|встреч|звонок|meet|calendar|календар/i])) add('demo_intent', 16, 'Лид обсуждает demo или встречу')
-  if (openMeetings.length || lead.status === 'booked') add('meeting_booked', 24, 'Встреча забронирована')
-  if (lead.company || textIncludes(allText, [/команд|team|company|компан|отдел|менеджер|sales|crm/i])) add('company_intent', 10, 'Есть командный или корпоративный контекст')
-  if (inboundMessages.length >= 2) add('multiple_inbound_messages', Math.min(14, inboundMessages.length * 4), 'Несколько входящих сообщений')
-  if (textIncludes(allText, [/сроч|сегодня|завтра|urgent|asap|быстр|немедленно|this week|на этой неделе/i])) add('urgency_wording', 12, 'Есть срочность в формулировках')
-  if (lead.telegram_chat_id || lead.telegramChatId || lead.telegram || lead.source === 'telegram') add('active_telegram', 8, 'Активен Telegram канал')
+  if (lastInboundDays !== null && lastInboundDays <= 2) add('recent_inbound', 8, 'недавний inbound')
+  if (hasPricingIntent && hasDemoIntent) add('pricing_demo_intent', 18, 'цена + demo intent')
+  else if (hasPricingIntent) add('pricing_intent', 10, 'pricing intent')
+  else if (hasDemoIntent) add('demo_intent', 10, 'demo intent')
+  if (bookedMeeting) add('meeting_booked', 18, 'встреча забронирована')
+  if (hasEnterpriseIntent) add('enterprise_team', 12, 'enterprise/team >20')
+  else if (hasCompanyIntent) add('company_context', 8, 'компания/команда указана')
+  if (inboundMessages.length >= 2) add('multiple_inbound_messages', 8, 'несколько inbound сообщений')
+  if (lead.telegram_chat_id || lead.telegramChatId || lead.telegram || lead.source === 'telegram') add('telegram_connected', 5, 'Telegram подключён')
+  if (stage === 'booked') add('stage_booked', 12, 'stage booked')
+  if (stage === 'proposal') add('stage_proposal', 14, 'stage proposal')
+  if (hasUrgencyIntent) add('urgency_wording', 8, 'срочность в формулировках')
 
-  if (inactiveDays !== null && inactiveDays > 7) { add('inactive_7d', -25, 'Нет активности больше 7 дней'); risk('inactive_lead', 'medium', 'Лид неактивен более 7 дней') }
-  if (lastOutboundDays !== null && (lastInboundDays === null || lastInboundDays > lastOutboundDays) && outboundMessages.length + followups.length >= 2) { add('no_response_after_followups', -18, 'Нет ответа после follow-up'); risk('ghosting_risk', 'high', 'Риск ghosting после нескольких касаний') }
-  if (textIncludes(allText, [/не интересно|откаж|declin|cancel|отмена|не актуально|позже не нужно/i])) { add('declined_meeting', -22, 'Лид отказался или отменил следующий шаг'); risk('deal_stalled', 'high', 'Сделка может быть остановлена отказом') }
-  if (lead.status === 'lost' || lead.status === 'closed_lost') { add('closed_lost', -60, 'Лид закрыт как lost'); risk('deal_stalled', 'high', 'Лид уже закрыт как lost') }
-  if (textIncludes(allText, [/bounce|bounced|delivery failed|undeliver|недостав/i])) { add('bounced_email', -18, 'Email bounced'); risk('inactive_lead', 'medium', 'Email канал недоступен') }
-  if (followups.length >= 3 && (lastInboundDays === null || lastInboundDays > 5)) { add('repeated_no_replies', -16, 'Повторные no-reply follow-up'); risk('ghosting_risk', 'high', 'Повторные follow-up без ответа') }
-  if (lead.status === 'proposal' && inactiveDays !== null && inactiveDays > 5) risk('deal_stalled', 'high', 'Proposal/deal stalled без активности')
-  if (pastScheduledMeetings.length && !textIncludes(allText, [/провели|итог|результат|спасибо за встреч/i])) risk('meeting_no_show_risk', 'medium', 'Есть риск no-show или отсутствует итог встречи')
+  if (!bookedMeeting && inactiveDays !== null && inactiveDays > 14) add('inactive_14d', -35, 'inactive >14d')
+  else if (!bookedMeeting && inactiveDays !== null && inactiveDays > 7) add('inactive_7d', -20, 'inactive >7d')
+  else if (!bookedMeeting && inactiveDays !== null && inactiveDays > 3) add('inactive_3d', -10, 'inactive >3d')
 
+  if (inactiveDays !== null && inactiveDays > 7 && hotStages.includes(stage)) risk('inactive_hot_deal', 'high', 'inactive >7d на hot/proposal/booked stage')
+  else if (inactiveDays !== null && inactiveDays > 3) risk('inactive_lead', 'medium', 'inactive >3d')
+  if (lastOutboundDays !== null && (lastInboundDays === null || lastInboundDays > lastOutboundDays) && outboundMessages.length + followups.length >= 2) risk('ghosting_risk', 'high', 'несколько касаний без ответа')
+  if (textIncludes(allText, [/не интересно|откаж|declin|cancel|отмена|не актуально|позже не нужно/i])) { add('declined_meeting', -22, 'отказ/отмена'); risk('deal_stalled', 'high', 'отказ или отмена следующего шага') }
+  if (textIncludes(allText, [/bounce|bounced|delivery failed|undeliver|недостав/i])) { add('bounced_email', -18, 'email bounced'); risk('inactive_lead', 'medium', 'email канал недоступен') }
+  if (pastScheduledMeetings.length && !textIncludes(allText, [/провели|итог|результат|спасибо за встреч/i])) risk('meeting_no_show_risk', 'medium', 'нет итога прошедшей встречи')
+
+  if (isClosedLost) {
+    const lostPenalty = -Math.max(0, score - 20)
+    if (lostPenalty) add('closed_lost', lostPenalty, 'closed lost')
+    score = Math.min(score, 20)
+  }
   score = clampScore(score)
-  const highestRisk = risks.some((item) => item.level === 'high') ? 'high' : risks.some((item) => item.level === 'medium') ? 'medium' : 'low'
-  const temperature = temperatureForScore(score)
-  const priority = priorityForScore(score, highestRisk)
-  const reasonParts = factors.map((f) => `${f.points > 0 ? '+' : ''}${f.points}: ${f.reason}`)
-  const riskParts = risks.map((r) => r.reason)
-  const scoringReason = [...reasonParts, ...riskParts.map((item) => `Риск: ${item}`)].join('; ') || 'Недостаточно сигналов, применён базовый warm score.'
-  const nextBestAction = highestRisk === 'high' ? 'Рекомендуется срочный follow-up' : score >= 76 ? 'Высокий шанс сделки — зафиксируйте следующий шаг' : score >= 51 ? 'Lead готов к demo' : score <= 25 ? 'Нужен прогрев и уточнение интереса' : 'Продолжить квалификацию лида'
+  const detectedRisk = risks.some((item) => item.level === 'high') ? 'high' : risks.some((item) => item.level === 'medium') ? 'medium' : 'low'
+  const highestRisk = isClosedWon || isClosedLost ? 'low' : detectedRisk
+  const temperature = isClosedLost ? 'cold' : temperatureForScore(score)
+  const hasStrongBuyingSignal = (hasPricingIntent && hasDemoIntent) || bookedMeeting || hasEnterpriseIntent || hasUrgencyIntent
+  const priority = priorityForScore(score, { hasStrongBuyingSignal, riskLevel: highestRisk, isClosedWon, isClosedLost })
+  const positiveParts = factors.filter((f) => f.points > 0).map((f) => `+${f.points} ${f.reason}`)
+  const negativeParts = factors.filter((f) => f.points < 0).map((f) => `${f.points} ${f.reason}`)
+  const category = `${temperature}/${priority}`
+  const scoringReason = compactReason([positiveParts.length ? `Плюсы: ${positiveParts.join(', ')}` : 'Плюсы: слабые сигналы', negativeParts.length ? `Минусы: ${negativeParts.join(', ')}` : 'Минусы: нет', risks.length ? `Риск: ${risks.map((r) => r.reason).join(', ')}` : null, `Итог: ${score}/100 ${category}`], 'Недостаточно сигналов, применён базовый cold/warm score.')
+  const nextBestAction = priority === 'urgent' ? 'Срочно связаться с лидом и зафиксировать следующий шаг' : priority === 'priority' ? 'Зафиксировать следующий шаг в ближайшее время' : highestRisk === 'high' ? 'Рекомендуется срочный follow-up по риску' : score >= 50 ? 'Продолжить квалификацию и назначить demo' : score <= 24 ? 'Нужен прогрев и уточнение интереса' : 'Продолжить квалификацию лида'
 
   return {
     score,
@@ -148,9 +199,11 @@ async function buildLeadScoringContext(executor, userId, workspaceId, leadId) {
 }
 
 async function createPriorityRecommendation(client, { workspaceId, userId, leadId, lead, result, source }) {
-  if (result.score < 51 && result.riskLevel === 'low') return null
+  const stage = normalizeLeadStage(lead)
+  if (isClosedWonStage(stage) || isClosedLostStage(stage)) return null
+  if (!['priority', 'urgent'].includes(result.priority) && !['medium', 'high'].includes(result.riskLevel)) return null
   const worker = await ensureLeadScoringWorker(client, workspaceId)
-  const title = result.riskLevel === 'high' ? 'Риск потери лида' : result.score >= 76 ? 'Высокий шанс сделки' : result.score >= 51 ? 'Lead готов к demo' : 'Рекомендуется срочный follow-up'
+  const title = result.riskLevel === 'high' ? 'Риск потери лида' : result.priority === 'urgent' ? 'Срочный приоритетный лид' : result.priority === 'priority' ? 'Высокий шанс сделки' : 'Рекомендуется follow-up по риску'
   const recommendation = result.riskLevel === 'high' ? 'Рекомендуется срочный follow-up: высокий риск потери лида.' : result.nextBestAction
   const duplicate = await client.query(
     `SELECT id FROM ai_worker_queue
@@ -193,8 +246,8 @@ async function scoreLead({ userId, workspaceId, leadId, source = 'manual', clien
     )
     await tx.query(
       `INSERT INTO lead_ai_scores(workspace_id, lead_id, score, temperature, deal_probability, probability_to_close, urgency_level, engagement_level, ai_summary, next_best_action, risk_level, recommended_next_step, confidence, engagement_score, expected_revenue, forecast_category, risk_signals, ai_reasoning, next_best_action_code)
-       VALUES($1, $2, $3, CASE WHEN $4 = 'priority' THEN 'hot' ELSE $4 END, $3, $3, $5, CASE WHEN $3 >= 51 THEN 'hot' WHEN $3 >= 26 THEN 'warm' ELSE 'cold' END, $6, $7, $8, $7, $3, $9, $10, $11, $12, $6, $13)`,
-      [workspaceId, leadId, result.score, result.temperature, result.priority === 'urgent' || result.priority === 'priority' ? 'high' : result.priority === 'high' ? 'medium' : 'low', result.scoringReason, result.nextBestAction, result.riskLevel, result.engagementScore, result.expectedRevenue, result.riskLevel === 'high' ? 'at_risk' : result.score >= 76 ? 'committed' : result.score >= 51 ? 'likely' : 'possible', JSON.stringify(result.riskSignals), result.riskLevel === 'high' ? 'escalate_to_manager' : result.score >= 51 ? 'schedule_demo' : 'follow_up_in_telegram']
+       VALUES($1, $2, $3, CASE WHEN $4 = 'priority' THEN 'hot' ELSE $4 END, $3, $3, $5, CASE WHEN $3 >= 50 THEN 'hot' WHEN $3 >= 25 THEN 'warm' ELSE 'cold' END, $6, $7, $8, $7, $3, $9, $10, $11, $12, $6, $13)`,
+      [workspaceId, leadId, result.score, result.temperature, result.priority === 'urgent' || result.priority === 'priority' ? 'high' : result.priority === 'high' ? 'medium' : 'low', result.scoringReason, result.nextBestAction, result.riskLevel, result.engagementScore, result.expectedRevenue, result.riskLevel === 'high' ? 'at_risk' : result.score >= 70 ? 'committed' : result.score >= 50 ? 'likely' : 'possible', JSON.stringify(result.riskSignals), result.riskLevel === 'high' ? 'escalate_to_manager' : result.score >= 50 ? 'schedule_demo' : 'follow_up_in_telegram']
     )
     await tx.query(
       `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload, executed_at)
@@ -228,6 +281,7 @@ async function scoreLead({ userId, workspaceId, leadId, source = 'manual', clien
       tx.release()
     }
   }
+  console.info('[lead-scoring] calibrated scoring applied', { workspaceId, leadId, score: result.score, priority: result.priority, riskLevel: result.riskLevel })
   console.info('[lead-scoring] lead updated', { workspaceId, leadId, score: result.score, priority: result.priority, riskLevel: result.riskLevel })
   return result
 }
@@ -237,7 +291,7 @@ async function scoreActiveLeads(userId, workspaceId, { limit = 500, source = 'ma
   const numericLimit = limit === null || limit === undefined ? null : Math.max(1, Math.min(Number(limit) || 500, 1000))
   const leads = await pool.query(
     `SELECT id FROM crm_leads
-      WHERE user_id = $1 AND workspace_id = $2 AND status NOT IN ('won','lost')
+      WHERE user_id = $1 AND workspace_id = $2 AND status NOT IN ('won','lost','closed_won','closed_lost')
       ORDER BY COALESCE(ai_last_scored_at, created_at) ASC, updated_at DESC
       ${numericLimit ? 'LIMIT $3' : ''}`,
     numericLimit ? [userId, workspaceId, numericLimit] : [userId, workspaceId]
