@@ -1,4 +1,7 @@
+const COPY_GUARD_BLOCK_MESSAGE = 'Blocked by copy guard: internal AI context leak'
+
 const FORBIDDEN_COPY_PATTERNS = [
+  /Контекст:/i,
   /Плюсы:/i,
   /Минусы:/i,
   /Итог:/i,
@@ -34,14 +37,16 @@ function containsForbiddenCustomerCopy(value) {
   return FORBIDDEN_COPY_PATTERNS.some((pattern) => pattern.test(text))
 }
 
-function assertSafeCustomerCopy(value, context = {}) {
+function assertCustomerSafeText(value, context = {}) {
   const text = String(value || '').trim()
   if (!text || containsForbiddenCustomerCopy(text)) {
     console.warn('[copy-guard] blocked internal context leak', context)
-    throw Object.assign(new Error('Outbound text contains internal AI context and was blocked'), { statusCode: 400, code: 'COPY_GUARD_BLOCKED' })
+    throw Object.assign(new Error(COPY_GUARD_BLOCK_MESSAGE), { statusCode: 400, code: 'COPY_GUARD_BLOCKED' })
   }
   return text
 }
+
+const assertSafeCustomerCopy = assertCustomerSafeText
 
 function getPriorityInboxCustomerText({ nextBestActionCode = '', nextBestAction = '' } = {}) {
   const code = String(nextBestActionCode || '').trim()
@@ -61,7 +66,9 @@ function getSafePriorityInboxCustomerText(payload = {}) {
 }
 
 module.exports = {
+  COPY_GUARD_BLOCK_MESSAGE,
   FORBIDDEN_COPY_PATTERNS,
+  assertCustomerSafeText,
   assertSafeCustomerCopy,
   containsForbiddenCustomerCopy,
   getPriorityInboxCustomerText,

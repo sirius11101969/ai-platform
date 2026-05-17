@@ -8,7 +8,7 @@ const { findDuplicateQueueItem, logDuplicateSkipped } = require('./aiQueueDedupS
 const { DEFAULT_TIMEZONE, buildMeetingDescription, buildStableIcsUid, generateMeetingIcs } = require('./calendarIcsService')
 const { createGoogleCalendarEvent } = require('./googleCalendarService')
 const { scoreLead } = require('./aiLeadScoringService')
-const { assertSafeCustomerCopy, containsForbiddenCustomerCopy, getSafePriorityInboxCustomerText } = require('./customerCopyGuard')
+const { assertCustomerSafeText, assertSafeCustomerCopy, containsForbiddenCustomerCopy, getSafePriorityInboxCustomerText } = require('./customerCopyGuard')
 
 const STATUSES = ['pending_approval', 'approved', 'rejected', 'executing', 'completed', 'executed', 'failed', 'cancelled']
 const TELEGRAM_MEETING_CONFIRMATION_DRAFT = 'telegram_meeting_confirmation_draft'
@@ -127,12 +127,9 @@ function getRawDraftText(item) {
 }
 
 function resolveCustomerMessage(item) {
-  let text = getRawDraftText(item)
-  if (isPriorityInboxItem(item) && (!text || containsForbiddenCustomerCopy(text) || !item.payload.customerText)) {
-    text = getSafePriorityInboxCustomerText(item.payload)
-  }
+  const text = getRawDraftText(item)
   if (isCustomerFacingDraftType(item.executionType)) {
-    return assertSafeCustomerCopy(text, { actionId: item.id, actionType: item.executionType, source: item.payload?.source || '' })
+    return assertCustomerSafeText(text, { actionId: item.id, actionType: item.executionType, source: item.payload?.source || '' })
   }
   return String(text || '').trim()
 }
