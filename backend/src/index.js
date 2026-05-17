@@ -28,6 +28,7 @@ const { ensureDefaultRulesForAllWorkspaces } = require('./services/aiFollowupRul
 const { requireAuth } = require('./middleware/authMiddleware')
 const { requireWorkspace } = require('./middleware/workspaceMiddleware')
 const { errorHandler } = require('./middleware/errorHandler')
+const { aiCopySanitizerResponseMiddleware } = require('./middleware/aiCopySanitizerMiddleware')
 
 const app = express()
 const port = Number(process.env.PORT || 3001)
@@ -41,6 +42,8 @@ const healthHandler = (_, res) => {
 
 app.get('/health', healthHandler)
 app.get('/api/health', healthHandler)
+
+app.use('/api', aiCopySanitizerResponseMiddleware)
 
 app.use('/api/public', publicRoutes)
 app.use('/api/auth', authRoutes)

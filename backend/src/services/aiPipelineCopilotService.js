@@ -2,6 +2,7 @@ const pool = require('../db/pool')
 const crmModel = require('../models/crmModel')
 const { addTimelineEvent } = require('./timelineService')
 const { assertSafeCustomerCopy } = require('./customerCopyGuard')
+const { sanitizeAiCopy, sanitizeAiActionPayload } = require('../utils/aiCopySanitizer')
 
 const HIGH_RISK = new Set(['high', 'medium'])
 const FOCUS_PRIORITIES = new Set(['urgent', 'priority'])
@@ -582,7 +583,7 @@ async function createPipelineCopilotAction(userId, workspaceId, { leadId, action
       `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
        VALUES($1, $2, $3, $4, 'pending_approval', $5, $6, $7)
        RETURNING id`,
-      [worker.id, workspaceId, lead.id, config.actionType, config.title, config.recommendation, payload]
+      [worker.id, workspaceId, lead.id, config.actionType, config.title, sanitizeAiCopy(config.recommendation), sanitizeAiActionPayload(payload)]
     )
     await addTimelineEvent(client, {
       workspaceId,

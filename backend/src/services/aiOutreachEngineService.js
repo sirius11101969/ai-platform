@@ -1,4 +1,5 @@
 const { addTimelineEvent } = require('./timelineService')
+const { sanitizeAiCopy, sanitizeAiActionPayload } = require('../utils/aiCopySanitizer')
 
 const OUTREACH_TYPES = ['first_contact', 'followup_24h', 'followup_3d', 'meeting_request', 'demo_offer']
 const QUEUE_ACTIONS = ['telegram_draft', 'email_draft']
@@ -306,7 +307,7 @@ async function createQueueItem(client, { workerId, workspaceId, userId, lead, ou
     `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
      VALUES($1, $2, $3, $4, 'pending_approval', $5, $6, $7)
      RETURNING id`,
-    [workerId, workspaceId, lead.id, actionType, title, recommendation, payload]
+    [workerId, workspaceId, lead.id, actionType, title, sanitizeAiCopy(recommendation), sanitizeAiActionPayload(payload)]
   )
   await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'ai_draft_created', title: actionType === 'email_draft' ? 'Черновик письма подготовлен' : 'Черновик Telegram подготовлен', body: payload.text || payload.message || recommendation, source: 'ai', metadata: { queueId: result.rows[0].id, actionType, outreachType, channel: payload.channel } })
   return { id: result.rows[0].id, actionType, outreachType }

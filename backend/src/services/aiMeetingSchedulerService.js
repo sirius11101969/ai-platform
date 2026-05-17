@@ -1,5 +1,6 @@
 const { addTimelineEvent } = require('./timelineService')
 const { findDuplicateQueueItem, logDuplicateSkipped, normalizeSourceMessageId } = require('./aiQueueDedupService')
+const { sanitizeAiCopy, sanitizeAiActionPayload } = require('../utils/aiCopySanitizer')
 
 const MEETING_ACTION_TYPE = 'meeting_schedule_proposal'
 const DEFAULT_TIMEZONE = process.env.APP_TIMEZONE || 'Europe/Moscow'
@@ -199,7 +200,7 @@ async function createMeetingScheduleProposal(client, { userId, workspaceId, lead
     `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
      VALUES($1, $2, $3, $4, 'pending_approval', $5, $6, $7)
      RETURNING id`,
-    [worker.id, workspaceId, lead.id, MEETING_ACTION_TYPE, `Запланировать встречу — ${lead.name}`, RECOMMENDATION, payload]
+    [worker.id, workspaceId, lead.id, MEETING_ACTION_TYPE, `Запланировать встречу — ${lead.name}`, sanitizeAiCopy(RECOMMENDATION), sanitizeAiActionPayload(payload)]
   )
   await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'ai_meeting_schedule_proposed', title: 'AI предложил запланировать встречу', body: messageText, source: 'ai', metadata: { queueId: created.rows[0].id, actionType: MEETING_ACTION_TYPE, channel, sourceMessageId: sourceId, confidence: detected.confidence } })
   return { id: created.rows[0].id, payload }

@@ -2,6 +2,7 @@ const pool = require('../db/pool')
 const crmModel = require('../models/crmModel')
 const { addTimelineEvent } = require('./timelineService')
 const { assertSafeCustomerCopy, getPriorityInboxCustomerText } = require('./customerCopyGuard')
+const { sanitizeAiCopy, sanitizeAiActionPayload } = require('../utils/aiCopySanitizer')
 
 const ACTIVE_STATUSES = new Set(['new', 'qualified', 'proposal', 'booked'])
 const STAGE_WEIGHT = { booked: 2, proposal: 1, qualified: 0, new: 0, won: -2, lost: -3 }
@@ -151,7 +152,7 @@ async function createPriorityInboxAction(userId, workspaceId, { leadId, actionTy
       `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
        VALUES($1, $2, $3, $4, 'pending_approval', $5, $6, $7)
        RETURNING id`,
-      [worker.id, workspaceId, lead.id, config.queueActionType, text.subject, text.recommendation, payload]
+      [worker.id, workspaceId, lead.id, config.queueActionType, text.subject, sanitizeAiCopy(text.recommendation), sanitizeAiActionPayload(payload)]
     )
     await addTimelineEvent(client, {
       workspaceId,

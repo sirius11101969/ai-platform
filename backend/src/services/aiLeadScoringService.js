@@ -1,5 +1,6 @@
 const pool = require('../db/pool')
 const { addTimelineEvent } = require('./timelineService')
+const { sanitizeAiCopy, sanitizeAiActionPayload } = require('../utils/aiCopySanitizer')
 
 const AI_LEAD_SCORING_WORKER_TYPE = 'ai_lead_scoring_engine'
 const AI_LEAD_SCORING_WORKER_NAME = 'AI Lead Scoring Engine'
@@ -248,7 +249,7 @@ async function createPriorityRecommendation(client, { workspaceId, userId, leadI
     `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
      VALUES($1, $2, $3, $4, 'pending_approval', $5, $6, $7)
      RETURNING id`,
-    [worker.id, workspaceId, leadId, PRIORITY_RECOMMENDATION_ACTION, title, recommendation, { source, score: result.score, aiScore: result.score, priority: result.priority, aiPriority: result.priority, temperature: result.temperature, riskLevel: result.riskLevel, aiRiskLevel: result.riskLevel, riskSignals: result.riskSignals, scoringReason: result.scoringReason, leadName: lead.name, recommendedNextStep: result.recommendedNextStep }]
+    [worker.id, workspaceId, leadId, PRIORITY_RECOMMENDATION_ACTION, title, sanitizeAiCopy(recommendation), sanitizeAiActionPayload({ source, score: result.score, aiScore: result.score, priority: result.priority, aiPriority: result.priority, temperature: result.temperature, riskLevel: result.riskLevel, aiRiskLevel: result.riskLevel, riskSignals: result.riskSignals, scoringReason: result.scoringReason, leadName: lead.name, recommendedNextStep: result.recommendedNextStep })]
   )
   console.info('[lead-scoring] recommendation created', { workspaceId, leadId, score: result.score, priority: result.priority, riskLevel: result.riskLevel, queueId: inserted.rows[0]?.id })
   return inserted.rows[0]
@@ -283,7 +284,7 @@ async function scoreLead({ userId, workspaceId, leadId, source = 'manual', clien
     await tx.query(
       `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload, executed_at)
        VALUES($1, $2, $3, $4, 'completed', $5, $6, $7, NOW())`,
-      [scoringWorker.id, workspaceId, leadId, LEAD_SCORING_ACTION, `AI Lead Scoring update — ${context.lead.name}`, result.nextBestAction, { source, score: result.score, priority: result.priority, temperature: result.temperature, riskLevel: result.riskLevel, scoringReason: result.scoringReason }]
+      [scoringWorker.id, workspaceId, leadId, LEAD_SCORING_ACTION, `AI Lead Scoring update — ${context.lead.name}`, sanitizeAiCopy(result.nextBestAction), sanitizeAiActionPayload({ source, score: result.score, priority: result.priority, temperature: result.temperature, riskLevel: result.riskLevel, scoringReason: result.scoringReason })]
     )
     await addTimelineEvent(tx, { workspaceId, leadId, userId, eventType: 'lead_scored', title: 'AI Lead Scoring обновлён', body: `Score ${result.score}/100 · ${result.temperature} · ${result.priority}. ${result.scoringReason}`, source: 'ai', metadata: result })
     if (result.riskLevel !== 'low') {

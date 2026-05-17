@@ -9,6 +9,7 @@ const { DEFAULT_TIMEZONE, buildMeetingDescription, buildStableIcsUid, generateMe
 const { createGoogleCalendarEvent } = require('./googleCalendarService')
 const { scoreLead } = require('./aiLeadScoringService')
 const { assertCustomerSafeText, assertSafeCustomerCopy, containsForbiddenCustomerCopy, getSafePriorityInboxCustomerText } = require('./customerCopyGuard')
+const { sanitizeAiCopy, sanitizeAiActionPayload } = require('../utils/aiCopySanitizer')
 
 const STATUSES = ['pending_approval', 'approved', 'rejected', 'executing', 'completed', 'executed', 'failed', 'cancelled']
 const TELEGRAM_MEETING_CONFIRMATION_DRAFT = 'telegram_meeting_confirmation_draft'
@@ -207,7 +208,7 @@ async function cleanupPriorityInboxDrafts(items) {
     const payload = { ...item.payload, customerText, draftText: customerText, text: customerText, message: customerText, body: item.executionType === EMAIL_FOLLOWUP_DRAFT || item.payload.channel === 'email' ? customerText : item.payload.body }
     if (payload.body === undefined) delete payload.body
     item.payload = payload
-    return pool.query('UPDATE ai_worker_queue SET payload = $3, updated_at = NOW() WHERE workspace_id = $1 AND id = $2', [item.workspaceId, item.id, payload])
+    return pool.query('UPDATE ai_worker_queue SET payload = $3, updated_at = NOW() WHERE workspace_id = $1 AND id = $2', [item.workspaceId, item.id, sanitizeAiActionPayload(payload)])
       .then(() => console.info('[copy-guard] cleaned pending Priority Inbox draft', { actionId: item.id, actionType: item.executionType }))
       .catch((error) => console.error('[copy-guard] pending draft cleanup failed', { actionId: item.id, error: error.message || error }))
   }))
@@ -220,7 +221,7 @@ async function updateQueueItem(userId, workspaceId, queueId, payload) {
   const values = [workspaceId, queueId]
   function set(column, value) { values.push(value); updates.push(`${column} = $${values.length}`) }
   if (payload.title !== undefined) set('title', String(payload.title || current.title).trim() || current.title)
-  if (payload.recommendation !== undefined) set('recommendation', String(payload.recommendation || ''))
+  if (payload.recommendation !== undefined) set('recommendation', sanitizeAiCopy(String(payload.recommendation || '')))
   if (payload.payload !== undefined) {
     const nextPayload = payload.payload || {}
     if (current.executionType === 'telegram_reply_draft' || current.executionType === TELEGRAM_MEETING_CONFIRMATION_DRAFT || current.executionType === FOLLOWUP_SEQUENCE_DRAFT || current.executionType === EMAIL_FOLLOWUP_DRAFT) {
@@ -236,7 +237,7 @@ async function updateQueueItem(userId, workspaceId, queueId, payload) {
         nextPayload.managerEditedAt = nextPayload.managerEditedAt || new Date().toISOString()
       }
     }
-    set('payload', nextPayload)
+    set('payload', sanitizeAiActionPayload(nextPayload))
   }
   if (payload.actionType !== undefined) {
     const nextType = normalizeActionType(payload.actionType)
@@ -595,7 +596,7 @@ async function executeMeetingScheduleProposal(userId, workspaceId, item) {
         await client.query(
           `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
            VALUES($1, $2, $3, $4, 'pending_approval', $5, $6, $7)`,
-          [worker.rows[0].id, workspaceId, item.leadId, TELEGRAM_MEETING_CONFIRMATION_DRAFT, `Ответ-подтверждение встречи — ${item.lead?.name || 'лид'}`, 'AI подготовил подтверждение demo-созвона для клиента. Проверьте и отправьте в Telegram.', { source: 'ai_meeting_scheduler', channel: 'telegram', sourceMessageId, customerText: confirmationText, draftText: confirmationText, text: confirmationText, message: confirmationText, meetingProposalQueueId: item.id, proposedStartTime, scheduledTime: proposedStartTime, detectedDateText: item.payload.detectedDateText || '', detectedTimeText: item.payload.detectedTimeText || '', leadName: item.lead?.name || '', inboundMessage: item.payload.inboundMessage || item.payload.customerMessage || '' }]
+          [worker.rows[0].id, workspaceId, item.leadId, TELEGRAM_MEETING_CONFIRMATION_DRAFT, `Ответ-подтверждение встречи — ${item.lead?.name || 'лид'}`, sanitizeAiCopy('AI подготовил подтверждение demo-созвона для клиента. Проверьте и отправьте в Telegram.'), sanitizeAiActionPayload({ source: 'ai_meeting_scheduler', channel: 'telegram', sourceMessageId, customerText: confirmationText, draftText: confirmationText, text: confirmationText, message: confirmationText, meetingProposalQueueId: item.id, proposedStartTime, scheduledTime: proposedStartTime, detectedDateText: item.payload.detectedDateText || '', detectedTimeText: item.payload.detectedTimeText || '', leadName: item.lead?.name || '', inboundMessage: item.payload.inboundMessage || item.payload.customerMessage || '' })]
         )
         console.info('[meeting-execute] confirmation draft created', { workspaceId, leadId: item.leadId, queueId: item.id, sourceMessageId })
       }
@@ -655,7 +656,7 @@ async function createEmailFollowupDraftQueueItem(client, { workspaceId, item, le
     `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
      VALUES($1, $2, $3, $4, 'pending_approval', $5, $6, $7)
      RETURNING id`,
-    [item.workerId, workspaceId, leadId, EMAIL_FOLLOWUP_DRAFT, `Email follow-up — ${leadName || 'лид'}`, safeBody, payload]
+    [item.workerId, workspaceId, leadId, EMAIL_FOLLOWUP_DRAFT, `Email follow-up — ${leadName || 'лид'}`, sanitizeAiCopy(safeBody), sanitizeAiActionPayload(payload)]
   )
   const draft = result.rows[0] || {}
   console.info('[followup-execute] email draft created', { actionId: item.id, leadId })

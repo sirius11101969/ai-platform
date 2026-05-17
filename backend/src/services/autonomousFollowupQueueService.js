@@ -1,4 +1,5 @@
 const { addTimelineEvent } = require('./timelineService')
+const { sanitizeAiCopy, sanitizeAiActionPayload } = require('../utils/aiCopySanitizer')
 
 const ACTION_TYPE = 'followup_sequence_draft'
 const ACTIVE_DEDUP_STATUSES = ['pending_approval', 'approved', 'completed', 'executed']
@@ -180,7 +181,7 @@ async function createFollowupSequenceDrafts({ client, userId, workspaceId, worke
       `INSERT INTO ai_worker_queue(worker_id, workspace_id, run_id, lead_id, action_type, status, title, recommendation, payload)
        VALUES($1, $2, $3, $4, $5, 'pending_approval', $6, $7, $8)
        RETURNING *`,
-      [worker.id, workspaceId, runId, lead.id, ACTION_TYPE, `Follow-up ${step.sequenceStep} — ${lead.name || lead.email || 'лид'}`, suggestedText, payload]
+      [worker.id, workspaceId, runId, lead.id, ACTION_TYPE, `Follow-up ${step.sequenceStep} — ${lead.name || lead.email || 'лид'}`, sanitizeAiCopy(suggestedText), sanitizeAiActionPayload(payload)]
     )
     await addTimelineEvent(client, {
       workspaceId,
