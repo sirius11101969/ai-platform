@@ -4,6 +4,7 @@ const { buildFollowUpDraft, scoreLeadContext } = require('../services/leadIntell
 const { createQualificationQueueItem, ensureSdrWorker, scheduleLeadQualification } = require('../services/leadQualificationService')
 const { addTimelineEvent } = require('../services/timelineService')
 const { scoreLead, scoreActiveLeads } = require('../services/aiLeadScoringService')
+const { sanitizeAiCopy, sanitizeAiActionPayload } = require('../utils/aiCopySanitizer')
 
 const CRM_STATUSES = ['new', 'qualified', 'proposal', 'booked', 'won', 'lost']
 const DEFAULT_STAGE_LABELS = {
@@ -851,7 +852,7 @@ async function createDealIntelligenceQueueItems(client, userId, workspaceId, lea
     await client.query(
       `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
        VALUES($1, $2, $3, $4, 'pending_approval', $5, $6, $7)`,
-      [worker.id, workspaceId, lead.id, actionType, title, recommendation, { ...basePayload, actionType }]
+      [worker.id, workspaceId, lead.id, actionType, title, sanitizeAiCopy(recommendation), sanitizeAiActionPayload({ ...basePayload, actionType })]
     )
   }
 }
@@ -903,7 +904,7 @@ async function createAiStageRecommendation(client, userId, workspaceId, lead, in
     `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
      VALUES($1, $2, $3, 'stage_change_recommendation', 'pending_approval', $4, $5, $6)
      RETURNING id`,
-    [worker.id, workspaceId, lead.id, `AI stage recommendation · ${lead.status} → ${nextStatus}`, reason, { source: 'ai_lead_analysis', currentStatus: lead.status, nextStatus, status: nextStatus, reason, confidence, probabilityToClose: intelligence.probabilityToClose || intelligence.dealProbability, estimatedRevenue: Number(lead.value || 0) * (Number(intelligence.dealProbability || 0) / 100), expectedCloseDate: new Date(Date.now() + 30 * 864e5).toISOString().slice(0, 10) }]
+    [worker.id, workspaceId, lead.id, `AI stage recommendation · ${lead.status} → ${nextStatus}`, sanitizeAiCopy(reason), sanitizeAiActionPayload({ source: 'ai_lead_analysis', currentStatus: lead.status, nextStatus, status: nextStatus, reason, confidence, probabilityToClose: intelligence.probabilityToClose || intelligence.dealProbability, estimatedRevenue: Number(lead.value || 0) * (Number(intelligence.dealProbability || 0) / 100), expectedCloseDate: new Date(Date.now() + 30 * 864e5).toISOString().slice(0, 10) })]
   )
   await logActivity(client, userId, workspaceId, lead.id, 'ai_stage_recommendation', 'AI рекомендовал смену этапа', reason, { queueId: result.rows[0].id, from: lead.status, to: nextStatus, confidence })
   return result.rows[0]

@@ -1,6 +1,7 @@
 const pool = require('../db/pool')
 const { assertCustomerSafeText } = require('./customerCopyGuard')
 const { addTimelineEvent } = require('./timelineService')
+const { sanitizeAiCopy, sanitizeAiActionPayload } = require('../utils/aiCopySanitizer')
 
 const AI_NEXT_BEST_ACTION_WORKER_TYPE = 'ai_next_best_action_engine'
 const SOURCE = 'next_best_action_engine'
@@ -256,7 +257,7 @@ async function createNextBestAction(client, { userId, workspaceId, workerId, run
     `INSERT INTO ai_worker_queue(worker_id, workspace_id, run_id, lead_id, action_type, status, title, recommendation, payload)
      VALUES($1, $2, $3, $4, $5, 'pending_approval', $6, $7, $8)
      RETURNING *`,
-    [workerId, workspaceId, runId, lead.id, action.actionType, action.title, action.reason, payload]
+    [workerId, workspaceId, runId, lead.id, action.actionType, action.title, sanitizeAiCopy(action.reason), sanitizeAiActionPayload(payload)]
   )
   await addTimelineEvent(client, {
     workspaceId,

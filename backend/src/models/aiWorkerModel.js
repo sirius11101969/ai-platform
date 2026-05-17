@@ -2,6 +2,7 @@ const pool = require('../db/pool')
 const { createFollowupSequenceDrafts } = require('../services/autonomousFollowupQueueService')
 const { AI_LEAD_SCORING_WORKER_TYPE, scoreActiveLeads } = require('../services/aiLeadScoringService')
 const { AI_NEXT_BEST_ACTION_WORKER_TYPE, runNextBestActionEngine } = require('../services/aiNextBestActionEngineService')
+const { sanitizeAiCopy, sanitizeAiActionPayload } = require('../utils/aiCopySanitizer')
 
 const WORKER_TYPES = [
   'ai_sdr_agent',
@@ -460,7 +461,7 @@ async function runWorker({ userId, workspaceId, workerId }) {
           `INSERT INTO ai_worker_queue(worker_id, workspace_id, run_id, lead_id, action_type, status, title, recommendation, payload)
            VALUES($1, $2, $3, $4, $5, 'pending_approval', $6, $7, $8)
            RETURNING *`,
-          [worker.id, workspaceId, run.id, recommendation.leadId, recommendation.actionType, recommendation.title, recommendation.recommendation, recommendation.payload]
+          [worker.id, workspaceId, run.id, recommendation.leadId, recommendation.actionType, recommendation.title, sanitizeAiCopy(recommendation.recommendation), sanitizeAiActionPayload(recommendation.payload)]
         )
         queueItems.push(normalizeQueueItem(queued.rows[0]))
       }

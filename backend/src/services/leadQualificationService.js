@@ -2,6 +2,7 @@ const pool = require('../db/pool')
 const { addTimelineEvent } = require('./timelineService')
 const { scoreLeadContext, buildFollowUpDraft } = require('./leadIntelligenceService')
 const { generateOutreachForLead } = require('./aiOutreachEngineService')
+const { sanitizeAiCopy, sanitizeAiActionPayload } = require('../utils/aiCopySanitizer')
 
 let intervalId = null
 let running = false
@@ -144,7 +145,7 @@ async function createForecastRiskQueueItems(client, { workspaceId, lead, intelli
       `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
        VALUES($1, $2, $3, $4, 'pending_approval', $5, $6, $7)
        RETURNING id, action_type`,
-      [worker.id, workspaceId, lead.id, actionType, forecastTitle(actionType), buildRiskRecommendation(lead, intelligence, actionType), payload]
+      [worker.id, workspaceId, lead.id, actionType, forecastTitle(actionType), sanitizeAiCopy(buildRiskRecommendation(lead, intelligence, actionType)), sanitizeAiActionPayload(payload)]
     )
     created.push(result.rows[0])
   }
@@ -216,7 +217,7 @@ async function createQualificationQueueItem(client, { workspaceId, leadId, worke
     `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
      VALUES($1, $2, $3, 'lead_prioritization', 'pending_approval', $4, $5, $6)
      RETURNING id`,
-    [workerId, workspaceId, leadId, title, recommendation, payload]
+    [workerId, workspaceId, leadId, title, sanitizeAiCopy(recommendation), sanitizeAiActionPayload(payload)]
   )
   return result.rows[0]
 }
@@ -342,7 +343,7 @@ async function qualifyLead(client, { lead, userId, workspaceId, queueId = null }
         `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
          VALUES($1, $2, $3, 'stage_change_recommendation', 'pending_approval', $4, $5, $6)
          RETURNING id`,
-        [lead.worker_id || (await ensureSdrWorker(client, workspaceId)).id, workspaceId, lead.id, `Перевести лида в Qualified — ${lead.name}`, reason, { source: 'lead_qualification', leadId: lead.id, fromStage, toStage, currentStatus: fromStage, nextStatus: toStage, status: toStage, confidence, reason, score: intelligence.score, temperature }]
+        [lead.worker_id || (await ensureSdrWorker(client, workspaceId)).id, workspaceId, lead.id, `Перевести лида в Qualified — ${lead.name}`, sanitizeAiCopy(reason), sanitizeAiActionPayload({ source: 'lead_qualification', leadId: lead.id, fromStage, toStage, currentStatus: fromStage, nextStatus: toStage, status: toStage, confidence, reason, score: intelligence.score, temperature })]
       )
       stageSuggestion = suggested.rows[0]
       await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'ai_stage_recommendation', title: 'AI рекомендовал смену этапа', body: `AI рекомендовал перевести лида в стадию ${stageLabel(toStage)}.`, source: 'ai', metadata: { queueId: stageSuggestion.id, fromStage, toStage, confidence, reason, score: intelligence.score } })
@@ -369,7 +370,7 @@ async function qualifyLead(client, { lead, userId, workspaceId, queueId = null }
               payload = payload || $4::jsonb,
               updated_at = NOW()
         WHERE workspace_id = $1 AND id = $2`,
-      [workspaceId, queueId, recommendation, { score: intelligence.score, priority, recommendedChannel: intelligence.recommendedChannel, confidence, probabilityToClose: intelligence.probabilityToClose || intelligence.dealProbability, engagementScore: intelligence.engagementScore, expectedRevenue: intelligence.expectedRevenue, forecastCategory: intelligence.forecastCategory, riskLevel: intelligence.riskLevel, riskQueueItemIds: riskQueueItems.map((item) => item.id), followUpJobId: followUpJob?.id || null, outreach, stageSuggestionId: stageSuggestion?.id || null }]
+      [workspaceId, queueId, sanitizeAiCopy(recommendation), sanitizeAiActionPayload({ score: intelligence.score, priority, recommendedChannel: intelligence.recommendedChannel, confidence, probabilityToClose: intelligence.probabilityToClose || intelligence.dealProbability, engagementScore: intelligence.engagementScore, expectedRevenue: intelligence.expectedRevenue, forecastCategory: intelligence.forecastCategory, riskLevel: intelligence.riskLevel, riskQueueItemIds: riskQueueItems.map((item) => item.id), followUpJobId: followUpJob?.id || null, outreach, stageSuggestionId: stageSuggestion?.id || null })]
     )
   }
 

@@ -12,6 +12,7 @@ const { createMeetingScheduleProposal } = require('./aiMeetingSchedulerService')
 const { findDuplicateQueueItem, logDuplicateSkipped, normalizeSourceMessageId } = require('./aiQueueDedupService')
 const { scoreLead } = require('./aiLeadScoringService')
 const { assertCustomerSafeText } = require('./customerCopyGuard')
+const { sanitizeAiCopy, sanitizeAiActionPayload } = require('../utils/aiCopySanitizer')
 
 const TELEGRAM_API_BASE = 'https://api.telegram.org'
 const DEMO_SITE_URL = 'https://www.as6.ru'
@@ -533,7 +534,7 @@ async function createInboundReplyRecommendations(client, { userId, workspaceId, 
       `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
        VALUES($1, $2, $3, 'telegram_reply_analysis', 'pending_approval', $4, $5, $6)
        RETURNING id`,
-      [worker.id, workspaceId, lead.id, `Проанализировать ответ Telegram — ${lead.name}`, recommendation, { source: 'telegram_inbound', channel: 'telegram', customerMessage: telegram.text, sourceMessageId, telegramMessageId: sourceMessageId, chatId: String(telegram.chatId), nextStep: recommendation }]
+      [worker.id, workspaceId, lead.id, `Проанализировать ответ Telegram — ${lead.name}`, sanitizeAiCopy(recommendation), sanitizeAiActionPayload({ source: 'telegram_inbound', channel: 'telegram', customerMessage: telegram.text, sourceMessageId, telegramMessageId: sourceMessageId, chatId: String(telegram.chatId), nextStep: recommendation })]
     )
     await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'telegram_reply_analysis_created', title: 'AI подготовил анализ ответа Telegram', body: recommendation, source: 'ai', metadata: { queueId: analysis.rows[0].id, actionType: 'telegram_reply_analysis', sourceMessageId, telegramMessageId: sourceMessageId } })
   }
@@ -552,7 +553,7 @@ async function createInboundReplyRecommendations(client, { userId, workspaceId, 
       `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
        VALUES($1, $2, $3, 'telegram_reply_draft', 'pending_approval', $4, $5, $6)
        RETURNING id`,
-      [worker.id, workspaceId, lead.id, `Ответ в Telegram — ${lead.name}`, 'AI подготовил короткий человеческий ответ на последнее сообщение. Проверьте текст, при необходимости отредактируйте и отправьте после approval.', { source: 'telegram_inbound', outreachType: 'inbound_reply_next_step', channel: 'telegram', draftText: text, inboundText: telegram.text, text, message: text, customerMessage: telegram.text, inboundMessage: telegram.text, sourceMessageId, telegramMessageId: sourceMessageId, chatId: String(telegram.chatId), leadName: lead.name, company: lead.company || '', currentStage: lead.status || '', leadStage: lead.status || '', lastAiScore: context.aiScore, forecastCategory: context.aiScore?.forecastCategory || null, riskLevel: context.aiScore?.riskLevel || null, recommendedNextStep: context.recommendedNextStep, timeline: context.timeline, model: generated.model, prompt: generated.prompt }]
+      [worker.id, workspaceId, lead.id, `Ответ в Telegram — ${lead.name}`, sanitizeAiCopy('AI подготовил короткий человеческий ответ на последнее сообщение. Проверьте текст, при необходимости отредактируйте и отправьте после approval.'), sanitizeAiActionPayload({ source: 'telegram_inbound', outreachType: 'inbound_reply_next_step', channel: 'telegram', draftText: text, inboundText: telegram.text, text, message: text, customerMessage: telegram.text, inboundMessage: telegram.text, sourceMessageId, telegramMessageId: sourceMessageId, chatId: String(telegram.chatId), leadName: lead.name, company: lead.company || '', currentStage: lead.status || '', leadStage: lead.status || '', lastAiScore: context.aiScore, forecastCategory: context.aiScore?.forecastCategory || null, riskLevel: context.aiScore?.riskLevel || null, recommendedNextStep: context.recommendedNextStep, timeline: context.timeline, model: generated.model, prompt: generated.prompt })]
     )
     await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'ai_telegram_reply_drafted', title: 'AI подготовил черновик Telegram', body: text, source: 'ai', metadata: { queueId: draft.rows[0].id, actionType: 'telegram_reply_draft', sourceMessageId, telegramMessageId: sourceMessageId } })
   }
@@ -573,7 +574,7 @@ async function createInboundReplyRecommendations(client, { userId, workspaceId, 
         `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
          VALUES($1, $2, $3, 'stage_change_recommendation', 'pending_approval', $4, $5, $6)
          RETURNING id`,
-        [worker.id, workspaceId, lead.id, `AI stage suggestion · ${lead.status} → ${nextStage}`, buildTelegramStageReason(lead.status, nextStage, telegram.text), { source: 'telegram_inbound', currentStatus: lead.status, nextStatus: nextStage, status: nextStage, reason: buildTelegramStageReason(lead.status, nextStage, telegram.text), confidence: 82, customerMessage: telegram.text }]
+        [worker.id, workspaceId, lead.id, `AI stage suggestion · ${lead.status} → ${nextStage}`, sanitizeAiCopy(buildTelegramStageReason(lead.status, nextStage, telegram.text)), sanitizeAiActionPayload({ source: 'telegram_inbound', currentStatus: lead.status, nextStatus: nextStage, status: nextStage, reason: buildTelegramStageReason(lead.status, nextStage, telegram.text), confidence: 82, customerMessage: telegram.text })]
       )
       await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'ai_stage_suggested', title: 'AI предложил смену этапа', body: `${lead.status} → ${nextStage}`, source: 'ai', metadata: { queueId: stage.rows[0].id, nextStatus: nextStage } })
     }
