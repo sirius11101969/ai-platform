@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PageHeading, Panel } from "../components/AppShell";
-import { fetchAiPipelineCopilot } from "../services/api";
+import { createPipelineCopilotFollowupAction, createPipelineCopilotMeetingAction, fetchAiPipelineCopilot } from "../services/api";
 
 const metricLabels = {
   actionsToday: "Actions Today",
@@ -47,19 +47,26 @@ function badgeClass(value, prefix = "pipeline") {
   return `${prefix}-${String(value || "medium").toLowerCase().replace(/[^a-z0-9_-]/g, "-")}`;
 }
 
-function ActionButtons({ ctas = {}, navigate }) {
+function ActionButtons({ item = {}, ctas = {}, navigate, onCreateAction, busyActionKey }) {
+  const leadId = item.leadId || item.id || ctas.leadId;
+  const actionId = item.actionId || item.queueId || (item.category === "approval" || item.actionType ? item.id : "");
+  const aiWorkersRoute = actionId ? `/ai-workers?actionId=${encodeURIComponent(actionId)}` : leadId ? `/ai-workers?leadId=${encodeURIComponent(leadId)}` : (ctas.openAiWorkers || "/ai-workers");
   const buttons = [
-    ["Open Lead", ctas.openLead || "/crm"],
-    ["Open AI Workers", ctas.openAiWorkers || "/ai-workers"],
-    ["Open Priority Inbox", ctas.openPriorityInbox || "/priority-inbox"],
-    ["Create Follow-up", ctas.createFollowUp || "/crm"],
-    ["Schedule Meeting", ctas.scheduleMeeting || "/crm"],
+    { label: "Open Lead", route: ctas.openLead || (leadId ? `/crm?leadId=${encodeURIComponent(leadId)}` : "/crm"), log: "[pipeline-copilot] open lead requested" },
+    { label: "Open AI Workers", route: ctas.openAiWorkers || aiWorkersRoute },
+    { label: "Open Priority Inbox", route: ctas.openPriorityInbox || (leadId ? `/priority-inbox?leadId=${encodeURIComponent(leadId)}` : "/priority-inbox") },
   ];
   return (
     <div className="pipeline-card-actions">
-      {buttons.map(([label, route]) => (
-        <button key={label} type="button" onClick={() => navigate(route)}>{label}</button>
+      {buttons.map((button) => (
+        <button key={button.label} type="button" onClick={() => { if (button.log) console.info(button.log, { leadId }); navigate(button.route); }}>{button.label}</button>
       ))}
+      <button type="button" onClick={() => onCreateAction?.(item, "followup")} disabled={!leadId || busyActionKey === `${leadId}:followup`}>
+        {busyActionKey === `${leadId}:followup` ? "Создаём…" : "Create Follow-up"}
+      </button>
+      <button type="button" onClick={() => onCreateAction?.(item, "meeting")} disabled={!leadId || busyActionKey === `${leadId}:meeting`}>
+        {busyActionKey === `${leadId}:meeting` ? "Создаём…" : "Schedule Meeting"}
+      </button>
     </div>
   );
 }
@@ -86,10 +93,13 @@ export default function PipelineCopilotPage() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const [expandedSections, setExpandedSections] = useState({});
+  const [busyActionKey, setBusyActionKey] = useState("");
+  const [message, setMessage] = useState("");
 
   async function loadCockpit() {
     setLoading(true);
     setError("");
+    setMessage("");
     try {
       const response = await fetchAiPipelineCopilot();
       setCockpit(response);
@@ -107,6 +117,27 @@ export default function PipelineCopilotPage() {
   const summary = cockpit?.summary || {};
   const revenue = cockpit?.revenueSnapshot || {};
   const metrics = useMemo(() => ["actionsToday", "focusLeads", "riskDeals", "meetingsNext24h", "pendingApprovals", "failedActions"], []);
+
+
+  async function handleCreatePipelineAction(item, actionKind) {
+    const leadId = item?.leadId || item?.id;
+    if (!leadId) return;
+    const key = `${leadId}:${actionKind}`;
+    setBusyActionKey(key);
+    setError("");
+    setMessage("");
+    try {
+      const request = actionKind === "followup" ? createPipelineCopilotFollowupAction : createPipelineCopilotMeetingAction;
+      const result = await request({ leadId });
+      const toast = result.duplicate ? "Уже есть активная AI задача" : actionKind === "followup" ? "Follow-up создан" : "Meeting proposal создан";
+      setMessage(toast);
+      navigate(result.redirectTo || (result.actionId ? `/ai-workers?actionId=${encodeURIComponent(result.actionId)}` : `/ai-workers?leadId=${encodeURIComponent(leadId)}`), { state: { toast } });
+    } catch (requestError) {
+      setError(requestError.message || "Не удалось создать AI действие");
+    } finally {
+      setBusyActionKey((current) => (current === key ? "" : current));
+    }
+  }
 
   function visibleItems(sectionKey, items = [], limit) {
     return expandedSections[sectionKey] ? items : items.slice(0, limit);
@@ -132,6 +163,7 @@ export default function PipelineCopilotPage() {
       />
 
       {error && <p className="auth-error">{error}</p>}
+      {message && <p className="success-alert">{message}</p>}
 
       <Panel className="pipeline-safety-banner">
         <strong>Safety mode: command center only.</strong>
@@ -177,7 +209,7 @@ export default function PipelineCopilotPage() {
                   <span className="pipeline-due-badge">{action.dueLabel}</span>
                 </div>
               </div>
-              <ActionButtons ctas={action.ctas} navigate={navigate} />
+              <ActionButtons item={action} ctas={action.ctas} navigate={navigate} onCreateAction={handleCreatePipelineAction} busyActionKey={busyActionKey} />
             </Panel>
           ))}
         </div>
@@ -198,7 +230,7 @@ export default function PipelineCopilotPage() {
                   <span className={`pipeline-badge ${badgeClass(lead.aiPriority, "priority")}`}>{priorityLabels[lead.aiPriority] || lead.aiPriority}</span>
                   <strong>{lead.aiRiskLevel === "high" || lead.aiRiskLevel === "medium" ? `${lead.aiRiskLevel} risk` : "focus"}</strong>
                 </div>
-                <ActionButtons ctas={lead.ctas} navigate={navigate} />
+                <ActionButtons item={lead} ctas={lead.ctas} navigate={navigate} onCreateAction={handleCreatePipelineAction} busyActionKey={busyActionKey} />
               </Panel>
             ))}
           </div>
@@ -218,7 +250,7 @@ export default function PipelineCopilotPage() {
                   <span className={`pipeline-badge risk-${lead.aiRiskLevel}`}>{lead.aiRiskLevel} risk</span>
                   <strong>{formatMoney(lead.value)}</strong>
                 </div>
-                <ActionButtons ctas={lead.ctas} navigate={navigate} />
+                <ActionButtons item={lead} ctas={lead.ctas} navigate={navigate} onCreateAction={handleCreatePipelineAction} busyActionKey={busyActionKey} />
               </Panel>
             ))}
           </div>
@@ -237,7 +269,7 @@ export default function PipelineCopilotPage() {
                   <p>{meeting.title} · {formatDateTime(meeting.startsAt)}</p>
                 </div>
                 <span className={meeting.needsPrep ? "pipeline-badge meeting-hot" : "pipeline-badge"}>{meeting.needsPrep ? "Prep now" : meeting.status}</span>
-                <ActionButtons ctas={meeting.ctas} navigate={navigate} />
+                <ActionButtons item={meeting} ctas={meeting.ctas} navigate={navigate} onCreateAction={handleCreatePipelineAction} busyActionKey={busyActionKey} />
               </Panel>
             ))}
           </div>
@@ -254,7 +286,7 @@ export default function PipelineCopilotPage() {
                   <p>{item.title}</p>
                 </div>
                 <span className="pipeline-badge approval-waiting">{statusLabels[item.status] || item.status}</span>
-                <ActionButtons ctas={item.ctas} navigate={navigate} />
+                <ActionButtons item={item} ctas={item.ctas} navigate={navigate} onCreateAction={handleCreatePipelineAction} busyActionKey={busyActionKey} />
               </Panel>
             ))}
           </div>
@@ -271,7 +303,7 @@ export default function PipelineCopilotPage() {
                   <p>{item.errorMessage || item.title}</p>
                 </div>
                 <span className="pipeline-badge failed-badge">Needs fix</span>
-                <ActionButtons ctas={item.ctas} navigate={navigate} />
+                <ActionButtons item={item} ctas={item.ctas} navigate={navigate} onCreateAction={handleCreatePipelineAction} busyActionKey={busyActionKey} />
               </Panel>
             ))}
           </div>

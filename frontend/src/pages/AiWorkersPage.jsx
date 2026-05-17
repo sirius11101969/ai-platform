@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { Panel, PageHeading, StatCard } from "../components/AppShell";
 import { approveAiApprovalQueueItem, downloadCrmMeetingIcs, executeAiApprovalQueueItem, fetchAiApprovalQueue, fetchAiCommandCenter, rejectAiApprovalQueueItem, runAiWorker, seedDemoSalesPipeline, updateAiApprovalQueueItem, updateAiWorker } from "../services/api";
 
@@ -464,6 +465,11 @@ export default function AiWorkersPage() {
   const [loadingKey, setLoadingKey] = useState("");
   const actionInFlightRef = useRef(new Set());
   const [editingDraft, setEditingDraft] = useState({ itemId: "", text: "" });
+  const location = useLocation();
+  const highlightRef = useRef(null);
+  const params = useMemo(() => new URLSearchParams(location.search), [location.search]);
+  const targetActionId = params.get("actionId") || params.get("approvalId") || "";
+  const targetLeadId = params.get("leadId") || "";
 
   async function loadCommandCenter({ silent = false } = {}) {
     if (!silent) {
@@ -471,7 +477,8 @@ export default function AiWorkersPage() {
       setError("");
     }
     try {
-      const [response, approvalResponse] = await Promise.all([fetchAiCommandCenter(), fetchAiApprovalQueue()]);
+      const queueParams = targetActionId ? {} : (targetLeadId ? { leadId: targetLeadId } : {});
+      const [response, approvalResponse] = await Promise.all([fetchAiCommandCenter(), fetchAiApprovalQueue(queueParams)]);
       setCommandCenter(response.commandCenter || null);
       setApprovalQueue({ items: approvalResponse.items || [], metrics: approvalResponse.metrics || {} });
     } catch (requestError) {
@@ -483,7 +490,17 @@ export default function AiWorkersPage() {
 
   useEffect(() => {
     loadCommandCenter();
-  }, []);
+  }, [location.search]);
+
+  useEffect(() => {
+    if (location.state?.toast) setMessage(location.state.toast);
+  }, [location.state]);
+
+  useEffect(() => {
+    if (!loading && highlightRef.current) {
+      highlightRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [loading, targetActionId, targetLeadId, approvalQueue.items]);
 
 
   async function handleSeedDemoPipeline() {
@@ -715,6 +732,13 @@ export default function AiWorkersPage() {
   const approvalItems = approvalQueue.items || [];
   const activeApprovalItems = useMemo(() => sortApprovalItemsByCreatedDesc(approvalItems.filter((item) => !["rejected", "completed", "executed", "cancelled"].includes(item.status))), [approvalItems]);
   const approvalHistoryItems = useMemo(() => sortApprovalItemsByCreatedDesc(approvalItems.filter((item) => ["rejected", "completed", "executed", "cancelled"].includes(item.status))), [approvalItems]);
+  const isHighlightedApprovalItem = (item) => Boolean((targetActionId && item.id === targetActionId) || (targetLeadId && item.leadId === targetLeadId));
+  const prioritizeHighlightedItems = (items, limit) => {
+    const sliced = items.slice(0, limit);
+    const highlighted = items.find(isHighlightedApprovalItem);
+    if (highlighted && !sliced.some((item) => item.id === highlighted.id)) return [highlighted, ...sliced.slice(0, Math.max(0, limit - 1))];
+    return sliced;
+  };
   const approvalMetrics = approvalQueue.metrics || {};
   const pendingActions = useMemo(() => queue.filter((item) => item.status === "pending_approval"), [queue]);
   const failedActions = useMemo(() => queue.filter((item) => item.status === "failed"), [queue]);
@@ -776,7 +800,7 @@ export default function AiWorkersPage() {
         </div>
         <div className="approval-table">
           {activeApprovalItems.length === 0 && <p className="empty-state">Нет AI действий на одобрение.</p>}
-          {activeApprovalItems.slice(0, 12).map((item) => {
+          {prioritizeHighlightedItems(activeApprovalItems, 12).map((item) => {
             const isApproveBusy = Boolean(busyActions[getApprovalActionKey(item.id, "approve")]);
             const isEditBusy = Boolean(busyActions[getApprovalActionKey(item.id, "edit")]);
             const isRejectBusy = Boolean(busyActions[getApprovalActionKey(item.id, "reject")]);
@@ -795,7 +819,7 @@ export default function AiWorkersPage() {
             const canEditItem = ["pending_approval", "failed"].includes(item.status);
             const canRejectItem = ["pending_approval", "failed"].includes(item.status);
             return (
-            <article className={`approval-row approval-${item.status}`} key={item.id}>
+            <article ref={isHighlightedApprovalItem(item) ? highlightRef : null} className={`approval-row approval-${item.status} ${isHighlightedApprovalItem(item) ? "route-highlight" : ""}`} key={item.id}>
               <div className="approval-main">
                 <strong>{item.title}</strong>
                 <p>{shortRecommendation(item)}</p>
@@ -858,8 +882,8 @@ export default function AiWorkersPage() {
               <span>{approvalHistoryItems.length} в истории</span>
             </div>
             <div className="approval-table approval-history-table">
-              {approvalHistoryItems.slice(0, 8).map((item) => (
-                <article className={`approval-row approval-history-row approval-${item.status}`} key={item.id}>
+              {prioritizeHighlightedItems(approvalHistoryItems, 8).map((item) => (
+                <article ref={isHighlightedApprovalItem(item) ? highlightRef : null} className={`approval-row approval-history-row approval-${item.status} ${isHighlightedApprovalItem(item) ? "route-highlight" : ""}`} key={item.id}>
                   <div className="approval-main">
                     <strong>{item.title}</strong>
                     <p>{shortRecommendation(item)}</p>
@@ -921,8 +945,8 @@ export default function AiWorkersPage() {
           </div>
           <div className="ai-queue-list">
             {queue.length === 0 && <p className="empty-state">Очередь пуста. Запустите AI сотрудника, чтобы создать рекомендации.</p>}
-            {queue.slice(0, 8).map((item) => (
-              <article className="ai-queue-item" key={item.id}>
+            {prioritizeHighlightedItems(queue, 8).map((item) => (
+              <article ref={isHighlightedApprovalItem(item) ? highlightRef : null} className={`ai-queue-item ${isHighlightedApprovalItem(item) ? "route-highlight" : ""}`} key={item.id}>
                 <div>
                   <strong>{item.title}</strong>
                   <p>{shortRecommendation(item)}</p>

@@ -1,4 +1,7 @@
 const pool = require('../db/pool')
+const crmModel = require('../models/crmModel')
+const { addTimelineEvent } = require('./timelineService')
+const { assertSafeCustomerCopy } = require('./customerCopyGuard')
 
 const HIGH_RISK = new Set(['high', 'medium'])
 const FOCUS_PRIORITIES = new Set(['urgent', 'priority'])
@@ -70,8 +73,10 @@ function leadRoute(leadId) {
   return leadId ? `/crm?leadId=${encodeURIComponent(leadId)}` : '/crm'
 }
 
-function queueRoute(itemId) {
-  return itemId ? `/ai-workers?approvalId=${encodeURIComponent(itemId)}` : '/ai-workers'
+function queueRoute(itemId, leadId = '') {
+  if (itemId) return `/ai-workers?actionId=${encodeURIComponent(itemId)}`
+  if (leadId) return `/ai-workers?leadId=${encodeURIComponent(leadId)}`
+  return '/ai-workers'
 }
 
 function priorityRoute(leadId) {
@@ -81,7 +86,7 @@ function priorityRoute(leadId) {
 function buildCtas(leadId, queueId = '') {
   return {
     openLead: leadRoute(leadId),
-    openAiWorkers: queueRoute(queueId),
+    openAiWorkers: queueRoute(queueId, leadId),
     openPriorityInbox: priorityRoute(leadId),
     createFollowUp: leadId ? `/crm?leadId=${encodeURIComponent(leadId)}&action=followup` : '/crm',
     scheduleMeeting: leadId ? `/crm?leadId=${encodeURIComponent(leadId)}&action=meeting` : '/crm',
@@ -459,6 +464,147 @@ function buildActions({ focusLeads, riskDeals, meetings, pendingApprovals, faile
   return sortTodayActions(actions).slice(0, 20)
 }
 
+
+function normalizeActionRequestType(actionKind) {
+  const value = String(actionKind || '').trim().toLowerCase()
+  if (value === 'followup' || value === 'follow-up') return 'followup'
+  if (value === 'meeting' || value === 'schedule_meeting') return 'meeting'
+  return ''
+}
+
+function pipelineActionConfig(actionKind) {
+  if (actionKind === 'followup') {
+    return {
+      actionType: 'followup_sequence_draft',
+      workerType: 'ai_crm_assistant',
+      workerName: 'AI CRM Assistant',
+      title: 'Pipeline Copilot follow-up draft',
+      recommendation: 'Менеджеру: проверьте безопасный follow-up и отправьте только после approval.',
+      customerText: 'Здравствуйте! Возвращаюсь к нашему диалогу по AS6 AI CRM. Актуально ещё обсудить автоматизацию продаж?',
+      channelLabel: 'follow-up',
+      sequenceStep: 'pipeline_copilot_followup',
+      eventTitle: 'AI Pipeline Copilot создал follow-up',
+    }
+  }
+  if (actionKind === 'meeting') {
+    return {
+      actionType: 'meeting_schedule_proposal',
+      workerType: 'ai_meeting_scheduler',
+      workerName: 'AI Meeting Scheduler',
+      title: 'Pipeline Copilot meeting proposal',
+      recommendation: 'Менеджеру: проверьте предложение встречи. Отправка клиенту возможна только после approval.',
+      customerText: 'Здравствуйте! Удобно согласовать короткую встречу по AS6 AI CRM и обсудить следующие шаги?',
+      channelLabel: 'meeting',
+      sequenceStep: '',
+      eventTitle: 'AI Pipeline Copilot создал meeting proposal',
+    }
+  }
+  return null
+}
+
+async function ensurePipelineActionWorker(client, workspaceId, config) {
+  const result = await client.query(
+    `INSERT INTO ai_workers(workspace_id, name, type, status, mode, description)
+     VALUES($1, $2, $3, 'active', 'approval_required', 'Создаёт approval-действия из AI Pipeline Copilot. Отправка только после проверки менеджера.')
+     ON CONFLICT (workspace_id, type) DO UPDATE SET updated_at = NOW()
+     RETURNING id`,
+    [workspaceId, config.workerName, config.workerType]
+  )
+  return result.rows[0]
+}
+
+async function findDuplicatePipelineAction(client, workspaceId, leadId, actionType) {
+  const result = await client.query(
+    `SELECT id FROM ai_worker_queue
+      WHERE workspace_id = $1 AND lead_id = $2 AND action_type = $3
+        AND status IN ('pending_approval','approved')
+        AND payload->>'source' = 'pipeline_copilot'
+        AND created_at >= NOW() - INTERVAL '24 hours'
+      ORDER BY created_at DESC LIMIT 1`,
+    [workspaceId, leadId, actionType]
+  )
+  return result.rows[0] || null
+}
+
+function buildPipelineActionPayload(lead, config, actionKind) {
+  const customerText = assertSafeCustomerCopy(config.customerText, { source: 'pipeline_copilot', leadId: lead.id, actionType: config.actionType })
+  const channel = lead.telegramChatId ? 'telegram' : (lead.email ? 'email' : 'crm')
+  return {
+    source: 'pipeline_copilot',
+    leadId: lead.id,
+    leadName: lead.name,
+    company: lead.company || '',
+    currentStage: lead.status || '',
+    channel,
+    customerText,
+    draftText: customerText,
+    text: customerText,
+    message: customerText,
+    body: channel === 'email' ? customerText : undefined,
+    subject: actionKind === 'meeting' ? 'Предложение встречи' : 'Follow-up по AS6 AI CRM',
+    recommendation: config.recommendation,
+    sequenceStep: config.sequenceStep || undefined,
+    proposalType: actionKind === 'meeting' ? 'pipeline_copilot_demo_scheduling' : undefined,
+    proposedStartTime: null,
+    suggestedTime: null,
+    noAutoSend: true,
+    internalContext: {
+      currentStage: lead.status || '',
+      ai_priority: lead.aiPriority || '',
+      ai_risk_level: lead.aiRiskLevel || '',
+    },
+  }
+}
+
+async function createPipelineCopilotAction(userId, workspaceId, { leadId, actionKind }) {
+  const normalizedActionKind = normalizeActionRequestType(actionKind)
+  const config = pipelineActionConfig(normalizedActionKind)
+  if (!leadId) throw Object.assign(new Error('leadId is required'), { statusCode: 400 })
+  if (!config) throw Object.assign(new Error('Invalid Pipeline Copilot action'), { statusCode: 400 })
+
+  console.info(`[pipeline-copilot] ${normalizedActionKind} action requested`, { workspaceId, userId, leadId })
+  const lead = await crmModel.findLead(userId, workspaceId, leadId)
+  if (!lead) throw Object.assign(new Error('Lead not found'), { statusCode: 404 })
+
+  const client = await pool.connect()
+  try {
+    await client.query('BEGIN')
+    const duplicate = await findDuplicatePipelineAction(client, workspaceId, lead.id, config.actionType)
+    if (duplicate) {
+      console.info('[pipeline-copilot] duplicate action reused', { workspaceId, leadId: lead.id, actionType: config.actionType, actionId: duplicate.id })
+      await client.query('COMMIT')
+      return { success: true, duplicate: true, actionId: duplicate.id, message: 'Уже есть активная AI задача для этого лида.', redirectTo: queueRoute(duplicate.id, lead.id) }
+    }
+
+    const worker = await ensurePipelineActionWorker(client, workspaceId, config)
+    const payload = buildPipelineActionPayload(lead, config, normalizedActionKind)
+    const result = await client.query(
+      `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
+       VALUES($1, $2, $3, $4, 'pending_approval', $5, $6, $7)
+       RETURNING id`,
+      [worker.id, workspaceId, lead.id, config.actionType, config.title, config.recommendation, payload]
+    )
+    await addTimelineEvent(client, {
+      workspaceId,
+      leadId: lead.id,
+      userId,
+      eventType: 'pipeline_copilot_action_created',
+      title: config.eventTitle,
+      body: config.recommendation,
+      source: 'ai',
+      metadata: { queueItemId: result.rows[0].id, actionType: config.actionType, source: 'pipeline_copilot' },
+    })
+    await client.query('COMMIT')
+    console.info(`[pipeline-copilot] ${normalizedActionKind} action created`, { workspaceId, leadId: lead.id, actionType: config.actionType, actionId: result.rows[0].id })
+    return { success: true, duplicate: false, actionId: result.rows[0].id, message: normalizedActionKind === 'followup' ? 'Follow-up создан' : 'Meeting proposal создан', redirectTo: queueRoute(result.rows[0].id, lead.id) }
+  } catch (error) {
+    await client.query('ROLLBACK')
+    throw error
+  } finally {
+    client.release()
+  }
+}
+
 async function getPipelineCopilot(userId, workspaceId) {
   console.info('[pipeline-copilot] requested', { workspaceId, userId })
   const [leads, queueHistory, meetings] = await Promise.all([
@@ -507,4 +653,4 @@ async function getPipelineCopilot(userId, workspaceId) {
   return { summary, todayActions, focusLeads, riskDeals, upcomingMeetings, pendingApprovals, failedActions, revenueSnapshot }
 }
 
-module.exports = { getPipelineCopilot, sanitizeManagerReason, normalizeCopilotActionTitle, isFocusLead, isActionableApproval, filterUnresolvedFailedActions }
+module.exports = { createPipelineCopilotAction, getPipelineCopilot, sanitizeManagerReason, normalizeCopilotActionTitle, isFocusLead, isActionableApproval, filterUnresolvedFailedActions }

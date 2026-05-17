@@ -1831,3 +1831,15 @@ button { font: inherit; }
   .pipeline-summary-grid { grid-template-columns: 1fr; }
   .pipeline-card-actions button { flex: 1 1 100%; }
 }
+
+/* Route-target highlight for cross-workflow CTA navigation */
+.route-highlight {
+  outline: 2px solid rgba(124, 92, 255, 0.95);
+  box-shadow: 0 0 0 4px rgba(124, 92, 255, 0.18), 0 18px 45px rgba(124, 92, 255, 0.2);
+  animation: route-highlight-pulse 1.6s ease-in-out 2;
+}
+
+@keyframes route-highlight-pulse {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}

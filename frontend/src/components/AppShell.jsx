@@ -186,9 +186,9 @@ export function PageHeading({ eyebrow, title, copy, action }) {
   );
 }
 
-export function Panel({ className = "", children, ...props }) {
-  return <section className={`app-panel shell-glow ${className}`} {...props}>{children}</section>;
-}
+export const Panel = React.forwardRef(function Panel({ className = "", children, ...props }, ref) {
+  return <section ref={ref} className={`app-panel shell-glow ${className}`} {...props}>{children}</section>;
+});
 
 export function StatCard({ label, value, hint, tone = "cyan" }) {
   return (

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { PageHeading, Panel } from "../components/AppShell";
 import { createPriorityInboxAction, fetchAiPriorityInbox } from "../services/api";
 
@@ -42,6 +42,9 @@ export default function PriorityInboxPage() {
   const [busyActions, setBusyActions] = useState({});
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
+  const highlightRef = useRef(null);
+  const targetLeadId = new URLSearchParams(location.search).get("leadId") || "";
 
   async function loadInbox(nextMode = mode) {
     setLoading(true);
@@ -63,7 +66,15 @@ export default function PriorityInboxPage() {
     }
   }
 
-  useEffect(() => { loadInbox("focus"); }, []);
+  useEffect(() => {
+    const initialMode = targetLeadId ? "all" : "focus";
+    setMode(initialMode);
+    loadInbox(initialMode);
+  }, [location.search]);
+
+  useEffect(() => {
+    if (!loading && highlightRef.current) highlightRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [loading, targetLeadId, inbox.leads]);
 
   function selectMode(nextMode) {
     setMode(nextMode);
@@ -140,7 +151,7 @@ export default function PriorityInboxPage() {
         {loading && Array.from({ length: 4 }).map((_, index) => <Panel className="priority-lead-card priority-card-skeleton" key={index}>AI анализирует Focus Mode…</Panel>)}
         {!loading && inbox.leads.length === 0 && <Panel className="empty-priority-inbox">Нет лидов в этом режиме. Generic high лиды доступны во вкладке All Leads.</Panel>}
         {!loading && inbox.leads.map((lead) => (
-          <Panel className={cardClassName(lead)} key={lead.leadId}>
+          <Panel ref={lead.leadId === targetLeadId ? highlightRef : null} className={`${cardClassName(lead)} ${lead.leadId === targetLeadId ? "route-highlight" : ""}`} key={lead.leadId}>
             <div className="priority-card-topline">
               <div>
                 <span className="eyebrow mini">{lead.stage}</span>
