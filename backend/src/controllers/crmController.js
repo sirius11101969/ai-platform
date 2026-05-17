@@ -136,6 +136,16 @@ async function sendTelegramReply(req, res, next) {
 }
 
 
+
+async function getMeeting(req, res, next) {
+  try {
+    const meeting = await crmModel.getMeeting(req.user.id, req.workspace.id, req.params.id)
+    res.json({ meeting })
+  } catch (error) {
+    next(error)
+  }
+}
+
 async function downloadMeetingIcs(req, res, next) {
   try {
     const meeting = await crmModel.getMeetingIcs(req.user.id, req.workspace.id, req.params.id)
@@ -184,6 +194,7 @@ module.exports = {
   deleteLead,
   downloadMeetingIcs,
   generateLeadEmail,
+  getMeeting,
   listLeadEmails,
   listLeads,
   listTelegramMessages,

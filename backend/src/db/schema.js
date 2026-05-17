@@ -812,6 +812,10 @@ async function migrate() {
       ics_uid TEXT,
       ics_content TEXT,
       timezone TEXT DEFAULT 'Europe/Moscow',
+      google_event_id TEXT,
+      google_meet_url TEXT,
+      calendar_error TEXT,
+      calendar_synced_at TIMESTAMPTZ,
       created_at TIMESTAMPTZ DEFAULT NOW(),
       updated_at TIMESTAMPTZ DEFAULT NOW()
     );
@@ -830,6 +834,10 @@ async function migrate() {
     ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS ics_uid TEXT;
     ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS ics_content TEXT;
     ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS timezone TEXT DEFAULT 'Europe/Moscow';
+    ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS google_event_id TEXT;
+    ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS google_meet_url TEXT;
+    ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS calendar_error TEXT;
+    ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS calendar_synced_at TIMESTAMPTZ;
 
     CREATE TABLE IF NOT EXISTS lead_attachments (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

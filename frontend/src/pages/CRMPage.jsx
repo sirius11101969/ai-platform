@@ -68,6 +68,10 @@ function calendarStatusLabel(status) {
   return ({ pending: 'ожидает', ics_ready: 'ICS готов', synced: 'синхронизировано', failed: 'ошибка' }[status] || status || 'ожидает');
 }
 
+function calendarProviderLabel(provider) {
+  return provider === 'google' ? 'Google Calendar' : 'ICS';
+}
+
 function toForm(lead) {
   return {
     name: lead?.name || "",
@@ -983,6 +987,8 @@ export default function CRMPage() {
           onGenerateEmail={handleGenerateEmail}
           onUploadEmailAttachment={handleUploadEmailAttachment}
           onSendEmail={handleSendEmail}
+          onDownloadMeetingIcs={handleDownloadMeetingIcs}
+          meetingIcsDownloadingId={meetingIcsDownloadingId}
           closeLeadModal={closeLeadModal}
         />
       )}
@@ -1078,7 +1084,7 @@ function LeadFormModal({ title, subtitle, stages, leadForm, setLeadForm, saving,
   );
 }
 
-function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDraftChange, onAddNote, onFollowUp, onAiAction, onAnalyzeLeadAi, aiActionBusy = {}, followUpLoading, onDelete, onEdit, onMove, telegramMessages = [], telegramDraft = '', telegramSending = false, onTelegramDraftChange, onSendTelegramReply, emailTemplates = [], leadEmails = [], emailComposer, emailAttachments = [], emailBusy = false, onEmailComposerChange, onGenerateEmail, onUploadEmailAttachment, onSendEmail, actionCenter = { actions: [], timeline: [], attachments: [] }, materials = [], executionBusy = {}, onCreateExecutionAction, onApproveExecutionAction, onSendExecutionAction, onEditExecutionAction, onCancelExecutionAction, onSendMaterials, onApproveApprovalQueueItem, onRejectApprovalQueueItem, onExecuteApprovalQueueItem, onEditApprovalQueueItem, closeLeadModal }) {
+function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDraftChange, onAddNote, onFollowUp, onAiAction, onAnalyzeLeadAi, aiActionBusy = {}, followUpLoading, onDelete, onEdit, onMove, telegramMessages = [], telegramDraft = '', telegramSending = false, onTelegramDraftChange, onSendTelegramReply, emailTemplates = [], leadEmails = [], emailComposer, emailAttachments = [], emailBusy = false, onEmailComposerChange, onGenerateEmail, onUploadEmailAttachment, onSendEmail, actionCenter = { actions: [], timeline: [], attachments: [] }, materials = [], executionBusy = {}, onCreateExecutionAction, onApproveExecutionAction, onSendExecutionAction, onEditExecutionAction, onCancelExecutionAction, onSendMaterials, onApproveApprovalQueueItem, onRejectApprovalQueueItem, onExecuteApprovalQueueItem, onEditApprovalQueueItem, onDownloadMeetingIcs, meetingIcsDownloadingId, closeLeadModal }) {
   useModalCloseLifecycle(closeLeadModal);
   const telegramOutreachDrafts = getOutreachDrafts(lead, 'telegram');
   const telegramReplyDrafts = (actionCenter.approvalItems || []).filter((item) => item.leadId === lead.id && (item.actionType === 'telegram_reply_draft' || item.executionType === 'telegram_reply_draft'));
@@ -1187,7 +1193,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
               <div className="telegram-chat-head">
                 <div>
                   <h4>Запланированная встреча</h4>
-                  <p>Calendar Integration v1 готовит внутренний .ics без Google OAuth и без автоотправки файлов.</p>
+                  <p>Calendar Integration v1 создаёт Google Calendar + Meet при наличии настроек и сохраняет .ics fallback.</p>
                 </div>
                 <span className="telegram-badge">Calendar</span>
               </div>
@@ -1199,12 +1205,15 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                     <small>{formatDate(meeting.startsAt)} · {meeting.durationMinutes || 30} мин · {meeting.timezone || 'Europe/Moscow'}</small>
                   </div>
                   <div className="meeting-calendar-meta">
+                    <span>Provider: {calendarProviderLabel(meeting.calendarProvider)}</span>
                     <span className={`calendar-status ${meeting.calendarStatus || 'pending'}`}>{calendarStatusLabel(meeting.calendarStatus)}</span>
                     <span>{meeting.status || 'scheduled'}</span>
                   </div>
+                  {meeting.googleMeetUrl && <a className="calendar-meet-url" href={meeting.googleMeetUrl} target="_blank" rel="noreferrer">{meeting.googleMeetUrl}</a>}
+                  {meeting.calendarError && <p className="calendar-error">{meeting.calendarError}</p>}
                   <div className="meeting-calendar-actions">
-                    <button type="button" className="btn primary compact" onClick={() => handleDownloadMeetingIcs(meeting)} disabled={!meeting.hasIcs || meetingIcsDownloadingId === meeting.id}>{meetingIcsDownloadingId === meeting.id ? 'Скачиваем…' : meeting.hasIcs ? 'Скачать .ics' : '.ics готовится'}</button>
-                    <span className="calendar-placeholder">Google Calendar скоро</span>
+                    {meeting.googleMeetUrl && <a className="btn primary compact" href={meeting.googleMeetUrl} target="_blank" rel="noreferrer">Открыть Google Meet</a>}
+                    <button type="button" className="btn primary compact" onClick={() => onDownloadMeetingIcs?.(meeting)} disabled={!meeting.hasIcs || meetingIcsDownloadingId === meeting.id}>{meetingIcsDownloadingId === meeting.id ? 'Скачиваем…' : meeting.hasIcs ? 'Скачать .ics' : '.ics готовится'}</button>
                   </div>
                 </article>
               ))}

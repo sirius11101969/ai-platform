@@ -6,6 +6,7 @@ const { sendLeadAttachments } = require('./attachmentService')
 const { addTimelineEvent } = require('./timelineService')
 const { findDuplicateQueueItem, logDuplicateSkipped } = require('./aiQueueDedupService')
 const { DEFAULT_TIMEZONE, buildMeetingDescription, buildStableIcsUid, generateMeetingIcs } = require('./calendarIcsService')
+const { createGoogleCalendarEvent } = require('./googleCalendarService')
 
 const STATUSES = ['pending_approval', 'approved', 'rejected', 'executing', 'completed', 'executed', 'failed', 'cancelled']
 const TELEGRAM_MEETING_CONFIRMATION_DRAFT = 'telegram_meeting_confirmation_draft'
@@ -70,6 +71,10 @@ function normalize(row) {
       calendarProvider: row.meeting_calendar_provider || '',
       timezone: row.meeting_timezone || '',
       hasIcs: Boolean(row.meeting_has_ics),
+      googleEventId: row.meeting_google_event_id || '',
+      googleMeetUrl: row.meeting_google_meet_url || '',
+      calendarError: row.meeting_calendar_error || '',
+      calendarSyncedAt: row.meeting_calendar_synced_at || null,
     } : null,
   }
 }
@@ -98,7 +103,7 @@ function russianError(message) {
 
 async function assertQueueItem(userId, workspaceId, queueId, client = pool) {
   const result = await client.query(
-    `SELECT q.*, w.name AS worker_name, l.name AS lead_name, l.company AS lead_company, l.email AS lead_email, l.telegram AS lead_telegram, l.telegram_chat_id AS lead_telegram_chat_id, l.status AS lead_status, m.id AS meeting_id, m.title AS meeting_title, m.starts_at AS meeting_starts_at, m.duration_minutes AS meeting_duration_minutes, m.status AS meeting_status, m.calendar_status AS meeting_calendar_status, m.calendar_provider AS meeting_calendar_provider, m.timezone AS meeting_timezone, (m.ics_content IS NOT NULL AND m.ics_content <> '') AS meeting_has_ics
+    `SELECT q.*, w.name AS worker_name, l.name AS lead_name, l.company AS lead_company, l.email AS lead_email, l.telegram AS lead_telegram, l.telegram_chat_id AS lead_telegram_chat_id, l.status AS lead_status, m.id AS meeting_id, m.title AS meeting_title, m.starts_at AS meeting_starts_at, m.duration_minutes AS meeting_duration_minutes, m.status AS meeting_status, m.calendar_status AS meeting_calendar_status, m.calendar_provider AS meeting_calendar_provider, m.timezone AS meeting_timezone, m.google_event_id AS meeting_google_event_id, m.google_meet_url AS meeting_google_meet_url, m.calendar_error AS meeting_calendar_error, m.calendar_synced_at AS meeting_calendar_synced_at, (m.ics_content IS NOT NULL AND m.ics_content <> '') AS meeting_has_ics
        FROM ai_worker_queue q
        JOIN ai_workers w ON w.id = q.worker_id AND w.workspace_id = q.workspace_id
        LEFT JOIN crm_leads l ON l.id = q.lead_id AND l.workspace_id = q.workspace_id
@@ -137,7 +142,7 @@ async function listQueue(userId, workspaceId, filters = {}) {
     clauses.push(`q.status = $${values.length}`)
   }
   const result = await pool.query(
-    `SELECT q.*, w.name AS worker_name, l.name AS lead_name, l.company AS lead_company, l.email AS lead_email, l.telegram AS lead_telegram, l.telegram_chat_id AS lead_telegram_chat_id, l.status AS lead_status, m.id AS meeting_id, m.title AS meeting_title, m.starts_at AS meeting_starts_at, m.duration_minutes AS meeting_duration_minutes, m.status AS meeting_status, m.calendar_status AS meeting_calendar_status, m.calendar_provider AS meeting_calendar_provider, m.timezone AS meeting_timezone, (m.ics_content IS NOT NULL AND m.ics_content <> '') AS meeting_has_ics
+    `SELECT q.*, w.name AS worker_name, l.name AS lead_name, l.company AS lead_company, l.email AS lead_email, l.telegram AS lead_telegram, l.telegram_chat_id AS lead_telegram_chat_id, l.status AS lead_status, m.id AS meeting_id, m.title AS meeting_title, m.starts_at AS meeting_starts_at, m.duration_minutes AS meeting_duration_minutes, m.status AS meeting_status, m.calendar_status AS meeting_calendar_status, m.calendar_provider AS meeting_calendar_provider, m.timezone AS meeting_timezone, m.google_event_id AS meeting_google_event_id, m.google_meet_url AS meeting_google_meet_url, m.calendar_error AS meeting_calendar_error, m.calendar_synced_at AS meeting_calendar_synced_at, (m.ics_content IS NOT NULL AND m.ics_content <> '') AS meeting_has_ics
        FROM ai_worker_queue q
        JOIN ai_workers w ON w.id = q.worker_id AND w.workspace_id = q.workspace_id
        LEFT JOIN crm_leads l ON l.id = q.lead_id AND l.workspace_id = q.workspace_id
@@ -266,6 +271,10 @@ async function ensureCrmMeetingsTable(client) {
   await client.query("ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS ics_uid TEXT")
   await client.query("ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS ics_content TEXT")
   await client.query("ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS timezone TEXT DEFAULT 'Europe/Moscow'")
+  await client.query("ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS google_event_id TEXT")
+  await client.query("ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS google_meet_url TEXT")
+  await client.query("ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS calendar_error TEXT")
+  await client.query("ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS calendar_synced_at TIMESTAMPTZ")
   await client.query('CREATE INDEX IF NOT EXISTS idx_crm_meetings_workspace_lead ON crm_meetings(workspace_id, lead_id, starts_at DESC)')
   await client.query('CREATE UNIQUE INDEX IF NOT EXISTS idx_crm_meetings_unique_ai_worker_queue_id ON crm_meetings(ai_worker_queue_id) WHERE ai_worker_queue_id IS NOT NULL')
   await client.query('CREATE INDEX IF NOT EXISTS idx_crm_meetings_ai_worker_queue_id ON crm_meetings(ai_worker_queue_id)')
@@ -352,16 +361,67 @@ async function insertOptionalMeetingRecord(client, { workspaceId, item }) {
          ics_uid = EXCLUDED.ics_uid,
          ics_content = EXCLUDED.ics_content,
          timezone = EXCLUDED.timezone,
+         google_event_id = crm_meetings.google_event_id,
+         google_meet_url = crm_meetings.google_meet_url,
+         calendar_error = NULL,
+         calendar_synced_at = crm_meetings.calendar_synced_at,
          updated_at = NOW()`
     : ''
   const result = await client.query(
     `INSERT INTO crm_meetings(${baseColumns.join(', ')})
      VALUES(${placeholders.join(', ')})
      ${conflict}
-     RETURNING id, calendar_status, calendar_provider, ics_uid`,
+     RETURNING id, title, starts_at, duration_minutes, description, location, meeting_url, calendar_status, calendar_provider, ics_uid, timezone, google_event_id, google_meet_url, calendar_error, calendar_synced_at`,
     values
   )
-  return { table: 'crm_meetings', id: result.rows[0]?.id || null, calendarStatus: result.rows[0]?.calendar_status || 'ics_ready', calendarProvider: result.rows[0]?.calendar_provider || 'ics', icsUid }
+  const row = result.rows[0] || {}
+  return {
+    table: 'crm_meetings',
+    id: row.id || null,
+    title: row.title || title,
+    startsAt: row.starts_at || startTime,
+    durationMinutes: Number(row.duration_minutes || duration),
+    description: row.description || description,
+    location: row.location || 'AS6 demo-созвон',
+    meetingUrl: row.meeting_url || '',
+    calendarStatus: row.calendar_status || 'ics_ready',
+    calendarProvider: row.calendar_provider || 'ics',
+    icsUid: row.ics_uid || icsUid,
+    timezone: row.timezone || timezone,
+    googleEventId: row.google_event_id || '',
+    googleMeetUrl: row.google_meet_url || '',
+    calendarError: row.calendar_error || '',
+    calendarSyncedAt: row.calendar_synced_at || null,
+  }
+}
+
+async function syncMeetingToGoogleCalendar(client, meetingRecord) {
+  if (!meetingRecord?.id) return meetingRecord
+  if (meetingRecord.googleEventId) {
+    await client.query("UPDATE crm_meetings SET calendar_provider = 'google', calendar_status = 'synced', calendar_error = NULL, updated_at = NOW() WHERE id = $1", [meetingRecord.id])
+    return { ...meetingRecord, calendarStatus: 'synced', calendarProvider: 'google' }
+  }
+  try {
+    const result = await createGoogleCalendarEvent({ meeting: meetingRecord })
+    if (result.skipped) {
+      await client.query("UPDATE crm_meetings SET calendar_provider = 'ics', calendar_status = 'ics_ready', calendar_error = NULL, updated_at = NOW() WHERE id = $1", [meetingRecord.id])
+      return { ...meetingRecord, calendarStatus: 'ics_ready', calendarProvider: 'ics' }
+    }
+    const updated = await client.query(
+      `UPDATE crm_meetings
+          SET google_event_id = $2, google_meet_url = $3, meeting_url = COALESCE(NULLIF($3, ''), meeting_url), calendar_provider = 'google', calendar_status = 'synced', calendar_error = NULL, calendar_synced_at = NOW(), updated_at = NOW()
+        WHERE id = $1 AND (google_event_id IS NULL OR google_event_id = '')
+        RETURNING google_event_id, google_meet_url, calendar_status, calendar_provider, calendar_synced_at`,
+      [meetingRecord.id, result.googleEventId, result.googleMeetUrl || '']
+    )
+    const row = updated.rows[0] || {}
+    return { ...meetingRecord, googleEventId: row.google_event_id || result.googleEventId, googleMeetUrl: row.google_meet_url || result.googleMeetUrl || '', calendarStatus: row.calendar_status || 'synced', calendarProvider: row.calendar_provider || 'google', calendarSyncedAt: row.calendar_synced_at || new Date().toISOString(), calendarError: '' }
+  } catch (error) {
+    const message = error.message || 'Google Calendar sync failed'
+    console.info('[calendar] google sync failed, using ics fallback', { meetingId: meetingRecord.id, error: message })
+    await client.query("UPDATE crm_meetings SET calendar_provider = 'ics', calendar_status = 'ics_ready', calendar_error = $2, updated_at = NOW() WHERE id = $1", [meetingRecord.id, message])
+    return { ...meetingRecord, calendarStatus: 'ics_ready', calendarProvider: 'ics', calendarError: message }
+  }
 }
 
 function getMeetingTimezone(item) {
@@ -383,11 +443,12 @@ function formatMeetingScheduleText(proposedStartTime, timeZone, { includeYear = 
   return `${date} в ${parts.hour}:${parts.minute}`
 }
 
-function buildMeetingConfirmationDraftText(item, { icsReady = false } = {}) {
+function buildMeetingConfirmationDraftText(item, { icsReady = false, googleMeetUrl = '' } = {}) {
   const proposedStartTime = getMeetingStartTime(item.payload)
   const baseText = proposedStartTime
     ? `Отлично, demo-созвон подтверждён на ${formatMeetingScheduleText(proposedStartTime, getMeetingTimezone(item))}. До встречи!`
     : 'Отлично, demo-созвон подтверждён. До встречи!'
+  if (googleMeetUrl) return `${baseText} Ссылка на встречу: ${googleMeetUrl}`
   return icsReady ? `${baseText} Календарное приглашение готово, менеджер может отправить его отдельно.` : baseText
 }
 
@@ -428,9 +489,10 @@ async function executeMeetingScheduleProposal(userId, workspaceId, item) {
   try {
     await client.query('BEGIN')
     await client.query("SELECT pg_advisory_xact_lock(hashtext($1))", [`meeting-execute:${workspaceId}:${item.id}`])
-    const meetingRecord = await insertOptionalMeetingRecord(client, { workspaceId, item })
+    let meetingRecord = await insertOptionalMeetingRecord(client, { workspaceId, item })
+    meetingRecord = await syncMeetingToGoogleCalendar(client, meetingRecord)
     const icsReady = meetingRecord.calendarStatus === 'ics_ready'
-    confirmationText = buildMeetingConfirmationDraftText(item, { icsReady })
+    confirmationText = buildMeetingConfirmationDraftText(item, { icsReady, googleMeetUrl: meetingRecord.googleMeetUrl })
     console.info('[meeting-execute] meeting created', { workspaceId, leadId: item.leadId, queueId: item.id, meetingId: meetingRecord.id })
     await client.query(
       `UPDATE crm_leads
