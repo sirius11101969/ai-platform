@@ -124,7 +124,7 @@ async function ensureLeadScoringWorker(client, workspaceId) {
   const executor = client || pool
   const result = await executor.query(
     `INSERT INTO ai_workers(workspace_id, name, type, status, mode, description)
-     VALUES($1, $2, $3, 'active', 'approval_required', 'Детерминированно пересчитывает AI score, priority, temperature и risk для CRM лидов.')
+     VALUES($1, $2, $3, 'active', 'approval_required', 'Scores leads, detects priority/risk, updates CRM and recommendations.')
      ON CONFLICT (workspace_id, type) DO UPDATE
         SET name = EXCLUDED.name, status = 'active', mode = EXCLUDED.mode, description = EXCLUDED.description, updated_at = NOW()
      RETURNING id`,
@@ -234,12 +234,13 @@ async function scoreLead({ userId, workspaceId, leadId, source = 'manual', clien
 
 async function scoreActiveLeads(userId, workspaceId, { limit = 500, source = 'manual_scan' } = {}) {
   console.info('[lead-scoring] scoring started', { workspaceId, source, scope: 'active_leads' })
+  const numericLimit = limit === null || limit === undefined ? null : Math.max(1, Math.min(Number(limit) || 500, 1000))
   const leads = await pool.query(
     `SELECT id FROM crm_leads
       WHERE user_id = $1 AND workspace_id = $2 AND status NOT IN ('won','lost')
       ORDER BY COALESCE(ai_last_scored_at, created_at) ASC, updated_at DESC
-      LIMIT $3`,
-    [userId, workspaceId, Math.max(1, Math.min(Number(limit) || 500, 1000))]
+      ${numericLimit ? 'LIMIT $3' : ''}`,
+    numericLimit ? [userId, workspaceId, numericLimit] : [userId, workspaceId]
   )
   const scored = []
   for (const row of leads.rows) {
