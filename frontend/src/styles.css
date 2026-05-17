@@ -1392,6 +1392,9 @@ button { font: inherit; }
 .approval-stage-details span { text-transform: none !important; letter-spacing: 0 !important; }
 .approval-stage-details b { display: block; color: #fff; margin-top: 2px; }
 .approval-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+.approval-send-button { cursor: pointer; opacity: 1; }
+.approval-send-button:disabled { cursor: wait; opacity: .78; }
+.send-debug-badge { display: inline-flex; width: fit-content; margin-top: 10px; padding: 5px 8px; border: 1px dashed rgba(117, 239, 255, .46); border-radius: 999px; background: rgba(14, 165, 233, .12); color: #bae6fd; font-size: .72rem; font-weight: 900; }
 .glow-status { text-shadow: 0 0 18px rgba(168, 85, 247, 0.55); }
 .glow-status.pending_approval { color: #fbbf24; }
 .glow-status.approved { color: #67e8f9; }

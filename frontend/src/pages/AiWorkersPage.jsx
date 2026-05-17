@@ -314,6 +314,39 @@ function logTelegramSendViaExecute(item) {
   console.log("[ai-workers-ui] telegram send via execute", { actionId: item.id, actionType: item.executionType || item.actionType });
 }
 
+function getApprovalItemType(item) {
+  return item?.executionType || item?.actionType || "";
+}
+
+function isTelegramSendAllowedStatus(status) {
+  return status === "approved" || status === "pending_approval";
+}
+
+function getTelegramSendButtonState(item, currentLoadingKey) {
+  const executeLoadingKey = getApprovalActionKey(item.id, "execute");
+  const buttonEnabled = isTelegramReplyDraft(item) && isTelegramSendAllowedStatus(item.status) && currentLoadingKey !== executeLoadingKey;
+
+  return {
+    actionType: getApprovalItemType(item),
+    buttonEnabled,
+    disabled: !buttonEnabled,
+    executeLoadingKey,
+    isExecutingThisAction: currentLoadingKey === executeLoadingKey,
+    loadingKey: currentLoadingKey || "none",
+  };
+}
+
+function logTelegramSendButtonState(item, buttonState) {
+  console.log("[ai-workers-ui] send button state", {
+    actionId: item.id,
+    actionType: buttonState.actionType,
+    status: item.status,
+    buttonEnabled: buttonState.buttonEnabled,
+    disabled: buttonState.disabled,
+    loadingKey: buttonState.loadingKey,
+  });
+}
+
 export default function AiWorkersPage() {
   const [commandCenter, setCommandCenter] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -458,13 +491,21 @@ export default function AiWorkersPage() {
     const requestOptions = { timeoutMs: APPROVAL_ACTION_TIMEOUT_MS };
 
     if (action === "execute" && isTelegramReplyDraft(item)) {
+      console.log("[ai-workers-ui] send clicked", { actionId: item.id, actionType: getApprovalItemType(item), status: item.status });
       logTelegramSendViaExecute(item);
     }
+
+    const executeApprovalItem = async () => {
+      if (isTelegramReplyDraft(item) && item.status === "pending_approval") {
+        await approveAiApprovalQueueItem(item.id, requestOptions);
+      }
+      return executeAiApprovalQueueItem(item.id, requestOptions);
+    };
 
     const actionRequests = {
       approve: () => approveAiApprovalQueueItem(item.id, requestOptions),
       reject: () => rejectAiApprovalQueueItem(item.id, requestOptions),
-      execute: () => executeAiApprovalQueueItem(item.id, requestOptions),
+      execute: executeApprovalItem,
     };
 
     const requestFactory = actionRequests[action];
@@ -635,7 +676,10 @@ export default function AiWorkersPage() {
             const isEditingThisDraft = editingDraft.itemId === item.id;
             const isExecuteBusy = isExecuteActionBusy;
             const isTelegramDraftItem = isTelegramReplyDraft(item);
-            const sendDisabled = item.status !== "approved" || loadingKey === executeLoadingKey;
+            const telegramSendButtonState = isTelegramDraftItem ? getTelegramSendButtonState(item, loadingKey) : null;
+            const sendDisabled = loadingKey === executeLoadingKey;
+            const canShowTelegramSendButton = isTelegramDraftItem && isTelegramSendAllowedStatus(item.status);
+            if (telegramSendButtonState) logTelegramSendButtonState(item, telegramSendButtonState);
             const isMeetingProposal = isMeetingScheduleProposal(item);
             const canEditItem = !isMeetingProposal || item.status === "pending_approval" || item.status === "failed";
             const canRejectItem = !isMeetingProposal || item.status === "pending_approval" || item.status === "failed";
@@ -655,6 +699,11 @@ export default function AiWorkersPage() {
                   editBusy: isItemBusy,
                 })}
                 {item.errorMessage && <small className="email-error-text">Ошибка выполнения: {formatApprovalErrorMessage(item.errorMessage)}</small>}
+                {telegramSendButtonState && (
+                  <small className="send-debug-badge">
+                    buttonEnabled={String(telegramSendButtonState.buttonEnabled)} · loadingKey={telegramSendButtonState.loadingKey}
+                  </small>
+                )}
               </div>
               <div><span>Лид</span><b>{item.lead?.name || "—"}</b></div>
               <div><span>AI сотрудник</span><b>{item.workerName || "AI"}</b></div>
@@ -671,9 +720,9 @@ export default function AiWorkersPage() {
                 {canRejectItem && !["executing", "completed", "rejected"].includes(item.status) && (
                   <button type="button" className="ghost-button compact danger-action" onClick={() => handleApprovalAction(item, "reject")} disabled={isItemBusy}>{isRejectBusy ? busyLabel : "Отклонить"}</button>
                 )}
-                {(isTelegramDraftItem || (item.status === "approved" && isApprovalItemExecutable(item))) && (
-                  isTelegramDraftItem ? (
-                    <button type="button" className="btn primary compact" onClick={() => handleApprovalAction(item, "execute")} disabled={sendDisabled} aria-busy={isExecuteActionBusy}>{isExecuteActionBusy ? approvalActionLoadingLabels.send : "Отправить"}</button>
+                {(canShowTelegramSendButton || (item.status === "approved" && isApprovalItemExecutable(item))) && (
+                  canShowTelegramSendButton ? (
+                    <button type="button" className="btn primary compact approval-send-button" onClick={() => handleApprovalAction(item, "execute")} disabled={sendDisabled} aria-busy={isExecuteActionBusy}>{isExecuteActionBusy ? approvalActionLoadingLabels.send : "Отправить"}</button>
                   ) : (
                     <button type="button" className="btn primary compact" onClick={() => handleApprovalAction(item, "execute")} disabled={isItemBusy || item.status !== "approved"}>{isExecuteBusy ? busyLabel : "Выполнить"}</button>
                   )
