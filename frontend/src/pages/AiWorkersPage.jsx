@@ -696,9 +696,10 @@ export default function AiWorkersPage() {
             const isEditingThisDraft = editingDraft.itemId === item.id;
             const isExecuteBusy = isExecuteActionBusy;
             const isTelegramDraftItem = isTelegramReplyDraft(item);
+            const isFollowupDraftItem = isFollowupSequenceDraft(item);
             const telegramSendButtonState = isTelegramDraftItem ? getTelegramSendButtonState(item, loadingKey) : null;
             const sendDisabled = loadingKey === executeLoadingKey;
-            const canShowTelegramSendButton = isTelegramDraftItem && isTelegramSendAllowedStatus(item.status);
+            const canShowTelegramSendButton = (isTelegramDraftItem || isFollowupDraftItem) && isTelegramSendAllowedStatus(item.status);
             if (telegramSendButtonState) logTelegramSendButtonState(item, telegramSendButtonState);
             const isMeetingProposal = isMeetingScheduleProposal(item);
             const canEditItem = !isMeetingProposal || item.status === "pending_approval" || item.status === "failed";
