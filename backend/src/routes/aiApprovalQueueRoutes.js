@@ -12,5 +12,6 @@ router.post('/:id/approve', controller.approve)
 router.post('/:id/reject', controller.reject)
 router.patch('/:id', controller.update)
 router.post('/:id/execute', controller.execute)
+router.post('/:id/send', controller.send)
 
 module.exports = router
