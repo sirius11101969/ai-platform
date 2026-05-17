@@ -1180,8 +1180,8 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                 <button className="ghost-button compact" type="button" onClick={() => onSendMaterials(['screenshot_1', 'screenshot_2'], isTelegramLead(lead) ? 'telegram' : 'email')} disabled={executionBusy.materials}>Отправить скриншоты</button>
               </div>
               <div className="execution-action-list">
-                {(actionCenter.approvalItems || []).length > 0 && <h5 className="approval-mini-title">Очередь AI сотрудников для этого лида</h5>}
-                {(actionCenter.approvalItems || []).filter((item) => (item.actionType || item.executionType) !== 'stage_change_recommendation').map((item) => (
+                {(actionCenter.approvalItems || []).filter((item) => !['rejected','completed','executed','cancelled'].includes(item.status)).length > 0 && <h5 className="approval-mini-title">Очередь AI сотрудников для этого лида</h5>}
+                {(actionCenter.approvalItems || []).filter((item) => !['rejected','completed','executed','cancelled'].includes(item.status) && (item.actionType || item.executionType) !== 'stage_change_recommendation').map((item) => (
                   <article className={`execution-action ${item.status}`} key={item.id}>
                     <div><strong>{actionTypeLabel(item.executionType || item.actionType)}</strong><span>{item.workerName || 'AI сотрудник'} · {actionStatusLabel(item.status)}</span></div>
                     <p>{item.recommendation || item.title}</p>
@@ -1194,7 +1194,19 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                     </div>
                   </article>
                 ))}
-                {(actionCenter.actions || []).length === 0 && (actionCenter.approvalItems || []).length === 0 && <p className="empty-state">Нет AI действий на одобрение. Создайте follow-up или материал.</p>}
+                {(actionCenter.approvalItems || []).filter((item) => ['rejected','completed','executed','cancelled'].includes(item.status) && (item.actionType || item.executionType) !== 'stage_change_recommendation').length > 0 && (
+                  <>
+                    <h5 className="approval-mini-title">История AI действий</h5>
+                    {(actionCenter.approvalItems || []).filter((item) => ['rejected','completed','executed','cancelled'].includes(item.status) && (item.actionType || item.executionType) !== 'stage_change_recommendation').slice(0, 6).map((item) => (
+                      <article className={`execution-action ${item.status}`} key={item.id}>
+                        <div><strong>{actionTypeLabel(item.executionType || item.actionType)}</strong><span>{item.workerName || 'AI сотрудник'} · {actionStatusLabel(item.status)} · {formatDate(item.updatedAt || item.executedAt || item.createdAt)}</span></div>
+                        <p>{item.recommendation || item.title}</p>
+                        {item.errorMessage && <small className="email-error-text">Ошибка: {item.errorMessage}</small>}
+                      </article>
+                    ))}
+                  </>
+                )}
+                {(actionCenter.actions || []).length === 0 && (actionCenter.approvalItems || []).filter((item) => !['rejected','completed','executed','cancelled'].includes(item.status)).length === 0 && <p className="empty-state">Нет AI действий на одобрение. Создайте follow-up или материал.</p>}
                 {(actionCenter.actions || []).map((action) => (
                   <article className={`execution-action ${action.status}`} key={action.id}>
                     <div><strong>{actionTypeLabel(action.actionType)}</strong><span>{action.channel} · {actionStatusLabel(action.status)}</span></div>

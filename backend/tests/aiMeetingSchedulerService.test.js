@@ -26,7 +26,7 @@ assert.strictEqual(detectSchedulingIntent('Спасибо, получил мат
 
 assert.strictEqual(
   buildMeetingConfirmationDraftText({ payload: { proposedStartTime: detected.proposedStartTime, detectedDateText: 'завтра', detectedTimeText: 'в 15:00', timeZone: 'Europe/Moscow' } }),
-  'Отлично, demo-созвон подтверждён на завтра в 15:00. До встречи!'
+  'Отлично, demo-созвон подтверждён на 18.05 в 15:00. До встречи!'
 )
 
 assert.strictEqual(
