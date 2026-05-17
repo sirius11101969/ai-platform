@@ -35,6 +35,11 @@ const ACTIONABLE_APPROVAL_TYPES = new Set([
   'crm_next_action',
 ])
 
+const COPILOT_ACTION_TITLE_MAPPINGS = new Map([
+  ['escalate high- deal', 'Escalate high-risk deal'],
+  ['stabilize at- deal', 'Stabilize at-risk deal'],
+])
+
 function toNumber(value) {
   const numeric = Number(value || 0)
   return Number.isFinite(numeric) ? numeric : 0
@@ -94,6 +99,9 @@ function sanitizeManagerReason(text) {
     .replace(/\b(?:score|priority|urgent|risk|confidence|weight|weights)\b/gi, ' ')
     .replace(/\+\s*\d+(?:\.\d+)?/g, ' ')
     .replace(/\b\d{1,3}\s*\/\s*100\b/g, ' ')
+    .replace(/\bhigh\s*-\s*deal\b/gi, 'high-risk deal')
+    .replace(/\bat\s*-\s*deal\b/gi, 'at-risk deal')
+    .replace(/-{2,}/g, '-')
     .replace(/\s{2,}/g, ' ')
     .trim()
 
@@ -105,6 +113,43 @@ function sanitizeManagerReason(text) {
 
   if (cleaned !== original) console.info('[pipeline-copilot] manager reason sanitized')
   return cleaned
+}
+
+function normalizeCopilotActionTitle(title) {
+  const original = compact(title)
+  if (!original) return ''
+
+  const explicitMapping = COPILOT_ACTION_TITLE_MAPPINGS.get(original.toLowerCase())
+  let normalized = explicitMapping || original
+    .replace(/(?:Контекст|Плюсы|Минусы|Итог|Риск)\s*:[^.!?\n]*(?:[.!?\n]|$)/gi, ' ')
+    .replace(/ai[_\s-]*(?:scoring[_\s-]*reason|score|priority|risk[_\s-]*level|temperature)/gi, ' ')
+    .replace(/internalContext/gi, ' ')
+    .replace(/\b(?:score|priority|urgent|confidence|weight|weights)\b/gi, ' ')
+    .replace(/\+\s*\d+(?:\.\d+)?/g, ' ')
+    .replace(/\b\d{1,3}\s*\/\s*100\b/g, ' ')
+    .replace(/\bhigh\s*-\s*deal\b/gi, 'high-risk deal')
+    .replace(/\bat\s*-\s*deal\b/gi, 'at-risk deal')
+    .replace(/\bhigh\s+risk\s+deal\b/gi, 'high-risk deal')
+    .replace(/\bat\s+risk\s+deal\b/gi, 'at-risk deal')
+    .replace(/-{2,}/g, '-')
+    .replace(/\s+-\s+/g, ' - ')
+    .replace(/\s{2,}/g, ' ')
+    .trim()
+
+  normalized = normalized
+    .replace(/^Escalate high-risk deal$/i, 'Escalate high-risk deal')
+    .replace(/^Stabilize at-risk deal$/i, 'Stabilize at-risk deal')
+    .replace(/(?:^|\s)[-–—]+(?=\s|$)/g, ' ')
+    .replace(/\s{2,}/g, ' ')
+    .trim()
+
+  const unsafe = /(?:Плюсы|Минусы|Итог|ai[_\s-]*scoring|internalContext|\+\s*\d+|\bscore\b|\bpriority\/urgent\b|-{2,}|\b(?:high|at)-\s+deal\b)/i.test(normalized)
+  if (!normalized || unsafe) normalized = 'Review sales action'
+
+  if (normalized !== original) {
+    console.info('[pipeline-copilot] action title normalized', { from: original, to: normalized })
+  }
+  return normalized
 }
 
 function leadManagerReason(lead) {
@@ -133,7 +178,7 @@ function normalizeLead(row) {
     aiRiskLevel: riskLevel,
     aiTemperature: compact(row.ai_temperature, 'warm').toLowerCase(),
     managerReason: sanitizeManagerReason(row.ai_scoring_reason || ''),
-    nextStep: sanitizeManagerReason(row.next_step || ''),
+    nextStep: normalizeCopilotActionTitle(row.next_step || ''),
     probabilityToClose: toNumber(row.probability_to_close),
     expectedCloseDate: row.expected_close_date || null,
     lastMessageAt: normalizeDate(row.last_message_at),
@@ -155,7 +200,7 @@ function normalizeQueueItem(row) {
     leadCompany: row.lead_company || '',
     actionType: row.action_type,
     status: row.status,
-    title: sanitizeManagerReason(row.title || payload.title || row.action_type),
+    title: normalizeCopilotActionTitle(row.title || payload.title || row.action_type),
     recommendation: sanitizeManagerReason(row.recommendation || payload.reason || payload.nextBestAction || ''),
     errorMessage: sanitizeManagerReason(row.error_message || payload.error || ''),
     priority: compact(payload.priority || payload.aiPriority, 'medium').toLowerCase(),
@@ -174,7 +219,7 @@ function normalizeMeeting(row) {
     id: row.id,
     leadId: row.lead_id,
     leadName: row.lead_name || 'Без лида',
-    title: sanitizeManagerReason(row.title || 'Встреча'),
+    title: normalizeCopilotActionTitle(row.title || 'Встреча'),
     startsAt: normalizeDate(row.starts_at),
     durationMinutes: toNumber(row.duration_minutes || 30),
     status: row.status || 'scheduled',
@@ -198,7 +243,7 @@ function pushAction(actions, seen, action) {
     id: key,
     leadId: action.leadId || null,
     leadName: action.leadName || 'Workspace',
-    actionTitle: sanitizeManagerReason(action.actionTitle) || action.actionTitle,
+    actionTitle: normalizeCopilotActionTitle(action.actionTitle) || action.actionTitle,
     reason: sanitizeManagerReason(action.reason) || 'Сделка требует follow-up сегодня',
     priority: action.priority || 'medium',
     dueLabel: action.dueLabel || 'Сегодня',
@@ -462,4 +507,4 @@ async function getPipelineCopilot(userId, workspaceId) {
   return { summary, todayActions, focusLeads, riskDeals, upcomingMeetings, pendingApprovals, failedActions, revenueSnapshot }
 }
 
-module.exports = { getPipelineCopilot, sanitizeManagerReason, isFocusLead, isActionableApproval, filterUnresolvedFailedActions }
+module.exports = { getPipelineCopilot, sanitizeManagerReason, normalizeCopilotActionTitle, isFocusLead, isActionableApproval, filterUnresolvedFailedActions }
