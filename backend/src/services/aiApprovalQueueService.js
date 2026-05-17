@@ -6,11 +6,13 @@ const { sendLeadAttachments } = require('./attachmentService')
 const { addTimelineEvent } = require('./timelineService')
 
 const STATUSES = ['pending_approval', 'approved', 'rejected', 'executing', 'completed', 'executed', 'failed', 'cancelled']
-const EXECUTION_TYPES = ['telegram_reply_draft', 'telegram_followup', 'email_followup', 'send_demo_link', 'send_presentation', 'create_reminder', 'move_lead_stage', 'stage_change_recommendation', 'followup_24h', 'followup_3d', 'demo_offer', 'meeting_request', 'meeting_schedule_proposal']
+const TELEGRAM_MEETING_CONFIRMATION_DRAFT = 'telegram_meeting_confirmation_draft'
+const EXECUTION_TYPES = ['telegram_reply_draft', TELEGRAM_MEETING_CONFIRMATION_DRAFT, 'telegram_followup', 'email_followup', 'send_demo_link', 'send_presentation', 'create_reminder', 'move_lead_stage', 'stage_change_recommendation', 'followup_24h', 'followup_3d', 'demo_offer', 'meeting_request', 'meeting_schedule_proposal']
 
 const ACTION_ALIASES = {
   stage_change_recommendation: 'stage_change_recommendation',
   telegram_reply_draft: 'telegram_reply_draft',
+  telegram_meeting_confirmation_draft: TELEGRAM_MEETING_CONFIRMATION_DRAFT,
   telegram_draft: 'telegram_followup',
   telegram_follow_up: 'telegram_followup',
   email_draft: 'email_followup',
@@ -143,7 +145,7 @@ async function updateQueueItem(userId, workspaceId, queueId, payload) {
   if (payload.recommendation !== undefined) set('recommendation', String(payload.recommendation || ''))
   if (payload.payload !== undefined) {
     const nextPayload = payload.payload || {}
-    if (current.executionType === 'telegram_reply_draft') {
+    if (current.executionType === 'telegram_reply_draft' || current.executionType === TELEGRAM_MEETING_CONFIRMATION_DRAFT) {
       const editedText = nextPayload.editedText ?? nextPayload.edited_text
       const normalizedEditedText = editedText !== undefined ? String(editedText || '').trim() : ''
       if (normalizedEditedText) {
@@ -241,13 +243,25 @@ async function insertOptionalMeetingRecord(client, { workspaceId, userId, item }
   return null
 }
 
+function buildMeetingConfirmationDraftText(item) {
+  const proposedStartTime = item.payload.proposedStartTime || null
+  const detectedDateText = String(item.payload.detectedDateText || '').trim()
+  const detectedTimeText = String(item.payload.detectedTimeText || '').trim().replace(/^в\s+/i, '')
+  if (!proposedStartTime || !detectedTimeText) {
+    return 'Отлично, зафиксировал demo-созвон. Подтвержу точное время отдельным сообщением.'
+  }
+
+  const scheduledText = [detectedDateText, detectedTimeText ? `в ${detectedTimeText}` : ''].filter(Boolean).join(' ')
+    || new Intl.DateTimeFormat('ru-RU', { dateStyle: 'short', timeStyle: 'short', timeZone: item.payload.timeZone || process.env.APP_TIMEZONE || 'UTC' }).format(new Date(proposedStartTime))
+
+  return `Отлично, зафиксировал demo-созвон на ${scheduledText}.\n\nПокажу, как AS6 AI CRM помогает вести лидов, Telegram follow-up и pipeline аналитику.\n\nДо встречи!`
+}
+
 async function executeMeetingScheduleProposal(userId, workspaceId, item) {
   const client = await pool.connect()
   const proposedStartTime = item.payload.proposedStartTime || null
   const title = item.payload.proposedTitle || `Demo-созвон — ${item.lead?.name || 'lead'}`
-  const confirmationText = proposedStartTime
-    ? `Отлично, зафиксировал demo-созвон на ${new Intl.DateTimeFormat('ru-RU', { dateStyle: 'short', timeStyle: 'short', timeZone: item.payload.timeZone || process.env.APP_TIMEZONE || 'UTC' }).format(new Date(proposedStartTime))}. До встречи!`
-    : 'Отлично, зафиксировал demo-созвон. До встречи!'
+  const confirmationText = buildMeetingConfirmationDraftText(item)
   try {
     await client.query('BEGIN')
     const optionalRecordTable = await insertOptionalMeetingRecord(client, { workspaceId, userId, item })
@@ -260,18 +274,29 @@ async function executeMeetingScheduleProposal(userId, workspaceId, item) {
     await saveAudit(client, { workspaceId, leadId: item.leadId, userId, type: 'meeting_scheduled', title: 'Demo-созвон запланирован', body: proposedStartTime ? `${title}: ${proposedStartTime}` : title, source: 'ai', metadata: { queueId: item.id, actionType: item.actionType, proposedStartTime, durationMinutes: item.payload.durationMinutes || 30, optionalRecordTable } })
 
     if ((item.payload.channel || '').toLowerCase() === 'telegram') {
-      const worker = await client.query(
-        `INSERT INTO ai_workers(workspace_id, name, type, status, mode, description)
-         VALUES($1, 'AI Telegram Reply Assistant', 'ai_telegram_assistant', 'active', 'approval_required', 'Готовит черновики ответов Telegram после входящих сообщений. Отправка только после проверки менеджера.')
-         ON CONFLICT (workspace_id, type) DO UPDATE SET updated_at = NOW()
-         RETURNING id`,
-        [workspaceId]
+      const existingDraft = await client.query(
+        `SELECT id FROM ai_worker_queue
+          WHERE workspace_id = $1 AND lead_id = $2 AND action_type = $3
+            AND payload->>'meetingProposalQueueId' = $4
+            AND status IN ('pending_approval', 'approved', 'executing', 'completed', 'executed')
+          LIMIT 1`,
+        [workspaceId, item.leadId, TELEGRAM_MEETING_CONFIRMATION_DRAFT, item.id]
       )
-      await client.query(
-        `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
-         VALUES($1, $2, $3, 'telegram_reply_draft', 'pending_approval', $4, $5, $6)`,
-        [worker.rows[0].id, workspaceId, item.leadId, `Подтвердить demo-созвон — ${item.lead?.name || ''}`, 'AI подготовил подтверждение встречи. Отправка только после approval менеджера.', { source: 'ai_meeting_scheduler', channel: 'telegram', draftText: confirmationText, text: confirmationText, message: confirmationText, meetingQueueId: item.id, proposedStartTime, leadName: item.lead?.name || '', inboundMessage: item.payload.inboundMessage || item.payload.customerMessage || '' }]
-      )
+
+      if (!existingDraft.rows[0]) {
+        const worker = await client.query(
+          `INSERT INTO ai_workers(workspace_id, name, type, status, mode, description)
+           VALUES($1, 'AI Telegram Reply Assistant', 'ai_telegram_assistant', 'active', 'approval_required', 'Готовит черновики ответов Telegram после входящих сообщений. Отправка только после проверки менеджера.')
+           ON CONFLICT (workspace_id, type) DO UPDATE SET updated_at = NOW()
+           RETURNING id`,
+          [workspaceId]
+        )
+        await client.query(
+          `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
+           VALUES($1, $2, $3, $4, 'pending_approval', $5, $6, $7)`,
+          [worker.rows[0].id, workspaceId, item.leadId, TELEGRAM_MEETING_CONFIRMATION_DRAFT, `Ответ-подтверждение встречи — ${item.lead?.name || 'лид'}`, 'AI подготовил подтверждение demo-созвона для клиента. Проверьте и отправьте в Telegram.', { source: 'ai_meeting_scheduler', channel: 'telegram', draftText: confirmationText, text: confirmationText, message: confirmationText, meetingProposalQueueId: item.id, proposedStartTime, scheduledTime: proposedStartTime, detectedDateText: item.payload.detectedDateText || '', detectedTimeText: item.payload.detectedTimeText || '', leadName: item.lead?.name || '', inboundMessage: item.payload.inboundMessage || item.payload.customerMessage || '' }]
+        )
+      }
     }
     await client.query('COMMIT')
     return { scheduled: true, proposedStartTime, confirmationDraftCreated: (item.payload.channel || '').toLowerCase() === 'telegram' }
@@ -283,7 +308,7 @@ async function executeMeetingScheduleProposal(userId, workspaceId, item) {
 
 function buildMessage(item) {
   if (item.executionType === 'send_demo_link') return item.recommendation || 'Демо AS6 AI CRM Platform: https://www.as6.ru'
-  if (item.executionType === 'telegram_reply_draft') {
+  if (item.executionType === 'telegram_reply_draft' || item.executionType === TELEGRAM_MEETING_CONFIRMATION_DRAFT) {
     return item.payload.editedText || item.payload.edited_text || item.payload.draftText || item.payload.text || item.payload.message || item.recommendation || item.title
   }
   return item.payload.editedText || item.payload.draftText || item.payload.text || item.payload.message || item.recommendation || item.title
@@ -294,7 +319,7 @@ async function executeByType(userId, workspaceId, item) {
   const type = item.executionType
   const channel = item.payload.channel || item.payload.suggestedChannel || (item.lead?.hasTelegramChatId ? 'telegram' : item.lead?.email ? 'email' : 'crm')
   if (type === 'meeting_schedule_proposal') return executeMeetingScheduleProposal(userId, workspaceId, item)
-  if (type === 'telegram_reply_draft' || type === 'telegram_followup') return sendTelegramMessageToLead({ userId, workspaceId, leadId: item.leadId, text: buildMessage(item) })
+  if (type === 'telegram_reply_draft' || type === TELEGRAM_MEETING_CONFIRMATION_DRAFT || type === 'telegram_followup') return sendTelegramMessageToLead({ userId, workspaceId, leadId: item.leadId, text: buildMessage(item) })
   if (['followup_24h', 'followup_3d', 'demo_offer', 'meeting_request'].includes(type)) {
     if (channel === 'telegram') return sendTelegramMessageToLead({ userId, workspaceId, leadId: item.leadId, text: buildMessage(item) })
     if (channel === 'email') return emailService.sendEmailNow(userId, { workspaceId, leadId: item.leadId, to: item.payload.to || item.lead?.email, subject: item.payload.subject || item.title, text: buildMessage(item), html: item.payload.html || '' })
@@ -334,7 +359,7 @@ async function executeQueueItem(userId, workspaceId, queueId) {
       } else if (executionType === 'meeting_schedule_proposal') {
         await saveAudit(client, { workspaceId, leadId: item.leadId, userId, type: 'ai_action_executed', title: 'AI meeting proposal выполнен', body: item.title, source: 'ai', metadata: { queueId, actionType: item.actionType, executionType, proposedStartTime: item.payload.proposedStartTime || null } })
       } else {
-        await saveAudit(client, { workspaceId, leadId: item.leadId, userId, type: executionType === 'email_followup' || item.payload.channel === 'email' ? 'email_sent' : executionType === 'telegram_reply_draft' || executionType === 'telegram_followup' || item.payload.channel === 'telegram' ? 'telegram_sent' : 'ai_action_executed', title: executionType === 'email_followup' || item.payload.channel === 'email' ? 'Email отправлен' : executionType === 'telegram_reply_draft' || executionType === 'telegram_followup' || item.payload.channel === 'telegram' ? 'Telegram отправлен' : 'AI действие выполнено', body: item.title, source: item.payload.channel || 'ai', metadata: { queueId, actionType: item.actionType, executionType } })
+        await saveAudit(client, { workspaceId, leadId: item.leadId, userId, type: executionType === TELEGRAM_MEETING_CONFIRMATION_DRAFT ? 'telegram_meeting_confirmation_sent' : executionType === 'email_followup' || item.payload.channel === 'email' ? 'email_sent' : executionType === 'telegram_reply_draft' || executionType === 'telegram_followup' || item.payload.channel === 'telegram' ? 'telegram_sent' : 'ai_action_executed', title: executionType === 'email_followup' || item.payload.channel === 'email' ? 'Email отправлен' : executionType === 'telegram_reply_draft' || executionType === TELEGRAM_MEETING_CONFIRMATION_DRAFT || executionType === 'telegram_followup' || item.payload.channel === 'telegram' ? 'Telegram отправлен' : 'AI действие выполнено', body: item.title, source: item.payload.channel || 'ai', metadata: { queueId, actionType: item.actionType, executionType } })
       }
       await client.query('COMMIT')
     } catch (error) { await client.query('ROLLBACK'); throw error } finally { client.release() }
@@ -380,4 +405,4 @@ async function getMetrics(userId, workspaceId) {
   }
 }
 
-module.exports = { approveQueueItem, executeQueueItem, getMetrics, listQueue, rejectQueueItem, updateQueueItem }
+module.exports = { approveQueueItem, buildMeetingConfirmationDraftText, executeQueueItem, getMetrics, listQueue, rejectQueueItem, updateQueueItem }
