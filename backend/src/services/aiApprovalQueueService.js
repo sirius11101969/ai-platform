@@ -551,7 +551,7 @@ async function executeMeetingScheduleProposal(userId, workspaceId, item) {
 }
 
 function buildMessage(item) {
-  if (item.executionType === FOLLOWUP_SEQUENCE_DRAFT) return item.payload.editedText || item.payload.edited_text || item.payload.suggestedText || item.payload.text || item.payload.message || item.recommendation || item.title
+  if (item.executionType === FOLLOWUP_SEQUENCE_DRAFT) return item.payload.editedText || item.payload.edited_text || item.payload.suggestedText || item.payload.draftText || item.payload.recommendation || item.payload.text || item.payload.message || item.recommendation || item.title
   if (item.executionType === 'send_demo_link') return item.recommendation || 'Демо AS6 AI CRM Platform: https://www.as6.ru'
   if (item.executionType === 'telegram_reply_draft' || item.executionType === TELEGRAM_MEETING_CONFIRMATION_DRAFT) {
     return item.payload.editedText || item.payload.edited_text || item.payload.draftText || item.payload.text || item.payload.message || item.recommendation || item.title
@@ -559,17 +559,67 @@ function buildMessage(item) {
   return item.payload.editedText || item.payload.draftText || item.payload.text || item.payload.message || item.recommendation || item.title
 }
 
+async function loadFollowupLead(workspaceId, leadId) {
+  if (!leadId) return null
+  const result = await pool.query(
+    `SELECT id, user_id, workspace_id, name, email, telegram_chat_id, metadata, status
+       FROM crm_leads
+      WHERE workspace_id = $1 AND id = $2`,
+    [workspaceId, leadId]
+  )
+  return result.rows[0] || null
+}
+
+function getLeadTelegramChatId(lead) {
+  return lead?.telegram_chat_id || lead?.metadata?.telegramChatId || ''
+}
+
+function getFollowupText(item) {
+  return String(item.payload.editedText || item.payload.edited_text || item.payload.suggestedText || item.payload.draftText || item.payload.recommendation || item.payload.text || item.payload.message || item.recommendation || '').trim()
+}
+
+async function executeFollowupSequenceDraft(userId, workspaceId, item) {
+  const leadId = item.payload.leadId || item.payload.lead_id || item.leadId
+  console.info('[followup-execute] requested', { actionId: item.id, leadId })
+  if (!leadId) throw russianError('Для выполнения нужен привязанный лид')
+
+  const lead = await loadFollowupLead(workspaceId, leadId)
+  if (!lead) throw Object.assign(new Error('Lead not found'), { statusCode: 404 })
+
+  const text = getFollowupText(item)
+  if (!text) throw russianError('Follow-up text is required')
+
+  const telegramChatId = getLeadTelegramChatId(lead)
+  if (telegramChatId) {
+    const result = await sendTelegramMessageToLead({ userId, workspaceId, leadId, text, actionId: item.id })
+    console.info('[followup-execute] telegram sent', { actionId: item.id, leadId })
+    return { ...result, delivery: 'telegram', leadId, text, sequenceStep: item.payload.sequenceStep || '' }
+  }
+
+  const email = String(lead.email || item.payload.to || '').trim()
+  if (email) {
+    const result = await emailService.enqueueEmail(userId, {
+      workspaceId,
+      leadId,
+      to: item.payload.to || email,
+      subject: item.payload.subject || 'Следующий шаг по AS6 AI CRM',
+      text,
+      html: item.payload.html || '',
+      scheduledAt: null,
+      deliverAsync: false,
+    })
+    return { emailDraft: result, delivery: 'email_draft', leadId, text, sequenceStep: item.payload.sequenceStep || '' }
+  }
+
+  throw russianError('No Telegram or email channel available')
+}
+
 async function executeByType(userId, workspaceId, item) {
-  if (!item.leadId && item.executionType !== 'create_reminder') throw russianError('Для выполнения нужен привязанный лид')
+  if (!item.leadId && item.executionType !== 'create_reminder' && item.executionType !== FOLLOWUP_SEQUENCE_DRAFT) throw russianError('Для выполнения нужен привязанный лид')
   const type = item.executionType
   const channel = item.payload.channel || item.payload.suggestedChannel || (item.lead?.hasTelegramChatId ? 'telegram' : item.lead?.email ? 'email' : 'crm')
   if (type === 'meeting_schedule_proposal') return executeMeetingScheduleProposal(userId, workspaceId, item)
-  if (type === FOLLOWUP_SEQUENCE_DRAFT) {
-    const text = buildMessage(item)
-    if (item.lead?.hasTelegramChatId) return sendTelegramMessageToLead({ userId, workspaceId, leadId: item.leadId, text, actionId: item.id })
-    if (item.lead?.email) return emailService.sendEmailNow(userId, { workspaceId, leadId: item.leadId, to: item.payload.to || item.lead.email, subject: item.payload.subject || 'Следующий шаг по AS6 AI CRM', text, html: item.payload.html || '' })
-    throw russianError('У лида нет Telegram или email для follow-up')
-  }
+  if (type === FOLLOWUP_SEQUENCE_DRAFT) return executeFollowupSequenceDraft(userId, workspaceId, item)
   if (type === 'telegram_reply_draft' || type === TELEGRAM_MEETING_CONFIRMATION_DRAFT || type === 'telegram_followup') {
     return sendTelegramMessageToLead({ userId, workspaceId, leadId: item.leadId, text: buildMessage(item), actionId: item.id })
   }
@@ -612,7 +662,7 @@ async function executeQueueItem(userId, workspaceId, queueId) {
       } else if (executionType === 'meeting_schedule_proposal') {
         // Meeting execution writes the dedicated meeting_scheduled timeline event inside executeMeetingScheduleProposal.
       } else if (executionType === FOLLOWUP_SEQUENCE_DRAFT) {
-        await saveAudit(client, { workspaceId, leadId: item.leadId, userId, type: 'followup_sent', title: 'Follow-up sent', body: buildMessage(item), source: item.lead?.hasTelegramChatId ? 'telegram' : 'email', metadata: { queueId, actionType: item.actionType, executionType, sequenceStep: item.payload.sequenceStep, confidence: item.payload.confidence, reason: item.payload.reason } })
+        await saveAudit(client, { workspaceId, leadId: result?.leadId || item.leadId, userId, type: 'followup_sent', title: 'Follow-up отправлен', body: result?.text || buildMessage(item), source: result?.delivery === 'telegram' ? 'telegram' : result?.delivery === 'email_draft' ? 'email' : item.lead?.hasTelegramChatId ? 'telegram' : 'email', metadata: { queueId, actionType: item.actionType, executionType, sequenceStep: result?.sequenceStep || item.payload.sequenceStep, confidence: item.payload.confidence, reason: item.payload.reason } })
       } else {
         await saveAudit(client, { workspaceId, leadId: item.leadId, userId, type: executionType === TELEGRAM_MEETING_CONFIRMATION_DRAFT ? 'telegram_meeting_confirmation_sent' : executionType === 'email_followup' || item.payload.channel === 'email' ? 'email_sent' : executionType === 'telegram_reply_draft' || executionType === 'telegram_followup' || item.payload.channel === 'telegram' ? 'telegram_sent' : 'ai_action_executed', title: executionType === 'email_followup' || item.payload.channel === 'email' ? 'Email отправлен' : executionType === 'telegram_reply_draft' || executionType === TELEGRAM_MEETING_CONFIRMATION_DRAFT || executionType === 'telegram_followup' || item.payload.channel === 'telegram' ? 'Telegram отправлен' : 'AI действие выполнено', body: item.title, source: item.payload.channel || 'ai', metadata: { queueId, actionType: item.actionType, executionType } })
       }
@@ -621,11 +671,12 @@ async function executeQueueItem(userId, workspaceId, queueId) {
     return { success: true, actionId: queueId, status: 'completed', item: await assertQueueItem(userId, workspaceId, queueId), result }
   } catch (error) {
     const message = error.message || 'Не удалось выполнить AI действие'
+    if (executionType === FOLLOWUP_SEQUENCE_DRAFT) console.info('[followup-execute] failed', { actionId: queueId, error: message })
     const client = await pool.connect()
     try {
       await client.query('BEGIN')
       await client.query("UPDATE ai_worker_queue SET status = 'failed', error_message = $3, updated_at = NOW() WHERE workspace_id = $1 AND id = $2", [workspaceId, queueId, message])
-      await saveAudit(client, { workspaceId, leadId: item.leadId, userId, type: 'send_failed', title: 'Отправка не выполнена', body: message, metadata: { queueId, actionType: item.actionType, executionType } })
+      await saveAudit(client, { workspaceId, leadId: item.payload?.leadId || item.payload?.lead_id || item.leadId, userId, type: 'send_failed', title: 'Отправка не выполнена', body: message, metadata: { queueId, actionType: item.actionType, executionType } })
       await client.query('COMMIT')
     } catch (auditError) { await client.query('ROLLBACK'); throw auditError } finally { client.release() }
     return { success: false, actionId: queueId, status: 'failed', item: await assertQueueItem(userId, workspaceId, queueId), error: message }
