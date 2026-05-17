@@ -212,6 +212,11 @@ async function approveQueueItem(userId, workspaceId, queueId) {
   } finally { client.release() }
 }
 
+async function getQueueItemLogContext(userId, workspaceId, queueId) {
+  const item = await assertQueueItem(userId, workspaceId, queueId)
+  return { actionId: item.id, actionType: item.executionType || item.actionType, status: item.status }
+}
+
 async function rejectQueueItem(userId, workspaceId, queueId) {
   const item = await assertQueueItem(userId, workspaceId, queueId)
   if (['executing', 'completed', 'executed'].includes(item.status)) throw russianError('Нельзя отклонить уже выполняемое или завершённое AI действие')
@@ -556,7 +561,10 @@ async function executeByType(userId, workspaceId, item) {
   const type = item.executionType
   const channel = item.payload.channel || item.payload.suggestedChannel || (item.lead?.hasTelegramChatId ? 'telegram' : item.lead?.email ? 'email' : 'crm')
   if (type === 'meeting_schedule_proposal') return executeMeetingScheduleProposal(userId, workspaceId, item)
-  if (type === 'telegram_reply_draft' || type === TELEGRAM_MEETING_CONFIRMATION_DRAFT || type === 'telegram_followup') return sendTelegramMessageToLead({ userId, workspaceId, leadId: item.leadId, text: buildMessage(item) })
+  if (type === 'telegram_reply_draft' || type === TELEGRAM_MEETING_CONFIRMATION_DRAFT || type === 'telegram_followup') {
+    console.info('[ai-workers-api] telegram send requested', { actionId: item.id })
+    return sendTelegramMessageToLead({ userId, workspaceId, leadId: item.leadId, text: buildMessage(item) })
+  }
   if (['followup_24h', 'followup_3d', 'demo_offer', 'meeting_request'].includes(type)) {
     if (channel === 'telegram') return sendTelegramMessageToLead({ userId, workspaceId, leadId: item.leadId, text: buildMessage(item) })
     if (channel === 'email') return emailService.sendEmailNow(userId, { workspaceId, leadId: item.leadId, to: item.payload.to || item.lead?.email, subject: item.payload.subject || item.title, text: buildMessage(item), html: item.payload.html || '' })
@@ -600,7 +608,7 @@ async function executeQueueItem(userId, workspaceId, queueId) {
       }
       await client.query('COMMIT')
     } catch (error) { await client.query('ROLLBACK'); throw error } finally { client.release() }
-    return { item: await assertQueueItem(userId, workspaceId, queueId), result }
+    return { success: true, actionId: queueId, status: 'completed', item: await assertQueueItem(userId, workspaceId, queueId), result }
   } catch (error) {
     const message = error.message || 'Не удалось выполнить AI действие'
     const client = await pool.connect()
@@ -610,7 +618,7 @@ async function executeQueueItem(userId, workspaceId, queueId) {
       await saveAudit(client, { workspaceId, leadId: item.leadId, userId, type: 'send_failed', title: 'Отправка не выполнена', body: message, metadata: { queueId, actionType: item.actionType, executionType } })
       await client.query('COMMIT')
     } catch (auditError) { await client.query('ROLLBACK'); throw auditError } finally { client.release() }
-    return { item: await assertQueueItem(userId, workspaceId, queueId), error: message }
+    return { success: false, actionId: queueId, status: 'failed', item: await assertQueueItem(userId, workspaceId, queueId), error: message }
   }
 }
 
@@ -642,4 +650,4 @@ async function getMetrics(userId, workspaceId) {
   }
 }
 
-module.exports = { approveQueueItem, buildMeetingConfirmationDraftText, executeQueueItem, getMetrics, listQueue, rejectQueueItem, updateQueueItem }
+module.exports = { approveQueueItem, buildMeetingConfirmationDraftText, executeQueueItem, getMetrics, getQueueItemLogContext, listQueue, rejectQueueItem, updateQueueItem }

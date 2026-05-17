@@ -287,8 +287,22 @@ function getApprovalActionErrorMessage(error) {
   return formatApprovalErrorMessage(error?.message || "Не удалось обновить AI действие. Попробуйте ещё раз.");
 }
 
+function getApprovalActionKey(actionId, operation) {
+  return `${actionId}:${operation}`;
+}
+
 function logApprovalAction(event, details) {
   console.log(`[ai-workers-ui] action ${event}`, details);
+}
+
+function logSendAction(event, details = {}) {
+  const labels = {
+    clicked: "send clicked",
+    start: "send request start",
+    success: "send request success",
+    failed: "send request failed",
+  };
+  console.log(`[ai-workers-ui] ${labels[event] || event}`, details);
 }
 
 export default function AiWorkersPage() {
@@ -299,8 +313,8 @@ export default function AiWorkersPage() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [approvalQueue, setApprovalQueue] = useState({ items: [], metrics: {} });
-  const [busyAction, setBusyAction] = useState(null);
-  const actionInFlightRef = useRef(false);
+  const [busyActions, setBusyActions] = useState({});
+  const actionInFlightRef = useRef(new Set());
   const [editingDraft, setEditingDraft] = useState({ itemId: "", text: "" });
 
   async function loadCommandCenter({ silent = false } = {}) {
@@ -387,13 +401,14 @@ export default function AiWorkersPage() {
   }
 
   async function runApprovalAction(item, action, requestFactory, onSuccess) {
-    if (actionInFlightRef.current) {
+    const actionKey = getApprovalActionKey(item.id, action);
+    if (actionInFlightRef.current.has(actionKey)) {
       logApprovalAction("failed", { itemId: item.id, action, reason: "action already in progress" });
       return;
     }
 
-    actionInFlightRef.current = true;
-    setBusyAction({ itemId: item.id, action });
+    actionInFlightRef.current.add(actionKey);
+    setBusyActions((current) => ({ ...current, [actionKey]: { itemId: item.id, action } }));
     setError("");
     setMessage("");
     logApprovalAction("start", { itemId: item.id, action, status: item.status });
@@ -407,30 +422,45 @@ export default function AiWorkersPage() {
         const errorMessage = formatApprovalErrorMessage(updatedItem?.errorMessage || response?.error);
         setError(errorMessage);
         logApprovalAction("failed", { itemId: item.id, action, error: errorMessage, status: updatedItem?.status });
+        if (action === "send") logSendAction("failed", { actionId: item.id, actionType: item.executionType || item.actionType, error: errorMessage });
         return;
       }
 
       onSuccess?.(response, updatedItem);
       logApprovalAction("success", { itemId: item.id, action, status: updatedItem?.status });
+      if (action === "send") logSendAction("success", { actionId: item.id, actionType: item.executionType || item.actionType });
     } catch (requestError) {
       const errorMessage = getApprovalActionErrorMessage(requestError);
       setError(errorMessage);
       logApprovalAction("failed", { itemId: item.id, action, error: errorMessage });
+      if (action === "send") logSendAction("failed", { actionId: item.id, actionType: item.executionType || item.actionType, error: errorMessage });
     } finally {
-      actionInFlightRef.current = false;
-      setBusyAction(null);
+      actionInFlightRef.current.delete(actionKey);
+      setBusyActions((current) => {
+        const next = { ...current };
+        delete next[actionKey];
+        return next;
+      });
       await refreshApprovalStateAfterAction();
     }
   }
 
   async function handleApprovalAction(item, action) {
     const requestOptions = { timeoutMs: APPROVAL_ACTION_TIMEOUT_MS };
+    const executeEndpoint = `/ai/approval-queue/${item.id}/execute`;
+
+    if (action === "send") {
+      logSendAction("clicked", { actionId: item.id, actionType: item.executionType || item.actionType });
+    }
 
     const actionRequests = {
       approve: () => approveAiApprovalQueueItem(item.id, requestOptions),
       reject: () => rejectAiApprovalQueueItem(item.id, requestOptions),
       execute: () => executeAiApprovalQueueItem(item.id, requestOptions),
-      send: () => executeAiApprovalQueueItem(item.id, requestOptions),
+      send: () => {
+        logSendAction("start", { endpoint: executeEndpoint });
+        return executeAiApprovalQueueItem(item.id, requestOptions);
+      },
     };
 
     const requestFactory = actionRequests[action];
@@ -454,7 +484,8 @@ export default function AiWorkersPage() {
   }
 
   function handleEditApprovalItem(item) {
-    if (actionInFlightRef.current) {
+    const itemHasBusyAction = Object.keys(busyActions).some((key) => key.startsWith(`${item.id}:`));
+    if (itemHasBusyAction) {
       logApprovalAction("failed", { itemId: item.id, action: "edit", reason: "action already in progress" });
       return;
     }
@@ -590,13 +621,15 @@ export default function AiWorkersPage() {
         <div className="approval-table">
           {activeApprovalItems.length === 0 && <p className="empty-state">Нет AI действий на одобрение.</p>}
           {activeApprovalItems.slice(0, 12).map((item) => {
-            const isItemBusy = busyAction?.itemId === item.id;
-            const busyLabel = isItemBusy ? approvalActionLoadingLabels[busyAction.action] : "";
+            const isApproveBusy = Boolean(busyActions[getApprovalActionKey(item.id, "approve")]);
+            const isEditBusy = Boolean(busyActions[getApprovalActionKey(item.id, "edit")]);
+            const isRejectBusy = Boolean(busyActions[getApprovalActionKey(item.id, "reject")]);
+            const isSendBusy = Boolean(busyActions[getApprovalActionKey(item.id, "send")]);
+            const isExecuteActionBusy = Boolean(busyActions[getApprovalActionKey(item.id, "execute")]);
+            const isItemBusy = isApproveBusy || isEditBusy || isRejectBusy || isSendBusy || isExecuteActionBusy;
+            const busyLabel = isApproveBusy ? approvalActionLoadingLabels.approve : isEditBusy ? approvalActionLoadingLabels.edit : isRejectBusy ? approvalActionLoadingLabels.reject : isSendBusy ? approvalActionLoadingLabels.send : isExecuteActionBusy ? approvalActionLoadingLabels.execute : "";
             const isEditingThisDraft = editingDraft.itemId === item.id;
-            const isApproveBusy = isItemBusy && busyAction.action === "approve";
-            const isEditBusy = isItemBusy && busyAction.action === "edit";
-            const isRejectBusy = isItemBusy && busyAction.action === "reject";
-            const isExecuteBusy = isItemBusy && ["execute", "send"].includes(busyAction.action);
+            const isExecuteBusy = isSendBusy || isExecuteActionBusy;
             const isMeetingProposal = isMeetingScheduleProposal(item);
             const canEditItem = !isMeetingProposal || item.status === "pending_approval" || item.status === "failed";
             const canRejectItem = !isMeetingProposal || item.status === "pending_approval" || item.status === "failed";
