@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Panel, PageHeading, StatCard } from "../components/AppShell";
 import { isInternalAiDebugEnabled, sanitizeCustomerVisibleText, sanitizeVisibleAiText } from "../utils/uiSanitizer";
-import { approveAiApprovalQueueItem, downloadCrmMeetingIcs, executeAiApprovalQueueItem, fetchAiApprovalQueue, fetchAiCommandCenter, rejectAiApprovalQueueItem, runAiWorker, seedDemoSalesPipeline, updateAiApprovalQueueItem, updateAiWorker } from "../services/api";
+import { approveAiApprovalQueueItem, downloadCrmMeetingIcs, executeAiApprovalQueueItem, fetchAiApprovalQueue, fetchAiCommandCenter, fetchAiWorkersFocusSummary, rejectAiApprovalQueueItem, runAiWorker, seedDemoSalesPipeline, updateAiApprovalQueueItem, updateAiWorker } from "../services/api";
 
 const typeLabels = {
   ai_sdr_agent: "AI SDR Agent",
@@ -36,15 +36,31 @@ const runStatusLabels = {
 };
 
 const approvalStatusLabels = {
-  pending_approval: "Ждёт одобрения",
-  approved: "Одобрено",
+  pending_approval: "Ждёт решения менеджера",
+  approved: "Готово к выполнению",
   rejected: "Отклонено",
   executing: "Выполняется",
-  completed: "Выполнено",
-  executed: "Исполнено",
-  failed: "Ошибка выполнения",
+  completed: "Действие завершено",
+  executed: "Действие завершено",
+  failed: "Требуется внимание",
   cancelled: "Отменено",
 };
+
+
+const approvalFooterStatusLabels = {
+  pending_approval: "Ждёт решения менеджера",
+  approved: "Готово к выполнению",
+  failed: "Требуется внимание",
+  rejected: "Отклонено",
+  completed: "Действие завершено",
+  executed: "Действие завершено",
+  executing: "Выполняется",
+  cancelled: "Отменено",
+};
+
+function getApprovalFooterStatusLabel(status) {
+  return approvalFooterStatusLabels[status] || approvalStatusLabels[status] || status || "—";
+}
 
 const actionTypeLabels = {
   telegram_followup: "Сообщение в Telegram",
@@ -605,6 +621,7 @@ export default function AiWorkersPage() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [approvalQueue, setApprovalQueue] = useState({ items: [], metrics: {} });
+  const [focusSummary, setFocusSummary] = useState(null);
   const [activeApprovalTab, setActiveApprovalTab] = useState("focus");
   const [expandedSections, setExpandedSections] = useState({ legacy: false, completed: false, safety: false, all: false });
   const [busyActions, setBusyActions] = useState({});
@@ -624,9 +641,11 @@ export default function AiWorkersPage() {
     }
     try {
       const queueParams = targetActionId ? {} : (targetLeadId ? { leadId: targetLeadId } : {});
-      const [response, approvalResponse] = await Promise.all([fetchAiCommandCenter(), fetchAiApprovalQueue(queueParams)]);
+      const focusParams = { actionId: targetActionId, leadId: targetLeadId };
+      const [response, approvalResponse, focusResponse] = await Promise.all([fetchAiCommandCenter(), fetchAiApprovalQueue(queueParams), fetchAiWorkersFocusSummary(focusParams)]);
       setCommandCenter(response.commandCenter || null);
       setApprovalQueue({ items: approvalResponse.items || [], metrics: approvalResponse.metrics || {} });
+      setFocusSummary(focusResponse || null);
     } catch (requestError) {
       setError(requestError.message || "Не удалось загрузить AI Command Center");
     } finally {
@@ -884,7 +903,7 @@ export default function AiWorkersPage() {
     if (highlighted && !sliced.some((item) => item.id === highlighted.id)) return [highlighted, ...sliced.slice(0, Math.max(0, (limit || items.length) - 1))];
     return sliced;
   };
-  const approvalMetrics = { ...(approvalQueue.metrics || {}), ...(focusQueueState.metrics || {}) };
+  const approvalMetrics = { ...(approvalQueue.metrics || {}), ...(focusQueueState.metrics || {}), ...(focusSummary || {}) };
   const pendingActions = useMemo(() => queue.filter((item) => item.status === "pending_approval"), [queue]);
   const failedActions = useMemo(() => queue.filter((item) => item.status === "failed"), [queue]);
 
@@ -977,7 +996,7 @@ export default function AiWorkersPage() {
               <button type="button" className="btn primary compact" onClick={() => handleApprovalAction(item, "execute")} disabled={executableButtonState.disabled}>{isExecuteActionBusy ? busyLabel : "Выполнить"}</button>
             )
           )}
-          {history && <span className="approval-history-note">{item.status === "failed" ? "Требуется внимание" : "Действие завершено"}</span>}
+          {history && <span className="approval-history-note">{getApprovalFooterStatusLabel(item.status)}</span>}
         </div>
       </article>
     );
@@ -1025,8 +1044,10 @@ export default function AiWorkersPage() {
 
       <section className="dashboard-stats ai-workers-stats">
         <StatCard label="Активные AI сотрудники" value={loading ? "…" : `${metrics.activeWorkers || 0}/${metrics.totalWorkers || 0}`} hint="Видимые роли AI workforce" />
-        <StatCard label="Очередь AI задач" value={loading ? "…" : String(metrics.queueActive || 0)} hint="Рекомендации в работе и ожидании" tone="violet" />
-        <StatCard label="Действия на одобрение" value={loading ? "…" : String(metrics.pendingActions || 0)} hint="Ничего не отправляется без человека" tone="pink" />
+        <StatCard label="Actionable now" value={loading ? "…" : String(approvalMetrics.actionableNow || 0)} hint="Фокусные задачи, требующие действия сейчас" tone="violet" />
+        <StatCard label="Needs approval" value={loading ? "…" : String(approvalMetrics.needsApproval || 0)} hint="Ожидают решения менеджера" tone="pink" />
+        <StatCard label="Failed unresolved" value={loading ? "…" : String(approvalMetrics.failedUnresolved || 0)} hint="Ошибки без более свежего успешного fallback" tone="pink" />
+        <StatCard label="Hidden legacy" value={loading ? "…" : String(approvalMetrics.hiddenLegacy || 0)} hint="Скрыто из Focus Queue, доступно в истории" tone="violet" />
         <StatCard label="AI эффективность" value={loading ? "…" : `${metrics.efficiency || 0}%`} hint="Доля успешных запусков AI работников" />
         <StatCard label="Meetings scheduled by AI" value={loading ? "…" : String(approvalMetrics.meetingsScheduledByAi || 0)} hint="После approval менеджера" tone="violet" />
         <StatCard label="Pending meeting proposals" value={loading ? "…" : String(approvalMetrics.pendingMeetingProposals || 0)} hint="AI предложения demo-созвона ждут решения" tone="pink" />
@@ -1034,6 +1055,7 @@ export default function AiWorkersPage() {
         <StatCard label="Next Best Actions generated today" value={loading ? "…" : String(metrics.nextBestActionsGeneratedToday || 0)} hint="Создано AI NBA сегодня" tone="violet" />
         <StatCard label="Выручка под контролем AI" value={loading ? "…" : formatMoney(metrics.revenueUnderAi)} hint="Плейсхолдер revenue impact по открытой воронке" tone="violet" />
       </section>
+      <p className="focus-total-history-note">Всего AI задач в истории: {loading ? "…" : (approvalMetrics.totalHistory || approvalQueue.items.length || 0)}</p>
 
       <Panel className="ai-approval-center-panel">
         <div className="panel-head focus-queue-head">

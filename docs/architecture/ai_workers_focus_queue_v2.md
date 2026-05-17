@@ -96,3 +96,44 @@ After deployment:
 - Old failed Telegram issues should not be urgent when a newer email fallback completed for the same lead.
 - `/ai-workers?actionId=89b2651a-3a7b-49ab-81ed-f22c3f6df03a` should still expand, scroll, and highlight the action when present in the payload.
 - Existing DB leakage verification should still return 0 rows.
+
+## Final polish and production UX
+
+The AI Workers page now uses Focus Queue metrics as the primary top-card language instead of exposing raw historical queue totals as urgent work. The old primary cards `Очередь AI задач` and `Действия на одобрение` are replaced by:
+
+- **Actionable now**
+- **Needs approval**
+- **Failed unresolved**
+- **Hidden legacy**
+
+Useful operational cards remain visible: active AI employees, AI efficiency, AI-scheduled meetings, pending meeting proposals, Next Best Actions pending/generated today, and revenue under AI control. If the full queue size is useful for audit context, it appears only as small secondary text: `Всего AI задач в истории: <count>`.
+
+Collapsed/history rows use status-specific footer copy so only completed/executed actions say `Действие завершено`:
+
+- `pending_approval` → `Ждёт решения менеджера`
+- `approved` → `Готово к выполнению`
+- `failed` → `Требуется внимание`
+- `rejected` → `Отклонено`
+- `completed` / `executed` → `Действие завершено`
+
+Backend focus observability is available through `GET /api/ai-workers/focus-summary` and the same controller is also mounted at `GET /api/ai/approval-queue/focus-summary`. It returns:
+
+```json
+{
+  "actionableNow": 10,
+  "needsApproval": 10,
+  "failedUnresolved": 0,
+  "hiddenLegacy": 101,
+  "completedHistory": 88,
+  "safetyHistory": 1,
+  "totalHistory": 200
+}
+```
+
+When the endpoint is requested, the backend emits production logs for focus construction and hidden legacy counts:
+
+- `[ai-workers-focus] focus queue built`
+- `[ai-workers-focus] legacy actions hidden`
+- `[ai-workers-focus] route highlight expanded hidden section` when a requested `actionId` or `leadId` belongs to a collapsed section.
+
+Route highlighting remains unchanged: visible actions are highlighted in-place, while hidden targets auto-open the correct collapsed section before scrolling to the row.

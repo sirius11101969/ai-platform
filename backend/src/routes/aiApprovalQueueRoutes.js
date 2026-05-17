@@ -7,6 +7,7 @@ const router = express.Router()
 router.use(requireAuth)
 router.use(requireWorkspace)
 
+router.get('/focus-summary', controller.focusSummary)
 router.get('/', controller.list)
 router.post('/:id/approve', controller.approve)
 router.post('/:id/reject', controller.reject)
