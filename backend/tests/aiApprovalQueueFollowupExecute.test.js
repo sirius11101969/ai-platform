@@ -195,6 +195,7 @@ async function testEmailFollowupCreatesDraftAndCompletes() {
     email: 'maria@example.com',
     subject: 'Следующий шаг',
     body: 'Мария, добрый день! Возвращаюсь с follow-up.',
+    customerText: 'Мария, добрый день! Возвращаюсь с follow-up.',
     draftText: 'Мария, добрый день! Возвращаюсь с follow-up.',
     text: 'Мария, добрый день! Возвращаюсь с follow-up.',
     message: 'Мария, добрый день! Возвращаюсь с follow-up.',
@@ -219,11 +220,47 @@ async function testEmailFollowupWithoutEmailFailsClearly() {
   assert.ok(calls.queueUpdates.some((update) => update.status === 'failed' && update.error === 'No email available for follow-up'))
 }
 
+async function testPriorityInboxDirtyFollowupRegeneratesCleanCustomerText() {
+  const { service, calls, getStatus } = installMocks({
+    lead: { telegram_chat_id: '12345', email: 'maria@example.com' },
+    payload: {
+      source: 'priority_inbox',
+      suggestedText: 'Контекст: Плюсы: +8 недавний inbound, +18 цена + demo intent. Итог: 100/100 priority/urgent risk confidence score',
+      draftText: 'Контекст: Плюсы: +8 недавний inbound, +18 цена + demo intent. Итог: 100/100 priority/urgent risk confidence score',
+      nextBestActionCode: 'send_pricing',
+      nextBestAction: 'Отправить pricing',
+    },
+  })
+  const result = await service.executeQueueItem('user-1', 'workspace-1', 'queue-1')
+
+  assert.strictEqual(result.success, true)
+  assert.strictEqual(getStatus(), 'completed')
+  assert.strictEqual(calls.telegram.length, 1)
+  assert.strictEqual(calls.telegram[0].text, 'Здравствуйте! Могу отправить краткую информацию по тарифам и показать, какой вариант лучше подойдёт под вашу задачу.')
+  assert.ok(!/Плюсы:|Минусы:|Итог:|ai_score|score|intent|\+\d+/i.test(calls.telegram[0].text))
+}
+
+async function testNonPriorityDirtyFollowupIsBlockedBeforeSend() {
+  const { service, calls, getStatus } = installMocks({
+    lead: { telegram_chat_id: '12345', email: 'maria@example.com' },
+    payload: { suggestedText: 'Контекст: Плюсы: +8 intent score' },
+  })
+  const result = await service.executeQueueItem('user-1', 'workspace-1', 'queue-1')
+
+  assert.strictEqual(result.success, false)
+  assert.strictEqual(getStatus(), 'failed')
+  assert.strictEqual(result.error, 'Outbound text contains internal AI context and was blocked')
+  assert.strictEqual(calls.telegram.length, 0)
+  assert.ok(calls.queueUpdates.some((update) => update.status === 'failed' && update.error === 'Outbound text contains internal AI context and was blocked'))
+}
+
 async function run() {
   await testTelegramFollowupExecutesAndCompletes()
   await testTelegramSendFailureDoesNotCreateSuccessTimeline()
   await testEmailFollowupCreatesDraftAndCompletes()
   await testEmailFollowupWithoutEmailFailsClearly()
+  await testPriorityInboxDirtyFollowupRegeneratesCleanCustomerText()
+  await testNonPriorityDirtyFollowupIsBlockedBeforeSend()
   console.log('ai approval queue followup execute tests passed')
 }
 

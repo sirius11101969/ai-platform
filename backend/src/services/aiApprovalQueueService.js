@@ -8,6 +8,7 @@ const { findDuplicateQueueItem, logDuplicateSkipped } = require('./aiQueueDedupS
 const { DEFAULT_TIMEZONE, buildMeetingDescription, buildStableIcsUid, generateMeetingIcs } = require('./calendarIcsService')
 const { createGoogleCalendarEvent } = require('./googleCalendarService')
 const { scoreLead } = require('./aiLeadScoringService')
+const { assertSafeCustomerCopy, containsForbiddenCustomerCopy, getSafePriorityInboxCustomerText } = require('./customerCopyGuard')
 
 const STATUSES = ['pending_approval', 'approved', 'rejected', 'executing', 'completed', 'executed', 'failed', 'cancelled']
 const TELEGRAM_MEETING_CONFIRMATION_DRAFT = 'telegram_meeting_confirmation_draft'
@@ -112,6 +113,30 @@ function russianError(message) {
   return Object.assign(new Error(message), { statusCode: 400 })
 }
 
+
+function isPriorityInboxItem(item) {
+  return item?.payload?.source === 'priority_inbox'
+}
+
+function isCustomerFacingDraftType(type) {
+  return [FOLLOWUP_SEQUENCE_DRAFT, EMAIL_FOLLOWUP_DRAFT, 'telegram_reply_draft', TELEGRAM_MEETING_CONFIRMATION_DRAFT, 'telegram_followup', 'email_followup'].includes(type)
+}
+
+function getRawDraftText(item) {
+  return item.payload.editedText || item.payload.edited_text || item.payload.customerText || item.payload.customer_text || item.payload.suggestedText || item.payload.draftText || item.payload.body || item.payload.text || item.payload.message || item.recommendation || item.title
+}
+
+function resolveCustomerMessage(item) {
+  let text = getRawDraftText(item)
+  if (isPriorityInboxItem(item) && (!text || containsForbiddenCustomerCopy(text) || !item.payload.customerText)) {
+    text = getSafePriorityInboxCustomerText(item.payload)
+  }
+  if (isCustomerFacingDraftType(item.executionType)) {
+    return assertSafeCustomerCopy(text, { actionId: item.id, actionType: item.executionType, source: item.payload?.source || '' })
+  }
+  return String(text || '').trim()
+}
+
 async function assertQueueItem(userId, workspaceId, queueId, client = pool) {
   const result = await client.query(
     `SELECT q.*, w.name AS worker_name, l.name AS lead_name, l.company AS lead_company, l.email AS lead_email, l.telegram AS lead_telegram, l.telegram_chat_id AS lead_telegram_chat_id, l.status AS lead_status, m.id AS meeting_id, m.title AS meeting_title, m.starts_at AS meeting_starts_at, m.duration_minutes AS meeting_duration_minutes, m.status AS meeting_status, m.calendar_status AS meeting_calendar_status, m.calendar_provider AS meeting_calendar_provider, m.timezone AS meeting_timezone, m.google_event_id AS meeting_google_event_id, m.google_meet_url AS meeting_google_meet_url, m.calendar_error AS meeting_calendar_error, m.calendar_synced_at AS meeting_calendar_synced_at, (m.ics_content IS NOT NULL AND m.ics_content <> '') AS meeting_has_ics
@@ -164,7 +189,28 @@ async function listQueue(userId, workspaceId, filters = {}) {
       LIMIT 200`,
     values
   )
-  return result.rows.map(normalize)
+  const items = result.rows.map(normalize)
+  await cleanupPriorityInboxDrafts(items)
+  return items
+}
+
+async function cleanupPriorityInboxDrafts(items) {
+  const dirtyItems = items.filter((item) => {
+    if (!isPriorityInboxItem(item)) return false
+    if (!['pending_approval', 'approved'].includes(item.status)) return false
+    if (!isCustomerFacingDraftType(item.executionType) && item.executionType !== 'meeting_schedule_proposal') return false
+    const customerText = getSafePriorityInboxCustomerText(item.payload)
+    return !item.payload.customerText || containsForbiddenCustomerCopy(getRawDraftText(item)) || item.payload.draftText !== customerText || item.payload.text !== customerText || item.payload.message !== customerText
+  })
+  await Promise.all(dirtyItems.map((item) => {
+    const customerText = getSafePriorityInboxCustomerText(item.payload)
+    const payload = { ...item.payload, customerText, draftText: customerText, text: customerText, message: customerText, body: item.executionType === EMAIL_FOLLOWUP_DRAFT || item.payload.channel === 'email' ? customerText : item.payload.body }
+    if (payload.body === undefined) delete payload.body
+    item.payload = payload
+    return pool.query('UPDATE ai_worker_queue SET payload = $3, updated_at = NOW() WHERE workspace_id = $1 AND id = $2', [item.workspaceId, item.id, payload])
+      .then(() => console.info('[copy-guard] cleaned pending Priority Inbox draft', { actionId: item.id, actionType: item.executionType }))
+      .catch((error) => console.error('[copy-guard] pending draft cleanup failed', { actionId: item.id, error: error.message || error }))
+  }))
 }
 
 async function updateQueueItem(userId, workspaceId, queueId, payload) {
@@ -510,7 +556,7 @@ async function executeMeetingScheduleProposal(userId, workspaceId, item) {
     let meetingRecord = await insertOptionalMeetingRecord(client, { workspaceId, item })
     meetingRecord = await syncMeetingToGoogleCalendar(client, meetingRecord)
     const icsReady = meetingRecord.calendarStatus === 'ics_ready'
-    confirmationText = buildMeetingConfirmationDraftText(item, { icsReady, googleMeetUrl: meetingRecord.googleMeetUrl })
+    confirmationText = assertSafeCustomerCopy(buildMeetingConfirmationDraftText(item, { icsReady, googleMeetUrl: meetingRecord.googleMeetUrl }), { actionId: item.id, actionType: TELEGRAM_MEETING_CONFIRMATION_DRAFT, source: item.payload?.source || '' })
     console.info('[meeting-execute] meeting created', { workspaceId, leadId: item.leadId, queueId: item.id, meetingId: meetingRecord.id })
     await client.query(
       `UPDATE crm_leads
@@ -549,7 +595,7 @@ async function executeMeetingScheduleProposal(userId, workspaceId, item) {
         await client.query(
           `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
            VALUES($1, $2, $3, $4, 'pending_approval', $5, $6, $7)`,
-          [worker.rows[0].id, workspaceId, item.leadId, TELEGRAM_MEETING_CONFIRMATION_DRAFT, `Ответ-подтверждение встречи — ${item.lead?.name || 'лид'}`, 'AI подготовил подтверждение demo-созвона для клиента. Проверьте и отправьте в Telegram.', { source: 'ai_meeting_scheduler', channel: 'telegram', sourceMessageId, draftText: confirmationText, text: confirmationText, message: confirmationText, meetingProposalQueueId: item.id, proposedStartTime, scheduledTime: proposedStartTime, detectedDateText: item.payload.detectedDateText || '', detectedTimeText: item.payload.detectedTimeText || '', leadName: item.lead?.name || '', inboundMessage: item.payload.inboundMessage || item.payload.customerMessage || '' }]
+          [worker.rows[0].id, workspaceId, item.leadId, TELEGRAM_MEETING_CONFIRMATION_DRAFT, `Ответ-подтверждение встречи — ${item.lead?.name || 'лид'}`, 'AI подготовил подтверждение demo-созвона для клиента. Проверьте и отправьте в Telegram.', { source: 'ai_meeting_scheduler', channel: 'telegram', sourceMessageId, customerText: confirmationText, draftText: confirmationText, text: confirmationText, message: confirmationText, meetingProposalQueueId: item.id, proposedStartTime, scheduledTime: proposedStartTime, detectedDateText: item.payload.detectedDateText || '', detectedTimeText: item.payload.detectedTimeText || '', leadName: item.lead?.name || '', inboundMessage: item.payload.inboundMessage || item.payload.customerMessage || '' }]
         )
         console.info('[meeting-execute] confirmation draft created', { workspaceId, leadId: item.leadId, queueId: item.id, sourceMessageId })
       }
@@ -563,12 +609,8 @@ async function executeMeetingScheduleProposal(userId, workspaceId, item) {
 }
 
 function buildMessage(item) {
-  if (item.executionType === FOLLOWUP_SEQUENCE_DRAFT) return item.payload.editedText || item.payload.edited_text || item.payload.suggestedText || item.payload.draftText || item.payload.body || item.payload.recommendation || item.payload.text || item.payload.message || item.recommendation || item.title
   if (item.executionType === 'send_demo_link') return item.recommendation || 'Демо AS6 AI CRM Platform: https://www.as6.ru'
-  if (item.executionType === 'telegram_reply_draft' || item.executionType === TELEGRAM_MEETING_CONFIRMATION_DRAFT) {
-    return item.payload.editedText || item.payload.edited_text || item.payload.draftText || item.payload.text || item.payload.message || item.recommendation || item.title
-  }
-  return item.payload.editedText || item.payload.draftText || item.payload.body || item.payload.text || item.payload.message || item.recommendation || item.title
+  return resolveCustomerMessage(item)
 }
 
 async function loadFollowupLead(workspaceId, leadId) {
@@ -587,7 +629,7 @@ function getLeadTelegramChatId(lead) {
 }
 
 function getFollowupText(item) {
-  return String(item.payload.editedText || item.payload.edited_text || item.payload.suggestedText || item.payload.draftText || item.payload.body || item.payload.recommendation || item.payload.text || item.payload.message || item.recommendation || '').trim()
+  return resolveCustomerMessage(item)
 }
 
 function getEmailSubject(item, lead) {
@@ -595,14 +637,16 @@ function getEmailSubject(item, lead) {
 }
 
 async function createEmailFollowupDraftQueueItem(client, { workspaceId, item, leadId, leadName, email, subject, body, sequenceStep }) {
+  const safeBody = assertSafeCustomerCopy(body, { actionId: item.id, actionType: EMAIL_FOLLOWUP_DRAFT, source: item.payload?.source || '' })
   const payload = {
     leadId,
     email,
     subject,
-    body,
-    draftText: body,
-    text: body,
-    message: body,
+    body: safeBody,
+    customerText: safeBody,
+    draftText: safeBody,
+    text: safeBody,
+    message: safeBody,
     channel: 'email',
     sourceFollowupActionId: item.id,
     sequenceStep,
@@ -611,7 +655,7 @@ async function createEmailFollowupDraftQueueItem(client, { workspaceId, item, le
     `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
      VALUES($1, $2, $3, $4, 'pending_approval', $5, $6, $7)
      RETURNING id`,
-    [item.workerId, workspaceId, leadId, EMAIL_FOLLOWUP_DRAFT, `Email follow-up — ${leadName || 'лид'}`, body, payload]
+    [item.workerId, workspaceId, leadId, EMAIL_FOLLOWUP_DRAFT, `Email follow-up — ${leadName || 'лид'}`, safeBody, payload]
   )
   const draft = result.rows[0] || {}
   console.info('[followup-execute] email draft created', { actionId: item.id, leadId })
@@ -628,6 +672,7 @@ function getTelegramResponseChatId(telegramResponse) {
 
 async function ensureFollowupTelegramMessagePersisted(client, { userId, workspaceId, leadId, text, result, item }) {
   if (result?.delivery !== 'telegram') return null
+  const safeText = assertSafeCustomerCopy(text, { actionId: item.id, actionType: item.executionType, source: item.payload?.source || '' })
 
   const existing = result.telegramMessage || null
   if (existing?.id) {
@@ -641,7 +686,7 @@ async function ensureFollowupTelegramMessagePersisted(client, { userId, workspac
     workspaceId,
     leadId,
     role: 'assistant',
-    message: text,
+    message: safeText,
     telegramChatId: result.chatId || item.lead?.telegramChatId || getTelegramResponseChatId(telegramResponse) || null,
     telegramMessageId: getTelegramResponseMessageId(telegramResponse),
   })
