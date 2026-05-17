@@ -123,6 +123,7 @@ export function ProtectedLayout({ children }) {
           <NavLink to="/crm" className={({ isActive }) => (isActive ? "active" : "")}>CRM‑воронка</NavLink>
           <NavLink to="/ai-workers" className={({ isActive }) => (isActive ? "active" : "")}>AI сотрудники</NavLink>
           <NavLink to="/followups" className={({ isActive }) => (isActive ? "active" : "")}>AI Follow-ups</NavLink>
+          <NavLink to="/priority-inbox" className={({ isActive }) => (isActive ? "active" : "")}>AI Priority Inbox</NavLink>
           <div className="sidebar-crm-actions" aria-label="Действия CRM">
             <button className="sidebar-create-lead" type="button" onClick={openCreateLead}>+ Создать лид</button>
             <button className="sidebar-activity-feed" type="button" onClick={openActivityFeed}>Лента активности</button>

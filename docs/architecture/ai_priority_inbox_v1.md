@@ -1,0 +1,165 @@
+# AI Priority Inbox v1
+
+## Purpose
+
+AI Priority Inbox v1 is a dedicated sales cockpit for AS6 AI CRM. It turns existing AI lead scoring, follow-up, meeting, Telegram, email, and approval data into a compact manager queue that answers three questions:
+
+1. **Who should be contacted now?**
+2. **Why does this lead matter?**
+3. **What should the manager do next?**
+
+The first version is deterministic: it does not call an LLM at request time. It uses existing CRM and AI fields to produce explainable `next_best_action` values.
+
+## Frontend
+
+### Route
+
+- `/priority-inbox`
+- Navigation label: **AI Priority Inbox**
+
+### Page structure
+
+The page includes:
+
+- Metric widgets:
+  - Urgent Leads
+  - Priority Leads
+  - At-Risk Deals
+  - Meetings Pending
+  - Follow-ups Needed
+- Filters:
+  - All
+  - Urgent
+  - Priority
+  - At Risk
+  - Needs Follow-up
+  - Meetings
+  - No Response >3d
+- Compact lead cards showing:
+  - lead name
+  - company/email/Telegram fallback
+  - CRM stage
+  - `ai_score`
+  - `ai_priority`
+  - `ai_temperature`
+  - `ai_risk_level`
+  - `ai_scoring_reason`
+  - last activity summary
+  - deterministic next suggested action
+- Action buttons:
+  - Telegram
+  - Email
+  - Create Follow-up
+  - Schedule Demo
+  - Open CRM Lead
+
+### CRM integration
+
+The page routes CRM-specific actions to the lead detail modal through `/crm?leadId=<id>` with optional `focus` hints. `Create Follow-up` directly calls the existing CRM follow-up endpoint so the lead is immediately enriched with an AI follow-up draft/note when possible.
+
+## Backend
+
+### Endpoint
+
+```http
+GET /api/ai/priority-inbox
+```
+
+Authentication and workspace scoping use the same middleware as other `/api/ai` routes.
+
+### Response shape
+
+```json
+{
+  "leads": [
+    {
+      "leadId": "uuid",
+      "name": "Lead name",
+      "company": "Company",
+      "email": "lead@example.com",
+      "stage": "Предложение",
+      "status": "proposal",
+      "ai_score": 82,
+      "ai_priority": "high",
+      "ai_temperature": "hot",
+      "ai_risk_level": "medium",
+      "ai_scoring_reason": "Reason from scoring engine",
+      "lastActivityAt": "2026-05-17T10:00:00.000Z",
+      "lastActivitySummary": "Последний входящий контакт в Telegram",
+      "next_best_action": "Риск потери сделки",
+      "nextBestActionReason": "Сделка на этапе предложения имеет средний или высокий AI risk.",
+      "nextBestActionCode": "deal_loss_risk",
+      "actionUrls": {
+        "telegram": "/crm?leadId=<id>&focus=telegram",
+        "email": "/crm?leadId=<id>&focus=email",
+        "followup": "/crm?leadId=<id>&focus=followup",
+        "demo": "/crm?leadId=<id>&focus=meeting",
+        "lead": "/crm?leadId=<id>"
+      }
+    }
+  ],
+  "metrics": {
+    "urgentLeads": 0,
+    "priorityLeads": 0,
+    "atRiskDeals": 0,
+    "meetingsPending": 0,
+    "followUpsNeeded": 0
+  },
+  "generatedAt": "2026-05-17T10:00:00.000Z"
+}
+```
+
+## Deterministic suggested action engine
+
+Priority order:
+
+1. `booked` + pending meeting/calendar confirmation → **Подтвердить встречу**
+2. `hot` + no fresh activity for 3+ days → **Сделать срочный follow-up**
+3. `proposal` + medium/high risk → **Риск потери сделки**
+4. pricing/budget interest + no demo/meeting → **Назначить demo**
+5. warm lead + recent inbound activity → **Ответить сегодня**
+6. urgent priority → **Связаться сегодня**
+7. proposal without stronger signal → **Отправить pricing**
+8. high score/high priority → **Связаться сегодня**
+9. no fresh activity for 3+ days → **Сделать follow-up**
+10. fallback → **Сделать follow-up**
+
+## Sorting
+
+Default backend sorting is stable and explainable:
+
+1. urgent leads first
+2. high-risk deals
+3. booked/proposal stages
+4. highest AI score
+5. newest activity
+
+## Timeline and logging
+
+Each inbox request logs:
+
+```text
+[priority-inbox] inbox requested
+```
+
+Each generated next action logs:
+
+```text
+[priority-inbox] action generated
+```
+
+For returned leads, the backend writes timeline events:
+
+- `ai_priority_inbox_viewed`
+- `ai_next_action_generated`
+
+Timeline event writes are best-effort and do not fail the inbox response if a timeline insert fails.
+
+## Verification checklist
+
+- `/priority-inbox` loads for authenticated users.
+- Urgent leads sort before non-urgent leads.
+- Suggested actions match the deterministic rules above.
+- Filters update the visible card set without reloading.
+- Metric widgets are computed from the same normalized inbox items as the cards.
+- Card buttons route to the CRM lead or call the existing follow-up workflow.
