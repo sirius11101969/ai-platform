@@ -6,7 +6,7 @@ const { sendLeadAttachments } = require('./attachmentService')
 const { addTimelineEvent } = require('./timelineService')
 
 const STATUSES = ['pending_approval', 'approved', 'rejected', 'executing', 'completed', 'executed', 'failed', 'cancelled']
-const EXECUTION_TYPES = ['telegram_reply_draft', 'telegram_followup', 'email_followup', 'send_demo_link', 'send_presentation', 'create_reminder', 'move_lead_stage', 'stage_change_recommendation', 'followup_24h', 'followup_3d', 'demo_offer', 'meeting_request']
+const EXECUTION_TYPES = ['telegram_reply_draft', 'telegram_followup', 'email_followup', 'send_demo_link', 'send_presentation', 'create_reminder', 'move_lead_stage', 'stage_change_recommendation', 'followup_24h', 'followup_3d', 'demo_offer', 'meeting_request', 'meeting_schedule_proposal']
 
 const ACTION_ALIASES = {
   stage_change_recommendation: 'stage_change_recommendation',
@@ -20,6 +20,7 @@ const ACTION_ALIASES = {
   followup_3d: 'followup_3d',
   demo_offer: 'demo_offer',
   meeting_request: 'meeting_request',
+  meeting_schedule_proposal: 'meeting_schedule_proposal',
   crm_next_action: 'create_reminder',
   move_lead_stage: 'stage_change_recommendation',
   lead_prioritization: 'create_reminder',
@@ -205,6 +206,81 @@ async function rejectQueueItem(userId, workspaceId, queueId) {
   } finally { client.release() }
 }
 
+
+async function tableExists(client, tableName) {
+  const result = await client.query('SELECT to_regclass($1) AS table_name', [tableName])
+  return Boolean(result.rows[0]?.table_name)
+}
+
+async function insertOptionalMeetingRecord(client, { workspaceId, userId, item }) {
+  const metadata = { queueId: item.id, actionType: item.actionType, sourceMessageId: item.payload.sourceMessageId, calendar: item.payload.calendar || { connectLater: true } }
+  const startTime = item.payload.proposedStartTime || null
+  const title = item.payload.proposedTitle || `Demo-созвон — ${item.lead?.name || 'lead'}`
+  const duration = Number(item.payload.durationMinutes || 30)
+
+  if (await tableExists(client, 'crm_meetings')) {
+    await client.query(
+      `INSERT INTO crm_meetings(workspace_id, user_id, lead_id, title, start_time, duration_minutes, status, source, metadata)
+       VALUES($1, $2, $3, $4, $5::timestamptz, $6, 'scheduled', 'ai', $7)
+       ON CONFLICT DO NOTHING`,
+      [workspaceId, userId, item.leadId, title, startTime, duration, metadata]
+    )
+    return 'crm_meetings'
+  }
+
+  if (await tableExists(client, 'crm_tasks')) {
+    await client.query(
+      `INSERT INTO crm_tasks(workspace_id, user_id, lead_id, title, due_at, status, type, metadata)
+       VALUES($1, $2, $3, $4, $5::timestamptz, 'scheduled', 'meeting', $6)
+       ON CONFLICT DO NOTHING`,
+      [workspaceId, userId, item.leadId, title, startTime, metadata]
+    )
+    return 'crm_tasks'
+  }
+
+  return null
+}
+
+async function executeMeetingScheduleProposal(userId, workspaceId, item) {
+  const client = await pool.connect()
+  const proposedStartTime = item.payload.proposedStartTime || null
+  const title = item.payload.proposedTitle || `Demo-созвон — ${item.lead?.name || 'lead'}`
+  const confirmationText = proposedStartTime
+    ? `Отлично, зафиксировал demo-созвон на ${new Intl.DateTimeFormat('ru-RU', { dateStyle: 'short', timeStyle: 'short', timeZone: item.payload.timeZone || process.env.APP_TIMEZONE || 'UTC' }).format(new Date(proposedStartTime))}. До встречи!`
+    : 'Отлично, зафиксировал demo-созвон. До встречи!'
+  try {
+    await client.query('BEGIN')
+    const optionalRecordTable = await insertOptionalMeetingRecord(client, { workspaceId, userId, item })
+    await client.query(
+      `UPDATE crm_leads
+          SET status = 'booked', stage = 'booked', next_step = 'Demo scheduled', metadata = COALESCE(metadata, '{}'::jsonb) || $4::jsonb, updated_at = NOW()
+        WHERE workspace_id = $1 AND id = $2 AND user_id = $3`,
+      [workspaceId, item.leadId, userId, { aiMeetingScheduler: { queueId: item.id, proposedStartTime, title, durationMinutes: item.payload.durationMinutes || 30 } }]
+    )
+    await saveAudit(client, { workspaceId, leadId: item.leadId, userId, type: 'meeting_scheduled', title: 'Demo-созвон запланирован', body: proposedStartTime ? `${title}: ${proposedStartTime}` : title, source: 'ai', metadata: { queueId: item.id, actionType: item.actionType, proposedStartTime, durationMinutes: item.payload.durationMinutes || 30, optionalRecordTable } })
+
+    if ((item.payload.channel || '').toLowerCase() === 'telegram') {
+      const worker = await client.query(
+        `INSERT INTO ai_workers(workspace_id, name, type, status, mode, description)
+         VALUES($1, 'AI Telegram Reply Assistant', 'ai_telegram_assistant', 'active', 'approval_required', 'Готовит черновики ответов Telegram после входящих сообщений. Отправка только после проверки менеджера.')
+         ON CONFLICT (workspace_id, type) DO UPDATE SET updated_at = NOW()
+         RETURNING id`,
+        [workspaceId]
+      )
+      await client.query(
+        `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
+         VALUES($1, $2, $3, 'telegram_reply_draft', 'pending_approval', $4, $5, $6)`,
+        [worker.rows[0].id, workspaceId, item.leadId, `Подтвердить demo-созвон — ${item.lead?.name || ''}`, 'AI подготовил подтверждение встречи. Отправка только после approval менеджера.', { source: 'ai_meeting_scheduler', channel: 'telegram', draftText: confirmationText, text: confirmationText, message: confirmationText, meetingQueueId: item.id, proposedStartTime, leadName: item.lead?.name || '', inboundMessage: item.payload.inboundMessage || item.payload.customerMessage || '' }]
+      )
+    }
+    await client.query('COMMIT')
+    return { scheduled: true, proposedStartTime, confirmationDraftCreated: (item.payload.channel || '').toLowerCase() === 'telegram' }
+  } catch (error) {
+    await client.query('ROLLBACK')
+    throw error
+  } finally { client.release() }
+}
+
 function buildMessage(item) {
   if (item.executionType === 'send_demo_link') return item.recommendation || 'Демо AS6 AI CRM Platform: https://www.as6.ru'
   if (item.executionType === 'telegram_reply_draft') {
@@ -217,6 +293,7 @@ async function executeByType(userId, workspaceId, item) {
   if (!item.leadId && item.executionType !== 'create_reminder') throw russianError('Для выполнения нужен привязанный лид')
   const type = item.executionType
   const channel = item.payload.channel || item.payload.suggestedChannel || (item.lead?.hasTelegramChatId ? 'telegram' : item.lead?.email ? 'email' : 'crm')
+  if (type === 'meeting_schedule_proposal') return executeMeetingScheduleProposal(userId, workspaceId, item)
   if (type === 'telegram_reply_draft' || type === 'telegram_followup') return sendTelegramMessageToLead({ userId, workspaceId, leadId: item.leadId, text: buildMessage(item) })
   if (['followup_24h', 'followup_3d', 'demo_offer', 'meeting_request'].includes(type)) {
     if (channel === 'telegram') return sendTelegramMessageToLead({ userId, workspaceId, leadId: item.leadId, text: buildMessage(item) })
@@ -254,6 +331,8 @@ async function executeQueueItem(userId, workspaceId, queueId) {
         const fromStage = getStageFrom(item) || item.lead?.status
         const toStage = getStageTo(item)
         await saveAudit(client, { workspaceId, leadId: item.leadId, userId, type: 'ai_stage_changed', title: 'AI изменил этап после approval', body: `AI рекомендовал перевести лида в стадию ${stageLabel(toStage)}. Стадия изменена: ${stageLabel(fromStage)} → ${stageLabel(toStage)}.`, metadata: { queueId, actionType: item.actionType, executionType, from: fromStage, to: toStage, confidence: item.payload.confidence, reason: item.payload.reason } })
+      } else if (executionType === 'meeting_schedule_proposal') {
+        await saveAudit(client, { workspaceId, leadId: item.leadId, userId, type: 'ai_action_executed', title: 'AI meeting proposal выполнен', body: item.title, source: 'ai', metadata: { queueId, actionType: item.actionType, executionType, proposedStartTime: item.payload.proposedStartTime || null } })
       } else {
         await saveAudit(client, { workspaceId, leadId: item.leadId, userId, type: executionType === 'email_followup' || item.payload.channel === 'email' ? 'email_sent' : executionType === 'telegram_reply_draft' || executionType === 'telegram_followup' || item.payload.channel === 'telegram' ? 'telegram_sent' : 'ai_action_executed', title: executionType === 'email_followup' || item.payload.channel === 'email' ? 'Email отправлен' : executionType === 'telegram_reply_draft' || executionType === 'telegram_followup' || item.payload.channel === 'telegram' ? 'Telegram отправлен' : 'AI действие выполнено', body: item.title, source: item.payload.channel || 'ai', metadata: { queueId, actionType: item.actionType, executionType } })
       }
@@ -281,6 +360,8 @@ async function getMetrics(userId, workspaceId) {
        COUNT(*) FILTER (WHERE status IN ('completed','executed') AND executed_at::date = CURRENT_DATE)::int AS executed_today,
        COUNT(*) FILTER (WHERE status = 'failed' AND updated_at::date = CURRENT_DATE)::int AS failed_today,
        COUNT(*) FILTER (WHERE status IN ('completed','executed'))::int AS completed_total,
+       COUNT(*) FILTER (WHERE action_type = 'meeting_schedule_proposal' AND status IN ('completed','executed'))::int AS meetings_scheduled_by_ai,
+       COUNT(*) FILTER (WHERE action_type = 'meeting_schedule_proposal' AND status = 'pending_approval')::int AS pending_meeting_proposals,
        COUNT(*) FILTER (WHERE status IN ('completed','executed','failed'))::int AS finished_total
      FROM ai_worker_queue q
      WHERE q.workspace_id = $1 AND EXISTS (SELECT 1 FROM workspace_members wm WHERE wm.workspace_id = q.workspace_id AND wm.user_id = $2)`,
@@ -294,6 +375,8 @@ async function getMetrics(userId, workspaceId) {
     executedToday: Number(row.executed_today || 0),
     failedToday: Number(row.failed_today || 0),
     successRate: finished ? Math.round((Number(row.completed_total || 0) / finished) * 100) : 0,
+    meetingsScheduledByAi: Number(row.meetings_scheduled_by_ai || 0),
+    pendingMeetingProposals: Number(row.pending_meeting_proposals || 0),
   }
 }
 

@@ -345,7 +345,7 @@ async function listLeads(userId, workspaceId) {
             ) scores) AS ai_score,
             COALESCE((SELECT json_agg(seq_row ORDER BY seq_row.recommended_at DESC) FROM (SELECT * FROM ai_followup_sequences afs WHERE afs.workspace_id = l.workspace_id AND afs.lead_id = l.id ORDER BY afs.recommended_at DESC LIMIT 5) seq_row), '[]'::json) AS ai_followup_sequences,
             COALESCE((SELECT json_agg(job_row ORDER BY job_row.created_at DESC) FROM (SELECT * FROM ai_followup_jobs afj WHERE afj.workspace_id = l.workspace_id AND afj.lead_id = l.id ORDER BY afj.created_at DESC LIMIT 10) job_row), '[]'::json) AS ai_followup_jobs,
-            COALESCE((SELECT json_agg(draft_row ORDER BY draft_row.created_at DESC) FROM (SELECT id, workspace_id, lead_id, action_type, status, title, recommendation, payload, created_at, updated_at FROM ai_worker_queue q WHERE q.workspace_id = l.workspace_id AND q.lead_id = l.id AND q.action_type IN ('telegram_draft','email_draft','followup_24h','followup_3d','demo_offer','meeting_request') ORDER BY q.created_at DESC LIMIT 20) draft_row), '[]'::json) AS ai_outreach_drafts,
+            COALESCE((SELECT json_agg(draft_row ORDER BY draft_row.created_at DESC) FROM (SELECT id, workspace_id, lead_id, action_type, status, title, recommendation, payload, created_at, updated_at FROM ai_worker_queue q WHERE q.workspace_id = l.workspace_id AND q.lead_id = l.id AND q.action_type IN ('telegram_draft','email_draft','followup_24h','followup_3d','demo_offer','meeting_request','meeting_schedule_proposal') ORDER BY q.created_at DESC LIMIT 20) draft_row), '[]'::json) AS ai_outreach_drafts,
             (SELECT to_jsonb(stage_q) FROM (SELECT id, workspace_id, lead_id, action_type, status, title, recommendation, payload, created_at, updated_at FROM ai_worker_queue q WHERE q.workspace_id = l.workspace_id AND q.lead_id = l.id AND q.action_type = 'stage_change_recommendation' AND q.status IN ('pending_approval','approved','failed') ORDER BY q.created_at DESC LIMIT 1) stage_q) AS ai_stage_recommendation,
             (SELECT a.output_result FROM ai_agent_actions a WHERE a.workspace_id = l.workspace_id AND a.lead_id = l.id AND a.task_type = 'analyze_lead' AND a.status = 'completed' ORDER BY a.created_at DESC LIMIT 1) AS ai_recommendation,
             COALESCE((SELECT json_agg(ai_row ORDER BY ai_row.created_at DESC) FROM (SELECT a.id, a.task_type, a.status, a.output_result, a.created_at FROM ai_agent_actions a WHERE a.workspace_id = l.workspace_id AND a.lead_id = l.id ORDER BY a.created_at DESC LIMIT 5) ai_row), '[]'::json) AS ai_actions
@@ -996,12 +996,14 @@ async function getStats(userId, workspaceId) {
               COUNT(*) FILTER (WHERE q.status = 'completed' AND q.executed_at::date = CURRENT_DATE)::int AS sent_today,
               COUNT(*) FILTER (WHERE q.status = 'pending_approval')::int AS pending_approvals,
               COUNT(DISTINCT q.lead_id) FILTER (WHERE q.status = 'pending_approval')::int AS ready_leads,
+              COUNT(*) FILTER (WHERE q.action_type = 'meeting_schedule_proposal' AND q.status IN ('completed','executed'))::int AS meetings_scheduled_by_ai,
+              COUNT(*) FILTER (WHERE q.action_type = 'meeting_schedule_proposal' AND q.status = 'pending_approval')::int AS pending_meeting_proposals,
               COUNT(DISTINCT q.lead_id)::int AS total_leads
          FROM ai_worker_queue q
          JOIN crm_leads l ON l.id = q.lead_id AND l.workspace_id = q.workspace_id
         WHERE q.workspace_id = $1
           AND l.user_id = $2
-          AND q.action_type IN ('telegram_draft','email_draft','followup_24h','followup_3d','demo_offer','meeting_request')`,
+          AND q.action_type IN ('telegram_draft','email_draft','followup_24h','followup_3d','demo_offer','meeting_request','meeting_schedule_proposal')`,
       [workspaceId, userId]
     ),
     pool.query(
@@ -1152,6 +1154,8 @@ async function getStats(userId, workspaceId) {
       repliesReceivedToday: Number(telegramStats.replies_today || 0),
       pendingApprovals: Number(outreachMetrics.pending_approvals || aiExecution.pending_approval || 0),
       outreachPendingApprovals: Number(outreachMetrics.pending_approvals || 0),
+      meetingsScheduledByAi: Number(outreachMetrics.meetings_scheduled_by_ai || 0),
+      pendingMeetingProposals: Number(outreachMetrics.pending_meeting_proposals || 0),
       aiResponseReadiness: Number(outreachMetrics.total_leads || 0) ? Math.round((Number(outreachMetrics.ready_leads || 0) / Number(outreachMetrics.total_leads || 1)) * 100) : 0,
     },
     byStatus,
