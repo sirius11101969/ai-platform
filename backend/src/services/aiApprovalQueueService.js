@@ -578,6 +578,37 @@ function getFollowupText(item) {
   return String(item.payload.editedText || item.payload.edited_text || item.payload.suggestedText || item.payload.draftText || item.payload.recommendation || item.payload.text || item.payload.message || item.recommendation || '').trim()
 }
 
+function getTelegramResponseMessageId(telegramResponse) {
+  return telegramResponse?.result?.message_id || telegramResponse?.message_id || telegramResponse?.id || null
+}
+
+function getTelegramResponseChatId(telegramResponse) {
+  return telegramResponse?.result?.chat?.id || telegramResponse?.chat?.id || telegramResponse?.chat_id || null
+}
+
+async function ensureFollowupTelegramMessagePersisted(client, { userId, workspaceId, leadId, text, result, item }) {
+  if (result?.delivery !== 'telegram') return null
+
+  const existing = result.telegramMessage || null
+  if (existing?.id) {
+    console.info('[followup-execute] telegram message persisted', { actionId: item.id, leadId })
+    return existing
+  }
+
+  const telegramResponse = result.telegramResponse || null
+  const telegramMessage = await crmModel.addTelegramMessage(client, {
+    userId,
+    workspaceId,
+    leadId,
+    role: 'assistant',
+    message: text,
+    telegramChatId: result.chatId || item.lead?.telegramChatId || getTelegramResponseChatId(telegramResponse) || null,
+    telegramMessageId: getTelegramResponseMessageId(telegramResponse),
+  })
+  console.info('[followup-execute] telegram message persisted', { actionId: item.id, leadId })
+  return telegramMessage
+}
+
 async function executeFollowupSequenceDraft(userId, workspaceId, item) {
   const leadId = item.payload.leadId || item.payload.lead_id || item.leadId
   console.info('[followup-execute] requested', { actionId: item.id, leadId })
@@ -654,7 +685,6 @@ async function executeQueueItem(userId, workspaceId, queueId) {
     const client = await pool.connect()
     try {
       await client.query('BEGIN')
-      await client.query("UPDATE ai_worker_queue SET status = $3, executed_at = NOW(), error_message = NULL, updated_at = NOW() WHERE workspace_id = $1 AND id = $2", [workspaceId, queueId, 'completed'])
       if (executionType === 'stage_change_recommendation') {
         const fromStage = getStageFrom(item) || item.lead?.status
         const toStage = getStageTo(item)
@@ -662,10 +692,14 @@ async function executeQueueItem(userId, workspaceId, queueId) {
       } else if (executionType === 'meeting_schedule_proposal') {
         // Meeting execution writes the dedicated meeting_scheduled timeline event inside executeMeetingScheduleProposal.
       } else if (executionType === FOLLOWUP_SEQUENCE_DRAFT) {
-        await saveAudit(client, { workspaceId, leadId: result?.leadId || item.leadId, userId, type: 'followup_sent', title: 'Follow-up отправлен', body: result?.text || buildMessage(item), source: result?.delivery === 'telegram' ? 'telegram' : result?.delivery === 'email_draft' ? 'email' : item.lead?.hasTelegramChatId ? 'telegram' : 'email', metadata: { queueId, actionType: item.actionType, executionType, sequenceStep: result?.sequenceStep || item.payload.sequenceStep, confidence: item.payload.confidence, reason: item.payload.reason } })
+        const followupLeadId = result?.leadId || item.payload?.leadId || item.payload?.lead_id || item.leadId
+        const followupText = result?.text || buildMessage(item)
+        await ensureFollowupTelegramMessagePersisted(client, { userId, workspaceId, leadId: followupLeadId, text: followupText, result, item })
+        await saveAudit(client, { workspaceId, leadId: followupLeadId, userId, type: 'followup_sent', title: 'Follow-up отправлен', body: followupText, source: result?.delivery === 'telegram' ? 'telegram' : result?.delivery === 'email_draft' ? 'email' : item.lead?.hasTelegramChatId ? 'telegram' : 'email', metadata: { queueId, actionType: item.actionType, executionType, sequenceStep: result?.sequenceStep || item.payload.sequenceStep, confidence: item.payload.confidence, reason: item.payload.reason } })
       } else {
         await saveAudit(client, { workspaceId, leadId: item.leadId, userId, type: executionType === TELEGRAM_MEETING_CONFIRMATION_DRAFT ? 'telegram_meeting_confirmation_sent' : executionType === 'email_followup' || item.payload.channel === 'email' ? 'email_sent' : executionType === 'telegram_reply_draft' || executionType === 'telegram_followup' || item.payload.channel === 'telegram' ? 'telegram_sent' : 'ai_action_executed', title: executionType === 'email_followup' || item.payload.channel === 'email' ? 'Email отправлен' : executionType === 'telegram_reply_draft' || executionType === TELEGRAM_MEETING_CONFIRMATION_DRAFT || executionType === 'telegram_followup' || item.payload.channel === 'telegram' ? 'Telegram отправлен' : 'AI действие выполнено', body: item.title, source: item.payload.channel || 'ai', metadata: { queueId, actionType: item.actionType, executionType } })
       }
+      await client.query("UPDATE ai_worker_queue SET status = $3, executed_at = NOW(), error_message = NULL, updated_at = NOW() WHERE workspace_id = $1 AND id = $2", [workspaceId, queueId, 'completed'])
       await client.query('COMMIT')
     } catch (error) { await client.query('ROLLBACK'); throw error } finally { client.release() }
     return { success: true, actionId: queueId, status: 'completed', item: await assertQueueItem(userId, workspaceId, queueId), result }
