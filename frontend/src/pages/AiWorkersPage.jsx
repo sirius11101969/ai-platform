@@ -443,6 +443,149 @@ function getApprovalItemType(item) {
   return item?.executionType || item?.actionType || "";
 }
 
+
+const FOCUS_QUEUE_LIMIT = 10;
+const FOCUS_RECENT_WINDOW_MS = 72 * 60 * 60 * 1000;
+const activeActionStatuses = new Set(["pending_approval", "approved"]);
+const finishedActionStatuses = new Set(["completed", "executed", "rejected", "cancelled"]);
+const customerFacingActionTypes = new Set(["telegram_followup", "email_followup", "email_followup_draft", "telegram_draft", "telegram_reply_draft", "telegram_meeting_confirmation_draft", "email_draft", "followup_sequence_draft", "meeting_schedule_proposal"]);
+const followupActionTypes = new Set(["telegram_followup", "email_followup", "email_followup_draft", "telegram_draft", "telegram_reply_draft", "telegram_meeting_confirmation_draft", "email_draft", "followup_sequence_draft"]);
+const meetingActionTypes = new Set(["meeting_schedule_proposal", "telegram_meeting_confirmation_draft"]);
+const focusTabs = [
+  { id: "focus", label: "Focus" },
+  { id: "needsApproval", label: "Needs Approval" },
+  { id: "failed", label: "Failed" },
+  { id: "meetings", label: "Meetings" },
+  { id: "followups", label: "Follow-ups" },
+  { id: "all", label: "All" },
+];
+
+function getItemCreatedTime(item) {
+  return new Date(item?.createdAt || item?.created_at || 0).getTime() || 0;
+}
+
+function getItemUpdatedTime(item) {
+  return new Date(item?.updatedAt || item?.updated_at || item?.createdAt || 0).getTime() || 0;
+}
+
+function getItemType(item) {
+  return item?.executionType || item?.actionType || "";
+}
+
+function getItemSearchText(item) {
+  return [item?.title, item?.recommendation, item?.errorMessage, item?.payload?.testName, item?.payload?.source, item?.payload?.scenario].filter(Boolean).join(" ").toLowerCase();
+}
+
+function isRecentAction(item, now = Date.now()) {
+  return now - getItemCreatedTime(item) <= FOCUS_RECENT_WINDOW_MS;
+}
+
+function isCustomerFacingAction(item) {
+  return customerFacingActionTypes.has(getItemType(item)) || ["email", "telegram"].includes(String(item?.payload?.channel || item?.payload?.suggestedChannel || "").toLowerCase());
+}
+
+function isFollowupAction(item) {
+  return followupActionTypes.has(getItemType(item));
+}
+
+function isMeetingAction(item) {
+  return meetingActionTypes.has(getItemType(item));
+}
+
+function isSafetyHistoryAction(item) {
+  const text = getItemSearchText(item);
+  return /unsafe copy guard test|safety[-_ ]?test|copy guard|ai safety|sanitizer test/.test(text) || item?.payload?.source === "copy_guard_test" || item?.payload?.safetyTest === true;
+}
+
+function isGenericLowValueLeadPriority(item) {
+  if (getItemType(item) !== "lead_priority_recommendation") return false;
+  const priority = String(item?.payload?.priority || item?.payload?.aiPriority || item?.payload?.value || "").toLowerCase();
+  const score = Number(item?.payload?.score || item?.payload?.aiScore || 0);
+  return ["", "low", "medium", "normal"].includes(priority) && score < 70;
+}
+
+function hasNewerCompletedFallback(item, items) {
+  if (item?.status !== "failed" || !item?.leadId) return false;
+  const itemTime = getItemUpdatedTime(item);
+  return items.some((candidate) => {
+    if (candidate.id === item.id || candidate.leadId !== item.leadId) return false;
+    if (!["completed", "executed"].includes(candidate.status)) return false;
+    if (!isCustomerFacingAction(candidate)) return false;
+    if (getItemUpdatedTime(candidate) <= itemTime) return false;
+    const candidateChannel = String(candidate?.payload?.channel || candidate?.payload?.suggestedChannel || "").toLowerCase();
+    const itemChannel = String(item?.payload?.channel || item?.payload?.suggestedChannel || "").toLowerCase();
+    return candidateChannel === "email" || candidateChannel !== itemChannel;
+  });
+}
+
+function getFocusPriority(item, items, now = Date.now()) {
+  const type = getItemType(item);
+  const source = String(item?.payload?.source || item?.workerName || item?.payload?.engine || "").toLowerCase();
+  const status = item?.status;
+  if (activeActionStatuses.has(status) && isCustomerFacingAction(item) && isRecentAction(item, now)) return 1;
+  if (source.includes("next_best_action") || type.includes("next_best_action")) return 2;
+  if (source.includes("pipeline_copilot") || type.includes("pipeline_copilot")) return 3;
+  if (isFollowupAction(item)) return 4;
+  if (isMeetingAction(item)) return 5;
+  if (status === "failed" && isCustomerFacingAction(item) && !hasNewerCompletedFallback(item, items)) return 6;
+  return 99;
+}
+
+function shouldHideFromFocus(item, items, now = Date.now()) {
+  const type = getItemType(item);
+  if (finishedActionStatuses.has(item?.status)) return true;
+  if (isSafetyHistoryAction(item)) return true;
+  if (item?.status === "failed" && hasNewerCompletedFallback(item, items)) return true;
+  if (type === "lead_scoring_update" && ["completed", "executed"].includes(item?.status)) return true;
+  if (["telegram_draft", "email_draft"].includes(type) && !isRecentAction(item, now)) return true;
+  if (isGenericLowValueLeadPriority(item)) return true;
+  return false;
+}
+
+function buildFocusQueueState(items, now = Date.now()) {
+  const sorted = sortApprovalItemsByCreatedDesc(items || []);
+  const completedHistoryActions = sorted.filter((item) => ["completed", "executed", "rejected", "cancelled"].includes(item.status) && !isSafetyHistoryAction(item));
+  const safetyHistoryActions = sorted.filter(isSafetyHistoryAction);
+  const focusCandidates = sorted
+    .filter((item) => !shouldHideFromFocus(item, sorted, now))
+    .filter((item) => activeActionStatuses.has(item.status) || (item.status === "failed" && !hasNewerCompletedFallback(item, sorted)))
+    .map((item) => ({ item, priority: getFocusPriority(item, sorted, now) }))
+    .filter(({ priority }) => priority < 99)
+    .sort((left, right) => left.priority - right.priority || getItemCreatedTime(right.item) - getItemCreatedTime(left.item))
+    .map(({ item }) => item);
+  const focusActions = focusCandidates.slice(0, FOCUS_QUEUE_LIMIT);
+  const focusIds = new Set(focusActions.map((item) => item.id));
+  const hiddenLegacyActions = sorted.filter((item) => !focusIds.has(item.id) && !completedHistoryActions.some((historyItem) => historyItem.id === item.id) && !safetyHistoryActions.some((historyItem) => historyItem.id === item.id));
+  const unresolvedFailedActions = sorted.filter((item) => item.status === "failed" && !hasNewerCompletedFallback(item, sorted) && !isSafetyHistoryAction(item));
+  const needsApprovalActions = sorted.filter((item) => activeActionStatuses.has(item.status) && !isSafetyHistoryAction(item));
+  const meetingsActions = sorted.filter((item) => isMeetingAction(item) && !isSafetyHistoryAction(item) && !finishedActionStatuses.has(item.status));
+  const followupActions = sorted.filter((item) => isFollowupAction(item) && !isSafetyHistoryAction(item) && !finishedActionStatuses.has(item.status));
+
+  return {
+    focusActions,
+    hiddenLegacyActions,
+    completedHistoryActions,
+    safetyHistoryActions,
+    allActions: sorted,
+    tabActions: {
+      focus: focusActions,
+      needsApproval: needsApprovalActions,
+      failed: unresolvedFailedActions,
+      meetings: meetingsActions,
+      followups: followupActions,
+      all: sorted,
+    },
+    metrics: {
+      actionableNow: focusActions.length,
+      needsApproval: needsApprovalActions.length,
+      failedUnresolved: unresolvedFailedActions.length,
+      hiddenLegacy: hiddenLegacyActions.length,
+      completedHistory: completedHistoryActions.length,
+      safetyHistory: safetyHistoryActions.length,
+    },
+  };
+}
+
 function logTelegramSendButtonState(item, buttonState) {
   console.log("[ai-workers-ui] send button state", {
     actionId: item.id,
@@ -462,6 +605,8 @@ export default function AiWorkersPage() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [approvalQueue, setApprovalQueue] = useState({ items: [], metrics: {} });
+  const [activeApprovalTab, setActiveApprovalTab] = useState("focus");
+  const [expandedSections, setExpandedSections] = useState({ legacy: false, completed: false, safety: false, all: false });
   const [busyActions, setBusyActions] = useState({});
   const [loadingKey, setLoadingKey] = useState("");
   const actionInFlightRef = useRef(new Set());
@@ -501,8 +646,7 @@ export default function AiWorkersPage() {
     if (!loading && highlightRef.current) {
       highlightRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
     }
-  }, [loading, targetActionId, targetLeadId, approvalQueue.items]);
-
+  }, [loading, targetActionId, targetLeadId, approvalQueue.items, expandedSections, activeApprovalTab]);
 
   async function handleSeedDemoPipeline() {
     setDemoBusy(true);
@@ -731,18 +875,128 @@ export default function AiWorkersPage() {
   const recentRuns = commandCenter?.recentRuns || [];
   const metrics = commandCenter?.metrics || {};
   const approvalItems = approvalQueue.items || [];
-  const activeApprovalItems = useMemo(() => sortApprovalItemsByCreatedDesc(approvalItems.filter((item) => !["rejected", "completed", "executed", "cancelled"].includes(item.status))), [approvalItems]);
-  const approvalHistoryItems = useMemo(() => sortApprovalItemsByCreatedDesc(approvalItems.filter((item) => ["rejected", "completed", "executed", "cancelled"].includes(item.status))), [approvalItems]);
+  const focusQueueState = useMemo(() => buildFocusQueueState(approvalItems), [approvalItems]);
+  const selectedApprovalItems = focusQueueState.tabActions[activeApprovalTab] || focusQueueState.focusActions;
   const isHighlightedApprovalItem = (item) => Boolean((targetActionId && item.id === targetActionId) || (targetLeadId && item.leadId === targetLeadId));
   const prioritizeHighlightedItems = (items, limit) => {
-    const sliced = items.slice(0, limit);
+    const sliced = limit ? items.slice(0, limit) : items;
     const highlighted = items.find(isHighlightedApprovalItem);
-    if (highlighted && !sliced.some((item) => item.id === highlighted.id)) return [highlighted, ...sliced.slice(0, Math.max(0, limit - 1))];
+    if (highlighted && !sliced.some((item) => item.id === highlighted.id)) return [highlighted, ...sliced.slice(0, Math.max(0, (limit || items.length) - 1))];
     return sliced;
   };
-  const approvalMetrics = approvalQueue.metrics || {};
+  const approvalMetrics = { ...(approvalQueue.metrics || {}), ...(focusQueueState.metrics || {}) };
   const pendingActions = useMemo(() => queue.filter((item) => item.status === "pending_approval"), [queue]);
   const failedActions = useMemo(() => queue.filter((item) => item.status === "failed"), [queue]);
+
+  useEffect(() => {
+    console.info("[ai-workers-focus] focus queue built", { count: focusQueueState.focusActions.length, actionableNow: focusQueueState.metrics.actionableNow });
+    console.info("[ai-workers-focus] legacy actions hidden", { count: focusQueueState.metrics.hiddenLegacy });
+  }, [focusQueueState.focusActions.length, focusQueueState.metrics.actionableNow, focusQueueState.metrics.hiddenLegacy]);
+
+  useEffect(() => {
+    if (!targetActionId && !targetLeadId) return;
+    const matchSection = (items) => items.some(isHighlightedApprovalItem);
+    const nextExpanded = {};
+    if (matchSection(focusQueueState.hiddenLegacyActions)) nextExpanded.legacy = true;
+    if (matchSection(focusQueueState.completedHistoryActions)) nextExpanded.completed = true;
+    if (matchSection(focusQueueState.safetyHistoryActions)) nextExpanded.safety = true;
+    if (!matchSection(selectedApprovalItems) && matchSection(focusQueueState.allActions)) nextExpanded.all = true;
+    if (!Object.keys(nextExpanded).length) return;
+    setExpandedSections((current) => ({ ...current, ...nextExpanded }));
+    console.info("[ai-workers-focus] route highlight expanded hidden section", { actionId: targetActionId, leadId: targetLeadId, sections: Object.keys(nextExpanded) });
+  }, [targetActionId, targetLeadId, focusQueueState, selectedApprovalItems]);
+
+  function renderApprovalRow(item, { history = false } = {}) {
+    const isApproveBusy = Boolean(busyActions[getApprovalActionKey(item.id, "approve")]);
+    const isEditBusy = Boolean(busyActions[getApprovalActionKey(item.id, "edit")]);
+    const isRejectBusy = Boolean(busyActions[getApprovalActionKey(item.id, "reject")]);
+    const executeLoadingKey = getApprovalActionKey(item.id, "execute");
+    const isExecuteActionBusy = Boolean(busyActions[executeLoadingKey]) || loadingKey === executeLoadingKey;
+    const isItemBusy = isApproveBusy || isEditBusy || isRejectBusy || isExecuteActionBusy;
+    const busyLabel = isApproveBusy ? approvalActionLoadingLabels.approve : isEditBusy ? approvalActionLoadingLabels.edit : isRejectBusy ? approvalActionLoadingLabels.reject : isExecuteActionBusy ? approvalActionLoadingLabels.execute : "";
+    const isEditingThisDraft = editingDraft.itemId === item.id;
+    const isTelegramDraftItem = isTelegramReplyDraft(item);
+    const isEmailDraftItem = isEmailFollowupDraft(item);
+    const executableButtonState = isApprovalItemExecutable(item) ? getExecutableButtonState(item, { isItemBusy, currentLoadingKey: loadingKey }) : null;
+    const showExecutableButton = Boolean(executableButtonState && ["pending_approval", "approved"].includes(item.status));
+    const isSendStyleButton = canAutoApproveAndExecuteDraft(item) || isEmailDraftItem;
+    const canEditItem = ["pending_approval", "failed"].includes(item.status);
+    const canRejectItem = ["pending_approval", "failed"].includes(item.status);
+    if (isTelegramDraftItem && executableButtonState) logTelegramSendButtonState(item, executableButtonState);
+
+    return (
+      <article ref={isHighlightedApprovalItem(item) ? highlightRef : null} className={`approval-row ${history ? "approval-history-row" : ""} approval-${item.status} ${isHighlightedApprovalItem(item) ? "route-highlight" : ""}`} key={item.id}>
+        <div className="approval-main">
+          <strong>{sanitizeVisibleAiText(item.title)}</strong>
+          <p>{shortRecommendation(item)}</p>
+          {renderStageDetails(item)}
+          {renderMeetingScheduleDetails(item, { onDownloadIcs: handleDownloadIcs })}
+          {renderFollowupSequenceDetails(item)}
+          {renderTelegramReplyDraft(item, {
+            isEditing: isEditingThisDraft,
+            editText: isEditingThisDraft ? editingDraft.text : getDraftText(item),
+            onEditTextChange: (text) => setEditingDraft({ itemId: item.id, text }),
+            onSaveEdit: () => saveApprovalItemEdit(item, editingDraft.text),
+            onCancelEdit: () => setEditingDraft({ itemId: "", text: "" }),
+            editBusy: isItemBusy,
+          })}
+          {renderEmailFollowupDraft(item, {
+            isEditing: isEditingThisDraft,
+            editText: isEditingThisDraft ? editingDraft.text : getDraftText(item),
+            onEditTextChange: (text) => setEditingDraft({ itemId: item.id, text }),
+            onSaveEdit: () => saveApprovalItemEdit(item, editingDraft.text),
+            onCancelEdit: () => setEditingDraft({ itemId: "", text: "" }),
+            editBusy: isItemBusy,
+          })}
+          {item.errorMessage && <small className="email-error-text">Ошибка выполнения: {formatApprovalErrorMessage(item.errorMessage)}</small>}
+          {executableButtonState && !history && (
+            <small className="send-debug-badge">
+              buttonEnabled={String(executableButtonState.buttonEnabled)} · actionId={item.id} · status={item.status}
+            </small>
+          )}
+        </div>
+        <div><span>Лид</span><b>{item.lead?.name || "—"}</b></div>
+        <div><span>AI сотрудник</span><b>{item.workerName || "AI"}</b></div>
+        <div><span>Канал</span><b>{item.payload?.channel || item.payload?.suggestedChannel || (item.lead?.telegram ? "telegram" : item.lead?.email ? "email" : "crm")}</b></div>
+        <div><span>Тип</span><b>{actionTypeLabels[item.executionType] || actionTypeLabels[item.actionType] || item.actionType}</b></div>
+        <div><span>Статус</span><b className={`glow-status ${item.status}`}>{approvalStatusLabels[item.status] || item.status}</b><small>{formatDate(item.updatedAt || item.createdAt)}</small></div>
+        <div className="approval-actions">
+          {!history && ["pending_approval", "failed"].includes(item.status) && (
+            <button type="button" className="ghost-button compact" onClick={() => handleApprovalAction(item, "approve")} disabled={isItemBusy}>{isApproveBusy ? busyLabel : "Одобрить"}</button>
+          )}
+          {!history && canEditItem && (
+            <button type="button" className="ghost-button compact" onClick={() => handleEditApprovalItem(item)} disabled={isItemBusy || ["executing","completed"].includes(item.status)}>{isEditBusy ? "Сохраняем…" : "Изменить"}</button>
+          )}
+          {!history && canRejectItem && !["executing", "completed", "rejected"].includes(item.status) && (
+            <button type="button" className="ghost-button compact danger-action" onClick={() => handleApprovalAction(item, "reject")} disabled={isItemBusy}>{isRejectBusy ? busyLabel : "Отклонить"}</button>
+          )}
+          {!history && showExecutableButton && (
+            isSendStyleButton ? (
+              <button type="button" className="btn primary compact approval-send-button" onClick={() => handleApprovalAction(item, "execute")} disabled={executableButtonState.disabled} aria-busy={isExecuteActionBusy}>{isExecuteActionBusy ? approvalActionLoadingLabels.send : "Отправить"}</button>
+            ) : (
+              <button type="button" className="btn primary compact" onClick={() => handleApprovalAction(item, "execute")} disabled={executableButtonState.disabled}>{isExecuteActionBusy ? busyLabel : "Выполнить"}</button>
+            )
+          )}
+          {history && <span className="approval-history-note">{item.status === "failed" ? "Требуется внимание" : "Действие завершено"}</span>}
+        </div>
+      </article>
+    );
+  }
+
+  function renderCollapsedSection({ id, title, count, items, history = false }) {
+    if (!items.length) return null;
+    return (
+      <details className="approval-collapsed-section" open={expandedSections[id]} onToggle={(event) => setExpandedSections((current) => ({ ...current, [id]: event.currentTarget.open }))}>
+        <summary>
+          <span>{title}</span>
+          <b>{count}</b>
+        </summary>
+        <div className="approval-table approval-history-table">
+          {prioritizeHighlightedItems(items, id === "all" ? 50 : 12).map((item) => renderApprovalRow(item, { history }))}
+        </div>
+      </details>
+    );
+  }
 
   return (
     <main className="workspace-page ai-workers-page">
@@ -782,129 +1036,49 @@ export default function AiWorkersPage() {
       </section>
 
       <Panel className="ai-approval-center-panel">
-        <div className="panel-head">
+        <div className="panel-head focus-queue-head">
           <div>
             <span className="eyebrow">Контроль человеком</span>
-            <h3>Центр одобрения AI</h3>
-            <p>AI только рекомендует. Отправка и выполнение доступны после ручного одобрения менеджером.</p>
+            <h3>Focus Queue</h3>
+            <p>Показываем только задачи, которые реально требуют действия менеджера сейчас.</p>
           </div>
-          <span className="live-pill"><i />{approvalMetrics.waitingApproval || 0} ждут</span>
+          <span className="live-pill focus-live-pill"><i />Actionable now: {approvalMetrics.actionableNow || 0}</span>
         </div>
-        <div className="approval-metric-strip">
-          <span>Одобрено сегодня <b>{approvalMetrics.approvedToday || 0}</b></span>
+        <div className="approval-metric-strip focus-metric-strip">
+          <span>Actionable now <b>{approvalMetrics.actionableNow || 0}</b></span>
+          <span>Needs approval <b>{approvalMetrics.needsApproval || 0}</b></span>
+          <span>Failed unresolved <b>{approvalMetrics.failedUnresolved || 0}</b></span>
+          <span>Hidden legacy <b>{approvalMetrics.hiddenLegacy || 0}</b></span>
+          <span>Completed history <b>{approvalMetrics.completedHistory || 0}</b></span>
+          <span>Safety history <b>{approvalMetrics.safetyHistory || 0}</b></span>
           <span>Выполнено сегодня <b>{approvalMetrics.executedToday || 0}</b></span>
-          <span>Ошибок сегодня <b>{approvalMetrics.failedToday || 0}</b></span>
           <span>Успешность <b>{approvalMetrics.successRate || 0}%</b></span>
-          <span>Meeting proposals <b>{approvalMetrics.pendingMeetingProposals || 0}</b></span>
-          <span>Follow-ups pending <b>{approvalMetrics.followupsPending || 0}</b></span>
-          <span>Follow-ups sent today <b>{approvalMetrics.followupsSentToday || 0}</b></span>
+        </div>
+        <div className="focus-tabs" role="tablist" aria-label="AI Workers approval filters">
+          {focusTabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={activeApprovalTab === tab.id}
+              className={activeApprovalTab === tab.id ? "active" : ""}
+              onClick={() => setActiveApprovalTab(tab.id)}
+            >
+              {tab.label}
+              <span>{focusQueueState.tabActions[tab.id]?.length || 0}</span>
+            </button>
+          ))}
         </div>
         <div className="approval-table">
-          {activeApprovalItems.length === 0 && <p className="empty-state">Нет AI действий на одобрение.</p>}
-          {prioritizeHighlightedItems(activeApprovalItems, 12).map((item) => {
-            const isApproveBusy = Boolean(busyActions[getApprovalActionKey(item.id, "approve")]);
-            const isEditBusy = Boolean(busyActions[getApprovalActionKey(item.id, "edit")]);
-            const isRejectBusy = Boolean(busyActions[getApprovalActionKey(item.id, "reject")]);
-            const executeLoadingKey = getApprovalActionKey(item.id, "execute");
-            const isExecuteActionBusy = Boolean(busyActions[executeLoadingKey]) || loadingKey === executeLoadingKey;
-            const isItemBusy = isApproveBusy || isEditBusy || isRejectBusy || isExecuteActionBusy;
-            const busyLabel = isApproveBusy ? approvalActionLoadingLabels.approve : isEditBusy ? approvalActionLoadingLabels.edit : isRejectBusy ? approvalActionLoadingLabels.reject : isExecuteActionBusy ? approvalActionLoadingLabels.execute : "";
-            const isEditingThisDraft = editingDraft.itemId === item.id;
-            const isExecuteBusy = isExecuteActionBusy;
-            const isTelegramDraftItem = isTelegramReplyDraft(item);
-            const isEmailDraftItem = isEmailFollowupDraft(item);
-            const executableButtonState = isApprovalItemExecutable(item) ? getExecutableButtonState(item, { isItemBusy, currentLoadingKey: loadingKey }) : null;
-            const showExecutableButton = Boolean(executableButtonState && ["pending_approval", "approved"].includes(item.status));
-            const isSendStyleButton = canAutoApproveAndExecuteDraft(item) || isEmailDraftItem;
-            if (isTelegramDraftItem && executableButtonState) logTelegramSendButtonState(item, executableButtonState);
-            const canEditItem = ["pending_approval", "failed"].includes(item.status);
-            const canRejectItem = ["pending_approval", "failed"].includes(item.status);
-            return (
-            <article ref={isHighlightedApprovalItem(item) ? highlightRef : null} className={`approval-row approval-${item.status} ${isHighlightedApprovalItem(item) ? "route-highlight" : ""}`} key={item.id}>
-              <div className="approval-main">
-                <strong>{sanitizeVisibleAiText(item.title)}</strong>
-                <p>{shortRecommendation(item)}</p>
-                {renderStageDetails(item)}
-                {renderMeetingScheduleDetails(item, { onDownloadIcs: handleDownloadIcs })}
-                {renderFollowupSequenceDetails(item)}
-                {renderTelegramReplyDraft(item, {
-                  isEditing: isEditingThisDraft,
-                  editText: isEditingThisDraft ? editingDraft.text : getDraftText(item),
-                  onEditTextChange: (text) => setEditingDraft({ itemId: item.id, text }),
-                  onSaveEdit: () => saveApprovalItemEdit(item, editingDraft.text),
-                  onCancelEdit: () => setEditingDraft({ itemId: "", text: "" }),
-                  editBusy: isItemBusy,
-                })}
-                {renderEmailFollowupDraft(item, {
-                  isEditing: isEditingThisDraft,
-                  editText: isEditingThisDraft ? editingDraft.text : getDraftText(item),
-                  onEditTextChange: (text) => setEditingDraft({ itemId: item.id, text }),
-                  onSaveEdit: () => saveApprovalItemEdit(item, editingDraft.text),
-                  onCancelEdit: () => setEditingDraft({ itemId: "", text: "" }),
-                  editBusy: isItemBusy,
-                })}
-                {item.errorMessage && <small className="email-error-text">Ошибка выполнения: {formatApprovalErrorMessage(item.errorMessage)}</small>}
-                {executableButtonState && (
-                  <small className="send-debug-badge">
-                    buttonEnabled={String(executableButtonState.buttonEnabled)} · actionId={item.id} · status={item.status}
-                  </small>
-                )}
-              </div>
-              <div><span>Лид</span><b>{item.lead?.name || "—"}</b></div>
-              <div><span>AI сотрудник</span><b>{item.workerName || "AI"}</b></div>
-              <div><span>Канал</span><b>{item.payload?.channel || item.payload?.suggestedChannel || (item.lead?.telegram ? "telegram" : item.lead?.email ? "email" : "crm")}</b></div>
-              <div><span>Тип</span><b>{actionTypeLabels[item.executionType] || actionTypeLabels[item.actionType] || item.actionType}</b></div>
-              <div><span>Статус</span><b className={`glow-status ${item.status}`}>{approvalStatusLabels[item.status] || item.status}</b><small>{formatDate(item.createdAt)}</small></div>
-              <div className="approval-actions">
-                {["pending_approval", "failed"].includes(item.status) && (
-                  <button type="button" className="ghost-button compact" onClick={() => handleApprovalAction(item, "approve")} disabled={isItemBusy}>{isApproveBusy ? busyLabel : "Одобрить"}</button>
-                )}
-                {canEditItem && (
-                  <button type="button" className="ghost-button compact" onClick={() => handleEditApprovalItem(item)} disabled={isItemBusy || ["executing","completed"].includes(item.status)}>{isEditBusy ? "Сохраняем…" : "Изменить"}</button>
-                )}
-                {canRejectItem && !["executing", "completed", "rejected"].includes(item.status) && (
-                  <button type="button" className="ghost-button compact danger-action" onClick={() => handleApprovalAction(item, "reject")} disabled={isItemBusy}>{isRejectBusy ? busyLabel : "Отклонить"}</button>
-                )}
-                {showExecutableButton && (
-                  isSendStyleButton ? (
-                    <button type="button" className="btn primary compact approval-send-button" onClick={() => handleApprovalAction(item, "execute")} disabled={executableButtonState.disabled} aria-busy={isExecuteActionBusy}>{isExecuteActionBusy ? approvalActionLoadingLabels.send : "Отправить"}</button>
-                  ) : (
-                    <button type="button" className="btn primary compact" onClick={() => handleApprovalAction(item, "execute")} disabled={executableButtonState.disabled}>{isExecuteBusy ? busyLabel : "Выполнить"}</button>
-                  )
-                )}
-              </div>
-            </article>
-          )})}
+          {selectedApprovalItems.length === 0 && <p className="empty-state">Нет AI действий в выбранном фильтре.</p>}
+          {prioritizeHighlightedItems(selectedApprovalItems, activeApprovalTab === "focus" ? FOCUS_QUEUE_LIMIT : 50).map((item) => renderApprovalRow(item))}
         </div>
-        {approvalHistoryItems.length > 0 && (
-          <div className="approval-history-section">
-            <div className="approval-history-head">
-              <h4>История</h4>
-              <span>{approvalHistoryItems.length} в истории</span>
-            </div>
-            <div className="approval-table approval-history-table">
-              {prioritizeHighlightedItems(approvalHistoryItems, 8).map((item) => (
-                <article ref={isHighlightedApprovalItem(item) ? highlightRef : null} className={`approval-row approval-history-row approval-${item.status} ${isHighlightedApprovalItem(item) ? "route-highlight" : ""}`} key={item.id}>
-                  <div className="approval-main">
-                    <strong>{sanitizeVisibleAiText(item.title)}</strong>
-                    <p>{shortRecommendation(item)}</p>
-                    {renderStageDetails(item)}
-                    {renderMeetingScheduleDetails(item, { onDownloadIcs: handleDownloadIcs })}
-                    {renderFollowupSequenceDetails(item)}
-                    {renderTelegramReplyDraft(item)}
-                    {item.errorMessage && <small className="email-error-text">Ошибка выполнения: {formatApprovalErrorMessage(item.errorMessage)}</small>}
-                  </div>
-                  <div><span>Лид</span><b>{item.lead?.name || "—"}</b></div>
-                  <div><span>AI сотрудник</span><b>{item.workerName || "AI"}</b></div>
-                  <div><span>Канал</span><b>{item.payload?.channel || item.payload?.suggestedChannel || (item.lead?.telegram ? "telegram" : item.lead?.email ? "email" : "crm")}</b></div>
-                  <div><span>Тип</span><b>{actionTypeLabels[item.executionType] || actionTypeLabels[item.actionType] || item.actionType}</b></div>
-                  <div><span>Статус</span><b className={`glow-status ${item.status}`}>{approvalStatusLabels[item.status] || item.status}</b><small>{formatDate(item.updatedAt || item.createdAt)}</small></div>
-                  <div className="approval-actions"><span className="approval-history-note">{item.status === "failed" ? "Требуется внимание" : "Действие завершено"}</span></div>
-                </article>
-              ))}
-            </div>
-          </div>
-        )}
+        <div className="approval-collapsed-list">
+          {renderCollapsedSection({ id: "legacy", title: "Show legacy pending", count: focusQueueState.hiddenLegacyActions.length, items: focusQueueState.hiddenLegacyActions })}
+          {renderCollapsedSection({ id: "completed", title: "Show completed history", count: focusQueueState.completedHistoryActions.length, items: focusQueueState.completedHistoryActions, history: true })}
+          {renderCollapsedSection({ id: "safety", title: "Show safety history", count: focusQueueState.safetyHistoryActions.length, items: focusQueueState.safetyHistoryActions, history: true })}
+          {renderCollapsedSection({ id: "all", title: "Show all actions", count: focusQueueState.allActions.length, items: focusQueueState.allActions, history: true })}
+        </div>
       </Panel>
 
       <section className="worker-card-grid">
