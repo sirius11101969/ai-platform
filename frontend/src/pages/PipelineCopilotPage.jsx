@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PageHeading, Panel } from "../components/AppShell";
+import { sanitizeVisibleAiText } from "../utils/uiSanitizer";
 import { createPipelineCopilotFollowupAction, createPipelineCopilotMeetingAction, fetchAiPipelineCopilot } from "../services/api";
 
 const metricLabels = {
@@ -182,12 +183,12 @@ export default function PipelineCopilotPage() {
       <Panel className="pipeline-summary-block">
         <div>
           <span className="eyebrow mini">Summary</span>
-          <h3>{loading ? "AI формирует cockpit…" : summary.headline || "Сегодня нужно сделать 0 действий"}</h3>
+          <h3>{loading ? "AI формирует cockpit…" : sanitizeVisibleAiText(summary.headline || "Сегодня нужно сделать 0 действий")}</h3>
         </div>
         <div className="pipeline-summary-lines">
-          <span>{summary.riskText || "0 сделок в риске"}</span>
-          <span>{summary.meetingsText || "0 встреч требуют подготовки"}</span>
-          <span>{summary.approvalsText || "0 AI задач ждут approval"}</span>
+          <span>{sanitizeVisibleAiText(summary.riskText || "0 сделок в риске")}</span>
+          <span>{sanitizeVisibleAiText(summary.meetingsText || "0 встреч требуют подготовки")}</span>
+          <span>{sanitizeVisibleAiText(summary.approvalsText || "0 AI задач ждут approval")}</span>
         </div>
       </Panel>
 
@@ -201,8 +202,8 @@ export default function PipelineCopilotPage() {
               <div className="pipeline-card-topline">
                 <div>
                   <span className="eyebrow mini">{action.leadName}</span>
-                  <h3>{action.actionTitle}</h3>
-                  <p>{action.reason}</p>
+                  <h3>{sanitizeVisibleAiText(action.actionTitle)}</h3>
+                  <p>{sanitizeVisibleAiText(action.reason)}</p>
                 </div>
                 <div className="pipeline-urgency-stack">
                   <span className={`pipeline-badge ${badgeClass(action.priority, "priority")}`}>{priorityLabels[action.priority] || action.priority}</span>
@@ -244,7 +245,7 @@ export default function PipelineCopilotPage() {
               <Panel className={`pipeline-mini-card risk-${lead.aiRiskLevel}`} key={lead.id}>
                 <div>
                   <h4>{lead.name}</h4>
-                  <p>{lead.managerReason || leadSubtitle(lead)}</p>
+                  <p>{sanitizeVisibleAiText(lead.managerReason || leadSubtitle(lead))}</p>
                 </div>
                 <div className="pipeline-mini-meta">
                   <span className={`pipeline-badge risk-${lead.aiRiskLevel}`}>{lead.aiRiskLevel} risk</span>
@@ -266,7 +267,7 @@ export default function PipelineCopilotPage() {
               <Panel className="pipeline-mini-card meeting" key={meeting.id}>
                 <div>
                   <h4>{meeting.leadName}</h4>
-                  <p>{meeting.title} · {formatDateTime(meeting.startsAt)}</p>
+                  <p>{sanitizeVisibleAiText(meeting.title)} · {formatDateTime(meeting.startsAt)}</p>
                 </div>
                 <span className={meeting.needsPrep ? "pipeline-badge meeting-hot" : "pipeline-badge"}>{meeting.needsPrep ? "Prep now" : meeting.status}</span>
                 <ActionButtons item={meeting} ctas={meeting.ctas} navigate={navigate} onCreateAction={handleCreatePipelineAction} busyActionKey={busyActionKey} />
@@ -283,7 +284,7 @@ export default function PipelineCopilotPage() {
               <Panel className="pipeline-mini-card approval" key={item.id}>
                 <div>
                   <h4>{item.leadName}</h4>
-                  <p>{item.title}</p>
+                  <p>{sanitizeVisibleAiText(item.title)}</p>
                 </div>
                 <span className="pipeline-badge approval-waiting">{statusLabels[item.status] || item.status}</span>
                 <ActionButtons item={item} ctas={item.ctas} navigate={navigate} onCreateAction={handleCreatePipelineAction} busyActionKey={busyActionKey} />

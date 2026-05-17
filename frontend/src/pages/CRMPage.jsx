@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Panel, PageHeading, StatCard } from "../components/AppShell";
+import { sanitizeCustomerVisibleText, sanitizeVisibleAiText } from "../utils/uiSanitizer";
 import {
   addCrmLeadNote,
   createCrmFollowUp,
@@ -119,11 +120,12 @@ function getActivityTitle(event) {
 }
 
 function formatCrmText(value) {
-  return String(value || "")
+  const formatted = String(value || "")
     .replace(/AI follow-up:/gi, "AI‑дожим:")
     .replace(/AI follow‑up/gi, "AI‑дожим")
     .replace(/AI reply sent:/gi, "AI ответ отправлен:")
     .replace(/Telegram message received/gi, "Telegram сообщение получено");
+  return sanitizeVisibleAiText(formatted);
 }
 
 function formatLeadSource(source) {
@@ -202,9 +204,9 @@ function getAiRecommendation(lead) {
 
 function getAiSummaryText(recommendation) {
   if (!recommendation) return 'AI анализ ещё не запускался';
-  if (recommendation.nextBestAction) return recommendation.nextBestAction;
-  if (Array.isArray(recommendation.recommendations) && recommendation.recommendations[0]) return recommendation.recommendations[0];
-  return recommendation.content || recommendation.rawText || 'AI рекомендация готова';
+  if (recommendation.nextBestAction) return sanitizeVisibleAiText(recommendation.nextBestAction);
+  if (Array.isArray(recommendation.recommendations) && recommendation.recommendations[0]) return sanitizeVisibleAiText(recommendation.recommendations[0]);
+  return sanitizeVisibleAiText(recommendation.content || recommendation.rawText || 'AI рекомендация готова');
 }
 
 
@@ -228,7 +230,7 @@ function getRecommendedStage(item) {
 
 function getStageRecommendationReason(item) {
   const payload = item?.payload || item || {};
-  return payload.reason || item?.reason || item?.recommendation || 'AI обнаружил сигнал для смены этапа.';
+  return sanitizeVisibleAiText(payload.reason || item?.reason || item?.recommendation || 'AI обнаружил сигнал для смены этапа.');
 }
 
 function getStageRecommendationConfidence(item) {
@@ -924,8 +926,8 @@ export default function CRMPage() {
                         <div className="lead-ai-probability forecast-progress"><span>{forecastLabel(getLeadAiScore(lead).forecastCategory)} · engagement {getLeadAiScore(lead).engagementScore}/100</span><i style={{ width: `${getLeadAiScore(lead).probabilityToClose}%` }} /></div>
                       </> : <div className="ai-forecast-empty-card">AI прогноз появится после квалификации лида.</div>}
                       {getAiBadges(lead).length > 0 && <div className="ai-badge-row">{getAiBadges(lead).map((badge) => <b className="ai-neon-badge" key={badge}>{badge}</b>)}</div>}
-                      <p>{lead.company || (isTelegramLead(lead) ? lead.telegram || "Telegram контакт" : "Компания не указана")}</p>{getLeadAiScore(lead)?.aiReasoning && <div className="ai-card-reasoning">{getLeadAiScore(lead).aiReasoning}</div>}
-                      <div className="lead-card-meta"><small><i />{stageMap[lead.status] || lead.status}</small><span className={`source-pill ${lead.source === "telegram" ? "telegram-source" : ""}`}>{formatLeadSource(lead.source)}</span></div>{getLeadAiScore(lead)?.recommendedNextStep && <div className="ai-card-recommendation"><span>AI</span>{getLeadAiScore(lead).recommendedNextStep}</div>}{!getLeadAiScore(lead)?.recommendedNextStep && getAiRecommendation(lead) && <div className="ai-card-recommendation"><span>AI</span>{getAiSummaryText(getAiRecommendation(lead))}</div>}{isTelegramLead(lead) && <div className="telegram-card-status"><span className={`telegram-presence-dot ${lead.telegramOnline ? 'online' : 'offline'}`} />{lead.telegramOnline ? 'online' : 'offline'} · {lead.lastMessageAt ? formatDate(lead.lastMessageAt) : 'нет сообщений'}</div>}
+                      <p>{lead.company || (isTelegramLead(lead) ? lead.telegram || "Telegram контакт" : "Компания не указана")}</p>{getLeadAiScore(lead)?.aiReasoning && <div className="ai-card-reasoning">{sanitizeVisibleAiText(getLeadAiScore(lead).aiReasoning)}</div>}
+                      <div className="lead-card-meta"><small><i />{stageMap[lead.status] || lead.status}</small><span className={`source-pill ${lead.source === "telegram" ? "telegram-source" : ""}`}>{formatLeadSource(lead.source)}</span></div>{getLeadAiScore(lead)?.recommendedNextStep && <div className="ai-card-recommendation"><span>AI</span>{sanitizeVisibleAiText(getLeadAiScore(lead).recommendedNextStep)}</div>}{!getLeadAiScore(lead)?.recommendedNextStep && getAiRecommendation(lead) && <div className="ai-card-recommendation"><span>AI</span>{getAiSummaryText(getAiRecommendation(lead))}</div>}{isTelegramLead(lead) && <div className="telegram-card-status"><span className={`telegram-presence-dot ${lead.telegramOnline ? 'online' : 'offline'}`} />{lead.telegramOnline ? 'online' : 'offline'} · {lead.lastMessageAt ? formatDate(lead.lastMessageAt) : 'нет сообщений'}</div>}
                     </article>
                   ))}
                 </div>
@@ -1147,7 +1149,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                   <div>
                     <span className="eyebrow">AI Forecast</span>
                     <h4>{getLeadAiScore(lead).probabilityToClose}% вероятность сделки</h4>
-                    <p>{getLeadAiScore(lead).aiSummary}</p>
+                    <p>{sanitizeVisibleAiText(getLeadAiScore(lead).aiSummary)}</p>
                   </div>
                   <span className={`urgency-badge ${getLeadAiScore(lead).urgencyLevel}`}>{urgencyLabel(getLeadAiScore(lead).urgencyLevel)}</span>
                 </div>
@@ -1158,7 +1160,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                   <div><span>priority_badge</span><strong>{lead.aiPriority || getLeadAiScore(lead).priority || 'medium'}</strong></div>
                   <div><span>temperature</span><strong>{tempLabel(lead.aiTemperature || getLeadAiScore(lead).temperature)}</strong></div>
                   <div><span>risk_badge</span><strong>{riskLabel(lead.aiRiskLevel || getLeadAiScore(lead).riskLevel)}</strong></div>
-                  <div><span>AI reasoning</span><strong>{lead.aiScoringReason || getLeadAiScore(lead).scoringReason || getLeadAiScore(lead).aiReasoning}</strong></div>
+                  <div><span>AI reasoning</span><strong>{sanitizeVisibleAiText(lead.aiScoringReason || getLeadAiScore(lead).scoringReason || getLeadAiScore(lead).aiReasoning)}</strong></div>
                   <div><span>probability_to_close</span><strong>{getLeadAiScore(lead).probabilityToClose}%</strong></div>
                   <div><span>engagement_score</span><strong>{getLeadAiScore(lead).engagementScore}/100 · {tempLabel(getLeadAiScore(lead).temperature)}</strong></div>
                   <div><span>expected_revenue</span><strong>{formatCurrency(getLeadAiScore(lead).expectedRevenue || lead.estimatedRevenue)}</strong></div>
@@ -1167,7 +1169,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                   <div><span>recommended_channel</span><strong>{channelLabel(getLeadAiScore(lead).recommendedChannel)}</strong></div>
                   <div><span>Прогноз конверсии</span><strong>{getLeadAiScore(lead).dealProbability >= 70 ? 'Высокий шанс оплаты' : getLeadAiScore(lead).dealProbability >= 40 ? 'Нужно усилить доверие' : 'Низкая готовность к покупке'}</strong></div>
                   <div><span>Идеальное время</span><strong>{getLeadAiScore(lead).idealContactTiming || 'сегодня'}</strong></div>
-                  <div><span>recommended_next_step</span><strong>{getLeadAiScore(lead).recommendedNextStep || getLeadAiScore(lead).nextBestAction}</strong></div>
+                  <div><span>recommended_next_step</span><strong>{sanitizeVisibleAiText(getLeadAiScore(lead).recommendedNextStep || getLeadAiScore(lead).nextBestAction)}</strong></div>
                   <div><span>latest forecast timeline event</span><strong>{getLatestForecastEvent(actionCenter)?.title || '—'} · {formatDate(getLatestForecastEvent(actionCenter)?.createdAt)}</strong></div>
                 </div>
               </div>
@@ -1189,14 +1191,14 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
               </div>
               {getAiRecommendation(lead) ? (
                 <div className="ai-recommendation-grid">
-                  <div><span>Следующее лучшее действие</span><strong>{getAiRecommendation(lead).nextBestAction || 'Клиент готов к следующему касанию'}</strong></div>
+                  <div><span>Следующее лучшее действие</span><strong>{sanitizeVisibleAiText(getAiRecommendation(lead).nextBestAction || 'Клиент готов к следующему касанию')}</strong></div>
                   <div><span>Срочность</span><strong>{getAiRecommendation(lead).urgencyScore ?? '—'}%</strong></div>
                   <div><span>Вероятность сделки</span><strong>{getAiRecommendation(lead).conversionProbability ?? '—'}%</strong></div>
-                  <div><span>Follow-up</span><strong>{getAiRecommendation(lead).followUpRecommendation || 'Рекомендуется follow-up через 24 часа'}</strong></div>
+                  <div><span>Follow-up</span><strong>{sanitizeVisibleAiText(getAiRecommendation(lead).followUpRecommendation || 'Рекомендуется follow-up через 24 часа')}</strong></div>
                 </div>
               ) : <p className="empty-state">Запустите «Анализ лида», чтобы получить AI рекомендации.</p>}
-              {Array.isArray(getAiRecommendation(lead)?.recommendations) && <ul className="ai-recommendation-list">{getAiRecommendation(lead).recommendations.map((item, index) => <li key={`${item}-${index}`}>{item}</li>)}</ul>}
-              {getLeadAiScore(lead) && <div className="ai-advisor-strip"><p><b>AI рекомендация:</b> {getLeadAiScore(lead).recommendedNextStep || getLeadAiScore(lead).nextBestAction || "Назначить следующий шаг"}</p><p><b>Рекомендуемый CTA:</b> {getLeadAiScore(lead).recommendedCta || "Назначить следующий шаг"}</p><p><b>Возражения:</b> {(getLeadAiScore(lead).objectionsDetected || []).join(", ") || "не обнаружены"}</p><p><b>AI Outreach Engine:</b> {telegramOutreachDrafts.length + emailOutreachDrafts.length} черновиков ждут approval · readiness {getLeadAiScore(lead).temperature === 'hot' ? 'немедленно' : getLeadAiScore(lead).temperature === 'warm' ? 'первый контакт' : 'только рекомендация'}</p></div>}
+              {Array.isArray(getAiRecommendation(lead)?.recommendations) && <ul className="ai-recommendation-list">{getAiRecommendation(lead).recommendations.map((item, index) => <li key={`${item}-${index}`}>{sanitizeVisibleAiText(item)}</li>)}</ul>}
+              {getLeadAiScore(lead) && <div className="ai-advisor-strip"><p><b>AI рекомендация:</b> {sanitizeVisibleAiText(getLeadAiScore(lead).recommendedNextStep || getLeadAiScore(lead).nextBestAction || "Назначить следующий шаг")}</p><p><b>Рекомендуемый CTA:</b> {sanitizeVisibleAiText(getLeadAiScore(lead).recommendedCta || "Назначить следующий шаг")}</p><p><b>Возражения:</b> {sanitizeVisibleAiText((getLeadAiScore(lead).objectionsDetected || []).join(", ") || "не обнаружены")}</p><p><b>AI Outreach Engine:</b> {telegramOutreachDrafts.length + emailOutreachDrafts.length} черновиков ждут approval · readiness {getLeadAiScore(lead).temperature === 'hot' ? 'немедленно' : getLeadAiScore(lead).temperature === 'warm' ? 'первый контакт' : 'только рекомендация'}</p></div>}
             </div>
 
 
@@ -1258,7 +1260,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                 {(actionCenter.approvalItems || []).filter((item) => !['rejected','completed','executed','cancelled'].includes(item.status) && (item.actionType || item.executionType) !== 'stage_change_recommendation').map((item) => (
                   <article className={`execution-action ${item.status}`} key={item.id}>
                     <div><strong>{actionTypeLabel(item.executionType || item.actionType)}</strong><span>{item.workerName || 'AI сотрудник'} · {actionStatusLabel(item.status)}</span></div>
-                    <p>{item.recommendation || item.title}</p>
+                    <p>{sanitizeVisibleAiText(item.recommendation || item.title)}</p>
                     {item.errorMessage && <small className="email-error-text">Ошибка: {item.errorMessage}</small>}
                     <div className="execution-buttons">
                       <button type="button" className="ghost-button compact" onClick={() => onApproveApprovalQueueItem(item)} disabled={executionBusy[item.id] || !['pending_approval','failed'].includes(item.status)}>{executionBusy[item.id] ? 'Работаем…' : 'Одобрить'}</button>
@@ -1274,7 +1276,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                     {(actionCenter.approvalItems || []).filter((item) => ['rejected','completed','executed','cancelled'].includes(item.status) && (item.actionType || item.executionType) !== 'stage_change_recommendation').slice(0, 6).map((item) => (
                       <article className={`execution-action ${item.status}`} key={item.id}>
                         <div><strong>{actionTypeLabel(item.executionType || item.actionType)}</strong><span>{item.workerName || 'AI сотрудник'} · {actionStatusLabel(item.status)} · {formatDate(item.updatedAt || item.executedAt || item.createdAt)}</span></div>
-                        <p>{item.recommendation || item.title}</p>
+                        <p>{sanitizeVisibleAiText(item.recommendation || item.title)}</p>
                         {item.errorMessage && <small className="email-error-text">Ошибка: {item.errorMessage}</small>}
                       </article>
                     ))}
@@ -1284,7 +1286,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                 {(actionCenter.actions || []).map((action) => (
                   <article className={`execution-action ${action.status}`} key={action.id}>
                     <div><strong>{actionTypeLabel(action.actionType)}</strong><span>{action.channel} · {actionStatusLabel(action.status)}</span></div>
-                    <p>{action.generatedText || action.title}</p>
+                    <p>{sanitizeCustomerVisibleText(action.generatedText || action.title)}</p>
                     {action.error && <small className="email-error-text">Ошибка: {action.error}</small>}
                     <div className="execution-buttons">
                       <button type="button" className="ghost-button compact" onClick={() => onApproveExecutionAction(action)} disabled={executionBusy[action.id] || ['approved','sent','cancelled'].includes(action.status)}>Одобрить</button>
@@ -1307,7 +1309,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                 <div><dt>Telegram username</dt><dd>{lead.telegramUsername || lead.telegram || "—"}</dd></div>
                 <div><dt>Chat id</dt><dd>{hasTelegramChatId(lead) ? <span className="telegram-chat-status ok">chat id сохранён</span> : <span className="telegram-chat-status missing">chat id отсутствует</span>}</dd></div>
                 <div><dt>Последний контакт</dt><dd>{formatDate(lead.lastMessageAt || lead.updatedAt)}</dd></div>
-                <div><dt>Следующее AI действие</dt><dd>{getLeadAiScore(lead)?.recommendedNextStep || getLeadAiScore(lead)?.nextBestAction || getAiSummaryText(getAiRecommendation(lead))}</dd></div>
+                <div><dt>Следующее AI действие</dt><dd>{sanitizeVisibleAiText(getLeadAiScore(lead)?.recommendedNextStep || getLeadAiScore(lead)?.nextBestAction || getAiSummaryText(getAiRecommendation(lead)))}</dd></div>
                 <div><dt>Email</dt><dd>{lead.email || "—"}</dd></div>
                 <div><dt>Этап</dt><dd>{stageMap[lead.status] || lead.status}</dd></div>
                 <div><dt>Создано</dt><dd>{formatDate(lead.createdAt)}</dd></div>
@@ -1331,12 +1333,12 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                   const draftText = payload.editedText || payload.edited_text || payload.draftText || payload.text || payload.message || draft.recommendation || '';
                   const wasEdited = Boolean(payload.editedByManager || payload.editedText || payload.edited_text);
                   return <article className="telegram-approval-preview" key={draft.id}>
-                    <div><span>Входящее</span><p>{inboundText || '—'}</p><small>{formatDate(draft.createdAt)}</small></div>
-                    <div><span>AI reply draft</span><p>{draftText || '—'}</p><small>{actionStatusLabel(draft.status)}{wasEdited ? ' · Изменено менеджером' : ''} · {formatDate(draft.updatedAt || draft.createdAt)}</small></div>
+                    <div><span>Входящее</span><p>{sanitizeCustomerVisibleText(inboundText || '—')}</p><small>{formatDate(draft.createdAt)}</small></div>
+                    <div><span>AI reply draft</span><p>{sanitizeCustomerVisibleText(draftText || '—')}</p><small>{actionStatusLabel(draft.status)}{wasEdited ? ' · Изменено менеджером' : ''} · {formatDate(draft.updatedAt || draft.createdAt)}</small></div>
                     <div className="execution-buttons"><button type="button" className="ghost-button compact" onClick={() => onApproveApprovalQueueItem(draft)} disabled={executionBusy[draft.id] || !['pending_approval','failed'].includes(draft.status)}>{executionBusy[draft.id] ? 'Работаем…' : 'Одобрить'}</button><button type="button" className="ghost-button compact" onClick={() => onEditApprovalQueueItem(draft)} disabled={executionBusy[draft.id] || ['executing','completed'].includes(draft.status)}>Изменить</button><button type="button" className="btn primary compact" onClick={() => onExecuteApprovalQueueItem(draft)} disabled={executionBusy[draft.id] || draft.status !== 'approved'}>{executionBusy[draft.id] ? 'Отправляем…' : 'Отправить'}</button></div>
                   </article>;
                 })}
-                {telegramOutreachDrafts.map((draft) => <p className="ai-sequence-draft" key={draft.id}><b>{outreachTypeLabel(draft.outreachType)}:</b> {draft.text}<small>{actionStatusLabel(draft.status)} · score {draft.score || '—'} · {draft.temperature || 'AI'} · {formatDate(draft.createdAt)}</small><span className="execution-buttons"><button type="button" className="ghost-button compact" onClick={() => onApproveApprovalQueueItem(draft)} disabled={executionBusy[draft.id] || !['pending_approval','failed'].includes(draft.status)}>{executionBusy[draft.id] ? 'Работаем…' : 'Одобрить'}</button><button type="button" className="btn primary compact" onClick={() => onExecuteApprovalQueueItem(draft)} disabled={executionBusy[draft.id] || draft.status !== 'approved'}>{executionBusy[draft.id] ? 'Отправляем…' : 'Отправить'}</button></span></p>)}
+                {telegramOutreachDrafts.map((draft) => <p className="ai-sequence-draft" key={draft.id}><b>{outreachTypeLabel(draft.outreachType)}:</b> {sanitizeCustomerVisibleText(draft.text)}<small>{actionStatusLabel(draft.status)} · score {draft.score || '—'} · {draft.temperature || 'AI'} · {formatDate(draft.createdAt)}</small><span className="execution-buttons"><button type="button" className="ghost-button compact" onClick={() => onApproveApprovalQueueItem(draft)} disabled={executionBusy[draft.id] || !['pending_approval','failed'].includes(draft.status)}>{executionBusy[draft.id] ? 'Работаем…' : 'Одобрить'}</button><button type="button" className="btn primary compact" onClick={() => onExecuteApprovalQueueItem(draft)} disabled={executionBusy[draft.id] || draft.status !== 'approved'}>{executionBusy[draft.id] ? 'Отправляем…' : 'Отправить'}</button></span></p>)}
               </div>
             </div>
 
@@ -1366,7 +1368,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                   {telegramMessages.length === 0 && <p className="empty-state">Сообщений пока нет</p>}
                   {telegramMessages.map((item) => (
                     <article className={`telegram-chat-bubble ${item.role === 'assistant' ? 'assistant' : 'user'}`} key={item.id}>
-                      <p>{item.message}</p>
+                      <p>{sanitizeCustomerVisibleText(item.message)}</p>
                       <small>{item.role === 'assistant' ? 'CRM / AI' : lead.telegram || lead.name} · {formatDate(item.createdAt)}</small>
                     </article>
                   ))}
@@ -1388,7 +1390,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
               </div>
               <div className="followup-history detail-followups">
                 {emailOutreachDrafts.length === 0 && <p className="empty-state">Email черновики ещё не созданы.</p>}
-                {emailOutreachDrafts.map((draft) => <p className="ai-sequence-draft" key={draft.id}><b>{outreachTypeLabel(draft.outreachType)} · {draft.subject}:</b> {draft.text}<small>{draft.status} · CTA: {draft.cta || '—'} · {formatDate(draft.createdAt)}</small>{draft.demoProposal && <small>{draft.demoProposal}</small>}</p>)}
+                {emailOutreachDrafts.map((draft) => <p className="ai-sequence-draft" key={draft.id}><b>{outreachTypeLabel(draft.outreachType)} · {draft.subject}:</b> {sanitizeCustomerVisibleText(draft.text)}<small>{draft.status} · CTA: {draft.cta || '—'} · {formatDate(draft.createdAt)}</small>{draft.demoProposal && <small>{sanitizeVisibleAiText(draft.demoProposal)}</small>}</p>)}
               </div>
               <form className="email-composer" onSubmit={onSendEmail}>
                 <div className="email-composer-row">
@@ -1441,10 +1443,10 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
               <h4>AI‑дожим</h4>
               <div className="followup-history detail-followups">
                 {(lead.followUps || []).length === 0 && (lead.aiFollowUpSequences || []).length === 0 && (lead.aiFollowupJobs || []).length === 0 && (lead.aiOutreachDrafts || []).length === 0 && <p>AI‑дожим ещё не генерировался.</p>}
-                {(lead.aiOutreachDrafts || []).map((item) => <p className="ai-sequence-draft" key={item.id}><b>{item.channel === 'email' ? `Email · ${item.subject}` : 'Telegram'}:</b> {item.text}<small>{actionStatusLabel(item.status)} · {outreachTypeLabel(item.outreachType)} · {formatDate(item.createdAt)}</small></p>)}
-                {(lead.aiFollowupJobs || []).map((item) => <p className="ai-sequence-draft" key={item.id}><b>{item.suggestedChannel === 'email' ? 'Email' : item.suggestedChannel === 'telegram' ? 'Telegram' : 'CRM reminder'}:</b> {item.generatedMessage}<small>{item.status} · {item.reason || item.ruleType} · срочность {item.urgency} · {formatDate(item.sentAt || item.approvedAt || item.scheduledFor || item.createdAt)}</small>{item.error && <small>Ошибка: {item.error}</small>}</p>)}
-                {(lead.aiFollowUpSequences || []).map((item) => <p className="ai-sequence-draft" key={item.id}><b>{item.followupType === "email" ? "Email" : item.followupType === "telegram" ? "Telegram" : "Задача"}:</b> {item.generatedMessage}<small>{item.status === "draft" ? "черновик" : item.status} · {formatDate(item.scheduledFor || item.recommendedAt)}</small></p>)}
-                {(lead.followUps || []).map((item) => <p key={item.id}><b>AI:</b> {item.message}<small>{formatDate(item.createdAt)}</small></p>)}
+                {(lead.aiOutreachDrafts || []).map((item) => <p className="ai-sequence-draft" key={item.id}><b>{item.channel === 'email' ? `Email · ${item.subject}` : 'Telegram'}:</b> {sanitizeCustomerVisibleText(item.text)}<small>{actionStatusLabel(item.status)} · {outreachTypeLabel(item.outreachType)} · {formatDate(item.createdAt)}</small></p>)}
+                {(lead.aiFollowupJobs || []).map((item) => <p className="ai-sequence-draft" key={item.id}><b>{item.suggestedChannel === 'email' ? 'Email' : item.suggestedChannel === 'telegram' ? 'Telegram' : 'CRM reminder'}:</b> {sanitizeCustomerVisibleText(item.generatedMessage)}<small>{item.status} · {sanitizeVisibleAiText(item.reason || item.ruleType)} · срочность {item.urgency} · {formatDate(item.sentAt || item.approvedAt || item.scheduledFor || item.createdAt)}</small>{item.error && <small>Ошибка: {item.error}</small>}</p>)}
+                {(lead.aiFollowUpSequences || []).map((item) => <p className="ai-sequence-draft" key={item.id}><b>{item.followupType === "email" ? "Email" : item.followupType === "telegram" ? "Telegram" : "Задача"}:</b> {sanitizeCustomerVisibleText(item.generatedMessage)}<small>{item.status === "draft" ? "черновик" : item.status} · {formatDate(item.scheduledFor || item.recommendedAt)}</small></p>)}
+                {(lead.followUps || []).map((item) => <p key={item.id}><b>AI:</b> {sanitizeCustomerVisibleText(item.message)}<small>{formatDate(item.createdAt)}</small></p>)}
               </div>
             </div>
 
@@ -1458,7 +1460,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
               <h4>Timeline memory</h4>
               <div className="activity-preview crm-activity-feed detail-activity-feed timeline-memory-feed">
                 {(actionCenter.timeline || []).length === 0 && activity.length === 0 && <p><span />Событий для лида пока нет</p>}
-                {(actionCenter.timeline || []).map((event) => <p className={event.source === 'ai' ? 'ai-timeline-item' : ''} key={event.id}><span />{timelineTitle(event)}<small>{formatCrmText(event.body)}<br />{event.source} · {formatDate(event.createdAt)}</small></p>)}
+                {(actionCenter.timeline || []).map((event) => <p className={event.source === 'ai' ? 'ai-timeline-item' : ''} key={event.id}><span />{timelineTitle(event)}<small>{formatCrmText(event.body)}<br />{sanitizeVisibleAiText(event.source)} · {formatDate(event.createdAt)}</small></p>)}
               </div>
             </div>
           </aside>

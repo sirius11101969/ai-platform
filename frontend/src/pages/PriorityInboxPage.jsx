@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { PageHeading, Panel } from "../components/AppShell";
+import { sanitizeVisibleAiText } from "../utils/uiSanitizer";
 import { createPriorityInboxAction, fetchAiPriorityInbox } from "../services/api";
 
 const TABS = [
@@ -173,18 +174,18 @@ export default function PriorityInboxPage() {
 
             <div className="priority-action-callout">
               <span>Next suggested action</span>
-              <strong>{lead.nextBestAction}</strong>
-              <p>{lead.nextBestActionReason}</p>
+              <strong>{sanitizeVisibleAiText(lead.nextBestAction)}</strong>
+              <p>{sanitizeVisibleAiText(lead.nextBestActionReason)}</p>
             </div>
 
             <div className="priority-reason-grid">
               <div>
                 <span>Почему важно</span>
-                <p>{lead.aiScoringReason}</p>
+                <p>{sanitizeVisibleAiText(lead.aiScoringReason)}</p>
               </div>
               <div>
                 <span>Last activity</span>
-                <p>{formatDate(lead.lastActivityAt)} · {lead.lastActivitySummary}{Number(lead.noResponseDays || 0) >= 3 ? ` · no response ${lead.noResponseDays}d` : ""}</p>
+                <p>{formatDate(lead.lastActivityAt)} · {sanitizeVisibleAiText(lead.lastActivitySummary)}{Number(lead.noResponseDays || 0) >= 3 ? ` · no response ${lead.noResponseDays}d` : ""}</p>
               </div>
             </div>
 
