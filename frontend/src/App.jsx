@@ -9,6 +9,7 @@ import CRMPage from "./pages/CRMPage";
 import AiWorkersPage from "./pages/AiWorkersPage";
 import FollowupsPage from "./pages/FollowupsPage";
 import PriorityInboxPage from "./pages/PriorityInboxPage";
+import PipelineCopilotPage from "./pages/PipelineCopilotPage";
 import { getAuthToken, getStoredUser } from "./services/api";
 
 const AuthContext = createContext({ token: null, user: null, isAuthenticated: false });
@@ -89,6 +90,7 @@ export default function App() {
           <Route path="/ai-workers" element={<ProtectedRoute><AiWorkersPage /></ProtectedRoute>} />
           <Route path="/followups" element={<ProtectedRoute><FollowupsPage /></ProtectedRoute>} />
           <Route path="/priority-inbox" element={<ProtectedRoute><PriorityInboxPage /></ProtectedRoute>} />
+          <Route path="/pipeline-copilot" element={<ProtectedRoute><PipelineCopilotPage /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
