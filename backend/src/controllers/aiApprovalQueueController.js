@@ -23,7 +23,11 @@ async function update(req, res, next) {
 }
 
 async function execute(req, res, next) {
-  try { res.status(202).json(await service.executeQueueItem(req.user.id, req.workspace.id, req.params.id)) } catch (error) { next(error) }
+  try {
+    const context = await service.getQueueItemLogContext(req.user.id, req.workspace.id, req.params.id)
+    console.info('[ai-workers-api] execute requested', { actionId: req.params.id, actionType: context.actionType })
+    res.json(await service.executeQueueItem(req.user.id, req.workspace.id, req.params.id))
+  } catch (error) { next(error) }
 }
 
 module.exports = { approve, execute, list, reject, update }
