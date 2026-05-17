@@ -1,6 +1,7 @@
 const assert = require('assert')
 const {
   sanitizeManagerReason,
+  normalizeCopilotActionTitle,
   isFocusLead,
   isActionableApproval,
   filterUnresolvedFailedActions,
@@ -11,6 +12,16 @@ function testSanitizeManagerReason() {
   const result = sanitizeManagerReason(unsafe)
   assert.ok(!/Плюсы|Минусы|Итог|\+18|score|priority\/urgent/i.test(result), result)
   assert.strictEqual(result, 'Сделка требует follow-up сегодня')
+  assert.strictEqual(sanitizeManagerReason('Escalate high-risk deal'), 'Escalate high-risk deal')
+  assert.strictEqual(sanitizeManagerReason('Stabilize at-risk deal'), 'Stabilize at-risk deal')
+}
+
+function testNormalizeCopilotActionTitle() {
+  assert.strictEqual(normalizeCopilotActionTitle('Escalate high- deal'), 'Escalate high-risk deal')
+  assert.strictEqual(normalizeCopilotActionTitle('Stabilize at- deal'), 'Stabilize at-risk deal')
+  assert.strictEqual(normalizeCopilotActionTitle('Escalate high-risk deal'), 'Escalate high-risk deal')
+  assert.strictEqual(normalizeCopilotActionTitle('Плюсы: +18 inbound. Review high--risk deal score'), 'Review high-risk deal')
+  assert.ok(!/high- deal|at- deal|--|Плюсы|Минусы|Итог|\+18|score/i.test(normalizeCopilotActionTitle('Плюсы: +18. Stabilize at- deal score')))
 }
 
 function testFocusLeadRules() {
@@ -42,6 +53,7 @@ function testUnresolvedFailedFilter() {
 
 function run() {
   testSanitizeManagerReason()
+  testNormalizeCopilotActionTitle()
   testFocusLeadRules()
   testActionableApprovalRules()
   testUnresolvedFailedFilter()
