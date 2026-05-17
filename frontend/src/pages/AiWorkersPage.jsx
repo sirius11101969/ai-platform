@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Panel, PageHeading, StatCard } from "../components/AppShell";
 import { approveAiApprovalQueueItem, downloadCrmMeetingIcs, executeAiApprovalQueueItem, fetchAiApprovalQueue, fetchAiCommandCenter, rejectAiApprovalQueueItem, runAiWorker, seedDemoSalesPipeline, updateAiApprovalQueueItem, updateAiWorker } from "../services/api";
 
@@ -218,6 +218,7 @@ const approvalActionMessages = {
   approve: "Действие одобрено",
   reject: "Действие отклонено",
   execute: "Действие выполнено",
+  send: "Сообщение отправлено",
   edit: "Черновик сохранён",
 };
 
@@ -225,10 +226,11 @@ const approvalActionLoadingLabels = {
   approve: "Одобряем…",
   reject: "Отклоняем…",
   execute: "Выполняем…",
+  send: "Отправляем…",
   edit: "Сохраняем…",
 };
 
-const APPROVAL_ACTION_TIMEOUT_MS = 20000;
+const APPROVAL_ACTION_TIMEOUT_MS = 15000;
 const executableApprovalTypes = new Set(["telegram_reply_draft", "telegram_meeting_confirmation_draft", "telegram_followup", "email_followup", "send_demo_link", "send_presentation", "create_reminder", "move_lead_stage", "stage_change_recommendation", "meeting_schedule_proposal"]);
 
 function isApprovalItemExecutable(item) {
@@ -247,7 +249,7 @@ function withApprovalActionTimeout(promise) {
   let timeoutId;
   const timeout = new Promise((_, reject) => {
     timeoutId = window.setTimeout(() => {
-      reject(new Error("Запрос выполняется дольше 20 секунд. Обновляем очередь, чтобы показать актуальный статус."));
+      reject(new Error("Запрос выполняется дольше 15 секунд. Спиннер остановлен — попробуйте ещё раз или обновите очередь."));
     }, APPROVAL_ACTION_TIMEOUT_MS);
   });
 
@@ -259,6 +261,36 @@ function mergeQueueItem(items, nextItem) {
   return items.map((item) => (item.id === nextItem.id ? { ...item, ...nextItem } : item));
 }
 
+function getOptimisticApprovalItem(item, action, response) {
+  if (response?.item?.id) return response.item;
+
+  const statusByAction = {
+    approve: "approved",
+    reject: "rejected",
+    execute: "completed",
+    send: "completed",
+  };
+  const nextStatus = statusByAction[action];
+  if (!nextStatus) return null;
+
+  return {
+    ...item,
+    status: nextStatus,
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+function getApprovalActionErrorMessage(error) {
+  if (error?.code === "REQUEST_TIMEOUT") {
+    return "Запрос выполняется дольше 15 секунд. Спиннер остановлен — попробуйте ещё раз или обновите очередь.";
+  }
+  return formatApprovalErrorMessage(error?.message || "Не удалось обновить AI действие. Попробуйте ещё раз.");
+}
+
+function logApprovalAction(event, details) {
+  console.log(`[ai-workers-ui] action ${event}`, details);
+}
+
 export default function AiWorkersPage() {
   const [commandCenter, setCommandCenter] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -268,6 +300,7 @@ export default function AiWorkersPage() {
   const [message, setMessage] = useState("");
   const [approvalQueue, setApprovalQueue] = useState({ items: [], metrics: {} });
   const [busyAction, setBusyAction] = useState(null);
+  const actionInFlightRef = useRef(false);
   const [editingDraft, setEditingDraft] = useState({ itemId: "", text: "" });
 
   async function loadCommandCenter({ silent = false } = {}) {
@@ -333,36 +366,77 @@ export default function AiWorkersPage() {
     }
   }
 
-  async function handleApprovalAction(item, action) {
+  function updateApprovalItemLocally(updatedItem) {
+    if (!updatedItem?.id) return;
+    setApprovalQueue((current) => ({
+      ...current,
+      items: mergeQueueItem(current.items || [], updatedItem),
+    }));
+    setCommandCenter((current) => current ? {
+      ...current,
+      queue: mergeQueueItem(current.queue || [], updatedItem),
+    } : current);
+  }
+
+  async function refreshApprovalStateAfterAction() {
+    try {
+      await loadCommandCenter({ silent: true });
+    } catch (requestError) {
+      setError(requestError.message || "Не удалось обновить очередь AI действий");
+    }
+  }
+
+  async function runApprovalAction(item, action, requestFactory, onSuccess) {
+    if (actionInFlightRef.current) {
+      logApprovalAction("failed", { itemId: item.id, action, reason: "action already in progress" });
+      return;
+    }
+
+    actionInFlightRef.current = true;
     setBusyAction({ itemId: item.id, action });
     setError("");
     setMessage("");
+    logApprovalAction("start", { itemId: item.id, action, status: item.status });
 
     try {
-      let request;
-      if (action === "approve") request = approveAiApprovalQueueItem(item.id);
-      if (action === "reject") request = rejectAiApprovalQueueItem(item.id);
-      if (action === "execute") request = executeAiApprovalQueueItem(item.id);
-
-      const response = await withApprovalActionTimeout(request);
-      const updatedItem = response?.item || null;
-
-      if (updatedItem) {
-        setApprovalQueue((current) => ({
-          ...current,
-          items: mergeQueueItem(current.items || [], updatedItem),
-        }));
-        setCommandCenter((current) => current ? {
-          ...current,
-          queue: mergeQueueItem(current.queue || [], updatedItem),
-        } : current);
-      }
+      const response = await withApprovalActionTimeout(requestFactory());
+      const updatedItem = getOptimisticApprovalItem(item, action, response);
+      updateApprovalItemLocally(updatedItem);
 
       if (updatedItem?.status === "failed" || response?.error) {
-        setError(formatApprovalErrorMessage(updatedItem?.errorMessage || response?.error));
+        const errorMessage = formatApprovalErrorMessage(updatedItem?.errorMessage || response?.error);
+        setError(errorMessage);
+        logApprovalAction("failed", { itemId: item.id, action, error: errorMessage, status: updatedItem?.status });
         return;
       }
 
+      onSuccess?.(response, updatedItem);
+      logApprovalAction("success", { itemId: item.id, action, status: updatedItem?.status });
+    } catch (requestError) {
+      const errorMessage = getApprovalActionErrorMessage(requestError);
+      setError(errorMessage);
+      logApprovalAction("failed", { itemId: item.id, action, error: errorMessage });
+    } finally {
+      actionInFlightRef.current = false;
+      setBusyAction(null);
+      await refreshApprovalStateAfterAction();
+    }
+  }
+
+  async function handleApprovalAction(item, action) {
+    const requestOptions = { timeoutMs: APPROVAL_ACTION_TIMEOUT_MS };
+
+    const actionRequests = {
+      approve: () => approveAiApprovalQueueItem(item.id, requestOptions),
+      reject: () => rejectAiApprovalQueueItem(item.id, requestOptions),
+      execute: () => executeAiApprovalQueueItem(item.id, requestOptions),
+      send: () => executeAiApprovalQueueItem(item.id, requestOptions),
+    };
+
+    const requestFactory = actionRequests[action];
+    if (!requestFactory) return;
+
+    await runApprovalAction(item, action, requestFactory, (_response, updatedItem) => {
       if (updatedItem?.status === "approved") {
         setMessage("Одобрено");
         return;
@@ -371,25 +445,20 @@ export default function AiWorkersPage() {
         setMessage("Отклонено");
         return;
       }
-      if (updatedItem?.status === "completed") {
-        setMessage("Выполнено");
+      if (["completed", "executed"].includes(updatedItem?.status)) {
+        setMessage(action === "send" ? "Отправлено" : "Выполнено");
         return;
       }
-
       setMessage(approvalActionMessages[action] || "Статус AI действия обновлён");
-    } catch (requestError) {
-      setError(requestError.message || "Не удалось обновить AI действие. Попробуйте ещё раз.");
-    } finally {
-      setBusyAction(null);
-      try {
-        await loadCommandCenter({ silent: true });
-      } catch (requestError) {
-        setError(requestError.message || "Не удалось обновить очередь AI действий");
-      }
-    }
+    });
   }
 
   function handleEditApprovalItem(item) {
+    if (actionInFlightRef.current) {
+      logApprovalAction("failed", { itemId: item.id, action: "edit", reason: "action already in progress" });
+      return;
+    }
+
     const isTelegramReplyDraftItem = isTelegramReplyDraft(item);
     if (isTelegramReplyDraftItem) {
       setEditingDraft({ itemId: item.id, text: getDraftText(item) });
@@ -409,28 +478,35 @@ export default function AiWorkersPage() {
   }
 
   async function saveApprovalItemEdit(item, nextText) {
-    setBusyAction({ itemId: item.id, action: "edit" });
-    setError("");
-    try {
-      if (isTelegramReplyDraft(item)) {
-        const normalizedText = String(nextText || "").trim();
-        await updateAiApprovalQueueItem(item.id, { payload: { ...(item.payload || {}), draftText: item.payload?.draftText || item.payload?.text || item.payload?.message || item.recommendation || "", editedText: normalizedText, edited_text: normalizedText, text: normalizedText, message: normalizedText, editedByManager: true } });
-        setEditingDraft({ itemId: "", text: "" });
-        setMessage("AI draft response изменён.");
-      } else if (isMeetingScheduleProposal(item)) {
-        const normalizedTime = String(nextText || "").trim();
-        await updateAiApprovalQueueItem(item.id, { payload: { ...(item.payload || {}), proposedStartTime: normalizedTime || null, managerEditedTime: true } });
-        setMessage("Время встречи изменено.");
-      } else {
-        await updateAiApprovalQueueItem(item.id, { recommendation: nextText });
-        setMessage("AI рекомендация изменена.");
-      }
-      await loadCommandCenter({ silent: true });
-    } catch (requestError) {
-      setError(requestError.message || "Не удалось изменить AI действие");
-    } finally {
-      setBusyAction(null);
+    let payload;
+    let successMessage = "AI рекомендация изменена.";
+    let localPatch = { ...item, updatedAt: new Date().toISOString() };
+
+    if (isTelegramReplyDraft(item)) {
+      const normalizedText = String(nextText || "").trim();
+      payload = { payload: { ...(item.payload || {}), draftText: item.payload?.draftText || item.payload?.text || item.payload?.message || item.recommendation || "", editedText: normalizedText, edited_text: normalizedText, text: normalizedText, message: normalizedText, editedByManager: true } };
+      localPatch = { ...localPatch, payload: payload.payload, recommendation: normalizedText };
+      successMessage = "AI draft response изменён.";
+    } else if (isMeetingScheduleProposal(item)) {
+      const normalizedTime = String(nextText || "").trim();
+      payload = { payload: { ...(item.payload || {}), proposedStartTime: normalizedTime || null, managerEditedTime: true } };
+      localPatch = { ...localPatch, payload: payload.payload };
+      successMessage = "Время встречи изменено.";
+    } else {
+      payload = { recommendation: nextText };
+      localPatch = { ...localPatch, recommendation: nextText };
     }
+
+    await runApprovalAction(
+      item,
+      "edit",
+      () => updateAiApprovalQueueItem(item.id, payload, { timeoutMs: APPROVAL_ACTION_TIMEOUT_MS }),
+      (response) => {
+        setEditingDraft({ itemId: "", text: "" });
+        updateApprovalItemLocally(response?.item?.id ? response.item : localPatch);
+        setMessage(successMessage);
+      },
+    );
   }
 
   async function handlePause(worker) {
@@ -520,7 +596,7 @@ export default function AiWorkersPage() {
             const isApproveBusy = isItemBusy && busyAction.action === "approve";
             const isEditBusy = isItemBusy && busyAction.action === "edit";
             const isRejectBusy = isItemBusy && busyAction.action === "reject";
-            const isExecuteBusy = isItemBusy && busyAction.action === "execute";
+            const isExecuteBusy = isItemBusy && ["execute", "send"].includes(busyAction.action);
             const isMeetingProposal = isMeetingScheduleProposal(item);
             const canEditItem = !isMeetingProposal || item.status === "pending_approval" || item.status === "failed";
             const canRejectItem = !isMeetingProposal || item.status === "pending_approval" || item.status === "failed";
@@ -537,7 +613,7 @@ export default function AiWorkersPage() {
                   onEditTextChange: (text) => setEditingDraft({ itemId: item.id, text }),
                   onSaveEdit: () => saveApprovalItemEdit(item, editingDraft.text),
                   onCancelEdit: () => setEditingDraft({ itemId: "", text: "" }),
-                  editBusy: isEditBusy,
+                  editBusy: isItemBusy,
                 })}
                 {item.errorMessage && <small className="email-error-text">Ошибка выполнения: {formatApprovalErrorMessage(item.errorMessage)}</small>}
               </div>
@@ -548,16 +624,16 @@ export default function AiWorkersPage() {
               <div><span>Статус</span><b className={`glow-status ${item.status}`}>{approvalStatusLabels[item.status] || item.status}</b><small>{formatDate(item.createdAt)}</small></div>
               <div className="approval-actions">
                 {["pending_approval", "failed"].includes(item.status) && (
-                  <button type="button" className="ghost-button compact" onClick={() => handleApprovalAction(item, "approve")} disabled={isApproveBusy}>{isApproveBusy ? busyLabel : "Одобрить"}</button>
+                  <button type="button" className="ghost-button compact" onClick={() => handleApprovalAction(item, "approve")} disabled={isItemBusy}>{isApproveBusy ? busyLabel : "Одобрить"}</button>
                 )}
                 {canEditItem && (
-                  <button type="button" className="ghost-button compact" onClick={() => handleEditApprovalItem(item)} disabled={isEditBusy || ["executing","completed"].includes(item.status)}>{isEditBusy ? "Сохраняем…" : "Изменить"}</button>
+                  <button type="button" className="ghost-button compact" onClick={() => handleEditApprovalItem(item)} disabled={isItemBusy || ["executing","completed"].includes(item.status)}>{isEditBusy ? "Сохраняем…" : "Изменить"}</button>
                 )}
                 {canRejectItem && !["executing", "completed", "rejected"].includes(item.status) && (
-                  <button type="button" className="ghost-button compact danger-action" onClick={() => handleApprovalAction(item, "reject")} disabled={isRejectBusy}>{isRejectBusy ? busyLabel : "Отклонить"}</button>
+                  <button type="button" className="ghost-button compact danger-action" onClick={() => handleApprovalAction(item, "reject")} disabled={isItemBusy}>{isRejectBusy ? busyLabel : "Отклонить"}</button>
                 )}
                 {(isTelegramReplyDraft(item) || (item.status === "approved" && isApprovalItemExecutable(item))) && (
-                  <button type="button" className="btn primary compact" onClick={() => handleApprovalAction(item, "execute")} disabled={isExecuteBusy || item.status !== "approved"}>{isExecuteBusy ? busyLabel : isTelegramReplyDraft(item) ? "Отправить" : "Выполнить"}</button>
+                  <button type="button" className="btn primary compact" onClick={() => handleApprovalAction(item, isTelegramReplyDraft(item) ? "send" : "execute")} disabled={isItemBusy || item.status !== "approved"}>{isExecuteBusy ? busyLabel : isTelegramReplyDraft(item) ? "Отправить" : "Выполнить"}</button>
                 )}
               </div>
             </article>

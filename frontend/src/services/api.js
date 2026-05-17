@@ -420,20 +420,20 @@ export function fetchAiApprovalQueue(params = {}) {
   return request(`/ai/approval-queue${query ? `?${query}` : ''}`)
 }
 
-export function approveAiApprovalQueueItem(id) {
-  return request(`/ai/approval-queue/${id}/approve`, { method: 'POST' })
+export function approveAiApprovalQueueItem(id, options = {}) {
+  return request(`/ai/approval-queue/${id}/approve`, { ...options, method: 'POST' })
 }
 
-export function rejectAiApprovalQueueItem(id) {
-  return request(`/ai/approval-queue/${id}/reject`, { method: 'POST' })
+export function rejectAiApprovalQueueItem(id, options = {}) {
+  return request(`/ai/approval-queue/${id}/reject`, { ...options, method: 'POST' })
 }
 
-export function updateAiApprovalQueueItem(id, payload) {
-  return request(`/ai/approval-queue/${id}`, { method: 'PATCH', body: JSON.stringify(payload) })
+export function updateAiApprovalQueueItem(id, payload, options = {}) {
+  return request(`/ai/approval-queue/${id}`, { ...options, method: 'PATCH', body: JSON.stringify(payload) })
 }
 
-export function executeAiApprovalQueueItem(id) {
-  return request(`/ai/approval-queue/${id}/execute`, { method: 'POST' })
+export function executeAiApprovalQueueItem(id, options = {}) {
+  return request(`/ai/approval-queue/${id}/execute`, { ...options, method: 'POST' })
 }
 
 export function fetchTelegramMessages(leadId) {
