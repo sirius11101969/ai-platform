@@ -25,7 +25,7 @@ async function update(req, res, next) {
 async function execute(req, res, next) {
   try {
     const context = await service.getQueueItemLogContext(req.user.id, req.workspace.id, req.params.id)
-    console.info('[ai-workers-api] execute requested', { actionId: req.params.id, actionType: context.actionType })
+    console.info('[ai-workers-api] execute route hit', { actionId: req.params.id, actionType: context.actionType })
     res.json(await service.executeQueueItem(req.user.id, req.workspace.id, req.params.id))
   } catch (error) { next(error) }
 }
