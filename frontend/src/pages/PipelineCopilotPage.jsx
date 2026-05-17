@@ -13,11 +13,11 @@ const metricLabels = {
 };
 
 const priorityLabels = {
-  urgent: "URGENT",
-  priority: "PRIORITY",
-  high: "HIGH",
-  medium: "MEDIUM",
-  low: "LOW",
+  urgent: "Срочно",
+  priority: "В фокусе",
+  high: "Высокий",
+  medium: "Средний",
+  low: "Низкий",
 };
 
 const statusLabels = {
@@ -64,11 +64,14 @@ function ActionButtons({ ctas = {}, navigate }) {
   );
 }
 
-function SectionHeader({ title, hint }) {
+function SectionHeader({ title, hint, action }) {
   return (
     <div className="pipeline-section-header">
-      <h3>{title}</h3>
-      <p>{hint}</p>
+      <div>
+        <h3>{title}</h3>
+        <p>{hint}</p>
+      </div>
+      {action}
     </div>
   );
 }
@@ -82,6 +85,7 @@ export default function PipelineCopilotPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const [expandedSections, setExpandedSections] = useState({});
 
   async function loadCockpit() {
     setLoading(true);
@@ -103,6 +107,20 @@ export default function PipelineCopilotPage() {
   const summary = cockpit?.summary || {};
   const revenue = cockpit?.revenueSnapshot || {};
   const metrics = useMemo(() => ["actionsToday", "focusLeads", "riskDeals", "meetingsNext24h", "pendingApprovals", "failedActions"], []);
+
+  function visibleItems(sectionKey, items = [], limit) {
+    return expandedSections[sectionKey] ? items : items.slice(0, limit);
+  }
+
+  function showAllButton(sectionKey, items = [], limit) {
+    if (items.length <= limit) return null;
+    const expanded = Boolean(expandedSections[sectionKey]);
+    return (
+      <button className="pipeline-show-all" type="button" onClick={() => setExpandedSections((current) => ({ ...current, [sectionKey]: !expanded }))}>
+        {expanded ? "Свернуть" : `Show all ${items.length}`}
+      </button>
+    );
+  }
 
   return (
     <main className="workspace-page pipeline-copilot-page">
@@ -142,11 +160,11 @@ export default function PipelineCopilotPage() {
       </Panel>
 
       <section className="pipeline-section">
-        <SectionHeader title="Today’s Sales Actions" hint="Deterministic order: failed/blocked → meetings within 24h → risk → urgent → approvals → other." />
+        <SectionHeader title="Today’s Sales Actions" hint="High-signal sales actions only: unresolved fixes, meetings, risk deals, focus leads, and actionable approvals." action={showAllButton("todayActions", cockpit?.todayActions || [], 10)} />
         <div className="pipeline-action-list">
           {loading && Array.from({ length: 4 }).map((_, index) => <Panel className="pipeline-action-card skeleton" key={index}>AI собирает действия…</Panel>)}
           {!loading && (cockpit?.todayActions || []).length === 0 && <EmptyState>Сегодня нет срочных AI-действий.</EmptyState>}
-          {!loading && (cockpit?.todayActions || []).map((action) => (
+          {!loading && visibleItems("todayActions", cockpit?.todayActions || [], 10).map((action) => (
             <Panel className={`pipeline-action-card ${badgeClass(action.priority, "priority")} category-${action.category}`} key={action.id}>
               <div className="pipeline-card-topline">
                 <div>
@@ -167,10 +185,10 @@ export default function PipelineCopilotPage() {
 
       <section className="pipeline-two-column">
         <div className="pipeline-section">
-          <SectionHeader title="Focus Leads" hint="AI Priority Inbox focus set: urgent, priority, high score, or elevated risk." />
+          <SectionHeader title="Focus Leads" hint="Only leads that need manager attention now: elevated risk, booked/proposal stage, or clear buying intent." action={showAllButton("focusLeads", cockpit?.focusLeads || [], 6)} />
           <div className="pipeline-compact-list">
             {!loading && (cockpit?.focusLeads || []).length === 0 && <EmptyState />}
-            {(cockpit?.focusLeads || []).slice(0, 8).map((lead) => (
+            {visibleItems("focusLeads", cockpit?.focusLeads || [], 6).map((lead) => (
               <Panel className="pipeline-mini-card" key={lead.id}>
                 <div>
                   <h4>{lead.name}</h4>
@@ -178,7 +196,7 @@ export default function PipelineCopilotPage() {
                 </div>
                 <div className="pipeline-mini-meta">
                   <span className={`pipeline-badge ${badgeClass(lead.aiPriority, "priority")}`}>{priorityLabels[lead.aiPriority] || lead.aiPriority}</span>
-                  <strong>{lead.aiScore}</strong>
+                  <strong>{lead.aiRiskLevel === "high" || lead.aiRiskLevel === "medium" ? `${lead.aiRiskLevel} risk` : "focus"}</strong>
                 </div>
                 <ActionButtons ctas={lead.ctas} navigate={navigate} />
               </Panel>
@@ -187,14 +205,14 @@ export default function PipelineCopilotPage() {
         </div>
 
         <div className="pipeline-section">
-          <SectionHeader title="Deals at Risk" hint="High/medium AI risk deals requiring intervention today." />
+          <SectionHeader title="Deals at Risk" hint="High/medium risk deals requiring intervention today." action={showAllButton("riskDeals", cockpit?.riskDeals || [], 6)} />
           <div className="pipeline-compact-list">
             {!loading && (cockpit?.riskDeals || []).length === 0 && <EmptyState />}
-            {(cockpit?.riskDeals || []).slice(0, 8).map((lead) => (
+            {visibleItems("riskDeals", cockpit?.riskDeals || [], 6).map((lead) => (
               <Panel className={`pipeline-mini-card risk-${lead.aiRiskLevel}`} key={lead.id}>
                 <div>
                   <h4>{lead.name}</h4>
-                  <p>{lead.aiScoringReason || leadSubtitle(lead)}</p>
+                  <p>{lead.managerReason || leadSubtitle(lead)}</p>
                 </div>
                 <div className="pipeline-mini-meta">
                   <span className={`pipeline-badge risk-${lead.aiRiskLevel}`}>{lead.aiRiskLevel} risk</span>
@@ -209,10 +227,10 @@ export default function PipelineCopilotPage() {
 
       <section className="pipeline-three-column">
         <div className="pipeline-section">
-          <SectionHeader title="Upcoming Meetings" hint="Meetings today/tomorrow and next 7 days." />
+          <SectionHeader title="Upcoming Meetings" hint="Meetings today/tomorrow and next 7 days." action={showAllButton("upcomingMeetings", cockpit?.upcomingMeetings || [], 6)} />
           <div className="pipeline-compact-list">
             {!loading && (cockpit?.upcomingMeetings || []).length === 0 && <EmptyState />}
-            {(cockpit?.upcomingMeetings || []).slice(0, 6).map((meeting) => (
+            {visibleItems("upcomingMeetings", cockpit?.upcomingMeetings || [], 6).map((meeting) => (
               <Panel className="pipeline-mini-card meeting" key={meeting.id}>
                 <div>
                   <h4>{meeting.leadName}</h4>
@@ -226,10 +244,10 @@ export default function PipelineCopilotPage() {
         </div>
 
         <div className="pipeline-section">
-          <SectionHeader title="Waiting for Approval" hint="AI Workers queue items that need manager review." />
+          <SectionHeader title="Waiting for Approval" hint="Actionable sales approvals only: messages, follow-ups, meetings, and next-best-action items." action={showAllButton("pendingApprovals", cockpit?.pendingApprovals || [], 6)} />
           <div className="pipeline-compact-list">
             {!loading && (cockpit?.pendingApprovals || []).length === 0 && <EmptyState />}
-            {(cockpit?.pendingApprovals || []).slice(0, 6).map((item) => (
+            {visibleItems("pendingApprovals", cockpit?.pendingApprovals || [], 6).map((item) => (
               <Panel className="pipeline-mini-card approval" key={item.id}>
                 <div>
                   <h4>{item.leadName}</h4>
@@ -243,16 +261,16 @@ export default function PipelineCopilotPage() {
         </div>
 
         <div className="pipeline-section">
-          <SectionHeader title="Failed / Needs Fix" hint="Old failed or blocked AI actions. Review in AI Workers." />
+          <SectionHeader title="Failed / Needs Fix" hint="Only unresolved failed customer-facing actions. Resolved fallback history stays out of the urgent cockpit." action={showAllButton("failedActions", cockpit?.failedActions || [], 5)} />
           <div className="pipeline-compact-list">
             {!loading && (cockpit?.failedActions || []).length === 0 && <EmptyState />}
-            {(cockpit?.failedActions || []).slice(0, 6).map((item) => (
+            {visibleItems("failedActions", cockpit?.failedActions || [], 5).map((item) => (
               <Panel className="pipeline-mini-card failed" key={item.id}>
                 <div>
                   <h4>{item.leadName}</h4>
                   <p>{item.errorMessage || item.title}</p>
                 </div>
-                <span className="pipeline-badge failed-badge">{item.status === "failed" ? "Needs fix" : "Resolved/old failed item"}</span>
+                <span className="pipeline-badge failed-badge">Needs fix</span>
                 <ActionButtons ctas={item.ctas} navigate={navigate} />
               </Panel>
             ))}
@@ -264,8 +282,8 @@ export default function PipelineCopilotPage() {
         <SectionHeader title="Revenue Snapshot" hint="Pipeline value, weighted value, and value exposed to risk." />
         <div className="pipeline-revenue-grid">
           <Panel><span>Open Pipeline</span><strong>{formatMoney(revenue.openPipelineValue)}</strong><p>{revenue.activeDeals || 0} active deals</p></Panel>
-          <Panel><span>Weighted Pipeline</span><strong>{formatMoney(revenue.weightedPipelineValue)}</strong><p>Probability / AI score weighted</p></Panel>
-          <Panel><span>Risk Pipeline</span><strong>{formatMoney(revenue.riskPipelineValue)}</strong><p>High + medium risk exposure</p></Panel>
+          <Panel><span>Weighted Pipeline</span><strong>{formatMoney(revenue.weightedPipelineValue)}</strong><p>Probability-weighted view</p></Panel>
+          <Panel><span>Risk Pipeline</span><strong>{formatMoney(revenue.riskPipelineValue)}</strong><p>Elevated risk exposure</p></Panel>
           <Panel><span>Focus Pipeline</span><strong>{formatMoney(revenue.focusPipelineValue)}</strong><p>Value in today’s focus set</p></Panel>
         </div>
       </section>

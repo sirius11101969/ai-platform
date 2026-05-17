@@ -153,3 +153,43 @@ After seeding/using the demo pipeline, verify:
 - Дмитрий Telegram issue appears as a failed/old failed item when present in `ai_worker_queue` with `failed` status.
 - Pending approvals are visible in Waiting for Approval.
 - No unsafe customer copy is displayed or sent from this page.
+
+## v2 clean executive cockpit
+
+Pipeline Copilot v2 keeps the same route (`/pipeline-copilot`) and API shape, but tightens the cockpit for manager-facing daily execution:
+
+- The UI must never render raw AI scoring context such as `ai_scoring_reason`, `internalContext`, `Плюсы:`, `Минусы:`, `Итог:`, scoring weights like `+8` / `+18`, or raw score explanations.
+- Backend responses use `sanitizeManagerReason(text)` before a reason, title, error, recommendation, meeting title, or lead summary can reach Pipeline Copilot sections.
+- Manager-facing reasons are short operational summaries, for example:
+  - `Лид проявил высокий интерес к demo`
+  - `Сделка требует follow-up сегодня`
+  - `Есть риск потери из-за паузы в коммуникации`
+  - `Встреча запланирована, нужно подготовить agenda`
+- The default Today’s Sales Actions view is capped at 10 visible actions and prioritizes:
+  1. unresolved failed customer-facing actions;
+  2. meetings within 24 hours;
+  3. high/medium risk deals;
+  4. urgent/priority focus leads;
+  5. actionable approvals from the next-best-action engine;
+  6. actionable high-value email, Telegram, follow-up, and meeting approvals.
+- Generic 51–59 or low-signal high-priority leads are excluded from the default action set.
+- Focus Leads only includes leads where:
+  - `ai_priority IN ('urgent','priority')`; or
+  - `ai_risk_level IN ('medium','high')`; or
+  - `stage IN ('booked','proposal') AND ai_score >= 65`.
+- Focus Leads excludes `ai_priority='high'` leads below score 70 when they do not have elevated risk.
+- Failed Actions counts only unresolved failed customer-facing actions. A failed item is treated as resolved when the same lead has a newer completed/executed customer-facing fallback/action, so old Telegram failures resolved by newer email fallbacks do not appear as urgent sales work.
+- Pending Approvals counts only actionable sales approvals: Telegram/email/follow-up/meeting/next-best-action items with `pending_approval` or `approved` status. It excludes stale lead scoring updates, noisy legacy actions, and generic low-signal `lead_priority_recommendation` items below score 70.
+- Default UI sections remain compact:
+  - Today’s Sales Actions: 10 visible by default;
+  - Focus Leads: 6 visible by default;
+  - Waiting for Approval: 6 visible by default;
+  - Failed / Needs Fix: 5 unresolved visible by default.
+- Overflow sections expose a `Show all` / collapse control instead of expanding noisy lists by default.
+- The viewed timeline event is created only when the workspace-level `crm_activity` insert supports `lead_id = NULL`; otherwise the service skips safely and logs `[pipeline-copilot] workspace event skipped`.
+
+Additional v2 logs:
+
+- `[pipeline-copilot] manager reason sanitized`
+- `[pipeline-copilot] unresolved failed filtered`
+- `[pipeline-copilot] focus mode applied`
