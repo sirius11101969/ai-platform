@@ -1,6 +1,7 @@
 const pool = require('../db/pool')
 const { createFollowupSequenceDrafts } = require('../services/autonomousFollowupQueueService')
 const { AI_LEAD_SCORING_WORKER_TYPE, scoreActiveLeads } = require('../services/aiLeadScoringService')
+const { AI_NEXT_BEST_ACTION_WORKER_TYPE, runNextBestActionEngine } = require('../services/aiNextBestActionEngineService')
 
 const WORKER_TYPES = [
   'ai_sdr_agent',
@@ -11,6 +12,7 @@ const WORKER_TYPES = [
   'ai_telegram_assistant',
   'ai_meeting_scheduler',
   AI_LEAD_SCORING_WORKER_TYPE,
+  AI_NEXT_BEST_ACTION_WORKER_TYPE,
 ]
 const STATUSES = ['active', 'paused', 'error']
 const MODES = ['suggestion_only', 'approval_required', 'autonomous_ready']
@@ -59,6 +61,12 @@ const DEFAULT_WORKERS = [
     type: AI_LEAD_SCORING_WORKER_TYPE,
     mode: 'approval_required',
     description: 'Scores leads, detects priority/risk, updates CRM and recommendations.',
+  },
+  {
+    name: 'AI Next Best Action Engine',
+    type: AI_NEXT_BEST_ACTION_WORKER_TYPE,
+    mode: 'approval_required',
+    description: 'Детерминированно выбирает безопасное следующее действие по каждому активному лиду и ставит его на approval менеджеру.',
   },
 ]
 
@@ -122,9 +130,9 @@ async function ensureDefaultWorkers(workspaceId, client = pool) {
       `INSERT INTO ai_workers(workspace_id, name, type, status, mode, description)
        VALUES($1, $2, $3, 'active', $4, $5)
        ON CONFLICT (workspace_id, type) DO UPDATE
-         SET name = CASE WHEN ai_workers.type IN ('ai_followup_worker', 'ai_lead_scoring_engine') THEN EXCLUDED.name ELSE ai_workers.name END,
-             mode = CASE WHEN ai_workers.type IN ('ai_followup_worker', 'ai_lead_scoring_engine') THEN EXCLUDED.mode ELSE ai_workers.mode END,
-             description = CASE WHEN ai_workers.type IN ('ai_followup_worker', 'ai_lead_scoring_engine') THEN EXCLUDED.description ELSE ai_workers.description END,
+         SET name = CASE WHEN ai_workers.type IN ('ai_followup_worker', 'ai_lead_scoring_engine', 'ai_next_best_action_engine') THEN EXCLUDED.name ELSE ai_workers.name END,
+             mode = CASE WHEN ai_workers.type IN ('ai_followup_worker', 'ai_lead_scoring_engine', 'ai_next_best_action_engine') THEN EXCLUDED.mode ELSE ai_workers.mode END,
+             description = CASE WHEN ai_workers.type IN ('ai_followup_worker', 'ai_lead_scoring_engine', 'ai_next_best_action_engine') THEN EXCLUDED.description ELSE ai_workers.description END,
              updated_at = NOW()`,
       [workspaceId, worker.name, worker.type, worker.mode, worker.description]
     )
@@ -186,6 +194,20 @@ async function getWorker(workspaceId, workerId, client = pool) {
   const result = await client.query('SELECT * FROM ai_workers WHERE workspace_id = $1 AND id = $2', [workspaceId, workerId])
   if (!result.rows[0]) throw Object.assign(new Error('AI worker not found'), { statusCode: 404 })
   return normalizeWorker(result.rows[0])
+}
+
+
+async function getWorkerByType(workspaceId, workerType, client = pool) {
+  const type = validateEnum(workerType, WORKER_TYPES, 'worker type')
+  await ensureDefaultWorkers(workspaceId, client)
+  const result = await client.query('SELECT * FROM ai_workers WHERE workspace_id = $1 AND type = $2 ORDER BY created_at ASC LIMIT 1', [workspaceId, type])
+  if (!result.rows[0]) throw Object.assign(new Error('AI worker not found'), { statusCode: 404 })
+  return normalizeWorker(result.rows[0])
+}
+
+async function runWorkerByType({ userId, workspaceId, workerType }) {
+  const worker = await getWorkerByType(workspaceId, workerType)
+  return runWorker({ userId, workspaceId, workerId: worker.id })
 }
 
 async function listRuns(workspaceId, workerId) {
@@ -396,6 +418,11 @@ async function runWorker({ userId, workspaceId, workerId }) {
       await client.query('COMMIT')
       return await runLeadScoringWorker({ userId, workspaceId, worker })
     }
+    if (worker.type === AI_NEXT_BEST_ACTION_WORKER_TYPE) {
+      await client.query('COMMIT')
+      const result = await runNextBestActionEngine({ userId, workspaceId, worker })
+      return { ...result, run: normalizeRun(result.run), queueItems: (result.queueItems || []).map(normalizeQueueItem) }
+    }
     const leads = await fetchLeadSnapshot(workspaceId)
     const recommendations = worker.type === 'ai_followup_worker' ? [] : buildRecommendations(worker, leads)
     const inputContext = {
@@ -467,7 +494,9 @@ async function getCommandCenter(workspaceId) {
       `SELECT
         COUNT(*) FILTER (WHERE status = 'pending_approval')::int AS pending_actions,
         COUNT(*) FILTER (WHERE status = 'failed')::int AS failed_actions,
-        COUNT(*) FILTER (WHERE status IN ('pending_approval','approved','executing'))::int AS queue_active
+        COUNT(*) FILTER (WHERE status IN ('pending_approval','approved','executing'))::int AS queue_active,
+        COUNT(*) FILTER (WHERE status = 'pending_approval' AND payload->>'source' = 'next_best_action_engine')::int AS next_best_actions_pending,
+        COUNT(*) FILTER (WHERE payload->>'source' = 'next_best_action_engine' AND created_at::date = CURRENT_DATE)::int AS next_best_actions_generated_today
        FROM ai_worker_queue WHERE workspace_id = $1`,
       [workspaceId]
     ),
@@ -488,6 +517,8 @@ async function getCommandCenter(workspaceId) {
       queueActive: Number(statsRow.queue_active || 0),
       pendingActions: Number(statsRow.pending_actions || 0),
       failedActions: Number(statsRow.failed_actions || 0),
+      nextBestActionsPending: Number(statsRow.next_best_actions_pending || 0),
+      nextBestActionsGeneratedToday: Number(statsRow.next_best_actions_generated_today || 0),
       efficiency,
       revenueUnderAi: Number(revenue.rows[0]?.pipeline || 0),
     },
@@ -505,5 +536,6 @@ module.exports = {
   listRuns,
   listWorkers,
   runWorker,
+  runWorkerByType,
   updateWorker,
 }
