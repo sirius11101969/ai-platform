@@ -1,16 +1,15 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { PageHeading, Panel } from "../components/AppShell";
 import { createCrmFollowUp, fetchAiPriorityInbox } from "../services/api";
 
-const FILTERS = [
-  { key: "all", label: "All" },
+const TABS = [
+  { key: "focus", label: "Focus" },
   { key: "urgent", label: "Urgent" },
-  { key: "priority", label: "Priority" },
   { key: "risk", label: "At Risk" },
-  { key: "followup", label: "Needs Follow-up" },
   { key: "meetings", label: "Meetings" },
-  { key: "no_response", label: "No Response >3d" },
+  { key: "followups", label: "Follow-ups" },
+  { key: "all", label: "All Leads" },
 ];
 
 function formatDate(value) {
@@ -19,38 +18,42 @@ function formatDate(value) {
 }
 
 function metricLabel(key) {
-  return ({ urgentLeads: "Urgent Leads", priorityLeads: "Priority Leads", atRiskDeals: "At-Risk Deals", meetingsPending: "Meetings Pending", followUpsNeeded: "Follow-ups Needed" }[key] || key);
+  return ({ urgentLeads: "Urgent Leads", focusLeads: "Focus Leads", atRiskDeals: "At-Risk Deals", meetingsToday: "Meetings Today", followUpsNeeded: "Follow-ups Needed" }[key] || key);
 }
 
 function badgeLabel(value) {
-  return String(value || "medium").replace("priority", "high").toUpperCase();
+  return String(value || "medium").replace("priority", "priority").toUpperCase();
 }
 
-function leadMatchesFilter(lead, filter) {
-  if (filter === "all") return true;
-  if (filter === "urgent") return lead.isUrgent;
-  if (filter === "priority") return ["urgent", "high", "priority"].includes(lead.aiPriority) || Number(lead.aiScore || 0) >= 70;
-  if (filter === "risk") return lead.isAtRisk;
-  if (filter === "followup") return lead.needsFollowUp;
-  if (filter === "meetings") return lead.pendingMeeting || lead.status === "booked";
-  if (filter === "no_response") return Number(lead.noResponseDays || 0) >= 3;
-  return true;
+function cardClassName(lead) {
+  return [
+    "priority-lead-card",
+    lead.isUrgent ? "urgent" : "",
+    lead.isAtRisk ? "risk" : "",
+    lead.pendingMeeting || lead.meetingToday || lead.hasMeeting ? "meeting" : "",
+  ].filter(Boolean).join(" ");
 }
 
 export default function PriorityInboxPage() {
-  const [inbox, setInbox] = useState({ leads: [], metrics: {} });
-  const [filter, setFilter] = useState("all");
+  const [inbox, setInbox] = useState({ leads: [], metrics: {}, totalLeads: 0, mode: "focus" });
+  const [mode, setMode] = useState("focus");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [busyFollowUp, setBusyFollowUp] = useState({});
   const navigate = useNavigate();
 
-  async function loadInbox() {
+  async function loadInbox(nextMode = mode) {
     setLoading(true);
     setError("");
     try {
-      const response = await fetchAiPriorityInbox();
-      setInbox({ leads: response.leads || [], metrics: response.metrics || {}, generatedAt: response.generatedAt });
+      const response = await fetchAiPriorityInbox({ mode: nextMode });
+      setInbox({
+        leads: response.leads || [],
+        metrics: response.metrics || {},
+        totalLeads: response.totalLeads || response.leads?.length || 0,
+        generatedAt: response.generatedAt,
+        mode: response.mode || nextMode,
+      });
     } catch (requestError) {
       setError(requestError.message || "Не удалось загрузить AI Priority Inbox");
     } finally {
@@ -58,9 +61,12 @@ export default function PriorityInboxPage() {
     }
   }
 
-  useEffect(() => { loadInbox(); }, []);
+  useEffect(() => { loadInbox("focus"); }, []);
 
-  const filteredLeads = useMemo(() => inbox.leads.filter((lead) => leadMatchesFilter(lead, filter)), [inbox.leads, filter]);
+  function selectMode(nextMode) {
+    setMode(nextMode);
+    loadInbox(nextMode);
+  }
 
   function openLead(lead, focus) {
     const url = lead.actionUrls?.[focus] || lead.crmUrl || `/crm?leadId=${lead.leadId}`;
@@ -72,7 +78,7 @@ export default function PriorityInboxPage() {
     setError("");
     try {
       await createCrmFollowUp(lead.leadId);
-      await loadInbox();
+      await loadInbox(mode);
     } catch (requestError) {
       setError(requestError.message || "Не удалось создать follow-up");
     } finally {
@@ -83,16 +89,16 @@ export default function PriorityInboxPage() {
   return (
     <main className="workspace-page priority-inbox-page">
       <PageHeading
-        eyebrow="AI Priority Inbox v1"
-        title="AI Priority Inbox"
-        copy="Сфокусированный sales cockpit: кому писать сейчас, почему лид важен и какой следующий шаг сработает лучше всего."
-        action={<button className="ghost-button" type="button" onClick={loadInbox} disabled={loading}>{loading ? "Обновляем…" : "Обновить"}</button>}
+        eyebrow="AI Priority Inbox · Focus Mode v2"
+        title="Focus Mode"
+        copy="Executive sales cockpit: только urgent, priority, сделки с AI risk и встречи/предложения с высоким action potential. Generic high 51–59 скрыты по умолчанию."
+        action={<button className="ghost-button" type="button" onClick={() => loadInbox(mode)} disabled={loading}>{loading ? "Обновляем…" : "Обновить"}</button>}
       />
 
       {error && <p className="auth-error">{error}</p>}
 
       <section className="priority-metrics" aria-label="Метрики AI Priority Inbox">
-        {["urgentLeads", "priorityLeads", "atRiskDeals", "meetingsPending", "followUpsNeeded"].map((key) => (
+        {["urgentLeads", "focusLeads", "atRiskDeals", "meetingsToday", "followUpsNeeded"].map((key) => (
           <Panel className={`priority-metric priority-metric-${key}`} key={key}>
             <span>{metricLabel(key)}</span>
             <strong>{loading ? "…" : Number(inbox.metrics?.[key] || 0)}</strong>
@@ -103,23 +109,23 @@ export default function PriorityInboxPage() {
       <Panel className="priority-control-panel">
         <div className="priority-controls-head">
           <div>
-            <h3>Action queue</h3>
-            <p>{loading ? "AI сортирует лиды…" : `${filteredLeads.length} из ${inbox.leads.length} лидов требуют внимания`}</p>
+            <h3>Focused action queue</h3>
+            <p>{loading ? "AI применяет Focus Mode…" : `${inbox.leads.length} из ${inbox.totalLeads || inbox.leads.length} активных лидов показаны в ${TABS.find((tab) => tab.key === mode)?.label || "Focus"}`}</p>
           </div>
-          <span className="priority-sorting-hint">Сортировка: urgent → risk → booked/proposal → score → activity</span>
+          <span className="priority-sorting-hint">Сортировка Focus: urgent → at-risk proposal/booked → meetings → priority</span>
         </div>
-        <div className="priority-filter-bar" role="tablist" aria-label="Фильтры Priority Inbox">
-          {FILTERS.map((item) => (
-            <button key={item.key} type="button" className={filter === item.key ? "active" : ""} onClick={() => setFilter(item.key)}>{item.label}</button>
+        <div className="priority-filter-bar" role="tablist" aria-label="Режимы Priority Inbox">
+          {TABS.map((item) => (
+            <button key={item.key} type="button" role="tab" aria-selected={mode === item.key} className={mode === item.key ? "active" : ""} onClick={() => selectMode(item.key)}>{item.label}</button>
           ))}
         </div>
       </Panel>
 
       <section className="priority-card-grid" aria-live="polite">
-        {loading && Array.from({ length: 4 }).map((_, index) => <Panel className="priority-lead-card priority-card-skeleton" key={index}>AI анализирует очередь…</Panel>)}
-        {!loading && filteredLeads.length === 0 && <Panel className="empty-priority-inbox">Нет лидов в этом фильтре. Выберите All или обновите scoring.</Panel>}
-        {!loading && filteredLeads.map((lead) => (
-          <Panel className={`priority-lead-card ${lead.isUrgent ? "urgent" : ""} ${lead.isAtRisk ? "risk" : ""}`} key={lead.leadId}>
+        {loading && Array.from({ length: 4 }).map((_, index) => <Panel className="priority-lead-card priority-card-skeleton" key={index}>AI анализирует Focus Mode…</Panel>)}
+        {!loading && inbox.leads.length === 0 && <Panel className="empty-priority-inbox">Нет лидов в этом режиме. Generic high лиды доступны во вкладке All Leads.</Panel>}
+        {!loading && inbox.leads.map((lead) => (
+          <Panel className={cardClassName(lead)} key={lead.leadId}>
             <div className="priority-card-topline">
               <div>
                 <span className="eyebrow mini">{lead.stage}</span>
@@ -136,6 +142,7 @@ export default function PriorityInboxPage() {
               <span className={`priority-badge priority-${lead.aiPriority}`}>{badgeLabel(lead.aiPriority)}</span>
               <span className={`priority-badge temp-${lead.aiTemperature}`}>{badgeLabel(lead.aiTemperature)}</span>
               <span className={`priority-badge risk-${lead.aiRiskLevel}`}>{badgeLabel(lead.aiRiskLevel)} RISK</span>
+              {(lead.pendingMeeting || lead.meetingToday || lead.hasMeeting) && <span className="priority-badge meeting-badge">MEETING</span>}
             </div>
 
             <div className="priority-action-callout">
@@ -159,7 +166,7 @@ export default function PriorityInboxPage() {
               <button type="button" onClick={() => openLead(lead, "telegram")}>Telegram</button>
               <button type="button" onClick={() => openLead(lead, "email")}>Email</button>
               <button type="button" onClick={() => handleCreateFollowUp(lead)} disabled={busyFollowUp[lead.leadId]}>{busyFollowUp[lead.leadId] ? "Создаём…" : "Create Follow-up"}</button>
-              <button type="button" onClick={() => openLead(lead, "demo")}>Schedule Demo</button>
+              <button type="button" onClick={() => openLead(lead, "demo")}>Meeting</button>
               <button type="button" className="primary-card-action" onClick={() => openLead(lead, "lead")}>Open CRM Lead</button>
             </div>
           </Panel>

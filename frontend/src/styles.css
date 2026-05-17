@@ -1696,8 +1696,8 @@ button { font: inherit; }
 .priority-metric span { color: #9fb2e8; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
 .priority-metric strong { display: block; margin-top: 18px; font-size: clamp(34px, 4vw, 52px); letter-spacing: -.08em; }
 .priority-metric-urgentLeads strong, .priority-metric-atRiskDeals strong { color: #ff9bad; }
-.priority-metric-priorityLeads strong { color: #ffe08a; }
-.priority-metric-meetingsPending strong { color: #83f3ff; }
+.priority-metric-focusLeads strong { color: #ffe08a; }
+.priority-metric-meetingsToday strong { color: #83f3ff; }
 .priority-metric-followUpsNeeded strong { color: #b9a7ff; }
 .priority-control-panel { display: grid; gap: 18px; }
 .priority-controls-head { display: flex; justify-content: space-between; align-items: start; gap: 16px; }
@@ -1708,9 +1708,11 @@ button { font: inherit; }
 .priority-filter-bar button { border: 1px solid rgba(255,255,255,.12); color: #dce7ff; background: rgba(255,255,255,.06); border-radius: 999px; padding: 10px 14px; font-weight: 900; cursor: pointer; }
 .priority-filter-bar button.active, .priority-filter-bar button:hover { border-color: rgba(117,239,255,.5); background: rgba(0,216,255,.14); color: #effcff; }
 .priority-card-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-.priority-lead-card { display: grid; gap: 16px; padding: 20px; overflow: hidden; }
-.priority-lead-card.urgent { border-color: rgba(255, 198, 87, .34); box-shadow: 0 26px 90px rgba(255, 198, 87, .08), 0 0 80px rgba(0,216,255,.1); }
-.priority-lead-card.risk { background: linear-gradient(180deg, rgba(255,255,255,.13), rgba(255,83,129,.075)); }
+.priority-lead-card { display: grid; gap: 16px; padding: 20px; overflow: hidden; border-color: rgba(255,255,255,.1); }
+.priority-lead-card.urgent { border-color: rgba(255, 198, 87, .72); box-shadow: 0 30px 110px rgba(255, 198, 87, .18), 0 0 90px rgba(255,83,129,.14); background: linear-gradient(180deg, rgba(255,198,87,.16), rgba(255,255,255,.09)); transform: translateY(-2px); }
+.priority-lead-card.urgent .priority-action-callout strong { font-size: clamp(26px, 3vw, 34px); color: #fff0bd; }
+.priority-lead-card.risk { border-color: rgba(255,83,129,.5); background: linear-gradient(180deg, rgba(255,255,255,.13), rgba(255,83,129,.075)); }
+.priority-lead-card.meeting { box-shadow: inset 4px 0 0 rgba(117,239,255,.66); }
 .priority-card-topline { display: flex; justify-content: space-between; gap: 16px; align-items: start; }
 .priority-card-topline h3 { margin: 4px 0 6px; font-size: clamp(22px, 3vw, 30px); letter-spacing: -.04em; }
 .priority-card-topline p { margin: 0; color: #aebde8; overflow-wrap: anywhere; }
@@ -1725,6 +1727,7 @@ button { font: inherit; }
 .temp-warm { background: rgba(117,239,255,.12); border-color: rgba(117,239,255,.3); color: #bdf8ff; }
 .risk-high { background: rgba(255,83,129,.18); border-color: rgba(255,83,129,.42); color: #ffd1da; }
 .risk-medium { background: rgba(255,196,82,.12); border-color: rgba(255,196,82,.3); color: #ffe6a8; }
+.meeting-badge { background: rgba(117,239,255,.14); border-color: rgba(117,239,255,.38); color: #c8fbff; }
 .priority-action-callout { padding: 16px; border-radius: 22px; border: 1px solid rgba(117,239,255,.18); background: linear-gradient(135deg, rgba(0,216,255,.12), rgba(127,92,255,.1)); }
 .priority-action-callout span, .priority-reason-grid span { color: #8fa5dd; font-size: 12px; font-weight: 950; text-transform: uppercase; letter-spacing: .05em; }
 .priority-action-callout strong { display: block; margin: 7px 0; font-size: 24px; letter-spacing: -.04em; }
