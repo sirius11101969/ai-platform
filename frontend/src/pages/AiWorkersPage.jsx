@@ -11,6 +11,7 @@ const typeLabels = {
   ai_telegram_assistant: "AI Telegram Assistant",
   ai_meeting_scheduler: "AI Meeting Scheduler",
   ai_lead_scoring_engine: "AI Lead Scoring Engine",
+  ai_next_best_action_engine: "AI Next Best Action Engine",
 };
 
 const statusLabels = {
@@ -64,6 +65,9 @@ const actionTypeLabels = {
   followup_sequence_draft: "Autonomous follow-up",
   lead_scoring_update: "AI Lead Scoring",
   lead_priority_recommendation: "Lead priority recommendation",
+  meeting_prep_recommendation: "Подготовка к demo",
+  risk_followup_recommendation: "Риск сделки",
+  proposal_followup_recommendation: "Follow-up по предложению",
 };
 
 function formatDate(value) {
@@ -747,6 +751,8 @@ export default function AiWorkersPage() {
         <StatCard label="AI эффективность" value={loading ? "…" : `${metrics.efficiency || 0}%`} hint="Доля успешных запусков AI работников" />
         <StatCard label="Meetings scheduled by AI" value={loading ? "…" : String(approvalMetrics.meetingsScheduledByAi || 0)} hint="После approval менеджера" tone="violet" />
         <StatCard label="Pending meeting proposals" value={loading ? "…" : String(approvalMetrics.pendingMeetingProposals || 0)} hint="AI предложения demo-созвона ждут решения" tone="pink" />
+        <StatCard label="Next Best Actions pending" value={loading ? "…" : String(metrics.nextBestActionsPending || 0)} hint="AI NBA ждут approval менеджера" tone="pink" />
+        <StatCard label="Next Best Actions generated today" value={loading ? "…" : String(metrics.nextBestActionsGeneratedToday || 0)} hint="Создано AI NBA сегодня" tone="violet" />
         <StatCard label="Выручка под контролем AI" value={loading ? "…" : formatMoney(metrics.revenueUnderAi)} hint="Плейсхолдер revenue impact по открытой воронке" tone="violet" />
       </section>
 
@@ -893,7 +899,7 @@ export default function AiWorkersPage() {
             </div>
             <div className="worker-actions">
               <button className="btn primary compact" type="button" onClick={() => handleRun(worker)} disabled={busyWorker === worker.id || worker.status === "paused"}>
-                {busyWorker === worker.id ? "Выполняется…" : worker.type === "ai_lead_scoring_engine" ? "Запустить scoring" : "Запустить"}
+                {busyWorker === worker.id ? "Выполняется…" : worker.type === "ai_lead_scoring_engine" ? "Запустить scoring" : worker.type === "ai_next_best_action_engine" ? "Run Next Best Actions" : "Запустить"}
               </button>
               <button className="ghost-button" type="button" onClick={() => handlePause(worker)} disabled={busyWorker === worker.id}>
                 {worker.status === "paused" ? "Возобновить" : "Пауза"}

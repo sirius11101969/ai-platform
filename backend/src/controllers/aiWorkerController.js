@@ -54,4 +54,13 @@ async function runWorker(req, res, next) {
   }
 }
 
-module.exports = { commandCenter, createWorker, listRuns, listWorkers, runWorker, updateWorker }
+async function runWorkerByType(req, res, next) {
+  try {
+    const result = await aiWorkerModel.runWorkerByType({ userId: req.user.id, workspaceId: req.workspace.id, workerType: req.params.type })
+    res.status(202).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
+module.exports = { commandCenter, createWorker, listRuns, listWorkers, runWorker, runWorkerByType, updateWorker }

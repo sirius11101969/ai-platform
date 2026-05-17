@@ -41,6 +41,9 @@ const ACTION_ALIASES = {
   crm_next_action: 'create_reminder',
   move_lead_stage: 'stage_change_recommendation',
   lead_prioritization: 'create_reminder',
+  meeting_prep_recommendation: 'create_reminder',
+  risk_followup_recommendation: 'create_reminder',
+  proposal_followup_recommendation: 'create_reminder',
 }
 
 function normalize(row) {
