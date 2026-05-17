@@ -138,7 +138,7 @@ async function assertQueueItem(userId, workspaceId, queueId, client = pool) {
   const result = await client.query(
     `SELECT q.*, w.name AS worker_name, l.name AS lead_name, l.company AS lead_company, l.email AS lead_email, l.telegram AS lead_telegram, l.telegram_chat_id AS lead_telegram_chat_id, l.status AS lead_status, m.id AS meeting_id, m.title AS meeting_title, m.starts_at AS meeting_starts_at, m.duration_minutes AS meeting_duration_minutes, m.status AS meeting_status, m.calendar_status AS meeting_calendar_status, m.calendar_provider AS meeting_calendar_provider, m.timezone AS meeting_timezone, m.google_event_id AS meeting_google_event_id, m.google_meet_url AS meeting_google_meet_url, m.calendar_error AS meeting_calendar_error, m.calendar_synced_at AS meeting_calendar_synced_at, (m.ics_content IS NOT NULL AND m.ics_content <> '') AS meeting_has_ics
        FROM ai_worker_queue q
-       JOIN ai_workers w ON w.id = q.worker_id AND w.workspace_id = q.workspace_id
+       LEFT JOIN ai_workers w ON w.id = q.worker_id AND w.workspace_id = q.workspace_id
        LEFT JOIN crm_leads l ON l.id = q.lead_id AND l.workspace_id = q.workspace_id
        LEFT JOIN crm_meetings m ON m.ai_worker_queue_id = q.id AND m.workspace_id = q.workspace_id
       WHERE q.id = $1 AND q.workspace_id = $2
@@ -178,7 +178,7 @@ async function listQueue(userId, workspaceId, filters = {}) {
   const result = await pool.query(
     `SELECT q.*, w.name AS worker_name, l.name AS lead_name, l.company AS lead_company, l.email AS lead_email, l.telegram AS lead_telegram, l.telegram_chat_id AS lead_telegram_chat_id, l.status AS lead_status, m.id AS meeting_id, m.title AS meeting_title, m.starts_at AS meeting_starts_at, m.duration_minutes AS meeting_duration_minutes, m.status AS meeting_status, m.calendar_status AS meeting_calendar_status, m.calendar_provider AS meeting_calendar_provider, m.timezone AS meeting_timezone, m.google_event_id AS meeting_google_event_id, m.google_meet_url AS meeting_google_meet_url, m.calendar_error AS meeting_calendar_error, m.calendar_synced_at AS meeting_calendar_synced_at, (m.ics_content IS NOT NULL AND m.ics_content <> '') AS meeting_has_ics
        FROM ai_worker_queue q
-       JOIN ai_workers w ON w.id = q.worker_id AND w.workspace_id = q.workspace_id
+       LEFT JOIN ai_workers w ON w.id = q.worker_id AND w.workspace_id = q.workspace_id
        LEFT JOIN crm_leads l ON l.id = q.lead_id AND l.workspace_id = q.workspace_id
        LEFT JOIN crm_meetings m ON m.ai_worker_queue_id = q.id AND m.workspace_id = q.workspace_id
       WHERE ${clauses.join(' AND ')}

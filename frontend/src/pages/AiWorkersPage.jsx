@@ -334,6 +334,32 @@ function isApprovalItemExecutable(item) {
   return executableApprovalTypes.has(item.executionType || item.actionType);
 }
 
+function sortApprovalItemsByCreatedDesc(items) {
+  return [...items].sort((left, right) => new Date(right.createdAt || right.created_at || 0).getTime() - new Date(left.createdAt || left.created_at || 0).getTime());
+}
+
+function canAutoApproveAndExecuteDraft(item) {
+  return isTelegramReplyDraft(item) || isFollowupSequenceDraft(item) || isEmailFollowupDraft(item);
+}
+
+function getExecutableButtonState(item, { isItemBusy = false, currentLoadingKey = "" } = {}) {
+  const executeLoadingKey = getApprovalActionKey(item.id, "execute");
+  const isExecutable = isApprovalItemExecutable(item);
+  const canExecuteApproved = item.status === "approved";
+  const canExecutePendingDraft = item.status === "pending_approval" && canAutoApproveAndExecuteDraft(item);
+  const isExecutingThisAction = currentLoadingKey === executeLoadingKey;
+  const buttonEnabled = Boolean(isExecutable && (canExecuteApproved || canExecutePendingDraft) && !isItemBusy && !isExecutingThisAction);
+
+  return {
+    actionType: getApprovalItemType(item),
+    buttonEnabled,
+    disabled: !buttonEnabled,
+    executeLoadingKey,
+    isExecutingThisAction,
+    loadingKey: currentLoadingKey || "none",
+  };
+}
+
 function formatApprovalErrorMessage(message) {
   const text = String(message || "").trim();
   if (text === "Lead has no Telegram chat id" || text === "У лида нет Telegram chat id" || text === "Telegram не подключён для этого лида.") {
@@ -409,24 +435,6 @@ function logTelegramSendViaExecute(item) {
 
 function getApprovalItemType(item) {
   return item?.executionType || item?.actionType || "";
-}
-
-function isTelegramSendAllowedStatus(status) {
-  return status === "approved" || status === "pending_approval";
-}
-
-function getTelegramSendButtonState(item, currentLoadingKey) {
-  const executeLoadingKey = getApprovalActionKey(item.id, "execute");
-  const buttonEnabled = isTelegramReplyDraft(item) && isTelegramSendAllowedStatus(item.status) && currentLoadingKey !== executeLoadingKey;
-
-  return {
-    actionType: getApprovalItemType(item),
-    buttonEnabled,
-    disabled: !buttonEnabled,
-    executeLoadingKey,
-    isExecutingThisAction: currentLoadingKey === executeLoadingKey,
-    loadingKey: currentLoadingKey || "none",
-  };
 }
 
 function logTelegramSendButtonState(item, buttonState) {
@@ -701,8 +709,8 @@ export default function AiWorkersPage() {
   const recentRuns = commandCenter?.recentRuns || [];
   const metrics = commandCenter?.metrics || {};
   const approvalItems = approvalQueue.items || [];
-  const activeApprovalItems = useMemo(() => approvalItems.filter((item) => !["rejected", "completed", "executed", "cancelled"].includes(item.status)), [approvalItems]);
-  const approvalHistoryItems = useMemo(() => approvalItems.filter((item) => ["rejected", "completed", "executed", "cancelled"].includes(item.status)), [approvalItems]);
+  const activeApprovalItems = useMemo(() => sortApprovalItemsByCreatedDesc(approvalItems.filter((item) => !["rejected", "completed", "executed", "cancelled"].includes(item.status))), [approvalItems]);
+  const approvalHistoryItems = useMemo(() => sortApprovalItemsByCreatedDesc(approvalItems.filter((item) => ["rejected", "completed", "executed", "cancelled"].includes(item.status))), [approvalItems]);
   const approvalMetrics = approvalQueue.metrics || {};
   const pendingActions = useMemo(() => queue.filter((item) => item.status === "pending_approval"), [queue]);
   const failedActions = useMemo(() => queue.filter((item) => item.status === "failed"), [queue]);
@@ -773,16 +781,13 @@ export default function AiWorkersPage() {
             const isEditingThisDraft = editingDraft.itemId === item.id;
             const isExecuteBusy = isExecuteActionBusy;
             const isTelegramDraftItem = isTelegramReplyDraft(item);
-            const isFollowupDraftItem = isFollowupSequenceDraft(item);
             const isEmailDraftItem = isEmailFollowupDraft(item);
-            const telegramSendButtonState = isTelegramDraftItem ? getTelegramSendButtonState(item, loadingKey) : null;
-            const sendDisabled = loadingKey === executeLoadingKey;
-            const canShowTelegramSendButton = (isTelegramDraftItem || isFollowupDraftItem) && isTelegramSendAllowedStatus(item.status);
-            const canShowDraftSendButton = canShowTelegramSendButton || (isEmailDraftItem && isTelegramSendAllowedStatus(item.status));
-            if (telegramSendButtonState) logTelegramSendButtonState(item, telegramSendButtonState);
-            const isMeetingProposal = isMeetingScheduleProposal(item);
-            const canEditItem = !isMeetingProposal || item.status === "pending_approval" || item.status === "failed";
-            const canRejectItem = !isMeetingProposal || item.status === "pending_approval" || item.status === "failed";
+            const executableButtonState = isApprovalItemExecutable(item) ? getExecutableButtonState(item, { isItemBusy, currentLoadingKey: loadingKey }) : null;
+            const showExecutableButton = Boolean(executableButtonState && ["pending_approval", "approved"].includes(item.status));
+            const isSendStyleButton = canAutoApproveAndExecuteDraft(item) || isEmailDraftItem;
+            if (isTelegramDraftItem && executableButtonState) logTelegramSendButtonState(item, executableButtonState);
+            const canEditItem = ["pending_approval", "failed"].includes(item.status);
+            const canRejectItem = ["pending_approval", "failed"].includes(item.status);
             return (
             <article className={`approval-row approval-${item.status}`} key={item.id}>
               <div className="approval-main">
@@ -808,9 +813,9 @@ export default function AiWorkersPage() {
                   editBusy: isItemBusy,
                 })}
                 {item.errorMessage && <small className="email-error-text">Ошибка выполнения: {formatApprovalErrorMessage(item.errorMessage)}</small>}
-                {telegramSendButtonState && (
+                {executableButtonState && (
                   <small className="send-debug-badge">
-                    buttonEnabled={String(telegramSendButtonState.buttonEnabled)} · loadingKey={telegramSendButtonState.loadingKey}
+                    buttonEnabled={String(executableButtonState.buttonEnabled)} · actionId={item.id} · status={item.status}
                   </small>
                 )}
               </div>
@@ -829,11 +834,11 @@ export default function AiWorkersPage() {
                 {canRejectItem && !["executing", "completed", "rejected"].includes(item.status) && (
                   <button type="button" className="ghost-button compact danger-action" onClick={() => handleApprovalAction(item, "reject")} disabled={isItemBusy}>{isRejectBusy ? busyLabel : "Отклонить"}</button>
                 )}
-                {(canShowDraftSendButton || (item.status === "approved" && isApprovalItemExecutable(item))) && (
-                  canShowDraftSendButton ? (
-                    <button type="button" className="btn primary compact approval-send-button" onClick={() => handleApprovalAction(item, "execute")} disabled={sendDisabled} aria-busy={isExecuteActionBusy}>{isExecuteActionBusy ? approvalActionLoadingLabels.send : "Отправить"}</button>
+                {showExecutableButton && (
+                  isSendStyleButton ? (
+                    <button type="button" className="btn primary compact approval-send-button" onClick={() => handleApprovalAction(item, "execute")} disabled={executableButtonState.disabled} aria-busy={isExecuteActionBusy}>{isExecuteActionBusy ? approvalActionLoadingLabels.send : "Отправить"}</button>
                   ) : (
-                    <button type="button" className="btn primary compact" onClick={() => handleApprovalAction(item, "execute")} disabled={isItemBusy || item.status !== "approved"}>{isExecuteBusy ? busyLabel : "Выполнить"}</button>
+                    <button type="button" className="btn primary compact" onClick={() => handleApprovalAction(item, "execute")} disabled={executableButtonState.disabled}>{isExecuteBusy ? busyLabel : "Выполнить"}</button>
                   )
                 )}
               </div>
