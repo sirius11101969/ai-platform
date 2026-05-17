@@ -878,6 +878,8 @@ async function migrate() {
     CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_status ON ai_worker_queue(workspace_id, status, created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_lead ON ai_worker_queue(workspace_id, lead_id, created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_stage_recommendations ON ai_worker_queue(workspace_id, lead_id, status, created_at DESC) WHERE action_type = 'stage_change_recommendation';
+    CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_followup_sequence_dedup ON ai_worker_queue(workspace_id, lead_id, ((payload->>'sequenceStep')), status, created_at DESC) WHERE action_type = 'followup_sequence_draft';
+    CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_followup_sequence_dashboard ON ai_worker_queue(workspace_id, action_type, status, executed_at, created_at DESC) WHERE action_type = 'followup_sequence_draft';
     CREATE INDEX IF NOT EXISTS idx_ai_action_queue_workspace_status ON ai_action_queue(workspace_id, status, created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_ai_action_queue_lead ON ai_action_queue(workspace_id, lead_id, created_at DESC);
     CREATE INDEX IF NOT EXISTS idx_lead_timeline_events_lead ON lead_timeline_events(workspace_id, lead_id, created_at DESC);

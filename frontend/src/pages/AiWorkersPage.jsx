@@ -4,7 +4,7 @@ import { approveAiApprovalQueueItem, downloadCrmMeetingIcs, executeAiApprovalQue
 
 const typeLabels = {
   ai_sdr_agent: "AI SDR Agent",
-  ai_followup_worker: "AI Follow-up Worker",
+  ai_followup_worker: "AI Follow-up Engine",
   ai_revenue_analyst: "AI Revenue Analyst",
   ai_crm_assistant: "AI CRM Assistant",
   ai_email_assistant: "AI Email Assistant",
@@ -59,6 +59,7 @@ const actionTypeLabels = {
   lead_prioritization: "Приоритизация",
   stage_change_recommendation: "AI рекомендация этапа",
   meeting_schedule_proposal: "Встреча / demo-созвон",
+  followup_sequence_draft: "Autonomous follow-up",
 };
 
 function formatDate(value) {
@@ -100,7 +101,7 @@ function renderStageDetails(item) {
 }
 
 function getDraftText(item) {
-  return item?.payload?.editedText || item?.payload?.edited_text || item?.payload?.draftText || item?.payload?.text || item?.payload?.message || item?.recommendation || "";
+  return item?.payload?.editedText || item?.payload?.edited_text || item?.payload?.suggestedText || item?.payload?.draftText || item?.payload?.text || item?.payload?.message || item?.recommendation || "";
 }
 
 function getInboundText(item) {
@@ -167,8 +168,25 @@ function isTelegramMeetingConfirmationDraft(item) {
   return item?.actionType === "telegram_meeting_confirmation_draft" || item?.executionType === "telegram_meeting_confirmation_draft";
 }
 
+function isFollowupSequenceDraft(item) {
+  return item?.actionType === "followup_sequence_draft" || item?.executionType === "followup_sequence_draft";
+}
+
 function isTelegramReplyDraft(item) {
-  return item?.actionType === "telegram_reply_draft" || item?.executionType === "telegram_reply_draft" || isTelegramMeetingConfirmationDraft(item);
+  return item?.actionType === "telegram_reply_draft" || item?.executionType === "telegram_reply_draft" || isTelegramMeetingConfirmationDraft(item) || isFollowupSequenceDraft(item);
+}
+
+function renderFollowupSequenceDetails(item) {
+  if (!isFollowupSequenceDraft(item)) return null;
+  const payload = item.payload || {};
+  return (
+    <div className="approval-stage-details meeting-schedule-details">
+      <span>Sequence step <b>{payload.sequenceStep || "—"}</b></span>
+      <span>Last touch <b>{payload.inactiveHours ? `${payload.inactiveHours} ч. назад` : "—"}</b></span>
+      <span>Last message <b>{payload.lastMessageText || "—"}</b></span>
+      <span>Confidence <b>{payload.confidence || "—"}</b></span>
+    </div>
+  );
 }
 
 function renderTelegramReplyDraft(item, { isEditing = false, editText = "", onEditTextChange, onSaveEdit, onCancelEdit, editBusy = false } = {}) {
@@ -180,14 +198,14 @@ function renderTelegramReplyDraft(item, { isEditing = false, editText = "", onEd
   return (
     <div className="telegram-reply-draft-card">
       <div className="telegram-reply-card-head">
-        <span className="telegram-badge">Telegram</span>
+        <span className="telegram-badge">{isFollowupSequenceDraft(item) ? (item.payload?.channel || "follow-up") : "Telegram"}</span>
         <span className="telegram-meta-pill">Этап: {stageLabel(item.payload?.leadStage || item.payload?.currentStage || item.lead?.status)}</span>
         {forecastRiskBadge && <span className="telegram-meta-pill risk">{forecastRiskBadge}</span>}
         {wasEdited && <span className="telegram-meta-pill edited">Изменено менеджером</span>}
       </div>
       <div>
-        <span>{isTelegramMeetingConfirmationDraft(item) ? "Лид" : "Последнее входящее сообщение"}</span>
-        <p>{isTelegramMeetingConfirmationDraft(item) ? (item.lead?.name || item.payload?.leadName || "—") : inbound}</p>
+        <span>{isTelegramMeetingConfirmationDraft(item) ? "Лид" : isFollowupSequenceDraft(item) ? "Последнее касание" : "Последнее входящее сообщение"}</span>
+        <p>{isTelegramMeetingConfirmationDraft(item) ? (item.lead?.name || item.payload?.leadName || "—") : isFollowupSequenceDraft(item) ? (item.payload?.lastMessageText || "—") : inbound}</p>
       </div>
       {isTelegramMeetingConfirmationDraft(item) && (
         <div>
@@ -196,7 +214,7 @@ function renderTelegramReplyDraft(item, { isEditing = false, editText = "", onEd
         </div>
       )}
       <div className="telegram-draft-body">
-        <span>{isTelegramMeetingConfirmationDraft(item) ? "Текст подтверждения" : "AI drafted reply text"}</span>
+        <span>{isTelegramMeetingConfirmationDraft(item) ? "Текст подтверждения" : isFollowupSequenceDraft(item) ? "AI follow-up draft text" : "AI drafted reply text"}</span>
         {!isEditing ? (
           <p>{draft}</p>
         ) : (
@@ -214,7 +232,7 @@ function renderTelegramReplyDraft(item, { isEditing = false, editText = "", onEd
 }
 
 function shortRecommendation(item) {
-  const text = item.recommendation || item.title || "AI рекомендация ожидает решения";
+  const text = item?.payload?.suggestedText || item.recommendation || item.title || "AI рекомендация ожидает решения";
   return text.length > 130 ? `${text.slice(0, 130)}…` : text;
 }
 
@@ -235,7 +253,7 @@ const approvalActionLoadingLabels = {
 };
 
 const APPROVAL_ACTION_TIMEOUT_MS = 15000;
-const executableApprovalTypes = new Set(["telegram_reply_draft", "telegram_meeting_confirmation_draft", "telegram_followup", "email_followup", "send_demo_link", "send_presentation", "create_reminder", "move_lead_stage", "stage_change_recommendation", "meeting_schedule_proposal"]);
+const executableApprovalTypes = new Set(["followup_sequence_draft", "telegram_reply_draft", "telegram_meeting_confirmation_draft", "telegram_followup", "email_followup", "send_demo_link", "send_presentation", "create_reminder", "move_lead_stage", "stage_change_recommendation", "meeting_schedule_proposal"]);
 
 function isApprovalItemExecutable(item) {
   return executableApprovalTypes.has(item.executionType || item.actionType);
@@ -536,7 +554,7 @@ export default function AiWorkersPage() {
     }
 
     const isTelegramReplyDraftItem = isTelegramReplyDraft(item);
-    if (isTelegramReplyDraftItem) {
+    if (isTelegramReplyDraftItem || isFollowupSequenceDraft(item)) {
       setEditingDraft({ itemId: item.id, text: getDraftText(item) });
       return;
     }
@@ -558,7 +576,7 @@ export default function AiWorkersPage() {
     let successMessage = "AI рекомендация изменена.";
     let localPatch = { ...item, updatedAt: new Date().toISOString() };
 
-    if (isTelegramReplyDraft(item)) {
+    if (isTelegramReplyDraft(item) || isFollowupSequenceDraft(item)) {
       const normalizedText = String(nextText || "").trim();
       payload = { payload: { ...(item.payload || {}), draftText: item.payload?.draftText || item.payload?.text || item.payload?.message || item.recommendation || "", editedText: normalizedText, edited_text: normalizedText, text: normalizedText, message: normalizedText, editedByManager: true } };
       localPatch = { ...localPatch, payload: payload.payload, recommendation: normalizedText };
@@ -662,6 +680,8 @@ export default function AiWorkersPage() {
           <span>Ошибок сегодня <b>{approvalMetrics.failedToday || 0}</b></span>
           <span>Успешность <b>{approvalMetrics.successRate || 0}%</b></span>
           <span>Meeting proposals <b>{approvalMetrics.pendingMeetingProposals || 0}</b></span>
+          <span>Follow-ups pending <b>{approvalMetrics.followupsPending || 0}</b></span>
+          <span>Follow-ups sent today <b>{approvalMetrics.followupsSentToday || 0}</b></span>
         </div>
         <div className="approval-table">
           {activeApprovalItems.length === 0 && <p className="empty-state">Нет AI действий на одобрение.</p>}
@@ -690,6 +710,7 @@ export default function AiWorkersPage() {
                 <p>{shortRecommendation(item)}</p>
                 {renderStageDetails(item)}
                 {renderMeetingScheduleDetails(item, { onDownloadIcs: handleDownloadIcs })}
+                {renderFollowupSequenceDetails(item)}
                 {renderTelegramReplyDraft(item, {
                   isEditing: isEditingThisDraft,
                   editText: isEditingThisDraft ? editingDraft.text : getDraftText(item),
@@ -745,6 +766,7 @@ export default function AiWorkersPage() {
                     <p>{shortRecommendation(item)}</p>
                     {renderStageDetails(item)}
                     {renderMeetingScheduleDetails(item, { onDownloadIcs: handleDownloadIcs })}
+                    {renderFollowupSequenceDetails(item)}
                     {renderTelegramReplyDraft(item)}
                     {item.errorMessage && <small className="email-error-text">Ошибка выполнения: {formatApprovalErrorMessage(item.errorMessage)}</small>}
                   </div>

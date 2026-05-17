@@ -259,6 +259,7 @@ export default function DashboardPage() {
         <StatCard label="Follow-ups pending" value={loading ? "…" : String(crmStats?.aiMetrics?.autonomousFollowUpsPending || 0)} hint="AI Follow-up Center ждёт решения" tone="pink" />
         <StatCard label="Hot leads without contact" value={loading ? "…" : String(crmStats?.aiMetrics?.hotLeadsWithoutContact || 0)} hint="горячие лиды без свежего касания" tone="violet" />
         <StatCard label="Follow-ups sent today" value={loading ? "…" : String(crmStats?.aiMetrics?.autonomousFollowUpsSentToday || 0)} hint="отправлено после ручного approval" />
+        <StatCard label="Stale conversations" value={loading ? "…" : String(crmStats?.aiMetrics?.staleConversations || 0)} hint="последнее касание старше 24 часов, закрытые стадии исключены" tone="pink" />
         <StatCard label="Follow-up conversion" value={`${crmStats?.aiMetrics?.followUpConversionPlaceholder || 0}%`} hint="placeholder до v2 attribution" tone="violet" />
         <StatCard label="AI эффективность" value={loading ? "…" : `${aiCommandMetrics?.efficiency || crmStats?.aiMetrics?.executionSuccessRate || crmStats?.aiMetrics?.efficiency || 0}%`} hint="Успешные запуски AI сотрудников" />
         <StatCard label="Forecast Revenue" value={loading ? "…" : formatCurrency(crmStats?.aiMetrics?.aiForecastedRevenue || crmStats?.aiMetrics?.predictedRevenue || 0)} hint="weighted expected revenue by AI probability" tone="violet" />
