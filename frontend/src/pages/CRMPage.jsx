@@ -350,7 +350,8 @@ export default function CRMPage() {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const leadIdFromUrl = params.get("leadId") || params.get("lead");
-    if (!leadIdFromUrl || selectedLeadId || leads.length === 0) return;
+    if (!leadIdFromUrl || leads.length === 0) return;
+    if (selectedLeadId === leadIdFromUrl) return;
     if (leads.some((lead) => lead.id === leadIdFromUrl)) setSelectedLeadId(leadIdFromUrl);
   }, [leads, location.search, selectedLeadId]);
 
@@ -910,7 +911,7 @@ export default function CRMPage() {
                   {stageLeads.length === 0 && <p className="empty-state">Перетащите лид на этот этап</p>}
                   {stageLeads.map((lead) => (
                     <article
-                      className={`lead-card premium-lead-card compact-pipeline-card ${getLeadAiScore(lead)?.riskLevel === "high" ? "at-risk-lead" : ""} ${draggedLeadId === lead.id ? "is-dragging" : ""}`}
+                      className={`lead-card premium-lead-card compact-pipeline-card ${getLeadAiScore(lead)?.riskLevel === "high" ? "at-risk-lead" : ""} ${draggedLeadId === lead.id ? "is-dragging" : ""} ${selectedLeadId === lead.id ? "route-highlight" : ""}`}
                       draggable
                       onClick={() => openDetail(lead)}
                       onDragStart={(event) => handleLeadDragStart(event, lead)}

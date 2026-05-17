@@ -427,6 +427,14 @@ export function fetchAiPipelineCopilot() {
   return request('/ai/pipeline-copilot')
 }
 
+export function createPipelineCopilotFollowupAction(payload) {
+  return request('/ai/pipeline-copilot/actions/followup', { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export function createPipelineCopilotMeetingAction(payload) {
+  return request('/ai/pipeline-copilot/actions/meeting', { method: 'POST', body: JSON.stringify(payload) })
+}
+
 export function fetchAiPriorityInbox(params = {}) {
   const query = new URLSearchParams(Object.entries(params).filter(([, value]) => value !== undefined && value !== null && value !== '')).toString()
   return request(`/ai/priority-inbox${query ? `?${query}` : ''}`)

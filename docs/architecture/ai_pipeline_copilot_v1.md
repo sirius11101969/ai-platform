@@ -193,3 +193,26 @@ Additional v2 logs:
 - `[pipeline-copilot] manager reason sanitized`
 - `[pipeline-copilot] unresolved failed filtered`
 - `[pipeline-copilot] focus mode applied`
+
+## CTA action workflow
+
+AI Pipeline Copilot CTA buttons are manager workflow routers, not customer-send controls.
+
+- **Open Lead** routes to `/crm?leadId=<lead_id>`. The CRM page reads `leadId`, opens the matching lead details, and highlights the selected lead card when present.
+- **Open AI Workers** routes to `/ai-workers?actionId=<action_id>` when the cockpit item already maps to an AI action. If no action exists yet, it routes to `/ai-workers?leadId=<lead_id>`. AI Workers uses these query parameters to load, scroll to, and highlight the matching approval item/action or lead-related actions.
+- **Open Priority Inbox** routes to `/priority-inbox?leadId=<lead_id>`. Priority Inbox switches to the broad lead list when needed, scrolls to the matching lead card, and highlights it.
+- **Create Follow-up** calls `POST /api/ai/pipeline-copilot/actions/followup` with `{ leadId }`. The backend creates a `followup_sequence_draft` AI worker queue item with `status = pending_approval`, `payload.source = pipeline_copilot`, copy-guarded customer text, and a manager-safe recommendation. The UI then opens `/ai-workers?actionId=<new_action_id>`.
+- **Schedule Meeting** calls `POST /api/ai/pipeline-copilot/actions/meeting` with `{ leadId }`. The backend creates a `meeting_schedule_proposal` AI worker queue item with `status = pending_approval`, `payload.source = pipeline_copilot`, safe customer text where needed, and a manager-safe recommendation. The UI then opens `/ai-workers?actionId=<new_action_id>`.
+
+Pipeline Copilot never sends Telegram/email or performs customer-facing execution. It only creates pending approval actions that must be reviewed in AI Workers.
+
+Deduplication is enforced per lead, action type, `payload.source = pipeline_copilot`, and 24-hour window. If an active `pending_approval` or `approved` follow-up/meeting action already exists, the API returns the existing `actionId` and the message `Уже есть активная AI задача для этого лида.` instead of inserting a duplicate.
+
+Operational logs for this workflow include:
+
+- `[pipeline-copilot] open lead requested`
+- `[pipeline-copilot] followup action requested`
+- `[pipeline-copilot] followup action created`
+- `[pipeline-copilot] meeting action requested`
+- `[pipeline-copilot] meeting action created`
+- `[pipeline-copilot] duplicate action reused`
