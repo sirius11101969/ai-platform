@@ -1,6 +1,7 @@
 const pool = require('../db/pool')
 const crmModel = require('../models/crmModel')
 const { addTimelineEvent } = require('./timelineService')
+const { assertSafeCustomerCopy, getPriorityInboxCustomerText } = require('./customerCopyGuard')
 
 const ACTIVE_STATUSES = new Set(['new', 'qualified', 'proposal', 'booked'])
 const STAGE_WEIGHT = { booked: 2, proposal: 1, qualified: 0, new: 0, won: -2, lost: -3 }
@@ -24,33 +25,33 @@ function hasBookedMeeting(lead) {
   return (lead.meetings || []).some((meeting) => ['booked', 'confirmed', 'scheduled', 'synced'].includes(normalizeText(meeting.status)) || normalizeText(meeting.calendarStatus) === 'synced')
 }
 
-function buildPriorityActionText(lead, inboxItem, actionType) {
-  const reason = inboxItem.aiScoringReason || lead.aiScoringReason || 'AI обнаружил приоритетный сигнал.'
-  const next = inboxItem.nextBestAction || 'Связаться с лидом и согласовать следующий шаг.'
-  const greeting = lead.name ? `${lead.name}, здравствуйте!` : 'Здравствуйте!'
-  if (actionType === 'email') {
-    return {
-      subject: `Следующий шаг по ${lead.company || 'вашему запросу'}`,
-      body: `${greeting}\n\nПишу по вашему запросу. ${next}\n\nКонтекст: ${reason}\n\nГотов(а) согласовать удобное время и ответить на вопросы.`,
-    }
-  }
-  if (actionType === 'meeting') {
-    const booked = hasBookedMeeting(lead)
-    return {
-      subject: booked ? 'Подготовка к demo-встрече' : 'Предложение demo-встречи',
-      body: booked
-        ? `Подготовить подтверждение и brief к уже запланированной встрече. Контекст: ${reason}. Следующий шаг: ${next}.`
-        : `Предложить клиенту demo-встречу и согласовать удобное время. Контекст: ${reason}. Следующий шаг: ${next}.`,
-    }
-  }
+function buildInternalContext(lead, inboxItem) {
   return {
-    subject: 'Priority Inbox follow-up',
-    body: `${greeting} ${next}\n\nКонтекст: ${reason}`,
+    ai_score: inboxItem.aiScore,
+    ai_priority: inboxItem.aiPriority,
+    ai_risk_level: inboxItem.aiRiskLevel,
+    ai_scoring_reason: inboxItem.aiScoringReason || lead.aiScoringReason || '',
+    nextBestAction: inboxItem.nextBestAction,
+    nextBestActionCode: inboxItem.nextBestActionCode,
+    nextBestActionReason: inboxItem.nextBestActionReason,
+    currentStage: lead.status || '',
   }
+}
+
+function buildPriorityActionText(lead, inboxItem, actionType) {
+  const customerText = assertSafeCustomerCopy(getPriorityInboxCustomerText({ nextBestActionCode: inboxItem.nextBestActionCode, nextBestAction: inboxItem.nextBestAction }), { source: 'priority_inbox', leadId: lead.id, actionType })
+  const subject = actionType === 'email'
+    ? `Следующий шаг по ${lead.company || 'вашему запросу'}`
+    : actionType === 'meeting'
+      ? (hasBookedMeeting(lead) ? 'Подготовка к встрече' : 'Предложение встречи')
+      : 'Priority Inbox follow-up'
+  const recommendation = `Менеджеру: ${inboxItem.nextBestAction || 'согласовать следующий шаг'}. Внутренний AI контекст доступен отдельно и не отправляется клиенту.`
+  return { subject, body: customerText, customerText, recommendation }
 }
 
 function buildPriorityActionPayload(lead, inboxItem, actionType) {
   const text = buildPriorityActionText(lead, inboxItem, actionType)
+  const internalContext = buildInternalContext(lead, inboxItem)
   const base = {
     source: 'priority_inbox',
     leadId: lead.id,
@@ -58,21 +59,26 @@ function buildPriorityActionPayload(lead, inboxItem, actionType) {
     company: lead.company || '',
     currentStage: lead.status || '',
     nextBestAction: inboxItem.nextBestAction,
+    nextBestActionCode: inboxItem.nextBestActionCode,
+    customerText: text.customerText,
+    recommendation: text.recommendation,
+    internalContext,
+    // Backward-compatible metadata for manager UI only. Outbound send paths must use customerText.
     aiScoringReason: inboxItem.aiScoringReason,
     aiScore: inboxItem.aiScore,
     aiPriority: inboxItem.aiPriority,
     riskLevel: inboxItem.aiRiskLevel,
-    body: text.body,
-    text: text.body,
-    message: text.body,
+    body: text.customerText,
+    text: text.customerText,
+    message: text.customerText,
     noAutoSend: true,
   }
 
-  if (actionType === 'telegram') return { ...base, channel: 'telegram', chatId: String(lead.telegramChatId || ''), draftText: text.body }
-  if (actionType === 'email') return { ...base, channel: 'email', email: lead.email, subject: text.subject }
+  if (actionType === 'telegram') return { ...base, channel: 'telegram', chatId: String(lead.telegramChatId || ''), draftText: text.customerText }
+  if (actionType === 'email') return { ...base, channel: 'email', email: lead.email, subject: text.subject, body: text.customerText, draftText: text.customerText }
   if (actionType === 'followup') {
     const channel = lead.telegramChatId ? 'telegram' : (lead.email ? 'email' : 'crm')
-    return { ...base, channel, sequenceStep: 'manual_priority_followup', draftText: text.body, subject: channel === 'email' ? text.subject : undefined }
+    return { ...base, channel, sequenceStep: 'manual_priority_followup', draftText: text.customerText, subject: channel === 'email' ? text.subject : undefined }
   }
   if (actionType === 'meeting') {
     const booked = hasBookedMeeting(lead)
@@ -85,6 +91,7 @@ function buildPriorityActionPayload(lead, inboxItem, actionType) {
       meetingAlreadyBooked: booked,
       proposalType: booked ? 'meeting_confirmation_prep' : 'demo_scheduling',
       title: text.subject,
+      draftText: text.customerText,
     }
   }
   return base
@@ -144,7 +151,7 @@ async function createPriorityInboxAction(userId, workspaceId, { leadId, actionTy
       `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
        VALUES($1, $2, $3, $4, 'pending_approval', $5, $6, $7)
        RETURNING id`,
-      [worker.id, workspaceId, lead.id, config.queueActionType, text.subject, text.body, payload]
+      [worker.id, workspaceId, lead.id, config.queueActionType, text.subject, text.recommendation, payload]
     )
     await addTimelineEvent(client, {
       workspaceId,

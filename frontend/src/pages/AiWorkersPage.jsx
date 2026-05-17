@@ -105,7 +105,30 @@ function renderStageDetails(item) {
 }
 
 function getDraftText(item) {
-  return item?.payload?.editedText || item?.payload?.edited_text || item?.payload?.suggestedText || item?.payload?.draftText || item?.payload?.body || item?.payload?.text || item?.payload?.message || item?.recommendation || "";
+  return item?.payload?.editedText || item?.payload?.edited_text || item?.payload?.customerText || item?.payload?.customer_text || item?.payload?.suggestedText || item?.payload?.draftText || item?.payload?.body || item?.payload?.text || item?.payload?.message || "";
+}
+
+function getInternalAiContext(item) {
+  const payload = item?.payload || {};
+  const context = payload.internalContext || {};
+  const parts = [];
+  if (context.ai_score || payload.aiScore) parts.push(`ai_score: ${context.ai_score || payload.aiScore}`);
+  if (context.ai_priority || payload.aiPriority) parts.push(`ai_priority: ${context.ai_priority || payload.aiPriority}`);
+  if (context.ai_risk_level || payload.riskLevel) parts.push(`ai_risk_level: ${context.ai_risk_level || payload.riskLevel}`);
+  if (context.ai_scoring_reason || payload.aiScoringReason) parts.push(`ai_scoring_reason: ${context.ai_scoring_reason || payload.aiScoringReason}`);
+  if (context.nextBestAction || payload.nextBestAction) parts.push(`nextBestAction: ${context.nextBestAction || payload.nextBestAction}`);
+  return parts.join(" · ");
+}
+
+function renderInternalAiContext(item) {
+  const text = getInternalAiContext(item);
+  if (!text) return null;
+  return (
+    <div className="telegram-draft-body internal-ai-context">
+      <span>Внутренний AI контекст</span>
+      <p>{text}</p>
+    </div>
+  );
 }
 
 function getInboundText(item) {
@@ -222,7 +245,7 @@ function renderTelegramReplyDraft(item, { isEditing = false, editText = "", onEd
         </div>
       )}
       <div className="telegram-draft-body">
-        <span>{isTelegramMeetingConfirmationDraft(item) ? "Текст подтверждения" : isFollowupSequenceDraft(item) ? "AI follow-up draft text" : "AI drafted reply text"}</span>
+        <span>{isTelegramMeetingConfirmationDraft(item) ? "Текст подтверждения" : isFollowupSequenceDraft(item) ? "Customer-facing follow-up text" : "Customer-facing reply text"}</span>
         {!isEditing ? (
           <p>{draft}</p>
         ) : (
@@ -235,6 +258,7 @@ function renderTelegramReplyDraft(item, { isEditing = false, editText = "", onEd
           </div>
         )}
       </div>
+      {renderInternalAiContext(item)}
     </div>
   );
 }
@@ -264,7 +288,7 @@ function renderEmailFollowupDraft(item, { isEditing = false, editText = "", onEd
         <p>{payload.subject || item.title || "—"}</p>
       </div>
       <div className="telegram-draft-body">
-        <span>Текст email follow-up</span>
+        <span>Customer-facing email follow-up text</span>
         {!isEditing ? (
           <p>{body}</p>
         ) : (
@@ -277,6 +301,7 @@ function renderEmailFollowupDraft(item, { isEditing = false, editText = "", onEd
           </div>
         )}
       </div>
+      {renderInternalAiContext(item)}
     </div>
   );
 }
@@ -630,7 +655,7 @@ export default function AiWorkersPage() {
 
     if (isTelegramReplyDraft(item) || isFollowupSequenceDraft(item) || isEmailFollowupDraft(item)) {
       const normalizedText = String(nextText || "").trim();
-      payload = { payload: { ...(item.payload || {}), draftText: item.payload?.draftText || item.payload?.body || item.payload?.text || item.payload?.message || item.recommendation || "", editedText: normalizedText, edited_text: normalizedText, body: isEmailFollowupDraft(item) ? normalizedText : item.payload?.body, text: normalizedText, message: normalizedText, editedByManager: true } };
+      payload = { payload: { ...(item.payload || {}), customerText: normalizedText, draftText: item.payload?.draftText || item.payload?.body || item.payload?.text || item.payload?.message || item.recommendation || "", editedText: normalizedText, edited_text: normalizedText, body: isEmailFollowupDraft(item) ? normalizedText : item.payload?.body, text: normalizedText, message: normalizedText, editedByManager: true } };
       localPatch = { ...localPatch, payload: payload.payload, recommendation: normalizedText };
       successMessage = "AI draft response изменён.";
     } else if (isMeetingScheduleProposal(item)) {
