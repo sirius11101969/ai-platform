@@ -63,6 +63,7 @@ async function runExistingChatIdTest() {
       }
       if (query.startsWith('INSERT INTO lead_timeline_events(')) return { rows: [{ id: 'timeline-1', workspace_id: params[0], lead_id: params[1], user_id: params[2], event_type: params[3], title: params[4], body: params[5], source: params[6], metadata: params[7], created_at: new Date() }], rowCount: 1 }
       if (query.startsWith('INSERT INTO ai_workers(')) return { rows: [{ id: 'worker-1' }], rowCount: 1 }
+      if (query.startsWith('SELECT id, status') && query.includes('FROM ai_worker_queue')) return { rows: [], rowCount: 0 }
       if (query.startsWith('UPDATE ai_followup_jobs')) return { rows: [], rowCount: 0 }
       if (query.startsWith('SELECT id FROM ai_worker_queue') && query.includes("action_type = 'telegram_reply_analysis'")) return { rows: [], rowCount: 0 }
       if (query.startsWith('INSERT INTO ai_worker_queue') && query.includes("'telegram_reply_analysis'")) return { rows: [{ id: 'queue-analysis-1' }], rowCount: 1 }

@@ -26,12 +26,12 @@ assert.strictEqual(detectSchedulingIntent('Спасибо, получил мат
 
 assert.strictEqual(
   buildMeetingConfirmationDraftText({ payload: { proposedStartTime: detected.proposedStartTime, detectedDateText: 'завтра', detectedTimeText: 'в 15:00', timeZone: 'Europe/Moscow' } }),
-  'Отлично, зафиксировал demo-созвон на завтра в 15:00.\n\nПокажу, как AS6 AI CRM помогает вести лидов, Telegram follow-up и pipeline аналитику.\n\nДо встречи!'
+  'Отлично, demo-созвон подтверждён на завтра в 15:00. До встречи!'
 )
 
 assert.strictEqual(
   buildMeetingConfirmationDraftText({ payload: { proposedStartTime: null, detectedDateText: 'завтра', detectedTimeText: '' } }),
-  'Отлично, зафиксировал demo-созвон. Подтвержу точное время отдельным сообщением.'
+  'Отлично, demo-созвон подтверждён. До встречи!'
 )
 
 async function testIdempotentMeetingSchedulerWorker() {
@@ -45,13 +45,14 @@ async function testIdempotentMeetingSchedulerWorker() {
       if (query.includes('SELECT id FROM ai_workers') && query.includes("type = 'ai_meeting_scheduler'")) {
         return { rows: worker ? [{ id: worker.id }] : [], rowCount: worker ? 1 : 0 }
       }
+      if (query.startsWith('UPDATE ai_workers SET last_run_at')) return { rows: [], rowCount: 1 }
       if (query.startsWith('INSERT INTO ai_workers(')) {
         workerInsertCount += 1
         if (worker) return { rows: [], rowCount: 0 }
         worker = { id: 'meeting-worker-1', workspace_id: params[0], type: 'ai_meeting_scheduler' }
         return { rows: [{ id: worker.id }], rowCount: 1 }
       }
-      if (query.includes('SELECT id FROM ai_worker_queue')) return { rows: [], rowCount: 0 }
+      if (query.includes('SELECT id, status') && query.includes('FROM ai_worker_queue')) return { rows: proposals.some((proposal) => proposal.payload.sourceMessageId === params[4]) ? [{ id: 'duplicate', status: 'pending_approval' }] : [], rowCount: 0 }
       if (query.startsWith('INSERT INTO ai_worker_queue(')) {
         const proposal = {
           id: `proposal-${proposals.length + 1}`,
@@ -60,7 +61,7 @@ async function testIdempotentMeetingSchedulerWorker() {
           leadId: params[2],
           actionType: params[3],
           status: 'pending_approval',
-          payload: params[7],
+          payload: params[6],
         }
         proposals.push(proposal)
         return { rows: [{ id: proposal.id }], rowCount: 1 }
@@ -81,6 +82,17 @@ async function testIdempotentMeetingSchedulerWorker() {
     })
     assert.ok(result, `proposal ${index} should be created`)
   }
+
+  const duplicate = await createMeetingScheduleProposal(client, {
+    userId: 'user-1',
+    workspaceId: 'workspace-1',
+    lead: { id: 'lead-1', name: 'Demo Lead' },
+    messageText: 'Да, завтра в 15:00 удобно для demo',
+    channel: 'telegram',
+    sourceMessageId: 'telegram-1',
+  })
+  assert.strictEqual(duplicate, null, 'duplicate source message should not create another proposal')
+
 
   assert.strictEqual(workerInsertCount, 1, 'meeting scheduler worker should be inserted once')
   assert.strictEqual(worker.id, 'meeting-worker-1')

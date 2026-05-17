@@ -4,6 +4,7 @@ const emailService = require('./emailService')
 const { sendTelegramMessageToLead } = require('./telegramService')
 const { sendLeadAttachments } = require('./attachmentService')
 const { addTimelineEvent } = require('./timelineService')
+const { findDuplicateQueueItem, logDuplicateSkipped } = require('./aiQueueDedupService')
 
 const STATUSES = ['pending_approval', 'approved', 'rejected', 'executing', 'completed', 'executed', 'failed', 'cancelled']
 const TELEGRAM_MEETING_CONFIRMATION_DRAFT = 'telegram_meeting_confirmation_draft'
@@ -214,33 +215,76 @@ async function tableExists(client, tableName) {
   return Boolean(result.rows[0]?.table_name)
 }
 
-async function insertOptionalMeetingRecord(client, { workspaceId, userId, item }) {
-  const metadata = { queueId: item.id, actionType: item.actionType, sourceMessageId: item.payload.sourceMessageId, calendar: item.payload.calendar || { connectLater: true } }
+async function ensureCrmMeetingsTable(client) {
+  await client.query(`CREATE TABLE IF NOT EXISTS crm_meetings (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+    lead_id UUID NOT NULL REFERENCES crm_leads(id) ON DELETE CASCADE,
+    title TEXT NOT NULL,
+    starts_at TIMESTAMPTZ,
+    duration_minutes INTEGER DEFAULT 30,
+    channel TEXT DEFAULT 'telegram',
+    status TEXT DEFAULT 'scheduled',
+    created_by_ai BOOLEAN DEFAULT TRUE,
+    ai_worker_queue_id UUID REFERENCES ai_worker_queue(id) ON DELETE SET NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+  )`)
+  await client.query("ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS starts_at TIMESTAMPTZ")
+  await client.query("ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS duration_minutes INTEGER DEFAULT 30")
+  await client.query("ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS channel TEXT DEFAULT 'telegram'")
+  await client.query("ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'scheduled'")
+  await client.query("ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS created_by_ai BOOLEAN DEFAULT TRUE")
+  await client.query("ALTER TABLE crm_meetings ADD COLUMN IF NOT EXISTS ai_worker_queue_id UUID REFERENCES ai_worker_queue(id) ON DELETE SET NULL")
+  await client.query('CREATE INDEX IF NOT EXISTS idx_crm_meetings_workspace_lead ON crm_meetings(workspace_id, lead_id, starts_at DESC)')
+  await client.query('CREATE UNIQUE INDEX IF NOT EXISTS idx_crm_meetings_unique_ai_worker_queue_id ON crm_meetings(ai_worker_queue_id) WHERE ai_worker_queue_id IS NOT NULL')
+  await client.query('CREATE INDEX IF NOT EXISTS idx_crm_meetings_ai_worker_queue_id ON crm_meetings(ai_worker_queue_id)')
+}
+
+async function getTableColumns(client, tableName) {
+  const result = await client.query(
+    `SELECT column_name
+       FROM information_schema.columns
+      WHERE table_schema = 'public' AND table_name = $1`,
+    [tableName]
+  )
+  return new Set(result.rows.map((row) => row.column_name))
+}
+
+async function insertOptionalMeetingRecord(client, { workspaceId, item }) {
+  await ensureCrmMeetingsTable(client)
+  const columns = await getTableColumns(client, 'crm_meetings')
   const startTime = item.payload.proposedStartTime || null
   const title = item.payload.proposedTitle || `Demo-созвон — ${item.lead?.name || 'lead'}`
   const duration = Number(item.payload.durationMinutes || 30)
 
-  if (await tableExists(client, 'crm_meetings')) {
-    await client.query(
-      `INSERT INTO crm_meetings(workspace_id, user_id, lead_id, title, start_time, duration_minutes, status, source, metadata)
-       VALUES($1, $2, $3, $4, $5::timestamptz, $6, 'scheduled', 'ai', $7)
-       ON CONFLICT DO NOTHING`,
-      [workspaceId, userId, item.leadId, title, startTime, duration, metadata]
-    )
-    return 'crm_meetings'
+  const baseColumns = ['workspace_id', 'lead_id', 'title']
+  const values = [workspaceId, item.leadId, title]
+  function addColumn(column, value) {
+    if (!columns.has(column)) return
+    baseColumns.push(column)
+    values.push(value)
   }
 
-  if (await tableExists(client, 'crm_tasks')) {
-    await client.query(
-      `INSERT INTO crm_tasks(workspace_id, user_id, lead_id, title, due_at, status, type, metadata)
-       VALUES($1, $2, $3, $4, $5::timestamptz, 'scheduled', 'meeting', $6)
-       ON CONFLICT DO NOTHING`,
-      [workspaceId, userId, item.leadId, title, startTime, metadata]
-    )
-    return 'crm_tasks'
-  }
+  addColumn(columns.has('starts_at') ? 'starts_at' : 'start_time', startTime)
+  addColumn('duration_minutes', duration)
+  addColumn('channel', item.payload.channel || 'telegram')
+  addColumn('status', 'scheduled')
+  addColumn('created_by_ai', true)
+  addColumn('ai_worker_queue_id', item.id)
+  addColumn('source', 'ai')
+  addColumn('metadata', { queueId: item.id, actionType: item.actionType, sourceMessageId: item.payload.sourceMessageId, calendar: item.payload.calendar || { connectLater: true } })
 
-  return null
+  const placeholders = values.map((_, index) => `$${index + 1}${['starts_at', 'start_time'].includes(baseColumns[index]) ? '::timestamptz' : ''}`)
+  const conflict = columns.has('ai_worker_queue_id') ? 'ON CONFLICT DO NOTHING' : ''
+  const result = await client.query(
+    `INSERT INTO crm_meetings(${baseColumns.join(', ')})
+     VALUES(${placeholders.join(', ')})
+     ${conflict}
+     RETURNING id`,
+    values
+  )
+  return { table: 'crm_meetings', id: result.rows[0]?.id || null }
 }
 
 function buildMeetingConfirmationDraftText(item) {
@@ -248,13 +292,23 @@ function buildMeetingConfirmationDraftText(item) {
   const detectedDateText = String(item.payload.detectedDateText || '').trim()
   const detectedTimeText = String(item.payload.detectedTimeText || '').trim().replace(/^в\s+/i, '')
   if (!proposedStartTime || !detectedTimeText) {
-    return 'Отлично, зафиксировал demo-созвон. Подтвержу точное время отдельным сообщением.'
+    return 'Отлично, demo-созвон подтверждён. До встречи!'
   }
 
   const scheduledText = [detectedDateText, detectedTimeText ? `в ${detectedTimeText}` : ''].filter(Boolean).join(' ')
     || new Intl.DateTimeFormat('ru-RU', { dateStyle: 'short', timeStyle: 'short', timeZone: item.payload.timeZone || process.env.APP_TIMEZONE || 'UTC' }).format(new Date(proposedStartTime))
 
-  return `Отлично, зафиксировал demo-созвон на ${scheduledText}.\n\nПокажу, как AS6 AI CRM помогает вести лидов, Telegram follow-up и pipeline аналитику.\n\nДо встречи!`
+  return `Отлично, demo-созвон подтверждён на ${scheduledText}. До встречи!`
+}
+
+function buildMeetingScheduledTimelineBody(item, proposedStartTime, title) {
+  if (!proposedStartTime) return `${title}. Время уточняется.`
+  const formatted = new Intl.DateTimeFormat('ru-RU', {
+    dateStyle: 'long',
+    timeStyle: 'short',
+    timeZone: item.payload.timeZone || process.env.APP_TIMEZONE || 'UTC',
+  }).format(new Date(proposedStartTime))
+  return `Demo-созвон запланирован на ${formatted}. Лид переведён в этап Booked, следующий шаг: Demo scheduled.`
 }
 
 async function executeMeetingScheduleProposal(userId, workspaceId, item) {
@@ -264,26 +318,29 @@ async function executeMeetingScheduleProposal(userId, workspaceId, item) {
   const confirmationText = buildMeetingConfirmationDraftText(item)
   try {
     await client.query('BEGIN')
-    const optionalRecordTable = await insertOptionalMeetingRecord(client, { workspaceId, userId, item })
+    const meetingRecord = await insertOptionalMeetingRecord(client, { workspaceId, item })
     await client.query(
       `UPDATE crm_leads
-          SET status = 'booked', stage = 'booked', next_step = 'Demo scheduled', metadata = COALESCE(metadata, '{}'::jsonb) || $4::jsonb, updated_at = NOW()
-        WHERE workspace_id = $1 AND id = $2 AND user_id = $3`,
-      [workspaceId, item.leadId, userId, { aiMeetingScheduler: { queueId: item.id, proposedStartTime, title, durationMinutes: item.payload.durationMinutes || 30 } }]
+          SET status = 'booked', stage = 'booked', next_step = 'Demo scheduled', metadata = COALESCE(metadata, '{}'::jsonb) || $3::jsonb, updated_at = NOW()
+        WHERE workspace_id = $1 AND id = $2`,
+      [workspaceId, item.leadId, { aiMeetingScheduler: { queueId: item.id, proposedStartTime, title, durationMinutes: item.payload.durationMinutes || 30 } }]
     )
-    await saveAudit(client, { workspaceId, leadId: item.leadId, userId, type: 'meeting_scheduled', title: 'Demo-созвон запланирован', body: proposedStartTime ? `${title}: ${proposedStartTime}` : title, source: 'ai', metadata: { queueId: item.id, actionType: item.actionType, proposedStartTime, durationMinutes: item.payload.durationMinutes || 30, optionalRecordTable } })
+    await saveAudit(client, { workspaceId, leadId: item.leadId, userId, type: 'meeting_scheduled', title: 'Demo-созвон запланирован', body: buildMeetingScheduledTimelineBody(item, proposedStartTime, title), source: 'ai', metadata: { queueId: item.id, actionType: item.actionType, proposedStartTime, durationMinutes: item.payload.durationMinutes || 30, meetingRecord } })
 
     if ((item.payload.channel || '').toLowerCase() === 'telegram') {
-      const existingDraft = await client.query(
-        `SELECT id FROM ai_worker_queue
-          WHERE workspace_id = $1 AND lead_id = $2 AND action_type = $3
-            AND payload->>'meetingProposalQueueId' = $4
-            AND status IN ('pending_approval', 'approved', 'executing', 'completed', 'executed')
-          LIMIT 1`,
-        [workspaceId, item.leadId, TELEGRAM_MEETING_CONFIRMATION_DRAFT, item.id]
-      )
+      const existingDraft = await findDuplicateQueueItem(client, {
+        workspaceId,
+        leadId: item.leadId,
+        actionType: TELEGRAM_MEETING_CONFIRMATION_DRAFT,
+        sourceMessageId: item.id,
+        extraPayloadMatch: { key: 'meetingProposalQueueId', value: item.id },
+      })
 
-      if (!existingDraft.rows[0]) {
+      if (existingDraft) {
+        logDuplicateSkipped({ workspaceId, leadId: item.leadId, actionType: TELEGRAM_MEETING_CONFIRMATION_DRAFT, sourceMessageId: item.id, duplicateId: existingDraft.id })
+      }
+
+      if (!existingDraft) {
         const worker = await client.query(
           `INSERT INTO ai_workers(workspace_id, name, type, status, mode, description)
            VALUES($1, 'AI Telegram Reply Assistant', 'ai_telegram_assistant', 'active', 'approval_required', 'Готовит черновики ответов Telegram после входящих сообщений. Отправка только после проверки менеджера.')
@@ -294,7 +351,7 @@ async function executeMeetingScheduleProposal(userId, workspaceId, item) {
         await client.query(
           `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
            VALUES($1, $2, $3, $4, 'pending_approval', $5, $6, $7)`,
-          [worker.rows[0].id, workspaceId, item.leadId, TELEGRAM_MEETING_CONFIRMATION_DRAFT, `Ответ-подтверждение встречи — ${item.lead?.name || 'лид'}`, 'AI подготовил подтверждение demo-созвона для клиента. Проверьте и отправьте в Telegram.', { source: 'ai_meeting_scheduler', channel: 'telegram', draftText: confirmationText, text: confirmationText, message: confirmationText, meetingProposalQueueId: item.id, proposedStartTime, scheduledTime: proposedStartTime, detectedDateText: item.payload.detectedDateText || '', detectedTimeText: item.payload.detectedTimeText || '', leadName: item.lead?.name || '', inboundMessage: item.payload.inboundMessage || item.payload.customerMessage || '' }]
+          [worker.rows[0].id, workspaceId, item.leadId, TELEGRAM_MEETING_CONFIRMATION_DRAFT, `Ответ-подтверждение встречи — ${item.lead?.name || 'лид'}`, 'AI подготовил подтверждение demo-созвона для клиента. Проверьте и отправьте в Telegram.', { source: 'ai_meeting_scheduler', channel: 'telegram', sourceMessageId: item.id, draftText: confirmationText, text: confirmationText, message: confirmationText, meetingProposalQueueId: item.id, proposedStartTime, scheduledTime: proposedStartTime, detectedDateText: item.payload.detectedDateText || '', detectedTimeText: item.payload.detectedTimeText || '', leadName: item.lead?.name || '', inboundMessage: item.payload.inboundMessage || item.payload.customerMessage || '' }]
         )
       }
     }
