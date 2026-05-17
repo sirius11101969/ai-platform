@@ -1111,6 +1111,15 @@ button { font: inherit; }
   min-height: 150px;
 }
 
+.focus-total-history-note {
+  color: var(--muted-text);
+  font-size: 0.86rem;
+  font-weight: 800;
+  margin: -8px 0 18px;
+  position: relative;
+  z-index: 1;
+}
+
 .worker-card-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

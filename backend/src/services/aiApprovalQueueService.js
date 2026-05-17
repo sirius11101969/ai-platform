@@ -23,6 +23,139 @@ const IMPORTANT_LEAD_PRIORITY_RECOMMENDATION_SQL = `(q.action_type <> 'lead_prio
   OR LOWER(CONCAT_WS(' ', q.recommendation, q.title, q.payload->>'recommendedNextStep', q.payload->>'nextBestAction')) ~ '(urgent|asap|сроч|немедленно|эскал|escalate)'
 ))`
 
+
+
+const FOCUS_QUEUE_LIMIT = 10
+const FOCUS_RECENT_WINDOW_MS = 72 * 60 * 60 * 1000
+const ACTIVE_ACTION_STATUSES = new Set(['pending_approval', 'approved'])
+const FINISHED_ACTION_STATUSES = new Set(['completed', 'executed', 'rejected', 'cancelled'])
+const CUSTOMER_FACING_ACTION_TYPES = new Set(['telegram_followup', 'email_followup', EMAIL_FOLLOWUP_DRAFT, 'telegram_draft', 'telegram_reply_draft', TELEGRAM_MEETING_CONFIRMATION_DRAFT, 'email_draft', FOLLOWUP_SEQUENCE_DRAFT, 'meeting_schedule_proposal'])
+const FOLLOWUP_ACTION_TYPES = new Set(['telegram_followup', 'email_followup', EMAIL_FOLLOWUP_DRAFT, 'telegram_draft', 'telegram_reply_draft', TELEGRAM_MEETING_CONFIRMATION_DRAFT, 'email_draft', FOLLOWUP_SEQUENCE_DRAFT])
+const MEETING_ACTION_TYPES = new Set(['meeting_schedule_proposal', TELEGRAM_MEETING_CONFIRMATION_DRAFT])
+
+function getItemCreatedTime(item) {
+  return new Date(item?.createdAt || item?.created_at || 0).getTime() || 0
+}
+
+function getItemUpdatedTime(item) {
+  return new Date(item?.updatedAt || item?.updated_at || item?.createdAt || 0).getTime() || 0
+}
+
+function getItemType(item) {
+  return item?.executionType || item?.actionType || ''
+}
+
+function getItemSearchText(item) {
+  return [item?.title, item?.recommendation, item?.errorMessage, item?.payload?.testName, item?.payload?.source, item?.payload?.scenario].filter(Boolean).join(' ').toLowerCase()
+}
+
+function isRecentAction(item, now = Date.now()) {
+  return now - getItemCreatedTime(item) <= FOCUS_RECENT_WINDOW_MS
+}
+
+function isCustomerFacingAction(item) {
+  return CUSTOMER_FACING_ACTION_TYPES.has(getItemType(item)) || ['email', 'telegram'].includes(String(item?.payload?.channel || item?.payload?.suggestedChannel || '').toLowerCase())
+}
+
+function isFollowupAction(item) {
+  return FOLLOWUP_ACTION_TYPES.has(getItemType(item))
+}
+
+function isMeetingAction(item) {
+  return MEETING_ACTION_TYPES.has(getItemType(item))
+}
+
+function isSafetyHistoryAction(item) {
+  const text = getItemSearchText(item)
+  return /unsafe copy guard test|safety[-_ ]?test|copy guard|ai safety|sanitizer test/.test(text) || item?.payload?.source === 'copy_guard_test' || item?.payload?.safetyTest === true
+}
+
+function isGenericLowValueLeadPriority(item) {
+  if (getItemType(item) !== 'lead_priority_recommendation') return false
+  const priority = String(item?.payload?.priority || item?.payload?.aiPriority || item?.payload?.value || '').toLowerCase()
+  const score = Number(item?.payload?.score || item?.payload?.aiScore || 0)
+  return ['', 'low', 'medium', 'normal'].includes(priority) && score < 70
+}
+
+function hasNewerCompletedFallback(item, items) {
+  if (item?.status !== 'failed' || !item?.leadId) return false
+  const itemTime = getItemUpdatedTime(item)
+  return items.some((candidate) => {
+    if (candidate.id === item.id || candidate.leadId !== item.leadId) return false
+    if (!['completed', 'executed'].includes(candidate.status)) return false
+    if (!isCustomerFacingAction(candidate)) return false
+    if (getItemUpdatedTime(candidate) <= itemTime) return false
+    const candidateChannel = String(candidate?.payload?.channel || candidate?.payload?.suggestedChannel || '').toLowerCase()
+    const itemChannel = String(item?.payload?.channel || item?.payload?.suggestedChannel || '').toLowerCase()
+    return candidateChannel === 'email' || candidateChannel !== itemChannel
+  })
+}
+
+function getFocusPriority(item, items, now = Date.now()) {
+  const type = getItemType(item)
+  const source = String(item?.payload?.source || item?.workerName || item?.payload?.engine || '').toLowerCase()
+  const status = item?.status
+  if (ACTIVE_ACTION_STATUSES.has(status) && isCustomerFacingAction(item) && isRecentAction(item, now)) return 1
+  if (source.includes('next_best_action') || type.includes('next_best_action')) return 2
+  if (source.includes('pipeline_copilot') || type.includes('pipeline_copilot')) return 3
+  if (isFollowupAction(item)) return 4
+  if (isMeetingAction(item)) return 5
+  if (status === 'failed' && isCustomerFacingAction(item) && !hasNewerCompletedFallback(item, items)) return 6
+  return 99
+}
+
+function shouldHideFromFocus(item, items, now = Date.now()) {
+  const type = getItemType(item)
+  if (FINISHED_ACTION_STATUSES.has(item?.status)) return true
+  if (isSafetyHistoryAction(item)) return true
+  if (item?.status === 'failed' && hasNewerCompletedFallback(item, items)) return true
+  if (type === 'lead_scoring_update' && ['completed', 'executed'].includes(item?.status)) return true
+  if (['telegram_draft', 'email_draft'].includes(type) && !isRecentAction(item, now)) return true
+  if (isGenericLowValueLeadPriority(item)) return true
+  return false
+}
+
+function buildFocusQueueState(items, now = Date.now()) {
+  const sorted = [...(items || [])].sort((left, right) => getItemCreatedTime(right) - getItemCreatedTime(left))
+  const completedHistoryActions = sorted.filter((item) => ['completed', 'executed', 'rejected', 'cancelled'].includes(item.status) && !isSafetyHistoryAction(item))
+  const safetyHistoryActions = sorted.filter(isSafetyHistoryAction)
+  const focusCandidates = sorted
+    .filter((item) => !shouldHideFromFocus(item, sorted, now))
+    .filter((item) => ACTIVE_ACTION_STATUSES.has(item.status) || (item.status === 'failed' && !hasNewerCompletedFallback(item, sorted)))
+    .map((item) => ({ item, priority: getFocusPriority(item, sorted, now) }))
+    .filter(({ priority }) => priority < 99)
+    .sort((left, right) => left.priority - right.priority || getItemCreatedTime(right.item) - getItemCreatedTime(left.item))
+    .map(({ item }) => item)
+  const focusActions = focusCandidates.slice(0, FOCUS_QUEUE_LIMIT)
+  const focusIds = new Set(focusActions.map((item) => item.id))
+  const completedIds = new Set(completedHistoryActions.map((item) => item.id))
+  const safetyIds = new Set(safetyHistoryActions.map((item) => item.id))
+  const hiddenLegacyActions = sorted.filter((item) => !focusIds.has(item.id) && !completedIds.has(item.id) && !safetyIds.has(item.id))
+  const unresolvedFailedActions = sorted.filter((item) => item.status === 'failed' && !hasNewerCompletedFallback(item, sorted) && !isSafetyHistoryAction(item))
+  const needsApprovalActions = sorted.filter((item) => ACTIVE_ACTION_STATUSES.has(item.status) && !isSafetyHistoryAction(item))
+
+  return {
+    focusActions,
+    hiddenLegacyActions,
+    completedHistoryActions,
+    safetyHistoryActions,
+    allActions: sorted,
+    metrics: {
+      actionableNow: focusActions.length,
+      needsApproval: needsApprovalActions.length,
+      failedUnresolved: unresolvedFailedActions.length,
+      hiddenLegacy: hiddenLegacyActions.length,
+      completedHistory: completedHistoryActions.length,
+      safetyHistory: safetyHistoryActions.length,
+      totalHistory: sorted.length,
+    },
+  }
+}
+
+function matchesFocusTarget(item, { actionId, leadId } = {}) {
+  return Boolean((actionId && item.id === actionId) || (leadId && item.leadId === leadId))
+}
+
 const ACTION_ALIASES = {
   stage_change_recommendation: 'stage_change_recommendation',
   telegram_reply_draft: 'telegram_reply_draft',
@@ -807,6 +940,26 @@ async function executeQueueItem(userId, workspaceId, queueId) {
   }
 }
 
+
+async function getFocusSummary(userId, workspaceId, options = {}) {
+  const items = await listQueue(userId, workspaceId)
+  const focusState = buildFocusQueueState(items)
+  const summary = focusState.metrics
+  console.info('[ai-workers-focus] focus queue built', { workspaceId, actionableNow: summary.actionableNow, totalHistory: summary.totalHistory })
+  console.info('[ai-workers-focus] legacy actions hidden', { workspaceId, hiddenLegacy: summary.hiddenLegacy })
+
+  const target = { actionId: options.actionId, leadId: options.leadId }
+  if (target.actionId || target.leadId) {
+    const hiddenSections = []
+    if (focusState.hiddenLegacyActions.some((item) => matchesFocusTarget(item, target))) hiddenSections.push('legacy')
+    if (focusState.completedHistoryActions.some((item) => matchesFocusTarget(item, target))) hiddenSections.push('completed')
+    if (focusState.safetyHistoryActions.some((item) => matchesFocusTarget(item, target))) hiddenSections.push('safety')
+    if (hiddenSections.length) console.info('[ai-workers-focus] route highlight expanded hidden section', { workspaceId, actionId: target.actionId || null, leadId: target.leadId || null, sections: hiddenSections })
+  }
+
+  return summary
+}
+
 async function getMetrics(userId, workspaceId) {
   const result = await pool.query(
     `SELECT
@@ -841,4 +994,4 @@ async function getMetrics(userId, workspaceId) {
   }
 }
 
-module.exports = { approveQueueItem, buildMeetingConfirmationDraftText, executeQueueItem, getMetrics, getQueueItemLogContext, listQueue, rejectQueueItem, updateQueueItem }
+module.exports = { approveQueueItem, buildFocusQueueState, buildMeetingConfirmationDraftText, executeQueueItem, getFocusSummary, getMetrics, getQueueItemLogContext, listQueue, rejectQueueItem, updateQueueItem }

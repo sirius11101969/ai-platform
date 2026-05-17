@@ -1,5 +1,12 @@
 const service = require('../services/aiApprovalQueueService')
 
+async function focusSummary(req, res, next) {
+  try {
+    const metrics = await service.getFocusSummary(req.user.id, req.workspace.id, { leadId: req.query.leadId, actionId: req.query.actionId })
+    res.json(metrics)
+  } catch (error) { next(error) }
+}
+
 async function list(req, res, next) {
   try {
     const [items, metrics] = await Promise.all([
@@ -38,4 +45,4 @@ async function send(req, res, next) {
   } catch (error) { next(error) }
 }
 
-module.exports = { approve, execute, list, reject, send, update }
+module.exports = { approve, execute, focusSummary, list, reject, send, update }
