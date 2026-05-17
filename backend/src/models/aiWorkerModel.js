@@ -1,4 +1,5 @@
 const pool = require('../db/pool')
+const { createFollowupSequenceDrafts } = require('../services/autonomousFollowupQueueService')
 
 const WORKER_TYPES = [
   'ai_sdr_agent',
@@ -22,10 +23,10 @@ const DEFAULT_WORKERS = [
     description: 'Анализирует новые лиды, определяет приоритет и предлагает первый следующий шаг.',
   },
   {
-    name: 'AI Follow-up Worker',
+    name: 'AI Follow-up Engine',
     type: 'ai_followup_worker',
     mode: 'approval_required',
-    description: 'Находит неактивных лидов и готовит безопасные follow-up рекомендации без автоотправки.',
+    description: 'Находит stale conversations и готовит безопасные follow-up drafts без автоотправки.',
   },
   {
     name: 'AI Revenue Analyst',
@@ -112,7 +113,11 @@ async function ensureDefaultWorkers(workspaceId, client = pool) {
     await client.query(
       `INSERT INTO ai_workers(workspace_id, name, type, status, mode, description)
        VALUES($1, $2, $3, 'active', $4, $5)
-       ON CONFLICT (workspace_id, type) DO NOTHING`,
+       ON CONFLICT (workspace_id, type) DO UPDATE
+         SET name = CASE WHEN ai_workers.type = 'ai_followup_worker' THEN EXCLUDED.name ELSE ai_workers.name END,
+             mode = CASE WHEN ai_workers.type = 'ai_followup_worker' THEN EXCLUDED.mode ELSE ai_workers.mode END,
+             description = CASE WHEN ai_workers.type = 'ai_followup_worker' THEN EXCLUDED.description ELSE ai_workers.description END,
+             updated_at = NOW()`,
       [workspaceId, worker.name, worker.type, worker.mode, worker.description]
     )
   }
@@ -328,32 +333,48 @@ async function runWorker({ userId, workspaceId, workerId }) {
     const worker = await getWorker(workspaceId, workerId, client)
     if (worker.status === 'paused') throw Object.assign(new Error('AI worker is paused'), { statusCode: 400 })
     const leads = await fetchLeadSnapshot(workspaceId)
-    const recommendations = buildRecommendations(worker, leads)
+    const recommendations = worker.type === 'ai_followup_worker' ? [] : buildRecommendations(worker, leads)
     const inputContext = {
       workerType: worker.type,
       mode: worker.mode,
       leadCount: leads.length,
-      generatedBy: 'deterministic_v1',
+      generatedBy: worker.type === 'ai_followup_worker' ? 'autonomous_followup_engine_v1' : 'deterministic_v1',
+      safety: worker.type === 'ai_followup_worker' ? 'human_approval_required_no_auto_send' : undefined,
     }
-    const outputSummary = buildOutputSummary(worker, leads, recommendations)
-    const creditsSpent = Math.max(1, recommendations.length || 1)
+    const initialOutputSummary = buildOutputSummary(worker, leads, recommendations)
     const runResult = await client.query(
       `INSERT INTO ai_worker_runs(worker_id, workspace_id, lead_id, input_context, output_summary, status, credits_spent)
        VALUES($1, $2, $3, $4, $5, 'completed', $6)
        RETURNING *`,
-      [worker.id, workspaceId, recommendations[0]?.leadId || null, inputContext, outputSummary, creditsSpent]
+      [worker.id, workspaceId, recommendations[0]?.leadId || null, inputContext, initialOutputSummary, Math.max(1, recommendations.length || 1)]
     )
-    const run = normalizeRun(runResult.rows[0])
+    let run = normalizeRun(runResult.rows[0])
     const queueItems = []
-    for (const recommendation of recommendations) {
-      const queued = await client.query(
-        `INSERT INTO ai_worker_queue(worker_id, workspace_id, run_id, lead_id, action_type, status, title, recommendation, payload)
-         VALUES($1, $2, $3, $4, $5, 'pending_approval', $6, $7, $8)
-         RETURNING *`,
-        [worker.id, workspaceId, run.id, recommendation.leadId, recommendation.actionType, recommendation.title, recommendation.recommendation, recommendation.payload]
-      )
-      queueItems.push(normalizeQueueItem(queued.rows[0]))
+    if (worker.type === 'ai_followup_worker') {
+      const scan = await createFollowupSequenceDrafts({ client, userId, workspaceId, workerId: worker.id, runId: run.id })
+      for (const item of scan.created) queueItems.push(normalizeQueueItem(item))
+      const outputSummary = {
+        summary: `AI Follow-up Engine проверил ${scan.scannedLeadsCount} stale conversations и создал ${scan.createdCount} drafts на approval`,
+        scannedLeads: scan.scannedLeadsCount,
+        createdDrafts: scan.createdCount,
+        skipped: scan.skippedCount,
+        actionType: 'followup_sequence_draft',
+        noAutoSend: true,
+      }
+      const updatedRun = await client.query('UPDATE ai_worker_runs SET lead_id = $3, output_summary = $4, credits_spent = $5 WHERE workspace_id = $1 AND id = $2 RETURNING *', [workspaceId, run.id, queueItems[0]?.lead_id || null, outputSummary, Math.max(1, scan.scannedLeadsCount || 1)])
+      run = normalizeRun(updatedRun.rows[0])
+    } else {
+      for (const recommendation of recommendations) {
+        const queued = await client.query(
+          `INSERT INTO ai_worker_queue(worker_id, workspace_id, run_id, lead_id, action_type, status, title, recommendation, payload)
+           VALUES($1, $2, $3, $4, $5, 'pending_approval', $6, $7, $8)
+           RETURNING *`,
+          [worker.id, workspaceId, run.id, recommendation.leadId, recommendation.actionType, recommendation.title, recommendation.recommendation, recommendation.payload]
+        )
+        queueItems.push(normalizeQueueItem(queued.rows[0]))
+      }
     }
+    const outputSummary = run.output_summary
     await client.query('UPDATE ai_workers SET last_run_at = NOW(), status = $3, updated_at = NOW() WHERE workspace_id = $1 AND id = $2', [workspaceId, worker.id, 'active'])
     await client.query(
       `INSERT INTO crm_activity(workspace_id, user_id, type, title, body, metadata)

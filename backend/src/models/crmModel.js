@@ -1014,13 +1014,16 @@ async function getStats(userId, workspaceId) {
     ),
     pool.query(
       `WITH latest AS (SELECT DISTINCT ON (lead_id) lead_id, score FROM lead_ai_scores WHERE workspace_id = $1 ORDER BY lead_id, generated_at DESC), activity AS (
-         SELECT l.id, GREATEST(l.updated_at, COALESCE(MAX(tm.created_at), l.updated_at), COALESCE(MAX(em.created_at), l.updated_at), COALESCE(MAX(n.created_at), l.updated_at)) AS last_activity_at
-           FROM crm_leads l LEFT JOIN telegram_messages tm ON tm.lead_id = l.id AND tm.workspace_id = l.workspace_id LEFT JOIN email_messages em ON em.lead_id = l.id AND em.workspace_id = l.workspace_id LEFT JOIN crm_notes n ON n.lead_id = l.id AND n.workspace_id = l.workspace_id
-          WHERE l.user_id = $2 AND l.workspace_id = $1 AND l.status NOT IN ('won','lost') GROUP BY l.id
+         SELECT l.id, GREATEST(COALESCE(l.last_message_at, 'epoch'::timestamptz), COALESCE(MAX(tm.created_at), 'epoch'::timestamptz), COALESCE(MAX(em.created_at), 'epoch'::timestamptz)) AS last_activity_at
+           FROM crm_leads l LEFT JOIN telegram_messages tm ON tm.lead_id = l.id AND tm.workspace_id = l.workspace_id LEFT JOIN email_messages em ON em.lead_id = l.id AND em.workspace_id = l.workspace_id
+          WHERE l.user_id = $2 AND l.workspace_id = $1 AND l.status NOT IN ('won','lost') AND (l.last_message_at IS NOT NULL OR tm.id IS NOT NULL OR em.id IS NOT NULL) GROUP BY l.id
        )
-       SELECT (SELECT COUNT(*)::int FROM ai_followup_jobs j JOIN crm_leads l ON l.id = j.lead_id AND l.workspace_id = j.workspace_id WHERE j.workspace_id = $1 AND l.user_id = $2 AND j.status IN ('suggested','approved')) AS pending,
-              (SELECT COUNT(*)::int FROM ai_followup_jobs j JOIN crm_leads l ON l.id = j.lead_id AND l.workspace_id = j.workspace_id WHERE j.workspace_id = $1 AND l.user_id = $2 AND j.status = 'sent' AND j.sent_at::date = CURRENT_DATE) AS sent_today,
-              COUNT(*) FILTER (WHERE latest.score >= 70 AND activity.last_activity_at < NOW() - INTERVAL '12 hours')::int AS hot_without_contact
+       SELECT ((SELECT COUNT(*)::int FROM ai_followup_jobs j JOIN crm_leads l ON l.id = j.lead_id AND l.workspace_id = j.workspace_id WHERE j.workspace_id = $1 AND l.user_id = $2 AND j.status IN ('suggested','approved'))
+               + (SELECT COUNT(*)::int FROM ai_worker_queue q JOIN crm_leads l ON l.id = q.lead_id AND l.workspace_id = q.workspace_id WHERE q.workspace_id = $1 AND l.user_id = $2 AND q.action_type = 'followup_sequence_draft' AND q.status IN ('pending_approval','approved'))) AS pending,
+              ((SELECT COUNT(*)::int FROM ai_followup_jobs j JOIN crm_leads l ON l.id = j.lead_id AND l.workspace_id = j.workspace_id WHERE j.workspace_id = $1 AND l.user_id = $2 AND j.status = 'sent' AND j.sent_at::date = CURRENT_DATE)
+               + (SELECT COUNT(*)::int FROM ai_worker_queue q JOIN crm_leads l ON l.id = q.lead_id AND l.workspace_id = q.workspace_id WHERE q.workspace_id = $1 AND l.user_id = $2 AND q.action_type = 'followup_sequence_draft' AND q.status IN ('completed','executed') AND q.executed_at::date = CURRENT_DATE)) AS sent_today,
+              COUNT(*) FILTER (WHERE latest.score >= 70 AND activity.last_activity_at < NOW() - INTERVAL '12 hours')::int AS hot_without_contact,
+              COUNT(*) FILTER (WHERE activity.last_activity_at < NOW() - INTERVAL '24 hours')::int AS stale_conversations
          FROM activity LEFT JOIN latest ON latest.lead_id = activity.id`,
       [workspaceId, userId]
     ),
@@ -1179,6 +1182,7 @@ async function getStats(userId, workspaceId) {
       executionSuccessRate: aiExecutionFinished ? Math.round((Number(aiExecution.sent_total || 0) / aiExecutionFinished) * 100) : 0,
       autonomousFollowUpsPending: Number(followupMetrics.pending || 0),
       hotLeadsWithoutContact: Number(followupMetrics.hot_without_contact || 0),
+      staleConversations: Number(followupMetrics.stale_conversations || 0),
       autonomousFollowUpsSentToday: Number(followupMetrics.sent_today || 0),
       followUpConversionPlaceholder: 0,
       outreachGeneratedToday: Number(outreachMetrics.generated_today || 0),
