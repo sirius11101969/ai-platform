@@ -243,6 +243,8 @@ export default function DashboardPage() {
         <StatCard label="AI сообщений отправлено сегодня" value={loading ? "…" : String(crmStats?.aiMetrics?.aiMessagesSentToday || aiApprovalMetrics?.executedToday || 0)} hint="Только после approval менеджера" tone="pink" />
         <StatCard label="Ответы получены сегодня" value={loading ? "…" : String(crmStats?.aiMetrics?.repliesReceivedToday || 0)} hint="Inbound Telegram replies привязаны к лидам" />
         <StatCard label="Pending approvals" value={loading ? "…" : String(crmStats?.aiMetrics?.pendingApprovals || aiApprovalMetrics?.waitingApproval || 0)} hint="AI черновики и stage suggestions ждут менеджера" tone="pink" />
+        <StatCard label="Meetings scheduled by AI" value={loading ? "…" : String(crmStats?.aiMetrics?.meetingsScheduledByAi || aiApprovalMetrics?.meetingsScheduledByAi || 0)} hint="Запланированы после approval" tone="violet" />
+        <StatCard label="Pending meeting proposals" value={loading ? "…" : String(crmStats?.aiMetrics?.pendingMeetingProposals || aiApprovalMetrics?.pendingMeetingProposals || 0)} hint="Demo-созвоны ждут решения менеджера" tone="pink" />
         <StatCard label="AI stage recommendations pending" value={loading ? "…" : String(crmStats?.aiMetrics?.stageRecommendationsPending || 0)} hint="stage_change_recommendation ждёт approval" tone="pink" />
         <StatCard label="Revenue At Risk" value={loading ? "…" : formatCurrency(crmStats?.aiMetrics?.revenueAtRisk || 0)} hint="weighted forecast in at-risk/lost-risk deals" tone="pink" />
         <StatCard label="High Probability Deals" value={loading ? "…" : String(crmStats?.aiMetrics?.highProbabilityDeals || 0)} hint="probability ≥ 70%" tone="violet" />

@@ -8,6 +8,7 @@ const crmModel = require('../models/crmModel')
 const { addTimelineEvent } = require('./timelineService')
 const { ensureDefaultWorkspace } = require('../models/workspaceModel')
 const emailService = require('./emailService')
+const { createMeetingScheduleProposal } = require('./aiMeetingSchedulerService')
 
 const TELEGRAM_API_BASE = 'https://api.telegram.org'
 const DEMO_SITE_URL = 'https://www.as6.ru'
@@ -696,6 +697,7 @@ async function upsertLeadWithIncomingMessage(telegram, retryOnDuplicate = true) 
     console.info('[telegram] inbound attached', { leadId: lead.id, chatId: String(telegram.chatId) })
     await logActivity(client, userId, workspaceId, lead.id, 'telegram_reply_received', 'Telegram reply received', telegram.text, { telegramUserId: telegram.userId, chatId: telegram.chatId, messageId: telegram.messageId })
     await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'telegram_reply_received', title: 'Получен ответ в Telegram', body: telegram.text, source: 'telegram', metadata: { telegramUserId: telegram.userId, chatId: telegram.chatId, messageId: telegram.messageId } })
+    await createMeetingScheduleProposal(client, { userId, workspaceId, lead, messageText: telegram.text, channel: 'telegram', sourceMessageId: telegram.messageId })
     await createInboundReplyRecommendations(client, { userId, workspaceId, lead, telegram })
     await client.query('COMMIT')
     return { lead, note: note.rows[0], telegramMessage, isNew, userId, workspaceId }

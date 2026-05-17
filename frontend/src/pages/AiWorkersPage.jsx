@@ -9,6 +9,7 @@ const typeLabels = {
   ai_crm_assistant: "AI CRM Assistant",
   ai_email_assistant: "AI Email Assistant",
   ai_telegram_assistant: "AI Telegram Assistant",
+  ai_meeting_scheduler: "AI Meeting Scheduler",
 };
 
 const statusLabels = {
@@ -56,6 +57,7 @@ const actionTypeLabels = {
   crm_next_action: "CRM действие",
   lead_prioritization: "Приоритизация",
   stage_change_recommendation: "AI рекомендация этапа",
+  meeting_schedule_proposal: "Встреча / demo-созвон",
 };
 
 function formatDate(value) {
@@ -123,6 +125,33 @@ function getForecastRiskBadge(item) {
   return "";
 }
 
+
+function isMeetingScheduleProposal(item) {
+  return item?.actionType === "meeting_schedule_proposal" || item?.executionType === "meeting_schedule_proposal";
+}
+
+function formatMeetingStart(value) {
+  if (!value) return "нужно уточнить у клиента";
+  return new Intl.DateTimeFormat("ru-RU", { dateStyle: "short", timeStyle: "short" }).format(new Date(value));
+}
+
+function renderMeetingScheduleDetails(item) {
+  if (!isMeetingScheduleProposal(item)) return null;
+  const payload = item.payload || {};
+  return (
+    <div className="approval-stage-details meeting-schedule-details">
+      <span>Лид <b>{item.lead?.name || payload.leadName || "—"}</b></span>
+      <span>Входящее <b>{payload.inboundMessage || payload.customerMessage || "—"}</b></span>
+      <span>Дата/время <b>{payload.detectedDateText || "—"} {payload.detectedTimeText || "—"}</b></span>
+      <span>Старт <b>{formatMeetingStart(payload.proposedStartTime)}</b></span>
+      <span>Название <b>{payload.proposedTitle || "Demo-созвон"}</b></span>
+      <span>Длительность <b>{payload.durationMinutes || 30} мин</b></span>
+      <span>Confidence <b>{payload.confidence || "—"}%</b></span>
+      <span>Канал <b>{payload.channel || "—"}</b></span>
+    </div>
+  );
+}
+
 function isTelegramReplyDraft(item) {
   return item?.actionType === "telegram_reply_draft" || item?.executionType === "telegram_reply_draft";
 }
@@ -183,7 +212,7 @@ const approvalActionLoadingLabels = {
 };
 
 const APPROVAL_ACTION_TIMEOUT_MS = 20000;
-const executableApprovalTypes = new Set(["telegram_reply_draft", "telegram_followup", "email_followup", "send_demo_link", "send_presentation", "create_reminder", "move_lead_stage", "stage_change_recommendation"]);
+const executableApprovalTypes = new Set(["telegram_reply_draft", "telegram_followup", "email_followup", "send_demo_link", "send_presentation", "create_reminder", "move_lead_stage", "stage_change_recommendation", "meeting_schedule_proposal"]);
 
 function isApprovalItemExecutable(item) {
   return executableApprovalTypes.has(item.executionType || item.actionType);
@@ -337,6 +366,13 @@ export default function AiWorkersPage() {
       setEditingDraft({ itemId: item.id, text: getDraftText(item) });
       return;
     }
+    if (isMeetingScheduleProposal(item)) {
+      const currentTime = item.payload?.proposedStartTime || "";
+      const nextTime = window.prompt("Изменить время встречи (ISO или YYYY-MM-DDTHH:mm)", currentTime);
+      if (nextTime === null) return;
+      saveApprovalItemEdit(item, nextTime);
+      return;
+    }
     const currentText = item.recommendation || item.title || "";
     const nextText = window.prompt("Изменить рекомендацию AI", currentText);
     if (nextText === null) return;
@@ -352,6 +388,10 @@ export default function AiWorkersPage() {
         await updateAiApprovalQueueItem(item.id, { payload: { ...(item.payload || {}), draftText: item.payload?.draftText || item.payload?.text || item.payload?.message || item.recommendation || "", editedText: normalizedText, edited_text: normalizedText, text: normalizedText, message: normalizedText, editedByManager: true } });
         setEditingDraft({ itemId: "", text: "" });
         setMessage("AI draft response изменён.");
+      } else if (isMeetingScheduleProposal(item)) {
+        const normalizedTime = String(nextText || "").trim();
+        await updateAiApprovalQueueItem(item.id, { payload: { ...(item.payload || {}), proposedStartTime: normalizedTime || null, managerEditedTime: true } });
+        setMessage("Время встречи изменено.");
       } else {
         await updateAiApprovalQueueItem(item.id, { recommendation: nextText });
         setMessage("AI рекомендация изменена.");
@@ -421,6 +461,8 @@ export default function AiWorkersPage() {
         <StatCard label="Очередь AI задач" value={loading ? "…" : String(metrics.queueActive || 0)} hint="Рекомендации в работе и ожидании" tone="violet" />
         <StatCard label="Действия на одобрение" value={loading ? "…" : String(metrics.pendingActions || 0)} hint="Ничего не отправляется без человека" tone="pink" />
         <StatCard label="AI эффективность" value={loading ? "…" : `${metrics.efficiency || 0}%`} hint="Доля успешных запусков AI работников" />
+        <StatCard label="Meetings scheduled by AI" value={loading ? "…" : String(approvalMetrics.meetingsScheduledByAi || 0)} hint="После approval менеджера" tone="violet" />
+        <StatCard label="Pending meeting proposals" value={loading ? "…" : String(approvalMetrics.pendingMeetingProposals || 0)} hint="AI предложения demo-созвона ждут решения" tone="pink" />
         <StatCard label="Выручка под контролем AI" value={loading ? "…" : formatMoney(metrics.revenueUnderAi)} hint="Плейсхолдер revenue impact по открытой воронке" tone="violet" />
       </section>
 
@@ -438,6 +480,7 @@ export default function AiWorkersPage() {
           <span>Выполнено сегодня <b>{approvalMetrics.executedToday || 0}</b></span>
           <span>Ошибок сегодня <b>{approvalMetrics.failedToday || 0}</b></span>
           <span>Успешность <b>{approvalMetrics.successRate || 0}%</b></span>
+          <span>Meeting proposals <b>{approvalMetrics.pendingMeetingProposals || 0}</b></span>
         </div>
         <div className="approval-table">
           {activeApprovalItems.length === 0 && <p className="empty-state">Нет AI действий на одобрение.</p>}
@@ -455,6 +498,7 @@ export default function AiWorkersPage() {
                 <strong>{item.title}</strong>
                 <p>{shortRecommendation(item)}</p>
                 {renderStageDetails(item)}
+                {renderMeetingScheduleDetails(item)}
                 {renderTelegramReplyDraft(item, {
                   isEditing: isEditingThisDraft,
                   editText: isEditingThisDraft ? editingDraft.text : getDraftText(item),
@@ -498,6 +542,7 @@ export default function AiWorkersPage() {
                     <strong>{item.title}</strong>
                     <p>{shortRecommendation(item)}</p>
                     {renderStageDetails(item)}
+                    {renderMeetingScheduleDetails(item)}
                     {renderTelegramReplyDraft(item)}
                     {item.errorMessage && <small className="email-error-text">Ошибка выполнения: {formatApprovalErrorMessage(item.errorMessage)}</small>}
                   </div>
