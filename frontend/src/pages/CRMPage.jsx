@@ -88,6 +88,8 @@ function getActivityTitle(event) {
     telegram_connected: "Telegram подключён",
     telegram_message_sent: "Telegram сообщение отправлено",
     telegram_ai_reply_sent: "AI ответ отправлен в Telegram",
+    ai_telegram_reply_drafted: "AI Telegram черновик создан",
+    telegram_reply_analysis_created: "AI анализ Telegram создан",
     meeting_scheduled: "Встреча запланирована",
     follow_up_scheduled: "Follow‑up запланирован",
     attachment_delivered: "Вложение доставлено",
@@ -218,7 +220,7 @@ function getStageRecommendationConfidence(item) {
 }
 
 function timelineTitle(event) {
-  return ({ telegram_connected: 'Telegram подключён', telegram_reply_received: 'Ответ Telegram получен', telegram_message_sent: 'Telegram сообщение отправлено', telegram_inbound: 'Telegram inbound', telegram_outbound_ai: 'Telegram outbound AI', ai_draft_created: 'AI черновик создан', ai_draft_approved: 'AI черновик одобрен', telegram_sent: 'Telegram отправлен', lead_replied: 'Лид ответил', send_failed: 'Отправка не выполнена', ai_stage_suggested: 'AI предложил этап', ai_stage_recommendation: 'AI рекомендовал этап', stage_approved: 'Этап одобрен', stage_changed: 'Этап изменён', opportunity_risk_detected: 'Риск сделки обнаружен', ai_risk_detected: 'AI риск обнаружен', ai_forecast_updated: 'AI прогноз обновлён', ai_next_action_generated: 'AI следующий шаг', email_sent: 'Email отправлен', email_failed: 'Email не отправлен', ai_score_updated: 'AI score обновлён', follow_up_draft: 'Follow-up черновик', sent_follow_up: 'Follow-up отправлен', attachments_sent: 'Материалы отправлены', lead_moved: 'Этап изменён', note_added: 'Заметка', ai_action_sent: 'AI действие отправлено', ai_action_approved: 'AI действие одобрено', ai_action_rejected: 'AI действие отклонено', ai_action_executed: 'AI действие выполнено', ai_action_failed: 'AI действие не выполнено', follow_up_suggested: 'Follow-up suggested', follow_up_approved: 'Follow-up approved', follow_up_rejected: 'Follow-up rejected', follow_up_sent: 'Follow-up sent', follow_up_failed: 'Follow-up failed' }[event?.type] || event?.title || 'Событие');
+  return ({ telegram_connected: 'Telegram подключён', telegram_reply_received: 'Ответ Telegram получен', telegram_message_sent: 'Telegram сообщение отправлено', telegram_inbound: 'Telegram inbound', telegram_outbound_ai: 'Telegram outbound AI', ai_draft_created: 'AI черновик создан', ai_draft_approved: 'AI черновик одобрен', telegram_sent: 'Telegram отправлен', lead_replied: 'Лид ответил', send_failed: 'Отправка не выполнена', ai_stage_suggested: 'AI предложил этап', ai_stage_recommendation: 'AI рекомендовал этап', stage_approved: 'Этап одобрен', stage_changed: 'Этап изменён', opportunity_risk_detected: 'Риск сделки обнаружен', ai_risk_detected: 'AI риск обнаружен', ai_forecast_updated: 'AI прогноз обновлён', ai_next_action_generated: 'AI следующий шаг', email_sent: 'Email отправлен', email_failed: 'Email не отправлен', ai_score_updated: 'AI score обновлён', follow_up_draft: 'Follow-up черновик', sent_follow_up: 'Follow-up отправлен', attachments_sent: 'Материалы отправлены', lead_moved: 'Этап изменён', note_added: 'Заметка', ai_action_sent: 'AI действие отправлено', ai_action_approved: 'AI действие одобрено', ai_action_rejected: 'AI действие отклонено', ai_action_executed: 'AI действие выполнено', ai_action_failed: 'AI действие не выполнено', ai_telegram_reply_drafted: 'AI Telegram черновик создан', telegram_reply_analysis_created: 'AI анализ Telegram создан', follow_up_suggested: 'Follow-up suggested', follow_up_approved: 'Follow-up approved', follow_up_rejected: 'Follow-up rejected', follow_up_sent: 'Follow-up sent', follow_up_failed: 'Follow-up failed' }[event?.type] || event?.title || 'Событие');
 }
 
 const modalCloseStack = [];
@@ -1053,6 +1055,7 @@ function LeadFormModal({ title, subtitle, stages, leadForm, setLeadForm, saving,
 function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDraftChange, onAddNote, onFollowUp, onAiAction, onAnalyzeLeadAi, aiActionBusy = {}, followUpLoading, onDelete, onEdit, onMove, telegramMessages = [], telegramDraft = '', telegramSending = false, onTelegramDraftChange, onSendTelegramReply, emailTemplates = [], leadEmails = [], emailComposer, emailAttachments = [], emailBusy = false, onEmailComposerChange, onGenerateEmail, onUploadEmailAttachment, onSendEmail, actionCenter = { actions: [], timeline: [], attachments: [] }, materials = [], executionBusy = {}, onCreateExecutionAction, onApproveExecutionAction, onSendExecutionAction, onEditExecutionAction, onCancelExecutionAction, onSendMaterials, onApproveApprovalQueueItem, onRejectApprovalQueueItem, onExecuteApprovalQueueItem, onEditApprovalQueueItem, closeLeadModal }) {
   useModalCloseLifecycle(closeLeadModal);
   const telegramOutreachDrafts = getOutreachDrafts(lead, 'telegram');
+  const telegramReplyDrafts = (actionCenter.approvalItems || []).filter((item) => item.leadId === lead.id && (item.actionType === 'telegram_reply_draft' || item.executionType === 'telegram_reply_draft'));
   const emailOutreachDrafts = getOutreachDrafts(lead, 'email');
 
   return (
@@ -1235,7 +1238,18 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                 <span className="telegram-badge">Telegram drafts</span>
               </div>
               <div className="followup-history detail-followups">
-                {telegramOutreachDrafts.length === 0 && <p className="empty-state">Telegram черновики ещё не созданы.</p>}
+                {telegramOutreachDrafts.length === 0 && telegramReplyDrafts.length === 0 && <p className="empty-state">Telegram черновики ещё не созданы.</p>}
+                {telegramReplyDrafts.map((draft) => {
+                  const payload = draft.payload || {};
+                  const inboundText = payload.inboundText || payload.inboundMessage || payload.customerMessage || '';
+                  const draftText = payload.editedText || payload.edited_text || payload.draftText || payload.text || payload.message || draft.recommendation || '';
+                  const wasEdited = Boolean(payload.editedByManager || payload.editedText || payload.edited_text);
+                  return <article className="telegram-approval-preview" key={draft.id}>
+                    <div><span>Входящее</span><p>{inboundText || '—'}</p><small>{formatDate(draft.createdAt)}</small></div>
+                    <div><span>AI reply draft</span><p>{draftText || '—'}</p><small>{actionStatusLabel(draft.status)}{wasEdited ? ' · Изменено менеджером' : ''} · {formatDate(draft.updatedAt || draft.createdAt)}</small></div>
+                    <div className="execution-buttons"><button type="button" className="ghost-button compact" onClick={() => onApproveApprovalQueueItem(draft)} disabled={executionBusy[draft.id] || !['pending_approval','failed'].includes(draft.status)}>{executionBusy[draft.id] ? 'Работаем…' : 'Одобрить'}</button><button type="button" className="ghost-button compact" onClick={() => onEditApprovalQueueItem(draft)} disabled={executionBusy[draft.id] || ['executing','completed'].includes(draft.status)}>Изменить</button><button type="button" className="btn primary compact" onClick={() => onExecuteApprovalQueueItem(draft)} disabled={executionBusy[draft.id] || draft.status !== 'approved'}>{executionBusy[draft.id] ? 'Отправляем…' : 'Отправить'}</button></div>
+                  </article>;
+                })}
                 {telegramOutreachDrafts.map((draft) => <p className="ai-sequence-draft" key={draft.id}><b>{outreachTypeLabel(draft.outreachType)}:</b> {draft.text}<small>{actionStatusLabel(draft.status)} · score {draft.score || '—'} · {draft.temperature || 'AI'} · {formatDate(draft.createdAt)}</small><span className="execution-buttons"><button type="button" className="ghost-button compact" onClick={() => onApproveApprovalQueueItem(draft)} disabled={executionBusy[draft.id] || !['pending_approval','failed'].includes(draft.status)}>{executionBusy[draft.id] ? 'Работаем…' : 'Одобрить'}</button><button type="button" className="btn primary compact" onClick={() => onExecuteApprovalQueueItem(draft)} disabled={executionBusy[draft.id] || draft.status !== 'approved'}>{executionBusy[draft.id] ? 'Отправляем…' : 'Отправить'}</button></span></p>)}
               </div>
             </div>

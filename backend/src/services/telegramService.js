@@ -464,7 +464,7 @@ function buildTelegramStageReason(currentStatus, nextStage, text) {
 async function getTelegramReplyDraftContext(client, { workspaceId, lead, telegram }) {
   const [score, timeline] = await Promise.all([
     client.query(
-      `SELECT score, temperature, deal_probability, probability_to_close, risk_level, recommended_next_step, ai_summary, generated_at
+      `SELECT score, temperature, deal_probability, probability_to_close, forecast_category, risk_level, recommended_next_step, ai_summary, generated_at
          FROM lead_ai_scores
         WHERE workspace_id = $1 AND lead_id = $2
         ORDER BY generated_at DESC
@@ -495,6 +495,7 @@ async function getTelegramReplyDraftContext(client, { workspaceId, lead, telegra
       temperature: latestScore.temperature,
       dealProbability: latestScore.deal_probability,
       probabilityToClose: latestScore.probability_to_close,
+      forecastCategory: latestScore.forecast_category,
       riskLevel: latestScore.risk_level,
       summary: latestScore.ai_summary,
       generatedAt: latestScore.generated_at,
@@ -548,7 +549,7 @@ async function createInboundReplyRecommendations(client, { userId, workspaceId, 
       `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
        VALUES($1, $2, $3, 'telegram_reply_draft', 'pending_approval', $4, $5, $6)
        RETURNING id`,
-      [worker.id, workspaceId, lead.id, `Ответ в Telegram — ${lead.name}`, 'AI подготовил короткий человеческий ответ на последнее сообщение. Проверьте текст, при необходимости отредактируйте и отправьте после approval.', { source: 'telegram_inbound', outreachType: 'inbound_reply_next_step', channel: 'telegram', text, message: text, customerMessage: telegram.text, inboundMessage: telegram.text, telegramMessageId: String(telegram.messageId), chatId: String(telegram.chatId), leadName: lead.name, company: lead.company || '', currentStage: lead.status || '', lastAiScore: context.aiScore, recommendedNextStep: context.recommendedNextStep, timeline: context.timeline, model: generated.model, prompt: generated.prompt }]
+      [worker.id, workspaceId, lead.id, `Ответ в Telegram — ${lead.name}`, 'AI подготовил короткий человеческий ответ на последнее сообщение. Проверьте текст, при необходимости отредактируйте и отправьте после approval.', { source: 'telegram_inbound', outreachType: 'inbound_reply_next_step', channel: 'telegram', draftText: text, inboundText: telegram.text, text, message: text, customerMessage: telegram.text, inboundMessage: telegram.text, telegramMessageId: String(telegram.messageId), chatId: String(telegram.chatId), leadName: lead.name, company: lead.company || '', currentStage: lead.status || '', leadStage: lead.status || '', lastAiScore: context.aiScore, forecastCategory: context.aiScore?.forecastCategory || null, riskLevel: context.aiScore?.riskLevel || null, recommendedNextStep: context.recommendedNextStep, timeline: context.timeline, model: generated.model, prompt: generated.prompt }]
     )
     await addTimelineEvent(client, { workspaceId, leadId: lead.id, userId, eventType: 'ai_telegram_reply_drafted', title: 'AI подготовил черновик Telegram', body: text, source: 'ai', metadata: { queueId: draft.rows[0].id, actionType: 'telegram_reply_draft', telegramMessageId: telegram.messageId } })
   }
