@@ -119,14 +119,43 @@ function detectSchedulingIntent(text, { now = new Date(), timeZone = getTimezone
 }
 
 async function ensureMeetingSchedulerWorker(client, workspaceId) {
-  const result = await client.query(
+  await client.query(`SELECT pg_advisory_xact_lock(hashtext('ai_meeting_scheduler_worker'))`)
+
+  const existing = await client.query(
+    `SELECT id FROM ai_workers
+      WHERE type = 'ai_meeting_scheduler'
+      ORDER BY created_at ASC, id ASC
+      LIMIT 1`
+  )
+  if (existing.rows[0]) {
+    console.log('[meeting-scheduler] worker reused', { workerId: existing.rows[0].id })
+    return existing.rows[0]
+  }
+
+  const created = await client.query(
     `INSERT INTO ai_workers(workspace_id, name, type, status, mode, description)
      VALUES($1, 'AI Meeting Scheduler', 'ai_meeting_scheduler', 'active', 'approval_required', 'Определяет намерение назначить demo-созвон и создаёт предложения встреч только для ручного approval.')
-     ON CONFLICT (workspace_id, type) DO UPDATE SET updated_at = NOW()
+     ON CONFLICT DO NOTHING
      RETURNING id`,
     [workspaceId]
   )
-  return result.rows[0]
+  if (created.rows[0]) {
+    console.log('[meeting-scheduler] worker created', { workerId: created.rows[0].id })
+    return created.rows[0]
+  }
+
+  const reused = await client.query(
+    `SELECT id FROM ai_workers
+      WHERE type = 'ai_meeting_scheduler'
+      ORDER BY created_at ASC, id ASC
+      LIMIT 1`
+  )
+  if (reused.rows[0]) {
+    console.log('[meeting-scheduler] worker reused', { workerId: reused.rows[0].id })
+    return reused.rows[0]
+  }
+
+  throw new Error('AI Meeting Scheduler worker could not be created or reused')
 }
 
 async function createMeetingScheduleProposal(client, { userId, workspaceId, lead, messageText, channel, sourceMessageId }) {
