@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Panel, PageHeading, StatCard } from "../components/AppShell";
-import { approveAiApprovalQueueItem, downloadCrmMeetingIcs, executeAiApprovalQueueItem, fetchAiApprovalQueue, fetchAiCommandCenter, rejectAiApprovalQueueItem, runAiWorker, seedDemoSalesPipeline, sendAiApprovalQueueItem, updateAiApprovalQueueItem, updateAiWorker } from "../services/api";
+import { approveAiApprovalQueueItem, downloadCrmMeetingIcs, executeAiApprovalQueueItem, fetchAiApprovalQueue, fetchAiCommandCenter, rejectAiApprovalQueueItem, runAiWorker, seedDemoSalesPipeline, updateAiApprovalQueueItem, updateAiWorker } from "../services/api";
 
 const typeLabels = {
   ai_sdr_agent: "AI SDR Agent",
@@ -274,7 +274,6 @@ function getOptimisticApprovalItem(item, action, response) {
     approve: "approved",
     reject: "rejected",
     execute: "completed",
-    send: "completed",
   };
   const nextStatus = statusByAction[action];
   if (!nextStatus) return null;
@@ -287,13 +286,13 @@ function getOptimisticApprovalItem(item, action, response) {
 }
 
 function getApprovalActionErrorMessage(error, action) {
-  if (action === "send" && (error?.code === "REQUEST_TIMEOUT" || error?.name === "AbortError")) {
+  if (action === "execute" && (error?.code === "REQUEST_TIMEOUT" || error?.name === "AbortError")) {
     return "Отправка не завершилась. Попробуйте ещё раз.";
   }
   if (error?.code === "REQUEST_TIMEOUT") {
     return "Запрос выполняется дольше 15 секунд. Спиннер остановлен — попробуйте ещё раз или обновите очередь.";
   }
-  if (action === "send") {
+  if (action === "execute") {
     const message = String(error?.message || "");
     if (!error?.status && (!message || /failed to fetch|networkerror|load failed/i.test(message))) {
       return "Backend endpoint недоступен. Отправка не завершилась. Попробуйте ещё раз.";
@@ -311,14 +310,8 @@ function logApprovalAction(event, details) {
   console.log(`[ai-workers-ui] action ${event}`, details);
 }
 
-function logSendAction(event, details = {}) {
-  const labels = {
-    clicked: "send clicked",
-    start: "send request start",
-    success: "send request success",
-    failed: "send request failed",
-  };
-  console.log(`[ai-workers-ui] ${labels[event] || event}`, details);
+function logTelegramSendViaExecute(item) {
+  console.log("[ai-workers-ui] telegram send via execute", { actionId: item.id, actionType: item.executionType || item.actionType });
 }
 
 export default function AiWorkersPage() {
@@ -426,7 +419,7 @@ export default function AiWorkersPage() {
 
     actionInFlightRef.current.add(actionKey);
     setBusyActions((current) => ({ ...current, [actionKey]: { itemId: item.id, action } }));
-    if (action === "send") setLoadingKey(actionKey);
+    if (action === "execute") setLoadingKey(actionKey);
     setError("");
     setMessage("");
     logApprovalAction("start", { itemId: item.id, action, status: item.status });
@@ -440,18 +433,15 @@ export default function AiWorkersPage() {
         const errorMessage = formatApprovalErrorMessage(updatedItem?.errorMessage || response?.error);
         setError(errorMessage);
         logApprovalAction("failed", { itemId: item.id, action, error: errorMessage, status: updatedItem?.status });
-        if (action === "send") logSendAction("failed", { actionId: item.id, actionType: item.executionType || item.actionType, error: errorMessage });
         return;
       }
 
       onSuccess?.(response, updatedItem);
       logApprovalAction("success", { itemId: item.id, action, status: updatedItem?.status });
-      if (action === "send") logSendAction("success", { actionId: item.id, actionType: item.executionType || item.actionType });
     } catch (requestError) {
       const errorMessage = getApprovalActionErrorMessage(requestError, action);
       setError(errorMessage);
       logApprovalAction("failed", { itemId: item.id, action, error: errorMessage });
-      if (action === "send") logSendAction("failed", { actionId: item.id, actionType: item.executionType || item.actionType, error: errorMessage });
     } finally {
       actionInFlightRef.current.delete(actionKey);
       setBusyActions((current) => {
@@ -459,27 +449,22 @@ export default function AiWorkersPage() {
         delete next[actionKey];
         return next;
       });
-      if (action === "send") setLoadingKey((current) => (current === actionKey ? "" : current));
+      if (action === "execute") setLoadingKey((current) => (current === actionKey ? "" : current));
       await refreshApprovalStateAfterAction();
     }
   }
 
   async function handleApprovalAction(item, action) {
     const requestOptions = { timeoutMs: APPROVAL_ACTION_TIMEOUT_MS };
-    const sendEndpoint = `/ai/approval-queue/${item.id}/send`;
 
-    if (action === "send") {
-      logSendAction("clicked", { actionId: item.id, actionType: item.executionType || item.actionType });
+    if (action === "execute" && isTelegramReplyDraft(item)) {
+      logTelegramSendViaExecute(item);
     }
 
     const actionRequests = {
       approve: () => approveAiApprovalQueueItem(item.id, requestOptions),
       reject: () => rejectAiApprovalQueueItem(item.id, requestOptions),
       execute: () => executeAiApprovalQueueItem(item.id, requestOptions),
-      send: () => {
-        logSendAction("start", { endpoint: sendEndpoint });
-        return sendAiApprovalQueueItem(item.id, requestOptions);
-      },
     };
 
     const requestFactory = actionRequests[action];
@@ -495,7 +480,7 @@ export default function AiWorkersPage() {
         return;
       }
       if (["completed", "executed"].includes(updatedItem?.status)) {
-        setMessage(action === "send" ? "Отправлено" : "Выполнено");
+        setMessage(isTelegramReplyDraft(item) ? "Отправлено" : "Выполнено");
         return;
       }
       setMessage(approvalActionMessages[action] || "Статус AI действия обновлён");
@@ -643,15 +628,14 @@ export default function AiWorkersPage() {
             const isApproveBusy = Boolean(busyActions[getApprovalActionKey(item.id, "approve")]);
             const isEditBusy = Boolean(busyActions[getApprovalActionKey(item.id, "edit")]);
             const isRejectBusy = Boolean(busyActions[getApprovalActionKey(item.id, "reject")]);
-            const sendLoadingKey = getApprovalActionKey(item.id, "send");
-            const isSendBusy = loadingKey === sendLoadingKey;
-            const isExecuteActionBusy = Boolean(busyActions[getApprovalActionKey(item.id, "execute")]);
-            const isItemBusy = isApproveBusy || isEditBusy || isRejectBusy || isSendBusy || isExecuteActionBusy;
-            const busyLabel = isApproveBusy ? approvalActionLoadingLabels.approve : isEditBusy ? approvalActionLoadingLabels.edit : isRejectBusy ? approvalActionLoadingLabels.reject : isSendBusy ? approvalActionLoadingLabels.send : isExecuteActionBusy ? approvalActionLoadingLabels.execute : "";
+            const executeLoadingKey = getApprovalActionKey(item.id, "execute");
+            const isExecuteActionBusy = Boolean(busyActions[executeLoadingKey]) || loadingKey === executeLoadingKey;
+            const isItemBusy = isApproveBusy || isEditBusy || isRejectBusy || isExecuteActionBusy;
+            const busyLabel = isApproveBusy ? approvalActionLoadingLabels.approve : isEditBusy ? approvalActionLoadingLabels.edit : isRejectBusy ? approvalActionLoadingLabels.reject : isExecuteActionBusy ? approvalActionLoadingLabels.execute : "";
             const isEditingThisDraft = editingDraft.itemId === item.id;
-            const isExecuteBusy = isSendBusy || isExecuteActionBusy;
+            const isExecuteBusy = isExecuteActionBusy;
             const isTelegramDraftItem = isTelegramReplyDraft(item);
-            const sendDisabled = isSendBusy || item.status !== "approved" || !getDraftText(item).trim() || !getTelegramChatId(item);
+            const sendDisabled = item.status !== "approved" || loadingKey === executeLoadingKey;
             const isMeetingProposal = isMeetingScheduleProposal(item);
             const canEditItem = !isMeetingProposal || item.status === "pending_approval" || item.status === "failed";
             const canRejectItem = !isMeetingProposal || item.status === "pending_approval" || item.status === "failed";
@@ -689,7 +673,7 @@ export default function AiWorkersPage() {
                 )}
                 {(isTelegramDraftItem || (item.status === "approved" && isApprovalItemExecutable(item))) && (
                   isTelegramDraftItem ? (
-                    <button type="button" className="btn primary compact" onClick={() => handleApprovalAction(item, "send")} disabled={sendDisabled} aria-busy={isSendBusy}>{isSendBusy ? approvalActionLoadingLabels.send : "Отправить"}</button>
+                    <button type="button" className="btn primary compact" onClick={() => handleApprovalAction(item, "execute")} disabled={sendDisabled} aria-busy={isExecuteActionBusy}>{isExecuteActionBusy ? approvalActionLoadingLabels.send : "Отправить"}</button>
                   ) : (
                     <button type="button" className="btn primary compact" onClick={() => handleApprovalAction(item, "execute")} disabled={isItemBusy || item.status !== "approved"}>{isExecuteBusy ? busyLabel : "Выполнить"}</button>
                   )

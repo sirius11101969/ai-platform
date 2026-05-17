@@ -886,7 +886,7 @@ async function runTelegramMaterialWorkflow({ userId, workspaceId, leadId, chatId
   return { handled: true, success: true, intent, sent, failed, missingTypes, reply, telegramResponse }
 }
 
-async function sendTelegramMessageToLead({ userId, workspaceId, leadId, text }) {
+async function sendTelegramMessageToLead({ userId, workspaceId, leadId, text, actionId = null }) {
   const message = normalizeText(text)
   if (!message) throw Object.assign(new Error('Telegram message is required'), { statusCode: 400 })
   const lead = await crmModel.listLeads(userId, workspaceId).then((leads) => leads.find((item) => item.id === leadId))
@@ -895,7 +895,8 @@ async function sendTelegramMessageToLead({ userId, workspaceId, leadId, text }) 
   if (!chatId) throw Object.assign(new Error('Telegram не подключён для этого лида.'), { statusCode: 400 })
   const telegramResponse = await sendTelegramMessage(chatId, message)
   const telegramMessage = await crmModel.appendOutgoingTelegramMessage({ userId, workspaceId, leadId, message, telegramResponse })
-  return { telegramMessage, telegramResponse }
+  if (actionId) console.info('[telegram-send] sent', { actionId, leadId, chatId })
+  return { telegramMessage, telegramResponse, chatId }
 }
 
 async function notifyManager({ telegram, lead, isNew }) {

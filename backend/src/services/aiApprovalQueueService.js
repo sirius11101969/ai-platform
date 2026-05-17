@@ -562,8 +562,7 @@ async function executeByType(userId, workspaceId, item) {
   const channel = item.payload.channel || item.payload.suggestedChannel || (item.lead?.hasTelegramChatId ? 'telegram' : item.lead?.email ? 'email' : 'crm')
   if (type === 'meeting_schedule_proposal') return executeMeetingScheduleProposal(userId, workspaceId, item)
   if (type === 'telegram_reply_draft' || type === TELEGRAM_MEETING_CONFIRMATION_DRAFT || type === 'telegram_followup') {
-    console.info('[ai-workers-api] telegram send requested', { actionId: item.id })
-    return sendTelegramMessageToLead({ userId, workspaceId, leadId: item.leadId, text: buildMessage(item) })
+    return sendTelegramMessageToLead({ userId, workspaceId, leadId: item.leadId, text: buildMessage(item), actionId: item.id })
   }
   if (['followup_24h', 'followup_3d', 'demo_offer', 'meeting_request'].includes(type)) {
     if (channel === 'telegram') return sendTelegramMessageToLead({ userId, workspaceId, leadId: item.leadId, text: buildMessage(item) })
