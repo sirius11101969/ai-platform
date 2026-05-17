@@ -1,5 +1,5 @@
 const assert = require('assert')
-const { calculateLeadScoring } = require('../src/services/aiLeadScoringService')
+const { calculateLeadScoring, shouldCreatePriorityRecommendation } = require('../src/services/aiLeadScoringService')
 
 function daysAgo(days) {
   return new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString()
@@ -18,6 +18,27 @@ function testPricingQuestionIsUsefulButNotOverweighted() {
   assert.strictEqual(result.temperature, 'hot')
   assert.strictEqual(result.priority, 'high')
   assert.ok(result.scoringReason.length <= 500)
+}
+
+function testApprovalRecommendationGateKeepsGenericHighOutOfQueue() {
+  const result = calculateLeadScoring({
+    lead: { id: 'pricing', name: 'Pricing Lead', source: 'telegram', telegram_chat_id: '42', value: 100000, updated_at: daysAgo(0.2) },
+    telegramMessages: [{ role: 'user', direction: 'inbound', message: 'Какая цена и тариф для команды sales?', created_at: daysAgo(0.1) }],
+    meetings: [],
+    followups: [],
+  })
+
+  assert.strictEqual(result.score, 51)
+  assert.strictEqual(result.priority, 'high')
+  assert.strictEqual(result.riskLevel, 'low')
+  assert.strictEqual(shouldCreatePriorityRecommendation(result), false, 'generic score 50-69/high leads must update CRM and timeline without approval noise')
+}
+
+function testApprovalRecommendationGateAllowsImportantScoringSignals() {
+  assert.strictEqual(shouldCreatePriorityRecommendation({ score: 59, priority: 'high', riskLevel: 'medium' }), true)
+  assert.strictEqual(shouldCreatePriorityRecommendation({ score: 70, priority: 'priority', riskLevel: 'low' }), true)
+  assert.strictEqual(shouldCreatePriorityRecommendation({ score: 66, priority: 'high', riskLevel: 'low', nextBestAction: 'Срочно связаться с клиентом' }), true)
+  assert.strictEqual(shouldCreatePriorityRecommendation({ score: 67, priority: 'high', riskLevel: 'low' }), false)
 }
 
 function testMeetingBookedCreatesPriorityWithoutUrgentInflation() {
@@ -82,6 +103,8 @@ function testClosedLeadsDoNotPollutePriorityQueue() {
 
 function main() {
   testPricingQuestionIsUsefulButNotOverweighted()
+  testApprovalRecommendationGateKeepsGenericHighOutOfQueue()
+  testApprovalRecommendationGateAllowsImportantScoringSignals()
   testMeetingBookedCreatesPriorityWithoutUrgentInflation()
   testEnterpriseHotLeadCanBecomeUrgent()
   testInactiveLeadRiskDetected()

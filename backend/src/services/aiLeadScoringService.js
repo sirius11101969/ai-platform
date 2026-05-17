@@ -39,6 +39,24 @@ function priorityForScore(score, { hasStrongBuyingSignal = false, riskLevel = 'l
   return 'low'
 }
 
+function isUrgentNextBestAction(result = {}) {
+  const text = [result.nextBestAction, result.recommendedNextStep, result.nextBestActionCode, result.actionCode]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase()
+  return /urgent|asap|сроч|немедленно|эскал|escalate/.test(text)
+}
+
+function shouldCreatePriorityRecommendation(result = {}) {
+  const score = Number(result.score ?? result.aiScore ?? 0)
+  const priority = result.priority || result.aiPriority
+  const riskLevel = result.riskLevel || result.aiRiskLevel
+  return ['priority', 'urgent'].includes(priority)
+    || ['medium', 'high'].includes(riskLevel)
+    || score >= 70
+    || isUrgentNextBestAction(result)
+}
+
 function normalizeLeadStage(lead = {}) {
   return String(lead.status || lead.stage || lead.pipeline_stage || lead.stage_code || '').toLowerCase()
 }
@@ -200,26 +218,39 @@ async function buildLeadScoringContext(executor, userId, workspaceId, leadId) {
 
 async function createPriorityRecommendation(client, { workspaceId, userId, leadId, lead, result, source }) {
   const stage = normalizeLeadStage(lead)
-  if (isClosedWonStage(stage) || isClosedLostStage(stage)) return null
-  if (!['priority', 'urgent'].includes(result.priority) && !['medium', 'high'].includes(result.riskLevel)) return null
+  if (isClosedWonStage(stage) || isClosedLostStage(stage)) {
+    console.info('[lead-scoring] recommendation skipped low priority', { workspaceId, leadId, score: result.score, priority: result.priority, riskLevel: result.riskLevel, reason: 'closed_lead' })
+    return null
+  }
+  if (!shouldCreatePriorityRecommendation(result)) {
+    console.info('[lead-scoring] recommendation skipped low priority', { workspaceId, leadId, score: result.score, priority: result.priority, riskLevel: result.riskLevel })
+    return null
+  }
   const worker = await ensureLeadScoringWorker(client, workspaceId)
   const title = result.riskLevel === 'high' ? 'Риск потери лида' : result.priority === 'urgent' ? 'Срочный приоритетный лид' : result.priority === 'priority' ? 'Высокий шанс сделки' : 'Рекомендуется follow-up по риску'
   const recommendation = result.riskLevel === 'high' ? 'Рекомендуется срочный follow-up: высокий риск потери лида.' : result.nextBestAction
   const duplicate = await client.query(
     `SELECT id FROM ai_worker_queue
       WHERE workspace_id = $1 AND lead_id = $2 AND action_type = $3
-        AND status IN ('pending_approval','approved','executing')
-        AND created_at > NOW() - INTERVAL '12 hours'
+        AND status IN ('pending_approval','approved')
+        AND (
+          payload->>'priority' = $4 OR payload->>'aiPriority' = $4
+          OR payload->>'riskLevel' = $5 OR payload->>'aiRiskLevel' = $5
+        )
       LIMIT 1`,
-    [workspaceId, leadId, PRIORITY_RECOMMENDATION_ACTION]
+    [workspaceId, leadId, PRIORITY_RECOMMENDATION_ACTION, result.priority, result.riskLevel]
   )
-  if (duplicate.rows[0]) return duplicate.rows[0]
+  if (duplicate.rows[0]) {
+    console.info('[lead-scoring] recommendation skipped low priority', { workspaceId, leadId, score: result.score, priority: result.priority, riskLevel: result.riskLevel, reason: 'duplicate_active_recommendation' })
+    return duplicate.rows[0]
+  }
   const inserted = await client.query(
     `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
      VALUES($1, $2, $3, $4, 'pending_approval', $5, $6, $7)
      RETURNING id`,
-    [worker.id, workspaceId, leadId, PRIORITY_RECOMMENDATION_ACTION, title, recommendation, { source, score: result.score, priority: result.priority, temperature: result.temperature, riskLevel: result.riskLevel, riskSignals: result.riskSignals, scoringReason: result.scoringReason, leadName: lead.name, recommendedNextStep: result.recommendedNextStep }]
+    [worker.id, workspaceId, leadId, PRIORITY_RECOMMENDATION_ACTION, title, recommendation, { source, score: result.score, aiScore: result.score, priority: result.priority, aiPriority: result.priority, temperature: result.temperature, riskLevel: result.riskLevel, aiRiskLevel: result.riskLevel, riskSignals: result.riskSignals, scoringReason: result.scoringReason, leadName: lead.name, recommendedNextStep: result.recommendedNextStep }]
   )
+  console.info('[lead-scoring] recommendation created', { workspaceId, leadId, score: result.score, priority: result.priority, riskLevel: result.riskLevel, queueId: inserted.rows[0]?.id })
   return inserted.rows[0]
 }
 
@@ -316,5 +347,6 @@ module.exports = {
   ensureLeadScoringWorker,
   scoreActiveLeads,
   scoreLead,
+  shouldCreatePriorityRecommendation,
   temperatureForScore,
 }

@@ -14,6 +14,12 @@ const TELEGRAM_MEETING_CONFIRMATION_DRAFT = 'telegram_meeting_confirmation_draft
 const FOLLOWUP_SEQUENCE_DRAFT = 'followup_sequence_draft'
 const EMAIL_FOLLOWUP_DRAFT = 'email_followup_draft'
 const EXECUTION_TYPES = [FOLLOWUP_SEQUENCE_DRAFT, EMAIL_FOLLOWUP_DRAFT, 'telegram_reply_draft', TELEGRAM_MEETING_CONFIRMATION_DRAFT, 'telegram_followup', 'email_followup', 'send_demo_link', 'send_presentation', 'create_reminder', 'move_lead_stage', 'stage_change_recommendation', 'followup_24h', 'followup_3d', 'demo_offer', 'meeting_request', 'meeting_schedule_proposal']
+const IMPORTANT_LEAD_PRIORITY_RECOMMENDATION_SQL = `(q.action_type <> 'lead_priority_recommendation' OR (
+  COALESCE(q.payload->>'priority', q.payload->>'aiPriority', '') IN ('priority','urgent')
+  OR COALESCE(q.payload->>'riskLevel', q.payload->>'aiRiskLevel', '') IN ('medium','high')
+  OR CASE WHEN (q.payload->>'score') ~ '^[0-9]+(\\.[0-9]+)?$' THEN (q.payload->>'score')::numeric ELSE 0 END >= 70
+  OR LOWER(CONCAT_WS(' ', q.recommendation, q.title, q.payload->>'recommendedNextStep', q.payload->>'nextBestAction')) ~ '(urgent|asap|сроч|немедленно|эскал|escalate)'
+))`
 
 const ACTION_ALIASES = {
   stage_change_recommendation: 'stage_change_recommendation',
@@ -146,6 +152,7 @@ async function listQueue(userId, workspaceId, filters = {}) {
     values.push(String(filters.status))
     clauses.push(`q.status = $${values.length}`)
   }
+  clauses.push(IMPORTANT_LEAD_PRIORITY_RECOMMENDATION_SQL)
   const result = await pool.query(
     `SELECT q.*, w.name AS worker_name, l.name AS lead_name, l.company AS lead_company, l.email AS lead_email, l.telegram AS lead_telegram, l.telegram_chat_id AS lead_telegram_chat_id, l.status AS lead_status, m.id AS meeting_id, m.title AS meeting_title, m.starts_at AS meeting_starts_at, m.duration_minutes AS meeting_duration_minutes, m.status AS meeting_status, m.calendar_status AS meeting_calendar_status, m.calendar_provider AS meeting_calendar_provider, m.timezone AS meeting_timezone, m.google_event_id AS meeting_google_event_id, m.google_meet_url AS meeting_google_meet_url, m.calendar_error AS meeting_calendar_error, m.calendar_synced_at AS meeting_calendar_synced_at, (m.ics_content IS NOT NULL AND m.ics_content <> '') AS meeting_has_ics
        FROM ai_worker_queue q
@@ -768,7 +775,9 @@ async function getMetrics(userId, workspaceId) {
        COUNT(*) FILTER (WHERE action_type = 'followup_sequence_draft' AND status IN ('completed','executed') AND executed_at::date = CURRENT_DATE)::int AS followups_sent_today,
        COUNT(*) FILTER (WHERE status IN ('completed','executed','failed'))::int AS finished_total
      FROM ai_worker_queue q
-     WHERE q.workspace_id = $1 AND EXISTS (SELECT 1 FROM workspace_members wm WHERE wm.workspace_id = q.workspace_id AND wm.user_id = $2)`,
+     WHERE q.workspace_id = $1
+       AND EXISTS (SELECT 1 FROM workspace_members wm WHERE wm.workspace_id = q.workspace_id AND wm.user_id = $2)
+       AND ${IMPORTANT_LEAD_PRIORITY_RECOMMENDATION_SQL}`,
     [workspaceId, userId]
   )
   const row = result.rows[0] || {}
