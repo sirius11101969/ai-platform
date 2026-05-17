@@ -1,5 +1,6 @@
 const assert = require('assert')
 const { createMeetingScheduleProposal, detectSchedulingIntent } = require('../src/services/aiMeetingSchedulerService')
+const { buildMeetingConfirmationDraftText } = require('../src/services/aiApprovalQueueService')
 
 const detected = detectSchedulingIntent('Да, завтра в 15:00 удобно', {
   now: new Date('2026-05-17T09:00:00.000Z'),
@@ -22,6 +23,16 @@ assert.strictEqual(afternoon.detectedTimeText, 'в 3 дня')
 assert.strictEqual(afternoon.proposedStartTime, '2026-05-19T12:00:00.000Z')
 
 assert.strictEqual(detectSchedulingIntent('Спасибо, получил материалы'), null)
+
+assert.strictEqual(
+  buildMeetingConfirmationDraftText({ payload: { proposedStartTime: detected.proposedStartTime, detectedDateText: 'завтра', detectedTimeText: 'в 15:00', timeZone: 'Europe/Moscow' } }),
+  'Отлично, зафиксировал demo-созвон на завтра в 15:00.\n\nПокажу, как AS6 AI CRM помогает вести лидов, Telegram follow-up и pipeline аналитику.\n\nДо встречи!'
+)
+
+assert.strictEqual(
+  buildMeetingConfirmationDraftText({ payload: { proposedStartTime: null, detectedDateText: 'завтра', detectedTimeText: '' } }),
+  'Отлично, зафиксировал demo-созвон. Подтвержу точное время отдельным сообщением.'
+)
 
 async function testIdempotentMeetingSchedulerWorker() {
   let worker = null

@@ -884,8 +884,10 @@ async function migrate() {
     CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_telegram_reply_analysis ON ai_worker_queue(workspace_id, lead_id, status, created_at DESC) WHERE action_type = 'telegram_reply_analysis';
     CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_telegram_reply_draft ON ai_worker_queue(workspace_id, lead_id, ((payload->>'telegramMessageId')), status, created_at DESC) WHERE action_type = 'telegram_reply_draft';
     CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_meeting_scheduler ON ai_worker_queue(workspace_id, lead_id, status, created_at DESC) WHERE action_type = 'meeting_schedule_proposal';
+    CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_telegram_meeting_confirmation_draft ON ai_worker_queue(workspace_id, lead_id, ((payload->>'meetingProposalQueueId')), status, created_at DESC) WHERE action_type = 'telegram_meeting_confirmation_draft';
     CREATE INDEX IF NOT EXISTS idx_lead_timeline_events_telegram_connect_reply ON lead_timeline_events(workspace_id, lead_id, event_type, created_at DESC) WHERE event_type IN ('telegram_connected', 'telegram_reply_received', 'telegram_message_sent', 'telegram_reply_analysis_created', 'ai_telegram_reply_drafted');
     CREATE INDEX IF NOT EXISTS idx_lead_timeline_events_meeting_scheduler ON lead_timeline_events(workspace_id, lead_id, event_type, created_at DESC) WHERE event_type IN ('ai_meeting_schedule_proposed', 'meeting_scheduled');
+    CREATE INDEX IF NOT EXISTS idx_lead_timeline_events_telegram_meeting_confirmation_sent ON lead_timeline_events(workspace_id, lead_id, event_type, created_at DESC) WHERE event_type = 'telegram_meeting_confirmation_sent';
     CREATE INDEX IF NOT EXISTS idx_crm_followups_user_id ON crm_followups(user_id);
     CREATE INDEX IF NOT EXISTS idx_crm_followups_lead_id ON crm_followups(lead_id);
     CREATE INDEX IF NOT EXISTS idx_crm_activity_user_id ON crm_activity(user_id);

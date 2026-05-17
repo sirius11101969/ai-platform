@@ -82,10 +82,37 @@ When executed, the backend:
 3. Updates `crm_leads.next_step` to `Demo scheduled`.
 4. Writes a `meeting_scheduled` timeline/activity event.
 5. Marks the queue item `completed`.
-6. Creates a separate `telegram_reply_draft` confirmation when the proposal came from Telegram:
-   `Отлично, зафиксировал demo-созвон на {date/time}. До встречи!`
+6. Creates a separate `telegram_meeting_confirmation_draft` confirmation when the proposal came from Telegram.
 
-The confirmation is only a draft and still requires manager approval before sending.
+The confirmation is only a draft and still requires manager approval before sending. Duplicate prevention uses `payload.meetingProposalQueueId`, so re-running/executing the same proposal cannot create a second active confirmation draft for the same meeting proposal.
+
+
+## Telegram meeting confirmation draft
+
+After an approved `meeting_schedule_proposal` is executed successfully for a Telegram-origin conversation, AI creates a second Approval Center item:
+
+- `action_type`: `telegram_meeting_confirmation_draft`
+- `status`: `pending_approval`
+- `title`: `Ответ-подтверждение встречи — {lead.name}`
+- `recommendation`: `AI подготовил подтверждение demo-созвона для клиента. Проверьте и отправьте в Telegram.`
+
+The payload includes the lead name, `meetingProposalQueueId`, `proposedStartTime`/`scheduledTime`, detected date/time text, inbound message, and editable draft fields (`draftText`, `text`, `message`). If the original payload includes a parsed date/time, the draft uses that human-readable slot, for example:
+
+```text
+Отлично, зафиксировал demo-созвон на завтра в 15:00.
+
+Покажу, как AS6 AI CRM помогает вести лидов, Telegram follow-up и pipeline аналитику.
+
+До встречи!
+```
+
+If time was not parsed, the safe fallback draft is:
+
+```text
+Отлично, зафиксировал demo-созвон. Подтвержу точное время отдельным сообщением.
+```
+
+Approval Center shows the lead name, scheduled time, draft text, edit controls, approve/send controls, and reject controls. Sending is available only after approval; execution sends through the saved `telegram_chat_id`, persists the outbound `telegram_messages` row, writes a `telegram_meeting_confirmation_sent` timeline/activity event, and marks the queue item `completed`.
 
 ## Dashboard metrics
 

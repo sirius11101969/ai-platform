@@ -51,6 +51,7 @@ const actionTypeLabels = {
   move_lead_stage: "Смена этапа",
   telegram_draft: "Черновик Telegram",
   telegram_reply_draft: "Ответ Telegram",
+  telegram_meeting_confirmation_draft: "Подтверждение встречи Telegram",
   telegram_reply_analysis: "Анализ ответа Telegram",
   email_draft: "Черновик письма",
   follow_up_recommendation: "Следующий контакт",
@@ -152,8 +153,12 @@ function renderMeetingScheduleDetails(item) {
   );
 }
 
+function isTelegramMeetingConfirmationDraft(item) {
+  return item?.actionType === "telegram_meeting_confirmation_draft" || item?.executionType === "telegram_meeting_confirmation_draft";
+}
+
 function isTelegramReplyDraft(item) {
-  return item?.actionType === "telegram_reply_draft" || item?.executionType === "telegram_reply_draft";
+  return item?.actionType === "telegram_reply_draft" || item?.executionType === "telegram_reply_draft" || isTelegramMeetingConfirmationDraft(item);
 }
 
 function renderTelegramReplyDraft(item, { isEditing = false, editText = "", onEditTextChange, onSaveEdit, onCancelEdit, editBusy = false } = {}) {
@@ -171,11 +176,17 @@ function renderTelegramReplyDraft(item, { isEditing = false, editText = "", onEd
         {wasEdited && <span className="telegram-meta-pill edited">Изменено менеджером</span>}
       </div>
       <div>
-        <span>Последнее входящее сообщение</span>
-        <p>{inbound}</p>
+        <span>{isTelegramMeetingConfirmationDraft(item) ? "Лид" : "Последнее входящее сообщение"}</span>
+        <p>{isTelegramMeetingConfirmationDraft(item) ? (item.lead?.name || item.payload?.leadName || "—") : inbound}</p>
       </div>
+      {isTelegramMeetingConfirmationDraft(item) && (
+        <div>
+          <span>Запланированное время</span>
+          <p>{formatMeetingStart(item.payload?.scheduledTime || item.payload?.proposedStartTime)}</p>
+        </div>
+      )}
       <div className="telegram-draft-body">
-        <span>AI drafted reply text</span>
+        <span>{isTelegramMeetingConfirmationDraft(item) ? "Текст подтверждения" : "AI drafted reply text"}</span>
         {!isEditing ? (
           <p>{draft}</p>
         ) : (
@@ -212,7 +223,7 @@ const approvalActionLoadingLabels = {
 };
 
 const APPROVAL_ACTION_TIMEOUT_MS = 20000;
-const executableApprovalTypes = new Set(["telegram_reply_draft", "telegram_followup", "email_followup", "send_demo_link", "send_presentation", "create_reminder", "move_lead_stage", "stage_change_recommendation", "meeting_schedule_proposal"]);
+const executableApprovalTypes = new Set(["telegram_reply_draft", "telegram_meeting_confirmation_draft", "telegram_followup", "email_followup", "send_demo_link", "send_presentation", "create_reminder", "move_lead_stage", "stage_change_recommendation", "meeting_schedule_proposal"]);
 
 function isApprovalItemExecutable(item) {
   return executableApprovalTypes.has(item.executionType || item.actionType);
@@ -361,7 +372,7 @@ export default function AiWorkersPage() {
   }
 
   function handleEditApprovalItem(item) {
-    const isTelegramReplyDraftItem = item.actionType === "telegram_reply_draft" || item.executionType === "telegram_reply_draft";
+    const isTelegramReplyDraftItem = isTelegramReplyDraft(item);
     if (isTelegramReplyDraftItem) {
       setEditingDraft({ itemId: item.id, text: getDraftText(item) });
       return;
