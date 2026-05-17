@@ -3,8 +3,9 @@ const { addTimelineEvent } = require('./timelineService')
 
 const ACTIVE_STATUSES = new Set(['new', 'qualified', 'proposal', 'booked'])
 const STAGE_WEIGHT = { booked: 2, proposal: 1, qualified: 0, new: 0, won: -2, lost: -3 }
-const PRIORITY_WEIGHT = { urgent: 3, high: 2, priority: 2, medium: 1, low: 0 }
+const PRIORITY_WEIGHT = { urgent: 3, priority: 2, high: 1, medium: 0, low: 0 }
 const RISK_WEIGHT = { high: 2, medium: 1, low: 0 }
+const VALID_MODES = new Set(['focus', 'all', 'urgent', 'risk', 'meetings', 'followups'])
 
 function toTime(value) {
   if (!value) return 0
@@ -25,6 +26,14 @@ function latestDate(values) {
 
 function normalizeText(value) {
   return String(value || '').trim().toLowerCase()
+}
+
+function isToday(value) {
+  const time = toTime(value)
+  if (!time) return false
+  const date = new Date(time)
+  const now = new Date()
+  return date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth() && date.getDate() === now.getDate()
 }
 
 function hasPricingInterest(lead) {
@@ -80,7 +89,9 @@ function getMeetingSignal(lead) {
   const meetings = lead.meetings || []
   const pending = meetings.find((meeting) => ['pending', 'scheduled', 'proposed'].includes(meeting.status) || meeting.calendarStatus === 'pending')
   const confirmed = meetings.find((meeting) => ['confirmed', 'synced'].includes(meeting.status) || meeting.calendarStatus === 'synced')
-  return { hasMeetings: meetings.length > 0, pending, confirmed }
+  const today = meetings.find((meeting) => isToday(meeting.startsAt))
+  const upcoming = meetings.find((meeting) => toTime(meeting.startsAt) >= Date.now())
+  return { hasMeetings: meetings.length > 0, pending, confirmed, today, upcoming }
 }
 
 function generateNextBestAction(lead) {
@@ -94,47 +105,55 @@ function generateNextBestAction(lead) {
   const inactiveDays = daysSince(lastContactAt)
   const lastInboundAt = getLastInboundAt(lead)
   const inboundDays = daysSince(lastInboundAt)
-  const { hasMeetings, pending } = getMeetingSignal(lead)
+  const { hasMeetings, pending, confirmed, today, upcoming } = getMeetingSignal(lead)
   const pricingInterest = hasPricingInterest(lead)
 
-  let action = 'Сделать follow-up'
-  let reason = 'Базовая рекомендация для активного лида без более сильного сигнала.'
-  let code = 'follow_up'
+  let action = 'Оставить в nurture'
+  let reason = 'Нет urgent, priority, risk или meeting-сигнала; лид не должен создавать шум в Focus Mode.'
+  let code = 'nurture'
 
-  if (status === 'booked' && pending) {
+  if (pending) {
     action = 'Подтвердить встречу'
-    reason = 'Лид находится на этапе встречи, но подтверждение или календарная синхронизация ещё ожидается.'
+    reason = 'Встреча уже создана, но ещё требует подтверждения или календарной синхронизации.'
     code = 'confirm_meeting'
-  } else if (temperature === 'hot' && (inactiveDays ?? 0) >= 3) {
-    action = 'Сделать срочный follow-up'
-    reason = 'Горячий лид не получал свежего касания больше 3 дней.'
-    code = 'urgent_follow_up'
+  } else if (today || (status === 'booked' && confirmed)) {
+    action = 'Подготовиться к встрече'
+    reason = 'Встреча уже назначена — следующий шаг подготовить контекст, вопросы и материалы.'
+    code = 'prepare_meeting'
+  } else if (hasMeetings && (inactiveDays ?? 0) >= 1) {
+    action = 'Сделать follow-up после встречи'
+    reason = 'У лида есть встреча в истории; актуальнее закрепить договорённости, а не назначать demo заново.'
+    code = 'meeting_follow_up'
   } else if (status === 'proposal' && ['medium', 'high'].includes(risk)) {
     action = 'Риск потери сделки'
     reason = 'Сделка на этапе предложения имеет средний или высокий AI risk.'
     code = 'deal_loss_risk'
-  } else if (pricingInterest && !hasMeetings) {
-    action = 'Назначить demo'
-    reason = 'Есть интерес к цене или тарифам, но demo ещё не назначено.'
-    code = 'schedule_demo'
+  } else if (['medium', 'high'].includes(risk)) {
+    action = 'Сделать follow-up сегодня'
+    reason = 'AI risk указывает на вероятность потери контакта или сделки.'
+    code = 'risk_follow_up'
+  } else if (priority === 'urgent' || (temperature === 'hot' && (inactiveDays ?? 0) >= 3)) {
+    action = 'Сделать срочный follow-up'
+    reason = priority === 'urgent' ? 'AI priority помечен как urgent.' : 'Горячий лид не получал свежего касания больше 3 дней.'
+    code = 'urgent_follow_up'
+  } else if (status === 'proposal' || pricingInterest) {
+    action = 'Отправить pricing'
+    reason = status === 'proposal' ? 'Лид находится на этапе предложения — следующий шаг коммерческие условия.' : 'Лид проявил интерес к цене или тарифам.'
+    code = 'send_pricing'
+  } else if (status === 'booked' || upcoming) {
+    action = 'Согласовать demo'
+    reason = 'Встреча находится в работе — нужно согласовать формат demo и ожидания клиента.'
+    code = 'align_demo'
   } else if (temperature === 'warm' && lastInboundAt && (inboundDays ?? 99) <= 1) {
     action = 'Ответить сегодня'
     reason = 'Тёплый лид недавно проявил входящую активность.'
     code = 'reply_today'
-  } else if (priority === 'urgent') {
+  } else if (priority === 'priority' || score >= 75) {
     action = 'Связаться сегодня'
-    reason = 'AI priority помечен как urgent.'
-    code = 'contact_today'
-  } else if (status === 'proposal') {
-    action = 'Отправить pricing'
-    reason = 'Лид находится на этапе предложения — следующий шаг коммерческие условия.'
-    code = 'send_pricing'
-  } else if (score >= 75 || priority === 'high') {
-    action = 'Связаться сегодня'
-    reason = 'Высокий AI score или высокий приоритет требуют быстрого контакта.'
+    reason = 'AI score или priority-сигнал требуют быстрого контакта.'
     code = 'contact_today'
   } else if ((inactiveDays ?? 0) >= 3) {
-    action = 'Сделать follow-up'
+    action = 'Сделать follow-up сегодня'
     reason = 'Нет свежего ответа или активности больше 3 дней.'
     code = 'needs_follow_up'
   }
@@ -144,7 +163,16 @@ function generateNextBestAction(lead) {
 }
 
 function isUrgent(item) {
-  return item.aiPriority === 'urgent' || item.nextBestActionCode === 'urgent_follow_up' || item.nextBestActionCode === 'contact_today'
+  return item.aiPriority === 'urgent' || item.nextBestActionCode === 'urgent_follow_up'
+}
+
+function isAtRisk(item) {
+  return ['medium', 'high'].includes(item.aiRiskLevel) || item.nextBestActionCode === 'deal_loss_risk' || item.nextBestActionCode === 'risk_follow_up'
+}
+
+function isFocusLead(item) {
+  const executiveStage = ['proposal', 'booked'].includes(item.status) && Number(item.aiScore || 0) >= 65
+  return ['urgent', 'priority'].includes(item.aiPriority) || isAtRisk(item) || executiveStage
 }
 
 function buildInboxItem(lead) {
@@ -153,9 +181,11 @@ function buildInboxItem(lead) {
   const lastActivitySummary = getLatestActivitySummary(lead, lastActivityAt)
   const lastContactAt = getLastContactAt(lead) || lastActivityAt
   const noResponseDays = daysSince(lastContactAt)
-  const pendingMeeting = getMeetingSignal(lead).pending
+  const meetingSignal = getMeetingSignal(lead)
   const latestFollowupJob = (lead.aiFollowupJobs || []).find((job) => ['suggested', 'pending', 'approved'].includes(job.status))
   const aiScore = Number(lead.aiLeadScore || lead.aiScore?.score || 0)
+  const aiPriority = lead.aiPriority || lead.aiScore?.priority || 'medium'
+  const aiRiskLevel = lead.aiRiskLevel || lead.aiScore?.riskLevel || 'low'
 
   return {
     id: lead.id,
@@ -169,12 +199,12 @@ function buildInboxItem(lead) {
     stage: lead.statusLabel || lead.status,
     aiScore,
     ai_score: aiScore,
-    aiPriority: lead.aiPriority || 'medium',
-    ai_priority: lead.aiPriority || 'medium',
+    aiPriority,
+    ai_priority: aiPriority,
     aiTemperature: lead.aiTemperature || lead.aiScore?.temperature || 'warm',
     ai_temperature: lead.aiTemperature || lead.aiScore?.temperature || 'warm',
-    aiRiskLevel: lead.aiRiskLevel || lead.aiScore?.riskLevel || 'low',
-    ai_risk_level: lead.aiRiskLevel || lead.aiScore?.riskLevel || 'low',
+    aiRiskLevel,
+    ai_risk_level: aiRiskLevel,
     aiScoringReason: lead.aiScoringReason || lead.aiScore?.scoringReason || lead.aiScore?.aiReasoning || lead.aiScore?.aiSummary || 'AI причина ещё не рассчитана',
     ai_scoring_reason: lead.aiScoringReason || lead.aiScore?.scoringReason || lead.aiScore?.aiReasoning || lead.aiScore?.aiSummary || 'AI причина ещё не рассчитана',
     lastActivityAt,
@@ -185,9 +215,12 @@ function buildInboxItem(lead) {
     nextBestActionReason: generated.reason,
     nextBestActionCode: generated.code,
     needsFollowUp: generated.code.includes('follow') || Boolean(latestFollowupJob),
-    pendingMeeting: Boolean(pendingMeeting),
-    isAtRisk: ['medium', 'high'].includes(lead.aiRiskLevel || lead.aiScore?.riskLevel) || generated.code === 'deal_loss_risk',
+    pendingMeeting: Boolean(meetingSignal.pending),
+    meetingToday: Boolean(meetingSignal.today),
+    hasMeeting: meetingSignal.hasMeetings,
+    isAtRisk: false,
     isUrgent: false,
+    isFocusLead: false,
     crmUrl: `/crm?leadId=${encodeURIComponent(lead.id)}`,
     actionUrls: {
       telegram: `/crm?leadId=${encodeURIComponent(lead.id)}&focus=telegram`,
@@ -199,9 +232,28 @@ function buildInboxItem(lead) {
   }
 }
 
+function enrichInboxItem(item) {
+  const enriched = { ...item }
+  enriched.isUrgent = isUrgent(enriched)
+  enriched.isAtRisk = isAtRisk(enriched)
+  enriched.isFocusLead = isFocusLead(enriched)
+  return enriched
+}
+
+function focusSortGroup(item) {
+  if (item.isUrgent) return 0
+  if (item.isAtRisk && ['proposal', 'booked'].includes(item.status)) return 1
+  if (item.pendingMeeting || item.meetingToday || item.status === 'booked') return 2
+  if (item.aiPriority === 'priority') return 3
+  if (item.isAtRisk) return 4
+  return 5
+}
+
 function sortInboxItems(a, b) {
-  const urgentDelta = Number(b.isUrgent) - Number(a.isUrgent)
-  if (urgentDelta) return urgentDelta
+  const focusDelta = focusSortGroup(a) - focusSortGroup(b)
+  if (focusDelta) return focusDelta
+  const priorityDelta = (PRIORITY_WEIGHT[b.aiPriority] || 0) - (PRIORITY_WEIGHT[a.aiPriority] || 0)
+  if (priorityDelta) return priorityDelta
   const riskDelta = (RISK_WEIGHT[b.aiRiskLevel] || 0) - (RISK_WEIGHT[a.aiRiskLevel] || 0)
   if (riskDelta) return riskDelta
   const stageDelta = (STAGE_WEIGHT[b.status] || 0) - (STAGE_WEIGHT[a.status] || 0)
@@ -214,21 +266,39 @@ function sortInboxItems(a, b) {
 function buildMetrics(items) {
   return {
     urgentLeads: items.filter((item) => item.isUrgent).length,
-    priorityLeads: items.filter((item) => ['urgent', 'high', 'priority'].includes(item.aiPriority) || item.aiScore >= 70).length,
+    focusLeads: items.filter((item) => item.isFocusLead).length,
     atRiskDeals: items.filter((item) => item.isAtRisk).length,
-    meetingsPending: items.filter((item) => item.pendingMeeting).length,
+    meetingsToday: items.filter((item) => item.meetingToday).length,
     followUpsNeeded: items.filter((item) => item.needsFollowUp || (item.noResponseDays ?? 0) >= 3).length,
   }
 }
 
-async function listPriorityInbox(userId, workspaceId) {
-  console.log('[priority-inbox] inbox requested', { userId, workspaceId })
+function normalizeMode(mode) {
+  const normalized = normalizeText(mode || 'focus')
+  return VALID_MODES.has(normalized) ? normalized : 'focus'
+}
+
+function filterItemsByMode(items, mode) {
+  if (mode === 'all') return items
+  if (mode === 'urgent') return items.filter((item) => item.isUrgent)
+  if (mode === 'risk') return items.filter((item) => item.isAtRisk)
+  if (mode === 'meetings') return items.filter((item) => item.pendingMeeting || item.meetingToday || item.status === 'booked' || item.hasMeeting)
+  if (mode === 'followups') return items.filter((item) => item.needsFollowUp || (item.noResponseDays ?? 0) >= 3)
+  return items.filter((item) => item.isFocusLead)
+}
+
+async function listPriorityInbox(userId, workspaceId, options = {}) {
+  const mode = normalizeMode(options.mode)
+  console.log('[priority-inbox] inbox requested', { userId, workspaceId, mode })
+  if (mode === 'focus') console.log('[priority-inbox] focus mode applied', { userId, workspaceId })
+
   const leads = await crmModel.listLeads(userId, workspaceId)
-  const items = leads
+  const allItems = leads
     .filter((lead) => ACTIVE_STATUSES.has(lead.status))
     .map(buildInboxItem)
-    .map((item) => ({ ...item, isUrgent: isUrgent(item) }))
+    .map(enrichInboxItem)
     .sort(sortInboxItems)
+  const items = filterItemsByMode(allItems, mode).sort(sortInboxItems)
 
   await Promise.all(items.slice(0, 50).map(async (item) => {
     try {
@@ -238,9 +308,9 @@ async function listPriorityInbox(userId, workspaceId) {
         userId,
         eventType: 'ai_priority_inbox_viewed',
         title: 'AI Priority Inbox viewed',
-        body: `Лид показан в Priority Inbox. Рекомендация: ${item.nextBestAction}.`,
+        body: `Лид показан в Priority Inbox (${mode}). Рекомендация: ${item.nextBestAction}.`,
         source: 'ai',
-        metadata: { aiScore: item.aiScore, aiPriority: item.aiPriority, nextBestActionCode: item.nextBestActionCode },
+        metadata: { aiScore: item.aiScore, aiPriority: item.aiPriority, nextBestActionCode: item.nextBestActionCode, mode },
       })
       await addTimelineEvent(null, {
         workspaceId,
@@ -250,14 +320,24 @@ async function listPriorityInbox(userId, workspaceId) {
         title: 'AI next action generated',
         body: item.nextBestAction,
         source: 'ai',
-        metadata: { nextBestActionCode: item.nextBestActionCode, reason: item.nextBestActionReason, source: 'priority_inbox_v1' },
+        metadata: { nextBestActionCode: item.nextBestActionCode, reason: item.nextBestActionReason, source: 'priority_inbox_v2', mode },
       })
     } catch (error) {
       console.error('[priority-inbox] timeline event failed', { leadId: item.leadId, error: error.message || error })
     }
   }))
 
-  return { leads: items, metrics: buildMetrics(items), generatedAt: new Date().toISOString() }
+  return {
+    mode,
+    leads: items,
+    metrics: buildMetrics(allItems),
+    totalLeads: allItems.length,
+    generatedAt: new Date().toISOString(),
+  }
 }
 
-module.exports = { generateNextBestAction, listPriorityInbox }
+module.exports = {
+  generateNextBestAction,
+  listPriorityInbox,
+  _private: { buildInboxItem, enrichInboxItem, filterItemsByMode, isFocusLead, buildMetrics, sortInboxItems },
+}

@@ -163,3 +163,94 @@ Timeline event writes are best-effort and do not fail the inbox response if a ti
 - Filters update the visible card set without reloading.
 - Metric widgets are computed from the same normalized inbox items as the cards.
 - Card buttons route to the CRM lead or call the existing follow-up workflow.
+
+## Focus Mode v2
+
+Focus Mode v2 turns the overloaded Priority Inbox into the default executive sales cockpit. The default route still uses `/priority-inbox`, but the page now requests the focused API mode by default:
+
+```http
+GET /api/ai/priority-inbox?mode=focus
+```
+
+Supported modes are:
+
+- `focus`
+- `urgent`
+- `risk`
+- `meetings`
+- `followups`
+- `all`
+
+### Default Focus rules
+
+`focus` mode includes only leads that satisfy at least one executive signal:
+
+1. `ai_priority IN ('priority', 'urgent')`
+2. `ai_risk_level IN ('medium', 'high')`
+3. `stage/status IN ('proposal', 'booked')` with `ai_score >= 65`
+
+Generic noisy leads such as `ai_priority='high'`, `ai_score < 70`, and low/no risk are intentionally excluded from Focus Mode. They remain visible only in **All Leads**.
+
+### Tabs
+
+The frontend replaces the broader v1 filters with API-backed tabs:
+
+- **Focus** — default selected mode.
+- **Urgent** — urgent leads and urgent follow-up actions.
+- **At Risk** — medium/high risk deals.
+- **Meetings** — leads with pending/today/known meetings or booked stage.
+- **Follow-ups** — leads that need a follow-up or have 3+ days without response.
+- **All Leads** — all active CRM leads, including generic high/hot 51–59 leads.
+
+### Metrics recalibration
+
+Top widgets now show executive attention metrics computed from all active normalized inbox items, not from the currently selected tab:
+
+- `urgentLeads` — urgent action count.
+- `focusLeads` — count of leads matching Focus rules; generic high leads are not counted.
+- `atRiskDeals` — medium/high risk deals and risk action recommendations.
+- `meetingsToday` — meetings scheduled for today.
+- `followUpsNeeded` — follow-up actions or 3+ no-response days.
+
+### Focus sorting
+
+Focus Mode sorts for attention rather than raw volume:
+
+1. urgent
+2. at-risk `proposal`/`booked` deals
+3. meetings pending/today/booked
+4. priority leads
+5. remaining risk/focus signals
+6. score and latest activity as tie-breakers
+
+The expected result is usually a compact set of 3–8 highly actionable cards such as Telegram Connect Test, Дмитрий Волков, Алексей Морозов, and Мария Кузнецова, while generic score 51–59 leads disappear from the default page.
+
+### Visual hierarchy
+
+The UI applies stronger executive emphasis to the highest-signal cards:
+
+- urgent cards receive the strongest border, glow, and larger next-action emphasis;
+- risk cards receive a warning border/background;
+- meeting cards receive a calendar accent and `MEETING` badge.
+
+### Next-best-action updates
+
+The deterministic action engine now avoids repetitive `Назначить demo` recommendations. It prefers context-aware actions such as:
+
+- `Подтвердить встречу`
+- `Подготовиться к встрече`
+- `Сделать follow-up сегодня`
+- `Риск потери сделки`
+- `Отправить pricing`
+- `Согласовать demo`
+- `Оставить в nurture` for low-signal leads visible only in All Leads
+
+If `stage/status=booked`, or a meeting already exists, the engine does not suggest `Назначить demo`; it suggests confirmation, preparation, alignment, or follow-up instead.
+
+### Logging
+
+When the default mode is applied, the backend emits:
+
+```text
+[priority-inbox] focus mode applied
+```

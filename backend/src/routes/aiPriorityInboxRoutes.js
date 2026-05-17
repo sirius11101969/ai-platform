@@ -10,7 +10,7 @@ router.use(requireWorkspace)
 
 router.get('/priority-inbox', async (req, res, next) => {
   try {
-    const inbox = await listPriorityInbox(req.user.id, req.workspace.id)
+    const inbox = await listPriorityInbox(req.user.id, req.workspace.id, { mode: req.query.mode })
     res.json(inbox)
   } catch (error) {
     next(error)
