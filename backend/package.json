@@ -8,7 +8,8 @@
     "test:public-leads": "node tests/publicLeadService.test.js",
     "test:outreach": "node tests/aiOutreachEngineService.test.js",
     "test:deal-forecast": "node tests/dealRiskForecastEngine.test.js",
-    "test:meeting-scheduler": "node tests/aiMeetingSchedulerService.test.js"
+    "test:meeting-scheduler": "node tests/aiMeetingSchedulerService.test.js",
+    "test:lead-scoring": "node tests/aiLeadScoringService.test.js"
   },
   "dependencies": {
     "axios": "^1.6.0",

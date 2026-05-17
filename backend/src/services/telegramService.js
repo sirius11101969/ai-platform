@@ -10,6 +10,7 @@ const { ensureDefaultWorkspace } = require('../models/workspaceModel')
 const emailService = require('./emailService')
 const { createMeetingScheduleProposal } = require('./aiMeetingSchedulerService')
 const { findDuplicateQueueItem, logDuplicateSkipped, normalizeSourceMessageId } = require('./aiQueueDedupService')
+const { scoreLead } = require('./aiLeadScoringService')
 
 const TELEGRAM_API_BASE = 'https://api.telegram.org'
 const DEMO_SITE_URL = 'https://www.as6.ru'
@@ -701,6 +702,7 @@ async function upsertLeadWithIncomingMessage(telegram, retryOnDuplicate = true) 
     const telegramWithSource = { ...telegram, sourceMessageId, messageId: sourceMessageId }
     await createMeetingScheduleProposal(client, { userId, workspaceId, lead, messageText: telegram.text, channel: 'telegram', sourceMessageId })
     await createInboundReplyRecommendations(client, { userId, workspaceId, lead, telegram: telegramWithSource })
+    await scoreLead({ userId, workspaceId, leadId: lead.id, source: 'inbound_telegram', client }).catch((error) => console.error('[lead-scoring] inbound trigger failed', error.message || error))
     await client.query('COMMIT')
     return { lead, note: note.rows[0], telegramMessage, isNew, userId, workspaceId }
   } catch (error) {
