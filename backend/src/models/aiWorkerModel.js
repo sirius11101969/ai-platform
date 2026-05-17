@@ -7,6 +7,7 @@ const WORKER_TYPES = [
   'ai_crm_assistant',
   'ai_email_assistant',
   'ai_telegram_assistant',
+  'ai_meeting_scheduler',
 ]
 const STATUSES = ['active', 'paused', 'error']
 const MODES = ['suggestion_only', 'approval_required', 'autonomous_ready']

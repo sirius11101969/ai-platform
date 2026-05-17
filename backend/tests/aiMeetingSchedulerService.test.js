@@ -1,5 +1,5 @@
 const assert = require('assert')
-const { detectSchedulingIntent } = require('../src/services/aiMeetingSchedulerService')
+const { createMeetingScheduleProposal, detectSchedulingIntent } = require('../src/services/aiMeetingSchedulerService')
 
 const detected = detectSchedulingIntent('Да, завтра в 15:00 удобно', {
   now: new Date('2026-05-17T09:00:00.000Z'),
@@ -23,4 +23,65 @@ assert.strictEqual(afternoon.proposedStartTime, '2026-05-19T12:00:00.000Z')
 
 assert.strictEqual(detectSchedulingIntent('Спасибо, получил материалы'), null)
 
-console.log('ai meeting scheduler tests passed')
+async function testIdempotentMeetingSchedulerWorker() {
+  let worker = null
+  let workerInsertCount = 0
+  const proposals = []
+
+  const client = {
+    async query(query, params = []) {
+      if (query.includes('pg_advisory_xact_lock')) return { rows: [], rowCount: 0 }
+      if (query.includes('SELECT id FROM ai_workers') && query.includes("type = 'ai_meeting_scheduler'")) {
+        return { rows: worker ? [{ id: worker.id }] : [], rowCount: worker ? 1 : 0 }
+      }
+      if (query.startsWith('INSERT INTO ai_workers(')) {
+        workerInsertCount += 1
+        if (worker) return { rows: [], rowCount: 0 }
+        worker = { id: 'meeting-worker-1', workspace_id: params[0], type: 'ai_meeting_scheduler' }
+        return { rows: [{ id: worker.id }], rowCount: 1 }
+      }
+      if (query.includes('SELECT id FROM ai_worker_queue')) return { rows: [], rowCount: 0 }
+      if (query.startsWith('INSERT INTO ai_worker_queue(')) {
+        const proposal = {
+          id: `proposal-${proposals.length + 1}`,
+          workerId: params[0],
+          workspaceId: params[1],
+          leadId: params[2],
+          actionType: params[3],
+          status: 'pending_approval',
+          payload: params[7],
+        }
+        proposals.push(proposal)
+        return { rows: [{ id: proposal.id }], rowCount: 1 }
+      }
+      if (query.startsWith('INSERT INTO lead_timeline_events(')) return { rows: [{ id: `timeline-${proposals.length}` }], rowCount: 1 }
+      throw new Error(`Unexpected query: ${query}`)
+    },
+  }
+
+  for (let index = 1; index <= 5; index += 1) {
+    const result = await createMeetingScheduleProposal(client, {
+      userId: 'user-1',
+      workspaceId: 'workspace-1',
+      lead: { id: 'lead-1', name: 'Demo Lead' },
+      messageText: 'Да, завтра в 15:00 удобно для demo',
+      channel: 'telegram',
+      sourceMessageId: `telegram-${index}`,
+    })
+    assert.ok(result, `proposal ${index} should be created`)
+  }
+
+  assert.strictEqual(workerInsertCount, 1, 'meeting scheduler worker should be inserted once')
+  assert.strictEqual(worker.id, 'meeting-worker-1')
+  assert.strictEqual(proposals.length, 5, 'five inbound scheduling messages should create five proposals')
+  assert.ok(proposals.every((proposal) => proposal.workerId === 'meeting-worker-1'))
+  assert.ok(proposals.every((proposal) => proposal.actionType === 'meeting_schedule_proposal'))
+  assert.ok(proposals.every((proposal) => proposal.status === 'pending_approval'))
+}
+
+testIdempotentMeetingSchedulerWorker()
+  .then(() => console.log('ai meeting scheduler tests passed'))
+  .catch((error) => {
+    console.error(error)
+    process.exit(1)
+  })

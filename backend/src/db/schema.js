@@ -734,9 +734,8 @@ async function migrate() {
       IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_workers_mode_valid') THEN
         ALTER TABLE ai_workers ADD CONSTRAINT ai_workers_mode_valid CHECK (mode IN ('suggestion_only', 'approval_required', 'autonomous_ready'));
       END IF;
-      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_workers_type_valid') THEN
-        ALTER TABLE ai_workers ADD CONSTRAINT ai_workers_type_valid CHECK (type IN ('ai_sdr_agent', 'ai_followup_worker', 'ai_revenue_analyst', 'ai_crm_assistant', 'ai_email_assistant', 'ai_telegram_assistant'));
-      END IF;
+      ALTER TABLE ai_workers DROP CONSTRAINT IF EXISTS ai_workers_type_valid;
+      ALTER TABLE ai_workers ADD CONSTRAINT ai_workers_type_valid CHECK (type IN ('ai_sdr_agent', 'ai_followup_worker', 'ai_revenue_analyst', 'ai_crm_assistant', 'ai_email_assistant', 'ai_telegram_assistant', 'ai_meeting_scheduler'));
       IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_worker_runs_status_valid') THEN
         ALTER TABLE ai_worker_runs ADD CONSTRAINT ai_worker_runs_status_valid CHECK (status IN ('queued', 'running', 'completed', 'failed'));
       END IF;
@@ -744,6 +743,22 @@ async function migrate() {
       ALTER TABLE ai_worker_queue DROP CONSTRAINT IF EXISTS ai_worker_queue_status_valid;
       ALTER TABLE ai_worker_queue ADD CONSTRAINT ai_worker_queue_status_valid CHECK (status IN ('pending_approval', 'approved', 'rejected', 'executing', 'completed', 'executed', 'failed', 'cancelled'));
     END $$;
+
+    DO $$
+    BEGIN
+      IF EXISTS (SELECT 1 FROM ai_workers WHERE type = 'ai_meeting_scheduler' OFFSET 1) THEN
+        UPDATE ai_worker_queue
+           SET worker_id = (SELECT id FROM ai_workers WHERE type = 'ai_meeting_scheduler' ORDER BY created_at ASC, id ASC LIMIT 1)
+         WHERE worker_id IN (SELECT id FROM ai_workers WHERE type = 'ai_meeting_scheduler' ORDER BY created_at ASC, id ASC OFFSET 1);
+        UPDATE ai_worker_runs
+           SET worker_id = (SELECT id FROM ai_workers WHERE type = 'ai_meeting_scheduler' ORDER BY created_at ASC, id ASC LIMIT 1)
+         WHERE worker_id IN (SELECT id FROM ai_workers WHERE type = 'ai_meeting_scheduler' ORDER BY created_at ASC, id ASC OFFSET 1);
+        DELETE FROM ai_workers
+         WHERE id IN (SELECT id FROM ai_workers WHERE type = 'ai_meeting_scheduler' ORDER BY created_at ASC, id ASC OFFSET 1);
+      END IF;
+    END $$;
+
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_ai_workers_unique_meeting_scheduler ON ai_workers(type) WHERE type = 'ai_meeting_scheduler';
 
 
     CREATE TABLE IF NOT EXISTS ai_action_queue (
