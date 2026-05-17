@@ -1,20 +1,22 @@
 const assert = require('assert')
 const path = require('path')
 
-function installMocks({ lead, payload = {}, status = 'approved' } = {}) {
+function installMocks({ lead, payload = {}, status = 'approved', telegramError = null } = {}) {
   const servicePath = path.resolve(__dirname, '../src/services/aiApprovalQueueService.js')
   const poolPath = path.resolve(__dirname, '../src/db/pool.js')
   const telegramPath = path.resolve(__dirname, '../src/services/telegramService.js')
+  const crmModelPath = path.resolve(__dirname, '../src/models/crmModel.js')
   const timelinePath = path.resolve(__dirname, '../src/services/timelineService.js')
   const emailPath = path.resolve(__dirname, '../src/services/emailService.js')
 
   delete require.cache[servicePath]
   delete require.cache[poolPath]
   delete require.cache[telegramPath]
+  delete require.cache[crmModelPath]
   delete require.cache[timelinePath]
   delete require.cache[emailPath]
 
-  const calls = { telegram: [], email: [], queueUpdates: [], timeline: [], activity: [] }
+  const calls = { telegram: [], email: [], queueUpdates: [], timeline: [], activity: [], telegramMessages: [] }
   let queueStatus = status
   let executedAt = null
   const queuePayload = {
@@ -72,6 +74,21 @@ function installMocks({ lead, payload = {}, status = 'approved' } = {}) {
     if (sql.includes('FROM crm_leads') && sql.includes('telegram_chat_id')) {
       return { rows: lead ? [{ id: 'lead-1', user_id: 'owner-1', workspace_id: 'workspace-1', name: lead.name || 'Мария Кузнецова', email: lead.email || '', telegram_chat_id: lead.telegram_chat_id || '', metadata: lead.metadata || {}, status: 'qualified' }] : [], rowCount: lead ? 1 : 0 }
     }
+    if (sql.startsWith('INSERT INTO telegram_messages(')) {
+      calls.telegramMessages.push({ sql, params })
+      return { rows: [{
+        id: `telegram-message-${calls.telegramMessages.length}`,
+        lead_id: params[0],
+        user_id: params[1],
+        workspace_id: params[7],
+        role: params[2],
+        direction: params[2] === 'user' ? 'inbound' : 'outbound',
+        message: params[3],
+        telegram_chat_id: params[4],
+        telegram_message_id: params[5],
+        created_at: new Date().toISOString(),
+      }], rowCount: 1 }
+    }
     if (sql.includes('INSERT INTO lead_timeline_events')) {
       calls.timeline.push({ sql, params })
       return { rows: [{ id: `timeline-${calls.timeline.length}` }], rowCount: 1 }
@@ -94,7 +111,8 @@ function installMocks({ lead, payload = {}, status = 'approved' } = {}) {
   require.cache[telegramPath] = { id: telegramPath, filename: telegramPath, loaded: true, exports: {
     sendTelegramMessageToLead: async (args) => {
       calls.telegram.push(args)
-      return { telegramMessage: { id: 'telegram-message-1', leadId: args.leadId, direction: 'outbound', message: args.text }, telegramResponse: { ok: true }, chatId: lead?.telegram_chat_id }
+      if (telegramError) throw telegramError
+      return { telegramResponse: { ok: true, result: { message_id: 777, chat: { id: lead?.telegram_chat_id } } }, chatId: lead?.telegram_chat_id }
     },
   } }
   require.cache[emailPath] = { id: emailPath, filename: emailPath, loaded: true, exports: {
@@ -125,7 +143,29 @@ async function testTelegramFollowupExecutesAndCompletes() {
   assert.strictEqual(calls.telegram[0].actionId, 'queue-1')
   assert.strictEqual(calls.telegram[0].leadId, 'lead-1')
   assert.match(calls.telegram[0].text, /Мария, добрый день/)
+  assert.strictEqual(calls.telegramMessages.length, 1)
+  assert.match(calls.telegramMessages[0].sql, /INSERT INTO telegram_messages/)
+  assert.strictEqual(calls.telegramMessages[0].params[0], 'lead-1')
+  assert.strictEqual(calls.telegramMessages[0].params[2], 'assistant')
+  assert.strictEqual(calls.telegramMessages[0].params[3], 'Мария, добрый день! Возвращаюсь с follow-up.')
+  assert.strictEqual(calls.telegramMessages[0].params[4], '12345')
+  assert.strictEqual(calls.telegramMessages[0].params[5], '777')
   assert.ok(calls.timeline.some((call) => call.event?.eventType === 'followup_sent' && call.event.title === 'Follow-up отправлен'))
+}
+
+
+async function testTelegramSendFailureDoesNotCreateSuccessTimeline() {
+  const { service, calls, getStatus } = installMocks({ lead: { telegram_chat_id: '12345', email: 'maria@example.com' }, telegramError: new Error('Telegram API unavailable') })
+  const result = await service.executeQueueItem('user-1', 'workspace-1', 'queue-1')
+
+  assert.strictEqual(result.success, false)
+  assert.strictEqual(result.status, 'failed')
+  assert.strictEqual(getStatus(), 'failed')
+  assert.strictEqual(result.error, 'Telegram API unavailable')
+  assert.strictEqual(calls.telegram.length, 1)
+  assert.strictEqual(calls.telegramMessages.length, 0)
+  assert.ok(!calls.timeline.some((call) => call.event?.eventType === 'followup_sent'))
+  assert.ok(calls.queueUpdates.some((update) => update.status === 'failed' && update.error === 'Telegram API unavailable'))
 }
 
 async function testNoChannelFailsClearly() {
@@ -137,11 +177,13 @@ async function testNoChannelFailsClearly() {
   assert.strictEqual(getStatus(), 'failed')
   assert.strictEqual(result.error, 'No Telegram or email channel available')
   assert.strictEqual(calls.telegram.length, 0)
+  assert.strictEqual(calls.telegramMessages.length, 0)
   assert.ok(calls.queueUpdates.some((update) => update.status === 'failed' && update.error === 'No Telegram or email channel available'))
 }
 
 async function run() {
   await testTelegramFollowupExecutesAndCompletes()
+  await testTelegramSendFailureDoesNotCreateSuccessTimeline()
   await testNoChannelFailsClearly()
   console.log('ai approval queue followup execute tests passed')
 }
