@@ -10,6 +10,7 @@ const typeLabels = {
   ai_email_assistant: "AI Email Assistant",
   ai_telegram_assistant: "AI Telegram Assistant",
   ai_meeting_scheduler: "AI Meeting Scheduler",
+  ai_lead_scoring_engine: "AI Lead Scoring Engine",
 };
 
 const statusLabels = {
@@ -61,6 +62,8 @@ const actionTypeLabels = {
   stage_change_recommendation: "AI рекомендация этапа",
   meeting_schedule_proposal: "Встреча / demo-созвон",
   followup_sequence_draft: "Autonomous follow-up",
+  lead_scoring_update: "AI Lead Scoring",
+  lead_priority_recommendation: "Lead priority recommendation",
 };
 
 function formatDate(value) {
@@ -467,7 +470,9 @@ export default function AiWorkersPage() {
     setMessage("");
     try {
       const response = await runAiWorker(worker.id);
-      setMessage(`${worker.name}: создано ${response.queueItems?.length || 0} рекомендаций на одобрение.`);
+      setMessage(worker.type === "ai_lead_scoring_engine"
+        ? `${worker.name}: scoring завершён для ${response.scoredLeads?.filter((item) => !item.error).length || 0} лидов.`
+        : `${worker.name}: создано ${response.queueItems?.length || 0} рекомендаций на одобрение.`);
       await loadCommandCenter({ silent: true });
     } catch (requestError) {
       setError(requestError.message || "Не удалось запустить AI сотрудника");
@@ -858,7 +863,7 @@ export default function AiWorkersPage() {
             </div>
             <div className="worker-actions">
               <button className="btn primary compact" type="button" onClick={() => handleRun(worker)} disabled={busyWorker === worker.id || worker.status === "paused"}>
-                {busyWorker === worker.id ? "Выполняется…" : "Запустить"}
+                {busyWorker === worker.id ? "Выполняется…" : worker.type === "ai_lead_scoring_engine" ? "Запустить scoring" : "Запустить"}
               </button>
               <button className="ghost-button" type="button" onClick={() => handlePause(worker)} disabled={busyWorker === worker.id}>
                 {worker.status === "paused" ? "Возобновить" : "Пауза"}

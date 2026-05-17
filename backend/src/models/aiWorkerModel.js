@@ -1,5 +1,6 @@
 const pool = require('../db/pool')
 const { createFollowupSequenceDrafts } = require('../services/autonomousFollowupQueueService')
+const { AI_LEAD_SCORING_WORKER_TYPE, scoreActiveLeads } = require('../services/aiLeadScoringService')
 
 const WORKER_TYPES = [
   'ai_sdr_agent',
@@ -9,6 +10,7 @@ const WORKER_TYPES = [
   'ai_email_assistant',
   'ai_telegram_assistant',
   'ai_meeting_scheduler',
+  AI_LEAD_SCORING_WORKER_TYPE,
 ]
 const STATUSES = ['active', 'paused', 'error']
 const MODES = ['suggestion_only', 'approval_required', 'autonomous_ready']
@@ -51,6 +53,12 @@ const DEFAULT_WORKERS = [
     type: 'ai_telegram_assistant',
     mode: 'approval_required',
     description: 'Готовит Telegram-сообщения и короткие сценарии диалога для одобрения.',
+  },
+  {
+    name: 'AI Lead Scoring Engine',
+    type: AI_LEAD_SCORING_WORKER_TYPE,
+    mode: 'approval_required',
+    description: 'Scores leads, detects priority/risk, updates CRM and recommendations.',
   },
 ]
 
@@ -114,9 +122,9 @@ async function ensureDefaultWorkers(workspaceId, client = pool) {
       `INSERT INTO ai_workers(workspace_id, name, type, status, mode, description)
        VALUES($1, $2, $3, 'active', $4, $5)
        ON CONFLICT (workspace_id, type) DO UPDATE
-         SET name = CASE WHEN ai_workers.type = 'ai_followup_worker' THEN EXCLUDED.name ELSE ai_workers.name END,
-             mode = CASE WHEN ai_workers.type = 'ai_followup_worker' THEN EXCLUDED.mode ELSE ai_workers.mode END,
-             description = CASE WHEN ai_workers.type = 'ai_followup_worker' THEN EXCLUDED.description ELSE ai_workers.description END,
+         SET name = CASE WHEN ai_workers.type IN ('ai_followup_worker', 'ai_lead_scoring_engine') THEN EXCLUDED.name ELSE ai_workers.name END,
+             mode = CASE WHEN ai_workers.type IN ('ai_followup_worker', 'ai_lead_scoring_engine') THEN EXCLUDED.mode ELSE ai_workers.mode END,
+             description = CASE WHEN ai_workers.type IN ('ai_followup_worker', 'ai_lead_scoring_engine') THEN EXCLUDED.description ELSE ai_workers.description END,
              updated_at = NOW()`,
       [workspaceId, worker.name, worker.type, worker.mode, worker.description]
     )
@@ -326,12 +334,68 @@ function buildOutputSummary(worker, leads, recommendations) {
   }
 }
 
+
+async function runLeadScoringWorker({ userId, workspaceId, worker }) {
+  console.info('[lead-scoring] manual run requested', { workspaceId, workerId: worker.id, userId })
+  const runStartedAt = new Date()
+  const initialRun = await pool.query(
+    `INSERT INTO ai_worker_runs(worker_id, workspace_id, input_context, output_summary, status, credits_spent)
+     VALUES($1, $2, $3, $4, 'running', 1)
+     RETURNING *`,
+    [worker.id, workspaceId, { workerType: worker.type, mode: worker.mode, generatedBy: 'lead_scoring_engine_v1', source: 'manual_worker_run' }, { summary: 'AI Lead Scoring Engine запущен вручную' }]
+  )
+  let run = normalizeRun(initialRun.rows[0])
+
+  const scored = await scoreActiveLeads(userId, workspaceId, { limit: null, source: 'manual_worker_run' })
+  const failed = scored.filter((item) => item.error)
+  const successful = scored.filter((item) => !item.error)
+  const highPriority = successful.filter((item) => item.result?.score >= 51 || item.result?.riskLevel === 'high')
+  const outputSummary = {
+    summary: `AI Lead Scoring Engine scored ${successful.length} active leads${failed.length ? `, ${failed.length} failed` : ''}`,
+    scoredLeads: successful.length,
+    failedLeads: failed.length,
+    highPriorityRecommendations: highPriority.length,
+    source: 'manual_worker_run',
+    errors: failed.slice(0, 10),
+  }
+  const updatedRun = await pool.query(
+    `UPDATE ai_worker_runs
+        SET output_summary = $3,
+            status = $4,
+            credits_spent = $5
+      WHERE workspace_id = $1 AND id = $2
+      RETURNING *`,
+    [workspaceId, run.id, outputSummary, failed.length && !successful.length ? 'failed' : 'completed', Math.max(1, scored.length || 1)]
+  )
+  run = normalizeRun(updatedRun.rows[0])
+  await pool.query('UPDATE ai_workers SET last_run_at = NOW(), status = $3, updated_at = NOW() WHERE workspace_id = $1 AND id = $2', [workspaceId, worker.id, failed.length && !successful.length ? 'error' : 'active'])
+  await pool.query(
+    `INSERT INTO crm_activity(workspace_id, user_id, type, title, body, metadata)
+     VALUES($1, $2, 'ai_worker_run_completed', $3, $4, $5)`,
+    [workspaceId, userId, `${worker.name} завершил scoring`, outputSummary.summary, { workerId: worker.id, runId: run.id, scoredLeads: successful.length, failedLeads: failed.length }]
+  )
+  const queueResult = await pool.query(
+    `SELECT * FROM ai_worker_queue
+      WHERE workspace_id = $1
+        AND worker_id = $2
+        AND action_type = 'lead_priority_recommendation'
+        AND created_at >= $3
+      ORDER BY created_at DESC`,
+    [workspaceId, worker.id, runStartedAt]
+  )
+  return { run, queueItems: queueResult.rows.map(normalizeQueueItem), scoredLeads: scored }
+}
+
 async function runWorker({ userId, workspaceId, workerId }) {
   const client = await pool.connect()
   try {
     await client.query('BEGIN')
     const worker = await getWorker(workspaceId, workerId, client)
     if (worker.status === 'paused') throw Object.assign(new Error('AI worker is paused'), { statusCode: 400 })
+    if (worker.type === AI_LEAD_SCORING_WORKER_TYPE) {
+      await client.query('COMMIT')
+      return await runLeadScoringWorker({ userId, workspaceId, worker })
+    }
     const leads = await fetchLeadSnapshot(workspaceId)
     const recommendations = worker.type === 'ai_followup_worker' ? [] : buildRecommendations(worker, leads)
     const inputContext = {
