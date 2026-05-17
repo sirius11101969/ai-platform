@@ -419,6 +419,12 @@ CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_next_best_action_dedup
   WHERE payload->>'source' = 'next_best_action_engine'
     AND status IN ('pending_approval', 'approved');
 
+
+CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_next_best_action_channel_dedup
+  ON ai_worker_queue(workspace_id, lead_id, action_type, status, ((payload->>'source')), (COALESCE(payload->>'preferredChannel', payload->>'channel', '')), created_at DESC)
+  WHERE payload->>'source' = 'next_best_action_engine'
+    AND status IN ('pending_approval', 'approved');
+
 CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_next_best_action_metrics
   ON ai_worker_queue(workspace_id, status, created_at DESC)
   WHERE payload->>'source' = 'next_best_action_engine';
