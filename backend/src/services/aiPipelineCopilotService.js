@@ -1,10 +1,39 @@
 const pool = require('../db/pool')
 
 const HIGH_RISK = new Set(['high', 'medium'])
-const URGENT_PRIORITIES = new Set(['urgent', 'priority', 'high'])
+const FOCUS_PRIORITIES = new Set(['urgent', 'priority'])
+const ACTION_PRIORITIES = new Set(['urgent', 'priority'])
 const ACTIVE_LEAD_STATUSES = ['new', 'qualified', 'proposal', 'booked']
 const PENDING_STATUSES = ['pending_approval', 'approved']
-const FAILED_STATUSES = ['failed', 'completed', 'executed']
+const HISTORY_STATUSES = ['failed', 'completed', 'executed']
+const COMPLETED_STATUSES = new Set(['completed', 'executed'])
+const CUSTOMER_ACTION_TYPES = new Set([
+  'telegram_reply_draft',
+  'telegram_meeting_confirmation_draft',
+  'telegram_followup',
+  'telegram_draft',
+  'telegram_follow_up',
+  'email_followup',
+  'email_followup_draft',
+  'email_draft',
+  'email_follow_up',
+  'followup_sequence_draft',
+  'followup_24h',
+  'followup_3d',
+  'meeting_schedule_proposal',
+  'meeting_request',
+  'meeting_prep_recommendation',
+  'demo_offer',
+  'risk_followup_recommendation',
+  'proposal_followup_recommendation',
+])
+const ACTIONABLE_APPROVAL_TYPES = new Set([
+  ...CUSTOMER_ACTION_TYPES,
+  'next_best_action',
+  'next_best_action_recommendation',
+  'lead_priority_recommendation',
+  'crm_next_action',
+])
 
 function toNumber(value) {
   const numeric = Number(value || 0)
@@ -17,6 +46,11 @@ function compact(value, fallback = '') {
 
 function normalizeDate(value) {
   return value ? new Date(value).toISOString() : null
+}
+
+function dateMs(value) {
+  const time = value ? new Date(value).getTime() : 0
+  return Number.isFinite(time) ? time : 0
 }
 
 function isWithinHours(value, hours) {
@@ -49,10 +83,43 @@ function buildCtas(leadId, queueId = '') {
   }
 }
 
+function sanitizeManagerReason(text) {
+  const original = compact(text)
+  if (!original) return ''
+
+  const cleaned = original
+    .replace(/(?:Контекст|Плюсы|Минусы|Итог|Риск)\s*:[^.!?\n]*(?:[.!?\n]|$)/gi, ' ')
+    .replace(/ai[_\s-]*(?:scoring[_\s-]*reason|score|priority|risk[_\s-]*level|temperature)/gi, ' ')
+    .replace(/internalContext/gi, ' ')
+    .replace(/\b(?:score|priority|urgent|risk|confidence|weight|weights)\b/gi, ' ')
+    .replace(/\+\s*\d+(?:\.\d+)?/g, ' ')
+    .replace(/\b\d{1,3}\s*\/\s*100\b/g, ' ')
+    .replace(/\s{2,}/g, ' ')
+    .trim()
+
+  const unsafe = /(?:Плюсы|Минусы|Итог|ai[_\s-]*scoring|internalContext|\+\s*\d+|\bscore\b|\bpriority\/urgent\b)/i.test(cleaned)
+  if (!cleaned || unsafe) {
+    console.info('[pipeline-copilot] manager reason sanitized')
+    return 'Сделка требует follow-up сегодня'
+  }
+
+  if (cleaned !== original) console.info('[pipeline-copilot] manager reason sanitized')
+  return cleaned
+}
+
+function leadManagerReason(lead) {
+  if (lead.aiRiskLevel === 'high') return 'Есть риск потери из-за паузы в коммуникации'
+  if (lead.aiRiskLevel === 'medium') return 'Сделка требует follow-up сегодня'
+  if (lead.stage === 'booked') return 'Встреча запланирована, нужно подготовить agenda'
+  if (lead.stage === 'proposal') return 'Сделка требует follow-up сегодня'
+  if (lead.aiPriority === 'urgent' || lead.aiPriority === 'priority') return 'Лид проявил высокий интерес к demo'
+  return sanitizeManagerReason(lead.managerReason) || 'Лид проявил высокий интерес к demo'
+}
+
 function normalizeLead(row) {
   const riskLevel = compact(row.ai_risk_level, 'low').toLowerCase()
   const priority = compact(row.ai_priority, 'medium').toLowerCase()
-  return {
+  const lead = {
     id: row.id,
     name: row.name,
     company: row.company || '',
@@ -65,8 +132,8 @@ function normalizeLead(row) {
     aiPriority: priority,
     aiRiskLevel: riskLevel,
     aiTemperature: compact(row.ai_temperature, 'warm').toLowerCase(),
-    aiScoringReason: row.ai_scoring_reason || '',
-    nextStep: row.next_step || '',
+    managerReason: sanitizeManagerReason(row.ai_scoring_reason || ''),
+    nextStep: sanitizeManagerReason(row.next_step || ''),
     probabilityToClose: toNumber(row.probability_to_close),
     expectedCloseDate: row.expected_close_date || null,
     lastMessageAt: normalizeDate(row.last_message_at),
@@ -74,6 +141,8 @@ function normalizeLead(row) {
     createdAt: normalizeDate(row.created_at),
     ctas: buildCtas(row.id),
   }
+  lead.managerReason = leadManagerReason(lead)
+  return lead
 }
 
 function normalizeQueueItem(row) {
@@ -86,11 +155,13 @@ function normalizeQueueItem(row) {
     leadCompany: row.lead_company || '',
     actionType: row.action_type,
     status: row.status,
-    title: row.title || payload.title || row.action_type,
-    recommendation: row.recommendation || payload.reason || payload.nextBestAction || '',
-    errorMessage: row.error_message || payload.error || '',
+    title: sanitizeManagerReason(row.title || payload.title || row.action_type),
+    recommendation: sanitizeManagerReason(row.recommendation || payload.reason || payload.nextBestAction || ''),
+    errorMessage: sanitizeManagerReason(row.error_message || payload.error || ''),
     priority: compact(payload.priority || payload.aiPriority, 'medium').toLowerCase(),
     riskLevel: compact(payload.riskLevel || payload.aiRiskLevel, '').toLowerCase(),
+    source: compact(payload.source || row.source, '').toLowerCase(),
+    payloadScore: toNumber(payload.score || payload.aiScore),
     createdAt: normalizeDate(row.created_at),
     updatedAt: normalizeDate(row.updated_at),
     executedAt: normalizeDate(row.executed_at),
@@ -103,7 +174,7 @@ function normalizeMeeting(row) {
     id: row.id,
     leadId: row.lead_id,
     leadName: row.lead_name || 'Без лида',
-    title: row.title || 'Встреча',
+    title: sanitizeManagerReason(row.title || 'Встреча'),
     startsAt: normalizeDate(row.starts_at),
     durationMinutes: toNumber(row.duration_minutes || 30),
     status: row.status || 'scheduled',
@@ -127,8 +198,8 @@ function pushAction(actions, seen, action) {
     id: key,
     leadId: action.leadId || null,
     leadName: action.leadName || 'Workspace',
-    actionTitle: action.actionTitle,
-    reason: action.reason,
+    actionTitle: sanitizeManagerReason(action.actionTitle) || action.actionTitle,
+    reason: sanitizeManagerReason(action.reason) || 'Сделка требует follow-up сегодня',
     priority: action.priority || 'medium',
     dueLabel: action.dueLabel || 'Сегодня',
     category: action.category || 'other',
@@ -150,11 +221,15 @@ function sortTodayActions(actions) {
 }
 
 async function recordViewedEvent(userId, workspaceId) {
-  await pool.query(
-    `INSERT INTO crm_activity(workspace_id, user_id, lead_id, type, title, body, metadata)
-     VALUES($1, $2, NULL, 'pipeline_copilot_viewed', 'AI Pipeline Copilot viewed', 'Workspace-level command center opened', $3)`,
-    [workspaceId, userId, { source: 'pipeline_copilot', workspaceLevel: true }]
-  )
+  try {
+    await pool.query(
+      `INSERT INTO crm_activity(workspace_id, user_id, lead_id, type, title, body, metadata)
+       VALUES($1, $2, NULL, 'pipeline_copilot_viewed', 'AI Pipeline Copilot viewed', 'Workspace-level command center opened', $3)`,
+      [workspaceId, userId, { source: 'pipeline_copilot', workspaceLevel: true }]
+    )
+  } catch (error) {
+    console.info('[pipeline-copilot] workspace event skipped', { workspaceId, error: error.message || error })
+  }
 }
 
 async function fetchLeads(workspaceId) {
@@ -207,32 +282,82 @@ async function fetchMeetings(workspaceId) {
   return result.rows.map(normalizeMeeting)
 }
 
+function isFocusLead(lead) {
+  return FOCUS_PRIORITIES.has(lead.aiPriority)
+    || HIGH_RISK.has(lead.aiRiskLevel)
+    || (['booked', 'proposal'].includes(lead.stage) && lead.aiScore >= 65)
+}
+
+function isActionableApproval(item) {
+  if (!PENDING_STATUSES.includes(item.status)) return false
+  if (item.actionType === 'lead_scoring_update') return false
+  if (item.actionType === 'lead_priority_recommendation') {
+    return FOCUS_PRIORITIES.has(item.priority) || HIGH_RISK.has(item.riskLevel) || item.payloadScore >= 70
+  }
+  if (item.source === 'next_best_action_engine') return true
+  return ACTIONABLE_APPROVAL_TYPES.has(item.actionType)
+}
+
+function failureResolutionKey(item) {
+  return item.leadId || item.leadName || 'workspace'
+}
+
+function isCustomerAction(item) {
+  return CUSTOMER_ACTION_TYPES.has(item.actionType)
+}
+
+function isSystemSafetyHistory(item) {
+  const text = `${item.title || ''} ${item.recommendation || ''} ${item.errorMessage || ''}`
+  return /unsafe copy guard|copy guard|internal context leak|blocked by copy guard/i.test(text)
+}
+
+function filterUnresolvedFailedActions(items) {
+  const completedByLead = new Map()
+  items.filter((item) => COMPLETED_STATUSES.has(item.status) && isCustomerAction(item)).forEach((item) => {
+    const key = failureResolutionKey(item)
+    completedByLead.set(key, Math.max(completedByLead.get(key) || 0, dateMs(item.executedAt || item.updatedAt || item.createdAt)))
+  })
+
+  const unresolved = items.filter((item) => {
+    if (item.status !== 'failed') return false
+    if (!isCustomerAction(item) || isSystemSafetyHistory(item)) return false
+    const completedAt = completedByLead.get(failureResolutionKey(item)) || 0
+    const failedAt = dateMs(item.updatedAt || item.createdAt)
+    return completedAt <= failedAt
+  })
+
+  if (unresolved.length !== items.filter((item) => item.status === 'failed').length) {
+    console.info('[pipeline-copilot] unresolved failed filtered')
+  }
+  return unresolved
+}
+
 function buildActions({ focusLeads, riskDeals, meetings, pendingApprovals, failedActions }) {
   const actions = []
   const seen = new Set()
 
-  failedActions.slice(0, 8).forEach((item) => pushAction(actions, seen, {
+  failedActions.slice(0, 5).forEach((item) => pushAction(actions, seen, {
     type: 'failed',
     sourceId: item.id,
     leadId: item.leadId,
     leadName: item.leadName,
     actionTitle: `Fix failed AI action: ${item.title}`,
-    reason: item.status === 'failed' ? (item.errorMessage || item.recommendation || 'AI action failed or needs a manual fix before it can proceed.') : (item.recommendation || 'Completed AI action retained here as resolved historical context.'),
-    priority: item.status === 'failed' ? 'urgent' : 'low',
-    dueLabel: item.status === 'failed' ? 'Blocked now' : 'Resolved/old failed item',
+    reason: item.errorMessage || item.recommendation || 'Customer-facing action needs a manual fix before it can proceed.',
+    priority: 'urgent',
+    dueLabel: 'Blocked now',
     category: 'failed',
     sortBucket: 10,
     ctaRoute: item.ctas.openAiWorkers,
     ctas: item.ctas,
   }))
 
-  meetings.filter((meeting) => meeting.needsPrep).slice(0, 8).forEach((meeting) => pushAction(actions, seen, {
+  meetings.filter((meeting) => meeting.needsPrep).slice(0, 5).forEach((meeting) => pushAction(actions, seen, {
     type: 'meeting',
     sourceId: meeting.id,
     leadId: meeting.leadId,
     leadName: meeting.leadName,
     actionTitle: `Prepare for meeting: ${meeting.title}`,
-    reason: `Meeting is inside the next 24 hours. Prepare context, desired outcome, and next step before the call.`,
+    reason: 'Встреча запланирована, нужно подготовить agenda',
     priority: 'high',
     dueLabel: 'Next 24h',
     category: 'meeting',
@@ -241,13 +366,13 @@ function buildActions({ focusLeads, riskDeals, meetings, pendingApprovals, faile
     ctas: meeting.ctas,
   }))
 
-  riskDeals.slice(0, 10).forEach((lead) => pushAction(actions, seen, {
+  riskDeals.slice(0, 6).forEach((lead) => pushAction(actions, seen, {
     type: 'risk',
     sourceId: lead.id,
     leadId: lead.id,
     leadName: lead.name,
     actionTitle: lead.aiRiskLevel === 'high' ? 'Escalate high-risk deal' : 'Stabilize at-risk deal',
-    reason: lead.aiScoringReason || `AI risk level is ${lead.aiRiskLevel}. Confirm buyer intent and next agreed step.`,
+    reason: lead.managerReason,
     priority: lead.aiRiskLevel === 'high' ? 'urgent' : 'high',
     dueLabel: 'Сегодня',
     category: 'risk',
@@ -256,13 +381,13 @@ function buildActions({ focusLeads, riskDeals, meetings, pendingApprovals, faile
     ctas: lead.ctas,
   }))
 
-  focusLeads.filter((lead) => URGENT_PRIORITIES.has(lead.aiPriority)).slice(0, 10).forEach((lead) => pushAction(actions, seen, {
+  focusLeads.filter((lead) => ACTION_PRIORITIES.has(lead.aiPriority)).slice(0, 6).forEach((lead) => pushAction(actions, seen, {
     type: 'urgent',
     sourceId: lead.id,
     leadId: lead.id,
     leadName: lead.name,
-    actionTitle: lead.nextStep || 'Work urgent focus lead',
-    reason: lead.aiScoringReason || `AI priority is ${lead.aiPriority}; keep momentum today.`,
+    actionTitle: lead.nextStep || 'Work focus lead',
+    reason: lead.managerReason,
     priority: lead.aiPriority,
     dueLabel: 'Сегодня',
     category: 'urgent',
@@ -271,7 +396,7 @@ function buildActions({ focusLeads, riskDeals, meetings, pendingApprovals, faile
     ctas: lead.ctas,
   }))
 
-  pendingApprovals.slice(0, 12).forEach((item) => pushAction(actions, seen, {
+  pendingApprovals.slice(0, 6).forEach((item) => pushAction(actions, seen, {
     type: 'approval',
     sourceId: item.id,
     leadId: item.leadId,
@@ -286,38 +411,27 @@ function buildActions({ focusLeads, riskDeals, meetings, pendingApprovals, faile
     ctas: item.ctas,
   }))
 
-  focusLeads.slice(0, 20).forEach((lead) => pushAction(actions, seen, {
-    type: 'focus',
-    sourceId: lead.id,
-    leadId: lead.id,
-    leadName: lead.name,
-    actionTitle: lead.nextStep || 'Open focus lead and choose next step',
-    reason: lead.aiScoringReason || 'Lead is in the AI focus set for today.',
-    priority: lead.aiPriority || 'medium',
-    dueLabel: 'Сегодня',
-    category: 'focus',
-    sortBucket: 90,
-    ctaRoute: lead.ctas.openLead,
-    ctas: lead.ctas,
-  }))
-
-  return sortTodayActions(actions).slice(0, 30)
+  return sortTodayActions(actions).slice(0, 20)
 }
 
 async function getPipelineCopilot(userId, workspaceId) {
   console.info('[pipeline-copilot] requested', { workspaceId, userId })
-  const [leads, pendingApprovals, failedActions, meetings] = await Promise.all([
+  const [leads, queueHistory, meetings] = await Promise.all([
     fetchLeads(workspaceId),
-    fetchQueue(workspaceId, PENDING_STATUSES, 120),
-    fetchQueue(workspaceId, FAILED_STATUSES, 80),
+    fetchQueue(workspaceId, [...PENDING_STATUSES, ...HISTORY_STATUSES], 200),
     fetchMeetings(workspaceId),
   ])
 
-  const focusLeads = leads.filter((lead) => URGENT_PRIORITIES.has(lead.aiPriority) || HIGH_RISK.has(lead.aiRiskLevel) || lead.aiScore >= 70).slice(0, 40)
-  const riskDeals = leads.filter((lead) => HIGH_RISK.has(lead.aiRiskLevel)).slice(0, 30)
+  const pendingApprovals = queueHistory.filter(isActionableApproval).slice(0, 30)
+  const failedActions = filterUnresolvedFailedActions(queueHistory).slice(0, 10)
+  const focusLeads = leads.filter(isFocusLead).slice(0, 20)
+  const riskDeals = leads.filter((lead) => HIGH_RISK.has(lead.aiRiskLevel)).slice(0, 12)
   const upcomingMeetings = meetings.slice(0, 30)
   const meetingsNext24h = upcomingMeetings.filter((meeting) => meeting.needsPrep)
   const todayActions = buildActions({ focusLeads, riskDeals, meetings: upcomingMeetings, pendingApprovals, failedActions })
+  const defaultTodayActions = todayActions.slice(0, 10)
+
+  console.info('[pipeline-copilot] focus mode applied', { focusLeads: focusLeads.length, todayActions: defaultTodayActions.length })
 
   const openPipeline = leads.filter((lead) => !['won', 'lost'].includes(lead.status))
   const revenueSnapshot = {
@@ -330,24 +444,22 @@ async function getPipelineCopilot(userId, workspaceId) {
   }
 
   const summary = {
-    actionsToday: todayActions.length,
+    actionsToday: defaultTodayActions.length,
     focusLeads: focusLeads.length,
     riskDeals: riskDeals.length,
     meetingsNext24h: meetingsNext24h.length,
     pendingApprovals: pendingApprovals.length,
     failedActions: failedActions.length,
-    headline: `Сегодня нужно сделать ${todayActions.length} действий`,
+    headline: `Сегодня нужно сделать ${defaultTodayActions.length} действий`,
     riskText: `${riskDeals.length} сделок в риске`,
     meetingsText: `${meetingsNext24h.length} встреч требуют подготовки`,
     approvalsText: `${pendingApprovals.length} AI задач ждут approval`,
   }
 
-  await recordViewedEvent(userId, workspaceId).catch((error) => {
-    console.error('[pipeline-copilot] viewed event failed', { workspaceId, error: error.message || error })
-  })
+  await recordViewedEvent(userId, workspaceId)
 
   console.info('[pipeline-copilot] summary generated', summary)
   return { summary, todayActions, focusLeads, riskDeals, upcomingMeetings, pendingApprovals, failedActions, revenueSnapshot }
 }
 
-module.exports = { getPipelineCopilot }
+module.exports = { getPipelineCopilot, sanitizeManagerReason, isFocusLead, isActionableApproval, filterUnresolvedFailedActions }
