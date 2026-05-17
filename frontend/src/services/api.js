@@ -423,6 +423,10 @@ export function fetchAiCommandCenter() {
   return request('/ai/command-center')
 }
 
+export function fetchAiPriorityInbox() {
+  return request('/ai/priority-inbox')
+}
+
 export function fetchAiApprovalQueue(params = {}) {
   const query = new URLSearchParams(Object.entries(params).filter(([, value]) => value !== undefined && value !== null && value !== '')).toString()
   return request(`/ai/approval-queue${query ? `?${query}` : ''}`)
