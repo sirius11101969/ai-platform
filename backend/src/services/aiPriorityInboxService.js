@@ -1,3 +1,4 @@
+const pool = require('../db/pool')
 const crmModel = require('../models/crmModel')
 const { addTimelineEvent } = require('./timelineService')
 
@@ -6,6 +7,165 @@ const STAGE_WEIGHT = { booked: 2, proposal: 1, qualified: 0, new: 0, won: -2, lo
 const PRIORITY_WEIGHT = { urgent: 3, priority: 2, high: 1, medium: 0, low: 0 }
 const RISK_WEIGHT = { high: 2, medium: 1, low: 0 }
 const VALID_MODES = new Set(['focus', 'all', 'urgent', 'risk', 'meetings', 'followups'])
+
+const ACTION_TYPES = new Set(['telegram', 'email', 'followup', 'meeting'])
+const ACTION_CONFIG = {
+  telegram: { queueActionType: 'telegram_reply_draft', workerType: 'ai_telegram_assistant', workerName: 'AI Telegram Reply Assistant' },
+  email: { queueActionType: 'email_followup_draft', workerType: 'ai_email_assistant', workerName: 'AI Email Assistant' },
+  followup: { queueActionType: 'followup_sequence_draft', workerType: 'ai_crm_assistant', workerName: 'AI CRM Assistant' },
+  meeting: { queueActionType: 'meeting_schedule_proposal', workerType: 'ai_meeting_scheduler', workerName: 'AI Meeting Scheduler' },
+}
+
+function russianError(message, statusCode = 400) {
+  return Object.assign(new Error(message), { statusCode })
+}
+
+function hasBookedMeeting(lead) {
+  return (lead.meetings || []).some((meeting) => ['booked', 'confirmed', 'scheduled', 'synced'].includes(normalizeText(meeting.status)) || normalizeText(meeting.calendarStatus) === 'synced')
+}
+
+function buildPriorityActionText(lead, inboxItem, actionType) {
+  const reason = inboxItem.aiScoringReason || lead.aiScoringReason || 'AI обнаружил приоритетный сигнал.'
+  const next = inboxItem.nextBestAction || 'Связаться с лидом и согласовать следующий шаг.'
+  const greeting = lead.name ? `${lead.name}, здравствуйте!` : 'Здравствуйте!'
+  if (actionType === 'email') {
+    return {
+      subject: `Следующий шаг по ${lead.company || 'вашему запросу'}`,
+      body: `${greeting}\n\nПишу по вашему запросу. ${next}\n\nКонтекст: ${reason}\n\nГотов(а) согласовать удобное время и ответить на вопросы.`,
+    }
+  }
+  if (actionType === 'meeting') {
+    const booked = hasBookedMeeting(lead)
+    return {
+      subject: booked ? 'Подготовка к demo-встрече' : 'Предложение demo-встречи',
+      body: booked
+        ? `Подготовить подтверждение и brief к уже запланированной встрече. Контекст: ${reason}. Следующий шаг: ${next}.`
+        : `Предложить клиенту demo-встречу и согласовать удобное время. Контекст: ${reason}. Следующий шаг: ${next}.`,
+    }
+  }
+  return {
+    subject: 'Priority Inbox follow-up',
+    body: `${greeting} ${next}\n\nКонтекст: ${reason}`,
+  }
+}
+
+function buildPriorityActionPayload(lead, inboxItem, actionType) {
+  const text = buildPriorityActionText(lead, inboxItem, actionType)
+  const base = {
+    source: 'priority_inbox',
+    leadId: lead.id,
+    leadName: lead.name,
+    company: lead.company || '',
+    currentStage: lead.status || '',
+    nextBestAction: inboxItem.nextBestAction,
+    aiScoringReason: inboxItem.aiScoringReason,
+    aiScore: inboxItem.aiScore,
+    aiPriority: inboxItem.aiPriority,
+    riskLevel: inboxItem.aiRiskLevel,
+    body: text.body,
+    text: text.body,
+    message: text.body,
+    noAutoSend: true,
+  }
+
+  if (actionType === 'telegram') return { ...base, channel: 'telegram', chatId: String(lead.telegramChatId || ''), draftText: text.body }
+  if (actionType === 'email') return { ...base, channel: 'email', email: lead.email, subject: text.subject }
+  if (actionType === 'followup') {
+    const channel = lead.telegramChatId ? 'telegram' : (lead.email ? 'email' : 'crm')
+    return { ...base, channel, sequenceStep: 'manual_priority_followup', draftText: text.body, subject: channel === 'email' ? text.subject : undefined }
+  }
+  if (actionType === 'meeting') {
+    const booked = hasBookedMeeting(lead)
+    return {
+      ...base,
+      channel: lead.telegramChatId ? 'telegram' : (lead.email ? 'email' : 'crm'),
+      leadId: lead.id,
+      suggestedTime: null,
+      source: 'priority_inbox',
+      meetingAlreadyBooked: booked,
+      proposalType: booked ? 'meeting_confirmation_prep' : 'demo_scheduling',
+      title: text.subject,
+    }
+  }
+  return base
+}
+
+async function ensurePriorityActionWorker(client, workspaceId, actionType) {
+  const config = ACTION_CONFIG[actionType]
+  const result = await client.query(
+    `INSERT INTO ai_workers(workspace_id, name, type, status, mode, description)
+     VALUES($1, $2, $3, 'active', 'approval_required', 'Создаёт approval-действия из AI Priority Inbox. Отправка только после проверки менеджера.')
+     ON CONFLICT (workspace_id, type) DO UPDATE SET updated_at = NOW()
+     RETURNING id`,
+    [workspaceId, config.workerName, config.workerType]
+  )
+  return result.rows[0]
+}
+
+async function findDuplicatePriorityAction(client, workspaceId, leadId, queueActionType) {
+  const result = await client.query(
+    `SELECT id FROM ai_worker_queue
+      WHERE workspace_id = $1 AND lead_id = $2 AND action_type = $3
+        AND status IN ('pending_approval','approved')
+        AND payload->>'source' = 'priority_inbox'
+      ORDER BY created_at DESC LIMIT 1`,
+    [workspaceId, leadId, queueActionType]
+  )
+  return result.rows[0] || null
+}
+
+async function createPriorityInboxAction(userId, workspaceId, { leadId, actionType }) {
+  const normalizedActionType = normalizeText(actionType)
+  console.log('[priority-inbox] action button clicked', { userId, workspaceId, leadId, actionType: normalizedActionType })
+  if (!leadId) throw russianError('leadId is required')
+  if (!ACTION_TYPES.has(normalizedActionType)) throw russianError('Invalid priority inbox action type')
+
+  const lead = await crmModel.findLead(userId, workspaceId, leadId)
+  if (!lead) throw russianError('Lead not found', 404)
+  if (normalizedActionType === 'telegram' && !lead.telegramChatId) throw russianError('Telegram не подключён для этого лида')
+  if (normalizedActionType === 'email' && !lead.email) throw russianError('Email не найден')
+
+  const inboxItem = enrichInboxItem(buildInboxItem(lead))
+  const config = ACTION_CONFIG[normalizedActionType]
+  const client = await pool.connect()
+  try {
+    await client.query('BEGIN')
+    const duplicate = await findDuplicatePriorityAction(client, workspaceId, lead.id, config.queueActionType)
+    if (duplicate) {
+      console.log('[priority-inbox] duplicate action reused', { workspaceId, leadId: lead.id, actionType: normalizedActionType, queueItemId: duplicate.id })
+      await client.query('COMMIT')
+      return { success: true, queueItemId: duplicate.id, redirectTo: '/ai-workers', duplicate: true }
+    }
+
+    const worker = await ensurePriorityActionWorker(client, workspaceId, normalizedActionType)
+    const payload = buildPriorityActionPayload(lead, inboxItem, normalizedActionType)
+    const text = buildPriorityActionText(lead, inboxItem, normalizedActionType)
+    const result = await client.query(
+      `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
+       VALUES($1, $2, $3, $4, 'pending_approval', $5, $6, $7)
+       RETURNING id`,
+      [worker.id, workspaceId, lead.id, config.queueActionType, text.subject, text.body, payload]
+    )
+    await addTimelineEvent(client, {
+      workspaceId,
+      leadId: lead.id,
+      userId,
+      eventType: 'priority_inbox_action_created',
+      title: 'AI Priority Inbox создал действие',
+      body: `Создано действие: ${normalizedActionType}`,
+      source: 'ai',
+      metadata: { queueItemId: result.rows[0].id, actionType: normalizedActionType, queueActionType: config.queueActionType, source: 'priority_inbox' },
+    })
+    await client.query('COMMIT')
+    console.log('[priority-inbox] queue action created', { workspaceId, leadId: lead.id, actionType: normalizedActionType, queueItemId: result.rows[0].id })
+    return { success: true, queueItemId: result.rows[0].id, redirectTo: '/ai-workers' }
+  } catch (error) {
+    await client.query('ROLLBACK')
+    throw error
+  } finally {
+    client.release()
+  }
+}
 
 function toTime(value) {
   if (!value) return 0
@@ -339,5 +499,6 @@ async function listPriorityInbox(userId, workspaceId, options = {}) {
 module.exports = {
   generateNextBestAction,
   listPriorityInbox,
-  _private: { buildInboxItem, enrichInboxItem, filterItemsByMode, isFocusLead, buildMetrics, sortInboxItems },
+  createPriorityInboxAction,
+  _private: { buildInboxItem, buildPriorityActionPayload, enrichInboxItem, filterItemsByMode, isFocusLead, buildMetrics, sortInboxItems },
 }
