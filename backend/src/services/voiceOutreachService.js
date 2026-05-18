@@ -6,7 +6,8 @@ const aiRevenueIntelligenceService = require('./aiRevenueIntelligenceService')
 
 const VOICE_OUTREACH_CALL_JOB_TYPE = 'voice_outreach_call'
 const VOICE_CALL_ANALYSIS_JOB_TYPE = 'voice_call_analysis'
-const AI_VOICE_WORKER_TYPE = 'ai_voice_worker'
+const AI_VOICE_WORKER_KIND = 'ai_voice_worker'
+const AI_VOICE_WORKER_TYPE = 'ai_sdr_agent'
 const DEFAULT_PROVIDER = 'mock_provider'
 const ALLOWED_STATUSES = new Set(['queued', 'dialing', 'active', 'completed', 'failed', 'rejected'])
 
@@ -72,11 +73,21 @@ async function insertCallEvent(client, { callId, eventType, payload = {} }) {
 async function ensureVoiceWorker(client, workspaceId) {
   const result = await client.query(
     `INSERT INTO ai_workers(workspace_id, name, type, status, mode, description)
-     VALUES($1::uuid, 'AI Voice Worker', $2::text, 'active', 'approval_required', 'Runs mock-mode voice outreach calls and stores transcripts, summaries, outcomes, and next actions.')
+     VALUES($1::uuid, 'AI Voice Worker', $2::text, 'active', 'approval_required', $3::text)
      ON CONFLICT (workspace_id, type) DO UPDATE
-       SET name = EXCLUDED.name, status = 'active', mode = EXCLUDED.mode, description = EXCLUDED.description, updated_at = NOW()
+       SET status = 'active',
+           last_run_at = NOW(),
+           updated_at = NOW(),
+           description = CASE
+             WHEN ai_workers.name = 'AI Voice Worker' THEN EXCLUDED.description
+             ELSE ai_workers.description
+           END
      RETURNING id`,
-    [workspaceId, AI_VOICE_WORKER_TYPE]
+    [
+      workspaceId,
+      AI_VOICE_WORKER_TYPE,
+      `Runs mock-mode voice outreach calls and stores transcripts, summaries, outcomes, and next actions. voice=true; workerKind=${AI_VOICE_WORKER_KIND}`,
+    ]
   )
   return result.rows[0]
 }
@@ -229,6 +240,7 @@ async function executeVoiceCallAnalysisJob(job) {
 }
 
 module.exports = {
+  AI_VOICE_WORKER_KIND,
   AI_VOICE_WORKER_TYPE,
   VOICE_OUTREACH_CALL_JOB_TYPE,
   VOICE_CALL_ANALYSIS_JOB_TYPE,
@@ -240,5 +252,5 @@ module.exports = {
   getCall,
   getCalls,
   initiateCall,
-  _private: { completeMockCall, extractPhoneNumber, normalizeCall, updateCallStatus },
+  _private: { completeMockCall, ensureVoiceWorker, extractPhoneNumber, normalizeCall, updateCallStatus },
 }
