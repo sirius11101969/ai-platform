@@ -6,12 +6,20 @@ The AI execution runner moves enterprise execution jobs out of manual SQL smoke 
 
 ## Backend entry points
 
-The runner is exposed under `/api/ai/execution`:
+The runner is exposed under `/api/ai/execution`. These routes are protected separately from the rest of `/api/ai`: requests are accepted when either the existing user JWT authentication succeeds or the internal smoke-test header `x-ai-execution-key` matches `AI_EXECUTION_ADMIN_KEY`. Missing or invalid credentials return a safe `401` JSON response and do not weaken any other route.
+
+Server-side smoke test calls can use the internal admin key without a user session table:
 
 ```bash
-curl -k https://www.as6.ru/api/ai/execution/health
-curl -k -X POST https://www.as6.ru/api/ai/execution/enqueue-test
-curl -k -X POST https://www.as6.ru/api/ai/execution/run-once
+curl -k https://www.as6.ru/api/ai/execution/health -H "x-ai-execution-key: $AI_EXECUTION_ADMIN_KEY"
+curl -k -X POST https://www.as6.ru/api/ai/execution/enqueue-test -H "x-ai-execution-key: $AI_EXECUTION_ADMIN_KEY"
+curl -k -X POST https://www.as6.ru/api/ai/execution/run-once -H "x-ai-execution-key: $AI_EXECUTION_ADMIN_KEY"
+```
+
+When the internal header is accepted, the backend writes this structured log line:
+
+```text
+[ai-execution-runner] internal admin key accepted
 ```
 
 Optional request body/query parameters:
