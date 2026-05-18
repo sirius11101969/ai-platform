@@ -26,10 +26,15 @@ services:
       GMAIL_ACCESS_TOKEN: ${GMAIL_ACCESS_TOKEN:-}
       GMAIL_FROM: ${GMAIL_FROM:-}
       FILE_STORAGE_DIR: /app/storage/attachments
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      AI_EXECUTION_POLL_INTERVAL_MS: ${AI_EXECUTION_POLL_INTERVAL_MS:-2000}
+      AI_EXECUTION_MAX_PARALLEL: ${AI_EXECUTION_MAX_PARALLEL:-4}
+      AI_EXECUTION_ENABLE_BACKGROUND_LOOP: ${AI_EXECUTION_ENABLE_BACKGROUND_LOOP:-true}
     volumes:
       - attachment_storage:/app/storage
     depends_on:
       - db
+      - redis
 
   db:
     image: postgres:15
@@ -40,6 +45,14 @@ services:
       POSTGRES_PASSWORD: password
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    expose:
+      - "6379"
+    volumes:
+      - redis_data:/data
 
   nginx:
     build: ./frontend
@@ -56,3 +69,4 @@ services:
 volumes:
   postgres_data:
   attachment_storage:
+  redis_data:
