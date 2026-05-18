@@ -1,6 +1,5 @@
-const axios = require('axios')
+const { OpenAiProvider } = require('../providers/openAiProvider')
 
-const OPENAI_RESPONSES_URL = 'https://api.openai.com/v1/responses'
 const DEFAULT_OPENAI_MODEL = 'gpt-4.1'
 
 const TASK_EXECUTION_PROFILES = {
@@ -61,22 +60,7 @@ function buildInput(task) {
   ].join('\n')
 }
 
-function extractResponseText(response) {
-  if (typeof response?.output_text === 'string' && response.output_text.trim()) {
-    return response.output_text.trim()
-  }
 
-  const textParts = []
-  for (const outputItem of response?.output || []) {
-    for (const contentItem of outputItem?.content || []) {
-      if (typeof contentItem?.text === 'string') {
-        textParts.push(contentItem.text)
-      }
-    }
-  }
-
-  return textParts.join('\n').trim()
-}
 
 async function executeAiTask(task) {
   const { apiKey, model } = getOpenAiConfig()
@@ -87,39 +71,29 @@ async function executeAiTask(task) {
     throw error
   }
 
-  const input = buildInput(task)
-  const startedAt = new Date().toISOString()
-
-  const { data } = await axios.post(
-    OPENAI_RESPONSES_URL,
-    {
-      model,
-      input,
-      temperature: 0.7,
-      max_output_tokens: 900,
+  const provider = new OpenAiProvider({ apiKey, model })
+  const response = await provider.createResponse({
+    input: buildInput(task),
+    model,
+    temperature: 0.7,
+    maxOutputTokens: 900,
+    metadata: {
+      taskId: task.id,
+      userId: task.user_id,
+      workspaceId: task.workspace_id,
     },
-    {
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      timeout: Number(process.env.OPENAI_TIMEOUT_MS || 60000),
-    }
-  )
-
-  const text = extractResponseText(data)
-  if (!text) {
-    throw new Error('OpenAI returned an empty response')
-  }
+  })
 
   return {
     title: TASK_EXECUTION_PROFILES[task.type]?.name || 'AI task result',
-    content: text,
+    content: response.text,
     generatedAt: new Date().toISOString(),
-    startedAt,
-    model,
-    provider: 'openai',
-    openaiResponseId: data.id,
+    startedAt: response.startedAt,
+    model: response.model,
+    provider: response.provider,
+    openaiResponseId: response.id,
+    usage: response.usage,
+    latencyMs: response.latencyMs,
     creditsSpent: task.credits_spent,
   }
 }
