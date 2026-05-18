@@ -197,7 +197,11 @@ function tempLabel(level) {
 }
 
 function channelLabel(channel) {
-  return ({ telegram: 'Telegram', email: 'Email', phone: 'Phone', crm_task: 'CRM task', Telegram: 'Telegram', Email: 'Email', 'Задача менеджеру': 'CRM task' }[channel] || channel || 'CRM task');
+  return ({ telegram: 'Telegram', email: 'Email', phone: 'Phone', voice: 'AI Voice', crm_task: 'CRM task', Telegram: 'Telegram', Email: 'Email', Voice: 'AI Voice', 'Задача менеджеру': 'CRM task' }[channel] || channel || 'CRM task');
+}
+
+function getLatestAiVoiceCall(lead) {
+  return lead?.latestAiVoiceCall || lead?.latest_ai_voice_call || null;
 }
 
 function forecastLabel(category) {
@@ -1074,6 +1078,7 @@ export default function CRMPage() {
                       {getLeadAiScore(lead) ? <>
                         <div className="lead-intelligence-kpis"><b>AI {getLeadAiScore(lead).score}/100</b><span>{lead.aiPriority || getLeadAiScore(lead).priority || 'medium'}</span><em>{tempLabel(lead.aiTemperature || getLeadAiScore(lead).temperature)}</em></div>
                         {lead.aiRevenueScore && <div className="lead-revenue-kpis"><span>AI Priority {lead.aiRevenueScore.priorityScore}/100</span><span>Close {lead.aiRevenueScore.closeProbability}%</span><span>{lead.aiRevenueScore.recommendedAction}</span></div>}
+                        {getLatestAiVoiceCall(lead) && <div className="lead-voice-kpis"><span>AI Voice</span><b>{getLatestAiVoiceCall(lead).sentiment || '—'}</b><em>{getLatestAiVoiceCall(lead).outcome || getLatestAiVoiceCall(lead).status}</em><small>{sanitizeVisibleAiText(getLatestAiVoiceCall(lead).nextAction || 'No recommendation yet')}</small></div>}
                         <div className="lead-ai-probability forecast-progress"><span>{forecastLabel(getLeadAiScore(lead).forecastCategory)} · engagement {getLeadAiScore(lead).engagementScore}/100</span><i style={{ width: `${getLeadAiScore(lead).probabilityToClose}%` }} /></div>
                       </> : <div className="ai-forecast-empty-card">AI прогноз появится после квалификации лида.</div>}
                       {getAiBadges(lead).length > 0 && <div className="ai-badge-row">{getAiBadges(lead).map((badge) => <b className="ai-neon-badge" key={badge}>{badge}</b>)}</div>}
@@ -1468,9 +1473,30 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                   <div><span>Recommended channel</span><strong>{channelLabel(lead.aiRevenueScore.recommendedChannel)}</strong></div>
                   <div><span>Pipeline health</span><strong>{lead.aiRevenueScore.pipelineHealth}/100</strong></div>
                   <div><span>Last AI Analysis</span><strong>{formatDate(lead.aiRevenueScore.updatedAt)}</strong></div>
+                  {getLatestAiVoiceCall(lead) && <div><span>Voice outcome in Revenue Brain</span><strong>{getLatestAiVoiceCall(lead).sentiment || '—'} · {getLatestAiVoiceCall(lead).outcome || '—'}</strong></div>}
                 </div>
               </div>
             )}
+
+            {getLatestAiVoiceCall(lead) && (
+              <div className="detail-section ai-voice-lead-card">
+                <div className="ai-probability-head">
+                  <div>
+                    <span className="eyebrow">AI Voice Outreach</span>
+                    <h4>Latest AI voice call · {getLatestAiVoiceCall(lead).status}</h4>
+                    <p>{sanitizeVisibleAiText(getLatestAiVoiceCall(lead).summary || getLatestAiVoiceCall(lead).nextAction || 'Mock call result is saved to this CRM lead.')}</p>
+                  </div>
+                  <span className="ai-glow-badge">Mock Mode · No real telephony traffic</span>
+                </div>
+                <div className="ai-recommendation-grid">
+                  <div><span>Sentiment</span><strong>{getLatestAiVoiceCall(lead).sentiment || '—'}</strong></div>
+                  <div><span>Outcome</span><strong>{getLatestAiVoiceCall(lead).outcome || '—'}</strong></div>
+                  <div><span>Qualification</span><strong>{getLatestAiVoiceCall(lead).qualificationLevel || '—'}</strong></div>
+                  <div><span>Next recommendation</span><strong>{sanitizeVisibleAiText(getLatestAiVoiceCall(lead).nextAction || '—')}</strong></div>
+                </div>
+              </div>
+            )}
+
 
             {getLeadAiScore(lead) ? (
               <div className="detail-section ai-deal-probability-panel">
@@ -1527,7 +1553,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                 </div>
               ) : <p className="empty-state">Запустите «Анализ лида», чтобы получить AI рекомендации.</p>}
               {Array.isArray(getAiRecommendation(lead)?.recommendations) && <ul className="ai-recommendation-list">{getAiRecommendation(lead).recommendations.map((item, index) => <li key={`${item}-${index}`}>{sanitizeVisibleAiText(item)}</li>)}</ul>}
-              {getLeadAiScore(lead) && <div className="ai-advisor-strip"><p><b>AI рекомендация:</b> {sanitizeVisibleAiText(getLeadAiScore(lead).recommendedNextStep || getLeadAiScore(lead).nextBestAction || "Назначить следующий шаг")}</p><p><b>Рекомендуемый CTA:</b> {sanitizeVisibleAiText(getLeadAiScore(lead).recommendedCta || "Назначить следующий шаг")}</p><p><b>Возражения:</b> {sanitizeVisibleAiText((getLeadAiScore(lead).objectionsDetected || []).join(", ") || "не обнаружены")}</p><p><b>AI Outreach Engine:</b> {telegramOutreachDrafts.length + emailOutreachDrafts.length} черновиков ждут approval · readiness {getLeadAiScore(lead).temperature === 'hot' ? 'немедленно' : getLeadAiScore(lead).temperature === 'warm' ? 'первый контакт' : 'только рекомендация'}</p></div>}
+              {getLeadAiScore(lead) && <div className="ai-advisor-strip"><p><b>AI рекомендация:</b> {sanitizeVisibleAiText(getLeadAiScore(lead).recommendedNextStep || getLeadAiScore(lead).nextBestAction || "Назначить следующий шаг")}</p><p><b>Рекомендуемый CTA:</b> {sanitizeVisibleAiText(getLeadAiScore(lead).recommendedCta || "Назначить следующий шаг")}</p><p><b>Возражения:</b> {sanitizeVisibleAiText((getLeadAiScore(lead).objectionsDetected || []).join(", ") || "не обнаружены")}</p><p><b>AI Outreach Engine:</b> {telegramOutreachDrafts.length + emailOutreachDrafts.length} черновиков ждут approval · readiness {getLeadAiScore(lead).temperature === 'hot' ? 'немедленно' : getLeadAiScore(lead).temperature === 'warm' ? 'первый контакт' : 'только рекомендация'}</p>{getLatestAiVoiceCall(lead) && <p><b>AI Voice outcome:</b> {getLatestAiVoiceCall(lead).sentiment || '—'} · {getLatestAiVoiceCall(lead).outcome || '—'} · {sanitizeVisibleAiText(getLatestAiVoiceCall(lead).nextAction || '—')}</p>}</div>}
             </div>
 
 
