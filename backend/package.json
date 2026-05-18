@@ -12,7 +12,8 @@
     "test:lead-scoring": "node tests/aiLeadScoringService.test.js",
     "test:copy-guard": "node tests/copyGuard.test.js",
     "test:ai-copy-sanitizer": "node tests/aiCopySanitizer.test.js",
-    "test:ai-execution-runner-auth": "node tests/aiExecutionRunnerAuthMiddleware.test.js"
+    "test:ai-execution-runner-auth": "node tests/aiExecutionRunnerAuthMiddleware.test.js",
+    "test:ai-execution-runner-openai": "node tests/aiExecutionRunnerOpenAi.test.js"
   },
   "dependencies": {
     "axios": "^1.6.0",

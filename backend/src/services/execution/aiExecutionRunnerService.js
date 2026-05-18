@@ -1,11 +1,16 @@
 const os = require('os')
 const pool = require('../../db/pool')
 const { writeExecutionLog } = require('./executionLogService')
+const { recordProviderUsage } = require('./providerUsageService')
+const { OpenAiProvider } = require('../../providers/openAiProvider')
 
 const RUNNER_LOG_PREFIX = '[ai-execution-runner]'
 const DEFAULT_QUEUES = ['default', 'priority', 'ai-execution']
 const DEFAULT_QUEUE_NAME = process.env.AI_EXECUTION_QUEUE_NAME || 'ai-execution'
 const DEFAULT_JOB_TIMEOUT_SECONDS = Number(process.env.AI_EXECUTION_JOB_TIMEOUT_SECONDS || 300)
+const OPENAI_TEXT_GENERATION_JOB_TYPE = 'openai_text_generation'
+const DEFAULT_OPENAI_TEXT_PROMPT = 'Напиши короткий безопасный follow-up для CRM лида на русском языке.'
+const MANAGER_SAFE_OPENAI_ERROR = 'OpenAI text generation could not be completed safely. Please check provider configuration or try again later.'
 
 function getWorkerNodeName() {
   return String(process.env.AI_WORKER_NODE_NAME || '').trim() || os.hostname()
@@ -27,6 +32,40 @@ function normalizePositiveInteger(value, fallback) {
 
 function logRunner(event, fields = {}) {
   console.log(`${RUNNER_LOG_PREFIX} ${event}`, fields)
+}
+
+function getSafeErrorMessage(error) {
+  return String(error?.safeMessage || error?.managerSafeMessage || error?.message || error || 'AI execution job failed').trim()
+}
+
+function getTechnicalErrorMessage(error) {
+  return String(error?.technicalMessage || error?.message || error || 'Unknown execution error').trim()
+}
+
+function isOpenAiApiKeyConfigured() {
+  const value = String(process.env.OPENAI_API_KEY || '').trim()
+  return Boolean(value) && value !== 'replace_me'
+}
+
+function createManagerSafeExecutionError(safeMessage, technicalMessage, options = {}) {
+  const error = new Error(safeMessage)
+  error.safeMessage = safeMessage
+  error.technicalMessage = technicalMessage || safeMessage
+  if (options.nonRetryable) error.nonRetryable = true
+  if (options.provider) error.provider = options.provider
+  if (options.operation) error.operation = options.operation
+  if (options.model) error.model = options.model
+  return error
+}
+
+function sanitizeOpenAiTextPayload(payload = {}) {
+  const prompt = String(payload.prompt || DEFAULT_OPENAI_TEXT_PROMPT).trim()
+  const system = typeof payload.system === 'string' && payload.system.trim() ? payload.system.trim() : null
+  const model = typeof payload.model === 'string' && payload.model.trim() ? payload.model.trim() : undefined
+  const maxOutputTokens = normalizePositiveInteger(payload.maxOutputTokens || payload.max_output_tokens, 900)
+  const temperatureValue = Number(payload.temperature)
+  const temperature = Number.isFinite(temperatureValue) ? temperatureValue : 0.7
+  return { prompt: prompt || DEFAULT_OPENAI_TEXT_PROMPT, system, model, maxOutputTokens, temperature }
 }
 
 async function registerWorkerNode(client = pool) {
@@ -201,9 +240,67 @@ async function executeInternalTestJob(job) {
   }
 }
 
+async function executeOpenAiTextGenerationJob(job) {
+  const payload = sanitizeOpenAiTextPayload(job.payload || {})
+  const provider = new OpenAiProvider({ model: payload.model })
+  const model = payload.model || provider.model
+  const metadata = {
+    workspaceId: job.workspace_id,
+    userId: job.user_id,
+    taskId: job.task_id,
+    jobId: job.id,
+    traceId: `ai-execution-job-${job.id}`,
+  }
+
+  if (!isOpenAiApiKeyConfigured()) {
+    throw createManagerSafeExecutionError(
+      'OpenAI provider is not configured for execution.',
+      'OPENAI_API_KEY is missing or set to replace_me',
+      { nonRetryable: true, provider: 'openai', operation: 'responses.create', model }
+    )
+  }
+
+  try {
+    const response = await provider.createResponse({
+      input: payload.prompt,
+      instructions: payload.system || undefined,
+      model,
+      temperature: payload.temperature,
+      maxOutputTokens: payload.maxOutputTokens,
+      metadata,
+    })
+
+    return {
+      ok: true,
+      jobId: job.id,
+      jobType: job.job_type,
+      provider: response.provider,
+      model: response.model,
+      responseId: response.id,
+      text: response.text,
+      usage: response.usage,
+      latencyMs: response.latencyMs,
+      startedAt: response.startedAt,
+      completedAt: new Date().toISOString(),
+    }
+  } catch (error) {
+    if (error.safeMessage) throw error
+    const safeError = createManagerSafeExecutionError(
+      MANAGER_SAFE_OPENAI_ERROR,
+      error && error.message ? error.message : String(error),
+      { provider: 'openai', operation: 'responses.create', model }
+    )
+    safeError.providerUsageRecorded = true
+    throw safeError
+  }
+}
+
 async function executeJob(job) {
   if (job.job_type === 'internal_test_execution') {
     return executeInternalTestJob(job)
+  }
+  if (job.job_type === OPENAI_TEXT_GENERATION_JOB_TYPE) {
+    return executeOpenAiTextGenerationJob(job)
   }
   const error = new Error(`Unsupported AI execution job type: ${job.job_type}`)
   error.nonRetryable = true
@@ -269,7 +366,8 @@ async function completeJob({ job, worker, result, startedAt }) {
 async function failJob({ job, worker, error, startedAt }) {
   const client = await pool.connect()
   const latencyMs = Date.now() - startedAt.getTime()
-  const message = error && error.message ? error.message : String(error)
+  const message = getSafeErrorMessage(error)
+  const technicalError = getTechnicalErrorMessage(error)
   try {
     await client.query('BEGIN')
     const freshResult = await client.query(
@@ -344,9 +442,22 @@ async function failJob({ job, worker, error, startedAt }) {
       level: 'error',
       event: 'job_failed',
       message: 'AI execution job failed',
-      metadata: { workerNodeId: worker.id, latencyMs, nextStatus, error: message },
+      metadata: { workerNodeId: worker.id, latencyMs, nextStatus, error: technicalError, safeError: message },
     }, client)
     await writeTaskHistory({ job: failedJob, workerNodeId: worker.id, previousStatus: 'running', nextStatus, latencyMs, errorMessage: message }, client)
+    if (failedJob.job_type === OPENAI_TEXT_GENERATION_JOB_TYPE && !error?.providerUsageRecorded) {
+      await recordProviderUsage({
+        workspaceId: failedJob.workspace_id,
+        userId: failedJob.user_id,
+        taskId: failedJob.task_id,
+        provider: 'openai',
+        model: error?.model || (failedJob.payload || {}).model || process.env.OPENAI_MODEL || null,
+        operation: error?.operation || 'responses.create',
+        latencyMs,
+        status: 'failed',
+        metadata: { jobId: failedJob.id, nextStatus, safeError: message },
+      }, client)
+    }
     await insertWorkerMetric({ workerNodeId: worker.id, queueName: failedJob.queue_name, metricName: 'job_failed', metricValue: 1, labels: { jobType: failedJob.job_type, nextStatus } }, client)
     await client.query('COMMIT')
     logRunner('job failed', { jobId: failedJob.id, queueName: failedJob.queue_name, workerNodeId: worker.id, nextStatus, error: message })
@@ -373,7 +484,7 @@ async function runOnce({ queueName = DEFAULT_QUEUE_NAME } = {}) {
     return { worker: claimed.worker || worker, job: completed.job, claimed: true, completed: completed.completed, result }
   } catch (error) {
     const failed = await failJob({ job: claimed.job, worker: claimed.worker || worker, error, startedAt })
-    return { worker: claimed.worker || worker, job: failed.job, claimed: true, completed: false, failed: true, nextStatus: failed.nextStatus, error: error.message }
+    return { worker: claimed.worker || worker, job: failed.job, claimed: true, completed: false, failed: true, nextStatus: failed.nextStatus, error: getSafeErrorMessage(error) }
   }
 }
 
@@ -389,6 +500,36 @@ async function enqueueInternalTestJob({ queueName = DEFAULT_QUEUE_NAME, priority
       Number.isFinite(Number(priority)) ? Math.trunc(Number(priority)) : 100,
       { source: 'api', createdFor: 'internal_test_execution', ...payload },
       normalizePositiveInteger(payload.maxAttempts, 3),
+      idempotencyKey,
+    ]
+  )
+  if (result.rowCount > 0) return result.rows[0]
+  if (!idempotencyKey) return null
+  const existing = await pool.query(
+    `SELECT * FROM ai_execution_jobs WHERE workspace_id IS NULL AND idempotency_key = $1 LIMIT 1`,
+    [idempotencyKey]
+  )
+  return existing.rows[0] || null
+}
+
+async function enqueueOpenAiTextGenerationJob({ queueName = DEFAULT_QUEUE_NAME, priority = 100, payload = {}, idempotencyKey = null } = {}) {
+  const normalizedQueueName = normalizeQueueName(queueName)
+  const normalizedPayload = {
+    source: 'api',
+    createdFor: OPENAI_TEXT_GENERATION_JOB_TYPE,
+    ...sanitizeOpenAiTextPayload(payload),
+  }
+  const result = await pool.query(
+    `INSERT INTO ai_execution_jobs(queue_name, job_type, priority, status, payload, max_attempts, run_after, idempotency_key)
+     VALUES($1, $2, $3, 'queued', $4, $5, NOW(), $6)
+     ON CONFLICT (workspace_id, idempotency_key) DO NOTHING
+     RETURNING *`,
+    [
+      normalizedQueueName,
+      OPENAI_TEXT_GENERATION_JOB_TYPE,
+      Number.isFinite(Number(priority)) ? Math.trunc(Number(priority)) : 100,
+      normalizedPayload,
+      normalizePositiveInteger(payload.maxAttempts || payload.max_attempts, 3),
       idempotencyKey,
     ]
   )
@@ -439,7 +580,16 @@ async function getHealth({ queueName = null } = {}) {
 module.exports = {
   claimNextJob,
   enqueueInternalTestJob,
+  enqueueOpenAiTextGenerationJob,
   getHealth,
   registerWorkerNode,
   runOnce,
+  _private: {
+    DEFAULT_OPENAI_TEXT_PROMPT,
+    OPENAI_TEXT_GENERATION_JOB_TYPE,
+    executeOpenAiTextGenerationJob,
+    getSafeErrorMessage,
+    isOpenAiApiKeyConfigured,
+    sanitizeOpenAiTextPayload,
+  },
 }

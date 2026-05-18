@@ -13,6 +13,10 @@ Server-side smoke test calls can use the internal admin key without a user sessi
 ```bash
 curl -k https://www.as6.ru/api/ai/execution/health -H "x-ai-execution-key: $AI_EXECUTION_ADMIN_KEY"
 curl -k -X POST https://www.as6.ru/api/ai/execution/enqueue-test -H "x-ai-execution-key: $AI_EXECUTION_ADMIN_KEY"
+curl -k -X POST https://www.as6.ru/api/ai/execution/enqueue-openai-test \
+  -H "x-ai-execution-key: $AI_EXECUTION_ADMIN_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"prompt":"Напиши короткий follow-up для Дмитрия Волкова"}'
 curl -k -X POST https://www.as6.ru/api/ai/execution/run-once -H "x-ai-execution-key: $AI_EXECUTION_ADMIN_KEY"
 ```
 
@@ -25,9 +29,12 @@ When the internal header is accepted, the backend writes this structured log lin
 Optional request body/query parameters:
 
 - `queueName` / `queue_name` — defaults to `ai-execution`.
-- `priority` on `enqueue-test` — lower values run first; defaults to `100`.
+- `priority` on `enqueue-test` and `enqueue-openai-test` — lower values run first; defaults to `100`.
 - `payload` on `enqueue-test` — JSON payload persisted on the job.
-- `idempotencyKey` / `idempotency_key` on `enqueue-test` — optional dedupe key for safe clients.
+- `prompt` on `enqueue-openai-test` — optional user prompt; defaults to `Напиши короткий безопасный follow-up для CRM лида на русском языке.`
+- `system` on `enqueue-openai-test` — optional OpenAI instructions/system text.
+- `model` on `enqueue-openai-test` — optional OpenAI model override; otherwise the runner uses `OPENAI_MODEL` through `openAiProvider.js`.
+- `idempotencyKey` / `idempotency_key` on enqueue endpoints — optional dedupe key for safe clients.
 
 ## Worker registration
 
@@ -73,7 +80,12 @@ The worker row is locked during the same transaction so `current_concurrency` ne
 
 ## Execution behavior
 
-The first production job type is `internal_test_execution`. It completes without calling an external AI provider and writes deterministic result JSON containing:
+The runner supports two production job types:
+
+1. `internal_test_execution`
+2. `openai_text_generation`
+
+`internal_test_execution` completes without calling an external AI provider and writes deterministic result JSON containing:
 
 - `ok`
 - `jobId`
@@ -82,6 +94,20 @@ The first production job type is `internal_test_execution`. It completes without
 - `attempt`
 - `payload`
 - `completedAt`
+
+`openai_text_generation` reads `payload.prompt`, optional `payload.system`, and optional `payload.model`. The runner calls `backend/src/providers/openAiProvider.js`, stores manager-facing JSON in `ai_execution_jobs.result` (`text`, `provider`, `model`, `responseId`, `usage`, and latency fields), and relies on the provider usage service to write `ai_provider_usage`. If `OPENAI_API_KEY` is missing or equals `replace_me`, the job fails gracefully with a manager-safe `error_message`; the technical configuration detail is written only into `execution_logs.metadata`.
+
+Example OpenAI smoke test sequence:
+
+```bash
+curl -k -X POST https://www.as6.ru/api/ai/execution/enqueue-openai-test \
+  -H "x-ai-execution-key: $KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"prompt":"Напиши короткий follow-up для Дмитрия Волкова"}'
+
+curl -k -X POST https://www.as6.ru/api/ai/execution/run-once \
+  -H "x-ai-execution-key: $KEY"
+```
 
 Completion updates the job to `completed`, clears timeout/error state, stores the result JSON, writes `execution_logs`, writes `worker_metrics`, optionally writes `task_execution_history` when a job has `task_id`, decrements worker concurrency, and logs:
 
