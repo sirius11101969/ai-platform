@@ -4,14 +4,20 @@ const { writeExecutionLog } = require('./executionLogService')
 const { normalizeDbValue, recordProviderUsage } = require('./providerUsageService')
 const { OpenAiProvider } = require('../../providers/openAiProvider')
 const { redactForExecutionLog } = require('./redaction')
+const { containsForbiddenCustomerCopy } = require('../customerCopyGuard')
+const { sanitizeAiActionPayload, sanitizeAiCopy } = require('../../utils/aiCopySanitizer')
 
 const RUNNER_LOG_PREFIX = '[ai-execution-runner]'
 const DEFAULT_QUEUES = ['default', 'priority', 'ai-execution']
 const DEFAULT_QUEUE_NAME = process.env.AI_EXECUTION_QUEUE_NAME || 'ai-execution'
 const DEFAULT_JOB_TIMEOUT_SECONDS = Number(process.env.AI_EXECUTION_JOB_TIMEOUT_SECONDS || 300)
 const OPENAI_TEXT_GENERATION_JOB_TYPE = 'openai_text_generation'
+const SALES_FOLLOWUP_GENERATION_JOB_TYPE = 'sales_followup_generation'
 const DEFAULT_OPENAI_TEXT_PROMPT = 'Напиши короткий безопасный follow-up для CRM лида на русском языке.'
 const MANAGER_SAFE_OPENAI_ERROR = 'OpenAI text generation could not be completed safely. Please check provider configuration or try again later.'
+const SALES_FOLLOWUP_SYSTEM_PROMPT = 'Ты AI sales assistant. Пиши короткий безопасный follow-up. Не выдумывай факты. Не раскрывай внутренний контекст.'
+const SALES_FOLLOWUP_SAFE_ERROR = 'AI Sales follow-up could not be generated safely. Please review the lead and try again later.'
+const SALES_FOLLOWUP_MAX_CHARS = 600
 
 function safeJsonb(value) {
   return JSON.stringify(normalizeDbValue(value ?? {}) ?? {})
@@ -89,6 +95,149 @@ function sanitizeOpenAiTextPayload(payload = {}) {
   const temperatureValue = Number(payload.temperature)
   const temperature = Number.isFinite(temperatureValue) ? temperatureValue : 0.7
   return { prompt: prompt || DEFAULT_OPENAI_TEXT_PROMPT, system, model, maxOutputTokens, temperature }
+}
+
+function normalizeSalesFollowupChannel(channel) {
+  const normalized = String(channel || '').trim().toLowerCase()
+  return normalized === 'email' ? 'email' : 'telegram'
+}
+
+function sanitizeSalesFollowupPayload(payload = {}) {
+  const leadId = normalizeNullableText(payload.leadId || payload.lead_id)
+  const channel = normalizeSalesFollowupChannel(payload.channel)
+  const tone = normalizeNullableText(payload.tone) || 'professional'
+  const language = normalizeNullableText(payload.language) || 'ru'
+  const model = normalizeNullableText(payload.model)
+  return { leadId, channel, tone, language, model }
+}
+
+function sanitizeShortContextText(value, maxLength = 280) {
+  return String(value || '')
+    .replace(/[\x00-\x1F\x7F]/g, ' ')
+    .replace(/Контекст\s*:|Плюсы\s*:|Минусы\s*:|Итог\s*:|ai_score|ai_priority|ai_risk_level/ig, '')
+    .replace(/\+\d+/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, maxLength)
+}
+
+function sanitizeCustomerMessage(text) {
+  const raw = String(text || '').replace(/[\x00-\x1F\x7F]/g, ' ').replace(/\s+/g, ' ').trim()
+  if (!raw) return ''
+  const unsafePatterns = [
+    /Контекст\s*:/ig,
+    /Плюсы\s*:/ig,
+    /Минусы\s*:/ig,
+    /Итог\s*:/ig,
+    /ai_score/ig,
+    /ai_priority/ig,
+    /ai_risk_level/ig,
+  ]
+  let sanitized = raw
+  unsafePatterns.forEach((pattern) => { sanitized = sanitized.replace(pattern, '') })
+  sanitized = sanitized
+    .replace(/\b(aiScore|aiPriority|aiRiskLevel|aiScoringReason)\b/ig, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+  if (sanitized.length > SALES_FOLLOWUP_MAX_CHARS) sanitized = sanitized.slice(0, SALES_FOLLOWUP_MAX_CHARS).trim()
+  return sanitized
+}
+
+function assertSafeSalesFollowupMessage(text, context = {}) {
+  const customerText = sanitizeCustomerMessage(text)
+  if (!customerText || containsForbiddenCustomerCopy(customerText)) {
+    console.warn('[ai-sales-worker] unsafe follow-up blocked', context)
+    throw createManagerSafeExecutionError(
+      SALES_FOLLOWUP_SAFE_ERROR,
+      'Generated follow-up failed customer copy safety checks',
+      { nonRetryable: true, provider: 'openai', operation: 'responses.create' }
+    )
+  }
+  return customerText
+}
+
+function normalizeLeadForPrompt(lead = {}) {
+  return {
+    name: sanitizeShortContextText(lead.name, 120),
+    company: sanitizeShortContextText(lead.company, 120),
+    status: sanitizeShortContextText(lead.status || lead.stage, 80),
+    source: sanitizeShortContextText(lead.source, 80),
+    nextStep: sanitizeShortContextText(lead.next_step, 160),
+  }
+}
+
+function buildSalesFollowupPrompt({ lead, timelineEvents = [], telegramMessages = [], emailMessages = [], channel, tone, language }) {
+  const safeLead = normalizeLeadForPrompt(lead)
+  const recentTimeline = timelineEvents.slice(0, 5).map((event) => ({
+    type: sanitizeShortContextText(event.event_type, 80),
+    title: sanitizeShortContextText(event.title, 120),
+    body: sanitizeShortContextText(event.body, 180),
+  }))
+  const recentTelegram = telegramMessages.slice(0, 5).map((message) => ({
+    direction: sanitizeShortContextText(message.direction || message.role, 40),
+    text: sanitizeShortContextText(message.body || message.message, 180),
+  }))
+  const recentEmail = emailMessages.slice(0, 5).map((message) => ({
+    status: sanitizeShortContextText(message.status, 40),
+    subject: sanitizeShortContextText(message.subject, 120),
+    text: sanitizeShortContextText(message.text_body || message.error, 180),
+  }))
+  return [
+    `Создай только текст сообщения клиенту. Канал: ${channel}. Тон: ${tone}. Язык: ${language}.`,
+    `Лид: ${JSON.stringify(safeLead)}`,
+    `Недавние события CRM: ${JSON.stringify(recentTimeline)}`,
+    `Недавние Telegram сообщения: ${JSON.stringify(recentTelegram)}`,
+    `Недавние email сообщения: ${JSON.stringify(recentEmail)}`,
+    'Не добавляй заголовки, анализ, внутренние оценки или пояснения. Максимум 600 символов.',
+  ].join('\n')
+}
+
+async function loadSalesFollowupLead(job, payload) {
+  const params = [payload.leadId]
+  let workspaceFilter = ''
+  if (job.workspace_id) {
+    params.push(job.workspace_id)
+    workspaceFilter = ` AND workspace_id = $${params.length}::uuid`
+  }
+  const result = await query(pool,
+    `SELECT id, workspace_id, user_id, name, email, company, status, stage, source, next_step, metadata,
+            telegram_chat_id, telegram_username, first_name, last_name, last_message_at
+       FROM crm_leads
+      WHERE id = $1::uuid${workspaceFilter}
+      LIMIT 1`,
+    params
+  )
+  return result.rows[0] || null
+}
+
+async function loadSalesFollowupContext(lead) {
+  const [timeline, telegram, email] = await Promise.all([
+    query(pool,
+      `SELECT event_type, title, body, source, created_at
+         FROM lead_timeline_events
+        WHERE workspace_id = $1::uuid AND lead_id = $2::uuid
+        ORDER BY created_at DESC
+        LIMIT 5`,
+      [lead.workspace_id, lead.id]
+    ).catch(() => ({ rows: [] })),
+    query(pool,
+      `SELECT role, direction, COALESCE(body, message) AS body, created_at
+         FROM telegram_messages
+        WHERE workspace_id = $1::uuid AND lead_id = $2::uuid
+        ORDER BY created_at DESC
+        LIMIT 5`,
+      [lead.workspace_id, lead.id]
+    ).catch(() => ({ rows: [] })),
+    query(pool,
+      `SELECT status, subject, text_body, error, created_at
+         FROM email_messages
+        WHERE workspace_id = $1::uuid AND lead_id = $2::uuid
+        ORDER BY created_at DESC
+        LIMIT 5`,
+      [lead.workspace_id, lead.id]
+    ).catch(() => ({ rows: [] })),
+  ])
+  return { timelineEvents: timeline.rows || [], telegramMessages: telegram.rows || [], emailMessages: email.rows || [] }
 }
 
 async function registerWorkerNode(client = pool) {
@@ -318,12 +467,108 @@ async function executeOpenAiTextGenerationJob(job) {
   }
 }
 
+
+async function executeSalesFollowupGenerationJob(job) {
+  const payload = sanitizeSalesFollowupPayload(job.payload || {})
+  if (!payload.leadId) {
+    throw createManagerSafeExecutionError(
+      'AI Sales follow-up requires a leadId.',
+      'sales_followup_generation payload.leadId is missing',
+      { nonRetryable: true }
+    )
+  }
+
+  const lead = await loadSalesFollowupLead(job, payload)
+  if (!lead) {
+    throw createManagerSafeExecutionError(
+      'Lead was not found for AI Sales follow-up.',
+      `crm_leads row not found for leadId=${payload.leadId}`,
+      { nonRetryable: true }
+    )
+  }
+
+  const provider = new OpenAiProvider({ model: payload.model })
+  const model = payload.model || provider.model
+  if (!isOpenAiApiKeyConfigured()) {
+    throw createManagerSafeExecutionError(
+      'OpenAI provider is not configured for AI Sales follow-up.',
+      'OPENAI_API_KEY is missing or set to replace_me',
+      { nonRetryable: true, provider: 'openai', operation: 'responses.create', model }
+    )
+  }
+
+  const context = await loadSalesFollowupContext(lead)
+  const prompt = buildSalesFollowupPrompt({ lead, ...context, channel: payload.channel, tone: payload.tone, language: payload.language })
+  const metadata = {
+    workspaceId: lead.workspace_id || job.workspace_id,
+    userId: job.user_id || lead.user_id,
+    taskId: job.task_id,
+    jobId: job.id,
+    traceId: `ai-sales-followup-${job.id}`,
+  }
+
+  try {
+    const response = await provider.createResponse({
+      input: prompt,
+      instructions: SALES_FOLLOWUP_SYSTEM_PROMPT,
+      model,
+      temperature: 0.3,
+      maxOutputTokens: 260,
+      metadata,
+    })
+    const customerText = assertSafeSalesFollowupMessage(response.text, { jobId: job.id, leadId: lead.id, channel: payload.channel })
+    const actionType = payload.channel === 'email' ? 'email_followup_draft' : 'telegram_reply_draft'
+    const recommendation = sanitizeAiCopy('AI Sales подготовил короткий follow-up. Проверьте текст и отправьте клиенту после одобрения.')
+    return {
+      ok: true,
+      jobId: job.id,
+      jobType: job.job_type,
+      provider: response.provider,
+      model: response.model,
+      responseId: response.id,
+      text: customerText,
+      usage: response.usage,
+      latencyMs: response.latencyMs,
+      startedAt: response.startedAt,
+      completedAt: new Date().toISOString(),
+      aiWorkerQueueDraft: {
+        workspaceId: lead.workspace_id || job.workspace_id,
+        userId: job.user_id || lead.user_id,
+        leadId: lead.id,
+        leadName: lead.name,
+        actionType,
+        title: `AI Sales follow-up — ${lead.name || 'lead'}`,
+        recommendation,
+        payload: sanitizeAiActionPayload({
+          customerText,
+          leadId: lead.id,
+          channel: payload.channel,
+          source: SALES_FOLLOWUP_GENERATION_JOB_TYPE,
+          executionJobId: job.id,
+        }),
+      },
+    }
+  } catch (error) {
+    if (error.safeMessage) throw error
+    const safeError = createManagerSafeExecutionError(
+      SALES_FOLLOWUP_SAFE_ERROR,
+      error && error.message ? error.message : String(error),
+      { provider: 'openai', operation: 'responses.create', model }
+    )
+    safeError.providerUsageRecorded = true
+    throw safeError
+  }
+}
+
 async function executeJob(job) {
   if (job.job_type === 'internal_test_execution') {
     return executeInternalTestJob(job)
   }
   if (job.job_type === OPENAI_TEXT_GENERATION_JOB_TYPE) {
     return executeOpenAiTextGenerationJob(job)
+  }
+  if (job.job_type === SALES_FOLLOWUP_GENERATION_JOB_TYPE) {
+    return executeSalesFollowupGenerationJob(job)
   }
   const error = new Error(`Unsupported AI execution job type: ${job.job_type}`)
   error.nonRetryable = true
@@ -335,6 +580,31 @@ async function completeJob({ job, worker, result, startedAt }) {
   const latencyMs = Date.now() - startedAt.getTime()
   try {
     await query(client, 'BEGIN')
+    const persistedResult = { ...(result || {}) }
+    const queueDraft = persistedResult.aiWorkerQueueDraft || null
+    delete persistedResult.aiWorkerQueueDraft
+    if (queueDraft) {
+      const workerResult = await query(client,
+        `INSERT INTO ai_workers(workspace_id, name, type, status, mode, description)
+         VALUES($1::uuid, 'AI Sales Worker', 'ai_sdr_agent', 'active', 'approval_required', 'Готовит безопасные follow-up черновики для менеджерского одобрения.')
+         ON CONFLICT (workspace_id, type) DO UPDATE SET
+           name = EXCLUDED.name,
+           status = 'active',
+           mode = 'approval_required',
+           description = EXCLUDED.description,
+           updated_at = NOW()
+         RETURNING id`,
+        [queueDraft.workspaceId]
+      )
+      const queueResult = await query(client,
+        `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload)
+         VALUES($1::uuid, $2::uuid, $3::uuid, $4::text, 'pending_approval', $5::text, $6::text, $7::jsonb)
+         RETURNING id`,
+        [workerResult.rows[0].id, queueDraft.workspaceId, queueDraft.leadId, queueDraft.actionType, queueDraft.title, queueDraft.recommendation, safeJsonb(queueDraft.payload)]
+      )
+      persistedResult.aiWorkerQueueId = queueResult.rows[0]?.id || null
+    }
+
     const updateResult = await query(client,
       `UPDATE ai_execution_jobs
           SET status = 'completed',
@@ -348,7 +618,7 @@ async function completeJob({ job, worker, result, startedAt }) {
           AND status = 'running'
           AND locked_by = $2::uuid
         RETURNING *`,
-      [job.id, worker.id, safeJsonb(result)]
+      [job.id, worker.id, safeJsonb(persistedResult)]
     )
     if (updateResult.rowCount === 0) {
       await query(client, 'ROLLBACK')
@@ -371,7 +641,7 @@ async function completeJob({ job, worker, result, startedAt }) {
       level: 'info',
       event: 'job_completed',
       message: 'AI execution job completed',
-      metadata: redactForExecutionLog({ workerNodeId: worker.id, latencyMs, result }),
+      metadata: redactForExecutionLog({ workerNodeId: worker.id, latencyMs, result: persistedResult }),
     }, client)
     await writeTaskHistory({ job: completedJob, workerNodeId: worker.id, previousStatus: 'running', nextStatus: 'completed', latencyMs }, client)
     await insertWorkerMetric({ workerNodeId: worker.id, queueName: completedJob.queue_name, metricName: 'job_completed', metricValue: 1, labels: { jobType: completedJob.job_type } }, client)
@@ -470,7 +740,7 @@ async function failJob({ job, worker, error, startedAt }) {
       metadata: redactForExecutionLog({ workerNodeId: worker.id, latencyMs, nextStatus, error: technicalError, safeError: message }),
     }, client)
     await writeTaskHistory({ job: failedJob, workerNodeId: worker.id, previousStatus: 'running', nextStatus, latencyMs, errorMessage: message }, client)
-    if (failedJob.job_type === OPENAI_TEXT_GENERATION_JOB_TYPE && !error?.providerUsageRecorded) {
+    if ([OPENAI_TEXT_GENERATION_JOB_TYPE, SALES_FOLLOWUP_GENERATION_JOB_TYPE].includes(failedJob.job_type) && !error?.providerUsageRecorded) {
       await recordProviderUsage({
         workspaceId: failedJob.workspace_id,
         userId: failedJob.user_id,
@@ -571,6 +841,42 @@ async function enqueueOpenAiTextGenerationJob({ queueName = DEFAULT_QUEUE_NAME, 
   return existing.rows[0] || null
 }
 
+
+async function enqueueSalesFollowupGenerationJob({ queueName = DEFAULT_QUEUE_NAME, priority = 100, payload = {}, idempotencyKey = null, workspaceId = null, userId = null } = {}) {
+  const normalizedQueueName = normalizeQueueName(queueName)
+  const normalizedPayload = {
+    source: 'api',
+    createdFor: SALES_FOLLOWUP_GENERATION_JOB_TYPE,
+    ...sanitizeSalesFollowupPayload(payload),
+  }
+  if (!normalizedPayload.leadId) {
+    throw createManagerSafeExecutionError('AI Sales follow-up requires a leadId.', 'enqueue payload.leadId is missing', { nonRetryable: true })
+  }
+  const result = await query(pool,
+    `INSERT INTO ai_execution_jobs(workspace_id, user_id, queue_name, job_type, priority, status, payload, max_attempts, run_after, idempotency_key)
+     VALUES($1::uuid, $2::uuid, $3::text, $4::text, $5::integer, 'queued', $6::jsonb, $7::integer, NOW(), $8::text)
+     ON CONFLICT (workspace_id, idempotency_key) DO NOTHING
+     RETURNING *`,
+    [
+      normalizeDbValue(workspaceId),
+      normalizeDbValue(userId),
+      normalizedQueueName,
+      SALES_FOLLOWUP_GENERATION_JOB_TYPE,
+      Number.isFinite(Number(priority)) ? Math.trunc(Number(priority)) : 100,
+      safeJsonb(normalizedPayload),
+      normalizePositiveInteger(payload.maxAttempts || payload.max_attempts, 3),
+      normalizeDbValue(idempotencyKey),
+    ]
+  )
+  if (result.rowCount > 0) return result.rows[0]
+  if (!idempotencyKey) return null
+  const existing = await query(pool,
+    `SELECT * FROM ai_execution_jobs WHERE workspace_id IS NOT DISTINCT FROM $1::uuid AND idempotency_key = $2::text LIMIT 1`,
+    [normalizeDbValue(workspaceId), normalizeDbValue(idempotencyKey)]
+  )
+  return existing.rows[0] || null
+}
+
 async function getHealth({ queueName = null } = {}) {
   const worker = await registerWorkerNode()
   const filters = []
@@ -610,15 +916,19 @@ module.exports = {
   claimNextJob,
   enqueueInternalTestJob,
   enqueueOpenAiTextGenerationJob,
+  enqueueSalesFollowupGenerationJob,
   getHealth,
   registerWorkerNode,
   runOnce,
   _private: {
     DEFAULT_OPENAI_TEXT_PROMPT,
     OPENAI_TEXT_GENERATION_JOB_TYPE,
+    SALES_FOLLOWUP_GENERATION_JOB_TYPE,
+    SALES_FOLLOWUP_SYSTEM_PROMPT,
     completeJob,
     executeJob,
     executeOpenAiTextGenerationJob,
+    executeSalesFollowupGenerationJob,
     failJob,
     getSafeErrorMessage,
     isOpenAiApiKeyConfigured,
@@ -626,5 +936,7 @@ module.exports = {
     safeJsonb,
     normalizeNullableText,
     sanitizeOpenAiTextPayload,
+    sanitizeCustomerMessage,
+    sanitizeSalesFollowupPayload,
   },
 }

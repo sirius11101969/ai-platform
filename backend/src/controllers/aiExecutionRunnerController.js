@@ -44,6 +44,31 @@ async function enqueueOpenAiTest(req, res, next) {
   }
 }
 
+
+async function enqueueSalesFollowup(req, res, next) {
+  try {
+    const body = req.body || {}
+    const job = await aiExecutionRunnerService.enqueueSalesFollowupGenerationJob({
+      queueName: getQueueName(req),
+      priority: body.priority,
+      payload: {
+        leadId: body.leadId || body.lead_id,
+        channel: body.channel,
+        tone: body.tone || 'professional',
+        language: body.language || 'ru',
+        model: body.model,
+        maxAttempts: body.maxAttempts || body.max_attempts,
+      },
+      workspaceId: body.workspaceId || body.workspace_id || req.get('x-workspace-id') || null,
+      userId: req.user?.id || body.userId || body.user_id || null,
+      idempotencyKey: body.idempotencyKey || body.idempotency_key || null,
+    })
+    res.status(201).json({ job })
+  } catch (error) {
+    next(error)
+  }
+}
+
 async function liveStatus(req, res, next) {
   try {
     const result = await autonomousExecutionLoop.getLiveStatus({
@@ -65,4 +90,4 @@ async function runOnce(req, res, next) {
   }
 }
 
-module.exports = { enqueueOpenAiTest, enqueueTest, health, liveStatus, runOnce }
+module.exports = { enqueueOpenAiTest, enqueueSalesFollowup, enqueueTest, health, liveStatus, runOnce }
