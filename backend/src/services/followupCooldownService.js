@@ -145,17 +145,31 @@ async function getFollowupCooldownState({ client, workspaceId, leadId, cooldownH
 
 async function recordCooldownSkipTimelineEvent({ client, workspaceId, leadId, userId = null, leadName = '', cooldownHours = DEFAULT_FOLLOWUP_COOLDOWN_HOURS, lastOutboundAt = null }) {
   const executor = getExecutor(client)
+  const workspaceFilter = workspaceId ? 'AND workspace_id = $1' : ''
+  const existingParams = workspaceId
+    ? [workspaceId, leadId, COOLDOWN_SKIP_EVENT_TYPE, SKIP_TIMELINE_COOLDOWN_HOURS]
+    : [leadId, COOLDOWN_SKIP_EVENT_TYPE, SKIP_TIMELINE_COOLDOWN_HOURS]
+  const leadIdParam = workspaceId ? '$2' : '$1'
+  const eventTypeParam = workspaceId ? '$3' : '$2'
+  const cooldownHoursParam = workspaceId ? '$4' : '$3'
+
   const existing = await executor.query(
-    `SELECT id
+    `SELECT COUNT(*)::int AS existing_audit_count
        FROM lead_timeline_events
-      WHERE workspace_id = $1
-        AND lead_id = $2
-        AND event_type = $3
-        AND created_at >= NOW() - ($4::int * INTERVAL '1 hour')
-      LIMIT 1`,
-    [workspaceId, leadId, COOLDOWN_SKIP_EVENT_TYPE, SKIP_TIMELINE_COOLDOWN_HOURS]
+      WHERE lead_id = ${leadIdParam}
+        ${workspaceFilter}
+        AND event_type = ${eventTypeParam}
+        AND created_at >= NOW() - (${cooldownHoursParam}::int * INTERVAL '1 hour')`,
+    existingParams
   )
-  if (existing.rows[0]) return false
+  const existingAuditCount = Number(existing.rows[0]?.existing_audit_count || 0)
+  const auditLogPayload = { leadId, leadName, existingAuditCount }
+  console.info('[followup-cooldown] timeline audit check', auditLogPayload)
+
+  if (existingAuditCount > 0) {
+    console.info('[followup-cooldown] timeline audit already exists', auditLogPayload)
+    return { created: false, existingAuditCount }
+  }
 
   await addTimelineEvent(executor, {
     workspaceId,
@@ -172,7 +186,8 @@ async function recordCooldownSkipTimelineEvent({ client, workspaceId, leadId, us
       cooldownHours,
     },
   })
-  return true
+  console.info('[followup-cooldown] timeline audit event created', { leadId, leadName })
+  return { created: true, existingAuditCount }
 }
 
 async function shouldSkipFollowupForCooldown({ client, workspaceId, leadId, leadName = '', userId = null, cooldownHours = DEFAULT_FOLLOWUP_COOLDOWN_HOURS, writeTimelineEvent = true }) {
@@ -183,13 +198,7 @@ async function shouldSkipFollowupForCooldown({ client, workspaceId, leadId, lead
   console.info('[followup-cooldown] lead skipped', logPayload)
 
   if (writeTimelineEvent) {
-    const createdTimelineEvent = await recordCooldownSkipTimelineEvent({ client, workspaceId, leadId, userId, leadName, cooldownHours, lastOutboundAt: state.lastOutboundAt })
-    console.info(
-      createdTimelineEvent
-        ? '[followup-cooldown] timeline audit event created'
-        : '[followup-cooldown] timeline audit already exists',
-      logPayload
-    )
+    await recordCooldownSkipTimelineEvent({ client, workspaceId, leadId, userId, leadName, cooldownHours, lastOutboundAt: state.lastOutboundAt })
   }
 
   return state

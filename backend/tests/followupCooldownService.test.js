@@ -17,7 +17,22 @@ function compact(sql) {
 }
 
 async function runCreatesTimelineAuditOncePerDayTest() {
-  const insertedEvents = []
+  const insertedEvents = [
+    {
+      id: 'unrelated-lead-timeline',
+      workspace_id: workspaceId,
+      lead_id: '00000000-0000-4000-8000-000000000099',
+      event_type: COOLDOWN_SKIP_EVENT_TYPE,
+      created_at: new Date(),
+    },
+    {
+      id: 'unrelated-workspace-timeline',
+      workspace_id: '00000000-0000-4000-8000-000000000098',
+      lead_id: leadId,
+      event_type: COOLDOWN_SKIP_EVENT_TYPE,
+      created_at: new Date(),
+    },
+  ]
   const logs = []
   const originalQuery = pool.query.bind(pool)
   const originalInfo = console.info
@@ -36,11 +51,18 @@ async function runCreatesTimelineAuditOncePerDayTest() {
       return { rows: [{ last_outbound_at: new Date(Date.now() - 60 * 60 * 1000) }], rowCount: 1 }
     }
 
-    if (query.startsWith('SELECT id FROM lead_timeline_events WHERE workspace_id = $1')) {
+    if (query.startsWith('SELECT COUNT(*)::int AS existing_audit_count FROM lead_timeline_events')) {
+      assert.ok(query.includes('WHERE lead_id = $2'), 'audit lookup must be scoped by exact lead_id')
+      assert.ok(query.includes('AND workspace_id = $1'), 'audit lookup must be scoped by exact workspace_id')
+      assert.ok(query.includes('AND event_type = $3'), 'audit lookup must be scoped by exact cooldown audit event_type')
+      assert.ok(query.includes("created_at >= NOW() - ($4::int * INTERVAL '1 hour')"), 'audit lookup must be limited to recent events')
       assert.deepStrictEqual(params, [workspaceId, leadId, COOLDOWN_SKIP_EVENT_TYPE, 24])
-      return insertedEvents.length
-        ? { rows: [{ id: insertedEvents[0].id }], rowCount: 1 }
-        : { rows: [], rowCount: 0 }
+      const existingAuditCount = insertedEvents.filter((event) => (
+        event.workspace_id === workspaceId &&
+        event.lead_id === leadId &&
+        event.event_type === COOLDOWN_SKIP_EVENT_TYPE
+      )).length
+      return { rows: [{ existing_audit_count: existingAuditCount }], rowCount: 1 }
     }
 
     if (query.startsWith('INSERT INTO lead_timeline_events(')) {
@@ -70,14 +92,26 @@ async function runCreatesTimelineAuditOncePerDayTest() {
     assert.strictEqual(first.active, true)
     assert.strictEqual(second.active, true)
     assert.strictEqual(first.reason, FOLLOWUP_COOLDOWN_SKIP_REASON)
-    assert.strictEqual(insertedEvents.length, 1, 'cooldown audit event should be inserted only once per lead per 24 hours')
-    assert.strictEqual(insertedEvents[0].event_type, COOLDOWN_SKIP_EVENT_TYPE)
-    assert.strictEqual(insertedEvents[0].title, COOLDOWN_SKIP_EVENT_TITLE)
-    assert.strictEqual(insertedEvents[0].body, COOLDOWN_SKIP_EVENT_BODY)
-    assert.strictEqual(insertedEvents[0].source, 'ai')
-    assert.strictEqual(insertedEvents[0].metadata.reason, FOLLOWUP_COOLDOWN_SKIP_REASON)
-    assert.ok(logs.some((entry) => entry[0] === '[followup-cooldown] timeline audit event created'))
-    assert.ok(logs.some((entry) => entry[0] === '[followup-cooldown] timeline audit already exists'))
+    const cooldownAuditEvents = insertedEvents.filter((event) => (
+      event.workspace_id === workspaceId &&
+      event.lead_id === leadId &&
+      event.event_type === COOLDOWN_SKIP_EVENT_TYPE
+    ))
+    assert.strictEqual(cooldownAuditEvents.length, 1, 'cooldown audit event should be inserted only once per lead per 24 hours')
+    assert.strictEqual(cooldownAuditEvents[0].event_type, COOLDOWN_SKIP_EVENT_TYPE)
+    assert.strictEqual(cooldownAuditEvents[0].title, COOLDOWN_SKIP_EVENT_TITLE)
+    assert.strictEqual(cooldownAuditEvents[0].body, COOLDOWN_SKIP_EVENT_BODY)
+    assert.strictEqual(cooldownAuditEvents[0].source, 'ai')
+    assert.strictEqual(cooldownAuditEvents[0].metadata.reason, FOLLOWUP_COOLDOWN_SKIP_REASON)
+
+    const auditCheckLogs = logs.filter((entry) => entry[0] === '[followup-cooldown] timeline audit check')
+    const createdLog = logs.find((entry) => entry[0] === '[followup-cooldown] timeline audit event created')
+    const existingLog = logs.find((entry) => entry[0] === '[followup-cooldown] timeline audit already exists')
+    assert.strictEqual(auditCheckLogs.length, 2)
+    assert.deepStrictEqual(auditCheckLogs[0][1], { leadId, leadName: 'Telegram Connect Test', existingAuditCount: 0 })
+    assert.deepStrictEqual(auditCheckLogs[1][1], { leadId, leadName: 'Telegram Connect Test', existingAuditCount: 1 })
+    assert.deepStrictEqual(createdLog[1], { leadId, leadName: 'Telegram Connect Test' })
+    assert.deepStrictEqual(existingLog[1], { leadId, leadName: 'Telegram Connect Test', existingAuditCount: 1 })
   } finally {
     pool.query = originalQuery
     console.info = originalInfo
