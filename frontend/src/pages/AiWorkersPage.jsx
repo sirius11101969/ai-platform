@@ -353,7 +353,7 @@ const APPROVAL_ACTION_TIMEOUT_MS = 15000;
 const executableApprovalTypes = new Set(["followup_sequence_draft", "email_followup_draft", "telegram_reply_draft", "telegram_meeting_confirmation_draft", "telegram_followup", "email_followup", "send_demo_link", "send_presentation", "create_reminder", "move_lead_stage", "stage_change_recommendation", "meeting_schedule_proposal"]);
 
 function isApprovalItemExecutable(item) {
-  return executableApprovalTypes.has(item.executionType || item.actionType);
+  return executableApprovalTypes.has(item?.executionType || item?.actionType);
 }
 
 function sortApprovalItemsByCreatedDesc(items) {
@@ -365,10 +365,11 @@ function canAutoApproveAndExecuteDraft(item) {
 }
 
 function getExecutableButtonState(item, { isItemBusy = false, currentLoadingKey = "" } = {}) {
-  const executeLoadingKey = getApprovalActionKey(item.id, "execute");
+  const executeLoadingKey = getApprovalActionKey(getActionId(item), "execute");
+  const itemStatus = getActionStatus(item);
   const isExecutable = isApprovalItemExecutable(item);
-  const canExecuteApproved = item.status === "approved";
-  const canExecutePendingDraft = item.status === "pending_approval" && canAutoApproveAndExecuteDraft(item);
+  const canExecuteApproved = itemStatus === "approved";
+  const canExecutePendingDraft = itemStatus === "pending_approval" && canAutoApproveAndExecuteDraft(item);
   const isExecutingThisAction = currentLoadingKey === executeLoadingKey;
   const buttonEnabled = Boolean(isExecutable && (canExecuteApproved || canExecutePendingDraft) && !isItemBusy && !isExecutingThisAction);
 
@@ -476,6 +477,73 @@ const focusTabs = [
   { id: "all", label: "All" },
 ];
 
+function safeArray(value) {
+  return Array.isArray(value) ? value.filter(Boolean) : [];
+}
+
+function isFinishedActionStatus(status) {
+  return finishedActionStatuses.has(status);
+}
+
+function getActionStatus(item) {
+  return item?.status || "";
+}
+
+function getActionId(item) {
+  return item?.id || "";
+}
+
+function getLeadId(item) {
+  return item?.leadId || item?.lead_id || "";
+}
+
+function getHighlightedActionLocation(focusQueueState, selectedApprovalItems, isHighlightedApprovalItem) {
+  const safeState = focusQueueState || {};
+  const sections = [
+    { id: "focus", label: "Focus Queue", items: safeArray(safeState.focusActions) },
+    { id: "selected", label: "текущем фильтре", items: safeArray(selectedApprovalItems) },
+    { id: "legacy", label: "legacy", items: safeArray(safeState.hiddenLegacyActions) },
+    { id: "completed", label: "completed history", items: safeArray(safeState.completedHistoryActions) },
+    { id: "safety", label: "safety history", items: safeArray(safeState.safetyHistoryActions) },
+    { id: "all", label: "общей истории", items: safeArray(safeState.allActions) },
+  ];
+  for (const section of sections) {
+    const item = section.items.find(isHighlightedApprovalItem);
+    if (item) return { section: section.id, label: section.label, item };
+  }
+  return null;
+}
+
+class AiWorkersErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("[ai-workers-ui] render failed", { error, errorInfo });
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <main className="workspace-page ai-workers-page">
+          <Panel className="ai-workers-fallback-panel">
+            <h2>AI Workers временно не отрисовался. Обновите страницу или откройте без actionId.</h2>
+            <p>Если вы открыли ссылку на конкретное действие, попробуйте перейти на <a href="/ai-workers">/ai-workers</a>.</p>
+          </Panel>
+        </main>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 function getItemCreatedTime(item) {
   return new Date(item?.createdAt || item?.created_at || 0).getTime() || 0;
 }
@@ -559,23 +627,25 @@ function shouldHideFromFocus(item, items, now = Date.now()) {
 }
 
 function buildFocusQueueState(items, now = Date.now()) {
-  const sorted = sortApprovalItemsByCreatedDesc(items || []);
-  const completedHistoryActions = sorted.filter((item) => ["completed", "executed", "rejected", "cancelled"].includes(item.status) && !isSafetyHistoryAction(item));
+  const sorted = sortApprovalItemsByCreatedDesc(safeArray(items));
+  const completedHistoryActions = sorted.filter((item) => isFinishedActionStatus(getActionStatus(item)) && !isSafetyHistoryAction(item));
   const safetyHistoryActions = sorted.filter(isSafetyHistoryAction);
   const focusCandidates = sorted
     .filter((item) => !shouldHideFromFocus(item, sorted, now))
-    .filter((item) => activeActionStatuses.has(item.status) || (item.status === "failed" && !hasNewerCompletedFallback(item, sorted)))
+    .filter((item) => activeActionStatuses.has(getActionStatus(item)) || (getActionStatus(item) === "failed" && !hasNewerCompletedFallback(item, sorted)))
     .map((item) => ({ item, priority: getFocusPriority(item, sorted, now) }))
     .filter(({ priority }) => priority < 99)
     .sort((left, right) => left.priority - right.priority || getItemCreatedTime(right.item) - getItemCreatedTime(left.item))
     .map(({ item }) => item);
-  const focusActions = focusCandidates.slice(0, FOCUS_QUEUE_LIMIT);
-  const focusIds = new Set(focusActions.map((item) => item.id));
-  const hiddenLegacyActions = sorted.filter((item) => !focusIds.has(item.id) && !completedHistoryActions.some((historyItem) => historyItem.id === item.id) && !safetyHistoryActions.some((historyItem) => historyItem.id === item.id));
-  const unresolvedFailedActions = sorted.filter((item) => item.status === "failed" && !hasNewerCompletedFallback(item, sorted) && !isSafetyHistoryAction(item));
-  const needsApprovalActions = sorted.filter((item) => activeActionStatuses.has(item.status) && !isSafetyHistoryAction(item));
-  const meetingsActions = sorted.filter((item) => isMeetingAction(item) && !isSafetyHistoryAction(item) && !finishedActionStatuses.has(item.status));
-  const followupActions = sorted.filter((item) => isFollowupAction(item) && !isSafetyHistoryAction(item) && !finishedActionStatuses.has(item.status));
+  const focusActions = safeArray(focusCandidates).slice(0, FOCUS_QUEUE_LIMIT);
+  const focusIds = new Set(focusActions.map(getActionId).filter(Boolean));
+  const completedHistoryIds = new Set(completedHistoryActions.map(getActionId).filter(Boolean));
+  const safetyHistoryIds = new Set(safetyHistoryActions.map(getActionId).filter(Boolean));
+  const hiddenLegacyActions = sorted.filter((item) => !focusIds.has(getActionId(item)) && !completedHistoryIds.has(getActionId(item)) && !safetyHistoryIds.has(getActionId(item)));
+  const unresolvedFailedActions = sorted.filter((item) => getActionStatus(item) === "failed" && !hasNewerCompletedFallback(item, sorted) && !isSafetyHistoryAction(item));
+  const needsApprovalActions = sorted.filter((item) => activeActionStatuses.has(getActionStatus(item)) && !isSafetyHistoryAction(item));
+  const meetingsActions = sorted.filter((item) => isMeetingAction(item) && !isSafetyHistoryAction(item) && !finishedActionStatuses.has(getActionStatus(item)));
+  const followupActions = sorted.filter((item) => isFollowupAction(item) && !isSafetyHistoryAction(item) && !finishedActionStatuses.has(getActionStatus(item)));
 
   return {
     focusActions,
@@ -613,7 +683,7 @@ function logTelegramSendButtonState(item, buttonState) {
   });
 }
 
-export default function AiWorkersPage() {
+function AiWorkersPageContent() {
   const [commandCenter, setCommandCenter] = useState(null);
   const [loading, setLoading] = useState(true);
   const [busyWorker, setBusyWorker] = useState("");
@@ -809,7 +879,8 @@ export default function AiWorkersPage() {
         return;
       }
       if (["completed", "executed"].includes(updatedItem?.status)) {
-        setMessage((isTelegramReplyDraft(item) || isEmailFollowupDraft(item)) ? "Отправлено" : "Выполнено");
+        setMessage((isTelegramReplyDraft(item) || isEmailFollowupDraft(item)) ? "Сообщение отправлено" : "Выполнено");
+        if (targetActionId && getActionId(item) === targetActionId) setExpandedSections((current) => ({ ...current, completed: true }));
         return;
       }
       setMessage(approvalActionMessages[action] || "Статус AI действия обновлён");
@@ -889,62 +960,91 @@ export default function AiWorkersPage() {
     }
   }
 
-  const workers = commandCenter?.workers || [];
-  const queue = commandCenter?.queue || [];
-  const recentRuns = commandCenter?.recentRuns || [];
+  const workers = safeArray(commandCenter?.workers);
+  const queue = safeArray(commandCenter?.queue);
+  const recentRuns = safeArray(commandCenter?.recentRuns);
   const metrics = commandCenter?.metrics || {};
-  const approvalItems = approvalQueue.items || [];
+  const approvalItems = safeArray(approvalQueue?.items);
+  const previousHighlightedStatusRef = useRef("");
   const focusQueueState = useMemo(() => buildFocusQueueState(approvalItems), [approvalItems]);
-  const selectedApprovalItems = focusQueueState.tabActions[activeApprovalTab] || focusQueueState.focusActions;
-  const isHighlightedApprovalItem = (item) => Boolean((targetActionId && item.id === targetActionId) || (targetLeadId && item.leadId === targetLeadId));
+  const selectedApprovalItems = safeArray(focusQueueState?.tabActions?.[activeApprovalTab] || focusQueueState?.focusActions);
+  const isHighlightedApprovalItem = (item) => Boolean(item && ((targetActionId && getActionId(item) === targetActionId) || (targetLeadId && getLeadId(item) === targetLeadId)));
   const prioritizeHighlightedItems = (items, limit) => {
-    const sliced = limit ? items.slice(0, limit) : items;
-    const highlighted = items.find(isHighlightedApprovalItem);
-    if (highlighted && !sliced.some((item) => item.id === highlighted.id)) return [highlighted, ...sliced.slice(0, Math.max(0, (limit || items.length) - 1))];
+    const safeItems = safeArray(items);
+    const sliced = limit ? safeItems.slice(0, limit) : safeItems;
+    const highlighted = safeItems.find(isHighlightedApprovalItem);
+    if (highlighted && !sliced.some((item) => getActionId(item) === getActionId(highlighted))) return [highlighted, ...sliced.slice(0, Math.max(0, (limit || safeItems.length) - 1))];
     return sliced;
   };
-  const approvalMetrics = { ...(approvalQueue.metrics || {}), ...(focusQueueState.metrics || {}), ...(focusSummary || {}) };
-  const pendingActions = useMemo(() => queue.filter((item) => item.status === "pending_approval"), [queue]);
-  const failedActions = useMemo(() => queue.filter((item) => item.status === "failed"), [queue]);
+  const highlightedActionLocation = getHighlightedActionLocation(focusQueueState, selectedApprovalItems, isHighlightedApprovalItem);
+  const highlightedAction = highlightedActionLocation?.item || null;
+  const highlightedActionMissing = Boolean((targetActionId || targetLeadId) && !loading && !highlightedAction);
+  const approvalMetrics = { ...(approvalQueue?.metrics || {}), ...(focusQueueState?.metrics || {}), ...(focusSummary || {}) };
+  const pendingActions = useMemo(() => queue.filter((item) => getActionStatus(item) === "pending_approval"), [queue]);
+  const failedActions = useMemo(() => queue.filter((item) => getActionStatus(item) === "failed"), [queue]);
 
   useEffect(() => {
-    console.info("[ai-workers-focus] focus queue built", { count: focusQueueState.focusActions.length, actionableNow: focusQueueState.metrics.actionableNow });
-    console.info("[ai-workers-focus] legacy actions hidden", { count: focusQueueState.metrics.hiddenLegacy });
-  }, [focusQueueState.focusActions.length, focusQueueState.metrics.actionableNow, focusQueueState.metrics.hiddenLegacy]);
+    console.info("[ai-workers-focus] focus queue built", { count: safeArray(focusQueueState?.focusActions).length, actionableNow: focusQueueState?.metrics?.actionableNow || 0 });
+    console.info("[ai-workers-focus] legacy actions hidden", { count: focusQueueState?.metrics?.hiddenLegacy || 0 });
+  }, [focusQueueState?.focusActions?.length, focusQueueState?.metrics?.actionableNow, focusQueueState?.metrics?.hiddenLegacy]);
 
   useEffect(() => {
     if (!targetActionId && !targetLeadId) return;
-    const matchSection = (items) => items.some(isHighlightedApprovalItem);
+    const matchSection = (items) => safeArray(items).some(isHighlightedApprovalItem);
     const nextExpanded = {};
-    if (matchSection(focusQueueState.hiddenLegacyActions)) nextExpanded.legacy = true;
-    if (matchSection(focusQueueState.completedHistoryActions)) nextExpanded.completed = true;
-    if (matchSection(focusQueueState.safetyHistoryActions)) nextExpanded.safety = true;
-    if (!matchSection(selectedApprovalItems) && matchSection(focusQueueState.allActions)) nextExpanded.all = true;
-    if (!Object.keys(nextExpanded).length) return;
-    setExpandedSections((current) => ({ ...current, ...nextExpanded }));
-    console.info("[ai-workers-focus] route highlight expanded hidden section", { actionId: targetActionId, leadId: targetLeadId, sections: Object.keys(nextExpanded) });
+    if (matchSection(focusQueueState?.hiddenLegacyActions)) nextExpanded.legacy = true;
+    if (matchSection(focusQueueState?.completedHistoryActions)) nextExpanded.completed = true;
+    if (matchSection(focusQueueState?.safetyHistoryActions)) nextExpanded.safety = true;
+    if (!matchSection(selectedApprovalItems) && matchSection(focusQueueState?.allActions)) nextExpanded.all = true;
+    const sectionsToOpen = Object.keys(nextExpanded);
+    if (!sectionsToOpen.length) return;
+    setExpandedSections((current) => {
+      const changed = sectionsToOpen.some((section) => !current?.[section]);
+      return changed ? { ...current, ...nextExpanded } : current;
+    });
+    console.info("[ai-workers-focus] route highlight expanded hidden section", { actionId: targetActionId, leadId: targetLeadId, sections: sectionsToOpen });
   }, [targetActionId, targetLeadId, focusQueueState, selectedApprovalItems]);
 
+  useEffect(() => {
+    if (!targetActionId) {
+      previousHighlightedStatusRef.current = "";
+      return;
+    }
+
+    const currentStatus = getActionStatus(highlightedAction);
+    const previousStatus = previousHighlightedStatusRef.current;
+    if (previousStatus && activeActionStatuses.has(previousStatus) && isFinishedActionStatus(currentStatus)) {
+      setMessage("Сообщение отправлено");
+      if (currentStatus === "completed" || currentStatus === "executed") {
+        setExpandedSections((current) => ({ ...current, completed: true }));
+      }
+    }
+    previousHighlightedStatusRef.current = currentStatus;
+  }, [targetActionId, highlightedAction]);
+
   function renderApprovalRow(item, { history = false } = {}) {
-    const isApproveBusy = Boolean(busyActions[getApprovalActionKey(item.id, "approve")]);
-    const isEditBusy = Boolean(busyActions[getApprovalActionKey(item.id, "edit")]);
-    const isRejectBusy = Boolean(busyActions[getApprovalActionKey(item.id, "reject")]);
-    const executeLoadingKey = getApprovalActionKey(item.id, "execute");
+    if (!item) return null;
+    const itemId = getActionId(item);
+    const itemStatus = getActionStatus(item);
+    const isApproveBusy = Boolean(busyActions[getApprovalActionKey(itemId, "approve")]);
+    const isEditBusy = Boolean(busyActions[getApprovalActionKey(itemId, "edit")]);
+    const isRejectBusy = Boolean(busyActions[getApprovalActionKey(itemId, "reject")]);
+    const executeLoadingKey = getApprovalActionKey(itemId, "execute");
     const isExecuteActionBusy = Boolean(busyActions[executeLoadingKey]) || loadingKey === executeLoadingKey;
     const isItemBusy = isApproveBusy || isEditBusy || isRejectBusy || isExecuteActionBusy;
     const busyLabel = isApproveBusy ? approvalActionLoadingLabels.approve : isEditBusy ? approvalActionLoadingLabels.edit : isRejectBusy ? approvalActionLoadingLabels.reject : isExecuteActionBusy ? approvalActionLoadingLabels.execute : "";
-    const isEditingThisDraft = editingDraft.itemId === item.id;
+    const isEditingThisDraft = editingDraft.itemId === itemId;
     const isTelegramDraftItem = isTelegramReplyDraft(item);
     const isEmailDraftItem = isEmailFollowupDraft(item);
     const executableButtonState = isApprovalItemExecutable(item) ? getExecutableButtonState(item, { isItemBusy, currentLoadingKey: loadingKey }) : null;
-    const showExecutableButton = Boolean(executableButtonState && ["pending_approval", "approved"].includes(item.status));
+    const showExecutableButton = Boolean(executableButtonState && ["pending_approval", "approved"].includes(itemStatus));
     const isSendStyleButton = canAutoApproveAndExecuteDraft(item) || isEmailDraftItem;
-    const canEditItem = ["pending_approval", "failed"].includes(item.status);
-    const canRejectItem = ["pending_approval", "failed"].includes(item.status);
+    const canEditItem = ["pending_approval", "failed"].includes(itemStatus);
+    const canRejectItem = ["pending_approval", "failed"].includes(itemStatus);
     if (isTelegramDraftItem && executableButtonState) logTelegramSendButtonState(item, executableButtonState);
 
     return (
-      <article ref={isHighlightedApprovalItem(item) ? highlightRef : null} className={`approval-row ${history ? "approval-history-row" : ""} approval-${item.status} ${isHighlightedApprovalItem(item) ? "route-highlight" : ""}`} key={item.id}>
+      <article ref={isHighlightedApprovalItem(item) ? highlightRef : null} className={`approval-row ${history ? "approval-history-row" : ""} approval-${itemStatus} ${isHighlightedApprovalItem(item) ? "route-highlight" : ""}`} key={itemId}>
         <div className="approval-main">
           <strong>{sanitizeVisibleAiText(item.title)}</strong>
           <p>{shortRecommendation(item)}</p>
@@ -954,7 +1054,7 @@ export default function AiWorkersPage() {
           {renderTelegramReplyDraft(item, {
             isEditing: isEditingThisDraft,
             editText: isEditingThisDraft ? editingDraft.text : getDraftText(item),
-            onEditTextChange: (text) => setEditingDraft({ itemId: item.id, text }),
+            onEditTextChange: (text) => setEditingDraft({ itemId, text }),
             onSaveEdit: () => saveApprovalItemEdit(item, editingDraft.text),
             onCancelEdit: () => setEditingDraft({ itemId: "", text: "" }),
             editBusy: isItemBusy,
@@ -962,7 +1062,7 @@ export default function AiWorkersPage() {
           {renderEmailFollowupDraft(item, {
             isEditing: isEditingThisDraft,
             editText: isEditingThisDraft ? editingDraft.text : getDraftText(item),
-            onEditTextChange: (text) => setEditingDraft({ itemId: item.id, text }),
+            onEditTextChange: (text) => setEditingDraft({ itemId, text }),
             onSaveEdit: () => saveApprovalItemEdit(item, editingDraft.text),
             onCancelEdit: () => setEditingDraft({ itemId: "", text: "" }),
             editBusy: isItemBusy,
@@ -970,7 +1070,7 @@ export default function AiWorkersPage() {
           {item.errorMessage && <small className="email-error-text">Ошибка выполнения: {formatApprovalErrorMessage(item.errorMessage)}</small>}
           {executableButtonState && !history && (
             <small className="send-debug-badge">
-              buttonEnabled={String(executableButtonState.buttonEnabled)} · actionId={item.id} · status={item.status}
+              buttonEnabled={String(executableButtonState.buttonEnabled)} · actionId={itemId} · status={itemStatus}
             </small>
           )}
         </div>
@@ -978,15 +1078,15 @@ export default function AiWorkersPage() {
         <div><span>AI сотрудник</span><b>{item.workerName || "AI"}</b></div>
         <div><span>Канал</span><b>{item.payload?.channel || item.payload?.suggestedChannel || (item.lead?.telegram ? "telegram" : item.lead?.email ? "email" : "crm")}</b></div>
         <div><span>Тип</span><b>{actionTypeLabels[item.executionType] || actionTypeLabels[item.actionType] || item.actionType}</b></div>
-        <div><span>Статус</span><b className={`glow-status ${item.status}`}>{approvalStatusLabels[item.status] || item.status}</b><small>{formatDate(item.updatedAt || item.createdAt)}</small></div>
+        <div><span>Статус</span><b className={`glow-status ${itemStatus}`}>{approvalStatusLabels[itemStatus] || itemStatus}</b><small>{formatDate(item.updatedAt || item.createdAt)}</small></div>
         <div className="approval-actions">
-          {!history && ["pending_approval", "failed"].includes(item.status) && (
+          {!history && ["pending_approval", "failed"].includes(itemStatus) && (
             <button type="button" className="ghost-button compact" onClick={() => handleApprovalAction(item, "approve")} disabled={isItemBusy}>{isApproveBusy ? busyLabel : "Одобрить"}</button>
           )}
           {!history && canEditItem && (
-            <button type="button" className="ghost-button compact" onClick={() => handleEditApprovalItem(item)} disabled={isItemBusy || ["executing","completed"].includes(item.status)}>{isEditBusy ? "Сохраняем…" : "Изменить"}</button>
+            <button type="button" className="ghost-button compact" onClick={() => handleEditApprovalItem(item)} disabled={isItemBusy || ["executing","completed"].includes(itemStatus)}>{isEditBusy ? "Сохраняем…" : "Изменить"}</button>
           )}
-          {!history && canRejectItem && !["executing", "completed", "rejected"].includes(item.status) && (
+          {!history && canRejectItem && !["executing", "completed", "rejected"].includes(itemStatus) && (
             <button type="button" className="ghost-button compact danger-action" onClick={() => handleApprovalAction(item, "reject")} disabled={isItemBusy}>{isRejectBusy ? busyLabel : "Отклонить"}</button>
           )}
           {!history && showExecutableButton && (
@@ -996,22 +1096,23 @@ export default function AiWorkersPage() {
               <button type="button" className="btn primary compact" onClick={() => handleApprovalAction(item, "execute")} disabled={executableButtonState.disabled}>{isExecuteActionBusy ? busyLabel : "Выполнить"}</button>
             )
           )}
-          {history && <span className="approval-history-note">{getApprovalFooterStatusLabel(item.status)}</span>}
+          {history && <span className="approval-history-note">{getApprovalFooterStatusLabel(itemStatus)}</span>}
         </div>
       </article>
     );
   }
 
   function renderCollapsedSection({ id, title, count, items, history = false }) {
-    if (!items.length) return null;
+    const safeItems = safeArray(items);
+    if (!safeItems.length) return null;
     return (
-      <details className="approval-collapsed-section" open={expandedSections[id]} onToggle={(event) => setExpandedSections((current) => ({ ...current, [id]: event.currentTarget.open }))}>
+      <details className="approval-collapsed-section" open={Boolean(expandedSections?.[id])} onToggle={(event) => setExpandedSections((current) => ({ ...current, [id]: event.currentTarget.open }))}>
         <summary>
           <span>{title}</span>
-          <b>{count}</b>
+          <b>{count ?? safeItems.length}</b>
         </summary>
         <div className="approval-table approval-history-table">
-          {prioritizeHighlightedItems(items, id === "all" ? 50 : 12).map((item) => renderApprovalRow(item, { history }))}
+          {prioritizeHighlightedItems(safeItems, id === "all" ? 50 : 12).map((item) => renderApprovalRow(item, { history }))}
         </div>
       </details>
     );
@@ -1028,6 +1129,12 @@ export default function AiWorkersPage() {
 
       {error && <p className="auth-error dashboard-alert">{error}</p>}
       {message && <p className="success-alert dashboard-alert">{message}</p>}
+      {highlightedActionMissing && (
+        <p className="ai-workers-route-notice dashboard-alert">AI действие из ссылки не найдено в текущей очереди. Страница продолжает работать — обновите центр или откройте без actionId.</p>
+      )}
+      {highlightedAction && highlightedActionLocation?.section === "completed" && (
+        <p className="ai-workers-route-notice dashboard-alert">Действие из ссылки уже завершено и показано в completed history.</p>
+      )}
 
 
       <Panel className="demo-pipeline-panel">
@@ -1143,13 +1250,13 @@ export default function AiWorkersPage() {
           <div className="ai-queue-list">
             {queue.length === 0 && <p className="empty-state">Очередь пуста. Запустите AI сотрудника, чтобы создать рекомендации.</p>}
             {prioritizeHighlightedItems(queue, 8).map((item) => (
-              <article ref={isHighlightedApprovalItem(item) ? highlightRef : null} className={`ai-queue-item ${isHighlightedApprovalItem(item) ? "route-highlight" : ""}`} key={item.id}>
+              <article ref={isHighlightedApprovalItem(item) ? highlightRef : null} className={`ai-queue-item ${isHighlightedApprovalItem(item) ? "route-highlight" : ""}`} key={getActionId(item)}>
                 <div>
-                  <strong>{sanitizeVisibleAiText(item.title)}</strong>
+                  <strong>{sanitizeVisibleAiText(item?.title)}</strong>
                   <p>{shortRecommendation(item)}</p>
-                  <small>{formatDate(item.created_at)} · {item.action_type}</small>
+                  <small>{formatDate(item?.created_at)} · {item?.action_type}</small>
                 </div>
-                <b>{item.status === "pending_approval" ? "Ждёт одобрения" : item.status}</b>
+                <b>{getActionStatus(item) === "pending_approval" ? "Ждёт одобрения" : getActionStatus(item)}</b>
               </article>
             ))}
           </div>
@@ -1207,5 +1314,14 @@ export default function AiWorkersPage() {
         </Panel>
       </section>
     </main>
+  );
+}
+
+
+export default function AiWorkersPage() {
+  return (
+    <AiWorkersErrorBoundary>
+      <AiWorkersPageContent />
+    </AiWorkersErrorBoundary>
   );
 }

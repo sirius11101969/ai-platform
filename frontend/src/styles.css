@@ -1052,6 +1052,24 @@ button { font: inherit; }
 }
 
 
+
+.ai-workers-route-notice {
+  border-color: rgba(94, 231, 255, 0.28);
+  background: rgba(59, 130, 246, 0.10);
+  color: #dbeafe;
+}
+
+.ai-workers-fallback-panel {
+  margin-top: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.ai-workers-fallback-panel h2 {
+  margin: 0 0 10px;
+}
+
+
 .demo-pipeline-panel {
   position: relative;
   z-index: 1;
