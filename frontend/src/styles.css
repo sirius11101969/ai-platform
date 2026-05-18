@@ -1069,6 +1069,20 @@ button { font: inherit; }
   margin: 0 0 10px;
 }
 
+.ai-workers-debug-block {
+  margin-top: 14px;
+  max-height: 360px;
+  overflow: auto;
+  white-space: pre-wrap;
+  border: 1px solid rgba(248, 113, 113, 0.45);
+  border-radius: 14px;
+  padding: 14px;
+  background: rgba(15, 23, 42, 0.86);
+  color: #fecaca;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 
 .demo-pipeline-panel {
   position: relative;
