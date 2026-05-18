@@ -186,6 +186,196 @@ async function testFailJobNonRetryableUsesTypedPersistenceQueries() {
   assert.strictEqual(JSON.parse(logInsert.params[9]).nextStatus, 'failed')
 }
 
+
+function createJsonResponse(status, body) {
+  return {
+    status,
+    async text() {
+      return JSON.stringify(body)
+    },
+    headers: {
+      get(name) {
+        return String(name).toLowerCase() === 'content-type' ? 'application/json' : null
+      },
+    },
+  }
+}
+
+async function withMockFetch(responseFactory, fn) {
+  const originalFetch = global.fetch
+  global.fetch = async (url, options) => responseFactory(url, options)
+  try {
+    return await fn()
+  } finally {
+    global.fetch = originalFetch
+  }
+}
+
+async function withEnv(updates, fn) {
+  const originals = {}
+  for (const key of Object.keys(updates)) {
+    originals[key] = process.env[key]
+    if (updates[key] === undefined) delete process.env[key]
+    else process.env[key] = updates[key]
+  }
+  try {
+    return await fn()
+  } finally {
+    for (const key of Object.keys(updates)) {
+      if (originals[key] === undefined) delete process.env[key]
+      else process.env[key] = originals[key]
+    }
+  }
+}
+
+async function withMockPool(queryHandler, clients, fn) {
+  const originalQuery = pool.query
+  const originalConnect = pool.connect
+  const directCalls = []
+  pool.query = async (sql, params = []) => {
+    directCalls.push({ sql, params })
+    return queryHandler(sql, params, directCalls)
+  }
+  pool.connect = async () => {
+    const client = clients.shift()
+    if (!client) throw new Error('No mock client available')
+    return client
+  }
+  try {
+    const result = await fn({ directCalls })
+    return { result, directCalls }
+  } finally {
+    pool.query = originalQuery
+    pool.connect = originalConnect
+  }
+}
+
+
+async function testEnqueueOpenAiJobNormalizesNullModelWithoutUndefinedParams() {
+  const calls = []
+  const originalQuery = pool.query
+  pool.query = async (sql, params = []) => {
+    calls.push({ sql, params })
+    if (sql.includes('INSERT INTO ai_execution_jobs')) {
+      return {
+        rows: [{ id: jobId, payload: JSON.parse(params[3]) }],
+        rowCount: 1,
+      }
+    }
+    throw new Error(`Unhandled enqueue SQL: ${sql}`)
+  }
+  try {
+    const job = await runner.enqueueOpenAiTextGenerationJob({ payload: { prompt: 'Hello', model: null, system: undefined } })
+    assert.strictEqual(job.payload.model, null)
+    assert.strictEqual(job.payload.system, null)
+  } finally {
+    pool.query = originalQuery
+  }
+
+  const insertCall = calls.find((call) => call.sql.includes('INSERT INTO ai_execution_jobs'))
+  assert(insertCall.sql.includes('$2::text'))
+  assert(insertCall.sql.includes('$4::jsonb'))
+  assertJsonParam(insertCall.params[3], {
+    source: 'api',
+    createdFor: _private.OPENAI_TEXT_GENERATION_JOB_TYPE,
+    prompt: 'Hello',
+    system: null,
+    model: null,
+    maxOutputTokens: 900,
+    temperature: 0.7,
+  })
+  assertNoUndefinedParams(calls)
+}
+
+async function testRunOnceCompletesOpenAiJobWithNullModelAndTypedPersistence() {
+  const queueName = 'ai-execution'
+  const worker = {
+    id: workerId,
+    node_name: 'test-node',
+    status: 'online',
+    queues: [queueName],
+    max_concurrency: 4,
+    current_concurrency: 0,
+  }
+  const queuedJob = {
+    id: jobId,
+    workspace_id: workspaceId,
+    user_id: userId,
+    task_id: taskId,
+    queue_name: queueName,
+    job_type: _private.OPENAI_TEXT_GENERATION_JOB_TYPE,
+    payload: { prompt: 'Hello', system: null, model: null },
+    attempt_count: 1,
+    previous_status: 'queued',
+  }
+  const completedJob = { ...queuedJob, status: 'completed', result: { ok: true } }
+
+  const claimClient = createClient(async (sql) => {
+    if (sql.includes('INSERT INTO worker_nodes')) return { rows: [worker], rowCount: 1 }
+    if (sql.includes('SELECT * FROM worker_nodes')) return { rows: [worker], rowCount: 1 }
+    if (sql.includes('UPDATE ai_execution_jobs')) return { rows: [queuedJob], rowCount: 1 }
+    if (sql.includes('UPDATE worker_nodes')) return { rows: [], rowCount: 1 }
+    if (sql.includes('INSERT INTO execution_logs')) return { rows: [{ id: 'claim-log' }], rowCount: 1 }
+    if (sql.includes('INSERT INTO task_execution_history')) return { rows: [{ id: 'claim-history' }], rowCount: 1 }
+    if (sql.includes('INSERT INTO worker_metrics')) return { rows: [], rowCount: 1 }
+    throw new Error(`Unhandled claim SQL: ${sql}`)
+  })
+  const completeClient = createClient(async (sql) => {
+    if (sql.includes('UPDATE ai_execution_jobs')) return { rows: [completedJob], rowCount: 1 }
+    if (sql.includes('UPDATE worker_nodes')) return { rows: [], rowCount: 1 }
+    if (sql.includes('INSERT INTO execution_logs')) return { rows: [{ id: 'complete-log' }], rowCount: 1 }
+    if (sql.includes('INSERT INTO task_execution_history')) return { rows: [{ id: 'complete-history' }], rowCount: 1 }
+    if (sql.includes('INSERT INTO worker_metrics')) return { rows: [], rowCount: 1 }
+    throw new Error(`Unhandled complete SQL: ${sql}`)
+  })
+
+  await withEnv({ OPENAI_API_KEY: 'test-key', OPENAI_MODEL: 'gpt-4.1-mini' }, async () => {
+    await withMockFetch((url, options) => {
+      const requestPayload = JSON.parse(options.body)
+      assert.strictEqual(requestPayload.model, 'gpt-4.1-mini')
+      assert.strictEqual(Object.prototype.hasOwnProperty.call(requestPayload, 'instructions'), false)
+      return createJsonResponse(200, {
+        id: 'resp-null-model',
+        output_text: 'Saved result',
+        usage: { input_tokens: 5, output_tokens: 7, total_tokens: 12 },
+      })
+    }, async () => {
+      const { result, directCalls } = await withMockPool((sql) => {
+        if (sql.includes('INSERT INTO worker_nodes')) return { rows: [worker], rowCount: 1 }
+        if (sql.includes('INSERT INTO ai_provider_usage')) return { rows: [{ id: 'usage-null-model' }], rowCount: 1 }
+        throw new Error(`Unhandled direct SQL: ${sql}`)
+      }, [claimClient, completeClient], async () => runner.runOnce({ queueName }))
+
+      assert.strictEqual(result.claimed, true)
+      assert.strictEqual(result.completed, true)
+      assert.strictEqual(result.job.status, 'completed')
+      assert.strictEqual(result.result.text, 'Saved result')
+      assert.strictEqual(result.result.model, 'gpt-4.1-mini')
+
+      const usageInsert = directCalls.find((call) => call.sql.includes('INSERT INTO ai_provider_usage'))
+      assert(usageInsert, 'expected provider usage insert')
+      assert(usageInsert.sql.includes('$5::text'))
+      assert(usageInsert.sql.includes('$14::jsonb'))
+      assert.strictEqual(usageInsert.params[4], 'gpt-4.1-mini')
+      assertJsonParam(usageInsert.params[13], { responseId: 'resp-null-model' })
+
+      const completeUpdate = completeClient.calls.find((call) => call.sql.includes('UPDATE ai_execution_jobs'))
+      assert(completeUpdate.sql.includes('result = $3::jsonb'))
+      const savedResult = JSON.parse(completeUpdate.params[2])
+      assert.strictEqual(savedResult.model, 'gpt-4.1-mini')
+      assert.strictEqual(savedResult.text, 'Saved result')
+
+      const executionLogInserts = [
+        ...claimClient.calls.filter((call) => call.sql.includes('INSERT INTO execution_logs')),
+        ...completeClient.calls.filter((call) => call.sql.includes('INSERT INTO execution_logs')),
+      ]
+      assert.strictEqual(executionLogInserts.length, 2)
+      executionLogInserts.forEach((call) => assert(call.sql.includes('$10::jsonb')))
+      assertNoUndefinedParams([...directCalls, ...claimClient.calls, ...completeClient.calls])
+    })
+  })
+}
+
 async function testExecutionLogAndProviderUsageHelpersCastJsonb() {
   const calls = []
   const client = {
@@ -238,5 +428,7 @@ Promise.resolve()
   .then(testFailJobRetryingUsesTypedPersistenceQueries)
   .then(testFailJobDeadLetteredUsesTypedPersistenceQueries)
   .then(testFailJobNonRetryableUsesTypedPersistenceQueries)
+  .then(testEnqueueOpenAiJobNormalizesNullModelWithoutUndefinedParams)
+  .then(testRunOnceCompletesOpenAiJobWithNullModelAndTypedPersistence)
   .then(testExecutionLogAndProviderUsageHelpersCastJsonb)
   .then(() => console.log('aiExecutionRunnerOpenAiPersistence tests passed'))

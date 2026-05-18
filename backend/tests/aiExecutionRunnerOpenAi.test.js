@@ -69,11 +69,18 @@ function withEnv(updates, fn) {
     })
 }
 
+function testNormalizeNullableText() {
+  assert.strictEqual(_private.normalizeNullableText(undefined), null)
+  assert.strictEqual(_private.normalizeNullableText(null), null)
+  assert.strictEqual(_private.normalizeNullableText('   '), null)
+  assert.strictEqual(_private.normalizeNullableText(' gpt-4.1-mini '), 'gpt-4.1-mini')
+}
+
 function testSanitizeOpenAiTextPayloadDefaults() {
   const payload = _private.sanitizeOpenAiTextPayload({})
   assert.strictEqual(payload.prompt, _private.DEFAULT_OPENAI_TEXT_PROMPT)
   assert.strictEqual(payload.system, null)
-  assert.strictEqual(payload.model, undefined)
+  assert.strictEqual(payload.model, null)
   assert.strictEqual(payload.maxOutputTokens, 900)
   assert.strictEqual(payload.temperature, 0.7)
 }
@@ -202,6 +209,7 @@ async function testMissingOpenAiKeyFailsSafely() {
 }
 
 Promise.resolve()
+  .then(testNormalizeNullableText)
   .then(testSanitizeOpenAiTextPayloadDefaults)
   .then(testSanitizeOpenAiTextPayloadOverrides)
   .then(testOpenAiSuccessPersistsProviderUsage)
