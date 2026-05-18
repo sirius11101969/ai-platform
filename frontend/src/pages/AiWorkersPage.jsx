@@ -88,8 +88,14 @@ const actionTypeLabels = {
   proposal_followup_recommendation: "Follow-up по предложению",
 };
 
+function isValidDateValue(value) {
+  if (!value) return false;
+  const time = new Date(value).getTime();
+  return Number.isFinite(time);
+}
+
 function formatDate(value) {
-  if (!value) return "ещё не запускался";
+  if (!isValidDateValue(value)) return "ещё не запускался";
   return new Intl.DateTimeFormat("ru-RU", {
     day: "2-digit",
     month: "short",
@@ -188,7 +194,7 @@ function isMeetingScheduleProposal(item) {
 }
 
 function formatMeetingStart(value) {
-  if (!value) return "нужно уточнить у клиента";
+  if (!isValidDateValue(value)) return "нужно уточнить у клиента";
   return new Intl.DateTimeFormat("ru-RU", { dateStyle: "short", timeStyle: "short" }).format(new Date(value));
 }
 
@@ -331,7 +337,8 @@ function renderEmailFollowupDraft(item, { isEditing = false, editText = "", onEd
 }
 
 function shortRecommendation(item) {
-  const text = sanitizeVisibleAiText(item?.payload?.suggestedText || item.recommendation || item.title || "AI рекомендация ожидает решения");
+  if (!isObjectAction(item)) return "AI рекомендация ожидает решения";
+  const text = sanitizeVisibleAiText(item?.payload?.suggestedText || item?.recommendation || item?.title || "AI рекомендация ожидает решения");
   return text.length > 130 ? `${text.slice(0, 130)}…` : text;
 }
 
@@ -358,8 +365,14 @@ function isApprovalItemExecutable(item) {
   return executableApprovalTypes.has(getItemType(item));
 }
 
+function getSafeTime(value) {
+  const time = new Date(value || 0).getTime();
+  return Number.isFinite(time) ? time : 0;
+}
+
 function sortApprovalItemsByCreatedDesc(items) {
-  return safeArray(items).slice().sort((left, right) => new Date(right?.createdAt || right?.created_at || 0).getTime() - new Date(left?.createdAt || left?.created_at || 0).getTime());
+  const safeItems = Array.isArray(items) ? items.filter(Boolean) : [];
+  return safeItems.slice().sort((left, right) => getSafeTime(right?.createdAt || right?.created_at) - getSafeTime(left?.createdAt || left?.created_at));
 }
 
 function canAutoApproveAndExecuteDraft(item) {
@@ -564,7 +577,15 @@ class AiWorkersErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error("[ai-workers-ui] render failed", { error, errorInfo });
+    const search = typeof window !== "undefined" ? window.location?.search || "" : "";
+    const currentActionId = search ? new URLSearchParams(search).get("actionId") || new URLSearchParams(search).get("approvalId") || "" : "";
+    console.error("[ai-workers-ui] render failed", {
+      message: error?.message || "",
+      stack: error?.stack || "",
+      componentStack: errorInfo?.componentStack || "",
+      actionId: currentActionId,
+      error,
+    });
   }
 
   render() {
@@ -597,6 +618,7 @@ function getItemType(item) {
 }
 
 function getItemSearchText(item) {
+  if (!isObjectAction(item)) return "";
   const chunks = [item?.title, item?.recommendation, item?.errorMessage, item?.payload?.testName, item?.payload?.source, item?.payload?.scenario];
   return safeArray(chunks).join(" ").toLowerCase();
 }
@@ -669,9 +691,10 @@ function shouldHideFromFocus(item, items, now = Date.now()) {
 }
 
 function buildFocusQueueState(items, now = Date.now()) {
-  const sorted = sortApprovalItemsByCreatedDesc(safeArray(items));
-  const completedHistoryActions = sorted.filter((item) => isFinishedActionStatus(getActionStatus(item)) && !isSafetyHistoryAction(item));
-  const safetyHistoryActions = sorted.filter(isSafetyHistoryAction);
+  const safeItems = Array.isArray(items) ? items.filter(Boolean) : [];
+  const sorted = sortApprovalItemsByCreatedDesc(safeItems);
+  const completedHistoryActions = Array.isArray(sorted) ? sorted.filter((item) => isFinishedActionStatus(getActionStatus(item)) && !isSafetyHistoryAction(item)) : [];
+  const safetyHistoryActions = Array.isArray(sorted) ? sorted.filter(isSafetyHistoryAction) : [];
   const focusCandidates = sorted
     .filter((item) => !shouldHideFromFocus(item, sorted, now))
     .filter((item) => activeActionStatuses.has(getActionStatus(item)) || (getActionStatus(item) === "failed" && !hasNewerCompletedFallback(item, sorted)))
@@ -680,8 +703,9 @@ function buildFocusQueueState(items, now = Date.now()) {
     .sort((left, right) => left.priority - right.priority || getItemCreatedTime(right.item) - getItemCreatedTime(left.item))
     .map(({ item }) => item);
   const focusActions = safeArray(focusCandidates).slice(0, FOCUS_QUEUE_LIMIT);
+  const safeCompletedHistoryForMetrics = Array.isArray(completedHistoryActions) ? completedHistoryActions : [];
   const focusIds = new Set(focusActions.map(getActionId).filter(Boolean));
-  const completedHistoryIds = new Set(completedHistoryActions.map(getActionId).filter(Boolean));
+  const completedHistoryIds = new Set(safeCompletedHistoryForMetrics.map(getActionId).filter(Boolean));
   const safetyHistoryIds = new Set(safetyHistoryActions.map(getActionId).filter(Boolean));
   const hiddenLegacyActions = sorted.filter((item) => !focusIds.has(getActionId(item)) && !completedHistoryIds.has(getActionId(item)) && !safetyHistoryIds.has(getActionId(item)));
   const unresolvedFailedActions = sorted.filter((item) => getActionStatus(item) === "failed" && !hasNewerCompletedFallback(item, sorted) && !isSafetyHistoryAction(item));
@@ -708,10 +732,20 @@ function buildFocusQueueState(items, now = Date.now()) {
       needsApproval: needsApprovalActions.length,
       failedUnresolved: unresolvedFailedActions.length,
       hiddenLegacy: hiddenLegacyActions.length,
-      completedHistory: completedHistoryActions.length,
+      completedHistory: safeCompletedHistoryForMetrics.length,
       safetyHistory: safetyHistoryActions.length,
     },
   };
+}
+
+function isValidCompletedHistoryAction(action) {
+  if (!action || typeof action !== "object" || Array.isArray(action)) return false;
+  if (!action.id) return false;
+  if (!action.status) return false;
+  if (!action.title) return false;
+  if (!action.created_at && !action.createdAt) return false;
+  if (!action.payload || typeof action.payload !== "object" || Array.isArray(action.payload)) return false;
+  return true;
 }
 
 function logTelegramSendButtonState(item, buttonState) {
@@ -1008,7 +1042,14 @@ function AiWorkersPageContent() {
   const approvalItems = safeArray(approvalQueue?.items);
   const previousHighlightedStatusRef = useRef("");
   const focusQueueState = useMemo(() => buildFocusQueueState(approvalItems), [approvalItems]);
-  const routeHighlightSections = useMemo(() => getRouteHighlightSections(focusQueueState), [focusQueueState]);
+  const completedHistoryActions = focusQueueState?.completedHistoryActions;
+  const safeCompletedHistoryActions = useMemo(() => (Array.isArray(completedHistoryActions)
+    ? completedHistoryActions.filter(Boolean)
+    : []), [completedHistoryActions]);
+  const routeHighlightSections = useMemo(() => getRouteHighlightSections({
+    ...focusQueueState,
+    completedHistoryActions: safeCompletedHistoryActions,
+  }), [focusQueueState, safeCompletedHistoryActions]);
   const selectedApprovalItems = safeArray(focusQueueState?.tabActions?.[activeApprovalTab] || focusQueueState?.focusActions);
   const highlightedAction = isObjectAction(highlightResolution?.action) ? highlightResolution.action : null;
   const highlightedActionId = getActionId(highlightedAction);
@@ -1067,20 +1108,21 @@ function AiWorkersPageContent() {
 
 
   useEffect(() => {
-    if (loading || !highlightedActionId) return undefined;
+    if (loading || !highlightedActionId || typeof window === "undefined" || typeof document === "undefined") return undefined;
 
     let frameId;
     const timeoutId = window.setTimeout(() => {
       const scrollHighlightedAction = () => {
+        if (typeof window === "undefined" || typeof document === "undefined") return;
         const escapedActionId = window.CSS?.escape ? window.CSS.escape(highlightedActionId) : String(highlightedActionId).replace(/"/g, '\\"');
-        const element = document.querySelector(`[data-action-id="${escapedActionId}"]`);
-        if (element) {
+        const element = typeof document.querySelector === "function" ? document.querySelector(`[data-action-id="${escapedActionId}"]`) : null;
+        if (element && typeof element.scrollIntoView === "function") {
           highlightRef.current = element;
           console.info("[ai-workers-focus] highlight target mounted", { actionId: highlightedActionId, section: highlightedActionSection });
           element.scrollIntoView({ behavior: "smooth", block: "center" });
           return;
         }
-        console.info("[ai-workers-focus] highlight skipped safely", { actionId: highlightedActionId, reason: "target_not_mounted" });
+        console.info("[ai-workers-focus] highlight skipped safely", { actionId: highlightedActionId, reason: element ? "scroll_unavailable" : "target_not_mounted" });
       };
 
       frameId = window.requestAnimationFrame
@@ -1113,7 +1155,8 @@ function AiWorkersPageContent() {
   }, [targetActionId, highlightedActionId, highlightedAction]);
 
   function renderApprovalRow(item, { history = false } = {}) {
-    if (!item) return null;
+    if (!item || typeof item !== "object" || Array.isArray(item)) return null;
+    if (history && isFinishedActionStatus(getActionStatus(item)) && !isValidCompletedHistoryAction(item)) return null;
     const itemId = getActionId(item);
     const itemStatus = getActionStatus(item);
     const isApproveBusy = Boolean(busyActions[getApprovalActionKey(itemId, "approve")]);
@@ -1174,7 +1217,7 @@ function AiWorkersPageContent() {
         <div><span>AI сотрудник</span><b>{item.workerName || "AI"}</b></div>
         <div><span>Канал</span><b>{item.payload?.channel || item.payload?.suggestedChannel || (item.lead?.telegram ? "telegram" : item.lead?.email ? "email" : "crm")}</b></div>
         <div><span>Тип</span><b>{actionTypeLabels[getItemType(item)] || getItemType(item)}</b></div>
-        <div><span>Статус</span><b className={`glow-status ${itemStatus}`}>{approvalStatusLabels[itemStatus] || itemStatus}</b><small>{formatDate(item.updatedAt || item.createdAt)}</small></div>
+        <div><span>Статус</span><b className={`glow-status ${itemStatus}`}>{approvalStatusLabels[itemStatus] || itemStatus}</b><small>{formatDate(item.updatedAt || item.updated_at || item.createdAt || item.created_at)}</small></div>
         <div className="approval-actions">
           {!history && ["pending_approval", "failed"].includes(itemStatus) && (
             <button type="button" className="ghost-button compact" onClick={() => handleApprovalAction(item, "approve")} disabled={isItemBusy}>{isApproveBusy ? busyLabel : "Одобрить"}</button>
@@ -1198,9 +1241,37 @@ function AiWorkersPageContent() {
     );
   }
 
+  function renderCompletedHistoryRow(action) {
+    const actionId = getActionId(action);
+    console.info("[ai-workers-focus] completed row render start", { actionId });
+    try {
+      if (!action || typeof action !== "object" || Array.isArray(action)) return null;
+      if (!isValidCompletedHistoryAction(action)) {
+        console.info("[ai-workers-focus] completed row render failed", { actionId, reason: "invalid_completed_action" });
+        return null;
+      }
+      const row = renderApprovalRow(action, { history: true });
+      console.info("[ai-workers-focus] completed row render success", { actionId });
+      return row;
+    } catch (rowError) {
+      console.error("[ai-workers-focus] failed to render completed row", { actionId, error: rowError });
+      console.info("[ai-workers-focus] completed row render failed", { actionId, error: rowError?.message || String(rowError) });
+      return null;
+    }
+  }
+
   function renderCollapsedSection({ id, title, count, items, history = false }) {
-    const safeItems = safeArray(items);
-    if (!safeItems.length) return null;
+    const safeItems = id === "completed"
+      ? (Array.isArray(completedHistoryActions) ? safeCompletedHistoryActions : [])
+      : safeArray(items);
+    if (id === "completed") {
+      console.info("[ai-workers-focus] rendering completed history", {
+        rawIsArray: Array.isArray(completedHistoryActions),
+        count: safeItems.length,
+      });
+    }
+    if (!Array.isArray(safeItems) || !safeItems.length) return null;
+    const visibleItems = prioritizeHighlightedItems(safeItems, id === "all" ? 50 : 12);
     return (
       <details className="approval-collapsed-section" open={Boolean(expandedSections?.[id])} onToggle={(event) => setExpandedSections((current) => ({ ...current, [id]: event.currentTarget.open }))}>
         <summary>
@@ -1208,7 +1279,7 @@ function AiWorkersPageContent() {
           <b>{count ?? safeItems.length}</b>
         </summary>
         <div className="approval-table approval-history-table">
-          {prioritizeHighlightedItems(safeItems, id === "all" ? 50 : 12).map((item) => renderApprovalRow(item, { history }))}
+          {Array.isArray(visibleItems) && visibleItems.map((item) => (id === "completed" ? renderCompletedHistoryRow(item) : renderApprovalRow(item, { history })))}
         </div>
       </details>
     );
@@ -1300,7 +1371,7 @@ function AiWorkersPageContent() {
         </div>
         <div className="approval-collapsed-list">
           {renderCollapsedSection({ id: "legacy", title: "Show legacy pending", count: safeArray(focusQueueState?.hiddenLegacyActions).length, items: focusQueueState?.hiddenLegacyActions })}
-          {renderCollapsedSection({ id: "completed", title: "Show completed history", count: safeArray(focusQueueState?.completedHistoryActions).length, items: focusQueueState?.completedHistoryActions, history: true })}
+          {renderCollapsedSection({ id: "completed", title: "Show completed history", count: safeCompletedHistoryActions.length, items: safeCompletedHistoryActions, history: true })}
           {renderCollapsedSection({ id: "safety", title: "Show safety history", count: safeArray(focusQueueState?.safetyHistoryActions).length, items: focusQueueState?.safetyHistoryActions, history: true })}
           {renderCollapsedSection({ id: "all", title: "Show all actions", count: safeArray(focusQueueState?.allActions).length, items: focusQueueState?.allActions, history: true })}
         </div>
