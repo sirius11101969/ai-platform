@@ -4,7 +4,7 @@ const sequenceService = require('../src/services/aiSequenceOrchestratorService')
 const { calculateRevenueLeadScore } = require('../src/services/aiRevenueIntelligenceService')
 
 function createVoiceClient() {
-  const state = { calls: [], events: [], timeline: [], workerCreated: false }
+  const state = { calls: [], events: [], timeline: [], workerCreated: false, workerParams: null }
   const lead = { id: '11111111-1111-4111-8111-111111111111', workspace_id: '22222222-2222-4222-8222-222222222222', user_id: '33333333-3333-4333-8333-333333333333', name: 'Anna Buyer', contact: '+15551234567', status: 'qualified', value: 50000 }
   return {
     state,
@@ -38,6 +38,8 @@ function createVoiceClient() {
       }
       if (sql.includes('INSERT INTO ai_workers')) {
         state.workerCreated = true
+        state.workerParams = params
+        assert.notStrictEqual(params[1], 'ai_voice_worker')
         return { rows: [{ id: 'worker-1' }], rowCount: 1 }
       }
       throw new Error(`Unhandled SQL: ${sql}`)
@@ -60,6 +62,28 @@ async function testMockCallLifecyclePersistsTranscriptAndAnalysis() {
   assert(client.state.timeline.some((event) => event.event_type === 'ai_voice_call_started'))
   assert(client.state.timeline.some((event) => event.event_type === 'ai_voice_call_completed'))
   assert(client.state.timeline.some((event) => event.event_type === 'ai_voice_followup_recommended'))
+  assert.strictEqual(client.state.workerParams[1], 'ai_sdr_agent')
+  assert.ok(client.state.workerParams[2].includes('workerKind=ai_voice_worker'))
+}
+
+async function testEnsureVoiceWorkerUsesAllowedTypeAndPreservesExistingWorkerDetails() {
+  const calls = []
+  const client = {
+    async query(sql, params = []) {
+      calls.push({ sql, params })
+      if (sql.includes('INSERT INTO ai_workers')) return { rows: [{ id: 'existing-sdr-worker' }], rowCount: 1 }
+      throw new Error(`Unhandled SQL: ${sql}`)
+    },
+  }
+  const worker = await voiceOutreachService._private.ensureVoiceWorker(client, '22222222-2222-4222-8222-222222222222')
+  assert.strictEqual(worker.id, 'existing-sdr-worker')
+  const insert = calls[0]
+  assert.strictEqual(insert.params[1], 'ai_sdr_agent')
+  assert.notStrictEqual(insert.params[1], voiceOutreachService.AI_VOICE_WORKER_KIND)
+  assert.ok(insert.params[2].includes('voice=true'))
+  assert.ok(insert.params[2].includes('workerKind=ai_voice_worker'))
+  assert.ok(insert.sql.includes("WHEN ai_workers.name = 'AI Voice Worker'"))
+  assert.ok(!insert.sql.includes('SET name = EXCLUDED.name'))
 }
 
 function createSequenceClient() {
@@ -105,6 +129,7 @@ function testRevenueScoreUsesVoiceSignals() {
 
 async function main() {
   await testMockCallLifecyclePersistsTranscriptAndAnalysis()
+  await testEnsureVoiceWorkerUsesAllowedTypeAndPreservesExistingWorkerDetails()
   await testVoiceSequenceEnqueuesVoiceJob()
   testRevenueScoreUsesVoiceSignals()
   console.log('voiceOutreachService tests passed')
