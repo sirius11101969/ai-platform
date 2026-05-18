@@ -181,7 +181,7 @@ async function testOpenAiFailurePersistsProviderUsageAndExecutionLog() {
       assert(logInsert.sql.includes('$10::jsonb'))
       assert.strictEqual(logInsert.params[6], 'error')
       assert.strictEqual(logInsert.params[7], 'openai_response_failed')
-      assert.deepStrictEqual(JSON.parse(logInsert.params[9]), { status: 400, error: 'bad request' })
+      assert.deepStrictEqual(JSON.parse(logInsert.params[9]), { status: 400 })
       assertNoUndefinedParams(calls)
     })
   })

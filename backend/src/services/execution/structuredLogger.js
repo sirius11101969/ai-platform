@@ -1,21 +1,4 @@
-function redact(value) {
-  if (value === undefined || value === null) return value
-  if (typeof value === 'string') {
-    if (/^(sk-|Bearer\s+)/i.test(value)) return '[REDACTED]'
-    if (value.length > 2048) return `${value.slice(0, 2048)}…[truncated]`
-    return value
-  }
-  if (Array.isArray(value)) return value.map(redact)
-  if (typeof value === 'object') {
-    return Object.fromEntries(
-      Object.entries(value).map(([key, item]) => [
-        key,
-        /api[_-]?key|secret|token|authorization|password/i.test(key) ? '[REDACTED]' : redact(item),
-      ])
-    )
-  }
-  return value
-}
+const { redact } = require('./redaction')
 
 function log(level, event, fields = {}) {
   const entry = {

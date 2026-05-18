@@ -68,13 +68,6 @@ async function recordProviderUsage(usage = {}, client = pool) {
     safeJson(normalized.metadata),
   ]
 
-  console.debug('[provider-usage-debug]', {
-    provider: normalized.provider,
-    model: normalized.model,
-    operation: normalized.operation,
-    status: normalized.status,
-    hasMetadata: normalized.metadata !== null,
-  })
 
   const result = await client.query(
     `INSERT INTO ai_provider_usage (
