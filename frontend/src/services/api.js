@@ -399,6 +399,33 @@ export function createAiTask(payload) {
   })
 }
 
+
+export function getActiveAiSequences() {
+  return request('/ai/sequences/active')
+}
+
+export function startAiSequence({ leadId, templateId, workspaceId } = {}) {
+  return request('/ai/sequences/start', {
+    method: 'POST',
+    workspaceId,
+    body: JSON.stringify({ leadId, templateId: templateId || undefined, workspaceId: workspaceId || undefined }),
+  })
+}
+
+export function pauseAiSequence(sequenceId) {
+  return request('/ai/sequences/pause', {
+    method: 'POST',
+    body: JSON.stringify({ sequenceId }),
+  })
+}
+
+export function stopAiSequence(sequenceId) {
+  return request('/ai/sequences/stop', {
+    method: 'POST',
+    body: JSON.stringify({ sequenceId }),
+  })
+}
+
 export function fetchAiWorkers() {
   return request('/ai/workers')
 }

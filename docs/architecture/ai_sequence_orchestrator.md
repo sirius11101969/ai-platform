@@ -116,6 +116,48 @@ The orchestrator writes these events:
 
 This keeps live dashboard support separate from the AI Workers UI while reusing queue statuses for approval/sending progress.
 
+
+## Manager UI workflow
+
+Managers can now start and control the orchestrator from two browser surfaces while continuing to use normal JWT workspace auth. The browser never sends `x-ai-execution-key`; that header remains reserved for server-side execution runners and internal automation.
+
+### CRM lead card
+
+The CRM lead details modal includes an **AI Sequence** block for the selected lead. It shows:
+
+- the active sequence status;
+- the current generated step number;
+- the next scheduled run time;
+- the template name, defaulting to **Enterprise Demo Follow-up**;
+- Start AI Sequence, Pause, and Stop controls.
+
+If more than one known active template exists in the workspace response, the card shows a compact template selector. Starting a sequence calls `POST /api/ai/sequences/start` with `{ leadId, templateId, workspaceId }` when available. Pause and Stop call the existing pause/stop endpoints with the selected sequence id.
+
+The card deliberately explains the safety posture: **AI will generate drafts for manager approval**. For generated steps, the user-facing safe status is **Step generated and waiting for approval**. Errors from the start/pause/stop endpoints are rendered inline so a manager can see when a sequence cannot start, for example because a matching active sequence already exists.
+
+### AI Workers / AI Manager area
+
+The AI Workers page includes an **AI Sequence Orchestrator** widget beside the existing approval queue. It uses `GET /api/ai/sequences/active` plus the existing approval queue data to show:
+
+- active sequences count;
+- sequences due within the next 24 hours;
+- generated sequence drafts count;
+- latest sequence drafts that are waiting in manager approval flow;
+- a high-priority lead selector and Start sequence button.
+
+The widget keeps the same approval model as the rest of AI Workers: sequence output is displayed as a draft, not as an autonomous send action. Managers must approve/execute draft queue items through the existing Focus Queue controls before any outbound message can be delivered.
+
+### Frontend service contract
+
+The frontend API service wraps the existing endpoints as:
+
+- `getActiveAiSequences()` → `GET /api/ai/sequences/active`;
+- `startAiSequence({ leadId, templateId, workspaceId })` → `POST /api/ai/sequences/start`;
+- `pauseAiSequence(sequenceId)` → `POST /api/ai/sequences/pause`;
+- `stopAiSequence(sequenceId)` → `POST /api/ai/sequences/stop`.
+
+All calls use the existing bearer token and workspace header injection used by the rest of the app.
+
 ## Scaling roadmap
 
 Near-term improvements:

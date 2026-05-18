@@ -38,6 +38,10 @@ import {
   sendTelegramLeadMessage,
   queueInactiveAiFollowUps,
   updateCrmStage,
+  getActiveAiSequences,
+  startAiSequence,
+  pauseAiSequence,
+  stopAiSequence,
 } from "../services/api";
 
 const DEFAULT_CRM_STAGES = [
@@ -58,6 +62,32 @@ function formatCurrency(value) {
 function formatDate(value) {
   if (!value) return "—";
   return new Intl.DateTimeFormat("ru-RU", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(value));
+}
+
+
+const DEFAULT_AI_SEQUENCE_TEMPLATE_NAME = "Enterprise Demo Follow-up";
+
+function sequenceStatusLabel(status) {
+  return ({ active: "Active", paused: "Paused", completed: "Completed", stopped: "Stopped" }[status] || status || "Not started");
+}
+
+function getSequenceTemplates(sequenceDashboard = {}) {
+  const templates = new Map();
+  [...(sequenceDashboard.activeSequences || []), ...(sequenceDashboard.upcomingSteps || []), ...(sequenceDashboard.stoppedSequences || [])].forEach((sequence) => {
+    if (sequence?.templateId && sequence?.templateName) templates.set(sequence.templateId, sequence.templateName);
+  });
+  return [{ id: "", name: DEFAULT_AI_SEQUENCE_TEMPLATE_NAME }, ...Array.from(templates, ([id, name]) => ({ id, name })).filter((item) => item.name !== DEFAULT_AI_SEQUENCE_TEMPLATE_NAME)];
+}
+
+function getLeadActiveSequence(sequenceDashboard = {}, leadId) {
+  return (sequenceDashboard.activeSequences || []).find((sequence) => sequence.leadId === leadId) || null;
+}
+
+function getSequenceSafeStatus(sequence) {
+  if (!sequence) return "AI will generate drafts for manager approval.";
+  if (sequence.status === "active" && sequence.currentStep > 0) return "Step generated and waiting for approval";
+  if (sequence.status === "active") return "AI will generate drafts for manager approval.";
+  return sequenceStatusLabel(sequence.status);
 }
 
 
@@ -302,6 +332,11 @@ export default function CRMPage() {
   const [inactiveQueueBusy, setInactiveQueueBusy] = useState(false);
   const [aiAnalysisBusy, setAiAnalysisBusy] = useState(false);
   const [meetingIcsDownloadingId, setMeetingIcsDownloadingId] = useState(null);
+  const [aiSequenceDashboard, setAiSequenceDashboard] = useState({ activeSequences: [], upcomingSteps: [], stoppedSequences: [], metrics: {} });
+  const [aiSequenceTemplateId, setAiSequenceTemplateId] = useState("");
+  const [aiSequenceBusy, setAiSequenceBusy] = useState({});
+  const [aiSequenceMessage, setAiSequenceMessage] = useState("");
+  const [aiSequenceError, setAiSequenceError] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -326,13 +361,14 @@ export default function CRMPage() {
     if (!silent) setLoading(true);
     setError("");
     try {
-      const [leadsResponse, stagesResponse, statsResponse, activityResponse, templatesResponse, materialsResponse] = await Promise.all([
+      const [leadsResponse, stagesResponse, statsResponse, activityResponse, templatesResponse, materialsResponse, sequencesResponse] = await Promise.all([
         fetchCrmLeads(),
         fetchCrmStages(),
         fetchCrmStats(),
         fetchCrmActivity(),
         fetchEmailTemplates(),
         fetchMaterials(),
+        getActiveAiSequences(),
       ]);
       setLeads(leadsResponse.leads || []);
       setStages((stagesResponse.stages?.length ? stagesResponse.stages : DEFAULT_CRM_STAGES));
@@ -340,6 +376,7 @@ export default function CRMPage() {
       setActivity(activityResponse.events || statsResponse.stats?.activity || []);
       setEmailTemplates(templatesResponse.templates || []);
       setMaterials(materialsResponse.materials || []);
+      setAiSequenceDashboard(sequencesResponse || { activeSequences: [], upcomingSteps: [], stoppedSequences: [], metrics: {} });
     } catch (requestError) {
       setError(requestError.message || "Не удалось загрузить CRM");
     } finally {
@@ -800,6 +837,62 @@ export default function CRMPage() {
     }
   }
 
+
+  async function refreshAiSequences() {
+    const response = await getActiveAiSequences();
+    setAiSequenceDashboard(response || { activeSequences: [], upcomingSteps: [], stoppedSequences: [], metrics: {} });
+    return response;
+  }
+
+  async function handleStartAiSequence(lead) {
+    if (!lead) return;
+    setAiSequenceBusy((current) => ({ ...current, [lead.id]: "start" }));
+    setAiSequenceError("");
+    setAiSequenceMessage("");
+    try {
+      await startAiSequence({ leadId: lead.id, templateId: aiSequenceTemplateId || undefined });
+      setAiSequenceMessage("AI sequence started. AI will generate drafts for manager approval.");
+      await refreshAiSequences();
+      await loadCrm({ silent: true });
+    } catch (requestError) {
+      setAiSequenceError(requestError.message || "Sequence cannot start for this lead.");
+    } finally {
+      setAiSequenceBusy((current) => ({ ...current, [lead.id]: "" }));
+    }
+  }
+
+  async function handlePauseAiSequence(sequence) {
+    if (!sequence) return;
+    setAiSequenceBusy((current) => ({ ...current, [sequence.leadId]: "pause" }));
+    setAiSequenceError("");
+    setAiSequenceMessage("");
+    try {
+      await pauseAiSequence(sequence.id);
+      setAiSequenceMessage("AI sequence paused. No drafts will be sent automatically.");
+      await refreshAiSequences();
+    } catch (requestError) {
+      setAiSequenceError(requestError.message || "Не удалось поставить AI sequence на паузу");
+    } finally {
+      setAiSequenceBusy((current) => ({ ...current, [sequence.leadId]: "" }));
+    }
+  }
+
+  async function handleStopAiSequence(sequence) {
+    if (!sequence) return;
+    setAiSequenceBusy((current) => ({ ...current, [sequence.leadId]: "stop" }));
+    setAiSequenceError("");
+    setAiSequenceMessage("");
+    try {
+      await stopAiSequence(sequence.id);
+      setAiSequenceMessage("AI sequence stopped. Existing drafts still require manager approval.");
+      await refreshAiSequences();
+    } catch (requestError) {
+      setAiSequenceError(requestError.message || "Не удалось остановить AI sequence");
+    } finally {
+      setAiSequenceBusy((current) => ({ ...current, [sequence.leadId]: "" }));
+    }
+  }
+
   function handleLeadDragStart(event, lead) {
     event.dataTransfer.effectAllowed = "move";
     event.dataTransfer.setData("text/plain", lead.id);
@@ -997,6 +1090,16 @@ export default function CRMPage() {
           onSendEmail={handleSendEmail}
           onDownloadMeetingIcs={handleDownloadMeetingIcs}
           meetingIcsDownloadingId={meetingIcsDownloadingId}
+          aiSequence={getLeadActiveSequence(aiSequenceDashboard, selectedLead.id)}
+          aiSequenceTemplates={getSequenceTemplates(aiSequenceDashboard)}
+          aiSequenceTemplateId={aiSequenceTemplateId}
+          aiSequenceBusy={aiSequenceBusy[selectedLead.id]}
+          aiSequenceMessage={aiSequenceMessage}
+          aiSequenceError={aiSequenceError}
+          onAiSequenceTemplateChange={setAiSequenceTemplateId}
+          onStartAiSequence={() => handleStartAiSequence(selectedLead)}
+          onPauseAiSequence={handlePauseAiSequence}
+          onStopAiSequence={handleStopAiSequence}
           closeLeadModal={closeLeadModal}
         />
       )}
@@ -1092,7 +1195,7 @@ function LeadFormModal({ title, subtitle, stages, leadForm, setLeadForm, saving,
   );
 }
 
-function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDraftChange, onAddNote, onFollowUp, onAiAction, onAnalyzeLeadAi, aiActionBusy = {}, followUpLoading, onDelete, onEdit, onMove, telegramMessages = [], telegramDraft = '', telegramSending = false, onTelegramDraftChange, onSendTelegramReply, emailTemplates = [], leadEmails = [], emailComposer, emailAttachments = [], emailBusy = false, onEmailComposerChange, onGenerateEmail, onUploadEmailAttachment, onSendEmail, actionCenter = { actions: [], timeline: [], attachments: [] }, materials = [], executionBusy = {}, onCreateExecutionAction, onApproveExecutionAction, onSendExecutionAction, onEditExecutionAction, onCancelExecutionAction, onSendMaterials, onApproveApprovalQueueItem, onRejectApprovalQueueItem, onExecuteApprovalQueueItem, onEditApprovalQueueItem, onDownloadMeetingIcs, meetingIcsDownloadingId, closeLeadModal }) {
+function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDraftChange, onAddNote, onFollowUp, onAiAction, onAnalyzeLeadAi, aiActionBusy = {}, followUpLoading, onDelete, onEdit, onMove, telegramMessages = [], telegramDraft = '', telegramSending = false, onTelegramDraftChange, onSendTelegramReply, emailTemplates = [], leadEmails = [], emailComposer, emailAttachments = [], emailBusy = false, onEmailComposerChange, onGenerateEmail, onUploadEmailAttachment, onSendEmail, actionCenter = { actions: [], timeline: [], attachments: [] }, materials = [], executionBusy = {}, onCreateExecutionAction, onApproveExecutionAction, onSendExecutionAction, onEditExecutionAction, onCancelExecutionAction, onSendMaterials, onApproveApprovalQueueItem, onRejectApprovalQueueItem, onExecuteApprovalQueueItem, onEditApprovalQueueItem, onDownloadMeetingIcs, meetingIcsDownloadingId, aiSequence = null, aiSequenceTemplates = [], aiSequenceTemplateId = "", aiSequenceBusy = "", aiSequenceMessage = "", aiSequenceError = "", onAiSequenceTemplateChange, onStartAiSequence, onPauseAiSequence, onStopAiSequence, closeLeadModal }) {
   useModalCloseLifecycle(closeLeadModal);
   const telegramOutreachDrafts = getOutreachDrafts(lead, 'telegram');
   const telegramReplyDrafts = (actionCenter.approvalItems || []).filter((item) => item.leadId === lead.id && (item.actionType === 'telegram_reply_draft' || item.executionType === 'telegram_reply_draft'));
@@ -1117,6 +1220,35 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
             <div className="detail-kpi-row">
               <div><span>Сумма сделки</span><strong>{formatCurrency(lead.value)}</strong></div>
               <label className="crm-field"><span>Текущий этап</span><select value={lead.status} onChange={(event) => onMove(event.target.value)}>{stages.map((stage) => <option key={stage.status} value={stage.status}>{stage.title}</option>)}</select></label>
+            </div>
+
+
+
+            <div className="detail-section ai-sequence-card">
+              <div className="ai-sequence-head">
+                <div>
+                  <span className="eyebrow">AI Sequence</span>
+                  <h4>Enterprise follow-up orchestrator</h4>
+                  <p>Never auto-send. AI will generate drafts for manager approval.</p>
+                </div>
+                <span className={`sequence-status-badge ${aiSequence?.status || "idle"}`}>{sequenceStatusLabel(aiSequence?.status)}</span>
+              </div>
+              <div className="ai-sequence-grid">
+                <span>Status <b>{getSequenceSafeStatus(aiSequence)}</b></span>
+                <span>Current step <b>{aiSequence?.currentStep ?? "—"}</b></span>
+                <span>Next run time <b>{formatDate(aiSequence?.nextRunAt)}</b></span>
+                <span>Template <b>{aiSequence?.templateName || DEFAULT_AI_SEQUENCE_TEMPLATE_NAME}</b></span>
+              </div>
+              {!aiSequence && aiSequenceTemplates.length > 1 && (
+                <label className="crm-field ai-sequence-template-field"><span>Template</span><select value={aiSequenceTemplateId} onChange={(event) => onAiSequenceTemplateChange(event.target.value)}>{aiSequenceTemplates.map((template) => <option key={template.id || "default"} value={template.id}>{template.name}</option>)}</select></label>
+              )}
+              {aiSequenceMessage && <p className="form-success ai-sequence-message">{aiSequenceMessage}</p>}
+              {aiSequenceError && <p className="form-error ai-sequence-message">{aiSequenceError}</p>}
+              <div className="ai-sequence-actions">
+                <button className="btn primary compact" type="button" onClick={onStartAiSequence} disabled={Boolean(aiSequence) || aiSequenceBusy === "start"}>{aiSequenceBusy === "start" ? "Starting…" : "Start AI Sequence"}</button>
+                <button className="ghost-button compact" type="button" onClick={() => onPauseAiSequence(aiSequence)} disabled={!aiSequence || aiSequenceBusy === "pause"}>{aiSequenceBusy === "pause" ? "Pausing…" : "Pause"}</button>
+                <button className="ghost-button compact danger-action" type="button" onClick={() => onStopAiSequence(aiSequence)} disabled={!aiSequence || aiSequenceBusy === "stop"}>{aiSequenceBusy === "stop" ? "Stopping…" : "Stop"}</button>
+              </div>
             </div>
 
             {getStageRecommendation(lead, actionCenter) && (
