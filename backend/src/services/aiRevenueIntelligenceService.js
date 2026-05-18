@@ -326,6 +326,32 @@ function normalizeLeadScoreRow(row = {}) {
   }
 }
 
+
+async function getLeadScores({ workspaceId, filter = '', sortBy = 'priorityScore', sortDirection = 'desc' } = {}) {
+  const result = await pool.query(
+    `SELECT s.*, l.name AS lead_name, l.company, l.status, l.value
+       FROM ai_lead_scores s
+       JOIN crm_leads l ON l.id = s.lead_id AND l.workspace_id = s.workspace_id
+      WHERE s.workspace_id = $1::uuid
+      ORDER BY s.priority_score DESC, s.close_probability DESC, s.updated_at DESC`,
+    [workspaceId]
+  )
+  let scores = result.rows.map(normalizeLeadScoreRow)
+  const activeFilter = String(filter || '').toLowerCase()
+  if (activeFilter === 'hot') scores = scores.filter((score) => score.priorityScore >= 75 || score.closeProbability >= 70)
+  if (activeFilter === 'high_probability') scores = scores.filter((score) => score.closeProbability >= 70)
+  if (activeFilter === 'stalled') scores = scores.filter((score) => score.pipelineHealth <= 40 || score.churnRisk >= 70)
+  if (activeFilter === 'at_risk') scores = scores.filter((score) => score.churnRisk >= 65)
+
+  const sortFields = { priorityScore: 'priorityScore', closeProbability: 'closeProbability', churnRisk: 'churnRisk', updatedAt: 'updatedAt' }
+  const field = sortFields[sortBy] || 'priorityScore'
+  const direction = sortDirection === 'asc' ? 1 : -1
+  return scores.sort((a, b) => {
+    if (field === 'updatedAt') return (new Date(a.updatedAt || 0) - new Date(b.updatedAt || 0)) * direction
+    return (Number(a[field] || 0) - Number(b[field] || 0)) * direction
+  })
+}
+
 async function generateRevenueForecast({ workspaceId, forecastPeriod = DEFAULT_FORECAST_PERIOD, client = null } = {}) {
   const executor = client || pool
   const result = await executor.query(
@@ -429,17 +455,18 @@ async function getRevenueIntelligenceDashboard({ workspaceId } = {}) {
   }
 }
 
-async function enqueueDueRevenueIntelligence({ client = pool, queueName = DEFAULT_QUEUE_NAME, limit = 25 } = {}) {
+async function enqueueDueRevenueIntelligence({ client = pool, queueName = DEFAULT_QUEUE_NAME, limit = 25, workspaceId = null } = {}) {
   const leadResult = await client.query(
     `SELECT l.id, l.workspace_id, l.user_id, COALESCE(MAX(s.updated_at), 'epoch'::timestamptz) AS last_scored_at
        FROM crm_leads l
        LEFT JOIN ai_lead_scores s ON s.workspace_id = l.workspace_id AND s.lead_id = l.id
       WHERE l.status NOT IN ('won','lost')
+        AND ($2::uuid IS NULL OR l.workspace_id = $2::uuid)
       GROUP BY l.id, l.workspace_id, l.user_id
      HAVING COALESCE(MAX(s.updated_at), 'epoch'::timestamptz) < NOW() - INTERVAL '6 hours'
       ORDER BY last_scored_at ASC
       LIMIT $1::integer`,
-    [limit]
+    [limit, workspaceId]
   )
   const enqueued = []
   for (const lead of leadResult.rows) {
@@ -458,10 +485,12 @@ async function enqueueDueRevenueIntelligence({ client = pool, queueName = DEFAUL
     `SELECT w.id AS workspace_id, w.owner_user_id AS user_id
        FROM workspaces w
       WHERE EXISTS (SELECT 1 FROM crm_leads l WHERE l.workspace_id = w.id AND l.status NOT IN ('won','lost'))
+        AND ($1::uuid IS NULL OR w.id = $1::uuid)
         AND NOT EXISTS (
           SELECT 1 FROM ai_revenue_forecasts f WHERE f.workspace_id = w.id AND f.generated_at > NOW() - INTERVAL '12 hours'
         )
-      LIMIT 50`
+      LIMIT 50`,
+    [workspaceId]
   )
   const forecasts = []
   for (const workspace of workspaceResult.rows) {
@@ -499,6 +528,7 @@ module.exports = {
   executeLeadIntelligenceAnalysisJob,
   executeRevenueForecastGenerationJob,
   generateRevenueForecast,
+  getLeadScores,
   getRevenueIntelligenceDashboard,
   analyzeLeadRevenueIntelligence,
   _private: { daysSince, inferRecommendedAction },

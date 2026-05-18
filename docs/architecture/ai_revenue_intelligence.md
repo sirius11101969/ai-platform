@@ -135,3 +135,83 @@ Future versions can learn from accepted/rejected recommendations and won/lost ou
 3. Add exploration safeguards that keep recommendations within approved action/channel policies.
 4. Train per-segment calibration models for probability-to-close.
 5. Continuously evaluate calibration drift before promoting model weights to production.
+
+## UI workflow: AI Revenue Command Center
+
+The production UI now exposes an **AI Revenue Intelligence** dashboard section in the main dashboard and CRM workspace. The section is intentionally executive and compact:
+
+1. A manager opens the dashboard or CRM.
+2. The frontend calls `getRevenueIntelligence()` using the existing authenticated workspace headers.
+3. The command center renders six safe summary cards from `ai_lead_scores` and `ai_revenue_forecasts`:
+   - Forecasted Revenue;
+   - Hot Leads;
+   - Stalled Leads;
+   - High Churn Risk;
+   - Pipeline Health;
+   - AI Recommendations.
+4. The Revenue Forecast Widget shows projected revenue, confidence score, active pipeline value, hot lead count, stalled lead count, and a lightweight trend indicator.
+5. The **AI Next Best Actions** queue lists safe manager actions such as `Schedule demo`, `Follow up via Telegram`, `Pause outreach`, and `Escalate to manager`.
+6. The manager can click **Run Revenue Analysis Now**. The UI calls `triggerRevenueAnalysis()`, which enqueues `lead_intelligence_analysis`, enqueues/generates the current forecast path, shows a loading state, and then displays a success or error toast.
+
+The UI only renders normalized manager summaries. It does not expose prompts, internal chain-of-thought, raw OpenAI responses, or unfiltered provider payloads.
+
+## CRM lead card workflow
+
+Every CRM lead detail card can show a Revenue Intelligence panel when an `ai_lead_scores` row exists for that lead:
+
+- AI Priority Score;
+- Close Probability;
+- Engagement Score;
+- Churn Risk;
+- Pipeline Health;
+- AI Recommendation;
+- Recommended Channel;
+- Last AI Analysis Time.
+
+Badges and progress meters keep the view scannable while preserving the existing CRM, AI Sequence, AI Worker, Telegram, email, meeting, and approval-queue controls. Empty states explain that the Revenue Brain should be run before scores are available.
+
+## Lead list workflow
+
+CRM lead lists keep the existing kanban stages but add Revenue Intelligence controls above the board:
+
+- sortable columns/signals: AI Priority, Close Probability, and Churn Risk;
+- filters: Hot Leads, High Probability, Stalled, and At Risk.
+
+Filtering and sorting are frontend-only views over the existing lead payload and do not mutate lead stage, ownership, sequence state, follow-up state, or autonomous execution state.
+
+## Command center architecture
+
+```text
+Dashboard / CRM UI
+  ├─ getRevenueIntelligence()
+  │    └─ GET /api/ai/revenue-intelligence
+  │         └─ reads ai_lead_scores + latest ai_revenue_forecasts
+  ├─ getLeadScores()
+  │    └─ GET /api/ai/revenue-intelligence/lead-scores
+  │         └─ returns sanitized, sortable lead score summaries
+  └─ triggerRevenueAnalysis()
+       ├─ POST /api/ai/revenue-intelligence/schedule
+       │    └─ enqueues workspace-scoped lead_intelligence_analysis and forecast jobs
+       └─ POST /api/ai/revenue-intelligence/forecast
+            └─ writes a fresh ai_revenue_forecasts snapshot
+```
+
+Manual trigger scheduling is workspace-scoped so one workspace cannot enqueue Revenue Brain work for another workspace. It reuses the existing auth middleware, workspace middleware, `ai_execution_jobs`, Redis-backed execution runner path, and existing OpenAI execution safety boundaries.
+
+## Executive dashboard roadmap
+
+Near-term dashboard enhancements:
+
+1. Add historical forecast trend lines from multiple `ai_revenue_forecasts` snapshots.
+2. Add forecast deltas by stage and owner.
+3. Show recommendation acceptance rate split by action type and channel.
+4. Add board-level revenue at risk by stage.
+5. Add calibration views comparing predicted close probability with won/lost outcomes.
+
+Longer-term executive roadmap:
+
+1. Per-workspace forecast calibration based on historical conversion.
+2. Revenue impact attribution for AI Sequences, AI Workers, and approved follow-ups.
+3. Alert routing for stalled high-value opportunities.
+4. Segment-specific next best action policies.
+5. Board-ready export views for weekly pipeline review.
