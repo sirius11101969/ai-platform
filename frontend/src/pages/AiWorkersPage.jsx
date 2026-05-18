@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Panel, PageHeading, StatCard } from "../components/AppShell";
 import { isInternalAiDebugEnabled, sanitizeCustomerVisibleText, sanitizeVisibleAiText } from "../utils/uiSanitizer";
@@ -497,21 +497,25 @@ function getLeadId(item) {
   return item?.leadId || item?.lead_id || "";
 }
 
-function getHighlightedActionLocation(focusQueueState, selectedApprovalItems, isHighlightedApprovalItem) {
+function getHighlightedActionLocation(focusQueueState, isHighlightedApprovalItem) {
+  if (typeof isHighlightedApprovalItem !== "function") return null;
   const safeState = focusQueueState || {};
   const sections = [
-    { id: "focus", label: "Focus Queue", items: safeArray(safeState.focusActions) },
-    { id: "selected", label: "текущем фильтре", items: safeArray(selectedApprovalItems) },
-    { id: "legacy", label: "legacy", items: safeArray(safeState.hiddenLegacyActions) },
-    { id: "completed", label: "completed history", items: safeArray(safeState.completedHistoryActions) },
-    { id: "safety", label: "safety history", items: safeArray(safeState.safetyHistoryActions) },
-    { id: "all", label: "общей истории", items: safeArray(safeState.allActions) },
+    { id: "focus", label: "Focus Queue", items: safeArray(safeState.focusActions), collapsedSection: "" },
+    { id: "completed", label: "completed history", items: safeArray(safeState.completedHistoryActions), collapsedSection: "completed" },
+    { id: "safety", label: "safety history", items: safeArray(safeState.safetyHistoryActions), collapsedSection: "safety" },
+    { id: "legacy", label: "legacy pending", items: safeArray(safeState.hiddenLegacyActions), collapsedSection: "legacy" },
+    { id: "all", label: "all actions", items: safeArray(safeState.allActions), collapsedSection: "all" },
   ];
   for (const section of sections) {
-    const item = section.items.find(isHighlightedApprovalItem);
-    if (item) return { section: section.id, label: section.label, item };
+    const item = section.items.find((candidate) => candidate && isHighlightedApprovalItem(candidate));
+    if (item) return { section: section.id, label: section.label, collapsedSection: section.collapsedSection, item };
   }
   return null;
+}
+
+function getActionDomId(actionId) {
+  return `ai-action-${String(actionId || "").replace(/[^a-zA-Z0-9_-]/g, "-")}`;
 }
 
 class AiWorkersErrorBoundary extends React.Component {
@@ -730,12 +734,6 @@ function AiWorkersPageContent() {
   useEffect(() => {
     if (location.state?.toast) setMessage(location.state.toast);
   }, [location.state]);
-
-  useEffect(() => {
-    if (!loading && highlightRef.current) {
-      highlightRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-  }, [loading, targetActionId, targetLeadId, approvalQueue.items, expandedSections, activeApprovalTab]);
 
   async function handleSeedDemoPipeline() {
     setDemoBusy(true);
@@ -968,7 +966,7 @@ function AiWorkersPageContent() {
   const previousHighlightedStatusRef = useRef("");
   const focusQueueState = useMemo(() => buildFocusQueueState(approvalItems), [approvalItems]);
   const selectedApprovalItems = safeArray(focusQueueState?.tabActions?.[activeApprovalTab] || focusQueueState?.focusActions);
-  const isHighlightedApprovalItem = (item) => Boolean(item && ((targetActionId && getActionId(item) === targetActionId) || (targetLeadId && getLeadId(item) === targetLeadId)));
+  const isHighlightedApprovalItem = useCallback((item) => Boolean(item && ((targetActionId && getActionId(item) === targetActionId) || (targetLeadId && getLeadId(item) === targetLeadId))), [targetActionId, targetLeadId]);
   const prioritizeHighlightedItems = (items, limit) => {
     const safeItems = safeArray(items);
     const sliced = limit ? safeItems.slice(0, limit) : safeItems;
@@ -976,7 +974,7 @@ function AiWorkersPageContent() {
     if (highlighted && !sliced.some((item) => getActionId(item) === getActionId(highlighted))) return [highlighted, ...sliced.slice(0, Math.max(0, (limit || safeItems.length) - 1))];
     return sliced;
   };
-  const highlightedActionLocation = getHighlightedActionLocation(focusQueueState, selectedApprovalItems, isHighlightedApprovalItem);
+  const highlightedActionLocation = useMemo(() => getHighlightedActionLocation(focusQueueState, isHighlightedApprovalItem), [focusQueueState, isHighlightedApprovalItem]);
   const highlightedAction = highlightedActionLocation?.item || null;
   const highlightedActionMissing = Boolean((targetActionId || targetLeadId) && !loading && !highlightedAction);
   const approvalMetrics = { ...(approvalQueue?.metrics || {}), ...(focusQueueState?.metrics || {}), ...(focusSummary || {}) };
@@ -990,20 +988,45 @@ function AiWorkersPageContent() {
 
   useEffect(() => {
     if (!targetActionId && !targetLeadId) return;
-    const matchSection = (items) => safeArray(items).some(isHighlightedApprovalItem);
-    const nextExpanded = {};
-    if (matchSection(focusQueueState?.hiddenLegacyActions)) nextExpanded.legacy = true;
-    if (matchSection(focusQueueState?.completedHistoryActions)) nextExpanded.completed = true;
-    if (matchSection(focusQueueState?.safetyHistoryActions)) nextExpanded.safety = true;
-    if (!matchSection(selectedApprovalItems) && matchSection(focusQueueState?.allActions)) nextExpanded.all = true;
-    const sectionsToOpen = Object.keys(nextExpanded);
-    if (!sectionsToOpen.length) return;
-    setExpandedSections((current) => {
-      const changed = sectionsToOpen.some((section) => !current?.[section]);
-      return changed ? { ...current, ...nextExpanded } : current;
+    const sectionToOpen = highlightedActionLocation?.collapsedSection || "";
+    console.info("[ai-workers-focus] route highlight resolved", {
+      actionId: targetActionId,
+      leadId: targetLeadId,
+      found: Boolean(highlightedActionLocation?.item),
+      section: highlightedActionLocation?.section || "missing",
+      collapsedSection: sectionToOpen || null,
     });
-    console.info("[ai-workers-focus] route highlight expanded hidden section", { actionId: targetActionId, leadId: targetLeadId, sections: sectionsToOpen });
-  }, [targetActionId, targetLeadId, focusQueueState, selectedApprovalItems]);
+    if (!sectionToOpen) return;
+    setExpandedSections((current) => {
+      if (current?.[sectionToOpen]) return current;
+      return { ...current, [sectionToOpen]: true };
+    });
+  }, [targetActionId, targetLeadId, highlightedActionLocation]);
+
+
+  useEffect(() => {
+    if (loading || !highlightedAction) return undefined;
+    const highlightedActionId = getActionId(highlightedAction);
+    if (!highlightedActionId) return undefined;
+
+    const scrollHighlightedAction = () => {
+      const escapedActionId = window.CSS?.escape ? window.CSS.escape(highlightedActionId) : String(highlightedActionId).replace(/"/g, '\\"');
+      const element = document.querySelector(`[data-action-id="${escapedActionId}"]`);
+      if (element) {
+        highlightRef.current = element;
+        element.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    };
+
+    const frameId = window.requestAnimationFrame
+      ? window.requestAnimationFrame(scrollHighlightedAction)
+      : window.setTimeout(scrollHighlightedAction, 0);
+
+    return () => {
+      if (window.cancelAnimationFrame && typeof frameId === "number") window.cancelAnimationFrame(frameId);
+      else window.clearTimeout(frameId);
+    };
+  }, [loading, highlightedAction, expandedSections, activeApprovalTab]);
 
   useEffect(() => {
     if (!targetActionId) {
@@ -1044,7 +1067,13 @@ function AiWorkersPageContent() {
     if (isTelegramDraftItem && executableButtonState) logTelegramSendButtonState(item, executableButtonState);
 
     return (
-      <article ref={isHighlightedApprovalItem(item) ? highlightRef : null} className={`approval-row ${history ? "approval-history-row" : ""} approval-${itemStatus} ${isHighlightedApprovalItem(item) ? "route-highlight" : ""}`} key={itemId}>
+      <article
+        id={itemId ? getActionDomId(itemId) : undefined}
+        data-action-id={itemId || undefined}
+        ref={isHighlightedApprovalItem(item) ? highlightRef : null}
+        className={`approval-row ${history ? "approval-history-row" : ""} approval-${itemStatus} ${isHighlightedApprovalItem(item) ? "route-highlight" : ""}`}
+        key={itemId || `${getLeadId(item)}-${itemStatus}-${item.title || "action"}`}
+      >
         <div className="approval-main">
           <strong>{sanitizeVisibleAiText(item.title)}</strong>
           <p>{shortRecommendation(item)}</p>
@@ -1130,7 +1159,7 @@ function AiWorkersPageContent() {
       {error && <p className="auth-error dashboard-alert">{error}</p>}
       {message && <p className="success-alert dashboard-alert">{message}</p>}
       {highlightedActionMissing && (
-        <p className="ai-workers-route-notice dashboard-alert">AI действие из ссылки не найдено в текущей очереди. Страница продолжает работать — обновите центр или откройте без actionId.</p>
+        <p className="ai-workers-route-notice dashboard-alert">AI action не найден или уже очищен из истории.</p>
       )}
       {highlightedAction && highlightedActionLocation?.section === "completed" && (
         <p className="ai-workers-route-notice dashboard-alert">Действие из ссылки уже завершено и показано в completed history.</p>
@@ -1162,7 +1191,7 @@ function AiWorkersPageContent() {
         <StatCard label="Next Best Actions generated today" value={loading ? "…" : String(metrics.nextBestActionsGeneratedToday || 0)} hint="Создано AI NBA сегодня" tone="violet" />
         <StatCard label="Выручка под контролем AI" value={loading ? "…" : formatMoney(metrics.revenueUnderAi)} hint="Плейсхолдер revenue impact по открытой воронке" tone="violet" />
       </section>
-      <p className="focus-total-history-note">Всего AI задач в истории: {loading ? "…" : (approvalMetrics.totalHistory || approvalQueue.items.length || 0)}</p>
+      <p className="focus-total-history-note">Всего AI задач в истории: {loading ? "…" : (approvalMetrics.totalHistory || safeArray(approvalQueue?.items).length || 0)}</p>
 
       <Panel className="ai-approval-center-panel">
         <div className="panel-head focus-queue-head">
@@ -1184,7 +1213,7 @@ function AiWorkersPageContent() {
           <span>Успешность <b>{approvalMetrics.successRate || 0}%</b></span>
         </div>
         <div className="focus-tabs" role="tablist" aria-label="AI Workers approval filters">
-          {focusTabs.map((tab) => (
+          {safeArray(focusTabs).map((tab) => (
             <button
               key={tab.id}
               type="button"
@@ -1203,10 +1232,10 @@ function AiWorkersPageContent() {
           {prioritizeHighlightedItems(selectedApprovalItems, activeApprovalTab === "focus" ? FOCUS_QUEUE_LIMIT : 50).map((item) => renderApprovalRow(item))}
         </div>
         <div className="approval-collapsed-list">
-          {renderCollapsedSection({ id: "legacy", title: "Show legacy pending", count: focusQueueState.hiddenLegacyActions.length, items: focusQueueState.hiddenLegacyActions })}
-          {renderCollapsedSection({ id: "completed", title: "Show completed history", count: focusQueueState.completedHistoryActions.length, items: focusQueueState.completedHistoryActions, history: true })}
-          {renderCollapsedSection({ id: "safety", title: "Show safety history", count: focusQueueState.safetyHistoryActions.length, items: focusQueueState.safetyHistoryActions, history: true })}
-          {renderCollapsedSection({ id: "all", title: "Show all actions", count: focusQueueState.allActions.length, items: focusQueueState.allActions, history: true })}
+          {renderCollapsedSection({ id: "legacy", title: "Show legacy pending", count: safeArray(focusQueueState?.hiddenLegacyActions).length, items: focusQueueState?.hiddenLegacyActions })}
+          {renderCollapsedSection({ id: "completed", title: "Show completed history", count: safeArray(focusQueueState?.completedHistoryActions).length, items: focusQueueState?.completedHistoryActions, history: true })}
+          {renderCollapsedSection({ id: "safety", title: "Show safety history", count: safeArray(focusQueueState?.safetyHistoryActions).length, items: focusQueueState?.safetyHistoryActions, history: true })}
+          {renderCollapsedSection({ id: "all", title: "Show all actions", count: safeArray(focusQueueState?.allActions).length, items: focusQueueState?.allActions, history: true })}
         </div>
       </Panel>
 
