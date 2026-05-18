@@ -3,6 +3,7 @@ const { createVoiceProvider } = require('../providers/voice')
 const { addTimelineEvent } = require('./timelineService')
 const { sanitizeAiActionPayload, sanitizeAiCopy } = require('../utils/aiCopySanitizer')
 const aiRevenueIntelligenceService = require('./aiRevenueIntelligenceService')
+const structuredLogger = require('./execution/structuredLogger')
 
 const VOICE_OUTREACH_CALL_JOB_TYPE = 'voice_outreach_call'
 const VOICE_CALL_ANALYSIS_JOB_TYPE = 'voice_call_analysis'
@@ -10,6 +11,33 @@ const AI_VOICE_WORKER_KIND = 'ai_voice_worker'
 const AI_VOICE_WORKER_TYPE = 'ai_sdr_agent'
 const DEFAULT_PROVIDER = 'mock_provider'
 const ALLOWED_STATUSES = new Set(['queued', 'dialing', 'active', 'completed', 'failed', 'rejected'])
+
+const clientQueryLocks = new WeakMap()
+
+function isPoolExecutor(executor) {
+  return executor === pool || (executor && typeof executor.connect === 'function' && typeof executor.release !== 'function')
+}
+
+function serializeClientQueries(client) {
+  if (!client || isPoolExecutor(client)) return client || pool
+  return {
+    ...client,
+    query(sql, params) {
+      const previous = clientQueryLocks.get(client) || Promise.resolve()
+      const run = previous.catch(() => null).then(() => client.query(sql, params))
+      clientQueryLocks.set(client, run.catch(() => null))
+      return run
+    },
+  }
+}
+
+function getVoiceDbExecutor(client = null) {
+  return client ? serializeClientQueries(client) : pool
+}
+
+function logVoiceDbFlowSafe(fields = {}) {
+  structuredLogger.info('voice_db_flow_safe', { service: 'ai_voice_outreach', ...fields })
+}
 
 function safeJsonb(value) {
   return JSON.stringify(value ?? {})
@@ -162,8 +190,8 @@ async function completeMockCall(client, { call, lead, userId = null, context = {
 async function initiateCall({ workspaceId, userId = null, leadId, sequenceId = null, provider = DEFAULT_PROVIDER, phoneNumber = null, metadata = {}, autoComplete = true, context = {}, client = null } = {}) {
   if (!workspaceId) throw Object.assign(new Error('workspaceId is required'), { statusCode: 400 })
   if (!leadId) throw Object.assign(new Error('leadId is required'), { statusCode: 400 })
-  const executor = client || await pool.connect()
-  const release = !client && executor.release ? () => executor.release() : null
+  const executor = getVoiceDbExecutor(client)
+  logVoiceDbFlowSafe({ workspaceId, leadId, flow: 'initiate_call', executor: client ? 'serialized_client' : 'pool' })
   try {
     const lead = await loadLead(executor, workspaceId, leadId)
     if (!lead) throw Object.assign(new Error('Lead not found'), { statusCode: 404 })
@@ -174,22 +202,22 @@ async function initiateCall({ workspaceId, userId = null, leadId, sequenceId = n
     return normalizeCall(await completeMockCall(executor, { call, lead, userId, context }))
   } catch (error) {
     throw error
-  } finally {
-    if (release) release()
   }
 }
 
 async function analyzeCall({ workspaceId, userId = null, callId, client = pool } = {}) {
-  const result = await client.query('SELECT c.*, l.name AS lead_name FROM ai_voice_calls c JOIN crm_leads l ON l.id = c.lead_id WHERE c.workspace_id = $1::uuid AND c.id = $2::uuid LIMIT 1', [workspaceId, callId])
+  const executor = getVoiceDbExecutor(client)
+  logVoiceDbFlowSafe({ workspaceId, callId, flow: 'analyze_call', executor: client && client !== pool ? 'serialized_client' : 'pool' })
+  const result = await executor.query('SELECT c.*, l.name AS lead_name FROM ai_voice_calls c JOIN crm_leads l ON l.id = c.lead_id WHERE c.workspace_id = $1::uuid AND c.id = $2::uuid LIMIT 1', [workspaceId, callId])
   const call = result.rows[0]
   if (!call) throw Object.assign(new Error('Voice call not found'), { statusCode: 404 })
   const analysis = analyzeTranscript({ transcript: call.transcript, lead: { name: call.lead_name } })
-  const updated = await client.query(
+  const updated = await executor.query(
     `UPDATE ai_voice_calls SET summary = $3::text, sentiment = $4::text, outcome = $5::text, next_action = $6::text, metadata = metadata || $7::jsonb WHERE workspace_id = $1::uuid AND id = $2::uuid RETURNING *`,
     [workspaceId, callId, analysis.summary, analysis.sentiment, analysis.outcome, analysis.nextAction, safeJsonb({ qualificationLevel: analysis.qualificationLevel, analyzedBy: 'deterministic-voice-analysis-v1' })]
   )
-  await insertCallEvent(client, { callId, eventType: 'analysis_completed', payload: analysis })
-  await addTimelineEvent(client, { workspaceId, leadId: call.lead_id, userId, eventType: 'ai_voice_followup_recommended', title: 'AI voice follow-up recommended', body: analysis.nextAction, source: 'ai', metadata: { callId, nextAction: analysis.nextAction, outcome: analysis.outcome } })
+  await insertCallEvent(executor, { callId, eventType: 'analysis_completed', payload: analysis })
+  await addTimelineEvent(executor, { workspaceId, leadId: call.lead_id, userId, eventType: 'ai_voice_followup_recommended', title: 'AI voice follow-up recommended', body: analysis.nextAction, source: 'ai', metadata: { callId, nextAction: analysis.nextAction, outcome: analysis.outcome } })
   return normalizeCall(updated.rows[0])
 }
 
@@ -215,9 +243,10 @@ async function getCall({ workspaceId, callId } = {}) {
 }
 
 async function enqueueVoiceCall({ client = pool, workspaceId, userId, leadId, sequenceId = null, phoneNumber = null, queueName = process.env.AI_EXECUTION_QUEUE_NAME || 'ai-execution' } = {}) {
+  const executor = getVoiceDbExecutor(client)
   const idempotencyKey = `${VOICE_OUTREACH_CALL_JOB_TYPE}:${workspaceId}:${leadId}:${sequenceId || 'manual'}:${new Date().toISOString().slice(0, 13)}`
   const payload = sanitizeAiActionPayload({ leadId, sequenceId, phoneNumber, provider: DEFAULT_PROVIDER, mockMode: true })
-  const result = await client.query(
+  const result = await executor.query(
     `INSERT INTO ai_execution_jobs(workspace_id, user_id, queue_name, job_type, priority, status, payload, max_attempts, run_after, idempotency_key)
      VALUES($1::uuid, $2::uuid, $3::text, $4::text, 75, 'queued', $5::jsonb, 2, NOW(), $6::text)
      ON CONFLICT (workspace_id, idempotency_key) DO NOTHING
@@ -252,5 +281,5 @@ module.exports = {
   getCall,
   getCalls,
   initiateCall,
-  _private: { completeMockCall, ensureVoiceWorker, extractPhoneNumber, normalizeCall, updateCallStatus },
+  _private: { completeMockCall, ensureVoiceWorker, extractPhoneNumber, getVoiceDbExecutor, normalizeCall, serializeClientQueries, updateCallStatus },
 }
