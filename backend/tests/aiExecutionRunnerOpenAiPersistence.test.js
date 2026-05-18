@@ -90,7 +90,7 @@ async function testCompleteJobUsesTypedPersistenceQueries() {
   assertJsonParam(logInsert.params[9], {
     workerNodeId: workerId,
     latencyMs: JSON.parse(logInsert.params[9]).latencyMs,
-    result: { ok: true, text: 'done', usage: { totalTokens: 7 }, optional: null },
+    result: { ok: true, text: '[REDACTED]', usage: { totalTokens: 7 }, optional: null },
   })
 
   const metricInsert = client.calls.find((call) => call.sql.includes('INSERT INTO worker_metrics'))
@@ -483,6 +483,41 @@ async function testExecutionLogAndProviderUsageHelpersCastJsonb() {
   assertNoUndefinedParams(calls)
 }
 
+async function testExecutionLogRedactsSensitiveMetadata() {
+  const calls = []
+  const client = {
+    async query(sql, params = []) {
+      calls.push({ sql, params })
+      return { rows: [{ id: 'redacted-log' }], rowCount: 1 }
+    },
+  }
+
+  await writeExecutionLog({
+    workspaceId,
+    userId,
+    taskId,
+    jobId,
+    level: 'info',
+    event: 'redaction_check',
+    message: 'redaction check',
+    metadata: {
+      apiKey: 'sk-secret-value',
+      prompt: 'customer prompt',
+      result: { text: 'generated answer', responseId: 'resp_123' },
+      usage: { promptTokens: 2, completionTokens: 3, totalTokens: 5 },
+    },
+  }, client)
+
+  const logInsert = calls.find((call) => call.sql.includes('INSERT INTO execution_logs'))
+  assertJsonParam(logInsert.params[9], {
+    apiKey: '[REDACTED]',
+    prompt: '[REDACTED]',
+    result: { text: '[REDACTED]', responseId: '[REDACTED]' },
+    usage: { promptTokens: 2, completionTokens: 3, totalTokens: 5 },
+  })
+  assertNoUndefinedParams(calls)
+}
+
 Promise.resolve()
   .then(testCompleteJobUsesTypedPersistenceQueries)
   .then(testFailJobRetryingUsesTypedPersistenceQueries)
@@ -492,4 +527,5 @@ Promise.resolve()
   .then(testRunOnceCompletesOpenAiJobWithNullModelAndTypedPersistence)
   .then(testProviderUsageInsertAcceptsNullModel)
   .then(testExecutionLogAndProviderUsageHelpersCastJsonb)
+  .then(testExecutionLogRedactsSensitiveMetadata)
   .then(() => console.log('aiExecutionRunnerOpenAiPersistence tests passed'))

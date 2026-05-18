@@ -1,5 +1,6 @@
 const pool = require('../../db/pool')
 const { normalizeDbValue } = require('./providerUsageService')
+const { redactForExecutionLog } = require('./redaction')
 
 function safeJson(value) {
   return JSON.stringify(normalizeDbValue(value) ?? {})
@@ -25,7 +26,7 @@ async function writeExecutionLog(log, client = pool) {
       normalizeDbValue(level),
       normalizeDbValue(log.event),
       message,
-      safeJson(log.metadata),
+      safeJson(redactForExecutionLog(log.metadata)),
       normalizeDbValue(log.traceId),
       normalizeDbValue(log.spanId),
     ]

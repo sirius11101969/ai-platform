@@ -26,6 +26,7 @@ async function requestJson(url, options = {}) {
     retryMaxMs = 8000,
     operation = 'http.request',
     expectedStatuses = [200],
+    logRetries = true,
     ...fetchOptions
   } = options
   let lastError
@@ -58,14 +59,14 @@ async function requestJson(url, options = {}) {
       const retryAfterMs = parseRetryAfter(response.headers.get('retry-after'))
       const backoffMs = retryAfterMs ?? Math.min(retryMaxMs, retryBaseMs * 2 ** (attempt - 1))
       const jitterMs = Math.floor(Math.random() * Math.min(250, backoffMs))
-      logger.warn('provider_http_retry', { operation, attempt, status: response.status, latencyMs, backoffMs: backoffMs + jitterMs })
+      if (logRetries) logger.warn('provider_http_retry', { operation, attempt, status: response.status, latencyMs, backoffMs: backoffMs + jitterMs })
       await sleep(backoffMs + jitterMs)
     } catch (error) {
       lastError = error
       if (!shouldRetry(error.status, error) || attempt > retries) throw error
       const backoffMs = Math.min(retryMaxMs, retryBaseMs * 2 ** (attempt - 1))
       const jitterMs = Math.floor(Math.random() * Math.min(250, backoffMs))
-      logger.warn('provider_http_retry', { operation, attempt, error: error.message, backoffMs: backoffMs + jitterMs })
+      if (logRetries) logger.warn('provider_http_retry', { operation, attempt, error: error.message, backoffMs: backoffMs + jitterMs })
       await sleep(backoffMs + jitterMs)
     } finally {
       clearTimeout(timeout)

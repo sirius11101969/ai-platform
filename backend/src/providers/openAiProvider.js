@@ -68,6 +68,7 @@ class OpenAiProvider {
         timeoutMs: this.timeoutMs,
         retries: this.retries,
         operation: 'openai.responses.create',
+        logRetries: false,
       })
       const text = extractResponseText(data)
       if (!text) throw new Error('OpenAI returned an empty response')
@@ -83,7 +84,7 @@ class OpenAiProvider {
         latencyMs,
         status: 'succeeded',
         metadata: { responseId: data.id },
-      }).catch((error) => logger.warn('provider_usage_record_failed', { error: error.message }))
+      }).catch(() => {})
       logger.info('openai_response_completed', { model: payload.model, taskId: metadata.taskId, latencyMs, ...usage })
       return { id: data.id, text, raw: data, usage, latencyMs, model: payload.model, provider: 'openai', startedAt: new Date(startedAt).toISOString() }
     } catch (error) {
@@ -107,7 +108,7 @@ class OpenAiProvider {
         level: 'error',
         event: 'openai_response_failed',
         message: 'OpenAI response request failed',
-        metadata: { status: error.status, error: error.message },
+        metadata: { status: error.status },
         traceId: metadata.traceId,
       }).catch(() => {})
       throw error
@@ -149,7 +150,7 @@ class OpenAiProvider {
       latencyMs,
       status: 'succeeded',
       metadata: { streamed: true },
-    }).catch((error) => logger.warn('provider_usage_record_failed', { error: error.message }))
+    }).catch(() => {})
 
     return { text, latencyMs, model: payload.model, provider: 'openai' }
   }
