@@ -97,16 +97,17 @@ class OpenAiProvider {
         operation: 'responses.create',
         latencyMs,
         status: 'failed',
-        metadata: { error: error.message, status: error.status },
+        metadata: { status: error.status },
       }).catch(() => {})
       await writeExecutionLog({
         workspaceId: metadata.workspaceId,
         userId: metadata.userId,
         taskId: metadata.taskId,
+        jobId: metadata.jobId,
         level: 'error',
         event: 'openai_response_failed',
-        message: error.message,
-        metadata: { status: error.status },
+        message: 'OpenAI response request failed',
+        metadata: { status: error.status, error: error.message },
         traceId: metadata.traceId,
       }).catch(() => {})
       throw error

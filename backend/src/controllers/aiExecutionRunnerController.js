@@ -28,6 +28,21 @@ async function enqueueTest(req, res, next) {
   }
 }
 
+async function enqueueOpenAiTest(req, res, next) {
+  try {
+    const body = req.body || {}
+    const job = await aiExecutionRunnerService.enqueueOpenAiTextGenerationJob({
+      queueName: getQueueName(req),
+      priority: body.priority,
+      payload: body,
+      idempotencyKey: body.idempotencyKey || body.idempotency_key || null,
+    })
+    res.status(201).json({ job })
+  } catch (error) {
+    next(error)
+  }
+}
+
 async function runOnce(req, res, next) {
   try {
     const result = await aiExecutionRunnerService.runOnce({ queueName: getQueueName(req) })
@@ -37,4 +52,4 @@ async function runOnce(req, res, next) {
   }
 }
 
-module.exports = { enqueueTest, health, runOnce }
+module.exports = { enqueueOpenAiTest, enqueueTest, health, runOnce }
