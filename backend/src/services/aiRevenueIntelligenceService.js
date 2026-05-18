@@ -225,17 +225,32 @@ async function ensureRevenueBrainWorker(client, workspaceId) {
   return result.rows[0]
 }
 
+async function queryOptional(client, sql, params) {
+  try {
+    return await client.query(sql, params)
+  } catch (_) {
+    return { rows: [] }
+  }
+}
+
 async function buildLeadRevenueContext(client, workspaceId, leadId) {
-  const [lead, telegramMessages, emailMessages, meetings, sequences, timeline, followups, voiceCalls] = await Promise.all([
-    client.query('SELECT * FROM crm_leads WHERE workspace_id = $1 AND id = $2', [workspaceId, leadId]),
-    client.query('SELECT * FROM telegram_messages WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 50', [workspaceId, leadId]),
-    client.query('SELECT * FROM email_messages WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 50', [workspaceId, leadId]).catch(() => ({ rows: [] })),
-    client.query('SELECT * FROM crm_meetings WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 20', [workspaceId, leadId]).catch(() => ({ rows: [] })),
-    client.query('SELECT * FROM ai_lead_sequences WHERE lead_id = $1 ORDER BY updated_at DESC LIMIT 5', [leadId]).catch(() => ({ rows: [] })),
-    client.query('SELECT * FROM lead_timeline_events WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 50', [workspaceId, leadId]).catch(() => ({ rows: [] })),
-    client.query('SELECT * FROM crm_followups WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 20', [workspaceId, leadId]).catch(() => ({ rows: [] })),
-    client.query('SELECT * FROM ai_voice_calls WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 10', [workspaceId, leadId]).catch(() => ({ rows: [] })),
-  ])
+  const queries = [
+    () => client.query('SELECT * FROM crm_leads WHERE workspace_id = $1 AND id = $2', [workspaceId, leadId]),
+    () => client.query('SELECT * FROM telegram_messages WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 50', [workspaceId, leadId]),
+    () => queryOptional(client, 'SELECT * FROM email_messages WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 50', [workspaceId, leadId]),
+    () => queryOptional(client, 'SELECT * FROM crm_meetings WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 20', [workspaceId, leadId]),
+    () => queryOptional(client, 'SELECT * FROM ai_lead_sequences WHERE lead_id = $1 ORDER BY updated_at DESC LIMIT 5', [leadId]),
+    () => queryOptional(client, 'SELECT * FROM lead_timeline_events WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 50', [workspaceId, leadId]),
+    () => queryOptional(client, 'SELECT * FROM crm_followups WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 20', [workspaceId, leadId]),
+    () => queryOptional(client, 'SELECT * FROM ai_voice_calls WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 10', [workspaceId, leadId]),
+  ]
+  const results = []
+  if (client === pool) {
+    results.push(...await Promise.all(queries.map((query) => query())))
+  } else {
+    for (const query of queries) results.push(await query())
+  }
+  const [lead, telegramMessages, emailMessages, meetings, sequences, timeline, followups, voiceCalls] = results
   if (!lead.rows[0]) return null
   return { lead: lead.rows[0], telegramMessages: telegramMessages.rows, emailMessages: emailMessages.rows, meetings: meetings.rows, sequences: sequences.rows, timeline: timeline.rows, followups: followups.rows, voiceCalls: voiceCalls.rows }
 }
