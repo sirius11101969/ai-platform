@@ -44,9 +44,12 @@ function hasMeetingBooked(meetings = []) {
   return meetings.some((meeting) => ['scheduled', 'confirmed'].includes(String(meeting.status || '').toLowerCase()))
 }
 
-function inferRecommendedChannel({ lead = {}, inboundCount = 0, emailCount = 0 }) {
+function inferRecommendedChannel({ lead = {}, inboundCount = 0, emailCount = 0, voiceCalls = [] }) {
+  const lastVoice = voiceCalls[0]
+  if (lastVoice?.sentiment === 'positive' && ['qualified_demo_interest', 'needs_nurture'].includes(String(lastVoice.outcome || ''))) return 'voice'
   if (lead.telegram_chat_id || lead.telegram || inboundCount > 0) return 'telegram'
   if (lead.email || emailCount > 0) return 'email'
+  if (lead.phone || lead.phone_number || lead.contact) return 'voice'
   return 'crm'
 }
 
@@ -74,6 +77,9 @@ function calculateRevenueLeadScore(context = {}) {
   const sequences = context.sequences || []
   const timeline = context.timeline || []
   const followups = context.followups || []
+  const voiceCalls = context.voiceCalls || []
+  const completedVoiceCalls = voiceCalls.filter((call) => call.status === 'completed')
+  const positiveVoiceCalls = completedVoiceCalls.filter((call) => call.sentiment === 'positive')
   const stage = normalizeStage(lead.status || lead.stage)
   const inboundMessages = telegramMessages.filter((message) => ['inbound', 'user'].includes(String(message.direction || message.role || '').toLowerCase()))
   const outboundMessages = telegramMessages.filter((message) => ['outbound', 'assistant'].includes(String(message.direction || message.role || '').toLowerCase()))
@@ -95,6 +101,7 @@ function calculateRevenueLeadScore(context = {}) {
   engagementScore += meetingBooked ? 20 : 0
   engagementScore += activeSequence ? 8 : 0
   engagementScore += Math.min(10, sequenceProgress * 3)
+  engagementScore += positiveVoiceCalls.length ? 30 : completedVoiceCalls.length ? 16 : 0
   if (silentDays !== null && silentDays >= 7) engagementScore -= Math.min(35, Math.round((silentDays - 6) * 4))
   engagementScore = clampScore(engagementScore)
 
@@ -102,6 +109,7 @@ function calculateRevenueLeadScore(context = {}) {
   if (meetingBooked) closeProbability += 12
   if (pastFollowupSuccess) closeProbability += 6
   if (value > 0) closeProbability += 3
+  if (positiveVoiceCalls.length) closeProbability += 14
   if (silentDays !== null && silentDays >= STALLED_LEAD_DAYS) closeProbability -= 18
   if (stage === 'won') closeProbability = 100
   if (stage === 'lost') closeProbability = 0
@@ -111,13 +119,14 @@ function calculateRevenueLeadScore(context = {}) {
   if (silentDays !== null && silentDays >= SILENT_LEAD_DAYS) churnRisk += Math.min(25, Math.round((silentDays - 6) * 3))
   if (stage === 'proposal' && silentDays !== null && silentDays >= 5) churnRisk += 12
   if (meetingBooked) churnRisk -= 18
+  if (positiveVoiceCalls.length) churnRisk -= 12
   if (stage === 'won') churnRisk = 12
   if (stage === 'lost') churnRisk = 95
   churnRisk = clampScore(churnRisk)
 
   const pipelineHealth = clampScore(Math.round((closeProbability * 0.5) + (engagementScore * 0.35) + ((100 - churnRisk) * 0.15)))
   const priorityScore = clampScore(Math.round(closeProbability * 0.48 + engagementScore * 0.35 + (100 - churnRisk) * 0.17))
-  const recommendedChannel = inferRecommendedChannel({ lead, inboundCount: inboundMessages.length, emailCount: emailMessages.length })
+  const recommendedChannel = inferRecommendedChannel({ lead, inboundCount: inboundMessages.length, emailCount: emailMessages.length, voiceCalls })
   const recommendedAction = inferRecommendedAction({ priorityScore, closeProbability, churnRisk, pipelineHealth, silentDays, meetingBooked, stage })
   const reasoningSummary = safeReason([
     `Priority ${priorityScore}/100 is probabilistic guidance`,
@@ -176,7 +185,7 @@ async function enrichRecommendationWithOpenAi({ workspaceId, userId, leadId, lea
       silentDays: deterministic.silentDays,
     },
     allowedActions: ['Schedule demo', 'Send pricing follow-up', 'Pause outreach', 'Escalate to manager', 'Send value follow-up'],
-    allowedChannels: ['telegram', 'email', 'crm'],
+    allowedChannels: ['telegram', 'email', 'crm', 'voice'],
   })
 
   try {
@@ -190,7 +199,7 @@ async function enrichRecommendationWithOpenAi({ workspaceId, userId, leadId, lea
     const parsed = parseJsonObject(response.text)
     if (!parsed) return deterministic
     const allowedActions = new Set(['Schedule demo', 'Send pricing follow-up', 'Pause outreach', 'Escalate to manager', 'Send value follow-up'])
-    const allowedChannels = new Set(['telegram', 'email', 'crm'])
+    const allowedChannels = new Set(['telegram', 'email', 'crm', 'voice'])
     return {
       ...deterministic,
       reasoningSummary: sanitizeAiCopy(String(parsed.reasoning_summary || deterministic.reasoningSummary).slice(0, 700)),
@@ -217,7 +226,7 @@ async function ensureRevenueBrainWorker(client, workspaceId) {
 }
 
 async function buildLeadRevenueContext(client, workspaceId, leadId) {
-  const [lead, telegramMessages, emailMessages, meetings, sequences, timeline, followups] = await Promise.all([
+  const [lead, telegramMessages, emailMessages, meetings, sequences, timeline, followups, voiceCalls] = await Promise.all([
     client.query('SELECT * FROM crm_leads WHERE workspace_id = $1 AND id = $2', [workspaceId, leadId]),
     client.query('SELECT * FROM telegram_messages WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 50', [workspaceId, leadId]),
     client.query('SELECT * FROM email_messages WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 50', [workspaceId, leadId]).catch(() => ({ rows: [] })),
@@ -225,9 +234,10 @@ async function buildLeadRevenueContext(client, workspaceId, leadId) {
     client.query('SELECT * FROM ai_lead_sequences WHERE lead_id = $1 ORDER BY updated_at DESC LIMIT 5', [leadId]).catch(() => ({ rows: [] })),
     client.query('SELECT * FROM lead_timeline_events WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 50', [workspaceId, leadId]).catch(() => ({ rows: [] })),
     client.query('SELECT * FROM crm_followups WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 20', [workspaceId, leadId]).catch(() => ({ rows: [] })),
+    client.query('SELECT * FROM ai_voice_calls WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 10', [workspaceId, leadId]).catch(() => ({ rows: [] })),
   ])
   if (!lead.rows[0]) return null
-  return { lead: lead.rows[0], telegramMessages: telegramMessages.rows, emailMessages: emailMessages.rows, meetings: meetings.rows, sequences: sequences.rows, timeline: timeline.rows, followups: followups.rows }
+  return { lead: lead.rows[0], telegramMessages: telegramMessages.rows, emailMessages: emailMessages.rows, meetings: meetings.rows, sequences: sequences.rows, timeline: timeline.rows, followups: followups.rows, voiceCalls: voiceCalls.rows }
 }
 
 async function persistLeadRevenueScore(client, { workspaceId, userId, leadId, score }) {

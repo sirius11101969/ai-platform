@@ -1068,6 +1068,11 @@ async function migrate() {
     await pool.query(fs.readFileSync(aiRevenueIntelligenceMigration, 'utf8'))
   }
 
+  const aiVoiceOutreachMigration = path.resolve(__dirname, '../../../db/migrations/026_ai_voice_outreach.sql')
+  if (fs.existsSync(aiVoiceOutreachMigration)) {
+    await pool.query(fs.readFileSync(aiVoiceOutreachMigration, 'utf8'))
+  }
+
   console.log('[schema] telegram migrations skipped safely')
 }
 
