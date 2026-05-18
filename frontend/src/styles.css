@@ -1881,7 +1881,7 @@ button { font: inherit; }
   animation: route-highlight-pulse 1.6s ease-in-out 2;
 }
 
-.approval-row .approval-route-badge {
+.approval-route-badge {
   display: inline-flex;
   align-items: center;
   width: fit-content;
