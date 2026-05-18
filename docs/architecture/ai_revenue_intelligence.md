@@ -136,6 +136,10 @@ Future versions can learn from accepted/rejected recommendations and won/lost ou
 4. Train per-segment calibration models for probability-to-close.
 5. Continuously evaluate calibration drift before promoting model weights to production.
 
+## Dedicated UI route
+
+AI Revenue Intelligence is available as a protected full-page workspace route at `/ai-revenue-intelligence`. The sidebar links to this route near AI Workers and AI Voice Outreach so managers can open Revenue Brain, forecast, pipeline health, next-best-action, and latest lead-score views without hunting inside `/dashboard`. The existing dashboard command-center preview remains in place and links to the full page.
+
 ## UI workflow: AI Revenue Command Center
 
 The production UI now exposes an **AI Revenue Intelligence** dashboard section in the main dashboard and CRM workspace. The section is intentionally executive and compact:

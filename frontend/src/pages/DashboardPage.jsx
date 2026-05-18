@@ -305,7 +305,10 @@ export default function DashboardPage() {
             <h3>AI Revenue Command Center</h3>
             <p className="modal-copy">Executive revenue view from ai_lead_scores and ai_revenue_forecasts. Prompts, chain of thought, and raw model responses stay hidden.</p>
           </div>
-          <button className="btn primary compact" type="button" onClick={handleRunRevenueAnalysis} disabled={revenueBusy}>{revenueBusy ? "Running analysis…" : "Run Revenue Analysis Now"}</button>
+          <div className="revenue-head-actions">
+            <Link className="ghost-button" to="/ai-revenue-intelligence">Open full Revenue Intelligence</Link>
+            <button className="btn primary compact" type="button" onClick={handleRunRevenueAnalysis} disabled={revenueBusy}>{revenueBusy ? "Running analysis…" : "Run Revenue Analysis Now"}</button>
+          </div>
         </div>
         <div className="dashboard-stats revenue-widget-row">
           {revenueCards.map((card) => <StatCard key={card.key} label={card.label} value={card.kind === 'money' ? formatCurrency(card.value) : card.kind === 'score' ? `${card.value}/100` : String(card.value)} hint={card.hint} tone={card.key === 'stalledLeads' || card.key === 'highChurnRisk' ? 'pink' : 'violet'} />)}

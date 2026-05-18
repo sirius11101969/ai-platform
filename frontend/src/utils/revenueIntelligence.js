@@ -72,3 +72,36 @@ export function buildRecommendationQueue(intelligence = {}) {
     reasoningSummary: sanitizeVisibleAiText(item.reasoningSummary),
   }))
 }
+
+
+export function getLatestRevenueLeadScores(scores = [], limit = 12) {
+  return scores
+    .map((score) => ({
+      ...score,
+      leadName: score.leadName || score.lead_name || 'Lead',
+      company: score.company || '—',
+      status: score.status || '—',
+      priorityScore: Number(score.priorityScore ?? score.priority_score ?? 0),
+      closeProbability: Number(score.closeProbability ?? score.close_probability ?? 0),
+      engagementScore: Number(score.engagementScore ?? score.engagement_score ?? 0),
+      churnRisk: Number(score.churnRisk ?? score.churn_risk ?? 0),
+      pipelineHealth: Number(score.pipelineHealth ?? score.pipeline_health ?? 0),
+      recommendedAction: sanitizeVisibleAiText(score.recommendedAction ?? score.recommended_action ?? ''),
+      recommendedChannel: score.recommendedChannel ?? score.recommended_channel ?? 'crm',
+      updatedAt: score.updatedAt || score.updated_at || score.createdAt || score.created_at || null,
+    }))
+    .sort((a, b) => new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0))
+    .slice(0, limit)
+}
+
+export function hasRevenueIntelligenceData(intelligence = {}, scores = []) {
+  return Boolean(
+    (scores || []).length ||
+    (intelligence?.hotLeads || []).length ||
+    (intelligence?.stalledLeads || []).length ||
+    (intelligence?.churnRisks || []).length ||
+    (intelligence?.nextBestActions || []).length ||
+    intelligence?.forecast ||
+    Number(intelligence?.widgets?.forecastedRevenue || 0) > 0
+  )
+}
