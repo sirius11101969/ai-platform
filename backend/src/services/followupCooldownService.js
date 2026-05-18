@@ -2,7 +2,6 @@ const pool = require('../db/pool')
 const { addTimelineEvent } = require('./timelineService')
 
 const DEFAULT_FOLLOWUP_COOLDOWN_HOURS = 48
-const SKIP_TIMELINE_COOLDOWN_HOURS = 24
 const FOLLOWUP_COOLDOWN_SKIP_REASON = 'recent_outbound_customer_message'
 const FOLLOWUP_COOLDOWN_MANAGER_REASON = 'Follow-up cooldown: клиенту уже отправлено сообщение недавно.'
 const COOLDOWN_SKIP_EVENT_TYPE = 'ai_followup_skipped_cooldown'
@@ -41,6 +40,7 @@ const OUTBOUND_TIMELINE_EVENT_TYPES = [
 ]
 
 let emailTableColumnsPromise = null
+let leadTimelineEventsColumnsPromise = null
 
 function getExecutor(client) {
   return client || pool
@@ -86,6 +86,26 @@ async function getEmailMessageColumns(client) {
     ).then((result) => new Set(result.rows.map((row) => row.column_name)))
   }
   return emailTableColumnsPromise
+}
+
+async function getLeadTimelineEventsColumns(client) {
+  if (!leadTimelineEventsColumnsPromise) {
+    leadTimelineEventsColumnsPromise = getExecutor(client).query(
+      `SELECT column_name
+         FROM information_schema.columns
+        WHERE table_schema = current_schema() AND table_name = 'lead_timeline_events'`
+    ).then((result) => new Set(result.rows.map((row) => row.column_name)))
+  }
+  return leadTimelineEventsColumnsPromise
+}
+
+function buildAuditLookupQuery(hasWorkspaceIdColumn) {
+  return `SELECT id, lead_id, event_type, title, created_at
+       FROM lead_timeline_events
+      WHERE lead_id = $1
+        AND event_type = '${COOLDOWN_SKIP_EVENT_TYPE}'
+        AND created_at >= NOW() - INTERVAL '24 hours'${hasWorkspaceIdColumn ? '\n        AND workspace_id = $2' : ''}
+      ORDER BY created_at DESC`
 }
 
 async function fetchLatestOutboundCustomerMessage({ client, workspaceId, leadId }) {
@@ -143,32 +163,38 @@ async function getFollowupCooldownState({ client, workspaceId, leadId, cooldownH
   }
 }
 
-async function recordCooldownSkipTimelineEvent({ client, workspaceId, leadId, userId = null, leadName = '', cooldownHours = DEFAULT_FOLLOWUP_COOLDOWN_HOURS, lastOutboundAt = null }) {
-  const executor = getExecutor(client)
-  const workspaceFilter = workspaceId ? 'AND workspace_id = $1' : ''
-  const existingParams = workspaceId
-    ? [workspaceId, leadId, COOLDOWN_SKIP_EVENT_TYPE, SKIP_TIMELINE_COOLDOWN_HOURS]
-    : [leadId, COOLDOWN_SKIP_EVENT_TYPE, SKIP_TIMELINE_COOLDOWN_HOURS]
-  const leadIdParam = workspaceId ? '$2' : '$1'
-  const eventTypeParam = workspaceId ? '$3' : '$2'
-  const cooldownHoursParam = workspaceId ? '$4' : '$3'
+async function queryFollowupCooldownAuditRows({ executor, leadId, workspaceId, hasWorkspaceIdColumn }) {
+  const sql = buildAuditLookupQuery(hasWorkspaceIdColumn)
+  const params = hasWorkspaceIdColumn ? [leadId, workspaceId] : [leadId]
+  const result = await executor.query(sql, params)
+  return result.rows || []
+}
 
-  const existing = await executor.query(
-    `SELECT COUNT(*)::int AS existing_audit_count
-       FROM lead_timeline_events
-      WHERE lead_id = ${leadIdParam}
-        ${workspaceFilter}
-        AND event_type = ${eventTypeParam}
-        AND created_at >= NOW() - (${cooldownHoursParam}::int * INTERVAL '1 hour')`,
-    existingParams
-  )
-  const existingAuditCount = Number(existing.rows[0]?.existing_audit_count || 0)
-  const auditLogPayload = { leadId, leadName, existingAuditCount }
+async function ensureFollowupCooldownTimelineEvent({ client, workspaceId, leadId, leadName = '', userId = null, cooldownHours = DEFAULT_FOLLOWUP_COOLDOWN_HOURS, lastOutboundAt = null }) {
+  const executor = getExecutor(client)
+  const leadTimelineEventsColumns = await getLeadTimelineEventsColumns(client)
+  const hasWorkspaceIdColumn = leadTimelineEventsColumns.has('workspace_id')
+  const existingAuditRows = await queryFollowupCooldownAuditRows({ executor, leadId, workspaceId, hasWorkspaceIdColumn })
+  const existingAuditCount = existingAuditRows.length
+  const auditLogPayload = {
+    leadId,
+    leadName,
+    workspaceId,
+    eventType: COOLDOWN_SKIP_EVENT_TYPE,
+    existingAuditCount,
+    existingAuditRows: existingAuditRows.map((row) => ({
+      id: row.id,
+      lead_id: row.lead_id,
+      event_type: row.event_type,
+      title: row.title,
+      created_at: row.created_at,
+    })),
+  }
   console.info('[followup-cooldown] timeline audit check', auditLogPayload)
 
   if (existingAuditCount > 0) {
     console.info('[followup-cooldown] timeline audit already exists', auditLogPayload)
-    return { created: false, existingAuditCount }
+    return { created: false, existingCount: existingAuditCount, verifyCount: existingAuditCount }
   }
 
   await addTimelineEvent(executor, {
@@ -186,8 +212,14 @@ async function recordCooldownSkipTimelineEvent({ client, workspaceId, leadId, us
       cooldownHours,
     },
   })
+
+  const verifyRows = await queryFollowupCooldownAuditRows({ executor, leadId, workspaceId, hasWorkspaceIdColumn })
+  const verifyCount = verifyRows.length
+  const inserted = verifyCount > 0
+  console.info('[followup-cooldown] timeline audit verify', { leadId, inserted, verifyCount })
   console.info('[followup-cooldown] timeline audit event created', { leadId, leadName })
-  return { created: true, existingAuditCount }
+
+  return { created: true, existingCount: existingAuditCount, verifyCount }
 }
 
 async function shouldSkipFollowupForCooldown({ client, workspaceId, leadId, leadName = '', userId = null, cooldownHours = DEFAULT_FOLLOWUP_COOLDOWN_HOURS, writeTimelineEvent = true }) {
@@ -198,7 +230,7 @@ async function shouldSkipFollowupForCooldown({ client, workspaceId, leadId, lead
   console.info('[followup-cooldown] lead skipped', logPayload)
 
   if (writeTimelineEvent) {
-    await recordCooldownSkipTimelineEvent({ client, workspaceId, leadId, userId, leadName, cooldownHours, lastOutboundAt: state.lastOutboundAt })
+    await ensureFollowupCooldownTimelineEvent({ client, workspaceId, leadId, userId, leadName, cooldownHours, lastOutboundAt: state.lastOutboundAt })
   }
 
   return state
@@ -214,5 +246,6 @@ module.exports = {
   isFollowupDraftActionType,
   isFollowupRecommendationCode,
   getFollowupCooldownState,
+  ensureFollowupCooldownTimelineEvent,
   shouldSkipFollowupForCooldown,
 }
