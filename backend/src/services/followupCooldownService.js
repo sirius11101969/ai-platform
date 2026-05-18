@@ -148,18 +148,29 @@ async function fetchLatestOutboundCustomerMessage({ client, workspaceId, leadId 
   return result.rows[0]?.last_outbound_at || null
 }
 
-async function getFollowupCooldownState({ client, workspaceId, leadId, cooldownHours = DEFAULT_FOLLOWUP_COOLDOWN_HOURS, now = new Date() }) {
+async function hasRecentOutboundCustomerMessage({ client, workspaceId, leadId, cooldownHours = DEFAULT_FOLLOWUP_COOLDOWN_HOURS, now = new Date() }) {
   const lastOutboundAt = await fetchLatestOutboundCustomerMessage({ client, workspaceId, leadId })
   const elapsedHours = hoursBetween(now, lastOutboundAt)
-  const active = elapsedHours !== null && elapsedHours >= 0 && elapsedHours < cooldownHours
+  const hasRecentOutbound = elapsedHours !== null && elapsedHours >= 0 && elapsedHours < cooldownHours
   return {
-    active,
+    hasRecentOutbound,
     leadId,
     lastOutboundAt,
     cooldownHours,
     elapsedHours,
-    reason: active ? FOLLOWUP_COOLDOWN_SKIP_REASON : null,
-    managerReason: active ? FOLLOWUP_COOLDOWN_MANAGER_REASON : null,
+  }
+}
+
+async function getFollowupCooldownState({ client, workspaceId, leadId, cooldownHours = DEFAULT_FOLLOWUP_COOLDOWN_HOURS, now = new Date() }) {
+  const state = await hasRecentOutboundCustomerMessage({ client, workspaceId, leadId, cooldownHours, now })
+  return {
+    active: state.hasRecentOutbound,
+    leadId,
+    lastOutboundAt: state.lastOutboundAt,
+    cooldownHours,
+    elapsedHours: state.elapsedHours,
+    reason: state.hasRecentOutbound ? FOLLOWUP_COOLDOWN_SKIP_REASON : null,
+    managerReason: state.hasRecentOutbound ? FOLLOWUP_COOLDOWN_MANAGER_REASON : null,
   }
 }
 
@@ -222,6 +233,30 @@ async function ensureFollowupCooldownTimelineEvent({ client, workspaceId, leadId
   return { created: true, existingCount: existingAuditCount, verifyCount }
 }
 
+async function auditFollowupCooldownEarlySkip({ client, workspaceId, leadId, leadName = '', userId = null, skipReason = 'unknown', cooldownHours = DEFAULT_FOLLOWUP_COOLDOWN_HOURS }) {
+  const state = await hasRecentOutboundCustomerMessage({ client, workspaceId, leadId, cooldownHours })
+  if (!state.hasRecentOutbound) return state
+
+  console.info('[followup-cooldown] early skip audit check', {
+    leadId,
+    leadName,
+    skipReason,
+    hasRecentOutbound: true,
+  })
+
+  await ensureFollowupCooldownTimelineEvent({
+    client,
+    workspaceId,
+    leadId,
+    userId,
+    leadName,
+    cooldownHours,
+    lastOutboundAt: state.lastOutboundAt,
+  })
+
+  return state
+}
+
 async function shouldSkipFollowupForCooldown({ client, workspaceId, leadId, leadName = '', userId = null, cooldownHours = DEFAULT_FOLLOWUP_COOLDOWN_HOURS, writeTimelineEvent = true }) {
   const state = await getFollowupCooldownState({ client, workspaceId, leadId, cooldownHours })
   if (!state.active) return state
@@ -245,7 +280,9 @@ module.exports = {
   COOLDOWN_SKIP_EVENT_BODY,
   isFollowupDraftActionType,
   isFollowupRecommendationCode,
+  hasRecentOutboundCustomerMessage,
   getFollowupCooldownState,
   ensureFollowupCooldownTimelineEvent,
+  auditFollowupCooldownEarlySkip,
   shouldSkipFollowupForCooldown,
 }

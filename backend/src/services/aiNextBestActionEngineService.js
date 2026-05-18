@@ -2,7 +2,7 @@ const pool = require('../db/pool')
 const { assertCustomerSafeText } = require('./customerCopyGuard')
 const { addTimelineEvent } = require('./timelineService')
 const { sanitizeAiCopy, sanitizeAiActionPayload } = require('../utils/aiCopySanitizer')
-const { shouldSkipFollowupForCooldown } = require('./followupCooldownService')
+const { auditFollowupCooldownEarlySkip, shouldSkipFollowupForCooldown } = require('./followupCooldownService')
 
 const AI_NEXT_BEST_ACTION_WORKER_TYPE = 'ai_next_best_action_engine'
 const SOURCE = 'next_best_action_engine'
@@ -239,6 +239,21 @@ async function hasDuplicateAction(client, { workspaceId, leadId, actionType, pre
   return result.rows[0] || null
 }
 
+async function auditAndLogSkippedLead(client, { workspaceId, lead, userId, reason, hasRecentOutbound = null }) {
+  let recentOutbound = hasRecentOutbound
+  if (recentOutbound === null || recentOutbound === undefined) {
+    const state = await auditFollowupCooldownEarlySkip({ client, workspaceId, leadId: lead.id, leadName: leadName(lead), userId, skipReason: reason })
+    recentOutbound = state.hasRecentOutbound
+  }
+  console.info('[next-best-action] lead skipped', {
+    leadId: lead.id,
+    leadName: leadName(lead),
+    reason,
+    hasRecentOutbound: Boolean(recentOutbound),
+  })
+  return Boolean(recentOutbound)
+}
+
 async function createNextBestAction(client, { userId, workspaceId, workerId, runId, lead, action }) {
   const payload = {
     source: SOURCE,
@@ -299,22 +314,26 @@ async function runNextBestActionEngine({ userId, workspaceId, worker, workerId }
     for (const lead of leads) {
       const action = selectNextBestAction(lead, now)
       if (!action) {
-        console.info('[next-best-action] lead skipped', { workspaceId, leadId: lead.id, reason: 'no_matching_rule' })
-        skipped.push({ leadId: lead.id, reason: 'no_matching_rule' })
+        const reason = 'no_matching_rule'
+        const hasRecentOutbound = await auditAndLogSkippedLead(client, { workspaceId, lead, userId, reason })
+        skipped.push({ leadId: lead.id, reason, hasRecentOutbound })
         continue
       }
       if (action.cooldownGuarded) {
         const cooldownState = await shouldSkipFollowupForCooldown({ client, workspaceId, leadId: lead.id, leadName: lead.name, userId })
         if (cooldownState.active) {
-          skipped.push({ leadId: lead.id, actionType: action.actionType, reason: cooldownState.reason, lastOutboundAt: cooldownState.lastOutboundAt, cooldownHours: cooldownState.cooldownHours })
+          await auditAndLogSkippedLead(client, { workspaceId, lead, userId, reason: cooldownState.reason, hasRecentOutbound: true })
+          skipped.push({ leadId: lead.id, actionType: action.actionType, reason: cooldownState.reason, lastOutboundAt: cooldownState.lastOutboundAt, cooldownHours: cooldownState.cooldownHours, hasRecentOutbound: true })
           continue
         }
       }
 
       const duplicate = await hasDuplicateAction(client, { workspaceId, leadId: lead.id, actionType: action.actionType, preferredChannel: action.preferredChannel })
       if (duplicate) {
+        const reason = 'duplicate_pending_action'
+        const hasRecentOutbound = await auditAndLogSkippedLead(client, { workspaceId, lead, userId, reason })
         console.info('[next-best-action] duplicate skipped', { workspaceId, leadId: lead.id, actionType: action.actionType, preferredChannel: action.preferredChannel, duplicateId: duplicate.id })
-        duplicates.push({ leadId: lead.id, actionType: action.actionType, preferredChannel: action.preferredChannel, duplicateId: duplicate.id })
+        duplicates.push({ leadId: lead.id, actionType: action.actionType, preferredChannel: action.preferredChannel, duplicateId: duplicate.id, hasRecentOutbound })
         continue
       }
       created.push(await createNextBestAction(client, { userId, workspaceId, workerId: resolvedWorker.id, runId: run.id, lead, action }))

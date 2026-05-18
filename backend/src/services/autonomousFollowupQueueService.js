@@ -1,6 +1,6 @@
 const { addTimelineEvent } = require('./timelineService')
 const { sanitizeAiCopy, sanitizeAiActionPayload } = require('../utils/aiCopySanitizer')
-const { shouldSkipFollowupForCooldown } = require('./followupCooldownService')
+const { auditFollowupCooldownEarlySkip, shouldSkipFollowupForCooldown } = require('./followupCooldownService')
 
 const ACTION_TYPE = 'followup_sequence_draft'
 const ACTIVE_DEDUP_STATUSES = ['pending_approval', 'approved', 'completed', 'executed']
@@ -153,7 +153,9 @@ async function createFollowupSequenceDrafts({ client, userId, workspaceId, worke
     const inactiveHours = formatHoursSince(lead.last_message_at)
     const step = await selectNextDueStep(client, workspaceId, lead, inactiveHours)
     if (!step) {
-      skipped.push({ leadId: lead.id, reason: 'threshold_not_met_or_duplicate' })
+      const skipReason = 'threshold_not_met_or_duplicate'
+      await auditFollowupCooldownEarlySkip({ client, workspaceId, leadId: lead.id, leadName: lead.name || lead.email || '', userId, skipReason })
+      skipped.push({ leadId: lead.id, reason: skipReason })
       continue
     }
 

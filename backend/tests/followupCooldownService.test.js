@@ -5,6 +5,7 @@ const {
   COOLDOWN_SKIP_EVENT_TITLE,
   COOLDOWN_SKIP_EVENT_TYPE,
   FOLLOWUP_COOLDOWN_SKIP_REASON,
+  auditFollowupCooldownEarlySkip,
   shouldSkipFollowupForCooldown,
 } = require('../src/services/followupCooldownService')
 
@@ -101,9 +102,11 @@ async function runCreatesTimelineAuditOncePerDayTest() {
   try {
     const first = await shouldSkipFollowupForCooldown({ workspaceId, leadId, leadName: 'Telegram Connect Test', userId })
     const second = await shouldSkipFollowupForCooldown({ workspaceId, leadId, leadName: 'Telegram Connect Test', userId })
+    const earlySkip = await auditFollowupCooldownEarlySkip({ workspaceId, leadId, leadName: 'Telegram Connect Test', userId, skipReason: 'no_matching_rule' })
 
     assert.strictEqual(first.active, true)
     assert.strictEqual(second.active, true)
+    assert.strictEqual(earlySkip.hasRecentOutbound, true)
     assert.strictEqual(first.reason, FOLLOWUP_COOLDOWN_SKIP_REASON)
     const cooldownAuditEvents = insertedEvents.filter((event) => (
       event.workspace_id === workspaceId &&
@@ -117,11 +120,18 @@ async function runCreatesTimelineAuditOncePerDayTest() {
     assert.strictEqual(cooldownAuditEvents[0].source, 'ai')
     assert.strictEqual(cooldownAuditEvents[0].metadata.reason, FOLLOWUP_COOLDOWN_SKIP_REASON)
 
+    const earlySkipLog = logs.find((entry) => entry[0] === '[followup-cooldown] early skip audit check')
     const auditCheckLogs = logs.filter((entry) => entry[0] === '[followup-cooldown] timeline audit check')
     const createdLog = logs.find((entry) => entry[0] === '[followup-cooldown] timeline audit event created')
     const existingLog = logs.find((entry) => entry[0] === '[followup-cooldown] timeline audit already exists')
     const verifyLog = logs.find((entry) => entry[0] === '[followup-cooldown] timeline audit verify')
-    assert.strictEqual(auditCheckLogs.length, 2)
+    assert.deepStrictEqual(earlySkipLog[1], {
+      leadId,
+      leadName: 'Telegram Connect Test',
+      skipReason: 'no_matching_rule',
+      hasRecentOutbound: true,
+    })
+    assert.strictEqual(auditCheckLogs.length, 3)
     assert.deepStrictEqual(auditCheckLogs[0][1], {
       leadId,
       leadName: 'Telegram Connect Test',
