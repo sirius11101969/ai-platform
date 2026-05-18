@@ -75,6 +75,8 @@ The UI logs:
 - `[ai-workers-focus] legacy actions hidden`
 - `[ai-workers-focus] route highlight expanded hidden section`
 
+Send-button diagnostic badges (`send-debug-badge`, including `buttonEnabled`, `actionId`, and raw status text) are hidden from production manager/customer UI. They render only in Vite development mode or when `VITE_SHOW_AI_SEND_DEBUG_BADGE=true` is explicitly enabled for developer diagnostics. The route-highlight badge `Открыто по ссылке` remains visible for deep-linked actions.
+
 ## Safety guarantees
 
 Focus Queue v2 does not remove any sanitizer or copy-guard layer:
