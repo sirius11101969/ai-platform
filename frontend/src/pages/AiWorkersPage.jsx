@@ -62,6 +62,11 @@ function getApprovalFooterStatusLabel(status) {
   return approvalFooterStatusLabels[status] || approvalStatusLabels[status] || status || "—";
 }
 
+function isAiSendDebugBadgeEnabled() {
+  const env = import.meta?.env || {};
+  return env.DEV === true || String(env.VITE_SHOW_AI_SEND_DEBUG_BADGE || "").toLowerCase() === "true";
+}
+
 const actionTypeLabels = {
   telegram_followup: "Сообщение в Telegram",
   email_followup: "Письмо",
@@ -1301,7 +1306,7 @@ function AiWorkersPageContent() {
             editBusy: isItemBusy,
           })}
           {item.errorMessage && <small className="email-error-text">Ошибка выполнения: {formatApprovalErrorMessage(item.errorMessage)}</small>}
-          {executableButtonState && !history && (
+          {executableButtonState && isAiSendDebugBadgeEnabled() && (
             <small className="send-debug-badge">
               buttonEnabled={String(executableButtonState.buttonEnabled)} · actionId={itemId} · status={itemStatus}
             </small>
