@@ -582,6 +582,7 @@ function getRouteHighlightSections(focusQueueState) {
     { section: "legacy", label: "legacy pending", items: safeArray(safeState.hiddenLegacyActions), collapsedSection: "legacy" },
     { section: "safety", label: "safety history", items: safeArray(safeState.safetyHistoryActions), collapsedSection: "safety" },
     { section: "all", label: "all actions", items: safeArray(safeState.allActions), collapsedSection: "all" },
+    { section: "raw", label: "raw queue history", items: safeArray(safeState.rawQueueActions), collapsedSection: "raw" },
   ];
 }
 
@@ -601,7 +602,7 @@ function resolveHighlightedAction(actionId, sections) {
       if (action) {
         return {
           found: true,
-          section: ["focus", "completed", "legacy", "safety", "all"].includes(sectionInfo.section) ? sectionInfo.section : null,
+          section: ["focus", "completed", "legacy", "safety", "all", "raw"].includes(sectionInfo.section) ? sectionInfo.section : null,
           action,
         };
       }
@@ -844,7 +845,7 @@ function AiWorkersPageContent() {
   const [approvalQueue, setApprovalQueue] = useState({ items: [], metrics: {} });
   const [focusSummary, setFocusSummary] = useState(null);
   const [activeApprovalTab, setActiveApprovalTab] = useState("focus");
-  const [expandedSections, setExpandedSections] = useState({ legacy: false, completed: false, safety: false, all: false });
+  const [expandedSections, setExpandedSections] = useState({ legacy: false, completed: false, safety: false, all: false, raw: false });
   const [busyActions, setBusyActions] = useState({});
   const [loadingKey, setLoadingKey] = useState("");
   const actionInFlightRef = useRef(new Set());
@@ -855,11 +856,13 @@ function AiWorkersPageContent() {
   const legacyDetailsRef = useRef(null);
   const safetyDetailsRef = useRef(null);
   const allDetailsRef = useRef(null);
+  const rawDetailsRef = useRef(null);
   const detailsRefs = useMemo(() => ({
     completed: completedDetailsRef,
     legacy: legacyDetailsRef,
     safety: safetyDetailsRef,
     all: allDetailsRef,
+    raw: rawDetailsRef,
   }), []);
   const params = useMemo(() => new URLSearchParams(location.search), [location.search]);
   const targetActionId = params.get("actionId") || params.get("approvalId") || "";
@@ -1121,11 +1124,11 @@ function AiWorkersPageContent() {
     }
   }
 
-  const workers = safeArray(commandCenter?.workers);
-  const queue = safeArray(commandCenter?.queue);
-  const recentRuns = safeArray(commandCenter?.recentRuns);
+  const workers = useMemo(() => safeArray(commandCenter?.workers), [commandCenter?.workers]);
+  const queue = useMemo(() => safeArray(commandCenter?.queue), [commandCenter?.queue]);
+  const recentRuns = useMemo(() => safeArray(commandCenter?.recentRuns), [commandCenter?.recentRuns]);
   const metrics = commandCenter?.metrics || {};
-  const approvalItems = safeArray(approvalQueue?.items);
+  const approvalItems = useMemo(() => safeArray(approvalQueue?.items), [approvalQueue?.items]);
   const previousHighlightedStatusRef = useRef("");
   const focusQueueState = useMemo(() => buildFocusQueueState(approvalItems), [approvalItems]);
   const completedHistoryActions = focusQueueState?.completedHistoryActions;
@@ -1135,7 +1138,8 @@ function AiWorkersPageContent() {
   const routeHighlightSections = useMemo(() => getRouteHighlightSections({
     ...focusQueueState,
     completedHistoryActions: safeCompletedHistoryActions,
-  }), [focusQueueState, safeCompletedHistoryActions]);
+    rawQueueActions: queue,
+  }), [focusQueueState, safeCompletedHistoryActions, queue]);
   const selectedApprovalItems = safeArray(focusQueueState?.tabActions?.[activeApprovalTab] || focusQueueState?.focusActions);
   const highlightedAction = isObjectAction(highlightResolution?.action) ? highlightResolution.action : null;
   const highlightedActionId = getActionId(highlightedAction);
@@ -1155,8 +1159,6 @@ function AiWorkersPageContent() {
   };
   const highlightedActionMissing = Boolean(targetActionId && !loading && highlightResolutionReady && !highlightResolution?.found);
   const approvalMetrics = { ...(approvalQueue?.metrics || {}), ...(focusQueueState?.metrics || {}), ...(focusSummary || {}) };
-  const pendingActions = useMemo(() => safeArray(queue).filter((item) => getActionStatus(item) === "pending_approval"), [queue]);
-  const failedActions = useMemo(() => safeArray(queue).filter((item) => getActionStatus(item) === "failed"), [queue]);
 
   useEffect(() => {
     console.info("[ai-workers-focus] focus queue built", { count: safeArray(focusQueueState?.focusActions).length, actionableNow: focusQueueState?.metrics?.actionableNow || 0 });
@@ -1373,6 +1375,57 @@ function AiWorkersPageContent() {
     }
   }
 
+  function renderRawQueueSection() {
+    const safeItems = safeArray(queue);
+    if (!safeItems.length) return null;
+    const visibleItems = prioritizeHighlightedItems(safeItems, 12);
+    const detailsRef = detailsRefs?.raw;
+    return (
+      <details
+        ref={detailsRef}
+        className="approval-collapsed-section raw-queue-history-section"
+        open={Boolean(expandedSections?.raw)}
+        onToggle={(event) => {
+          const node = event?.currentTarget;
+          const isOpen = Boolean(node && typeof node === "object" && "open" in node && node.open);
+          setExpandedSections((current) => ({ ...current, raw: isOpen }));
+        }}
+      >
+        <summary>
+          <span>Show raw queue history</span>
+          <b>Доступно в журнале</b>
+        </summary>
+        <div className="raw-queue-history-copy">
+          <span className="eyebrow">История AI задач</span>
+          <p>Legacy queue preview скрыт по умолчанию, чтобы Focus Queue оставалась главным рабочим списком.</p>
+        </div>
+        <div className="ai-queue-list raw-queue-history-list">
+          {visibleItems.map((item) => {
+            const itemId = getActionId(item);
+            const shouldHighlight = isHighlightedApprovalItem(item);
+            return (
+              <article
+                id={itemId ? getActionDomId(itemId) : undefined}
+                data-action-id={itemId || undefined}
+                ref={shouldHighlight ? highlightRef : null}
+                className={`ai-queue-item ${shouldHighlight ? "route-highlight" : ""}`}
+                key={itemId || `raw-queue-${safeItems.indexOf(item)}`}
+              >
+                <div>
+                  <strong>{sanitizeVisibleAiText(getActionTitle(item) || item?.title)}</strong>
+                  {shouldHighlight && <span className="approval-route-badge">Открыто по ссылке</span>}
+                  <p>{shortRecommendation(item)}</p>
+                  <small>{formatDate(item?.created_at || item?.createdAt)} · {item?.action_type || getItemType(item) || "AI task"}</small>
+                </div>
+                <b>{getActionStatus(item) === "pending_approval" ? "Ждёт одобрения" : getActionStatus(item)}</b>
+              </article>
+            );
+          })}
+        </div>
+      </details>
+    );
+  }
+
   function renderCollapsedSection({ id, title, count, items, history = false }) {
     const safeItems = id === "completed"
       ? (Array.isArray(completedHistoryActions) ? safeCompletedHistoryActions : [])
@@ -1425,6 +1478,9 @@ function AiWorkersPageContent() {
       {highlightedAction && highlightedActionSection === "completed" && (
         <p className="ai-workers-route-notice dashboard-alert">Действие из ссылки уже завершено и показано в completed history.</p>
       )}
+      {highlightedAction && highlightedActionSection === "raw" && (
+        <p className="ai-workers-route-notice dashboard-alert">Действие из ссылки найдено в raw queue history — журнал открыт автоматически.</p>
+      )}
 
 
       <Panel className="demo-pipeline-panel">
@@ -1444,7 +1500,7 @@ function AiWorkersPageContent() {
         <StatCard label="Actionable now" value={loading ? "…" : String(approvalMetrics.actionableNow || 0)} hint="Фокусные задачи, требующие действия сейчас" tone="violet" />
         <StatCard label="Needs approval" value={loading ? "…" : String(approvalMetrics.needsApproval || 0)} hint="Ожидают решения менеджера" tone="pink" />
         <StatCard label="Failed unresolved" value={loading ? "…" : String(approvalMetrics.failedUnresolved || 0)} hint="Ошибки без более свежего успешного fallback" tone="pink" />
-        <StatCard label="Hidden legacy" value={loading ? "…" : String(approvalMetrics.hiddenLegacy || 0)} hint="Скрыто из Focus Queue, доступно в истории" tone="violet" />
+        <StatCard label="История AI задач" value={loading ? "…" : "Журнал"} hint="Доступно в журнале без шума в Focus Queue" tone="violet" />
         <StatCard label="AI эффективность" value={loading ? "…" : `${metrics.efficiency || 0}%`} hint="Доля успешных запусков AI работников" />
         <StatCard label="Meetings scheduled by AI" value={loading ? "…" : String(approvalMetrics.meetingsScheduledByAi || 0)} hint="После approval менеджера" tone="violet" />
         <StatCard label="Pending meeting proposals" value={loading ? "…" : String(approvalMetrics.pendingMeetingProposals || 0)} hint="AI предложения demo-созвона ждут решения" tone="pink" />
@@ -1467,7 +1523,7 @@ function AiWorkersPageContent() {
           <span>Actionable now <b>{approvalMetrics.actionableNow || 0}</b></span>
           <span>Needs approval <b>{approvalMetrics.needsApproval || 0}</b></span>
           <span>Failed unresolved <b>{approvalMetrics.failedUnresolved || 0}</b></span>
-          <span>Hidden legacy <b>{approvalMetrics.hiddenLegacy || 0}</b></span>
+          <span>История AI задач <b>Доступно в журнале</b></span>
           <span>Completed history <b>{approvalMetrics.completedHistory || 0}</b></span>
           <span>Safety history <b>{approvalMetrics.safetyHistory || 0}</b></span>
           <span>Выполнено сегодня <b>{approvalMetrics.executedToday || 0}</b></span>
@@ -1497,6 +1553,7 @@ function AiWorkersPageContent() {
           {renderCollapsedSection({ id: "completed", title: "Show completed history", count: safeCompletedHistoryActions.length, items: safeCompletedHistoryActions, history: true })}
           {renderCollapsedSection({ id: "safety", title: "Show safety history", count: safeArray(focusQueueState?.safetyHistoryActions).length, items: focusQueueState?.safetyHistoryActions, history: true })}
           {renderCollapsedSection({ id: "all", title: "Show all actions", count: safeArray(focusQueueState?.allActions).length, items: focusQueueState?.allActions, history: true })}
+          {renderRawQueueSection()}
         </div>
       </Panel>
 
@@ -1532,43 +1589,25 @@ function AiWorkersPageContent() {
         <Panel>
           <div className="panel-head">
             <div>
-              <span className="eyebrow">Очередь</span>
-              <h3>Статус AI задач</h3>
-            </div>
-            <span className="live-pill"><i />{metrics.queueActive || 0} активных</span>
-          </div>
-          <div className="ai-queue-list">
-            {queue.length === 0 && <p className="empty-state">Очередь пуста. Запустите AI сотрудника, чтобы создать рекомендации.</p>}
-            {prioritizeHighlightedItems(queue, 8).map((item) => (
-              <article ref={isHighlightedApprovalItem(item) ? highlightRef : null} className={`ai-queue-item ${isHighlightedApprovalItem(item) ? "route-highlight" : ""}`} key={getActionId(item)}>
-                <div>
-                  <strong>{sanitizeVisibleAiText(item?.title)}</strong>
-                  <p>{shortRecommendation(item)}</p>
-                  <small>{formatDate(item?.created_at)} · {item?.action_type}</small>
-                </div>
-                <b>{getActionStatus(item) === "pending_approval" ? "Ждёт одобрения" : getActionStatus(item)}</b>
-              </article>
-            ))}
-          </div>
-        </Panel>
-
-        <Panel>
-          <div className="panel-head">
-            <div>
               <span className="eyebrow">Контроль качества</span>
               <h3>Ожидают и требуют внимания</h3>
             </div>
           </div>
           <div className="approval-lanes">
             <div>
-              <span>Pending actions</span>
-              <strong>{pendingActions.length}</strong>
-              <p>Черновики, follow-up и next best actions ждут решения менеджера.</p>
+              <span>Pending focus actions</span>
+              <strong>{approvalMetrics.needsApproval || 0}</strong>
+              <p>Фокусные черновики, follow-up и next best actions ждут решения менеджера.</p>
             </div>
             <div>
-              <span>Failed actions</span>
-              <strong>{failedActions.length}</strong>
-              <p>Ошибки исполнения остаются видимыми для безопасного ручного восстановления.</p>
+              <span>Failed unresolved</span>
+              <strong>{approvalMetrics.failedUnresolved || 0}</strong>
+              <p>Ошибки без более свежего успешного fallback остаются видимыми для восстановления.</p>
+            </div>
+            <div>
+              <span>Safety history</span>
+              <strong>{approvalMetrics.safetyHistory || 0}</strong>
+              <p>Защитные и тестовые события доступны в журнале, но не шумят в Focus Queue.</p>
             </div>
           </div>
         </Panel>
