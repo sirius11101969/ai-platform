@@ -17,7 +17,8 @@
     "test:ai-execution-runner-openai-persistence": "node tests/aiExecutionRunnerOpenAiPersistence.test.js",
     "test:autonomous-execution-loop": "node tests/autonomousExecutionLoop.test.js",
     "test:ai-execution-runner-sales-followup": "node tests/aiExecutionRunnerSalesFollowup.test.js",
-    "test:ai-sequence-orchestrator": "node tests/aiSequenceOrchestrator.test.js"
+    "test:ai-sequence-orchestrator": "node tests/aiSequenceOrchestrator.test.js",
+    "test:ai-sequence-routes-auth": "node tests/aiSequenceRoutesAuth.test.js"
   },
   "dependencies": {
     "axios": "^1.6.0",
