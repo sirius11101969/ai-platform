@@ -1875,9 +1875,26 @@ button { font: inherit; }
 
 /* Route-target highlight for cross-workflow CTA navigation */
 .route-highlight {
-  outline: 2px solid rgba(124, 92, 255, 0.95);
-  box-shadow: 0 0 0 4px rgba(124, 92, 255, 0.18), 0 18px 45px rgba(124, 92, 255, 0.2);
+  outline: 2px solid rgba(34, 211, 238, 0.95);
+  box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.16), 0 0 30px rgba(34, 211, 238, 0.28);
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.12), rgba(168, 85, 247, 0.08));
   animation: route-highlight-pulse 1.6s ease-in-out 2;
+}
+
+.approval-row .approval-route-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-top: 8px;
+  padding: 4px 10px;
+  border: 1px solid rgba(34, 211, 238, 0.55);
+  border-radius: 999px;
+  background: rgba(34, 211, 238, 0.14);
+  color: #bff8ff;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
 }
 
 @keyframes route-highlight-pulse {
