@@ -8,6 +8,7 @@ const { containsForbiddenCustomerCopy } = require('../customerCopyGuard')
 const { sanitizeAiActionPayload, sanitizeAiCopy } = require('../../utils/aiCopySanitizer')
 const aiSequenceOrchestratorService = require('../aiSequenceOrchestratorService')
 const aiRevenueIntelligenceService = require('../aiRevenueIntelligenceService')
+const voiceOutreachService = require('../voiceOutreachService')
 
 const RUNNER_LOG_PREFIX = '[ai-execution-runner]'
 const DEFAULT_QUEUES = ['default', 'priority', 'ai-execution']
@@ -745,6 +746,12 @@ async function executeJob(job) {
   }
   if (job.job_type === aiRevenueIntelligenceService.REVENUE_FORECAST_GENERATION_JOB_TYPE) {
     return aiRevenueIntelligenceService.executeRevenueForecastGenerationJob(job)
+  }
+  if (job.job_type === voiceOutreachService.VOICE_OUTREACH_CALL_JOB_TYPE) {
+    return voiceOutreachService.executeVoiceOutreachCallJob(job)
+  }
+  if (job.job_type === voiceOutreachService.VOICE_CALL_ANALYSIS_JOB_TYPE) {
+    return voiceOutreachService.executeVoiceCallAnalysisJob(job)
   }
   const error = new Error(`Unsupported AI execution job type: ${job.job_type}`)
   error.nonRetryable = true

@@ -2,6 +2,7 @@ const pool = require('../db/pool')
 const { addTimelineEvent } = require('./timelineService')
 const { sanitizeAiActionPayload } = require('../utils/aiCopySanitizer')
 const { shouldSkipFollowupForCooldown, DEFAULT_FOLLOWUP_COOLDOWN_HOURS } = require('./followupCooldownService')
+const { VOICE_OUTREACH_CALL_JOB_TYPE } = require('./voiceOutreachService')
 
 const SALES_SEQUENCE_STEP_GENERATION_JOB_TYPE = 'sales_sequence_step_generation'
 const SEQUENCE_ACTION_TYPE = 'sales_sequence_followup_draft'
@@ -27,7 +28,9 @@ function normalizePositiveInteger(value, fallback) {
 
 function normalizeChannel(channel) {
   const normalized = String(channel || '').trim().toLowerCase()
-  return normalized === 'email' ? 'email' : 'telegram'
+  if (normalized === 'email') return 'email'
+  if (normalized === 'voice') return 'voice'
+  return 'telegram'
 }
 
 function mapLeadSequence(row = {}) {
@@ -272,18 +275,22 @@ async function enqueueDueSequenceSteps({ client = pool, queueName = DEFAULT_QUEU
       skipped.push({ leadSequenceId: sequence.id, reason: cooldown.reason, retryAt: retryAt.toISOString() })
       continue
     }
-    const idempotencyKey = `sales-sequence:${sequence.id}:step:${nextStepOrder}`
-    const payload = sanitizeAiActionPayload({ leadSequenceId: sequence.id, step: nextStepOrder })
+    const isVoiceStep = normalizeChannel(sequence.channel) === 'voice'
+    const idempotencyKey = `${isVoiceStep ? 'voice-sequence' : 'sales-sequence'}:${sequence.id}:step:${nextStepOrder}`
+    const payload = sanitizeAiActionPayload(isVoiceStep
+      ? { leadId: sequence.lead_id, sequenceId: sequence.id, leadSequenceId: sequence.id, step: nextStepOrder, provider: 'mock_provider', mockMode: true }
+      : { leadSequenceId: sequence.id, step: nextStepOrder })
+    const jobType = isVoiceStep ? VOICE_OUTREACH_CALL_JOB_TYPE : SALES_SEQUENCE_STEP_GENERATION_JOB_TYPE
     const jobResult = await query(client,
       `INSERT INTO ai_execution_jobs(workspace_id, user_id, queue_name, job_type, priority, status, payload, max_attempts, run_after, idempotency_key)
        VALUES($1::uuid, $2::uuid, $3::text, $4::text, 80, 'queued', $5::jsonb, 3, NOW(), $6::text)
        ON CONFLICT (workspace_id, idempotency_key) DO NOTHING
        RETURNING *`,
-      [sequence.workspace_id, sequence.user_id, queueName, SALES_SEQUENCE_STEP_GENERATION_JOB_TYPE, safeJsonb(payload), idempotencyKey]
+      [sequence.workspace_id, sequence.user_id, queueName, jobType, safeJsonb(payload), idempotencyKey]
     )
     if (jobResult.rowCount > 0) {
       await query(client, 'UPDATE ai_lead_sequences SET last_generated_at = NOW(), next_run_at = NULL, updated_at = NOW() WHERE id = $1::uuid', [sequence.id])
-      enqueued.push({ leadSequenceId: sequence.id, jobId: jobResult.rows[0].id, step: nextStepOrder })
+      enqueued.push({ leadSequenceId: sequence.id, jobId: jobResult.rows[0].id, step: nextStepOrder, jobType })
     } else {
       skipped.push({ leadSequenceId: sequence.id, reason: 'duplicate_job' })
     }

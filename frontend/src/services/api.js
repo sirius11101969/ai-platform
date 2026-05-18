@@ -396,6 +396,20 @@ export function analyzeAiRevenueLead(leadId) {
   return request(`/ai/revenue-intelligence/leads/${leadId}/analyze`, { method: 'POST' })
 }
 
+
+export function fetchAiVoiceCalls(params = {}) {
+  const query = new URLSearchParams(Object.entries(params).filter(([, value]) => value !== undefined && value !== null && value !== '')).toString()
+  return request(`/ai/voice/calls${query ? `?${query}` : ''}`)
+}
+
+export function createAiVoiceCall(payload = {}) {
+  return request('/ai/voice/call', { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export function fetchAiVoiceCall(id) {
+  return request(`/ai/voice/calls/${id}`)
+}
+
 export function fetchCrmActivity() {
   return request('/crm/activity')
 }
