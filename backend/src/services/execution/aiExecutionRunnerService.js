@@ -1,7 +1,7 @@
 const os = require('os')
 const pool = require('../../db/pool')
 const { writeExecutionLog } = require('./executionLogService')
-const { recordProviderUsage } = require('./providerUsageService')
+const { normalizeDbValue, recordProviderUsage } = require('./providerUsageService')
 const { OpenAiProvider } = require('../../providers/openAiProvider')
 
 const RUNNER_LOG_PREFIX = '[ai-execution-runner]'
@@ -13,7 +13,7 @@ const DEFAULT_OPENAI_TEXT_PROMPT = 'Напиши короткий безопас
 const MANAGER_SAFE_OPENAI_ERROR = 'OpenAI text generation could not be completed safely. Please check provider configuration or try again later.'
 
 function safeJson(value) {
-  return JSON.stringify(value ?? {})
+  return JSON.stringify(normalizeDbValue(value) ?? {})
 }
 
 function getWorkerNodeName() {
@@ -110,7 +110,7 @@ async function insertWorkerMetric({ workerNodeId, queueName, metricName, metricV
   await client.query(
     `INSERT INTO worker_metrics(worker_node_id, queue_name, metric_name, metric_value, labels)
      VALUES($1::uuid, $2::text, $3::text, $4::numeric, $5::jsonb)`,
-    [workerNodeId || null, queueName || null, metricName || null, Number(metricValue ?? 0), safeJson(labels)]
+    [normalizeDbValue(workerNodeId), normalizeDbValue(queueName), normalizeDbValue(metricName), Number(metricValue ?? 0), safeJson(labels)]
   )
 }
 
@@ -124,14 +124,14 @@ async function writeTaskHistory({ job, workerNodeId, previousStatus, nextStatus,
      RETURNING id`,
     [
       job.task_id,
-      job.workspace_id || null,
-      job.user_id || null,
-      previousStatus || null,
-      nextStatus,
-      workerNodeId || null,
+      normalizeDbValue(job.workspace_id),
+      normalizeDbValue(job.user_id),
+      normalizeDbValue(previousStatus),
+      normalizeDbValue(nextStatus),
+      normalizeDbValue(workerNodeId),
       job.attempt_count || 1,
-      latencyMs || null,
-      errorMessage || null,
+      normalizeDbValue(latencyMs || null),
+      normalizeDbValue(errorMessage),
       safeJson(metadata),
     ]
   )
@@ -145,7 +145,7 @@ async function claimNextJob({ queueName = DEFAULT_QUEUE_NAME, workerNode } = {})
     await client.query('BEGIN')
     const worker = workerNode || await registerWorkerNode(client)
     const workerLockResult = await client.query(
-      `SELECT * FROM worker_nodes WHERE id = $1 FOR UPDATE`,
+      `SELECT * FROM worker_nodes WHERE id = $1::uuid FOR UPDATE`,
       [worker.id]
     )
     const lockedWorker = workerLockResult.rows[0]
@@ -167,7 +167,7 @@ async function claimNextJob({ queueName = DEFAULT_QUEUE_NAME, workerNode } = {})
       `WITH next_job AS (
          SELECT id, status AS previous_status
            FROM ai_execution_jobs
-          WHERE queue_name = $1
+          WHERE queue_name = $1::text
             AND status IN ('queued', 'retrying')
             AND run_after <= NOW()
           ORDER BY priority ASC, run_after ASC, created_at ASC
@@ -176,7 +176,7 @@ async function claimNextJob({ queueName = DEFAULT_QUEUE_NAME, workerNode } = {})
        )
        UPDATE ai_execution_jobs jobs
           SET status = 'running',
-              locked_by = $2,
+              locked_by = $2::uuid,
               locked_at = NOW(),
               heartbeat_at = NOW(),
               timeout_at = NOW() + ($3::text || ' seconds')::interval,
@@ -193,7 +193,7 @@ async function claimNextJob({ queueName = DEFAULT_QUEUE_NAME, workerNode } = {})
       await client.query(
         `UPDATE worker_nodes
             SET heartbeat_at = NOW(), updated_at = NOW()
-          WHERE id = $1`,
+          WHERE id = $1::uuid`,
         [lockedWorker.id]
       )
       await client.query('COMMIT')
@@ -206,7 +206,7 @@ async function claimNextJob({ queueName = DEFAULT_QUEUE_NAME, workerNode } = {})
           SET current_concurrency = current_concurrency + 1,
               heartbeat_at = NOW(),
               updated_at = NOW()
-        WHERE id = $1`,
+        WHERE id = $1::uuid`,
       [lockedWorker.id]
     )
     await writeExecutionLog({
@@ -325,9 +325,9 @@ async function completeJob({ job, worker, result, startedAt }) {
               heartbeat_at = NOW(),
               timeout_at = NULL,
               updated_at = NOW()
-        WHERE id = $1
+        WHERE id = $1::uuid
           AND status = 'running'
-          AND locked_by = $2
+          AND locked_by = $2::uuid
         RETURNING *`,
       [job.id, worker.id, safeJson(result)]
     )
@@ -341,7 +341,7 @@ async function completeJob({ job, worker, result, startedAt }) {
           SET current_concurrency = GREATEST(current_concurrency - 1, 0),
               heartbeat_at = NOW(),
               updated_at = NOW()
-        WHERE id = $1`,
+        WHERE id = $1::uuid`,
       [worker.id]
     )
     await writeExecutionLog({
@@ -376,7 +376,7 @@ async function failJob({ job, worker, error, startedAt }) {
     await client.query('BEGIN')
     const freshResult = await client.query(
       `SELECT * FROM ai_execution_jobs
-        WHERE id = $1 AND status = 'running' AND locked_by = $2
+        WHERE id = $1::uuid AND status = 'running' AND locked_by = $2::uuid
         FOR UPDATE`,
       [job.id, worker.id]
     )
@@ -405,7 +405,7 @@ async function failJob({ job, worker, error, startedAt }) {
               timeout_at = NULL,
               run_after = ${runAfterSql},
               updated_at = NOW()
-        WHERE id = $1
+        WHERE id = $1::uuid
         RETURNING *`,
       [freshJob.id, worker.id, nextStatus, message, freshJob.attempt_count]
     )
@@ -418,10 +418,10 @@ async function failJob({ job, worker, error, startedAt }) {
            error_message, payload, attempts
          ) VALUES($1::uuid,$2::text,$3::uuid,$4::uuid,$5::text,$6::text,$7::jsonb,$8::integer)`,
         [
-          failedJob.workspace_id || null,
-          failedJob.queue_name,
-          failedJob.id,
-          failedJob.task_id || null,
+          normalizeDbValue(failedJob.workspace_id),
+          normalizeDbValue(failedJob.queue_name),
+          normalizeDbValue(failedJob.id),
+          normalizeDbValue(failedJob.task_id),
           'max_attempts_exhausted',
           message,
           safeJson(failedJob.payload),
@@ -435,7 +435,7 @@ async function failJob({ job, worker, error, startedAt }) {
           SET current_concurrency = GREATEST(current_concurrency - 1, 0),
               heartbeat_at = NOW(),
               updated_at = NOW()
-        WHERE id = $1`,
+        WHERE id = $1::uuid`,
       [worker.id]
     )
     await writeExecutionLog({
@@ -504,14 +504,14 @@ async function enqueueInternalTestJob({ queueName = DEFAULT_QUEUE_NAME, priority
       Number.isFinite(Number(priority)) ? Math.trunc(Number(priority)) : 100,
       safeJson({ source: 'api', createdFor: 'internal_test_execution', ...(payload || {}) }),
       normalizePositiveInteger(payload.maxAttempts, 3),
-      idempotencyKey || null,
+      normalizeDbValue(idempotencyKey),
     ]
   )
   if (result.rowCount > 0) return result.rows[0]
   if (!idempotencyKey) return null
   const existing = await pool.query(
-    `SELECT * FROM ai_execution_jobs WHERE workspace_id IS NULL AND idempotency_key = $1 LIMIT 1`,
-    [idempotencyKey]
+    `SELECT * FROM ai_execution_jobs WHERE workspace_id IS NULL AND idempotency_key = $1::text LIMIT 1`,
+    [normalizeDbValue(idempotencyKey)]
   )
   return existing.rows[0] || null
 }
@@ -534,14 +534,14 @@ async function enqueueOpenAiTextGenerationJob({ queueName = DEFAULT_QUEUE_NAME, 
       Number.isFinite(Number(priority)) ? Math.trunc(Number(priority)) : 100,
       safeJson(normalizedPayload),
       normalizePositiveInteger(payload.maxAttempts || payload.max_attempts, 3),
-      idempotencyKey || null,
+      normalizeDbValue(idempotencyKey),
     ]
   )
   if (result.rowCount > 0) return result.rows[0]
   if (!idempotencyKey) return null
   const existing = await pool.query(
-    `SELECT * FROM ai_execution_jobs WHERE workspace_id IS NULL AND idempotency_key = $1 LIMIT 1`,
-    [idempotencyKey]
+    `SELECT * FROM ai_execution_jobs WHERE workspace_id IS NULL AND idempotency_key = $1::text LIMIT 1`,
+    [normalizeDbValue(idempotencyKey)]
   )
   return existing.rows[0] || null
 }
@@ -552,7 +552,7 @@ async function getHealth({ queueName = null } = {}) {
   const params = []
   if (queueName) {
     params.push(normalizeQueueName(queueName))
-    filters.push(`queue_name = $${params.length}`)
+    filters.push(`queue_name = $${params.length}::text`)
   }
   const whereSql = filters.length ? `WHERE ${filters.join(' AND ')}` : ''
   const countResult = await pool.query(
