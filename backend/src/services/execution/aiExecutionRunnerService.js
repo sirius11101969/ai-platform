@@ -6,6 +6,7 @@ const { OpenAiProvider } = require('../../providers/openAiProvider')
 const { redactForExecutionLog } = require('./redaction')
 const { containsForbiddenCustomerCopy } = require('../customerCopyGuard')
 const { sanitizeAiActionPayload, sanitizeAiCopy } = require('../../utils/aiCopySanitizer')
+const aiSequenceOrchestratorService = require('../aiSequenceOrchestratorService')
 
 const RUNNER_LOG_PREFIX = '[ai-execution-runner]'
 const DEFAULT_QUEUES = ['default', 'priority', 'ai-execution']
@@ -18,6 +19,8 @@ const MANAGER_SAFE_OPENAI_ERROR = 'OpenAI text generation could not be completed
 const SALES_FOLLOWUP_SYSTEM_PROMPT = 'Ты AI sales assistant. Пиши короткий безопасный follow-up. Не выдумывай факты. Не раскрывай внутренний контекст.'
 const SALES_FOLLOWUP_SAFE_ERROR = 'AI Sales follow-up could not be generated safely. Please review the lead and try again later.'
 const SALES_FOLLOWUP_MAX_CHARS = 600
+const SALES_SEQUENCE_MAX_CHARS = 700
+const SALES_SEQUENCE_SYSTEM_PROMPT = 'You are a safe sales assistant. Write only customer-facing follow-up copy. Never include internal CRM data, AI terminology, fake urgency, pressure, or hallucinated promises.'
 
 function safeJsonb(value) {
   return JSON.stringify(normalizeDbValue(value ?? {}) ?? {})
@@ -111,6 +114,13 @@ function sanitizeSalesFollowupPayload(payload = {}) {
   return { leadId, channel, tone, language, model }
 }
 
+function sanitizeSalesSequencePayload(payload = {}) {
+  const leadSequenceId = normalizeNullableText(payload.leadSequenceId || payload.lead_sequence_id)
+  const step = normalizePositiveInteger(payload.step, 1)
+  const model = normalizeNullableText(payload.model)
+  return { leadSequenceId, step, model }
+}
+
 function sanitizeShortContextText(value, maxLength = 280) {
   return String(value || '')
     .replace(/[\x00-\x1F\x7F]/g, ' ')
@@ -121,7 +131,7 @@ function sanitizeShortContextText(value, maxLength = 280) {
     .slice(0, maxLength)
 }
 
-function sanitizeCustomerMessage(text) {
+function sanitizeCustomerMessage(text, maxChars = SALES_FOLLOWUP_MAX_CHARS) {
   const raw = String(text || '').replace(/[\x00-\x1F\x7F]/g, ' ').replace(/\s+/g, ' ').trim()
   if (!raw) return ''
   const unsafePatterns = [
@@ -139,7 +149,7 @@ function sanitizeCustomerMessage(text) {
     .replace(/\b(aiScore|aiPriority|aiRiskLevel|aiScoringReason)\b/ig, '')
     .replace(/\s+/g, ' ')
     .trim()
-  if (sanitized.length > SALES_FOLLOWUP_MAX_CHARS) sanitized = sanitized.slice(0, SALES_FOLLOWUP_MAX_CHARS).trim()
+  if (sanitized.length > maxChars) sanitized = sanitized.slice(0, maxChars).trim()
   return sanitized
 }
 
@@ -560,6 +570,162 @@ async function executeSalesFollowupGenerationJob(job) {
   }
 }
 
+async function loadSalesSequenceContext(payload, job) {
+  const result = await query(pool,
+    `SELECT s.id AS lead_sequence_id, s.current_step, s.status AS sequence_status, s.lead_id, s.template_id,
+            t.workspace_id, t.name AS template_name, t.description AS template_description, t.channel,
+            st.step_order, st.delay_hours, st.goal, st.tone, st.instructions,
+            l.user_id, l.name, l.email, l.company, l.status, l.stage, l.source, l.next_step, l.metadata,
+            l.telegram_chat_id, l.telegram_username, l.first_name, l.last_name, l.last_message_at
+       FROM ai_lead_sequences s
+       JOIN ai_sequence_templates t ON t.id = s.template_id
+       JOIN ai_sequence_steps st ON st.template_id = s.template_id AND st.step_order = $2::integer
+       JOIN crm_leads l ON l.id = s.lead_id
+      WHERE s.id = $1::uuid
+        AND s.status = 'active'
+        AND ($3::uuid IS NULL OR t.workspace_id = $3::uuid)
+      LIMIT 1`,
+    [payload.leadSequenceId, payload.step, job.workspace_id]
+  )
+  const sequence = result.rows[0] || null
+  if (!sequence) return null
+  const [timeline, priorDrafts] = await Promise.all([
+    query(pool,
+      `SELECT event_type, title, body, source, created_at
+         FROM lead_timeline_events
+        WHERE workspace_id = $1::uuid AND lead_id = $2::uuid
+        ORDER BY created_at DESC
+        LIMIT 8`,
+      [sequence.workspace_id, sequence.lead_id]
+    ).catch(() => ({ rows: [] })),
+    query(pool,
+      `SELECT title, recommendation, payload, status, created_at
+         FROM ai_worker_queue
+        WHERE workspace_id = $1::uuid AND lead_id = $2::uuid
+          AND payload->>'source' = $3::text
+        ORDER BY created_at DESC
+        LIMIT 5`,
+      [sequence.workspace_id, sequence.lead_id, aiSequenceOrchestratorService.SALES_SEQUENCE_STEP_GENERATION_JOB_TYPE]
+    ).catch(() => ({ rows: [] })),
+  ])
+  return { sequence, timelineEvents: timeline.rows || [], priorDrafts: priorDrafts.rows || [] }
+}
+
+function buildSalesSequencePrompt({ sequence, timelineEvents = [], priorDrafts = [] }) {
+  const lead = normalizeLeadForPrompt(sequence)
+  const timeline = timelineEvents.slice(0, 8).map((event) => ({
+    type: sanitizeShortContextText(event.event_type, 80),
+    title: sanitizeShortContextText(event.title, 120),
+    body: sanitizeShortContextText(event.body, 180),
+  }))
+  const prior = priorDrafts.slice(0, 5).map((draft) => ({
+    status: sanitizeShortContextText(draft.status, 40),
+    text: sanitizeShortContextText(draft.payload?.customerText || draft.payload?.message || draft.recommendation, 180),
+  }))
+  return [
+    `Write only the next customer-facing sales follow-up message. Channel: ${sequence.channel}. Tone: ${sanitizeShortContextText(sequence.tone, 80)}.`,
+    `Lead context (safe public fields only): ${JSON.stringify(lead)}`,
+    `Sequence template: ${sanitizeShortContextText(sequence.template_name, 120)}. Step ${sequence.step_order}: ${sanitizeShortContextText(sequence.goal, 160)}.`,
+    `Step instructions: ${sanitizeShortContextText(sequence.instructions, 260)}.`,
+    `Recent timeline: ${JSON.stringify(timeline)}`,
+    `Prior generated customer messages: ${JSON.stringify(prior)}`,
+    'Safety rules: no spammy pressure, no fake urgency, no internal CRM fields, no AI terminology, no unsupported promises. Maximum 700 characters. Return message text only.',
+  ].join('\n')
+}
+
+function assertSafeSalesSequenceMessage(text, context = {}) {
+  const customerText = sanitizeCustomerMessage(text, SALES_SEQUENCE_MAX_CHARS)
+  const unsafePatterns = /(limited time|act now|urgent|guaranteed|guarantee|AI|CRM data|internal|score|risk|priority|hallucinat)/i
+  if (!customerText || containsForbiddenCustomerCopy(customerText) || unsafePatterns.test(customerText)) {
+    console.warn('[ai-sales-sequence] unsafe sequence copy blocked', context)
+    throw createManagerSafeExecutionError(
+      'AI sales sequence step could not be generated safely. Please review the sequence and try again later.',
+      'Generated sales sequence step failed safety checks',
+      { nonRetryable: true, provider: 'openai', operation: 'responses.create' }
+    )
+  }
+  return customerText
+}
+
+async function executeSalesSequenceStepGenerationJob(job) {
+  const payload = sanitizeSalesSequencePayload(job.payload || {})
+  if (!payload.leadSequenceId) {
+    throw createManagerSafeExecutionError('AI sales sequence step requires a leadSequenceId.', 'sales_sequence_step_generation payload.leadSequenceId is missing', { nonRetryable: true })
+  }
+  const context = await loadSalesSequenceContext(payload, job)
+  if (!context) {
+    throw createManagerSafeExecutionError('Lead sequence step was not found or is no longer active.', `lead sequence not found for ${payload.leadSequenceId} step ${payload.step}`, { nonRetryable: true })
+  }
+  const { sequence } = context
+  const provider = new OpenAiProvider({ model: payload.model })
+  const model = payload.model || provider.model
+  if (!isOpenAiApiKeyConfigured()) {
+    throw createManagerSafeExecutionError('OpenAI provider is not configured for AI sales sequences.', 'OPENAI_API_KEY is missing or set to replace_me', { nonRetryable: true, provider: 'openai', operation: 'responses.create', model })
+  }
+  const prompt = buildSalesSequencePrompt(context)
+  const metadata = {
+    workspaceId: sequence.workspace_id || job.workspace_id,
+    userId: job.user_id || sequence.user_id,
+    jobId: job.id,
+    traceId: `ai-sales-sequence-${job.id}`,
+    leadSequenceId: sequence.lead_sequence_id,
+    step: payload.step,
+  }
+  try {
+    const response = await provider.createResponse({
+      input: prompt,
+      instructions: SALES_SEQUENCE_SYSTEM_PROMPT,
+      model,
+      temperature: 0.25,
+      maxOutputTokens: 280,
+      metadata,
+    })
+    const customerText = assertSafeSalesSequenceMessage(response.text, { jobId: job.id, leadSequenceId: sequence.lead_sequence_id, step: payload.step })
+    const recommendation = sanitizeAiCopy(`Sequence step ${payload.step} was generated because the lead is active in ${sequence.template_name}, the step goal is ${sequence.goal}, and no cooldown or stop condition blocked it. Review before sending.`)
+    return {
+      ok: true,
+      jobId: job.id,
+      jobType: job.job_type,
+      provider: response.provider,
+      model: response.model,
+      responseId: response.id,
+      text: customerText,
+      usage: response.usage,
+      latencyMs: response.latencyMs,
+      startedAt: response.startedAt,
+      completedAt: new Date().toISOString(),
+      aiWorkerQueueDraft: {
+        workspaceId: sequence.workspace_id || job.workspace_id,
+        userId: job.user_id || sequence.user_id,
+        leadId: sequence.lead_id,
+        leadName: sequence.name,
+        actionType: aiSequenceOrchestratorService.SEQUENCE_ACTION_TYPE,
+        title: `Sequence step ${payload.step} — ${sequence.name || 'lead'}`,
+        recommendation,
+        sequence: { leadSequenceId: sequence.lead_sequence_id, step: payload.step },
+        payload: sanitizeAiActionPayload({
+          customerText,
+          leadId: sequence.lead_id,
+          leadSequenceId: sequence.lead_sequence_id,
+          templateId: sequence.template_id,
+          templateName: sequence.template_name,
+          step: payload.step,
+          goal: sequence.goal,
+          channel: sequence.channel,
+          source: aiSequenceOrchestratorService.SALES_SEQUENCE_STEP_GENERATION_JOB_TYPE,
+          executionJobId: job.id,
+          noAutoSend: true,
+        }),
+      },
+    }
+  } catch (error) {
+    if (error.safeMessage) throw error
+    const safeError = createManagerSafeExecutionError('AI sales sequence step could not be generated safely. Please review the sequence and try again later.', error && error.message ? error.message : String(error), { provider: 'openai', operation: 'responses.create', model })
+    safeError.providerUsageRecorded = true
+    throw safeError
+  }
+}
+
 async function executeJob(job) {
   if (job.job_type === 'internal_test_execution') {
     return executeInternalTestJob(job)
@@ -569,6 +735,9 @@ async function executeJob(job) {
   }
   if (job.job_type === SALES_FOLLOWUP_GENERATION_JOB_TYPE) {
     return executeSalesFollowupGenerationJob(job)
+  }
+  if (job.job_type === aiSequenceOrchestratorService.SALES_SEQUENCE_STEP_GENERATION_JOB_TYPE) {
+    return executeSalesSequenceStepGenerationJob(job)
   }
   const error = new Error(`Unsupported AI execution job type: ${job.job_type}`)
   error.nonRetryable = true
@@ -603,6 +772,15 @@ async function completeJob({ job, worker, result, startedAt }) {
         [workerResult.rows[0].id, queueDraft.workspaceId, queueDraft.leadId, queueDraft.actionType, queueDraft.title, queueDraft.recommendation, safeJsonb(queueDraft.payload)]
       )
       persistedResult.aiWorkerQueueId = queueResult.rows[0]?.id || null
+      if (queueDraft.sequence?.leadSequenceId && queueDraft.sequence?.step) {
+        await aiSequenceOrchestratorService.markStepGenerated({
+          client,
+          leadSequenceId: queueDraft.sequence.leadSequenceId,
+          step: queueDraft.sequence.step,
+          queueId: persistedResult.aiWorkerQueueId,
+          executionJobId: job.id,
+        })
+      }
     }
 
     const updateResult = await query(client,
@@ -924,11 +1102,15 @@ module.exports = {
     DEFAULT_OPENAI_TEXT_PROMPT,
     OPENAI_TEXT_GENERATION_JOB_TYPE,
     SALES_FOLLOWUP_GENERATION_JOB_TYPE,
+    SALES_SEQUENCE_SYSTEM_PROMPT,
     SALES_FOLLOWUP_SYSTEM_PROMPT,
     completeJob,
     executeJob,
     executeOpenAiTextGenerationJob,
     executeSalesFollowupGenerationJob,
+    executeSalesSequenceStepGenerationJob,
+    sanitizeSalesSequencePayload,
+    assertSafeSalesSequenceMessage,
     failJob,
     getSafeErrorMessage,
     isOpenAiApiKeyConfigured,
