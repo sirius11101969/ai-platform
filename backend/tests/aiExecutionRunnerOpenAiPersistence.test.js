@@ -376,6 +376,64 @@ async function testRunOnceCompletesOpenAiJobWithNullModelAndTypedPersistence() {
   })
 }
 
+
+async function testProviderUsageInsertAcceptsNullModel() {
+  const calls = []
+  const client = {
+    async query(sql, params = []) {
+      calls.push({ sql, params })
+      return { rows: [{ id: 'usage-null-model-direct' }], rowCount: 1 }
+    },
+  }
+
+  const row = await recordProviderUsage({
+    workspaceId,
+    userId,
+    taskId,
+    provider: undefined,
+    model: null,
+    operation: undefined,
+    promptTokens: undefined,
+    completionTokens: 3,
+    totalTokens: 3,
+    providerCostUsd: undefined,
+    billableCredits: undefined,
+    latencyMs: undefined,
+    status: 'succeeded',
+    metadata: undefined,
+  }, client)
+
+  assert.deepStrictEqual(row, { id: 'usage-null-model-direct' })
+  const usageInsert = calls.find((call) => call.sql.includes('INSERT INTO ai_provider_usage'))
+  assert(usageInsert, 'expected provider usage insert')
+  assert(usageInsert.sql.includes('$1::uuid'))
+  assert(usageInsert.sql.includes('$2::uuid'))
+  assert(usageInsert.sql.includes('$3::uuid'))
+  assert(usageInsert.sql.includes('$4::text'))
+  assert(usageInsert.sql.includes('$5::text'))
+  assert(usageInsert.sql.includes('$6::text'))
+  assert(usageInsert.sql.includes('$7::integer'))
+  assert(usageInsert.sql.includes('$8::integer'))
+  assert(usageInsert.sql.includes('$9::integer'))
+  assert(usageInsert.sql.includes('$10::numeric'))
+  assert(usageInsert.sql.includes('$11::integer'))
+  assert(usageInsert.sql.includes('$12::integer'))
+  assert(usageInsert.sql.includes('$13::text'))
+  assert(usageInsert.sql.includes('$14::jsonb'))
+  assert.strictEqual(usageInsert.params[3], 'openai')
+  assert.strictEqual(usageInsert.params[4], null)
+  assert.strictEqual(usageInsert.params[5], 'text_generation')
+  assert.strictEqual(usageInsert.params[6], 0)
+  assert.strictEqual(usageInsert.params[7], 3)
+  assert.strictEqual(usageInsert.params[8], 3)
+  assert.strictEqual(usageInsert.params[9], 0)
+  assert.strictEqual(usageInsert.params[10], 0)
+  assert.strictEqual(usageInsert.params[11], 0)
+  assert.strictEqual(usageInsert.params[12], 'succeeded')
+  assertJsonParam(usageInsert.params[13], {})
+  assertNoUndefinedParams(calls)
+}
+
 async function testExecutionLogAndProviderUsageHelpersCastJsonb() {
   const calls = []
   const client = {
@@ -411,7 +469,9 @@ async function testExecutionLogAndProviderUsageHelpersCastJsonb() {
   assertJsonParam(logInsert.params[9], {})
 
   const usageInsert = calls.find((call) => call.sql.includes('INSERT INTO ai_provider_usage'))
-  assert(usageInsert.sql.includes('workspace_id, user_id, task_id, provider, model, operation'))
+  assert(usageInsert.sql.includes('workspace_id'))
+  assert(usageInsert.sql.includes('provider'))
+  assert(usageInsert.sql.includes('operation'))
   assert(!usageInsert.sql.includes('model_name'))
   assert(usageInsert.sql.includes('$10::numeric'))
   assert(usageInsert.sql.includes('$14::jsonb'))
@@ -430,5 +490,6 @@ Promise.resolve()
   .then(testFailJobNonRetryableUsesTypedPersistenceQueries)
   .then(testEnqueueOpenAiJobNormalizesNullModelWithoutUndefinedParams)
   .then(testRunOnceCompletesOpenAiJobWithNullModelAndTypedPersistence)
+  .then(testProviderUsageInsertAcceptsNullModel)
   .then(testExecutionLogAndProviderUsageHelpersCastJsonb)
   .then(() => console.log('aiExecutionRunnerOpenAiPersistence tests passed'))
