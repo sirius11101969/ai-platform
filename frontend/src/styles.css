@@ -2114,6 +2114,59 @@ button { font: inherit; }
   border-color: rgba(255, 205, 86, .18);
 }
 
+.ai-manager-event.grouped-cooldown {
+  border-color: rgba(117, 239, 255, .28);
+  background: linear-gradient(135deg, rgba(117, 239, 255, .08), rgba(255, 205, 86, .07)), rgba(255,255,255,.045);
+}
+
+.ai-manager-event-content {
+  min-width: 0;
+}
+
+.ai-manager-event-title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ai-manager-event-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 4px 9px;
+  border: 1px solid rgba(117, 239, 255, .32);
+  border-radius: 999px;
+  background: rgba(117, 239, 255, .10);
+  color: #dffbff;
+  font-size: 12px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.ai-manager-event-leads {
+  margin: 10px 0 0;
+  padding-left: 20px;
+  color: #d8e3ff;
+  line-height: 1.5;
+}
+
+.ai-manager-event-toggle {
+  margin-top: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #75efff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.ai-manager-event-toggle:hover {
+  color: #eafcff;
+}
+
 .ai-manager-event strong {
   display: block;
   color: #f8fdff;

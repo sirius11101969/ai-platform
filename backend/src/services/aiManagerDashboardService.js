@@ -270,16 +270,25 @@ async function getSafetyEvents(workspaceId, rangeStart) {
 
   const events = await pool.query(
     `SELECT * FROM (
-       SELECT 'copy_guard_block' AS type, COALESCE(q.title, 'Copy guard blocked unsafe draft') AS title, COALESCE(q.error_message, q.recommendation, '') AS detail, COALESCE(q.updated_at, q.created_at) AS created_at
+       SELECT q.id::text AS id, 'copy_guard_block' AS type, COALESCE(q.title, 'Copy guard blocked unsafe draft') AS title, COALESCE(q.error_message, q.recommendation, '') AS detail, COALESCE(q.updated_at, q.created_at) AS created_at, q.lead_id::text AS lead_id, COALESCE(l.name, '') AS lead_name
        FROM ai_worker_queue q
+       LEFT JOIN crm_leads l ON l.id = q.lead_id AND l.workspace_id = q.workspace_id
        WHERE q.workspace_id = $1 AND ${isCopyGuardTextSql('q')} AND COALESCE(q.updated_at, q.created_at) >= ${rangeStart}
        UNION ALL
-       SELECT event_type AS type, title, COALESCE(body, '') AS detail, created_at
-       FROM lead_timeline_events
-       WHERE workspace_id = $1 AND (event_type = ANY($2::text[]) OR title ~* 'cooldown|copy guard|duplicate|fallback|route highlight') AND created_at >= ${rangeStart}
+       SELECT t.id::text AS id,
+              t.event_type AS type,
+              t.title,
+              COALESCE(t.body, '') AS detail,
+              t.created_at,
+              t.lead_id::text AS lead_id,
+              COALESCE(NULLIF(t.metadata->>'leadName', ''), l.name, '') AS lead_name
+       FROM lead_timeline_events t
+       LEFT JOIN crm_leads l ON l.id = t.lead_id AND l.workspace_id = t.workspace_id
+       WHERE t.workspace_id = $1 AND (t.event_type = ANY($2::text[]) OR t.title ~* 'cooldown|copy guard|duplicate|fallback|route highlight') AND t.created_at >= ${rangeStart}
        UNION ALL
-       SELECT 'failed_unresolved' AS type, q.title, COALESCE(q.error_message, '') AS detail, COALESCE(q.updated_at, q.created_at) AS created_at
+       SELECT q.id::text AS id, 'failed_unresolved' AS type, q.title, COALESCE(q.error_message, '') AS detail, COALESCE(q.updated_at, q.created_at) AS created_at, q.lead_id::text AS lead_id, COALESCE(l.name, '') AS lead_name
        FROM ai_worker_queue q
+       LEFT JOIN crm_leads l ON l.id = q.lead_id AND l.workspace_id = q.workspace_id
        WHERE q.workspace_id = $1 AND q.status = 'failed' AND NOT ${isCopyGuardTextSql('q')} AND COALESCE(q.updated_at, q.created_at) >= ${rangeStart}
      ) safety
      ORDER BY created_at DESC
@@ -289,7 +298,15 @@ async function getSafetyEvents(workspaceId, rangeStart) {
 
   return {
     ...counts,
-    items: events.rows.map((row) => ({ type: row.type, title: row.title, detail: row.detail || '', createdAt: row.created_at })),
+    items: events.rows.map((row, index) => ({
+      id: row.id || `${row.type || 'event'}-${row.created_at || index}-${index}`,
+      type: row.type,
+      title: row.title,
+      detail: row.detail || '',
+      createdAt: row.created_at,
+      leadId: row.lead_id || '',
+      leadName: row.lead_name || '',
+    })),
   }
 }
 

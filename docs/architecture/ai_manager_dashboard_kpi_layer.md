@@ -126,6 +126,14 @@ The safety section includes summary counters and recent event items for:
 - fallback-to-email events
 - route-highlight recoveries if tracked
 
+Cooldown timeline rows remain raw and unchanged in `lead_timeline_events`, but the frontend safety feed runs `groupSafetyEvents(events)` before rendering. The helper groups only duplicate follow-up cooldown rows by event type, body/detail text, and an hourly date bucket. When multiple matching cooldown rows are present, the UI replaces the repeated cards with one manager-readable card:
+
+- title: `Follow-up cooldown prevented duplicates`
+- badge: `<count> prevented`
+- body: `Cooldown guard предотвратил повторные follow-up для <count> лидов:` followed by lead names
+
+Single-item rendering is intentionally preserved for copy guard blocks, failed unresolved actions, fallback-to-email events, route-highlight recoveries, and single cooldown rows. This keeps KPI counts accurate while removing visual noise from repeated `AI follow-up пропущен` / `Недавнее исходящее сообщение клиенту — cooldown 48 часов.` events.
+
 ## Empty, loading, and error states
 
 The frontend never assumes that KPI data exists. It renders:
@@ -144,6 +152,7 @@ AI ещё не накопил достаточно действий для KPI.
 2. Confirm `GET /api/ai/manager-dashboard?range=7d` returns `200`.
 3. Confirm KPI cards render and show non-zero values when demo or production data exists.
 4. Confirm “Дмитрий Волков” email sends appear in recent wins when `email_messages` contains the sent demo email.
-5. Confirm “Telegram Connect Test” cooldown audit appears when `lead_timeline_events` contains `ai_followup_skipped_cooldown` metadata/title for that lead.
-6. Confirm unsafe copy guard tests appear in safety events when queue items are blocked by copy guard.
-7. Confirm no console `TypeError` and no black screen on loading, error, or empty data.
+5. Confirm a single “Telegram Connect Test” cooldown audit appears when there is only one `ai_followup_skipped_cooldown` row in the current hourly bucket.
+6. Confirm repeated cooldown rows with the same event type/body/hour render as one `Follow-up cooldown prevented duplicates` safety card with the `<count> prevented` badge and expandable lead names.
+7. Confirm unsafe copy guard tests appear as individual safety events when queue items are blocked by copy guard.
+8. Confirm no console `TypeError` and no black screen on loading, error, or empty data.

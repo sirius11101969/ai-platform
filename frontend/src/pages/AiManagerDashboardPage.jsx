@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Panel, PageHeading, StatCard } from "../components/AppShell";
 import { fetchAiManagerDashboard } from "../services/api";
+import { groupSafetyEvents } from "../utils/aiManagerDashboardSafety";
 
 const rangeOptions = [
   { value: "today", label: "Today" },
@@ -63,18 +64,49 @@ function MiniMetric({ label, value, hint, danger = false }) {
 }
 
 function TimelineList({ items, empty, safety = false }) {
+  const [expandedGroups, setExpandedGroups] = useState({});
+
   if (!items?.length) return <p className="empty-state">{empty}</p>;
+
+  const toggleGroup = (key) => {
+    setExpandedGroups((current) => ({ ...current, [key]: !current[key] }));
+  };
+
   return (
     <div className="ai-manager-event-list">
-      {items.map((item, index) => (
-        <article className={`ai-manager-event ${safety ? "safety" : ""}`} key={`${item.type || "event"}-${item.createdAt || index}-${index}`}>
-          <div>
-            <strong>{item.title || "AI event"}</strong>
-            {item.detail && <p>{item.detail}</p>}
-          </div>
-          <time>{formatDate(item.createdAt)}</time>
-        </article>
-      ))}
+      {items.map((item, index) => {
+        const itemKey = item.key || item.id || `${item.type || "event"}-${item.createdAt || index}-${index}`;
+        const isGroupedCooldown = item.grouped && item.groupKind === "cooldown";
+        const isExpanded = Boolean(expandedGroups[itemKey]);
+        const visibleLeadNames = isExpanded ? item.leadNames : item.leadNames?.slice(0, 3);
+
+        return (
+          <article className={`ai-manager-event ${safety ? "safety" : ""} ${isGroupedCooldown ? "grouped-cooldown" : ""}`} key={itemKey}>
+            <div className="ai-manager-event-content">
+              <div className="ai-manager-event-title-row">
+                <strong>{item.title || "AI event"}</strong>
+                {item.badge && <span className="ai-manager-event-badge">{item.badge}</span>}
+              </div>
+              {item.detail && <p>{item.detail}</p>}
+              {isGroupedCooldown && visibleLeadNames?.length > 0 && (
+                <>
+                  <ul className="ai-manager-event-leads">
+                    {visibleLeadNames.map((leadName, leadIndex) => (
+                      <li key={`${itemKey}-lead-${leadName}-${leadIndex}`}>{leadName}</li>
+                    ))}
+                  </ul>
+                  {item.leadNames.length > 3 && (
+                    <button className="ai-manager-event-toggle" type="button" onClick={() => toggleGroup(itemKey)}>
+                      {isExpanded ? "Свернуть" : `Показать ещё ${item.leadNames.length - 3}`}
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
+            <time>{formatDate(item.createdAt)}</time>
+          </article>
+        );
+      })}
     </div>
   );
 }
@@ -113,6 +145,7 @@ export default function AiManagerDashboardPage() {
   const safetyEvents = dashboard?.safetyEvents || {};
   const recentWins = Array.isArray(dashboard?.recentWins) ? dashboard.recentWins : [];
   const safetyItems = Array.isArray(safetyEvents?.items) ? safetyEvents.items : [];
+  const groupedSafetyItems = useMemo(() => groupSafetyEvents(safetyItems), [safetyItems]);
 
   const hasData = useMemo(() => hasAnyData([actionFunnel, communicationOutcomes, workloadReduction, pipelineHealth, revenueAttribution, safetyEvents]) || recentWins.length > 0 || safetyItems.length > 0, [actionFunnel, communicationOutcomes, workloadReduction, pipelineHealth, revenueAttribution, safetyEvents, recentWins.length, safetyItems.length]);
 
@@ -207,7 +240,7 @@ export default function AiManagerDashboardPage() {
                 <MiniMetric label="Fallback-to-email events" value={formatNumber(safetyEvents.fallback_to_email_events)} />
                 <MiniMetric label="Route-highlight recoveries" value={formatNumber(safetyEvents.route_highlight_recoveries)} />
               </div>
-              <TimelineList items={safetyItems} empty="Safety events пока нет." safety />
+              <TimelineList items={groupedSafetyItems} empty="Safety events пока нет." safety />
             </Panel>
           </section>
 
