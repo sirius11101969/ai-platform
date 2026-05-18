@@ -1057,6 +1057,11 @@ async function migrate() {
     await pool.query(fs.readFileSync(enterpriseAiMigration, 'utf8'))
   }
 
+  const aiSequenceMigration = path.resolve(__dirname, '../../../db/migrations/024_ai_sequence_orchestrator.sql')
+  if (fs.existsSync(aiSequenceMigration)) {
+    await pool.query(fs.readFileSync(aiSequenceMigration, 'utf8'))
+  }
+
   console.log('[schema] telegram migrations skipped safely')
 }
 

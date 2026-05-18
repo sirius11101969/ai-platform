@@ -2,6 +2,7 @@ const os = require('os')
 const pool = require('../../db/pool')
 const aiExecutionRunnerService = require('./aiExecutionRunnerService')
 const { writeExecutionLog } = require('./executionLogService')
+const aiSequenceOrchestratorService = require('../aiSequenceOrchestratorService')
 
 const LOOP_LOG_PREFIX = '[autonomous-execution-loop]'
 const DEFAULT_QUEUE_NAME = process.env.AI_EXECUTION_QUEUE_NAME || 'ai-execution'
@@ -217,6 +218,8 @@ class AutonomousExecutionLoop {
       logLoop('polling', { queueName: this.queueName, activeJobs: this.activeJobs.size, maxParallel: this.maxParallel })
       await this.writeHeartbeat()
       await withRedisLock(this.redisClient, `ai-execution:${this.queueName}:recovery-lock`, RECOVERY_LOCK_TTL_MS, () => recoverStuckJobs({ queueName: this.queueName }))
+      await withRedisLock(this.redisClient, `ai-execution:${this.queueName}:sequence-orchestrator-lock`, POLL_LOCK_TTL_MS, () => aiSequenceOrchestratorService.enqueueDueSequenceSteps({ queueName: this.queueName }))
+        .catch((error) => warnLoop('sequence orchestrator skipped', { error: error.message }))
 
       while (this.running && this.activeJobs.size < this.maxParallel) {
         const dispatch = await withRedisLock(this.redisClient, `ai-execution:${this.queueName}:dispatch-lock`, POLL_LOCK_TTL_MS, () => this.dispatchOne())
