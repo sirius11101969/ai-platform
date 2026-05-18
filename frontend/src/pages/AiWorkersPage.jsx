@@ -121,7 +121,7 @@ function isStageRecommendation(item) {
 
 function renderStageDetails(item) {
   if (!isStageRecommendation(item)) return null;
-  const payload = item.payload || {};
+  const payload = getActionPayload(item);
   const fromStage = payload.fromStage || payload.currentStatus || item.lead?.status || "new";
   const toStage = payload.toStage || payload.nextStatus || payload.status || "qualified";
   return (
@@ -135,11 +135,12 @@ function renderStageDetails(item) {
 }
 
 function getDraftText(item) {
-  return item?.payload?.editedText || item?.payload?.edited_text || item?.payload?.customerText || item?.payload?.customer_text || item?.payload?.suggestedText || item?.payload?.draftText || item?.payload?.body || item?.payload?.text || item?.payload?.message || "";
+  const payload = getActionPayload(item);
+  return payload.editedText || payload.edited_text || payload.customerText || payload.customer_text || payload.suggestedText || payload.draftText || payload.body || payload.text || payload.message || "";
 }
 
 function getInternalAiContext(item) {
-  const payload = item?.payload || {};
+  const payload = getActionPayload(item);
   const context = payload.internalContext || {};
   const parts = [];
   if (context.ai_score || payload.aiScore) parts.push(`ai_score: ${context.ai_score || payload.aiScore}`);
@@ -162,11 +163,13 @@ function renderInternalAiContext(item) {
 }
 
 function getInboundText(item) {
-  return item?.payload?.inboundText || item?.payload?.inboundMessage || item?.payload?.customerMessage || "";
+  const payload = getActionPayload(item);
+  return payload.inboundText || payload.inboundMessage || payload.customerMessage || "";
 }
 
 function getTelegramChatId(item) {
-  return item?.lead?.telegramChatId || item?.payload?.telegramChatId || item?.payload?.telegram_chat_id || item?.payload?.chatId || "";
+  const payload = getActionPayload(item);
+  return item?.lead?.telegramChatId || payload.telegramChatId || payload.telegram_chat_id || payload.chatId || "";
 }
 
 function riskLabel(level) {
@@ -178,7 +181,7 @@ function forecastLabel(category) {
 }
 
 function getForecastRiskBadge(item) {
-  const payload = item?.payload || {};
+  const payload = getActionPayload(item);
   const score = payload.lastAiScore || {};
   const risk = payload.riskLevel || score.riskLevel;
   const forecast = payload.forecastCategory || score.forecastCategory;
@@ -190,7 +193,7 @@ function getForecastRiskBadge(item) {
 
 
 function isMeetingScheduleProposal(item) {
-  return item?.actionType === "meeting_schedule_proposal" || item?.executionType === "meeting_schedule_proposal";
+  return getItemType(item) === "meeting_schedule_proposal";
 }
 
 function formatMeetingStart(value) {
@@ -200,11 +203,11 @@ function formatMeetingStart(value) {
 
 function renderMeetingScheduleDetails(item, { onDownloadIcs } = {}) {
   if (!isMeetingScheduleProposal(item)) return null;
-  const payload = item.payload || {};
+  const payload = getActionPayload(item);
   const meeting = item.meeting || null;
   return (
     <div className="approval-stage-details meeting-schedule-details">
-      <span>Лид <b>{item.lead?.name || payload.leadName || "—"}</b></span>
+      <span>Лид <b>{getActionLeadName(item) || "—"}</b></span>
       <span>Входящее <b>{sanitizeCustomerVisibleText(payload.inboundMessage || payload.customerMessage || "—")}</b></span>
       <span>Дата/время <b>{payload.detectedDateText || "—"} {payload.detectedTimeText || "—"}</b></span>
       <span>Старт <b>{formatMeetingStart(meeting?.startsAt || payload.proposedStartTime)}</b></span>
@@ -222,24 +225,24 @@ function renderMeetingScheduleDetails(item, { onDownloadIcs } = {}) {
 }
 
 function isTelegramMeetingConfirmationDraft(item) {
-  return item?.actionType === "telegram_meeting_confirmation_draft" || item?.executionType === "telegram_meeting_confirmation_draft";
+  return getItemType(item) === "telegram_meeting_confirmation_draft";
 }
 
 function isFollowupSequenceDraft(item) {
-  return item?.actionType === "followup_sequence_draft" || item?.executionType === "followup_sequence_draft";
+  return getItemType(item) === "followup_sequence_draft";
 }
 
 function isEmailFollowupDraft(item) {
-  return item?.actionType === "email_followup_draft" || item?.executionType === "email_followup_draft";
+  return getItemType(item) === "email_followup_draft";
 }
 
 function isTelegramReplyDraft(item) {
-  return item?.actionType === "telegram_reply_draft" || item?.executionType === "telegram_reply_draft" || isTelegramMeetingConfirmationDraft(item) || isFollowupSequenceDraft(item);
+  return getItemType(item) === "telegram_reply_draft" || isTelegramMeetingConfirmationDraft(item) || isFollowupSequenceDraft(item);
 }
 
 function renderFollowupSequenceDetails(item) {
   if (!isFollowupSequenceDraft(item)) return null;
-  const payload = item.payload || {};
+  const payload = getActionPayload(item);
   return (
     <div className="approval-stage-details meeting-schedule-details">
       <span>Sequence step <b>{payload.sequenceStep || "—"}</b></span>
@@ -254,24 +257,25 @@ function renderTelegramReplyDraft(item, { isEditing = false, editText = "", onEd
   if (!isTelegramReplyDraft(item)) return null;
   const inbound = sanitizeCustomerVisibleText(getInboundText(item) || "—");
   const draft = sanitizeCustomerVisibleText(getDraftText(item) || "—");
-  const wasEdited = Boolean(item.payload?.editedByManager || item.payload?.editedText || item.payload?.edited_text);
+  const payload = getActionPayload(item);
+  const wasEdited = Boolean(payload.editedByManager || payload.editedText || payload.edited_text);
   const forecastRiskBadge = getForecastRiskBadge(item);
   return (
     <div className="telegram-reply-draft-card">
       <div className="telegram-reply-card-head">
-        <span className="telegram-badge">{isFollowupSequenceDraft(item) ? (item.payload?.channel || "follow-up") : "Telegram"}</span>
-        <span className="telegram-meta-pill">Этап: {stageLabel(item.payload?.leadStage || item.payload?.currentStage || item.lead?.status)}</span>
+        <span className="telegram-badge">{isFollowupSequenceDraft(item) ? (payload.channel || "follow-up") : "Telegram"}</span>
+        <span className="telegram-meta-pill">Этап: {stageLabel(payload.leadStage || payload.currentStage || item?.lead?.status)}</span>
         {forecastRiskBadge && <span className="telegram-meta-pill risk">{forecastRiskBadge}</span>}
         {wasEdited && <span className="telegram-meta-pill edited">Изменено менеджером</span>}
       </div>
       <div>
         <span>{isTelegramMeetingConfirmationDraft(item) ? "Лид" : isFollowupSequenceDraft(item) ? "Последнее касание" : "Последнее входящее сообщение"}</span>
-        <p>{isTelegramMeetingConfirmationDraft(item) ? (item.lead?.name || item.payload?.leadName || "—") : isFollowupSequenceDraft(item) ? sanitizeCustomerVisibleText(item.payload?.lastMessageText || "—") : inbound}</p>
+        <p>{isTelegramMeetingConfirmationDraft(item) ? (getActionLeadName(item) || "—") : isFollowupSequenceDraft(item) ? sanitizeCustomerVisibleText(payload.lastMessageText || "—") : inbound}</p>
       </div>
       {isTelegramMeetingConfirmationDraft(item) && (
         <div>
           <span>Запланированное время</span>
-          <p>{formatMeetingStart(item.payload?.scheduledTime || item.payload?.proposedStartTime)}</p>
+          <p>{formatMeetingStart(payload.scheduledTime || payload.proposedStartTime)}</p>
         </div>
       )}
       <div className="telegram-draft-body">
@@ -295,7 +299,7 @@ function renderTelegramReplyDraft(item, { isEditing = false, editText = "", onEd
 
 function renderEmailFollowupDraft(item, { isEditing = false, editText = "", onEditTextChange, onSaveEdit, onCancelEdit, editBusy = false } = {}) {
   if (!isEmailFollowupDraft(item)) return null;
-  const payload = item.payload || {};
+  const payload = getActionPayload(item);
   const body = sanitizeCustomerVisibleText(getDraftText(item) || "—");
   const wasEdited = Boolean(payload.editedByManager || payload.editedText || payload.edited_text);
   return (
@@ -307,7 +311,7 @@ function renderEmailFollowupDraft(item, { isEditing = false, editText = "", onEd
       </div>
       <div>
         <span>Лид</span>
-        <p>{item.lead?.name || payload.leadName || "—"}</p>
+        <p>{getActionLeadName(item) || "—"}</p>
       </div>
       <div>
         <span>Email</span>
@@ -315,7 +319,7 @@ function renderEmailFollowupDraft(item, { isEditing = false, editText = "", onEd
       </div>
       <div>
         <span>Тема письма</span>
-        <p>{sanitizeVisibleAiText(payload.subject || item.title || "—")}</p>
+        <p>{sanitizeVisibleAiText(payload.subject || getActionTitle(item) || "—")}</p>
       </div>
       <div className="telegram-draft-body">
         <span>Customer-facing email follow-up text</span>
@@ -338,7 +342,8 @@ function renderEmailFollowupDraft(item, { isEditing = false, editText = "", onEd
 
 function shortRecommendation(item) {
   if (!isObjectAction(item)) return "AI рекомендация ожидает решения";
-  const text = sanitizeVisibleAiText(item?.payload?.suggestedText || item?.recommendation || item?.title || "AI рекомендация ожидает решения");
+  const payload = getActionPayload(item);
+  const text = sanitizeVisibleAiText(payload.suggestedText || item?.recommendation || getActionTitle(item) || "AI рекомендация ожидает решения");
   return text.length > 130 ? `${text.slice(0, 130)}…` : text;
 }
 
@@ -504,24 +509,69 @@ function isObjectAction(action) {
   return Boolean(action && typeof action === "object" && !Array.isArray(action));
 }
 
-function getActionStatus(item) {
-  if (!isObjectAction(item)) return "";
-  return item.status || "";
+function getActionId(action) {
+  try {
+    if (!isObjectAction(action)) return "";
+    return action.id || action.actionId || action.action_id || "";
+  } catch (_error) {
+    return "";
+  }
 }
 
-function getActionId(item) {
-  if (!isObjectAction(item)) return "";
-  return item.id || "";
+function getActionStatus(action) {
+  try {
+    if (!isObjectAction(action)) return "";
+    return action.status || action.state || "";
+  } catch (_error) {
+    return "";
+  }
+}
+
+function getActionTitle(action) {
+  try {
+    if (!isObjectAction(action)) return "AI действие";
+    return action.title || action.name || action.recommendation || getActionPayload(action).title || "AI действие";
+  } catch (_error) {
+    return "AI действие";
+  }
+}
+
+function getActionPayload(action) {
+  try {
+    if (!isObjectAction(action)) return {};
+    const payload = action.payload;
+    return payload && typeof payload === "object" && !Array.isArray(payload) ? payload : {};
+  } catch (_error) {
+    return {};
+  }
+}
+
+function getActionLeadName(action) {
+  try {
+    if (!isObjectAction(action)) return "";
+    const payload = getActionPayload(action);
+    return action.lead?.name || action.leadName || action.lead_name || payload.leadName || payload.lead_name || "";
+  } catch (_error) {
+    return "";
+  }
 }
 
 function getActionType(item) {
-  if (!isObjectAction(item)) return "";
-  return item.type || item.executionType || item.actionType || "";
+  try {
+    if (!isObjectAction(item)) return "";
+    return item.type || item.executionType || item.actionType || getActionPayload(item).actionType || getActionPayload(item).type || "";
+  } catch (_error) {
+    return "";
+  }
 }
 
 function getLeadId(item) {
-  if (!isObjectAction(item)) return "";
-  return item.leadId || item.lead_id || "";
+  try {
+    if (!isObjectAction(item)) return "";
+    return item.leadId || item.lead_id || getActionPayload(item).leadId || getActionPayload(item).lead_id || "";
+  } catch (_error) {
+    return "";
+  }
 }
 
 function getRouteHighlightSections(focusQueueState) {
@@ -569,20 +619,23 @@ function getActionDomId(actionId) {
 class AiWorkersErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, error: null, errorInfo: null, href: "" };
   }
 
-  static getDerivedStateFromError() {
-    return { hasError: true };
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
   }
 
   componentDidCatch(error, errorInfo) {
     const search = typeof window !== "undefined" ? window.location?.search || "" : "";
     const currentActionId = search ? new URLSearchParams(search).get("actionId") || new URLSearchParams(search).get("approvalId") || "" : "";
+    const href = typeof window !== "undefined" ? window.location?.href || "" : "";
+    this.setState({ error, errorInfo, href });
     console.error("[ai-workers-ui] render failed", {
       message: error?.message || "",
       stack: error?.stack || "",
       componentStack: errorInfo?.componentStack || "",
+      href,
       actionId: currentActionId,
       error,
     });
@@ -590,11 +643,18 @@ class AiWorkersErrorBoundary extends React.Component {
 
   render() {
     if (this.state.hasError) {
+      const error = this.state.error || {};
+      const stackLines = String(error.stack || "").split("\n").slice(0, 8).join("\n");
+      const componentStack = this.state.errorInfo?.componentStack || "";
+      const href = this.state.href || (typeof window !== "undefined" ? window.location?.href || "" : "");
       return (
         <main className="workspace-page ai-workers-page">
           <Panel className="ai-workers-fallback-panel">
             <h2>AI Workers временно не отрисовался.</h2>
             <p>Сработала защита от реального render crash. Попробуйте обновить страницу или перейти на <a href="/ai-workers">/ai-workers</a>.</p>
+            <pre className="ai-workers-debug-block">
+              {`message: ${error.message || ""}\nstack:\n${stackLines}\ncomponentStack:\n${componentStack}\nhref: ${href}`}
+            </pre>
           </Panel>
         </main>
       );
@@ -619,7 +679,8 @@ function getItemType(item) {
 
 function getItemSearchText(item) {
   if (!isObjectAction(item)) return "";
-  const chunks = [item?.title, item?.recommendation, item?.errorMessage, item?.payload?.testName, item?.payload?.source, item?.payload?.scenario];
+  const payload = getActionPayload(item);
+  const chunks = [getActionTitle(item), item?.recommendation, item?.errorMessage, payload.testName, payload.source, payload.scenario];
   return safeArray(chunks).join(" ").toLowerCase();
 }
 
@@ -628,7 +689,8 @@ function isRecentAction(item, now = Date.now()) {
 }
 
 function isCustomerFacingAction(item) {
-  return customerFacingActionTypes.has(getItemType(item)) || ["email", "telegram"].includes(String(item?.payload?.channel || item?.payload?.suggestedChannel || "").toLowerCase());
+  const payload = getActionPayload(item);
+  return customerFacingActionTypes.has(getItemType(item)) || ["email", "telegram"].includes(String(payload.channel || payload.suggestedChannel || "").toLowerCase());
 }
 
 function isFollowupAction(item) {
@@ -641,13 +703,15 @@ function isMeetingAction(item) {
 
 function isSafetyHistoryAction(item) {
   const text = getItemSearchText(item);
-  return /unsafe copy guard test|safety[-_ ]?test|copy guard|ai safety|sanitizer test/.test(text) || item?.payload?.source === "copy_guard_test" || item?.payload?.safetyTest === true;
+  const payload = getActionPayload(item);
+  return /unsafe copy guard test|safety[-_ ]?test|copy guard|ai safety|sanitizer test/.test(text) || payload.source === "copy_guard_test" || payload.safetyTest === true;
 }
 
 function isGenericLowValueLeadPriority(item) {
   if (getItemType(item) !== "lead_priority_recommendation") return false;
-  const priority = String(item?.payload?.priority || item?.payload?.aiPriority || item?.payload?.value || "").toLowerCase();
-  const score = Number(item?.payload?.score || item?.payload?.aiScore || 0);
+  const payload = getActionPayload(item);
+  const priority = String(payload.priority || payload.aiPriority || payload.value || "").toLowerCase();
+  const score = Number(payload.score || payload.aiScore || 0);
   return ["", "low", "medium", "normal"].includes(priority) && score < 70;
 }
 
@@ -659,15 +723,18 @@ function hasNewerCompletedFallback(item, items) {
     if (!["completed", "executed"].includes(getActionStatus(candidate))) return false;
     if (!isCustomerFacingAction(candidate)) return false;
     if (getItemUpdatedTime(candidate) <= itemTime) return false;
-    const candidateChannel = String(candidate?.payload?.channel || candidate?.payload?.suggestedChannel || "").toLowerCase();
-    const itemChannel = String(item?.payload?.channel || item?.payload?.suggestedChannel || "").toLowerCase();
+    const candidatePayload = getActionPayload(candidate);
+    const candidateChannel = String(candidatePayload.channel || candidatePayload.suggestedChannel || "").toLowerCase();
+    const itemPayload = getActionPayload(item);
+    const itemChannel = String(itemPayload.channel || itemPayload.suggestedChannel || "").toLowerCase();
     return candidateChannel === "email" || candidateChannel !== itemChannel;
   });
 }
 
 function getFocusPriority(item, items, now = Date.now()) {
   const type = getItemType(item);
-  const source = String(item?.payload?.source || item?.workerName || item?.payload?.engine || "").toLowerCase();
+  const payload = getActionPayload(item);
+  const source = String(payload.source || item?.workerName || payload.engine || "").toLowerCase();
   const status = getActionStatus(item);
   if (activeActionStatuses.has(status) && isCustomerFacingAction(item) && isRecentAction(item, now)) return 1;
   if (source.includes("next_best_action") || type.includes("next_best_action")) return 2;
@@ -744,7 +811,7 @@ function isValidCompletedHistoryAction(action) {
   if (!action.status) return false;
   if (!action.title) return false;
   if (!action.created_at && !action.createdAt) return false;
-  if (!action.payload || typeof action.payload !== "object" || Array.isArray(action.payload)) return false;
+  if (Object.keys(getActionPayload(action)).length === 0) return false;
   return true;
 }
 
@@ -975,7 +1042,7 @@ function AiWorkersPageContent() {
       return;
     }
     if (isMeetingScheduleProposal(item)) {
-      const currentTime = item.payload?.proposedStartTime || "";
+      const currentTime = getActionPayload(item).proposedStartTime || "";
       const nextTime = window.prompt("Изменить время встречи (ISO или YYYY-MM-DDTHH:mm)", currentTime);
       if (nextTime === null) return;
       saveApprovalItemEdit(item, nextTime);
@@ -994,12 +1061,13 @@ function AiWorkersPageContent() {
 
     if (isTelegramReplyDraft(item) || isFollowupSequenceDraft(item) || isEmailFollowupDraft(item)) {
       const normalizedText = String(nextText || "").trim();
-      payload = { payload: { ...(item.payload || {}), customerText: normalizedText, draftText: item.payload?.draftText || item.payload?.body || item.payload?.text || item.payload?.message || item.recommendation || "", editedText: normalizedText, edited_text: normalizedText, body: isEmailFollowupDraft(item) ? normalizedText : item.payload?.body, text: normalizedText, message: normalizedText, editedByManager: true } };
+      const currentPayload = getActionPayload(item);
+      payload = { payload: { ...currentPayload, customerText: normalizedText, draftText: currentPayload.draftText || currentPayload.body || currentPayload.text || currentPayload.message || item.recommendation || "", editedText: normalizedText, edited_text: normalizedText, body: isEmailFollowupDraft(item) ? normalizedText : currentPayload.body, text: normalizedText, message: normalizedText, editedByManager: true } };
       localPatch = { ...localPatch, payload: payload.payload, recommendation: normalizedText };
       successMessage = "AI draft response изменён.";
     } else if (isMeetingScheduleProposal(item)) {
       const normalizedTime = String(nextText || "").trim();
-      payload = { payload: { ...(item.payload || {}), proposedStartTime: normalizedTime || null, managerEditedTime: true } };
+      payload = { payload: { ...getActionPayload(item), proposedStartTime: normalizedTime || null, managerEditedTime: true } };
       localPatch = { ...localPatch, payload: payload.payload };
       successMessage = "Время встречи изменено.";
     } else {
@@ -1155,10 +1223,11 @@ function AiWorkersPageContent() {
   }, [targetActionId, highlightedActionId, highlightedAction]);
 
   function renderApprovalRow(item, { history = false } = {}) {
-    if (!item || typeof item !== "object" || Array.isArray(item)) return null;
-    if (history && isFinishedActionStatus(getActionStatus(item)) && !isValidCompletedHistoryAction(item)) return null;
+    const payload = getActionPayload(item);
     const itemId = getActionId(item);
-    const itemStatus = getActionStatus(item);
+    const itemStatus = getActionStatus(item) || "unknown";
+    const shouldRouteHighlight = Boolean(targetActionId && itemId === targetActionId);
+    const shouldHighlight = shouldRouteHighlight || (!history && isHighlightedApprovalItem(item));
     const isApproveBusy = Boolean(busyActions[getApprovalActionKey(itemId, "approve")]);
     const isEditBusy = Boolean(busyActions[getApprovalActionKey(itemId, "edit")]);
     const isRejectBusy = Boolean(busyActions[getApprovalActionKey(itemId, "reject")]);
@@ -1180,12 +1249,12 @@ function AiWorkersPageContent() {
       <article
         id={itemId ? getActionDomId(itemId) : undefined}
         data-action-id={itemId || undefined}
-        ref={isHighlightedApprovalItem(item) ? highlightRef : null}
-        className={`approval-row ${history ? "approval-history-row" : ""} approval-${itemStatus} ${isHighlightedApprovalItem(item) ? "route-highlight" : ""}`}
-        key={itemId || `${getLeadId(item)}-${itemStatus}-${item.title || "action"}`}
+        ref={shouldHighlight ? highlightRef : null}
+        className={`approval-row ${history ? "approval-history-row" : ""} approval-${itemStatus} ${shouldHighlight ? "route-highlight" : ""}`}
+        key={itemId || `${getLeadId(item)}-${itemStatus}-${getActionTitle(item) || "action"}`}
       >
         <div className="approval-main">
-          <strong>{sanitizeVisibleAiText(item.title)}</strong>
+          <strong>{sanitizeVisibleAiText(getActionTitle(item))}</strong>
           <p>{shortRecommendation(item)}</p>
           {renderStageDetails(item)}
           {renderMeetingScheduleDetails(item, { onDownloadIcs: handleDownloadIcs })}
@@ -1213,9 +1282,9 @@ function AiWorkersPageContent() {
             </small>
           )}
         </div>
-        <div><span>Лид</span><b>{item.lead?.name || "—"}</b></div>
-        <div><span>AI сотрудник</span><b>{item.workerName || "AI"}</b></div>
-        <div><span>Канал</span><b>{item.payload?.channel || item.payload?.suggestedChannel || (item.lead?.telegram ? "telegram" : item.lead?.email ? "email" : "crm")}</b></div>
+        <div><span>Лид</span><b>{getActionLeadName(item) || "—"}</b></div>
+        <div><span>AI сотрудник</span><b>{item?.workerName || item?.worker?.name || "AI"}</b></div>
+        <div><span>Канал</span><b>{payload.channel || payload.suggestedChannel || (item?.lead?.telegram ? "telegram" : item?.lead?.email ? "email" : "crm")}</b></div>
         <div><span>Тип</span><b>{actionTypeLabels[getItemType(item)] || getItemType(item)}</b></div>
         <div><span>Статус</span><b className={`glow-status ${itemStatus}`}>{approvalStatusLabels[itemStatus] || itemStatus}</b><small>{formatDate(item.updatedAt || item.updated_at || item.createdAt || item.created_at)}</small></div>
         <div className="approval-actions">
@@ -1241,22 +1310,42 @@ function AiWorkersPageContent() {
     );
   }
 
-  function renderCompletedHistoryRow(action) {
+  function renderMalformedApprovalRow(action, { history = false, error = null } = {}) {
     const actionId = getActionId(action);
-    console.info("[ai-workers-focus] completed row render start", { actionId });
+    const itemStatus = getActionStatus(action) || "malformed";
+    const shouldHighlight = Boolean(targetActionId && actionId === targetActionId);
+    if (error) console.error("[ai-workers-ui] safe approval row fallback", { actionId, error });
+    return (
+      <article
+        id={actionId ? getActionDomId(actionId) : undefined}
+        data-action-id={actionId || undefined}
+        ref={shouldHighlight ? highlightRef : null}
+        className={`approval-row ${history ? "approval-history-row" : ""} approval-${itemStatus} malformed-approval-row ${shouldHighlight ? "route-highlight" : ""}`}
+        key={actionId || `malformed-${Math.random().toString(36).slice(2)}`}
+      >
+        <div className="approval-main">
+          <strong>AI action не удалось отрисовать безопасно</strong>
+          <p>{sanitizeVisibleAiText(getActionTitle(action) || "Некорректные данные AI действия")}</p>
+          {error?.message && <small className="email-error-text">Render error: {error.message}</small>}
+        </div>
+        <div><span>Лид</span><b>{getActionLeadName(action) || "—"}</b></div>
+        <div><span>AI сотрудник</span><b>AI</b></div>
+        <div><span>Канал</span><b>{getActionPayload(action).channel || "crm"}</b></div>
+        <div><span>Тип</span><b>{actionTypeLabels[getItemType(action)] || getItemType(action) || "—"}</b></div>
+        <div><span>Статус</span><b className={`glow-status ${itemStatus}`}>{approvalStatusLabels[itemStatus] || itemStatus || "—"}</b></div>
+        <div className="approval-actions">{history && <span className="approval-history-note">{getApprovalFooterStatusLabel(itemStatus)}</span>}</div>
+      </article>
+    );
+  }
+
+  function SafeApprovalRow({ action, history = false }) {
     try {
-      if (!action || typeof action !== "object" || Array.isArray(action)) return null;
-      if (!isValidCompletedHistoryAction(action)) {
-        console.info("[ai-workers-focus] completed row render failed", { actionId, reason: "invalid_completed_action" });
-        return null;
+      if (!isObjectAction(action) || !getActionId(action)) {
+        return renderMalformedApprovalRow(action, { history });
       }
-      const row = renderApprovalRow(action, { history: true });
-      console.info("[ai-workers-focus] completed row render success", { actionId });
-      return row;
+      return renderApprovalRow(action, { history });
     } catch (rowError) {
-      console.error("[ai-workers-focus] failed to render completed row", { actionId, error: rowError });
-      console.info("[ai-workers-focus] completed row render failed", { actionId, error: rowError?.message || String(rowError) });
-      return null;
+      return renderMalformedApprovalRow(action, { history, error: rowError });
     }
   }
 
@@ -1271,7 +1360,7 @@ function AiWorkersPageContent() {
       });
     }
     if (!Array.isArray(safeItems) || !safeItems.length) return null;
-    const visibleItems = prioritizeHighlightedItems(safeItems, id === "all" ? 50 : 12);
+    const visibleItems = id === "completed" ? safeItems.slice(0, 12) : prioritizeHighlightedItems(safeItems, id === "all" ? 50 : 12);
     return (
       <details className="approval-collapsed-section" open={Boolean(expandedSections?.[id])} onToggle={(event) => setExpandedSections((current) => ({ ...current, [id]: event.currentTarget.open }))}>
         <summary>
@@ -1279,7 +1368,7 @@ function AiWorkersPageContent() {
           <b>{count ?? safeItems.length}</b>
         </summary>
         <div className="approval-table approval-history-table">
-          {Array.isArray(visibleItems) && visibleItems.map((item) => (id === "completed" ? renderCompletedHistoryRow(item) : renderApprovalRow(item, { history })))}
+          {Array.isArray(visibleItems) && visibleItems.map((item) => <SafeApprovalRow action={item} history={history} key={getActionId(item) || `${id}-malformed-${safeItems.indexOf(item)}`} />)}
         </div>
       </details>
     );
@@ -1367,7 +1456,7 @@ function AiWorkersPageContent() {
         </div>
         <div className="approval-table">
           {selectedApprovalItems.length === 0 && <p className="empty-state">Нет AI действий в выбранном фильтре.</p>}
-          {prioritizeHighlightedItems(selectedApprovalItems, activeApprovalTab === "focus" ? FOCUS_QUEUE_LIMIT : 50).map((item) => renderApprovalRow(item))}
+          {prioritizeHighlightedItems(selectedApprovalItems, activeApprovalTab === "focus" ? FOCUS_QUEUE_LIMIT : 50).map((item) => <SafeApprovalRow action={item} key={getActionId(item) || `focus-malformed-${selectedApprovalItems.indexOf(item)}`} />)}
         </div>
         <div className="approval-collapsed-list">
           {renderCollapsedSection({ id: "legacy", title: "Show legacy pending", count: safeArray(focusQueueState?.hiddenLegacyActions).length, items: focusQueueState?.hiddenLegacyActions })}
