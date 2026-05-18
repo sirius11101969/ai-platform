@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useLocation } from "react-router-dom";
 import { Panel, PageHeading, StatCard } from "../components/AppShell";
 import { isInternalAiDebugEnabled, sanitizeCustomerVisibleText, sanitizeVisibleAiText } from "../utils/uiSanitizer";
-import { approveAiApprovalQueueItem, downloadCrmMeetingIcs, executeAiApprovalQueueItem, fetchAiApprovalQueue, fetchAiCommandCenter, fetchAiWorkersFocusSummary, rejectAiApprovalQueueItem, runAiWorker, seedDemoSalesPipeline, updateAiApprovalQueueItem, updateAiWorker } from "../services/api";
+import { approveAiApprovalQueueItem, downloadCrmMeetingIcs, executeAiApprovalQueueItem, fetchAiApprovalQueue, fetchAiCommandCenter, fetchAiWorkersFocusSummary, fetchCrmLeads, getActiveAiSequences, rejectAiApprovalQueueItem, runAiWorker, seedDemoSalesPipeline, startAiSequence, updateAiApprovalQueueItem, updateAiWorker } from "../services/api";
 
 const typeLabels = {
   ai_sdr_agent: "AI SDR Agent",
@@ -111,6 +111,38 @@ function formatDate(value) {
 
 function formatMoney(value) {
   return new Intl.NumberFormat("ru-RU", { style: "currency", currency: "RUB", maximumFractionDigits: 0 }).format(Number(value || 0));
+}
+
+
+const DEFAULT_AI_SEQUENCE_TEMPLATE_NAME = "Enterprise Demo Follow-up";
+
+function isSequenceDraft(item) {
+  const payload = getActionPayload(item);
+  return getActionType(item) === "sales_sequence_followup_draft" || payload.source === "sales_sequence_step_generation" || Boolean(payload.leadSequenceId);
+}
+
+function getDueSoonCount(sequences = []) {
+  const now = Date.now();
+  const soon = now + 24 * 60 * 60 * 1000;
+  return safeArray(sequences).filter((sequence) => {
+    const time = new Date(sequence?.nextRunAt || 0).getTime();
+    return Number.isFinite(time) && time >= now && time <= soon;
+  }).length;
+}
+
+function getSequenceTemplates(sequenceDashboard = {}) {
+  const templates = new Map();
+  [...safeArray(sequenceDashboard.activeSequences), ...safeArray(sequenceDashboard.stoppedSequences)].forEach((sequence) => {
+    if (sequence?.templateId && sequence?.templateName) templates.set(sequence.templateId, sequence.templateName);
+  });
+  return [{ id: "", name: DEFAULT_AI_SEQUENCE_TEMPLATE_NAME }, ...Array.from(templates, ([id, name]) => ({ id, name })).filter((item) => item.name !== DEFAULT_AI_SEQUENCE_TEMPLATE_NAME)];
+}
+
+function getLeadPriorityValue(lead = {}) {
+  const score = Number(lead.aiScore?.score || lead.ai_score?.score || lead.aiScore || 0);
+  const priority = String(lead.aiPriority || lead.aiScore?.priority || "").toLowerCase();
+  const boost = priority === "urgent" ? 40 : priority === "high" ? 25 : priority === "medium" ? 10 : 0;
+  return score + boost + Number(lead.value || 0) / 100000;
 }
 
 
@@ -849,6 +881,11 @@ function AiWorkersPageContent() {
   const [message, setMessage] = useState("");
   const [approvalQueue, setApprovalQueue] = useState({ items: [], metrics: {} });
   const [focusSummary, setFocusSummary] = useState(null);
+  const [aiSequences, setAiSequences] = useState({ activeSequences: [], upcomingSteps: [], stoppedSequences: [], metrics: {} });
+  const [crmLeads, setCrmLeads] = useState([]);
+  const [sequenceLeadId, setSequenceLeadId] = useState("");
+  const [sequenceTemplateId, setSequenceTemplateId] = useState("");
+  const [sequenceBusy, setSequenceBusy] = useState(false);
   const [activeApprovalTab, setActiveApprovalTab] = useState("focus");
   const [expandedSections, setExpandedSections] = useState({ legacy: false, completed: false, safety: false, all: false, raw: false });
   const [busyActions, setBusyActions] = useState({});
@@ -883,10 +920,14 @@ function AiWorkersPageContent() {
     try {
       const queueParams = targetActionId ? {} : (targetLeadId ? { leadId: targetLeadId } : {});
       const focusParams = { actionId: targetActionId, leadId: targetLeadId };
-      const [response, approvalResponse, focusResponse] = await Promise.all([fetchAiCommandCenter(), fetchAiApprovalQueue(queueParams), fetchAiWorkersFocusSummary(focusParams)]);
+      const [response, approvalResponse, focusResponse, sequencesResponse, leadsResponse] = await Promise.all([fetchAiCommandCenter(), fetchAiApprovalQueue(queueParams), fetchAiWorkersFocusSummary(focusParams), getActiveAiSequences(), fetchCrmLeads()]);
       setCommandCenter(response.commandCenter || null);
       setApprovalQueue({ items: approvalResponse.items || [], metrics: approvalResponse.metrics || {} });
       setFocusSummary(focusResponse || null);
+      setAiSequences(sequencesResponse || { activeSequences: [], upcomingSteps: [], stoppedSequences: [], metrics: {} });
+      const nextLeads = safeArray(leadsResponse.leads);
+      setCrmLeads(nextLeads);
+      setSequenceLeadId((current) => current || [...nextLeads].sort((a, b) => getLeadPriorityValue(b) - getLeadPriorityValue(a))[0]?.id || "");
     } catch (requestError) {
       setError(requestError.message || "Не удалось загрузить AI Command Center");
     } finally {
@@ -901,6 +942,26 @@ function AiWorkersPageContent() {
   useEffect(() => {
     if (location.state?.toast) setMessage(location.state.toast);
   }, [location.state]);
+
+
+  async function handleStartSelectedSequence() {
+    if (!sequenceLeadId) {
+      setError("Выберите lead для AI sequence.");
+      return;
+    }
+    setSequenceBusy(true);
+    setError("");
+    setMessage("");
+    try {
+      await startAiSequence({ leadId: sequenceLeadId, templateId: sequenceTemplateId || undefined });
+      setMessage("AI Sequence started. AI will generate drafts for manager approval — never auto-send.");
+      await loadCommandCenter({ silent: true });
+    } catch (requestError) {
+      setError(requestError.message || "Sequence cannot start for selected lead.");
+    } finally {
+      setSequenceBusy(false);
+    }
+  }
 
   async function handleSeedDemoPipeline() {
     setDemoBusy(true);
@@ -1164,6 +1225,9 @@ function AiWorkersPageContent() {
   };
   const highlightedActionMissing = Boolean(targetActionId && !loading && highlightResolutionReady && !highlightResolution?.found);
   const approvalMetrics = { ...(approvalQueue?.metrics || {}), ...(focusQueueState?.metrics || {}), ...(focusSummary || {}) };
+  const sequenceDrafts = safeArray(approvalQueue.items).filter(isSequenceDraft).sort((a, b) => getItemCreatedTime(b) - getItemCreatedTime(a));
+  const sequenceTemplates = getSequenceTemplates(aiSequences);
+  const selectableSequenceLeads = useMemo(() => [...safeArray(crmLeads)].sort((a, b) => getLeadPriorityValue(b) - getLeadPriorityValue(a)).slice(0, 25), [crmLeads]);
 
   useEffect(() => {
     console.info("[ai-workers-focus] focus queue built", { count: safeArray(focusQueueState?.focusActions).length, actionableNow: focusQueueState?.metrics?.actionableNow || 0 });
@@ -1514,6 +1578,44 @@ function AiWorkersPageContent() {
         <StatCard label="Выручка под контролем AI" value={loading ? "…" : formatMoney(metrics.revenueUnderAi)} hint="Плейсхолдер revenue impact по открытой воронке" tone="violet" />
       </section>
       <p className="focus-total-history-note">Всего AI задач в истории: {loading ? "…" : (approvalMetrics.totalHistory || safeArray(approvalQueue?.items).length || 0)}</p>
+
+
+
+      <Panel className="ai-sequence-orchestrator-widget">
+        <div className="panel-head focus-queue-head">
+          <div>
+            <span className="eyebrow">AI Sequence Orchestrator</span>
+            <h3>Safe sequence drafts for manager approval</h3>
+            <p>Never auto-send. AI will generate drafts for manager approval and show safe status: Step generated and waiting for approval.</p>
+          </div>
+          <span className="live-pill focus-live-pill"><i />Active: {aiSequences.metrics?.active || safeArray(aiSequences.activeSequences).length || 0}</span>
+        </div>
+        <div className="approval-metric-strip sequence-metric-strip">
+          <span>Active sequences <b>{aiSequences.metrics?.active || safeArray(aiSequences.activeSequences).length || 0}</b></span>
+          <span>Due soon <b>{getDueSoonCount(aiSequences.activeSequences)}</b></span>
+          <span>Generated drafts <b>{sequenceDrafts.length}</b></span>
+          <span>Completion rate <b>{aiSequences.completionRate || 0}%</b></span>
+        </div>
+        <div className="ai-sequence-worker-grid">
+          <div className="ai-sequence-start-box">
+            <label className="crm-field"><span>High-priority lead</span><select value={sequenceLeadId} onChange={(event) => setSequenceLeadId(event.target.value)}><option value="">Select lead</option>{selectableSequenceLeads.map((lead) => <option key={lead.id} value={lead.id}>{lead.name} · {lead.company || stageLabel(lead.status)} · score {lead.aiScore?.score || lead.aiPriority || "—"}</option>)}</select></label>
+            {sequenceTemplates.length > 1 && <label className="crm-field"><span>Template</span><select value={sequenceTemplateId} onChange={(event) => setSequenceTemplateId(event.target.value)}>{sequenceTemplates.map((template) => <option key={template.id || "default"} value={template.id}>{template.name}</option>)}</select></label>}
+            <button className="btn primary compact" type="button" onClick={handleStartSelectedSequence} disabled={sequenceBusy || !sequenceLeadId}>{sequenceBusy ? "Starting sequence…" : "Start sequence for selected lead"}</button>
+          </div>
+          <div className="ai-sequence-draft-list">
+            <h4>Latest sequence drafts</h4>
+            {sequenceDrafts.length === 0 && <p className="empty-state">No AI sequence drafts yet.</p>}
+            {sequenceDrafts.slice(0, 4).map((item) => (
+              <article className="ai-sequence-draft-row" key={getActionId(item) || item.id}>
+                <strong>{getActionLeadName(item) || "Lead"}</strong>
+                <span className="sequence-status-badge pending_approval">Step generated and waiting for approval</span>
+                <p>{shortRecommendation(item)}</p>
+                <small>{getApprovalFooterStatusLabel(item.status)} · {formatDate(item.createdAt || item.created_at)}</small>
+              </article>
+            ))}
+          </div>
+        </div>
+      </Panel>
 
       <Panel className="ai-approval-center-panel">
         <div className="panel-head focus-queue-head">
