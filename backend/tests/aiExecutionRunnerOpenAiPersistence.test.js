@@ -211,7 +211,9 @@ async function testExecutionLogAndProviderUsageHelpersCastJsonb() {
     model: null,
     operation: 'responses.create',
     promptTokens: undefined,
-    metadata: { nested: true },
+    providerCostUsd: '0.125',
+    status: 'retrying',
+    metadata: { nested: true, optional: undefined },
   }, client)
 
   const logInsert = calls.find((call) => call.sql.includes('INSERT INTO execution_logs'))
@@ -221,10 +223,13 @@ async function testExecutionLogAndProviderUsageHelpersCastJsonb() {
   const usageInsert = calls.find((call) => call.sql.includes('INSERT INTO ai_provider_usage'))
   assert(usageInsert.sql.includes('workspace_id, user_id, task_id, provider, model, operation'))
   assert(!usageInsert.sql.includes('model_name'))
+  assert(usageInsert.sql.includes('$10::numeric'))
   assert(usageInsert.sql.includes('$14::jsonb'))
   assert.strictEqual(usageInsert.params[1], null)
   assert.strictEqual(usageInsert.params[6], 0)
-  assertJsonParam(usageInsert.params[13], { nested: true })
+  assert.strictEqual(usageInsert.params[9], 0.125)
+  assert.strictEqual(usageInsert.params[12], 'failed')
+  assertJsonParam(usageInsert.params[13], { nested: true, optional: null })
   assertNoUndefinedParams(calls)
 }
 
