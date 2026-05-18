@@ -12,8 +12,27 @@ const OPENAI_TEXT_GENERATION_JOB_TYPE = 'openai_text_generation'
 const DEFAULT_OPENAI_TEXT_PROMPT = 'Напиши короткий безопасный follow-up для CRM лида на русском языке.'
 const MANAGER_SAFE_OPENAI_ERROR = 'OpenAI text generation could not be completed safely. Please check provider configuration or try again later.'
 
+function safeJsonb(value) {
+  return JSON.stringify(normalizeDbValue(value ?? {}) ?? {})
+}
+
 function safeJson(value) {
-  return JSON.stringify(normalizeDbValue(value) ?? {})
+  return safeJsonb(value)
+}
+
+function debugSql(queryText, params = []) {
+  console.log('[SQL-DEBUG]', queryText)
+  console.log('[SQL-PARAMS]', params)
+}
+
+function normalizeDbParams(params = []) {
+  return params.map((param) => (param === undefined ? null : param))
+}
+
+async function debugQuery(dbClient, queryText, params = []) {
+  const safeParams = normalizeDbParams(params)
+  debugSql(queryText, safeParams)
+  return dbClient.query(queryText, safeParams)
 }
 
 function normalizeNullableText(value) {
@@ -81,7 +100,7 @@ function sanitizeOpenAiTextPayload(payload = {}) {
 async function registerWorkerNode(client = pool) {
   const nodeName = getWorkerNodeName()
   const maxConcurrency = getMaxConcurrency()
-  const result = await client.query(
+  const result = await debugQuery(client,
     `INSERT INTO worker_nodes(
        node_name, node_type, status, queues, max_concurrency, current_concurrency,
        heartbeat_at, started_at, stopped_at, metadata, updated_at
@@ -100,7 +119,7 @@ async function registerWorkerNode(client = pool) {
       nodeName,
       DEFAULT_QUEUES,
       maxConcurrency,
-      safeJson({
+      safeJsonb({
         pid: process.pid,
         hostname: os.hostname(),
         service: 'ai-execution-runner',
@@ -113,16 +132,16 @@ async function registerWorkerNode(client = pool) {
 }
 
 async function insertWorkerMetric({ workerNodeId, queueName, metricName, metricValue, labels = {} }, client = pool) {
-  await client.query(
+  await debugQuery(client,
     `INSERT INTO worker_metrics(worker_node_id, queue_name, metric_name, metric_value, labels)
      VALUES($1::uuid, $2::text, $3::text, $4::numeric, $5::jsonb)`,
-    [normalizeDbValue(workerNodeId), normalizeDbValue(queueName), normalizeDbValue(metricName), Number(metricValue ?? 0), safeJson(labels)]
+    [normalizeDbValue(workerNodeId), normalizeDbValue(queueName), normalizeDbValue(metricName), Number(metricValue ?? 0), safeJsonb(labels)]
   )
 }
 
 async function writeTaskHistory({ job, workerNodeId, previousStatus, nextStatus, latencyMs, errorMessage, metadata = {} }, client = pool) {
   if (!job.task_id) return null
-  const result = await client.query(
+  const result = await debugQuery(client,
     `INSERT INTO task_execution_history(
        task_id, workspace_id, user_id, previous_status, next_status, worker_node_id,
        attempt, latency_ms, error_message, metadata
@@ -138,7 +157,7 @@ async function writeTaskHistory({ job, workerNodeId, previousStatus, nextStatus,
       job.attempt_count || 1,
       normalizeDbValue(latencyMs || null),
       normalizeDbValue(errorMessage),
-      safeJson(metadata),
+      safeJsonb(metadata),
     ]
   )
   return result.rows[0]
@@ -148,28 +167,28 @@ async function claimNextJob({ queueName = DEFAULT_QUEUE_NAME, workerNode } = {})
   const client = await pool.connect()
   const normalizedQueueName = normalizeQueueName(queueName)
   try {
-    await client.query('BEGIN')
+    await debugQuery(client, 'BEGIN')
     const worker = workerNode || await registerWorkerNode(client)
-    const workerLockResult = await client.query(
+    const workerLockResult = await debugQuery(client,
       `SELECT * FROM worker_nodes WHERE id = $1::uuid FOR UPDATE`,
       [worker.id]
     )
     const lockedWorker = workerLockResult.rows[0]
     if (!lockedWorker || lockedWorker.status !== 'online') {
-      await client.query('COMMIT')
+      await debugQuery(client, 'COMMIT')
       return { worker: lockedWorker || worker, job: null, reason: 'worker_unavailable' }
     }
     if (!lockedWorker.queues.includes(normalizedQueueName)) {
-      await client.query('COMMIT')
+      await debugQuery(client, 'COMMIT')
       return { worker: lockedWorker, job: null, reason: 'queue_not_supported' }
     }
     if (lockedWorker.current_concurrency >= lockedWorker.max_concurrency) {
-      await client.query('COMMIT')
+      await debugQuery(client, 'COMMIT')
       return { worker: lockedWorker, job: null, reason: 'max_concurrency_reached' }
     }
 
     const timeoutSeconds = normalizePositiveInteger(DEFAULT_JOB_TIMEOUT_SECONDS, 300)
-    const claimResult = await client.query(
+    const claimResult = await debugQuery(client,
       `WITH next_job AS (
          SELECT id, status AS previous_status
            FROM ai_execution_jobs
@@ -185,7 +204,7 @@ async function claimNextJob({ queueName = DEFAULT_QUEUE_NAME, workerNode } = {})
               locked_by = $2::uuid,
               locked_at = NOW(),
               heartbeat_at = NOW(),
-              timeout_at = NOW() + ($3::text || ' seconds')::interval,
+              timeout_at = NOW() + ($3::integer * INTERVAL '1 second'),
               attempt_count = jobs.attempt_count + 1,
               error_message = NULL,
               updated_at = NOW()
@@ -196,18 +215,18 @@ async function claimNextJob({ queueName = DEFAULT_QUEUE_NAME, workerNode } = {})
     )
 
     if (claimResult.rowCount === 0) {
-      await client.query(
+      await debugQuery(client,
         `UPDATE worker_nodes
             SET heartbeat_at = NOW(), updated_at = NOW()
           WHERE id = $1::uuid`,
         [lockedWorker.id]
       )
-      await client.query('COMMIT')
+      await debugQuery(client, 'COMMIT')
       return { worker: lockedWorker, job: null, reason: 'no_claimable_job' }
     }
 
     const job = claimResult.rows[0]
-    await client.query(
+    await debugQuery(client,
       `UPDATE worker_nodes
           SET current_concurrency = current_concurrency + 1,
               heartbeat_at = NOW(),
@@ -227,11 +246,11 @@ async function claimNextJob({ queueName = DEFAULT_QUEUE_NAME, workerNode } = {})
     }, client)
     await writeTaskHistory({ job, workerNodeId: lockedWorker.id, previousStatus: job.previous_status, nextStatus: 'running' }, client)
     await insertWorkerMetric({ workerNodeId: lockedWorker.id, queueName: normalizedQueueName, metricName: 'job_claimed', metricValue: 1 }, client)
-    await client.query('COMMIT')
+    await debugQuery(client, 'COMMIT')
     logRunner('job claimed', { jobId: job.id, queueName: normalizedQueueName, workerNodeId: lockedWorker.id })
     return { worker: lockedWorker, job }
   } catch (error) {
-    await client.query('ROLLBACK')
+    await debugQuery(client, 'ROLLBACK')
     throw error
   } finally {
     client.release()
@@ -321,8 +340,8 @@ async function completeJob({ job, worker, result, startedAt }) {
   const client = await pool.connect()
   const latencyMs = Date.now() - startedAt.getTime()
   try {
-    await client.query('BEGIN')
-    const updateResult = await client.query(
+    await debugQuery(client, 'BEGIN')
+    const updateResult = await debugQuery(client,
       `UPDATE ai_execution_jobs
           SET status = 'completed',
               result = $3::jsonb,
@@ -335,14 +354,14 @@ async function completeJob({ job, worker, result, startedAt }) {
           AND status = 'running'
           AND locked_by = $2::uuid
         RETURNING *`,
-      [job.id, worker.id, safeJson(result)]
+      [job.id, worker.id, safeJsonb(result)]
     )
     if (updateResult.rowCount === 0) {
-      await client.query('ROLLBACK')
+      await debugQuery(client, 'ROLLBACK')
       return { job, completed: false, reason: 'job_not_owned_or_not_running' }
     }
     const completedJob = updateResult.rows[0]
-    await client.query(
+    await debugQuery(client,
       `UPDATE worker_nodes
           SET current_concurrency = GREATEST(current_concurrency - 1, 0),
               heartbeat_at = NOW(),
@@ -362,11 +381,11 @@ async function completeJob({ job, worker, result, startedAt }) {
     }, client)
     await writeTaskHistory({ job: completedJob, workerNodeId: worker.id, previousStatus: 'running', nextStatus: 'completed', latencyMs }, client)
     await insertWorkerMetric({ workerNodeId: worker.id, queueName: completedJob.queue_name, metricName: 'job_completed', metricValue: 1, labels: { jobType: completedJob.job_type } }, client)
-    await client.query('COMMIT')
+    await debugQuery(client, 'COMMIT')
     logRunner('job completed', { jobId: completedJob.id, queueName: completedJob.queue_name, workerNodeId: worker.id })
     return { job: completedJob, completed: true }
   } catch (error) {
-    await client.query('ROLLBACK')
+    await debugQuery(client, 'ROLLBACK')
     throw error
   } finally {
     client.release()
@@ -379,29 +398,26 @@ async function failJob({ job, worker, error, startedAt }) {
   const message = getSafeErrorMessage(error)
   const technicalError = getTechnicalErrorMessage(error)
   try {
-    await client.query('BEGIN')
-    const freshResult = await client.query(
+    await debugQuery(client, 'BEGIN')
+    const freshResult = await debugQuery(client,
       `SELECT * FROM ai_execution_jobs
         WHERE id = $1::uuid AND status = 'running' AND locked_by = $2::uuid
         FOR UPDATE`,
       [job.id, worker.id]
     )
     if (freshResult.rowCount === 0) {
-      await client.query('ROLLBACK')
+      await debugQuery(client, 'ROLLBACK')
       return { job, failed: false, reason: 'job_not_owned_or_not_running' }
     }
     const freshJob = freshResult.rows[0]
     let nextStatus = 'retrying'
-    let runAfterSql = `NOW() + (LEAST(300, POWER(2, GREATEST($5::integer - 1, 0)))::text || ' seconds')::interval`
     if (error && error.nonRetryable) {
       nextStatus = 'failed'
-      runAfterSql = 'run_after'
     } else if (freshJob.attempt_count >= freshJob.max_attempts) {
       nextStatus = 'dead_lettered'
-      runAfterSql = 'run_after'
     }
 
-    const updateResult = await client.query(
+    const updateResult = await debugQuery(client,
       `UPDATE ai_execution_jobs
           SET status = $3::text,
               error_message = $4::text,
@@ -409,16 +425,20 @@ async function failJob({ job, worker, error, startedAt }) {
               locked_at = NULL,
               heartbeat_at = NOW(),
               timeout_at = NULL,
-              run_after = ${runAfterSql},
+              run_after = CASE
+                WHEN $3::text = 'retrying' THEN NOW() + (LEAST(300, POWER(2, GREATEST($5::integer - 1, 0)))::integer * INTERVAL '1 second')
+                ELSE run_after
+              END,
               updated_at = NOW()
         WHERE id = $1::uuid
+          AND locked_by = $2::uuid
         RETURNING *`,
       [freshJob.id, worker.id, nextStatus, message, freshJob.attempt_count]
     )
     const failedJob = updateResult.rows[0]
 
     if (nextStatus === 'dead_lettered') {
-      await client.query(
+      await debugQuery(client,
         `INSERT INTO dead_letter_queue(
            workspace_id, source_queue, source_job_id, task_id, reason,
            error_message, payload, attempts
@@ -430,13 +450,13 @@ async function failJob({ job, worker, error, startedAt }) {
           normalizeDbValue(failedJob.task_id),
           'max_attempts_exhausted',
           message,
-          safeJson(failedJob.payload),
+          safeJsonb(failedJob.payload),
           failedJob.attempt_count,
         ]
       )
     }
 
-    await client.query(
+    await debugQuery(client,
       `UPDATE worker_nodes
           SET current_concurrency = GREATEST(current_concurrency - 1, 0),
               heartbeat_at = NOW(),
@@ -469,11 +489,11 @@ async function failJob({ job, worker, error, startedAt }) {
       }, client)
     }
     await insertWorkerMetric({ workerNodeId: worker.id, queueName: failedJob.queue_name, metricName: 'job_failed', metricValue: 1, labels: { jobType: failedJob.job_type, nextStatus } }, client)
-    await client.query('COMMIT')
+    await debugQuery(client, 'COMMIT')
     logRunner('job failed', { jobId: failedJob.id, queueName: failedJob.queue_name, workerNodeId: worker.id, nextStatus, error: message })
     return { job: failedJob, failed: true, nextStatus }
   } catch (failureError) {
-    await client.query('ROLLBACK')
+    await debugQuery(client, 'ROLLBACK')
     throw failureError
   } finally {
     client.release()
@@ -500,7 +520,7 @@ async function runOnce({ queueName = DEFAULT_QUEUE_NAME } = {}) {
 
 async function enqueueInternalTestJob({ queueName = DEFAULT_QUEUE_NAME, priority = 100, payload = {}, idempotencyKey = null } = {}) {
   const normalizedQueueName = normalizeQueueName(queueName)
-  const result = await pool.query(
+  const result = await debugQuery(pool,
     `INSERT INTO ai_execution_jobs(queue_name, job_type, priority, status, payload, max_attempts, run_after, idempotency_key)
      VALUES($1::text, 'internal_test_execution', $2::integer, 'queued', $3::jsonb, $4::integer, NOW(), $5::text)
      ON CONFLICT (workspace_id, idempotency_key) DO NOTHING
@@ -508,14 +528,14 @@ async function enqueueInternalTestJob({ queueName = DEFAULT_QUEUE_NAME, priority
     [
       normalizedQueueName,
       Number.isFinite(Number(priority)) ? Math.trunc(Number(priority)) : 100,
-      safeJson({ source: 'api', createdFor: 'internal_test_execution', ...(payload || {}) }),
+      safeJsonb({ source: 'api', createdFor: 'internal_test_execution', ...(payload || {}) }),
       normalizePositiveInteger(payload.maxAttempts, 3),
       normalizeDbValue(idempotencyKey),
     ]
   )
   if (result.rowCount > 0) return result.rows[0]
   if (!idempotencyKey) return null
-  const existing = await pool.query(
+  const existing = await debugQuery(pool,
     `SELECT * FROM ai_execution_jobs WHERE workspace_id IS NULL AND idempotency_key = $1::text LIMIT 1`,
     [normalizeDbValue(idempotencyKey)]
   )
@@ -529,7 +549,7 @@ async function enqueueOpenAiTextGenerationJob({ queueName = DEFAULT_QUEUE_NAME, 
     createdFor: OPENAI_TEXT_GENERATION_JOB_TYPE,
     ...sanitizeOpenAiTextPayload(payload),
   }
-  const result = await pool.query(
+  const result = await debugQuery(pool,
     `INSERT INTO ai_execution_jobs(queue_name, job_type, priority, status, payload, max_attempts, run_after, idempotency_key)
      VALUES($1::text, $2::text, $3::integer, 'queued', $4::jsonb, $5::integer, NOW(), $6::text)
      ON CONFLICT (workspace_id, idempotency_key) DO NOTHING
@@ -538,14 +558,14 @@ async function enqueueOpenAiTextGenerationJob({ queueName = DEFAULT_QUEUE_NAME, 
       normalizedQueueName,
       OPENAI_TEXT_GENERATION_JOB_TYPE,
       Number.isFinite(Number(priority)) ? Math.trunc(Number(priority)) : 100,
-      safeJson(normalizedPayload),
+      safeJsonb(normalizedPayload),
       normalizePositiveInteger(payload.maxAttempts || payload.max_attempts, 3),
       normalizeDbValue(idempotencyKey),
     ]
   )
   if (result.rowCount > 0) return result.rows[0]
   if (!idempotencyKey) return null
-  const existing = await pool.query(
+  const existing = await debugQuery(pool,
     `SELECT * FROM ai_execution_jobs WHERE workspace_id IS NULL AND idempotency_key = $1::text LIMIT 1`,
     [normalizeDbValue(idempotencyKey)]
   )
@@ -561,7 +581,7 @@ async function getHealth({ queueName = null } = {}) {
     filters.push(`queue_name = $${params.length}::text`)
   }
   const whereSql = filters.length ? `WHERE ${filters.join(' AND ')}` : ''
-  const countResult = await pool.query(
+  const countResult = await debugQuery(pool,
     `SELECT status, COUNT(*)::integer AS count
        FROM ai_execution_jobs
        ${whereSql}
@@ -603,6 +623,7 @@ module.exports = {
     getSafeErrorMessage,
     isOpenAiApiKeyConfigured,
     safeJson,
+    safeJsonb,
     normalizeNullableText,
     sanitizeOpenAiTextPayload,
   },
