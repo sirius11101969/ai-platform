@@ -1,3 +1,5 @@
+const fs = require('fs')
+const path = require('path')
 const pool = require('./pool')
 
 async function migrate() {
@@ -1049,6 +1051,12 @@ async function migrate() {
     CREATE INDEX IF NOT EXISTS idx_ai_followup_attempts_lead ON ai_followup_attempts(workspace_id, lead_id, created_at DESC);
 
   `)
+
+  const enterpriseAiMigration = path.resolve(__dirname, '../../../db/migrations/022_enterprise_ai_execution_platform.sql')
+  if (fs.existsSync(enterpriseAiMigration)) {
+    await pool.query(fs.readFileSync(enterpriseAiMigration, 'utf8'))
+  }
+
   console.log('[schema] telegram migrations skipped safely')
 }
 
