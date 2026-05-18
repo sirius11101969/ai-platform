@@ -137,3 +137,53 @@ When the endpoint is requested, the backend emits production logs for focus cons
 - `[ai-workers-focus] route highlight expanded hidden section` when a requested `actionId` or `leadId` belongs to a collapsed section.
 
 Route highlighting remains unchanged: visible actions are highlighted in-place, while hidden targets auto-open the correct collapsed section before scrolling to the row.
+
+## Follow-up cooldown guard after outbound communication
+
+AI follow-up generation has an anti-duplicate cooldown after customer-facing outbound communication. When a lead has a recent outbound touch, AI generators must not create another follow-up draft for that lead for the default 48-hour cooldown window.
+
+The guard applies to:
+
+- AI Follow-up Engine autonomous `followup_sequence_draft` generation.
+- Pipeline Copilot follow-up draft generation.
+- Priority Inbox Telegram/email/follow-up draft actions.
+- Next Best Action follow-up recommendations that resolve to customer-facing follow-up drafts.
+
+Cooldown sources are checked per lead across timeline and message history:
+
+- `lead_timeline_events.event_type IN ('followup_sent','follow_up_sent','telegram_message_sent','telegram_sent','email_sent','ai_action_executed')`.
+- `telegram_messages` with outbound direction.
+- `email_messages` when the table exists, using `direction = 'outbound'` when available and sent email timestamps otherwise.
+
+If the latest outbound customer message is inside the cooldown window, the generator skips new `followup_sequence_draft`, `telegram_reply_draft` / Telegram follow-up draft, and `email_followup_draft` rows for the lead. The skip is logged as:
+
+```text
+[followup-cooldown] lead skipped { leadId, leadName, lastOutboundAt, cooldownHours: 48, reason: 'recent_outbound_customer_message' }
+```
+
+A manager-safe UI reason is used anywhere the lead/action still appears in Pipeline Copilot or Priority Inbox:
+
+```text
+Follow-up cooldown: клиенту уже отправлено сообщение недавно.
+```
+
+The guard may add a timeline audit event `ai_followup_skipped_cooldown` with title `AI follow-up пропущен` and body `Недавнее исходящее сообщение клиенту — cooldown 48 часов.` To avoid timeline spam, this skip event is limited to one event per lead per 24 hours.
+
+The cooldown does not block manual manager actions, meeting confirmations, non-follow-up recommendations, scoring updates, copy guard behavior, route highlighting, or Focus Queue rendering.
+
+Verification SQL for a known lead after running generators again:
+
+```sql
+SELECT action_type,status,title,created_at
+FROM ai_worker_queue
+WHERE lead_id=(SELECT id FROM crm_leads WHERE name='Telegram Connect Test' LIMIT 1)
+AND action_type IN ('followup_sequence_draft','telegram_reply_draft','email_followup_draft')
+ORDER BY created_at DESC
+LIMIT 10;
+
+SELECT event_type,title,body,created_at
+FROM lead_timeline_events
+WHERE lead_id=(SELECT id FROM crm_leads WHERE name='Telegram Connect Test' LIMIT 1)
+ORDER BY created_at DESC
+LIMIT 15;
+```

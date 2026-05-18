@@ -57,12 +57,13 @@ function ActionButtons({ item = {}, ctas = {}, navigate, onCreateAction, busyAct
     { label: "Open AI Workers", route: ctas.openAiWorkers || aiWorkersRoute },
     { label: "Open Priority Inbox", route: ctas.openPriorityInbox || (leadId ? `/priority-inbox?leadId=${encodeURIComponent(leadId)}` : "/priority-inbox") },
   ];
+  const followupCooldownReason = item.followupCooldownActive || item.followupCooldownReason ? (item.followupCooldownReason || "Follow-up cooldown: клиенту уже отправлено сообщение недавно.") : "";
   return (
     <div className="pipeline-card-actions">
       {buttons.map((button) => (
         <button key={button.label} type="button" onClick={() => { if (button.log) console.info(button.log, { leadId }); navigate(button.route); }}>{button.label}</button>
       ))}
-      <button type="button" onClick={() => onCreateAction?.(item, "followup")} disabled={!leadId || busyActionKey === `${leadId}:followup`}>
+      <button type="button" onClick={() => onCreateAction?.(item, "followup")} title={followupCooldownReason} disabled={!leadId || Boolean(followupCooldownReason) || busyActionKey === `${leadId}:followup`}>
         {busyActionKey === `${leadId}:followup` ? "Создаём…" : "Create Follow-up"}
       </button>
       <button type="button" onClick={() => onCreateAction?.(item, "meeting")} disabled={!leadId || busyActionKey === `${leadId}:meeting`}>
@@ -130,6 +131,10 @@ export default function PipelineCopilotPage() {
     try {
       const request = actionKind === "followup" ? createPipelineCopilotFollowupAction : createPipelineCopilotMeetingAction;
       const result = await request({ leadId });
+      if (result.skipped) {
+        setMessage(result.message || "Follow-up cooldown: клиенту уже отправлено сообщение недавно.");
+        return;
+      }
       const toast = result.duplicate ? "Уже есть активная AI задача" : actionKind === "followup" ? "Follow-up создан" : "Meeting proposal создан";
       setMessage(toast);
       navigate(result.redirectTo || (result.actionId ? `/ai-workers?actionId=${encodeURIComponent(result.actionId)}` : `/ai-workers?leadId=${encodeURIComponent(leadId)}`), { state: { toast } });

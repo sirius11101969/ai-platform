@@ -2,6 +2,7 @@ const pool = require('../db/pool')
 const { assertCustomerSafeText } = require('./customerCopyGuard')
 const { addTimelineEvent } = require('./timelineService')
 const { sanitizeAiCopy, sanitizeAiActionPayload } = require('../utils/aiCopySanitizer')
+const { shouldSkipFollowupForCooldown } = require('./followupCooldownService')
 
 const AI_NEXT_BEST_ACTION_WORKER_TYPE = 'ai_next_best_action_engine'
 const SOURCE = 'next_best_action_engine'
@@ -13,6 +14,7 @@ const TELEGRAM_FOLLOWUP_DRAFT = 'telegram_followup'
 const INTERNAL_REMINDER = 'create_reminder'
 const EMAIL_MEETING_CONFIRMATION_SUBJECT = 'Подтверждение demo-созвона'
 const EMAIL_MEETING_CONFIRMATION_TEXT = 'Здравствуйте! Подтверждаю demo-созвон. Если время нужно изменить — просто напишите, я подстроюсь.'
+const COOLDOWN_GUARDED_NEXT_BEST_ACTIONS = new Set(['risk_followup_recommendation', 'followup_sequence_draft', 'proposal_followup_recommendation'])
 
 function getBestContactChannel(lead = {}) {
   if (String(lead.telegram_chat_id || lead.telegramChatId || '').trim()) return { preferredChannel: 'telegram', fallbackReason: '' }
@@ -151,6 +153,7 @@ function selectNextBestAction(lead, now = new Date()) {
       channelFallbackReason: channel.fallbackReason || null,
       originalActionType: actionType,
     },
+    cooldownGuarded: COOLDOWN_GUARDED_NEXT_BEST_ACTIONS.has(actionType),
     confidence: confidenceFor(actionType, lead, staleHours),
   }
   console.info('[next-best-action] channel selected', { leadId: lead.id, actionType: action.actionType, preferredChannel: action.preferredChannel })
@@ -300,6 +303,14 @@ async function runNextBestActionEngine({ userId, workspaceId, worker, workerId }
         skipped.push({ leadId: lead.id, reason: 'no_matching_rule' })
         continue
       }
+      if (action.cooldownGuarded) {
+        const cooldownState = await shouldSkipFollowupForCooldown({ client, workspaceId, leadId: lead.id, leadName: lead.name, userId })
+        if (cooldownState.active) {
+          skipped.push({ leadId: lead.id, actionType: action.actionType, reason: cooldownState.reason, lastOutboundAt: cooldownState.lastOutboundAt, cooldownHours: cooldownState.cooldownHours })
+          continue
+        }
+      }
+
       const duplicate = await hasDuplicateAction(client, { workspaceId, leadId: lead.id, actionType: action.actionType, preferredChannel: action.preferredChannel })
       if (duplicate) {
         console.info('[next-best-action] duplicate skipped', { workspaceId, leadId: lead.id, actionType: action.actionType, preferredChannel: action.preferredChannel, duplicateId: duplicate.id })
