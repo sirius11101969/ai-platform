@@ -1,5 +1,9 @@
 const pool = require('../../db/pool')
 
+function safeJson(value) {
+  return JSON.stringify(value ?? {})
+}
+
 function safeNumber(value) {
   const number = Number(value || 0)
   return Number.isFinite(number) ? number : 0
@@ -30,7 +34,7 @@ async function recordProviderUsage(usage, client = pool) {
        workspace_id, user_id, task_id, provider, model, operation,
        prompt_tokens, completion_tokens, total_tokens, provider_cost_usd,
        billable_credits, latency_ms, status, metadata
-     ) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
+     ) VALUES($1::uuid,$2::uuid,$3::uuid,$4::text,$5::text,$6::text,$7::integer,$8::integer,$9::integer,$10::numeric,$11::integer,$12::integer,$13::text,$14::jsonb)
      RETURNING id`,
     [
       normalized.workspaceId,
@@ -46,10 +50,10 @@ async function recordProviderUsage(usage, client = pool) {
       normalized.billableCredits,
       normalized.latencyMs,
       normalized.status,
-      normalized.metadata,
+      safeJson(normalized.metadata),
     ]
   )
   return result.rows[0]
 }
 
-module.exports = { recordProviderUsage }
+module.exports = { recordProviderUsage, safeJson }

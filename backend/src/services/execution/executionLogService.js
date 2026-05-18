@@ -1,5 +1,9 @@
 const pool = require('../../db/pool')
 
+function safeJson(value) {
+  return JSON.stringify(value ?? {})
+}
+
 async function writeExecutionLog(log, client = pool) {
   const level = log.level || 'info'
   const message = String(log.message || log.event || '').trim()
@@ -8,7 +12,7 @@ async function writeExecutionLog(log, client = pool) {
     `INSERT INTO execution_logs(
        workspace_id, user_id, task_id, job_id, workflow_id, agent_id,
        level, event, message, metadata, trace_id, span_id
-     ) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+     ) VALUES($1::uuid,$2::uuid,$3::uuid,$4::uuid,$5::uuid,$6::uuid,$7::text,$8::text,$9::text,$10::jsonb,$11::text,$12::text)
      RETURNING id`,
     [
       log.workspaceId || null,
@@ -20,7 +24,7 @@ async function writeExecutionLog(log, client = pool) {
       level,
       log.event || null,
       message,
-      log.metadata || {},
+      safeJson(log.metadata),
       log.traceId || null,
       log.spanId || null,
     ]
@@ -28,4 +32,4 @@ async function writeExecutionLog(log, client = pool) {
   return result.rows[0]
 }
 
-module.exports = { writeExecutionLog }
+module.exports = { safeJson, writeExecutionLog }
