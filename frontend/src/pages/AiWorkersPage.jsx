@@ -616,6 +616,14 @@ function getActionDomId(actionId) {
   return `ai-action-${String(actionId || "").replace(/[^a-zA-Z0-9_-]/g, "-")}`;
 }
 
+function safeOpenDetails(ref) {
+  const node = ref?.current;
+  if (!node || typeof node !== "object") return false;
+  if (!("open" in node)) return false;
+  node.open = true;
+  return true;
+}
+
 class AiWorkersErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -843,6 +851,16 @@ function AiWorkersPageContent() {
   const [editingDraft, setEditingDraft] = useState({ itemId: "", text: "" });
   const location = useLocation();
   const highlightRef = useRef(null);
+  const completedDetailsRef = useRef(null);
+  const legacyDetailsRef = useRef(null);
+  const safetyDetailsRef = useRef(null);
+  const allDetailsRef = useRef(null);
+  const detailsRefs = useMemo(() => ({
+    completed: completedDetailsRef,
+    legacy: legacyDetailsRef,
+    safety: safetyDetailsRef,
+    all: allDetailsRef,
+  }), []);
   const params = useMemo(() => new URLSearchParams(location.search), [location.search]);
   const targetActionId = params.get("actionId") || params.get("approvalId") || "";
   const targetLeadId = params.get("leadId") || "";
@@ -1178,32 +1196,36 @@ function AiWorkersPageContent() {
   useEffect(() => {
     if (loading || !highlightedActionId || typeof window === "undefined" || typeof document === "undefined") return undefined;
 
+    const sectionToOpen = highlightedActionSection && highlightedActionSection !== "focus" ? highlightedActionSection : "";
     let frameId;
-    const timeoutId = window.setTimeout(() => {
-      const scrollHighlightedAction = () => {
-        if (typeof window === "undefined" || typeof document === "undefined") return;
-        const escapedActionId = window.CSS?.escape ? window.CSS.escape(highlightedActionId) : String(highlightedActionId).replace(/"/g, '\\"');
-        const element = typeof document.querySelector === "function" ? document.querySelector(`[data-action-id="${escapedActionId}"]`) : null;
-        if (element && typeof element.scrollIntoView === "function") {
-          highlightRef.current = element;
-          console.info("[ai-workers-focus] highlight target mounted", { actionId: highlightedActionId, section: highlightedActionSection });
-          element.scrollIntoView({ behavior: "smooth", block: "center" });
-          return;
+    const scrollHighlightedAction = () => {
+      if (typeof window === "undefined" || typeof document === "undefined") return;
+      if (sectionToOpen) {
+        const detailsRef = detailsRefs?.[sectionToOpen];
+        if (!safeOpenDetails(detailsRef)) {
+          console.info("[ai-workers-focus] details ref missing, skipped safely", { actionId: highlightedActionId, section: sectionToOpen });
         }
-        console.info("[ai-workers-focus] highlight skipped safely", { actionId: highlightedActionId, reason: element ? "scroll_unavailable" : "target_not_mounted" });
-      };
+      }
+      const escapedActionId = window.CSS?.escape ? window.CSS.escape(highlightedActionId) : String(highlightedActionId).replace(/"/g, '\\"');
+      const element = typeof document.querySelector === "function" ? document.querySelector(`[data-action-id="${escapedActionId}"]`) : null;
+      if (element && typeof element.scrollIntoView === "function") {
+        highlightRef.current = element;
+        console.info("[ai-workers-focus] highlight target mounted", { actionId: highlightedActionId, section: highlightedActionSection });
+        element.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
+      console.info("[ai-workers-focus] highlight skipped safely", { actionId: highlightedActionId, reason: element ? "scroll_unavailable" : "target_not_mounted" });
+    };
 
-      frameId = window.requestAnimationFrame
-        ? window.requestAnimationFrame(scrollHighlightedAction)
-        : window.setTimeout(scrollHighlightedAction, 0);
-    }, 0);
+    frameId = window.requestAnimationFrame
+      ? window.requestAnimationFrame(scrollHighlightedAction)
+      : window.setTimeout(scrollHighlightedAction, 0);
 
     return () => {
-      window.clearTimeout(timeoutId);
       if (window.cancelAnimationFrame && typeof frameId === "number") window.cancelAnimationFrame(frameId);
       else if (frameId) window.clearTimeout(frameId);
     };
-  }, [loading, highlightedActionId, highlightedActionSection, expandedSections, activeApprovalTab]);
+  }, [loading, highlightedActionId, highlightedActionSection, expandedSections, activeApprovalTab, detailsRefs]);
 
   useEffect(() => {
     if (!targetActionId) {
@@ -1363,8 +1385,18 @@ function AiWorkersPageContent() {
     }
     if (!Array.isArray(safeItems) || !safeItems.length) return null;
     const visibleItems = prioritizeHighlightedItems(safeItems, id === "all" ? 50 : 12);
+    const detailsRef = detailsRefs?.[id];
     return (
-      <details className="approval-collapsed-section" open={Boolean(expandedSections?.[id])} onToggle={(event) => setExpandedSections((current) => ({ ...current, [id]: event.currentTarget.open }))}>
+      <details
+        ref={detailsRef}
+        className="approval-collapsed-section"
+        open={Boolean(expandedSections?.[id])}
+        onToggle={(event) => {
+          const node = event?.currentTarget;
+          const isOpen = Boolean(node && typeof node === "object" && "open" in node && node.open);
+          setExpandedSections((current) => ({ ...current, [id]: isOpen }));
+        }}
+      >
         <summary>
           <span>{title}</span>
           <b>{count ?? safeItems.length}</b>
