@@ -83,14 +83,14 @@ async function testCompleteJobUsesTypedPersistenceQueries() {
 
   const jobUpdate = client.calls.find((call) => call.sql.includes('UPDATE ai_execution_jobs'))
   assert(jobUpdate.sql.includes('result = $3::jsonb'))
-  assertJsonParam(jobUpdate.params[2], { ok: true, text: 'done', usage: { totalTokens: 7 } })
+  assertJsonParam(jobUpdate.params[2], { ok: true, text: 'done', usage: { totalTokens: 7 }, optional: null })
 
   const logInsert = client.calls.find((call) => call.sql.includes('INSERT INTO execution_logs'))
   assert(logInsert.sql.includes('$10::jsonb'))
   assertJsonParam(logInsert.params[9], {
     workerNodeId: workerId,
     latencyMs: JSON.parse(logInsert.params[9]).latencyMs,
-    result: { ok: true, text: 'done', usage: { totalTokens: 7 } },
+    result: { ok: true, text: 'done', usage: { totalTokens: 7 }, optional: null },
   })
 
   const metricInsert = client.calls.find((call) => call.sql.includes('INSERT INTO worker_metrics'))
@@ -219,7 +219,10 @@ async function testExecutionLogAndProviderUsageHelpersCastJsonb() {
   assertJsonParam(logInsert.params[9], {})
 
   const usageInsert = calls.find((call) => call.sql.includes('INSERT INTO ai_provider_usage'))
+  assert(usageInsert.sql.includes('workspace_id, user_id, task_id, provider, model, operation'))
+  assert(!usageInsert.sql.includes('model_name'))
   assert(usageInsert.sql.includes('$14::jsonb'))
+  assert.strictEqual(usageInsert.params[1], null)
   assert.strictEqual(usageInsert.params[6], 0)
   assertJsonParam(usageInsert.params[13], { nested: true })
   assertNoUndefinedParams(calls)
