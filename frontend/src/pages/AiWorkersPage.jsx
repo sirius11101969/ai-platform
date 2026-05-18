@@ -108,7 +108,9 @@ function stageLabel(stage) {
 }
 
 function isStageRecommendation(item) {
-  return (item.executionType || item.actionType) === "stage_change_recommendation" || item.actionType === "move_lead_stage";
+  if (!isObjectAction(item)) return false;
+  const type = getActionType(item);
+  return type === "stage_change_recommendation" || type === "move_lead_stage";
 }
 
 function renderStageDetails(item) {
@@ -353,11 +355,11 @@ const APPROVAL_ACTION_TIMEOUT_MS = 15000;
 const executableApprovalTypes = new Set(["followup_sequence_draft", "email_followup_draft", "telegram_reply_draft", "telegram_meeting_confirmation_draft", "telegram_followup", "email_followup", "send_demo_link", "send_presentation", "create_reminder", "move_lead_stage", "stage_change_recommendation", "meeting_schedule_proposal"]);
 
 function isApprovalItemExecutable(item) {
-  return executableApprovalTypes.has(item?.executionType || item?.actionType);
+  return executableApprovalTypes.has(getItemType(item));
 }
 
 function sortApprovalItemsByCreatedDesc(items) {
-  return [...items].sort((left, right) => new Date(right.createdAt || right.created_at || 0).getTime() - new Date(left.createdAt || left.created_at || 0).getTime());
+  return safeArray(items).slice().sort((left, right) => new Date(right?.createdAt || right?.created_at || 0).getTime() - new Date(left?.createdAt || left?.created_at || 0).getTime());
 }
 
 function canAutoApproveAndExecuteDraft(item) {
@@ -405,8 +407,8 @@ function withApprovalActionTimeout(promise, action) {
 }
 
 function mergeQueueItem(items, nextItem) {
-  if (!nextItem?.id) return items;
-  return items.map((item) => (item.id === nextItem.id ? { ...item, ...nextItem } : item));
+  if (!isObjectAction(nextItem) || !getActionId(nextItem)) return safeArray(items);
+  return safeArray(items).map((item) => (getActionId(item) === getActionId(nextItem) ? { ...item, ...nextItem } : item));
 }
 
 function getOptimisticApprovalItem(item, action, response) {
@@ -453,11 +455,11 @@ function logApprovalAction(event, details) {
 }
 
 function logTelegramSendViaExecute(item) {
-  console.log("[ai-workers-ui] telegram send via execute", { actionId: item.id, actionType: item.executionType || item.actionType });
+  console.log("[ai-workers-ui] telegram send via execute", { actionId: getActionId(item), actionType: getItemType(item) });
 }
 
 function getApprovalItemType(item) {
-  return item?.executionType || item?.actionType || "";
+  return getItemType(item);
 }
 
 
@@ -485,33 +487,66 @@ function isFinishedActionStatus(status) {
   return finishedActionStatuses.has(status);
 }
 
+function isObjectAction(action) {
+  return Boolean(action && typeof action === "object" && !Array.isArray(action));
+}
+
 function getActionStatus(item) {
-  return item?.status || "";
+  if (!isObjectAction(item)) return "";
+  return item.status || "";
 }
 
 function getActionId(item) {
-  return item?.id || "";
+  if (!isObjectAction(item)) return "";
+  return item.id || "";
+}
+
+function getActionType(item) {
+  if (!isObjectAction(item)) return "";
+  return item.type || item.executionType || item.actionType || "";
 }
 
 function getLeadId(item) {
-  return item?.leadId || item?.lead_id || "";
+  if (!isObjectAction(item)) return "";
+  return item.leadId || item.lead_id || "";
 }
 
-function getHighlightedActionLocation(focusQueueState, isHighlightedApprovalItem) {
-  if (typeof isHighlightedApprovalItem !== "function") return null;
-  const safeState = focusQueueState || {};
-  const sections = [
-    { id: "focus", label: "Focus Queue", items: safeArray(safeState.focusActions), collapsedSection: "" },
-    { id: "completed", label: "completed history", items: safeArray(safeState.completedHistoryActions), collapsedSection: "completed" },
-    { id: "safety", label: "safety history", items: safeArray(safeState.safetyHistoryActions), collapsedSection: "safety" },
-    { id: "legacy", label: "legacy pending", items: safeArray(safeState.hiddenLegacyActions), collapsedSection: "legacy" },
-    { id: "all", label: "all actions", items: safeArray(safeState.allActions), collapsedSection: "all" },
+function getRouteHighlightSections(focusQueueState) {
+  const safeState = isObjectAction(focusQueueState) ? focusQueueState : {};
+  return [
+    { section: "focus", label: "Focus Queue", items: safeArray(safeState.focusActions), collapsedSection: "" },
+    { section: "completed", label: "completed history", items: safeArray(safeState.completedHistoryActions), collapsedSection: "completed" },
+    { section: "legacy", label: "legacy pending", items: safeArray(safeState.hiddenLegacyActions), collapsedSection: "legacy" },
+    { section: "safety", label: "safety history", items: safeArray(safeState.safetyHistoryActions), collapsedSection: "safety" },
+    { section: "all", label: "all actions", items: safeArray(safeState.allActions), collapsedSection: "all" },
   ];
-  for (const section of sections) {
-    const item = section.items.find((candidate) => candidate && isHighlightedApprovalItem(candidate));
-    if (item) return { section: section.id, label: section.label, collapsedSection: section.collapsedSection, item };
+}
+
+function createEmptyHighlightResolution() {
+  return { found: false, section: null, action: null };
+}
+
+function resolveHighlightedAction(actionId, sections) {
+  try {
+    const targetId = String(actionId || "").trim();
+    if (!targetId || !Array.isArray(sections)) return createEmptyHighlightResolution();
+
+    for (const sectionInfo of sections) {
+      if (!isObjectAction(sectionInfo)) continue;
+      const candidates = safeArray(sectionInfo.items);
+      const action = candidates.find((candidate) => isObjectAction(candidate) && getActionId(candidate) === targetId) || null;
+      if (action) {
+        return {
+          found: true,
+          section: ["focus", "completed", "legacy", "safety", "all"].includes(sectionInfo.section) ? sectionInfo.section : null,
+          action,
+        };
+      }
+    }
+  } catch (error) {
+    console.warn("[ai-workers-focus] highlight skipped safely", { actionId, error });
   }
-  return null;
+  return createEmptyHighlightResolution();
 }
 
 function getActionDomId(actionId) {
@@ -537,8 +572,8 @@ class AiWorkersErrorBoundary extends React.Component {
       return (
         <main className="workspace-page ai-workers-page">
           <Panel className="ai-workers-fallback-panel">
-            <h2>AI Workers временно не отрисовался. Обновите страницу или откройте без actionId.</h2>
-            <p>Если вы открыли ссылку на конкретное действие, попробуйте перейти на <a href="/ai-workers">/ai-workers</a>.</p>
+            <h2>AI Workers временно не отрисовался.</h2>
+            <p>Сработала защита от реального render crash. Попробуйте обновить страницу или перейти на <a href="/ai-workers">/ai-workers</a>.</p>
           </Panel>
         </main>
       );
@@ -557,11 +592,13 @@ function getItemUpdatedTime(item) {
 }
 
 function getItemType(item) {
-  return item?.executionType || item?.actionType || "";
+  if (!isObjectAction(item)) return "";
+  return item.executionType || item.actionType || getActionType(item);
 }
 
 function getItemSearchText(item) {
-  return [item?.title, item?.recommendation, item?.errorMessage, item?.payload?.testName, item?.payload?.source, item?.payload?.scenario].filter(Boolean).join(" ").toLowerCase();
+  const chunks = [item?.title, item?.recommendation, item?.errorMessage, item?.payload?.testName, item?.payload?.source, item?.payload?.scenario];
+  return safeArray(chunks).join(" ").toLowerCase();
 }
 
 function isRecentAction(item, now = Date.now()) {
@@ -593,11 +630,11 @@ function isGenericLowValueLeadPriority(item) {
 }
 
 function hasNewerCompletedFallback(item, items) {
-  if (item?.status !== "failed" || !item?.leadId) return false;
+  if (getActionStatus(item) !== "failed" || !getLeadId(item)) return false;
   const itemTime = getItemUpdatedTime(item);
-  return items.some((candidate) => {
-    if (candidate.id === item.id || candidate.leadId !== item.leadId) return false;
-    if (!["completed", "executed"].includes(candidate.status)) return false;
+  return safeArray(items).some((candidate) => {
+    if (getActionId(candidate) === getActionId(item) || getLeadId(candidate) !== getLeadId(item)) return false;
+    if (!["completed", "executed"].includes(getActionStatus(candidate))) return false;
     if (!isCustomerFacingAction(candidate)) return false;
     if (getItemUpdatedTime(candidate) <= itemTime) return false;
     const candidateChannel = String(candidate?.payload?.channel || candidate?.payload?.suggestedChannel || "").toLowerCase();
@@ -609,7 +646,7 @@ function hasNewerCompletedFallback(item, items) {
 function getFocusPriority(item, items, now = Date.now()) {
   const type = getItemType(item);
   const source = String(item?.payload?.source || item?.workerName || item?.payload?.engine || "").toLowerCase();
-  const status = item?.status;
+  const status = getActionStatus(item);
   if (activeActionStatuses.has(status) && isCustomerFacingAction(item) && isRecentAction(item, now)) return 1;
   if (source.includes("next_best_action") || type.includes("next_best_action")) return 2;
   if (source.includes("pipeline_copilot") || type.includes("pipeline_copilot")) return 3;
@@ -621,10 +658,11 @@ function getFocusPriority(item, items, now = Date.now()) {
 
 function shouldHideFromFocus(item, items, now = Date.now()) {
   const type = getItemType(item);
-  if (finishedActionStatuses.has(item?.status)) return true;
+  const status = getActionStatus(item);
+  if (finishedActionStatuses.has(status)) return true;
   if (isSafetyHistoryAction(item)) return true;
-  if (item?.status === "failed" && hasNewerCompletedFallback(item, items)) return true;
-  if (type === "lead_scoring_update" && ["completed", "executed"].includes(item?.status)) return true;
+  if (status === "failed" && hasNewerCompletedFallback(item, items)) return true;
+  if (type === "lead_scoring_update" && ["completed", "executed"].includes(status)) return true;
   if (["telegram_draft", "email_draft"].includes(type) && !isRecentAction(item, now)) return true;
   if (isGenericLowValueLeadPriority(item)) return true;
   return false;
@@ -678,9 +716,9 @@ function buildFocusQueueState(items, now = Date.now()) {
 
 function logTelegramSendButtonState(item, buttonState) {
   console.log("[ai-workers-ui] send button state", {
-    actionId: item.id,
+    actionId: getActionId(item),
     actionType: buttonState.actionType,
-    status: item.status,
+    status: getActionStatus(item),
     buttonEnabled: buttonState.buttonEnabled,
     disabled: buttonState.disabled,
     loadingKey: buttonState.loadingKey,
@@ -707,6 +745,8 @@ function AiWorkersPageContent() {
   const params = useMemo(() => new URLSearchParams(location.search), [location.search]);
   const targetActionId = params.get("actionId") || params.get("approvalId") || "";
   const targetLeadId = params.get("leadId") || "";
+  const [highlightResolution, setHighlightResolution] = useState(createEmptyHighlightResolution);
+  const [highlightResolutionReady, setHighlightResolutionReady] = useState(false);
 
   async function loadCommandCenter({ silent = false } = {}) {
     if (!silent) {
@@ -757,7 +797,7 @@ function AiWorkersPageContent() {
     try {
       const response = await runAiWorker(worker.id);
       setMessage(worker.type === "ai_lead_scoring_engine"
-        ? `${worker.name}: scoring завершён для ${response.scoredLeads?.filter((item) => !item.error).length || 0} лидов.`
+        ? `${worker.name}: scoring завершён для ${safeArray(response.scoredLeads).filter((item) => !item.error).length || 0} лидов.`
         : `${worker.name}: создано ${response.queueItems?.length || 0} рекомендаций на одобрение.`);
       await loadCommandCenter({ silent: true });
     } catch (requestError) {
@@ -800,18 +840,19 @@ function AiWorkersPageContent() {
   }
 
   async function runApprovalAction(item, action, requestFactory, onSuccess) {
-    const actionKey = getApprovalActionKey(item.id, action);
-    if (actionInFlightRef.current.has(actionKey)) {
-      logApprovalAction("failed", { itemId: item.id, action, reason: "action already in progress" });
+    const itemId = getActionId(item);
+    const actionKey = getApprovalActionKey(itemId, action);
+    if (!itemId || actionInFlightRef.current.has(actionKey)) {
+      logApprovalAction("failed", { itemId, action, reason: itemId ? "action already in progress" : "missing action id" });
       return;
     }
 
     actionInFlightRef.current.add(actionKey);
-    setBusyActions((current) => ({ ...current, [actionKey]: { itemId: item.id, action } }));
+    setBusyActions((current) => ({ ...current, [actionKey]: { itemId, action } }));
     if (action === "execute") setLoadingKey(actionKey);
     setError("");
     setMessage("");
-    logApprovalAction("start", { itemId: item.id, action, status: item.status });
+    logApprovalAction("start", { itemId, action, status: getActionStatus(item) });
 
     try {
       const response = await withApprovalActionTimeout(requestFactory(), action);
@@ -821,16 +862,16 @@ function AiWorkersPageContent() {
       if (updatedItem?.status === "failed" || response?.error) {
         const errorMessage = formatApprovalErrorMessage(updatedItem?.errorMessage || response?.error);
         setError(errorMessage);
-        logApprovalAction("failed", { itemId: item.id, action, error: errorMessage, status: updatedItem?.status });
+        logApprovalAction("failed", { itemId, action, error: errorMessage, status: getActionStatus(updatedItem) });
         return;
       }
 
       onSuccess?.(response, updatedItem);
-      logApprovalAction("success", { itemId: item.id, action, status: updatedItem?.status });
+      logApprovalAction("success", { itemId, action, status: getActionStatus(updatedItem) });
     } catch (requestError) {
       const errorMessage = getApprovalActionErrorMessage(requestError, action);
       setError(errorMessage);
-      logApprovalAction("failed", { itemId: item.id, action, error: errorMessage });
+      logApprovalAction("failed", { itemId, action, error: errorMessage });
     } finally {
       actionInFlightRef.current.delete(actionKey);
       setBusyActions((current) => {
@@ -845,22 +886,23 @@ function AiWorkersPageContent() {
 
   async function handleApprovalAction(item, action) {
     const requestOptions = { timeoutMs: APPROVAL_ACTION_TIMEOUT_MS };
+    const itemId = getActionId(item);
 
     if (action === "execute" && (isTelegramReplyDraft(item) || isEmailFollowupDraft(item))) {
-      console.log("[ai-workers-ui] send clicked", { actionId: item.id, actionType: getApprovalItemType(item), status: item.status });
+      console.log("[ai-workers-ui] send clicked", { actionId: itemId, actionType: getApprovalItemType(item), status: getActionStatus(item) });
       logTelegramSendViaExecute(item);
     }
 
     const executeApprovalItem = async () => {
-      if ((isTelegramReplyDraft(item) || isEmailFollowupDraft(item)) && item.status === "pending_approval") {
-        await approveAiApprovalQueueItem(item.id, requestOptions);
+      if ((isTelegramReplyDraft(item) || isEmailFollowupDraft(item)) && getActionStatus(item) === "pending_approval") {
+        await approveAiApprovalQueueItem(itemId, requestOptions);
       }
-      return executeAiApprovalQueueItem(item.id, requestOptions);
+      return executeAiApprovalQueueItem(itemId, requestOptions);
     };
 
     const actionRequests = {
-      approve: () => approveAiApprovalQueueItem(item.id, requestOptions),
-      reject: () => rejectAiApprovalQueueItem(item.id, requestOptions),
+      approve: () => approveAiApprovalQueueItem(itemId, requestOptions),
+      reject: () => rejectAiApprovalQueueItem(itemId, requestOptions),
       execute: executeApprovalItem,
     };
 
@@ -886,15 +928,16 @@ function AiWorkersPageContent() {
   }
 
   function handleEditApprovalItem(item) {
-    const itemHasBusyAction = Object.keys(busyActions).some((key) => key.startsWith(`${item.id}:`));
+    const itemId = getActionId(item);
+    const itemHasBusyAction = safeArray(Object.keys(busyActions)).some((key) => key.startsWith(`${itemId}:`));
     if (itemHasBusyAction) {
-      logApprovalAction("failed", { itemId: item.id, action: "edit", reason: "action already in progress" });
+      logApprovalAction("failed", { itemId, action: "edit", reason: "action already in progress" });
       return;
     }
 
     const isTelegramReplyDraftItem = isTelegramReplyDraft(item);
     if (isTelegramReplyDraftItem || isFollowupSequenceDraft(item) || isEmailFollowupDraft(item)) {
-      setEditingDraft({ itemId: item.id, text: getDraftText(item) });
+      setEditingDraft({ itemId, text: getDraftText(item) });
       return;
     }
     if (isMeetingScheduleProposal(item)) {
@@ -933,7 +976,7 @@ function AiWorkersPageContent() {
     await runApprovalAction(
       item,
       "edit",
-      () => updateAiApprovalQueueItem(item.id, payload, { timeoutMs: APPROVAL_ACTION_TIMEOUT_MS }),
+      () => updateAiApprovalQueueItem(getActionId(item), payload, { timeoutMs: APPROVAL_ACTION_TIMEOUT_MS }),
       (response) => {
         setEditingDraft({ itemId: "", text: "" });
         updateApprovalItemLocally(response?.item?.id ? response.item : localPatch);
@@ -965,21 +1008,28 @@ function AiWorkersPageContent() {
   const approvalItems = safeArray(approvalQueue?.items);
   const previousHighlightedStatusRef = useRef("");
   const focusQueueState = useMemo(() => buildFocusQueueState(approvalItems), [approvalItems]);
+  const routeHighlightSections = useMemo(() => getRouteHighlightSections(focusQueueState), [focusQueueState]);
   const selectedApprovalItems = safeArray(focusQueueState?.tabActions?.[activeApprovalTab] || focusQueueState?.focusActions);
-  const isHighlightedApprovalItem = useCallback((item) => Boolean(item && ((targetActionId && getActionId(item) === targetActionId) || (targetLeadId && getLeadId(item) === targetLeadId))), [targetActionId, targetLeadId]);
+  const highlightedAction = isObjectAction(highlightResolution?.action) ? highlightResolution.action : null;
+  const highlightedActionId = getActionId(highlightedAction);
+  const highlightedActionSection = highlightResolution?.section || null;
+  const isHighlightedApprovalItem = useCallback((item) => {
+    if (!isObjectAction(item)) return false;
+    const itemId = getActionId(item);
+    if (highlightedActionId && itemId === highlightedActionId) return true;
+    return Boolean(targetLeadId && getLeadId(item) === targetLeadId);
+  }, [highlightedActionId, targetLeadId]);
   const prioritizeHighlightedItems = (items, limit) => {
     const safeItems = safeArray(items);
     const sliced = limit ? safeItems.slice(0, limit) : safeItems;
     const highlighted = safeItems.find(isHighlightedApprovalItem);
-    if (highlighted && !sliced.some((item) => getActionId(item) === getActionId(highlighted))) return [highlighted, ...sliced.slice(0, Math.max(0, (limit || safeItems.length) - 1))];
+    if (highlighted && !safeArray(sliced).some((item) => getActionId(item) === getActionId(highlighted))) return [highlighted, ...sliced.slice(0, Math.max(0, (limit || safeItems.length) - 1))];
     return sliced;
   };
-  const highlightedActionLocation = useMemo(() => getHighlightedActionLocation(focusQueueState, isHighlightedApprovalItem), [focusQueueState, isHighlightedApprovalItem]);
-  const highlightedAction = highlightedActionLocation?.item || null;
-  const highlightedActionMissing = Boolean((targetActionId || targetLeadId) && !loading && !highlightedAction);
+  const highlightedActionMissing = Boolean(targetActionId && !loading && highlightResolutionReady && !highlightResolution?.found);
   const approvalMetrics = { ...(approvalQueue?.metrics || {}), ...(focusQueueState?.metrics || {}), ...(focusSummary || {}) };
-  const pendingActions = useMemo(() => queue.filter((item) => getActionStatus(item) === "pending_approval"), [queue]);
-  const failedActions = useMemo(() => queue.filter((item) => getActionStatus(item) === "failed"), [queue]);
+  const pendingActions = useMemo(() => safeArray(queue).filter((item) => getActionStatus(item) === "pending_approval"), [queue]);
+  const failedActions = useMemo(() => safeArray(queue).filter((item) => getActionStatus(item) === "failed"), [queue]);
 
   useEffect(() => {
     console.info("[ai-workers-focus] focus queue built", { count: safeArray(focusQueueState?.focusActions).length, actionableNow: focusQueueState?.metrics?.actionableNow || 0 });
@@ -987,46 +1037,63 @@ function AiWorkersPageContent() {
   }, [focusQueueState?.focusActions?.length, focusQueueState?.metrics?.actionableNow, focusQueueState?.metrics?.hiddenLegacy]);
 
   useEffect(() => {
-    if (!targetActionId && !targetLeadId) return;
-    const sectionToOpen = highlightedActionLocation?.collapsedSection || "";
-    console.info("[ai-workers-focus] route highlight resolved", {
-      actionId: targetActionId,
-      leadId: targetLeadId,
-      found: Boolean(highlightedActionLocation?.item),
-      section: highlightedActionLocation?.section || "missing",
-      collapsedSection: sectionToOpen || null,
-    });
+    if (!targetActionId) {
+      setHighlightResolution(createEmptyHighlightResolution());
+      setHighlightResolutionReady(false);
+      return;
+    }
+
+    console.info("[ai-workers-focus] resolving highlighted action", { actionId: targetActionId });
+    const nextResolution = resolveHighlightedAction(targetActionId, routeHighlightSections);
+    setHighlightResolution(nextResolution);
+    setHighlightResolutionReady(true);
+
+    if (!nextResolution.found) {
+      console.info("[ai-workers-focus] highlight skipped safely", { actionId: targetActionId, reason: "not_found" });
+      return;
+    }
+
+    if (nextResolution.section === "completed") {
+      console.info("[ai-workers-focus] completed action resolved", { actionId: targetActionId });
+    }
+
+    const sectionToOpen = nextResolution.section && nextResolution.section !== "focus" ? nextResolution.section : "";
     if (!sectionToOpen) return;
     setExpandedSections((current) => {
       if (current?.[sectionToOpen]) return current;
       return { ...current, [sectionToOpen]: true };
     });
-  }, [targetActionId, targetLeadId, highlightedActionLocation]);
+  }, [targetActionId, routeHighlightSections]);
 
 
   useEffect(() => {
-    if (loading || !highlightedAction) return undefined;
-    const highlightedActionId = getActionId(highlightedAction);
-    if (!highlightedActionId) return undefined;
+    if (loading || !highlightedActionId) return undefined;
 
-    const scrollHighlightedAction = () => {
-      const escapedActionId = window.CSS?.escape ? window.CSS.escape(highlightedActionId) : String(highlightedActionId).replace(/"/g, '\\"');
-      const element = document.querySelector(`[data-action-id="${escapedActionId}"]`);
-      if (element) {
-        highlightRef.current = element;
-        element.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-    };
+    let frameId;
+    const timeoutId = window.setTimeout(() => {
+      const scrollHighlightedAction = () => {
+        const escapedActionId = window.CSS?.escape ? window.CSS.escape(highlightedActionId) : String(highlightedActionId).replace(/"/g, '\\"');
+        const element = document.querySelector(`[data-action-id="${escapedActionId}"]`);
+        if (element) {
+          highlightRef.current = element;
+          console.info("[ai-workers-focus] highlight target mounted", { actionId: highlightedActionId, section: highlightedActionSection });
+          element.scrollIntoView({ behavior: "smooth", block: "center" });
+          return;
+        }
+        console.info("[ai-workers-focus] highlight skipped safely", { actionId: highlightedActionId, reason: "target_not_mounted" });
+      };
 
-    const frameId = window.requestAnimationFrame
-      ? window.requestAnimationFrame(scrollHighlightedAction)
-      : window.setTimeout(scrollHighlightedAction, 0);
+      frameId = window.requestAnimationFrame
+        ? window.requestAnimationFrame(scrollHighlightedAction)
+        : window.setTimeout(scrollHighlightedAction, 0);
+    }, 0);
 
     return () => {
+      window.clearTimeout(timeoutId);
       if (window.cancelAnimationFrame && typeof frameId === "number") window.cancelAnimationFrame(frameId);
-      else window.clearTimeout(frameId);
+      else if (frameId) window.clearTimeout(frameId);
     };
-  }, [loading, highlightedAction, expandedSections, activeApprovalTab]);
+  }, [loading, highlightedActionId, highlightedActionSection, expandedSections, activeApprovalTab]);
 
   useEffect(() => {
     if (!targetActionId) {
@@ -1043,7 +1110,7 @@ function AiWorkersPageContent() {
       }
     }
     previousHighlightedStatusRef.current = currentStatus;
-  }, [targetActionId, highlightedAction]);
+  }, [targetActionId, highlightedActionId, highlightedAction]);
 
   function renderApprovalRow(item, { history = false } = {}) {
     if (!item) return null;
@@ -1106,7 +1173,7 @@ function AiWorkersPageContent() {
         <div><span>Лид</span><b>{item.lead?.name || "—"}</b></div>
         <div><span>AI сотрудник</span><b>{item.workerName || "AI"}</b></div>
         <div><span>Канал</span><b>{item.payload?.channel || item.payload?.suggestedChannel || (item.lead?.telegram ? "telegram" : item.lead?.email ? "email" : "crm")}</b></div>
-        <div><span>Тип</span><b>{actionTypeLabels[item.executionType] || actionTypeLabels[item.actionType] || item.actionType}</b></div>
+        <div><span>Тип</span><b>{actionTypeLabels[getItemType(item)] || getItemType(item)}</b></div>
         <div><span>Статус</span><b className={`glow-status ${itemStatus}`}>{approvalStatusLabels[itemStatus] || itemStatus}</b><small>{formatDate(item.updatedAt || item.createdAt)}</small></div>
         <div className="approval-actions">
           {!history && ["pending_approval", "failed"].includes(itemStatus) && (
@@ -1159,9 +1226,9 @@ function AiWorkersPageContent() {
       {error && <p className="auth-error dashboard-alert">{error}</p>}
       {message && <p className="success-alert dashboard-alert">{message}</p>}
       {highlightedActionMissing && (
-        <p className="ai-workers-route-notice dashboard-alert">AI action не найден или уже очищен из истории.</p>
+        <p className="ai-workers-route-notice dashboard-alert">AI action не найден.</p>
       )}
-      {highlightedAction && highlightedActionLocation?.section === "completed" && (
+      {highlightedAction && highlightedActionSection === "completed" && (
         <p className="ai-workers-route-notice dashboard-alert">Действие из ссылки уже завершено и показано в completed history.</p>
       )}
 
@@ -1223,7 +1290,7 @@ function AiWorkersPageContent() {
               onClick={() => setActiveApprovalTab(tab.id)}
             >
               {tab.label}
-              <span>{focusQueueState.tabActions[tab.id]?.length || 0}</span>
+              <span>{safeArray(focusQueueState?.tabActions?.[tab.id]).length || 0}</span>
             </button>
           ))}
         </div>
@@ -1241,7 +1308,7 @@ function AiWorkersPageContent() {
 
       <section className="worker-card-grid">
         {loading && <Panel className="ai-worker-card"><p className="empty-state">Загружаем AI сотрудников…</p></Panel>}
-        {!loading && workers.map((worker) => (
+        {!loading && safeArray(workers).map((worker) => (
           <Panel className={`ai-worker-card worker-status-${worker.status}`} key={worker.id}>
             <div className="worker-card-top">
               <div className="worker-orb" />
@@ -1323,7 +1390,7 @@ function AiWorkersPageContent() {
           </div>
           <div className="recent-run-list">
             {recentRuns.length === 0 && <p className="empty-state">Запусков пока нет.</p>}
-            {recentRuns.map((run) => (
+            {safeArray(recentRuns).map((run) => (
               <article className={`recent-run ${run.status}`} key={run.id}>
                 <div>
                   <strong>{run.output_summary?.summary || "AI запуск"}</strong>
