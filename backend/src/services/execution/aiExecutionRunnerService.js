@@ -40,7 +40,7 @@ function getWorkerNodeName() {
 }
 
 function getMaxConcurrency() {
-  const value = Number(process.env.AI_MAX_CONCURRENT_JOBS || 4)
+  const value = Number(process.env.AI_EXECUTION_MAX_PARALLEL || process.env.AI_MAX_CONCURRENT_JOBS || 4)
   return Number.isFinite(value) && value > 0 ? Math.trunc(value) : 4
 }
 
@@ -375,6 +375,7 @@ async function completeJob({ job, worker, result, startedAt }) {
     }, client)
     await writeTaskHistory({ job: completedJob, workerNodeId: worker.id, previousStatus: 'running', nextStatus: 'completed', latencyMs }, client)
     await insertWorkerMetric({ workerNodeId: worker.id, queueName: completedJob.queue_name, metricName: 'job_completed', metricValue: 1, labels: { jobType: completedJob.job_type } }, client)
+    await insertWorkerMetric({ workerNodeId: worker.id, queueName: completedJob.queue_name, metricName: 'job_latency_ms', metricValue: latencyMs, labels: { jobType: completedJob.job_type, status: 'completed' } }, client)
     await query(client, 'COMMIT')
     logRunner('job completed', { jobId: completedJob.id, queueName: completedJob.queue_name, workerNodeId: worker.id })
     return { job: completedJob, completed: true }
@@ -483,6 +484,10 @@ async function failJob({ job, worker, error, startedAt }) {
       }, client)
     }
     await insertWorkerMetric({ workerNodeId: worker.id, queueName: failedJob.queue_name, metricName: 'job_failed', metricValue: 1, labels: { jobType: failedJob.job_type, nextStatus } }, client)
+    await insertWorkerMetric({ workerNodeId: worker.id, queueName: failedJob.queue_name, metricName: 'job_latency_ms', metricValue: latencyMs, labels: { jobType: failedJob.job_type, status: nextStatus } }, client)
+    if (nextStatus === 'retrying') {
+      await insertWorkerMetric({ workerNodeId: worker.id, queueName: failedJob.queue_name, metricName: 'job_retry_scheduled', metricValue: 1, labels: { jobType: failedJob.job_type } }, client)
+    }
     await query(client, 'COMMIT')
     logRunner('job failed', { jobId: failedJob.id, queueName: failedJob.queue_name, workerNodeId: worker.id, nextStatus })
     return { job: failedJob, failed: true, nextStatus }
@@ -612,6 +617,7 @@ module.exports = {
     DEFAULT_OPENAI_TEXT_PROMPT,
     OPENAI_TEXT_GENERATION_JOB_TYPE,
     completeJob,
+    executeJob,
     executeOpenAiTextGenerationJob,
     failJob,
     getSafeErrorMessage,

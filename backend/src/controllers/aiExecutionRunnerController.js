@@ -1,4 +1,5 @@
 const aiExecutionRunnerService = require('../services/execution/aiExecutionRunnerService')
+const autonomousExecutionLoop = require('../services/execution/autonomousExecutionLoop')
 
 function getQueueName(req) {
   const body = req.body || {}
@@ -43,6 +44,18 @@ async function enqueueOpenAiTest(req, res, next) {
   }
 }
 
+async function liveStatus(req, res, next) {
+  try {
+    const result = await autonomousExecutionLoop.getLiveStatus({
+      queueName: req.query.queueName || req.query.queue_name || null,
+      loop: autonomousExecutionLoop.getAutonomousExecutionLoop(),
+    })
+    res.json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
 async function runOnce(req, res, next) {
   try {
     const result = await aiExecutionRunnerService.runOnce({ queueName: getQueueName(req) })
@@ -52,4 +65,4 @@ async function runOnce(req, res, next) {
   }
 }
 
-module.exports = { enqueueOpenAiTest, enqueueTest, health, runOnce }
+module.exports = { enqueueOpenAiTest, enqueueTest, health, liveStatus, runOnce }

@@ -31,6 +31,7 @@ const { requireAuth } = require('./middleware/authMiddleware')
 const { requireWorkspace } = require('./middleware/workspaceMiddleware')
 const { errorHandler } = require('./middleware/errorHandler')
 const { aiCopySanitizerResponseMiddleware } = require('./middleware/aiCopySanitizerMiddleware')
+const { startAutonomousExecutionLoop } = require('./services/execution/autonomousExecutionLoop')
 
 const app = express()
 const port = Number(process.env.PORT || 3001)
@@ -148,9 +149,15 @@ async function start() {
   startLeadAnalysisWorker()
   startLeadQualificationWorker()
 
-  app.listen(port, () => {
+  const server = app.listen(port, () => {
     console.log(`Backend started on port ${port}`)
   })
+
+  startAutonomousExecutionLoop().catch((error) => {
+    console.warn('[autonomous-execution-loop] startup failed', { error: error.message })
+  })
+
+  return server
 }
 
 if (require.main === module) {
