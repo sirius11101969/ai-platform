@@ -12,6 +12,10 @@ const OPENAI_TEXT_GENERATION_JOB_TYPE = 'openai_text_generation'
 const DEFAULT_OPENAI_TEXT_PROMPT = 'Напиши короткий безопасный follow-up для CRM лида на русском языке.'
 const MANAGER_SAFE_OPENAI_ERROR = 'OpenAI text generation could not be completed safely. Please check provider configuration or try again later.'
 
+function safeJson(value) {
+  return JSON.stringify(value ?? {})
+}
+
 function getWorkerNodeName() {
   return String(process.env.AI_WORKER_NODE_NAME || '').trim() || os.hostname()
 }
@@ -75,7 +79,7 @@ async function registerWorkerNode(client = pool) {
     `INSERT INTO worker_nodes(
        node_name, node_type, status, queues, max_concurrency, current_concurrency,
        heartbeat_at, started_at, stopped_at, metadata, updated_at
-     ) VALUES($1, 'general', 'online', $2::text[], $3, 0, NOW(), NOW(), NULL, $4, NOW())
+     ) VALUES($1::text, 'general', 'online', $2::text[], $3::integer, 0, NOW(), NOW(), NULL, $4::jsonb, NOW())
      ON CONFLICT (node_name) DO UPDATE SET
        node_type = 'general',
        status = 'online',
@@ -90,11 +94,11 @@ async function registerWorkerNode(client = pool) {
       nodeName,
       DEFAULT_QUEUES,
       maxConcurrency,
-      {
+      safeJson({
         pid: process.pid,
         hostname: os.hostname(),
         service: 'ai-execution-runner',
-      },
+      }),
     ]
   )
   const worker = result.rows[0]
@@ -105,8 +109,8 @@ async function registerWorkerNode(client = pool) {
 async function insertWorkerMetric({ workerNodeId, queueName, metricName, metricValue, labels = {} }, client = pool) {
   await client.query(
     `INSERT INTO worker_metrics(worker_node_id, queue_name, metric_name, metric_value, labels)
-     VALUES($1, $2, $3, $4, $5)`,
-    [workerNodeId || null, queueName, metricName, metricValue, labels]
+     VALUES($1::uuid, $2::text, $3::text, $4::numeric, $5::jsonb)`,
+    [workerNodeId || null, queueName || null, metricName || null, Number(metricValue ?? 0), safeJson(labels)]
   )
 }
 
@@ -116,7 +120,7 @@ async function writeTaskHistory({ job, workerNodeId, previousStatus, nextStatus,
     `INSERT INTO task_execution_history(
        task_id, workspace_id, user_id, previous_status, next_status, worker_node_id,
        attempt, latency_ms, error_message, metadata
-     ) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+     ) VALUES($1::uuid,$2::uuid,$3::uuid,$4::text,$5::text,$6::uuid,$7::integer,$8::integer,$9::text,$10::jsonb)
      RETURNING id`,
     [
       job.task_id,
@@ -128,7 +132,7 @@ async function writeTaskHistory({ job, workerNodeId, previousStatus, nextStatus,
       job.attempt_count || 1,
       latencyMs || null,
       errorMessage || null,
-      metadata,
+      safeJson(metadata),
     ]
   )
   return result.rows[0]
@@ -315,7 +319,7 @@ async function completeJob({ job, worker, result, startedAt }) {
     const updateResult = await client.query(
       `UPDATE ai_execution_jobs
           SET status = 'completed',
-              result = $3,
+              result = $3::jsonb,
               error_message = NULL,
               completed_at = NOW(),
               heartbeat_at = NOW(),
@@ -325,7 +329,7 @@ async function completeJob({ job, worker, result, startedAt }) {
           AND status = 'running'
           AND locked_by = $2
         RETURNING *`,
-      [job.id, worker.id, result]
+      [job.id, worker.id, safeJson(result)]
     )
     if (updateResult.rowCount === 0) {
       await client.query('ROLLBACK')
@@ -382,7 +386,7 @@ async function failJob({ job, worker, error, startedAt }) {
     }
     const freshJob = freshResult.rows[0]
     let nextStatus = 'retrying'
-    let runAfterSql = `NOW() + (LEAST(300, POWER(2, GREATEST($5 - 1, 0)))::text || ' seconds')::interval`
+    let runAfterSql = `NOW() + (LEAST(300, POWER(2, GREATEST($5::integer - 1, 0)))::text || ' seconds')::interval`
     if (error && error.nonRetryable) {
       nextStatus = 'failed'
       runAfterSql = 'run_after'
@@ -393,8 +397,8 @@ async function failJob({ job, worker, error, startedAt }) {
 
     const updateResult = await client.query(
       `UPDATE ai_execution_jobs
-          SET status = $3,
-              error_message = $4,
+          SET status = $3::text,
+              error_message = $4::text,
               locked_by = NULL,
               locked_at = NULL,
               heartbeat_at = NOW(),
@@ -412,7 +416,7 @@ async function failJob({ job, worker, error, startedAt }) {
         `INSERT INTO dead_letter_queue(
            workspace_id, source_queue, source_job_id, task_id, reason,
            error_message, payload, attempts
-         ) VALUES($1,$2,$3,$4,$5,$6,$7,$8)`,
+         ) VALUES($1::uuid,$2::text,$3::uuid,$4::uuid,$5::text,$6::text,$7::jsonb,$8::integer)`,
         [
           failedJob.workspace_id || null,
           failedJob.queue_name,
@@ -420,7 +424,7 @@ async function failJob({ job, worker, error, startedAt }) {
           failedJob.task_id || null,
           'max_attempts_exhausted',
           message,
-          failedJob.payload || {},
+          safeJson(failedJob.payload),
           failedJob.attempt_count,
         ]
       )
@@ -492,15 +496,15 @@ async function enqueueInternalTestJob({ queueName = DEFAULT_QUEUE_NAME, priority
   const normalizedQueueName = normalizeQueueName(queueName)
   const result = await pool.query(
     `INSERT INTO ai_execution_jobs(queue_name, job_type, priority, status, payload, max_attempts, run_after, idempotency_key)
-     VALUES($1, 'internal_test_execution', $2, 'queued', $3, $4, NOW(), $5)
+     VALUES($1::text, 'internal_test_execution', $2::integer, 'queued', $3::jsonb, $4::integer, NOW(), $5::text)
      ON CONFLICT (workspace_id, idempotency_key) DO NOTHING
      RETURNING *`,
     [
       normalizedQueueName,
       Number.isFinite(Number(priority)) ? Math.trunc(Number(priority)) : 100,
-      { source: 'api', createdFor: 'internal_test_execution', ...payload },
+      safeJson({ source: 'api', createdFor: 'internal_test_execution', ...(payload || {}) }),
       normalizePositiveInteger(payload.maxAttempts, 3),
-      idempotencyKey,
+      idempotencyKey || null,
     ]
   )
   if (result.rowCount > 0) return result.rows[0]
@@ -521,16 +525,16 @@ async function enqueueOpenAiTextGenerationJob({ queueName = DEFAULT_QUEUE_NAME, 
   }
   const result = await pool.query(
     `INSERT INTO ai_execution_jobs(queue_name, job_type, priority, status, payload, max_attempts, run_after, idempotency_key)
-     VALUES($1, $2, $3, 'queued', $4, $5, NOW(), $6)
+     VALUES($1::text, $2::text, $3::integer, 'queued', $4::jsonb, $5::integer, NOW(), $6::text)
      ON CONFLICT (workspace_id, idempotency_key) DO NOTHING
      RETURNING *`,
     [
       normalizedQueueName,
       OPENAI_TEXT_GENERATION_JOB_TYPE,
       Number.isFinite(Number(priority)) ? Math.trunc(Number(priority)) : 100,
-      normalizedPayload,
+      safeJson(normalizedPayload),
       normalizePositiveInteger(payload.maxAttempts || payload.max_attempts, 3),
-      idempotencyKey,
+      idempotencyKey || null,
     ]
   )
   if (result.rowCount > 0) return result.rows[0]
@@ -587,9 +591,12 @@ module.exports = {
   _private: {
     DEFAULT_OPENAI_TEXT_PROMPT,
     OPENAI_TEXT_GENERATION_JOB_TYPE,
+    completeJob,
     executeOpenAiTextGenerationJob,
+    failJob,
     getSafeErrorMessage,
     isOpenAiApiKeyConfigured,
+    safeJson,
     sanitizeOpenAiTextPayload,
   },
 }
