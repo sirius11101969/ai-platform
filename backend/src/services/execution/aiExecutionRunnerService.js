@@ -16,6 +16,12 @@ function safeJson(value) {
   return JSON.stringify(normalizeDbValue(value) ?? {})
 }
 
+function normalizeNullableText(value) {
+  if (value === undefined || value === null) return null
+  const normalized = String(value).trim()
+  return normalized || null
+}
+
 function getWorkerNodeName() {
   return String(process.env.AI_WORKER_NODE_NAME || '').trim() || os.hostname()
 }
@@ -64,8 +70,8 @@ function createManagerSafeExecutionError(safeMessage, technicalMessage, options 
 
 function sanitizeOpenAiTextPayload(payload = {}) {
   const prompt = String(payload.prompt || DEFAULT_OPENAI_TEXT_PROMPT).trim()
-  const system = typeof payload.system === 'string' && payload.system.trim() ? payload.system.trim() : null
-  const model = typeof payload.model === 'string' && payload.model.trim() ? payload.model.trim() : undefined
+  const system = normalizeNullableText(payload.system)
+  const model = normalizeNullableText(payload.model)
   const maxOutputTokens = normalizePositiveInteger(payload.maxOutputTokens || payload.max_output_tokens, 900)
   const temperatureValue = Number(payload.temperature)
   const temperature = Number.isFinite(temperatureValue) ? temperatureValue : 0.7
@@ -597,6 +603,7 @@ module.exports = {
     getSafeErrorMessage,
     isOpenAiApiKeyConfigured,
     safeJson,
+    normalizeNullableText,
     sanitizeOpenAiTextPayload,
   },
 }
