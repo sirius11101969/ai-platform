@@ -3,6 +3,7 @@ const crmModel = require('../models/crmModel')
 const { addTimelineEvent } = require('./timelineService')
 const { assertSafeCustomerCopy } = require('./customerCopyGuard')
 const { sanitizeAiCopy, sanitizeAiActionPayload } = require('../utils/aiCopySanitizer')
+const { FOLLOWUP_COOLDOWN_MANAGER_REASON, getFollowupCooldownState, shouldSkipFollowupForCooldown } = require('./followupCooldownService')
 
 const HIGH_RISK = new Set(['high', 'medium'])
 const FOCUS_PRIORITIES = new Set(['urgent', 'priority'])
@@ -257,6 +258,8 @@ function pushAction(actions, seen, action) {
     sortBucket: action.sortBucket || 90,
     ctaRoute: action.ctaRoute || '/crm',
     ctas: action.ctas || buildCtas(action.leadId),
+    followupCooldownActive: Boolean(action.followupCooldownActive),
+    followupCooldownReason: action.followupCooldownReason || '',
   })
   console.info('[pipeline-copilot] action generated', { category: action.category || 'other', leadId: action.leadId || null, title: action.actionTitle })
 }
@@ -383,6 +386,10 @@ function filterUnresolvedFailedActions(items) {
   return unresolved
 }
 
+function managerReasonWithCooldown(lead) {
+  return lead.followupCooldownActive ? FOLLOWUP_COOLDOWN_MANAGER_REASON : lead.managerReason
+}
+
 function buildActions({ focusLeads, riskDeals, meetings, pendingApprovals, failedActions }) {
   const actions = []
   const seen = new Set()
@@ -423,7 +430,9 @@ function buildActions({ focusLeads, riskDeals, meetings, pendingApprovals, faile
     leadId: lead.id,
     leadName: lead.name,
     actionTitle: lead.aiRiskLevel === 'high' ? 'Escalate high-risk deal' : 'Stabilize at-risk deal',
-    reason: lead.managerReason,
+    reason: managerReasonWithCooldown(lead),
+    followupCooldownActive: Boolean(lead.followupCooldownActive),
+    followupCooldownReason: lead.followupCooldownReason || '',
     priority: lead.aiRiskLevel === 'high' ? 'urgent' : 'high',
     dueLabel: 'Сегодня',
     category: 'risk',
@@ -438,7 +447,9 @@ function buildActions({ focusLeads, riskDeals, meetings, pendingApprovals, faile
     leadId: lead.id,
     leadName: lead.name,
     actionTitle: lead.nextStep || 'Work focus lead',
-    reason: lead.managerReason,
+    reason: managerReasonWithCooldown(lead),
+    followupCooldownActive: Boolean(lead.followupCooldownActive),
+    followupCooldownReason: lead.followupCooldownReason || '',
     priority: lead.aiPriority,
     dueLabel: 'Сегодня',
     category: 'urgent',
@@ -570,6 +581,20 @@ async function createPipelineCopilotAction(userId, workspaceId, { leadId, action
   const client = await pool.connect()
   try {
     await client.query('BEGIN')
+    if (normalizedActionKind === 'followup') {
+      const cooldownState = await shouldSkipFollowupForCooldown({ client, workspaceId, leadId: lead.id, leadName: lead.name, userId })
+      if (cooldownState.active) {
+        await client.query('COMMIT')
+        return {
+          success: false,
+          skipped: true,
+          reason: cooldownState.reason,
+          message: FOLLOWUP_COOLDOWN_MANAGER_REASON,
+          cooldown: { lastOutboundAt: cooldownState.lastOutboundAt, cooldownHours: cooldownState.cooldownHours },
+        }
+      }
+    }
+
     const duplicate = await findDuplicatePipelineAction(client, workspaceId, lead.id, config.actionType)
     if (duplicate) {
       console.info('[pipeline-copilot] duplicate action reused', { workspaceId, leadId: lead.id, actionType: config.actionType, actionId: duplicate.id })
@@ -608,11 +633,23 @@ async function createPipelineCopilotAction(userId, workspaceId, { leadId, action
 
 async function getPipelineCopilot(userId, workspaceId) {
   console.info('[pipeline-copilot] requested', { workspaceId, userId })
-  const [leads, queueHistory, meetings] = await Promise.all([
+  const [rawLeads, queueHistory, meetings] = await Promise.all([
     fetchLeads(workspaceId),
     fetchQueue(workspaceId, [...PENDING_STATUSES, ...HISTORY_STATUSES], 200),
     fetchMeetings(workspaceId),
   ])
+  const leads = await Promise.all(rawLeads.map(async (lead) => {
+    const cooldownState = await getFollowupCooldownState({ workspaceId, leadId: lead.id })
+    if (!cooldownState.active) return lead
+    return {
+      ...lead,
+      followupCooldownActive: true,
+      followupCooldownReason: FOLLOWUP_COOLDOWN_MANAGER_REASON,
+      followupCooldownLastOutboundAt: cooldownState.lastOutboundAt,
+      followupCooldownHours: cooldownState.cooldownHours,
+      managerReason: FOLLOWUP_COOLDOWN_MANAGER_REASON,
+    }
+  }))
 
   const pendingApprovals = queueHistory.filter(isActionableApproval).slice(0, 30)
   const failedActions = filterUnresolvedFailedActions(queueHistory).slice(0, 10)

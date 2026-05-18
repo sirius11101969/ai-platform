@@ -95,6 +95,10 @@ async function runScanTest() {
       return { rows: [], rowCount: 0 }
     }
 
+    if (query.startsWith('SELECT MAX(outbound_at) AS last_outbound_at')) {
+      return { rows: [{ last_outbound_at: null }], rowCount: 1 }
+    }
+
     if (query.startsWith('SELECT column_name FROM information_schema.columns')) {
       return { rows: ['reason', 'urgency', 'metadata'].map((column_name) => ({ column_name })), rowCount: 3 }
     }

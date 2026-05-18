@@ -3,6 +3,7 @@ const crmModel = require('../models/crmModel')
 const { addTimelineEvent } = require('./timelineService')
 const { assertSafeCustomerCopy, getPriorityInboxCustomerText } = require('./customerCopyGuard')
 const { sanitizeAiCopy, sanitizeAiActionPayload } = require('../utils/aiCopySanitizer')
+const { FOLLOWUP_COOLDOWN_MANAGER_REASON, getFollowupCooldownState, shouldSkipFollowupForCooldown } = require('./followupCooldownService')
 
 const ACTIVE_STATUSES = new Set(['new', 'qualified', 'proposal', 'booked'])
 const STAGE_WEIGHT = { booked: 2, proposal: 1, qualified: 0, new: 0, won: -2, lost: -3 }
@@ -138,6 +139,20 @@ async function createPriorityInboxAction(userId, workspaceId, { leadId, actionTy
   const client = await pool.connect()
   try {
     await client.query('BEGIN')
+    if (['telegram', 'email', 'followup'].includes(normalizedActionType)) {
+      const cooldownState = await shouldSkipFollowupForCooldown({ client, workspaceId, leadId: lead.id, leadName: lead.name, userId })
+      if (cooldownState.active) {
+        await client.query('COMMIT')
+        return {
+          success: false,
+          skipped: true,
+          reason: cooldownState.reason,
+          message: FOLLOWUP_COOLDOWN_MANAGER_REASON,
+          cooldown: { lastOutboundAt: cooldownState.lastOutboundAt, cooldownHours: cooldownState.cooldownHours },
+        }
+      }
+    }
+
     const duplicate = await findDuplicatePriorityAction(client, workspaceId, lead.id, config.queueActionType)
     if (duplicate) {
       console.log('[priority-inbox] duplicate action reused', { workspaceId, leadId: lead.id, actionType: normalizedActionType, queueItemId: duplicate.id })
@@ -330,6 +345,10 @@ function generateNextBestAction(lead) {
   return { action, reason, code }
 }
 
+function isFollowupRecommendation(code) {
+  return String(code || '').includes('follow') || ['contact_today', 'reply_today', 'deal_loss_risk'].includes(String(code || ''))
+}
+
 function isUrgent(item) {
   return item.aiPriority === 'urgent' || item.nextBestActionCode === 'urgent_follow_up'
 }
@@ -346,6 +365,11 @@ function isFocusLead(item) {
 function buildInboxItem(lead) {
   const lastActivityAt = getLastActivityAt(lead)
   const generated = generateNextBestAction(lead)
+  if (lead.followupCooldownActive && isFollowupRecommendation(generated.code)) {
+    generated.action = 'Оставить в nurture'
+    generated.reason = FOLLOWUP_COOLDOWN_MANAGER_REASON
+    generated.code = 'followup_cooldown'
+  }
   const lastActivitySummary = getLatestActivitySummary(lead, lastActivityAt)
   const lastContactAt = getLastContactAt(lead) || lastActivityAt
   const noResponseDays = daysSince(lastContactAt)
@@ -382,7 +406,11 @@ function buildInboxItem(lead) {
     next_best_action: generated.action,
     nextBestActionReason: generated.reason,
     nextBestActionCode: generated.code,
-    needsFollowUp: generated.code.includes('follow') || Boolean(latestFollowupJob),
+    followupCooldownActive: Boolean(lead.followupCooldownActive),
+    followupCooldownReason: lead.followupCooldownActive ? FOLLOWUP_COOLDOWN_MANAGER_REASON : '',
+    followupCooldownLastOutboundAt: lead.followupCooldownLastOutboundAt || null,
+    followupCooldownHours: lead.followupCooldownHours || null,
+    needsFollowUp: lead.followupCooldownActive ? false : (generated.code.includes('follow') || Boolean(latestFollowupJob)),
     pendingMeeting: Boolean(meetingSignal.pending),
     meetingToday: Boolean(meetingSignal.today),
     hasMeeting: meetingSignal.hasMeetings,
@@ -390,6 +418,7 @@ function buildInboxItem(lead) {
     isUrgent: false,
     isFocusLead: false,
     crmUrl: `/crm?leadId=${encodeURIComponent(lead.id)}`,
+    actionDisabledReasons: lead.followupCooldownActive ? { telegram: FOLLOWUP_COOLDOWN_MANAGER_REASON, email: FOLLOWUP_COOLDOWN_MANAGER_REASON, followup: FOLLOWUP_COOLDOWN_MANAGER_REASON } : {},
     actionUrls: {
       telegram: `/crm?leadId=${encodeURIComponent(lead.id)}&focus=telegram`,
       email: `/crm?leadId=${encodeURIComponent(lead.id)}&focus=email`,
@@ -461,7 +490,17 @@ async function listPriorityInbox(userId, workspaceId, options = {}) {
   if (mode === 'focus') console.log('[priority-inbox] focus mode applied', { userId, workspaceId })
 
   const leads = await crmModel.listLeads(userId, workspaceId)
-  const allItems = leads
+  const leadsWithCooldown = await Promise.all(leads.map(async (lead) => {
+    const cooldownState = await getFollowupCooldownState({ workspaceId, leadId: lead.id })
+    if (!cooldownState.active) return lead
+    return {
+      ...lead,
+      followupCooldownActive: true,
+      followupCooldownLastOutboundAt: cooldownState.lastOutboundAt,
+      followupCooldownHours: cooldownState.cooldownHours,
+    }
+  }))
+  const allItems = leadsWithCooldown
     .filter((lead) => ACTIVE_STATUSES.has(lead.status))
     .map(buildInboxItem)
     .map(enrichInboxItem)

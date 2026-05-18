@@ -5,6 +5,7 @@ const emailService = require('./emailService')
 const { sendTelegramMessageToLead } = require('./telegramService')
 const { addTimelineEvent } = require('./timelineService')
 const { DEFAULT_FOLLOWUP_RULES, ensureDefaultRulesForWorkspace } = require('./aiFollowupRulesService')
+const { shouldSkipFollowupForCooldown } = require('./followupCooldownService')
 
 const OPENAI_RESPONSES_URL = 'https://api.openai.com/v1/responses'
 const STATUSES = ['suggested', 'approved', 'rejected', 'sent', 'failed']
@@ -297,6 +298,7 @@ async function scanWorkspace(userId, workspaceId) {
 
   const createdJobs = []
   const skippedDuplicateJobs = []
+  const skippedCooldownJobs = []
   const debugEvaluations = []
   let matchedLeadsCount = 0
   for (const row of leadsResult.rows) {
@@ -335,6 +337,19 @@ async function scanWorkspace(userId, workspaceId) {
 
     matchedLeadsCount += 1
     console.info('[ai-followups] lead matched rules', { workspaceId, leadId: row.id, ruleTypes: matchedRules.map((rule) => rule.ruleType) })
+    const cooldownState = await shouldSkipFollowupForCooldown({ workspaceId, leadId: row.id, leadName: row.name, userId })
+    if (cooldownState.active) {
+      skippedCooldownJobs.push({
+        leadId: row.id,
+        leadName: row.name,
+        lastOutboundAt: cooldownState.lastOutboundAt,
+        cooldownHours: cooldownState.cooldownHours,
+        reason: cooldownState.reason,
+        ruleTypes: matchedRules.map((rule) => rule.ruleType),
+      })
+      continue
+    }
+
     for (const rule of matchedRules) {
       const duplicate = await pool.query(
         `SELECT id FROM ai_followup_jobs
@@ -381,14 +396,17 @@ async function scanWorkspace(userId, workspaceId) {
     matchedLeadsCount,
     created: createdJobs.length,
     skippedDuplicates: skippedDuplicateJobs.length,
+    skippedCooldown: skippedCooldownJobs.length,
     activeRules: activeRules.length,
     createdCount: createdJobs.length,
     createdJobsCount: createdJobs.length,
     skippedDuplicatesCount: skippedDuplicateJobs.length,
+    skippedCooldownCount: skippedCooldownJobs.length,
     activeRulesCount: activeRules.length,
-    skippedCount: skippedDuplicateJobs.length,
+    skippedCount: skippedDuplicateJobs.length + skippedCooldownJobs.length,
     createdJobs,
     skippedDuplicateJobs,
+    skippedCooldownJobs,
     debugSummary: {
       evaluationsCount: debugEvaluations.length,
       matchedEvaluationsCount: debugEvaluations.filter((evaluation) => evaluation.finalMatch).length,
@@ -405,6 +423,7 @@ async function scanWorkspace(userId, workspaceId) {
     matchedLeadsCount: response.matchedLeadsCount,
     created: response.created,
     skippedDuplicates: response.skippedDuplicates,
+    skippedCooldown: response.skippedCooldown,
     activeRules: response.activeRules,
   })
   return response

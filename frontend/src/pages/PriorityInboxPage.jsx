@@ -103,6 +103,10 @@ export default function PriorityInboxPage() {
     setMessage("");
     try {
       const result = await createPriorityInboxAction({ leadId: lead.leadId, actionType });
+      if (result.skipped) {
+        setMessage(result.message || "Follow-up cooldown: клиенту уже отправлено сообщение недавно.");
+        return;
+      }
       setMessage(result.duplicate ? "Действие уже ждёт approval — открываем AI Workers" : "AI действие создано — открываем approval center");
       navigate(result.redirectTo || "/ai-workers");
     } catch (requestError) {
@@ -190,9 +194,9 @@ export default function PriorityInboxPage() {
             </div>
 
             <div className="priority-card-actions">
-              <button type="button" onClick={() => handlePriorityAction(lead, "telegram")} disabled={isActionBusy(lead, "telegram")}>{isActionBusy(lead, "telegram") ? "Создаём…" : "Telegram"}</button>
-              <button type="button" onClick={() => handlePriorityAction(lead, "email")} disabled={isActionBusy(lead, "email")}>{isActionBusy(lead, "email") ? "Создаём…" : "Email"}</button>
-              <button type="button" onClick={() => handlePriorityAction(lead, "followup")} disabled={isActionBusy(lead, "followup")}>{isActionBusy(lead, "followup") ? "Создаём…" : "Create Follow-up"}</button>
+              <button type="button" onClick={() => handlePriorityAction(lead, "telegram")} title={lead.actionDisabledReasons?.telegram || ""} disabled={Boolean(lead.actionDisabledReasons?.telegram) || isActionBusy(lead, "telegram")}>{isActionBusy(lead, "telegram") ? "Создаём…" : "Telegram"}</button>
+              <button type="button" onClick={() => handlePriorityAction(lead, "email")} title={lead.actionDisabledReasons?.email || ""} disabled={Boolean(lead.actionDisabledReasons?.email) || isActionBusy(lead, "email")}>{isActionBusy(lead, "email") ? "Создаём…" : "Email"}</button>
+              <button type="button" onClick={() => handlePriorityAction(lead, "followup")} title={lead.actionDisabledReasons?.followup || ""} disabled={Boolean(lead.actionDisabledReasons?.followup) || isActionBusy(lead, "followup")}>{isActionBusy(lead, "followup") ? "Создаём…" : "Create Follow-up"}</button>
               <button type="button" onClick={() => handlePriorityAction(lead, "meeting")} disabled={isActionBusy(lead, "meeting")}>{isActionBusy(lead, "meeting") ? "Создаём…" : "Meeting"}</button>
               <button type="button" className="primary-card-action" onClick={() => openLead(lead, "lead")}>Open CRM Lead</button>
             </div>
