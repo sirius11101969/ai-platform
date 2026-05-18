@@ -365,6 +365,22 @@ export function runCrmLeadScoring(payload = {}) {
   return request('/crm/lead-scoring/run', { method: 'POST', body: JSON.stringify(payload) })
 }
 
+export function fetchAiRevenueIntelligence() {
+  return request('/ai/revenue-intelligence')
+}
+
+export function generateAiRevenueForecast(payload = {}) {
+  return request('/ai/revenue-intelligence/forecast', { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export function scheduleAiRevenueIntelligence(payload = {}) {
+  return request('/ai/revenue-intelligence/schedule', { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export function analyzeAiRevenueLead(leadId) {
+  return request(`/ai/revenue-intelligence/leads/${leadId}/analyze`, { method: 'POST' })
+}
+
 export function fetchCrmActivity() {
   return request('/crm/activity')
 }

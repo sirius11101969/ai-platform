@@ -77,6 +77,7 @@ function normalizeLead(row) {
     aiRecommendation: row.ai_recommendation || null,
     aiStageRecommendation: normalizeAiStageRecommendation(row.ai_stage_recommendation || null),
     aiScore: normalizeAiScore(row.ai_score_row || (row.ai_score && typeof row.ai_score === 'object' ? row.ai_score : { score: row.ai_score, probability_to_close: row.ai_score, deal_probability: row.ai_score, temperature: row.ai_temperature, risk_level: row.ai_risk_level, ai_priority: row.ai_priority, ai_summary: row.ai_scoring_reason, ai_reasoning: row.ai_scoring_reason, recommended_next_step: row.ai_scoring_reason, ai_last_scored_at: row.ai_last_scored_at, ai_scoring_reason: row.ai_scoring_reason })),
+    aiRevenueScore: normalizeAiRevenueScore(row.ai_revenue_score || null),
     aiFollowUpSequences: Array.isArray(row.ai_followup_sequences) ? row.ai_followup_sequences.map(normalizeAiFollowUpSequence).filter(Boolean) : [],
     aiActions: Array.isArray(row.ai_actions) ? row.ai_actions : [],
     aiFollowupJobs: Array.isArray(row.ai_followup_jobs) ? row.ai_followup_jobs.map(normalizeAiFollowupJob).filter(Boolean) : [],
@@ -171,6 +172,25 @@ function normalizeAiScore(row) {
     priority: row.priority || row.ai_priority || row.aiPriority || '',
     lastScoredAt: row.ai_last_scored_at || row.aiLastScoredAt || row.generated_at || row.generatedAt || row.created_at || row.createdAt,
     scoringReason: row.ai_scoring_reason || row.aiScoringReason || row.ai_reasoning || row.aiReasoning || row.ai_summary || row.aiSummary || '',
+  }
+}
+
+function normalizeAiRevenueScore(row) {
+  if (!row) return null
+  return {
+    id: row.id,
+    leadId: row.lead_id || row.leadId,
+    priorityScore: Number(row.priority_score ?? row.priorityScore ?? 0),
+    closeProbability: Number(row.close_probability ?? row.closeProbability ?? 0),
+    engagementScore: Number(row.engagement_score ?? row.engagementScore ?? 0),
+    churnRisk: Number(row.churn_risk ?? row.churnRisk ?? 0),
+    pipelineHealth: Number(row.pipeline_health ?? row.pipelineHealth ?? 0),
+    recommendedAction: row.recommended_action || row.recommendedAction || '',
+    recommendedChannel: row.recommended_channel || row.recommendedChannel || '',
+    reasoningSummary: row.reasoning_summary || row.reasoningSummary || '',
+    model: row.model || '',
+    createdAt: row.created_at || row.createdAt,
+    updatedAt: row.updated_at || row.updatedAt,
   }
 }
 
@@ -385,6 +405,13 @@ async function listLeads(userId, workspaceId) {
               ORDER BY las.generated_at DESC
               LIMIT 1
             ) scores) AS ai_score_row,
+            (SELECT to_jsonb(revenue_scores) FROM (
+              SELECT id, lead_id, priority_score, close_probability, engagement_score, churn_risk, pipeline_health, recommended_action, recommended_channel, reasoning_summary, model, created_at, updated_at
+                FROM ai_lead_scores rbs
+               WHERE rbs.workspace_id = l.workspace_id AND rbs.lead_id = l.id
+               ORDER BY rbs.updated_at DESC
+               LIMIT 1
+            ) revenue_scores) AS ai_revenue_score,
             COALESCE((SELECT json_agg(seq_row ORDER BY seq_row.recommended_at DESC) FROM (SELECT * FROM ai_followup_sequences afs WHERE afs.workspace_id = l.workspace_id AND afs.lead_id = l.id ORDER BY afs.recommended_at DESC LIMIT 5) seq_row), '[]'::json) AS ai_followup_sequences,
             COALESCE((SELECT json_agg(job_row ORDER BY job_row.created_at DESC) FROM (SELECT * FROM ai_followup_jobs afj WHERE afj.workspace_id = l.workspace_id AND afj.lead_id = l.id ORDER BY afj.created_at DESC LIMIT 10) job_row), '[]'::json) AS ai_followup_jobs,
             COALESCE((SELECT json_agg(meeting_row ORDER BY meeting_row.starts_at DESC NULLS LAST, meeting_row.created_at DESC) FROM (SELECT id, workspace_id, lead_id, title, starts_at, duration_minutes, channel, status, description, location, meeting_url, calendar_status, calendar_provider, ics_uid, google_event_id, google_meet_url, calendar_error, calendar_synced_at, timezone, ai_worker_queue_id, created_at, updated_at, (ics_content IS NOT NULL AND ics_content <> '') AS has_ics FROM crm_meetings m WHERE m.workspace_id = l.workspace_id AND m.lead_id = l.id ORDER BY m.starts_at DESC NULLS LAST, m.created_at DESC LIMIT 10) meeting_row), '[]'::json) AS meetings,
@@ -413,7 +440,7 @@ async function listLeads(userId, workspaceId) {
 async function findLead(userId, workspaceId, leadId, client = pool) {
   const result = await client.query(`SELECT ${LEAD_SELECT} FROM crm_leads WHERE user_id = $1 AND workspace_id = $2 AND id = $3`, [userId, workspaceId, leadId])
   if (!result.rows[0]) return null
-  const [notes, followups, telegramMessages, aiScore, aiSequences, aiFollowupJobs, meetings, aiOutreachDrafts, aiStageRecommendation] = await Promise.all([
+  const [notes, followups, telegramMessages, aiScore, aiRevenueScore, aiSequences, aiFollowupJobs, meetings, aiOutreachDrafts, aiStageRecommendation] = await Promise.all([
     client.query('SELECT id, lead_id, user_id, body, created_at FROM crm_notes WHERE user_id = $1 AND workspace_id = $3 AND lead_id = $2 ORDER BY created_at DESC', [userId, leadId, workspaceId]),
     client.query('SELECT id, lead_id, user_id, message, model, created_at FROM crm_followups WHERE user_id = $1 AND workspace_id = $3 AND lead_id = $2 ORDER BY created_at DESC', [userId, leadId, workspaceId]),
     client.query('SELECT id, lead_id, user_id, role, message, telegram_chat_id, telegram_message_id, created_at FROM telegram_messages WHERE user_id = $1 AND workspace_id = $3 AND lead_id = $2 ORDER BY created_at ASC LIMIT 200', [userId, leadId, workspaceId]),
@@ -451,6 +478,7 @@ async function findLead(userId, workspaceId, leadId, client = pool) {
      WHERE scores.workspace_id = $1 AND scores.lead_id = $2
      ORDER BY scores.generated_at DESC
      LIMIT 1`, [workspaceId, leadId]),
+    client.query('SELECT id, lead_id, priority_score, close_probability, engagement_score, churn_risk, pipeline_health, recommended_action, recommended_channel, reasoning_summary, model, created_at, updated_at FROM ai_lead_scores WHERE workspace_id = $1 AND lead_id = $2 ORDER BY updated_at DESC LIMIT 1', [workspaceId, leadId]),
     client.query('SELECT * FROM ai_followup_sequences WHERE workspace_id = $1 AND lead_id = $2 ORDER BY recommended_at DESC LIMIT 5', [workspaceId, leadId]),
     client.query('SELECT * FROM ai_followup_jobs WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 10', [workspaceId, leadId]),
     client.query("SELECT id, workspace_id, lead_id, title, starts_at, duration_minutes, channel, status, description, location, meeting_url, calendar_status, calendar_provider, ics_uid, google_event_id, google_meet_url, calendar_error, calendar_synced_at, timezone, ai_worker_queue_id, created_at, updated_at, (ics_content IS NOT NULL AND ics_content <> '') AS has_ics FROM crm_meetings WHERE workspace_id = $1 AND lead_id = $2 ORDER BY starts_at DESC NULLS LAST, created_at DESC LIMIT 10", [workspaceId, leadId]),
@@ -459,7 +487,7 @@ async function findLead(userId, workspaceId, leadId, client = pool) {
   ])
   const ai = await client.query("SELECT output_result FROM ai_agent_actions WHERE workspace_id = $1 AND lead_id = $2 AND task_type = 'analyze_lead' AND status = 'completed' ORDER BY created_at DESC LIMIT 1", [workspaceId, leadId])
   const aiActions = await client.query('SELECT id, task_type, status, output_result, created_at FROM ai_agent_actions WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 5', [workspaceId, leadId])
-  return normalizeLead({ ...result.rows[0], notes_list: notes.rows, followups: followups.rows, telegram_messages: telegramMessages.rows, ai_score: aiScore.rows[0] || null, ai_followup_sequences: aiSequences.rows, ai_followup_jobs: aiFollowupJobs.rows, meetings: meetings.rows, ai_outreach_drafts: aiOutreachDrafts.rows, ai_stage_recommendation: aiStageRecommendation.rows[0] || null, ai_recommendation: ai.rows[0]?.output_result || null, ai_actions: aiActions.rows })
+  return normalizeLead({ ...result.rows[0], notes_list: notes.rows, followups: followups.rows, telegram_messages: telegramMessages.rows, ai_score: aiScore.rows[0] || null, ai_revenue_score: aiRevenueScore.rows[0] || null, ai_followup_sequences: aiSequences.rows, ai_followup_jobs: aiFollowupJobs.rows, meetings: meetings.rows, ai_outreach_drafts: aiOutreachDrafts.rows, ai_stage_recommendation: aiStageRecommendation.rows[0] || null, ai_recommendation: ai.rows[0]?.output_result || null, ai_actions: aiActions.rows })
 }
 
 async function createLead(userId, workspaceId, payload) {

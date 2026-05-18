@@ -18,7 +18,8 @@
     "test:autonomous-execution-loop": "node tests/autonomousExecutionLoop.test.js",
     "test:ai-execution-runner-sales-followup": "node tests/aiExecutionRunnerSalesFollowup.test.js",
     "test:ai-sequence-orchestrator": "node tests/aiSequenceOrchestrator.test.js",
-    "test:ai-sequence-routes-auth": "node tests/aiSequenceRoutesAuth.test.js"
+    "test:ai-sequence-routes-auth": "node tests/aiSequenceRoutesAuth.test.js",
+    "test:ai-revenue-intelligence": "node tests/aiRevenueIntelligenceService.test.js"
   },
   "dependencies": {
     "axios": "^1.6.0",

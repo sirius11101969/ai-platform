@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Panel, PageHeading, StatCard } from "../components/AppShell";
-import { createAiTask, fetchAiApprovalQueue, fetchAiCommandCenter, fetchAiTask, fetchAiTasks, fetchCrmStats, fetchProfile, updateStoredUser } from "../services/api";
+import { createAiTask, fetchAiApprovalQueue, fetchAiCommandCenter, fetchAiTask, fetchAiTasks, fetchCrmStats, fetchProfile, fetchAiRevenueIntelligence, updateStoredUser } from "../services/api";
 import { orders, quickActions, userProfile } from "../data/mockData";
 
 const taskTypeLabels = {
@@ -123,6 +123,7 @@ export default function DashboardPage() {
   const [crmStats, setCrmStats] = useState(null);
   const [aiCommandMetrics, setAiCommandMetrics] = useState(null);
   const [aiApprovalMetrics, setAiApprovalMetrics] = useState(null);
+  const [revenueIntelligence, setRevenueIntelligence] = useState(null);
   const [costs, setCosts] = useState({});
   const [taskForm, setTaskForm] = useState(initialTaskForm);
   const [loading, setLoading] = useState(true);
@@ -135,13 +136,14 @@ export default function DashboardPage() {
     if (!silent) setLoading(true);
     setError("");
     try {
-      const [profileResponse, tasksResponse, crmResponse, commandResponse, approvalResponse] = await Promise.all([fetchProfile(), fetchAiTasks(), fetchCrmStats(), fetchAiCommandCenter(), fetchAiApprovalQueue()]);
+      const [profileResponse, tasksResponse, crmResponse, commandResponse, approvalResponse, revenueResponse] = await Promise.all([fetchProfile(), fetchAiTasks(), fetchCrmStats(), fetchAiCommandCenter(), fetchAiApprovalQueue(), fetchAiRevenueIntelligence()]);
       setProfile(profileResponse.user || null);
       setTasks(tasksResponse.tasks || []);
       setCosts(tasksResponse.costs || {});
       setCrmStats(crmResponse.stats || null);
       setAiCommandMetrics(commandResponse.commandCenter?.metrics || null);
       setAiApprovalMetrics(approvalResponse.metrics || null);
+      setRevenueIntelligence(revenueResponse.intelligence || null);
     } catch (requestError) {
       setError(requestError.message || "Не удалось загрузить дашборд");
     } finally {
@@ -267,6 +269,10 @@ export default function DashboardPage() {
         <StatCard label="AI эффективность" value={loading ? "…" : `${aiCommandMetrics?.efficiency || crmStats?.aiMetrics?.executionSuccessRate || crmStats?.aiMetrics?.efficiency || 0}%`} hint="Успешные запуски AI сотрудников" />
         <StatCard label="Forecast Revenue" value={loading ? "…" : formatCurrency(crmStats?.aiMetrics?.aiForecastedRevenue || crmStats?.aiMetrics?.predictedRevenue || 0)} hint="weighted expected revenue by AI probability" tone="violet" />
         <StatCard label="Выручка под контролем AI" value={loading ? "…" : formatCurrency(aiRevenueUnderControl)} hint="Плейсхолдер revenue impact по открытой воронке" tone="violet" />
+        <StatCard label="Revenue Brain forecast" value={loading ? "…" : formatCurrency(revenueIntelligence?.widgets?.forecastedRevenue || revenueIntelligence?.forecast?.projectedRevenue || 0)} hint={`confidence ${revenueIntelligence?.forecast?.confidenceScore || 0}%`} tone="violet" />
+        <StatCard label="Revenue Brain hot leads" value={loading ? "…" : String(revenueIntelligence?.widgets?.hotLeadsCount || 0)} hint="AI Revenue Intelligence priority queue" tone="pink" />
+        <StatCard label="Revenue Brain health" value={loading ? "…" : `${revenueIntelligence?.widgets?.aiPipelineHealth || 0}/100`} hint={`engagement ${revenueIntelligence?.widgets?.engagementTrend || 0}/100`} />
+        <StatCard label="Revenue recommendations" value={loading ? "…" : String(revenueIntelligence?.widgets?.aiRecommendationsQueue || 0)} hint="next best actions from Revenue Brain" tone="violet" />
         <StatCard label="Telegram лиды" value={loading ? "…" : String(crmStats?.telegram?.leads || 0)} hint={`${crmStats?.telegram?.recentMessages || 0} последних сообщений за 24ч · ${crmStats?.telegram?.aiActionsSent || 0} AI Telegram actions sent`} tone="pink" />
       </section>
 
