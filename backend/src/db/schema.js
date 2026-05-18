@@ -756,7 +756,7 @@ async function migrate() {
         ALTER TABLE ai_workers ADD CONSTRAINT ai_workers_mode_valid CHECK (mode IN ('suggestion_only', 'approval_required', 'autonomous_ready'));
       END IF;
       ALTER TABLE ai_workers DROP CONSTRAINT IF EXISTS ai_workers_type_valid;
-      ALTER TABLE ai_workers ADD CONSTRAINT ai_workers_type_valid CHECK (type IN ('ai_sdr_agent', 'ai_followup_worker', 'ai_revenue_analyst', 'ai_crm_assistant', 'ai_email_assistant', 'ai_telegram_assistant', 'ai_meeting_scheduler', 'ai_lead_scoring_engine', 'ai_next_best_action_engine'));
+      ALTER TABLE ai_workers ADD CONSTRAINT ai_workers_type_valid CHECK (type IN ('ai_sdr_agent', 'ai_followup_worker', 'ai_revenue_analyst', 'ai_revenue_brain', 'ai_crm_assistant', 'ai_email_assistant', 'ai_telegram_assistant', 'ai_meeting_scheduler', 'ai_lead_scoring_engine', 'ai_next_best_action_engine'));
       IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ai_worker_runs_status_valid') THEN
         ALTER TABLE ai_worker_runs ADD CONSTRAINT ai_worker_runs_status_valid CHECK (status IN ('queued', 'running', 'completed', 'failed'));
       END IF;
@@ -1060,6 +1060,12 @@ async function migrate() {
   const aiSequenceMigration = path.resolve(__dirname, '../../../db/migrations/024_ai_sequence_orchestrator.sql')
   if (fs.existsSync(aiSequenceMigration)) {
     await pool.query(fs.readFileSync(aiSequenceMigration, 'utf8'))
+  }
+
+
+  const aiRevenueIntelligenceMigration = path.resolve(__dirname, '../../../db/migrations/025_ai_revenue_intelligence.sql')
+  if (fs.existsSync(aiRevenueIntelligenceMigration)) {
+    await pool.query(fs.readFileSync(aiRevenueIntelligenceMigration, 'utf8'))
   }
 
   console.log('[schema] telegram migrations skipped safely')

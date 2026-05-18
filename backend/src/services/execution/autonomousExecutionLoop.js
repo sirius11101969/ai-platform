@@ -3,6 +3,7 @@ const pool = require('../../db/pool')
 const aiExecutionRunnerService = require('./aiExecutionRunnerService')
 const { writeExecutionLog } = require('./executionLogService')
 const aiSequenceOrchestratorService = require('../aiSequenceOrchestratorService')
+const aiRevenueIntelligenceService = require('../aiRevenueIntelligenceService')
 
 const LOOP_LOG_PREFIX = '[autonomous-execution-loop]'
 const DEFAULT_QUEUE_NAME = process.env.AI_EXECUTION_QUEUE_NAME || 'ai-execution'
@@ -220,6 +221,8 @@ class AutonomousExecutionLoop {
       await withRedisLock(this.redisClient, `ai-execution:${this.queueName}:recovery-lock`, RECOVERY_LOCK_TTL_MS, () => recoverStuckJobs({ queueName: this.queueName }))
       await withRedisLock(this.redisClient, `ai-execution:${this.queueName}:sequence-orchestrator-lock`, POLL_LOCK_TTL_MS, () => aiSequenceOrchestratorService.enqueueDueSequenceSteps({ queueName: this.queueName }))
         .catch((error) => warnLoop('sequence orchestrator skipped', { error: error.message }))
+      await withRedisLock(this.redisClient, `ai-execution:${this.queueName}:revenue-brain-lock`, POLL_LOCK_TTL_MS, () => aiRevenueIntelligenceService.enqueueDueRevenueIntelligence({ queueName: this.queueName }))
+        .catch((error) => warnLoop('revenue intelligence scheduler skipped', { error: error.message }))
 
       while (this.running && this.activeJobs.size < this.maxParallel) {
         const dispatch = await withRedisLock(this.redisClient, `ai-execution:${this.queueName}:dispatch-lock`, POLL_LOCK_TTL_MS, () => this.dispatchOne())

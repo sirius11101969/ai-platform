@@ -42,6 +42,9 @@ import {
   startAiSequence,
   pauseAiSequence,
   stopAiSequence,
+  fetchAiRevenueIntelligence,
+  generateAiRevenueForecast,
+  scheduleAiRevenueIntelligence,
 } from "../services/api";
 
 const DEFAULT_CRM_STAGES = [
@@ -337,6 +340,8 @@ export default function CRMPage() {
   const [aiSequenceBusy, setAiSequenceBusy] = useState({});
   const [aiSequenceMessage, setAiSequenceMessage] = useState("");
   const [aiSequenceError, setAiSequenceError] = useState("");
+  const [revenueIntelligence, setRevenueIntelligence] = useState(null);
+  const [revenueBrainBusy, setRevenueBrainBusy] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -361,7 +366,7 @@ export default function CRMPage() {
     if (!silent) setLoading(true);
     setError("");
     try {
-      const [leadsResponse, stagesResponse, statsResponse, activityResponse, templatesResponse, materialsResponse, sequencesResponse] = await Promise.all([
+      const [leadsResponse, stagesResponse, statsResponse, activityResponse, templatesResponse, materialsResponse, sequencesResponse, revenueResponse] = await Promise.all([
         fetchCrmLeads(),
         fetchCrmStages(),
         fetchCrmStats(),
@@ -369,6 +374,7 @@ export default function CRMPage() {
         fetchEmailTemplates(),
         fetchMaterials(),
         getActiveAiSequences(),
+        fetchAiRevenueIntelligence(),
       ]);
       setLeads(leadsResponse.leads || []);
       setStages((stagesResponse.stages?.length ? stagesResponse.stages : DEFAULT_CRM_STAGES));
@@ -377,6 +383,7 @@ export default function CRMPage() {
       setEmailTemplates(templatesResponse.templates || []);
       setMaterials(materialsResponse.materials || []);
       setAiSequenceDashboard(sequencesResponse || { activeSequences: [], upcomingSteps: [], stoppedSequences: [], metrics: {} });
+      setRevenueIntelligence(revenueResponse?.intelligence || null);
     } catch (requestError) {
       setError(requestError.message || "Не удалось загрузить CRM");
     } finally {
@@ -777,6 +784,23 @@ export default function CRMPage() {
   }
 
 
+  async function handleRunRevenueBrain() {
+    setError('');
+    setRevenueBrainBusy(true);
+    try {
+      await scheduleAiRevenueIntelligence({ limit: 100 });
+      await generateAiRevenueForecast();
+      const response = await fetchAiRevenueIntelligence();
+      setRevenueIntelligence(response.intelligence || null);
+      await loadCrm({ silent: true });
+      await refreshMeta();
+    } catch (requestError) {
+      setError(requestError.message || 'Не удалось запустить AI Revenue Brain');
+    } finally {
+      setRevenueBrainBusy(false);
+    }
+  }
+
   async function handleAnalyzeWorkspaceAi() {
     setError('');
     setAiAnalysisBusy(true);
@@ -971,6 +995,8 @@ export default function CRMPage() {
 <div className="ai-action-center-buttons"><button className="ghost-button" type="button" onClick={handleAnalyzeWorkspaceAi} disabled={aiAnalysisBusy}>{aiAnalysisBusy ? "Scoring запущен…" : "Запустить scoring"}</button><button className="btn primary compact" type="button" onClick={handleQueueInactiveFollowUps} disabled={inactiveQueueBusy}>{inactiveQueueBusy ? "AI ставит в очередь…" : "Поставить follow-up для неактивных"}</button></div>
       </section>
 
+      <AiRevenueIntelligencePanel intelligence={revenueIntelligence} busy={revenueBrainBusy} onRun={handleRunRevenueBrain} />
+
       <section className="crm-layout production-crm-layout">
         <div className="pipeline-board production-pipeline">
           {loading ? DEFAULT_CRM_STAGES.slice(0, 3).map((stage) => <Panel className="stage-column crm-skeleton" key={stage.status}>Загрузка: {stage.title}…</Panel>) : stages.map((stage) => {
@@ -1016,6 +1042,7 @@ export default function CRMPage() {
                       <div className="lead-topline"><strong>{lead.name}</strong><span>{formatCurrency(lead.value)}</span></div>
                       {getLeadAiScore(lead) ? <>
                         <div className="lead-intelligence-kpis"><b>AI {getLeadAiScore(lead).score}/100</b><span>{lead.aiPriority || getLeadAiScore(lead).priority || 'medium'}</span><em>{tempLabel(lead.aiTemperature || getLeadAiScore(lead).temperature)}</em></div>
+                        {lead.aiRevenueScore && <div className="lead-revenue-kpis"><span>AI Priority {lead.aiRevenueScore.priorityScore}/100</span><span>Close {lead.aiRevenueScore.closeProbability}%</span><span>{lead.aiRevenueScore.recommendedAction}</span></div>}
                         <div className="lead-ai-probability forecast-progress"><span>{forecastLabel(getLeadAiScore(lead).forecastCategory)} · engagement {getLeadAiScore(lead).engagementScore}/100</span><i style={{ width: `${getLeadAiScore(lead).probabilityToClose}%` }} /></div>
                       </> : <div className="ai-forecast-empty-card">AI прогноз появится после квалификации лида.</div>}
                       {getAiBadges(lead).length > 0 && <div className="ai-badge-row">{getAiBadges(lead).map((badge) => <b className="ai-neon-badge" key={badge}>{badge}</b>)}</div>}
@@ -1125,6 +1152,62 @@ export default function CRMPage() {
         />
       )}
     </main>
+  );
+}
+
+
+function AiRevenueIntelligencePanel({ intelligence, busy, onRun }) {
+  const widgets = intelligence?.widgets || {};
+  const forecast = intelligence?.forecast || null;
+  const hotLeads = intelligence?.hotLeads || [];
+  const stalledLeads = intelligence?.stalledLeads || [];
+  const churnRisks = intelligence?.churnRisks || [];
+  const nextBestActions = intelligence?.nextBestActions || [];
+  return (
+    <section className="crm-ai-revenue-panel">
+      <div className="panel-head revenue-panel-head">
+        <div>
+          <span className="eyebrow">AI Revenue Intelligence</span>
+          <h3>Revenue Brain layer</h3>
+          <p className="modal-copy">Probabilistic lead priority, close likelihood, churn risk, pipeline health, and next best action from CRM signals only.</p>
+        </div>
+        <button className="btn primary compact" type="button" onClick={onRun} disabled={busy}>{busy ? "Revenue Brain…" : "Run Revenue Brain"}</button>
+      </div>
+      <div className="dashboard-stats revenue-widget-row">
+        <StatCard label="Forecasted revenue" value={formatCurrency(widgets.forecastedRevenue || forecast?.projectedRevenue || 0)} hint={`confidence ${forecast?.confidenceScore || 0}%`} tone="violet" />
+        <StatCard label="Hot leads count" value={String(widgets.hotLeadsCount || 0)} hint="priority 75+ or close 70+" tone="pink" />
+        <StatCard label="AI pipeline health" value={`${widgets.aiPipelineHealth || 0}/100`} hint={`${forecast?.stalledLeadsCount || 0} stalled leads`} />
+        <StatCard label="Engagement trend" value={`${widgets.engagementTrend || 0}/100`} hint="recent replies, sequences, meetings" tone="violet" />
+        <StatCard label="AI recommendations queue" value={String(widgets.aiRecommendationsQueue || 0)} hint="next best actions available" tone="pink" />
+      </div>
+      <div className="revenue-intelligence-grid">
+        <RevenueList title="Hot leads" items={hotLeads} empty="No hot leads scored yet." />
+        <RevenueList title="Highest close probability" items={intelligence?.highestCloseProbability || []} empty="No close probability data yet." field="closeProbability" suffix="%" />
+        <RevenueList title="Stalled leads" items={stalledLeads} empty="No stalled leads detected." field="churnRisk" suffix=" risk" />
+        <RevenueList title="Churn risks" items={churnRisks} empty="No churn risks detected." field="churnRisk" suffix=" risk" />
+      </div>
+      <div className="revenue-action-queue">
+        <strong>Next best actions</strong>
+        {nextBestActions.length === 0 && <p className="empty-state">Run Revenue Brain to populate recommendations.</p>}
+        {nextBestActions.slice(0, 6).map((item) => <span key={item.id || item.leadId}>{item.leadName || 'Lead'} · {item.recommendedAction} · {channelLabel(item.recommendedChannel)}</span>)}
+      </div>
+    </section>
+  );
+}
+
+function RevenueList({ title, items, empty, field = "priorityScore", suffix = "/100" }) {
+  return (
+    <div className="revenue-list-card">
+      <strong>{title}</strong>
+      {items.length === 0 && <p className="empty-state">{empty}</p>}
+      {items.slice(0, 4).map((item) => (
+        <article key={item.id || item.leadId}>
+          <span>{item.leadName || item.company || 'Lead'}</span>
+          <b>{item[field] ?? 0}{suffix}</b>
+          <small>{sanitizeVisibleAiText(item.recommendedAction || item.reasoningSummary || '')}</small>
+        </article>
+      ))}
+    </div>
   );
 }
 
@@ -1271,6 +1354,27 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                   <button type="button" className="ghost-button compact" onClick={() => onApproveApprovalQueueItem(getStageRecommendation(lead, actionCenter))} disabled={executionBusy[getStageRecommendation(lead, actionCenter).id] || !['pending_approval','failed'].includes(getStageRecommendation(lead, actionCenter).status)}>{executionBusy[getStageRecommendation(lead, actionCenter).id] ? 'Обновляем…' : 'Approve stage change'}</button>
                   <button type="button" className="btn primary compact" onClick={() => onExecuteApprovalQueueItem(getStageRecommendation(lead, actionCenter))} disabled={executionBusy[getStageRecommendation(lead, actionCenter).id] || getStageRecommendation(lead, actionCenter).status !== 'approved'}>{executionBusy[getStageRecommendation(lead, actionCenter).id] ? 'Выполняем…' : 'Execute stage change'}</button>
                   <button type="button" className="ghost-button compact danger-action" onClick={() => onRejectApprovalQueueItem(getStageRecommendation(lead, actionCenter))} disabled={executionBusy[getStageRecommendation(lead, actionCenter).id] || ['executing','completed','executed','rejected'].includes(getStageRecommendation(lead, actionCenter).status)}>Reject</button>
+                </div>
+              </div>
+            )}
+
+            {lead.aiRevenueScore && (
+              <div className="detail-section ai-revenue-lead-card">
+                <div className="ai-probability-head">
+                  <div>
+                    <span className="eyebrow">AI Revenue Intelligence</span>
+                    <h4>AI Priority {lead.aiRevenueScore.priorityScore}/100 · Close {lead.aiRevenueScore.closeProbability}%</h4>
+                    <p>{sanitizeVisibleAiText(lead.aiRevenueScore.reasoningSummary)}</p>
+                  </div>
+                  <span className="ai-glow-badge">{formatDate(lead.aiRevenueScore.updatedAt)}</span>
+                </div>
+                <div className="ai-recommendation-grid">
+                  <div><span>AI Priority</span><strong>{lead.aiRevenueScore.priorityScore}/100</strong></div>
+                  <div><span>Close Probability</span><strong>{lead.aiRevenueScore.closeProbability}%</strong></div>
+                  <div><span>AI Recommendation</span><strong>{sanitizeVisibleAiText(lead.aiRevenueScore.recommendedAction)}</strong></div>
+                  <div><span>Recommended channel</span><strong>{channelLabel(lead.aiRevenueScore.recommendedChannel)}</strong></div>
+                  <div><span>Pipeline health</span><strong>{lead.aiRevenueScore.pipelineHealth}/100</strong></div>
+                  <div><span>Last AI Analysis</span><strong>{formatDate(lead.aiRevenueScore.updatedAt)}</strong></div>
                 </div>
               </div>
             )}

@@ -2292,3 +2292,101 @@ button { font: inherit; }
   .ai-sequence-worker-grid { grid-template-columns: 1fr; }
   .ai-sequence-head { align-items: flex-start; flex-direction: column; }
 }
+
+.crm-ai-revenue-panel {
+  border: 1px solid rgba(139, 92, 246, 0.26);
+  border-radius: 28px;
+  padding: 22px;
+  margin: 22px 0;
+  background: linear-gradient(135deg, rgba(20, 24, 51, 0.92), rgba(67, 56, 202, 0.18));
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.34);
+}
+
+.revenue-panel-head,
+.revenue-widget-row {
+  margin-bottom: 16px;
+}
+
+.revenue-intelligence-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.revenue-list-card,
+.revenue-action-queue {
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 20px;
+  padding: 14px;
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.revenue-list-card article {
+  display: grid;
+  gap: 4px;
+  padding: 10px 0;
+  border-top: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.revenue-list-card article:first-of-type {
+  border-top: 0;
+}
+
+.revenue-list-card b,
+.lead-revenue-kpis span {
+  color: #c4b5fd;
+}
+
+.revenue-list-card small,
+.revenue-action-queue span {
+  color: rgba(226, 232, 240, 0.76);
+}
+
+.revenue-action-queue {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.revenue-action-queue strong {
+  width: 100%;
+}
+
+.revenue-action-queue span {
+  border: 1px solid rgba(196, 181, 253, 0.22);
+  border-radius: 999px;
+  padding: 8px 11px;
+  background: rgba(124, 58, 237, 0.16);
+}
+
+.lead-revenue-kpis {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0;
+  font-size: 0.75rem;
+}
+
+.lead-revenue-kpis span {
+  border-radius: 999px;
+  padding: 5px 8px;
+  background: rgba(124, 58, 237, 0.12);
+  border: 1px solid rgba(196, 181, 253, 0.16);
+}
+
+.ai-revenue-lead-card {
+  border-color: rgba(196, 181, 253, 0.24);
+}
+
+@media (max-width: 1100px) {
+  .revenue-intelligence-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .revenue-intelligence-grid {
+    grid-template-columns: 1fr;
+  }
+}
