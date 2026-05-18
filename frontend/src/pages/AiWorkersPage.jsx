@@ -1255,6 +1255,7 @@ function AiWorkersPageContent() {
       >
         <div className="approval-main">
           <strong>{sanitizeVisibleAiText(getActionTitle(item))}</strong>
+          {shouldRouteHighlight && <span className="approval-route-badge">Открыто по ссылке</span>}
           <p>{shortRecommendation(item)}</p>
           {renderStageDetails(item)}
           {renderMeetingScheduleDetails(item, { onDownloadIcs: handleDownloadIcs })}
@@ -1325,6 +1326,7 @@ function AiWorkersPageContent() {
       >
         <div className="approval-main">
           <strong>AI action не удалось отрисовать безопасно</strong>
+          {shouldHighlight && <span className="approval-route-badge">Открыто по ссылке</span>}
           <p>{sanitizeVisibleAiText(getActionTitle(action) || "Некорректные данные AI действия")}</p>
           {error?.message && <small className="email-error-text">Render error: {error.message}</small>}
         </div>
@@ -1360,7 +1362,7 @@ function AiWorkersPageContent() {
       });
     }
     if (!Array.isArray(safeItems) || !safeItems.length) return null;
-    const visibleItems = id === "completed" ? safeItems.slice(0, 12) : prioritizeHighlightedItems(safeItems, id === "all" ? 50 : 12);
+    const visibleItems = prioritizeHighlightedItems(safeItems, id === "all" ? 50 : 12);
     return (
       <details className="approval-collapsed-section" open={Boolean(expandedSections?.[id])} onToggle={(event) => setExpandedSections((current) => ({ ...current, [id]: event.currentTarget.open }))}>
         <summary>
