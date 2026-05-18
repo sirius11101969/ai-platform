@@ -15,8 +15,15 @@ function safeJson(value) {
 }
 
 function safeNumber(value) {
-  const number = Number(value || 0)
+  const number = Number(value ?? 0)
   return Number.isFinite(number) && number > 0 ? number : 0
+}
+
+const VALID_PROVIDER_USAGE_STATUSES = new Set(['submitted', 'succeeded', 'failed', 'cancelled'])
+
+function normalizeStatus(status) {
+  const normalized = String(status || 'succeeded').trim().toLowerCase()
+  return VALID_PROVIDER_USAGE_STATUSES.has(normalized) ? normalized : 'failed'
 }
 
 async function recordProviderUsage(usage = {}, client = pool) {
@@ -33,7 +40,7 @@ async function recordProviderUsage(usage = {}, client = pool) {
     providerCostUsd: safeNumber(usage.providerCostUsd),
     billableCredits: Math.trunc(safeNumber(usage.billableCredits)),
     latencyMs: Math.trunc(safeNumber(usage.latencyMs)),
-    status: normalizeDbValue(usage.status || 'succeeded'),
+    status: normalizeStatus(usage.status),
     metadata: normalizeDbValue(usage.metadata || {}),
   }
 
@@ -66,4 +73,4 @@ async function recordProviderUsage(usage = {}, client = pool) {
   return result.rows[0]
 }
 
-module.exports = { normalizeDbValue, recordProviderUsage, safeJson }
+module.exports = { normalizeDbValue, normalizeStatus, recordProviderUsage, safeJson }
