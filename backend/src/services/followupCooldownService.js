@@ -6,6 +6,8 @@ const SKIP_TIMELINE_COOLDOWN_HOURS = 24
 const FOLLOWUP_COOLDOWN_SKIP_REASON = 'recent_outbound_customer_message'
 const FOLLOWUP_COOLDOWN_MANAGER_REASON = 'Follow-up cooldown: клиенту уже отправлено сообщение недавно.'
 const COOLDOWN_SKIP_EVENT_TYPE = 'ai_followup_skipped_cooldown'
+const COOLDOWN_SKIP_EVENT_TITLE = 'AI follow-up пропущен'
+const COOLDOWN_SKIP_EVENT_BODY = 'Недавнее исходящее сообщение клиенту — cooldown 48 часов.'
 
 const FOLLOWUP_DRAFT_ACTION_TYPES = new Set([
   'followup_sequence_draft',
@@ -160,8 +162,8 @@ async function recordCooldownSkipTimelineEvent({ client, workspaceId, leadId, us
     leadId,
     userId,
     eventType: COOLDOWN_SKIP_EVENT_TYPE,
-    title: 'AI follow-up пропущен',
-    body: `Недавнее исходящее сообщение клиенту — cooldown ${cooldownHours} часов.`,
+    title: COOLDOWN_SKIP_EVENT_TITLE,
+    body: COOLDOWN_SKIP_EVENT_BODY,
     source: 'ai',
     metadata: {
       reason: FOLLOWUP_COOLDOWN_SKIP_REASON,
@@ -181,7 +183,13 @@ async function shouldSkipFollowupForCooldown({ client, workspaceId, leadId, lead
   console.info('[followup-cooldown] lead skipped', logPayload)
 
   if (writeTimelineEvent) {
-    await recordCooldownSkipTimelineEvent({ client, workspaceId, leadId, userId, leadName, cooldownHours, lastOutboundAt: state.lastOutboundAt })
+    const createdTimelineEvent = await recordCooldownSkipTimelineEvent({ client, workspaceId, leadId, userId, leadName, cooldownHours, lastOutboundAt: state.lastOutboundAt })
+    console.info(
+      createdTimelineEvent
+        ? '[followup-cooldown] timeline audit event created'
+        : '[followup-cooldown] timeline audit already exists',
+      logPayload
+    )
   }
 
   return state
@@ -191,6 +199,9 @@ module.exports = {
   DEFAULT_FOLLOWUP_COOLDOWN_HOURS,
   FOLLOWUP_COOLDOWN_MANAGER_REASON,
   FOLLOWUP_COOLDOWN_SKIP_REASON,
+  COOLDOWN_SKIP_EVENT_TYPE,
+  COOLDOWN_SKIP_EVENT_TITLE,
+  COOLDOWN_SKIP_EVENT_BODY,
   isFollowupDraftActionType,
   isFollowupRecommendationCode,
   getFollowupCooldownState,

@@ -167,7 +167,9 @@ A manager-safe UI reason is used anywhere the lead/action still appears in Pipel
 Follow-up cooldown: клиенту уже отправлено сообщение недавно.
 ```
 
-The guard may add a timeline audit event `ai_followup_skipped_cooldown` with title `AI follow-up пропущен` and body `Недавнее исходящее сообщение клиенту — cooldown 48 часов.` To avoid timeline spam, this skip event is limited to one event per lead per 24 hours.
+### Cooldown audit timeline event
+
+The guard writes a manager-safe timeline audit event `ai_followup_skipped_cooldown` with title `AI follow-up пропущен` and body `Недавнее исходящее сообщение клиенту — cooldown 48 часов.` To avoid timeline spam, this skip event is limited to one event per lead per 24 hours. Backend logs distinguish new and deduplicated audit writes with `[followup-cooldown] timeline audit event created` and `[followup-cooldown] timeline audit already exists`.
 
 The cooldown does not block manual manager actions, meeting confirmations, non-follow-up recommendations, scoring updates, copy guard behavior, route highlighting, or Focus Queue rendering.
 
@@ -186,4 +188,11 @@ FROM lead_timeline_events
 WHERE lead_id=(SELECT id FROM crm_leads WHERE name='Telegram Connect Test' LIMIT 1)
 ORDER BY created_at DESC
 LIMIT 15;
+
+SELECT event_type,title,body,created_at
+FROM lead_timeline_events
+WHERE lead_id=(SELECT id FROM crm_leads WHERE name='Telegram Connect Test' LIMIT 1)
+AND event_type='ai_followup_skipped_cooldown'
+ORDER BY created_at DESC
+LIMIT 5;
 ```
