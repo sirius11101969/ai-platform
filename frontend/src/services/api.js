@@ -369,12 +369,27 @@ export function fetchAiRevenueIntelligence() {
   return request('/ai/revenue-intelligence')
 }
 
+export function getRevenueIntelligence() {
+  return fetchAiRevenueIntelligence()
+}
+
+export function getLeadScores(params = {}) {
+  const query = new URLSearchParams(Object.entries(params).filter(([, value]) => value !== undefined && value !== null && value !== '')).toString()
+  return request(`/ai/revenue-intelligence/lead-scores${query ? `?${query}` : ''}`)
+}
+
 export function generateAiRevenueForecast(payload = {}) {
   return request('/ai/revenue-intelligence/forecast', { method: 'POST', body: JSON.stringify(payload) })
 }
 
 export function scheduleAiRevenueIntelligence(payload = {}) {
   return request('/ai/revenue-intelligence/schedule', { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export async function triggerRevenueAnalysis(payload = {}) {
+  const scheduled = await scheduleAiRevenueIntelligence(payload)
+  const forecast = await generateAiRevenueForecast(payload.forecastPeriod ? { forecastPeriod: payload.forecastPeriod } : {})
+  return { scheduled: scheduled.scheduled, forecast: forecast.forecast }
 }
 
 export function analyzeAiRevenueLead(leadId) {

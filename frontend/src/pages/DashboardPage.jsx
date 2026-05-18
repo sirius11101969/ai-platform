@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Panel, PageHeading, StatCard } from "../components/AppShell";
-import { createAiTask, fetchAiApprovalQueue, fetchAiCommandCenter, fetchAiTask, fetchAiTasks, fetchCrmStats, fetchProfile, fetchAiRevenueIntelligence, updateStoredUser } from "../services/api";
+import { createAiTask, fetchAiApprovalQueue, fetchAiCommandCenter, fetchAiTask, fetchAiTasks, fetchCrmStats, fetchProfile, getRevenueIntelligence, triggerRevenueAnalysis, updateStoredUser } from "../services/api";
 import { orders, quickActions, userProfile } from "../data/mockData";
+import { buildRecommendationQueue, getForecastWidget, getRevenueCards } from "../utils/revenueIntelligence";
 
 const taskTypeLabels = {
   ai_content_generation: "Генерация текста",
@@ -129,6 +130,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [revenueBusy, setRevenueBusy] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
@@ -136,7 +138,7 @@ export default function DashboardPage() {
     if (!silent) setLoading(true);
     setError("");
     try {
-      const [profileResponse, tasksResponse, crmResponse, commandResponse, approvalResponse, revenueResponse] = await Promise.all([fetchProfile(), fetchAiTasks(), fetchCrmStats(), fetchAiCommandCenter(), fetchAiApprovalQueue(), fetchAiRevenueIntelligence()]);
+      const [profileResponse, tasksResponse, crmResponse, commandResponse, approvalResponse, revenueResponse] = await Promise.all([fetchProfile(), fetchAiTasks(), fetchCrmStats(), fetchAiCommandCenter(), fetchAiApprovalQueue(), getRevenueIntelligence()]);
       setProfile(profileResponse.user || null);
       setTasks(tasksResponse.tasks || []);
       setCosts(tasksResponse.costs || {});
@@ -185,6 +187,25 @@ export default function DashboardPage() {
   const activityFeed = useMemo(() => buildActivityFeed(sortedTasks), [sortedTasks]);
   const selectedCost = costs[taskForm.type] || 0;
   const aiRevenueUnderControl = Number(aiCommandMetrics?.revenueUnderAi || crmStats?.pipelineValue || 0);
+  const revenueCards = getRevenueCards(revenueIntelligence || {});
+  const forecastWidget = getForecastWidget(revenueIntelligence || {});
+  const revenueActions = buildRecommendationQueue(revenueIntelligence || {}).slice(0, 5);
+
+  async function handleRunRevenueAnalysis() {
+    setRevenueBusy(true);
+    setError("");
+    setMessage("");
+    try {
+      await triggerRevenueAnalysis({ limit: 100 });
+      const revenueResponse = await getRevenueIntelligence();
+      setRevenueIntelligence(revenueResponse.intelligence || null);
+      setMessage("Revenue analysis jobs queued and forecast generated.");
+    } catch (requestError) {
+      setError(requestError.message || "Не удалось запустить Revenue Analysis");
+    } finally {
+      setRevenueBusy(false);
+    }
+  }
 
   async function handleCreateTask(event) {
     event.preventDefault();
@@ -274,6 +295,41 @@ export default function DashboardPage() {
         <StatCard label="Revenue Brain health" value={loading ? "…" : `${revenueIntelligence?.widgets?.aiPipelineHealth || 0}/100`} hint={`engagement ${revenueIntelligence?.widgets?.engagementTrend || 0}/100`} />
         <StatCard label="Revenue recommendations" value={loading ? "…" : String(revenueIntelligence?.widgets?.aiRecommendationsQueue || 0)} hint="next best actions from Revenue Brain" tone="violet" />
         <StatCard label="Telegram лиды" value={loading ? "…" : String(crmStats?.telegram?.leads || 0)} hint={`${crmStats?.telegram?.recentMessages || 0} последних сообщений за 24ч · ${crmStats?.telegram?.aiActionsSent || 0} AI Telegram actions sent`} tone="pink" />
+      </section>
+
+
+      <section className="dashboard-revenue-command-center">
+        <div className="panel-head revenue-panel-head">
+          <div>
+            <span className="eyebrow">AI Revenue Intelligence</span>
+            <h3>AI Revenue Command Center</h3>
+            <p className="modal-copy">Executive revenue view from ai_lead_scores and ai_revenue_forecasts. Prompts, chain of thought, and raw model responses stay hidden.</p>
+          </div>
+          <button className="btn primary compact" type="button" onClick={handleRunRevenueAnalysis} disabled={revenueBusy}>{revenueBusy ? "Running analysis…" : "Run Revenue Analysis Now"}</button>
+        </div>
+        <div className="dashboard-stats revenue-widget-row">
+          {revenueCards.map((card) => <StatCard key={card.key} label={card.label} value={card.kind === 'money' ? formatCurrency(card.value) : card.kind === 'score' ? `${card.value}/100` : String(card.value)} hint={card.hint} tone={card.key === 'stalledLeads' || card.key === 'highChurnRisk' ? 'pink' : 'violet'} />)}
+        </div>
+        <div className="dashboard-revenue-bottom">
+          <div className="revenue-forecast-widget">
+            <div>
+              <span className="eyebrow">Revenue Forecast Widget</span>
+              <strong>{formatCurrency(forecastWidget.projectedRevenue)}</strong>
+              <p>Active pipeline {formatCurrency(forecastWidget.activePipelineValue)} · hot {forecastWidget.hotLeadsCount} · stalled {forecastWidget.stalledLeadsCount}</p>
+            </div>
+            <div className="forecast-mini-trend" aria-label="Forecast confidence trend">
+              <span style={{ height: `${Math.max(10, forecastWidget.confidenceScore)}%` }} />
+              <span style={{ height: `${Math.max(10, forecastWidget.hotLeadsCount * 12)}%` }} />
+              <span style={{ height: `${Math.max(10, forecastWidget.stalledLeadsCount * 12)}%` }} />
+            </div>
+            <b>{forecastWidget.confidenceScore}% confidence</b>
+          </div>
+          <div className="revenue-action-queue dashboard-next-actions">
+            <strong>AI Next Best Actions</strong>
+            {revenueActions.length === 0 && <p className="empty-state">No AI Revenue recommendations yet. Run analysis to populate the queue.</p>}
+            {revenueActions.map((item) => <span key={item.id || item.leadId}>{item.leadName || 'Lead'} · {item.recommendedAction} · {item.recommendedChannel || 'crm'}</span>)}
+          </div>
+        </div>
       </section>
 
       <section className="app-grid two-columns">

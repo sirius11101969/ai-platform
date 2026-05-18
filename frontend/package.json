@@ -5,7 +5,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview --host",
-    "test:ui-sanitizer": "node tests/uiSanitizer.test.mjs"
+    "test:ui-sanitizer": "node tests/uiSanitizer.test.mjs",
+    "test:revenue-intelligence": "node tests/revenueIntelligence.test.mjs"
   },
   "dependencies": {
     "react": "^18.2.0",
