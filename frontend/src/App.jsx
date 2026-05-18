@@ -12,6 +12,7 @@ import PriorityInboxPage from "./pages/PriorityInboxPage";
 import PipelineCopilotPage from "./pages/PipelineCopilotPage";
 import AiManagerDashboardPage from "./pages/AiManagerDashboardPage";
 import AiVoiceOutreachPage from "./pages/AiVoiceOutreachPage";
+import AiRevenueIntelligencePage from "./pages/AiRevenueIntelligencePage";
 import { getAuthToken, getStoredUser } from "./services/api";
 
 const AuthContext = createContext({ token: null, user: null, isAuthenticated: false });
@@ -95,6 +96,7 @@ export default function App() {
           <Route path="/pipeline-copilot" element={<ProtectedRoute><PipelineCopilotPage /></ProtectedRoute>} />
           <Route path="/ai-manager-dashboard" element={<ProtectedRoute><AiManagerDashboardPage /></ProtectedRoute>} />
           <Route path="/ai-voice-outreach" element={<ProtectedRoute><AiVoiceOutreachPage /></ProtectedRoute>} />
+          <Route path="/ai-revenue-intelligence" element={<ProtectedRoute><AiRevenueIntelligencePage /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

@@ -2592,3 +2592,78 @@ button { font: inherit; }
   .voice-detail-grid { grid-template-columns: 1fr; }
   .voice-trigger-form { grid-template-columns: 1fr; }
 }
+
+.ai-revenue-intelligence-page .app-heading {
+  align-items: flex-start;
+}
+
+.revenue-head-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.ai-revenue-forecast-widget {
+  margin-bottom: 0;
+}
+
+.ai-revenue-health-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 16px;
+}
+
+.ai-revenue-action-panel {
+  align-content: flex-start;
+  margin-top: 0;
+  min-height: 100%;
+}
+
+.ai-revenue-segment-grid {
+  margin: 18px 0;
+}
+
+.ai-revenue-list-panel h3 {
+  color: #f8fdff;
+  margin: 4px 0 10px;
+}
+
+.revenue-lead-row-head {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.revenue-lead-row-head strong {
+  color: #75efff;
+}
+
+.ai-revenue-table-panel {
+  margin-top: 18px;
+}
+
+.ai-revenue-table {
+  overflow-x: auto;
+}
+
+.ai-revenue-table td strong {
+  color: #f8fdff;
+}
+
+.ai-revenue-table td small {
+  color: var(--muted-text);
+}
+
+@media (max-width: 760px) {
+  .ai-revenue-health-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .revenue-head-actions {
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+}

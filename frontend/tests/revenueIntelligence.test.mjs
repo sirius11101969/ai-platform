@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { buildRecommendationQueue, filterAndSortRevenueLeads, getForecastWidget, getRevenueCards } from '../src/utils/revenueIntelligence.js'
+import { buildRecommendationQueue, filterAndSortRevenueLeads, getForecastWidget, getLatestRevenueLeadScores, getRevenueCards, hasRevenueIntelligenceData } from '../src/utils/revenueIntelligence.js'
 
 const intelligence = {
   forecast: { projectedRevenue: 125000, confidenceScore: 81, activePipelineValue: 240000, hotLeadsCount: 2, stalledLeadsCount: 1 },
@@ -32,5 +32,16 @@ assert.deepEqual(filterAndSortRevenueLeads(leads, 'all', 'churnRisk').map((lead)
 const queue = buildRecommendationQueue(intelligence)
 assert.equal(queue.length, 2)
 assert.equal(/Плюсы:|ai_score:/i.test(queue[1].recommendedAction + queue[1].reasoningSummary), false)
+
+
+const latestScores = getLatestRevenueLeadScores([
+  { id: 'old', lead_name: 'Old Lead', priority_score: 20, updated_at: '2026-05-17T10:00:00Z', recommended_action: 'Send value follow-up' },
+  { id: 'new', leadName: 'New Lead', priorityScore: 88, updatedAt: '2026-05-18T10:00:00Z', recommendedAction: 'Контекст: Плюсы: +18 demo intent' },
+], 1)
+assert.equal(latestScores.length, 1, 'latest score table helper respects limit')
+assert.equal(latestScores[0].id, 'new', 'latest score table helper sorts newest first')
+assert.equal(/Плюсы:|ai_score:/i.test(latestScores[0].recommendedAction), false, 'latest score actions are sanitized')
+assert.equal(hasRevenueIntelligenceData({}, []), false, 'empty revenue intelligence state is explicit')
+assert.equal(hasRevenueIntelligenceData({ hotLeads: [{ id: 'hot' }] }, []), true, 'non-empty revenue intelligence state is detected')
 
 console.log('revenue intelligence tests passed')
