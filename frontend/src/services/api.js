@@ -432,6 +432,11 @@ export function fetchAiPipelineCopilot() {
   return request('/ai/pipeline-copilot')
 }
 
+export function fetchAiManagerDashboard(params = {}) {
+  const query = new URLSearchParams(Object.entries(params).filter(([, value]) => value !== undefined && value !== null && value !== '')).toString()
+  return request(`/ai/manager-dashboard${query ? `?${query}` : ''}`)
+}
+
 export function createPipelineCopilotFollowupAction(payload) {
   return request('/ai/pipeline-copilot/actions/followup', { method: 'POST', body: JSON.stringify(payload) })
 }

@@ -2009,3 +2009,142 @@ button { font: inherit; }
 @media (max-width: 1100px) {
   .focus-metric-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+.ai-manager-dashboard-page .app-heading {
+  align-items: center;
+}
+
+.ai-manager-range-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid rgba(117,239,255,.18);
+  border-radius: 18px;
+  background: rgba(255,255,255,.045);
+}
+
+.ai-manager-range-filter button {
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 14px;
+  padding: 10px 13px;
+  color: #dbe7ff;
+  background: rgba(255,255,255,.06);
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.ai-manager-range-filter button.active {
+  border-color: rgba(117,239,255,.62);
+  color: #06111f;
+  background: linear-gradient(135deg, #75efff, #8affd2);
+  box-shadow: 0 14px 34px rgba(117,239,255,.2);
+}
+
+.ai-manager-kpi-grid .stat-card {
+  min-height: 150px;
+}
+
+.ai-manager-section {
+  position: relative;
+  z-index: 1;
+  border: 1px solid rgba(117,239,255,.16);
+  background:
+    radial-gradient(circle at 12% 8%, rgba(117,239,255,.12), transparent 28%),
+    rgba(255,255,255,.055);
+}
+
+.ai-manager-metric-grid,
+.ai-manager-safety-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.ai-manager-mini-metric {
+  min-height: 112px;
+  padding: 16px;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 20px;
+  background: rgba(5, 10, 28, .48);
+}
+
+.ai-manager-mini-metric span {
+  color: #9db1e6;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.ai-manager-mini-metric strong {
+  display: block;
+  margin-top: 10px;
+  color: #f8fdff;
+  font-size: clamp(26px, 3vw, 38px);
+  letter-spacing: -.06em;
+}
+
+.ai-manager-mini-metric p {
+  margin: 7px 0 0;
+  color: #91a2d6;
+  line-height: 1.45;
+}
+
+.ai-manager-mini-metric.danger {
+  border-color: rgba(255, 86, 205, .28);
+  background: radial-gradient(circle at top right, rgba(255, 86, 205, .14), transparent 42%), rgba(5, 10, 28, .52);
+}
+
+.ai-manager-event-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.ai-manager-event {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 18px;
+  background: rgba(255,255,255,.045);
+}
+
+.ai-manager-event.safety {
+  border-color: rgba(255, 205, 86, .18);
+}
+
+.ai-manager-event strong {
+  display: block;
+  color: #f8fdff;
+}
+
+.ai-manager-event p {
+  margin: 5px 0 0;
+  color: #aebde8;
+  line-height: 1.45;
+}
+
+.ai-manager-event time {
+  flex: 0 0 auto;
+  color: #75efff;
+  font-size: 12px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.ai-manager-error {
+  border-color: rgba(248, 113, 113, .36);
+}
+
+@media (max-width: 900px) {
+  .ai-manager-dashboard-page .app-heading,
+  .ai-manager-event {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .ai-manager-metric-grid,
+  .ai-manager-safety-summary {
+    grid-template-columns: 1fr;
+  }
+}
