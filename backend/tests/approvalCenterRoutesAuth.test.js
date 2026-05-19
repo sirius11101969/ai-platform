@@ -108,7 +108,7 @@ async function runWithApp(fn) {
   }
 }
 
-async function testAdminKeyQueueAndApprove() {
+async function testAdminKeyQueueAndDecisionActions() {
   await runWithApp(async ({ baseUrl, calls }) => {
     const originalInfo = console.info
     const logs = []
@@ -125,12 +125,34 @@ async function testAdminKeyQueueAndApprove() {
       assert.strictEqual(approve.status, 200)
       assert.strictEqual(approve.body.item.workspaceId, '11111111-1111-1111-1111-111111111111')
 
+      const reject = await request(baseUrl, 'POST', '/api/ai/approval-center/item-2/reject', {
+        headers,
+        body: { reason: 'not enough context' },
+      })
+      assert.strictEqual(reject.status, 200)
+
+      const snooze = await request(baseUrl, 'POST', '/api/ai/approval-center/item-3/snooze', {
+        headers,
+        body: { reason: 'awaiting customer data', snoozeUntil: '2026-05-20T00:00:00.000Z' },
+      })
+      assert.strictEqual(snooze.status, 200)
+
+      const escalate = await request(baseUrl, 'POST', '/api/ai/approval-center/item-4/escalate', {
+        headers,
+        body: { reason: 'manager review needed' },
+      })
+      assert.strictEqual(escalate.status, 200)
+
       assert.strictEqual(calls[0][0], 'listQueue')
       assert.strictEqual(calls[0][1].workspaceId, '11111111-1111-1111-1111-111111111111')
       assert.strictEqual(calls[1][0], 'updateDecision')
+      assert.strictEqual(calls[1][1].action, 'approve')
+      assert.strictEqual(calls[2][1].action, 'reject')
+      assert.strictEqual(calls[3][1].action, 'snooze')
+      assert.strictEqual(calls[4][1].action, 'escalate')
       assert.strictEqual(calls[1][1].workspaceId, '11111111-1111-1111-1111-111111111111')
       assert.strictEqual(calls[1][1].userId, 'owner-user-id')
-      assert.ok(logs.some(([message]) => message === 'approval_center_admin_key_accepted'))
+      assert.ok(logs.some(([message]) => message === 'approval_center_admin_key_auth_success'))
     } finally {
       console.info = originalInfo
     }
@@ -149,6 +171,6 @@ async function testJwtStillWorks() {
 }
 
 Promise.resolve()
-  .then(testAdminKeyQueueAndApprove)
+  .then(testAdminKeyQueueAndDecisionActions)
   .then(testJwtStillWorks)
   .then(() => console.log('approvalCenterRoutesAuth tests passed'))

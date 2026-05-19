@@ -11,6 +11,10 @@ router.use((req, res, next) => {
     return next()
   }
 
+  if (/^\/approval-center\/(queue|[^/]+\/(approve|reject|snooze|escalate))$/.test(req.path)) {
+    return next()
+  }
+
   if (req.aiExecutionAuth?.type === 'internal_admin_key') {
     const workspaceId = req.get('x-workspace-id') || req.body?.workspaceId || req.body?.workspace_id || req.query.workspaceId || req.query.workspace_id
     if (!workspaceId) return res.status(400).json({ error: 'workspaceId is required for admin-key sequence requests' })
