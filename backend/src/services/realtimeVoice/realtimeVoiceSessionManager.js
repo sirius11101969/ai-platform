@@ -4,9 +4,11 @@ const aiRevenueIntelligenceService = require('../aiRevenueIntelligenceService')
 const { createRealtimeVoiceStateMachine } = require('./realtimeVoiceStateMachine')
 const { realtimeVoiceEventBus, EVENT_TYPES } = require('./realtimeVoiceEventBus')
 const { runMockRealtimeStream } = require('./realtimeVoiceStreamingService')
+const structuredLogger = require('../execution/structuredLogger')
 
 const DEFAULT_TRANSPORT = 'mock_stream'
 const DEFAULT_PROVIDER = 'mock_realtime_provider'
+const MOCK_PHONE_PLACEHOLDER = '+70000000000'
 
 function safeJson(value) {
   return JSON.stringify(value || {})
@@ -42,9 +44,57 @@ function normalizeEvent(row = {}) {
   }
 }
 
+function firstString(...values) {
+  for (const value of values) {
+    if (value === undefined || value === null) continue
+    const normalized = String(value).trim()
+    if (normalized) return normalized
+  }
+  return ''
+}
+
+function resolveLeadPhone(lead = {}) {
+  const data = lead.lead_data || lead
+  const candidates = [
+    ['phone', data.phone],
+    ['phone_number', data.phone_number],
+    ['contact_phone', data.contact_phone],
+    ['metadata.phone', data.metadata?.phone],
+    ['payload.phone', data.payload?.phone],
+    ['contact', data.contact],
+  ]
+  const resolved = candidates.find(([, value]) => firstString(value))
+  if (resolved) return { phone: firstString(resolved[1]), source: resolved[0], usedFallback: false }
+  return { phone: MOCK_PHONE_PLACEHOLDER, source: 'mock_placeholder', usedFallback: true }
+}
+
+function normalizeLead(row = {}) {
+  if (!row) return null
+  const data = row.lead_data || row
+  const { phone, source, usedFallback } = resolveLeadPhone(data)
+  return {
+    ...data,
+    id: data.id || row.id,
+    workspace_id: data.workspace_id || row.workspace_id,
+    name: data.name || row.name,
+    status: data.status || row.status,
+    value: data.value ?? row.value,
+    phone,
+    resolved_phone: phone,
+    phone_source: source,
+    phone_fallback_used: usedFallback,
+  }
+}
+
 async function loadLead(executor, workspaceId, leadId) {
-  const result = await executor.query('SELECT id, name, contact, phone, phone_number, status, value FROM crm_leads WHERE workspace_id = $1::uuid AND id = $2::uuid LIMIT 1', [workspaceId, leadId])
-  return result.rows[0] || null
+  const result = await executor.query(
+    `SELECT id, workspace_id, name, status, value, to_jsonb(crm_leads) AS lead_data
+       FROM crm_leads
+      WHERE workspace_id = $1::uuid AND id = $2::uuid
+      LIMIT 1`,
+    [workspaceId, leadId]
+  )
+  return normalizeLead(result.rows[0])
 }
 
 async function persistEvent(executor, { sessionId, eventType, payload = {} }) {
@@ -90,9 +140,18 @@ async function createRealtimeVoiceSession({ workspaceId, userId = null, leadId, 
   const executor = client || pool
   const lead = await loadLead(executor, workspaceId, leadId)
   if (!lead) throw Object.assign(new Error('Lead not found'), { statusCode: 404 })
+  structuredLogger.info('realtime_voice_phone_resolved', {
+    service: 'realtime_voice',
+    workspaceId,
+    leadId,
+    phoneSource: lead.phone_source,
+    usedFallback: lead.phone_fallback_used,
+    simulationMode: true,
+  })
 
-  const session = await createSessionRecord(executor, { workspaceId, leadId, callId, transport, provider, metadata })
-  await addTimelineEvent(executor, { workspaceId, leadId, userId, eventType: 'realtime_voice_started', title: 'Realtime voice simulation started', body: 'Simulation Mode: no real telephony or microphone streaming was used.', source: 'ai', metadata: { sessionId: session.id, transport, provider, mockMode: true } }).catch(() => null)
+  const sessionMetadata = { ...metadata, leadPhone: lead.resolved_phone, phoneSource: lead.phone_source, phoneFallbackUsed: lead.phone_fallback_used }
+  const session = await createSessionRecord(executor, { workspaceId, leadId, callId, transport, provider, metadata: sessionMetadata })
+  await addTimelineEvent(executor, { workspaceId, leadId, userId, eventType: 'realtime_voice_started', title: 'Realtime voice simulation started', body: 'Simulation Mode: no real telephony or microphone streaming was used.', source: 'ai', metadata: { sessionId: session.id, transport, provider, mockMode: true, phoneSource: lead.phone_source, phoneFallbackUsed: lead.phone_fallback_used } }).catch(() => null)
   if (!autoRun) return session
   return runRealtimeVoiceSimulation({ workspaceId, userId, sessionId: session.id, client: executor })
 }
@@ -168,5 +227,5 @@ module.exports = {
   runRealtimeVoiceSimulation,
   listRealtimeVoiceSessions,
   getRealtimeVoiceSession,
-  _private: { normalizeSession, normalizeEvent, persistEvent, updateSessionState, createSessionRecord },
+  _private: { normalizeSession, normalizeEvent, persistEvent, updateSessionState, createSessionRecord, loadLead, normalizeLead, resolveLeadPhone, MOCK_PHONE_PLACEHOLDER },
 }
