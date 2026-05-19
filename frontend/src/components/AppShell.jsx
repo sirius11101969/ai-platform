@@ -125,6 +125,7 @@ export function ProtectedLayout({ children }) {
           <NavLink to="/ai-revenue-intelligence" className={({ isActive }) => (isActive ? "active" : "")}>AI Revenue Intelligence</NavLink>
           <NavLink to="/ai-voice-outreach" className={({ isActive }) => (isActive ? "active" : "")}>AI Voice Outreach</NavLink>
           <NavLink to="/ai-realtime-voice" className={({ isActive }) => (isActive ? "active" : "")}>AI Realtime Voice</NavLink>
+          <NavLink to="/ai-live-voice" className={({ isActive }) => (isActive ? "active" : "")}>AI Live Voice</NavLink>
           <NavLink to="/followups" className={({ isActive }) => (isActive ? "active" : "")}>AI Follow-ups</NavLink>
           <NavLink to="/priority-inbox" className={({ isActive }) => (isActive ? "active" : "")}>AI Priority Inbox</NavLink>
           <NavLink to="/pipeline-copilot" className={({ isActive }) => (isActive ? "active" : "")}>AI Pipeline Copilot</NavLink>
