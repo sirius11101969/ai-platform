@@ -1,5 +1,7 @@
 const gateway = require('../services/liveRealtime/liveRealtimeGateway')
 const { sign, verify } = require('../services/tokenService')
+const authService = require('../services/authService')
+const workspaceModel = require('../models/workspaceModel')
 const { _private: runnerAuthPrivate } = require('../middleware/aiExecutionRunnerAuthMiddleware')
 
 const safety = { simulationMode: true, noMicrophone: true, noOpenAiAudioStreaming: true, noTelephony: true }
@@ -19,6 +21,7 @@ async function createStreamToken(req,res,next){
 async function streamSession(req,res,next){
   try {
     let workspaceId = req.workspace?.id || null
+    let session = null
     const isQueryKeyAccepted = runnerAuthPrivate.isInternalAdminKeyAccepted(req) && Boolean(req.query?.key)
     if (isQueryKeyAccepted) {
       console.info('live_stream_query_key_accepted', { method: req.method, path: req.originalUrl || req.url })
@@ -29,17 +32,37 @@ async function streamSession(req,res,next){
       if (decoded?.typ !== 'live_stream_sse' || decoded?.sessionId !== req.params.id) return res.status(401).json({ error:'Invalid live stream token' })
       workspaceId = decoded.workspaceId
     }
+
+    if (!workspaceId && !isQueryKeyAccepted) {
+      const header = req.get?.('authorization') || ''
+      const [scheme, bearerToken] = header.split(' ')
+      if (scheme === 'Bearer' && bearerToken) {
+        const user = await authService.verifyToken(bearerToken)
+        session = await gateway.getSessionById({ sessionId:req.params.id })
+        if (!session) return res.status(404).json({ error:'Live stream session not found' })
+        const workspace = await workspaceModel.getWorkspaceForUser(user.id, session.workspaceId)
+        if (!workspace) return res.status(403).json({ error:'Workspace not found' })
+        workspaceId = workspace.id
+      }
+    }
+
     if (!workspaceId && !isQueryKeyAccepted) return res.status(401).json({ error:'Unauthorized stream access' })
-    const session = workspaceId
-      ? await gateway.getSession({ workspaceId, sessionId:req.params.id })
-      : await gateway.getSessionById({ sessionId:req.params.id })
+    if (!session) {
+      session = workspaceId
+        ? await gateway.getSession({ workspaceId, sessionId:req.params.id })
+        : await gateway.getSessionById({ sessionId:req.params.id })
+    }
     if (!session) return res.status(404).json({ error:'Live stream session not found' })
+
+    console.info('live_stream_sse_connected', { sessionId: req.params.id, workspaceId, auth: isQueryKeyAccepted ? 'admin_key_query' : 'jwt_or_stream_token' })
+
     res.setHeader('Content-Type','text/event-stream')
     res.setHeader('Cache-Control','no-cache')
     res.setHeader('Connection','keep-alive')
     res.flushHeaders?.()
     const send = (event) => res.write(`event: live_stream_event\ndata: ${JSON.stringify(event)}\n\n`)
     const heartbeat = setInterval(() => res.write(': heartbeat\n\n'), 10000)
+    let unsubLive = () => {}
     const doneIfCompleted = (event) => {
       if (event?.eventType === 'completed') {
         clearInterval(heartbeat)
@@ -50,7 +73,7 @@ async function streamSession(req,res,next){
     session.events.forEach((event) => { send(event); doneIfCompleted(event) })
     if (session.status === 'completed') return res.end()
     const wrappedSend = (event) => { send(event); doneIfCompleted(event) }
-    const unsubLive = gateway.liveRealtimeStreamBus.subscribe(req.params.id, wrappedSend)
+    unsubLive = gateway.liveRealtimeStreamBus.subscribe(req.params.id, wrappedSend)
     req.on('close', () => { clearInterval(heartbeat); unsubLive(); res.end() })
   } catch (e) { next(e) }
 }

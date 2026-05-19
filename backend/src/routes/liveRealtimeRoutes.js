@@ -3,6 +3,8 @@ const { requireAiExecutionWorkspaceAuth } = require('../middleware/aiExecutionWo
 const controller = require('../controllers/liveRealtimeController')
 
 const router = express.Router()
+router.get('/live-stream/sessions/:id/stream', controller.streamSession)
+
 router.use(requireAiExecutionWorkspaceAuth({
   missingWorkspaceError: 'workspaceId is required for admin key live stream access',
   acceptedLogEvent: 'live_stream_admin_key_accepted',
@@ -13,6 +15,5 @@ router.get('/live-stream/sessions', controller.listSessions)
 router.get('/live-stream/sessions/:id', controller.getSession)
 router.get('/live-stream/sessions/:id/events', controller.getSessionEvents)
 router.post('/live-stream/sessions/:id/stream-token', controller.createStreamToken)
-router.get('/live-stream/sessions/:id/stream', controller.streamSession)
 
 module.exports = router
