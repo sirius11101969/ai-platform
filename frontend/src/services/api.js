@@ -410,6 +410,20 @@ export function fetchAiVoiceCall(id) {
   return request(`/ai/voice/calls/${id}`)
 }
 
+
+export function fetchRealtimeVoiceSessions(params = {}) {
+  const query = new URLSearchParams(Object.entries(params).filter(([, value]) => value !== undefined && value !== null && value !== '')).toString()
+  return request(`/ai/realtime-voice/sessions${query ? `?${query}` : ''}`)
+}
+
+export function createRealtimeVoiceSession(payload = {}) {
+  return request('/ai/realtime-voice/session', { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export function fetchRealtimeVoiceSession(id) {
+  return request(`/ai/realtime-voice/sessions/${id}`)
+}
+
 export function fetchCrmActivity() {
   return request('/crm/activity')
 }

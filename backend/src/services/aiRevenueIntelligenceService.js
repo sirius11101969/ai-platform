@@ -78,8 +78,11 @@ function calculateRevenueLeadScore(context = {}) {
   const timeline = context.timeline || []
   const followups = context.followups || []
   const voiceCalls = context.voiceCalls || []
+  const realtimeVoiceSessions = context.realtimeVoiceSessions || []
   const completedVoiceCalls = voiceCalls.filter((call) => call.status === 'completed')
   const positiveVoiceCalls = completedVoiceCalls.filter((call) => call.sentiment === 'positive')
+  const completedRealtimeVoiceSessions = realtimeVoiceSessions.filter((session) => session.status === 'completed')
+  const interruptedRealtimeVoiceSessions = realtimeVoiceSessions.filter((session) => session.status === 'interrupted' || session.session_metadata?.stateHistory?.some?.((entry) => entry.state === 'interrupted'))
   const stage = normalizeStage(lead.status || lead.stage)
   const inboundMessages = telegramMessages.filter((message) => ['inbound', 'user'].includes(String(message.direction || message.role || '').toLowerCase()))
   const outboundMessages = telegramMessages.filter((message) => ['outbound', 'assistant'].includes(String(message.direction || message.role || '').toLowerCase()))
@@ -102,6 +105,8 @@ function calculateRevenueLeadScore(context = {}) {
   engagementScore += activeSequence ? 8 : 0
   engagementScore += Math.min(10, sequenceProgress * 3)
   engagementScore += positiveVoiceCalls.length ? 30 : completedVoiceCalls.length ? 16 : 0
+  engagementScore += completedRealtimeVoiceSessions.length ? 18 : realtimeVoiceSessions.length ? 10 : 0
+  engagementScore += interruptedRealtimeVoiceSessions.length ? 6 : 0
   if (silentDays !== null && silentDays >= 7) engagementScore -= Math.min(35, Math.round((silentDays - 6) * 4))
   engagementScore = clampScore(engagementScore)
 
@@ -110,6 +115,7 @@ function calculateRevenueLeadScore(context = {}) {
   if (pastFollowupSuccess) closeProbability += 6
   if (value > 0) closeProbability += 3
   if (positiveVoiceCalls.length) closeProbability += 14
+  if (completedRealtimeVoiceSessions.length) closeProbability += 10
   if (silentDays !== null && silentDays >= STALLED_LEAD_DAYS) closeProbability -= 18
   if (stage === 'won') closeProbability = 100
   if (stage === 'lost') closeProbability = 0
@@ -120,6 +126,7 @@ function calculateRevenueLeadScore(context = {}) {
   if (stage === 'proposal' && silentDays !== null && silentDays >= 5) churnRisk += 12
   if (meetingBooked) churnRisk -= 18
   if (positiveVoiceCalls.length) churnRisk -= 12
+  if (completedRealtimeVoiceSessions.length) churnRisk -= 8
   if (stage === 'won') churnRisk = 12
   if (stage === 'lost') churnRisk = 95
   churnRisk = clampScore(churnRisk)
@@ -133,6 +140,7 @@ function calculateRevenueLeadScore(context = {}) {
     `${recentInboundCount} recent reply signal(s)`,
     activeSequence ? `active AI sequence at step ${sequenceProgress}` : 'no active AI sequence signal',
     meetingBooked ? 'meeting/demo signal is present' : null,
+    completedRealtimeVoiceSessions.length ? `${completedRealtimeVoiceSessions.length} realtime voice simulation signal(s)` : null,
     silentDays !== null ? `last detected activity about ${Math.round(silentDays)} day(s) ago` : null,
     `stage is ${stage || 'unknown'}`,
   ])
@@ -243,6 +251,7 @@ async function buildLeadRevenueContext(client, workspaceId, leadId) {
     () => queryOptional(client, 'SELECT * FROM lead_timeline_events WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 50', [workspaceId, leadId]),
     () => queryOptional(client, 'SELECT * FROM crm_followups WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 20', [workspaceId, leadId]),
     () => queryOptional(client, 'SELECT * FROM ai_voice_calls WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 10', [workspaceId, leadId]),
+    () => queryOptional(client, 'SELECT * FROM ai_realtime_voice_sessions WHERE workspace_id = $1 AND lead_id = $2 ORDER BY created_at DESC LIMIT 10', [workspaceId, leadId]),
   ]
   const results = []
   if (client === pool) {
@@ -250,9 +259,9 @@ async function buildLeadRevenueContext(client, workspaceId, leadId) {
   } else {
     for (const query of queries) results.push(await query())
   }
-  const [lead, telegramMessages, emailMessages, meetings, sequences, timeline, followups, voiceCalls] = results
+  const [lead, telegramMessages, emailMessages, meetings, sequences, timeline, followups, voiceCalls, realtimeVoiceSessions] = results
   if (!lead.rows[0]) return null
-  return { lead: lead.rows[0], telegramMessages: telegramMessages.rows, emailMessages: emailMessages.rows, meetings: meetings.rows, sequences: sequences.rows, timeline: timeline.rows, followups: followups.rows, voiceCalls: voiceCalls.rows }
+  return { lead: lead.rows[0], telegramMessages: telegramMessages.rows, emailMessages: emailMessages.rows, meetings: meetings.rows, sequences: sequences.rows, timeline: timeline.rows, followups: followups.rows, voiceCalls: voiceCalls.rows, realtimeVoiceSessions: realtimeVoiceSessions.rows }
 }
 
 async function persistLeadRevenueScore(client, { workspaceId, userId, leadId, score }) {

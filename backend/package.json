@@ -20,7 +20,8 @@
     "test:ai-sequence-orchestrator": "node tests/aiSequenceOrchestrator.test.js",
     "test:ai-sequence-routes-auth": "node tests/aiSequenceRoutesAuth.test.js",
     "test:ai-revenue-intelligence": "node tests/aiRevenueIntelligenceService.test.js",
-    "test:ai-voice-outreach": "node tests/voiceOutreachService.test.js"
+    "test:ai-voice-outreach": "node tests/voiceOutreachService.test.js",
+    "test:realtime-voice-core": "node tests/realtimeVoiceCore.test.js"
   },
   "dependencies": {
     "axios": "^1.6.0",
