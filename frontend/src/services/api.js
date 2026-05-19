@@ -755,3 +755,11 @@ export function createOpenAiRealtimeAudioSandboxSession(payload = {}) {
 export function stopOpenAiRealtimeAudioSandboxSession(sessionId) {
   return request(`/ai/openai-realtime/audio-sandbox/session/${sessionId}/stop`, { method: 'POST' })
 }
+
+export function createOpenAiRealtimeAudioPilotSession(payload = {}) {
+  return request('/ai/openai-realtime/audio-pilot/session', { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export function stopOpenAiRealtimeAudioPilotSession(sessionId) {
+  return request(`/ai/openai-realtime/audio-pilot/session/${sessionId}/stop`, { method: 'POST' })
+}

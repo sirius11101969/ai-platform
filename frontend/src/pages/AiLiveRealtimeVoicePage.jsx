@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { PageHeading, Panel } from '../components/AppShell'
-import { createLiveStreamEventSource, startLiveStreamSession, createOpenAiRealtimeEphemeralSession, refreshOpenAiRealtimeSession, createOpenAiRealtimeAudioSandboxSession, stopOpenAiRealtimeAudioSandboxSession } from '../services/api'
+import { createLiveStreamEventSource, startLiveStreamSession, createOpenAiRealtimeEphemeralSession, refreshOpenAiRealtimeSession, createOpenAiRealtimeAudioSandboxSession, stopOpenAiRealtimeAudioSandboxSession, createOpenAiRealtimeAudioPilotSession, stopOpenAiRealtimeAudioPilotSession } from '../services/api'
 import { LIVE_STREAM_INITIAL_STATE, reduceLiveStreamState } from '../utils/liveStreamUiState'
 import { createMicrophoneManager } from '../services/microphone/microphoneManager'
 import { getMicrophoneSupportStatus } from '../services/microphone/microphonePermissionService'
@@ -18,7 +18,9 @@ export default function AiLiveRealtimeVoicePage() {
   const webrtcRef = useRef(null)
   const [webrtcState, setWebrtcState] = useState({ peerConnectionState: 'idle', iceGatheringState: 'new', signalingState: 'stable', localAudioTrackReady: false, offerCreated: false, simulatedAnswerApplied: false, iceCandidateCount: 0, noAudioSentToOpenAi: true, simulationTransport: true })
   const [sandbox, setSandbox] = useState({ enabled: false, requireConfirmation: true, confirmed: false, allowed: false, reason: 'disabled', active: false })
+  const [pilot, setPilot] = useState({ enabled: false, authorizedWorkspace: false, consent: false, state: 'pilot_disconnected', active: false, timer: 0, latency: 0, reason: 'pilot_disabled', maxSessionSeconds: 180 })
   const audioBridgeRef = useRef(null)
+  const pilotTimerRef = useRef(null)
 
   useEffect(() => {
     const manager = createMicrophoneManager({
@@ -125,6 +127,36 @@ export default function AiLiveRealtimeVoicePage() {
     setSandbox((curr) => ({ ...curr, active: false }))
   }
 
+
+
+  useEffect(() => {
+    if (!pilot.active) return
+    pilotTimerRef.current = setInterval(() => {
+      setPilot((curr) => ({ ...curr, timer: curr.timer + 1, latency: Math.max(20, curr.latency + 4) }))
+    }, 1000)
+    return () => clearInterval(pilotTimerRef.current)
+  }, [pilot.active])
+
+  async function startPilotSession() {
+    const response = await createOpenAiRealtimeAudioPilotSession({ confirmAudioStreaming: pilot.consent })
+    const allowed = !!response?.allowed
+    setPilot((curr) => ({ ...curr, enabled: response?.reason !== 'pilot_disabled', authorizedWorkspace: response?.reason !== 'pilot_workspace_not_authorized', state: allowed ? 'pilot_connecting' : 'pilot_failed', active: allowed, reason: response?.reason || 'unknown', maxSessionSeconds: response?.maxSessionSeconds || 180, timer: 0 }))
+    if (!allowed) return
+    audioBridgeRef.current = createOpenAiRealtimeAudioBridge({ sandboxEnabled: true, confirmationRequired: true, maxSessionSeconds: response?.maxSessionSeconds || 180, onEvent: (event) => {
+      const next = event?.payload?.state
+      if (next) setPilot((curr) => ({ ...curr, state: next, active: next === 'pilot_connected' || next === 'pilot_connecting' }))
+      setStream((curr) => reduceLiveStreamState(curr, { id: `pilot-${Date.now()}-${event.eventType}`, ...event }))
+    } })
+    audioBridgeRef.current.prepareConnection()
+    if (pilot.consent && micRef.current?.state?.stream) audioBridgeRef.current.attachLocalTrack({ stream: micRef.current.state.stream, confirmed: true })
+  }
+
+  async function stopPilotSession() {
+    if (ephemeral.sessionId) await stopOpenAiRealtimeAudioPilotSession(ephemeral.sessionId).catch(() => null)
+    audioBridgeRef.current?.stop()
+    setPilot((curr) => ({ ...curr, active: false, state: 'pilot_disconnected' }))
+  }
+
   async function prepareWebrtcTransport() {
     webrtcRef.current?.preparePeerConnection()
     await webrtcRef.current?.createLocalOffer()
@@ -168,6 +200,17 @@ export default function AiLiveRealtimeVoicePage() {
         <div className='voice-indicator-row'><span className={sandbox.active ? 'active' : ''}>Sandbox Only</span><span className={!sandbox.active ? 'active' : ''}>Real audio disabled by default</span></div>
         <div className='mic-controls'><button className='btn compact primary' onClick={startSandboxAudioSession}>Start Sandbox Audio Session</button><button className='btn compact secondary' onClick={stopSandboxAudioSession}>Stop Session</button></div>
       </Panel>
+
+      <Panel>
+        <h3>Limited Real Audio Pilot</h3>
+        <p><b>Pilot Mode</b> · <b>Authorized Workspace Only</b> · <b>Disconnect Anytime</b> · <b>API Key Never Exposed</b></p>
+        <p><b>Pilot enabled</b>: {pilot.enabled ? 'Yes' : 'No'} · <b>Workspace authorized</b>: {pilot.authorizedWorkspace ? 'Yes' : 'No'}</p>
+        <p><b>Realtime transport state</b>: {pilot.state} · <b>Audio session state</b>: {pilot.state}</p>
+        <p><b>Timer</b>: {pilot.timer}s / {pilot.maxSessionSeconds}s · <b>Latency</b>: {pilot.latency}ms</p>
+        <label><input type='checkbox' checked={pilot.consent} onChange={(e) => setPilot((curr) => ({ ...curr, consent: e.target.checked }))} /> I explicitly confirm real audio streaming for this pilot session.</label>
+        <div className='mic-controls'><button className='btn compact primary' onClick={startPilotSession}>Connect Pilot</button><button className='btn compact secondary' onClick={stopPilotSession}>Disconnect Pilot</button></div>
+      </Panel>
+
       <Panel><h3>Live transcript feed & event timeline</h3><p>{stream.transcript || 'Transcript chunks will appear here.'}</p><div className='realtime-event-list'>{stream.events.map((e) => <article key={e.id}><b>{e.eventType}</b><span>{latency}ms</span><p>{e.payload?.text || 'event'}</p></article>)}</div></Panel>
     </section>
   </main>
