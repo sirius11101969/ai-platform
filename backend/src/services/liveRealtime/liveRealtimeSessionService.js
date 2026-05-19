@@ -10,10 +10,68 @@ const { suggestCrmActions } = require('../aiSalesBrain/crmActionSuggestionEngine
 
 const FLOW = ['session_started','user_audio_chunk_simulated','partial_transcript','ai_thinking','ai_response_chunk','interruption_detected','resume_listening','final_transcript','completed']
 const safeJson = (v) => JSON.stringify(v || {})
+const logStructured = (event, payload = {}) => console.info(JSON.stringify({ event, ...payload }))
 
 async function persistEvent(sessionId, eventType, payload = {}) {
   const result = await pool.query('INSERT INTO ai_live_stream_events(session_id,event_type,payload) VALUES($1::uuid,$2::text,$3::jsonb) RETURNING *', [sessionId, eventType, safeJson(payload)])
   return normalizeEvent(result.rows[0])
+}
+
+async function persistObjectionEvent({ sessionId, workspaceId, leadId, objection }) {
+  if (!workspaceId || !objection) return null
+  const metadata = { sessionId, leadId: leadId || null, objection }
+  const result = await pool.query(
+    `INSERT INTO ai_objection_events(session_id,workspace_id,objection_category,confidence,response_strategy,escalation_suggestion,payload)
+     VALUES($1::uuid,$2::uuid,$3::text,$4::numeric,$5::text,$6::text,$7::jsonb) RETURNING *`,
+    [sessionId, workspaceId, objection.category || 'unknown', Number(objection.confidence || 0), objection.strategy || '', objection.escalation || '', safeJson(metadata)]
+  )
+  logStructured('ai_objection_persisted', { sessionId, workspaceId, leadId: leadId || null, objectionCategory: objection.category || 'unknown' })
+  return result.rows[0]
+}
+
+async function persistMeetingIntent({ sessionId, workspaceId, leadId, meetingIntent }) {
+  if (!workspaceId || !meetingIntent) return null
+  const primaryIntent = meetingIntent.primaryIntent || meetingIntent.intents?.[0] || 'unknown'
+  const metadata = { sessionId, leadId: leadId || null, meetingIntent, recommendedNextStep: meetingIntent.recommendedNextStep || null }
+  const result = await pool.query(
+    `INSERT INTO ai_meeting_intents(session_id,workspace_id,intent_type,confidence,payload)
+     VALUES($1::uuid,$2::uuid,$3::text,$4::numeric,$5::jsonb) RETURNING *`,
+    [sessionId, workspaceId, primaryIntent, Number(meetingIntent.confidence || 0), safeJson(metadata)]
+  )
+  logStructured('ai_meeting_intent_persisted', { sessionId, workspaceId, leadId: leadId || null, primaryIntent })
+  return result.rows[0]
+}
+
+async function persistCrmActionSuggestion({ sessionId, workspaceId, leadId, action, requiresExplicitUserAction = true }) {
+  if (!workspaceId || !action) return null
+  const metadata = { sessionId, leadId: leadId || null, actionPriority: action.priority || 'normal', action }
+  const result = await pool.query(
+    `INSERT INTO ai_crm_action_suggestions(session_id,workspace_id,action_type,requires_user_action,payload)
+     VALUES($1::uuid,$2::uuid,$3::text,$4::boolean,$5::jsonb) RETURNING *`,
+    [sessionId, workspaceId, action.type || 'unknown', Boolean(requiresExplicitUserAction), safeJson(metadata)]
+  )
+  logStructured('ai_crm_action_persisted', { sessionId, workspaceId, leadId: leadId || null, actionType: action.type || 'unknown' })
+  return result.rows[0]
+}
+
+async function persistConversationMemory({ sessionId, workspaceId, leadId, leadSignal, objection, meetingIntent, pricingEvent, sentimentEvent, transcript }) {
+  if (!workspaceId) return null
+  const summary = {
+    leadId: leadId || null,
+    detectedBuyingSignals: leadSignal?.payload?.leadContext || null,
+    pricingInterest: Boolean(pricingEvent),
+    sentimentChanges: sentimentEvent?.payload || null,
+    objectionSummary: objection ? { category: objection.category || 'unknown', confidenceScore: Number(objection.confidence || 0) } : null,
+    meetingIntentSummary: meetingIntent ? { primaryIntent: meetingIntent.primaryIntent || meetingIntent.intents?.[0] || 'unknown', confidenceScore: Number(meetingIntent.confidence || 0) } : null,
+    transcriptSummary: transcript.slice(-6).map((item) => `${item.role}: ${item.text}`).join(' | ').slice(0, 2000),
+  }
+  const result = await pool.query(
+    `INSERT INTO ai_conversation_memory(session_id,workspace_id,signal_type,payload)
+     VALUES($1::uuid,$2::uuid,$3::text,$4::jsonb) RETURNING *`,
+    [sessionId, workspaceId, 'ai_sales_brain_summary', safeJson(summary)]
+  )
+  logStructured('ai_sales_brain_persisted', { sessionId, workspaceId, leadId: leadId || null })
+  return result.rows[0]
 }
 
 function normalizeSession(r){ if(!r) return null; return { id:r.id, workspaceId:r.workspace_id, leadId:r.lead_id, realtimeVoiceSessionId:r.realtime_voice_session_id, status:r.status, streamMode:r.stream_mode, simulationSafety:r.simulation_safety||{}, metadata:r.metadata||{}, latencyMs:r.latency_ms||0, createdAt:r.created_at, startedAt:r.started_at, completedAt:r.completed_at } }
@@ -43,11 +101,13 @@ async function runSimulation({sessionId,workspaceId,leadId,userId}){
   if (objection) {
     const objectionEvent = await persistEvent(sessionId,'objection_detected',{ objection, safeContext: leadContext.safeSummary })
     events.push(objectionEvent); liveRealtimeStreamBus.publish(sessionId, objectionEvent)
+    await persistObjectionEvent({ sessionId, workspaceId, leadId, objection })
   }
   const meetingIntent = detectMeetingIntent('Can we book a demo and send pricing?')
   if (meetingIntent) {
     const meetingEvent = await persistEvent(sessionId,'meeting_interest_detected',{ meetingIntent })
     events.push(meetingEvent); liveRealtimeStreamBus.publish(sessionId, meetingEvent)
+    await persistMeetingIntent({ sessionId, workspaceId, leadId, meetingIntent })
   }
   const pricingEvent = await persistEvent(sessionId,'pricing_interest_detected',{ knowledgeHint:'planComparison' })
   events.push(pricingEvent); liveRealtimeStreamBus.publish(sessionId, pricingEvent)
@@ -55,9 +115,11 @@ async function runSimulation({sessionId,workspaceId,leadId,userId}){
   for (const action of actions) {
     const actionEvent = await persistEvent(sessionId,'crm_action_suggested',{ action, requiresExplicitUserAction:true })
     events.push(actionEvent); liveRealtimeStreamBus.publish(sessionId, actionEvent)
+    await persistCrmActionSuggestion({ sessionId, workspaceId, leadId, action, requiresExplicitUserAction: true })
   }
   const sentimentEvent = await persistEvent(sessionId,'sentiment_shift_detected',{ from:'neutral', to:'positive', reason:'demo_interest' })
   events.push(sentimentEvent); liveRealtimeStreamBus.publish(sessionId, sentimentEvent)
+  await persistConversationMemory({ sessionId, workspaceId, leadId, leadSignal, objection, meetingIntent, pricingEvent, sentimentEvent, transcript })
 
   const latencyMs = computeLatency(events) || 120
   await pool.query("UPDATE ai_live_stream_sessions SET status='completed', latency_ms=$2::integer, completed_at=NOW(), metadata=metadata || $3::jsonb WHERE id=$1::uuid", [sessionId,latencyMs,safeJson({ transcript, interruptionDetected:true, futureTransport:'websocket' })])
