@@ -424,16 +424,20 @@ export function fetchRealtimeVoiceSession(id) {
   return request(`/ai/realtime-voice/sessions/${id}`)
 }
 
-export function createLiveRealtimeTransportSession(payload = {}) {
-  return request('/ai/live-realtime/session', { method: 'POST', body: JSON.stringify(payload) })
+export function createLiveStreamSession(payload = {}) {
+  return request('/ai/live-stream/session', { method: 'POST', body: JSON.stringify(payload) })
 }
 
-export function fetchLiveRealtimeTransportSessions() {
-  return request('/ai/live-realtime/sessions')
+export function fetchLiveStreamSessions() {
+  return request('/ai/live-stream/sessions')
 }
 
-export function fetchLiveRealtimeTransportSession(id) {
-  return request(`/ai/live-realtime/sessions/${id}`)
+export function fetchLiveStreamSession(id) {
+  return request(`/ai/live-stream/sessions/${id}`)
+}
+
+export function fetchLiveStreamSessionEvents(id) {
+  return request(`/ai/live-stream/sessions/${id}/events`)
 }
 
 export function fetchCrmActivity() {

@@ -99,7 +99,7 @@ export default function App() {
           <Route path="/ai-manager-dashboard" element={<ProtectedRoute><AiManagerDashboardPage /></ProtectedRoute>} />
           <Route path="/ai-voice-outreach" element={<ProtectedRoute><AiVoiceOutreachPage /></ProtectedRoute>} />
           <Route path="/ai-realtime-voice" element={<ProtectedRoute><AiRealtimeVoicePage /></ProtectedRoute>} />
-          <Route path="/ai-live-voice" element={<ProtectedRoute><AiLiveRealtimeVoicePage /></ProtectedRoute>} />
+          <Route path="/ai-live-streaming" element={<ProtectedRoute><AiLiveRealtimeVoicePage /></ProtectedRoute>} />
           <Route path="/ai-revenue-intelligence" element={<ProtectedRoute><AiRevenueIntelligencePage /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
