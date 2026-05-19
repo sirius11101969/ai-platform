@@ -124,6 +124,7 @@ export function ProtectedLayout({ children }) {
             <NavLink to="/crm" className={({ isActive }) => (isActive ? "active" : "")}>CRM‑воронка</NavLink>
             <NavLink to="/ai-workers" className={({ isActive }) => (isActive ? "active" : "")}>AI сотрудники</NavLink>
             <NavLink to="/ai-approval-center" className={({ isActive }) => (isActive ? "active" : "")}>AI SDR Approval Center</NavLink>
+            <NavLink to="/ai-execution-center" className={({ isActive }) => (isActive ? "active" : "")}>AI Execution Center</NavLink>
             <NavLink to="/ai-revenue-intelligence" className={({ isActive }) => (isActive ? "active" : "")}>AI Revenue Intelligence</NavLink>
             <NavLink to="/ai-voice-outreach" className={({ isActive }) => (isActive ? "active" : "")}>AI Voice Outreach</NavLink>
             <NavLink to="/ai-realtime-voice" className={({ isActive }) => (isActive ? "active" : "")}>AI Realtime Voice</NavLink>
