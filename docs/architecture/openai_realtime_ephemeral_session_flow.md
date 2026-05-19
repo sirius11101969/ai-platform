@@ -1,33 +1,65 @@
-# OpenAI Realtime Ephemeral Session Flow (Simulation-first)
+# OpenAI Realtime Ephemeral Session Flow (Simulation + Feature-Flagged Provider)
 
-This architecture adds secure, short-lived browser session orchestration for future OpenAI Realtime audio, without sending microphone audio to OpenAI yet.
+## Summary
+The backend issues browser-safe ephemeral session credentials for AI Live Streaming.
 
-## Security architecture
-- Backend-only token minting (OpenAI key never reaches browser).
-- Signed session IDs + short-lived browser token.
-- Origin validation and replay-nonce protection.
-- No raw microphone audio persistence.
+- Default behavior remains **simulation**.
+- Real OpenAI Realtime Sessions exchange is enabled only when `OPENAI_REALTIME_ENABLED=true`.
+- Browser never receives `OPENAI_API_KEY`.
 
-## Ephemeral auth flow
-1. Browser requests `/api/ai/openai-realtime/ephemeral-session`.
-2. Backend issues signed session ID + TTL metadata + capability manifest.
-3. Browser tracks expiration and refreshes via `/refresh` before expiry.
-4. Refresh transitions session lifecycle and updates metrics.
+## Session creation flow
+1. Browser requests `POST /api/ai/openai-realtime/ephemeral-session`.
+2. Backend validates workspace auth + origin.
+3. Backend checks feature flag and API key:
+   - Disabled or missing key → simulation token path.
+   - Enabled + key present → call OpenAI Realtime Sessions API.
+4. If provider call fails, backend safely logs error and falls back to simulation.
+5. Backend persists session row and bootstrap events.
+6. Browser receives safe response with `clientSecret`, `session` metadata, and safety flags.
 
-## Session lifecycle states
-`session_created -> negotiation_prepared -> browser_ready -> session_refresh -> reconnecting -> expired -> closed`
+## Feature flag
+- `OPENAI_REALTIME_ENABLED=false` (default): simulation mode.
+- `OPENAI_REALTIME_ENABLED=true`: attempt provider session creation.
 
-## Future integration path
-Browser mic -> WebRTC transport -> OpenAI Realtime API -> bidirectional audio stream.
+## Fallback behavior
+Fallback to simulation happens when:
+- Realtime flag is disabled.
+- `OPENAI_API_KEY` is missing.
+- OpenAI provider returns an error or malformed payload.
 
-Current phase intentionally keeps transport simulation-only; no external raw audio delivery.
+## Persistence safety model
+Persisted for each session:
+- provider mode (`simulation` / `openai`)
+- model, voice
+- expires_at, state
+- token hash only (never raw token)
+- safe metadata/capabilities
 
-## WebRTC roadmap
-- Add negotiated SDP exchange endpoint.
-- Bind ephemeral sessions to transport peers.
-- Attach codec/capability filters and media policy checks.
+Never persisted or returned to browser:
+- `OPENAI_API_KEY`
+- provider auth secrets
+- internal private prompts
 
-## Realtime audio roadmap
-- Add secure server relay for realtime control channel.
-- Add opt-in audio egress gates and policy checks.
-- Add redaction-aware observability (no raw audio logs).
+## API response shape
+```json
+{
+  "session": {
+    "id": "...",
+    "providerMode": "simulation|openai",
+    "model": "gpt-4o-realtime-preview",
+    "voice": "alloy",
+    "expiresAt": "ISO-8601",
+    "clientSecret": "ephemeral-token",
+    "simulationMode": true,
+    "capabilities": {}
+  },
+  "safety": {
+    "noApiKeyExposed": true,
+    "audioStreamingEnabled": false,
+    "browserOnlyAudio": true
+  }
+}
+```
+
+## Future step: real audio streaming
+Real browser-to-provider audio streaming remains a future step and must stay behind explicit product and safety approval. Current phase keeps microphone capture browser-local by default.

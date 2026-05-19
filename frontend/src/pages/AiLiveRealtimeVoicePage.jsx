@@ -11,7 +11,7 @@ export default function AiLiveRealtimeVoicePage() {
   const micRef = useRef(null)
   const [micState, setMicState] = useState({ permission: 'unknown', enabled: false, muted: false, speaking: false, level: 0, waveform: Array.from({ length: 32 }, () => 0), status: 'idle', error: null })
 
-  const [ephemeral, setEphemeral] = useState({ status: 'idle', sessionId: null, expiresIn: 0, reconnectState: 'stable', transportState: 'prepared', latencyState: 'simulated', error: null })
+  const [ephemeral, setEphemeral] = useState({ status: 'idle', sessionId: null, expiresIn: 0, reconnectState: 'stable', transportState: 'prepared', latencyState: 'simulated', providerMode: 'simulation', providerStatus: 'Simulation', model: null, voice: null, error: null })
   const refreshTimerRef = useRef(null)
 
   useEffect(() => {
@@ -31,7 +31,7 @@ export default function AiLiveRealtimeVoicePage() {
     const session = created?.session
     if (!session?.id) return
     const expiresIn = Math.max(1, Math.floor((new Date(session.expiresAt).getTime() - Date.now()) / 1000))
-    setEphemeral({ status: 'active', sessionId: session.id, expiresIn, reconnectState: 'stable', transportState: session.transport || 'webrtc', latencyState: 'simulated', error: null })
+    setEphemeral({ status: 'active', sessionId: session.id, expiresIn, reconnectState: 'stable', transportState: 'webrtc', latencyState: session.simulationMode ? 'simulated' : 'live-ready', providerMode: session.providerMode || 'simulation', providerStatus: session.providerMode === 'openai' ? 'Ready' : session.state === 'provider_error_fallback' ? 'Provider Error' : 'Simulation', model: session.model, voice: session.voice, error: null })
   }
 
   async function startSimulation() {
@@ -66,7 +66,7 @@ export default function AiLiveRealtimeVoicePage() {
     refreshOpenAiRealtimeSession(ephemeral.sessionId, { replayNonce: `browser-${Date.now()}` })
       .then((r) => {
         const sec = Math.max(1, Math.floor((new Date(r.session.expiresAt).getTime() - Date.now()) / 1000))
-        setEphemeral((curr) => ({ ...curr, expiresIn: sec, reconnectState: 'refreshed' }))
+        setEphemeral((curr) => ({ ...curr, expiresIn: sec, reconnectState: 'refreshed', providerMode: r.session.providerMode || curr.providerMode, providerStatus: r.session.providerMode === 'openai' ? 'Ready' : 'Simulation', model: r.session.model || curr.model, voice: r.session.voice || curr.voice }))
       })
       .catch(() => setEphemeral((curr) => ({ ...curr, reconnectState: 'reconnecting', error: 'Session refresh failed' })))
       .finally(() => { refreshTimerRef.current = null })
@@ -93,10 +93,10 @@ export default function AiLiveRealtimeVoicePage() {
 
   return <main className='workspace-page ai-realtime-voice-page'>
     <PageHeading eyebrow='Simulation Mode · Live Realtime Streaming Layer' title='AI Live Streaming' copy='Browser-safe SSE simulation foundation for future live AI conversations. WebSocket-ready architecture, no real media traffic.' />
-    <div className='safety-banner realtime-safety-banner'><strong>Local Browser Audio Only</strong><span>Simulation Mode</span><span>No Audio Sent To OpenAI</span><span>Browser-Only Audio</span><span>Secure Realtime Session</span></div>
+    <div className='safety-banner realtime-safety-banner'><strong>Local Browser Audio Only</strong><span>OpenAI Realtime: {ephemeral.providerStatus}</span><span>Model: {ephemeral.model || 'n/a'}</span><span>Voice: {ephemeral.voice || 'n/a'}</span><span>Secure Ephemeral Session</span><span>API Key Not Exposed</span></div>
     <section className='dashboard-stats realtime-voice-stats'>
       <Stat label='State' value={stream.status} /><Stat label='Latency meter' value={`${latency}ms`} /><Stat label='Timeline events' value={stream.events.length} /><Stat label='Interruption' value={stream.interruptionDetected ? 'detected' : 'none'} />
-      <Stat label='Session active' value={ephemeral.status} /><Stat label='Expires in' value={`${ephemeral.expiresIn}s`} /><Stat label='Reconnect' value={ephemeral.reconnectState} /><Stat label='Transport' value={ephemeral.transportState} />
+      <Stat label='Session active' value={ephemeral.status} /><Stat label='Expires in' value={`${ephemeral.expiresIn}s`} /><Stat label='Reconnect' value={ephemeral.reconnectState} /><Stat label='Transport' value={ephemeral.transportState} /><Stat label='Realtime mode' value={ephemeral.providerMode} /><Stat label='Voice' value={ephemeral.voice || 'n/a'} />
     </section>
     <section className='realtime-detail-grid'>
       <Panel><h3>AI Live Streaming</h3><button className='btn primary' onClick={startSimulation}>Start Live Simulation</button><div className='voice-indicator-row'><span className={stream.thinking ? 'active' : ''}>AI Thinking</span><span className={stream.speaking ? 'active' : ''}>AI Speaking</span><span className={stream.interruptionDetected ? 'interrupted' : ''}>Interruption</span><span className={stream.resumed ? 'active' : ''}>Resume</span><span className={stream.completed ? 'active' : ''}>Completed</span></div><p className='eyebrow'>Simulation safety badge active.</p></Panel>

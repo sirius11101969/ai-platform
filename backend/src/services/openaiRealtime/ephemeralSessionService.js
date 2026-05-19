@@ -5,15 +5,26 @@ const tokens = require('./realtimeSessionTokenService')
 const pool = require('../../db/pool')
 
 const SESSION_TTL_SECONDS = Number(process.env.REALTIME_EPHEMERAL_SESSION_TTL || 180)
+const OPENAI_REALTIME_API_URL = 'https://api.openai.com/v1/realtime/sessions'
 
+function isOpenAiRealtimeEnabled() {
+  return String(process.env.OPENAI_REALTIME_ENABLED || '').toLowerCase() === 'true'
+}
 
+function defaultModel() {
+  return process.env.OPENAI_REALTIME_MODEL || 'gpt-4o-realtime-preview'
+}
+
+function defaultVoice() {
+  return process.env.OPENAI_REALTIME_VOICE || 'alloy'
+}
 
 function hashToken(token) {
   return crypto.createHash('sha256').update(String(token || '')).digest('hex')
 }
 
-function buildSafeSessionMetadata({ userId, capabilities, tokenIssuedAt }) {
-  return { userId: userId || null, capabilities, tokenIssuedAt }
+function buildSafeSessionMetadata({ userId, capabilities, tokenIssuedAt, providerMode, model, voice, providerError }) {
+  return { userId: userId || null, capabilities, tokenIssuedAt, providerMode, model, voice, providerError: providerError || null }
 }
 
 async function persistSessionAndEvents(session) {
@@ -27,19 +38,19 @@ async function persistSessionAndEvents(session) {
       [
         session.workspaceId,
         session.id,
-        hashToken(session.browserToken),
+        hashToken(session.clientSecret),
         session.state,
         session.transport,
         session.reconnectCount || 0,
         session.refreshCount || 0,
         session.expiresAt,
-        JSON.stringify(buildSafeSessionMetadata({ userId: session.userId, capabilities: session.capabilities, tokenIssuedAt: session.tokenIssuedAt })),
+        JSON.stringify(buildSafeSessionMetadata({ userId: session.userId, capabilities: session.capabilities, tokenIssuedAt: session.tokenIssuedAt, providerMode: session.providerMode, model: session.model, voice: session.voice, providerError: session.providerError })),
         JSON.stringify(session.metrics || {}),
       ]
     )
     const dbSessionId = insertSession.rows[0].id
     const eventRows = [
-      ['session_created', { at: session.createdAt }],
+      ['session_created', { at: session.createdAt, providerMode: session.providerMode }],
       ['negotiation_prepared', { transport: session.transport }],
       ['browser_ready', { capabilities: session.capabilities }],
     ]
@@ -50,7 +61,6 @@ async function persistSessionAndEvents(session) {
       )
     }
     await client.query('COMMIT')
-    console.info('openai_realtime_ephemeral_session_persisted', { workspaceId: session.workspaceId, signedSessionId: session.id, sessionDbId: dbSessionId, eventCount: eventRows.length })
   } catch (error) {
     await client.query('ROLLBACK').catch(() => undefined)
     throw error
@@ -59,8 +69,26 @@ async function persistSessionAndEvents(session) {
   }
 }
 
-function capabilities() {
-  return { simulationMode: true, openaiRealtimeEnabled: false, browserOnlyAudio: true, supportsWebRtcNegotiation: true, supportsSseFallback: true }
+function buildCapabilities({ simulationMode }) {
+  return { simulationMode, openaiRealtimeEnabled: isOpenAiRealtimeEnabled(), browserOnlyAudio: true, supportsWebRtcNegotiation: true, supportsSseFallback: true }
+}
+
+async function createProviderSession({ model, voice }) {
+  const resp = await fetch(OPENAI_REALTIME_API_URL, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ model, voice }),
+  })
+  if (!resp.ok) throw new Error(`openai_realtime_session_failed:${resp.status}`)
+  const data = await resp.json()
+  const clientSecret = data?.client_secret?.value
+  if (!data?.id || !clientSecret) throw new Error('openai_realtime_session_invalid_response')
+  return { id: data.id, clientSecret, expiresAt: data.expires_at ? new Date(data.expires_at * 1000).toISOString() : new Date(Date.now() + SESSION_TTL_SECONDS * 1000).toISOString() }
+}
+
+function buildSimulationToken({ sessionId, workspaceId }) {
+  const browserToken = tokens.mintBrowserToken({ sessionId, workspaceId, ttlSeconds: SESSION_TTL_SECONDS })
+  return { clientSecret: browserToken.token, tokenIssuedAt: browserToken.issuedAt, expiresAt: new Date(browserToken.expiresAt * 1000).toISOString() }
 }
 
 async function createSession({ workspaceId, userId, origin, transport = 'webrtc' }) {
@@ -68,12 +96,48 @@ async function createSession({ workspaceId, userId, origin, transport = 'webrtc'
   const createdAt = new Date().toISOString()
   const nonce = crypto.randomUUID().replace(/-/g, '').slice(0, 12)
   const id = security.createSignedSessionId({ workspaceId, nonce, createdAt })
-  const browserToken = tokens.mintBrowserToken({ sessionId: id, workspaceId, ttlSeconds: SESSION_TTL_SECONDS })
+  const model = defaultModel()
+  const voice = defaultVoice()
+  let providerMode = 'simulation'
+  let simulationMode = true
+  let providerError = null
+  let providerSessionId = null
+
+  let tokenPayload = buildSimulationToken({ sessionId: id, workspaceId })
+  if (isOpenAiRealtimeEnabled() && process.env.OPENAI_API_KEY) {
+    try {
+      const provider = await createProviderSession({ model, voice })
+      providerMode = 'openai'
+      simulationMode = false
+      providerSessionId = provider.id
+      tokenPayload = { clientSecret: provider.clientSecret, tokenIssuedAt: Math.floor(Date.now() / 1000), expiresAt: provider.expiresAt }
+    } catch (error) {
+      providerError = error.message
+      console.warn('openai_realtime_ephemeral_provider_error', { workspaceId, error: error.message })
+    }
+  }
+
   const session = registry.create({
-    id, workspaceId, userId, createdAt, expiresAt: new Date(browserToken.expiresAt * 1000).toISOString(),
-    transport, state: 'session_created', reconnectCount: 0, refreshCount: 0, events: [{ state: 'session_created', at: createdAt }],
-    capabilities: capabilities(), tokenIssuedAt: browserToken.issuedAt, browserToken: browserToken.token,
-    metrics: { transportLatencyMs: 0, browserCapabilities: { microphone: 'local_only', webRtc: 'prepared', sse: 'ready' } }
+    id,
+    workspaceId,
+    userId,
+    createdAt,
+    expiresAt: tokenPayload.expiresAt,
+    transport,
+    state: providerError ? 'provider_error_fallback' : 'session_created',
+    reconnectCount: 0,
+    refreshCount: 0,
+    events: [{ state: 'session_created', at: createdAt }],
+    capabilities: buildCapabilities({ simulationMode }),
+    tokenIssuedAt: tokenPayload.tokenIssuedAt,
+    clientSecret: tokenPayload.clientSecret,
+    model,
+    voice,
+    providerMode,
+    providerSessionId,
+    providerError,
+    simulationMode,
+    metrics: { transportLatencyMs: 0, browserCapabilities: { microphone: 'local_only', webRtc: 'prepared', sse: 'ready' } },
   })
   await persistSessionAndEvents(session)
   return session
@@ -95,11 +159,13 @@ function refreshSession({ workspaceId, sessionId, replayNonce, origin }) {
   registry.markReplayNonce(sessionId, replayNonce)
   const browserToken = tokens.mintBrowserToken({ sessionId, workspaceId, ttlSeconds: SESSION_TTL_SECONDS })
   return registry.update(sessionId, {
-    browserToken: browserToken.token,
+    clientSecret: browserToken.token,
     tokenIssuedAt: browserToken.issuedAt,
     expiresAt: new Date(browserToken.expiresAt * 1000).toISOString(),
     refreshCount: (session.refreshCount || 0) + 1,
     state: 'session_refresh',
+    providerMode: 'simulation',
+    simulationMode: true,
     events: [...(session.events || []), { state: 'session_refresh', at: new Date().toISOString() }],
   })
 }

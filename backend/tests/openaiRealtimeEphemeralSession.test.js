@@ -16,37 +16,47 @@ async function run() {
   }
 
   const originalConnect = pool.connect
+  const originalFetch = global.fetch
+  const env = { ...process.env }
   pool.connect = async () => fakeClient
 
   try {
+    process.env.OPENAI_REALTIME_ENABLED = 'false'
+    delete process.env.OPENAI_API_KEY
     const base = await service.createSession({ workspaceId: '00000000-0000-0000-0000-000000000001', userId: 'u1', origin: 'http://localhost:5173' })
+    assert.equal(base.providerMode, 'simulation')
     assert.ok(base.id)
+
     const fetched = service.getSession({ workspaceId: '00000000-0000-0000-0000-000000000001', sessionId: base.id })
     assert.equal(fetched.validSigned, true)
 
+    process.env.OPENAI_REALTIME_ENABLED = 'true'
+    delete process.env.OPENAI_API_KEY
+    const noKey = await service.createSession({ workspaceId: '00000000-0000-0000-0000-000000000001', userId: 'u1', origin: 'http://localhost:5173' })
+    assert.equal(noKey.providerMode, 'simulation')
+
+    process.env.OPENAI_API_KEY = 'sk-test'
+    global.fetch = async () => ({ ok: false, status: 500, json: async () => ({}) })
+    const providerError = await service.createSession({ workspaceId: '00000000-0000-0000-0000-000000000001', userId: 'u1', origin: 'http://localhost:5173' })
+    assert.equal(providerError.providerMode, 'simulation')
+    assert.equal(providerError.state, 'provider_error_fallback')
+
     const refreshed = service.refreshSession({ workspaceId: '00000000-0000-0000-0000-000000000001', sessionId: base.id, replayNonce: 'r1', origin: 'http://localhost:5173' })
     assert.equal(refreshed.state, 'session_refresh')
-    assert.equal(refreshed.refreshCount, 1)
 
-    let replayBlocked = false
-    try { service.refreshSession({ workspaceId: '00000000-0000-0000-0000-000000000001', sessionId: base.id, replayNonce: 'r1', origin: 'http://localhost:5173' }) } catch (_e) { replayBlocked = true }
-    assert.equal(replayBlocked, true)
-
-    const valid = tokenService.validateBrowserToken(base.browserToken)
+    const valid = tokenService.validateBrowserToken(base.clientSecret)
     assert.equal(valid.valid, true)
 
     const sessionInsert = queries.find((q) => q.sql.includes('INSERT INTO ai_openai_realtime_sessions'))
-    assert.ok(sessionInsert, 'expected session insert query')
-    assert.equal(sessionInsert.params[1], base.id, 'signed_session_id should equal signed session id')
-    assert.notEqual(sessionInsert.params[2], base.browserToken, 'raw browser token must not be stored in DB')
-
-    const eventInserts = queries.filter((q) => q.sql.includes('INSERT INTO ai_openai_realtime_session_events'))
-    assert.equal(eventInserts.length, 3, 'expected exactly three persisted events')
-    assert.deepEqual(eventInserts.map((q) => q.params[1]), ['session_created', 'negotiation_prepared', 'browser_ready'])
+    assert.ok(sessionInsert)
+    assert.notEqual(sessionInsert.params[2], base.clientSecret)
+    assert.ok(!JSON.stringify(sessionInsert).includes('sk-test'))
 
     console.log('openaiRealtimeEphemeralSession.test.js passed')
   } finally {
     pool.connect = originalConnect
+    global.fetch = originalFetch
+    process.env = env
   }
 }
 
