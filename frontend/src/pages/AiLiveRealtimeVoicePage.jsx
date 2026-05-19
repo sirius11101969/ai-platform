@@ -4,6 +4,7 @@ import { createLiveStreamEventSource, startLiveStreamSession, createOpenAiRealti
 import { LIVE_STREAM_INITIAL_STATE, reduceLiveStreamState } from '../utils/liveStreamUiState'
 import { createMicrophoneManager } from '../services/microphone/microphoneManager'
 import { getMicrophoneSupportStatus } from '../services/microphone/microphonePermissionService'
+import { createWebrtcNegotiationService } from '../services/webrtc/webrtcNegotiationService'
 
 export default function AiLiveRealtimeVoicePage() {
   const [stream, setStream] = useState(LIVE_STREAM_INITIAL_STATE)
@@ -13,6 +14,8 @@ export default function AiLiveRealtimeVoicePage() {
 
   const [ephemeral, setEphemeral] = useState({ status: 'idle', sessionId: null, expiresIn: 0, reconnectState: 'stable', transportState: 'prepared', latencyState: 'simulated', providerMode: 'simulation', providerStatus: 'Simulation', model: null, voice: null, error: null })
   const refreshTimerRef = useRef(null)
+  const webrtcRef = useRef(null)
+  const [webrtcState, setWebrtcState] = useState({ peerConnectionState: 'idle', iceGatheringState: 'new', signalingState: 'stable', localAudioTrackReady: false, offerCreated: false, simulatedAnswerApplied: false, iceCandidateCount: 0, noAudioSentToOpenAi: true, simulationTransport: true })
 
   useEffect(() => {
     const manager = createMicrophoneManager({
@@ -22,7 +25,12 @@ export default function AiLiveRealtimeVoicePage() {
     })
     micRef.current = manager
     manager.refreshPermission().then(() => setMicState({ ...manager.state }))
-    return () => manager.stop()
+    webrtcRef.current = createWebrtcNegotiationService({
+      providerMode: 'simulation',
+      onEvent: (event) => setStream((curr) => reduceLiveStreamState(curr, { id: `webrtc-${Date.now()}-${event.eventType}`, ...event })),
+    })
+    const unsubscribe = webrtcRef.current.subscribe(setWebrtcState)
+    return () => { unsubscribe(); webrtcRef.current?.close(); manager.stop() }
   }, [])
 
 
@@ -80,9 +88,14 @@ export default function AiLiveRealtimeVoicePage() {
   async function enableMicrophone() {
     await micRef.current?.start()
     syncMic()
+    const stream = micRef.current?.state?.stream
+    if (stream && webrtcRef.current) {
+      webrtcRef.current.preparePeerConnection()
+      await webrtcRef.current.attachLocalAudioTrack(stream, { enabled: true })
+    }
   }
 
-  function disableMicrophone() { micRef.current?.stop(); syncMic() }
+  function disableMicrophone() { micRef.current?.stop(); webrtcRef.current?.close(); syncMic() }
   function toggleMute() { micRef.current?.setMuted(!micState.muted); syncMic() }
   function simulateActivity() {
     if (!micRef.current?.state.enabled) return
@@ -90,6 +103,13 @@ export default function AiLiveRealtimeVoicePage() {
     micRef.current.processAudioFrame(samples)
     syncMic()
   }
+
+  async function prepareWebrtcTransport() {
+    webrtcRef.current?.preparePeerConnection()
+    await webrtcRef.current?.createLocalOffer()
+  }
+
+  function closeWebrtcConnection() { webrtcRef.current?.close() }
 
   return <main className='workspace-page ai-realtime-voice-page'>
     <PageHeading eyebrow='Simulation Mode · Live Realtime Streaming Layer' title='AI Live Streaming' copy='Browser-safe SSE simulation foundation for future live AI conversations. WebSocket-ready architecture, no real media traffic.' />
@@ -99,7 +119,7 @@ export default function AiLiveRealtimeVoicePage() {
       <Stat label='Session active' value={ephemeral.status} /><Stat label='Expires in' value={`${ephemeral.expiresIn}s`} /><Stat label='Reconnect' value={ephemeral.reconnectState} /><Stat label='Transport' value={ephemeral.transportState} /><Stat label='Realtime mode' value={ephemeral.providerMode} /><Stat label='Voice' value={ephemeral.voice || 'n/a'} />
     </section>
     <section className='realtime-detail-grid'>
-      <Panel><h3>AI Live Streaming</h3><button className='btn primary' onClick={startSimulation}>Start Live Simulation</button><div className='voice-indicator-row'><span className={stream.thinking ? 'active' : ''}>AI Thinking</span><span className={stream.speaking ? 'active' : ''}>AI Speaking</span><span className={stream.interruptionDetected ? 'interrupted' : ''}>Interruption</span><span className={stream.resumed ? 'active' : ''}>Resume</span><span className={stream.completed ? 'active' : ''}>Completed</span></div><p className='eyebrow'>Simulation safety badge active.</p></Panel>
+      <Panel><h3>AI Live Streaming</h3><button className='btn primary' onClick={startSimulation}>Start Live Simulation</button><button className='btn secondary' onClick={prepareWebrtcTransport}>Prepare WebRTC</button><div className='voice-indicator-row'><span className={stream.thinking ? 'active' : ''}>AI Thinking</span><span className={stream.speaking ? 'active' : ''}>AI Speaking</span><span className={stream.interruptionDetected ? 'interrupted' : ''}>Interruption</span><span className={stream.resumed ? 'active' : ''}>Resume</span><span className={stream.completed ? 'active' : ''}>Completed</span></div><p className='eyebrow'>Simulation safety badge active.</p></Panel>
       <Panel>
         <h3>Browser microphone foundation</h3>
         <p>Permission: <b>{micState.permission}</b> · Status: <b>{micState.status}</b> · Browser support: <b>{support.supported ? 'supported' : 'unsupported'}</b></p>
@@ -108,6 +128,14 @@ export default function AiLiveRealtimeVoicePage() {
         <div className='audio-meter'><i style={{ width: `${Math.max(3, micState.level * 100)}%` }} /></div>
         <div className='waveform'>{micState.waveform.map((v, idx) => <span key={idx} style={{ height: `${Math.max(6, v * 100)}%` }} />)}</div>
         {micState.error ? <p className='auth-error'>Microphone error: {micState.error}</p> : null}
+      </Panel>
+
+      <Panel>
+        <h3>Realtime WebRTC Transport</h3>
+        <p><b>WebRTC Prepared</b>: {webrtcState.peerConnectionState !== 'idle' ? 'Yes' : 'No'} · <b>Local Audio Track Ready</b>: {webrtcState.localAudioTrackReady ? 'Yes' : 'No'}</p>
+        <p><b>No Audio Sent To OpenAI</b>: {webrtcState.noAudioSentToOpenAi ? 'Yes' : 'No'} · <b>Simulation Transport</b>: {webrtcState.simulationTransport ? 'Yes' : 'No'}</p>
+        <div className='voice-indicator-row'><span>Peer: {webrtcState.peerConnectionState}</span><span>ICE: {webrtcState.iceGatheringState}</span><span>Signaling: {webrtcState.signalingState}</span><span>Offer: {webrtcState.offerCreated ? 'Created' : 'Pending'}</span><span>Simulated answer: {webrtcState.simulatedAnswerApplied ? 'Applied' : 'Pending'}</span><span>ICE candidates: {webrtcState.iceCandidateCount}</span></div>
+        <button className='btn compact secondary' onClick={closeWebrtcConnection}>Close WebRTC Connection</button>
       </Panel>
       <Panel><h3>Live transcript feed & event timeline</h3><p>{stream.transcript || 'Transcript chunks will appear here.'}</p><div className='realtime-event-list'>{stream.events.map((e) => <article key={e.id}><b>{e.eventType}</b><span>{latency}ms</span><p>{e.payload?.text || 'event'}</p></article>)}</div></Panel>
     </section>
