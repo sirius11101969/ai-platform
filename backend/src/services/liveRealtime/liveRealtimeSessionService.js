@@ -7,6 +7,7 @@ const { summarizeLeadContext } = require('../aiSalesBrain/leadContextAssembler')
 const { detectObjection } = require('../aiSalesBrain/objectionHandlingEngine')
 const { detectMeetingIntent } = require('../aiSalesBrain/meetingIntentDetector')
 const { suggestCrmActions } = require('../aiSalesBrain/crmActionSuggestionEngine')
+const { runAutonomousSdrLoop } = require('../autonomousSdr/autonomousSdrLoop')
 
 const FLOW = ['session_started','user_audio_chunk_simulated','partial_transcript','ai_thinking','ai_response_chunk','interruption_detected','resume_listening','final_transcript','completed']
 const safeJson = (v) => JSON.stringify(v || {})
@@ -120,6 +121,26 @@ async function runSimulation({sessionId,workspaceId,leadId,userId}){
   const sentimentEvent = await persistEvent(sessionId,'sentiment_shift_detected',{ from:'neutral', to:'positive', reason:'demo_interest' })
   events.push(sentimentEvent); liveRealtimeStreamBus.publish(sessionId, sentimentEvent)
   await persistConversationMemory({ sessionId, workspaceId, leadId, leadSignal, objection, meetingIntent, pricingEvent, sentimentEvent, transcript })
+
+  const autonomous = await runAutonomousSdrLoop({
+    sessionId,
+    workspaceId,
+    leadId,
+    intelligence: {
+      leadScore: leadContext.safeSummary.leadScore,
+      sentiment: 'positive',
+      buyingIntent: meetingIntent?.primaryIntent || 'wants_demo',
+      meetingIntent: meetingIntent?.primaryIntent || null,
+      objectionCategory: objection?.category || null,
+      objectionSeverity: objection ? 2 : 0,
+      inactivityHours: 18,
+      enterpriseSignals: 2,
+      estimatedRevenue: 75000,
+    },
+    publishEvent: (eventType, payload) => {
+      persistEvent(sessionId, eventType, payload).then((event) => liveRealtimeStreamBus.publish(sessionId, event)).catch(() => null)
+    },
+  })
 
   const latencyMs = computeLatency(events) || 120
   await pool.query("UPDATE ai_live_stream_sessions SET status='completed', latency_ms=$2::integer, completed_at=NOW(), metadata=metadata || $3::jsonb WHERE id=$1::uuid", [sessionId,latencyMs,safeJson({ transcript, interruptionDetected:true, futureTransport:'websocket' })])

@@ -1,0 +1,3 @@
+const STAGES=['new','qualified','demo_requested','proposal_ready','negotiation','hot_opportunity','closed_won_probability','stalled']
+function recommendSalesStage({ leadState, actions=[], meetingIntent }={}){ if(leadState==='stalled') return 'stalled'; if(actions.includes('enterprise_escalation')||leadState==='enterprise_interest') return 'negotiation'; if(actions.includes('pricing_follow_up')) return 'proposal_ready'; if(actions.includes('schedule_demo')||meetingIntent==='wants_demo') return 'demo_requested'; if(leadState==='hot') return 'hot_opportunity'; if(leadState==='engaged'||leadState==='warming') return 'qualified'; return 'new' }
+module.exports={ recommendSalesStage, STAGES }

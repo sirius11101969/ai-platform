@@ -1,0 +1,13 @@
+const test = require('node:test')
+const assert = require('node:assert/strict')
+const { evaluateLeadState } = require('../src/services/autonomousSdr/leadStateEvaluator')
+const { generateNextBestActions } = require('../src/services/autonomousSdr/nextBestActionEngine')
+const { recommendEscalation } = require('../src/services/autonomousSdr/escalationDecisionEngine')
+const { buildFollowUpStrategy } = require('../src/services/autonomousSdr/followUpStrategyEngine')
+const { recommendSalesStage } = require('../src/services/autonomousSdr/salesStageTransitionEngine')
+
+test('lead state classification', () => { assert.equal(evaluateLeadState({ leadScore: 90, buyingIntent: 'wants_demo' }), 'hot') })
+test('next best action generation', () => { assert.ok(generateNextBestActions({ leadState: 'hot', meetingIntent: 'wants_demo' }).includes('schedule_demo')) })
+test('escalation detection', () => { assert.equal(recommendEscalation({ enterpriseSignals: 2, sentiment: 'negative' }).recommend, true) })
+test('follow-up timing generation', () => { assert.equal(buildFollowUpStrategy({ leadState: 'hot' }).suggestedTiming, 'within_2_hours') })
+test('stage recommendation', () => { assert.equal(recommendSalesStage({ leadState: 'hot', actions: ['schedule_demo'] }), 'demo_requested') })
