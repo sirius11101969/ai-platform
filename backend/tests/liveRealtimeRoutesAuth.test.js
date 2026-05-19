@@ -89,6 +89,7 @@ async function testSseRouteAllowsAdminKeyWithoutWorkspaceId() {
     assert.strictEqual(response.status, 200)
     assert.ok(body.includes('event: live_stream_event'))
     assert.ok(body.includes('"eventType":"session_started"'))
+    assert.ok(!body.includes('workspaceId is required for admin-key sequence requests'))
   })
 }
 
