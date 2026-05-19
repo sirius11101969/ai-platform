@@ -1,0 +1,13 @@
+const express = require('express')
+const { requireAuth } = require('../middleware/authMiddleware')
+const { requireWorkspace } = require('../middleware/workspaceMiddleware')
+const controller = require('../controllers/approvalCenterController')
+const router = express.Router()
+router.use(requireAuth)
+router.use(requireWorkspace)
+router.get('/approval-center/queue', controller.list)
+router.post('/approval-center/:id/approve', controller.approve)
+router.post('/approval-center/:id/reject', controller.reject)
+router.post('/approval-center/:id/snooze', controller.snooze)
+router.post('/approval-center/:id/escalate', controller.escalate)
+module.exports = router
