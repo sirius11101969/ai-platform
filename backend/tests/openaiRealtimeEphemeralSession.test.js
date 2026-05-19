@@ -22,10 +22,11 @@ async function run() {
 
   try {
     process.env.OPENAI_REALTIME_ENABLED = 'false'
+    process.env.OPENAI_REALTIME_AUDIO_PILOT_ENABLED = 'false'
     delete process.env.OPENAI_API_KEY
     const base = await service.createSession({ workspaceId: '00000000-0000-0000-0000-000000000001', userId: 'u1', origin: 'http://localhost:5173' })
     assert.equal(base.providerMode, 'simulation')
-    assert.ok(base.id)
+    assert.equal(base.capabilities.pilotEnabled, false)
 
     const fetched = service.getSession({ workspaceId: '00000000-0000-0000-0000-000000000001', sessionId: base.id })
     assert.equal(fetched.validSigned, true)
@@ -41,6 +42,13 @@ async function run() {
     assert.equal(providerError.providerMode, 'simulation')
     assert.equal(providerError.state, 'provider_error_fallback')
 
+    process.env.OPENAI_REALTIME_AUDIO_PILOT_ENABLED = 'true'
+    global.fetch = async () => ({ ok: true, json: async () => ({ id: 'sess-openai-1', client_secret: { value: 'secret-ephemeral' }, expires_at: Math.floor(Date.now() / 1000) + 60 }) })
+    const pilotLive = await service.createSession({ workspaceId: '00000000-0000-0000-0000-000000000001', userId: 'u1', origin: 'http://localhost:5173' })
+    assert.equal(pilotLive.providerMode, 'openai')
+    assert.equal(pilotLive.state, 'pilot_connecting')
+    assert.equal(pilotLive.capabilities.pilotEnabled, true)
+
     const refreshed = service.refreshSession({ workspaceId: '00000000-0000-0000-0000-000000000001', sessionId: base.id, replayNonce: 'r1', origin: 'http://localhost:5173' })
     assert.equal(refreshed.state, 'session_refresh')
 
@@ -50,7 +58,7 @@ async function run() {
     const sessionInsert = queries.find((q) => q.sql.includes('INSERT INTO ai_openai_realtime_sessions'))
     assert.ok(sessionInsert)
     assert.notEqual(sessionInsert.params[2], base.clientSecret)
-    assert.ok(!JSON.stringify(sessionInsert).includes('sk-test'))
+    assert.ok(!JSON.stringify(queries).includes('sk-test'))
 
     console.log('openaiRealtimeEphemeralSession.test.js passed')
   } finally {

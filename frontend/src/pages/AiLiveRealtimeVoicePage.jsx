@@ -117,7 +117,7 @@ export default function AiLiveRealtimeVoicePage() {
     setSandbox((curr) => ({ ...curr, enabled: response?.safety?.sandboxOnly === true, requireConfirmation: !!response?.safety?.requireConfirmation, allowed: !!response?.allowed, reason: response?.reason || 'unknown', active: !!response?.allowed }))
     if (!response?.allowed) return
     audioBridgeRef.current = createOpenAiRealtimeAudioBridge({ sandboxEnabled: true, confirmationRequired: !!response?.safety?.requireConfirmation, onEvent: (event) => setStream((curr) => reduceLiveStreamState(curr, { id: `sandbox-${Date.now()}-${event.eventType}`, ...event })) })
-    audioBridgeRef.current.prepareConnection()
+    audioBridgeRef.current.prepareConnection({ ephemeralSession: { id: ephemeral.sessionId } })
     if (sandbox.confirmed && micRef.current?.state?.stream) audioBridgeRef.current.attachLocalTrack({ stream: micRef.current.state.stream, confirmed: true })
   }
 
@@ -147,8 +147,9 @@ export default function AiLiveRealtimeVoicePage() {
       if (next) setPilot((curr) => ({ ...curr, state: next, active: next === 'pilot_connected' || next === 'pilot_connecting' }))
       setStream((curr) => reduceLiveStreamState(curr, { id: `pilot-${Date.now()}-${event.eventType}`, ...event }))
     } })
-    audioBridgeRef.current.prepareConnection()
+    audioBridgeRef.current.prepareConnection({ ephemeralSession: { id: ephemeral.sessionId } })
     if (pilot.consent && micRef.current?.state?.stream) audioBridgeRef.current.attachLocalTrack({ stream: micRef.current.state.stream, confirmed: true })
+    if (micState.speaking) audioBridgeRef.current.handleInterruption({ userSpeaking: true })
   }
 
   async function stopPilotSession() {
@@ -165,7 +166,7 @@ export default function AiLiveRealtimeVoicePage() {
   function closeWebrtcConnection() { webrtcRef.current?.close() }
 
   return <main className='workspace-page ai-realtime-voice-page'>
-    <PageHeading eyebrow='Simulation Mode · Live Realtime Streaming Layer' title='AI Live Streaming' copy='Browser-safe SSE simulation foundation for future live AI conversations. WebSocket-ready architecture, no real media traffic.' />
+    <PageHeading eyebrow='Simulation Mode · Live Realtime Streaming Layer' title='AI Live Streaming' copy='Controlled pilot-ready realtime and simulation streaming layer with safety-first browser controls.' />
     <div className='safety-banner realtime-safety-banner'><strong>Local Browser Audio Only</strong><span>OpenAI Realtime: {ephemeral.providerStatus}</span><span>Model: {ephemeral.model || 'n/a'}</span><span>Voice: {ephemeral.voice || 'n/a'}</span><span>Secure Ephemeral Session</span><span>API Key Not Exposed</span></div>
     <section className='dashboard-stats realtime-voice-stats'>
       <Stat label='State' value={stream.status} /><Stat label='Latency meter' value={`${latency}ms`} /><Stat label='Timeline events' value={stream.events.length} /><Stat label='Interruption' value={stream.interruptionDetected ? 'detected' : 'none'} />
@@ -202,10 +203,10 @@ export default function AiLiveRealtimeVoicePage() {
       </Panel>
 
       <Panel>
-        <h3>Limited Real Audio Pilot</h3>
-        <p><b>Pilot Mode</b> · <b>Authorized Workspace Only</b> · <b>Disconnect Anytime</b> · <b>API Key Never Exposed</b></p>
+        <h3>Realtime AI Conversation</h3>
+        <p><b>Pilot Mode</b> · <b>Authorized Workspace Only</b> · <b>Disconnect Anytime</b> · <b>Auto Timeout Enabled</b> · <b>API Key Never Exposed</b></p>
         <p><b>Pilot enabled</b>: {pilot.enabled ? 'Yes' : 'No'} · <b>Workspace authorized</b>: {pilot.authorizedWorkspace ? 'Yes' : 'No'}</p>
-        <p><b>Realtime transport state</b>: {pilot.state} · <b>Audio session state</b>: {pilot.state}</p>
+        <p><b>Realtime connection state</b>: {pilot.state} · <b>AI speaking</b>: {stream.speaking ? 'Yes' : 'No'} · <b>User speaking</b>: {micState.speaking ? 'Yes' : 'No'} · <b>Interruption</b>: {stream.interruptionDetected ? 'Yes' : 'No'}</p><p><b>Simulation fallback</b>: {ephemeral.providerMode === 'openai' ? 'No' : 'Yes'}</p>
         <p><b>Timer</b>: {pilot.timer}s / {pilot.maxSessionSeconds}s · <b>Latency</b>: {pilot.latency}ms</p>
         <label><input type='checkbox' checked={pilot.consent} onChange={(e) => setPilot((curr) => ({ ...curr, consent: e.target.checked }))} /> I explicitly confirm real audio streaming for this pilot session.</label>
         <div className='mic-controls'><button className='btn compact primary' onClick={startPilotSession}>Connect Pilot</button><button className='btn compact secondary' onClick={stopPilotSession}>Disconnect Pilot</button></div>

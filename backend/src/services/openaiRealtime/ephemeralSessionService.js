@@ -11,6 +11,10 @@ function isOpenAiRealtimeEnabled() {
   return String(process.env.OPENAI_REALTIME_ENABLED || '').toLowerCase() === 'true'
 }
 
+function isRealtimeAudioPilotEnabled() {
+  return String(process.env.OPENAI_REALTIME_AUDIO_PILOT_ENABLED || '').toLowerCase() === 'true'
+}
+
 function defaultModel() {
   return process.env.OPENAI_REALTIME_MODEL || 'gpt-4o-realtime-preview'
 }
@@ -70,8 +74,8 @@ async function persistSessionAndEvents(session) {
   }
 }
 
-function buildCapabilities({ simulationMode }) {
-  return { simulationMode, openaiRealtimeEnabled: isOpenAiRealtimeEnabled(), browserOnlyAudio: true, supportsWebRtcNegotiation: true, supportsSseFallback: true }
+function buildCapabilities({ simulationMode, pilotEnabled }) {
+  return { simulationMode, pilotEnabled, openaiRealtimeEnabled: isOpenAiRealtimeEnabled(), browserOnlyAudio: true, supportsWebRtcNegotiation: true, supportsSseFallback: true }
 }
 
 async function createProviderSession({ model, voice }) {
@@ -105,7 +109,9 @@ async function createSession({ workspaceId, userId, origin, transport = 'webrtc'
   let providerSessionId = null
 
   let tokenPayload = buildSimulationToken({ sessionId: id, workspaceId })
-  if (isOpenAiRealtimeEnabled() && process.env.OPENAI_API_KEY) {
+  const pilotEnabled = isRealtimeAudioPilotEnabled()
+
+  if (isOpenAiRealtimeEnabled() && pilotEnabled && process.env.OPENAI_API_KEY) {
     try {
       const provider = await createProviderSession({ model, voice })
       providerMode = 'openai'
@@ -125,11 +131,11 @@ async function createSession({ workspaceId, userId, origin, transport = 'webrtc'
     createdAt,
     expiresAt: tokenPayload.expiresAt,
     transport,
-    state: providerError ? 'provider_error_fallback' : 'session_created',
+    state: providerError ? 'provider_error_fallback' : (providerMode === 'openai' ? 'pilot_connecting' : 'session_created'),
     reconnectCount: 0,
     refreshCount: 0,
     events: [{ state: 'session_created', at: createdAt }],
-    capabilities: buildCapabilities({ simulationMode }),
+    capabilities: buildCapabilities({ simulationMode, pilotEnabled }),
     tokenIssuedAt: tokenPayload.tokenIssuedAt,
     clientSecret: tokenPayload.clientSecret,
     model,
@@ -138,7 +144,7 @@ async function createSession({ workspaceId, userId, origin, transport = 'webrtc'
     providerSessionId,
     providerError,
     simulationMode,
-    metrics: { transportLatencyMs: 0, browserCapabilities: { microphone: 'local_only', webRtc: 'prepared', sse: 'ready' } },
+    metrics: { transportLatencyMs: 0, providerConnectionState: providerMode === 'openai' ? 'pilot_connecting' : 'simulation', browserCapabilities: { microphone: 'local_only', webRtc: 'prepared', sse: 'ready' } },
   })
   const dbSessionId = await persistSessionAndEvents(session)
   return { ...session, dbSessionId }
