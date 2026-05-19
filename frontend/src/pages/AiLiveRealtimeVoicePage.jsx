@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { PageHeading, Panel } from '../components/AppShell'
-import { createLiveStreamEventSource, startLiveStreamSession, createOpenAiRealtimeEphemeralSession, refreshOpenAiRealtimeSession } from '../services/api'
+import { createLiveStreamEventSource, startLiveStreamSession, createOpenAiRealtimeEphemeralSession, refreshOpenAiRealtimeSession, createOpenAiRealtimeAudioSandboxSession, stopOpenAiRealtimeAudioSandboxSession } from '../services/api'
 import { LIVE_STREAM_INITIAL_STATE, reduceLiveStreamState } from '../utils/liveStreamUiState'
 import { createMicrophoneManager } from '../services/microphone/microphoneManager'
 import { getMicrophoneSupportStatus } from '../services/microphone/microphonePermissionService'
 import { createWebrtcNegotiationService } from '../services/webrtc/webrtcNegotiationService'
+import { createOpenAiRealtimeAudioBridge } from '../services/openaiRealtime/openaiRealtimeAudioBridge'
 
 export default function AiLiveRealtimeVoicePage() {
   const [stream, setStream] = useState(LIVE_STREAM_INITIAL_STATE)
@@ -16,6 +17,8 @@ export default function AiLiveRealtimeVoicePage() {
   const refreshTimerRef = useRef(null)
   const webrtcRef = useRef(null)
   const [webrtcState, setWebrtcState] = useState({ peerConnectionState: 'idle', iceGatheringState: 'new', signalingState: 'stable', localAudioTrackReady: false, offerCreated: false, simulatedAnswerApplied: false, iceCandidateCount: 0, noAudioSentToOpenAi: true, simulationTransport: true })
+  const [sandbox, setSandbox] = useState({ enabled: false, requireConfirmation: true, confirmed: false, allowed: false, reason: 'disabled', active: false })
+  const audioBridgeRef = useRef(null)
 
   useEffect(() => {
     const manager = createMicrophoneManager({
@@ -29,6 +32,7 @@ export default function AiLiveRealtimeVoicePage() {
       providerMode: 'simulation',
       onEvent: (event) => setStream((curr) => reduceLiveStreamState(curr, { id: `webrtc-${Date.now()}-${event.eventType}`, ...event })),
     })
+    audioBridgeRef.current = createOpenAiRealtimeAudioBridge({ sandboxEnabled: false, confirmationRequired: true, onEvent: (event) => setStream((curr) => reduceLiveStreamState(curr, { id: `sandbox-${Date.now()}-${event.eventType}`, ...event })) })
     const unsubscribe = webrtcRef.current.subscribe(setWebrtcState)
     return () => { unsubscribe(); webrtcRef.current?.close(); manager.stop() }
   }, [])
@@ -104,6 +108,23 @@ export default function AiLiveRealtimeVoicePage() {
     syncMic()
   }
 
+
+
+  async function startSandboxAudioSession() {
+    const response = await createOpenAiRealtimeAudioSandboxSession({ confirmAudioStreaming: sandbox.confirmed })
+    setSandbox((curr) => ({ ...curr, enabled: response?.safety?.sandboxOnly === true, requireConfirmation: !!response?.safety?.requireConfirmation, allowed: !!response?.allowed, reason: response?.reason || 'unknown', active: !!response?.allowed }))
+    if (!response?.allowed) return
+    audioBridgeRef.current = createOpenAiRealtimeAudioBridge({ sandboxEnabled: true, confirmationRequired: !!response?.safety?.requireConfirmation, onEvent: (event) => setStream((curr) => reduceLiveStreamState(curr, { id: `sandbox-${Date.now()}-${event.eventType}`, ...event })) })
+    audioBridgeRef.current.prepareConnection()
+    if (sandbox.confirmed && micRef.current?.state?.stream) audioBridgeRef.current.attachLocalTrack({ stream: micRef.current.state.stream, confirmed: true })
+  }
+
+  async function stopSandboxAudioSession() {
+    if (ephemeral.sessionId) await stopOpenAiRealtimeAudioSandboxSession(ephemeral.sessionId).catch(() => null)
+    audioBridgeRef.current?.stop()
+    setSandbox((curr) => ({ ...curr, active: false }))
+  }
+
   async function prepareWebrtcTransport() {
     webrtcRef.current?.preparePeerConnection()
     await webrtcRef.current?.createLocalOffer()
@@ -136,6 +157,16 @@ export default function AiLiveRealtimeVoicePage() {
         <p><b>No Audio Sent To OpenAI</b>: {webrtcState.noAudioSentToOpenAi ? 'Yes' : 'No'} · <b>Simulation Transport</b>: {webrtcState.simulationTransport ? 'Yes' : 'No'}</p>
         <div className='voice-indicator-row'><span>Peer: {webrtcState.peerConnectionState}</span><span>ICE: {webrtcState.iceGatheringState}</span><span>Signaling: {webrtcState.signalingState}</span><span>Offer: {webrtcState.offerCreated ? 'Created' : 'Pending'}</span><span>Simulated answer: {webrtcState.simulatedAnswerApplied ? 'Applied' : 'Pending'}</span><span>ICE candidates: {webrtcState.iceCandidateCount}</span></div>
         <button className='btn compact secondary' onClick={closeWebrtcConnection}>Close WebRTC Connection</button>
+      </Panel>
+
+      <Panel>
+        <h3>OpenAI Realtime Audio Sandbox</h3>
+        <p><b>Sandbox Only</b> · Audio may be sent to OpenAI only after confirmation.</p>
+        <p><b>Status</b>: {sandbox.active ? 'Enabled' : 'Disabled'} · <b>Reason</b>: {sandbox.reason}</p>
+        <p><b>OpenAI API key never exposed</b> · <b>Stop session anytime</b></p>
+        <label><input type='checkbox' checked={sandbox.confirmed} onChange={(e) => setSandbox((curr) => ({ ...curr, confirmed: e.target.checked }))} /> I confirm audio streaming for sandbox test.</label>
+        <div className='voice-indicator-row'><span className={sandbox.active ? 'active' : ''}>Sandbox Only</span><span className={!sandbox.active ? 'active' : ''}>Real audio disabled by default</span></div>
+        <div className='mic-controls'><button className='btn compact primary' onClick={startSandboxAudioSession}>Start Sandbox Audio Session</button><button className='btn compact secondary' onClick={stopSandboxAudioSession}>Stop Session</button></div>
       </Panel>
       <Panel><h3>Live transcript feed & event timeline</h3><p>{stream.transcript || 'Transcript chunks will appear here.'}</p><div className='realtime-event-list'>{stream.events.map((e) => <article key={e.id}><b>{e.eventType}</b><span>{latency}ms</span><p>{e.payload?.text || 'event'}</p></article>)}</div></Panel>
     </section>

@@ -61,6 +61,7 @@ async function persistSessionAndEvents(session) {
       )
     }
     await client.query('COMMIT')
+    return dbSessionId
   } catch (error) {
     await client.query('ROLLBACK').catch(() => undefined)
     throw error
@@ -139,8 +140,8 @@ async function createSession({ workspaceId, userId, origin, transport = 'webrtc'
     simulationMode,
     metrics: { transportLatencyMs: 0, browserCapabilities: { microphone: 'local_only', webRtc: 'prepared', sse: 'ready' } },
   })
-  await persistSessionAndEvents(session)
-  return session
+  const dbSessionId = await persistSessionAndEvents(session)
+  return { ...session, dbSessionId }
 }
 
 function getSession({ workspaceId, sessionId }) {
