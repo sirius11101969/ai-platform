@@ -1,5 +1,6 @@
 const gateway = require('../services/liveRealtime/liveRealtimeGateway')
 const { sign, verify } = require('../services/tokenService')
+const { _private: runnerAuthPrivate } = require('../middleware/aiExecutionRunnerAuthMiddleware')
 
 const safety = { simulationMode: true, noMicrophone: true, noOpenAiAudioStreaming: true, noTelephony: true }
 
@@ -18,14 +19,20 @@ async function createStreamToken(req,res,next){
 async function streamSession(req,res,next){
   try {
     let workspaceId = req.workspace?.id || null
+    const isQueryKeyAccepted = runnerAuthPrivate.isInternalAdminKeyAccepted(req) && Boolean(req.query?.key)
+    if (isQueryKeyAccepted) {
+      console.info('live_stream_query_key_accepted', { method: req.method, path: req.originalUrl || req.url })
+    }
     const token = req.query?.streamToken
     if (!workspaceId && token) {
       const decoded = verify(token)
       if (decoded?.typ !== 'live_stream_sse' || decoded?.sessionId !== req.params.id) return res.status(401).json({ error:'Invalid live stream token' })
       workspaceId = decoded.workspaceId
     }
-    if (!workspaceId) return res.status(401).json({ error:'Unauthorized stream access' })
-    const session = await gateway.getSession({ workspaceId, sessionId:req.params.id })
+    if (!workspaceId && !isQueryKeyAccepted) return res.status(401).json({ error:'Unauthorized stream access' })
+    const session = workspaceId
+      ? await gateway.getSession({ workspaceId, sessionId:req.params.id })
+      : await gateway.getSessionById({ sessionId:req.params.id })
     if (!session) return res.status(404).json({ error:'Live stream session not found' })
     res.setHeader('Content-Type','text/event-stream')
     res.setHeader('Cache-Control','no-cache')
