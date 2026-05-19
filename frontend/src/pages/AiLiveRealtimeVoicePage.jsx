@@ -97,6 +97,11 @@ export default function AiLiveRealtimeVoicePage() {
       meeting: byType('meeting_interest_detected').slice(-1)[0]?.payload || null,
       actions: byType('crm_action_suggested').map((e) => e.payload?.action?.type).filter(Boolean),
       sentiment: byType('sentiment_shift_detected').slice(-1)[0]?.payload || null,
+      autonomousLeadState: byType('lead_state_updated').slice(-1)[0]?.payload || null,
+      autonomousActions: byType('next_best_action_generated').slice(-1)[0]?.payload || null,
+      autonomousFollowup: byType('followup_strategy_generated').slice(-1)[0]?.payload || null,
+      autonomousHandoff: byType('handoff_recommended').slice(-1)[0]?.payload || null,
+      autonomousStage: byType('sales_stage_recommended').slice(-1)[0]?.payload || null,
     }
   }, [stream.events])
 
@@ -230,6 +235,12 @@ export default function AiLiveRealtimeVoicePage() {
       <Panel><h3>Suggested CRM Actions</h3><p>{salesBrainSignals.actions.length ? salesBrainSignals.actions.join(', ') : 'No suggestions yet'}</p><p>Suggestions only. Manual user approval required.</p></Panel>
       <Panel><h3>Objection Analysis</h3><p>{salesBrainSignals.objections?.objection ? `${salesBrainSignals.objections.objection.category} (${Math.round((salesBrainSignals.objections.objection.confidence || 0) * 100)}%)` : 'No objection detected'}</p></Panel>
       <Panel><h3>Meeting Intent Detection</h3><p>{salesBrainSignals.meeting?.meetingIntent?.primaryIntent || 'No meeting intent detected'}</p></Panel>
+      <Panel><h3>Autonomous SDR Loop</h3><p><b>Suggestion Only</b> · <b>Human Approval Required</b> · <b>No Automatic Outreach</b> · <b>No Automatic CRM Execution</b></p></Panel>
+      <Panel><h3>Lead State</h3><p>{salesBrainSignals.autonomousLeadState?.leadState || 'No lead state yet'}</p></Panel>
+      <Panel><h3>Next Best Actions</h3><p>{salesBrainSignals.autonomousActions?.actions?.join(', ') || 'No actions yet'}</p></Panel>
+      <Panel><h3>Follow-up Strategy</h3><p>{salesBrainSignals.autonomousFollowup ? `${salesBrainSignals.autonomousFollowup.urgencyLevel} · ${salesBrainSignals.autonomousFollowup.suggestedTiming} · ${salesBrainSignals.autonomousFollowup.recommendedChannel}` : 'No follow-up strategy yet'}</p></Panel>
+      <Panel><h3>Human Escalation</h3><p>{salesBrainSignals.autonomousHandoff ? `${salesBrainSignals.autonomousHandoff.priority} (${(salesBrainSignals.autonomousHandoff.rationale||[]).join(', ')})` : 'No escalation recommended'}</p></Panel>
+      <Panel><h3>Recommended Sales Stage</h3><p>{salesBrainSignals.autonomousStage?.stage || 'No stage recommendation yet'}</p></Panel>
 
       <Panel><h3>Live transcript feed & event timeline</h3><p>{stream.transcript || 'Transcript chunks will appear here.'}</p><div className='realtime-event-list'>{stream.events.map((e) => <article key={e.id}><b>{e.eventType}</b><span>{latency}ms</span><p>{e.payload?.text || 'event'}</p></article>)}</div></Panel>
     </section>
