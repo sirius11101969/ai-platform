@@ -33,6 +33,12 @@ async function streamSession(req,res,next){
       workspaceId = decoded.workspaceId
     }
 
+    if (!workspaceId && isQueryKeyAccepted) {
+      session = await gateway.getSessionById({ sessionId:req.params.id })
+      if (!session) return res.status(404).json({ error:'Live stream session not found' })
+      workspaceId = session.workspaceId || null
+    }
+
     if (!workspaceId && !isQueryKeyAccepted) {
       const header = req.get?.('authorization') || ''
       const [scheme, bearerToken] = header.split(' ')
