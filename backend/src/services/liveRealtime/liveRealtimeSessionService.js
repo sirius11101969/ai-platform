@@ -3,6 +3,10 @@ const { addTimelineEvent } = require('../timelineService')
 const aiRevenueIntelligenceService = require('../aiRevenueIntelligenceService')
 const { liveRealtimeStreamBus } = require('./liveRealtimeStreamBus')
 const { appendTranscript, computeLatency } = require('./liveRealtimeTranscriptService')
+const { summarizeLeadContext } = require('../aiSalesBrain/leadContextAssembler')
+const { detectObjection } = require('../aiSalesBrain/objectionHandlingEngine')
+const { detectMeetingIntent } = require('../aiSalesBrain/meetingIntentDetector')
+const { suggestCrmActions } = require('../aiSalesBrain/crmActionSuggestionEngine')
 
 const FLOW = ['session_started','user_audio_chunk_simulated','partial_transcript','ai_thinking','ai_response_chunk','interruption_detected','resume_listening','final_transcript','completed']
 const safeJson = (v) => JSON.stringify(v || {})
@@ -25,6 +29,7 @@ async function createSession({workspaceId,leadId,userId}){
 
 async function runSimulation({sessionId,workspaceId,leadId,userId}){
   let transcript=[]; const events=[]
+  const leadContext = summarizeLeadContext({ crmLead:{ name:'Sample Lead', company:'Sample Co', stage:'qualified' }, leadScore:88, revenueForecast:{ band:'growth' }, activityHistory:[{type:'recent_call'}], outreachHistory:[{outcome:'replied'}], realtimeMetadata:{sessionId,channel:'sse'} })
   for (const eventType of FLOW){
     const payload = { text: eventType.replaceAll('_',' '), simulationMode: true }
     if (eventType.includes('transcript') || eventType.includes('response')) transcript = appendTranscript(transcript, { role: eventType.includes('ai')?'assistant':'user', text: payload.text })
@@ -32,6 +37,28 @@ async function runSimulation({sessionId,workspaceId,leadId,userId}){
     events.push(event)
     liveRealtimeStreamBus.publish(sessionId,event)
   }
+  const leadSignal = await persistEvent(sessionId,'lead_signal_detected',{ leadContext: leadContext.safeSummary });
+  events.push(leadSignal); liveRealtimeStreamBus.publish(sessionId, leadSignal)
+  const objection = detectObjection('Your pricing seems expensive and we may wait until next quarter')
+  if (objection) {
+    const objectionEvent = await persistEvent(sessionId,'objection_detected',{ objection, safeContext: leadContext.safeSummary })
+    events.push(objectionEvent); liveRealtimeStreamBus.publish(sessionId, objectionEvent)
+  }
+  const meetingIntent = detectMeetingIntent('Can we book a demo and send pricing?')
+  if (meetingIntent) {
+    const meetingEvent = await persistEvent(sessionId,'meeting_interest_detected',{ meetingIntent })
+    events.push(meetingEvent); liveRealtimeStreamBus.publish(sessionId, meetingEvent)
+  }
+  const pricingEvent = await persistEvent(sessionId,'pricing_interest_detected',{ knowledgeHint:'planComparison' })
+  events.push(pricingEvent); liveRealtimeStreamBus.publish(sessionId, pricingEvent)
+  const actions = suggestCrmActions({ objection, meetingIntent, leadScore: leadContext.safeSummary.leadScore, pricingInterest: true })
+  for (const action of actions) {
+    const actionEvent = await persistEvent(sessionId,'crm_action_suggested',{ action, requiresExplicitUserAction:true })
+    events.push(actionEvent); liveRealtimeStreamBus.publish(sessionId, actionEvent)
+  }
+  const sentimentEvent = await persistEvent(sessionId,'sentiment_shift_detected',{ from:'neutral', to:'positive', reason:'demo_interest' })
+  events.push(sentimentEvent); liveRealtimeStreamBus.publish(sessionId, sentimentEvent)
+
   const latencyMs = computeLatency(events) || 120
   await pool.query("UPDATE ai_live_stream_sessions SET status='completed', latency_ms=$2::integer, completed_at=NOW(), metadata=metadata || $3::jsonb WHERE id=$1::uuid", [sessionId,latencyMs,safeJson({ transcript, interruptionDetected:true, futureTransport:'websocket' })])
   if (workspaceId && leadId) await aiRevenueIntelligenceService.analyzeLeadRevenueIntelligence({ workspaceId, userId, leadId, client: pool }).catch(()=>null)
