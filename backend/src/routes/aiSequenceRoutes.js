@@ -5,13 +5,15 @@ const { requireWorkspace } = require('../middleware/workspaceMiddleware')
 
 const router = express.Router()
 
-router.use(requireAiExecutionRunnerAuth)
 router.use((req, res, next) => {
-  if (req.method === 'GET' && /^\/live-stream\/sessions\/[^/]+\/stream$/.test(req.path)) {
+  if (/^\/approval-center\/(queue|[^/]+\/(approve|reject|snooze|escalate))$/.test(req.path)) {
     return next()
   }
 
-  if (/^\/approval-center\/(queue|[^/]+\/(approve|reject|snooze|escalate))$/.test(req.path)) {
+  return requireAiExecutionRunnerAuth(req, res, next)
+})
+router.use((req, res, next) => {
+  if (req.method === 'GET' && /^\/live-stream\/sessions\/[^/]+\/stream$/.test(req.path)) {
     return next()
   }
 

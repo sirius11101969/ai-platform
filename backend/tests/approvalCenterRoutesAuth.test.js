@@ -78,7 +78,12 @@ async function runWithApp(fn) {
       getWorkspaceForUser: async (userId, workspaceId) => ({ id: workspaceId, userId, role: 'owner' }),
     }),
     installMockModule(dbPoolPath, {
-      query: async () => ({ rows: [{ id: '11111111-1111-1111-1111-111111111111', name: 'Admin Workspace', owner_user_id: 'owner-user-id', plan: 'pro' }] }),
+      query: async (_sql, params) => {
+        if (params?.[0] === '11111111-1111-1111-1111-111111111111') {
+          return { rows: [{ id: '11111111-1111-1111-1111-111111111111', name: 'Admin Workspace', owner_user_id: 'owner-user-id', plan: 'pro' }] }
+        }
+        return { rows: [] }
+      },
     }),
     installMockModule(approvalServicePath, {
       listQueue: async (workspaceId, filters) => {
@@ -161,16 +166,56 @@ async function testAdminKeyQueueAndDecisionActions() {
 
 async function testJwtStillWorks() {
   await runWithApp(async ({ baseUrl, calls }) => {
-    const queue = await request(baseUrl, 'GET', '/api/ai/approval-center/queue', {
-      headers: { authorization: 'Bearer valid.jwt', 'x-workspace-id': 'workspace-jwt' },
+    const originalInfo = console.info
+    const logs = []
+    console.info = (...args) => logs.push(args)
+    try {
+      const queue = await request(baseUrl, 'GET', '/api/ai/approval-center/queue', {
+        headers: { authorization: 'Bearer valid.jwt', 'x-workspace-id': 'workspace-jwt' },
+      })
+
+      assert.strictEqual(queue.status, 200)
+      assert.strictEqual(calls[0][1].workspaceId, 'workspace-jwt')
+      assert.ok(logs.some(([message]) => message === 'approval_center_jwt_auth_success'))
+    } finally {
+      console.info = originalInfo
+    }
+  })
+}
+
+async function testAdminKeyWorkspaceIsolationRejectsUnknownWorkspace() {
+  await runWithApp(async ({ baseUrl, calls }) => {
+    const response = await request(baseUrl, 'GET', '/api/ai/approval-center/queue', {
+      headers: { 'x-ai-execution-key': 'approval-admin-key', 'x-workspace-id': '22222222-2222-2222-2222-222222222222' },
     })
 
-    assert.strictEqual(queue.status, 200)
-    assert.strictEqual(calls[0][1].workspaceId, 'workspace-jwt')
+    assert.strictEqual(response.status, 404)
+    assert.deepStrictEqual(response.body, { error: 'Рабочее пространство не найдено' })
+    assert.strictEqual(calls.length, 0)
+  })
+}
+
+async function testAdminKeyApproveAndSnoozeActions() {
+  await runWithApp(async ({ baseUrl }) => {
+    const headers = { 'x-ai-execution-key': 'approval-admin-key', 'x-workspace-id': '11111111-1111-1111-1111-111111111111' }
+
+    const approve = await request(baseUrl, 'POST', '/api/ai/approval-center/item-admin-1/approve', {
+      headers,
+      body: { reason: 'approved by admin key' },
+    })
+    assert.strictEqual(approve.status, 200)
+
+    const snooze = await request(baseUrl, 'POST', '/api/ai/approval-center/item-admin-2/snooze', {
+      headers,
+      body: { reason: 'snooze by admin key', snoozeUntil: '2026-05-21T00:00:00.000Z' },
+    })
+    assert.strictEqual(snooze.status, 200)
   })
 }
 
 Promise.resolve()
   .then(testAdminKeyQueueAndDecisionActions)
+  .then(testAdminKeyApproveAndSnoozeActions)
   .then(testJwtStillWorks)
+  .then(testAdminKeyWorkspaceIsolationRejectsUnknownWorkspace)
   .then(() => console.log('approvalCenterRoutesAuth tests passed'))

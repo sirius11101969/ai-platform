@@ -11,6 +11,7 @@ function requireAiExecutionWorkspaceAuth(options = {}) {
   const {
     missingWorkspaceError = 'workspaceId is required for admin key access',
     acceptedLogEvent = null,
+    jwtAcceptedLogEvent = null,
   } = options
 
   return async function aiExecutionWorkspaceAuth(req, res, next) {
@@ -28,7 +29,18 @@ function requireAiExecutionWorkspaceAuth(options = {}) {
       }
       return requireAuth(req, res, (authError) => {
         if (authError) return next(authError)
-        return requireWorkspace(req, res, next)
+        return requireWorkspace(req, res, (workspaceError) => {
+          if (workspaceError) return next(workspaceError)
+          if (jwtAcceptedLogEvent) {
+            console.info(jwtAcceptedLogEvent, {
+              method: req.method,
+              path: req.originalUrl || req.url,
+              userId: req.user?.id,
+              workspaceId: req.workspace?.id,
+            })
+          }
+          return next()
+        })
       })
     } catch (error) {
       return next(error)
