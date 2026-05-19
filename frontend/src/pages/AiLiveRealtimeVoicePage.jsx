@@ -89,6 +89,17 @@ export default function AiLiveRealtimeVoicePage() {
   const latency = useMemo(() => Math.max(20, stream.events.length * 24), [stream.events.length])
   const support = getMicrophoneSupportStatus()
 
+  const salesBrainSignals = useMemo(() => {
+    const byType = (t) => stream.events.filter((e) => e.eventType === t)
+    return {
+      leadSignals: byType('lead_signal_detected').slice(-1)[0]?.payload || null,
+      objections: byType('objection_detected').slice(-1)[0]?.payload || null,
+      meeting: byType('meeting_interest_detected').slice(-1)[0]?.payload || null,
+      actions: byType('crm_action_suggested').map((e) => e.payload?.action?.type).filter(Boolean),
+      sentiment: byType('sentiment_shift_detected').slice(-1)[0]?.payload || null,
+    }
+  }, [stream.events])
+
   function syncMic() { if (micRef.current) setMicState({ ...micRef.current.state }) }
 
   async function enableMicrophone() {
@@ -211,6 +222,14 @@ export default function AiLiveRealtimeVoicePage() {
         <label><input type='checkbox' checked={pilot.consent} onChange={(e) => setPilot((curr) => ({ ...curr, consent: e.target.checked }))} /> I explicitly confirm real audio streaming for this pilot session.</label>
         <div className='mic-controls'><button className='btn compact primary' onClick={startPilotSession}>Connect Pilot</button><button className='btn compact secondary' onClick={stopPilotSession}>Disconnect Pilot</button></div>
       </Panel>
+
+
+      <Panel><h3>AI Sales Brain</h3><p>Realtime sales cognition layer active. Suggestion-only mode enforced.</p><p><b>No auto-contact</b> · <b>No auto-send</b> · <b>No auto-book</b></p></Panel>
+      <Panel><h3>Lead Intelligence</h3><p>{salesBrainSignals.leadSignals ? JSON.stringify(salesBrainSignals.leadSignals.leadContext || {}) : 'Waiting for lead signal...'}</p></Panel>
+      <Panel><h3>Conversation Signals</h3><p>Sentiment: {salesBrainSignals.sentiment ? `${salesBrainSignals.sentiment.from} → ${salesBrainSignals.sentiment.to}` : 'n/a'}</p><p>Meeting intents: {salesBrainSignals.meeting?.meetingIntent?.intents?.join(', ') || 'none'}</p></Panel>
+      <Panel><h3>Suggested CRM Actions</h3><p>{salesBrainSignals.actions.length ? salesBrainSignals.actions.join(', ') : 'No suggestions yet'}</p><p>Suggestions only. Manual user approval required.</p></Panel>
+      <Panel><h3>Objection Analysis</h3><p>{salesBrainSignals.objections?.objection ? `${salesBrainSignals.objections.objection.category} (${Math.round((salesBrainSignals.objections.objection.confidence || 0) * 100)}%)` : 'No objection detected'}</p></Panel>
+      <Panel><h3>Meeting Intent Detection</h3><p>{salesBrainSignals.meeting?.meetingIntent?.primaryIntent || 'No meeting intent detected'}</p></Panel>
 
       <Panel><h3>Live transcript feed & event timeline</h3><p>{stream.transcript || 'Transcript chunks will appear here.'}</p><div className='realtime-event-list'>{stream.events.map((e) => <article key={e.id}><b>{e.eventType}</b><span>{latency}ms</span><p>{e.payload?.text || 'event'}</p></article>)}</div></Panel>
     </section>
