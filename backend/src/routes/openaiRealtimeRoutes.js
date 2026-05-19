@@ -9,5 +9,7 @@ router.get('/openai-realtime/session/:id', controller.getEphemeralSession)
 router.post('/openai-realtime/session/:id/refresh', controller.refreshEphemeralSession)
 router.post('/openai-realtime/audio-sandbox/session', controller.createAudioSandboxSession)
 router.post('/openai-realtime/audio-sandbox/session/:id/stop', controller.stopAudioSandboxSession)
+router.post('/openai-realtime/audio-pilot/session', controller.createAudioPilotSession)
+router.post('/openai-realtime/audio-pilot/session/:id/stop', controller.stopAudioPilotSession)
 
 module.exports = router
