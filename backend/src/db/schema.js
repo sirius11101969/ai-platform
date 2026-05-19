@@ -1077,6 +1077,15 @@ async function migrate() {
   if (fs.existsSync(realtimeAiVoiceCoreMigration)) {
     await pool.query(fs.readFileSync(realtimeAiVoiceCoreMigration, 'utf8'))
   }
+  const openAiRealtimeWebRtcMigration = path.resolve(__dirname, '../../../db/migrations/028_openai_realtime_webrtc_foundation.sql')
+  if (fs.existsSync(openAiRealtimeWebRtcMigration)) {
+    await pool.query(fs.readFileSync(openAiRealtimeWebRtcMigration, 'utf8'))
+  }
+
+  const liveRealtimeStreamingMigration = path.resolve(__dirname, '../../../db/migrations/029_live_realtime_streaming.sql')
+  if (fs.existsSync(liveRealtimeStreamingMigration)) {
+    await pool.query(fs.readFileSync(liveRealtimeStreamingMigration, 'utf8'))
+  }
 
   console.log('[schema] telegram migrations skipped safely')
 }

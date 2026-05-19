@@ -1,42 +1,44 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import { PageHeading, Panel } from '../components/AppShell'
-import { createLiveRealtimeTransportSession, fetchLiveRealtimeTransportSession } from '../services/api'
-
+import { createLiveStreamSession } from '../services/api'
 
 export default function AiLiveRealtimeVoicePage() {
   const [events, setEvents] = useState([])
   const [status, setStatus] = useState('idle')
-  const [startedAt, setStartedAt] = useState(null)
-
-  const metrics = useMemo(() => {
-    const latency = events.filter((e) => e.latencyMs).map((e) => e.latencyMs)
-    const avgLatency = latency.length ? Math.round(latency.reduce((a, b) => a + b, 0) / latency.length) : 0
-    return { avgLatency, interruptions: events.filter((e) => e.type === 'interruption').length, transcriptLag: 120, responseChunkTiming: 180, duration: startedAt ? Math.max(1, Date.now() - startedAt) : 0 }
-  }, [events, startedAt])
+  const sourceRef = useRef(null)
 
   async function startSimulation() {
-    setStatus('running')
     setEvents([])
-    setStartedAt(Date.now())
-    const created = await createLiveRealtimeTransportSession({})
-    const hydrated = await fetchLiveRealtimeTransportSession(created?.session?.id)
-    const mapped = (hydrated?.session?.events || []).map((event, i) => ({ type: event.event_type, latencyMs: 45 + i * 15, text: event?.payload?.text || event.event_type }))
-    for (const event of mapped) setEvents((curr) => [...curr, event])
-    setStatus('completed')
+    setStatus('starting')
+    const created = await createLiveStreamSession({})
+    const id = created?.session?.id
+    if (!id) return
+    if (sourceRef.current) sourceRef.current.close()
+    const source = new EventSource(`/api/ai/live-stream/sessions/${id}/stream`)
+    sourceRef.current = source
+    source.onmessage = () => {}
+    ;['session_started','user_audio_chunk_simulated','partial_transcript','ai_thinking','ai_response_chunk','interruption_detected','resume_listening','final_transcript','completed'].forEach((type) => {
+      source.addEventListener(type, (e) => {
+        const payload = JSON.parse(e.data)
+        setEvents((curr) => [...curr, payload])
+        setStatus(type === 'completed' ? 'completed' : type.includes('listening') ? 'listening' : type.includes('response') ? 'speaking' : 'running')
+      })
+    })
   }
 
+  const latency = useMemo(() => Math.max(20, events.length * 24), [events.length])
+  const transcript = events.filter((e) => e.eventType?.includes('transcript')).map((e) => e.payload?.text).filter(Boolean).join(' · ')
+  const interruption = events.find((e) => e.eventType === 'interruption_detected')
+
   return <main className='workspace-page ai-realtime-voice-page'>
-    <PageHeading eyebrow='Simulation Mode · OpenAI Realtime + WebRTC Foundation' title='AI Live Realtime Voice' copy='Production-grade browser realtime transport foundation. No real microphone, no telephony, no OpenAI audio streaming yet.' />
-    <div className='safety-banner realtime-safety-banner'><strong>Simulation Mode</strong><span>No real microphone</span><span>No real telephony</span><span>No OpenAI audio streaming yet</span></div>
+    <PageHeading eyebrow='Simulation Mode · Live Realtime Streaming Layer' title='AI Live Streaming' copy='Browser-safe SSE simulation foundation for future live AI conversations. WebSocket-ready architecture, no real media traffic.' />
+    <div className='safety-banner realtime-safety-banner'><strong>Simulation Mode</strong><span>No real microphone</span><span>No real OpenAI audio streaming</span><span>No real telephony</span></div>
     <section className='dashboard-stats realtime-voice-stats'>
-      <Stat label='Active sessions' value={status === 'running' ? 1 : 0} />
-      <Stat label='Transport state' value={status} />
-      <Stat label='Avg latency' value={`${metrics.avgLatency}ms`} />
-      <Stat label='Session duration' value={`${Math.round(metrics.duration / 1000)}s`} />
+      <Stat label='State' value={status} /><Stat label='Latency meter' value={`${latency}ms`} /><Stat label='Timeline events' value={events.length} /><Stat label='Interruption' value={interruption ? 'detected' : 'none'} />
     </section>
     <section className='realtime-detail-grid'>
-      <Panel><h3>Realtime Simulation</h3><button className='btn primary' onClick={startSimulation} disabled={status === 'running'}>Start Realtime Transport Simulation</button><p>Waveform: ▂▅▃▆▂▇▃▅ (simulated)</p><p>Interruption recovery: {metrics.interruptions}</p><p>Transcript lag: {metrics.transcriptLag}ms · Response chunk timing: {metrics.responseChunkTiming}ms</p></Panel>
-      <Panel><h3>Transcript & transport events</h3><div className='realtime-event-list'>{events.map((e, idx) => <article key={idx}><b>{e.type}</b><span>{e.latencyMs}ms</span><p>{e.text}</p></article>)}</div></Panel>
+      <Panel><h3>AI Live Streaming</h3><button className='btn primary' onClick={startSimulation}>Start Live Simulation</button><p>AI Listening: {status === 'listening' ? 'ON' : 'OFF'} · AI Speaking: {status === 'speaking' ? 'ON' : 'OFF'}</p><p className='eyebrow'>Simulation safety badge active.</p></Panel>
+      <Panel><h3>Live transcript feed & event timeline</h3><p>{transcript || 'Transcript chunks will appear here.'}</p><div className='realtime-event-list'>{events.map((e) => <article key={e.id}><b>{e.eventType}</b><span>{latency}ms</span><p>{e.payload?.text || 'event'}</p></article>)}</div></Panel>
     </section>
   </main>
 }
