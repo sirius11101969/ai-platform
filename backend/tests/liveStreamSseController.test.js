@@ -25,3 +25,32 @@ testStreamSendsUnifiedEventAndClosesOnCompleted().then(() => console.log('live s
   console.error(error)
   process.exit(1)
 })
+
+async function testStreamAcceptsQueryKeyAuthWithoutWorkspace() {
+  const writes = []
+  const sessionId = 'session-2'
+  const previousAdminKey = process.env.AI_EXECUTION_ADMIN_KEY
+  process.env.AI_EXECUTION_ADMIN_KEY = 'admin-test-key'
+  gateway.getSession = async () => { throw new Error('workspace scoped fetch should not be used for query key auth') }
+  gateway.getSessionById = async () => ({ id: sessionId, status: 'completed', events: [{ id: 'e1', eventType: 'session_started', payload: {} }] })
+
+  const req = {
+    params: { id: sessionId },
+    query: { key: 'admin-test-key' },
+    get: (header) => (header.toLowerCase() === 'x-ai-execution-key' ? null : null),
+    on: () => {},
+  }
+  let ended = false
+  const res = { setHeader: () => {}, flushHeaders: () => {}, write: (chunk) => writes.push(chunk), end: () => { ended = true } }
+
+  await controller.streamSession(req, res, (error) => { throw error })
+
+  process.env.AI_EXECUTION_ADMIN_KEY = previousAdminKey
+  assert(writes.some((line) => line.includes('event: live_stream_event')))
+  assert.equal(ended, true)
+}
+
+testStreamAcceptsQueryKeyAuthWithoutWorkspace().then(() => console.log('live stream query key auth tests passed')).catch((error) => {
+  console.error(error)
+  process.exit(1)
+})

@@ -39,6 +39,7 @@ async function runSimulation({sessionId,workspaceId,leadId,userId}){
 
 async function listSessions({workspaceId}){ const r = await pool.query('SELECT * FROM ai_live_stream_sessions WHERE workspace_id=$1::uuid ORDER BY created_at DESC LIMIT 100',[workspaceId]); return r.rows.map(normalizeSession) }
 async function getSession({workspaceId,sessionId}){ const s = await pool.query('SELECT * FROM ai_live_stream_sessions WHERE workspace_id=$1::uuid AND id=$2::uuid LIMIT 1',[workspaceId,sessionId]); const session = normalizeSession(s.rows[0]); if(!session) return null; const e = await pool.query('SELECT * FROM ai_live_stream_events WHERE session_id=$1::uuid ORDER BY created_at ASC',[sessionId]); return { ...session, events:e.rows.map(normalizeEvent) } }
+async function getSessionById({sessionId}){ const s = await pool.query('SELECT * FROM ai_live_stream_sessions WHERE id=$1::uuid LIMIT 1',[sessionId]); const session = normalizeSession(s.rows[0]); if(!session) return null; const e = await pool.query('SELECT * FROM ai_live_stream_events WHERE session_id=$1::uuid ORDER BY created_at ASC',[sessionId]); return { ...session, events:e.rows.map(normalizeEvent) } }
 async function getSessionEvents({workspaceId,sessionId}){ const s = await pool.query('SELECT 1 FROM ai_live_stream_sessions WHERE workspace_id=$1::uuid AND id=$2::uuid LIMIT 1',[workspaceId,sessionId]); if(!s.rowCount) return null; const e = await pool.query('SELECT * FROM ai_live_stream_events WHERE session_id=$1::uuid ORDER BY created_at ASC',[sessionId]); return e.rows.map(normalizeEvent) }
 
-module.exports = { createSession, listSessions, getSession, getSessionEvents }
+module.exports = { createSession, listSessions, getSession, getSessionById, getSessionEvents }
