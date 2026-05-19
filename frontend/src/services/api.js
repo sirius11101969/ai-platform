@@ -735,3 +735,15 @@ export function rejectAiFollowup(id) {
 export function sendAiFollowup(id) {
   return request(`/ai/followups/${id}/send`, { method: 'POST', timeoutMs: 20000 })
 }
+
+export function createOpenAiRealtimeEphemeralSession(payload = {}) {
+  return request('/ai/openai-realtime/ephemeral-session', { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export function getOpenAiRealtimeSession(sessionId) {
+  return request(`/ai/openai-realtime/session/${sessionId}`)
+}
+
+export function refreshOpenAiRealtimeSession(sessionId, payload = {}) {
+  return request(`/ai/openai-realtime/session/${sessionId}/refresh`, { method: 'POST', body: JSON.stringify(payload) })
+}
