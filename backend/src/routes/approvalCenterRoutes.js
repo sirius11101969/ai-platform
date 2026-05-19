@@ -1,10 +1,11 @@
 const express = require('express')
-const { requireAuth } = require('../middleware/authMiddleware')
-const { requireWorkspace } = require('../middleware/workspaceMiddleware')
+const { requireAiExecutionWorkspaceAuth } = require('../middleware/aiExecutionWorkspaceAuthMiddleware')
 const controller = require('../controllers/approvalCenterController')
 const router = express.Router()
-router.use(requireAuth)
-router.use(requireWorkspace)
+router.use(requireAiExecutionWorkspaceAuth({
+  missingWorkspaceError: 'workspaceId is required for admin key approval center access',
+  acceptedLogEvent: 'approval_center_admin_key_accepted',
+}))
 router.get('/approval-center/queue', controller.list)
 router.post('/approval-center/:id/approve', controller.approve)
 router.post('/approval-center/:id/reject', controller.reject)
