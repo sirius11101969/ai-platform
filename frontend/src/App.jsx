@@ -16,6 +16,7 @@ import AiRealtimeVoicePage from "./pages/AiRealtimeVoicePage";
 import AiRevenueIntelligencePage from "./pages/AiRevenueIntelligencePage";
 import AiLiveRealtimeVoicePage from "./pages/AiLiveRealtimeVoicePage";
 import AiApprovalCenterPage from "./pages/AiApprovalCenterPage";
+import AiExecutionCenterPage from "./pages/AiExecutionCenterPage";
 import { getAuthToken, getStoredUser } from "./services/api";
 
 const AuthContext = createContext({ token: null, user: null, isAuthenticated: false });
@@ -103,6 +104,7 @@ export default function App() {
           <Route path="/ai-live-streaming" element={<ProtectedRoute><AiLiveRealtimeVoicePage /></ProtectedRoute>} />
           <Route path="/ai-revenue-intelligence" element={<ProtectedRoute><AiRevenueIntelligencePage /></ProtectedRoute>} />
           <Route path="/ai-approval-center" element={<ProtectedRoute><AiApprovalCenterPage /></ProtectedRoute>} />
+          <Route path="/ai-execution-center" element={<ProtectedRoute><AiExecutionCenterPage /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

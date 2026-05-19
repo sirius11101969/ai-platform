@@ -1,0 +1,12 @@
+const express = require('express')
+const { requireAuth } = require('../middleware/authMiddleware')
+const { requireWorkspace } = require('../middleware/workspaceMiddleware')
+const c = require('../controllers/aiExecutionLayerController')
+const r = express.Router()
+r.use(requireAuth)
+r.use(requireWorkspace)
+r.get('/execution/queue', c.getQueue)
+r.post('/execution/:id/execute', c.execute)
+r.post('/execution/:id/cancel', c.cancel)
+r.get('/execution/runs', c.getRuns)
+module.exports = r

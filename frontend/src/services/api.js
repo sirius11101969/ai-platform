@@ -784,3 +784,19 @@ export function createOpenAiRealtimeAudioPilotSession(payload = {}) {
 export function stopOpenAiRealtimeAudioPilotSession(sessionId) {
   return request(`/ai/openai-realtime/audio-pilot/session/${sessionId}/stop`, { method: 'POST' })
 }
+
+export function fetchAiExecutionQueue() {
+  return request('/ai/execution/queue', { method: 'GET' })
+}
+
+export function executeAiExecution(id) {
+  return request(`/ai/execution/${id}/execute`, { method: 'POST' })
+}
+
+export function cancelAiExecution(id) {
+  return request(`/ai/execution/${id}/cancel`, { method: 'POST' })
+}
+
+export function fetchAiExecutionRuns() {
+  return request('/ai/execution/runs', { method: 'GET' })
+}
