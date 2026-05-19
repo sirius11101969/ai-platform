@@ -118,24 +118,26 @@ export function ProtectedLayout({ children }) {
     <div className="app-shell">
       <aside className="sidebar shell-glow">
         <BrandMark />
-        <nav className="side-nav" aria-label="Основная навигация">
-          <NavLink to="/dashboard" className={({ isActive }) => (isActive ? "active" : "")}>Дашборд</NavLink>
-          <NavLink to="/crm" className={({ isActive }) => (isActive ? "active" : "")}>CRM‑воронка</NavLink>
-          <NavLink to="/ai-workers" className={({ isActive }) => (isActive ? "active" : "")}>AI сотрудники</NavLink>
-          <NavLink to="/ai-revenue-intelligence" className={({ isActive }) => (isActive ? "active" : "")}>AI Revenue Intelligence</NavLink>
-          <NavLink to="/ai-voice-outreach" className={({ isActive }) => (isActive ? "active" : "")}>AI Voice Outreach</NavLink>
-          <NavLink to="/ai-realtime-voice" className={({ isActive }) => (isActive ? "active" : "")}>AI Realtime Voice</NavLink>
-          <NavLink to="/ai-live-streaming" className={({ isActive }) => (isActive ? "active" : "")}>AI Live Streaming</NavLink>
-          <NavLink to="/followups" className={({ isActive }) => (isActive ? "active" : "")}>AI Follow-ups</NavLink>
-          <NavLink to="/priority-inbox" className={({ isActive }) => (isActive ? "active" : "")}>AI Priority Inbox</NavLink>
-          <NavLink to="/pipeline-copilot" className={({ isActive }) => (isActive ? "active" : "")}>AI Pipeline Copilot</NavLink>
-          <NavLink to="/ai-manager-dashboard" className={({ isActive }) => (isActive ? "active" : "")}>AI Manager Dashboard</NavLink>
-          <div className="sidebar-crm-actions" aria-label="Действия CRM">
-            <button className="sidebar-create-lead" type="button" onClick={openCreateLead}>+ Создать лид</button>
-            <button className="sidebar-activity-feed" type="button" onClick={openActivityFeed}>Лента активности</button>
-          </div>
-          <Link to="/login" onClick={handleLogout}>Выйти</Link>
-        </nav>
+        <div className="sidebar-scroll" role="presentation">
+          <nav className="side-nav" aria-label="Основная навигация">
+            <NavLink to="/dashboard" className={({ isActive }) => (isActive ? "active" : "")}>Дашборд</NavLink>
+            <NavLink to="/crm" className={({ isActive }) => (isActive ? "active" : "")}>CRM‑воронка</NavLink>
+            <NavLink to="/ai-workers" className={({ isActive }) => (isActive ? "active" : "")}>AI сотрудники</NavLink>
+            <NavLink to="/ai-revenue-intelligence" className={({ isActive }) => (isActive ? "active" : "")}>AI Revenue Intelligence</NavLink>
+            <NavLink to="/ai-voice-outreach" className={({ isActive }) => (isActive ? "active" : "")}>AI Voice Outreach</NavLink>
+            <NavLink to="/ai-realtime-voice" className={({ isActive }) => (isActive ? "active" : "")}>AI Realtime Voice</NavLink>
+            <NavLink to="/ai-live-streaming" className={({ isActive }) => (isActive ? "active" : "")}>AI Live Streaming</NavLink>
+            <NavLink to="/followups" className={({ isActive }) => (isActive ? "active" : "")}>AI Follow-ups</NavLink>
+            <NavLink to="/priority-inbox" className={({ isActive }) => (isActive ? "active" : "")}>AI Priority Inbox</NavLink>
+            <NavLink to="/pipeline-copilot" className={({ isActive }) => (isActive ? "active" : "")}>AI Pipeline Copilot</NavLink>
+            <NavLink to="/ai-manager-dashboard" className={({ isActive }) => (isActive ? "active" : "")}>AI Manager Dashboard</NavLink>
+            <div className="sidebar-crm-actions" aria-label="Действия CRM">
+              <button className="sidebar-create-lead" type="button" onClick={openCreateLead}>+ Создать лид</button>
+              <button className="sidebar-activity-feed" type="button" onClick={openActivityFeed}>Лента активности</button>
+            </div>
+            <Link to="/login" onClick={handleLogout}>Выйти</Link>
+          </nav>
+        </div>
         <CreditsMiniBlock credits={currentWorkspace?.creditsPool ?? profile?.credits} />
       </aside>
       <div className="workspace">
