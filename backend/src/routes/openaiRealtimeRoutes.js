@@ -7,5 +7,7 @@ router.use(requireAiExecutionWorkspaceAuth({ missingWorkspaceError: 'workspaceId
 router.post('/openai-realtime/ephemeral-session', controller.createEphemeralSession)
 router.get('/openai-realtime/session/:id', controller.getEphemeralSession)
 router.post('/openai-realtime/session/:id/refresh', controller.refreshEphemeralSession)
+router.post('/openai-realtime/audio-sandbox/session', controller.createAudioSandboxSession)
+router.post('/openai-realtime/audio-sandbox/session/:id/stop', controller.stopAudioSandboxSession)
 
 module.exports = router

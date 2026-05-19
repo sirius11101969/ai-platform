@@ -63,3 +63,9 @@ Never persisted or returned to browser:
 
 ## Future step: real audio streaming
 Real browser-to-provider audio streaming remains a future step and must stay behind explicit product and safety approval. Current phase keeps microphone capture browser-local by default.
+
+
+## Audio sandbox endpoint
+- `POST /api/ai/openai-realtime/audio-sandbox/session` enforces explicit sandbox guard checks.
+- Denied requests return `allowed=false` with reason and simulation fallback metadata.
+- Allowed requests return session metadata and safety signals without exposing API keys.

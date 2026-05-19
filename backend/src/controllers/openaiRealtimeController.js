@@ -1,4 +1,6 @@
 const service = require('../services/openaiRealtime/ephemeralSessionService')
+const guard = require('../services/openaiRealtime/realtimeAudioSandboxGuard')
+const pool = require('../db/pool')
 
 function toResponse(session) {
   return {
@@ -43,4 +45,48 @@ async function refreshEphemeralSession(req, res, next) {
   } catch (error) { next(error) }
 }
 
-module.exports = { createEphemeralSession, getEphemeralSession, refreshEphemeralSession }
+
+
+async function persistSandboxEvent({ sessionId, eventType, payload }) {
+  const safePayload = { ...(payload || {}), at: new Date().toISOString() }
+  if (sessionId) {
+    await pool.query('INSERT INTO ai_openai_realtime_session_events (session_id, event_type, payload) VALUES ($1::uuid, $2, $3::jsonb)', [sessionId, eventType, JSON.stringify(safePayload)]).catch(() => null)
+    return
+  }
+  console.info('openai_realtime_audio_sandbox_event', { eventType, payload: safePayload })
+}
+
+async function createAudioSandboxSession(req, res, next) {
+  try {
+    const confirmAudioStreaming = req.body?.confirmAudioStreaming === true
+    await persistSandboxEvent({ eventType: 'sandbox_requested', payload: { workspaceId: req.workspace.id, userId: req.user?.id || null, confirmAudioStreaming } })
+
+    const eligibility = guard.evaluate({ workspaceId: req.workspace.id, confirmAudioStreaming })
+    if (!eligibility.allowed) {
+      await persistSandboxEvent({ eventType: 'sandbox_denied', payload: { workspaceId: req.workspace.id, userId: req.user?.id || null, reason: eligibility.reason } })
+      return res.json({ allowed: false, reason: eligibility.reason, session: null, providerMode: 'simulation', model: process.env.OPENAI_REALTIME_MODEL || 'gpt-4o-realtime-preview', voice: process.env.OPENAI_REALTIME_VOICE || 'alloy', safety: { ...eligibility.safety, apiKeyExposed: false, simulationFallback: true } })
+    }
+
+    const session = await service.createSession({ workspaceId: req.workspace.id, userId: req.user?.id || null, origin: req.get('origin'), transport: 'webrtc' })
+    await persistSandboxEvent({ sessionId: session.dbSessionId, eventType: 'sandbox_allowed', payload: { workspaceId: req.workspace.id, userId: req.user?.id || null, providerMode: session.providerMode } })
+    return res.status(201).json({
+      allowed: true,
+      reason: eligibility.reason,
+      session: { id: session.id, expiresAt: session.expiresAt, capabilities: session.capabilities },
+      providerMode: session.providerMode,
+      model: session.model,
+      voice: session.voice,
+      safety: { ...eligibility.safety, apiKeyExposed: false, canStopAnytime: true },
+    })
+  } catch (error) { next(error) }
+}
+
+async function stopAudioSandboxSession(req, res, next) {
+  try {
+    const session = service.getSession({ workspaceId: req.workspace.id, sessionId: req.params.id })
+    await persistSandboxEvent({ sessionId: session?.dbSessionId, eventType: 'sandbox_stopped', payload: { workspaceId: req.workspace.id, userId: req.user?.id || null, sessionId: req.params.id } })
+    return res.json({ stopped: true })
+  } catch (error) { next(error) }
+}
+
+module.exports = { createEphemeralSession, getEphemeralSession, refreshEphemeralSession, createAudioSandboxSession, stopAudioSandboxSession }

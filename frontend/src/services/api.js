@@ -747,3 +747,11 @@ export function getOpenAiRealtimeSession(sessionId) {
 export function refreshOpenAiRealtimeSession(sessionId, payload = {}) {
   return request(`/ai/openai-realtime/session/${sessionId}/refresh`, { method: 'POST', body: JSON.stringify(payload) })
 }
+
+export function createOpenAiRealtimeAudioSandboxSession(payload = {}) {
+  return request('/ai/openai-realtime/audio-sandbox/session', { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export function stopOpenAiRealtimeAudioSandboxSession(sessionId) {
+  return request(`/ai/openai-realtime/audio-sandbox/session/${sessionId}/stop`, { method: 'POST' })
+}
