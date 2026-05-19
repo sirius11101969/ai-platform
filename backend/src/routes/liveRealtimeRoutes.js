@@ -12,6 +12,7 @@ router.post('/live-stream/session', controller.createSession)
 router.get('/live-stream/sessions', controller.listSessions)
 router.get('/live-stream/sessions/:id', controller.getSession)
 router.get('/live-stream/sessions/:id/events', controller.getSessionEvents)
+router.post('/live-stream/sessions/:id/stream-token', controller.createStreamToken)
 router.get('/live-stream/sessions/:id/stream', controller.streamSession)
 
 module.exports = router
