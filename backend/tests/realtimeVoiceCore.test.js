@@ -52,18 +52,19 @@ async function testStreamingTranscriptAndInterruptionFlow() {
   assert(updates.at(-1).status === 'completed')
 }
 
-function createRealtimeClient() {
+function createRealtimeClient(overrides = {}) {
   const state = {
     sessions: [],
     events: [],
     timeline: [],
     scores: [],
-    lead: { id: '11111111-1111-4111-8111-111111111111', workspace_id: '22222222-2222-4222-8222-222222222222', user_id: '33333333-3333-4333-8333-333333333333', name: 'Realtime Buyer', contact: '+15551234567', status: 'qualified', value: 90000 },
+    lead: { id: '11111111-1111-4111-8111-111111111111', workspace_id: '22222222-2222-4222-8222-222222222222', user_id: '33333333-3333-4333-8333-333333333333', name: 'Realtime Buyer', phone: '+15551234567', status: 'qualified', value: 90000, metadata: {}, payload: {}, ...overrides.lead },
   }
   return {
     state,
     async query(sql, params = []) {
-      if (sql.includes('FROM crm_leads') && sql.includes('LIMIT 1')) return { rows: [state.lead], rowCount: 1 }
+      if (/SELECT\s+[^`]*phone_number/i.test(sql)) throw new Error('compatibility test should not select missing phone_number column')
+      if (sql.includes('FROM crm_leads') && sql.includes('LIMIT 1')) return { rows: [{ ...state.lead, lead_data: state.lead }], rowCount: 1 }
       if (sql.includes('SELECT * FROM crm_leads')) return { rows: [state.lead], rowCount: 1 }
       if (sql.includes('INSERT INTO ai_realtime_voice_sessions')) {
         const row = { id: '44444444-4444-4444-8444-444444444444', workspace_id: params[0], lead_id: params[1], call_id: params[2], status: 'initializing', transport: params[3], provider: params[4], session_metadata: JSON.parse(params[5]), started_at: new Date().toISOString(), completed_at: null, created_at: new Date().toISOString() }
@@ -113,6 +114,32 @@ function createRealtimeClient() {
   }
 }
 
+
+async function testLeadPhoneLoadingWithSchemaCompatiblePhone() {
+  const client = createRealtimeClient({ lead: { phone: '+15550001111' } })
+  const lead = await realtimeVoiceSessionManager._private.loadLead(client, '22222222-2222-4222-8222-222222222222', '11111111-1111-4111-8111-111111111111')
+  assert.strictEqual(lead.resolved_phone, '+15550001111')
+  assert.strictEqual(lead.phone_source, 'phone')
+  assert.strictEqual(lead.phone_fallback_used, false)
+}
+
+function testLeadPhoneResolutionFromCompatibleShapes() {
+  const { resolveLeadPhone } = realtimeVoiceSessionManager._private
+  assert.deepStrictEqual(resolveLeadPhone({ phone_number: '+15550002222' }), { phone: '+15550002222', source: 'phone_number', usedFallback: false })
+  assert.deepStrictEqual(resolveLeadPhone({ contact_phone: '+15550003333' }), { phone: '+15550003333', source: 'contact_phone', usedFallback: false })
+  assert.deepStrictEqual(resolveLeadPhone({ metadata: { phone: '+15550004444' } }), { phone: '+15550004444', source: 'metadata.phone', usedFallback: false })
+  assert.deepStrictEqual(resolveLeadPhone({ payload: { phone: '+15550005555' } }), { phone: '+15550005555', source: 'payload.phone', usedFallback: false })
+}
+
+async function testSessionAllowsLeadWithoutPhoneUsingSimulationFallback() {
+  const client = createRealtimeClient({ lead: { phone: null, phone_number: null, contact_phone: null, contact: null, metadata: {}, payload: {} } })
+  const session = await realtimeVoiceSessionManager.createRealtimeVoiceSession({ workspaceId: '22222222-2222-4222-8222-222222222222', userId: '33333333-3333-4333-8333-333333333333', leadId: '11111111-1111-4111-8111-111111111111', client, autoRun: false })
+  assert.strictEqual(session.status, 'initializing')
+  assert.strictEqual(session.sessionMetadata.leadPhone, '+70000000000')
+  assert.strictEqual(session.sessionMetadata.phoneSource, 'mock_placeholder')
+  assert.strictEqual(session.sessionMetadata.phoneFallbackUsed, true)
+}
+
 async function testSessionPersistenceAndRevenueBrainTimeline() {
   const client = createRealtimeClient()
   const session = await realtimeVoiceSessionManager.createRealtimeVoiceSession({ workspaceId: '22222222-2222-4222-8222-222222222222', userId: '33333333-3333-4333-8333-333333333333', leadId: '11111111-1111-4111-8111-111111111111', client })
@@ -130,6 +157,9 @@ async function main() {
   testStateMachineTransitions()
   testEventBusPublishSubscribe()
   await testStreamingTranscriptAndInterruptionFlow()
+  await testLeadPhoneLoadingWithSchemaCompatiblePhone()
+  testLeadPhoneResolutionFromCompatibleShapes()
+  await testSessionAllowsLeadWithoutPhoneUsingSimulationFallback()
   await testSessionPersistenceAndRevenueBrainTimeline()
   console.log('realtimeVoiceCore tests passed')
 }
