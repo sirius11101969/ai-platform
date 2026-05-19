@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { PageHeading, Panel } from '../components/AppShell'
+import { createLiveRealtimeTransportSession, fetchLiveRealtimeTransportSession } from '../services/api'
 
-const steps = ['negotiation', 'mock_stream', 'transcript', 'interruption', 'response_chunks', 'completed']
 
 export default function AiLiveRealtimeVoicePage() {
   const [events, setEvents] = useState([])
@@ -18,10 +18,10 @@ export default function AiLiveRealtimeVoicePage() {
     setStatus('running')
     setEvents([])
     setStartedAt(Date.now())
-    for (const [i, step] of steps.entries()) {
-      await new Promise((resolve) => setTimeout(resolve, 220))
-      setEvents((curr) => [...curr, { type: step, latencyMs: 45 + i * 15, text: step === 'transcript' ? 'Prospect: we need revenue visibility in real-time.' : step }])
-    }
+    const created = await createLiveRealtimeTransportSession({})
+    const hydrated = await fetchLiveRealtimeTransportSession(created?.session?.id)
+    const mapped = (hydrated?.session?.events || []).map((event, i) => ({ type: event.event_type, latencyMs: 45 + i * 15, text: event?.payload?.text || event.event_type }))
+    for (const event of mapped) setEvents((curr) => [...curr, event])
     setStatus('completed')
   }
 
@@ -35,7 +35,7 @@ export default function AiLiveRealtimeVoicePage() {
       <Stat label='Session duration' value={`${Math.round(metrics.duration / 1000)}s`} />
     </section>
     <section className='realtime-detail-grid'>
-      <Panel><h3>Realtime Simulation</h3><button className='btn primary' onClick={startSimulation} disabled={status === 'running'}>Start Realtime Simulation</button><p>Waveform: ▂▅▃▆▂▇▃▅ (simulated)</p><p>Interruption recovery: {metrics.interruptions}</p><p>Transcript lag: {metrics.transcriptLag}ms · Response chunk timing: {metrics.responseChunkTiming}ms</p></Panel>
+      <Panel><h3>Realtime Simulation</h3><button className='btn primary' onClick={startSimulation} disabled={status === 'running'}>Start Realtime Transport Simulation</button><p>Waveform: ▂▅▃▆▂▇▃▅ (simulated)</p><p>Interruption recovery: {metrics.interruptions}</p><p>Transcript lag: {metrics.transcriptLag}ms · Response chunk timing: {metrics.responseChunkTiming}ms</p></Panel>
       <Panel><h3>Transcript & transport events</h3><div className='realtime-event-list'>{events.map((e, idx) => <article key={idx}><b>{e.type}</b><span>{e.latencyMs}ms</span><p>{e.text}</p></article>)}</div></Panel>
     </section>
   </main>

@@ -424,6 +424,18 @@ export function fetchRealtimeVoiceSession(id) {
   return request(`/ai/realtime-voice/sessions/${id}`)
 }
 
+export function createLiveRealtimeTransportSession(payload = {}) {
+  return request('/ai/live-realtime/session', { method: 'POST', body: JSON.stringify(payload) })
+}
+
+export function fetchLiveRealtimeTransportSessions() {
+  return request('/ai/live-realtime/sessions')
+}
+
+export function fetchLiveRealtimeTransportSession(id) {
+  return request(`/ai/live-realtime/sessions/${id}`)
+}
+
 export function fetchCrmActivity() {
   return request('/crm/activity')
 }

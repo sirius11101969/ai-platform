@@ -4,6 +4,7 @@ const audioRouter = require('./realtimeAudioRouter')
 const registry = require('./realtimeSessionRegistry')
 const { publish, subscribe } = require('./webRtcSessionManager')
 const aiRevenueIntelligenceService = require('../aiRevenueIntelligenceService')
+const structuredLogger = require('../execution/structuredLogger')
 const safeJson = (v) => JSON.stringify(v || {})
 
 async function persistSession(session) {
@@ -18,11 +19,27 @@ async function startSimulation({ workspaceId, leadId }) {
   const base = await adapter.createSession({ workspaceId, leadId })
   const saved = await persistSession(base)
   const session = registry.registerSession({ ...base, id: saved.id })
-  publish(`session:${session.id}`, { eventType: 'session_created', session })
+  structuredLogger.info('realtime_transport_session_started', { workspaceId, leadId, sessionId: session.id, realtimeSessionId: session.realtimeSessionId, provider: session.provider, transport: session.transport, simulationMode: true })
+  const flow = [
+    { eventType: 'negotiation_started', payload: { state: 'negotiating', simulated: true } },
+    { eventType: 'sdp_exchange', payload: { simulated: true } },
+    { eventType: 'ice_candidates', payload: { simulated: true } },
+    { eventType: 'transcript_chunk', payload: { text: 'Prospect: we need revenue visibility in real-time.', partial: true, simulated: true } },
+    { eventType: 'ai_response_chunk', payload: { text: 'AI: understood, preparing real-time revenue summary now.', partial: true, simulated: true } },
+    { eventType: 'interruption', payload: { reason: 'simulated_user_interrupt', simulated: true } },
+    { eventType: 'resume', payload: { resumed: true, simulated: true } },
+    { eventType: 'completed', payload: { state: 'connected', simulated: true } },
+  ]
   const negotiation = audioRouter.simulateNegotiation(session.id)
-  registry.updateSession(session.id, { state: negotiation.state, sessionMetadata: { ...session.sessionMetadata, negotiation: negotiation.negotiation } })
-  await persistEvent(session.id, 'transport_negotiated', negotiation)
-  publish(`session:${session.id}`, { eventType: 'transport_negotiated', payload: negotiation })
+  flow[1].payload = { ...flow[1].payload, offer: negotiation.negotiation.sdpOffer, answer: negotiation.negotiation.sdpAnswer }
+  flow[2].payload = { ...flow[2].payload, candidates: negotiation.negotiation.iceCandidates }
+
+  for (const item of flow) {
+    await persistEvent(session.id, item.eventType, item.payload)
+    publish(`session:${session.id}`, item)
+  }
+  registry.updateSession(session.id, { state: negotiation.state, sessionMetadata: { ...session.sessionMetadata, negotiation: negotiation.negotiation, lifecycle: flow.map((f) => f.eventType) } })
+  structuredLogger.info('realtime_transport_negotiation', { workspaceId, leadId, sessionId: session.id, transport: negotiation.transport, state: negotiation.state, simulationMode: true })
   return registry.getSession(session.id)
 }
 
@@ -32,7 +49,23 @@ async function completeSimulation(sessionId) {
   const closed = await adapter.closeSession(session)
   registry.updateSession(sessionId, { state: closed.state })
   publish(`session:${sessionId}`, { eventType: 'session_completed', payload: { state: 'closed' } })
+  await persistEvent(sessionId, 'session_completed', { state: 'closed', simulated: true })
+  structuredLogger.info('realtime_transport_completed', { workspaceId: session.workspaceId, leadId: session.leadId, sessionId, state: 'closed', simulationMode: true })
   await aiRevenueIntelligenceService.analyzeLeadRevenueIntelligence({ workspaceId: session.workspaceId, leadId: session.leadId }).catch(() => null)
   return registry.getSession(sessionId)
 }
-module.exports = { startSimulation, completeSimulation, subscribe }
+
+async function listSessions({ workspaceId }) {
+  const result = await pool.query('SELECT * FROM ai_realtime_transport_sessions WHERE workspace_id = $1::uuid ORDER BY created_at DESC LIMIT 100', [workspaceId])
+  return result.rows
+}
+
+async function getSession({ workspaceId, sessionId }) {
+  const sessionResult = await pool.query('SELECT * FROM ai_realtime_transport_sessions WHERE workspace_id = $1::uuid AND id = $2::uuid LIMIT 1', [workspaceId, sessionId])
+  const session = sessionResult.rows[0]
+  if (!session) return null
+  const eventsResult = await pool.query('SELECT id, event_type, payload, created_at FROM ai_realtime_transport_events WHERE transport_session_id = $1::uuid ORDER BY created_at ASC', [sessionId])
+  return { ...session, events: eventsResult.rows }
+}
+
+module.exports = { startSimulation, completeSimulation, listSessions, getSession, subscribe }
