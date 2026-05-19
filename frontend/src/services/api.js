@@ -440,6 +440,26 @@ export function fetchLiveStreamSessionEvents(id) {
   return request(`/ai/live-stream/sessions/${id}/events`)
 }
 
+export function startLiveStreamSession(payload = {}) {
+  return createLiveStreamSession(payload)
+}
+
+export function getLiveStreamEvents(sessionId) {
+  return fetchLiveStreamSessionEvents(sessionId)
+}
+
+export function createLiveStreamEventSource(sessionId) {
+  const workspaceId = getActiveWorkspaceId()
+  const qs = new URLSearchParams()
+  if (workspaceId) qs.set('workspaceId', workspaceId)
+  return request(`/ai/live-stream/sessions/${sessionId}/stream-token${qs.toString() ? `?${qs.toString()}` : ''}`, { method: 'POST' })
+    .then(({ token }) => {
+      const params = new URLSearchParams()
+      params.set('streamToken', token)
+      return new EventSource(`${API_BASE_URL}/ai/live-stream/sessions/${sessionId}/stream?${params.toString()}`)
+    })
+}
+
 export function fetchCrmActivity() {
   return request('/crm/activity')
 }
