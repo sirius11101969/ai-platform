@@ -1,9 +1,10 @@
 const express = require('express')
 const { requireAiExecutionWorkspaceAuth } = require('../middleware/aiExecutionWorkspaceAuthMiddleware')
+const { allowLiveStreamSseAuth } = require('../middleware/allowLiveStreamSseAuth')
 const controller = require('../controllers/liveRealtimeController')
 
 const router = express.Router()
-router.get('/live-stream/sessions/:id/stream', controller.streamSession)
+router.get('/live-stream/sessions/:id/stream', allowLiveStreamSseAuth, controller.streamSession)
 
 router.use(requireAiExecutionWorkspaceAuth({
   missingWorkspaceError: 'workspaceId is required for admin key live stream access',
