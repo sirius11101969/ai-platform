@@ -157,7 +157,7 @@ async function testAdminKeyQueueAndDecisionActions() {
       assert.strictEqual(calls[4][1].action, 'escalate')
       assert.strictEqual(calls[1][1].workspaceId, '11111111-1111-1111-1111-111111111111')
       assert.strictEqual(calls[1][1].userId, 'owner-user-id')
-      assert.ok(logs.some(([message]) => message === 'approval_center_admin_key_auth_success'))
+      assert.ok(logs.some(([message]) => message === 'ai_control_gateway_auth_success'))
     } finally {
       console.info = originalInfo
     }
@@ -176,7 +176,7 @@ async function testJwtStillWorks() {
 
       assert.strictEqual(queue.status, 200)
       assert.strictEqual(calls[0][1].workspaceId, 'workspace-jwt')
-      assert.ok(logs.some(([message]) => message === 'approval_center_jwt_auth_success'))
+      assert.ok(logs.some(([message]) => message === 'ai_control_gateway_auth_success'))
     } finally {
       console.info = originalInfo
     }
@@ -191,6 +191,34 @@ async function testAdminKeyWorkspaceIsolationRejectsUnknownWorkspace() {
 
     assert.strictEqual(response.status, 404)
     assert.deepStrictEqual(response.body, { error: 'Рабочее пространство не найдено' })
+    assert.strictEqual(calls.length, 0)
+  })
+}
+
+
+async function testAdminKeyMissingWorkspaceDenied() {
+  await runWithApp(async ({ baseUrl, calls }) => {
+    const response = await request(baseUrl, 'GET', '/api/ai/approval-center/queue', {
+      headers: { 'x-ai-execution-key': 'approval-admin-key' },
+    })
+
+    assert.strictEqual(response.status, 400)
+    assert.deepStrictEqual(response.body, { error: 'workspaceId is required for admin key approval center access' })
+    assert.strictEqual(calls.length, 0)
+  })
+}
+
+async function testWrongAdminKeyDenied() {
+  await runWithApp(async ({ baseUrl, calls }) => {
+    const response = await request(baseUrl, 'GET', '/api/ai/approval-center/queue', {
+      headers: {
+        'x-ai-execution-key': 'wrong-admin-key',
+        'x-workspace-id': '11111111-1111-1111-1111-111111111111',
+      },
+    })
+
+    assert.strictEqual(response.status, 401)
+    assert.deepStrictEqual(response.body, { error: 'Unauthorized' })
     assert.strictEqual(calls.length, 0)
   })
 }
@@ -217,5 +245,7 @@ Promise.resolve()
   .then(testAdminKeyQueueAndDecisionActions)
   .then(testAdminKeyApproveAndSnoozeActions)
   .then(testJwtStillWorks)
+  .then(testAdminKeyMissingWorkspaceDenied)
+  .then(testWrongAdminKeyDenied)
   .then(testAdminKeyWorkspaceIsolationRejectsUnknownWorkspace)
   .then(() => console.log('approvalCenterRoutesAuth tests passed'))
