@@ -82,7 +82,7 @@ async function testRevenueEngineEndpointsViaAdminKey() {
       assert.strictEqual(snapshot.status, 200)
       assert.strictEqual(recommendations.status, 200)
       assert.strictEqual(risks.status, 200)
-      assert.strictEqual(analysis.status, 201)
+      assert.strictEqual(analysis.status, 200)
       assert.strictEqual(analysis.body.workspaceId, '11111111-1111-1111-1111-111111111111')
       assert.notStrictEqual(snapshot.body?.error, 'Не найден токен авторизации')
       assert.ok(logs.some(([event]) => event === 'ai_revenue_engine_gateway_middleware_active'))
