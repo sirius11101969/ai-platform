@@ -11,7 +11,6 @@ console.info('ai_revenue_engine_gateway_middleware_active', {
 })
 
 router.use(requireAiControlGateway({
-  requireWorkspaceForAdminKey: true,
   missingWorkspaceError: 'workspaceId is required for admin key revenue engine access',
 }))
 router.use((req, _res, next) => {

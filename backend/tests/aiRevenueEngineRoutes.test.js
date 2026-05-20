@@ -1,4 +1,6 @@
 const assert = require('assert')
+const fs = require('fs')
+const path = require('path')
 
 const authServicePath = require.resolve('../src/services/authService')
 const workspaceModelPath = require.resolve('../src/models/workspaceModel')
@@ -81,6 +83,7 @@ async function testRevenueEngineEndpointsViaAdminKey() {
       assert.strictEqual(recommendations.status, 200)
       assert.strictEqual(risks.status, 200)
       assert.strictEqual(analysis.status, 201)
+      assert.strictEqual(analysis.body.workspaceId, '11111111-1111-1111-1111-111111111111')
       assert.notStrictEqual(snapshot.body?.error, 'Не найден токен авторизации')
       assert.ok(logs.some(([event]) => event === 'ai_revenue_engine_gateway_middleware_active'))
       assert.ok(logs.some(([event]) => event === 'ai_revenue_engine_routes_registered'))
@@ -94,6 +97,17 @@ async function testRevenueEngineEndpointsViaAdminKey() {
   })
 }
 
+async function testGatewayConfigParityWithWorkforce() {
+  const revenueRoutesPath = path.join(__dirname, '../src/routes/aiRevenueEngineRoutes.js')
+  const workforceRoutesPath = path.join(__dirname, '../src/routes/aiWorkforceRoutes.js')
+  const revenueSource = fs.readFileSync(revenueRoutesPath, 'utf8')
+  const workforceSource = fs.readFileSync(workforceRoutesPath, 'utf8')
+
+  assert.match(revenueSource, /missingWorkspaceError:\s*'workspaceId is required for admin key revenue engine access'/)
+  assert.match(workforceSource, /missingWorkspaceError:\s*'workspaceId is required for admin key workforce access'/)
+  assert.ok(!revenueSource.includes('requireWorkspaceForAdminKey: true'))
+}
+
 async function testRevenueEngineJwtStillWorks() {
   await runWithApp(async (base) => {
     const headers = { authorization: 'Bearer valid.jwt', 'x-workspace-id': 'ws-ok' }
@@ -105,5 +119,6 @@ async function testRevenueEngineJwtStillWorks() {
 Promise.resolve()
   .then(testRevenueEngineEndpointsViaAdminKey)
   .then(testRevenueEngineJwtStillWorks)
+  .then(testGatewayConfigParityWithWorkforce)
   .then(() => console.log('aiRevenueEngineRoutes.test.js passed'))
   .catch((error) => { console.error(error); process.exit(1) })
