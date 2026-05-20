@@ -844,3 +844,11 @@ export function fetchAiStrategicOkrs(){return request('/ai/strategic-planning/ok
 export function fetchAiStrategicInitiatives(){return request('/ai/strategic-planning/initiatives')}
 export function fetchAiStrategicDependencyGraph(){return request('/ai/strategic-planning/dependency-graph')}
 export function fetchAiStrategicResourceAllocation(){return request('/ai/strategic-planning/resource-allocation')}
+
+
+export function runAiEnterpriseCoordination(){return request('/ai/enterprise-coordination/run',{method:'POST',body:JSON.stringify({})})}
+export function fetchAiEnterpriseRuns(){return request('/ai/enterprise-coordination/runs')}
+export function fetchAiEnterpriseSynchronization(){return request('/ai/enterprise-coordination/synchronization')}
+export function fetchAiEnterpriseRoutes(){return request('/ai/enterprise-coordination/routes')}
+export function fetchAiEnterpriseConflicts(){return request('/ai/enterprise-coordination/conflicts')}
+export function fetchAiEnterpriseEscalations(){return request('/ai/enterprise-coordination/escalations')}
