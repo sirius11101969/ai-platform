@@ -1,0 +1,11 @@
+const express = require('express')
+const controller = require('../controllers/aiExecutiveBrainController')
+const { requireAiControlGateway } = require('../middleware/aiControlGateway')
+const router = express.Router()
+router.use(requireAiControlGateway({ missingWorkspaceError: 'workspaceId is required for admin key executive brain access' }))
+router.get('/executive-brain/snapshot', controller.getSnapshot)
+router.get('/executive-brain/recommendations', controller.getRecommendations)
+router.get('/executive-brain/risks', controller.getRisks)
+router.get('/executive-brain/organizational-health', controller.getOrganizationalHealth)
+router.post('/executive-brain/run-analysis', controller.runAnalysis)
+module.exports = router

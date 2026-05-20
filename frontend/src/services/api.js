@@ -824,3 +824,9 @@ export function fetchAiRevenueEngineSnapshot() { return request('/ai/revenue-eng
 export function fetchAiRevenueEngineRecommendations() { return request('/ai/revenue-engine/recommendations') }
 export function fetchAiRevenueEngineRisks() { return request('/ai/revenue-engine/risks') }
 export function runAiRevenueEngineAnalysis() { return request('/ai/revenue-engine/run-analysis', { method: 'POST', body: JSON.stringify({}) }) }
+
+export function fetchAiExecutiveSnapshot(){return request('/ai/executive-brain/snapshot')}
+export function fetchAiExecutiveRecommendations(){return request('/ai/executive-brain/recommendations')}
+export function fetchAiExecutiveRisks(){return request('/ai/executive-brain/risks')}
+export function fetchAiExecutiveOrganizationalHealth(){return request('/ai/executive-brain/organizational-health')}
+export function runAiExecutiveAnalysis(){return request('/ai/executive-brain/run-analysis',{method:'POST',body:JSON.stringify({})})}
