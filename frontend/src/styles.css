@@ -2893,3 +2893,13 @@ button { font: inherit; }
 .status-dot { position:relative; padding-left:14px; }
 .status-dot::before { content:''; width:8px; height:8px; border-radius:50%; background:#6effa0; position:absolute; left:0; top:7px; animation:pulse 1.4s infinite; }
 @keyframes pulse { 0%{opacity:.5} 50%{opacity:1} 100%{opacity:.5} }
+.workforce-command-graph { border:1px solid rgba(103,227,255,.32); background: linear-gradient(145deg, rgba(12,20,42,.84), rgba(19,32,66,.6)); }
+.command-stage-columns { display:grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap:12px; margin-top:10px; }
+.command-stage-column { border:1px solid rgba(152,180,255,.2); border-radius:12px; padding:10px; background: rgba(6,12,31,.55); }
+.command-stage-column h4 { margin:0 0 8px; text-transform: capitalize; font-size: 12px; color:#9dc6ff; }
+.command-node-card { margin-bottom:8px; padding:8px; border-radius:10px; background: rgba(15,26,52,.7); border:1px solid rgba(153,195,255,.25); display:grid; gap:4px; }
+.command-node-card small { color:#9cb0d8; }
+.command-node-card.warning { border-color: rgba(255,155,100,.65); box-shadow: 0 0 0 1px rgba(255,155,100,.25) inset; }
+.command-node-card.pulse { animation: pulse 1.5s infinite; }
+.command-edge-list { margin-top:10px; display:grid; gap:4px; font-size:12px; color:#8bb8f3; }
+@media (max-width: 1200px) { .command-stage-columns { grid-template-columns: repeat(2,minmax(0,1fr)); } }

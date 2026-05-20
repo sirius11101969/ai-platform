@@ -131,3 +131,7 @@ The presentation layer is cosmetic only and does not alter orchestration decisio
 
 ## Realtime Operations Addendum
 See `realtime_ai_workforce_operations.md` for the event bus, stream, metrics, and swarm coordination monitoring architecture.
+
+
+## AI Workforce Command Graph
+The command graph endpoint and UI map connect lead intelligence, SDR actions, approval gates, execution queue state, workforce orchestration, and realtime operational telemetry into a single governed view.

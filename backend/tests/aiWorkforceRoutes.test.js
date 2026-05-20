@@ -132,6 +132,17 @@ async function testUnauthorizedWorkspaceDenied() {
 }
 
 
+
+async function testCommandGraphEndpointViaAdminKey() {
+  await runWithApp(async (base) => {
+    const headers = { 'x-ai-execution-key': 'workforce-admin-key', 'x-workspace-id': '11111111-1111-1111-1111-111111111111' }
+    const graph = await request(base, '/api/ai/workforce/command-graph?leadId=lead-1', headers)
+    assert.strictEqual(graph.status, 200)
+    assert.ok(Array.isArray(graph.body.graph.nodes))
+    assert.ok(Array.isArray(graph.body.graph.edges))
+  })
+}
+
 async function testRealtimeEndpointsAndSimulation() {
   await runWithApp(async (base) => {
     const headers = { 'x-ai-execution-key': 'workforce-admin-key', 'x-workspace-id': '11111111-1111-1111-1111-111111111111' }
@@ -155,6 +166,7 @@ Promise.resolve()
   .then(testWorkforceAgentsViaAdminKey)
   .then(testJwtStillWorks)
   .then(testUnauthorizedWorkspaceDenied)
+  .then(testCommandGraphEndpointViaAdminKey)
   .then(testRealtimeEndpointsAndSimulation)
   .then(() => console.log('aiWorkforceRoutes.test.js passed'))
   .catch((error) => { console.error(error); process.exit(1) })

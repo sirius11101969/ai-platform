@@ -633,6 +633,10 @@ export function fetchAiWorkforceRealtimeMetricsHistory(params = {}) {
   return request(`/ai/workforce/realtime-metrics/history${query ? `?${query}` : ''}`)
 }
 export function simulateAiWorkforceActivity() { return request('/ai/workforce/simulate-activity', { method: 'POST', body: JSON.stringify({}) }) }
+export function fetchAiWorkforceCommandGraph(params = {}) {
+  const query = new URLSearchParams(Object.entries(params).filter(([, value]) => value !== undefined && value !== null && value !== '')).toString()
+  return request(`/ai/workforce/command-graph${query ? `?${query}` : ''}`)
+}
 
 export function fetchTelegramMessages(leadId) {
   return request(`/crm/leads/${leadId}/telegram-messages`)
