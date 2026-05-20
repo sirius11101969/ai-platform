@@ -50,7 +50,7 @@ async function runAnalysis(req, res, next) {
       authMode: context.authMode,
       userId: context.userId,
     })
-    res.status(201).json(analysis)
+    res.status(200).json(analysis)
   } catch (e) { next(e) }
 }
 
