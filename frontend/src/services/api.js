@@ -860,3 +860,5 @@ export function fetchAiOrganizationalLineage(){return request('/ai/organizationa
 export function fetchAiOrganizationalTimeline(){return request('/ai/organizational-memory/timeline')}
 export function fetchAiOrganizationalDrift(){return request('/ai/organizational-memory/drift')}
 export function fetchAiOrganizationalLearning(){return request('/ai/organizational-memory/learning')}
+
+export function fetchAiExecutiveUnifiedOverview(){return request('/ai/executive-dashboard/overview')}

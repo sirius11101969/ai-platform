@@ -20,6 +20,7 @@ import AiApprovalCenterPage from "./pages/AiApprovalCenterPage";
 import AiExecutionCenterPage from "./pages/AiExecutionCenterPage";
 import AiWorkforceCenterPage from "./pages/AiWorkforceCenterPage";
 import AiExecutiveBrainPage from "./pages/AiExecutiveBrainPage";
+import AiExecutiveUnifiedDashboardPage from "./pages/AiExecutiveUnifiedDashboardPage";
 import AiCompanySimulationPage from "./pages/AiCompanySimulationPage";
 import AiStrategicPlanningPage from "./pages/AiStrategicPlanningPage";
 import AiEnterpriseCoordinationPage from "./pages/AiEnterpriseCoordinationPage";
@@ -115,6 +116,7 @@ export default function App() {
           <Route path="/ai-execution-center" element={<ProtectedRoute><AiExecutionCenterPage /></ProtectedRoute>} />
           <Route path="/ai-workforce-center" element={<ProtectedRoute><AiWorkforceCenterPage /></ProtectedRoute>} />
           <Route path="/ai-executive-brain" element={<ProtectedRoute><AiExecutiveBrainPage /></ProtectedRoute>} />
+          <Route path="/ai-executive-dashboard" element={<ProtectedRoute><AiExecutiveUnifiedDashboardPage /></ProtectedRoute>} />
           <Route path="/ai-company-simulation" element={<ProtectedRoute><AiCompanySimulationPage /></ProtectedRoute>} />
           <Route path="/ai-strategic-planning" element={<ProtectedRoute><AiStrategicPlanningPage /></ProtectedRoute>} />
           <Route path="/ai-enterprise-coordination" element={<ProtectedRoute><AiEnterpriseCoordinationPage /></ProtectedRoute>} />
