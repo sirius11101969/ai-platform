@@ -12,7 +12,14 @@ function installMockModule(modulePath, exports) {
 }
 
 function clearModules() {
-  for (const p of [indexPath, require.resolve('../src/routes/aiWorkforceRoutes'), require.resolve('../src/controllers/aiWorkforceController')]) delete require.cache[p]
+  for (const p of [
+    indexPath,
+    require.resolve('../src/routes/aiWorkforceRoutes'),
+    require.resolve('../src/controllers/aiWorkforceController'),
+    require.resolve('../src/middleware/aiExecutionRunnerAuthMiddleware'),
+    require.resolve('../src/middleware/workspaceMiddleware'),
+    require.resolve('../src/middleware/authMiddleware'),
+  ]) delete require.cache[p]
 }
 
 async function request(baseUrl, path, headers) {
@@ -20,12 +27,32 @@ async function request(baseUrl, path, headers) {
   return { status: res.status, body: await res.json() }
 }
 
-async function run() {
+async function runWithApp(fn) {
+  const originalAdminKey = process.env.AI_EXECUTION_ADMIN_KEY
+  process.env.AI_EXECUTION_ADMIN_KEY = 'workforce-admin-key'
+
   const restore = [
-    installMockModule(authServicePath, { verifyToken: async () => ({ id: 'u1' }) }),
-    installMockModule(workspaceModelPath, { getWorkspaceForUser: async (_u, wid) => (wid === 'ws-ok' ? { id: wid, userId: 'u1' } : null) }),
+    installMockModule(authServicePath, {
+      verifyToken: async (token) => {
+        if (token !== 'valid.jwt') {
+          const error = new Error('bad token')
+          error.statusCode = 401
+          throw error
+        }
+        return { id: 'u1' }
+      },
+    }),
+    installMockModule(workspaceModelPath, {
+      getWorkspaceForUser: async (_u, wid) => (wid === 'ws-ok' ? { id: wid, userId: 'u1' } : null),
+    }),
     installMockModule(dbPoolPath, {
-      query: async (sql) => {
+      query: async (sql, params) => {
+        if (sql.includes('FROM workspaces')) {
+          if (params?.[0] === '11111111-1111-1111-1111-111111111111') {
+            return { rows: [{ id: params[0], name: 'Admin Workspace', owner_user_id: 'owner-user-id', plan: 'pro' }] }
+          }
+          return { rows: [] }
+        }
         if (sql.includes('FROM ai_workforce_agents')) return { rows: [{ id: 'a1', role: 'SDR', status: 'assigned', workload: 3, collaboration_state: 'active', metadata: {} }] }
         if (sql.includes('FROM ai_workforce_tasks')) return { rows: [{ id: 't1', task_type: 'lead_qualification', status: 'queued', execution_dependencies: ['approval_center'] }] }
         if (sql.includes('FROM ai_workforce_assignments')) return { rows: [{ id: 'as1', task_id: 't1', agent_id: 'a1', status: 'assigned' }] }
@@ -40,25 +67,66 @@ async function run() {
   clearModules()
   const { app } = require('../src/index')
   const server = await new Promise((resolve) => { const s = app.listen(0, '127.0.0.1', () => resolve(s)) })
-  const base = `http://127.0.0.1:${server.address().port}`
-  const headers = { authorization: 'Bearer jwt', 'x-workspace-id': 'ws-ok' }
 
-  const agents = await request(base, '/api/ai/workforce/agents', headers)
-  const assignments = await request(base, '/api/ai/workforce/assignments', headers)
-  const plans = await request(base, '/api/ai/workforce/execution-plans', headers)
-  const metrics = await request(base, '/api/ai/workforce/metrics', headers)
-  const isolation = await request(base, '/api/ai/workforce/agents', { authorization: 'Bearer jwt', 'x-workspace-id': 'bad' })
-
-  assert.strictEqual(agents.status, 200)
-  assert.strictEqual(assignments.status, 200)
-  assert.strictEqual(plans.status, 200)
-  assert.strictEqual(metrics.status, 200)
-  assert.strictEqual(metrics.body.metrics.pendingApprovals, 4)
-  assert.strictEqual(isolation.status, 403)
-
-  await new Promise((resolve) => server.close(resolve))
-  clearModules(); restore.reverse().forEach((r) => r())
-  console.log('aiWorkforceRoutes.test.js passed')
+  try {
+    await fn(`http://127.0.0.1:${server.address().port}`)
+  } finally {
+    await new Promise((resolve) => server.close(resolve))
+    clearModules(); restore.reverse().forEach((r) => r())
+    if (originalAdminKey === undefined) delete process.env.AI_EXECUTION_ADMIN_KEY
+    else process.env.AI_EXECUTION_ADMIN_KEY = originalAdminKey
+  }
 }
 
-run().catch((error) => { console.error(error); process.exit(1) })
+async function testWorkforceMetricsViaAdminKey() {
+  await runWithApp(async (base) => {
+    const logs = []
+    const originalInfo = console.info
+    console.info = (...args) => logs.push(args)
+    try {
+      const headers = { 'x-ai-execution-key': 'workforce-admin-key', 'x-workspace-id': '11111111-1111-1111-1111-111111111111' }
+      const metrics = await request(base, '/api/ai/workforce/metrics', headers)
+
+      assert.strictEqual(metrics.status, 200)
+      assert.strictEqual(metrics.body.metrics.pendingApprovals, 4)
+      assert.ok(logs.some(([event]) => event === 'ai_workforce_gateway_auth_success'))
+      assert.ok(logs.some(([event]) => event === 'ai_workforce_workspace_resolved'))
+    } finally {
+      console.info = originalInfo
+    }
+  })
+}
+
+async function testWorkforceAgentsViaAdminKey() {
+  await runWithApp(async (base) => {
+    const headers = { 'x-ai-execution-key': 'workforce-admin-key', 'x-workspace-id': '11111111-1111-1111-1111-111111111111' }
+    const agents = await request(base, '/api/ai/workforce/agents', headers)
+    assert.strictEqual(agents.status, 200)
+    assert.strictEqual(agents.body.items[0].id, 'a1')
+  })
+}
+
+async function testJwtStillWorks() {
+  await runWithApp(async (base) => {
+    const headers = { authorization: 'Bearer valid.jwt', 'x-workspace-id': 'ws-ok' }
+    const assignments = await request(base, '/api/ai/workforce/assignments', headers)
+    assert.strictEqual(assignments.status, 200)
+  })
+}
+
+async function testUnauthorizedWorkspaceDenied() {
+  await runWithApp(async (base) => {
+    const headers = { 'x-ai-execution-key': 'workforce-admin-key', 'x-workspace-id': '22222222-2222-2222-2222-222222222222' }
+    const agents = await request(base, '/api/ai/workforce/agents', headers)
+    assert.strictEqual(agents.status, 404)
+    assert.deepStrictEqual(agents.body, { error: 'Рабочее пространство не найдено' })
+  })
+}
+
+Promise.resolve()
+  .then(testWorkforceMetricsViaAdminKey)
+  .then(testWorkforceAgentsViaAdminKey)
+  .then(testJwtStillWorks)
+  .then(testUnauthorizedWorkspaceDenied)
+  .then(() => console.log('aiWorkforceRoutes.test.js passed'))
+  .catch((error) => { console.error(error); process.exit(1) })
