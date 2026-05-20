@@ -1,0 +1,12 @@
+const express=require('express')
+const controller=require('../controllers/aiEnterpriseCoordinationController')
+const { requireAiControlGateway } = require('../middleware/aiControlGateway')
+const router=express.Router()
+router.use(requireAiControlGateway({ missingWorkspaceError:'workspaceId is required for enterprise coordination' }))
+router.post('/enterprise-coordination/run',controller.run)
+router.get('/enterprise-coordination/runs',controller.runs)
+router.get('/enterprise-coordination/synchronization',controller.synchronization)
+router.get('/enterprise-coordination/routes',controller.routes)
+router.get('/enterprise-coordination/conflicts',controller.conflicts)
+router.get('/enterprise-coordination/escalations',controller.escalations)
+module.exports=router
