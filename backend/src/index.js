@@ -65,7 +65,7 @@ app.use('/api/dashboard', dashboardRoutes)
 app.use('/api/workspaces', workspaceRoutes)
 app.use('/api/crm', crmRoutes)
 app.use('/api/ai/execution', aiExecutionRunnerRoutes)
-app.use('/api/ai', aiWorkforceRoutes)
+app.use('/api/ai/workforce', aiWorkforceRoutes)
 app.use('/api/ai', aiExecutionLayerRoutes)
 // Must stay before the global /api/ai sequence middleware chain so SSE stream auth can run in isolation.
 app.use('/api/ai', liveRealtimeRoutes)
