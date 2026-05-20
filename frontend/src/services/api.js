@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
+const API_BASE_URL = import.meta?.env?.VITE_API_BASE_URL || '/api'
 const AUTH_STORAGE_KEY = 'ai-platform-auth'
 const LEGACY_TOKEN_KEYS = ['token', 'jwt', 'accessToken', 'authToken']
 const WORKSPACE_STORAGE_KEY = 'ai-platform-workspace-id'
