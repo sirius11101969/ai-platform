@@ -837,3 +837,10 @@ export function fetchAiCompanySimulationRuns(){return request('/ai/company-simul
 export function fetchAiCompanySimulationScenarios(){return request('/ai/company-simulation/scenarios')}
 export function fetchAiCompanySimulationResults(){return request('/ai/company-simulation/results')}
 export function fetchAiCompanySimulationRisks(){return request('/ai/company-simulation/risks')}
+
+export function runAiStrategicPlanning(){return request('/ai/strategic-planning/run',{method:'POST',body:JSON.stringify({})})}
+export function fetchAiStrategicPlans(){return request('/ai/strategic-planning/plans')}
+export function fetchAiStrategicOkrs(){return request('/ai/strategic-planning/okrs')}
+export function fetchAiStrategicInitiatives(){return request('/ai/strategic-planning/initiatives')}
+export function fetchAiStrategicDependencyGraph(){return request('/ai/strategic-planning/dependency-graph')}
+export function fetchAiStrategicResourceAllocation(){return request('/ai/strategic-planning/resource-allocation')}

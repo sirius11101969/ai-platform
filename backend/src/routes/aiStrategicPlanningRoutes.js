@@ -1,0 +1,12 @@
+const express = require('express')
+const controller = require('../controllers/aiStrategicPlanningController')
+const { requireAiControlGateway } = require('../middleware/aiControlGateway')
+const router = express.Router()
+router.use(requireAiControlGateway({ missingWorkspaceError: 'workspaceId is required for strategic planning' }))
+router.post('/strategic-planning/run', controller.run)
+router.get('/strategic-planning/plans', controller.plans)
+router.get('/strategic-planning/okrs', controller.okrs)
+router.get('/strategic-planning/initiatives', controller.initiatives)
+router.get('/strategic-planning/dependency-graph', controller.dependency)
+router.get('/strategic-planning/resource-allocation', controller.resource)
+module.exports = router
