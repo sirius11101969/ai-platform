@@ -35,14 +35,35 @@ function createWorkforceRealtimeOperationsService({ db = pool, eventBus = create
     const collaborationSessions = events.rows.filter((row) => row.event_type === 'worker_collaboration_started').length
     const throughput24h = events.rows.filter((row) => row.event_type === 'worker_activity_completed').length
 
-    const metrics = { bottlenecksDetected, escalationsDetected, activeAssignments, collaborationSessions, throughput24h }
+    const computedAt = new Date().toISOString()
+    const metrics = {
+      bottlenecksDetected,
+      escalationsDetected,
+      activeAssignments,
+      collaborationSessions,
+      throughput24h,
+      timestamp: computedAt,
+      source: 'realtime_workforce_operations',
+    }
     await db.query(
       `INSERT INTO ai_workforce_realtime_metrics (workspace_id, metrics, computed_at)
-       VALUES ($1,$2::jsonb,NOW())`,
-      [workspaceId, JSON.stringify(metrics)]
+       VALUES ($1,$2::jsonb,$3)`,
+      [workspaceId, JSON.stringify(metrics), computedAt]
     )
-    console.info('ai_workforce_realtime_metrics_updated', { workspaceId, ...metrics })
+    console.info('ai_workforce_realtime_metrics_snapshot_persisted', { workspaceId, computedAt, source: metrics.source, metrics })
     return metrics
+  }
+
+  async function listRealtimeMetricsHistory(workspaceId, limit = 50) {
+    const result = await db.query(
+      `SELECT id, workspace_id, metrics, computed_at
+       FROM ai_workforce_realtime_metrics
+       WHERE workspace_id = $1
+       ORDER BY computed_at DESC
+       LIMIT $2`,
+      [workspaceId, limit]
+    )
+    return result.rows
   }
 
   async function detectBottlenecks(workspaceId) {
@@ -93,7 +114,7 @@ function createWorkforceRealtimeOperationsService({ db = pool, eventBus = create
     return result.rows
   }
 
-  return { publishWorkforceEvent, computeRealtimeMetrics, detectBottlenecks, detectEscalationChains, summarizeCollaborationActivity, listEvents, listActivityStream }
+  return { publishWorkforceEvent, computeRealtimeMetrics, listRealtimeMetricsHistory, detectBottlenecks, detectEscalationChains, summarizeCollaborationActivity, listEvents, listActivityStream }
 }
 
 module.exports = { createWorkforceRealtimeOperationsService }

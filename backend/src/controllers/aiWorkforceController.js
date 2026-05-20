@@ -109,9 +109,6 @@ async function getMetrics(req, res, next) {
   } catch (error) { next(error) }
 }
 
-module.exports = { listAgents, listTasks, listAssignments, listExecutionPlans, getMetrics, listEvents, listActivityStream, getRealtimeMetrics, simulateActivity }
-
-
 async function listEvents(req, res, next) {
   try {
     const limit = Math.min(Number(req.query.limit) || 100, 500)
@@ -138,6 +135,14 @@ async function getRealtimeMetrics(req, res, next) {
   } catch (error) { next(error) }
 }
 
+async function getRealtimeMetricsHistory(req, res, next) {
+  try {
+    const limit = Math.min(Number(req.query.limit) || 50, 200)
+    const items = await realtimeService.listRealtimeMetricsHistory(req.workspace.id, limit)
+    res.json({ items })
+  } catch (error) { next(error) }
+}
+
 async function simulateActivity(req, res, next) {
   try {
     const workspaceId = req.workspace.id
@@ -156,3 +161,5 @@ async function simulateActivity(req, res, next) {
     res.status(201).json({ items: created, safety: { noExternalOutreach: true, noRealCustomerActions: true } })
   } catch (error) { next(error) }
 }
+
+module.exports = { listAgents, listTasks, listAssignments, listExecutionPlans, getMetrics, listEvents, listActivityStream, getRealtimeMetrics, getRealtimeMetricsHistory, simulateActivity }
