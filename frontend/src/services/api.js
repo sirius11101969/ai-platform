@@ -830,3 +830,10 @@ export function fetchAiExecutiveRecommendations(){return request('/ai/executive-
 export function fetchAiExecutiveRisks(){return request('/ai/executive-brain/risks')}
 export function fetchAiExecutiveOrganizationalHealth(){return request('/ai/executive-brain/organizational-health')}
 export function runAiExecutiveAnalysis(){return request('/ai/executive-brain/run-analysis',{method:'POST',body:JSON.stringify({})})}
+
+
+export function runAiCompanySimulation(payload={}){return request('/ai/company-simulation/run',{method:'POST',body:JSON.stringify(payload)})}
+export function fetchAiCompanySimulationRuns(){return request('/ai/company-simulation/runs')}
+export function fetchAiCompanySimulationScenarios(){return request('/ai/company-simulation/scenarios')}
+export function fetchAiCompanySimulationResults(){return request('/ai/company-simulation/results')}
+export function fetchAiCompanySimulationRisks(){return request('/ai/company-simulation/risks')}

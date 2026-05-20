@@ -1,0 +1,2 @@
+function simulateChurnRisk({ stalledLeads = 0, responseLatencyHours = 24 }) { return { scenarioType: 'churn_risk', projectedImpact: Math.round(stalledLeads * 5 + responseLatencyHours * 0.7), confidenceScore: 0.7, riskLevel: stalledLeads > 8 ? 'high' : 'medium', simulationHorizon: '60d', recommendedHumanAction: 'Launch human-led retention intervention plan.' } }
+module.exports = { simulateChurnRisk }

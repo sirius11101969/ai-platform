@@ -1,0 +1,2 @@
+function simulatePipelineCollapse({ atRiskDeals = 0, pipelineValue = 0 }) { return { scenarioType: 'pipeline_collapse_risk', projectedImpact: Math.round((atRiskDeals * 0.1) * pipelineValue), confidenceScore: 0.69, riskLevel: atRiskDeals > 6 ? 'high' : 'medium', simulationHorizon: '30d', recommendedHumanAction: 'Escalate at-risk deal review with executive sponsor.' } }
+module.exports = { simulatePipelineCollapse }

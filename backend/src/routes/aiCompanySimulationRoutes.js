@@ -1,0 +1,11 @@
+const express = require('express')
+const controller = require('../controllers/aiCompanySimulationController')
+const { requireAiControlGateway } = require('../middleware/aiControlGateway')
+const router = express.Router()
+router.use(requireAiControlGateway({ missingWorkspaceError: 'workspaceId is required for admin key company simulation access' }))
+router.post('/company-simulation/run', controller.run)
+router.get('/company-simulation/runs', controller.runs)
+router.get('/company-simulation/scenarios', controller.scenarios)
+router.get('/company-simulation/results', controller.results)
+router.get('/company-simulation/risks', controller.risks)
+module.exports = router
