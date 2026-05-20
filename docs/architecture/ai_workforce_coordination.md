@@ -128,3 +128,6 @@ The control center UI visualizes workforce state using:
 - utilization cards for workforce pressure and capacity
 
 The presentation layer is cosmetic only and does not alter orchestration decisions, routing rules, or approval enforcement.
+
+## Realtime Operations Addendum
+See `realtime_ai_workforce_operations.md` for the event bus, stream, metrics, and swarm coordination monitoring architecture.

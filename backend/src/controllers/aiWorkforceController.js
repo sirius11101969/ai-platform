@@ -1,4 +1,7 @@
 const pool = require('../db/pool')
+const { createWorkforceRealtimeOperationsService } = require('../services/aiWorkforce/workforceRealtimeOperationsService')
+
+const realtimeService = createWorkforceRealtimeOperationsService({ db: pool })
 
 function toNumber(value) {
   const number = Number(value)
@@ -106,4 +109,50 @@ async function getMetrics(req, res, next) {
   } catch (error) { next(error) }
 }
 
-module.exports = { listAgents, listTasks, listAssignments, listExecutionPlans, getMetrics }
+module.exports = { listAgents, listTasks, listAssignments, listExecutionPlans, getMetrics, listEvents, listActivityStream, getRealtimeMetrics, simulateActivity }
+
+
+async function listEvents(req, res, next) {
+  try {
+    const limit = Math.min(Number(req.query.limit) || 100, 500)
+    const items = await realtimeService.listEvents(req.workspace.id, limit)
+    res.json({ items })
+  } catch (error) { next(error) }
+}
+
+async function listActivityStream(req, res, next) {
+  try {
+    const limit = Math.min(Number(req.query.limit) || 100, 500)
+    const items = await realtimeService.listActivityStream(req.workspace.id, limit)
+    res.json({ items })
+  } catch (error) { next(error) }
+}
+
+async function getRealtimeMetrics(req, res, next) {
+  try {
+    const metrics = await realtimeService.computeRealtimeMetrics(req.workspace.id)
+    const bottlenecks = await realtimeService.detectBottlenecks(req.workspace.id)
+    const escalations = await realtimeService.detectEscalationChains(req.workspace.id)
+    const collaboration = await realtimeService.summarizeCollaborationActivity(req.workspace.id)
+    res.json({ metrics, bottlenecks, escalations, collaboration })
+  } catch (error) { next(error) }
+}
+
+async function simulateActivity(req, res, next) {
+  try {
+    const workspaceId = req.workspace.id
+    const workerId = req.body.workerId || null
+    const demoEvents = [
+      { eventType: 'worker_activity_started', severity: 'info', payload: { summary: 'Simulation started', safeSimulation: true, noExternalOutreach: true, noRealCustomerActions: true } },
+      { eventType: 'worker_collaboration_started', severity: 'info', payload: { summary: 'Simulation collaboration', safeSimulation: true, noExternalOutreach: true, noRealCustomerActions: true } },
+      { eventType: 'execution_plan_updated', severity: 'info', payload: { summary: 'Simulation execution plan updated', safeSimulation: true, noExternalOutreach: true, noRealCustomerActions: true } },
+      { eventType: 'worker_activity_completed', severity: 'info', payload: { summary: 'Simulation complete', safeSimulation: true, noExternalOutreach: true, noRealCustomerActions: true } },
+    ]
+    const created = []
+    for (const event of demoEvents) {
+      // eslint-disable-next-line no-await-in-loop
+      created.push(await realtimeService.publishWorkforceEvent({ workspaceId, workerId, ...event }))
+    }
+    res.status(201).json({ items: created, safety: { noExternalOutreach: true, noRealCustomerActions: true } })
+  } catch (error) { next(error) }
+}

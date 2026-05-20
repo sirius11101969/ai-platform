@@ -625,6 +625,10 @@ export function fetchAiWorkforceTasks() { return request('/ai/workforce/tasks') 
 export function fetchAiWorkforceAssignments() { return request('/ai/workforce/assignments') }
 export function fetchAiWorkforceExecutionPlans() { return request('/ai/workforce/execution-plans') }
 export function fetchAiWorkforceMetrics() { return request('/ai/workforce/metrics') }
+export function fetchAiWorkforceEvents() { return request('/ai/workforce/events') }
+export function fetchAiWorkforceActivityStream() { return request('/ai/workforce/activity-stream') }
+export function fetchAiWorkforceRealtimeMetrics() { return request('/ai/workforce/realtime-metrics') }
+export function simulateAiWorkforceActivity() { return request('/ai/workforce/simulate-activity', { method: 'POST', body: JSON.stringify({}) }) }
 
 export function fetchTelegramMessages(leadId) {
   return request(`/crm/leads/${leadId}/telegram-messages`)

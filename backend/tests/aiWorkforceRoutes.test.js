@@ -59,6 +59,11 @@ async function runWithApp(fn) {
         if (sql.includes('FROM ai_workforce_execution_plans')) return { rows: [{ id: 'p1', task_type: 'lead_qualification', status: 'waiting_approval' }] }
         if (sql.includes('FROM ai_workforce_collaboration_events')) return { rows: [{ count: 2 }] }
         if (sql.includes('FROM ai_worker_queue')) return { rows: [{ count: 4 }] }
+        if (sql.includes('FROM ai_workforce_events')) return { rows: [{ id: 'e1', event_type: 'worker_activity_completed', severity: 'info', published_at: new Date().toISOString() }] }
+        if (sql.includes('FROM ai_workforce_activity_stream')) return { rows: [{ id: 's1', event_type: 'worker_activity_completed', summary: 'Done' }] }
+        if (sql.includes('INSERT INTO ai_workforce_realtime_metrics')) return { rows: [] }
+        if (sql.includes('INSERT INTO ai_workforce_events')) return { rows: [{ id: 'e2', event_type: 'worker_activity_started', severity: 'info', published_at: new Date().toISOString() }] }
+        if (sql.includes('INSERT INTO ai_workforce_activity_stream')) return { rows: [] }
         return { rows: [] }
       },
     }),
@@ -125,10 +130,26 @@ async function testUnauthorizedWorkspaceDenied() {
   })
 }
 
+
+async function testRealtimeEndpointsAndSimulation() {
+  await runWithApp(async (base) => {
+    const headers = { 'x-ai-execution-key': 'workforce-admin-key', 'x-workspace-id': '11111111-1111-1111-1111-111111111111' }
+    const events = await request(base, '/api/ai/workforce/events', headers)
+    assert.strictEqual(events.status, 200)
+    const stream = await request(base, '/api/ai/workforce/activity-stream', headers)
+    assert.strictEqual(stream.status, 200)
+    const metrics = await request(base, '/api/ai/workforce/realtime-metrics', headers)
+    assert.strictEqual(metrics.status, 200)
+    const simulateRes = await fetch(`${base}/api/ai/workforce/simulate-activity`, { method: 'POST', headers: { ...headers, 'content-type': 'application/json' }, body: '{}' })
+    assert.strictEqual(simulateRes.status, 201)
+  })
+}
+
 Promise.resolve()
   .then(testWorkforceMetricsViaAdminKey)
   .then(testWorkforceAgentsViaAdminKey)
   .then(testJwtStillWorks)
   .then(testUnauthorizedWorkspaceDenied)
+  .then(testRealtimeEndpointsAndSimulation)
   .then(() => console.log('aiWorkforceRoutes.test.js passed'))
   .catch((error) => { console.error(error); process.exit(1) })
