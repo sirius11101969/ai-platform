@@ -59,6 +59,8 @@ async function run() {
     assert.ok(logs.some(([event]) => event === 'ai_revenue_engine_request_debug'))
     assert.ok(logs.some(([event]) => event === 'ai_revenue_engine_auth_context_attached'))
     assert.ok(!logs.some(([event]) => event === 'ai_workforce_gateway_auth_success'))
+    assert.ok(!logs.some(([event]) => event === 'sequence_admin_key_accepted'))
+
 
     const requestDebug = logs.find(([event]) => event === 'ai_revenue_engine_request_debug')
     const authAttached = logs.find(([event]) => event === 'ai_revenue_engine_auth_context_attached')
