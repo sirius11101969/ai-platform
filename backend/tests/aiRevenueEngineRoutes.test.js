@@ -93,6 +93,11 @@ async function testAdminKeyAuthAndLogs() {
       assert.notStrictEqual(snapshot.body?.error, 'Не найден токен авторизации')
       assert.ok(logs.some(([event]) => event === 'ai_revenue_engine_gateway_auth_success'))
       assert.ok(logs.some(([event]) => event === 'ai_revenue_engine_workspace_resolved'))
+
+      const run = await request(base, '/api/ai/revenue-engine/run-analysis', headers, 'POST')
+      assert.strictEqual(run.status, 201)
+      assert.strictEqual(run.body.analysisId, 'analysis-1')
+      assert.ok(logs.some(([event]) => event === 'ai_revenue_engine_analysis_started'))
     } finally {
       console.info = originalInfo
     }
@@ -117,21 +122,29 @@ async function testGatewayAuthJwtMode() {
   })
 }
 
-async function testRecommendationsEndpointAdminKey() {
+async function testRecommendationsAndRisksEndpointAdminKey() {
   await runWithApp(async (base) => {
     const headers = { 'x-ai-execution-key': 'revenue-admin-key', 'x-workspace-id': '11111111-1111-1111-1111-111111111111' }
     const recommendations = await request(base, '/api/ai/revenue-engine/recommendations', headers)
     assert.strictEqual(recommendations.status, 200)
     assert.strictEqual(recommendations.body.recommendations[0].id, 'rec-1')
+
+    const risks = await request(base, '/api/ai/revenue-engine/risks', headers)
+    assert.strictEqual(risks.status, 200)
+    assert.strictEqual(risks.body.risks[0].id, 'risk-1')
   })
 }
 
-async function testSnapshotEndpointAdminKey() {
+async function testSnapshotAndRunAnalysisEndpointAdminKey() {
   await runWithApp(async (base) => {
     const headers = { 'x-ai-execution-key': 'revenue-admin-key', 'x-workspace-id': '11111111-1111-1111-1111-111111111111' }
     const snapshot = await request(base, '/api/ai/revenue-engine/snapshot', headers)
     assert.strictEqual(snapshot.status, 200)
     assert.strictEqual(snapshot.body.snapshot.score, 81)
+
+    const run = await request(base, '/api/ai/revenue-engine/run-analysis', headers, 'POST')
+    assert.strictEqual(run.status, 201)
+    assert.strictEqual(run.body.ok, true)
   })
 }
 
@@ -139,7 +152,7 @@ Promise.resolve()
   .then(testAdminKeyAuthAndLogs)
   .then(testWorkspaceIsolation)
   .then(testGatewayAuthJwtMode)
-  .then(testRecommendationsEndpointAdminKey)
-  .then(testSnapshotEndpointAdminKey)
+  .then(testRecommendationsAndRisksEndpointAdminKey)
+  .then(testSnapshotAndRunAnalysisEndpointAdminKey)
   .then(() => console.log('aiRevenueEngineRoutes.test.js passed'))
   .catch((error) => { console.error(error); process.exit(1) })
