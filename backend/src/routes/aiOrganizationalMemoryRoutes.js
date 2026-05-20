@@ -1,0 +1,12 @@
+const express=require('express')
+const controller=require('../controllers/aiOrganizationalMemoryController')
+const { requireAiControlGateway } = require('../middleware/aiControlGateway')
+const router=express.Router()
+router.use(requireAiControlGateway({ missingWorkspaceError:'workspaceId is required for organizational memory' }))
+router.post('/organizational-memory/run',controller.run)
+router.get('/organizational-memory/snapshot',controller.snapshot)
+router.get('/organizational-memory/lineage',controller.lineage)
+router.get('/organizational-memory/timeline',controller.timeline)
+router.get('/organizational-memory/drift',controller.drift)
+router.get('/organizational-memory/learning',controller.learning)
+module.exports=router

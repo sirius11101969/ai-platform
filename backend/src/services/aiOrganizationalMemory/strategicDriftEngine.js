@@ -1,0 +1,2 @@
+function detect({ strategicEvolution = [], recommendationOutcomes = [] }) { const driftScore = Math.min(100, strategicEvolution.length * 12 + recommendationOutcomes.filter((x)=>x.outcome==='missed').length * 20); return [{ driftKey:'drift-primary', driftScore, driftLevel:driftScore>60?'high':driftScore>30?'medium':'low', explanation:'Strategic variance detected from plan evolution and recommendation outcomes.' }] }
+module.exports={ detect }

@@ -1,0 +1,10 @@
+const assert=require('assert')
+const authServicePath = require.resolve('../src/services/authService')
+const workspaceModelPath = require.resolve('../src/models/workspaceModel')
+const dbPoolPath = require.resolve('../src/db/pool')
+const indexPath = require.resolve('../src/index')
+function mock(p,e){const o=require.cache[p];require.cache[p]={id:p,filename:p,loaded:true,exports:e};return()=>o?require.cache[p]=o:delete require.cache[p]}
+function clear(){for(const p of [indexPath,require.resolve('../src/routes/aiOrganizationalMemoryRoutes'),require.resolve('../src/middleware/workspaceMiddleware'),require.resolve('../src/middleware/authMiddleware')]) delete require.cache[p]}
+async function req(base,path,opts={}){const r=await fetch(base+path,opts); return {status:r.status,body:await r.json()}}
+async function run(){const old=process.env.AI_EXECUTION_ADMIN_KEY;process.env.AI_EXECUTION_ADMIN_KEY='k';const restore=[mock(authServicePath,{verifyToken:async()=>({id:'u1'})}),mock(workspaceModelPath,{getWorkspaceForUser:async()=>({id:'ws-ok',userId:'u1'})}),mock(dbPoolPath,{query:async(sql)=>{if(sql.includes('FROM workspaces')) return {rows:[{id:'11111111-1111-1111-1111-111111111111',name:'W',owner_user_id:'u1',plan:'pro'}]}; return {rows:[]}},connect:async()=>({query:async()=>({rows:[]}),release:()=>{}})})];clear();const {app}=require('../src/index');const s=await new Promise(r=>{const x=app.listen(0,'127.0.0.1',()=>r(x))});try{const b=`http://127.0.0.1:${s.address().port}`;let a=await req(b,'/api/ai/organizational-memory/snapshot');assert.strictEqual(a.status,401);a=await req(b,'/api/ai/organizational-memory/snapshot',{headers:{'x-ai-execution-key':'k','x-workspace-id':'11111111-1111-1111-1111-111111111111'}});assert.strictEqual(a.status,200)}finally{await new Promise(r=>s.close(r));restore.reverse().forEach((f)=>f()); if(old===undefined) delete process.env.AI_EXECUTION_ADMIN_KEY; else process.env.AI_EXECUTION_ADMIN_KEY=old}}
+run().then(()=>console.log('aiOrganizationalMemoryRoutesAuth passed')).catch((e)=>{console.error(e);process.exit(1)})
