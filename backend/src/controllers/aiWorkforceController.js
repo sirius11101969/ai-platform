@@ -1,7 +1,9 @@
 const pool = require('../db/pool')
 const { createWorkforceRealtimeOperationsService } = require('../services/aiWorkforce/workforceRealtimeOperationsService')
+const { createCommandGraphService } = require('../services/aiWorkforce/commandGraphService')
 
 const realtimeService = createWorkforceRealtimeOperationsService({ db: pool })
+const commandGraphService = createCommandGraphService({ db: pool })
 
 function toNumber(value) {
   const number = Number(value)
@@ -143,6 +145,13 @@ async function getRealtimeMetricsHistory(req, res, next) {
   } catch (error) { next(error) }
 }
 
+
+async function getCommandGraph(req, res, next) {
+  try {
+    const graph = await commandGraphService.buildGraph({ workspaceId: req.workspace.id, leadId: req.query.leadId || null })
+    res.json({ graph })
+  } catch (error) { next(error) }
+}
 async function simulateActivity(req, res, next) {
   try {
     const workspaceId = req.workspace.id
@@ -162,4 +171,4 @@ async function simulateActivity(req, res, next) {
   } catch (error) { next(error) }
 }
 
-module.exports = { listAgents, listTasks, listAssignments, listExecutionPlans, getMetrics, listEvents, listActivityStream, getRealtimeMetrics, getRealtimeMetricsHistory, simulateActivity }
+module.exports = { listAgents, listTasks, listAssignments, listExecutionPlans, getMetrics, listEvents, listActivityStream, getRealtimeMetrics, getRealtimeMetricsHistory, getCommandGraph, simulateActivity }

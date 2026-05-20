@@ -31,6 +31,7 @@ router.get('/workforce/events', controller.listEvents)
 router.get('/workforce/activity-stream', controller.listActivityStream)
 router.get('/workforce/realtime-metrics', controller.getRealtimeMetrics)
 router.get('/workforce/realtime-metrics/history', controller.getRealtimeMetricsHistory)
+router.get('/workforce/command-graph', controller.getCommandGraph)
 router.post('/workforce/simulate-activity', controller.simulateActivity)
 
 module.exports = router
