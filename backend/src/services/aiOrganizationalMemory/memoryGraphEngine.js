@@ -1,0 +1,2 @@
+function build({ executiveDecisions = [], initiativeHistory = [], lineage = [] }) { return { nodes:[...executiveDecisions.map((x)=>({id:x.decisionKey,type:'decision'})),...initiativeHistory.map((x)=>({id:x.initiativeKey,type:'initiative'})),...lineage.map((x)=>({id:x.lineageKey,type:'lineage'}))], edges:lineage.map((x)=>({from:x.sourceDecision,to:x.lineageKey,type:'decision_to_lineage'})) } }
+module.exports={ build }

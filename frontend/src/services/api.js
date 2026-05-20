@@ -852,3 +852,11 @@ export function fetchAiEnterpriseSynchronization(){return request('/ai/enterpris
 export function fetchAiEnterpriseRoutes(){return request('/ai/enterprise-coordination/routes')}
 export function fetchAiEnterpriseConflicts(){return request('/ai/enterprise-coordination/conflicts')}
 export function fetchAiEnterpriseEscalations(){return request('/ai/enterprise-coordination/escalations')}
+
+
+export function runAiOrganizationalMemory(){return request('/ai/organizational-memory/run',{method:'POST',body:JSON.stringify({})})}
+export function fetchAiOrganizationalSnapshot(){return request('/ai/organizational-memory/snapshot')}
+export function fetchAiOrganizationalLineage(){return request('/ai/organizational-memory/lineage')}
+export function fetchAiOrganizationalTimeline(){return request('/ai/organizational-memory/timeline')}
+export function fetchAiOrganizationalDrift(){return request('/ai/organizational-memory/drift')}
+export function fetchAiOrganizationalLearning(){return request('/ai/organizational-memory/learning')}

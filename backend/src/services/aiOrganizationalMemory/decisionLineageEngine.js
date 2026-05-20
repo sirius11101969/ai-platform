@@ -1,0 +1,2 @@
+function build({ executiveDecisions = [], strategicEvolution = [], recommendationOutcomes = [] }) { return executiveDecisions.map((d, idx) => ({ lineageKey:`lineage-${idx+1}-${d.decisionKey}`, sourceDecision:d.decision, strategicReference:strategicEvolution[idx%Math.max(strategicEvolution.length,1)]?.planKey||'default-plan', recommendationOutcome:recommendationOutcomes[idx%Math.max(recommendationOutcomes.length,1)]?.outcome||'monitor', requiresHumanReview:true })) }
+module.exports={ build }
