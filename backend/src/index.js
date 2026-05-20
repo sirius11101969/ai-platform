@@ -93,7 +93,7 @@ app.get('/api/email/open/:token', markOpened)
 app.use('/api/email', emailRoutes)
 app.use('/api/telegram', telegramRoutes)
 app.use('/api/integrations/telegram', telegramRoutes)
-app.use('/api', aiExecutionRoutes)
+app.use('/api/execution', aiExecutionRoutes)
 
 app.post('/api/lead', requireAuth, requireWorkspace, async (req, res, next) => {
   try {

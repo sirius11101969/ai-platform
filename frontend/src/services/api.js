@@ -721,35 +721,35 @@ export function addWorkspaceMember(id, payload) {
 }
 
 export function fetchMaterials() {
-  return request('/materials')
+  return request('/execution/materials')
 }
 
 export function fetchLeadActionCenter(leadId) {
-  return request(`/crm/leads/${leadId}/action-center`)
+  return request(`/execution/crm/leads/${leadId}/action-center`)
 }
 
 export function createLeadAiAction(leadId, payload) {
-  return request(`/crm/leads/${leadId}/actions`, { method: 'POST', body: JSON.stringify(payload) })
+  return request(`/execution/crm/leads/${leadId}/actions`, { method: 'POST', body: JSON.stringify(payload) })
 }
 
 export function updateLeadAiAction(actionId, payload) {
-  return request(`/crm/actions/${actionId}`, { method: 'PATCH', body: JSON.stringify(payload) })
+  return request(`/execution/crm/actions/${actionId}`, { method: 'PATCH', body: JSON.stringify(payload) })
 }
 
 export function approveLeadAiAction(actionId) {
-  return request(`/crm/actions/${actionId}/approve`, { method: 'POST' })
+  return request(`/execution/crm/actions/${actionId}/approve`, { method: 'POST' })
 }
 
 export function cancelLeadAiAction(actionId) {
-  return request(`/crm/actions/${actionId}/cancel`, { method: 'POST' })
+  return request(`/execution/crm/actions/${actionId}/cancel`, { method: 'POST' })
 }
 
 export function sendLeadAiAction(actionId) {
-  return request(`/crm/actions/${actionId}/send`, { method: 'POST' })
+  return request(`/execution/crm/actions/${actionId}/send`, { method: 'POST' })
 }
 
 export function sendLeadMaterials(leadId, payload) {
-  return request(`/leads/${leadId}/attachments/send`, { method: 'POST', body: JSON.stringify(payload) })
+  return request(`/execution/leads/${leadId}/attachments/send`, { method: 'POST', body: JSON.stringify(payload) })
 }
 
 export function fetchAiFollowups() {
