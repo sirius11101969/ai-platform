@@ -89,6 +89,7 @@ async function testWorkforceMetricsViaAdminKey() {
 
       assert.strictEqual(metrics.status, 200)
       assert.strictEqual(metrics.body.metrics.pendingApprovals, 4)
+      assert.notStrictEqual(metrics.body?.error, 'Не найден токен авторизации')
       assert.ok(logs.some(([event]) => event === 'ai_workforce_gateway_auth_success'))
       assert.ok(logs.some(([event]) => event === 'ai_workforce_workspace_resolved'))
     } finally {
@@ -103,6 +104,7 @@ async function testWorkforceAgentsViaAdminKey() {
     const agents = await request(base, '/api/ai/workforce/agents', headers)
     assert.strictEqual(agents.status, 200)
     assert.strictEqual(agents.body.items[0].id, 'a1')
+    assert.notStrictEqual(agents.body?.error, 'Не найден токен авторизации')
   })
 }
 
