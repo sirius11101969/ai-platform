@@ -628,6 +628,10 @@ export function fetchAiWorkforceMetrics() { return request('/ai/workforce/metric
 export function fetchAiWorkforceEvents() { return request('/ai/workforce/events') }
 export function fetchAiWorkforceActivityStream() { return request('/ai/workforce/activity-stream') }
 export function fetchAiWorkforceRealtimeMetrics() { return request('/ai/workforce/realtime-metrics') }
+export function fetchAiWorkforceRealtimeMetricsHistory(params = {}) {
+  const query = new URLSearchParams(Object.entries(params).filter(([, value]) => value !== undefined && value !== null && value !== '')).toString()
+  return request(`/ai/workforce/realtime-metrics/history${query ? `?${query}` : ''}`)
+}
 export function simulateAiWorkforceActivity() { return request('/ai/workforce/simulate-activity', { method: 'POST', body: JSON.stringify({}) }) }
 
 export function fetchTelegramMessages(leadId) {

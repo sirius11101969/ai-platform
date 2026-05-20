@@ -61,6 +61,7 @@ async function runWithApp(fn) {
         if (sql.includes('FROM ai_worker_queue')) return { rows: [{ count: 4 }] }
         if (sql.includes('FROM ai_workforce_events')) return { rows: [{ id: 'e1', event_type: 'worker_activity_completed', severity: 'info', published_at: new Date().toISOString() }] }
         if (sql.includes('FROM ai_workforce_activity_stream')) return { rows: [{ id: 's1', event_type: 'worker_activity_completed', summary: 'Done' }] }
+        if (sql.includes('FROM ai_workforce_realtime_metrics')) return { rows: [{ id: 'm1', workspace_id: params?.[0], metrics: { source: 'realtime_workforce_operations' }, computed_at: new Date().toISOString() }] }
         if (sql.includes('INSERT INTO ai_workforce_realtime_metrics')) return { rows: [] }
         if (sql.includes('INSERT INTO ai_workforce_events')) return { rows: [{ id: 'e2', event_type: 'worker_activity_started', severity: 'info', published_at: new Date().toISOString() }] }
         if (sql.includes('INSERT INTO ai_workforce_activity_stream')) return { rows: [] }
@@ -140,6 +141,10 @@ async function testRealtimeEndpointsAndSimulation() {
     assert.strictEqual(stream.status, 200)
     const metrics = await request(base, '/api/ai/workforce/realtime-metrics', headers)
     assert.strictEqual(metrics.status, 200)
+    assert.strictEqual(metrics.body.metrics.source, 'realtime_workforce_operations')
+    const history = await request(base, '/api/ai/workforce/realtime-metrics/history', headers)
+    assert.strictEqual(history.status, 200)
+    assert.strictEqual(history.body.items[0].workspace_id, '11111111-1111-1111-1111-111111111111')
     const simulateRes = await fetch(`${base}/api/ai/workforce/simulate-activity`, { method: 'POST', headers: { ...headers, 'content-type': 'application/json' }, body: '{}' })
     assert.strictEqual(simulateRes.status, 201)
   })
