@@ -1,0 +1,2 @@
+function simulateDepartmentStress({ workforceUtilization = 70, executionPressure = 40 }) { return { scenarioType: 'department_load_stress', projectedImpact: Math.round(workforceUtilization * 0.8 + executionPressure * 0.5), confidenceScore: 0.72, riskLevel: workforceUtilization > 88 ? 'high' : 'medium', simulationHorizon: '45d', recommendedHumanAction: 'Run cross-functional load balancing workshop.' } }
+module.exports = { simulateDepartmentStress }

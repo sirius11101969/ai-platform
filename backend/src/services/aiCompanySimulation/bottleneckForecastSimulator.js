@@ -1,0 +1,2 @@
+function simulateBottlenecks({ pendingApprovals = 0, executionPressure = 0 }) { return { scenarioType: 'approval_bottleneck_impact', projectedImpact: Math.round(pendingApprovals * 9 + executionPressure * 0.4), confidenceScore: 0.76, riskLevel: pendingApprovals > 10 ? 'high' : 'medium', simulationHorizon: '21d', recommendedHumanAction: 'Add approval coverage and decision SLAs.' } }
+module.exports = { simulateBottlenecks }
