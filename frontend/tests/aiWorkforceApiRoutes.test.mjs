@@ -5,6 +5,7 @@ import {
   fetchAiWorkforceAssignments,
   fetchAiWorkforceExecutionPlans,
   fetchAiWorkforceMetrics,
+  fetchAiWorkforceCommandGraph,
 } from '../src/services/api.js'
 
 const expectedRoutes = [
@@ -13,6 +14,7 @@ const expectedRoutes = [
   '/api/ai/workforce/assignments',
   '/api/ai/workforce/execution-plans',
   '/api/ai/workforce/metrics',
+  '/api/ai/workforce/command-graph',
 ]
 
 const calls = []
@@ -30,6 +32,7 @@ await fetchAiWorkforceTasks()
 await fetchAiWorkforceAssignments()
 await fetchAiWorkforceExecutionPlans()
 await fetchAiWorkforceMetrics()
+await fetchAiWorkforceCommandGraph()
 
 assert.deepEqual(
   calls.map((entry) => entry.url),
