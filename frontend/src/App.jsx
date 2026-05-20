@@ -14,6 +14,7 @@ import AiManagerDashboardPage from "./pages/AiManagerDashboardPage";
 import AiVoiceOutreachPage from "./pages/AiVoiceOutreachPage";
 import AiRealtimeVoicePage from "./pages/AiRealtimeVoicePage";
 import AiRevenueIntelligencePage from "./pages/AiRevenueIntelligencePage";
+import AiRevenueEnginePage from "./pages/AiRevenueEnginePage";
 import AiLiveRealtimeVoicePage from "./pages/AiLiveRealtimeVoicePage";
 import AiApprovalCenterPage from "./pages/AiApprovalCenterPage";
 import AiExecutionCenterPage from "./pages/AiExecutionCenterPage";
@@ -104,6 +105,7 @@ export default function App() {
           <Route path="/ai-realtime-voice" element={<ProtectedRoute><AiRealtimeVoicePage /></ProtectedRoute>} />
           <Route path="/ai-live-streaming" element={<ProtectedRoute><AiLiveRealtimeVoicePage /></ProtectedRoute>} />
           <Route path="/ai-revenue-intelligence" element={<ProtectedRoute><AiRevenueIntelligencePage /></ProtectedRoute>} />
+          <Route path="/ai-revenue-engine" element={<ProtectedRoute><AiRevenueEnginePage /></ProtectedRoute>} />
           <Route path="/ai-approval-center" element={<ProtectedRoute><AiApprovalCenterPage /></ProtectedRoute>} />
           <Route path="/ai-execution-center" element={<ProtectedRoute><AiExecutionCenterPage /></ProtectedRoute>} />
           <Route path="/ai-workforce-center" element={<ProtectedRoute><AiWorkforceCenterPage /></ProtectedRoute>} />

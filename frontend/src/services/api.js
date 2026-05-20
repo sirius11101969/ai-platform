@@ -819,3 +819,8 @@ export function cancelAiExecution(id) {
 export function fetchAiExecutionRuns() {
   return request('/ai/execution/runs', { method: 'GET' })
 }
+
+export function fetchAiRevenueEngineSnapshot() { return request('/ai/revenue-engine/snapshot') }
+export function fetchAiRevenueEngineRecommendations() { return request('/ai/revenue-engine/recommendations') }
+export function fetchAiRevenueEngineRisks() { return request('/ai/revenue-engine/risks') }
+export function runAiRevenueEngineAnalysis() { return request('/ai/revenue-engine/run-analysis', { method: 'POST', body: JSON.stringify({}) }) }
