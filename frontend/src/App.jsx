@@ -21,6 +21,7 @@ import AiExecutionCenterPage from "./pages/AiExecutionCenterPage";
 import AiWorkforceCenterPage from "./pages/AiWorkforceCenterPage";
 import AiExecutiveBrainPage from "./pages/AiExecutiveBrainPage";
 import AiCompanySimulationPage from "./pages/AiCompanySimulationPage";
+import AiStrategicPlanningPage from "./pages/AiStrategicPlanningPage";
 import { getAuthToken, getStoredUser } from "./services/api";
 
 const AuthContext = createContext({ token: null, user: null, isAuthenticated: false });
@@ -113,6 +114,7 @@ export default function App() {
           <Route path="/ai-workforce-center" element={<ProtectedRoute><AiWorkforceCenterPage /></ProtectedRoute>} />
           <Route path="/ai-executive-brain" element={<ProtectedRoute><AiExecutiveBrainPage /></ProtectedRoute>} />
           <Route path="/ai-company-simulation" element={<ProtectedRoute><AiCompanySimulationPage /></ProtectedRoute>} />
+          <Route path="/ai-strategic-planning" element={<ProtectedRoute><AiStrategicPlanningPage /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>

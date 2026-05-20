@@ -1,0 +1,13 @@
+const assert = require('assert')
+const { generateOkrs } = require('../src/services/aiStrategicPlanning/aiOkrPlanningEngine')
+const { buildDependencyGraph } = require('../src/services/aiStrategicPlanning/dependencyGraphEngine')
+const { prioritizeInitiatives } = require('../src/services/aiStrategicPlanning/initiativePrioritizationEngine')
+
+const okr = generateOkrs({ signals: { leadQuality: 10 } })
+assert.ok(okr.okrs.length > 0, 'OKR generation')
+const initiatives = prioritizeInitiatives({ okrPlan: okr })
+const graph = buildDependencyGraph({ initiatives })
+assert.ok(Array.isArray(graph.nodes), 'dependency graph generation')
+for (const f of ['planning_only','no_autonomous_execution','no_customer_contact','no_pricing_changes','requires_human_approval']) assert.strictEqual(okr[f], true, `governance enforcement ${f}`)
+assert.strictEqual(Boolean(okr.execute), false, 'no execution side effects')
+console.log('ai strategic planning tests passed')
