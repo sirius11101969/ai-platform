@@ -619,6 +619,13 @@ export function snoozeAiApprovalCenterItem(id, payload = {}) {
 export function escalateAiApprovalCenterItem(id, payload = {}) {
   return request(`/ai/approval-center/${id}/escalate`, { method: 'POST', body: JSON.stringify(payload) })
 }
+
+export function fetchAiWorkforceAgents() { return request('/ai/workforce/agents') }
+export function fetchAiWorkforceTasks() { return request('/ai/workforce/tasks') }
+export function fetchAiWorkforceAssignments() { return request('/ai/workforce/assignments') }
+export function fetchAiWorkforceExecutionPlans() { return request('/ai/workforce/execution-plans') }
+export function fetchAiWorkforceMetrics() { return request('/ai/workforce/metrics') }
+
 export function fetchTelegramMessages(leadId) {
   return request(`/crm/leads/${leadId}/telegram-messages`)
 }
