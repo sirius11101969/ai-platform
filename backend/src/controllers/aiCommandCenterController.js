@@ -24,4 +24,26 @@ async function getTimeline(req, res, next) {
   }
 }
 
-module.exports = { getOverview, getTimeline }
+module.exports = { getOverview, getTimeline, requestAction, getActions }
+
+
+async function requestAction(req, res, next) {
+  try {
+    const ctx = resolve(req)
+    const { actionType, reason } = req.body || {}
+    const response = await service.requestAction({ ...ctx, actionType, reason })
+    res.status(201).json(response)
+  } catch (error) {
+    next(error)
+  }
+}
+
+async function getActions(req, res, next) {
+  try {
+    const ctx = resolve(req)
+    const response = await service.getActions({ ...ctx, limit: req.query?.limit })
+    res.json(response)
+  } catch (error) {
+    next(error)
+  }
+}

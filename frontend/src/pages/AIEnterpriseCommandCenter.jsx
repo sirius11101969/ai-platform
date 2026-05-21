@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { PageHeading, Panel } from '../components/AppShell'
-import { fetchAiCommandCenterOverview, fetchAiCommandCenterTimeline } from '../services/api'
+import { fetchAiCommandCenterActions, fetchAiCommandCenterOverview, fetchAiCommandCenterTimeline, requestAiCommandCenterAction } from '../services/api'
 
 export default function AIEnterpriseCommandCenter() {
   const navigate = useNavigate()
@@ -9,12 +9,16 @@ export default function AIEnterpriseCommandCenter() {
   const [timelineData, setTimelineData] = useState(null)
   const [eventsFilter, setEventsFilter] = useState('All')
   const [error, setError] = useState('')
+  const [actionRequests, setActionRequests] = useState([])
+  const [confirmAction, setConfirmAction] = useState(null)
+  const [actionReason, setActionReason] = useState('')
 
   useEffect(() => {
-    Promise.all([fetchAiCommandCenterOverview(), fetchAiCommandCenterTimeline()])
-      .then(([overview, timeline]) => {
+    Promise.all([fetchAiCommandCenterOverview(), fetchAiCommandCenterTimeline(), fetchAiCommandCenterActions()])
+      .then(([overview, timeline, actions]) => {
         setData(overview)
         setTimelineData(timeline)
+        setActionRequests(actions.actions || [])
       })
       .catch((e) => setError(e.message))
   }, [])
@@ -28,6 +32,33 @@ export default function AIEnterpriseCommandCenter() {
     { title: 'Memory', to: '/ai/organizational-memory' },
     { title: 'Approval Queue', to: '/ai/approval-center' },
   ]
+
+
+
+  const executiveActions = [
+    { label: 'Request Strategic Planning Review', actionType: 'strategic_planning_review' },
+    { label: 'Request Revenue Review', actionType: 'revenue_review' },
+    { label: 'Request Workforce Review', actionType: 'workforce_review' },
+    { label: 'Request Coordination Review', actionType: 'coordination_review' },
+    { label: 'Request Memory Review', actionType: 'memory_review' },
+    { label: 'Run Autonomous Customer Outreach (disabled)', actionType: 'disabled_dangerous', dangerous: true },
+  ]
+
+  async function submitExecutiveAction() {
+    if (!confirmAction || confirmAction.dangerous) return
+    try {
+      const response = await requestAiCommandCenterAction({
+        workspaceId: data?.workspaceId,
+        actionType: confirmAction.actionType,
+        reason: actionReason,
+      })
+      setActionRequests((prev) => [response.action, ...prev])
+      setConfirmAction(null)
+      setActionReason('')
+    } catch (e) {
+      setError(e.message)
+    }
+  }
 
   const recentEvents = timelineData?.recentEvents || []
   const filteredEvents = recentEvents.filter((event) => {
@@ -75,6 +106,14 @@ export default function AIEnterpriseCommandCenter() {
         <p>{JSON.stringify(filteredEvents)}</p>
       </Panel>
       <Panel><h3>Quick Actions</h3><div className='safety-pills'>{(data.actions || []).map((action) => <button key={action.label} className='btn compact' type='button' disabled>{action.label} — Coming in v1.2</button>)}</div></Panel>
+      <Panel>
+        <h3>Executive Actions Panel</h3>
+        <p>Governance warning: no autonomous execution, no customer outreach, no pricing changes, human approval is mandatory.</p>
+        <div className='safety-pills'>{executiveActions.map((action) => <button key={action.label} className='btn compact' type='button' disabled={action.dangerous} onClick={() => setConfirmAction(action)}>{action.label}</button>)}</div>
+        <p>Status: requires human approval</p>
+        <p>Recent requests: {JSON.stringify(actionRequests)}</p>
+      </Panel>
+      {confirmAction ? <Panel><h3>Confirm Executive Action</h3><p>Governance warning: This request does not execute autonomously and requires human approval.</p><p>{confirmAction.label}</p><textarea value={actionReason} onChange={(e)=>setActionReason(e.target.value)} placeholder='Reason for review request' /><div className='safety-pills'><button className='btn compact' type='button' onClick={submitExecutiveAction}>Confirm request</button><button className='btn compact' type='button' onClick={()=>setConfirmAction(null)}>Cancel</button></div></Panel> : null}
     </> : null}
   </main>
 }

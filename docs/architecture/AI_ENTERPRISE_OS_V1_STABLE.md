@@ -56,3 +56,10 @@ curl -H "Authorization: Bearer <jwt>" -H "X-Workspace-Id: <workspace-id>" http:/
 - Add historical health trend charts and incident timeline.
 - Add role-specific governance controls and approval escalation visualizations.
 - Integrate deeper observability signals from AI execution runtime queues.
+
+
+## v1.1 Command Center — Executive Actions Panel
+- Added governance-first Executive Actions Panel in `/ai-enterprise-command-center` with explicit human confirmation before creating requests.
+- Added API endpoints `POST /api/ai/command-center/actions/request` and `GET /api/ai/command-center/actions` behind Unified AI Control Gateway (JWT or `x-ai-execution-key`) with workspace isolation.
+- Added `ai_command_center_actions` persistence to audit executive requests and governance controls (`humanApprovalRequired`, `noAutonomousExecution`, `noCustomerActions`, `noPricingChanges`).
+- Logged `command_center_action_requested` and `command_center_actions_loaded` events for audit visibility.

@@ -1,3 +1,4 @@
+const pool = require('../db/pool')
 const { getOverview: getExecutiveOverview } = require('./aiExecutiveUnifiedDashboardService')
 const { getSystemHealth } = require('./aiSystemHealthService')
 
@@ -89,4 +90,53 @@ async function getTimeline({ workspaceId }) {
   return { version: 'v1.1', generatedAt, timeline, recentEvents }
 }
 
-module.exports = { getOverview, getTimeline }
+module.exports = { getOverview, getTimeline, requestAction, getActions }
+
+
+const ALLOWED_ACTION_TYPES = new Set([
+  'strategic_planning_review',
+  'revenue_review',
+  'workforce_review',
+  'coordination_review',
+  'memory_review',
+])
+
+const GOVERNANCE_GUARDRAILS = {
+  humanApprovalRequired: true,
+  noAutonomousExecution: true,
+  noCustomerActions: true,
+  noPricingChanges: true,
+}
+
+async function requestAction({ workspaceId, actionType, reason }) {
+  if (!ALLOWED_ACTION_TYPES.has(actionType)) {
+    const error = new Error('Invalid actionType')
+    error.statusCode = 400
+    throw error
+  }
+
+  const result = await pool.query(
+    `INSERT INTO ai_command_center_actions(workspace_id, action_type, reason, status, governance)
+     VALUES($1::uuid, $2, $3, 'requested', $4::jsonb)
+     RETURNING id, workspace_id, action_type, reason, status, governance, created_at, updated_at`,
+    [workspaceId, actionType, reason || '', JSON.stringify(GOVERNANCE_GUARDRAILS)]
+  )
+
+  console.info('command_center_action_requested', { workspaceId, actionType, status: 'requested' })
+  return { action: result.rows[0] }
+}
+
+async function getActions({ workspaceId, limit = 25 }) {
+  const safeLimit = Math.min(Math.max(Number(limit) || 25, 1), 100)
+  const result = await pool.query(
+    `SELECT id, workspace_id, action_type, reason, status, governance, created_at, updated_at
+       FROM ai_command_center_actions
+      WHERE workspace_id = $1::uuid
+      ORDER BY created_at DESC
+      LIMIT $2`,
+    [workspaceId, safeLimit]
+  )
+
+  console.info('command_center_actions_loaded', { workspaceId, count: result.rows.length })
+  return { actions: result.rows }
+}
