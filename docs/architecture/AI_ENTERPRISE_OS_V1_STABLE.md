@@ -63,3 +63,9 @@ curl -H "Authorization: Bearer <jwt>" -H "X-Workspace-Id: <workspace-id>" http:/
 - Added API endpoints `POST /api/ai/command-center/actions/request` and `GET /api/ai/command-center/actions` behind Unified AI Control Gateway (JWT or `x-ai-execution-key`) with workspace isolation.
 - Added `ai_command_center_actions` persistence to audit executive requests and governance controls (`humanApprovalRequired`, `noAutonomousExecution`, `noCustomerActions`, `noPricingChanges`).
 - Logged `command_center_action_requested` and `command_center_actions_loaded` events for audit visibility.
+
+## v1.1 Phase 4 — Approval Workflow + Executive Inbox
+- Added Executive Inbox workflow for Command Center actions: `GET /api/ai/command-center/inbox`, `POST /api/ai/command-center/actions/:id/approve`, `POST /api/ai/command-center/actions/:id/reject`, and `GET /api/ai/command-center/actions/:id/audit`.
+- Workflow is status-only and governance-first: request → inbox review → approve/reject → audit trail. No autonomous execution, no customer outreach, no pricing changes, and no destructive external side effects.
+- Added migration `044_command_center_action_approvals.sql` extending `ai_command_center_actions` with approval metadata and creating `ai_command_center_action_audit_log`.
+- Frontend `/ai-enterprise-command-center` now includes Executive Inbox with governance labels, review actions, and audit loading controls behind explicit confirmation.

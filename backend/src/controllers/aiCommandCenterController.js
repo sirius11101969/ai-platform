@@ -1,49 +1,19 @@
 const service = require('../services/aiCommandCenterService')
 
 function resolve(req) {
-  return { workspaceId: req.workspace?.id || req.aiControl?.workspaceId || req.workspaceId || null }
-}
-
-async function getOverview(req, res, next) {
-  try {
-    const ctx = resolve(req)
-    const response = await service.getOverview(ctx)
-    res.json(response)
-  } catch (error) {
-    next(error)
+  return {
+    workspaceId: req.workspace?.id || req.aiControl?.workspaceId || req.workspaceId || null,
+    userId: req.user?.id || req.aiControl?.userId || null,
   }
 }
 
-async function getTimeline(req, res, next) {
-  try {
-    const ctx = resolve(req)
-    const response = await service.getTimeline(ctx)
-    res.json(response)
-  } catch (error) {
-    next(error)
-  }
-}
+async function getOverview(req, res, next) { try { res.json(await service.getOverview(resolve(req))) } catch (e) { next(e) } }
+async function getTimeline(req, res, next) { try { res.json(await service.getTimeline(resolve(req))) } catch (e) { next(e) } }
+async function requestAction(req, res, next) { try { const { actionType, reason } = req.body || {}; res.status(201).json(await service.requestAction({ ...resolve(req), actionType, reason })) } catch (e) { next(e) } }
+async function getActions(req, res, next) { try { res.json(await service.getActions({ ...resolve(req), limit: req.query?.limit, status: req.query?.status })) } catch (e) { next(e) } }
+async function getInbox(req, res, next) { try { res.json(await service.getActions({ ...resolve(req), limit: req.query?.limit, status: 'requested' })) } catch (e) { next(e) } }
+async function approveAction(req, res, next) { try { res.json(await service.reviewAction({ ...resolve(req), actionId: req.params.id, decision: 'approve', reviewNote: req.body?.reviewNote, reviewer: resolve(req).userId })) } catch (e) { next(e) } }
+async function rejectAction(req, res, next) { try { res.json(await service.reviewAction({ ...resolve(req), actionId: req.params.id, decision: 'reject', reviewNote: req.body?.reviewNote, reviewer: resolve(req).userId })) } catch (e) { next(e) } }
+async function getActionAudit(req, res, next) { try { res.json(await service.getActionAudit({ ...resolve(req), actionId: req.params.id, limit: req.query?.limit })) } catch (e) { next(e) } }
 
-module.exports = { getOverview, getTimeline, requestAction, getActions }
-
-
-async function requestAction(req, res, next) {
-  try {
-    const ctx = resolve(req)
-    const { actionType, reason } = req.body || {}
-    const response = await service.requestAction({ ...ctx, actionType, reason })
-    res.status(201).json(response)
-  } catch (error) {
-    next(error)
-  }
-}
-
-async function getActions(req, res, next) {
-  try {
-    const ctx = resolve(req)
-    const response = await service.getActions({ ...ctx, limit: req.query?.limit })
-    res.json(response)
-  } catch (error) {
-    next(error)
-  }
-}
+module.exports = { getOverview, getTimeline, requestAction, getActions, getInbox, approveAction, rejectAction, getActionAudit }

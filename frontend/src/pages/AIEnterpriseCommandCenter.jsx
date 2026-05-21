@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { PageHeading, Panel } from '../components/AppShell'
-import { fetchAiCommandCenterActions, fetchAiCommandCenterOverview, fetchAiCommandCenterTimeline, requestAiCommandCenterAction } from '../services/api'
+import { approveAiCommandCenterAction, fetchAiCommandCenterActionAudit, fetchAiCommandCenterInbox, fetchAiCommandCenterOverview, fetchAiCommandCenterTimeline, rejectAiCommandCenterAction, requestAiCommandCenterAction } from '../services/api'
 
 export default function AIEnterpriseCommandCenter() {
   const navigate = useNavigate()
@@ -10,12 +10,14 @@ export default function AIEnterpriseCommandCenter() {
   const [eventsFilter, setEventsFilter] = useState('All')
   const [error, setError] = useState('')
   const [actionRequests, setActionRequests] = useState([])
+  const [selectedAudit, setSelectedAudit] = useState([])
   const [confirmAction, setConfirmAction] = useState(null)
   const [actionReason, setActionReason] = useState('')
 
   useEffect(() => {
-    Promise.all([fetchAiCommandCenterOverview(), fetchAiCommandCenterTimeline(), fetchAiCommandCenterActions()])
+    Promise.all([fetchAiCommandCenterOverview(), fetchAiCommandCenterTimeline(), fetchAiCommandCenterInbox()])
       .then(([overview, timeline, actions]) => {
+        console.info('command_center_inbox_loaded', { count: (actions.actions || []).length })
         setData(overview)
         setTimelineData(timeline)
         setActionRequests(actions.actions || [])
@@ -106,6 +108,12 @@ export default function AIEnterpriseCommandCenter() {
         <p>{JSON.stringify(filteredEvents)}</p>
       </Panel>
       <Panel><h3>Quick Actions</h3><div className='safety-pills'>{(data.actions || []).map((action) => <button key={action.label} className='btn compact' type='button' disabled>{action.label} — Coming in v1.2</button>)}</div></Panel>
+      <Panel>
+        <h3>Executive Inbox</h3>
+        <p>Human Approval Required · No Autonomous Execution · No Customer Actions · No Pricing Changes</p>
+        {(actionRequests||[]).map((a)=> <div key={a.id}><p>{a.action_type} | {a.reason} | {a.status} | {new Date(a.created_at).toLocaleString()}</p><p>Governance: Human Approval Required · No Autonomous Execution · No Customer Actions · No Pricing Changes</p><div className='safety-pills'><button className='btn compact' type='button' onClick={async()=>{ if(!window.confirm('Approve action? Status only. No external execution.')) return; const reviewNote=window.prompt('Approval note (optional)','')||''; const r=await approveAiCommandCenterAction(a.id,{reviewNote}); setActionRequests(prev=>prev.map(x=>x.id===a.id?r.action:x)); console.info('command_center_action_approved',{actionId:a.id}); }}>Approve</button><button className='btn compact' type='button' onClick={async()=>{ if(!window.confirm('Reject action? Status only. No external execution.')) return; const reviewNote=window.prompt('Rejection note (optional)','')||''; const r=await rejectAiCommandCenterAction(a.id,{reviewNote}); setActionRequests(prev=>prev.map(x=>x.id===a.id?r.action:x)); console.info('command_center_action_rejected',{actionId:a.id}); }}>Reject</button><button className='btn compact' type='button' onClick={async()=>{ if(!window.confirm('Load audit trail?')) return; const r=await fetchAiCommandCenterActionAudit(a.id); setSelectedAudit(r.audit||[]); console.info('command_center_action_audit_loaded',{actionId:a.id,count:(r.audit||[]).length}); }}>Audit</button></div></div>)}
+        <p>{JSON.stringify(selectedAudit)}</p>
+      </Panel>
       <Panel>
         <h3>Executive Actions Panel</h3>
         <p>Governance warning: no autonomous execution, no customer outreach, no pricing changes, human approval is mandatory.</p>

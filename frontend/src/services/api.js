@@ -868,4 +868,8 @@ export function fetchAiCommandCenterOverview(){return request('/ai/command-cente
 export function fetchAiCommandCenterTimeline(){return request('/ai/command-center/timeline')}
 
 export function fetchAiCommandCenterActions(){return request('/ai/command-center/actions')}
+export function fetchAiCommandCenterInbox(){return request('/ai/command-center/inbox')}
 export function requestAiCommandCenterAction(payload){return request('/ai/command-center/actions/request',{method:'POST',body:JSON.stringify(payload||{})})}
+export function approveAiCommandCenterAction(id,payload={}){return request(`/ai/command-center/actions/${id}/approve`,{method:'POST',body:JSON.stringify(payload)})}
+export function rejectAiCommandCenterAction(id,payload={}){return request(`/ai/command-center/actions/${id}/reject`,{method:'POST',body:JSON.stringify(payload)})}
+export function fetchAiCommandCenterActionAudit(id){return request(`/ai/command-center/actions/${id}/audit`)}
