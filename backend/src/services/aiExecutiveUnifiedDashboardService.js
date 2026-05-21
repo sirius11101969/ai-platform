@@ -1,5 +1,7 @@
 const pool = require('./../db/pool')
 
+const TIMESTAMP_CANDIDATES = ['created_at', 'computed_at', 'generated_at', 'occurred_at', 'updated_at', 'timestamp']
+
 const GOVERNANCE_LABELS = [
   'Human Approval Required',
   'No Autonomous Customer Actions',
@@ -26,8 +28,10 @@ async function safeSelect({ client, workspaceId, tableName, candidateColumns }) 
     if (!selectedColumn) {
       return { status: 'schema_unavailable', row: null, sourceColumn: null }
     }
+    const timestampColumn = await resolveTimestampColumn(client, tableName, TIMESTAMP_CANDIDATES)
+    const orderClause = timestampColumn ? ` ORDER BY ${timestampColumn} DESC` : ''
     const result = await client.query(
-      `SELECT ${selectedColumn} FROM ${tableName} WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`,
+      `SELECT ${selectedColumn} FROM ${tableName} WHERE workspace_id=$1${orderClause} LIMIT 1`,
       [workspaceId]
     )
     return { status: 'ready', row: result.rows[0] || null, sourceColumn: selectedColumn }
@@ -66,6 +70,17 @@ async function resolveMetricColumn(client, tableName, candidateColumns) {
 
 async function resolveCoordinationColumn(client, tableName, candidateColumns) {
   return resolveColumn(client, tableName, candidateColumns, 'executive_dashboard_coordination_resolved')
+}
+
+async function resolveTimestampColumn(client, tableName, candidateColumns = TIMESTAMP_CANDIDATES) {
+  return resolveColumn(client, tableName, candidateColumns, 'executive_dashboard_timestamp_resolved')
+}
+
+async function queryLatestRows({ client, workspaceId, moduleName, tableName, selectClause, limit = 1 }) {
+  const timestampColumn = await resolveTimestampColumn(client, tableName, TIMESTAMP_CANDIDATES)
+  const orderClause = timestampColumn ? ` ORDER BY ${timestampColumn} DESC` : ''
+  const sql = `SELECT ${selectClause} FROM ${tableName} WHERE workspace_id=$1${orderClause} LIMIT ${limit}`
+  return safeQuery({ client, workspaceId, moduleName, tableName, sql, fallback: { rows: [], rowCount: 0 } })
 }
 
 async function getCoordinationData({ client, workspaceId, coordinationColumn }) {
@@ -108,15 +123,15 @@ async function getOverview({ workspaceId, client = pool }) {
   const workforceSyncColumnPromise = resolveMetricColumn(client, 'ai_department_synchronization', ['sync_payload', 'payload', 'metadata', 'summary', 'data'])
   const coordinationColumnPromise = resolveCoordinationColumn(client, 'ai_enterprise_coordination_runs', ['sync_payload', 'coordination_payload', 'payload', 'metadata', 'summary', 'data'])
   const settled = await Promise.allSettled([
-    wrap('executiveSummary', 'ai_organizational_health', `SELECT health_score, created_at FROM ai_organizational_health WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`),
-    wrap('revenue', 'ai_revenue_engine_snapshots', `SELECT snapshot_payload FROM ai_revenue_engine_snapshots WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`),
+    queryLatestRows({ client, workspaceId, moduleName: 'executiveSummary', tableName: 'ai_organizational_health', selectClause: 'health_score' }),
+    queryLatestRows({ client, workspaceId, moduleName: 'revenue', tableName: 'ai_revenue_engine_snapshots', selectClause: 'snapshot_payload' }),
     wrap('strategy', 'ai_strategic_initiatives', `SELECT COUNT(*)::int AS c FROM ai_strategic_initiatives WHERE workspace_id=$1`),
     wrap('approvals', 'ai_executive_escalations', `SELECT COUNT(*)::int AS c FROM ai_executive_escalations WHERE workspace_id=$1`),
-    wrap('strategy', 'ai_strategic_drift_events', `SELECT drift_payload FROM ai_strategic_drift_events WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`),
+    queryLatestRows({ client, workspaceId, moduleName: 'strategy', tableName: 'ai_strategic_drift_events', selectClause: 'drift_payload' }),
     wrap('approvals', 'ai_approval_queue', `SELECT COUNT(*)::int AS c FROM ai_approval_queue WHERE workspace_id=$1 AND approval_status='pending_approval'`),
-    wrap('simulation', 'ai_company_simulation_risks', `SELECT risk_type, severity, risk_payload FROM ai_company_simulation_risks WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`),
-    wrap('governance', 'ai_executive_risk_events', `SELECT risk_type, severity, risk_payload FROM ai_executive_risk_events WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 20`),
-    wrap('memory', 'ai_organizational_memory', `SELECT memory_payload FROM ai_organizational_memory WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`),
+    queryLatestRows({ client, workspaceId, moduleName: 'simulation', tableName: 'ai_company_simulation_risks', selectClause: 'risk_type, severity, risk_payload' }),
+    queryLatestRows({ client, workspaceId, moduleName: 'governance', tableName: 'ai_executive_risk_events', selectClause: 'risk_type, severity, risk_payload', limit: 20 }),
+    queryLatestRows({ client, workspaceId, moduleName: 'memory', tableName: 'ai_organizational_memory', selectClause: 'memory_payload' }),
     wrap('workforce', 'ai_workforce_assignments', `SELECT COUNT(*)::int AS c FROM ai_workforce_assignments WHERE workspace_id=$1`),
     strategyPlanColumnPromise,
     workforcePlanColumnPromise,
