@@ -188,7 +188,7 @@ async function testStatusAbsentQueueStatusExists() {
     if (sql.includes('FROM information_schema.columns')) {
       const [tableName, candidates] = params
       if (tableName === 'ai_workforce_realtime_metrics') return { rows: [{ column_name: 'created_at' }] }
-      if (tableName === 'ai_approval_queue' && candidates.includes('status')) return { rows: [{ column_name: 'queue_status' }] }
+      if (tableName === 'ai_approval_queue' && candidates.includes('approval_status')) return { rows: [{ column_name: 'queue_status' }] }
       if (tableName === 'ai_approval_queue') return { rows: [{ column_name: 'created_at' }] }
       return { rows: [] }
     }
@@ -196,7 +196,51 @@ async function testStatusAbsentQueueStatusExists() {
   }, async (base) => {
     const r = await request(base, { authorization: 'Bearer valid.jwt', 'x-workspace-id': 'ws-ok' })
     assert.strictEqual(r.status, 200)
-    assert.ok(seen.some((q) => q.includes("queue_status='pending_approval'")), 'expected approval query to use queue_status')
+    assert.ok(seen.some((q) => q.includes('queue_status AS approval_status')), 'expected approval query to alias queue_status')
+  })
+}
+
+async function testApprovalQueueReadyWhenRowExists() {
+  await runWithApp(async (sql, params) => {
+    if (sql.includes('FROM information_schema.columns')) {
+      const [tableName, candidates] = params
+      if (tableName === 'ai_workforce_realtime_metrics') return { rows: [{ column_name: 'created_at' }] }
+      if (tableName === 'ai_approval_queue' && candidates.includes('approval_status')) return { rows: [{ column_name: 'approval_status' }] }
+      if (tableName === 'ai_approval_queue') return { rows: [{ column_name: 'created_at' }] }
+      return { rows: [] }
+    }
+    if (sql.includes('FROM ai_approval_queue')) {
+      return { rows: [{ id: 'aq-1', approval_status: 'pending_approval', recommendation_type: 'price_change', confidence_score: 0.82, created_at: new Date().toISOString() }] }
+    }
+    return { rows: [{ id: 'x', created_at: new Date().toISOString() }] }
+  }, async (base) => {
+    const r = await request(base, { authorization: 'Bearer valid.jwt', 'x-workspace-id': 'ws-ok' })
+    assert.strictEqual(r.status, 200)
+    const layer = r.body.layers.find((l) => l.name === 'Approval Center Queue')
+    assert.strictEqual(layer.status, 'ready')
+    assert.strictEqual(layer.lastKnownData.id, 'aq-1')
+    assert.strictEqual(layer.lastKnownData.approval_status, 'pending_approval')
+    assert.strictEqual(layer.lastKnownData.recommendation_type, 'price_change')
+  })
+}
+
+async function testApprovalQueueMissingWhenEmpty() {
+  await runWithApp(async (sql, params) => {
+    if (sql.includes('FROM information_schema.columns')) {
+      const [tableName, candidates] = params
+      if (tableName === 'ai_workforce_realtime_metrics') return { rows: [{ column_name: 'created_at' }] }
+      if (tableName === 'ai_approval_queue' && candidates.includes('approval_status')) return { rows: [{ column_name: 'approval_status' }] }
+      if (tableName === 'ai_approval_queue') return { rows: [{ column_name: 'created_at' }] }
+      return { rows: [] }
+    }
+    if (sql.includes('FROM ai_approval_queue')) return { rows: [] }
+    return { rows: [{ id: 'x', created_at: new Date().toISOString() }] }
+  }, async (base) => {
+    const r = await request(base, { authorization: 'Bearer valid.jwt', 'x-workspace-id': 'ws-ok' })
+    assert.strictEqual(r.status, 200)
+    const layer = r.body.layers.find((l) => l.name === 'Approval Center Queue')
+    assert.strictEqual(layer.status, 'missing')
+    assert.strictEqual(layer.notes, 'Queue empty')
   })
 }
 
@@ -205,6 +249,8 @@ Promise.resolve()
   .then(testAllReady)
   .then(testCreatedAtAbsentComputedAtExists)
   .then(testStatusAbsentQueueStatusExists)
+  .then(testApprovalQueueReadyWhenRowExists)
+  .then(testApprovalQueueMissingWhenEmpty)
   .then(testMissingTableNo500)
   .then(testInternalKeyWorks)
   .then(testWorkspaceIsolation)

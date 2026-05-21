@@ -28,13 +28,14 @@ async function resolveColumn({ tableName, candidates }) {
   return candidates.find((column) => found.has(column)) || null
 }
 
-async function checkLayer(name, endpoint, queryFn) {
+async function checkLayer(name, endpoint, queryFn, options = {}) {
+  const { missingNotes = 'No data found' } = options
   try {
     const result = await queryFn()
     const hasData = result !== null && result !== undefined
     if (!hasData) {
       console.warn('ai_system_health_layer_missing', { name, endpoint })
-      return { name, status: 'missing', endpoint, lastKnownData: null, notes: 'No data found' }
+      return { name, status: 'missing', endpoint, lastKnownData: null, notes: missingNotes }
     }
     return { name, status: 'ready', endpoint, lastKnownData: result, notes: 'OK' }
   } catch (error) {
@@ -74,7 +75,7 @@ async function getSystemHealth({ workspaceId }) {
 
   const approvalStatusColumn = await resolveColumn({
     tableName: 'ai_approval_queue',
-    candidates: ['status', 'approval_status', 'queue_status', 'decision_status', 'state'],
+    candidates: ['approval_status', 'status', 'queue_status', 'decision_status', 'state'],
   })
   console.info('ai_system_health_status_resolved', {
     layer: 'Approval Center Queue',
@@ -96,13 +97,14 @@ async function getSystemHealth({ workspaceId }) {
     }),
     checkLayer('Approval Center Queue', '/api/ai/approval-center/queue', async () => {
       if (!approvalTimestampColumn && !approvalStatusColumn) return null
-      const where = ['workspace_id=$1']
-      if (approvalStatusColumn) where.push(`${approvalStatusColumn}='pending_approval'`)
-      const orderBy = approvalTimestampColumn ? ` ORDER BY ${approvalTimestampColumn} DESC` : ''
-      const selectTimestamp = approvalTimestampColumn ? `, ${approvalTimestampColumn} AS resolved_timestamp` : ''
-      const sql = `SELECT id${selectTimestamp} FROM ai_approval_queue WHERE ${where.join(' AND ')}${orderBy} LIMIT 1`
-      return (await pool.query(sql, [workspaceId])).rows[0] || null
-    }),
+      const selectTimestamp = approvalTimestampColumn ? `, ${approvalTimestampColumn} AS created_at` : ''
+      const selectStatus = approvalStatusColumn ? `, ${approvalStatusColumn} AS approval_status` : ''
+      const sql = `SELECT id, recommendation_type, confidence_score${selectStatus}${selectTimestamp} FROM ai_approval_queue WHERE workspace_id=$1${approvalTimestampColumn ? ` ORDER BY ${approvalTimestampColumn} DESC` : ''} LIMIT 1`
+      const row = (await pool.query(sql, [workspaceId])).rows[0] || null
+      if (!row) return null
+      console.info('ai_system_health_approval_queue_loaded', { workspaceId, id: row.id, approval_status: row.approval_status })
+      return row
+    }, { missingNotes: 'Queue empty' }),
     checkLayer('Database', 'postgres', async () => (await pool.query('SELECT NOW() as now')).rows[0] || null),
   ])
 
