@@ -66,6 +66,9 @@ app.get('/api/health', healthHandler)
 
 app.use('/api', aiCopySanitizerResponseMiddleware)
 
+app.use('/api/ai', aiSystemHealthRoutes)
+console.info('ai_system_health_route_registered', { basePath: '/api/ai/system-health' })
+
 app.use('/api/public', publicRoutes)
 app.use('/api/auth', authRoutes)
 app.use('/api/dashboard', dashboardRoutes)
@@ -101,7 +104,6 @@ app.use('/api/ai', aiFollowupRoutes)
 app.use('/api/ai', aiPriorityInboxRoutes)
 app.use('/api/ai', aiPipelineCopilotRoutes)
 app.use('/api/ai', aiManagerDashboardRoutes)
-app.use('/api/ai', aiSystemHealthRoutes)
 app.use('/api/demo', demoRoutes)
 app.get('/api/email/open/:token', markOpened)
 app.use('/api/email', emailRoutes)

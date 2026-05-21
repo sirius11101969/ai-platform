@@ -15,6 +15,52 @@ function clearModules() {
   for (const p of [indexPath, require.resolve('../src/routes/aiSystemHealthRoutes'), require.resolve('../src/controllers/aiSystemHealthController'), require.resolve('../src/services/aiSystemHealthService')]) delete require.cache[p]
 }
 
+const authMiddlewarePath = require.resolve('../src/middleware/authMiddleware')
+
+
+async function testRouteRegistrationOrder() {
+  const source = require('fs').readFileSync(require.resolve('../src/index'), 'utf8')
+  const mountPos = source.indexOf("app.use('/api/ai', aiSystemHealthRoutes)")
+  const protectedLeadPos = source.indexOf("app.post('/api/lead', requireAuth")
+  assert.ok(mountPos !== -1, 'system health route mount not found')
+  assert.ok(protectedLeadPos !== -1, 'protected /api route not found')
+  assert.ok(mountPos < protectedLeadPos, 'system health route must register before protected /api handlers')
+}
+
+async function testNoAuthInterceptionForExecutionKey() {
+  const originalAdminKey = process.env.AI_EXECUTION_ADMIN_KEY
+  process.env.AI_EXECUTION_ADMIN_KEY = 'health-admin-key'
+
+  const restore = [
+    installMockModule(authMiddlewarePath, {
+      requireAuth: (_req, _res, _next) => {
+        throw new Error('requireAuth_should_not_be_called_for_execution_key')
+      }
+    }),
+    installMockModule(authServicePath, { verifyToken: async () => ({ id: 'u1' }) }),
+    installMockModule(workspaceModelPath, { getWorkspaceForUser: async () => ({ id: '11111111-1111-1111-1111-111111111111', userId: 'u1' }) }),
+    installMockModule(dbPoolPath, { query: async () => ({ rows: [{ id: 'x' }] }) }),
+  ]
+
+  clearModules()
+  const { app } = require('../src/index')
+  const server = await new Promise((resolve) => { const s = app.listen(0, '127.0.0.1', () => resolve(s)) })
+
+  try {
+    const r = await request(`http://127.0.0.1:${server.address().port}`, {
+      'x-ai-execution-key': 'health-admin-key',
+      'x-workspace-id': '11111111-1111-1111-1111-111111111111'
+    })
+    assert.strictEqual(r.status, 200)
+  } finally {
+    await new Promise((resolve) => server.close(resolve))
+    clearModules()
+    restore.reverse().forEach((r) => r())
+    if (originalAdminKey === undefined) delete process.env.AI_EXECUTION_ADMIN_KEY
+    else process.env.AI_EXECUTION_ADMIN_KEY = originalAdminKey
+  }
+}
+
 async function runWithApp(dbQuery, fn) {
   const originalAdminKey = process.env.AI_EXECUTION_ADMIN_KEY
   process.env.AI_EXECUTION_ADMIN_KEY = 'health-admin-key'
@@ -102,12 +148,14 @@ async function testDegradedSummary() {
 }
 
 Promise.resolve()
+  .then(testRouteRegistrationOrder)
   .then(testAllReady)
   .then(testMissingTableNo500)
   .then(testInternalKeyWorks)
   .then(testWorkspaceIsolation)
   .then(testGatewayAuth)
   .then(testMissingWorkspaceForAdminKey)
+  .then(testNoAuthInterceptionForExecutionKey)
   .then(testDegradedSummary)
   .then(() => console.log('aiSystemHealthRoutes.test.js passed'))
   .catch((e) => { console.error(e); process.exit(1) })
