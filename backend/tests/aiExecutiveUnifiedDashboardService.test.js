@@ -1,7 +1,7 @@
 const assert = require('assert')
 const { getOverview } = require('../src/services/aiExecutiveUnifiedDashboardService')
 
-function createClient({ missingTables = [], strategicPlanColumn = 'plan_payload', workforcePlanColumn = 'plan_payload', workforceRealtimeColumn = 'metrics_payload' } = {}) {
+function createClient({ missingTables = [], strategicPlanColumn = 'plan_payload', workforcePlanColumn = 'plan_payload', workforceRealtimeColumn = 'metrics_payload', coordinationColumn = 'coordination_payload' } = {}) {
   return {
     async query(sql, params = []) {
       const missing = missingTables.find((table) => sql.includes(table))
@@ -15,6 +15,7 @@ function createClient({ missingTables = [], strategicPlanColumn = 'plan_payload'
         if (tableName === 'ai_strategic_plans') return { rows: strategicPlanColumn ? [{ column_name: strategicPlanColumn }] : [], rowCount: strategicPlanColumn ? 1 : 0 }
         if (tableName === 'ai_workforce_execution_plans') return { rows: workforcePlanColumn ? [{ column_name: workforcePlanColumn }] : [], rowCount: workforcePlanColumn ? 1 : 0 }
         if (tableName === 'ai_workforce_realtime_metrics') return { rows: workforceRealtimeColumn ? [{ column_name: workforceRealtimeColumn }] : [], rowCount: workforceRealtimeColumn ? 1 : 0 }
+        if (tableName === 'ai_enterprise_coordination_runs') return { rows: coordinationColumn ? [{ column_name: coordinationColumn }] : [], rowCount: coordinationColumn ? 1 : 0 }
         return { rows: [], rowCount: 0 }
       }
       if (sql.includes('ai_organizational_health')) return { rows: [{ health_score: 88 }], rowCount: 1 }
@@ -28,7 +29,7 @@ function createClient({ missingTables = [], strategicPlanColumn = 'plan_payload'
       if (sql.includes('ai_executive_risk_events')) return { rows: [{ severity: 'low' }], rowCount: 1 }
       if (sql.includes('ai_strategic_plans')) return { rows: [{ [strategicPlanColumn]: { horizon: 'q4' } }], rowCount: 1 }
       if (sql.includes('ai_organizational_memory')) return { rows: [{ memory_payload: { insights: [] } }], rowCount: 1 }
-      if (sql.includes('ai_enterprise_coordination_runs')) return { rows: [{ coordination_payload: { status: 'active' } }], rowCount: 1 }
+      if (sql.includes('ai_enterprise_coordination_runs')) return { rows: coordinationColumn ? [{ [coordinationColumn]: { status: 'active' } }] : [], rowCount: coordinationColumn ? 1 : 0 }
       if (sql.includes('ai_workforce_execution_plans')) return { rows: workforcePlanColumn ? [{ [workforcePlanColumn]: { utilization: 75 } }] : [], rowCount: workforcePlanColumn ? 1 : 0 }
       if (sql.includes('ai_workforce_assignments')) return { rows: [{ c: 5 }], rowCount: 1 }
       if (sql.includes('ai_workforce_realtime_metrics')) return { rows: workforceRealtimeColumn ? [{ [workforceRealtimeColumn]: { utilization: 70 } }] : [], rowCount: workforceRealtimeColumn ? 1 : 0 }
@@ -101,8 +102,25 @@ async function testWorkforceRealtimeNoMetricColumnsFallsBackSchemaUnavailable() 
   assert.strictEqual(overview.workforce.realtime.status, 'schema_unavailable')
 }
 
+
+async function testCoordinationSupportsPayloadColumnWhenSyncPayloadAbsent() {
+  const overview = await getOverview({ workspaceId: 'w1', client: createClient({ coordinationColumn: 'payload' }) })
+  assert.deepStrictEqual(overview.coordination, { status: 'active' })
+}
+
+async function testCoordinationSupportsMetadataColumn() {
+  const overview = await getOverview({ workspaceId: 'w1', client: createClient({ coordinationColumn: 'metadata' }) })
+  assert.deepStrictEqual(overview.coordination, { status: 'active' })
+}
+
+async function testCoordinationNoValidColumnsFallsBackSchemaUnavailable() {
+  const overview = await getOverview({ workspaceId: 'w1', client: createClient({ coordinationColumn: null }) })
+  assert.strictEqual(overview.coordination.status, 'schema_unavailable')
+  assert.ok(overview.unavailableModules.includes('coordination'))
+}
+
 async function testNoValidColumnsStillReturnsOverview200Shape() {
-  const overview = await getOverview({ workspaceId: 'w1', client: createClient({ strategicPlanColumn: null, workforcePlanColumn: null }) })
+  const overview = await getOverview({ workspaceId: 'w1', client: createClient({ strategicPlanColumn: null, workforcePlanColumn: null, coordinationColumn: null }) })
   assert.strictEqual(overview.strategy.status, 'schema_unavailable')
   assert.ok(overview.executiveSummary.generatedAt)
 }
@@ -118,6 +136,9 @@ async function main() {
   await testWorkforceRealtimeSupportsMetricsColumn()
   await testWorkforceRealtimeSupportsPayloadColumn()
   await testWorkforceRealtimeNoMetricColumnsFallsBackSchemaUnavailable()
+  await testCoordinationSupportsPayloadColumnWhenSyncPayloadAbsent()
+  await testCoordinationSupportsMetadataColumn()
+  await testCoordinationNoValidColumnsFallsBackSchemaUnavailable()
   await testNoValidColumnsStillReturnsOverview200Shape()
   console.log('aiExecutiveUnifiedDashboardService tests passed')
 }
