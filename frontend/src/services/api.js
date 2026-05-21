@@ -866,6 +866,9 @@ export function fetchAiExecutiveUnifiedOverview(){return request('/ai/executive-
 export function fetchAiSystemHealth() { return request('/ai/system-health') }
 export function fetchAiCommandCenterOverview(){return request('/ai/command-center/overview')}
 export function fetchAiCommandCenterTimeline(){return request('/ai/command-center/timeline')}
+export function fetchAiCommandCenterBrief(){return request('/ai/command-center/brief')}
+export function fetchAiCommandCenterOperations(){return request('/ai/command-center/operations')}
+export function fetchAiCommandCenterFocus(){return request('/ai/command-center/focus')}
 
 export function fetchAiCommandCenterActions(){return request('/ai/command-center/actions')}
 export function fetchAiCommandCenterInbox(){return request('/ai/command-center/inbox')}

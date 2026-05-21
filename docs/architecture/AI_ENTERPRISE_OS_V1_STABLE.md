@@ -69,3 +69,21 @@ curl -H "Authorization: Bearer <jwt>" -H "X-Workspace-Id: <workspace-id>" http:/
 - Workflow is status-only and governance-first: request → inbox review → approve/reject → audit trail. No autonomous execution, no customer outreach, no pricing changes, and no destructive external side effects.
 - Added migration `044_command_center_action_approvals.sql` extending `ai_command_center_actions` with approval metadata and creating `ai_command_center_action_audit_log`.
 - Frontend `/ai-enterprise-command-center` now includes Executive Inbox with governance labels, review actions, and audit loading controls behind explicit confirmation.
+
+## v1.2 Executive Operations Hub
+- Upgraded `/ai-enterprise-command-center` into Executive Operations Hub with five governance-safe sections: Daily Executive Brief, Operations Board, Executive Focus Queue, Decision Tracker, and interactive local Morning Checklist.
+- Added new read-only API endpoints behind Unified AI Control Gateway with workspace isolation:
+  - `GET /api/ai/command-center/brief`
+  - `GET /api/ai/command-center/operations`
+  - `GET /api/ai/command-center/focus`
+- Responses aggregate existing modules only (Command Center, Executive Dashboard, Approval Queue, Revenue, Workforce, Strategy, Coordination) into a stable payload:
+  - `{ generatedAt, executiveBrief, operations, focusQueue, checklist }`
+- Added operational logs:
+  - `command_center_brief_loaded`
+  - `command_center_operations_loaded`
+  - `command_center_focus_loaded`
+- Preserved governance constraints and existing APIs:
+  - Human Approval Required
+  - No Autonomous Execution
+  - No Customer Actions
+  - No Pricing Changes
