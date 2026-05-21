@@ -68,6 +68,24 @@ async function resolveCoordinationColumn(client, tableName, candidateColumns) {
   return resolveColumn(client, tableName, candidateColumns, 'executive_dashboard_coordination_resolved')
 }
 
+async function getCoordinationData({ client, workspaceId, coordinationColumn }) {
+  if (!coordinationColumn) return { status: 'schema_unavailable', sourceColumn: null, data: null }
+  const coordinationSelection = await safeSelect({
+    client,
+    workspaceId,
+    tableName: 'ai_enterprise_coordination_runs',
+    candidateColumns: [coordinationColumn]
+  })
+  if (coordinationSelection.status === 'schema_unavailable') {
+    return { status: 'schema_unavailable', sourceColumn: null, data: null }
+  }
+  return {
+    status: 'ready',
+    sourceColumn: coordinationSelection.sourceColumn,
+    data: coordinationSelection.row?.[coordinationSelection.sourceColumn] || null
+  }
+}
+
 async function safeQuery({ client, workspaceId, moduleName, tableName, sql, fallback }) {
   try {
     return await client.query(sql, [workspaceId])
@@ -87,14 +105,14 @@ async function getOverview({ workspaceId, client = pool }) {
   const strategyPlanColumnPromise = resolveMetricColumn(client, 'ai_strategic_plans', ['plan_payload', 'plan', 'payload', 'recommendation', 'data'])
   const workforcePlanColumnPromise = resolveMetricColumn(client, 'ai_workforce_execution_plans', ['plan_payload', 'plan', 'payload', 'recommendation', 'data'])
   const workforceRealtimeColumnPromise = resolveMetricColumn(client, 'ai_workforce_realtime_metrics', ['metrics_payload', 'metrics', 'payload', 'snapshot', 'summary', 'data'])
-  const coordinationColumnPromise = resolveCoordinationColumn(client, 'ai_enterprise_coordination_runs', ['sync_payload', 'coordination_payload', 'payload', 'synchronization', 'data', 'summary', 'metadata'])
-  const [health, revenue, initiatives, escalations, drift, workforce, approvals, simRisk, risks, memory, workforceAssignments, strategyPlanColumn, workforcePlanColumn, workforceRealtimeColumn, coordinationColumn] = await Promise.all([
+  const workforceSyncColumnPromise = resolveMetricColumn(client, 'ai_department_synchronization', ['sync_payload', 'payload', 'metadata', 'summary', 'data'])
+  const coordinationColumnPromise = resolveCoordinationColumn(client, 'ai_enterprise_coordination_runs', ['sync_payload', 'coordination_payload', 'payload', 'metadata', 'summary', 'data'])
+  const settled = await Promise.allSettled([
     wrap('executiveSummary', 'ai_organizational_health', `SELECT health_score, created_at FROM ai_organizational_health WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`),
     wrap('revenue', 'ai_revenue_engine_snapshots', `SELECT snapshot_payload FROM ai_revenue_engine_snapshots WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`),
     wrap('strategy', 'ai_strategic_initiatives', `SELECT COUNT(*)::int AS c FROM ai_strategic_initiatives WHERE workspace_id=$1`),
     wrap('approvals', 'ai_executive_escalations', `SELECT COUNT(*)::int AS c FROM ai_executive_escalations WHERE workspace_id=$1`),
     wrap('strategy', 'ai_strategic_drift_events', `SELECT drift_payload FROM ai_strategic_drift_events WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`),
-    wrap('workforce', 'ai_department_synchronization', `SELECT sync_payload FROM ai_department_synchronization WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`),
     wrap('approvals', 'ai_approval_queue', `SELECT COUNT(*)::int AS c FROM ai_approval_queue WHERE workspace_id=$1 AND approval_status='pending_approval'`),
     wrap('simulation', 'ai_company_simulation_risks', `SELECT risk_type, severity, risk_payload FROM ai_company_simulation_risks WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`),
     wrap('governance', 'ai_executive_risk_events', `SELECT risk_type, severity, risk_payload FROM ai_executive_risk_events WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 20`),
@@ -103,8 +121,31 @@ async function getOverview({ workspaceId, client = pool }) {
     strategyPlanColumnPromise,
     workforcePlanColumnPromise,
     workforceRealtimeColumnPromise,
+    workforceSyncColumnPromise,
     coordinationColumnPromise
   ])
+  const fallbackResult = { rows: [], rowCount: 0 }
+  const settledValue = (index, sectionName, fallbackValue = fallbackResult) => {
+    const result = settled[index]
+    if (result.status === 'fulfilled') return result.value
+    console.warn('executive_dashboard_section_failed', { workspaceId, sectionName, error: result.reason?.message || String(result.reason) })
+    return fallbackValue
+  }
+  const health = settledValue(0, 'executiveSummary')
+  const revenue = settledValue(1, 'revenue')
+  const initiatives = settledValue(2, 'strategy')
+  const escalations = settledValue(3, 'approvals')
+  const drift = settledValue(4, 'strategy')
+  const approvals = settledValue(5, 'approvals')
+  const simRisk = settledValue(6, 'simulation')
+  const risks = settledValue(7, 'governance')
+  const memory = settledValue(8, 'memory')
+  const workforceAssignments = settledValue(9, 'workforce')
+  const strategyPlanColumn = settledValue(10, 'strategy', null)
+  const workforcePlanColumn = settledValue(11, 'workforce', null)
+  const workforceRealtimeColumn = settledValue(12, 'workforce', null)
+  const workforceSyncColumn = settledValue(13, 'workforce', null)
+  const coordinationColumn = settledValue(14, 'coordination', null)
 
   const strategyPlanSelection = strategyPlanColumn
     ? await safeSelect({ client, workspaceId, tableName: 'ai_strategic_plans', candidateColumns: [strategyPlanColumn] })
@@ -118,9 +159,11 @@ async function getOverview({ workspaceId, client = pool }) {
     ? await safeSelect({ client, workspaceId, tableName: 'ai_workforce_realtime_metrics', candidateColumns: [workforceRealtimeColumn] })
     : { status: 'schema_unavailable', row: null, sourceColumn: null }
 
-  const coordinationSelection = coordinationColumn
-    ? await safeSelect({ client, workspaceId, tableName: 'ai_enterprise_coordination_runs', candidateColumns: [coordinationColumn] })
+  const workforceSyncSelection = workforceSyncColumn
+    ? await safeSelect({ client, workspaceId, tableName: 'ai_department_synchronization', candidateColumns: [workforceSyncColumn] })
     : { status: 'schema_unavailable', row: null, sourceColumn: null }
+
+  const coordinationData = await getCoordinationData({ client, workspaceId, coordinationColumn })
 
   function moduleValue(moduleName, value) {
     if (value !== null && value !== undefined) {
@@ -134,35 +177,50 @@ async function getOverview({ workspaceId, client = pool }) {
 
   const governanceStatus = { mode: 'recommendation_only', status: 'human_approval_required' }
   const revenuePayload = revenue.rows[0]?.snapshot_payload || {}
-  const workforceUtilization = workforce.rows[0]?.sync_payload?.utilization || workforcePlanSelection.row?.[workforcePlanSelection.sourceColumn]?.utilization || workforceRealtimeSelection.row?.[workforceRealtimeSelection.sourceColumn]?.utilization || 0
+  const workforceUtilization = workforceSyncSelection.row?.[workforceSyncSelection.sourceColumn]?.utilization || workforcePlanSelection.row?.[workforcePlanSelection.sourceColumn]?.utilization || workforceRealtimeSelection.row?.[workforceRealtimeSelection.sourceColumn]?.utilization || 0
 
   if (strategyPlanSelection.status === 'schema_unavailable') {
     if (!unavailableModules.includes('strategy')) unavailableModules.push('strategy')
     moduleStatuses.strategy = 'schema_unavailable'
   }
 
-  if (coordinationSelection.status === 'schema_unavailable') {
+  if (coordinationData.status === 'schema_unavailable') {
     if (!unavailableModules.includes('coordination')) unavailableModules.push('coordination')
     moduleStatuses.coordination = 'schema_unavailable'
   }
 
+  function sectionFallback(sectionName, error) {
+    console.warn('executive_dashboard_section_failed', { workspaceId, sectionName, error: error?.message || String(error) })
+    if (!unavailableModules.includes(sectionName)) unavailableModules.push(sectionName)
+    moduleStatuses[sectionName] = 'schema_unavailable'
+    return { status: 'schema_unavailable' }
+  }
+
+  function buildSection(sectionName, builder) {
+    try {
+      return moduleValue(sectionName, builder())
+    } catch (error) {
+      return moduleValue(sectionName, sectionFallback(sectionName, error))
+    }
+  }
+
   const response = {
-    executiveSummary: moduleValue('executiveSummary', { generatedAt: new Date().toISOString(), governanceStatus }),
-    revenue: moduleValue('revenue', revenuePayload),
-    strategy: moduleValue('strategy', {
+    executiveSummary: buildSection('executiveSummary', () => ({ generatedAt: new Date().toISOString(), governanceStatus })),
+    revenue: buildSection('revenue', () => revenuePayload),
+    strategy: buildSection('strategy', () => ({
       status: strategyPlanSelection.status,
       latestPlan: strategyPlanSelection.row?.[strategyPlanSelection.sourceColumn] || null,
       sourceColumn: strategyPlanSelection.sourceColumn,
       strategicPlan: strategyPlanSelection.row?.[strategyPlanSelection.sourceColumn] || {},
       activeStrategicInitiatives: initiatives.rows[0]?.c || 0,
       strategicDrift: drift.rows[0]?.drift_payload || null
-    }),
-    coordination: moduleValue('coordination', coordinationSelection.status === 'schema_unavailable'
+    })),
+    coordination: buildSection('coordination', () => (coordinationData.status === 'schema_unavailable'
       ? { status: 'schema_unavailable', sourceColumn: null }
-      : (coordinationSelection.row?.[coordinationSelection.sourceColumn] || null)),
-    memory: moduleValue('memory', memory.rows[0]?.memory_payload || null),
-    workforce: moduleValue('workforce', {
-      departmentSync: workforce.rows[0]?.sync_payload || null,
+      : (coordinationData.data || null))),
+    memory: buildSection('memory', () => memory.rows[0]?.memory_payload || null),
+    workforce: buildSection('workforce', () => ({
+      departmentSync: workforceSyncSelection.row?.[workforceSyncSelection.sourceColumn] || null,
       executionPlan: workforcePlanSelection.row?.[workforcePlanSelection.sourceColumn] || null,
       assignments: workforceAssignments.rows[0]?.c || 0,
       realtime: workforceRealtimeSelection.status === 'schema_unavailable'
@@ -172,13 +230,13 @@ async function getOverview({ workspaceId, client = pool }) {
             sourceColumn: workforceRealtimeSelection.sourceColumn,
             data: workforceRealtimeSelection.row?.[workforceRealtimeSelection.sourceColumn] || null
           }
-    }),
-    approvals: moduleValue('approvals', {
+    })),
+    approvals: buildSection('approvals', () => ({
       openQueue: approvals.rows[0]?.c || 0,
       openExecutiveEscalations: escalations.rows[0]?.c || 0
-    }),
-    simulation: moduleValue('simulation', { latestRisk: simRisk.rows[0] || null }),
-    governance: moduleValue('governance', { governanceStatus, strategicRisks: risks.rows || [] }),
+    })),
+    simulation: buildSection('simulation', () => ({ latestRisk: simRisk.rows[0] || null })),
+    governance: buildSection('governance', () => ({ governanceStatus, strategicRisks: risks.rows || [] })),
     unavailableModules
   }
 

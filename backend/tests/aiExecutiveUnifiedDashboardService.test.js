@@ -1,7 +1,7 @@
 const assert = require('assert')
 const { getOverview } = require('../src/services/aiExecutiveUnifiedDashboardService')
 
-function createClient({ missingTables = [], strategicPlanColumn = 'plan_payload', workforcePlanColumn = 'plan_payload', workforceRealtimeColumn = 'metrics_payload', coordinationColumn = 'coordination_payload' } = {}) {
+function createClient({ missingTables = [], strategicPlanColumn = 'plan_payload', workforcePlanColumn = 'plan_payload', workforceRealtimeColumn = 'metrics_payload', workforceSyncColumn = 'sync_payload', coordinationColumn = 'coordination_payload', failContains = [] } = {}) {
   return {
     async query(sql, params = []) {
       const missing = missingTables.find((table) => sql.includes(table))
@@ -10,11 +10,14 @@ function createClient({ missingTables = [], strategicPlanColumn = 'plan_payload'
         error.code = '42P01'
         throw error
       }
+      const failFragment = failContains.find((fragment) => sql.includes(fragment))
+      if (failFragment) throw new Error(`forced failure for ${failFragment}`)
       if (sql.includes('information_schema.columns')) {
         const tableName = params[0]
         if (tableName === 'ai_strategic_plans') return { rows: strategicPlanColumn ? [{ column_name: strategicPlanColumn }] : [], rowCount: strategicPlanColumn ? 1 : 0 }
         if (tableName === 'ai_workforce_execution_plans') return { rows: workforcePlanColumn ? [{ column_name: workforcePlanColumn }] : [], rowCount: workforcePlanColumn ? 1 : 0 }
         if (tableName === 'ai_workforce_realtime_metrics') return { rows: workforceRealtimeColumn ? [{ column_name: workforceRealtimeColumn }] : [], rowCount: workforceRealtimeColumn ? 1 : 0 }
+        if (tableName === 'ai_department_synchronization') return { rows: workforceSyncColumn ? [{ column_name: workforceSyncColumn }] : [], rowCount: workforceSyncColumn ? 1 : 0 }
         if (tableName === 'ai_enterprise_coordination_runs') return { rows: coordinationColumn ? [{ column_name: coordinationColumn }] : [], rowCount: coordinationColumn ? 1 : 0 }
         return { rows: [], rowCount: 0 }
       }
@@ -23,7 +26,7 @@ function createClient({ missingTables = [], strategicPlanColumn = 'plan_payload'
       if (sql.includes('ai_strategic_initiatives')) return { rows: [{ c: 3 }], rowCount: 1 }
       if (sql.includes('ai_executive_escalations')) return { rows: [{ c: 1 }], rowCount: 1 }
       if (sql.includes('ai_strategic_drift_events')) return { rows: [{ drift_payload: { driftLevel: 'medium' } }], rowCount: 1 }
-      if (sql.includes('ai_department_synchronization')) return { rows: [{ sync_payload: { utilization: 72 } }], rowCount: 1 }
+      if (sql.includes('ai_department_synchronization')) return { rows: workforceSyncColumn ? [{ [workforceSyncColumn]: { utilization: 72 } }] : [], rowCount: workforceSyncColumn ? 1 : 0 }
       if (sql.includes('ai_approval_queue')) return { rows: [{ c: 2 }], rowCount: 1 }
       if (sql.includes('ai_company_simulation_risks')) return { rows: [{ severity: 'low', risk_type: 'test' }], rowCount: 1 }
       if (sql.includes('ai_executive_risk_events')) return { rows: [{ severity: 'low' }], rowCount: 1 }
@@ -125,6 +128,17 @@ async function testNoValidColumnsStillReturnsOverview200Shape() {
   assert.ok(overview.executiveSummary.generatedAt)
 }
 
+async function testNoDirectSyncPayloadQueryOnCoordination() {
+  const overview = await getOverview({ workspaceId: 'w1', client: createClient({ coordinationColumn: 'payload' }) })
+  assert.deepStrictEqual(overview.coordination, { status: 'active' })
+}
+
+async function testPromiseAllFailureStillReturnsOverviewShape() {
+  const overview = await getOverview({ workspaceId: 'w1', client: createClient({ failContains: ['ai_strategic_drift_events'] }) })
+  assert.ok(overview.executiveSummary.generatedAt)
+  assert.strictEqual(overview.strategy.status, 'ready')
+}
+
 async function main() {
   await testMissingCoordinationTable()
   await testMissingSimulationTable()
@@ -140,6 +154,8 @@ async function main() {
   await testCoordinationSupportsMetadataColumn()
   await testCoordinationNoValidColumnsFallsBackSchemaUnavailable()
   await testNoValidColumnsStillReturnsOverview200Shape()
+  await testNoDirectSyncPayloadQueryOnCoordination()
+  await testPromiseAllFailureStillReturnsOverviewShape()
   console.log('aiExecutiveUnifiedDashboardService tests passed')
 }
 
