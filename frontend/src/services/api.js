@@ -862,3 +862,5 @@ export function fetchAiOrganizationalDrift(){return request('/ai/organizational-
 export function fetchAiOrganizationalLearning(){return request('/ai/organizational-memory/learning')}
 
 export function fetchAiExecutiveUnifiedOverview(){return request('/ai/executive-dashboard/overview')}
+
+export function fetchAiSystemHealth() { return request('/ai/system-health') }
