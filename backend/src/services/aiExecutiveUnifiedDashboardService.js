@@ -11,6 +11,33 @@ function isMissingRelationError(error) {
   return error?.code === '42P01' || /relation .* does not exist/i.test(error?.message || '')
 }
 
+function isMissingColumnError(error) {
+  return error?.code === '42703' || /column .* does not exist/i.test(error?.message || '')
+}
+
+async function safeSelect({ client, workspaceId, tableName, candidateColumns }) {
+  try {
+    const columnsResult = await client.query(
+      `SELECT column_name FROM information_schema.columns WHERE table_schema='public' AND table_name=$1`,
+      [tableName]
+    )
+    const existingColumns = new Set((columnsResult.rows || []).map((row) => row.column_name))
+    const selectedColumn = candidateColumns.find((column) => existingColumns.has(column))
+    if (!selectedColumn) {
+      return { status: 'schema_unavailable', row: null, sourceColumn: null }
+    }
+    const result = await client.query(
+      `SELECT ${selectedColumn} FROM ${tableName} WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`,
+      [workspaceId]
+    )
+    return { status: 'ready', row: result.rows[0] || null, sourceColumn: selectedColumn }
+  } catch (error) {
+    if (!isMissingRelationError(error) && !isMissingColumnError(error)) throw error
+    console.warn('executive_dashboard_schema_fallback', { workspaceId, tableName, candidateColumns, error: error.message })
+    return { status: 'schema_unavailable', row: null, sourceColumn: null }
+  }
+}
+
 async function safeQuery({ client, workspaceId, moduleName, tableName, sql, fallback }) {
   try {
     return await client.query(sql, [workspaceId])
@@ -27,7 +54,8 @@ async function getOverview({ workspaceId, client = pool }) {
   const unavailableModules = []
   const wrap = (moduleName, tableName, sql) => safeQuery({ client, workspaceId, moduleName, tableName, sql, fallback })
 
-  const [health, revenue, initiatives, escalations, drift, workforce, approvals, simRisk, risks, strategicPlans, memory, coordination, workforcePlans, workforceAssignments, realtime] = await Promise.all([
+  const strategyPlanSelectionPromise = safeSelect({ client, workspaceId, tableName: 'ai_strategic_plans', candidateColumns: ['plan_payload', 'plan', 'payload', 'recommendation', 'data'] })
+  const [health, revenue, initiatives, escalations, drift, workforce, approvals, simRisk, risks, memory, coordination, workforcePlans, workforceAssignments, realtime, strategyPlanSelection] = await Promise.all([
     wrap('executiveSummary', 'ai_organizational_health', `SELECT health_score, created_at FROM ai_organizational_health WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`),
     wrap('revenue', 'ai_revenue_engine_snapshots', `SELECT snapshot_payload FROM ai_revenue_engine_snapshots WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`),
     wrap('strategy', 'ai_strategic_initiatives', `SELECT COUNT(*)::int AS c FROM ai_strategic_initiatives WHERE workspace_id=$1`),
@@ -37,12 +65,12 @@ async function getOverview({ workspaceId, client = pool }) {
     wrap('approvals', 'ai_approval_queue', `SELECT COUNT(*)::int AS c FROM ai_approval_queue WHERE workspace_id=$1 AND approval_status='pending_approval'`),
     wrap('simulation', 'ai_company_simulation_risks', `SELECT risk_type, severity, risk_payload FROM ai_company_simulation_risks WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`),
     wrap('governance', 'ai_executive_risk_events', `SELECT risk_type, severity, risk_payload FROM ai_executive_risk_events WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 20`),
-    wrap('strategy', 'ai_strategic_plans', `SELECT plan_payload FROM ai_strategic_plans WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`),
     wrap('memory', 'ai_organizational_memory', `SELECT memory_payload FROM ai_organizational_memory WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`),
     wrap('coordination', 'ai_enterprise_coordination_runs', `SELECT coordination_payload FROM ai_enterprise_coordination_runs WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`),
     wrap('workforce', 'ai_workforce_execution_plans', `SELECT plan_payload FROM ai_workforce_execution_plans WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`),
     wrap('workforce', 'ai_workforce_assignments', `SELECT COUNT(*)::int AS c FROM ai_workforce_assignments WHERE workspace_id=$1`),
-    wrap('workforce', 'ai_workforce_realtime_metrics', `SELECT metrics_payload FROM ai_workforce_realtime_metrics WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`)
+    wrap('workforce', 'ai_workforce_realtime_metrics', `SELECT metrics_payload FROM ai_workforce_realtime_metrics WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`),
+    strategyPlanSelectionPromise
   ])
 
   function moduleValue(moduleName, value) {
@@ -59,11 +87,19 @@ async function getOverview({ workspaceId, client = pool }) {
   const revenuePayload = revenue.rows[0]?.snapshot_payload || {}
   const workforceUtilization = workforce.rows[0]?.sync_payload?.utilization || workforcePlans.rows[0]?.plan_payload?.utilization || realtime.rows[0]?.metrics_payload?.utilization || 0
 
+  if (strategyPlanSelection.status === 'schema_unavailable') {
+    if (!unavailableModules.includes('strategy')) unavailableModules.push('strategy')
+    moduleStatuses.strategy = 'schema_unavailable'
+  }
+
   const response = {
     executiveSummary: moduleValue('executiveSummary', { generatedAt: new Date().toISOString(), governanceStatus }),
     revenue: moduleValue('revenue', revenuePayload),
     strategy: moduleValue('strategy', {
-      strategicPlan: strategicPlans.rows[0]?.plan_payload || {},
+      status: strategyPlanSelection.status,
+      latestPlan: strategyPlanSelection.row?.[strategyPlanSelection.sourceColumn] || null,
+      sourceColumn: strategyPlanSelection.sourceColumn,
+      strategicPlan: strategyPlanSelection.row?.[strategyPlanSelection.sourceColumn] || {},
       activeStrategicInitiatives: initiatives.rows[0]?.c || 0,
       strategicDrift: drift.rows[0]?.drift_payload || null
     }),
