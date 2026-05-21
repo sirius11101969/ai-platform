@@ -84,6 +84,20 @@ async function request(base, headers) {
   return { status: res.status, body: await res.json() }
 }
 
+function buildSchemaAwareQuery({ workforceTs = [], approvalTs = [], approvalStatus = [], fallbackRow = { id: 'x' }, throwOnSql } = {}) {
+  return async (sql) => {
+    if (throwOnSql) return throwOnSql(sql)
+    if (sql.includes('FROM information_schema.columns')) {
+      const [tableName, candidates] = arguments[1] || []
+      if (tableName === 'ai_workforce_realtime_metrics') return { rows: workforceTs.filter((c) => candidates.includes(c)).map((column_name) => ({ column_name })) }
+      if (tableName === 'ai_approval_queue' && candidates.includes('status')) return { rows: approvalStatus.filter((c) => candidates.includes(c)).map((column_name) => ({ column_name })) }
+      if (tableName === 'ai_approval_queue') return { rows: approvalTs.filter((c) => candidates.includes(c)).map((column_name) => ({ column_name })) }
+      return { rows: [] }
+    }
+    return { rows: [fallbackRow] }
+  }
+}
+
 async function testAllReady() {
   await runWithApp(async () => ({ rows: [{ id: 'x', created_at: new Date().toISOString() }] }), async (base) => {
     const r = await request(base, { authorization: 'Bearer valid.jwt', 'x-workspace-id': 'ws-ok' })
@@ -147,9 +161,50 @@ async function testDegradedSummary() {
   })
 }
 
+
+async function testCreatedAtAbsentComputedAtExists() {
+  const seen = []
+  await runWithApp(async (sql, params) => {
+    seen.push(sql)
+    if (sql.includes('FROM information_schema.columns')) {
+      const [tableName, candidates] = params
+      if (tableName === 'ai_workforce_realtime_metrics') return { rows: [{ column_name: 'computed_at' }] }
+      if (tableName === 'ai_approval_queue' && candidates.includes('status')) return { rows: [{ column_name: 'status' }] }
+      if (tableName === 'ai_approval_queue') return { rows: [{ column_name: 'created_at' }] }
+      return { rows: [] }
+    }
+    return { rows: [{ id: 'x', computed_at: new Date().toISOString() }] }
+  }, async (base) => {
+    const r = await request(base, { authorization: 'Bearer valid.jwt', 'x-workspace-id': 'ws-ok' })
+    assert.strictEqual(r.status, 200)
+    assert.ok(seen.some((q) => q.includes('ORDER BY computed_at DESC')), 'expected workforce query to order by computed_at')
+  })
+}
+
+async function testStatusAbsentQueueStatusExists() {
+  const seen = []
+  await runWithApp(async (sql, params) => {
+    seen.push(sql)
+    if (sql.includes('FROM information_schema.columns')) {
+      const [tableName, candidates] = params
+      if (tableName === 'ai_workforce_realtime_metrics') return { rows: [{ column_name: 'created_at' }] }
+      if (tableName === 'ai_approval_queue' && candidates.includes('status')) return { rows: [{ column_name: 'queue_status' }] }
+      if (tableName === 'ai_approval_queue') return { rows: [{ column_name: 'created_at' }] }
+      return { rows: [] }
+    }
+    return { rows: [{ id: 'x', created_at: new Date().toISOString() }] }
+  }, async (base) => {
+    const r = await request(base, { authorization: 'Bearer valid.jwt', 'x-workspace-id': 'ws-ok' })
+    assert.strictEqual(r.status, 200)
+    assert.ok(seen.some((q) => q.includes("queue_status='pending_approval'")), 'expected approval query to use queue_status')
+  })
+}
+
 Promise.resolve()
   .then(testRouteRegistrationOrder)
   .then(testAllReady)
+  .then(testCreatedAtAbsentComputedAtExists)
+  .then(testStatusAbsentQueueStatusExists)
   .then(testMissingTableNo500)
   .then(testInternalKeyWorks)
   .then(testWorkspaceIsolation)
