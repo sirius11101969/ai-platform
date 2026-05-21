@@ -14,4 +14,14 @@ async function getOverview(req, res, next) {
   }
 }
 
-module.exports = { getOverview }
+async function getTimeline(req, res, next) {
+  try {
+    const ctx = resolve(req)
+    const response = await service.getTimeline(ctx)
+    res.json(response)
+  } catch (error) {
+    next(error)
+  }
+}
+
+module.exports = { getOverview, getTimeline }

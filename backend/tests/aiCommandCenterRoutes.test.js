@@ -34,14 +34,14 @@ async function runWithApp(dbQuery, fn) {
   }
 }
 
-async function request(base, headers) {
-  const res = await fetch(`${base}/api/ai/command-center/overview`, { headers })
+async function request(base, path, headers) {
+  const res = await fetch(`${base}${path}`, { headers })
   return { status: res.status, body: await res.json() }
 }
 
 async function testOverview200() {
   await runWithApp(async () => ({ rows: [{ id: 'x', created_at: new Date().toISOString() }] }), async (base) => {
-    const r = await request(base, { authorization: 'Bearer valid.jwt', 'x-workspace-id': 'ws-ok' })
+    const r = await request(base, '/api/ai/command-center/overview', { authorization: 'Bearer valid.jwt', 'x-workspace-id': 'ws-ok' })
     assert.strictEqual(r.status, 200)
     assert.strictEqual(r.body.commandCenterVersion, 'v1.1')
   })
@@ -49,14 +49,14 @@ async function testOverview200() {
 
 async function testGatewayAuth() {
   await runWithApp(async () => ({ rows: [{ id: 'x' }] }), async (base) => {
-    const r = await request(base, { 'x-ai-execution-key': 'wrong-key', 'x-workspace-id': '11111111-1111-1111-1111-111111111111' })
+    const r = await request(base, '/api/ai/command-center/overview', { 'x-ai-execution-key': 'wrong-key', 'x-workspace-id': '11111111-1111-1111-1111-111111111111' })
     assert.strictEqual(r.status, 401)
   })
 }
 
 async function testWorkspaceIsolation() {
   await runWithApp(async () => ({ rows: [{ id: 'x' }] }), async (base) => {
-    const r = await request(base, { 'x-ai-execution-key': 'health-admin-key', 'x-workspace-id': 'bad-ws' })
+    const r = await request(base, '/api/ai/command-center/overview', { 'x-ai-execution-key': 'health-admin-key', 'x-workspace-id': 'bad-ws' })
     assert.strictEqual(r.status, 404)
   })
 }
@@ -66,9 +66,20 @@ async function testDegradedModules() {
     if (sql.includes('ai_enterprise_coordination_runs')) throw new Error('temporary timeout')
     return { rows: [{ id: 'x' }] }
   }, async (base) => {
-    const r = await request(base, { authorization: 'Bearer valid.jwt', 'x-workspace-id': 'ws-ok' })
+    const r = await request(base, '/api/ai/command-center/overview', { authorization: 'Bearer valid.jwt', 'x-workspace-id': 'ws-ok' })
     assert.strictEqual(r.status, 200)
     assert.ok(r.body.health.DEGRADED >= 1)
+  })
+}
+
+async function testTimelineAggregation() {
+  await runWithApp(async () => ({ rows: [{ id: 'x', created_at: new Date().toISOString() }] }), async (base) => {
+    const r = await request(base, '/api/ai/command-center/timeline', { authorization: 'Bearer valid.jwt', 'x-workspace-id': 'ws-ok' })
+    assert.strictEqual(r.status, 200)
+    assert.strictEqual(r.body.version, 'v1.1')
+    assert.ok(Array.isArray(r.body.timeline))
+    assert.ok(r.body.timeline.length >= 4)
+    assert.ok(Array.isArray(r.body.recentEvents))
   })
 }
 
@@ -77,6 +88,7 @@ Promise.resolve()
   .then(testWorkspaceIsolation)
   .then(testDegradedModules)
   .then(testOverview200)
+  .then(testTimelineAggregation)
   .then(() => console.log('ok'))
   .catch((error) => {
     console.error(error)
