@@ -83,12 +83,45 @@ async function testTimelineAggregation() {
   })
 }
 
+async function testOperationsHubAggregationAndFocusOrdering() {
+  await runWithApp(async (sql) => {
+    if (sql.includes('FROM ai_command_center_actions')) {
+      return {
+        rows: [
+          { id: 'a1', action_type: 'revenue_review', status: 'requested', created_at: '2026-01-02T00:00:00.000Z' },
+          { id: 'a2', action_type: 'workforce_review', status: 'approved', created_at: '2026-01-01T00:00:00.000Z' },
+        ],
+      }
+    }
+    return { rows: [{ id: 'x', created_at: new Date().toISOString() }] }
+  }, async (base) => {
+    const headers = { authorization: 'Bearer valid.jwt', 'x-workspace-id': 'ws-ok' }
+    const brief = await request(base, '/api/ai/command-center/brief', headers)
+    assert.strictEqual(brief.status, 200)
+    assert.ok(brief.body.executiveBrief)
+    assert.ok(Array.isArray(brief.body.checklist))
+
+    const operations = await request(base, '/api/ai/command-center/operations', headers)
+    assert.strictEqual(operations.status, 200)
+    assert.ok(typeof operations.body.operations.healthy === 'number')
+
+    const focus = await request(base, '/api/ai/command-center/focus', headers)
+    assert.strictEqual(focus.status, 200)
+    assert.ok(Array.isArray(focus.body.focusQueue))
+    const priorities = focus.body.focusQueue.map((item) => item.priority)
+    const firstMedium = priorities.indexOf('medium')
+    const firstHigh = priorities.indexOf('high')
+    if (firstMedium >= 0 && firstHigh >= 0) assert.ok(firstHigh < firstMedium)
+  })
+}
+
 Promise.resolve()
   .then(testGatewayAuth)
   .then(testWorkspaceIsolation)
   .then(testDegradedModules)
   .then(testOverview200)
   .then(testTimelineAggregation)
+  .then(testOperationsHubAggregationAndFocusOrdering)
   .then(() => console.log('ok'))
   .catch((error) => {
     console.error(error)

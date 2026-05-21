@@ -112,6 +112,104 @@ async function getTimeline({ workspaceId }) { /* unchanged */
   return { version: 'v1.1', generatedAt, timeline, recentEvents }
 }
 
+function buildChecklist() {
+  return [
+    { id: 'review_health', label: 'Review health', completed: false },
+    { id: 'review_approvals', label: 'Review approvals', completed: false },
+    { id: 'review_revenue', label: 'Review revenue', completed: false },
+    { id: 'review_workforce', label: 'Review workforce', completed: false },
+    { id: 'review_strategy', label: 'Review strategy', completed: false },
+  ]
+}
+
+function focusPriorityRank(priority) {
+  return ({ critical: 0, high: 1, medium: 2 }[String(priority || '').toLowerCase()] ?? 3)
+}
+
+async function getOperationsHub({ workspaceId }) {
+  const generatedAt = new Date().toISOString()
+  const [executive, healthCenter, actions] = await Promise.all([
+    getExecutiveOverview({ workspaceId }),
+    getSystemHealth({ workspaceId }),
+    getActions({ workspaceId, limit: 200 }),
+  ])
+
+  const pendingApprovals = (actions?.actions || []).filter((item) => item.status === 'requested').length
+  const topBottleneck = pendingApprovals > 0 ? 'Approval Queue' : 'None'
+  const topRecommendation = pendingApprovals > 0 ? 'Clear requested approvals to reduce execution drag.' : 'Maintain governance cadence and monitor degraded modules.'
+  const executiveBrief = {
+    healthSummary: {
+      ready: healthCenter?.summary?.readyCount || 0,
+      degraded: healthCenter?.summary?.degradedCount || 0,
+      missing: healthCenter?.summary?.missingCount || 0,
+    },
+    pendingApprovals,
+    topBottleneck,
+    topRecommendation,
+  }
+
+  const operations = {
+    healthy: executiveBrief.healthSummary.ready,
+    needsAttention: (executiveBrief.healthSummary.degraded || 0) + (executive?.cards?.approvalBottlenecks || 0),
+    blocked: executive?.coordination?.crossTeamSync?.openConflicts || 0,
+    completedToday: (actions?.actions || []).filter((item) => item.status === 'approved' || item.status === 'rejected').length,
+  }
+
+  const focusCandidates = [
+    ...((executive?.governance?.strategicRisks || []).map((risk) => ({
+      id: `risk-${risk.riskKey || risk.id || Math.random()}`,
+      source: 'strategy',
+      title: risk.title || risk.summary || 'Strategic risk review',
+      priority: String(risk.severity || 'high').toLowerCase() === 'critical' ? 'critical' : 'high',
+      state: 'requested',
+    }))),
+    ...((actions?.actions || []).map((action) => ({
+      id: `decision-${action.id}`,
+      source: 'approval_queue',
+      title: `${action.action_type} (${action.status})`,
+      priority: action.status === 'requested' ? 'critical' : 'medium',
+      state: action.status,
+      requestedAt: action.created_at,
+    }))),
+  ]
+
+  const focusQueue = focusCandidates
+    .filter((item) => ['critical', 'high', 'medium'].includes(item.priority))
+    .sort((a, b) => {
+      const p = focusPriorityRank(a.priority) - focusPriorityRank(b.priority)
+      if (p) return p
+      return Date.parse(b.requestedAt || generatedAt) - Date.parse(a.requestedAt || generatedAt)
+    })
+    .slice(0, 20)
+
+  const payload = {
+    generatedAt,
+    executiveBrief,
+    operations,
+    focusQueue,
+    checklist: buildChecklist(),
+  }
+  return payload
+}
+
+async function getBrief(ctx) {
+  const payload = await getOperationsHub(ctx)
+  console.info('command_center_brief_loaded', { workspaceId: ctx.workspaceId, generatedAt: payload.generatedAt })
+  return payload
+}
+
+async function getOperations(ctx) {
+  const payload = await getOperationsHub(ctx)
+  console.info('command_center_operations_loaded', { workspaceId: ctx.workspaceId, generatedAt: payload.generatedAt })
+  return payload
+}
+
+async function getFocus(ctx) {
+  const payload = await getOperationsHub(ctx)
+  console.info('command_center_focus_loaded', { workspaceId: ctx.workspaceId, count: payload.focusQueue.length })
+  return payload
+}
+
 async function requestAction({ workspaceId, actionType, reason }) {
   if (!ALLOWED_ACTION_TYPES.has(actionType)) { const e = new Error('Invalid actionType'); e.statusCode = 400; throw e }
   const result = await pool.query(
@@ -180,4 +278,4 @@ async function getActionAudit({ workspaceId, actionId, limit = 50 }) {
   return { audit: result.rows }
 }
 
-module.exports = { getOverview, getTimeline, requestAction, getActions, reviewAction, getActionAudit, buildReviewer }
+module.exports = { getOverview, getTimeline, getBrief, getOperations, getFocus, requestAction, getActions, reviewAction, getActionAudit, buildReviewer }
