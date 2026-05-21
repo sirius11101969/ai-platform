@@ -7,54 +7,86 @@ const GOVERNANCE_LABELS = [
   'Recommendation / Planning / Memory Only'
 ]
 
+function isMissingRelationError(error) {
+  return error?.code === '42P01' || /relation .* does not exist/i.test(error?.message || '')
+}
+
+async function safeQuery({ client, workspaceId, moduleName, tableName, sql, fallback }) {
+  try {
+    return await client.query(sql, [workspaceId])
+  } catch (error) {
+    if (!isMissingRelationError(error)) throw error
+    console.warn('executive_dashboard_module_missing', { workspaceId, moduleName, tableName, error: error.message })
+    return fallback
+  }
+}
+
 async function getOverview({ workspaceId, client = pool }) {
-  const [health, revenue, initiatives, escalations, drift, workforce, approvals, simRisk, risks, strategicPlans, memory, coordination, realtime] = await Promise.all([
-    client.query(`SELECT health_score, created_at FROM ai_organizational_health WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`, [workspaceId]),
-    client.query(`SELECT snapshot_payload FROM ai_revenue_engine_snapshots WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`, [workspaceId]),
-    client.query(`SELECT COUNT(*)::int AS c FROM ai_strategic_initiatives WHERE workspace_id=$1`, [workspaceId]),
-    client.query(`SELECT COUNT(*)::int AS c FROM ai_executive_escalations WHERE workspace_id=$1`, [workspaceId]),
-    client.query(`SELECT drift_payload FROM ai_strategic_drift_events WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`, [workspaceId]),
-    client.query(`SELECT coordination_payload FROM ai_workforce_coordination_runs WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`, [workspaceId]),
-    client.query(`SELECT COUNT(*)::int AS c FROM ai_approval_queue WHERE workspace_id=$1 AND approval_status='pending_approval'`, [workspaceId]),
-    client.query(`SELECT risk_type, severity, risk_payload FROM ai_company_simulation_risks WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`, [workspaceId]),
-    client.query(`SELECT risk_type, severity, risk_payload FROM ai_executive_risk_events WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 20`, [workspaceId]),
-    client.query(`SELECT plan_payload FROM ai_strategic_plans WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`, [workspaceId]),
-    client.query(`SELECT memory_payload FROM ai_organizational_memory WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`, [workspaceId]),
-    client.query(`SELECT coordination_payload FROM ai_enterprise_coordination_runs WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`, [workspaceId]),
-    client.query(`SELECT COUNT(*)::int AS c FROM ai_workforce_tasks WHERE workspace_id=$1 AND status='active'`, [workspaceId])
+  const fallback = { rows: [], rowCount: 0 }
+  const moduleStatuses = {}
+  const unavailableModules = []
+  const wrap = (moduleName, tableName, sql) => safeQuery({ client, workspaceId, moduleName, tableName, sql, fallback })
+
+  const [health, revenue, initiatives, escalations, drift, workforce, approvals, simRisk, risks, strategicPlans, memory, coordination, workforcePlans, workforceAssignments, realtime] = await Promise.all([
+    wrap('executiveSummary', 'ai_organizational_health', `SELECT health_score, created_at FROM ai_organizational_health WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`),
+    wrap('revenue', 'ai_revenue_engine_snapshots', `SELECT snapshot_payload FROM ai_revenue_engine_snapshots WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`),
+    wrap('strategy', 'ai_strategic_initiatives', `SELECT COUNT(*)::int AS c FROM ai_strategic_initiatives WHERE workspace_id=$1`),
+    wrap('approvals', 'ai_executive_escalations', `SELECT COUNT(*)::int AS c FROM ai_executive_escalations WHERE workspace_id=$1`),
+    wrap('strategy', 'ai_strategic_drift_events', `SELECT drift_payload FROM ai_strategic_drift_events WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`),
+    wrap('workforce', 'ai_department_synchronization', `SELECT sync_payload FROM ai_department_synchronization WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`),
+    wrap('approvals', 'ai_approval_queue', `SELECT COUNT(*)::int AS c FROM ai_approval_queue WHERE workspace_id=$1 AND approval_status='pending_approval'`),
+    wrap('simulation', 'ai_company_simulation_risks', `SELECT risk_type, severity, risk_payload FROM ai_company_simulation_risks WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`),
+    wrap('governance', 'ai_executive_risk_events', `SELECT risk_type, severity, risk_payload FROM ai_executive_risk_events WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 20`),
+    wrap('strategy', 'ai_strategic_plans', `SELECT plan_payload FROM ai_strategic_plans WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`),
+    wrap('memory', 'ai_organizational_memory', `SELECT memory_payload FROM ai_organizational_memory WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`),
+    wrap('coordination', 'ai_enterprise_coordination_runs', `SELECT coordination_payload FROM ai_enterprise_coordination_runs WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`),
+    wrap('workforce', 'ai_workforce_execution_plans', `SELECT plan_payload FROM ai_workforce_execution_plans WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`),
+    wrap('workforce', 'ai_workforce_assignments', `SELECT COUNT(*)::int AS c FROM ai_workforce_assignments WHERE workspace_id=$1`),
+    wrap('workforce', 'ai_workforce_realtime_metrics', `SELECT metrics_payload FROM ai_workforce_realtime_metrics WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 1`)
   ])
+
+  function moduleValue(moduleName, value) {
+    if (value !== null && value !== undefined) {
+      moduleStatuses[moduleName] = 'ready'
+      return value
+    }
+    if (!moduleStatuses[moduleName]) moduleStatuses[moduleName] = 'not_initialized'
+    if (!unavailableModules.includes(moduleName)) unavailableModules.push(moduleName)
+    return { status: 'not_initialized' }
+  }
 
   const governanceStatus = { mode: 'recommendation_only', status: 'human_approval_required' }
   const revenuePayload = revenue.rows[0]?.snapshot_payload || {}
-  const workforceUtilization = workforce.rows[0]?.coordination_payload?.utilization || 0
+  const workforceUtilization = workforce.rows[0]?.sync_payload?.utilization || workforcePlans.rows[0]?.plan_payload?.utilization || realtime.rows[0]?.metrics_payload?.utilization || 0
 
-  return {
-    governanceLabels: GOVERNANCE_LABELS,
-    cards: {
-      organizationalHealthScore: health.rows[0]?.health_score || 0,
-      revenueOpportunity: revenuePayload?.forecast?.projectedRevenueExpansion || 0,
+  const response = {
+    executiveSummary: moduleValue('executiveSummary', { generatedAt: new Date().toISOString(), governanceStatus }),
+    revenue: moduleValue('revenue', revenuePayload),
+    strategy: moduleValue('strategy', {
+      strategicPlan: strategicPlans.rows[0]?.plan_payload || {},
       activeStrategicInitiatives: initiatives.rows[0]?.c || 0,
-      openExecutiveEscalations: escalations.rows[0]?.c || 0,
-      strategicDriftLevel: drift.rows[0]?.drift_payload?.driftLevel || 'low',
-      workforceUtilization,
-      approvalBottlenecks: approvals.rows[0]?.c || 0,
-      simulationRiskLevel: simRisk.rows[0]?.severity || 'low',
-      governanceMode: governanceStatus.mode
-    },
-    sections: {
-      executiveSummary: { generatedAt: new Date().toISOString(), governanceStatus },
-      revenueIntelligence: revenuePayload,
-      strategicPlanning: strategicPlans.rows[0]?.plan_payload || {},
-      enterpriseCoordination: coordination.rows[0]?.coordination_payload || {},
-      organizationalMemory: memory.rows[0]?.memory_payload || {},
-      workforceHealth: workforce.rows[0]?.coordination_payload || {},
-      approvalBottlenecks: { openQueue: approvals.rows[0]?.c || 0 },
-      simulationScenarios: { latestRisk: simRisk.rows[0] || null },
-      strategicRisks: risks.rows,
-      governanceStatus,
-      realtimeMetrics: { activeWorkforceTasks: realtime.rows[0]?.c || 0 }
-    }
+      strategicDrift: drift.rows[0]?.drift_payload || null
+    }),
+    coordination: moduleValue('coordination', coordination.rows[0]?.coordination_payload || null),
+    memory: moduleValue('memory', memory.rows[0]?.memory_payload || null),
+    workforce: moduleValue('workforce', {
+      departmentSync: workforce.rows[0]?.sync_payload || null,
+      executionPlan: workforcePlans.rows[0]?.plan_payload || null,
+      assignments: workforceAssignments.rows[0]?.c || 0,
+      realtime: realtime.rows[0]?.metrics_payload || null
+    }),
+    approvals: moduleValue('approvals', {
+      openQueue: approvals.rows[0]?.c || 0,
+      openExecutiveEscalations: escalations.rows[0]?.c || 0
+    }),
+    simulation: moduleValue('simulation', { latestRisk: simRisk.rows[0] || null }),
+    governance: moduleValue('governance', { governanceStatus, strategicRisks: risks.rows || [] }),
+    unavailableModules
   }
+
+  console.info('executive_dashboard_overview_loaded', { workspaceId, unavailableModules })
+
+  return { governanceLabels: GOVERNANCE_LABELS, cards: { organizationalHealthScore: health.rows[0]?.health_score || 0, revenueOpportunity: revenuePayload?.forecast?.projectedRevenueExpansion || 0, activeStrategicInitiatives: initiatives.rows[0]?.c || 0, openExecutiveEscalations: escalations.rows[0]?.c || 0, strategicDriftLevel: drift.rows[0]?.drift_payload?.driftLevel || 'low', workforceUtilization, approvalBottlenecks: approvals.rows[0]?.c || 0, simulationRiskLevel: simRisk.rows[0]?.severity || 'low', governanceMode: governanceStatus.mode }, ...response }
 }
 
 module.exports = { getOverview }
