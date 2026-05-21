@@ -864,3 +864,4 @@ export function fetchAiOrganizationalLearning(){return request('/ai/organization
 export function fetchAiExecutiveUnifiedOverview(){return request('/ai/executive-dashboard/overview')}
 
 export function fetchAiSystemHealth() { return request('/ai/system-health') }
+export function fetchAiCommandCenterOverview(){return request('/ai/command-center/overview')}
