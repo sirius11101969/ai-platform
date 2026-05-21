@@ -866,3 +866,6 @@ export function fetchAiExecutiveUnifiedOverview(){return request('/ai/executive-
 export function fetchAiSystemHealth() { return request('/ai/system-health') }
 export function fetchAiCommandCenterOverview(){return request('/ai/command-center/overview')}
 export function fetchAiCommandCenterTimeline(){return request('/ai/command-center/timeline')}
+
+export function fetchAiCommandCenterActions(){return request('/ai/command-center/actions')}
+export function requestAiCommandCenterAction(payload){return request('/ai/command-center/actions/request',{method:'POST',body:JSON.stringify(payload||{})})}
