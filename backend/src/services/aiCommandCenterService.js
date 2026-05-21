@@ -2,6 +2,33 @@ const pool = require('../db/pool')
 const { getOverview: getExecutiveOverview } = require('./aiExecutiveUnifiedDashboardService')
 const { getSystemHealth } = require('./aiSystemHealthService')
 
+const ALLOWED_ACTION_TYPES = new Set([
+  'strategic_planning_review',
+  'revenue_review',
+  'workforce_review',
+  'coordination_review',
+  'memory_review',
+])
+
+const GOVERNANCE_GUARDRAILS = {
+  humanApprovalRequired: true,
+  noAutonomousExecution: true,
+  noCustomerActions: true,
+  noPricingChanges: true,
+}
+
+function buildReviewer(reqCtx = {}) {
+  return reqCtx.userId || reqCtx.actorId || 'unknown'
+}
+
+async function createAuditEvent({ workspaceId, actionId, eventType, payload }) {
+  await pool.query(
+    `INSERT INTO ai_command_center_action_audit_log(workspace_id, action_id, event_type, event_payload)
+     VALUES($1::uuid, $2::uuid, $3, $4::jsonb)`,
+    [workspaceId, actionId, eventType, JSON.stringify(payload || {})]
+  )
+}
+
 async function getOverview({ workspaceId }) {
   const [executive, healthCenter] = await Promise.all([
     getExecutiveOverview({ workspaceId }),
@@ -57,12 +84,11 @@ async function getOverview({ workspaceId }) {
   return response
 }
 
-async function getTimeline({ workspaceId }) {
+async function getTimeline({ workspaceId }) { /* unchanged */
   const [executive, healthCenter] = await Promise.all([
     getExecutiveOverview({ workspaceId }),
     getSystemHealth({ workspaceId })
   ])
-
   const generatedAt = new Date().toISOString()
   const systemSeverity = (healthCenter?.summary?.degradedCount || 0) > 0 ? 'warning' : ((healthCenter?.summary?.missingCount || 0) > 0 ? 'warning' : 'info')
   const openQueue = executive?.approvals?.openQueue || 0
@@ -79,64 +105,79 @@ async function getTimeline({ workspaceId }) {
     { timestamp: generatedAt, event: `System health READY:${healthCenter?.summary?.readyCount || 0} DEGRADED:${healthCenter?.summary?.degradedCount || 0} MISSING:${healthCenter?.summary?.missingCount || 0}`, severity: systemSeverity, source: 'Executive Dashboard' },
   ]
 
-  const recentEvents = [...timeline]
-    .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp))
-    .slice(0, 20)
-
+  const recentEvents = [...timeline].sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp)).slice(0, 20)
   console.info('command_center_navigation_loaded', { workspaceId, generatedAt })
   console.info('command_center_timeline_loaded', { workspaceId, items: timeline.length })
   console.info('command_center_events_loaded', { workspaceId, items: recentEvents.length })
-
   return { version: 'v1.1', generatedAt, timeline, recentEvents }
 }
 
-module.exports = { getOverview, getTimeline, requestAction, getActions }
-
-
-const ALLOWED_ACTION_TYPES = new Set([
-  'strategic_planning_review',
-  'revenue_review',
-  'workforce_review',
-  'coordination_review',
-  'memory_review',
-])
-
-const GOVERNANCE_GUARDRAILS = {
-  humanApprovalRequired: true,
-  noAutonomousExecution: true,
-  noCustomerActions: true,
-  noPricingChanges: true,
-}
-
 async function requestAction({ workspaceId, actionType, reason }) {
-  if (!ALLOWED_ACTION_TYPES.has(actionType)) {
-    const error = new Error('Invalid actionType')
-    error.statusCode = 400
-    throw error
-  }
-
+  if (!ALLOWED_ACTION_TYPES.has(actionType)) { const e = new Error('Invalid actionType'); e.statusCode = 400; throw e }
   const result = await pool.query(
     `INSERT INTO ai_command_center_actions(workspace_id, action_type, reason, status, governance)
      VALUES($1::uuid, $2, $3, 'requested', $4::jsonb)
-     RETURNING id, workspace_id, action_type, reason, status, governance, created_at, updated_at`,
+     RETURNING id, workspace_id, action_type, reason, status, governance, created_at, updated_at, approved_at, rejected_at, reviewed_by, review_note`,
     [workspaceId, actionType, reason || '', JSON.stringify(GOVERNANCE_GUARDRAILS)]
   )
-
+  await createAuditEvent({ workspaceId, actionId: result.rows[0].id, eventType: 'requested', payload: { actionType, reason: reason || '' } })
   console.info('command_center_action_requested', { workspaceId, actionType, status: 'requested' })
   return { action: result.rows[0] }
 }
 
-async function getActions({ workspaceId, limit = 25 }) {
+async function getActions({ workspaceId, limit = 25, status = null }) {
   const safeLimit = Math.min(Math.max(Number(limit) || 25, 1), 100)
+  const where = ['workspace_id = $1::uuid']
+  const args = [workspaceId]
+  if (status) { args.push(status); where.push(`status = $${args.length}`) }
+  args.push(safeLimit)
   const result = await pool.query(
-    `SELECT id, workspace_id, action_type, reason, status, governance, created_at, updated_at
+    `SELECT id, workspace_id, action_type, reason, status, governance, created_at, updated_at, approved_at, rejected_at, reviewed_by, review_note
        FROM ai_command_center_actions
-      WHERE workspace_id = $1::uuid
+      WHERE ${where.join(' AND ')}
       ORDER BY created_at DESC
-      LIMIT $2`,
-    [workspaceId, safeLimit]
+      LIMIT $${args.length}`,
+    args
   )
-
   console.info('command_center_actions_loaded', { workspaceId, count: result.rows.length })
   return { actions: result.rows }
 }
+
+async function reviewAction({ workspaceId, actionId, decision, reviewNote, reviewer }) {
+  const isApprove = decision === 'approve'
+  const status = isApprove ? 'approved' : 'rejected'
+  const timeCol = isApprove ? 'approved_at' : 'rejected_at'
+  const result = await pool.query(
+    `UPDATE ai_command_center_actions
+        SET status = $3,
+            ${timeCol} = now(),
+            reviewed_by = $4,
+            review_note = $5,
+            updated_at = now()
+      WHERE id = $1::uuid AND workspace_id = $2::uuid
+      RETURNING id, workspace_id, action_type, reason, status, governance, created_at, updated_at, approved_at, rejected_at, reviewed_by, review_note`,
+    [actionId, workspaceId, status, reviewer || 'unknown', reviewNote || '']
+  )
+  if (!result.rows.length) { const e = new Error('Action not found'); e.statusCode = 404; throw e }
+  await createAuditEvent({ workspaceId, actionId, eventType: status, payload: { reviewNote: reviewNote || '', reviewer: reviewer || 'unknown' } })
+  console.info(isApprove ? 'command_center_action_approved' : 'command_center_action_rejected', { workspaceId, actionId, status })
+  return { action: result.rows[0] }
+}
+
+async function getActionAudit({ workspaceId, actionId, limit = 50 }) {
+  const safeLimit = Math.min(Math.max(Number(limit) || 50, 1), 200)
+  const verify = await pool.query('SELECT id FROM ai_command_center_actions WHERE id = $1::uuid AND workspace_id = $2::uuid LIMIT 1', [actionId, workspaceId])
+  if (!verify.rows.length) { const e = new Error('Action not found'); e.statusCode = 404; throw e }
+  const result = await pool.query(
+    `SELECT id, workspace_id, action_id, event_type, event_payload, created_at
+       FROM ai_command_center_action_audit_log
+      WHERE workspace_id = $1::uuid AND action_id = $2::uuid
+      ORDER BY created_at DESC
+      LIMIT $3`,
+    [workspaceId, actionId, safeLimit]
+  )
+  console.info('command_center_action_audit_loaded', { workspaceId, actionId, count: result.rows.length })
+  return { audit: result.rows }
+}
+
+module.exports = { getOverview, getTimeline, requestAction, getActions, reviewAction, getActionAudit, buildReviewer }
