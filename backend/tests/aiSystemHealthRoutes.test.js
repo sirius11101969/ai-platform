@@ -59,6 +59,14 @@ async function testMissingTableNo500() {
   })
 }
 
+async function testInternalKeyWorks() {
+  await runWithApp(async () => ({ rows: [{ id: 'x', created_at: new Date().toISOString() }] }), async (base) => {
+    const r = await request(base, { 'x-ai-execution-key': 'health-admin-key', 'x-workspace-id': '11111111-1111-1111-1111-111111111111' })
+    assert.strictEqual(r.status, 200)
+    assert.ok(r.body.summary.readyCount >= 1)
+  })
+}
+
 async function testWorkspaceIsolation() {
   await runWithApp(async () => ({ rows: [{ id: 'x' }] }), async (base) => {
     const r = await request(base, { 'x-ai-execution-key': 'health-admin-key', 'x-workspace-id': 'bad-ws' })
@@ -77,6 +85,7 @@ async function testMissingWorkspaceForAdminKey() {
   await runWithApp(async () => ({ rows: [{ id: 'x' }] }), async (base) => {
     const r = await request(base, { 'x-ai-execution-key': 'health-admin-key' })
     assert.strictEqual(r.status, 400)
+    assert.deepStrictEqual(r.body, { error: 'workspaceId is required for system health' })
   })
 }
 
@@ -95,6 +104,7 @@ async function testDegradedSummary() {
 Promise.resolve()
   .then(testAllReady)
   .then(testMissingTableNo500)
+  .then(testInternalKeyWorks)
   .then(testWorkspaceIsolation)
   .then(testGatewayAuth)
   .then(testMissingWorkspaceForAdminKey)
