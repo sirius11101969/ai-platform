@@ -56,4 +56,37 @@ async function getOverview({ workspaceId }) {
   return response
 }
 
-module.exports = { getOverview }
+async function getTimeline({ workspaceId }) {
+  const [executive, healthCenter] = await Promise.all([
+    getExecutiveOverview({ workspaceId }),
+    getSystemHealth({ workspaceId })
+  ])
+
+  const generatedAt = new Date().toISOString()
+  const systemSeverity = (healthCenter?.summary?.degradedCount || 0) > 0 ? 'warning' : ((healthCenter?.summary?.missingCount || 0) > 0 ? 'warning' : 'info')
+  const openQueue = executive?.approvals?.openQueue || 0
+  const bottlenecks = executive?.cards?.approvalBottlenecks || 0
+  const strategicRisks = executive?.governance?.strategicRisks || []
+  const decisions = executive?.strategy?.latestPlan?.decisions || []
+  const syncConflicts = executive?.coordination?.crossTeamSync?.openConflicts || 0
+
+  const timeline = [
+    { timestamp: generatedAt, event: `Executive dashboard refresh (health score ${executive?.cards?.organizationalHealthScore || 0})`, severity: 'info', source: 'Executive Dashboard' },
+    { timestamp: generatedAt, event: `Approval queue open items: ${openQueue}; bottlenecks: ${bottlenecks}`, severity: openQueue > 0 ? 'warning' : 'info', source: 'Approval Queue' },
+    { timestamp: generatedAt, event: `Strategy risks observed: ${strategicRisks.length}; latest decisions tracked: ${decisions.length}`, severity: strategicRisks.length > 0 ? 'warning' : 'info', source: 'Strategy' },
+    { timestamp: generatedAt, event: `Coordination conflicts: ${syncConflicts}`, severity: syncConflicts > 0 ? 'critical' : 'info', source: 'Coordination' },
+    { timestamp: generatedAt, event: `System health READY:${healthCenter?.summary?.readyCount || 0} DEGRADED:${healthCenter?.summary?.degradedCount || 0} MISSING:${healthCenter?.summary?.missingCount || 0}`, severity: systemSeverity, source: 'Executive Dashboard' },
+  ]
+
+  const recentEvents = [...timeline]
+    .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp))
+    .slice(0, 20)
+
+  console.info('command_center_navigation_loaded', { workspaceId, generatedAt })
+  console.info('command_center_timeline_loaded', { workspaceId, items: timeline.length })
+  console.info('command_center_events_loaded', { workspaceId, items: recentEvents.length })
+
+  return { version: 'v1.1', generatedAt, timeline, recentEvents }
+}
+
+module.exports = { getOverview, getTimeline }

@@ -121,9 +121,16 @@ export default function App() {
           <Route path="/ai-executive-dashboard" element={<ProtectedRoute><AiExecutiveUnifiedDashboardPage /></ProtectedRoute>} />
           <Route path="/ai-company-simulation" element={<ProtectedRoute><AiCompanySimulationPage /></ProtectedRoute>} />
           <Route path="/ai-strategic-planning" element={<ProtectedRoute><AiStrategicPlanningPage /></ProtectedRoute>} />
+          <Route path="/ai/strategic-planning" element={<ProtectedRoute><AiStrategicPlanningPage /></ProtectedRoute>} />
           <Route path="/ai-enterprise-coordination" element={<ProtectedRoute><AiEnterpriseCoordinationPage /></ProtectedRoute>} />
+          <Route path="/ai/enterprise-coordination" element={<ProtectedRoute><AiEnterpriseCoordinationPage /></ProtectedRoute>} />
           <Route path="/ai-organizational-memory" element={<ProtectedRoute><AiOrganizationalMemoryPage /></ProtectedRoute>} />
+          <Route path="/ai/organizational-memory" element={<ProtectedRoute><AiOrganizationalMemoryPage /></ProtectedRoute>} />
           <Route path="/ai-system-health-center" element={<ProtectedRoute><AiSystemHealthCenterPage /></ProtectedRoute>} />
+          <Route path="/ai/system-health" element={<ProtectedRoute><AiSystemHealthCenterPage /></ProtectedRoute>} />
+          <Route path="/ai/revenue-engine" element={<ProtectedRoute><AiRevenueEnginePage /></ProtectedRoute>} />
+          <Route path="/ai/workforce" element={<ProtectedRoute><AiWorkforceCenterPage /></ProtectedRoute>} />
+          <Route path="/ai/approval-center" element={<ProtectedRoute><AiApprovalCenterPage /></ProtectedRoute>} />
           <Route path="/ai-enterprise-command-center" element={<ProtectedRoute><AIEnterpriseCommandCenter /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
