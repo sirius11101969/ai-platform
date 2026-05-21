@@ -73,6 +73,13 @@ async function testGatewayAuth() {
   })
 }
 
+async function testMissingWorkspaceForAdminKey() {
+  await runWithApp(async () => ({ rows: [{ id: 'x' }] }), async (base) => {
+    const r = await request(base, { 'x-ai-execution-key': 'health-admin-key' })
+    assert.strictEqual(r.status, 400)
+  })
+}
+
 async function testDegradedSummary() {
   await runWithApp(async (sql) => {
     if (sql.includes('ai_enterprise_coordination_runs')) throw new Error('temporary timeout')
@@ -90,6 +97,7 @@ Promise.resolve()
   .then(testMissingTableNo500)
   .then(testWorkspaceIsolation)
   .then(testGatewayAuth)
+  .then(testMissingWorkspaceForAdminKey)
   .then(testDegradedSummary)
   .then(() => console.log('aiSystemHealthRoutes.test.js passed'))
   .catch((e) => { console.error(e); process.exit(1) })
