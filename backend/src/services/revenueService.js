@@ -154,7 +154,7 @@ async function completePayment({ workspaceId, orderId }) {
   const client = await pool.connect()
   try {
     await client.query('BEGIN')
-    const lookup = await client.query(`SELECT * FROM revenue_orders WHERE workspace_id = $1::uuid AND id = $2::text LIMIT 1`, [workspaceId, orderId])
+    const lookup = await client.query(`SELECT * FROM revenue_orders WHERE workspace_id = $1::uuid AND id = $2::uuid LIMIT 1`, [workspaceId, orderId])
     const order = lookup.rows[0]
     if (!order) throw Object.assign(new Error('order not found'), { statusCode: 404 })
 
@@ -166,7 +166,7 @@ async function completePayment({ workspaceId, orderId }) {
 
     const creditsIssued = Number(order.credits || 0) || PLAN_DEFAULT_CREDITS[String(order.plan || '').toLowerCase()] || PLAN_DEFAULT_CREDITS.starter
 
-    await client.query(`UPDATE revenue_orders SET status = 'paid', credits = $1::int, updated_at = NOW() WHERE workspace_id = $2::uuid AND id = $3::text`, [creditsIssued, workspaceId, orderId])
+    await client.query(`UPDATE revenue_orders SET status = 'paid', credits = $1::int, updated_at = NOW() WHERE workspace_id = $2::uuid AND id = $3::uuid`, [creditsIssued, workspaceId, orderId])
     await trackEvent({ workspaceId, eventType: 'payment_completed', payload: { orderId, amount: Number(order.amount || 0), currency: order.currency, plan: order.plan } }, client)
     console.info('payment_completed_created', { workspaceId, orderId })
 
