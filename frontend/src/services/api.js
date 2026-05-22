@@ -869,6 +869,9 @@ export function fetchAiCommandCenterTimeline(){return request('/ai/command-cente
 export function fetchAiCommandCenterBrief(){return request('/ai/command-center/brief')}
 export function fetchAiCommandCenterOperations(){return request('/ai/command-center/operations')}
 export function fetchAiCommandCenterFocus(){return request('/ai/command-center/focus')}
+export function fetchAiCommandCenterDailyReport(){return request('/ai/command-center/report/daily')}
+export function fetchAiCommandCenterWeeklyReport(){return request('/ai/command-center/report/weekly')}
+export function fetchAiCommandCenterKpi(){return request('/ai/command-center/kpi')}
 
 export function fetchAiCommandCenterActions(){return request('/ai/command-center/actions')}
 export function fetchAiCommandCenterInbox(){return request('/ai/command-center/inbox')}
