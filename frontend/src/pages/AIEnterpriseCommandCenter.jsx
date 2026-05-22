@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react'
 import { PageHeading, Panel } from '../components/AppShell'
-import { fetchAiCommandCenterBrief, fetchAiCommandCenterDailyReport, fetchAiCommandCenterFocus, fetchAiCommandCenterKpi, fetchAiCommandCenterOperations, fetchAiCommandCenterPlanning, fetchAiCommandCenterPlanningMonthly, fetchAiCommandCenterPlanningWeekly, fetchAiCommandCenterWeeklyReport } from '../services/api'
+import { fetchAiCommandCenterBrief, fetchAiCommandCenterDailyReport, fetchAiCommandCenterFocus, fetchAiCommandCenterKpi, fetchAiCommandCenterOperations, fetchAiCommandCenterPlanning, fetchAiCommandCenterPlanningMonthly, fetchAiCommandCenterPlanningWeekly, fetchAiCommandCenterReadiness, fetchAiCommandCenterReview, fetchAiCommandCenterStability, fetchAiCommandCenterWeeklyReport } from '../services/api'
 
 export default function AIEnterpriseCommandCenter() {
   const [hub, setHub] = useState(null)
   const [planning, setPlanning] = useState(null)
+  const [review, setReview] = useState(null)
+  const [stability, setStability] = useState(null)
+  const [readiness, setReadiness] = useState(null)
   const [error, setError] = useState('')
   const [checklist, setChecklist] = useState({})
 
   useEffect(() => {
-    Promise.all([fetchAiCommandCenterBrief(), fetchAiCommandCenterOperations(), fetchAiCommandCenterFocus(), fetchAiCommandCenterDailyReport(), fetchAiCommandCenterWeeklyReport(), fetchAiCommandCenterKpi(), fetchAiCommandCenterPlanning(), fetchAiCommandCenterPlanningWeekly(), fetchAiCommandCenterPlanningMonthly()])
-      .then(([brief, operations, focus, dailyReport, weeklyReport, kpi, planningAll, planningWeekly, planningMonthly]) => {
+    Promise.all([fetchAiCommandCenterBrief(), fetchAiCommandCenterOperations(), fetchAiCommandCenterFocus(), fetchAiCommandCenterDailyReport(), fetchAiCommandCenterWeeklyReport(), fetchAiCommandCenterKpi(), fetchAiCommandCenterPlanning(), fetchAiCommandCenterPlanningWeekly(), fetchAiCommandCenterPlanningMonthly(), fetchAiCommandCenterReview(), fetchAiCommandCenterStability(), fetchAiCommandCenterReadiness()])
+      .then(([brief, operations, focus, dailyReport, weeklyReport, kpi, planningAll, planningWeekly, planningMonthly, reviewPayload, stabilityPayload, readinessPayload]) => {
         const merged = {
           generatedAt: brief.generatedAt || operations.generatedAt || focus.generatedAt,
           executiveBrief: brief.executiveBrief || {},
@@ -26,6 +29,9 @@ export default function AIEnterpriseCommandCenter() {
         ;(merged.checklist || []).forEach((item) => { initialChecklist[item.id] = Boolean(item.completed) })
         setChecklist(initialChecklist)
         setPlanning({ all: planningAll, weekly: planningWeekly, monthly: planningMonthly })
+        setReview(reviewPayload)
+        setStability(stabilityPayload)
+        setReadiness(readinessPayload)
       })
       .catch((e) => setError(e.message || 'Failed to load command center'))
   }, [])
@@ -109,6 +115,37 @@ export default function AIEnterpriseCommandCenter() {
       <Panel>
         <h3>Planning Recommendations</h3>
         {(planning?.all?.recommendations || []).map((line, idx) => <p key={`planning-rec-${idx}`}>{line}</p>)}
+      </Panel>
+
+
+      <section className='stats-grid'>
+        <Panel><h3>Review Dashboard</h3><p>Total Open Decisions: {review?.review?.totalOpenDecisions || 0}</p></Panel>
+        <Panel><h3>Review Dashboard</h3><p>Approved Today: {review?.review?.approvedToday || 0}</p></Panel>
+        <Panel><h3>Review Dashboard</h3><p>Rejected Today: {review?.review?.rejectedToday || 0}</p></Panel>
+        <Panel><h3>Review Dashboard</h3><p>Unresolved Followups: {review?.review?.unresolvedFollowups || 0}</p></Panel>
+      </section>
+
+      <section className='stats-grid'>
+        <Panel><h3>Stability Monitor</h3><p>Duplicated Recommendations: {stability?.stability?.duplicatedRecommendations || 0}</p></Panel>
+        <Panel><h3>Stability Monitor</h3><p>Empty Reports: {stability?.stability?.emptyReports || 0}</p></Panel>
+        <Panel><h3>Stability Monitor</h3><p>Stale Approvals (&gt;24h): {stability?.stability?.staleApprovals || 0}</p></Panel>
+        <Panel><h3>Stability Monitor</h3><p>Orphan Planning Entries: {stability?.stability?.orphanPlanningEntries || 0}</p></Panel>
+      </section>
+
+      <Panel>
+        <h3>Governance Health</h3>
+        <p>Governance Score: {readiness?.governance?.governanceScore || 0}</p>
+        <p>Approval SLA: {readiness?.governance?.approvalSla || '0%'}</p>
+        <p>Review Coverage: {readiness?.governance?.reviewCoverage || '0%'}</p>
+      </Panel>
+
+      <Panel>
+        <h3>Release Readiness</h3>
+        <p>{readiness?.readiness?.healthOk ? '☑' : '☐'} Health OK</p>
+        <p>{readiness?.readiness?.reportsOk ? '☑' : '☐'} Reports OK</p>
+        <p>{readiness?.readiness?.planningOk ? '☑' : '☐'} Planning OK</p>
+        <p>{readiness?.readiness?.approvalQueueOk ? '☑' : '☐'} Approval Queue OK</p>
+        <p>{readiness?.readiness?.governanceOk ? '☑' : '☐'} Governance OK</p>
       </Panel>
 
       <Panel>

@@ -38,6 +38,9 @@ async function runWithApp(fn) {
       getPlanning: async (args) => { calls.push({ ...args, reportType: 'planning' }); return { planningHorizon: 'weekly_monthly' } },
       getPlanningWeekly: async (args) => { calls.push({ ...args, reportType: 'planning_weekly' }); return { planningHorizon: 'weekly' } },
       getPlanningMonthly: async (args) => { calls.push({ ...args, reportType: 'planning_monthly' }); return { planningHorizon: 'monthly' } },
+      getReview: async (args) => { calls.push({ ...args, reportType: 'review' }); return { review: { totalOpenDecisions: 1 } } },
+      getStability: async (args) => { calls.push({ ...args, reportType: 'stability' }); return { stability: { staleApprovals: 0 } } },
+      getReadiness: async (args) => { calls.push({ ...args, reportType: 'readiness' }); return { readiness: { governanceOk: true } } },
     }),
   ]
 
@@ -74,6 +77,18 @@ Promise.resolve().then(async () => {
     const planningMonthly = await request(baseUrl, '/api/ai/command-center/planning/monthly', headers)
     assert.strictEqual(planningMonthly.status, 200)
     assert.strictEqual(planningMonthly.body.planningHorizon, 'monthly')
+
+    const review = await request(baseUrl, '/api/ai/command-center/review', headers)
+    assert.strictEqual(review.status, 200)
+    assert.strictEqual(review.body.review.totalOpenDecisions, 1)
+
+    const stability = await request(baseUrl, '/api/ai/command-center/stability', headers)
+    assert.strictEqual(stability.status, 200)
+    assert.strictEqual(stability.body.stability.staleApprovals, 0)
+
+    const readiness = await request(baseUrl, '/api/ai/command-center/readiness', headers)
+    assert.strictEqual(readiness.status, 200)
+    assert.strictEqual(readiness.body.readiness.governanceOk, true)
 
     assert.strictEqual(calls[0].workspaceId, 'ws-1')
     assert.strictEqual(calls[1].workspaceId, 'ws-1')

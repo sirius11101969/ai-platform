@@ -425,4 +425,92 @@ async function getPlanningMonthly({ workspaceId }) {
   return { ...payload, planningHorizon: 'monthly' }
 }
 
-module.exports = { getOverview, getTimeline, getBrief, getOperations, getFocus, getReport, getKpi, getPlanning, getPlanningWeekly, getPlanningMonthly, requestAction, getActions, reviewAction, getActionAudit, buildReviewer }
+
+function countDuplicates(values = []) {
+  const map = new Map()
+  values.forEach((value) => {
+    const normalized = String(value || '').trim().toLowerCase()
+    if (!normalized) return
+    map.set(normalized, (map.get(normalized) || 0) + 1)
+  })
+  let duplicated = 0
+  for (const count of map.values()) if (count > 1) duplicated += (count - 1)
+  return duplicated
+}
+
+function hasEmptySections(payload = {}) {
+  const keys = ['weeklyPriorities', 'monthlyObjectives', 'kpiReviewPlan', 'decisionFollowups', 'recommendations']
+  return keys.some((key) => Array.isArray(payload[key]) && payload[key].length === 0)
+}
+
+async function getReview({ workspaceId }) {
+  const generatedAt = new Date().toISOString()
+  const [actions, planning] = await Promise.all([
+    getActions({ workspaceId, limit: 200 }),
+    getPlanning({ workspaceId }),
+  ])
+  const rows = actions?.actions || []
+  const now = Date.now()
+  const isToday = (iso) => {
+    if (!iso) return false
+    const d = new Date(iso)
+    const n = new Date(now)
+    return d.getUTCFullYear() === n.getUTCFullYear() && d.getUTCMonth() === n.getUTCMonth() && d.getUTCDate() === n.getUTCDate()
+  }
+  const review = {
+    totalOpenDecisions: rows.filter((a) => a.status === 'requested').length,
+    approvedToday: rows.filter((a) => a.status === 'approved' && isToday(a.approved_at || a.updated_at)).length,
+    rejectedToday: rows.filter((a) => a.status === 'rejected' && isToday(a.rejected_at || a.updated_at)).length,
+    unresolvedFollowups: (planning?.decisionFollowups || []).filter((f) => f.status !== 'approved' && f.status !== 'rejected').length,
+  }
+  console.info('command_center_review_loaded', { workspaceId, generatedAt, open: review.totalOpenDecisions })
+  return { generatedAt, review, governance: GOVERNANCE_GUARDRAILS }
+}
+
+async function getStability({ workspaceId }) {
+  const generatedAt = new Date().toISOString()
+  const [dailyReport, weeklyReport, planning, actions] = await Promise.all([
+    getReport({ workspaceId, reportType: 'daily' }),
+    getReport({ workspaceId, reportType: 'weekly' }),
+    getPlanning({ workspaceId }),
+    getActions({ workspaceId, limit: 200 }),
+  ])
+  const now = Date.now()
+  const rows = actions?.actions || []
+  const duplicatedRecommendations = countDuplicates([...(dailyReport?.recommendedNextActions || []), ...(weeklyReport?.recommendedNextActions || []), ...(planning?.recommendations || [])])
+  const emptyReports = [dailyReport, weeklyReport].filter((report) => !report?.summary || (report?.decisions || []).length === 0).length
+  const staleApprovals = rows.filter((a) => a.status === 'requested' && (now - Date.parse(a.created_at || generatedAt)) > 24*60*60*1000).length
+  const orphanPlanningEntries = (planning?.decisionFollowups || []).filter((f) => !rows.find((a) => a.id === f.actionId)).length
+  const emptySections = hasEmptySections(planning) ? 1 : 0
+  const stability = { duplicatedRecommendations, emptyReports, staleApprovals, orphanPlanningEntries, emptySections }
+  console.info('command_center_stability_loaded', { workspaceId, generatedAt, stability })
+  return { generatedAt, stability, governance: GOVERNANCE_GUARDRAILS }
+}
+
+async function getReadiness({ workspaceId }) {
+  const generatedAt = new Date().toISOString()
+  const [healthCenter, dailyReport, planning, reviewData, stabilityData, kpi] = await Promise.all([
+    getSystemHealth({ workspaceId }),
+    getReport({ workspaceId, reportType: 'daily' }),
+    getPlanning({ workspaceId }),
+    getReview({ workspaceId }),
+    getStability({ workspaceId }),
+    getKpi({ workspaceId }),
+  ])
+  const readiness = {
+    healthOk: (healthCenter?.summary?.degradedCount || 0) === 0 && (healthCenter?.summary?.missingCount || 0) === 0,
+    reportsOk: Boolean(dailyReport?.summary),
+    planningOk: !hasEmptySections(planning),
+    approvalQueueOk: (reviewData?.review?.totalOpenDecisions || 0) === 0 || (stabilityData?.stability?.staleApprovals || 0) === 0,
+    governanceOk: Boolean(kpi?.kpis?.organizationalHealthScore || 0) >= 70,
+  }
+  const governance = {
+    governanceScore: Number(kpi?.kpis?.organizationalHealthScore || 0),
+    approvalSla: `${Math.max(0, 100 - ((stabilityData?.stability?.staleApprovals || 0) * 10))}%`,
+    reviewCoverage: `${Math.max(0, 100 - ((reviewData?.review?.unresolvedFollowups || 0) * 5))}%`,
+  }
+  console.info('command_center_readiness_loaded', { workspaceId, generatedAt, readiness })
+  return { generatedAt, review: reviewData.review, stability: stabilityData.stability, readiness, governance }
+}
+
+module.exports = { getOverview, getTimeline, getBrief, getOperations, getFocus, getReport, getKpi, getPlanning, getPlanningWeekly, getPlanningMonthly, getReview, getStability, getReadiness, requestAction, getActions, reviewAction, getActionAudit, buildReviewer }
