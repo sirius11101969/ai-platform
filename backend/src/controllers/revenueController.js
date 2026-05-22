@@ -36,4 +36,29 @@ async function startCheckout(req, res, next) {
   } catch (e) { next(e) }
 }
 
-module.exports = { overview, funnel, activate, startCheckout }
+
+
+
+async function createPaymentPending(req, res, next) {
+  try {
+    const { workspaceId, checkoutId, plan } = req.body || {}
+    if (!checkoutId) return res.status(400).json({ error: 'checkoutId is required' })
+    const result = await revenueService.createPendingOrder({ workspaceId: workspaceId || req.workspace.id, checkoutId, plan })
+    res.status(200).json({
+      orderId: result.order.id,
+      status: 'payment_pending',
+      paymentUrl: `/dashboard/revenue?order=pending&checkout=${encodeURIComponent(checkoutId)}` ,
+      createdAt: result.order.created_at,
+      deduped: result.deduped,
+    })
+  } catch (e) { next(e) }
+}
+
+async function pendingOrders(req, res, next) {
+  try {
+    const orders = await revenueService.getPendingOrders({ workspaceId: req.workspace.id })
+    res.json({ orders })
+  } catch (e) { next(e) }
+}
+
+module.exports = { overview, funnel, activate, startCheckout, createPaymentPending, pendingOrders }

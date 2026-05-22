@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { PageHeading, Panel, StatCard } from '../components/AppShell'
-import { fetchRevenueOverview, fetchRevenueFunnel, fetchWorkspaces, getActiveWorkspaceId } from '../services/api'
+import { fetchRevenueOverview, fetchRevenueFunnel, fetchPendingRevenueOrders, fetchWorkspaces, getActiveWorkspaceId } from '../services/api'
 
 const SAFETY = ['Human Approval Required', 'No Autonomous Execution', 'No Customer Actions', 'No Pricing Changes']
 
@@ -8,6 +8,7 @@ export default function RevenueDashboardPage() {
   const [overview, setOverview] = useState({})
   const [funnel, setFunnel] = useState([])
   const [workspaceId, setWorkspaceId] = useState(() => getActiveWorkspaceId())
+  const [pendingOrders, setPendingOrders] = useState([])
   const [workspaces, setWorkspaces] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -26,12 +27,14 @@ export default function RevenueDashboardPage() {
     Promise.all([
       fetchRevenueOverview(workspaceId),
       fetchRevenueFunnel(workspaceId),
+      fetchPendingRevenueOrders(workspaceId),
       fetchWorkspaces(),
     ])
-      .then(([o, f, w]) => {
+      .then(([o, f, po, w]) => {
         if (!active) return
         setOverview(o?.overview || o?.data?.overview || {})
         setFunnel(f?.funnel || f?.data?.funnel || [])
+        setPendingOrders(po?.orders || [])
         setWorkspaces(w.workspaces || [])
       })
       .catch((e) => {
@@ -70,6 +73,10 @@ export default function RevenueDashboardPage() {
         <h3>Revenue Funnel</h3>
         <p><strong>Revenue source:</strong> live API</p>
         {funnel.length === 0 ? <p>No funnel events yet for this workspace.</p> : funnel.map((item) => <p key={item.stage}><strong>{item.stage}</strong>: {item.total ?? 0}</p>)}
+      </Panel>
+      <Panel>
+        <h3>Pending Orders</h3>
+        {pendingOrders.length === 0 ? <p>No pending orders.</p> : pendingOrders.map((order) => <p key={order.id}><strong>{order.id}</strong> · {order.plan} · {order.status} · {order.created_at}</p>)}
       </Panel>
     </>}
 
