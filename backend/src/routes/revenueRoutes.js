@@ -1,11 +1,20 @@
 const express = require('express')
-const { requireAuth } = require('../middleware/authMiddleware')
-const { requireWorkspace } = require('../middleware/workspaceMiddleware')
+const { requireAiControlGateway } = require('../middleware/aiControlGateway')
 const controller = require('../controllers/revenueController')
 
 const router = express.Router()
-router.get('/revenue/overview', requireAuth, requireWorkspace, controller.overview)
-router.get('/revenue/funnel', requireAuth, requireWorkspace, controller.funnel)
-router.post('/revenue/activate', requireAuth, requireWorkspace, controller.activate)
+router.use(requireAiControlGateway({ missingWorkspaceError: 'workspaceId is required for revenue routes' }))
+router.use((req, _res, next) => {
+  console.info('revenue_gateway_auth_success', {
+    method: req.method,
+    path: req.originalUrl || req.url,
+    workspaceId: req.workspace?.id || req.aiControl?.workspaceId || null,
+    authMode: req.aiControl?.authMode || null,
+  })
+  next()
+})
+router.get('/revenue/overview', controller.overview)
+router.get('/revenue/funnel', controller.funnel)
+router.post('/revenue/activate', controller.activate)
 
 module.exports = router
