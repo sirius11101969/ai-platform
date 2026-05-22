@@ -898,3 +898,8 @@ export function fetchRevenueFunnel(workspaceId = getActiveWorkspaceId()) {
 }
 export function activateRevenuePayment(payload) { return request('/revenue/activate', { method: 'POST', body: JSON.stringify(payload || {}) }) }
 export function startRevenueCheckout(payload) { return request('/revenue/checkout/start', { method: 'POST', body: JSON.stringify(payload || {}) }) }
+export function createPaymentPending(payload) { return request('/revenue/payment/pending', { method: 'POST', body: JSON.stringify(payload || {}) }) }
+export function fetchPendingRevenueOrders(workspaceId = getActiveWorkspaceId()) {
+  const query = workspaceId ? `?workspaceId=${encodeURIComponent(workspaceId)}` : ''
+  return request(`/revenue/orders/pending${query}`, { workspaceId })
+}

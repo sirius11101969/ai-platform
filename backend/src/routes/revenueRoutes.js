@@ -17,5 +17,7 @@ router.get('/revenue/overview', controller.overview)
 router.get('/revenue/funnel', controller.funnel)
 router.post('/revenue/activate', controller.activate)
 router.post('/revenue/checkout/start', controller.startCheckout)
+router.post('/revenue/payment/pending', controller.createPaymentPending)
+router.get('/revenue/orders/pending', controller.pendingOrders)
 
 module.exports = router

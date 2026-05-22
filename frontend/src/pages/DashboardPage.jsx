@@ -167,8 +167,10 @@ export default function DashboardPage() {
         business: { amount: 24900, currency: "RUB" },
       }[plan] || { amount: 0, currency: "RUB" };
       const response = await startRevenueCheckout({ plan, ...planConfig });
-      setCheckoutStatus(response);
-      setMessage(`Checkout запущен: ${plan}. Статус: ${response.status}.`);
+      const pending = await createPaymentPending({ checkoutId: response.checkoutId, plan });
+      setCheckoutStatus({ ...response, orderId: pending.orderId, orderStatus: pending.status });
+      setMessage(`Checkout запущен: ${plan}. Статус: ${pending.status}.`);
+      navigate('/dashboard/revenue?order=pending');
       await loadDashboard({ silent: true });
     } catch (requestError) {
       setError(requestError.message || "Не удалось запустить checkout");

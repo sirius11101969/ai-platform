@@ -93,10 +93,73 @@ async function startCheckout({ workspaceId, plan = 'starter', amount = 0, curren
   })
 
   return {
+    checkoutId,
     checkoutUrl: `/dashboard?checkout=${encodeURIComponent(checkoutId)}`,
     status: 'payment_pending',
     plan: normalizedPlan,
   }
 }
 
-module.exports = { getOverview, getFunnel, activatePayment, startCheckout, trackEvent }
+
+
+
+async function createPendingOrder({ workspaceId, checkoutId, plan = 'starter' }) {
+  if (!checkoutId) throw Object.assign(new Error('checkoutId is required'), { statusCode: 400 })
+
+  const client = await pool.connect()
+  try {
+    await client.query('BEGIN')
+    const existing = await client.query(`SELECT * FROM revenue_orders WHERE workspace_id = $1::uuid AND checkout_id = $2::text AND status = 'payment_pending' LIMIT 1`, [workspaceId, checkoutId])
+    if (existing.rows[0]) {
+      await client.query('COMMIT')
+      return { order: existing.rows[0], deduped: true }
+    }
+
+    const checkoutEvent = await client.query(`
+      SELECT payload
+      FROM revenue_events
+      WHERE workspace_id = $1::uuid
+        AND event_type = 'checkout_started'
+        AND payload->>'checkoutId' = $2
+      ORDER BY created_at DESC
+      LIMIT 1
+    `, [workspaceId, checkoutId])
+
+    const payload = checkoutEvent.rows[0]?.payload || {}
+    const amount = Number(payload.amount || 0)
+    const currency = String(payload.currency || 'RUB').toUpperCase()
+    const credits = Number(payload.credits || 0)
+    const provider = String(payload.provider || 'internal')
+
+    const created = await client.query(`
+      INSERT INTO revenue_orders(workspace_id, checkout_id, plan, amount, currency, status, credits, provider)
+      VALUES($1::uuid, $2::text, $3::text, $4::numeric, $5::text, 'payment_pending', $6::int, $7::text)
+      RETURNING *
+    `, [workspaceId, checkoutId, plan, amount, currency, credits, provider])
+
+    console.info('revenue_order_created', { workspaceId, checkoutId, orderId: created.rows[0].id, status: 'payment_pending' })
+    await trackEvent({ workspaceId, eventType: 'payment_pending', payload: { checkoutId, orderId: created.rows[0].id, plan, status: 'payment_pending' } }, client)
+    console.info('payment_pending_created', { workspaceId, checkoutId, orderId: created.rows[0].id })
+
+    await client.query('COMMIT')
+    return { order: created.rows[0], deduped: false }
+  } catch (error) {
+    await client.query('ROLLBACK')
+    throw error
+  } finally {
+    client.release()
+  }
+}
+
+async function getPendingOrders({ workspaceId, limit = 25 }) {
+  const result = await pool.query(`
+    SELECT id, plan, status, created_at
+    FROM revenue_orders
+    WHERE workspace_id = $1::uuid AND status = 'payment_pending'
+    ORDER BY created_at DESC
+    LIMIT $2::int
+  `, [workspaceId, Math.max(1, Number(limit || 25))])
+  return result.rows
+}
+
+module.exports = { getOverview, getFunnel, activatePayment, startCheckout, trackEvent, createPendingOrder, getPendingOrders }

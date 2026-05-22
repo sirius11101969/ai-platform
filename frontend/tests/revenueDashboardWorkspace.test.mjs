@@ -20,7 +20,8 @@ const calls = []
 global.fetch = async (url) => {
   calls.push(String(url))
   if (String(url).includes('/revenue/overview')) return { ok: true, json: async () => ({ overview: {} }) }
-  if (String(url).includes('/revenue/funnel')) return { ok: true, json: async () => ({ funnel: [{ stage: 'checkout_started', total: 1 }] }) }
+  if (String(url).includes('/revenue/funnel')) return { ok: true, json: async () => ({ funnel: [{ stage: 'checkout_started', total: 1 }, { stage: 'payment_pending', total: 2 }] }) }
+  if (String(url).includes('/revenue/orders/pending')) return { ok: true, json: async () => ({ orders: [{ id: 'order-1', plan: 'starter', status: 'payment_pending', created_at: '2026-05-22T00:00:00.000Z' }] }) }
   if (String(url).includes('/workspaces')) return { ok: true, json: async () => ({ workspaces: [{ id: 'ws-selected', name: 'Workspace A' }] }) }
   return { ok: true, json: async () => ({}) }
 }
@@ -47,3 +48,5 @@ await api.fetchRevenueFunnel('ws-isolated')
 assert.equal(calls.some((url) => url.includes('workspaceId=ws-isolated')), true, 'workspace isolation preserved via explicit workspace-scoped calls')
 
 console.log('revenue dashboard workspace tests passed')
+
+assert.equal(dashboardSource.includes('Pending Orders'), true, 'dashboard renders Pending Orders section')
