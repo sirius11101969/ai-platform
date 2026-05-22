@@ -28,7 +28,7 @@ const aiSequenceRoutes = require('./routes/aiSequenceRoutes')
 const aiRevenueIntelligenceRoutes = require('./routes/aiRevenueIntelligenceRoutes')
 const aiRevenueEngineRoutes = require('./routes/aiRevenueEngineRoutes')
 const revenueRoutes = require('./routes/revenueRoutes')
-const paymentRoutes = require('./routes/paymentRoutes')
+const { publicPaymentRoutes, paymentRoutes } = require('./routes/paymentRoutes')
 const aiExecutiveBrainRoutes = require('./routes/aiExecutiveBrainRoutes')
 const aiCompanySimulationRoutes = require('./routes/aiCompanySimulationRoutes')
 const aiStrategicPlanningRoutes = require('./routes/aiStrategicPlanningRoutes')
@@ -66,6 +66,9 @@ const healthHandler = (_, res) => {
 
 app.get('/health', healthHandler)
 app.get('/api/health', healthHandler)
+
+app.use('/api', publicPaymentRoutes)
+console.info('payment_webhook_route_registered_early', { basePath: '/api/payments/webhook' })
 
 app.use('/api', aiCopySanitizerResponseMiddleware)
 
