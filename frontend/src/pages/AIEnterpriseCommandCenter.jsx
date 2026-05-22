@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { PageHeading, Panel } from '../components/AppShell'
-import { fetchAiCommandCenterBrief, fetchAiCommandCenterDailyReport, fetchAiCommandCenterFocus, fetchAiCommandCenterKpi, fetchAiCommandCenterOperations, fetchAiCommandCenterPlanning, fetchAiCommandCenterPlanningMonthly, fetchAiCommandCenterPlanningWeekly, fetchAiCommandCenterReadiness, fetchAiCommandCenterReview, fetchAiCommandCenterStability, fetchAiCommandCenterWeeklyReport } from '../services/api'
+import { fetchAiCommandCenterBrief, fetchAiCommandCenterDailyReport, fetchAiCommandCenterFocus, fetchAiCommandCenterKpi, fetchAiCommandCenterOperations, fetchAiCommandCenterPlanning, fetchAiCommandCenterPlanningMonthly, fetchAiCommandCenterPlanningWeekly, fetchAiCommandCenterQuality, fetchAiCommandCenterReadiness, fetchAiCommandCenterReview, fetchAiCommandCenterStability, fetchAiCommandCenterWeeklyReport } from '../services/api'
 
 export default function AIEnterpriseCommandCenter() {
   const [hub, setHub] = useState(null)
@@ -8,12 +8,13 @@ export default function AIEnterpriseCommandCenter() {
   const [review, setReview] = useState(null)
   const [stability, setStability] = useState(null)
   const [readiness, setReadiness] = useState(null)
+  const [quality, setQuality] = useState(null)
   const [error, setError] = useState('')
   const [checklist, setChecklist] = useState({})
 
   useEffect(() => {
-    Promise.all([fetchAiCommandCenterBrief(), fetchAiCommandCenterOperations(), fetchAiCommandCenterFocus(), fetchAiCommandCenterDailyReport(), fetchAiCommandCenterWeeklyReport(), fetchAiCommandCenterKpi(), fetchAiCommandCenterPlanning(), fetchAiCommandCenterPlanningWeekly(), fetchAiCommandCenterPlanningMonthly(), fetchAiCommandCenterReview(), fetchAiCommandCenterStability(), fetchAiCommandCenterReadiness()])
-      .then(([brief, operations, focus, dailyReport, weeklyReport, kpi, planningAll, planningWeekly, planningMonthly, reviewPayload, stabilityPayload, readinessPayload]) => {
+    Promise.all([fetchAiCommandCenterBrief(), fetchAiCommandCenterOperations(), fetchAiCommandCenterFocus(), fetchAiCommandCenterDailyReport(), fetchAiCommandCenterWeeklyReport(), fetchAiCommandCenterKpi(), fetchAiCommandCenterPlanning(), fetchAiCommandCenterPlanningWeekly(), fetchAiCommandCenterPlanningMonthly(), fetchAiCommandCenterReview(), fetchAiCommandCenterStability(), fetchAiCommandCenterReadiness(), fetchAiCommandCenterQuality()])
+      .then(([brief, operations, focus, dailyReport, weeklyReport, kpi, planningAll, planningWeekly, planningMonthly, reviewPayload, stabilityPayload, readinessPayload, qualityPayload]) => {
         const merged = {
           generatedAt: brief.generatedAt || operations.generatedAt || focus.generatedAt,
           executiveBrief: brief.executiveBrief || {},
@@ -32,6 +33,7 @@ export default function AIEnterpriseCommandCenter() {
         setReview(reviewPayload)
         setStability(stabilityPayload)
         setReadiness(readinessPayload)
+        setQuality(qualityPayload)
       })
       .catch((e) => setError(e.message || 'Failed to load command center'))
   }, [])
@@ -39,7 +41,7 @@ export default function AIEnterpriseCommandCenter() {
   const decisionRows = (hub?.focusQueue || []).map((item) => ({ title: item.title, state: item.state || 'requested', source: item.source || 'coordination', priority: item.priority || 'medium' }))
 
   return <main className='workspace-content'>
-    <PageHeading eyebrow='AI Enterprise OS v1.2' title='AI Enterprise Command Center' copy='Executive Operations Hub for governance-only recommendations. Human Approval Required · No Autonomous Execution · No Customer Actions · No Pricing Changes.' />
+    <PageHeading eyebrow='AI Enterprise OS v1.3' title='AI Enterprise Command Center' copy='Executive Operations Hub for governance-only recommendations. Human Approval Required · No Autonomous Execution · No Customer Actions · No Pricing Changes.' />
     {error ? <Panel><p>{error}</p></Panel> : null}
     {hub ? <>
       <Panel>
@@ -131,6 +133,12 @@ export default function AIEnterpriseCommandCenter() {
         <Panel><h3>Stability Monitor</h3><p>Stale Approvals (&gt;24h): {stability?.stability?.staleApprovals || 0}</p></Panel>
         <Panel><h3>Stability Monitor</h3><p>Orphan Planning Entries: {stability?.stability?.orphanPlanningEntries || 0}</p></Panel>
       </section>
+
+      <Panel><h3>Quality Badge</h3><p>Quality: duplicates {quality?.quality?.duplicatedRecommendations || 0} · empty reports {quality?.quality?.emptyReports || 0}</p></Panel>
+
+      <Panel><h3>Governance Badge</h3><p>Governance: {quality?.governance?.governanceScore || readiness?.governance?.governanceScore || 0} ({quality?.governance?.governanceStatus || readiness?.governance?.governanceStatus || 'degraded'})</p></Panel>
+
+      <Panel><h3>Readiness Badge</h3><p>Readiness: {quality?.readiness?.governanceOk ? 'ready' : 'not ready'}</p></Panel>
 
       <Panel>
         <h3>Governance Health</h3>

@@ -41,6 +41,7 @@ async function runWithApp(fn) {
       getReview: async (args) => { calls.push({ ...args, reportType: 'review' }); return { review: { totalOpenDecisions: 1 } } },
       getStability: async (args) => { calls.push({ ...args, reportType: 'stability' }); return { stability: { staleApprovals: 0 } } },
       getReadiness: async (args) => { calls.push({ ...args, reportType: 'readiness' }); return { readiness: { governanceOk: true } } },
+      getQuality: async (args) => { calls.push({ ...args, reportType: 'quality' }); return { quality: { duplicatedRecommendations: 0, emptyReports: 0 }, governance: { governanceScore: 84 }, readiness: { governanceOk: true } } },
     }),
   ]
 
@@ -89,6 +90,10 @@ Promise.resolve().then(async () => {
     const readiness = await request(baseUrl, '/api/ai/command-center/readiness', headers)
     assert.strictEqual(readiness.status, 200)
     assert.strictEqual(readiness.body.readiness.governanceOk, true)
+
+    const quality = await request(baseUrl, '/api/ai/command-center/quality', headers)
+    assert.strictEqual(quality.status, 200)
+    assert.strictEqual(quality.body.quality.duplicatedRecommendations, 0)
 
     assert.strictEqual(calls[0].workspaceId, 'ws-1')
     assert.strictEqual(calls[1].workspaceId, 'ws-1')

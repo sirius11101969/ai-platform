@@ -879,6 +879,7 @@ export function fetchAiCommandCenterPlanningMonthly(){return request('/ai/comman
 export function fetchAiCommandCenterReview(){return request('/ai/command-center/review')}
 export function fetchAiCommandCenterStability(){return request('/ai/command-center/stability')}
 export function fetchAiCommandCenterReadiness(){return request('/ai/command-center/readiness')}
+export function fetchAiCommandCenterQuality(){return request('/ai/command-center/quality')}
 
 export function fetchAiCommandCenterActions(){return request('/ai/command-center/actions')}
 export function fetchAiCommandCenterInbox(){return request('/ai/command-center/inbox')}
