@@ -329,11 +329,18 @@ async function getReport({ workspaceId, reportType = 'daily' }) {
   ].filter((item) => item.value > 0)
 
   const summary = `${reportType === 'weekly' ? 'Weekly' : 'Daily'} governance review: READY ${healthCenter?.summary?.readyCount || 0}, DEGRADED ${healthCenter?.summary?.degradedCount || 0}, requested actions ${actionRows.filter((item) => item.status === 'requested').length}.`
-  const recommendedNextActions = [
+  const rawRecommendedNextActions = [
     operations?.executiveBrief?.topRecommendation || 'Maintain governance-only mode.',
     'Prioritize approval queue triage before additional strategic requests.',
     'Review workforce and organizational memory signals with human approval checkpoints.',
   ]
+  const recommendedNextActions = deduplicateRecommendations(rawRecommendedNextActions)
+  if (recommendedNextActions.length !== rawRecommendedNextActions.length) {
+    console.info('command_center_recommendations_deduplicated', { workspaceId, before: rawRecommendedNextActions.length, after: recommendedNextActions.length })
+  }
+  if (decisions.length === 0 && risks.length === 0 && bottlenecks.length === 0) {
+    decisions.push({ status: 'no_items_detected', recommendation: 'continue monitoring' })
+  }
   const payload = { generatedAt, reportType, kpis, summary, decisions, risks, bottlenecks, recommendedNextActions, governance: GOVERNANCE_GUARDRAILS }
   console.info(reportType === 'weekly' ? 'command_center_weekly_report_loaded' : 'command_center_daily_report_loaded', { workspaceId, generatedAt })
   return payload
@@ -373,11 +380,11 @@ function buildPlanningPayload({ dailyReport, weeklyReport, kpi, focusQueue, acti
     governance: a.governance || GOVERNANCE_GUARDRAILS,
   }))
 
-  const recommendations = [
+  const recommendations = deduplicateRecommendations([
     ...(dailyReport?.recommendedNextActions || []),
     ...(weeklyReport?.recommendedNextActions || []),
     'Review strategic planning and organizational memory before approving new actions.',
-  ].slice(0, 8)
+  ]).slice(0, 8)
 
   return {
     generatedAt,
@@ -436,6 +443,25 @@ function countDuplicates(values = []) {
   let duplicated = 0
   for (const count of map.values()) if (count > 1) duplicated += (count - 1)
   return duplicated
+}
+
+
+function deduplicateRecommendations(values = []) {
+  const seen = new Set()
+  const deduplicated = []
+  for (const value of values || []) {
+    const normalized = String(value || '').trim().toLowerCase()
+    if (!normalized || seen.has(normalized)) continue
+    seen.add(normalized)
+    deduplicated.push(String(value).trim())
+  }
+  return deduplicated
+}
+
+function computeGovernanceScore({ health = 0, approvalCoverage = 0, planningCoverage = 0, stability = 0 }) {
+  const score = Math.max(0, Math.min(100, Math.round((Number(health) + Number(approvalCoverage) + Number(planningCoverage) + Number(stability)) / 4)))
+  const status = score >= 80 ? 'healthy' : (score >= 60 ? 'warning' : 'degraded')
+  return { score, status }
 }
 
 function hasEmptySections(payload = {}) {
@@ -497,20 +523,43 @@ async function getReadiness({ workspaceId }) {
     getStability({ workspaceId }),
     getKpi({ workspaceId }),
   ])
+  const governanceScoreCard = computeGovernanceScore({
+    health: Math.max(0, 100 - (((healthCenter?.summary?.degradedCount || 0) * 15) + ((healthCenter?.summary?.missingCount || 0) * 20))),
+    approvalCoverage: Math.max(0, 100 - ((stabilityData?.stability?.staleApprovals || 0) * 10)),
+    planningCoverage: hasEmptySections(planning) ? 55 : 100,
+    stability: Math.max(0, 100 - (((stabilityData?.stability?.duplicatedRecommendations || 0) * 10) + ((stabilityData?.stability?.emptyReports || 0) * 20))),
+  })
+  console.info('command_center_governance_scored', { workspaceId, generatedAt, governanceScore: governanceScoreCard.score, status: governanceScoreCard.status })
   const readiness = {
     healthOk: (healthCenter?.summary?.degradedCount || 0) === 0 && (healthCenter?.summary?.missingCount || 0) === 0,
     reportsOk: Boolean(dailyReport?.summary),
     planningOk: !hasEmptySections(planning),
     approvalQueueOk: (reviewData?.review?.totalOpenDecisions || 0) === 0 || (stabilityData?.stability?.staleApprovals || 0) === 0,
-    governanceOk: Boolean(kpi?.kpis?.organizationalHealthScore || 0) >= 70,
+    governanceOk: !((stabilityData?.stability?.duplicatedRecommendations || 0) > 0 || (stabilityData?.stability?.emptyReports || 0) > 0 || (stabilityData?.stability?.staleApprovals || 0) > 0),
   }
   const governance = {
-    governanceScore: Number(kpi?.kpis?.organizationalHealthScore || 0),
+    governanceScore: governanceScoreCard.score,
+    governanceStatus: governanceScoreCard.status,
     approvalSla: `${Math.max(0, 100 - ((stabilityData?.stability?.staleApprovals || 0) * 10))}%`,
     reviewCoverage: `${Math.max(0, 100 - ((reviewData?.review?.unresolvedFollowups || 0) * 5))}%`,
   }
+  console.info('command_center_quality_loaded', { workspaceId, generatedAt, quality: { duplicatedRecommendations: stabilityData?.stability?.duplicatedRecommendations || 0, emptyReports: stabilityData?.stability?.emptyReports || 0 }, governance: { score: governance.governanceScore, status: governance.governanceStatus }, readiness: { governanceOk: readiness.governanceOk } })
   console.info('command_center_readiness_loaded', { workspaceId, generatedAt, readiness })
   return { generatedAt, review: reviewData.review, stability: stabilityData.stability, readiness, governance }
 }
 
-module.exports = { getOverview, getTimeline, getBrief, getOperations, getFocus, getReport, getKpi, getPlanning, getPlanningWeekly, getPlanningMonthly, getReview, getStability, getReadiness, requestAction, getActions, reviewAction, getActionAudit, buildReviewer }
+async function getQuality({ workspaceId }) {
+  const readinessPayload = await getReadiness({ workspaceId })
+  const payload = {
+    quality: {
+      duplicatedRecommendations: readinessPayload?.stability?.duplicatedRecommendations || 0,
+      emptyReports: readinessPayload?.stability?.emptyReports || 0,
+    },
+    governance: readinessPayload?.governance || { governanceScore: 0, governanceStatus: 'degraded' },
+    readiness: readinessPayload?.readiness || { governanceOk: false },
+  }
+  console.info('command_center_quality_loaded', { workspaceId, quality: payload.quality, governance: payload.governance, readiness: payload.readiness })
+  return payload
+}
+
+module.exports = { getOverview, getTimeline, getBrief, getOperations, getFocus, getReport, getKpi, getPlanning, getPlanningWeekly, getPlanningMonthly, getReview, getStability, getReadiness, getQuality, requestAction, getActions, reviewAction, getActionAudit, buildReviewer, deduplicateRecommendations, computeGovernanceScore }
