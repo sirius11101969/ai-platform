@@ -891,3 +891,4 @@ export function fetchAiCommandCenterActionAudit(id){return request(`/ai/command-
 export function fetchRevenueOverview() { return request('/revenue/overview') }
 export function fetchRevenueFunnel() { return request('/revenue/funnel') }
 export function activateRevenuePayment(payload) { return request('/revenue/activate', { method: 'POST', body: JSON.stringify(payload || {}) }) }
+export function startRevenueCheckout(payload) { return request('/revenue/checkout/start', { method: 'POST', body: JSON.stringify(payload || {}) }) }

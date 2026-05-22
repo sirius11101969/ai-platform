@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Panel, PageHeading, StatCard } from "../components/AppShell";
-import { createAiTask, fetchAiApprovalQueue, fetchAiCommandCenter, fetchAiTask, fetchAiTasks, fetchCrmStats, fetchProfile, getRevenueIntelligence, triggerRevenueAnalysis, updateStoredUser } from "../services/api";
+import { createAiTask, fetchAiApprovalQueue, fetchAiCommandCenter, fetchAiTask, fetchAiTasks, fetchCrmStats, fetchProfile, getRevenueIntelligence, startRevenueCheckout, triggerRevenueAnalysis, updateStoredUser } from "../services/api";
 import { orders, quickActions, userProfile } from "../data/mockData";
 import { buildRecommendationQueue, getForecastWidget, getRevenueCards } from "../utils/revenueIntelligence";
 
@@ -119,6 +119,7 @@ function buildActivityFeed(tasks) {
 }
 
 export default function DashboardPage() {
+  const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [crmStats, setCrmStats] = useState(null);
@@ -131,6 +132,8 @@ export default function DashboardPage() {
   const [saving, setSaving] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [revenueBusy, setRevenueBusy] = useState(false);
+  const [checkoutModalOpen, setCheckoutModalOpen] = useState(false);
+  const [checkoutStatus, setCheckoutStatus] = useState(null);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
@@ -151,6 +154,33 @@ export default function DashboardPage() {
     } finally {
       if (!silent) setLoading(false);
     }
+  }
+
+  async function handleCheckoutStart(plan) {
+    setRevenueBusy(true);
+    setError("");
+    setMessage("");
+    try {
+      const planConfig = {
+        starter: { amount: 3900, currency: "RUB" },
+        pro: { amount: 9900, currency: "RUB" },
+        business: { amount: 24900, currency: "RUB" },
+      }[plan] || { amount: 0, currency: "RUB" };
+      const response = await startRevenueCheckout({ plan, ...planConfig });
+      setCheckoutStatus(response);
+      setMessage(`Checkout запущен: ${plan}. Статус: ${response.status}.`);
+      await loadDashboard({ silent: true });
+    } catch (requestError) {
+      setError(requestError.message || "Не удалось запустить checkout");
+    } finally {
+      setRevenueBusy(false);
+    }
+  }
+
+  function handleQuickActionClick(action) {
+    if (action !== "Пополнить AI‑кредиты") return;
+    navigate("/dashboard/revenue");
+    setCheckoutModalOpen(true);
   }
 
   useEffect(() => {
@@ -452,9 +482,29 @@ export default function DashboardPage() {
           ))}
         </div>
         <div className="quick-actions dashboard-quick-actions">
-          {quickActions.map((action) => <button type="button" key={action}>{action}</button>)}
+          {quickActions.map((action) => <button type="button" key={action} onClick={() => handleQuickActionClick(action)}>{action}</button>)}
         </div>
       </Panel>
+
+      {checkoutModalOpen && (
+        <div className="modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget && !revenueBusy) setCheckoutModalOpen(false); }}>
+          <section className="ai-task-modal" role="dialog" aria-modal="true" aria-labelledby="credits-checkout-modal-title">
+            <div className="panel-head">
+              <div>
+                <span className="eyebrow">Пополнение AI‑кредитов</span>
+                <h3 id="credits-checkout-modal-title">Пополнение AI‑кредитов</h3>
+              </div>
+              <button className="modal-close" type="button" onClick={() => setCheckoutModalOpen(false)} disabled={revenueBusy}>×</button>
+            </div>
+            <div className="quick-actions">
+              <button type="button" onClick={() => handleCheckoutStart("starter")} disabled={revenueBusy}>Starter credits</button>
+              <button type="button" onClick={() => handleCheckoutStart("pro")} disabled={revenueBusy}>Pro credits</button>
+              <button type="button" onClick={() => handleCheckoutStart("business")} disabled={revenueBusy}>Business credits</button>
+            </div>
+            {checkoutStatus && <p className="success-alert">Статус оплаты: {checkoutStatus.status}</p>}
+          </section>
+        </div>
+      )}
 
       {modalOpen && (
         <div className="modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget && !saving) setModalOpen(false); }}>
