@@ -10,8 +10,15 @@ async function create(req, res, next) {
 
 async function webhook(req, res, next) {
   try {
-    const { provider, externalPaymentId, status, amount, currency, metadata } = req.body || {}
-    const result = await paymentService.processWebhook({ workspaceId: req.workspace.id, provider, externalPaymentId, status, amount, currency, metadata })
+    const body = req.body || {}
+    const provider = body.provider
+    const event = body.event
+    const externalPaymentId = body.externalPaymentId || body.external_payment_id
+    const status = body.status || (event === 'payment.succeeded' ? 'paid' : undefined)
+    const amount = body.amount
+    const currency = body.currency
+    const metadata = body.metadata || {}
+    const result = await paymentService.processWebhook({ workspaceId: req.workspace?.id, provider, event, externalPaymentId, status, amount, currency, metadata })
     res.status(200).json(result)
   } catch (e) { next(e) }
 }
