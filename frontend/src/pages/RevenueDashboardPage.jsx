@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { PageHeading, Panel, StatCard } from '../components/AppShell'
-import { fetchRevenueOverview, fetchRevenueFunnel, fetchPendingRevenueOrders, fetchWorkspaces, getActiveWorkspaceId } from '../services/api'
+import { fetchRevenueOverview, fetchRevenueFunnel, fetchRevenueOrders, completeRevenuePayment, fetchWorkspaces, getActiveWorkspaceId } from '../services/api'
 
 const SAFETY = ['Human Approval Required', 'No Autonomous Execution', 'No Customer Actions', 'No Pricing Changes']
 
@@ -8,7 +8,8 @@ export default function RevenueDashboardPage() {
   const [overview, setOverview] = useState({})
   const [funnel, setFunnel] = useState([])
   const [workspaceId, setWorkspaceId] = useState(() => getActiveWorkspaceId())
-  const [pendingOrders, setPendingOrders] = useState([])
+  const [orders, setOrders] = useState([])
+  const [payingOrderId, setPayingOrderId] = useState('')
   const [workspaces, setWorkspaces] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -27,14 +28,14 @@ export default function RevenueDashboardPage() {
     Promise.all([
       fetchRevenueOverview(workspaceId),
       fetchRevenueFunnel(workspaceId),
-      fetchPendingRevenueOrders(workspaceId),
+      fetchRevenueOrders(workspaceId),
       fetchWorkspaces(),
     ])
       .then(([o, f, po, w]) => {
         if (!active) return
         setOverview(o?.overview || o?.data?.overview || {})
         setFunnel(f?.funnel || f?.data?.funnel || [])
-        setPendingOrders(po?.orders || [])
+        setOrders(po?.orders || [])
         setWorkspaces(w.workspaces || [])
       })
       .catch((e) => {
@@ -48,10 +49,32 @@ export default function RevenueDashboardPage() {
     return () => { active = false }
   }, [workspaceId])
 
+  const pendingOrders = useMemo(() => orders.filter((order) => order.status === 'payment_pending'), [orders])
+  const paidOrders = useMemo(() => orders.filter((order) => order.status === 'paid'), [orders])
+
   const workspaceLabel = useMemo(() => {
     const match = workspaces.find((workspace) => workspace.id === workspaceId)
     return match?.name || workspaceId || 'Not selected'
   }, [workspaces, workspaceId])
+
+
+  const markOrderPaid = async (orderId) => {
+    setPayingOrderId(orderId)
+    try {
+      const result = await completeRevenuePayment({ workspaceId, orderId })
+      console.info('payment_completed_created', result)
+      console.info('credit_granted', { orderId: result.orderId, creditsIssued: result.creditsIssued })
+      console.info('activation_completed', { orderId: result.orderId, activationStatus: result.activationStatus })
+      const [o, f, all] = await Promise.all([fetchRevenueOverview(workspaceId), fetchRevenueFunnel(workspaceId), fetchRevenueOrders(workspaceId)])
+      setOverview(o?.overview || o?.data?.overview || {})
+      setFunnel(f?.funnel || f?.data?.funnel || [])
+      setOrders(all?.orders || [])
+    } catch (e) {
+      setError(e?.message || 'Failed to complete payment')
+    } finally {
+      setPayingOrderId('')
+    }
+  }
 
   return <div className='workforce-center'>
     <PageHeading eyebrow='Revenue Activation v1.4' title='Revenue Dashboard' copy='First production revenue flow with approval-first activation.' />
@@ -76,7 +99,11 @@ export default function RevenueDashboardPage() {
       </Panel>
       <Panel>
         <h3>Pending Orders</h3>
-        {pendingOrders.length === 0 ? <p>No pending orders.</p> : pendingOrders.map((order) => <p key={order.id}><strong>{order.id}</strong> · {order.plan} · {order.status} · {order.created_at}</p>)}
+        {pendingOrders.length === 0 ? <p>No pending orders.</p> : pendingOrders.map((order) => <div key={order.id} style={{ marginBottom: 10 }}><p><strong>{order.id}</strong> · {order.plan} · {order.status} · {order.created_at}</p><button className='btn compact' disabled={payingOrderId === order.id} onClick={() => markOrderPaid(order.id)}>Mark test payment as paid</button><p><small>Test only · no real charge</small></p></div>)}
+      </Panel>
+      <Panel>
+        <h3>Paid Orders</h3>
+        {paidOrders.length === 0 ? <p>No paid orders.</p> : paidOrders.map((order) => <p key={order.id}><strong>{order.id}</strong> · {order.plan} · {order.status} · credits: {order.credits || 0} · activation_completed</p>)}
       </Panel>
     </>}
 
