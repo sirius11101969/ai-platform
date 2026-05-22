@@ -1100,6 +1100,16 @@ CREATE TABLE IF NOT EXISTS crm_stages (
     CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_outreach_dashboard ON ai_worker_queue(workspace_id, action_type, status, created_at DESC) WHERE action_type IN ('telegram_draft', 'email_draft');
     CREATE INDEX IF NOT EXISTS idx_ai_followup_attempts_lead ON ai_followup_attempts(workspace_id, lead_id, created_at DESC);
 
+    CREATE TABLE IF NOT EXISTS revenue_events (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+      event_type TEXT NOT NULL,
+      payload JSONB NOT NULL DEFAULT '{}'::jsonb,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS idx_revenue_events_workspace_created ON revenue_events(workspace_id, created_at DESC);
+    CREATE INDEX IF NOT EXISTS idx_revenue_events_workspace_type ON revenue_events(workspace_id, event_type, created_at DESC);
+
   `)
 
   const enterpriseAiMigration = path.resolve(__dirname, '../../../db/migrations/022_enterprise_ai_execution_platform.sql')

@@ -887,3 +887,7 @@ export function requestAiCommandCenterAction(payload){return request('/ai/comman
 export function approveAiCommandCenterAction(id,payload={}){return request(`/ai/command-center/actions/${id}/approve`,{method:'POST',body:JSON.stringify(payload)})}
 export function rejectAiCommandCenterAction(id,payload={}){return request(`/ai/command-center/actions/${id}/reject`,{method:'POST',body:JSON.stringify(payload)})}
 export function fetchAiCommandCenterActionAudit(id){return request(`/ai/command-center/actions/${id}/audit`)}
+
+export function fetchRevenueOverview() { return request('/revenue/overview') }
+export function fetchRevenueFunnel() { return request('/revenue/funnel') }
+export function activateRevenuePayment(payload) { return request('/revenue/activate', { method: 'POST', body: JSON.stringify(payload || {}) }) }
