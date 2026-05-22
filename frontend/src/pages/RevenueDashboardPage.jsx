@@ -30,8 +30,8 @@ export default function RevenueDashboardPage() {
     ])
       .then(([o, f, w]) => {
         if (!active) return
-        setOverview(o.overview || {})
-        setFunnel(f.funnel || [])
+        setOverview(o?.overview || o?.data?.overview || {})
+        setFunnel(f?.funnel || f?.data?.funnel || [])
         setWorkspaces(w.workspaces || [])
       })
       .catch((e) => {
@@ -68,7 +68,8 @@ export default function RevenueDashboardPage() {
       </section>
       <Panel>
         <h3>Revenue Funnel</h3>
-        {funnel.length === 0 ? <p>No funnel events yet for this workspace.</p> : funnel.map((item) => <p key={item.stage}><strong>{item.stage}</strong>: {item.total}</p>)}
+        <p><strong>Revenue source:</strong> live API</p>
+        {funnel.length === 0 ? <p>No funnel events yet for this workspace.</p> : funnel.map((item) => <p key={item.stage}><strong>{item.stage}</strong>: {item.total ?? 0}</p>)}
       </Panel>
     </>}
 
