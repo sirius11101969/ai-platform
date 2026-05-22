@@ -22,12 +22,19 @@ async function createPayment({ workspaceId, provider, amount, currency, metadata
   return { transaction: created.rows[0], mode: p.mode }
 }
 
-async function processWebhook({ workspaceId, provider, externalPaymentId, status, amount, currency, metadata = {} }) {
-  await loadProvider(provider)
+async function processWebhook({ workspaceId, provider, event, externalPaymentId, status, amount, currency, metadata = {} }) {
+  const paymentProvider = await loadProvider(provider)
+  const normalizedStatus = status || (event === 'payment.succeeded' ? 'paid' : status)
+
+  if (paymentProvider.mode === 'mock' && provider === 'yookassa') {
+    if (event !== 'payment.succeeded' || normalizedStatus !== 'paid' || !externalPaymentId) {
+      throw Object.assign(new Error('invalid mock webhook payload'), { statusCode: 400 })
+    }
+  }
   const client = await pool.connect()
   try {
     await client.query('BEGIN')
-    console.info('webhook_received', { workspaceId, provider, externalPaymentId, status })
+    console.info('webhook_received', { workspaceId, provider, externalPaymentId, status: normalizedStatus, event })
     const existing = await client.query('SELECT * FROM payment_transactions WHERE provider=$1 AND external_payment_id=$2 LIMIT 1', [provider, externalPaymentId])
     const tx = existing.rows[0]
     if (!tx) throw Object.assign(new Error('payment transaction not found'), { statusCode: 404 })
@@ -41,15 +48,16 @@ async function processWebhook({ workspaceId, provider, externalPaymentId, status
       `UPDATE payment_transactions
        SET status=$1::text, metadata = COALESCE(metadata, '{}'::jsonb) || $2::jsonb
        WHERE id=$3::uuid RETURNING *`,
-      [status, JSON.stringify(metadata || {}), tx.id]
+      [normalizedStatus, JSON.stringify(metadata || {}), tx.id]
     )
 
-    if (status === 'paid') {
+    if (normalizedStatus === 'paid') {
+      const targetWorkspaceId = workspaceId || tx.workspace_id
       const credits = Math.max(1, Math.round(Number(amount || tx.amount || 0)))
-      await revenueService.completePayment({ workspaceId, orderId: metadata.orderId }).catch(() => null)
-      await client.query('UPDATE workspaces SET credits_pool = credits_pool + $1::int, updated_at = NOW() WHERE id = $2::uuid', [credits, workspaceId])
-      console.info('payment_confirmed', { workspaceId, provider, externalPaymentId })
-      console.info('credit_granted', { workspaceId, provider, externalPaymentId, credits })
+      await revenueService.completePayment({ workspaceId: targetWorkspaceId, orderId: metadata.orderId }).catch(() => null)
+      await client.query('UPDATE workspaces SET credits_pool = credits_pool + $1::int, updated_at = NOW() WHERE id = $2::uuid', [credits, targetWorkspaceId])
+      console.info('payment_confirmed', { workspaceId: targetWorkspaceId, provider, externalPaymentId })
+      console.info('credit_granted', { workspaceId: targetWorkspaceId, provider, externalPaymentId, credits })
     }
 
     await client.query('COMMIT')
