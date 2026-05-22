@@ -60,8 +60,15 @@ async function processWebhook({ workspaceId, provider, externalPaymentId, status
   } finally { client.release() }
 }
 
-async function getPaymentStatus({ workspaceId, externalPaymentId }) {
-  const result = await pool.query('SELECT * FROM payment_transactions WHERE workspace_id=$1::uuid AND external_payment_id=$2::text LIMIT 1', [workspaceId, externalPaymentId])
+async function getPaymentStatus({ workspaceId }) {
+  const result = await pool.query(
+    `SELECT id, provider, external_payment_id, status, amount, currency, metadata, created_at
+     FROM payment_transactions
+     WHERE workspace_id = $1::uuid
+     ORDER BY created_at DESC
+     LIMIT 1`,
+    [workspaceId]
+  )
   return result.rows[0] || null
 }
 
