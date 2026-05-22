@@ -194,6 +194,37 @@ CREATE INDEX IF NOT EXISTS idx_crm_notes_lead_id ON crm_notes(lead_id);
 CREATE INDEX IF NOT EXISTS idx_telegram_messages_lead_id ON telegram_messages(lead_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_telegram_messages_user_id ON telegram_messages(user_id, created_at DESC);
 
+CREATE TABLE IF NOT EXISTS payment_providers (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  provider TEXT NOT NULL UNIQUE,
+  currency TEXT NOT NULL,
+  enabled BOOLEAN NOT NULL DEFAULT true,
+  mode TEXT NOT NULL DEFAULT 'mock' CHECK (mode IN ('mock', 'live')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS payment_transactions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+  provider TEXT NOT NULL,
+  external_payment_id TEXT NOT NULL,
+  status TEXT NOT NULL CHECK (status IN ('created', 'pending', 'paid', 'failed', 'refunded')),
+  amount NUMERIC(12,2) NOT NULL CHECK (amount >= 0),
+  currency TEXT NOT NULL,
+  metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE(provider, external_payment_id)
+);
+
+INSERT INTO payment_providers(provider, currency, enabled, mode)
+VALUES
+  ('yookassa', 'RUB', true, 'mock'),
+  ('stripe', 'USD', true, 'mock'),
+  ('usdt_trc20', 'USDT', true, 'mock')
+ON CONFLICT (provider) DO NOTHING;
+
+CREATE INDEX IF NOT EXISTS idx_payment_transactions_workspace_created ON payment_transactions(workspace_id, created_at DESC);
+
 CREATE TABLE IF NOT EXISTS ai_agents (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,

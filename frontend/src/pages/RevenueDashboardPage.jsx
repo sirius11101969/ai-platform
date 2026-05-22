@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { PageHeading, Panel, StatCard } from '../components/AppShell'
-import { fetchRevenueOverview, fetchRevenueFunnel, fetchRevenueOrders, completeRevenuePayment, fetchWorkspaces, getActiveWorkspaceId } from '../services/api'
+import { fetchRevenueOverview, fetchRevenueFunnel, fetchRevenueOrders, completeRevenuePayment, fetchWorkspaces, getActiveWorkspaceId, fetchPaymentDashboard } from '../services/api'
 
 const SAFETY = ['Human Approval Required', 'No Autonomous Execution', 'No Customer Actions', 'No Pricing Changes']
 
@@ -12,6 +12,7 @@ export default function RevenueDashboardPage() {
   const [payingOrderId, setPayingOrderId] = useState('')
   const [workspaces, setWorkspaces] = useState([])
   const [loading, setLoading] = useState(true)
+  const [paymentDashboard, setPaymentDashboard] = useState({ providers: [], transactions: [], health: [] })
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -30,13 +31,15 @@ export default function RevenueDashboardPage() {
       fetchRevenueFunnel(workspaceId),
       fetchRevenueOrders(workspaceId),
       fetchWorkspaces(),
+      fetchPaymentDashboard(workspaceId),
     ])
-      .then(([o, f, po, w]) => {
+      .then(([o, f, po, w, pd]) => {
         if (!active) return
         setOverview(o?.overview || o?.data?.overview || {})
         setFunnel(f?.funnel || f?.data?.funnel || [])
         setOrders(po?.orders || [])
         setWorkspaces(w.workspaces || [])
+        setPaymentDashboard(pd || { providers: [], transactions: [], health: [] })
       })
       .catch((e) => {
         if (!active) return
@@ -77,7 +80,7 @@ export default function RevenueDashboardPage() {
   }
 
   return <div className='workforce-center'>
-    <PageHeading eyebrow='Revenue Activation v1.4' title='Revenue Dashboard' copy='First production revenue flow with approval-first activation.' />
+    <PageHeading eyebrow='Revenue Activation v1.5' title='Revenue Dashboard' copy='First production revenue flow with approval-first activation.' />
     <Panel><strong>Safety Controls:</strong> <div className='safety-pills'>{SAFETY.map((x) => <span key={x}>{x}</span>)}</div></Panel>
     <Panel><strong>Current workspace:</strong> {workspaceLabel}</Panel>
 
@@ -101,6 +104,10 @@ export default function RevenueDashboardPage() {
         <h3>Pending Orders</h3>
         {pendingOrders.length === 0 ? <p>No pending orders.</p> : pendingOrders.map((order) => <div key={order.id} style={{ marginBottom: 10 }}><p><strong>{order.id}</strong> · {order.plan} · {order.status} · {order.created_at}</p><button className='btn compact' disabled={payingOrderId === order.id} onClick={() => markOrderPaid(order.id)}>Mark test payment as paid</button><p><small>Test only · no real charge</small></p></div>)}
       </Panel>
+      <Panel><h3>Payment Provider</h3>{paymentDashboard.providers.map((p)=><p key={p.provider}>{p.provider} · {p.currency} · {p.mode} · {p.enabled ? 'enabled':'disabled'}</p>)}</Panel>
+      <Panel><h3>Transactions</h3>{paymentDashboard.transactions.length===0 ? <p>No transactions.</p> : paymentDashboard.transactions.map((t)=><p key={t.id}>{t.provider} · {t.external_payment_id} · {t.status} · {t.amount} {t.currency}</p>)}</Panel>
+      <Panel><h3>Provider Health</h3>{paymentDashboard.health.map((h)=><p key={h.provider}>{h.provider}: {h.status} ({h.mode})</p>)}</Panel>
+      <Panel><h3>Payment Logs</h3><p>payment_created</p><p>webhook_received</p><p>payment_confirmed</p><p>credit_granted</p></Panel>
       <Panel>
         <h3>Paid Orders</h3>
         {paidOrders.length === 0 ? <p>No paid orders.</p> : paidOrders.map((order) => <p key={order.id}><strong>{order.id}</strong> · {order.plan} · {order.status} · credits: {order.credits || 0} · activation_completed</p>)}
