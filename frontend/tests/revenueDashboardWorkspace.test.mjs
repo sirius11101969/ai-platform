@@ -39,6 +39,9 @@ assert.equal(dashboardSource.includes('Current workspace:'), true, 'workspace la
 assert.equal(/checkout_started/.test(JSON.stringify(funnelPayload)) || dashboardSource.includes('item.total'), true, 'funnel renders checkout_started count from API payload')
 assert.equal(funnelPayload.funnel[0].stage, 'checkout_started')
 assert.equal(funnelPayload.funnel[0].total, 1, 'checkout_started count from API is preserved')
+assert.equal(dashboardSource.includes("setFunnel(f?.funnel || f?.data?.funnel || [])"), true, 'funnel mapping supports response.funnel and response.data.funnel')
+assert.equal(dashboardSource.includes('item.total ?? 0'), true, 'missing funnel totals fall back to 0')
+assert.equal(dashboardSource.includes('Revenue source:</strong> live API'), true, 'dashboard shows visible live API source label')
 
 await api.fetchRevenueFunnel('ws-isolated')
 assert.equal(calls.some((url) => url.includes('workspaceId=ws-isolated')), true, 'workspace isolation preserved via explicit workspace-scoped calls')
