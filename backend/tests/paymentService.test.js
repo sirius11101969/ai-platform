@@ -64,4 +64,41 @@ async function testLedgerConsistencySingleCreditGrant() {
   } finally { restore() }
 }
 
-Promise.resolve().then(testProviderIsolation).then(testDuplicateWebhook).then(testLedgerConsistencySingleCreditGrant).then(()=>console.log('paymentService tests passed'))
+
+
+async function testStatusReturnsLatestCreatedTransaction() {
+  const newest = {
+    id: 'tx-2',
+    provider: 'stripe',
+    external_payment_id: 'mock_2',
+    status: 'created',
+    amount: 15,
+    currency: 'USD',
+    metadata: { source: 'checkout' },
+    created_at: '2026-05-22T00:00:00.000Z',
+  }
+
+  let capturedSql = ''
+  let capturedParams = []
+  const { service, restore } = loadWithMocks({ queryImpl: async (sql, params = []) => {
+    if (sql.includes('FROM payment_transactions') && sql.includes('ORDER BY created_at DESC') && sql.includes('LIMIT 1')) {
+      capturedSql = sql
+      capturedParams = params
+      return { rows: [newest] }
+    }
+    throw new Error(`unexpected query: ${sql}`)
+  }})
+
+  try {
+    const payment = await service.getPaymentStatus({ workspaceId: '00000000-0000-0000-0000-000000000123' })
+    assert.deepStrictEqual(payment, newest)
+    assert.deepStrictEqual(capturedParams, ['00000000-0000-0000-0000-000000000123'])
+    assert.ok(capturedSql.includes('WHERE workspace_id = $1::uuid'))
+  } finally { restore() }
+}
+Promise.resolve()
+  .then(testProviderIsolation)
+  .then(testDuplicateWebhook)
+  .then(testLedgerConsistencySingleCreditGrant)
+  .then(testStatusReturnsLatestCreatedTransaction)
+  .then(() => console.log('paymentService tests passed'))
