@@ -61,4 +61,20 @@ async function pendingOrders(req, res, next) {
   } catch (e) { next(e) }
 }
 
-module.exports = { overview, funnel, activate, startCheckout, createPaymentPending, pendingOrders }
+async function completePayment(req, res, next) {
+  try {
+    const { workspaceId, orderId } = req.body || {}
+    if (!orderId) return res.status(400).json({ error: 'orderId is required' })
+    const result = await revenueService.completePayment({ workspaceId: workspaceId || req.workspace.id, orderId })
+    res.status(200).json(result)
+  } catch (e) { next(e) }
+}
+
+async function orders(req, res, next) {
+  try {
+    const orders = await revenueService.getOrders({ workspaceId: req.workspace.id })
+    res.json({ orders })
+  } catch (e) { next(e) }
+}
+
+module.exports = { overview, funnel, activate, startCheckout, createPaymentPending, pendingOrders, completePayment, orders }

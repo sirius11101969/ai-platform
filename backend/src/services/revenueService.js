@@ -1,6 +1,7 @@
 const pool = require('../db/pool')
 
 const FUNNEL_STAGES = ['visitor','lead','signup','checkout_started','payment_pending','payment_completed','credits_issued','activation_completed']
+const PLAN_DEFAULT_CREDITS = { starter: 100, pro: 500, business: 1500 }
 
 async function trackEvent({ workspaceId, eventType, payload = {} }, client = pool) {
   const result = await client.query(
@@ -100,9 +101,6 @@ async function startCheckout({ workspaceId, plan = 'starter', amount = 0, curren
   }
 }
 
-
-
-
 async function createPendingOrder({ workspaceId, checkoutId, plan = 'starter' }) {
   if (!checkoutId) throw Object.assign(new Error('checkoutId is required'), { statusCode: 400 })
 
@@ -151,6 +149,58 @@ async function createPendingOrder({ workspaceId, checkoutId, plan = 'starter' })
   }
 }
 
+async function completePayment({ workspaceId, orderId }) {
+  if (!orderId) throw Object.assign(new Error('orderId is required'), { statusCode: 400 })
+  const client = await pool.connect()
+  try {
+    await client.query('BEGIN')
+    const lookup = await client.query(`SELECT * FROM revenue_orders WHERE workspace_id = $1::uuid AND id = $2::text LIMIT 1`, [workspaceId, orderId])
+    const order = lookup.rows[0]
+    if (!order) throw Object.assign(new Error('order not found'), { statusCode: 404 })
+
+    if (order.status === 'paid') {
+      await client.query('COMMIT')
+      return { orderId, status: 'paid', creditsIssued: 0, activationStatus: 'activation_completed', deduped: true }
+    }
+    if (order.status !== 'payment_pending') throw Object.assign(new Error(`order status ${order.status} cannot be completed`), { statusCode: 409 })
+
+    const creditsIssued = Number(order.credits || 0) || PLAN_DEFAULT_CREDITS[String(order.plan || '').toLowerCase()] || PLAN_DEFAULT_CREDITS.starter
+
+    await client.query(`UPDATE revenue_orders SET status = 'paid', credits = $1::int, updated_at = NOW() WHERE workspace_id = $2::uuid AND id = $3::text`, [creditsIssued, workspaceId, orderId])
+    await trackEvent({ workspaceId, eventType: 'payment_completed', payload: { orderId, amount: Number(order.amount || 0), currency: order.currency, plan: order.plan } }, client)
+    console.info('payment_completed_created', { workspaceId, orderId })
+
+    await client.query(`UPDATE workspaces SET credits_pool = credits_pool + $1::int, updated_at = NOW() WHERE id = $2::uuid`, [creditsIssued, workspaceId])
+    console.info('credit_granted', { workspaceId, orderId, credits: creditsIssued })
+    await trackEvent({ workspaceId, eventType: 'credits_issued', payload: { orderId, credits: creditsIssued, plan: order.plan } }, client)
+
+    await trackEvent({ workspaceId, eventType: 'activation_completed', payload: { orderId, activationStatus: 'activation_completed', plan: order.plan } }, client)
+    console.info('activation_completed', { workspaceId, orderId })
+    console.info('revenue_order_paid', { workspaceId, orderId, status: 'paid' })
+    console.info('crm_revenue_feed_updated', { workspaceId, orderId, status: 'paid', creditsIssued, activationStatus: 'activation_completed' })
+
+    await client.query('COMMIT')
+    return { orderId, status: 'paid', creditsIssued, activationStatus: 'activation_completed', deduped: false }
+  } catch (error) {
+    await client.query('ROLLBACK')
+    throw error
+  } finally {
+    client.release()
+  }
+}
+
+async function getOrders({ workspaceId, limit = 100 }) {
+  const result = await pool.query(`
+    SELECT id, checkout_id, plan, amount, currency, status, credits, provider, created_at, updated_at
+    FROM revenue_orders
+    WHERE workspace_id = $1::uuid AND status IN ('payment_pending', 'paid')
+    ORDER BY created_at DESC
+    LIMIT $2::int
+  `, [workspaceId, Math.max(1, Number(limit || 100))])
+  console.info('revenue_orders_loaded', { workspaceId, total: result.rows.length })
+  return result.rows
+}
+
 async function getPendingOrders({ workspaceId, limit = 25 }) {
   const result = await pool.query(`
     SELECT id, plan, status, created_at
@@ -162,4 +212,4 @@ async function getPendingOrders({ workspaceId, limit = 25 }) {
   return result.rows
 }
 
-module.exports = { getOverview, getFunnel, activatePayment, startCheckout, trackEvent, createPendingOrder, getPendingOrders }
+module.exports = { getOverview, getFunnel, activatePayment, startCheckout, trackEvent, createPendingOrder, getPendingOrders, completePayment, getOrders }
