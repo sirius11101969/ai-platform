@@ -27,6 +27,7 @@ import AiEnterpriseCoordinationPage from "./pages/AiEnterpriseCoordinationPage";
 import AiOrganizationalMemoryPage from "./pages/AiOrganizationalMemoryPage";
 import AiSystemHealthCenterPage from "./pages/AiSystemHealthCenterPage";
 import AIEnterpriseCommandCenter from "./pages/AIEnterpriseCommandCenter";
+import RevenueDashboardPage from "./pages/RevenueDashboardPage";
 import { getAuthToken, getStoredUser } from "./services/api";
 
 const AuthContext = createContext({ token: null, user: null, isAuthenticated: false });
@@ -132,6 +133,7 @@ export default function App() {
           <Route path="/ai/workforce" element={<ProtectedRoute><AiWorkforceCenterPage /></ProtectedRoute>} />
           <Route path="/ai/approval-center" element={<ProtectedRoute><AiApprovalCenterPage /></ProtectedRoute>} />
           <Route path="/ai-enterprise-command-center" element={<ProtectedRoute><AIEnterpriseCommandCenter /></ProtectedRoute>} />
+          <Route path="/dashboard/revenue" element={<ProtectedRoute><RevenueDashboardPage /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
