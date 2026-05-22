@@ -44,24 +44,24 @@ async function run() {
   const service = require('../src/services/revenueService')
 
   try {
-    state.orders.push({ id: 'order-1', workspace_id: 'ws-1', plan: 'pro', status: 'payment_pending', credits: 0, amount: 4900, currency: 'USD' })
-    state.orders.push({ id: 'order-2', workspace_id: 'ws-2', plan: 'starter', status: 'payment_pending', credits: 0, amount: 3900, currency: 'USD' })
+    state.orders.push({ id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', workspace_id: '11111111-1111-4111-8111-111111111111', plan: 'pro', status: 'payment_pending', credits: 0, amount: 4900, currency: 'USD' })
+    state.orders.push({ id: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb', workspace_id: '22222222-2222-4222-8222-222222222222', plan: 'starter', status: 'payment_pending', credits: 0, amount: 3900, currency: 'USD' })
 
-    const first = await service.completePayment({ workspaceId: 'ws-1', orderId: 'order-1' })
+    const first = await service.completePayment({ workspaceId: '11111111-1111-4111-8111-111111111111', orderId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa' })
     assert.equal(first.status, 'paid', 'pending→paid')
     assert.equal(first.creditsIssued, 500, 'plan default credits applied')
 
-    const deduped = await service.completePayment({ workspaceId: 'ws-1', orderId: 'order-1' })
+    const deduped = await service.completePayment({ workspaceId: '11111111-1111-4111-8111-111111111111', orderId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa' })
     assert.equal(deduped.deduped, true, 'duplicate complete does not double grant')
 
-    const funnel = await service.getFunnel({ workspaceId: 'ws-1' })
+    const funnel = await service.getFunnel({ workspaceId: '11111111-1111-4111-8111-111111111111' })
     const byStage = Object.fromEntries(funnel.map((x) => [x.stage, x.total]))
     assert.equal(byStage.payment_completed, 1, 'funnel increments payment_completed')
     assert.equal(byStage.credits_issued, 1, 'credits_issued increments')
     assert.equal(byStage.activation_completed, 1, 'activation_completed increments')
 
-    assert.equal(state.creditsByWorkspace['ws-1'], 500, 'credits granted once')
-    assert.equal(state.creditsByWorkspace['ws-2'] || 0, 0, 'workspace isolation')
+    assert.equal(state.creditsByWorkspace['11111111-1111-4111-8111-111111111111'], 500, 'credits granted once')
+    assert.equal(state.creditsByWorkspace['22222222-2222-4222-8222-222222222222'] || 0, 0, 'workspace isolation')
   } finally {
     restore()
     delete require.cache[revenueServicePath]
