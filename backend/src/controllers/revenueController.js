@@ -1,11 +1,17 @@
 const revenueService = require('../services/revenueService')
 
 async function overview(req, res, next) {
-  try { res.json({ overview: await revenueService.getOverview({ workspaceId: req.workspace.id }) }) } catch (e) { next(e) }
+  try {
+    console.info('revenue_overview_loaded', { workspaceId: req.workspace.id, authMode: req.aiControl?.authMode || 'jwt' })
+    res.json({ overview: await revenueService.getOverview({ workspaceId: req.workspace.id }) })
+  } catch (e) { next(e) }
 }
 
 async function funnel(req, res, next) {
-  try { res.json({ funnel: await revenueService.getFunnel({ workspaceId: req.workspace.id }) }) } catch (e) { next(e) }
+  try {
+    console.info('revenue_funnel_loaded', { workspaceId: req.workspace.id, authMode: req.aiControl?.authMode || 'jwt' })
+    res.json({ funnel: await revenueService.getFunnel({ workspaceId: req.workspace.id }) })
+  } catch (e) { next(e) }
 }
 
 async function activate(req, res, next) {
