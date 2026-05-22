@@ -278,4 +278,65 @@ async function getActionAudit({ workspaceId, actionId, limit = 50 }) {
   return { audit: result.rows }
 }
 
-module.exports = { getOverview, getTimeline, getBrief, getOperations, getFocus, requestAction, getActions, reviewAction, getActionAudit, buildReviewer }
+async function getKpi({ workspaceId }) {
+  const [executive, healthCenter, actions] = await Promise.all([
+    getExecutiveOverview({ workspaceId }),
+    getSystemHealth({ workspaceId }),
+    getActions({ workspaceId, limit: 200 }),
+  ])
+
+  const actionRows = actions?.actions || []
+  const kpis = {
+    systemHealth: {
+      READY: healthCenter?.summary?.readyCount || 0,
+      DEGRADED: healthCenter?.summary?.degradedCount || 0,
+      MISSING: healthCenter?.summary?.missingCount || 0,
+    },
+    organizationalHealthScore: executive?.cards?.organizationalHealthScore || 0,
+    workforceUtilization: executive?.cards?.workforceUtilization || 0,
+    approvalQueueOpen: executive?.approvals?.openQueue || 0,
+    commandCenterActionsRequested: actionRows.filter((item) => item.status === 'requested').length,
+    commandCenterActionsApproved: actionRows.filter((item) => item.status === 'approved').length,
+    strategicRiskCount: (executive?.governance?.strategicRisks || []).length,
+  }
+  console.info('command_center_kpi_loaded', { workspaceId, generatedAt: new Date().toISOString() })
+  return { generatedAt: new Date().toISOString(), reportType: 'kpi', kpis, governance: GOVERNANCE_GUARDRAILS }
+}
+
+async function getReport({ workspaceId, reportType = 'daily' }) {
+  const generatedAt = new Date().toISOString()
+  const [executive, healthCenter, actions, operations] = await Promise.all([
+    getExecutiveOverview({ workspaceId }),
+    getSystemHealth({ workspaceId }),
+    getActions({ workspaceId, limit: 200 }),
+    getOperationsHub({ workspaceId }),
+  ])
+  const actionRows = actions?.actions || []
+  const strategicRisks = executive?.governance?.strategicRisks || []
+  const kpis = {
+    organizationalHealthScore: executive?.cards?.organizationalHealthScore || 0,
+    workforceUtilization: executive?.cards?.workforceUtilization || 0,
+    approvalQueueOpen: executive?.approvals?.openQueue || 0,
+    pendingApprovals: operations?.executiveBrief?.pendingApprovals || 0,
+    healthySystems: healthCenter?.summary?.readyCount || 0,
+    degradedSystems: healthCenter?.summary?.degradedCount || 0,
+  }
+  const decisions = (executive?.strategy?.latestPlan?.decisions || []).slice(0, 8).map((d, idx) => ({ id: d.id || `decision-${idx + 1}`, summary: d.summary || d.title || String(d), source: 'strategic_planning' }))
+  const risks = strategicRisks.slice(0, 8).map((risk, idx) => ({ id: risk.id || `risk-${idx + 1}`, title: risk.title || risk.risk_type || 'Strategic risk', severity: risk.severity || 'high' }))
+  const bottlenecks = [
+    { area: 'approval_queue', value: executive?.cards?.approvalBottlenecks || 0 },
+    { area: 'cross_team_sync', value: executive?.coordination?.crossTeamSync?.openConflicts || 0 },
+  ].filter((item) => item.value > 0)
+
+  const summary = `${reportType === 'weekly' ? 'Weekly' : 'Daily'} governance review: READY ${healthCenter?.summary?.readyCount || 0}, DEGRADED ${healthCenter?.summary?.degradedCount || 0}, requested actions ${actionRows.filter((item) => item.status === 'requested').length}.`
+  const recommendedNextActions = [
+    operations?.executiveBrief?.topRecommendation || 'Maintain governance-only mode.',
+    'Prioritize approval queue triage before additional strategic requests.',
+    'Review workforce and organizational memory signals with human approval checkpoints.',
+  ]
+  const payload = { generatedAt, reportType, kpis, summary, decisions, risks, bottlenecks, recommendedNextActions, governance: GOVERNANCE_GUARDRAILS }
+  console.info(reportType === 'weekly' ? 'command_center_weekly_report_loaded' : 'command_center_daily_report_loaded', { workspaceId, generatedAt })
+  return payload
+}
+
+module.exports = { getOverview, getTimeline, getBrief, getOperations, getFocus, getReport, getKpi, requestAction, getActions, reviewAction, getActionAudit, buildReviewer }

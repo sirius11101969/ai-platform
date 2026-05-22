@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { PageHeading, Panel } from '../components/AppShell'
-import { fetchAiCommandCenterBrief, fetchAiCommandCenterFocus, fetchAiCommandCenterOperations } from '../services/api'
+import { fetchAiCommandCenterBrief, fetchAiCommandCenterDailyReport, fetchAiCommandCenterFocus, fetchAiCommandCenterKpi, fetchAiCommandCenterOperations, fetchAiCommandCenterWeeklyReport } from '../services/api'
 
 export default function AIEnterpriseCommandCenter() {
   const [hub, setHub] = useState(null)
@@ -8,14 +8,17 @@ export default function AIEnterpriseCommandCenter() {
   const [checklist, setChecklist] = useState({})
 
   useEffect(() => {
-    Promise.all([fetchAiCommandCenterBrief(), fetchAiCommandCenterOperations(), fetchAiCommandCenterFocus()])
-      .then(([brief, operations, focus]) => {
+    Promise.all([fetchAiCommandCenterBrief(), fetchAiCommandCenterOperations(), fetchAiCommandCenterFocus(), fetchAiCommandCenterDailyReport(), fetchAiCommandCenterWeeklyReport(), fetchAiCommandCenterKpi()])
+      .then(([brief, operations, focus, dailyReport, weeklyReport, kpi]) => {
         const merged = {
           generatedAt: brief.generatedAt || operations.generatedAt || focus.generatedAt,
           executiveBrief: brief.executiveBrief || {},
           operations: operations.operations || {},
           focusQueue: focus.focusQueue || [],
           checklist: brief.checklist || [],
+          dailyReport,
+          weeklyReport,
+          kpi,
         }
         setHub(merged)
         const initialChecklist = {}
@@ -32,12 +35,38 @@ export default function AIEnterpriseCommandCenter() {
     {error ? <Panel><p>{error}</p></Panel> : null}
     {hub ? <>
       <Panel>
-        <h3>Daily Executive Brief</h3>
+        <h3>Executive Daily Report</h3>
+        <p>{hub.dailyReport?.summary || 'No daily summary available.'}</p>
         <p>health summary: READY {hub.executiveBrief?.healthSummary?.ready || 0} · DEGRADED {hub.executiveBrief?.healthSummary?.degraded || 0} · MISSING {hub.executiveBrief?.healthSummary?.missing || 0}</p>
-        <p>pending approvals: {hub.executiveBrief?.pendingApprovals || 0}</p>
-        <p>top bottleneck: {hub.executiveBrief?.topBottleneck || 'None'}</p>
-        <p>top recommendation: {hub.executiveBrief?.topRecommendation || 'Maintain governance mode.'}</p>
         <p>generatedAt: {new Date(hub.generatedAt).toLocaleString()}</p>
+      </Panel>
+
+      <Panel>
+        <h3>Weekly Review</h3>
+        <p>{hub.weeklyReport?.summary || 'No weekly summary available.'}</p>
+      </Panel>
+
+      <Panel>
+        <h3>KPI Snapshot</h3>
+        <p>Org Health Score: {hub.kpi?.kpis?.organizationalHealthScore || 0}</p>
+        <p>Workforce Utilization: {hub.kpi?.kpis?.workforceUtilization || 0}</p>
+        <p>Approval Queue Open: {hub.kpi?.kpis?.approvalQueueOpen || 0}</p>
+      </Panel>
+
+      <Panel>
+        <h3>Decision Summary</h3>
+        {decisionRows.map((item, idx) => <p key={`${item.title}-${idx}`}>{item.state} | {item.title} | {item.source}</p>)}
+      </Panel>
+
+      <Panel>
+        <h3>Risks & Bottlenecks</h3>
+        {(hub.dailyReport?.risks || []).map((risk) => <p key={risk.id}>{risk.severity} | {risk.title}</p>)}
+        {(hub.dailyReport?.bottlenecks || []).map((item) => <p key={item.area}>{item.area} | {item.value}</p>)}
+      </Panel>
+
+      <Panel>
+        <h3>Recommended Next Actions</h3>
+        {(hub.dailyReport?.recommendedNextActions || []).map((line, idx) => <p key={`next-${idx}`}>{line}</p>)}
       </Panel>
 
       <section className='stats-grid'>
@@ -46,18 +75,6 @@ export default function AIEnterpriseCommandCenter() {
         <Panel><h3>Operations Board</h3><p>Blocked: {hub.operations?.blocked || 0}</p></Panel>
         <Panel><h3>Operations Board</h3><p>Completed Today: {hub.operations?.completedToday || 0}</p></Panel>
       </section>
-
-      <Panel>
-        <h3>Executive Focus Queue</h3>
-        <p>Prioritized: critical → high → medium</p>
-        {(hub.focusQueue || []).map((item) => <p key={item.id}>{item.priority} | {item.title} | {item.state}</p>)}
-      </Panel>
-
-      <Panel>
-        <h3>Decision Tracker</h3>
-        <p>States: requested · approved · rejected · closed</p>
-        {decisionRows.map((item, idx) => <p key={`${item.title}-${idx}`}>{item.state} | {item.title} | {item.source}</p>)}
-      </Panel>
 
       <Panel>
         <h3>Morning Checklist</h3>
