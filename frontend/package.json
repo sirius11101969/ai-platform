@@ -8,7 +8,8 @@
     "test:ui-sanitizer": "node tests/uiSanitizer.test.mjs",
     "test:revenue-intelligence": "node tests/revenueIntelligence.test.mjs",
     "test:ai-voice-outreach": "node tests/aiVoiceOutreach.test.mjs",
-    "test:ai-workforce-routes": "node tests/aiWorkforceApiRoutes.test.mjs"
+    "test:ai-workforce-routes": "node tests/aiWorkforceApiRoutes.test.mjs",
+    "test:revenue-dashboard-workspace": "node tests/revenueDashboardWorkspace.test.mjs"
   },
   "dependencies": {
     "react": "^18.2.0",

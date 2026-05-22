@@ -888,7 +888,13 @@ export function approveAiCommandCenterAction(id,payload={}){return request(`/ai/
 export function rejectAiCommandCenterAction(id,payload={}){return request(`/ai/command-center/actions/${id}/reject`,{method:'POST',body:JSON.stringify(payload)})}
 export function fetchAiCommandCenterActionAudit(id){return request(`/ai/command-center/actions/${id}/audit`)}
 
-export function fetchRevenueOverview() { return request('/revenue/overview') }
-export function fetchRevenueFunnel() { return request('/revenue/funnel') }
+export function fetchRevenueOverview(workspaceId = getActiveWorkspaceId()) {
+  const query = workspaceId ? `?workspaceId=${encodeURIComponent(workspaceId)}` : ''
+  return request(`/revenue/overview${query}`, { workspaceId })
+}
+export function fetchRevenueFunnel(workspaceId = getActiveWorkspaceId()) {
+  const query = workspaceId ? `?workspaceId=${encodeURIComponent(workspaceId)}` : ''
+  return request(`/revenue/funnel${query}`, { workspaceId })
+}
 export function activateRevenuePayment(payload) { return request('/revenue/activate', { method: 'POST', body: JSON.stringify(payload || {}) }) }
 export function startRevenueCheckout(payload) { return request('/revenue/checkout/start', { method: 'POST', body: JSON.stringify(payload || {}) }) }
