@@ -3,9 +3,11 @@ const {
   calculateRevenueLeadScore,
   generateRevenueForecast,
   enqueueDueRevenueIntelligence,
+  getRevenueIntelligenceDashboard,
   LEAD_INTELLIGENCE_ANALYSIS_JOB_TYPE,
   REVENUE_FORECAST_GENERATION_JOB_TYPE,
 } = require('../src/services/aiRevenueIntelligenceService')
+const pool = require('../src/db/pool')
 
 function daysAgo(days) {
   return new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString()
@@ -89,11 +91,39 @@ async function testAutonomousSchedulingEnqueuesJobs() {
   assert.deepStrictEqual(jobTypes, [LEAD_INTELLIGENCE_ANALYSIS_JOB_TYPE, REVENUE_FORECAST_GENERATION_JOB_TYPE])
 }
 
+async function testDashboardMetricsWithoutStartedAtColumn() {
+  const originalQuery = pool.query
+  pool.query = async (sql) => {
+    if (sql.includes('FROM ai_lead_scores s') && sql.includes('JOIN crm_leads l')) return { rows: [], rowCount: 0 }
+    if (sql.includes('FROM ai_revenue_forecasts')) return { rows: [], rowCount: 0 }
+    if (sql.includes('analysis_latency_ms') && sql.includes('ai_execution_jobs j')) {
+      assert(!sql.includes('j.started_at'), 'dashboard metrics SQL must not reference j.started_at')
+      return {
+        rows: [{ analysis_latency_ms: '1200', forecast_generation_count: 2, scored_leads: 3, active_leads: 4, recommendation_acceptance: 1 }],
+        rowCount: 1,
+      }
+    }
+    throw new Error(`Unhandled SQL: ${sql}`)
+  }
+
+  try {
+    const dashboard = await getRevenueIntelligenceDashboard({ workspaceId: 'workspace-1' })
+    assert.strictEqual(typeof dashboard, 'object')
+    assert.strictEqual(dashboard.metrics.analysisLatencyMs, 1200)
+    assert.strictEqual(dashboard.metrics.forecastGenerationCount, 2)
+    assert.strictEqual(dashboard.metrics.recommendationAcceptance, 1)
+    assert.strictEqual(dashboard.metrics.scoringCoverage, 75)
+  } finally {
+    pool.query = originalQuery
+  }
+}
+
 async function main() {
   testScoreGenerationUsesSignals()
   await testForecastGenerationDoesNotHallucinateRevenue()
   testRecommendationSafetyForSilentLead()
   await testAutonomousSchedulingEnqueuesJobs()
+  await testDashboardMetricsWithoutStartedAtColumn()
   console.log('aiRevenueIntelligenceService tests passed')
 }
 

@@ -440,7 +440,7 @@ async function getRevenueIntelligenceDashboard({ workspaceId } = {}) {
     pool.query('SELECT * FROM ai_revenue_forecasts WHERE workspace_id = $1::uuid ORDER BY generated_at DESC LIMIT 1', [workspaceId]),
     pool.query(
       `SELECT
-         COALESCE(AVG(EXTRACT(EPOCH FROM (j.completed_at - j.started_at)) * 1000) FILTER (WHERE j.completed_at IS NOT NULL AND j.started_at IS NOT NULL), 0)::numeric AS analysis_latency_ms,
+         COALESCE(AVG(EXTRACT(EPOCH FROM (j.completed_at - j.created_at)) * 1000) FILTER (WHERE j.completed_at IS NOT NULL AND j.created_at IS NOT NULL), 0)::numeric AS analysis_latency_ms,
          COUNT(*) FILTER (WHERE j.job_type = $2::text AND j.status = 'completed')::integer AS forecast_generation_count,
          COUNT(DISTINCT s.lead_id)::integer AS scored_leads,
          COUNT(DISTINCT l.id)::integer AS active_leads,
@@ -457,6 +457,12 @@ async function getRevenueIntelligenceDashboard({ workspaceId } = {}) {
   const latestForecast = forecastResult.rows[0] || null
   const metrics = metricsResult.rows[0] || {}
   const avgPipelineHealth = scores.length ? Math.round(scores.reduce((sum, score) => sum + score.pipelineHealth, 0) / scores.length) : 0
+  console.info('[ai-revenue-intelligence] revenue_intelligence_metrics_loaded', {
+    workspaceId,
+    scoredLeads: Number(metrics.scored_leads || 0),
+    activeLeads: Number(metrics.active_leads || 0),
+    forecastGenerationCount: Number(metrics.forecast_generation_count || 0),
+  })
   return {
     hotLeads: scores.filter((score) => score.priorityScore >= 75 || score.closeProbability >= 70).slice(0, 10),
     highestCloseProbability: [...scores].sort((a, b) => b.closeProbability - a.closeProbability).slice(0, 10),
