@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react'
 import { PageHeading, Panel } from '../components/AppShell'
-import { fetchAiCommandCenterBrief, fetchAiCommandCenterDailyReport, fetchAiCommandCenterFocus, fetchAiCommandCenterKpi, fetchAiCommandCenterOperations, fetchAiCommandCenterWeeklyReport } from '../services/api'
+import { fetchAiCommandCenterBrief, fetchAiCommandCenterDailyReport, fetchAiCommandCenterFocus, fetchAiCommandCenterKpi, fetchAiCommandCenterOperations, fetchAiCommandCenterPlanning, fetchAiCommandCenterPlanningMonthly, fetchAiCommandCenterPlanningWeekly, fetchAiCommandCenterWeeklyReport } from '../services/api'
 
 export default function AIEnterpriseCommandCenter() {
   const [hub, setHub] = useState(null)
+  const [planning, setPlanning] = useState(null)
   const [error, setError] = useState('')
   const [checklist, setChecklist] = useState({})
 
   useEffect(() => {
-    Promise.all([fetchAiCommandCenterBrief(), fetchAiCommandCenterOperations(), fetchAiCommandCenterFocus(), fetchAiCommandCenterDailyReport(), fetchAiCommandCenterWeeklyReport(), fetchAiCommandCenterKpi()])
-      .then(([brief, operations, focus, dailyReport, weeklyReport, kpi]) => {
+    Promise.all([fetchAiCommandCenterBrief(), fetchAiCommandCenterOperations(), fetchAiCommandCenterFocus(), fetchAiCommandCenterDailyReport(), fetchAiCommandCenterWeeklyReport(), fetchAiCommandCenterKpi(), fetchAiCommandCenterPlanning(), fetchAiCommandCenterPlanningWeekly(), fetchAiCommandCenterPlanningMonthly()])
+      .then(([brief, operations, focus, dailyReport, weeklyReport, kpi, planningAll, planningWeekly, planningMonthly]) => {
         const merged = {
           generatedAt: brief.generatedAt || operations.generatedAt || focus.generatedAt,
           executiveBrief: brief.executiveBrief || {},
@@ -24,6 +25,7 @@ export default function AIEnterpriseCommandCenter() {
         const initialChecklist = {}
         ;(merged.checklist || []).forEach((item) => { initialChecklist[item.id] = Boolean(item.completed) })
         setChecklist(initialChecklist)
+        setPlanning({ all: planningAll, weekly: planningWeekly, monthly: planningMonthly })
       })
       .catch((e) => setError(e.message || 'Failed to load command center'))
   }, [])
@@ -75,6 +77,39 @@ export default function AIEnterpriseCommandCenter() {
         <Panel><h3>Operations Board</h3><p>Blocked: {hub.operations?.blocked || 0}</p></Panel>
         <Panel><h3>Operations Board</h3><p>Completed Today: {hub.operations?.completedToday || 0}</p></Panel>
       </section>
+
+
+
+      <Panel>
+        <h3>Executive Planning Board</h3>
+        <p>Planning Horizon: {planning?.all?.planningHorizon || 'weekly_monthly'}</p>
+        <p>Generated: {planning?.all?.generatedAt ? new Date(planning.all.generatedAt).toLocaleString() : 'n/a'}</p>
+      </Panel>
+
+      <Panel>
+        <h3>Weekly Priorities</h3>
+        {(planning?.weekly?.weeklyPriorities || []).map((p) => <p key={p.id}>{p.priority} | {p.title} | {p.source}</p>)}
+      </Panel>
+
+      <Panel>
+        <h3>Monthly Objectives</h3>
+        {(planning?.monthly?.monthlyObjectives || []).map((o, idx) => <p key={`mo-${idx}`}>{o.objective} | current {o.current} | target {o.target}</p>)}
+      </Panel>
+
+      <Panel>
+        <h3>KPI Review Plan</h3>
+        {(planning?.all?.kpiReviewPlan || []).map((k, idx) => <p key={`kpi-plan-${idx}`}>{k.metric} | {k.cadence} | owner {k.owner}</p>)}
+      </Panel>
+
+      <Panel>
+        <h3>Decision Follow-ups</h3>
+        {(planning?.all?.decisionFollowups || []).map((d) => <p key={d.actionId}>{d.status} | {d.actionType} | required: {d.requiredDecision}</p>)}
+      </Panel>
+
+      <Panel>
+        <h3>Planning Recommendations</h3>
+        {(planning?.all?.recommendations || []).map((line, idx) => <p key={`planning-rec-${idx}`}>{line}</p>)}
+      </Panel>
 
       <Panel>
         <h3>Morning Checklist</h3>

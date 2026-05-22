@@ -339,4 +339,90 @@ async function getReport({ workspaceId, reportType = 'daily' }) {
   return payload
 }
 
-module.exports = { getOverview, getTimeline, getBrief, getOperations, getFocus, getReport, getKpi, requestAction, getActions, reviewAction, getActionAudit, buildReviewer }
+
+
+function buildPlanningPayload({ dailyReport, weeklyReport, kpi, focusQueue, actions, executive }) {
+  const generatedAt = new Date().toISOString()
+  const weeklyPriorities = (focusQueue || []).slice(0, 6).map((item, idx) => ({
+    id: item.id || `priority-${idx + 1}`,
+    title: item.title || 'Executive follow-up',
+    priority: item.priority || 'medium',
+    source: item.source || 'focus_queue',
+    state: item.state || 'requested',
+    requestedAt: item.requestedAt || generatedAt,
+  }))
+
+  const monthlyObjectives = [
+    { objective: 'Stabilize operational health', metric: 'degraded_systems', target: 0, current: dailyReport?.kpis?.degradedSystems || 0 },
+    { objective: 'Maintain governance throughput', metric: 'approval_queue_open', target: 0, current: kpi?.kpis?.approvalQueueOpen || 0 },
+    { objective: 'Improve organizational health score', metric: 'organizational_health_score', target: Math.max(Number(kpi?.kpis?.organizationalHealthScore || 0), 85), current: kpi?.kpis?.organizationalHealthScore || 0 },
+  ]
+
+  const kpiReviewPlan = [
+    { metric: 'system_health_ready', cadence: 'weekly', owner: 'executive_ops', current: kpi?.kpis?.systemHealth?.READY || 0 },
+    { metric: 'approval_queue_open', cadence: 'daily', owner: 'governance_review', current: kpi?.kpis?.approvalQueueOpen || 0 },
+    { metric: 'strategic_risk_count', cadence: 'weekly', owner: 'strategic_planning', current: kpi?.kpis?.strategicRiskCount || 0 },
+  ]
+
+  const decisionFollowups = (actions?.actions || []).filter((a) => a.status === 'requested').slice(0, 10).map((a) => ({
+    actionId: a.id,
+    actionType: a.action_type,
+    status: a.status,
+    reason: a.reason,
+    requiredDecision: 'human_approval',
+    governance: a.governance || GOVERNANCE_GUARDRAILS,
+  }))
+
+  const recommendations = [
+    ...(dailyReport?.recommendedNextActions || []),
+    ...(weeklyReport?.recommendedNextActions || []),
+    'Review strategic planning and organizational memory before approving new actions.',
+  ].slice(0, 8)
+
+  return {
+    generatedAt,
+    planningHorizon: 'weekly_monthly',
+    weeklyPriorities,
+    monthlyObjectives,
+    kpiReviewPlan,
+    decisionFollowups,
+    recommendations,
+    governance: {
+      ...GOVERNANCE_GUARDRAILS,
+      planningOnly: true,
+      humanApprovalRequired: true,
+      sourceSystems: ['daily_report', 'weekly_report', 'kpi', 'focus_queue', 'approval_actions', 'strategic_planning', 'organizational_memory'],
+      noAutonomousExecution: true,
+      noCustomerActions: true,
+      noPricingChanges: true,
+    },
+  }
+}
+
+async function getPlanning({ workspaceId }) {
+  const [dailyReport, weeklyReport, kpi, operations, actions, executive] = await Promise.all([
+    getReport({ workspaceId, reportType: 'daily' }),
+    getReport({ workspaceId, reportType: 'weekly' }),
+    getKpi({ workspaceId }),
+    getOperationsHub({ workspaceId }),
+    getActions({ workspaceId, limit: 200 }),
+    getExecutiveOverview({ workspaceId }),
+  ])
+  const payload = buildPlanningPayload({ dailyReport, weeklyReport, kpi, focusQueue: operations?.focusQueue || [], actions, executive })
+  console.info('command_center_planning_loaded', { workspaceId, generatedAt: payload.generatedAt })
+  return payload
+}
+
+async function getPlanningWeekly({ workspaceId }) {
+  const payload = await getPlanning({ workspaceId })
+  console.info('command_center_weekly_planning_loaded', { workspaceId, generatedAt: payload.generatedAt, priorities: payload.weeklyPriorities.length })
+  return { ...payload, planningHorizon: 'weekly' }
+}
+
+async function getPlanningMonthly({ workspaceId }) {
+  const payload = await getPlanning({ workspaceId })
+  console.info('command_center_monthly_planning_loaded', { workspaceId, generatedAt: payload.generatedAt, objectives: payload.monthlyObjectives.length })
+  return { ...payload, planningHorizon: 'monthly' }
+}
+
+module.exports = { getOverview, getTimeline, getBrief, getOperations, getFocus, getReport, getKpi, getPlanning, getPlanningWeekly, getPlanningMonthly, requestAction, getActions, reviewAction, getActionAudit, buildReviewer }
