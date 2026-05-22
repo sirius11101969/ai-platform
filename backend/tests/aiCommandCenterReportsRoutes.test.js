@@ -35,6 +35,9 @@ async function runWithApp(fn) {
       requestAction: async () => ({}), getActions: async () => ({}), reviewAction: async () => ({}), getActionAudit: async () => ({}),
       getReport: async (args) => { calls.push(args); return { reportType: args.reportType, kpis: { readiness: 9 } } },
       getKpi: async (args) => { calls.push({ ...args, reportType: 'kpi' }); return { reportType: 'kpi', kpis: { approvalQueueOpen: 2 } } },
+      getPlanning: async (args) => { calls.push({ ...args, reportType: 'planning' }); return { planningHorizon: 'weekly_monthly' } },
+      getPlanningWeekly: async (args) => { calls.push({ ...args, reportType: 'planning_weekly' }); return { planningHorizon: 'weekly' } },
+      getPlanningMonthly: async (args) => { calls.push({ ...args, reportType: 'planning_monthly' }); return { planningHorizon: 'monthly' } },
     }),
   ]
 
@@ -60,9 +63,24 @@ Promise.resolve().then(async () => {
     assert.strictEqual(kpi.status, 200)
     assert.strictEqual(kpi.body.kpis.approvalQueueOpen, 2)
 
+    const planning = await request(baseUrl, '/api/ai/command-center/planning', headers)
+    assert.strictEqual(planning.status, 200)
+    assert.strictEqual(planning.body.planningHorizon, 'weekly_monthly')
+
+    const planningWeekly = await request(baseUrl, '/api/ai/command-center/planning/weekly', headers)
+    assert.strictEqual(planningWeekly.status, 200)
+    assert.strictEqual(planningWeekly.body.planningHorizon, 'weekly')
+
+    const planningMonthly = await request(baseUrl, '/api/ai/command-center/planning/monthly', headers)
+    assert.strictEqual(planningMonthly.status, 200)
+    assert.strictEqual(planningMonthly.body.planningHorizon, 'monthly')
+
     assert.strictEqual(calls[0].workspaceId, 'ws-1')
     assert.strictEqual(calls[1].workspaceId, 'ws-1')
     assert.strictEqual(calls[2].workspaceId, 'ws-1')
+    assert.strictEqual(calls[3].workspaceId, 'ws-1')
+    assert.strictEqual(calls[4].workspaceId, 'ws-1')
+    assert.strictEqual(calls[5].workspaceId, 'ws-1')
   })
 
   await runWithApp(async ({ baseUrl }) => {

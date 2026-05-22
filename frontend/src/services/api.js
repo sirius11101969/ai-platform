@@ -873,6 +873,10 @@ export function fetchAiCommandCenterDailyReport(){return request('/ai/command-ce
 export function fetchAiCommandCenterWeeklyReport(){return request('/ai/command-center/report/weekly')}
 export function fetchAiCommandCenterKpi(){return request('/ai/command-center/kpi')}
 
+export function fetchAiCommandCenterPlanning(){return request('/ai/command-center/planning')}
+export function fetchAiCommandCenterPlanningWeekly(){return request('/ai/command-center/planning/weekly')}
+export function fetchAiCommandCenterPlanningMonthly(){return request('/ai/command-center/planning/monthly')}
+
 export function fetchAiCommandCenterActions(){return request('/ai/command-center/actions')}
 export function fetchAiCommandCenterInbox(){return request('/ai/command-center/inbox')}
 export function requestAiCommandCenterAction(payload){return request('/ai/command-center/actions/request',{method:'POST',body:JSON.stringify(payload||{})})}
