@@ -908,3 +908,8 @@ export function fetchRevenueOrders(workspaceId = getActiveWorkspaceId()) {
   return request(`/revenue/orders${query}`, { workspaceId })
 }
 export function completeRevenuePayment(payload) { return request('/revenue/payment/complete', { method: 'POST', body: JSON.stringify(payload || {}) }) }
+
+export function fetchPaymentDashboard(workspaceId = getActiveWorkspaceId()) {
+  const query = workspaceId ? `?workspaceId=${encodeURIComponent(workspaceId)}` : ''
+  return request(`/payments/dashboard${query}`, { workspaceId })
+}
