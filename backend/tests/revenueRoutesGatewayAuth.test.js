@@ -91,6 +91,12 @@ async function run() {
       headers: { authorization: 'Bearer valid.jwt', 'x-workspace-id': 'ws-ok' },
     })
     assert.strictEqual(jwtAuth.status, 200)
+
+    const checkoutUnauthorized = await request(base, 'POST', '/api/revenue/checkout/start', {
+      headers: { 'x-workspace-id': '11111111-1111-1111-1111-111111111111' },
+      body: { plan: 'starter', amount: 3900, currency: 'RUB' },
+    })
+    assert.strictEqual(checkoutUnauthorized.status, 401)
   } finally {
     await new Promise((resolve) => server.close(resolve))
     clearModules()

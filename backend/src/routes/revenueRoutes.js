@@ -16,5 +16,6 @@ router.use((req, _res, next) => {
 router.get('/revenue/overview', controller.overview)
 router.get('/revenue/funnel', controller.funnel)
 router.post('/revenue/activate', controller.activate)
+router.post('/revenue/checkout/start', controller.startCheckout)
 
 module.exports = router

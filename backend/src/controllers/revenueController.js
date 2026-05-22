@@ -23,4 +23,17 @@ async function activate(req, res, next) {
   } catch (e) { next(e) }
 }
 
-module.exports = { overview, funnel, activate }
+async function startCheckout(req, res, next) {
+  try {
+    const { workspaceId, plan, amount, currency } = req.body || {}
+    const result = await revenueService.startCheckout({
+      workspaceId: workspaceId || req.workspace.id,
+      plan,
+      amount,
+      currency,
+    })
+    res.status(200).json(result)
+  } catch (e) { next(e) }
+}
+
+module.exports = { overview, funnel, activate, startCheckout }

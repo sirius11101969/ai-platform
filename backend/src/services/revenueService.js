@@ -66,4 +66,37 @@ async function activatePayment({ workspaceId, paymentId, credits = 100, lead = n
   }
 }
 
-module.exports = { getOverview, getFunnel, activatePayment, trackEvent }
+async function startCheckout({ workspaceId, plan = 'starter', amount = 0, currency = 'RUB' }) {
+  const normalizedPlan = String(plan || 'starter')
+  const normalizedAmount = Number(amount || 0)
+  const normalizedCurrency = String(currency || 'RUB').toUpperCase()
+  const checkoutId = `chk_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
+
+  console.info('revenue_checkout_started', {
+    workspaceId,
+    plan: normalizedPlan,
+    amount: normalizedAmount,
+    currency: normalizedCurrency,
+    checkoutId,
+  })
+
+  await trackEvent({
+    workspaceId,
+    eventType: 'checkout_started',
+    payload: {
+      checkoutId,
+      plan: normalizedPlan,
+      amount: normalizedAmount,
+      currency: normalizedCurrency,
+      status: 'payment_pending',
+    },
+  })
+
+  return {
+    checkoutUrl: `/dashboard?checkout=${encodeURIComponent(checkoutId)}`,
+    status: 'payment_pending',
+    plan: normalizedPlan,
+  }
+}
+
+module.exports = { getOverview, getFunnel, activatePayment, startCheckout, trackEvent }
