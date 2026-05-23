@@ -1,6 +1,7 @@
 const pool = require('../db/pool')
 const revenueService = require('./revenueService')
 const { issuePaymentCredits } = require('./execution/creditLedgerService')
+const { createSandboxPayment, createMockPayment } = require('./providers/yookassaProvider')
 
 async function loadProvider(provider, client = pool) {
   const r = await client.query('SELECT * FROM payment_providers WHERE provider = $1 LIMIT 1', [provider])
@@ -9,18 +10,41 @@ async function loadProvider(provider, client = pool) {
   return row
 }
 
+async function createProviderPayment({ provider, amount, currency, metadata = {}, workspaceId }) {
+  const mode = process.env.YOOKASSA_MODE || 'mock'
+  if (provider !== 'yookassa') {
+    const paymentId = `mock_${provider}_${Date.now()}`
+    return { paymentId, status: 'created', confirmationUrl: null, providerMetadata: { mode: 'mock' } }
+  }
+  if (mode === 'test') return createSandboxPayment({ amount, currency, metadata, workspaceId })
+  if (mode === 'mock') return createMockPayment({ provider, amount, currency, metadata, workspaceId })
+  throw Object.assign(new Error(`unsupported YOOKASSA_MODE: ${mode}`), { statusCode: 400 })
+}
+
 async function createPayment({ workspaceId, provider, amount, currency, metadata = {} }) {
   const p = await loadProvider(provider)
-  if (p.mode !== 'mock') throw Object.assign(new Error('live mode not yet enabled'), { statusCode: 400 })
+  const normalizedCurrency = String(currency || p.currency).toUpperCase()
+  const providerPayment = await createProviderPayment({
+    provider,
+    amount,
+    currency: normalizedCurrency,
+    metadata,
+    workspaceId,
+  })
 
-  const externalPaymentId = `mock_${provider}_${Date.now()}`
   const created = await pool.query(
-    `INSERT INTO payment_transactions(workspace_id, provider, external_payment_id, status, amount, currency, metadata)
-     VALUES($1::uuid,$2::text,$3::text,'created',$4::numeric,$5::text,$6::jsonb) RETURNING *`,
-    [workspaceId, provider, externalPaymentId, Number(amount || 0), String(currency || p.currency).toUpperCase(), JSON.stringify(metadata || {})]
+    `INSERT INTO payment_transactions(workspace_id, provider, external_payment_id, status, amount, currency, metadata, provider_metadata, checkout_url)
+     VALUES($1::uuid,$2::text,$3::text,$4::text,$5::numeric,$6::text,$7::jsonb,$8::jsonb,$9::text) RETURNING *`,
+    [workspaceId, provider, providerPayment.paymentId, providerPayment.status, Number(amount || 0), normalizedCurrency, JSON.stringify(metadata || {}), JSON.stringify(providerPayment.providerMetadata || {}), providerPayment.confirmationUrl]
   )
-  console.info('payment_created', { workspaceId, provider, externalPaymentId, mode: p.mode })
-  return { transaction: created.rows[0], mode: p.mode }
+  console.info('payment_created', { workspaceId, provider, externalPaymentId: providerPayment.paymentId, mode: p.mode })
+  return {
+    transaction: created.rows[0],
+    mode: p.mode,
+    paymentId: providerPayment.paymentId,
+    status: providerPayment.status,
+    confirmationUrl: providerPayment.confirmationUrl,
+  }
 }
 
 async function processWebhook({ workspaceId, provider, event, externalPaymentId, status, amount, currency, metadata = {} }) {
@@ -96,4 +120,4 @@ async function getDashboard({ workspaceId }) {
   return { providers: providers.rows, transactions: transactions.rows, health }
 }
 
-module.exports = { createPayment, processWebhook, getPaymentStatus, getDashboard }
+module.exports = { createProviderPayment, createPayment, processWebhook, getPaymentStatus, getDashboard }

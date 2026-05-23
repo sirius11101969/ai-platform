@@ -4,12 +4,14 @@ const paymentServicePath = require.resolve('../src/services/paymentService')
 const poolPath = require.resolve('../src/db/pool')
 const revenueServicePath = require.resolve('../src/services/revenueService')
 const creditLedgerServicePath = require.resolve('../src/services/execution/creditLedgerService')
+const yookassaProviderPath = require.resolve('../src/services/providers/yookassaProvider')
 
-function loadWithMocks({ queryImpl, issuePaymentCreditsImpl }) {
+function loadWithMocks({ queryImpl, issuePaymentCreditsImpl, providerImpl }) {
   delete require.cache[paymentServicePath]
   const originalPool = require.cache[poolPath]
   const originalRevenue = require.cache[revenueServicePath]
   const originalCreditLedger = require.cache[creditLedgerServicePath]
+  const originalProvider = require.cache[yookassaProviderPath]
 
   const fakePool = {
     query: queryImpl,
@@ -24,6 +26,15 @@ function loadWithMocks({ queryImpl, issuePaymentCreditsImpl }) {
     loaded: true,
     exports: { issuePaymentCredits: issuePaymentCreditsImpl || (async () => ({ duplicated: false, id: 'ledger-1', balance_after: 9 })) },
   }
+  require.cache[yookassaProviderPath] = {
+    id: yookassaProviderPath,
+    filename: yookassaProviderPath,
+    loaded: true,
+    exports: providerImpl || {
+      createMockPayment: async ({ provider }) => ({ paymentId: `mock_${provider}_1`, status: 'created', confirmationUrl: null, providerMetadata: { mode: 'mock' } }),
+      createSandboxPayment: async () => ({ paymentId: 'sandbox_1', status: 'pending', confirmationUrl: 'https://sandbox.yookassa/confirm', providerMetadata: { mode: 'test' } }),
+    },
+  }
   const service = require('../src/services/paymentService')
   return {
     service,
@@ -32,8 +43,42 @@ function loadWithMocks({ queryImpl, issuePaymentCreditsImpl }) {
       if (originalPool) require.cache[poolPath] = originalPool; else delete require.cache[poolPath]
       if (originalRevenue) require.cache[revenueServicePath] = originalRevenue; else delete require.cache[revenueServicePath]
       if (originalCreditLedger) require.cache[creditLedgerServicePath] = originalCreditLedger; else delete require.cache[creditLedgerServicePath]
+      if (originalProvider) require.cache[yookassaProviderPath] = originalProvider; else delete require.cache[yookassaProviderPath]
     },
   }
+}
+
+async function testCreatePaymentMockModeUnchanged() {
+  process.env.YOOKASSA_MODE = 'mock'
+  let insertParams = null
+  const { service, restore } = loadWithMocks({ queryImpl: async (sql, params = []) => {
+    if (sql.includes('FROM payment_providers')) return { rows: [{ provider: 'yookassa', enabled: true, mode: 'mock', currency: 'RUB' }] }
+    if (sql.includes('INSERT INTO payment_transactions')) { insertParams = params; return { rows: [{ id: 'tx-1', external_payment_id: params[2], status: 'created', checkout_url: params[8] }] } }
+    return { rows: [] }
+  } })
+  try {
+    const result = await service.createPayment({ workspaceId: '00000000-0000-0000-0000-000000000123', provider: 'yookassa', amount: 10, currency: 'rub' })
+    assert.strictEqual(result.status, 'created')
+    assert.strictEqual(result.confirmationUrl, null)
+    assert.strictEqual(insertParams[2], 'mock_yookassa_1')
+  } finally { restore(); delete process.env.YOOKASSA_MODE }
+}
+
+async function testCreatePaymentSandboxReturnsConfirmationUrlAndPersists() {
+  process.env.YOOKASSA_MODE = 'test'
+  let insertParams = null
+  const { service, restore } = loadWithMocks({ queryImpl: async (sql, params = []) => {
+    if (sql.includes('FROM payment_providers')) return { rows: [{ provider: 'yookassa', enabled: true, mode: 'mock', currency: 'RUB' }] }
+    if (sql.includes('INSERT INTO payment_transactions')) { insertParams = params; return { rows: [{ id: 'tx-2', external_payment_id: params[2], checkout_url: params[8], provider_metadata: params[7] }] } }
+    return { rows: [] }
+  } })
+  try {
+    const result = await service.createPayment({ workspaceId: '00000000-0000-0000-0000-000000000123', provider: 'yookassa', amount: 15, currency: 'RUB', metadata: { orderId: 'ord-1' } })
+    assert.strictEqual(result.paymentId, 'sandbox_1')
+    assert.strictEqual(result.confirmationUrl, 'https://sandbox.yookassa/confirm')
+    assert.strictEqual(insertParams[2], 'sandbox_1')
+    assert.strictEqual(insertParams[8], 'https://sandbox.yookassa/confirm')
+  } finally { restore(); delete process.env.YOOKASSA_MODE }
 }
 
 async function testProviderIsolation() { /* unchanged */
@@ -168,6 +213,8 @@ async function testStatusReturnsLatestCreatedTransaction() {
 
 Promise.resolve()
   .then(testProviderIsolation)
+  .then(testCreatePaymentMockModeUnchanged)
+  .then(testCreatePaymentSandboxReturnsConfirmationUrlAndPersists)
   .then(testDuplicateWebhook)
   .then(testLedgerConsistencySingleCreditGrant)
   .then(testWebhookIssuesGrantMetadata)
