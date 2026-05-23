@@ -81,6 +81,79 @@ async function testLedgerConsistencySingleCreditGrant() {
   } finally { restore() }
 }
 
+
+async function testWebhookIssuesGrantMetadata() {
+  const creditCalls = []
+  const { service, restore } = loadWithMocks({
+    queryImpl: async (sql) => {
+      if (sql.includes('FROM payment_providers')) return { rows: [{ provider: 'stripe', enabled: true, mode: 'mock', currency: 'USD' }] }
+      if (sql.includes('FROM payment_transactions WHERE provider=')) return { rows: [{ id: '1', status: 'created', amount: 12, currency: 'USD', workspace_id: 'w' }] }
+      if (sql.includes('UPDATE payment_transactions')) return { rows: [{ id: '1', status: 'paid', amount: 12 }] }
+      if (sql === 'BEGIN' || sql === 'COMMIT' || sql === 'ROLLBACK') return { rows: [] }
+      return { rows: [] }
+    },
+    issuePaymentCreditsImpl: async (payload) => { creditCalls.push(payload); return { duplicated: false, id: 'ledger-1', balance_after: 12 } },
+  })
+
+  try {
+    await service.processWebhook({ workspaceId: 'w', provider: 'stripe', externalPaymentId: 'ext-1', status: 'paid', amount: 12, currency: 'usd' })
+    assert.strictEqual(creditCalls.length, 1)
+    assert.strictEqual(creditCalls[0].provider, 'stripe')
+    assert.strictEqual(creditCalls[0].externalPaymentId, 'ext-1')
+    assert.strictEqual(creditCalls[0].amount, 12)
+    assert.strictEqual(creditCalls[0].currency, 'usd')
+  } finally { restore() }
+}
+
+async function testIssuePaymentCreditsUsesGrantAndDedupes() {
+  delete require.cache[creditLedgerServicePath]
+  const originalPool = require.cache[poolPath]
+  require.cache[poolPath] = { id: poolPath, filename: poolPath, loaded: true, exports: {} }
+  const { issuePaymentCredits } = require('../src/services/execution/creditLedgerService')
+  const state = { credits_pool: 3, inserted: false }
+  const sqlLog = []
+  const fakeClient = {
+    query: async (sql, params=[]) => {
+      sqlLog.push({ sql, params })
+      if (sql.startsWith('SELECT id, balance_after FROM credit_ledger_entries')) {
+        return state.inserted ? { rows: [{ id: 'ledger-1', balance_after: 8 }] } : { rows: [] }
+      }
+      if (sql.startsWith('SELECT id FROM workspaces')) return { rows: [{ id: 'w' }] }
+      if (sql.startsWith('UPDATE workspaces SET credits_pool = credits_pool +')) {
+        state.credits_pool += params[0]
+        return { rows: [{ credits_pool: state.credits_pool }] }
+      }
+      if (sql.includes('INSERT INTO credit_ledger_entries')) {
+        state.inserted = true
+        return { rows: [{ id: 'ledger-1', balance_after: state.credits_pool }] }
+      }
+      throw new Error(`unexpected sql ${sql}`)
+    },
+  }
+
+  try {
+    const first = await issuePaymentCredits({ workspaceId: 'w', provider: 'stripe', externalPaymentId: 'ext-2', amount: 5, currency: 'usd' }, fakeClient)
+  const second = await issuePaymentCredits({ workspaceId: 'w', provider: 'stripe', externalPaymentId: 'ext-2', amount: 5, currency: 'usd' }, fakeClient)
+
+  assert.strictEqual(first.duplicated, false)
+  assert.strictEqual(second.duplicated, true)
+  assert.strictEqual(state.credits_pool, 8)
+
+  const insertStmt = sqlLog.find((entry) => entry.sql.includes('INSERT INTO credit_ledger_entries'))
+  assert.ok(insertStmt)
+  assert.ok(insertStmt.sql.includes("'grant'"))
+
+  const metadata = insertStmt.params[4]
+  assert.deepStrictEqual(metadata, { reason: 'payment_credit', provider: 'stripe', externalPaymentId: 'ext-2', amount: 5, currency: 'USD' })
+
+  const existingCheckParams = sqlLog[0].params
+  assert.deepStrictEqual(existingCheckParams, ['w', 'payment:stripe:ext-2'])
+  } finally {
+    if (originalPool) require.cache[poolPath] = originalPool; else delete require.cache[poolPath]
+    delete require.cache[creditLedgerServicePath]
+  }
+}
+
 async function testStatusReturnsLatestCreatedTransaction() {
   const newest = { id: 'tx-2', provider: 'stripe', external_payment_id: 'mock_2', status: 'created', amount: 15, currency: 'USD', metadata: { source: 'checkout' }, created_at: '2026-05-22T00:00:00.000Z' }
   let capturedSql = ''
@@ -97,5 +170,7 @@ Promise.resolve()
   .then(testProviderIsolation)
   .then(testDuplicateWebhook)
   .then(testLedgerConsistencySingleCreditGrant)
+  .then(testWebhookIssuesGrantMetadata)
+  .then(testIssuePaymentCreditsUsesGrantAndDedupes)
   .then(testStatusReturnsLatestCreatedTransaction)
   .then(() => console.log('paymentService tests passed'))

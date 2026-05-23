@@ -80,10 +80,10 @@ async function issuePaymentCredits({ workspaceId, provider, externalPaymentId, a
   )
   if (!updated.rows[0]) throw Object.assign(new Error('Workspace not found'), { statusCode: 404 })
   const balanceAfter = Number(updated.rows[0].credits_pool || 0)
-  const metadata = { provider, externalPaymentId, amount: Number(amount || 0), currency: String(currency || '').toUpperCase() }
+  const metadata = { reason: 'payment_credit', provider, externalPaymentId, amount: Number(amount || 0), currency: String(currency || '').toUpperCase() }
   const entry = await client.query(
     `INSERT INTO credit_ledger_entries(workspace_id, idempotency_key, entry_type, credits_delta, balance_after, metadata)
-     VALUES($1,$2,'payment_credit',$3,$4,$5)
+     VALUES($1,$2,'grant',$3,$4,$5)
      RETURNING id, balance_after`,
     [workspaceId, idempotencyKey, credits, balanceAfter, metadata]
   )
