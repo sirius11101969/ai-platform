@@ -83,6 +83,22 @@ async function migrate() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+
+
+    CREATE TABLE IF NOT EXISTS credit_ledger_entries (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+      user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+      task_id UUID REFERENCES ai_tasks(id) ON DELETE SET NULL,
+      idempotency_key TEXT NOT NULL,
+      entry_type TEXT NOT NULL,
+      credits_delta INTEGER NOT NULL,
+      balance_after INTEGER NOT NULL,
+      metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      UNIQUE(workspace_id, idempotency_key)
+    );
+
     CREATE TABLE IF NOT EXISTS ai_tasks (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -961,6 +977,8 @@ CREATE TABLE IF NOT EXISTS crm_stages (
     CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_source_message_dedup ON ai_worker_queue(workspace_id, lead_id, action_type, ((payload->>'sourceMessageId')), status, created_at DESC) WHERE action_type IN ('meeting_schedule_proposal', 'telegram_reply_draft', 'telegram_meeting_confirmation_draft');
     CREATE INDEX IF NOT EXISTS idx_lead_attachments_lead ON lead_attachments(workspace_id, lead_id, created_at DESC);
 
+
+    CREATE INDEX IF NOT EXISTS idx_credit_ledger_entries_workspace_id ON credit_ledger_entries(workspace_id, created_at DESC);
 
     CREATE INDEX IF NOT EXISTS idx_workspaces_owner_user_id ON workspaces(owner_user_id);
     CREATE INDEX IF NOT EXISTS idx_workspace_members_user_id ON workspace_members(user_id);

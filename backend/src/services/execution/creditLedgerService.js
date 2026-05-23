@@ -59,4 +59,35 @@ async function refundCredits({ workspaceId, userId, taskId, credits, idempotency
   return { duplicated: false, ...entry.rows[0] }
 }
 
-module.exports = { reserveCredits, refundCredits }
+
+async function issuePaymentCredits({ workspaceId, provider, externalPaymentId, amount, currency }, client = pool) {
+  const credits = Math.max(1, Math.round(Number(amount || 0)))
+  if (!workspaceId) throw new Error('workspaceId is required')
+  if (!provider) throw new Error('provider is required')
+  if (!externalPaymentId) throw new Error('externalPaymentId is required')
+  const idempotencyKey = `payment:${provider}:${externalPaymentId}`
+
+  const existing = await client.query(
+    'SELECT id, balance_after FROM credit_ledger_entries WHERE workspace_id = $1 AND idempotency_key = $2',
+    [workspaceId, idempotencyKey]
+  )
+  if (existing.rows[0]) return { duplicated: true, ...existing.rows[0] }
+
+  await client.query('SELECT id FROM workspaces WHERE id = $1 FOR UPDATE', [workspaceId])
+  const updated = await client.query(
+    'UPDATE workspaces SET credits_pool = credits_pool + $1, updated_at = NOW() WHERE id = $2 RETURNING credits_pool',
+    [credits, workspaceId]
+  )
+  if (!updated.rows[0]) throw Object.assign(new Error('Workspace not found'), { statusCode: 404 })
+  const balanceAfter = Number(updated.rows[0].credits_pool || 0)
+  const metadata = { provider, externalPaymentId, amount: Number(amount || 0), currency: String(currency || '').toUpperCase() }
+  const entry = await client.query(
+    `INSERT INTO credit_ledger_entries(workspace_id, idempotency_key, entry_type, credits_delta, balance_after, metadata)
+     VALUES($1,$2,'payment_credit',$3,$4,$5)
+     RETURNING id, balance_after`,
+    [workspaceId, idempotencyKey, credits, balanceAfter, metadata]
+  )
+  return { duplicated: false, ...entry.rows[0] }
+}
+
+module.exports = { reserveCredits, refundCredits, issuePaymentCredits }
