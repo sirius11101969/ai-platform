@@ -225,6 +225,14 @@ ON CONFLICT (provider) DO NOTHING;
 
 CREATE INDEX IF NOT EXISTS idx_payment_transactions_workspace_created ON payment_transactions(workspace_id, created_at DESC);
 
+
+ALTER TABLE payment_transactions
+  ADD COLUMN IF NOT EXISTS provider_metadata JSONB NOT NULL DEFAULT '{}'::jsonb;
+
+ALTER TABLE payment_transactions
+  ADD COLUMN IF NOT EXISTS checkout_url TEXT;
+
+
 CREATE TABLE IF NOT EXISTS ai_agents (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,

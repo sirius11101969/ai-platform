@@ -1118,6 +1118,18 @@ CREATE TABLE IF NOT EXISTS crm_stages (
     CREATE INDEX IF NOT EXISTS idx_ai_worker_queue_outreach_dashboard ON ai_worker_queue(workspace_id, action_type, status, created_at DESC) WHERE action_type IN ('telegram_draft', 'email_draft');
     CREATE INDEX IF NOT EXISTS idx_ai_followup_attempts_lead ON ai_followup_attempts(workspace_id, lead_id, created_at DESC);
 
+
+    DO $$
+    BEGIN
+      IF to_regclass('public.payment_transactions') IS NOT NULL THEN
+        ALTER TABLE payment_transactions
+          ADD COLUMN IF NOT EXISTS provider_metadata JSONB NOT NULL DEFAULT '{}'::jsonb;
+
+        ALTER TABLE payment_transactions
+          ADD COLUMN IF NOT EXISTS checkout_url TEXT;
+      END IF;
+    END $$;
+
     CREATE TABLE IF NOT EXISTS revenue_events (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
