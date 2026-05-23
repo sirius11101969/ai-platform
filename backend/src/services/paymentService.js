@@ -1,5 +1,6 @@
 const pool = require('../db/pool')
 const revenueService = require('./revenueService')
+const { issuePaymentCredits } = require('./execution/creditLedgerService')
 
 async function loadProvider(provider, client = pool) {
   const r = await client.query('SELECT * FROM payment_providers WHERE provider = $1 LIMIT 1', [provider])
@@ -55,7 +56,13 @@ async function processWebhook({ workspaceId, provider, event, externalPaymentId,
       const targetWorkspaceId = workspaceId || tx.workspace_id
       const credits = Math.max(1, Math.round(Number(amount || tx.amount || 0)))
       await revenueService.completePayment({ workspaceId: targetWorkspaceId, orderId: metadata.orderId }).catch(() => null)
-      await client.query('UPDATE workspaces SET credits_pool = credits_pool + $1::int, updated_at = NOW() WHERE id = $2::uuid', [credits, targetWorkspaceId])
+      await issuePaymentCredits({
+        workspaceId: targetWorkspaceId,
+        provider,
+        externalPaymentId,
+        amount: credits,
+        currency: currency || tx.currency,
+      }, client)
       console.info('payment_confirmed', { workspaceId: targetWorkspaceId, provider, externalPaymentId })
       console.info('credit_granted', { workspaceId: targetWorkspaceId, provider, externalPaymentId, credits })
     }
