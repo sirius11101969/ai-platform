@@ -22,6 +22,24 @@ async function createSandboxPayment({ amount, currency, metadata = {}, workspace
       return_url: `${appUrl.replace(/\/$/, '')}/billing`,
     },
     description: `Workspace ${workspaceId} payment`,
+    receipt: {
+      customer: {
+        email: metadata.customerEmail || process.env.PAYMENT_RECEIPT_EMAIL || 'buylesson@gmail.com',
+      },
+      items: [
+        {
+          description: metadata.description || 'AI credits',
+          quantity: '1.00',
+          amount: {
+            value: Number(amount || 0).toFixed(2),
+            currency: String(currency || 'RUB').toUpperCase(),
+          },
+          vat_code: Number(process.env.YOOKASSA_VAT_CODE || 1),
+          payment_subject: 'service',
+          payment_mode: 'full_payment',
+        },
+      ],
+    },
     metadata: { ...(metadata || {}), workspaceId },
   }
 
