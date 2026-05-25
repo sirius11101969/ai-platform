@@ -14,12 +14,19 @@ async function webhook(req, res, next) {
     const provider = body.provider || 'yookassa'
     const event = body.event || body.event_type
     const object = body.object || {}
+
     const externalPaymentId = body.externalPaymentId || body.external_payment_id || object.id
-    const status = body.status || object.status || (event === 'payment.succeeded' ? 'paid' : undefined)
+    const rawStatus = body.status || object.status
+    const status = body.status ||
+      (event === 'payment.succeeded' ? 'paid' : undefined) ||
+      (rawStatus === 'succeeded' ? 'paid' : rawStatus)
+
     const amount = body.amount || Number(object.amount?.value)
     const currency = body.currency || object.amount?.currency
     const metadata = body.metadata || object.metadata || {}
-    const result = await paymentService.processWebhook({ workspaceId: req.workspace?.id, provider, event, externalPaymentId, status, amount, currency, metadata })
+    const workspaceId = req.workspace?.id || metadata.workspaceId || metadata.workspace_id
+
+    const result = await paymentService.processWebhook({ workspaceId, provider, event, externalPaymentId, status, amount, currency, metadata })
     res.status(200).json(result)
   } catch (e) { next(e) }
 }
