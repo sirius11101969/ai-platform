@@ -82,11 +82,11 @@ async function processWebhook({ workspaceId, provider, event, externalPaymentId,
       const plan = String(
         metadata.plan ||
         tx.metadata?.plan ||
-        'start'
+        'starter'
       ).toLowerCase()
 
       const planCredits = {
-        start: 60,
+        starter: 60,
         pro: 180,
         business: 450
       }
