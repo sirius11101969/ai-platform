@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Panel, PageHeading, StatCard } from "../components/AppShell";
-import { createAiTask, fetchAiApprovalQueue, fetchAiCommandCenter, fetchAiTask, fetchAiTasks, fetchCrmStats, fetchProfile, getRevenueIntelligence, startRevenueCheckout, triggerRevenueAnalysis, updateStoredUser } from "../services/api";
+import { createAiTask, fetchAiApprovalQueue, fetchAiCommandCenter, fetchAiTask, fetchAiTasks, fetchCrmStats, fetchProfile, fetchPaymentStatus, getRevenueIntelligence, startRevenueCheckout, triggerRevenueAnalysis, updateStoredUser } from "../services/api";
 import { orders, quickActions, userProfile } from "../data/mockData";
 import { buildRecommendationQueue, getForecastWidget, getRevenueCards } from "../utils/revenueIntelligence";
 
@@ -136,6 +136,10 @@ export default function DashboardPage() {
   const [checkoutStatus, setCheckoutStatus] = useState(null);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [paymentRefreshEnabled, setPaymentRefreshEnabled] =
+useState(
+window.location.search.includes("order=pending")
+);
 
   async function loadDashboard({ silent = false } = {}) {
     if (!silent) setLoading(true);
@@ -188,6 +192,27 @@ export default function DashboardPage() {
   useEffect(() => {
     loadDashboard();
   }, []);
+
+  useEffect(() => {
+    if (!paymentRefreshEnabled) return undefined;
+
+    const interval = window.setInterval(async () => {
+      try {
+        const paymentResponse = await fetchPaymentStatus();
+        const payment = paymentResponse?.payment;
+
+        if (payment?.status === "paid") {
+          await loadDashboard({ silent: true });
+          setMessage("Оплата прошла успешно. Баланс AI-кредитов обновлён.");
+          setPaymentRefreshEnabled(false);
+        }
+      } catch (_error) {
+        // payment-status-refresh: keep dashboard alive even if polling fails
+      }
+    }, 3000);
+
+    return () => window.clearInterval(interval);
+  }, [paymentRefreshEnabled]);
 
   useEffect(() => {
     const activeTasks = tasks.filter((task) => ["pending", "processing"].includes(task.status));

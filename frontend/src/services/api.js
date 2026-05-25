@@ -913,3 +913,8 @@ export function fetchPaymentDashboard(workspaceId = getActiveWorkspaceId()) {
   const query = workspaceId ? `?workspaceId=${encodeURIComponent(workspaceId)}` : ''
   return request(`/payments/dashboard${query}`, { workspaceId })
 }
+
+export function fetchPaymentStatus(workspaceId = getActiveWorkspaceId()) {
+  const query = workspaceId ? `?workspaceId=${encodeURIComponent(workspaceId)}` : ''
+  return request(`/payments/status${query}`, { workspaceId })
+}
