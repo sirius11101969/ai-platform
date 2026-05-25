@@ -2903,3 +2903,31 @@ button { font: inherit; }
 .command-node-card.pulse { animation: pulse 1.5s infinite; }
 .command-edge-list { margin-top:10px; display:grid; gap:4px; font-size:12px; color:#8bb8f3; }
 @media (max-width: 1200px) { .command-stage-columns { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+
+
+/* clickable cursor */
+
+.price-card a,
+.price-card button,
+.btn,
+button,
+a[href]{
+cursor:pointer;
+}
+
+
+/* Pricing checkout button UX */
+.price-card button {
+  cursor: pointer;
+  transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease, background .18s ease;
+}
+
+.price-card button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 34px rgba(0, 180, 255, .28);
+  opacity: .96;
+}
+
+.price-card button:active {
+  transform: translateY(0);
+}

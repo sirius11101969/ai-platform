@@ -289,6 +289,44 @@ function CalculatorSection({ clients, setClients, price, setPrice, revenue }) {
 }
 
 function PricingSection() {
+  async function startCheckout(plan) {
+    try {
+      const response = await fetch(`/api/public/checkout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          plan: plan.key || plan.name,
+          currency: "RUB",
+          amount: Number(String(plan.price).replace(/[^0-9]/g, "")) || 10,
+          customerEmail: "buylesson@gmail.com"
+        })
+      });
+
+if(!response.ok){
+const text=await response.text();
+throw new Error(text || "Checkout unavailable");
+}
+
+      const data = await response.json();
+
+      if (!response.ok || !data.confirmationUrl) {
+        throw new Error(data.error || "Не удалось создать оплату");
+      }
+
+      const checkoutUrl = data.confirmationUrl || data.checkout_url || data.transaction?.checkout_url;
+
+      if (!checkoutUrl) {
+        throw new Error("Ссылка на оплату не получена");
+      }
+
+      window.open(checkoutUrl, "_blank", "noopener,noreferrer");
+    } catch (error) {
+      alert(error.message || "Ошибка оплаты");
+    }
+  }
+
   return (
     <section className="section pricing-section" id="pricing">
       <SectionHeader eyebrow="Тарифы" title="Glow‑тарифы для быстрого запуска и масштабирования" copy="Начните с MVP, подключите больше AI‑кредитов и расширяйте CRM‑автоматизацию по мере роста команды." />
@@ -300,7 +338,7 @@ function PricingSection() {
             <div className="price">{plan.price}<small>/мес</small></div>
             <p>{plan.detail}</p>
             <ul>{plan.features.map((feature) => <li key={feature}>{feature}</li>)}</ul>
-            <a href="#lead-form">Выбрать тариф</a>
+            <button type="button" onClick={() => startCheckout(plan)}>Выбрать тариф</button>
           </motion.article>
         ))}
       </div>
