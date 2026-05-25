@@ -78,8 +78,25 @@ async function processWebhook({ workspaceId, provider, event, externalPaymentId,
 
     if (normalizedStatus === 'paid') {
       const targetWorkspaceId = workspaceId || tx.workspace_id
-      const credits = Math.max(1, Math.round(Number(amount || tx.amount || 0)))
+
+      const plan = String(
+        metadata.plan ||
+        tx.metadata?.plan ||
+        'start'
+      ).toLowerCase()
+
+      const planCredits = {
+        start: 60,
+        pro: 180,
+        business: 450
+      }
+
+      const credits =
+        planCredits[plan] ||
+        Math.max(1, Math.round(Number(amount || tx.amount || 0)))
+
       await revenueService.completePayment({ workspaceId: targetWorkspaceId, orderId: metadata.orderId }).catch(() => null)
+
       await issuePaymentCredits({
         workspaceId: targetWorkspaceId,
         provider,
@@ -87,6 +104,16 @@ async function processWebhook({ workspaceId, provider, event, externalPaymentId,
         amount: credits,
         currency: currency || tx.currency,
       }, client)
+
+      await client.query(
+        `UPDATE workspaces
+         SET plan=$1,
+             updated_at=NOW()
+         WHERE id=$2::uuid`,
+        [plan, targetWorkspaceId]
+      )
+
+      console.info('workspace_plan_updated', { workspaceId: targetWorkspaceId, plan })
       console.info('payment_confirmed', { workspaceId: targetWorkspaceId, provider, externalPaymentId })
       console.info('credit_granted', { workspaceId: targetWorkspaceId, provider, externalPaymentId, credits })
     }
