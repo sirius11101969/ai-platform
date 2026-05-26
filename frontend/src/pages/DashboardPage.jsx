@@ -191,6 +191,17 @@ window.location.search.includes("order=pending")
 
   useEffect(() => {
     loadDashboard();
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("payment") === "success") {
+      setMessage("Оплата принята. Проверяем начисление AI-кредитов...");
+      setPaymentRefreshEnabled(true);
+
+      params.delete("payment");
+      const nextQuery = params.toString();
+      const nextUrl = `${window.location.pathname}${nextQuery ? `?${nextQuery}` : ""}`;
+      window.history.replaceState({}, "", nextUrl);
+    }
   }, []);
 
   useEffect(() => {

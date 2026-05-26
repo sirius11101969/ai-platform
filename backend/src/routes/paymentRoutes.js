@@ -8,7 +8,7 @@ const publicPaymentRoutes = express.Router()
 const paymentRoutes = express.Router()
 const paymentsGateway = requireAiControlGateway({ missingWorkspaceError: 'workspaceId is required for payment routes' })
 
-publicPaymentRoutes.post('/payments/webhook', controller.webhook)
+publicPaymentRoutes.post('/payments/webhook', requirePaymentWebhookSecret, controller.webhook)
 publicPaymentRoutes.post('/public/checkout', publicCheckout.createCheckout)
 
 paymentRoutes.post('/payments/create', paymentsGateway, controller.create)

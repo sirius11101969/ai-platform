@@ -5,3 +5,8 @@ build/
 .env.*
 .DS_Store
 npm-debug.log*
+
+.env
+backup_*.sql
+docker-compose.local.backup.yml
+backend/assets/materials/

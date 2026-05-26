@@ -68,6 +68,8 @@ app.get('/health', healthHandler)
 app.get('/api/health', healthHandler)
 
 app.use('/api', publicPaymentRoutes)
+app.use('/api/telegram', telegramRoutes)
+app.use('/api/integrations/telegram', telegramRoutes)
 console.info('payment_webhook_route_registered_early', { basePath: '/api/payments/webhook' })
 
 app.use('/api', aiCopySanitizerResponseMiddleware)
@@ -116,8 +118,6 @@ app.use('/api/ai', aiManagerDashboardRoutes)
 app.use('/api/demo', demoRoutes)
 app.get('/api/email/open/:token', markOpened)
 app.use('/api/email', emailRoutes)
-app.use('/api/telegram', telegramRoutes)
-app.use('/api/integrations/telegram', telegramRoutes)
 app.use('/api/execution', aiExecutionRoutes)
 
 app.post('/api/lead', requireAuth, requireWorkspace, async (req, res, next) => {

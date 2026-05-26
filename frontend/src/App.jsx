@@ -4,6 +4,7 @@ import "./styles.css";
 import { ProtectedLayout } from "./components/AppShell";
 import LandingPage from "./pages/LandingPage";
 import { LoginPage, SignupPage } from "./pages/AuthPages";
+import PaymentSuccessPage from "./pages/PaymentSuccessPage";
 import DashboardPage from "./pages/DashboardPage";
 import CRMPage from "./pages/CRMPage";
 import AiWorkersPage from "./pages/AiWorkersPage";
@@ -103,6 +104,7 @@ export default function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/payment/success" element={<PaymentSuccessPage />} />
           <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path="/crm" element={<ProtectedRoute><CRMPage /></ProtectedRoute>} />
           <Route path="/ai-workers" element={<ProtectedRoute><AiWorkersPage /></ProtectedRoute>} />

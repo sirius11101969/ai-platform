@@ -65,6 +65,10 @@ services:
       - redis_data:/data
 
   nginx:
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
     build: ./frontend
     restart: always
     ports:

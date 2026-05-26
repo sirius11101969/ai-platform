@@ -1,15 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { PageHeading, Panel, StatCard } from '../components/AppShell'
-import { fetchRevenueOverview, fetchRevenueFunnel, fetchRevenueOrders, completeRevenuePayment, fetchWorkspaces, getActiveWorkspaceId, fetchPaymentDashboard } from '../services/api'
-
-const SAFETY = ['Human Approval Required', 'No Autonomous Execution', 'No Customer Actions', 'No Pricing Changes']
+import { fetchRevenueOverview, fetchRevenueFunnel, fetchRevenueOrders, fetchWorkspaces, getActiveWorkspaceId, fetchPaymentDashboard } from '../services/api'
 
 export default function RevenueDashboardPage() {
   const [overview, setOverview] = useState({})
   const [funnel, setFunnel] = useState([])
   const [workspaceId, setWorkspaceId] = useState(() => getActiveWorkspaceId())
   const [orders, setOrders] = useState([])
-  const [payingOrderId, setPayingOrderId] = useState('')
   const [workspaces, setWorkspaces] = useState([])
   const [loading, setLoading] = useState(true)
   const [paymentDashboard, setPaymentDashboard] = useState({ providers: [], transactions: [], health: [] })
@@ -55,33 +52,56 @@ export default function RevenueDashboardPage() {
   const pendingOrders = useMemo(() => orders.filter((order) => order.status === 'payment_pending'), [orders])
   const paidOrders = useMemo(() => orders.filter((order) => order.status === 'paid'), [orders])
 
+  const normalizePlan = (plan) => {
+    const value = String(plan || '').toLowerCase()
+    if (['pro', 'профи'].includes(value)) return 'Pro'
+    if (['business', 'бизнес'].includes(value)) return 'Business'
+    return 'Starter'
+  }
+
+  const visibleTransactions = useMemo(
+    () => (paymentDashboard.transactions || []).filter((t) => !String(t.external_payment_id || '').startsWith('mock_')),
+    [paymentDashboard.transactions]
+  )
+  const paidTransactions = useMemo(
+    () => visibleTransactions.filter((t) => t.status === 'paid'),
+    [visibleTransactions]
+  )
+  const pendingTransactions = useMemo(
+    () => visibleTransactions.filter((t) => ['pending', 'created'].includes(t.status)),
+    [visibleTransactions]
+  )
+  const paidRevenue = useMemo(
+    () => paidTransactions.reduce((sum, t) => sum + Number(t.amount || 0), 0),
+    [paidTransactions]
+  )
+  const latestPayment =
+paidTransactions
+.slice()
+.sort(
+(a,b)=>
+new Date(b.created_at)-new Date(a.created_at)
+)[0] || null
+
+  const liveProviders = useMemo(
+    () => (paymentDashboard.providers || []).filter((p) => p.enabled && p.mode === 'live'),
+    [paymentDashboard.providers]
+  )
+
+  const recentVisibleTransactions = useMemo(
+    () => visibleTransactions.slice(0, 10),
+    [visibleTransactions]
+  )
+
   const workspaceLabel = useMemo(() => {
     const match = workspaces.find((workspace) => workspace.id === workspaceId)
     return match?.name || workspaceId || 'Not selected'
   }, [workspaces, workspaceId])
 
 
-  const markOrderPaid = async (orderId) => {
-    setPayingOrderId(orderId)
-    try {
-      const result = await completeRevenuePayment({ workspaceId, orderId })
-      console.info('payment_completed_created', result)
-      console.info('credit_granted', { orderId: result.orderId, creditsIssued: result.creditsIssued })
-      console.info('activation_completed', { orderId: result.orderId, activationStatus: result.activationStatus })
-      const [o, f, all] = await Promise.all([fetchRevenueOverview(workspaceId), fetchRevenueFunnel(workspaceId), fetchRevenueOrders(workspaceId)])
-      setOverview(o?.overview || o?.data?.overview || {})
-      setFunnel(f?.funnel || f?.data?.funnel || [])
-      setOrders(all?.orders || [])
-    } catch (e) {
-      setError(e?.message || 'Failed to complete payment')
-    } finally {
-      setPayingOrderId('')
-    }
-  }
 
   return <div className='workforce-center'>
     <PageHeading eyebrow='Revenue Activation v1.5' title='Revenue Dashboard' copy='First production revenue flow with approval-first activation.' />
-    <Panel><strong>Safety Controls:</strong> <div className='safety-pills'>{SAFETY.map((x) => <span key={x}>{x}</span>)}</div></Panel>
     <Panel><strong>Current workspace:</strong> {workspaceLabel}</Panel>
 
     {loading && <Panel><p>Loading revenue dashboard…</p></Panel>}
@@ -89,25 +109,98 @@ export default function RevenueDashboardPage() {
 
     {!loading && !error && <>
       <section className='stats-grid'>
-        <StatCard label='MRR' value={overview.mrr || 0} hint='payment_completed in current month' />
-        <StatCard label='Payments Today' value={overview.paymentsToday || 0} hint='today settled payments' />
+        <StatCard label='Revenue This Month' value={overview.mrr || 0} hint='paid YooKassa payments this month' />
+        <StatCard label='Revenue Today' value={overview.paymentsToday || 0} hint='paid YooKassa payments today' />
         <StatCard label='New Users' value={overview.newUsers || 0} hint='today signups' />
         <StatCard label='Credits Issued' value={overview.creditsIssued || 0} hint='today granted credits' />
         <StatCard label='Activation Rate' value={`${overview.activationRate || 0}%`} hint='activation_completed / payment_completed' />
+        <StatCard label='Paid Revenue' value={`${paidRevenue.toLocaleString('ru-RU')} ₽`} hint='sum of paid transactions' />
+        <StatCard label='Paid Payments' value={paidTransactions.length} hint='successful payments' />
+        <StatCard label='Pending Payments' value={pendingTransactions.length} hint='waiting for payment' />
+        <StatCard label='Latest Payment' value={latestPayment ? `${Number(latestPayment.amount || 0).toLocaleString('ru-RU')} ${latestPayment.currency}` : '—'} hint={latestPayment?.status || 'no payments'} />
       </section>
       <Panel>
         <h3>Revenue Funnel</h3>
         <p><strong>Revenue source:</strong> live API</p>
         {funnel.length === 0 ? <p>No funnel events yet for this workspace.</p> : funnel.map((item) => <p key={item.stage}><strong>{item.stage}</strong>: {item.total ?? 0}</p>)}
       </Panel>
+      <Panel><h3>Live Payment Provider</h3>{liveProviders.length===0 ? <p>No live providers enabled.</p> : liveProviders.map((p)=><p key={p.provider}>{p.provider} · {p.currency} · LIVE · enabled</p>)}</Panel>
       <Panel>
-        <h3>Pending Orders</h3>
-        {pendingOrders.length === 0 ? <p>No pending orders.</p> : pendingOrders.map((order) => <div key={order.id} style={{ marginBottom: 10 }}><p><strong>{order.id}</strong> · {order.plan} · {order.status} · {order.created_at}</p><button className='btn compact' disabled={payingOrderId === order.id} onClick={() => markOrderPaid(order.id)}>Mark test payment as paid</button><p><small>Test only · no real charge</small></p></div>)}
-      </Panel>
-      <Panel><h3>Payment Provider</h3>{paymentDashboard.providers.map((p)=><p key={p.provider}>{p.provider} · {p.currency} · {p.mode} · {p.enabled ? 'enabled':'disabled'}</p>)}</Panel>
-      <Panel><h3>Transactions</h3>{paymentDashboard.transactions.length===0 ? <p>No transactions.</p> : paymentDashboard.transactions.map((t)=><p key={t.id}>{t.provider} · {t.external_payment_id} · {t.status} · {t.amount} {t.currency}</p>)}</Panel>
-      <Panel><h3>Provider Health</h3>{paymentDashboard.health.map((h)=><p key={h.provider}>{h.provider}: {h.status} ({h.mode})</p>)}</Panel>
-      <Panel><h3>Payment Logs</h3><p>payment_created</p><p>webhook_received</p><p>payment_confirmed</p><p>credit_granted</p></Panel>
+<h3>Payments History</h3>
+
+<div style={{display:'grid',gap:'12px'}}>
+
+{recentVisibleTransactions.length===0
+? <p>No payments yet.</p>
+
+: recentVisibleTransactions.map((t)=>(
+
+<div
+key={t.id}
+style={{
+padding:'14px',
+border:'1px solid rgba(255,255,255,.12)',
+borderRadius:'12px'
+}}
+>
+
+<div><strong>{t.amount} {t.currency}</strong></div>
+
+<div>Provider: {t.provider}</div>
+
+<div>
+Status:
+<span style={{
+marginLeft:8,
+color:t.status==='paid'
+?'#00d26a'
+:'#ffb400'
+}}>
+{t.status.toUpperCase()}
+</span>
+</div>
+
+<div>
+Plan:
+{normalizePlan(t.metadata?.plan)}
+</div>
+
+<div>
+Date:
+{new Date(t.created_at).toLocaleString()}
+</div>
+
+<div style={{
+opacity:.6,
+fontSize:12
+}}>
+Payment:
+{t.external_payment_id}
+</div>
+
+</div>
+
+))
+
+}
+
+</div>
+
+</Panel>
+      <Panel>
+<h3>Provider Health</h3>
+
+{paymentDashboard.health
+.filter((h)=>h.mode==='live')
+.map((h)=>
+
+<p key={h.provider}>
+🟢 {h.provider === 'yookassa' ? 'YooKassa' : h.provider} {h.status}
+</p>
+
+)}
+
+</Panel>
       <Panel>
         <h3>Paid Orders</h3>
         {paidOrders.length === 0 ? <p>No paid orders.</p> : paidOrders.map((order) => <p key={order.id}><strong>{order.id}</strong> · {order.plan} · {order.status} · credits: {order.credits || 0} · activation_completed</p>)}

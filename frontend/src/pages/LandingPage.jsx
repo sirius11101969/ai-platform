@@ -201,7 +201,10 @@ function Hero() {
           <a href="#workflow">CRM</a>
           <a href="#pricing">Тарифы</a>
         </div>
-        <a className="nav-cta" href="https://t.me/" target="_blank" rel="noreferrer">Демо в Telegram</a>
+        <div style={{display:"flex",gap:"10px",alignItems:"center"}}>
+  <a className="nav-cta" href="/login">Войти</a>
+  <a className="nav-cta" href="https://t.me/" target="_blank" rel="noreferrer">Демо в Telegram</a>
+</div>
       </nav>
 
       <div className="hero-grid">
@@ -338,7 +341,13 @@ throw new Error(text || "Checkout unavailable");
             <div className="price">{plan.price}<small>/мес</small></div>
             <p>{plan.detail}</p>
             <ul>{plan.features.map((feature) => <li key={feature}>{feature}</li>)}</ul>
-            <button type="button" onClick={() => startCheckout(plan)}>Выбрать тариф</button>
+            <button
+type="button"
+className="pricing-cta-btn"
+onClick={() => startCheckout(plan)}
+>
+Выбрать тариф
+</button>
           </motion.article>
         ))}
       </div>

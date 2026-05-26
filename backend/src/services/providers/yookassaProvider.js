@@ -19,7 +19,7 @@ async function createSandboxPayment({ amount, currency, metadata = {}, workspace
     capture: true,
     confirmation: {
       type: 'redirect',
-      return_url: `${appUrl.replace(/\/$/, '')}/billing`,
+      return_url: `${appUrl.replace(/\/$/, '')}/payment/success`,
     },
     description: `Workspace ${workspaceId} payment`,
     receipt: {

@@ -2,8 +2,17 @@ const paymentService = require('../services/paymentService')
 
 async function create(req, res, next) {
   try {
-    const { provider, amount, currency, metadata } = req.body || {}
-    const result = await paymentService.createPayment({ workspaceId: req.workspace.id, provider, amount, currency, metadata })
+    const { provider, amount, currency, metadata, plan } = req.body || {}
+    const mergedMetadata = { ...(metadata || {}) }
+    if (plan) mergedMetadata.plan = String(plan).toLowerCase()
+
+    const result = await paymentService.createPayment({
+      workspaceId: req.workspace.id,
+      provider,
+      amount,
+      currency,
+      metadata: mergedMetadata,
+    })
     res.status(200).json(result)
   } catch (e) { next(e) }
 }

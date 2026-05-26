@@ -16,17 +16,57 @@ async function trackEvent({ workspaceId, eventType, payload = {} }, client = poo
 
 async function getOverview({ workspaceId }) {
   const result = await pool.query(`
+    WITH payments AS (
+      SELECT
+        COUNT(*)::int AS total_payments,
+        COUNT(*) FILTER (WHERE status = 'paid')::int AS paid_payments,
+        COALESCE(SUM(amount) FILTER (
+          WHERE status = 'paid'
+          AND created_at >= date_trunc('month', NOW())
+          AND external_payment_id NOT LIKE 'mock_%'
+        ), 0)::numeric AS mrr,
+        COALESCE(SUM(amount) FILTER (
+          WHERE status = 'paid'
+          AND created_at >= date_trunc('day', NOW())
+          AND external_payment_id NOT LIKE 'mock_%'
+        ), 0)::numeric AS payments_today
+      FROM payment_transactions
+      WHERE workspace_id = $1::uuid
+    ),
+    credits AS (
+      SELECT
+        COALESCE(SUM(credits_delta) FILTER (
+          WHERE created_at >= date_trunc('day', NOW())
+          AND entry_type = 'grant'
+        ), 0)::int AS credits_issued
+      FROM credit_ledger_entries
+      WHERE workspace_id = $1::uuid
+    ),
+    users_today AS (
+      SELECT COUNT(*)::int AS new_users
+      FROM users
+      WHERE created_at >= date_trunc('day', NOW())
+    )
     SELECT
-      COALESCE(SUM((payload->>'amount')::numeric) FILTER (WHERE event_type = 'payment_completed' AND created_at >= date_trunc('month', NOW())), 0)::numeric AS mrr,
-      COALESCE(SUM((payload->>'amount')::numeric) FILTER (WHERE event_type = 'payment_completed' AND created_at >= date_trunc('day', NOW())), 0)::numeric AS payments_today,
-      COUNT(*) FILTER (WHERE event_type = 'signup' AND created_at >= date_trunc('day', NOW()))::int AS new_users,
-      COALESCE(SUM((payload->>'credits')::int) FILTER (WHERE event_type = 'credits_issued' AND created_at >= date_trunc('day', NOW())), 0)::int AS credits_issued,
-      ROUND((COUNT(*) FILTER (WHERE event_type = 'activation_completed')::numeric / NULLIF(COUNT(*) FILTER (WHERE event_type = 'payment_completed'), 0)::numeric) * 100, 2) AS activation_rate
-    FROM revenue_events
-    WHERE workspace_id = $1::uuid
+      payments.mrr,
+      payments.payments_today,
+      credits.credits_issued,
+      users_today.new_users,
+      CASE
+        WHEN payments.total_payments = 0 THEN 0
+        ELSE ROUND((payments.paid_payments::numeric / payments.total_payments::numeric) * 100, 2)
+      END AS activation_rate
+    FROM payments, credits, users_today
   `, [workspaceId])
+
   const row = result.rows[0] || {}
-  return { mrr: Number(row.mrr || 0), paymentsToday: Number(row.payments_today || 0), newUsers: Number(row.new_users || 0), creditsIssued: Number(row.credits_issued || 0), activationRate: Number(row.activation_rate || 0) }
+  return {
+    mrr: Number(row.mrr || 0),
+    paymentsToday: Number(row.payments_today || 0),
+    newUsers: Number(row.new_users || 0),
+    creditsIssued: Number(row.credits_issued || 0),
+    activationRate: Number(row.activation_rate || 0),
+  }
 }
 
 async function getFunnel({ workspaceId }) {

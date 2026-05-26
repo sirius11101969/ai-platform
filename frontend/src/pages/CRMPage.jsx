@@ -59,13 +59,32 @@ const DEFAULT_CRM_STAGES = [
 
 const initialLeadForm = { name: "", email: "", telegram: "", company: "", value: "", notes: "", source: "ручной ввод", status: "new" };
 
+
+function clampPercent(value) {
+  const n = Number(value || 0)
+  if (Number.isNaN(n)) return 0
+  return Math.max(0, Math.min(100, n))
+}
+
 function formatCurrency(value) {
   return new Intl.NumberFormat("ru-RU", { style: "currency", currency: "RUB", maximumFractionDigits: 0 }).format(Number(value || 0));
 }
 
 function formatDate(value) {
-  if (!value) return "—";
-  return new Intl.DateTimeFormat("ru-RU", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(value));
+  if (!value) return "—"
+
+  const d = new Date(value)
+
+  if (Number.isNaN(d.getTime())) {
+    console.warn("invalid date", value)
+    return "—"
+  }
+
+  try {
+    return d.toLocaleString()
+  } catch {
+    return "—"
+  }
 }
 
 
@@ -379,8 +398,8 @@ export default function CRMPage() {
         fetchCrmStages(),
         fetchCrmStats(),
         fetchCrmActivity(),
-        fetchEmailTemplates(),
-        fetchMaterials(),
+        fetchEmailTemplates().catch(() => ({ templates: [] })),
+        fetchMaterials().catch(() => ({ materials: [] })),
         getActiveAiSequences(),
         getRevenueIntelligence(),
       ]);
@@ -419,7 +438,7 @@ export default function CRMPage() {
     function handleOpenActivityFeed() {
       window.sessionStorage?.removeItem('crm-open-activity-feed');
       setIsActivityOpen(true);
-      refreshMeta().catch((requestError) => setError(requestError.message || "Не удалось обновить ленту активности"));
+      refreshMeta().catch(()=>undefined);
     }
 
     if (window.sessionStorage?.getItem('crm-open-create-lead') === '1') handleOpenCreate();
@@ -995,7 +1014,7 @@ export default function CRMPage() {
         <StatCard label="At-risk Deals" value={loading ? "…" : String(stats?.aiMetrics?.atRiskDeals || 0)} hint="ghosting / stalled / inactive risk" tone="violet" />
         <StatCard label="Hot Leads" value={loading ? "…" : String(stats?.aiMetrics?.hotLeads || 0)} hint={`средний score ${stats?.aiMetrics?.averageLeadScore || 0}/100`} tone="pink" />
         <StatCard label="Leads needing follow-up" value={loading ? "…" : String(stats?.aiMetrics?.leadsNeedingFollowUp || stats?.aiMetrics?.followUpsPending || 0)} hint="риск или нет свежего касания" />
-        <StatCard label="Forecast Revenue" value={loading ? "…" : formatCurrency(stats?.aiMetrics?.aiForecastedRevenue || stats?.aiMetrics?.predictedRevenue || 0)} hint={`forecast ${stats?.aiMetrics?.conversionForecast || 0}%`} tone="violet" />
+        <StatCard label="Weighted Forecast" value={loading ? "…" : formatCurrency(stats?.aiMetrics?.aiForecastedRevenue || stats?.aiMetrics?.predictedRevenue || 0)} hint={`forecast ${stats?.aiMetrics?.conversionForecast || 0}%`} tone="violet" />
         <StatCard label="Revenue At Risk" value={loading ? "…" : formatCurrency(stats?.aiMetrics?.revenueAtRisk || 0)} hint={`${stats?.aiMetrics?.atRiskDeals || 0} at-risk deals`} tone="pink" />
         <StatCard label="High Probability Deals" value={loading ? "…" : String(stats?.aiMetrics?.highProbabilityDeals || 0)} hint="probability ≥ 70%" />
         <StatCard label="Stalled Opportunities" value={loading ? "…" : String(stats?.aiMetrics?.stalledOpportunities || stats?.aiMetrics?.inactiveOpportunities || 0)} hint="нет активности более 7 дней" tone="pink" />
@@ -1081,8 +1100,8 @@ export default function CRMPage() {
                         {getLatestAiVoiceCall(lead) && <div className="lead-voice-kpis"><span>AI Voice</span><b>{getLatestAiVoiceCall(lead).sentiment || '—'}</b><em>{getLatestAiVoiceCall(lead).outcome || getLatestAiVoiceCall(lead).status}</em><small>{sanitizeVisibleAiText(getLatestAiVoiceCall(lead).nextAction || 'No recommendation yet')}</small></div>}
                         <div className="lead-ai-probability forecast-progress"><span>{forecastLabel(getLeadAiScore(lead).forecastCategory)} · engagement {getLeadAiScore(lead).engagementScore}/100</span><i style={{ width: `${getLeadAiScore(lead).probabilityToClose}%` }} /></div>
                       </> : <div className="ai-forecast-empty-card">AI прогноз появится после квалификации лида.</div>}
-                      {getAiBadges(lead).length > 0 && <div className="ai-badge-row">{getAiBadges(lead).map((badge) => <b className="ai-neon-badge" key={badge}>{badge}</b>)}</div>}
-                      <p>{lead.company || (isTelegramLead(lead) ? lead.telegram || "Telegram контакт" : "Компания не указана")}</p>{getLeadAiScore(lead)?.aiReasoning && <div className="ai-card-reasoning">{sanitizeVisibleAiText(getLeadAiScore(lead).aiReasoning)}</div>}
+                      
+                      <p>{lead.company || (isTelegramLead(lead) ? lead.telegram || "Telegram контакт" : "Компания не указана")}</p>
                       <div className="lead-card-meta"><small><i />{stageMap[lead.status] || lead.status}</small><span className={`source-pill ${lead.source === "telegram" ? "telegram-source" : ""}`}>{formatLeadSource(lead.source)}</span></div>{getLeadAiScore(lead)?.recommendedNextStep && <div className="ai-card-recommendation"><span>AI</span>{sanitizeVisibleAiText(getLeadAiScore(lead).recommendedNextStep)}</div>}{!getLeadAiScore(lead)?.recommendedNextStep && getAiRecommendation(lead) && <div className="ai-card-recommendation"><span>AI</span>{getAiSummaryText(getAiRecommendation(lead))}</div>}{isTelegramLead(lead) && <div className="telegram-card-status"><span className={`telegram-presence-dot ${lead.telegramOnline ? 'online' : 'offline'}`} />{lead.telegramOnline ? 'online' : 'offline'} · {lead.lastMessageAt ? formatDate(lead.lastMessageAt) : 'нет сообщений'}</div>}
                     </article>
                   ))}
@@ -1257,7 +1276,7 @@ function AiRevenueIntelligencePanel({ intelligence, busy, toast, onRun }) {
         <div>
           <span className="eyebrow">AI Revenue Intelligence</span>
           <h3>AI Revenue Command Center</h3>
-          <p className="modal-copy">Executive view of forecasted revenue, hot leads, stalled deals, churn risk, health, and safe AI recommendations.</p>
+          <p className="modal-copy">Executive view of weighted forecast, hot leads, stalled deals, churn risk, health, and safe AI recommendations.</p>
         </div>
         <button className="btn primary compact" type="button" onClick={onRun} disabled={busy}>{busy ? "Running analysis…" : "Run Revenue Analysis Now"}</button>
       </div>
@@ -1267,14 +1286,14 @@ function AiRevenueIntelligencePanel({ intelligence, busy, toast, onRun }) {
       </div>
       <div className="revenue-forecast-widget">
         <div>
-          <span className="eyebrow">Revenue Forecast Widget</span>
+          <span className="eyebrow">Weighted Forecast Widget</span>
           <strong>{formatCurrency(forecast.projectedRevenue)}</strong>
           <p>Active pipeline {formatCurrency(forecast.activePipelineValue)} · generated {formatDate(forecast.generatedAt)}</p>
         </div>
         <div className="forecast-mini-trend" aria-label="Forecast confidence trend">
-          <span style={{ height: `${Math.max(10, forecast.confidenceScore)}%` }} />
-          <span style={{ height: `${Math.max(10, forecast.hotLeadsCount * 12)}%` }} />
-          <span style={{ height: `${Math.max(10, forecast.stalledLeadsCount * 12)}%` }} />
+          <span style={{ height: `${Math.max(0, Math.min(100, Number(Math.max(10, forecast.confidenceScore) || 0)))}%` }} />
+          <span style={{ height: `${Math.max(0, Math.min(100, Number(Math.max(10, forecast.hotLeadsCount * 12) || 0)))}%` }} />
+          <span style={{ height: `${Math.max(0, Math.min(100, Number(Math.max(10, forecast.stalledLeadsCount * 12) || 0)))}%` }} />
         </div>
         <b>{forecast.confidenceScore}% confidence</b>
       </div>
@@ -1667,6 +1686,8 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                 <div><dt>Следующее AI действие</dt><dd>{sanitizeVisibleAiText(getLeadAiScore(lead)?.recommendedNextStep || getLeadAiScore(lead)?.nextBestAction || getAiSummaryText(getAiRecommendation(lead)))}</dd></div>
                 <div><dt>Email</dt><dd>{lead.email || "—"}</dd></div>
                 <div><dt>Этап</dt><dd>{stageMap[lead.status] || lead.status}</dd></div>
+                {lead.metadata?.payment_status && <div><dt>Оплата</dt><dd>💰 {String(lead.metadata.payment_status).toUpperCase()} · {String(lead.metadata.plan || '-').toUpperCase()} · {lead.metadata.credits || 0} credits</dd></div>}
+                {lead.metadata?.payment_id && <div><dt>Payment ID</dt><dd style={{wordBreak:'break-all'}}>{lead.metadata.payment_id}</dd></div>}
                 <div><dt>Создано</dt><dd>{formatDate(lead.createdAt)}</dd></div>
                 <div><dt>Обновлено</dt><dd>{formatDate(lead.updatedAt)}</dd></div>
               </dl>

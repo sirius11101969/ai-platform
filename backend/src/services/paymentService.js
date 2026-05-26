@@ -1,4 +1,5 @@
 const pool = require('../db/pool')
+const axios = require('axios')
 const revenueService = require('./revenueService')
 const { issuePaymentCredits } = require('./execution/creditLedgerService')
 const { createSandboxPayment, createMockPayment } = require('./providers/yookassaProvider')
@@ -62,7 +63,15 @@ async function processWebhook({ workspaceId, provider, event, externalPaymentId,
     console.info('webhook_received', { workspaceId, provider, externalPaymentId, status: normalizedStatus, event })
     const existing = await client.query('SELECT * FROM payment_transactions WHERE provider=$1 AND external_payment_id=$2 LIMIT 1', [provider, externalPaymentId])
     const tx = existing.rows[0]
-    if (!tx) throw Object.assign(new Error('payment transaction not found'), { statusCode: 404 })
+    if (!tx) {
+      console.warn('webhook_payment_not_found', { workspaceId, provider, externalPaymentId })
+      await client.query('COMMIT')
+      return {
+        ignored: true,
+        reason: 'payment transaction not found',
+        externalPaymentId,
+      }
+    }
 
     if (tx.status === 'paid') {
       await client.query('COMMIT')
@@ -116,6 +125,109 @@ async function processWebhook({ workspaceId, provider, event, externalPaymentId,
       console.info('workspace_plan_updated', { workspaceId: targetWorkspaceId, plan })
       console.info('payment_confirmed', { workspaceId: targetWorkspaceId, provider, externalPaymentId })
       console.info('credit_granted', { workspaceId: targetWorkspaceId, provider, externalPaymentId, credits })
+
+      try {
+        const lead = await client.query(`
+          SELECT id, user_id
+          FROM crm_leads
+          WHERE workspace_id = $1::uuid
+          ORDER BY created_at DESC
+          LIMIT 1
+        `, [targetWorkspaceId])
+
+        if (lead.rows[0]) {
+          const leadId = lead.rows[0].id
+          const userId = lead.rows[0].user_id
+
+          await client.query(`
+            UPDATE crm_leads
+            SET
+              value = $1::numeric,
+              metadata = COALESCE(metadata, '{}'::jsonb) || jsonb_build_object(
+                'payment_status', 'paid',
+                'plan', $2::text,
+                'credits', $3::int,
+                'payment_id', $4::text,
+                'provider', $5::text
+              ),
+              updated_at = NOW()
+            WHERE id = $6::uuid
+          `, [
+            Number(amount || tx.amount || 0),
+            plan,
+            credits,
+            externalPaymentId,
+            provider,
+            leadId
+          ])
+
+          await client.query(`
+            INSERT INTO lead_timeline_events(
+              workspace_id,
+              lead_id,
+              user_id,
+              event_type,
+              title,
+              body,
+              source,
+              metadata
+            )
+            VALUES(
+              $1::uuid,
+              $2::uuid,
+              $3::uuid,
+              'payment_received',
+              '💰 Payment received',
+              $4::text,
+              'payments',
+              $5::jsonb
+            )
+          `, [
+            targetWorkspaceId,
+            leadId,
+            userId,
+            `Paid ${amount || tx.amount} ${currency || tx.currency}\nPlan ${plan}\nCredits +${credits}`,
+            JSON.stringify({
+              paymentId: externalPaymentId,
+              provider,
+              plan,
+              credits,
+              amount: Number(amount || tx.amount || 0),
+              currency: currency || tx.currency
+            })
+          ])
+
+          console.info('crm_payment_synced', { workspaceId: targetWorkspaceId, leadId, externalPaymentId })
+        }
+      } catch (e) {
+        console.error('crm_payment_sync_failed', e.message)
+      }
+
+      try {
+        if (process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_MANAGER_CHAT_ID) {
+          const text = [
+            '💰 НОВАЯ ОПЛАТА AS6',
+            '',
+            `📦 Тариф: ${plan.toUpperCase()}`,
+            `💳 Сумма: ${amount || tx.amount} ${currency || tx.currency}`,
+            `⚡ Кредиты: +${credits}`,
+            `🏢 Workspace: ${targetWorkspaceId}`,
+            `🧾 Payment: ${externalPaymentId}`
+          ].join('\n')
+
+          await axios.post(
+            `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
+            {
+              chat_id: process.env.TELEGRAM_MANAGER_CHAT_ID,
+              text
+            }
+          )
+
+          console.info('telegram_payment_notification_sent')
+        }
+      } catch (e) {
+        console.error('telegram_payment_notification_failed', e.message)
+      }
     }
 
     await client.query('COMMIT')
