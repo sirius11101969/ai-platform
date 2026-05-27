@@ -138,9 +138,59 @@ async function processWebhook({ workspaceId, provider, event, externalPaymentId,
           LIMIT 1
         `, [targetWorkspaceId])
 
-        if (lead.rows[0]) {
-          const leadId = lead.rows[0].id
-          const userId = lead.rows[0].user_id
+        let paymentLead = lead.rows[0]
+
+        if (!paymentLead) {
+          const createdLead = await client.query(`
+            INSERT INTO crm_leads(
+              workspace_id,
+              name,
+              status,
+              stage,
+              source,
+              value,
+              metadata,
+              notes,
+              created_at,
+              updated_at
+            )
+            VALUES(
+              $1::uuid,
+              $2::text,
+              'booked',
+              'booked',
+              'payment',
+              $3::numeric,
+              jsonb_build_object(
+                'payment_status', 'paid',
+                'plan', $4::text,
+                'credits', $5::int,
+                'payment_id', $6::text,
+                'provider', $7::text
+              ),
+              $8::text,
+              NOW(),
+              NOW()
+            )
+            RETURNING id, user_id
+          `, [
+            targetWorkspaceId,
+            `Payment ${String(plan || 'plan').toUpperCase()} ${amount || tx.amount} ${currency || tx.currency}`,
+            Number(amount || tx.amount || 0),
+            plan,
+            credits,
+            externalPaymentId,
+            provider,
+            `Auto-created from paid ${provider} payment ${externalPaymentId}`
+          ])
+
+          paymentLead = createdLead.rows[0]
+          console.info('crm_payment_lead_created', { workspaceId: targetWorkspaceId, leadId: paymentLead.id, externalPaymentId })
+        }
+
+        if (paymentLead) {
+          const leadId = paymentLead.id
+          const userId = paymentLead.user_id
 
           await client.query(`
             UPDATE crm_leads
