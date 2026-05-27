@@ -19,6 +19,9 @@ async function createProviderPayment({ provider, amount, currency, metadata = {}
   }
   if (mode === 'test') return createSandboxPayment({ amount, currency, metadata, workspaceId })
   if (mode === 'mock') return createMockPayment({ provider, amount, currency, metadata, workspaceId })
+  if (['live', 'production', 'real', 'yookassa'].includes(mode)) {
+    return createSandboxPayment({ amount, currency, metadata, workspaceId })
+  }
   throw Object.assign(new Error(`unsupported YOOKASSA_MODE: ${mode}`), { statusCode: 400 })
 }
 
