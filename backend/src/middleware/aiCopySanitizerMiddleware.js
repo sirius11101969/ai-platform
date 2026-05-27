@@ -1,22 +1,25 @@
 const { sanitizeAiActionPayload } = require('../utils/aiCopySanitizer')
 
-function safeStringify(value) {
-  try { return JSON.stringify(value) } catch (_) { return null }
+const EXCLUDED = [
+'/api/revenue/telegram-report',
+'/api/revenue/command-center'
+]
+
+function aiCopySanitizerResponseMiddleware(req,res,next){
+
+if (EXCLUDED.some(x=>req.originalUrl.startsWith(x))){
+return next()
 }
 
-function aiCopySanitizerResponseMiddleware(req, res, next) {
-  if (process.env.SHOW_INTERNAL_AI_DEBUG === 'true') return next()
+const original = res.json.bind(res)
 
-  const originalJson = res.json.bind(res)
-  res.json = (body) => {
-    const before = safeStringify(body)
-    const sanitizedBody = sanitizeAiActionPayload(body, new WeakMap(), { logSave: false })
-    const after = safeStringify(sanitizedBody)
-    if (before !== after) console.warn('[ai-copy-sanitizer] payload sanitized before response')
-    return originalJson(sanitizedBody)
-  }
+res.json = (payload)=>{
+return original(
+sanitizeAiActionPayload(payload)
+)
+}
 
-  return next()
+next()
 }
 
 module.exports = { aiCopySanitizerResponseMiddleware }
