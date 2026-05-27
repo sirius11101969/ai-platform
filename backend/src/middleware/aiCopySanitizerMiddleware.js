@@ -2,7 +2,8 @@ const { sanitizeAiActionPayload } = require('../utils/aiCopySanitizer')
 
 const EXCLUDED = [
 '/api/revenue/telegram-report',
-'/api/revenue/command-center'
+'/api/revenue/command-center',
+'/api/ai-secretary'
 ]
 
 function aiCopySanitizerResponseMiddleware(req,res,next){
