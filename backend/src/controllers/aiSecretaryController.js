@@ -175,10 +175,10 @@ async function createAiSecretaryLead(req, res, next) {
 }
 
 function resolveActionState(action) {
-  if (action === 'call') return { status: 'contacted', stage: 'contacted', title: '📞 Manager should call lead', body: 'AI Secretary action: call lead' }
-  if (action === 'meeting') return { status: 'meeting', stage: 'meeting', title: '📅 Meeting should be scheduled', body: 'AI Secretary action: schedule meeting' }
+  if (action === 'call') return { status: 'qualified', stage: 'qualified', title: '📞 Manager should call lead', body: 'AI Secretary action: call lead' }
+  if (action === 'meeting') return { status: 'booked', stage: 'booked', title: '📅 Meeting should be scheduled', body: 'AI Secretary action: schedule meeting' }
   if (action === 'proposal') return { status: 'proposal', stage: 'proposal', title: '📨 Proposal should be sent', body: 'AI Secretary action: send proposal' }
-  if (action === 'archive') return { status: 'archived', stage: 'lost', title: '🗂 Lead archived', body: 'AI Secretary action: archive lead' }
+  if (action === 'archive') return { status: 'lost', stage: 'lost', title: '🗂 Lead archived', body: 'AI Secretary action: archive lead' }
   return { status: 'qualified', stage: 'qualified', title: '✅ Lead qualified', body: 'AI Secretary action completed' }
 }
 
