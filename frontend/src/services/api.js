@@ -918,3 +918,7 @@ export function fetchPaymentStatus(workspaceId = getActiveWorkspaceId()) {
   const query = workspaceId ? `?workspaceId=${encodeURIComponent(workspaceId)}` : ''
   return request(`/payments/status${query}`, { workspaceId })
 }
+
+export function fetchRevenueCommandCenter() {
+  return request('/revenue/command-center')
+}

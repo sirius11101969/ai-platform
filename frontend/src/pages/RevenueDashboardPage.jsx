@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { PageHeading, Panel, StatCard } from '../components/AppShell'
-import { fetchRevenueOverview, fetchRevenueFunnel, fetchRevenueOrders, fetchWorkspaces, getActiveWorkspaceId, fetchPaymentDashboard } from '../services/api'
+import { fetchRevenueOverview, fetchRevenueFunnel, fetchRevenueOrders, fetchWorkspaces, getActiveWorkspaceId, fetchPaymentDashboard, fetchRevenueCommandCenter } from '../services/api'
 
 export default function RevenueDashboardPage() {
   const [overview, setOverview] = useState({})
@@ -10,6 +10,7 @@ export default function RevenueDashboardPage() {
   const [workspaces, setWorkspaces] = useState([])
   const [loading, setLoading] = useState(true)
   const [paymentDashboard, setPaymentDashboard] = useState({ providers: [], transactions: [], health: [] })
+  const [revenueCommand, setRevenueCommand] = useState(null)
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -29,14 +30,16 @@ export default function RevenueDashboardPage() {
       fetchRevenueOrders(workspaceId),
       fetchWorkspaces(),
       fetchPaymentDashboard(workspaceId),
+      fetchRevenueCommandCenter(),
     ])
-      .then(([o, f, po, w, pd]) => {
+      .then(([o, f, po, w, pd, rc]) => {
         if (!active) return
         setOverview(o?.overview || o?.data?.overview || {})
         setFunnel(f?.funnel || f?.data?.funnel || [])
         setOrders(po?.orders || [])
         setWorkspaces(w.workspaces || [])
         setPaymentDashboard(pd || { providers: [], transactions: [], health: [] })
+        setRevenueCommand(rc?.revenue || null)
       })
       .catch((e) => {
         if (!active) return
@@ -124,6 +127,25 @@ new Date(b.created_at)-new Date(a.created_at)
         <p><strong>Revenue source:</strong> live API</p>
         {funnel.length === 0 ? <p>No funnel events yet for this workspace.</p> : funnel.map((item) => <p key={item.stage}><strong>{item.stage}</strong>: {item.total ?? 0}</p>)}
       </Panel>
+      {revenueCommand && (
+        <Panel>
+          <h3>Revenue Command Center</h3>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:'12px'}}>
+            {(revenueCommand.by_provider || []).map((p) => (
+              <div key={`${p.provider}-${p.currency}`} style={{padding:'14px',border:'1px solid rgba(255,255,255,.12)',borderRadius:'12px'}}>
+                <div><strong>{String(p.provider).toUpperCase()}</strong></div>
+                <div>Currency: {p.currency}</div>
+                <div>Paid: {p.paid_count}</div>
+                <div>Total: {Number(p.paid_total || 0).toLocaleString()}</div>
+                <div>Open: {p.open_count}</div>
+                <div>Open total: {Number(p.open_total || 0).toLocaleString()}</div>
+              </div>
+            ))}
+          </div>
+          <p style={{marginTop:12}}>Credits issued: {revenueCommand.credits_issued}</p>
+        </Panel>
+      )}
+
       <Panel><h3>Live Payment Provider</h3>{liveProviders.length===0 ? <p>No live providers enabled.</p> : liveProviders.map((p)=><p key={p.provider}>{p.provider} · {p.currency} · LIVE · enabled</p>)}</Panel>
       <Panel>
 <h3>Payments History</h3>
