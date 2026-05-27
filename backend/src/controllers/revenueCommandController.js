@@ -46,8 +46,25 @@ async function getRevenueCommandCenter(req, res, next) {
   }
 }
 
+
 function formatMoney(value, currency) {
   return `${Number(value || 0).toLocaleString('ru-RU')} ${currency}`
+}
+
+function providerLabel(provider) {
+  if (provider === 'yookassa') return 'YooKassa'
+  if (provider === 'stripe') return 'Stripe'
+  if (provider === 'usdt_trc20') return 'USDT TRC20'
+  return provider
+}
+
+function toUsd(value, currency) {
+  const amount = Number(value || 0)
+  const c = String(currency || '').toUpperCase()
+  const usdRubRate = Number(process.env.USD_RUB_RATE || 90)
+  if (c === 'USD' || c === 'USDT') return amount
+  if (c === 'RUB') return amount / usdRubRate
+  return 0
 }
 
 async function sendRevenueTelegramReport(req, res, next) {
@@ -65,8 +82,7 @@ async function sendRevenueTelegramReport(req, res, next) {
         GROUP BY provider,currency
       ),
       credits AS (
-        SELECT
-          COALESCE(SUM((metadata->>'credits')::numeric),0)::numeric AS credits_issued
+        SELECT COALESCE(SUM((metadata->>'credits')::numeric),0)::numeric AS credits_issued
         FROM crm_leads
         WHERE source='payment'
       ),
@@ -91,30 +107,37 @@ async function sendRevenueTelegramReport(req, res, next) {
     const rows = revenue.by_provider || []
     const today = revenue.today || []
 
-    const providerLines = rows.map((p) => {
-      const label =
-        p.provider === 'yookassa' ? 'YooKassa' :
-        p.provider === 'stripe' ? 'Stripe' :
-        p.provider === 'usdt_trc20' ? 'USDT TRC20' :
-        p.provider
+    const totalUsd = rows.reduce((sum, p) => sum + toUsd(p.paid_total, p.currency), 0)
+    const todayUsd = today.reduce((sum, p) => sum + toUsd(p.paid_today_total, p.currency), 0)
+    const paidCount = rows.reduce((sum, p) => sum + Number(p.paid_count || 0), 0)
+    const openCount = rows.reduce((sum, p) => sum + Number(p.open_count || 0), 0)
+    const allCount = paidCount + openCount
+    const conversion = allCount ? Math.round((paidCount / allCount) * 100) : 0
+    const todayCount = today.reduce((sum, p) => sum + Number(p.paid_today_count || 0), 0)
 
-      return `• ${label}: paid ${p.paid_count} / ${formatMoney(p.paid_total, p.currency)} · open ${p.open_count} / ${formatMoney(p.open_total, p.currency)}`
-    })
+    const providerLines = rows.map((p) =>
+      `• ${providerLabel(p.provider)} → ${formatMoney(p.paid_total, p.currency)} paid · ${formatMoney(p.open_total, p.currency)} open`
+    )
 
     const todayLines = today.length
-      ? today.map((p) => `• ${p.provider}: ${p.paid_today_count} payments / ${formatMoney(p.paid_today_total, p.currency)}`)
+      ? today.map((p) => `• ${providerLabel(p.provider)} → ${p.paid_today_count} payments · ${formatMoney(p.paid_today_total, p.currency)}`)
       : ['• No paid payments today']
 
     const text = [
-      '📊 AS6 DAILY REVENUE REPORT',
+      '📊 AS6 EXECUTIVE REVENUE REPORT',
       '',
-      '💰 By provider:',
+      `💰 Total Revenue: ≈ $${Math.round(totalUsd).toLocaleString('ru-RU')}`,
+      `📈 Today: +${todayCount} payments · ≈ $${Math.round(todayUsd).toLocaleString('ru-RU')}`,
+      `💳 Paid: ${paidCount}`,
+      `🟡 Open: ${openCount}`,
+      `🔥 Conversion: ${paidCount}/${allCount} → ${conversion}%`,
+      `⚡ Credits issued: ${Number(revenue.credits_issued || 0).toLocaleString('ru-RU')}`,
+      '',
+      '🏦 Providers:',
       ...providerLines,
       '',
-      '📅 Today:',
+      '📅 Today by provider:',
       ...todayLines,
-      '',
-      `⚡ Credits issued: ${Number(revenue.credits_issued || 0).toLocaleString('ru-RU')}`,
       '',
       `🕒 Generated: ${new Date(revenue.generated_at).toISOString()}`
     ].join('\n')
@@ -124,6 +147,7 @@ async function sendRevenueTelegramReport(req, res, next) {
     }
 
     const axios = require('axios')
+    const appUrl = process.env.APP_URL || 'https://www.as6.ru'
 
     await axios.post(
       `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
@@ -131,9 +155,10 @@ async function sendRevenueTelegramReport(req, res, next) {
         chat_id: process.env.TELEGRAM_MANAGER_CHAT_ID,
         text,
         reply_markup: {
-          inline_keyboard: [[
-            { text: 'Open Revenue Dashboard', url: `${process.env.APP_URL || 'https://www.as6.ru'}/dashboard/revenue` }
-          ]]
+          inline_keyboard: [
+            [{ text: '📈 Revenue Dashboard', url: `${appUrl}/dashboard/revenue` }],
+            [{ text: '💳 Payments', url: `${appUrl}/dashboard/revenue` }, { text: '📋 CRM', url: `${appUrl}/crm` }]
+          ]
         }
       }
     )
