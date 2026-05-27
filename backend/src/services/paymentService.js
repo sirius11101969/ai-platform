@@ -263,6 +263,15 @@ async function processWebhook({ workspaceId, provider, event, externalPaymentId,
             '💰 НОВАЯ ОПЛАТА AS6',
             '',
             `📦 Тариф: ${plan.toUpperCase()}`,
+            `🏦 Провайдер: ${
+              provider === 'yookassa'
+                ? 'YooKassa'
+                : provider === 'stripe'
+                ? 'Stripe'
+                : provider === 'usdt_trc20'
+                ? 'USDT TRC20'
+                : provider
+            }`,
             `💳 Сумма: ${amount || tx.amount} ${currency || tx.currency}`,
             `⚡ Кредиты: +${credits}`,
             `🏢 Workspace: ${targetWorkspaceId}`,
