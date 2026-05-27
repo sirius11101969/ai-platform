@@ -134,9 +134,10 @@ async function processWebhook({ workspaceId, provider, event, externalPaymentId,
           SELECT id, user_id
           FROM crm_leads
           WHERE workspace_id = $1::uuid
+            AND metadata->>'payment_id' = $2::text
           ORDER BY created_at DESC
           LIMIT 1
-        `, [targetWorkspaceId])
+        `, [targetWorkspaceId, externalPaymentId])
 
         let paymentLead = lead.rows[0]
 
