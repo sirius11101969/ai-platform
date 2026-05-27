@@ -29,6 +29,7 @@ const aiRevenueIntelligenceRoutes = require('./routes/aiRevenueIntelligenceRoute
 const aiRevenueEngineRoutes = require('./routes/aiRevenueEngineRoutes')
 const revenueRoutes = require('./routes/revenueRoutes')
 const { publicPaymentRoutes, paymentRoutes } = require('./routes/paymentRoutes')
+const revenueCommandRoutes = require('./routes/revenueCommandRoutes')
 const aiExecutiveBrainRoutes = require('./routes/aiExecutiveBrainRoutes')
 const aiCompanySimulationRoutes = require('./routes/aiCompanySimulationRoutes')
 const aiStrategicPlanningRoutes = require('./routes/aiStrategicPlanningRoutes')
