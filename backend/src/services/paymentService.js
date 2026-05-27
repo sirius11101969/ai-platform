@@ -12,7 +12,7 @@ async function loadProvider(provider, client = pool) {
 }
 
 async function createProviderPayment({ provider, amount, currency, metadata = {}, workspaceId }) {
-  const mode = process.env.YOOKASSA_MODE || 'mock'
+  const mode = String(process.env.YOOKASSA_MODE || 'mock').toLowerCase()
   if (provider !== 'yookassa') {
     const paymentId = `mock_${provider}_${Date.now()}`
     return { paymentId, status: 'created', confirmationUrl: null, providerMetadata: { mode: 'mock' } }
