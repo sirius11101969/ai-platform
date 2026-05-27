@@ -262,21 +262,40 @@ async function processWebhook({ workspaceId, provider, event, externalPaymentId,
 
       try {
         if (process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_MANAGER_CHAT_ID) {
+          const paidAmount = Number(amount || tx.amount || 0)
+          const paidCurrency = String(currency || tx.currency || '').toUpperCase()
+          const providerLabel =
+            provider === 'yookassa'
+              ? 'YooKassa'
+              : provider === 'stripe'
+              ? 'Stripe'
+              : provider === 'usdt_trc20'
+              ? 'USDT TRC20'
+              : provider
+
+          const sourceLabel = metadata?.source || tx.metadata?.source || 'unknown'
+          const customerEmail = metadata?.customerEmail || metadata?.email || tx.metadata?.customerEmail || tx.metadata?.email || '—'
+          const usdRate = Number(process.env.USD_RUB_RATE || 90)
+          const usdEquivalent =
+            paidCurrency === 'USD' || paidCurrency === 'USDT'
+              ? `$${paidAmount.toFixed(2)}`
+              : paidCurrency === 'RUB'
+              ? `≈ $${(paidAmount / usdRate).toFixed(2)} при USD/RUB ${usdRate}`
+              : '—'
+
+          const crmUrl = `${process.env.APP_URL || 'https://www.as6.ru'}/crm?workspaceId=${targetWorkspaceId}${paymentCrmLeadId ? `&leadId=${paymentCrmLeadId}` : ''}`
+
           const text = [
             '💰 НОВАЯ ОПЛАТА AS6',
             '',
             `📦 Тариф: ${plan.toUpperCase()}`,
-            `🏦 Провайдер: ${
-              provider === 'yookassa'
-                ? 'YooKassa'
-                : provider === 'stripe'
-                ? 'Stripe'
-                : provider === 'usdt_trc20'
-                ? 'USDT TRC20'
-                : provider
-            }`,
-            `💳 Сумма: ${amount || tx.amount} ${currency || tx.currency}`,
+            `🏦 Провайдер: ${providerLabel}`,
+            `🌍 Валюта: ${paidCurrency}`,
+            `💳 Сумма: ${paidAmount} ${paidCurrency}`,
+            `💵 USD эквивалент: ${usdEquivalent}`,
             `⚡ Кредиты: +${credits}`,
+            `👤 Email клиента: ${customerEmail}`,
+            `📍 Источник: ${sourceLabel}`,
             `🏢 Workspace: ${targetWorkspaceId}`,
             `🧾 Payment: ${externalPaymentId}`
           ].join('\n')
