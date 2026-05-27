@@ -147,10 +147,13 @@ async function createAiSecretaryLead(req, res, next) {
             inline_keyboard: [
               [{ text: '🗂 Открыть CRM', url: crmUrl }],
               [
-                { text: '📞 Позвонить', url: `${crmUrl}&action=call` },
-                { text: '📅 Встреча', url: `${crmUrl}&action=meeting` }
+                { text: '📞 Позвонить', callback_data: `ai_secretary:call:${lead.id}:${workspaceId}` },
+                { text: '📅 Встреча', callback_data: `ai_secretary:meeting:${lead.id}:${workspaceId}` }
               ],
-              [{ text: '📨 КП', url: `${crmUrl}&action=proposal` }]
+              [
+                { text: '📨 КП', callback_data: `ai_secretary:proposal:${lead.id}:${workspaceId}` },
+                { text: '🗂 Архив', callback_data: `ai_secretary:archive:${lead.id}:${workspaceId}` }
+              ]
             ]
           }
         }
@@ -182,6 +185,87 @@ function resolveActionState(action) {
   return { status: 'qualified', stage: 'qualified', title: '✅ Lead qualified', body: 'AI Secretary action completed' }
 }
 
+async function applyAiSecretaryActionCore({ leadId, action, workspaceId }) {
+  const state = resolveActionState(action)
+
+  const updated = await pool.query(`
+    UPDATE crm_leads
+    SET
+      status = $1::text,
+      stage = $2::text,
+      metadata = COALESCE(metadata, '{}'::jsonb) || jsonb_build_object(
+        'ai_secretary_last_action', $3::text,
+        'ai_secretary_action_at', NOW()
+      ),
+      updated_at = NOW()
+    WHERE id = $4::uuid
+      AND workspace_id = $5::uuid
+    RETURNING *
+  `, [state.status, state.stage, action, leadId, workspaceId])
+
+  if (!updated.rows[0]) return null
+
+  const lead = updated.rows[0]
+
+  await pool.query(`
+    INSERT INTO lead_timeline_events(
+      workspace_id,
+      lead_id,
+      user_id,
+      event_type,
+      title,
+      body,
+      source,
+      metadata
+    )
+    VALUES(
+      $1::uuid,
+      $2::uuid,
+      NULL,
+      'ai_secretary_action',
+      $3::text,
+      $4::text,
+      'ai_secretary',
+      $5::jsonb
+    )
+  `, [
+    workspaceId,
+    leadId,
+    state.title,
+    state.body,
+    JSON.stringify({ action, status: state.status, stage: state.stage })
+  ])
+
+  return { lead, state }
+}
+
+async function sendAiSecretaryActionConfirmation({ lead, leadId, action, state, workspaceId }) {
+  if (!process.env.TELEGRAM_BOT_TOKEN || !process.env.TELEGRAM_MANAGER_CHAT_ID) return false
+
+  const appUrl = process.env.APP_URL || 'https://www.as6.ru'
+  const crmUrl = `${appUrl}/crm?workspaceId=${workspaceId}&leadId=${leadId}`
+
+  await axios.post(
+    `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
+    {
+      chat_id: process.env.TELEGRAM_MANAGER_CHAT_ID,
+      text: [
+        '✅ AI SECRETARY ACTION APPLIED',
+        '',
+        `👤 Lead: ${lead.name}`,
+        `🎯 Action: ${actionLabel(action)}`,
+        `📌 Status: ${state.status}`,
+        `🧾 Lead ID: ${leadId}`
+      ].join('\n'),
+      reply_markup: {
+        inline_keyboard: [[{ text: '🗂 Открыть CRM', url: crmUrl }]]
+      }
+    }
+  )
+
+  return true
+}
+
 async function applyAiSecretaryAction(req, res, next) {
   try {
     const leadId = normalizeText(req.params.leadId || req.body?.leadId)
@@ -190,95 +274,83 @@ async function applyAiSecretaryAction(req, res, next) {
 
     if (!leadId) return res.status(400).json({ error: 'leadId is required' })
 
-    const state = resolveActionState(action)
+    const result = await applyAiSecretaryActionCore({ leadId, action, workspaceId })
+    if (!result) return res.status(404).json({ error: 'lead not found' })
 
-    const updated = await pool.query(`
-      UPDATE crm_leads
-      SET
-        status = $1::text,
-        stage = $2::text,
-        metadata = COALESCE(metadata, '{}'::jsonb) || jsonb_build_object(
-          'ai_secretary_last_action', $3::text,
-          'ai_secretary_action_at', NOW()
-        ),
-        updated_at = NOW()
-      WHERE id = $4::uuid
-        AND workspace_id = $5::uuid
-      RETURNING *
-    `, [state.status, state.stage, action, leadId, workspaceId])
-
-    if (!updated.rows[0]) return res.status(404).json({ error: 'lead not found' })
-
-    const lead = updated.rows[0]
-
-    await pool.query(`
-      INSERT INTO lead_timeline_events(
-        workspace_id,
-        lead_id,
-        user_id,
-        event_type,
-        title,
-        body,
-        source,
-        metadata
-      )
-      VALUES(
-        $1::uuid,
-        $2::uuid,
-        NULL,
-        'ai_secretary_action',
-        $3::text,
-        $4::text,
-        'ai_secretary',
-        $5::jsonb
-      )
-    `, [
-      workspaceId,
+    const telegramSent = await sendAiSecretaryActionConfirmation({
+      lead: result.lead,
       leadId,
-      state.title,
-      state.body,
-      JSON.stringify({ action, status: state.status, stage: state.stage })
-    ])
-
-    let telegramSent = false
-
-    if (process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_MANAGER_CHAT_ID) {
-      const appUrl = process.env.APP_URL || 'https://www.as6.ru'
-      const crmUrl = `${appUrl}/crm?workspaceId=${workspaceId}&leadId=${leadId}`
-
-      await axios.post(
-        `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
-        {
-          chat_id: process.env.TELEGRAM_MANAGER_CHAT_ID,
-          text: [
-            '✅ AI SECRETARY ACTION APPLIED',
-            '',
-            `👤 Lead: ${lead.name}`,
-            `🎯 Action: ${actionLabel(action)}`,
-            `📌 Status: ${state.status}`,
-            `🧾 Lead ID: ${leadId}`
-          ].join('\n'),
-          reply_markup: {
-            inline_keyboard: [[{ text: '🗂 Открыть CRM', url: crmUrl }]]
-          }
-        }
-      )
-
-      telegramSent = true
-    }
+      action,
+      state: result.state,
+      workspaceId
+    })
 
     res.json({
       status: 'ok',
       leadId,
       action,
-      crmStatus: state.status,
-      crmStage: state.stage,
+      crmStatus: result.state.status,
+      crmStage: result.state.stage,
       telegramSent,
-      lead
+      lead: result.lead
     })
   } catch (e) {
     next(e)
   }
 }
 
-module.exports = { createAiSecretaryLead, applyAiSecretaryAction }
+async function handleAiSecretaryTelegramCallback(req, res, next) {
+  try {
+    const body = req.body || {}
+    const callback = body.callback_query
+    const data = String(callback?.data || '')
+
+    if (!data.startsWith('ai_secretary:')) {
+      return res.json({ status: 'ignored' })
+    }
+
+    const [, action, leadId, workspaceIdFromData] = data.split(':')
+    const workspaceId = normalizeText(workspaceIdFromData || process.env.PUBLIC_CHECKOUT_WORKSPACE_ID || DEFAULT_WORKSPACE_ID)
+
+    const result = await applyAiSecretaryActionCore({ leadId, action, workspaceId })
+    if (!result) {
+      if (callback?.id) {
+        await axios.post(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/answerCallbackQuery`, {
+          callback_query_id: callback.id,
+          text: 'Lead not found',
+          show_alert: true
+        })
+      }
+      return res.status(404).json({ error: 'lead not found' })
+    }
+
+    if (callback?.id) {
+      await axios.post(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/answerCallbackQuery`, {
+        callback_query_id: callback.id,
+        text: `Action applied: ${actionLabel(action)}`,
+        show_alert: false
+      })
+    }
+
+    await sendAiSecretaryActionConfirmation({
+      lead: result.lead,
+      leadId,
+      action,
+      state: result.state,
+      workspaceId
+    })
+
+    res.json({
+      status: 'ok',
+      source: 'telegram_callback',
+      leadId,
+      action,
+      crmStatus: result.state.status,
+      crmStage: result.state.stage
+    })
+  } catch (e) {
+    next(e)
+  }
+}
+
+module.exports = { createAiSecretaryLead, applyAiSecretaryAction, handleAiSecretaryTelegramCallback }
