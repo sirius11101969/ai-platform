@@ -129,6 +129,8 @@ async function processWebhook({ workspaceId, provider, event, externalPaymentId,
       console.info('payment_confirmed', { workspaceId: targetWorkspaceId, provider, externalPaymentId })
       console.info('credit_granted', { workspaceId: targetWorkspaceId, provider, externalPaymentId, credits })
 
+      let paymentCrmLeadId = null
+
       try {
         const lead = await client.query(`
           SELECT id, user_id
@@ -191,6 +193,7 @@ async function processWebhook({ workspaceId, provider, event, externalPaymentId,
 
         if (paymentLead) {
           const leadId = paymentLead.id
+          paymentCrmLeadId = leadId
           const userId = paymentLead.user_id
 
           await client.query(`
@@ -282,7 +285,10 @@ async function processWebhook({ workspaceId, provider, event, externalPaymentId,
             `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
             {
               chat_id: process.env.TELEGRAM_MANAGER_CHAT_ID,
-              text
+              text,
+              reply_markup: {
+                inline_keyboard: [[{ text: 'Открыть CRM карточку', url: crmUrl }]]
+              }
             }
           )
 
