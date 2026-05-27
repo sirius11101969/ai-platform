@@ -86,6 +86,23 @@ paidTransactions
 new Date(b.created_at)-new Date(a.created_at)
 )[0] || null
 
+  const commandRows = revenueCommand?.by_provider || []
+  const commandTodayRows = revenueCommand?.today || []
+
+  const commandPaidPayments = commandRows.reduce((sum, p) => sum + Number(p.paid_count || 0), 0)
+  const commandOpenPayments = commandRows.reduce((sum, p) => sum + Number(p.open_count || 0), 0)
+  const commandCreditsIssued = Number(revenueCommand?.credits_issued || 0)
+
+  const commandRubPaid = commandRows
+    .filter((p) => p.currency === 'RUB')
+    .reduce((sum, p) => sum + Number(p.paid_total || 0), 0)
+
+  const commandUsdPaid = commandRows
+    .filter((p) => p.currency === 'USD' || p.currency === 'USDT')
+    .reduce((sum, p) => sum + Number(p.paid_total || 0), 0)
+
+  const commandTodayPayments = commandTodayRows.reduce((sum, p) => sum + Number(p.paid_today_count || 0), 0)
+
   const liveProviders = useMemo(
     () => (paymentDashboard.providers || []).filter((p) => p.enabled && p.mode === 'live'),
     [paymentDashboard.providers]
@@ -112,14 +129,13 @@ new Date(b.created_at)-new Date(a.created_at)
 
     {!loading && !error && <>
       <section className='stats-grid'>
-        <StatCard label='Revenue This Month' value={overview.mrr || 0} hint='paid YooKassa payments this month' />
-        <StatCard label='Revenue Today' value={overview.paymentsToday || 0} hint='paid YooKassa payments today' />
-        <StatCard label='New Users' value={overview.newUsers || 0} hint='today signups' />
-        <StatCard label='Credits Issued' value={overview.creditsIssued || 0} hint='today granted credits' />
+        <StatCard label='Command USD/USDT Revenue' value={`$${commandUsdPaid.toLocaleString('ru-RU')}`} hint='Stripe + USDT paid total' />
+        <StatCard label='Command RUB Revenue' value={`${commandRubPaid.toLocaleString('ru-RU')} ₽`} hint='YooKassa paid total' />
+        <StatCard label='Credits Issued' value={commandCreditsIssued.toLocaleString('ru-RU')} hint='all payment CRM leads' />
+        <StatCard label='Paid Payments' value={commandPaidPayments} hint='all providers' />
+        <StatCard label='Open Payments' value={commandOpenPayments} hint='pending + created payments' />
+        <StatCard label='Payments Today' value={commandTodayPayments} hint='paid today by provider' />
         <StatCard label='Activation Rate' value={`${overview.activationRate || 0}%`} hint='activation_completed / payment_completed' />
-        <StatCard label='Paid Revenue' value={`${paidRevenue.toLocaleString('ru-RU')} ₽`} hint='sum of paid transactions' />
-        <StatCard label='Paid Payments' value={paidTransactions.length} hint='successful payments' />
-        <StatCard label='Pending Payments' value={pendingTransactions.length} hint='waiting for payment' />
         <StatCard label='Latest Payment' value={latestPayment ? `${Number(latestPayment.amount || 0).toLocaleString('ru-RU')} ${latestPayment.currency}` : '—'} hint={latestPayment?.status || 'no payments'} />
       </section>
       <Panel>
