@@ -924,6 +924,26 @@ export function fetchRevenueCommandCenter() {
 }
 
 
+
+export async function markTestPaymentPaid(paymentId) {
+  const secret =
+    localStorage.getItem("payment_webhook_secret") ||
+    window.prompt("Enter PAYMENT_WEBHOOK_SECRET")
+
+  if (!secret) {
+    throw new Error("PAYMENT_WEBHOOK_SECRET required")
+  }
+
+  localStorage.setItem("payment_webhook_secret", secret)
+
+  return request(
+    `/payments/test/mark-paid/${paymentId}?secret=${encodeURIComponent(secret)}`,
+    {
+      method: "POST"
+    }
+  )
+}
+
 export function applyAiSecretaryLeadAction(leadId, action, workspaceId) {
   return request(`/ai-secretary/leads/${leadId}/actions/${action}`, {
     method: 'POST',
