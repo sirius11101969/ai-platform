@@ -147,12 +147,12 @@ async function createAiSecretaryLead(req, res, next) {
             inline_keyboard: [
               [{ text: '🗂 Открыть CRM', url: crmUrl }],
               [
-                { text: '📞 Позвонить', callback_data: `ai_secretary:call:${lead.id}:${workspaceId}` },
-                { text: '📅 Встреча', callback_data: `ai_secretary:meeting:${lead.id}:${workspaceId}` }
+                { text: '📞 Позвонить', callback_data: `as:${lead.id}:call` },
+                { text: '📅 Встреча', callback_data: `as:${lead.id}:meeting` }
               ],
               [
-                { text: '📨 КП', callback_data: `ai_secretary:proposal:${lead.id}:${workspaceId}` },
-                { text: '🗂 Архив', callback_data: `ai_secretary:archive:${lead.id}:${workspaceId}` }
+                { text: '📨 КП', callback_data: `as:${lead.id}:proposal` },
+                { text: '🗂 Архив', callback_data: `as:${lead.id}:archive` }
               ]
             ]
           }
@@ -305,12 +305,20 @@ async function handleAiSecretaryTelegramCallback(req, res, next) {
     const callback = body.callback_query
     const data = String(callback?.data || '')
 
-    if (!data.startsWith('ai_secretary:')) {
+    if (!data.startsWith('as:')) {
       return res.json({ status: 'ignored' })
     }
 
-    const [, action, leadId, workspaceIdFromData] = data.split(':')
-    const workspaceId = normalizeText(workspaceIdFromData || process.env.PUBLIC_CHECKOUT_WORKSPACE_ID || DEFAULT_WORKSPACE_ID)
+    const [, leadId, action] = data.split(':')
+
+    const leadLookup = await pool.query(
+      'SELECT workspace_id FROM crm_leads WHERE id=$1::uuid LIMIT 1',
+      [leadId]
+    )
+
+    const workspaceId = normalizeText(
+      leadLookup.rows[0]?.workspace_id || process.env.PUBLIC_CHECKOUT_WORKSPACE_ID || DEFAULT_WORKSPACE_ID
+    )
 
     const result = await applyAiSecretaryActionCore({ leadId, action, workspaceId })
     if (!result) {
