@@ -10,6 +10,12 @@ const paymentsGateway = requireAiControlGateway({ missingWorkspaceError: 'worksp
 
 publicPaymentRoutes.post('/payments/webhook', requirePaymentWebhookSecret, controller.webhook)
 
+// Public YooKassa webhook endpoint.
+// YooKassa does not send our x-payment-webhook-secret header.
+// Security is handled by matching YooKassa payment id with existing payment_transactions
+// and processing only known payment ids.
+publicPaymentRoutes.post('/payments/yookassa/webhook', controller.webhook)
+
 publicPaymentRoutes.post(
   '/payments/test/mark-paid/:paymentId',
   requirePaymentWebhookSecret,
