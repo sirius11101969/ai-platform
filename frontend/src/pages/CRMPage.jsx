@@ -47,6 +47,7 @@ import {
   getLeadScores,
   triggerRevenueAnalysis,
   applyAiSecretaryLeadAction,
+  markTestPaymentPaid,
 } from "../services/api";
 
 const DEFAULT_CRM_STAGES = [
@@ -816,6 +817,26 @@ export default function CRMPage() {
     }
   }
 
+  async function handleTestPaymentPaid(lead) {
+    const paymentId = lead?.metadata?.payment_id
+
+    if (!paymentId) {
+      setError("У лида нет payment_id. Сначала нажми 💳 Оплата.")
+      return
+    }
+
+    try {
+      setError("")
+      await markTestPaymentPaid(paymentId)
+      await Promise.all([
+        loadCrm({ silent: true }),
+        refreshMeta()
+      ])
+    } catch (requestError) {
+      setError(requestError.message || "Не удалось отметить test payment как paid")
+    }
+  }
+
   async function handleDeleteLead(lead) {
     if (!window.confirm(`Удалить лид «${lead.company || lead.name}»?`)) return;
     setError("");
@@ -1254,6 +1275,7 @@ export default function CRMPage() {
           onStopAiSequence={handleStopAiSequence}
           closeLeadModal={closeLeadModal}
           onAiSecretaryCrmAction={handleAiSecretaryCrmAction}
+          onTestPaymentPaid={handleTestPaymentPaid}
         />
       )}
 
@@ -1466,7 +1488,7 @@ function LeadFormModal({ title, subtitle, stages, leadForm, setLeadForm, saving,
   );
 }
 
-function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDraftChange, onAddNote, onFollowUp, onAiAction, onAnalyzeLeadAi, aiActionBusy = {}, followUpLoading, onDelete, onEdit, onMove, telegramMessages = [], telegramDraft = '', telegramSending = false, onTelegramDraftChange, onSendTelegramReply, emailTemplates = [], leadEmails = [], emailComposer, emailAttachments = [], emailBusy = false, onEmailComposerChange, onGenerateEmail, onUploadEmailAttachment, onSendEmail, actionCenter = { actions: [], timeline: [], attachments: [] }, materials = [], executionBusy = {}, onCreateExecutionAction, onApproveExecutionAction, onSendExecutionAction, onEditExecutionAction, onCancelExecutionAction, onSendMaterials, onApproveApprovalQueueItem, onRejectApprovalQueueItem, onExecuteApprovalQueueItem, onEditApprovalQueueItem, onDownloadMeetingIcs, meetingIcsDownloadingId, aiSequence = null, aiSequenceTemplates = [], aiSequenceTemplateId = "", aiSequenceBusy = "", aiSequenceMessage = "", aiSequenceError = "", onAiSequenceTemplateChange, onStartAiSequence, onPauseAiSequence, onStopAiSequence, closeLeadModal, onAiSecretaryCrmAction }) {
+function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDraftChange, onAddNote, onFollowUp, onAiAction, onAnalyzeLeadAi, aiActionBusy = {}, followUpLoading, onDelete, onEdit, onMove, telegramMessages = [], telegramDraft = '', telegramSending = false, onTelegramDraftChange, onSendTelegramReply, emailTemplates = [], leadEmails = [], emailComposer, emailAttachments = [], emailBusy = false, onEmailComposerChange, onGenerateEmail, onUploadEmailAttachment, onSendEmail, actionCenter = { actions: [], timeline: [], attachments: [] }, materials = [], executionBusy = {}, onCreateExecutionAction, onApproveExecutionAction, onSendExecutionAction, onEditExecutionAction, onCancelExecutionAction, onSendMaterials, onApproveApprovalQueueItem, onRejectApprovalQueueItem, onExecuteApprovalQueueItem, onEditApprovalQueueItem, onDownloadMeetingIcs, meetingIcsDownloadingId, aiSequence = null, aiSequenceTemplates = [], aiSequenceTemplateId = "", aiSequenceBusy = "", aiSequenceMessage = "", aiSequenceError = "", onAiSequenceTemplateChange, onStartAiSequence, onPauseAiSequence, onStopAiSequence, closeLeadModal, onAiSecretaryCrmAction, onTestPaymentPaid }) {
   useModalCloseLifecycle(closeLeadModal);
   const telegramOutreachDrafts = getOutreachDrafts(lead, 'telegram');
   const telegramReplyDrafts = (actionCenter.approvalItems || []).filter((item) => item.leadId === lead.id && (item.actionType === 'telegram_reply_draft' || item.executionType === 'telegram_reply_draft'));
@@ -1930,6 +1952,7 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
           <button className="ghost-button compact" type="button" onClick={() => onAiSecretaryCrmAction?.(lead, "meeting")}>📅 Встреча</button>
           <button className="ghost-button compact" type="button" onClick={() => onAiSecretaryCrmAction?.(lead, "proposal")}>📨 КП</button>
           <button className="btn primary compact" type="button" onClick={() => onAiSecretaryCrmAction?.(lead, "checkout")}>💳 Оплата</button>
+          <button className="btn primary compact" type="button" onClick={() => onTestPaymentPaid?.(lead)}>✅ Test Paid</button>
           <button className="ghost-button" type="button" onClick={closeLeadModal}>Закрыть</button>
         </div>
       </section>
