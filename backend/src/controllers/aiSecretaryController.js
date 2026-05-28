@@ -332,12 +332,16 @@ async function handleAiSecretaryTelegramCallback(req, res, next) {
       return res.status(404).json({ error: 'lead not found' })
     }
 
-    if (callback?.id) {
-      await axios.post(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/answerCallbackQuery`, {
-        callback_query_id: callback.id,
-        text: `Action applied: ${actionLabel(action)}`,
-        show_alert: false
-      })
+    if (callback?.id && callback.id !== 'manual-test') {
+      try {
+        await axios.post(`https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/answerCallbackQuery`, {
+          callback_query_id: callback.id,
+          text: `Action applied: ${actionLabel(action)}`,
+          show_alert: false
+        })
+      } catch (e) {
+        console.warn('telegram_answer_callback_failed', e.response?.data || e.message)
+      }
     }
 
     await sendAiSecretaryActionConfirmation({
