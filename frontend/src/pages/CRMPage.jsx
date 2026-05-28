@@ -1915,6 +1915,10 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
           </aside>
         </div>
         <div className="lead-detail-bottom-actions">
+          <button className="ghost-button compact" type="button" onClick={() => onAiSecretaryCrmAction?.(lead, "call")}>📞 Позвонить</button>
+          <button className="ghost-button compact" type="button" onClick={() => onAiSecretaryCrmAction?.(lead, "meeting")}>📅 Встреча</button>
+          <button className="ghost-button compact" type="button" onClick={() => onAiSecretaryCrmAction?.(lead, "proposal")}>📨 КП</button>
+          <button className="btn primary compact" type="button" onClick={() => onAiSecretaryCrmAction?.(lead, "checkout")}>💳 Оплата</button>
           <button className="ghost-button" type="button" onClick={closeLeadModal}>Закрыть</button>
         </div>
       </section>
