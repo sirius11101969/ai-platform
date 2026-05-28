@@ -60,34 +60,43 @@ module.exports = { create, webhook, status, dashboard }
 async function testMarkPaymentPaid(req, res, next) {
   try {
     const paymentId = String(req.params.paymentId || '').trim()
-
-    if (!paymentId) {
-      return res.status(400).json({ error: 'paymentId required' })
-    }
-
-    const txLookup = await paymentService.pool?.query?.('SELECT 1')
-      .catch(() => null)
+    const leadId = String(req.query.leadId || req.body?.leadId || '').trim()
 
     const pool = require('../db/pool')
 
-    const found = await pool.query(`
-      SELECT *
-      FROM payment_transactions
-      WHERE external_payment_id = $1::text
-      LIMIT 1
-    `, [paymentId])
+    let found
+
+    if (paymentId && paymentId !== 'by-lead') {
+      found = await pool.query(`
+        SELECT *
+        FROM payment_transactions
+        WHERE external_payment_id = $1::text
+        LIMIT 1
+      `, [paymentId])
+    } else if (leadId) {
+      found = await pool.query(`
+        SELECT *
+        FROM payment_transactions
+        WHERE metadata->>'leadId' = $1::text
+          AND status IN ('pending','created')
+        ORDER BY created_at DESC
+        LIMIT 1
+      `, [leadId])
+    } else {
+      return res.status(400).json({ error: 'paymentId or leadId required' })
+    }
 
     const tx = found.rows[0]
 
     if (!tx) {
-      return res.status(404).json({ error: 'payment not found', paymentId })
+      return res.status(404).json({ error: 'payment not found', paymentId, leadId })
     }
 
     const result = await paymentService.processWebhook({
       workspaceId: tx.workspace_id,
       provider: tx.provider,
       event: 'payment.succeeded',
-      externalPaymentId: paymentId,
+      externalPaymentId: tx.external_payment_id,
       status: 'paid',
       amount: Number(tx.amount || 0),
       currency: tx.currency,
@@ -96,7 +105,8 @@ async function testMarkPaymentPaid(req, res, next) {
 
     return res.json({
       ok: true,
-      paymentId,
+      paymentId: tx.external_payment_id,
+      leadId: tx.metadata?.leadId || leadId,
       provider: tx.provider,
       result
     })
