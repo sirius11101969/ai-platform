@@ -73,12 +73,20 @@ function formatCurrency(value) {
 function formatDate(value) {
   if (!value) return "—"
 
-  const d = new Date(value)
+  const raw = String(value)
 
-  if (Number.isNaN(d.getTime())) {
-    console.warn("invalid date", value)
-    return "—"
-  }
+  // Do not try to parse normal CRM/AI text as a date.
+  // This prevents noisy console warnings when timeline body text is passed accidentally.
+  const looksLikeDate =
+    /^\d{4}-\d{2}-\d{2}/.test(raw) ||
+    /^\d{2}\.\d{2}\.\d{4}/.test(raw) ||
+    raw.includes('T')
+
+  if (!looksLikeDate) return "—"
+
+  const d = new Date(raw)
+
+  if (Number.isNaN(d.getTime())) return "—"
 
   try {
     return d.toLocaleString()
