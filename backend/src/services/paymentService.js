@@ -377,7 +377,23 @@ async function processWebhook({ workspaceId, provider, event, externalPaymentId,
               : provider
 
           const sourceLabel = metadata?.source || tx.metadata?.source || 'unknown'
+          const customerName =
+            metadata?.customerName ||
+            metadata?.name ||
+            metadata?.fullName ||
+            tx.metadata?.customerName ||
+            tx.metadata?.name ||
+            tx.metadata?.fullName ||
+            metadata?.leadName ||
+            tx.metadata?.leadName ||
+            '—'
           const customerEmail = metadata?.customerEmail || metadata?.email || tx.metadata?.customerEmail || tx.metadata?.email || '—'
+          const customerPhone =
+            metadata?.customerPhone ||
+            metadata?.phone ||
+            tx.metadata?.customerPhone ||
+            tx.metadata?.phone ||
+            '—'
           const usdRate = Number(process.env.USD_RUB_RATE || 90)
           const usdEquivalent =
             paidCurrency === 'USD' || paidCurrency === 'USDT'
@@ -397,7 +413,9 @@ async function processWebhook({ workspaceId, provider, event, externalPaymentId,
             `💳 Сумма: ${paidAmount} ${paidCurrency}`,
             `💵 USD эквивалент: ${usdEquivalent}`,
             `⚡ Кредиты: +${credits}`,
-            `👤 Email клиента: ${customerEmail}`,
+            `👤 Клиент: ${customerName}`,
+            `📧 Email: ${customerEmail}`,
+            `📱 Телефон: ${customerPhone}`,
             `📍 Источник: ${sourceLabel}`,
             `🏢 Workspace: ${targetWorkspaceId}`,
             `🧾 Payment: ${externalPaymentId}`,
