@@ -216,18 +216,39 @@ async function applyAiSecretaryActionCore({ leadId, action, workspaceId }) {
   let checkout = null
 
   if (action === 'checkout') {
-    checkout = await paymentService.createPayment({
-      workspaceId,
-      provider: 'yookassa',
-      amount: Number(process.env.AI_SECRETARY_CHECKOUT_AMOUNT || 990),
-      currency: 'RUB',
-      metadata: {
-        source: 'ai_secretary',
-        leadId,
-        plan: process.env.AI_SECRETARY_CHECKOUT_PLAN || 'starter',
-        customerEmail: lead.email || ''
+    const existingCheckout = await pool.query(`
+      SELECT *
+      FROM payment_transactions
+      WHERE workspace_id = $1::uuid
+        AND metadata->>'leadId' = $2
+        AND metadata->>'source' = 'ai_secretary'
+        AND status IN ('pending','created')
+      ORDER BY created_at DESC
+      LIMIT 1
+    `, [workspaceId, leadId])
+
+    if (existingCheckout.rows[0]) {
+      checkout = {
+        transaction: existingCheckout.rows[0],
+        mode: 'existing',
+        paymentId: existingCheckout.rows[0].external_payment_id,
+        status: existingCheckout.rows[0].status,
+        confirmationUrl: existingCheckout.rows[0].checkout_url
       }
-    })
+    } else {
+      checkout = await paymentService.createPayment({
+        workspaceId,
+        provider: 'yookassa',
+        amount: Number(process.env.AI_SECRETARY_CHECKOUT_AMOUNT || 990),
+        currency: 'RUB',
+        metadata: {
+          source: 'ai_secretary',
+          leadId,
+          plan: process.env.AI_SECRETARY_CHECKOUT_PLAN || 'starter',
+          customerEmail: lead.email || ''
+        }
+      })
+    }
   }
 
   await pool.query(`
