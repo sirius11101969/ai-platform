@@ -55,3 +55,38 @@ async function dashboard(req, res, next) {
 }
 
 module.exports = { create, webhook, status, dashboard }
+
+
+async function testMarkPaymentPaid(req, res, next) {
+  try {
+    const paymentId = String(req.params.paymentId || '').trim()
+
+    if (!paymentId) {
+      return res.status(400).json({
+        error: 'paymentId required'
+      })
+    }
+
+    const result = await paymentService.processWebhookEvent({
+      provider: 'test',
+      event: 'payment.succeeded',
+      externalPaymentId: paymentId,
+      status: 'paid',
+      amount: 990,
+      currency: 'RUB',
+      payload: {
+        source: 'test_admin_mark_paid'
+      }
+    })
+
+    return res.json({
+      ok: True,
+      paymentId,
+      result
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
+module.exports.testMarkPaymentPaid = testMarkPaymentPaid
