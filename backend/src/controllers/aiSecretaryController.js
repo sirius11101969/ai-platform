@@ -264,7 +264,7 @@ async function applyAiSecretaryActionCore({ leadId, action, workspaceId }) {
   return { lead, state, checkout }
 }
 
-async function sendAiSecretaryActionConfirmation({ lead, leadId, action, state, workspaceId }) {
+async function sendAiSecretaryActionConfirmation({ lead, leadId, action, state, workspaceId, checkout = null }) {
   if (!process.env.TELEGRAM_BOT_TOKEN || !process.env.TELEGRAM_MANAGER_CHAT_ID) return false
 
   const appUrl = process.env.APP_URL || 'https://www.as6.ru'
@@ -284,8 +284,8 @@ async function sendAiSecretaryActionConfirmation({ lead, leadId, action, state, 
       ].join('\n'),
       reply_markup: {
         inline_keyboard: [
-          ...(arguments[0]?.checkout?.confirmationUrl
-            ? [[{ text: '💳 Открыть оплату', url: arguments[0].checkout.confirmationUrl }]]
+          ...(checkout?.confirmationUrl
+            ? [[{ text: '💳 Открыть оплату', url: checkout.confirmationUrl }]]
             : []),
           [{ text: '🗂 Открыть CRM', url: crmUrl }]
         ]
