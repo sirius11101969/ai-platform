@@ -80,7 +80,7 @@ async function testMarkPaymentPaid(req, res, next) {
     })
 
     return res.json({
-      ok: True,
+      ok: true,
       paymentId,
       result
     })
