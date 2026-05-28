@@ -129,6 +129,81 @@ async function processWebhook({ workspaceId, provider, event, externalPaymentId,
       console.info('payment_confirmed', { workspaceId: targetWorkspaceId, provider, externalPaymentId })
       console.info('credit_granted', { workspaceId: targetWorkspaceId, provider, externalPaymentId, credits })
 
+      const sourceLeadId = tx.metadata?.leadId || metadata?.leadId || null
+
+      if (sourceLeadId) {
+        try {
+          const sourceLead = await client.query(`
+            UPDATE crm_leads
+            SET
+              status = 'won',
+              stage = 'won',
+              value = $1::numeric,
+              metadata = COALESCE(metadata, '{}'::jsonb) || jsonb_build_object(
+                'payment_status', 'paid',
+                'payment_id', $2::text,
+                'provider', $3::text,
+                'paid_amount', $4::numeric,
+                'paid_currency', $5::text,
+                'paid_at', NOW()
+              ),
+              updated_at = NOW()
+            WHERE id = $6::uuid
+              AND workspace_id = $7::uuid
+            RETURNING id, name, email
+          `, [
+            Number(amount || tx.amount || 0),
+            externalPaymentId,
+            provider,
+            Number(amount || tx.amount || 0),
+            currency || tx.currency,
+            sourceLeadId,
+            targetWorkspaceId
+          ])
+
+          if (sourceLead.rows[0]) {
+            await client.query(`
+              INSERT INTO lead_timeline_events(
+                workspace_id,
+                lead_id,
+                user_id,
+                event_type,
+                title,
+                body,
+                source,
+                metadata
+              )
+              VALUES(
+                $1::uuid,
+                $2::uuid,
+                NULL,
+                'payment_received',
+                '💰 Payment received from AI Secretary lead',
+                $3::text,
+                'payments',
+                $4::jsonb
+              )
+            `, [
+              targetWorkspaceId,
+              sourceLeadId,
+              `Paid ${amount || tx.amount} ${currency || tx.currency}\nProvider ${provider}\nPayment ${externalPaymentId}\nCredits +${credits}`,
+              JSON.stringify({
+                paymentId: externalPaymentId,
+                provider,
+                amount: Number(amount || tx.amount || 0),
+                currency: currency || tx.currency,
+                credits,
+                source: 'ai_secretary'
+              })
+            ])
+
+            console.info('ai_secretary_lead_marked_won', { workspaceId: targetWorkspaceId, leadId: sourceLeadId, externalPaymentId })
+          }
+        } catch (e) {
+          console.error('ai_secretary_lead_payment_sync_failed', e.message)
+        }
+      }
+
       let paymentCrmLeadId = null
 
       try {
@@ -297,8 +372,9 @@ async function processWebhook({ workspaceId, provider, event, externalPaymentId,
             `👤 Email клиента: ${customerEmail}`,
             `📍 Источник: ${sourceLabel}`,
             `🏢 Workspace: ${targetWorkspaceId}`,
-            `🧾 Payment: ${externalPaymentId}`
-          ].join('\n')
+            `🧾 Payment: ${externalPaymentId}`,
+            sourceLeadId ? `🧠 Lead: ${sourceLeadId}` : null
+          ].filter(Boolean).join('\n')
 
           await axios.post(
             `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
