@@ -67,7 +67,7 @@ async function testMarkPaymentPaid(req, res, next) {
       })
     }
 
-    const result = await paymentService.processWebhookEvent({
+    const result = await paymentService.processWebhook({
       provider: 'test',
       event: 'payment.succeeded',
       externalPaymentId: paymentId,
