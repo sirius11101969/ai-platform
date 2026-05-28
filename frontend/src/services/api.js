@@ -922,3 +922,11 @@ export function fetchPaymentStatus(workspaceId = getActiveWorkspaceId()) {
 export function fetchRevenueCommandCenter() {
   return request('/revenue/command-center')
 }
+
+
+export function applyAiSecretaryLeadAction(leadId, action, workspaceId) {
+  return request(`/ai-secretary/leads/${leadId}/actions/${action}`, {
+    method: 'POST',
+    body: JSON.stringify({ workspaceId })
+  })
+}
