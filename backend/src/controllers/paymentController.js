@@ -62,26 +62,42 @@ async function testMarkPaymentPaid(req, res, next) {
     const paymentId = String(req.params.paymentId || '').trim()
 
     if (!paymentId) {
-      return res.status(400).json({
-        error: 'paymentId required'
-      })
+      return res.status(400).json({ error: 'paymentId required' })
+    }
+
+    const txLookup = await paymentService.pool?.query?.('SELECT 1')
+      .catch(() => null)
+
+    const pool = require('../db/pool')
+
+    const found = await pool.query(`
+      SELECT *
+      FROM payment_transactions
+      WHERE external_payment_id = $1::text
+      LIMIT 1
+    `, [paymentId])
+
+    const tx = found.rows[0]
+
+    if (!tx) {
+      return res.status(404).json({ error: 'payment not found', paymentId })
     }
 
     const result = await paymentService.processWebhook({
-      provider: 'test',
+      workspaceId: tx.workspace_id,
+      provider: tx.provider,
       event: 'payment.succeeded',
       externalPaymentId: paymentId,
       status: 'paid',
-      amount: 990,
-      currency: 'RUB',
-      payload: {
-        source: 'test_admin_mark_paid'
-      }
+      amount: Number(tx.amount || 0),
+      currency: tx.currency,
+      metadata: tx.metadata || {}
     })
 
     return res.json({
       ok: true,
       paymentId,
+      provider: tx.provider,
       result
     })
   } catch (error) {
