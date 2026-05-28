@@ -1,5 +1,6 @@
 const pool = require('../db/pool')
 const axios = require('axios')
+const paymentService = require('../services/paymentService')
 
 const DEFAULT_WORKSPACE_ID = 'e5d83c26-f0cb-4ec4-9077-308110eaa77b'
 
@@ -32,6 +33,7 @@ function nextAction(score) {
 function actionLabel(action) {
   if (action === 'call') return '📞 Позвонить'
   if (action === 'meeting') return '📅 Назначить встречу'
+  if (action === 'checkout') return '💳 Создать оплату'
   return '📨 Отправить КП'
 }
 
@@ -152,6 +154,9 @@ async function createAiSecretaryLead(req, res, next) {
               ],
               [
                 { text: '📨 КП', callback_data: `as:${lead.id}:proposal` },
+                { text: '💳 Оплата', callback_data: `as:${lead.id}:checkout` }
+              ],
+              [
                 { text: '🗂 Архив', callback_data: `as:${lead.id}:archive` }
               ]
             ]
@@ -181,6 +186,7 @@ function resolveActionState(action) {
   if (action === 'call') return { status: 'qualified', stage: 'qualified', title: '📞 Manager should call lead', body: 'AI Secretary action: call lead' }
   if (action === 'meeting') return { status: 'booked', stage: 'booked', title: '📅 Meeting should be scheduled', body: 'AI Secretary action: schedule meeting' }
   if (action === 'proposal') return { status: 'proposal', stage: 'proposal', title: '📨 Proposal should be sent', body: 'AI Secretary action: send proposal' }
+  if (action === 'checkout') return { status: 'proposal', stage: 'proposal', title: '💳 Checkout should be created', body: 'AI Secretary action: create checkout' }
   if (action === 'archive') return { status: 'lost', stage: 'lost', title: '🗂 Lead archived', body: 'AI Secretary action: archive lead' }
   return { status: 'qualified', stage: 'qualified', title: '✅ Lead qualified', body: 'AI Secretary action completed' }
 }
@@ -207,6 +213,23 @@ async function applyAiSecretaryActionCore({ leadId, action, workspaceId }) {
 
   const lead = updated.rows[0]
 
+  let checkout = null
+
+  if (action === 'checkout') {
+    checkout = await paymentService.createPayment({
+      workspaceId,
+      provider: 'yookassa',
+      amount: Number(process.env.AI_SECRETARY_CHECKOUT_AMOUNT || 990),
+      currency: 'RUB',
+      metadata: {
+        source: 'ai_secretary',
+        leadId,
+        plan: process.env.AI_SECRETARY_CHECKOUT_PLAN || 'starter',
+        customerEmail: lead.email || ''
+      }
+    })
+  }
+
   await pool.query(`
     INSERT INTO lead_timeline_events(
       workspace_id,
@@ -232,11 +255,13 @@ async function applyAiSecretaryActionCore({ leadId, action, workspaceId }) {
     workspaceId,
     leadId,
     state.title,
-    state.body,
-    JSON.stringify({ action, status: state.status, stage: state.stage })
+    checkout?.confirmationUrl
+      ? `${state.body}\nCheckout: ${checkout.confirmationUrl}`
+      : state.body,
+    JSON.stringify({ action, status: state.status, stage: state.stage, checkout })
   ])
 
-  return { lead, state }
+  return { lead, state, checkout }
 }
 
 async function sendAiSecretaryActionConfirmation({ lead, leadId, action, state, workspaceId }) {
@@ -292,6 +317,7 @@ async function applyAiSecretaryAction(req, res, next) {
       crmStatus: result.state.status,
       crmStage: result.state.stage,
       telegramSent,
+      checkout: result.checkout || null,
       lead: result.lead
     })
   } catch (e) {
@@ -358,7 +384,8 @@ async function handleAiSecretaryTelegramCallback(req, res, next) {
       leadId,
       action,
       crmStatus: result.state.status,
-      crmStage: result.state.stage
+      crmStage: result.state.stage,
+      checkout: result.checkout || null
     })
   } catch (e) {
     next(e)
