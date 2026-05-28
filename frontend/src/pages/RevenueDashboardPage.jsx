@@ -14,6 +14,41 @@ export default function RevenueDashboardPage() {
   const [error, setError] = useState('')
 
   useEffect(() => {
+    const intervalId = window.setInterval(async () => {
+      try {
+        const workspaceId = getActiveWorkspaceId()
+
+        const [
+          revenueOverview,
+          revenueFunnel,
+          revenueOrders,
+          workspaces,
+          paymentDashboard,
+          revenueCommandCenter
+        ] = await Promise.all([
+          fetchRevenueOverview(workspaceId),
+          fetchRevenueFunnel(workspaceId),
+          fetchRevenueOrders(workspaceId),
+          fetchWorkspaces(),
+          fetchPaymentDashboard(workspaceId),
+          fetchRevenueCommandCenter(),
+        ])
+
+        setOverview(revenueOverview || null)
+        setFunnel(revenueFunnel || null)
+        setOrders(revenueOrders || [])
+        setWorkspaces(workspaces || [])
+        setPaymentDashboard(paymentDashboard || null)
+        setRevenueCommand(revenueCommandCenter?.revenue || null)
+      } catch (e) {
+        console.error("Revenue realtime refresh failed", e)
+      }
+    }, 15000)
+
+    return () => window.clearInterval(intervalId)
+  }, [])
+
+  useEffect(() => {
     const handleWorkspaceUpdate = (event) => setWorkspaceId(event?.detail?.workspaceId || getActiveWorkspaceId())
     window.addEventListener('ai-platform-workspace-updated', handleWorkspaceUpdate)
     return () => window.removeEventListener('ai-platform-workspace-updated', handleWorkspaceUpdate)
