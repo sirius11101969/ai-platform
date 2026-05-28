@@ -199,6 +199,22 @@ function getLeadTelegramConnectLink(lead) {
 }
 
 
+
+
+function aiSecretaryActionLabel(action) {
+  if (action === 'call') return '📞 Позвонить'
+  if (action === 'meeting') return '📅 Встреча'
+  if (action === 'proposal') return '📨 КП'
+  if (action === 'checkout') return '💳 Оплата'
+  return '—'
+}
+
+function paymentStatusLabel(status) {
+  if (status === 'paid') return '🟢 paid'
+  if (status === 'pending') return '🟡 pending'
+  return '—'
+}
+
 function getLeadAiScore(lead) {
   return lead?.aiScore || null;
 }
@@ -1688,6 +1704,19 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                 <div><dt>Этап</dt><dd>{stageMap[lead.status] || lead.status}</dd></div>
                 {lead.metadata?.payment_status && <div><dt>Оплата</dt><dd>💰 {String(lead.metadata.payment_status).toUpperCase()} · {String(lead.metadata.plan || '-').toUpperCase()} · {lead.metadata.credits || 0} credits</dd></div>}
                 {lead.metadata?.payment_id && <div><dt>Payment ID</dt><dd style={{wordBreak:'break-all'}}>{lead.metadata.payment_id}</dd></div>}
+
+                <div><dt>AI Score</dt><dd>{lead.metadata?.ai_score || lead.ai_score || 0}/100</dd></div>
+
+                <div><dt>Next Action</dt><dd>{aiSecretaryActionLabel(
+                  lead.metadata?.next_action ||
+                  lead.metadata?.ai_secretary_last_action
+                )}</dd></div>
+
+                <div><dt>Payment Status</dt><dd>{paymentStatusLabel(
+                  lead.metadata?.payment_status
+                )}</dd></div>
+
+                <div><dt>Last AI Action</dt><dd>{lead.metadata?.ai_secretary_last_action || '—'}</dd></div>
                 <div><dt>Создано</dt><dd>{formatDate(lead.createdAt)}</dd></div>
                 <div><dt>Обновлено</dt><dd>{formatDate(lead.updatedAt)}</dd></div>
               </dl>
