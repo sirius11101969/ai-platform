@@ -1,6 +1,7 @@
 const pool = require('../db/pool')
 const axios = require('axios')
 const paymentService = require('../services/paymentService')
+const aiSequenceService = require('../services/aiSequenceService')
 
 const DEFAULT_WORKSPACE_ID = 'e5d83c26-f0cb-4ec4-9077-308110eaa77b'
 
@@ -117,6 +118,17 @@ async function createAiSecretaryLead(req, res, next) {
       `AI Score ${score}/100\nNext action: ${actionLabel(action)}\nSource: ${source}`,
       JSON.stringify({ score, nextAction: action, email, phone, source })
     ])
+
+    await aiSequenceService.startSequence({
+      workspaceId,
+      leadId: lead.id,
+      templateName: aiSequenceService.DEFAULT_TEMPLATE,
+      metadata: {
+        source: 'ai_secretary',
+        score,
+        nextAction: action
+      }
+    })
 
     let telegramSent = false
 
