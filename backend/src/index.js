@@ -90,7 +90,7 @@ app.use('/api/ai', aiExecutionLayerRoutes)
 // Must stay before the global /api/ai sequence middleware chain so SSE stream auth can run in isolation.
 app.use('/api/ai', liveRealtimeRoutes)
 app.use('/api/ai', approvalCenterRoutes)
-app.use('/api/ai', aiSequenceRoutes)
+app.use('/api/ai-sequences', aiSequenceRoutes)
 app.use('/api/ai', aiRevenueIntelligenceRoutes)
 app.use('/api/ai', aiRevenueEngineRoutes)
 app.use('/api/revenue', revenueCommandRoutes)
