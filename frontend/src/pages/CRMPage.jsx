@@ -446,6 +446,16 @@ export default function CRMPage() {
   useEffect(() => { loadCrm(); }, []);
 
   useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      loadCrm({ silent: true }).catch(() => undefined)
+      refreshMeta().catch(() => undefined)
+    }, 15000)
+
+    return () => window.clearInterval(intervalId)
+  }, []);
+
+
+  useEffect(() => {
     const params = new URLSearchParams(location.search);
     const leadIdFromUrl = params.get("leadId") || params.get("lead");
     if (!leadIdFromUrl || leads.length === 0) return;
