@@ -770,6 +770,41 @@ export default function CRMPage() {
     }
   }
 
+
+  async function handleAiSecretaryCrmAction(lead, action) {
+    if (!lead?.id) return
+
+    try {
+      setError("")
+
+      const response = await applyAiSecretaryLeadAction(
+        lead.id,
+        action,
+        lead.workspaceId ||
+        lead.workspace_id ||
+        lead.metadata?.workspaceId
+      )
+
+      if (response?.lead) {
+        setLeads((current) =>
+          current.map((item) =>
+            item.id === lead.id ? response.lead : item
+          )
+        )
+      }
+
+      await Promise.all([
+        loadCrm({ silent: true }),
+        refreshMeta()
+      ])
+    } catch (requestError) {
+      setError(
+        requestError.message ||
+        'Не удалось выполнить AI Secretary действие'
+      )
+    }
+  }
+
   async function handleDeleteLead(lead) {
     if (!window.confirm(`Удалить лид «${lead.company || lead.name}»?`)) return;
     setError("");
@@ -1207,6 +1242,7 @@ export default function CRMPage() {
           onPauseAiSequence={handlePauseAiSequence}
           onStopAiSequence={handleStopAiSequence}
           closeLeadModal={closeLeadModal}
+          onAiSecretaryCrmAction={handleAiSecretaryCrmAction}
         />
       )}
 
@@ -1419,7 +1455,7 @@ function LeadFormModal({ title, subtitle, stages, leadForm, setLeadForm, saving,
   );
 }
 
-function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDraftChange, onAddNote, onFollowUp, onAiAction, onAnalyzeLeadAi, aiActionBusy = {}, followUpLoading, onDelete, onEdit, onMove, telegramMessages = [], telegramDraft = '', telegramSending = false, onTelegramDraftChange, onSendTelegramReply, emailTemplates = [], leadEmails = [], emailComposer, emailAttachments = [], emailBusy = false, onEmailComposerChange, onGenerateEmail, onUploadEmailAttachment, onSendEmail, actionCenter = { actions: [], timeline: [], attachments: [] }, materials = [], executionBusy = {}, onCreateExecutionAction, onApproveExecutionAction, onSendExecutionAction, onEditExecutionAction, onCancelExecutionAction, onSendMaterials, onApproveApprovalQueueItem, onRejectApprovalQueueItem, onExecuteApprovalQueueItem, onEditApprovalQueueItem, onDownloadMeetingIcs, meetingIcsDownloadingId, aiSequence = null, aiSequenceTemplates = [], aiSequenceTemplateId = "", aiSequenceBusy = "", aiSequenceMessage = "", aiSequenceError = "", onAiSequenceTemplateChange, onStartAiSequence, onPauseAiSequence, onStopAiSequence, closeLeadModal }) {
+function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDraftChange, onAddNote, onFollowUp, onAiAction, onAnalyzeLeadAi, aiActionBusy = {}, followUpLoading, onDelete, onEdit, onMove, telegramMessages = [], telegramDraft = '', telegramSending = false, onTelegramDraftChange, onSendTelegramReply, emailTemplates = [], leadEmails = [], emailComposer, emailAttachments = [], emailBusy = false, onEmailComposerChange, onGenerateEmail, onUploadEmailAttachment, onSendEmail, actionCenter = { actions: [], timeline: [], attachments: [] }, materials = [], executionBusy = {}, onCreateExecutionAction, onApproveExecutionAction, onSendExecutionAction, onEditExecutionAction, onCancelExecutionAction, onSendMaterials, onApproveApprovalQueueItem, onRejectApprovalQueueItem, onExecuteApprovalQueueItem, onEditApprovalQueueItem, onDownloadMeetingIcs, meetingIcsDownloadingId, aiSequence = null, aiSequenceTemplates = [], aiSequenceTemplateId = "", aiSequenceBusy = "", aiSequenceMessage = "", aiSequenceError = "", onAiSequenceTemplateChange, onStartAiSequence, onPauseAiSequence, onStopAiSequence, closeLeadModal, onAiSecretaryCrmAction }) {
   useModalCloseLifecycle(closeLeadModal);
   const telegramOutreachDrafts = getOutreachDrafts(lead, 'telegram');
   const telegramReplyDrafts = (actionCenter.approvalItems || []).filter((item) => item.leadId === lead.id && (item.actionType === 'telegram_reply_draft' || item.executionType === 'telegram_reply_draft'));
