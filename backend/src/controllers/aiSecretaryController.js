@@ -283,7 +283,12 @@ async function sendAiSecretaryActionConfirmation({ lead, leadId, action, state, 
         `🧾 Lead ID: ${leadId}`
       ].join('\n'),
       reply_markup: {
-        inline_keyboard: [[{ text: '🗂 Открыть CRM', url: crmUrl }]]
+        inline_keyboard: [
+          ...(arguments[0]?.checkout?.confirmationUrl
+            ? [[{ text: '💳 Открыть оплату', url: arguments[0].checkout.confirmationUrl }]]
+            : []),
+          [{ text: '🗂 Открыть CRM', url: crmUrl }]
+        ]
       }
     }
   )
@@ -307,7 +312,8 @@ async function applyAiSecretaryAction(req, res, next) {
       leadId,
       action,
       state: result.state,
-      workspaceId
+      workspaceId,
+      checkout: result.checkout || null
     })
 
     res.json({
@@ -375,7 +381,8 @@ async function handleAiSecretaryTelegramCallback(req, res, next) {
       leadId,
       action,
       state: result.state,
-      workspaceId
+      workspaceId,
+      checkout: result.checkout || null
     })
 
     res.json({
