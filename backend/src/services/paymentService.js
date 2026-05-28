@@ -162,42 +162,70 @@ async function processWebhook({ workspaceId, provider, event, externalPaymentId,
           ])
 
           if (sourceLead.rows[0]) {
-            await client.query(`
-              INSERT INTO lead_timeline_events(
-                workspace_id,
-                lead_id,
-                user_id,
-                event_type,
-                title,
-                body,
-                source,
-                metadata
-              )
-              VALUES(
-                $1::uuid,
-                $2::uuid,
-                NULL,
-                'payment_received',
-                '💰 Payment received from AI Secretary lead',
-                $3::text,
-                'payments',
-                $4::jsonb
-              )
-            `, [
-              targetWorkspaceId,
-              sourceLeadId,
-              `Paid ${amount || tx.amount} ${currency || tx.currency}\nProvider ${provider}\nPayment ${externalPaymentId}\nCredits +${credits}`,
-              JSON.stringify({
-                paymentId: externalPaymentId,
-                provider,
-                amount: Number(amount || tx.amount || 0),
-                currency: currency || tx.currency,
-                credits,
-                source: 'ai_secretary'
-              })
-            ])
 
-            console.info('ai_secretary_lead_marked_won', { workspaceId: targetWorkspaceId, leadId: sourceLeadId, externalPaymentId })
+            const existingEvent = await client.query(`
+              SELECT id
+              FROM lead_timeline_events
+              WHERE lead_id = $1::uuid
+                AND event_type = 'payment_received'
+                AND metadata->>'paymentId' = $2::text
+              LIMIT 1
+            `, [sourceLeadId, externalPaymentId])
+
+            if (!existingEvent.rows[0]) {
+              await client.query(`
+                INSERT INTO lead_timeline_events(
+                  workspace_id,
+                  lead_id,
+                  user_id,
+                  event_type,
+                  title,
+                  body,
+                  source,
+                  metadata
+                )
+                VALUES(
+                  $1::uuid,
+                  $2::uuid,
+                  NULL,
+                  'payment_received',
+                  '💰 Payment received from AI Secretary lead',
+                  $3::text,
+                  'payments',
+                  $4::jsonb
+                )
+              `, [
+                targetWorkspaceId,
+                sourceLeadId,
+                `Paid ${amount || tx.amount} ${currency || tx.currency}\nProvider ${provider}\nPayment ${externalPaymentId}\nCredits +${credits}`,
+                JSON.stringify({
+                  paymentId: externalPaymentId,
+                  provider,
+                  amount: Number(amount || tx.amount || 0),
+                  currency: currency || tx.currency,
+                  credits,
+                  source: 'ai_secretary'
+                })
+              ])
+
+              console.info('ai_secretary_payment_timeline_created', {
+                workspaceId: targetWorkspaceId,
+                leadId: sourceLeadId,
+                externalPaymentId
+              })
+            } else {
+              console.info('ai_secretary_payment_timeline_skipped_duplicate', {
+                workspaceId: targetWorkspaceId,
+                leadId: sourceLeadId,
+                externalPaymentId
+              })
+            }
+
+            console.info('ai_secretary_lead_marked_won', {
+              workspaceId: targetWorkspaceId,
+              leadId: sourceLeadId,
+              externalPaymentId
+            })
           }
         } catch (e) {
           console.error('ai_secretary_lead_payment_sync_failed', e.message)
