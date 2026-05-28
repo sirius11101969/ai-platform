@@ -46,6 +46,7 @@ import {
   getRevenueIntelligence,
   getLeadScores,
   triggerRevenueAnalysis,
+  applyAiSecretaryLeadAction,
 } from "../services/api";
 
 const DEFAULT_CRM_STAGES = [
