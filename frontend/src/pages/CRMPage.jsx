@@ -818,10 +818,10 @@ export default function CRMPage() {
   }
 
   async function handleTestPaymentPaid(lead) {
-    const paymentId = lead?.metadata?.payment_id
+    const paymentId = lead?.metadata?.payment_id || lead?.metadata?.sequence_payment_id
 
     if (!paymentId) {
-      setError("У лида нет payment_id. Сначала нажми 💳 Оплата.")
+      setError("У лида нет payment_id или sequence_payment_id. Сначала создай оплату.")
       return
     }
 
