@@ -440,16 +440,49 @@ async function getRevenueIntelligenceDashboard({ workspaceId } = {}) {
     pool.query('SELECT * FROM ai_revenue_forecasts WHERE workspace_id = $1::uuid ORDER BY generated_at DESC LIMIT 1', [workspaceId]),
     pool.query(
       `SELECT
-         COALESCE(AVG(EXTRACT(EPOCH FROM (j.completed_at - j.created_at)) * 1000) FILTER (WHERE j.completed_at IS NOT NULL AND j.created_at IS NOT NULL), 0)::numeric AS analysis_latency_ms,
-         COUNT(*) FILTER (WHERE j.job_type = $2::text AND j.status = 'completed')::integer AS forecast_generation_count,
-         COUNT(DISTINCT s.lead_id)::integer AS scored_leads,
-         COUNT(DISTINCT l.id)::integer AS active_leads,
-         COUNT(*) FILTER (WHERE q.action_type = 'revenue_next_best_action' AND q.status IN ('approved','completed','executed'))::integer AS recommendation_acceptance
-        FROM crm_leads l
-        LEFT JOIN ai_lead_scores s ON s.workspace_id = l.workspace_id AND s.lead_id = l.id
-        LEFT JOIN ai_execution_jobs j ON j.workspace_id = l.workspace_id AND j.job_type IN ($2::text, $3::text) AND j.created_at >= NOW() - INTERVAL '30 days'
-        LEFT JOIN ai_worker_queue q ON q.workspace_id = l.workspace_id AND q.action_type = 'revenue_next_best_action' AND q.created_at >= NOW() - INTERVAL '30 days'
-       WHERE l.workspace_id = $1::uuid AND l.status NOT IN ('won','lost')`,
+         COALESCE((
+           SELECT AVG(EXTRACT(EPOCH FROM (j.completed_at - j.created_at)) * 1000)
+           FROM ai_execution_jobs j
+           WHERE j.workspace_id = $1::uuid
+             AND j.job_type IN ($2::text, $3::text)
+             AND j.status = 'completed'
+             AND j.completed_at IS NOT NULL
+             AND j.created_at IS NOT NULL
+             AND j.created_at >= NOW() - INTERVAL '30 days'
+         ), 0)::numeric AS analysis_latency_ms,
+
+         COALESCE((
+           SELECT COUNT(*)
+           FROM ai_execution_jobs j
+           WHERE j.workspace_id = $1::uuid
+             AND j.job_type = $2::text
+             AND j.status = 'completed'
+             AND j.created_at >= NOW() - INTERVAL '30 days'
+         ), 0)::integer AS forecast_generation_count,
+
+         COALESCE((
+           SELECT COUNT(DISTINCT s.lead_id)
+           FROM ai_lead_scores s
+           JOIN crm_leads l ON l.id = s.lead_id AND l.workspace_id = s.workspace_id
+           WHERE s.workspace_id = $1::uuid
+             AND l.status NOT IN ('won','lost')
+         ), 0)::integer AS scored_leads,
+
+         COALESCE((
+           SELECT COUNT(DISTINCT l.id)
+           FROM crm_leads l
+           WHERE l.workspace_id = $1::uuid
+             AND l.status NOT IN ('won','lost')
+         ), 0)::integer AS active_leads,
+
+         COALESCE((
+           SELECT COUNT(*)
+           FROM ai_worker_queue q
+           WHERE q.workspace_id = $1::uuid
+             AND q.action_type = 'revenue_next_best_action'
+             AND q.status IN ('approved','completed','executed')
+             AND q.created_at >= NOW() - INTERVAL '30 days'
+         ), 0)::integer AS recommendation_acceptance`,
       [workspaceId, REVENUE_FORECAST_GENERATION_JOB_TYPE, LEAD_INTELLIGENCE_ANALYSIS_JOB_TYPE]
     ),
   ])
