@@ -142,10 +142,6 @@ async function processWebhook({ workspaceId, provider, event, externalPaymentId,
               metadata = COALESCE(metadata, '{}'::jsonb) || jsonb_build_object(
                 'payment_status', 'paid',
                 'payment_id', $2::text,
-                'sequence_payment_status', CASE
-                  WHEN COALESCE(metadata->>'sequence_payment_id', '') = $2::text THEN 'paid'
-                  ELSE COALESCE(metadata->>'sequence_payment_status', '')
-                END,
                 'provider', $3::text,
                 'paid_amount', $4::numeric,
                 'paid_currency', $5::text,
@@ -166,6 +162,17 @@ async function processWebhook({ workspaceId, provider, event, externalPaymentId,
           ])
 
           if (sourceLead.rows[0]) {
+            await client.query(`
+              UPDATE crm_leads
+              SET metadata = COALESCE(metadata, '{}'::jsonb) || jsonb_build_object(
+                    'sequence_payment_status', 'paid'
+                  ),
+                  updated_at = NOW()
+              WHERE id = $1::uuid
+                AND workspace_id = $2::uuid
+                AND metadata->>'sequence_payment_id' = $3::text
+                AND metadata->>'payment_status' = 'paid'
+            `, [sourceLeadId, targetWorkspaceId, externalPaymentId])
 
             const existingEvent = await client.query(`
               SELECT id
