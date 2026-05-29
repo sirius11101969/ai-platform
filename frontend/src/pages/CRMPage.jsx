@@ -419,24 +419,25 @@ export default function CRMPage() {
     if (!silent) setLoading(true);
     setError("");
     try {
+      const shouldLoadStatic = !silent
       const shouldLoadRevenue = !silent
 
       const [leadsResponse, stagesResponse, statsResponse, activityResponse, templatesResponse, materialsResponse, sequencesResponse, revenueResponse] = await Promise.all([
         fetchCrmLeads(),
-        fetchCrmStages(),
+        shouldLoadStatic ? fetchCrmStages() : Promise.resolve(null),
         fetchCrmStats(),
         fetchCrmActivity(),
-        fetchEmailTemplates().catch(() => ({ templates: [] })),
-        fetchMaterials().catch(() => ({ materials: [] })),
+        shouldLoadStatic ? fetchEmailTemplates().catch(() => ({ templates: [] })) : Promise.resolve(null),
+        shouldLoadStatic ? fetchMaterials().catch(() => ({ materials: [] })) : Promise.resolve(null),
         getActiveAiSequences(),
         shouldLoadRevenue ? getRevenueIntelligence() : Promise.resolve(null),
       ]);
       setLeads(leadsResponse.leads || []);
-      setStages((stagesResponse.stages?.length ? stagesResponse.stages : DEFAULT_CRM_STAGES));
+      if (stagesResponse) setStages((stagesResponse.stages?.length ? stagesResponse.stages : DEFAULT_CRM_STAGES));
       setStats(statsResponse.stats || null);
       setActivity(activityResponse.events || statsResponse.stats?.activity || []);
-      setEmailTemplates(templatesResponse.templates || []);
-      setMaterials(materialsResponse.materials || []);
+      if (templatesResponse) setEmailTemplates(templatesResponse.templates || []);
+      if (materialsResponse) setMaterials(materialsResponse.materials || []);
       setAiSequenceDashboard(sequencesResponse || { activeSequences: [], upcomingSteps: [], stoppedSequences: [], metrics: {} });
       if (revenueResponse) setRevenueIntelligence(revenueResponse?.intelligence || null);
     } catch (requestError) {
