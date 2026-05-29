@@ -1782,6 +1782,33 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                 {lead.metadata?.payment_status && <div><dt>Оплата</dt><dd>💰 {String(lead.metadata.payment_status).toUpperCase()} · {String(lead.metadata.plan || '-').toUpperCase()} · {lead.metadata.credits || 0} credits</dd></div>}
                 {lead.metadata?.payment_id && <div><dt>Payment ID</dt><dd style={{wordBreak:'break-all'}}>{lead.metadata.payment_id}</dd></div>}
 
+                {(lead.metadata?.sequence_payment_id || lead.metadata?.sequence_checkout_url || lead.metadata?.sequence_payment_status) && (
+                  <>
+                    <div>
+                      <dt>AI Sequence</dt>
+                      <dd>🤖 Auto checkout · {String(lead.metadata.sequence_payment_status || 'pending').toUpperCase()}</dd>
+                    </div>
+
+                    {lead.metadata?.sequence_payment_id && (
+                      <div>
+                        <dt>Sequence Payment ID</dt>
+                        <dd style={{wordBreak:'break-all'}}>{lead.metadata.sequence_payment_id}</dd>
+                      </div>
+                    )}
+
+                    {lead.metadata?.sequence_checkout_url && (
+                      <div>
+                        <dt>Sequence Checkout</dt>
+                        <dd>
+                          <a href={lead.metadata.sequence_checkout_url} target="_blank" rel="noreferrer">
+                            Открыть ссылку оплаты
+                          </a>
+                        </dd>
+                      </div>
+                    )}
+                  </>
+                )}
+
                 <div><dt>AI Score</dt><dd>{lead.metadata?.ai_score || lead.ai_score || 0}/100</dd></div>
 
                 <div><dt>Next Action</dt><dd>{aiSecretaryActionLabel(
