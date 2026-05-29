@@ -1,9 +1,7 @@
-FROM node:20-alpine
+FROM ai-platform-backend:latest
 
 WORKDIR /app
 
 COPY . .
-
-RUN npm install
 
 CMD ["npm", "start"]
