@@ -43,6 +43,7 @@ const realtimeVoiceRoutes = require('./routes/realtimeVoiceRoutes')
 const realtimeTransportRoutes = require('./routes/realtimeTransportRoutes')
 const openaiRealtimeRoutes = require('./routes/openaiRealtimeRoutes')
 const liveRealtimeRoutes = require('./routes/liveRealtimeRoutes')
+const { startAiSequenceScheduler } = require('./services/aiSequenceScheduler')
 const demoRoutes = require('./routes/demoRoutes')
 const publicRoutes = require('./routes/publicRoutes')
 const { markOpened } = require('./controllers/emailController')
@@ -201,6 +202,7 @@ async function start() {
   startEmailQueueWorker()
   startLeadAnalysisWorker()
   startLeadQualificationWorker()
+  startAiSequenceScheduler()
 
   const server = app.listen(port, () => {
     console.log(`Backend started on port ${port}`)
