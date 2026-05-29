@@ -292,6 +292,12 @@ async function executeNextStep({ workspaceId, leadId }) {
         source: 'ai_sequence'
       })
     ])
+
+    await stopSequence({
+      workspaceId,
+      leadId,
+      reason: 'checkout_created'
+    })
   }
 
   const updated = await pool.query(`
