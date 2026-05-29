@@ -142,6 +142,10 @@ async function processWebhook({ workspaceId, provider, event, externalPaymentId,
               metadata = COALESCE(metadata, '{}'::jsonb) || jsonb_build_object(
                 'payment_status', 'paid',
                 'payment_id', $2::text,
+                'sequence_payment_status', CASE
+                  WHEN COALESCE(metadata->>'sequence_payment_id', '') = $2::text THEN 'paid'
+                  ELSE COALESCE(metadata->>'sequence_payment_status', '')
+                END,
                 'provider', $3::text,
                 'paid_amount', $4::numeric,
                 'paid_currency', $5::text,
