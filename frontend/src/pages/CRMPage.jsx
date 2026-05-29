@@ -1809,6 +1809,29 @@ function LeadDetailModal({ lead, stages, stageMap, activity, noteDraft, onNoteDr
                   </>
                 )}
 
+                {(lead.metadata?.checkout_recovery_status || lead.metadata?.checkout_recovery_payment_id || lead.metadata?.checkout_recovery_last_at) && (
+                  <>
+                    <div>
+                      <dt>Checkout Recovery</dt>
+                      <dd>💬 {String(lead.metadata.checkout_recovery_status || 'pending').toUpperCase()} · Step {lead.metadata.checkout_recovery_step || 1}</dd>
+                    </div>
+
+                    {lead.metadata?.checkout_recovery_payment_id && (
+                      <div>
+                        <dt>Recovery Payment ID</dt>
+                        <dd style={{wordBreak:'break-all'}}>{lead.metadata.checkout_recovery_payment_id}</dd>
+                      </div>
+                    )}
+
+                    {lead.metadata?.checkout_recovery_last_at && (
+                      <div>
+                        <dt>Recovery Last At</dt>
+                        <dd>{String(lead.metadata.checkout_recovery_last_at)}</dd>
+                      </div>
+                    )}
+                  </>
+                )}
+
                 <div><dt>AI Score</dt><dd>{lead.metadata?.ai_score || lead.ai_score || 0}/100</dd></div>
 
                 <div><dt>Next Action</dt><dd>{aiSecretaryActionLabel(
