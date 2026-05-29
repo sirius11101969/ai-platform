@@ -1,4 +1,5 @@
 const aiSequenceService = require('../services/aiSequenceService')
+const { runAiSequenceSchedulerOnce } = require('../services/aiSequenceScheduler')
 
 async function executeNext(req, res, next) {
   try {
@@ -27,6 +28,16 @@ async function executeNext(req, res, next) {
   }
 }
 
+async function runSchedulerOnce(req, res, next) {
+  try {
+    const result = await runAiSequenceSchedulerOnce()
+    return res.json({ ok: true, result })
+  } catch (error) {
+    next(error)
+  }
+}
+
 module.exports = {
-  executeNext
+  executeNext,
+  runSchedulerOnce
 }
