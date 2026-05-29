@@ -704,7 +704,6 @@ export default function CRMPage() {
     refreshTelegramMessages(selectedLead).catch((requestError) => setError(requestError.message || 'Не удалось загрузить Telegram переписку'));
     const intervalId = window.setInterval(() => {
       refreshTelegramMessages(selectedLead).catch(() => undefined);
-      loadCrm({ silent: true }).catch(() => undefined);
     }, 7000);
     return () => window.clearInterval(intervalId);
   }, [selectedLeadId]);
