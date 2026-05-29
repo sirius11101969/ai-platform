@@ -453,7 +453,7 @@ export default function CRMPage() {
     const intervalId = window.setInterval(() => {
       loadCrm({ silent: true }).catch(() => undefined)
       refreshMeta().catch(() => undefined)
-    }, 15000)
+    }, 60000)
 
     return () => window.clearInterval(intervalId)
   }, []);
