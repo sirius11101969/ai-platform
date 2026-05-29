@@ -1,4 +1,5 @@
 const pool = require('../db/pool')
+const paymentService = require('./paymentService')
 
 const DEFAULT_TEMPLATE = 'ai_secretary_followup_v1'
 
@@ -196,6 +197,102 @@ async function executeNextStep({ workspaceId, leadId }) {
       templateName: sequence.template_name
     })
   ])
+
+  let checkout = null
+
+  if (step.step === 4) {
+    const existingCheckout = await pool.query(`
+      SELECT *
+      FROM payment_transactions
+      WHERE workspace_id = $1::uuid
+        AND metadata->>'leadId' = $2
+        AND metadata->>'source' = 'ai_sequence'
+        AND status IN ('pending','created')
+      ORDER BY created_at DESC
+      LIMIT 1
+    `, [workspaceId, leadId])
+
+    if (existingCheckout.rows[0]) {
+      checkout = {
+        mode: 'existing',
+        transaction: existingCheckout.rows[0],
+        paymentId: existingCheckout.rows[0].external_payment_id,
+        confirmationUrl: existingCheckout.rows[0].checkout_url
+      }
+    } else {
+      checkout = await paymentService.createPayment({
+        workspaceId,
+        provider: 'yookassa',
+        amount: Number(process.env.AI_SECRETARY_CHECKOUT_AMOUNT || 990),
+        currency: 'RUB',
+        metadata: {
+          source: 'ai_sequence',
+          leadId,
+          plan: process.env.AI_SECRETARY_CHECKOUT_PLAN || 'starter',
+          customerEmail: lead.email || ''
+        }
+      })
+    }
+
+    const paymentId =
+      checkout?.paymentId ||
+      checkout?.transaction?.external_payment_id ||
+      checkout?.transaction?.id ||
+      null
+
+    const checkoutUrl =
+      checkout?.confirmationUrl ||
+      checkout?.transaction?.checkout_url ||
+      checkout?.checkoutUrl ||
+      null
+
+    await pool.query(`
+      UPDATE crm_leads
+      SET metadata = COALESCE(metadata, '{}'::jsonb) || jsonb_build_object(
+            'sequence_payment_id', $3::text,
+            'sequence_checkout_url', $4::text,
+            'sequence_payment_provider', 'yookassa',
+            'sequence_payment_status', 'pending'
+          ),
+          updated_at = NOW()
+      WHERE workspace_id = $1::uuid
+        AND id = $2::uuid
+    `, [workspaceId, leadId, paymentId, checkoutUrl])
+
+    await pool.query(`
+      INSERT INTO lead_timeline_events(
+        workspace_id,
+        lead_id,
+        user_id,
+        event_type,
+        title,
+        body,
+        source,
+        metadata
+      )
+      VALUES(
+        $1::uuid,
+        $2::uuid,
+        NULL,
+        'ai_sequence_checkout_created',
+        '💳 AI Sequence checkout created',
+        $3::text,
+        'ai_sequence',
+        $4::jsonb
+      )
+    `, [
+      workspaceId,
+      leadId,
+      checkoutUrl || 'Checkout created by AI Sequence',
+      JSON.stringify({
+        step: step.step,
+        paymentId,
+        checkoutUrl,
+        provider: 'yookassa',
+        source: 'ai_sequence'
+      })
+    ])
+  }
 
   const updated = await pool.query(`
     UPDATE ai_sequences
