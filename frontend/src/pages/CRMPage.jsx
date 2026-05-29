@@ -419,6 +419,8 @@ export default function CRMPage() {
     if (!silent) setLoading(true);
     setError("");
     try {
+      const shouldLoadRevenue = !silent
+
       const [leadsResponse, stagesResponse, statsResponse, activityResponse, templatesResponse, materialsResponse, sequencesResponse, revenueResponse] = await Promise.all([
         fetchCrmLeads(),
         fetchCrmStages(),
@@ -427,7 +429,7 @@ export default function CRMPage() {
         fetchEmailTemplates().catch(() => ({ templates: [] })),
         fetchMaterials().catch(() => ({ materials: [] })),
         getActiveAiSequences(),
-        getRevenueIntelligence(),
+        shouldLoadRevenue ? getRevenueIntelligence() : Promise.resolve(null),
       ]);
       setLeads(leadsResponse.leads || []);
       setStages((stagesResponse.stages?.length ? stagesResponse.stages : DEFAULT_CRM_STAGES));
@@ -436,7 +438,7 @@ export default function CRMPage() {
       setEmailTemplates(templatesResponse.templates || []);
       setMaterials(materialsResponse.materials || []);
       setAiSequenceDashboard(sequencesResponse || { activeSequences: [], upcomingSteps: [], stoppedSequences: [], metrics: {} });
-      setRevenueIntelligence(revenueResponse?.intelligence || null);
+      if (revenueResponse) setRevenueIntelligence(revenueResponse?.intelligence || null);
     } catch (requestError) {
       setError(requestError.message || "Не удалось загрузить CRM");
     } finally {
