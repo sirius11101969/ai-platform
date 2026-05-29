@@ -2,6 +2,41 @@ const aiSequenceService = require('../services/aiSequenceService')
 const pool = require('../db/pool')
 const { runAiSequenceSchedulerOnce } = require('../services/aiSequenceScheduler')
 
+
+async function startSequence(req, res, next) {
+  try {
+    const workspaceId = String(req.body?.workspaceId || req.query.workspaceId || req.workspace?.id || '').trim()
+    const leadId = String(req.body?.leadId || req.query.leadId || '').trim()
+    const templateName = String(req.body?.templateName || req.query.templateName || aiSequenceService.DEFAULT_TEMPLATE || '').trim()
+    const metadata = req.body?.metadata || {}
+
+    if (!workspaceId) {
+      return res.status(400).json({ error: 'workspaceId required' })
+    }
+
+    if (!leadId) {
+      return res.status(400).json({ error: 'leadId required' })
+    }
+
+    const result = await aiSequenceService.startSequence({
+      workspaceId,
+      leadId,
+      templateName,
+      metadata: {
+        ...metadata,
+        source: metadata.source || 'crm_ai_sequence_button'
+      }
+    })
+
+    return res.json({
+      ok: true,
+      result
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 async function executeNext(req, res, next) {
   try {
     const workspaceId = String(req.body?.workspaceId || req.query.workspaceId || '').trim()
@@ -98,6 +133,7 @@ async function runSchedulerOnce(req, res, next) {
 }
 
 module.exports = {
+  startSequence,
   executeNext,
   getActiveSequences,
   runSchedulerOnce
