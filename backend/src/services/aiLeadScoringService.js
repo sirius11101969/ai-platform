@@ -281,21 +281,36 @@ async function scoreLead({ userId, workspaceId, leadId, source = 'manual', clien
        VALUES($1, $2, $3, CASE WHEN $4 = 'priority' THEN 'hot' ELSE $4 END, $3, $3, $5, CASE WHEN $3 >= 50 THEN 'hot' WHEN $3 >= 25 THEN 'warm' ELSE 'cold' END, $6, $7, $8, $7, $3, $9, $10, $11, $12, $6, $13)`,
       [workspaceId, leadId, result.score, result.temperature, result.priority === 'urgent' || result.priority === 'priority' ? 'high' : result.priority === 'high' ? 'medium' : 'low', result.scoringReason, result.nextBestAction, result.riskLevel, result.engagementScore, result.expectedRevenue, result.riskLevel === 'high' ? 'at_risk' : result.score >= 70 ? 'committed' : result.score >= 50 ? 'likely' : 'possible', JSON.stringify(result.riskSignals), result.riskLevel === 'high' ? 'escalate_to_manager' : result.score >= 50 ? 'schedule_demo' : 'follow_up_in_telegram']
     )
-    await tx.query(
-      `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload, executed_at)
-       VALUES($1, $2, $3, $4, 'completed', $5, $6, $7, NOW())`,
-      [scoringWorker.id, workspaceId, leadId, LEAD_SCORING_ACTION, `AI Lead Scoring update — ${context.lead.name}`, sanitizeAiCopy(result.nextBestAction), sanitizeAiActionPayload({ source, score: result.score, priority: result.priority, temperature: result.temperature, riskLevel: result.riskLevel, scoringReason: result.scoringReason })]
+    const recentScoringEvent = await tx.query(
+      `SELECT 1
+         FROM lead_timeline_events
+        WHERE workspace_id = $1
+          AND lead_id = $2
+          AND event_type = 'lead_scored'
+          AND created_at > NOW() - INTERVAL '6 hours'
+        LIMIT 1`,
+      [workspaceId, leadId]
     )
-    await addTimelineEvent(tx, { workspaceId, leadId, userId, eventType: 'lead_scored', title: 'AI Lead Scoring обновлён', body: `Score ${result.score}/100 · ${result.temperature} · ${result.priority}. ${result.scoringReason}`, source: 'ai', metadata: result })
-    if (result.riskLevel !== 'low') {
-      console.info('[lead-scoring] risk detected', { workspaceId, leadId, riskLevel: result.riskLevel, riskSignals: result.riskSignals })
-      await addTimelineEvent(tx, { workspaceId, leadId, userId, eventType: 'lead_risk_detected', title: 'AI Lead Scoring обнаружил риск', body: result.risks.map((item) => item.reason).join('; ') || result.scoringReason, source: 'ai', metadata: { riskLevel: result.riskLevel, riskSignals: result.riskSignals, risks: result.risks } })
+
+    if (recentScoringEvent.rowCount === 0) {
+      await tx.query(
+        `INSERT INTO ai_worker_queue(worker_id, workspace_id, lead_id, action_type, status, title, recommendation, payload, executed_at)
+         VALUES($1, $2, $3, $4, 'completed', $5, $6, $7, NOW())`,
+        [scoringWorker.id, workspaceId, leadId, LEAD_SCORING_ACTION, `AI Lead Scoring update — ${context.lead.name}`, sanitizeAiCopy(result.nextBestAction), sanitizeAiActionPayload({ source, score: result.score, priority: result.priority, temperature: result.temperature, riskLevel: result.riskLevel, scoringReason: result.scoringReason })]
+      )
+      await addTimelineEvent(tx, { workspaceId, leadId, userId, eventType: 'lead_scored', title: 'AI Lead Scoring обновлён', body: `Score ${result.score}/100 · ${result.temperature} · ${result.priority}. ${result.scoringReason}`, source: 'ai', metadata: result })
     }
-    await tx.query(
-      `INSERT INTO crm_activity(user_id, workspace_id, lead_id, type, title, body, metadata)
-       VALUES($1, $2, $3, 'lead_scored', 'AI Lead Scoring обновлён', $4, $5)`,
-      [userId, workspaceId, leadId, result.scoringReason, result]
-    )
+    if (recentScoringEvent.rowCount === 0) {
+      if (result.riskLevel !== 'low') {
+        console.info('[lead-scoring] risk detected', { workspaceId, leadId, riskLevel: result.riskLevel, riskSignals: result.riskSignals })
+        await addTimelineEvent(tx, { workspaceId, leadId, userId, eventType: 'lead_risk_detected', title: 'AI Lead Scoring обнаружил риск', body: result.risks.map((item) => item.reason).join('; ') || result.scoringReason, source: 'ai', metadata: { riskLevel: result.riskLevel, riskSignals: result.riskSignals, risks: result.risks } })
+      }
+      await tx.query(
+        `INSERT INTO crm_activity(user_id, workspace_id, lead_id, type, title, body, metadata)
+         VALUES($1, $2, $3, 'lead_scored', 'AI Lead Scoring обновлён', $4, $5)`,
+        [userId, workspaceId, leadId, result.scoringReason, result]
+      )
+    }
     await createPriorityRecommendation(tx, { workspaceId, userId, leadId, lead: context.lead, result, source })
   }
 

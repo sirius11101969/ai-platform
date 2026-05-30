@@ -7,7 +7,6 @@ const UNSAFE_PATTERNS = [
   /ai_priority:/i,
   /ai_risk_level:/i,
   /scoring_reason/i,
-  /\+\d+/,
 ]
 
 const DEFAULT_MANAGER_TEXT = 'Высокий интерес к demo и внедрению.'
@@ -32,8 +31,10 @@ function sanitizeAiCopy(text, options = {}) {
   const trimmed = text.trim()
   if (!isInternalAiContext(trimmed)) return trimmed
 
-  console.warn('[ai-copy-sanitizer] unsafe text detected')
-  if (logSave) console.warn('[ai-copy-sanitizer] text sanitized before save')
+  if (process.env.AI_COPY_SANITIZER_DEBUG === 'true') {
+    console.warn('[ai-copy-sanitizer] unsafe text detected')
+    if (logSave) console.warn('[ai-copy-sanitizer] text sanitized before save')
+  }
   return getSafeManagerText(trimmed)
 }
 
