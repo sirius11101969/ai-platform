@@ -306,6 +306,14 @@ async function persistLeadRevenueScore(client, { workspaceId, userId, leadId, sc
      SELECT w.id, $1::uuid, $2::uuid, 'revenue_next_best_action', 'completed', $3::text, $4::text, $5::jsonb, NOW()
        FROM ai_workers w
       WHERE w.workspace_id = $1::uuid AND w.type = $6::text
+        AND NOT EXISTS (
+          SELECT 1
+            FROM ai_worker_queue q
+           WHERE q.workspace_id = $1::uuid
+             AND q.lead_id = $2::uuid
+             AND q.action_type = 'revenue_next_best_action'
+             AND q.created_at > NOW() - INTERVAL '6 hours'
+        )
       LIMIT 1`,
     [workspaceId, leadId, `AI Revenue Brain — ${score.recommendedAction}`, sanitizeAiCopy(score.reasoningSummary), sanitizeAiActionPayload({ source: 'ai_revenue_intelligence', recommendedAction: score.recommendedAction, recommendedChannel: score.recommendedChannel, priorityScore: score.priorityScore, closeProbability: score.closeProbability, churnRisk: score.churnRisk }), AI_REVENUE_BRAIN_WORKER_TYPE]
   )

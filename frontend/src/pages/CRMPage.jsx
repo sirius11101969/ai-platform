@@ -452,7 +452,6 @@ export default function CRMPage() {
   useEffect(() => {
     const intervalId = window.setInterval(() => {
       loadCrm({ silent: true }).catch(() => undefined)
-      refreshMeta().catch(() => undefined)
     }, 60000)
 
     return () => window.clearInterval(intervalId)
