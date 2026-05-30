@@ -173,8 +173,9 @@ async function executeNextStep({ workspaceId, leadId }) {
       AND event_type = 'ai_sequence_step'
       AND source = 'ai_sequence'
       AND metadata->>'step' = $3::text
+      AND metadata->>'sequenceId' = $4::text
     LIMIT 1
-  `, [workspaceId, leadId, String(step.step)])
+  `, [workspaceId, leadId, String(step.step), String(sequence.id)])
 
   if (existingStepEvent.rows[0]) {
     return {
@@ -212,6 +213,7 @@ async function executeNextStep({ workspaceId, leadId }) {
     message,
     JSON.stringify({
       step: step.step,
+      sequenceId: sequence.id,
       channel: step.channel,
       templateName: sequence.template_name
     })
