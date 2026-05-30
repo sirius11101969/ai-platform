@@ -31,6 +31,12 @@ async function runAiSequenceSchedulerOnce() {
         AND COALESCE(l.status, '') <> 'won'
         AND COALESCE(l.stage, '') <> 'won'
         AND COALESCE(l.metadata->>'payment_status', '') <> 'paid'
+        AND (
+          (COALESCE(s.current_step, 0) = 0 AND s.started_at <= NOW() - INTERVAL '5 minutes')
+          OR (COALESCE(s.current_step, 0) = 1 AND COALESCE((s.metadata->>'last_step_at')::timestamptz, s.started_at) <= NOW() - INTERVAL '1440 minutes')
+          OR (COALESCE(s.current_step, 0) = 2 AND COALESCE((s.metadata->>'last_step_at')::timestamptz, s.started_at) <= NOW() - INTERVAL '2880 minutes')
+          OR (COALESCE(s.current_step, 0) = 3 AND COALESCE((s.metadata->>'last_step_at')::timestamptz, s.started_at) <= NOW() - INTERVAL '4320 minutes')
+        )
       ORDER BY s.started_at ASC
       LIMIT 10
     `)
