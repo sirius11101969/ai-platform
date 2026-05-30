@@ -165,6 +165,25 @@ async function executeNextStep({ workspaceId, leadId }) {
 
   const message = renderTemplate(step.text, lead)
 
+  const existingStepEvent = await pool.query(`
+    SELECT id
+    FROM lead_timeline_events
+    WHERE workspace_id = $1::uuid
+      AND lead_id = $2::uuid
+      AND event_type = 'ai_sequence_step'
+      AND source = 'ai_sequence'
+      AND metadata->>'step' = $3::text
+    LIMIT 1
+  `, [workspaceId, leadId, String(step.step)])
+
+  if (existingStepEvent.rows[0]) {
+    return {
+      skipped: true,
+      reason: 'sequence_step_already_exists',
+      step
+    }
+  }
+
   await pool.query(`
     INSERT INTO lead_timeline_events(
       workspace_id,
