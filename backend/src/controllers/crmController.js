@@ -30,6 +30,16 @@ async function listLeads(req, res, next) {
   }
 }
 
+async function getLead(req, res, next) {
+  try {
+    const lead = await crmModel.findLead(req.user.id, req.workspace.id, req.params.id)
+    if (!lead) return res.status(404).json({ error: 'Lead not found' })
+    res.json({ lead })
+  } catch (error) {
+    next(error)
+  }
+}
+
 async function createLead(req, res, next) {
   try {
     const lead = await crmModel.createLead(req.user.id, req.workspace.id, req.body)
@@ -118,7 +128,7 @@ async function listLeadEmails(req, res, next) {
 
 async function generateLeadEmail(req, res, next) {
   try {
-    const lead = (await crmModel.listLeads(req.user.id, req.workspace.id)).find((item) => item.id === req.params.id)
+    const lead = await crmModel.findLead(req.user.id, req.workspace.id, req.params.id)
     if (!lead) return res.status(404).json({ error: 'Lead not found' })
     const email = emailService.renderTemplate(req.body.template || 'follow_up', lead, req.body)
     res.json({ email })
@@ -213,6 +223,7 @@ module.exports = {
   deleteLead,
   downloadMeetingIcs,
   generateLeadEmail,
+  getLead,
   getMeeting,
   listLeadEmails,
   listLeads,

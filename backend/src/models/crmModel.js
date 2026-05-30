@@ -390,9 +390,6 @@ async function logActivity(client, userId, workspaceId, leadId, type, title, bod
 async function listLeads(userId, workspaceId) {
   const result = await pool.query(
     `SELECT ${leadSelect('l')},
-            COALESCE(json_agg(DISTINCT jsonb_build_object('id', n.id, 'lead_id', n.lead_id, 'user_id', n.user_id, 'body', n.body, 'created_at', n.created_at)) FILTER (WHERE n.id IS NOT NULL), '[]'::json) AS notes_list,
-            COALESCE(json_agg(DISTINCT jsonb_build_object('id', f.id, 'lead_id', f.lead_id, 'user_id', f.user_id, 'message', f.message, 'model', f.model, 'created_at', f.created_at)) FILTER (WHERE f.id IS NOT NULL), '[]'::json) AS followups,
-            COALESCE((SELECT json_agg(tm_row ORDER BY tm_row.created_at ASC) FROM (SELECT tm.id, tm.lead_id, tm.user_id, tm.role, tm.direction, COALESCE(tm.message, tm.body) AS message, tm.telegram_chat_id, tm.telegram_message_id, tm.created_at FROM telegram_messages tm WHERE tm.lead_id = l.id AND tm.user_id = l.user_id ORDER BY tm.created_at DESC LIMIT 10) tm_row), '[]'::json) AS telegram_messages,
             (SELECT to_jsonb(scores) FROM (
               SELECT
                 las.id AS id,
@@ -435,37 +432,14 @@ async function listLeads(userId, workspaceId) {
                WHERE rbs.workspace_id = l.workspace_id AND rbs.lead_id = l.id
                ORDER BY rbs.updated_at DESC
                LIMIT 1
-            ) revenue_scores) AS ai_revenue_score,
-            COALESCE((SELECT json_agg(seq_row ORDER BY seq_row.recommended_at DESC) FROM (SELECT * FROM ai_followup_sequences afs WHERE afs.workspace_id = l.workspace_id AND afs.lead_id = l.id ORDER BY afs.recommended_at DESC LIMIT 5) seq_row), '[]'::json) AS ai_followup_sequences,
-            COALESCE((SELECT json_agg(job_row ORDER BY job_row.created_at DESC) FROM (SELECT * FROM ai_followup_jobs afj WHERE afj.workspace_id = l.workspace_id AND afj.lead_id = l.id ORDER BY afj.created_at DESC LIMIT 10) job_row), '[]'::json) AS ai_followup_jobs,
-            COALESCE((SELECT json_agg(meeting_row ORDER BY meeting_row.starts_at DESC NULLS LAST, meeting_row.created_at DESC) FROM (SELECT id, workspace_id, lead_id, title, starts_at, duration_minutes, channel, status, description, location, meeting_url, calendar_status, calendar_provider, ics_uid, google_event_id, google_meet_url, calendar_error, calendar_synced_at, timezone, ai_worker_queue_id, created_at, updated_at, (ics_content IS NOT NULL AND ics_content <> '') AS has_ics FROM crm_meetings m WHERE m.workspace_id = l.workspace_id AND m.lead_id = l.id ORDER BY m.starts_at DESC NULLS LAST, m.created_at DESC LIMIT 10) meeting_row), '[]'::json) AS meetings,
-            COALESCE((SELECT json_agg(draft_row ORDER BY draft_row.created_at DESC) FROM (SELECT id, workspace_id, lead_id, action_type, status, title, recommendation, payload, created_at, updated_at FROM ai_worker_queue q WHERE q.workspace_id = l.workspace_id AND q.lead_id = l.id AND q.action_type IN ('telegram_draft','email_draft','followup_24h','followup_3d','demo_offer','meeting_request','meeting_schedule_proposal') ORDER BY q.created_at DESC LIMIT 20) draft_row), '[]'::json) AS ai_outreach_drafts,
-            (SELECT to_jsonb(stage_q) FROM (SELECT id, workspace_id, lead_id, action_type, status, title, recommendation, payload, created_at, updated_at FROM ai_worker_queue q WHERE q.workspace_id = l.workspace_id AND q.lead_id = l.id AND q.action_type = 'stage_change_recommendation' AND q.status IN ('pending_approval','approved','failed') ORDER BY q.created_at DESC LIMIT 1) stage_q) AS ai_stage_recommendation,
-            (SELECT to_jsonb(voice_call) FROM (
-              SELECT id, workspace_id, lead_id, provider, status, phone_number, duration_seconds, sentiment, outcome, next_action, summary, metadata, created_at, completed_at
-                FROM ai_voice_calls vc
-               WHERE vc.workspace_id = l.workspace_id AND vc.lead_id = l.id
-               ORDER BY vc.created_at DESC
-               LIMIT 1
-            ) voice_call) AS latest_ai_voice_call,
-            (SELECT a.output_result FROM ai_agent_actions a WHERE a.workspace_id = l.workspace_id AND a.lead_id = l.id AND a.task_type = 'analyze_lead' AND a.status = 'completed' ORDER BY a.created_at DESC LIMIT 1) AS ai_recommendation,
-            COALESCE((SELECT json_agg(ai_row ORDER BY ai_row.created_at DESC) FROM (SELECT a.id, a.task_type, a.status, a.output_result, a.created_at FROM ai_agent_actions a WHERE a.workspace_id = l.workspace_id AND a.lead_id = l.id ORDER BY a.created_at DESC LIMIT 5) ai_row), '[]'::json) AS ai_actions
+            ) revenue_scores) AS ai_revenue_score
        FROM crm_leads AS l
-       LEFT JOIN crm_notes AS n ON n.lead_id = l.id AND n.user_id = l.user_id
-       LEFT JOIN crm_followups AS f ON f.lead_id = l.id AND f.user_id = l.user_id
       WHERE l.user_id = $1 AND l.workspace_id = $2
-      GROUP BY l.id
       ORDER BY l.updated_at DESC, l.created_at DESC`,
     [userId, workspaceId]
   )
 
-  return result.rows.map((row) => {
-    const lead = normalizeLead(row)
-    lead.notes.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    lead.followUps.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    lead.telegramMessages.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
-    return lead
-  })
+  return result.rows.map(normalizeLead)
 }
 
 async function findLead(userId, workspaceId, leadId, client = pool) {

@@ -12,6 +12,7 @@ import {
   downloadCrmMeetingIcs,
   fetchCrmActivity,
   fetchCrmLeads,
+  fetchCrmLead,
   fetchCrmStages,
   fetchCrmStats,
   fetchTelegramMessages,
@@ -1066,10 +1067,18 @@ export default function CRMPage() {
     setDropTargetStage(null);
   }
 
-  function openDetail(lead) {
+  async function openDetail(lead) {
     if (draggedLeadId) return;
     setSelectedLeadId(lead.id);
     setIsEditingDetail(false);
+    try {
+      const response = await fetchCrmLead(lead.id);
+      if (response?.lead) {
+        setLeads((current) => current.map((item) => (item.id === lead.id ? { ...item, ...response.lead } : item)));
+      }
+    } catch (requestError) {
+      setError(requestError.message || 'Не удалось загрузить карточку лида');
+    }
   }
 
   function startDetailEdit(lead) {

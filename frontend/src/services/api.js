@@ -270,6 +270,10 @@ export function fetchCrmLeads() {
   return request('/crm/leads')
 }
 
+export function fetchCrmLead(id) {
+  return request(`/crm/leads/${id}`)
+}
+
 
 function getFilenameFromContentDisposition(contentDisposition) {
   if (!contentDisposition) return ''
