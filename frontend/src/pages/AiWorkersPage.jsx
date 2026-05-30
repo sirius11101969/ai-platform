@@ -886,7 +886,7 @@ function AiWorkersPageContent() {
   const [sequenceLeadId, setSequenceLeadId] = useState("");
   const [sequenceTemplateId, setSequenceTemplateId] = useState("");
   const [sequenceBusy, setSequenceBusy] = useState(false);
-  const [activeApprovalTab, setActiveApprovalTab] = useState("focus");
+  const [activeApprovalTab, setActiveApprovalTab] = useState("needsApproval");
   const [expandedSections, setExpandedSections] = useState({ legacy: false, completed: false, safety: false, all: false, raw: false });
   const [busyActions, setBusyActions] = useState({});
   const [loadingKey, setLoadingKey] = useState("");
