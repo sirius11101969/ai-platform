@@ -587,7 +587,7 @@ export default function CRMPage() {
     setError('');
     try {
       await sendLeadEmail(selectedLead.id, emailComposer);
-      await Promise.all([refreshLeadEmails(selectedLead), loadCrm({ silent: true }), refreshMeta()]);
+      await Promise.all([refreshLeadEmails(selectedLead), loadCrm({ silent: true })]);
     } catch (requestError) {
       setError(requestError.message || 'Не удалось поставить письмо в очередь');
     } finally {
@@ -610,7 +610,7 @@ export default function CRMPage() {
         generatedText: actionType === 'send_demo_link' ? 'Демо AS6 AI CRM Platform: https://www.as6.ru' : text,
         payload: { subject: 'AS6 AI CRM Platform', to: lead.email || '' },
       });
-      await Promise.all([refreshActionCenter(lead), loadCrm({ silent: true }), refreshMeta()]);
+      await Promise.all([refreshActionCenter(lead), loadCrm({ silent: true })]);
     } catch (requestError) {
       setError(requestError.message || 'Не удалось создать AI действие');
     } finally {
@@ -621,7 +621,7 @@ export default function CRMPage() {
   async function handleApproveExecutionAction(action) {
     setExecutionBusy((current) => ({ ...current, [action.id]: true }));
     setError('');
-    try { await approveLeadAiAction(action.id); await Promise.all([refreshActionCenter(selectedLead), loadCrm({ silent: true }), refreshMeta()]); }
+    try { await approveLeadAiAction(action.id); await Promise.all([refreshActionCenter(selectedLead), loadCrm({ silent: true })]); }
     catch (requestError) { setError(requestError.message || 'Не удалось одобрить действие'); }
     finally { setExecutionBusy((current) => ({ ...current, [action.id]: false })); }
   }
@@ -629,7 +629,7 @@ export default function CRMPage() {
   async function handleCancelExecutionAction(action) {
     setExecutionBusy((current) => ({ ...current, [action.id]: true }));
     setError('');
-    try { await cancelLeadAiAction(action.id); await Promise.all([refreshActionCenter(selectedLead), loadCrm({ silent: true }), refreshMeta()]); }
+    try { await cancelLeadAiAction(action.id); await Promise.all([refreshActionCenter(selectedLead), loadCrm({ silent: true })]); }
     catch (requestError) { setError(requestError.message || 'Не удалось отклонить действие'); }
     finally { setExecutionBusy((current) => ({ ...current, [action.id]: false })); }
   }
@@ -637,7 +637,7 @@ export default function CRMPage() {
   async function handleSendExecutionAction(action) {
     setExecutionBusy((current) => ({ ...current, [action.id]: true }));
     setError('');
-    try { await sendLeadAiAction(action.id); await Promise.all([refreshActionCenter(selectedLead), refreshLeadEmails(selectedLead), refreshTelegramMessages(selectedLead), loadCrm({ silent: true }), refreshMeta()]); }
+    try { await sendLeadAiAction(action.id); await Promise.all([refreshActionCenter(selectedLead), refreshLeadEmails(selectedLead), refreshTelegramMessages(selectedLead), loadCrm({ silent: true })]); }
     catch (requestError) { setError(requestError.message || 'Не удалось отправить действие'); }
     finally { setExecutionBusy((current) => ({ ...current, [action.id]: false })); }
   }
@@ -655,7 +655,7 @@ export default function CRMPage() {
   async function handleApproveApprovalQueueItem(item) {
     setExecutionBusy((current) => ({ ...current, [item.id]: true }));
     setError('');
-    try { await approveAiApprovalQueueItem(item.id); await Promise.all([refreshActionCenter(selectedLead), loadCrm({ silent: true }), refreshMeta()]); }
+    try { await approveAiApprovalQueueItem(item.id); await Promise.all([refreshActionCenter(selectedLead), loadCrm({ silent: true })]); }
     catch (requestError) { setError(requestError.message || 'Не удалось одобрить AI действие'); }
     finally { setExecutionBusy((current) => ({ ...current, [item.id]: false })); }
   }
@@ -663,7 +663,7 @@ export default function CRMPage() {
   async function handleRejectApprovalQueueItem(item) {
     setExecutionBusy((current) => ({ ...current, [item.id]: true }));
     setError('');
-    try { await rejectAiApprovalQueueItem(item.id); await Promise.all([refreshActionCenter(selectedLead), loadCrm({ silent: true }), refreshMeta()]); }
+    try { await rejectAiApprovalQueueItem(item.id); await Promise.all([refreshActionCenter(selectedLead), loadCrm({ silent: true })]); }
     catch (requestError) { setError(requestError.message || 'Не удалось отклонить AI действие'); }
     finally { setExecutionBusy((current) => ({ ...current, [item.id]: false })); }
   }
@@ -671,7 +671,7 @@ export default function CRMPage() {
   async function handleExecuteApprovalQueueItem(item) {
     setExecutionBusy((current) => ({ ...current, [item.id]: true }));
     setError('');
-    try { const response = await executeAiApprovalQueueItem(item.id); if (response?.error) setError(response.error); await Promise.all([refreshActionCenter(selectedLead), refreshLeadEmails(selectedLead), refreshTelegramMessages(selectedLead), loadCrm({ silent: true }), refreshMeta()]); }
+    try { const response = await executeAiApprovalQueueItem(item.id); if (response?.error) setError(response.error); await Promise.all([refreshActionCenter(selectedLead), refreshLeadEmails(selectedLead), refreshTelegramMessages(selectedLead), loadCrm({ silent: true })]); }
     catch (requestError) { setError(requestError.message || 'Не удалось выполнить AI действие'); }
     finally { setExecutionBusy((current) => ({ ...current, [item.id]: false })); }
   }
@@ -689,7 +689,7 @@ export default function CRMPage() {
   async function handleSendMaterials(lead, materialKeys, channel) {
     setExecutionBusy((current) => ({ ...current, materials: true }));
     setError('');
-    try { await sendLeadMaterials(lead.id, { materialKeys, channel, email: { to: lead.email || '' } }); await Promise.all([refreshActionCenter(lead), refreshLeadEmails(lead), loadCrm({ silent: true }), refreshMeta()]); }
+    try { await sendLeadMaterials(lead.id, { materialKeys, channel, email: { to: lead.email || '' } }); await Promise.all([refreshActionCenter(lead), refreshLeadEmails(lead), loadCrm({ silent: true })]); }
     catch (requestError) { setError(requestError.message || 'Материал пока не загружен на сервер'); }
     finally { setExecutionBusy((current) => ({ ...current, materials: false })); }
   }
@@ -717,7 +717,7 @@ export default function CRMPage() {
       const response = await sendTelegramLeadMessage(selectedLead.id, message);
       setTelegramMessages((current) => [...current, response.telegramMessage].filter(Boolean));
       setTelegramDraft('');
-      await Promise.all([refreshTelegramMessages(selectedLead), loadCrm({ silent: true }), refreshMeta()]);
+      await Promise.all([refreshTelegramMessages(selectedLead), loadCrm({ silent: true })]);
     } catch (requestError) {
       setError(requestError.message || 'Не удалось отправить сообщение в Telegram');
     } finally {
@@ -806,10 +806,7 @@ export default function CRMPage() {
         )
       }
 
-      await Promise.all([
-        loadCrm({ silent: true }),
-        refreshMeta()
-      ])
+      await loadCrm({ silent: true })
     } catch (requestError) {
       setError(
         requestError.message ||
@@ -829,10 +826,7 @@ export default function CRMPage() {
     try {
       setError("")
       await markTestPaymentPaid(paymentId)
-      await Promise.all([
-        loadCrm({ silent: true }),
-        refreshMeta()
-      ])
+      await loadCrm({ silent: true })
     } catch (requestError) {
       setError(requestError.message || "Не удалось отметить test payment как paid")
     }
