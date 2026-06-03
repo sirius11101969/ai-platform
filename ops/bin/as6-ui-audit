@@ -1,7 +1,39 @@
 #!/usr/bin/env bash
 set -euo pipefail
+
 ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
 cd "$ROOT"
-rg -q 'data-command-center-visual="premium-as6"' frontend/src/pages/CommandCenterPage.jsx
-rg -q '#030712|#020617|command-kpis|copilot-hero|pipeline-funnel' frontend/src/theme/as6Theme.css
+
+PAGE="frontend/src/pages/CommandCenterPage.jsx"
+SHELL="frontend/src/components/AppShell.jsx"
+THEME="frontend/src/theme/as6Theme.css"
+APP="frontend/src/App.jsx"
+
+check_text() {
+  local file="$1" text="$2" label="$3"
+  if rg -q --fixed-strings "$text" "$file"; then
+    echo "OK:$label:$text"
+  else
+    echo "FAIL:$label:$text"
+    exit 1
+  fi
+}
+
+check_texts() {
+  local file="$1" label="$2"
+  shift 2
+  local text
+  for text in "$@"; do
+    check_text "$file" "$text" "$label"
+  done
+  echo "OK:$label"
+}
+
+check_texts "$APP" 'UI_AUDIT_COMMAND_CENTER_ROUTE' 'path="/command-center"'
+check_texts "$SHELL" 'UI_AUDIT_PREMIUM_SIDEBAR' 'data-command-sidebar={isCommandCenter ? "premium" : undefined}' 'command-side-nav' 'command-sidebar-bottom'
+check_texts "$PAGE" 'UI_AUDIT_PREMIUM_PAGE_MARKERS' 'data-command-center-visual="premium-as6"' 'data-command-kpi-row' 'data-pipeline-funnel' 'data-right-action-rail' 'data-ai-recommendations' 'data-quick-actions'
+check_texts "$PAGE" 'UI_AUDIT_PREMIUM_PAGE_COPY' 'AI Copilot' 'Главная цель дня' 'Производительность AI сотрудников' 'Динамика выручки' 'Цели на месяц' 'Быстрые действия'
+check_texts "$THEME" 'UI_AUDIT_PREMIUM_THEME' '#030712' '#020617' 'command-kpis' 'copilot-hero' 'pipeline-funnel' 'quick-actions { position: sticky; bottom: 8px'
+
+echo 'UI_AUDIT_RESULT=OK'
 echo 'AS6_UI_AUDIT_RESULT=OK'
