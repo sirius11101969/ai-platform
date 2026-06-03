@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+rg -q 'data-command-center-visual="premium-as6"' frontend/src/pages/CommandCenterPage.jsx
+rg -q '#030712|#020617|command-kpis|copilot-hero|pipeline-funnel' frontend/src/theme/as6Theme.css
+echo 'AS6_UI_AUDIT_RESULT=OK'

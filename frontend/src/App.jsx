@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./styles.css";
+import "./theme/as6Theme.css";
 import { ProtectedLayout } from "./components/AppShell";
 import LandingPage from "./pages/LandingPage";
 import { LoginPage, SignupPage } from "./pages/AuthPages";
@@ -28,6 +29,7 @@ import AiEnterpriseCoordinationPage from "./pages/AiEnterpriseCoordinationPage";
 import AiOrganizationalMemoryPage from "./pages/AiOrganizationalMemoryPage";
 import AiSystemHealthCenterPage from "./pages/AiSystemHealthCenterPage";
 import AIEnterpriseCommandCenter from "./pages/AIEnterpriseCommandCenter";
+import CommandCenterPage from "./pages/CommandCenterPage";
 import RevenueDashboardPage from "./pages/RevenueDashboardPage";
 import { getAuthToken, getStoredUser } from "./services/api";
 
@@ -135,6 +137,7 @@ export default function App() {
           <Route path="/ai/workforce" element={<ProtectedRoute><AiWorkforceCenterPage /></ProtectedRoute>} />
           <Route path="/ai/approval-center" element={<ProtectedRoute><AiApprovalCenterPage /></ProtectedRoute>} />
           <Route path="/ai-enterprise-command-center" element={<ProtectedRoute><AIEnterpriseCommandCenter /></ProtectedRoute>} />
+          <Route path="/command-center" element={<ProtectedRoute><CommandCenterPage /></ProtectedRoute>} />
           <Route path="/dashboard/revenue" element={<ProtectedRoute><RevenueDashboardPage /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
