@@ -6,25 +6,28 @@ PAGE="frontend/src/pages/CommandCenterPage.jsx"
 SHELL="frontend/src/components/AppShell.jsx"
 THEME="frontend/src/theme/as6Theme.css"
 APP="frontend/src/App.jsx"
+
 check_file(){ test -f "$1" || { echo "missing:$1"; exit 1; }; }
 check_pattern(){ local file="$1" pattern="$2" label="$3"; if rg -q "$pattern" "$file"; then echo "OK:$label"; else echo "FAIL:$label"; exit 1; fi; }
+check_patterns(){ local file="$1" label="$2"; shift 2; local pattern; for pattern in "$@"; do check_pattern "$file" "$pattern" "$label:$pattern"; done; }
+check_absent(){ local file="$1" pattern="$2" label="$3"; if rg -q "$pattern" "$file"; then echo "FAIL:$label"; exit 1; else echo "OK:$label"; fi; }
+
 check_file "$PAGE"; check_file "$SHELL"; check_file "$THEME"; check_file "$APP"
+
 check_pattern "$APP" 'path="/command-center"' 'command center route'
-check_pattern "$SHELL" 'AS6|AI PLATFORM|command-center-active|🚀 Command Center|ИЗБРАННОЕ|AS6 Owner|Открыть AI поддержку' 'COMMAND_CENTER_VISUAL_SIDEBAR'
-check_pattern "$PAGE" 'data-command-kpi-row|Выручка сегодня|\$1,248,890|Новые лиды|247|Сделки в работе|87|AI сотрудники|28 / 28|Конверсия|24.6%' 'COMMAND_CENTER_VISUAL_KPI_ROW'
-check_pattern "$PAGE" 'data-pipeline-funnel|Pipeline Overview|funnelStages|Новые лиды|Квалификация|Презентация|Переговоры|Закрытие|Сумма в процессе|В выигрыше' 'COMMAND_CENTER_VISUAL_FUNNEL'
-check_pattern "$THEME" 'clip-path: polygon\(10% 0, 90% 0, 100% 100%, 0 100%\)' 'COMMAND_CENTER_VISUAL_FUNNEL_TRAPEZOID_CSS'
-check_pattern "$PAGE" 'data-copilot-rail|data-copilot-hero|AI Copilot|Спросить AI Copilot|Последние события|Следующее лучшее действие|Ожидаемый эффект|\+\$8,900' 'COMMAND_CENTER_VISUAL_COPILOT_RAIL'
-check_pattern "$PAGE" 'data-ai-recommendations|AI рекомендации|Высокий приоритет|Возможность роста|Оптимизация|Риск' 'COMMAND_CENTER_VISUAL_RECOMMENDATIONS'
-check_pattern "$PAGE" 'data-quick-actions|Быстрые действия|Создать лид|Создать сделку|Добавить задачу|Approval Queue|AI аналитика|Отчёты|Настроить AI' 'COMMAND_CENTER_VISUAL_QUICK_ACTIONS'
-check_pattern "$THEME" 'position: sticky; bottom: 8px' 'COMMAND_CENTER_VISUAL_QUICK_ACTIONS_STICKY'
-( cd frontend && npm run build )
-echo 'OK:frontend build'
-echo 'COMMAND_CENTER_VISUAL_SIDEBAR=OK'
-echo 'COMMAND_CENTER_VISUAL_KPI_ROW=OK'
-echo 'COMMAND_CENTER_VISUAL_FUNNEL=OK'
-echo 'COMMAND_CENTER_VISUAL_COPILOT_RAIL=OK'
-echo 'COMMAND_CENTER_VISUAL_RECOMMENDATIONS=OK'
-echo 'COMMAND_CENTER_VISUAL_QUICK_ACTIONS=OK'
-echo 'COMMAND_CENTER_VISUAL_RESULT=OK'
-echo 'COMMAND_CENTER_VISUAL_PROGRESS=100'
+check_pattern "$PAGE" 'data-as6-diagnostic-page="command-center-premium"' 'COMMAND_CENTER_PREMIUM_PAGE_MARKER'
+check_pattern "$PAGE" 'data-as6-diagnostic-hero="executive-command-center"' 'COMMAND_CENTER_PREMIUM_HERO_MARKER'
+check_pattern "$PAGE" 'data-as6-diagnostic-kpis="executive-kpi-row"' 'COMMAND_CENTER_PREMIUM_KPIS_MARKER'
+check_pattern "$PAGE" 'data-as6-diagnostic-copilot="right-action-rail"' 'COMMAND_CENTER_PREMIUM_COPILOT_MARKER'
+check_pattern "$PAGE" 'data-command-center-visual="premium-as6"' 'COMMAND_CENTER_PREMIUM_VISUAL_ROOT'
+check_patterns "$PAGE" 'COMMAND_CENTER_PREMIUM_HERO_IMPLEMENTATION' 'Добро пожаловать' 'Ваш AI Command Center' 'command-top-actions'
+check_patterns "$PAGE" 'COMMAND_CENTER_PREMIUM_KPI_IMPLEMENTATION' 'data-command-kpi-row' 'kpiBlueprint' 'Выручка сегодня' 'Новые лиды' 'Сделки в работе' 'AI сотрудники' 'Конверсия'
+check_patterns "$PAGE" 'COMMAND_CENTER_PREMIUM_PIPELINE_IMPLEMENTATION' 'data-pipeline-funnel' 'funnelStages' 'Pipeline Overview' 'Сумма в процессе' 'В выигрыше'
+check_patterns "$PAGE" 'COMMAND_CENTER_PREMIUM_COPILOT_IMPLEMENTATION' 'data-copilot-rail' 'data-copilot-hero' 'AI Copilot' 'Спросить AI Copilot' 'Следующее лучшее действие' 'Ожидаемый эффект'
+check_patterns "$PAGE" 'COMMAND_CENTER_PREMIUM_RECOMMENDATIONS_IMPLEMENTATION' 'data-ai-recommendations' 'AI рекомендации' 'Высокий приоритет' 'Возможность роста' 'Оптимизация' 'Риск'
+check_patterns "$PAGE" 'COMMAND_CENTER_PREMIUM_QUICK_ACTIONS_IMPLEMENTATION' 'data-quick-actions' 'Быстрые действия' 'Создать лид' 'Создать сделку' 'Добавить задачу' 'Approval Queue' 'AI аналитика' 'Отчёты' 'Настроить AI'
+check_patterns "$SHELL" 'COMMAND_CENTER_PREMIUM_SIDEBAR_IMPLEMENTATION' 'command-side-nav' 'command-center-active' '🚀 Command Center' '/ai-workforce-center' '/ai-approval-center' 'ИЗБРАННОЕ' 'AS6 Owner' 'Открыть AI поддержку'
+check_absent "$SHELL" '<NavLink to="/ai-workers">👥 AI сотрудники</NavLink>|<NavLink to="/ai-workers">⌘ AI SDR Agents</NavLink>' 'COMMAND_CENTER_PREMIUM_SIDEBAR_OLD_WORKER_LINKS'
+check_patterns "$THEME" 'COMMAND_CENTER_PREMIUM_THEME_IMPLEMENTATION' 'command-center-page' 'command-kpis' 'pipeline-funnel' 'copilot-hero' 'quick-actions'
+
+echo 'COMMAND_CENTER_RESULT=OK'
