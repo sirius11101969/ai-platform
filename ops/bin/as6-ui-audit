@@ -2,6 +2,19 @@
 set -euo pipefail
 ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
 cd "$ROOT"
+SHELL="frontend/src/components/AppShell.jsx"
 rg -q 'data-command-center-visual="premium-as6"' frontend/src/pages/CommandCenterPage.jsx
 rg -q '#030712|#020617|command-kpis|copilot-hero|pipeline-funnel' frontend/src/theme/as6Theme.css
+rg -q 'to="/ai-workforce-center".*>👥 AI сотрудники</NavLink>' "$SHELL"
+rg -q 'to="/ai-workforce-center".*>AI сотрудники</NavLink>' "$SHELL"
+rg -q 'to="/ai-workforce-center".*>⌘ AI SDR Agents</NavLink>' "$SHELL"
+rg -q 'to="/ai-approval-center".*>AI SDR Approval Center</NavLink>' "$SHELL"
+rg -q 'to="/ai-approval-center".*>▢ Approval Queue' "$SHELL"
+ai_employees_workforce_count=$(rg 'to="/ai-workforce-center".*>(👥 )?AI сотрудники</NavLink>' "$SHELL" | wc -l | tr -d ' ')
+if [ "$ai_employees_workforce_count" -ne 2 ]; then echo 'UI_AUDIT_RESULT=FAIL'; exit 1; fi
+if rg -q 'to="/ai-workers".*>(👥 AI сотрудники|⌘ AI SDR Agents|AI сотрудники|AI SDR Approval Center)' "$SHELL"; then
+  echo 'UI_AUDIT_RESULT=FAIL'
+  exit 1
+fi
 echo 'AS6_UI_AUDIT_RESULT=OK'
+echo 'UI_AUDIT_RESULT=OK'
