@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { creditSummary, userProfile } from "../data/mockData";
 import { addWorkspaceMember, clearAuthSession, createWorkspace, fetchCurrentWorkspace, fetchProfile, fetchWorkspaces, getActiveWorkspaceId, getStoredUser, setActiveWorkspaceId, updateWorkspace } from "../services/api";
 
@@ -18,6 +18,7 @@ export function ProtectedLayout({ children }) {
   const [workspaceError, setWorkspaceError] = useState("");
   const [settingsOpen, setSettingsOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     let active = true;
@@ -113,46 +114,82 @@ export function ProtectedLayout({ children }) {
   const displayPlan = currentWorkspace?.plan || profile?.plan || userProfile.plan;
   const workspaceName = currentWorkspace?.name || "Моё пространство";
   const roleLabels = { owner: "Владелец", admin: "Администратор", sales: "Продажи", viewer: "Наблюдатель" };
+  const isCommandCenter = location.pathname === "/command-center";
 
   return (
-    <div className="app-shell">
-      <aside className="sidebar shell-glow">
-        <BrandMark />
-        <div className="sidebar-scroll" role="presentation">
-          <nav className="side-nav" aria-label="Основная навигация">
-            <NavLink to="/dashboard" className={({ isActive }) => (isActive ? "active" : "")}>Дашборд</NavLink>
-            <NavLink to="/crm" className={({ isActive }) => (isActive ? "active" : "")}>CRM‑воронка</NavLink>
-            <NavLink to="/ai-workers" className={({ isActive }) => (isActive ? "active" : "")}>AI сотрудники</NavLink>
-            <NavLink to="/ai-workers" className={({ isActive }) => (isActive ? "active" : "")}>AI SDR Approval Center</NavLink>
-            <NavLink to="/ai-execution-center" className={({ isActive }) => (isActive ? "active" : "")}>AI Execution Center</NavLink>
-            <NavLink to="/ai-workforce-center" className={({ isActive }) => (isActive ? "active" : "")}>AI Workforce Center</NavLink>
-            <NavLink to="/ai-executive-brain" className={({ isActive }) => (isActive ? "active" : "")}>AI Executive Brain</NavLink>
-                        <NavLink to="/ai-enterprise-command-center" className={({ isActive }) => (isActive ? "active" : "")}>AI Enterprise Command Center</NavLink>
-            <NavLink to="/ai-revenue-intelligence" className={({ isActive }) => (isActive ? "active" : "")}>AI Revenue Intelligence</NavLink>
-            <NavLink to="/ai-revenue-engine" className={({ isActive }) => (isActive ? "active" : "")}>AI Revenue Engine</NavLink>
-            <NavLink to="/dashboard/revenue" className={({ isActive }) => (isActive ? "active" : "")}>Revenue Dashboard</NavLink>
-            <NavLink to="/ai-voice-outreach" className={({ isActive }) => (isActive ? "active" : "")}>AI Voice Outreach</NavLink>
-            <NavLink to="/ai-realtime-voice" className={({ isActive }) => (isActive ? "active" : "")}>AI Realtime Voice</NavLink>
-            <NavLink to="/ai-live-streaming" className={({ isActive }) => (isActive ? "active" : "")}>AI Live Streaming</NavLink>
-            <NavLink to="/followups" className={({ isActive }) => (isActive ? "active" : "")}>AI Follow-ups</NavLink>
-            <NavLink to="/priority-inbox" className={({ isActive }) => (isActive ? "active" : "")}>AI Priority Inbox</NavLink>
-            <NavLink to="/pipeline-copilot" className={({ isActive }) => (isActive ? "active" : "")}>AI Pipeline Copilot</NavLink>
-            <NavLink to="/ai-manager-dashboard" className={({ isActive }) => (isActive ? "active" : "")}>AI Manager Dashboard</NavLink>
-            <NavLink to="/ai-strategic-planning" className={({ isActive }) => (isActive ? "active" : "")}>AI Strategic Planning</NavLink>
-            <NavLink to="/ai-enterprise-coordination" className={({ isActive }) => (isActive ? "active" : "")}>AI Enterprise Coordination</NavLink>
-            <NavLink to="/ai-organizational-memory" className={({ isActive }) => (isActive ? "active" : "")}>AI Organizational Memory</NavLink>
-            <NavLink to="/ai-system-health-center" className={({ isActive }) => (isActive ? "active" : "")}>AI System Health Center</NavLink>
-            <div className="sidebar-crm-actions" aria-label="Действия CRM">
-              <button className="sidebar-create-lead" type="button" onClick={openCreateLead}>+ Создать лид</button>
-              <button className="sidebar-activity-feed" type="button" onClick={openActivityFeed}>Лента активности</button>
+    <div className={`app-shell ${isCommandCenter ? "command-shell" : ""}`}>
+      <aside className={`sidebar shell-glow ${isCommandCenter ? "command-sidebar" : ""}`} data-command-sidebar={isCommandCenter ? "premium" : undefined}>
+        {isCommandCenter ? (
+          <>
+            <div className="as6-sidebar-brand"><strong>AS6</strong><span>AI PLATFORM</span></div>
+            <div className="sidebar-scroll" role="presentation">
+              <nav className="side-nav command-side-nav" aria-label="Command Center navigation">
+                <NavLink to="/command-center" className={({ isActive }) => (isActive ? "active command-center-active" : "command-center-link")}>🚀 Command Center</NavLink>
+                <NavLink to="/dashboard">▦ Dashboard</NavLink>
+                <NavLink to="/crm">▧ CRM</NavLink>
+                <NavLink to="/dashboard/revenue">↗ Revenue</NavLink>
+                <NavLink to="/ai-workers">👥 AI сотрудники</NavLink>
+                <NavLink to="/followups">☑ AI задачи <span className="nav-badge">12</span></NavLink>
+                <NavLink to="/ai-revenue-intelligence">⌁ AI аналитика</NavLink>
+                <NavLink to="/priority-inbox">✉ AI коммуникации <span className="nav-badge">3</span></NavLink>
+                <NavLink to="/ai-system-health-center">◇ AI DevOps Center</NavLink>
+                <NavLink to="/ai-enterprise-coordination">⚙ AI настройки</NavLink>
+              </nav>
+              <div className="sidebar-favorites" data-sidebar-favorites>
+                <span>ИЗБРАННОЕ</span>
+                <NavLink to="/pipeline-copilot">▣ Pipeline Copilot</NavLink>
+                <NavLink to="/ai-approval-center">▢ Approval Queue <em>7</em></NavLink>
+                <NavLink to="/ai-workers">⌘ AI SDR Agents</NavLink>
+                <NavLink to="/ai-executive-brain">✧ Executive Brain</NavLink>
+              </div>
             </div>
-            <Link to="/login" onClick={handleLogout}>Выйти</Link>
-          </nav>
-        </div>
-        <CreditsMiniBlock credits={currentWorkspace?.creditsPool ?? profile?.credits} />
+            <div className="command-sidebar-bottom">
+              <section className="command-profile-card">
+                <div className="profile-photo">В</div><div><strong>AS6 Owner</strong><span>Владимир</span><small>● Онлайн</small></div>
+              </section>
+              <section className="command-help-card"><b>✦</b><span>Нужна помощь?</span><strong>Открыть AI поддержку</strong></section>
+            </div>
+          </>
+        ) : (
+          <>
+            <BrandMark />
+            <div className="sidebar-scroll" role="presentation">
+              <nav className="side-nav" aria-label="Основная навигация">
+                <NavLink to="/dashboard" className={({ isActive }) => (isActive ? "active" : "")}>Дашборд</NavLink>
+                <NavLink to="/crm" className={({ isActive }) => (isActive ? "active" : "")}>CRM‑воронка</NavLink>
+                <NavLink to="/ai-workers" className={({ isActive }) => (isActive ? "active" : "")}>AI сотрудники</NavLink>
+                <NavLink to="/ai-workers" className={({ isActive }) => (isActive ? "active" : "")}>AI SDR Approval Center</NavLink>
+                <NavLink to="/ai-execution-center" className={({ isActive }) => (isActive ? "active" : "")}>AI Execution Center</NavLink>
+                <NavLink to="/ai-workforce-center" className={({ isActive }) => (isActive ? "active" : "")}>AI Workforce Center</NavLink>
+                <NavLink to="/ai-executive-brain" className={({ isActive }) => (isActive ? "active" : "")}>AI Executive Brain</NavLink>
+                <NavLink to="/ai-enterprise-command-center" className={({ isActive }) => (isActive ? "active" : "")}>AI Enterprise Command Center</NavLink>
+                <NavLink to="/ai-revenue-intelligence" className={({ isActive }) => (isActive ? "active" : "")}>AI Revenue Intelligence</NavLink>
+                <NavLink to="/ai-revenue-engine" className={({ isActive }) => (isActive ? "active" : "")}>AI Revenue Engine</NavLink>
+                <NavLink to="/dashboard/revenue" className={({ isActive }) => (isActive ? "active" : "")}>Revenue Dashboard</NavLink>
+                <NavLink to="/ai-voice-outreach" className={({ isActive }) => (isActive ? "active" : "")}>AI Voice Outreach</NavLink>
+                <NavLink to="/ai-realtime-voice" className={({ isActive }) => (isActive ? "active" : "")}>AI Realtime Voice</NavLink>
+                <NavLink to="/ai-live-streaming" className={({ isActive }) => (isActive ? "active" : "")}>AI Live Streaming</NavLink>
+                <NavLink to="/followups" className={({ isActive }) => (isActive ? "active" : "")}>AI Follow-ups</NavLink>
+                <NavLink to="/priority-inbox" className={({ isActive }) => (isActive ? "active" : "")}>AI Priority Inbox</NavLink>
+                <NavLink to="/pipeline-copilot" className={({ isActive }) => (isActive ? "active" : "")}>AI Pipeline Copilot</NavLink>
+                <NavLink to="/ai-manager-dashboard" className={({ isActive }) => (isActive ? "active" : "")}>AI Manager Dashboard</NavLink>
+                <NavLink to="/ai-strategic-planning" className={({ isActive }) => (isActive ? "active" : "")}>AI Strategic Planning</NavLink>
+                <NavLink to="/ai-enterprise-coordination" className={({ isActive }) => (isActive ? "active" : "")}>AI Enterprise Coordination</NavLink>
+                <NavLink to="/ai-organizational-memory" className={({ isActive }) => (isActive ? "active" : "")}>AI Organizational Memory</NavLink>
+                <NavLink to="/ai-system-health-center" className={({ isActive }) => (isActive ? "active" : "")}>AI System Health Center</NavLink>
+                <div className="sidebar-crm-actions" aria-label="Действия CRM">
+                  <button className="sidebar-create-lead" type="button" onClick={openCreateLead}>+ Создать лид</button>
+                  <button className="sidebar-activity-feed" type="button" onClick={openActivityFeed}>Лента активности</button>
+                </div>
+                <Link to="/login" onClick={handleLogout}>Выйти</Link>
+              </nav>
+            </div>
+            <CreditsMiniBlock credits={currentWorkspace?.creditsPool ?? profile?.credits} />
+          </>
+        )}
       </aside>
       <div className="workspace">
-        <header className="workspace-header shell-glow">
+        {!isCommandCenter && <header className="workspace-header shell-glow">
           <div>
             <span className="eyebrow">Защищённое рабочее пространство</span>
             <h1>AI‑ОС выручки</h1>
@@ -171,8 +208,8 @@ export function ProtectedLayout({ children }) {
               <span>{displayPlan} · {roleLabels[currentWorkspace?.role] || "участник"}</span>
             </div>
           </div>
-        </header>
-        <div className="workspace-current-name">Текущее пространство: <strong>{workspaceName}</strong></div>
+        </header>}
+        {!isCommandCenter && <div className="workspace-current-name">Текущее пространство: <strong>{workspaceName}</strong></div>}
         {children}
         {settingsOpen && <WorkspaceSettings workspace={currentWorkspace} roleLabels={roleLabels} onClose={() => setSettingsOpen(false)} onRefresh={refreshCurrentWorkspace} />}
       </div>
