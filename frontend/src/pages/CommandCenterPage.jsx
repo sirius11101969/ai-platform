@@ -5,7 +5,7 @@ const demoMetrics = {
   revenueToday: '$1,248,890',
   leads: '247',
   deals: '87',
-  aiEmployees: '28 / 28',
+  aiEmployees: '28/28',
   conversion: '24.6%',
   pipelineTotal: '$4,782,000',
   wonTotal: '$1,248,890',
@@ -14,10 +14,19 @@ const demoMetrics = {
   monthlyRemaining: '$4,110,000',
 }
 
+function isZeroLike(value) {
+  if (value === null || value === undefined) return true
+  if (typeof value === 'number') return value === 0
+  if (typeof value !== 'string') return false
+  const compact = value.trim().replace(/\s/g, '')
+  if (!compact) return true
+  const numeric = compact.replace(/[,$%]/g, '')
+  if (/^0+(\.0+)?(\/0+(\.0+)?)?$/.test(numeric)) return true
+  return false
+}
+
 function pickMetric(value, fallback) {
-  if (value === null || value === undefined) return fallback
-  if (typeof value === 'number' && value === 0) return fallback
-  if (typeof value === 'string' && (!value.trim() || value.trim() === '0' || value.trim() === '$0' || value.trim() === '0%')) return fallback
+  if (isZeroLike(value)) return fallback
   return value
 }
 
@@ -28,19 +37,19 @@ function formatMoney(value, fallback) {
 }
 
 const kpiBlueprint = [
-  { key: 'revenueToday', label: 'Выручка сегодня', value: demoMetrics.revenueToday, delta: '+18.6%', tone: 'revenue', icon: '↗', spark: [18, 25, 20, 28, 24, 31, 42] },
-  { key: 'leads', label: 'Новые лиды', value: demoMetrics.leads, delta: '+32%', tone: 'leads', icon: '👥', spark: [16, 22, 34, 31, 42, 50, 58] },
-  { key: 'deals', label: 'Сделки в работе', value: demoMetrics.deals, delta: '+14%', tone: 'deals', icon: '💼', spark: [45, 36, 40, 32, 48, 52, 59] },
-  { key: 'aiEmployees', label: 'AI сотрудники', value: demoMetrics.aiEmployees, delta: 'Активны', tone: 'ai', icon: '🤖', spark: [52, 50, 54, 53, 55, 56, 58] },
-  { key: 'conversion', label: 'Конверсия', value: demoMetrics.conversion, delta: '+8.3%', tone: 'conversion', icon: '◎', spark: [21, 26, 24, 31, 35, 39, 46] },
+  { key: 'revenueToday', label: 'Revenue Today', value: demoMetrics.revenueToday, delta: '+18.6%', tone: 'revenue', icon: '↗', spark: [18, 25, 20, 28, 24, 31, 42], bars: [28, 36, 30, 44, 38, 54, 72] },
+  { key: 'leads', label: 'New Leads', value: demoMetrics.leads, delta: '+32%', tone: 'leads', icon: '👥', spark: [16, 22, 34, 31, 42, 50, 58], bars: [26, 34, 48, 46, 58, 66, 76] },
+  { key: 'deals', label: 'Deals', value: demoMetrics.deals, delta: '+14%', tone: 'deals', icon: '💼', spark: [45, 36, 40, 32, 48, 52, 59], bars: [68, 52, 58, 48, 70, 74, 84] },
+  { key: 'aiEmployees', label: 'AI Workers', value: demoMetrics.aiEmployees, delta: 'Active', tone: 'ai', icon: '🤖', spark: [52, 50, 54, 53, 55, 56, 58], bars: [72, 70, 75, 74, 78, 80, 83] },
+  { key: 'conversion', label: 'Conversion', value: demoMetrics.conversion, delta: '+8.3%', tone: 'conversion', icon: '◎', spark: [21, 26, 24, 31, 35, 39, 46], bars: [30, 36, 34, 44, 52, 58, 68] },
 ]
 
 const funnelStages = [
-  { label: 'Новые лиды', value: 247, width: 100, tone: 'blue' },
-  { label: 'Квалификация', value: 198, width: 84, tone: 'green' },
-  { label: 'Презентация', value: 123, width: 68, tone: 'yellow' },
-  { label: 'Переговоры', value: 76, width: 52, tone: 'orange' },
-  { label: 'Закрытие', value: 34, width: 36, tone: 'pink' },
+  { label: 'Новые лиды', value: 247, width: 100, amount: '$1.84M', tone: 'blue' },
+  { label: 'Квалификация', value: 198, width: 86, amount: '$1.36M', tone: 'green' },
+  { label: 'Презентация', value: 123, width: 72, amount: '$890K', tone: 'yellow' },
+  { label: 'Переговоры', value: 76, width: 56, amount: '$512K', tone: 'orange' },
+  { label: 'Закрытие', value: 34, width: 40, amount: '$250K', tone: 'pink' },
 ]
 
 const aiEmployees = [
@@ -105,7 +114,7 @@ export default function CommandCenterPage() {
         revenueToday: apiKpis.revenueToday || apiState.brief?.executiveBrief?.revenueToday,
         leads: operations.completedToday || apiKpis.newLeads,
         deals: apiKpis.approvalQueueOpen || operations.needsAttention,
-        aiEmployees: apiKpis.workforceUtilization ? `${apiKpis.workforceUtilization} / ${apiKpis.workforceUtilization}` : null,
+        aiEmployees: !isZeroLike(apiKpis.workforceUtilization) ? `${apiKpis.workforceUtilization}/${apiKpis.workforceUtilization}` : null,
         conversion: apiKpis.conversionRate,
       }[item.key]
       return { ...item, value: item.key === 'revenueToday' ? formatMoney(liveValue, item.value) : pickMetric(liveValue, item.value) }
@@ -140,6 +149,7 @@ export default function CommandCenterPage() {
       <section className="command-kpis" data-command-kpi-row>
         {kpis.map((item) => <article className={`command-kpi ${item.tone}`} key={item.key}>
           <div className="kpi-copy"><span>{item.label}</span><strong>{item.value}</strong><em>{item.delta}</em></div>
+          <div className="kpi-mini-bars" aria-hidden="true">{item.bars.map((height, index) => <b key={`${item.key}-${index}`} style={{ height: `${height}%` }} />)}</div>
           <svg className="kpi-spark" viewBox="0 0 100 64" preserveAspectRatio="none" aria-hidden="true"><polyline points={sparklinePoints(item.spark)} /></svg>
           <i>{item.icon}</i>
         </article>)}
@@ -164,7 +174,9 @@ export default function CommandCenterPage() {
               <div className="pipeline-layout">
                 <div className="pipeline-funnel">
                   {funnelStages.map((stage) => <div className="funnel-row" key={stage.label}>
-                    <span>{stage.label}</span><strong className={`funnel-slice ${stage.tone}`} style={{ width: `${stage.width}%` }}>{stage.value}</strong>
+                    <strong className={`funnel-slice ${stage.tone}`} style={{ width: `${stage.width}%` }}>
+                      <span>{stage.label}</span><b>{stage.value}</b><em>{stage.amount}</em>
+                    </strong>
                   </div>)}
                 </div>
                 <div className="pipeline-summary">
@@ -191,7 +203,7 @@ export default function CommandCenterPage() {
             </article>
 
             <article className="command-card month-goals">
-              <h2>Цели на месяц</h2>
+              <h2>Monthly Goals <span>Цели на месяц</span></h2>
               <div className="circle-progress" style={{ '--progress': '75%' }}><strong>75%</strong><span>Выполнено</span></div>
               <dl><div><dt>Цель</dt><dd>{monthly.target}</dd></div><div><dt>Факт</dt><dd>{monthly.actual}</dd></div><div><dt>Осталось</dt><dd>{monthly.remaining}</dd></div></dl>
             </article>
@@ -203,8 +215,8 @@ export default function CommandCenterPage() {
             <div className="copilot-top"><h2>AI Copilot</h2><span>AS6</span></div><div className="robot-icon">🤖</div>
             <p>Я здесь, чтобы помочь вам принимать лучшие решения и достигать целей быстрее.</p><button type="button">Спросить AI Copilot →</button>
           </article>
-          <article className="command-card event-card"><div className="command-card-head"><h2>Последние события</h2><a href="/dashboard">Все</a></div>{events.map((event) => <div className="event-row" key={event.text}><b>{event.icon}</b><span>{event.text}</span><time>{event.time}</time></div>)}</article>
-          <article className="command-card next-action-card"><h2>Следующее лучшее действие</h2>{nextActions.map((action) => <div className="next-action" key={action.label}><b>{action.icon}</b><span>{action.label}<small>{action.note}</small></span><strong>{action.value}</strong></div>)}<div className="expected-effect"><span>Ожидаемый эффект</span><strong>+$8,900</strong></div></article>
+          <article className="command-card event-card"><div className="command-card-head"><h2>Recent Events <span>Последние события</span></h2><a href="/dashboard">Все</a></div>{events.map((event) => <div className="event-row" key={event.text}><b>{event.icon}</b><span>{event.text}</span><time>{event.time}</time></div>)}</article>
+          <article className="command-card next-action-card"><h2>Next Best Action <span>Следующее лучшее действие</span></h2>{nextActions.map((action) => <div className="next-action" key={action.label}><b>{action.icon}</b><span>{action.label}<small>{action.note}</small></span><strong>{action.value}</strong></div>)}<div className="expected-effect"><span>Ожидаемый эффект</span><strong>+$8,900</strong></div></article>
         </aside>
       </section>
 
