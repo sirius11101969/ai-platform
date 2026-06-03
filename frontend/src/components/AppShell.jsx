@@ -128,7 +128,7 @@ export function ProtectedLayout({ children }) {
                 <NavLink to="/dashboard">▦ Dashboard</NavLink>
                 <NavLink to="/crm">▧ CRM</NavLink>
                 <NavLink to="/dashboard/revenue">↗ Revenue</NavLink>
-                <NavLink to="/ai-workers">👥 AI сотрудники</NavLink>
+                <NavLink to="/ai-workforce-center">👥 AI сотрудники</NavLink>
                 <NavLink to="/followups">☑ AI задачи <span className="nav-badge">12</span></NavLink>
                 <NavLink to="/ai-revenue-intelligence">⌁ AI аналитика</NavLink>
                 <NavLink to="/priority-inbox">✉ AI коммуникации <span className="nav-badge">3</span></NavLink>
@@ -139,7 +139,7 @@ export function ProtectedLayout({ children }) {
                 <span>ИЗБРАННОЕ</span>
                 <NavLink to="/pipeline-copilot">▣ Pipeline Copilot</NavLink>
                 <NavLink to="/ai-approval-center">▢ Approval Queue <em>7</em></NavLink>
-                <NavLink to="/ai-workers">⌘ AI SDR Agents</NavLink>
+                <NavLink to="/ai-workforce-center">⌘ AI SDR Agents</NavLink>
                 <NavLink to="/ai-executive-brain">✧ Executive Brain</NavLink>
               </div>
             </div>
@@ -157,8 +157,8 @@ export function ProtectedLayout({ children }) {
               <nav className="side-nav" aria-label="Основная навигация">
                 <NavLink to="/dashboard" className={({ isActive }) => (isActive ? "active" : "")}>Дашборд</NavLink>
                 <NavLink to="/crm" className={({ isActive }) => (isActive ? "active" : "")}>CRM‑воронка</NavLink>
-                <NavLink to="/ai-workers" className={({ isActive }) => (isActive ? "active" : "")}>AI сотрудники</NavLink>
-                <NavLink to="/ai-workers" className={({ isActive }) => (isActive ? "active" : "")}>AI SDR Approval Center</NavLink>
+                <NavLink to="/ai-workforce-center" className={({ isActive }) => (isActive ? "active" : "")}>AI сотрудники</NavLink>
+                <NavLink to="/ai-approval-center" className={({ isActive }) => (isActive ? "active" : "")}>AI SDR Approval Center</NavLink>
                 <NavLink to="/ai-execution-center" className={({ isActive }) => (isActive ? "active" : "")}>AI Execution Center</NavLink>
                 <NavLink to="/ai-workforce-center" className={({ isActive }) => (isActive ? "active" : "")}>AI Workforce Center</NavLink>
                 <NavLink to="/ai-executive-brain" className={({ isActive }) => (isActive ? "active" : "")}>AI Executive Brain</NavLink>
