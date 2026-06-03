@@ -17,7 +17,7 @@ const demoMetrics = {
 function pickMetric(value, fallback) {
   if (value === null || value === undefined) return fallback
   if (typeof value === 'number' && value === 0) return fallback
-  if (typeof value === 'string' && (!value.trim() || value.trim() === '0' || value.trim() === '$0')) return fallback
+  if (typeof value === 'string' && (!value.trim() || value.trim() === '0' || value.trim() === '$0' || value.trim() === '0%')) return fallback
   return value
 }
 
@@ -28,11 +28,11 @@ function formatMoney(value, fallback) {
 }
 
 const kpiBlueprint = [
-  { key: 'revenueToday', label: 'Выручка сегодня', value: demoMetrics.revenueToday, delta: '+18.6%', tone: 'revenue', icon: '↗' },
-  { key: 'leads', label: 'Новые лиды', value: demoMetrics.leads, delta: '+32%', tone: 'leads', icon: '👥' },
-  { key: 'deals', label: 'Сделки в работе', value: demoMetrics.deals, delta: '+14%', tone: 'deals', icon: '💼' },
-  { key: 'aiEmployees', label: 'AI сотрудники', value: demoMetrics.aiEmployees, delta: 'Активны', tone: 'ai', icon: '🤖' },
-  { key: 'conversion', label: 'Конверсия', value: demoMetrics.conversion, delta: '+8.3%', tone: 'conversion', icon: '◎' },
+  { key: 'revenueToday', label: 'Выручка сегодня', value: demoMetrics.revenueToday, delta: '+18.6%', tone: 'revenue', icon: '↗', spark: [18, 25, 20, 28, 24, 31, 42] },
+  { key: 'leads', label: 'Новые лиды', value: demoMetrics.leads, delta: '+32%', tone: 'leads', icon: '👥', spark: [16, 22, 34, 31, 42, 50, 58] },
+  { key: 'deals', label: 'Сделки в работе', value: demoMetrics.deals, delta: '+14%', tone: 'deals', icon: '💼', spark: [45, 36, 40, 32, 48, 52, 59] },
+  { key: 'aiEmployees', label: 'AI сотрудники', value: demoMetrics.aiEmployees, delta: 'Активны', tone: 'ai', icon: '🤖', spark: [52, 50, 54, 53, 55, 56, 58] },
+  { key: 'conversion', label: 'Конверсия', value: demoMetrics.conversion, delta: '+8.3%', tone: 'conversion', icon: '◎', spark: [21, 26, 24, 31, 35, 39, 46] },
 ]
 
 const funnelStages = [
@@ -72,6 +72,11 @@ const recommendations = [
 
 const quickActions = ['Создать лид', 'Создать сделку', 'Добавить задачу', 'Approval Queue', 'AI аналитика', 'Отчёты', 'Настроить AI']
 const chartBars = [46, 64, 56, 78, 70, 92, 82, 100]
+const monthFallback = { target: demoMetrics.monthlyTarget, actual: demoMetrics.monthlyActual, remaining: demoMetrics.monthlyRemaining }
+
+function sparklinePoints(values) {
+  return values.map((value, index) => `${index * (100 / (values.length - 1))},${64 - value}`).join(' ')
+}
 
 export default function CommandCenterPage() {
   const [apiState, setApiState] = useState({})
@@ -107,9 +112,18 @@ export default function CommandCenterPage() {
     })
   }, [apiState])
 
+  const monthly = useMemo(() => {
+    const live = apiState.monthly?.planning || apiState.focus?.monthly || {}
+    return {
+      target: formatMoney(live.targetRevenue || live.revenueTarget, monthFallback.target),
+      actual: formatMoney(live.actualRevenue || live.revenueActual, monthFallback.actual),
+      remaining: formatMoney(live.remainingRevenue || live.revenueRemaining, monthFallback.remaining),
+    }
+  }, [apiState])
+
   return (
     <main className="command-center-page" data-command-center-visual="premium-as6">
-      <section className="command-hero" data-command-kpi-row>
+      <section className="command-hero">
         <div>
           <h1>Добро пожаловать, <span>Владимир!</span> 👋</h1>
           <p>Ваш AI Command Center. Управляйте, анализируйте и масштабируйте выручку.</p>
@@ -123,9 +137,11 @@ export default function CommandCenterPage() {
         </div>
       </section>
 
-      <section className="command-kpis">
+      <section className="command-kpis" data-command-kpi-row>
         {kpis.map((item) => <article className={`command-kpi ${item.tone}`} key={item.key}>
-          <div><span>{item.label}</span><strong>{item.value}</strong><em>{item.delta}</em></div><i>{item.icon}</i>
+          <div className="kpi-copy"><span>{item.label}</span><strong>{item.value}</strong><em>{item.delta}</em></div>
+          <svg className="kpi-spark" viewBox="0 0 100 64" preserveAspectRatio="none" aria-hidden="true"><polyline points={sparklinePoints(item.spark)} /></svg>
+          <i>{item.icon}</i>
         </article>)}
       </section>
 
@@ -137,9 +153,9 @@ export default function CommandCenterPage() {
               <p>Увеличить выручку на $12,400 сегодня</p>
               <div className="goal-progress"><span style={{ width: '68%' }} /></div>
               <div className="goal-stats">
-                <div><small>Expected revenue</small><strong>$12,400</strong></div>
-                <div><small>Probability</small><strong>78%</strong></div>
-                <div><small>Monthly impact</small><strong>+$156,800</strong></div>
+                <div><small>Ожидаемая выручка</small><strong>$12,400</strong></div>
+                <div><small>Вероятность</small><strong>78%</strong></div>
+                <div><small>Влияние на месяц</small><strong>+$156,800</strong></div>
               </div>
             </article>
 
@@ -177,12 +193,12 @@ export default function CommandCenterPage() {
             <article className="command-card month-goals">
               <h2>Цели на месяц</h2>
               <div className="circle-progress" style={{ '--progress': '75%' }}><strong>75%</strong><span>Выполнено</span></div>
-              <dl><div><dt>Цель</dt><dd>{demoMetrics.monthlyTarget}</dd></div><div><dt>Факт</dt><dd>{demoMetrics.monthlyActual}</dd></div><div><dt>Осталось</dt><dd>{demoMetrics.monthlyRemaining}</dd></div></dl>
+              <dl><div><dt>Цель</dt><dd>{monthly.target}</dd></div><div><dt>Факт</dt><dd>{monthly.actual}</dd></div><div><dt>Осталось</dt><dd>{monthly.remaining}</dd></div></dl>
             </article>
           </section>
         </div>
 
-        <aside className="command-right-rail" data-right-action-rail>
+        <aside className="command-right-rail" data-right-action-rail data-copilot-rail>
           <article className="command-card copilot-hero" data-copilot-hero>
             <div className="copilot-top"><h2>AI Copilot</h2><span>AS6</span></div><div className="robot-icon">🤖</div>
             <p>Я здесь, чтобы помочь вам принимать лучшие решения и достигать целей быстрее.</p><button type="button">Спросить AI Copilot →</button>
