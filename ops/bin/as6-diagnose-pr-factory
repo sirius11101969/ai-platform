@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+WF=".github/workflows/as6-agent-pr-factory.yml"
+ROUTER=".github/workflows/as6-issue-router.yml"
+fail=0
+
+test -f "$WF" && echo "PR_FACTORY_FILE=OK" || { echo "PR_FACTORY_FILE=FAIL"; fail=1; }
+grep -q "workflow_dispatch" "$WF" && echo "PR_FACTORY_TRIGGER=OK" || { echo "PR_FACTORY_TRIGGER=FAIL"; fail=1; }
+grep -q "contents: write" "$WF" && echo "PR_FACTORY_CONTENTS_WRITE=OK" || { echo "PR_FACTORY_CONTENTS_WRITE=FAIL"; fail=1; }
+grep -q "pull-requests: write" "$WF" && echo "PR_FACTORY_PULL_REQUESTS_WRITE=OK" || { echo "PR_FACTORY_PULL_REQUESTS_WRITE=FAIL"; fail=1; }
+grep -q "issues: write" "$WF" && echo "PR_FACTORY_ISSUES_WRITE=OK" || { echo "PR_FACTORY_ISSUES_WRITE=FAIL"; fail=1; }
+grep -q "as6-agent/" "$WF" && echo "PR_FACTORY_BRANCH_PREFIX=OK" || { echo "PR_FACTORY_BRANCH_PREFIX=FAIL"; fail=1; }
+grep -q ".github/agent-tasks" "$WF" && echo "PR_FACTORY_TASK_FILE=OK" || { echo "PR_FACTORY_TASK_FILE=FAIL"; fail=1; }
+grep -q "draft: true" "$WF" && echo "PR_FACTORY_DRAFT_PR=OK" || { echo "PR_FACTORY_DRAFT_PR=FAIL"; fail=1; }
+grep -q "AS6_PR_FACTORY_RESULT=OK" "$WF" && echo "PR_FACTORY_SAFE_LOGS=OK" || { echo "PR_FACTORY_SAFE_LOGS=FAIL"; fail=1; }
+grep -q "as6-agent-pr-factory.yml" "$ROUTER" && echo "ROUTER_PR_FACTORY_TARGET=OK" || { echo "ROUTER_PR_FACTORY_TARGET=FAIL"; fail=1; }
+
+if [ "$fail" -eq 0 ]; then
+  echo "PR_FACTORY_RESULT=OK"
+  exit 0
+fi
+
+echo "PR_FACTORY_RESULT=FAIL"
+exit 1
