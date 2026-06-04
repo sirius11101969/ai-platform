@@ -9,8 +9,8 @@ fail=0
 test -f "$WF" && echo "ISSUE_ROUTER_FILE=OK" || { echo "ISSUE_ROUTER_FILE=FAIL"; fail=1; }
 grep -q "issues:" "$WF" && echo "ISSUE_ROUTER_TRIGGER=OK" || { echo "ISSUE_ROUTER_TRIGGER=FAIL"; fail=1; }
 grep -q "issues: write" "$WF" && echo "ISSUE_ROUTER_ISSUES_PERMISSION=OK" || { echo "ISSUE_ROUTER_ISSUES_PERMISSION=FAIL"; fail=1; }
-grep -q "as6-backend-agent.yml" "$WF" && echo "ISSUE_ROUTER_BACKEND=OK" || { echo "ISSUE_ROUTER_BACKEND=FAIL"; fail=1; }
-grep -q "as6-frontend-agent.yml" "$WF" && echo "ISSUE_ROUTER_FRONTEND=OK" || { echo "ISSUE_ROUTER_FRONTEND=FAIL"; fail=1; }
+grep -q "AS6 Backend Codex Agent" "$WF" && echo "ISSUE_ROUTER_BACKEND=OK" || { echo "ISSUE_ROUTER_BACKEND=FAIL"; fail=1; }
+grep -q "AS6 Frontend Codex Agent" "$WF" && echo "ISSUE_ROUTER_FRONTEND=OK" || { echo "ISSUE_ROUTER_FRONTEND=FAIL"; fail=1; }
 grep -q "AS6 DevOps Codex Agent" "$WF" && echo "ISSUE_ROUTER_DEVOPS=OK" || { echo "ISSUE_ROUTER_DEVOPS=FAIL"; fail=1; }
 grep -q "Safe handoff mode is active" "$WF" && echo "ISSUE_ROUTER_SAFE_HANDOFF=OK" || { echo "ISSUE_ROUTER_SAFE_HANDOFF=FAIL"; fail=1; }
 
