@@ -38,9 +38,33 @@ jobs:
             const owner = context.repo.owner;
             const repo = context.repo.repo;
 
-            const issueNumber = core.getInput("issue_number");
-            const agent = core.getInput("agent");
-            const task = core.getInput("task");
+            const eventInputs = (context.payload && context.payload.inputs) || {};
+
+            const issueNumber = String(eventInputs.issue_number || core.getInput("issue_number") || "").trim();
+            const agent = String(eventInputs.agent || core.getInput("agent") || "").trim();
+            const task = String(eventInputs.task || core.getInput("task") || "").trim();
+
+            console.log(`AS6_PR_FACTORY_INPUT_SOURCE=${Object.keys(eventInputs).length ? "event.inputs" : "core.getInput"}`);
+
+            if (!issueNumber || !agent || !task) {
+              console.log("AS6_PR_FACTORY_INPUT_RESULT=FAIL");
+              console.log(`AS6_PR_FACTORY_INPUT_ISSUE_PRESENT=${issueNumber ? "YES" : "NO"}`);
+              console.log(`AS6_PR_FACTORY_INPUT_AGENT_PRESENT=${agent ? "YES" : "NO"}`);
+              console.log(`AS6_PR_FACTORY_INPUT_TASK_PRESENT=${task ? "YES" : "NO"}`);
+              throw new Error("AS6 PR Factory missing required inputs; refusing to create branch, task file, PR, or issue comment.");
+            }
+
+            if (!["backend", "frontend", "devops"].includes(agent)) {
+              console.log("AS6_PR_FACTORY_INPUT_RESULT=FAIL");
+              throw new Error(`AS6 PR Factory invalid agent: ${agent}`);
+            }
+
+            if (!/^\d+$/.test(issueNumber) || Number(issueNumber) <= 0) {
+              console.log("AS6_PR_FACTORY_INPUT_RESULT=FAIL");
+              throw new Error(`AS6 PR Factory invalid issue_number: ${issueNumber}`);
+            }
+
+            console.log("AS6_PR_FACTORY_INPUT_RESULT=OK");
 
             const base = "main";
             const branch = `as6-agent/${agent}-issue-${issueNumber}`;
