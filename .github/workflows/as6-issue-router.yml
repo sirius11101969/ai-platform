@@ -94,32 +94,26 @@ jobs:
               return;
             }
 
-            const workflowByAgent = {
-              backend: "as6-backend-agent.yml",
-              frontend: "as6-frontend-agent.yml",
-              devops: "as6-devops-agent.yml",
+            const labelByAgent = {
+              backend: "as6-agent:backend",
+              frontend: "as6-agent:frontend",
+              devops: "as6-agent:devops",
             };
 
-            const workflow_id = workflowByAgent[agent];
-            const task = [
-              `Issue #${issueNumber}: ${title}`,
-              "",
-              body || "",
-              "",
-              "AS6 rules:",
-              "- Work through PR only.",
-              "- Do not mutate production.",
-              "- Do not expose secrets.",
-              "- Follow diagnostics-first workflow.",
-              "- If a recurring issue is found, recommend or add a diagnostic."
-            ].join("\n");
+            const workflowByAgent = {
+              backend: "AS6 Backend Codex Agent",
+              frontend: "AS6 Frontend Codex Agent",
+              devops: "AS6 DevOps Codex Agent",
+            };
 
-            await github.rest.actions.createWorkflowDispatch({
+            const label = labelByAgent[agent];
+            const workflowName = workflowByAgent[agent];
+
+            await github.rest.issues.addLabels({
               owner,
               repo,
-              workflow_id,
-              ref: "main",
-              inputs: { task }
+              issue_number: issueNumber,
+              labels: [label, "as6-ai-workforce"]
             });
 
             await github.rest.issues.createComment({
