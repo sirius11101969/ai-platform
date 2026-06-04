@@ -45,9 +45,10 @@ run_check() {
 : > "$LOG"
 
 echo "==================================================" | tee -a "$LOG"
-echo "AS6 ARCHITECTURE GUARDIAN v2" | tee -a "$LOG"
+echo "AS6 ARCHITECTURE GUARDIAN v3.1" | tee -a "$LOG"
 echo "==================================================" | tee -a "$LOG"
 
+run_check "toolchain" "TOOLCHAIN_RESULT=OK" ./ops/bin/as6-toolchain-check
 run_check "git diff check" "" git diff --check
 run_check "secret scan" "SECRET_SCAN_RESULT=OK" ./ops/bin/as6-pre-commit-secret-scan
 run_check "command center diagnostic" "COMMAND_CENTER_RESULT=OK" ./ops/bin/as6-diagnose-command-center
@@ -63,7 +64,7 @@ fi
 cat > "$REPORT" <<JSON
 {
   "guardian": "AS6 Architecture Guardian",
-  "version": 2,
+  "version": "3.1",
   "verdict": "$verdict",
   "passed": $passed,
   "failures": $failures,

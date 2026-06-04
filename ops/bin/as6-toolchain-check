@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+missing=0
+
+echo "=== required host tools ==="
+for tool in git docker grep python3 rg; do
+  if command -v "$tool" >/dev/null 2>&1; then
+    echo "TOOL_OK=$tool"
+  else
+    echo "TOOL_MISSING=$tool"
+    missing=$((missing + 1))
+  fi
+done
+
+echo
+echo "=== optional host tools ==="
+for tool in node npm; do
+  if command -v "$tool" >/dev/null 2>&1; then
+    echo "${tool^^}_HOST_RESULT=OK"
+  else
+    echo "${tool^^}_HOST_RESULT=OPTIONAL_MISSING"
+  fi
+done
+
+if [ "$missing" -eq 0 ]; then
+  echo "TOOLCHAIN_RESULT=OK"
+  exit 0
+fi
+
+echo "TOOLCHAIN_RESULT=FAIL"
+echo "TOOLCHAIN_MISSING_COUNT=$missing"
+exit 1
