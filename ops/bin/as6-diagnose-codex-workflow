@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+WF=".github/workflows/as6-codex-review.yml"
+PROMPT=".github/codex/prompts/as6-pr-review.md"
+
+fail=0
+
+test -f "$WF" || { echo "CODEX_WORKFLOW_FILE=FAIL"; fail=1; }
+test -f "$PROMPT" || { echo "CODEX_PROMPT_FILE=FAIL"; fail=1; }
+
+grep -q "openai/codex-action@v1" "$WF" && echo "CODEX_ACTION_REF=OK" || { echo "CODEX_ACTION_REF=FAIL"; fail=1; }
+grep -q "openai-api-key:" "$WF" && echo "CODEX_API_KEY_INPUT=OK" || { echo "CODEX_API_KEY_INPUT=FAIL"; fail=1; }
+grep -q "secrets.OPENAI_API_KEY" "$WF" && echo "CODEX_SECRET_REFERENCE=OK" || { echo "CODEX_SECRET_REFERENCE=FAIL"; fail=1; }
+grep -q "prompt-file: .github/codex/prompts/as6-pr-review.md" "$WF" && echo "CODEX_PROMPT_REFERENCE=OK" || { echo "CODEX_PROMPT_REFERENCE=FAIL"; fail=1; }
+
+if [ "$fail" -eq 0 ]; then
+  echo "CODEX_WORKFLOW_RESULT=OK"
+  exit 0
+fi
+
+echo "CODEX_WORKFLOW_RESULT=FAIL"
+exit 1

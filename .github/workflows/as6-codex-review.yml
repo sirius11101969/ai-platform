@@ -21,8 +21,6 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || github.event.pull_request.draft == false
     permissions:
       contents: read
-    env:
-      CODEX_ACTION_OPENAI_API_KEY: ${{ secrets[format('{0}_{1}_{2}', 'OPENAI', 'API', 'KEY')] }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -32,6 +30,7 @@ jobs:
       - name: Run AS6 Codex reviewer
         uses: openai/codex-action@v1
         with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
           prompt-file: .github/codex/prompts/as6-pr-review.md
           sandbox: read-only
           safety-strategy: drop-sudo
