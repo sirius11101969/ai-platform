@@ -37,3 +37,5 @@ fi
 
 echo "AS6_AI_WORKFORCE_STATUS=FAIL"
 exit 1
+
+# AS6 v7 diagnostic: ops/bin/as6-diagnose-agent-write-mode
