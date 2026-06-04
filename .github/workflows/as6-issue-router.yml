@@ -116,9 +116,37 @@ jobs:
               labels: [label, "as6-ai-workforce"]
             });
 
+            const task = [
+              `Issue #${issueNumber}: ${title}`,
+              "",
+              body || "",
+              "",
+              "AS6 rules:",
+              "- Work through PR only.",
+              "- Do not mutate production.",
+              "- Do not expose secrets.",
+              "- Follow diagnostics-first workflow.",
+              "- If a recurring issue is found, recommend or add a diagnostic."
+            ].join("\n");
+
             await github.rest.issues.createComment({
               owner,
               repo,
               issue_number: issueNumber,
-              body: `AS6 AI Workforce Router dispatched the **${agent}** Codex agent for this issue.`
+              body: [
+                `AS6 AI Workforce Router selected the **${agent}** Codex agent for this issue.`,
+                "",
+                `Label added: \`${label}\``,
+                "",
+                "Safe handoff mode is active because GitHub Actions bot cannot run Codex Action without repository write access.",
+                "",
+                "Next step:",
+                `Open GitHub → Actions → ${workflowName} → Run workflow`,
+                "",
+                "Use this task:",
+                "",
+                "```",
+                task,
+                "```"
+              ].join("\n")
             });
