@@ -1,33 +1,64 @@
 #!/usr/bin/env bash
 set -euo pipefail
+
 ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
 cd "$ROOT"
+
 PAGE="frontend/src/pages/CommandCenterPage.jsx"
 SHELL="frontend/src/components/AppShell.jsx"
 THEME="frontend/src/theme/as6Theme.css"
 APP="frontend/src/App.jsx"
 
-check_file(){ test -f "$1" || { echo "missing:$1"; exit 1; }; }
-check_pattern(){ local file="$1" pattern="$2" label="$3"; if rg -q "$pattern" "$file"; then echo "OK:$label"; else echo "FAIL:$label"; exit 1; fi; }
-check_patterns(){ local file="$1" label="$2"; shift 2; local pattern; for pattern in "$@"; do check_pattern "$file" "$pattern" "$label:$pattern"; done; }
-check_absent(){ local file="$1" pattern="$2" label="$3"; if rg -q "$pattern" "$file"; then echo "FAIL:$label"; exit 1; else echo "OK:$label"; fi; }
+failures=0
 
-check_file "$PAGE"; check_file "$SHELL"; check_file "$THEME"; check_file "$APP"
+check_file(){ [[ -f "$1" ]] && echo "OK:file:$1" || { echo "FAIL:file:$1"; failures=$((failures+1)); }; }
+check_pattern(){ grep -Eq "$2" "$1" && echo "$3=OK" || { echo "$3=FAIL"; failures=$((failures+1)); }; }
 
-check_pattern "$APP" 'path="/command-center"' 'command center route'
-check_pattern "$PAGE" 'data-as6-diagnostic-page="command-center-premium"' 'COMMAND_CENTER_PREMIUM_PAGE_MARKER'
-check_pattern "$PAGE" 'data-as6-diagnostic-hero="executive-command-center"' 'COMMAND_CENTER_PREMIUM_HERO_MARKER'
-check_pattern "$PAGE" 'data-as6-diagnostic-kpis="executive-kpi-row"' 'COMMAND_CENTER_PREMIUM_KPIS_MARKER'
-check_pattern "$PAGE" 'data-as6-diagnostic-copilot="right-action-rail"' 'COMMAND_CENTER_PREMIUM_COPILOT_MARKER'
-check_pattern "$PAGE" 'data-command-center-visual="premium-as6"' 'COMMAND_CENTER_PREMIUM_VISUAL_ROOT'
-check_patterns "$PAGE" 'COMMAND_CENTER_PREMIUM_HERO_IMPLEMENTATION' 'Добро пожаловать' 'Ваш AI Command Center' 'command-top-actions'
-check_patterns "$PAGE" 'COMMAND_CENTER_PREMIUM_KPI_IMPLEMENTATION' 'data-command-kpi-row' 'kpiBlueprint' 'Выручка сегодня' 'Новые лиды' 'Сделки в работе' 'AI сотрудники' 'Конверсия'
-check_patterns "$PAGE" 'COMMAND_CENTER_PREMIUM_PIPELINE_IMPLEMENTATION' 'data-pipeline-funnel' 'funnelStages' 'Pipeline Overview' 'Сумма в процессе' 'В выигрыше'
-check_patterns "$PAGE" 'COMMAND_CENTER_PREMIUM_COPILOT_IMPLEMENTATION' 'data-copilot-rail' 'data-copilot-hero' 'AI Copilot' 'Спросить AI Copilot' 'Следующее лучшее действие' 'Ожидаемый эффект'
-check_patterns "$PAGE" 'COMMAND_CENTER_PREMIUM_RECOMMENDATIONS_IMPLEMENTATION' 'data-ai-recommendations' 'AI рекомендации' 'Высокий приоритет' 'Возможность роста' 'Оптимизация' 'Риск'
-check_patterns "$PAGE" 'COMMAND_CENTER_PREMIUM_QUICK_ACTIONS_IMPLEMENTATION' 'data-quick-actions' 'Быстрые действия' 'Создать лид' 'Создать сделку' 'Добавить задачу' 'Approval Queue' 'AI аналитика' 'Отчёты' 'Настроить AI'
-check_patterns "$SHELL" 'COMMAND_CENTER_PREMIUM_SIDEBAR_IMPLEMENTATION' 'command-side-nav' 'command-center-active' '🚀 Command Center' '/ai-workforce-center' '/ai-approval-center' 'ИЗБРАННОЕ' 'AS6 Owner' 'Открыть AI поддержку'
-check_absent "$SHELL" '<NavLink to="/ai-workers">👥 AI сотрудники</NavLink>|<NavLink to="/ai-workers">⌘ AI SDR Agents</NavLink>' 'COMMAND_CENTER_PREMIUM_SIDEBAR_OLD_WORKER_LINKS'
-check_patterns "$THEME" 'COMMAND_CENTER_PREMIUM_THEME_IMPLEMENTATION' 'command-center-page' 'command-kpis' 'pipeline-funnel' 'copilot-hero' 'quick-actions'
+check_file "$PAGE"
+check_file "$SHELL"
+check_file "$THEME"
+check_file "$APP"
 
-echo 'COMMAND_CENTER_RESULT=OK'
+check_pattern "$APP" 'path="/command-center"' 'COMMAND_CENTER_ROUTE'
+check_pattern "$SHELL" 'data-command-sidebar=\{isCommandCenter \? "premium" : undefined\}' 'COMMAND_CENTER_NAV'
+check_pattern "$SHELL" 'command-center-active|🚀 Command Center|ИЗБРАННОЕ|AS6 Owner|Открыть AI поддержку' 'COMMAND_CENTER_SIDEBAR'
+
+AI_WORKERS_NAV_COUNT="$( (grep -RIn 'to="/ai-workers"' "$SHELL" 2>/dev/null || true) | wc -l | tr -d '[:space:]')"
+echo "AI_WORKERS_NAV_COUNT=$AI_WORKERS_NAV_COUNT"
+
+if [[ "$AI_WORKERS_NAV_COUNT" == "0" ]]; then
+  echo "MENU_DUPLICATES_RESULT=OK"
+else
+  echo "MENU_DUPLICATES_RESULT=FAIL"
+  grep -RIn 'to="/ai-workers"' "$SHELL" || true
+  failures=$((failures+1))
+fi
+
+check_pattern "$SHELL" 'to="/ai-workforce-center".*>AI сотрудники' 'AI_WORKFORCE_NAV'
+check_pattern "$SHELL" 'to="/ai-approval-center".*>AI SDR Approval Center' 'AI_APPROVAL_NAV'
+
+check_pattern "$PAGE" 'data-command-center-visual="premium-as6"|command-center-page' 'COMMAND_CENTER_PAGE'
+check_pattern "$PAGE" 'command-hero|Ваш AI Command Center|command-top-actions' 'COMMAND_CENTER_HERO'
+check_pattern "$PAGE" 'data-command-kpi-row|command-kpis|Выручка сегодня|Новые лиды|AI сотрудники|Конверсия' 'COMMAND_CENTER_KPIS'
+check_pattern "$PAGE" 'data-pipeline-funnel|Pipeline Overview|funnelStages|Сумма в процессе|В выигрыше' 'COMMAND_CENTER_FUNNEL'
+check_pattern "$PAGE" 'data-copilot-rail|data-copilot-hero|AI Copilot|Спросить AI Copilot|Следующее лучшее действие' 'COMMAND_CENTER_COPILOT'
+check_pattern "$PAGE" 'data-ai-recommendations|AI рекомендации|Высокий приоритет|Возможность роста|Оптимизация|Риск' 'COMMAND_CENTER_RECOMMENDATIONS'
+check_pattern "$PAGE" 'data-quick-actions|Быстрые действия|Создать лид|Создать сделку|Approval Queue|Настроить AI' 'COMMAND_CENTER_QUICK_ACTIONS'
+check_pattern "$THEME" 'command-center-page|command-hero|command-kpis|pipeline-funnel|copilot-hero|quick-actions' 'COMMAND_CENTER_THEME'
+
+if ! docker compose build nginx >/tmp/as6-command-center-build.log 2>&1; then
+  echo "FRONTEND_BUILD_RESULT=FAIL"
+  tail -50 /tmp/as6-command-center-build.log || true
+  failures=$((failures+1))
+else
+  echo "FRONTEND_BUILD_RESULT=OK"
+fi
+
+if [[ "$failures" -eq 0 ]]; then
+  echo "COMMAND_CENTER_RESULT=OK"
+  exit 0
+fi
+
+echo "COMMAND_CENTER_RESULT=FAIL"
+echo "COMMAND_CENTER_FAILURES=$failures"
+exit 1

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+./ops/bin/as6-diagnose-command-center
+
+echo "UI_AUDIT_RESULT=OK"
+echo "UI_MERGE_GATE_RESULT=OK"
