@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+ROUTER=".github/workflows/as6-issue-router.yml"
+FACTORY=".github/workflows/as6-agent-pr-factory.yml"
+BACKEND=".github/workflows/as6-backend-agent.yml"
+FRONTEND=".github/workflows/as6-frontend-agent.yml"
+DEVOPS=".github/workflows/as6-devops-agent.yml"
+
+test -f "$ROUTER" && echo "AGENT_HANDOFF_ROUTER_FILE=OK" || { echo "AGENT_HANDOFF_ROUTER_FILE=FAIL"; fail=1; }
+test -f "$FACTORY" && echo "AGENT_HANDOFF_PR_FACTORY_FILE=OK" || { echo "AGENT_HANDOFF_PR_FACTORY_FILE=FAIL"; fail=1; }
+
+grep -q "as6-agent-pr-factory.yml" "$ROUTER" && echo "AGENT_HANDOFF_ROUTER_TO_FACTORY=OK" || { echo "AGENT_HANDOFF_ROUTER_TO_FACTORY=FAIL"; fail=1; }
+grep -q "issue_number: String(issueNumber)" "$ROUTER" && echo "AGENT_HANDOFF_ROUTER_ISSUE_INPUT=OK" || { echo "AGENT_HANDOFF_ROUTER_ISSUE_INPUT=FAIL"; fail=1; }
+grep -q "agent," "$ROUTER" && echo "AGENT_HANDOFF_ROUTER_AGENT_INPUT=OK" || { echo "AGENT_HANDOFF_ROUTER_AGENT_INPUT=FAIL"; fail=1; }
+grep -q "task" "$ROUTER" && echo "AGENT_HANDOFF_ROUTER_TASK_INPUT=OK" || { echo "AGENT_HANDOFF_ROUTER_TASK_INPUT=FAIL"; fail=1; }
+
+grep -q "AS6_PR_FACTORY_INPUT_RESULT=OK" "$FACTORY" && echo "AGENT_HANDOFF_FACTORY_INPUT_GUARD=OK" || { echo "AGENT_HANDOFF_FACTORY_INPUT_GUARD=FAIL"; fail=1; }
+grep -q "as6-agent/" "$FACTORY" && echo "AGENT_HANDOFF_FACTORY_BRANCH=OK" || { echo "AGENT_HANDOFF_FACTORY_BRANCH=FAIL"; fail=1; }
+grep -q ".github/agent-tasks" "$FACTORY" && echo "AGENT_HANDOFF_FACTORY_TASK_FILE=OK" || { echo "AGENT_HANDOFF_FACTORY_TASK_FILE=FAIL"; fail=1; }
+grep -q "draft: true" "$FACTORY" && echo "AGENT_HANDOFF_FACTORY_DRAFT_PR=OK" || { echo "AGENT_HANDOFF_FACTORY_DRAFT_PR=FAIL"; fail=1; }
+
+for wf in "$BACKEND" "$FRONTEND" "$DEVOPS"; do
+  test -f "$wf" || { echo "AGENT_HANDOFF_AGENT_WORKFLOW_MISSING=$wf"; fail=1; continue; }
+  grep -q "sandbox: read-only" "$wf" && echo "AGENT_HANDOFF_READ_ONLY_AGENT=OK:$wf" || { echo "AGENT_HANDOFF_READ_ONLY_AGENT=FAIL:$wf"; fail=1; }
+  grep -q "prompt-file:" "$wf" && echo "AGENT_HANDOFF_PROMPT_FILE=OK:$wf" || { echo "AGENT_HANDOFF_PROMPT_FILE=FAIL:$wf"; fail=1; }
+done
+
+if [ "$fail" -eq 0 ]; then
+  echo "AGENT_HANDOFF_RESULT=OK"
+  exit 0
+fi
+
+echo "AGENT_HANDOFF_RESULT=FAIL"
+exit 1
