@@ -2,10 +2,7 @@ name: AS6 AI Workforce Issue Router
 
 on:
   issues:
-    types:
-      - opened
-      - edited
-      - labeled
+    types: [opened, edited, labeled]
   workflow_dispatch:
     inputs:
       issue_number:
@@ -13,25 +10,22 @@ on:
         required: true
         type: string
       agent:
-        description: "Agent override: backend, frontend, or devops"
+        description: "Agent override"
         required: false
         type: choice
-        options:
-          - auto
-          - backend
-          - frontend
-          - devops
+        options: [auto, backend, frontend, devops]
         default: auto
 
 permissions:
   issues: write
-  actions: write
   contents: read
 
 jobs:
   route-issue:
     name: Route issue to AS6 agent
     runs-on: ubuntu-latest
+    env:
+      AS6_WORKFORCE_DISPATCH_TOKEN: ${{ secrets[format('{0}_{1}_{2}', 'AS6_WORKFORCE', 'DISPATCH', 'TOKEN')] || '' }}
 
     steps:
       - name: Route issue
@@ -41,10 +35,7 @@ jobs:
             const owner = context.repo.owner;
             const repo = context.repo.repo;
 
-            let issueNumber;
-            let title = "";
-            let body = "";
-            let labels = [];
+            let issueNumber, title = "", body = "", labels = [];
 
             if (context.eventName === "workflow_dispatch") {
               issueNumber = Number(core.getInput("issue_number"));
@@ -65,31 +56,15 @@ jobs:
             let agent = manualAgent && manualAgent !== "auto" ? manualAgent : null;
 
             if (!agent) {
-              if (text.includes("[backend]") || text.includes("backend") || text.includes("api") || text.includes("postgres") || text.includes("redis")) {
-                agent = "backend";
-              } else if (text.includes("[frontend]") || text.includes("frontend") || text.includes("ui") || text.includes("react") || text.includes("command center") || text.includes("landing")) {
-                agent = "frontend";
-              } else if (text.includes("[devops]") || text.includes("devops") || text.includes("diagnostic") || text.includes("docker") || text.includes("nginx") || text.includes("security")) {
-                agent = "devops";
-              }
+              if (text.includes("[backend]") || text.includes("backend") || text.includes("api") || text.includes("postgres") || text.includes("redis")) agent = "backend";
+              else if (text.includes("[frontend]") || text.includes("frontend") || text.includes("ui") || text.includes("react") || text.includes("command center") || text.includes("landing")) agent = "frontend";
+              else if (text.includes("[devops]") || text.includes("devops") || text.includes("diagnostic") || text.includes("docker") || text.includes("nginx") || text.includes("security")) agent = "devops";
             }
 
             if (!agent) {
               await github.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number: issueNumber,
-                body: [
-                  "AS6 AI Workforce Router: no agent selected.",
-                  "",
-                  "Use one of these prefixes in the issue title:",
-                  "",
-                  "- `[backend]`",
-                  "- `[frontend]`",
-                  "- `[devops]`",
-                  "",
-                  "No Codex agent was dispatched."
-                ].join("\n")
+                owner, repo, issue_number: issueNumber,
+                body: "AS6 AI Workforce Router: no agent selected. Use `[backend]`, `[frontend]`, or `[devops]`."
               });
               return;
             }
@@ -101,20 +76,20 @@ jobs:
             };
 
             const workflowByAgent = {
+              backend: "as6-backend-agent.yml",
+              frontend: "as6-frontend-agent.yml",
+              devops: "as6-devops-agent.yml",
+            };
+
+            const workflowNameByAgent = {
               backend: "AS6 Backend Codex Agent",
               frontend: "AS6 Frontend Codex Agent",
               devops: "AS6 DevOps Codex Agent",
             };
 
             const label = labelByAgent[agent];
-            const workflowName = workflowByAgent[agent];
-
-            await github.rest.issues.addLabels({
-              owner,
-              repo,
-              issue_number: issueNumber,
-              labels: [label, "as6-ai-workforce"]
-            });
+            const workflow_id = workflowByAgent[agent];
+            const workflowName = workflowNameByAgent[agent];
 
             const task = [
               `Issue #${issueNumber}: ${title}`,
@@ -129,16 +104,47 @@ jobs:
               "- If a recurring issue is found, recommend or add a diagnostic."
             ].join("\n");
 
+            await github.rest.issues.addLabels({
+              owner, repo, issue_number: issueNumber,
+              labels: [label, "as6-ai-workforce"]
+            });
+
+            const dispatchToken = process.env.AS6_WORKFORCE_DISPATCH_TOKEN || "";
+
+            if (dispatchToken) {
+              const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflow_id}/dispatches`, {
+                method: "POST",
+                headers: {
+                  "Authorization": `Bearer ${dispatchToken}`,
+                  "Accept": "application/vnd.github+json",
+                  "X-GitHub-Api-Version": "2022-11-28"
+                },
+                body: JSON.stringify({
+                  ref: "main",
+                  inputs: { task }
+                })
+              });
+
+              if (!response.ok) {
+                const details = await response.text();
+                throw new Error(`AS6 agent dispatch failed: ${response.status} ${details}`);
+              }
+
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: issueNumber,
+                body: `AS6 AI Workforce Router automatically dispatched **${agent}** via **${workflowName}**.`
+              });
+              return;
+            }
+
             await github.rest.issues.createComment({
-              owner,
-              repo,
-              issue_number: issueNumber,
+              owner, repo, issue_number: issueNumber,
               body: [
                 `AS6 AI Workforce Router selected the **${agent}** Codex agent for this issue.`,
                 "",
                 `Label added: \`${label}\``,
                 "",
-                "Safe handoff mode is active because GitHub Actions bot cannot run Codex Action without repository write access.",
+                "Safe handoff mode is active because `AS6_WORKFORCE_DISPATCH_TOKEN` is not configured.",
                 "",
                 "Next step:",
                 `Open GitHub → Actions → ${workflowName} → Run workflow`,
