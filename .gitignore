@@ -10,3 +10,6 @@ npm-debug.log*
 backup_*.sql
 docker-compose.local.backup.yml
 backend/assets/materials/
+var/cache/
+quarantine/
+ops/bin/*.backup.*

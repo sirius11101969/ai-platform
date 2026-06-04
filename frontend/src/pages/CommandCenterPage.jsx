@@ -122,8 +122,8 @@ export default function CommandCenterPage() {
   }, [apiState])
 
   return (
-    <main className="command-center-page" data-command-center-visual="premium-as6">
-      <section className="command-hero">
+    <main className="command-center-page" data-command-center-visual="premium-as6" data-as6-diagnostic-page="command-center-premium">
+      <section className="command-hero" data-as6-diagnostic-hero="executive-command-center">
         <div>
           <h1>Добро пожаловать, <span>Владимир!</span> 👋</h1>
           <p>Ваш AI Command Center. Управляйте, анализируйте и масштабируйте выручку.</p>
@@ -137,7 +137,7 @@ export default function CommandCenterPage() {
         </div>
       </section>
 
-      <section className="command-kpis" data-command-kpi-row>
+      <section className="command-kpis" data-command-kpi-row data-as6-diagnostic-kpis="executive-kpi-row">
         {kpis.map((item) => <article className={`command-kpi ${item.tone}`} key={item.key}>
           <div className="kpi-copy"><span>{item.label}</span><strong>{item.value}</strong><em>{item.delta}</em></div>
           <svg className="kpi-spark" viewBox="0 0 100 64" preserveAspectRatio="none" aria-hidden="true"><polyline points={sparklinePoints(item.spark)} /></svg>
@@ -198,7 +198,7 @@ export default function CommandCenterPage() {
           </section>
         </div>
 
-        <aside className="command-right-rail" data-right-action-rail data-copilot-rail>
+        <aside className="command-right-rail" data-right-action-rail data-copilot-rail data-as6-diagnostic-copilot="right-action-rail">
           <article className="command-card copilot-hero" data-copilot-hero>
             <div className="copilot-top"><h2>AI Copilot</h2><span>AS6</span></div><div className="robot-icon">🤖</div>
             <p>Я здесь, чтобы помочь вам принимать лучшие решения и достигать целей быстрее.</p><button type="button">Спросить AI Copilot →</button>

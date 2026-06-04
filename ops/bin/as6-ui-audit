@@ -2,6 +2,50 @@
 set -euo pipefail
 ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
 cd "$ROOT"
-rg -q 'data-command-center-visual="premium-as6"' frontend/src/pages/CommandCenterPage.jsx
-rg -q '#030712|#020617|command-kpis|copilot-hero|pipeline-funnel' frontend/src/theme/as6Theme.css
-echo 'AS6_UI_AUDIT_RESULT=OK'
+PAGE="frontend/src/pages/CommandCenterPage.jsx"
+SHELL="frontend/src/components/AppShell.jsx"
+THEME="frontend/src/theme/as6Theme.css"
+
+check_pattern(){ local file="$1" pattern="$2" label="$3"; if rg -q "$pattern" "$file"; then echo "OK:$label"; else echo "FAIL:$label"; exit 1; fi; }
+check_patterns(){ local file="$1" label="$2"; shift 2; local pattern; for pattern in "$@"; do check_pattern "$file" "$pattern" "$label:$pattern"; done; }
+
+check_pattern "$PAGE" 'data-command-center-visual="premium-as6"' 'UI_PREMIUM_ROOT'
+check_pattern "$PAGE" 'data-as6-diagnostic-page="command-center-premium"' 'UI_DIAGNOSTIC_PAGE_MARKER'
+check_pattern "$PAGE" 'data-as6-diagnostic-hero="executive-command-center"' 'UI_DIAGNOSTIC_HERO_MARKER'
+check_pattern "$PAGE" 'data-as6-diagnostic-kpis="executive-kpi-row"' 'UI_DIAGNOSTIC_KPIS_MARKER'
+check_pattern "$PAGE" 'data-as6-diagnostic-copilot="right-action-rail"' 'UI_DIAGNOSTIC_COPILOT_MARKER'
+check_patterns "$THEME" 'UI_PREMIUM_THEME' '#030712' '#020617' 'command-kpis' 'copilot-hero' 'pipeline-funnel' 'quick-actions'
+check_patterns "$SHELL" 'UI_COMMAND_NAV_CURRENT_ROUTES' 'command-side-nav' 'to="/ai-workforce-center"' 'to="/ai-approval-center"'
+
+python - <<'PY'
+from pathlib import Path
+import re, sys
+shell = Path('frontend/src/components/AppShell.jsx').read_text()
+sections = {
+    'MENU_COMMAND_NAV': re.search(r'<nav className="side-nav command-side-nav"[\s\S]*?</nav>', shell),
+    'MENU_COMMAND_FAVORITES': re.search(r'<div className="sidebar-favorites"[\s\S]*?</div>', shell),
+}
+for label, match in sections.items():
+    if not match:
+        print(f'FAIL:{label}_PRESENT')
+        sys.exit(1)
+links_by_section = {label: re.findall(r'<NavLink\s+to="([^"]+)"', match.group(0)) for label, match in sections.items()}
+all_command_links = [link for links in links_by_section.values() for link in links]
+required = {'/ai-workforce-center', '/ai-approval-center'}
+missing = sorted(required - set(all_command_links))
+if missing:
+    print('FAIL:MENU_CURRENT_ROUTES_MISSING=' + ','.join(missing))
+    sys.exit(1)
+legacy = [link for link in all_command_links if link == '/ai-workers']
+if legacy:
+    print('FAIL:MENU_LEGACY_AI_WORKERS_LINKS=' + str(len(legacy)))
+    sys.exit(1)
+for label, links in links_by_section.items():
+    duplicates = sorted({link for link in links if links.count(link) > 1})
+    if duplicates:
+        print(f'FAIL:{label}_DUPLICATE_LINKS=' + ','.join(duplicates))
+        sys.exit(1)
+print('MENU_DUPLICATES_RESULT=OK')
+PY
+
+echo 'UI_AUDIT_RESULT=OK'

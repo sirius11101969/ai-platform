@@ -1,0 +1,21 @@
+name: AS6 Architecture Guardian
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  guardian:
+    name: Diagnose PR safety
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run AS6 Architecture Guardian
+        run: |
+          chmod +x ops/bin/as6-pr-guardian
+          ./ops/bin/as6-pr-guardian
