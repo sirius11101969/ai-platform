@@ -76,9 +76,9 @@ jobs:
             };
 
             const workflowByAgent = {
-              backend: "as6-backend-agent.yml",
-              frontend: "as6-frontend-agent.yml",
-              devops: "as6-devops-agent.yml",
+              backend: "as6-agent-pr-factory.yml",
+              frontend: "as6-agent-pr-factory.yml",
+              devops: "as6-agent-pr-factory.yml",
             };
 
             const workflowNameByAgent = {
@@ -126,7 +126,11 @@ jobs:
                 },
                 body: JSON.stringify({
                   ref: "main",
-                  inputs: { task }
+                  inputs: {
+                    issue_number: String(issueNumber),
+                    agent,
+                    task
+                  }
                 })
               });
 
