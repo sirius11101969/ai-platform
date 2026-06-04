@@ -94,13 +94,28 @@ jobs:
               return;
             }
 
-            const workflowByAgent = {
-              backend: "as6-backend-agent.yml",
-              frontend: "as6-frontend-agent.yml",
-              devops: "as6-devops-agent.yml",
+            const labelByAgent = {
+              backend: "as6-agent:backend",
+              frontend: "as6-agent:frontend",
+              devops: "as6-agent:devops",
             };
 
-            const workflow_id = workflowByAgent[agent];
+            const workflowByAgent = {
+              backend: "AS6 Backend Codex Agent",
+              frontend: "AS6 Frontend Codex Agent",
+              devops: "AS6 DevOps Codex Agent",
+            };
+
+            const label = labelByAgent[agent];
+            const workflowName = workflowByAgent[agent];
+
+            await github.rest.issues.addLabels({
+              owner,
+              repo,
+              issue_number: issueNumber,
+              labels: [label, "as6-ai-workforce"]
+            });
+
             const task = [
               `Issue #${issueNumber}: ${title}`,
               "",
@@ -114,17 +129,24 @@ jobs:
               "- If a recurring issue is found, recommend or add a diagnostic."
             ].join("\n");
 
-            await github.rest.actions.createWorkflowDispatch({
-              owner,
-              repo,
-              workflow_id,
-              ref: "main",
-              inputs: { task }
-            });
-
             await github.rest.issues.createComment({
               owner,
               repo,
               issue_number: issueNumber,
-              body: `AS6 AI Workforce Router dispatched the **${agent}** Codex agent for this issue.`
+              body: [
+                `AS6 AI Workforce Router selected the **${agent}** Codex agent for this issue.`,
+                "",
+                `Label added: \`${label}\``,
+                "",
+                "Safe handoff mode is active because GitHub Actions bot cannot run Codex Action without repository write access.",
+                "",
+                "Next step:",
+                `Open GitHub → Actions → ${workflowName} → Run workflow`,
+                "",
+                "Use this task:",
+                "",
+                "```",
+                task,
+                "```"
+              ].join("\n")
             });
