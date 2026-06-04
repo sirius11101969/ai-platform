@@ -15,6 +15,9 @@ grep -q "AS6 DevOps Codex Agent" "$WF" && echo "ISSUE_ROUTER_DEVOPS=OK" || { ech
 grep -q "AS6_WORKFORCE_DISPATCH_TOKEN" "$WF" && echo "ISSUE_ROUTER_DISPATCH_TOKEN_SUPPORT=OK" || { echo "ISSUE_ROUTER_DISPATCH_TOKEN_SUPPORT=FAIL"; fail=1; }
 grep -q "actions/workflows" "$WF" && echo "ISSUE_ROUTER_AUTO_DISPATCH_SUPPORT=OK" || { echo "ISSUE_ROUTER_AUTO_DISPATCH_SUPPORT=FAIL"; fail=1; }
 grep -q "Safe handoff mode is active" "$WF" && echo "ISSUE_ROUTER_SAFE_HANDOFF=OK" || { echo "ISSUE_ROUTER_SAFE_HANDOFF=FAIL"; fail=1; }
+grep -q "AS6_ROUTER_AGENT=" "$WF" && echo "ISSUE_ROUTER_SAFE_LOG_AGENT=OK" || { echo "ISSUE_ROUTER_SAFE_LOG_AGENT=FAIL"; fail=1; }
+grep -q "AS6_ROUTER_MODE=auto-dispatch" "$WF" && echo "ISSUE_ROUTER_SAFE_LOG_AUTODISPATCH=OK" || { echo "ISSUE_ROUTER_SAFE_LOG_AUTODISPATCH=FAIL"; fail=1; }
+grep -q "AS6_ROUTER_DISPATCH_RESULT=OK" "$WF" && echo "ISSUE_ROUTER_SAFE_LOG_RESULT=OK" || { echo "ISSUE_ROUTER_SAFE_LOG_RESULT=FAIL"; fail=1; }
 
 if [ "$fail" -eq 0 ]; then
   echo "ISSUE_ROUTER_RESULT=OK"

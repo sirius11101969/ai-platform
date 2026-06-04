@@ -111,7 +111,12 @@ jobs:
 
             const dispatchToken = process.env.AS6_WORKFORCE_DISPATCH_TOKEN || "";
 
+            console.log(`AS6_ROUTER_AGENT=${agent}`);
+            console.log(`AS6_ROUTER_WORKFLOW=${workflow_id}`);
+            console.log(`AS6_ROUTER_ISSUE=${issueNumber}`);
+
             if (dispatchToken) {
+              console.log("AS6_ROUTER_MODE=auto-dispatch");
               const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflow_id}/dispatches`, {
                 method: "POST",
                 headers: {
@@ -130,12 +135,16 @@ jobs:
                 throw new Error(`AS6 agent dispatch failed: ${response.status} ${details}`);
               }
 
+              console.log("AS6_ROUTER_DISPATCH_RESULT=OK");
+
               await github.rest.issues.createComment({
                 owner, repo, issue_number: issueNumber,
                 body: `AS6 AI Workforce Router automatically dispatched **${agent}** via **${workflowName}**.`
               });
               return;
             }
+
+            console.log("AS6_ROUTER_MODE=safe-handoff");
 
             await github.rest.issues.createComment({
               owner, repo, issue_number: issueNumber,
