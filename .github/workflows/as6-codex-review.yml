@@ -1,0 +1,38 @@
+name: AS6 Codex Review
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  codex-review:
+    name: Codex PR review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.draft == false
+    permissions:
+      contents: read
+    env:
+      CODEX_ACTION_OPENAI_API_KEY: ${{ secrets[format('{0}_{1}_{2}', 'OPENAI', 'API', 'KEY')] }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Run AS6 Codex reviewer
+        uses: openai/codex-action@v1
+        with:
+          prompt-file: .github/codex/prompts/as6-pr-review.md
+          sandbox: read-only
+          safety-strategy: drop-sudo
+          codex-args: '["--ephemeral"]'
