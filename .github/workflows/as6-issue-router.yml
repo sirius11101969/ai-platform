@@ -1,0 +1,130 @@
+name: AS6 AI Workforce Issue Router
+
+on:
+  issues:
+    types:
+      - opened
+      - edited
+      - labeled
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: "Issue number to route manually"
+        required: true
+        type: string
+      agent:
+        description: "Agent override: backend, frontend, or devops"
+        required: false
+        type: choice
+        options:
+          - auto
+          - backend
+          - frontend
+          - devops
+        default: auto
+
+permissions:
+  issues: write
+  actions: write
+  contents: read
+
+jobs:
+  route-issue:
+    name: Route issue to AS6 agent
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Route issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            let issueNumber;
+            let title = "";
+            let body = "";
+            let labels = [];
+
+            if (context.eventName === "workflow_dispatch") {
+              issueNumber = Number(core.getInput("issue_number"));
+              const issue = await github.rest.issues.get({ owner, repo, issue_number: issueNumber });
+              title = issue.data.title || "";
+              body = issue.data.body || "";
+              labels = (issue.data.labels || []).map((label) => typeof label === "string" ? label : label.name);
+            } else {
+              issueNumber = context.payload.issue.number;
+              title = context.payload.issue.title || "";
+              body = context.payload.issue.body || "";
+              labels = (context.payload.issue.labels || []).map((label) => label.name);
+            }
+
+            const manualAgent = context.eventName === "workflow_dispatch" ? core.getInput("agent") : "auto";
+            const text = `${title}\n${body}\n${labels.join(" ")}`.toLowerCase();
+
+            let agent = manualAgent && manualAgent !== "auto" ? manualAgent : null;
+
+            if (!agent) {
+              if (text.includes("[backend]") || text.includes("backend") || text.includes("api") || text.includes("postgres") || text.includes("redis")) {
+                agent = "backend";
+              } else if (text.includes("[frontend]") || text.includes("frontend") || text.includes("ui") || text.includes("react") || text.includes("command center") || text.includes("landing")) {
+                agent = "frontend";
+              } else if (text.includes("[devops]") || text.includes("devops") || text.includes("diagnostic") || text.includes("docker") || text.includes("nginx") || text.includes("security")) {
+                agent = "devops";
+              }
+            }
+
+            if (!agent) {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: issueNumber,
+                body: [
+                  "AS6 AI Workforce Router: no agent selected.",
+                  "",
+                  "Use one of these prefixes in the issue title:",
+                  "",
+                  "- `[backend]`",
+                  "- `[frontend]`",
+                  "- `[devops]`",
+                  "",
+                  "No Codex agent was dispatched."
+                ].join("\n")
+              });
+              return;
+            }
+
+            const workflowByAgent = {
+              backend: "as6-backend-agent.yml",
+              frontend: "as6-frontend-agent.yml",
+              devops: "as6-devops-agent.yml",
+            };
+
+            const workflow_id = workflowByAgent[agent];
+            const task = [
+              `Issue #${issueNumber}: ${title}`,
+              "",
+              body || "",
+              "",
+              "AS6 rules:",
+              "- Work through PR only.",
+              "- Do not mutate production.",
+              "- Do not expose secrets.",
+              "- Follow diagnostics-first workflow.",
+              "- If a recurring issue is found, recommend or add a diagnostic."
+            ].join("\n");
+
+            await github.rest.actions.createWorkflowDispatch({
+              owner,
+              repo,
+              workflow_id,
+              ref: "main",
+              inputs: { task }
+            });
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: issueNumber,
+              body: `AS6 AI Workforce Router dispatched the **${agent}** Codex agent for this issue.`
+            });
