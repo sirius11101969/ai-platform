@@ -1,0 +1,33 @@
+name: AS6 Frontend Codex Agent
+
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: "Frontend task for AS6 Codex Agent"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  frontend-agent:
+    name: Frontend Agent
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Run Frontend Codex Agent
+        uses: openai/codex-action@v1
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          prompt-file: .github/codex/prompts/as6-frontend-agent.md
+          sandbox: read-only
+          safety-strategy: drop-sudo
+          codex-args: '["--ephemeral"]'

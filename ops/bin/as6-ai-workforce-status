@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+check_file() {
+  if [ -f "$1" ]; then
+    echo "OK:$1"
+  else
+    echo "FAIL:$1"
+    fail=1
+  fi
+}
+
+echo "=== AS6 AI Workforce Status ==="
+
+check_file ".github/workflows/as6-codex-review.yml"
+check_file ".github/workflows/as6-backend-agent.yml"
+check_file ".github/workflows/as6-frontend-agent.yml"
+check_file ".github/workflows/as6-devops-agent.yml"
+
+check_file ".github/codex/prompts/as6-pr-review.md"
+check_file ".github/codex/prompts/as6-backend-agent.md"
+check_file ".github/codex/prompts/as6-frontend-agent.md"
+check_file ".github/codex/prompts/as6-devops-agent.md"
+
+check_file "ops/bin/as6-diagnose-codex-workflow"
+
+./ops/bin/as6-diagnose-codex-workflow
+
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_AI_WORKFORCE_STATUS=OK"
+  exit 0
+fi
+
+echo "AS6_AI_WORKFORCE_STATUS=FAIL"
+exit 1
