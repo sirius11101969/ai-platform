@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+WF=".github/workflows/as6-agent-branch-writer.yml"
+TARGET_BRANCH="${AS6_AGENT_BRANCH_WRITER_TEST_BRANCH:-as6-agent/frontend-issue-274}"
+TARGET_TASK="${AS6_AGENT_BRANCH_WRITER_TEST_TASK:-.github/agent-tasks/issue-274-frontend.md}"
+
+echo "=== AS6 Agent Branch Writer E2E Readiness Diagnostics ==="
+
+git fetch origin >/dev/null 2>&1 && echo "AGENT_BRANCH_WRITER_E2E_FETCH=OK" || { echo "AGENT_BRANCH_WRITER_E2E_FETCH=FAIL"; fail=1; }
+
+if git ls-remote --heads origin "as6-agent/*" | grep -q "refs/heads/as6-agent/"; then
+  echo "AGENT_BRANCH_WRITER_E2E_REMOTE_BRANCH_DISCOVERY=OK"
+  echo "AGENT_BRANCH_WRITER_E2E_AGENT_BRANCHES=OK"
+else
+  echo "AGENT_BRANCH_WRITER_E2E_REMOTE_BRANCH_DISCOVERY=FAIL"
+  echo "AGENT_BRANCH_WRITER_E2E_AGENT_BRANCHES=FAIL"
+  fail=1
+fi
+
+if git ls-remote --exit-code --heads origin "$TARGET_BRANCH" >/dev/null 2>&1; then
+  echo "AGENT_BRANCH_WRITER_E2E_TARGET_BRANCH=OK:${TARGET_BRANCH}"
+else
+  echo "AGENT_BRANCH_WRITER_E2E_TARGET_BRANCH=FAIL:${TARGET_BRANCH}"
+  fail=1
+fi
+
+test -f "$WF" && echo "AGENT_BRANCH_WRITER_E2E_WORKFLOW_FILE=OK" || { echo "AGENT_BRANCH_WRITER_E2E_WORKFLOW_FILE=FAIL"; fail=1; }
+grep -q "workflow_dispatch" "$WF" && echo "AGENT_BRANCH_WRITER_E2E_WORKFLOW_DISPATCH=OK" || { echo "AGENT_BRANCH_WRITER_E2E_WORKFLOW_DISPATCH=FAIL"; fail=1; }
+grep -q "branch.startsWith(\"as6-agent/\")" "$WF" && echo "AGENT_BRANCH_WRITER_E2E_BRANCH_GUARD=OK" || { echo "AGENT_BRANCH_WRITER_E2E_BRANCH_GUARD=FAIL"; fail=1; }
+grep -q "AS6_BRANCH_WRITER_INPUT_SOURCE" "$WF" && echo "AGENT_BRANCH_WRITER_E2E_INPUT_SOURCE_LOG=OK" || { echo "AGENT_BRANCH_WRITER_E2E_INPUT_SOURCE_LOG=FAIL"; fail=1; }
+grep -q "missing required inputs" "$WF" && echo "AGENT_BRANCH_WRITER_E2E_EMPTY_INPUT_GUARD=OK" || { echo "AGENT_BRANCH_WRITER_E2E_EMPTY_INPUT_GUARD=FAIL"; fail=1; }
+
+if find .github/agent-tasks -type f >/dev/null 2>&1 && [ -n "$(find .github/agent-tasks -type f 2>/dev/null | head -1)" ]; then
+  echo "AGENT_BRANCH_WRITER_E2E_TASK_FILES=OK"
+else
+  echo "AGENT_BRANCH_WRITER_E2E_TASK_FILES=FAIL:none_in_main"
+  fail=1
+fi
+
+if [ -f "$TARGET_TASK" ]; then
+  echo "AGENT_BRANCH_WRITER_E2E_TARGET_TASK=OK:${TARGET_TASK}"
+else
+  echo "AGENT_BRANCH_WRITER_E2E_TARGET_TASK=FAIL:${TARGET_TASK}"
+  fail=1
+fi
+
+echo "AGENT_BRANCH_WRITER_E2E_TEST_BRANCH=${TARGET_BRANCH}"
+echo "AGENT_BRANCH_WRITER_E2E_TEST_TASK=${TARGET_TASK}"
+
+if [ "$fail" -eq 0 ]; then
+  echo "AGENT_BRANCH_WRITER_E2E_READY=OK"
+  echo "AGENT_BRANCH_WRITER_E2E_RESULT=OK"
+  exit 0
+fi
+
+echo "AGENT_BRANCH_WRITER_E2E_READY=NO"
+echo "AGENT_BRANCH_WRITER_E2E_RESULT=FAIL"
+exit 1
