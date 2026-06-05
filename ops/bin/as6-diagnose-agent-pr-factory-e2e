@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+echo "=== AS6 Agent PR Factory E2E Diagnostics ==="
+
+check_file() {
+  local file="$1"
+  local label="$2"
+  test -f "$file" && echo "${label}=OK:${file}" || { echo "${label}=FAIL:${file}"; fail=1; }
+}
+
+check_file ".github/workflows/as6-issue-router.yml" "AGENT_PR_FACTORY_E2E_ISSUE_ROUTER_FILE"
+check_file ".github/workflows/as6-agent-pr-factory.yml" "AGENT_PR_FACTORY_E2E_PR_FACTORY_FILE"
+check_file ".github/workflows/as6-agent-branch-writer.yml" "AGENT_PR_FACTORY_E2E_BRANCH_WRITER_FILE"
+check_file ".github/workflows/as6-codex-review.yml" "AGENT_PR_FACTORY_E2E_CODEX_REVIEW_FILE"
+check_file ".github/workflows/as6-pr-guardian.yml" "AGENT_PR_FACTORY_E2E_ARCH_GUARDIAN_FILE"
+check_file "ops/bin/as6-diagnose-agent-branch-writer-e2e" "AGENT_PR_FACTORY_E2E_BRANCH_WRITER_E2E_DIAG"
+
+grep -q "as6-agent-pr-factory.yml" .github/workflows/as6-issue-router.yml && echo "AGENT_PR_FACTORY_E2E_ROUTER_TO_FACTORY=OK" || { echo "AGENT_PR_FACTORY_E2E_ROUTER_TO_FACTORY=FAIL"; fail=1; }
+grep -q "draft: true" .github/workflows/as6-agent-pr-factory.yml && echo "AGENT_PR_FACTORY_E2E_DRAFT_PR=OK" || { echo "AGENT_PR_FACTORY_E2E_DRAFT_PR=FAIL"; fail=1; }
+grep -q "as6-agent/" .github/workflows/as6-agent-pr-factory.yml && echo "AGENT_PR_FACTORY_E2E_AGENT_BRANCH_PREFIX=OK" || { echo "AGENT_PR_FACTORY_E2E_AGENT_BRANCH_PREFIX=FAIL"; fail=1; }
+grep -q ".github/agent-tasks/" .github/workflows/as6-agent-pr-factory.yml && echo "AGENT_PR_FACTORY_E2E_TASK_FILE_HANDOFF=OK" || { echo "AGENT_PR_FACTORY_E2E_TASK_FILE_HANDOFF=FAIL"; fail=1; }
+grep -q "contents: write" .github/workflows/as6-agent-pr-factory.yml && echo "AGENT_PR_FACTORY_E2E_FACTORY_CONTENTS_WRITE=OK" || { echo "AGENT_PR_FACTORY_E2E_FACTORY_CONTENTS_WRITE=FAIL"; fail=1; }
+grep -q "pull-requests: write" .github/workflows/as6-agent-pr-factory.yml && echo "AGENT_PR_FACTORY_E2E_FACTORY_PR_WRITE=OK" || { echo "AGENT_PR_FACTORY_E2E_FACTORY_PR_WRITE=FAIL"; fail=1; }
+
+MAIN_WRITE_HITS="$(
+  grep -RIn "git push origin main\|refs/heads/main" .github/workflows ops/bin 2>/dev/null \
+    | grep -v "ops/bin/as6-diagnose-agent-pr-factory-e2e" \
+    | grep -v "ops/bin/as6-diagnose-controlled-branch-writer" \
+    | grep -v "ops/bin/as6-diagnose-agent-branch-writer" \
+    | grep -v ".github/workflows/as6-agent-branch-writer.yml" \
+    || true
+)"
+
+echo "AGENT_PR_FACTORY_E2E_MAIN_WRITE_GUARD_SCOPE=workflows_and_ops_bin"
+echo "AGENT_PR_FACTORY_E2E_MAIN_WRITE_GUARD_FALSE_POSITIVE_FILTER=OK"
+
+if [ -n "$MAIN_WRITE_HITS" ]; then
+  echo "AGENT_PR_FACTORY_E2E_MAIN_WRITE_GUARD=FAIL"
+  echo "$MAIN_WRITE_HITS" | head -20
+  fail=1
+else
+  echo "AGENT_PR_FACTORY_E2E_MAIN_WRITE_GUARD=OK"
+fi
+
+./ops/bin/as6-diagnose-agent-branch-writer-e2e >/tmp/as6-agent-branch-writer-e2e.out
+grep -q "AGENT_BRANCH_WRITER_E2E_RESULT=OK" /tmp/as6-agent-branch-writer-e2e.out && echo "AGENT_PR_FACTORY_E2E_BRANCH_WRITER_READY=OK" || { echo "AGENT_PR_FACTORY_E2E_BRANCH_WRITER_READY=FAIL"; cat /tmp/as6-agent-branch-writer-e2e.out; fail=1; }
+
+if [ "$fail" -eq 0 ]; then
+  echo "AGENT_PR_FACTORY_E2E_READY=OK"
+  echo "AGENT_PR_FACTORY_E2E_RESULT=OK"
+  exit 0
+fi
+
+echo "AGENT_PR_FACTORY_E2E_READY=NO"
+echo "AGENT_PR_FACTORY_E2E_RESULT=FAIL"
+exit 1

@@ -49,3 +49,5 @@ exit 1
 # AS6 workflow YAML diagnostic: ops/bin/as6-diagnose-workflow-yaml
 
 # AS6 Agent Branch Writer E2E diagnostic: ops/bin/as6-diagnose-agent-branch-writer-e2e
+
+# AS6 Agent PR Factory E2E diagnostic: ops/bin/as6-diagnose-agent-pr-factory-e2e
