@@ -40,3 +40,7 @@ if [ "$fail" -eq 0 ]; then
   echo "WRITE_MODE_STATUS=DIAGNOSTIC_ONLY"
   echo "WRITE_MODE_NEXT_SAFE_STEP=prepare_explicit_write_agent_workflow"
   exit 0
+fi
+
+echo "WRITE_MODE_RESULT=FAIL"
+exit 1

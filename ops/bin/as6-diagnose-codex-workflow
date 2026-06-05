@@ -19,3 +19,7 @@ grep -Eq "prompt-file: (\.github/codex/prompts/as6-pr-review.md|/tmp/as6-scoped-
 if [ "$fail" -eq 0 ]; then
   echo "CODEX_WORKFLOW_RESULT=OK"
   exit 0
+fi
+
+echo "CODEX_WORKFLOW_RESULT=FAIL"
+exit 1

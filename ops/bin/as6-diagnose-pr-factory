@@ -23,3 +23,7 @@ grep -q "as6-agent-pr-factory.yml" "$ROUTER" && echo "ROUTER_PR_FACTORY_TARGET=O
 if [ "$fail" -eq 0 ]; then
   echo "PR_FACTORY_RESULT=OK"
   exit 0
+fi
+
+echo "PR_FACTORY_RESULT=FAIL"
+exit 1

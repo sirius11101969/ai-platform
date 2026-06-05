@@ -22,3 +22,7 @@ grep -q "AS6_ROUTER_DISPATCH_RESULT=OK" "$WF" && echo "ISSUE_ROUTER_SAFE_LOG_RES
 if [ "$fail" -eq 0 ]; then
   echo "ISSUE_ROUTER_RESULT=OK"
   exit 0
+fi
+
+echo "ISSUE_ROUTER_RESULT=FAIL"
+exit 1

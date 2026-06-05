@@ -33,3 +33,7 @@ if [ "$fail" -eq 0 ]; then
   echo "CONTROLLED_WRITE_STATUS=BOOTSTRAP_DIAGNOSTIC_ONLY"
   echo "CONTROLLED_WRITE_NEXT_SAFE_STEP=add_explicit_agent_branch_write_workflow"
   exit 0
+fi
+
+echo "CONTROLLED_WRITE_RESULT=FAIL"
+exit 1

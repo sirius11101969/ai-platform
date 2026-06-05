@@ -55,5 +55,3 @@ exit 1
 # AS6 GitHub Actions Node 24 readiness diagnostic: ops/bin/as6-diagnose-actions-node24
 
 # AS6 GitHub Actions Node 24 migration diagnostic: ops/bin/as6-diagnose-actions-node24-migration
-
-# AS6 diagnostic flow/dead-code detector: ops/bin/as6-diagnose-diagnostic-flow

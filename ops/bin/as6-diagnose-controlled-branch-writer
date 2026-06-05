@@ -55,3 +55,7 @@ if [ "$fail" -eq 0 ]; then
   echo "BRANCH_WRITER_STATUS=DIAGNOSTIC_ONLY"
   echo "BRANCH_WRITER_NEXT_SAFE_STEP=create_explicit_as6_agent_branch_writer_workflow"
   exit 0
+fi
+
+echo "BRANCH_WRITER_RESULT=FAIL"
+exit 1
