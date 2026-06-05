@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+echo "=== AS6 Diagnose All ==="
+
+run_check() {
+  local name="$1"
+  local cmd="$2"
+
+  echo
+  echo "=== RUN: ${name} ==="
+
+  if bash -lc "$cmd"; then
+    echo "AS6_DIAGNOSE_ALL_CHECK=OK:${name}"
+  else
+    echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:${name}"
+    fail=1
+  fi
+}
+
+run_check "git-main-sync" "./ops/bin/as6-diagnose-git-main-sync"
+run_check "diagnostic-coverage" "./ops/bin/as6-diagnose-diagnostic-coverage"
+run_check "diagnostic-flow" "./ops/bin/as6-diagnose-diagnostic-flow"
+run_check "workflow-yaml" "./ops/bin/as6-diagnose-workflow-yaml"
+run_check "actions-node24" "./ops/bin/as6-diagnose-actions-node24"
+run_check "actions-node24-migration" "./ops/bin/as6-diagnose-actions-node24-migration"
+run_check "agent-branch-writer" "./ops/bin/as6-diagnose-agent-branch-writer"
+run_check "agent-branch-writer-e2e" "./ops/bin/as6-diagnose-agent-branch-writer-e2e"
+run_check "agent-pr-factory-e2e" "./ops/bin/as6-diagnose-agent-pr-factory-e2e"
+run_check "controlled-branch-writer" "./ops/bin/as6-diagnose-controlled-branch-writer"
+run_check "controlled-write-mode" "./ops/bin/as6-diagnose-controlled-write-mode"
+run_check "issue-router" "./ops/bin/as6-diagnose-issue-router"
+run_check "pr-factory" "./ops/bin/as6-diagnose-pr-factory"
+run_check "codex-workflow" "./ops/bin/as6-diagnose-codex-workflow"
+run_check "ai-workforce-status" "./ops/bin/as6-ai-workforce-status"
+
+echo
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_DIAGNOSE_ALL_RESULT=OK"
+  exit 0
+fi
+
+echo "AS6_DIAGNOSE_ALL_RESULT=FAIL"
+exit 1
