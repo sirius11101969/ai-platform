@@ -47,3 +47,5 @@ exit 1
 # AS6 v9 writer diagnostic: ops/bin/as6-diagnose-agent-branch-writer
 
 # AS6 workflow YAML diagnostic: ops/bin/as6-diagnose-workflow-yaml
+
+# AS6 Agent Branch Writer E2E diagnostic: ops/bin/as6-diagnose-agent-branch-writer-e2e
