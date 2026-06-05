@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+OUT="/tmp/as6-platform-command-center.out"
+
+echo "=== AS6 Platform Command Center ==="
+
+if ./ops/bin/as6-owner-dashboard >"$OUT" 2>&1; then
+  OWNER_RESULT="OK"
+else
+  OWNER_RESULT="FAIL"
+fi
+
+cat "$OUT"
+
+echo
+echo "=== AS6 Platform Command Summary ==="
+
+platform="$(grep -E '^PLATFORM_STATUS=' "$OUT" | tail -1 | cut -d= -f2- || true)"
+workforce="$(grep -E '^WORKFORCE_STATUS=' "$OUT" | tail -1 | cut -d= -f2- || true)"
+root_cause="$(grep -E '^ROOT_CAUSE_STATUS=' "$OUT" | tail -1 | cut -d= -f2- || true)"
+next_action="$(grep -E '^NEXT_ACTION=' "$OUT" | tail -1 | cut -d= -f2- || true)"
+next_command="$(grep -E '^NEXT_COMMAND=' "$OUT" | tail -1 | cut -d= -f2- || true)"
+
+echo "PLATFORM_COMMAND_CENTER_STATUS=${platform:-UNKNOWN}"
+echo "PLATFORM_COMMAND_CENTER_OWNER_DASHBOARD=${OWNER_RESULT}"
+echo "PLATFORM_COMMAND_CENTER_WORKFORCE=${workforce:-UNKNOWN}"
+echo "PLATFORM_COMMAND_CENTER_ROOT_CAUSE=${root_cause:-unknown}"
+echo "PLATFORM_COMMAND_CENTER_SECURITY=see_secret_scan_before_commit"
+echo "PLATFORM_COMMAND_CENTER_DEPLOY=not_checked_yet"
+echo "PLATFORM_COMMAND_CENTER_NEXT_ACTION=${next_action:-inspect_owner_dashboard}"
+echo "PLATFORM_COMMAND_CENTER_NEXT_COMMAND=${next_command:-./ops/bin/as6-owner-dashboard}"
+
+if [ "$OWNER_RESULT" = "OK" ]; then
+  echo "AS6_PLATFORM_COMMAND_CENTER_RESULT=OK"
+  exit 0
+fi
+
+echo "AS6_PLATFORM_COMMAND_CENTER_RESULT=FAIL"
+exit 1

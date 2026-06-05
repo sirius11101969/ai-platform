@@ -67,3 +67,5 @@ exit 1
 # AS6 root cause report: ops/bin/as6-root-cause-report
 
 # AS6 owner dashboard: ops/bin/as6-owner-dashboard
+
+# AS6 platform command center: ops/bin/as6-platform-command-center
