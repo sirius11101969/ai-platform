@@ -73,15 +73,15 @@ jobs:
           mkdir -p .github/agent-writer
 
           cat > .github/agent-writer/last-run.md <<EOF2
-# AS6 Agent Branch Writer
+          # AS6 Agent Branch Writer
 
-Branch: ${branch}
+          Branch: ${branch}
 
-Status: controlled branch writer executed.
+          Status: controlled branch writer executed.
 
-Note:
-${note}
-EOF2
+          Note:
+          ${note}
+          EOF2
 
           echo "AS6_BRANCH_WRITER_FILE_RESULT=OK"
 

@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+echo "=== AS6 Workflow YAML Diagnostics ==="
+
+python3 - <<'PY' || exit 1
+from pathlib import Path
+import sys
+
+try:
+    import yaml
+except Exception as e:
+    print("WORKFLOW_YAML_PYYAML=FAIL")
+    print(f"WORKFLOW_YAML_ERROR={type(e).__name__}")
+    sys.exit(1)
+
+fail = False
+for path in sorted(Path(".github/workflows").glob("*.yml")):
+    try:
+        yaml.safe_load(path.read_text())
+        print(f"WORKFLOW_YAML_PARSE=OK:{path}")
+    except Exception as e:
+        print(f"WORKFLOW_YAML_PARSE=FAIL:{path}:{e}")
+        fail = True
+
+if fail:
+    print("WORKFLOW_YAML_RESULT=FAIL")
+    sys.exit(1)
+
+print("WORKFLOW_YAML_RESULT=OK")
+PY
+
+WF=".github/workflows/as6-agent-branch-writer.yml"
+
+if [ -f "$WF" ]; then
+  grep -q "cat > .github/agent-writer/last-run.md <<EOF2" "$WF" && echo "WORKFLOW_YAML_BRANCH_WRITER_HEREDOC=OK" || { echo "WORKFLOW_YAML_BRANCH_WRITER_HEREDOC=FAIL"; fail=1; }
+  awk '
+    /cat > \.github\/agent-writer\/last-run\.md <<EOF2/ {inblock=1; next}
+    inblock && /^EOF2$/ {bad=1}
+    inblock && /^[^[:space:]]/ && $0 !~ /^$/ {bad=1}
+    inblock && /^[[:space:]]+EOF2$/ {inblock=0}
+    END {exit bad ? 1 : 0}
+  ' "$WF" && echo "WORKFLOW_YAML_BRANCH_WRITER_HEREDOC_INDENT=OK" || { echo "WORKFLOW_YAML_BRANCH_WRITER_HEREDOC_INDENT=FAIL"; fail=1; }
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "WORKFLOW_YAML_DIAGNOSTIC_RESULT=OK"
+  exit 0
+fi
+
+echo "WORKFLOW_YAML_DIAGNOSTIC_RESULT=FAIL"
+exit 1
