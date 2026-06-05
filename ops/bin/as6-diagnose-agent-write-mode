@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+BACKEND=".github/workflows/as6-backend-agent.yml"
+FRONTEND=".github/workflows/as6-frontend-agent.yml"
+DEVOPS=".github/workflows/as6-devops-agent.yml"
+FACTORY=".github/workflows/as6-agent-pr-factory.yml"
+
+echo "=== AS6 Agent Write Mode Diagnostics ==="
+
+for wf in "$BACKEND" "$FRONTEND" "$DEVOPS"; do
+  test -f "$wf" && echo "WRITE_MODE_AGENT_FILE=OK:$wf" || { echo "WRITE_MODE_AGENT_FILE=FAIL:$wf"; fail=1; continue; }
+
+  grep -q "workflow_dispatch" "$wf" && echo "WRITE_MODE_AGENT_TRIGGER=OK:$wf" || { echo "WRITE_MODE_AGENT_TRIGGER=FAIL:$wf"; fail=1; }
+  grep -q "task:" "$wf" && echo "WRITE_MODE_AGENT_TASK_INPUT=OK:$wf" || { echo "WRITE_MODE_AGENT_TASK_INPUT=FAIL:$wf"; fail=1; }
+  grep -q "contents: read" "$wf" && echo "WRITE_MODE_AGENT_READ_ONLY_CONTENTS=OK:$wf" || { echo "WRITE_MODE_AGENT_READ_ONLY_CONTENTS=FAIL:$wf"; fail=1; }
+  grep -q "sandbox: read-only" "$wf" && echo "WRITE_MODE_AGENT_SANDBOX_READ_ONLY=OK:$wf" || { echo "WRITE_MODE_AGENT_SANDBOX_READ_ONLY=FAIL:$wf"; fail=1; }
+
+  if grep -q "contents: write" "$wf"; then
+    echo "WRITE_MODE_AGENT_WRITE_ENABLED=FAIL:$wf"
+    fail=1
+  else
+    echo "WRITE_MODE_AGENT_WRITE_ENABLED=NO:$wf"
+  fi
+done
+
+test -f "$FACTORY" && echo "WRITE_MODE_FACTORY_FILE=OK" || { echo "WRITE_MODE_FACTORY_FILE=FAIL"; fail=1; }
+
+grep -q "as6-agent/" "$FACTORY" && echo "WRITE_MODE_BRANCH_HANDOFF=OK" || { echo "WRITE_MODE_BRANCH_HANDOFF=FAIL"; fail=1; }
+grep -q ".github/agent-tasks" "$FACTORY" && echo "WRITE_MODE_TASK_HANDOFF=OK" || { echo "WRITE_MODE_TASK_HANDOFF=FAIL"; fail=1; }
+grep -q "draft: true" "$FACTORY" && echo "WRITE_MODE_DRAFT_PR_SAFETY=OK" || { echo "WRITE_MODE_DRAFT_PR_SAFETY=FAIL"; fail=1; }
+grep -q "AS6_PR_FACTORY_RESULT=OK" "$FACTORY" && echo "WRITE_MODE_FACTORY_SAFE_LOGS=OK" || { echo "WRITE_MODE_FACTORY_SAFE_LOGS=FAIL"; fail=1; }
+
+if [ "$fail" -eq 0 ]; then
+  echo "WRITE_MODE_RESULT=OK"
+  echo "WRITE_MODE_STATUS=DIAGNOSTIC_ONLY"
+  echo "WRITE_MODE_NEXT_SAFE_STEP=prepare_explicit_write_agent_workflow"
+  exit 0
+fi
+
+echo "WRITE_MODE_RESULT=FAIL"
+exit 1
