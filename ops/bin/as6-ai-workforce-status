@@ -61,3 +61,5 @@ exit 1
 # AS6 registered diagnostic: ops/bin/as6-diagnose-git-main-sync
 
 # AS6 registered diagnostic aggregator: ops/bin/as6-diagnose-all
+
+# AS6 root cause engine: ops/bin/as6-root-cause

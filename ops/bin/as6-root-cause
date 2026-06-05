@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+OUT="/tmp/as6-root-cause-diagnose-all.out"
+
+echo "=== AS6 Root Cause Engine ==="
+
+if ./ops/bin/as6-diagnose-all >"$OUT" 2>&1; then
+  cat "$OUT"
+  echo
+  echo "ROOT_CAUSE=none"
+  echo "AFFECTED_COMPONENT=none"
+  echo "SAFE_TO_FIX=no_action_needed"
+  echo "RECOMMENDED_ACTION=continue"
+  echo "AS6_ROOT_CAUSE_RESULT=OK"
+  exit 0
+fi
+
+cat "$OUT"
+
+echo
+echo "=== AS6 Root Cause Summary ==="
+
+grep -E "FAIL|WARN|ERROR" "$OUT" | head -50 || true
+
+FIRST_FAIL="$(grep -E "AS6_DIAGNOSE_ALL_CHECK=FAIL|RESULT=FAIL|=FAIL|ERROR" "$OUT" | head -1 || true)"
+
+echo "ROOT_CAUSE=${FIRST_FAIL:-unknown}"
+echo "AFFECTED_COMPONENT=diagnostics"
+echo "SAFE_TO_FIX=requires_review"
+echo "RECOMMENDED_ACTION=inspect_first_fail_and_add_or_update_diagnostics"
+echo "AS6_ROOT_CAUSE_RESULT=FAIL"
+
+exit 1
