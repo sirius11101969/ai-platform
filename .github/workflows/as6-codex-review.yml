@@ -26,12 +26,48 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: false
+          fetch-depth: 0
+
+      - name: Prepare scoped PR diff
+        if: github.event_name == 'pull_request'
+        run: |
+          set -euo pipefail
+          git diff --name-status "${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }}" > /tmp/as6-pr-files.txt
+          git diff --stat "${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }}" > /tmp/as6-pr-stat.txt
+          git diff -- "${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }}" > /tmp/as6-pr-diff.txt || true
+
+          {
+            echo "# AS6 Scoped PR Diff"
+            echo
+            echo "Base: ${{ github.event.pull_request.base.sha }}"
+            echo "Head: ${{ github.event.pull_request.head.sha }}"
+            echo
+            echo "## Changed files"
+            cat /tmp/as6-pr-files.txt
+            echo
+            echo "## Diff stat"
+            cat /tmp/as6-pr-stat.txt
+            echo
+            echo "## Diff"
+            head -c 60000 /tmp/as6-pr-diff.txt
+          } > /tmp/as6-scoped-pr-review.md
+
+          echo "AS6_CODEX_REVIEW_SCOPED_DIFF=OK"
+          wc -c /tmp/as6-scoped-pr-review.md
 
       - name: Run AS6 Codex reviewer
+        id: codex_review
+        continue-on-error: true
         uses: openai/codex-action@v1
         with:
           openai-api-key: ${{ secrets.OPENAI_API_KEY }}
-          prompt-file: .github/codex/prompts/as6-pr-review.md
+          prompt-file: /tmp/as6-scoped-pr-review.md
           sandbox: read-only
           safety-strategy: drop-sudo
           codex-args: '["--ephemeral"]'
+
+      - name: Codex review fail-soft notice
+        if: steps.codex_review.outcome == 'failure'
+        run: |
+          echo "AS6_CODEX_REVIEW_FAIL_SOFT=OK"
+          echo "Codex Review failed, likely due to quota or provider availability. Guardian remains required."
