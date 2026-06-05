@@ -54,8 +54,3 @@ if [ "$fail" -eq 0 ]; then
   echo "AGENT_PR_FACTORY_E2E_READY=OK"
   echo "AGENT_PR_FACTORY_E2E_RESULT=OK"
   exit 0
-fi
-
-echo "AGENT_PR_FACTORY_E2E_READY=NO"
-echo "AGENT_PR_FACTORY_E2E_RESULT=FAIL"
-exit 1

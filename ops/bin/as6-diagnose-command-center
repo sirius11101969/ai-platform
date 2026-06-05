@@ -57,8 +57,3 @@ fi
 if [[ "$failures" -eq 0 ]]; then
   echo "COMMAND_CENTER_RESULT=OK"
   exit 0
-fi
-
-echo "COMMAND_CENTER_RESULT=FAIL"
-echo "COMMAND_CENTER_FAILURES=$failures"
-exit 1

@@ -37,17 +37,3 @@ if grep -RIn "actions/github-script@v7\|actions/checkout@v4" .github/workflows >
   echo "NODE24_MIGRATION_COMPLETE=FAIL"
   cat /tmp/as6-node24-legacy.out
   exit 1
-else
-  echo "NODE24_MIGRATION_COMPLETE=OK"
-fi
-
-grep -RIn "actions/github-script@v8" .github/workflows >/dev/null 2>&1 && echo "ACTIONS_GITHUB_SCRIPT_V8=OK" || { echo "ACTIONS_GITHUB_SCRIPT_V8=FAIL"; fail=1; }
-grep -RIn "actions/checkout@v6" .github/workflows >/dev/null 2>&1 && echo "ACTIONS_CHECKOUT_V6=OK" || { echo "ACTIONS_CHECKOUT_V6=FAIL"; fail=1; }
-
-if [ "$fail" -eq 0 ]; then
-  echo "NODE24_MIGRATION_RESULT=OK"
-  exit 0
-fi
-
-echo "NODE24_MIGRATION_RESULT=FAIL"
-exit 1

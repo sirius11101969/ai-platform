@@ -50,7 +50,3 @@ fi
 if [ "$fail" -eq 0 ]; then
   echo "WORKFLOW_YAML_DIAGNOSTIC_RESULT=OK"
   exit 0
-fi
-
-echo "WORKFLOW_YAML_DIAGNOSTIC_RESULT=FAIL"
-exit 1

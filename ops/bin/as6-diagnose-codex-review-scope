@@ -17,7 +17,3 @@ grep -q "continue-on-error: true" "$WF" && echo "CODEX_REVIEW_FAIL_SOFT=OK" || {
 if [ "$fail" -eq 0 ]; then
   echo "CODEX_REVIEW_SCOPE_RESULT=OK"
   exit 0
-fi
-
-echo "CODEX_REVIEW_SCOPE_RESULT=FAIL"
-exit 1
