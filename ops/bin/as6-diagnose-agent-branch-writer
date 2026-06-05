@@ -12,6 +12,10 @@ test -f "$WF" && echo "AGENT_BRANCH_WRITER_FILE=OK" || { echo "AGENT_BRANCH_WRIT
 
 grep -q "workflow_dispatch" "$WF" && echo "AGENT_BRANCH_WRITER_TRIGGER=OK" || { echo "AGENT_BRANCH_WRITER_TRIGGER=FAIL"; fail=1; }
 grep -q "contents: write" "$WF" && echo "AGENT_BRANCH_WRITER_CONTENTS_WRITE=OK" || { echo "AGENT_BRANCH_WRITER_CONTENTS_WRITE=FAIL"; fail=1; }
+grep -q "context.payload.*inputs" "$WF" && echo "AGENT_BRANCH_WRITER_EVENT_INPUTS=OK" || { echo "AGENT_BRANCH_WRITER_EVENT_INPUTS=FAIL"; fail=1; }
+grep -q "AS6_BRANCH_WRITER_INPUT_SOURCE" "$WF" && echo "AGENT_BRANCH_WRITER_INPUT_SOURCE_LOG=OK" || { echo "AGENT_BRANCH_WRITER_INPUT_SOURCE_LOG=FAIL"; fail=1; }
+grep -q "core.getInput" "$WF" && echo "AGENT_BRANCH_WRITER_INPUT_FALLBACK=OK" || { echo "AGENT_BRANCH_WRITER_INPUT_FALLBACK=FAIL"; fail=1; }
+grep -q "missing required inputs" "$WF" && echo "AGENT_BRANCH_WRITER_EMPTY_INPUT_GUARD=OK" || { echo "AGENT_BRANCH_WRITER_EMPTY_INPUT_GUARD=FAIL"; fail=1; }
 grep -q "branch.startsWith(\"as6-agent/\")" "$WF" && echo "AGENT_BRANCH_WRITER_JS_BRANCH_GUARD=OK" || { echo "AGENT_BRANCH_WRITER_JS_BRANCH_GUARD=FAIL"; fail=1; }
 grep -q "as6-agent/\*" "$WF" && echo "AGENT_BRANCH_WRITER_SHELL_BRANCH_GUARD=OK" || { echo "AGENT_BRANCH_WRITER_SHELL_BRANCH_GUARD=FAIL"; fail=1; }
 grep -q "git push origin \"HEAD:\${{ inputs.branch }}\"" "$WF" && echo "AGENT_BRANCH_WRITER_TARGETED_PUSH=OK" || { echo "AGENT_BRANCH_WRITER_TARGETED_PUSH=FAIL"; fail=1; }
