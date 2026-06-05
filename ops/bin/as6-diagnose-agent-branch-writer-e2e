@@ -12,9 +12,11 @@ echo "=== AS6 Agent Branch Writer E2E Readiness Diagnostics ==="
 
 git fetch origin >/dev/null 2>&1 && echo "AGENT_BRANCH_WRITER_E2E_FETCH=OK" || { echo "AGENT_BRANCH_WRITER_E2E_FETCH=FAIL"; fail=1; }
 
-if git branch -r | grep -q "origin/as6-agent/"; then
+if git ls-remote --heads origin "as6-agent/*" | grep -q "refs/heads/as6-agent/"; then
+  echo "AGENT_BRANCH_WRITER_E2E_REMOTE_BRANCH_DISCOVERY=OK"
   echo "AGENT_BRANCH_WRITER_E2E_AGENT_BRANCHES=OK"
 else
+  echo "AGENT_BRANCH_WRITER_E2E_REMOTE_BRANCH_DISCOVERY=FAIL"
   echo "AGENT_BRANCH_WRITER_E2E_AGENT_BRANCHES=FAIL"
   fail=1
 fi
