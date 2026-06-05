@@ -58,3 +58,4 @@ exit 1
 
 # AS6 diagnostic coverage detector: ops/bin/as6-diagnose-diagnostic-coverage
 \n# AS6 registered diagnostic: ops/bin/as6-diagnose-codex-review-scope\n\n# AS6 registered diagnostic: ops/bin/as6-diagnose-command-center\n\n# AS6 registered diagnostic: ops/bin/as6-diagnose-diagnostic-flow\n\n# AS6 registered diagnostic: ops/bin/as6-diagnose-issue-router\n\n# AS6 registered diagnostic: ops/bin/as6-diagnose-pr-factory\n
+# AS6 registered diagnostic: ops/bin/as6-diagnose-git-main-sync

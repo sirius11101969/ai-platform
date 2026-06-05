@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+echo "=== AS6 Git Main Sync Diagnostics ==="
+
+git fetch origin >/dev/null 2>&1 || true
+
+LOCAL="$(git rev-parse main 2>/dev/null || echo unknown)"
+REMOTE="$(git rev-parse origin/main 2>/dev/null || echo unknown)"
+
+echo "GIT_MAIN_LOCAL=$LOCAL"
+echo "GIT_MAIN_REMOTE=$REMOTE"
+
+if [ "$LOCAL" = "$REMOTE" ]; then
+  echo "GIT_MAIN_SYNC=OK"
+  echo "GIT_MAIN_SYNC_RESULT=OK"
+  exit 0
+fi
+
+echo "GIT_MAIN_SYNC=FAIL"
+echo "GIT_MAIN_SYNC_RESULT=FAIL"
+exit 1
