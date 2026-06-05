@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+echo "=== AS6 Controlled Write Mode Diagnostics ==="
+
+for wf in \
+  .github/workflows/as6-backend-agent.yml \
+  .github/workflows/as6-frontend-agent.yml \
+  .github/workflows/as6-devops-agent.yml
+do
+  test -f "$wf" && echo "CONTROLLED_WRITE_AGENT_FILE=OK:$wf" || { echo "CONTROLLED_WRITE_AGENT_FILE=FAIL:$wf"; fail=1; continue; }
+  grep -q "contents: read" "$wf" && echo "CONTROLLED_WRITE_DEFAULT_READ_ONLY=OK:$wf" || { echo "CONTROLLED_WRITE_DEFAULT_READ_ONLY=FAIL:$wf"; fail=1; }
+  grep -q "sandbox: read-only" "$wf" && echo "CONTROLLED_WRITE_SANDBOX_READ_ONLY=OK:$wf" || { echo "CONTROLLED_WRITE_SANDBOX_READ_ONLY=FAIL:$wf"; fail=1; }
+done
+
+grep -q "as6-agent/" .github/workflows/as6-agent-pr-factory.yml && echo "CONTROLLED_WRITE_BRANCH_PREFIX=OK" || { echo "CONTROLLED_WRITE_BRANCH_PREFIX=FAIL"; fail=1; }
+grep -q "draft: true" .github/workflows/as6-agent-pr-factory.yml && echo "CONTROLLED_WRITE_DRAFT_PR=OK" || { echo "CONTROLLED_WRITE_DRAFT_PR=FAIL"; fail=1; }
+grep -q "AS6_PR_FACTORY_INPUT_RESULT=OK" .github/workflows/as6-agent-pr-factory.yml && echo "CONTROLLED_WRITE_INPUT_GUARD=OK" || { echo "CONTROLLED_WRITE_INPUT_GUARD=FAIL"; fail=1; }
+
+if grep -RIn "contents: write" .github/workflows/as6-backend-agent.yml .github/workflows/as6-frontend-agent.yml .github/workflows/as6-devops-agent.yml >/dev/null 2>&1; then
+  echo "CONTROLLED_WRITE_AGENT_WRITE_NOW=FAIL"
+  fail=1
+else
+  echo "CONTROLLED_WRITE_AGENT_WRITE_NOW=NO"
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "CONTROLLED_WRITE_RESULT=OK"
+  echo "CONTROLLED_WRITE_STATUS=BOOTSTRAP_DIAGNOSTIC_ONLY"
+  echo "CONTROLLED_WRITE_NEXT_SAFE_STEP=add_explicit_agent_branch_write_workflow"
+  exit 0
+fi
+
+echo "CONTROLLED_WRITE_RESULT=FAIL"
+exit 1
