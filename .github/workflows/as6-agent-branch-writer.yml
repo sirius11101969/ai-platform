@@ -32,11 +32,21 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const branch = core.getInput("branch").trim();
-            const taskFile = core.getInput("task_file").trim();
+            const eventInputs = (context.payload && context.payload.inputs) || {};
 
+            const branch = String(eventInputs.branch || core.getInput("branch") || "").trim();
+            const taskFile = String(eventInputs.task_file || core.getInput("task_file") || "").trim();
+
+            console.log(`AS6_BRANCH_WRITER_INPUT_SOURCE=${Object.keys(eventInputs).length ? "event.inputs" : "core.getInput"}`);
             console.log(`AS6_BRANCH_WRITER_BRANCH=${branch}`);
             console.log(`AS6_BRANCH_WRITER_TASK_FILE=${taskFile}`);
+
+            if (!branch || !taskFile) {
+              console.log("AS6_BRANCH_WRITER_INPUT_RESULT=FAIL");
+              console.log(`AS6_BRANCH_WRITER_BRANCH_PRESENT=${branch ? "YES" : "NO"}`);
+              console.log(`AS6_BRANCH_WRITER_TASK_FILE_PRESENT=${taskFile ? "YES" : "NO"}`);
+              throw new Error("AS6 Branch Writer missing required inputs; refusing to write.");
+            }
 
             if (!branch.startsWith("as6-agent/")) {
               throw new Error("AS6 Branch Writer refuses to write outside as6-agent/* branches.");
