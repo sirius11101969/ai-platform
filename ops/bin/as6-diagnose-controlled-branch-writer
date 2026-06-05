@@ -22,12 +22,24 @@ grep -q 'No secret exposure' "$FACTORY" && echo "BRANCH_WRITER_SECRET_RULE=OK" |
 grep -q 'draft == false' "$REVIEW" && echo "BRANCH_WRITER_REVIEW_AFTER_READY=OK" || { echo "BRANCH_WRITER_REVIEW_AFTER_READY=FAIL"; fail=1; }
 grep -q 'sandbox: read-only' "$REVIEW" && echo "BRANCH_WRITER_REVIEW_READ_ONLY=OK" || { echo "BRANCH_WRITER_REVIEW_READ_ONLY=FAIL"; fail=1; }
 
-if grep -RIn 'refs/heads/main\|branch.*main\|git push origin main' .github/workflows ops/bin \
-  | grep -v 'ops/bin/as6-diagnose-controlled-branch-writer' >/dev/null 2>&1; then
+MAIN_WRITE_HITS="$(
+  grep -RIn 'refs/heads/main\|branch.*main\|git push origin main' .github/workflows ops/bin 2>/dev/null \
+    | grep -v 'ops/bin/as6-diagnose-controlled-branch-writer' \
+    | grep -v '.github/workflows/as6-agent-branch-writer.yml' \
+    || true
+)"
+
+if [ -n "$MAIN_WRITE_HITS" ]; then
   echo "BRANCH_WRITER_MAIN_WRITE_GUARD=FAIL"
+  echo "$MAIN_WRITE_HITS" | head -20
   fail=1
 else
   echo "BRANCH_WRITER_MAIN_WRITE_GUARD=OK"
+fi
+
+if [ -f ".github/workflows/as6-agent-branch-writer.yml" ]; then
+  grep -q 'branch.startsWith("as6-agent/")' .github/workflows/as6-agent-branch-writer.yml && echo "BRANCH_WRITER_EXPLICIT_WORKFLOW_BRANCH_GUARD=OK" || { echo "BRANCH_WRITER_EXPLICIT_WORKFLOW_BRANCH_GUARD=FAIL"; fail=1; }
+  grep -q 'git push origin "HEAD:${{ inputs.branch }}"' .github/workflows/as6-agent-branch-writer.yml && echo "BRANCH_WRITER_EXPLICIT_WORKFLOW_TARGETED_PUSH=OK" || { echo "BRANCH_WRITER_EXPLICIT_WORKFLOW_TARGETED_PUSH=FAIL"; fail=1; }
 fi
 
 if grep -RIn 'contents: write' .github/workflows/as6-backend-agent.yml .github/workflows/as6-frontend-agent.yml .github/workflows/as6-devops-agent.yml >/dev/null 2>&1; then
