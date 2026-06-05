@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+echo "=== AS6 Diagnostic Flow Diagnostics ==="
+
+python3 - <<'PY'
+from pathlib import Path
+import sys
+
+fail = False
+
+for path in sorted(Path("ops/bin").glob("as6-diagnose-*")):
+    lines = path.read_text(errors="ignore").splitlines()
+    for i, line in enumerate(lines):
+        stripped = line.strip()
+        if stripped.startswith("exit ") and i + 1 < len(lines):
+            rest = [x.strip() for x in lines[i+1:] if x.strip() and not x.strip().startswith("#")]
+            if rest:
+                print(f"DIAGNOSTIC_FLOW_UNREACHABLE_AFTER_EXIT=FAIL:{path}:{i+1}")
+                fail = True
+                break
+
+if fail:
+    print("DIAGNOSTIC_FLOW_RESULT=FAIL")
+    sys.exit(1)
+
+print("DIAGNOSTIC_FLOW_UNREACHABLE_AFTER_EXIT=OK")
+print("DIAGNOSTIC_FLOW_RESULT=OK")
+PY
+
+STATUS="ops/bin/as6-ai-workforce-status"
+
+if [ -f "$STATUS" ]; then
+  echo "DIAGNOSTIC_FLOW_STATUS_FILE=OK"
+else
+  echo "DIAGNOSTIC_FLOW_STATUS_FILE=FAIL"
+  exit 1
+fi
+
+echo "DIAGNOSTIC_FLOW_STATUS_INTEGRATION=DIAGNOSTIC_ONLY"
