@@ -30,9 +30,6 @@ grep -RIn 'actions/github-script@' .github/workflows >/dev/null 2>&1 && echo "NO
 grep -RIn 'actions/checkout@' .github/workflows >/dev/null 2>&1 && echo "NODE24_MIGRATION_CHECKOUT_PRESENT=OK" || echo "NODE24_MIGRATION_CHECKOUT_PRESENT=NONE"
 
 echo "NODE24_MIGRATION_STATUS=DIAGNOSTIC_ONLY"
-echo "NODE24_MIGRATION_RESULT=OK"
-
-exit "$fail"
 
 echo "=== AS6 Node 24 Migration Completion Check ==="
 
@@ -44,5 +41,13 @@ else
   echo "NODE24_MIGRATION_COMPLETE=OK"
 fi
 
-grep -RIn "actions/github-script@v8" .github/workflows >/dev/null 2>&1 && echo "ACTIONS_GITHUB_SCRIPT_V8=OK" || echo "ACTIONS_GITHUB_SCRIPT_V8=NONE"
-grep -RIn "actions/checkout@v6" .github/workflows >/dev/null 2>&1 && echo "ACTIONS_CHECKOUT_V6=OK" || echo "ACTIONS_CHECKOUT_V6=NONE"
+grep -RIn "actions/github-script@v8" .github/workflows >/dev/null 2>&1 && echo "ACTIONS_GITHUB_SCRIPT_V8=OK" || { echo "ACTIONS_GITHUB_SCRIPT_V8=FAIL"; fail=1; }
+grep -RIn "actions/checkout@v6" .github/workflows >/dev/null 2>&1 && echo "ACTIONS_CHECKOUT_V6=OK" || { echo "ACTIONS_CHECKOUT_V6=FAIL"; fail=1; }
+
+if [ "$fail" -eq 0 ]; then
+  echo "NODE24_MIGRATION_RESULT=OK"
+  exit 0
+fi
+
+echo "NODE24_MIGRATION_RESULT=FAIL"
+exit 1
