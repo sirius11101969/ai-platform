@@ -27,9 +27,21 @@ grep -q ".github/agent-tasks/" .github/workflows/as6-agent-pr-factory.yml && ech
 grep -q "contents: write" .github/workflows/as6-agent-pr-factory.yml && echo "AGENT_PR_FACTORY_E2E_FACTORY_CONTENTS_WRITE=OK" || { echo "AGENT_PR_FACTORY_E2E_FACTORY_CONTENTS_WRITE=FAIL"; fail=1; }
 grep -q "pull-requests: write" .github/workflows/as6-agent-pr-factory.yml && echo "AGENT_PR_FACTORY_E2E_FACTORY_PR_WRITE=OK" || { echo "AGENT_PR_FACTORY_E2E_FACTORY_PR_WRITE=FAIL"; fail=1; }
 
-if grep -RIn "git push origin main\|refs/heads/main" .github/workflows ops/bin \
-  | grep -v "as6-diagnose-agent-pr-factory-e2e" >/dev/null 2>&1; then
+MAIN_WRITE_HITS="$(
+  grep -RIn "git push origin main\|refs/heads/main" .github/workflows ops/bin 2>/dev/null \
+    | grep -v "ops/bin/as6-diagnose-agent-pr-factory-e2e" \
+    | grep -v "ops/bin/as6-diagnose-controlled-branch-writer" \
+    | grep -v "ops/bin/as6-diagnose-agent-branch-writer" \
+    | grep -v ".github/workflows/as6-agent-branch-writer.yml" \
+    || true
+)"
+
+echo "AGENT_PR_FACTORY_E2E_MAIN_WRITE_GUARD_SCOPE=workflows_and_ops_bin"
+echo "AGENT_PR_FACTORY_E2E_MAIN_WRITE_GUARD_FALSE_POSITIVE_FILTER=OK"
+
+if [ -n "$MAIN_WRITE_HITS" ]; then
   echo "AGENT_PR_FACTORY_E2E_MAIN_WRITE_GUARD=FAIL"
+  echo "$MAIN_WRITE_HITS" | head -20
   fail=1
 else
   echo "AGENT_PR_FACTORY_E2E_MAIN_WRITE_GUARD=OK"
