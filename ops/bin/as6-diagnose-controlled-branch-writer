@@ -22,7 +22,8 @@ grep -q 'No secret exposure' "$FACTORY" && echo "BRANCH_WRITER_SECRET_RULE=OK" |
 grep -q 'draft == false' "$REVIEW" && echo "BRANCH_WRITER_REVIEW_AFTER_READY=OK" || { echo "BRANCH_WRITER_REVIEW_AFTER_READY=FAIL"; fail=1; }
 grep -q 'sandbox: read-only' "$REVIEW" && echo "BRANCH_WRITER_REVIEW_READ_ONLY=OK" || { echo "BRANCH_WRITER_REVIEW_READ_ONLY=FAIL"; fail=1; }
 
-if grep -RIn 'refs/heads/main\|branch.*main\|git push origin main' .github/workflows ops/bin >/dev/null 2>&1; then
+if grep -RIn 'refs/heads/main\|branch.*main\|git push origin main' .github/workflows ops/bin \
+  | grep -v 'ops/bin/as6-diagnose-controlled-branch-writer' >/dev/null 2>&1; then
   echo "BRANCH_WRITER_MAIN_WRITE_GUARD=FAIL"
   fail=1
 else
