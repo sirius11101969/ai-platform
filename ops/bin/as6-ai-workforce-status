@@ -63,3 +63,5 @@ exit 1
 # AS6 registered diagnostic aggregator: ops/bin/as6-diagnose-all
 
 # AS6 root cause engine: ops/bin/as6-root-cause
+
+# AS6 root cause report: ops/bin/as6-root-cause-report

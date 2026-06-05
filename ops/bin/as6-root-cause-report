@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+OUT="/tmp/as6-root-cause-report.out"
+
+echo "=== AS6 Root Cause Report ==="
+
+if ./ops/bin/as6-root-cause >"$OUT" 2>&1; then
+  cat "$OUT"
+  echo
+  echo "OVERALL_STATUS=OK"
+  echo "FAILED_CHECKS=none"
+  echo "WARNINGS=none"
+  echo "SAFE_TO_FIX=no_action_needed"
+  echo "RECOMMENDED_ACTION=continue"
+  echo "NEXT_COMMAND=./ops/bin/as6-root-cause"
+  echo "AS6_ROOT_CAUSE_REPORT_RESULT=OK"
+  exit 0
+fi
+
+cat "$OUT"
+
+echo
+echo "=== AS6 Root Cause Report Summary ==="
+
+echo "OVERALL_STATUS=FAIL"
+echo "FAILED_CHECKS_BEGIN"
+grep -E "FAIL|ERROR" "$OUT" | head -50 || true
+echo "FAILED_CHECKS_END"
+
+echo "WARNINGS_BEGIN"
+grep -E "WARN" "$OUT" | head -50 || true
+echo "WARNINGS_END"
+
+echo "SAFE_TO_FIX=requires_review"
+echo "RECOMMENDED_ACTION=inspect_failed_checks_then_fix_and_rerun_diagnostics"
+echo "NEXT_COMMAND=./ops/bin/as6-root-cause"
+echo "AS6_ROOT_CAUSE_REPORT_RESULT=FAIL"
+
+exit 1
