@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+STATUS="ops/bin/as6-ai-workforce-status"
+
+echo "=== AS6 Diagnostic Coverage Diagnostics ==="
+
+test -f "$STATUS" && echo "DIAGNOSTIC_COVERAGE_STATUS_FILE=OK" || { echo "DIAGNOSTIC_COVERAGE_STATUS_FILE=FAIL"; exit 1; }
+
+for f in ops/bin/as6-diagnose-*; do
+  [ -f "$f" ] || continue
+  base="$(basename "$f")"
+  case "$base" in
+    *.backup.*) continue ;;
+  esac
+
+  if grep -q "$f" "$STATUS" || grep -q "$base" "$STATUS"; then
+    echo "DIAGNOSTIC_COVERAGE_REGISTERED=OK:$f"
+  else
+    echo "DIAGNOSTIC_COVERAGE_REGISTERED=WARN:not_in_status:$f"
+  fi
+done
+
+echo "DIAGNOSTIC_COVERAGE_RESULT=OK"
