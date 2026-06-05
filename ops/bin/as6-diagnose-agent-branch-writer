@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+WF=".github/workflows/as6-agent-branch-writer.yml"
+fail=0
+
+echo "=== AS6 Agent Branch Writer Workflow Diagnostics ==="
+
+test -f "$WF" && echo "AGENT_BRANCH_WRITER_FILE=OK" || { echo "AGENT_BRANCH_WRITER_FILE=FAIL"; fail=1; }
+
+grep -q "workflow_dispatch" "$WF" && echo "AGENT_BRANCH_WRITER_TRIGGER=OK" || { echo "AGENT_BRANCH_WRITER_TRIGGER=FAIL"; fail=1; }
+grep -q "contents: write" "$WF" && echo "AGENT_BRANCH_WRITER_CONTENTS_WRITE=OK" || { echo "AGENT_BRANCH_WRITER_CONTENTS_WRITE=FAIL"; fail=1; }
+grep -q "branch.startsWith(\"as6-agent/\")" "$WF" && echo "AGENT_BRANCH_WRITER_JS_BRANCH_GUARD=OK" || { echo "AGENT_BRANCH_WRITER_JS_BRANCH_GUARD=FAIL"; fail=1; }
+grep -q "as6-agent/\*" "$WF" && echo "AGENT_BRANCH_WRITER_SHELL_BRANCH_GUARD=OK" || { echo "AGENT_BRANCH_WRITER_SHELL_BRANCH_GUARD=FAIL"; fail=1; }
+grep -q "git push origin \"HEAD:\${{ inputs.branch }}\"" "$WF" && echo "AGENT_BRANCH_WRITER_TARGETED_PUSH=OK" || { echo "AGENT_BRANCH_WRITER_TARGETED_PUSH=FAIL"; fail=1; }
+
+if grep -q "git push origin main" "$WF"; then
+  echo "AGENT_BRANCH_WRITER_MAIN_PUSH=FAIL"
+  fail=1
+else
+  echo "AGENT_BRANCH_WRITER_MAIN_PUSH=NO"
+fi
+
+grep -q ".github/agent-writer/last-run.md" "$WF" && echo "AGENT_BRANCH_WRITER_SAFE_FILE=OK" || { echo "AGENT_BRANCH_WRITER_SAFE_FILE=FAIL"; fail=1; }
+
+if [ "$fail" -eq 0 ]; then
+  echo "AGENT_BRANCH_WRITER_RESULT=OK"
+  echo "AGENT_BRANCH_WRITER_STATUS=CONTROLLED_WRITE_WORKFLOW_PRESENT"
+  exit 0
+fi
+
+echo "AGENT_BRANCH_WRITER_RESULT=FAIL"
+exit 1
