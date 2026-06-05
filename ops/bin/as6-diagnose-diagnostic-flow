@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+echo "=== AS6 Diagnostic Flow Diagnostics ==="
+
+for f in ops/bin/as6-*; do
+  [ -f "$f" ] || continue
+  if bash -n "$f"; then
+    echo "DIAGNOSTIC_SHELL_SYNTAX=OK:$f"
+  else
+    echo "DIAGNOSTIC_SHELL_SYNTAX=FAIL:$f"
+    fail=1
+  fi
+done
+
+python3 - <<'PY' || fail=1
+from pathlib import Path
+import sys
+
+bad = False
+
+for path in sorted(Path("ops/bin").glob("as6-diagnose-*")):
+    lines = path.read_text(errors="ignore").splitlines()
+    for i, line in enumerate(lines):
+        stripped = line.strip()
+        # Only top-level unconditional exits are treated as flow terminators.
+        if line.startswith("exit ") and i + 1 < len(lines):
+            rest = [
+                x.strip()
+                for x in lines[i+1:]
+                if x.strip() and not x.strip().startswith("#")
+            ]
+            if rest:
+                print(f"DIAGNOSTIC_FLOW_UNREACHABLE_AFTER_TOP_LEVEL_EXIT=FAIL:{path}:{i+1}")
+                bad = True
+
+if bad:
+    print("DIAGNOSTIC_FLOW_RESULT=FAIL")
+    sys.exit(1)
+
+print("DIAGNOSTIC_FLOW_UNREACHABLE_AFTER_TOP_LEVEL_EXIT=OK")
+print("DIAGNOSTIC_FLOW_RESULT=OK")
+PY
+
+if [ "$fail" -eq 0 ]; then
+  echo "DIAGNOSTIC_FLOW_FINAL_RESULT=OK"
+  exit 0
+fi
+
+echo "DIAGNOSTIC_FLOW_FINAL_RESULT=FAIL"
+exit 1
