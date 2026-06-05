@@ -33,3 +33,16 @@ echo "NODE24_MIGRATION_STATUS=DIAGNOSTIC_ONLY"
 echo "NODE24_MIGRATION_RESULT=OK"
 
 exit "$fail"
+
+echo "=== AS6 Node 24 Migration Completion Check ==="
+
+if grep -RIn "actions/github-script@v7\|actions/checkout@v4" .github/workflows >/tmp/as6-node24-legacy.out 2>/dev/null; then
+  echo "NODE24_MIGRATION_COMPLETE=FAIL"
+  cat /tmp/as6-node24-legacy.out
+  exit 1
+else
+  echo "NODE24_MIGRATION_COMPLETE=OK"
+fi
+
+grep -RIn "actions/github-script@v8" .github/workflows >/dev/null 2>&1 && echo "ACTIONS_GITHUB_SCRIPT_V8=OK" || echo "ACTIONS_GITHUB_SCRIPT_V8=NONE"
+grep -RIn "actions/checkout@v6" .github/workflows >/dev/null 2>&1 && echo "ACTIONS_CHECKOUT_V6=OK" || echo "ACTIONS_CHECKOUT_V6=NONE"
