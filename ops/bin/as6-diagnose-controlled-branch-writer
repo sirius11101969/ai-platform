@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+echo "=== AS6 Controlled Branch Writer Diagnostics ==="
+
+FACTORY=".github/workflows/as6-agent-pr-factory.yml"
+REVIEW=".github/workflows/as6-codex-review.yml"
+
+test -f "$FACTORY" && echo "BRANCH_WRITER_PR_FACTORY_FILE=OK" || { echo "BRANCH_WRITER_PR_FACTORY_FILE=FAIL"; fail=1; }
+test -f "$REVIEW" && echo "BRANCH_WRITER_CODEX_REVIEW_FILE=OK" || { echo "BRANCH_WRITER_CODEX_REVIEW_FILE=FAIL"; fail=1; }
+
+grep -q 'as6-agent/' "$FACTORY" && echo "BRANCH_WRITER_BRANCH_PREFIX=OK" || { echo "BRANCH_WRITER_BRANCH_PREFIX=FAIL"; fail=1; }
+grep -q 'draft: true' "$FACTORY" && echo "BRANCH_WRITER_DRAFT_PR_REQUIRED=OK" || { echo "BRANCH_WRITER_DRAFT_PR_REQUIRED=FAIL"; fail=1; }
+grep -q 'AS6_PR_FACTORY_INPUT_RESULT=OK' "$FACTORY" && echo "BRANCH_WRITER_INPUT_GUARD=OK" || { echo "BRANCH_WRITER_INPUT_GUARD=FAIL"; fail=1; }
+grep -q 'No production mutation' "$FACTORY" && echo "BRANCH_WRITER_NO_PRODUCTION_MUTATION_RULE=OK" || { echo "BRANCH_WRITER_NO_PRODUCTION_MUTATION_RULE=FAIL"; fail=1; }
+grep -q 'No secret exposure' "$FACTORY" && echo "BRANCH_WRITER_SECRET_RULE=OK" || { echo "BRANCH_WRITER_SECRET_RULE=FAIL"; fail=1; }
+
+grep -q 'draft == false' "$REVIEW" && echo "BRANCH_WRITER_REVIEW_AFTER_READY=OK" || { echo "BRANCH_WRITER_REVIEW_AFTER_READY=FAIL"; fail=1; }
+grep -q 'sandbox: read-only' "$REVIEW" && echo "BRANCH_WRITER_REVIEW_READ_ONLY=OK" || { echo "BRANCH_WRITER_REVIEW_READ_ONLY=FAIL"; fail=1; }
+
+if grep -RIn 'refs/heads/main\|branch.*main\|git push origin main' .github/workflows ops/bin \
+  | grep -v 'ops/bin/as6-diagnose-controlled-branch-writer' >/dev/null 2>&1; then
+  echo "BRANCH_WRITER_MAIN_WRITE_GUARD=FAIL"
+  fail=1
+else
+  echo "BRANCH_WRITER_MAIN_WRITE_GUARD=OK"
+fi
+
+if grep -RIn 'contents: write' .github/workflows/as6-backend-agent.yml .github/workflows/as6-frontend-agent.yml .github/workflows/as6-devops-agent.yml >/dev/null 2>&1; then
+  echo "BRANCH_WRITER_AGENT_DIRECT_WRITE=FAIL"
+  fail=1
+else
+  echo "BRANCH_WRITER_AGENT_DIRECT_WRITE=NO"
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "BRANCH_WRITER_RESULT=OK"
+  echo "BRANCH_WRITER_STATUS=DIAGNOSTIC_ONLY"
+  echo "BRANCH_WRITER_NEXT_SAFE_STEP=create_explicit_as6_agent_branch_writer_workflow"
+  exit 0
+fi
+
+echo "BRANCH_WRITER_RESULT=FAIL"
+exit 1
