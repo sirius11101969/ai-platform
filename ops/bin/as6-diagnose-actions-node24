@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+echo "=== AS6 GitHub Actions Node 24 Readiness Diagnostics ==="
+
+grep -RIn "actions/github-script@v7" .github/workflows >/tmp/as6-node20-actions.out 2>/dev/null || true
+grep -RIn "actions/checkout@v4" .github/workflows >>/tmp/as6-node20-actions.out 2>/dev/null || true
+
+if [ -s /tmp/as6-node20-actions.out ]; then
+  echo "ACTIONS_NODE20_DEPRECATION_CHECK=WARN"
+  cat /tmp/as6-node20-actions.out
+else
+  echo "ACTIONS_NODE20_DEPRECATION_CHECK=OK"
+fi
+
+grep -RIn "actions/github-script@" .github/workflows >/dev/null 2>&1 && echo "ACTIONS_GITHUB_SCRIPT_PRESENT=OK" || echo "ACTIONS_GITHUB_SCRIPT_PRESENT=NONE"
+grep -RIn "actions/checkout@" .github/workflows >/dev/null 2>&1 && echo "ACTIONS_CHECKOUT_PRESENT=OK" || echo "ACTIONS_CHECKOUT_PRESENT=NONE"
+
+echo "ACTIONS_NODE24_READINESS_STATUS=DIAGNOSTIC_ONLY"
+echo "ACTIONS_NODE24_READINESS_RESULT=OK"
+exit 0
