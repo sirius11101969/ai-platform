@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+OUT="/tmp/as6-owner-dashboard-root-cause-report.out"
+
+echo "=== AS6 Owner Dashboard ==="
+
+if ./ops/bin/as6-root-cause-report >"$OUT" 2>&1; then
+  ROOT_RESULT="OK"
+else
+  ROOT_RESULT="FAIL"
+fi
+
+cat "$OUT"
+
+echo
+echo "=== AS6 Owner Summary ==="
+
+overall="$(grep -E '^OVERALL_STATUS=' "$OUT" | tail -1 | cut -d= -f2- || true)"
+root_cause="$(grep -E '^ROOT_CAUSE=' "$OUT" | tail -1 | cut -d= -f2- || true)"
+safe_to_fix="$(grep -E '^SAFE_TO_FIX=' "$OUT" | tail -1 | cut -d= -f2- || true)"
+recommended="$(grep -E '^RECOMMENDED_ACTION=' "$OUT" | tail -1 | cut -d= -f2- || true)"
+next_command="$(grep -E '^NEXT_COMMAND=' "$OUT" | tail -1 | cut -d= -f2- || true)"
+
+echo "PLATFORM_STATUS=${overall:-UNKNOWN}"
+echo "WORKFORCE_STATUS=${ROOT_RESULT}"
+echo "ROOT_CAUSE_STATUS=${root_cause:-unknown}"
+echo "SECURITY_STATUS=see_secret_scan_before_commit"
+echo "DEPLOY_STATUS=not_checked_by_owner_dashboard_yet"
+echo "SAFE_TO_FIX=${safe_to_fix:-requires_review}"
+echo "NEXT_ACTION=${recommended:-inspect_root_cause_report}"
+echo "NEXT_COMMAND=${next_command:-./ops/bin/as6-root-cause-report}"
+
+if [ "$ROOT_RESULT" = "OK" ]; then
+  echo "AS6_OWNER_DASHBOARD_RESULT=OK"
+  exit 0
+fi
+
+echo "AS6_OWNER_DASHBOARD_RESULT=FAIL"
+exit 1
