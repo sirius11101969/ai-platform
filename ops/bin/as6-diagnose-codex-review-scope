@@ -12,6 +12,7 @@ grep -q "github.event.pull_request.base.sha" "$WF" && echo "CODEX_REVIEW_BASE_SH
 grep -q "github.event.pull_request.head.sha" "$WF" && echo "CODEX_REVIEW_HEAD_SHA=OK" || { echo "CODEX_REVIEW_HEAD_SHA=FAIL"; fail=1; }
 grep -q "head -c 60000" "$WF" && echo "CODEX_REVIEW_DIFF_LIMIT=OK" || { echo "CODEX_REVIEW_DIFF_LIMIT=FAIL"; fail=1; }
 grep -q "AS6_CODEX_REVIEW_SCOPED_DIFF=OK" "$WF" && echo "CODEX_REVIEW_SAFE_LOG=OK" || { echo "CODEX_REVIEW_SAFE_LOG=FAIL"; fail=1; }
+grep -q "continue-on-error: true" "$WF" && echo "CODEX_REVIEW_FAIL_SOFT=OK" || { echo "CODEX_REVIEW_FAIL_SOFT=FAIL"; fail=1; }
 
 if [ "$fail" -eq 0 ]; then
   echo "CODEX_REVIEW_SCOPE_RESULT=OK"

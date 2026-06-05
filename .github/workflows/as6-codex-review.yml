@@ -56,6 +56,8 @@ jobs:
           wc -c /tmp/as6-scoped-pr-review.md
 
       - name: Run AS6 Codex reviewer
+        id: codex_review
+        continue-on-error: true
         uses: openai/codex-action@v1
         with:
           openai-api-key: ${{ secrets.OPENAI_API_KEY }}
@@ -63,3 +65,9 @@ jobs:
           sandbox: read-only
           safety-strategy: drop-sudo
           codex-args: '["--ephemeral"]'
+
+      - name: Codex review fail-soft notice
+        if: steps.codex_review.outcome == 'failure'
+        run: |
+          echo "AS6_CODEX_REVIEW_FAIL_SOFT=OK"
+          echo "Codex Review failed, likely due to quota or provider availability. Guardian remains required."
