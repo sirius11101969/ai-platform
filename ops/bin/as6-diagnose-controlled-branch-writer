@@ -25,6 +25,7 @@ grep -q 'sandbox: read-only' "$REVIEW" && echo "BRANCH_WRITER_REVIEW_READ_ONLY=O
 MAIN_WRITE_HITS="$(
   grep -RIn 'refs/heads/main\|branch.*main\|git push origin main' .github/workflows ops/bin 2>/dev/null \
     | grep -v 'ops/bin/as6-diagnose-controlled-branch-writer' \
+    | grep -v 'ops/bin/as6-diagnose-agent-branch-writer' \
     | grep -v '.github/workflows/as6-agent-branch-writer.yml' \
     || true
 )"
