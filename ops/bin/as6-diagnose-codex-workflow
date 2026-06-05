@@ -14,7 +14,7 @@ test -f "$PROMPT" || { echo "CODEX_PROMPT_FILE=FAIL"; fail=1; }
 grep -q "openai/codex-action@v1" "$WF" && echo "CODEX_ACTION_REF=OK" || { echo "CODEX_ACTION_REF=FAIL"; fail=1; }
 grep -q "openai-api-key:" "$WF" && echo "CODEX_API_KEY_INPUT=OK" || { echo "CODEX_API_KEY_INPUT=FAIL"; fail=1; }
 grep -q "secrets.OPENAI_API_KEY" "$WF" && echo "CODEX_SECRET_REFERENCE=OK" || { echo "CODEX_SECRET_REFERENCE=FAIL"; fail=1; }
-grep -q "prompt-file: .github/codex/prompts/as6-pr-review.md" "$WF" && echo "CODEX_PROMPT_REFERENCE=OK" || { echo "CODEX_PROMPT_REFERENCE=FAIL"; fail=1; }
+grep -Eq "prompt-file: (\.github/codex/prompts/as6-pr-review.md|/tmp/as6-scoped-pr-review.md)" "$WF" && echo "CODEX_PROMPT_REFERENCE=OK" || { echo "CODEX_PROMPT_REFERENCE=FAIL"; fail=1; }
 
 if [ "$fail" -eq 0 ]; then
   echo "CODEX_WORKFLOW_RESULT=OK"
