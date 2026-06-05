@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+echo "=== AS6 GitHub Actions Node 24 Migration Diagnostics ==="
+
+test -x ops/bin/as6-diagnose-actions-node24 && echo "NODE24_MIGRATION_READINESS_DIAG=OK" || { echo "NODE24_MIGRATION_READINESS_DIAG=FAIL"; fail=1; }
+
+GITHUB_SCRIPT_HITS="$(grep -RIn 'actions/github-script@v7' .github/workflows 2>/dev/null || true)"
+CHECKOUT_HITS="$(grep -RIn 'actions/checkout@v4' .github/workflows 2>/dev/null || true)"
+
+if [ -n "$GITHUB_SCRIPT_HITS" ]; then
+  echo "NODE24_MIGRATION_GITHUB_SCRIPT_V7=WARN"
+  echo "$GITHUB_SCRIPT_HITS"
+else
+  echo "NODE24_MIGRATION_GITHUB_SCRIPT_V7=OK"
+fi
+
+if [ -n "$CHECKOUT_HITS" ]; then
+  echo "NODE24_MIGRATION_CHECKOUT_V4=WARN"
+  echo "$CHECKOUT_HITS"
+else
+  echo "NODE24_MIGRATION_CHECKOUT_V4=OK"
+fi
+
+grep -RIn 'actions/github-script@' .github/workflows >/dev/null 2>&1 && echo "NODE24_MIGRATION_GITHUB_SCRIPT_PRESENT=OK" || echo "NODE24_MIGRATION_GITHUB_SCRIPT_PRESENT=NONE"
+grep -RIn 'actions/checkout@' .github/workflows >/dev/null 2>&1 && echo "NODE24_MIGRATION_CHECKOUT_PRESENT=OK" || echo "NODE24_MIGRATION_CHECKOUT_PRESENT=NONE"
+
+echo "NODE24_MIGRATION_STATUS=DIAGNOSTIC_ONLY"
+echo "NODE24_MIGRATION_RESULT=OK"
+
+exit "$fail"

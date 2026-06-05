@@ -53,3 +53,5 @@ exit 1
 # AS6 Agent PR Factory E2E diagnostic: ops/bin/as6-diagnose-agent-pr-factory-e2e
 
 # AS6 GitHub Actions Node 24 readiness diagnostic: ops/bin/as6-diagnose-actions-node24
+
+# AS6 GitHub Actions Node 24 migration diagnostic: ops/bin/as6-diagnose-actions-node24-migration
