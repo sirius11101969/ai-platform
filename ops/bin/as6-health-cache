@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+mkdir -p runtime/health/history
+
+OUT="/tmp/as6-health-cache-platform-command-center.out"
+NOW="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+SHA="$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
+
+echo "=== AS6 Health Cache ==="
+
+if ./ops/bin/as6-platform-command-center >"$OUT" 2>&1; then
+  RESULT="OK"
+else
+  RESULT="FAIL"
+fi
+
+platform="$(grep -E '^PLATFORM_COMMAND_CENTER_STATUS=' "$OUT" | tail -1 | cut -d= -f2- || true)"
+owner="$(grep -E '^PLATFORM_COMMAND_CENTER_OWNER_DASHBOARD=' "$OUT" | tail -1 | cut -d= -f2- || true)"
+workforce="$(grep -E '^PLATFORM_COMMAND_CENTER_WORKFORCE=' "$OUT" | tail -1 | cut -d= -f2- || true)"
+root_cause="$(grep -E '^PLATFORM_COMMAND_CENTER_ROOT_CAUSE=' "$OUT" | tail -1 | cut -d= -f2- || true)"
+next_action="$(grep -E '^PLATFORM_COMMAND_CENTER_NEXT_ACTION=' "$OUT" | tail -1 | cut -d= -f2- || true)"
+next_command="$(grep -E '^PLATFORM_COMMAND_CENTER_NEXT_COMMAND=' "$OUT" | tail -1 | cut -d= -f2- || true)"
+
+python3 - <<PY
+import json
+from pathlib import Path
+
+data = {
+    "timestamp": "$NOW",
+    "git_sha": "$SHA",
+    "health_cache_result": "$RESULT",
+    "platform_status": "${platform:-UNKNOWN}",
+    "owner_dashboard": "${owner:-UNKNOWN}",
+    "workforce_status": "${workforce:-UNKNOWN}",
+    "root_cause": "${root_cause:-unknown}",
+    "next_action": "${next_action:-inspect_platform_command_center}",
+    "next_command": "${next_command:-./ops/bin/as6-platform-command-center}",
+}
+
+latest = Path("runtime/health/latest.json")
+history = Path("runtime/health/history") / f"{data['timestamp'].replace(':', '-')}-{data['git_sha']}.json"
+
+latest.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\\n")
+history.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\\n")
+
+print("HEALTH_CACHE_LATEST=runtime/health/latest.json")
+print(f"HEALTH_CACHE_HISTORY={history}")
+print(f"HEALTH_CACHE_RESULT={data['health_cache_result']}")
+PY
+
+if [ "$RESULT" = "OK" ]; then
+  echo "AS6_HEALTH_CACHE_RESULT=OK"
+  exit 0
+fi
+
+echo "AS6_HEALTH_CACHE_RESULT=FAIL"
+exit 1
