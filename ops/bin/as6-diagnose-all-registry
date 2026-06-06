@@ -11,6 +11,12 @@ echo "=== AS6 Diagnose All Registry Coverage Diagnostics ==="
 test -x ops/bin/as6-diagnostic-registry && echo "DIAGNOSE_ALL_REGISTRY_SOURCE=OK" || { echo "DIAGNOSE_ALL_REGISTRY_SOURCE=FAIL"; fail=1; }
 test -x ops/bin/as6-diagnose-all && echo "DIAGNOSE_ALL_SCRIPT=OK" || { echo "DIAGNOSE_ALL_SCRIPT=FAIL"; fail=1; }
 
+if grep -qF "as6-diagnostic-registry" ops/bin/as6-diagnose-all; then
+  echo "REGISTRY_DRIVEN_DIAGNOSE_ALL_MODE=OK"
+else
+  echo "REGISTRY_DRIVEN_DIAGNOSE_ALL_MODE=NO"
+fi
+
 registry="$(mktemp)"
 status_file="ops/bin/as6-diagnose-all"
 
@@ -29,6 +35,8 @@ while read -r diag; do
 
   if grep -qF "$diag" "$status_file" || grep -qF "${diag#ops/bin/as6-diagnose-}" "$status_file"; then
     echo "DIAGNOSE_ALL_REGISTRY_INCLUDED=OK:$diag"
+  elif grep -qF "as6-diagnostic-registry" "$status_file"; then
+    echo "DIAGNOSE_ALL_REGISTRY_INCLUDED=OK:registry_driven:$diag"
   else
     echo "DIAGNOSE_ALL_REGISTRY_INCLUDED=FAIL:not_in_diagnose_all:$diag"
     fail=1
