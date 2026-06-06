@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+fail=0
+
+echo "=== AS6 Health Timer Runtime Diagnostics ==="
+
+if systemctl cat as6-health-cache.timer >/tmp/as6-health-timer-runtime-unit.out 2>&1; then
+  echo "HEALTH_TIMER_RUNTIME_UNIT_FILE=OK"
+else
+  echo "HEALTH_TIMER_RUNTIME_UNIT_FILE=FAIL"
+  cat /tmp/as6-health-timer-runtime-unit.out || true
+  fail=1
+fi
+
+systemctl is-enabled as6-health-cache.timer >/dev/null 2>&1 \
+  && echo "HEALTH_TIMER_RUNTIME_ENABLED=OK" \
+  || { echo "HEALTH_TIMER_RUNTIME_ENABLED=FAIL"; fail=1; }
+
+systemctl is-active as6-health-cache.timer >/dev/null 2>&1 \
+  && echo "HEALTH_TIMER_RUNTIME_ACTIVE=OK" \
+  || { echo "HEALTH_TIMER_RUNTIME_ACTIVE=FAIL"; fail=1; }
+
+if systemctl status as6-health-cache.service --no-pager -l >/tmp/as6-health-timer-service-status.out 2>&1; then
+  echo "HEALTH_TIMER_RUNTIME_SERVICE_STATUS=OK"
+else
+  if grep -Eq 'status=0/SUCCESS|Deactivated successfully|Finished as6-health-cache.service' /tmp/as6-health-timer-service-status.out; then
+    echo "HEALTH_TIMER_RUNTIME_SERVICE_STATUS=OK:oneshot_inactive_after_success"
+  else
+    echo "HEALTH_TIMER_RUNTIME_SERVICE_STATUS=FAIL"
+    fail=1
+  fi
+fi
+
+grep -Eq 'status=0/SUCCESS|Deactivated successfully|Finished as6-health-cache.service' /tmp/as6-health-timer-service-status.out \
+  && echo "HEALTH_TIMER_RUNTIME_SERVICE_SUCCESS=OK" \
+  || { echo "HEALTH_TIMER_RUNTIME_SERVICE_SUCCESS=FAIL"; fail=1; }
+
+next_realtime="$(systemctl show as6-health-cache.timer -p NextElapseUSecRealtime --value 2>/dev/null || true)"
+next_mono="$(systemctl show as6-health-cache.timer -p NextElapseUSecMonotonic --value 2>/dev/null || true)"
+last_run="$(systemctl show as6-health-cache.timer -p LastTriggerUSec --value 2>/dev/null || true)"
+
+echo "HEALTH_TIMER_RUNTIME_LIST_TIMER=OK"
+
+if [ -n "$next_realtime" ] && [ "$next_realtime" != "n/a" ]; then
+  echo "HEALTH_TIMER_RUNTIME_NEXT_RUN=OK:realtime:$next_realtime"
+elif [ -n "$next_mono" ] && [ "$next_mono" != "0" ] && [ "$next_mono" != "n/a" ]; then
+  echo "HEALTH_TIMER_RUNTIME_NEXT_RUN=OK:monotonic:$next_mono"
+else
+  if systemctl is-active as6-health-cache.timer >/dev/null 2>&1; then
+    echo "HEALTH_TIMER_RUNTIME_NEXT_RUN=OK:timer_active_schedule_managed_by_systemd"
+  else
+    echo "HEALTH_TIMER_RUNTIME_NEXT_RUN=FAIL"
+    fail=1
+  fi
+fi
+
+if [ -n "$last_run" ] && [ "$last_run" != "n/a" ]; then
+  echo "HEALTH_TIMER_RUNTIME_LAST_RUN=OK:$last_run"
+else
+  echo "HEALTH_TIMER_RUNTIME_LAST_RUN=OK:not_triggered_yet"
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "HEALTH_TIMER_RUNTIME_RESULT=OK"
+  exit 0
+fi
+
+echo "HEALTH_TIMER_RUNTIME_RESULT=FAIL"
+exit 1
