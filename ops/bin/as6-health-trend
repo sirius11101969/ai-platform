@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+echo "=== AS6 Health Trend ==="
+
+python3 - <<'PY'
+import json
+from pathlib import Path
+
+history_dir = Path("runtime/health/history")
+files = sorted(history_dir.glob("*.json"))[-20:]
+
+print(f"HEALTH_TREND_HISTORY_DIR={history_dir}")
+print(f"HEALTH_TREND_TOTAL_SAMPLES={len(files)}")
+
+if not files:
+    print("HEALTH_TREND_RESULT=NO_DATA")
+    raise SystemExit(0)
+
+ok = fail = warn = 0
+latest = None
+
+for p in files:
+    try:
+        data = json.loads(p.read_text())
+    except Exception:
+        fail += 1
+        continue
+
+    latest = data
+    status = data.get("platform_status", "UNKNOWN")
+    cache = data.get("health_cache_result", "UNKNOWN")
+    root = data.get("root_cause", "unknown")
+
+    if cache == "OK" and status == "OK" and root in ("none", "", "unknown"):
+        ok += 1
+    elif status == "WARN":
+        warn += 1
+    else:
+        fail += 1
+
+print(f"HEALTH_TREND_OK_COUNT={ok}")
+print(f"HEALTH_TREND_WARN_COUNT={warn}")
+print(f"HEALTH_TREND_FAIL_COUNT={fail}")
+
+if latest:
+    print(f"HEALTH_TREND_LATEST_TIMESTAMP={latest.get('timestamp', 'unknown')}")
+    print(f"HEALTH_TREND_LATEST_GIT_SHA={latest.get('git_sha', 'unknown')}")
+    print(f"HEALTH_TREND_LATEST_PLATFORM={latest.get('platform_status', 'UNKNOWN')}")
+    print(f"HEALTH_TREND_LATEST_ROOT_CAUSE={latest.get('root_cause', 'unknown')}")
+    print(f"HEALTH_TREND_NEXT_ACTION={latest.get('next_action', 'inspect_health_cache')}")
+
+if fail == 0:
+    print("HEALTH_TREND_RESULT=OK")
+else:
+    print("HEALTH_TREND_RESULT=FAIL")
+    raise SystemExit(1)
+PY
