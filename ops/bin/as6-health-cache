@@ -6,24 +6,49 @@ cd "$ROOT"
 
 mkdir -p runtime/health/history
 
-OUT="/tmp/as6-health-cache-platform-command-center.out"
 NOW="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 SHA="$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
 
-echo "=== AS6 Health Cache ==="
+WORKFORCE_OUT="/tmp/as6-health-cache-workforce.out"
+TIMER_OUT="/tmp/as6-health-cache-timer-runtime.out"
+CLEANUP_OUT="/tmp/as6-health-cache-cleanup.out"
 
-if ./ops/bin/as6-platform-command-center >"$OUT" 2>&1; then
-  RESULT="OK"
+echo "=== AS6 Health Cache ==="
+echo "HEALTH_CACHE_MODE=lightweight_snapshot"
+
+if ./ops/bin/as6-ai-workforce-status >"$WORKFORCE_OUT" 2>&1; then
+  workforce="OK"
 else
-  RESULT="FAIL"
+  workforce="FAIL"
 fi
 
-platform="$(grep -E '^PLATFORM_COMMAND_CENTER_STATUS=' "$OUT" | tail -1 | cut -d= -f2- || true)"
-owner="$(grep -E '^PLATFORM_COMMAND_CENTER_OWNER_DASHBOARD=' "$OUT" | tail -1 | cut -d= -f2- || true)"
-workforce="$(grep -E '^PLATFORM_COMMAND_CENTER_WORKFORCE=' "$OUT" | tail -1 | cut -d= -f2- || true)"
-root_cause="$(grep -E '^PLATFORM_COMMAND_CENTER_ROOT_CAUSE=' "$OUT" | tail -1 | cut -d= -f2- || true)"
-next_action="$(grep -E '^PLATFORM_COMMAND_CENTER_NEXT_ACTION=' "$OUT" | tail -1 | cut -d= -f2- || true)"
-next_command="$(grep -E '^PLATFORM_COMMAND_CENTER_NEXT_COMMAND=' "$OUT" | tail -1 | cut -d= -f2- || true)"
+if ./ops/bin/as6-diagnose-health-timer-runtime >"$TIMER_OUT" 2>&1; then
+  timer_runtime="OK"
+else
+  timer_runtime="FAIL"
+fi
+
+if ./ops/bin/as6-diagnose-health-cleanup >"$CLEANUP_OUT" 2>&1; then
+  cleanup="OK"
+else
+  cleanup="FAIL"
+fi
+
+if [ "$workforce" = "OK" ] && [ "$timer_runtime" = "OK" ] && [ "$cleanup" = "OK" ]; then
+  RESULT="OK"
+  platform="OK"
+  owner="OK"
+  root_cause="none"
+  next_action="continue"
+  next_command="./ops/bin/as6-health-status"
+else
+  RESULT="FAIL"
+  platform="FAIL"
+  owner="FAIL"
+  root_cause="workforce=${workforce};timer_runtime=${timer_runtime};cleanup=${cleanup}"
+  next_action="inspect_failed_lightweight_health_checks"
+  next_command="./ops/bin/as6-diagnose-all"
+fi
 
 python3 - <<PY
 import json
@@ -33,12 +58,15 @@ data = {
     "timestamp": "$NOW",
     "git_sha": "$SHA",
     "health_cache_result": "$RESULT",
-    "platform_status": "${platform:-UNKNOWN}",
-    "owner_dashboard": "${owner:-UNKNOWN}",
-    "workforce_status": "${workforce:-UNKNOWN}",
-    "root_cause": "${root_cause:-unknown}",
-    "next_action": "${next_action:-inspect_platform_command_center}",
-    "next_command": "${next_command:-./ops/bin/as6-platform-command-center}",
+    "health_cache_mode": "lightweight_snapshot",
+    "platform_status": "$platform",
+    "owner_dashboard": "$owner",
+    "workforce_status": "$workforce",
+    "health_timer_runtime": "$timer_runtime",
+    "health_cleanup": "$cleanup",
+    "root_cause": "$root_cause",
+    "next_action": "$next_action",
+    "next_command": "$next_command",
 }
 
 latest = Path("runtime/health/latest.json")
@@ -49,6 +77,7 @@ history.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\\n")
 
 print("HEALTH_CACHE_LATEST=runtime/health/latest.json")
 print(f"HEALTH_CACHE_HISTORY={history}")
+print(f"HEALTH_CACHE_MODE={data['health_cache_mode']}")
 print(f"HEALTH_CACHE_RESULT={data['health_cache_result']}")
 PY
 
