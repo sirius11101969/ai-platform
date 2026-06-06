@@ -117,3 +117,5 @@ exit 1
 # AS6 diagnostic timeouts: ops/bin/as6-diagnose-diagnostic-timeouts
 
 # AS6 health remediation: ops/bin/as6-diagnose-health-remediation
+
+# AS6 health recovery diagnostics: ops/bin/as6-diagnose-health-recovery

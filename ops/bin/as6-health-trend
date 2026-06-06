@@ -5,6 +5,7 @@ ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
 cd "$ROOT"
 
 RECENT_WINDOW="${AS6_HEALTH_TREND_RECENT_WINDOW:-3}"
+MIN_RECOVERY_OK="${AS6_HEALTH_TREND_MIN_RECOVERY_OK:-1}"
 
 echo "=== AS6 Health Trend ==="
 
@@ -15,10 +16,12 @@ from pathlib import Path
 history_dir = Path("runtime/health/history")
 files = sorted(history_dir.glob("*.json"))[-20:]
 recent_window = int("$RECENT_WINDOW")
+min_recovery_ok = int("$MIN_RECOVERY_OK")
 
 print(f"HEALTH_TREND_HISTORY_DIR={history_dir}")
 print(f"HEALTH_TREND_TOTAL_SAMPLES={len(files)}")
 print(f"HEALTH_TREND_RECENT_WINDOW={recent_window}")
+print(f"HEALTH_TREND_MIN_RECOVERY_OK={min_recovery_ok}")
 
 if not files:
     print("HEALTH_TREND_RESULT=NO_DATA")
@@ -67,11 +70,24 @@ recent_ok = sum(1 for item in recent if item[0] == "OK")
 recent_warn = sum(1 for item in recent if item[0] == "WARN")
 recent_fail = sum(1 for item in recent if item[0] == "FAIL")
 
+last_fail_index = max((idx for idx, item in enumerate(samples) if item[0] == "FAIL"), default=-1)
+ok_after_last_fail = sum(1 for item in samples[last_fail_index + 1:] if item[0] == "OK")
+latest_state = samples[-1][0] if samples else "UNKNOWN"
+
 print(f"HEALTH_TREND_RECENT_OK_COUNT={recent_ok}")
 print(f"HEALTH_TREND_RECENT_WARN_COUNT={recent_warn}")
 print(f"HEALTH_TREND_RECENT_FAIL_COUNT={recent_fail}")
+print(f"HEALTH_TREND_OK_AFTER_LAST_FAIL={ok_after_last_fail}")
+print(f"HEALTH_TREND_LATEST_STATE={latest_state}")
+
+if latest_state == "OK" and ok_after_last_fail >= min_recovery_ok:
+    print("HEALTH_TREND_HISTORICAL_FAILURES=YES" if fail else "HEALTH_TREND_HISTORICAL_FAILURES=NO")
+    print("HEALTH_TREND_RECENT_RECOVERY=OK")
+    print("HEALTH_TREND_RESULT=OK")
+    raise SystemExit(0)
 
 if recent and recent_fail == 0 and recent_ok + recent_warn == len(recent):
+    print("HEALTH_TREND_HISTORICAL_FAILURES=YES" if fail else "HEALTH_TREND_HISTORICAL_FAILURES=NO")
     print("HEALTH_TREND_RECENT_RECOVERY=OK")
     if recent_warn > 0:
         print("HEALTH_TREND_RESULT=WARN")
@@ -79,6 +95,7 @@ if recent and recent_fail == 0 and recent_ok + recent_warn == len(recent):
     print("HEALTH_TREND_RESULT=OK")
     raise SystemExit(0)
 
+print("HEALTH_TREND_HISTORICAL_FAILURES=YES" if fail else "HEALTH_TREND_HISTORICAL_FAILURES=NO")
 print("HEALTH_TREND_RECENT_RECOVERY=NO")
 if fail:
     print("HEALTH_TREND_RESULT=FAIL")

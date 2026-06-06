@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+OUT="/tmp/as6-health-recovery-trend.out"
+fail=0
+
+echo "=== AS6 Health Recovery Diagnostics ==="
+
+if ./ops/bin/as6-health-trend >"$OUT" 2>&1; then
+  echo "HEALTH_RECOVERY_TREND_RUN=OK"
+else
+  echo "HEALTH_RECOVERY_TREND_RUN=FAIL"
+  fail=1
+fi
+
+cat "$OUT"
+
+grep -q '^HEALTH_TREND_LATEST_STATE=OK$' "$OUT" && echo "HEALTH_RECOVERY_LATEST_STATUS=OK" || { echo "HEALTH_RECOVERY_LATEST_STATUS=FAIL"; fail=1; }
+grep -q '^HEALTH_TREND_RECENT_RECOVERY=OK$' "$OUT" && echo "HEALTH_RECOVERY_RECENT_RECOVERY=OK" || { echo "HEALTH_RECOVERY_RECENT_RECOVERY=FAIL"; fail=1; }
+grep -q '^HEALTH_TREND_HISTORICAL_FAILURES=' "$OUT" && echo "HEALTH_RECOVERY_HISTORICAL_FAILURES=OK" || { echo "HEALTH_RECOVERY_HISTORICAL_FAILURES=FAIL"; fail=1; }
+
+if [ "$fail" -eq 0 ]; then
+  echo "HEALTH_RECOVERY_RESULT=OK"
+  exit 0
+fi
+
+echo "HEALTH_RECOVERY_RESULT=FAIL"
+exit 1
