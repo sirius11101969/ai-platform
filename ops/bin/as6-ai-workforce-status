@@ -105,3 +105,5 @@ exit 1
 # AS6 health timer runtime: ops/bin/as6-diagnose-health-timer-runtime
 
 # AS6 health timer dashboard: ops/bin/as6-diagnose-health-timer-dashboard
+
+# AS6 health cache freshness: ops/bin/as6-diagnose-health-cache-freshness
