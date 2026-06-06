@@ -5,9 +5,13 @@ fail=0
 
 echo "=== AS6 Health Timer Runtime Diagnostics ==="
 
-systemctl list-unit-files | grep -q '^as6-health-cache.timer' \
-  && echo "HEALTH_TIMER_RUNTIME_UNIT_FILE=OK" \
-  || { echo "HEALTH_TIMER_RUNTIME_UNIT_FILE=FAIL"; fail=1; }
+if systemctl cat as6-health-cache.timer >/tmp/as6-health-timer-runtime-unit.out 2>&1; then
+  echo "HEALTH_TIMER_RUNTIME_UNIT_FILE=OK"
+else
+  echo "HEALTH_TIMER_RUNTIME_UNIT_FILE=FAIL"
+  cat /tmp/as6-health-timer-runtime-unit.out || true
+  fail=1
+fi
 
 systemctl is-enabled as6-health-cache.timer >/dev/null 2>&1 \
   && echo "HEALTH_TIMER_RUNTIME_ENABLED=OK" \
