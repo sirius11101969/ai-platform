@@ -1,0 +1,139 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+DIR="runtime/health/history"
+WINDOW="${AS6_HEALTH_ANOMALY_WINDOW:-10}"
+MAX_CONSECUTIVE_FAILS="${AS6_HEALTH_ANOMALY_MAX_CONSECUTIVE_FAILS:-2}"
+MAX_REPEAT_ROOT_CAUSE="${AS6_HEALTH_ANOMALY_MAX_REPEAT_ROOT_CAUSE:-3}"
+MAX_OK_AGE_SECONDS="${AS6_HEALTH_ANOMALY_MAX_OK_AGE_SECONDS:-7200}"
+
+fail=0
+
+echo "=== AS6 Health History Anomaly Diagnostics ==="
+
+test -d "$DIR" && echo "HEALTH_ANOMALY_HISTORY_DIR=OK" || { echo "HEALTH_ANOMALY_HISTORY_DIR=FAIL"; fail=1; }
+
+for value in "$WINDOW" "$MAX_CONSECUTIVE_FAILS" "$MAX_REPEAT_ROOT_CAUSE" "$MAX_OK_AGE_SECONDS"; do
+  if ! [[ "$value" =~ ^[0-9]+$ ]] || [ "$value" -lt 1 ]; then
+    echo "HEALTH_ANOMALY_CONFIG=FAIL:$value"
+    fail=1
+  fi
+done
+
+if [ "$fail" -ne 0 ]; then
+  echo "HEALTH_HISTORY_ANOMALY_RESULT=FAIL"
+  exit 1
+fi
+
+echo "HEALTH_ANOMALY_WINDOW=$WINDOW"
+echo "HEALTH_ANOMALY_MAX_CONSECUTIVE_FAILS=$MAX_CONSECUTIVE_FAILS"
+echo "HEALTH_ANOMALY_MAX_REPEAT_ROOT_CAUSE=$MAX_REPEAT_ROOT_CAUSE"
+echo "HEALTH_ANOMALY_MAX_OK_AGE_SECONDS=$MAX_OK_AGE_SECONDS"
+echo "HEALTH_ANOMALY_CONFIG=OK"
+
+python3 - <<PY || fail=1
+import json
+from pathlib import Path
+from datetime import datetime, timezone
+from collections import Counter
+
+history_dir = Path("$DIR")
+window = int("$WINDOW")
+max_consecutive_fails = int("$MAX_CONSECUTIVE_FAILS")
+max_repeat_root = int("$MAX_REPEAT_ROOT_CAUSE")
+max_ok_age = int("$MAX_OK_AGE_SECONDS")
+
+files = sorted(history_dir.glob("*.json"))[-window:]
+print(f"HEALTH_ANOMALY_TOTAL_SAMPLES={len(files)}")
+
+samples = []
+last_ok_ts = None
+now = datetime.now(timezone.utc)
+
+for p in files:
+    try:
+        data = json.loads(p.read_text())
+    except Exception:
+        samples.append(("FAIL", "invalid_json", None))
+        continue
+
+    result = data.get("health_cache_result", "UNKNOWN")
+    platform = data.get("platform_status", "UNKNOWN")
+    root = data.get("root_cause", "unknown")
+    ts_raw = data.get("timestamp", "")
+
+    state = "OK" if result == "OK" and platform == "OK" and root in ("none", "", "unknown") else "FAIL"
+    ts = None
+    try:
+        ts = datetime.fromisoformat(ts_raw.replace("Z", "+00:00"))
+    except Exception:
+        pass
+
+    if state == "OK" and ts:
+        last_ok_ts = ts
+
+    samples.append((state, root, ts))
+
+consecutive_fails = 0
+max_seen_consecutive_fails = 0
+for state, _, _ in samples:
+    if state == "FAIL":
+        consecutive_fails += 1
+        max_seen_consecutive_fails = max(max_seen_consecutive_fails, consecutive_fails)
+    else:
+        consecutive_fails = 0
+
+roots = [root for state, root, _ in samples if state == "FAIL" and root not in ("none", "", "unknown")]
+root_counts = Counter(roots)
+most_common_root, most_common_count = ("none", 0)
+if root_counts:
+    most_common_root, most_common_count = root_counts.most_common(1)[0]
+
+last_ok_age = None
+if last_ok_ts:
+    last_ok_age = int((now - last_ok_ts).total_seconds())
+
+print(f"HEALTH_ANOMALY_CONSECUTIVE_FAILS={max_seen_consecutive_fails}")
+print(f"HEALTH_ANOMALY_REPEAT_ROOT_CAUSE={most_common_root}:{most_common_count}")
+print(f"HEALTH_ANOMALY_LAST_OK_AGE={last_ok_age if last_ok_age is not None else 'unknown'}s")
+
+hard_fail = False
+
+if max_seen_consecutive_fails > max_consecutive_fails:
+    print("HEALTH_ANOMALY_CONSECUTIVE_FAILS_RESULT=FAIL")
+    hard_fail = True
+else:
+    print("HEALTH_ANOMALY_CONSECUTIVE_FAILS_RESULT=OK")
+
+if most_common_count > max_repeat_root:
+    print("HEALTH_ANOMALY_REPEAT_ROOT_CAUSE_RESULT=FAIL")
+    hard_fail = True
+else:
+    print("HEALTH_ANOMALY_REPEAT_ROOT_CAUSE_RESULT=OK")
+
+if last_ok_age is None:
+    print("HEALTH_ANOMALY_LAST_OK_RESULT=FAIL:no_ok_samples")
+    hard_fail = True
+elif last_ok_age > max_ok_age:
+    print("HEALTH_ANOMALY_LAST_OK_RESULT=FAIL:stale_ok")
+    hard_fail = True
+else:
+    print("HEALTH_ANOMALY_LAST_OK_RESULT=OK")
+
+if hard_fail:
+    print("HEALTH_HISTORY_ANOMALY_RESULT=FAIL")
+    raise SystemExit(1)
+
+print("HEALTH_HISTORY_ANOMALY_RESULT=OK")
+PY
+
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_HEALTH_HISTORY_ANOMALY_DIAGNOSTIC_RESULT=OK"
+  exit 0
+fi
+
+echo "AS6_HEALTH_HISTORY_ANOMALY_DIAGNOSTIC_RESULT=FAIL"
+exit 1
