@@ -111,3 +111,5 @@ exit 1
 # AS6 diagnostic registry: ops/bin/as6-diagnostic-registry
 
 # AS6 diagnostic registry: ops/bin/as6-diagnose-diagnostic-registry
+
+# AS6 diagnose-all registry coverage: ops/bin/as6-diagnose-all-registry
