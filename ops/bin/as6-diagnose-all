@@ -15,9 +15,15 @@ run_check() {
   echo
   echo "=== RUN: ${name} ==="
 
-  if bash -lc "$cmd"; then
+  local timeout_seconds="${AS6_DIAGNOSE_ALL_TIMEOUT_SECONDS:-60}"
+
+  if timeout "$timeout_seconds" bash -lc "$cmd"; then
     echo "AS6_DIAGNOSE_ALL_CHECK=OK:${name}"
   else
+    local rc="$?"
+    if [ "$rc" -eq 124 ]; then
+      echo "AS6_DIAGNOSE_ALL_TIMEOUT=FAIL:${name}:${timeout_seconds}s"
+    fi
     echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:${name}"
     fail=1
   fi
