@@ -107,3 +107,7 @@ exit 1
 # AS6 health timer dashboard: ops/bin/as6-diagnose-health-timer-dashboard
 
 # AS6 health cache freshness: ops/bin/as6-diagnose-health-cache-freshness
+
+# AS6 diagnostic registry: ops/bin/as6-diagnostic-registry
+
+# AS6 diagnostic registry: ops/bin/as6-diagnose-diagnostic-registry

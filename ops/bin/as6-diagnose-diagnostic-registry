@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+echo "=== AS6 Diagnostic Registry Diagnostics ==="
+
+test -x ops/bin/as6-diagnostic-registry && echo "DIAGNOSTIC_REGISTRY_SCRIPT=OK" || { echo "DIAGNOSTIC_REGISTRY_SCRIPT=FAIL"; fail=1; }
+
+if ./ops/bin/as6-diagnostic-registry >/tmp/as6-diagnostic-registry.out 2>&1; then
+  echo "DIAGNOSTIC_REGISTRY_RUN=OK"
+else
+  echo "DIAGNOSTIC_REGISTRY_RUN=FAIL"
+  cat /tmp/as6-diagnostic-registry.out || true
+  fail=1
+fi
+
+grep -q '^DIAGNOSTIC_REGISTRY_ENTRY=OK:ops/bin/as6-diagnose-health-cache-freshness$' /tmp/as6-diagnostic-registry.out \
+  && echo "DIAGNOSTIC_REGISTRY_FRESHNESS_INCLUDED=OK" \
+  || { echo "DIAGNOSTIC_REGISTRY_FRESHNESS_INCLUDED=FAIL"; fail=1; }
+
+grep -q '^DIAGNOSTIC_REGISTRY_RESULT=OK$' /tmp/as6-diagnostic-registry.out \
+  && echo "DIAGNOSTIC_REGISTRY_OUTPUT=OK" \
+  || { echo "DIAGNOSTIC_REGISTRY_OUTPUT=FAIL"; fail=1; }
+
+if grep -q '^DIAGNOSTIC_REGISTRY_ENTRY=FAIL:' /tmp/as6-diagnostic-registry.out; then
+  echo "DIAGNOSTIC_REGISTRY_EXECUTABLES=FAIL"
+  grep '^DIAGNOSTIC_REGISTRY_ENTRY=FAIL:' /tmp/as6-diagnostic-registry.out
+  fail=1
+else
+  echo "DIAGNOSTIC_REGISTRY_EXECUTABLES=OK"
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "DIAGNOSTIC_REGISTRY_DIAGNOSTIC_RESULT=OK"
+  exit 0
+fi
+
+echo "DIAGNOSTIC_REGISTRY_DIAGNOSTIC_RESULT=FAIL"
+exit 1
