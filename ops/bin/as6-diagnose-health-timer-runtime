@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+fail=0
+
+echo "=== AS6 Health Timer Runtime Diagnostics ==="
+
+systemctl list-unit-files | grep -q '^as6-health-cache.timer' \
+  && echo "HEALTH_TIMER_RUNTIME_UNIT_FILE=OK" \
+  || { echo "HEALTH_TIMER_RUNTIME_UNIT_FILE=FAIL"; fail=1; }
+
+systemctl is-enabled as6-health-cache.timer >/dev/null 2>&1 \
+  && echo "HEALTH_TIMER_RUNTIME_ENABLED=OK" \
+  || { echo "HEALTH_TIMER_RUNTIME_ENABLED=FAIL"; fail=1; }
+
+systemctl is-active as6-health-cache.timer >/dev/null 2>&1 \
+  && echo "HEALTH_TIMER_RUNTIME_ACTIVE=OK" \
+  || { echo "HEALTH_TIMER_RUNTIME_ACTIVE=FAIL"; fail=1; }
+
+if systemctl status as6-health-cache.service --no-pager -l >/tmp/as6-health-timer-service-status.out 2>&1; then
+  echo "HEALTH_TIMER_RUNTIME_SERVICE_STATUS=OK"
+else
+  echo "HEALTH_TIMER_RUNTIME_SERVICE_STATUS=WARN"
+fi
+
+grep -Eq 'status=0/SUCCESS|Deactivated successfully|Finished as6-health-cache.service' /tmp/as6-health-timer-service-status.out \
+  && echo "HEALTH_TIMER_RUNTIME_SERVICE_SUCCESS=OK" \
+  || { echo "HEALTH_TIMER_RUNTIME_SERVICE_SUCCESS=FAIL"; fail=1; }
+
+if systemctl list-timers --all | grep -q 'as6-health-cache.timer'; then
+  echo "HEALTH_TIMER_RUNTIME_LIST_TIMER=OK"
+  systemctl list-timers --all | grep 'as6-health-cache.timer'
+else
+  echo "HEALTH_TIMER_RUNTIME_LIST_TIMER=FAIL"
+  fail=1
+fi
+
+next_run="$(systemctl list-timers --all | awk '/as6-health-cache.timer/ {print $1" "$2" "$3" "$4" "$5}')"
+last_run="$(systemctl list-timers --all | awk '/as6-health-cache.timer/ {print $7" "$8" "$9" "$10" "$11}')"
+
+if [ -n "$next_run" ] && [ "$next_run" != "- - - - -" ]; then
+  echo "HEALTH_TIMER_RUNTIME_NEXT_RUN=OK:$next_run"
+else
+  echo "HEALTH_TIMER_RUNTIME_NEXT_RUN=WARN"
+fi
+
+if [ -n "$last_run" ] && [ "$last_run" != "- - - - -" ]; then
+  echo "HEALTH_TIMER_RUNTIME_LAST_RUN=OK:$last_run"
+else
+  echo "HEALTH_TIMER_RUNTIME_LAST_RUN=WARN"
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "HEALTH_TIMER_RUNTIME_RESULT=OK"
+  exit 0
+fi
+
+echo "HEALTH_TIMER_RUNTIME_RESULT=FAIL"
+exit 1
