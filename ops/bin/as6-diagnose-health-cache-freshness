@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+FILE="runtime/health/latest.json"
+THRESHOLD_SECONDS="${AS6_HEALTH_CACHE_STALE_SECONDS:-3600}"
+fail=0
+
+echo "=== AS6 Health Cache Freshness Diagnostics ==="
+
+test -f "$FILE" && echo "HEALTH_CACHE_FILE_EXISTS=OK" || { echo "HEALTH_CACHE_FILE_EXISTS=FAIL"; fail=1; }
+
+if ! [[ "$THRESHOLD_SECONDS" =~ ^[0-9]+$ ]] || [ "$THRESHOLD_SECONDS" -lt 60 ]; then
+  echo "HEALTH_CACHE_STALE_THRESHOLD=FAIL:$THRESHOLD_SECONDS"
+  fail=1
+else
+  echo "HEALTH_CACHE_STALE_THRESHOLD=OK:${THRESHOLD_SECONDS}s"
+fi
+
+if [ "$fail" -ne 0 ]; then
+  echo "HEALTH_CACHE_FRESHNESS_RESULT=FAIL"
+  exit 1
+fi
+
+python3 - <<PY || fail=1
+import json
+import sys
+from datetime import datetime, timezone
+from pathlib import Path
+
+file = Path("$FILE")
+threshold = int("$THRESHOLD_SECONDS")
+
+try:
+    data = json.loads(file.read_text())
+except Exception as e:
+    print("HEALTH_CACHE_JSON_VALID=FAIL")
+    print(f"HEALTH_CACHE_JSON_ERROR={type(e).__name__}")
+    raise SystemExit(1)
+
+print("HEALTH_CACHE_JSON_VALID=OK")
+
+timestamp = data.get("timestamp")
+if not timestamp:
+    print("HEALTH_CACHE_TIMESTAMP_VALID=FAIL")
+    raise SystemExit(1)
+
+try:
+    ts = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
+except Exception:
+    print("HEALTH_CACHE_TIMESTAMP_VALID=FAIL")
+    raise SystemExit(1)
+
+now = datetime.now(timezone.utc)
+age = int((now - ts).total_seconds())
+
+print("HEALTH_CACHE_TIMESTAMP_VALID=OK")
+print(f"HEALTH_CACHE_LAST_UPDATE_AGE={age}s")
+print(f"HEALTH_CACHE_LAST_SUCCESS={data.get('health_cache_result', 'UNKNOWN')}")
+
+if data.get("health_cache_result") != "OK":
+    print("HEALTH_CACHE_REFRESH_EXPECTED=YES:last_cache_result_not_ok")
+    print("HEALTH_CACHE_FRESHNESS_RESULT=FAIL")
+    raise SystemExit(1)
+
+if age > threshold:
+    print("HEALTH_CACHE_REFRESH_EXPECTED=YES:stale_cache")
+    print("HEALTH_CACHE_FRESHNESS_RESULT=FAIL")
+    raise SystemExit(1)
+
+print("HEALTH_CACHE_REFRESH_EXPECTED=NO")
+print("HEALTH_CACHE_FRESHNESS_RESULT=OK")
+PY
+
+if [ "$fail" -eq 0 ]; then
+  exit 0
+fi
+
+echo "HEALTH_CACHE_FRESHNESS_RESULT=FAIL"
+exit 1
