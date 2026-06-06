@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+FILE="runtime/health/latest.json"
+
+echo "=== AS6 Health Status ==="
+
+if [ ! -f "$FILE" ]; then
+  echo "HEALTH_STATUS_FILE=FAIL"
+  echo "HEALTH_STATUS_RESULT=FAIL"
+  exit 1
+fi
+
+python3 - <<'PY'
+import json
+from pathlib import Path
+
+p = Path("runtime/health/latest.json")
+data = json.loads(p.read_text())
+
+print(f"HEALTH_STATUS_TIMESTAMP={data.get('timestamp', 'unknown')}")
+print(f"HEALTH_STATUS_GIT_SHA={data.get('git_sha', 'unknown')}")
+print(f"HEALTH_STATUS_PLATFORM={data.get('platform_status', 'UNKNOWN')}")
+print(f"HEALTH_STATUS_OWNER_DASHBOARD={data.get('owner_dashboard', 'UNKNOWN')}")
+print(f"HEALTH_STATUS_WORKFORCE={data.get('workforce_status', 'UNKNOWN')}")
+print(f"HEALTH_STATUS_ROOT_CAUSE={data.get('root_cause', 'unknown')}")
+print(f"HEALTH_STATUS_NEXT_ACTION={data.get('next_action', 'inspect_platform')}")
+print(f"HEALTH_STATUS_NEXT_COMMAND={data.get('next_command', './ops/bin/as6-health-cache')}")
+
+if data.get("health_cache_result") == "OK" and data.get("platform_status") == "OK":
+    print("HEALTH_STATUS_RESULT=OK")
+else:
+    print("HEALTH_STATUS_RESULT=FAIL")
+    raise SystemExit(1)
+PY
