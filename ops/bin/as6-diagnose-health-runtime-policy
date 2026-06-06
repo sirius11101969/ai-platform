@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+echo "=== AS6 Health Runtime Policy Diagnostics ==="
+
+grep -q '^runtime/health/latest\.json$' .gitignore && echo "HEALTH_RUNTIME_LATEST_GITIGNORE=OK" || { echo "HEALTH_RUNTIME_LATEST_GITIGNORE=FAIL"; fail=1; }
+grep -q '^runtime/health/history/\*\.json$' .gitignore && echo "HEALTH_RUNTIME_HISTORY_GITIGNORE=OK" || { echo "HEALTH_RUNTIME_HISTORY_GITIGNORE=FAIL"; fail=1; }
+
+if git ls-files --error-unmatch runtime/health/latest.json >/dev/null 2>&1; then
+  echo "HEALTH_RUNTIME_LATEST_TRACKED=FAIL"
+  fail=1
+else
+  echo "HEALTH_RUNTIME_LATEST_TRACKED=NO"
+fi
+
+tracked_history="$(git ls-files 'runtime/health/history/*.json' || true)"
+if [ -n "$tracked_history" ]; then
+  echo "HEALTH_RUNTIME_HISTORY_TRACKED=FAIL"
+  echo "$tracked_history"
+  fail=1
+else
+  echo "HEALTH_RUNTIME_HISTORY_TRACKED=NO"
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "HEALTH_RUNTIME_POLICY_RESULT=OK"
+  exit 0
+fi
+
+echo "HEALTH_RUNTIME_POLICY_RESULT=FAIL"
+exit 1
