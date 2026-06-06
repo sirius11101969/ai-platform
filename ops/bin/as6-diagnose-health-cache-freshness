@@ -9,6 +9,7 @@ THRESHOLD_SECONDS="${AS6_HEALTH_CACHE_STALE_SECONDS:-3600}"
 fail=0
 
 echo "=== AS6 Health Cache Freshness Diagnostics ==="
+echo "HEALTH_CACHE_AUTO_REFRESH_RECOVERY=DISABLED:avoid_nested_heavy_diagnostics"
 
 test -f "$FILE" && echo "HEALTH_CACHE_FILE_EXISTS=OK" || { echo "HEALTH_CACHE_FILE_EXISTS=FAIL"; fail=1; }
 
@@ -24,8 +25,7 @@ if [ "$fail" -ne 0 ]; then
   exit 1
 fi
 
-check_freshness() {
-  python3 - <<PY
+python3 - <<PY
 import json
 from datetime import datetime, timezone
 from pathlib import Path
@@ -61,45 +61,17 @@ print(f"HEALTH_CACHE_LAST_SUCCESS={data.get('health_cache_result', 'UNKNOWN')}")
 
 if data.get("health_cache_result") != "OK":
     print("HEALTH_CACHE_REFRESH_EXPECTED=YES:last_cache_result_not_ok")
-    raise SystemExit(2)
+    print("HEALTH_CACHE_RECOMMENDED_ACTION=run_as6_health_cache")
+    print("HEALTH_CACHE_FRESHNESS_RESULT=FAIL")
+    raise SystemExit(1)
 
 if age > threshold:
     print("HEALTH_CACHE_REFRESH_EXPECTED=YES:stale_cache")
-    raise SystemExit(2)
+    print("HEALTH_CACHE_RECOMMENDED_ACTION=run_as6_health_cache")
+    print("HEALTH_CACHE_FRESHNESS_RESULT=FAIL")
+    raise SystemExit(1)
 
 print("HEALTH_CACHE_REFRESH_EXPECTED=NO")
-print("HEALTH_CACHE_AUTO_REFRESH_RECOVERY=SKIP:fresh_cache")
+print("HEALTH_CACHE_RECOMMENDED_ACTION=continue")
 print("HEALTH_CACHE_FRESHNESS_RESULT=OK")
-raise SystemExit(0)
 PY
-}
-
-set +e
-check_freshness
-rc="$?"
-set -e
-
-if [ "$rc" -eq 0 ]; then
-  exit 0
-fi
-
-if [ "$rc" -eq 2 ]; then
-  if ./ops/bin/as6-health-cache >/tmp/as6-health-cache-freshness-refresh.out 2>&1; then
-    echo "HEALTH_CACHE_AUTO_REFRESH_RECOVERY=OK"
-
-    set +e
-    check_freshness
-    rc2="$?"
-    set -e
-
-    if [ "$rc2" -eq 0 ]; then
-      exit 0
-    fi
-  else
-    echo "HEALTH_CACHE_AUTO_REFRESH_RECOVERY=FAIL"
-    cat /tmp/as6-health-cache-freshness-refresh.out || true
-  fi
-fi
-
-echo "HEALTH_CACHE_FRESHNESS_RESULT=FAIL"
-exit 1
