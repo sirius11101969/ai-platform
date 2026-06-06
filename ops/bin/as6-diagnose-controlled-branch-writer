@@ -27,6 +27,7 @@ MAIN_WRITE_HITS="$(
     | grep -v 'ops/bin/as6-diagnose-controlled-branch-writer' \
     | grep -v 'ops/bin/as6-diagnose-agent-branch-writer' \
     | grep -v 'ops/bin/as6-diagnose-agent-pr-factory-e2e' \
+    | grep -v 'ops/bin/as6-diagnose-working-tree-safety' \
     | grep -v '.github/workflows/as6-agent-branch-writer.yml' \
     || true
 )"
