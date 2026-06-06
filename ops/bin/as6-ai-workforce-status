@@ -89,3 +89,7 @@ exit 1
 # AS6 health cleanup: ops/bin/as6-diagnose-health-cleanup
 
 # AS6 health dashboard integration: ops/bin/as6-diagnose-health-dashboard-integration
+
+# AS6 health alerts: ops/bin/as6-health-alerts
+
+# AS6 health alerts: ops/bin/as6-diagnose-health-alerts
