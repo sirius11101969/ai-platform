@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+KEEP="${AS6_HEALTH_HISTORY_KEEP:-30}"
+DIR="runtime/health/history"
+
+echo "=== AS6 Health Cleanup Diagnostics ==="
+
+test -x ops/bin/as6-health-cleanup && echo "HEALTH_CLEANUP_SCRIPT=OK" || { echo "HEALTH_CLEANUP_SCRIPT=FAIL"; fail=1; }
+test -d "$DIR" && echo "HEALTH_CLEANUP_HISTORY_DIR=OK" || { echo "HEALTH_CLEANUP_HISTORY_DIR=FAIL"; fail=1; }
+
+if [[ "$KEEP" =~ ^[0-9]+$ ]] && [ "$KEEP" -ge 1 ]; then
+  echo "HEALTH_CLEANUP_KEEP_POLICY=OK:$KEEP"
+else
+  echo "HEALTH_CLEANUP_KEEP_POLICY=FAIL:$KEEP"
+  fail=1
+fi
+
+count="$(find "$DIR" -maxdepth 1 -type f -name '*.json' 2>/dev/null | wc -l | tr -d '[:space:]')"
+echo "HEALTH_CLEANUP_HISTORY_COUNT=$count"
+
+if [ "$count" -le "$KEEP" ]; then
+  echo "HEALTH_CLEANUP_LIMIT=OK"
+else
+  echo "HEALTH_CLEANUP_LIMIT=FAIL"
+  fail=1
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "HEALTH_CLEANUP_DIAGNOSTIC_RESULT=OK"
+  exit 0
+fi
+
+echo "HEALTH_CLEANUP_DIAGNOSTIC_RESULT=FAIL"
+exit 1

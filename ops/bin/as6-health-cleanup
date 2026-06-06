@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+KEEP="${AS6_HEALTH_HISTORY_KEEP:-30}"
+DIR="runtime/health/history"
+
+echo "=== AS6 Health Cleanup ==="
+
+mkdir -p "$DIR"
+
+if ! [[ "$KEEP" =~ ^[0-9]+$ ]] || [ "$KEEP" -lt 1 ]; then
+  echo "HEALTH_CLEANUP_KEEP=FAIL:$KEEP"
+  echo "AS6_HEALTH_CLEANUP_RESULT=FAIL"
+  exit 1
+fi
+
+echo "HEALTH_CLEANUP_KEEP=$KEEP"
+
+before="$(find "$DIR" -maxdepth 1 -type f -name '*.json' | wc -l | tr -d '[:space:]')"
+echo "HEALTH_CLEANUP_BEFORE=$before"
+
+find "$DIR" -maxdepth 1 -type f -name '*.json' -printf '%T@ %p\n' \
+  | sort -nr \
+  | awk -v keep="$KEEP" 'NR>keep {print $2}' \
+  | xargs -r rm -f --
+
+after="$(find "$DIR" -maxdepth 1 -type f -name '*.json' | wc -l | tr -d '[:space:]')"
+echo "HEALTH_CLEANUP_AFTER=$after"
+
+if [ "$after" -le "$KEEP" ]; then
+  echo "AS6_HEALTH_CLEANUP_RESULT=OK"
+  exit 0
+fi
+
+echo "AS6_HEALTH_CLEANUP_RESULT=FAIL"
+exit 1
