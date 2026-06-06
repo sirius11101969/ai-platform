@@ -24,9 +24,9 @@ if [ "$fail" -ne 0 ]; then
   exit 1
 fi
 
-python3 - <<PY || fail=1
+check_freshness() {
+  python3 - <<PY
 import json
-import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -53,8 +53,7 @@ except Exception:
     print("HEALTH_CACHE_TIMESTAMP_VALID=FAIL")
     raise SystemExit(1)
 
-now = datetime.now(timezone.utc)
-age = int((now - ts).total_seconds())
+age = int((datetime.now(timezone.utc) - ts).total_seconds())
 
 print("HEALTH_CACHE_TIMESTAMP_VALID=OK")
 print(f"HEALTH_CACHE_LAST_UPDATE_AGE={age}s")
@@ -62,20 +61,44 @@ print(f"HEALTH_CACHE_LAST_SUCCESS={data.get('health_cache_result', 'UNKNOWN')}")
 
 if data.get("health_cache_result") != "OK":
     print("HEALTH_CACHE_REFRESH_EXPECTED=YES:last_cache_result_not_ok")
-    print("HEALTH_CACHE_FRESHNESS_RESULT=FAIL")
-    raise SystemExit(1)
+    raise SystemExit(2)
 
 if age > threshold:
     print("HEALTH_CACHE_REFRESH_EXPECTED=YES:stale_cache")
-    print("HEALTH_CACHE_FRESHNESS_RESULT=FAIL")
-    raise SystemExit(1)
+    raise SystemExit(2)
 
 print("HEALTH_CACHE_REFRESH_EXPECTED=NO")
+print("HEALTH_CACHE_AUTO_REFRESH_RECOVERY=SKIP:fresh_cache")
 print("HEALTH_CACHE_FRESHNESS_RESULT=OK")
+raise SystemExit(0)
 PY
+}
 
-if [ "$fail" -eq 0 ]; then
+set +e
+check_freshness
+rc="$?"
+set -e
+
+if [ "$rc" -eq 0 ]; then
   exit 0
+fi
+
+if [ "$rc" -eq 2 ]; then
+  if ./ops/bin/as6-health-cache >/tmp/as6-health-cache-freshness-refresh.out 2>&1; then
+    echo "HEALTH_CACHE_AUTO_REFRESH_RECOVERY=OK"
+
+    set +e
+    check_freshness
+    rc2="$?"
+    set -e
+
+    if [ "$rc2" -eq 0 ]; then
+      exit 0
+    fi
+  else
+    echo "HEALTH_CACHE_AUTO_REFRESH_RECOVERY=FAIL"
+    cat /tmp/as6-health-cache-freshness-refresh.out || true
+  fi
 fi
 
 echo "HEALTH_CACHE_FRESHNESS_RESULT=FAIL"
