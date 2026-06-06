@@ -1,0 +1,12 @@
+[Unit]
+Description=Run AS6 Health Cache Refresh every 30 minutes
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=30min
+AccuracySec=1min
+Persistent=true
+Unit=as6-health-cache.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,12 @@
+[Unit]
+Description=AS6 Health Cache Refresh
+After=docker.service
+Wants=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/var/www/ai-platform
+ExecStart=/var/www/ai-platform/ops/bin/as6-health-cache
+ExecStartPost=/var/www/ai-platform/ops/bin/as6-health-cleanup
+User=root
+Group=root

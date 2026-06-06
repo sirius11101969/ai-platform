@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+echo "=== AS6 Install Health Timer ==="
+
+install -m 0644 ops/systemd/as6-health-cache.service /etc/systemd/system/as6-health-cache.service
+install -m 0644 ops/systemd/as6-health-cache.timer /etc/systemd/system/as6-health-cache.timer
+
+systemctl daemon-reload
+systemctl enable --now as6-health-cache.timer
+
+echo "AS6_HEALTH_TIMER_INSTALL_RESULT=OK"
+systemctl list-timers --all | grep -E 'as6-health-cache\.timer' || true
