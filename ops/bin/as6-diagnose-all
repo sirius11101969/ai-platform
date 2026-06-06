@@ -23,20 +23,39 @@ run_check() {
   fi
 }
 
-run_check "git-main-sync" "./ops/bin/as6-diagnose-git-main-sync"
-run_check "diagnostic-coverage" "./ops/bin/as6-diagnose-diagnostic-coverage"
-run_check "diagnostic-flow" "./ops/bin/as6-diagnose-diagnostic-flow"
-run_check "workflow-yaml" "./ops/bin/as6-diagnose-workflow-yaml"
-run_check "actions-node24" "./ops/bin/as6-diagnose-actions-node24"
-run_check "actions-node24-migration" "./ops/bin/as6-diagnose-actions-node24-migration"
-run_check "agent-branch-writer" "./ops/bin/as6-diagnose-agent-branch-writer"
-run_check "agent-branch-writer-e2e" "./ops/bin/as6-diagnose-agent-branch-writer-e2e"
-run_check "agent-pr-factory-e2e" "./ops/bin/as6-diagnose-agent-pr-factory-e2e"
-run_check "controlled-branch-writer" "./ops/bin/as6-diagnose-controlled-branch-writer"
-run_check "controlled-write-mode" "./ops/bin/as6-diagnose-controlled-write-mode"
-run_check "issue-router" "./ops/bin/as6-diagnose-issue-router"
-run_check "pr-factory" "./ops/bin/as6-diagnose-pr-factory"
-run_check "codex-workflow" "./ops/bin/as6-diagnose-codex-workflow"
+if [ ! -x ops/bin/as6-diagnostic-registry ]; then
+  echo "AS6_DIAGNOSE_ALL_REGISTRY=FAIL:missing_or_not_executable"
+  echo "AS6_DIAGNOSE_ALL_RESULT=FAIL"
+  exit 1
+fi
+
+echo "AS6_DIAGNOSE_ALL_REGISTRY=OK"
+
+while read -r diag; do
+  case "$diag" in
+    ops/bin/as6-diagnose-all)
+      echo "AS6_DIAGNOSE_ALL_SKIP=OK:self"
+      continue
+      ;;
+    ops/bin/as6-diagnose-diagnostic-flow)
+      echo "AS6_DIAGNOSE_ALL_SKIP=OK:diagnostic-flow_prevents_recursion"
+      continue
+      ;;
+    ops/bin/as6-diagnose-diagnostic-coverage)
+      echo "AS6_DIAGNOSE_ALL_SKIP=OK:diagnostic-coverage_prevents_recursion"
+      continue
+      ;;
+  esac
+
+  name="${diag#ops/bin/as6-diagnose-}"
+  run_check "$name" "./$diag"
+done < <(
+  ./ops/bin/as6-diagnostic-registry \
+    | awk -F= '/^DIAGNOSTIC_REGISTRY_ENTRY=OK:/ {print $2}' \
+    | sed 's#^OK:##' \
+    | sort
+)
+
 run_check "ai-workforce-status" "./ops/bin/as6-ai-workforce-status"
 
 echo
