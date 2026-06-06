@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+FILE="runtime/health/latest.json"
+DIR="runtime/health/history"
+KEEP="${AS6_HEALTH_HISTORY_KEEP:-30}"
+THRESHOLD_SECONDS="${AS6_HEALTH_CACHE_STALE_SECONDS:-3600}"
+
+fail=0
+needs_repair=0
+
+echo "=== AS6 Health Remediation Diagnostics ==="
+
+test -f "$FILE" && echo "HEALTH_REMEDIATION_LATEST_FILE=OK" || { echo "HEALTH_REMEDIATION_LATEST_FILE=FAIL"; fail=1; }
+test -d "$DIR" && echo "HEALTH_REMEDIATION_HISTORY_DIR=OK" || { echo "HEALTH_REMEDIATION_HISTORY_DIR=FAIL"; fail=1; }
+
+if ! [[ "$KEEP" =~ ^[0-9]+$ ]] || [ "$KEEP" -lt 1 ]; then
+  echo "HEALTH_REMEDIATION_KEEP_POLICY=FAIL:$KEEP"
+  fail=1
+else
+  echo "HEALTH_REMEDIATION_KEEP_POLICY=OK:$KEEP"
+fi
+
+if ! [[ "$THRESHOLD_SECONDS" =~ ^[0-9]+$ ]] || [ "$THRESHOLD_SECONDS" -lt 60 ]; then
+  echo "HEALTH_REMEDIATION_STALE_THRESHOLD=FAIL:$THRESHOLD_SECONDS"
+  fail=1
+else
+  echo "HEALTH_REMEDIATION_STALE_THRESHOLD=OK:${THRESHOLD_SECONDS}s"
+fi
+
+history_count="$(find "$DIR" -maxdepth 1 -type f -name '*.json' 2>/dev/null | wc -l | tr -d '[:space:]' || echo 0)"
+echo "HEALTH_REMEDIATION_HISTORY_COUNT=$history_count"
+
+if [ "$history_count" -gt "$KEEP" ]; then
+  echo "HEALTH_REMEDIATION_NEEDS_CLEANUP=YES"
+  needs_repair=1
+else
+  echo "HEALTH_REMEDIATION_NEEDS_CLEANUP=NO"
+fi
+
+if [ "$fail" -ne 0 ]; then
+  echo "HEALTH_REMEDIATION_SAFE_TO_AUTO_REPAIR=NO"
+  echo "HEALTH_REMEDIATION_RECOMMENDED_COMMAND=inspect_runtime_health"
+  echo "HEALTH_REMEDIATION_RESULT=FAIL"
+  exit 1
+fi
+
+python3 - <<PY
+import json
+from datetime import datetime, timezone
+from pathlib import Path
+
+file = Path("$FILE")
+threshold = int("$THRESHOLD_SECONDS")
+
+data = json.loads(file.read_text())
+result = data.get("health_cache_result", "UNKNOWN")
+timestamp = data.get("timestamp", "")
+age = 999999999
+
+try:
+    ts = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
+    age = int((datetime.now(timezone.utc) - ts).total_seconds())
+except Exception:
+    pass
+
+print(f"HEALTH_REMEDIATION_LATEST_RESULT={result}")
+print(f"HEALTH_REMEDIATION_LATEST_AGE={age}s")
+
+if result != "OK":
+    print("HEALTH_REMEDIATION_NEEDS_REFRESH=YES:last_cache_result_not_ok")
+    raise SystemExit(2)
+
+if age > threshold:
+    print("HEALTH_REMEDIATION_NEEDS_REFRESH=YES:stale_cache")
+    raise SystemExit(2)
+
+print("HEALTH_REMEDIATION_NEEDS_REFRESH=NO")
+raise SystemExit(0)
+PY
+rc="$?"
+
+if [ "$rc" -eq 2 ]; then
+  needs_repair=1
+fi
+
+if [ "$needs_repair" -eq 1 ]; then
+  echo "HEALTH_REMEDIATION_SAFE_TO_AUTO_REPAIR=YES"
+  echo "HEALTH_REMEDIATION_RECOMMENDED_COMMAND=./ops/bin/as6-health-cleanup && ./ops/bin/as6-health-cache"
+  echo "HEALTH_REMEDIATION_RESULT=REPAIR_NEEDED"
+  exit 0
+fi
+
+echo "HEALTH_REMEDIATION_SAFE_TO_AUTO_REPAIR=NO"
+echo "HEALTH_REMEDIATION_RECOMMENDED_COMMAND=continue"
+echo "HEALTH_REMEDIATION_RESULT=OK"

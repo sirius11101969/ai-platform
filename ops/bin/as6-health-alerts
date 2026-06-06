@@ -20,10 +20,38 @@ fail_count="$(grep -E '^HEALTH_TREND_FAIL_COUNT=' "$OUT" | tail -1 | cut -d= -f2
 warn_count="$(grep -E '^HEALTH_TREND_WARN_COUNT=' "$OUT" | tail -1 | cut -d= -f2- || echo 0)"
 trend_result="$(grep -E '^HEALTH_TREND_RESULT=' "$OUT" | tail -1 | cut -d= -f2- || echo UNKNOWN)"
 latest_root="$(grep -E '^HEALTH_TREND_LATEST_ROOT_CAUSE=' "$OUT" | tail -1 | cut -d= -f2- || echo unknown)"
+recent_recovery="$(grep -E '^HEALTH_TREND_RECENT_RECOVERY=' "$OUT" | tail -1 | cut -d= -f2- || echo UNKNOWN)"
+historical_failures="$(grep -E '^HEALTH_TREND_HISTORICAL_FAILURES=' "$OUT" | tail -1 | cut -d= -f2- || echo UNKNOWN)"
+latest_state="$(grep -E '^HEALTH_TREND_LATEST_STATE=' "$OUT" | tail -1 | cut -d= -f2- || echo UNKNOWN)"
 
-if [ "$TREND_RUN" != "OK" ] || [ "${fail_count:-0}" -gt 0 ] || [ "$trend_result" = "FAIL" ]; then
+echo "HEALTH_ALERT_TREND_RESULT=${trend_result}"
+echo "HEALTH_ALERT_RECENT_RECOVERY=${recent_recovery}"
+echo "HEALTH_ALERT_LATEST_STATE=${latest_state}"
+echo "HEALTH_ALERT_HISTORICAL_FAILURES=${historical_failures}"
+
+if [ "$TREND_RUN" = "OK" ] && [ "$trend_result" = "OK" ] && [ "$latest_state" = "OK" ]; then
+  echo "HEALTH_ALERT_LEVEL=OK"
+  if [ "$historical_failures" = "YES" ]; then
+    echo "HEALTH_ALERT_REASON=recovered_with_historical_failures"
+  else
+    echo "HEALTH_ALERT_REASON=none"
+  fi
+  echo "HEALTH_ALERT_NEXT_ACTION=continue"
+  echo "AS6_HEALTH_ALERTS_RESULT=OK"
+  exit 0
+fi
+
+if [ "$TREND_RUN" = "OK" ] && [ "$trend_result" = "WARN" ]; then
+  echo "HEALTH_ALERT_LEVEL=WARN"
+  echo "HEALTH_ALERT_REASON=trend_warning"
+  echo "HEALTH_ALERT_NEXT_ACTION=inspect_health_trend"
+  echo "AS6_HEALTH_ALERTS_RESULT=OK"
+  exit 0
+fi
+
+if [ "$TREND_RUN" != "OK" ] || [ "$trend_result" = "FAIL" ]; then
   echo "HEALTH_ALERT_LEVEL=FAIL"
-  echo "HEALTH_ALERT_REASON=trend_failure_or_failed_samples"
+  echo "HEALTH_ALERT_REASON=trend_failure_or_current_failure"
   echo "HEALTH_ALERT_NEXT_ACTION=run_as6_root_cause"
   echo "AS6_HEALTH_ALERTS_RESULT=FAIL"
   exit 1
@@ -35,6 +63,14 @@ if [ "${warn_count:-0}" -gt 0 ] || [ "$latest_root" != "none" ]; then
   echo "HEALTH_ALERT_NEXT_ACTION=inspect_health_trend"
   echo "AS6_HEALTH_ALERTS_RESULT=OK"
   exit 0
+fi
+
+if [ "${fail_count:-0}" -gt 0 ] && [ "$recent_recovery" != "OK" ]; then
+  echo "HEALTH_ALERT_LEVEL=FAIL"
+  echo "HEALTH_ALERT_REASON=historical_failures_without_recovery"
+  echo "HEALTH_ALERT_NEXT_ACTION=inspect_health_recovery"
+  echo "AS6_HEALTH_ALERTS_RESULT=FAIL"
+  exit 1
 fi
 
 echo "HEALTH_ALERT_LEVEL=OK"

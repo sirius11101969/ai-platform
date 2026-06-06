@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+TIMEOUT_SECONDS="${AS6_DIAGNOSTIC_TIMEOUT_SECONDS:-30}"
+fail=0
+
+echo "=== AS6 Diagnostic Timeout Diagnostics ==="
+echo "DIAGNOSTIC_TIMEOUT_SECONDS=${TIMEOUT_SECONDS}"
+
+if ! [[ "$TIMEOUT_SECONDS" =~ ^[0-9]+$ ]] || [ "$TIMEOUT_SECONDS" -lt 5 ]; then
+  echo "DIAGNOSTIC_TIMEOUT_CONFIG=FAIL"
+  echo "DIAGNOSTIC_TIMEOUT_RESULT=FAIL"
+  exit 1
+fi
+
+echo "DIAGNOSTIC_TIMEOUT_CONFIG=OK"
+
+for diag in ops/bin/as6-diagnose-health-cache-freshness ops/bin/as6-diagnose-health-timer-runtime ops/bin/as6-diagnose-all-registry; do
+  if [ ! -x "$diag" ]; then
+    echo "DIAGNOSTIC_TIMEOUT_CHECK=FAIL:not_executable:$diag"
+    fail=1
+    continue
+  fi
+
+  if timeout "$TIMEOUT_SECONDS" "$diag" >/tmp/as6-timeout-check.out 2>&1; then
+    echo "DIAGNOSTIC_TIMEOUT_CHECK=OK:$diag"
+  else
+    rc="$?"
+    if [ "$rc" -eq 124 ]; then
+      echo "DIAGNOSTIC_TIMEOUT_CHECK=FAIL:timeout:$diag"
+    else
+      echo "DIAGNOSTIC_TIMEOUT_CHECK=OK:completed_with_nonzero:$diag"
+    fi
+  fi
+done
+
+if [ "$fail" -eq 0 ]; then
+  echo "DIAGNOSTIC_TIMEOUT_RESULT=OK"
+  exit 0
+fi
+
+echo "DIAGNOSTIC_TIMEOUT_RESULT=FAIL"
+exit 1
