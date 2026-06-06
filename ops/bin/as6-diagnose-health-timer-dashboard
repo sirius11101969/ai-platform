@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+echo "=== AS6 Health Timer Dashboard Diagnostics ==="
+
+grep -q "HEALTH_TIMER_RUNTIME_SUMMARY" ops/bin/as6-owner-dashboard && echo "HEALTH_TIMER_DASHBOARD_OWNER_FIELD=OK" || { echo "HEALTH_TIMER_DASHBOARD_OWNER_FIELD=FAIL"; fail=1; }
+grep -q "PLATFORM_COMMAND_CENTER_HEALTH_TIMER_RUNTIME" ops/bin/as6-platform-command-center && echo "HEALTH_TIMER_DASHBOARD_PLATFORM_FIELD=OK" || { echo "HEALTH_TIMER_DASHBOARD_PLATFORM_FIELD=FAIL"; fail=1; }
+
+if ./ops/bin/as6-owner-dashboard >/tmp/as6-health-timer-dashboard-owner.out 2>&1; then
+  echo "HEALTH_TIMER_DASHBOARD_OWNER_RUN=OK"
+else
+  echo "HEALTH_TIMER_DASHBOARD_OWNER_RUN=FAIL"
+  tail -80 /tmp/as6-health-timer-dashboard-owner.out || true
+  fail=1
+fi
+
+if ./ops/bin/as6-platform-command-center >/tmp/as6-health-timer-dashboard-platform.out 2>&1; then
+  echo "HEALTH_TIMER_DASHBOARD_PLATFORM_RUN=OK"
+else
+  echo "HEALTH_TIMER_DASHBOARD_PLATFORM_RUN=FAIL"
+  tail -80 /tmp/as6-health-timer-dashboard-platform.out || true
+  fail=1
+fi
+
+grep -q "HEALTH_TIMER_RUNTIME_SUMMARY=OK" /tmp/as6-health-timer-dashboard-owner.out && echo "HEALTH_TIMER_DASHBOARD_OWNER_OUTPUT=OK" || { echo "HEALTH_TIMER_DASHBOARD_OWNER_OUTPUT=FAIL"; fail=1; }
+grep -q "PLATFORM_COMMAND_CENTER_HEALTH_TIMER_RUNTIME=OK" /tmp/as6-health-timer-dashboard-platform.out && echo "HEALTH_TIMER_DASHBOARD_PLATFORM_OUTPUT=OK" || { echo "HEALTH_TIMER_DASHBOARD_PLATFORM_OUTPUT=FAIL"; fail=1; }
+
+if [ "$fail" -eq 0 ]; then
+  echo "HEALTH_TIMER_DASHBOARD_RESULT=OK"
+  exit 0
+fi
+
+echo "HEALTH_TIMER_DASHBOARD_RESULT=FAIL"
+exit 1

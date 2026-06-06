@@ -34,12 +34,14 @@ health_status="$(grep -E '^HEALTH_STATUS_SUMMARY=' "$OUT" | tail -1 | cut -d= -f
 health_trend="$(grep -E '^HEALTH_TREND_SUMMARY=' "$OUT" | tail -1 | cut -d= -f2- || true)"
 health_cleanup="$(grep -E '^HEALTH_CLEANUP_SUMMARY=' "$OUT" | tail -1 | cut -d= -f2- || true)"
 health_alert="$(grep -E '^HEALTH_ALERT_SUMMARY=' "$OUT" | tail -1 | cut -d= -f2- || true)"
+health_timer_runtime="$(grep -E '^HEALTH_TIMER_RUNTIME_SUMMARY=' "$OUT" | tail -1 | cut -d= -f2- || true)"
 
 echo "PLATFORM_COMMAND_CENTER_DEPLOY=not_checked_yet"
 echo "PLATFORM_COMMAND_CENTER_HEALTH_STATUS=${health_status:-UNKNOWN}"
 echo "PLATFORM_COMMAND_CENTER_HEALTH_TREND=${health_trend:-UNKNOWN}"
 echo "PLATFORM_COMMAND_CENTER_HEALTH_CLEANUP=${health_cleanup:-UNKNOWN}"
 echo "PLATFORM_COMMAND_CENTER_HEALTH_ALERT=${health_alert:-UNKNOWN}"
+echo "PLATFORM_COMMAND_CENTER_HEALTH_TIMER_RUNTIME=${health_timer_runtime:-UNKNOWN}"
 echo "PLATFORM_COMMAND_CENTER_NEXT_ACTION=${next_action:-inspect_owner_dashboard}"
 echo "PLATFORM_COMMAND_CENTER_NEXT_COMMAND=${next_command:-./ops/bin/as6-owner-dashboard}"
 
