@@ -83,3 +83,7 @@ exit 1
 # AS6 health trend: ops/bin/as6-health-trend
 
 # AS6 health trend: ops/bin/as6-diagnose-health-trend
+
+# AS6 health cleanup: ops/bin/as6-health-cleanup
+
+# AS6 health cleanup: ops/bin/as6-diagnose-health-cleanup
