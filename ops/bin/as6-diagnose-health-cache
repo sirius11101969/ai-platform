@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+echo "=== AS6 Health Cache Diagnostics ==="
+
+test -f runtime/health/latest.json && echo "HEALTH_CACHE_FILE=OK" || { echo "HEALTH_CACHE_FILE=FAIL"; fail=1; }
+test -d runtime/health/history && echo "HEALTH_CACHE_HISTORY_DIR=OK" || { echo "HEALTH_CACHE_HISTORY_DIR=FAIL"; fail=1; }
+
+python3 - <<'PY' || fail=1
+import json
+from pathlib import Path
+
+p = Path("runtime/health/latest.json")
+data = json.loads(p.read_text())
+
+required = [
+    "timestamp",
+    "git_sha",
+    "health_cache_result",
+    "platform_status",
+    "owner_dashboard",
+    "workforce_status",
+    "root_cause",
+    "next_action",
+    "next_command",
+]
+
+missing = [x for x in required if x not in data]
+
+if missing:
+    print("HEALTH_CACHE_JSON_VALID=FAIL")
+    print("HEALTH_CACHE_MISSING=" + ",".join(missing))
+    raise SystemExit(1)
+
+print("HEALTH_CACHE_JSON_VALID=OK")
+print("HEALTH_CACHE_TIMESTAMP=OK")
+print("HEALTH_CACHE_SCHEMA=OK")
+PY
+
+if [ "$fail" -eq 0 ]; then
+  echo "HEALTH_CACHE_DIAGNOSTIC_RESULT=OK"
+  exit 0
+fi
+
+echo "HEALTH_CACHE_DIAGNOSTIC_RESULT=FAIL"
+exit 1

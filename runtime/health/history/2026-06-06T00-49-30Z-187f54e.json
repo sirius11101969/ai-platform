@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-06-06T00:49:30Z",
+  "git_sha": "187f54e",
+  "health_cache_result": "OK",
+  "platform_status": "OK",
+  "owner_dashboard": "OK",
+  "workforce_status": "OK",
+  "root_cause": "none",
+  "next_action": "continue",
+  "next_command": "./ops/bin/as6-root-cause"
+}

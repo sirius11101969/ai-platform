@@ -69,3 +69,7 @@ exit 1
 # AS6 owner dashboard: ops/bin/as6-owner-dashboard
 
 # AS6 platform command center: ops/bin/as6-platform-command-center
+
+# AS6 health cache: ops/bin/as6-health-cache
+
+# AS6 health cache: ops/bin/as6-diagnose-health-cache
