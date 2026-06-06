@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+echo "=== AS6 Health Status Diagnostics ==="
+
+test -x ops/bin/as6-health-status && echo "HEALTH_STATUS_SCRIPT=OK" || { echo "HEALTH_STATUS_SCRIPT=FAIL"; fail=1; }
+test -f runtime/health/latest.json && echo "HEALTH_STATUS_CACHE_FILE=OK" || { echo "HEALTH_STATUS_CACHE_FILE=FAIL"; fail=1; }
+
+if ./ops/bin/as6-health-status >/tmp/as6-health-status-check.out 2>&1; then
+  echo "HEALTH_STATUS_RUN=OK"
+else
+  echo "HEALTH_STATUS_RUN=FAIL"
+  cat /tmp/as6-health-status-check.out || true
+  fail=1
+fi
+
+grep -q "HEALTH_STATUS_RESULT=OK" /tmp/as6-health-status-check.out 2>/dev/null && echo "HEALTH_STATUS_OUTPUT=OK" || { echo "HEALTH_STATUS_OUTPUT=FAIL"; fail=1; }
+
+if [ "$fail" -eq 0 ]; then
+  echo "HEALTH_STATUS_DIAGNOSTIC_RESULT=OK"
+  exit 0
+fi
+
+echo "HEALTH_STATUS_DIAGNOSTIC_RESULT=FAIL"
+exit 1

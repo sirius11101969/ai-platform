@@ -73,3 +73,7 @@ exit 1
 # AS6 health cache: ops/bin/as6-health-cache
 
 # AS6 health cache: ops/bin/as6-diagnose-health-cache
+
+# AS6 health status: ops/bin/as6-health-status
+
+# AS6 health status: ops/bin/as6-diagnose-health-status
