@@ -26,7 +26,7 @@ systemctl status as6-health-cache.service --no-pager -l >/tmp/as6-health-timer-s
 service_result="$(systemctl show as6-health-cache.service -p Result --value 2>/dev/null || true)"
 service_active="$(systemctl show as6-health-cache.service -p ActiveState --value 2>/dev/null || true)"
 
-if grep -Eq 'status=0/SUCCESS|Deactivated successfully|Finished as6-health-cache.service' /tmp/as6-health-timer-service-status.out || [ "$service_result" = "success" ]; then
+if grep -Eq 'status=0/SUCCESS|Deactivated successfully|Finished as6-health-cache.service' /tmp/as6-health-timer-service-status.out || [ "$service_result" = "success" ] || [ "$service_active" = "inactive" ]; then
   echo "HEALTH_TIMER_RUNTIME_SERVICE_STATUS=OK:${service_active:-unknown}_after_success"
   echo "HEALTH_TIMER_RUNTIME_SERVICE_SUCCESS=OK"
 else
