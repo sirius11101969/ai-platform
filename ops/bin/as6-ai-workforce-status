@@ -115,3 +115,5 @@ exit 1
 # AS6 health history corruption diagnostics: ops/bin/as6-diagnose-health-history-corruption
 
 # AS6 health history anomaly diagnostics: ops/bin/as6-diagnose-health-history-anomaly
+
+# AS6 working tree safety diagnostics: ops/bin/as6-diagnose-working-tree-safety

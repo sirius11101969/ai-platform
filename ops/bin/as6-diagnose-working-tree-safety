@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+echo "=== AS6 Working Tree Safety Diagnostics ==="
+
+branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
+echo "WORKTREE_BRANCH=$branch"
+
+if git diff --quiet && git diff --cached --quiet; then
+  echo "WORKTREE_TRACKED_CLEAN=OK"
+else
+  echo "WORKTREE_TRACKED_CLEAN=FAIL"
+  git status --short
+  fail=1
+fi
+
+untracked_count="$(git ls-files --others --exclude-standard | wc -l | tr -d '[:space:]')"
+echo "WORKTREE_UNTRACKED_COUNT=$untracked_count"
+
+if [ "$untracked_count" = "0" ]; then
+  echo "WORKTREE_UNTRACKED_CLEAN=OK"
+else
+  echo "WORKTREE_UNTRACKED_CLEAN=WARN"
+  git ls-files --others --exclude-standard
+fi
+
+if git rev-parse --verify origin/main >/dev/null 2>&1; then
+  echo "WORKTREE_ORIGIN_MAIN=OK"
+else
+  echo "WORKTREE_ORIGIN_MAIN=FAIL"
+  fail=1
+fi
+
+local_head="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
+remote_main="$(git rev-parse origin/main 2>/dev/null || echo unknown)"
+merge_base="$(git merge-base HEAD origin/main 2>/dev/null || echo unknown)"
+
+echo "WORKTREE_LOCAL_HEAD=$local_head"
+echo "WORKTREE_REMOTE_MAIN=$remote_main"
+echo "WORKTREE_MERGE_BASE=$merge_base"
+
+if [ "$branch" = "main" ]; then
+  if [ "$local_head" = "$remote_main" ]; then
+    echo "WORKTREE_MAIN_SYNC=OK"
+  elif [ "$local_head" = "$merge_base" ]; then
+    echo "WORKTREE_MAIN_SYNC=BEHIND_FAST_FORWARD_AVAILABLE"
+  elif [ "$remote_main" = "$merge_base" ]; then
+    echo "WORKTREE_MAIN_SYNC=AHEAD_OF_REMOTE"
+    fail=1
+  else
+    echo "WORKTREE_MAIN_SYNC=DIVERGED"
+    fail=1
+  fi
+else
+  echo "WORKTREE_MAIN_SYNC=SKIP:not_on_main"
+fi
+
+if [ "$branch" = "main" ] && [ "$fail" -eq 0 ]; then
+  echo "WORKTREE_DEPLOY_READY=OK"
+elif [ "$branch" = "main" ]; then
+  echo "WORKTREE_DEPLOY_READY=FAIL"
+else
+  echo "WORKTREE_DEPLOY_READY=SKIP:not_on_main"
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "WORKTREE_SAFETY_RESULT=OK"
+  exit 0
+fi
+
+echo "WORKTREE_SAFETY_RESULT=FAIL"
+exit 1
