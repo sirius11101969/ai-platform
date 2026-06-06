@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+DIR="runtime/health/history"
+fail=0
+
+echo "=== AS6 Health History Corruption Diagnostics ==="
+
+test -d "$DIR" && echo "HEALTH_HISTORY_DIR=OK" || { echo "HEALTH_HISTORY_DIR=FAIL"; fail=1; }
+
+python3 - <<'PY' || fail=1
+import json
+from pathlib import Path
+from datetime import datetime, timezone
+
+dir_path = Path("runtime/health/history")
+required = {
+    "timestamp",
+    "git_sha",
+    "health_cache_result",
+    "platform_status",
+    "root_cause",
+    "next_action",
+    "next_command",
+}
+
+files = sorted(dir_path.glob("*.json"))
+print(f"HEALTH_HISTORY_TOTAL_FILES={len(files)}")
+
+timestamps = {}
+invalid_json = 0
+missing_fields = 0
+empty_files = 0
+future_files = 0
+bad_timestamps = 0
+
+now = datetime.now(timezone.utc)
+
+for p in files:
+    if p.stat().st_size == 0:
+        print(f"HEALTH_HISTORY_EMPTY_FILE=FAIL:{p}")
+        empty_files += 1
+        continue
+
+    try:
+        data = json.loads(p.read_text())
+    except Exception as e:
+        print(f"HEALTH_HISTORY_JSON_VALID=FAIL:{p}:{type(e).__name__}")
+        invalid_json += 1
+        continue
+
+    missing = sorted(required - set(data.keys()))
+    if missing:
+        print(f"HEALTH_HISTORY_REQUIRED_FIELDS=FAIL:{p}:{','.join(missing)}")
+        missing_fields += 1
+
+    ts = data.get("timestamp")
+    if ts:
+        timestamps.setdefault(ts, []).append(str(p))
+        try:
+            parsed = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+            if parsed > now:
+                print(f"HEALTH_HISTORY_FUTURE_TIMESTAMP=FAIL:{p}:{ts}")
+                future_files += 1
+        except Exception:
+            print(f"HEALTH_HISTORY_TIMESTAMP_VALID=FAIL:{p}:{ts}")
+            bad_timestamps += 1
+
+duplicates = {ts: paths for ts, paths in timestamps.items() if len(paths) > 1}
+for ts, paths in duplicates.items():
+    print(f"HEALTH_HISTORY_DUPLICATE_TIMESTAMP=FAIL:{ts}:{'|'.join(paths)}")
+
+if not files:
+    print("HEALTH_HISTORY_EMPTY=OK:no_history_yet")
+
+if invalid_json == 0:
+    print("HEALTH_HISTORY_JSON_VALID=OK")
+if missing_fields == 0:
+    print("HEALTH_HISTORY_REQUIRED_FIELDS=OK")
+if empty_files == 0:
+    print("HEALTH_HISTORY_EMPTY_FILES=OK")
+if future_files == 0:
+    print("HEALTH_HISTORY_FUTURE_TIMESTAMPS=OK")
+if bad_timestamps == 0:
+    print("HEALTH_HISTORY_TIMESTAMPS_VALID=OK")
+if not duplicates:
+    print("HEALTH_HISTORY_DUPLICATE_TIMESTAMPS=OK")
+
+if invalid_json or missing_fields or empty_files or future_files or bad_timestamps or duplicates:
+    print("HEALTH_HISTORY_CORRUPTION_RESULT=FAIL")
+    raise SystemExit(1)
+
+print("HEALTH_HISTORY_CORRUPTION_RESULT=OK")
+PY
+
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_HEALTH_HISTORY_CORRUPTION_DIAGNOSTIC_RESULT=OK"
+  exit 0
+fi
+
+echo "AS6_HEALTH_HISTORY_CORRUPTION_DIAGNOSTIC_RESULT=FAIL"
+exit 1
