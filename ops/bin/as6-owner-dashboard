@@ -29,7 +29,28 @@ echo "PLATFORM_STATUS=${overall:-UNKNOWN}"
 echo "WORKFORCE_STATUS=${ROOT_RESULT}"
 echo "ROOT_CAUSE_STATUS=${root_cause:-unknown}"
 echo "SECURITY_STATUS=see_secret_scan_before_commit"
+if ./ops/bin/as6-health-status >/tmp/as6-owner-health-status.out 2>&1; then
+  health_status="$(grep -E '^HEALTH_STATUS_RESULT=' /tmp/as6-owner-health-status.out | tail -1 | cut -d= -f2- || true)"
+else
+  health_status="FAIL"
+fi
+
+if ./ops/bin/as6-health-trend >/tmp/as6-owner-health-trend.out 2>&1; then
+  health_trend="$(grep -E '^HEALTH_TREND_RESULT=' /tmp/as6-owner-health-trend.out | tail -1 | cut -d= -f2- || true)"
+else
+  health_trend="FAIL"
+fi
+
+if ./ops/bin/as6-diagnose-health-cleanup >/tmp/as6-owner-health-cleanup.out 2>&1; then
+  health_cleanup="$(grep -E '^HEALTH_CLEANUP_DIAGNOSTIC_RESULT=' /tmp/as6-owner-health-cleanup.out | tail -1 | cut -d= -f2- || true)"
+else
+  health_cleanup="FAIL"
+fi
+
 echo "DEPLOY_STATUS=not_checked_by_owner_dashboard_yet"
+echo "HEALTH_STATUS_SUMMARY=${health_status:-UNKNOWN}"
+echo "HEALTH_TREND_SUMMARY=${health_trend:-UNKNOWN}"
+echo "HEALTH_CLEANUP_SUMMARY=${health_cleanup:-UNKNOWN}"
 echo "SAFE_TO_FIX=${safe_to_fix:-requires_review}"
 echo "NEXT_ACTION=${recommended:-inspect_root_cause_report}"
 echo "NEXT_COMMAND=${next_command:-./ops/bin/as6-root-cause-report}"
