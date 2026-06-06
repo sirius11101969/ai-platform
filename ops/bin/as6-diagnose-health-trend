@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+echo "=== AS6 Health Trend Diagnostics ==="
+
+test -x ops/bin/as6-health-trend && echo "HEALTH_TREND_SCRIPT=OK" || { echo "HEALTH_TREND_SCRIPT=FAIL"; fail=1; }
+test -d runtime/health/history && echo "HEALTH_TREND_HISTORY_DIR=OK" || { echo "HEALTH_TREND_HISTORY_DIR=FAIL"; fail=1; }
+
+if ./ops/bin/as6-health-trend >/tmp/as6-health-trend-check.out 2>&1; then
+  echo "HEALTH_TREND_RUN=OK"
+else
+  echo "HEALTH_TREND_RUN=FAIL"
+  cat /tmp/as6-health-trend-check.out || true
+  fail=1
+fi
+
+grep -Eq "HEALTH_TREND_RESULT=(OK|NO_DATA)" /tmp/as6-health-trend-check.out 2>/dev/null && echo "HEALTH_TREND_OUTPUT=OK" || { echo "HEALTH_TREND_OUTPUT=FAIL"; fail=1; }
+
+if [ "$fail" -eq 0 ]; then
+  echo "HEALTH_TREND_DIAGNOSTIC_RESULT=OK"
+  exit 0
+fi
+
+echo "HEALTH_TREND_DIAGNOSTIC_RESULT=FAIL"
+exit 1
