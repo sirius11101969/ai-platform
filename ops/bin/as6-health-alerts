@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+OUT="/tmp/as6-health-alerts-trend.out"
+
+echo "=== AS6 Health Alerts ==="
+
+if ./ops/bin/as6-health-trend >"$OUT" 2>&1; then
+  TREND_RUN="OK"
+else
+  TREND_RUN="FAIL"
+fi
+
+cat "$OUT"
+
+fail_count="$(grep -E '^HEALTH_TREND_FAIL_COUNT=' "$OUT" | tail -1 | cut -d= -f2- || echo 0)"
+warn_count="$(grep -E '^HEALTH_TREND_WARN_COUNT=' "$OUT" | tail -1 | cut -d= -f2- || echo 0)"
+trend_result="$(grep -E '^HEALTH_TREND_RESULT=' "$OUT" | tail -1 | cut -d= -f2- || echo UNKNOWN)"
+latest_root="$(grep -E '^HEALTH_TREND_LATEST_ROOT_CAUSE=' "$OUT" | tail -1 | cut -d= -f2- || echo unknown)"
+
+if [ "$TREND_RUN" != "OK" ] || [ "${fail_count:-0}" -gt 0 ] || [ "$trend_result" = "FAIL" ]; then
+  echo "HEALTH_ALERT_LEVEL=FAIL"
+  echo "HEALTH_ALERT_REASON=trend_failure_or_failed_samples"
+  echo "HEALTH_ALERT_NEXT_ACTION=run_as6_root_cause"
+  echo "AS6_HEALTH_ALERTS_RESULT=FAIL"
+  exit 1
+fi
+
+if [ "${warn_count:-0}" -gt 0 ] || [ "$latest_root" != "none" ]; then
+  echo "HEALTH_ALERT_LEVEL=WARN"
+  echo "HEALTH_ALERT_REASON=warnings_or_non_empty_root_cause"
+  echo "HEALTH_ALERT_NEXT_ACTION=inspect_health_trend"
+  echo "AS6_HEALTH_ALERTS_RESULT=OK"
+  exit 0
+fi
+
+echo "HEALTH_ALERT_LEVEL=OK"
+echo "HEALTH_ALERT_REASON=none"
+echo "HEALTH_ALERT_NEXT_ACTION=continue"
+echo "AS6_HEALTH_ALERTS_RESULT=OK"

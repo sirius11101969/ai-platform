@@ -50,7 +50,14 @@ fi
 echo "DEPLOY_STATUS=not_checked_by_owner_dashboard_yet"
 echo "HEALTH_STATUS_SUMMARY=${health_status:-UNKNOWN}"
 echo "HEALTH_TREND_SUMMARY=${health_trend:-UNKNOWN}"
+if ./ops/bin/as6-health-alerts >/tmp/as6-owner-health-alerts.out 2>&1; then
+  health_alert="$(grep -E '^HEALTH_ALERT_LEVEL=' /tmp/as6-owner-health-alerts.out | tail -1 | cut -d= -f2- || true)"
+else
+  health_alert="FAIL"
+fi
+
 echo "HEALTH_CLEANUP_SUMMARY=${health_cleanup:-UNKNOWN}"
+echo "HEALTH_ALERT_SUMMARY=${health_alert:-UNKNOWN}"
 echo "SAFE_TO_FIX=${safe_to_fix:-requires_review}"
 echo "NEXT_ACTION=${recommended:-inspect_root_cause_report}"
 echo "NEXT_COMMAND=${next_command:-./ops/bin/as6-root-cause-report}"

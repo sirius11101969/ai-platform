@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+echo "=== AS6 Health Alerts Diagnostics ==="
+
+test -x ops/bin/as6-health-alerts && echo "HEALTH_ALERTS_SCRIPT=OK" || { echo "HEALTH_ALERTS_SCRIPT=FAIL"; fail=1; }
+
+if ./ops/bin/as6-health-alerts >/tmp/as6-health-alerts-check.out 2>&1; then
+  echo "HEALTH_ALERTS_RUN=OK"
+else
+  echo "HEALTH_ALERTS_RUN=FAIL"
+  cat /tmp/as6-health-alerts-check.out || true
+  fail=1
+fi
+
+grep -Eq '^HEALTH_ALERT_LEVEL=(OK|WARN|FAIL)$' /tmp/as6-health-alerts-check.out && echo "HEALTH_ALERTS_LEVEL_OUTPUT=OK" || { echo "HEALTH_ALERTS_LEVEL_OUTPUT=FAIL"; fail=1; }
+grep -Eq '^HEALTH_ALERT_REASON=' /tmp/as6-health-alerts-check.out && echo "HEALTH_ALERTS_REASON_OUTPUT=OK" || { echo "HEALTH_ALERTS_REASON_OUTPUT=FAIL"; fail=1; }
+grep -Eq '^HEALTH_ALERT_NEXT_ACTION=' /tmp/as6-health-alerts-check.out && echo "HEALTH_ALERTS_NEXT_ACTION_OUTPUT=OK" || { echo "HEALTH_ALERTS_NEXT_ACTION_OUTPUT=FAIL"; fail=1; }
+
+if [ "$fail" -eq 0 ]; then
+  echo "HEALTH_ALERTS_DIAGNOSTIC_RESULT=OK"
+  exit 0
+fi
+
+echo "HEALTH_ALERTS_DIAGNOSTIC_RESULT=FAIL"
+exit 1
