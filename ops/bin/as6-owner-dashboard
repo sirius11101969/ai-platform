@@ -56,8 +56,15 @@ else
   health_alert="FAIL"
 fi
 
+if ./ops/bin/as6-diagnose-health-timer-runtime >/tmp/as6-owner-health-timer-runtime.out 2>&1; then
+  health_timer_runtime="$(grep -E '^HEALTH_TIMER_RUNTIME_RESULT=' /tmp/as6-owner-health-timer-runtime.out | tail -1 | cut -d= -f2- || true)"
+else
+  health_timer_runtime="FAIL"
+fi
+
 echo "HEALTH_CLEANUP_SUMMARY=${health_cleanup:-UNKNOWN}"
 echo "HEALTH_ALERT_SUMMARY=${health_alert:-UNKNOWN}"
+echo "HEALTH_TIMER_RUNTIME_SUMMARY=${health_timer_runtime:-UNKNOWN}"
 echo "SAFE_TO_FIX=${safe_to_fix:-requires_review}"
 echo "NEXT_ACTION=${recommended:-inspect_root_cause_report}"
 echo "NEXT_COMMAND=${next_command:-./ops/bin/as6-root-cause-report}"
