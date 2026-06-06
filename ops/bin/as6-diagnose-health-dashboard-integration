@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+echo "=== AS6 Health Dashboard Integration Diagnostics ==="
+
+grep -q "HEALTH_STATUS_SUMMARY" ops/bin/as6-owner-dashboard && echo "HEALTH_DASHBOARD_OWNER_STATUS=OK" || { echo "HEALTH_DASHBOARD_OWNER_STATUS=FAIL"; fail=1; }
+grep -q "HEALTH_TREND_SUMMARY" ops/bin/as6-owner-dashboard && echo "HEALTH_DASHBOARD_OWNER_TREND=OK" || { echo "HEALTH_DASHBOARD_OWNER_TREND=FAIL"; fail=1; }
+grep -q "HEALTH_CLEANUP_SUMMARY" ops/bin/as6-owner-dashboard && echo "HEALTH_DASHBOARD_OWNER_CLEANUP=OK" || { echo "HEALTH_DASHBOARD_OWNER_CLEANUP=FAIL"; fail=1; }
+
+grep -q "PLATFORM_COMMAND_CENTER_HEALTH_STATUS" ops/bin/as6-platform-command-center && echo "HEALTH_DASHBOARD_PLATFORM_STATUS=OK" || { echo "HEALTH_DASHBOARD_PLATFORM_STATUS=FAIL"; fail=1; }
+grep -q "PLATFORM_COMMAND_CENTER_HEALTH_TREND" ops/bin/as6-platform-command-center && echo "HEALTH_DASHBOARD_PLATFORM_TREND=OK" || { echo "HEALTH_DASHBOARD_PLATFORM_TREND=FAIL"; fail=1; }
+grep -q "PLATFORM_COMMAND_CENTER_HEALTH_CLEANUP" ops/bin/as6-platform-command-center && echo "HEALTH_DASHBOARD_PLATFORM_CLEANUP=OK" || { echo "HEALTH_DASHBOARD_PLATFORM_CLEANUP=FAIL"; fail=1; }
+
+if ./ops/bin/as6-owner-dashboard >/tmp/as6-health-dashboard-owner.out 2>&1; then
+  echo "HEALTH_DASHBOARD_OWNER_RUN=OK"
+else
+  echo "HEALTH_DASHBOARD_OWNER_RUN=FAIL"
+  tail -80 /tmp/as6-health-dashboard-owner.out || true
+  fail=1
+fi
+
+if ./ops/bin/as6-platform-command-center >/tmp/as6-health-dashboard-platform.out 2>&1; then
+  echo "HEALTH_DASHBOARD_PLATFORM_RUN=OK"
+else
+  echo "HEALTH_DASHBOARD_PLATFORM_RUN=FAIL"
+  tail -80 /tmp/as6-health-dashboard-platform.out || true
+  fail=1
+fi
+
+grep -q "HEALTH_STATUS_SUMMARY=OK" /tmp/as6-health-dashboard-owner.out && echo "HEALTH_DASHBOARD_OWNER_STATUS_OUTPUT=OK" || { echo "HEALTH_DASHBOARD_OWNER_STATUS_OUTPUT=FAIL"; fail=1; }
+grep -q "PLATFORM_COMMAND_CENTER_HEALTH_STATUS=OK" /tmp/as6-health-dashboard-platform.out && echo "HEALTH_DASHBOARD_PLATFORM_STATUS_OUTPUT=OK" || { echo "HEALTH_DASHBOARD_PLATFORM_STATUS_OUTPUT=FAIL"; fail=1; }
+
+if [ "$fail" -eq 0 ]; then
+  echo "HEALTH_DASHBOARD_INTEGRATION_RESULT=OK"
+  exit 0
+fi
+
+echo "HEALTH_DASHBOARD_INTEGRATION_RESULT=FAIL"
+exit 1
