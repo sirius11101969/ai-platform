@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+echo "=== AS6 Diagnostic Registry ==="
+
+find ops/bin -maxdepth 1 -type f -name 'as6-diagnose-*' \
+  ! -name '*.backup.*' \
+  -printf '%f\n' \
+  | sort \
+  | while read -r name; do
+      test -x "ops/bin/$name" \
+        && echo "DIAGNOSTIC_REGISTRY_ENTRY=OK:ops/bin/$name" \
+        || echo "DIAGNOSTIC_REGISTRY_ENTRY=FAIL:not_executable:ops/bin/$name"
+    done
+
+echo "DIAGNOSTIC_REGISTRY_RESULT=OK"
