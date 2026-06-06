@@ -36,27 +36,22 @@ grep -Eq 'status=0/SUCCESS|Deactivated successfully|Finished as6-health-cache.se
   && echo "HEALTH_TIMER_RUNTIME_SERVICE_SUCCESS=OK" \
   || { echo "HEALTH_TIMER_RUNTIME_SERVICE_SUCCESS=FAIL"; fail=1; }
 
-if systemctl list-timers --all | grep -q 'as6-health-cache.timer'; then
+next_run="$(systemctl show as6-health-cache.timer -p NextElapseUSecRealtime --value 2>/dev/null || true)"
+last_run="$(systemctl show as6-health-cache.timer -p LastTriggerUSec --value 2>/dev/null || true)"
+
+if [ -n "$next_run" ] && [ "$next_run" != "n/a" ]; then
   echo "HEALTH_TIMER_RUNTIME_LIST_TIMER=OK"
-  systemctl list-timers --all | grep 'as6-health-cache.timer'
+  echo "HEALTH_TIMER_RUNTIME_NEXT_RUN=OK:$next_run"
 else
   echo "HEALTH_TIMER_RUNTIME_LIST_TIMER=FAIL"
+  echo "HEALTH_TIMER_RUNTIME_NEXT_RUN=FAIL"
   fail=1
 fi
 
-next_run="$(systemctl list-timers --all | awk '/as6-health-cache.timer/ {print $1" "$2" "$3" "$4" "$5}')"
-last_run="$(systemctl list-timers --all | awk '/as6-health-cache.timer/ {print $7" "$8" "$9" "$10" "$11}')"
-
-if [ -n "$next_run" ] && [ "$next_run" != "- - - - -" ]; then
-  echo "HEALTH_TIMER_RUNTIME_NEXT_RUN=OK:$next_run"
-else
-  echo "HEALTH_TIMER_RUNTIME_NEXT_RUN=WARN"
-fi
-
-if [ -n "$last_run" ] && [ "$last_run" != "- - - - -" ]; then
+if [ -n "$last_run" ] && [ "$last_run" != "n/a" ]; then
   echo "HEALTH_TIMER_RUNTIME_LAST_RUN=OK:$last_run"
 else
-  echo "HEALTH_TIMER_RUNTIME_LAST_RUN=WARN"
+  echo "HEALTH_TIMER_RUNTIME_LAST_RUN=WARN:not_triggered_yet"
 fi
 
 if [ "$fail" -eq 0 ]; then
