@@ -7,6 +7,7 @@ cd "$ROOT"
 fail=0
 
 echo "=== AS6 Diagnose All Registry Coverage Diagnostics ==="
+echo "HEAVY_DASHBOARD_CHECK_SKIP_POLICY=OK"
 
 test -x ops/bin/as6-diagnostic-registry && echo "DIAGNOSE_ALL_REGISTRY_SOURCE=OK" || { echo "DIAGNOSE_ALL_REGISTRY_SOURCE=FAIL"; fail=1; }
 test -x ops/bin/as6-diagnose-all && echo "DIAGNOSE_ALL_SCRIPT=OK" || { echo "DIAGNOSE_ALL_SCRIPT=FAIL"; fail=1; }
@@ -29,6 +30,10 @@ while read -r diag; do
   case "$diag" in
     ops/bin/as6-diagnose-all|ops/bin/as6-diagnose-diagnostic-registry|ops/bin/as6-diagnose-diagnostic-coverage|ops/bin/as6-diagnose-diagnostic-flow)
       echo "DIAGNOSE_ALL_REGISTRY_SKIPPED=OK:$diag"
+      continue
+      ;;
+    ops/bin/as6-diagnose-health-dashboard-integration|ops/bin/as6-diagnose-health-timer-dashboard|ops/bin/as6-diagnose-command-center)
+      echo "DIAGNOSE_ALL_REGISTRY_SKIPPED=OK:heavy_dashboard_check_prevents_nested_diagnose_all:$diag"
       continue
       ;;
   esac

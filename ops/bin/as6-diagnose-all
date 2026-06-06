@@ -45,6 +45,10 @@ while read -r diag; do
       echo "AS6_DIAGNOSE_ALL_SKIP=OK:diagnostic-coverage_prevents_recursion"
       continue
       ;;
+    ops/bin/as6-diagnose-health-dashboard-integration|ops/bin/as6-diagnose-health-timer-dashboard|ops/bin/as6-diagnose-command-center)
+      echo "AS6_DIAGNOSE_ALL_SKIP=OK:heavy_dashboard_check_prevents_nested_diagnose_all:$diag"
+      continue
+      ;;
   esac
 
   name="${diag#ops/bin/as6-diagnose-}"
