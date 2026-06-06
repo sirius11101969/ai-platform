@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+echo "=== AS6 Health Timer Diagnostics ==="
+
+test -f ops/systemd/as6-health-cache.service && echo "HEALTH_TIMER_SERVICE_FILE=OK" || { echo "HEALTH_TIMER_SERVICE_FILE=FAIL"; fail=1; }
+test -f ops/systemd/as6-health-cache.timer && echo "HEALTH_TIMER_TIMER_FILE=OK" || { echo "HEALTH_TIMER_TIMER_FILE=FAIL"; fail=1; }
+test -x ops/bin/as6-install-health-timer && echo "HEALTH_TIMER_INSTALL_SCRIPT=OK" || { echo "HEALTH_TIMER_INSTALL_SCRIPT=FAIL"; fail=1; }
+
+grep -q 'ExecStart=/var/www/ai-platform/ops/bin/as6-health-cache' ops/systemd/as6-health-cache.service && echo "HEALTH_TIMER_EXEC_CACHE=OK" || { echo "HEALTH_TIMER_EXEC_CACHE=FAIL"; fail=1; }
+grep -q 'ExecStartPost=/var/www/ai-platform/ops/bin/as6-health-cleanup' ops/systemd/as6-health-cache.service && echo "HEALTH_TIMER_EXEC_CLEANUP=OK" || { echo "HEALTH_TIMER_EXEC_CLEANUP=FAIL"; fail=1; }
+grep -q '^OnUnitActiveSec=30min$' ops/systemd/as6-health-cache.timer && echo "HEALTH_TIMER_INTERVAL=OK" || { echo "HEALTH_TIMER_INTERVAL=FAIL"; fail=1; }
+grep -q '^Persistent=true$' ops/systemd/as6-health-cache.timer && echo "HEALTH_TIMER_PERSISTENT=OK" || { echo "HEALTH_TIMER_PERSISTENT=FAIL"; fail=1; }
+
+if command -v systemd-analyze >/dev/null 2>&1; then
+  systemd-analyze verify ops/systemd/as6-health-cache.service ops/systemd/as6-health-cache.timer >/tmp/as6-health-timer-verify.out 2>&1 \
+    && echo "HEALTH_TIMER_SYSTEMD_VERIFY=OK" \
+    || { echo "HEALTH_TIMER_SYSTEMD_VERIFY=FAIL"; cat /tmp/as6-health-timer-verify.out || true; fail=1; }
+else
+  echo "HEALTH_TIMER_SYSTEMD_VERIFY=SKIP:no_systemd_analyze"
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "HEALTH_TIMER_DIAGNOSTIC_RESULT=OK"
+  exit 0
+fi
+
+echo "HEALTH_TIMER_DIAGNOSTIC_RESULT=FAIL"
+exit 1
