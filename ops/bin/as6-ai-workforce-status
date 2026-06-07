@@ -117,3 +117,5 @@ exit 1
 # AS6 health history anomaly diagnostics: ops/bin/as6-diagnose-health-history-anomaly
 
 # AS6 diagnostic recursion guard: ops/bin/as6-diagnose-diagnostic-recursion
+
+# AS6 diagnostic performance guard: ops/bin/as6-diagnose-diagnostic-performance
