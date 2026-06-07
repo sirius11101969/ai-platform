@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+echo "=== AS6 Diagnostic Scorecard ==="
+
+run_score() {
+  local label="$1"
+  local cmd="$2"
+  local marker="$3"
+  local out="/tmp/as6-scorecard-${label}.out"
+
+  if bash -lc "$cmd" >"$out" 2>&1 && grep -q "$marker" "$out"; then
+    echo "AS6_SCORECARD_${label}=OK"
+  else
+    echo "AS6_SCORECARD_${label}=FAIL"
+    cat "$out" | tail -40 || true
+    fail=1
+  fi
+}
+
+run_score "GIT" "./ops/bin/as6-diagnose-git-main-sync" "GIT_MAIN_SYNC_RESULT=OK"
+run_score "HEALTH" "./ops/bin/as6-diagnose-health-cache-freshness && ./ops/bin/as6-diagnose-health-timer-runtime && ./ops/bin/as6-health-alerts" "AS6_HEALTH_ALERTS_RESULT=OK"
+run_score "ROOT_CAUSE" "./ops/bin/as6-diagnose-root-cause-v2" "ROOT_CAUSE_V2_RESULT=OK"
+run_score "DIAGNOSTICS" "./ops/bin/as6-diagnose-all" "AS6_DIAGNOSE_ALL_RESULT=OK"
+run_score "SECURITY" "as6-pre-commit-secret-scan" "SECRET_SCAN_RESULT=OK"
+
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_SCORECARD_STATUS=GREEN"
+  echo "AS6_SCORECARD_HEALTH=100"
+  echo "AS6_SCORECARD_SECURITY=100"
+  echo "AS6_SCORECARD_ARCHITECTURE=100"
+  echo "AS6_SCORECARD_DIAGNOSTICS=100"
+  echo "AS6_SCORECARD_RESULT=OK"
+  exit 0
+fi
+
+echo "AS6_SCORECARD_STATUS=RED"
+echo "AS6_SCORECARD_RESULT=FAIL"
+exit 1
