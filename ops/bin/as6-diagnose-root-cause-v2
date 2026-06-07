@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+warn=0
+failed_checks=()
+warn_checks=()
+
+echo "=== AS6 Root Cause V2 Diagnostics ==="
+
+run_check() {
+  local name="$1"
+  local cmd="$2"
+  local out="/tmp/as6-root-cause-v2-${name}.out"
+
+  echo
+  echo "=== ROOT_CAUSE_V2_RUN: ${name} ==="
+
+  if bash -lc "$cmd" >"$out" 2>&1; then
+    cat "$out"
+    echo "ROOT_CAUSE_V2_CHECK=OK:${name}"
+  else
+    cat "$out"
+    echo "ROOT_CAUSE_V2_CHECK=FAIL:${name}"
+    failed_checks+=("$name")
+    fail=1
+  fi
+
+  if grep -Eq '=WARN|WARN:' "$out"; then
+    echo "ROOT_CAUSE_V2_CHECK_WARN=YES:${name}"
+    warn_checks+=("$name")
+    warn=1
+  else
+    echo "ROOT_CAUSE_V2_CHECK_WARN=NO:${name}"
+  fi
+}
+
+run_check "git-main-sync" "./ops/bin/as6-diagnose-git-main-sync"
+run_check "health-source-of-truth" "./ops/bin/as6-diagnose-health-source-of-truth"
+run_check "health-cache-freshness" "./ops/bin/as6-diagnose-health-cache-freshness"
+run_check "health-timer-runtime" "./ops/bin/as6-diagnose-health-timer-runtime"
+run_check "health-cleanup" "./ops/bin/as6-diagnose-health-cleanup"
+run_check "health-alerts" "./ops/bin/as6-health-alerts"
+run_check "runtime-artifacts" "./ops/bin/as6-diagnose-runtime-artifacts"
+run_check "diagnostic-registry" "./ops/bin/as6-diagnose-diagnostic-registry"
+run_check "diagnostic-coverage" "./ops/bin/as6-diagnose-diagnostic-coverage"
+run_check "diagnostic-flow" "./ops/bin/as6-diagnose-diagnostic-flow"
+run_check "diagnostic-recursion" "./ops/bin/as6-diagnose-diagnostic-recursion"
+run_check "diagnostic-performance" "./ops/bin/as6-diagnose-diagnostic-performance"
+run_check "secret-scan" "as6-pre-commit-secret-scan"
+
+echo
+echo "=== AS6 Root Cause V2 Summary ==="
+
+if [ "${#failed_checks[@]}" -eq 0 ]; then
+  echo "ROOT_CAUSE_V2_OVERALL_STATUS=OK"
+  echo "ROOT_CAUSE_V2_FAILED_CHECKS=none"
+  echo "ROOT_CAUSE_V2_ROOT_CAUSE=none"
+  echo "ROOT_CAUSE_V2_SAFE_TO_FIX=YES"
+  echo "ROOT_CAUSE_V2_SAFE_TO_DEPLOY=YES"
+  echo "ROOT_CAUSE_V2_RECOMMENDED_ACTION=continue"
+else
+  echo "ROOT_CAUSE_V2_OVERALL_STATUS=FAIL"
+  echo "ROOT_CAUSE_V2_FAILED_CHECKS=$(IFS=,; echo "${failed_checks[*]}")"
+  echo "ROOT_CAUSE_V2_ROOT_CAUSE=$(IFS=,; echo "${failed_checks[*]}")"
+  echo "ROOT_CAUSE_V2_SAFE_TO_FIX=REVIEW_REQUIRED"
+  echo "ROOT_CAUSE_V2_SAFE_TO_DEPLOY=NO"
+  echo "ROOT_CAUSE_V2_RECOMMENDED_ACTION=inspect_failed_checks_then_fix"
+fi
+
+if [ "${#warn_checks[@]}" -eq 0 ]; then
+  echo "ROOT_CAUSE_V2_WARN_CHECKS=none"
+else
+  echo "ROOT_CAUSE_V2_WARN_CHECKS=$(IFS=,; echo "${warn_checks[*]}")"
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "ROOT_CAUSE_V2_RESULT=OK"
+  exit 0
+fi
+
+echo "ROOT_CAUSE_V2_RESULT=FAIL"
+exit 1
