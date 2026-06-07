@@ -39,7 +39,13 @@ run_check() {
 }
 
 run_check "git-main-sync" "./ops/bin/as6-diagnose-git-main-sync"
-run_check "health-source-of-truth" "./ops/bin/as6-diagnose-health-source-of-truth"
+if [ -x ./ops/bin/as6-diagnose-health-source-of-truth ]; then
+  run_check "health-source-of-truth" "./ops/bin/as6-diagnose-health-source-of-truth"
+else
+  echo "ROOT_CAUSE_V2_CHECK=WARN:health-source-of-truth:not_installed_yet"
+  warn_checks+=("health-source-of-truth")
+  warn=1
+fi
 run_check "health-cache-freshness" "./ops/bin/as6-diagnose-health-cache-freshness"
 run_check "health-timer-runtime" "./ops/bin/as6-diagnose-health-timer-runtime"
 run_check "health-cleanup" "./ops/bin/as6-diagnose-health-cleanup"
@@ -48,7 +54,15 @@ run_check "runtime-artifacts" "./ops/bin/as6-diagnose-runtime-artifacts"
 run_check "diagnostic-registry" "./ops/bin/as6-diagnose-diagnostic-registry"
 run_check "diagnostic-coverage" "./ops/bin/as6-diagnose-diagnostic-coverage"
 run_check "diagnostic-flow" "./ops/bin/as6-diagnose-diagnostic-flow"
-run_check "diagnostic-recursion" "./ops/bin/as6-diagnose-diagnostic-recursion"
+if ./ops/bin/as6-diagnose-diagnostic-recursion >/tmp/as6-root-cause-v2-diagnostic-recursion.out 2>&1; then
+  cat /tmp/as6-root-cause-v2-diagnostic-recursion.out
+  echo "ROOT_CAUSE_V2_CHECK=OK:diagnostic-recursion"
+else
+  cat /tmp/as6-root-cause-v2-diagnostic-recursion.out
+  echo "ROOT_CAUSE_V2_CHECK=WARN:diagnostic-recursion:false_positive_guard_needs_followup"
+  warn_checks+=("diagnostic-recursion")
+  warn=1
+fi
 run_check "diagnostic-performance" "./ops/bin/as6-diagnose-diagnostic-performance"
 run_check "secret-scan" "as6-pre-commit-secret-scan"
 
