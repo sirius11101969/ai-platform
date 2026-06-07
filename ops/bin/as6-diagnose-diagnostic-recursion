@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+echo "=== AS6 Diagnostic Recursion Guard ==="
+
+check_no_pattern() {
+  local label="$1"
+  local file="$2"
+  local pattern="$3"
+
+  if [ ! -f "$file" ]; then
+    echo "${label}=FAIL:file_missing:$file"
+    fail=1
+    return
+  fi
+
+  if grep -Eq "$pattern" "$file"; then
+    echo "${label}=FAIL:$file"
+    grep -En "$pattern" "$file" || true
+    fail=1
+  else
+    echo "${label}=OK"
+  fi
+}
+
+check_no_pattern \
+  "DIAGNOSTIC_RECURSION_HEALTH_CACHE_NO_COMMAND_CENTER" \
+  "ops/bin/as6-health-cache" \
+  'as6-platform-command-center|as6-owner-dashboard|as6-root-cause|as6-diagnose-all'
+
+check_no_pattern \
+  "DIAGNOSTIC_RECURSION_ALERTS_NO_CACHE_REFRESH" \
+  "ops/bin/as6-health-alerts" \
+  'as6-health-cache|as6-diagnose-all|as6-platform-command-center|as6-owner-dashboard'
+
+check_no_pattern \
+  "DIAGNOSTIC_RECURSION_TREND_NO_ALERTS" \
+  "ops/bin/as6-health-trend" \
+  'as6-health-alerts|as6-diagnose-all|as6-platform-command-center|as6-owner-dashboard'
+
+check_no_pattern \
+  "DIAGNOSTIC_RECURSION_STATUS_NO_CACHE_REFRESH" \
+  "ops/bin/as6-health-status" \
+  'as6-health-cache|as6-diagnose-all|as6-platform-command-center|as6-owner-dashboard'
+
+check_no_pattern \
+  "DIAGNOSTIC_RECURSION_OWNER_NO_DIAGNOSE_ALL" \
+  "ops/bin/as6-owner-dashboard" \
+  'as6-diagnose-all'
+
+check_no_pattern \
+  "DIAGNOSTIC_RECURSION_PLATFORM_NO_DIAGNOSE_ALL" \
+  "ops/bin/as6-platform-command-center" \
+  'as6-diagnose-all'
+
+if grep -RIn 'as6-diagnose-all' ops/bin/as6-diagnose-* 2>/dev/null \
+  | grep -v 'ops/bin/as6-diagnose-diagnostic-recursion' \
+  | grep -v 'ops/bin/as6-diagnose-all-registry' \
+  | grep -v 'ops/bin/as6-diagnose-diagnostic-coverage' \
+  | grep -v 'ops/bin/as6-diagnose-diagnostic-flow' \
+  | grep -v 'ops/bin/as6-diagnose-working-tree-safety' \
+  >/tmp/as6-diagnostic-recursion-hits.out; then
+  echo "DIAGNOSTIC_RECURSION_DIAGNOSE_ALL_NESTED=FAIL"
+  cat /tmp/as6-diagnostic-recursion-hits.out
+  fail=1
+else
+  echo "DIAGNOSTIC_RECURSION_DIAGNOSE_ALL_NESTED=OK"
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "DIAGNOSTIC_RECURSION_RESULT=OK"
+  exit 0
+fi
+
+echo "DIAGNOSTIC_RECURSION_RESULT=FAIL"
+exit 1
