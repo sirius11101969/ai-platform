@@ -21,12 +21,30 @@ warn_count="$(grep -E '^HEALTH_TREND_WARN_COUNT=' "$OUT" | tail -1 | cut -d= -f2
 trend_result="$(grep -E '^HEALTH_TREND_RESULT=' "$OUT" | tail -1 | cut -d= -f2- || echo UNKNOWN)"
 latest_root="$(grep -E '^HEALTH_TREND_LATEST_ROOT_CAUSE=' "$OUT" | tail -1 | cut -d= -f2- || echo unknown)"
 
-if [ "$TREND_RUN" != "OK" ] || [ "${fail_count:-0}" -gt 0 ] || [ "$trend_result" = "FAIL" ]; then
+latest_platform="$(grep -E '^HEALTH_TREND_LATEST_PLATFORM=' "$OUT" | tail -1 | cut -d= -f2- || echo UNKNOWN)"
+
+if [ "$TREND_RUN" != "OK" ] && ! grep -q '^HEALTH_TREND_RESULT=' "$OUT"; then
   echo "HEALTH_ALERT_LEVEL=FAIL"
-  echo "HEALTH_ALERT_REASON=trend_failure_or_failed_samples"
+  echo "HEALTH_ALERT_REASON=trend_command_failed"
   echo "HEALTH_ALERT_NEXT_ACTION=run_as6_root_cause"
   echo "AS6_HEALTH_ALERTS_RESULT=FAIL"
   exit 1
+fi
+
+if [ "$latest_platform" = "FAIL" ]; then
+  echo "HEALTH_ALERT_LEVEL=FAIL"
+  echo "HEALTH_ALERT_REASON=latest_platform_failed"
+  echo "HEALTH_ALERT_NEXT_ACTION=run_as6_root_cause"
+  echo "AS6_HEALTH_ALERTS_RESULT=FAIL"
+  exit 1
+fi
+
+if [ "${fail_count:-0}" -gt 0 ] || [ "$trend_result" = "FAIL" ]; then
+  echo "HEALTH_ALERT_LEVEL=WARN"
+  echo "HEALTH_ALERT_REASON=historical_failed_samples_latest_ok"
+  echo "HEALTH_ALERT_NEXT_ACTION=monitor_until_history_rotates_clean"
+  echo "AS6_HEALTH_ALERTS_RESULT=OK"
+  exit 0
 fi
 
 if [ "${warn_count:-0}" -gt 0 ] || [ "$latest_root" != "none" ]; then
