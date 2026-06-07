@@ -23,7 +23,7 @@ latest_root="$(grep -E '^HEALTH_TREND_LATEST_ROOT_CAUSE=' "$OUT" | tail -1 | cut
 
 latest_platform="$(grep -E '^HEALTH_TREND_LATEST_PLATFORM=' "$OUT" | tail -1 | cut -d= -f2- || echo UNKNOWN)"
 
-if [ "$TREND_RUN" != "OK" ]; then
+if [ "$TREND_RUN" != "OK" ] && ! grep -q '^HEALTH_TREND_RESULT=' "$OUT"; then
   echo "HEALTH_ALERT_LEVEL=FAIL"
   echo "HEALTH_ALERT_REASON=trend_command_failed"
   echo "HEALTH_ALERT_NEXT_ACTION=run_as6_root_cause"
