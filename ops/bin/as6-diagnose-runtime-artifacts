@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+MAX_TMP_FILES="${AS6_RUNTIME_ARTIFACTS_MAX_TMP_FILES:-100}"
+MAX_HEALTH_HISTORY_FILES="${AS6_RUNTIME_ARTIFACTS_MAX_HEALTH_HISTORY_FILES:-60}"
+MAX_BACKUP_FILES="${AS6_RUNTIME_ARTIFACTS_MAX_BACKUP_FILES:-20}"
+STALE_TMP_MINUTES="${AS6_RUNTIME_ARTIFACTS_STALE_TMP_MINUTES:-1440}"
+
+fail=0
+
+echo "=== AS6 Runtime Artifacts Diagnostics ==="
+
+for value in "$MAX_TMP_FILES" "$MAX_HEALTH_HISTORY_FILES" "$MAX_BACKUP_FILES" "$STALE_TMP_MINUTES"; do
+  if ! [[ "$value" =~ ^[0-9]+$ ]] || [ "$value" -lt 1 ]; then
+    echo "RUNTIME_ARTIFACTS_CONFIG=FAIL:$value"
+    fail=1
+  fi
+done
+
+if [ "$fail" -eq 0 ]; then
+  echo "RUNTIME_ARTIFACTS_CONFIG=OK"
+fi
+
+tmp_count="$(find /tmp -maxdepth 1 -type f -name 'as6-*' 2>/dev/null | wc -l | tr -d '[:space:]')"
+echo "RUNTIME_ARTIFACTS_TMP_COUNT=$tmp_count"
+if [ "$tmp_count" -gt "$MAX_TMP_FILES" ]; then
+  echo "RUNTIME_ARTIFACTS_TMP_GROWTH=WARN:count_gt_${MAX_TMP_FILES}"
+else
+  echo "RUNTIME_ARTIFACTS_TMP_GROWTH=OK"
+fi
+
+stale_tmp_count="$(find /tmp -maxdepth 1 -type f -name 'as6-*' -mmin +"$STALE_TMP_MINUTES" 2>/dev/null | wc -l | tr -d '[:space:]')"
+echo "RUNTIME_ARTIFACTS_STALE_TMP_COUNT=$stale_tmp_count"
+if [ "$stale_tmp_count" -gt 0 ]; then
+  echo "RUNTIME_ARTIFACTS_STALE_OUTPUT_FILES=WARN"
+  find /tmp -maxdepth 1 -type f -name 'as6-*' -mmin +"$STALE_TMP_MINUTES" 2>/dev/null | head -20
+else
+  echo "RUNTIME_ARTIFACTS_STALE_OUTPUT_FILES=OK"
+fi
+
+history_dir="runtime/health/history"
+mkdir -p "$history_dir"
+history_count="$(find "$history_dir" -maxdepth 1 -type f -name '*.json' 2>/dev/null | wc -l | tr -d '[:space:]')"
+echo "RUNTIME_ARTIFACTS_HEALTH_HISTORY_COUNT=$history_count"
+if [ "$history_count" -gt "$MAX_HEALTH_HISTORY_FILES" ]; then
+  echo "RUNTIME_ARTIFACTS_HEALTH_HISTORY_GROWTH=WARN:count_gt_${MAX_HEALTH_HISTORY_FILES}"
+else
+  echo "RUNTIME_ARTIFACTS_HEALTH_HISTORY_GROWTH=OK"
+fi
+
+backup_count="$(find . -maxdepth 4 -type f \( -name '*.backup.*' -o -name '*backup*' \) 2>/dev/null | wc -l | tr -d '[:space:]')"
+echo "RUNTIME_ARTIFACTS_BACKUP_COUNT=$backup_count"
+if [ "$backup_count" -gt "$MAX_BACKUP_FILES" ]; then
+  echo "RUNTIME_ARTIFACTS_BACKUP_ACCUMULATION=WARN:count_gt_${MAX_BACKUP_FILES}"
+else
+  echo "RUNTIME_ARTIFACTS_BACKUP_ACCUMULATION=OK"
+fi
+
+python3 - <<'PY' || fail=1
+import json
+from pathlib import Path
+
+files = [Path("runtime/health/latest.json")]
+files += sorted(Path("runtime/health/history").glob("*.json"))[-20:]
+
+invalid = 0
+checked = 0
+for p in files:
+    if not p.exists():
+        continue
+    checked += 1
+    try:
+        json.loads(p.read_text())
+    except Exception as e:
+        print(f"RUNTIME_ARTIFACTS_JSON_VALIDITY=FAIL:{p}:{type(e).__name__}")
+        invalid += 1
+
+print(f"RUNTIME_ARTIFACTS_JSON_CHECKED={checked}")
+if invalid:
+    print("RUNTIME_ARTIFACTS_JSON_VALIDITY=FAIL")
+    raise SystemExit(1)
+
+print("RUNTIME_ARTIFACTS_JSON_VALIDITY=OK")
+PY
+
+if [ "$fail" -eq 0 ]; then
+  echo "RUNTIME_ARTIFACTS_RESULT=OK"
+  exit 0
+fi
+
+echo "RUNTIME_ARTIFACTS_RESULT=FAIL"
+exit 1
