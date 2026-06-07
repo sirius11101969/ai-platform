@@ -8,6 +8,7 @@ fail=0
 
 echo "=== AS6 Health Source Of Truth Diagnostics ==="
 
+<<<<<<< HEAD
 LATEST="runtime/health/latest.json"
 HISTORY_DIR="runtime/health/history"
 
@@ -109,4 +110,106 @@ if [ "$fail" -eq 0 ]; then
 fi
 
 echo "AS6_HEALTH_SOURCE_OF_TRUTH_DIAGNOSTIC_RESULT=FAIL"
+=======
+check_file() {
+  local label="$1"
+  local file="$2"
+
+  if [ -f "$file" ]; then
+    echo "${label}=OK:$file"
+  else
+    echo "${label}=FAIL:$file"
+    fail=1
+  fi
+}
+
+check_dir() {
+  local label="$1"
+  local dir="$2"
+
+  if [ -d "$dir" ]; then
+    echo "${label}=OK:$dir"
+  else
+    echo "${label}=FAIL:$dir"
+    fail=1
+  fi
+}
+
+check_grep() {
+  local label="$1"
+  local file="$2"
+  local pattern="$3"
+
+  if grep -Eq "$pattern" "$file" 2>/dev/null; then
+    echo "${label}=OK:$file"
+  else
+    echo "${label}=FAIL:$file"
+    fail=1
+  fi
+}
+
+check_no_exec() {
+  local label="$1"
+  local file="$2"
+  local pattern="$3"
+
+  if grep -En "$pattern" "$file" 2>/dev/null \
+    | grep -v 'NEXT_COMMAND' \
+    | grep -v 'next_command' \
+    | grep -v 'echo ' \
+    | grep -v 'print(' \
+    >/tmp/as6-health-source-of-truth-hit.out; then
+    echo "${label}=FAIL:$file"
+    cat /tmp/as6-health-source-of-truth-hit.out
+    fail=1
+  else
+    echo "${label}=OK"
+  fi
+}
+
+check_file "HEALTH_SOURCE_OF_TRUTH_LATEST_JSON" "runtime/health/latest.json"
+check_dir "HEALTH_SOURCE_OF_TRUTH_HISTORY_DIR" "runtime/health/history"
+
+check_grep \
+  "HEALTH_SOURCE_OF_TRUTH_HEALTH_STATUS_READS_CACHE" \
+  "ops/bin/as6-health-status" \
+  'runtime/health/latest\.json'
+
+check_grep \
+  "HEALTH_SOURCE_OF_TRUTH_HEALTH_ALERTS_READS_TREND" \
+  "ops/bin/as6-health-alerts" \
+  'as6-health-trend'
+
+check_grep \
+  "HEALTH_SOURCE_OF_TRUTH_HEALTH_TREND_READS_HISTORY" \
+  "ops/bin/as6-health-trend" \
+  'runtime/health/history'
+
+check_grep \
+  "HEALTH_SOURCE_OF_TRUTH_OWNER_DASHBOARD_USES_HEALTH_STATUS" \
+  "ops/bin/as6-owner-dashboard" \
+  'as6-health-status'
+
+check_grep \
+  "HEALTH_SOURCE_OF_TRUTH_PLATFORM_COMMAND_CENTER_USES_OWNER_DASHBOARD" \
+  "ops/bin/as6-platform-command-center" \
+  'as6-owner-dashboard'
+
+check_no_exec \
+  "HEALTH_SOURCE_OF_TRUTH_NO_DASHBOARD_CACHE_REFRESH_LOOP" \
+  "ops/bin/as6-owner-dashboard" \
+  '(^|[ ;|&])(\./)?ops/bin/as6-health-cache([[:space:]]|>|$)'
+
+check_no_exec \
+  "HEALTH_SOURCE_OF_TRUTH_NO_COMMAND_CENTER_CACHE_REFRESH_LOOP" \
+  "ops/bin/as6-platform-command-center" \
+  '(^|[ ;|&])(\./)?ops/bin/as6-health-cache([[:space:]]|>|$)'
+
+if [ "$fail" -eq 0 ]; then
+  echo "HEALTH_SOURCE_OF_TRUTH_RESULT=OK"
+  exit 0
+fi
+
+echo "HEALTH_SOURCE_OF_TRUTH_RESULT=FAIL"
+>>>>>>> b628b66 (feat: add health source of truth diagnostics)
 exit 1
