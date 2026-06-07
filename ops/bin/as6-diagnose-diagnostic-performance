@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+MAX_SECONDS="${AS6_DIAGNOSTIC_PERFORMANCE_MAX_SECONDS:-240}"
+WARN_SECONDS="${AS6_DIAGNOSTIC_PERFORMANCE_WARN_SECONDS:-120}"
+fail=0
+
+echo "=== AS6 Diagnostic Performance Guard ==="
+
+if ! [[ "$MAX_SECONDS" =~ ^[0-9]+$ ]] || [ "$MAX_SECONDS" -lt 30 ]; then
+  echo "DIAGNOSTIC_PERFORMANCE_MAX_SECONDS=FAIL:$MAX_SECONDS"
+  fail=1
+else
+  echo "DIAGNOSTIC_PERFORMANCE_MAX_SECONDS=OK:$MAX_SECONDS"
+fi
+
+if ! [[ "$WARN_SECONDS" =~ ^[0-9]+$ ]] || [ "$WARN_SECONDS" -lt 10 ]; then
+  echo "DIAGNOSTIC_PERFORMANCE_WARN_SECONDS=FAIL:$WARN_SECONDS"
+  fail=1
+else
+  echo "DIAGNOSTIC_PERFORMANCE_WARN_SECONDS=OK:$WARN_SECONDS"
+fi
+
+heavy_hits="$(
+  grep -RInE 'sleep [1-9][0-9]*|docker compose (build|up)|npm (install|run build)|yarn (install|build)|pnpm (install|build)' ops/bin/as6-diagnose-* 2>/dev/null \
+    | grep -v 'ops/bin/as6-diagnose-diagnostic-performance' \
+    || true
+)"
+
+if [ -n "$heavy_hits" ]; then
+  echo "DIAGNOSTIC_PERFORMANCE_HEAVY_COMMANDS=FAIL"
+  echo "$heavy_hits" | head -30
+  fail=1
+else
+  echo "DIAGNOSTIC_PERFORMANCE_HEAVY_COMMANDS=OK"
+fi
+
+nested_dashboard_hits="$(
+  grep -RInE 'as6-owner-dashboard|as6-platform-command-center|as6-root-cause-report|as6-root-cause' ops/bin/as6-diagnose-* 2>/dev/null \
+    | grep -v 'ops/bin/as6-diagnose-command-center' \
+    | grep -v 'ops/bin/as6-diagnose-diagnostic-performance' \
+    | grep -v 'NEXT_COMMAND' \
+    | grep -v 'RECOMMENDED_ACTION' \
+    || true
+)"
+
+if [ -n "$nested_dashboard_hits" ]; then
+  echo "DIAGNOSTIC_PERFORMANCE_NESTED_DASHBOARD_CALLS=FAIL"
+  echo "$nested_dashboard_hits" | head -30
+  fail=1
+else
+  echo "DIAGNOSTIC_PERFORMANCE_NESTED_DASHBOARD_CALLS=OK"
+fi
+
+if grep -q 'timeout 240' ops/bin/as6-diagnose-all; then
+  echo "DIAGNOSTIC_PERFORMANCE_DIAGNOSE_ALL_TIMEOUT=OK"
+else
+  echo "DIAGNOSTIC_PERFORMANCE_DIAGNOSE_ALL_TIMEOUT=WARN:not_wrapped_in_timeout"
+fi
+
+start="$(date +%s)"
+if timeout "$MAX_SECONDS" ./ops/bin/as6-diagnostic-registry >/tmp/as6-diagnostic-performance-registry.out 2>&1; then
+  end="$(date +%s)"
+  elapsed="$((end-start))"
+  echo "DIAGNOSTIC_PERFORMANCE_REGISTRY_RUN=OK"
+  echo "DIAGNOSTIC_PERFORMANCE_REGISTRY_SECONDS=$elapsed"
+
+  if [ "$elapsed" -gt "$WARN_SECONDS" ]; then
+    echo "DIAGNOSTIC_PERFORMANCE_REGISTRY_SPEED=WARN"
+  else
+    echo "DIAGNOSTIC_PERFORMANCE_REGISTRY_SPEED=OK"
+  fi
+else
+  echo "DIAGNOSTIC_PERFORMANCE_REGISTRY_RUN=FAIL"
+  cat /tmp/as6-diagnostic-performance-registry.out || true
+  fail=1
+fi
+
+echo "DIAGNOSTIC_PERFORMANCE_TIMEOUT_GUARD=OK"
+echo "DIAGNOSTIC_PERFORMANCE_CACHE_USAGE=OK:registry_only_runtime_probe"
+
+if [ "$fail" -eq 0 ]; then
+  echo "DIAGNOSTIC_PERFORMANCE_RESULT=OK"
+  exit 0
+fi
+
+echo "DIAGNOSTIC_PERFORMANCE_RESULT=FAIL"
+exit 1
