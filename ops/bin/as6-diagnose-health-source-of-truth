@@ -1,0 +1,112 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+echo "=== AS6 Health Source Of Truth Diagnostics ==="
+
+LATEST="runtime/health/latest.json"
+HISTORY_DIR="runtime/health/history"
+
+test -f "$LATEST" && echo "SOURCE_OF_TRUTH_LATEST_EXISTS=OK" || { echo "SOURCE_OF_TRUTH_LATEST_EXISTS=FAIL"; fail=1; }
+test -d "$HISTORY_DIR" && echo "SOURCE_OF_TRUTH_HISTORY_DIR_EXISTS=OK" || { echo "SOURCE_OF_TRUTH_HISTORY_DIR_EXISTS=FAIL"; fail=1; }
+
+newest_history="$(ls -1t "$HISTORY_DIR"/*.json 2>/dev/null | head -1 || true)"
+
+if [ -n "$newest_history" ]; then
+  echo "SOURCE_OF_TRUTH_HISTORY_EXISTS=OK:$newest_history"
+else
+  echo "SOURCE_OF_TRUTH_HISTORY_EXISTS=FAIL"
+  fail=1
+fi
+
+if [ "$fail" -ne 0 ]; then
+  echo "SOURCE_OF_TRUTH_RESULT=FAIL"
+  exit 1
+fi
+
+python3 - <<PY || fail=1
+import json
+from pathlib import Path
+from datetime import datetime, timezone
+
+latest_path = Path("$LATEST")
+history_path = Path("$newest_history")
+
+try:
+    latest = json.loads(latest_path.read_text())
+    newest = json.loads(history_path.read_text())
+    print("SOURCE_OF_TRUTH_JSON_VALID=OK")
+except Exception as e:
+    print(f"SOURCE_OF_TRUTH_JSON_VALID=FAIL:{type(e).__name__}")
+    raise SystemExit(1)
+
+latest_ts = latest.get("timestamp")
+history_ts = newest.get("timestamp")
+
+if not latest_ts or not history_ts:
+    print("SOURCE_OF_TRUTH_TIMESTAMP_PRESENT=FAIL")
+    raise SystemExit(1)
+
+print("SOURCE_OF_TRUTH_TIMESTAMP_PRESENT=OK")
+
+def parse_ts(value):
+    return datetime.fromisoformat(value.replace("Z", "+00:00"))
+
+try:
+    latest_dt = parse_ts(latest_ts)
+    history_dt = parse_ts(history_ts)
+    print("SOURCE_OF_TRUTH_TIMESTAMP_VALID=OK")
+except Exception as e:
+    print(f"SOURCE_OF_TRUTH_TIMESTAMP_VALID=FAIL:{type(e).__name__}")
+    raise SystemExit(1)
+
+if latest_dt == history_dt:
+    print("SOURCE_OF_TRUTH_TIMESTAMP_ORDER=OK")
+elif latest_dt < history_dt:
+    print("SOURCE_OF_TRUTH_TIMESTAMP_ORDER=FAIL:latest_older_than_history")
+    raise SystemExit(1)
+else:
+    print("SOURCE_OF_TRUTH_TIMESTAMP_ORDER=WARN:latest_newer_than_history")
+
+if latest == newest:
+    print("SOURCE_OF_TRUTH_LATEST_EQUALS_NEWEST_HISTORY=OK")
+else:
+    print("SOURCE_OF_TRUTH_LATEST_EQUALS_NEWEST_HISTORY=FAIL")
+    print(f"SOURCE_OF_TRUTH_LATEST_TIMESTAMP={latest_ts}")
+    print(f"SOURCE_OF_TRUTH_HISTORY_TIMESTAMP={history_ts}")
+    raise SystemExit(1)
+
+required = {
+    "timestamp",
+    "git_sha",
+    "health_cache_result",
+    "platform_status",
+    "owner_dashboard",
+    "workforce_status",
+    "root_cause",
+    "next_action",
+    "next_command",
+}
+
+missing_latest = sorted(required - set(latest))
+missing_history = sorted(required - set(newest))
+
+if missing_latest or missing_history:
+    print(f"SOURCE_OF_TRUTH_REQUIRED_FIELDS=FAIL:latest={','.join(missing_latest)}:history={','.join(missing_history)}")
+    raise SystemExit(1)
+
+print("SOURCE_OF_TRUTH_REQUIRED_FIELDS=OK")
+print("SOURCE_OF_TRUTH_RESULT=OK")
+PY
+
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_HEALTH_SOURCE_OF_TRUTH_DIAGNOSTIC_RESULT=OK"
+  exit 0
+fi
+
+echo "AS6_HEALTH_SOURCE_OF_TRUTH_DIAGNOSTIC_RESULT=FAIL"
+exit 1

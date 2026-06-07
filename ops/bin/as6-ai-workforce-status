@@ -121,3 +121,5 @@ exit 1
 # AS6 diagnostic performance guard: ops/bin/as6-diagnose-diagnostic-performance
 
 # AS6 runtime artifacts guard: ops/bin/as6-diagnose-runtime-artifacts
+
+# AS6 health source-of-truth diagnostics: ops/bin/as6-diagnose-health-source-of-truth
