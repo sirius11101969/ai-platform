@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+DIR="runtime/diagnostics/scorecard-history"
+mkdir -p "$DIR"
+
+NOW="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+SHA="$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
+OUT="/tmp/as6-scorecard-history-current.out"
+
+echo "=== AS6 Scorecard History Diagnostics ==="
+
+if ./ops/bin/as6-diagnose-scorecard >"$OUT" 2>&1; then
+  run_result="OK"
+else
+  run_result="FAIL"
+fi
+
+status="$(grep -E '^AS6_SCORECARD_STATUS=' "$OUT" | tail -1 | cut -d= -f2- || echo UNKNOWN)"
+result="$(grep -E '^AS6_SCORECARD_RESULT=' "$OUT" | tail -1 | cut -d= -f2- || echo "$run_result")"
+
+file="$DIR/${NOW//:/-}-${SHA}.json"
+
+python3 - <<PY
+import json
+from pathlib import Path
+
+data = {
+    "timestamp": "$NOW",
+    "git_sha": "$SHA",
+    "scorecard_status": "$status",
+    "scorecard_result": "$result",
+    "run_result": "$run_result",
+}
+
+Path("$file").write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\\n")
+PY
+
+total="$(ls -1 "$DIR"/*.json 2>/dev/null | wc -l | tr -d ' ')"
+green="$(grep -Rsl '"scorecard_status": "GREEN"' "$DIR"/*.json 2>/dev/null | wc -l | tr -d ' ')"
+red="$(grep -Rsl '"scorecard_status": "RED"' "$DIR"/*.json 2>/dev/null | wc -l | tr -d ' ')"
+
+echo "AS6_SCORECARD_HISTORY_FILE=$file"
+echo "AS6_SCORECARD_HISTORY_TOTAL_RUNS=$total"
+echo "AS6_SCORECARD_HISTORY_GREEN_RUNS=$green"
+echo "AS6_SCORECARD_HISTORY_RED_RUNS=$red"
+
+if [ "$red" -gt 0 ] && [ "$status" != "GREEN" ]; then
+  echo "AS6_SCORECARD_HISTORY_TREND=RED"
+else
+  echo "AS6_SCORECARD_HISTORY_TREND=GREEN_OR_RECOVERING"
+fi
+
+echo "AS6_SCORECARD_HISTORY_RESULT=OK"
