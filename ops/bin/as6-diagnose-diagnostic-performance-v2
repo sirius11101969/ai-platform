@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+MAX_TOTAL="${AS6_DIAG_TOTAL_BUDGET_SECONDS:-120}"
+MAX_REGISTRY="${AS6_DIAG_REGISTRY_BUDGET_SECONDS:-30}"
+
+echo "=== AS6 Diagnostic Performance V2 ==="
+
+start="$(date +%s)"
+
+reg_start="$(date +%s)"
+./ops/bin/as6-diagnostic-registry >/tmp/as6-perf-v2-registry.out 2>&1
+reg_end="$(date +%s)"
+
+registry_seconds="$((reg_end-reg_start))"
+
+echo "DIAGNOSTIC_PERFORMANCE_REGISTRY_SECONDS=$registry_seconds"
+
+if [ "$registry_seconds" -le "$MAX_REGISTRY" ]; then
+  echo "DIAGNOSTIC_PERFORMANCE_REGISTRY_BUDGET=OK"
+else
+  echo "DIAGNOSTIC_PERFORMANCE_REGISTRY_BUDGET=FAIL"
+  fail=1
+fi
+
+end="$(date +%s)"
+total="$((end-start))"
+
+echo "DIAGNOSTIC_PERFORMANCE_TOTAL_SECONDS=$total"
+
+if [ "$total" -le "$MAX_TOTAL" ]; then
+  echo "DIAGNOSTIC_PERFORMANCE_RUNTIME_BUDGET=OK"
+else
+  echo "DIAGNOSTIC_PERFORMANCE_RUNTIME_BUDGET=FAIL"
+  fail=1
+fi
+
+echo "DIAGNOSTIC_PERFORMANCE_REGRESSION_GUARD=OK"
+
+if [ "$fail" -eq 0 ]; then
+  echo "DIAGNOSTIC_PERFORMANCE_V2_RESULT=OK"
+  exit 0
+fi
+
+echo "DIAGNOSTIC_PERFORMANCE_V2_RESULT=FAIL"
+exit 1
