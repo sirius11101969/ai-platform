@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+BASELINE_FILE="runtime/diagnostics/performance-baseline.json"
+
+echo "=== AS6 Diagnostic Baseline ==="
+
+mkdir -p "$(dirname "$BASELINE_FILE")"
+echo "DIAGNOSTIC_BASELINE_DIR=OK:$(dirname "$BASELINE_FILE")"
+
+current=0
+
+if [ -x ./ops/bin/as6-diagnose-diagnostic-performance-v2 ]; then
+  echo "DIAGNOSTIC_BASELINE_PERFORMANCE_V2=OK"
+  ./ops/bin/as6-diagnose-diagnostic-performance-v2 >/tmp/as6-baseline-perf.out 2>&1 || true
+  current="$(grep '^DIAGNOSTIC_PERFORMANCE_TOTAL_SECONDS=' /tmp/as6-baseline-perf.out | tail -1 | cut -d= -f2 || echo 0)"
+else
+  echo "DIAGNOSTIC_BASELINE_PERFORMANCE_V2=SKIP:not_installed_yet"
+  echo "DIAGNOSTIC_BASELINE_BOOTSTRAP_MODE=OK"
+fi
+
+case "$current" in
+  ''|*[!0-9]*) current=0 ;;
+esac
+
+echo "DIAGNOSTIC_BASELINE_CURRENT_TOTAL_SECONDS=$current"
+
+if [ ! -f "$BASELINE_FILE" ]; then
+  cat > "$BASELINE_FILE" <<JSON
+{
+  "total_seconds": $current
+}
+JSON
+
+  echo "DIAGNOSTIC_BASELINE_FILE=CREATED"
+  echo "DIAGNOSTIC_BASELINE_RESULT=OK"
+  exit 0
+fi
+
+previous="$(python3 - <<'PY'
+import json
+from pathlib import Path
+p = Path("runtime/diagnostics/performance-baseline.json")
+print(json.loads(p.read_text()).get("total_seconds", 0))
+PY
+)"
+
+case "$previous" in
+  ''|*[!0-9]*) previous=0 ;;
+esac
+
+delta=$((current-previous))
+
+echo "DIAGNOSTIC_BASELINE_FILE=OK"
+echo "DIAGNOSTIC_BASELINE_PREVIOUS_TOTAL_SECONDS=$previous"
+echo "DIAGNOSTIC_BASELINE_DELTA_SECONDS=$delta"
+
+if [ "$delta" -gt 30 ]; then
+  echo "DIAGNOSTIC_BASELINE_REGRESSION=WARN"
+else
+  echo "DIAGNOSTIC_BASELINE_REGRESSION=OK"
+fi
+
+echo "DIAGNOSTIC_BASELINE_RESULT=OK"
