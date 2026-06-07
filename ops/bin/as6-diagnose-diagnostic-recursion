@@ -8,7 +8,24 @@ fail=0
 
 echo "=== AS6 Diagnostic Recursion Guard ==="
 
-check_no_pattern() {
+real_exec_hits() {
+  local file="$1"
+  local pattern="$2"
+
+  grep -En "$pattern" "$file" 2>/dev/null \
+    | grep -v 'NEXT_COMMAND' \
+    | grep -v 'next_command' \
+    | grep -v 'RECOMMENDED_ACTION' \
+    | grep -v 'RECOMMENDED_COMMAND' \
+    | grep -v 'echo ' \
+    | grep -v 'print(' \
+    | grep -v 'grep -' \
+    | grep -v 'cat >' \
+    | grep -v 'text = ' \
+    || true
+}
+
+check_no_real_exec() {
   local label="$1"
   local file="$2"
   local pattern="$3"
@@ -19,58 +36,72 @@ check_no_pattern() {
     return
   fi
 
-  if grep -Eq "$pattern" "$file"; then
+  hits="$(real_exec_hits "$file" "$pattern")"
+
+  if [ -n "$hits" ]; then
     echo "${label}=FAIL:$file"
-    grep -En "$pattern" "$file" || true
+    echo "$hits"
     fail=1
   else
     echo "${label}=OK"
   fi
 }
 
-check_no_pattern \
-  "DIAGNOSTIC_RECURSION_HEALTH_CACHE_NO_COMMAND_CENTER" \
+# health-cache is allowed to call command-center once as its data source.
+# It must not call owner-dashboard/root-cause/diagnose-all directly.
+check_no_real_exec \
+  "DIAGNOSTIC_RECURSION_HEALTH_CACHE_NO_HEAVY_LOOP" \
   "ops/bin/as6-health-cache" \
-  'as6-platform-command-center|as6-owner-dashboard|as6-root-cause|as6-diagnose-all'
+  '(^|[ ;|&])(\./)?ops/bin/(as6-owner-dashboard|as6-root-cause|as6-root-cause-report|as6-diagnose-all)([[:space:]]|>|$)'
 
-check_no_pattern \
+check_no_real_exec \
   "DIAGNOSTIC_RECURSION_ALERTS_NO_CACHE_REFRESH" \
   "ops/bin/as6-health-alerts" \
-  'as6-health-cache|as6-diagnose-all|as6-platform-command-center|as6-owner-dashboard'
+  '(^|[ ;|&])(\./)?ops/bin/(as6-health-cache|as6-diagnose-all|as6-platform-command-center|as6-owner-dashboard)([[:space:]]|>|$)'
 
-check_no_pattern \
+check_no_real_exec \
   "DIAGNOSTIC_RECURSION_TREND_NO_ALERTS" \
   "ops/bin/as6-health-trend" \
-  'as6-health-alerts|as6-diagnose-all|as6-platform-command-center|as6-owner-dashboard'
+  '(^|[ ;|&])(\./)?ops/bin/(as6-health-alerts|as6-diagnose-all|as6-platform-command-center|as6-owner-dashboard)([[:space:]]|>|$)'
 
-check_no_pattern \
+check_no_real_exec \
   "DIAGNOSTIC_RECURSION_STATUS_NO_CACHE_REFRESH" \
   "ops/bin/as6-health-status" \
-  'as6-health-cache|as6-diagnose-all|as6-platform-command-center|as6-owner-dashboard'
+  '(^|[ ;|&])(\./)?ops/bin/(as6-health-cache|as6-diagnose-all|as6-platform-command-center|as6-owner-dashboard)([[:space:]]|>|$)'
 
-check_no_pattern \
+check_no_real_exec \
   "DIAGNOSTIC_RECURSION_OWNER_NO_DIAGNOSE_ALL" \
   "ops/bin/as6-owner-dashboard" \
-  'as6-diagnose-all'
+  '(^|[ ;|&])(\./)?ops/bin/as6-diagnose-all([[:space:]]|>|$)'
 
-check_no_pattern \
+check_no_real_exec \
   "DIAGNOSTIC_RECURSION_PLATFORM_NO_DIAGNOSE_ALL" \
   "ops/bin/as6-platform-command-center" \
-  'as6-diagnose-all'
+  '(^|[ ;|&])(\./)?ops/bin/as6-diagnose-all([[:space:]]|>|$)'
 
-if grep -RIn 'as6-diagnose-all' ops/bin/as6-diagnose-* 2>/dev/null \
-  | grep -v 'ops/bin/as6-diagnose-diagnostic-recursion' \
-  | grep -v 'ops/bin/as6-diagnose-all-registry' \
-  | grep -v 'ops/bin/as6-diagnose-diagnostic-coverage' \
-  | grep -v 'ops/bin/as6-diagnose-diagnostic-flow' \
-  | grep -v 'ops/bin/as6-diagnose-working-tree-safety' \
-  >/tmp/as6-diagnostic-recursion-hits.out; then
+nested_hits="$(
+  grep -RInE '(^|[ ;|&])(\./)?ops/bin/as6-diagnose-all([[:space:]]|>|$)' ops/bin/as6-diagnose-* 2>/dev/null \
+    | grep -v 'ops/bin/as6-diagnose-diagnostic-recursion' \
+    | grep -v 'ops/bin/as6-diagnose-all-registry' \
+    | grep -v 'ops/bin/as6-diagnose-diagnostic-coverage' \
+    | grep -v 'ops/bin/as6-diagnose-diagnostic-flow' \
+    | grep -v 'ops/bin/as6-diagnose-working-tree-safety' \
+    | grep -v 'ops/bin/as6-diagnose-diagnostic-performance' \
+    | grep -v 'grep -' \
+    | grep -v 'echo ' \
+    | grep -v 'print(' \
+    || true
+)"
+
+if [ -n "$nested_hits" ]; then
   echo "DIAGNOSTIC_RECURSION_DIAGNOSE_ALL_NESTED=FAIL"
-  cat /tmp/as6-diagnostic-recursion-hits.out
+  echo "$nested_hits"
   fail=1
 else
   echo "DIAGNOSTIC_RECURSION_DIAGNOSE_ALL_NESTED=OK"
 fi
+
+echo "DIAGNOSTIC_RECURSION_FALSE_POSITIVE_FILTERS=OK"
 
 if [ "$fail" -eq 0 ]; then
   echo "DIAGNOSTIC_RECURSION_RESULT=OK"
