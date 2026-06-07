@@ -52,13 +52,7 @@ run_check "runtime-artifacts" "./ops/bin/as6-diagnose-runtime-artifacts"
 run_check "diagnostic-registry" "./ops/bin/as6-diagnose-diagnostic-registry"
 run_check "diagnostic-coverage" "./ops/bin/as6-diagnose-diagnostic-coverage"
 run_check "diagnostic-flow" "./ops/bin/as6-diagnose-diagnostic-flow"
-if ./ops/bin/as6-diagnose-diagnostic-recursion >/tmp/as6-root-cause-v2-diagnostic-recursion.out 2>&1; then
-  cat /tmp/as6-root-cause-v2-diagnostic-recursion.out
-  echo "ROOT_CAUSE_V2_CHECK=OK:diagnostic-recursion"
-else
-  cat /tmp/as6-root-cause-v2-diagnostic-recursion.out
-  echo "ROOT_CAUSE_V2_CHECK=SKIP:diagnostic-recursion:false_positive_guard_needs_followup"
-fi
+run_check "diagnostic-recursion" "./ops/bin/as6-diagnose-diagnostic-recursion"
 if ./ops/bin/as6-diagnose-diagnostic-performance >/tmp/as6-root-cause-v2-diagnostic-performance.out 2>&1; then
   cat /tmp/as6-root-cause-v2-diagnostic-performance.out
   echo "ROOT_CAUSE_V2_CHECK=OK:diagnostic-performance"
