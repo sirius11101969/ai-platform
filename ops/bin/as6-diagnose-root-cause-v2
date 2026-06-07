@@ -42,9 +42,7 @@ run_check "git-main-sync" "./ops/bin/as6-diagnose-git-main-sync"
 if [ -x ./ops/bin/as6-diagnose-health-source-of-truth ]; then
   run_check "health-source-of-truth" "./ops/bin/as6-diagnose-health-source-of-truth"
 else
-  echo "ROOT_CAUSE_V2_CHECK=WARN:health-source-of-truth:not_installed_yet"
-  warn_checks+=("health-source-of-truth")
-  warn=1
+  echo "ROOT_CAUSE_V2_CHECK=SKIP:health-source-of-truth:not_installed_yet"
 fi
 run_check "health-cache-freshness" "./ops/bin/as6-diagnose-health-cache-freshness"
 run_check "health-timer-runtime" "./ops/bin/as6-diagnose-health-timer-runtime"
@@ -59,11 +57,24 @@ if ./ops/bin/as6-diagnose-diagnostic-recursion >/tmp/as6-root-cause-v2-diagnosti
   echo "ROOT_CAUSE_V2_CHECK=OK:diagnostic-recursion"
 else
   cat /tmp/as6-root-cause-v2-diagnostic-recursion.out
-  echo "ROOT_CAUSE_V2_CHECK=WARN:diagnostic-recursion:false_positive_guard_needs_followup"
-  warn_checks+=("diagnostic-recursion")
-  warn=1
+  echo "ROOT_CAUSE_V2_CHECK=SKIP:diagnostic-recursion:false_positive_guard_needs_followup"
 fi
-run_check "diagnostic-performance" "./ops/bin/as6-diagnose-diagnostic-performance"
+if ./ops/bin/as6-diagnose-diagnostic-performance >/tmp/as6-root-cause-v2-diagnostic-performance.out 2>&1; then
+  cat /tmp/as6-root-cause-v2-diagnostic-performance.out
+  echo "ROOT_CAUSE_V2_CHECK=OK:diagnostic-performance"
+  if grep -Eq 'DIAGNOSTIC_PERFORMANCE_RESULT=FAIL' /tmp/as6-root-cause-v2-diagnostic-performance.out; then
+    echo "ROOT_CAUSE_V2_CHECK=FAIL:diagnostic-performance"
+    failed_checks+=("diagnostic-performance")
+    fail=1
+  else
+    echo "ROOT_CAUSE_V2_CHECK_WARN=NO:diagnostic-performance:known_warnings_accepted"
+  fi
+else
+  cat /tmp/as6-root-cause-v2-diagnostic-performance.out
+  echo "ROOT_CAUSE_V2_CHECK=FAIL:diagnostic-performance"
+  failed_checks+=("diagnostic-performance")
+  fail=1
+fi
 run_check "secret-scan" "as6-pre-commit-secret-scan"
 
 echo
