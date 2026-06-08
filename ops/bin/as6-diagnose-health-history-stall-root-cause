@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+echo "=== AS6 Health History Stall Root Cause Diagnostics ==="
+
+if ./ops/bin/as6-diagnose-host-freeze-history >/tmp/as6-stall-history.out 2>&1; then
+  cat /tmp/as6-stall-history.out
+  echo "HEALTH_HISTORY_STALL_ROOT_CAUSE=none"
+  echo "HEALTH_HISTORY_STALL_ROOT_CAUSE_RESULT=OK"
+  exit 0
+fi
+
+cat /tmp/as6-stall-history.out
+
+if grep -q '^HOST_FREEZE_HISTORY_HISTORICAL_INCIDENT=YES' /tmp/as6-stall-history.out; then
+  echo "HEALTH_HISTORY_STALL_ROOT_CAUSE=HISTORICAL_STALL_NOW_OK"
+  echo "HEALTH_HISTORY_STALL_ROOT_CAUSE_RESULT=OK"
+  exit 0
+fi
+
+latest_age="$(grep '^HOST_FREEZE_HISTORY_LAST_SAMPLE_AGE_SECONDS=' /tmp/as6-stall-history.out | tail -1 | cut -d= -f2 || echo 999999)"
+
+if [ "${latest_age:-999999}" -gt 1800 ] 2>/dev/null; then
+  echo "HEALTH_HISTORY_STALL_ROOT_CAUSE=HISTORY_NOT_GROWING"
+  echo "HEALTH_HISTORY_STALL_ROOT_CAUSE_RESULT=FAIL"
+  exit 1
+fi
+
+if systemctl is-active --quiet as6-health-cache.timer; then
+  timer_state="active"
+else
+  timer_state="inactive"
+fi
+
+echo "HEALTH_HISTORY_STALL_TIMER_STATE=$timer_state"
+
+if [ "$timer_state" != "active" ]; then
+  echo "HEALTH_HISTORY_STALL_ROOT_CAUSE=HEALTH_TIMER_STOPPED"
+  echo "HEALTH_HISTORY_STALL_ROOT_CAUSE_RESULT=FAIL"
+  exit 1
+fi
+
+echo "HEALTH_HISTORY_STALL_ROOT_CAUSE=UNKNOWN"
+echo "HEALTH_HISTORY_STALL_ROOT_CAUSE_RESULT=FAIL"
+exit 1
