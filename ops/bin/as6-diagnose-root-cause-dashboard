@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "=== AS6 Root Cause Dashboard Diagnostics ==="
+fail=0
+
+if [ -f "ops/bin/as6-owner-dashboard" ]; then
+  echo "ROOT_CAUSE_DASHBOARD_OWNER_FILE=OK"
+else
+  echo "ROOT_CAUSE_DASHBOARD_OWNER_FILE=FAIL:missing"
+  fail=1
+fi
+
+if [ -f "ops/bin/as6-root-cause-v3" ]; then
+  echo "ROOT_CAUSE_DASHBOARD_ENGINE_FILE=OK"
+else
+  echo "ROOT_CAUSE_DASHBOARD_ENGINE_FILE=FAIL:missing"
+  fail=1
+fi
+
+if [ -f "runtime/root-cause/root-cause-v3.env" ]; then
+  echo "ROOT_CAUSE_DASHBOARD_CACHE_FILE=OK"
+else
+  echo "ROOT_CAUSE_DASHBOARD_CACHE_FILE=FAIL:missing"
+  fail=1
+fi
+
+if grep -q "root-cause-v3.env\|root-cause-v3\|ROOT_CAUSE" ops/bin/as6-owner-dashboard 2>/dev/null; then
+  echo "ROOT_CAUSE_DASHBOARD_WIRING=OK"
+else
+  echo "ROOT_CAUSE_DASHBOARD_WIRING=FAIL:not_connected_to_v3_report"
+  fail=1
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "ROOT_CAUSE_DASHBOARD_RESULT=OK"
+  exit 0
+fi
+
+echo "ROOT_CAUSE_DASHBOARD_RESULT=FAIL"
+exit 1
