@@ -66,6 +66,18 @@ if echo "$last_ok_result" | grep -q 'stale_ok'; then
     echo "HEALTH_ANOMALY_ROOT_LATEST_CACHE=missing"
   fi
 
+  if ./ops/bin/as6-diagnose-health-cache-timer-freshness >/tmp/as6-health-anomaly-timer-freshness.out 2>&1; then
+    cat /tmp/as6-health-anomaly-timer-freshness.out
+    if grep -q '^HEALTH_CACHE_TIMER_FRESHNESS_RESULT=OK' /tmp/as6-health-anomaly-timer-freshness.out; then
+      echo "HEALTH_ANOMALY_ROOT_CACHE_REFRESH_NOW=OK"
+      echo "HEALTH_ANOMALY_ROOT_CAUSE=HISTORICAL_HEALTH_CACHE_REFRESH_NOW_OK"
+      echo "HEALTH_ANOMALY_ROOT_CAUSE_RESULT=OK"
+      exit 0
+    fi
+  else
+    cat /tmp/as6-health-anomaly-timer-freshness.out
+  fi
+
   echo "HEALTH_ANOMALY_ROOT_CACHE_REFRESH_NOW=FAIL"
   echo "HEALTH_ANOMALY_ROOT_CAUSE=HEALTH_CACHE_REFRESH"
   echo "HEALTH_ANOMALY_ROOT_CAUSE_RESULT=FAIL"
