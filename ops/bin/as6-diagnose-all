@@ -25,6 +25,7 @@ run_check() {
 
 run_check "git-main-sync" "./ops/bin/as6-diagnose-git-main-sync"
 run_check "diagnostic-coverage" "./ops/bin/as6-diagnose-diagnostic-coverage"
+run_check "diagnostic-status-registry" "./ops/bin/as6-diagnose-diagnostic-status-registry"
 run_check "diagnostic-flow" "./ops/bin/as6-diagnose-diagnostic-flow"
 run_check "workflow-yaml" "./ops/bin/as6-diagnose-workflow-yaml"
 run_check "actions-node24" "./ops/bin/as6-diagnose-actions-node24"

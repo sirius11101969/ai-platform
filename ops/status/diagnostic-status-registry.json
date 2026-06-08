@@ -1,0 +1,341 @@
+{
+  "version": 1,
+  "diagnostics": [
+    {
+      "check": "actions-node24",
+      "path": "ops/bin/as6-diagnose-actions-node24",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "actions-node24-migration",
+      "path": "ops/bin/as6-diagnose-actions-node24-migration",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "agent-branch-writer",
+      "path": "ops/bin/as6-diagnose-agent-branch-writer",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "agent-branch-writer-e2e",
+      "path": "ops/bin/as6-diagnose-agent-branch-writer-e2e",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "agent-pr-factory-e2e",
+      "path": "ops/bin/as6-diagnose-agent-pr-factory-e2e",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "agent-write-mode",
+      "path": "ops/bin/as6-diagnose-agent-write-mode",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "all",
+      "path": "ops/bin/as6-diagnose-all",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "codex-review-scope",
+      "path": "ops/bin/as6-diagnose-codex-review-scope",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "codex-workflow",
+      "path": "ops/bin/as6-diagnose-codex-workflow",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "command-center",
+      "path": "ops/bin/as6-diagnose-command-center",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "controlled-branch-writer",
+      "path": "ops/bin/as6-diagnose-controlled-branch-writer",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "controlled-write-mode",
+      "path": "ops/bin/as6-diagnose-controlled-write-mode",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "diagnostic-coverage",
+      "path": "ops/bin/as6-diagnose-diagnostic-coverage",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "diagnostic-flow",
+      "path": "ops/bin/as6-diagnose-diagnostic-flow",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "diagnostic-performance",
+      "path": "ops/bin/as6-diagnose-diagnostic-performance",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "diagnostic-recursion",
+      "path": "ops/bin/as6-diagnose-diagnostic-recursion",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "diagnostic-registry",
+      "path": "ops/bin/as6-diagnose-diagnostic-registry",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "freeze-correlation",
+      "path": "ops/bin/as6-diagnose-freeze-correlation",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "git-main-sync",
+      "path": "ops/bin/as6-diagnose-git-main-sync",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "health-alerts",
+      "path": "ops/bin/as6-diagnose-health-alerts",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "health-anomaly-root-cause",
+      "path": "ops/bin/as6-diagnose-health-anomaly-root-cause",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "health-cache",
+      "path": "ops/bin/as6-diagnose-health-cache",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "health-cache-freshness",
+      "path": "ops/bin/as6-diagnose-health-cache-freshness",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "health-cache-timer-freshness",
+      "path": "ops/bin/as6-diagnose-health-cache-timer-freshness",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "health-cleanup",
+      "path": "ops/bin/as6-diagnose-health-cleanup",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "health-dashboard-integration",
+      "path": "ops/bin/as6-diagnose-health-dashboard-integration",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "health-history-anomaly",
+      "path": "ops/bin/as6-diagnose-health-history-anomaly",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "health-history-corruption",
+      "path": "ops/bin/as6-diagnose-health-history-corruption",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "health-history-gap-root-cause",
+      "path": "ops/bin/as6-diagnose-health-history-gap-root-cause",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "health-history-historical-only",
+      "path": "ops/bin/as6-diagnose-health-history-historical-only",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "health-history-recovery-window",
+      "path": "ops/bin/as6-diagnose-health-history-recovery-window",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "health-history-stall-root-cause",
+      "path": "ops/bin/as6-diagnose-health-history-stall-root-cause",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "health-recovery",
+      "path": "ops/bin/as6-diagnose-health-recovery",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "health-runtime-policy",
+      "path": "ops/bin/as6-diagnose-health-runtime-policy",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "health-status",
+      "path": "ops/bin/as6-diagnose-health-status",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "health-timer",
+      "path": "ops/bin/as6-diagnose-health-timer",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "health-timer-dashboard",
+      "path": "ops/bin/as6-diagnose-health-timer-dashboard",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "health-timer-runtime",
+      "path": "ops/bin/as6-diagnose-health-timer-runtime",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "health-trend",
+      "path": "ops/bin/as6-diagnose-health-trend",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "host-freeze-history",
+      "path": "ops/bin/as6-diagnose-host-freeze-history",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "host-stability",
+      "path": "ops/bin/as6-diagnose-host-stability",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "issue-router",
+      "path": "ops/bin/as6-diagnose-issue-router",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "pr-factory",
+      "path": "ops/bin/as6-diagnose-pr-factory",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "root-cause-cache",
+      "path": "ops/bin/as6-diagnose-root-cause-cache",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "root-cause-contract",
+      "path": "ops/bin/as6-diagnose-root-cause-contract",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "root-cause-dashboard",
+      "path": "ops/bin/as6-diagnose-root-cause-dashboard",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "root-cause-staleness",
+      "path": "ops/bin/as6-diagnose-root-cause-staleness",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "root-cause-v2",
+      "path": "ops/bin/as6-diagnose-root-cause-v2",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "runtime-artifact-format",
+      "path": "ops/bin/as6-diagnose-runtime-artifact-format",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "runtime-artifacts",
+      "path": "ops/bin/as6-diagnose-runtime-artifacts",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "runtime-binary-artifacts",
+      "path": "ops/bin/as6-diagnose-runtime-binary-artifacts",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "runtime-stale-tmp-artifacts",
+      "path": "ops/bin/as6-diagnose-runtime-stale-tmp-artifacts",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "ssh-stability",
+      "path": "ops/bin/as6-diagnose-ssh-stability",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "status-registry-consistency",
+      "path": "ops/bin/as6-diagnose-status-registry-consistency",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "unreachable-diagnostic-blocks",
+      "path": "ops/bin/as6-diagnose-unreachable-diagnostic-blocks",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "workflow-yaml",
+      "path": "ops/bin/as6-diagnose-workflow-yaml",
+      "status_visible": true,
+      "source": "auto"
+    }
+  ]
+}

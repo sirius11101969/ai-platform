@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+REGISTRY="ops/status/diagnostic-status-registry.json"
+fail=0
+
+echo "=== AS6 Diagnostic Status Registry Diagnostics ==="
+
+if [ -f "$REGISTRY" ]; then
+  echo "DIAGNOSTIC_STATUS_REGISTRY_FILE=OK:$REGISTRY"
+else
+  echo "DIAGNOSTIC_STATUS_REGISTRY_FILE=FAIL:missing"
+  echo "DIAGNOSTIC_STATUS_REGISTRY_RESULT=FAIL"
+  exit 1
+fi
+
+python3 - <<'PY' || fail=1
+import json
+from pathlib import Path
+
+registry = Path("ops/status/diagnostic-status-registry.json")
+data = json.loads(registry.read_text())
+paths = {item.get("path") for item in data.get("diagnostics", [])}
+
+missing = []
+for p in sorted(Path("ops/bin").glob("as6-diagnose-*")):
+    if ".backup." in p.name:
+        continue
+    if str(p) not in paths:
+        missing.append(str(p))
+
+print(f"DIAGNOSTIC_STATUS_REGISTRY_COUNT={len(paths)}")
+if missing:
+    for p in missing:
+        print(f"DIAGNOSTIC_STATUS_REGISTRY_MISSING=FAIL:{p}")
+    raise SystemExit(1)
+
+print("DIAGNOSTIC_STATUS_REGISTRY_COMPLETE=OK")
+PY
+
+if [ "$fail" -eq 0 ]; then
+  echo "DIAGNOSTIC_STATUS_REGISTRY_RESULT=OK"
+  exit 0
+fi
+
+echo "DIAGNOSTIC_STATUS_REGISTRY_RESULT=FAIL"
+exit 1
