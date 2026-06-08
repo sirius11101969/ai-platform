@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+ROOT_CAUSE_REPORT="${AS6_ROOT_CAUSE_V3_REPORT:-runtime/root-cause/root-cause-v3.env}"
+ROOT_CAUSE_LOG_DIR="${AS6_ROOT_CAUSE_V3_OUT_DIR:-runtime/root-cause}"
+FAIL=0
+WARN=0
+
+echo "=== AS6 Root Cause False Positive Diagnostics ==="
+echo "ROOT_CAUSE_FALSE_POSITIVE_REPORT=$ROOT_CAUSE_REPORT"
+
+if [ ! -f "$ROOT_CAUSE_REPORT" ]; then
+  echo "ROOT_CAUSE_FALSE_POSITIVE_REPORT_STATUS=WARN:missing"
+  echo "ROOT_CAUSE_FALSE_POSITIVE_RESULT=OK"
+  exit 0
+fi
+
+kv() {
+  local key="$1"
+  awk -F= -v k="$key" '$1 == k {v=$2} END {print v}' "$ROOT_CAUSE_REPORT" 2>/dev/null || true
+}
+
+root_cause="$(kv ROOT_CAUSE)"
+confidence="$(kv CONFIDENCE)"
+impact="$(kv IMPACT)"
+recommended_action="$(kv RECOMMENDED_ACTION)"
+
+echo "ROOT_CAUSE_FALSE_POSITIVE_ROOT_CAUSE=${root_cause:-unknown}"
+echo "ROOT_CAUSE_FALSE_POSITIVE_CONFIDENCE=${confidence:-unknown}"
+echo "ROOT_CAUSE_FALSE_POSITIVE_IMPACT=${impact:-unknown}"
+echo "ROOT_CAUSE_FALSE_POSITIVE_RECOMMENDED_ACTION=${recommended_action:-unknown}"
+
+log_has() {
+  local log="$1"
+  local pattern="$2"
+  grep -Eq "$pattern" "$ROOT_CAUSE_LOG_DIR/$log" 2>/dev/null
+}
+
+case "$root_cause" in
+  SSH)
+    if log_has ssh-stability.log '^SSH_STABILITY_RESULT=OK' && ! log_has ssh-stability.log '^SSH_STABILITY_RESULT=FAIL'; then
+      echo "ROOT_CAUSE_FALSE_POSITIVE_SSH=FAIL:root_cause_ssh_but_ssh_stability_ok"
+      FAIL=1
+    else
+      echo "ROOT_CAUSE_FALSE_POSITIVE_SSH=OK"
+    fi
+    ;;
+  HOST_STABILITY)
+    if log_has host-stability.log '^HOST_STABILITY_RESULT=OK' && ! log_has host-stability.log '^HOST_STABILITY_RESULT=FAIL'; then
+      echo "ROOT_CAUSE_FALSE_POSITIVE_HOST_STABILITY=FAIL:root_cause_host_but_host_stability_ok"
+      FAIL=1
+    else
+      echo "ROOT_CAUSE_FALSE_POSITIVE_HOST_STABILITY=OK"
+    fi
+    ;;
+  HEALTH_HISTORY_CORRUPTION)
+    if log_has health-history-corruption.log '^HEALTH_HISTORY_CORRUPTION_RESULT=OK' && ! log_has health-history-corruption.log '^HEALTH_HISTORY_CORRUPTION_RESULT=FAIL'; then
+      echo "ROOT_CAUSE_FALSE_POSITIVE_HEALTH_HISTORY_CORRUPTION=FAIL:root_cause_corruption_but_corruption_check_ok"
+      FAIL=1
+    else
+      echo "ROOT_CAUSE_FALSE_POSITIVE_HEALTH_HISTORY_CORRUPTION=OK"
+    fi
+    ;;
+  HEALTH_HISTORY_ANOMALY|HOST_FREEZE_HISTORY|OOM|KERNEL|NETWORK|DOCKER|POSTGRES|REDIS|NGINX|HEALTH_HISTORY_STALL|none|UNKNOWN|"")
+    echo "ROOT_CAUSE_FALSE_POSITIVE_GENERIC=OK:not_enough_contradiction"
+    ;;
+  *)
+    echo "ROOT_CAUSE_FALSE_POSITIVE_UNKNOWN_ROOT=WARN:$root_cause"
+    WARN=1
+    ;;
+esac
+
+if [ "$FAIL" -ne 0 ]; then
+  echo "ROOT_CAUSE_FALSE_POSITIVE_RESULT=FAIL"
+  exit 1
+fi
+
+if [ "$WARN" -ne 0 ]; then
+  echo "ROOT_CAUSE_FALSE_POSITIVE_RESULT=WARN"
+  exit 0
+fi
+
+echo "ROOT_CAUSE_FALSE_POSITIVE_RESULT=OK"
+exit 0
