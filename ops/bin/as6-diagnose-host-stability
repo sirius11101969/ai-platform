@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+fail=0
+
+echo "=== AS6 Host Stability Diagnostics ==="
+
+available_mb="$(free -m | awk '/Mem:/ {print $7}')"
+root_used_pct="$(df -P / | awk 'NR==2 {gsub("%","",$5); print $5}')"
+load1="$(awk '{print $1}' /proc/loadavg)"
+
+echo "HOST_STABILITY_MEMORY_AVAILABLE_MB=$available_mb"
+echo "HOST_STABILITY_DISK_ROOT_USED_PERCENT=$root_used_pct"
+echo "HOST_STABILITY_LOAD_1M=$load1"
+
+if [ "${available_mb:-0}" -lt 256 ]; then
+  echo "HOST_STABILITY_MEMORY=FAIL"
+  fail=1
+else
+  echo "HOST_STABILITY_MEMORY=OK"
+fi
+
+if [ "${root_used_pct:-100}" -gt 85 ]; then
+  echo "HOST_STABILITY_DISK=FAIL"
+  fail=1
+else
+  echo "HOST_STABILITY_DISK=OK"
+fi
+
+if awk "BEGIN {exit !($load1 > 4.0)}"; then
+  echo "HOST_STABILITY_LOAD=FAIL"
+  fail=1
+else
+  echo "HOST_STABILITY_LOAD=OK"
+fi
+
+if journalctl -k -b -0 --no-pager 2>/dev/null | grep -Eiq 'oom|out of memory|killed process'; then
+  echo "HOST_STABILITY_OOM=FAIL"
+  fail=1
+else
+  echo "HOST_STABILITY_OOM=OK"
+fi
+
+if journalctl -k -b -0 --no-pager 2>/dev/null | grep -Eiq 'kernel panic|soft lockup|hard lockup|hung task|blocked for more than|i/o error|EXT4-fs error'; then
+  echo "HOST_STABILITY_KERNEL_ERRORS=FAIL"
+  fail=1
+else
+  echo "HOST_STABILITY_KERNEL_ERRORS=OK"
+fi
+
+if command -v docker >/dev/null 2>&1; then
+  docker stats --no-stream --format '{{.Name}} {{.MemPerc}}' >/tmp/as6-host-stability-docker-stats.out 2>/dev/null || true
+
+  if awk '{gsub("%","",$2); if ($2+0 > 80) bad=1} END {exit bad ? 0 : 1}' /tmp/as6-host-stability-docker-stats.out 2>/dev/null; then
+    echo "HOST_STABILITY_DOCKER_MEMORY=FAIL"
+    cat /tmp/as6-host-stability-docker-stats.out
+    fail=1
+  else
+    echo "HOST_STABILITY_DOCKER_MEMORY=OK"
+  fi
+else
+  echo "HOST_STABILITY_DOCKER_MEMORY=SKIP:no_docker"
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "HOST_STABILITY_RESULT=OK"
+  exit 0
+fi
+
+echo "HOST_STABILITY_RESULT=FAIL"
+exit 1
