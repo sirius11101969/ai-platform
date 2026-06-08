@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "=== AS6 Owner Dashboard Root Cause V3 ==="
+REPORT="runtime/root-cause/root-cause-v3.env"
+
+if [ ! -f "$REPORT" ]; then
+  echo "ROOT_CAUSE_V3_REPORT=missing"
+  echo "OWNER_DASHBOARD_ROOT_CAUSE_V3_RESULT=FAIL"
+  exit 1
+fi
+
+for key in SAFE_TO_FIX SAFE_TO_CHANGE ROOT_CAUSE CONFIDENCE IMPACT SEVERITY AFFECTED_COMPONENTS RECOMMENDED_ACTION NEXT_COMMAND AUTOMATION_TO_ADD; do
+  grep -E "^${key}=" "$REPORT" || echo "${key}=missing"
+done
+
+echo "OWNER_DASHBOARD_ROOT_CAUSE_V3_RESULT=OK"
+exit 0
