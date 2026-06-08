@@ -1,0 +1,209 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+OUT_DIR="${AS6_ROOT_CAUSE_V3_OUT_DIR:-runtime/root-cause}"
+REPORT="$OUT_DIR/root-cause-v3.env"
+mkdir -p "$OUT_DIR"
+
+fail=0
+warn=0
+best_root="UNKNOWN"
+best_confidence=0
+best_impact="unknown"
+best_action="collect_more_evidence"
+affected_components="unknown"
+severity="LOW"
+automation_to_add="none"
+
+log_file_for() {
+  local name="$1"
+  echo "$OUT_DIR/${name}.log"
+}
+
+run_diag() {
+  local name="$1"
+  local cmd="$2"
+  local out
+  out="$(log_file_for "$name")"
+
+  echo "=== RUN: $name ==="
+  if bash -lc "$cmd" >"$out" 2>&1; then
+    echo "ROOT_CAUSE_V3_DIAGNOSTIC=OK:$name"
+  else
+    local rc=$?
+    echo "ROOT_CAUSE_V3_DIAGNOSTIC=FAIL:$name:$rc"
+    fail=1
+  fi
+  cat "$out"
+}
+
+kv_from_log() {
+  local file="$1"
+  local key="$2"
+  awk -F= -v k="$key" '$1 == k {v=$2} END {print v}' "$file" 2>/dev/null || true
+}
+
+score_candidate() {
+  local root="$1"
+  local confidence="$2"
+  local impact="$3"
+  local action="$4"
+  local components="$5"
+  local auto="$6"
+
+  if [ "$confidence" -gt "$best_confidence" ]; then
+    best_confidence="$confidence"
+    best_root="$root"
+    best_impact="$impact"
+    best_action="$action"
+    affected_components="$components"
+    automation_to_add="$auto"
+  fi
+}
+
+normalize_confidence() {
+  local value="$1"
+  if ! [[ "$value" =~ ^[0-9]+$ ]]; then
+    echo 0
+    return
+  fi
+  if [ "$value" -gt 100 ]; then
+    echo 100
+  else
+    echo "$value"
+  fi
+}
+
+echo "=== AS6 Root Cause V3 ==="
+
+run_diag "health-history-corruption" "./ops/bin/as6-diagnose-health-history-corruption" || true
+run_diag "health-history-anomaly" "./ops/bin/as6-diagnose-health-history-anomaly" || true
+run_diag "host-stability" "./ops/bin/as6-diagnose-host-stability" || true
+run_diag "ssh-stability" "./ops/bin/as6-diagnose-ssh-stability" || true
+run_diag "host-freeze-history" "./ops/bin/as6-diagnose-host-freeze-history" || true
+run_diag "freeze-correlation" "./ops/bin/as6-diagnose-freeze-correlation" || true
+
+freeze_log="$(log_file_for freeze-correlation)"
+freeze_root="$(kv_from_log "$freeze_log" FREEZE_ROOT_CAUSE)"
+freeze_confidence="$(normalize_confidence "$(kv_from_log "$freeze_log" FREEZE_CONFIDENCE)")"
+freeze_impact="$(kv_from_log "$freeze_log" FREEZE_IMPACT)"
+freeze_action="$(kv_from_log "$freeze_log" FREEZE_RECOMMENDED_ACTION)"
+
+if [ "$freeze_confidence" -gt 0 ]; then
+  case "$freeze_root" in
+    OOM)
+      score_candidate "OOM" "$freeze_confidence" "${freeze_impact:-host_or_container_memory_pressure}" "${freeze_action:-inspect_memory_limits_and_container_usage}" "host,docker,containers" "memory_pressure_monitor"
+      ;;
+    KERNEL)
+      score_candidate "KERNEL" "$freeze_confidence" "${freeze_impact:-host_kernel_or_disk_freeze}" "${freeze_action:-inspect_kernel_logs_disk_and_provider_host}" "host,kernel,disk" "kernel_freeze_correlation"
+      ;;
+    NETWORK)
+      score_candidate "NETWORK" "$freeze_confidence" "${freeze_impact:-network_or_provider_connectivity_loss}" "${freeze_action:-check_provider_network_interface_and_routes}" "host,network,ssh" "network_correlation"
+      ;;
+    DOCKER)
+      score_candidate "DOCKER" "$freeze_confidence" "${freeze_impact:-container_runtime_instability}" "${freeze_action:-inspect_docker_events_and_container_restarts}" "docker,containers" "docker_restart_correlation"
+      ;;
+    POSTGRES)
+      score_candidate "POSTGRES" "$freeze_confidence" "${freeze_impact:-database_instability}" "${freeze_action:-inspect_postgres_logs_and_storage}" "postgres,database" "postgres_correlation"
+      ;;
+    REDIS)
+      score_candidate "REDIS" "$freeze_confidence" "${freeze_impact:-redis_instability}" "${freeze_action:-inspect_redis_memory_and_persistence}" "redis,cache" "redis_correlation"
+      ;;
+    NGINX)
+      score_candidate "NGINX" "$freeze_confidence" "${freeze_impact:-edge_proxy_instability}" "${freeze_action:-inspect_nginx_upstream_and_proxy_errors}" "nginx,backend" "nginx_upstream_correlation"
+      ;;
+    SSH)
+      score_candidate "SSH" "$freeze_confidence" "${freeze_impact:-operator_access_instability}" "${freeze_action:-inspect_ssh_keepalive_auth_and_network}" "ssh,network" "ssh_access_correlation"
+      ;;
+    HEALTH_HISTORY_STALL)
+      score_candidate "HEALTH_HISTORY_STALL" "$freeze_confidence" "${freeze_impact:-health_cache_or_timer_stalled}" "${freeze_action:-inspect_health_timer_and_runtime_history_writer}" "health-cache,timer,runtime-history" "health_timer_stall_monitor"
+      ;;
+  esac
+fi
+
+host_log="$(log_file_for host-stability)"
+ssh_log="$(log_file_for ssh-stability)"
+history_corruption_log="$(log_file_for health-history-corruption)"
+history_anomaly_log="$(log_file_for health-history-anomaly)"
+host_freeze_log="$(log_file_for host-freeze-history)"
+
+if grep -q '^HOST_STABILITY_RESULT=FAIL' "$host_log" 2>/dev/null; then
+  score_candidate "HOST_STABILITY" 75 "host_resource_or_kernel_instability" "run_host_stability_remediation_plan" "host,docker,kernel" "host_stability_remediation_guard"
+fi
+
+if grep -q '^SSH_STABILITY_RESULT=FAIL' "$ssh_log" 2>/dev/null; then
+  score_candidate "SSH_STABILITY" 70 "operator_access_or_network_instability" "run_ssh_stability_remediation_plan" "ssh,network" "ssh_stability_monitor"
+fi
+
+if grep -q '^HOST_FREEZE_HISTORY_RESULT=FAIL' "$host_freeze_log" 2>/dev/null; then
+  score_candidate "HOST_FREEZE_HISTORY" 68 "health_history_stall_or_freeze_pattern" "run_freeze_correlation_and_health_timer_checks" "health-history,host,timer" "host_freeze_history_monitor"
+fi
+
+if grep -q '^HEALTH_HISTORY_CORRUPTION_RESULT=FAIL' "$history_corruption_log" 2>/dev/null; then
+  score_candidate "HEALTH_HISTORY_CORRUPTION" 65 "runtime_history_data_invalid" "repair_or_rotate_corrupted_health_history_records" "runtime-history,health-cache" "health_history_integrity_guard"
+fi
+
+if grep -q '^HEALTH_HISTORY_ANOMALY_RESULT=FAIL' "$history_anomaly_log" 2>/dev/null; then
+  score_candidate "HEALTH_HISTORY_ANOMALY" 62 "health_history_anomaly_detected" "inspect_repeated_root_causes_and_failed_health_samples" "runtime-history,health-cache,platform" "health_history_anomaly_monitor"
+fi
+
+if [ "$best_confidence" -ge 90 ]; then
+  severity="CRITICAL"
+elif [ "$best_confidence" -ge 75 ]; then
+  severity="HIGH"
+elif [ "$best_confidence" -ge 50 ]; then
+  severity="MEDIUM"
+else
+  severity="LOW"
+fi
+
+safe_to_fix="NO"
+safe_to_change="NO"
+next_command="./ops/bin/as6-diagnose-all"
+
+if [ "$best_confidence" -ge 60 ]; then
+  safe_to_fix="YES"
+  safe_to_change="NO"
+  next_command="$best_action"
+elif [ "$best_confidence" -gt 0 ]; then
+  safe_to_fix="NO"
+  safe_to_change="NO"
+  next_command="./ops/bin/as6-diagnose-all && ./ops/bin/as6-root-cause-v3"
+else
+  safe_to_fix="NO"
+  safe_to_change="YES"
+  best_root="none"
+  best_impact="none_detected"
+  best_action="continue_monitoring"
+  affected_components="none"
+  automation_to_add="none"
+fi
+
+{
+  echo "SAFE_TO_FIX=$safe_to_fix"
+  echo "SAFE_TO_CHANGE=$safe_to_change"
+  echo "ROOT_CAUSE=$best_root"
+  echo "CONFIDENCE=$best_confidence"
+  echo "IMPACT=$best_impact"
+  echo "SEVERITY=$severity"
+  echo "AFFECTED_COMPONENTS=$affected_components"
+  echo "RECOMMENDED_ACTION=$best_action"
+  echo "NEXT_COMMAND=$next_command"
+  echo "AUTOMATION_TO_ADD=$automation_to_add"
+  echo "EVIDENCE_1=$OUT_DIR/health-history-corruption.log"
+  echo "EVIDENCE_2=$OUT_DIR/health-history-anomaly.log"
+  echo "EVIDENCE_3=$OUT_DIR/freeze-correlation.log"
+} | tee "$REPORT"
+
+echo "ROOT_CAUSE_V3_REPORT=$REPORT"
+
+if [ "$best_confidence" -ge 60 ]; then
+  echo "ROOT_CAUSE_V3_RESULT=FAIL"
+  exit 1
+fi
+
+echo "ROOT_CAUSE_V3_RESULT=OK"
+exit 0
