@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+fail=0
+
+echo "=== AS6 SSH Stability Diagnostics ==="
+
+cfg="$(sshd -T 2>/dev/null || true)"
+
+echo "$cfg" | grep -q '^tcpkeepalive yes' \
+  && echo "SSH_STABILITY_TCP_KEEPALIVE=OK" \
+  || { echo "SSH_STABILITY_TCP_KEEPALIVE=FAIL"; fail=1; }
+
+echo "$cfg" | grep -q '^clientaliveinterval 300' \
+  && echo "SSH_STABILITY_CLIENT_ALIVE_INTERVAL=OK:300" \
+  || echo "SSH_STABILITY_CLIENT_ALIVE_INTERVAL=WARN:not_300"
+
+echo "$cfg" | grep -q '^clientalivecountmax 2' \
+  && echo "SSH_STABILITY_CLIENT_ALIVE_COUNT=OK:2" \
+  || echo "SSH_STABILITY_CLIENT_ALIVE_COUNT=WARN:not_2"
+
+echo "$cfg" | grep -q '^passwordauthentication no' \
+  && echo "SSH_STABILITY_PASSWORD_AUTH=OK:disabled" \
+  || { echo "SSH_STABILITY_PASSWORD_AUTH=FAIL:enabled_or_unknown"; fail=1; }
+
+echo "$cfg" | grep -q '^maxauthtries 3' \
+  && echo "SSH_STABILITY_MAX_AUTH_TRIES=OK:3" \
+  || echo "SSH_STABILITY_MAX_AUTH_TRIES=WARN:not_3"
+
+bruteforce_count="$(journalctl -u ssh -b -0 --no-pager 2>/dev/null | grep -Eci 'invalid user|maximum authentication attempts|too many authentication failures' || true)"
+echo "SSH_STABILITY_BRUTEFORCE_EVENTS=$bruteforce_count"
+
+if [ "${bruteforce_count:-0}" -gt 100 ]; then
+  echo "SSH_STABILITY_BRUTEFORCE_RATE=WARN"
+else
+  echo "SSH_STABILITY_BRUTEFORCE_RATE=OK"
+fi
+
+active_sessions="$(ss -tnp 2>/dev/null | grep -c ':22' || true)"
+echo "SSH_STABILITY_ACTIVE_SESSIONS=$active_sessions"
+
+if ip -s link show eth0 2>/dev/null | awk '
+  /RX:/ {rx=1; next}
+  rx==1 {if ($3+$4+$5 > 0) bad=1; rx=0}
+  /TX:/ {tx=1; next}
+  tx==1 {if ($3+$4+$5 > 0) bad=1; tx=0}
+  END {exit bad ? 0 : 1}
+'; then
+  echo "SSH_STABILITY_INTERFACE_ERRORS=FAIL"
+  fail=1
+else
+  echo "SSH_STABILITY_INTERFACE_ERRORS=OK"
+fi
+
+if journalctl -k -b -0 --no-pager 2>/dev/null | grep -Eiq 'network.*down|link is down|reset adapter|NETDEV WATCHDOG|transmit queue timed out'; then
+  echo "SSH_STABILITY_KERNEL_NETWORK=FAIL"
+  fail=1
+else
+  echo "SSH_STABILITY_KERNEL_NETWORK=OK"
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "SSH_STABILITY_RESULT=OK"
+  exit 0
+fi
+
+echo "SSH_STABILITY_RESULT=FAIL"
+exit 1
