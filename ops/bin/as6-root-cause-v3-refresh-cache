@@ -1,0 +1,136 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+OUT_DIR="runtime/root-cause"
+REPORT="$OUT_DIR/root-cause-v3.env"
+mkdir -p "$OUT_DIR"
+
+kv() {
+  local file="$1"
+  local key="$2"
+  awk -F= -v k="$key" '$1 == k {v=$2} END {print v}' "$file" 2>/dev/null || true
+}
+
+normalize_confidence() {
+  local value="${1:-0}"
+  if [[ "$value" =~ ^[0-9]+$ ]]; then
+    echo "$value"
+  else
+    echo 0
+  fi
+}
+
+best_root="none"
+best_confidence=0
+best_impact="none"
+best_action="collect_more_history"
+best_components="none"
+best_automation="none"
+
+score() {
+  local root="$1"
+  local confidence="$2"
+  local impact="$3"
+  local action="$4"
+  local components="$5"
+  local automation="$6"
+
+  confidence="$(normalize_confidence "$confidence")"
+  if [ "$confidence" -gt "$best_confidence" ]; then
+    best_root="$root"
+    best_confidence="$confidence"
+    best_impact="$impact"
+    best_action="$action"
+    best_components="$components"
+    best_automation="$automation"
+  fi
+}
+
+freeze_log="$OUT_DIR/freeze-correlation.log"
+anomaly_log="$OUT_DIR/health-history-anomaly.log"
+host_log="$OUT_DIR/host-stability.log"
+ssh_log="$OUT_DIR/ssh-stability.log"
+corruption_log="$OUT_DIR/health-history-corruption.log"
+
+if [ -f "$freeze_log" ]; then
+  freeze_root="$(kv "$freeze_log" FREEZE_ROOT_CAUSE)"
+  freeze_confidence="$(normalize_confidence "$(kv "$freeze_log" FREEZE_CONFIDENCE)")"
+  freeze_impact="$(kv "$freeze_log" FREEZE_IMPACT)"
+  freeze_action="$(kv "$freeze_log" FREEZE_RECOMMENDED_ACTION)"
+
+  if [ "$freeze_confidence" -gt 0 ]; then
+    if [ "$freeze_root" = "HEALTH_HISTORY_STALL" ]; then
+      if ./ops/bin/as6-diagnose-health-history-stall-root-cause >/tmp/as6-refresh-stall-root.out 2>&1 \
+        && grep -q '^HEALTH_HISTORY_STALL_ROOT_CAUSE_RESULT=OK' /tmp/as6-refresh-stall-root.out; then
+        echo "ROOT_CAUSE_REFRESH_CANDIDATE_SKIPPED=HEALTH_HISTORY_STALL:resolved_or_historical"
+      else
+        score "HEALTH_HISTORY_STALL" "$freeze_confidence" "${freeze_impact:-health_cache_or_timer_stalled}" "${freeze_action:-inspect_health_timer_and_runtime_history_writer}" "health-cache,timer,runtime-history" "health_timer_stall_monitor"
+      fi
+    else
+      score "$freeze_root" "$freeze_confidence" "${freeze_impact:-unknown}" "${freeze_action:-collect_more_history}" "runtime" "root_cause_monitor"
+    fi
+  fi
+fi
+
+if grep -q '^HOST_STABILITY_RESULT=FAIL' "$host_log" 2>/dev/null; then
+  score "HOST_STABILITY" 75 "host_resource_or_kernel_instability" "run_host_stability_remediation_plan" "host,docker,kernel" "host_stability_remediation_guard"
+fi
+
+if grep -q '^SSH_STABILITY_RESULT=FAIL' "$ssh_log" 2>/dev/null; then
+  score "SSH_STABILITY" 70 "operator_access_or_network_instability" "run_ssh_stability_remediation_plan" "ssh,network" "ssh_stability_monitor"
+fi
+
+if grep -q '^HEALTH_HISTORY_CORRUPTION_RESULT=FAIL' "$corruption_log" 2>/dev/null; then
+  score "HEALTH_HISTORY_CORRUPTION" 65 "runtime_history_data_invalid" "repair_or_rotate_corrupted_health_history_records" "runtime-history,health-cache" "health_history_integrity_guard"
+fi
+
+if grep -q '^HEALTH_HISTORY_ANOMALY_RESULT=FAIL' "$anomaly_log" 2>/dev/null; then
+  if ./ops/bin/as6-diagnose-health-anomaly-root-cause >/tmp/as6-refresh-anomaly-root.out 2>&1 \
+    && grep -q '^HEALTH_ANOMALY_ROOT_CAUSE_RESULT=OK' /tmp/as6-refresh-anomaly-root.out; then
+    echo "ROOT_CAUSE_REFRESH_CANDIDATE_SKIPPED=HEALTH_HISTORY_ANOMALY:resolved_or_historical"
+  else
+    score "HEALTH_HISTORY_ANOMALY" 62 "health_history_anomaly_detected" "inspect_repeated_root_causes_and_failed_health_samples" "runtime-history,health-cache,platform" "health_history_anomaly_monitor"
+  fi
+fi
+
+if [ "$best_confidence" -ge 90 ]; then
+  severity="CRITICAL"
+elif [ "$best_confidence" -ge 75 ]; then
+  severity="HIGH"
+elif [ "$best_confidence" -ge 50 ]; then
+  severity="MEDIUM"
+elif [ "$best_confidence" -gt 0 ]; then
+  severity="LOW"
+else
+  severity="NONE"
+fi
+
+if [ "$best_confidence" -gt 0 ]; then
+  safe_to_fix="YES"
+  safe_to_change="NO"
+else
+  safe_to_fix="NO"
+  safe_to_change="YES"
+fi
+
+cat > "$REPORT" <<EOF
+SAFE_TO_FIX=$safe_to_fix
+SAFE_TO_CHANGE=$safe_to_change
+ROOT_CAUSE=$best_root
+CONFIDENCE=$best_confidence
+IMPACT=$best_impact
+SEVERITY=$severity
+AFFECTED_COMPONENTS=$best_components
+RECOMMENDED_ACTION=$best_action
+NEXT_COMMAND=$best_action
+AUTOMATION_TO_ADD=$best_automation
+EVIDENCE_1=runtime/root-cause/health-history-corruption.log
+EVIDENCE_2=runtime/root-cause/health-history-anomaly.log
+EVIDENCE_3=runtime/root-cause/freeze-correlation.log
+EOF
+
+cat "$REPORT"
+echo "ROOT_CAUSE_V3_REFRESH_CACHE_RESULT=OK"
