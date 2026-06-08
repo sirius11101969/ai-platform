@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+name="${1:-}"
+
+if [ -z "$name" ]; then
+  echo "AS6_CREATE_DIAGNOSTIC_FEATURE_RESULT=FAIL:missing_name"
+  echo "Usage: ./ops/bin/as6-create-diagnostic-feature <name>"
+  exit 1
+fi
+
+if ! [[ "$name" =~ ^[a-z0-9][a-z0-9-]*$ ]]; then
+  echo "AS6_CREATE_DIAGNOSTIC_FEATURE_RESULT=FAIL:invalid_name"
+  exit 1
+fi
+
+branch="feature/as6-diagnostic-${name}"
+
+git checkout main
+git pull --ff-only origin main
+git checkout -b "$branch"
+
+./ops/bin/as6-create-diagnostic "$name"
+
+./ops/bin/as6-diagnostic-registry
+./ops/bin/as6-diagnose-diagnostic-registry
+./ops/bin/as6-diagnose-all
+as6-pre-commit-secret-scan
+
+git add "ops/bin/as6-diagnose-${name}" ops/bin/as6-ai-workforce-status
+git commit -m "feat: add ${name} diagnostics"
+git push -u origin "$branch"
+
+echo "AS6_CREATE_DIAGNOSTIC_FEATURE_BRANCH=$branch"
+echo "AS6_CREATE_DIAGNOSTIC_FEATURE_RESULT=OK"

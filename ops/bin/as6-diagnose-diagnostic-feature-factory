@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+echo "=== AS6 Diagnostic Feature Factory Diagnostics ==="
+
+[ -x ops/bin/as6-create-diagnostic-feature ] \
+  && echo "DIAGNOSTIC_FEATURE_FACTORY_TOOL=OK" \
+  || { echo "DIAGNOSTIC_FEATURE_FACTORY_TOOL=FAIL"; fail=1; }
+
+grep -q 'as6-create-diagnostic' ops/bin/as6-create-diagnostic-feature \
+  && echo "DIAGNOSTIC_FEATURE_FACTORY_USES_SCAFFOLD=OK" \
+  || { echo "DIAGNOSTIC_FEATURE_FACTORY_USES_SCAFFOLD=FAIL"; fail=1; }
+
+grep -q 'as6-pre-commit-secret-scan' ops/bin/as6-create-diagnostic-feature \
+  && echo "DIAGNOSTIC_FEATURE_FACTORY_SECRET_SCAN=OK" \
+  || { echo "DIAGNOSTIC_FEATURE_FACTORY_SECRET_SCAN=FAIL"; fail=1; }
+
+grep -q 'git push -u origin' ops/bin/as6-create-diagnostic-feature \
+  && echo "DIAGNOSTIC_FEATURE_FACTORY_PUSH=OK" \
+  || { echo "DIAGNOSTIC_FEATURE_FACTORY_PUSH=FAIL"; fail=1; }
+
+if [ "$fail" -eq 0 ]; then
+  echo "DIAGNOSTIC_FEATURE_FACTORY_RESULT=OK"
+  exit 0
+fi
+
+echo "DIAGNOSTIC_FEATURE_FACTORY_RESULT=FAIL"
+exit 1
