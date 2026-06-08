@@ -77,6 +77,45 @@ normalize_confidence() {
   fi
 }
 
+diag_failed() {
+  local file="$1"
+  local key="$2"
+  grep -q "^${key}=FAIL" "$file" 2>/dev/null
+}
+
+diag_ok() {
+  local file="$1"
+  local key="$2"
+  grep -q "^${key}=OK" "$file" 2>/dev/null
+}
+
+confirmed_freeze_root() {
+  local root="$1"
+  case "$root" in
+    SSH)
+      diag_failed "$(log_file_for ssh-stability)" SSH_STABILITY_RESULT
+      ;;
+    HOST_STABILITY|OOM|KERNEL|NETWORK)
+      diag_failed "$(log_file_for host-stability)" HOST_STABILITY_RESULT
+      ;;
+    HEALTH_HISTORY_STALL|HOST_FREEZE_HISTORY)
+      diag_failed "$(log_file_for host-freeze-history)" HOST_FREEZE_HISTORY_RESULT
+      ;;
+    HEALTH_HISTORY_ANOMALY)
+      diag_failed "$(log_file_for health-history-anomaly)" HEALTH_HISTORY_ANOMALY_RESULT
+      ;;
+    HEALTH_HISTORY_CORRUPTION)
+      diag_failed "$(log_file_for health-history-corruption)" HEALTH_HISTORY_CORRUPTION_RESULT
+      ;;
+    DOCKER|POSTGRES|REDIS|NGINX)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
 echo "=== AS6 Root Cause V3 ==="
 
 run_diag "health-history-corruption" "./ops/bin/as6-diagnose-health-history-corruption" || true
@@ -95,13 +134,25 @@ freeze_action="$(kv_from_log "$freeze_log" FREEZE_RECOMMENDED_ACTION)"
 if [ "$freeze_confidence" -gt 0 ]; then
   case "$freeze_root" in
     OOM)
-      score_candidate "OOM" "$freeze_confidence" "${freeze_impact:-host_or_container_memory_pressure}" "${freeze_action:-inspect_memory_limits_and_container_usage}" "host,docker,containers" "memory_pressure_monitor"
+      if confirmed_freeze_root OOM; then
+        score_candidate "OOM" "$freeze_confidence" "${freeze_impact:-host_or_container_memory_pressure}" "${freeze_action:-inspect_memory_limits_and_container_usage}" "host,docker,containers" "memory_pressure_monitor"
+      else
+        echo "ROOT_CAUSE_V3_CANDIDATE_SKIPPED=OOM:not_confirmed_by_host_stability"
+      fi
       ;;
     KERNEL)
-      score_candidate "KERNEL" "$freeze_confidence" "${freeze_impact:-host_kernel_or_disk_freeze}" "${freeze_action:-inspect_kernel_logs_disk_and_provider_host}" "host,kernel,disk" "kernel_freeze_correlation"
+      if confirmed_freeze_root KERNEL; then
+        score_candidate "KERNEL" "$freeze_confidence" "${freeze_impact:-host_kernel_or_disk_freeze}" "${freeze_action:-inspect_kernel_logs_disk_and_provider_host}" "host,kernel,disk" "kernel_freeze_correlation"
+      else
+        echo "ROOT_CAUSE_V3_CANDIDATE_SKIPPED=KERNEL:not_confirmed_by_host_stability"
+      fi
       ;;
     NETWORK)
-      score_candidate "NETWORK" "$freeze_confidence" "${freeze_impact:-network_or_provider_connectivity_loss}" "${freeze_action:-check_provider_network_interface_and_routes}" "host,network,ssh" "network_correlation"
+      if confirmed_freeze_root NETWORK; then
+        score_candidate "NETWORK" "$freeze_confidence" "${freeze_impact:-network_or_provider_connectivity_loss}" "${freeze_action:-check_provider_network_interface_and_routes}" "host,network,ssh" "network_correlation"
+      else
+        echo "ROOT_CAUSE_V3_CANDIDATE_SKIPPED=NETWORK:not_confirmed_by_host_stability"
+      fi
       ;;
     DOCKER)
       score_candidate "DOCKER" "$freeze_confidence" "${freeze_impact:-container_runtime_instability}" "${freeze_action:-inspect_docker_events_and_container_restarts}" "docker,containers" "docker_restart_correlation"
@@ -116,10 +167,18 @@ if [ "$freeze_confidence" -gt 0 ]; then
       score_candidate "NGINX" "$freeze_confidence" "${freeze_impact:-edge_proxy_instability}" "${freeze_action:-inspect_nginx_upstream_and_proxy_errors}" "nginx,backend" "nginx_upstream_correlation"
       ;;
     SSH)
-      score_candidate "SSH" "$freeze_confidence" "${freeze_impact:-operator_access_instability}" "${freeze_action:-inspect_ssh_keepalive_auth_and_network}" "ssh,network" "ssh_access_correlation"
+      if confirmed_freeze_root SSH; then
+        score_candidate "SSH" "$freeze_confidence" "${freeze_impact:-operator_access_instability}" "${freeze_action:-inspect_ssh_keepalive_auth_and_network}" "ssh,network" "ssh_access_correlation"
+      else
+        echo "ROOT_CAUSE_V3_CANDIDATE_SKIPPED=SSH:not_confirmed_by_ssh_stability"
+      fi
       ;;
     HEALTH_HISTORY_STALL)
-      score_candidate "HEALTH_HISTORY_STALL" "$freeze_confidence" "${freeze_impact:-health_cache_or_timer_stalled}" "${freeze_action:-inspect_health_timer_and_runtime_history_writer}" "health-cache,timer,runtime-history" "health_timer_stall_monitor"
+      if confirmed_freeze_root HEALTH_HISTORY_STALL; then
+        score_candidate "HEALTH_HISTORY_STALL" "$freeze_confidence" "${freeze_impact:-health_cache_or_timer_stalled}" "${freeze_action:-inspect_health_timer_and_runtime_history_writer}" "health-cache,timer,runtime-history" "health_timer_stall_monitor"
+      else
+        echo "ROOT_CAUSE_V3_CANDIDATE_SKIPPED=HEALTH_HISTORY_STALL:not_confirmed_by_host_freeze_history"
+      fi
       ;;
   esac
 fi
