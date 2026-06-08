@@ -63,6 +63,8 @@ for p in files:
     result = data.get("health_cache_result", "UNKNOWN")
     platform = data.get("platform_status", "UNKNOWN")
     root = data.get("root_cause", "unknown")
+    if isinstance(root, str) and "=" in root:
+        root = root.split("=")[-1]
     ts_raw = data.get("timestamp", "")
 
     state = "OK" if result == "OK" and platform == "OK" and root in ("none", "", "unknown") else "FAIL"
