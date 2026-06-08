@@ -91,7 +91,8 @@ for state, _, _ in samples:
     else:
         consecutive_fails = 0
 
-roots = [root for state, root, _ in samples if state == "FAIL" and root not in ("none", "", "unknown")]
+invalid_roots = {"none", "", "unknown", "UNKNOWN", "OK", "FAIL"}
+roots = [root for state, root, _ in samples if state == "FAIL" and root not in invalid_roots]
 root_counts = Counter(roots)
 most_common_root, most_common_count = ("none", 0)
 if root_counts:
