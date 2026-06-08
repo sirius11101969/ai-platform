@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "=== AS6 Root Cause Contract Diagnostics ==="
+REPORT="runtime/root-cause/root-cause-v3.env"
+fail=0
+
+if [ ! -f "$REPORT" ]; then
+  echo "ROOT_CAUSE_CONTRACT_FILE=FAIL:missing"
+  echo "ROOT_CAUSE_CONTRACT_RESULT=FAIL"
+  exit 1
+fi
+
+echo "ROOT_CAUSE_CONTRACT_FILE=OK"
+
+required_fields="SAFE_TO_FIX SAFE_TO_CHANGE ROOT_CAUSE CONFIDENCE IMPACT SEVERITY AFFECTED_COMPONENTS RECOMMENDED_ACTION NEXT_COMMAND AUTOMATION_TO_ADD"
+
+for field in $required_fields; do
+  if grep -q "^${field}=" "$REPORT"; then
+    echo "ROOT_CAUSE_CONTRACT_FIELD=OK:${field}"
+  else
+    echo "ROOT_CAUSE_CONTRACT_FIELD=FAIL:${field}"
+    fail=1
+  fi
+done
+
+if [ "$fail" -eq 0 ]; then
+  echo "ROOT_CAUSE_CONTRACT_RESULT=OK"
+  exit 0
+fi
+
+echo "ROOT_CAUSE_CONTRACT_RESULT=FAIL"
+exit 1
