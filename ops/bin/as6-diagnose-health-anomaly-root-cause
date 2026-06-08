@@ -48,18 +48,28 @@ if echo "$repeat_root" | grep -q '^GIT_MAIN_SYNC=FAIL'; then
 fi
 
 if echo "$last_ok_result" | grep -q 'stale_ok'; then
-  if ./ops/bin/as6-health-cache >/tmp/as6-health-anomaly-cache-refresh.out 2>&1; then
-    echo "HEALTH_ANOMALY_ROOT_CACHE_REFRESH_NOW=OK"
-    echo "HEALTH_ANOMALY_ROOT_CAUSE=HISTORICAL_STALE_OK_NOW_REFRESHED"
-    echo "HEALTH_ANOMALY_ROOT_CAUSE_RESULT=OK"
-    exit 0
+  latest="runtime/health/latest.json"
+  max_age="${AS6_HEALTH_ANOMALY_LATEST_MAX_AGE_SECONDS:-1800}"
+
+  if [ -f "$latest" ]; then
+    age="$(( $(date +%s) - $(stat -c %Y "$latest") ))"
+    echo "HEALTH_ANOMALY_ROOT_LATEST_CACHE_AGE_SECONDS=$age"
+    echo "HEALTH_ANOMALY_ROOT_LATEST_CACHE_MAX_AGE_SECONDS=$max_age"
+
+    if [ "$age" -le "$max_age" ]; then
+      echo "HEALTH_ANOMALY_ROOT_CACHE_REFRESH_NOW=OK"
+      echo "HEALTH_ANOMALY_ROOT_CAUSE=HISTORICAL_STALE_OK_NOW_REFRESHED"
+      echo "HEALTH_ANOMALY_ROOT_CAUSE_RESULT=OK"
+      exit 0
+    fi
   else
-    cat /tmp/as6-health-anomaly-cache-refresh.out
-    echo "HEALTH_ANOMALY_ROOT_CACHE_REFRESH_NOW=FAIL"
-    echo "HEALTH_ANOMALY_ROOT_CAUSE=HEALTH_CACHE_REFRESH"
-    echo "HEALTH_ANOMALY_ROOT_CAUSE_RESULT=FAIL"
-    exit 1
+    echo "HEALTH_ANOMALY_ROOT_LATEST_CACHE=missing"
   fi
+
+  echo "HEALTH_ANOMALY_ROOT_CACHE_REFRESH_NOW=FAIL"
+  echo "HEALTH_ANOMALY_ROOT_CAUSE=HEALTH_CACHE_REFRESH"
+  echo "HEALTH_ANOMALY_ROOT_CAUSE_RESULT=FAIL"
+  exit 1
 fi
 
 if [ "${consecutive_fails:-0}" -gt 0 ] 2>/dev/null; then
