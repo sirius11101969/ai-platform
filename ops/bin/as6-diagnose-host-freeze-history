@@ -1,0 +1,201 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+DIR="${AS6_HEALTH_HISTORY_DIR:-runtime/health/history}"
+WINDOW="${AS6_HOST_FREEZE_HISTORY_WINDOW:-20}"
+MAX_LAST_SAMPLE_AGE_SECONDS="${AS6_HOST_FREEZE_HISTORY_MAX_LAST_SAMPLE_AGE_SECONDS:-1800}"
+MAX_SAMPLE_GAP_SECONDS="${AS6_HOST_FREEZE_HISTORY_MAX_SAMPLE_GAP_SECONDS:-1800}"
+MAX_IDENTICAL_RESULT_STREAK="${AS6_HOST_FREEZE_HISTORY_MAX_IDENTICAL_RESULT_STREAK:-8}"
+MAX_IDENTICAL_ROOT_CAUSE_STREAK="${AS6_HOST_FREEZE_HISTORY_MAX_IDENTICAL_ROOT_CAUSE_STREAK:-8}"
+MIN_SAMPLES_FOR_STREAK="${AS6_HOST_FREEZE_HISTORY_MIN_SAMPLES_FOR_STREAK:-5}"
+
+fail=0
+
+require_positive_int() {
+  local name="$1"
+  local value="$2"
+  if ! [[ "$value" =~ ^[0-9]+$ ]] || [ "$value" -lt 1 ]; then
+    echo "HOST_FREEZE_HISTORY_CONFIG=FAIL:${name}:${value}"
+    fail=1
+  fi
+}
+
+echo "=== AS6 Host Freeze History Diagnostics ==="
+
+test -d "$DIR" && echo "HOST_FREEZE_HISTORY_DIR=OK:$DIR" || { echo "HOST_FREEZE_HISTORY_DIR=FAIL:$DIR"; fail=1; }
+
+require_positive_int "WINDOW" "$WINDOW"
+require_positive_int "MAX_LAST_SAMPLE_AGE_SECONDS" "$MAX_LAST_SAMPLE_AGE_SECONDS"
+require_positive_int "MAX_SAMPLE_GAP_SECONDS" "$MAX_SAMPLE_GAP_SECONDS"
+require_positive_int "MAX_IDENTICAL_RESULT_STREAK" "$MAX_IDENTICAL_RESULT_STREAK"
+require_positive_int "MAX_IDENTICAL_ROOT_CAUSE_STREAK" "$MAX_IDENTICAL_ROOT_CAUSE_STREAK"
+require_positive_int "MIN_SAMPLES_FOR_STREAK" "$MIN_SAMPLES_FOR_STREAK"
+
+if [ "$fail" -ne 0 ]; then
+  echo "HOST_FREEZE_HISTORY_RESULT=FAIL"
+  exit 1
+fi
+
+echo "HOST_FREEZE_HISTORY_WINDOW=$WINDOW"
+echo "HOST_FREEZE_HISTORY_MAX_LAST_SAMPLE_AGE_SECONDS=$MAX_LAST_SAMPLE_AGE_SECONDS"
+echo "HOST_FREEZE_HISTORY_MAX_SAMPLE_GAP_SECONDS=$MAX_SAMPLE_GAP_SECONDS"
+echo "HOST_FREEZE_HISTORY_MAX_IDENTICAL_RESULT_STREAK=$MAX_IDENTICAL_RESULT_STREAK"
+echo "HOST_FREEZE_HISTORY_MAX_IDENTICAL_ROOT_CAUSE_STREAK=$MAX_IDENTICAL_ROOT_CAUSE_STREAK"
+echo "HOST_FREEZE_HISTORY_MIN_SAMPLES_FOR_STREAK=$MIN_SAMPLES_FOR_STREAK"
+echo "HOST_FREEZE_HISTORY_CONFIG=OK"
+
+AS6_HOST_FREEZE_HISTORY_DIR="$DIR" \
+AS6_HOST_FREEZE_HISTORY_WINDOW="$WINDOW" \
+AS6_HOST_FREEZE_HISTORY_MAX_LAST_SAMPLE_AGE_SECONDS="$MAX_LAST_SAMPLE_AGE_SECONDS" \
+AS6_HOST_FREEZE_HISTORY_MAX_SAMPLE_GAP_SECONDS="$MAX_SAMPLE_GAP_SECONDS" \
+AS6_HOST_FREEZE_HISTORY_MAX_IDENTICAL_RESULT_STREAK="$MAX_IDENTICAL_RESULT_STREAK" \
+AS6_HOST_FREEZE_HISTORY_MAX_IDENTICAL_ROOT_CAUSE_STREAK="$MAX_IDENTICAL_ROOT_CAUSE_STREAK" \
+AS6_HOST_FREEZE_HISTORY_MIN_SAMPLES_FOR_STREAK="$MIN_SAMPLES_FOR_STREAK" \
+python3 - <<'PY' || fail=1
+import json
+import os
+from pathlib import Path
+from datetime import datetime, timezone
+
+history_dir = Path(os.environ["AS6_HOST_FREEZE_HISTORY_DIR"])
+window = int(os.environ["AS6_HOST_FREEZE_HISTORY_WINDOW"])
+max_last_age = int(os.environ["AS6_HOST_FREEZE_HISTORY_MAX_LAST_SAMPLE_AGE_SECONDS"])
+max_gap = int(os.environ["AS6_HOST_FREEZE_HISTORY_MAX_SAMPLE_GAP_SECONDS"])
+max_result_streak = int(os.environ["AS6_HOST_FREEZE_HISTORY_MAX_IDENTICAL_RESULT_STREAK"])
+max_root_streak = int(os.environ["AS6_HOST_FREEZE_HISTORY_MAX_IDENTICAL_ROOT_CAUSE_STREAK"])
+min_samples_for_streak = int(os.environ["AS6_HOST_FREEZE_HISTORY_MIN_SAMPLES_FOR_STREAK"])
+
+now = datetime.now(timezone.utc)
+files = sorted(history_dir.glob("*.json"))[-window:]
+print(f"HOST_FREEZE_HISTORY_TOTAL_SAMPLES={len(files)}")
+
+if not files:
+    print("HOST_FREEZE_HISTORY_SAMPLES=OK:no_history_yet")
+    print("HOST_FREEZE_HISTORY_RESULT=OK")
+    raise SystemExit(0)
+
+samples = []
+invalid = 0
+for path in files:
+    try:
+        data = json.loads(path.read_text())
+    except Exception as exc:
+        print(f"HOST_FREEZE_HISTORY_JSON=FAIL:{path}:{type(exc).__name__}")
+        invalid += 1
+        continue
+
+    raw_ts = str(data.get("timestamp", "")).strip()
+    parsed = None
+    if raw_ts:
+        try:
+            parsed = datetime.fromisoformat(raw_ts.replace("Z", "+00:00"))
+            if parsed.tzinfo is None:
+                parsed = parsed.replace(tzinfo=timezone.utc)
+        except Exception:
+            print(f"HOST_FREEZE_HISTORY_TIMESTAMP=FAIL:{path}:{raw_ts}")
+            invalid += 1
+            continue
+    else:
+        print(f"HOST_FREEZE_HISTORY_TIMESTAMP=FAIL:{path}:missing")
+        invalid += 1
+        continue
+
+    result = str(data.get("health_cache_result", "UNKNOWN"))
+    platform = str(data.get("platform_status", "UNKNOWN"))
+    root = str(data.get("root_cause", "unknown"))
+    next_action = str(data.get("next_action", "unknown"))
+    samples.append({
+        "path": str(path),
+        "ts": parsed,
+        "result": result,
+        "platform": platform,
+        "root": root,
+        "next_action": next_action,
+    })
+
+if invalid:
+    print(f"HOST_FREEZE_HISTORY_INVALID_SAMPLES={invalid}")
+    print("HOST_FREEZE_HISTORY_RESULT=FAIL")
+    raise SystemExit(1)
+
+samples.sort(key=lambda item: item["ts"])
+last = samples[-1]
+last_age = int((now - last["ts"]).total_seconds())
+print(f"HOST_FREEZE_HISTORY_LAST_SAMPLE={last['path']}")
+print(f"HOST_FREEZE_HISTORY_LAST_SAMPLE_AGE_SECONDS={last_age}")
+
+hard_fail = False
+
+if last_age > max_last_age:
+    print("HOST_FREEZE_HISTORY_LAST_SAMPLE_FRESHNESS=FAIL:stale")
+    hard_fail = True
+else:
+    print("HOST_FREEZE_HISTORY_LAST_SAMPLE_FRESHNESS=OK")
+
+max_seen_gap = 0
+max_gap_pair = None
+for prev, cur in zip(samples, samples[1:]):
+    gap = int((cur["ts"] - prev["ts"]).total_seconds())
+    if gap > max_seen_gap:
+        max_seen_gap = gap
+        max_gap_pair = (prev["path"], cur["path"])
+
+print(f"HOST_FREEZE_HISTORY_MAX_SAMPLE_GAP_SECONDS_SEEN={max_seen_gap}")
+if max_seen_gap > max_gap:
+    left, right = max_gap_pair or ("unknown", "unknown")
+    print(f"HOST_FREEZE_HISTORY_SAMPLE_GAP=FAIL:{left}->{right}")
+    hard_fail = True
+else:
+    print("HOST_FREEZE_HISTORY_SAMPLE_GAP=OK")
+
+# Detect suspiciously unchanged health output. This is a WARN unless the history window is large enough,
+# because a short stable OK streak can be normal after a healthy deployment.
+def longest_streak(values):
+    best_value = None
+    best_len = 0
+    current_value = None
+    current_len = 0
+    for value in values:
+        if value == current_value:
+            current_len += 1
+        else:
+            current_value = value
+            current_len = 1
+        if current_len > best_len:
+            best_len = current_len
+            best_value = value
+    return best_value, best_len
+
+result_value, result_streak = longest_streak([f"{s['result']}|{s['platform']}" for s in samples])
+root_value, root_streak = longest_streak([s["root"] for s in samples])
+print(f"HOST_FREEZE_HISTORY_IDENTICAL_RESULT_STREAK={result_value}:{result_streak}")
+print(f"HOST_FREEZE_HISTORY_IDENTICAL_ROOT_CAUSE_STREAK={root_value}:{root_streak}")
+
+if len(samples) >= min_samples_for_streak and result_streak > max_result_streak:
+    print("HOST_FREEZE_HISTORY_IDENTICAL_RESULT_STREAK_RESULT=WARN")
+else:
+    print("HOST_FREEZE_HISTORY_IDENTICAL_RESULT_STREAK_RESULT=OK")
+
+if len(samples) >= min_samples_for_streak and root_value not in ("none", "", "unknown") and root_streak > max_root_streak:
+    print("HOST_FREEZE_HISTORY_IDENTICAL_ROOT_CAUSE_STREAK_RESULT=FAIL")
+    hard_fail = True
+else:
+    print("HOST_FREEZE_HISTORY_IDENTICAL_ROOT_CAUSE_STREAK_RESULT=OK")
+
+if hard_fail:
+    print("HOST_FREEZE_HISTORY_RESULT=FAIL")
+    raise SystemExit(1)
+
+print("HOST_FREEZE_HISTORY_RESULT=OK")
+PY
+
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_HOST_FREEZE_HISTORY_DIAGNOSTIC_RESULT=OK"
+  exit 0
+fi
+
+echo "AS6_HOST_FREEZE_HISTORY_DIAGNOSTIC_RESULT=FAIL"
+exit 1

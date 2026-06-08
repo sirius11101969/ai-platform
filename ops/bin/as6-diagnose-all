@@ -38,6 +38,9 @@ run_check "issue-router" "./ops/bin/as6-diagnose-issue-router"
 run_check "pr-factory" "./ops/bin/as6-diagnose-pr-factory"
 run_check "codex-workflow" "./ops/bin/as6-diagnose-codex-workflow"
 run_check "ai-workforce-status" "./ops/bin/as6-ai-workforce-status"
+run_check "health-history-corruption" "./ops/bin/as6-diagnose-health-history-corruption"
+run_check "health-history-anomaly" "./ops/bin/as6-diagnose-health-history-anomaly"
+run_check "host-freeze-history" "./ops/bin/as6-diagnose-host-freeze-history"
 
 echo
 if [ "$fail" -eq 0 ]; then
