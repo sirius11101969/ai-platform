@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+echo "=== AS6 Runtime Binary Artifacts Diagnostics ==="
+
+fail=0
+
+for f in /tmp/as6-* runtime/root-cause/* runtime/health/latest.json; do
+  [ -f "$f" ] || continue
+  if LC_ALL=C grep -Iq . "$f"; then
+    :
+  else
+    echo "RUNTIME_BINARY_ARTIFACT=FAIL:$f"
+    fail=1
+  fi
+done
+
+if [ "$fail" -eq 0 ]; then
+  echo "RUNTIME_BINARY_ARTIFACTS_RESULT=OK"
+  exit 0
+fi
+
+echo "RUNTIME_BINARY_ARTIFACTS_RESULT=FAIL"
+exit 1

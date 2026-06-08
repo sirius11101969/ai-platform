@@ -45,6 +45,8 @@ run_check "health-recovery" "./ops/bin/as6-diagnose-health-recovery"
 run_check "host-freeze-history" "./ops/bin/as6-diagnose-host-freeze-history"
 run_check "freeze-correlation" "./ops/bin/as6-diagnose-freeze-correlation"
 run_check "root-cause-v3" "./ops/bin/as6-root-cause-v3"
+run_check "root-cause-staleness" "./ops/bin/as6-diagnose-root-cause-staleness"
+run_check "runtime-binary-artifacts" "./ops/bin/as6-diagnose-runtime-binary-artifacts"
 run_check "unreachable-diagnostic-blocks" "./ops/bin/as6-diagnose-unreachable-diagnostic-blocks"
 # AS6 health/root-cause automation checks
 run_check "health-cache-timer-freshness" "./ops/bin/as6-diagnose-health-cache-timer-freshness"

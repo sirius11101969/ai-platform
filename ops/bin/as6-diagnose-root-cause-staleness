@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+echo "=== AS6 Root Cause Staleness Diagnostics ==="
+
+REPORT="runtime/root-cause/root-cause-v3.env"
+fail=0
+
+if [ ! -f "$REPORT" ]; then
+  echo "ROOT_CAUSE_STALENESS_REPORT=FAIL:missing"
+  echo "ROOT_CAUSE_STALENESS_RESULT=FAIL"
+  exit 1
+fi
+
+root="$(grep -E '^ROOT_CAUSE=' "$REPORT" | tail -1 | cut -d= -f2- || true)"
+confidence="$(grep -E '^CONFIDENCE=' "$REPORT" | tail -1 | cut -d= -f2- || true)"
+safe="$(grep -E '^SAFE_TO_CHANGE=' "$REPORT" | tail -1 | cut -d= -f2- || true)"
+
+echo "ROOT_CAUSE_STALENESS_ROOT_CAUSE=${root:-unknown}"
+echo "ROOT_CAUSE_STALENESS_CONFIDENCE=${confidence:-unknown}"
+echo "ROOT_CAUSE_STALENESS_SAFE_TO_CHANGE=${safe:-unknown}"
+
+if [ "${root:-unknown}" = "none" ] && [ "${confidence:-999}" = "0" ] && [ "${safe:-NO}" = "YES" ]; then
+  echo "ROOT_CAUSE_STALE=NO"
+else
+  if [ "${root:-unknown}" = "HOST_STABILITY" ] && grep -q '^HOST_STABILITY_RESULT=OK' runtime/root-cause/host-stability.log 2>/dev/null; then
+    echo "ROOT_CAUSE_STALE=YES:host_stability_now_ok"
+    fail=1
+  else
+    echo "ROOT_CAUSE_STALE=UNKNOWN_OR_ACTIVE"
+  fi
+fi
+
+if grep -R 'HEALTH_RECOVERY_WINDOW_ROOT_CAUSE=HOST_STABILITY' runtime/root-cause runtime/health 2>/dev/null | grep -q .; then
+  echo "ROOT_CAUSE_STALE_TRACE=YES:historical_host_stability_trace"
+else
+  echo "ROOT_CAUSE_STALE_TRACE=NO"
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "ROOT_CAUSE_STALENESS_RESULT=OK"
+  exit 0
+fi
+
+echo "ROOT_CAUSE_STALENESS_RESULT=FAIL"
+exit 1
