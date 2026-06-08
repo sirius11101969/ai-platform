@@ -30,11 +30,15 @@ run_diag() {
   out="$(log_file_for "$name")"
 
   echo "=== RUN: $name ==="
-  if bash -lc "$cmd" >"$out" 2>&1; then
+  if timeout "${AS6_ROOT_CAUSE_V3_DIAG_TIMEOUT_SECONDS:-45}" bash -lc "$cmd" >"$out" 2>&1; then
     echo "ROOT_CAUSE_V3_DIAGNOSTIC=OK:$name"
   else
     local rc=$?
-    echo "ROOT_CAUSE_V3_DIAGNOSTIC=FAIL:$name:$rc"
+    if [ "$rc" -eq 124 ]; then
+      echo "ROOT_CAUSE_V3_DIAGNOSTIC=TIMEOUT:$name:${AS6_ROOT_CAUSE_V3_DIAG_TIMEOUT_SECONDS:-45}"
+    else
+      echo "ROOT_CAUSE_V3_DIAGNOSTIC=FAIL:$name:$rc"
+    fi
     fail=1
   fi
   cat "$out"
