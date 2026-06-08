@@ -63,7 +63,7 @@ if [ -f "$freeze_log" ]; then
 
   if [ "$freeze_confidence" -gt 0 ]; then
     if [ "$freeze_root" = "HEALTH_HISTORY_STALL" ]; then
-      if ./ops/bin/as6-diagnose-health-history-stall-root-cause >/tmp/as6-refresh-stall-root.out 2>&1 \
+      if timeout "${AS6_ROOT_CAUSE_REFRESH_SUBCHECK_TIMEOUT_SECONDS:-20}" ./ops/bin/as6-diagnose-health-history-stall-root-cause >/tmp/as6-refresh-stall-root.out 2>&1 \
         && grep -q '^HEALTH_HISTORY_STALL_ROOT_CAUSE_RESULT=OK' /tmp/as6-refresh-stall-root.out; then
         echo "ROOT_CAUSE_REFRESH_CANDIDATE_SKIPPED=HEALTH_HISTORY_STALL:resolved_or_historical"
       else
@@ -88,7 +88,7 @@ if grep -q '^HEALTH_HISTORY_CORRUPTION_RESULT=FAIL' "$corruption_log" 2>/dev/nul
 fi
 
 if grep -q '^HEALTH_HISTORY_ANOMALY_RESULT=FAIL' "$anomaly_log" 2>/dev/null; then
-  if ./ops/bin/as6-diagnose-health-anomaly-root-cause >/tmp/as6-refresh-anomaly-root.out 2>&1 \
+  if timeout "${AS6_ROOT_CAUSE_REFRESH_SUBCHECK_TIMEOUT_SECONDS:-20}" ./ops/bin/as6-diagnose-health-anomaly-root-cause >/tmp/as6-refresh-anomaly-root.out 2>&1 \
     && grep -q '^HEALTH_ANOMALY_ROOT_CAUSE_RESULT=OK' /tmp/as6-refresh-anomaly-root.out; then
     echo "ROOT_CAUSE_REFRESH_CANDIDATE_SKIPPED=HEALTH_HISTORY_ANOMALY:resolved_or_historical"
   else
