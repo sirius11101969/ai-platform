@@ -85,6 +85,19 @@ if echo "$last_ok_result" | grep -q 'stale_ok'; then
 fi
 
 if [ "${consecutive_fails:-0}" -gt 0 ] 2>/dev/null; then
+  if echo "$repeat_root" | grep -q '^none:0'; then
+    if ./ops/bin/as6-diagnose-health-cache-timer-freshness >/tmp/as6-health-anomaly-consecutive-freshness.out 2>&1; then
+      cat /tmp/as6-health-anomaly-consecutive-freshness.out
+      if grep -q '^HEALTH_CACHE_TIMER_FRESHNESS_RESULT=OK' /tmp/as6-health-anomaly-consecutive-freshness.out; then
+        echo "HEALTH_ANOMALY_ROOT_CAUSE=HISTORICAL_CONSECUTIVE_FAILURES_NOW_OK"
+        echo "HEALTH_ANOMALY_ROOT_CAUSE_RESULT=OK"
+        exit 0
+      fi
+    else
+      cat /tmp/as6-health-anomaly-consecutive-freshness.out
+    fi
+  fi
+
   echo "HEALTH_ANOMALY_ROOT_CAUSE=CONSECUTIVE_HEALTH_FAILURES"
   echo "HEALTH_ANOMALY_ROOT_CAUSE_RESULT=FAIL"
   exit 1
