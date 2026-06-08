@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+echo "=== AS6 Unreachable Diagnostic Blocks Diagnostics ==="
+
+for f in ops/bin/as6-diagnose-all ops/bin/as6-ai-workforce-status; do
+  echo "UNREACHABLE_DIAGNOSTIC_FILE=$f"
+  if awk '
+    /^[[:space:]]*exit[[:space:]]+[0-9]+/ { seen_exit=NR; next }
+    seen_exit && /run_check[[:space:]]/ {
+      printf("UNREACHABLE_RUN_CHECK=FAIL:%s:%s\n", FILENAME, NR)
+      bad=1
+    }
+    END { exit bad ? 1 : 0 }
+  ' "$f"; then
+    echo "UNREACHABLE_RUN_CHECK_RESULT=OK:$f"
+  else
+    echo "UNREACHABLE_RUN_CHECK_RESULT=FAIL:$f"
+    fail=1
+  fi
+done
+
+if [ "$fail" -eq 0 ]; then
+  echo "UNREACHABLE_DIAGNOSTIC_BLOCKS_RESULT=OK"
+  exit 0
+fi
+
+echo "UNREACHABLE_DIAGNOSTIC_BLOCKS_RESULT=FAIL"
+exit 1
