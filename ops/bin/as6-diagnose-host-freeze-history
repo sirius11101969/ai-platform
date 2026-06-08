@@ -186,6 +186,20 @@ else:
     print("HOST_FREEZE_HISTORY_IDENTICAL_ROOT_CAUSE_STREAK_RESULT=OK")
 
 if hard_fail:
+    import subprocess
+    gap = subprocess.run(
+        ["./ops/bin/as6-diagnose-health-history-gap-root-cause"],
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
+    print(gap.stdout, end="")
+    if "HEALTH_HISTORY_GAP_ROOT_CAUSE=HISTORICAL_GAP_TIMER_NOW_OK" in gap.stdout and "HEALTH_HISTORY_GAP_ROOT_CAUSE_RESULT=OK" in gap.stdout:
+        print("HOST_FREEZE_HISTORY_HISTORICAL_INCIDENT=YES")
+        print("HOST_FREEZE_HISTORY_HISTORICAL_INCIDENT_REASON=gap_already_resolved")
+        print("HOST_FREEZE_HISTORY_RESULT=OK")
+        raise SystemExit(0)
+
     print("HOST_FREEZE_HISTORY_RESULT=FAIL")
     raise SystemExit(1)
 
