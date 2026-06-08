@@ -174,7 +174,22 @@ if [ "${FREEZE_HISTORY_FAIL_STREAK:-0}" -gt 2 ]; then history_score=$((history_s
 [ "$oom_events" -gt 0 ] && score_candidate "OOM" $((70 + oom_events * 5 + history_score)) "host_or_container_memory_pressure" "inspect_memory_limits_and_container_usage"
 [ "$kernel_freeze_events" -gt 0 ] && score_candidate "KERNEL" $((65 + kernel_freeze_events * 5 + history_score)) "host_kernel_or_disk_freeze" "inspect_kernel_logs_disk_and_provider_host"
 [ "$network_events" -gt 0 ] && score_candidate "NETWORK" $((60 + network_events * 5 + ssh_events * 2 + history_score)) "network_or_provider_connectivity_loss" "check_provider_network_interface_and_routes"
-[ "$docker_events" -gt 0 ] && score_candidate "DOCKER" $((55 + docker_events * 4 + history_score)) "container_runtime_instability" "inspect_docker_events_and_container_restarts"
+if [ "$docker_events" -gt 0 ]; then
+  docker_restarts="$(docker ps -a --format '{{.Names}} {{.Status}}' 2>/dev/null | grep -Eci 'Restarting|Exited|unhealthy|Dead' || true)"
+  docker_health_failures="$(docker ps --format '{{.Names}}' 2>/dev/null | while read -r c; do
+    [ -n "$c" ] || continue
+    docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{end}}' "$c" 2>/dev/null
+  done | grep -Eci 'unhealthy|starting' || true)"
+
+  echo "FREEZE_EVIDENCE_DOCKER_RESTARTS=$docker_restarts"
+  echo "FREEZE_EVIDENCE_DOCKER_HEALTH_FAILURES=$docker_health_failures"
+
+  if [ "$docker_restarts" -gt 0 ] || [ "$docker_health_failures" -gt 0 ]; then
+    score_candidate "DOCKER" $((55 + docker_events * 4 + history_score)) "container_runtime_instability" "inspect_docker_events_and_container_restarts"
+  else
+    echo "FREEZE_CORRELATION_CANDIDATE_SKIPPED=DOCKER:not_confirmed_by_container_state"
+  fi
+fi
 [ "$postgres_events" -gt 0 ] && score_candidate "POSTGRES" $((50 + postgres_events * 4 + history_score)) "database_instability" "inspect_postgres_logs_and_storage"
 [ "$redis_events" -gt 0 ] && score_candidate "REDIS" $((45 + redis_events * 4 + history_score)) "redis_instability" "inspect_redis_memory_and_persistence"
 [ "$nginx_events" -gt 0 ] && score_candidate "NGINX" $((40 + nginx_events * 3 + history_score)) "edge_proxy_instability" "inspect_nginx_upstream_and_proxy_errors"
