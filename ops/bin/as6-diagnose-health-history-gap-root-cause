@@ -1,0 +1,116 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+DIR="${AS6_HEALTH_HISTORY_DIR:-runtime/health/history}"
+MAX_GAP="${AS6_HEALTH_HISTORY_MAX_GAP_SECONDS:-1800}"
+fail=0
+
+echo "=== AS6 Health History Gap Root Cause Diagnostics ==="
+echo "HEALTH_HISTORY_GAP_DIR=$DIR"
+echo "HEALTH_HISTORY_GAP_MAX_SECONDS=$MAX_GAP"
+
+if [ ! -d "$DIR" ]; then
+  echo "HEALTH_HISTORY_GAP_DIR_STATUS=FAIL:missing"
+  echo "HEALTH_HISTORY_GAP_ROOT_CAUSE_RESULT=FAIL"
+  exit 1
+fi
+
+python3 - <<PY
+import json
+from pathlib import Path
+from datetime import datetime, timezone
+
+d = Path("$DIR")
+max_gap = int("$MAX_GAP")
+samples = []
+
+for p in sorted(d.glob("*.json")):
+    try:
+        data = json.loads(p.read_text())
+        ts = datetime.fromisoformat(str(data.get("timestamp","")).replace("Z","+00:00"))
+        if ts.tzinfo is None:
+            ts = ts.replace(tzinfo=timezone.utc)
+        samples.append((ts, str(p)))
+    except Exception:
+        pass
+
+samples.sort()
+best_gap = 0
+pair = None
+for a, b in zip(samples, samples[1:]):
+    gap = int((b[0] - a[0]).total_seconds())
+    if gap > best_gap:
+        best_gap = gap
+        pair = (a, b)
+
+print(f"HEALTH_HISTORY_GAP_SAMPLES={len(samples)}")
+print(f"HEALTH_HISTORY_GAP_MAX_SEEN_SECONDS={best_gap}")
+
+if pair:
+    print(f"HEALTH_HISTORY_GAP_FROM={pair[0][1]}")
+    print(f"HEALTH_HISTORY_GAP_TO={pair[1][1]}")
+
+if best_gap <= max_gap:
+    print("HEALTH_HISTORY_GAP_STATUS=OK")
+else:
+    print("HEALTH_HISTORY_GAP_STATUS=FAIL")
+PY
+
+gap_status="$(python3 - <<PY
+import json
+from pathlib import Path
+from datetime import datetime, timezone
+d=Path("$DIR")
+max_gap=int("$MAX_GAP")
+samples=[]
+for p in sorted(d.glob("*.json")):
+    try:
+        data=json.loads(p.read_text())
+        ts=datetime.fromisoformat(str(data.get("timestamp","")).replace("Z","+00:00"))
+        if ts.tzinfo is None: ts=ts.replace(tzinfo=timezone.utc)
+        samples.append((ts,str(p)))
+    except Exception:
+        pass
+samples.sort()
+best=0
+for a,b in zip(samples,samples[1:]):
+    best=max(best,int((b[0]-a[0]).total_seconds()))
+print("FAIL" if best > max_gap else "OK")
+PY
+)"
+
+if [ "$gap_status" = "OK" ]; then
+  echo "HEALTH_HISTORY_GAP_ROOT_CAUSE=none"
+  echo "HEALTH_HISTORY_GAP_ROOT_CAUSE_RESULT=OK"
+  exit 0
+fi
+
+echo "HEALTH_HISTORY_GAP_TIMER_STATUS=$(systemctl is-active as6-health-cache.timer 2>/dev/null || echo unknown)"
+echo "HEALTH_HISTORY_GAP_SERVICE_STATUS=$(systemctl is-active as6-health-cache.service 2>/dev/null || echo unknown)"
+echo "HEALTH_HISTORY_GAP_LAST_TIMER_LOGS_BEGIN"
+journalctl -u as6-health-cache.timer -u as6-health-cache.service --since "24 hours ago" --no-pager 2>/dev/null | tail -30 || true
+echo "HEALTH_HISTORY_GAP_LAST_TIMER_LOGS_END"
+
+reboots="$(last reboot 2>/dev/null | head -5 | wc -l || true)"
+docker_restarts="$(journalctl -u docker --since "24 hours ago" --no-pager 2>/dev/null | grep -Eci 'restart|stopped|starting|failed|error' || true)"
+timer_failures="$(journalctl -u as6-health-cache.service --since "24 hours ago" --no-pager 2>/dev/null | grep -Eci 'failed|error|timeout|killed|exit' || true)"
+
+echo "HEALTH_HISTORY_GAP_REBOOT_EVIDENCE=$reboots"
+echo "HEALTH_HISTORY_GAP_DOCKER_RESTART_EVIDENCE=$docker_restarts"
+echo "HEALTH_HISTORY_GAP_TIMER_FAILURE_EVIDENCE=$timer_failures"
+
+if [ "$timer_failures" -gt 0 ]; then
+  echo "HEALTH_HISTORY_GAP_ROOT_CAUSE=HEALTH_TIMER_FAILURE"
+elif [ "$docker_restarts" -gt 0 ]; then
+  echo "HEALTH_HISTORY_GAP_ROOT_CAUSE=DOCKER_OR_DEPLOY_WINDOW"
+elif [ "$reboots" -gt 0 ]; then
+  echo "HEALTH_HISTORY_GAP_ROOT_CAUSE=HOST_REBOOT_OR_PROVIDER_WINDOW"
+else
+  echo "HEALTH_HISTORY_GAP_ROOT_CAUSE=UNKNOWN_HISTORY_STALL"
+fi
+
+echo "HEALTH_HISTORY_GAP_ROOT_CAUSE_RESULT=FAIL"
+exit 1
