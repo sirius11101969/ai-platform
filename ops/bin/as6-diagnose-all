@@ -52,3 +52,8 @@ fi
 
 echo "AS6_DIAGNOSE_ALL_RESULT=FAIL"
 exit 1
+
+# AS6 health/root-cause automation checks
+run_check "health-cache-timer-freshness" "./ops/bin/as6-diagnose-health-cache-timer-freshness"
+run_check "health-anomaly-root-cause" "./ops/bin/as6-diagnose-health-anomaly-root-cause"
+run_check "root-cause-v3-refresh-cache" "./ops/bin/as6-root-cause-v3-refresh-cache"
