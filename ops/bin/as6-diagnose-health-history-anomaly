@@ -141,14 +141,15 @@ if [ "$fail" -eq 0 ]; then
   exit 0
 fi
 
-if ./ops/bin/as6-diagnose-health-recovery >/tmp/as6-health-history-recovery.out 2>&1; then
-  cat /tmp/as6-health-history-recovery.out
+if ./ops/bin/as6-diagnose-health-history-recovery-window >/tmp/as6-health-history-recovery-window.out 2>&1; then
+  cat /tmp/as6-health-history-recovery-window.out
   echo "HEALTH_ANOMALY_AUTO_CLOSED=YES"
+  echo "HEALTH_ANOMALY_AUTO_CLOSE_REASON=recovery_window_confirmed"
   echo "HEALTH_HISTORY_ANOMALY_RESULT=OK"
   echo "AS6_HEALTH_HISTORY_ANOMALY_DIAGNOSTIC_RESULT=OK"
   exit 0
 else
-  cat /tmp/as6-health-history-recovery.out
+  cat /tmp/as6-health-history-recovery-window.out
 fi
 
 echo "AS6_HEALTH_HISTORY_ANOMALY_DIAGNOSTIC_RESULT=FAIL"

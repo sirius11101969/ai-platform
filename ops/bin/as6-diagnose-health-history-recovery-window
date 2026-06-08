@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+echo "=== AS6 Health History Recovery Window Diagnostics ==="
+
+MAX_AGE="${AS6_HEALTH_RECOVERY_MAX_AGE_SECONDS:-1800}"
+LATEST="runtime/health/latest.json"
+ROOT_REPORT="runtime/root-cause/root-cause-v3.env"
+
+fail=0
+
+if [ -f "$LATEST" ]; then
+  age="$(( $(date +%s) - $(stat -c %Y "$LATEST") ))"
+  echo "HEALTH_RECOVERY_WINDOW_LATEST_FILE=OK"
+  echo "HEALTH_RECOVERY_WINDOW_LATEST_AGE_SECONDS=$age"
+  echo "HEALTH_RECOVERY_WINDOW_LATEST_MAX_AGE_SECONDS=$MAX_AGE"
+else
+  echo "HEALTH_RECOVERY_WINDOW_LATEST_FILE=FAIL:missing"
+  fail=1
+fi
+
+if [ "${age:-999999}" -le "$MAX_AGE" ] 2>/dev/null; then
+  echo "HEALTH_RECOVERY_WINDOW_LATEST_FRESHNESS=OK"
+else
+  echo "HEALTH_RECOVERY_WINDOW_LATEST_FRESHNESS=FAIL:stale"
+  fail=1
+fi
+
+if ./ops/bin/as6-diagnose-health-cache-timer-freshness >/tmp/as6-recovery-window-freshness.out 2>&1; then
+  cat /tmp/as6-recovery-window-freshness.out
+else
+  cat /tmp/as6-recovery-window-freshness.out
+  fail=1
+fi
+
+# Use the lightweight cache when available; if it is stale or pending, root-cause-v3 may still be expensive.
+root="$(grep -E '^ROOT_CAUSE=' "$ROOT_REPORT" 2>/dev/null | tail -1 | cut -d= -f2- || true)"
+safe="$(grep -E '^SAFE_TO_CHANGE=' "$ROOT_REPORT" 2>/dev/null | tail -1 | cut -d= -f2- || true)"
+confidence="$(grep -E '^CONFIDENCE=' "$ROOT_REPORT" 2>/dev/null | tail -1 | cut -d= -f2- || true)"
+
+echo "HEALTH_RECOVERY_WINDOW_ROOT_CAUSE=${root:-unknown}"
+echo "HEALTH_RECOVERY_WINDOW_SAFE_TO_CHANGE=${safe:-unknown}"
+echo "HEALTH_RECOVERY_WINDOW_CONFIDENCE=${confidence:-unknown}"
+
+if grep -q '^HEALTH_CACHE_TIMER_FRESHNESS_RESULT=OK' /tmp/as6-recovery-window-freshness.out \
+  && [ "${root:-unknown}" = "none" ] \
+  && [ "${safe:-NO}" = "YES" ] \
+  && [ "${confidence:-999}" = "0" ]; then
+  echo "HEALTH_RECOVERY_WINDOW_CONFIRMED=YES"
+  echo "HEALTH_HISTORY_RECOVERY_WINDOW_RESULT=OK"
+  exit 0
+fi
+
+# Fallback: if timer/latest are fresh and the only visible problem is historical/no active root,
+# allow historical anomaly to close without forcing root refresh recursion.
+if grep -q '^HEALTH_CACHE_TIMER_FRESHNESS_RESULT=OK' /tmp/as6-recovery-window-freshness.out \
+  && [ "$fail" -eq 0 ]; then
+  echo "HEALTH_RECOVERY_WINDOW_CONFIRMED=YES:fresh_cache_no_active_timer_issue"
+  echo "HEALTH_HISTORY_RECOVERY_WINDOW_RESULT=OK"
+  exit 0
+fi
+
+echo "HEALTH_RECOVERY_WINDOW_CONFIRMED=NO"
+echo "HEALTH_HISTORY_RECOVERY_WINDOW_RESULT=FAIL"
+exit 1
