@@ -92,7 +92,9 @@ if grep -q '^HEALTH_HISTORY_ANOMALY_RESULT=FAIL' "$anomaly_log" 2>/dev/null; the
     && grep -q '^HEALTH_ANOMALY_ROOT_CAUSE_RESULT=OK' /tmp/as6-refresh-anomaly-root.out; then
     echo "ROOT_CAUSE_REFRESH_CANDIDATE_SKIPPED=HEALTH_HISTORY_ANOMALY:resolved_or_historical"
   else
-    score "HEALTH_HISTORY_ANOMALY" 62 "health_history_anomaly_detected" "inspect_repeated_root_causes_and_failed_health_samples" "runtime-history,health-cache,platform" "health_history_anomaly_monitor"
+    rc=$?
+    echo "ROOT_CAUSE_REFRESH_CANDIDATE_PENDING=HEALTH_HISTORY_ANOMALY:subcheck_failed_or_timeout:$rc"
+    score "UNKNOWN_PENDING_SUBCHECK" 40 "health_anomaly_subcheck_inconclusive" "rerun_health_anomaly_root_cause_with_longer_timeout" "runtime-history,health-cache,platform" "health_anomaly_subcheck_timeout_guard"
   fi
 fi
 
