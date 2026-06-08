@@ -151,7 +151,17 @@ if grep -q '^HEALTH_HISTORY_CORRUPTION_RESULT=FAIL' "$history_corruption_log" 2>
 fi
 
 if grep -q '^HEALTH_HISTORY_ANOMALY_RESULT=FAIL' "$history_anomaly_log" 2>/dev/null; then
-  score_candidate "HEALTH_HISTORY_ANOMALY" 62 "health_history_anomaly_detected" "inspect_repeated_root_causes_and_failed_health_samples" "runtime-history,health-cache,platform" "health_history_anomaly_monitor"
+  if ./ops/bin/as6-diagnose-health-anomaly-root-cause >/tmp/as6-root-cause-v3-health-anomaly-root.out 2>&1; then
+    cat /tmp/as6-root-cause-v3-health-anomaly-root.out
+    if grep -q '^HEALTH_ANOMALY_ROOT_CAUSE_RESULT=OK' /tmp/as6-root-cause-v3-health-anomaly-root.out; then
+      echo "ROOT_CAUSE_V3_CANDIDATE_SKIPPED=HEALTH_HISTORY_ANOMALY:resolved_or_historical"
+    else
+      score_candidate "HEALTH_HISTORY_ANOMALY" 62 "health_history_anomaly_detected" "inspect_repeated_root_causes_and_failed_health_samples" "runtime-history,health-cache,platform" "health_history_anomaly_monitor"
+    fi
+  else
+    cat /tmp/as6-root-cause-v3-health-anomaly-root.out
+    score_candidate "HEALTH_HISTORY_ANOMALY" 62 "health_history_anomaly_detected" "inspect_repeated_root_causes_and_failed_health_samples" "runtime-history,health-cache,platform" "health_history_anomaly_monitor"
+  fi
 fi
 
 if [ "$best_confidence" -ge 90 ]; then
