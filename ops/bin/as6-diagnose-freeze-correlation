@@ -178,7 +178,13 @@ if [ "${FREEZE_HISTORY_FAIL_STREAK:-0}" -gt 2 ]; then history_score=$((history_s
 [ "$postgres_events" -gt 0 ] && score_candidate "POSTGRES" $((50 + postgres_events * 4 + history_score)) "database_instability" "inspect_postgres_logs_and_storage"
 [ "$redis_events" -gt 0 ] && score_candidate "REDIS" $((45 + redis_events * 4 + history_score)) "redis_instability" "inspect_redis_memory_and_persistence"
 [ "$nginx_events" -gt 0 ] && score_candidate "NGINX" $((40 + nginx_events * 3 + history_score)) "edge_proxy_instability" "inspect_nginx_upstream_and_proxy_errors"
-[ "$ssh_events" -gt 0 ] && score_candidate "SSH" $((35 + ssh_events * 3 + history_score)) "operator_access_instability" "inspect_ssh_keepalive_auth_and_network"
+if [ "$ssh_events" -gt 0 ]; then
+  if ./ops/bin/as6-diagnose-ssh-stability >/tmp/as6-freeze-correlation-ssh-stability.out 2>&1 && grep -q '^SSH_STABILITY_RESULT=FAIL' /tmp/as6-freeze-correlation-ssh-stability.out; then
+    score_candidate "SSH" $((35 + ssh_events * 3 + history_score)) "operator_access_instability" "inspect_ssh_keepalive_auth_and_network"
+  else
+    echo "FREEZE_CORRELATION_CANDIDATE_SKIPPED=SSH:not_confirmed_by_ssh_stability"
+  fi
+fi
 
 if [ "$best_score" -eq 0 ] && [ "$history_score" -gt 0 ]; then
   score_candidate "HEALTH_HISTORY_STALL" "$history_score" "health_cache_or_timer_stalled" "inspect_health_timer_and_runtime_history_writer"
