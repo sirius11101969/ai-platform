@@ -12,7 +12,7 @@ for f in /tmp/as6-* runtime/root-cause/* runtime/health/latest.json; do
   [ -f "$f" ] || continue
 
   case "$f" in
-    /tmp/as6-node20-actions.out|/tmp/as6-node24-legacy.out)
+    /tmp/as6-health-history-recovery.out|/tmp/as6-node20-actions.out|/tmp/as6-node24-legacy.out)
       echo "RUNTIME_BINARY_ARTIFACT=SKIP:external_tool_output:$f"
       continue
       ;;

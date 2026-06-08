@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "=== AS6 Runtime Stale TMP Artifacts Diagnostics ==="
+
+MAX_AGE="${AS6_RUNTIME_TMP_MAX_AGE_SECONDS:-7200}"
+now="$(date +%s)"
+fail=0
+
+for f in /tmp/as6-*; do
+  [ -f "$f" ] || continue
+  age="$(( now - $(stat -c %Y "$f") ))"
+  echo "RUNTIME_TMP_ARTIFACT_AGE_SECONDS=$age:$f"
+
+  if [ "$age" -gt "$MAX_AGE" ]; then
+    echo "RUNTIME_TMP_ARTIFACT_STALE=WARN:$f"
+  fi
+done
+
+echo "RUNTIME_TMP_ARTIFACT_STALENESS_RESULT=OK"
+exit 0

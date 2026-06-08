@@ -14,7 +14,7 @@ classify_file() {
   [ -f "$f" ] || return 0
 
   case "$f" in
-    /tmp/as6-node20-actions.out|/tmp/as6-node24-legacy.out)
+    /tmp/as6-health-history-recovery.out|/tmp/as6-node20-actions.out|/tmp/as6-node24-legacy.out)
       echo "RUNTIME_ARTIFACT_FORMAT=SKIP:external_tool_output:$f"
       return 0
       ;;
