@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+echo "=== AS6 Runtime Artifact Format Diagnostics ==="
+
+fail=0
+
+classify_file() {
+  local f="$1"
+
+  [ -f "$f" ] || return 0
+
+  case "$f" in
+    /tmp/as6-node20-actions.out|/tmp/as6-node24-legacy.out)
+      echo "RUNTIME_ARTIFACT_FORMAT=SKIP:external_tool_output:$f"
+      return 0
+      ;;
+  esac
+
+  if [ ! -s "$f" ]; then
+    echo "RUNTIME_ARTIFACT_FORMAT=EMPTY:$f"
+    return 0
+  fi
+
+  if LC_ALL=C grep -Iq . "$f"; then
+    if python3 -m json.tool "$f" >/dev/null 2>&1; then
+      echo "RUNTIME_ARTIFACT_FORMAT=JSON:$f"
+    else
+      echo "RUNTIME_ARTIFACT_FORMAT=TEXT:$f"
+    fi
+  else
+    echo "RUNTIME_ARTIFACT_FORMAT=BINARY:$f"
+    fail=1
+  fi
+}
+
+for f in /tmp/as6-* runtime/root-cause/* runtime/health/latest.json; do
+  classify_file "$f"
+done
+
+if [ "$fail" -eq 0 ]; then
+  echo "RUNTIME_ARTIFACT_FORMAT_RESULT=OK"
+  exit 0
+fi
+
+echo "RUNTIME_ARTIFACT_FORMAT_RESULT=FAIL"
+exit 1

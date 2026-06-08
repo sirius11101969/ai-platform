@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+echo "=== AS6 Status Registry Consistency Diagnostics ==="
+
+fail=0
+
+for f in ops/bin/as6-diagnose-all ops/bin/as6-diagnostic-registry ops/bin/as6-ai-workforce-status ops/bin/as6-owner-dashboard; do
+  if [ -f "$f" ]; then
+    echo "STATUS_REGISTRY_FILE=OK:$f"
+  else
+    echo "STATUS_REGISTRY_FILE=MISS:$f"
+  fi
+done
+
+checks="$(grep -E 'run_check "' ops/bin/as6-diagnose-all | sed -E 's/.*run_check "([^"]+)".*/\1/' | sort -u || true)"
+echo "STATUS_REGISTRY_DIAGNOSE_ALL_CHECKS_BEGIN"
+printf '%s\n' "$checks"
+echo "STATUS_REGISTRY_DIAGNOSE_ALL_CHECKS_END"
+
+for required in \
+  health-cache-timer-freshness \
+  health-anomaly-root-cause \
+  health-history-recovery-window \
+  health-recovery \
+  root-cause-staleness \
+  runtime-artifact-format \
+  runtime-binary-artifacts \
+  unreachable-diagnostic-blocks \
+  root-cause-v3-refresh-cache
+do
+  if printf '%s\n' "$checks" | grep -qx "$required"; then
+    echo "STATUS_REGISTRY_REQUIRED_CHECK=OK:$required"
+  else
+    echo "STATUS_REGISTRY_REQUIRED_CHECK=FAIL:$required"
+    fail=1
+  fi
+done
+
+if [ "$fail" -eq 0 ]; then
+  echo "STATUS_REGISTRY_CONSISTENCY_RESULT=OK"
+  exit 0
+fi
+
+echo "STATUS_REGISTRY_CONSISTENCY_RESULT=FAIL"
+exit 1
