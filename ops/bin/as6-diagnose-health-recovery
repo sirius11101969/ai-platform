@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+echo "=== AS6 Health Recovery Diagnostics ==="
+
+./ops/bin/as6-root-cause-v3-refresh-cache >/tmp/as6-health-recovery-root.out 2>&1 || true
+cat /tmp/as6-health-recovery-root.out
+
+root="$(grep -E '^ROOT_CAUSE=' runtime/root-cause/root-cause-v3.env 2>/dev/null | tail -1 | cut -d= -f2- || true)"
+safe="$(grep -E '^SAFE_TO_CHANGE=' runtime/root-cause/root-cause-v3.env 2>/dev/null | tail -1 | cut -d= -f2- || true)"
+confidence="$(grep -E '^CONFIDENCE=' runtime/root-cause/root-cause-v3.env 2>/dev/null | tail -1 | cut -d= -f2- || true)"
+
+echo "HEALTH_RECOVERY_ROOT_CAUSE=${root:-unknown}"
+echo "HEALTH_RECOVERY_SAFE_TO_CHANGE=${safe:-unknown}"
+echo "HEALTH_RECOVERY_CONFIDENCE=${confidence:-unknown}"
+
+if ./ops/bin/as6-diagnose-health-cache-timer-freshness >/tmp/as6-health-recovery-freshness.out 2>&1; then
+  cat /tmp/as6-health-recovery-freshness.out
+else
+  cat /tmp/as6-health-recovery-freshness.out
+  echo "HEALTH_RECOVERY_CONFIRMED=NO"
+  echo "HEALTH_RECOVERY_RESULT=FAIL:freshness"
+  exit 1
+fi
+
+if [ "${root:-unknown}" = "none" ] && [ "${safe:-NO}" = "YES" ] && [ "${confidence:-999}" = "0" ] \
+  && grep -q '^HEALTH_CACHE_TIMER_FRESHNESS_RESULT=OK' /tmp/as6-health-recovery-freshness.out; then
+  echo "HEALTH_RECOVERY_CONFIRMED=YES"
+  echo "HEALTH_RECOVERY_RESULT=OK"
+  exit 0
+fi
+
+echo "HEALTH_RECOVERY_CONFIRMED=NO"
+echo "HEALTH_RECOVERY_RESULT=FAIL:not_recovered"
+exit 1
