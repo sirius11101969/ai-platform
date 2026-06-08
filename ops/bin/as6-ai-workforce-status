@@ -124,3 +124,4 @@ exit 1
 
 # AS6 root cause v2 diagnostics: ops/bin/as6-diagnose-root-cause-v2
 # AS6 host stability diagnostics: ops/bin/as6-diagnose-host-stability
+# AS6 SSH stability diagnostics: ops/bin/as6-diagnose-ssh-stability
