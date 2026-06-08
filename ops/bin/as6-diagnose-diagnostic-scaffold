@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+echo "=== AS6 Diagnostic Scaffold Diagnostics ==="
+
+if [ -x ops/bin/as6-create-diagnostic ]; then
+  echo "DIAGNOSTIC_SCAFFOLD_TOOL=OK"
+else
+  echo "DIAGNOSTIC_SCAFFOLD_TOOL=FAIL"
+  fail=1
+fi
+
+if grep -q 'AS6_CREATE_DIAGNOSTIC_RESULT=OK' ops/bin/as6-create-diagnostic; then
+  echo "DIAGNOSTIC_SCAFFOLD_RESULT_MARKER=OK"
+else
+  echo "DIAGNOSTIC_SCAFFOLD_RESULT_MARKER=FAIL"
+  fail=1
+fi
+
+if grep -q 'as6-ai-workforce-status' ops/bin/as6-create-diagnostic; then
+  echo "DIAGNOSTIC_SCAFFOLD_WORKFORCE_REGISTRATION=OK"
+else
+  echo "DIAGNOSTIC_SCAFFOLD_WORKFORCE_REGISTRATION=FAIL"
+  fail=1
+fi
+
+tmp_name="scaffold-smoke-$RANDOM"
+tmp_script="ops/bin/as6-diagnose-${tmp_name}"
+
+if ./ops/bin/as6-create-diagnostic "$tmp_name" >/tmp/as6-scaffold-smoke.out 2>&1; then
+  if [ -x "$tmp_script" ] && grep -q "AS6_DIAGNOSTIC_${tmp_name//-/_}_RESULT=OK" "$tmp_script"; then
+    echo "DIAGNOSTIC_SCAFFOLD_SMOKE_CREATE=OK"
+  else
+    echo "DIAGNOSTIC_SCAFFOLD_SMOKE_CREATE=FAIL"
+    cat /tmp/as6-scaffold-smoke.out || true
+    fail=1
+  fi
+else
+  echo "DIAGNOSTIC_SCAFFOLD_SMOKE_CREATE=FAIL"
+  cat /tmp/as6-scaffold-smoke.out || true
+  fail=1
+fi
+
+rm -f "$tmp_script"
+
+python3 - "$tmp_name" <<'PY'
+from pathlib import Path
+import sys
+
+name = sys.argv[1]
+p = Path("ops/bin/as6-ai-workforce-status")
+text = p.read_text()
+line = f"# AS6 diagnostic {name}: ops/bin/as6-diagnose-{name}\n"
+text = text.replace(line, "")
+p.write_text(text)
+PY
+
+if [ "$fail" -eq 0 ]; then
+  echo "DIAGNOSTIC_SCAFFOLD_RESULT=OK"
+  exit 0
+fi
+
+echo "DIAGNOSTIC_SCAFFOLD_RESULT=FAIL"
+exit 1

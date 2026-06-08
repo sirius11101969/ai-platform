@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+name="${1:-}"
+
+if [ -z "$name" ]; then
+  echo "AS6_CREATE_DIAGNOSTIC_RESULT=FAIL:missing_name"
+  echo "Usage: ./ops/bin/as6-create-diagnostic <name>"
+  exit 1
+fi
+
+if ! [[ "$name" =~ ^[a-z0-9][a-z0-9-]*$ ]]; then
+  echo "AS6_CREATE_DIAGNOSTIC_RESULT=FAIL:invalid_name"
+  echo "Name must match: ^[a-z0-9][a-z0-9-]*$"
+  exit 1
+fi
+
+script="ops/bin/as6-diagnose-${name}"
+
+if [ -e "$script" ]; then
+  echo "AS6_CREATE_DIAGNOSTIC_RESULT=FAIL:already_exists:$script"
+  exit 1
+fi
+
+title="$(printf '%s' "$name" | tr '-' ' ')"
+
+cat > "$script" <<SCRIPT
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="\${AS6_REPO_ROOT:-\$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "\$ROOT"
+
+echo "=== AS6 Diagnostic: ${title} ==="
+
+echo "AS6_DIAGNOSTIC_${name//-/_}_STATUS=TODO"
+echo "AS6_DIAGNOSTIC_${name//-/_}_RESULT=OK"
+SCRIPT
+
+chmod +x "$script"
+
+line="# AS6 diagnostic ${name}: ${script}"
+
+python3 - "$line" <<'PY'
+from pathlib import Path
+import sys
+
+line = sys.argv[1]
+p = Path("ops/bin/as6-ai-workforce-status")
+text = p.read_text() if p.exists() else "#!/usr/bin/env bash\nset -euo pipefail\n"
+
+if line not in text:
+    if not text.endswith("\n"):
+        text += "\n"
+    text += line + "\n"
+
+p.write_text(text)
+PY
+
+echo "AS6_CREATE_DIAGNOSTIC_SCRIPT=$script"
+echo "AS6_CREATE_DIAGNOSTIC_WORKFORCE_ENTRY=OK"
+echo "AS6_CREATE_DIAGNOSTIC_RESULT=OK"
