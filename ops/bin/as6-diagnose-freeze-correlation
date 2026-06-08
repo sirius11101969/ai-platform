@@ -1,0 +1,205 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+HISTORY_DIR="${AS6_HEALTH_HISTORY_DIR:-runtime/health/history}"
+WINDOW="${AS6_FREEZE_CORRELATION_WINDOW:-20}"
+LOOKBACK="${AS6_FREEZE_CORRELATION_JOURNAL_LOOKBACK:-24 hours ago}"
+
+fail=0
+
+echo "=== AS6 Freeze Correlation Diagnostics ==="
+
+echo "FREEZE_CORRELATION_HISTORY_DIR=$HISTORY_DIR"
+echo "FREEZE_CORRELATION_WINDOW=$WINDOW"
+echo "FREEZE_CORRELATION_JOURNAL_LOOKBACK=$LOOKBACK"
+
+if ! [[ "$WINDOW" =~ ^[0-9]+$ ]] || [ "$WINDOW" -lt 1 ]; then
+  echo "FREEZE_CORRELATION_CONFIG=FAIL:WINDOW:$WINDOW"
+  echo "FREEZE_CORRELATION_RESULT=FAIL"
+  exit 1
+fi
+
+test -d "$HISTORY_DIR" && echo "FREEZE_CORRELATION_HISTORY_DIR_STATUS=OK" || echo "FREEZE_CORRELATION_HISTORY_DIR_STATUS=WARN:missing"
+
+event_count() {
+  local unit="$1"
+  local pattern="$2"
+  if command -v journalctl >/dev/null 2>&1; then
+    if [ -n "$unit" ]; then
+      journalctl -u "$unit" --since "$LOOKBACK" --no-pager 2>/dev/null | grep -Eci "$pattern" || true
+    else
+      journalctl --since "$LOOKBACK" --no-pager 2>/dev/null | grep -Eci "$pattern" || true
+    fi
+  else
+    echo 0
+  fi
+}
+
+kernel_count() {
+  local pattern="$1"
+  if command -v journalctl >/dev/null 2>&1; then
+    journalctl -k --since "$LOOKBACK" --no-pager 2>/dev/null | grep -Eci "$pattern" || true
+  else
+    dmesg 2>/dev/null | grep -Eci "$pattern" || true
+  fi
+}
+
+python3 - <<PY > /tmp/as6-freeze-correlation-history.env || fail=1
+import json
+from pathlib import Path
+from datetime import datetime, timezone
+
+history_dir = Path("$HISTORY_DIR")
+window = int("$WINDOW")
+files = sorted(history_dir.glob("*.json"))[-window:] if history_dir.exists() else []
+print(f"FREEZE_HISTORY_SAMPLES={len(files)}")
+
+if not files:
+    print("FREEZE_HISTORY_LAST_SAMPLE_AGE_SECONDS=unknown")
+    print("FREEZE_HISTORY_MAX_GAP_SECONDS=0")
+    print("FREEZE_HISTORY_FAIL_STREAK=0")
+    print("FREEZE_HISTORY_REPEAT_ROOT=none:0")
+    raise SystemExit(0)
+
+samples = []
+invalid = 0
+for p in files:
+    try:
+        data = json.loads(p.read_text())
+        ts_raw = str(data.get("timestamp", ""))
+        ts = datetime.fromisoformat(ts_raw.replace("Z", "+00:00"))
+        if ts.tzinfo is None:
+            ts = ts.replace(tzinfo=timezone.utc)
+        result = str(data.get("health_cache_result", "UNKNOWN"))
+        platform = str(data.get("platform_status", "UNKNOWN"))
+        root = str(data.get("root_cause", "unknown"))
+        state = "OK" if result == "OK" and platform == "OK" and root in ("none", "", "unknown") else "FAIL"
+        samples.append((ts, state, root, str(p)))
+    except Exception:
+        invalid += 1
+
+print(f"FREEZE_HISTORY_INVALID_SAMPLES={invalid}")
+if not samples:
+    print("FREEZE_HISTORY_LAST_SAMPLE_AGE_SECONDS=unknown")
+    print("FREEZE_HISTORY_MAX_GAP_SECONDS=0")
+    print("FREEZE_HISTORY_FAIL_STREAK=0")
+    print("FREEZE_HISTORY_REPEAT_ROOT=invalid:0")
+    raise SystemExit(0)
+
+samples.sort(key=lambda x: x[0])
+now = datetime.now(timezone.utc)
+last_age = int((now - samples[-1][0]).total_seconds())
+max_gap = 0
+for prev, cur in zip(samples, samples[1:]):
+    max_gap = max(max_gap, int((cur[0] - prev[0]).total_seconds()))
+
+fail_streak = 0
+best_fail_streak = 0
+for _, state, _, _ in samples:
+    if state == "FAIL":
+        fail_streak += 1
+        best_fail_streak = max(best_fail_streak, fail_streak)
+    else:
+        fail_streak = 0
+
+best_root = "none"
+best_root_streak = 0
+current_root = None
+current_root_streak = 0
+for _, _, root, _ in samples:
+    if root == current_root:
+        current_root_streak += 1
+    else:
+        current_root = root
+        current_root_streak = 1
+    if current_root_streak > best_root_streak:
+        best_root = root
+        best_root_streak = current_root_streak
+
+print(f"FREEZE_HISTORY_LAST_SAMPLE_AGE_SECONDS={last_age}")
+print(f"FREEZE_HISTORY_MAX_GAP_SECONDS={max_gap}")
+print(f"FREEZE_HISTORY_FAIL_STREAK={best_fail_streak}")
+print(f"FREEZE_HISTORY_REPEAT_ROOT={best_root}:{best_root_streak}")
+PY
+
+cat /tmp/as6-freeze-correlation-history.env
+# shellcheck disable=SC1091
+. /tmp/as6-freeze-correlation-history.env
+
+oom_events="$(kernel_count 'oom|out of memory|killed process')"
+kernel_freeze_events="$(kernel_count 'kernel panic|soft lockup|hard lockup|hung task|blocked for more than|watchdog|BUG:|I/O error|EXT4-fs error')"
+network_events="$(kernel_count 'network.*down|link is down|NETDEV WATCHDOG|transmit queue timed out|reset adapter')"
+docker_events="$(event_count docker 'restart|oom|killed|failed|error|unhealthy')"
+nginx_events="$(event_count nginx 'failed|error|restart|worker process exited|upstream timed out|connection refused')"
+postgres_events="$(event_count postgresql 'database system was interrupted|out of memory|terminated|panic|FATAL|restart')"
+redis_events="$(event_count redis 'out of memory|terminated|restart|failed|error')"
+ssh_events="$(event_count ssh 'disconnect|timeout|broken pipe|maximum authentication attempts|too many authentication failures|reset by peer')"
+
+echo "FREEZE_EVIDENCE_OOM_EVENTS=$oom_events"
+echo "FREEZE_EVIDENCE_KERNEL_EVENTS=$kernel_freeze_events"
+echo "FREEZE_EVIDENCE_NETWORK_EVENTS=$network_events"
+echo "FREEZE_EVIDENCE_DOCKER_EVENTS=$docker_events"
+echo "FREEZE_EVIDENCE_NGINX_EVENTS=$nginx_events"
+echo "FREEZE_EVIDENCE_POSTGRES_EVENTS=$postgres_events"
+echo "FREEZE_EVIDENCE_REDIS_EVENTS=$redis_events"
+echo "FREEZE_EVIDENCE_SSH_EVENTS=$ssh_events"
+
+best_root="UNKNOWN"
+best_score=0
+impact="unknown"
+recommended_action="collect_more_history"
+
+score_candidate() {
+  local root="$1"
+  local score="$2"
+  local candidate_impact="$3"
+  local action="$4"
+  if [ "$score" -gt "$best_score" ]; then
+    best_score="$score"
+    best_root="$root"
+    impact="$candidate_impact"
+    recommended_action="$action"
+  fi
+}
+
+history_score=0
+if [ "${FREEZE_HISTORY_INVALID_SAMPLES:-0}" != "0" ]; then history_score=$((history_score + 20)); fi
+if [ "${FREEZE_HISTORY_LAST_SAMPLE_AGE_SECONDS:-0}" != "unknown" ] && [ "${FREEZE_HISTORY_LAST_SAMPLE_AGE_SECONDS:-0}" -gt 1800 ]; then history_score=$((history_score + 25)); fi
+if [ "${FREEZE_HISTORY_MAX_GAP_SECONDS:-0}" -gt 1800 ]; then history_score=$((history_score + 30)); fi
+if [ "${FREEZE_HISTORY_FAIL_STREAK:-0}" -gt 2 ]; then history_score=$((history_score + 25)); fi
+
+[ "$oom_events" -gt 0 ] && score_candidate "OOM" $((70 + oom_events * 5 + history_score)) "host_or_container_memory_pressure" "inspect_memory_limits_and_container_usage"
+[ "$kernel_freeze_events" -gt 0 ] && score_candidate "KERNEL" $((65 + kernel_freeze_events * 5 + history_score)) "host_kernel_or_disk_freeze" "inspect_kernel_logs_disk_and_provider_host"
+[ "$network_events" -gt 0 ] && score_candidate "NETWORK" $((60 + network_events * 5 + ssh_events * 2 + history_score)) "network_or_provider_connectivity_loss" "check_provider_network_interface_and_routes"
+[ "$docker_events" -gt 0 ] && score_candidate "DOCKER" $((55 + docker_events * 4 + history_score)) "container_runtime_instability" "inspect_docker_events_and_container_restarts"
+[ "$postgres_events" -gt 0 ] && score_candidate "POSTGRES" $((50 + postgres_events * 4 + history_score)) "database_instability" "inspect_postgres_logs_and_storage"
+[ "$redis_events" -gt 0 ] && score_candidate "REDIS" $((45 + redis_events * 4 + history_score)) "redis_instability" "inspect_redis_memory_and_persistence"
+[ "$nginx_events" -gt 0 ] && score_candidate "NGINX" $((40 + nginx_events * 3 + history_score)) "edge_proxy_instability" "inspect_nginx_upstream_and_proxy_errors"
+[ "$ssh_events" -gt 0 ] && score_candidate "SSH" $((35 + ssh_events * 3 + history_score)) "operator_access_instability" "inspect_ssh_keepalive_auth_and_network"
+
+if [ "$best_score" -eq 0 ] && [ "$history_score" -gt 0 ]; then
+  score_candidate "HEALTH_HISTORY_STALL" "$history_score" "health_cache_or_timer_stalled" "inspect_health_timer_and_runtime_history_writer"
+fi
+
+if [ "$best_score" -gt 100 ]; then best_score=100; fi
+
+echo "FREEZE_ROOT_CAUSE=$best_root"
+echo "FREEZE_CONFIDENCE=$best_score"
+echo "FREEZE_IMPACT=$impact"
+echo "FREEZE_RECOMMENDED_ACTION=$recommended_action"
+
+if [ "$best_score" -ge 60 ]; then
+  echo "FREEZE_CORRELATION_RESULT=FAIL"
+  exit 1
+fi
+
+if [ "$best_score" -gt 0 ]; then
+  echo "FREEZE_CORRELATION_RESULT=WARN"
+  exit 0
+fi
+
+echo "FREEZE_CORRELATION_RESULT=OK"
+exit 0

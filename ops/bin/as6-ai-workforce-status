@@ -126,3 +126,4 @@ exit 1
 # AS6 host stability diagnostics: ops/bin/as6-diagnose-host-stability
 # AS6 SSH stability diagnostics: ops/bin/as6-diagnose-ssh-stability
 # AS6 host freeze history diagnostics: ops/bin/as6-diagnose-host-freeze-history
+# AS6 freeze correlation diagnostics: ops/bin/as6-diagnose-freeze-correlation
