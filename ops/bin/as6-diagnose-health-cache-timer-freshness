@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+LATEST="runtime/health/latest.json"
+MAX_AGE="${AS6_HEALTH_CACHE_MAX_AGE_SECONDS:-1800}"
+fail=0
+
+echo "=== AS6 Health Cache Timer Freshness Diagnostics ==="
+echo "HEALTH_CACHE_TIMER_FRESHNESS_MAX_AGE_SECONDS=$MAX_AGE"
+
+if [ -f "$LATEST" ]; then
+  age="$(( $(date +%s) - $(stat -c %Y "$LATEST") ))"
+  echo "HEALTH_CACHE_LATEST_FILE=OK"
+  echo "HEALTH_CACHE_LATEST_AGE_SECONDS=$age"
+  if [ "$age" -le "$MAX_AGE" ]; then
+    echo "HEALTH_CACHE_LATEST_FRESHNESS=OK"
+  else
+    echo "HEALTH_CACHE_LATEST_FRESHNESS=FAIL:stale"
+    fail=1
+  fi
+else
+  echo "HEALTH_CACHE_LATEST_FILE=FAIL:missing"
+  fail=1
+fi
+
+timer_state="$(systemctl is-active as6-health-cache.timer 2>/dev/null || true)"
+service_state="$(systemctl is-active as6-health-cache.service 2>/dev/null || true)"
+echo "HEALTH_CACHE_TIMER_STATE=${timer_state:-unknown}"
+echo "HEALTH_CACHE_SERVICE_STATE=${service_state:-unknown}"
+
+next_run="$(systemctl list-timers as6-health-cache.timer --no-pager --no-legend 2>/dev/null | awk '{print $1" "$2" "$3" "$4}' || true)"
+last_run_logs="$(journalctl -u as6-health-cache.service --since '2 hours ago' --no-pager 2>/dev/null | grep -E 'AS6_HEALTH_CACHE_RESULT=OK|Finished as6-health-cache.service|Failed to start|status=1/FAILURE' | tail -10 || true)"
+
+echo "HEALTH_CACHE_TIMER_NEXT_RUN=${next_run:-unknown}"
+echo "HEALTH_CACHE_RECENT_SERVICE_EVENTS_BEGIN"
+printf '%s\n' "$last_run_logs"
+echo "HEALTH_CACHE_RECENT_SERVICE_EVENTS_END"
+
+if [ "$timer_state" != "active" ]; then
+  echo "HEALTH_CACHE_TIMER_FRESHNESS_ROOT_CAUSE=TIMER_INACTIVE"
+  fail=1
+elif [ "$service_state" = "activating" ]; then
+  echo "HEALTH_CACHE_TIMER_FRESHNESS_ROOT_CAUSE=SERVICE_STILL_RUNNING"
+  fail=1
+elif [ "$fail" -ne 0 ]; then
+  echo "HEALTH_CACHE_TIMER_FRESHNESS_ROOT_CAUSE=LATEST_STALE_OR_MISSING"
+else
+  echo "HEALTH_CACHE_TIMER_FRESHNESS_ROOT_CAUSE=none"
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "HEALTH_CACHE_TIMER_FRESHNESS_RESULT=OK"
+  exit 0
+fi
+
+echo "HEALTH_CACHE_TIMER_FRESHNESS_RESULT=FAIL"
+exit 1
