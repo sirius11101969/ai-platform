@@ -143,7 +143,17 @@ if grep -q '^SSH_STABILITY_RESULT=FAIL' "$ssh_log" 2>/dev/null; then
 fi
 
 if grep -q '^HOST_FREEZE_HISTORY_RESULT=FAIL' "$host_freeze_log" 2>/dev/null; then
-  score_candidate "HOST_FREEZE_HISTORY" 68 "health_history_stall_or_freeze_pattern" "run_freeze_correlation_and_health_timer_checks" "health-history,host,timer" "host_freeze_history_monitor"
+  if ./ops/bin/as6-diagnose-health-history-stall-root-cause >/tmp/as6-root-cause-v3-stall-root.out 2>&1; then
+    cat /tmp/as6-root-cause-v3-stall-root.out
+    if grep -q '^HEALTH_HISTORY_STALL_ROOT_CAUSE_RESULT=OK' /tmp/as6-root-cause-v3-stall-root.out; then
+      echo "ROOT_CAUSE_V3_CANDIDATE_SKIPPED=HOST_FREEZE_HISTORY:resolved_or_historical"
+    else
+      score_candidate "HOST_FREEZE_HISTORY" 68 "health_history_stall_or_freeze_pattern" "run_freeze_correlation_and_health_timer_checks" "health-history,host,timer" "host_freeze_history_monitor"
+    fi
+  else
+    cat /tmp/as6-root-cause-v3-stall-root.out
+    score_candidate "HOST_FREEZE_HISTORY" 68 "health_history_stall_or_freeze_pattern" "run_freeze_correlation_and_health_timer_checks" "health-history,host,timer" "host_freeze_history_monitor"
+  fi
 fi
 
 if grep -q '^HEALTH_HISTORY_CORRUPTION_RESULT=FAIL' "$history_corruption_log" 2>/dev/null; then
