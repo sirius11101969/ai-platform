@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "=== AS6 Root Cause Cache Diagnostics ==="
+REPORT="runtime/root-cause/root-cause-v3.env"
+
+if [ -f "$REPORT" ]; then
+  echo "ROOT_CAUSE_CACHE_FILE=OK"
+else
+  echo "ROOT_CAUSE_CACHE_FILE=FAIL:missing"
+  echo "ROOT_CAUSE_CACHE_RESULT=FAIL"
+  exit 1
+fi
+
+if [ -s "$REPORT" ]; then
+  echo "ROOT_CAUSE_CACHE_NOT_EMPTY=OK"
+else
+  echo "ROOT_CAUSE_CACHE_NOT_EMPTY=FAIL"
+  echo "ROOT_CAUSE_CACHE_RESULT=FAIL"
+  exit 1
+fi
+
+echo "ROOT_CAUSE_CACHE_RESULT=OK"
+exit 0
