@@ -94,17 +94,39 @@ echo "HEALTH_HISTORY_GAP_LAST_TIMER_LOGS_BEGIN"
 journalctl -u as6-health-cache.timer -u as6-health-cache.service --since "24 hours ago" --no-pager 2>/dev/null | tail -30 || true
 echo "HEALTH_HISTORY_GAP_LAST_TIMER_LOGS_END"
 
+last_success_epoch="$(journalctl -u as6-health-cache.service --since "24 hours ago" --no-pager -o short-unix 2>/dev/null | awk '/AS6_HEALTH_CACHE_RESULT=OK|Deactivated successfully|Finished as6-health-cache.service/ {t=$1} END {print int(t)}')"
+
+if [ -n "$last_success_epoch" ] && [ "$last_success_epoch" -gt 0 ]; then
+  since_arg="@${last_success_epoch}"
+  echo "HEALTH_HISTORY_GAP_LAST_SUCCESS_EPOCH=$last_success_epoch"
+else
+  since_arg="24 hours ago"
+  echo "HEALTH_HISTORY_GAP_LAST_SUCCESS_EPOCH=unknown"
+fi
+
 reboots="$(last reboot 2>/dev/null | head -5 | wc -l || true)"
-docker_restarts="$(journalctl -u docker --since "24 hours ago" --no-pager 2>/dev/null | grep -Eci 'restart|stopped|starting|failed|error' || true)"
-timer_failures="$(journalctl -u as6-health-cache.service --since "24 hours ago" --no-pager 2>/dev/null | grep -Eci 'failed|error|timeout|killed|exit' || true)"
+docker_restarts="$(journalctl -u docker --since "$since_arg" --no-pager 2>/dev/null | grep -Eci 'restart|stopped|starting|failed|error' || true)"
+timer_failures="$(journalctl -u as6-health-cache.service --since "$since_arg" --no-pager 2>/dev/null | grep -Eci 'failed|error|timeout|killed|exit-code|status=1/FAILURE' || true)"
+timer_successes="$(journalctl -u as6-health-cache.service --since "$since_arg" --no-pager 2>/dev/null | grep -Eci 'AS6_HEALTH_CACHE_RESULT=OK|Deactivated successfully|status=0/SUCCESS|Finished as6-health-cache.service' || true)"
 
 echo "HEALTH_HISTORY_GAP_REBOOT_EVIDENCE=$reboots"
 echo "HEALTH_HISTORY_GAP_DOCKER_RESTART_EVIDENCE=$docker_restarts"
 echo "HEALTH_HISTORY_GAP_TIMER_FAILURE_EVIDENCE=$timer_failures"
+echo "HEALTH_HISTORY_GAP_TIMER_SUCCESS_EVIDENCE=$timer_successes"
 
 if [ "$timer_failures" -gt 0 ]; then
   echo "HEALTH_HISTORY_GAP_ROOT_CAUSE=HEALTH_TIMER_FAILURE"
-elif [ "$docker_restarts" -gt 0 ]; then
+  echo "HEALTH_HISTORY_GAP_ROOT_CAUSE_RESULT=FAIL"
+  exit 1
+fi
+
+if [ "$timer_successes" -gt 0 ]; then
+  echo "HEALTH_HISTORY_GAP_ROOT_CAUSE=HISTORICAL_GAP_TIMER_NOW_OK"
+  echo "HEALTH_HISTORY_GAP_ROOT_CAUSE_RESULT=OK"
+  exit 0
+fi
+
+if [ "$docker_restarts" -gt 0 ]; then
   echo "HEALTH_HISTORY_GAP_ROOT_CAUSE=DOCKER_OR_DEPLOY_WINDOW"
 elif [ "$reboots" -gt 0 ]; then
   echo "HEALTH_HISTORY_GAP_ROOT_CAUSE=HOST_REBOOT_OR_PROVIDER_WINDOW"
