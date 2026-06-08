@@ -202,7 +202,17 @@ if [ "$ssh_events" -gt 0 ]; then
 fi
 
 if [ "$best_score" -eq 0 ] && [ "$history_score" -gt 0 ]; then
-  score_candidate "HEALTH_HISTORY_STALL" "$history_score" "health_cache_or_timer_stalled" "inspect_health_timer_and_runtime_history_writer"
+  if ./ops/bin/as6-diagnose-health-history-stall-root-cause >/tmp/as6-freeze-correlation-stall-root.out 2>&1; then
+    cat /tmp/as6-freeze-correlation-stall-root.out
+    if grep -q '^HEALTH_HISTORY_STALL_ROOT_CAUSE_RESULT=OK' /tmp/as6-freeze-correlation-stall-root.out; then
+      echo "FREEZE_CORRELATION_CANDIDATE_SKIPPED=HEALTH_HISTORY_STALL:resolved_or_historical"
+    else
+      score_candidate "HEALTH_HISTORY_STALL" "$history_score" "health_cache_or_timer_stalled" "inspect_health_timer_and_runtime_history_writer"
+    fi
+  else
+    cat /tmp/as6-freeze-correlation-stall-root.out
+    score_candidate "HEALTH_HISTORY_STALL" "$history_score" "health_cache_or_timer_stalled" "inspect_health_timer_and_runtime_history_writer"
+  fi
 fi
 
 if [ "$best_score" -gt 100 ]; then best_score=100; fi
