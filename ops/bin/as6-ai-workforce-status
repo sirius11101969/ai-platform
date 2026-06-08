@@ -123,3 +123,4 @@ exit 1
 # AS6 runtime artifacts guard: ops/bin/as6-diagnose-runtime-artifacts
 
 # AS6 root cause v2 diagnostics: ops/bin/as6-diagnose-root-cause-v2
+# AS6 host stability diagnostics: ops/bin/as6-diagnose-host-stability
