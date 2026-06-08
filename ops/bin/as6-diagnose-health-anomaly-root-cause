@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+OUT="/tmp/as6-health-anomaly-root-cause.out"
+fail=0
+
+echo "=== AS6 Health Anomaly Root Cause Diagnostics ==="
+
+if ./ops/bin/as6-diagnose-health-history-anomaly >"$OUT" 2>&1; then
+  anomaly_result="OK"
+else
+  anomaly_result="FAIL"
+fi
+
+cat "$OUT"
+
+repeat_root="$(grep -E '^HEALTH_ANOMALY_REPEAT_ROOT_CAUSE=' "$OUT" | tail -1 | cut -d= -f2- || true)"
+consecutive_fails="$(grep -E '^HEALTH_ANOMALY_CONSECUTIVE_FAILS=' "$OUT" | tail -1 | cut -d= -f2- || echo 0)"
+last_ok_result="$(grep -E '^HEALTH_ANOMALY_LAST_OK_RESULT=' "$OUT" | tail -1 | cut -d= -f2- || true)"
+
+echo "HEALTH_ANOMALY_ROOT_SOURCE_RESULT=$anomaly_result"
+echo "HEALTH_ANOMALY_ROOT_REPEAT_ROOT_CAUSE=${repeat_root:-unknown}"
+echo "HEALTH_ANOMALY_ROOT_CONSECUTIVE_FAILS=${consecutive_fails:-0}"
+echo "HEALTH_ANOMALY_ROOT_LAST_OK_RESULT=${last_ok_result:-unknown}"
+
+if [ "$anomaly_result" = "OK" ]; then
+  echo "HEALTH_ANOMALY_ROOT_CAUSE=none"
+  echo "HEALTH_ANOMALY_ROOT_CAUSE_RESULT=OK"
+  exit 0
+fi
+
+if echo "$repeat_root" | grep -q '^GIT_MAIN_SYNC=FAIL'; then
+  if ./ops/bin/as6-diagnose-git-main-sync >/tmp/as6-health-anomaly-git-sync.out 2>&1; then
+    echo "HEALTH_ANOMALY_ROOT_GIT_MAIN_SYNC_NOW=OK"
+    echo "HEALTH_ANOMALY_ROOT_CAUSE=HISTORICAL_GIT_MAIN_SYNC_NOW_OK"
+    echo "HEALTH_ANOMALY_ROOT_CAUSE_RESULT=OK"
+    exit 0
+  else
+    cat /tmp/as6-health-anomaly-git-sync.out
+    echo "HEALTH_ANOMALY_ROOT_GIT_MAIN_SYNC_NOW=FAIL"
+    echo "HEALTH_ANOMALY_ROOT_CAUSE=GIT_MAIN_SYNC"
+    echo "HEALTH_ANOMALY_ROOT_CAUSE_RESULT=FAIL"
+    exit 1
+  fi
+fi
+
+if echo "$last_ok_result" | grep -q 'stale_ok'; then
+  if ./ops/bin/as6-health-cache >/tmp/as6-health-anomaly-cache-refresh.out 2>&1; then
+    echo "HEALTH_ANOMALY_ROOT_CACHE_REFRESH_NOW=OK"
+    echo "HEALTH_ANOMALY_ROOT_CAUSE=HISTORICAL_STALE_OK_NOW_REFRESHED"
+    echo "HEALTH_ANOMALY_ROOT_CAUSE_RESULT=OK"
+    exit 0
+  else
+    cat /tmp/as6-health-anomaly-cache-refresh.out
+    echo "HEALTH_ANOMALY_ROOT_CACHE_REFRESH_NOW=FAIL"
+    echo "HEALTH_ANOMALY_ROOT_CAUSE=HEALTH_CACHE_REFRESH"
+    echo "HEALTH_ANOMALY_ROOT_CAUSE_RESULT=FAIL"
+    exit 1
+  fi
+fi
+
+if [ "${consecutive_fails:-0}" -gt 0 ] 2>/dev/null; then
+  echo "HEALTH_ANOMALY_ROOT_CAUSE=CONSECUTIVE_HEALTH_FAILURES"
+  echo "HEALTH_ANOMALY_ROOT_CAUSE_RESULT=FAIL"
+  exit 1
+fi
+
+echo "HEALTH_ANOMALY_ROOT_CAUSE=UNKNOWN_HEALTH_ANOMALY"
+echo "HEALTH_ANOMALY_ROOT_CAUSE_RESULT=FAIL"
+exit 1
