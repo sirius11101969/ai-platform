@@ -212,6 +212,20 @@ else:
 
 if hard_fail:
     import subprocess
+
+    aging = subprocess.run(
+        ["./ops/bin/as6-diagnose-historical-gap-aging"],
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
+    print(aging.stdout, end="")
+    if "HISTORICAL_GAP_ACTIVE=NO" in aging.stdout and "HISTORICAL_GAP_AGING_RESULT=OK" in aging.stdout:
+        print("HOST_FREEZE_HISTORY_HISTORICAL_GAP_AGING=YES")
+        print("HOST_FREEZE_HISTORY_HISTORICAL_GAP_AGING_REASON=aged_out_and_recovery_confirmed")
+        print("HOST_FREEZE_HISTORY_RESULT=OK")
+        raise SystemExit(0)
+
     gap = subprocess.run(
         ["./ops/bin/as6-diagnose-health-history-gap-root-cause"],
         text=True,
