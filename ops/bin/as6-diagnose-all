@@ -71,3 +71,5 @@ fi
 echo "AS6_DIAGNOSE_ALL_RESULT=FAIL"
 exit 1
 
+
+run_check "health-history-gap-suppression" "./ops/bin/as6-diagnose-health-history-gap-suppression"

@@ -182,6 +182,12 @@
       "source": "auto"
     },
     {
+      "check": "health-history-gap-suppression",
+      "path": "ops/bin/as6-diagnose-health-history-gap-suppression",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
       "check": "health-history-historical-only",
       "path": "ops/bin/as6-diagnose-health-history-historical-only",
       "status_visible": true,

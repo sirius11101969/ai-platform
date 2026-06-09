@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+echo "=== AS6 Health History Gap Suppression Diagnostics ==="
+
+if ./ops/bin/as6-diagnose-health-history-gap-root-cause >/tmp/as6-gap-suppression.out 2>&1; then
+  cat /tmp/as6-gap-suppression.out
+else
+  cat /tmp/as6-gap-suppression.out
+  echo "HEALTH_HISTORY_GAP_SUPPRESSION_RESULT=FAIL"
+  exit 1
+fi
+
+if grep -q '^HEALTH_HISTORY_GAP_ROOT_CAUSE=HISTORICAL_GAP_TIMER_NOW_OK' /tmp/as6-gap-suppression.out \
+  && grep -q '^HEALTH_HISTORY_GAP_ROOT_CAUSE_RESULT=OK' /tmp/as6-gap-suppression.out; then
+  echo "HEALTH_HISTORY_GAP_SUPPRESSED=YES"
+  echo "HEALTH_HISTORY_GAP_SUPPRESSION_REASON=historical_gap_timer_now_ok"
+  echo "HEALTH_HISTORY_GAP_SUPPRESSION_RESULT=OK"
+  exit 0
+fi
+
+echo "HEALTH_HISTORY_GAP_SUPPRESSED=NO"
+echo "HEALTH_HISTORY_GAP_SUPPRESSION_RESULT=OK"
