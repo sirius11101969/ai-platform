@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+echo "=== AS6 Raw Fail Consumers Diagnostics ==="
+
+bad_refs="$(
+  grep -RIn 'HEALTH_HISTORY_GAP_STATUS=RAW_FAIL' ops/bin 2>/dev/null \
+    | grep -v 'as6-diagnose-raw-fail-consumers' \
+    || true
+)"
+
+internal_refs="$(
+  grep -RIn 'HEALTH_HISTORY_GAP_STATUS_RAW=FAIL' ops/bin 2>/dev/null \
+    | grep -v 'as6-diagnose-raw-fail-consumers' \
+    || true
+)"
+
+echo "RAW_FAIL_PUBLIC_CONSUMERS_COUNT=$(printf '%s\n' "$bad_refs" | sed '/^$/d' | wc -l | tr -d ' ')"
+echo "RAW_FAIL_INTERNAL_CONSUMERS_COUNT=$(printf '%s\n' "$internal_refs" | sed '/^$/d' | wc -l | tr -d ' ')"
+
+if [ -n "$bad_refs" ]; then
+  echo "RAW_FAIL_PUBLIC_CONSUMERS_BEGIN"
+  printf '%s\n' "$bad_refs"
+  echo "RAW_FAIL_PUBLIC_CONSUMERS_END"
+  echo "RAW_FAIL_CONSUMERS_RESULT=FAIL"
+  exit 1
+fi
+
+if ./ops/bin/as6-historical-incident-api >/tmp/as6-raw-fail-consumers-api.out 2>&1; then
+  cat /tmp/as6-raw-fail-consumers-api.out | grep -E 'HISTORICAL_API_|HISTORICAL_INCIDENT_API_RESULT=' || true
+else
+  cat /tmp/as6-raw-fail-consumers-api.out
+  echo "RAW_FAIL_CONSUMERS_RESULT=FAIL:historical_api"
+  exit 1
+fi
+
+if grep -q '^HISTORICAL_API_SAFE_TO_IGNORE_RAW_FAIL=YES' /tmp/as6-raw-fail-consumers-api.out; then
+  echo "RAW_FAIL_ROUTED_THROUGH_HISTORICAL_API=YES"
+  echo "RAW_FAIL_CONSUMERS_RESULT=OK"
+  exit 0
+fi
+
+echo "RAW_FAIL_ROUTED_THROUGH_HISTORICAL_API=NO"
+echo "RAW_FAIL_CONSUMERS_RESULT=FAIL"
+exit 1

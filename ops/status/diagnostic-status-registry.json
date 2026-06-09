@@ -302,6 +302,12 @@
       "source": "auto"
     },
     {
+      "check": "raw-fail-consumers",
+      "path": "ops/bin/as6-diagnose-raw-fail-consumers",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
       "check": "root-cause-cache",
       "path": "ops/bin/as6-diagnose-root-cause-cache",
       "status_visible": true,
