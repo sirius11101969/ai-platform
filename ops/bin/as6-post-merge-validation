@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+OUT="runtime/post-merge/$(date -u +%Y-%m-%dT%H-%M-%SZ).log"
+mkdir -p runtime/post-merge
+
+{
+  echo "=== AS6 Post Merge Validation ==="
+  ./ops/bin/as6-diagnose-all
+  ./ops/bin/as6-root-cause-v3-refresh-cache
+  ./ops/bin/as6-owner-dashboard-root-cause-v3
+  echo "AS6_POST_MERGE_VALIDATION_RESULT=OK"
+} | tee "$OUT"
