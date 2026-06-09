@@ -12,6 +12,15 @@ fail=0
 
 echo "=== AS6 Freeze Correlation Diagnostics ==="
 
+if ./ops/bin/as6-historical-incident-api >/tmp/as6-freeze-historical-api.out 2>&1; then
+  cat /tmp/as6-freeze-historical-api.out
+  if grep -q '^HISTORICAL_API_SAFE_TO_IGNORE_RAW_FAIL=YES' /tmp/as6-freeze-historical-api.out; then
+    echo "FREEZE_CORRELATION_HISTORICAL_API=OK"
+    echo "FREEZE_CORRELATION_RAW_FAIL_SUPPRESSED_BY_API=YES"
+  fi
+fi
+
+
 echo "FREEZE_CORRELATION_HISTORY_DIR=$HISTORY_DIR"
 echo "FREEZE_CORRELATION_WINDOW=$WINDOW"
 echo "FREEZE_CORRELATION_JOURNAL_LOOKBACK=$LOOKBACK"

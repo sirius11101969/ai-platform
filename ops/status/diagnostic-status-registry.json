@@ -254,6 +254,12 @@
       "source": "auto"
     },
     {
+      "check": "historical-incident-api",
+      "path": "ops/bin/as6-diagnose-historical-incident-api",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
       "check": "historical-incident-archive",
       "path": "ops/bin/as6-diagnose-historical-incident-archive",
       "status_visible": true,

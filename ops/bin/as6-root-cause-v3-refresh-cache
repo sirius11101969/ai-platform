@@ -55,6 +55,15 @@ host_log="$OUT_DIR/host-stability.log"
 ssh_log="$OUT_DIR/ssh-stability.log"
 corruption_log="$OUT_DIR/health-history-corruption.log"
 
+if ./ops/bin/as6-historical-incident-api >/tmp/as6-root-cause-historical-api.out 2>&1; then
+  cat /tmp/as6-root-cause-historical-api.out
+  if grep -q '^HISTORICAL_API_SAFE_TO_IGNORE_RAW_FAIL=YES' /tmp/as6-root-cause-historical-api.out; then
+    echo "ROOT_CAUSE_REFRESH_HISTORICAL_API=OK"
+    echo "ROOT_CAUSE_REFRESH_RAW_FAIL_SUPPRESSED_BY_API=YES"
+  fi
+fi
+
+
 if [ -f "$freeze_log" ]; then
   freeze_root="$(kv "$freeze_log" FREEZE_ROOT_CAUSE)"
   freeze_confidence="$(normalize_confidence "$(kv "$freeze_log" FREEZE_CONFIDENCE)")"

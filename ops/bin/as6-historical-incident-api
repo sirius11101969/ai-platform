@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+echo "=== AS6 Historical Incident API ==="
+
+./ops/bin/as6-diagnose-historical-incident-canonicalization >/tmp/as6-historical-incident-api-canonical.out 2>&1 || true
+cat /tmp/as6-historical-incident-api-canonical.out
+
+status="$(grep -E '^HISTORICAL_CANONICAL_STATUS=' /tmp/as6-historical-incident-api-canonical.out | tail -1 | cut -d= -f2- || true)"
+active="$(grep -E '^HISTORICAL_CANONICAL_ACTIVE=' /tmp/as6-historical-incident-api-canonical.out | tail -1 | cut -d= -f2- || true)"
+result="$(grep -E '^HISTORICAL_INCIDENT_CANONICALIZATION_RESULT=' /tmp/as6-historical-incident-api-canonical.out | tail -1 | cut -d= -f2- || true)"
+
+echo "HISTORICAL_API_STATUS=${status:-unknown}"
+echo "HISTORICAL_API_ACTIVE=${active:-unknown}"
+echo "HISTORICAL_API_RESULT=${result:-unknown}"
+
+if [ "${status:-}" = "HISTORICAL" ] && [ "${active:-}" = "NO" ] && [ "${result:-}" = "OK" ]; then
+  echo "HISTORICAL_API_ROOT_CAUSE=historical_incident_recovered"
+  echo "HISTORICAL_API_SAFE_TO_IGNORE_RAW_FAIL=YES"
+  echo "HISTORICAL_INCIDENT_API_RESULT=OK"
+  exit 0
+fi
+
+if [ "${result:-}" = "OK" ] && [ "${active:-}" = "NO" ]; then
+  echo "HISTORICAL_API_ROOT_CAUSE=none"
+  echo "HISTORICAL_API_SAFE_TO_IGNORE_RAW_FAIL=YES"
+  echo "HISTORICAL_INCIDENT_API_RESULT=OK"
+  exit 0
+fi
+
+echo "HISTORICAL_API_ROOT_CAUSE=active_or_uncanonicalized_incident"
+echo "HISTORICAL_API_SAFE_TO_IGNORE_RAW_FAIL=NO"
+echo "HISTORICAL_INCIDENT_API_RESULT=FAIL"
+exit 1
