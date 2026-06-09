@@ -33,6 +33,21 @@ if [ "${root:-unknown}" = "none" ] && [ "${safe:-NO}" = "YES" ] && [ "${confiden
   exit 0
 fi
 
+if [ "${root:-unknown}" = "HOST_STABILITY" ] \
+  && grep -q '^HEALTH_CACHE_TIMER_FRESHNESS_RESULT=OK' /tmp/as6-health-recovery-freshness.out \
+  && ./ops/bin/as6-diagnose-health-history-recovery-window >/tmp/as6-host-stability-recovery-window.out 2>&1 \
+  && grep -q '^HEALTH_HISTORY_RECOVERY_WINDOW_RESULT=OK' /tmp/as6-host-stability-recovery-window.out \
+  && ./ops/bin/as6-diagnose-host-freeze-history >/tmp/as6-host-stability-freeze-history.out 2>&1 \
+  && grep -q '^HOST_FREEZE_HISTORY_RESULT=OK' /tmp/as6-host-stability-freeze-history.out; then
+  cat /tmp/as6-host-stability-recovery-window.out
+  cat /tmp/as6-host-stability-freeze-history.out
+  echo "HEALTH_RECOVERY_HOST_STABILITY_AUTO_CLOSED=YES"
+  echo "HEALTH_RECOVERY_HOST_STABILITY_AUTO_CLOSE_REASON=fresh_cache_recovery_window_and_host_freeze_ok"
+  echo "HEALTH_RECOVERY_CONFIRMED=YES"
+  echo "HEALTH_RECOVERY_RESULT=OK"
+  exit 0
+fi
+
 echo "HEALTH_RECOVERY_CONFIRMED=NO"
 echo "HEALTH_RECOVERY_RESULT=FAIL:not_recovered"
 exit 1

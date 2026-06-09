@@ -76,7 +76,15 @@ if [ -f "$freeze_log" ]; then
 fi
 
 if grep -q '^HOST_STABILITY_RESULT=FAIL' "$host_log" 2>/dev/null; then
-  score "HOST_STABILITY" 75 "host_resource_or_kernel_instability" "run_host_stability_remediation_plan" "host,docker,kernel" "host_stability_remediation_guard"
+  if ./ops/bin/as6-diagnose-health-recovery >/tmp/as6-root-cause-host-stability-recovery.out 2>&1 \
+    && grep -q '^HEALTH_RECOVERY_HOST_STABILITY_AUTO_CLOSED=YES' /tmp/as6-root-cause-host-stability-recovery.out \
+    && grep -q '^HEALTH_RECOVERY_RESULT=OK' /tmp/as6-root-cause-host-stability-recovery.out; then
+    cat /tmp/as6-root-cause-host-stability-recovery.out
+    echo "ROOT_CAUSE_REFRESH_HOST_STABILITY_AUTO_CLOSED=YES"
+    echo "ROOT_CAUSE_REFRESH_CANDIDATE_SKIPPED=HOST_STABILITY:recovered_or_historical"
+  else
+    score "HOST_STABILITY" 75 "host_resource_or_kernel_instability" "run_host_stability_remediation_plan" "host,docker,kernel" "host_stability_remediation_guard"
+  fi
 fi
 
 if grep -q '^SSH_STABILITY_RESULT=FAIL' "$ssh_log" 2>/dev/null; then
