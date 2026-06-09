@@ -28,7 +28,7 @@ print(f"HEALTH_STATUS_OWNER_DASHBOARD={data.get('owner_dashboard', 'UNKNOWN')}")
 print(f"HEALTH_STATUS_WORKFORCE={data.get('workforce_status', 'UNKNOWN')}")
 print(f"HEALTH_STATUS_ROOT_CAUSE={data.get('root_cause', 'unknown')}")
 print(f"HEALTH_STATUS_NEXT_ACTION={data.get('next_action', 'inspect_platform')}")
-print(f"HEALTH_STATUS_NEXT_COMMAND={data.get('next_command', './ops/bin/as6-health-cache')}")
+print(f"HEALTH_STATUS_NEXT_COMMAND={data.get('next_command', './ops/bin/as6-diagnose-health-cache-timer-freshness')}")
 
 if data.get("health_cache_result") == "OK" and data.get("platform_status") == "OK":
     print("HEALTH_STATUS_RESULT=OK")

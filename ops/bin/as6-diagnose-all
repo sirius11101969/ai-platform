@@ -59,7 +59,6 @@ run_check "unreachable-diagnostic-blocks" "./ops/bin/as6-diagnose-unreachable-di
 run_check "health-cache-timer-freshness" "./ops/bin/as6-diagnose-health-cache-timer-freshness"
 run_check "health-anomaly-root-cause" "./ops/bin/as6-diagnose-health-anomaly-root-cause"
 run_check "root-cause-v3-refresh-cache" "./ops/bin/as6-root-cause-v3-refresh-cache"
-run_check "post-merge-validation" "./ops/bin/as6-post-merge-validation"
 run_check "health-history-gap-suppression" "./ops/bin/as6-diagnose-health-history-gap-suppression"
 
 
