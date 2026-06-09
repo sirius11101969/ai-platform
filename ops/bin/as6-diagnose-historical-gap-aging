@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+MAX_ACTIVE_AGE_SECONDS="${AS6_HISTORICAL_GAP_ACTIVE_MAX_AGE_SECONDS:-7200}"
+fail=0
+
+echo "=== AS6 Historical Gap Aging Diagnostics ==="
+echo "HISTORICAL_GAP_ACTIVE_MAX_AGE_SECONDS=$MAX_ACTIVE_AGE_SECONDS"
+
+if ./ops/bin/as6-diagnose-health-history-gap-root-cause >/tmp/as6-historical-gap-aging-root.out 2>&1; then
+  cat /tmp/as6-historical-gap-aging-root.out
+else
+  cat /tmp/as6-historical-gap-aging-root.out
+  echo "HISTORICAL_GAP_AGING_RESULT=FAIL:gap_root_cause"
+  exit 1
+fi
+
+if ./ops/bin/as6-diagnose-health-history-recovery-window >/tmp/as6-historical-gap-aging-recovery.out 2>&1; then
+  cat /tmp/as6-historical-gap-aging-recovery.out
+else
+  cat /tmp/as6-historical-gap-aging-recovery.out
+  echo "HISTORICAL_GAP_AGING_RESULT=FAIL:recovery_window"
+  exit 1
+fi
+
+gap_to="$(grep -E '^HEALTH_HISTORY_GAP_TO=' /tmp/as6-historical-gap-aging-root.out | tail -1 | cut -d= -f2- || true)"
+gap_root="$(grep -E '^HEALTH_HISTORY_GAP_ROOT_CAUSE=' /tmp/as6-historical-gap-aging-root.out | tail -1 | cut -d= -f2- || true)"
+gap_result="$(grep -E '^HEALTH_HISTORY_GAP_ROOT_CAUSE_RESULT=' /tmp/as6-historical-gap-aging-root.out | tail -1 | cut -d= -f2- || true)"
+
+if [ -n "$gap_to" ] && [ -f "$gap_to" ]; then
+  gap_age="$(( $(date +%s) - $(stat -c %Y "$gap_to") ))"
+else
+  gap_age=0
+fi
+
+echo "HISTORICAL_GAP_TO=${gap_to:-none}"
+echo "HISTORICAL_GAP_AGE_SECONDS=$gap_age"
+echo "HISTORICAL_GAP_ROOT_CAUSE=${gap_root:-none}"
+echo "HISTORICAL_GAP_ROOT_CAUSE_RESULT=${gap_result:-unknown}"
+
+if [ "${gap_root:-}" = "HISTORICAL_GAP_TIMER_NOW_OK" ] \
+  && [ "${gap_result:-}" = "OK" ] \
+  && [ "$gap_age" -ge "$MAX_ACTIVE_AGE_SECONDS" ] \
+  && grep -q '^HEALTH_HISTORY_RECOVERY_WINDOW_RESULT=OK' /tmp/as6-historical-gap-aging-recovery.out; then
+  echo "HISTORICAL_GAP_ACTIVE=NO"
+  echo "HISTORICAL_GAP_AGING_REASON=historical_gap_aged_out_and_recovery_confirmed"
+  echo "HISTORICAL_GAP_AGING_RESULT=OK"
+  exit 0
+fi
+
+if grep -q '^HEALTH_HISTORY_RECOVERY_WINDOW_RESULT=OK' /tmp/as6-historical-gap-aging-recovery.out; then
+  echo "HISTORICAL_GAP_ACTIVE=NO"
+  echo "HISTORICAL_GAP_AGING_REASON=recovery_confirmed"
+  echo "HISTORICAL_GAP_AGING_RESULT=OK"
+  exit 0
+fi
+
+echo "HISTORICAL_GAP_ACTIVE=YES"
+echo "HISTORICAL_GAP_AGING_RESULT=FAIL"
+exit 1

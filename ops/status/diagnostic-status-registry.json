@@ -248,6 +248,12 @@
       "source": "auto"
     },
     {
+      "check": "historical-gap-aging",
+      "path": "ops/bin/as6-diagnose-historical-gap-aging",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
       "check": "historical-incident-archive",
       "path": "ops/bin/as6-diagnose-historical-incident-archive",
       "status_visible": true,
