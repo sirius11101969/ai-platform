@@ -56,7 +56,7 @@ if pair:
 if best_gap <= max_gap:
     print("HEALTH_HISTORY_GAP_STATUS=OK")
 else:
-    print("HEALTH_HISTORY_GAP_STATUS=FAIL")
+    print("HEALTH_HISTORY_GAP_STATUS=RAW_FAIL")
 PY
 
 gap_status="$(python3 - <<PY
@@ -121,6 +121,9 @@ if [ "$timer_failures" -gt 0 ]; then
 fi
 
 if [ "$timer_successes" -gt 0 ]; then
+  echo "HEALTH_HISTORY_GAP_STATUS=HISTORICAL"
+  echo "HEALTH_HISTORY_GAP_STATUS_NORMALIZED=HISTORICAL"
+  echo "HEALTH_HISTORY_GAP_ACTIVE=NO"
   echo "HEALTH_HISTORY_GAP_ROOT_CAUSE=HISTORICAL_GAP_TIMER_NOW_OK"
   echo "HEALTH_HISTORY_GAP_ROOT_CAUSE_RESULT=OK"
   exit 0
