@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+DIR="${AS6_HEALTH_HISTORY_DIR:-runtime/health/history}"
+fail=0
+
+echo "=== AS6 Root Cause Canonicalization Diagnostics ==="
+
+if [ ! -d "$DIR" ]; then
+  echo "ROOT_CAUSE_CANONICALIZATION_DIR=FAIL:missing:$DIR"
+  echo "ROOT_CAUSE_CANONICALIZATION_RESULT=FAIL"
+  exit 1
+fi
+
+python3 - <<'PY' || fail=1
+import json
+from pathlib import Path
+
+d = Path("runtime/health/history")
+bad_tokens = (
+    "_RESULT=",
+    "HEALTH_ANOMALY_",
+    "HOST_FREEZE_HISTORY_",
+    "ROOT_CAUSE_RESULT=",
+    "CONSECUTIVE_FAILS_RESULT=",
+    "REPEAT_ROOT_CAUSE_RESULT=",
+)
+
+bad = []
+files = sorted(d.glob("*.json"))
+for p in files:
+    try:
+        data = json.loads(p.read_text())
+    except Exception:
+        continue
+    root = str(data.get("root_cause", ""))
+    if any(t in root for t in bad_tokens):
+        bad.append((p, root))
+
+print(f"ROOT_CAUSE_CANONICALIZATION_FILES={len(files)}")
+print(f"ROOT_CAUSE_CANONICALIZATION_BAD_RECORDS={len(bad)}")
+for p, root in bad[:20]:
+    print(f"ROOT_CAUSE_CANONICALIZATION_BAD_RECORD={p}:{root}")
+
+if bad:
+    print("ROOT_CAUSE_CANONICALIZATION_RESULT=FAIL")
+    raise SystemExit(1)
+
+print("ROOT_CAUSE_CANONICALIZATION_RESULT=OK")
+PY
+
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_ROOT_CAUSE_CANONICALIZATION_DIAGNOSTIC_RESULT=OK"
+  exit 0
+fi
+
+echo "AS6_ROOT_CAUSE_CANONICALIZATION_DIAGNOSTIC_RESULT=FAIL"
+exit 1

@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+DIR="${AS6_HEALTH_HISTORY_DIR:-runtime/health/history}"
+
+echo "=== AS6 Sanitize Health History Root Cause ==="
+
+python3 - <<'PY'
+import json
+from pathlib import Path
+
+d = Path("runtime/health/history")
+bad_tokens = (
+    "_RESULT=",
+    "HEALTH_ANOMALY_",
+    "HOST_FREEZE_HISTORY_",
+    "ROOT_CAUSE_RESULT=",
+    "CONSECUTIVE_FAILS_RESULT=",
+    "REPEAT_ROOT_CAUSE_RESULT=",
+)
+
+changed = 0
+for p in sorted(d.glob("*.json")):
+    try:
+        data = json.loads(p.read_text())
+    except Exception:
+        continue
+
+    root = str(data.get("root_cause", ""))
+    if any(t in root for t in bad_tokens):
+        data["root_cause_original"] = root
+        data["root_cause"] = "historical_noncanonical_root_cause"
+        data["root_cause_sanitized"] = True
+        p.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n")
+        changed += 1
+        print(f"HEALTH_HISTORY_ROOT_CAUSE_SANITIZED={p}")
+
+print(f"HEALTH_HISTORY_ROOT_CAUSE_SANITIZED_COUNT={changed}")
+print("HEALTH_HISTORY_ROOT_CAUSE_SANITIZE_RESULT=OK")
+PY
