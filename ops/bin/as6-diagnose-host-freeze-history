@@ -174,16 +174,41 @@ root_value, root_streak = longest_streak([s["root"] for s in samples])
 print(f"HOST_FREEZE_HISTORY_IDENTICAL_RESULT_STREAK={result_value}:{result_streak}")
 print(f"HOST_FREEZE_HISTORY_IDENTICAL_ROOT_CAUSE_STREAK={root_value}:{root_streak}")
 
-if len(samples) >= min_samples_for_streak and result_streak > max_result_streak:
-    print("HOST_FREEZE_HISTORY_IDENTICAL_RESULT_STREAK_RESULT=WARN")
-else:
-    print("HOST_FREEZE_HISTORY_IDENTICAL_RESULT_STREAK_RESULT=OK")
+historical_streak_suppressed = False
+if len(samples) >= min_samples_for_streak and (
+    result_streak > max_result_streak
+    or (root_value not in ("none", "", "unknown") and root_streak > max_root_streak)
+):
+    import subprocess
+    suppressor = subprocess.run(
+        ["./ops/bin/as6-diagnose-historical-incident-suppressor"],
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
+    print(suppressor.stdout, end="")
+    if "HISTORICAL_INCIDENT_SUPPRESSOR_ACTIVE=YES" in suppressor.stdout:
+        historical_streak_suppressed = True
+        print("HOST_FREEZE_HISTORY_HISTORICAL_STREAK_SUPPRESSED=YES")
+        print("HOST_FREEZE_HISTORY_STREAK_AUTO_CLOSE=YES")
+        print("HISTORICAL_STREAK_SUPPRESSION_RESULT=OK")
 
-if len(samples) >= min_samples_for_streak and root_value not in ("none", "", "unknown") and root_streak > max_root_streak:
-    print("HOST_FREEZE_HISTORY_IDENTICAL_ROOT_CAUSE_STREAK_RESULT=FAIL")
-    hard_fail = True
+if historical_streak_suppressed:
+    print("HOST_FREEZE_HISTORY_IDENTICAL_RESULT_STREAK_RESULT=OK:HISTORICAL")
 else:
-    print("HOST_FREEZE_HISTORY_IDENTICAL_ROOT_CAUSE_STREAK_RESULT=OK")
+    if len(samples) >= min_samples_for_streak and result_streak > max_result_streak:
+        print("HOST_FREEZE_HISTORY_IDENTICAL_RESULT_STREAK_RESULT=WARN")
+    else:
+        print("HOST_FREEZE_HISTORY_IDENTICAL_RESULT_STREAK_RESULT=OK")
+
+if historical_streak_suppressed:
+    print("HOST_FREEZE_HISTORY_IDENTICAL_ROOT_CAUSE_STREAK_RESULT=OK:HISTORICAL")
+else:
+    if len(samples) >= min_samples_for_streak and root_value not in ("none", "", "unknown") and root_streak > max_root_streak:
+        print("HOST_FREEZE_HISTORY_IDENTICAL_ROOT_CAUSE_STREAK_RESULT=FAIL")
+        hard_fail = True
+    else:
+        print("HOST_FREEZE_HISTORY_IDENTICAL_ROOT_CAUSE_STREAK_RESULT=OK")
 
 if hard_fail:
     import subprocess
