@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+echo "=== AS6 Historical Incident Canonicalization Diagnostics ==="
+
+./ops/bin/as6-diagnose-health-history-gap-root-cause >/tmp/as6-historical-canonical-gap.out 2>&1 || true
+cat /tmp/as6-historical-canonical-gap.out
+
+./ops/bin/as6-diagnose-historical-gap-aging >/tmp/as6-historical-canonical-aging.out 2>&1 || true
+cat /tmp/as6-historical-canonical-aging.out
+
+./ops/bin/as6-diagnose-historical-incident-suppressor >/tmp/as6-historical-canonical-suppressor.out 2>&1 || true
+cat /tmp/as6-historical-canonical-suppressor.out
+
+raw_fail_count="$(grep -h '^HEALTH_HISTORY_GAP_STATUS=RAW_FAIL' /tmp/as6-historical-canonical-gap.out /tmp/as6-historical-canonical-aging.out /tmp/as6-historical-canonical-suppressor.out 2>/dev/null | wc -l | tr -d ' ')"
+historical_count="$(grep -h '^HEALTH_HISTORY_GAP_STATUS=HISTORICAL' /tmp/as6-historical-canonical-gap.out /tmp/as6-historical-canonical-aging.out /tmp/as6-historical-canonical-suppressor.out 2>/dev/null | wc -l | tr -d ' ')"
+active_no_count="$(grep -h '^HEALTH_HISTORY_GAP_ACTIVE=NO\|^HISTORICAL_GAP_ACTIVE=NO' /tmp/as6-historical-canonical-gap.out /tmp/as6-historical-canonical-aging.out /tmp/as6-historical-canonical-suppressor.out 2>/dev/null | wc -l | tr -d ' ')"
+suppressor_active_count="$(grep -h '^HISTORICAL_INCIDENT_SUPPRESSOR_ACTIVE=YES' /tmp/as6-historical-canonical-suppressor.out 2>/dev/null | wc -l | tr -d ' ')"
+recovery_ok_count="$(grep -h '^HEALTH_HISTORY_RECOVERY_WINDOW_RESULT=OK' /tmp/as6-historical-canonical-aging.out /tmp/as6-historical-canonical-suppressor.out 2>/dev/null | wc -l | tr -d ' ')"
+
+echo "HISTORICAL_CANONICAL_RAW_FAIL_COUNT=$raw_fail_count"
+echo "HISTORICAL_CANONICAL_HISTORICAL_COUNT=$historical_count"
+echo "HISTORICAL_CANONICAL_ACTIVE_NO_COUNT=$active_no_count"
+echo "HISTORICAL_CANONICAL_SUPPRESSOR_ACTIVE_COUNT=$suppressor_active_count"
+echo "HISTORICAL_CANONICAL_RECOVERY_OK_COUNT=$recovery_ok_count"
+
+if [ "$raw_fail_count" -gt 0 ] && [ "$historical_count" -gt 0 ] && [ "$active_no_count" -gt 0 ]; then
+  echo "HISTORICAL_CANONICAL_STATUS=HISTORICAL"
+  echo "HISTORICAL_CANONICAL_ACTIVE=NO"
+  echo "HISTORICAL_CANONICAL_REASON=raw_gap_normalized_by_historical_status"
+  echo "HISTORICAL_INCIDENT_CANONICALIZATION_RESULT=OK"
+  exit 0
+fi
+
+if [ "$raw_fail_count" -eq 0 ]; then
+  echo "HISTORICAL_CANONICAL_STATUS=OK"
+  echo "HISTORICAL_CANONICAL_ACTIVE=NO"
+  echo "HISTORICAL_CANONICAL_REASON=no_raw_fail"
+  echo "HISTORICAL_INCIDENT_CANONICALIZATION_RESULT=OK"
+  exit 0
+fi
+
+echo "HISTORICAL_CANONICAL_STATUS=FAIL"
+echo "HISTORICAL_CANONICAL_ACTIVE=YES"
+echo "HISTORICAL_CANONICAL_REASON=raw_fail_without_historical_normalization"
+echo "HISTORICAL_INCIDENT_CANONICALIZATION_RESULT=FAIL"
+exit 1
