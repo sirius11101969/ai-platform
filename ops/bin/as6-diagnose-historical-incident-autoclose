@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+echo "=== AS6 Historical Incident Autoclose Diagnostics ==="
+
+./ops/bin/as6-diagnose-raw-fail-consumers >/tmp/as6-autoclose-raw.out 2>&1 || true
+cat /tmp/as6-autoclose-raw.out
+
+./ops/bin/as6-historical-incident-api >/tmp/as6-autoclose-api.out 2>&1 || true
+cat /tmp/as6-autoclose-api.out | grep -E 'HISTORICAL_API_|HISTORICAL_INCIDENT_API_RESULT=' || true
+
+./ops/bin/as6-diagnose-health-history-recovery-window >/tmp/as6-autoclose-recovery.out 2>&1 || true
+cat /tmp/as6-autoclose-recovery.out | grep -E 'HEALTH_HISTORY_RECOVERY_WINDOW_RESULT=|HEALTH_RECOVERY_WINDOW_CONFIRMED=|HEALTH_CACHE_TIMER_FRESHNESS_RESULT=' || true
+
+raw_public="$(grep -E '^RAW_FAIL_PUBLIC_CONSUMERS_COUNT=' /tmp/as6-autoclose-raw.out | tail -1 | cut -d= -f2- || echo unknown)"
+raw_routed="$(grep -E '^RAW_FAIL_ROUTED_THROUGH_HISTORICAL_API=' /tmp/as6-autoclose-raw.out | tail -1 | cut -d= -f2- || echo unknown)"
+api_safe="$(grep -E '^HISTORICAL_API_SAFE_TO_IGNORE_RAW_FAIL=' /tmp/as6-autoclose-api.out | tail -1 | cut -d= -f2- || echo unknown)"
+api_active="$(grep -E '^HISTORICAL_API_ACTIVE=' /tmp/as6-autoclose-api.out | tail -1 | cut -d= -f2- || echo unknown)"
+recovery_ok="$(grep -E '^HEALTH_HISTORY_RECOVERY_WINDOW_RESULT=' /tmp/as6-autoclose-recovery.out | tail -1 | cut -d= -f2- || echo unknown)"
+
+echo "HISTORICAL_AUTOCLOSE_RAW_PUBLIC_CONSUMERS=${raw_public:-unknown}"
+echo "HISTORICAL_AUTOCLOSE_RAW_ROUTED=${raw_routed:-unknown}"
+echo "HISTORICAL_AUTOCLOSE_API_SAFE=${api_safe:-unknown}"
+echo "HISTORICAL_AUTOCLOSE_API_ACTIVE=${api_active:-unknown}"
+echo "HISTORICAL_AUTOCLOSE_RECOVERY_WINDOW=${recovery_ok:-unknown}"
+
+if [ "${raw_public:-unknown}" = "0" ] \
+  && [ "${raw_routed:-unknown}" = "YES" ] \
+  && [ "${api_safe:-unknown}" = "YES" ] \
+  && [ "${api_active:-unknown}" = "NO" ] \
+  && [ "${recovery_ok:-unknown}" = "OK" ]; then
+  echo "HISTORICAL_INCIDENT_AUTO_CLOSED=YES"
+  echo "HISTORICAL_INCIDENT_ARCHIVED=YES"
+  echo "HEALTH_HISTORY_GAP_STATUS_RAW=ARCHIVED"
+  echo "HISTORICAL_INCIDENT_AUTOCLOSE_REASON=raw_fail_internal_only_api_safe_recovery_confirmed"
+  echo "HISTORICAL_INCIDENT_AUTOCLOSE_RESULT=OK"
+  exit 0
+fi
+
+echo "HISTORICAL_INCIDENT_AUTO_CLOSED=NO"
+echo "HISTORICAL_INCIDENT_ARCHIVED=NO"
+echo "HISTORICAL_INCIDENT_AUTOCLOSE_REASON=conditions_not_met"
+echo "HISTORICAL_INCIDENT_AUTOCLOSE_RESULT=FAIL"
+exit 1

@@ -266,6 +266,12 @@
       "source": "auto"
     },
     {
+      "check": "historical-incident-autoclose",
+      "path": "ops/bin/as6-diagnose-historical-incident-autoclose",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
       "check": "historical-incident-canonicalization",
       "path": "ops/bin/as6-diagnose-historical-incident-canonicalization",
       "status_visible": true,
