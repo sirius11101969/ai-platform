@@ -248,6 +248,12 @@
       "source": "auto"
     },
     {
+      "check": "historical-incident-archive",
+      "path": "ops/bin/as6-diagnose-historical-incident-archive",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
       "check": "historical-incident-suppressor",
       "path": "ops/bin/as6-diagnose-historical-incident-suppressor",
       "status_visible": true,

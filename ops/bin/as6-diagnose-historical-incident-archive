@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+SRC="runtime/health/history"
+DST="runtime/health/archive"
+fail=0
+
+echo "=== AS6 Historical Incident Archive Diagnostics ==="
+
+mkdir -p "$DST"
+
+python3 - <<'PY' || fail=1
+import json
+from pathlib import Path
+
+src = Path("runtime/health/history")
+dst = Path("runtime/health/archive")
+
+archive_roots = {
+    "historical_noncanonical_root_cause",
+    "historical_gap_recovered",
+    "historical_host_stability_recovered",
+    "historical_timer_recovered",
+    "historical_freeze_recovered",
+    "resolved_or_historical",
+}
+
+active_dirty = []
+archive_files = list(dst.glob("*.json"))
+
+for p in sorted(src.glob("*.json")):
+    try:
+        data = json.loads(p.read_text())
+    except Exception:
+        continue
+
+    root = str(data.get("root_cause", ""))
+    if root in archive_roots or data.get("root_cause_sanitized") is True or data.get("historical_incident") is True:
+        active_dirty.append(str(p))
+
+print(f"HISTORICAL_ARCHIVE_FILES={len(archive_files)}")
+print(f"HISTORICAL_ARCHIVE_ACTIVE_DIRTY_COUNT={len(active_dirty)}")
+
+for item in active_dirty[:20]:
+    print(f"HISTORICAL_ARCHIVE_ACTIVE_DIRTY={item}")
+
+if active_dirty:
+    print("HISTORICAL_INCIDENT_ARCHIVE_DIAGNOSTIC_RESULT=FAIL")
+    raise SystemExit(1)
+
+print("HISTORICAL_INCIDENT_ARCHIVE_DIAGNOSTIC_RESULT=OK")
+PY
+
+if [ "$fail" -eq 0 ]; then
+  echo "HISTORICAL_INCIDENT_ARCHIVE_RESULT=OK"
+  exit 0
+fi
+
+echo "HISTORICAL_INCIDENT_ARCHIVE_RESULT=FAIL"
+exit 1

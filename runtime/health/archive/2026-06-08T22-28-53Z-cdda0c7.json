@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-06-08T22:28:53Z",
+  "git_sha": "cdda0c7",
+  "health_cache_result": "FAIL",
+  "platform_status": "FAIL",
+  "owner_dashboard": "FAIL",
+  "workforce_status": "FAIL",
+  "root_cause": "historical_noncanonical_root_cause",
+  "next_action": "inspect_failed_checks_then_fix_and_rerun_diagnostics",
+  "next_command": "./ops/bin/as6-root-cause",
+  "root_cause_original": "HEALTH_ANOMALY_CONSECUTIVE_FAILS_RESULT=FAIL",
+  "root_cause_sanitized": true
+}

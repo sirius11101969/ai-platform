@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+SRC="runtime/health/history"
+DST="runtime/health/archive"
+mkdir -p "$DST"
+
+echo "=== AS6 Archive Historical Incidents ==="
+
+python3 - <<'PY'
+import json
+import shutil
+from pathlib import Path
+
+src = Path("runtime/health/history")
+dst = Path("runtime/health/archive")
+dst.mkdir(parents=True, exist_ok=True)
+
+archive_roots = {
+    "historical_noncanonical_root_cause",
+    "historical_gap_recovered",
+    "historical_host_stability_recovered",
+    "historical_timer_recovered",
+    "historical_freeze_recovered",
+    "resolved_or_historical",
+}
+
+moved = 0
+kept = 0
+
+for p in sorted(src.glob("*.json")):
+    try:
+        data = json.loads(p.read_text())
+    except Exception:
+        kept += 1
+        continue
+
+    root = str(data.get("root_cause", ""))
+    should_archive = (
+        root in archive_roots
+        or data.get("root_cause_sanitized") is True
+        or data.get("historical_incident") is True
+    )
+
+    if should_archive:
+        target = dst / p.name
+        if not target.exists():
+            shutil.copy2(p, target)
+        p.unlink()
+        moved += 1
+        print(f"HISTORICAL_INCIDENT_ARCHIVED={p}->{target}")
+    else:
+        kept += 1
+
+print(f"HISTORICAL_INCIDENT_ARCHIVED_COUNT={moved}")
+print(f"HISTORICAL_INCIDENT_ACTIVE_HISTORY_KEPT={kept}")
+print("HISTORICAL_INCIDENT_ARCHIVE_RESULT=OK")
+PY
