@@ -302,6 +302,12 @@
       "source": "auto"
     },
     {
+      "check": "root-cause-token-policy",
+      "path": "ops/bin/as6-diagnose-root-cause-token-policy",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
       "check": "root-cause-v2",
       "path": "ops/bin/as6-diagnose-root-cause-v2",
       "status_visible": true,

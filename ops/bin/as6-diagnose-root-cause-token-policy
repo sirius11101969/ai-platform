@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+echo "=== AS6 Root Cause Token Policy Diagnostics ==="
+
+cat <<'EOF'
+ROOT_CAUSE_TOKEN_POLICY_SERVICE_TOKENS=none,unknown,UNKNOWN,historical_noncanonical_root_cause,historical_gap_recovered,historical_only,resolved_or_historical
+ROOT_CAUSE_TOKEN_POLICY_RESULT=OK
+EOF

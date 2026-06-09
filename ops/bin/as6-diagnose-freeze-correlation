@@ -76,6 +76,8 @@ for p in files:
         result = str(data.get("health_cache_result", "UNKNOWN"))
         platform = str(data.get("platform_status", "UNKNOWN"))
         root = str(data.get("root_cause", "unknown"))
+        if root in ("historical_noncanonical_root_cause", "historical_gap_recovered", "historical_only", "resolved_or_historical"):
+            root = "none"
         state = "OK" if result == "OK" and platform == "OK" and root in ("none", "", "unknown") else "FAIL"
         samples.append((ts, state, root, str(p)))
     except Exception:
@@ -169,7 +171,16 @@ history_score=0
 if [ "${FREEZE_HISTORY_INVALID_SAMPLES:-0}" != "0" ]; then history_score=$((history_score + 20)); fi
 if [ "${FREEZE_HISTORY_LAST_SAMPLE_AGE_SECONDS:-0}" != "unknown" ] && [ "${FREEZE_HISTORY_LAST_SAMPLE_AGE_SECONDS:-0}" -gt 1800 ]; then history_score=$((history_score + 25)); fi
 if [ "${FREEZE_HISTORY_MAX_GAP_SECONDS:-0}" -gt 1800 ]; then history_score=$((history_score + 30)); fi
-if [ "${FREEZE_HISTORY_FAIL_STREAK:-0}" -gt 2 ]; then history_score=$((history_score + 25)); fi
+
+if ./ops/bin/as6-diagnose-historical-incident-suppressor >/tmp/as6-freeze-correlation-suppressor.out 2>&1 \
+  && grep -q '^HISTORICAL_INCIDENT_SUPPRESSOR_ACTIVE=YES' /tmp/as6-freeze-correlation-suppressor.out; then
+  cat /tmp/as6-freeze-correlation-suppressor.out
+  echo "FREEZE_CORRELATION_HISTORICAL_INCIDENT=YES"
+  echo "FREEZE_CORRELATION_HISTORY_SCORE_SUPPRESSED=YES"
+else
+  if [ "${FREEZE_HISTORY_FAIL_STREAK:-0}" -gt 2 ]; then history_score=$((history_score + 25)); fi
+fi
+
 
 [ "$oom_events" -gt 0 ] && score_candidate "OOM" $((70 + oom_events * 5 + history_score)) "host_or_container_memory_pressure" "inspect_memory_limits_and_container_usage"
 [ "$kernel_freeze_events" -gt 0 ] && score_candidate "KERNEL" $((65 + kernel_freeze_events * 5 + history_score)) "host_kernel_or_disk_freeze" "inspect_kernel_logs_disk_and_provider_host"

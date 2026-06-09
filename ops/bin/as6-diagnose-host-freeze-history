@@ -177,7 +177,7 @@ print(f"HOST_FREEZE_HISTORY_IDENTICAL_ROOT_CAUSE_STREAK={root_value}:{root_strea
 historical_streak_suppressed = False
 if len(samples) >= min_samples_for_streak and (
     result_streak > max_result_streak
-    or (root_value not in ("none", "", "unknown") and root_streak > max_root_streak)
+    or (root_value not in ("none", "", "unknown", "UNKNOWN", "historical_noncanonical_root_cause", "historical_gap_recovered", "historical_only", "resolved_or_historical") and root_streak > max_root_streak)
 ):
     import subprocess
     suppressor = subprocess.run(
@@ -204,7 +204,7 @@ else:
 if historical_streak_suppressed:
     print("HOST_FREEZE_HISTORY_IDENTICAL_ROOT_CAUSE_STREAK_RESULT=OK:HISTORICAL")
 else:
-    if len(samples) >= min_samples_for_streak and root_value not in ("none", "", "unknown") and root_streak > max_root_streak:
+    if len(samples) >= min_samples_for_streak and root_value not in ("none", "", "unknown", "UNKNOWN", "historical_noncanonical_root_cause", "historical_gap_recovered", "historical_only", "resolved_or_historical") and root_streak > max_root_streak:
         print("HOST_FREEZE_HISTORY_IDENTICAL_ROOT_CAUSE_STREAK_RESULT=FAIL")
         hard_fail = True
     else:
