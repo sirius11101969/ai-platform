@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+echo "=== AS6 Health History Historical-Only Diagnostics ==="
+
+if ./ops/bin/as6-diagnose-health-cache-timer-freshness >/tmp/as6-historical-only-freshness.out 2>&1; then
+  cat /tmp/as6-historical-only-freshness.out
+else
+  cat /tmp/as6-historical-only-freshness.out
+  echo "HEALTH_HISTORY_HISTORICAL_ONLY_RESULT=FAIL:freshness_check_failed"
+  exit 1
+fi
+
+if ! grep -q '^HEALTH_CACHE_TIMER_FRESHNESS_RESULT=OK' /tmp/as6-historical-only-freshness.out; then
+  echo "HEALTH_HISTORY_HISTORICAL_ONLY_RESULT=FAIL:cache_not_fresh"
+  exit 1
+fi
+
+if ./ops/bin/as6-root-cause-v3-refresh-cache >/tmp/as6-historical-only-root-refresh.out 2>&1; then
+  cat /tmp/as6-historical-only-root-refresh.out
+else
+  cat /tmp/as6-historical-only-root-refresh.out
+  echo "HEALTH_HISTORY_HISTORICAL_ONLY_RESULT=FAIL:root_refresh_failed"
+  exit 1
+fi
+
+root="$(grep -E '^ROOT_CAUSE=' runtime/root-cause/root-cause-v3.env 2>/dev/null | tail -1 | cut -d= -f2- || true)"
+safe="$(grep -E '^SAFE_TO_CHANGE=' runtime/root-cause/root-cause-v3.env 2>/dev/null | tail -1 | cut -d= -f2- || true)"
+confidence="$(grep -E '^CONFIDENCE=' runtime/root-cause/root-cause-v3.env 2>/dev/null | tail -1 | cut -d= -f2- || true)"
+
+echo "HEALTH_HISTORY_HISTORICAL_ONLY_ROOT_CAUSE=${root:-unknown}"
+echo "HEALTH_HISTORY_HISTORICAL_ONLY_SAFE_TO_CHANGE=${safe:-unknown}"
+echo "HEALTH_HISTORY_HISTORICAL_ONLY_CONFIDENCE=${confidence:-unknown}"
+
+if [ "${root:-unknown}" = "none" ] && [ "${safe:-NO}" = "YES" ] && [ "${confidence:-999}" = "0" ]; then
+  echo "HEALTH_ANOMALY_HISTORICAL_ONLY=YES"
+  echo "HEALTH_HISTORY_HISTORICAL_ONLY_RESULT=OK"
+  exit 0
+fi
+
+echo "HEALTH_ANOMALY_HISTORICAL_ONLY=NO"
+echo "HEALTH_HISTORY_HISTORICAL_ONLY_RESULT=FAIL:active_root_cause_or_unsafe"
+exit 1

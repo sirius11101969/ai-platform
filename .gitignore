@@ -17,3 +17,5 @@ ops/bin/*.backup.*
 # AS6 runtime health cache snapshots are generated locally.
 runtime/health/latest.json
 runtime/health/history/*.json
+runtime/root-cause/
+runtime/post-merge/
