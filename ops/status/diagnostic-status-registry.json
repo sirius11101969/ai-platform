@@ -392,6 +392,12 @@
       "source": "auto"
     },
     {
+      "check": "strategic-readiness",
+      "path": "ops/bin/as6-diagnose-strategic-readiness",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
       "check": "unreachable-diagnostic-blocks",
       "path": "ops/bin/as6-diagnose-unreachable-diagnostic-blocks",
       "status_visible": true,

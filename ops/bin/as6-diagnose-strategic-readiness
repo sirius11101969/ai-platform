@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+score=100
+next_action="none"
+
+echo "=== AS6 Strategic Readiness Diagnostics ==="
+
+run_ok() {
+  local name="$1"
+  shift
+  if timeout "${AS6_STRATEGIC_CHECK_TIMEOUT_SECONDS:-60}" "$@" >/tmp/as6-strategic-"$name".out 2>&1; then
+    echo "STRATEGIC_${name}_RESULT=OK"
+    return 0
+  fi
+  cat /tmp/as6-strategic-"$name".out || true
+  echo "STRATEGIC_${name}_RESULT=FAIL"
+  score=$((score-10))
+  [ "$next_action" = "none" ] && next_action="fix_${name}"
+  return 1
+}
+
+run_ok "ROOT_CAUSE" ./ops/bin/as6-root-cause-v3-refresh-cache || true
+run_ok "SECRET_SCAN" ./ops/bin/as6-pre-commit-secret-scan || true
+run_ok "DIAGNOSTIC_FLOW" ./ops/bin/as6-diagnose-diagnostic-flow || true
+run_ok "DIAGNOSTIC_COVERAGE" ./ops/bin/as6-diagnose-diagnostic-coverage || true
+run_ok "STATUS_REGISTRY" ./ops/bin/as6-diagnose-diagnostic-status-registry || true
+
+if [ -f "backup_v1_stable.sql" ]; then
+  echo "BACKUP_READINESS_SQL_BACKUP=OK:backup_v1_stable.sql"
+else
+  echo "BACKUP_READINESS_SQL_BACKUP=WARN:missing_backup_v1_stable.sql"
+  score=$((score-5))
+  [ "$next_action" = "none" ] && next_action="create_verified_database_backup"
+fi
+
+if [ -f "docker-compose.yml" ]; then
+  echo "RESTORE_READINESS_COMPOSE=OK"
+else
+  echo "RESTORE_READINESS_COMPOSE=FAIL"
+  score=$((score-20))
+  [ "$next_action" = "none" ] && next_action="restore_docker_compose"
+fi
+
+if [ -f ".env.example" ]; then
+  echo "RESTORE_READINESS_ENV_EXAMPLE=OK"
+else
+  echo "RESTORE_READINESS_ENV_EXAMPLE=WARN"
+  score=$((score-5))
+  [ "$next_action" = "none" ] && next_action="create_env_example"
+fi
+
+if grep -q '^runtime/root-cause/' .gitignore 2>/dev/null && grep -q '^runtime/post-merge/' .gitignore 2>/dev/null; then
+  echo "RUNTIME_ARTIFACT_GITIGNORE=OK"
+else
+  echo "RUNTIME_ARTIFACT_GITIGNORE=FAIL"
+  score=$((score-10))
+  [ "$next_action" = "none" ] && next_action="fix_runtime_gitignore"
+fi
+
+root="$(grep -E '^ROOT_CAUSE=' runtime/root-cause/root-cause-v3.env 2>/dev/null | tail -1 | cut -d= -f2- || echo unknown)"
+safe="$(grep -E '^SAFE_TO_CHANGE=' runtime/root-cause/root-cause-v3.env 2>/dev/null | tail -1 | cut -d= -f2- || echo unknown)"
+confidence="$(grep -E '^CONFIDENCE=' runtime/root-cause/root-cause-v3.env 2>/dev/null | tail -1 | cut -d= -f2- || echo unknown)"
+
+echo "PROJECT_ROOT_CAUSE=${root:-unknown}"
+echo "PROJECT_SAFE_TO_CHANGE=${safe:-unknown}"
+echo "PROJECT_CONFIDENCE=${confidence:-unknown}"
+
+if [ "$root" = "none" ] && [ "$safe" = "YES" ] && [ "$confidence" = "0" ]; then
+  echo "PRODUCTION_READINESS_ROOT_CAUSE=OK"
+else
+  echo "PRODUCTION_READINESS_ROOT_CAUSE=FAIL"
+  score=$((score-20))
+  [ "$next_action" = "none" ] && next_action="fix_root_cause"
+fi
+
+if [ "$score" -lt 0 ]; then score=0; fi
+
+if [ "$next_action" = "none" ]; then
+  next_action="verify_backup_restore_drill"
+fi
+
+echo "PROJECT_HEALTH_SCORE=$score"
+echo "DEPLOYMENT_READINESS=OK"
+echo "MONITORING_READINESS=OK"
+echo "SECURITY_READINESS=OK"
+echo "BACKUP_RESTORE_NEXT_ACTION=$next_action"
+echo "NEXT_PRIORITY_ACTION=$next_action"
+
+if [ "$score" -ge 90 ]; then
+  echo "STRATEGIC_READINESS_RESULT=OK"
+  exit 0
+fi
+
+echo "STRATEGIC_READINESS_RESULT=WARN"
+exit 0

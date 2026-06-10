@@ -67,6 +67,7 @@ run_check "health-anomaly-root-cause" "./ops/bin/as6-diagnose-health-anomaly-roo
 run_check "root-cause-v3-refresh-cache" "./ops/bin/as6-root-cause-v3-refresh-cache"
 run_check "health-history-gap-suppression" "./ops/bin/as6-diagnose-health-history-gap-suppression"
 run_check "historical-only" "./ops/bin/as6-diagnose-health-history-historical-only"
+run_check "strategic-readiness" "./ops/bin/as6-diagnose-strategic-readiness"
 
 
 echo
