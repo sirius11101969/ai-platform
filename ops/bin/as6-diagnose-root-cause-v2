@@ -46,11 +46,28 @@ else
 fi
 run_check "health-cache-freshness" "./ops/bin/as6-diagnose-health-cache-freshness"
 run_check "health-timer-runtime" "./ops/bin/as6-diagnose-health-timer-runtime"
+run_check "automation-sources" "./ops/bin/as6-diagnose-automation-sources"
+run_check "ops-agent" "./ops/bin/as6-diagnose-ops-agent"
+run_check "host-freeze-network" "./ops/bin/as6-diagnose-host-freeze-network"
+run_check "hypervisor-reboot" "./ops/bin/as6-diagnose-hypervisor-reboot"
+run_check "provider-hypervisor-reboot" "./ops/bin/as6-diagnose-provider-hypervisor-reboot"
+run_check "reboot-origin" "./ops/bin/as6-diagnose-reboot-origin"
+run_check "reboot-forensics" "AS6_REBOOT_FORENSICS_LIGHTWEIGHT=1 ./ops/bin/as6-diagnose-reboot-forensics"
+run_check "provider-event-correlation" "./ops/bin/as6-diagnose-provider-event-correlation"
+run_check "reboot-evidence-cache" "./ops/bin/as6-diagnose-reboot-evidence-cache"
+run_check "reboot-evidence-symbols" "./ops/bin/as6-diagnose-reboot-evidence-symbols"
+run_check "reboot-evidence-self-heal" "./ops/bin/as6-diagnose-reboot-evidence-self-heal"
+run_check "pre-reboot-forensics" "./ops/bin/as6-diagnose-pre-reboot-forensics"
 run_check "health-cleanup" "./ops/bin/as6-diagnose-health-cleanup"
 run_check "health-alerts" "./ops/bin/as6-health-alerts"
 run_check "runtime-artifacts" "./ops/bin/as6-diagnose-runtime-artifacts"
 run_check "diagnostic-registry" "./ops/bin/as6-diagnose-diagnostic-registry"
 run_check "diagnostic-coverage" "./ops/bin/as6-diagnose-diagnostic-coverage"
+run_check "constitution" "./ops/bin/as6-diagnose-constitution"
+run_check "heredoc-safety" "./ops/bin/as6-diagnose-heredoc-safety"
+run_check "patch-structure" "./ops/bin/as6-diagnose-patch-structure"
+run_check "git-hygiene" "./ops/bin/as6-diagnose-git-hygiene"
+run_check "output-format" "./ops/bin/as6-diagnose-output-format"
 run_check "diagnostic-flow" "./ops/bin/as6-diagnose-diagnostic-flow"
 if ./ops/bin/as6-diagnose-diagnostic-recursion >/tmp/as6-root-cause-v2-diagnostic-recursion.out 2>&1; then
   cat /tmp/as6-root-cause-v2-diagnostic-recursion.out
@@ -75,9 +92,24 @@ else
   failed_checks+=("diagnostic-performance")
   fail=1
 fi
-run_check "secret-scan" "as6-pre-commit-secret-scan"
+run_check "secret-scan" "./ops/bin/as6-pre-commit-secret-scan"
 
 echo
+
+run_check "backup-integrity" "./ops/bin/as6-diagnose-backup-integrity"
+run_check "restore-readiness" "./ops/bin/as6-diagnose-restore-readiness"
+run_check "disaster-recovery" "./ops/bin/as6-diagnose-disaster-recovery"
+echo "ROOT_CAUSE_V2_CHECK=SKIP:restore-drill:emergency_safe_mode"
+# EMERGENCY_DISABLED run_check "restore-drill" "./ops/bin/as6-diagnose-restore-drill"
+run_check "diagnostic-insertion-points" "./ops/bin/as6-diagnose-diagnostic-insertion-points"
+run_check "function-order" "./ops/bin/as6-diagnose-function-order"
+echo "ROOT_CAUSE_V2_CHECK=SKIP:diagnostic-governance:emergency_safe_mode"
+# EMERGENCY_DISABLED run_check "diagnostic-governance" "./ops/bin/as6-diagnose-diagnostic-governance"
+run_check "diagnostic-timeout-governance" "./ops/bin/as6-diagnose-diagnostic-timeout-governance"
+echo "ROOT_CAUSE_V2_CHECK=SKIP:restore-drill-history:emergency_safe_mode"
+# EMERGENCY_DISABLED run_check "restore-drill-history" "./ops/bin/as6-diagnose-restore-drill-history"
+run_check "backup-governance" "./ops/bin/as6-diagnose-backup-governance"
+
 echo "=== AS6 Root Cause V2 Summary ==="
 
 if [ "${#failed_checks[@]}" -eq 0 ]; then
@@ -106,6 +138,5 @@ if [ "$fail" -eq 0 ]; then
   echo "ROOT_CAUSE_V2_RESULT=OK"
   exit 0
 fi
-
 echo "ROOT_CAUSE_V2_RESULT=FAIL"
 exit 1

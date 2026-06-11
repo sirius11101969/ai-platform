@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+
+echo "=== AS6 Diagnostic Output Format Diagnostics ==="
+fail=0
+
+tmp="/tmp/as6-output-format.$$"
+mkdir -p "$tmp"
+
+./ops/bin/as6-diagnose-patch-structure >"$tmp/patch-structure.out" 2>&1 || true
+./ops/bin/as6-diagnose-constitution >"$tmp/constitution.out" 2>&1 || true
+./ops/bin/as6-diagnose-git-hygiene >"$tmp/git-hygiene.out" 2>&1 || true
+
+if grep -RInE "PASSnecho|OKecho|FAILecho|PASSFAIL|OKFAIL|FAILPASS|\\\\necho" "$tmp" 2>/dev/null; then
+  echo "AS6_OUTPUT_FORMAT_CORRUPTION=FAIL"
+  fail=1
+else
+  echo "AS6_OUTPUT_FORMAT_CORRUPTION=PASS"
+fi
+
+if grep -RInE "AS6_.*=(PASS|OK|FAIL|WARN)" "$tmp" >/dev/null 2>&1; then
+  echo "AS6_OUTPUT_FORMAT_SIGNALS=PASS"
+else
+  echo "AS6_OUTPUT_FORMAT_SIGNALS=FAIL"
+  fail=1
+fi
+
+rm -rf "$tmp"
+
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_OUTPUT_FORMAT=PASS"
+  echo "AS6_OUTPUT_FORMAT_RESULT=OK"
+  exit 0
+fi
+
+echo "AS6_OUTPUT_FORMAT=FAIL"
+echo "AS6_OUTPUT_FORMAT_RESULT=FAIL"
+exit 1

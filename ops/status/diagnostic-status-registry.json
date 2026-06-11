@@ -44,6 +44,24 @@
       "source": "auto"
     },
     {
+      "check": "automation-sources",
+      "path": "ops/bin/as6-diagnose-automation-sources",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "backup-governance",
+      "path": "ops/bin/as6-diagnose-backup-governance",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "backup-integrity",
+      "path": "ops/bin/as6-diagnose-backup-integrity",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
       "check": "codex-review-scope",
       "path": "ops/bin/as6-diagnose-codex-review-scope",
       "status_visible": true,
@@ -58,6 +76,12 @@
     {
       "check": "command-center",
       "path": "ops/bin/as6-diagnose-command-center",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "constitution",
+      "path": "ops/bin/as6-diagnose-constitution",
       "status_visible": true,
       "source": "auto"
     },
@@ -86,6 +110,18 @@
       "source": "auto"
     },
     {
+      "check": "diagnostic-governance",
+      "path": "ops/bin/as6-diagnose-diagnostic-governance",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "diagnostic-insertion-points",
+      "path": "ops/bin/as6-diagnose-diagnostic-insertion-points",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
       "check": "diagnostic-performance",
       "path": "ops/bin/as6-diagnose-diagnostic-performance",
       "status_visible": true,
@@ -110,8 +146,32 @@
       "source": "auto"
     },
     {
+      "check": "diagnostic-timeout-governance",
+      "path": "ops/bin/as6-diagnose-diagnostic-timeout-governance",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "disaster-recovery",
+      "path": "ops/bin/as6-diagnose-disaster-recovery",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
       "check": "freeze-correlation",
       "path": "ops/bin/as6-diagnose-freeze-correlation",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "function-order",
+      "path": "ops/bin/as6-diagnose-function-order",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "git-hygiene",
+      "path": "ops/bin/as6-diagnose-git-hygiene",
       "status_visible": true,
       "source": "auto"
     },
@@ -248,6 +308,12 @@
       "source": "auto"
     },
     {
+      "check": "heredoc-safety",
+      "path": "ops/bin/as6-diagnose-heredoc-safety",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
       "check": "historical-gap-aging",
       "path": "ops/bin/as6-diagnose-historical-gap-aging",
       "status_visible": true,
@@ -290,8 +356,20 @@
       "source": "auto"
     },
     {
+      "check": "host-freeze-network",
+      "path": "ops/bin/as6-diagnose-host-freeze-network",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
       "check": "host-stability",
       "path": "ops/bin/as6-diagnose-host-stability",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "hypervisor-reboot",
+      "path": "ops/bin/as6-diagnose-hypervisor-reboot",
       "status_visible": true,
       "source": "auto"
     },
@@ -302,14 +380,98 @@
       "source": "auto"
     },
     {
+      "check": "ops-agent",
+      "path": "ops/bin/as6-diagnose-ops-agent",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "output-format",
+      "path": "ops/bin/as6-diagnose-output-format",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "patch-structure",
+      "path": "ops/bin/as6-diagnose-patch-structure",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
       "check": "pr-factory",
       "path": "ops/bin/as6-diagnose-pr-factory",
       "status_visible": true,
       "source": "auto"
     },
     {
+      "check": "pre-reboot-forensics",
+      "path": "ops/bin/as6-diagnose-pre-reboot-forensics",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "provider-event-correlation",
+      "path": "ops/bin/as6-diagnose-provider-event-correlation",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "provider-hypervisor-reboot",
+      "path": "ops/bin/as6-diagnose-provider-hypervisor-reboot",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
       "check": "raw-fail-consumers",
       "path": "ops/bin/as6-diagnose-raw-fail-consumers",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "reboot-evidence-cache",
+      "path": "ops/bin/as6-diagnose-reboot-evidence-cache",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "reboot-evidence-self-heal",
+      "path": "ops/bin/as6-diagnose-reboot-evidence-self-heal",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "reboot-evidence-symbols",
+      "path": "ops/bin/as6-diagnose-reboot-evidence-symbols",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "reboot-forensics",
+      "path": "ops/bin/as6-diagnose-reboot-forensics",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "reboot-origin",
+      "path": "ops/bin/as6-diagnose-reboot-origin",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "restore-drill",
+      "path": "ops/bin/as6-diagnose-restore-drill",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "restore-drill-history",
+      "path": "ops/bin/as6-diagnose-restore-drill-history",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "restore-readiness",
+      "path": "ops/bin/as6-diagnose-restore-readiness",
       "status_visible": true,
       "source": "auto"
     },

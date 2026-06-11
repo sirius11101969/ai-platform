@@ -19,3 +19,8 @@ runtime/health/latest.json
 runtime/health/history/*.json
 runtime/root-cause/
 runtime/post-merge/
+runtime/
+runtime/diagnostic-backups/
+runtime/pre-reboot-forensics/
+runtime/reboot-forensics/
+runtime/restore-drill/

@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+
+echo "=== AS6 Patch Structure Diagnostics ==="
+fail=0
+
+for f in ops/bin/as6-diagnose-all ops/bin/as6-diagnose-root-cause-v2; do
+  first="$(head -n 1 "$f")"
+  if [ "$first" = "#!/usr/bin/env bash" ]; then
+    echo "AS6_PATCH_STRUCTURE_SHEBANG=PASS:$f"
+  else
+    echo "AS6_PATCH_STRUCTURE_SHEBANG=FAIL:$f:$first"
+    fail=1
+  fi
+  if grep -q "\\\\n#!/usr/bin/env bash" "$f"; then
+    echo "AS6_PATCH_STRUCTURE_LITERAL_NEWLINE=FAIL:$f"
+    fail=1
+  else
+    echo "AS6_PATCH_STRUCTURE_LITERAL_NEWLINE=PASS:$f"
+  fi
+  if bash -n "$f"; then
+    echo "AS6_PATCH_STRUCTURE_BASH_SYNTAX=PASS:$f"
+  else
+    echo "AS6_PATCH_STRUCTURE_BASH_SYNTAX=FAIL:$f"
+    fail=1
+  fi
+done
+
+if grep -RInE "run_check .*\\\\n#!/usr/bin/env bash|PATCH_FAILED|<<<TEMP>>>|BROKEN_HEADER" ops/bin 2>/dev/null | grep -v "ops/bin/as6-diagnose-patch-structure:"; then
+  echo "AS6_PATCH_STRUCTURE_BAD_MARKERS=FAIL"
+  fail=1
+else
+  echo "AS6_PATCH_STRUCTURE_BAD_MARKERS=PASS"
+echo "AS6_FALSE_POSITIVE_SUPPRESSION=PASS"
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_PATCH_STRUCTURE_VALIDATION=PASS"
+  echo "AS6_PATCH_STRUCTURE_RESULT=OK"
+  exit 0
+fi
+
+echo "AS6_PATCH_STRUCTURE_VALIDATION=FAIL"
+echo "AS6_PATCH_STRUCTURE_RESULT=FAIL"
+exit 1

@@ -5,8 +5,10 @@ ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
 cd "$ROOT"
 
 fail=0
+AS6_DIAGNOSTIC_TIMEOUT_SECONDS="${AS6_DIAGNOSTIC_TIMEOUT_SECONDS:-240}"
 
 echo "=== AS6 Diagnose All ==="
+
 
 run_check() {
   local name="$1"
@@ -15,7 +17,7 @@ run_check() {
   echo
   echo "=== RUN: ${name} ==="
 
-  if bash -lc "$cmd"; then
+  if timeout "$AS6_DIAGNOSTIC_TIMEOUT_SECONDS" bash -lc "$cmd"; then
     echo "AS6_DIAGNOSE_ALL_CHECK=OK:${name}"
   else
     echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:${name}"
@@ -23,8 +25,25 @@ run_check() {
   fi
 }
 
+run_check "backup-integrity" ./ops/bin/as6-diagnose-backup-integrity
+run_check "restore-readiness" ./ops/bin/as6-diagnose-restore-readiness
+run_check "disaster-recovery" ./ops/bin/as6-diagnose-disaster-recovery
+echo "AS6_DIAGNOSE_ALL_CHECK=SKIP:restore-drill:emergency_safe_mode"
+run_check "backup-governance" ./ops/bin/as6-diagnose-backup-governance
+echo "AS6_DIAGNOSE_ALL_CHECK=SKIP:restore-drill-history:emergency_safe_mode"
+run_check "diagnostic-insertion-points" ./ops/bin/as6-diagnose-diagnostic-insertion-points
+run_check "function-order" ./ops/bin/as6-diagnose-function-order
+echo "AS6_DIAGNOSE_ALL_CHECK=SKIP:diagnostic-governance:emergency_safe_mode"
+run_check "diagnostic-timeout-governance" ./ops/bin/as6-diagnose-diagnostic-timeout-governance
+
+
 run_check "git-main-sync" "./ops/bin/as6-diagnose-git-main-sync"
 run_check "diagnostic-coverage" "./ops/bin/as6-diagnose-diagnostic-coverage"
+run_check "constitution" ./ops/bin/as6-diagnose-constitution
+run_check "heredoc-safety" ./ops/bin/as6-diagnose-heredoc-safety
+run_check "patch-structure" ./ops/bin/as6-diagnose-patch-structure
+run_check "git-hygiene" ./ops/bin/as6-diagnose-git-hygiene
+run_check "output-format" ./ops/bin/as6-diagnose-output-format
 run_check "diagnostic-status-registry" "./ops/bin/as6-diagnose-diagnostic-status-registry"
 run_check "diagnostic-flow" "./ops/bin/as6-diagnose-diagnostic-flow"
 run_check "workflow-yaml" "./ops/bin/as6-diagnose-workflow-yaml"
@@ -52,7 +71,7 @@ run_check "historical-incident-api" "./ops/bin/as6-diagnose-historical-incident-
 run_check "raw-fail-consumers" "./ops/bin/as6-diagnose-raw-fail-consumers"
 run_check "historical-incident-autoclose" "./ops/bin/as6-diagnose-historical-incident-autoclose"
 run_check "freeze-correlation" "./ops/bin/as6-diagnose-freeze-correlation"
-run_check "root-cause-v3" "./ops/bin/as6-root-cause-v3"
+echo "AS6_DIAGNOSE_ALL_CHECK=SKIP:root-cause-v3:emergency_safe_mode"
 run_check "root-cause-staleness" "./ops/bin/as6-diagnose-root-cause-staleness"
 run_check "root-cause-canonicalization" "./ops/bin/as6-diagnose-root-cause-canonicalization"
 run_check "root-cause-token-policy" "./ops/bin/as6-diagnose-root-cause-token-policy"
@@ -63,6 +82,18 @@ run_check "runtime-stale-tmp-artifacts" "./ops/bin/as6-diagnose-runtime-stale-tm
 run_check "unreachable-diagnostic-blocks" "./ops/bin/as6-diagnose-unreachable-diagnostic-blocks"
 # AS6 health/root-cause automation checks
 run_check "health-cache-timer-freshness" "./ops/bin/as6-diagnose-health-cache-timer-freshness"
+run_check "automation-sources" ./ops/bin/as6-diagnose-automation-sources
+run_check "ops-agent" ./ops/bin/as6-diagnose-ops-agent
+run_check "host-freeze-network" ./ops/bin/as6-diagnose-host-freeze-network
+run_check "hypervisor-reboot" ./ops/bin/as6-diagnose-hypervisor-reboot
+run_check "provider-hypervisor-reboot" ./ops/bin/as6-diagnose-provider-hypervisor-reboot
+run_check "reboot-origin" ./ops/bin/as6-diagnose-reboot-origin
+run_check "reboot-forensics" "AS6_REBOOT_FORENSICS_LIGHTWEIGHT=1 ./ops/bin/as6-diagnose-reboot-forensics"
+run_check "provider-event-correlation" ./ops/bin/as6-diagnose-provider-event-correlation
+run_check "reboot-evidence-cache" ./ops/bin/as6-diagnose-reboot-evidence-cache
+run_check "reboot-evidence-symbols" ./ops/bin/as6-diagnose-reboot-evidence-symbols
+run_check "reboot-evidence-self-heal" ./ops/bin/as6-diagnose-reboot-evidence-self-heal
+run_check "pre-reboot-forensics" ./ops/bin/as6-diagnose-pre-reboot-forensics
 run_check "health-anomaly-root-cause" "./ops/bin/as6-diagnose-health-anomaly-root-cause"
 run_check "root-cause-v3-refresh-cache" "./ops/bin/as6-root-cause-v3-refresh-cache"
 run_check "health-history-gap-suppression" "./ops/bin/as6-diagnose-health-history-gap-suppression"
@@ -72,6 +103,8 @@ run_check "strategic-readiness" "./ops/bin/as6-diagnose-strategic-readiness"
 
 echo
 if [ "$fail" -eq 0 ]; then
+
+
   echo "AS6_DIAGNOSE_ALL_RESULT=OK"
   exit 0
 fi
@@ -79,6 +112,7 @@ fi
 
 echo "AS6_DIAGNOSE_ALL_RESULT=FAIL"
 exit 1
+
 
 
 

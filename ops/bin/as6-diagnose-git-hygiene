@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+
+echo "=== AS6 Git Hygiene Diagnostics ==="
+fail=0
+
+status="$(git status --short)"
+
+echo "AS6_GIT_STATUS_READABLE=PASS"
+
+if printf "%s\n" "$status" | grep -Eq "^[?MADRCU ]{1,2} runtime/"; then
+  echo "AS6_GIT_RUNTIME_DIRTY=FAIL"
+  printf "%s\n" "$status" | grep -E "^[?MADRCU ]{1,2} runtime/" || true
+  fail=1
+else
+  echo "AS6_GIT_RUNTIME_DIRTY=PASS"
+fi
+
+if printf "%s\n" "$status" | grep -Eq "runtime/diagnostic-backups|runtime/pre-reboot-forensics|runtime/reboot-forensics|runtime/restore-drill"; then
+  echo "AS6_GIT_FORENSIC_ARTIFACTS_UNTRACKED=FAIL"
+  fail=1
+else
+  echo "AS6_GIT_FORENSIC_ARTIFACTS_UNTRACKED=PASS"
+fi
+
+if [ -f .gitignore ]; then
+  echo "AS6_GITIGNORE_FILE=PASS"
+else
+  echo "AS6_GITIGNORE_FILE=FAIL"
+  fail=1
+fi
+
+for pattern in "runtime/" "runtime/diagnostic-backups/" "runtime/pre-reboot-forensics/" "runtime/reboot-forensics/" "runtime/restore-drill/"; do
+  if grep -qxF "$pattern" .gitignore 2>/dev/null; then
+    echo "AS6_GITIGNORE_RUNTIME_PATTERN=PASS:$pattern"
+  else
+    echo "AS6_GITIGNORE_RUNTIME_PATTERN=FAIL:$pattern"
+    fail=1
+  fi
+done
+
+if git diff --name-only --cached | grep -Eq "^runtime/"; then
+  echo "AS6_GIT_STAGED_RUNTIME=FAIL"
+  fail=1
+else
+  echo "AS6_GIT_STAGED_RUNTIME=PASS"
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_GIT_HYGIENE=PASS"
+  echo "AS6_GIT_HYGIENE_RESULT=OK"
+  exit 0
+fi
+
+echo "AS6_GIT_HYGIENE=FAIL"
+echo "AS6_GIT_HYGIENE_RESULT=FAIL"
+exit 1

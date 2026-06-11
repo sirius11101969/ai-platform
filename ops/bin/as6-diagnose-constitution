@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+
+echo "=== AS6 Autonomous Engineering Constitution Diagnostics ==="
+fail=0
+DOC="docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md"
+GOV="ops/governance/as6-engineering-standard.md"
+
+check_file(){ test -s "$1" && echo "$2=PASS:$1" || { echo "$2=FAIL:$1"; fail=1; }; }
+check_contains(){ grep -q "$2" "$1" && echo "$3=PASS" || { echo "$3=FAIL"; fail=1; }; }
+
+check_file "$DOC" AS6_CONSTITUTION_DOCUMENT
+check_file "$GOV" AS6_GOVERNANCE_MIRROR
+
+for gate in AS6_PRE_INSPECTION AS6_DIAGNOSTICS AS6_FACT_CONFIRMATION AS6_ROOT_CAUSE_CONFIRMED AS6_ROLLBACK_READY AS6_ARCHITECTURE_VALIDATED AS6_POST_FIX_DIAGNOSTICS AS6_PRODUCTION_VALIDATED AS6_FIX_CONFIRMED AS6_COVERAGE_UPDATED AS6_REGISTRY_UPDATED AS6_ERROR_ADDED_TO_DIAGNOSTICS AS6_AUTO_DETECTION_ENABLED AS6_ARTIFACTS_CAPTURED AS6_GIT_CLEAN AS6_PR_ALLOWED AS6_CODEX_REVIEW AS6_GUARDIAN_REVIEW AS6_MERGE_ALLOWED AS6_POST_MERGE_VALIDATED AS6_HEREDOC_SAFETY; do
+  check_contains "$DOC" "$gate" "$gate"
+done
+
+check_contains "$DOC" "Always write correct heredoc" AS6_RULE_HEREDOC_SAFETY
+check_contains "$DOC" "Diagnostics First" AS6_RULE_DIAGNOSTICS_FIRST
+check_contains "$DOC" "Root Cause First" AS6_RULE_ROOT_CAUSE_FIRST
+check_contains "$DOC" "Backup Before Change" AS6_RULE_BACKUP_FIRST
+check_contains "$DOC" "Every incident must become a diagnostic" AS6_RULE_INCIDENT_TO_DIAGNOSTIC
+check_contains "$DOC" "Diagnostics must show only real problems" AS6_RULE_REAL_PROBLEMS_ONLY
+
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_CONSTITUTION_GATE=PASS"
+  echo "AS6_CONSTITUTION_RESULT=OK"
+  exit 0
+fi
+
+echo "AS6_CONSTITUTION_GATE=FAIL"
+echo "AS6_CONSTITUTION_RESULT=FAIL"
+exit 1
