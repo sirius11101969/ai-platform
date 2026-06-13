@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+echo "=== AS6 Python Variable Contract Diagnostics ==="
+helper="ops/lib/as6-python-variable-contract-check.py"
+if [ -s "$helper" ]; then echo "AS6_VARIABLE_CONTRACT_HELPER=PASS:$helper"; else echo "AS6_VARIABLE_CONTRACT_HELPER=FAIL:$helper"; exit 1; fi
+python3 "$helper" ops/lib/as6-diagnostic-contract-count.py ops/lib/as6-diagnostic-registration-check.py ops/lib/as6-root-cause-remediation-check.py ops/lib/as6-root-cause-router-emit.py ops/lib/as6-python-variable-contract-check.py ops/lib/as6-nameerror-signature-check.py ops/lib/as6-generated-python-safety-check.py

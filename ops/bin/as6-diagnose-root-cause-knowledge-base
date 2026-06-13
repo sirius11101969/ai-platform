@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+
+echo "=== AS6 Root Cause Knowledge Base Diagnostics ==="
+fail=0
+catalog="ops/governance/root-cause-catalog.json"
+
+if [ -s "$catalog" ]; then echo "AS6_ROOT_CAUSE_CATALOG_EXISTS=PASS"; else echo "AS6_ROOT_CAUSE_CATALOG_EXISTS=FAIL"; fail=1; fi
+
+python3 - "$catalog" <<'AS6_RCKB_DIAGNOSTIC_PY'
+import json, sys
+from pathlib import Path
+p = Path(sys.argv[1])
+required = ["severity", "symptoms", "verification", "fix", "rollback", "prevention"]
+if not p.exists() or p.stat().st_size == 0:
+    print("AS6_ROOT_CAUSE_KNOWLEDGE_BASE=FAIL")
+    raise SystemExit(1)
+data = json.loads(p.read_text())
+fail = False
+print(f"AS6_ROOT_CAUSE_CATALOG_COUNT={len(data)}")
+for key, entry in sorted(data.items()):
+    if entry.get("class") != key:
+        print(f"AS6_ROOT_CAUSE_CLASS_MATCH=FAIL:{key}")
+        fail = True
+    else:
+        print(f"AS6_ROOT_CAUSE_CLASS_MATCH=PASS:{key}")
+    for field in required:
+        value = entry.get(field)
+        ok = bool(value) and (not isinstance(value, list) or len(value) > 0)
+        print(f"AS6_ROOT_CAUSE_HAS_{field.upper()}={'PASS' if ok else 'FAIL'}:{key}")
+        if not ok:
+            fail = True
+if fail:
+    print("AS6_ROOT_CAUSE_KNOWLEDGE_BASE=FAIL")
+    print("AS6_ROOT_CAUSE_KNOWLEDGE_BASE_RESULT=FAIL")
+    raise SystemExit(1)
+print("AS6_ROOT_CAUSE_KNOWLEDGE_BASE=PASS")
+print("AS6_ROOT_CAUSE_KNOWLEDGE_BASE_RESULT=OK")
+AS6_RCKB_DIAGNOSTIC_PY

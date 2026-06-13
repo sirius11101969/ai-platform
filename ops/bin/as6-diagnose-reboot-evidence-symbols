@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+
+echo "=== AS6 Reboot Evidence Symbol Diagnostics ==="
+
+fail=0
+target="ops/bin/as6-reboot-evidence-cache"
+
+if grep -q 'local_cmd_raw' "$target"; then
+  echo "REBOOT_EVIDENCE_SYMBOL_LOCAL_CMD_RAW=OK"
+else
+  echo "REBOOT_EVIDENCE_SYMBOL_LOCAL_CMD_RAW=FAIL"
+  fail=1
+fi
+
+if grep -Eq '[^_]local_cmd([^_a-zA-Z0-9]|$)' "$target"; then
+  echo "REBOOT_EVIDENCE_SYMBOL_STALE_LOCAL_CMD=FAIL"
+  grep -nE '[^_]local_cmd([^_a-zA-Z0-9]|$)' "$target" || true
+  fail=1
+else
+  echo "REBOOT_EVIDENCE_SYMBOL_STALE_LOCAL_CMD=OK"
+fi
+
+if bash -n "$target"; then
+  echo "REBOOT_EVIDENCE_SYMBOL_SHELL_SYNTAX=OK"
+else
+  echo "REBOOT_EVIDENCE_SYMBOL_SHELL_SYNTAX=FAIL"
+  fail=1
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "REBOOT_EVIDENCE_SYMBOL_RESULT=OK"
+  exit 0
+fi
+
+echo "REBOOT_EVIDENCE_SYMBOL_RESULT=FAIL"
+exit 1

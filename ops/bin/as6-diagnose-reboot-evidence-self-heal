@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+
+echo "=== AS6 Reboot Evidence Self-Heal Diagnostics ==="
+
+fail=0
+service="as6-reboot-forensics-cache.service"
+timer="as6-reboot-forensics-cache.timer"
+
+if systemctl is-active "$timer" >/dev/null 2>&1; then
+  echo "REBOOT_EVIDENCE_SELF_HEAL_TIMER_ACTIVE=OK"
+else
+  echo "REBOOT_EVIDENCE_SELF_HEAL_TIMER_ACTIVE=FAIL"
+  fail=1
+fi
+
+if systemctl is-failed "$service" >/dev/null 2>&1; then
+  echo "REBOOT_EVIDENCE_SELF_HEAL_FAILED_STATE=FOUND"
+  systemctl reset-failed "$service" || true
+  echo "REBOOT_EVIDENCE_SELF_HEAL_RESET_FAILED=OK"
+else
+  echo "REBOOT_EVIDENCE_SELF_HEAL_FAILED_STATE=OK:none"
+fi
+
+if ./ops/bin/as6-reboot-evidence-cache >/tmp/as6-reboot-evidence-self-heal-run.out 2>&1; then
+  cat /tmp/as6-reboot-evidence-self-heal-run.out
+  echo "REBOOT_EVIDENCE_SELF_HEAL_CACHE_RUN=OK"
+else
+  cat /tmp/as6-reboot-evidence-self-heal-run.out || true
+  echo "REBOOT_EVIDENCE_SELF_HEAL_CACHE_RUN=FAIL"
+  fail=1
+fi
+
+classification="$(python3 - <<'PY'
+import json
+try:
+    print(json.load(open("runtime/reboot-forensics/provider-correlation.json")).get("classification","unknown"))
+except Exception:
+    print("unknown")
+PY
+)"
+confidence="$(python3 - <<'PY'
+import json
+try:
+    print(json.load(open("runtime/reboot-forensics/provider-correlation.json")).get("confidence",0))
+except Exception:
+    print(0)
+PY
+)"
+
+echo "REBOOT_EVIDENCE_SELF_HEAL_CLASSIFICATION=$classification"
+echo "REBOOT_EVIDENCE_SELF_HEAL_CONFIDENCE=$confidence"
+
+if [ "$classification" = "PROVIDER_HYPERVISOR_REBOOT" ] && [ "$confidence" -ge 90 ]; then
+  echo "REBOOT_EVIDENCE_SELF_HEAL_CLASSIFIER=OK"
+else
+  echo "REBOOT_EVIDENCE_SELF_HEAL_CLASSIFIER=WARN:inspect_provider_correlation"
+fi
+
+if systemctl is-failed "$service" >/dev/null 2>&1; then
+  echo "REBOOT_EVIDENCE_SELF_HEAL_SERVICE_STATE=FAIL"
+  fail=1
+else
+  echo "REBOOT_EVIDENCE_SELF_HEAL_SERVICE_STATE=OK"
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "REBOOT_EVIDENCE_SELF_HEAL_RESULT=OK"
+  exit 0
+fi
+
+echo "REBOOT_EVIDENCE_SELF_HEAL_RESULT=FAIL"
+exit 1

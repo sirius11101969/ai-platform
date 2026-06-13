@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+
+echo "=== AS6 Restore Readiness Diagnostics ==="
+
+fail=0
+
+[ -f docker-compose.yml ] && echo "RESTORE_READINESS_COMPOSE=OK" || { echo "RESTORE_READINESS_COMPOSE=FAIL"; fail=1; }
+[ -f .env.example ] && echo "RESTORE_READINESS_ENV_EXAMPLE=OK" || { echo "RESTORE_READINESS_ENV_EXAMPLE=FAIL"; fail=1; }
+[ -f backup_v1_stable.sql ] && echo "RESTORE_READINESS_DB_BACKUP=OK:backup_v1_stable.sql" || { echo "RESTORE_READINESS_DB_BACKUP=FAIL"; fail=1; }
+
+if grep -Eq 'postgres|POSTGRES|DATABASE' docker-compose.yml .env.example 2>/dev/null; then
+  echo "RESTORE_READINESS_DATABASE_CONFIG=OK"
+else
+  echo "RESTORE_READINESS_DATABASE_CONFIG=WARN:no_database_markers_found"
+fi
+
+if docker compose config >/tmp/as6-restore-compose-config.out 2>&1; then
+  echo "RESTORE_READINESS_COMPOSE_CONFIG=OK"
+else
+  echo "RESTORE_READINESS_COMPOSE_CONFIG=FAIL"
+  fail=1
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "RESTORE_READINESS_RESULT=OK"
+  exit 0
+fi
+
+echo "RESTORE_READINESS_RESULT=FAIL"
+exit 1

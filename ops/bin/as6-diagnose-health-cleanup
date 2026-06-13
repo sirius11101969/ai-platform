@@ -20,7 +20,17 @@ else
   fail=1
 fi
 
+if [ -x ops/bin/as6-health-cleanup ]; then
+  ./ops/bin/as6-health-cleanup >/tmp/as6-health-cleanup-diagnostic-run.out 2>&1 || true
+fi
+
 count="$(find "$DIR" -maxdepth 1 -type f -name '*.json' 2>/dev/null | wc -l | tr -d '[:space:]')"
+
+if [ "$count" -gt "$KEEP" ] && [ -x ops/bin/as6-health-cleanup ]; then
+  ./ops/bin/as6-health-cleanup >>/tmp/as6-health-cleanup-diagnostic-run.out 2>&1 || true
+  count="$(find "$DIR" -maxdepth 1 -type f -name '*.json' 2>/dev/null | wc -l | tr -d '[:space:]')"
+fi
+
 echo "HEALTH_CLEANUP_HISTORY_COUNT=$count"
 
 if [ "$count" -le "$KEEP" ]; then

@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+
+echo "=== AS6 Patch Mode Diagnostics ==="
+fail=0
+
+if grep -q "AS6_PATCH_MODE=PASS" docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md; then echo "AS6_PATCH_MODE_RULE=PASS"; else echo "AS6_PATCH_MODE_RULE=FAIL"; fail=1; fi
+if grep -RIn "base64.b64decode" ops .github 2>/dev/null | grep -Ev "ops/bin/as6-diagnose-patch-mode|ops/bin/as6-diagnose-command-length-safety|ops/governance/|docs/"; then echo "AS6_NO_GIANT_BASE64_PATCH=FAIL"; fail=1; else echo "AS6_NO_GIANT_BASE64_PATCH=PASS"; fi
+if grep -RInE "python3 -c .{500,}|base64.{500,}" ops .github 2>/dev/null | grep -Ev "ops/bin/as6-diagnose-patch-mode|ops/bin/as6-diagnose-command-length-safety|ops/governance/|docs/"; then echo "AS6_COMMAND_LENGTH_SAFETY=FAIL"; fail=1; else echo "AS6_COMMAND_LENGTH_SAFETY=PASS"; fi
+if grep -RInE "<<'[^']+'" ops .github 2>/dev/null | grep -v "ops/bin/as6-diagnose-patch-mode" | grep -q "<<.*EOF.*<<"; then echo "AS6_NO_NESTED_HEREDOC_PATCH=FAIL"; fail=1; else echo "AS6_NO_NESTED_HEREDOC_PATCH=PASS"; fi
+if grep -q "AS6_CODE_GENERATION_SAFETY=PASS" docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md; then echo "AS6_CODE_GENERATION_SAFETY=PASS"; else echo "AS6_CODE_GENERATION_SAFETY=FAIL"; fail=1; fi
+if [ "$fail" -eq 0 ]; then echo "AS6_PATCH_MODE=PASS"; echo "AS6_PATCH_MODE_RESULT=OK"; exit 0; fi
+echo "AS6_PATCH_MODE=FAIL"; echo "AS6_PATCH_MODE_RESULT=FAIL"; exit 1

@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+
+echo "=== AS6 Reboot Evidence Cache Diagnostics ==="
+
+fail=0
+base="runtime/reboot-forensics"
+cache="$base/provider-correlation.json"
+
+[ -x ops/bin/as6-reboot-evidence-cache ] \
+  && echo "REBOOT_EVIDENCE_COLLECTOR=OK" \
+  || { echo "REBOOT_EVIDENCE_COLLECTOR=FAIL"; fail=1; }
+
+if ./ops/bin/as6-reboot-evidence-cache >/tmp/as6-reboot-evidence-cache.out 2>&1; then
+  cat /tmp/as6-reboot-evidence-cache.out
+  echo "REBOOT_EVIDENCE_COLLECTOR_RUN=OK"
+else
+  cat /tmp/as6-reboot-evidence-cache.out || true
+  echo "REBOOT_EVIDENCE_COLLECTOR_RUN=FAIL"
+  fail=1
+fi
+
+[ -s "$cache" ] \
+  && echo "REBOOT_EVIDENCE_PROVIDER_CORRELATION=OK:$cache" \
+  || { echo "REBOOT_EVIDENCE_PROVIDER_CORRELATION=FAIL:$cache"; fail=1; }
+
+classification="$(python3 - <<'PY'
+import json
+try:
+    print(json.load(open("runtime/reboot-forensics/provider-correlation.json")).get("classification","unknown"))
+except Exception:
+    print("unknown")
+PY
+)"
+confidence="$(python3 - <<'PY'
+import json
+try:
+    print(json.load(open("runtime/reboot-forensics/provider-correlation.json")).get("confidence",0))
+except Exception:
+    print(0)
+PY
+)"
+
+echo "REBOOT_EVIDENCE_CLASSIFICATION=$classification"
+echo "REBOOT_EVIDENCE_CONFIDENCE=$confidence"
+
+false_local="$(python3 - <<'PY2'
+import json
+try:
+    print("YES" if json.load(open("runtime/reboot-forensics/provider-correlation.json")).get("signals",{}).get("false_local_reboot_match") else "NO")
+except Exception:
+    print("UNKNOWN")
+PY2
+)"
+hypervisor_priority="$(python3 - <<'PY2'
+import json
+try:
+    print("YES" if json.load(open("runtime/reboot-forensics/provider-correlation.json")).get("signals",{}).get("hypervisor_priority_applied") else "NO")
+except Exception:
+    print("UNKNOWN")
+PY2
+)"
+echo "REBOOT_EVIDENCE_FALSE_LOCAL_MATCH=$false_local"
+echo "REBOOT_EVIDENCE_HYPERVISOR_PRIORITY=$hypervisor_priority"
+
+count="$(find "$base/evidence" -mindepth 1 -maxdepth 1 -type d ! -name latest 2>/dev/null | wc -l | tr -d ' ')"
+echo "REBOOT_EVIDENCE_HISTORY_COUNT=$count"
+
+if [ "$count" -le 30 ]; then
+  echo "REBOOT_EVIDENCE_RETENTION=OK"
+else
+  echo "REBOOT_EVIDENCE_RETENTION=FAIL"
+  fail=1
+fi
+
+if systemctl cat as6-reboot-forensics-cache.service >/tmp/as6-reboot-evidence-service.unit 2>&1; then
+  echo "REBOOT_EVIDENCE_SYSTEMD_SERVICE=OK"
+else
+  echo "REBOOT_EVIDENCE_SYSTEMD_SERVICE=WARN:not_installed"
+fi
+
+if systemctl cat as6-reboot-forensics-cache.timer >/tmp/as6-reboot-evidence-timer.unit 2>&1; then
+  echo "REBOOT_EVIDENCE_SYSTEMD_TIMER=OK"
+else
+  echo "REBOOT_EVIDENCE_SYSTEMD_TIMER=WARN:not_installed"
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "REBOOT_EVIDENCE_CACHE_RESULT=OK"
+  exit 0
+fi
+
+echo "REBOOT_EVIDENCE_CACHE_RESULT=FAIL"
+exit 1

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+echo "=== AS6 Generated Python Contracts Diagnostics ==="
+helper="ops/lib/as6-generated-python-contracts-check.py"
+if [ -s "$helper" ]; then echo "AS6_GENERATED_PYTHON_CONTRACTS_HELPER=PASS:$helper"; else echo "AS6_GENERATED_PYTHON_CONTRACTS_HELPER=FAIL:$helper"; exit 1; fi
+PYTHONDONTWRITEBYTECODE=1 python3 "$helper"
+rm -rf ops/lib/__pycache__
+find ops -name "*.pyc" -delete 2>/dev/null || true

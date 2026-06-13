@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+echo "=== AS6 Python Artifact Git Hygiene Diagnostics ==="
+helper="ops/lib/as6-python-artifact-git-hygiene-check.py"
+if [ -s "$helper" ]; then echo "AS6_PYTHON_ARTIFACT_GIT_HYGIENE_HELPER=PASS:$helper"; else echo "AS6_PYTHON_ARTIFACT_GIT_HYGIENE_HELPER=FAIL:$helper"; exit 1; fi
+python3 "$helper"

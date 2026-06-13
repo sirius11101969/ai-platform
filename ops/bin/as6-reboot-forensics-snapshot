@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+
+mkdir -p runtime/reboot-forensics/history
+
+ts="$(date -u +%Y-%m-%dT%H-%M-%SZ)"
+out="runtime/reboot-forensics/history/${ts}.log"
+latest="runtime/reboot-forensics/latest.log"
+
+{
+  echo "=== AS6 Reboot Forensics Snapshot ==="
+  echo "REBOOT_FORENSICS_TIMESTAMP=$ts"
+  echo "REBOOT_FORENSICS_HOSTNAME=$(hostname)"
+  echo "REBOOT_FORENSICS_UPTIME=$(uptime || true)"
+
+  echo
+  echo "=== LAST REBOOTS ==="
+  last -x | head -80 || true
+
+  echo
+  echo "=== CURRENT BOOT SHUTDOWN/REBOOT SIGNALS ==="
+  journalctl -b --no-pager | grep -Ei 'reboot|shutdown|poweroff|halt|hypervisor initiated|systemd-logind|reboot.target|poweroff.target' | tail -300 || true
+
+  echo
+  echo "=== PREVIOUS BOOT SHUTDOWN/REBOOT SIGNALS ==="
+  journalctl -b -1 --no-pager 2>/dev/null | grep -Ei 'reboot|shutdown|poweroff|halt|hypervisor initiated|systemd-logind|reboot.target|poweroff.target' | tail -300 || true
+
+  echo
+  echo "=== AUDIT DANGEROUS EVENTS ==="
+  if command -v ausearch >/dev/null 2>&1; then
+    ausearch -k as6-reboot-syscall -k as6-reboot-command -k as6-shutdown-command -k as6-systemctl-command -i 2>/dev/null \
+      | grep -E 'proctitle=.*(reboot|shutdown|poweroff|halt|systemctl .*reboot|systemctl .*poweroff|systemctl .*halt|systemctl .*isolate .*reboot.target|systemctl .*start .*reboot.target)' \
+      | tail -200 || true
+  else
+    echo "ausearch not installed"
+  fi
+
+  echo
+  echo "=== BEGET AGENT ==="
+  systemctl status beget-agent --no-pager -l 2>/dev/null || true
+  journalctl -u beget-agent --no-pager -n 200 2>/dev/null || true
+
+  echo
+  echo "=== LOCAL REBOOT COMMANDS ==="
+  grep -RniE 'systemctl reboot|reboot($| )|shutdown -r|shutdown now|poweroff|halt|init 6|reboot.target|poweroff.target' \
+    /var/www/ai-platform /usr/local/bin /etc/systemd/system /etc/cron* /opt 2>/dev/null \
+    | grep -Ev 'runtime/diagnostic-backups|runtime/reboot-forensics|as6-diagnose|as6-reboot-forensics|last reboot|Hypervisor Reboot' || true
+} > "$out"
+
+cp -a "$out" "$latest"
+
+echo "REBOOT_FORENSICS_SNAPSHOT=$out"
+echo "REBOOT_FORENSICS_LATEST=$latest"
+echo "REBOOT_FORENSICS_SNAPSHOT_RESULT=OK"

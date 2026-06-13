@@ -55,10 +55,15 @@ else
   echo "DIAGNOSTIC_PERFORMANCE_NESTED_DASHBOARD_CALLS=OK"
 fi
 
-if grep -q 'timeout 240' ops/bin/as6-diagnose-all; then
+if grep -q 'timeout "\$AS6_DIAGNOSTIC_TIMEOUT_SECONDS" bash -lc "\$cmd"' ops/bin/as6-diagnose-all; then
   echo "DIAGNOSTIC_PERFORMANCE_DIAGNOSE_ALL_TIMEOUT=OK"
+  echo "DIAGNOSTIC_PERFORMANCE_TIMEOUT_PATTERN=OK:dynamic_policy"
+elif grep -q 'timeout 240' ops/bin/as6-diagnose-all; then
+  echo "DIAGNOSTIC_PERFORMANCE_DIAGNOSE_ALL_TIMEOUT=OK"
+  echo "DIAGNOSTIC_PERFORMANCE_TIMEOUT_PATTERN=OK:legacy_static_policy"
 else
   echo "DIAGNOSTIC_PERFORMANCE_DIAGNOSE_ALL_TIMEOUT=WARN:not_wrapped_in_timeout"
+  echo "DIAGNOSTIC_PERFORMANCE_TIMEOUT_PATTERN=FAIL:not_found"
 fi
 
 start="$(date +%s)"

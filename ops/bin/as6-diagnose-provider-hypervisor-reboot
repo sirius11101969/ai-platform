@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "=== AS6 Provider Hypervisor Reboot Diagnostics ==="
+
+fail=0
+
+if journalctl -b -1 --no-pager 2>/dev/null | grep -qi 'hypervisor initiated shutdown'; then
+  echo "PROVIDER_HYPERVISOR_REBOOT_SIGNATURE=FAIL:previous_boot"
+  echo "PROVIDER_HYPERVISOR_REBOOT_ROOT_CAUSE=beget_or_provider_hypervisor_initiated_shutdown"
+  fail=1
+else
+  echo "PROVIDER_HYPERVISOR_REBOOT_SIGNATURE=OK"
+  echo "PROVIDER_HYPERVISOR_REBOOT_ROOT_CAUSE=none"
+fi
+
+if systemctl cat beget-agent.service >/tmp/as6-provider-beget-agent.unit 2>&1; then
+  echo "PROVIDER_AGENT_UNIT=OK:beget-agent.service"
+else
+  echo "PROVIDER_AGENT_UNIT=WARN:not_found"
+fi
+
+if pgrep -af '/usr/sbin/beget-agent' >/tmp/as6-provider-beget-agent.ps 2>/dev/null; then
+  echo "PROVIDER_AGENT_PROCESS=RUNNING"
+else
+  echo "PROVIDER_AGENT_PROCESS=WARN:not_running"
+fi
+
+if strings /usr/sbin/beget-agent 2>/dev/null | grep -qi 'hypervisor initiated shutdown'; then
+  echo "PROVIDER_AGENT_HYPERVISOR_STRING=OK"
+else
+  echo "PROVIDER_AGENT_HYPERVISOR_STRING=WARN:not_detected"
+fi
+
+if strings /usr/sbin/beget-agent 2>/dev/null | grep -qi 'GuestAgentService.*Shutdown\|CommandProcessor.*Shutdown'; then
+  echo "PROVIDER_AGENT_SHUTDOWN_HANDLER=OK"
+else
+  echo "PROVIDER_AGENT_SHUTDOWN_HANDLER=WARN:not_detected"
+fi
+
+last reboot | head -10 | sed 's/^/PROVIDER_REBOOT_HISTORY=/'
+
+reboot_count="$(last reboot | head -10 | wc -l | tr -d ' ')"
+echo "PROVIDER_REBOOT_HISTORY_COUNT=$reboot_count"
+
+if journalctl -k --no-pager | grep -Eiq 'oom|out of memory|oom-killer'; then
+  echo "PROVIDER_REBOOT_LOCAL_OOM=FAIL"
+else
+  echo "PROVIDER_REBOOT_LOCAL_OOM=OK"
+fi
+
+if journalctl -k --no-pager | grep -Eiq 'soft lockup|hard lockup|hung task|blocked for more than'; then
+  echo "PROVIDER_REBOOT_LOCAL_KERNEL_LOCKUP=FAIL"
+else
+  echo "PROVIDER_REBOOT_LOCAL_KERNEL_LOCKUP=OK"
+fi
+
+if journalctl -k --no-pager | grep -Eiq 'I/O error|blk_update_request|EXT4-fs error|Buffer I/O error'; then
+  echo "PROVIDER_REBOOT_LOCAL_DISK_ERRORS=FAIL"
+else
+  echo "PROVIDER_REBOOT_LOCAL_DISK_ERRORS=OK"
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "PROVIDER_HYPERVISOR_REBOOT_RESULT=OK"
+  exit 0
+fi
+
+echo "PROVIDER_HYPERVISOR_REBOOT_RESULT=FAIL"
+exit 1

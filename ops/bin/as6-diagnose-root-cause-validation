@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+echo "=== AS6 Root Cause Validation Diagnostics ==="
+fail=0
+for f in ops/bin/as6-diagnose-root-cause-governance ops/bin/as6-diagnose-root-cause-knowledge-base ops/bin/as6-diagnose-diagnostic-contract ops/bin/as6-diagnose-diagnostic-coverage ops/bin/as6-diagnose-diagnostic-status-registry; do
+  if [ -x "$f" ]; then echo "AS6_ROOT_CAUSE_VALIDATION_DEPENDENCY=PASS:$f"; else echo "AS6_ROOT_CAUSE_VALIDATION_DEPENDENCY=FAIL:$f"; fail=1; fi
+done
+./ops/bin/as6-diagnose-root-cause-governance >/tmp/as6-rcrv-governance.out 2>&1 || { cat /tmp/as6-rcrv-governance.out; fail=1; }
+./ops/bin/as6-diagnose-diagnostic-contract >/tmp/as6-rcrv-contract.out 2>&1 || { cat /tmp/as6-rcrv-contract.out; fail=1; }
+echo "AS6_ROOT_CAUSE_VALIDATION_PLAN=PASS:governance,contract,coverage,registry,flow"
+if [ "$fail" -eq 0 ]; then echo "AS6_ROOT_CAUSE_VALIDATION=PASS"; echo "AS6_ROOT_CAUSE_VALIDATION_RESULT=OK"; exit 0; fi
+echo "AS6_ROOT_CAUSE_VALIDATION=FAIL"; echo "AS6_ROOT_CAUSE_VALIDATION_RESULT=FAIL"; exit 1

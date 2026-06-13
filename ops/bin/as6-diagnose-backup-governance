@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+
+echo "=== AS6 Backup Governance Diagnostics ==="
+
+fail=0
+backup="backup_v1_stable.sql"
+max_age_days="${AS6_BACKUP_MAX_AGE_DAYS:-30}"
+min_size_bytes="${AS6_BACKUP_MIN_SIZE_BYTES:-100000}"
+
+if [ -s "$backup" ]; then
+  echo "BACKUP_GOVERNANCE_FILE=OK:$backup"
+else
+  echo "BACKUP_GOVERNANCE_FILE=FAIL:$backup"
+  fail=1
+fi
+
+if [ -s "$backup" ]; then
+  size="$(stat -c%s "$backup")"
+  echo "BACKUP_GOVERNANCE_SIZE_BYTES=$size"
+  if [ "$size" -ge "$min_size_bytes" ]; then
+    echo "BACKUP_GOVERNANCE_SIZE_POLICY=OK"
+  else
+    echo "BACKUP_GOVERNANCE_SIZE_POLICY=FAIL"
+    fail=1
+  fi
+fi
+
+if [ -s "$backup" ]; then
+  age_days="$(( ( $(date +%s) - $(stat -c %Y "$backup") ) / 86400 ))"
+  echo "BACKUP_GOVERNANCE_AGE_DAYS=$age_days"
+  if [ "$age_days" -le "$max_age_days" ]; then
+    echo "BACKUP_GOVERNANCE_AGE_POLICY=OK"
+  else
+    echo "BACKUP_GOVERNANCE_AGE_POLICY=WARN:backup_older_than_${max_age_days}_days"
+  fi
+fi
+
+if [ -d runtime/diagnostic-backups ]; then
+  echo "BACKUP_GOVERNANCE_DIAGNOSTIC_BACKUPS_DIR=OK"
+else
+  echo "BACKUP_GOVERNANCE_DIAGNOSTIC_BACKUPS_DIR=OK:not_created_yet"
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "BACKUP_GOVERNANCE_RESULT=OK"
+  exit 0
+fi
+
+echo "BACKUP_GOVERNANCE_RESULT=FAIL"
+exit 1

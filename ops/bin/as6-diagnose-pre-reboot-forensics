@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "=== AS6 Pre-Reboot Forensics Diagnostics ==="
+
+fail=0
+DIR="/var/www/ai-platform/runtime/pre-reboot-forensics"
+
+systemctl is-active as6-pre-reboot-forensics.timer >/dev/null 2>&1 \
+  && echo "PRE_REBOOT_FORENSICS_TIMER_ACTIVE=OK" \
+  || { echo "PRE_REBOOT_FORENSICS_TIMER_ACTIVE=FAIL"; fail=1; }
+
+systemctl cat as6-pre-reboot-forensics.service >/dev/null 2>&1 \
+  && echo "PRE_REBOOT_FORENSICS_SERVICE_UNIT=OK" \
+  || { echo "PRE_REBOOT_FORENSICS_SERVICE_UNIT=FAIL"; fail=1; }
+
+test -x /usr/local/bin/as6-pre-reboot-snapshot \
+  && echo "PRE_REBOOT_FORENSICS_COLLECTOR=OK" \
+  || { echo "PRE_REBOOT_FORENSICS_COLLECTOR=FAIL"; fail=1; }
+
+test -d "$DIR" \
+  && echo "PRE_REBOOT_FORENSICS_DIR=OK:$DIR" \
+  || { echo "PRE_REBOOT_FORENSICS_DIR=FAIL:$DIR"; fail=1; }
+
+if /usr/local/bin/as6-pre-reboot-snapshot >/tmp/as6-pre-reboot-snapshot.out 2>&1; then
+  echo "PRE_REBOOT_FORENSICS_SNAPSHOT_RUN=OK"
+else
+  cat /tmp/as6-pre-reboot-snapshot.out || true
+  echo "PRE_REBOOT_FORENSICS_SNAPSHOT_RUN=FAIL"
+  fail=1
+fi
+
+test -s "$DIR/latest.log" \
+  && echo "PRE_REBOOT_FORENSICS_LATEST=OK" \
+  || { echo "PRE_REBOOT_FORENSICS_LATEST=FAIL"; fail=1; }
+
+count="$(find "$DIR" -maxdepth 1 -type f -name '*.log' 2>/dev/null | wc -l | tr -d ' ')"
+echo "PRE_REBOOT_FORENSICS_HISTORY_COUNT=$count"
+
+if [ "$count" -gt 720 ]; then
+  find "$DIR" -maxdepth 1 -type f -name '*.log' -printf '%T@ %p\n' | sort -nr | awk 'NR>720{print $2}' | xargs -r rm -f --
+  echo "PRE_REBOOT_FORENSICS_RETENTION=OK:trimmed"
+else
+  echo "PRE_REBOOT_FORENSICS_RETENTION=OK"
+fi
+
+if grep -q "===== NETWORK =====" "$DIR/latest.log" && grep -q "===== SOCKETS =====" "$DIR/latest.log"; then
+  echo "PRE_REBOOT_FORENSICS_CONTENT=OK"
+else
+  echo "PRE_REBOOT_FORENSICS_CONTENT=FAIL"
+  fail=1
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "PRE_REBOOT_FORENSICS_RESULT=OK"
+  exit 0
+fi
+
+echo "PRE_REBOOT_FORENSICS_RESULT=FAIL"
+exit 1

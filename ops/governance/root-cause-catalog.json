@@ -1,0 +1,1474 @@
+{
+  "BACKUP_ARTIFACT_FALSE_POSITIVE": {
+    "class": "BACKUP_ARTIFACT_FALSE_POSITIVE",
+    "fix": [
+      "exclude backup paths from active-source diagnostics"
+    ],
+    "prevention": [
+      "backup_artifact_exclusion",
+      "active_runtime_only_signature_scan"
+    ],
+    "rollback": [
+      "restore previous diagnostic helper if scope patch is incorrect"
+    ],
+    "severity": "low",
+    "symptoms": [
+      "diagnostic fails due to archived backup copy rather than active code",
+      "runtime archive contains historical failure signature"
+    ],
+    "verification": [
+      "inspect failing path and confirm it is under runtime/diagnostic-backups or archive"
+    ]
+  },
+  "COPY_PASTE_CORRUPTED_PATCH": {
+    "class": "COPY_PASTE_CORRUPTED_PATCH",
+    "fix": [
+      "recreate the patch file with quoted external heredoc",
+      "validate syntax before execution"
+    ],
+    "prevention": [
+      "patch_structure_validation",
+      "diagnostic_output_format_guard"
+    ],
+    "rollback": [
+      "restore files from runtime/diagnostic-backups",
+      "reset unstaged broken edits if needed"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "unexpected characters appear after command",
+      "script contains merged or duplicated fragments",
+      "diagnostic output shows broken shell or Python syntax"
+    ],
+    "verification": [
+      "compare intended script with actual shell history or file content",
+      "run bash -n on generated shell files",
+      "run output-format diagnostics"
+    ]
+  },
+  "DIAGNOSTIC_CONTRACT_NO_RECURSION_SELF_REFERENCE_FALSE_POSITIVE": {
+    "class": "DIAGNOSTIC_CONTRACT_NO_RECURSION_SELF_REFERENCE_FALSE_POSITIVE",
+    "fix": [
+      "replace plain text search with executable command pattern search",
+      "exclude grep rule implementation from evidence"
+    ],
+    "prevention": [
+      "real_evidence_pattern_matching",
+      "diagnostic_contract_self_reference_exclusion",
+      "diagnostic_contract_no_recursion"
+    ],
+    "rollback": [
+      "restore diagnostic contract from runtime/diagnostic-backups/bin"
+    ],
+    "severity": "low",
+    "symptoms": [
+      "no-recursion diagnostic reports failure because it matches its own grep rule",
+      "diagnostic contract contains target text only inside its self-check"
+    ],
+    "verification": [
+      "inspect matching line",
+      "confirm there is no real command invocation of diagnostic-status-registry",
+      "match only executable command patterns and exclude grep rule line"
+    ]
+  },
+  "DIAGNOSTIC_CONTRACT_PYTHON_C_EXIT_OR_HANG": {
+    "class": "DIAGNOSTIC_CONTRACT_PYTHON_C_EXIT_OR_HANG",
+    "fix": [
+      "move registry count logic into checked helper file",
+      "rerun diagnostic contract and registry coverage"
+    ],
+    "prevention": [
+      "diagnostic_contract_helper_file",
+      "no_quote_sensitive_python_c_templates",
+      "schema_aware_registry_count"
+    ],
+    "rollback": [
+      "restore diagnostic from runtime/diagnostic-backups/bin"
+    ],
+    "severity": "high",
+    "symptoms": [
+      "diagnostic contract prints only first PASS line then stops",
+      "python3 -c command substitution exits or blocks before contract values are emitted"
+    ],
+    "verification": [
+      "run diagnostic contract with timeout",
+      "inspect whether registry count uses python3 -c"
+    ]
+  },
+  "DIAGNOSTIC_CONTRACT_RECURSIVE_DEPENDENCY": {
+    "class": "DIAGNOSTIC_CONTRACT_RECURSIVE_DEPENDENCY",
+    "fix": [
+      "make diagnostic contract self-contained",
+      "use schema-aware helper count instead of calling another diagnostic"
+    ],
+    "prevention": [
+      "diagnostic_contract_no_recursion",
+      "self_contained_diagnostic_contract",
+      "schema_aware_registry_count"
+    ],
+    "rollback": [
+      "restore diagnostic contract from runtime/diagnostic-backups/bin"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "diagnostic contract calls another diagnostic internally",
+      "contract stops after helper line when nested diagnostic call exits non-zero or blocks",
+      "set -e propagates internal diagnostic failure"
+    ],
+    "verification": [
+      "inspect diagnostic contract for calls to as6-diagnose-diagnostic-status-registry",
+      "run helper directly and compare contract output"
+    ]
+  },
+  "DIAGNOSTIC_CONTRACT_SELF_REFERENCE_FALSE_POSITIVE": {
+    "class": "DIAGNOSTIC_CONTRACT_SELF_REFERENCE_FALSE_POSITIVE",
+    "fix": [
+      "scan for heredoc operator plus marker or standalone closing marker",
+      "exclude the grep rule line from its own result"
+    ],
+    "prevention": [
+      "diagnostic_self_reference_exclusion",
+      "diagnostic_contract_validation",
+      "real_evidence_pattern_matching"
+    ],
+    "rollback": [
+      "restore diagnostic from runtime/diagnostic-backups/bin"
+    ],
+    "severity": "low",
+    "symptoms": [
+      "diagnostic contract reports failure because it matches its own detection string",
+      "grep against $0 finds marker text inside the check itself"
+    ],
+    "verification": [
+      "inspect diagnostic source line containing the check",
+      "confirm no real runtime heredoc block exists",
+      "search for actual heredoc syntax instead of plain marker mention"
+    ]
+  },
+  "DIAGNOSTIC_COVERAGE_REGISTRATION_DRIFT": {
+    "class": "DIAGNOSTIC_COVERAGE_REGISTRATION_DRIFT",
+    "fix": [
+      "refresh registry",
+      "rerun coverage",
+      "rerun governance"
+    ],
+    "prevention": [
+      "coverage_after_new_diagnostic",
+      "registry_after_new_diagnostic"
+    ],
+    "rollback": [
+      "restore previous registry from runtime/diagnostic-backups/status"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "new diagnostic exists but coverage has not been refreshed",
+      "root-cause governance reports registry or coverage mismatch"
+    ],
+    "verification": [
+      "run as6-refresh-diagnostic-status-registry",
+      "run as6-diagnose-diagnostic-coverage",
+      "run as6-diagnose-root-cause-governance"
+    ]
+  },
+  "DIAGNOSTIC_EMBEDDED_HEREDOC_RUNTIME_HANG": {
+    "class": "DIAGNOSTIC_EMBEDDED_HEREDOC_RUNTIME_HANG",
+    "fix": [
+      "rewrite generated diagnostic without embedded runtime heredoc",
+      "use schema-aware short command or separate checked file",
+      "run bash -n and the diagnostic after rewrite"
+    ],
+    "prevention": [
+      "no_runtime_heredoc_in_generated_diagnostics",
+      "diagnostic_contract_validation",
+      "as6_patch_mode"
+    ],
+    "rollback": [
+      "restore diagnostic from runtime/diagnostic-backups/bin",
+      "restore root-cause-catalog.json from runtime/diagnostic-backups/governance"
+    ],
+    "severity": "high",
+    "symptoms": [
+      "diagnostic prints initial PASS line and then stops",
+      "generated diagnostic contains runtime heredoc block",
+      "bash -n passes but runtime execution blocks"
+    ],
+    "verification": [
+      "inspect generated diagnostic with nl -ba",
+      "grep for heredoc marker inside diagnostic file",
+      "confirm execution stops after first emitted signal"
+    ]
+  },
+  "DIAGNOSTIC_GIT_REGISTRATION_DRIFT": {
+    "class": "DIAGNOSTIC_GIT_REGISTRATION_DRIFT",
+    "fix": [
+      "git add diagnostic files after validation",
+      "ensure diagnostic status registry is refreshed",
+      "rerun coverage and registry diagnostics"
+    ],
+    "prevention": [
+      "git_tracked_diagnostic_required",
+      "registry_after_new_diagnostic",
+      "coverage_after_new_diagnostic"
+    ],
+    "rollback": [
+      "restore diagnostic files from runtime/diagnostic-backups/bin",
+      "restore registry from runtime/diagnostic-backups/status"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "diagnostic file exists but is not tracked by git",
+      "diagnostic can pass locally but may disappear after clone, merge, or disaster recovery",
+      "git status shows untracked ops/bin/as6-diagnose-* files"
+    ],
+    "verification": [
+      "run as6-diagnose-diagnostic-registration",
+      "compare ops/bin/as6-diagnose-* with git ls-files",
+      "inspect git status --short"
+    ]
+  },
+  "DIAGNOSTIC_HELPER_GIT_REGISTRATION_DRIFT": {
+    "class": "DIAGNOSTIC_HELPER_GIT_REGISTRATION_DRIFT",
+    "fix": [
+      "git add ops/lib helper files",
+      "add helper existence checks to diagnostics"
+    ],
+    "prevention": [
+      "diagnostic_helper_must_be_git_tracked",
+      "generated_python_helper_files"
+    ],
+    "rollback": [
+      "restore helper files from runtime/diagnostic-backups/lib"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "diagnostic depends on ops/lib helper that is not tracked by git",
+      "diagnostic passes on current server but helper may be missing in another checkout"
+    ],
+    "verification": [
+      "run as6-diagnose-diagnostic-registration",
+      "compare ops/lib helpers with git ls-files",
+      "run helper compile checks"
+    ]
+  },
+  "DIAGNOSTIC_REGISTRY_GIT_ALIGNMENT_DRIFT": {
+    "class": "DIAGNOSTIC_REGISTRY_GIT_ALIGNMENT_DRIFT",
+    "fix": [
+      "stage or remove drifted diagnostic registry entries"
+    ],
+    "prevention": [
+      "diagnostic_tracking_consistency",
+      "registry_git_alignment"
+    ],
+    "rollback": [
+      "restore registry from runtime/diagnostic-backups/status"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "registry lists diagnostics that git does not track",
+      "coverage passes while git tracking fails"
+    ],
+    "verification": [
+      "run as6-diagnose-diagnostic-tracking"
+    ]
+  },
+  "DIAGNOSTIC_REGISTRY_GIT_HYGIENE_DRIFT": {
+    "class": "DIAGNOSTIC_REGISTRY_GIT_HYGIENE_DRIFT",
+    "fix": [
+      "stage validated diagnostics and helpers",
+      "rerun diagnostic registration and git hygiene checks"
+    ],
+    "prevention": [
+      "registry_item_must_be_git_tracked",
+      "diagnostic_registration_governance"
+    ],
+    "rollback": [
+      "unstage files with git reset if needed",
+      "restore files from backups if damaged"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "registry and coverage are green but diagnostic artifacts are untracked",
+      "diagnostic governance is not reproducible from git alone"
+    ],
+    "verification": [
+      "run as6-diagnose-diagnostic-registration",
+      "run as6-diagnose-git-hygiene",
+      "inspect git status --short for ops/bin and ops/lib"
+    ]
+  },
+  "DIAGNOSTIC_SELF_REFERENCE_FALSE_POSITIVE": {
+    "class": "DIAGNOSTIC_SELF_REFERENCE_FALSE_POSITIVE",
+    "fix": [
+      "exclude the diagnostic source file from its own scan",
+      "keep the detection rule active for all other files"
+    ],
+    "prevention": [
+      "diagnostic_self_reference_exclusion",
+      "patch_mode_false_positive_suppression"
+    ],
+    "rollback": [
+      "restore diagnostic from runtime/diagnostic-backups/bin",
+      "rerun patch-mode and output-format diagnostics"
+    ],
+    "severity": "low",
+    "symptoms": [
+      "diagnostic reports its own detection rule as a failure",
+      "scan result points to the diagnostic file itself"
+    ],
+    "verification": [
+      "inspect the matched file path",
+      "confirm the match is inside diagnostic source code",
+      "confirm no production or runtime artifact contains the forbidden pattern"
+    ]
+  },
+  "DIAGNOSTIC_TRACKING_DRIFT": {
+    "class": "DIAGNOSTIC_TRACKING_DRIFT",
+    "fix": [
+      "git add diagnostics and helpers that are registered in registry and coverage",
+      "rerun diagnostic registration, coverage and status registry"
+    ],
+    "prevention": [
+      "diagnostic_git_tracking_validation",
+      "diagnostic_registry_git_alignment",
+      "diagnostic_coverage_git_alignment"
+    ],
+    "rollback": [
+      "git restore --staged affected files if staging was incorrect"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "diagnostic is present in registry and coverage but is not tracked by git",
+      "AS6_DIAGNOSTIC_GIT_TRACKED=FAIL for generated diagnostics",
+      "new diagnostics are registered but remain untracked"
+    ],
+    "verification": [
+      "run as6-diagnose-diagnostic-tracking",
+      "run as6-diagnose-diagnostic-registration",
+      "confirm AS6_DIAGNOSTIC_TRACKING_RESULT=OK"
+    ]
+  },
+  "DIAGNOSTIC_TRACKING_SINGLE_FILE_DRIFT": {
+    "class": "DIAGNOSTIC_TRACKING_SINGLE_FILE_DRIFT",
+    "fix": [
+      "git add the missing registered diagnostic and helper if needed",
+      "rerun diagnostic tracking and registration"
+    ],
+    "prevention": [
+      "single_file_diagnostic_tracking_validation",
+      "registered_diagnostic_staging_check"
+    ],
+    "rollback": [
+      "git restore --staged affected file if staging was incorrect"
+    ],
+    "severity": "low",
+    "symptoms": [
+      "one diagnostic exists and is registered but remains untracked",
+      "git status shows ?? for a registered diagnostic file",
+      "diagnostic tracking fails with missing count 1"
+    ],
+    "verification": [
+      "run git status --short for the diagnostic path",
+      "run as6-diagnose-diagnostic-tracking"
+    ]
+  },
+  "GENERATED_PYTHON_COMPILE_TARGET_DRIFT": {
+    "class": "GENERATED_PYTHON_COMPILE_TARGET_DRIFT",
+    "fix": [
+      "compile to a safe temporary .pyc target",
+      "remove temporary compile directory after validation",
+      "cleanup repository pycache after compile validation"
+    ],
+    "prevention": [
+      "generated_python_compile_target_validation",
+      "safe_temporary_compile_target",
+      "no_dev_null_py_compile_target"
+    ],
+    "rollback": [
+      "restore runtime contract helper from runtime/diagnostic-backups/lib"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "AS6_GENERATED_PYTHON_COMPILE=FAIL with FileExistsError",
+      "py_compile cfile target is incompatible with runtime path semantics",
+      "compile validation fails even though helper source is syntactically valid"
+    ],
+    "verification": [
+      "run as6-diagnose-generated-python-runtime",
+      "confirm AS6_GENERATED_PYTHON_COMPILE_TARGET_SAFE=PASS",
+      "confirm all AS6_GENERATED_PYTHON_COMPILE entries are PASS"
+    ]
+  },
+  "GENERATED_PYTHON_CONTRACT_DRIFT": {
+    "class": "GENERATED_PYTHON_CONTRACT_DRIFT",
+    "fix": [
+      "repair failing generated Python sub-contract and rerun registry/coverage"
+    ],
+    "prevention": [
+      "generated_python_contract_aggregation"
+    ],
+    "rollback": [
+      "restore generated Python helper or diagnostic from runtime backups"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "generated Python diagnostics do not pass aggregate contract",
+      "runtime/import/nameerror/regression tracking contracts are inconsistent"
+    ],
+    "verification": [
+      "run as6-diagnose-generated-python-contracts"
+    ]
+  },
+  "GENERATED_PYTHON_CONTRACT_HELPER_IMPORT_SIDE_EFFECT": {
+    "class": "GENERATED_PYTHON_CONTRACT_HELPER_IMPORT_SIDE_EFFECT",
+    "fix": [
+      "wrap aggregate helper execution in main guard",
+      "ensure helper import emits no diagnostic execution side effects"
+    ],
+    "prevention": [
+      "generated_python_contract_import_guard",
+      "generated_python_helper_import_safe"
+    ],
+    "rollback": [
+      "restore helper from runtime/diagnostic-backups/lib"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "aggregate generated Python contract helper executes diagnostics during runpy import validation",
+      "runtime contract imports contracts helper and triggers nested contract execution",
+      "contract diagnostics fail even though subdiagnostics pass"
+    ],
+    "verification": [
+      "run as6-diagnose-generated-python-contracts",
+      "run as6-diagnose-generated-python-runtime",
+      "confirm AS6_GENERATED_PYTHON_CONTRACT_IMPORT_GUARD=PASS"
+    ]
+  },
+  "GENERATED_PYTHON_CONTRACT_RECURSIVE_IMPORT_DRIFT": {
+    "class": "GENERATED_PYTHON_CONTRACT_RECURSIVE_IMPORT_DRIFT",
+    "fix": [
+      "make aggregate helper import-safe and non-executing on import"
+    ],
+    "prevention": [
+      "contract_helper_main_guard",
+      "no_recursive_runpy_contracts"
+    ],
+    "rollback": [
+      "restore helper from runtime backup"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "aggregate contract check calls runtime check which imports aggregate contract check again",
+      "contract check reports subdiagnostic failure caused by recursive import execution"
+    ],
+    "verification": [
+      "run generated Python runtime and contracts diagnostics together"
+    ]
+  },
+  "GENERATED_PYTHON_IMPORT_DRIFT": {
+    "class": "GENERATED_PYTHON_IMPORT_DRIFT",
+    "fix": [
+      "remove import-time side effects or make helper contract explicit"
+    ],
+    "prevention": [
+      "generated_python_import_contract"
+    ],
+    "rollback": [
+      "restore helper from backup"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "generated helper cannot be imported or executed under runpy contract",
+      "ImportError or module drift in helper diagnostics"
+    ],
+    "verification": [
+      "run as6-diagnose-generated-python-imports"
+    ]
+  },
+  "GENERATED_PYTHON_IMPORT_SIDE_EFFECT": {
+    "class": "GENERATED_PYTHON_IMPORT_SIDE_EFFECT",
+    "fix": [
+      "treat CLI helper import output as WARN unless it causes timeout or hard error",
+      "use -B and explicit cleanup around import validation"
+    ],
+    "prevention": [
+      "generated_python_import_side_effect_guard",
+      "generated_python_import_safe"
+    ],
+    "rollback": [
+      "restore runtime contract helper from runtime/diagnostic-backups/lib"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "import validation executes helper code with side effects",
+      "helper import creates runtime artifacts or emits diagnostic output",
+      "import check should warn rather than hard fail for CLI-style helpers"
+    ],
+    "verification": [
+      "run as6-diagnose-generated-python-imports",
+      "inspect AS6_GENERATED_PYTHON_IMPORT=WARN entries"
+    ]
+  },
+  "GENERATED_PYTHON_NAMEERROR_DRIFT": {
+    "class": "GENERATED_PYTHON_NAMEERROR_DRIFT",
+    "fix": [
+      "repair variable/nameerror diagnostics"
+    ],
+    "prevention": [
+      "generated_python_nameerror_contract"
+    ],
+    "rollback": [
+      "restore helper from backup"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "generated Python nameerror contract fails"
+    ],
+    "verification": [
+      "run as6-diagnose-generated-python-nameerror"
+    ]
+  },
+  "GENERATED_PYTHON_PYCACHE_ARTIFACT_DRIFT": {
+    "class": "GENERATED_PYTHON_PYCACHE_ARTIFACT_DRIFT",
+    "fix": [
+      "use py_compile cfile=os.devnull",
+      "run Python subprocesses with -B and PYTHONDONTWRITEBYTECODE=1",
+      "cleanup pycache before and after each phase"
+    ],
+    "prevention": [
+      "generated_python_pycache_cleanup",
+      "python_runtime_artifact_cleanup",
+      "no_pycache_artifacts"
+    ],
+    "rollback": [
+      "restore runtime contract helper from runtime/diagnostic-backups/lib"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "runtime-contract py_compile creates ops/lib/__pycache__",
+      "python artifact hygiene fails after generated Python runtime diagnostics",
+      "untracked .pyc files appear during generated Python regression"
+    ],
+    "verification": [
+      "run as6-diagnose-generated-python-runtime",
+      "run as6-diagnose-python-artifact-git-hygiene",
+      "confirm AS6_GENERATED_PYTHON_PYCACHE_CLEANUP=PASS"
+    ]
+  },
+  "GENERATED_PYTHON_REGRESSION_DRIFT": {
+    "class": "GENERATED_PYTHON_REGRESSION_DRIFT",
+    "fix": [
+      "repair failing generated diagnostic and rerun registry/coverage"
+    ],
+    "prevention": [
+      "generated_python_regression_execution"
+    ],
+    "rollback": [
+      "restore diagnostic/helper from backup"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "generated Python diagnostics pass individually but fail in regression sequence"
+    ],
+    "verification": [
+      "run as6-diagnose-generated-python-regression"
+    ]
+  },
+  "GENERATED_PYTHON_RUNTIME_CONTRACT_DRIFT": {
+    "class": "GENERATED_PYTHON_RUNTIME_CONTRACT_DRIFT",
+    "fix": [
+      "repair helper compile/import/runtime behavior",
+      "rerun generated Python runtime contract"
+    ],
+    "prevention": [
+      "generated_python_runtime_contract",
+      "generated_python_regression_execution"
+    ],
+    "rollback": [
+      "restore helpers from runtime/diagnostic-backups/lib"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "generated Python helper compiles or runs inconsistently",
+      "runtime Python diagnostics are registered but not regression-tested"
+    ],
+    "verification": [
+      "run as6-diagnose-generated-python-runtime",
+      "run as6-diagnose-generated-python-regression"
+    ]
+  },
+  "GENERATED_PYTHON_RUNTIME_DRIFT": {
+    "class": "GENERATED_PYTHON_RUNTIME_DRIFT",
+    "fix": [
+      "repair runtime contract helper"
+    ],
+    "prevention": [
+      "generated_python_runtime_contract"
+    ],
+    "rollback": [
+      "restore runtime helper from backup"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "generated Python runtime contract fails"
+    ],
+    "verification": [
+      "run as6-diagnose-generated-python-runtime"
+    ]
+  },
+  "GENERATED_PYTHON_SAFETY_LEGACY_SCOPE_FALSE_POSITIVE": {
+    "class": "GENERATED_PYTHON_SAFETY_LEGACY_SCOPE_FALSE_POSITIVE",
+    "fix": [
+      "scope hard failures to newly generated helpers and diagnostics",
+      "keep legacy heredoc findings as warning until migrated"
+    ],
+    "prevention": [
+      "generated_python_safety_scope",
+      "legacy_pattern_warning_not_failure"
+    ],
+    "rollback": [
+      "restore helper from runtime/diagnostic-backups/lib"
+    ],
+    "severity": "low",
+    "symptoms": [
+      "generated-python-safety fails on known legacy heredoc scripts instead of only new generated artifacts",
+      "legacy migration debt is reported as hard failure"
+    ],
+    "verification": [
+      "run as6-diagnose-generated-python-safety",
+      "confirm legacy patterns are emitted as WARN not FAIL"
+    ]
+  },
+  "GENERATED_PYTHON_SAFETY_SELF_REFERENCE_FALSE_POSITIVE": {
+    "class": "GENERATED_PYTHON_SAFETY_SELF_REFERENCE_FALSE_POSITIVE",
+    "fix": [
+      "exclude diagnostic self-reference from hard failure evidence"
+    ],
+    "prevention": [
+      "generated_python_self_reference_exclusion",
+      "real_evidence_pattern_matching"
+    ],
+    "rollback": [
+      "restore helper from runtime/diagnostic-backups/lib"
+    ],
+    "severity": "low",
+    "symptoms": [
+      "generated-python-safety matches its own pattern definitions",
+      "diagnostic reports itself as unsafe because pattern strings exist in the checker"
+    ],
+    "verification": [
+      "inspect AS6_GENERATED_PYTHON_SELF_REFERENCE_EXCLUDED output",
+      "confirm self checker is excluded from hard failure evidence"
+    ]
+  },
+  "GENERATED_PYTHON_SELF_IMPORT_RECURSION": {
+    "class": "GENERATED_PYTHON_SELF_IMPORT_RECURSION",
+    "fix": [
+      "exclude runtime-contract checker from import validation while still compiling it",
+      "rerun generated Python runtime/import/nameerror/regression diagnostics"
+    ],
+    "prevention": [
+      "generated_python_self_import_guard",
+      "runtime_contract_self_reference_exclusion"
+    ],
+    "rollback": [
+      "restore helper from runtime/diagnostic-backups/lib"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "generated Python runtime-contract helper imports itself during import validation",
+      "import validation times out while running the runtime-contract checker",
+      "subprocess.TimeoutExpired while runpy executes the current checker"
+    ],
+    "verification": [
+      "run as6-diagnose-generated-python-runtime",
+      "confirm AS6_GENERATED_PYTHON_SELF_IMPORT_EXCLUSION=PASS",
+      "confirm AS6_GENERATED_PYTHON_RUNTIME_CONTRACT_RESULT=OK"
+    ]
+  },
+  "GENERATED_PYTHON_SHELL_QUOTE_COLLISION": {
+    "class": "GENERATED_PYTHON_SHELL_QUOTE_COLLISION",
+    "fix": [
+      "move generated Python logic into checked helper file",
+      "avoid nested quote-sensitive python3 -c templates"
+    ],
+    "prevention": [
+      "no_quote_sensitive_python_c_templates",
+      "generated_python_helper_files",
+      "router_runtime_validation"
+    ],
+    "rollback": [
+      "restore diagnostics from runtime/diagnostic-backups/bin"
+    ],
+    "severity": "high",
+    "symptoms": [
+      "python3 -c diagnostic looks correct in nl output but shell strips inner quotes",
+      "NameError appears for dictionary key that should be quoted"
+    ],
+    "verification": [
+      "inspect generated python3 -c single-quote boundaries",
+      "replace inline Python with helper file"
+    ]
+  },
+  "GENERATED_PYTHON_TEMPLATE_VARIABLE_LEAK": {
+    "class": "GENERATED_PYTHON_TEMPLATE_VARIABLE_LEAK",
+    "fix": [
+      "replace leaked variable with quoted dictionary key or helper-file implementation"
+    ],
+    "prevention": [
+      "generated_python_runtime_validation",
+      "generated_python_name_check",
+      "router_runtime_validation"
+    ],
+    "rollback": [
+      "restore generated diagnostic from runtime/diagnostic-backups/bin"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "generated diagnostic crashes with NameError",
+      "template variable is emitted as Python variable instead of quoted key"
+    ],
+    "verification": [
+      "run generated diagnostic directly",
+      "inspect generated Python expression around failing variable"
+    ]
+  },
+  "GENERATED_TEMPLATE_REFERENCE_DRIFT": {
+    "class": "GENERATED_TEMPLATE_REFERENCE_DRIFT",
+    "fix": [
+      "move template logic into explicit helper files",
+      "validate helper with py_compile and variable contract diagnostics"
+    ],
+    "prevention": [
+      "generated_python_helper_files",
+      "no_quote_sensitive_python_c_templates",
+      "generated_variable_contract"
+    ],
+    "rollback": [
+      "restore helpers and diagnostics from runtime/diagnostic-backups"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "generated code references placeholder names that do not exist after template expansion",
+      "helper compiles but runtime variable references drift from generated assignments"
+    ],
+    "verification": [
+      "run as6-diagnose-generated-python-safety",
+      "run as6-diagnose-python-variable-contract"
+    ]
+  },
+  "GENERATED_VARIABLE_NAME_DRIFT": {
+    "class": "GENERATED_VARIABLE_NAME_DRIFT",
+    "fix": [
+      "normalize generated variable names",
+      "replace unsafe inline Python generation with checked helper files",
+      "rerun generated Python safety and runtime diagnostics"
+    ],
+    "prevention": [
+      "generated_variable_contract",
+      "generated_python_runtime_validation",
+      "nameerror_signature_detection"
+    ],
+    "rollback": [
+      "restore affected script from runtime/diagnostic-backups/bin",
+      "restore affected helper from runtime/diagnostic-backups/lib"
+    ],
+    "severity": "high",
+    "symptoms": [
+      "NameError reports a generated variable name that was never assigned",
+      "runtime output says Did you mean another generated variable name",
+      "generated script uses local_cmd while only local_cmd_raw exists"
+    ],
+    "verification": [
+      "run as6-diagnose-python-variable-contract",
+      "run as6-diagnose-nameerror-signatures",
+      "inspect affected generated Python helper or diagnostic"
+    ]
+  },
+  "GIANT_BASE64_PATCH": {
+    "class": "GIANT_BASE64_PATCH",
+    "fix": [
+      "replace base64 transport with readable script or patch file",
+      "run bash -n before execution"
+    ],
+    "prevention": [
+      "no_giant_base64_patch",
+      "as6_patch_mode"
+    ],
+    "rollback": [
+      "do not run corrupted payload",
+      "restore touched files from backups"
+    ],
+    "severity": "high",
+    "symptoms": [
+      "large base64 payload used as code transport",
+      "copy/paste corruption creates invalid code",
+      "diagnostics cannot easily review patch content"
+    ],
+    "verification": [
+      "search for base64.b64decode or long base64 payloads",
+      "confirm patch content is hidden inside encoded string"
+    ]
+  },
+  "HOST_FREEZE_SSH_DROP": {
+    "class": "HOST_FREEZE_SSH_DROP",
+    "fix": [
+      "enable pre-reboot capture",
+      "collect freeze evidence before manual reboot",
+      "investigate host/network/provider layer"
+    ],
+    "prevention": [
+      "pre_reboot_capture",
+      "ssh_stability_probe",
+      "host_freeze_network_diagnostics"
+    ],
+    "rollback": [
+      "reboot server from provider panel only if SSH is unavailable",
+      "verify Docker and health endpoint after boot"
+    ],
+    "severity": "critical",
+    "symptoms": [
+      "SSH session drops back to PowerShell",
+      "site becomes unavailable",
+      "manual provider panel reboot is required"
+    ],
+    "verification": [
+      "inspect pre-reboot evidence cache",
+      "check network/socket/load/memory snapshots",
+      "correlate with provider actions and uptime"
+    ]
+  },
+  "KNOWLEDGE_BASE_REFERENCE_FALSE_POSITIVE": {
+    "class": "KNOWLEDGE_BASE_REFERENCE_FALSE_POSITIVE",
+    "fix": [
+      "exclude governance catalogs and policy documents from executable patch scans",
+      "keep scans active for scripts, workflows, and executable sources"
+    ],
+    "prevention": [
+      "knowledge_base_reference_exclusion",
+      "patch_mode_reference_source_suppression",
+      "diagnostic_self_reference_exclusion"
+    ],
+    "rollback": [
+      "restore ops/bin/as6-diagnose-patch-mode from runtime/diagnostic-backups/bin",
+      "restore root-cause-catalog.json from runtime/diagnostic-backups/governance if JSON becomes invalid"
+    ],
+    "severity": "low",
+    "symptoms": [
+      "patch-mode diagnostic reports forbidden pattern inside governance catalog",
+      "root cause catalog describes a forbidden pattern and is treated as real evidence",
+      "policy or documentation text is incorrectly scanned as executable patch source"
+    ],
+    "verification": [
+      "inspect the matched path",
+      "confirm the match is in ops/governance or docs",
+      "confirm production scripts and workflows do not contain the forbidden pattern"
+    ]
+  },
+  "METRIC_QUERY_DRIFT": {
+    "class": "METRIC_QUERY_DRIFT",
+    "fix": [
+      "replace manual grep metric with contract diagnostic"
+    ],
+    "prevention": [
+      "diagnostic_contract_validation",
+      "no_ad_hoc_metric_queries"
+    ],
+    "rollback": [
+      "use previous known-good diagnostic contract from backup"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "manual metric reports incorrect value after schema change"
+    ],
+    "verification": [
+      "compare manual metric with diagnostic contract"
+    ]
+  },
+  "NESTED_HEREDOC_PATCH": {
+    "class": "NESTED_HEREDOC_PATCH",
+    "fix": [
+      "replace nested heredoc with file-based patch mode",
+      "use printf or generated script file for inner content"
+    ],
+    "prevention": [
+      "no_nested_heredoc_patches",
+      "file_based_patch_preferred"
+    ],
+    "rollback": [
+      "press Ctrl+C if shell is waiting",
+      "restore affected files from diagnostic backups"
+    ],
+    "severity": "high",
+    "symptoms": [
+      "terminal remains at continuation prompt",
+      "script waits for an inner heredoc terminator",
+      "copy/paste becomes fragile"
+    ],
+    "verification": [
+      "search for heredoc inside another generated heredoc block",
+      "confirm more than one heredoc generation layer exists in one command"
+    ]
+  },
+  "NETWORK_BLACKHOLE": {
+    "class": "NETWORK_BLACKHOLE",
+    "fix": [
+      "collect network state snapshot",
+      "restore firewall/docker networking only after evidence capture"
+    ],
+    "prevention": [
+      "host_freeze_network_diagnostics",
+      "external_connectivity_monitoring"
+    ],
+    "rollback": [
+      "restore previous firewall/docker daemon configuration",
+      "restart Docker only after diagnostics"
+    ],
+    "severity": "high",
+    "symptoms": [
+      "ping or TCP checks fail externally",
+      "local services may still be running",
+      "SSH and HTTPS unavailable from client"
+    ],
+    "verification": [
+      "compare local socket listeners with external connectivity",
+      "run host freeze network diagnostic",
+      "check route, firewall, provider network state"
+    ]
+  },
+  "OVERSIZED_SINGLE_LINE_PATCH": {
+    "class": "OVERSIZED_SINGLE_LINE_PATCH",
+    "fix": [
+      "replace giant one-line patch with file-based script",
+      "use one external quoted heredoc only when needed"
+    ],
+    "prevention": [
+      "max_command_length",
+      "no_giant_base64_patch"
+    ],
+    "rollback": [
+      "discard incomplete command",
+      "rerun from a validated script file"
+    ],
+    "severity": "high",
+    "symptoms": [
+      "single command is truncated during browser or terminal paste",
+      "Python reports unterminated string literal",
+      "part of command appears outside quotes"
+    ],
+    "verification": [
+      "inspect failed command length",
+      "look for truncated base64 or broken quotes",
+      "confirm command exceeded terminal-safe size"
+    ]
+  },
+  "PRE_REBOOT_EVIDENCE_MISSING": {
+    "class": "PRE_REBOOT_EVIDENCE_MISSING",
+    "fix": [
+      "install pre-reboot forensics timer",
+      "cache evidence frequently enough before reboot"
+    ],
+    "prevention": [
+      "pre_reboot_capture",
+      "reboot_evidence_cache"
+    ],
+    "rollback": [
+      "disable timer only if it causes load or noise",
+      "keep existing evidence archives"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "manual reboot happens before evidence capture",
+      "post-boot logs do not contain freeze state",
+      "root cause remains uncertain"
+    ],
+    "verification": [
+      "check runtime/pre-reboot-forensics",
+      "check reboot evidence cache",
+      "confirm timer/service installation"
+    ]
+  },
+  "PROVIDER_HYPERVISOR_REBOOT": {
+    "class": "PROVIDER_HYPERVISOR_REBOOT",
+    "fix": [
+      "collect provider correlation evidence",
+      "send reproducible evidence to hosting provider"
+    ],
+    "prevention": [
+      "provider_event_correlation",
+      "reboot_evidence_cache"
+    ],
+    "rollback": [
+      "restore service after boot",
+      "verify application health endpoint"
+    ],
+    "severity": "high",
+    "symptoms": [
+      "journal contains hypervisor initiated shutdown",
+      "system performs graceful reboot without local crash",
+      "Docker and application stop normally during shutdown"
+    ],
+    "verification": [
+      "check journalctl for hypervisor initiated shutdown",
+      "compare provider action history",
+      "confirm no OOM, panic, disk error, or local reboot audit"
+    ]
+  },
+  "PYTHON_ARTIFACT_GIT_HYGIENE_DRIFT": {
+    "class": "PYTHON_ARTIFACT_GIT_HYGIENE_DRIFT",
+    "fix": [
+      "remove __pycache__ and .pyc files",
+      "unstage python runtime artifacts",
+      "rerun git hygiene and diagnostic registration"
+    ],
+    "prevention": [
+      "no_pycache_artifacts",
+      "no_tracked_pycache",
+      "python_artifact_git_hygiene"
+    ],
+    "rollback": [
+      "no code rollback required unless helper was damaged; restore helper from runtime/diagnostic-backups/lib"
+    ],
+    "severity": "low",
+    "symptoms": [
+      "__pycache__ or .pyc files appear after py_compile or helper execution",
+      "python runtime artifacts become untracked or staged git noise",
+      "diagnostic helpers pass but leave repository artifact residue"
+    ],
+    "verification": [
+      "run as6-diagnose-python-artifact-git-hygiene",
+      "run git status --short and inspect __pycache__ or .pyc"
+    ]
+  },
+  "PYTHON_HELPER_RUNTIME_ARTIFACT_DRIFT": {
+    "class": "PYTHON_HELPER_RUNTIME_ARTIFACT_DRIFT",
+    "fix": [
+      "delete generated __pycache__ artifacts after compile checks",
+      "prevent pycache from entering git index"
+    ],
+    "prevention": [
+      "python_helper_runtime_artifact_cleanup",
+      "no_untracked_pycache"
+    ],
+    "rollback": [
+      "remove runtime artifacts"
+    ],
+    "severity": "low",
+    "symptoms": [
+      "running Python helper diagnostics creates repository-local runtime artifacts",
+      "py_compile creates __pycache__ under ops/lib"
+    ],
+    "verification": [
+      "run helper compile checks and then as6-diagnose-python-artifact-git-hygiene"
+    ]
+  },
+  "REBOOT_FORENSICS_RUNTIME_FAILURE": {
+    "class": "REBOOT_FORENSICS_RUNTIME_FAILURE",
+    "fix": [
+      "repair variable-name drift in reboot evidence cache scripts",
+      "rerun reboot forensics runtime diagnostics",
+      "refresh registry and coverage"
+    ],
+    "prevention": [
+      "reboot_forensics_runtime_validation",
+      "nameerror_signature_detection",
+      "generated_variable_contract"
+    ],
+    "rollback": [
+      "restore reboot forensics scripts from runtime/diagnostic-backups/bin"
+    ],
+    "severity": "high",
+    "symptoms": [
+      "as6-reboot-forensics-cache.service exits non-zero",
+      "journalctl shows NameError or FileNotFoundError for /var/www/ai-platform/-",
+      "reboot evidence cache runtime fails even when static diagnostics pass"
+    ],
+    "verification": [
+      "run as6-diagnose-reboot-forensics-runtime",
+      "inspect journalctl -u as6-reboot-forensics-cache.service",
+      "run as6-diagnose-nameerror-signatures"
+    ]
+  },
+  "REGISTRY_METRIC_QUERY_DRIFT": {
+    "class": "REGISTRY_METRIC_QUERY_DRIFT",
+    "fix": [
+      "stop using grep against internal registry fields",
+      "use the diagnostic contract count instead"
+    ],
+    "prevention": [
+      "diagnostic_contract_validation",
+      "registry_contract_count",
+      "no_ad_hoc_registry_grep"
+    ],
+    "rollback": [
+      "restore diagnostic-status-registry.json from runtime/diagnostic-backups/status"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "diagnostic registry reports a valid count but manual grep count returns zero",
+      "ad-hoc metric query no longer matches registry schema"
+    ],
+    "verification": [
+      "run as6-diagnose-diagnostic-status-registry",
+      "run as6-diagnose-diagnostic-contract"
+    ]
+  },
+  "REGISTRY_SCHEMA_DRIFT": {
+    "class": "REGISTRY_SCHEMA_DRIFT",
+    "fix": [
+      "update diagnostic contract layer",
+      "avoid direct field grep on JSON artifacts"
+    ],
+    "prevention": [
+      "registry_contract_validation",
+      "schema_aware_metric_queries"
+    ],
+    "rollback": [
+      "restore previous registry JSON and contract script from backup"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "registry structure changes but old queries assume previous fields"
+    ],
+    "verification": [
+      "load registry as JSON",
+      "derive count from supported schema"
+    ]
+  },
+  "ROOT_CAUSE_CLASS_NOT_DOCUMENTED": {
+    "class": "ROOT_CAUSE_CLASS_NOT_DOCUMENTED",
+    "fix": [
+      "add catalog entry with symptoms, verification, fix, rollback, prevention, severity"
+    ],
+    "prevention": [
+      "root_cause_knowledge_base",
+      "mandatory_fix_definition",
+      "mandatory_prevention_definition",
+      "mandatory_verification_definition"
+    ],
+    "rollback": [
+      "restore previous catalog from backup if JSON is invalid"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "new ROOT_CAUSE_CLASS appears in diagnostics but not in catalog",
+      "diagnostic can detect problem but cannot explain fix or prevention"
+    ],
+    "verification": [
+      "extract ROOT_CAUSE_CLASS tokens from diagnostics",
+      "compare with ops/governance/root-cause-catalog.json"
+    ]
+  },
+  "ROOT_CAUSE_GOVERNANCE_COVERAGE_DRIFT": {
+    "class": "ROOT_CAUSE_GOVERNANCE_COVERAGE_DRIFT",
+    "fix": [
+      "register new diagnostics in aggregators",
+      "refresh diagnostic status registry",
+      "rerun coverage and governance"
+    ],
+    "prevention": [
+      "root_cause_governance_registry_refresh",
+      "coverage_after_new_diagnostic",
+      "registry_after_new_diagnostic"
+    ],
+    "rollback": [
+      "restore root-cause catalog and registry from runtime/diagnostic-backups",
+      "restore aggregator scripts from runtime/diagnostic-backups/bin"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "root cause governance reports registry or coverage FAIL after new diagnostics are added",
+      "new root cause classes map to diagnostics that exist but are not yet refreshed in status registry",
+      "diagnostic coverage is stale after adding router, remediation or validation diagnostics"
+    ],
+    "verification": [
+      "run as6-diagnose-root-cause-governance",
+      "run as6-refresh-diagnostic-status-registry",
+      "run as6-diagnose-diagnostic-coverage",
+      "rerun governance after registry refresh"
+    ]
+  },
+  "ROOT_CAUSE_ROUTER_MISSING_ROUTE": {
+    "class": "ROOT_CAUSE_ROUTER_MISSING_ROUTE",
+    "fix": [
+      "add route for the root cause class",
+      "map route to diagnostic, severity, remediation and validation"
+    ],
+    "prevention": [
+      "root_cause_router",
+      "mandatory_route_for_root_cause"
+    ],
+    "rollback": [
+      "restore router diagnostic from runtime/diagnostic-backups/bin"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "root cause exists but router cannot map it to diagnostic and remediation",
+      "routing output is missing for a catalog class"
+    ],
+    "verification": [
+      "run as6-diagnose-root-cause-router",
+      "compare catalog classes with router output"
+    ]
+  },
+  "ROOT_CAUSE_ROUTING_CONTRACT_DRIFT": {
+    "class": "ROOT_CAUSE_ROUTING_CONTRACT_DRIFT",
+    "fix": [
+      "refresh router route generation from catalog",
+      "register router diagnostics in aggregators"
+    ],
+    "prevention": [
+      "root_cause_routing_contract",
+      "route_count_matches_catalog"
+    ],
+    "rollback": [
+      "restore catalog and router from backups"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "router output no longer matches catalog or governance contract",
+      "new catalog entries are not routable"
+    ],
+    "verification": [
+      "compare catalog classes with route count",
+      "run root cause governance after router refresh"
+    ]
+  },
+  "ROOT_CAUSE_WITHOUT_COVERAGE": {
+    "class": "ROOT_CAUSE_WITHOUT_COVERAGE",
+    "fix": [
+      "refresh diagnostic status registry",
+      "ensure the diagnostic artifact is discoverable under ops/bin"
+    ],
+    "prevention": [
+      "root_cause_coverage_registration",
+      "diagnostic_coverage_gate"
+    ],
+    "rollback": [
+      "restore previous registry from git or backup",
+      "rerun coverage diagnostics"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "root cause diagnostic exists but is absent from diagnostic coverage",
+      "coverage does not prove the diagnostic is tracked"
+    ],
+    "verification": [
+      "run as6-diagnose-diagnostic-coverage",
+      "check diagnostic-status-registry.json for the diagnostic artifact"
+    ]
+  },
+  "ROOT_CAUSE_WITHOUT_DIAGNOSTIC": {
+    "class": "ROOT_CAUSE_WITHOUT_DIAGNOSTIC",
+    "fix": [
+      "add or map a diagnostic artifact for the root cause",
+      "register diagnostic in aggregator if needed"
+    ],
+    "prevention": [
+      "root_cause_governance",
+      "root_cause_diagnostic_registration"
+    ],
+    "rollback": [
+      "restore catalog from runtime/diagnostic-backups/governance",
+      "restore aggregator scripts from runtime/diagnostic-backups/bin"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "root cause exists in catalog but has no corresponding diagnostic artifact",
+      "error class is documented but cannot be automatically checked"
+    ],
+    "verification": [
+      "inspect root-cause-catalog.json",
+      "verify a diagnostic script exists for the root cause or governance layer",
+      "run as6-diagnose-root-cause-governance"
+    ]
+  },
+  "ROOT_CAUSE_WITHOUT_PREVENTION": {
+    "class": "ROOT_CAUSE_WITHOUT_PREVENTION",
+    "fix": [
+      "add one or more prevention controls to the catalog entry",
+      "convert prevention into diagnostic or AEC rule where possible"
+    ],
+    "prevention": [
+      "root_cause_prevention_required",
+      "mandatory_prevention_definition"
+    ],
+    "rollback": [
+      "restore previous catalog from backup if prevention metadata is invalid"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "catalog entry lacks prevention controls",
+      "root cause can recur because no prevention rule is documented"
+    ],
+    "verification": [
+      "inspect catalog entry prevention list",
+      "run root cause knowledge base diagnostics"
+    ]
+  },
+  "ROOT_CAUSE_WITHOUT_REGISTRY": {
+    "class": "ROOT_CAUSE_WITHOUT_REGISTRY",
+    "fix": [
+      "refresh registry after adding diagnostic",
+      "ensure diagnostic has executable permissions and valid shell syntax"
+    ],
+    "prevention": [
+      "root_cause_registry_registration",
+      "status_registry_gate"
+    ],
+    "rollback": [
+      "restore ops/status/diagnostic-status-registry.json from git",
+      "rerun registry diagnostics"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "root cause diagnostic is not listed in diagnostic registry",
+      "status registry cannot show diagnostic status"
+    ],
+    "verification": [
+      "run as6-refresh-diagnostic-status-registry",
+      "run as6-diagnose-diagnostic-status-registry"
+    ]
+  },
+  "ROOT_CAUSE_WITHOUT_REMEDIATION_PLAN": {
+    "class": "ROOT_CAUSE_WITHOUT_REMEDIATION_PLAN",
+    "fix": [
+      "derive remediation plan from catalog fix, rollback and prevention fields"
+    ],
+    "prevention": [
+      "root_cause_remediation_required",
+      "mandatory_fix_definition"
+    ],
+    "rollback": [
+      "restore remediation diagnostic from backup"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "root cause has detection but no fix plan",
+      "operator cannot see standard remediation steps"
+    ],
+    "verification": [
+      "run as6-diagnose-root-cause-remediation",
+      "inspect remediation plan output"
+    ]
+  },
+  "ROOT_CAUSE_WITHOUT_ROLLBACK": {
+    "class": "ROOT_CAUSE_WITHOUT_ROLLBACK",
+    "fix": [
+      "add rollback steps to the catalog entry",
+      "include backup path or git reset strategy where applicable"
+    ],
+    "prevention": [
+      "root_cause_rollback_required",
+      "mandatory_rollback_definition"
+    ],
+    "rollback": [
+      "restore previous catalog entry from backup"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "catalog entry lacks rollback procedure",
+      "operator cannot safely revert an attempted fix"
+    ],
+    "verification": [
+      "inspect catalog entry rollback list",
+      "run root cause knowledge base diagnostics"
+    ]
+  },
+  "ROOT_CAUSE_WITHOUT_VALIDATION_PLAN": {
+    "class": "ROOT_CAUSE_WITHOUT_VALIDATION_PLAN",
+    "fix": [
+      "add validation plan for each routed root cause",
+      "require post-fix diagnostic contract"
+    ],
+    "prevention": [
+      "root_cause_validation_required",
+      "post_fix_validation_gate"
+    ],
+    "rollback": [
+      "restore validation diagnostic from backup"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "root cause has fix but no post-fix validation path",
+      "changes cannot prove the issue is resolved"
+    ],
+    "verification": [
+      "run as6-diagnose-root-cause-validation",
+      "check validation plan for diagnostic, coverage, registry and flow"
+    ]
+  },
+  "RUNTIME_DIAGNOSTIC_BACKUP_SCANNED_AS_SOURCE": {
+    "class": "RUNTIME_DIAGNOSTIC_BACKUP_SCANNED_AS_SOURCE",
+    "fix": [
+      "exclude runtime/diagnostic-backups and forensic archives from active signature scans",
+      "rerun nameerror signatures and governance"
+    ],
+    "prevention": [
+      "runtime_backup_source_exclusion",
+      "backup_artifact_false_positive_suppression",
+      "nameerror_signature_scope"
+    ],
+    "rollback": [
+      "restore helper from runtime/diagnostic-backups/lib"
+    ],
+    "severity": "low",
+    "symptoms": [
+      "NameError signature diagnostic reports failures from runtime/diagnostic-backups",
+      "backup snapshots are scanned as active source evidence",
+      "old helper backups create false positive runtime signature failures"
+    ],
+    "verification": [
+      "run as6-diagnose-nameerror-signatures",
+      "confirm AS6_RUNTIME_DIAGNOSTIC_BACKUP_NOT_SCANNED=PASS",
+      "confirm diagnostic-backups paths are absent from FAIL evidence"
+    ]
+  },
+  "UNFINISHED_HEREDOC_BLOCK": {
+    "class": "UNFINISHED_HEREDOC_BLOCK",
+    "fix": [
+      "cancel incomplete heredoc",
+      "rerun using quoted marker and validated script"
+    ],
+    "prevention": [
+      "quoted_heredoc_required",
+      "no_nested_heredoc_patches"
+    ],
+    "rollback": [
+      "press Ctrl+C",
+      "verify no partial file was written"
+    ],
+    "severity": "high",
+    "symptoms": [
+      "terminal displays continuation prompt",
+      "command waits for closing marker",
+      "Ctrl+C is required to recover prompt"
+    ],
+    "verification": [
+      "inspect command for missing closing heredoc marker",
+      "confirm shell prompt is continuation prompt"
+    ]
+  },
+  "VARIABLE_CONTRACT_EXCEPTION_HANDLER_FALSE_POSITIVE": {
+    "class": "VARIABLE_CONTRACT_EXCEPTION_HANDLER_FALSE_POSITIVE",
+    "fix": [
+      "teach AST variable scanner about ast.ExceptHandler.name and known exception globals"
+    ],
+    "prevention": [
+      "variable_contract_exception_handler_support",
+      "variable_contract_false_positive_suppression"
+    ],
+    "rollback": [
+      "restore helper from runtime/diagnostic-backups/lib"
+    ],
+    "severity": "low",
+    "symptoms": [
+      "variable-contract diagnostic warns about SyntaxError and exc in except SyntaxError as exc",
+      "exception class and exception handler binding are treated as unresolved variables"
+    ],
+    "verification": [
+      "run as6-diagnose-python-variable-contract",
+      "confirm AS6_VARIABLE_CONTRACT_EXCEPT_HANDLER=PASS",
+      "confirm warning for SyntaxError,exc is gone"
+    ]
+  }
+}

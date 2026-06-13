@@ -1,0 +1,127 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+
+echo "=== AS6 Root Cause Governance Diagnostics ==="
+fail=0
+catalog="ops/governance/root-cause-catalog.json"
+registry="ops/status/diagnostic-status-registry.json"
+
+if [ -s "$catalog" ]; then echo "AS6_ROOT_CAUSE_GOVERNANCE_CATALOG=PASS"; else echo "AS6_ROOT_CAUSE_GOVERNANCE_CATALOG=FAIL"; fail=1; fi
+if [ -s "$registry" ]; then echo "AS6_ROOT_CAUSE_GOVERNANCE_REGISTRY_FILE=PASS"; else echo "AS6_ROOT_CAUSE_GOVERNANCE_REGISTRY_FILE=FAIL"; fail=1; fi
+
+python3 - "$catalog" "$registry" <<'AS6_RCGL_DIAGNOSTIC_PY'
+import json, sys
+from pathlib import Path
+catalog = Path(sys.argv[1])
+registry = Path(sys.argv[2])
+data = json.loads(catalog.read_text())
+reg_text = registry.read_text() if registry.exists() else ""
+fail = False
+required = ["severity", "symptoms", "verification", "fix", "rollback", "prevention"]
+diagnostic_map = {
+    "DIAGNOSTIC_SELF_REFERENCE_FALSE_POSITIVE": "as6-diagnose-patch-mode",
+    "KNOWLEDGE_BASE_REFERENCE_FALSE_POSITIVE": "as6-diagnose-patch-mode",
+    "NESTED_HEREDOC_PATCH": "as6-diagnose-patch-mode",
+    "OVERSIZED_SINGLE_LINE_PATCH": "as6-diagnose-patch-mode",
+    "GIANT_BASE64_PATCH": "as6-diagnose-patch-mode",
+    "COPY_PASTE_CORRUPTED_PATCH": "as6-diagnose-output-format",
+    "UNFINISHED_HEREDOC_BLOCK": "as6-diagnose-heredoc-safety",
+    "PROVIDER_HYPERVISOR_REBOOT": "as6-diagnose-provider-hypervisor-reboot",
+    "HOST_FREEZE_SSH_DROP": "as6-diagnose-host-freeze-investigation-pack",
+    "NETWORK_BLACKHOLE": "as6-diagnose-host-freeze-network",
+    "PRE_REBOOT_EVIDENCE_MISSING": "as6-diagnose-pre-reboot-forensics",
+    "ROOT_CAUSE_CLASS_NOT_DOCUMENTED": "as6-diagnose-root-cause-knowledge-base",
+    "ROOT_CAUSE_WITHOUT_DIAGNOSTIC": "as6-diagnose-root-cause-governance",
+    "ROOT_CAUSE_WITHOUT_COVERAGE": "as6-diagnose-root-cause-governance",
+    "ROOT_CAUSE_WITHOUT_REGISTRY": "as6-diagnose-root-cause-governance",
+    "ROOT_CAUSE_WITHOUT_PREVENTION": "as6-diagnose-root-cause-governance",
+    "DIAGNOSTIC_CONTRACT_SELF_REFERENCE_FALSE_POSITIVE": "as6-diagnose-diagnostic-contract",
+    "DIAGNOSTIC_EMBEDDED_HEREDOC_RUNTIME_HANG": "as6-diagnose-diagnostic-contract",
+    "REGISTRY_METRIC_QUERY_DRIFT": "as6-diagnose-diagnostic-contract",
+    "REGISTRY_SCHEMA_DRIFT": "as6-diagnose-diagnostic-contract",
+    "METRIC_QUERY_DRIFT": "as6-diagnose-diagnostic-contract",
+    "DIAGNOSTIC_CONTRACT_NO_RECURSION_SELF_REFERENCE_FALSE_POSITIVE": "as6-diagnose-diagnostic-contract",
+    "DIAGNOSTIC_CONTRACT_RECURSIVE_DEPENDENCY": "as6-diagnose-diagnostic-contract",
+    "DIAGNOSTIC_CONTRACT_PYTHON_C_EXIT_OR_HANG": "as6-diagnose-diagnostic-contract",
+    "GENERATED_PYTHON_SHELL_QUOTE_COLLISION": "as6-diagnose-root-cause-router",
+    "PYTHON_ARTIFACT_GIT_HYGIENE_DRIFT": "as6-diagnose-python-artifact-git-hygiene",
+    "PYTHON_HELPER_RUNTIME_ARTIFACT_DRIFT": "as6-diagnose-python-artifact-git-hygiene",
+    "VARIABLE_CONTRACT_EXCEPTION_HANDLER_FALSE_POSITIVE": "as6-diagnose-python-variable-contract",
+    "GENERATED_PYTHON_CONTRACT_HELPER_IMPORT_SIDE_EFFECT": "as6-diagnose-generated-python-contracts",
+    "GENERATED_PYTHON_CONTRACT_RECURSIVE_IMPORT_DRIFT": "as6-diagnose-generated-python-contracts",
+    "GENERATED_PYTHON_CONTRACT_DRIFT": "as6-diagnose-generated-python-contracts",
+    "GENERATED_PYTHON_RUNTIME_DRIFT": "as6-diagnose-generated-python-runtime",
+    "GENERATED_PYTHON_NAMEERROR_DRIFT": "as6-diagnose-generated-python-nameerror",
+    "DIAGNOSTIC_TRACKING_SINGLE_FILE_DRIFT": "as6-diagnose-diagnostic-tracking",
+    "DIAGNOSTIC_TRACKING_DRIFT": "as6-diagnose-diagnostic-tracking",
+    "DIAGNOSTIC_REGISTRY_GIT_ALIGNMENT_DRIFT": "as6-diagnose-diagnostic-tracking",
+    "GENERATED_PYTHON_COMPILE_TARGET_DRIFT": "as6-diagnose-generated-python-runtime",
+    "GENERATED_PYTHON_PYCACHE_ARTIFACT_DRIFT": "as6-diagnose-generated-python-runtime",
+    "GENERATED_PYTHON_IMPORT_SIDE_EFFECT": "as6-diagnose-generated-python-imports",
+    "GENERATED_PYTHON_SELF_IMPORT_RECURSION": "as6-diagnose-generated-python-runtime",
+    "GENERATED_PYTHON_RUNTIME_CONTRACT_DRIFT": "as6-diagnose-generated-python-runtime",
+    "GENERATED_PYTHON_IMPORT_DRIFT": "as6-diagnose-generated-python-imports",
+    "GENERATED_PYTHON_REGRESSION_DRIFT": "as6-diagnose-generated-python-regression",
+    "GENERATED_VARIABLE_NAME_DRIFT": "as6-diagnose-python-variable-contract",
+    "GENERATED_TEMPLATE_REFERENCE_DRIFT": "as6-diagnose-generated-python-safety",
+    "RUNTIME_DIAGNOSTIC_BACKUP_SCANNED_AS_SOURCE": "as6-diagnose-nameerror-signatures",
+    "BACKUP_ARTIFACT_FALSE_POSITIVE": "as6-diagnose-nameerror-signatures",
+    "REBOOT_FORENSICS_RUNTIME_FAILURE": "as6-diagnose-reboot-forensics-runtime",
+    "GENERATED_PYTHON_SAFETY_LEGACY_SCOPE_FALSE_POSITIVE": "as6-diagnose-generated-python-safety",
+    "GENERATED_PYTHON_SAFETY_SELF_REFERENCE_FALSE_POSITIVE": "as6-diagnose-generated-python-safety",
+    "GENERATED_PYTHON_TEMPLATE_VARIABLE_LEAK": "as6-diagnose-root-cause-router",
+    "ROOT_CAUSE_ROUTER_MISSING_ROUTE": "as6-diagnose-root-cause-router",
+    "ROOT_CAUSE_WITHOUT_REMEDIATION_PLAN": "as6-diagnose-root-cause-remediation",
+    "ROOT_CAUSE_WITHOUT_VALIDATION_PLAN": "as6-diagnose-root-cause-validation",
+    "ROOT_CAUSE_ROUTING_CONTRACT_DRIFT": "as6-diagnose-root-cause-router",
+    "DIAGNOSTIC_GIT_REGISTRATION_DRIFT": "as6-diagnose-diagnostic-registration",
+    "DIAGNOSTIC_HELPER_GIT_REGISTRATION_DRIFT": "as6-diagnose-diagnostic-registration",
+    "DIAGNOSTIC_REGISTRY_GIT_HYGIENE_DRIFT": "as6-diagnose-diagnostic-registration",
+    "DIAGNOSTIC_COVERAGE_REGISTRATION_DRIFT": "as6-diagnose-diagnostic-registration",
+    "ROOT_CAUSE_GOVERNANCE_COVERAGE_DRIFT": "as6-diagnose-root-cause-governance",
+    "ROOT_CAUSE_WITHOUT_ROLLBACK": "as6-diagnose-root-cause-governance"
+}
+for key, entry in sorted(data.items()):
+    for field in required:
+        value = entry.get(field)
+        ok = bool(value) and (not isinstance(value, list) or len(value) > 0)
+        if not ok:
+            print(f"AS6_ROOT_CAUSE_FIELD_{field.upper()}=FAIL:{key}")
+            fail = True
+    diag = diagnostic_map.get(key)
+    if not diag:
+        print(f"AS6_ROOT_CAUSE_DIAGNOSTIC=FAIL:{key}:missing_map")
+        fail = True
+        continue
+    diag_path = Path("ops/bin") / diag
+    if diag_path.exists() and diag_path.stat().st_size > 0:
+        print(f"AS6_ROOT_CAUSE_DIAGNOSTIC=PASS:{key}:{diag}")
+    else:
+        print(f"AS6_ROOT_CAUSE_DIAGNOSTIC=FAIL:{key}:{diag}")
+        fail = True
+    if diag in reg_text:
+        print(f"AS6_ROOT_CAUSE_REGISTRY=PASS:{key}:{diag}")
+        print(f"AS6_ROOT_CAUSE_COVERAGE=PASS:{key}:{diag}")
+    else:
+        print(f"AS6_ROOT_CAUSE_REGISTRY=FAIL:{key}:{diag}")
+        print(f"AS6_ROOT_CAUSE_COVERAGE=FAIL:{key}:{diag}")
+        fail = True
+    if entry.get("prevention"):
+        print(f"AS6_ROOT_CAUSE_PREVENTION=PASS:{key}")
+    else:
+        print(f"AS6_ROOT_CAUSE_PREVENTION=FAIL:{key}")
+        fail = True
+    if entry.get("rollback"):
+        print(f"AS6_ROOT_CAUSE_ROLLBACK=PASS:{key}")
+    else:
+        print(f"AS6_ROOT_CAUSE_ROLLBACK=FAIL:{key}")
+        fail = True
+if fail:
+    print("AS6_ROOT_CAUSE_GOVERNANCE=FAIL")
+    print("AS6_ROOT_CAUSE_GOVERNANCE_RESULT=FAIL")
+    raise SystemExit(1)
+print("AS6_ROOT_CAUSE_GOVERNANCE=PASS")
+print("AS6_ROOT_CAUSE_GOVERNANCE_RESULT=OK")
+AS6_RCGL_DIAGNOSTIC_PY

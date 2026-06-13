@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+
+echo "=== AS6 Restore Drill History Diagnostics ==="
+
+mkdir -p runtime/restore-drill
+
+history="runtime/restore-drill/latest.json"
+
+if [ -f "$history" ]; then
+  echo "RESTORE_DRILL_HISTORY_FILE=OK:$history"
+else
+  echo "RESTORE_DRILL_HISTORY_FILE=OK:not_created_yet"
+fi
+
+if ./ops/bin/as6-diagnose-restore-drill >/tmp/as6-restore-drill-history-run.out 2>&1; then
+  result="OK"
+else
+  result="FAIL"
+fi
+
+cat /tmp/as6-restore-drill-history-run.out
+
+tables="$(grep -E '^RESTORE_DRILL_PUBLIC_TABLE_COUNT=' /tmp/as6-restore-drill-history-run.out | tail -1 | cut -d= -f2- || echo 0)"
+
+python3 - <<PY
+import json, time
+from pathlib import Path
+data = {
+  "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+  "result": "$result",
+  "public_table_count": "$tables",
+}
+Path("runtime/restore-drill").mkdir(parents=True, exist_ok=True)
+Path("runtime/restore-drill/latest.json").write_text(json.dumps(data, indent=2) + "\n")
+PY
+
+echo "RESTORE_DRILL_HISTORY_WRITE=OK"
+echo "RESTORE_DRILL_HISTORY_RESULT=$result"
+
+[ "$result" = "OK" ]

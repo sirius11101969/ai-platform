@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+
+echo "=== AS6 Disaster Recovery Diagnostics ==="
+
+fail=0
+
+for f in docker-compose.yml .env.example backup_v1_stable.sql ops/bin/as6-diagnose-all ops/bin/as6-diagnose-root-cause-v2; do
+  if [ -f "$f" ]; then
+    echo "DISASTER_RECOVERY_REQUIRED_FILE=OK:$f"
+  else
+    echo "DISASTER_RECOVERY_REQUIRED_FILE=FAIL:$f"
+    fail=1
+  fi
+done
+
+if ./ops/bin/as6-diagnose-backup-integrity >/tmp/as6-dr-backup-integrity.out 2>&1; then
+  echo "DISASTER_RECOVERY_BACKUP_INTEGRITY=OK"
+else
+  echo "DISASTER_RECOVERY_BACKUP_INTEGRITY=FAIL"
+  fail=1
+fi
+
+if ./ops/bin/as6-diagnose-restore-readiness >/tmp/as6-dr-restore-readiness.out 2>&1; then
+  echo "DISASTER_RECOVERY_RESTORE_READINESS=OK"
+else
+  echo "DISASTER_RECOVERY_RESTORE_READINESS=FAIL"
+  fail=1
+fi
+
+echo "DISASTER_RECOVERY_NOTE=restore_drill_not_executed_in_production"
+
+if [ "$fail" -eq 0 ]; then
+  echo "DISASTER_RECOVERY_RESULT=OK"
+  exit 0
+fi
+
+echo "DISASTER_RECOVERY_RESULT=FAIL"
+exit 1

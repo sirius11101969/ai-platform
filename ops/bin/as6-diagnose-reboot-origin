@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "=== AS6 Reboot Origin Diagnostics ==="
+
+fail=0
+
+command -v auditctl >/dev/null 2>&1 \
+  && echo "REBOOT_ORIGIN_AUDITCTL=OK" \
+  || { echo "REBOOT_ORIGIN_AUDITCTL=FAIL"; fail=1; }
+
+systemctl is-active auditd >/dev/null 2>&1 \
+  && echo "REBOOT_ORIGIN_AUDITD_ACTIVE=OK" \
+  || { echo "REBOOT_ORIGIN_AUDITD_ACTIVE=FAIL"; fail=1; }
+
+if auditctl -l 2>/dev/null | grep -Eq 'as6-reboot|as6-shutdown|as6-systemctl'; then
+  echo "REBOOT_ORIGIN_AUDIT_RULES=OK"
+else
+  echo "REBOOT_ORIGIN_AUDIT_RULES=FAIL"
+  fail=1
+fi
+
+if journalctl -b -1 --no-pager 2>/dev/null | grep -qi 'hypervisor initiated shutdown'; then
+  echo "REBOOT_ORIGIN_PREVIOUS_BOOT=EXTERNAL_HYPERVISOR_SHUTDOWN"
+else
+  echo "REBOOT_ORIGIN_PREVIOUS_BOOT=UNKNOWN_OR_NONE"
+fi
+
+if ausearch -k as6-reboot-syscall -k as6-reboot-command -k as6-shutdown-command -k as6-systemctl-command -i 2>/dev/null >/tmp/as6-reboot-origin-audit.raw; then
+  python3 - <<'PY2' >/tmp/as6-reboot-origin-audit.dangerous
+import re
+from pathlib import Path
+
+raw = Path("/tmp/as6-reboot-origin-audit.raw").read_text(errors="replace").splitlines()
+
+danger = re.compile(
+    r"proctitle=.*("
+    r"(^|[ /])(reboot|shutdown|poweroff|halt)( |$)|"
+    r"systemctl (reboot|poweroff|halt|kexec)( |$)|"
+    r"systemctl (isolate|start) (reboot\\.target|poweroff\\.target|halt\\.target)"
+    r")",
+    re.I,
+)
+
+safe_systemctl = re.compile(
+    r"proctitle=.*systemctl (cat|status|show|list-timers|is-enabled|is-active|enable|daemon-reload|restart auditd|start auditd)",
+    re.I,
+)
+
+for line in raw:
+    if "proctitle=" not in line:
+        continue
+    if safe_systemctl.search(line):
+        continue
+    if danger.search(line):
+        print(line)
+PY2
+
+  if [ -s /tmp/as6-reboot-origin-audit.dangerous ]; then
+    echo "REBOOT_ORIGIN_DANGEROUS_AUDIT_EVENTS=FOUND"
+    tail -80 /tmp/as6-reboot-origin-audit.dangerous
+  else
+    echo "REBOOT_ORIGIN_DANGEROUS_AUDIT_EVENTS=NONE_YET"
+  fi
+
+  echo "REBOOT_ORIGIN_AUDIT_RAW_EVENTS=$(grep -c '^----' /tmp/as6-reboot-origin-audit.raw 2>/dev/null || echo 0)"
+else
+  echo "REBOOT_ORIGIN_DANGEROUS_AUDIT_EVENTS=UNAVAILABLE"
+fi
+
+if grep -RniE 'systemctl reboot|reboot($| )|shutdown -r|shutdown now|poweroff|halt|init 6' \
+  /var/www/ai-platform /usr/local/bin /etc/systemd/system /etc/cron* /opt 2>/dev/null \
+  | grep -Ev 'as6-diagnose|backup|last reboot|Hypervisor Reboot Diagnostics' \
+  >/tmp/as6-reboot-origin-local-search.out; then
+  echo "REBOOT_ORIGIN_LOCAL_COMMANDS=WARN:found"
+  cat /tmp/as6-reboot-origin-local-search.out
+else
+  echo "REBOOT_ORIGIN_LOCAL_COMMANDS=OK:none"
+fi
+
+last reboot | head -10 | sed 's/^/REBOOT_ORIGIN_HISTORY=/'
+
+if [ "$fail" -eq 0 ]; then
+  echo "REBOOT_ORIGIN_RESULT=OK"
+  exit 0
+fi
+
+echo "REBOOT_ORIGIN_RESULT=FAIL"
+exit 1

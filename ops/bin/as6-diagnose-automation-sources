@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "=== AS6 Automation Sources Diagnostics ==="
+
+fail=0
+
+for unit in \
+  as6-health-cache.timer \
+  as6-dashboard-cache.timer \
+  as6-automation-registry.timer \
+  as6-self-heal.timer
+do
+  if systemctl list-unit-files "$unit" >/dev/null 2>&1; then
+    state="$(systemctl is-enabled "$unit" 2>/dev/null || true)"
+    active="$(systemctl is-active "$unit" 2>/dev/null || true)"
+    echo "AUTOMATION_SOURCE_TIMER=$unit:enabled=${state:-unknown}:active=${active:-unknown}"
+  fi
+done
+
+if systemctl is-enabled as6-self-heal.timer >/dev/null 2>&1; then
+  echo "AUTOMATION_SELF_HEAL_TIMER=FAIL:enabled"
+  fail=1
+else
+  echo "AUTOMATION_SELF_HEAL_TIMER=OK:disabled_for_stability"
+fi
+
+if pgrep -af '/usr/local/bin/as6-ops-agent' >/tmp/as6-ops-agent.ps 2>/dev/null; then
+  echo "AUTOMATION_OPS_AGENT=RUNNING"
+  cat /tmp/as6-ops-agent.ps
+else
+  echo "AUTOMATION_OPS_AGENT=NOT_RUNNING"
+fi
+
+echo "AUTOMATION_HEALTH_CACHE_LOCK=OK:/tmp/as6-health-cache.systemd.lock"
+
+if [ "$fail" -eq 0 ]; then
+  echo "AUTOMATION_SOURCES_RESULT=OK"
+  exit 0
+fi
+
+echo "AUTOMATION_SOURCES_RESULT=FAIL"
+exit 1

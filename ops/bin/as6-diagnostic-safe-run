@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+name="$1"
+shift
+
+timeout_seconds="${AS6_SAFE_DIAGNOSTIC_TIMEOUT_SECONDS:-45}"
+lock="/tmp/as6-diagnostic-${name}.lock"
+
+(
+  flock -n 9 || {
+    echo "AS6_SAFE_RUN=SKIP:${name}:already_running"
+    exit 0
+  }
+
+  echo "AS6_SAFE_RUN=START:${name}:timeout_${timeout_seconds}s"
+
+  if timeout "$timeout_seconds" "$@"; then
+    echo "AS6_SAFE_RUN=OK:${name}"
+    exit 0
+  else
+    rc="$?"
+    if [ "$rc" -eq 124 ]; then
+      echo "AS6_SAFE_RUN=FAIL:${name}:timeout"
+    else
+      echo "AS6_SAFE_RUN=FAIL:${name}:rc_${rc}"
+    fi
+    exit "$rc"
+  fi
+) 9>"$lock"

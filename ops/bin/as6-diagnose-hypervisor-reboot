@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "=== AS6 Hypervisor Reboot Diagnostics ==="
+
+fail=0
+
+if journalctl -b -1 --no-pager 2>/dev/null | grep -qi 'hypervisor initiated shutdown'; then
+  echo "HYPERVISOR_REBOOT_DETECTED=FAIL:previous_boot"
+  echo "HYPERVISOR_REBOOT_ROOT_CAUSE=provider_or_vps_hypervisor_initiated_shutdown"
+  fail=1
+else
+  echo "HYPERVISOR_REBOOT_DETECTED=OK"
+  echo "HYPERVISOR_REBOOT_ROOT_CAUSE=none"
+fi
+
+last reboot | head -20 | sed 's/^/HYPERVISOR_REBOOT_HISTORY=/'
+
+echo "HYPERVISOR_REBOOT_OOM=$(journalctl -k --no-pager | grep -Eiq 'oom|out of memory|oom-killer' && echo FAIL || echo OK)"
+echo "HYPERVISOR_REBOOT_KERNEL_LOCKUP=$(journalctl -k --no-pager | grep -Eiq 'soft lockup|hard lockup|hung task|blocked for more than' && echo FAIL || echo OK)"
+echo "HYPERVISOR_REBOOT_DISK_ERRORS=$(journalctl -k --no-pager | grep -Eiq 'I/O error|blk_update_request|EXT4-fs error|Buffer I/O error' && echo FAIL || echo OK)"
+
+if [ "$fail" -eq 0 ]; then
+  echo "HYPERVISOR_REBOOT_RESULT=OK"
+  exit 0
+fi
+
+echo "HYPERVISOR_REBOOT_RESULT=FAIL"
+exit 1

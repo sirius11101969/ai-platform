@@ -32,9 +32,27 @@ else
   fi
 fi
 
-grep -Eq 'status=0/SUCCESS|Deactivated successfully|Finished as6-health-cache.service' /tmp/as6-health-timer-service-status.out \
-  && echo "HEALTH_TIMER_RUNTIME_SERVICE_SUCCESS=OK" \
-  || { echo "HEALTH_TIMER_RUNTIME_SERVICE_SUCCESS=FAIL"; fail=1; }
+if grep -Eq 'status=0/SUCCESS|Deactivated successfully|Finished as6-health-cache.service' /tmp/as6-health-timer-service-status.out; then
+  echo "HEALTH_TIMER_RUNTIME_SERVICE_SUCCESS=OK"
+elif [ -f runtime/health/latest.json ] && python3 - <<'PY2'
+import json, sys
+from datetime import datetime, timezone
+from pathlib import Path
+try:
+    data = json.loads(Path("runtime/health/latest.json").read_text())
+    ts = datetime.fromisoformat(data["timestamp"].replace("Z", "+00:00"))
+    age = (datetime.now(timezone.utc) - ts).total_seconds()
+    ok = data.get("health_cache_result") == "OK" and age <= 3600
+    raise SystemExit(0 if ok else 1)
+except Exception:
+    raise SystemExit(1)
+PY2
+then
+  echo "HEALTH_TIMER_RUNTIME_SERVICE_SUCCESS=OK:latest_cache_fresh"
+else
+  echo "HEALTH_TIMER_RUNTIME_SERVICE_SUCCESS=FAIL"
+  fail=1
+fi
 
 next_realtime="$(systemctl show as6-health-cache.timer -p NextElapseUSecRealtime --value 2>/dev/null || true)"
 next_mono="$(systemctl show as6-health-cache.timer -p NextElapseUSecMonotonic --value 2>/dev/null || true)"

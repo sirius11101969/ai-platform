@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+
+echo "=== AS6 Reboot Forensics Diagnostics ==="
+
+fail=0
+mkdir -p runtime/reboot-forensics/history
+
+if [ "${AS6_REBOOT_FORENSICS_LIGHTWEIGHT:-0}" = "1" ]; then
+  echo "REBOOT_FORENSICS_LIGHTWEIGHT_MODE=OK"
+  test -s runtime/reboot-forensics/latest.log \
+    && echo "REBOOT_FORENSICS_LATEST=OK" \
+    || echo "REBOOT_FORENSICS_LATEST=WARN:not_created_yet"
+  test -s runtime/reboot-forensics/reboot-timeline.json \
+    && echo "REBOOT_FORENSICS_TIMELINE=OK" \
+    || echo "REBOOT_FORENSICS_TIMELINE=WARN:not_created_yet"
+  echo "REBOOT_FORENSICS_RESULT=OK"
+  exit 0
+fi
+
+
+if [ -x ops/bin/as6-reboot-forensics-snapshot ]; then
+  echo "REBOOT_FORENSICS_COLLECTOR=OK"
+else
+  echo "REBOOT_FORENSICS_COLLECTOR=FAIL"
+  fail=1
+fi
+
+if ./ops/bin/as6-reboot-forensics-snapshot >/tmp/as6-reboot-forensics-snapshot.out 2>&1; then
+  cat /tmp/as6-reboot-forensics-snapshot.out
+  echo "REBOOT_FORENSICS_SNAPSHOT_RUN=OK"
+else
+  cat /tmp/as6-reboot-forensics-snapshot.out || true
+  echo "REBOOT_FORENSICS_SNAPSHOT_RUN=FAIL"
+  fail=1
+fi
+
+test -s runtime/reboot-forensics/latest.log \
+  && echo "REBOOT_FORENSICS_LATEST=OK" \
+  || { echo "REBOOT_FORENSICS_LATEST=FAIL"; fail=1; }
+
+if grep -qi 'hypervisor initiated shutdown' runtime/reboot-forensics/latest.log 2>/dev/null; then
+  echo "REBOOT_FORENSICS_HYPERVISOR_SIGNATURE=WARN:detected"
+else
+  echo "REBOOT_FORENSICS_HYPERVISOR_SIGNATURE=OK:not_detected_in_latest_snapshot"
+fi
+
+if grep -Eiq 'proctitle=.*(reboot|shutdown|poweroff|halt|systemctl .*reboot|systemctl .*poweroff|systemctl .*halt)' runtime/reboot-forensics/latest.log 2>/dev/null; then
+  echo "REBOOT_FORENSICS_LOCAL_INITIATOR=FAIL:dangerous_audit_event_found"
+  fail=1
+else
+  echo "REBOOT_FORENSICS_LOCAL_INITIATOR=OK:none"
+fi
+
+count="$(find runtime/reboot-forensics/history -maxdepth 1 -type f -name '*.log' | wc -l | tr -d ' ')"
+echo "REBOOT_FORENSICS_HISTORY_COUNT=$count"
+
+if [ "$count" -gt 50 ]; then
+  find runtime/reboot-forensics/history -maxdepth 1 -type f -name '*.log' -printf '%T@ %p\n' | sort -nr | awk 'NR>50{print $2}' | xargs -r rm -f --
+  echo "REBOOT_FORENSICS_HISTORY_CLEANUP=OK"
+else
+  echo "REBOOT_FORENSICS_HISTORY_CLEANUP=OK:not_needed"
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "REBOOT_FORENSICS_RESULT=OK"
+  exit 0
+fi
+
+echo "REBOOT_FORENSICS_RESULT=FAIL"
+exit 1

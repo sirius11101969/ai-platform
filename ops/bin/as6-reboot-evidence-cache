@@ -1,0 +1,149 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+
+base="runtime/reboot-forensics"
+ts="$(date -u +%Y-%m-%dT%H-%M-%SZ)"
+dir="$base/evidence/$ts"
+latest="$base/evidence/latest"
+mkdir -p "$dir" "$base/history"
+
+write_cmd() {
+  local name="$1"
+  shift
+  {
+    echo "=== $name ==="
+    echo "timestamp=$ts"
+    "$@" 2>&1 || true
+  } > "$dir/$name.txt"
+}
+
+write_shell() {
+  local name="$1"
+  local cmd="$2"
+  {
+    echo "=== $name ==="
+    echo "timestamp=$ts"
+    bash -lc "$cmd" 2>&1 || true
+  } > "$dir/$name.txt"
+}
+
+write_shell "uptime" "uptime; date -u; hostname"
+write_shell "last-x" "last -x | head -120"
+write_shell "boot-list" "journalctl --list-boots | tail -40"
+write_shell "journal-prev-boot-reboot-signals" "journalctl -b -1 --no-pager 2>/dev/null | grep -Ei 'hypervisor initiated shutdown|System is rebooting|reboot.target|shutdown.target|poweroff.target|systemd-logind|watchdog|panic|oom|I/O error|hung task|soft lockup|hard lockup' | tail -400"
+write_shell "journal-current-boot-reboot-signals" "journalctl -b --no-pager | grep -Ei 'hypervisor initiated shutdown|System is rebooting|reboot.target|shutdown.target|poweroff.target|systemd-logind|watchdog|panic|oom|I/O error|hung task|soft lockup|hard lockup' | tail -400"
+write_shell "kernel-events" "journalctl -k --no-pager | grep -Ei 'oom|out of memory|oom-killer|soft lockup|hard lockup|hung task|blocked for more than|I/O error|blk_update_request|EXT4-fs error|Buffer I/O error|panic|watchdog' | tail -300"
+write_shell "beget-agent" "systemctl status beget-agent --no-pager -l; echo; journalctl -u beget-agent --no-pager -n 300"
+write_shell "audit-reboot" "if command -v ausearch >/dev/null 2>&1; then ausearch -k as6-reboot-syscall -k as6-reboot-command -k as6-shutdown-command -k as6-systemctl-command -i | tail -300; else echo 'ausearch unavailable'; fi"
+write_shell "docker-state" "docker ps -a; echo; docker compose ps 2>/dev/null || true; echo; docker stats --no-stream 2>/dev/null || true"
+write_shell "systemd-timers" "systemctl list-timers --all | grep -Ei 'as6|health|root|diagnostic|reboot|forensics' || true"
+write_shell "local-reboot-commands" "grep -RniE 'systemctl reboot|reboot($| )|shutdown -r|shutdown now|poweroff|halt|init 6|reboot.target|poweroff.target' /var/www/ai-platform /usr/local/bin /etc/systemd/system /etc/cron* /opt 2>/dev/null | grep -Ev 'runtime/diagnostic-backups|runtime/reboot-forensics|as6-diagnose|as6-reboot-forensics|as6-reboot-evidence|last reboot|Hypervisor Reboot' || true"
+
+python3 - "$dir" "$ts" <<'PY'
+import json, re, sys
+from pathlib import Path
+
+dir = Path(sys.argv[1])
+ts = sys.argv[2]
+
+def read(name):
+    p = dir / f"{name}.txt"
+    return p.read_text(errors="replace") if p.exists() else ""
+
+prev = read("journal-prev-boot-reboot-signals")
+kernel = read("kernel-events")
+audit = read("audit-reboot")
+lastx = read("last-x")
+local = read("local-reboot-commands")
+
+hypervisor = bool(re.search(r"hypervisor initiated shutdown", prev, re.I))
+oom = bool(re.search(r"oom|out of memory|oom-killer", kernel, re.I))
+panic = bool(re.search(r"panic|soft lockup|hard lockup|hung task|blocked for more than", kernel, re.I))
+disk = bool(re.search(r"I/O error|blk_update_request|EXT4-fs error|Buffer I/O error", kernel, re.I))
+safe_systemctl = re.compile(r"proctitle=.*systemctl (cat|status|show|list-timers|is-enabled|is-active|enable|daemon-reload|restart auditd|start auditd)", re.I)
+dangerous_audit_lines = []
+for line in audit.splitlines():
+    if "proctitle=" not in line:
+        continue
+    if safe_systemctl.search(line):
+        continue
+    if re.search(r"proctitle=.*((^|[ /])(reboot|shutdown|poweroff|halt)( |$)|systemctl (reboot|poweroff|halt|kexec)( |$)|systemctl (isolate|start) (reboot\\.target|poweroff\\.target|halt\\.target))", line, re.I):
+        dangerous_audit_lines.append(line)
+manual = bool(dangerous_audit_lines)
+
+# Local grep matches are advisory only. They are not proof of reboot origin,
+# because diagnostics/scripts can contain words like reboot/shutdown safely.
+local_cmd_raw = bool(local.strip())
+local_cmd_confirmed = False
+false_local_match = local_cmd_raw and not manual
+
+shutdown_records = len([x for x in lastx.splitlines() if x.startswith("shutdown ")])
+
+# Strong evidence priority:
+# 1) auditd dangerous executable event
+# 2) kernel/OOM/disk fault
+# 3) hypervisor initiated shutdown
+# 4) graceful unknown
+if manual:
+    classification = "MANUAL_OR_LOCAL_REBOOT"
+elif oom:
+    classification = "OOM_REBOOT"
+elif panic:
+    classification = "KERNEL_PANIC_OR_LOCKUP"
+elif disk:
+    classification = "DISK_ERROR_REBOOT"
+elif hypervisor:
+    classification = "PROVIDER_HYPERVISOR_REBOOT"
+elif shutdown_records > 0:
+    classification = "GRACEFUL_REBOOT_UNKNOWN_SOURCE"
+else:
+    classification = "UNKNOWN_REBOOT"
+
+confidence = 0
+if classification == "PROVIDER_HYPERVISOR_REBOOT":
+    confidence = 95
+    if not (oom or panic or disk or manual):
+        confidence = 100
+elif classification in ("MANUAL_OR_LOCAL_REBOOT", "OOM_REBOOT", "KERNEL_PANIC_OR_LOCKUP", "DISK_ERROR_REBOOT"):
+    confidence = 90
+elif classification == "GRACEFUL_REBOOT_UNKNOWN_SOURCE":
+    confidence = 60
+else:
+    confidence = 30
+
+data = {
+    "timestamp": ts,
+    "classification": classification,
+    "confidence": confidence,
+    "signals": {
+        "hypervisor_initiated_shutdown": hypervisor,
+        "oom": oom,
+        "kernel_panic_or_lockup": panic,
+        "disk_errors": disk,
+        "manual_or_local_audit": manual,
+        "local_reboot_command_found": local_cmd_raw,
+        "local_reboot_command_confirmed": local_cmd_confirmed,
+        "false_local_reboot_match": false_local_match,
+        "hypervisor_priority_applied": bool(hypervisor and not manual),
+        "shutdown_records": shutdown_records,
+    },
+    "evidence_dir": str(dir),
+    "next_action": "await_provider_response" if classification == "PROVIDER_HYPERVISOR_REBOOT" else "inspect_evidence_dir",
+}
+(dir / "classification.json").write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n")
+Path("runtime/reboot-forensics/provider-correlation.json").write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n")
+print(json.dumps(data, ensure_ascii=False, indent=2))
+PY
+
+rm -f "$latest"
+ln -sfn "$ts" "$latest"
+
+# retention: keep latest 30 evidence dirs
+find "$base/evidence" -mindepth 1 -maxdepth 1 -type d ! -name latest -printf '%T@ %p\n' 2>/dev/null \
+  | sort -nr | awk 'NR>30{print $2}' | xargs -r rm -rf --
+
+echo "REBOOT_EVIDENCE_CACHE_DIR=$dir"
+echo "REBOOT_EVIDENCE_CACHE_LATEST=$latest"
+echo "REBOOT_EVIDENCE_CACHE_RESULT=OK"

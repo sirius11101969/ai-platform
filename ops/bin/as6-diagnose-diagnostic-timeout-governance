@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+
+echo "=== AS6 Diagnostic Timeout Governance Diagnostics ==="
+
+fail=0
+MAX="${AS6_DIAGNOSTIC_TIMEOUT_SECONDS:-240}"
+
+command -v timeout >/dev/null 2>&1 \
+  && echo "DIAGNOSTIC_TIMEOUT_TOOL=OK" \
+  || { echo "DIAGNOSTIC_TIMEOUT_TOOL=FAIL"; fail=1; }
+
+if [[ "$MAX" =~ ^[0-9]+$ ]] && [ "$MAX" -ge 30 ]; then
+  echo "DIAGNOSTIC_TIMEOUT_POLICY=OK:${MAX}s"
+else
+  echo "DIAGNOSTIC_TIMEOUT_POLICY=FAIL:${MAX}"
+  fail=1
+fi
+
+grep -q 'AS6_DIAGNOSTIC_TIMEOUT_SECONDS' ops/bin/as6-diagnose-all \
+  && echo "DIAGNOSTIC_TIMEOUT_DIAGNOSE_ALL_POLICY=OK" \
+  || { echo "DIAGNOSTIC_TIMEOUT_DIAGNOSE_ALL_POLICY=FAIL"; fail=1; }
+
+grep -q 'timeout "$AS6_DIAGNOSTIC_TIMEOUT_SECONDS" bash -lc "$cmd"' ops/bin/as6-diagnose-all \
+  && echo "DIAGNOSTIC_TIMEOUT_DIAGNOSE_ALL_WRAPPED=OK" \
+  || { echo "DIAGNOSTIC_TIMEOUT_DIAGNOSE_ALL_WRAPPED=FAIL"; fail=1; }
+
+if ./ops/bin/as6-diagnose-diagnostic-performance >/tmp/as6-timeout-governance-performance.out 2>&1; then
+  cat /tmp/as6-timeout-governance-performance.out
+  echo "DIAGNOSTIC_TIMEOUT_PERFORMANCE_CHECK=OK"
+else
+  cat /tmp/as6-timeout-governance-performance.out || true
+  echo "DIAGNOSTIC_TIMEOUT_PERFORMANCE_CHECK=FAIL"
+  fail=1
+fi
+
+if grep -q 'DIAGNOSTIC_PERFORMANCE_DIAGNOSE_ALL_TIMEOUT=WARN:not_wrapped_in_timeout' /tmp/as6-timeout-governance-performance.out; then
+  echo "DIAGNOSTIC_TIMEOUT_PERFORMANCE_WARN=FAIL:not_wrapped_in_timeout"
+  fail=1
+else
+  echo "DIAGNOSTIC_TIMEOUT_PERFORMANCE_WARN=OK"
+fi
+
+if grep -q 'DIAGNOSTIC_PERFORMANCE_TIMEOUT_PATTERN=OK:dynamic_policy' /tmp/as6-timeout-governance-performance.out; then
+  echo "DIAGNOSTIC_TIMEOUT_PATTERN_RECOGNITION=OK:dynamic_policy"
+else
+  echo "DIAGNOSTIC_TIMEOUT_PATTERN_RECOGNITION=FAIL:dynamic_policy_not_detected"
+  fail=1
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "DIAGNOSTIC_TIMEOUT_GOVERNANCE_RESULT=OK"
+  exit 0
+fi
+
+echo "DIAGNOSTIC_TIMEOUT_GOVERNANCE_RESULT=FAIL"
+exit 1

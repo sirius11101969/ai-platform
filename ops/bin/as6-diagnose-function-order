@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+
+echo "=== AS6 Function Order Diagnostics ==="
+
+fail=0
+
+check_run_check_order() {
+  local file="$1"
+  [ -f "$file" ] || return 0
+
+  first_def="$(grep -nE '^run_check\(\)' "$file" | head -1 | cut -d: -f1 || true)"
+  first_call="$(grep -nE '^[[:space:]]*run_check[[:space:]]+"' "$file" | head -1 | cut -d: -f1 || true)"
+
+  echo "FUNCTION_ORDER_FILE=$file"
+  echo "FUNCTION_ORDER_RUN_CHECK_DEF_LINE=${first_def:-none}"
+  echo "FUNCTION_ORDER_RUN_CHECK_FIRST_CALL_LINE=${first_call:-none}"
+
+  if [ -n "${first_call:-}" ] && [ -n "${first_def:-}" ] && [ "$first_call" -lt "$first_def" ]; then
+    echo "FUNCTION_ORDER_CALL_BEFORE_DEFINITION=FAIL:$file:$first_call"
+    fail=1
+  else
+    echo "FUNCTION_ORDER_CALL_BEFORE_DEFINITION=OK:$file"
+  fi
+}
+
+check_run_check_order ops/bin/as6-diagnose-all
+check_run_check_order ops/bin/as6-diagnose-root-cause-v2
+
+if [ "$fail" -eq 0 ]; then
+  echo "FUNCTION_ORDER_RESULT=OK"
+  exit 0
+fi
+
+echo "FUNCTION_ORDER_RESULT=FAIL"
+exit 1

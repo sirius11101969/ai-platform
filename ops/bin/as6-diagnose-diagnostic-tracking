@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+echo "=== AS6 Diagnostic Git Tracking Diagnostics ==="
+helper="ops/lib/as6-diagnostic-tracking-check.py"
+if [ -s "$helper" ]; then echo "AS6_DIAGNOSTIC_TRACKING_HELPER=PASS:$helper"; else echo "AS6_DIAGNOSTIC_TRACKING_HELPER=FAIL:$helper"; exit 1; fi
+python3 "$helper"

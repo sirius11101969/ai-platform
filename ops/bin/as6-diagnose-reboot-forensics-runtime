@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+echo "=== AS6 Reboot Forensics Runtime Diagnostics ==="
+fail=0
+if [ -x ops/bin/as6-reboot-evidence-cache ]; then echo "AS6_REBOOT_FORENSICS_CACHE_EXECUTABLE=PASS"; else echo "AS6_REBOOT_FORENSICS_CACHE_EXECUTABLE=FAIL"; fail=1; fi
+if [ -x ops/bin/as6-reboot-forensics-snapshot ]; then echo "AS6_REBOOT_FORENSICS_SNAPSHOT_EXECUTABLE=PASS"; else echo "AS6_REBOOT_FORENSICS_SNAPSHOT_EXECUTABLE=FAIL"; fail=1; fi
+if grep -RIn "local_cmd[^_]" ops/bin/as6-reboot-evidence-cache ops/bin/as6-reboot-forensics-snapshot 2>/dev/null | grep -v "local_cmd_raw"; then echo "AS6_REBOOT_FORENSICS_LOCAL_CMD_DRIFT=FAIL"; fail=1; else echo "AS6_REBOOT_FORENSICS_LOCAL_CMD_DRIFT=PASS"; fi
+if journalctl -u as6-reboot-forensics-cache.service -n 200 --no-pager 2>/dev/null | grep -E "NameError:|Did you mean:|FileNotFoundError:.*ai-platform/-"; then echo "AS6_REBOOT_FORENSICS_RUNTIME=FAIL"; echo "AS6_REBOOT_FORENSICS_CACHE_RUNTIME=FAIL"; fail=1; else echo "AS6_REBOOT_FORENSICS_RUNTIME=PASS"; echo "AS6_REBOOT_FORENSICS_CACHE_RUNTIME=PASS"; fi
+if [ "$fail" -eq 0 ]; then echo "AS6_REBOOT_FORENSICS_RUNTIME_RESULT=OK"; exit 0; fi
+echo "AS6_REBOOT_FORENSICS_RUNTIME_RESULT=FAIL"
+exit 1

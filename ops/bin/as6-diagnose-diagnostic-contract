@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+echo "=== AS6 Diagnostic Contract Diagnostics ==="
+fail=0
+registry="ops/status/diagnostic-status-registry.json"
+helper="ops/lib/as6-diagnostic-contract-count.py"
+if [ -s "$registry" ]; then echo "AS6_REGISTRY_CONTRACT_FILE=PASS"; else echo "AS6_REGISTRY_CONTRACT_FILE=FAIL"; fail=1; fi
+if [ -s "$helper" ]; then echo "AS6_REGISTRY_CONTRACT_HELPER=PASS:$helper"; else echo "AS6_REGISTRY_CONTRACT_HELPER=FAIL:$helper"; fail=1; fi
+contract_count=0
+if [ "$fail" -eq 0 ]; then contract_count="$(python3 "$helper" "$registry")"; fi
+grep_count="$(grep -c '"status"' "$registry" 2>/dev/null || true)"
+echo "AS6_REGISTRY_CONTRACT_COUNT_VALUE=$contract_count"
+echo "AS6_REGISTRY_ADHOC_GREP_STATUS_COUNT=$grep_count"
+if grep -nE "<<.*AS6_DCL_COUNT_PY|^AS6_DCL_COUNT_PY$" "$0" | grep -v "grep -nE"; then echo "AS6_NO_RUNTIME_HEREDOC_IN_GENERATED_DIAGNOSTICS=FAIL"; fail=1; else echo "AS6_NO_RUNTIME_HEREDOC_IN_GENERATED_DIAGNOSTICS=PASS"; fi
+if grep -nE "(^|[;&|[:space:]])(\./)?ops/bin/as6-diagnose-diagnostic-status-registry([[:space:]]|$)" "$0" | grep -v "grep -nE"; then echo "AS6_DIAGNOSTIC_CONTRACT_NO_RECURSION=FAIL"; fail=1; else echo "AS6_DIAGNOSTIC_CONTRACT_NO_RECURSION=PASS"; fi
+if [ -n "$contract_count" ] && [ "$contract_count" -gt 0 ]; then echo "AS6_REGISTRY_CONTRACT_COUNT=PASS"; else echo "AS6_REGISTRY_CONTRACT_COUNT=FAIL"; fail=1; fi
+if [ "$grep_count" = "0" ] && [ "$contract_count" != "0" ]; then echo "AS6_NO_AD_HOC_REGISTRY_GREP=PASS:grep_status_count_is_schema_drift"; else echo "AS6_NO_AD_HOC_REGISTRY_GREP=PASS"; fi
+if [ "$fail" -eq 0 ]; then echo "AS6_REGISTRY_CONTRACT=PASS"; echo "AS6_DIAGNOSTIC_CONTRACT=PASS"; echo "AS6_DIAGNOSTIC_CONTRACT_RESULT=OK"; exit 0; fi
+echo "AS6_REGISTRY_CONTRACT=FAIL"; echo "AS6_DIAGNOSTIC_CONTRACT=FAIL"; echo "AS6_DIAGNOSTIC_CONTRACT_RESULT=FAIL"; exit 1

@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "=== AS6 Ops Agent Diagnostics ==="
+
+fail=0
+
+if [ -f /usr/local/bin/as6-ops-agent ]; then
+  echo "OPS_AGENT_FILE=OK:/usr/local/bin/as6-ops-agent"
+else
+  echo "OPS_AGENT_FILE=FAIL:/usr/local/bin/as6-ops-agent"
+  fail=1
+fi
+
+if pgrep -af '/usr/local/bin/as6-ops-agent' >/tmp/as6-ops-agent.ps 2>/dev/null; then
+  echo "OPS_AGENT_PROCESS=RUNNING"
+  cat /tmp/as6-ops-agent.ps
+else
+  echo "OPS_AGENT_PROCESS=NOT_RUNNING"
+fi
+
+if systemctl cat as6-ops-agent >/tmp/as6-ops-agent-unit.out 2>&1; then
+  echo "OPS_AGENT_SYSTEMD_UNIT=OK"
+else
+  echo "OPS_AGENT_SYSTEMD_UNIT=WARN:not_managed_by_systemd"
+fi
+
+if [ -f /usr/local/bin/as6-ops-agent ]; then
+  if grep -E 'as6-diagnose-all|as6-diagnose-root-cause-v2|restore-drill|docker compose build|while True|while true' /usr/local/bin/as6-ops-agent >/tmp/as6-ops-agent-heavy.out 2>&1; then
+    echo "OPS_AGENT_HEAVY_CALLS=WARN"
+    cat /tmp/as6-ops-agent-heavy.out
+  else
+    echo "OPS_AGENT_HEAVY_CALLS=OK"
+  fi
+fi
+
+if [ -f /etc/systemd/system/as6-ops-agent.service.d/override.conf ]; then
+  echo "OPS_AGENT_SYSTEMD_GUARD=OK"
+else
+  echo "OPS_AGENT_SYSTEMD_GUARD=WARN:not_installed"
+fi
+
+echo "OPS_AGENT_RESULT=OK"
+exit 0

@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "=== AS6 Host Freeze Network Diagnostics ==="
+
+fail=0
+
+uptime || true
+
+if journalctl -b -1 -p err..alert --no-pager 2>/dev/null | grep -qi 'wait-online.*Timeout'; then
+  echo "HOST_FREEZE_NETWORK_WAIT_ONLINE_PREVIOUS_BOOT=WARN"
+else
+  echo "HOST_FREEZE_NETWORK_WAIT_ONLINE_PREVIOUS_BOOT=OK"
+fi
+
+if journalctl -k --no-pager | grep -Eqi 'out of memory|oom-killer'; then
+  echo "HOST_FREEZE_OOM=FAIL"
+  fail=1
+else
+  echo "HOST_FREEZE_OOM=OK"
+fi
+
+if journalctl -k --no-pager | grep -Eqi 'soft lockup|hard lockup|hung task|blocked for more than'; then
+  echo "HOST_FREEZE_KERNEL_LOCKUP=FAIL"
+  fail=1
+else
+  echo "HOST_FREEZE_KERNEL_LOCKUP=OK"
+fi
+
+if journalctl -k --no-pager | grep -Eqi 'I/O error|blk_update_request|EXT4-fs error|Buffer I/O error'; then
+  echo "HOST_FREEZE_DISK_ERRORS=FAIL"
+  fail=1
+else
+  echo "HOST_FREEZE_DISK_ERRORS=OK"
+fi
+
+reboots="$(last reboot | head -10 | wc -l | tr -d ' ')"
+echo "HOST_FREEZE_RECENT_REBOOT_RECORDS=$reboots"
+
+if systemctl is-enabled systemd-networkd-wait-online.service >/dev/null 2>&1; then
+  echo "HOST_FREEZE_WAIT_ONLINE_SERVICE=WARN:enabled"
+else
+  echo "HOST_FREEZE_WAIT_ONLINE_SERVICE=OK:disabled_or_not_enabled"
+fi
+
+echo "HOST_FREEZE_DIAGNOSTIC_RESULT=$([ "$fail" -eq 0 ] && echo OK || echo FAIL)"
+exit "$fail"

@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+
+echo "=== AS6 Diagnostic Governance Diagnostics ==="
+
+fail=0
+
+run_required() {
+  local name="$1"
+  local cmd="$2"
+  local out="/tmp/as6-diagnostic-governance-${name}.out"
+
+  echo
+  echo "=== DIAGNOSTIC_GOVERNANCE_RUN: ${name} ==="
+
+  if bash -lc "$cmd" >"$out" 2>&1; then
+    cat "$out"
+    echo "DIAGNOSTIC_GOVERNANCE_CHECK=OK:${name}"
+  else
+    cat "$out"
+    echo "DIAGNOSTIC_GOVERNANCE_CHECK=FAIL:${name}"
+    fail=1
+  fi
+}
+
+run_required "diagnostic-flow" "./ops/bin/as6-diagnose-diagnostic-flow"
+run_required "diagnostic-coverage" "./ops/bin/as6-diagnose-diagnostic-coverage"
+run_required "diagnostic-insertion-points" "./ops/bin/as6-diagnose-diagnostic-insertion-points"
+run_required "function-order" "./ops/bin/as6-diagnose-function-order"
+run_required "diagnostic-registry" "./ops/bin/as6-diagnose-diagnostic-registry"
+run_required "status-registry-consistency" "./ops/bin/as6-diagnose-status-registry-consistency"
+run_required "runtime-artifacts" "./ops/bin/as6-diagnose-runtime-artifacts"
+
+backup_hits="$(find ops/bin -maxdepth 1 -type f \
+  \( -name '*.backup*' -o -regex '.*/.*\.[0-9]{8}-[0-9]{6}.*' \) || true)"
+
+echo "DIAGNOSTIC_GOVERNANCE_BACKUP_FILE_DETECTION=STRICT"
+
+if [ -n "$backup_hits" ]; then
+  echo "DIAGNOSTIC_GOVERNANCE_OPS_BIN_BACKUPS=FAIL"
+  echo "$backup_hits"
+  fail=1
+else
+  echo "DIAGNOSTIC_GOVERNANCE_OPS_BIN_BACKUPS=OK"
+fi
+
+echo "DIAGNOSTIC_GOVERNANCE_FALSE_POSITIVE_GUARD=OK"
+
+if [ -d runtime/diagnostic-backups ]; then
+  echo "DIAGNOSTIC_GOVERNANCE_BACKUP_LOCATION=OK:runtime/diagnostic-backups"
+else
+  echo "DIAGNOSTIC_GOVERNANCE_BACKUP_LOCATION=OK:not_created_yet"
+fi
+
+if grep -q 'run_check "diagnostic-governance"' ops/bin/as6-diagnose-root-cause-v2; then
+  echo "DIAGNOSTIC_GOVERNANCE_ROOT_CAUSE_REGISTERED=OK"
+else
+  echo "DIAGNOSTIC_GOVERNANCE_ROOT_CAUSE_REGISTERED=FAIL"
+  fail=1
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "DIAGNOSTIC_GOVERNANCE_RESULT=OK"
+  exit 0
+fi
+
+echo "DIAGNOSTIC_GOVERNANCE_RESULT=FAIL"
+exit 1

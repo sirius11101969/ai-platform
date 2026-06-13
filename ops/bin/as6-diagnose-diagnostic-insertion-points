@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+
+echo "=== AS6 Diagnostic Insertion Point Diagnostics ==="
+
+fail=0
+
+check_file() {
+  local file="$1"
+  [ -f "$file" ] || return 0
+
+  if awk '
+    /exit [01]/ { seen_exit=1; next }
+    seen_exit && /run_check|run_named_check|as6-diagnose-/ { bad=1 }
+    END { exit bad ? 1 : 0 }
+  ' "$file"; then
+    echo "DIAGNOSTIC_INSERTION_POINT=OK:$file"
+  else
+    echo "DIAGNOSTIC_INSERTION_POINT=FAIL:unreachable_check_after_exit:$file"
+    fail=1
+  fi
+}
+
+check_file ops/bin/as6-diagnose-root-cause-v2
+check_file ops/bin/as6-diagnose-all
+check_file ops/bin/as6-diagnose-strategic-readiness
+
+if [ "$fail" -eq 0 ]; then
+  echo "DIAGNOSTIC_INSERTION_POINTS_RESULT=OK"
+  exit 0
+fi
+
+echo "DIAGNOSTIC_INSERTION_POINTS_RESULT=FAIL"
+exit 1

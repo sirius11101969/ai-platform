@@ -1,0 +1,131 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+
+echo "=== AS6 Provider Event Correlation Diagnostics ==="
+
+fail=0
+mkdir -p runtime/reboot-forensics
+
+timeline="runtime/reboot-forensics/reboot-timeline.json"
+latest="runtime/reboot-forensics/latest.log"
+
+python3 - <<'PY'
+import json, re, subprocess, time
+from pathlib import Path
+from datetime import datetime, timezone
+
+def run(cmd):
+    try:
+        return subprocess.check_output(cmd, shell=True, text=True, stderr=subprocess.DEVNULL)
+    except Exception:
+        return ""
+
+now = datetime.now(timezone.utc)
+
+last_reboot = run("last reboot | head -30")
+last_x = run("last -x | head -80")
+list_boots = run("journalctl --list-boots 2>/dev/null | tail -30")
+prev_journal = run("journalctl -b -1 --no-pager 2>/dev/null | grep -Ei 'hypervisor initiated shutdown|System is rebooting|reboot.target|shutdown.target|systemd-logind' | tail -100")
+current_kernel = run("journalctl -k --no-pager 2>/dev/null | grep -Ei 'oom|out of memory|oom-killer|soft lockup|hard lockup|hung task|blocked for more than|I/O error|blk_update_request|EXT4-fs error|Buffer I/O error' | tail -100")
+
+reboots = []
+for line in last_reboot.splitlines():
+    if line.startswith("reboot"):
+        reboots.append(line)
+
+recent = reboots[:10]
+hypervisor_signature = bool(re.search(r"hypervisor initiated shutdown", prev_journal, re.I))
+local_faults = bool(current_kernel.strip())
+shutdown_count = len([l for l in last_x.splitlines() if l.startswith("shutdown ")])
+frequent_reboots = len(recent) >= 3
+
+confidence = 0
+if hypervisor_signature:
+    confidence += 60
+if frequent_reboots:
+    confidence += 20
+if not local_faults:
+    confidence += 15
+if shutdown_count >= 3:
+    confidence += 5
+confidence = min(confidence, 100)
+
+if hypervisor_signature and confidence >= 80:
+    root_cause = "PROVIDER_HYPERVISOR_REBOOT"
+elif frequent_reboots and not local_faults:
+    root_cause = "PROVIDER_OR_EXTERNAL_REBOOT_SUSPECTED"
+else:
+    root_cause = "NO_PROVIDER_REBOOT_CONFIRMED"
+
+data = {
+    "timestamp": now.isoformat().replace("+00:00", "Z"),
+    "root_cause": root_cause,
+    "root_cause_confidence": confidence,
+    "hypervisor_signature_detected": hypervisor_signature,
+    "recent_reboot_count": len(recent),
+    "shutdown_record_count": shutdown_count,
+    "local_kernel_faults_detected": local_faults,
+    "latest_reboots": recent,
+    "evidence": {
+        "previous_boot_reboot_signals": prev_journal.splitlines()[-20:],
+        "kernel_fault_signals": current_kernel.splitlines()[-20:],
+        "journal_boots_tail": list_boots.splitlines()[-10:],
+    },
+    "next_action": "await_provider_response" if root_cause != "NO_PROVIDER_REBOOT_CONFIRMED" else "continue_monitoring",
+}
+
+Path("runtime/reboot-forensics").mkdir(parents=True, exist_ok=True)
+Path("runtime/reboot-forensics/reboot-timeline.json").write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n")
+print(json.dumps(data, ensure_ascii=False, indent=2))
+PY
+
+if [ -s "$timeline" ]; then
+  echo "PROVIDER_EVENT_TIMELINE=OK:$timeline"
+else
+  echo "PROVIDER_EVENT_TIMELINE=FAIL:$timeline"
+  fail=1
+fi
+
+root_cause="$(python3 - <<'PY'
+import json
+print(json.load(open("runtime/reboot-forensics/reboot-timeline.json")).get("root_cause","unknown"))
+PY
+)"
+confidence="$(python3 - <<'PY'
+import json
+print(json.load(open("runtime/reboot-forensics/reboot-timeline.json")).get("root_cause_confidence",0))
+PY
+)"
+hypervisor="$(python3 - <<'PY'
+import json
+print("YES" if json.load(open("runtime/reboot-forensics/reboot-timeline.json")).get("hypervisor_signature_detected") else "NO")
+PY
+)"
+recent_count="$(python3 - <<'PY'
+import json
+print(json.load(open("runtime/reboot-forensics/reboot-timeline.json")).get("recent_reboot_count",0))
+PY
+)"
+
+echo "PROVIDER_EVENT_ROOT_CAUSE=$root_cause"
+echo "PROVIDER_EVENT_CONFIDENCE=$confidence"
+echo "PROVIDER_EVENT_HYPERVISOR_SIGNATURE=$hypervisor"
+echo "PROVIDER_EVENT_RECENT_REBOOT_COUNT=$recent_count"
+
+if [ "$root_cause" = "PROVIDER_HYPERVISOR_REBOOT" ]; then
+  echo "PROVIDER_EVENT_ALERT=WARN:provider_hypervisor_reboot_confirmed"
+elif [ "$root_cause" = "PROVIDER_OR_EXTERNAL_REBOOT_SUSPECTED" ]; then
+  echo "PROVIDER_EVENT_ALERT=WARN:provider_or_external_reboot_suspected"
+else
+  echo "PROVIDER_EVENT_ALERT=OK:none"
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "PROVIDER_EVENT_CORRELATION_RESULT=OK"
+  exit 0
+fi
+
+echo "PROVIDER_EVENT_CORRELATION_RESULT=FAIL"
+exit 1

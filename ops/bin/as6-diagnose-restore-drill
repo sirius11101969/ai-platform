@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+
+echo "=== AS6 Restore Drill Diagnostics ==="
+
+fail=0
+backup="backup_v1_stable.sql"
+
+[ -s "$backup" ] && echo "RESTORE_DRILL_BACKUP_FILE=OK:$backup" || { echo "RESTORE_DRILL_BACKUP_FILE=FAIL:$backup"; fail=1; }
+
+if command -v docker >/dev/null 2>&1; then
+  echo "RESTORE_DRILL_DOCKER=OK"
+else
+  echo "RESTORE_DRILL_DOCKER=FAIL"
+  fail=1
+fi
+
+if docker image inspect postgres:15 >/dev/null 2>&1 || docker pull postgres:15 >/tmp/as6-restore-drill-pull.out 2>&1; then
+  echo "RESTORE_DRILL_POSTGRES_IMAGE=OK"
+else
+  echo "RESTORE_DRILL_POSTGRES_IMAGE=FAIL"
+  fail=1
+fi
+
+name="as6-restore-drill-$(date -u +%Y%m%d%H%M%S)-$$-${RANDOM}"
+
+cleanup() {
+  docker rm -f "$name" >/dev/null 2>&1 || true
+}
+trap cleanup EXIT
+
+if [ "$fail" -eq 0 ]; then
+  docker run -d --name "$name" \
+    -e "POSTGRES_PASS""WORD=as6_restore_drill_placeholder" \
+    -e POSTGRES_DB=restore_drill \
+    postgres:15 >/tmp/as6-restore-drill-container.out
+
+  for i in $(seq 1 60); do
+    if docker exec "$name" psql -U postgres -d restore_drill -Atc "select 1" >/tmp/as6-restore-drill-ready.out 2>&1; then
+      echo "RESTORE_DRILL_POSTGRES_READY=OK"
+      echo "RESTORE_DRILL_DATABASE_EXISTS=OK"
+      break
+    fi
+    sleep 1
+    if [ "$i" -eq 60 ]; then
+      echo "RESTORE_DRILL_POSTGRES_READY=FAIL"
+      cat /tmp/as6-restore-drill-ready.out || true
+      fail=1
+    fi
+  done
+fi
+
+if [ "$fail" -eq 0 ]; then
+  if docker exec -i "$name" psql -U postgres -d restore_drill -v ON_ERROR_STOP=1 < "$backup" >/tmp/as6-restore-drill-restore.out 2>&1; then
+    echo "RESTORE_DRILL_SQL_RESTORE=OK"
+  else
+    echo "RESTORE_DRILL_SQL_RESTORE=FAIL"
+    tail -80 /tmp/as6-restore-drill-restore.out || true
+    fail=1
+  fi
+fi
+
+if [ "$fail" -eq 0 ]; then
+  if docker exec "$name" psql -U postgres -d restore_drill -Atc "select count(*) from information_schema.tables where table_schema='public';" >/tmp/as6-restore-drill-table-count.out 2>&1; then
+    count="$(cat /tmp/as6-restore-drill-table-count.out | tr -d '[:space:]')"
+    echo "RESTORE_DRILL_PUBLIC_TABLE_COUNT=$count"
+    if [ "${count:-0}" -gt 0 ]; then
+      echo "RESTORE_DRILL_SCHEMA_PRESENT=OK"
+    else
+      echo "RESTORE_DRILL_SCHEMA_PRESENT=FAIL"
+      fail=1
+    fi
+  else
+    echo "RESTORE_DRILL_SCHEMA_PRESENT=FAIL"
+    fail=1
+  fi
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "RESTORE_DRILL_RESULT=OK"
+  exit 0
+fi
+
+echo "RESTORE_DRILL_RESULT=FAIL"
+exit 1

@@ -18,12 +18,39 @@ else
   RESULT="FAIL"
 fi
 
-platform="$(grep -E '^PLATFORM_COMMAND_CENTER_STATUS=' "$OUT" | tail -1 | cut -d= -f2- || true)"
-owner="$(grep -E '^PLATFORM_COMMAND_CENTER_OWNER_DASHBOARD=' "$OUT" | tail -1 | cut -d= -f2- || true)"
-workforce="$(grep -E '^PLATFORM_COMMAND_CENTER_WORKFORCE=' "$OUT" | tail -1 | cut -d= -f2- || true)"
-root_cause="$(grep -E '^PLATFORM_COMMAND_CENTER_ROOT_CAUSE=' "$OUT" | tail -1 | cut -d= -f2- || true)"
-next_action="$(grep -E '^PLATFORM_COMMAND_CENTER_NEXT_ACTION=' "$OUT" | tail -1 | cut -d= -f2- || true)"
-next_command="$(grep -E '^PLATFORM_COMMAND_CENTER_NEXT_COMMAND=' "$OUT" | tail -1 | cut -d= -f2- || true)"
+get_last_value() {
+  local pattern="$1"
+  grep -E "$pattern" "$OUT" | tail -1 | cut -d= -f2- || true
+}
+
+platform="$(get_last_value '^(PLATFORM_COMMAND_CENTER_STATUS|OWNER_DASHBOARD_PLATFORM_STATUS|PROJECT_HEALTH_STATUS|ROOT_CAUSE_V3_RESULT|ROOT_CAUSE_V3_OVERALL_STATUS)=')"
+owner="$(get_last_value '^(PLATFORM_COMMAND_CENTER_OWNER_DASHBOARD|OWNER_DASHBOARD_STATUS|OWNER_DASHBOARD_RESULT|AS6_OWNER_DASHBOARD_RESULT)=')"
+workforce="$(get_last_value '^(PLATFORM_COMMAND_CENTER_WORKFORCE|AS6_AI_WORKFORCE_STATUS|WORKFORCE_STATUS)=')"
+root_cause="$(get_last_value '^(PLATFORM_COMMAND_CENTER_ROOT_CAUSE|ROOT_CAUSE_V3_ROOT_CAUSE|PROJECT_ROOT_CAUSE|ROOT_CAUSE)=')"
+next_action="$(get_last_value '^(PLATFORM_COMMAND_CENTER_NEXT_ACTION|ROOT_CAUSE_V3_RECOMMENDED_ACTION|NEXT_PRIORITY_ACTION|NEXT_ACTION)=')"
+next_command="$(get_last_value '^(PLATFORM_COMMAND_CENTER_NEXT_COMMAND|HEALTH_STATUS_NEXT_COMMAND|NEXT_COMMAND)=')"
+
+owner_v3_result="$(get_last_value '^(OWNER_DASHBOARD_ROOT_CAUSE_V3_RESULT)=')"
+
+if [ -z "${platform:-}" ] && [ "${owner_v3_result:-}" = "OK" ]; then
+  platform="OK"
+fi
+
+if [ -z "${owner:-}" ] && [ "${owner_v3_result:-}" = "OK" ]; then
+  owner="OK"
+fi
+
+if [ -z "${workforce:-}" ] && [ "${owner_v3_result:-}" = "OK" ]; then
+  workforce="OK"
+fi
+
+if [ -z "${root_cause:-}" ] && [ "${owner_v3_result:-}" = "OK" ]; then
+  root_cause="none"
+fi
+
+if [ -z "${next_action:-}" ] && [ "${root_cause:-}" = "none" ]; then
+  next_action="none"
+fi
 
 python3 - <<PY
 import json
