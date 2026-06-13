@@ -18,6 +18,15 @@ for f in /tmp/as6-* runtime/root-cause/* runtime/health/latest.json; do
       ;;
   esac
 
+  if [ ! -s "$f" ]; then
+    case "$f" in
+      /tmp/as6-*.lock|/tmp/as6-*.out)
+        echo "RUNTIME_BINARY_ARTIFACT=SKIP:empty_runtime_tmp:$f"
+        continue
+        ;;
+    esac
+  fi
+
   if LC_ALL=C grep -Iq . "$f"; then
     :
   else
