@@ -398,6 +398,30 @@
       "confirm all AS6_GENERATED_PYTHON_COMPILE entries are PASS"
     ]
   },
+  "GENERATED_PYTHON_CONTRACT_COVERAGE_DRIFT": {
+    "class": "GENERATED_PYTHON_CONTRACT_COVERAGE_DRIFT",
+    "fix": [
+      "register missing generated-python diagnostic/helper in aggregate contracts and tracking governance",
+      "rerun registry, coverage, registration and contracts"
+    ],
+    "prevention": [
+      "generated_python_contract_coverage",
+      "generated_python_registry_tracking_contract_alignment"
+    ],
+    "rollback": [
+      "restore affected helper/diagnostic from runtime backups"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "generated-python diagnostic exists but is not covered by aggregate contracts",
+      "generated-python helper exists but is not covered by helper contract validation",
+      "generated-python registry, tracking and contract coverage diverge"
+    ],
+    "verification": [
+      "run as6-diagnose-generated-python-contract-coverage",
+      "run as6-diagnose-generated-python-contracts"
+    ]
+  },
   "GENERATED_PYTHON_CONTRACT_DRIFT": {
     "class": "GENERATED_PYTHON_CONTRACT_DRIFT",
     "fix": [
@@ -462,6 +486,26 @@
     ],
     "verification": [
       "run generated Python runtime and contracts diagnostics together"
+    ]
+  },
+  "GENERATED_PYTHON_HELPER_CONTRACT_COVERAGE_DRIFT": {
+    "class": "GENERATED_PYTHON_HELPER_CONTRACT_COVERAGE_DRIFT",
+    "fix": [
+      "add helper to contract coverage validation"
+    ],
+    "prevention": [
+      "generated_python_helper_contract_coverage"
+    ],
+    "rollback": [
+      "restore contract coverage helper from backup"
+    ],
+    "severity": "medium",
+    "symptoms": [
+      "generated-python helper exists without aggregate helper coverage",
+      "helper is tracked but not validated by generated-python contracts"
+    ],
+    "verification": [
+      "run as6-diagnose-generated-python-contract-coverage"
     ]
   },
   "GENERATED_PYTHON_IMPORT_DRIFT": {

@@ -51,6 +51,8 @@ diagnostic_map = {
     "VARIABLE_CONTRACT_EXCEPTION_HANDLER_FALSE_POSITIVE": "as6-diagnose-python-variable-contract",
     "GENERATED_PYTHON_CONTRACT_HELPER_IMPORT_SIDE_EFFECT": "as6-diagnose-generated-python-contracts",
     "GENERATED_PYTHON_CONTRACT_RECURSIVE_IMPORT_DRIFT": "as6-diagnose-generated-python-contracts",
+    "GENERATED_PYTHON_CONTRACT_COVERAGE_DRIFT": "as6-diagnose-generated-python-contract-coverage",
+    "GENERATED_PYTHON_HELPER_CONTRACT_COVERAGE_DRIFT": "as6-diagnose-generated-python-contract-coverage",
     "GENERATED_PYTHON_CONTRACT_DRIFT": "as6-diagnose-generated-python-contracts",
     "GENERATED_PYTHON_RUNTIME_DRIFT": "as6-diagnose-generated-python-runtime",
     "GENERATED_PYTHON_NAMEERROR_DRIFT": "as6-diagnose-generated-python-nameerror",
