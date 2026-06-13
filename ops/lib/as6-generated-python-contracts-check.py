@@ -7,6 +7,8 @@ def run_contracts():
         "imports": ("ops/bin/as6-diagnose-generated-python-imports", ["AS6_GENERATED_PYTHON_IMPORTS=PASS", "AS6_GENERATED_PYTHON_IMPORT_SAFE=PASS"]),
         "nameerror": ("ops/bin/as6-diagnose-generated-python-nameerror", ["AS6_GENERATED_PYTHON_NAMEERROR=PASS"]),
         "regression": ("ops/bin/as6-diagnose-generated-python-regression", ["AS6_GENERATED_PYTHON_REGRESSION=PASS"]),
+        "safety": ("ops/bin/as6-diagnose-generated-python-safety", ["AS6_GENERATED_PYTHON_SAFETY_RESULT=OK"]),
+        "coverage": ("ops/bin/as6-diagnose-generated-python-contract-coverage", ["AS6_GENERATED_PYTHON_CONTRACT_COVERAGE_RESULT=OK"]),
         "tracking": ("ops/bin/as6-diagnose-diagnostic-tracking", ["AS6_DIAGNOSTIC_TRACKING_RESULT=OK"]),
     }
     fail = False
@@ -30,12 +32,17 @@ def run_contracts():
             fail = True
         else:
             print(f"AS6_GENERATED_PYTHON_CONTRACT_CHECK=PASS:{name}")
-    helper = Path("ops/lib/as6-generated-python-runtime-contract-check.py")
-    if helper.exists():
-        print(f"AS6_GENERATED_PYTHON_HELPER_TRACKING=PASS:{helper}")
-    else:
-        print(f"AS6_GENERATED_PYTHON_HELPER_TRACKING=FAIL:{helper}")
-        fail = True
+    helpers = [
+        Path("ops/lib/as6-generated-python-runtime-contract-check.py"),
+        Path("ops/lib/as6-generated-python-safety-check.py"),
+        Path("ops/lib/as6-generated-python-contract-coverage-check.py"),
+    ]
+    for helper in helpers:
+        if helper.exists():
+            print(f"AS6_GENERATED_PYTHON_HELPER_TRACKING=PASS:{helper}")
+        else:
+            print(f"AS6_GENERATED_PYTHON_HELPER_TRACKING=FAIL:{helper}")
+            fail = True
     print("AS6_GENERATED_PYTHON_CONTRACT_IMPORT_GUARD=PASS")
     print("AS6_GENERATED_PYTHON_CONTRACT_HELPER_IMPORT_SAFE=PASS")
     if fail:
@@ -47,6 +54,8 @@ def run_contracts():
     print("AS6_GENERATED_PYTHON_RUNTIME_CONTRACT_AGGREGATE=PASS")
     print("AS6_GENERATED_PYTHON_COMPILE_CONTRACT=PASS")
     print("AS6_GENERATED_PYTHON_REGRESSION_CONTRACT=PASS")
+    print("AS6_GENERATED_PYTHON_SAFETY_CONTRACT=PASS")
+    print("AS6_GENERATED_PYTHON_COVERAGE_CONTRACT=PASS")
     print("AS6_GENERATED_PYTHON_CONTRACTS=PASS")
     print("AS6_GENERATED_PYTHON_CONTRACTS_RESULT=OK")
 
