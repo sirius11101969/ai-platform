@@ -1,1 +1,20 @@
-name: AS6 Constitution Gate\n\non:\n  pull_request:\n  workflow_dispatch:\n\npermissions:\n  contents: read\n  pull-requests: read\n\njobs:\n  constitution-gate:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: bash ops/bin/as6-diagnose-constitution\n      - run: bash ops/bin/as6-diagnose-heredoc-safety\n      - run: bash ops/bin/as6-diagnose-diagnostic-flow\n      - run: bash ops/bin/as6-diagnose-diagnostic-coverage\n      - run: bash ops/bin/as6-diagnose-diagnostic-status-registry\n
+name: AS6 Constitution Gate
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  constitution-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash ops/bin/as6-diagnose-constitution
+      - run: bash ops/bin/as6-diagnose-heredoc-safety
+      - run: bash ops/bin/as6-diagnose-diagnostic-flow
+      - run: bash ops/bin/as6-diagnose-diagnostic-coverage
+      - run: bash ops/bin/as6-diagnose-diagnostic-status-registry
