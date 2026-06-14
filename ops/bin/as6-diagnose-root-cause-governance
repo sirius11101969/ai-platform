@@ -21,6 +21,12 @@ reg_text = registry.read_text() if registry.exists() else ""
 fail = False
 required = ["severity", "symptoms", "verification", "fix", "rollback", "prevention"]
 diagnostic_map = {
+    'DOCKER_ENV_CONTRACT_DRIFT': 'as6-diagnose-env-contract',
+    'EMPTY_REQUIRED_ENV': 'as6-diagnose-env-contract',
+    'ENV_EXAMPLE_DRIFT': 'as6-diagnose-env-contract',
+    'MISSING_REQUIRED_ENV': 'as6-diagnose-env-contract',
+    'PAYMENT_ENV_DRIFT': 'as6-diagnose-env-contract',
+    'TRACKED_ENV_SECRET_FILE': 'as6-diagnose-env-contract',
     "DIAGNOSTIC_SELF_REFERENCE_FALSE_POSITIVE": "as6-diagnose-patch-mode",
     "KNOWLEDGE_BASE_REFERENCE_FALSE_POSITIVE": "as6-diagnose-patch-mode",
     "NESTED_HEREDOC_PATCH": "as6-diagnose-patch-mode",
