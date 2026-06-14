@@ -37,6 +37,7 @@ echo "AS6_DIAGNOSE_ALL_CHECK=SKIP:diagnostic-governance:emergency_safe_mode"
 run_check "diagnostic-timeout-governance" ./ops/bin/as6-diagnose-diagnostic-timeout-governance
 
 
+run_check "env-contract" ./ops/bin/as6-diagnose-env-contract
 run_check "git-main-sync" "./ops/bin/as6-diagnose-git-main-sync"
 run_check "diagnostic-coverage" "./ops/bin/as6-diagnose-diagnostic-coverage"
 run_check "constitution" ./ops/bin/as6-diagnose-constitution

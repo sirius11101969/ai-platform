@@ -1514,5 +1514,122 @@
       "confirm AS6_VARIABLE_CONTRACT_EXCEPT_HANDLER=PASS",
       "confirm warning for SyntaxError,exc is gone"
     ]
+  },
+  "MISSING_REQUIRED_ENV": {
+    "class": "MISSING_REQUIRED_ENV",
+    "severity": "medium",
+    "symptoms": [
+      "env contract warning or drift"
+    ],
+    "verification": [
+      "run as6-diagnose-env-contract"
+    ],
+    "fix": [
+      "update .env or .env.example without exposing secrets"
+    ],
+    "rollback": [
+      "restore env contract backups"
+    ],
+    "prevention": [
+      "env_contract_guard"
+    ]
+  },
+  "EMPTY_REQUIRED_ENV": {
+    "class": "EMPTY_REQUIRED_ENV",
+    "severity": "medium",
+    "symptoms": [
+      "env contract warning or drift"
+    ],
+    "verification": [
+      "run as6-diagnose-env-contract"
+    ],
+    "fix": [
+      "update .env or .env.example without exposing secrets"
+    ],
+    "rollback": [
+      "restore env contract backups"
+    ],
+    "prevention": [
+      "env_contract_guard"
+    ]
+  },
+  "ENV_EXAMPLE_DRIFT": {
+    "class": "ENV_EXAMPLE_DRIFT",
+    "severity": "medium",
+    "symptoms": [
+      "env contract warning or drift"
+    ],
+    "verification": [
+      "run as6-diagnose-env-contract"
+    ],
+    "fix": [
+      "update .env or .env.example without exposing secrets"
+    ],
+    "rollback": [
+      "restore env contract backups"
+    ],
+    "prevention": [
+      "env_contract_guard"
+    ]
+  },
+  "DOCKER_ENV_CONTRACT_DRIFT": {
+    "class": "DOCKER_ENV_CONTRACT_DRIFT",
+    "severity": "medium",
+    "symptoms": [
+      "env contract warning or drift"
+    ],
+    "verification": [
+      "run as6-diagnose-env-contract"
+    ],
+    "fix": [
+      "update .env or .env.example without exposing secrets"
+    ],
+    "rollback": [
+      "restore env contract backups"
+    ],
+    "prevention": [
+      "env_contract_guard"
+    ]
+  },
+  "PAYMENT_ENV_DRIFT": {
+    "class": "PAYMENT_ENV_DRIFT",
+    "severity": "medium",
+    "symptoms": [
+      "env contract warning or drift"
+    ],
+    "verification": [
+      "run as6-diagnose-env-contract"
+    ],
+    "fix": [
+      "update .env or .env.example without exposing secrets"
+    ],
+    "rollback": [
+      "restore env contract backups"
+    ],
+    "prevention": [
+      "env_contract_guard"
+    ]
+  },
+  "TRACKED_ENV_SECRET_FILE": {
+    "class": "TRACKED_ENV_SECRET_FILE",
+    "severity": "high",
+    "symptoms": [
+      ".env is tracked by git while .gitignore excludes it"
+    ],
+    "verification": [
+      "run git ls-files .env",
+      "run as6-diagnose-env-contract"
+    ],
+    "fix": [
+      "git rm --cached .env without deleting local .env",
+      "keep .env in .gitignore"
+    ],
+    "rollback": [
+      "restore env index state before commit if needed"
+    ],
+    "prevention": [
+      "env_not_tracked_guard",
+      "secret_values_hidden"
+    ]
   }
 }

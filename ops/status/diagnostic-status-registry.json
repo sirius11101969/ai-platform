@@ -706,6 +706,13 @@
       "check": "ssh-heredoc-guard",
       "path": "ops/bin/as6-diagnose-ssh-heredoc-guard",
       "status": "registered"
+    },
+    {
+      "check": "env-contract",
+      "path": "ops/bin/as6-diagnose-env-contract",
+      "status": "registered",
+      "category": "env",
+      "required": false
     }
   ]
 }

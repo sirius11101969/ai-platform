@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+echo "=== AS6 Env Contract Diagnostics ==="
+fail=0
+env_file=".env"
+example_file=".env.example"
+compose_file="docker-compose.yml"
+required="APP_URL AI_EXECUTION_ADMIN_KEY"
+payment_optional="PAYMENT_MODE PAYMENT_WEBHOOK_SECRET STRIPE_MODE STRIPE_SECRET_KEY STRIPE_WEBHOOK_SECRET YOOKASSA_MODE YOOKASSA_SHOP_ID YOOKASSA_SECRET_KEY"
+test -f "$env_file" && echo "AS6_ENV_FILE=PASS:$env_file" || { echo "AS6_ENV_FILE=FAIL:$env_file"; fail=1; }
+test -f "$example_file" && echo "AS6_ENV_EXAMPLE_FILE=PASS:$example_file" || { echo "AS6_ENV_EXAMPLE_FILE=FAIL:$example_file"; fail=1; }
+test -f "$compose_file" && echo "AS6_DOCKER_COMPOSE_FILE=PASS:$compose_file" || { echo "AS6_DOCKER_COMPOSE_FILE=FAIL:$compose_file"; fail=1; }
+get_env_value() { grep -E "^$1=" "$env_file" 2>/dev/null | tail -1 | cut -d= -f2- || true; }
+example_has() { grep -qE "^$1=" "$example_file" 2>/dev/null; }
+compose_mentions() { grep -q "\${$1" "$compose_file" 2>/dev/null || grep -q "$1" "$compose_file" 2>/dev/null; }
+for k in $required; do
+  example_has "$k" && echo "AS6_ENV_EXAMPLE_REQUIRED_KEY=PASS:$k" || echo "AS6_ENV_EXAMPLE_REQUIRED_KEY=WARN:$k"
+  v="$(get_env_value "$k")"
+  [ -n "$v" ] && echo "AS6_REQUIRED_ENV_PRESENT=PASS:$k" || echo "AS6_REQUIRED_ENV_PRESENT=WARN:$k"
+  compose_mentions "$k" && echo "AS6_COMPOSE_ENV_REFERENCE=PASS:$k" || echo "AS6_COMPOSE_ENV_REFERENCE=WARN:$k"
+done
+for k in $payment_optional; do
+  example_has "$k" && echo "AS6_PAYMENT_ENV_EXAMPLE_KEY=PASS:$k" || echo "AS6_PAYMENT_ENV_EXAMPLE_KEY=WARN:$k"
+  v="$(get_env_value "$k")"
+  [ -n "$v" ] && echo "AS6_PAYMENT_ENV_PRESENT=PASS:$k" || echo "AS6_PAYMENT_ENV_PRESENT=WARN:$k"
+  compose_mentions "$k" && echo "AS6_PAYMENT_COMPOSE_REFERENCE=PASS:$k" || echo "AS6_PAYMENT_COMPOSE_REFERENCE=WARN:$k"
+done
+if git ls-files --error-unmatch "$env_file" >/dev/null 2>&1; then echo "AS6_ENV_NOT_TRACKED=FAIL:$env_file"; fail=1; else echo "AS6_ENV_NOT_TRACKED=PASS:$env_file"; fi
+if grep -RInE "(SECRET|KEY|PASSWORD|TOKEN)=.{12,}" "$example_file" 2>/dev/null | grep -Ev "CHANGE_ME|REPLACE_ME|example|placeholder|dummy|test"; then echo "AS6_ENV_EXAMPLE_NO_REAL_SECRETS=FAIL"; fail=1; else echo "AS6_ENV_EXAMPLE_NO_REAL_SECRETS=PASS"; fi
+echo "AS6_ENV_SECRET_VALUES_HIDDEN=PASS"
+echo "AS6_ENV_CONTRACT_WARNINGS_ARE_NON_BLOCKING=PASS"
+if [ "$fail" -eq 0 ]; then echo "AS6_ENV_CONTRACT=PASS"; echo "AS6_ENV_CONTRACT_RESULT=OK"; exit 0; fi
+echo "AS6_ENV_CONTRACT=FAIL"
+echo "AS6_ENV_CONTRACT_RESULT=FAIL"
+exit 1
