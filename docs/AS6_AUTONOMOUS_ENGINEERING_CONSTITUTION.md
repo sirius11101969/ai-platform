@@ -530,3 +530,10 @@ Required signals:
 - AS6_ENV_SECRET_VALUES_HIDDEN=PASS
 - AS6_ENV_NOT_TRACKED=PASS
 - AS6_ENV_CONTRACT_WARNINGS_ARE_NON_BLOCKING=PASS
+
+## AS6 Control Panel Reboot Correlation Rule
+When VPS reboot coincides with provider panel history or hypervisor shutdown signal, diagnostics must classify it separately from application, Docker, kernel, SSH, and OS root causes.
+Required signals:
+- CONTROL_PANEL_REBOOT_CORRELATION_RESULT=OK
+- CONTROL_PANEL_REBOOT_ROOT_CAUSE
+- CONTROL_PANEL_REBOOT_EVIDENCE_DIR

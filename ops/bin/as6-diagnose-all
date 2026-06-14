@@ -114,6 +114,7 @@ run_check "provider-hypervisor-reboot" ./ops/bin/as6-diagnose-provider-hyperviso
 run_check "reboot-origin" ./ops/bin/as6-diagnose-reboot-origin
 run_check "reboot-forensics" "AS6_REBOOT_FORENSICS_LIGHTWEIGHT=1 ./ops/bin/as6-diagnose-reboot-forensics"
 run_check "provider-event-correlation" ./ops/bin/as6-diagnose-provider-event-correlation
+run_check "control-panel-reboot-correlation" ./ops/bin/as6-diagnose-control-panel-reboot-correlation
 run_check "reboot-evidence-cache" ./ops/bin/as6-diagnose-reboot-evidence-cache
 run_check "reboot-evidence-symbols" ./ops/bin/as6-diagnose-reboot-evidence-symbols
 run_check "reboot-evidence-self-heal" ./ops/bin/as6-diagnose-reboot-evidence-self-heal

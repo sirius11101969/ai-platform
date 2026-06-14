@@ -713,6 +713,13 @@
       "status": "registered",
       "category": "env",
       "required": false
+    },
+    {
+      "check": "control-panel-reboot-correlation",
+      "path": "ops/bin/as6-diagnose-control-panel-reboot-correlation",
+      "status": "registered",
+      "category": "provider",
+      "required": false
     }
   ]
 }

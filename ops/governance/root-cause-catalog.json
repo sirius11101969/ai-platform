@@ -1631,5 +1631,105 @@
       "env_not_tracked_guard",
       "secret_values_hidden"
     ]
+  },
+  "CONTROL_PANEL_REBOOT": {
+    "class": "CONTROL_PANEL_REBOOT",
+    "severity": "high",
+    "symptoms": [
+      "provider panel reboot event correlates with VPS reboot"
+    ],
+    "verification": [
+      "run as6-diagnose-control-panel-reboot-correlation",
+      "compare Beget panel history timestamp with journal boot timestamp"
+    ],
+    "fix": [
+      "enable 2FA",
+      "change provider panel password",
+      "restrict panel IP allowlist",
+      "close idle provider panel sessions"
+    ],
+    "rollback": [
+      "not applicable: external provider panel event"
+    ],
+    "prevention": [
+      "control_panel_reboot_correlation",
+      "provider_panel_event_review",
+      "panel_security_hardening"
+    ]
+  },
+  "CONTROL_PANEL_POWER_REBOOT": {
+    "class": "CONTROL_PANEL_POWER_REBOOT",
+    "severity": "high",
+    "symptoms": [
+      "provider panel power reboot event correlates with VPS forced reboot"
+    ],
+    "verification": [
+      "run as6-diagnose-control-panel-reboot-correlation",
+      "compare Beget panel history timestamp with journal boot timestamp"
+    ],
+    "fix": [
+      "enable 2FA",
+      "change provider panel password",
+      "restrict panel IP allowlist",
+      "close idle provider panel sessions"
+    ],
+    "rollback": [
+      "not applicable: external provider panel event"
+    ],
+    "prevention": [
+      "control_panel_reboot_correlation",
+      "provider_panel_event_review",
+      "panel_security_hardening"
+    ]
+  },
+  "CONTROL_PANEL_REBOOT_UNATTRIBUTED": {
+    "class": "CONTROL_PANEL_REBOOT_UNATTRIBUTED",
+    "severity": "high",
+    "symptoms": [
+      "provider panel reboot source exists but actor attribution is not confirmed"
+    ],
+    "verification": [
+      "run as6-diagnose-control-panel-reboot-correlation",
+      "compare Beget panel history timestamp with journal boot timestamp"
+    ],
+    "fix": [
+      "enable 2FA",
+      "change provider panel password",
+      "restrict panel IP allowlist",
+      "close idle provider panel sessions"
+    ],
+    "rollback": [
+      "not applicable: external provider panel event"
+    ],
+    "prevention": [
+      "control_panel_reboot_correlation",
+      "provider_panel_event_review",
+      "panel_security_hardening"
+    ]
+  },
+  "PROVIDER_UI_ACTION": {
+    "class": "PROVIDER_UI_ACTION",
+    "severity": "high",
+    "symptoms": [
+      "provider UI action affected VPS lifecycle"
+    ],
+    "verification": [
+      "run as6-diagnose-control-panel-reboot-correlation",
+      "compare Beget panel history timestamp with journal boot timestamp"
+    ],
+    "fix": [
+      "enable 2FA",
+      "change provider panel password",
+      "restrict panel IP allowlist",
+      "close idle provider panel sessions"
+    ],
+    "rollback": [
+      "not applicable: external provider panel event"
+    ],
+    "prevention": [
+      "control_panel_reboot_correlation",
+      "provider_panel_event_review",
+      "panel_security_hardening"
+    ]
   }
 }

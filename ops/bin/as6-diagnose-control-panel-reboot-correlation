@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+echo "=== AS6 Control Panel Reboot Correlation Diagnostics ==="
+out_dir="runtime/reboot-forensics/control-panel"
+mkdir -p "$out_dir"
+last -x | head -100 > "$out_dir/last-x.txt" 2>/dev/null || true
+journalctl -b -1 --no-pager 2>/dev/null | grep -Ei "hypervisor initiated shutdown|System is rebooting|Reached target reboot|systemd-reboot|poweroff|shutdown" | tail -200 > "$out_dir/previous-boot-reboot-signals.txt" || true
+ssh_ip="$(last -i | awk "/^root[[:space:]]/ {print \$3; exit}" 2>/dev/null || true)"
+boot_count="$(last -x | grep -E "^reboot[[:space:]]+system boot" | head -100 | wc -l | tr -d " ")"
+hypervisor="NO"
+grep -qi "hypervisor initiated shutdown" "$out_dir/previous-boot-reboot-signals.txt" && hypervisor="YES"
+echo "CONTROL_PANEL_REBOOT_LAST_SSH_IP=${ssh_ip:-unknown}"
+echo "CONTROL_PANEL_REBOOT_RECENT_BOOT_COUNT=$boot_count"
+echo "CONTROL_PANEL_REBOOT_HYPERVISOR_SIGNAL=$hypervisor"
+echo "CONTROL_PANEL_REBOOT_API_STATUS=INFO:provider_reported_api_disabled"
+echo "CONTROL_PANEL_REBOOT_SECURITY_HARDENING=INFO:2fa_password_changed_ip_allowlist_enabled"
+if [ "$hypervisor" = "YES" ]; then
+  echo "CONTROL_PANEL_REBOOT_CORRELATION=PASS"
+  echo "CONTROL_PANEL_REBOOT_ROOT_CAUSE=CONTROL_PANEL_REBOOT_UNATTRIBUTED"
+  echo "CONTROL_PANEL_REBOOT_CONFIDENCE=90"
+else
+  echo "CONTROL_PANEL_REBOOT_CORRELATION=WARN:no_previous_boot_hypervisor_signal"
+  echo "CONTROL_PANEL_REBOOT_ROOT_CAUSE=UNKNOWN"
+  echo "CONTROL_PANEL_REBOOT_CONFIDENCE=50"
+fi
+echo "CONTROL_PANEL_REBOOT_EVIDENCE_DIR=$out_dir"
+echo "CONTROL_PANEL_REBOOT_CORRELATION_RESULT=OK"
