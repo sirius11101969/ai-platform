@@ -1756,5 +1756,109 @@
       "registry_coverage_required",
       "root_cause_governance_required"
     ]
+  },
+  "UNCONTROLLED_CHANGE": {
+    "class": "UNCONTROLLED_CHANGE",
+    "severity": "high",
+    "symptoms": [
+      "change bypassed diagnostics, registry, governance, or approval control"
+    ],
+    "verification": [
+      "run as6-diagnose-change-governance",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "add impact analysis, rollback plan, validation plan, and approval gate",
+      "register missing diagnostics",
+      "rerun full diagnostics"
+    ],
+    "rollback": [
+      "restore changed governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "change_governance",
+      "change_impact_analysis",
+      "change_rollback_plan",
+      "change_validation_plan",
+      "change_approval_gate"
+    ]
+  },
+  "MISSING_CHANGE_ROLLBACK_PLAN": {
+    "class": "MISSING_CHANGE_ROLLBACK_PLAN",
+    "severity": "high",
+    "symptoms": [
+      "change lacks a documented rollback plan"
+    ],
+    "verification": [
+      "run as6-diagnose-change-governance",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "add impact analysis, rollback plan, validation plan, and approval gate",
+      "register missing diagnostics",
+      "rerun full diagnostics"
+    ],
+    "rollback": [
+      "restore changed governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "change_governance",
+      "change_impact_analysis",
+      "change_rollback_plan",
+      "change_validation_plan",
+      "change_approval_gate"
+    ]
+  },
+  "MISSING_CHANGE_VALIDATION_PLAN": {
+    "class": "MISSING_CHANGE_VALIDATION_PLAN",
+    "severity": "high",
+    "symptoms": [
+      "change lacks a repeatable validation plan"
+    ],
+    "verification": [
+      "run as6-diagnose-change-governance",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "add impact analysis, rollback plan, validation plan, and approval gate",
+      "register missing diagnostics",
+      "rerun full diagnostics"
+    ],
+    "rollback": [
+      "restore changed governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "change_governance",
+      "change_impact_analysis",
+      "change_rollback_plan",
+      "change_validation_plan",
+      "change_approval_gate"
+    ]
+  },
+  "MISSING_CHANGE_IMPACT_ANALYSIS": {
+    "class": "MISSING_CHANGE_IMPACT_ANALYSIS",
+    "severity": "high",
+    "symptoms": [
+      "change lacks impact analysis before execution"
+    ],
+    "verification": [
+      "run as6-diagnose-change-governance",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "add impact analysis, rollback plan, validation plan, and approval gate",
+      "register missing diagnostics",
+      "rerun full diagnostics"
+    ],
+    "rollback": [
+      "restore changed governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "change_governance",
+      "change_impact_analysis",
+      "change_rollback_plan",
+      "change_validation_plan",
+      "change_approval_gate"
+    ]
   }
 }

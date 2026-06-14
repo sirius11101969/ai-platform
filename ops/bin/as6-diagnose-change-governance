@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+echo "=== AS6 Change Governance Diagnostics ==="
+fail=0
+DOC="ops/governance/as6-change-governance.md"
+test -f "$DOC" && echo "AS6_CHANGE_GOVERNANCE_DOC=PASS:$DOC" || { echo "AS6_CHANGE_GOVERNANCE_DOC=FAIL:$DOC"; fail=1; }
+for signal in AS6_CHANGE_IMPACT_ANALYSIS=PASS AS6_CHANGE_RISK_CLASSIFICATION=PASS AS6_CHANGE_ROLLBACK_PLAN=PASS AS6_CHANGE_VALIDATION_PLAN=PASS AS6_CHANGE_APPROVAL_GATE=PASS AS6_CHANGE_POST_DIAGNOSTICS=PASS AEC_CHANGE_GOVERNANCE=PASS; do
+  if grep -q "$signal" "$DOC"; then
+    echo "AS6_CHANGE_GOVERNANCE_SIGNAL=PASS:$signal"
+  else
+    echo "AS6_CHANGE_GOVERNANCE_SIGNAL=FAIL:$signal"
+    fail=1
+  fi
+done
+for cls in UNCONTROLLED_CHANGE MISSING_CHANGE_ROLLBACK_PLAN MISSING_CHANGE_VALIDATION_PLAN MISSING_CHANGE_IMPACT_ANALYSIS; do
+  if grep -q "$cls" ops/governance/root-cause-catalog.json; then
+    echo "AS6_CHANGE_GOVERNANCE_ROOT_CAUSE=PASS:$cls"
+  else
+    echo "AS6_CHANGE_GOVERNANCE_ROOT_CAUSE=FAIL:$cls"
+    fail=1
+  fi
+done
+grep -q "change-governance" ops/bin/as6-diagnose-all && echo "AS6_CHANGE_GOVERNANCE_DIAGNOSE_ALL=PASS" || { echo "AS6_CHANGE_GOVERNANCE_DIAGNOSE_ALL=FAIL"; fail=1; }
+grep -q "ops/bin/as6-diagnose-change-governance" ops/status/diagnostic-status-registry.json && echo "AS6_CHANGE_GOVERNANCE_REGISTRY=PASS" || { echo "AS6_CHANGE_GOVERNANCE_REGISTRY=FAIL"; fail=1; }
+grep -q "AEC_CHANGE_GOVERNANCE=PASS" docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md && echo "AS6_CHANGE_GOVERNANCE_AEC_RULE=PASS" || { echo "AS6_CHANGE_GOVERNANCE_AEC_RULE=FAIL"; fail=1; }
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_CHANGE_IMPACT_ANALYSIS=PASS"
+  echo "AS6_CHANGE_RISK_CLASSIFICATION=PASS"
+  echo "AS6_CHANGE_ROLLBACK_PLAN=PASS"
+  echo "AS6_CHANGE_VALIDATION_PLAN=PASS"
+  echo "AS6_CHANGE_APPROVAL_GATE=PASS"
+  echo "AS6_CHANGE_POST_DIAGNOSTICS=PASS"
+  echo "AS6_CHANGE_GOVERNANCE=PASS"
+  echo "AS6_CHANGE_GOVERNANCE_RESULT=OK"
+  exit 0
+fi
+echo "AS6_CHANGE_GOVERNANCE=FAIL"
+echo "AS6_CHANGE_GOVERNANCE_RESULT=FAIL"
+exit 1

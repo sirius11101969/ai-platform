@@ -727,6 +727,13 @@
       "status": "registered",
       "category": "governance",
       "required": true
+    },
+    {
+      "check": "change-governance",
+      "path": "ops/bin/as6-diagnose-change-governance",
+      "status": "registered",
+      "category": "governance",
+      "required": true
     }
   ]
 }

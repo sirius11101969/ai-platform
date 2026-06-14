@@ -42,6 +42,7 @@ run_check "git-main-sync" "./ops/bin/as6-diagnose-git-main-sync"
 run_check "diagnostic-coverage" "./ops/bin/as6-diagnose-diagnostic-coverage"
 run_check "constitution" ./ops/bin/as6-diagnose-constitution
 run_check "autonomy-operating-standard" ./ops/bin/as6-diagnose-autonomy-operating-standard
+run_check "change-governance" ./ops/bin/as6-diagnose-change-governance
 run_check "heredoc-safety" ./ops/bin/as6-diagnose-heredoc-safety
 run_check "patch-structure" ./ops/bin/as6-diagnose-patch-structure
 run_check "git-hygiene" ./ops/bin/as6-diagnose-git-hygiene

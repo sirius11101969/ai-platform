@@ -542,3 +542,8 @@ Required signals:
 ## AS6 Autonomy Operating Standard Rule
 Every engineering change must follow diagnostics first, structure, safe change, repeat diagnostics, registry coverage, root-cause governance, automation, and control.
 Required diagnostic signal: AEC_AUTONOMY_OPERATING_STANDARD=PASS
+
+
+## AS6 Change Governance Rule
+Every engineering change must include impact analysis, risk classification, rollback plan, validation plan, approval gate, and post-change diagnostics.
+Required diagnostic signal: AEC_CHANGE_GOVERNANCE=PASS
