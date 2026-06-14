@@ -21,6 +21,7 @@ reg_text = registry.read_text() if registry.exists() else ""
 fail = False
 required = ["severity", "symptoms", "verification", "fix", "rollback", "prevention"]
 diagnostic_map = {
+    'AUTONOMY_OPERATING_STANDARD_DRIFT': 'as6-diagnose-autonomy-operating-standard',
     'CONTROL_PANEL_REBOOT': 'as6-diagnose-control-panel-reboot-correlation',
     'CONTROL_PANEL_POWER_REBOOT': 'as6-diagnose-control-panel-reboot-correlation',
     'CONTROL_PANEL_REBOOT_UNATTRIBUTED': 'as6-diagnose-control-panel-reboot-correlation',

@@ -537,3 +537,8 @@ Required signals:
 - CONTROL_PANEL_REBOOT_CORRELATION_RESULT=OK
 - CONTROL_PANEL_REBOOT_ROOT_CAUSE
 - CONTROL_PANEL_REBOOT_EVIDENCE_DIR
+
+
+## AS6 Autonomy Operating Standard Rule
+Every engineering change must follow diagnostics first, structure, safe change, repeat diagnostics, registry coverage, root-cause governance, automation, and control.
+Required diagnostic signal: AEC_AUTONOMY_OPERATING_STANDARD=PASS

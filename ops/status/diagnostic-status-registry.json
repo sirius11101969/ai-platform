@@ -720,6 +720,13 @@
       "status": "registered",
       "category": "provider",
       "required": false
+    },
+    {
+      "check": "autonomy-operating-standard",
+      "path": "ops/bin/as6-diagnose-autonomy-operating-standard",
+      "status": "registered",
+      "category": "governance",
+      "required": true
     }
   ]
 }

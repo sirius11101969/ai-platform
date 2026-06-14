@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+echo "=== AS6 Autonomy Operating Standard Diagnostics ==="
+fail=0
+DOC="ops/governance/as6-autonomy-operating-standard.md"
+test -f "$DOC" && echo "AS6_AUTONOMY_STANDARD_DOC=PASS:$DOC" || { echo "AS6_AUTONOMY_STANDARD_DOC=FAIL:$DOC"; fail=1; }
+for phrase in "Diagnostics first" "Structure before change" "Repeat diagnostics" "Add new artifacts to diagnostics" "Add new checks to diagnostics" "Add new controls" "root-cause governance" "AEC_AUTONOMY_OPERATING_STANDARD=PASS" "No secret values printed"; do
+  if grep -q "$phrase" "$DOC"; then
+    echo "AS6_AUTONOMY_STANDARD_RULE=PASS:$phrase"
+  else
+    echo "AS6_AUTONOMY_STANDARD_RULE=FAIL:$phrase"
+    fail=1
+  fi
+done
+grep -q "autonomy-operating-standard" ops/bin/as6-diagnose-all && echo "AS6_AUTONOMY_STANDARD_DIAGNOSE_ALL=PASS" || { echo "AS6_AUTONOMY_STANDARD_DIAGNOSE_ALL=FAIL"; fail=1; }
+grep -q "ops/bin/as6-diagnose-autonomy-operating-standard" ops/status/diagnostic-status-registry.json && echo "AS6_AUTONOMY_STANDARD_REGISTRY=PASS" || { echo "AS6_AUTONOMY_STANDARD_REGISTRY=FAIL"; fail=1; }
+grep -q "AUTONOMY_OPERATING_STANDARD_DRIFT" ops/governance/root-cause-catalog.json && echo "AS6_AUTONOMY_STANDARD_ROOT_CAUSE=PASS" || { echo "AS6_AUTONOMY_STANDARD_ROOT_CAUSE=FAIL"; fail=1; }
+grep -q "AEC_AUTONOMY_OPERATING_STANDARD=PASS" docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md && echo "AS6_AUTONOMY_STANDARD_AEC_RULE=PASS" || { echo "AS6_AUTONOMY_STANDARD_AEC_RULE=FAIL"; fail=1; }
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_AUTONOMY_OPERATING_STANDARD=PASS"
+  echo "AS6_AUTONOMY_OPERATING_STANDARD_RESULT=OK"
+  exit 0
+fi
+echo "AS6_AUTONOMY_OPERATING_STANDARD=FAIL"
+echo "AS6_AUTONOMY_OPERATING_STANDARD_RESULT=FAIL"
+exit 1

@@ -1731,5 +1731,30 @@
       "provider_panel_event_review",
       "panel_security_hardening"
     ]
+  },
+  "AUTONOMY_OPERATING_STANDARD_DRIFT": {
+    "class": "AUTONOMY_OPERATING_STANDARD_DRIFT",
+    "severity": "high",
+    "symptoms": [
+      "engineering change bypasses diagnostics, registry, coverage, root-cause governance, or repeat validation"
+    ],
+    "verification": [
+      "run as6-diagnose-autonomy-operating-standard",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore AS6 autonomy operating standard",
+      "register missing diagnostics and controls",
+      "rerun full diagnostics"
+    ],
+    "rollback": [
+      "restore governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "autonomy_operating_standard",
+      "diagnostics_first",
+      "registry_coverage_required",
+      "root_cause_governance_required"
+    ]
   }
 }
