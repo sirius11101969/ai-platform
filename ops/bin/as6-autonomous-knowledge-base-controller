@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /var/www/ai-platform
+fail=0
+warn=0
+evidence_dir="runtime/knowledge-base-controller"
+mkdir -p "$evidence_dir"
+evidence_file="$evidence_dir/latest.out"
+: > "$evidence_file"
+say(){ echo "$1" | tee -a "$evidence_file"; }
+ok(){ say "PASS: $1"; }
+soft(){ say "WARN: $1"; warn=1; }
+bad(){ say "FAIL: $1"; fail=1; }
+run_gate(){ name="$1"; shift; say "--- gate: $name ---"; if "$@" >> "$evidence_file" 2>&1; then ok "$name"; else bad "$name"; fi; }
+
+say "=== AS6 AUTONOMOUS KNOWLEDGE BASE CONTROLLER ==="
+
+say "--- canonical knowledge files ---"
+[ -f docs/AS6_PROJECT_STATE.md ] && ok "AS6_PROJECT_STATE exists" || bad "AS6_PROJECT_STATE missing"
+[ -f ops/registry/as6-diagnostic-registry.md ] && ok "diagnostic registry exists" || bad "diagnostic registry missing"
+[ -f ops/registry/as6-coverage-registry.md ] && ok "coverage registry exists" || bad "coverage registry missing"
+[ -f ops/registry/as6-aec-registry.md ] && ok "AEC registry exists" || bad "AEC registry missing"
+[ -d docs/diagnostics ] && ok "diagnostics docs directory exists" || bad "diagnostics docs directory missing"
+[ -d docs/coverage ] && ok "coverage docs directory exists" || bad "coverage docs directory missing"
+[ -d docs/governance ] && ok "governance docs directory exists" || bad "governance docs directory missing"
+
+say "--- L7 controller presence ---"
+for controller in as6-autonomous-production-drift-controller as6-autonomous-architecture-compliance-controller as6-autonomous-rollback-verification-controller as6-autonomous-deployment-controller as6-autonomous-incident-commander; do
+  if [ -x "ops/bin/$controller" ]; then ok "controller exists: $controller"; else bad "controller missing: $controller"; fi
+done
+
+say "--- L7 controller registry alignment ---"
+for controller in as6-autonomous-production-drift-controller as6-autonomous-architecture-compliance-controller as6-autonomous-rollback-verification-controller as6-autonomous-deployment-controller as6-autonomous-incident-commander; do
+  if grep -Rqs "$controller" ops/registry docs/diagnostics docs/governance docs/coverage docs/AS6_PROJECT_STATE.md; then ok "registered knowledge reference: $controller"; else bad "missing knowledge reference: $controller"; fi
+done
+
+say "--- root-cause knowledge gates ---"
+if [ -x ops/bin/as6-diagnose-root-cause-knowledge-base ]; then run_gate "root cause knowledge base" ops/bin/as6-diagnose-root-cause-knowledge-base; else soft "root cause knowledge base diagnostic missing"; fi
+if [ -x ops/bin/as6-diagnose-root-cause-governance ]; then run_gate "root cause governance" ops/bin/as6-diagnose-root-cause-governance; else soft "root cause governance diagnostic missing"; fi
+if [ -x ops/bin/as6-diagnose-root-cause-router ]; then run_gate "root cause router" ops/bin/as6-diagnose-root-cause-router; else soft "root cause router diagnostic missing"; fi
+
+say "--- orphan and drift checks ---"
+missing_registry=0
+for f in docs/diagnostics/*.md; do
+  [ -e "$f" ] || continue
+  base="$(basename "$f")"
+  if grep -Rqs "$base" ops/registry docs/AS6_PROJECT_STATE.md docs/governance docs/coverage; then ok "diagnostic doc linked: $base"; else soft "diagnostic doc has weak linkage: $base"; missing_registry=1; fi
+done
+
+for f in docs/coverage/*.md; do
+  [ -e "$f" ] || continue
+  if grep -Eq "COVERAGE=REGISTERED|Coverage registered|Coverage status" "$f"; then ok "coverage doc contract OK: $(basename "$f")"; else bad "coverage doc contract missing: $(basename "$f")"; fi
+done
+
+say "--- AEC registration consistency ---"
+for aec in AEC_DEPLOYMENT_REQUIRES_ROLLBACK_VERIFICATION AEC_INCIDENT_COMMANDER_REQUIRES_EVIDENCE AEC_ROLLBACK_READINESS_REQUIRED_BEFORE_DEPLOYMENT AEC_RUNTIME_SERVICE_ALIAS_MUST_MATCH_COMPOSE_IDENTITY AEC_PRODUCTION_DRIFT_MUST_BE_NONE_BEFORE_L7_DEPLOYMENT; do
+  if grep -Rqs "$aec" ops/registry docs; then ok "AEC registered: $aec"; else bad "AEC missing: $aec"; fi
+done
+
+say "--- state freshness checks ---"
+for phase in "L7 Phase 1" "L7 Phase 2" "L7 Phase 3" "L7 Phase 4" "L7 Phase 5"; do
+  if grep -q "$phase" docs/AS6_PROJECT_STATE.md; then ok "state contains $phase"; else bad "state missing $phase"; fi
+done
+
+say "--- evidence directories ---"
+for d in runtime/rollback-verification runtime/deployment-controller runtime/incident-commander; do
+  if [ -d "$d" ] && [ -f "$d/latest.out" ]; then ok "evidence exists: $d/latest.out"; else soft "evidence not found yet: $d/latest.out"; fi
+done
+
+say "--- secret safety ---"
+if git ls-files .env 2>/dev/null | grep -Fxq ".env"; then bad ".env is tracked by git"; else ok ".env is not tracked by git"; fi
+if [ -x ops/bin/as6-pre-commit-secret-scan ]; then run_gate "secret scan" ops/bin/as6-pre-commit-secret-scan; else soft "secret scan missing"; fi
+
+say "--- result ---"
+if [ "$fail" -eq 0 ]; then
+  say "AUTONOMOUS_KNOWLEDGE_BASE_CONTROLLER=PASS"
+  if [ "$warn" -eq 1 ]; then say "AUTONOMOUS_KNOWLEDGE_BASE_WARNINGS=PRESENT"; else say "AUTONOMOUS_KNOWLEDGE_BASE_WARNINGS=NONE"; fi
+  say "AS6_AUTONOMOUS_KNOWLEDGE_BASE_CONTROLLER_RESULT=OK"
+else
+  say "AUTONOMOUS_KNOWLEDGE_BASE_CONTROLLER=FAIL"
+  say "AS6_AUTONOMOUS_KNOWLEDGE_BASE_CONTROLLER_RESULT=FAIL"
+fi
+say "AS6_AUTONOMOUS_KNOWLEDGE_BASE_CONTROLLER_EVIDENCE=$evidence_file"
+exit "$fail"

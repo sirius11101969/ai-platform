@@ -23,3 +23,6 @@
 
 ## Autonomous Incident Commander Coverage
 - AS6_AUTONOMOUS_INCIDENT_COMMANDER_COVERAGE=REGISTERED
+
+## Autonomous Knowledge Base Coverage
+- AS6_AUTONOMOUS_KNOWLEDGE_BASE_COVERAGE=REGISTERED

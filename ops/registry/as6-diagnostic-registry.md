@@ -18,3 +18,7 @@
 ## Autonomous Incident Commander
 - ops/bin/as6-autonomous-incident-commander
 - result: AS6_AUTONOMOUS_INCIDENT_COMMANDER_RESULT
+
+## Autonomous Knowledge Base Controller
+- ops/bin/as6-autonomous-knowledge-base-controller
+- result: AS6_AUTONOMOUS_KNOWLEDGE_BASE_CONTROLLER_RESULT

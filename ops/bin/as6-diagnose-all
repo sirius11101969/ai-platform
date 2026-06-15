@@ -198,3 +198,12 @@ else
   echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:autonomous-incident-commander"
   fail=1
 fi
+
+echo ""
+echo "=== RUN: autonomous-knowledge-base-controller ==="
+if ops/bin/as6-autonomous-knowledge-base-controller; then
+  echo "AS6_DIAGNOSE_ALL_CHECK=OK:autonomous-knowledge-base-controller"
+else
+  echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:autonomous-knowledge-base-controller"
+  fail=1
+fi
