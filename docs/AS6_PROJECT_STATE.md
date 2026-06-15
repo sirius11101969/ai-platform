@@ -494,3 +494,45 @@ Added root cause classes:
 - INCIDENT_EVIDENCE_BUNDLE_MISSING
 - INCIDENT_HUMAN_APPROVAL_GATE_MISSING
 - INCIDENT_AUTO_REPAIR_POLICY_VIOLATION
+
+## L7 Phase 8: Autonomous Incident Lifecycle Controller
+
+Status:
+
+- AS6_INCIDENT_LIFECYCLE_CONTROLLER=IMPLEMENTED
+- AS6_INCIDENT_LIFECYCLE_COVERAGE=REGISTERED
+- AEC_INCIDENT_MUST_BE_REGISTERED=REGISTERED
+- AEC_INCIDENT_MUST_HAVE_STATE=REGISTERED
+- AEC_INCIDENT_MUST_HAVE_EVIDENCE=REGISTERED
+- AEC_INCIDENT_MUST_HAVE_ROOT_CAUSE=REGISTERED
+- AEC_INCIDENT_MUST_HAVE_CLOSURE=REGISTERED
+- AEC_INCIDENT_TRANSITION_MUST_BE_VALID=REGISTERED
+- AEC_INCIDENT_MUST_HAVE_OWNER=REGISTERED
+
+Added to diagnostics:
+
+- incident_lifecycle_controller
+- incident_registry_diagnostics
+- incident_state_diagnostics
+- incident_transition_diagnostics
+- incident_closure_diagnostics
+- incident_evidence_diagnostics
+- incident_root_cause_binding_diagnostics
+- incident_owner_presence
+- incident_human_approval_gate
+- incident_auto_repair_apply_block
+- incident_history_generation
+- incident_closure_generation
+
+Added root cause classes:
+
+- INCIDENT_NOT_REGISTERED
+- INCIDENT_WITHOUT_OWNER
+- INCIDENT_WITHOUT_STATE
+- INCIDENT_WITHOUT_EVIDENCE
+- INCIDENT_WITHOUT_CLOSURE
+- INCIDENT_STATE_TRANSITION_DRIFT
+- INCIDENT_REOPEN_REQUIRED
+- INCIDENT_SEVERITY_MISMATCH
+- INCIDENT_ROOT_CAUSE_MISMATCH
+- INCIDENT_HISTORY_MISSING

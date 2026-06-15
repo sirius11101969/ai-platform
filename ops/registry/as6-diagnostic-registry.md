@@ -26,3 +26,7 @@
 ## Autonomous Incident Governance Controller
 - ops/bin/as6-autonomous-incident-governance-controller
 - result: AS6_INCIDENT_GOVERNANCE_RESULT
+
+## Autonomous Incident Lifecycle Controller
+- ops/bin/as6-autonomous-incident-lifecycle-controller
+- result: AS6_INCIDENT_LIFECYCLE_RESULT

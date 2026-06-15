@@ -29,3 +29,6 @@
 
 ## Autonomous Incident Governance Coverage
 - AS6_INCIDENT_GOVERNANCE_COVERAGE=REGISTERED
+
+## Autonomous Incident Lifecycle Coverage
+- AS6_INCIDENT_LIFECYCLE_COVERAGE=REGISTERED

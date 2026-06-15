@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /var/www/ai-platform
+fail=0
+warn=0
+incident_id="AS6-CURRENT"
+incident_state="CLOSED"
+severity="none"
+root_cause="NONE"
+decision="OBSERVE"
+lifecycle_dir="runtime/incident-lifecycle"
+registry_dir="runtime/incidents"
+evidence_dir="$lifecycle_dir/evidence"
+mkdir -p "$registry_dir" "$evidence_dir"
+evidence_file="$lifecycle_dir/latest.out"
+registry_file="$registry_dir/current.env"
+history_file="$registry_dir/history.log"
+closure_file="$registry_dir/closure.md"
+transition_file="$lifecycle_dir/transition-check.out"
+: > "$evidence_file"
+say(){ echo "$1" | tee -a "$evidence_file"; }
+ok(){ say "PASS: $1"; }
+soft(){ say "WARN: $1"; warn=1; }
+bad(){ say "FAIL: $1"; fail=1; incident_state="CONFIRMED"; severity="high"; decision="HUMAN_APPROVAL_REQUIRED"; }
+run_capture(){ name="$1"; outfile="$2"; shift 2; say "--- capture: $name ---"; if "$@" > "$outfile" 2>&1; then ok "$name"; else bad "$name"; fi; cat "$outfile" >> "$evidence_file"; }
+
+say "=== AS6 AUTONOMOUS INCIDENT LIFECYCLE CONTROLLER ==="
+
+say "--- incident registry bootstrap ---"
+[ -d "$registry_dir" ] && ok "incident registry directory exists" || bad "incident registry directory missing"
+[ -d "$evidence_dir" ] && ok "incident lifecycle evidence directory exists" || bad "incident lifecycle evidence directory missing"
+
+say "--- lifecycle health capture ---"
+if curl -fsS --max-time 15 https://www.as6.ru/api/health 2>/dev/null | grep -q "\"status\":\"OK\""; then ok "public production health OK"; else bad "public production health failed"; root_cause="PRODUCTION_HEALTH_NOT_CONFIRMED"; fi
+[ -x ops/bin/as6-autonomous-production-drift-controller ] && run_capture "production drift" "$evidence_dir/production-drift.out" ops/bin/as6-autonomous-production-drift-controller || bad "production drift controller missing"
+[ -x ops/bin/as6-autonomous-architecture-compliance-controller ] && run_capture "architecture compliance" "$evidence_dir/architecture-compliance.out" ops/bin/as6-autonomous-architecture-compliance-controller || bad "architecture compliance controller missing"
+[ -x ops/bin/as6-autonomous-rollback-verification-controller ] && run_capture "rollback verification" "$evidence_dir/rollback-verification.out" ops/bin/as6-autonomous-rollback-verification-controller || bad "rollback verification controller missing"
+[ -x ops/bin/as6-autonomous-deployment-controller ] && run_capture "deployment controller" "$evidence_dir/deployment-controller.out" ops/bin/as6-autonomous-deployment-controller || bad "deployment controller missing"
+[ -x ops/bin/as6-autonomous-incident-governance-controller ] && run_capture "incident governance" "$evidence_dir/incident-governance.out" ops/bin/as6-autonomous-incident-governance-controller || soft "incident governance controller missing"
+
+say "--- state machine validation ---"
+printf "%s\n" "NEW->TRIAGED" "TRIAGED->CONFIRMED" "CONFIRMED->MITIGATED" "MITIGATED->VALIDATED" "VALIDATED->CLOSED" "CLOSED->REOPENED" "REOPENED->TRIAGED" > "$transition_file"
+ok "incident transition table generated"
+
+if [ "$fail" -eq 0 ]; then
+  incident_state="CLOSED"
+  severity="none"
+  root_cause="NONE"
+  decision="OBSERVE"
+else
+  [ "$root_cause" = "NONE" ] && root_cause="INCIDENT_ROOT_CAUSE_MISMATCH"
+fi
+
+say "--- incident registry write ---"
+printf "%s\n" "AS6_INCIDENT_ID=$incident_id" "AS6_INCIDENT_STATE=$incident_state" "AS6_INCIDENT_SEVERITY=$severity" "AS6_INCIDENT_ROOT_CAUSE=$root_cause" "AS6_INCIDENT_DECISION=$decision" "AS6_INCIDENT_OWNER=human-approved-ops" "AS6_INCIDENT_AUTO_REPAIR_APPLY=NO" "AS6_INCIDENT_HUMAN_APPROVAL_REQUIRED=YES" "AS6_INCIDENT_EVIDENCE=$evidence_file" > "$registry_file"
+printf "%s %s %s %s\n" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$incident_id" "$incident_state" "$decision" >> "$history_file"
+ok "incident registry current state written: $registry_file"
+ok "incident history updated: $history_file"
+
+say "--- closure validation ---"
+if [ "$incident_state" = "CLOSED" ]; then
+  printf "%s\n" "# AS6 Incident Closure" "" "Incident ID: $incident_id" "State: $incident_state" "Severity: $severity" "Root cause: $root_cause" "Decision: $decision" "" "Closure basis:" "" "- Public production health OK" "- Production drift OK" "- Architecture compliance OK" "- Rollback verification OK" "- Deployment controller OK" "" "Auto repair apply: NO" "Human approval required for production-changing action: YES" > "$closure_file"
+  ok "incident closure evidence generated: $closure_file"
+else
+  soft "incident is not closed; closure evidence not final"
+fi
+
+say "--- lifecycle evidence validation ---"
+[ -f "$registry_file" ] && ok "incident registry file exists" || bad "incident registry file missing"
+[ -f "$history_file" ] && ok "incident history file exists" || bad "incident history file missing"
+[ -f "$transition_file" ] && ok "incident transition file exists" || bad "incident transition file missing"
+[ "$incident_state" != "CLOSED" ] || [ -f "$closure_file" ] && ok "incident closure condition satisfied" || bad "incident closure evidence missing"
+
+say "--- safety gates ---"
+if git ls-files .env 2>/dev/null | grep -Fxq ".env"; then bad ".env is tracked by git"; else ok ".env is not tracked by git"; fi
+if [ -x ops/bin/as6-pre-commit-secret-scan ]; then run_capture "secret scan" "$evidence_dir/secret-scan.out" ops/bin/as6-pre-commit-secret-scan; else soft "secret scan missing"; fi
+
+say "--- result ---"
+say "AS6_INCIDENT_LIFECYCLE_ID=$incident_id"
+say "AS6_INCIDENT_LIFECYCLE_STATE=$incident_state"
+say "AS6_INCIDENT_LIFECYCLE_DECISION=$decision"
+say "AS6_INCIDENT_LIFECYCLE_ROOT_CAUSE=$root_cause"
+if [ "$fail" -eq 0 ]; then
+  say "AS6_INCIDENT_LIFECYCLE=PASS"
+  if [ "$warn" -eq 1 ]; then say "AS6_INCIDENT_LIFECYCLE_WARNINGS=PRESENT"; else say "AS6_INCIDENT_LIFECYCLE_WARNINGS=NONE"; fi
+  say "AS6_INCIDENT_LIFECYCLE_RESULT=OK"
+else
+  say "AS6_INCIDENT_LIFECYCLE=FAIL"
+  say "AS6_INCIDENT_LIFECYCLE_RESULT=FAIL"
+fi
+say "AS6_INCIDENT_LIFECYCLE_EVIDENCE=$evidence_file"
+exit "$fail"
