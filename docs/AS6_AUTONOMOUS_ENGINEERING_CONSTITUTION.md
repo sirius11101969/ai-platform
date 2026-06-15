@@ -552,3 +552,19 @@ Required diagnostic signal: AEC_CHANGE_GOVERNANCE=PASS
 ## AS6 Autonomous Change Controller Rule
 Every autonomous or manual change must pass impact, risk, rollback, validation, evidence, registry, and deployment-gate controls before production.
 Required diagnostic signal: AEC_AUTONOMOUS_CHANGE_CONTROLLER=PASS
+
+
+## AS6 AEC_PRODUCTION_DEPLOYMENT_SAFETY Rule
+Required diagnostic signal: AEC_PRODUCTION_DEPLOYMENT_SAFETY=PASS
+
+
+## AS6 AEC_VPS_BASELINE Rule
+Required diagnostic signal: AEC_VPS_BASELINE=PASS
+
+
+## AS6 AEC_PROVIDER_CONTROL_PLANE Rule
+Required diagnostic signal: AEC_PROVIDER_CONTROL_PLANE=PASS
+
+
+## AS6 AEC_AUTONOMOUS_COVERAGE_GATE Rule
+Required diagnostic signal: AEC_AUTONOMOUS_COVERAGE_GATE=PASS

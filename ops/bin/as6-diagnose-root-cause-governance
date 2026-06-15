@@ -21,6 +21,17 @@ reg_text = registry.read_text() if registry.exists() else ""
 fail = False
 required = ["severity", "symptoms", "verification", "fix", "rollback", "prevention"]
 diagnostic_map = {
+    'REBOOT_FORENSICS_PROVIDER_SUPPRESSOR_DRIFT': 'as6-diagnose-provider-control-plane',
+    'DEPLOYMENT_WITHOUT_BACKUP': 'as6-diagnose-production-deployment-safety',
+    'DEPLOYMENT_WITHOUT_ROLLBACK': 'as6-diagnose-production-deployment-safety',
+    'DEPLOYMENT_WITHOUT_VALIDATION': 'as6-diagnose-production-deployment-safety',
+    'VPS_BASELINE_DRIFT': 'as6-diagnose-vps-baseline',
+    'SYSTEMD_TIMER_DRIFT': 'as6-diagnose-vps-baseline',
+    'HOST_CONFIGURATION_DRIFT': 'as6-diagnose-vps-baseline',
+    'UNATTRIBUTED_PROVIDER_ACTION': 'as6-diagnose-provider-control-plane',
+    'PANEL_SECURITY_DRIFT': 'as6-diagnose-provider-control-plane',
+    'CONTROL_PLANE_AUDIT_GAP': 'as6-diagnose-provider-control-plane',
+    'AUTONOMOUS_COVERAGE_GAP': 'as6-diagnose-autonomous-coverage',
     'AUTONOMOUS_CHANGE_CONTROLLER_DRIFT': 'as6-diagnose-autonomous-change-controller',
     'CHANGE_EVIDENCE_MISSING': 'as6-diagnose-autonomous-change-controller',
     'DEPLOYMENT_GATE_BYPASS': 'as6-diagnose-autonomous-change-controller',

@@ -1968,5 +1968,258 @@
       "deployment_gate_required",
       "autonomous_validation_required"
     ]
+  },
+  "DEPLOYMENT_WITHOUT_BACKUP": {
+    "class": "DEPLOYMENT_WITHOUT_BACKUP",
+    "severity": "high",
+    "symptoms": [
+      "deployment attempted without verified backup"
+    ],
+    "verification": [
+      "run as6-diagnose-production-deployment-safety",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore missing diagnostic, registry, coverage, prevention, rollback, or evidence gate"
+    ],
+    "rollback": [
+      "restore governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "production_deployment_safety",
+      "vps_baseline",
+      "provider_control_plane",
+      "autonomous_coverage_gate"
+    ]
+  },
+  "DEPLOYMENT_WITHOUT_ROLLBACK": {
+    "class": "DEPLOYMENT_WITHOUT_ROLLBACK",
+    "severity": "high",
+    "symptoms": [
+      "deployment attempted without rollback readiness"
+    ],
+    "verification": [
+      "run as6-diagnose-production-deployment-safety",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore missing diagnostic, registry, coverage, prevention, rollback, or evidence gate"
+    ],
+    "rollback": [
+      "restore governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "production_deployment_safety",
+      "vps_baseline",
+      "provider_control_plane",
+      "autonomous_coverage_gate"
+    ]
+  },
+  "DEPLOYMENT_WITHOUT_VALIDATION": {
+    "class": "DEPLOYMENT_WITHOUT_VALIDATION",
+    "severity": "high",
+    "symptoms": [
+      "deployment attempted without validation gate"
+    ],
+    "verification": [
+      "run as6-diagnose-production-deployment-safety",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore missing diagnostic, registry, coverage, prevention, rollback, or evidence gate"
+    ],
+    "rollback": [
+      "restore governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "production_deployment_safety",
+      "vps_baseline",
+      "provider_control_plane",
+      "autonomous_coverage_gate"
+    ]
+  },
+  "VPS_BASELINE_DRIFT": {
+    "class": "VPS_BASELINE_DRIFT",
+    "severity": "high",
+    "symptoms": [
+      "VPS baseline differs from expected production state"
+    ],
+    "verification": [
+      "run as6-diagnose-vps-baseline",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore missing diagnostic, registry, coverage, prevention, rollback, or evidence gate"
+    ],
+    "rollback": [
+      "restore governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "production_deployment_safety",
+      "vps_baseline",
+      "provider_control_plane",
+      "autonomous_coverage_gate"
+    ]
+  },
+  "SYSTEMD_TIMER_DRIFT": {
+    "class": "SYSTEMD_TIMER_DRIFT",
+    "severity": "high",
+    "symptoms": [
+      "systemd timer baseline drift detected"
+    ],
+    "verification": [
+      "run as6-diagnose-vps-baseline",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore missing diagnostic, registry, coverage, prevention, rollback, or evidence gate"
+    ],
+    "rollback": [
+      "restore governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "production_deployment_safety",
+      "vps_baseline",
+      "provider_control_plane",
+      "autonomous_coverage_gate"
+    ]
+  },
+  "HOST_CONFIGURATION_DRIFT": {
+    "class": "HOST_CONFIGURATION_DRIFT",
+    "severity": "high",
+    "symptoms": [
+      "host configuration drift detected"
+    ],
+    "verification": [
+      "run as6-diagnose-vps-baseline",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore missing diagnostic, registry, coverage, prevention, rollback, or evidence gate"
+    ],
+    "rollback": [
+      "restore governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "production_deployment_safety",
+      "vps_baseline",
+      "provider_control_plane",
+      "autonomous_coverage_gate"
+    ]
+  },
+  "UNATTRIBUTED_PROVIDER_ACTION": {
+    "class": "UNATTRIBUTED_PROVIDER_ACTION",
+    "severity": "high",
+    "symptoms": [
+      "provider control plane action lacks attribution"
+    ],
+    "verification": [
+      "run as6-diagnose-provider-control-plane",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore missing diagnostic, registry, coverage, prevention, rollback, or evidence gate"
+    ],
+    "rollback": [
+      "restore governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "production_deployment_safety",
+      "vps_baseline",
+      "provider_control_plane",
+      "autonomous_coverage_gate"
+    ]
+  },
+  "PANEL_SECURITY_DRIFT": {
+    "class": "PANEL_SECURITY_DRIFT",
+    "severity": "high",
+    "symptoms": [
+      "provider panel security posture drift detected"
+    ],
+    "verification": [
+      "run as6-diagnose-provider-control-plane",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore missing diagnostic, registry, coverage, prevention, rollback, or evidence gate"
+    ],
+    "rollback": [
+      "restore governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "production_deployment_safety",
+      "vps_baseline",
+      "provider_control_plane",
+      "autonomous_coverage_gate"
+    ]
+  },
+  "CONTROL_PLANE_AUDIT_GAP": {
+    "class": "CONTROL_PLANE_AUDIT_GAP",
+    "severity": "high",
+    "symptoms": [
+      "provider control plane audit evidence gap detected"
+    ],
+    "verification": [
+      "run as6-diagnose-provider-control-plane",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore missing diagnostic, registry, coverage, prevention, rollback, or evidence gate"
+    ],
+    "rollback": [
+      "restore governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "production_deployment_safety",
+      "vps_baseline",
+      "provider_control_plane",
+      "autonomous_coverage_gate"
+    ]
+  },
+  "AUTONOMOUS_COVERAGE_GAP": {
+    "class": "AUTONOMOUS_COVERAGE_GAP",
+    "severity": "high",
+    "symptoms": [
+      "autonomous coverage chain is incomplete"
+    ],
+    "verification": [
+      "run as6-diagnose-autonomous-coverage",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore missing diagnostic, registry, coverage, prevention, rollback, or evidence gate"
+    ],
+    "rollback": [
+      "restore governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "production_deployment_safety",
+      "vps_baseline",
+      "provider_control_plane",
+      "autonomous_coverage_gate"
+    ]
+  },
+  "REBOOT_FORENSICS_PROVIDER_SUPPRESSOR_DRIFT": {
+    "class": "REBOOT_FORENSICS_PROVIDER_SUPPRESSOR_DRIFT",
+    "severity": "medium",
+    "symptoms": [
+      "provider control plane evidence is blocked by historical local reboot audit signature"
+    ],
+    "verification": [
+      "run as6-diagnose-provider-control-plane",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore missing diagnostic, registry, coverage, prevention, rollback, evidence, or suppressor gate"
+    ],
+    "rollback": [
+      "restore governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "production_deployment_safety",
+      "vps_baseline",
+      "provider_control_plane",
+      "autonomous_coverage_gate"
+    ]
   }
 }

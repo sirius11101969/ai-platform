@@ -741,6 +741,34 @@
       "status": "registered",
       "category": "governance",
       "required": true
+    },
+    {
+      "check": "production-deployment-safety",
+      "path": "ops/bin/as6-diagnose-production-deployment-safety",
+      "status": "registered",
+      "category": "governance",
+      "required": true
+    },
+    {
+      "check": "vps-baseline",
+      "path": "ops/bin/as6-diagnose-vps-baseline",
+      "status": "registered",
+      "category": "infrastructure",
+      "required": true
+    },
+    {
+      "check": "provider-control-plane",
+      "path": "ops/bin/as6-diagnose-provider-control-plane",
+      "status": "registered",
+      "category": "provider",
+      "required": true
+    },
+    {
+      "check": "autonomous-coverage",
+      "path": "ops/bin/as6-diagnose-autonomous-coverage",
+      "status": "registered",
+      "category": "governance",
+      "required": true
     }
   ]
 }

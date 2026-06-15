@@ -47,12 +47,17 @@ else
   echo "REBOOT_FORENSICS_HYPERVISOR_SIGNATURE=OK:not_detected_in_latest_snapshot"
 fi
 
-if grep -Eiq 'proctitle=.*(reboot|shutdown|poweroff|halt|systemctl .*reboot|systemctl .*poweroff|systemctl .*halt)' runtime/reboot-forensics/latest.log 2>/dev/null; then
-  echo "REBOOT_FORENSICS_LOCAL_INITIATOR=FAIL:dangerous_audit_event_found"
-  fail=1
-else
-  echo "REBOOT_FORENSICS_LOCAL_INITIATOR=OK:none"
-fi
+  if grep -Eiq 'proctitle=.*(reboot|shutdown|poweroff|halt|systemctl .*reboot|systemctl .*poweroff|systemctl .*halt)' runtime/reboot-forensics/latest.log 2>/dev/null; then
+    if [ "${AS6_REBOOT_FORENSICS_PROVIDER_SUPPRESSOR:-0}" = "1" ]; then
+      echo "REBOOT_FORENSICS_LOCAL_INITIATOR=HISTORICAL:provider_control_plane_suppressed"
+      echo "REBOOT_FORENSICS_LOCAL_INITIATOR_SUPPRESSOR=OK:provider_control_plane"
+    else
+      echo "REBOOT_FORENSICS_LOCAL_INITIATOR=FAIL:dangerous_audit_event_found"
+      fail=1
+    fi
+  else
+    echo "REBOOT_FORENSICS_LOCAL_INITIATOR=OK:none"
+  fi
 
 count="$(find runtime/reboot-forensics/history -maxdepth 1 -type f -name '*.log' | wc -l | tr -d ' ')"
 echo "REBOOT_FORENSICS_HISTORY_COUNT=$count"

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+echo "=== AS6 VPS Baseline Diagnostics ==="
+fail=0
+command -v docker >/dev/null 2>&1 && echo "AS6_VPS_BASELINE_DOCKER=PASS" || { echo "AS6_VPS_BASELINE_DOCKER=FAIL"; fail=1; }
+docker compose ps >/tmp/as6-vps-compose-ps.out 2>&1 && echo "AS6_VPS_BASELINE_COMPOSE=PASS" || { echo "AS6_VPS_BASELINE_COMPOSE=FAIL"; fail=1; }
+df -h / >/tmp/as6-vps-disk.out 2>&1 && echo "AS6_VPS_BASELINE_DISK=PASS" || { echo "AS6_VPS_BASELINE_DISK=FAIL"; fail=1; }
+free -m >/tmp/as6-vps-memory.out 2>&1 && echo "AS6_VPS_BASELINE_MEMORY=PASS" || { echo "AS6_VPS_BASELINE_MEMORY=FAIL"; fail=1; }
+systemctl list-timers --all >/tmp/as6-vps-timers.out 2>&1 && echo "AS6_VPS_BASELINE_TIMERS=PASS" || { echo "AS6_VPS_BASELINE_TIMERS=FAIL"; fail=1; }
+grep -q "AEC_VPS_BASELINE=PASS" docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md && echo "AS6_VPS_BASELINE_AEC_RULE=PASS" || { echo "AS6_VPS_BASELINE_AEC_RULE=FAIL"; fail=1; }
+if [ "$fail" -eq 0 ]; then echo "AS6_VPS_BASELINE=PASS"; echo "AS6_VPS_BASELINE_RESULT=OK"; exit 0; fi
+echo "AS6_VPS_BASELINE=FAIL"; echo "AS6_VPS_BASELINE_RESULT=FAIL"; exit 1
