@@ -797,6 +797,13 @@
       "status": "registered",
       "category": "governance",
       "required": true
+    },
+    {
+      "check": "autonomous-validation-controller",
+      "path": "ops/bin/as6-diagnose-autonomous-validation-controller",
+      "status": "registered",
+      "category": "governance",
+      "required": true
     }
   ]
 }

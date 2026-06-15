@@ -21,6 +21,11 @@ reg_text = registry.read_text() if registry.exists() else ""
 fail = False
 required = ["severity", "symptoms", "verification", "fix", "rollback", "prevention"]
 diagnostic_map = {
+    'AUTONOMOUS_VALIDATION_CONTROLLER_DRIFT': 'as6-diagnose-autonomous-validation-controller',
+    'CHANGE_WITHOUT_POST_VALIDATION': 'as6-diagnose-autonomous-validation-controller',
+    'VALIDATION_EVIDENCE_MISSING': 'as6-diagnose-autonomous-validation-controller',
+    'PRODUCTION_HEALTH_NOT_CONFIRMED': 'as6-diagnose-autonomous-validation-controller',
+    'ROLLBACK_VERIFICATION_MISSING': 'as6-diagnose-autonomous-validation-controller',
     'AUTONOMOUS_REPAIR_CONTROLLER_DRIFT': 'as6-diagnose-autonomous-repair-controller',
     'REPAIR_WITHOUT_ROOT_CAUSE': 'as6-diagnose-autonomous-repair-controller',
     'REPAIR_WITHOUT_VALIDATION': 'as6-diagnose-autonomous-repair-controller',

@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+echo "=== AS6 Autonomous Validation Controller Diagnostics ==="
+fail=0
+DOC="ops/governance/as6-autonomous-validation-controller.md"
+EVIDENCE_DIR="runtime/validation-controller"
+mkdir -p "$EVIDENCE_DIR"
+date -u +"%Y-%m-%dT%H:%M:%SZ" > "$EVIDENCE_DIR/latest-run.txt"
+git status --short > "$EVIDENCE_DIR/git-status.txt" 2>/dev/null || true
+test -f "$DOC" && echo "AS6_VALIDATION_DOC=PASS:$DOC" || { echo "AS6_VALIDATION_DOC=FAIL:$DOC"; fail=1; }
+grep -q "AS6_VALIDATION_PLAN=PASS" "$DOC" && echo "AS6_VALIDATION_PLAN=PASS" || { echo "AS6_VALIDATION_PLAN=FAIL"; fail=1; }
+./ops/bin/as6-diagnose-health-status > "$EVIDENCE_DIR/health-status.out" 2>&1 && echo "AS6_VALIDATION_PRODUCTION_HEALTH=PASS" || { echo "AS6_VALIDATION_PRODUCTION_HEALTH=FAIL"; fail=1; }
+./ops/bin/as6-diagnose-rollback-readiness > "$EVIDENCE_DIR/rollback-readiness.out" 2>&1 && echo "AS6_VALIDATION_ROLLBACK_VERIFICATION=PASS" || { echo "AS6_VALIDATION_ROLLBACK_VERIFICATION=FAIL"; fail=1; }
+./ops/bin/as6-diagnose-autonomous-repair-controller > "$EVIDENCE_DIR/repair-controller.out" 2>&1 && echo "AS6_VALIDATION_REPAIR_CONTROLLER=PASS" || { echo "AS6_VALIDATION_REPAIR_CONTROLLER=FAIL"; fail=1; }
+./ops/bin/as6-diagnose-change-pipeline-controller > "$EVIDENCE_DIR/change-pipeline.out" 2>&1 && echo "AS6_VALIDATION_CHANGE_PIPELINE=PASS" || { echo "AS6_VALIDATION_CHANGE_PIPELINE=FAIL"; fail=1; }
+./ops/bin/as6-diagnose-strategic-readiness > "$EVIDENCE_DIR/strategic-readiness.out" 2>&1 && echo "AS6_VALIDATION_POST_CHANGE_DIAGNOSTICS=PASS" || { echo "AS6_VALIDATION_POST_CHANGE_DIAGNOSTICS=FAIL"; fail=1; }
+test -s "$EVIDENCE_DIR/health-status.out" && test -s "$EVIDENCE_DIR/rollback-readiness.out" && test -s "$EVIDENCE_DIR/repair-controller.out" && test -s "$EVIDENCE_DIR/change-pipeline.out" && echo "AS6_VALIDATION_EVIDENCE=PASS" || { echo "AS6_VALIDATION_EVIDENCE=FAIL"; fail=1; }
+grep -q "AEC_AUTONOMOUS_VALIDATION_CONTROLLER=PASS" docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md && echo "AS6_VALIDATION_AEC_RULE=PASS" || { echo "AS6_VALIDATION_AEC_RULE=FAIL"; fail=1; }
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_VALIDATION_ALLOWED=YES"
+  echo "AS6_AUTONOMOUS_VALIDATION_CONTROLLER=PASS"
+  echo "AS6_AUTONOMOUS_VALIDATION_CONTROLLER_EVIDENCE_DIR=$EVIDENCE_DIR"
+  echo "AS6_AUTONOMOUS_VALIDATION_CONTROLLER_RESULT=OK"
+  exit 0
+fi
+echo "AS6_VALIDATION_ALLOWED=NO"
+echo "AS6_AUTONOMOUS_VALIDATION_CONTROLLER=FAIL"
+echo "AS6_AUTONOMOUS_VALIDATION_CONTROLLER_RESULT=FAIL"
+exit 1

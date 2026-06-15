@@ -2461,5 +2461,135 @@
       "repair_rollback_required",
       "auto_apply_guard"
     ]
+  },
+  "AUTONOMOUS_VALIDATION_CONTROLLER_DRIFT": {
+    "class": "AUTONOMOUS_VALIDATION_CONTROLLER_DRIFT",
+    "severity": "high",
+    "symptoms": [
+      "autonomous validation controller is missing, bypassed, or not registered"
+    ],
+    "verification": [
+      "run as6-diagnose-autonomous-validation-controller",
+      "run as6-diagnose-autonomous-repair-controller",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore validation controller",
+      "add post-change diagnostics, production health confirmation, rollback verification, and evidence"
+    ],
+    "rollback": [
+      "restore governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "autonomous_validation_controller",
+      "post_change_validation_required",
+      "production_health_after_change",
+      "rollback_verification_required",
+      "validation_evidence_required"
+    ]
+  },
+  "CHANGE_WITHOUT_POST_VALIDATION": {
+    "class": "CHANGE_WITHOUT_POST_VALIDATION",
+    "severity": "high",
+    "symptoms": [
+      "change completed without post-change validation diagnostics"
+    ],
+    "verification": [
+      "run as6-diagnose-autonomous-validation-controller",
+      "run as6-diagnose-autonomous-repair-controller",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore validation controller",
+      "add post-change diagnostics, production health confirmation, rollback verification, and evidence"
+    ],
+    "rollback": [
+      "restore governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "autonomous_validation_controller",
+      "post_change_validation_required",
+      "production_health_after_change",
+      "rollback_verification_required",
+      "validation_evidence_required"
+    ]
+  },
+  "VALIDATION_EVIDENCE_MISSING": {
+    "class": "VALIDATION_EVIDENCE_MISSING",
+    "severity": "high",
+    "symptoms": [
+      "validation evidence artifacts are missing"
+    ],
+    "verification": [
+      "run as6-diagnose-autonomous-validation-controller",
+      "run as6-diagnose-autonomous-repair-controller",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore validation controller",
+      "add post-change diagnostics, production health confirmation, rollback verification, and evidence"
+    ],
+    "rollback": [
+      "restore governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "autonomous_validation_controller",
+      "post_change_validation_required",
+      "production_health_after_change",
+      "rollback_verification_required",
+      "validation_evidence_required"
+    ]
+  },
+  "PRODUCTION_HEALTH_NOT_CONFIRMED": {
+    "class": "PRODUCTION_HEALTH_NOT_CONFIRMED",
+    "severity": "high",
+    "symptoms": [
+      "production health was not confirmed after change"
+    ],
+    "verification": [
+      "run as6-diagnose-autonomous-validation-controller",
+      "run as6-diagnose-autonomous-repair-controller",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore validation controller",
+      "add post-change diagnostics, production health confirmation, rollback verification, and evidence"
+    ],
+    "rollback": [
+      "restore governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "autonomous_validation_controller",
+      "post_change_validation_required",
+      "production_health_after_change",
+      "rollback_verification_required",
+      "validation_evidence_required"
+    ]
+  },
+  "ROLLBACK_VERIFICATION_MISSING": {
+    "class": "ROLLBACK_VERIFICATION_MISSING",
+    "severity": "high",
+    "symptoms": [
+      "rollback verification is missing after change"
+    ],
+    "verification": [
+      "run as6-diagnose-autonomous-validation-controller",
+      "run as6-diagnose-autonomous-repair-controller",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore validation controller",
+      "add post-change diagnostics, production health confirmation, rollback verification, and evidence"
+    ],
+    "rollback": [
+      "restore governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "autonomous_validation_controller",
+      "post_change_validation_required",
+      "production_health_after_change",
+      "rollback_verification_required",
+      "validation_evidence_required"
+    ]
   }
 }
