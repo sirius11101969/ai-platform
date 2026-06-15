@@ -14,3 +14,7 @@
 ## Autonomous Deployment Controller
 - ops/bin/as6-autonomous-deployment-controller
 - result: AS6_AUTONOMOUS_DEPLOYMENT_CONTROLLER_RESULT
+
+## Autonomous Incident Commander
+- ops/bin/as6-autonomous-incident-commander
+- result: AS6_AUTONOMOUS_INCIDENT_COMMANDER_RESULT

@@ -20,3 +20,6 @@
 
 ## Autonomous Deployment Coverage
 - AS6_AUTONOMOUS_DEPLOYMENT_COVERAGE=REGISTERED
+
+## Autonomous Incident Commander Coverage
+- AS6_AUTONOMOUS_INCIDENT_COMMANDER_COVERAGE=REGISTERED

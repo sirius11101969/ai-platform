@@ -189,3 +189,12 @@ else
   echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:autonomous-deployment-controller"
   fail=1
 fi
+
+echo ""
+echo "=== RUN: autonomous-incident-commander ==="
+if ops/bin/as6-autonomous-incident-commander; then
+  echo "AS6_DIAGNOSE_ALL_CHECK=OK:autonomous-incident-commander"
+else
+  echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:autonomous-incident-commander"
+  fail=1
+fi

@@ -1,0 +1,45 @@
+# AS6 Autonomous Incident Commander Diagnostics
+
+Registered diagnostic artifact:
+
+- ops/bin/as6-autonomous-incident-commander
+
+New diagnostic checks added:
+
+- incident_commander_controller
+- incident_public_health_detection
+- incident_production_drift_gate
+- incident_architecture_compliance_gate
+- incident_rollback_verification_gate
+- incident_deployment_controller_gate
+- incident_provider_control_plane_gate
+- incident_vps_baseline_gate
+- incident_change_pipeline_gate
+- incident_root_cause_router_gate
+- incident_root_cause_knowledge_base_gate
+- incident_root_cause_governance_gate
+- incident_classification
+- incident_decision_output
+- incident_evidence_generation
+- incident_no_auto_repair_apply_policy
+
+New error classes added:
+
+- INCIDENT_COMMANDER_EVIDENCE_MISSING
+- INCIDENT_CLASSIFICATION_FAILED
+- INCIDENT_ROOT_CAUSE_ROUTE_MISSING
+- INCIDENT_REPAIR_APPLY_BLOCK_REQUIRED
+- INCIDENT_ESCALATION_REQUIRED
+- INCIDENT_PRODUCTION_HEALTH_FAILED
+- INCIDENT_DRIFT_GATE_FAILED
+- INCIDENT_ARCHITECTURE_GATE_FAILED
+- INCIDENT_ROLLBACK_GATE_FAILED
+- INCIDENT_DEPLOYMENT_GATE_FAILED
+
+New AEC rules added:
+
+- AEC_INCIDENT_COMMANDER_REQUIRES_EVIDENCE
+- AEC_INCIDENT_COMMANDER_REQUIRES_ROOT_CAUSE_ROUTE
+- AEC_INCIDENT_COMMANDER_BLOCKS_AUTO_REPAIR_APPLY
+- AEC_INCIDENT_COMMANDER_REQUIRES_ESCALATION_DECISION
+- AEC_INCIDENT_COMMANDER_REQUIRES_PRODUCTION_HEALTH_CHECK
