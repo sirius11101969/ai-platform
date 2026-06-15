@@ -180,3 +180,12 @@ else
   echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:autonomous-rollback-verification-controller"
   fail=1
 fi
+
+echo ""
+echo "=== RUN: autonomous-deployment-controller ==="
+if ops/bin/as6-autonomous-deployment-controller; then
+  echo "AS6_DIAGNOSE_ALL_CHECK=OK:autonomous-deployment-controller"
+else
+  echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:autonomous-deployment-controller"
+  fail=1
+fi

@@ -10,3 +10,7 @@
 ## Autonomous Rollback Verification Controller
 - ops/bin/as6-autonomous-rollback-verification-controller
 - result: AS6_AUTONOMOUS_ROLLBACK_VERIFICATION_RESULT
+
+## Autonomous Deployment Controller
+- ops/bin/as6-autonomous-deployment-controller
+- result: AS6_AUTONOMOUS_DEPLOYMENT_CONTROLLER_RESULT

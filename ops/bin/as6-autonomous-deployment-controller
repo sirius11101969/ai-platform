@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /var/www/ai-platform
+fail=0
+warn=0
+evidence_dir="runtime/deployment-controller"
+mkdir -p "$evidence_dir"
+evidence_file="$evidence_dir/latest.out"
+: > "$evidence_file"
+say(){ echo "$1" | tee -a "$evidence_file"; }
+ok(){ say "PASS: $1"; }
+soft(){ say "WARN: $1"; warn=1; }
+bad(){ say "FAIL: $1"; fail=1; }
+run_gate(){ name="$1"; shift; say "--- gate: $name ---"; if "$@" >> "$evidence_file" 2>&1; then ok "$name"; else bad "$name"; fi; }
+
+say "=== AS6 AUTONOMOUS DEPLOYMENT CONTROLLER ==="
+
+say "--- deployment plan validation ---"
+[ -f docker-compose.yml ] && ok "deployment compose plan exists" || bad "deployment compose plan missing"
+[ -f nginx.conf ] && ok "nginx deployment config exists" || bad "nginx deployment config missing"
+[ -f docs/AS6_PROJECT_STATE.md ] && ok "project state exists" || bad "project state missing"
+
+say "--- deployment preconditions ---"
+run_gate "architecture compliance" ops/bin/as6-autonomous-architecture-compliance-controller
+run_gate "production drift" ops/bin/as6-autonomous-production-drift-controller
+run_gate "rollback verification" ops/bin/as6-autonomous-rollback-verification-controller
+
+if [ -x ops/bin/as6-diagnose-production-deployment-safety ]; then run_gate "production deployment safety" ops/bin/as6-diagnose-production-deployment-safety; else bad "production deployment safety diagnostic missing"; fi
+if [ -x ops/bin/as6-diagnose-change-pipeline-controller ]; then run_gate "change pipeline controller" ops/bin/as6-diagnose-change-pipeline-controller; else bad "change pipeline controller diagnostic missing"; fi
+if [ -x ops/bin/as6-diagnose-git-main-sync ]; then run_gate "git main sync" ops/bin/as6-diagnose-git-main-sync; else bad "git main sync diagnostic missing"; fi
+
+say "--- public production confirmation ---"
+if curl -fsS --max-time 15 https://www.as6.ru/api/health 2>/dev/null | grep -q "\"status\":\"OK\""; then ok "public production health OK"; else bad "public production health failed"; fi
+
+say "--- secret and git gates ---"
+if git ls-files .env 2>/dev/null | grep -Fxq ".env"; then bad ".env is tracked by git"; else ok ".env is not tracked by git"; fi
+if [ -x ops/bin/as6-pre-commit-secret-scan ]; then run_gate "secret scan" ops/bin/as6-pre-commit-secret-scan; else soft "secret scan missing"; fi
+if git status --short | grep -q .; then soft "working tree has changes; deployment apply should be blocked until committed"; else ok "working tree clean"; fi
+
+say "--- deployment apply policy ---"
+say "AS6_DEPLOYMENT_APPLY_MODE=GATED_NO_AUTO_APPLY"
+say "AS6_DEPLOYMENT_HUMAN_APPROVAL_REQUIRED=YES"
+ok "deployment controller validates gates but does not auto-apply production changes"
+
+say "--- result ---"
+if [ "$fail" -eq 0 ]; then
+  say "AUTONOMOUS_DEPLOYMENT_CONTROLLER=PASS"
+  if [ "$warn" -eq 1 ]; then say "AUTONOMOUS_DEPLOYMENT_WARNINGS=PRESENT"; else say "AUTONOMOUS_DEPLOYMENT_WARNINGS=NONE"; fi
+  say "AS6_AUTONOMOUS_DEPLOYMENT_CONTROLLER_RESULT=OK"
+else
+  say "AUTONOMOUS_DEPLOYMENT_CONTROLLER=FAIL"
+  say "AS6_AUTONOMOUS_DEPLOYMENT_CONTROLLER_RESULT=FAIL"
+fi
+say "AS6_AUTONOMOUS_DEPLOYMENT_CONTROLLER_EVIDENCE=$evidence_file"
+exit "$fail"

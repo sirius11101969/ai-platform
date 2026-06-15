@@ -17,3 +17,6 @@
 
 ## Rollback Verification Coverage
 - AS6_ROLLBACK_VERIFICATION_COVERAGE=REGISTERED
+
+## Autonomous Deployment Coverage
+- AS6_AUTONOMOUS_DEPLOYMENT_COVERAGE=REGISTERED
