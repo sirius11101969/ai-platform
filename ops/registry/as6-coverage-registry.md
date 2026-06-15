@@ -26,3 +26,6 @@
 
 ## Autonomous Knowledge Base Coverage
 - AS6_AUTONOMOUS_KNOWLEDGE_BASE_COVERAGE=REGISTERED
+
+## Autonomous Incident Governance Coverage
+- AS6_INCIDENT_GOVERNANCE_COVERAGE=REGISTERED

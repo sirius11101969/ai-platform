@@ -22,3 +22,7 @@
 ## Autonomous Knowledge Base Controller
 - ops/bin/as6-autonomous-knowledge-base-controller
 - result: AS6_AUTONOMOUS_KNOWLEDGE_BASE_CONTROLLER_RESULT
+
+## Autonomous Incident Governance Controller
+- ops/bin/as6-autonomous-incident-governance-controller
+- result: AS6_INCIDENT_GOVERNANCE_RESULT

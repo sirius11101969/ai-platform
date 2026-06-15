@@ -454,3 +454,43 @@ L7 milestone:
 - L7 Phase 4 Deployment Controller: COMPLETE
 - L7 Phase 5 Incident Commander: COMPLETE
 - L7 Phase 6 Knowledge Base Controller: IMPLEMENTED
+
+## L7 Phase 7: Autonomous Incident Governance Controller
+
+Status:
+
+- AS6_INCIDENT_GOVERNANCE_CONTROLLER=IMPLEMENTED
+- AS6_INCIDENT_GOVERNANCE_COVERAGE=REGISTERED
+- AEC_INCIDENT_MUST_HAVE_ROOT_CAUSE=REGISTERED
+- AEC_INCIDENT_MUST_HAVE_REMEDIATION=REGISTERED
+- AEC_INCIDENT_MUST_HAVE_VALIDATION=REGISTERED
+- AEC_INCIDENT_MUST_HAVE_EVIDENCE=REGISTERED
+- AEC_INCIDENT_MUST_BE_REGISTERED=REGISTERED
+- AEC_INCIDENT_AUTO_REPAIR_APPLY_FORBIDDEN_WITHOUT_APPROVAL=REGISTERED
+
+Added to diagnostics:
+
+- incident_governance_controller
+- incident_state_generation
+- incident_remediation_plan_generation
+- incident_validation_plan_generation
+- incident_evidence_bundle_generation
+- incident_root_cause_binding
+- incident_no_auto_repair_apply_policy
+- incident_human_approval_gate
+- incident_production_health_gate
+- incident_l7_gate_capture
+- incident_secret_scan_gate
+
+Added root cause classes:
+
+- INCIDENT_WITHOUT_ROOT_CAUSE
+- INCIDENT_WITHOUT_REMEDIATION_PLAN
+- INCIDENT_WITHOUT_VALIDATION_PLAN
+- INCIDENT_WITHOUT_EVIDENCE
+- INCIDENT_STATE_DRIFT
+- INCIDENT_REMEDIATION_PLAN_DRIFT
+- INCIDENT_VALIDATION_PLAN_DRIFT
+- INCIDENT_EVIDENCE_BUNDLE_MISSING
+- INCIDENT_HUMAN_APPROVAL_GATE_MISSING
+- INCIDENT_AUTO_REPAIR_POLICY_VIOLATION

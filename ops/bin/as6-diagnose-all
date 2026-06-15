@@ -207,3 +207,12 @@ else
   echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:autonomous-knowledge-base-controller"
   fail=1
 fi
+
+echo ""
+echo "=== RUN: autonomous-incident-governance-controller ==="
+if ops/bin/as6-autonomous-incident-governance-controller; then
+  echo "AS6_DIAGNOSE_ALL_CHECK=OK:autonomous-incident-governance-controller"
+else
+  echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:autonomous-incident-governance-controller"
+  fail=1
+fi

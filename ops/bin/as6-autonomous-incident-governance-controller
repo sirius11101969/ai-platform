@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /var/www/ai-platform
+fail=0
+warn=0
+incident="NO_ACTIVE_INCIDENT"
+decision="OBSERVE"
+root_cause="NONE"
+evidence_dir="runtime/incident-governance"
+bundle_dir="$evidence_dir/evidence"
+mkdir -p "$bundle_dir"
+evidence_file="$evidence_dir/latest.out"
+state_file="$evidence_dir/incident-state.env"
+remediation_file="$evidence_dir/remediation-plan.md"
+validation_file="$evidence_dir/validation-plan.md"
+: > "$evidence_file"
+say(){ echo "$1" | tee -a "$evidence_file"; }
+ok(){ say "PASS: $1"; }
+soft(){ say "WARN: $1"; warn=1; }
+bad(){ say "FAIL: $1"; fail=1; incident="ACTIVE_INCIDENT"; }
+run_capture(){ name="$1"; outfile="$2"; shift 2; say "--- capture: $name ---"; if "$@" > "$outfile" 2>&1; then ok "$name"; else bad "$name"; fi; cat "$outfile" >> "$evidence_file"; }
+
+say "=== AS6 AUTONOMOUS INCIDENT GOVERNANCE CONTROLLER ==="
+
+say "--- health and gate capture ---"
+if curl -fsS --max-time 15 https://www.as6.ru/api/health 2>/dev/null | grep -q "\"status\":\"OK\""; then ok "public production health OK"; else bad "public production health failed"; root_cause="PRODUCTION_HEALTH_NOT_CONFIRMED"; fi
+[ -x ops/bin/as6-autonomous-production-drift-controller ] && run_capture "production drift" "$bundle_dir/production-drift.out" ops/bin/as6-autonomous-production-drift-controller || bad "production drift controller missing"
+[ -x ops/bin/as6-autonomous-architecture-compliance-controller ] && run_capture "architecture compliance" "$bundle_dir/architecture-compliance.out" ops/bin/as6-autonomous-architecture-compliance-controller || bad "architecture compliance controller missing"
+[ -x ops/bin/as6-autonomous-rollback-verification-controller ] && run_capture "rollback verification" "$bundle_dir/rollback-verification.out" ops/bin/as6-autonomous-rollback-verification-controller || bad "rollback verification controller missing"
+[ -x ops/bin/as6-autonomous-deployment-controller ] && run_capture "deployment controller" "$bundle_dir/deployment-controller.out" ops/bin/as6-autonomous-deployment-controller || bad "deployment controller missing"
+[ -x ops/bin/as6-autonomous-knowledge-base-controller ] && run_capture "knowledge base controller" "$bundle_dir/knowledge-base-controller.out" ops/bin/as6-autonomous-knowledge-base-controller || soft "knowledge base controller missing"
+
+say "--- root cause routing capture ---"
+[ -x ops/bin/as6-diagnose-root-cause-router ] && run_capture "root cause router" "$bundle_dir/root-cause-router.out" ops/bin/as6-diagnose-root-cause-router || soft "root cause router missing"
+[ -x ops/bin/as6-diagnose-root-cause-governance ] && run_capture "root cause governance" "$bundle_dir/root-cause-governance.out" ops/bin/as6-diagnose-root-cause-governance || soft "root cause governance missing"
+
+if [ "$fail" -eq 0 ]; then
+  incident="NO_ACTIVE_INCIDENT"
+  decision="OBSERVE"
+  root_cause="NONE"
+else
+  decision="REPAIR_PLAN_REQUIRED_HUMAN_APPROVAL_REQUIRED"
+  [ "$root_cause" = "NONE" ] && root_cause="INCIDENT_WITHOUT_ROOT_CAUSE"
+fi
+
+say "--- incident state generation ---"
+printf "%s\n" "AS6_INCIDENT_STATE=$incident" "AS6_INCIDENT_DECISION=$decision" "AS6_INCIDENT_ROOT_CAUSE=$root_cause" "AS6_INCIDENT_AUTO_REPAIR_APPLY=NO" "AS6_INCIDENT_HUMAN_APPROVAL_REQUIRED=YES" "AS6_INCIDENT_EVIDENCE=$evidence_file" > "$state_file"
+ok "incident state generated: $state_file"
+
+say "--- remediation plan generation ---"
+printf "%s\n" "# AS6 Incident Remediation Plan" "" "Incident state: $incident" "Decision: $decision" "Root cause: $root_cause" "" "Policy:" "" "- No automatic repair apply." "- Human approval required before any production-changing action." "- Run diagnostics before any change." "- Run post-change diagnostics after any change." "- Preserve rollback verification." "" "Required gates:" "" "- production drift" "- architecture compliance" "- rollback verification" "- deployment controller" "- root cause router" "- root cause governance" > "$remediation_file"
+ok "remediation plan generated: $remediation_file"
+
+say "--- validation plan generation ---"
+printf "%s\n" "# AS6 Incident Validation Plan" "" "Required validation sequence:" "" "1. Run incident governance controller." "2. Run production drift controller." "3. Run architecture compliance controller." "4. Run rollback verification controller." "5. Run deployment controller." "6. Run root cause governance diagnostics." "7. Run secret scan." "8. Confirm public production health." "" "Expected result:" "" "- AS6_INCIDENT_GOVERNANCE_RESULT=OK" "- AS6_INCIDENT_STATE=NO_ACTIVE_INCIDENT or safe blocked state" > "$validation_file"
+ok "validation plan generated: $validation_file"
+
+say "--- evidence bundle validation ---"
+[ -f "$state_file" ] && ok "incident state evidence exists" || bad "incident state evidence missing"
+[ -f "$remediation_file" ] && ok "remediation plan evidence exists" || bad "remediation plan evidence missing"
+[ -f "$validation_file" ] && ok "validation plan evidence exists" || bad "validation plan evidence missing"
+
+say "--- safety gates ---"
+if git ls-files .env 2>/dev/null | grep -Fxq ".env"; then bad ".env is tracked by git"; else ok ".env is not tracked by git"; fi
+if [ -x ops/bin/as6-pre-commit-secret-scan ]; then run_capture "secret scan" "$bundle_dir/secret-scan.out" ops/bin/as6-pre-commit-secret-scan; else soft "secret scan missing"; fi
+
+say "--- result ---"
+say "AS6_INCIDENT_STATE=$incident"
+say "AS6_INCIDENT_DECISION=$decision"
+say "AS6_INCIDENT_ROOT_CAUSE=$root_cause"
+if [ "$fail" -eq 0 ]; then
+  say "AS6_INCIDENT_GOVERNANCE=PASS"
+  if [ "$warn" -eq 1 ]; then say "AS6_INCIDENT_GOVERNANCE_WARNINGS=PRESENT"; else say "AS6_INCIDENT_GOVERNANCE_WARNINGS=NONE"; fi
+  say "AS6_INCIDENT_GOVERNANCE_RESULT=OK"
+else
+  say "AS6_INCIDENT_GOVERNANCE=FAIL"
+  say "AS6_INCIDENT_GOVERNANCE_RESULT=FAIL"
+fi
+say "AS6_INCIDENT_GOVERNANCE_EVIDENCE=$evidence_file"
+exit "$fail"
