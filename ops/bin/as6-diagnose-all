@@ -171,3 +171,12 @@ else
   echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:autonomous-production-drift-controller"
   fail=1
 fi
+
+echo ""
+echo "=== RUN: autonomous-rollback-verification-controller ==="
+if ops/bin/as6-autonomous-rollback-verification-controller; then
+  echo "AS6_DIAGNOSE_ALL_CHECK=OK:autonomous-rollback-verification-controller"
+else
+  echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:autonomous-rollback-verification-controller"
+  fail=1
+fi

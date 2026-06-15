@@ -255,3 +255,50 @@ Added AEC rules:
 - AEC_RUNTIME_SERVICE_ALIAS_MUST_MATCH_COMPOSE_IDENTITY
 - AEC_LOCAL_HEALTH_CONTRACT_MUST_BE_DISCOVERED_BEFORE_VALIDATION
 - AEC_PUBLIC_HEALTH_OK_CAN_SUPPRESS_LOCAL_HEALTH_FALSE_POSITIVE
+
+## L7 Phase 3: Autonomous Rollback Verification Controller
+
+Status:
+
+- AS6_AUTONOMOUS_ROLLBACK_VERIFICATION_CONTROLLER=IMPLEMENTED
+- AS6_ROLLBACK_VERIFICATION_COVERAGE=REGISTERED
+- AEC_ROLLBACK_READINESS_REQUIRED_BEFORE_DEPLOYMENT=REGISTERED
+- AEC_RESTORE_PATH_MUST_BE_VERIFIED=REGISTERED
+- AEC_BACKUP_POLICY_MUST_HAVE_EVIDENCE=REGISTERED
+- AEC_ROLLBACK_VERIFICATION_EVIDENCE_REQUIRED=REGISTERED
+
+Added to diagnostics:
+
+- rollback_verification_controller
+- backup_artifact_presence
+- backup_artifact_plausible_size
+- backup_sql_signature
+- restore_prerequisite_compose
+- restore_prerequisite_env_example
+- production_env_presence_without_secret_output
+- postgres_runtime_target_presence
+- rollback_readiness_diagnostic_execution
+- restore_readiness_diagnostic_execution
+- backup_integrity_diagnostic_execution
+- rollback_documentation_reference_check
+- restore_documentation_reference_check
+- backup_governance_reference_check
+- rollback_secret_scan_gate
+- rollback_evidence_file_generation
+
+Added root cause classes:
+
+- ROLLBACK_PLAN_MISSING
+- ROLLBACK_EVIDENCE_MISSING
+- RESTORE_PROCEDURE_MISSING
+- BACKUP_POLICY_GAP
+- ROLLBACK_VALIDATION_MISSING
+- BACKUP_ARTIFACT_MISSING
+- BACKUP_ARTIFACT_TOO_SMALL
+- BACKUP_SQL_SIGNATURE_MISSING
+- RESTORE_TARGET_MISSING
+- ROLLBACK_SECRET_SCAN_FAILED
+
+Next L7 target:
+
+- Autonomous Deployment Controller

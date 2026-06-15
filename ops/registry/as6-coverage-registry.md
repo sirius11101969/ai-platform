@@ -14,3 +14,6 @@
 
 ## Production Drift V3 Coverage
 - AS6_PRODUCTION_DRIFT_V3_COVERAGE=REGISTERED
+
+## Rollback Verification Coverage
+- AS6_ROLLBACK_VERIFICATION_COVERAGE=REGISTERED

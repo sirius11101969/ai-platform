@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd /var/www/ai-platform
+
+fail=0
+warn=0
+evidence_dir="runtime/rollback-verification"
+mkdir -p "$evidence_dir"
+evidence_file="$evidence_dir/latest.out"
+: > "$evidence_file"
+
+say(){ echo "$1" | tee -a "$evidence_file"; }
+ok(){ say "PASS: $1"; }
+soft(){ say "WARN: $1"; warn=1; }
+bad(){ say "FAIL: $1"; fail=1; }
+
+echo "=== AS6 AUTONOMOUS ROLLBACK VERIFICATION CONTROLLER ===" | tee -a "$evidence_file"
+
+say "--- backup presence ---"
+if [ -f backup_v1_stable.sql ]; then
+  size="$(wc -c < backup_v1_stable.sql | tr -d " ")"
+  if [ "${size:-0}" -gt 100000 ]; then
+    ok "backup artifact exists and size is plausible: backup_v1_stable.sql bytes=$size"
+  else
+    bad "backup artifact exists but size is too small: backup_v1_stable.sql bytes=$size"
+  fi
+else
+  bad "backup artifact missing: backup_v1_stable.sql"
+fi
+
+say "--- backup content signature ---"
+if [ -f backup_v1_stable.sql ] && grep -Eiq "PostgreSQL database dump|CREATE TABLE|COPY .* FROM stdin|INSERT INTO" backup_v1_stable.sql; then
+  ok "backup SQL signature verified"
+else
+  bad "backup SQL signature missing or unreadable"
+fi
+
+say "--- restore prerequisites ---"
+[ -f docker-compose.yml ] && ok "docker-compose.yml available for restore path" || bad "docker-compose.yml missing for restore path"
+[ -f .env.example ] && ok ".env.example available for restore path" || bad ".env.example missing for restore path"
+[ -f .env ] && ok ".env exists on server for production restore context" || soft ".env missing on server; restore requires creating it from .env.example"
+
+say "--- runtime database target ---"
+if command -v docker >/dev/null 2>&1; then
+  if docker ps --format "{{.Names}}" | grep -Eq "^ai-platform-db(-1)?$|postgres"; then
+    ok "postgres runtime target exists"
+  else
+    bad "postgres runtime target missing"
+  fi
+else
+  bad "docker command unavailable"
+fi
+
+say "--- existing rollback diagnostics ---"
+if [ -x ops/bin/as6-diagnose-rollback-readiness ]; then
+  if ops/bin/as6-diagnose-rollback-readiness >> "$evidence_file" 2>&1; then ok "rollback readiness diagnostic OK"; else bad "rollback readiness diagnostic failed"; fi
+else
+  bad "ops/bin/as6-diagnose-rollback-readiness missing"
+fi
+
+if [ -x ops/bin/as6-diagnose-restore-readiness ]; then
+  if ops/bin/as6-diagnose-restore-readiness >> "$evidence_file" 2>&1; then ok "restore readiness diagnostic OK"; else bad "restore readiness diagnostic failed"; fi
+else
+  bad "ops/bin/as6-diagnose-restore-readiness missing"
+fi
+
+if [ -x ops/bin/as6-diagnose-backup-integrity ]; then
+  if ops/bin/as6-diagnose-backup-integrity >> "$evidence_file" 2>&1; then ok "backup integrity diagnostic OK"; else bad "backup integrity diagnostic failed"; fi
+else
+  bad "ops/bin/as6-diagnose-backup-integrity missing"
+fi
+
+say "--- rollback documentation and governance ---"
+if grep -Riq "rollback" docs ops/governance 2>/dev/null; then ok "rollback documentation references exist"; else bad "rollback documentation references missing"; fi
+if grep -Riq "restore" docs ops/governance 2>/dev/null; then ok "restore documentation references exist"; else bad "restore documentation references missing"; fi
+if grep -Riq "backup_v1_stable.sql" docs ops 2>/dev/null; then ok "backup artifact referenced by governance/docs"; else soft "backup artifact reference not found in governance/docs"; fi
+
+say "--- safety gates ---"
+if git ls-files .env 2>/dev/null | grep -Fxq ".env"; then bad ".env is tracked by git"; else ok ".env is not tracked by git"; fi
+if [ -x ops/bin/as6-pre-commit-secret-scan ]; then
+  if ops/bin/as6-pre-commit-secret-scan >> "$evidence_file" 2>&1; then ok "secret scan OK"; else bad "secret scan failed"; fi
+else
+  soft "secret scan script missing"
+fi
+
+say "--- result ---"
+if [ "$fail" -eq 0 ]; then
+  say "ROLLBACK_VERIFICATION=OK"
+  if [ "$warn" -eq 1 ]; then say "ROLLBACK_VERIFICATION_WARNINGS=PRESENT"; else say "ROLLBACK_VERIFICATION_WARNINGS=NONE"; fi
+  say "AS6_AUTONOMOUS_ROLLBACK_VERIFICATION_RESULT=OK"
+else
+  say "ROLLBACK_VERIFICATION=FAIL"
+  say "AS6_AUTONOMOUS_ROLLBACK_VERIFICATION_RESULT=FAIL"
+fi
+
+say "AS6_AUTONOMOUS_ROLLBACK_VERIFICATION_EVIDENCE=$evidence_file"
+exit "$fail"
