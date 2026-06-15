@@ -790,6 +790,13 @@
       "status": "registered",
       "category": "governance",
       "required": true
+    },
+    {
+      "check": "autonomous-repair-controller",
+      "path": "ops/bin/as6-diagnose-autonomous-repair-controller",
+      "status": "registered",
+      "category": "governance",
+      "required": true
     }
   ]
 }

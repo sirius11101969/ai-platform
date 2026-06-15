@@ -2331,5 +2331,135 @@
       "rollback_readiness",
       "production_freeze_guard"
     ]
+  },
+  "AUTONOMOUS_REPAIR_CONTROLLER_DRIFT": {
+    "class": "AUTONOMOUS_REPAIR_CONTROLLER_DRIFT",
+    "severity": "high",
+    "symptoms": [
+      "autonomous repair controller is missing, bypassed, or not registered"
+    ],
+    "verification": [
+      "run as6-diagnose-autonomous-repair-controller",
+      "run as6-diagnose-change-pipeline-controller",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore repair controller",
+      "add root cause, validation, rollback, evidence, and pipeline gate"
+    ],
+    "rollback": [
+      "restore governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "autonomous_repair_controller",
+      "repair_root_cause_required",
+      "repair_validation_required",
+      "repair_rollback_required",
+      "auto_apply_guard"
+    ]
+  },
+  "REPAIR_WITHOUT_ROOT_CAUSE": {
+    "class": "REPAIR_WITHOUT_ROOT_CAUSE",
+    "severity": "high",
+    "symptoms": [
+      "repair attempted without root cause governance"
+    ],
+    "verification": [
+      "run as6-diagnose-autonomous-repair-controller",
+      "run as6-diagnose-change-pipeline-controller",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore repair controller",
+      "add root cause, validation, rollback, evidence, and pipeline gate"
+    ],
+    "rollback": [
+      "restore governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "autonomous_repair_controller",
+      "repair_root_cause_required",
+      "repair_validation_required",
+      "repair_rollback_required",
+      "auto_apply_guard"
+    ]
+  },
+  "REPAIR_WITHOUT_VALIDATION": {
+    "class": "REPAIR_WITHOUT_VALIDATION",
+    "severity": "high",
+    "symptoms": [
+      "repair attempted without validation plan"
+    ],
+    "verification": [
+      "run as6-diagnose-autonomous-repair-controller",
+      "run as6-diagnose-change-pipeline-controller",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore repair controller",
+      "add root cause, validation, rollback, evidence, and pipeline gate"
+    ],
+    "rollback": [
+      "restore governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "autonomous_repair_controller",
+      "repair_root_cause_required",
+      "repair_validation_required",
+      "repair_rollback_required",
+      "auto_apply_guard"
+    ]
+  },
+  "REPAIR_WITHOUT_ROLLBACK": {
+    "class": "REPAIR_WITHOUT_ROLLBACK",
+    "severity": "high",
+    "symptoms": [
+      "repair attempted without rollback plan"
+    ],
+    "verification": [
+      "run as6-diagnose-autonomous-repair-controller",
+      "run as6-diagnose-change-pipeline-controller",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore repair controller",
+      "add root cause, validation, rollback, evidence, and pipeline gate"
+    ],
+    "rollback": [
+      "restore governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "autonomous_repair_controller",
+      "repair_root_cause_required",
+      "repair_validation_required",
+      "repair_rollback_required",
+      "auto_apply_guard"
+    ]
+  },
+  "UNSAFE_AUTO_REPAIR_APPLY": {
+    "class": "UNSAFE_AUTO_REPAIR_APPLY",
+    "severity": "high",
+    "symptoms": [
+      "auto repair apply path bypasses change pipeline gate"
+    ],
+    "verification": [
+      "run as6-diagnose-autonomous-repair-controller",
+      "run as6-diagnose-change-pipeline-controller",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore repair controller",
+      "add root cause, validation, rollback, evidence, and pipeline gate"
+    ],
+    "rollback": [
+      "restore governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "autonomous_repair_controller",
+      "repair_root_cause_required",
+      "repair_validation_required",
+      "repair_rollback_required",
+      "auto_apply_guard"
+    ]
   }
 }

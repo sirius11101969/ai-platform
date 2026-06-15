@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+echo "=== AS6 Autonomous Repair Controller Diagnostics ==="
+fail=0
+DOC="ops/governance/as6-autonomous-repair-controller.md"
+EVIDENCE_DIR="runtime/repair-controller"
+mkdir -p "$EVIDENCE_DIR"
+git status --short > "$EVIDENCE_DIR/git-status.txt" 2>/dev/null || true
+test -f "$DOC" && echo "AS6_REPAIR_DOC=PASS:$DOC" || { echo "AS6_REPAIR_DOC=FAIL:$DOC"; fail=1; }
+./ops/bin/as6-diagnose-root-cause-governance >/tmp/as6-repair-root-cause.out 2>&1 && echo "AS6_REPAIR_ROOT_CAUSE=PASS" || { echo "AS6_REPAIR_ROOT_CAUSE=FAIL"; fail=1; }
+grep -q "AS6_REPAIR_PLAN=PASS" "$DOC" && echo "AS6_REPAIR_PLAN=PASS" || { echo "AS6_REPAIR_PLAN=FAIL"; fail=1; }
+grep -q "AS6_REPAIR_VALIDATION=PASS" "$DOC" && echo "AS6_REPAIR_VALIDATION=PASS" || { echo "AS6_REPAIR_VALIDATION=FAIL"; fail=1; }
+grep -q "AS6_REPAIR_ROLLBACK=PASS" "$DOC" && echo "AS6_REPAIR_ROLLBACK=PASS" || { echo "AS6_REPAIR_ROLLBACK=FAIL"; fail=1; }
+test -d "$EVIDENCE_DIR" && echo "AS6_REPAIR_EVIDENCE=PASS" || { echo "AS6_REPAIR_EVIDENCE=FAIL"; fail=1; }
+./ops/bin/as6-diagnose-change-pipeline-controller >/tmp/as6-repair-change-pipeline.out 2>&1 && echo "AS6_REPAIR_CHANGE_PIPELINE=PASS" || { echo "AS6_REPAIR_CHANGE_PIPELINE=FAIL"; fail=1; }
+if grep -RInE "AUTO_APPLY=1|auto_apply=true|repair.*apply.*without.*gate" ops .github 2>/dev/null | grep -Ev "as6-diagnose-autonomous-repair-controller|governance|diagnostic-backups" >/tmp/as6-repair-auto-apply.out; then
+  echo "AS6_REPAIR_AUTO_APPLY_GUARD=FAIL"
+  cat /tmp/as6-repair-auto-apply.out
+  fail=1
+else
+  echo "AS6_REPAIR_AUTO_APPLY_GUARD=PASS"
+fi
+grep -q "AEC_AUTONOMOUS_REPAIR_CONTROLLER=PASS" docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md && echo "AS6_REPAIR_AEC_RULE=PASS" || { echo "AS6_REPAIR_AEC_RULE=FAIL"; fail=1; }
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_REPAIR_ALLOWED=YES"
+  echo "AS6_AUTONOMOUS_REPAIR_CONTROLLER=PASS"
+  echo "AS6_AUTONOMOUS_REPAIR_CONTROLLER_EVIDENCE_DIR=$EVIDENCE_DIR"
+  echo "AS6_AUTONOMOUS_REPAIR_CONTROLLER_RESULT=OK"
+  exit 0
+fi
+echo "AS6_REPAIR_ALLOWED=NO"
+echo "AS6_AUTONOMOUS_REPAIR_CONTROLLER=FAIL"
+echo "AS6_AUTONOMOUS_REPAIR_CONTROLLER_RESULT=FAIL"
+exit 1
