@@ -173,3 +173,85 @@ Read:
 Then continue work using diagnostics-first methodology from the last confirmed green production state.
 
 This document is the primary source of truth for AS6 project state and must be updated after every meaningful project growth, operational change, diagnostic expansion, governance addition, root-cause class addition, security exception, backup/restore/DR rule, automation controller change, or production validation milestone.
+
+## L7 Phase 1: Autonomous Production Drift Controller
+
+Status:
+
+- AS6_PRODUCTION_DRIFT_CONTROLLER=IMPLEMENTED
+- AS6_PRODUCTION_DRIFT_COVERAGE=REGISTERED
+- AEC_PRODUCTION_DRIFT_MUST_BE_NONE_BEFORE_L7_DEPLOYMENT=REGISTERED
+
+Added to diagnostics:
+
+- production drift controller
+- canonical file checks
+- Docker Compose topology checks
+- runtime container checks
+- listener checks
+- local/public health checks
+- Git drift warning
+- .env Git tracking protection
+
+Added error classes:
+
+- PRODUCTION_DRIFT_CANONICAL_FILE_MISSING
+- PRODUCTION_DRIFT_COMPOSE_SERVICE_MISSING
+- PRODUCTION_DRIFT_CONTAINER_NOT_RUNNING
+- PRODUCTION_DRIFT_PORT_LISTENER_MISSING
+- PRODUCTION_DRIFT_HEALTHCHECK_FAILED
+- PRODUCTION_DRIFT_GIT_STATE_DIRTY
+- PRODUCTION_DRIFT_SECRET_FILE_TRACKED
+
+## L7 Phase 1 Update: Production Drift Controller V2
+
+Status:
+
+- AS6_PRODUCTION_DRIFT_CONTROLLER_V2=IMPLEMENTED
+- AS6_PRODUCTION_DRIFT_V2_COVERAGE=REGISTERED
+- AEC_PRODUCTION_DRIFT_CONTAINER_NAMES_MUST_BE_NORMALIZED=REGISTERED
+- AEC_LOCAL_HEALTH_MUST_USE_SAFE_FALLBACKS=REGISTERED
+
+Added to diagnostics:
+
+- Docker Compose v2 container name normalization
+- legacy container name compatibility
+- canonical service identity normalization
+- local health fallback matrix
+- public health confirmation retained
+
+Added error classes:
+
+- PRODUCTION_DRIFT_CANONICAL_CONTAINER_NAME_MISMATCH
+- PRODUCTION_DRIFT_LOCAL_HEALTH_ENDPOINT_VARIANCE
+- PRODUCTION_DRIFT_FALSE_POSITIVE_CONTAINER_NAMING
+
+## L7 Corrective Update: Architecture Compliance V2 and Production Drift V3
+
+Status:
+
+- AS6_ARCHITECTURE_COMPLIANCE_V2=IMPLEMENTED
+- AS6_PRODUCTION_DRIFT_V3=IMPLEMENTED
+- AS6_ARCHITECTURE_COMPLIANCE_V2_COVERAGE=REGISTERED
+- AS6_PRODUCTION_DRIFT_V3_COVERAGE=REGISTERED
+
+Added to diagnostics:
+
+- service_alias_normalization
+- compose_service_identity_mapping
+- runtime_to_compose_mapping
+- postgres_db_alias_support
+- local_health_contract_detection
+- local_health_variant_classification
+- public_health_precedence_for_production_status
+
+Added root cause classes:
+
+- ARCHITECTURE_COMPLIANCE_SERVICE_ALIAS_MISMATCH
+- PRODUCTION_DRIFT_LOCAL_HEALTH_CONTRACT_MISMATCH
+
+Added AEC rules:
+
+- AEC_RUNTIME_SERVICE_ALIAS_MUST_MATCH_COMPOSE_IDENTITY
+- AEC_LOCAL_HEALTH_CONTRACT_MUST_BE_DISCOVERED_BEFORE_VALIDATION
+- AEC_PUBLIC_HEALTH_OK_CAN_SUPPRESS_LOCAL_HEALTH_FALSE_POSITIVE

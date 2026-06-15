@@ -153,3 +153,21 @@ exit 1
 
 
 
+
+echo ""
+echo "=== RUN: autonomous-architecture-compliance-controller ==="
+if ops/bin/as6-autonomous-architecture-compliance-controller; then
+  echo "AS6_DIAGNOSE_ALL_CHECK=OK:autonomous-architecture-compliance-controller"
+else
+  echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:autonomous-architecture-compliance-controller"
+  fail=1
+fi
+
+echo ""
+echo "=== RUN: autonomous-production-drift-controller ==="
+if ops/bin/as6-autonomous-production-drift-controller; then
+  echo "AS6_DIAGNOSE_ALL_CHECK=OK:autonomous-production-drift-controller"
+else
+  echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:autonomous-production-drift-controller"
+  fail=1
+fi

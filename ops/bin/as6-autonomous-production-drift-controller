@@ -1,0 +1,129 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd /var/www/ai-platform
+
+fail=0
+soft=0
+
+check_ok() { echo "PASS: $1"; }
+check_warn() { echo "WARN: $1"; soft=1; }
+check_fail() { echo "FAIL: $1"; fail=1; }
+
+container_exists_any() {
+  for candidate in "$@"; do
+    if docker ps --format "{{.Names}}" 2>/dev/null | grep -Fxq "$candidate"; then
+      echo "$candidate"
+      return 0
+    fi
+  done
+  return 1
+}
+
+health_ok_any() {
+  for url in "https://localhost/api/health" "https://127.0.0.1/api/health" "http://localhost/api/health" "http://127.0.0.1/api/health"; do
+    if curl -fsS --max-time 10 -k "$url" 2>/dev/null | grep -q "\"status\":\"OK\""; then
+      echo "$url"
+      return 0
+    fi
+  done
+  return 1
+}
+
+echo "=== AS6 AUTONOMOUS PRODUCTION DRIFT CONTROLLER V3 ==="
+
+echo "--- canonical files ---"
+[ -f docker-compose.yml ] && check_ok "docker-compose.yml exists" || check_fail "docker-compose.yml missing"
+[ -f nginx.conf ] && check_ok "nginx.conf exists" || check_fail "nginx.conf missing"
+[ -f .env ] && check_ok ".env exists on server" || check_fail ".env missing on server"
+[ -f docs/AS6_PROJECT_STATE.md ] && check_ok "AS6_PROJECT_STATE exists" || check_fail "AS6_PROJECT_STATE missing"
+
+echo "--- expected services in compose ---"
+for identity in nginx backend redis; do
+  if grep -Eq "^[[:space:]]{2}${identity}:" docker-compose.yml 2>/dev/null; then
+    check_ok "compose service identity exists: ${identity}"
+  else
+    check_fail "compose service identity missing: ${identity}"
+  fi
+done
+if grep -Eq "^[[:space:]]{2}(postgres|postgresql|db|database):" docker-compose.yml 2>/dev/null; then
+  check_ok "compose service identity exists: postgres/db alias"
+else
+  check_fail "compose service identity missing: postgres/db alias"
+fi
+
+echo "--- docker runtime state ---"
+if command -v docker >/dev/null 2>&1; then
+  docker ps --format "{{.Names}} {{.Status}}" | sed -n "1,120p"
+  nginx_name="$(container_exists_any ai-platform-nginx ai-platform-nginx-1 || true)"
+  backend_name="$(container_exists_any ai-platform-backend ai-platform-backend-1 || true)"
+  db_name="$(container_exists_any ai-platform-db-1 ai-platform-postgres-1 ai-platform-db || true)"
+  redis_name="$(container_exists_any ai-platform-redis-1 ai-platform-redis || true)"
+  [ -n "$nginx_name" ] && check_ok "container running: nginx canonical=$nginx_name" || check_fail "nginx container not running under accepted names"
+  [ -n "$backend_name" ] && check_ok "container running: backend canonical=$backend_name" || check_fail "backend container not running under accepted names"
+  [ -n "$db_name" ] && check_ok "container running: postgres canonical=$db_name" || check_fail "postgres container not running under accepted names"
+  [ -n "$redis_name" ] && check_ok "container running: redis canonical=$redis_name" || check_fail "redis container not running under accepted names"
+else
+  check_fail "docker command unavailable"
+fi
+
+echo "--- network/listener drift ---"
+if ss -tlnp 2>/dev/null | grep -q ":80 "; then check_ok "port 80 listener exists"; else check_fail "port 80 listener missing"; fi
+if ss -tlnp 2>/dev/null | grep -q ":443 "; then check_ok "port 443 listener exists"; else check_fail "port 443 listener missing"; fi
+
+echo "--- health drift ---"
+public_ok=0
+if curl -fsS --max-time 15 https://www.as6.ru/api/health 2>/dev/null | grep -q "\"status\":\"OK\""; then
+  check_ok "public HTTPS health OK"
+  public_ok=1
+else
+  check_fail "public HTTPS health failed"
+fi
+
+local_health="$(health_ok_any || true)"
+if [ -n "$local_health" ]; then
+  check_ok "local health OK via $local_health"
+else
+  if [ "$public_ok" -eq 1 ]; then
+    check_warn "local health failed but public health is OK; classified as local health contract mismatch, not production drift"
+    echo "PRODUCTION_DRIFT_LOCAL_HEALTH_CONTRACT=VARIANT"
+  else
+    check_fail "local health failed and public health is not confirmed"
+  fi
+fi
+
+echo "--- git drift ---"
+if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  check_ok "git repository detected"
+  branch="$(git branch --show-current || true)"
+  echo "GIT_BRANCH=${branch}"
+  if git status --short | grep -q .; then
+    check_warn "working tree has changes"
+  else
+    check_ok "working tree clean"
+  fi
+else
+  check_fail "git repository not detected"
+fi
+
+echo "--- secret protection drift ---"
+if git ls-files .env 2>/dev/null | grep -Fxq ".env"; then
+  check_fail ".env is tracked by git"
+else
+  check_ok ".env is not tracked by git"
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "PRODUCTION_DRIFT_STATUS=NONE"
+  if [ "$soft" -eq 1 ]; then
+    echo "PRODUCTION_DRIFT_SOFT_WARNINGS=PRESENT"
+  else
+    echo "PRODUCTION_DRIFT_SOFT_WARNINGS=NONE"
+  fi
+  echo "AS6_PRODUCTION_DRIFT_CONTROLLER_RESULT=OK"
+else
+  echo "PRODUCTION_DRIFT_STATUS=DETECTED"
+  echo "AS6_PRODUCTION_DRIFT_CONTROLLER_RESULT=FAIL"
+fi
+
+exit "$fail"

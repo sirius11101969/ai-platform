@@ -1,0 +1,3 @@
+# AS6 Architecture Compliance Coverage
+
+AS6_ARCHITECTURE_COMPLIANCE_COVERAGE=REGISTERED

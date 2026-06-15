@@ -1,0 +1,16 @@
+# AS6 Coverage Registry
+
+## Production Drift Coverage
+- AS6_PRODUCTION_DRIFT_COVERAGE=REGISTERED
+
+## Production Drift Coverage V2
+- AS6_PRODUCTION_DRIFT_V2_COVERAGE=REGISTERED
+
+## Architecture Compliance Coverage
+- AS6_ARCHITECTURE_COMPLIANCE_COVERAGE=REGISTERED
+
+## Architecture Compliance V2 Coverage
+- AS6_ARCHITECTURE_COMPLIANCE_V2_COVERAGE=REGISTERED
+
+## Production Drift V3 Coverage
+- AS6_PRODUCTION_DRIFT_V3_COVERAGE=REGISTERED

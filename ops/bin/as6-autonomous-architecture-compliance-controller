@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd /var/www/ai-platform
+
+fail=0
+ok(){ echo "PASS: $1"; }
+warn(){ echo "WARN: $1"; }
+bad(){ echo "FAIL: $1"; fail=1; }
+
+compose_has_any_service(){
+  for svc in "$@"; do
+    if grep -Eq "^[[:space:]]{2}${svc}:" docker-compose.yml 2>/dev/null; then
+      echo "$svc"
+      return 0
+    fi
+  done
+  return 1
+}
+
+runtime_has_any(){
+  for pattern in "$@"; do
+    if docker ps --format "{{.Names}}" 2>/dev/null | grep -Eq "$pattern"; then
+      docker ps --format "{{.Names}}" 2>/dev/null | grep -E "$pattern" | head -n 1
+      return 0
+    fi
+  done
+  return 1
+}
+
+echo "=== AS6 AUTONOMOUS ARCHITECTURE COMPLIANCE CONTROLLER V2 ==="
+
+[ -f docker-compose.yml ] && ok "docker-compose.yml exists" || bad "docker-compose.yml missing"
+[ -f nginx.conf ] && ok "nginx.conf exists" || bad "nginx.conf missing"
+
+nginx_svc="$(compose_has_any_service nginx || true)"
+backend_svc="$(compose_has_any_service backend app api server || true)"
+postgres_svc="$(compose_has_any_service postgres postgresql db database || true)"
+redis_svc="$(compose_has_any_service redis cache || true)"
+
+[ -n "$nginx_svc" ] && ok "architecture service present: nginx identity=$nginx_svc" || bad "architecture service missing: nginx"
+[ -n "$backend_svc" ] && ok "architecture service present: backend identity=$backend_svc" || bad "architecture service missing: backend"
+[ -n "$postgres_svc" ] && ok "architecture service present: postgres identity=$postgres_svc" || bad "architecture service missing: postgres/db alias"
+[ -n "$redis_svc" ] && ok "architecture service present: redis identity=$redis_svc" || bad "architecture service missing: redis"
+
+nginx_rt="$(runtime_has_any "^ai-platform-nginx(-1)?$" || true)"
+backend_rt="$(runtime_has_any "^ai-platform-backend(-1)?$" || true)"
+postgres_rt="$(runtime_has_any "^ai-platform-db(-1)?$" "^ai-platform-postgres(-1)?$" "postgres" || true)"
+redis_rt="$(runtime_has_any "^ai-platform-redis(-1)?$" || true)"
+
+[ -n "$nginx_rt" ] && ok "nginx runtime=$nginx_rt" || bad "nginx runtime missing"
+[ -n "$backend_rt" ] && ok "backend runtime=$backend_rt" || bad "backend runtime missing"
+[ -n "$postgres_rt" ] && ok "postgres runtime=$postgres_rt" || bad "postgres runtime missing"
+[ -n "$redis_rt" ] && ok "redis runtime=$redis_rt" || bad "redis runtime missing"
+
+if [ -n "$nginx_svc" ] && [ -n "$backend_svc" ] && [ -n "$postgres_svc" ] && [ -n "$redis_svc" ]; then
+  ok "compose topology identity complete"
+else
+  bad "compose topology identity incomplete"
+fi
+
+echo "EXPECTED_TOPOLOGY=nginx->backend->postgres_or_db+redis"
+echo "SERVICE_IDENTITY_MAP=nginx:${nginx_svc:-missing},backend:${backend_svc:-missing},postgres:${postgres_svc:-missing},redis:${redis_svc:-missing}"
+
+if [ "$fail" -eq 0 ]; then
+  echo "ARCHITECTURE_COMPLIANCE=OK"
+  echo "AS6_ARCHITECTURE_COMPLIANCE_RESULT=OK"
+else
+  echo "ARCHITECTURE_COMPLIANCE=FAIL"
+  echo "AS6_ARCHITECTURE_COMPLIANCE_RESULT=FAIL"
+fi
+
+exit "$fail"
