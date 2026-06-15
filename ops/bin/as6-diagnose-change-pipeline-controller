@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+echo "=== AS6 Change Pipeline Controller Diagnostics ==="
+fail=0
+./ops/bin/as6-pre-commit-secret-scan >/tmp/as6-change-pipeline-secret.out 2>&1 && echo "AS6_CHANGE_PIPELINE_SECRET_SCAN=PASS" || { echo "AS6_CHANGE_PIPELINE_SECRET_SCAN=FAIL"; fail=1; }
+./ops/bin/as6-diagnose-git-main-sync >/tmp/as6-change-pipeline-git-sync.out 2>&1 && echo "AS6_CHANGE_PIPELINE_GIT_SYNC=PASS" || { echo "AS6_CHANGE_PIPELINE_GIT_SYNC=FAIL"; fail=1; }
+./ops/bin/as6-diagnose-production-deployment-safety >/tmp/as6-change-pipeline-deployment.out 2>&1 && echo "AS6_CHANGE_PIPELINE_DEPLOYMENT_SAFETY=PASS" || { echo "AS6_CHANGE_PIPELINE_DEPLOYMENT_SAFETY=FAIL"; fail=1; }
+./ops/bin/as6-diagnose-vps-baseline >/tmp/as6-change-pipeline-vps.out 2>&1 && echo "AS6_CHANGE_PIPELINE_VPS_BASELINE=PASS" || { echo "AS6_CHANGE_PIPELINE_VPS_BASELINE=FAIL"; fail=1; }
+./ops/bin/as6-diagnose-provider-control-plane >/tmp/as6-change-pipeline-provider.out 2>&1 && echo "AS6_CHANGE_PIPELINE_PROVIDER_CONTROL=PASS" || { echo "AS6_CHANGE_PIPELINE_PROVIDER_CONTROL=FAIL"; fail=1; }
+./ops/bin/as6-diagnose-autonomous-coverage >/tmp/as6-change-pipeline-coverage.out 2>&1 && echo "AS6_CHANGE_PIPELINE_AUTONOMOUS_COVERAGE=PASS" || { echo "AS6_CHANGE_PIPELINE_AUTONOMOUS_COVERAGE=FAIL"; fail=1; }
+./ops/bin/as6-diagnose-rollback-readiness >/tmp/as6-change-pipeline-rollback.out 2>&1 && echo "AS6_CHANGE_PIPELINE_ROLLBACK=PASS" || { echo "AS6_CHANGE_PIPELINE_ROLLBACK=FAIL"; fail=1; }
+./ops/bin/as6-diagnose-production-freeze-guard >/tmp/as6-change-pipeline-freeze.out 2>&1 && echo "AS6_CHANGE_PIPELINE_FREEZE_GUARD=PASS" || { echo "AS6_CHANGE_PIPELINE_FREEZE_GUARD=FAIL"; fail=1; }
+grep -q "AEC_CHANGE_PIPELINE_CONTROLLER=PASS" docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md && echo "AS6_CHANGE_PIPELINE_AEC_RULE=PASS" || { echo "AS6_CHANGE_PIPELINE_AEC_RULE=FAIL"; fail=1; }
+echo "AS6_CHANGE_PIPELINE_DIAGNOSE_ALL=PASS"
+if [ "$fail" -eq 0 ]; then echo "AS6_CHANGE_ALLOWED=YES"; echo "AS6_CHANGE_PIPELINE_CONTROLLER=PASS"; echo "AS6_CHANGE_PIPELINE_CONTROLLER_RESULT=OK"; exit 0; fi
+echo "AS6_CHANGE_ALLOWED=NO"; echo "AS6_CHANGE_PIPELINE_CONTROLLER=FAIL"; echo "AS6_CHANGE_PIPELINE_CONTROLLER_RESULT=FAIL"; exit 1

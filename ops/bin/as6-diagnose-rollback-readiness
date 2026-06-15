@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+echo "=== AS6 Rollback Readiness Diagnostics ==="
+fail=0
+test -f backup_v1_stable.sql && echo "AS6_ROLLBACK_BACKUP=PASS" || { echo "AS6_ROLLBACK_BACKUP=FAIL"; fail=1; }
+test -f docker-compose.yml && echo "AS6_ROLLBACK_COMPOSE=PASS" || { echo "AS6_ROLLBACK_COMPOSE=FAIL"; fail=1; }
+test -f .env.example && echo "AS6_ROLLBACK_ENV_EXAMPLE=PASS" || { echo "AS6_ROLLBACK_ENV_EXAMPLE=FAIL"; fail=1; }
+test -f ops/governance/as6-rollback-readiness.md && echo "AS6_ROLLBACK_INSTRUCTIONS=PASS" || { echo "AS6_ROLLBACK_INSTRUCTIONS=FAIL"; fail=1; }
+grep -q "AEC_ROLLBACK_READINESS=PASS" docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md && echo "AS6_ROLLBACK_AEC_RULE=PASS" || { echo "AS6_ROLLBACK_AEC_RULE=FAIL"; fail=1; }
+if [ "$fail" -eq 0 ]; then echo "AS6_ROLLBACK_READINESS=PASS"; echo "AS6_ROLLBACK_READINESS_RESULT=OK"; exit 0; fi
+echo "AS6_ROLLBACK_READINESS=FAIL"; echo "AS6_ROLLBACK_READINESS_RESULT=FAIL"; exit 1

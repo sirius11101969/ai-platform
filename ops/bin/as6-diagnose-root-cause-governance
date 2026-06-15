@@ -21,6 +21,11 @@ reg_text = registry.read_text() if registry.exists() else ""
 fail = False
 required = ["severity", "symptoms", "verification", "fix", "rollback", "prevention"]
 diagnostic_map = {
+    'CHANGE_WITHOUT_GATE': 'as6-diagnose-change-pipeline-controller',
+    'CHANGE_WITHOUT_ROLLBACK': 'as6-diagnose-rollback-readiness',
+    'ROLLBACK_NOT_TESTED': 'as6-diagnose-rollback-readiness',
+    'PRODUCTION_FREEZE_VIOLATION': 'as6-diagnose-production-freeze-guard',
+    'CHANGE_PIPELINE_CONTROLLER_DRIFT': 'as6-diagnose-change-pipeline-controller',
     'REBOOT_FORENSICS_PROVIDER_SUPPRESSOR_DRIFT': 'as6-diagnose-provider-control-plane',
     'DEPLOYMENT_WITHOUT_BACKUP': 'as6-diagnose-production-deployment-safety',
     'DEPLOYMENT_WITHOUT_ROLLBACK': 'as6-diagnose-production-deployment-safety',

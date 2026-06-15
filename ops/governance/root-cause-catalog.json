@@ -2221,5 +2221,115 @@
       "provider_control_plane",
       "autonomous_coverage_gate"
     ]
+  },
+  "CHANGE_WITHOUT_GATE": {
+    "class": "CHANGE_WITHOUT_GATE",
+    "severity": "high",
+    "symptoms": [
+      "change attempted without pipeline controller gate"
+    ],
+    "verification": [
+      "run as6-diagnose-change-pipeline-controller",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore change pipeline, rollback readiness, freeze guard, registry, and governance coverage"
+    ],
+    "rollback": [
+      "restore governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "change_pipeline_controller",
+      "rollback_readiness",
+      "production_freeze_guard"
+    ]
+  },
+  "CHANGE_WITHOUT_ROLLBACK": {
+    "class": "CHANGE_WITHOUT_ROLLBACK",
+    "severity": "high",
+    "symptoms": [
+      "change attempted without rollback readiness"
+    ],
+    "verification": [
+      "run as6-diagnose-rollback-readiness",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore change pipeline, rollback readiness, freeze guard, registry, and governance coverage"
+    ],
+    "rollback": [
+      "restore governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "change_pipeline_controller",
+      "rollback_readiness",
+      "production_freeze_guard"
+    ]
+  },
+  "ROLLBACK_NOT_TESTED": {
+    "class": "ROLLBACK_NOT_TESTED",
+    "severity": "high",
+    "symptoms": [
+      "rollback readiness is missing or unverified"
+    ],
+    "verification": [
+      "run as6-diagnose-rollback-readiness",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore change pipeline, rollback readiness, freeze guard, registry, and governance coverage"
+    ],
+    "rollback": [
+      "restore governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "change_pipeline_controller",
+      "rollback_readiness",
+      "production_freeze_guard"
+    ]
+  },
+  "PRODUCTION_FREEZE_VIOLATION": {
+    "class": "PRODUCTION_FREEZE_VIOLATION",
+    "severity": "high",
+    "symptoms": [
+      "dangerous production operation detected without guard"
+    ],
+    "verification": [
+      "run as6-diagnose-production-freeze-guard",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore change pipeline, rollback readiness, freeze guard, registry, and governance coverage"
+    ],
+    "rollback": [
+      "restore governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "change_pipeline_controller",
+      "rollback_readiness",
+      "production_freeze_guard"
+    ]
+  },
+  "CHANGE_PIPELINE_CONTROLLER_DRIFT": {
+    "class": "CHANGE_PIPELINE_CONTROLLER_DRIFT",
+    "severity": "high",
+    "symptoms": [
+      "change pipeline controller is missing, bypassed, or not registered"
+    ],
+    "verification": [
+      "run as6-diagnose-change-pipeline-controller",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore change pipeline, rollback readiness, freeze guard, registry, and governance coverage"
+    ],
+    "rollback": [
+      "restore governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "change_pipeline_controller",
+      "rollback_readiness",
+      "production_freeze_guard"
+    ]
   }
 }

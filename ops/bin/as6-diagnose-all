@@ -48,6 +48,9 @@ run_check "production-deployment-safety" ./ops/bin/as6-diagnose-production-deplo
 run_check "vps-baseline" ./ops/bin/as6-diagnose-vps-baseline
 run_check "provider-control-plane" ./ops/bin/as6-diagnose-provider-control-plane
 run_check "autonomous-coverage" ./ops/bin/as6-diagnose-autonomous-coverage
+run_check "rollback-readiness" ./ops/bin/as6-diagnose-rollback-readiness
+run_check "production-freeze-guard" ./ops/bin/as6-diagnose-production-freeze-guard
+run_check "change-pipeline-controller" ./ops/bin/as6-diagnose-change-pipeline-controller
 run_check "heredoc-safety" ./ops/bin/as6-diagnose-heredoc-safety
 run_check "patch-structure" ./ops/bin/as6-diagnose-patch-structure
 run_check "git-hygiene" ./ops/bin/as6-diagnose-git-hygiene

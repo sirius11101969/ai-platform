@@ -769,6 +769,27 @@
       "status": "registered",
       "category": "governance",
       "required": true
+    },
+    {
+      "check": "rollback-readiness",
+      "path": "ops/bin/as6-diagnose-rollback-readiness",
+      "status": "registered",
+      "category": "governance",
+      "required": true
+    },
+    {
+      "check": "production-freeze-guard",
+      "path": "ops/bin/as6-diagnose-production-freeze-guard",
+      "status": "registered",
+      "category": "governance",
+      "required": true
+    },
+    {
+      "check": "change-pipeline-controller",
+      "path": "ops/bin/as6-diagnose-change-pipeline-controller",
+      "status": "registered",
+      "category": "governance",
+      "required": true
     }
   ]
 }

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+echo "=== AS6 Production Freeze Guard Diagnostics ==="
+fail=0
+./ops/bin/as6-diagnose-rollback-readiness >/tmp/as6-freeze-rollback-readiness.out 2>&1 && echo "AS6_FREEZE_ROLLBACK_READY=PASS" || { echo "AS6_FREEZE_ROLLBACK_READY=FAIL"; fail=1; }
+grep -RInE "docker compose down|docker volume rm|docker system prune|rm -rf /(var/www/ai-platform|var/lib/docker)" ops .github 2>/dev/null | grep -Ev "as6-diagnose-production-freeze-guard|governance|diagnostic-backups" >/tmp/as6-freeze-dangerous-ops.out || true
+if [ -s /tmp/as6-freeze-dangerous-ops.out ]; then echo "AS6_PRODUCTION_FREEZE_DANGEROUS_OPS=FAIL"; cat /tmp/as6-freeze-dangerous-ops.out; fail=1; else echo "AS6_PRODUCTION_FREEZE_DANGEROUS_OPS=PASS"; fi
+grep -q "AEC_PRODUCTION_FREEZE_GUARD=PASS" docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md && echo "AS6_PRODUCTION_FREEZE_AEC_RULE=PASS" || { echo "AS6_PRODUCTION_FREEZE_AEC_RULE=FAIL"; fail=1; }
+if [ "$fail" -eq 0 ]; then echo "AS6_PRODUCTION_FREEZE_GUARD=PASS"; echo "AS6_PRODUCTION_FREEZE_GUARD_RESULT=OK"; exit 0; fi
+echo "AS6_PRODUCTION_FREEZE_GUARD=FAIL"; echo "AS6_PRODUCTION_FREEZE_GUARD_RESULT=FAIL"; exit 1
