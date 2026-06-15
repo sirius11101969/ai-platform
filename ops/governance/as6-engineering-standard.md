@@ -541,3 +541,8 @@ Required diagnostic signal: AEC_AUTONOMY_OPERATING_STANDARD=PASS
 ## AS6 Change Governance Rule
 Every engineering change must include impact analysis, risk classification, rollback plan, validation plan, approval gate, and post-change diagnostics.
 Required diagnostic signal: AEC_CHANGE_GOVERNANCE=PASS
+
+
+## AS6 Autonomous Change Controller Rule
+Every autonomous or manual change must pass impact, risk, rollback, validation, evidence, registry, and deployment-gate controls before production.
+Required diagnostic signal: AEC_AUTONOMOUS_CHANGE_CONTROLLER=PASS

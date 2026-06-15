@@ -734,6 +734,13 @@
       "status": "registered",
       "category": "governance",
       "required": true
+    },
+    {
+      "check": "autonomous-change-controller",
+      "path": "ops/bin/as6-diagnose-autonomous-change-controller",
+      "status": "registered",
+      "category": "governance",
+      "required": true
     }
   ]
 }

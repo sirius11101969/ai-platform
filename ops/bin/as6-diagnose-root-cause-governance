@@ -21,6 +21,10 @@ reg_text = registry.read_text() if registry.exists() else ""
 fail = False
 required = ["severity", "symptoms", "verification", "fix", "rollback", "prevention"]
 diagnostic_map = {
+    'AUTONOMOUS_CHANGE_CONTROLLER_DRIFT': 'as6-diagnose-autonomous-change-controller',
+    'CHANGE_EVIDENCE_MISSING': 'as6-diagnose-autonomous-change-controller',
+    'DEPLOYMENT_GATE_BYPASS': 'as6-diagnose-autonomous-change-controller',
+    'UNVALIDATED_AUTONOMOUS_CHANGE': 'as6-diagnose-autonomous-change-controller',
     'UNCONTROLLED_CHANGE': 'as6-diagnose-change-governance',
     'MISSING_CHANGE_ROLLBACK_PLAN': 'as6-diagnose-change-governance',
     'MISSING_CHANGE_VALIDATION_PLAN': 'as6-diagnose-change-governance',

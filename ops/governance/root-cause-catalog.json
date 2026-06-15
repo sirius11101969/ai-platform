@@ -1860,5 +1860,113 @@
       "change_validation_plan",
       "change_approval_gate"
     ]
+  },
+  "AUTONOMOUS_CHANGE_CONTROLLER_DRIFT": {
+    "class": "AUTONOMOUS_CHANGE_CONTROLLER_DRIFT",
+    "severity": "high",
+    "symptoms": [
+      "autonomous change controller is missing, bypassed, or not registered"
+    ],
+    "verification": [
+      "run as6-diagnose-autonomous-change-controller",
+      "run as6-diagnose-change-governance",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore autonomous change controller",
+      "add missing evidence artifacts",
+      "enforce deployment gate",
+      "rerun full diagnostics"
+    ],
+    "rollback": [
+      "restore changed governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "autonomous_change_controller",
+      "change_evidence_required",
+      "deployment_gate_required",
+      "autonomous_validation_required"
+    ]
+  },
+  "CHANGE_EVIDENCE_MISSING": {
+    "class": "CHANGE_EVIDENCE_MISSING",
+    "severity": "high",
+    "symptoms": [
+      "change lacks evidence artifacts for review and audit"
+    ],
+    "verification": [
+      "run as6-diagnose-autonomous-change-controller",
+      "run as6-diagnose-change-governance",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore autonomous change controller",
+      "add missing evidence artifacts",
+      "enforce deployment gate",
+      "rerun full diagnostics"
+    ],
+    "rollback": [
+      "restore changed governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "autonomous_change_controller",
+      "change_evidence_required",
+      "deployment_gate_required",
+      "autonomous_validation_required"
+    ]
+  },
+  "DEPLOYMENT_GATE_BYPASS": {
+    "class": "DEPLOYMENT_GATE_BYPASS",
+    "severity": "high",
+    "symptoms": [
+      "production deployment bypasses diagnostic or governance gate"
+    ],
+    "verification": [
+      "run as6-diagnose-autonomous-change-controller",
+      "run as6-diagnose-change-governance",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore autonomous change controller",
+      "add missing evidence artifacts",
+      "enforce deployment gate",
+      "rerun full diagnostics"
+    ],
+    "rollback": [
+      "restore changed governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "autonomous_change_controller",
+      "change_evidence_required",
+      "deployment_gate_required",
+      "autonomous_validation_required"
+    ]
+  },
+  "UNVALIDATED_AUTONOMOUS_CHANGE": {
+    "class": "UNVALIDATED_AUTONOMOUS_CHANGE",
+    "severity": "high",
+    "symptoms": [
+      "autonomous change lacks validation evidence before merge or deploy"
+    ],
+    "verification": [
+      "run as6-diagnose-autonomous-change-controller",
+      "run as6-diagnose-change-governance",
+      "run as6-diagnose-all"
+    ],
+    "fix": [
+      "restore autonomous change controller",
+      "add missing evidence artifacts",
+      "enforce deployment gate",
+      "rerun full diagnostics"
+    ],
+    "rollback": [
+      "restore changed governance files from runtime/diagnostic-backups"
+    ],
+    "prevention": [
+      "autonomous_change_controller",
+      "change_evidence_required",
+      "deployment_gate_required",
+      "autonomous_validation_required"
+    ]
   }
 }
