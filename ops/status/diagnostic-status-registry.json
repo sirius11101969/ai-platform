@@ -1,10 +1,20 @@
-[
-  {
-    "name": "diagnostic-flow-guard",
-    "path": "ops/bin/as6-diagnose-diagnostic-flow-guard",
-    "result_key": "AS6_DIAGNOSTIC_FLOW_GUARD_RESULT",
-    "expected": "OK",
-    "category": "diagnostic-flow",
-    "required": true
-  }
-]
+{
+  "diagnostics": [
+    {
+      "name": "diagnostic-flow-guard",
+      "path": "ops/bin/as6-diagnose-diagnostic-flow-guard",
+      "result_key": "AS6_DIAGNOSTIC_FLOW_GUARD_RESULT",
+      "expected": "OK",
+      "category": "diagnostic-flow",
+      "required": true
+    },
+    {
+      "name": "root-cause-governance",
+      "path": "ops/bin/as6-diagnose-root-cause-governance",
+      "result_key": "AS6_ROOT_CAUSE_GOVERNANCE_RESULT",
+      "expected": "OK",
+      "category": "root-cause-governance",
+      "required": true
+    }
+  ]
+}

@@ -68,3 +68,651 @@
 
 ## Diagnostic Status Registry Coverage
 - AS6_DIAGNOSTIC_STATUS_REGISTRY_COVERAGE=REGISTERED
+
+## Root Cause Coverage: AUTONOMOUS_CHANGE_CONTROLLER_DRIFT
+- diagnostic: as6-diagnose-autonomous-change-controller
+- class: AUTONOMOUS_CHANGE_CONTROLLER_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: AUTONOMOUS_COVERAGE_GAP
+- diagnostic: as6-diagnose-autonomous-coverage
+- class: AUTONOMOUS_COVERAGE_GAP
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: AUTONOMOUS_REPAIR_CONTROLLER_DRIFT
+- diagnostic: as6-diagnose-autonomous-repair-controller
+- class: AUTONOMOUS_REPAIR_CONTROLLER_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: AUTONOMOUS_VALIDATION_CONTROLLER_DRIFT
+- diagnostic: as6-diagnose-autonomous-validation-controller
+- class: AUTONOMOUS_VALIDATION_CONTROLLER_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: AUTONOMY_OPERATING_STANDARD_DRIFT
+- diagnostic: as6-diagnose-autonomy-operating-standard
+- class: AUTONOMY_OPERATING_STANDARD_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: BACKUP_ARTIFACT_FALSE_POSITIVE
+- diagnostic: as6-diagnose-nameerror-signatures
+- class: BACKUP_ARTIFACT_FALSE_POSITIVE
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: CHANGE_EVIDENCE_MISSING
+- diagnostic: as6-diagnose-autonomous-change-controller
+- class: CHANGE_EVIDENCE_MISSING
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: CHANGE_PIPELINE_CONTROLLER_DRIFT
+- diagnostic: as6-diagnose-change-pipeline-controller
+- class: CHANGE_PIPELINE_CONTROLLER_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: CHANGE_WITHOUT_GATE
+- diagnostic: as6-diagnose-change-pipeline-controller
+- class: CHANGE_WITHOUT_GATE
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: CHANGE_WITHOUT_POST_VALIDATION
+- diagnostic: as6-diagnose-autonomous-validation-controller
+- class: CHANGE_WITHOUT_POST_VALIDATION
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: CHANGE_WITHOUT_ROLLBACK
+- diagnostic: as6-diagnose-rollback-readiness
+- class: CHANGE_WITHOUT_ROLLBACK
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: CONTROL_PANEL_POWER_REBOOT
+- diagnostic: as6-diagnose-control-panel-reboot-correlation
+- class: CONTROL_PANEL_POWER_REBOOT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: CONTROL_PANEL_REBOOT
+- diagnostic: as6-diagnose-control-panel-reboot-correlation
+- class: CONTROL_PANEL_REBOOT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: CONTROL_PANEL_REBOOT_UNATTRIBUTED
+- diagnostic: as6-diagnose-control-panel-reboot-correlation
+- class: CONTROL_PANEL_REBOOT_UNATTRIBUTED
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: CONTROL_PLANE_AUDIT_GAP
+- diagnostic: as6-diagnose-provider-control-plane
+- class: CONTROL_PLANE_AUDIT_GAP
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: COPY_PASTE_CORRUPTED_PATCH
+- diagnostic: as6-diagnose-output-format
+- class: COPY_PASTE_CORRUPTED_PATCH
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: DEPLOYMENT_GATE_BYPASS
+- diagnostic: as6-diagnose-autonomous-change-controller
+- class: DEPLOYMENT_GATE_BYPASS
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: DEPLOYMENT_WITHOUT_BACKUP
+- diagnostic: as6-diagnose-production-deployment-safety
+- class: DEPLOYMENT_WITHOUT_BACKUP
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: DEPLOYMENT_WITHOUT_ROLLBACK
+- diagnostic: as6-diagnose-production-deployment-safety
+- class: DEPLOYMENT_WITHOUT_ROLLBACK
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: DEPLOYMENT_WITHOUT_VALIDATION
+- diagnostic: as6-diagnose-production-deployment-safety
+- class: DEPLOYMENT_WITHOUT_VALIDATION
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: DIAGNOSTIC_CONTRACT_NO_RECURSION_SELF_REFERENCE_FALSE_POSITIVE
+- diagnostic: as6-diagnose-diagnostic-contract
+- class: DIAGNOSTIC_CONTRACT_NO_RECURSION_SELF_REFERENCE_FALSE_POSITIVE
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: DIAGNOSTIC_CONTRACT_PYTHON_C_EXIT_OR_HANG
+- diagnostic: as6-diagnose-diagnostic-contract
+- class: DIAGNOSTIC_CONTRACT_PYTHON_C_EXIT_OR_HANG
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: DIAGNOSTIC_CONTRACT_RECURSIVE_DEPENDENCY
+- diagnostic: as6-diagnose-diagnostic-contract
+- class: DIAGNOSTIC_CONTRACT_RECURSIVE_DEPENDENCY
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: DIAGNOSTIC_CONTRACT_SELF_REFERENCE_FALSE_POSITIVE
+- diagnostic: as6-diagnose-diagnostic-contract
+- class: DIAGNOSTIC_CONTRACT_SELF_REFERENCE_FALSE_POSITIVE
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: DIAGNOSTIC_COVERAGE_REGISTRATION_DRIFT
+- diagnostic: as6-diagnose-diagnostic-registration
+- class: DIAGNOSTIC_COVERAGE_REGISTRATION_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: DIAGNOSTIC_EMBEDDED_HEREDOC_RUNTIME_HANG
+- diagnostic: as6-diagnose-diagnostic-contract
+- class: DIAGNOSTIC_EMBEDDED_HEREDOC_RUNTIME_HANG
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: DIAGNOSTIC_GIT_REGISTRATION_DRIFT
+- diagnostic: as6-diagnose-diagnostic-registration
+- class: DIAGNOSTIC_GIT_REGISTRATION_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: DIAGNOSTIC_HELPER_GIT_REGISTRATION_DRIFT
+- diagnostic: as6-diagnose-diagnostic-registration
+- class: DIAGNOSTIC_HELPER_GIT_REGISTRATION_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: DIAGNOSTIC_REGISTRY_GIT_ALIGNMENT_DRIFT
+- diagnostic: as6-diagnose-diagnostic-tracking
+- class: DIAGNOSTIC_REGISTRY_GIT_ALIGNMENT_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: DIAGNOSTIC_REGISTRY_GIT_HYGIENE_DRIFT
+- diagnostic: as6-diagnose-diagnostic-registration
+- class: DIAGNOSTIC_REGISTRY_GIT_HYGIENE_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: DIAGNOSTIC_SELF_REFERENCE_FALSE_POSITIVE
+- diagnostic: as6-diagnose-patch-mode
+- class: DIAGNOSTIC_SELF_REFERENCE_FALSE_POSITIVE
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: DIAGNOSTIC_TRACKING_DRIFT
+- diagnostic: as6-diagnose-diagnostic-tracking
+- class: DIAGNOSTIC_TRACKING_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: DIAGNOSTIC_TRACKING_SINGLE_FILE_DRIFT
+- diagnostic: as6-diagnose-diagnostic-tracking
+- class: DIAGNOSTIC_TRACKING_SINGLE_FILE_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: DOCKER_ENV_CONTRACT_DRIFT
+- diagnostic: as6-diagnose-env-contract
+- class: DOCKER_ENV_CONTRACT_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: EMPTY_REQUIRED_ENV
+- diagnostic: as6-diagnose-env-contract
+- class: EMPTY_REQUIRED_ENV
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: ENV_EXAMPLE_DRIFT
+- diagnostic: as6-diagnose-env-contract
+- class: ENV_EXAMPLE_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: GENERATED_PYTHON_COMPILE_TARGET_DRIFT
+- diagnostic: as6-diagnose-generated-python-runtime
+- class: GENERATED_PYTHON_COMPILE_TARGET_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: GENERATED_PYTHON_CONTRACT_COVERAGE_DRIFT
+- diagnostic: as6-diagnose-generated-python-contract-coverage
+- class: GENERATED_PYTHON_CONTRACT_COVERAGE_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: GENERATED_PYTHON_CONTRACT_DRIFT
+- diagnostic: as6-diagnose-generated-python-contracts
+- class: GENERATED_PYTHON_CONTRACT_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: GENERATED_PYTHON_CONTRACT_HELPER_IMPORT_SIDE_EFFECT
+- diagnostic: as6-diagnose-generated-python-contracts
+- class: GENERATED_PYTHON_CONTRACT_HELPER_IMPORT_SIDE_EFFECT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: GENERATED_PYTHON_CONTRACT_RECURSIVE_IMPORT_DRIFT
+- diagnostic: as6-diagnose-generated-python-contracts
+- class: GENERATED_PYTHON_CONTRACT_RECURSIVE_IMPORT_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: GENERATED_PYTHON_HELPER_CONTRACT_COVERAGE_DRIFT
+- diagnostic: as6-diagnose-generated-python-contract-coverage
+- class: GENERATED_PYTHON_HELPER_CONTRACT_COVERAGE_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: GENERATED_PYTHON_IMPORT_DRIFT
+- diagnostic: as6-diagnose-generated-python-imports
+- class: GENERATED_PYTHON_IMPORT_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: GENERATED_PYTHON_IMPORT_SIDE_EFFECT
+- diagnostic: as6-diagnose-generated-python-imports
+- class: GENERATED_PYTHON_IMPORT_SIDE_EFFECT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: GENERATED_PYTHON_NAMEERROR_DRIFT
+- diagnostic: as6-diagnose-generated-python-nameerror
+- class: GENERATED_PYTHON_NAMEERROR_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: GENERATED_PYTHON_PYCACHE_ARTIFACT_DRIFT
+- diagnostic: as6-diagnose-generated-python-runtime
+- class: GENERATED_PYTHON_PYCACHE_ARTIFACT_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: GENERATED_PYTHON_REGRESSION_DRIFT
+- diagnostic: as6-diagnose-generated-python-regression
+- class: GENERATED_PYTHON_REGRESSION_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: GENERATED_PYTHON_RUNTIME_CONTRACT_DRIFT
+- diagnostic: as6-diagnose-generated-python-runtime
+- class: GENERATED_PYTHON_RUNTIME_CONTRACT_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: GENERATED_PYTHON_RUNTIME_DRIFT
+- diagnostic: as6-diagnose-generated-python-runtime
+- class: GENERATED_PYTHON_RUNTIME_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: GENERATED_PYTHON_SAFETY_LEGACY_SCOPE_FALSE_POSITIVE
+- diagnostic: as6-diagnose-generated-python-safety
+- class: GENERATED_PYTHON_SAFETY_LEGACY_SCOPE_FALSE_POSITIVE
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: GENERATED_PYTHON_SAFETY_SELF_REFERENCE_FALSE_POSITIVE
+- diagnostic: as6-diagnose-generated-python-safety
+- class: GENERATED_PYTHON_SAFETY_SELF_REFERENCE_FALSE_POSITIVE
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: GENERATED_PYTHON_SELF_IMPORT_RECURSION
+- diagnostic: as6-diagnose-generated-python-runtime
+- class: GENERATED_PYTHON_SELF_IMPORT_RECURSION
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: GENERATED_PYTHON_SHELL_QUOTE_COLLISION
+- diagnostic: as6-diagnose-root-cause-router
+- class: GENERATED_PYTHON_SHELL_QUOTE_COLLISION
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: GENERATED_PYTHON_TEMPLATE_VARIABLE_LEAK
+- diagnostic: as6-diagnose-root-cause-router
+- class: GENERATED_PYTHON_TEMPLATE_VARIABLE_LEAK
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: GENERATED_TEMPLATE_REFERENCE_DRIFT
+- diagnostic: as6-diagnose-generated-python-safety
+- class: GENERATED_TEMPLATE_REFERENCE_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: GENERATED_VARIABLE_NAME_DRIFT
+- diagnostic: as6-diagnose-python-variable-contract
+- class: GENERATED_VARIABLE_NAME_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: GIANT_BASE64_PATCH
+- diagnostic: as6-diagnose-patch-mode
+- class: GIANT_BASE64_PATCH
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: HOST_CONFIGURATION_DRIFT
+- diagnostic: as6-diagnose-vps-baseline
+- class: HOST_CONFIGURATION_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: HOST_FREEZE_SSH_DROP
+- diagnostic: as6-diagnose-host-freeze-investigation-pack
+- class: HOST_FREEZE_SSH_DROP
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: KNOWLEDGE_BASE_REFERENCE_FALSE_POSITIVE
+- diagnostic: as6-diagnose-patch-mode
+- class: KNOWLEDGE_BASE_REFERENCE_FALSE_POSITIVE
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: METRIC_QUERY_DRIFT
+- diagnostic: as6-diagnose-diagnostic-contract
+- class: METRIC_QUERY_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: MISSING_CHANGE_IMPACT_ANALYSIS
+- diagnostic: as6-diagnose-change-governance
+- class: MISSING_CHANGE_IMPACT_ANALYSIS
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: MISSING_CHANGE_ROLLBACK_PLAN
+- diagnostic: as6-diagnose-change-governance
+- class: MISSING_CHANGE_ROLLBACK_PLAN
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: MISSING_CHANGE_VALIDATION_PLAN
+- diagnostic: as6-diagnose-change-governance
+- class: MISSING_CHANGE_VALIDATION_PLAN
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: MISSING_REQUIRED_ENV
+- diagnostic: as6-diagnose-env-contract
+- class: MISSING_REQUIRED_ENV
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: NESTED_HEREDOC_PATCH
+- diagnostic: as6-diagnose-patch-mode
+- class: NESTED_HEREDOC_PATCH
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: NETWORK_BLACKHOLE
+- diagnostic: as6-diagnose-host-freeze-network
+- class: NETWORK_BLACKHOLE
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: OVERSIZED_SINGLE_LINE_PATCH
+- diagnostic: as6-diagnose-patch-mode
+- class: OVERSIZED_SINGLE_LINE_PATCH
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: PANEL_SECURITY_DRIFT
+- diagnostic: as6-diagnose-provider-control-plane
+- class: PANEL_SECURITY_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: PAYMENT_ENV_DRIFT
+- diagnostic: as6-diagnose-env-contract
+- class: PAYMENT_ENV_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: PRE_REBOOT_EVIDENCE_MISSING
+- diagnostic: as6-diagnose-pre-reboot-forensics
+- class: PRE_REBOOT_EVIDENCE_MISSING
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: PRODUCTION_FREEZE_VIOLATION
+- diagnostic: as6-diagnose-production-freeze-guard
+- class: PRODUCTION_FREEZE_VIOLATION
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: PRODUCTION_HEALTH_NOT_CONFIRMED
+- diagnostic: as6-diagnose-autonomous-validation-controller
+- class: PRODUCTION_HEALTH_NOT_CONFIRMED
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: PROVIDER_HYPERVISOR_REBOOT
+- diagnostic: as6-diagnose-provider-hypervisor-reboot
+- class: PROVIDER_HYPERVISOR_REBOOT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: PROVIDER_UI_ACTION
+- diagnostic: as6-diagnose-control-panel-reboot-correlation
+- class: PROVIDER_UI_ACTION
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: PYTHON_ARTIFACT_GIT_HYGIENE_DRIFT
+- diagnostic: as6-diagnose-python-artifact-git-hygiene
+- class: PYTHON_ARTIFACT_GIT_HYGIENE_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: PYTHON_HELPER_RUNTIME_ARTIFACT_DRIFT
+- diagnostic: as6-diagnose-python-artifact-git-hygiene
+- class: PYTHON_HELPER_RUNTIME_ARTIFACT_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: REBOOT_FORENSICS_PROVIDER_SUPPRESSOR_DRIFT
+- diagnostic: as6-diagnose-provider-control-plane
+- class: REBOOT_FORENSICS_PROVIDER_SUPPRESSOR_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: REBOOT_FORENSICS_RUNTIME_FAILURE
+- diagnostic: as6-diagnose-reboot-forensics-runtime
+- class: REBOOT_FORENSICS_RUNTIME_FAILURE
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: REGISTRY_METRIC_QUERY_DRIFT
+- diagnostic: as6-diagnose-diagnostic-contract
+- class: REGISTRY_METRIC_QUERY_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: REGISTRY_SCHEMA_DRIFT
+- diagnostic: as6-diagnose-diagnostic-contract
+- class: REGISTRY_SCHEMA_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: REPAIR_WITHOUT_ROLLBACK
+- diagnostic: as6-diagnose-autonomous-repair-controller
+- class: REPAIR_WITHOUT_ROLLBACK
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: REPAIR_WITHOUT_ROOT_CAUSE
+- diagnostic: as6-diagnose-autonomous-repair-controller
+- class: REPAIR_WITHOUT_ROOT_CAUSE
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: REPAIR_WITHOUT_VALIDATION
+- diagnostic: as6-diagnose-autonomous-repair-controller
+- class: REPAIR_WITHOUT_VALIDATION
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: ROLLBACK_NOT_TESTED
+- diagnostic: as6-diagnose-rollback-readiness
+- class: ROLLBACK_NOT_TESTED
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: ROLLBACK_VERIFICATION_MISSING
+- diagnostic: as6-diagnose-autonomous-validation-controller
+- class: ROLLBACK_VERIFICATION_MISSING
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: ROOT_CAUSE_CLASS_NOT_DOCUMENTED
+- diagnostic: as6-diagnose-root-cause-knowledge-base
+- class: ROOT_CAUSE_CLASS_NOT_DOCUMENTED
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: ROOT_CAUSE_GOVERNANCE_COVERAGE_DRIFT
+- diagnostic: as6-diagnose-root-cause-governance
+- class: ROOT_CAUSE_GOVERNANCE_COVERAGE_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: ROOT_CAUSE_ROUTER_MISSING_ROUTE
+- diagnostic: as6-diagnose-root-cause-router
+- class: ROOT_CAUSE_ROUTER_MISSING_ROUTE
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: ROOT_CAUSE_ROUTING_CONTRACT_DRIFT
+- diagnostic: as6-diagnose-root-cause-router
+- class: ROOT_CAUSE_ROUTING_CONTRACT_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: ROOT_CAUSE_WITHOUT_COVERAGE
+- diagnostic: as6-diagnose-root-cause-governance
+- class: ROOT_CAUSE_WITHOUT_COVERAGE
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: ROOT_CAUSE_WITHOUT_DIAGNOSTIC
+- diagnostic: as6-diagnose-root-cause-governance
+- class: ROOT_CAUSE_WITHOUT_DIAGNOSTIC
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: ROOT_CAUSE_WITHOUT_PREVENTION
+- diagnostic: as6-diagnose-root-cause-governance
+- class: ROOT_CAUSE_WITHOUT_PREVENTION
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: ROOT_CAUSE_WITHOUT_REGISTRY
+- diagnostic: as6-diagnose-root-cause-governance
+- class: ROOT_CAUSE_WITHOUT_REGISTRY
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: ROOT_CAUSE_WITHOUT_REMEDIATION_PLAN
+- diagnostic: as6-diagnose-root-cause-remediation
+- class: ROOT_CAUSE_WITHOUT_REMEDIATION_PLAN
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: ROOT_CAUSE_WITHOUT_ROLLBACK
+- diagnostic: as6-diagnose-root-cause-governance
+- class: ROOT_CAUSE_WITHOUT_ROLLBACK
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: ROOT_CAUSE_WITHOUT_VALIDATION_PLAN
+- diagnostic: as6-diagnose-root-cause-validation
+- class: ROOT_CAUSE_WITHOUT_VALIDATION_PLAN
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: RUNTIME_DIAGNOSTIC_BACKUP_SCANNED_AS_SOURCE
+- diagnostic: as6-diagnose-nameerror-signatures
+- class: RUNTIME_DIAGNOSTIC_BACKUP_SCANNED_AS_SOURCE
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: SYSTEMD_TIMER_DRIFT
+- diagnostic: as6-diagnose-vps-baseline
+- class: SYSTEMD_TIMER_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: TRACKED_ENV_SECRET_FILE
+- diagnostic: as6-diagnose-env-contract
+- class: TRACKED_ENV_SECRET_FILE
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: UNATTRIBUTED_PROVIDER_ACTION
+- diagnostic: as6-diagnose-provider-control-plane
+- class: UNATTRIBUTED_PROVIDER_ACTION
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: UNCONTROLLED_CHANGE
+- diagnostic: as6-diagnose-change-governance
+- class: UNCONTROLLED_CHANGE
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: UNFINISHED_HEREDOC_BLOCK
+- diagnostic: as6-diagnose-heredoc-safety
+- class: UNFINISHED_HEREDOC_BLOCK
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: UNSAFE_AUTO_REPAIR_APPLY
+- diagnostic: as6-diagnose-autonomous-repair-controller
+- class: UNSAFE_AUTO_REPAIR_APPLY
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: UNVALIDATED_AUTONOMOUS_CHANGE
+- diagnostic: as6-diagnose-autonomous-change-controller
+- class: UNVALIDATED_AUTONOMOUS_CHANGE
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: VALIDATION_EVIDENCE_MISSING
+- diagnostic: as6-diagnose-autonomous-validation-controller
+- class: VALIDATION_EVIDENCE_MISSING
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: VARIABLE_CONTRACT_EXCEPTION_HANDLER_FALSE_POSITIVE
+- diagnostic: as6-diagnose-python-variable-contract
+- class: VARIABLE_CONTRACT_EXCEPTION_HANDLER_FALSE_POSITIVE
+- coverage: registered
+- source: bulk-root-cause-governance-repair
+
+## Root Cause Coverage: VPS_BASELINE_DRIFT
+- diagnostic: as6-diagnose-vps-baseline
+- class: VPS_BASELINE_DRIFT
+- coverage: registered
+- source: bulk-root-cause-governance-repair

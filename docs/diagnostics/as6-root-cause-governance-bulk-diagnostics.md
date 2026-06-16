@@ -1,0 +1,26 @@
+# AS6 Root Cause Governance Bulk Diagnostics
+
+Added checks:
+
+- root_cause_registry_bulk_consistency_check
+- root_cause_coverage_bulk_consistency_check
+- root_cause_metadata_registration_check
+- status_registry_schema_contract_check
+- status_registry_json_shape_validation
+- governance_bulk_registration_audit
+
+Added root cause classes:
+
+- ROOT_CAUSE_REGISTRY_BULK_DRIFT
+- ROOT_CAUSE_COVERAGE_BULK_DRIFT
+- ROOT_CAUSE_METADATA_REGISTRATION_DRIFT
+- STATUS_REGISTRY_SCHEMA_MISMATCH
+- STATUS_REGISTRY_LIST_OBJECT_CONTRACT_DRIFT
+- ROOT_CAUSE_GOVERNANCE_BULK_FAIL
+
+Added AEC rules:
+
+- AEC_ROOT_CAUSE_MUST_HAVE_REGISTRY_ENTRY
+- AEC_ROOT_CAUSE_MUST_HAVE_COVERAGE_ENTRY
+- AEC_STATUS_REGISTRY_JSON_SCHEMA_REQUIRED
+- AEC_ROOT_CAUSE_GOVERNANCE_BULK_CONSISTENCY_REQUIRED
