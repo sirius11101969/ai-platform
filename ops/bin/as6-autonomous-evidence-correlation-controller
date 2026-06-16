@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /var/www/ai-platform
+fail=0
+warn=0
+corr_dir="runtime/evidence-correlation"
+bundle_dir="$corr_dir/evidence"
+mkdir -p "$bundle_dir"
+evidence_file="$corr_dir/latest.out"
+matrix_file="$corr_dir/evidence-correlation-matrix.tsv"
+summary_file="$corr_dir/evidence-summary.env"
+: > "$evidence_file"
+: > "$matrix_file"
+: > "$summary_file"
+say(){ echo "$1" | tee -a "$evidence_file"; }
+ok(){ say "PASS: $1"; }
+soft(){ say "WARN: $1"; warn=1; }
+bad(){ say "FAIL: $1"; fail=1; }
+run_capture(){ name="$1"; outfile="$2"; shift 2; say "--- capture: $name ---"; if "$@" > "$outfile" 2>&1; then ok "$name"; else bad "$name"; fi; cat "$outfile" >> "$evidence_file"; }
+
+say "=== AS6 AUTONOMOUS EVIDENCE CORRELATION CONTROLLER ==="
+
+say "--- canonical evidence locations ---"
+for d in runtime/rollback-verification runtime/deployment-controller runtime/incident-commander runtime/incident-governance runtime/incident-lifecycle runtime/change-approval runtime/governance-compliance runtime/knowledge-base-controller; do
+  if [ -d "$d" ]; then ok "evidence directory exists: $d"; else soft "evidence directory missing or not generated yet: $d"; fi
+done
+
+say "--- live gate capture ---"
+[ -x ops/bin/as6-autonomous-rollback-verification-controller ] && run_capture "rollback verification" "$bundle_dir/rollback-verification.out" ops/bin/as6-autonomous-rollback-verification-controller || bad "rollback verification controller missing"
+[ -x ops/bin/as6-autonomous-deployment-controller ] && run_capture "deployment controller" "$bundle_dir/deployment-controller.out" ops/bin/as6-autonomous-deployment-controller || bad "deployment controller missing"
+[ -x ops/bin/as6-autonomous-incident-lifecycle-controller ] && run_capture "incident lifecycle" "$bundle_dir/incident-lifecycle.out" ops/bin/as6-autonomous-incident-lifecycle-controller || soft "incident lifecycle controller missing"
+[ -x ops/bin/as6-autonomous-change-approval-controller ] && run_capture "change approval" "$bundle_dir/change-approval.out" ops/bin/as6-autonomous-change-approval-controller || soft "change approval controller missing"
+[ -x ops/bin/as6-autonomous-governance-compliance-controller ] && run_capture "governance compliance" "$bundle_dir/governance-compliance.out" ops/bin/as6-autonomous-governance-compliance-controller || soft "governance compliance controller missing"
+[ -x ops/bin/as6-autonomous-knowledge-base-controller ] && run_capture "knowledge base" "$bundle_dir/knowledge-base.out" ops/bin/as6-autonomous-knowledge-base-controller || soft "knowledge base controller missing"
+
+say "--- evidence matrix generation ---"
+printf "%s\t%s\t%s\t%s\n" "artifact" "exists" "has_result" "has_evidence_pointer" > "$matrix_file"
+for f in runtime/*/latest.out runtime/incidents/current.env; do
+  [ -e "$f" ] || continue
+  has_result="NO"
+  has_pointer="NO"
+  grep -Eq "RESULT=OK|=PASS|STATUS=NONE|VERIFICATION=OK|COMPLIANCE=OK" "$f" && has_result="YES" || true
+  grep -Eq "EVIDENCE=|latest.out|runtime/" "$f" && has_pointer="YES" || true
+  printf "%s\tYES\t%s\t%s\n" "$f" "$has_result" "$has_pointer" >> "$matrix_file"
+  [ "$has_result" = "YES" ] && ok "evidence has result marker: $f" || soft "evidence has weak or missing result marker: $f"
+done
+
+say "--- expected evidence contract checks ---"
+for pair in "runtime/rollback-verification/latest.out:AS6_AUTONOMOUS_ROLLBACK_VERIFICATION_RESULT=OK" "runtime/deployment-controller/latest.out:AS6_AUTONOMOUS_DEPLOYMENT_CONTROLLER_RESULT=OK" "runtime/change-approval/latest.out:AS6_CHANGE_APPROVAL_RESULT=OK" "runtime/incident-lifecycle/latest.out:AS6_INCIDENT_LIFECYCLE_RESULT=OK" "runtime/governance-compliance/latest.out:AS6_GOVERNANCE_COMPLIANCE_RESULT=OK"; do
+  file="${pair%%:*}"
+  pattern="${pair#*:}"
+  if [ -f "$file" ]; then
+    if grep -q "$pattern" "$file"; then ok "expected evidence contract OK: $file"; else soft "expected evidence contract not found yet: $file pattern=$pattern"; fi
+  else
+    soft "expected evidence file missing: $file"
+  fi
+done
+
+say "--- orphan evidence scan ---"
+orphan_count=0
+for f in runtime/*/*.out runtime/*/*.env runtime/*/*.md runtime/*/*.tsv; do
+  [ -e "$f" ] || continue
+  if grep -Rqs "$(basename "$f")" docs ops/registry runtime 2>/dev/null; then
+    ok "evidence referenced or discoverable: $f"
+  else
+    soft "evidence may be orphan or runtime-only: $f"
+    orphan_count=$((orphan_count+1))
+  fi
+done
+
+say "--- summary artifact generation ---"
+printf "%s\n" "AS6_EVIDENCE_CORRELATION_ORPHAN_COUNT=$orphan_count" "AS6_EVIDENCE_CORRELATION_MATRIX=$matrix_file" "AS6_EVIDENCE_CORRELATION_EVIDENCE=$evidence_file" > "$summary_file"
+ok "evidence summary generated: $summary_file"
+
+say "--- safety gates ---"
+if git ls-files .env 2>/dev/null | grep -Fxq ".env"; then bad ".env is tracked by git"; else ok ".env is not tracked by git"; fi
+if [ -x ops/bin/as6-pre-commit-secret-scan ]; then run_capture "secret scan" "$bundle_dir/secret-scan.out" ops/bin/as6-pre-commit-secret-scan; else soft "secret scan missing"; fi
+
+say "--- result ---"
+if [ "$fail" -eq 0 ]; then
+  say "AS6_EVIDENCE_CORRELATION=PASS"
+  if [ "$warn" -eq 1 ]; then say "AS6_EVIDENCE_CORRELATION_WARNINGS=PRESENT"; else say "AS6_EVIDENCE_CORRELATION_WARNINGS=NONE"; fi
+  say "AS6_EVIDENCE_CORRELATION_RESULT=OK"
+else
+  say "AS6_EVIDENCE_CORRELATION=FAIL"
+  say "AS6_EVIDENCE_CORRELATION_RESULT=FAIL"
+fi
+say "AS6_EVIDENCE_CORRELATION_EVIDENCE=$evidence_file"
+say "AS6_EVIDENCE_CORRELATION_MATRIX=$matrix_file"
+exit "$fail"

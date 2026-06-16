@@ -38,3 +38,6 @@
 
 ## Autonomous Governance Compliance Coverage
 - AS6_GOVERNANCE_COMPLIANCE_COVERAGE=REGISTERED
+
+## Autonomous Evidence Correlation Coverage
+- AS6_EVIDENCE_CORRELATION_COVERAGE=REGISTERED

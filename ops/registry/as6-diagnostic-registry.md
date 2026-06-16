@@ -38,3 +38,7 @@
 ## Autonomous Governance Compliance Controller
 - ops/bin/as6-autonomous-governance-compliance-controller
 - result: AS6_GOVERNANCE_COMPLIANCE_RESULT
+
+## Autonomous Evidence Correlation Controller
+- ops/bin/as6-autonomous-evidence-correlation-controller
+- result: AS6_EVIDENCE_CORRELATION_RESULT

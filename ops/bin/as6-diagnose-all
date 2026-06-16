@@ -243,3 +243,12 @@ else
   echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:autonomous-governance-compliance-controller"
   fail=1
 fi
+
+echo ""
+echo "=== RUN: autonomous-evidence-correlation-controller ==="
+if ops/bin/as6-autonomous-evidence-correlation-controller; then
+  echo "AS6_DIAGNOSE_ALL_CHECK=OK:autonomous-evidence-correlation-controller"
+else
+  echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:autonomous-evidence-correlation-controller"
+  fail=1
+fi
