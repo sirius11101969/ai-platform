@@ -50,3 +50,7 @@
 ## Autonomy Score Controller
 - ops/bin/as6-autonomy-score-controller
 - result: AS6_AUTONOMY_SCORE_RESULT
+
+## Autonomous Production Policy Engine
+- ops/bin/as6-autonomous-production-policy-engine
+- result: AS6_PRODUCTION_POLICY_ENGINE_RESULT

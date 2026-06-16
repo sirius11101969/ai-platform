@@ -1,0 +1,23 @@
+# AS6 Production Policy Diagnostics
+
+Added checks:
+- production_policy_engine
+- production_policy_matrix_generation
+- production_policy_human_approval_gate
+- production_policy_no_auto_apply_gate
+- production_policy_safe_docs_auto_register_gate
+- production_policy_secret_scan_gate
+
+Added root causes:
+- PRODUCTION_POLICY_ENGINE_MISSING
+- PRODUCTION_POLICY_MATRIX_MISSING
+- PRODUCTION_AUTO_APPLY_POLICY_VIOLATION
+- PRODUCTION_HUMAN_APPROVAL_POLICY_MISSING
+- PRODUCTION_POLICY_EVIDENCE_MISSING
+
+Added AEC:
+- AEC_PRODUCTION_POLICY_ENGINE_REQUIRED
+- AEC_PRODUCTION_POLICY_MATRIX_REQUIRED
+- AEC_PRODUCTION_AUTO_APPLY_FORBIDDEN_WITHOUT_APPROVAL
+- AEC_PRODUCTION_HUMAN_APPROVAL_REQUIRED
+- AEC_PRODUCTION_POLICY_EVIDENCE_REQUIRED

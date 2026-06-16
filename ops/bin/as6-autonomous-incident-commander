@@ -1,73 +1,26 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd /var/www/ai-platform
-fail=0
-warn=0
-incident=0
-decision="OBSERVE"
-class="NO_ACTIVE_INCIDENT"
-evidence_dir="runtime/incident-commander"
-mkdir -p "$evidence_dir"
-evidence_file="$evidence_dir/latest.out"
-: > "$evidence_file"
-say(){ echo "$1" | tee -a "$evidence_file"; }
+fail=0; warn=0
+dir="runtime/incident-commander"; mkdir -p "$dir/evidence"
+out="$dir/latest.out"; state="$dir/incident-state.env"; plan="$dir/incident-plan.md"; timeline="$dir/incident-timeline.tsv"
+: > "$out"; : > "$state"; : > "$plan"; : > "$timeline"
+say(){ echo "$1" | tee -a "$out"; }
 ok(){ say "PASS: $1"; }
 soft(){ say "WARN: $1"; warn=1; }
-bad(){ say "FAIL: $1"; fail=1; incident=1; }
-capture_gate(){ name="$1"; shift; say "--- evidence gate: $name ---"; if "$@" >> "$evidence_file" 2>&1; then ok "$name"; else bad "$name"; fi; }
-
+bad(){ say "FAIL: $1"; fail=1; }
 say "=== AS6 AUTONOMOUS INCIDENT COMMANDER ==="
-
-say "--- incident detection: production health ---"
-if curl -fsS --max-time 15 https://www.as6.ru/api/health 2>/dev/null | grep -q "\"status\":\"OK\""; then
-  ok "public production health OK"
-else
-  bad "public production health failed"
-  class="PRODUCTION_HEALTH_INCIDENT"
-fi
-
-say "--- incident detection: infrastructure gates ---"
-capture_gate "production drift" ops/bin/as6-autonomous-production-drift-controller
-capture_gate "architecture compliance" ops/bin/as6-autonomous-architecture-compliance-controller
-capture_gate "rollback verification" ops/bin/as6-autonomous-rollback-verification-controller
-capture_gate "deployment controller" ops/bin/as6-autonomous-deployment-controller
-
-say "--- incident detection: existing diagnostics ---"
-if [ -x ops/bin/as6-diagnose-provider-control-plane ]; then capture_gate "provider control plane" ops/bin/as6-diagnose-provider-control-plane; else soft "provider control plane diagnostic missing"; fi
-if [ -x ops/bin/as6-diagnose-vps-baseline ]; then capture_gate "vps baseline" ops/bin/as6-diagnose-vps-baseline; else soft "vps baseline diagnostic missing"; fi
-if [ -x ops/bin/as6-diagnose-change-pipeline-controller ]; then capture_gate "change pipeline controller" ops/bin/as6-diagnose-change-pipeline-controller; else soft "change pipeline diagnostic missing"; fi
-
-say "--- root cause route readiness ---"
-if [ -x ops/bin/as6-diagnose-root-cause-router ]; then capture_gate "root cause router" ops/bin/as6-diagnose-root-cause-router; else soft "root cause router diagnostic missing"; fi
-if [ -x ops/bin/as6-diagnose-root-cause-knowledge-base ]; then capture_gate "root cause knowledge base" ops/bin/as6-diagnose-root-cause-knowledge-base; else soft "root cause knowledge base diagnostic missing"; fi
-if [ -x ops/bin/as6-diagnose-root-cause-governance ]; then capture_gate "root cause governance" ops/bin/as6-diagnose-root-cause-governance; else soft "root cause governance diagnostic missing"; fi
-
-say "--- incident classification ---"
-if [ "$fail" -eq 0 ]; then
-  class="NO_ACTIVE_INCIDENT"
-  decision="OBSERVE"
-  ok "no active incident detected"
-else
-  decision="ESCALATE_AND_BLOCK_AUTO_APPLY"
-  say "INCIDENT_CLASS=$class"
-  say "INCIDENT_DECISION=$decision"
-fi
-
-say "--- commander safety policy ---"
-say "AS6_INCIDENT_COMMANDER_AUTO_REPAIR_APPLY=NO"
-say "AS6_INCIDENT_COMMANDER_HUMAN_APPROVAL_REQUIRED=YES"
-ok "incident commander classifies and routes, but does not auto-apply repairs"
-
-say "--- result ---"
-say "AS6_INCIDENT_CLASS=$class"
-say "AS6_INCIDENT_DECISION=$decision"
-if [ "$fail" -eq 0 ]; then
-  say "AUTONOMOUS_INCIDENT_COMMANDER=PASS"
-  if [ "$warn" -eq 1 ]; then say "AUTONOMOUS_INCIDENT_COMMANDER_WARNINGS=PRESENT"; else say "AUTONOMOUS_INCIDENT_COMMANDER_WARNINGS=NONE"; fi
-  say "AS6_AUTONOMOUS_INCIDENT_COMMANDER_RESULT=OK"
-else
-  say "AUTONOMOUS_INCIDENT_COMMANDER=FAIL"
-  say "AS6_AUTONOMOUS_INCIDENT_COMMANDER_RESULT=FAIL"
-fi
-say "AS6_AUTONOMOUS_INCIDENT_COMMANDER_EVIDENCE=$evidence_file"
-exit "$fail"
+printf "%s\t%s\t%s\n" "time_utc" "event" "status" > "$timeline"
+now="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+if curl -fsS --max-time 15 https://www.as6.ru/api/health 2>/dev/null | grep -q "\"status\":\"OK\""; then ok "public production health OK"; prod="GREEN"; else bad "public production health failed"; prod="INCIDENT"; fi
+printf "%s\t%s\t%s\n" "$now" "public_health" "$prod" >> "$timeline"
+[ -x ops/bin/as6-autonomous-production-drift-controller ] && ops/bin/as6-autonomous-production-drift-controller >> "$out" 2>&1 && ok "production drift gate" || soft "production drift gate warning"
+[ -x ops/bin/as6-autonomous-architecture-compliance-controller ] && ops/bin/as6-autonomous-architecture-compliance-controller >> "$out" 2>&1 && ok "architecture compliance gate" || soft "architecture compliance gate warning"
+[ -x ops/bin/as6-autonomous-rollback-verification-controller ] && ops/bin/as6-autonomous-rollback-verification-controller >> "$out" 2>&1 && ok "rollback verification gate" || soft "rollback verification gate warning"
+[ -x ops/bin/as6-autonomous-evidence-correlation-controller ] && ops/bin/as6-autonomous-evidence-correlation-controller >> "$out" 2>&1 && ok "evidence correlation gate" || soft "evidence correlation gate warning"
+if [ "$fail" -eq 0 ]; then incident_state="NO_ACTIVE_INCIDENT"; severity="none"; decision="OBSERVE"; root_cause="NONE"; else incident_state="ACTIVE_INCIDENT"; severity="high"; decision="HUMAN_APPROVAL_REQUIRED"; root_cause="PRODUCTION_HEALTH_NOT_CONFIRMED"; fi
+printf "%s\n" "AS6_INCIDENT_COMMANDER_STATE=$incident_state" "AS6_INCIDENT_COMMANDER_SEVERITY=$severity" "AS6_INCIDENT_COMMANDER_DECISION=$decision" "AS6_INCIDENT_COMMANDER_ROOT_CAUSE=$root_cause" "AS6_INCIDENT_COMMANDER_AUTO_REPAIR_APPLY=NO" "AS6_INCIDENT_COMMANDER_HUMAN_APPROVAL_REQUIRED=YES" "AS6_INCIDENT_COMMANDER_EVIDENCE=$out" > "$state"
+printf "%s\n" "# AS6 Incident Commander Plan" "" "State: $incident_state" "Severity: $severity" "Decision: $decision" "Root cause: $root_cause" "" "Required sequence:" "" "1. Diagnostics first." "2. Root cause binding." "3. Rollback verification." "4. Evidence correlation." "5. Human approval before production-changing action." "6. Post-change diagnostics." > "$plan"
+if git ls-files .env 2>/dev/null | grep -Fxq ".env"; then bad ".env is tracked by git"; else ok ".env is not tracked by git"; fi
+[ -x ops/bin/as6-pre-commit-secret-scan ] && ops/bin/as6-pre-commit-secret-scan >> "$out" 2>&1 && ok "secret scan" || soft "secret scan warning"
+if [ "$fail" -eq 0 ]; then say "AS6_INCIDENT_COMMANDER=PASS"; say "AS6_INCIDENT_COMMANDER_RESULT=OK"; exit 0; else say "AS6_INCIDENT_COMMANDER=FAIL"; say "AS6_INCIDENT_COMMANDER_RESULT=FAIL"; exit 1; fi

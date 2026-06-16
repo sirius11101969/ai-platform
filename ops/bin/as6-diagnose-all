@@ -270,3 +270,7 @@ else
   echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:autonomy-score-controller"
   fail=1
 fi
+
+echo ""
+echo "=== RUN: autonomous-production-policy-engine ==="
+if ops/bin/as6-autonomous-production-policy-engine; then echo "AS6_DIAGNOSE_ALL_CHECK=OK:autonomous-production-policy-engine"; else echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:autonomous-production-policy-engine"; fail=1; fi

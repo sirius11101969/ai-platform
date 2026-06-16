@@ -47,3 +47,9 @@
 
 ## Autonomy Score Coverage
 - AS6_AUTONOMY_SCORE_COVERAGE=REGISTERED
+
+## Incident Commander Coverage
+- AS6_INCIDENT_COMMANDER_COVERAGE=REGISTERED
+
+## Production Policy Engine Coverage
+- AS6_PRODUCTION_POLICY_ENGINE_COVERAGE=REGISTERED

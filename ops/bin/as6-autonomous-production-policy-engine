@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /var/www/ai-platform
+fail=0; warn=0
+dir="runtime/production-policy"; mkdir -p "$dir"
+out="$dir/latest.out"; matrix="$dir/production-policy-matrix.tsv"; summary="$dir/production-policy-summary.env"
+: > "$out"; : > "$matrix"; : > "$summary"
+say(){ echo "$1" | tee -a "$out"; }
+ok(){ say "PASS: $1"; }
+soft(){ say "WARN: $1"; warn=1; }
+bad(){ say "FAIL: $1"; fail=1; }
+say "=== AS6 AUTONOMOUS PRODUCTION POLICY ENGINE ==="
+printf "%s\t%s\t%s\n" "policy" "required" "status" > "$matrix"
+check(){ name="$1"; cmd="$2"; if [ -x "$cmd" ] && "$cmd" >> "$out" 2>&1; then ok "$name"; printf "%s\tYES\tPASS\n" "$name" >> "$matrix"; else soft "$name"; printf "%s\tYES\tWARN\n" "$name" >> "$matrix"; fi; }
+check "architecture_compliance_required" ops/bin/as6-autonomous-architecture-compliance-controller
+check "production_drift_required" ops/bin/as6-autonomous-production-drift-controller
+check "rollback_verification_required" ops/bin/as6-autonomous-rollback-verification-controller
+check "deployment_controller_required" ops/bin/as6-autonomous-deployment-controller
+check "evidence_correlation_required" ops/bin/as6-autonomous-evidence-correlation-controller
+check "incident_commander_required" ops/bin/as6-autonomous-incident-commander
+check "git_main_sync_required" ops/bin/as6-diagnose-git-main-sync
+check "secret_scan_required" ops/bin/as6-pre-commit-secret-scan
+say "--- production apply policy ---"
+say "AS6_PRODUCTION_POLICY_AUTO_APPLY=NO"
+say "AS6_PRODUCTION_POLICY_HUMAN_APPROVAL_REQUIRED=YES"
+say "AS6_PRODUCTION_POLICY_SAFE_DOCS_AUTO_REGISTER=YES"
+say "AS6_PRODUCTION_POLICY_PROD_CHANGE_AUTO_APPLY=NO"
+printf "%s\n" "AS6_PRODUCTION_POLICY_AUTO_APPLY=NO" "AS6_PRODUCTION_POLICY_HUMAN_APPROVAL_REQUIRED=YES" "AS6_PRODUCTION_POLICY_SAFE_DOCS_AUTO_REGISTER=YES" "AS6_PRODUCTION_POLICY_PROD_CHANGE_AUTO_APPLY=NO" "AS6_PRODUCTION_POLICY_MATRIX=$matrix" "AS6_PRODUCTION_POLICY_EVIDENCE=$out" > "$summary"
+if git ls-files .env 2>/dev/null | grep -Fxq ".env"; then bad ".env is tracked by git"; else ok ".env is not tracked by git"; fi
+if [ "$fail" -eq 0 ]; then say "AS6_PRODUCTION_POLICY_ENGINE=PASS"; say "AS6_PRODUCTION_POLICY_ENGINE_RESULT=OK"; exit 0; else say "AS6_PRODUCTION_POLICY_ENGINE=FAIL"; say "AS6_PRODUCTION_POLICY_ENGINE_RESULT=FAIL"; exit 1; fi

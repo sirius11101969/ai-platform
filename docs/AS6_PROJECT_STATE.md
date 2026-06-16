@@ -773,3 +773,32 @@ Added root cause classes:
 - ROOT_CAUSE_OVERLAP_DRIFT
 - ROOT_CAUSE_ORPHAN_CLASS
 - ROOT_CAUSE_TAXONOMY_DRIFT
+
+## L7 Phase: Incident Commander and Production Policy Engine
+
+- AS6_INCIDENT_COMMANDER=IMPLEMENTED
+- AS6_PRODUCTION_POLICY_ENGINE=IMPLEMENTED
+- Production-changing auto-apply: NO
+- Human approval required: YES
+
+Added to diagnostics:
+- incident_commander_controller
+- incident_state_generation
+- incident_timeline_generation
+- incident_plan_generation
+- incident_root_cause_binding
+- production_policy_engine
+- production_policy_matrix_generation
+- production_policy_human_approval_gate
+- production_policy_no_auto_apply_gate
+
+Added root cause classes:
+- INCIDENT_COMMANDER_MISSING
+- INCIDENT_STATE_MISSING
+- INCIDENT_TIMELINE_MISSING
+- INCIDENT_PLAN_MISSING
+- INCIDENT_ROOT_CAUSE_NOT_BOUND
+- PRODUCTION_POLICY_ENGINE_MISSING
+- PRODUCTION_POLICY_MATRIX_MISSING
+- PRODUCTION_AUTO_APPLY_POLICY_VIOLATION
+- PRODUCTION_HUMAN_APPROVAL_POLICY_MISSING
