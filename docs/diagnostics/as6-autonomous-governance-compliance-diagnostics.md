@@ -1,0 +1,41 @@
+# AS6 Autonomous Governance Compliance Diagnostics
+
+Registered diagnostic artifact:
+
+- ops/bin/as6-autonomous-governance-compliance-controller
+
+New diagnostic checks added:
+
+- governance_compliance_controller
+- controller_diagnostics_registration_check
+- controller_coverage_registration_check
+- controller_governance_registration_check
+- controller_registry_registration_check
+- controller_state_registration_check
+- controller_diagnose_all_integration_check
+- controller_governance_matrix_generation
+- governance_root_cause_contract_check
+- governance_secret_scan_gate
+
+New error classes added:
+
+- CONTROLLER_WITHOUT_DIAGNOSTIC
+- CONTROLLER_WITHOUT_COVERAGE
+- CONTROLLER_WITHOUT_REGISTRY
+- CONTROLLER_WITHOUT_ROOT_CAUSE
+- CONTROLLER_WITHOUT_PREVENTION
+- CONTROLLER_WITHOUT_ROLLBACK
+- CONTROLLER_WITHOUT_STATE_REGISTRATION
+- CONTROLLER_WITHOUT_DIAGNOSE_ALL_INTEGRATION
+- GOVERNANCE_MATRIX_MISSING
+- GOVERNANCE_COMPLIANCE_EVIDENCE_MISSING
+
+New AEC rules added:
+
+- AEC_CONTROLLER_MUST_HAVE_DIAGNOSTIC
+- AEC_CONTROLLER_MUST_HAVE_COVERAGE
+- AEC_CONTROLLER_MUST_HAVE_REGISTRY
+- AEC_CONTROLLER_MUST_HAVE_GOVERNANCE
+- AEC_CONTROLLER_MUST_HAVE_STATE_REGISTRATION
+- AEC_CONTROLLER_MUST_HAVE_DIAGNOSE_ALL_INTEGRATION
+- AEC_GOVERNANCE_COMPLIANCE_EVIDENCE_REQUIRED

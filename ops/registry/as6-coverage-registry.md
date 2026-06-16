@@ -35,3 +35,6 @@
 
 ## Autonomous Change Approval Coverage
 - AS6_CHANGE_APPROVAL_COVERAGE=REGISTERED
+
+## Autonomous Governance Compliance Coverage
+- AS6_GOVERNANCE_COMPLIANCE_COVERAGE=REGISTERED

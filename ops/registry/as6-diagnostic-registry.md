@@ -34,3 +34,7 @@
 ## Autonomous Change Approval Controller
 - ops/bin/as6-autonomous-change-approval-controller
 - result: AS6_CHANGE_APPROVAL_RESULT
+
+## Autonomous Governance Compliance Controller
+- ops/bin/as6-autonomous-governance-compliance-controller
+- result: AS6_GOVERNANCE_COMPLIANCE_RESULT

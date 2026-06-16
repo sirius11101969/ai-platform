@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /var/www/ai-platform
+fail=0
+warn=0
+gov_dir="runtime/governance-compliance"
+evidence_dir="$gov_dir/evidence"
+mkdir -p "$evidence_dir"
+evidence_file="$gov_dir/latest.out"
+matrix_file="$gov_dir/controller-governance-matrix.tsv"
+: > "$evidence_file"
+: > "$matrix_file"
+say(){ echo "$1" | tee -a "$evidence_file"; }
+ok(){ say "PASS: $1"; }
+soft(){ say "WARN: $1"; warn=1; }
+bad(){ say "FAIL: $1"; fail=1; }
+run_capture(){ name="$1"; outfile="$2"; shift 2; say "--- capture: $name ---"; if "$@" > "$outfile" 2>&1; then ok "$name"; else bad "$name"; fi; cat "$outfile" >> "$evidence_file"; }
+
+say "=== AS6 AUTONOMOUS GOVERNANCE COMPLIANCE CONTROLLER ==="
+
+say "--- canonical governance files ---"
+[ -f docs/AS6_PROJECT_STATE.md ] && ok "project state exists" || bad "project state missing"
+[ -f ops/registry/as6-diagnostic-registry.md ] && ok "diagnostic registry exists" || bad "diagnostic registry missing"
+[ -f ops/registry/as6-coverage-registry.md ] && ok "coverage registry exists" || bad "coverage registry missing"
+[ -f ops/registry/as6-aec-registry.md ] && ok "AEC registry exists" || bad "AEC registry missing"
+[ -d docs/governance ] && ok "governance docs directory exists" || bad "governance docs directory missing"
+[ -d docs/diagnostics ] && ok "diagnostics docs directory exists" || bad "diagnostics docs directory missing"
+[ -d docs/coverage ] && ok "coverage docs directory exists" || bad "coverage docs directory missing"
+
+say "--- controller governance matrix ---"
+printf "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" "controller" "executable" "diagnostics" "coverage" "governance" "registry" "state" "diagnose_all" > "$matrix_file"
+for path in ops/bin/as6-autonomous-*controller ops/bin/as6-autonomous-*commander; do
+  [ -e "$path" ] || continue
+  name="$(basename "$path")"
+  short="${name#as6-autonomous-}"
+  diag="NO"; cov="NO"; gov="NO"; reg="NO"; state="NO"; da="NO"
+  grep -Rqs "$name" docs/diagnostics && diag="YES" || true
+  grep -Rqs "$name" docs/coverage && cov="YES" || true
+  grep -Rqs "$name" docs/governance && gov="YES" || true
+  grep -Rqs "$name" ops/registry && reg="YES" || true
+  grep -Rqs "$short\\|$name" docs/AS6_PROJECT_STATE.md && state="YES" || true
+  grep -qs "$name" ops/bin/as6-diagnose-all && da="YES" || true
+  printf "%s\tYES\t%s\t%s\t%s\t%s\t%s\t%s\n" "$name" "$diag" "$cov" "$gov" "$reg" "$state" "$da" >> "$matrix_file"
+  [ "$diag" = "YES" ] && ok "$name diagnostics registered" || bad "$name diagnostics missing"
+  [ "$cov" = "YES" ] && ok "$name coverage registered" || bad "$name coverage missing"
+  [ "$gov" = "YES" ] && ok "$name governance registered" || bad "$name governance missing"
+  [ "$reg" = "YES" ] && ok "$name registry registered" || bad "$name registry missing"
+  [ "$state" = "YES" ] && ok "$name state registered" || soft "$name state reference weak or missing"
+  [ "$da" = "YES" ] && ok "$name diagnose-all integration present" || soft "$name diagnose-all integration missing"
+done
+
+say "--- governance root-cause contract checks ---"
+for cls in CONTROLLER_WITHOUT_DIAGNOSTIC CONTROLLER_WITHOUT_COVERAGE CONTROLLER_WITHOUT_REGISTRY CONTROLLER_WITHOUT_ROOT_CAUSE CONTROLLER_WITHOUT_PREVENTION CONTROLLER_WITHOUT_ROLLBACK CONTROLLER_WITHOUT_STATE_REGISTRATION CONTROLLER_WITHOUT_DIAGNOSE_ALL_INTEGRATION; do
+  if grep -Rqs "$cls" docs ops; then ok "root-cause class registered: $cls"; else soft "root-cause class not yet visible before this run: $cls"; fi
+done
+
+say "--- existing governance diagnostics ---"
+if [ -x ops/bin/as6-diagnose-root-cause-governance ]; then run_capture "root cause governance" "$evidence_dir/root-cause-governance.out" ops/bin/as6-diagnose-root-cause-governance; else soft "root cause governance diagnostic missing"; fi
+if [ -x ops/bin/as6-diagnose-root-cause-knowledge-base ]; then run_capture "root cause knowledge base" "$evidence_dir/root-cause-knowledge-base.out" ops/bin/as6-diagnose-root-cause-knowledge-base; else soft "root cause knowledge base diagnostic missing"; fi
+
+say "--- safety gates ---"
+if git ls-files .env 2>/dev/null | grep -Fxq ".env"; then bad ".env is tracked by git"; else ok ".env is not tracked by git"; fi
+if [ -x ops/bin/as6-pre-commit-secret-scan ]; then run_capture "secret scan" "$evidence_dir/secret-scan.out" ops/bin/as6-pre-commit-secret-scan; else soft "secret scan missing"; fi
+
+say "--- result ---"
+if [ "$fail" -eq 0 ]; then
+  say "AS6_GOVERNANCE_COMPLIANCE=PASS"
+  if [ "$warn" -eq 1 ]; then say "AS6_GOVERNANCE_COMPLIANCE_WARNINGS=PRESENT"; else say "AS6_GOVERNANCE_COMPLIANCE_WARNINGS=NONE"; fi
+  say "AS6_GOVERNANCE_COMPLIANCE_RESULT=OK"
+else
+  say "AS6_GOVERNANCE_COMPLIANCE=FAIL"
+  say "AS6_GOVERNANCE_COMPLIANCE_RESULT=FAIL"
+fi
+say "AS6_GOVERNANCE_COMPLIANCE_EVIDENCE=$evidence_file"
+say "AS6_GOVERNANCE_COMPLIANCE_MATRIX=$matrix_file"
+exit "$fail"
