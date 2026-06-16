@@ -837,3 +837,38 @@ Added root cause classes:
 - CHANGE_IMPACT_WITHOUT_ROLLBACK
 - CHANGE_IMPACT_WITHOUT_EVIDENCE
 - CHANGE_IMPACT_POLICY_DRIFT
+
+## L7+ Phase: Unified Autonomy Orchestrator
+
+- AS6_UNIFIED_AUTONOMY_ORCHESTRATOR=IMPLEMENTED
+- AS6_UNIFIED_AUTONOMY_ORCHESTRATOR_COVERAGE=REGISTERED
+- Production auto-apply: NO
+- Human approval required: YES
+
+Added to diagnostics:
+- unified_autonomy_orchestrator
+- unified_autonomy_matrix_generation
+- unified_autonomy_score_generation
+- unified_autonomy_plan_generation
+- unified_autonomy_production_health_gate
+- unified_autonomy_architecture_gate
+- unified_autonomy_drift_gate
+- unified_autonomy_rollback_gate
+- unified_autonomy_deployment_gate
+- unified_autonomy_evidence_gate
+- unified_autonomy_incident_gate
+- unified_autonomy_policy_gate
+- unified_autonomy_change_impact_gate
+- unified_autonomy_secret_scan_gate
+- unified_autonomy_git_sync_gate
+
+Added root cause classes:
+- UNIFIED_AUTONOMY_ORCHESTRATOR_MISSING
+- UNIFIED_AUTONOMY_MATRIX_MISSING
+- UNIFIED_AUTONOMY_SCORE_MISSING
+- UNIFIED_AUTONOMY_PLAN_MISSING
+- UNIFIED_AUTONOMY_GATE_MISSING
+- UNIFIED_AUTONOMY_BELOW_L7
+- UNIFIED_AUTONOMY_POLICY_DRIFT
+- UNIFIED_AUTONOMY_WITHOUT_HUMAN_APPROVAL
+- UNIFIED_AUTONOMY_UNSAFE_AUTO_APPLY

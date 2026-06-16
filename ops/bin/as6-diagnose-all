@@ -282,3 +282,7 @@ if ops/bin/as6-autonomous-architecture-evolution-controller; then echo "AS6_DIAG
 echo ""
 echo "=== RUN: autonomous-change-impact-analysis-controller ==="
 if ops/bin/as6-autonomous-change-impact-analysis-controller; then echo "AS6_DIAGNOSE_ALL_CHECK=OK:autonomous-change-impact-analysis-controller"; else echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:autonomous-change-impact-analysis-controller"; fail=1; fi
+
+echo ""
+echo "=== RUN: unified-autonomy-orchestrator ==="
+if ops/bin/as6-unified-autonomy-orchestrator; then echo "AS6_DIAGNOSE_ALL_CHECK=OK:unified-autonomy-orchestrator"; else echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:unified-autonomy-orchestrator"; fail=1; fi

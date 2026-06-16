@@ -62,3 +62,7 @@
 ## Autonomous Change Impact Analysis Controller
 - ops/bin/as6-autonomous-change-impact-analysis-controller
 - result: AS6_CHANGE_IMPACT_ANALYSIS_RESULT
+
+## Unified Autonomy Orchestrator
+- ops/bin/as6-unified-autonomy-orchestrator
+- result: AS6_UNIFIED_AUTONOMY_ORCHESTRATOR_RESULT

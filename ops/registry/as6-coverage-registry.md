@@ -59,3 +59,6 @@
 
 ## Change Impact Analysis Coverage
 - AS6_CHANGE_IMPACT_ANALYSIS_COVERAGE=REGISTERED
+
+## Unified Autonomy Orchestrator Coverage
+- AS6_UNIFIED_AUTONOMY_ORCHESTRATOR_COVERAGE=REGISTERED

@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /var/www/ai-platform
+fail=0; warn=0; pass=0; total=0
+dir="runtime/unified-autonomy-orchestrator"; mkdir -p "$dir/evidence"
+out="$dir/latest.out"; matrix="$dir/unified-autonomy-matrix.tsv"; summary="$dir/unified-autonomy-summary.env"; plan="$dir/unified-autonomy-plan.md"
+: > "$out"; : > "$matrix"; : > "$summary"; : > "$plan"
+say(){ echo "$1" | tee -a "$out"; }
+ok(){ say "PASS: $1"; pass=$((pass+1)); }
+soft(){ say "WARN: $1"; warn=1; }
+bad(){ say "FAIL: $1"; fail=1; }
+gate(){ name="$1"; cmd="$2"; total=$((total+1)); file="$dir/evidence/${name}.out"; safe="$(printf "%s" "$name" | tr " /" "__")"; file="$dir/evidence/${safe}.out"; if [ -x "$cmd" ] && "$cmd" > "$file" 2>&1; then ok "$name"; printf "%s\t%s\tPASS\t%s\n" "$name" "$cmd" "$file" >> "$matrix"; cat "$file" >> "$out"; else soft "$name"; printf "%s\t%s\tWARN_OR_MISSING\t%s\n" "$name" "$cmd" "$file" >> "$matrix"; [ -f "$file" ] && cat "$file" >> "$out"; fi; }
+say "=== AS6 UNIFIED AUTONOMY ORCHESTRATOR ==="
+printf "%s\t%s\t%s\t%s\n" "gate" "command" "status" "evidence" > "$matrix"
+gate "production_health_public" ops/bin/as6-diagnose-public-health
+gate "architecture_compliance" ops/bin/as6-autonomous-architecture-compliance-controller
+gate "production_drift" ops/bin/as6-autonomous-production-drift-controller
+gate "rollback_verification" ops/bin/as6-autonomous-rollback-verification-controller
+gate "deployment_controller" ops/bin/as6-autonomous-deployment-controller
+gate "evidence_correlation" ops/bin/as6-autonomous-evidence-correlation-controller
+gate "root_cause_deduplication" ops/bin/as6-autonomous-root-cause-deduplication-controller
+gate "incident_commander" ops/bin/as6-autonomous-incident-commander
+gate "production_policy_engine" ops/bin/as6-autonomous-production-policy-engine
+gate "architecture_evolution" ops/bin/as6-autonomous-architecture-evolution-controller
+gate "change_impact_analysis" ops/bin/as6-autonomous-change-impact-analysis-controller
+gate "git_main_sync" ops/bin/as6-diagnose-git-main-sync
+gate "secret_scan" ops/bin/as6-pre-commit-secret-scan
+gate "root_cause_knowledge_base" ops/bin/as6-diagnose-root-cause-knowledge-base
+gate "root_cause_governance" ops/bin/as6-diagnose-root-cause-governance
+say "--- production safety policy ---"
+say "AS6_UNIFIED_AUTONOMY_AUTO_PRODUCTION_APPLY=NO"
+say "AS6_UNIFIED_AUTONOMY_HUMAN_APPROVAL_REQUIRED=YES"
+say "AS6_UNIFIED_AUTONOMY_SAFE_DOCS_AUTO_REGISTER=YES"
+if git ls-files .env 2>/dev/null | grep -Fxq ".env"; then bad ".env is tracked by git"; else ok ".env is not tracked by git"; fi
+if [ "$total" -gt 0 ]; then score=$((pass * 100 / total)); else score=0; fi
+if [ "$score" -lt 75 ]; then level="L6"; class="PARTIAL_AUTONOMY"; fi
+if [ "$score" -ge 75 ] && [ "$score" -lt 88 ]; then level="L7"; class="AUTONOMOUS_GOVERNANCE_PLATFORM"; fi
+if [ "$score" -ge 88 ] && [ "$score" -lt 95 ]; then level="L8"; class="CONDITIONAL_AUTONOMOUS_OPERATIONS"; fi
+if [ "$score" -ge 95 ]; then level="L9"; class="FULL_AUTONOMOUS_PRODUCTION_CONTROL"; fi
+printf "%s\n" "# AS6 Unified Autonomy Plan" "" "Level: $level" "Score: $score" "Class: $class" "" "Policy:" "" "- Production auto-apply: NO" "- Human approval required: YES" "- Safe docs/governance registration: YES" "" "Required sequence:" "" "1. Diagnostics first." "2. Architecture compliance." "3. Production drift." "4. Rollback verification." "5. Evidence correlation." "6. Incident commander." "7. Production policy." "8. Change impact." "9. Git sync." "10. Secret scan." "11. Human approval before production-changing action." > "$plan"
+printf "%s\n" "AS6_UNIFIED_AUTONOMY_SCORE_PERCENT=$score" "AS6_UNIFIED_AUTONOMY_LEVEL=$level" "AS6_UNIFIED_AUTONOMY_CLASS=$class" "AS6_UNIFIED_AUTONOMY_PASS_GATES=$pass" "AS6_UNIFIED_AUTONOMY_TOTAL_GATES=$total" "AS6_UNIFIED_AUTONOMY_MATRIX=$matrix" "AS6_UNIFIED_AUTONOMY_PLAN=$plan" "AS6_UNIFIED_AUTONOMY_EVIDENCE=$out" "AS6_UNIFIED_AUTONOMY_AUTO_PRODUCTION_APPLY=NO" "AS6_UNIFIED_AUTONOMY_HUMAN_APPROVAL_REQUIRED=YES" > "$summary"
+say "--- result ---"
+say "AS6_UNIFIED_AUTONOMY_SCORE_PERCENT=$score"
+say "AS6_UNIFIED_AUTONOMY_LEVEL=$level"
+say "AS6_UNIFIED_AUTONOMY_CLASS=$class"
+say "AS6_UNIFIED_AUTONOMY_PASS_GATES=$pass"
+say "AS6_UNIFIED_AUTONOMY_TOTAL_GATES=$total"
+say "AS6_UNIFIED_AUTONOMY_MATRIX=$matrix"
+say "AS6_UNIFIED_AUTONOMY_PLAN=$plan"
+say "AS6_UNIFIED_AUTONOMY_EVIDENCE=$out"
+if [ "$score" -ge 75 ]; then say "AS6_UNIFIED_AUTONOMY_ORCHESTRATOR=PASS"; say "AS6_UNIFIED_AUTONOMY_ORCHESTRATOR_RESULT=OK"; exit 0; else say "AS6_UNIFIED_AUTONOMY_ORCHESTRATOR=FAIL"; say "AS6_UNIFIED_AUTONOMY_ORCHESTRATOR_RESULT=FAIL"; exit 1; fi

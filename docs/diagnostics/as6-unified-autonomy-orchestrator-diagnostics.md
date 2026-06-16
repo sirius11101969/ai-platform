@@ -1,0 +1,38 @@
+# AS6 Unified Autonomy Orchestrator Diagnostics
+
+Added checks:
+- unified_autonomy_orchestrator
+- unified_autonomy_matrix_generation
+- unified_autonomy_score_generation
+- unified_autonomy_plan_generation
+- unified_autonomy_production_health_gate
+- unified_autonomy_architecture_gate
+- unified_autonomy_drift_gate
+- unified_autonomy_rollback_gate
+- unified_autonomy_deployment_gate
+- unified_autonomy_evidence_gate
+- unified_autonomy_incident_gate
+- unified_autonomy_policy_gate
+- unified_autonomy_change_impact_gate
+- unified_autonomy_secret_scan_gate
+- unified_autonomy_git_sync_gate
+
+Added root causes:
+- UNIFIED_AUTONOMY_ORCHESTRATOR_MISSING
+- UNIFIED_AUTONOMY_MATRIX_MISSING
+- UNIFIED_AUTONOMY_SCORE_MISSING
+- UNIFIED_AUTONOMY_PLAN_MISSING
+- UNIFIED_AUTONOMY_GATE_MISSING
+- UNIFIED_AUTONOMY_BELOW_L7
+- UNIFIED_AUTONOMY_POLICY_DRIFT
+- UNIFIED_AUTONOMY_WITHOUT_HUMAN_APPROVAL
+- UNIFIED_AUTONOMY_UNSAFE_AUTO_APPLY
+
+Added AEC:
+- AEC_UNIFIED_AUTONOMY_ORCHESTRATOR_REQUIRED
+- AEC_UNIFIED_AUTONOMY_MATRIX_REQUIRED
+- AEC_UNIFIED_AUTONOMY_SCORE_REQUIRED
+- AEC_UNIFIED_AUTONOMY_PLAN_REQUIRED
+- AEC_UNIFIED_AUTONOMY_REQUIRES_POLICY_GATE
+- AEC_UNIFIED_AUTONOMY_REQUIRES_HUMAN_APPROVAL
+- AEC_UNIFIED_AUTONOMY_AUTO_APPLY_FORBIDDEN_WITHOUT_APPROVAL
