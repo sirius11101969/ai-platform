@@ -62,3 +62,6 @@
 
 ## Unified Autonomy Orchestrator Coverage
 - AS6_UNIFIED_AUTONOMY_ORCHESTRATOR_COVERAGE=REGISTERED
+
+## Diagnostic Flow Coverage
+- AS6_DIAGNOSTIC_FLOW_COVERAGE=REGISTERED

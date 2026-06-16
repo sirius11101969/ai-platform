@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /var/www/ai-platform
+fail=0
+out="runtime/diagnostic-flow/latest.out"
+mkdir -p runtime/diagnostic-flow
+: > "$out"
+say(){ echo "$1" | tee -a "$out"; }
+say "=== AS6 DIAGNOSTIC FLOW GUARD ==="
+first_result_line="$(grep -n "AS6_DIAGNOSE_ALL_RESULT" ops/bin/as6-diagnose-all | head -1 | cut -d: -f1 || true)"
+last_controller_line="$(grep -n "as6-unified-autonomy-orchestrator\|as6-autonomous-" ops/bin/as6-diagnose-all | tail -1 | cut -d: -f1 || true)"
+exit_count="$(grep -c "exit " ops/bin/as6-diagnose-all || true)"
+say "DIAGNOSTIC_FLOW_FIRST_RESULT_LINE=${first_result_line:-none}"
+say "DIAGNOSTIC_FLOW_LAST_CONTROLLER_LINE=${last_controller_line:-none}"
+say "DIAGNOSTIC_FLOW_EXIT_COUNT=$exit_count"
+if [ -n "${first_result_line:-}" ] && [ -n "${last_controller_line:-}" ] && [ "$first_result_line" -lt "$last_controller_line" ]; then
+  say "DIAGNOSTIC_FLOW_UNREACHABLE_AFTER_TOP_LEVEL_EXIT=FAIL"
+  fail=1
+else
+  say "DIAGNOSTIC_FLOW_UNREACHABLE_AFTER_TOP_LEVEL_EXIT=PASS"
+fi
+if [ "$exit_count" -gt 2 ]; then
+  say "DIAGNOSTIC_FLOW_EXIT_COUNT=FAIL:$exit_count"
+  fail=1
+else
+  say "DIAGNOSTIC_FLOW_EXIT_COUNT=PASS:$exit_count"
+fi
+if [ "$fail" -eq 0 ]; then say "AS6_DIAGNOSTIC_FLOW_GUARD_RESULT=OK"; exit 0; else say "AS6_DIAGNOSTIC_FLOW_GUARD_RESULT=FAIL"; exit 1; fi

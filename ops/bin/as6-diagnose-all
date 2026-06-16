@@ -138,13 +138,6 @@ run_check "historical-only" "./ops/bin/as6-diagnose-health-history-historical-on
 run_check "strategic-readiness" "./ops/bin/as6-diagnose-strategic-readiness"
 
 
-echo
-if [ "$fail" -eq 0 ]; then
-
-
-  echo "AS6_DIAGNOSE_ALL_RESULT=OK"
-  exit 0
-fi
 
 
 echo "AS6_DIAGNOSE_ALL_RESULT=FAIL"
@@ -286,3 +279,15 @@ if ops/bin/as6-autonomous-change-impact-analysis-controller; then echo "AS6_DIAG
 echo ""
 echo "=== RUN: unified-autonomy-orchestrator ==="
 if ops/bin/as6-unified-autonomy-orchestrator; then echo "AS6_DIAGNOSE_ALL_CHECK=OK:unified-autonomy-orchestrator"; else echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:unified-autonomy-orchestrator"; fail=1; fi
+echo ""
+echo ""
+echo "=== RUN: diagnostic-flow-guard ==="
+if ops/bin/as6-diagnose-diagnostic-flow-guard; then echo "AS6_DIAGNOSE_ALL_CHECK=OK:diagnostic-flow-guard"; else echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:diagnostic-flow-guard"; fail=1; fi
+echo "=== AS6 DIAGNOSE ALL FINAL RESULT ==="
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_DIAGNOSE_ALL_RESULT=OK"
+  exit 0
+else
+  echo "AS6_DIAGNOSE_ALL_RESULT=FAIL"
+  exit 1
+fi

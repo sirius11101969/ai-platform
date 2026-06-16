@@ -66,3 +66,7 @@
 ## Unified Autonomy Orchestrator
 - ops/bin/as6-unified-autonomy-orchestrator
 - result: AS6_UNIFIED_AUTONOMY_ORCHESTRATOR_RESULT
+
+## Diagnostic Flow Guard
+- ops/bin/as6-diagnose-diagnostic-flow-guard
+- result: AS6_DIAGNOSTIC_FLOW_GUARD_RESULT

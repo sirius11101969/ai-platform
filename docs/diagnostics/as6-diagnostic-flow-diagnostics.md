@@ -1,0 +1,24 @@
+# AS6 Diagnostic Flow Diagnostics
+
+Added checks:
+
+- diagnostic_flow_guard
+- diagnostic_flow_top_level_exit_scan
+- diagnostic_flow_unreachable_controller_scan
+- diagnostic_flow_final_result_single_exit_gate
+- diagnostic_flow_l7_controller_reachability_gate
+
+Added root cause classes:
+
+- DIAGNOSTIC_FLOW_UNREACHABLE_AFTER_TOP_LEVEL_EXIT
+- DIAGNOSTIC_FLOW_EARLY_FINAL_RESULT
+- DIAGNOSTIC_FLOW_CONTROLLER_BLOCK_UNREACHABLE
+- DIAGNOSTIC_FLOW_EXIT_COUNT_DRIFT
+- DIAGNOSE_ALL_FINAL_RESULT_NOT_LAST
+
+Added AEC rules:
+
+- AEC_DIAGNOSTIC_FLOW_GUARD_REQUIRED
+- AEC_DIAGNOSE_ALL_FINAL_RESULT_MUST_BE_LAST
+- AEC_DIAGNOSE_ALL_NO_EARLY_TOP_LEVEL_EXIT
+- AEC_L7_CONTROLLERS_MUST_BE_REACHABLE
