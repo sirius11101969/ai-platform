@@ -41,3 +41,6 @@
 
 ## Autonomous Evidence Correlation Coverage
 - AS6_EVIDENCE_CORRELATION_COVERAGE=REGISTERED
+
+## Autonomous Root Cause Deduplication Coverage
+- AS6_ROOT_CAUSE_DEDUPLICATION_COVERAGE=REGISTERED

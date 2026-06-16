@@ -252,3 +252,12 @@ else
   echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:autonomous-evidence-correlation-controller"
   fail=1
 fi
+
+echo ""
+echo "=== RUN: autonomous-root-cause-deduplication-controller ==="
+if ops/bin/as6-autonomous-root-cause-deduplication-controller; then
+  echo "AS6_DIAGNOSE_ALL_CHECK=OK:autonomous-root-cause-deduplication-controller"
+else
+  echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:autonomous-root-cause-deduplication-controller"
+  fail=1
+fi

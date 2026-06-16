@@ -659,3 +659,46 @@ Added root cause classes:
 - EVIDENCE_SUMMARY_MISSING
 - EVIDENCE_SECRET_SCAN_FAILED
 - EVIDENCE_RUNTIME_DRIFT
+
+## L7+ Phase 12: Autonomous Root Cause Deduplication Controller
+
+Status:
+
+- AS6_ROOT_CAUSE_DEDUPLICATION_CONTROLLER=IMPLEMENTED
+- AS6_ROOT_CAUSE_DEDUPLICATION_COVERAGE=REGISTERED
+- AEC_ROOT_CAUSE_DUPLICATE_FORBIDDEN=REGISTERED
+- AEC_ROOT_CAUSE_ALIAS_FORBIDDEN=REGISTERED
+- AEC_ROOT_CAUSE_OVERLAP_FORBIDDEN=REGISTERED
+- AEC_ROOT_CAUSE_ORPHAN_FORBIDDEN=REGISTERED
+- AEC_ROOT_CAUSE_UNUSED_FORBIDDEN=REGISTERED
+- AEC_ROOT_CAUSE_GOVERNANCE_ALIGNMENT_REQUIRED=REGISTERED
+- AEC_ROOT_CAUSE_COVERAGE_ALIGNMENT_REQUIRED=REGISTERED
+- AEC_ROOT_CAUSE_REGISTRY_ALIGNMENT_REQUIRED=REGISTERED
+
+Added to diagnostics:
+
+- root_cause_deduplication_controller
+- root_cause_duplicate_detection
+- root_cause_alias_detection
+- root_cause_overlap_detection
+- root_cause_unused_class_detection
+- root_cause_orphan_class_detection
+- root_cause_registry_consistency
+- root_cause_governance_consistency
+- root_cause_coverage_consistency
+- root_cause_prevention_consistency
+- root_cause_rollback_consistency
+- root_cause_evidence_consistency
+
+Added root cause classes:
+
+- ROOT_CAUSE_DUPLICATE_CLASS
+- ROOT_CAUSE_ALIAS_DRIFT
+- ROOT_CAUSE_OVERLAP_DRIFT
+- ROOT_CAUSE_UNUSED_CLASS
+- ROOT_CAUSE_ORPHAN_CLASS
+- ROOT_CAUSE_GOVERNANCE_BLOAT
+- ROOT_CAUSE_REGISTRY_BLOAT
+- ROOT_CAUSE_COVERAGE_BLOAT
+- ROOT_CAUSE_PREVENTION_DRIFT
+- ROOT_CAUSE_ROLLBACK_DRIFT

@@ -42,3 +42,7 @@
 ## Autonomous Evidence Correlation Controller
 - ops/bin/as6-autonomous-evidence-correlation-controller
 - result: AS6_EVIDENCE_CORRELATION_RESULT
+
+## Autonomous Root Cause Deduplication Controller
+- ops/bin/as6-autonomous-root-cause-deduplication-controller
+- result: AS6_ROOT_CAUSE_DEDUPLICATION_RESULT
