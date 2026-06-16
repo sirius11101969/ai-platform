@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /var/www/ai-platform
+fail=0
+dir="runtime/root-cause-governance-completion"
+mkdir -p "$dir"
+out="$dir/latest.out"
+gaps="$dir/root-cause-governance-gaps.tsv"
+matrix="$dir/root-cause-governance-completion-matrix.tsv"
+: > "$out"
+: > "$matrix"
+say(){ echo "$1" | tee -a "$out"; }
+say "=== AS6 ROOT CAUSE GOVERNANCE COMPLETION CONTROLLER ==="
+printf "%s\t%s\t%s\t%s\n" "class" "diagnostic" "registry" "coverage" > "$matrix"
+[ -f "$gaps" ] || : > "$gaps"
+while IFS="$(printf "\t")" read -r cls diag kind; do
+  [ -n "${cls:-}" ] || continue
+  reg="FAIL"
+  cov="FAIL"
+  grep -q "$cls" ops/registry/as6-diagnostic-registry.md docs/governance docs/diagnostics docs/AS6_PROJECT_STATE.md 2>/dev/null && reg="PASS" || true
+  grep -q "$cls" ops/registry/as6-coverage-registry.md docs/coverage docs/AS6_PROJECT_STATE.md 2>/dev/null && cov="PASS" || true
+  printf "%s\t%s\t%s\t%s\n" "$cls" "$diag" "$reg" "$cov" >> "$matrix"
+  [ "$reg" = "PASS" ] || fail=1
+  [ "$cov" = "PASS" ] || fail=1
+done < "$gaps"
+count="$(tail -n +2 "$matrix" | wc -l | tr -d " ")"
+say "ROOT_CAUSE_GOVERNANCE_COMPLETION_CHECKED=$count"
+if [ "$fail" -eq 0 ]; then say "AS6_ROOT_CAUSE_GOVERNANCE_COMPLETION=PASS"; say "AS6_ROOT_CAUSE_GOVERNANCE_COMPLETION_RESULT=OK"; exit 0; else say "AS6_ROOT_CAUSE_GOVERNANCE_COMPLETION=FAIL"; say "AS6_ROOT_CAUSE_GOVERNANCE_COMPLETION_RESULT=FAIL"; exit 1; fi

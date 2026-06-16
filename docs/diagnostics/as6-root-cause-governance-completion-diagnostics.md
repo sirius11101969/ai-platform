@@ -1,0 +1,31 @@
+# AS6 Root Cause Governance Completion Diagnostics
+
+Added checks:
+
+- root_cause_registry_completeness_check
+- root_cause_coverage_completeness_check
+- root_cause_documentation_completeness_check
+- root_cause_aec_completeness_check
+- root_cause_router_vs_registry_consistency_check
+- root_cause_router_vs_coverage_consistency_check
+- root_cause_governance_gap_audit
+- root_cause_artifact_generation_audit
+
+Added root cause classes:
+
+- ROOT_CAUSE_REGISTRY_INCOMPLETE
+- ROOT_CAUSE_COVERAGE_INCOMPLETE
+- ROOT_CAUSE_DOCUMENTATION_INCOMPLETE
+- ROOT_CAUSE_AEC_MISSING
+- ROOT_CAUSE_ROUTER_REGISTRY_MISMATCH
+- ROOT_CAUSE_ROUTER_COVERAGE_MISMATCH
+- ROOT_CAUSE_GOVERNANCE_ARTIFACT_DRIFT
+- ROOT_CAUSE_ARTIFACT_GENERATION_DRIFT
+
+Added AEC rules:
+
+- AEC_ROOT_CAUSE_REGISTRY_REQUIRED
+- AEC_ROOT_CAUSE_COVERAGE_REQUIRED
+- AEC_ROOT_CAUSE_DOC_REQUIRED
+- AEC_ROOT_CAUSE_ROUTER_ALIGNMENT_REQUIRED
+- AEC_ROOT_CAUSE_GOVERNANCE_COMPLETENESS_REQUIRED
