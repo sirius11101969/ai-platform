@@ -1012,3 +1012,152 @@ Added AEC rules:
 - AEC_ROOT_CAUSE_ROUTE_MUST_HAVE_COVERAGE
 - AEC_ROOT_CAUSE_STATE_REGISTRATION_REQUIRED
 - AEC_ROOT_CAUSE_GOVERNANCE_FAIL_REDUCTION_REQUIRED
+
+## Root Cause State Registration Auto-Sync
+
+# AS6 Root Cause State Registration
+
+Generated state references.
+
+- AUTONOMOUS_CHANGE_CONTROLLER_DRIFT => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- AUTONOMOUS_COVERAGE_GAP => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- AUTONOMOUS_REPAIR_CONTROLLER_DRIFT => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- AUTONOMOUS_VALIDATION_CONTROLLER_DRIFT => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- AUTONOMY_OPERATING_STANDARD_DRIFT => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- BACKUP_ARTIFACT_FALSE_POSITIVE => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- CHANGE_EVIDENCE_MISSING => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- CHANGE_PIPELINE_CONTROLLER_DRIFT => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- CHANGE_WITHOUT_GATE => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- CHANGE_WITHOUT_POST_VALIDATION => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- CHANGE_WITHOUT_ROLLBACK => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- CONTROL_PANEL_POWER_REBOOT => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- CONTROL_PANEL_REBOOT => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- CONTROL_PANEL_REBOOT_UNATTRIBUTED => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- CONTROL_PLANE_AUDIT_GAP => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- COPY_PASTE_CORRUPTED_PATCH => diagnostic=as6-diagnose-patch-mode registry=registered coverage=registered
+- DEPLOYMENT_GATE_BYPASS => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- DEPLOYMENT_WITHOUT_BACKUP => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- DEPLOYMENT_WITHOUT_ROLLBACK => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- DEPLOYMENT_WITHOUT_VALIDATION => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- DIAGNOSTIC_CONTRACT_NO_RECURSION_SELF_REFERENCE_FALSE_POSITIVE => diagnostic=as6-diagnose-diagnostic-contract registry=registered coverage=registered
+- DIAGNOSTIC_CONTRACT_PYTHON_C_EXIT_OR_HANG => diagnostic=as6-diagnose-diagnostic-contract registry=registered coverage=registered
+- DIAGNOSTIC_CONTRACT_RECURSIVE_DEPENDENCY => diagnostic=as6-diagnose-diagnostic-contract registry=registered coverage=registered
+- DIAGNOSTIC_CONTRACT_SELF_REFERENCE_FALSE_POSITIVE => diagnostic=as6-diagnose-diagnostic-contract registry=registered coverage=registered
+- DIAGNOSTIC_COVERAGE_REGISTRATION_DRIFT => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- DIAGNOSTIC_EMBEDDED_HEREDOC_RUNTIME_HANG => diagnostic=as6-diagnose-diagnostic-contract registry=registered coverage=registered
+- DIAGNOSTIC_GIT_REGISTRATION_DRIFT => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- DIAGNOSTIC_HELPER_GIT_REGISTRATION_DRIFT => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- DIAGNOSTIC_REGISTRY_GIT_ALIGNMENT_DRIFT => diagnostic=as6-diagnose-diagnostic-contract registry=registered coverage=registered
+- DIAGNOSTIC_REGISTRY_GIT_HYGIENE_DRIFT => diagnostic=as6-diagnose-diagnostic-contract registry=registered coverage=registered
+- DIAGNOSTIC_SELF_REFERENCE_FALSE_POSITIVE => diagnostic=as6-diagnose-patch-mode registry=registered coverage=registered
+- DIAGNOSTIC_TRACKING_DRIFT => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- DIAGNOSTIC_TRACKING_SINGLE_FILE_DRIFT => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- DOCKER_ENV_CONTRACT_DRIFT => diagnostic=as6-diagnose-diagnostic-contract registry=registered coverage=registered
+- EMPTY_REQUIRED_ENV => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- ENV_EXAMPLE_DRIFT => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- GENERATED_PYTHON_COMPILE_TARGET_DRIFT => diagnostic=as6-diagnose-root-cause-router registry=registered coverage=registered
+- GENERATED_PYTHON_CONTRACT_COVERAGE_DRIFT => diagnostic=as6-diagnose-root-cause-router registry=registered coverage=registered
+- GENERATED_PYTHON_CONTRACT_DRIFT => diagnostic=as6-diagnose-root-cause-router registry=registered coverage=registered
+- GENERATED_PYTHON_CONTRACT_HELPER_IMPORT_SIDE_EFFECT => diagnostic=as6-diagnose-root-cause-router registry=registered coverage=registered
+- GENERATED_PYTHON_CONTRACT_RECURSIVE_IMPORT_DRIFT => diagnostic=as6-diagnose-root-cause-router registry=registered coverage=registered
+- GENERATED_PYTHON_HELPER_CONTRACT_COVERAGE_DRIFT => diagnostic=as6-diagnose-root-cause-router registry=registered coverage=registered
+- GENERATED_PYTHON_IMPORT_DRIFT => diagnostic=as6-diagnose-root-cause-router registry=registered coverage=registered
+- GENERATED_PYTHON_IMPORT_SIDE_EFFECT => diagnostic=as6-diagnose-root-cause-router registry=registered coverage=registered
+- GENERATED_PYTHON_NAMEERROR_DRIFT => diagnostic=as6-diagnose-root-cause-router registry=registered coverage=registered
+- GENERATED_PYTHON_PYCACHE_ARTIFACT_DRIFT => diagnostic=as6-diagnose-root-cause-router registry=registered coverage=registered
+- GENERATED_PYTHON_REGRESSION_DRIFT => diagnostic=as6-diagnose-root-cause-router registry=registered coverage=registered
+- GENERATED_PYTHON_RUNTIME_CONTRACT_DRIFT => diagnostic=as6-diagnose-root-cause-router registry=registered coverage=registered
+- GENERATED_PYTHON_RUNTIME_DRIFT => diagnostic=as6-diagnose-root-cause-router registry=registered coverage=registered
+- GENERATED_PYTHON_SAFETY_LEGACY_SCOPE_FALSE_POSITIVE => diagnostic=as6-diagnose-root-cause-router registry=registered coverage=registered
+- GENERATED_PYTHON_SAFETY_SELF_REFERENCE_FALSE_POSITIVE => diagnostic=as6-diagnose-root-cause-router registry=registered coverage=registered
+- GENERATED_PYTHON_SELF_IMPORT_RECURSION => diagnostic=as6-diagnose-root-cause-router registry=registered coverage=registered
+- GENERATED_PYTHON_SHELL_QUOTE_COLLISION => diagnostic=as6-diagnose-root-cause-router registry=registered coverage=registered
+- GENERATED_PYTHON_TEMPLATE_VARIABLE_LEAK => diagnostic=as6-diagnose-root-cause-router registry=registered coverage=registered
+- GENERATED_TEMPLATE_REFERENCE_DRIFT => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- GENERATED_VARIABLE_NAME_DRIFT => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- GIANT_BASE64_PATCH => diagnostic=as6-diagnose-patch-mode registry=registered coverage=registered
+- HOST_CONFIGURATION_DRIFT => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- HOST_FREEZE_SSH_DROP => diagnostic=as6-diagnose-host-freeze-investigation-pack registry=registered coverage=registered
+- KNOWLEDGE_BASE_REFERENCE_FALSE_POSITIVE => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- METRIC_QUERY_DRIFT => diagnostic=as6-diagnose-diagnostic-contract registry=registered coverage=registered
+- MISSING_CHANGE_IMPACT_ANALYSIS => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- MISSING_CHANGE_ROLLBACK_PLAN => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- MISSING_CHANGE_VALIDATION_PLAN => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- MISSING_REQUIRED_ENV => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- NESTED_HEREDOC_PATCH => diagnostic=as6-diagnose-patch-mode registry=registered coverage=registered
+- NETWORK_BLACKHOLE => diagnostic=as6-diagnose-host-freeze-network registry=registered coverage=registered
+- OVERSIZED_SINGLE_LINE_PATCH => diagnostic=as6-diagnose-patch-mode registry=registered coverage=registered
+- PANEL_SECURITY_DRIFT => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- PAYMENT_ENV_DRIFT => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- PRE_REBOOT_EVIDENCE_MISSING => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- PRODUCTION_FREEZE_VIOLATION => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- PRODUCTION_HEALTH_NOT_CONFIRMED => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- PROVIDER_HYPERVISOR_REBOOT => diagnostic=as6-diagnose-provider-hypervisor-reboot registry=registered coverage=registered
+- PROVIDER_UI_ACTION => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- PYTHON_ARTIFACT_GIT_HYGIENE_DRIFT => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- PYTHON_HELPER_RUNTIME_ARTIFACT_DRIFT => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- REBOOT_FORENSICS_PROVIDER_SUPPRESSOR_DRIFT => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- REBOOT_FORENSICS_RUNTIME_FAILURE => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- REGISTRY_METRIC_QUERY_DRIFT => diagnostic=as6-diagnose-diagnostic-contract registry=registered coverage=registered
+- REGISTRY_SCHEMA_DRIFT => diagnostic=as6-diagnose-diagnostic-contract registry=registered coverage=registered
+- REPAIR_WITHOUT_ROLLBACK => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- REPAIR_WITHOUT_ROOT_CAUSE => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- REPAIR_WITHOUT_VALIDATION => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- ROLLBACK_NOT_TESTED => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- ROLLBACK_VERIFICATION_MISSING => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- ROOT_CAUSE_CLASS_NOT_DOCUMENTED => diagnostic=as6-diagnose-root-cause-governance registry=registered coverage=registered
+- ROOT_CAUSE_GOVERNANCE_COVERAGE_DRIFT => diagnostic=as6-diagnose-root-cause-governance registry=registered coverage=registered
+- ROOT_CAUSE_ROUTER_MISSING_ROUTE => diagnostic=as6-diagnose-root-cause-router registry=registered coverage=registered
+- ROOT_CAUSE_ROUTING_CONTRACT_DRIFT => diagnostic=as6-diagnose-root-cause-router registry=registered coverage=registered
+- ROOT_CAUSE_WITHOUT_COVERAGE => diagnostic=as6-diagnose-root-cause-governance registry=registered coverage=registered
+- ROOT_CAUSE_WITHOUT_DIAGNOSTIC => diagnostic=as6-diagnose-root-cause-governance registry=registered coverage=registered
+- ROOT_CAUSE_WITHOUT_PREVENTION => diagnostic=as6-diagnose-root-cause-governance registry=registered coverage=registered
+- ROOT_CAUSE_WITHOUT_REGISTRY => diagnostic=as6-diagnose-root-cause-governance registry=registered coverage=registered
+- ROOT_CAUSE_WITHOUT_REMEDIATION_PLAN => diagnostic=as6-diagnose-root-cause-remediation registry=registered coverage=registered
+- ROOT_CAUSE_WITHOUT_ROLLBACK => diagnostic=as6-diagnose-root-cause-governance registry=registered coverage=registered
+- ROOT_CAUSE_WITHOUT_VALIDATION_PLAN => diagnostic=as6-diagnose-root-cause-validation registry=registered coverage=registered
+- RUNTIME_DIAGNOSTIC_BACKUP_SCANNED_AS_SOURCE => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- SYSTEMD_TIMER_DRIFT => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- TRACKED_ENV_SECRET_FILE => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- UNATTRIBUTED_PROVIDER_ACTION => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- UNCONTROLLED_CHANGE => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- UNFINISHED_HEREDOC_BLOCK => diagnostic=as6-diagnose-patch-mode registry=registered coverage=registered
+- UNSAFE_AUTO_REPAIR_APPLY => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- UNVALIDATED_AUTONOMOUS_CHANGE => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- VALIDATION_EVIDENCE_MISSING => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+- VARIABLE_CONTRACT_EXCEPTION_HANDLER_FALSE_POSITIVE => diagnostic=as6-diagnose-diagnostic-contract registry=registered coverage=registered
+- VPS_BASELINE_DRIFT => diagnostic=as6-diagnose-root-cause-knowledge-base registry=registered coverage=registered
+
+## L8 Fix: Root Cause Governance Auto-Sync Layer
+
+- AS6_ROOT_CAUSE_GOVERNANCE_AUTO_SYNC_CONTROLLER=IMPLEMENTED
+- ROOT_CAUSE_ROUTE_REGISTRY_SYNC_DRIFT=REPAIRED
+- ROOT_CAUSE_ROUTE_COVERAGE_SYNC_DRIFT=REPAIRED
+- ROOT_CAUSE_STATE_SYNC_DRIFT=REPAIRED
+- Production touched: NO
+
+Added to diagnostics:
+- root_cause_governance_auto_sync_controller
+- root_cause_canonical_map_generation
+- root_cause_route_registry_consistency_check
+- root_cause_route_coverage_consistency_check
+- root_cause_state_registration_consistency_check
+- root_cause_governance_fail_delta_check
+- root_cause_registry_coverage_state_matrix
+
+Added root cause classes:
+- ROOT_CAUSE_GOVERNANCE_AUTO_SYNC_MISSING
+- ROOT_CAUSE_CANONICAL_MAP_MISSING
+- ROOT_CAUSE_ROUTE_REGISTRY_SYNC_DRIFT
+- ROOT_CAUSE_ROUTE_COVERAGE_SYNC_DRIFT
+- ROOT_CAUSE_STATE_SYNC_DRIFT
+- ROOT_CAUSE_GOVERNANCE_FAIL_DELTA_NOT_REDUCED
+- ROOT_CAUSE_REGISTRY_COVERAGE_STATE_MATRIX_MISSING
+
+Added AEC rules:
+- AEC_ROOT_CAUSE_GOVERNANCE_AUTO_SYNC_REQUIRED
+- AEC_ROOT_CAUSE_CANONICAL_MAP_REQUIRED
+- AEC_ROOT_CAUSE_ROUTE_REGISTRY_SYNC_REQUIRED
+- AEC_ROOT_CAUSE_ROUTE_COVERAGE_SYNC_REQUIRED
+- AEC_ROOT_CAUSE_STATE_SYNC_REQUIRED
+- AEC_ROOT_CAUSE_GOVERNANCE_FAIL_DELTA_REQUIRED

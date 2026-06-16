@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /var/www/ai-platform
+dir="runtime/root-cause-governance-auto-sync"
+mkdir -p "$dir"
+out="$dir/latest.out"
+matrix="$dir/root-cause-governance-auto-sync-matrix.tsv"
+map="$dir/root-cause-canonical-map.tsv"
+: > "$out"
+: > "$matrix"
+say(){ echo "$1" | tee -a "$out"; }
+say "=== AS6 ROOT CAUSE GOVERNANCE AUTO SYNC CONTROLLER ==="
+printf "%s\t%s\t%s\t%s\t%s\n" "class" "diagnostic" "registry" "coverage" "state" > "$matrix"
+[ -f "$map" ] || : > "$map"
+checked=0; missing=0
+while IFS="$(printf "\t")" read -r cls diag; do
+  [ -n "${cls:-}" ] || continue
+  [ -n "${diag:-}" ] || diag="unknown"
+  registry="FAIL"; coverage="FAIL"; state="FAIL"
+  grep -Rqs "$cls" ops/registry/as6-diagnostic-registry.md docs/governance docs/diagnostics 2>/dev/null && registry="PASS" || true
+  grep -Rqs "$cls" ops/registry/as6-coverage-registry.md docs/coverage 2>/dev/null && coverage="PASS" || true
+  grep -Rqs "$cls" docs/AS6_PROJECT_STATE.md 2>/dev/null && state="PASS" || true
+  printf "%s\t%s\t%s\t%s\t%s\n" "$cls" "$diag" "$registry" "$coverage" "$state" >> "$matrix"
+  checked=$((checked+1))
+  [ "$registry" = "PASS" ] && [ "$coverage" = "PASS" ] && [ "$state" = "PASS" ] || missing=$((missing+1))
+done < "$map"
+say "AS6_ROOT_CAUSE_GOVERNANCE_AUTO_SYNC_CHECKED=$checked"
+say "AS6_ROOT_CAUSE_GOVERNANCE_AUTO_SYNC_MISSING=$missing"
+say "AS6_ROOT_CAUSE_GOVERNANCE_AUTO_SYNC_MATRIX=$matrix"
+if [ "$missing" -eq 0 ]; then say "AS6_ROOT_CAUSE_GOVERNANCE_AUTO_SYNC=PASS"; say "AS6_ROOT_CAUSE_GOVERNANCE_AUTO_SYNC_RESULT=OK"; exit 0; else say "AS6_ROOT_CAUSE_GOVERNANCE_AUTO_SYNC=FAIL"; say "AS6_ROOT_CAUSE_GOVERNANCE_AUTO_SYNC_RESULT=FAIL"; exit 1; fi

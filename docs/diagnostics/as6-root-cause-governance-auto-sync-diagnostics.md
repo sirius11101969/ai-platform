@@ -1,0 +1,30 @@
+# AS6 Root Cause Governance Auto-Sync Diagnostics
+
+Added checks:
+
+- root_cause_governance_auto_sync_controller
+- root_cause_canonical_map_generation
+- root_cause_route_registry_consistency_check
+- root_cause_route_coverage_consistency_check
+- root_cause_state_registration_consistency_check
+- root_cause_governance_fail_delta_check
+- root_cause_registry_coverage_state_matrix
+
+Added root cause classes:
+
+- ROOT_CAUSE_GOVERNANCE_AUTO_SYNC_MISSING
+- ROOT_CAUSE_CANONICAL_MAP_MISSING
+- ROOT_CAUSE_ROUTE_REGISTRY_SYNC_DRIFT
+- ROOT_CAUSE_ROUTE_COVERAGE_SYNC_DRIFT
+- ROOT_CAUSE_STATE_SYNC_DRIFT
+- ROOT_CAUSE_GOVERNANCE_FAIL_DELTA_NOT_REDUCED
+- ROOT_CAUSE_REGISTRY_COVERAGE_STATE_MATRIX_MISSING
+
+Added AEC rules:
+
+- AEC_ROOT_CAUSE_GOVERNANCE_AUTO_SYNC_REQUIRED
+- AEC_ROOT_CAUSE_CANONICAL_MAP_REQUIRED
+- AEC_ROOT_CAUSE_ROUTE_REGISTRY_SYNC_REQUIRED
+- AEC_ROOT_CAUSE_ROUTE_COVERAGE_SYNC_REQUIRED
+- AEC_ROOT_CAUSE_STATE_SYNC_REQUIRED
+- AEC_ROOT_CAUSE_GOVERNANCE_FAIL_DELTA_REQUIRED
