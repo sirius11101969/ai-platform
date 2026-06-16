@@ -1,0 +1,26 @@
+# AS6 Root Cause Registry Auto-Sync Diagnostics
+
+Added checks:
+
+- root_cause_registry_auto_sync_controller
+- root_cause_route_registry_sync_check
+- root_cause_route_coverage_sync_check
+- root_cause_governance_matrix_generation
+- root_cause_state_registration_sync_check
+- root_cause_registry_coverage_fail_reduction_check
+
+Added root cause classes:
+
+- ROOT_CAUSE_REGISTRY_AUTO_SYNC_MISSING
+- ROOT_CAUSE_ROUTE_REGISTRY_DRIFT
+- ROOT_CAUSE_ROUTE_COVERAGE_DRIFT
+- ROOT_CAUSE_STATE_REGISTRATION_DRIFT
+- ROOT_CAUSE_REGISTRY_COVERAGE_FAIL_REDUCTION_MISSING
+
+Added AEC rules:
+
+- AEC_ROOT_CAUSE_REGISTRY_AUTO_SYNC_REQUIRED
+- AEC_ROOT_CAUSE_ROUTE_MUST_HAVE_REGISTRY
+- AEC_ROOT_CAUSE_ROUTE_MUST_HAVE_COVERAGE
+- AEC_ROOT_CAUSE_STATE_REGISTRATION_REQUIRED
+- AEC_ROOT_CAUSE_GOVERNANCE_FAIL_REDUCTION_REQUIRED

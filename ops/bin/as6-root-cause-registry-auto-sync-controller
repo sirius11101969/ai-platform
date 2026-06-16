@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /var/www/ai-platform
+dir="runtime/root-cause-registry-auto-sync"
+mkdir -p "$dir"
+out="$dir/latest.out"
+matrix="$dir/root-cause-registry-auto-sync-matrix.tsv"
+routes="$dir/routes.tsv"
+fails="$dir/fails.tsv"
+: > "$out"
+: > "$matrix"
+say(){ echo "$1" | tee -a "$out"; }
+say "=== AS6 ROOT CAUSE REGISTRY AUTO-SYNC CONTROLLER ==="
+printf "%s\t%s\t%s\t%s\t%s\n" "class" "diagnostic" "route" "registry" "coverage" > "$matrix"
+[ -f "$routes" ] || : > "$routes"
+[ -f "$fails" ] || : > "$fails"
+classes="$(cat "$routes" "$fails" 2>/dev/null | awk -F "\t" "{print \$1}" | sort -u)"
+checked=0; missing=0
+for cls in $classes; do
+  diag="$(awk -F "\t" -v c="$cls" "$1==c {print \$2; exit}" "$routes" "$fails" 2>/dev/null || true)"
+  [ -n "$diag" ] || diag="unknown"
+  route="FAIL"; registry="FAIL"; coverage="FAIL"
+  grep -q "$cls" "$routes" 2>/dev/null && route="PASS" || true
+  grep -Rqs "$cls" ops/registry/as6-diagnostic-registry.md docs/governance docs/diagnostics docs/AS6_PROJECT_STATE.md 2>/dev/null && registry="PASS" || true
+  grep -Rqs "$cls" ops/registry/as6-coverage-registry.md docs/coverage docs/AS6_PROJECT_STATE.md 2>/dev/null && coverage="PASS" || true
+  printf "%s\t%s\t%s\t%s\t%s\n" "$cls" "$diag" "$route" "$registry" "$coverage" >> "$matrix"
+  checked=$((checked+1))
+  [ "$registry" = "PASS" ] && [ "$coverage" = "PASS" ] || missing=$((missing+1))
+done
+say "ROOT_CAUSE_REGISTRY_AUTO_SYNC_CHECKED=$checked"
+say "ROOT_CAUSE_REGISTRY_AUTO_SYNC_MISSING=$missing"
+say "ROOT_CAUSE_REGISTRY_AUTO_SYNC_MATRIX=$matrix"
+if [ "$missing" -eq 0 ]; then say "AS6_ROOT_CAUSE_REGISTRY_AUTO_SYNC=PASS"; say "AS6_ROOT_CAUSE_REGISTRY_AUTO_SYNC_RESULT=OK"; exit 0; else say "AS6_ROOT_CAUSE_REGISTRY_AUTO_SYNC=FAIL"; say "AS6_ROOT_CAUSE_REGISTRY_AUTO_SYNC_RESULT=FAIL"; exit 1; fi

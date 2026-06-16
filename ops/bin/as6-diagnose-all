@@ -286,6 +286,9 @@ if ops/bin/as6-diagnose-diagnostic-flow-guard; then echo "AS6_DIAGNOSE_ALL_CHECK
 echo ""
 echo "=== RUN: root-cause-governance-completion-controller ==="
 if ops/bin/as6-root-cause-governance-completion-controller; then echo "AS6_DIAGNOSE_ALL_CHECK=OK:root-cause-governance-completion-controller"; else echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:root-cause-governance-completion-controller"; fail=1; fi
+echo ""
+echo "=== RUN: root-cause-registry-auto-sync-controller ==="
+if ops/bin/as6-root-cause-registry-auto-sync-controller; then echo "AS6_DIAGNOSE_ALL_CHECK=OK:root-cause-registry-auto-sync-controller"; else echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:root-cause-registry-auto-sync-controller"; fail=1; fi
 echo "=== AS6 DIAGNOSE ALL FINAL RESULT ==="
 if [ "$fail" -eq 0 ]; then
   echo "AS6_DIAGNOSE_ALL_RESULT=OK"
