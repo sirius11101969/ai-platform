@@ -46,3 +46,7 @@
 ## Autonomous Root Cause Deduplication Controller
 - ops/bin/as6-autonomous-root-cause-deduplication-controller
 - result: AS6_ROOT_CAUSE_DEDUPLICATION_RESULT
+
+## Autonomy Score Controller
+- ops/bin/as6-autonomy-score-controller
+- result: AS6_AUTONOMY_SCORE_RESULT

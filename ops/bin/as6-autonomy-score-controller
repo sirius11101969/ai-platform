@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /var/www/ai-platform
+fail=0
+warn=0
+score=0
+max=100
+dir="runtime/autonomy-score"
+mkdir -p "$dir"
+out="$dir/latest.out"
+matrix="$dir/autonomy-score-matrix.tsv"
+summary="$dir/autonomy-score-summary.env"
+: > "$out"
+: > "$matrix"
+: > "$summary"
+say(){ echo "$1" | tee -a "$out"; }
+ok(){ say "PASS: $1"; }
+soft(){ say "WARN: $1"; warn=1; }
+bad(){ say "FAIL: $1"; fail=1; }
+add_score(){ score=$((score + $1)); }
+gate(){ name="$1"; points="$2"; shift 2; if "$@" >> "$out" 2>&1; then ok "$name"; add_score "$points"; printf "%s\t%s\t%s\n" "$name" "$points" "PASS" >> "$matrix"; else soft "$name"; printf "%s\t%s\t%s\n" "$name" "0" "WARN_OR_FAIL" >> "$matrix"; fi; }
+
+say "=== AS6 AUTONOMY SCORE CONTROLLER ==="
+printf "%s\t%s\t%s\n" "area" "points" "status" > "$matrix"
+
+say "--- autonomy gates ---"
+gate "Beget/VPS baseline diagnostics" 8 ops/bin/as6-diagnose-vps-baseline
+gate "Provider control plane diagnostics" 6 ops/bin/as6-diagnose-provider-control-plane
+gate "Production drift controller" 10 ops/bin/as6-autonomous-production-drift-controller
+gate "Architecture compliance controller" 10 ops/bin/as6-autonomous-architecture-compliance-controller
+gate "Rollback verification controller" 10 ops/bin/as6-autonomous-rollback-verification-controller
+gate "Deployment controller" 10 ops/bin/as6-autonomous-deployment-controller
+gate "Git main sync" 7 ops/bin/as6-diagnose-git-main-sync
+gate "Secret scan" 7 ops/bin/as6-pre-commit-secret-scan
+gate "Root cause knowledge base" 8 ops/bin/as6-diagnose-root-cause-knowledge-base
+gate "Root cause governance" 8 ops/bin/as6-diagnose-root-cause-governance
+
+if [ -x ops/bin/as6-autonomous-evidence-correlation-controller ]; then gate "Evidence correlation controller" 5 ops/bin/as6-autonomous-evidence-correlation-controller; else soft "Evidence correlation controller missing"; printf "%s\t%s\t%s\n" "Evidence correlation controller" "0" "MISSING" >> "$matrix"; fi
+if [ -x ops/bin/as6-autonomous-root-cause-deduplication-controller ]; then gate "Root cause deduplication controller" 4 ops/bin/as6-autonomous-root-cause-deduplication-controller; else soft "Root cause deduplication controller missing"; printf "%s\t%s\t%s\n" "Root cause deduplication controller" "0" "MISSING" >> "$matrix"; fi
+
+say "--- production apply policy ---"
+if grep -Rqs "AS6_DEPLOYMENT_APPLY_MODE=GATED_NO_AUTO_APPLY\|HUMAN_APPROVAL_REQUIRED=YES\|AUTO_APPLY=NO" runtime docs ops 2>/dev/null; then
+  ok "safe no-auto-apply production policy detected"
+  printf "%s\t%s\t%s\n" "Human approval gate" "0" "LIMITS_TO_L7" >> "$matrix"
+else
+  soft "explicit no-auto-apply policy not found"
+fi
+
+if [ "$score" -lt 75 ]; then level="L6"; class="PARTIAL_AUTONOMY"; fi
+if [ "$score" -ge 75 ] && [ "$score" -lt 88 ]; then level="L7"; class="AUTONOMOUS_GOVERNANCE_PLATFORM"; fi
+if [ "$score" -ge 88 ] && [ "$score" -lt 95 ]; then level="L8"; class="CONDITIONAL_AUTONOMOUS_OPERATIONS"; fi
+if [ "$score" -ge 95 ]; then level="L9"; class="FULL_AUTONOMOUS_PRODUCTION_CONTROL"; fi
+
+say "--- result ---"
+say "AS6_AUTONOMY_CHAIN=Beget_VPS_to_GitHub_to_ChatGPT_Codex_to_AI_Platform_to_Production"
+say "AS6_AUTONOMY_SCORE_PERCENT=$score"
+say "AS6_AUTONOMY_LEVEL=$level"
+say "AS6_AUTONOMY_CLASS=$class"
+say "AS6_AUTONOMY_HUMAN_DEPENDENCY_PERCENT=$((100 - score))"
+say "AS6_AUTONOMY_SCORE_MATRIX=$matrix"
+say "AS6_AUTONOMY_SCORE_EVIDENCE=$out"
+printf "%s\n" "AS6_AUTONOMY_SCORE_PERCENT=$score" "AS6_AUTONOMY_LEVEL=$level" "AS6_AUTONOMY_CLASS=$class" "AS6_AUTONOMY_HUMAN_DEPENDENCY_PERCENT=$((100 - score))" "AS6_AUTONOMY_SCORE_MATRIX=$matrix" "AS6_AUTONOMY_SCORE_EVIDENCE=$out" > "$summary"
+if [ "$score" -ge 75 ]; then say "AS6_AUTONOMY_SCORE_RESULT=OK"; exit 0; else say "AS6_AUTONOMY_SCORE_RESULT=FAIL"; exit 1; fi

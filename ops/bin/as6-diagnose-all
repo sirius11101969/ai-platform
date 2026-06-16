@@ -261,3 +261,12 @@ else
   echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:autonomous-root-cause-deduplication-controller"
   fail=1
 fi
+
+echo ""
+echo "=== RUN: autonomy-score-controller ==="
+if ops/bin/as6-autonomy-score-controller; then
+  echo "AS6_DIAGNOSE_ALL_CHECK=OK:autonomy-score-controller"
+else
+  echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:autonomy-score-controller"
+  fail=1
+fi

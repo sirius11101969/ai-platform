@@ -44,3 +44,6 @@
 
 ## Autonomous Root Cause Deduplication Coverage
 - AS6_ROOT_CAUSE_DEDUPLICATION_COVERAGE=REGISTERED
+
+## Autonomy Score Coverage
+- AS6_AUTONOMY_SCORE_COVERAGE=REGISTERED
