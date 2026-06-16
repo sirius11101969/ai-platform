@@ -2,7 +2,7 @@
 
 Purpose:
 
-Correlate runtime evidence artifacts across deployment, rollback, incidents, change approval, governance, and knowledge-base controllers.
+Correlate runtime evidence artifacts across rollback, deployment, incidents, change approval, governance, and knowledge-base controllers.
 
 Controller:
 

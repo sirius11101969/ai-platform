@@ -7,12 +7,11 @@ Registered diagnostic artifact:
 New diagnostic checks added:
 
 - evidence_correlation_controller
-- evidence_directory_presence_check
 - evidence_live_gate_capture
 - evidence_matrix_generation
 - evidence_result_marker_check
 - evidence_pointer_check
-- expected_evidence_contract_check
+- required_evidence_contract_check
 - orphan_evidence_scan
 - evidence_summary_generation
 - evidence_secret_scan_gate

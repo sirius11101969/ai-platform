@@ -31,11 +31,3 @@ Verification: run orphan evidence scan.
 Fix: register or clean up evidence artifact.
 Rollback: do not use orphan evidence for promotion.
 Prevention: enforce AEC_EVIDENCE_ORPHAN_SCAN_REQUIRED.
-
-## EVIDENCE_SECRET_SCAN_FAILED
-Severity: critical
-Symptoms: evidence or changed files fail secret scan.
-Verification: run pre-commit secret scan.
-Fix: remove secret from evidence or changed file.
-Rollback: block commit and push.
-Prevention: enforce AEC_EVIDENCE_SECRET_SCAN_REQUIRED.

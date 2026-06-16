@@ -2,11 +2,7 @@
 
 Rule:
 
-Evidence Correlation validates that controller evidence exists, contains result markers, and can be traced back to governance/diagnostics.
-
-Required result:
-
-- AS6_EVIDENCE_CORRELATION_RESULT=OK
+Evidence Correlation validates that controller evidence exists, contains result markers, and can be traced back to diagnostics/governance.
 
 Secrets:
 
