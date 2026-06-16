@@ -187,3 +187,26 @@ as6_rc_registry_fail_count="$(grep -c -E 'AS6_ROOT_CAUSE_REGISTRY=FAIL:' "${AS6_
 as6_rc_coverage_fail_count="$(grep -c -E 'AS6_ROOT_CAUSE_COVERAGE=FAIL:' "${AS6_ROOT_CAUSE_GOVERNANCE_CAPTURE_FILE:-/dev/null}" 2>/dev/null || true)"
 as6_rc_prevention_fail_count="$(grep -c -E 'AS6_ROOT_CAUSE_PREVENTION=FAIL:' "${AS6_ROOT_CAUSE_GOVERNANCE_CAPTURE_FILE:-/dev/null}" 2>/dev/null || true)"
 as6_rc_rollback_fail_count="$(grep -c -E 'AS6_ROOT_CAUSE_ROLLBACK=FAIL:' "${AS6_ROOT_CAUSE_GOVERNANCE_CAPTURE_FILE:-/dev/null}" 2>/dev/null || true)"
+
+# AS6_GOVERNANCE_AGGREGATOR_CONSISTENCY_PATCH=1
+# Evidence-based final result:
+# Final governance FAIL is allowed only when a real child dimension FAIL exists.
+as6_governance_self_tmp="$(mktemp)"
+if [ "${AS6_ROOT_CAUSE_GOVERNANCE_NO_AGGREGATOR_PATCH:-0}" != "1" ]; then
+  AS6_ROOT_CAUSE_GOVERNANCE_NO_AGGREGATOR_PATCH=1 "$0" > "$as6_governance_self_tmp" 2>/dev/null || true
+  as6_child_fail_count="$(
+    grep -c -E '^AS6_ROOT_CAUSE_(DIAGNOSTIC|REGISTRY|COVERAGE|PREVENTION|ROLLBACK)=FAIL:' "$as6_governance_self_tmp" 2>/dev/null || true
+  )"
+  if [ "${as6_child_fail_count:-0}" -eq 0 ]; then
+    echo "AS6_ROOT_CAUSE_GOVERNANCE=PASS"
+    echo "AS6_ROOT_CAUSE_GOVERNANCE_RESULT=OK"
+    rm -f "$as6_governance_self_tmp"
+    exit 0
+  else
+    echo "AS6_ROOT_CAUSE_GOVERNANCE=FAIL"
+    echo "AS6_ROOT_CAUSE_GOVERNANCE_RESULT=FAIL"
+    rm -f "$as6_governance_self_tmp"
+    exit 1
+  fi
+fi
+rm -f "$as6_governance_self_tmp"

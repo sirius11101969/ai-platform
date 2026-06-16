@@ -1,0 +1,27 @@
+# AS6 Root Cause Governance Aggregator Consistency Diagnostics
+
+Added checks:
+
+- root_cause_governance_final_result_validator
+- root_cause_governance_fail_source_locator
+- root_cause_governance_state_reconciliation
+- root_cause_governance_registry_reconciliation
+- root_cause_governance_coverage_reconciliation
+- root_cause_governance_orphan_failure_detector
+- root_cause_governance_aggregator_consistency
+
+Added root cause classes:
+
+- ROOT_CAUSE_GOVERNANCE_FINAL_AGGREGATOR_DRIFT
+- ROOT_CAUSE_GOVERNANCE_FALSE_FAIL
+- ROOT_CAUSE_GOVERNANCE_STATE_RECONCILIATION_DRIFT
+- ROOT_CAUSE_GOVERNANCE_ORPHAN_FAILURE
+- ROOT_CAUSE_GOVERNANCE_AGGREGATION_MISMATCH
+
+Added AEC rules:
+
+- AEC_GOVERNANCE_RESULT_MUST_MATCH_CHILD_RESULTS
+- AEC_GOVERNANCE_FAIL_REQUIRES_EVIDENCE
+- AEC_GOVERNANCE_ORPHAN_FAILURE_PROHIBITED
+- AEC_GOVERNANCE_RECONCILIATION_REQUIRED
+- AEC_GOVERNANCE_AGGREGATOR_CONSISTENCY_REQUIRED

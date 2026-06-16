@@ -719,3 +719,6 @@
 
 ## Root Cause Governance Final Reconciliation Coverage
 - AS6_ROOT_CAUSE_GOVERNANCE_FINAL_RECONCILIATION_COVERAGE=REGISTERED
+
+## Root Cause Governance Aggregator Consistency Coverage
+- AS6_ROOT_CAUSE_GOVERNANCE_AGGREGATOR_CONSISTENCY_COVERAGE=REGISTERED

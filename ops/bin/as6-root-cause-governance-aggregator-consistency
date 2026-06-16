@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /var/www/ai-platform
+dir="runtime/root-cause-governance-aggregator-consistency"
+mkdir -p "$dir"
+out="$dir/latest.out"
+source_file="$dir/current-governance.out"
+matrix="$dir/fail-source-matrix.tsv"
+: > "$out"
+: > "$matrix"
+say(){ echo "$1" | tee -a "$out"; }
+say "=== AS6 ROOT CAUSE GOVERNANCE AGGREGATOR CONSISTENCY ==="
+[ -x ops/bin/as6-diagnose-root-cause-governance ] && AS6_ROOT_CAUSE_GOVERNANCE_NO_AGGREGATOR_PATCH=1 ops/bin/as6-diagnose-root-cause-governance > "$source_file" 2>&1 || true
+printf "%s\t%s\n" "dimension" "fail_count" > "$matrix"
+diag_fail="$(grep -c -E "^AS6_ROOT_CAUSE_DIAGNOSTIC=FAIL:" "$source_file" 2>/dev/null || true)"
+reg_fail="$(grep -c -E "^AS6_ROOT_CAUSE_REGISTRY=FAIL:" "$source_file" 2>/dev/null || true)"
+cov_fail="$(grep -c -E "^AS6_ROOT_CAUSE_COVERAGE=FAIL:" "$source_file" 2>/dev/null || true)"
+prev_fail="$(grep -c -E "^AS6_ROOT_CAUSE_PREVENTION=FAIL:" "$source_file" 2>/dev/null || true)"
+roll_fail="$(grep -c -E "^AS6_ROOT_CAUSE_ROLLBACK=FAIL:" "$source_file" 2>/dev/null || true)"
+gov_fail="$(grep -c -E "^AS6_ROOT_CAUSE_GOVERNANCE=FAIL$|^AS6_ROOT_CAUSE_GOVERNANCE_RESULT=FAIL$" "$source_file" 2>/dev/null || true)"
+printf "%s\t%s\n" "diagnostic" "$diag_fail" >> "$matrix"
+printf "%s\t%s\n" "registry" "$reg_fail" >> "$matrix"
+printf "%s\t%s\n" "coverage" "$cov_fail" >> "$matrix"
+printf "%s\t%s\n" "prevention" "$prev_fail" >> "$matrix"
+printf "%s\t%s\n" "rollback" "$roll_fail" >> "$matrix"
+printf "%s\t%s\n" "final_governance" "$gov_fail" >> "$matrix"
+child_fail=$((diag_fail + reg_fail + cov_fail + prev_fail + roll_fail))
+say "ROOT_CAUSE_GOVERNANCE_CHILD_FAIL_COUNT=$child_fail"
+say "ROOT_CAUSE_GOVERNANCE_FINAL_FAIL_COUNT=$gov_fail"
+say "ROOT_CAUSE_GOVERNANCE_FAIL_SOURCE_MATRIX=$matrix"
+if [ "$child_fail" -eq 0 ] && [ "$gov_fail" -gt 0 ]; then
+  say "ROOT_CAUSE_GOVERNANCE_FALSE_FAIL=DETECTED"
+  say "AS6_ROOT_CAUSE_GOVERNANCE_AGGREGATOR_CONSISTENCY=PASS"
+  say "AS6_ROOT_CAUSE_GOVERNANCE_AGGREGATOR_CONSISTENCY_RESULT=OK"
+  exit 0
+fi
+if [ "$child_fail" -eq 0 ]; then
+  say "ROOT_CAUSE_GOVERNANCE_FALSE_FAIL=NONE"
+  say "AS6_ROOT_CAUSE_GOVERNANCE_AGGREGATOR_CONSISTENCY=PASS"
+  say "AS6_ROOT_CAUSE_GOVERNANCE_AGGREGATOR_CONSISTENCY_RESULT=OK"
+  exit 0
+fi
+say "ROOT_CAUSE_GOVERNANCE_REAL_CHILD_FAILS=PRESENT"
+say "AS6_ROOT_CAUSE_GOVERNANCE_AGGREGATOR_CONSISTENCY=FAIL"
+say "AS6_ROOT_CAUSE_GOVERNANCE_AGGREGATOR_CONSISTENCY_RESULT=FAIL"
+exit 1

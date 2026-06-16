@@ -619,3 +619,7 @@
 ## Root Cause Governance Final Reconciliation
 - diagnostic: ops/bin/as6-root-cause-governance-final-reconciliation-controller
 - result: AS6_ROOT_CAUSE_GOVERNANCE_FINAL_RECONCILIATION_RESULT
+
+## Root Cause Governance Aggregator Consistency
+- diagnostic: ops/bin/as6-root-cause-governance-aggregator-consistency
+- result: AS6_ROOT_CAUSE_GOVERNANCE_AGGREGATOR_CONSISTENCY_RESULT
