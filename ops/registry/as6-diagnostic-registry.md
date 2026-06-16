@@ -70,3 +70,8 @@
 ## Diagnostic Flow Guard
 - ops/bin/as6-diagnose-diagnostic-flow-guard
 - result: AS6_DIAGNOSTIC_FLOW_GUARD_RESULT
+
+## Diagnostic Status Registry Repair
+- file: ops/status/diagnostic-status-registry.json
+- diagnostic: ops/bin/as6-diagnose-diagnostic-flow-guard
+- result: AS6_DIAGNOSTIC_FLOW_GUARD_RESULT

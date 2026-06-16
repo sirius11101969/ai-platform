@@ -898,3 +898,25 @@ Added AEC rules:
 - AEC_DIAGNOSE_ALL_FINAL_RESULT_MUST_BE_LAST
 - AEC_DIAGNOSE_ALL_NO_EARLY_TOP_LEVEL_EXIT
 - AEC_L7_CONTROLLERS_MUST_BE_REACHABLE
+
+## L7 Fix: Diagnostic Status Registry Repair
+
+- DIAGNOSTIC_STATUS_REGISTRY_MISSING=FIXED_FOR:ops/bin/as6-diagnose-diagnostic-flow-guard
+- AS6_DIAGNOSTIC_STATUS_REGISTRY_COVERAGE=REGISTERED
+
+Added to diagnostics:
+- diagnostic_status_registry_flow_guard_registration
+- diagnostic_status_registry_json_normalization
+- diagnostic_status_registry_required_diagnostic_presence
+- diagnostic_status_registry_l7_guard_alignment
+
+Added root cause classes:
+- DIAGNOSTIC_STATUS_REGISTRY_MISSING
+- DIAGNOSTIC_STATUS_REGISTRY_JSON_DRIFT
+- DIAGNOSTIC_STATUS_REGISTRY_L7_GUARD_MISSING
+- DIAGNOSTIC_STATUS_REGISTRY_REQUIRED_ENTRY_MISSING
+
+Added AEC rules:
+- AEC_DIAGNOSTIC_STATUS_REGISTRY_REQUIRED
+- AEC_DIAGNOSTIC_FLOW_GUARD_MUST_BE_IN_STATUS_REGISTRY
+- AEC_DIAGNOSTIC_STATUS_REGISTRY_JSON_VALID_REQUIRED

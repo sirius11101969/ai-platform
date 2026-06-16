@@ -1,0 +1,21 @@
+# AS6 Diagnostic Status Registry Diagnostics
+
+Added checks:
+
+- diagnostic_status_registry_flow_guard_registration
+- diagnostic_status_registry_json_normalization
+- diagnostic_status_registry_required_diagnostic_presence
+- diagnostic_status_registry_l7_guard_alignment
+
+Added root cause classes:
+
+- DIAGNOSTIC_STATUS_REGISTRY_MISSING
+- DIAGNOSTIC_STATUS_REGISTRY_JSON_DRIFT
+- DIAGNOSTIC_STATUS_REGISTRY_L7_GUARD_MISSING
+- DIAGNOSTIC_STATUS_REGISTRY_REQUIRED_ENTRY_MISSING
+
+Added AEC rules:
+
+- AEC_DIAGNOSTIC_STATUS_REGISTRY_REQUIRED
+- AEC_DIAGNOSTIC_FLOW_GUARD_MUST_BE_IN_STATUS_REGISTRY
+- AEC_DIAGNOSTIC_STATUS_REGISTRY_JSON_VALID_REQUIRED

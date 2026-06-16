@@ -65,3 +65,6 @@
 
 ## Diagnostic Flow Coverage
 - AS6_DIAGNOSTIC_FLOW_COVERAGE=REGISTERED
+
+## Diagnostic Status Registry Coverage
+- AS6_DIAGNOSTIC_STATUS_REGISTRY_COVERAGE=REGISTERED
