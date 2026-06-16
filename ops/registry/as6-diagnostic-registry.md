@@ -30,3 +30,7 @@
 ## Autonomous Incident Lifecycle Controller
 - ops/bin/as6-autonomous-incident-lifecycle-controller
 - result: AS6_INCIDENT_LIFECYCLE_RESULT
+
+## Autonomous Change Approval Controller
+- ops/bin/as6-autonomous-change-approval-controller
+- result: AS6_CHANGE_APPROVAL_RESULT

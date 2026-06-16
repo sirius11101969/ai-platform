@@ -32,3 +32,6 @@
 
 ## Autonomous Incident Lifecycle Coverage
 - AS6_INCIDENT_LIFECYCLE_COVERAGE=REGISTERED
+
+## Autonomous Change Approval Coverage
+- AS6_CHANGE_APPROVAL_COVERAGE=REGISTERED

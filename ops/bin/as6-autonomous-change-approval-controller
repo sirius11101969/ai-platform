@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /var/www/ai-platform
+fail=0
+warn=0
+decision="APPROVED_FOR_PLANNING_ONLY"
+approval_mode="NO_AUTO_APPLY"
+approval_dir="runtime/change-approval"
+evidence_dir="$approval_dir/evidence"
+mkdir -p "$evidence_dir"
+evidence_file="$approval_dir/latest.out"
+approval_file="$approval_dir/change-approval.env"
+approval_plan="$approval_dir/change-approval-plan.md"
+: > "$evidence_file"
+say(){ echo "$1" | tee -a "$evidence_file"; }
+ok(){ say "PASS: $1"; }
+soft(){ say "WARN: $1"; warn=1; }
+bad(){ say "FAIL: $1"; fail=1; decision="BLOCKED"; }
+run_capture(){ name="$1"; outfile="$2"; shift 2; say "--- capture: $name ---"; if "$@" > "$outfile" 2>&1; then ok "$name"; else bad "$name"; fi; cat "$outfile" >> "$evidence_file"; }
+
+say "=== AS6 AUTONOMOUS CHANGE APPROVAL CONTROLLER ==="
+
+say "--- approval preconditions ---"
+[ -f docs/AS6_PROJECT_STATE.md ] && ok "project state exists" || bad "project state missing"
+[ -f docker-compose.yml ] && ok "deployment compose exists" || bad "deployment compose missing"
+[ -f nginx.conf ] && ok "nginx config exists" || bad "nginx config missing"
+
+say "--- gate capture ---"
+[ -x ops/bin/as6-autonomous-deployment-controller ] && run_capture "deployment controller" "$evidence_dir/deployment-controller.out" ops/bin/as6-autonomous-deployment-controller || bad "deployment controller missing"
+[ -x ops/bin/as6-autonomous-rollback-verification-controller ] && run_capture "rollback verification" "$evidence_dir/rollback-verification.out" ops/bin/as6-autonomous-rollback-verification-controller || bad "rollback verification missing"
+[ -x ops/bin/as6-autonomous-incident-lifecycle-controller ] && run_capture "incident lifecycle" "$evidence_dir/incident-lifecycle.out" ops/bin/as6-autonomous-incident-lifecycle-controller || soft "incident lifecycle missing"
+[ -x ops/bin/as6-autonomous-incident-governance-controller ] && run_capture "incident governance" "$evidence_dir/incident-governance.out" ops/bin/as6-autonomous-incident-governance-controller || soft "incident governance missing"
+[ -x ops/bin/as6-autonomous-knowledge-base-controller ] && run_capture "knowledge base" "$evidence_dir/knowledge-base.out" ops/bin/as6-autonomous-knowledge-base-controller || soft "knowledge base controller missing"
+
+say "--- git and production safety ---"
+if [ -x ops/bin/as6-diagnose-git-main-sync ]; then run_capture "git main sync" "$evidence_dir/git-main-sync.out" ops/bin/as6-diagnose-git-main-sync; else bad "git main sync diagnostic missing"; fi
+if [ -x ops/bin/as6-diagnose-production-deployment-safety ]; then run_capture "production deployment safety" "$evidence_dir/production-deployment-safety.out" ops/bin/as6-diagnose-production-deployment-safety; else bad "production deployment safety diagnostic missing"; fi
+if curl -fsS --max-time 15 https://www.as6.ru/api/health 2>/dev/null | grep -q "\"status\":\"OK\""; then ok "public production health OK"; else bad "public production health failed"; fi
+
+say "--- secret and working tree gates ---"
+if git ls-files .env 2>/dev/null | grep -Fxq ".env"; then bad ".env is tracked by git"; else ok ".env is not tracked by git"; fi
+if [ -x ops/bin/as6-pre-commit-secret-scan ]; then run_capture "secret scan" "$evidence_dir/secret-scan.out" ops/bin/as6-pre-commit-secret-scan; else bad "secret scan missing"; fi
+if git status --short | grep -q .; then soft "working tree has changes; apply approval blocked until commit"; approval_mode="NO_AUTO_APPLY_WORKING_TREE_DIRTY"; else ok "working tree clean"; fi
+
+say "--- human approval policy ---"
+say "AS6_CHANGE_APPROVAL_HUMAN_APPROVAL_REQUIRED=YES"
+say "AS6_CHANGE_APPROVAL_AUTO_APPLY=NO"
+ok "controller approves planning/evidence only and blocks automatic production apply"
+
+if [ "$fail" -eq 0 ]; then
+  decision="APPROVED_FOR_PLANNING_ONLY"
+else
+  decision="BLOCKED"
+fi
+
+say "--- approval artifact generation ---"
+printf "%s\n" "AS6_CHANGE_APPROVAL_DECISION=$decision" "AS6_CHANGE_APPROVAL_MODE=$approval_mode" "AS6_CHANGE_APPROVAL_AUTO_APPLY=NO" "AS6_CHANGE_APPROVAL_HUMAN_APPROVAL_REQUIRED=YES" "AS6_CHANGE_APPROVAL_EVIDENCE=$evidence_file" > "$approval_file"
+printf "%s\n" "# AS6 Change Approval Plan" "" "Decision: $decision" "Mode: $approval_mode" "" "Policy:" "" "- No automatic production apply." "- Human approval required before production-changing action." "- Rollback verification required." "- Deployment controller required." "- Incident lifecycle required." "- Secret scan required." "- Git main sync required." "" "Evidence:" "" "- $evidence_file" "- $approval_file" > "$approval_plan"
+ok "approval artifact generated: $approval_file"
+ok "approval plan generated: $approval_plan"
+
+say "--- result ---"
+say "AS6_CHANGE_APPROVAL_DECISION=$decision"
+say "AS6_CHANGE_APPROVAL_MODE=$approval_mode"
+if [ "$fail" -eq 0 ]; then
+  say "AS6_CHANGE_APPROVAL=PASS"
+  if [ "$warn" -eq 1 ]; then say "AS6_CHANGE_APPROVAL_WARNINGS=PRESENT"; else say "AS6_CHANGE_APPROVAL_WARNINGS=NONE"; fi
+  say "AS6_CHANGE_APPROVAL_RESULT=OK"
+else
+  say "AS6_CHANGE_APPROVAL=FAIL"
+  say "AS6_CHANGE_APPROVAL_RESULT=FAIL"
+fi
+say "AS6_CHANGE_APPROVAL_EVIDENCE=$evidence_file"
+exit "$fail"

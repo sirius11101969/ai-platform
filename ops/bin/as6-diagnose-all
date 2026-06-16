@@ -225,3 +225,12 @@ else
   echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:autonomous-incident-lifecycle-controller"
   fail=1
 fi
+
+echo ""
+echo "=== RUN: autonomous-change-approval-controller ==="
+if ops/bin/as6-autonomous-change-approval-controller; then
+  echo "AS6_DIAGNOSE_ALL_CHECK=OK:autonomous-change-approval-controller"
+else
+  echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:autonomous-change-approval-controller"
+  fail=1
+fi

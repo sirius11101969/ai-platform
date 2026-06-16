@@ -1,0 +1,45 @@
+# AS6 Autonomous Change Approval Diagnostics
+
+Registered diagnostic artifact:
+
+- ops/bin/as6-autonomous-change-approval-controller
+
+New diagnostic checks added:
+
+- change_approval_controller
+- change_approval_preconditions
+- change_approval_deployment_gate
+- change_approval_rollback_gate
+- change_approval_incident_lifecycle_gate
+- change_approval_incident_governance_gate
+- change_approval_knowledge_base_gate
+- change_approval_git_sync_gate
+- change_approval_production_safety_gate
+- change_approval_public_health_gate
+- change_approval_secret_scan_gate
+- change_approval_working_tree_gate
+- change_approval_human_approval_gate
+- change_approval_no_auto_apply_policy
+- change_approval_evidence_generation
+
+New error classes added:
+
+- CHANGE_APPROVAL_MISSING
+- CHANGE_APPROVAL_EVIDENCE_MISSING
+- CHANGE_APPROVAL_WITHOUT_ROLLBACK
+- CHANGE_APPROVAL_WITHOUT_DEPLOYMENT_GATE
+- CHANGE_APPROVAL_WITHOUT_INCIDENT_LIFECYCLE
+- CHANGE_APPROVAL_WITHOUT_SECRET_SCAN
+- CHANGE_APPROVAL_WITHOUT_GIT_SYNC
+- CHANGE_APPROVAL_WITH_DIRTY_WORKTREE
+- CHANGE_APPROVAL_HUMAN_APPROVAL_MISSING
+- CHANGE_APPROVAL_AUTO_APPLY_POLICY_VIOLATION
+
+New AEC rules added:
+
+- AEC_CHANGE_REQUIRES_APPROVAL
+- AEC_CHANGE_REQUIRES_EVIDENCE
+- AEC_CHANGE_REQUIRES_ROLLBACK_VERIFICATION
+- AEC_CHANGE_REQUIRES_DEPLOYMENT_GATE
+- AEC_CHANGE_REQUIRES_INCIDENT_LIFECYCLE
+- AEC_CHANGE_AUTO_APPLY_FORBIDDEN_WITHOUT_HUMAN_APPROVAL
