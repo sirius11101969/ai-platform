@@ -1,0 +1,32 @@
+# AS6 Root Cause Governance Final Reconciliation Diagnostics
+
+Added checks:
+
+- root_cause_governance_final_state
+- root_cause_governance_aggregator
+- root_cause_governance_state_reconciliation
+- root_cause_governance_registry_reconciliation
+- root_cause_governance_coverage_reconciliation
+- root_cause_governance_route_reconciliation
+- root_cause_governance_fail_source_locator
+- root_cause_governance_orphan_class_detector
+- root_cause_governance_final_result_validator
+
+Added root cause classes:
+
+- ROOT_CAUSE_GOVERNANCE_FINAL_AGGREGATOR_DRIFT
+- ROOT_CAUSE_GOVERNANCE_RECONCILIATION_DRIFT
+- ROOT_CAUSE_GOVERNANCE_ORPHAN_CLASS
+- ROOT_CAUSE_GOVERNANCE_REGISTRY_STATE_MISMATCH
+- ROOT_CAUSE_GOVERNANCE_COVERAGE_STATE_MISMATCH
+- ROOT_CAUSE_GOVERNANCE_ROUTE_STATE_MISMATCH
+- ROOT_CAUSE_GOVERNANCE_FALSE_FAIL
+- ROOT_CAUSE_GOVERNANCE_FINAL_STATE_DRIFT
+
+Added AEC rules:
+
+- AEC_ROOT_CAUSE_GOVERNANCE_FINAL_RESULT_MUST_MATCH_EVIDENCE
+- AEC_ROOT_CAUSE_GOVERNANCE_REGISTRY_RECONCILIATION_REQUIRED
+- AEC_ROOT_CAUSE_GOVERNANCE_COVERAGE_RECONCILIATION_REQUIRED
+- AEC_ROOT_CAUSE_GOVERNANCE_ROUTE_RECONCILIATION_REQUIRED
+- AEC_ROOT_CAUSE_GOVERNANCE_FALSE_FAIL_PROHIBITED

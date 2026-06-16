@@ -615,3 +615,7 @@
 - diagnostic: as6-diagnose-vps-baseline
 - class: VPS_BASELINE_DRIFT
 - source: bulk-root-cause-governance-repair
+
+## Root Cause Governance Final Reconciliation
+- diagnostic: ops/bin/as6-root-cause-governance-final-reconciliation-controller
+- result: AS6_ROOT_CAUSE_GOVERNANCE_FINAL_RECONCILIATION_RESULT

@@ -295,6 +295,9 @@ if ops/bin/as6-root-cause-governance-auto-sync-controller; then echo "AS6_DIAGNO
 echo ""
 echo "=== RUN: root-cause-governance-sync-authority-controller ==="
 if ops/bin/as6-root-cause-governance-sync-authority-controller; then echo "AS6_DIAGNOSE_ALL_CHECK=OK:root-cause-governance-sync-authority-controller"; else echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:root-cause-governance-sync-authority-controller"; fail=1; fi
+echo ""
+echo "=== RUN: root-cause-governance-final-reconciliation-controller ==="
+if ops/bin/as6-root-cause-governance-final-reconciliation-controller; then echo "AS6_DIAGNOSE_ALL_CHECK=OK:root-cause-governance-final-reconciliation-controller"; else echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:root-cause-governance-final-reconciliation-controller"; fail=1; fi
 echo "=== AS6 DIAGNOSE ALL FINAL RESULT ==="
 if [ "$fail" -eq 0 ]; then
   echo "AS6_DIAGNOSE_ALL_RESULT=OK"

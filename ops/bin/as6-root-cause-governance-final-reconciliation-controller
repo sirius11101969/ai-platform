@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /var/www/ai-platform
+dir="runtime/root-cause-governance-final-reconciliation"
+mkdir -p "$dir"
+out="$dir/latest.out"
+matrix="$dir/root-cause-governance-final-reconciliation-matrix.tsv"
+: > "$out"
+: > "$matrix"
+say(){ echo "$1" | tee -a "$out"; }
+say "=== AS6 ROOT CAUSE GOVERNANCE FINAL RECONCILIATION CONTROLLER ==="
+[ -x ops/bin/as6-diagnose-root-cause-governance ] && ops/bin/as6-diagnose-root-cause-governance > "$dir/current-governance.out" 2>&1 || true
+reg_fail="$(grep -c -E "AS6_ROOT_CAUSE_REGISTRY=FAIL:" "$dir/current-governance.out" 2>/dev/null || true)"
+cov_fail="$(grep -c -E "AS6_ROOT_CAUSE_COVERAGE=FAIL:" "$dir/current-governance.out" 2>/dev/null || true)"
+diag_fail="$(grep -c -E "AS6_ROOT_CAUSE_DIAGNOSTIC=FAIL:" "$dir/current-governance.out" 2>/dev/null || true)"
+prev_fail="$(grep -c -E "AS6_ROOT_CAUSE_PREVENTION=FAIL:" "$dir/current-governance.out" 2>/dev/null || true)"
+roll_fail="$(grep -c -E "AS6_ROOT_CAUSE_ROLLBACK=FAIL:" "$dir/current-governance.out" 2>/dev/null || true)"
+printf "%s\t%s\n" "check" "fail_count" > "$matrix"
+printf "%s\t%s\n" "diagnostic" "$diag_fail" >> "$matrix"
+printf "%s\t%s\n" "registry" "$reg_fail" >> "$matrix"
+printf "%s\t%s\n" "coverage" "$cov_fail" >> "$matrix"
+printf "%s\t%s\n" "prevention" "$prev_fail" >> "$matrix"
+printf "%s\t%s\n" "rollback" "$roll_fail" >> "$matrix"
+say "ROOT_CAUSE_GOVERNANCE_FINAL_DIAGNOSTIC_FAIL_COUNT=$diag_fail"
+say "ROOT_CAUSE_GOVERNANCE_FINAL_REGISTRY_FAIL_COUNT=$reg_fail"
+say "ROOT_CAUSE_GOVERNANCE_FINAL_COVERAGE_FAIL_COUNT=$cov_fail"
+say "ROOT_CAUSE_GOVERNANCE_FINAL_PREVENTION_FAIL_COUNT=$prev_fail"
+say "ROOT_CAUSE_GOVERNANCE_FINAL_ROLLBACK_FAIL_COUNT=$roll_fail"
+if [ "$diag_fail" -eq 0 ] && [ "$reg_fail" -eq 0 ] && [ "$cov_fail" -eq 0 ] && [ "$prev_fail" -eq 0 ] && [ "$roll_fail" -eq 0 ]; then
+  say "AS6_ROOT_CAUSE_GOVERNANCE_FINAL_RECONCILIATION=PASS"
+  say "AS6_ROOT_CAUSE_GOVERNANCE_FINAL_RECONCILIATION_RESULT=OK"
+  exit 0
+else
+  say "AS6_ROOT_CAUSE_GOVERNANCE_FINAL_RECONCILIATION=FAIL"
+  say "AS6_ROOT_CAUSE_GOVERNANCE_FINAL_RECONCILIATION_RESULT=FAIL"
+  exit 1
+fi

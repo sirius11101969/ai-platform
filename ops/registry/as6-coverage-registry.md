@@ -716,3 +716,6 @@
 - class: VPS_BASELINE_DRIFT
 - coverage: registered
 - source: bulk-root-cause-governance-repair
+
+## Root Cause Governance Final Reconciliation Coverage
+- AS6_ROOT_CAUSE_GOVERNANCE_FINAL_RECONCILIATION_COVERAGE=REGISTERED
