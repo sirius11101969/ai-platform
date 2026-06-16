@@ -747,3 +747,29 @@ Added root cause classes:
 - AUTONOMY_HUMAN_DEPENDENCY_TOO_HIGH
 - AUTONOMY_LEVEL_DRIFT
 - AUTONOMY_SCORE_EVIDENCE_MISSING
+
+## L7 Close Autonomy Gap
+
+- AS6_EVIDENCE_CORRELATION_CONTROLLER=IMPLEMENTED
+- AS6_ROOT_CAUSE_DEDUPLICATION_CONTROLLER=IMPLEMENTED
+- Target: move Autonomy Score from 74% L6 to L7 threshold
+
+Added to diagnostics:
+- evidence_correlation_controller
+- evidence_result_marker_check
+- evidence_matrix_generation
+- root_cause_deduplication_controller
+- root_cause_duplicate_detection
+- root_cause_alias_detection
+- root_cause_overlap_detection
+- root_cause_orphan_class_detection
+
+Added root cause classes:
+- EVIDENCE_CORRELATION_MISSING
+- EVIDENCE_MATRIX_MISSING
+- EVIDENCE_RESULT_MARKER_MISSING
+- ROOT_CAUSE_DUPLICATE_CLASS
+- ROOT_CAUSE_ALIAS_DRIFT
+- ROOT_CAUSE_OVERLAP_DRIFT
+- ROOT_CAUSE_ORPHAN_CLASS
+- ROOT_CAUSE_TAXONOMY_DRIFT
