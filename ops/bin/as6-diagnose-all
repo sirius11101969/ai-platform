@@ -274,3 +274,11 @@ fi
 echo ""
 echo "=== RUN: autonomous-production-policy-engine ==="
 if ops/bin/as6-autonomous-production-policy-engine; then echo "AS6_DIAGNOSE_ALL_CHECK=OK:autonomous-production-policy-engine"; else echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:autonomous-production-policy-engine"; fail=1; fi
+
+echo ""
+echo "=== RUN: autonomous-architecture-evolution-controller ==="
+if ops/bin/as6-autonomous-architecture-evolution-controller; then echo "AS6_DIAGNOSE_ALL_CHECK=OK:autonomous-architecture-evolution-controller"; else echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:autonomous-architecture-evolution-controller"; fail=1; fi
+
+echo ""
+echo "=== RUN: autonomous-change-impact-analysis-controller ==="
+if ops/bin/as6-autonomous-change-impact-analysis-controller; then echo "AS6_DIAGNOSE_ALL_CHECK=OK:autonomous-change-impact-analysis-controller"; else echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:autonomous-change-impact-analysis-controller"; fail=1; fi

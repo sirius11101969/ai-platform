@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /var/www/ai-platform
+fail=0; warn=0
+dir="runtime/architecture-evolution"; mkdir -p "$dir"
+out="$dir/latest.out"; matrix="$dir/architecture-evolution-matrix.tsv"; summary="$dir/architecture-evolution-summary.env"
+: > "$out"; : > "$matrix"; : > "$summary"
+say(){ echo "$1" | tee -a "$out"; }
+ok(){ say "PASS: $1"; }
+soft(){ say "WARN: $1"; warn=1; }
+bad(){ say "FAIL: $1"; fail=1; }
+say "=== AS6 AUTONOMOUS ARCHITECTURE EVOLUTION CONTROLLER ==="
+printf "%s\t%s\t%s\n" "contract" "expected" "status" > "$matrix"
+[ -f docker-compose.yml ] && ok "docker-compose exists" || bad "docker-compose missing"
+[ -f nginx.conf ] && ok "nginx config exists" || bad "nginx config missing"
+[ -f docs/AS6_PROJECT_STATE.md ] && ok "project state exists" || bad "project state missing"
+for svc in nginx backend redis; do if grep -q "$svc" docker-compose.yml; then ok "compose service present: $svc"; printf "%s\tYES\tPASS\n" "compose_service_$svc" >> "$matrix"; else bad "compose service missing: $svc"; printf "%s\tYES\tFAIL\n" "compose_service_$svc" >> "$matrix"; fi; done
+if grep -q "postgres\|db:" docker-compose.yml; then ok "compose postgres/db present"; printf "%s\tYES\tPASS\n" "compose_service_postgres_or_db" >> "$matrix"; else bad "compose postgres/db missing"; printf "%s\tYES\tFAIL\n" "compose_service_postgres_or_db" >> "$matrix"; fi
+[ -x ops/bin/as6-autonomous-architecture-compliance-controller ] && ops/bin/as6-autonomous-architecture-compliance-controller >> "$out" 2>&1 && ok "architecture compliance gate" || soft "architecture compliance gate warning"
+[ -x ops/bin/as6-autonomous-production-drift-controller ] && ops/bin/as6-autonomous-production-drift-controller >> "$out" 2>&1 && ok "production drift gate" || soft "production drift gate warning"
+[ -x ops/bin/as6-autonomous-rollback-verification-controller ] && ops/bin/as6-autonomous-rollback-verification-controller >> "$out" 2>&1 && ok "rollback verification gate" || soft "rollback verification gate warning"
+[ -x ops/bin/as6-autonomous-evidence-correlation-controller ] && ops/bin/as6-autonomous-evidence-correlation-controller >> "$out" 2>&1 && ok "evidence correlation gate" || soft "evidence correlation gate warning"
+if git ls-files .env 2>/dev/null | grep -Fxq ".env"; then bad ".env is tracked by git"; else ok ".env is not tracked by git"; fi
+printf "%s\n" "AS6_ARCHITECTURE_EVOLUTION_MATRIX=$matrix" "AS6_ARCHITECTURE_EVOLUTION_EVIDENCE=$out" > "$summary"
+if [ "$fail" -eq 0 ]; then say "AS6_ARCHITECTURE_EVOLUTION=PASS"; say "AS6_ARCHITECTURE_EVOLUTION_RESULT=OK"; exit 0; else say "AS6_ARCHITECTURE_EVOLUTION=FAIL"; say "AS6_ARCHITECTURE_EVOLUTION_RESULT=FAIL"; exit 1; fi

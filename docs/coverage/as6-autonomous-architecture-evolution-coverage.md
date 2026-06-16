@@ -1,0 +1,3 @@
+# AS6 Architecture Evolution Coverage
+
+AS6_ARCHITECTURE_EVOLUTION_COVERAGE=REGISTERED

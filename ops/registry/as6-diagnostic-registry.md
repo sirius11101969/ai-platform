@@ -54,3 +54,11 @@
 ## Autonomous Production Policy Engine
 - ops/bin/as6-autonomous-production-policy-engine
 - result: AS6_PRODUCTION_POLICY_ENGINE_RESULT
+
+## Autonomous Architecture Evolution Controller
+- ops/bin/as6-autonomous-architecture-evolution-controller
+- result: AS6_ARCHITECTURE_EVOLUTION_RESULT
+
+## Autonomous Change Impact Analysis Controller
+- ops/bin/as6-autonomous-change-impact-analysis-controller
+- result: AS6_CHANGE_IMPACT_ANALYSIS_RESULT

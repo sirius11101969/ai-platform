@@ -1,0 +1,3 @@
+# AS6 Change Impact Analysis Coverage
+
+AS6_CHANGE_IMPACT_ANALYSIS_COVERAGE=REGISTERED

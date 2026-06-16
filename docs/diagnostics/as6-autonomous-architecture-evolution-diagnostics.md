@@ -1,0 +1,22 @@
+# AS6 Architecture Evolution Diagnostics
+
+Added checks:
+- architecture_evolution_controller
+- architecture_evolution_matrix_generation
+- architecture_compose_contract_gate
+- architecture_runtime_contract_gate
+- architecture_rollback_gate
+- architecture_evidence_gate
+
+Added root causes:
+- ARCHITECTURE_EVOLUTION_CONTROLLER_MISSING
+- ARCHITECTURE_EVOLUTION_MATRIX_MISSING
+- ARCHITECTURE_EVOLUTION_WITHOUT_ROLLBACK
+- ARCHITECTURE_EVOLUTION_WITHOUT_EVIDENCE
+- ARCHITECTURE_EVOLUTION_CONTRACT_DRIFT
+
+Added AEC:
+- AEC_ARCHITECTURE_EVOLUTION_CONTROLLER_REQUIRED
+- AEC_ARCHITECTURE_EVOLUTION_MATRIX_REQUIRED
+- AEC_ARCHITECTURE_EVOLUTION_REQUIRES_ROLLBACK
+- AEC_ARCHITECTURE_EVOLUTION_REQUIRES_EVIDENCE

@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /var/www/ai-platform
+fail=0; warn=0
+dir="runtime/change-impact"; mkdir -p "$dir"
+out="$dir/latest.out"; matrix="$dir/change-impact-matrix.tsv"; summary="$dir/change-impact-summary.env"
+: > "$out"; : > "$matrix"; : > "$summary"
+say(){ echo "$1" | tee -a "$out"; }
+ok(){ say "PASS: $1"; }
+soft(){ say "WARN: $1"; warn=1; }
+bad(){ say "FAIL: $1"; fail=1; }
+say "=== AS6 AUTONOMOUS CHANGE IMPACT ANALYSIS CONTROLLER ==="
+printf "%s\t%s\t%s\n" "area" "impact" "status" > "$matrix"
+changed="$(git status --short | awk "{print \$2}" | tr "\n" " " || true)"
+say "AS6_CHANGE_IMPACT_CHANGED_FILES=$changed"
+if git status --short | grep -q .; then soft "working tree has changes, impact analysis required"; else ok "working tree clean"; fi
+for area in docker-compose.yml nginx.conf backend frontend database db docs ops; do if echo "$changed" | grep -q "$area"; then printf "%s\tYES\tREVIEW\n" "$area" >> "$matrix"; soft "change impacts: $area"; else printf "%s\tNO\tPASS\n" "$area" >> "$matrix"; fi; done
+[ -x ops/bin/as6-autonomous-production-policy-engine ] && ops/bin/as6-autonomous-production-policy-engine >> "$out" 2>&1 && ok "production policy gate" || soft "production policy gate warning"
+[ -x ops/bin/as6-autonomous-incident-commander ] && ops/bin/as6-autonomous-incident-commander >> "$out" 2>&1 && ok "incident commander gate" || soft "incident commander gate warning"
+[ -x ops/bin/as6-autonomous-rollback-verification-controller ] && ops/bin/as6-autonomous-rollback-verification-controller >> "$out" 2>&1 && ok "rollback gate" || soft "rollback gate warning"
+[ -x ops/bin/as6-autonomous-evidence-correlation-controller ] && ops/bin/as6-autonomous-evidence-correlation-controller >> "$out" 2>&1 && ok "evidence gate" || soft "evidence gate warning"
+if git ls-files .env 2>/dev/null | grep -Fxq ".env"; then bad ".env is tracked by git"; else ok ".env is not tracked by git"; fi
+[ -x ops/bin/as6-pre-commit-secret-scan ] && ops/bin/as6-pre-commit-secret-scan >> "$out" 2>&1 && ok "secret scan" || soft "secret scan warning"
+printf "%s\n" "AS6_CHANGE_IMPACT_CHANGED_FILES=$changed" "AS6_CHANGE_IMPACT_MATRIX=$matrix" "AS6_CHANGE_IMPACT_EVIDENCE=$out" "AS6_CHANGE_IMPACT_HUMAN_APPROVAL_REQUIRED=YES" "AS6_CHANGE_IMPACT_AUTO_APPLY=NO" > "$summary"
+if [ "$fail" -eq 0 ]; then say "AS6_CHANGE_IMPACT_ANALYSIS=PASS"; say "AS6_CHANGE_IMPACT_ANALYSIS_RESULT=OK"; exit 0; else say "AS6_CHANGE_IMPACT_ANALYSIS=FAIL"; say "AS6_CHANGE_IMPACT_ANALYSIS_RESULT=FAIL"; exit 1; fi

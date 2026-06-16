@@ -53,3 +53,9 @@
 
 ## Production Policy Engine Coverage
 - AS6_PRODUCTION_POLICY_ENGINE_COVERAGE=REGISTERED
+
+## Architecture Evolution Coverage
+- AS6_ARCHITECTURE_EVOLUTION_COVERAGE=REGISTERED
+
+## Change Impact Analysis Coverage
+- AS6_CHANGE_IMPACT_ANALYSIS_COVERAGE=REGISTERED

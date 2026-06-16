@@ -802,3 +802,38 @@ Added root cause classes:
 - PRODUCTION_POLICY_MATRIX_MISSING
 - PRODUCTION_AUTO_APPLY_POLICY_VIOLATION
 - PRODUCTION_HUMAN_APPROVAL_POLICY_MISSING
+
+## L7+ Phase: Architecture Evolution and Change Impact Analysis
+
+- AS6_ARCHITECTURE_EVOLUTION_CONTROLLER=IMPLEMENTED
+- AS6_CHANGE_IMPACT_ANALYSIS_CONTROLLER=IMPLEMENTED
+- Production-changing auto-apply: NO
+- Human approval required: YES
+
+Added to diagnostics:
+- architecture_evolution_controller
+- architecture_evolution_matrix_generation
+- architecture_compose_contract_gate
+- architecture_runtime_contract_gate
+- architecture_rollback_gate
+- architecture_evidence_gate
+- change_impact_analysis_controller
+- change_impact_matrix_generation
+- change_impact_worktree_scan
+- change_impact_production_policy_gate
+- change_impact_incident_commander_gate
+- change_impact_rollback_gate
+- change_impact_evidence_gate
+
+Added root cause classes:
+- ARCHITECTURE_EVOLUTION_CONTROLLER_MISSING
+- ARCHITECTURE_EVOLUTION_MATRIX_MISSING
+- ARCHITECTURE_EVOLUTION_WITHOUT_ROLLBACK
+- ARCHITECTURE_EVOLUTION_WITHOUT_EVIDENCE
+- ARCHITECTURE_EVOLUTION_CONTRACT_DRIFT
+- CHANGE_IMPACT_ANALYSIS_MISSING
+- CHANGE_IMPACT_MATRIX_MISSING
+- CHANGE_WITHOUT_IMPACT_ANALYSIS
+- CHANGE_IMPACT_WITHOUT_ROLLBACK
+- CHANGE_IMPACT_WITHOUT_EVIDENCE
+- CHANGE_IMPACT_POLICY_DRIFT
