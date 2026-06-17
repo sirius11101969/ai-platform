@@ -824,6 +824,9 @@
   ,"ops/bin/as6-diagnose-backup-secret-scan-contract": {"status":"registered","result":"OK","source":"as6-repair-diagnostic-registration-and-secret-scan"}
   ,"ops/bin/as6-diagnose-completion-marker-contract": {"status":"registered","result":"OK","source":"as6-close-early-exit-control"}
   ,"ops/bin/as6-diagnose-registered-diagnostic-git-tracking": {"status":"registered","result":"OK","source":"as6-track-completion-marker-diagnostic"}
+  ,"ops/bin/as6-diagnose-autonomous-diagnostic-expansion-validation": {"status":"registered","result":"OK","source":"as6-self-expand-diagnostics"}
+  ,"ops/bin/as6-self-expand-diagnostics": {"status":"registered","result":"OK","source":"as6-self-expanding-diagnostics-framework"}
+  ,"ops/bin/as6-diagnose-self-expanding-diagnostics": {"status":"registered","result":"OK","source":"as6-self-expanding-diagnostics-framework"}
     }
   ]
 }

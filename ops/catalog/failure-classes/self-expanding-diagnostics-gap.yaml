@@ -1,0 +1,10 @@
+class: SELF_EXPANDING_DIAGNOSTICS_GAP
+category: autonomous-diagnostic-expansion
+severity: critical
+diagnostic_required: true
+coverage_required: true
+governance_required: true
+prevention_required: true
+aec_required: true
+state_required: true
+resolution: create framework that converts new failure classes into diagnostics and governance artifacts

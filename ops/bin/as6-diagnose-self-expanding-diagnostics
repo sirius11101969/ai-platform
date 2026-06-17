@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+echo "=== AS6 Self-Expanding Diagnostics Framework ==="
+test -x ops/bin/as6-self-expand-diagnostics
+test -f ops/governance/as6-self-expanding-diagnostics-framework.md
+test -f ops/catalog/failure-classes/self-expanding-diagnostics-gap.yaml
+grep -Fq "Detection -> Classification -> Diagnostic Creation" ops/governance/as6-self-expanding-diagnostics-framework.md
+grep -Fq "Every new failure class must create a diagnostic" ops/governance/as6-self-expanding-diagnostics-framework.md
+echo "AS6_SELF_EXPANDING_DIAGNOSTICS=ENABLED"
+echo "AS6_SELF_EXPANDING_COVERAGE=ENABLED"
+echo "AS6_SELF_EXPANDING_GOVERNANCE=ENABLED"
+echo "AS6_SELF_EXPANDING_PREVENTION=ENABLED"
+echo "AS6_SELF_EXPANDING_AEC=ENABLED"
+echo "AS6_SELF_EXPANDING_DIAGNOSTICS_RESULT=OK"

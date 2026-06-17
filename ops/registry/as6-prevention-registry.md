@@ -8,3 +8,5 @@
 | UNTRACKED_REGISTERED_DIAGNOSTIC_ARTIFACT | every-registered-diagnostic-must-be-git-tracked | ENABLED |
 | SCAN_POLICY_FALSE_POSITIVE | allow-policy-state-keys-block-sensitive-values | ENABLED |
 | DIAGNOSTIC_EARLY_EXIT | require-terminal-completion-marker-before-close | ENABLED |
+| AUTONOMOUS_DIAGNOSTIC_EXPANSION_VALIDATION | generated-prevention-control | ENABLED |
+| SELF_EXPANDING_DIAGNOSTICS_GAP | auto-create-diagnostic-coverage-governance-prevention-aec-state | ENABLED |

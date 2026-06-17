@@ -246,3 +246,5 @@
 | SCAN_POLICY_FALSE_POSITIVE | AEC_IGNORE_STATE_POLICY_KEYS_IN_SCAN | policy-state-keys-are-not-sensitive-values | ENABLED |
 | DIAGNOSTIC_EARLY_EXIT | AEC_REQUIRE_TERMINAL_COMPLETION_MARKER | one-command-patches-must-print-final-result-marker | ENABLED |
 | UNTRACKED_REGISTERED_DIAGNOSTIC | AEC_BLOCK_REGISTERED_UNTRACKED_DIAGNOSTIC | registry-coverage-status-require-git-tracking | ENABLED |
+| AUTONOMOUS_DIAGNOSTIC_EXPANSION_VALIDATION | AEC_GENERATED_FAILURE_CLASS_CONTROL | generated-failure-class-must-have-diagnostic-and-coverage | ENABLED |
+| SELF_EXPANDING_DIAGNOSTICS_GAP | AEC_REQUIRE_SELF_EXPANDING_DIAGNOSTICS | new-failure-classes-must-generate-full-artifact-chain | ENABLED |

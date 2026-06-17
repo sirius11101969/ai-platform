@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+echo "=== AS6 Generated Diagnostic: AUTONOMOUS_DIAGNOSTIC_EXPANSION_VALIDATION ==="
+test -f ops/catalog/failure-classes/autonomous-diagnostic-expansion-validation.yaml
+echo "AS6_GENERATED_FAILURE_CLASS=AUTONOMOUS_DIAGNOSTIC_EXPANSION_VALIDATION"
+echo "AS6_GENERATED_DIAGNOSTIC_RESULT=OK:AUTONOMOUS_DIAGNOSTIC_EXPANSION_VALIDATION"

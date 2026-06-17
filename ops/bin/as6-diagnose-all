@@ -351,3 +351,9 @@ fi
 
 # AS6 registered diagnostic git tracking contract
 [ -x ops/bin/as6-diagnose-registered-diagnostic-git-tracking ] && ops/bin/as6-diagnose-registered-diagnostic-git-tracking
+
+# AS6 self-expanding diagnostics framework
+[ -x ops/bin/as6-diagnose-self-expanding-diagnostics ] && ops/bin/as6-diagnose-self-expanding-diagnostics
+
+# AS6 generated expansion validation diagnostic
+[ -x ops/bin/as6-diagnose-autonomous-diagnostic-expansion-validation ] && ops/bin/as6-diagnose-autonomous-diagnostic-expansion-validation

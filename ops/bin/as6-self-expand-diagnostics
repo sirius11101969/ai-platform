@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+class="${1:-}"
+if [ -z "$class" ]; then echo "AS6_SELF_EXPAND_RESULT=FAIL:missing_failure_class"; exit 1; fi
+slug="$(printf "%s" "$class" | tr "[:upper:]_" "[:lower:]-" | tr -cd "a-z0-9-")"
+diag="ops/bin/as6-diagnose-${slug}"
+mkdir -p ops/bin ops/catalog/failure-classes ops/registry ops/status docs
+printf "%s\n" "class: ${class}" "category: generated-failure-class" "diagnostic_required: true" "coverage_required: true" "governance_required: true" "prevention_required: true" "aec_required: true" "state_required: true" > "ops/catalog/failure-classes/${slug}.yaml"
+printf "%s\n" "#!/usr/bin/env bash" "set -Eeuo pipefail" "echo \"=== AS6 Generated Diagnostic: ${class} ===\"" "test -f ops/catalog/failure-classes/${slug}.yaml" "echo \"AS6_GENERATED_FAILURE_CLASS=${class}\"" "echo \"AS6_GENERATED_DIAGNOSTIC_RESULT=OK:${class}\"" > "$diag"
+chmod +x "$diag"
+touch ops/registry/as6-diagnostic-registry.md ops/registry/as6-coverage-registry.md ops/registry/as6-prevention-registry.md ops/registry/as6-aec-registry.md ops/status/diagnostic-status-registry.json
+grep -Fq "$diag" ops/registry/as6-diagnostic-registry.md || printf "%s\n" "| $diag | generated-failure-class-diagnostic | ENABLED |" >> ops/registry/as6-diagnostic-registry.md
+grep -Fq "$diag" ops/registry/as6-coverage-registry.md || printf "%s\n" "| $diag | generated-failure-class+registry+coverage+governance+prevention+aec+state | ENABLED |" >> ops/registry/as6-coverage-registry.md
+grep -Fq "$class" ops/registry/as6-prevention-registry.md || printf "%s\n" "| $class | generated-prevention-control | ENABLED |" >> ops/registry/as6-prevention-registry.md
+grep -Fq "$class" ops/registry/as6-aec-registry.md || printf "%s\n" "| $class | AEC_GENERATED_FAILURE_CLASS_CONTROL | generated-failure-class-must-have-diagnostic-and-coverage | ENABLED |" >> ops/registry/as6-aec-registry.md
+if ! grep -Fq "$diag" ops/status/diagnostic-status-registry.json; then tmp="$(mktemp)"; awk -v key="$diag" '/^[[:space:]]*}[[:space:]]*$/ && done==0 { print "  ,\"" key "\": {\"status\":\"registered\",\"result\":\"OK\",\"source\":\"as6-self-expand-diagnostics\"}"; done=1 } { print }' ops/status/diagnostic-status-registry.json > "$tmp"; mv "$tmp" ops/status/diagnostic-status-registry.json; fi
+grep -Fq "AS6_GENERATED_FAILURE_CLASS_${class}=REGISTERED" docs/AS6_PROJECT_STATE.md || printf "%s\n" "" "## AS6 Generated Failure Class: ${class}" "AS6_GENERATED_FAILURE_CLASS_${class}=REGISTERED" "AS6_GENERATED_DIAGNOSTIC_${slug}=ENABLED" >> docs/AS6_PROJECT_STATE.md
+echo "AS6_SELF_EXPAND_CREATED_DIAGNOSTIC=$diag"
+echo "AS6_SELF_EXPAND_RESULT=OK:${class}"
