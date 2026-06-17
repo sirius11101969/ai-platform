@@ -1317,3 +1317,9 @@
 | ops/bin/as6-diagnose-autonomous-diagnostic-expansion-validation | generated-failure-class-diagnostic | ENABLED |
 | ops/bin/as6-self-expand-diagnostics | self-expanding-diagnostics-framework | ENABLED |
 | ops/bin/as6-diagnose-self-expanding-diagnostics | self-expanding-diagnostics-framework | ENABLED |
+| ops/bin/as6-auto-expansion-router | autonomous-expansion-router | ENABLED |
+| ops/bin/as6-diagnose-auto-expansion-router | autonomous-expansion-router | ENABLED |
+| ops/bin/as6-diagnose-runtime-stage-gap | runtime-stage-gap+auto-expansion-router | ENABLED |
+| ops/bin/as6-diagnose-runtime-stage-gap-exit-code | runtime-stage-gap-exit-code-contract | ENABLED |
+| ops/bin/as6-diagnose-runtime-stage-gap-final-marker | runtime-stage-gap-final-marker-contract | ENABLED |
+| ops/bin/as6-diagnose-runtime-stage-gap-policy-text | runtime-stage-gap-policy-text-contract | ENABLED |

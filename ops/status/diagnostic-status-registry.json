@@ -827,6 +827,12 @@
   ,"ops/bin/as6-diagnose-autonomous-diagnostic-expansion-validation": {"status":"registered","result":"OK","source":"as6-self-expand-diagnostics"}
   ,"ops/bin/as6-self-expand-diagnostics": {"status":"registered","result":"OK","source":"as6-self-expanding-diagnostics-framework"}
   ,"ops/bin/as6-diagnose-self-expanding-diagnostics": {"status":"registered","result":"OK","source":"as6-self-expanding-diagnostics-framework"}
+  ,"ops/bin/as6-auto-expansion-router": {"status":"registered","result":"OK","source":"as6-auto-expansion-router"}
+  ,"ops/bin/as6-diagnose-auto-expansion-router": {"status":"registered","result":"OK","source":"as6-auto-expansion-router"}
+  ,"ops/bin/as6-diagnose-runtime-stage-gap": {"status":"registered","result":"OK","source":"as6-repair-runtime-stage-gap"}
+  ,"ops/bin/as6-diagnose-runtime-stage-gap-exit-code": {"status":"registered","result":"OK","source":"as6-repair-runtime-stage-gap-exit-code"}
+  ,"ops/bin/as6-diagnose-runtime-stage-gap-final-marker": {"status":"registered","result":"OK","source":"as6-repair-runtime-stage-gap-premature-exit"}
+  ,"ops/bin/as6-diagnose-runtime-stage-gap-policy-text": {"status":"registered","result":"OK","source":"as6-repair-runtime-policy-text-contract"}
     }
   ]
 }

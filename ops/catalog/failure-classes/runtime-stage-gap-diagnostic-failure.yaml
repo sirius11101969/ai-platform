@@ -1,0 +1,11 @@
+class: RUNTIME_STAGE_GAP_DIAGNOSTIC_FAILURE
+category: diagnostic-exit-code-contract
+severity: high
+diagnostic_required: true
+coverage_required: true
+governance_required: true
+prevention_required: true
+aec_required: true
+state_required: true
+root_cause: runtime stage gap diagnostic returned non-zero before final OK marker
+resolution: every PASS diagnostic must explicitly reach final OK marker and exit 0

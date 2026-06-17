@@ -10,3 +10,8 @@
 | DIAGNOSTIC_EARLY_EXIT | require-terminal-completion-marker-before-close | ENABLED |
 | AUTONOMOUS_DIAGNOSTIC_EXPANSION_VALIDATION | generated-prevention-control | ENABLED |
 | SELF_EXPANDING_DIAGNOSTICS_GAP | auto-create-diagnostic-coverage-governance-prevention-aec-state | ENABLED |
+| AUTONOMOUS_EXPANSION_ROUTER_GAP | route-detected-issues-into-self-expanding-diagnostics | ENABLED |
+| GITIGNORE_RUNTIME_STAGE_GAP | validate-runtime-without-staging-runtime-directory | ENABLED |
+| RUNTIME_STAGE_GAP_DIAGNOSTIC_FAILURE | diagnostics-must-reach-final-ok-marker-and-exit-zero | ENABLED |
+| RUNTIME_STAGE_GAP_DIAGNOSTIC_PREMATURE_EXIT | require-final-result-marker-before-diagnostic-exit | ENABLED |
+| RUNTIME_STAGE_GAP_POLICY_TEXT_DRIFT | keep-governance-policy-text-aligned-with-diagnostics | ENABLED |

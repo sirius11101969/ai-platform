@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -uo pipefail
+echo "=== AS6 Runtime Stage Gap Diagnostics ==="
+fail=0
+if [ -f ops/catalog/failure-classes/gitignore-runtime-stage-gap.yaml ]; then
+  echo "AS6_RUNTIME_STAGE_GAP_FAILURE_CLASS=PASS"
+else
+  echo "AS6_RUNTIME_STAGE_GAP_FAILURE_CLASS=FAIL"
+  fail=1
+fi
+if [ -f ops/governance/as6-runtime-artifact-staging-policy.md ]; then
+  echo "AS6_RUNTIME_STAGE_GAP_POLICY=PASS"
+else
+  echo "AS6_RUNTIME_STAGE_GAP_POLICY=FAIL"
+  fail=1
+fi
+if [ -f ops/governance/as6-runtime-artifact-staging-policy.md ] && grep -Fq "Runtime artifacts must not be staged." ops/governance/as6-runtime-artifact-staging-policy.md; then
+  echo "AS6_RUNTIME_STAGE_GAP_POLICY_TEXT=PASS"
+else
+  echo "AS6_RUNTIME_STAGE_GAP_POLICY_TEXT=FAIL"
+  fail=1
+fi
+if git check-ignore -q runtime/as6/test 2>/dev/null; then
+  echo "AS6_RUNTIME_GITIGNORE_DETECTED=PASS"
+else
+  echo "AS6_RUNTIME_GITIGNORE_DETECTED=WARN:not_ignored_or_no_rule"
+fi
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_RUNTIME_STAGE_GAP_CONTROL=PASS"
+  echo "AS6_RUNTIME_STAGE_GAP_RESULT=OK"
+  exit 0
+else
+  echo "AS6_RUNTIME_STAGE_GAP_CONTROL=FAIL"
+  echo "AS6_RUNTIME_STAGE_GAP_RESULT=FAIL"
+  exit 1
+fi

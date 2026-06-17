@@ -357,3 +357,18 @@ fi
 
 # AS6 generated expansion validation diagnostic
 [ -x ops/bin/as6-diagnose-autonomous-diagnostic-expansion-validation ] && ops/bin/as6-diagnose-autonomous-diagnostic-expansion-validation
+
+# AS6 autonomous expansion router
+[ -x ops/bin/as6-diagnose-auto-expansion-router ] && ops/bin/as6-diagnose-auto-expansion-router
+
+# AS6 runtime stage gap
+[ -x ops/bin/as6-diagnose-runtime-stage-gap ] && ops/bin/as6-diagnose-runtime-stage-gap
+
+# AS6 runtime stage gap exit code
+[ -x ops/bin/as6-diagnose-runtime-stage-gap-exit-code ] && ops/bin/as6-diagnose-runtime-stage-gap-exit-code
+
+# AS6 runtime stage gap final marker
+[ -x ops/bin/as6-diagnose-runtime-stage-gap-final-marker ] && ops/bin/as6-diagnose-runtime-stage-gap-final-marker
+
+# AS6 runtime stage gap policy text contract
+[ -x ops/bin/as6-diagnose-runtime-stage-gap-policy-text ] && ops/bin/as6-diagnose-runtime-stage-gap-policy-text

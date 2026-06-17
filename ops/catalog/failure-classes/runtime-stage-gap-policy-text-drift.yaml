@@ -1,0 +1,11 @@
+class: RUNTIME_STAGE_GAP_POLICY_TEXT_DRIFT
+category: governance-diagnostic-contract-drift
+severity: high
+diagnostic_required: true
+coverage_required: true
+governance_required: true
+prevention_required: true
+aec_required: true
+state_required: true
+root_cause: governance policy text did not match diagnostic literal contract
+resolution: policy and diagnostic must share stable text contract

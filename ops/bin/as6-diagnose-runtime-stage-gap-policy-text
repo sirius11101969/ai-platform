@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -uo pipefail
+echo "=== AS6 Runtime Stage Gap Policy Text Contract ==="
+fail=0
+[ -f ops/catalog/failure-classes/runtime-stage-gap-policy-text-drift.yaml ] || fail=1
+[ -f ops/governance/as6-runtime-artifact-staging-policy.md ] || fail=1
+if grep -Fq "Runtime artifacts must not be staged." ops/governance/as6-runtime-artifact-staging-policy.md; then
+  echo "AS6_GOVERNANCE_POLICY_TEXT_CONTRACT=PASS"
+else
+  echo "AS6_GOVERNANCE_POLICY_TEXT_CONTRACT=FAIL"
+  fail=1
+fi
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_RUNTIME_STAGE_GAP_POLICY_TEXT_CONTRACT_RESULT=OK"
+  exit 0
+else
+  echo "AS6_RUNTIME_STAGE_GAP_POLICY_TEXT_CONTRACT_RESULT=FAIL"
+  exit 1
+fi

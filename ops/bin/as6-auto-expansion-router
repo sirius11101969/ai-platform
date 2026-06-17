@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+source_file="${1:-}"
+if [ -z "$source_file" ]; then echo "AS6_AUTO_EXPANSION_ROUTER_RESULT=FAIL:missing_source_file"; exit 1; fi
+if [ ! -f "$source_file" ]; then echo "AS6_AUTO_EXPANSION_ROUTER_RESULT=FAIL:source_not_found"; exit 1; fi
+test -x ops/bin/as6-self-expand-diagnostics
+mkdir -p runtime/as6
+out="runtime/as6/auto-expansion-router.classes"
+: > "$out"
+grep -E "FAIL|WARN|GAP|DRIFT|INCIDENT|REGRESSION|ROOT_CAUSE|ARCHITECTURE" "$source_file" | sed "s/.*//g" >/dev/null || true
+grep -E "FAIL|WARN|GAP|DRIFT|INCIDENT|REGRESSION|ROOT_CAUSE|ARCHITECTURE" "$source_file" | sed "s/[^A-Za-z0-9_ -]/ /g" | tr "[:lower:] -" "[:upper:]__" | awk "{print substr(\$0,1,80)}" | grep -E "[A-Z0-9_]{6,}" | sort -u > "$out" || true
+count=0
+while IFS= read -r class; do
+  [ -z "$class" ] && continue
+  case "$class" in *PASSWORD*|*TOKEN*|*SECRET*|*KEY*) continue ;; esac
+  ops/bin/as6-self-expand-diagnostics "$class" >/dev/null
+  count=$((count + 1))
+done < "$out"
+echo "AS6_AUTO_EXPANSION_ROUTER_CLASSES=$count"
+echo "AS6_AUTO_EXPANSION_ROUTER_RESULT=OK"

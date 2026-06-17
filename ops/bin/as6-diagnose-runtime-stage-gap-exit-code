@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+echo "=== AS6 Runtime Stage Gap Exit Code Contract ==="
+test -f ops/catalog/failure-classes/runtime-stage-gap-diagnostic-failure.yaml
+test -f ops/governance/as6-diagnostic-exit-code-contract.md
+out="$(mktemp)"
+if ops/bin/as6-diagnose-runtime-stage-gap >"$out" 2>&1; then
+  grep -Fq "AS6_RUNTIME_STAGE_GAP_RESULT=OK" "$out"
+  echo "AS6_RUNTIME_STAGE_GAP_EXIT_CODE_CONTROL=PASS"
+else
+  cat "$out"
+  rm -f "$out"
+  echo "AS6_RUNTIME_STAGE_GAP_EXIT_CODE_CONTROL=FAIL"
+  exit 1
+fi
+rm -f "$out"
+echo "AS6_DIAGNOSTIC_EXIT_CODE_CONTRACT=PASS"
+echo "AS6_RUNTIME_STAGE_GAP_EXIT_CODE_RESULT=OK"
+exit 0

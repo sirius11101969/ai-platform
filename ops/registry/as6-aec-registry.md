@@ -248,3 +248,8 @@
 | UNTRACKED_REGISTERED_DIAGNOSTIC | AEC_BLOCK_REGISTERED_UNTRACKED_DIAGNOSTIC | registry-coverage-status-require-git-tracking | ENABLED |
 | AUTONOMOUS_DIAGNOSTIC_EXPANSION_VALIDATION | AEC_GENERATED_FAILURE_CLASS_CONTROL | generated-failure-class-must-have-diagnostic-and-coverage | ENABLED |
 | SELF_EXPANDING_DIAGNOSTICS_GAP | AEC_REQUIRE_SELF_EXPANDING_DIAGNOSTICS | new-failure-classes-must-generate-full-artifact-chain | ENABLED |
+| AUTONOMOUS_EXPANSION_ROUTER_GAP | AEC_REQUIRE_AUTO_EXPANSION_ROUTER | detected-issues-must-route-to-self-expansion | ENABLED |
+| GITIGNORE_RUNTIME_STAGE_GAP | AEC_FORBID_STAGING_IGNORED_RUNTIME | runtime-artifacts-must-not-be-required-for-git-add | ENABLED |
+| RUNTIME_STAGE_GAP_DIAGNOSTIC_FAILURE | AEC_REQUIRE_DIAGNOSTIC_EXIT_ZERO | pass-diagnostics-must-exit-zero-with-final-marker | ENABLED |
+| RUNTIME_STAGE_GAP_DIAGNOSTIC_PREMATURE_EXIT | AEC_REQUIRE_FINAL_RESULT_MARKER | diagnostics-must-print-final-marker-before-termination | ENABLED |
+| RUNTIME_STAGE_GAP_POLICY_TEXT_DRIFT | AEC_REQUIRE_POLICY_TEXT_CONTRACT | governance-policy-text-must-match-diagnostic-contract | ENABLED |

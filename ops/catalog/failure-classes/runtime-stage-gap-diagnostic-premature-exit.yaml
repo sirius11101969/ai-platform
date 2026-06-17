@@ -1,0 +1,11 @@
+class: RUNTIME_STAGE_GAP_DIAGNOSTIC_PREMATURE_EXIT
+category: diagnostic-final-marker-contract
+severity: high
+diagnostic_required: true
+coverage_required: true
+governance_required: true
+prevention_required: true
+aec_required: true
+state_required: true
+root_cause: runtime stage gap diagnostic exited before final result marker
+resolution: diagnostic must never terminate before printing explicit OK or FAIL result marker

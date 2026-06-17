@@ -1423,3 +1423,9 @@
 | ops/bin/as6-diagnose-autonomous-diagnostic-expansion-validation | generated-failure-class+registry+coverage+governance+prevention+aec+state | ENABLED |
 | ops/bin/as6-self-expand-diagnostics | detection+classification+diagnostic+coverage+governance+prevention+aec+state+validation | ENABLED |
 | ops/bin/as6-diagnose-self-expanding-diagnostics | detection+classification+diagnostic+coverage+governance+prevention+aec+state+validation | ENABLED |
+| ops/bin/as6-auto-expansion-router | detect+classify+self-expand+registry+coverage+governance+prevention+aec+state | ENABLED |
+| ops/bin/as6-diagnose-auto-expansion-router | detect+classify+self-expand+registry+coverage+governance+prevention+aec+state | ENABLED |
+| ops/bin/as6-diagnose-runtime-stage-gap | runtime-validation-without-staging+auto-expansion-routing | ENABLED |
+| ops/bin/as6-diagnose-runtime-stage-gap-exit-code | runtime-stage-gap+diagnostic-exit-code+final-marker | ENABLED |
+| ops/bin/as6-diagnose-runtime-stage-gap-final-marker | runtime-stage-gap+final-marker+premature-exit-prevention | ENABLED |
+| ops/bin/as6-diagnose-runtime-stage-gap-policy-text | governance-policy-text+runtime-stage-gap-contract | ENABLED |

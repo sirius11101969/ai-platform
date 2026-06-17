@@ -1,0 +1,10 @@
+class: AUTONOMOUS_EXPANSION_ROUTER_GAP
+category: autonomous-diagnostic-expansion
+severity: high
+diagnostic_required: true
+coverage_required: true
+governance_required: true
+prevention_required: true
+aec_required: true
+state_required: true
+resolution: automatically route detected fail/warn/gap/drift classes into self-expanding diagnostics

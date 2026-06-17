@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+echo "=== AS6 Autonomous Expansion Router Diagnostics ==="
+test -x ops/bin/as6-auto-expansion-router
+test -x ops/bin/as6-self-expand-diagnostics
+test -f ops/governance/as6-autonomous-expansion-router.md
+test -f ops/catalog/failure-classes/autonomous-expansion-router-gap.yaml
+printf "%s\n" "AS6_TEST_ROUTER_GAP=FAIL" "AS6_TEST_ROUTER_DRIFT=WARN" > runtime/as6/auto-expansion-router-test.log
+ops/bin/as6-auto-expansion-router runtime/as6/auto-expansion-router-test.log >/tmp/as6-auto-expansion-router-test.out
+grep -Fq "AS6_AUTO_EXPANSION_ROUTER_RESULT=OK" /tmp/as6-auto-expansion-router-test.out
+echo "AS6_AUTO_EXPANSION_ROUTER=ENABLED"
+echo "AS6_AUTO_EXPANSION_ROUTER_RESULT=OK"
