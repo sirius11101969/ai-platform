@@ -140,8 +140,6 @@ run_check "strategic-readiness" "./ops/bin/as6-diagnose-strategic-readiness"
 
 
 
-echo "AS6_DIAGNOSE_ALL_RESULT=FAIL"
-exit 1
 
 
 
@@ -303,6 +301,15 @@ echo "=== RUN: root-cause-governance-aggregator-consistency ==="
 if ops/bin/as6-root-cause-governance-aggregator-consistency; then echo "AS6_DIAGNOSE_ALL_CHECK=OK:root-cause-governance-aggregator-consistency"; else echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:root-cause-governance-aggregator-consistency"; fail=1; fi
 echo "=== AS6 DIAGNOSE ALL FINAL RESULT ==="
 if [ "$fail" -eq 0 ]; then
+  echo "AS6_DIAGNOSE_ALL_RESULT=OK"
+  exit 0
+else
+  echo "AS6_DIAGNOSE_ALL_RESULT=FAIL"
+  exit 1
+fi
+echo ""
+echo "=== AS6 DIAGNOSE ALL FINAL RESULT ==="
+if [ "${fail:-0}" -eq 0 ]; then
   echo "AS6_DIAGNOSE_ALL_RESULT=OK"
   exit 0
 else
