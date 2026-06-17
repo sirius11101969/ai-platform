@@ -1604,3 +1604,35 @@ Implemented:
 
 Production touched: NO
 Secrets touched: NO
+
+## 2026-06-17 — AS6 Diagnostics-First Operating Standard Codified
+
+Added as canonical operating standard:
+- Diagnostics first.
+- Structure validation before changes.
+- Controlled change.
+- Repeat diagnostics after changes.
+- Automatically add newly discovered artifacts to diagnostics.
+- Automatically add newly discovered checks to diagnostics.
+- Automatically add newly discovered controls to diagnostics.
+- Automatically add newly discovered error/root-cause classes to diagnostics.
+- Automatically add newly required AEC rules to diagnostics.
+- Register diagnostics in coverage/registry/status registry.
+- Keep docs/AS6_PROJECT_STATE.md current.
+- Use as6-diagnose-all-watch for long full runs.
+- Prefer one large command/script/patch/prompt/hybrid.
+- Use one external quoted heredoc.
+- Avoid nested heredocs, base64, and long inline python3.
+- Never expose secrets.
+
+Added diagnostics:
+- ops/bin/as6-diagnose-diagnostics-first-operating-standard
+
+Added docs:
+- docs/governance/as6-diagnostics-first-operating-standard.md
+- docs/diagnostics/as6-diagnostics-first-operating-standard-diagnostics.md
+- docs/coverage/as6-diagnostics-first-operating-standard-coverage.md
+- docs/operations/as6-diagnostics-first-operating-standard-runbook.md
+
+Production touched: NO
+Secrets touched: NO

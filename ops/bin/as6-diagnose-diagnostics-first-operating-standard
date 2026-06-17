@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /var/www/ai-platform
+
+echo "=== AS6 Diagnostics-First Operating Standard Diagnostics ==="
+
+fail=0
+
+check_file() {
+  if [ -s "$1" ]; then
+    echo "PASS: $1"
+  else
+    echo "FAIL: $1"
+    fail=1
+  fi
+}
+
+check_text() {
+  if grep -q "$2" "$1" 2>/dev/null; then
+    echo "PASS: $1 contains $2"
+  else
+    echo "FAIL: $1 missing $2"
+    fail=1
+  fi
+}
+
+check_file docs/governance/as6-diagnostics-first-operating-standard.md
+check_file docs/diagnostics/as6-diagnostics-first-operating-standard-diagnostics.md
+check_file docs/coverage/as6-diagnostics-first-operating-standard-coverage.md
+check_file docs/operations/as6-diagnostics-first-operating-standard-runbook.md
+
+check_text docs/governance/as6-diagnostics-first-operating-standard.md "Diagnostics first"
+check_text docs/governance/as6-diagnostics-first-operating-standard.md "Repeat diagnostics"
+check_text docs/governance/as6-diagnostics-first-operating-standard.md "coverage and registry"
+check_text docs/governance/as6-diagnostics-first-operating-standard.md "AS6_PROJECT_STATE"
+check_text docs/governance/as6-diagnostics-first-operating-standard.md "Avoid nested heredocs"
+check_text docs/governance/as6-diagnostics-first-operating-standard.md "Never print or request secrets"
+
+if grep -q "ops/bin/as6-diagnose-diagnostics-first-operating-standard" ops/status/diagnostic-status-registry.json 2>/dev/null; then
+  echo "PASS: diagnostic status registry contains diagnostics-first standard"
+else
+  echo "FAIL: diagnostic status registry missing diagnostics-first standard"
+  fail=1
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_DIAGNOSTICS_FIRST_OPERATING_STANDARD=PASS"
+  echo "AS6_DIAGNOSTICS_FIRST_OPERATING_STANDARD_RESULT=OK"
+  exit 0
+fi
+
+echo "AS6_DIAGNOSTICS_FIRST_OPERATING_STANDARD=FAIL"
+echo "AS6_DIAGNOSTICS_FIRST_OPERATING_STANDARD_RESULT=FAIL"
+exit 1

@@ -236,6 +236,12 @@
       "source": "auto"
     },
     {
+      "check": "diagnostics-first-operating-standard",
+      "path": "ops/bin/as6-diagnose-diagnostics-first-operating-standard",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
       "check": "disaster-recovery",
       "path": "ops/bin/as6-diagnose-disaster-recovery",
       "status_visible": true,

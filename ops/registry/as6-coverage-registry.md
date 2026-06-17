@@ -1409,3 +1409,5 @@
 - ops/bin/as6-diagnose-public-health
 
 - ops/bin/as6-diagnose-all-watch
+
+- ops/bin/as6-diagnose-diagnostics-first-operating-standard
