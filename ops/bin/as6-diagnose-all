@@ -348,3 +348,6 @@ fi
 
 # AS6 completion marker contract
 [ -x ops/bin/as6-diagnose-completion-marker-contract ] && ops/bin/as6-diagnose-completion-marker-contract
+
+# AS6 registered diagnostic git tracking contract
+[ -x ops/bin/as6-diagnose-registered-diagnostic-git-tracking ] && ops/bin/as6-diagnose-registered-diagnostic-git-tracking

@@ -823,6 +823,7 @@
   ,"ops/bin/as6-diagnose-one-command-standard": {"status":"registered","result":"OK","source":"as6-repair-diagnostic-registration-and-secret-scan"}
   ,"ops/bin/as6-diagnose-backup-secret-scan-contract": {"status":"registered","result":"OK","source":"as6-repair-diagnostic-registration-and-secret-scan"}
   ,"ops/bin/as6-diagnose-completion-marker-contract": {"status":"registered","result":"OK","source":"as6-close-early-exit-control"}
+  ,"ops/bin/as6-diagnose-registered-diagnostic-git-tracking": {"status":"registered","result":"OK","source":"as6-track-completion-marker-diagnostic"}
     }
   ]
 }

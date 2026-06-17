@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+echo "=== AS6 Registered Diagnostic Git Tracking Contract ==="
+test -f ops/catalog/failure-classes/untracked-registered-diagnostic.yaml
+test -x ops/bin/as6-diagnose-completion-marker-contract
+git ls-files --error-unmatch ops/bin/as6-diagnose-completion-marker-contract >/dev/null 2>&1 || { echo "AS6_REGISTERED_DIAGNOSTIC_GIT_TRACKING_CONTROL=FAIL:ops/bin/as6-diagnose-completion-marker-contract"; exit 1; }
+echo "AS6_REGISTERED_DIAGNOSTIC_GIT_TRACKING_CONTROL=PASS"
+echo "AS6_REGISTERED_DIAGNOSTIC_GIT_TRACKING_RESULT=OK"

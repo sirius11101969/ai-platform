@@ -1313,3 +1313,4 @@
 | ops/bin/as6-diagnose-one-command-standard | one-command-diagnostics-first-standard | ENABLED |
 | ops/bin/as6-diagnose-backup-secret-scan-contract | as6-one-command-and-diagnostic-contract | ENABLED |
 | ops/bin/as6-diagnose-completion-marker-contract | one-command-completion-contract | ENABLED |
+| ops/bin/as6-diagnose-registered-diagnostic-git-tracking | registered-diagnostic-git-tracking | ENABLED |

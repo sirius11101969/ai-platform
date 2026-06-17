@@ -1,0 +1,9 @@
+class: UNTRACKED_REGISTERED_DIAGNOSTIC
+category: diagnostic-registration-drift
+severity: high
+diagnostic_required: true
+coverage_required: true
+governance_required: true
+prevention_required: true
+aec_required: true
+state_required: true
