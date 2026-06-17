@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "=== AS6 Public Health Diagnostics ==="
+
+if curl -fsS --max-time 15 https://www.as6.ru/api/health | grep -qiE 'OK|status'; then
+  echo "AS6_PUBLIC_HEALTH=PASS"
+  echo "AS6_PUBLIC_HEALTH_RESULT=OK"
+  exit 0
+fi
+
+echo "AS6_PUBLIC_HEALTH=FAIL"
+echo "AS6_PUBLIC_HEALTH_RESULT=FAIL"
+exit 1

@@ -1300,3 +1300,7 @@
 ## Runtime Binary Empty Tmp Repair
 - diagnostic: runtime_binary_empty_tmp_skip
 - result: RUNTIME_BINARY_ARTIFACTS_RESULT
+
+- ops/bin/as6-diagnose-public-health
+
+- ops/bin/as6-diagnose-all-watch

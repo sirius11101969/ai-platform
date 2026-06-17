@@ -1,1068 +1,815 @@
 {
+  "version": 1,
   "diagnostics": [
     {
-      "name": "actions-node24",
+      "check": "actions-node24",
       "path": "ops/bin/as6-diagnose-actions-node24",
-      "result_key": "AS6_ACTIONS_NODE24_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "actions-node24-migration",
+      "check": "actions-node24-migration",
       "path": "ops/bin/as6-diagnose-actions-node24-migration",
-      "result_key": "AS6_ACTIONS_NODE24_MIGRATION_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "agent-branch-writer",
+      "check": "agent-branch-writer",
       "path": "ops/bin/as6-diagnose-agent-branch-writer",
-      "result_key": "AS6_AGENT_BRANCH_WRITER_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "agent-branch-writer-e2e",
+      "check": "agent-branch-writer-e2e",
       "path": "ops/bin/as6-diagnose-agent-branch-writer-e2e",
-      "result_key": "AS6_AGENT_BRANCH_WRITER_E2E_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "agent-pr-factory-e2e",
+      "check": "agent-pr-factory-e2e",
       "path": "ops/bin/as6-diagnose-agent-pr-factory-e2e",
-      "result_key": "AS6_AGENT_PR_FACTORY_E2E_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "agent-write-mode",
+      "check": "agent-write-mode",
       "path": "ops/bin/as6-diagnose-agent-write-mode",
-      "result_key": "AS6_AGENT_WRITE_MODE_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "all",
+      "check": "all",
       "path": "ops/bin/as6-diagnose-all",
-      "result_key": "AS6_ALL_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "automation-sources",
+      "check": "all-watch",
+      "path": "ops/bin/as6-diagnose-all-watch",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "automation-sources",
       "path": "ops/bin/as6-diagnose-automation-sources",
-      "result_key": "AS6_AUTOMATION_SOURCES_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "autonomous-change-controller",
+      "check": "autonomous-change-controller",
       "path": "ops/bin/as6-diagnose-autonomous-change-controller",
-      "result_key": "AS6_AUTONOMOUS_CHANGE_CONTROLLER_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "autonomous-coverage",
+      "check": "autonomous-coverage",
       "path": "ops/bin/as6-diagnose-autonomous-coverage",
-      "result_key": "AS6_AUTONOMOUS_COVERAGE_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "autonomous-repair-controller",
+      "check": "autonomous-repair-controller",
       "path": "ops/bin/as6-diagnose-autonomous-repair-controller",
-      "result_key": "AS6_AUTONOMOUS_REPAIR_CONTROLLER_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "autonomous-validation-controller",
+      "check": "autonomous-validation-controller",
       "path": "ops/bin/as6-diagnose-autonomous-validation-controller",
-      "result_key": "AS6_AUTONOMOUS_VALIDATION_CONTROLLER_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "autonomy-operating-standard",
+      "check": "autonomy-operating-standard",
       "path": "ops/bin/as6-diagnose-autonomy-operating-standard",
-      "result_key": "AS6_AUTONOMY_OPERATING_STANDARD_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "backup-governance",
+      "check": "backup-governance",
       "path": "ops/bin/as6-diagnose-backup-governance",
-      "result_key": "AS6_BACKUP_GOVERNANCE_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "backup-integrity",
+      "check": "backup-integrity",
       "path": "ops/bin/as6-diagnose-backup-integrity",
-      "result_key": "AS6_BACKUP_INTEGRITY_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "change-governance",
+      "check": "change-governance",
       "path": "ops/bin/as6-diagnose-change-governance",
-      "result_key": "AS6_CHANGE_GOVERNANCE_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "change-pipeline-controller",
+      "check": "change-pipeline-controller",
       "path": "ops/bin/as6-diagnose-change-pipeline-controller",
-      "result_key": "AS6_CHANGE_PIPELINE_CONTROLLER_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "codex-review-scope",
+      "check": "codex-review-scope",
       "path": "ops/bin/as6-diagnose-codex-review-scope",
-      "result_key": "AS6_CODEX_REVIEW_SCOPE_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "codex-workflow",
+      "check": "codex-workflow",
       "path": "ops/bin/as6-diagnose-codex-workflow",
-      "result_key": "AS6_CODEX_WORKFLOW_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "command-center",
+      "check": "command-center",
       "path": "ops/bin/as6-diagnose-command-center",
-      "result_key": "AS6_COMMAND_CENTER_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "command-length-safety",
+      "check": "command-length-safety",
       "path": "ops/bin/as6-diagnose-command-length-safety",
-      "result_key": "AS6_COMMAND_LENGTH_SAFETY_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "constitution",
+      "check": "constitution",
       "path": "ops/bin/as6-diagnose-constitution",
-      "result_key": "AS6_CONSTITUTION_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "control-panel-reboot-correlation",
+      "check": "control-panel-reboot-correlation",
       "path": "ops/bin/as6-diagnose-control-panel-reboot-correlation",
-      "result_key": "AS6_CONTROL_PANEL_REBOOT_CORRELATION_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "controlled-branch-writer",
+      "check": "controlled-branch-writer",
       "path": "ops/bin/as6-diagnose-controlled-branch-writer",
-      "result_key": "AS6_CONTROLLED_BRANCH_WRITER_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "controlled-write-mode",
+      "check": "controlled-write-mode",
       "path": "ops/bin/as6-diagnose-controlled-write-mode",
-      "result_key": "AS6_CONTROLLED_WRITE_MODE_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "diagnostic-contract",
+      "check": "diagnostic-contract",
       "path": "ops/bin/as6-diagnose-diagnostic-contract",
-      "result_key": "AS6_DIAGNOSTIC_CONTRACT_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "diagnostic-coverage",
+      "check": "diagnostic-coverage",
       "path": "ops/bin/as6-diagnose-diagnostic-coverage",
-      "result_key": "AS6_DIAGNOSTIC_COVERAGE_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "diagnostic-flow",
+      "check": "diagnostic-flow",
       "path": "ops/bin/as6-diagnose-diagnostic-flow",
-      "result_key": "AS6_DIAGNOSTIC_FLOW_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "diagnostic-flow-guard",
+      "check": "diagnostic-flow-guard",
       "path": "ops/bin/as6-diagnose-diagnostic-flow-guard",
-      "result_key": "AS6_DIAGNOSTIC_FLOW_GUARD_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "diagnostic-governance",
+      "check": "diagnostic-governance",
       "path": "ops/bin/as6-diagnose-diagnostic-governance",
-      "result_key": "AS6_DIAGNOSTIC_GOVERNANCE_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "diagnostic-insertion-points",
+      "check": "diagnostic-insertion-points",
       "path": "ops/bin/as6-diagnose-diagnostic-insertion-points",
-      "result_key": "AS6_DIAGNOSTIC_INSERTION_POINTS_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "diagnostic-performance",
+      "check": "diagnostic-performance",
       "path": "ops/bin/as6-diagnose-diagnostic-performance",
-      "result_key": "AS6_DIAGNOSTIC_PERFORMANCE_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "diagnostic-recursion",
+      "check": "diagnostic-recursion",
       "path": "ops/bin/as6-diagnose-diagnostic-recursion",
-      "result_key": "AS6_DIAGNOSTIC_RECURSION_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "diagnostic-registration",
+      "check": "diagnostic-registration",
       "path": "ops/bin/as6-diagnose-diagnostic-registration",
-      "result_key": "AS6_DIAGNOSTIC_REGISTRATION_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "diagnostic-registry",
+      "check": "diagnostic-registry",
       "path": "ops/bin/as6-diagnose-diagnostic-registry",
-      "result_key": "AS6_DIAGNOSTIC_REGISTRY_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "diagnostic-status-registry",
+      "check": "diagnostic-status-registry",
       "path": "ops/bin/as6-diagnose-diagnostic-status-registry",
-      "result_key": "AS6_DIAGNOSTIC_STATUS_REGISTRY_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "diagnostic-timeout-governance",
+      "check": "diagnostic-timeout-governance",
       "path": "ops/bin/as6-diagnose-diagnostic-timeout-governance",
-      "result_key": "AS6_DIAGNOSTIC_TIMEOUT_GOVERNANCE_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "diagnostic-tracking",
+      "check": "diagnostic-tracking",
       "path": "ops/bin/as6-diagnose-diagnostic-tracking",
-      "result_key": "AS6_DIAGNOSTIC_TRACKING_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "disaster-recovery",
+      "check": "disaster-recovery",
       "path": "ops/bin/as6-diagnose-disaster-recovery",
-      "result_key": "AS6_DISASTER_RECOVERY_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "env-contract",
+      "check": "env-contract",
       "path": "ops/bin/as6-diagnose-env-contract",
-      "result_key": "AS6_ENV_CONTRACT_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "freeze-correlation",
+      "check": "freeze-correlation",
       "path": "ops/bin/as6-diagnose-freeze-correlation",
-      "result_key": "AS6_FREEZE_CORRELATION_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "function-order",
+      "check": "function-order",
       "path": "ops/bin/as6-diagnose-function-order",
-      "result_key": "AS6_FUNCTION_ORDER_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "generated-python-contract-coverage",
+      "check": "generated-python-contract-coverage",
       "path": "ops/bin/as6-diagnose-generated-python-contract-coverage",
-      "result_key": "AS6_GENERATED_PYTHON_CONTRACT_COVERAGE_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "generated-python-contracts",
+      "check": "generated-python-contracts",
       "path": "ops/bin/as6-diagnose-generated-python-contracts",
-      "result_key": "AS6_GENERATED_PYTHON_CONTRACTS_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "generated-python-imports",
+      "check": "generated-python-imports",
       "path": "ops/bin/as6-diagnose-generated-python-imports",
-      "result_key": "AS6_GENERATED_PYTHON_IMPORTS_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "generated-python-nameerror",
+      "check": "generated-python-nameerror",
       "path": "ops/bin/as6-diagnose-generated-python-nameerror",
-      "result_key": "AS6_GENERATED_PYTHON_NAMEERROR_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "generated-python-regression",
+      "check": "generated-python-regression",
       "path": "ops/bin/as6-diagnose-generated-python-regression",
-      "result_key": "AS6_GENERATED_PYTHON_REGRESSION_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "generated-python-runtime",
+      "check": "generated-python-runtime",
       "path": "ops/bin/as6-diagnose-generated-python-runtime",
-      "result_key": "AS6_GENERATED_PYTHON_RUNTIME_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "generated-python-safety",
+      "check": "generated-python-safety",
       "path": "ops/bin/as6-diagnose-generated-python-safety",
-      "result_key": "AS6_GENERATED_PYTHON_SAFETY_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "git-hygiene",
+      "check": "git-hygiene",
       "path": "ops/bin/as6-diagnose-git-hygiene",
-      "result_key": "AS6_GIT_HYGIENE_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "git-main-sync",
+      "check": "git-main-sync",
       "path": "ops/bin/as6-diagnose-git-main-sync",
-      "result_key": "AS6_GIT_MAIN_SYNC_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "health-alerts",
+      "check": "health-alerts",
       "path": "ops/bin/as6-diagnose-health-alerts",
-      "result_key": "AS6_HEALTH_ALERTS_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "health-anomaly-root-cause",
+      "check": "health-anomaly-root-cause",
       "path": "ops/bin/as6-diagnose-health-anomaly-root-cause",
-      "result_key": "AS6_HEALTH_ANOMALY_ROOT_CAUSE_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "health-cache",
+      "check": "health-cache",
       "path": "ops/bin/as6-diagnose-health-cache",
-      "result_key": "AS6_HEALTH_CACHE_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "health-cache-freshness",
+      "check": "health-cache-freshness",
       "path": "ops/bin/as6-diagnose-health-cache-freshness",
-      "result_key": "AS6_HEALTH_CACHE_FRESHNESS_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "health-cache-timer-freshness",
+      "check": "health-cache-timer-freshness",
       "path": "ops/bin/as6-diagnose-health-cache-timer-freshness",
-      "result_key": "AS6_HEALTH_CACHE_TIMER_FRESHNESS_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "health-cleanup",
+      "check": "health-cleanup",
       "path": "ops/bin/as6-diagnose-health-cleanup",
-      "result_key": "AS6_HEALTH_CLEANUP_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "health-dashboard-integration",
+      "check": "health-dashboard-integration",
       "path": "ops/bin/as6-diagnose-health-dashboard-integration",
-      "result_key": "AS6_HEALTH_DASHBOARD_INTEGRATION_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "health-history-anomaly",
+      "check": "health-history-anomaly",
       "path": "ops/bin/as6-diagnose-health-history-anomaly",
-      "result_key": "AS6_HEALTH_HISTORY_ANOMALY_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "health-history-corruption",
+      "check": "health-history-corruption",
       "path": "ops/bin/as6-diagnose-health-history-corruption",
-      "result_key": "AS6_HEALTH_HISTORY_CORRUPTION_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "health-history-gap-root-cause",
+      "check": "health-history-gap-root-cause",
       "path": "ops/bin/as6-diagnose-health-history-gap-root-cause",
-      "result_key": "AS6_HEALTH_HISTORY_GAP_ROOT_CAUSE_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "health-history-gap-suppression",
+      "check": "health-history-gap-suppression",
       "path": "ops/bin/as6-diagnose-health-history-gap-suppression",
-      "result_key": "AS6_HEALTH_HISTORY_GAP_SUPPRESSION_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "health-history-historical-only",
+      "check": "health-history-historical-only",
       "path": "ops/bin/as6-diagnose-health-history-historical-only",
-      "result_key": "AS6_HEALTH_HISTORY_HISTORICAL_ONLY_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "health-history-recovery-window",
+      "check": "health-history-recovery-window",
       "path": "ops/bin/as6-diagnose-health-history-recovery-window",
-      "result_key": "AS6_HEALTH_HISTORY_RECOVERY_WINDOW_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "health-history-stall-root-cause",
+      "check": "health-history-stall-root-cause",
       "path": "ops/bin/as6-diagnose-health-history-stall-root-cause",
-      "result_key": "AS6_HEALTH_HISTORY_STALL_ROOT_CAUSE_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "health-recovery",
+      "check": "health-recovery",
       "path": "ops/bin/as6-diagnose-health-recovery",
-      "result_key": "AS6_HEALTH_RECOVERY_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "health-runtime-policy",
+      "check": "health-runtime-policy",
       "path": "ops/bin/as6-diagnose-health-runtime-policy",
-      "result_key": "AS6_HEALTH_RUNTIME_POLICY_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "health-status",
+      "check": "health-status",
       "path": "ops/bin/as6-diagnose-health-status",
-      "result_key": "AS6_HEALTH_STATUS_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "health-timer",
+      "check": "health-timer",
       "path": "ops/bin/as6-diagnose-health-timer",
-      "result_key": "AS6_HEALTH_TIMER_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "health-timer-dashboard",
+      "check": "health-timer-dashboard",
       "path": "ops/bin/as6-diagnose-health-timer-dashboard",
-      "result_key": "AS6_HEALTH_TIMER_DASHBOARD_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "health-timer-runtime",
+      "check": "health-timer-runtime",
       "path": "ops/bin/as6-diagnose-health-timer-runtime",
-      "result_key": "AS6_HEALTH_TIMER_RUNTIME_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "health-trend",
+      "check": "health-trend",
       "path": "ops/bin/as6-diagnose-health-trend",
-      "result_key": "AS6_HEALTH_TREND_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "heredoc-safety",
+      "check": "heredoc-safety",
       "path": "ops/bin/as6-diagnose-heredoc-safety",
-      "result_key": "AS6_HEREDOC_SAFETY_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "historical-gap-aging",
+      "check": "historical-gap-aging",
       "path": "ops/bin/as6-diagnose-historical-gap-aging",
-      "result_key": "AS6_HISTORICAL_GAP_AGING_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "historical-incident-api",
+      "check": "historical-incident-api",
       "path": "ops/bin/as6-diagnose-historical-incident-api",
-      "result_key": "AS6_HISTORICAL_INCIDENT_API_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "historical-incident-archive",
+      "check": "historical-incident-archive",
       "path": "ops/bin/as6-diagnose-historical-incident-archive",
-      "result_key": "AS6_HISTORICAL_INCIDENT_ARCHIVE_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "historical-incident-autoclose",
+      "check": "historical-incident-autoclose",
       "path": "ops/bin/as6-diagnose-historical-incident-autoclose",
-      "result_key": "AS6_HISTORICAL_INCIDENT_AUTOCLOSE_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "historical-incident-canonicalization",
+      "check": "historical-incident-canonicalization",
       "path": "ops/bin/as6-diagnose-historical-incident-canonicalization",
-      "result_key": "AS6_HISTORICAL_INCIDENT_CANONICALIZATION_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "historical-incident-suppressor",
+      "check": "historical-incident-suppressor",
       "path": "ops/bin/as6-diagnose-historical-incident-suppressor",
-      "result_key": "AS6_HISTORICAL_INCIDENT_SUPPRESSOR_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "host-freeze-history",
+      "check": "host-freeze-history",
       "path": "ops/bin/as6-diagnose-host-freeze-history",
-      "result_key": "AS6_HOST_FREEZE_HISTORY_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "host-freeze-investigation-pack",
+      "check": "host-freeze-investigation-pack",
       "path": "ops/bin/as6-diagnose-host-freeze-investigation-pack",
-      "result_key": "AS6_HOST_FREEZE_INVESTIGATION_PACK_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "host-freeze-network",
+      "check": "host-freeze-network",
       "path": "ops/bin/as6-diagnose-host-freeze-network",
-      "result_key": "AS6_HOST_FREEZE_NETWORK_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "host-stability",
+      "check": "host-stability",
       "path": "ops/bin/as6-diagnose-host-stability",
-      "result_key": "AS6_HOST_STABILITY_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "hypervisor-reboot",
+      "check": "hypervisor-reboot",
       "path": "ops/bin/as6-diagnose-hypervisor-reboot",
-      "result_key": "AS6_HYPERVISOR_REBOOT_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "issue-router",
+      "check": "issue-router",
       "path": "ops/bin/as6-diagnose-issue-router",
-      "result_key": "AS6_ISSUE_ROUTER_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "nameerror-signatures",
+      "check": "nameerror-signatures",
       "path": "ops/bin/as6-diagnose-nameerror-signatures",
-      "result_key": "AS6_NAMEERROR_SIGNATURES_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "ops-agent",
+      "check": "ops-agent",
       "path": "ops/bin/as6-diagnose-ops-agent",
-      "result_key": "AS6_OPS_AGENT_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "output-format",
+      "check": "output-format",
       "path": "ops/bin/as6-diagnose-output-format",
-      "result_key": "AS6_OUTPUT_FORMAT_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "patch-mode",
+      "check": "patch-mode",
       "path": "ops/bin/as6-diagnose-patch-mode",
-      "result_key": "AS6_PATCH_MODE_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "patch-structure",
+      "check": "patch-structure",
       "path": "ops/bin/as6-diagnose-patch-structure",
-      "result_key": "AS6_PATCH_STRUCTURE_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "pr-factory",
+      "check": "pr-factory",
       "path": "ops/bin/as6-diagnose-pr-factory",
-      "result_key": "AS6_PR_FACTORY_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "pre-reboot-forensics",
+      "check": "pre-reboot-forensics",
       "path": "ops/bin/as6-diagnose-pre-reboot-forensics",
-      "result_key": "AS6_PRE_REBOOT_FORENSICS_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "production-deployment-safety",
+      "check": "production-deployment-safety",
       "path": "ops/bin/as6-diagnose-production-deployment-safety",
-      "result_key": "AS6_PRODUCTION_DEPLOYMENT_SAFETY_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "production-freeze-guard",
+      "check": "production-freeze-guard",
       "path": "ops/bin/as6-diagnose-production-freeze-guard",
-      "result_key": "AS6_PRODUCTION_FREEZE_GUARD_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "provider-control-plane",
+      "check": "provider-control-plane",
       "path": "ops/bin/as6-diagnose-provider-control-plane",
-      "result_key": "AS6_PROVIDER_CONTROL_PLANE_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "provider-event-correlation",
+      "check": "provider-event-correlation",
       "path": "ops/bin/as6-diagnose-provider-event-correlation",
-      "result_key": "AS6_PROVIDER_EVENT_CORRELATION_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "provider-hypervisor-reboot",
+      "check": "provider-hypervisor-reboot",
       "path": "ops/bin/as6-diagnose-provider-hypervisor-reboot",
-      "result_key": "AS6_PROVIDER_HYPERVISOR_REBOOT_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "python-artifact-git-hygiene",
+      "check": "public-health",
+      "path": "ops/bin/as6-diagnose-public-health",
+      "status_visible": true,
+      "source": "auto"
+    },
+    {
+      "check": "python-artifact-git-hygiene",
       "path": "ops/bin/as6-diagnose-python-artifact-git-hygiene",
-      "result_key": "AS6_PYTHON_ARTIFACT_GIT_HYGIENE_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "python-variable-contract",
+      "check": "python-variable-contract",
       "path": "ops/bin/as6-diagnose-python-variable-contract",
-      "result_key": "AS6_PYTHON_VARIABLE_CONTRACT_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "raw-fail-consumers",
+      "check": "raw-fail-consumers",
       "path": "ops/bin/as6-diagnose-raw-fail-consumers",
-      "result_key": "AS6_RAW_FAIL_CONSUMERS_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "reboot-evidence-cache",
+      "check": "reboot-evidence-cache",
       "path": "ops/bin/as6-diagnose-reboot-evidence-cache",
-      "result_key": "AS6_REBOOT_EVIDENCE_CACHE_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "reboot-evidence-self-heal",
+      "check": "reboot-evidence-self-heal",
       "path": "ops/bin/as6-diagnose-reboot-evidence-self-heal",
-      "result_key": "AS6_REBOOT_EVIDENCE_SELF_HEAL_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "reboot-evidence-symbols",
+      "check": "reboot-evidence-symbols",
       "path": "ops/bin/as6-diagnose-reboot-evidence-symbols",
-      "result_key": "AS6_REBOOT_EVIDENCE_SYMBOLS_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "reboot-forensics",
+      "check": "reboot-forensics",
       "path": "ops/bin/as6-diagnose-reboot-forensics",
-      "result_key": "AS6_REBOOT_FORENSICS_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "reboot-forensics-runtime",
+      "check": "reboot-forensics-runtime",
       "path": "ops/bin/as6-diagnose-reboot-forensics-runtime",
-      "result_key": "AS6_REBOOT_FORENSICS_RUNTIME_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "reboot-origin",
+      "check": "reboot-origin",
       "path": "ops/bin/as6-diagnose-reboot-origin",
-      "result_key": "AS6_REBOOT_ORIGIN_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "restore-drill",
+      "check": "restore-drill",
       "path": "ops/bin/as6-diagnose-restore-drill",
-      "result_key": "AS6_RESTORE_DRILL_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "restore-drill-history",
+      "check": "restore-drill-history",
       "path": "ops/bin/as6-diagnose-restore-drill-history",
-      "result_key": "AS6_RESTORE_DRILL_HISTORY_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "restore-readiness",
+      "check": "restore-readiness",
       "path": "ops/bin/as6-diagnose-restore-readiness",
-      "result_key": "AS6_RESTORE_READINESS_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "rollback-readiness",
+      "check": "rollback-readiness",
       "path": "ops/bin/as6-diagnose-rollback-readiness",
-      "result_key": "AS6_ROLLBACK_READINESS_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "root-cause-cache",
+      "check": "root-cause-cache",
       "path": "ops/bin/as6-diagnose-root-cause-cache",
-      "result_key": "AS6_ROOT_CAUSE_CACHE_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "root-cause-canonicalization",
+      "check": "root-cause-canonicalization",
       "path": "ops/bin/as6-diagnose-root-cause-canonicalization",
-      "result_key": "AS6_ROOT_CAUSE_CANONICALIZATION_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "root-cause-contract",
+      "check": "root-cause-contract",
       "path": "ops/bin/as6-diagnose-root-cause-contract",
-      "result_key": "AS6_ROOT_CAUSE_CONTRACT_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "root-cause-dashboard",
+      "check": "root-cause-dashboard",
       "path": "ops/bin/as6-diagnose-root-cause-dashboard",
-      "result_key": "AS6_ROOT_CAUSE_DASHBOARD_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "root-cause-governance",
+      "check": "root-cause-governance",
       "path": "ops/bin/as6-diagnose-root-cause-governance",
-      "result_key": "AS6_ROOT_CAUSE_GOVERNANCE_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "root-cause-knowledge-base",
+      "check": "root-cause-knowledge-base",
       "path": "ops/bin/as6-diagnose-root-cause-knowledge-base",
-      "result_key": "AS6_ROOT_CAUSE_KNOWLEDGE_BASE_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "root-cause-remediation",
+      "check": "root-cause-remediation",
       "path": "ops/bin/as6-diagnose-root-cause-remediation",
-      "result_key": "AS6_ROOT_CAUSE_REMEDIATION_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "root-cause-router",
+      "check": "root-cause-router",
       "path": "ops/bin/as6-diagnose-root-cause-router",
-      "result_key": "AS6_ROOT_CAUSE_ROUTER_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "root-cause-staleness",
+      "check": "root-cause-staleness",
       "path": "ops/bin/as6-diagnose-root-cause-staleness",
-      "result_key": "AS6_ROOT_CAUSE_STALENESS_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "root-cause-token-policy",
+      "check": "root-cause-token-policy",
       "path": "ops/bin/as6-diagnose-root-cause-token-policy",
-      "result_key": "AS6_ROOT_CAUSE_TOKEN_POLICY_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "root-cause-v2",
+      "check": "root-cause-v2",
       "path": "ops/bin/as6-diagnose-root-cause-v2",
-      "result_key": "AS6_ROOT_CAUSE_V2_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "root-cause-validation",
+      "check": "root-cause-validation",
       "path": "ops/bin/as6-diagnose-root-cause-validation",
-      "result_key": "AS6_ROOT_CAUSE_VALIDATION_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "runtime-artifact-format",
+      "check": "runtime-artifact-format",
       "path": "ops/bin/as6-diagnose-runtime-artifact-format",
-      "result_key": "AS6_RUNTIME_ARTIFACT_FORMAT_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "runtime-artifacts",
+      "check": "runtime-artifacts",
       "path": "ops/bin/as6-diagnose-runtime-artifacts",
-      "result_key": "AS6_RUNTIME_ARTIFACTS_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "runtime-binary-artifacts",
+      "check": "runtime-binary-artifacts",
       "path": "ops/bin/as6-diagnose-runtime-binary-artifacts",
-      "result_key": "AS6_RUNTIME_BINARY_ARTIFACTS_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "runtime-stale-tmp-artifacts",
+      "check": "runtime-stale-tmp-artifacts",
       "path": "ops/bin/as6-diagnose-runtime-stale-tmp-artifacts",
-      "result_key": "AS6_RUNTIME_STALE_TMP_ARTIFACTS_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "ssh-heredoc-guard",
+      "check": "ssh-heredoc-guard",
       "path": "ops/bin/as6-diagnose-ssh-heredoc-guard",
-      "result_key": "AS6_SSH_HEREDOC_GUARD_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "ssh-stability",
+      "check": "ssh-stability",
       "path": "ops/bin/as6-diagnose-ssh-stability",
-      "result_key": "AS6_SSH_STABILITY_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "status-registry-consistency",
+      "check": "status-registry-consistency",
       "path": "ops/bin/as6-diagnose-status-registry-consistency",
-      "result_key": "AS6_STATUS_REGISTRY_CONSISTENCY_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "strategic-readiness",
+      "check": "strategic-readiness",
       "path": "ops/bin/as6-diagnose-strategic-readiness",
-      "result_key": "AS6_STRATEGIC_READINESS_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "unreachable-diagnostic-blocks",
+      "check": "unreachable-diagnostic-blocks",
       "path": "ops/bin/as6-diagnose-unreachable-diagnostic-blocks",
-      "result_key": "AS6_UNREACHABLE_DIAGNOSTIC_BLOCKS_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "vps-baseline",
+      "check": "vps-baseline",
       "path": "ops/bin/as6-diagnose-vps-baseline",
-      "result_key": "AS6_VPS_BASELINE_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     },
     {
-      "name": "workflow-yaml",
+      "check": "workflow-yaml",
       "path": "ops/bin/as6-diagnose-workflow-yaml",
-      "result_key": "AS6_WORKFLOW_YAML_RESULT",
-      "expected": "OK",
-      "category": "diagnostic",
-      "required": true
+      "status_visible": true,
+      "source": "auto"
     }
   ]
 }

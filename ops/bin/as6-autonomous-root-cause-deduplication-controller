@@ -1,37 +1,113 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd /var/www/ai-platform
-fail=0; warn=0
-dir="runtime/root-cause-deduplication"; mkdir -p "$dir"
-out="$dir/latest.out"; map="$dir/root-cause-map.tsv"; aliases="$dir/root-cause-aliases.tsv"; dups="$dir/root-cause-duplicates.tsv"; summary="$dir/root-cause-summary.env"
-: > "$out"; : > "$map"; : > "$aliases"; : > "$dups"; : > "$summary"
+
+fail=0
+warn=0
+
+dir="runtime/root-cause-deduplication"
+mkdir -p "$dir"
+
+out="$dir/latest.out"
+map="$dir/root-cause-map.tsv"
+aliases="$dir/root-cause-aliases.tsv"
+dups="$dir/root-cause-duplicates.tsv"
+summary="$dir/root-cause-summary.env"
+
+: > "$out"
+: > "$map"
+: > "$aliases"
+: > "$dups"
+: > "$summary"
+
 say(){ echo "$1" | tee -a "$out"; }
 ok(){ say "PASS: $1"; }
 soft(){ say "WARN: $1"; warn=1; }
 bad(){ say "FAIL: $1"; fail=1; }
+
 say "=== AS6 AUTONOMOUS ROOT CAUSE DEDUPLICATION CONTROLLER ==="
+
 printf "%s\t%s\t%s\n" "class" "normalized" "source" > "$map"
+
 for f in docs/AS6_PROJECT_STATE.md docs/governance/*.md docs/diagnostics/*.md docs/coverage/*.md ops/registry/*.md ops/governance/*.md; do
   [ -f "$f" ] || continue
-  grep -Eo "[A-Z][A-Z0-9_]{5,}" "$f" | while read -r cls; do
-    case "$cls" in PASS|FAIL|WARN|OK|YES|NO|AS6|AEC|LTS|VPS|API|UTC) continue ;; esac
-    norm="$(printf "%s" "$cls" | sed -E "s/^(AS6_|AEC_)//; s/_(MISSING|DRIFT|FAILED|FAIL|GAP|VIOLATION|REQUIRED|FORBIDDEN|NONE|OK|PASS)$//")"
-    printf "%s\t%s\t%s\n" "$cls" "$norm" "$f"
-  done
-done | sort -u >> "$map"
+
+  while read -r cls; do
+    [ -n "$cls" ] || continue
+
+    case "$cls" in
+      PASS|FAIL|WARN|OK|YES|NO|AS6|AEC|LTS|VPS|API|UTC) continue ;;
+    esac
+
+    norm="$(printf "%s" "$cls" | sed -E 's/^(AS6_|AEC_)//; s/_(MISSING|DRIFT|FAILED|FAIL|GAP|VIOLATION|REQUIRED|FORBIDDEN|NONE|OK|PASS)$//')"
+    printf "%s\t%s\t%s\n" "$cls" "$norm" "$f" >> "$map"
+  done < <(grep -Eo "[A-Z][A-Z0-9_]{5,}" "$f" 2>/dev/null || true)
+done
+
+sort -u "$map" -o "$map"
+
 count="$(tail -n +2 "$map" | wc -l | tr -d " ")"
+
 printf "%s\t%s\n" "class" "count" > "$dups"
-tail -n +2 "$map" | cut -f1 | sort | uniq -c | awk "$1 > 1 {print $2 \"\t\" $1}" >> "$dups" || true
+tail -n +2 "$map" | cut -f1 | sort | uniq -c | awk '$1 > 1 {print $2 "\t" $1}' >> "$dups" || true
+
 printf "%s\t%s\t%s\n" "normalized" "count" "classes" > "$aliases"
-tail -n +2 "$map" | awk -F "\t" "{a[$2]=a[$2]\",\"$1; c[$2]++} END {for (k in c) if (c[k] > 1) print k \"\t\" c[k] \"\t\" a[k]}" | sort >> "$aliases" || true
+tail -n +2 "$map" | awk -F '\t' '{a[$2]=a[$2]","$1; c[$2]++} END {for (k in c) if (c[k] > 1) print k "\t" c[k] "\t" a[k]}' | sort >> "$aliases" || true
+
 dup_count="$(tail -n +2 "$dups" | wc -l | tr -d " ")"
 alias_count="$(tail -n +2 "$aliases" | wc -l | tr -d " ")"
+
 say "ROOT_CAUSE_REFERENCE_COUNT=$count"
 say "ROOT_CAUSE_DUPLICATE_REFERENCE_COUNT=$dup_count"
 say "ROOT_CAUSE_ALIAS_GROUP_COUNT=$alias_count"
+
 [ "$count" -gt 0 ] && ok "root cause map generated" || bad "root cause map empty"
-[ -x ops/bin/as6-diagnose-root-cause-knowledge-base ] && ops/bin/as6-diagnose-root-cause-knowledge-base >> "$out" 2>&1 && ok "root cause knowledge base gate" || soft "root cause knowledge base gate warning"
-[ -x ops/bin/as6-diagnose-root-cause-governance ] && ops/bin/as6-diagnose-root-cause-governance >> "$out" 2>&1 && ok "root cause governance gate" || soft "root cause governance gate warning"
-if git ls-files .env 2>/dev/null | grep -Fxq ".env"; then bad ".env is tracked by git"; else ok ".env is not tracked by git"; fi
-printf "%s\n" "AS6_ROOT_CAUSE_DEDUP_REFERENCE_COUNT=$count" "AS6_ROOT_CAUSE_DEDUP_DUPLICATE_REFERENCE_COUNT=$dup_count" "AS6_ROOT_CAUSE_DEDUP_ALIAS_GROUP_COUNT=$alias_count" "AS6_ROOT_CAUSE_DEDUP_MAP=$map" "AS6_ROOT_CAUSE_DEDUP_EVIDENCE=$out" > "$summary"
-if [ "$fail" -eq 0 ]; then say "AS6_ROOT_CAUSE_DEDUPLICATION=PASS"; say "AS6_ROOT_CAUSE_DEDUPLICATION_RESULT=OK"; exit 0; else say "AS6_ROOT_CAUSE_DEDUPLICATION=FAIL"; say "AS6_ROOT_CAUSE_DEDUPLICATION_RESULT=FAIL"; exit 1; fi
+
+if [ -x ops/bin/as6-diagnose-root-cause-knowledge-base ]; then
+  if ops/bin/as6-diagnose-root-cause-knowledge-base >> "$out" 2>&1; then
+    ok "root cause knowledge base gate"
+  else
+    soft "root cause knowledge base gate warning"
+  fi
+else
+  soft "root cause knowledge base diagnostic missing"
+fi
+
+if [ -x ops/bin/as6-diagnose-root-cause-governance ]; then
+  if ops/bin/as6-diagnose-root-cause-governance >> "$out" 2>&1; then
+    ok "root cause governance gate"
+  else
+    soft "root cause governance gate warning"
+  fi
+else
+  soft "root cause governance diagnostic missing"
+fi
+
+if git ls-files .env 2>/dev/null | grep -Fxq ".env"; then
+  bad ".env is tracked by git"
+else
+  ok ".env is not tracked by git"
+fi
+
+printf "%s\n" \
+  "AS6_ROOT_CAUSE_DEDUP_REFERENCE_COUNT=$count" \
+  "AS6_ROOT_CAUSE_DEDUP_DUPLICATE_REFERENCE_COUNT=$dup_count" \
+  "AS6_ROOT_CAUSE_DEDUP_ALIAS_GROUP_COUNT=$alias_count" \
+  "AS6_ROOT_CAUSE_DEDUP_MAP=$map" \
+  "AS6_ROOT_CAUSE_DEDUP_EVIDENCE=$out" \
+  > "$summary"
+
+if [ "$fail" -eq 0 ]; then
+  say "AS6_ROOT_CAUSE_DEDUPLICATION=PASS"
+  if [ "$warn" -eq 1 ]; then
+    say "AS6_ROOT_CAUSE_DEDUPLICATION_WARNINGS=PRESENT"
+  else
+    say "AS6_ROOT_CAUSE_DEDUPLICATION_WARNINGS=NONE"
+  fi
+  say "AS6_ROOT_CAUSE_DEDUPLICATION_RESULT=OK"
+  exit 0
+fi
+
+say "AS6_ROOT_CAUSE_DEDUPLICATION=FAIL"
+say "AS6_ROOT_CAUSE_DEDUPLICATION_RESULT=FAIL"
+exit 1

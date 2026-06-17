@@ -1405,3 +1405,7 @@
 
 ## Runtime Binary Empty Tmp Coverage
 - AS6_RUNTIME_BINARY_EMPTY_TMP_COVERAGE=REGISTERED
+
+- ops/bin/as6-diagnose-public-health
+
+- ops/bin/as6-diagnose-all-watch

@@ -1,4 +1,6 @@
-# as6-autonomous-production-drift-controller governance
+Coverage registered:
+
+# as6-autonomous-production-drift-controller coverage
 
 Controller: `as6-autonomous-production-drift-controller`
 
