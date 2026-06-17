@@ -1278,3 +1278,16 @@
 - diagnostic: ops/bin/as6-diagnose-workflow-yaml
 - registry: registered
 - source: diagnostic-status-registry-autobuild
+
+## Autonomous Validation Controller Wrapper
+- diagnostic: ops/bin/as6-autonomous-validation-controller
+- delegates_to: ops/bin/as6-diagnose-autonomous-validation-controller
+- result: AS6_AUTONOMOUS_VALIDATION_CONTROLLER_RESULT
+
+## KB Incident Cascade Reconciliation
+- diagnostic: ops/bin/as6-autonomous-incident-auto-close-reconciliation-controller
+- result: AS6_INCIDENT_AUTO_CLOSE_RECONCILIATION_RESULT
+
+## Coverage Doc Contract Marker Repair
+- diagnostic: coverage_doc_contract_marker
+- result: COVERAGE_DOC_CONTRACT_MARKER_REPAIR=OK

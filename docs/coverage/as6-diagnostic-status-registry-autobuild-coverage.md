@@ -1,5 +1,9 @@
 # AS6 Diagnostic Coverage Auto-Rebuild
 
+Coverage registered:
+AS6_AS6_DIAGNOSTIC_STATUS_REGISTRY_AUTOBUILD_COVERAGE=REGISTERED
+
+
 Generated from ops/bin/as6-diagnose*.
 
 ## as6-diagnose-actions-node24

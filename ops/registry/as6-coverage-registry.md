@@ -1387,3 +1387,12 @@
 - diagnostic: ops/bin/as6-diagnose-workflow-yaml
 - coverage: registered
 - source: diagnostic-status-registry-autobuild
+
+## Autonomous Validation Controller Wrapper Coverage
+- AS6_AUTONOMOUS_VALIDATION_CONTROLLER_WRAPPER_COVERAGE=REGISTERED
+
+## KB Incident Cascade Reconciliation Coverage
+- AS6_KB_INCIDENT_CASCADE_RECONCILIATION_COVERAGE=REGISTERED
+
+## Coverage Doc Contract Marker Repair Coverage
+- AS6_COVERAGE_DOC_CONTRACT_MARKER_REPAIR_COVERAGE=REGISTERED

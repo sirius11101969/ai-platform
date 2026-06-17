@@ -1,5 +1,9 @@
 # AS6 Root Cause Governance Sync Authority Coverage
 
+Coverage registered:
+AS6_AS6_ROOT_CAUSE_GOVERNANCE_SYNC_AUTHORITY_COVERAGE=REGISTERED
+
+
 Canonical coverage authority generated from router and governance diagnostics.
 
 ## AUTONOMOUS_CHANGE_CONTROLLER_DRIFT

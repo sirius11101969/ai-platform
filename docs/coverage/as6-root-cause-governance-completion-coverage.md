@@ -1,5 +1,9 @@
 # AS6 Root Cause Governance Completion Coverage
 
+Coverage registered:
+AS6_AS6_ROOT_CAUSE_GOVERNANCE_COMPLETION_COVERAGE=REGISTERED
+
+
 Generated from root-cause governance gaps.
 
 ## AUTONOMOUS_CHANGE_CONTROLLER_DRIFT
