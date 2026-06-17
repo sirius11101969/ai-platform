@@ -833,6 +833,11 @@
   ,"ops/bin/as6-diagnose-runtime-stage-gap-exit-code": {"status":"registered","result":"OK","source":"as6-repair-runtime-stage-gap-exit-code"}
   ,"ops/bin/as6-diagnose-runtime-stage-gap-final-marker": {"status":"registered","result":"OK","source":"as6-repair-runtime-stage-gap-premature-exit"}
   ,"ops/bin/as6-diagnose-runtime-stage-gap-policy-text": {"status":"registered","result":"OK","source":"as6-repair-runtime-policy-text-contract"}
+  ,"ops/bin/as6-diagnose-diagnose-all-wait-signature": {"status":"registered","result":"OK","source":"as6-repair-diagnose-all-wait-signature"}
+  ,"ops/bin/as6-diagnose-backup-discovery-drift": {"status":"registered","result":"OK","source":"as6-repair-backup-diagnostic-discovery-drift"}
+  ,"ops/bin/as6-diagnose-fast-summary": {"status":"registered","result":"OK","source":"as6-simplify-and-speed-diagnostics"}
+  ,"ops/bin/as6-diagnose-diagnostic-simplification": {"status":"registered","result":"OK","source":"as6-simplify-and-speed-diagnostics"}
+  ,"ops/bin/as6-diagnose-active-autonomy-score": {"status":"registered","result":"OK","source":"as6-repair-autonomy-score-false-positive"}
     }
   ]
 }

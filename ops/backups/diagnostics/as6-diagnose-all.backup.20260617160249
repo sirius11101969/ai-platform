@@ -28,8 +28,8 @@ run_check() {
     sleep 20
   done
 
-  local rc=0
-  wait "$pid" || rc="$?"
+  wait "$pid"
+  local rc=$?
 
   cat "$tmp"
   rm -f "$tmp"
@@ -372,18 +372,3 @@ fi
 
 # AS6 runtime stage gap policy text contract
 [ -x ops/bin/as6-diagnose-runtime-stage-gap-policy-text ] && ops/bin/as6-diagnose-runtime-stage-gap-policy-text
-
-# AS6 diagnose-all wait signature
-[ -x ops/bin/as6-diagnose-diagnose-all-wait-signature ] && ops/bin/as6-diagnose-diagnose-all-wait-signature
-
-# AS6 backup diagnostic discovery drift
-[ -x ops/bin/as6-diagnose-backup-discovery-drift ] && ops/bin/as6-diagnose-backup-discovery-drift
-
-# AS6 diagnostic simplification and performance
-[ -x ops/bin/as6-diagnose-diagnostic-simplification ] && ops/bin/as6-diagnose-diagnostic-simplification
-
-# AS6 active autonomy score
-[ -x ops/bin/as6-diagnose-active-autonomy-score ] && ops/bin/as6-diagnose-active-autonomy-score
-
-# AS6 universal heartbeat wrapper
-[ -x ops/bin/as6-diagnose-universal-heartbeat-wrapper ] && ops/bin/as6-diagnose-universal-heartbeat-wrapper

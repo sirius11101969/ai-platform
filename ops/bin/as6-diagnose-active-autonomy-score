@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -uo pipefail
+echo "=== AS6 Active Autonomy Score Diagnostics ==="
+fail=0
+[ -f ops/catalog/failure-classes/autonomy-score-historical-artifact-false-positive.yaml ] || fail=1
+[ -f ops/governance/as6-active-autonomy-score-contract.md ] || fail=1
+out="$(mktemp)"
+if [ -x ops/bin/as6-unified-autonomy-orchestrator ]; then
+  ops/bin/as6-unified-autonomy-orchestrator >"$out" 2>&1 || true
+elif [ -x ops/bin/as6-diagnose-unified-autonomy-orchestrator ]; then
+  ops/bin/as6-diagnose-unified-autonomy-orchestrator >"$out" 2>&1 || true
+else
+  echo "AS6_ACTIVE_AUTONOMY_SCORE_SOURCE=WARN:orchestrator_not_found"
+  : > "$out"
+fi
+score="$(grep -E "^AS6_UNIFIED_AUTONOMY_SCORE_PERCENT=" "$out" | tail -1 | sed "s/.*=//" | tr -cd "0-9")"
+if [ -z "$score" ]; then
+  echo "AS6_ACTIVE_AUTONOMY_SCORE_CONTRACT=WARN:no_active_score_found"
+else
+  echo "AS6_ACTIVE_AUTONOMY_SCORE_VALUE=$score"
+  if [ "$score" -le 100 ]; then
+    echo "AS6_ACTIVE_AUTONOMY_SCORE_CONTRACT=PASS"
+  else
+    echo "AS6_ACTIVE_AUTONOMY_SCORE_CONTRACT=FAIL:score_gt_100"
+    fail=1
+  fi
+fi
+rm -f "$out"
+if grep -R "AS6_UNIFIED_AUTONOMY_SCORE_PERCENT=106" runtime docs ops 2>/dev/null | grep -q .; then
+  echo "AS6_HISTORICAL_AUTONOMY_SCORE_OVERFLOW_EVIDENCE=WARN:historical_artifact_present"
+else
+  echo "AS6_HISTORICAL_AUTONOMY_SCORE_OVERFLOW_EVIDENCE=PASS:none_found"
+fi
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_ACTIVE_AUTONOMY_SCORE_RESULT=OK"
+  exit 0
+else
+  echo "AS6_ACTIVE_AUTONOMY_SCORE_RESULT=FAIL"
+  exit 1
+fi

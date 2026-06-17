@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -uo pipefail
+label="${1:-AS6 command}"
+shift || true
+[ "$#" -gt 0 ] || { echo "AS6_HEARTBEAT_WRAPPER_RESULT=FAIL:no_command"; exit 1; }
+"$@" &
+pid="$!"
+echo "AS6_HEARTBEAT_STARTED label=${label} pid=${pid}"
+while kill -0 "$pid" 2>/dev/null; do
+  echo "AS6_HEARTBEAT current=${label} pid=${pid} time=$(date -u +%H:%M:%S)"
+  sleep 20
+done
+rc=0
+wait "$pid" || rc="$?"
+[ "$rc" -eq 0 ] && echo "AS6_HEARTBEAT_WRAPPER_RESULT=OK:${label}" || echo "AS6_HEARTBEAT_WRAPPER_RESULT=FAIL:${label}:rc=${rc}"
+exit "$rc"

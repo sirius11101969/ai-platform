@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+echo "=== AS6 Universal Heartbeat Wrapper Diagnostics ==="
+test -x ops/bin/as6-run-heartbeat
+ops/bin/as6-run-heartbeat test-heartbeat bash -lc 'sleep 2; echo AS6_HEARTBEAT_TEST=OK'
+echo "AS6_UNIVERSAL_HEARTBEAT_WRAPPER_RESULT=OK"

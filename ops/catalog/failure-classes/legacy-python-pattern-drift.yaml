@@ -1,0 +1,5 @@
+class: LEGACY_PYTHON_PATTERN_DRIFT
+category: diagnostic-legacy-pattern-drift
+severity: medium
+root_cause: legacy python heredoc and base64 patterns remain in older diagnostics
+resolution: track legacy patterns as migration debt without blocking production health

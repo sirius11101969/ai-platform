@@ -1,0 +1,11 @@
+class: BACKUP_DIAGNOSTIC_DISCOVERY_DRIFT
+category: diagnostic-discovery-drift
+severity: high
+diagnostic_required: true
+coverage_required: true
+governance_required: true
+prevention_required: true
+aec_required: true
+state_required: true
+root_cause: diagnostic backup files in ops/bin match as6-diagnose-* discovery pattern
+resolution: diagnostic backups must be stored outside ops/bin diagnostic discovery path

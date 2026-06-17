@@ -253,3 +253,8 @@
 | RUNTIME_STAGE_GAP_DIAGNOSTIC_FAILURE | AEC_REQUIRE_DIAGNOSTIC_EXIT_ZERO | pass-diagnostics-must-exit-zero-with-final-marker | ENABLED |
 | RUNTIME_STAGE_GAP_DIAGNOSTIC_PREMATURE_EXIT | AEC_REQUIRE_FINAL_RESULT_MARKER | diagnostics-must-print-final-marker-before-termination | ENABLED |
 | RUNTIME_STAGE_GAP_POLICY_TEXT_DRIFT | AEC_REQUIRE_POLICY_TEXT_CONTRACT | governance-policy-text-must-match-diagnostic-contract | ENABLED |
+| DIAGNOSE_ALL_PATCH_SIGNATURE_DRIFT | AEC_REQUIRE_DIAGNOSE_ALL_WAIT_RC_CAPTURE | diagnose-all-wait-must-capture-rc-without-fail-fast | ENABLED |
+| BACKUP_DIAGNOSTIC_DISCOVERY_DRIFT | AEC_FORBID_DIAGNOSTIC_BACKUPS_IN_DISCOVERY_PATH | backup-files-must-not-match-diagnostic-discovery-patterns | ENABLED |
+| DIAGNOSTIC_COMPLEXITY_DRIFT | AEC_REQUIRE_DIAGNOSTIC_SIMPLIFICATION | diagnostics-must-remain-simple-fast-and-useful | ENABLED |
+| AUTONOMY_SCORE_OVERFLOW | AEC_CAP_AUTONOMY_SCORE_AT_100 | autonomy-score-must-not-exceed-100-percent | ENABLED |
+| AUTONOMY_SCORE_HISTORICAL_ARTIFACT_FALSE_POSITIVE | AEC_VALIDATE_ACTIVE_RUNTIME_NOT_HISTORICAL_ARTIFACTS | active-readiness-must-not-fail-on-historical-evidence | ENABLED |

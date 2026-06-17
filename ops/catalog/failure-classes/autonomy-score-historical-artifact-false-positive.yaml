@@ -1,0 +1,11 @@
+class: AUTONOMY_SCORE_HISTORICAL_ARTIFACT_FALSE_POSITIVE
+category: autonomy-metric-diagnostic-scope-drift
+severity: high
+root_cause: autonomy overflow diagnostic scanned historical artifacts instead of active autonomy calculation
+resolution: validate active unified-autonomy-orchestrator output only
+diagnostic_required: true
+coverage_required: true
+governance_required: true
+prevention_required: true
+aec_required: true
+state_required: true

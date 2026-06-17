@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+echo "=== AS6 Diagnose-All Wait Signature Diagnostics ==="
+test -f ops/catalog/failure-classes/diagnose-all-patch-signature-drift.yaml
+grep -Fq "wait \"\$pid\" || rc=\"\$?\"" ops/bin/as6-diagnose-all
+grep -Fq "AS6_DIAGNOSE_ALL_CHECK=FAIL" ops/bin/as6-diagnose-all
+echo "AS6_DIAGNOSE_ALL_PATCH_SIGNATURE_CONTROL=PASS"
+echo "AS6_DIAGNOSE_ALL_WAIT_SIGNATURE_RESULT=OK"

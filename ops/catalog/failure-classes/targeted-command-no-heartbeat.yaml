@@ -1,0 +1,3 @@
+class: TARGETED_COMMAND_NO_HEARTBEAT
+root_cause: targeted commands bypass diagnose-all heartbeat
+resolution: use ops/bin/as6-run-heartbeat for long targeted commands

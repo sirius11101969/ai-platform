@@ -1,0 +1,5 @@
+class: DIAGNOSE_ALL_PERFORMANCE_DRIFT
+category: diagnostic-runtime-performance-drift
+severity: medium
+root_cause: full diagnose-all can be slow because every controller runs sequentially
+resolution: add fast summary diagnostics profile for quick operator visibility

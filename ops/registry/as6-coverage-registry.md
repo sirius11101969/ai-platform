@@ -1429,3 +1429,9 @@
 | ops/bin/as6-diagnose-runtime-stage-gap-exit-code | runtime-stage-gap+diagnostic-exit-code+final-marker | ENABLED |
 | ops/bin/as6-diagnose-runtime-stage-gap-final-marker | runtime-stage-gap+final-marker+premature-exit-prevention | ENABLED |
 | ops/bin/as6-diagnose-runtime-stage-gap-policy-text | governance-policy-text+runtime-stage-gap-contract | ENABLED |
+| ops/bin/as6-diagnose-diagnose-all-wait-signature | wait-rc-capture+patch-signature+fail-isolation | ENABLED |
+| ops/bin/as6-diagnose-backup-discovery-drift | backup-location+diagnostic-discovery+registry-hygiene | ENABLED |
+| ops/bin/as6-diagnose-fast-summary | speed+complexity+score-overflow+legacy-pattern+weak-linkage | ENABLED |
+| ops/bin/as6-diagnose-diagnostic-simplification | speed+complexity+score-overflow+legacy-pattern+weak-linkage | ENABLED |
+| ops/bin/as6-diagnose-active-autonomy-score | active-runtime-score+historical-artifact-false-positive-prevention | ENABLED |
+| ops/bin/as6-diagnose-universal-heartbeat-wrapper | targeted-command-heartbeat | ENABLED |

@@ -1,0 +1,5 @@
+class: DIAGNOSTIC_COMPLEXITY_DRIFT
+category: diagnostic-maintainability-drift
+severity: medium
+root_cause: diagnostic framework growth increases runtime and operational complexity
+resolution: add complexity budget, fast summary, and simplification controls

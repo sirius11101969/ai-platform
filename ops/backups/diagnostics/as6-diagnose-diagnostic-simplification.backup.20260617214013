@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -uo pipefail
+echo "=== AS6 Diagnostic Simplification Diagnostics ==="
+fail=0
+[ -f ops/catalog/failure-classes/autonomy-score-overflow.yaml ] || fail=1
+[ -f ops/catalog/failure-classes/diagnostic-complexity-drift.yaml ] || fail=1
+[ -f ops/catalog/failure-classes/weak-diagnostic-linkage-drift.yaml ] || fail=1
+[ -f ops/catalog/failure-classes/legacy-python-pattern-drift.yaml ] || fail=1
+[ -f ops/catalog/failure-classes/diagnose-all-performance-drift.yaml ] || fail=1
+[ -f ops/governance/as6-diagnostic-simplification-performance-policy.md ] || fail=1
+[ -x ops/bin/as6-diagnose-fast-summary ] || fail=1
+diag_count="$(find ops/bin -maxdepth 1 -type f -name "as6-diagnose-*" | wc -l | tr -d " ")"
+fc_count="$(find ops/catalog/failure-classes -type f -name "*.yaml" 2>/dev/null | wc -l | tr -d " ")"
+legacy_count="$(grep -RIlE "python3 - <<|base64\.b64decode" ops/bin 2>/dev/null | wc -l | tr -d " ")"
+echo "AS6_DIAGNOSTIC_COMPLEXITY_COUNT=${diag_count}"
+echo "AS6_FAILURE_CLASS_COUNT=${fc_count}"
+echo "AS6_LEGACY_PATTERN_COUNT=${legacy_count}"
+if [ "$diag_count" -gt 180 ]; then echo "AS6_DIAGNOSTIC_COMPLEXITY_BUDGET=WARN:${diag_count}"; else echo "AS6_DIAGNOSTIC_COMPLEXITY_BUDGET=PASS:${diag_count}"; fi
+if [ "$legacy_count" -gt 0 ]; then echo "AS6_LEGACY_PYTHON_PATTERN_DRIFT=WARN:${legacy_count}"; else echo "AS6_LEGACY_PYTHON_PATTERN_DRIFT=PASS"; fi
+if grep -R "AS6_UNIFIED_AUTONOMY_SCORE_PERCENT=106" ops/bin ops docs 2>/dev/null | grep -q .; then echo "AS6_AUTONOMY_SCORE_OVERFLOW_CONTROL=FAIL"; fail=1; else echo "AS6_AUTONOMY_SCORE_OVERFLOW_CONTROL=PASS"; fi
+ops/bin/as6-diagnose-fast-summary >/tmp/as6-fast-summary.out 2>&1 && echo "AS6_FAST_SUMMARY_CONTROL=PASS" || { cat /tmp/as6-fast-summary.out; echo "AS6_FAST_SUMMARY_CONTROL=FAIL"; fail=1; }
+if [ "$fail" -eq 0 ]; then echo "AS6_DIAGNOSTIC_SIMPLIFICATION_RESULT=OK"; exit 0; else echo "AS6_DIAGNOSTIC_SIMPLIFICATION_RESULT=FAIL"; exit 1; fi

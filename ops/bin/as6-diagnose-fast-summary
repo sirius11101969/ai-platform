@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -uo pipefail
+echo "=== AS6 Fast Diagnostic Summary ==="
+fail=0
+[ -f docs/AS6_PROJECT_STATE.md ] && echo "AS6_FAST_STATE_FILE=PASS" || { echo "AS6_FAST_STATE_FILE=FAIL"; fail=1; }
+[ -f ops/registry/as6-diagnostic-registry.md ] && echo "AS6_FAST_DIAGNOSTIC_REGISTRY=PASS" || { echo "AS6_FAST_DIAGNOSTIC_REGISTRY=FAIL"; fail=1; }
+[ -f ops/registry/as6-coverage-registry.md ] && echo "AS6_FAST_COVERAGE_REGISTRY=PASS" || { echo "AS6_FAST_COVERAGE_REGISTRY=FAIL"; fail=1; }
+[ -f ops/registry/as6-aec-registry.md ] && echo "AS6_FAST_AEC_REGISTRY=PASS" || { echo "AS6_FAST_AEC_REGISTRY=FAIL"; fail=1; }
+if find ops/bin -maxdepth 1 -type f -name "as6-diagnose-*.backup.*" | grep -q .; then echo "AS6_FAST_BACKUP_DISCOVERY=FAIL"; fail=1; else echo "AS6_FAST_BACKUP_DISCOVERY=PASS"; fi
+if git diff --name-only -- .env .env.* 2>/dev/null | grep -q .; then echo "AS6_FAST_ENV_STAGING=FAIL"; fail=1; else echo "AS6_FAST_ENV_STAGING=PASS"; fi
+diag_count="$(find ops/bin -maxdepth 1 -type f -name "as6-diagnose-*" | wc -l | tr -d " ")"
+fc_count="$(find ops/catalog/failure-classes -type f -name "*.yaml" 2>/dev/null | wc -l | tr -d " ")"
+echo "AS6_FAST_DIAGNOSTIC_COUNT=${diag_count}"
+echo "AS6_FAST_FAILURE_CLASS_COUNT=${fc_count}"
+if [ "$fail" -eq 0 ]; then echo "AS6_FAST_SUMMARY_RESULT=OK"; exit 0; else echo "AS6_FAST_SUMMARY_RESULT=FAIL"; exit 1; fi

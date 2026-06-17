@@ -1,0 +1,11 @@
+class: DIAGNOSE_ALL_FAIL_FAST_WAIT_CONTRACT
+category: diagnostic-runner-fail-isolation
+severity: critical
+diagnostic_required: true
+coverage_required: true
+governance_required: true
+prevention_required: true
+aec_required: true
+state_required: true
+root_cause: diagnose-all stops at first failed controller because wait inherits set -e behavior before failure can be recorded
+resolution: child diagnostic failure must be captured as rc and converted to AS6_DIAGNOSE_ALL_CHECK=FAIL without stopping the full run

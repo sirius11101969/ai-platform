@@ -1,0 +1,5 @@
+class: DIAGNOSE_ALL_PATCH_SIGNATURE_DRIFT
+category: diagnostic-runner-patch-contract
+severity: high
+root_cause: previous automated patch expected quoted rc assignment but actual diagnose-all uses local rc=$?
+resolution: patch actual wait/local rc signature safely

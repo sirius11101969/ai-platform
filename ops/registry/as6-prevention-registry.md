@@ -15,3 +15,11 @@
 | RUNTIME_STAGE_GAP_DIAGNOSTIC_FAILURE | diagnostics-must-reach-final-ok-marker-and-exit-zero | ENABLED |
 | RUNTIME_STAGE_GAP_DIAGNOSTIC_PREMATURE_EXIT | require-final-result-marker-before-diagnostic-exit | ENABLED |
 | RUNTIME_STAGE_GAP_POLICY_TEXT_DRIFT | keep-governance-policy-text-aligned-with-diagnostics | ENABLED |
+| DIAGNOSE_ALL_PATCH_SIGNATURE_DRIFT | verify-current-run-check-signature-before-patching | ENABLED |
+| BACKUP_DIAGNOSTIC_DISCOVERY_DRIFT | keep-diagnostic-backups-out-of-ops-bin | ENABLED |
+| AUTONOMY_SCORE_OVERFLOW | simplify-and-speed-diagnostic-control-plane | ENABLED |
+| DIAGNOSTIC_COMPLEXITY_DRIFT | simplify-and-speed-diagnostic-control-plane | ENABLED |
+| WEAK_DIAGNOSTIC_LINKAGE_DRIFT | simplify-and-speed-diagnostic-control-plane | ENABLED |
+| LEGACY_PYTHON_PATTERN_DRIFT | simplify-and-speed-diagnostic-control-plane | ENABLED |
+| DIAGNOSE_ALL_PERFORMANCE_DRIFT | simplify-and-speed-diagnostic-control-plane | ENABLED |
+| AUTONOMY_SCORE_HISTORICAL_ARTIFACT_FALSE_POSITIVE | validate-active-autonomy-score-not-historical-logs | ENABLED |

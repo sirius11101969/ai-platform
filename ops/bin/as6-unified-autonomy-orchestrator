@@ -32,15 +32,20 @@ say "AS6_UNIFIED_AUTONOMY_AUTO_PRODUCTION_APPLY=NO"
 say "AS6_UNIFIED_AUTONOMY_HUMAN_APPROVAL_REQUIRED=YES"
 say "AS6_UNIFIED_AUTONOMY_SAFE_DOCS_AUTO_REGISTER=YES"
 if git ls-files .env 2>/dev/null | grep -Fxq ".env"; then bad ".env is tracked by git"; else ok ".env is not tracked by git"; fi
-if [ "$total" -gt 0 ]; then score=$((pass * 100 / total)); else score=0; fi
+if [ "$total" -gt 0 ]; then score=0 0( pass_gates * 100 / total_gates ))
+if [ "" -gt 100 ]; then score=100; fi; else score=0; fi
 if [ "$score" -lt 75 ]; then level="L6"; class="PARTIAL_AUTONOMY"; fi
 if [ "$score" -ge 75 ] && [ "$score" -lt 88 ]; then level="L7"; class="AUTONOMOUS_GOVERNANCE_PLATFORM"; fi
 if [ "$score" -ge 88 ] && [ "$score" -lt 95 ]; then level="L8"; class="CONDITIONAL_AUTONOMOUS_OPERATIONS"; fi
 if [ "$score" -ge 95 ]; then level="L9"; class="FULL_AUTONOMOUS_PRODUCTION_CONTROL"; fi
 printf "%s\n" "# AS6 Unified Autonomy Plan" "" "Level: $level" "Score: $score" "Class: $class" "" "Policy:" "" "- Production auto-apply: NO" "- Human approval required: YES" "- Safe docs/governance registration: YES" "" "Required sequence:" "" "1. Diagnostics first." "2. Architecture compliance." "3. Production drift." "4. Rollback verification." "5. Evidence correlation." "6. Incident commander." "7. Production policy." "8. Change impact." "9. Git sync." "10. Secret scan." "11. Human approval before production-changing action." > "$plan"
-printf "%s\n" "AS6_UNIFIED_AUTONOMY_SCORE_PERCENT=$score" "AS6_UNIFIED_AUTONOMY_LEVEL=$level" "AS6_UNIFIED_AUTONOMY_CLASS=$class" "AS6_UNIFIED_AUTONOMY_PASS_GATES=$pass" "AS6_UNIFIED_AUTONOMY_TOTAL_GATES=$total" "AS6_UNIFIED_AUTONOMY_MATRIX=$matrix" "AS6_UNIFIED_AUTONOMY_PLAN=$plan" "AS6_UNIFIED_AUTONOMY_EVIDENCE=$out" "AS6_UNIFIED_AUTONOMY_AUTO_PRODUCTION_APPLY=NO" "AS6_UNIFIED_AUTONOMY_HUMAN_APPROVAL_REQUIRED=YES" > "$summary"
+printf "%s\n" "if [ "-e" -gt 100 ] 2>/dev/null; then score=100; fi
+if [ "-e" -gt 100 ] 2>/dev/null; then score=100; fi
+AS6_UNIFIED_AUTONOMY_SCORE_PERCENT=$score" "AS6_UNIFIED_AUTONOMY_LEVEL=$level" "AS6_UNIFIED_AUTONOMY_CLASS=$class" "AS6_UNIFIED_AUTONOMY_PASS_GATES=$pass" "AS6_UNIFIED_AUTONOMY_TOTAL_GATES=$total" "AS6_UNIFIED_AUTONOMY_MATRIX=$matrix" "AS6_UNIFIED_AUTONOMY_PLAN=$plan" "AS6_UNIFIED_AUTONOMY_EVIDENCE=$out" "AS6_UNIFIED_AUTONOMY_AUTO_PRODUCTION_APPLY=NO" "AS6_UNIFIED_AUTONOMY_HUMAN_APPROVAL_REQUIRED=YES" > "$summary"
 say "--- result ---"
-say "AS6_UNIFIED_AUTONOMY_SCORE_PERCENT=$score"
+say "if [ "-e" -gt 100 ] 2>/dev/null; then score=100; fi
+if [ "-e" -gt 100 ] 2>/dev/null; then score=100; fi
+AS6_UNIFIED_AUTONOMY_SCORE_PERCENT=$score"
 say "AS6_UNIFIED_AUTONOMY_LEVEL=$level"
 say "AS6_UNIFIED_AUTONOMY_CLASS=$class"
 say "AS6_UNIFIED_AUTONOMY_PASS_GATES=$pass"

@@ -1,0 +1,5 @@
+class: WEAK_DIAGNOSTIC_LINKAGE_DRIFT
+category: registry-coverage-governance-linkage-drift
+severity: medium
+root_cause: diagnostic docs can exist with weak linkage to registry coverage and governance
+resolution: track weak linkage as diagnostic debt and enforce linkage cleanup plan

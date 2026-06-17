@@ -1,0 +1,5 @@
+class: AUTONOMY_SCORE_OVERFLOW
+category: autonomy-metric-drift
+severity: high
+root_cause: unified autonomy score can exceed 100 percent when pass gates exceed total gates
+resolution: clamp autonomy score to 100 and diagnose score overflow
