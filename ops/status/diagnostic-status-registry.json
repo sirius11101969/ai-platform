@@ -816,6 +816,9 @@
       "path": "ops/bin/as6-diagnose-workflow-yaml",
       "status_visible": true,
       "source": "auto"
+  ,"ops/bin/as6-diagnose-all-live": {"status":"registered","result":"OK","source":"as6-repair-live-spinner-registration"}
+  ,"ops/bin/as6-diagnose-true-live-spinner": {"status":"registered","result":"OK","source":"as6-repair-live-spinner-registration"}
+  ,"ops/bin/as6-diagnose-live-spinner-registration": {"status":"registered","result":"OK","source":"as6-repair-live-spinner-registration"}
     }
   ]
 }

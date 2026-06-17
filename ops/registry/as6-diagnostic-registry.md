@@ -1307,3 +1307,5 @@
 
 - ops/bin/as6-diagnose-diagnostics-first-operating-standard
 | ops/bin/as6-diagnose-true-live-spinner | true-live-spinner | ENABLED |
+| ops/bin/as6-diagnose-all-live | live-spinner-diagnostics | ENABLED |
+| ops/bin/as6-diagnose-live-spinner-registration | live-spinner-registration-contract | ENABLED |

@@ -1648,3 +1648,64 @@ Control:
 - spinner is bound to real command PID
 - command output is passed through while command runs
 - spinner stops when command exits
+
+## AS6 Live Spinner Registration Repair
+AS6_LIVE_SPINNER_REGISTRATION_REPAIR=APPLIED
+AS6_ROOT_CAUSE=DIAGNOSTIC_STATUS_REGISTRY_DRIFT_FOR_NEW_DIAGNOSTIC
+AS6_PREVENTION_DIAGNOSTIC_CREATED_WITHOUT_STATUS_REGISTRY=ENABLED
+AS6_AEC_REQUIRE_STATUS_REGISTRY_FOR_NEW_DIAGNOSTIC=ENABLED
+
+Added to diagnostics:
+- ops/bin/as6-diagnose-live-spinner-registration
+
+Registered:
+- ops/bin/as6-diagnose-all-live
+- ops/bin/as6-diagnose-true-live-spinner
+- ops/bin/as6-diagnose-live-spinner-registration
+
+Updated:
+- ops/registry/as6-diagnostic-registry.md
+- ops/registry/as6-coverage-registry.md
+- ops/status/diagnostic-status-registry.json
+- ops/registry/as6-prevention-registry.md
+- ops/registry/as6-aec-registry.md
+
+## AS6 Core Diagnostic Registry Repair
+AS6_CORE_DIAGNOSTIC_REGISTRY_REPAIR=APPLIED
+AS6_ROOT_CAUSE=CORE_DIAGNOSTIC_WITHOUT_REGISTRY_STATUS
+Registered core diagnostics:
+- ops/bin/as6-diagnose-all-watch
+- ops/bin/as6-diagnose-public-health
+- ops/bin/as6-diagnose-diagnostics-first-operating-standard
+Added prevention:
+- CORE_DIAGNOSTIC_WITHOUT_REGISTRY_STATUS
+Added AEC:
+- AS6_AEC_REQUIRE_CORE_DIAGNOSTIC_REGISTRY_STATUS
+
+## AS6 Simple Watch Heartbeat
+AS6_SIMPLE_WATCH_HEARTBEAT=ENABLED
+AS6_DIAGNOSE_ALL_LIVE_DEPRECATED_FOR_MANUAL_USE=YES
+Primary command:
+- cd /var/www/ai-platform && ops/bin/as6-diagnose-all-watch
+Behavior:
+- prints heartbeat every 20 seconds
+- shows elapsed time
+- shows current controller
+- shows OK/FAIL counters
+- no separate live wrapper required
+Added diagnostic:
+- ops/bin/as6-diagnose-watch-heartbeat
+Added prevention:
+- LONG_RUNNING_CONTROLLER_WITHOUT_HEARTBEAT
+Added AEC:
+- AS6_AEC_REQUIRE_SIMPLE_WATCH_HEARTBEAT
+
+## AS6 Simple Heartbeat
+AS6_SIMPLE_HEARTBEAT_IN_DIAGNOSE_ALL=ENABLED
+Primary command:
+- ops/bin/as6-diagnose-all
+Behavior:
+- heartbeat every 20 seconds during long-running diagnostics
+- no watch command required
+- no live command required
+- no spinner required

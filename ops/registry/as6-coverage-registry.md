@@ -1412,3 +1412,6 @@
 
 - ops/bin/as6-diagnose-diagnostics-first-operating-standard
 | true-live-spinner | pid-bound-spinner+live-output-passthrough+elapsed-timer | ENABLED |
+| ops/bin/as6-diagnose-all-live | pid-bound-live-progress+diagnostic-visibility+status-registry-contract | ENABLED |
+| ops/bin/as6-diagnose-true-live-spinner | pid-bound-live-progress+diagnostic-visibility+status-registry-contract | ENABLED |
+| ops/bin/as6-diagnose-live-spinner-registration | diagnostic-registry+coverage-registry+status-registry | ENABLED |

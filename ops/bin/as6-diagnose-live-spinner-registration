@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+echo "=== AS6 Live Spinner Registration Diagnostics ==="
+test -x ops/bin/as6-diagnose-all-live
+test -x ops/bin/as6-diagnose-true-live-spinner
+grep -Fq "ops/bin/as6-diagnose-all-live" ops/registry/as6-diagnostic-registry.md
+grep -Fq "ops/bin/as6-diagnose-true-live-spinner" ops/registry/as6-diagnostic-registry.md
+grep -Fq "ops/bin/as6-diagnose-all-live" ops/registry/as6-coverage-registry.md
+grep -Fq "ops/bin/as6-diagnose-true-live-spinner" ops/registry/as6-coverage-registry.md
+grep -Fq "ops/bin/as6-diagnose-all-live" ops/status/diagnostic-status-registry.json
+grep -Fq "ops/bin/as6-diagnose-true-live-spinner" ops/status/diagnostic-status-registry.json
+echo "AS6_LIVE_SPINNER_REGISTRATION=PASS"
+echo "AS6_LIVE_SPINNER_REGISTRATION_RESULT=OK"
