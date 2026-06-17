@@ -816,13 +816,6 @@
       "path": "ops/bin/as6-diagnose-workflow-yaml",
       "status_visible": true,
       "source": "auto"
-  ,"ops/bin/as6-diagnose-all-live": {"status":"registered","result":"OK","source":"as6-repair-live-spinner-registration"}
-  ,"ops/bin/as6-diagnose-true-live-spinner": {"status":"registered","result":"OK","source":"as6-repair-live-spinner-registration"}
-  ,"ops/bin/as6-diagnose-live-spinner-registration": {"status":"registered","result":"OK","source":"as6-repair-live-spinner-registration"}
-  ,"ops/bin/as6-diagnose-watch-heartbeat": {"status":"registered","result":"OK","source":"as6-simple-watch-heartbeat"}
-  ,"ops/bin/as6-diagnose-one-command-standard": {"status":"registered","result":"OK","source":"as6-repair-diagnostic-registration-and-secret-scan"}
-  ,"ops/bin/as6-diagnose-backup-secret-scan-contract": {"status":"registered","result":"OK","source":"as6-repair-diagnostic-registration-and-secret-scan"}
-  ,"ops/bin/as6-diagnose-completion-marker-contract": {"status":"registered","result":"OK","source":"as6-close-early-exit-control"}
     }
   ]
 }

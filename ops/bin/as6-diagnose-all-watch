@@ -1,109 +1,107 @@
 #!/usr/bin/env bash
-set -euo pipefail
-cd /var/www/ai-platform
+set -Eeuo pipefail
 
-log="${1:-/tmp/as6-diagnose-all-watch.out}"
-timeout_seconds="${AS6_DIAGNOSE_ALL_TIMEOUT:-1800}"
-slow_threshold="${AS6_WATCH_SLOW_THRESHOLD:-60}"
+log="${AS6_DIAGNOSE_ALL_WATCH_LOG:-/tmp/as6-diagnose-all-watch.out}"
+heartbeat="${AS6_WATCH_HEARTBEAT_SECONDS:-20}"
+slow="${AS6_WATCH_SLOW_THRESHOLD:-60}"
 
 : > "$log"
 
 echo "AS6_DIAGNOSE_ALL_WATCH_LOG=$log"
-echo "AS6_DIAGNOSE_ALL_WATCH_TIMEOUT=${timeout_seconds}s"
-echo "AS6_WATCH_SLOW_THRESHOLD=${slow_threshold}s"
+echo "AS6_DIAGNOSE_ALL_WATCH_HEARTBEAT=${heartbeat}s"
 echo "AS6_DIAGNOSE_ALL_WATCH_STARTED=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-echo
-
-timeout "$timeout_seconds" ./ops/bin/as6-diagnose-all > "$log" 2>&1 &
-pid=$!
-
-cleanup() {
-  echo
-  echo "AS6_DIAGNOSE_ALL_WATCH_INTERRUPTED=YES"
-  kill "$pid" 2>/dev/null || true
-}
-trap cleanup INT TERM
 
 start="$(date +%s)"
-spin='|/-\'
-i=0
+last_heartbeat="$start"
+ok=0
+fail=0
+current="starting"
+current_start="$start"
 
-last_current=""
-last_change="$(date +%s)"
-last_fail_count=0
+run_check() {
+  name="$1"
+  shift
 
-stats="/tmp/as6-diagnose-all-watch-controller-stats.tsv"
-: > "$stats"
-printf "controller\tstarted_at\tended_at\tduration_seconds\n" > "$stats"
+  current="$name"
+  current_start="$(date +%s)"
 
-while kill -0 "$pid" 2>/dev/null; do
+  echo
+  echo "=== RUN: $name ===" | tee -a "$log"
+
+  tmp="$(mktemp)"
+  set +e
+  "$@" > "$tmp" 2>&1
+  rc="$?"
+  set -e
+
+  cat "$tmp" | tee -a "$log"
+  rm -f "$tmp"
+
   now="$(date +%s)"
-  elapsed=$((now - start))
+  elapsed="$((now - start))"
+  age="$((now - current_start))"
 
-  current="$(grep '^=== RUN:' "$log" 2>/dev/null | tail -1 | sed -E 's/^=== RUN: //; s/ ===$//' || true)"
-  current="${current:-starting}"
-
-  if [ "$current" != "$last_current" ]; then
-    if [ -n "$last_current" ] && [ "$last_current" != "starting" ]; then
-      duration=$((now - last_change))
-      printf "%s\t%s\t%s\t%s\n" "$last_current" "$last_change" "$now" "$duration" >> "$stats"
-    fi
-    last_current="$current"
-    last_change="$now"
+  if [ "$age" -ge "$slow" ]; then
+    echo "AS6_WATCH_SLOW_CONTROLLER=${name}:${age}s" | tee -a "$log"
   fi
 
-  current_age=$((now - last_change))
-  ok="$(grep -c 'AS6_DIAGNOSE_ALL_CHECK=OK:' "$log" 2>/dev/null || true)"
-  fail="$(grep -c 'AS6_DIAGNOSE_ALL_CHECK=FAIL:' "$log" 2>/dev/null || true)"
-
-  if [ "$fail" -gt "$last_fail_count" ]; then
-    echo
-    echo "NEW_FAIL_DETECTED=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-    grep "AS6_DIAGNOSE_ALL_CHECK=FAIL:" "$log" | sort -u | tail -20 || true
-    last_fail_count="$fail"
+  if [ "$rc" -eq 0 ]; then
+    ok="$((ok + 1))"
+    echo "AS6_DIAGNOSE_ALL_CHECK=OK:$name" | tee -a "$log"
+  else
+    fail="$((fail + 1))"
+    echo "NEW_FAIL_DETECTED=$(date -u +%Y-%m-%dT%H:%M:%SZ)" | tee -a "$log"
+    echo "AS6_DIAGNOSE_ALL_CHECK=FAIL:$name" | tee -a "$log"
   fi
 
-  slow=""
-  if [ "$current_age" -ge "$slow_threshold" ]; then
-    slow=" SLOW_CONTROLLER=${current_age}s"
-  fi
+  echo "AS6_WATCH_PROGRESS elapsed=${elapsed}s OK=${ok} FAIL=${fail} current=${name}" | tee -a "$log"
+}
 
-  printf "\r[%s] elapsed=%ss OK=%s FAIL=%s current_age=%ss current=%s%s          " \
-    "${spin:$i:1}" "$elapsed" "$ok" "$fail" "$current_age" "$current" "$slow"
+heartbeat_line() {
+  now="$(date +%s)"
+  elapsed="$((now - start))"
+  age="$((now - current_start))"
+  echo "AS6_WATCH_HEARTBEAT time=$(date -u +%Y-%m-%dT%H:%M:%SZ) elapsed=${elapsed}s OK=${ok} FAIL=${fail} current=${current} current_age=${age}s" | tee -a "$log"
+}
 
-  i=$(((i + 1) % 4))
-  sleep 0.2
-done
-
-wait "$pid" || rc=$?
-rc="${rc:-0}"
-
-finish="$(date +%s)"
-if [ -n "$last_current" ] && [ "$last_current" != "starting" ]; then
-  duration=$((finish - last_change))
-  printf "%s\t%s\t%s\t%s\n" "$last_current" "$last_change" "$finish" "$duration" >> "$stats"
+if [ ! -x ops/bin/as6-diagnose-all ]; then
+  echo "AS6_DIAGNOSE_ALL_WATCH_RESULT=FAIL:no ops/bin/as6-diagnose-all"
+  exit 1
 fi
 
-printf "\r[✓] finished exit=%s elapsed=%ss                                      \n" "$rc" "$((finish - start))"
+controllers="$(grep -Eo "as6-diagnose-[A-Za-z0-9_-]+" ops/bin/as6-diagnose-all | sed 's/^as6-diagnose-//' | awk '!seen[$0]++')"
+
+if [ -z "$controllers" ]; then
+  echo "AS6_DIAGNOSE_ALL_WATCH_RESULT=FAIL:no controllers found"
+  exit 1
+fi
+
+for name in $controllers; do
+  now="$(date +%s)"
+  if [ "$((now - last_heartbeat))" -ge "$heartbeat" ]; then
+    heartbeat_line
+    last_heartbeat="$now"
+  fi
+
+  cmd="ops/bin/as6-diagnose-${name}"
+  if [ -x "$cmd" ]; then
+    run_check "$name" "$cmd"
+  fi
+
+  now="$(date +%s)"
+  if [ "$((now - last_heartbeat))" -ge "$heartbeat" ]; then
+    heartbeat_line
+    last_heartbeat="$now"
+  fi
+done
 
 echo
-echo "----- FAILS -----"
-grep "AS6_DIAGNOSE_ALL_CHECK=FAIL:" "$log" | sort -u || true
+echo "AS6_DIAGNOSE_ALL_WATCH_SUMMARY OK=${ok} FAIL=${fail}" | tee -a "$log"
 
-echo
-echo "----- RESULT -----"
-grep "AS6_DIAGNOSE_ALL_RESULT=" "$log" | tail -10 || true
-
-echo
-echo "----- SLOW CONTROLLERS -----"
-awk -F'\t' 'NR>1 && $4 >= 30 {printf "%-55s %ss\n", $1, $4}' "$stats" | sort -k2 -nr | head -30 || true
-
-echo
-echo "----- CONTROLLER TIMINGS -----"
-awk -F'\t' 'NR>1 {printf "%-55s %ss\n", $1, $4}' "$stats" | sort -k2 -nr | head -40 || true
-
-echo
-echo "----- LAST 40 LINES -----"
-tail -40 "$log" || true
-
-exit "$rc"
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_DIAGNOSE_ALL_WATCH_RESULT=OK" | tee -a "$log"
+  exit 0
+else
+  echo "AS6_DIAGNOSE_ALL_WATCH_RESULT=FAIL" | tee -a "$log"
+  exit 1
+fi

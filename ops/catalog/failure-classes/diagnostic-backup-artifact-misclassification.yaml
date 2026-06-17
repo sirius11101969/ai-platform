@@ -1,0 +1,5 @@
+class: DIAGNOSTIC_BACKUP_ARTIFACT_MISCLASSIFICATION
+category: diagnostic-registration-drift
+severity: high
+prevention_required: true
+aec_required: true

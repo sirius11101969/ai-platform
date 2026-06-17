@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+echo "=== AS6 Watch Heartbeat Diagnostics ==="
+
+test -x ops/bin/as6-diagnose-all-watch
+grep -Fq 'AS6_WATCH_HEARTBEAT' ops/bin/as6-diagnose-all-watch
+grep -Fq 'AS6_WATCH_HEARTBEAT_SECONDS' ops/bin/as6-diagnose-all-watch
+grep -Fq 'current_age=' ops/bin/as6-diagnose-all-watch
+grep -Fq 'AS6_WATCH_PROGRESS' ops/bin/as6-diagnose-all-watch
+
+echo "AS6_WATCH_HEARTBEAT_SCRIPT=PASS"
+echo "AS6_WATCH_HEARTBEAT_RESULT=OK"

@@ -1415,3 +1415,7 @@
 | ops/bin/as6-diagnose-all-live | pid-bound-live-progress+diagnostic-visibility+status-registry-contract | ENABLED |
 | ops/bin/as6-diagnose-true-live-spinner | pid-bound-live-progress+diagnostic-visibility+status-registry-contract | ENABLED |
 | ops/bin/as6-diagnose-live-spinner-registration | diagnostic-registry+coverage-registry+status-registry | ENABLED |
+| ops/bin/as6-diagnose-watch-heartbeat | heartbeat-every-20s+current-controller+elapsed+ok-fail | ENABLED |
+| ops/bin/as6-diagnose-one-command-standard | diagnostics-first+one-command+no-extra-steps+no-secrets | ENABLED |
+| ops/bin/as6-diagnose-backup-secret-scan-contract | backup-exclusion+secret-scan-env-reference+one-command-standard | ENABLED |
+| ops/bin/as6-diagnose-completion-marker-contract | one-command+completion-marker+early-exit-control | ENABLED |

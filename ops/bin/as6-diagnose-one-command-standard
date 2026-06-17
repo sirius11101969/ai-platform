@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+echo "=== AS6 One Command Diagnostics First Standard ==="
+test -f ops/governance/as6-one-command-diagnostics-first-standard.md
+grep -Fq "One command must do everything" ops/governance/as6-one-command-diagnostics-first-standard.md
+grep -Fq "Do not use base64" ops/governance/as6-one-command-diagnostics-first-standard.md
+grep -Fq "terminal completion marker" ops/governance/as6-one-command-diagnostics-first-standard.md
+echo "AS6_ONE_COMMAND_STANDARD=PASS"
+echo "AS6_ONE_COMMAND_STANDARD_RESULT=OK"

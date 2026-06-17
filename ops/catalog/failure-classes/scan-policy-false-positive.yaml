@@ -1,0 +1,5 @@
+class: SCAN_POLICY_FALSE_POSITIVE
+category: scan-contract-drift
+severity: high
+prevention_required: true
+aec_required: true

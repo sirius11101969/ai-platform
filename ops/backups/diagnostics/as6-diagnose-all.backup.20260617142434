@@ -339,12 +339,3 @@ fi
 
 # AS6 simple watch heartbeat
 [ -x ops/bin/as6-diagnose-watch-heartbeat ] && ops/bin/as6-diagnose-watch-heartbeat
-
-# AS6 one command diagnostics first standard
-[ -x ops/bin/as6-diagnose-one-command-standard ] && ops/bin/as6-diagnose-one-command-standard
-
-# AS6 backup and secret scan contract
-[ -x ops/bin/as6-diagnose-backup-secret-scan-contract ] && ops/bin/as6-diagnose-backup-secret-scan-contract
-
-# AS6 completion marker contract
-[ -x ops/bin/as6-diagnose-completion-marker-contract ] && ops/bin/as6-diagnose-completion-marker-contract

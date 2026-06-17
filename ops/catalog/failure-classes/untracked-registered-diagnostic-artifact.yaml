@@ -1,0 +1,5 @@
+class: UNTRACKED_REGISTERED_DIAGNOSTIC_ARTIFACT
+category: diagnostic-registration-drift
+severity: high
+prevention_required: true
+aec_required: true

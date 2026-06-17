@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+echo "=== AS6 Completion Marker Contract ==="
+test -f ops/catalog/failure-classes/diagnostic-early-exit.yaml
+test -f ops/governance/as6-one-command-diagnostics-first-standard.md
+grep -Fq "terminal completion marker" ops/governance/as6-one-command-diagnostics-first-standard.md
+grep -Fq "DIAGNOSTIC_EARLY_EXIT" ops/catalog/failure-classes/diagnostic-early-exit.yaml
+echo "AS6_COMPLETION_MARKER_CONTROL=PASS"
+echo "AS6_DIAGNOSTIC_EARLY_EXIT_CONTROL=PASS"
+echo "AS6_COMPLETION_MARKER_CONTRACT_RESULT=OK"

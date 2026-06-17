@@ -1309,3 +1309,7 @@
 | ops/bin/as6-diagnose-true-live-spinner | true-live-spinner | ENABLED |
 | ops/bin/as6-diagnose-all-live | live-spinner-diagnostics | ENABLED |
 | ops/bin/as6-diagnose-live-spinner-registration | live-spinner-registration-contract | ENABLED |
+| ops/bin/as6-diagnose-watch-heartbeat | simple-watch-heartbeat | ENABLED |
+| ops/bin/as6-diagnose-one-command-standard | one-command-diagnostics-first-standard | ENABLED |
+| ops/bin/as6-diagnose-backup-secret-scan-contract | as6-one-command-and-diagnostic-contract | ENABLED |
+| ops/bin/as6-diagnose-completion-marker-contract | one-command-completion-contract | ENABLED |
