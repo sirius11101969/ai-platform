@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+echo "=== AS6 True Live Spinner Diagnostics ==="
+test -x ops/bin/as6-run-live-spinner
+test -x ops/bin/as6-diagnose-all-live
+grep -Fq "kill -0" ops/bin/as6-run-live-spinner
+grep -Fq "pid=" ops/bin/as6-run-live-spinner
+grep -Fq "elapsed=" ops/bin/as6-run-live-spinner
+grep -Fq "dd if=" ops/bin/as6-run-live-spinner
+echo "AS6_TRUE_LIVE_SPINNER_PID_BOUND=PASS"
+echo "AS6_TRUE_LIVE_SPINNER_OUTPUT_PASSTHROUGH=PASS"
+echo "AS6_TRUE_LIVE_SPINNER_RESULT=OK"

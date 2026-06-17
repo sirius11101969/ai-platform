@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+label="${1:-AS6 command}"
+shift || true
+if [ "$#" -eq 0 ]; then echo "AS6_LIVE_SPINNER_RESULT=FAIL:no_command"; exit 1; fi
+log="$(mktemp)"
+pos=0
+start="$(date +%s)"
+frames="|/-\\"
+i=0
+"$@" >"$log" 2>&1 &
+pid="$!"
+echo "AS6_LIVE_COMMAND_STARTED label=${label} pid=${pid}"
+while kill -0 "$pid" 2>/dev/null; do
+  size="$(wc -c <"$log" | tr -d " ")"
+  if [ "$size" -gt "$pos" ]; then
+    dd if="$log" bs=1 skip="$pos" count="$((size - pos))" 2>/dev/null || true
+    pos="$size"
+  fi
+  now="$(date +%s)"
+  elapsed="$((now - start))"
+  frame="$(printf "%s" "$frames" | cut -c "$((i % 4 + 1))")"
+  printf "\r%s AS6_COMMAND_RUNNING label=%s pid=%s elapsed=%ss " "$frame" "$label" "$pid" "$elapsed" >&2
+  i="$((i + 1))"
+  sleep 1
+done
+wait "$pid"
+rc="$?"
+printf "\r%*s\r" 120 "" >&2
+size="$(wc -c <"$log" | tr -d " ")"
+if [ "$size" -gt "$pos" ]; then dd if="$log" bs=1 skip="$pos" count="$((size - pos))" 2>/dev/null || true; fi
+rm -f "$log"
+if [ "$rc" -eq 0 ]; then echo "AS6_LIVE_SPINNER_RESULT=OK:${label}"; else echo "AS6_LIVE_SPINNER_RESULT=FAIL:${label}:rc=${rc}"; fi
+exit "$rc"

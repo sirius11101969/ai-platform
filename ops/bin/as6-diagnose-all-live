@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+echo "=== AS6 Live Diagnostics ==="
+if [ -x ops/bin/as6-diagnose-all-watch ]; then
+  exec ops/bin/as6-run-live-spinner "as6-diagnose-all-watch" ops/bin/as6-diagnose-all-watch
+fi
+if [ -x ops/bin/as6-diagnose-all ]; then
+  exec ops/bin/as6-run-live-spinner "as6-diagnose-all" ops/bin/as6-diagnose-all
+fi
+echo "AS6_LIVE_DIAGNOSTICS_RESULT=FAIL:no_diagnostics_found"
+exit 1

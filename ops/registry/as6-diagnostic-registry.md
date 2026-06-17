@@ -1306,3 +1306,4 @@
 - ops/bin/as6-diagnose-all-watch
 
 - ops/bin/as6-diagnose-diagnostics-first-operating-standard
+| ops/bin/as6-diagnose-true-live-spinner | true-live-spinner | ENABLED |

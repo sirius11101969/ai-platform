@@ -1636,3 +1636,15 @@ Added docs:
 
 Production touched: NO
 Secrets touched: NO
+
+## AS6 True Live Spinner
+AS6_TRUE_LIVE_SPINNER=ENABLED
+AS6_LIVE_DIAGNOSTICS=ENABLED
+Added to diagnostics:
+- ops/bin/as6-diagnose-true-live-spinner
+- ops/bin/as6-diagnose-all-live
+- ops/bin/as6-run-live-spinner
+Control:
+- spinner is bound to real command PID
+- command output is passed through while command runs
+- spinner stops when command exits
