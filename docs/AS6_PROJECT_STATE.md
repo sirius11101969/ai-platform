@@ -1709,3 +1709,9 @@ Behavior:
 - no watch command required
 - no live command required
 - no spinner required
+
+## AS6 One Command Mode
+AS6_ONE_COMMAND_MODE=ENABLED
+AS6_HEARTBEAT_BUILT_IN=ENABLED
+AS6_EXTRA_LAUNCHERS_DEPRECATED=YES
+PRIMARY_WORKFLOW=ONE_COMMAND_ONLY
