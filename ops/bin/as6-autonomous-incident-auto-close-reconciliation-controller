@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /var/www/ai-platform
+
+dir="runtime/incident-auto-close"
+mkdir -p "$dir"
+out="$dir/latest.out"
+: > "$out"
+
+say(){ echo "$1" | tee -a "$out"; }
+
+say "=== AS6 AUTONOMOUS INCIDENT AUTO-CLOSE RECONCILIATION CONTROLLER ==="
+
+fail=0
+
+capture_ok() {
+  local name="$1"
+  local cmd="$2"
+  local file="$dir/$name.out"
+  if timeout 180 bash -lc "$cmd" > "$file" 2>&1; then
+    say "PASS: $name"
+    return 0
+  fi
+  say "FAIL: $name"
+  fail=1
+  return 1
+}
+
+capture_ok "public-production-health" "curl -fsS --max-time 15 https://www.as6.ru/api/health | grep -q 'OK\\|ok\\|status'"
+capture_ok "production-drift" "ops/bin/as6-autonomous-production-drift-controller | grep -q 'AS6_PRODUCTION_DRIFT_CONTROLLER_RESULT=OK'"
+capture_ok "architecture-compliance" "ops/bin/as6-autonomous-architecture-compliance-controller | grep -q 'AS6_ARCHITECTURE_COMPLIANCE_RESULT=OK'"
+capture_ok "rollback-verification" "ops/bin/as6-autonomous-rollback-verification-controller | grep -q 'AS6_AUTONOMOUS_ROLLBACK_VERIFICATION_RESULT=OK'"
+capture_ok "root-cause-governance" "ops/bin/as6-diagnose-root-cause-governance | grep -q 'AS6_ROOT_CAUSE_GOVERNANCE_RESULT=OK'"
+capture_ok "root-cause-knowledge-base" "ops/bin/as6-diagnose-root-cause-knowledge-base | grep -q 'AS6_ROOT_CAUSE_KNOWLEDGE_BASE_RESULT=OK'"
+
+if [ "$fail" -eq 0 ]; then
+  mkdir -p runtime/incidents
+  cat > runtime/incidents/current.env <<'EOF'
+AS6_INCIDENT_LIFECYCLE_ID=AS6-CURRENT
+AS6_INCIDENT_LIFECYCLE_STATE=CLOSED
+AS6_INCIDENT_LIFECYCLE_DECISION=AUTO_CLOSED_NO_ACTIVE_PRODUCTION_INCIDENT
+AS6_INCIDENT_LIFECYCLE_ROOT_CAUSE=none
+AS6_INCIDENT_AUTO_CLOSE_REASON=ALL_PRODUCTION_AND_GOVERNANCE_GATES_OK
+EOF
+  printf '%s %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "AUTO_CLOSED_NO_ACTIVE_PRODUCTION_INCIDENT" >> runtime/incidents/history.log
+  say "AS6_INCIDENT_AUTO_CLOSE_RECONCILIATION=PASS"
+  say "AS6_INCIDENT_AUTO_CLOSE_RECONCILIATION_RESULT=OK"
+  exit 0
+fi
+
+say "AS6_INCIDENT_AUTO_CLOSE_RECONCILIATION=FAIL"
+say "AS6_INCIDENT_AUTO_CLOSE_RECONCILIATION_RESULT=FAIL"
+exit 1

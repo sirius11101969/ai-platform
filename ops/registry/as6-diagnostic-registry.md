@@ -1291,3 +1291,12 @@
 ## Coverage Doc Contract Marker Repair
 - diagnostic: coverage_doc_contract_marker
 - result: COVERAGE_DOC_CONTRACT_MARKER_REPAIR=OK
+
+## Autonomous Repair Controller Wrapper
+- diagnostic: ops/bin/as6-autonomous-repair-controller
+- delegates_to: ops/bin/as6-diagnose-autonomous-repair-controller
+- result: AS6_AUTONOMOUS_REPAIR_CONTROLLER_RESULT
+
+## Runtime Binary Empty Tmp Repair
+- diagnostic: runtime_binary_empty_tmp_skip
+- result: RUNTIME_BINARY_ARTIFACTS_RESULT

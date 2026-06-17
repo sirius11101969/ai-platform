@@ -11,15 +11,18 @@ fails="$dir/fails.tsv"
 : > "$matrix"
 say(){ echo "$1" | tee -a "$out"; }
 say "=== AS6 ROOT CAUSE REGISTRY AUTO-SYNC CONTROLLER ==="
-printf "%s\t%s\t%s\t%s\t%s\n" "class" "diagnostic" "route" "registry" "coverage" > "$matrix"
 [ -f "$routes" ] || : > "$routes"
 [ -f "$fails" ] || : > "$fails"
-classes="$(cat "$routes" "$fails" 2>/dev/null | awk -F "\t" "{print \$1}" | sort -u)"
-checked=0; missing=0
+printf "%s\t%s\t%s\t%s\t%s\n" "class" "diagnostic" "route" "registry" "coverage" > "$matrix"
+classes="$(cat "$routes" "$fails" 2>/dev/null | awk -F "	" '{ if ($1!="") print $1 }' | sort -u)"
+checked=0
+missing=0
 for cls in $classes; do
-  diag="$(awk -F "\t" -v c="$cls" "$1==c {print \$2; exit}" "$routes" "$fails" 2>/dev/null || true)"
+  diag="$(awk -F "	" -v c="$cls" '$1==c && $2!="" {print $2; exit}' "$routes" "$fails" 2>/dev/null || true)"
   [ -n "$diag" ] || diag="unknown"
-  route="FAIL"; registry="FAIL"; coverage="FAIL"
+  route="FAIL"
+  registry="FAIL"
+  coverage="FAIL"
   grep -q "$cls" "$routes" 2>/dev/null && route="PASS" || true
   grep -Rqs "$cls" ops/registry/as6-diagnostic-registry.md docs/governance docs/diagnostics docs/AS6_PROJECT_STATE.md 2>/dev/null && registry="PASS" || true
   grep -Rqs "$cls" ops/registry/as6-coverage-registry.md docs/coverage docs/AS6_PROJECT_STATE.md 2>/dev/null && coverage="PASS" || true

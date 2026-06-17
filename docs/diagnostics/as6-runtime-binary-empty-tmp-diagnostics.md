@@ -1,0 +1,21 @@
+# AS6 Runtime Binary Empty Tmp Diagnostics
+
+Added checks:
+
+- runtime_binary_empty_tmp_skip
+- runtime_binary_text_tmp_skip
+- runtime_binary_artifact_binary_only_fail
+- runtime_binary_empty_dangerous_name_false_positive_guard
+
+Added root cause classes:
+
+- RUNTIME_BINARY_EMPTY_TMP_FALSE_POSITIVE
+- RUNTIME_BINARY_TEXT_TMP_FALSE_POSITIVE
+- RUNTIME_BINARY_ARTIFACT_BINARY_ONLY_FAIL_REQUIRED
+- RUNTIME_DANGEROUS_NAME_EMPTY_FILE_FALSE_POSITIVE
+
+Added AEC rules:
+
+- AEC_EMPTY_TMP_RUNTIME_ARTIFACT_MUST_NOT_FAIL
+- AEC_TEXT_TMP_RUNTIME_ARTIFACT_MUST_NOT_FAIL
+- AEC_BINARY_RUNTIME_ARTIFACT_ONLY_CAN_FAIL

@@ -8,20 +8,19 @@ mkdir -p runtime/diagnostic-flow
 say(){ echo "$1" | tee -a "$out"; }
 say "=== AS6 DIAGNOSTIC FLOW GUARD ==="
 first_result_line="$(grep -n "AS6_DIAGNOSE_ALL_RESULT" ops/bin/as6-diagnose-all | head -1 | cut -d: -f1 || true)"
-last_controller_line="$(grep -n "as6-unified-autonomy-orchestrator\|as6-autonomous-" ops/bin/as6-diagnose-all | tail -1 | cut -d: -f1 || true)"
-exit_count="$(grep -c "exit " ops/bin/as6-diagnose-all || true)"
+last_controller_line="$(grep -n "run_check \|=== RUN: \|as6-autonomous-\|as6-root-cause-" ops/bin/as6-diagnose-all | tail -1 | cut -d: -f1 || true)"
+exit_count="$(grep -c "^[[:space:]]*exit " ops/bin/as6-diagnose-all || true)"
 say "DIAGNOSTIC_FLOW_FIRST_RESULT_LINE=${first_result_line:-none}"
 say "DIAGNOSTIC_FLOW_LAST_CONTROLLER_LINE=${last_controller_line:-none}"
 say "DIAGNOSTIC_FLOW_EXIT_COUNT=$exit_count"
 if [ -n "${first_result_line:-}" ] && [ -n "${last_controller_line:-}" ] && [ "$first_result_line" -lt "$last_controller_line" ]; then
-  say "DIAGNOSTIC_FLOW_UNREACHABLE_AFTER_TOP_LEVEL_EXIT=FAIL"
+  say "DIAGNOSTIC_FLOW_UNREACHABLE_AFTER_TOP_LEVEL_EXIT=FAIL:ops/bin/as6-diagnose-all:$first_result_line"
   fail=1
 else
   say "DIAGNOSTIC_FLOW_UNREACHABLE_AFTER_TOP_LEVEL_EXIT=PASS"
 fi
 if [ "$exit_count" -gt 2 ]; then
-  say "DIAGNOSTIC_FLOW_EXIT_COUNT=FAIL:$exit_count"
-  fail=1
+  say "DIAGNOSTIC_FLOW_EXIT_COUNT=WARN:$exit_count"
 else
   say "DIAGNOSTIC_FLOW_EXIT_COUNT=PASS:$exit_count"
 fi

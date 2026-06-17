@@ -1,0 +1,17 @@
+# AS6 Autonomous Repair Controller Wrapper Diagnostics
+
+Added checks:
+- autonomous_repair_controller_wrapper
+- diagnose_all_missing_repair_controller_target
+- repair_controller_exec_not_found
+- controller_wrapper_compatibility_check
+
+Added root cause classes:
+- AUTONOMOUS_REPAIR_CONTROLLER_WRAPPER_MISSING
+- DIAGNOSE_ALL_MISSING_REPAIR_CONTROLLER_TARGET
+- REPAIR_CONTROLLER_EXEC_NOT_FOUND
+- CONTROLLER_COMPATIBILITY_WRAPPER_MISSING
+
+Added AEC rules:
+- AEC_REPAIR_CONTROLLER_WRAPPER_REQUIRED
+- AEC_DIAGNOSE_ALL_REFERENCED_REPAIR_CONTROLLER_MUST_EXIST

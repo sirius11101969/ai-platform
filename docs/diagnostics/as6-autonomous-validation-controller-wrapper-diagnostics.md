@@ -1,0 +1,21 @@
+# AS6 Autonomous Validation Controller Wrapper Diagnostics
+
+Added checks:
+
+- autonomous_validation_controller_wrapper
+- diagnose_all_missing_controller_target
+- diagnostic_child_exec_not_found
+- controller_wrapper_compatibility_check
+
+Added root cause classes:
+
+- AUTONOMOUS_VALIDATION_CONTROLLER_WRAPPER_MISSING
+- DIAGNOSE_ALL_MISSING_CONTROLLER_TARGET
+- DIAGNOSTIC_CHILD_EXEC_NOT_FOUND
+- CONTROLLER_COMPATIBILITY_WRAPPER_MISSING
+
+Added AEC rules:
+
+- AEC_DIAGNOSE_ALL_REFERENCED_CONTROLLER_MUST_EXIST
+- AEC_AUTONOMOUS_CONTROLLER_WRAPPER_REQUIRED
+- AEC_DIAGNOSTIC_CHILD_EXEC_NOT_FOUND_PROHIBITED

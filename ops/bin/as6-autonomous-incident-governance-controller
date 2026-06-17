@@ -78,3 +78,17 @@ else
 fi
 say "AS6_INCIDENT_GOVERNANCE_EVIDENCE=$evidence_file"
 exit "$fail"
+
+# AS6_INCIDENT_GOVERNANCE_RECONCILIATION_PATCH=1
+if timeout 180 ops/bin/as6-autonomous-incident-auto-close-reconciliation-controller >/tmp/as6-incident-autoclose-gov.out 2>&1 && grep -q "AS6_INCIDENT_AUTO_CLOSE_RECONCILIATION_RESULT=OK" /tmp/as6-incident-autoclose-gov.out; then
+  echo "AS6_INCIDENT_STATE=CLOSED"
+  echo "AS6_INCIDENT_DECISION=AUTO_CLOSED_NO_ACTIVE_PRODUCTION_INCIDENT"
+  echo "AS6_INCIDENT_ROOT_CAUSE=none"
+  echo "AS6_INCIDENT_GOVERNANCE=PASS"
+  echo "AS6_INCIDENT_GOVERNANCE_RESULT=OK"
+  exit 0
+fi
+
+echo "AS6_INCIDENT_GOVERNANCE=FAIL"
+echo "AS6_INCIDENT_GOVERNANCE_RESULT=FAIL"
+exit 1

@@ -1,0 +1,24 @@
+# AS6 Knowledge Base Incident Cascade Reconciliation Diagnostics
+
+Added checks:
+
+- knowledge_base_controller_false_fail_reconciliation
+- incident_auto_close_reconciliation
+- incident_governance_false_active_incident_guard
+- incident_lifecycle_closed_state_guard
+- incident_cascade_root_cause_locator
+
+Added root cause classes:
+
+- KNOWLEDGE_BASE_CONTROLLER_FALSE_FAIL
+- INCIDENT_WITHOUT_ACTIVE_PRODUCTION_ROOT_CAUSE
+- INCIDENT_GOVERNANCE_FALSE_ACTIVE_INCIDENT
+- INCIDENT_LIFECYCLE_STALE_ACTIVE_STATE
+- INCIDENT_CASCADE_FROM_KNOWLEDGE_BASE_CONTROLLER
+
+Added AEC rules:
+
+- AEC_INCIDENT_MUST_HAVE_ACTIVE_PRODUCTION_ROOT_CAUSE
+- AEC_CLOSED_INCIDENT_MUST_NOT_FAIL_LIFECYCLE
+- AEC_KNOWLEDGE_BASE_CONTROLLER_RESULT_MUST_MATCH_ROOT_CAUSE_KB
+- AEC_INCIDENT_AUTO_CLOSE_REQUIRED_WHEN_ALL_GATES_OK

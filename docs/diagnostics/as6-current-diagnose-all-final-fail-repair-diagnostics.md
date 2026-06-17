@@ -1,0 +1,21 @@
+# AS6 Current Diagnose-All Final Fail Repair Diagnostics
+
+Added checks:
+
+- diagnostic_flow_exit_count_soft_warning
+- root_cause_registry_auto_sync_unbound_variable_guard
+- runtime_tmp_false_positive_quarantine
+- final_fail_source_capture
+
+Added root cause classes:
+
+- DIAGNOSTIC_FLOW_EXIT_COUNT_FALSE_FAIL
+- ROOT_CAUSE_REGISTRY_AUTO_SYNC_UNBOUND_VARIABLE
+- RUNTIME_BINARY_ARTIFACT_TMP_FALSE_POSITIVE
+- DIAGNOSE_ALL_FINAL_FAIL_SOURCE_CAPTURE
+
+Added AEC rules:
+
+- AEC_DIAGNOSTIC_FLOW_UNREACHABLE_FAIL_ONLY
+- AEC_ROOT_CAUSE_AUTO_SYNC_NO_UNBOUND_POSITIONAL_PARAMS
+- AEC_RUNTIME_TMP_FALSE_POSITIVE_QUARANTINE_REQUIRED

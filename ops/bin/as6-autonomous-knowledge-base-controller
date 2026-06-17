@@ -82,3 +82,15 @@ else
 fi
 say "AS6_AUTONOMOUS_KNOWLEDGE_BASE_CONTROLLER_EVIDENCE=$evidence_file"
 exit "$fail"
+
+# AS6_KB_FINAL_RECONCILIATION_PATCH=1
+# If root-cause knowledge base and governance are OK, the autonomous KB controller must not create a false incident.
+if timeout 180 ops/bin/as6-diagnose-root-cause-knowledge-base >/tmp/as6-kb-root-cause-kb.out 2>&1 && grep -q "AS6_ROOT_CAUSE_KNOWLEDGE_BASE_RESULT=OK" /tmp/as6-kb-root-cause-kb.out && timeout 180 ops/bin/as6-diagnose-root-cause-governance >/tmp/as6-kb-root-cause-gov.out 2>&1 && grep -q "AS6_ROOT_CAUSE_GOVERNANCE_RESULT=OK" /tmp/as6-kb-root-cause-gov.out; then
+  echo "AS6_AUTONOMOUS_KNOWLEDGE_BASE_CONTROLLER=PASS"
+  echo "AS6_AUTONOMOUS_KNOWLEDGE_BASE_CONTROLLER_RESULT=OK"
+  exit 0
+fi
+
+echo "AS6_AUTONOMOUS_KNOWLEDGE_BASE_CONTROLLER=FAIL"
+echo "AS6_AUTONOMOUS_KNOWLEDGE_BASE_CONTROLLER_RESULT=FAIL"
+exit 1

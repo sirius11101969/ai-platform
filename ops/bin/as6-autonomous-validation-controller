@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd /var/www/ai-platform
+
+echo "=== AS6 AUTONOMOUS VALIDATION CONTROLLER COMPATIBILITY WRAPPER ==="
+
+if [ -x ops/bin/as6-diagnose-autonomous-validation-controller ]; then
+  ops/bin/as6-diagnose-autonomous-validation-controller
+  rc=$?
+  if [ "$rc" -eq 0 ]; then
+    echo "AS6_AUTONOMOUS_VALIDATION_CONTROLLER_WRAPPER=PASS"
+    echo "AS6_AUTONOMOUS_VALIDATION_CONTROLLER_RESULT=OK"
+    exit 0
+  fi
+  echo "AS6_AUTONOMOUS_VALIDATION_CONTROLLER_WRAPPER=FAIL"
+  echo "AS6_AUTONOMOUS_VALIDATION_CONTROLLER_RESULT=FAIL"
+  exit "$rc"
+fi
+
+echo "AS6_AUTONOMOUS_VALIDATION_CONTROLLER_WRAPPER=FAIL"
+echo "AS6_AUTONOMOUS_VALIDATION_CONTROLLER_RESULT=FAIL"
+echo "AS6_AUTONOMOUS_VALIDATION_CONTROLLER_ROOT_CAUSE=MISSING_TARGET_DIAGNOSTIC"
+exit 1

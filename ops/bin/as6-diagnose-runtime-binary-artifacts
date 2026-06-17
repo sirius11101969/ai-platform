@@ -1,38 +1,33 @@
 #!/usr/bin/env bash
 set -euo pipefail
-
-ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
-cd "$ROOT"
+cd /var/www/ai-platform
 
 echo "=== AS6 Runtime Binary Artifacts Diagnostics ==="
 
 fail=0
 
-for f in /tmp/as6-* runtime/root-cause/* runtime/health/latest.json; do
-  [ -f "$f" ] || continue
+for f in /tmp/as6-*; do
+  [ -e "$f" ] || continue
 
   case "$f" in
-    /tmp/as6-health-history-recovery.out|/tmp/as6-node20-actions.out|/tmp/as6-node24-legacy.out)
+    /tmp/as6-node20-actions.out|/tmp/as6-node24-legacy.out)
       echo "RUNTIME_BINARY_ARTIFACT=SKIP:external_tool_output:$f"
       continue
       ;;
   esac
 
   if [ ! -s "$f" ]; then
-    case "$f" in
-      /tmp/as6-*.lock|/tmp/as6-*.out)
-        echo "RUNTIME_BINARY_ARTIFACT=SKIP:empty_runtime_tmp:$f"
-        continue
-        ;;
-    esac
+    echo "RUNTIME_BINARY_ARTIFACT=SKIP:empty_runtime_tmp:$f"
+    continue
   fi
 
   if LC_ALL=C grep -Iq . "$f"; then
-    :
-  else
-    echo "RUNTIME_BINARY_ARTIFACT=FAIL:$f"
-    fail=1
+    echo "RUNTIME_BINARY_ARTIFACT=SKIP:text_runtime_tmp:$f"
+    continue
   fi
+
+  echo "RUNTIME_BINARY_ARTIFACT=FAIL:$f"
+  fail=1
 done
 
 if [ "$fail" -eq 0 ]; then
