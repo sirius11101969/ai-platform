@@ -386,7 +386,6 @@ fi
 
 # AS6 primary fail repair
 [ -x ops/bin/as6-diagnose-primary-fail-repair ] && ops/bin/as6-diagnose-primary-fail-repair
-exit "$fail"
 
 # AS6 primary fail repair v2
 [ -x ops/bin/as6-diagnose-primary-fail-repair-v2 ] && ops/bin/as6-diagnose-primary-fail-repair-v2
@@ -417,3 +416,5 @@ exit "$fail"
 
 # AS6 fast final green proof control
 [ -x ops/bin/as6-diagnose-fast-final-green-proof-control ] && ops/bin/as6-diagnose-fast-final-green-proof-control
+
+exit "$fail"
