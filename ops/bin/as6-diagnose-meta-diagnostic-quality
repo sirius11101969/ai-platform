@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "=== AS6 Meta Diagnostic Quality Gate ==="
+
+f="ops/bin/as6-diagnose-all"
+fail=0
+
+exit_count="$(grep -c '^exit "\$fail"$' "$f" || true)"
+exit_line="$(grep -n '^exit "\$fail"$' "$f" | cut -d: -f1 || true)"
+last_line="$(wc -l < "$f" | tr -d ' ')"
+
+echo "AS6_META_DIAGNOSE_ALL_EXIT_COUNT=$exit_count"
+echo "AS6_META_DIAGNOSE_ALL_EXIT_LINE=${exit_line:-NONE}"
+echo "AS6_META_DIAGNOSE_ALL_LAST_LINE=$last_line"
+
+if [ "$exit_count" = "1" ] && [ "$exit_line" = "$last_line" ]; then
+  echo "AS6_META_EXIT_AT_FINAL_LINE=PASS"
+else
+  echo "AS6_META_EXIT_AT_FINAL_LINE=FAIL"
+  fail=1
+fi
+
+if grep -q 'AS6_HEARTBEAT current=' "$f" && grep -q 'sleep 20' "$f"; then
+  echo "AS6_META_HEARTBEAT_20_SECONDS=PASS"
+else
+  echo "AS6_META_HEARTBEAT_20_SECONDS=FAIL"
+  fail=1
+fi
+
+final_count="$(grep -c 'AS6_DIAGNOSE_ALL_RESULT=' "$f" || true)"
+echo "AS6_META_FINAL_RESULT_MARKER_COUNT=$final_count"
+
+if [ "$final_count" -le 2 ]; then
+  echo "AS6_META_FINAL_RESULT_MARKERS=PASS"
+else
+  echo "AS6_META_FINAL_RESULT_MARKERS=FAIL"
+  fail=1
+fi
+
+if grep -q 'AS6_SUMMARY_MODE_PATCH_V1' ops/lib/as6-diagnostic-registration-check.py; then
+  echo "AS6_META_REGISTRATION_SUMMARY_MODE=PASS"
+else
+  echo "AS6_META_REGISTRATION_SUMMARY_MODE=FAIL"
+  fail=1
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_META_DIAGNOSTIC_QUALITY_GATE_RESULT=OK"
+  exit 0
+fi
+
+echo "AS6_META_DIAGNOSTIC_QUALITY_GATE_RESULT=FAIL"
+exit 1

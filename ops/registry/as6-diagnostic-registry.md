@@ -1349,3 +1349,4 @@
 | ops/bin/as6-diagnose-controller-cluster-status-registry | controller-cluster-status-registry | ENABLED |
 | ops/bin/as6-diagnose-fast-final-green-proof | fast-final-green-proof | ENABLED |
 | ops/bin/as6-diagnose-fast-final-green-proof-control | fast-final-green-proof | ENABLED |
+- ops/bin/as6-diagnose-meta-diagnostic-quality | AS6 meta diagnostic quality gate | GREEN
