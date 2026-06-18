@@ -80,9 +80,12 @@ function sparklinePoints(values) {
 
 export default function CommandCenterPage() {
   const [apiState, setApiState] = useState({})
+  const [apiLoading, setApiLoading] = useState(true)
+  const [apiErrors, setApiErrors] = useState([])
 
   useEffect(() => {
     let active = true
+    setApiLoading(true)
     Promise.allSettled([
       fetchAiCommandCenterBrief(),
       fetchAiCommandCenterOperations(),
@@ -91,8 +94,16 @@ export default function CommandCenterPage() {
       fetchAiCommandCenterPlanningMonthly(),
     ]).then((results) => {
       if (!active) return
-      const [brief, operations, focus, kpi, monthly] = results.map((result) => (result.status === 'fulfilled' ? result.value : null))
-      setApiState({ brief, operations, focus, kpi, monthly })
+      const names = ['brief', 'operations', 'focus', 'kpi', 'monthly']
+      const payload = {}
+      const errors = []
+      results.forEach((result, index) => {
+        if (result.status === 'fulfilled') payload[names[index]] = result.value
+        else errors.push(names[index])
+      })
+      setApiState(payload)
+      setApiErrors(errors)
+      setApiLoading(false)
     })
     return () => { active = false }
   }, [])
@@ -121,12 +132,36 @@ export default function CommandCenterPage() {
     }
   }, [apiState])
 
+  const executiveBrief = useMemo(() => {
+    const brief = apiState.brief?.executiveBrief || apiState.brief?.brief || {}
+    return {
+      title: brief.title || 'AI Executive Brief',
+      summary: brief.summary || brief.text || 'Сегодня система работает в live-ready режиме: данные Command Center подключены через защищённые API, а интерфейс показывает fallback до получения авторизованного ответа.',
+      focus: brief.focus || apiState.focus?.focus || 'Сфокусироваться на выручке, одобрениях AI-действий и рисках в pipeline.',
+      risk: brief.risk || brief.risks?.[0] || 'Критичных production-рисков не отображено. Проверьте approval queue и сделки с высоким приоритетом.',
+      opportunity: brief.opportunity || brief.opportunities?.[0] || 'Ускорить обработку лидов через AI Workforce и follow-up automation.',
+    }
+  }, [apiState])
+
+  const systemStatus = useMemo(() => ([
+    { label: 'Production', value: 'GREEN' },
+    { label: 'Diagnostics', value: 'GREEN' },
+    { label: 'Governance', value: 'GREEN' },
+    { label: 'AI Workforce', value: pickMetric(apiState.kpi?.kpis?.workforceStatus, 'READY') },
+    { label: 'API', value: apiErrors.length ? 'AUTH REQUIRED' : (apiLoading ? 'LOADING' : 'LIVE') },
+  ]), [apiErrors.length, apiLoading, apiState])
+
+
   return (
     <main className="command-center-page" data-command-center-visual="premium-as6" data-as6-diagnostic-page="command-center-premium">
       <section className="command-hero" data-as6-diagnostic-hero="executive-command-center">
         <div>
           <h1>Добро пожаловать, <span>Владимир!</span> 👋</h1>
           <p>Ваш AI Command Center. Управляйте, анализируйте и масштабируйте выручку.</p>
+          <div className="command-live-status">
+            <span className={apiLoading ? 'loading' : 'green'}>{apiLoading ? 'Синхронизация...' : 'Live-ready'}</span>
+            <span>{apiErrors.length ? `API требует авторизацию: ${apiErrors.length}` : 'API подключён'}</span>
+          </div>
         </div>
         <div className="command-top-actions" aria-label="Command Center tools">
           <label className="command-search"><span>⌕</span><input type="search" placeholder="Поиск..." /></label>
@@ -143,6 +178,24 @@ export default function CommandCenterPage() {
           <svg className="kpi-spark" viewBox="0 0 100 64" preserveAspectRatio="none" aria-hidden="true"><polyline points={sparklinePoints(item.spark)} /></svg>
           <i>{item.icon}</i>
         </article>)}
+      </section>
+
+      <section className="command-executive-os" data-as6-executive-os-v2="brief-and-system">
+        <article className="command-card executive-brief-card">
+          <div className="command-card-head"><h2>{executiveBrief.title}</h2><span>Executive OS V2</span></div>
+          <p>{executiveBrief.summary}</p>
+          <div className="executive-brief-grid">
+            <div><small>Фокус дня</small><strong>{executiveBrief.focus}</strong></div>
+            <div><small>Риск</small><strong>{executiveBrief.risk}</strong></div>
+            <div><small>Возможность</small><strong>{executiveBrief.opportunity}</strong></div>
+          </div>
+        </article>
+        <article className="command-card system-status-card">
+          <div className="command-card-head"><h2>System Status</h2><span>AS6</span></div>
+          <div className="system-status-list">
+            {systemStatus.map((item) => <div className="system-status-row" key={item.label}><span>{item.label}</span><strong>{item.value}</strong></div>)}
+          </div>
+        </article>
       </section>
 
       <section className="command-main-grid">

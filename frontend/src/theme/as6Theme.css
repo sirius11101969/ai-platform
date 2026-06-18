@@ -167,3 +167,26 @@
   .command-shell { grid-template-columns: 268px minmax(0, 1fr); }
   .command-main-grid { grid-template-columns: minmax(0, 1fr) 344px; }
 }
+
+/* AS6 Executive OS V2 */
+.command-live-status { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; align-items:center; }
+.command-live-status span { border:1px solid rgba(255,255,255,.16); background:rgba(255,255,255,.07); color:#d9f7ff; border-radius:999px; padding:7px 11px; font-size:12px; font-weight:800; }
+.command-live-status span.green { color:#9fffc9; background:rgba(35,255,148,.12); border-color:rgba(35,255,148,.28); }
+.command-live-status span.loading { color:#ffe9a7; background:rgba(255,204,77,.12); border-color:rgba(255,204,77,.28); }
+
+.command-executive-os { display:grid; grid-template-columns:minmax(0,1.65fr) minmax(280px,.8fr); gap:16px; }
+.executive-brief-card p { color:#cfe7ff; font-size:15px; line-height:1.65; margin:0 0 18px; max-width:980px; }
+.executive-brief-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.executive-brief-grid div { border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.055); border-radius:18px; padding:14px; min-height:108px; }
+.executive-brief-grid small { display:block; color:#91a9c5; font-weight:800; text-transform:uppercase; letter-spacing:.08em; font-size:10px; margin-bottom:8px; }
+.executive-brief-grid strong { display:block; color:#f4fbff; font-size:14px; line-height:1.45; }
+
+.system-status-list { display:grid; gap:10px; }
+.system-status-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 13px; border-radius:16px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); }
+.system-status-row span { color:#b7cbe2; font-weight:800; }
+.system-status-row strong { color:#9fffc9; font-size:12px; letter-spacing:.08em; }
+
+@media (max-width: 980px) {
+  .command-executive-os { grid-template-columns:1fr; }
+  .executive-brief-grid { grid-template-columns:1fr; }
+}
