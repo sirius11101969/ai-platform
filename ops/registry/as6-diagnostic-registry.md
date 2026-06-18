@@ -1352,3 +1352,4 @@
 - ops/bin/as6-diagnose-meta-diagnostic-quality | AS6 meta diagnostic quality gate | GREEN
 - ops/bin/as6-diagnose-meta-diagnostic-dedup | AS6 meta diagnostic dedup candidate scan | GREEN
 - ops/bin/as6-diagnose-command-center-hook-order | AS6 command center React hook/order runtime black-screen guard | GREEN
+- ops/bin/as6-diagnose-command-center-deployment | AS6 command center deployment/runtime marker verification | GREEN

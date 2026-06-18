@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "=== AS6 Command Center Deployment Diagnostics ==="
+fail=0
+if docker ps --format "{{.Names}}" | grep -q "^ai-platform-nginx-1$"; then echo "AS6_COMMAND_CENTER_NGINX_CONTAINER=PASS"; else echo "AS6_COMMAND_CENTER_NGINX_CONTAINER=FAIL"; fail=1; fi
+if grep -q "data-as6-executive-os-v5" frontend/src/pages/CommandCenterPage.jsx; then echo "AS6_COMMAND_CENTER_V5_SOURCE_MARKER=PASS"; else echo "AS6_COMMAND_CENTER_V5_SOURCE_MARKER=FAIL"; fail=1; fi
+if docker exec ai-platform-nginx-1 sh -c "grep -R \"data-as6-executive-os-v5\" /usr/share/nginx/html 2>/dev/null | head -1" >/tmp/as6-command-center-v5-runtime 2>/dev/null; then echo "AS6_COMMAND_CENTER_V5_RUNTIME_MARKER=PASS"; else echo "AS6_COMMAND_CENTER_V5_RUNTIME_MARKER=WARN:not_found_in_static_bundle"; fi
+code="$(curl -k -L -s -o /tmp/as6-command-center-page.html -w "%{http_code}" https://www.as6.ru/command-center || true)"
+echo "AS6_COMMAND_CENTER_HTTP_CODE=$code"
+if [ "$code" = "200" ]; then echo "AS6_COMMAND_CENTER_HTTP=PASS"; else echo "AS6_COMMAND_CENTER_HTTP=FAIL"; fail=1; fi
+if grep -qi "<div id=\"root\"" /tmp/as6-command-center-page.html; then echo "AS6_COMMAND_CENTER_HTML_ROOT=PASS"; else echo "AS6_COMMAND_CENTER_HTML_ROOT=FAIL"; fail=1; fi
+if [ "$fail" -eq 0 ]; then echo "AS6_COMMAND_CENTER_DEPLOYMENT_RESULT=OK"; exit 0; fi
+echo "AS6_COMMAND_CENTER_DEPLOYMENT_RESULT=FAIL"; exit 1

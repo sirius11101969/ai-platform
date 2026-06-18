@@ -1071,6 +1071,11 @@
       "path": "ops/bin/as6-diagnose-command-center-hook-order",
       "status": "GREEN",
       "owner": "AS6_COMMAND_CENTER_BLACK_SCREEN_FIX_V1"
+    },
+    {
+      "path": "ops/bin/as6-diagnose-command-center-deployment",
+      "status": "GREEN",
+      "owner": "AS6_COMMAND_CENTER_DEPLOY_VERIFY_V1"
     }
   ]
 }
