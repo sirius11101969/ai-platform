@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "=== AS6 Command Center Pixel Perfect V8 Diagnostics ==="
+f="frontend/src/pages/CommandCenterPage.jsx"
+shell="frontend/src/components/AppShell.jsx"
+css="frontend/src/theme/as6Theme.css"
+fail=0
+if grep -q "className=\"quick-actions quick-actions-primary\"" "$f"; then echo "AS6_V8_QUICK_ACTIONS_PRESENT=PASS"; else echo "AS6_V8_QUICK_ACTIONS_PRESENT=FAIL"; fail=1; fi
+if grep -q "screenshot-funnel-slice" "$f"; then echo "AS6_V8_TRAPEZOID_FUNNEL=PASS"; else echo "AS6_V8_TRAPEZOID_FUNNEL=FAIL"; fail=1; fi
+if grep -q "as6-sidebar-copilot-card" "$shell"; then echo "AS6_V8_SIDEBAR_COPILOT_REMOVED=FAIL"; fail=1; else echo "AS6_V8_SIDEBAR_COPILOT_REMOVED=PASS"; fi
+if grep -q ".command-right-rail .copilot-hero { display:grid" "$css"; then echo "AS6_V8_RIGHT_RAIL_COPILOT_ENABLED=PASS"; else echo "AS6_V8_RIGHT_RAIL_COPILOT_ENABLED=FAIL"; fail=1; fi
+if grep -q "AS6 Command Center Pixel Perfect V8" "$css"; then echo "AS6_V8_CSS=PASS"; else echo "AS6_V8_CSS=FAIL"; fail=1; fi
+if [ "$fail" -eq 0 ]; then echo "AS6_COMMAND_CENTER_PIXEL_PERFECT_V8_RESULT=OK"; exit 0; fi
+echo "AS6_COMMAND_CENTER_PIXEL_PERFECT_V8_RESULT=FAIL"; exit 1

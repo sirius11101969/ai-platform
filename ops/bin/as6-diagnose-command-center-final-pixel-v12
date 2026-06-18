@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "=== AS6 Command Center Final Pixel V12 Diagnostics ==="
+css="frontend/src/theme/as6Theme.css"
+fail=0
+grep -q "AS6 Command Center Final Pixel V12" "$css" && echo "AS6_V12_CSS=PASS" || { echo "AS6_V12_CSS=FAIL"; fail=1; }
+grep -q "clip-path:polygon(6% 0,94% 0,100% 100%,0 100%)" "$css" && echo "AS6_V12_CENTERED_FUNNEL=PASS" || { echo "AS6_V12_CENTERED_FUNNEL=FAIL"; fail=1; }
+grep -q "robot-icon.copilot-avatar-v2 { width:134px" "$css" && echo "AS6_V12_COPILOT_MASS=PASS" || { echo "AS6_V12_COPILOT_MASS=FAIL"; fail=1; }
+grep -q ".recommendation::after" "$css" && echo "AS6_V12_RECOMMENDATION_GLOW=PASS" || { echo "AS6_V12_RECOMMENDATION_GLOW=FAIL"; fail=1; }
+grep -q "AS6 Command Center Pixel Polish V11" "$css" && echo "AS6_V11_COMPATIBILITY=PASS" || { echo "AS6_V11_COMPATIBILITY=FAIL"; fail=1; }
+if [ "$fail" -eq 0 ]; then echo "AS6_COMMAND_CENTER_FINAL_PIXEL_V12_RESULT=OK"; exit 0; fi
+echo "AS6_COMMAND_CENTER_FINAL_PIXEL_V12_RESULT=FAIL"; exit 1

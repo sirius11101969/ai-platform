@@ -1461,3 +1461,8 @@
 - ops/bin/as6-diagnose-command-center-deployment | Coverage: command-center deployment, nginx runtime marker, HTTP root, black-screen deployment prevention
 - ops/bin/as6-diagnose-command-center-mission-control-layout | Coverage: mission-control layout, duplicate vertical stack prevention, executive stream row, responsive command center
 - ops/bin/as6-diagnose-command-center-executive-ux-v6 | Coverage: primary actions above fold, interactive filters, compact copilot, pipeline board visualization
+- ops/bin/as6-diagnose-command-center-screenshot-match-v7 | Coverage: sidebar copilot, profile order, screenshot trapezoid pipeline, one-day dropdown, linked quick actions
+- ops/bin/as6-diagnose-command-center-pixel-perfect-v8 | Coverage: duplicate executive generation removal, quick actions DOM order, single copilot, symmetric trapezoid funnel
+- ops/bin/as6-diagnose-command-center-executive-v10 | Coverage: premium copilot avatar, AS6 brand lockup, symmetric funnel tuning, premium quick actions
+- ops/bin/as6-diagnose-command-center-pixel-polish-v11 | Coverage: V11 funnel geometry, copilot scale, AS6 brand lockup, quick action interaction, recommendation contrast
+- ops/bin/as6-diagnose-command-center-final-pixel-v12 | Coverage: centered symmetric funnel, larger copilot visual mass, executive recommendation CTA polish

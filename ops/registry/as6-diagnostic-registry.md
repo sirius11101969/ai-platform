@@ -1355,3 +1355,8 @@
 - ops/bin/as6-diagnose-command-center-deployment | AS6 command center deployment/runtime marker verification | GREEN
 - ops/bin/as6-diagnose-command-center-mission-control-layout | AS6 command center mission-control visual architecture gate | GREEN
 - ops/bin/as6-diagnose-command-center-executive-ux-v6 | AS6 command center executive UX V6 visual-functional gate | GREEN
+- ops/bin/as6-diagnose-command-center-screenshot-match-v7 | AS6 command center screenshot-match V7 visual-functional gate | GREEN
+- ops/bin/as6-diagnose-command-center-pixel-perfect-v8 | AS6 command center pixel-perfect V8 visual architecture gate | GREEN
+- ops/bin/as6-diagnose-command-center-executive-v10 | AS6 command center executive V10 pixel polish gate | GREEN
+- ops/bin/as6-diagnose-command-center-pixel-polish-v11 | AS6 command center pixel polish V11 visual gate | GREEN
+- ops/bin/as6-diagnose-command-center-final-pixel-v12 | AS6 command center final pixel V12 visual gate | GREEN

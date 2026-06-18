@@ -1086,6 +1086,31 @@
       "path": "ops/bin/as6-diagnose-command-center-executive-ux-v6",
       "status": "GREEN",
       "owner": "AS6_COMMAND_CENTER_EXECUTIVE_UX_V6"
+    },
+    {
+      "path": "ops/bin/as6-diagnose-command-center-screenshot-match-v7",
+      "status": "GREEN",
+      "owner": "AS6_COMMAND_CENTER_SCREENSHOT_MATCH_V7"
+    },
+    {
+      "path": "ops/bin/as6-diagnose-command-center-pixel-perfect-v8",
+      "status": "GREEN",
+      "owner": "AS6_COMMAND_CENTER_PIXEL_PERFECT_V8"
+    },
+    {
+      "path": "ops/bin/as6-diagnose-command-center-executive-v10",
+      "status": "GREEN",
+      "owner": "AS6_COMMAND_CENTER_EXECUTIVE_V10"
+    },
+    {
+      "path": "ops/bin/as6-diagnose-command-center-pixel-polish-v11",
+      "status": "GREEN",
+      "owner": "AS6_COMMAND_CENTER_PIXEL_POLISH_V11"
+    },
+    {
+      "path": "ops/bin/as6-diagnose-command-center-final-pixel-v12",
+      "status": "GREEN",
+      "owner": "AS6_COMMAND_CENTER_FINAL_PIXEL_V12"
     }
   ]
 }

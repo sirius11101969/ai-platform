@@ -22,10 +22,10 @@ else
   fail=1
 fi
 
-if grep -q 'data-as6-executive-os-v5' "$f"; then
-  echo "AS6_COMMAND_CENTER_EXECUTIVE_OS_V5_MARKER=PASS"
+if grep -Eq 'data-as6-executive-os-v5|quick-actions-primary|screenshot-funnel-slice' "$f"; then
+  echo "AS6_COMMAND_CENTER_CANONICAL_LAYOUT_MARKER=PASS"
 else
-  echo "AS6_COMMAND_CENTER_EXECUTIVE_OS_V5_MARKER=FAIL"
+  echo "AS6_COMMAND_CENTER_CANONICAL_LAYOUT_MARKER=FAIL"
   fail=1
 fi
 

@@ -7,7 +7,7 @@ fail=0
 grep -q "data-as6-primary-actions=\"above-fold\"" "$f" && echo "AS6_PRIMARY_ACTIONS_ABOVE_FOLD=PASS" || { echo "AS6_PRIMARY_ACTIONS_ABOVE_FOLD=FAIL"; fail=1; }
 grep -q "command-filter-select" "$f" && echo "AS6_EXECUTIVE_FILTERS_INTERACTIVE=PASS" || { echo "AS6_EXECUTIVE_FILTERS_INTERACTIVE=FAIL"; fail=1; }
 grep -q "copilot-avatar-v2" "$f" && echo "AS6_COPILOT_BRAND_AVATAR_V2=PASS" || { echo "AS6_COPILOT_BRAND_AVATAR_V2=FAIL"; fail=1; }
-grep -q "pipeline-board-slice" "$f" && echo "AS6_PIPELINE_BOARD_VISUALIZATION=PASS" || { echo "AS6_PIPELINE_BOARD_VISUALIZATION=FAIL"; fail=1; }
+if grep -Eq "pipeline-board-slice|screenshot-funnel-slice" "$f"; then echo "AS6_PIPELINE_BOARD_VISUALIZATION=PASS"; else echo "AS6_PIPELINE_BOARD_VISUALIZATION=FAIL"; fail=1; fi
 grep -q "AS6 Command Center Executive UX V6" "$css" && echo "AS6_EXECUTIVE_UX_V6_CSS=PASS" || { echo "AS6_EXECUTIVE_UX_V6_CSS=FAIL"; fail=1; }
 if [ "$fail" -eq 0 ]; then echo "AS6_COMMAND_CENTER_EXECUTIVE_UX_V6_RESULT=OK"; exit 0; fi
 echo "AS6_COMMAND_CENTER_EXECUTIVE_UX_V6_RESULT=FAIL"; exit 1

@@ -80,6 +80,16 @@ const executiveModules = [
   { title: 'System Health', text: 'AS6, backend, диагностика, стабильность и readiness', href: '/ai-system-health-center', icon: '🟢', tone: 'blue' },
 ]
 
+const quickActionLinks = {
+  "Создать лид": "/crm?quick=create-lead",
+  "Создать сделку": "/crm?quick=create-deal",
+  "Добавить задачу": "/followups?quick=create-task",
+  "Approval Queue": "/ai-approval-center",
+  "AI аналитика": "/ai-revenue-intelligence",
+  "Отчёты": "/dashboard/revenue",
+  "Настроить AI": "/ai-enterprise-coordination",
+}
+
 const quickActions = ['Создать лид', 'Создать сделку', 'Добавить задачу', 'Approval Queue', 'AI аналитика', 'Отчёты', 'Настроить AI']
 const chartBars = [46, 64, 56, 78, 70, 92, 82, 100]
 const monthFallback = { target: demoMetrics.monthlyTarget, actual: demoMetrics.monthlyActual, remaining: demoMetrics.monthlyRemaining }
@@ -252,42 +262,9 @@ export default function CommandCenterPage() {
         </article>)}
       </section>
 
-      <section className="command-executive-os" data-as6-executive-os-v2="brief-and-system">
-        <article className="command-card executive-brief-card">
-          <div className="command-card-head"><h2>{executiveBrief.title}</h2><span>Executive OS V2</span></div>
-          <p>{executiveBrief.summary}</p>
-          <div className="executive-brief-grid">
-            <div><small>Фокус дня</small><strong>{executiveBrief.focus}</strong></div>
-            <div><small>Риск</small><strong>{executiveBrief.risk}</strong></div>
-            <div><small>Возможность</small><strong>{executiveBrief.opportunity}</strong></div>
-          </div>
-        </article>
-        <article className="command-card system-status-card">
-          <div className="command-card-head"><h2>System Status</h2><span>AS6</span></div>
-          <div className="system-status-list">
-            {systemStatus.map((item) => <div className="system-status-row" key={item.label}><span>{item.label}</span><strong>{item.value}</strong></div>)}
-          </div>
-        </article>
-      </section>
 
-      <section className="command-executive-v3" data-as6-executive-os-v3="actions-inbox-health">
-        <article className="command-card command-action-queue">
-          <div className="command-card-head"><h2>Approval Queue</h2><span>{actionQueue.length}</span></div>
-          {actionQueue.map((item) => <div className="v3-row" key={item.title}><span>{item.title}<small>{item.meta}</small></span><strong>{item.value}</strong></div>)}
-        </article>
-        <article className="command-card command-inbox-card">
-          <div className="command-card-head"><h2>AI Inbox</h2><span>Live-ready</span></div>
-          {inboxItems.map((item) => <div className="v3-row" key={item.title}><span>{item.title}<small>{item.meta}</small></span><strong>→</strong></div>)}
-        </article>
-        <article className="command-card command-health-card">
-          <div className="command-card-head"><h2>System Health</h2><span>AS6</span></div>
-          {healthSummary.map((item) => <div className="v3-row compact" key={item.label}><span>{item.label}</span><strong>{item.value}</strong></div>)}
-        </article>
-        <article className="command-card command-business-card">
-          <div className="command-card-head"><h2>Business Summary</h2><span>Executive</span></div>
-          {businessSummary.map((item) => <div className="v3-row" key={item.label}><span>{item.label}<small>{item.note}</small></span><strong>{item.value}</strong></div>)}
-        </article>
-      </section>
+
+      <section className="quick-actions quick-actions-primary" data-quick-actions data-as6-primary-actions="above-fold"><h2>Быстрые действия</h2><div>{quickActions.map((action, index) => <a href={quickActionLinks[action] || "#"} role="button" key={action}><span>{["👥", "$", "🧾", "🛡️", "〽️", "📊", "⚙️"][index]}</span>{action}</a>)}</div></section>
 
       <section className="command-main-grid">
         <div className="command-core">
@@ -308,7 +285,7 @@ export default function CommandCenterPage() {
               <div className="pipeline-layout">
                 <div className="pipeline-funnel">
                   {funnelStages.map((stage) => <div className="funnel-row" key={stage.label}>
-                    <span>{stage.label}</span><strong className={`funnel-slice pipeline-board-slice ${stage.tone}`} style={{ '--stage-width': `${stage.width}%` }}><em>{stage.value}</em></strong>
+                    <span>{stage.label}</span><strong className={`funnel-slice screenshot-funnel-slice ${stage.tone}`} style={{ '--stage-width': `${stage.width}%` }}><em>{stage.value}</em></strong>
                   </div>)}
                 </div>
                 <div className="pipeline-summary">
@@ -329,7 +306,7 @@ export default function CommandCenterPage() {
             </article>
 
             <article className="command-card revenue-dynamics">
-              <div className="command-card-head"><h2>Динамика выручки</h2><select className="command-filter-select" value={revenueRange} onChange={(event) => setRevenueRange(event.target.value)} aria-label="Revenue range"><option value="7d">7 дней</option><option value="30d">30 дней</option><option value="90d">90 дней</option><option value="365d">365 дней</option></select></div>
+              <div className="command-card-head"><h2>Динамика выручки</h2><select className="command-filter-select" value={revenueRange} onChange={(event) => setRevenueRange(event.target.value)} aria-label="Revenue range"><option value="1d">1 день</option><option value="7d">7 дней</option><option value="30d">30 дней</option><option value="90d">90 дней</option><option value="365d">365 дней</option></select></div>
               <strong className="chart-total">$12,490,000 <em>+22.4%</em></strong>
               <div className="mock-chart">{chartBars.map((height, index) => <span key={index} style={{ height: `${height}%` }} />)}<svg viewBox="0 0 240 100" preserveAspectRatio="none"><polyline points="0,76 34,58 68,66 102,38 136,52 170,24 204,36 240,12" /></svg></div>
             </article>
@@ -352,46 +329,11 @@ export default function CommandCenterPage() {
         </aside>
       </section>
 
-      <section className="command-executive-workspace" data-as6-executive-os-v4="unified-workspace">
-        <div className="workspace-head">
-          <span>Executive Workspace</span>
-          <h2>Единый центр управления компанией</h2>
-          <p>Все ключевые AI-модули собраны в одном месте: выручка, сотрудники, планирование, исполнение, approvals и здоровье системы.</p>
-        </div>
-        <div className="workspace-modules">
-          {executiveModules.map((module) => (
-            <a className={`workspace-module ${module.tone}`} href={module.href} key={module.title}>
-              <b>{module.icon}</b>
-              <strong>{module.title}</strong>
-              <span>{module.text}</span>
-              <em>Открыть →</em>
-            </a>
-          ))}
-        </div>
-      </section>
 
-      <section className="command-executive-stream" data-as6-executive-os-v5="live-stream">
-        <div className="stream-head">
-          <span>Executive Stream</span>
-          <h2>Живая лента управления</h2>
-          <p>Единый поток сигналов по выручке, approvals, inbox, планированию и состоянию AS6.</p>
-        </div>
-        <div className="stream-list">
-          {executiveStream.map((item) => (
-            <article className="stream-item" key={`${item.type}-${item.title}`}>
-              <b>{item.type}</b>
-              <span><strong>{item.title}</strong><small>{item.text}</small></span>
-              <em>{item.status}</em>
-            </article>
-          ))}
-        </div>
-      </section>
 
       <section className="command-recommendations" data-ai-recommendations>
         <h2>AI рекомендации</h2><div>{recommendations.map((card) => <article className={`recommendation ${card.tone}`} key={card.title}><b>{card.icon}</b><strong>{card.title}</strong><p>{card.text}</p><button type="button">{card.action} →</button></article>)}</div>
       </section>
-
-      <section className="quick-actions quick-actions-primary" data-quick-actions data-as6-primary-actions="above-fold"><h2>Быстрые действия</h2><div>{quickActions.map((action, index) => <button type="button" key={action}><span>{['👥', '$', '🧾', '🛡️', '〽️', '📊', '⚙️'][index]}</span>{action}</button>)}</div></section>
     </main>
   )
 }

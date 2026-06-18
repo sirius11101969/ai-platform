@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "=== AS6 Command Center Screenshot Match V7 Diagnostics ==="
+f="frontend/src/pages/CommandCenterPage.jsx"
+css="frontend/src/theme/as6Theme.css"
+sidebar="$(grep -R "as6-sidebar-copilot-card" -n frontend/src 2>/dev/null | head -1 | cut -d: -f1 || true)"
+fail=0
+grep -q "screenshot-funnel-slice" "$f" && echo "AS6_SCREENSHOT_PIPELINE_TRAPEZOID=PASS" || { echo "AS6_SCREENSHOT_PIPELINE_TRAPEZOID=FAIL"; fail=1; }
+grep -q "<option value=\"1d\">1 день</option>" "$f" && echo "AS6_DROPDOWN_ONE_DAY=PASS" || { echo "AS6_DROPDOWN_ONE_DAY=FAIL"; fail=1; }
+grep -q "quickActionLinks" "$f" && echo "AS6_QUICK_ACTIONS_LINKED=PASS" || { echo "AS6_QUICK_ACTIONS_LINKED=FAIL"; fail=1; }
+[ -n "$sidebar" ] && echo "AS6_SIDEBAR_COPILOT_SOURCE=PASS:$sidebar" || { echo "AS6_SIDEBAR_COPILOT_SOURCE=FAIL"; fail=1; }
+grep -q ".command-right-rail .copilot-hero { display:none" "$css" && echo "AS6_RIGHT_RAIL_COPILOT_HIDDEN=PASS" || { echo "AS6_RIGHT_RAIL_COPILOT_HIDDEN=FAIL"; fail=1; }
+grep -q "AS6 Command Center Screenshot Match V7" "$css" && echo "AS6_SCREENSHOT_MATCH_V7_CSS=PASS" || { echo "AS6_SCREENSHOT_MATCH_V7_CSS=FAIL"; fail=1; }
+if [ "$fail" -eq 0 ]; then echo "AS6_COMMAND_CENTER_SCREENSHOT_MATCH_V7_RESULT=OK"; exit 0; fi
+echo "AS6_COMMAND_CENTER_SCREENSHOT_MATCH_V7_RESULT=FAIL"; exit 1
