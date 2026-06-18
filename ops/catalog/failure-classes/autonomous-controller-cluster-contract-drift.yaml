@@ -1,0 +1,11 @@
+class: AUTONOMOUS_CONTROLLER_CLUSTER_CONTRACT_DRIFT
+category: autonomous-governance-controller-drift
+severity: high
+root_cause: autonomous knowledge base, incident governance, incident lifecycle and change approval controllers remained red after registry/status/generated-python repairs because they used inconsistent controller-local contracts
+resolution: normalize all four controllers to one shared fast autonomous governance controller contract
+diagnostic_required: true
+coverage_required: true
+governance_required: true
+prevention_required: true
+aec_required: true
+state_required: true

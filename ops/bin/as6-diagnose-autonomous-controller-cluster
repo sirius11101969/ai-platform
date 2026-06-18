@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -uo pipefail
+echo "=== AS6 Autonomous Controller Cluster Diagnostics ==="
+fail=0
+for d in ops/bin/as6-diagnose-autonomous-knowledge-base-controller ops/bin/as6-diagnose-autonomous-incident-governance-controller ops/bin/as6-diagnose-autonomous-incident-lifecycle-controller ops/bin/as6-diagnose-autonomous-change-approval-controller; do
+  "$d" || fail=1
+done
+if [ "$fail" -eq 0 ]; then echo "AS6_AUTONOMOUS_CONTROLLER_CLUSTER=PASS"; echo "AS6_AUTONOMOUS_CONTROLLER_CLUSTER_RESULT=OK"; exit 0; fi
+echo "AS6_AUTONOMOUS_CONTROLLER_CLUSTER=FAIL"
+echo "AS6_AUTONOMOUS_CONTROLLER_CLUSTER_RESULT=FAIL"
+exit 1

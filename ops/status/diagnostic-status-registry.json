@@ -98,6 +98,12 @@
       "source": "auto"
     },
     {
+      "check": "autonomous-controller-cluster",
+      "path": "ops/bin/as6-diagnose-autonomous-controller-cluster",
+      "status_visible": true,
+      "source": "as6-controller-cluster-status-registry-fix"
+    },
+    {
       "check": "autonomous-coverage",
       "path": "ops/bin/as6-diagnose-autonomous-coverage",
       "status_visible": true,
@@ -236,6 +242,12 @@
       "source": "auto"
     },
     {
+      "check": "controller-cluster-status-registry",
+      "path": "ops/bin/as6-diagnose-controller-cluster-status-registry",
+      "status_visible": true,
+      "source": "as6-controller-cluster-status-registry-fix"
+    },
+    {
       "check": "diagnose-all-wait-signature",
       "path": "ops/bin/as6-diagnose-diagnose-all-wait-signature",
       "status_visible": true,
@@ -342,6 +354,18 @@
       "path": "ops/bin/as6-diagnose-env-contract",
       "status_visible": true,
       "source": "auto"
+    },
+    {
+      "check": "fast-final-green-proof",
+      "path": "ops/bin/as6-diagnose-fast-final-green-proof",
+      "status_visible": true,
+      "source": "as6-fast-final-green-proof"
+    },
+    {
+      "check": "fast-final-green-proof-control",
+      "path": "ops/bin/as6-diagnose-fast-final-green-proof-control",
+      "status_visible": true,
+      "source": "as6-fast-final-green-proof"
     },
     {
       "check": "fast-summary",

@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -uo pipefail
+echo "=== AS6 Fast Final Green Proof Diagnostics ==="
+fail=0
+run_gate() {
+  name="$1"
+  cmd="$2"
+  echo "AS6_FAST_GREEN_PROOF_GATE=RUN:${name}"
+  if bash -lc "$cmd"; then
+    echo "AS6_FAST_GREEN_PROOF_GATE=PASS:${name}"
+  else
+    echo "AS6_FAST_GREEN_PROOF_GATE=FAIL:${name}"
+    fail=1
+  fi
+}
+run_gate diagnostic-insertion-points "ops/bin/as6-diagnose-diagnostic-insertion-points"
+run_gate diagnostic-status-registry "ops/bin/as6-diagnose-diagnostic-status-registry"
+run_gate diagnostic-registration "ops/bin/as6-diagnose-diagnostic-registration"
+run_gate autonomous-controller-cluster "ops/bin/as6-diagnose-autonomous-controller-cluster"
+run_gate generated-python-contracts "ops/bin/as6-diagnose-generated-python-contracts"
+run_gate reboot-evidence-self-heal "ops/bin/as6-diagnose-reboot-evidence-self-heal"
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_FAST_FINAL_GREEN_PROOF=PASS"
+  echo "AS6_FAST_FINAL_GREEN_PROOF_RESULT=OK"
+  exit 0
+fi
+echo "AS6_FAST_FINAL_GREEN_PROOF=FAIL"
+echo "AS6_FAST_FINAL_GREEN_PROOF_RESULT=FAIL"
+exit 1

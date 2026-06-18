@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 set -uo pipefail
 echo "=== AS6 Autonomous Incident Lifecycle Controller Diagnostics ==="
-ops/lib/as6-autonomous-controller-shared-contract autonomous-incident-lifecycle-controller
-echo "AS6_INCIDENT_LIFECYCLE=PASS"
-echo "AS6_INCIDENT_LIFECYCLE_WARNINGS=NONE"
+ops/lib/as6-governance-convergence-contract autonomous-incident-lifecycle-controller
 echo "AS6_AUTONOMOUS_INCIDENT_LIFECYCLE_CONTROLLER=PASS"
 echo "AS6_AUTONOMOUS_INCIDENT_LIFECYCLE_CONTROLLER_RESULT=OK"

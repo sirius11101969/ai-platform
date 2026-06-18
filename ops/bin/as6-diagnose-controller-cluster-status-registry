@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -uo pipefail
+echo "=== AS6 Autonomous Controller Cluster Status Registry Diagnostics ==="
+fail=0
+grep -Fq "ops/bin/as6-diagnose-autonomous-controller-cluster" ops/status/diagnostic-status-registry.json && echo "AS6_CONTROLLER_CLUSTER_STATUS_REGISTRY=PASS" || { echo "AS6_CONTROLLER_CLUSTER_STATUS_REGISTRY=FAIL"; fail=1; }
+grep -Fq "AUTONOMOUS_CONTROLLER_CLUSTER_STATUS_REGISTRY_DRIFT" ops/registry/as6-prevention-registry.md && echo "AS6_CONTROLLER_CLUSTER_STATUS_PREVENTION=PASS" || { echo "AS6_CONTROLLER_CLUSTER_STATUS_PREVENTION=FAIL"; fail=1; }
+grep -Fq "AEC_REQUIRE_CONTROLLER_CLUSTER_STATUS_REGISTRY" ops/registry/as6-aec-registry.md && echo "AS6_CONTROLLER_CLUSTER_STATUS_AEC=PASS" || { echo "AS6_CONTROLLER_CLUSTER_STATUS_AEC=FAIL"; fail=1; }
+if [ "$fail" -eq 0 ]; then echo "AS6_CONTROLLER_CLUSTER_STATUS_REGISTRY_RESULT=OK"; exit 0; fi
+echo "AS6_CONTROLLER_CLUSTER_STATUS_REGISTRY_RESULT=FAIL"
+exit 1

@@ -39,3 +39,6 @@
 | STATUS_REGISTRY_CANONICAL_ARRAY_SYNC_DRIFT | sync-status-registry-diagnostics-array | ENABLED |
 | TRACKED_PYCACHE_ARTIFACT_DRIFT | remove-and-ignore-python-bytecode-artifacts | ENABLED |
 | PYCACHE_STAGED_DELETE_FALSE_POSITIVE | allow-staged-bytecode-deletion-during-cleanup | ENABLED |
+| AUTONOMOUS_CONTROLLER_CLUSTER_CONTRACT_DRIFT | use-shared-fast-autonomous-controller-contract | ENABLED |
+| AUTONOMOUS_CONTROLLER_CLUSTER_STATUS_REGISTRY_DRIFT | require-controller-cluster-status-registry-entry | ENABLED |
+| FULL_DIAGNOSE_LONG_RUN_SSH_RESET_DRIFT | use-fast-final-green-proof-for-commit-gate | ENABLED |

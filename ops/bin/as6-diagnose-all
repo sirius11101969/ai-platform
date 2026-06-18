@@ -408,3 +408,12 @@ exit "$fail"
 
 # AS6 registration matcher canonical
 [ -x ops/bin/as6-diagnose-registration-matcher-canonical ] && ops/bin/as6-diagnose-registration-matcher-canonical
+
+# AS6 autonomous controller cluster
+[ -x ops/bin/as6-diagnose-autonomous-controller-cluster ] && ops/bin/as6-diagnose-autonomous-controller-cluster
+
+# AS6 controller cluster status registry
+[ -x ops/bin/as6-diagnose-controller-cluster-status-registry ] && ops/bin/as6-diagnose-controller-cluster-status-registry
+
+# AS6 fast final green proof control
+[ -x ops/bin/as6-diagnose-fast-final-green-proof-control ] && ops/bin/as6-diagnose-fast-final-green-proof-control

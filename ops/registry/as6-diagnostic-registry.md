@@ -1345,3 +1345,7 @@
 | ops/bin/as6-diagnose-final-registry-convergence | final-registry-convergence | ENABLED |
 | ops/bin/as6-diagnose-registration-matcher-canonical | registration-matcher-canonical | ENABLED |
 | ops/bin/as6-clean-python-artifacts | python-bytecode-artifact-hygiene | ENABLED |
+| ops/bin/as6-diagnose-autonomous-controller-cluster | autonomous-controller-cluster-contract | ENABLED |
+| ops/bin/as6-diagnose-controller-cluster-status-registry | controller-cluster-status-registry | ENABLED |
+| ops/bin/as6-diagnose-fast-final-green-proof | fast-final-green-proof | ENABLED |
+| ops/bin/as6-diagnose-fast-final-green-proof-control | fast-final-green-proof | ENABLED |

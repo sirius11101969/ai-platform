@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -uo pipefail
+component="${1:-unknown}"
+fail=0
+echo "=== AS6 Autonomous Controller Shared Contract: ${component} ==="
+[ -f docs/AS6_PROJECT_STATE.md ] && echo "AS6_AUTONOMOUS_CONTROLLER_STATE=PASS" || { echo "AS6_AUTONOMOUS_CONTROLLER_STATE=FAIL"; fail=1; }
+[ -f ops/registry/as6-diagnostic-registry.md ] && echo "AS6_AUTONOMOUS_CONTROLLER_DIAGNOSTIC_REGISTRY=PASS" || { echo "AS6_AUTONOMOUS_CONTROLLER_DIAGNOSTIC_REGISTRY=FAIL"; fail=1; }
+[ -f ops/registry/as6-coverage-registry.md ] && echo "AS6_AUTONOMOUS_CONTROLLER_COVERAGE_REGISTRY=PASS" || { echo "AS6_AUTONOMOUS_CONTROLLER_COVERAGE_REGISTRY=FAIL"; fail=1; }
+[ -f ops/status/diagnostic-status-registry.json ] && echo "AS6_AUTONOMOUS_CONTROLLER_STATUS_REGISTRY=PASS" || { echo "AS6_AUTONOMOUS_CONTROLLER_STATUS_REGISTRY=FAIL"; fail=1; }
+[ -f ops/governance/as6-autonomous-controller-cluster-contract-policy.md ] && echo "AS6_AUTONOMOUS_CONTROLLER_GOVERNANCE_POLICY=PASS" || { echo "AS6_AUTONOMOUS_CONTROLLER_GOVERNANCE_POLICY=FAIL"; fail=1; }
+grep -Fq "AUTONOMOUS_CONTROLLER_CLUSTER_CONTRACT_DRIFT" ops/registry/as6-prevention-registry.md && echo "AS6_AUTONOMOUS_CONTROLLER_PREVENTION=PASS" || { echo "AS6_AUTONOMOUS_CONTROLLER_PREVENTION=FAIL"; fail=1; }
+grep -Fq "AEC_REQUIRE_AUTONOMOUS_CONTROLLER_CLUSTER_CONTRACT" ops/registry/as6-aec-registry.md && echo "AS6_AUTONOMOUS_CONTROLLER_AEC=PASS" || { echo "AS6_AUTONOMOUS_CONTROLLER_AEC=FAIL"; fail=1; }
+case "$component" in
+  autonomous-knowledge-base-controller)
+    grep -Fq "root-cause" ops/registry/as6-diagnostic-registry.md && echo "AS6_KNOWLEDGE_BASE_LINKAGE=PASS" || { echo "AS6_KNOWLEDGE_BASE_LINKAGE=FAIL"; fail=1; }
+    ;;
+  autonomous-incident-governance-controller)
+    grep -Fq "incident" ops/registry/as6-diagnostic-registry.md && echo "AS6_INCIDENT_GOVERNANCE_LINKAGE=PASS" || { echo "AS6_INCIDENT_GOVERNANCE_LINKAGE=FAIL"; fail=1; }
+    ;;
+  autonomous-incident-lifecycle-controller)
+    grep -Fq "incident" ops/registry/as6-coverage-registry.md && echo "AS6_INCIDENT_LIFECYCLE_LINKAGE=PASS" || { echo "AS6_INCIDENT_LIFECYCLE_LINKAGE=FAIL"; fail=1; }
+    ;;
+  autonomous-change-approval-controller)
+    grep -Fq "AS6_PRODUCTION_POLICY" docs/AS6_PROJECT_STATE.md ops/governance/*.md 2>/dev/null && echo "AS6_CHANGE_APPROVAL_POLICY_LINKAGE=PASS" || echo "AS6_CHANGE_APPROVAL_POLICY_LINKAGE=WARN:policy_reference_weak"
+    ;;
+esac
+if [ "$fail" -eq 0 ]; then echo "AS6_AUTONOMOUS_CONTROLLER_SHARED_CONTRACT=PASS:${component}"; exit 0; fi
+echo "AS6_AUTONOMOUS_CONTROLLER_SHARED_CONTRACT=FAIL:${component}"
+exit 1

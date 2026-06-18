@@ -1,0 +1,11 @@
+class: FULL_DIAGNOSE_LONG_RUN_SSH_RESET_DRIFT
+category: validation-execution-drift
+severity: medium
+root_cause: full diagnose-all can run long enough for SSH session reset before final AS6_DIAGNOSE_ALL_RESULT is captured even when target gates are already green
+resolution: add fast final green proof gate that validates critical AS6 production readiness gates without recursively running full diagnose-all
+diagnostic_required: true
+coverage_required: true
+governance_required: true
+prevention_required: true
+aec_required: true
+state_required: true

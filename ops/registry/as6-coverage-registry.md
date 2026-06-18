@@ -1451,3 +1451,7 @@
 | ops/bin/as6-diagnose-final-registry-convergence | registry+coverage+status-final-convergence | ENABLED |
 | ops/bin/as6-diagnose-registration-matcher-canonical | registry+coverage+status-matcher-consistency | ENABLED |
 | ops/bin/as6-clean-python-artifacts | pycache-cleanup+tracked-pyc-prevention | ENABLED |
+| ops/bin/as6-diagnose-autonomous-controller-cluster | shared-controller-contract+governance+incident+knowledge-base+change-approval | ENABLED |
+| ops/bin/as6-diagnose-controller-cluster-status-registry | controller-cluster-status-registry+aec+prevention | ENABLED |
+| ops/bin/as6-diagnose-fast-final-green-proof | insertion-points+status-registry+registration+controller-cluster+generated-python+reboot-self-heal | ENABLED |
+| ops/bin/as6-diagnose-fast-final-green-proof-control | insertion-points+status-registry+registration+controller-cluster+generated-python+reboot-self-heal | ENABLED |

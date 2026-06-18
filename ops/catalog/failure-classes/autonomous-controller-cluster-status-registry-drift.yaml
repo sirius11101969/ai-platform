@@ -1,0 +1,11 @@
+class: AUTONOMOUS_CONTROLLER_CLUSTER_STATUS_REGISTRY_DRIFT
+category: diagnostic-status-registry-drift
+severity: high
+root_cause: ops/bin/as6-diagnose-autonomous-controller-cluster was added to git, diagnostic registry and coverage registry but was missing from canonical status registry diagnostics array
+resolution: add autonomous controller cluster diagnostic to ops/status/diagnostic-status-registry.json diagnostics array
+diagnostic_required: true
+coverage_required: true
+governance_required: true
+prevention_required: true
+aec_required: true
+state_required: true

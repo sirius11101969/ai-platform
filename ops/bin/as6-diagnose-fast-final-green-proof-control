@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -uo pipefail
+echo "=== AS6 Fast Final Green Proof Control Diagnostics ==="
+fail=0
+grep -Fq "as6-diagnose-all" ops/bin/as6-diagnose-fast-final-green-proof && { echo "AS6_FAST_GREEN_PROOF_NO_FULL_RECURSION=FAIL"; fail=1; } || echo "AS6_FAST_GREEN_PROOF_NO_FULL_RECURSION=PASS"
+grep -Fq "AS6_FAST_FINAL_GREEN_PROOF_RESULT=OK" ops/bin/as6-diagnose-fast-final-green-proof && echo "AS6_FAST_GREEN_PROOF_COMPLETION_MARKER=PASS" || { echo "AS6_FAST_GREEN_PROOF_COMPLETION_MARKER=FAIL"; fail=1; }
+[ -f ops/governance/as6-fast-final-green-proof-policy.md ] && echo "AS6_FAST_GREEN_PROOF_GOVERNANCE=PASS" || { echo "AS6_FAST_GREEN_PROOF_GOVERNANCE=FAIL"; fail=1; }
+grep -Fq "AEC_REQUIRE_FAST_FINAL_GREEN_PROOF" ops/registry/as6-aec-registry.md && echo "AS6_FAST_GREEN_PROOF_AEC=PASS" || { echo "AS6_FAST_GREEN_PROOF_AEC=FAIL"; fail=1; }
+if [ "$fail" -eq 0 ]; then echo "AS6_FAST_GREEN_PROOF_CONTROL_RESULT=OK"; exit 0; fi
+echo "AS6_FAST_GREEN_PROOF_CONTROL_RESULT=FAIL"
+exit 1
