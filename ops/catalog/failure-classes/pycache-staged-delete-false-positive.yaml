@@ -1,0 +1,5 @@
+class: PYCACHE_STAGED_DELETE_FALSE_POSITIVE
+category: python-artifact-git-hygiene
+severity: high
+root_cause: python artifact hygiene diagnostic treated staged deletion of tracked pyc artifact as untracked pycache failure
+resolution: allow staged D deletion of pyc artifacts while still failing added modified or untracked bytecode artifacts

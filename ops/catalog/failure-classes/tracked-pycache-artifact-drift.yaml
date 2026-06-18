@@ -1,0 +1,5 @@
+class: TRACKED_PYCACHE_ARTIFACT_DRIFT
+category: python-artifact-git-hygiene
+severity: high
+root_cause: compiled python bytecode under ops/lib/__pycache__ was tracked or staged as deleted, causing generated python runtime contract failure
+resolution: remove pycache and pyc from git tracking, ignore future bytecode artifacts, and enforce cleanup diagnostic

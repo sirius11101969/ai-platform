@@ -24,3 +24,7 @@ runtime/diagnostic-backups/
 runtime/pre-reboot-forensics/
 runtime/reboot-forensics/
 runtime/restore-drill/
+
+# AS6 Python bytecode artifacts
+__pycache__/
+*.pyc

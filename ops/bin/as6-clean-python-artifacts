@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -uo pipefail
+find ops -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+find ops -type f -name "*.pyc" -delete 2>/dev/null || true
+exit 0

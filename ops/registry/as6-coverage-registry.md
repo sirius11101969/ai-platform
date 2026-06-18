@@ -1450,3 +1450,4 @@
 | ops/bin/as6-diagnose-unified-autonomy-orchestrator | governance-convergence+autonomy-orchestration+controller-contract | ENABLED |
 | ops/bin/as6-diagnose-final-registry-convergence | registry+coverage+status-final-convergence | ENABLED |
 | ops/bin/as6-diagnose-registration-matcher-canonical | registry+coverage+status-matcher-consistency | ENABLED |
+| ops/bin/as6-clean-python-artifacts | pycache-cleanup+tracked-pyc-prevention | ENABLED |

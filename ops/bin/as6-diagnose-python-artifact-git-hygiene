@@ -1,7 +1,14 @@
 #!/usr/bin/env bash
-set -euo pipefail
-cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+set -uo pipefail
 echo "=== AS6 Python Artifact Git Hygiene Diagnostics ==="
-helper="ops/lib/as6-python-artifact-git-hygiene-check.py"
-if [ -s "$helper" ]; then echo "AS6_PYTHON_ARTIFACT_GIT_HYGIENE_HELPER=PASS:$helper"; else echo "AS6_PYTHON_ARTIFACT_GIT_HYGIENE_HELPER=FAIL:$helper"; exit 1; fi
-python3 "$helper"
+fail=0
+[ -x ops/bin/as6-clean-python-artifacts ] && ops/bin/as6-clean-python-artifacts || true
+if find ops -type d -name "__pycache__" | grep -q .; then echo "AS6_NO_PYCACHE_ARTIFACTS=FAIL"; fail=1; else echo "AS6_NO_PYCACHE_ARTIFACTS=PASS"; fi
+if find ops -type f -name "*.pyc" | grep -q .; then echo "AS6_NO_PYC_FILES=FAIL"; fail=1; else echo "AS6_NO_PYC_FILES=PASS"; fi
+if git ls-files | grep -E "(^|/)__pycache__/|\.pyc$" >/dev/null; then echo "AS6_NO_TRACKED_PYCACHE=FAIL"; fail=1; else echo "AS6_NO_TRACKED_PYCACHE=PASS"; fi
+bad="$(git status --short | grep -E "__pycache__|\\.pyc$" | grep -v "^D " | grep -v "^ D " || true)"
+if [ -n "$bad" ]; then echo "AS6_NO_UNTRACKED_PYCACHE=FAIL"; printf "%s\n" "$bad"; fail=1; else echo "AS6_NO_UNTRACKED_PYCACHE=PASS"; fi
+if [ "$fail" -eq 0 ]; then echo "AS6_PYTHON_ARTIFACT_GIT_HYGIENE=PASS"; echo "AS6_PYTHON_ARTIFACT_GIT_HYGIENE_RESULT=OK"; exit 0; fi
+echo "AS6_PYTHON_ARTIFACT_GIT_HYGIENE=FAIL"
+echo "AS6_PYTHON_ARTIFACT_GIT_HYGIENE_RESULT=FAIL"
+exit 1

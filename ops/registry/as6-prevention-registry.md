@@ -37,3 +37,5 @@
 | UNIFIED_AUTONOMY_ORCHESTRATOR_SHELL_SYNTAX_DRIFT | keep-unified-autonomy-wrapper-shell-safe | ENABLED |
 | DIAGNOSTIC_REGISTRATION_MATCHER_DRIFT | canonicalize-diagnostic-registration-matcher | ENABLED |
 | STATUS_REGISTRY_CANONICAL_ARRAY_SYNC_DRIFT | sync-status-registry-diagnostics-array | ENABLED |
+| TRACKED_PYCACHE_ARTIFACT_DRIFT | remove-and-ignore-python-bytecode-artifacts | ENABLED |
+| PYCACHE_STAGED_DELETE_FALSE_POSITIVE | allow-staged-bytecode-deletion-during-cleanup | ENABLED |

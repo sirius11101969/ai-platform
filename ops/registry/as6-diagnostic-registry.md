@@ -1344,3 +1344,4 @@
 | ops/bin/as6-diagnose-unified-autonomy-orchestrator | governance-controller-convergence | ENABLED |
 | ops/bin/as6-diagnose-final-registry-convergence | final-registry-convergence | ENABLED |
 | ops/bin/as6-diagnose-registration-matcher-canonical | registration-matcher-canonical | ENABLED |
+| ops/bin/as6-clean-python-artifacts | python-bytecode-artifact-hygiene | ENABLED |

@@ -1,0 +1,5 @@
+class: GENERATED_PYTHON_PYCACHE_ARTIFACT_DRIFT
+category: generated-python-artifact-hygiene
+severity: high
+root_cause: generated python runtime checks created or detected __pycache__ and pyc artifacts, causing repeated generated-python runtime/import/nameerror/regression/contracts failures
+resolution: cleanup python bytecode artifacts before and after generated python checks and enforce git hygiene contract
