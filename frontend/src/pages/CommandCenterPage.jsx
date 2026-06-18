@@ -201,6 +201,12 @@ export default function CommandCenterPage() {
     ]
   }, [apiState])
 
+  const businessSummary = useMemo(() => ([
+    { label: 'Revenue', value: monthly.actual, note: `Цель: ${monthly.target}` },
+    { label: 'AI Workforce', value: pickMetric(apiState.kpi?.kpis?.workforceUtilization, 'READY'), note: 'Исполнение и автоматизация' },
+    { label: 'Planning', value: pickMetric(apiState.monthly?.planning?.status, 'ACTIVE'), note: `Осталось: ${monthly.remaining}` },
+  ]), [apiState, monthly])
+
   const executiveStream = useMemo(() => {
     const items = [
       { type: 'Revenue', title: 'Финансовый фокус', text: `Факт месяца: ${monthly.actual}. Осталось до цели: ${monthly.remaining}.`, status: 'LIVE' },
@@ -212,11 +218,6 @@ export default function CommandCenterPage() {
     return items
   }, [monthly, actionQueue, inboxItems, healthSummary, businessSummary])
 
-  const businessSummary = useMemo(() => ([
-    { label: 'Revenue', value: monthly.actual, note: `Цель: ${monthly.target}` },
-    { label: 'AI Workforce', value: pickMetric(apiState.kpi?.kpis?.workforceUtilization, 'READY'), note: 'Исполнение и автоматизация' },
-    { label: 'Planning', value: pickMetric(apiState.monthly?.planning?.status, 'ACTIVE'), note: `Осталось: ${monthly.remaining}` },
-  ]), [apiState, monthly])
 
 
 

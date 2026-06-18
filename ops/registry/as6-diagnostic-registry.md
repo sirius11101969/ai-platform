@@ -1351,3 +1351,4 @@
 | ops/bin/as6-diagnose-fast-final-green-proof-control | fast-final-green-proof | ENABLED |
 - ops/bin/as6-diagnose-meta-diagnostic-quality | AS6 meta diagnostic quality gate | GREEN
 - ops/bin/as6-diagnose-meta-diagnostic-dedup | AS6 meta diagnostic dedup candidate scan | GREEN
+- ops/bin/as6-diagnose-command-center-hook-order | AS6 command center React hook/order runtime black-screen guard | GREEN

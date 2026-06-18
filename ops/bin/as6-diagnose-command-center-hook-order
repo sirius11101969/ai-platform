@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "=== AS6 Command Center Hook Order Diagnostics ==="
+
+f="frontend/src/pages/CommandCenterPage.jsx"
+fail=0
+
+stream_line="$(grep -n "const executiveStream = useMemo" "$f" | head -1 | cut -d: -f1 || true)"
+business_line="$(grep -n "const businessSummary = useMemo" "$f" | head -1 | cut -d: -f1 || true)"
+
+echo "AS6_COMMAND_CENTER_EXECUTIVE_STREAM_LINE=${stream_line:-NONE}"
+echo "AS6_COMMAND_CENTER_BUSINESS_SUMMARY_LINE=${business_line:-NONE}"
+
+if [ -z "$stream_line" ] || [ -z "$business_line" ]; then
+  echo "AS6_COMMAND_CENTER_HOOK_ORDER=FAIL:missing_hook"
+  fail=1
+elif [ "$stream_line" -gt "$business_line" ]; then
+  echo "AS6_COMMAND_CENTER_HOOK_ORDER=PASS"
+else
+  echo "AS6_COMMAND_CENTER_HOOK_ORDER=FAIL:executiveStream_before_businessSummary"
+  fail=1
+fi
+
+if grep -q 'data-as6-executive-os-v5' "$f"; then
+  echo "AS6_COMMAND_CENTER_EXECUTIVE_OS_V5_MARKER=PASS"
+else
+  echo "AS6_COMMAND_CENTER_EXECUTIVE_OS_V5_MARKER=FAIL"
+  fail=1
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_COMMAND_CENTER_HOOK_ORDER_RESULT=OK"
+  exit 0
+fi
+
+echo "AS6_COMMAND_CENTER_HOOK_ORDER_RESULT=FAIL"
+exit 1

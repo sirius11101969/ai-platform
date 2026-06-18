@@ -1457,3 +1457,4 @@
 | ops/bin/as6-diagnose-fast-final-green-proof-control | insertion-points+status-registry+registration+controller-cluster+generated-python+reboot-self-heal | ENABLED |
 - ops/bin/as6-diagnose-meta-diagnostic-quality | Coverage: diagnostic quality, final exit, heartbeat, summary output, unreachable block prevention
 - ops/bin/as6-diagnose-meta-diagnostic-dedup | Coverage: diagnostic deduplication, duplicate-name prevention, diagnostic scale control
+- ops/bin/as6-diagnose-command-center-hook-order | Coverage: command-center runtime hook order, black-screen prevention, Executive OS V5 dependency order
