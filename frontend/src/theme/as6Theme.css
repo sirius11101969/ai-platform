@@ -190,3 +190,18 @@
   .command-executive-os { grid-template-columns:1fr; }
   .executive-brief-grid { grid-template-columns:1fr; }
 }
+
+/* AS6 Executive OS V3 */
+.command-executive-v3 { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; }
+.v3-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:13px 0; border-bottom:1px solid rgba(255,255,255,.09); }
+.v3-row:last-child { border-bottom:0; }
+.v3-row span { display:grid; gap:5px; color:#eff8ff; font-weight:850; font-size:14px; }
+.v3-row small { color:#8fa8c8; font-size:11px; font-weight:750; }
+.v3-row strong { color:#9fffc9; font-size:13px; white-space:nowrap; }
+.v3-row.compact span { color:#bcd2eb; }
+.command-action-queue { box-shadow:0 22px 70px rgba(139,44,255,.14); }
+.command-inbox-card { box-shadow:0 22px 70px rgba(0,216,255,.12); }
+.command-health-card { box-shadow:0 22px 70px rgba(35,255,148,.10); }
+.command-business-card { box-shadow:0 22px 70px rgba(255,92,205,.10); }
+@media (max-width: 1180px) { .command-executive-v3 { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media (max-width: 720px) { .command-executive-v3 { grid-template-columns:1fr; } }

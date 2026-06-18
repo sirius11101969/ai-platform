@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { fetchAiCommandCenterBrief, fetchAiCommandCenterFocus, fetchAiCommandCenterKpi, fetchAiCommandCenterOperations, fetchAiCommandCenterPlanningMonthly } from '../services/api'
+import { fetchAiCommandCenterActions, fetchAiCommandCenterBrief, fetchAiCommandCenterFocus, fetchAiCommandCenterInbox, fetchAiCommandCenterKpi, fetchAiCommandCenterOperations, fetchAiCommandCenterPlanningMonthly, fetchAiSystemHealth } from '../services/api'
 
 const demoMetrics = {
   revenueToday: '$1,248,890',
@@ -92,9 +92,12 @@ export default function CommandCenterPage() {
       fetchAiCommandCenterFocus(),
       fetchAiCommandCenterKpi(),
       fetchAiCommandCenterPlanningMonthly(),
+      fetchAiCommandCenterActions(),
+      fetchAiCommandCenterInbox(),
+      fetchAiSystemHealth(),
     ]).then((results) => {
       if (!active) return
-      const names = ['brief', 'operations', 'focus', 'kpi', 'monthly']
+      const names = ['brief', 'operations', 'focus', 'kpi', 'monthly', 'actions', 'inbox', 'health']
       const payload = {}
       const errors = []
       results.forEach((result, index) => {
@@ -151,6 +154,50 @@ export default function CommandCenterPage() {
     { label: 'API', value: apiErrors.length ? 'AUTH REQUIRED' : (apiLoading ? 'LOADING' : 'LIVE') },
   ]), [apiErrors.length, apiLoading, apiState])
 
+  const actionQueue = useMemo(() => {
+    const list = apiState.actions?.actions || apiState.actions?.items || []
+    if (Array.isArray(list) && list.length) return list.slice(0, 4).map((item, index) => ({
+      title: item.title || item.name || `AI действие #${index + 1}`,
+      meta: item.status || item.priority || 'Требует решения',
+      value: item.impact || item.value || 'Review',
+    }))
+    return [
+      { title: 'Одобрить AI follow-up', meta: 'Approval Queue · высокий приоритет', value: '+$2,800' },
+      { title: 'Проверить риск сделки', meta: 'Pipeline · требуется внимание', value: 'Risk' },
+      { title: 'Запустить AI outreach', meta: 'Growth · готово к запуску', value: '+12 лидов' },
+    ]
+  }, [apiState])
+
+  const inboxItems = useMemo(() => {
+    const list = apiState.inbox?.items || apiState.inbox?.messages || apiState.inbox?.inbox || []
+    if (Array.isArray(list) && list.length) return list.slice(0, 4).map((item, index) => ({
+      title: item.title || item.subject || `Сообщение #${index + 1}`,
+      meta: item.from || item.source || item.time || 'AI Inbox',
+    }))
+    return [
+      { title: 'Новые лиды ожидают квалификации', meta: 'AI Inbox · today' },
+      { title: '3 действия ожидают approval', meta: 'Approval Center' },
+      { title: 'Еженедельный план готов к проверке', meta: 'Strategic Planning' },
+    ]
+  }, [apiState])
+
+  const healthSummary = useMemo(() => {
+    const health = apiState.health || {}
+    return [
+      { label: 'Backend', value: health.backend || health.status || 'OK' },
+      { label: 'Database', value: health.database || 'OK' },
+      { label: 'Redis', value: health.redis || 'OK' },
+      { label: 'AS6', value: health.as6 || 'GREEN' },
+    ]
+  }, [apiState])
+
+  const businessSummary = useMemo(() => ([
+    { label: 'Revenue', value: monthly.actual, note: `Цель: ${monthly.target}` },
+    { label: 'AI Workforce', value: pickMetric(apiState.kpi?.kpis?.workforceUtilization, 'READY'), note: 'Исполнение и автоматизация' },
+    { label: 'Planning', value: pickMetric(apiState.monthly?.planning?.status, 'ACTIVE'), note: `Осталось: ${monthly.remaining}` },
+  ]), [apiState, monthly])
+
+
 
   return (
     <main className="command-center-page" data-command-center-visual="premium-as6" data-as6-diagnostic-page="command-center-premium">
@@ -195,6 +242,25 @@ export default function CommandCenterPage() {
           <div className="system-status-list">
             {systemStatus.map((item) => <div className="system-status-row" key={item.label}><span>{item.label}</span><strong>{item.value}</strong></div>)}
           </div>
+        </article>
+      </section>
+
+      <section className="command-executive-v3" data-as6-executive-os-v3="actions-inbox-health">
+        <article className="command-card command-action-queue">
+          <div className="command-card-head"><h2>Approval Queue</h2><span>{actionQueue.length}</span></div>
+          {actionQueue.map((item) => <div className="v3-row" key={item.title}><span>{item.title}<small>{item.meta}</small></span><strong>{item.value}</strong></div>)}
+        </article>
+        <article className="command-card command-inbox-card">
+          <div className="command-card-head"><h2>AI Inbox</h2><span>Live-ready</span></div>
+          {inboxItems.map((item) => <div className="v3-row" key={item.title}><span>{item.title}<small>{item.meta}</small></span><strong>→</strong></div>)}
+        </article>
+        <article className="command-card command-health-card">
+          <div className="command-card-head"><h2>System Health</h2><span>AS6</span></div>
+          {healthSummary.map((item) => <div className="v3-row compact" key={item.label}><span>{item.label}</span><strong>{item.value}</strong></div>)}
+        </article>
+        <article className="command-card command-business-card">
+          <div className="command-card-head"><h2>Business Summary</h2><span>Executive</span></div>
+          {businessSummary.map((item) => <div className="v3-row" key={item.label}><span>{item.label}<small>{item.note}</small></span><strong>{item.value}</strong></div>)}
         </article>
       </section>
 
