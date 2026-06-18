@@ -201,6 +201,17 @@ export default function CommandCenterPage() {
     ]
   }, [apiState])
 
+  const executiveStream = useMemo(() => {
+    const items = [
+      { type: 'Revenue', title: 'Финансовый фокус', text: `Факт месяца: ${monthly.actual}. Осталось до цели: ${monthly.remaining}.`, status: 'LIVE' },
+      { type: 'Approvals', title: 'Очередь решений', text: `${actionQueue.length} AI-действия готовы к проверке.`, status: actionQueue.length ? 'ACTION' : 'CLEAR' },
+      { type: 'Inbox', title: 'AI Inbox', text: `${inboxItems.length} входящих executive-сигнала.`, status: inboxItems.length ? 'REVIEW' : 'CLEAR' },
+      { type: 'Health', title: 'Стабильность системы', text: `AS6: ${healthSummary.find((x) => x.label === 'AS6')?.value || 'GREEN'}.`, status: 'GREEN' },
+      { type: 'Planning', title: 'Планирование', text: businessSummary.find((x) => x.label === 'Planning')?.note || 'План активен.', status: 'ACTIVE' },
+    ]
+    return items
+  }, [monthly, actionQueue, inboxItems, healthSummary, businessSummary])
+
   const businessSummary = useMemo(() => ([
     { label: 'Revenue', value: monthly.actual, note: `Цель: ${monthly.target}` },
     { label: 'AI Workforce', value: pickMetric(apiState.kpi?.kpis?.workforceUtilization, 'READY'), note: 'Исполнение и автоматизация' },
@@ -351,6 +362,23 @@ export default function CommandCenterPage() {
               <span>{module.text}</span>
               <em>Открыть →</em>
             </a>
+          ))}
+        </div>
+      </section>
+
+      <section className="command-executive-stream" data-as6-executive-os-v5="live-stream">
+        <div className="stream-head">
+          <span>Executive Stream</span>
+          <h2>Живая лента управления</h2>
+          <p>Единый поток сигналов по выручке, approvals, inbox, планированию и состоянию AS6.</p>
+        </div>
+        <div className="stream-list">
+          {executiveStream.map((item) => (
+            <article className="stream-item" key={`${item.type}-${item.title}`}>
+              <b>{item.type}</b>
+              <span><strong>{item.title}</strong><small>{item.text}</small></span>
+              <em>{item.status}</em>
+            </article>
           ))}
         </div>
       </section>
