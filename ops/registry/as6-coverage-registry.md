@@ -1456,3 +1456,4 @@
 | ops/bin/as6-diagnose-fast-final-green-proof | insertion-points+status-registry+registration+controller-cluster+generated-python+reboot-self-heal | ENABLED |
 | ops/bin/as6-diagnose-fast-final-green-proof-control | insertion-points+status-registry+registration+controller-cluster+generated-python+reboot-self-heal | ENABLED |
 - ops/bin/as6-diagnose-meta-diagnostic-quality | Coverage: diagnostic quality, final exit, heartbeat, summary output, unreachable block prevention
+- ops/bin/as6-diagnose-meta-diagnostic-dedup | Coverage: diagnostic deduplication, duplicate-name prevention, diagnostic scale control

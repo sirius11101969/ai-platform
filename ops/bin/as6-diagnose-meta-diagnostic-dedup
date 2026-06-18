@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "=== AS6 Meta Diagnostic Dedup Candidate Scan ==="
+
+total="$(find ops/bin -maxdepth 1 -type f -name 'as6-diagnose-*' | wc -l | tr -d ' ')"
+duplicate_names="$(find ops/bin -maxdepth 1 -type f -name 'as6-diagnose-*' -printf '%f\n' | sort | uniq -d | wc -l | tr -d ' ')"
+status_registry_mentions="$(grep -R 'DIAGNOSTIC_STATUS_REGISTRY_FILE=OK\|AS6_STATUS_REGISTRY_FILE' ops/bin ops/lib 2>/dev/null | wc -l | tr -d ' ')"
+registration_helper_mentions="$(grep -R 'AS6_DIAGNOSTIC_REGISTRATION_HELPER=PASS' ops/bin ops/lib 2>/dev/null | wc -l | tr -d ' ')"
+
+echo "AS6_META_DEDUP_DIAGNOSTIC_TOTAL=$total"
+echo "AS6_META_DEDUP_DUPLICATE_NAME_COUNT=$duplicate_names"
+echo "AS6_META_DEDUP_STATUS_REGISTRY_MENTION_COUNT=$status_registry_mentions"
+echo "AS6_META_DEDUP_REGISTRATION_HELPER_MENTION_COUNT=$registration_helper_mentions"
+
+if [ "$duplicate_names" -eq 0 ]; then
+  echo "AS6_META_DIAGNOSTIC_DEDUP_RESULT=OK"
+  exit 0
+fi
+
+echo "AS6_META_DIAGNOSTIC_DEDUP_RESULT=FAIL"
+exit 1

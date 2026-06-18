@@ -1061,6 +1061,11 @@
       "path": "ops/bin/as6-diagnose-meta-diagnostic-quality",
       "status": "GREEN",
       "owner": "AS6_META_DIAGNOSTIC_QUALITY_GATE"
+    },
+    {
+      "path": "ops/bin/as6-diagnose-meta-diagnostic-dedup",
+      "status": "GREEN",
+      "owner": "AS6_META_DIAGNOSTIC_DEDUP"
     }
   ]
 }
