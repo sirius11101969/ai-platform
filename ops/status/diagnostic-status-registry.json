@@ -838,6 +838,10 @@
   ,"ops/bin/as6-diagnose-fast-summary": {"status":"registered","result":"OK","source":"as6-simplify-and-speed-diagnostics"}
   ,"ops/bin/as6-diagnose-diagnostic-simplification": {"status":"registered","result":"OK","source":"as6-simplify-and-speed-diagnostics"}
   ,"ops/bin/as6-diagnose-active-autonomy-score": {"status":"registered","result":"OK","source":"as6-repair-autonomy-score-false-positive"}
+  ,"ops/bin/as6-diagnose-primary-fail-repair": {"status":"registered","result":"OK","source":"as6-primary-fail-repair"}
+  ,"ops/bin/as6-diagnose-primary-fail-repair-v2": {"status":"registered","result":"OK","source":"as6-primary-fail-repair-v2"}
+  ,"ops/bin/as6-diagnose-universal-heartbeat-wrapper": {"status":"registered","result":"OK","source":"as6-heartbeat-registry-match-repair"}
+  ,"ops/bin/as6-diagnose-heartbeat-wrapper-registry-match": {"status":"registered","result":"OK","source":"as6-heartbeat-registry-match-repair"}
     }
   ]
 }

@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+echo "=== AS6 Primary FAIL Repair Diagnostics ==="
+test -f ops/catalog/failure-classes/diagnose-all-unreachable-after-exit.yaml
+test -f ops/catalog/failure-classes/autonomous-coverage-diagnostic-linkage-gap.yaml
+test -f docs/diagnostics/as6-autonomous-coverage-diagnostics.md
+test -f docs/coverage/as6-autonomous-coverage-coverage.md
+bash -n ops/bin/as6-diagnose-all
+if ops/bin/as6-diagnose-diagnostic-insertion-points >/tmp/as6-insertion-after-repair.out 2>&1; then
+  echo "AS6_DIAGNOSTIC_INSERTION_POINTS_REPAIR=PASS"
+else
+  cat /tmp/as6-insertion-after-repair.out
+  echo "AS6_DIAGNOSTIC_INSERTION_POINTS_REPAIR=FAIL"
+  exit 1
+fi
+if ops/bin/as6-diagnose-autonomous-coverage >/tmp/as6-coverage-after-repair.out 2>&1; then
+  echo "AS6_AUTONOMOUS_COVERAGE_REPAIR=PASS"
+else
+  cat /tmp/as6-coverage-after-repair.out
+  echo "AS6_AUTONOMOUS_COVERAGE_REPAIR=FAIL"
+  exit 1
+fi
+echo "AS6_PRIMARY_FAIL_REPAIR_RESULT=OK"

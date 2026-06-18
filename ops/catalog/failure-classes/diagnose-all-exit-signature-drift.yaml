@@ -1,0 +1,5 @@
+class: DIAGNOSE_ALL_EXIT_SIGNATURE_DRIFT
+category: diagnostic-flow-drift
+severity: high
+root_cause: diagnose-all final exit signature was not plain exit 0/1 and previous patch did not move it
+resolution: remove top-level exit lines and append one final exit after all inserted diagnostics

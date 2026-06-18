@@ -1,0 +1,11 @@
+class: HEARTBEAT_WRAPPER_REGISTRY_MATCH_DRIFT
+category: diagnostic-registration-drift
+severity: high
+root_cause: heartbeat wrapper diagnostic exists and appears in registry files, but diagnostic-registration checker still fails registry and coverage match
+resolution: normalize canonical registry, coverage and status registry entries for heartbeat wrapper diagnostic
+diagnostic_required: true
+coverage_required: true
+governance_required: true
+prevention_required: true
+aec_required: true
+state_required: true

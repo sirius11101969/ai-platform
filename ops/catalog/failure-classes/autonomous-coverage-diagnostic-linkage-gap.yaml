@@ -1,0 +1,11 @@
+class: AUTONOMOUS_COVERAGE_DIAGNOSTIC_LINKAGE_GAP
+category: autonomous-coverage-drift
+severity: high
+root_cause: autonomous coverage gate reports diagnostic coverage missing even though registry/prevention/rollback/evidence/AEC are present
+resolution: create explicit autonomous coverage diagnostic and coverage linkage artifacts
+diagnostic_required: true
+coverage_required: true
+governance_required: true
+prevention_required: true
+aec_required: true
+state_required: true

@@ -319,15 +319,19 @@ if ops/bin/as6-root-cause-governance-aggregator-consistency; then echo "AS6_DIAG
 echo "=== AS6 DIAGNOSE ALL FINAL RESULT ==="
 if [ "$fail" -eq 0 ]; then
   echo "AS6_DIAGNOSE_ALL_RESULT=OK"
+  exit 0
 else
   echo "AS6_DIAGNOSE_ALL_RESULT=FAIL"
+  exit 1
 fi
 echo ""
 echo "=== AS6 DIAGNOSE ALL FINAL RESULT ==="
 if [ "${fail:-0}" -eq 0 ]; then
   echo "AS6_DIAGNOSE_ALL_RESULT=OK"
+  exit 0
 else
   echo "AS6_DIAGNOSE_ALL_RESULT=FAIL"
+  exit 1
 fi
 
 # AS6 live spinner registration contract
@@ -386,10 +390,3 @@ fi
 
 # AS6 primary fail repair
 [ -x ops/bin/as6-diagnose-primary-fail-repair ] && ops/bin/as6-diagnose-primary-fail-repair
-exit "$fail"
-
-# AS6 primary fail repair v2
-[ -x ops/bin/as6-diagnose-primary-fail-repair-v2 ] && ops/bin/as6-diagnose-primary-fail-repair-v2
-
-# AS6 heartbeat wrapper registry match
-[ -x ops/bin/as6-diagnose-heartbeat-wrapper-registry-match ] && ops/bin/as6-diagnose-heartbeat-wrapper-registry-match

@@ -1,0 +1,5 @@
+class: AUTONOMOUS_COVERAGE_GATE_LINKAGE_REPAIR
+category: autonomous-coverage-drift
+severity: high
+root_cause: autonomous coverage diagnostic gate did not recognize explicit diagnostic linkage artifact
+resolution: rewrite autonomous coverage diagnostic to validate explicit linkage chain

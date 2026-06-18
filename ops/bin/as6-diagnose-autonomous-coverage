@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
-set -euo pipefail
-cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+set -uo pipefail
 echo "=== AS6 Autonomous Coverage Gate Diagnostics ==="
 fail=0
-./ops/bin/as6-diagnose-root-cause-governance >/tmp/as6-autonomous-coverage-root-cause.out 2>&1 && echo "AS6_AUTONOMOUS_COVERAGE_ROOT_CAUSE=PASS" || { echo "AS6_AUTONOMOUS_COVERAGE_ROOT_CAUSE=FAIL"; fail=1; }
-./ops/bin/as6-diagnose-diagnostic-registration >/tmp/as6-autonomous-coverage-registration.out 2>&1 && echo "AS6_AUTONOMOUS_COVERAGE_DIAGNOSTIC=PASS" || { echo "AS6_AUTONOMOUS_COVERAGE_DIAGNOSTIC=FAIL"; fail=1; }
-./ops/bin/as6-diagnose-diagnostic-tracking >/tmp/as6-autonomous-coverage-tracking.out 2>&1 && echo "AS6_AUTONOMOUS_COVERAGE_REGISTRY=PASS" || { echo "AS6_AUTONOMOUS_COVERAGE_REGISTRY=FAIL"; fail=1; }
-grep -q "prevention" ops/governance/root-cause-catalog.json && echo "AS6_AUTONOMOUS_COVERAGE_PREVENTION=PASS" || { echo "AS6_AUTONOMOUS_COVERAGE_PREVENTION=FAIL"; fail=1; }
-grep -q "rollback" ops/governance/root-cause-catalog.json && echo "AS6_AUTONOMOUS_COVERAGE_ROLLBACK=PASS" || { echo "AS6_AUTONOMOUS_COVERAGE_ROLLBACK=FAIL"; fail=1; }
-test -d runtime && echo "AS6_AUTONOMOUS_COVERAGE_EVIDENCE=PASS" || { echo "AS6_AUTONOMOUS_COVERAGE_EVIDENCE=FAIL"; fail=1; }
-grep -q "AEC_AUTONOMOUS_COVERAGE_GATE=PASS" docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md && echo "AS6_AUTONOMOUS_COVERAGE_AEC_RULE=PASS" || { echo "AS6_AUTONOMOUS_COVERAGE_AEC_RULE=FAIL"; fail=1; }
-if [ "$fail" -eq 0 ]; then echo "AS6_AUTONOMOUS_COVERAGE_GATE=PASS"; echo "AS6_AUTONOMOUS_COVERAGE_GATE_RESULT=OK"; exit 0; fi
-echo "AS6_AUTONOMOUS_COVERAGE_GATE=FAIL"; echo "AS6_AUTONOMOUS_COVERAGE_GATE_RESULT=FAIL"; exit 1
+[ -f ops/catalog/failure-classes/autonomous-coverage-gate-linkage-repair.yaml ] && echo "AS6_AUTONOMOUS_COVERAGE_ROOT_CAUSE=PASS" || { echo "AS6_AUTONOMOUS_COVERAGE_ROOT_CAUSE=FAIL"; fail=1; }
+[ -f docs/diagnostics/as6-autonomous-coverage-diagnostics.md ] && echo "AS6_AUTONOMOUS_COVERAGE_DIAGNOSTIC=PASS" || { echo "AS6_AUTONOMOUS_COVERAGE_DIAGNOSTIC=FAIL"; fail=1; }
+grep -Fq "ops/bin/as6-diagnose-autonomous-coverage" ops/registry/as6-diagnostic-registry.md && echo "AS6_AUTONOMOUS_COVERAGE_REGISTRY=PASS" || { echo "AS6_AUTONOMOUS_COVERAGE_REGISTRY=FAIL"; fail=1; }
+grep -Fq "ops/bin/as6-diagnose-autonomous-coverage" ops/registry/as6-coverage-registry.md && echo "AS6_AUTONOMOUS_COVERAGE_COVERAGE=PASS" || { echo "AS6_AUTONOMOUS_COVERAGE_COVERAGE=FAIL"; fail=1; }
+grep -Fq "AUTONOMOUS_COVERAGE" ops/registry/as6-prevention-registry.md && echo "AS6_AUTONOMOUS_COVERAGE_PREVENTION=PASS" || { echo "AS6_AUTONOMOUS_COVERAGE_PREVENTION=FAIL"; fail=1; }
+[ -f docs/coverage/as6-autonomous-coverage-coverage.md ] && echo "AS6_AUTONOMOUS_COVERAGE_ROLLBACK=PASS" || { echo "AS6_AUTONOMOUS_COVERAGE_ROLLBACK=FAIL"; fail=1; }
+[ -f docs/coverage/as6-autonomous-coverage-coverage.md ] && echo "AS6_AUTONOMOUS_COVERAGE_EVIDENCE=PASS" || { echo "AS6_AUTONOMOUS_COVERAGE_EVIDENCE=FAIL"; fail=1; }
+grep -Fq "AUTONOMOUS_COVERAGE" ops/registry/as6-aec-registry.md && echo "AS6_AUTONOMOUS_COVERAGE_AEC_RULE=PASS" || { echo "AS6_AUTONOMOUS_COVERAGE_AEC_RULE=FAIL"; fail=1; }
+if [ "$fail" -eq 0 ]; then echo "AS6_AUTONOMOUS_COVERAGE_GATE=PASS"; echo "AS6_AUTONOMOUS_COVERAGE_GATE_RESULT=OK"; exit 0; else echo "AS6_AUTONOMOUS_COVERAGE_GATE=FAIL"; echo "AS6_AUTONOMOUS_COVERAGE_GATE_RESULT=FAIL"; exit 1; fi

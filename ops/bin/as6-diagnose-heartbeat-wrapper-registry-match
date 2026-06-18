@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+echo "=== AS6 Heartbeat Wrapper Registry Match Diagnostics ==="
+test -x ops/bin/as6-diagnose-universal-heartbeat-wrapper
+grep -Fq "ops/bin/as6-diagnose-universal-heartbeat-wrapper" ops/registry/as6-diagnostic-registry.md
+grep -Fq "ops/bin/as6-diagnose-universal-heartbeat-wrapper" ops/registry/as6-coverage-registry.md
+grep -Fq "ops/bin/as6-diagnose-universal-heartbeat-wrapper" ops/status/diagnostic-status-registry.json
+grep -Fq "HEARTBEAT_WRAPPER_REGISTRY_MATCH_DRIFT" ops/registry/as6-prevention-registry.md
+grep -Fq "AEC_REQUIRE_HEARTBEAT_WRAPPER_REGISTRY_MATCH" ops/registry/as6-aec-registry.md
+echo "AS6_HEARTBEAT_WRAPPER_REGISTRY_MATCH=PASS"
+echo "AS6_HEARTBEAT_WRAPPER_REGISTRY_MATCH_RESULT=OK"

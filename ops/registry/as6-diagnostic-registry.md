@@ -1328,4 +1328,7 @@
 | ops/bin/as6-diagnose-fast-summary | diagnostic-simplification-performance | ENABLED |
 | ops/bin/as6-diagnose-diagnostic-simplification | diagnostic-simplification-performance | ENABLED |
 | ops/bin/as6-diagnose-active-autonomy-score | active-autonomy-score-contract | ENABLED |
-| ops/bin/as6-diagnose-universal-heartbeat-wrapper | universal-heartbeat-wrapper | ENABLED |
+| ops/bin/as6-diagnose-primary-fail-repair | primary-fail-repair | ENABLED |
+| ops/bin/as6-diagnose-primary-fail-repair-v2 | primary-fail-repair-v2 | ENABLED |
+| ops/bin/as6-diagnose-universal-heartbeat-wrapper | heartbeat-wrapper-diagnostic | ENABLED |
+| ops/bin/as6-diagnose-heartbeat-wrapper-registry-match | heartbeat-wrapper-registry-match | ENABLED |

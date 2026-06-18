@@ -1,0 +1,11 @@
+class: DIAGNOSE_ALL_UNREACHABLE_AFTER_EXIT
+category: diagnostic-flow-drift
+severity: high
+root_cause: ops/bin/as6-diagnose-all contains diagnostic insertion content after a top-level exit
+resolution: move final exit to the end of the file so inserted diagnostics are reachable
+diagnostic_required: true
+coverage_required: true
+governance_required: true
+prevention_required: true
+aec_required: true
+state_required: true

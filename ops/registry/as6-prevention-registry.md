@@ -23,3 +23,8 @@
 | LEGACY_PYTHON_PATTERN_DRIFT | simplify-and-speed-diagnostic-control-plane | ENABLED |
 | DIAGNOSE_ALL_PERFORMANCE_DRIFT | simplify-and-speed-diagnostic-control-plane | ENABLED |
 | AUTONOMY_SCORE_HISTORICAL_ARTIFACT_FALSE_POSITIVE | validate-active-autonomy-score-not-historical-logs | ENABLED |
+| DIAGNOSE_ALL_UNREACHABLE_AFTER_EXIT | repair-primary-diagnostic-fail-before-cascade | ENABLED |
+| AUTONOMOUS_COVERAGE_DIAGNOSTIC_LINKAGE_GAP | repair-primary-diagnostic-fail-before-cascade | ENABLED |
+| DIAGNOSE_ALL_EXIT_SIGNATURE_DRIFT | keep-final-exit-at-end-of-diagnose-all | ENABLED |
+| AUTONOMOUS_COVERAGE_GATE_LINKAGE_REPAIR | autonomous-coverage-must-validate-explicit-linkage | ENABLED |
+| HEARTBEAT_WRAPPER_REGISTRY_MATCH_DRIFT | canonicalize-heartbeat-wrapper-registry-coverage-status-linkage | ENABLED |

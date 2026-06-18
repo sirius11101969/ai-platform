@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+echo "=== AS6 Primary FAIL Repair V2 Diagnostics ==="
+bash -n ops/bin/as6-diagnose-all
+ops/bin/as6-diagnose-diagnostic-insertion-points
+ops/bin/as6-diagnose-autonomous-coverage
+echo "AS6_PRIMARY_FAIL_REPAIR_V2_RESULT=OK"

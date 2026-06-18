@@ -1434,4 +1434,7 @@
 | ops/bin/as6-diagnose-fast-summary | speed+complexity+score-overflow+legacy-pattern+weak-linkage | ENABLED |
 | ops/bin/as6-diagnose-diagnostic-simplification | speed+complexity+score-overflow+legacy-pattern+weak-linkage | ENABLED |
 | ops/bin/as6-diagnose-active-autonomy-score | active-runtime-score+historical-artifact-false-positive-prevention | ENABLED |
-| ops/bin/as6-diagnose-universal-heartbeat-wrapper | targeted-command-heartbeat | ENABLED |
+| ops/bin/as6-diagnose-primary-fail-repair | diagnostic-insertion+autonomous-coverage+cascade-prevention | ENABLED |
+| ops/bin/as6-diagnose-primary-fail-repair-v2 | insertion-reachability+autonomous-coverage-linkage | ENABLED |
+| ops/bin/as6-diagnose-universal-heartbeat-wrapper | universal-heartbeat-wrapper+targeted-command-progress+operator-visibility | ENABLED |
+| ops/bin/as6-diagnose-heartbeat-wrapper-registry-match | heartbeat-wrapper-registry+coverage+status-contract | ENABLED |
