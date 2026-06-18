@@ -1,0 +1,5 @@
+class: STATUS_REGISTRY_CANONICAL_ARRAY_SYNC_DRIFT
+category: diagnostic-status-registry-drift
+severity: high
+root_cause: new diagnostics were present on disk but missing from canonical diagnostics array in ops/status/diagnostic-status-registry.json
+resolution: synchronize every ops/bin/as6-diagnose-* into the diagnostics array

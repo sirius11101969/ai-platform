@@ -1,0 +1,5 @@
+class: AUTONOMOUS_INCIDENT_LIFECYCLE_CONTROLLER_DRIFT
+category: autonomous-controller-drift
+severity: high
+root_cause: incident lifecycle controller cascaded from incident governance drift
+resolution: normalize lifecycle controller to shared autonomous governance convergence contract

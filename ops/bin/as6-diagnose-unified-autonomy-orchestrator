@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -uo pipefail
+echo "=== AS6 Unified Autonomy Orchestrator Diagnostics ==="
+fail=0
+for c in diagnostic-flow autonomous-knowledge-base-controller autonomous-incident-governance-controller autonomous-incident-lifecycle-controller autonomous-change-approval-controller; do ops/lib/as6-governance-convergence-contract "$c" || fail=1; done
+if [ "$fail" -eq 0 ]; then pass_gates=5; total_gates=5; score=100; else pass_gates=0; total_gates=5; score=0; fi
+if [ "$score" -gt 100 ]; then score=100; fi
+echo "AS6_UNIFIED_AUTONOMY_PASS_GATES=${pass_gates}"
+echo "AS6_UNIFIED_AUTONOMY_TOTAL_GATES=${total_gates}"
+echo "AS6_UNIFIED_AUTONOMY_SCORE_PERCENT=${score}"
+if [ "$fail" -eq 0 ]; then echo "AS6_UNIFIED_AUTONOMY_ORCHESTRATOR=PASS"; echo "AS6_UNIFIED_AUTONOMY_ORCHESTRATOR_RESULT=OK"; exit 0; else echo "AS6_UNIFIED_AUTONOMY_ORCHESTRATOR=FAIL"; echo "AS6_UNIFIED_AUTONOMY_ORCHESTRATOR_RESULT=FAIL"; exit 1; fi

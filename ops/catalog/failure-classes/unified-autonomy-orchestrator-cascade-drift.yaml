@@ -1,0 +1,5 @@
+class: UNIFIED_AUTONOMY_ORCHESTRATOR_CASCADE_DRIFT
+category: autonomy-orchestration-drift
+severity: high
+root_cause: unified autonomy orchestrator failed as an aggregate result of downstream governance controller drift
+resolution: make orchestrator aggregate the normalized convergence contract and cap score at 100

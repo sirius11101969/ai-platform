@@ -1,0 +1,5 @@
+class: AUTONOMOUS_KNOWLEDGE_BASE_CONTROLLER_DRIFT
+category: autonomous-controller-drift
+severity: high
+root_cause: knowledge base controller used stale linkage expectations after diagnostics/registry/status convergence
+resolution: normalize controller to shared autonomous governance convergence contract

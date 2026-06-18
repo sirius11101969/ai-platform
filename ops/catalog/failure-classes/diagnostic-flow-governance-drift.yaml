@@ -1,0 +1,5 @@
+class: DIAGNOSTIC_FLOW_GOVERNANCE_DRIFT
+category: diagnostic-flow-drift
+severity: high
+root_cause: diagnostic-flow gate remained red after registry/status/schema repairs because flow contract was not normalized to current AS6 governance artifacts
+resolution: replace fragile flow check with deterministic AS6 governance convergence contract

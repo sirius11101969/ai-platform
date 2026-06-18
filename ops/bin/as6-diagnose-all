@@ -399,3 +399,12 @@ exit "$fail"
 
 # AS6 diagnostic status registry schema sync
 [ -x ops/bin/as6-diagnose-status-registry-schema-sync ] && ops/bin/as6-diagnose-status-registry-schema-sync
+
+# AS6 governance controller convergence
+[ -x ops/bin/as6-diagnose-governance-controller-convergence ] && ops/bin/as6-diagnose-governance-controller-convergence
+
+# AS6 final registry convergence
+[ -x ops/bin/as6-diagnose-final-registry-convergence ] && ops/bin/as6-diagnose-final-registry-convergence
+
+# AS6 registration matcher canonical
+[ -x ops/bin/as6-diagnose-registration-matcher-canonical ] && ops/bin/as6-diagnose-registration-matcher-canonical

@@ -1,0 +1,5 @@
+class: AUTONOMOUS_INCIDENT_GOVERNANCE_CONTROLLER_DRIFT
+category: autonomous-controller-drift
+severity: high
+root_cause: incident governance controller cascaded from stale governance linkage checks
+resolution: normalize incident governance to shared autonomous governance convergence contract

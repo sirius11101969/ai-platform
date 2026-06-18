@@ -1,0 +1,5 @@
+class: UNIFIED_AUTONOMY_ORCHESTRATOR_SHELL_SYNTAX_DRIFT
+category: shell-syntax-drift
+severity: high
+root_cause: ops/bin/as6-unified-autonomy-orchestrator contains malformed arithmetic expression score=0 0(...)
+resolution: replace with simple safe wrapper to as6-diagnose-unified-autonomy-orchestrator

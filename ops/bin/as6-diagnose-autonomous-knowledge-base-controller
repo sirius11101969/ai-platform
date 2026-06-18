@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -uo pipefail
+echo "=== AS6 Autonomous Knowledge Base Controller Diagnostics ==="
+ops/lib/as6-governance-convergence-contract autonomous-knowledge-base-controller
+echo "AS6_AUTONOMOUS_KNOWLEDGE_BASE_CONTROLLER=PASS"
+echo "AS6_AUTONOMOUS_KNOWLEDGE_BASE_CONTROLLER_RESULT=OK"

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -uo pipefail
+echo "=== AS6 Registration Matcher Canonical Diagnostics ==="
+fail=0
+[ -f ops/catalog/failure-classes/diagnostic-registration-matcher-drift.yaml ] && echo "AS6_REGISTRATION_MATCHER_FAILURE_CLASS=PASS" || { echo "AS6_REGISTRATION_MATCHER_FAILURE_CLASS=FAIL"; fail=1; }
+[ -f ops/catalog/failure-classes/status-registry-canonical-array-sync-drift.yaml ] && echo "AS6_STATUS_ARRAY_SYNC_FAILURE_CLASS=PASS" || { echo "AS6_STATUS_ARRAY_SYNC_FAILURE_CLASS=FAIL"; fail=1; }
+[ -f ops/governance/as6-diagnostic-registration-matcher-canonical-policy.md ] && echo "AS6_REGISTRATION_MATCHER_GOVERNANCE=PASS" || { echo "AS6_REGISTRATION_MATCHER_GOVERNANCE=FAIL"; fail=1; }
+python3 -m py_compile ops/lib/as6-diagnostic-registration-check.py || fail=1
+ops/bin/as6-diagnose-diagnostic-registration || fail=1
+if [ "$fail" -eq 0 ]; then echo "AS6_REGISTRATION_MATCHER_CANONICAL=PASS"; echo "AS6_REGISTRATION_MATCHER_CANONICAL_RESULT=OK"; exit 0; else echo "AS6_REGISTRATION_MATCHER_CANONICAL=FAIL"; echo "AS6_REGISTRATION_MATCHER_CANONICAL_RESULT=FAIL"; exit 1; fi

@@ -32,3 +32,8 @@
 | AS6_TEST_ROUTER_GAP_FAIL | generated-prevention-control | ENABLED |
 | DIAGNOSTIC_STATUS_REGISTRY_DRIFT | auto-sync-all-diagnostics-into-status-registry | ENABLED |
 | DIAGNOSTIC_STATUS_REGISTRY_SCHEMA_SYNC_DRIFT | sync-status-registry-through-canonical-diagnostics-array | ENABLED |
+| GOVERNANCE_CONTROLLER_CONVERGENCE | use-shared-fast-governance-controller-contract | ENABLED |
+| GOVERNANCE_CONVERGENCE_REGISTRY_DRIFT | canonicalize-governance-convergence-diagnostic-registration | ENABLED |
+| UNIFIED_AUTONOMY_ORCHESTRATOR_SHELL_SYNTAX_DRIFT | keep-unified-autonomy-wrapper-shell-safe | ENABLED |
+| DIAGNOSTIC_REGISTRATION_MATCHER_DRIFT | canonicalize-diagnostic-registration-matcher | ENABLED |
+| STATUS_REGISTRY_CANONICAL_ARRAY_SYNC_DRIFT | sync-status-registry-diagnostics-array | ENABLED |

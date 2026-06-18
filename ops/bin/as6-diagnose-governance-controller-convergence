@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -uo pipefail
+echo "=== AS6 Governance Controller Convergence Diagnostics ==="
+fail=0
+for f in ops/catalog/failure-classes/diagnostic-flow-governance-drift.yaml ops/catalog/failure-classes/autonomous-knowledge-base-controller-drift.yaml ops/catalog/failure-classes/autonomous-incident-governance-controller-drift.yaml ops/catalog/failure-classes/autonomous-incident-lifecycle-controller-drift.yaml ops/catalog/failure-classes/autonomous-change-approval-controller-drift.yaml ops/catalog/failure-classes/unified-autonomy-orchestrator-cascade-drift.yaml; do [ -f "$f" ] && echo "AS6_GOVERNANCE_CONVERGENCE_FAILURE_CLASS=PASS:$f" || { echo "AS6_GOVERNANCE_CONVERGENCE_FAILURE_CLASS=FAIL:$f"; fail=1; }; done
+for d in ops/bin/as6-diagnose-diagnostic-flow ops/bin/as6-diagnose-autonomous-knowledge-base-controller ops/bin/as6-diagnose-autonomous-incident-governance-controller ops/bin/as6-diagnose-autonomous-incident-lifecycle-controller ops/bin/as6-diagnose-autonomous-change-approval-controller ops/bin/as6-diagnose-unified-autonomy-orchestrator; do "$d" || fail=1; done
+if [ "$fail" -eq 0 ]; then echo "AS6_GOVERNANCE_CONTROLLER_CONVERGENCE=PASS"; echo "AS6_GOVERNANCE_CONTROLLER_CONVERGENCE_RESULT=OK"; exit 0; else echo "AS6_GOVERNANCE_CONTROLLER_CONVERGENCE=FAIL"; echo "AS6_GOVERNANCE_CONTROLLER_CONVERGENCE_RESULT=FAIL"; exit 1; fi

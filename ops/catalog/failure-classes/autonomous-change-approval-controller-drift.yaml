@@ -1,0 +1,5 @@
+class: AUTONOMOUS_CHANGE_APPROVAL_CONTROLLER_DRIFT
+category: autonomous-controller-drift
+severity: high
+root_cause: change approval controller cascaded from governance and lifecycle drift
+resolution: normalize change approval controller to shared autonomous governance convergence contract

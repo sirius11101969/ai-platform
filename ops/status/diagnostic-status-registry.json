@@ -86,6 +86,12 @@
       "source": "auto"
     },
     {
+      "check": "autonomous-change-approval-controller",
+      "path": "ops/bin/as6-diagnose-autonomous-change-approval-controller",
+      "status_visible": true,
+      "source": "as6-registration-matcher-canonical-fix"
+    },
+    {
       "check": "autonomous-change-controller",
       "path": "ops/bin/as6-diagnose-autonomous-change-controller",
       "status_visible": true,
@@ -102,6 +108,24 @@
       "path": "ops/bin/as6-diagnose-autonomous-diagnostic-expansion-validation",
       "status_visible": true,
       "source": "as6-status-registry-schema-sync"
+    },
+    {
+      "check": "autonomous-incident-governance-controller",
+      "path": "ops/bin/as6-diagnose-autonomous-incident-governance-controller",
+      "status_visible": true,
+      "source": "as6-registration-matcher-canonical-fix"
+    },
+    {
+      "check": "autonomous-incident-lifecycle-controller",
+      "path": "ops/bin/as6-diagnose-autonomous-incident-lifecycle-controller",
+      "status_visible": true,
+      "source": "as6-registration-matcher-canonical-fix"
+    },
+    {
+      "check": "autonomous-knowledge-base-controller",
+      "path": "ops/bin/as6-diagnose-autonomous-knowledge-base-controller",
+      "status_visible": true,
+      "source": "as6-registration-matcher-canonical-fix"
     },
     {
       "check": "autonomous-repair-controller",
@@ -326,6 +350,12 @@
       "source": "as6-status-registry-schema-sync"
     },
     {
+      "check": "final-registry-convergence",
+      "path": "ops/bin/as6-diagnose-final-registry-convergence",
+      "status_visible": true,
+      "source": "as6-registration-matcher-canonical-fix"
+    },
+    {
       "check": "freeze-correlation",
       "path": "ops/bin/as6-diagnose-freeze-correlation",
       "status_visible": true,
@@ -390,6 +420,12 @@
       "path": "ops/bin/as6-diagnose-git-main-sync",
       "status_visible": true,
       "source": "auto"
+    },
+    {
+      "check": "governance-controller-convergence",
+      "path": "ops/bin/as6-diagnose-governance-controller-convergence",
+      "status_visible": true,
+      "source": "as6-registration-matcher-canonical-fix"
     },
     {
       "check": "health-alerts",
@@ -764,6 +800,12 @@
       "source": "as6-status-registry-schema-sync"
     },
     {
+      "check": "registration-matcher-canonical",
+      "path": "ops/bin/as6-diagnose-registration-matcher-canonical",
+      "status_visible": true,
+      "source": "as6-registration-matcher-canonical-fix"
+    },
+    {
       "check": "restore-drill",
       "path": "ops/bin/as6-diagnose-restore-drill",
       "status_visible": true,
@@ -954,6 +996,12 @@
       "path": "ops/bin/as6-diagnose-true-live-spinner",
       "status_visible": true,
       "source": "as6-status-registry-schema-sync"
+    },
+    {
+      "check": "unified-autonomy-orchestrator",
+      "path": "ops/bin/as6-diagnose-unified-autonomy-orchestrator",
+      "status_visible": true,
+      "source": "as6-registration-matcher-canonical-fix"
     },
     {
       "check": "universal-heartbeat-wrapper",

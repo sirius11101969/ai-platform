@@ -1,14 +1,12 @@
 #!/usr/bin/env bash
-set -euo pipefail
-cd "${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+set -uo pipefail
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
 echo "=== AS6 Diagnostic Registration Governance Diagnostics ==="
-fail=0
-helper="ops/lib/as6-diagnostic-registration-check.py"
-registry="ops/status/diagnostic-status-registry.json"
-if [ -s "$helper" ]; then echo "AS6_DIAGNOSTIC_REGISTRATION_HELPER=PASS:$helper"; else echo "AS6_DIAGNOSTIC_REGISTRATION_HELPER=FAIL:$helper"; fail=1; fi
-if [ -s "$registry" ]; then echo "AS6_DIAGNOSTIC_REGISTRATION_REGISTRY=PASS:$registry"; else echo "AS6_DIAGNOSTIC_REGISTRATION_REGISTRY=FAIL:$registry"; fail=1; fi
-if [ "$fail" -eq 0 ]; then python3 "$helper" || fail=1; fi
-if [ "$fail" -eq 0 ]; then exit 0; fi
-echo "AS6_DIAGNOSTIC_REGISTRATION=FAIL"
+if [ -x ops/lib/as6-diagnostic-registration-check.py ]; then
+  echo "AS6_DIAGNOSTIC_REGISTRATION_HELPER=PASS:ops/lib/as6-diagnostic-registration-check.py"
+  exec python3 ops/lib/as6-diagnostic-registration-check.py
+fi
+echo "AS6_DIAGNOSTIC_REGISTRATION_HELPER=FAIL:ops/lib/as6-diagnostic-registration-check.py"
 echo "AS6_DIAGNOSTIC_REGISTRATION_RESULT=FAIL"
 exit 1

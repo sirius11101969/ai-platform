@@ -1336,3 +1336,11 @@
 | ops/bin/as6-diagnose-as6-test-router-gap-fail | generated-failure-class-diagnostic | ENABLED |
 | ops/bin/as6-diagnose-status-registry-sync | diagnostic-status-registry-sync | ENABLED |
 | ops/bin/as6-diagnose-status-registry-schema-sync | diagnostic-status-registry-schema-sync | ENABLED |
+| ops/bin/as6-diagnose-autonomous-change-approval-controller | governance-controller-convergence | ENABLED |
+| ops/bin/as6-diagnose-autonomous-incident-governance-controller | governance-controller-convergence | ENABLED |
+| ops/bin/as6-diagnose-autonomous-incident-lifecycle-controller | governance-controller-convergence | ENABLED |
+| ops/bin/as6-diagnose-autonomous-knowledge-base-controller | governance-controller-convergence | ENABLED |
+| ops/bin/as6-diagnose-governance-controller-convergence | governance-controller-convergence | ENABLED |
+| ops/bin/as6-diagnose-unified-autonomy-orchestrator | governance-controller-convergence | ENABLED |
+| ops/bin/as6-diagnose-final-registry-convergence | final-registry-convergence | ENABLED |
+| ops/bin/as6-diagnose-registration-matcher-canonical | registration-matcher-canonical | ENABLED |

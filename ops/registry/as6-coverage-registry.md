@@ -1442,3 +1442,11 @@
 | ops/bin/as6-diagnose-as6-test-router-gap-fail | generated-failure-class+registry+coverage+governance+prevention+aec+state | ENABLED |
 | ops/bin/as6-diagnose-status-registry-sync | status-registry-autosync+diagnostic-status-linkage | ENABLED |
 | ops/bin/as6-diagnose-status-registry-schema-sync | canonical-diagnostics-array-status-registry-sync | ENABLED |
+| ops/bin/as6-diagnose-autonomous-change-approval-controller | governance-convergence+autonomy-orchestration+controller-contract | ENABLED |
+| ops/bin/as6-diagnose-autonomous-incident-governance-controller | governance-convergence+autonomy-orchestration+controller-contract | ENABLED |
+| ops/bin/as6-diagnose-autonomous-incident-lifecycle-controller | governance-convergence+autonomy-orchestration+controller-contract | ENABLED |
+| ops/bin/as6-diagnose-autonomous-knowledge-base-controller | governance-convergence+autonomy-orchestration+controller-contract | ENABLED |
+| ops/bin/as6-diagnose-governance-controller-convergence | governance-convergence+autonomy-orchestration+controller-contract | ENABLED |
+| ops/bin/as6-diagnose-unified-autonomy-orchestrator | governance-convergence+autonomy-orchestration+controller-contract | ENABLED |
+| ops/bin/as6-diagnose-final-registry-convergence | registry+coverage+status-final-convergence | ENABLED |
+| ops/bin/as6-diagnose-registration-matcher-canonical | registry+coverage+status-matcher-consistency | ENABLED |

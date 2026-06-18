@@ -1,0 +1,5 @@
+class: DIAGNOSTIC_REGISTRATION_MATCHER_DRIFT
+category: diagnostic-registration-drift
+severity: high
+root_cause: diagnostic-registration matcher does not use the same canonical registry coverage and status schema as the current AS6 governance layer
+resolution: rewrite matcher to validate exact diagnostic paths against diagnostic registry coverage registry and canonical diagnostics array

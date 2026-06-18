@@ -1,0 +1,5 @@
+class: GOVERNANCE_CONVERGENCE_REGISTRY_DRIFT
+category: diagnostic-registration-drift
+severity: high
+root_cause: newly generated governance convergence diagnostics were git tracked but not recognized by diagnostic and coverage registry validation
+resolution: canonicalize diagnostic registry coverage registry and status registry entries for all governance convergence diagnostics

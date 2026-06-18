@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -uo pipefail
+echo "=== AS6 Final Registry Convergence Diagnostics ==="
+fail=0
+bash -n ops/bin/as6-unified-autonomy-orchestrator || fail=1
+for d in ops/bin/as6-diagnose-autonomous-change-approval-controller ops/bin/as6-diagnose-autonomous-incident-governance-controller ops/bin/as6-diagnose-autonomous-incident-lifecycle-controller ops/bin/as6-diagnose-autonomous-knowledge-base-controller ops/bin/as6-diagnose-governance-controller-convergence ops/bin/as6-diagnose-unified-autonomy-orchestrator; do
+  grep -Fq "$d" ops/registry/as6-diagnostic-registry.md && echo "AS6_FINAL_REGISTRY_ENTRY=PASS:$d" || { echo "AS6_FINAL_REGISTRY_ENTRY=FAIL:$d"; fail=1; }
+  grep -Fq "$d" ops/registry/as6-coverage-registry.md && echo "AS6_FINAL_COVERAGE_ENTRY=PASS:$d" || { echo "AS6_FINAL_COVERAGE_ENTRY=FAIL:$d"; fail=1; }
+done
+if [ "$fail" -eq 0 ]; then echo "AS6_FINAL_REGISTRY_CONVERGENCE=PASS"; echo "AS6_FINAL_REGISTRY_CONVERGENCE_RESULT=OK"; exit 0; else echo "AS6_FINAL_REGISTRY_CONVERGENCE=FAIL"; echo "AS6_FINAL_REGISTRY_CONVERGENCE_RESULT=FAIL"; exit 1; fi

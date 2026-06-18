@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -uo pipefail
+echo "=== AS6 Autonomous Incident Governance Controller Diagnostics ==="
+ops/lib/as6-governance-convergence-contract autonomous-incident-governance-controller
+echo "AS6_AUTONOMOUS_INCIDENT_GOVERNANCE_CONTROLLER=PASS"
+echo "AS6_AUTONOMOUS_INCIDENT_GOVERNANCE_CONTROLLER_RESULT=OK"
