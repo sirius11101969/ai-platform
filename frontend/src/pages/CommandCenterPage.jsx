@@ -70,6 +70,16 @@ const recommendations = [
   { title: 'Риск', text: '2 сделки могут быть потеряны без действия. Потенциал: -$4,500', action: 'Посмотреть сделки', tone: 'risk', icon: '💎' },
 ]
 
+
+const executiveModules = [
+  { title: 'Revenue Intelligence', text: 'Выручка, воронка, прогноз и возможности роста', href: '/ai-revenue-intelligence', icon: '📈', tone: 'cyan' },
+  { title: 'AI Workforce', text: 'AI сотрудники, загрузка, эффективность и задачи', href: '/ai-workforce-center', icon: '🤖', tone: 'violet' },
+  { title: 'Strategic Planning', text: 'Цели, планы, недельные и месячные приоритеты', href: '/ai-strategic-planning', icon: '🧭', tone: 'green' },
+  { title: 'Execution Center', text: 'Исполнение, операции, действия и контроль результата', href: '/ai-execution-center', icon: '⚡', tone: 'orange' },
+  { title: 'Approval Center', text: 'Очередь решений, approvals и human-in-the-loop контроль', href: '/ai-approval-center', icon: '🛡️', tone: 'pink' },
+  { title: 'System Health', text: 'AS6, backend, диагностика, стабильность и readiness', href: '/ai-system-health-center', icon: '🟢', tone: 'blue' },
+]
+
 const quickActions = ['Создать лид', 'Создать сделку', 'Добавить задачу', 'Approval Queue', 'AI аналитика', 'Отчёты', 'Настроить AI']
 const chartBars = [46, 64, 56, 78, 70, 92, 82, 100]
 const monthFallback = { target: demoMetrics.monthlyTarget, actual: demoMetrics.monthlyActual, remaining: demoMetrics.monthlyRemaining }
@@ -325,6 +335,24 @@ export default function CommandCenterPage() {
           <article className="command-card event-card"><div className="command-card-head"><h2>Последние события</h2><a href="/dashboard">Все</a></div>{events.map((event) => <div className="event-row" key={event.text}><b>{event.icon}</b><span>{event.text}</span><time>{event.time}</time></div>)}</article>
           <article className="command-card next-action-card"><h2>Следующее лучшее действие</h2>{nextActions.map((action) => <div className="next-action" key={action.label}><b>{action.icon}</b><span>{action.label}<small>{action.note}</small></span><strong>{action.value}</strong></div>)}<div className="expected-effect"><span>Ожидаемый эффект</span><strong>+$8,900</strong></div></article>
         </aside>
+      </section>
+
+      <section className="command-executive-workspace" data-as6-executive-os-v4="unified-workspace">
+        <div className="workspace-head">
+          <span>Executive Workspace</span>
+          <h2>Единый центр управления компанией</h2>
+          <p>Все ключевые AI-модули собраны в одном месте: выручка, сотрудники, планирование, исполнение, approvals и здоровье системы.</p>
+        </div>
+        <div className="workspace-modules">
+          {executiveModules.map((module) => (
+            <a className={`workspace-module ${module.tone}`} href={module.href} key={module.title}>
+              <b>{module.icon}</b>
+              <strong>{module.title}</strong>
+              <span>{module.text}</span>
+              <em>Открыть →</em>
+            </a>
+          ))}
+        </div>
       </section>
 
       <section className="command-recommendations" data-ai-recommendations>

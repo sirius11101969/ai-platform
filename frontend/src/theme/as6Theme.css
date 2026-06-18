@@ -205,3 +205,25 @@
 .command-business-card { box-shadow:0 22px 70px rgba(255,92,205,.10); }
 @media (max-width: 1180px) { .command-executive-v3 { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 @media (max-width: 720px) { .command-executive-v3 { grid-template-columns:1fr; } }
+
+/* AS6 Executive OS V4 */
+.command-executive-workspace { display:grid; gap:16px; }
+.workspace-head { border:1px solid rgba(255,255,255,.12); background:linear-gradient(135deg,rgba(139,44,255,.16),rgba(0,216,255,.08)); border-radius:28px; padding:22px; box-shadow:0 24px 80px rgba(0,0,0,.22); }
+.workspace-head span { color:#9fffc9; font-weight:900; text-transform:uppercase; letter-spacing:.12em; font-size:11px; }
+.workspace-head h2 { margin:8px 0 8px; color:#fff; font-size:28px; }
+.workspace-head p { margin:0; color:#bdd4ee; max-width:920px; line-height:1.6; }
+.workspace-modules { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:14px; }
+.workspace-module { text-decoration:none; color:#eef8ff; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.055); border-radius:22px; padding:16px; min-height:188px; display:flex; flex-direction:column; gap:10px; transition:transform .18s ease, border-color .18s ease, background .18s ease; }
+.workspace-module:hover { transform:translateY(-3px); border-color:rgba(159,255,201,.38); background:rgba(255,255,255,.085); }
+.workspace-module b { font-size:24px; }
+.workspace-module strong { font-size:15px; color:#fff; }
+.workspace-module span { color:#9fb6d2; font-size:12px; line-height:1.45; flex:1; }
+.workspace-module em { color:#9fffc9; font-style:normal; font-weight:900; font-size:12px; }
+.workspace-module.cyan { box-shadow:0 18px 60px rgba(0,216,255,.08); }
+.workspace-module.violet { box-shadow:0 18px 60px rgba(139,44,255,.10); }
+.workspace-module.green { box-shadow:0 18px 60px rgba(35,255,148,.08); }
+.workspace-module.orange { box-shadow:0 18px 60px rgba(255,176,64,.08); }
+.workspace-module.pink { box-shadow:0 18px 60px rgba(255,92,205,.08); }
+.workspace-module.blue { box-shadow:0 18px 60px rgba(84,166,255,.08); }
+@media (max-width: 1280px) { .workspace-modules { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@media (max-width: 760px) { .workspace-modules { grid-template-columns:1fr; } .workspace-head h2 { font-size:22px; } }
