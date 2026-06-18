@@ -1,12 +1,22 @@
 #!/usr/bin/env python3
-import json, subprocess, sys
+import json, os, subprocess, sys
 from pathlib import Path
 root = Path(".")
 diag_registry = root / "ops/registry/as6-diagnostic-registry.md"
 cov_registry = root / "ops/registry/as6-coverage-registry.md"
 status_registry = root / "ops/status/diagnostic-status-registry.json"
 fail = 0
-def out(s): print(s, flush=True)
+# AS6_SUMMARY_MODE_PATCH_V1
+verbose = os.environ.get("AS6_DIAGNOSTIC_REGISTRATION_VERBOSE") == "1"
+summary_counts = {}
+def out(s):
+    key = s.split("=", 1)[0]
+    if "=PASS:" in s or "=WARN:" in s:
+        summary_counts[key] = summary_counts.get(key, 0) + 1
+        if verbose:
+            print(s, flush=True)
+    else:
+        print(s, flush=True)
 for p,name in [(diag_registry,"AS6_DIAGNOSTIC_REGISTRY_FILE"),(cov_registry,"AS6_COVERAGE_REGISTRY_FILE"),(status_registry,"AS6_STATUS_REGISTRY_FILE")]:
     if p.exists(): out(f"{name}=PASS:{p}")
     else: out(f"{name}=FAIL:{p}"); fail = 1
@@ -52,6 +62,8 @@ for h in helpers:
     hp = str(h)
     if hp in tracked: out(f"AS6_DIAGNOSTIC_HELPER_GIT_TRACKED=PASS:{hp}")
     else: out(f"AS6_DIAGNOSTIC_HELPER_GIT_TRACKED=WARN:{hp}")
+for key in sorted(summary_counts):
+    out(f"{key}_COUNT={summary_counts[key]}")
 if fail == 0:
     out("AS6_DIAGNOSTIC_REGISTRATION=PASS")
     out("AS6_DIAGNOSTIC_REGISTRATION_RESULT=OK")
