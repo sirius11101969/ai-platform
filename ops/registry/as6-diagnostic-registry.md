@@ -1353,3 +1353,5 @@
 - ops/bin/as6-diagnose-meta-diagnostic-dedup | AS6 meta diagnostic dedup candidate scan | GREEN
 - ops/bin/as6-diagnose-command-center-hook-order | AS6 command center React hook/order runtime black-screen guard | GREEN
 - ops/bin/as6-diagnose-command-center-deployment | AS6 command center deployment/runtime marker verification | GREEN
+- ops/bin/as6-diagnose-command-center-mission-control-layout | AS6 command center mission-control visual architecture gate | GREEN
+- ops/bin/as6-diagnose-command-center-executive-ux-v6 | AS6 command center executive UX V6 visual-functional gate | GREEN

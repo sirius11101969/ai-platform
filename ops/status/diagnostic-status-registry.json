@@ -1076,6 +1076,16 @@
       "path": "ops/bin/as6-diagnose-command-center-deployment",
       "status": "GREEN",
       "owner": "AS6_COMMAND_CENTER_DEPLOY_VERIFY_V1"
+    },
+    {
+      "path": "ops/bin/as6-diagnose-command-center-mission-control-layout",
+      "status": "GREEN",
+      "owner": "AS6_COMMAND_CENTER_MISSION_CONTROL_LAYOUT_V1"
+    },
+    {
+      "path": "ops/bin/as6-diagnose-command-center-executive-ux-v6",
+      "status": "GREEN",
+      "owner": "AS6_COMMAND_CENTER_EXECUTIVE_UX_V6"
     }
   ]
 }

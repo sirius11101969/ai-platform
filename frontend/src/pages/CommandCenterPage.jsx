@@ -92,6 +92,9 @@ export default function CommandCenterPage() {
   const [apiState, setApiState] = useState({})
   const [apiLoading, setApiLoading] = useState(true)
   const [apiErrors, setApiErrors] = useState([])
+  const [pipelinePeriod, setPipelinePeriod] = useState('month')
+  const [revenueRange, setRevenueRange] = useState('30d')
+  const [workforceRange, setWorkforceRange] = useState('week')
 
   useEffect(() => {
     let active = true
@@ -301,11 +304,11 @@ export default function CommandCenterPage() {
             </article>
 
             <article className="command-card pipeline-card" data-pipeline-funnel>
-              <div className="command-card-head"><h2>Pipeline Overview</h2><button type="button">Этот месяц⌄</button></div>
+              <div className="command-card-head"><h2>Pipeline Overview</h2><select className="command-filter-select" value={pipelinePeriod} onChange={(event) => setPipelinePeriod(event.target.value)} aria-label="Pipeline period"><option value="week">Неделя</option><option value="month">Этот месяц</option><option value="quarter">Квартал</option><option value="year">Год</option></select></div>
               <div className="pipeline-layout">
                 <div className="pipeline-funnel">
                   {funnelStages.map((stage) => <div className="funnel-row" key={stage.label}>
-                    <span>{stage.label}</span><strong className={`funnel-slice ${stage.tone}`} style={{ width: `${stage.width}%` }}>{stage.value}</strong>
+                    <span>{stage.label}</span><strong className={`funnel-slice pipeline-board-slice ${stage.tone}`} style={{ '--stage-width': `${stage.width}%` }}><em>{stage.value}</em></strong>
                   </div>)}
                 </div>
                 <div className="pipeline-summary">
@@ -318,7 +321,7 @@ export default function CommandCenterPage() {
 
           <section className="command-second-grid">
             <article className="command-card employee-performance">
-              <div className="command-card-head"><h2>Производительность AI сотрудников</h2><button type="button">Неделя⌄</button></div>
+              <div className="command-card-head"><h2>Производительность AI сотрудников</h2><select className="command-filter-select" value={workforceRange} onChange={(event) => setWorkforceRange(event.target.value)} aria-label="AI workforce period"><option value="today">Сегодня</option><option value="week">Неделя</option><option value="month">Месяц</option></select></div>
               {aiEmployees.map((agent) => <div className="agent-row" key={agent.name}>
                 <b>{agent.avatar}</b><span>{agent.name}</span><strong>{agent.value}{agent.suffix}</strong><em>{agent.delta}</em>
                 <div className="agent-progress"><i className={agent.tone} style={{ width: `${agent.progress}%` }} /></div>
@@ -326,7 +329,7 @@ export default function CommandCenterPage() {
             </article>
 
             <article className="command-card revenue-dynamics">
-              <div className="command-card-head"><h2>Динамика выручки</h2><button type="button">30 дней⌄</button></div>
+              <div className="command-card-head"><h2>Динамика выручки</h2><select className="command-filter-select" value={revenueRange} onChange={(event) => setRevenueRange(event.target.value)} aria-label="Revenue range"><option value="7d">7 дней</option><option value="30d">30 дней</option><option value="90d">90 дней</option><option value="365d">365 дней</option></select></div>
               <strong className="chart-total">$12,490,000 <em>+22.4%</em></strong>
               <div className="mock-chart">{chartBars.map((height, index) => <span key={index} style={{ height: `${height}%` }} />)}<svg viewBox="0 0 240 100" preserveAspectRatio="none"><polyline points="0,76 34,58 68,66 102,38 136,52 170,24 204,36 240,12" /></svg></div>
             </article>
@@ -341,7 +344,7 @@ export default function CommandCenterPage() {
 
         <aside className="command-right-rail" data-right-action-rail data-copilot-rail data-as6-diagnostic-copilot="right-action-rail">
           <article className="command-card copilot-hero" data-copilot-hero>
-            <div className="copilot-top"><h2>AI Copilot</h2><span>AS6</span></div><div className="robot-icon">🤖</div>
+            <div className="copilot-top"><h2>AI Copilot</h2><span>AS6</span></div><div className="robot-icon copilot-avatar-v2"><span>AS6</span><i /></div>
             <p>Я здесь, чтобы помочь вам принимать лучшие решения и достигать целей быстрее.</p><button type="button">Спросить AI Copilot →</button>
           </article>
           <article className="command-card event-card"><div className="command-card-head"><h2>Последние события</h2><a href="/dashboard">Все</a></div>{events.map((event) => <div className="event-row" key={event.text}><b>{event.icon}</b><span>{event.text}</span><time>{event.time}</time></div>)}</article>
@@ -388,7 +391,7 @@ export default function CommandCenterPage() {
         <h2>AI рекомендации</h2><div>{recommendations.map((card) => <article className={`recommendation ${card.tone}`} key={card.title}><b>{card.icon}</b><strong>{card.title}</strong><p>{card.text}</p><button type="button">{card.action} →</button></article>)}</div>
       </section>
 
-      <section className="quick-actions" data-quick-actions><h2>Быстрые действия</h2><div>{quickActions.map((action, index) => <button type="button" key={action}><span>{['👥', '$', '🧾', '🛡️', '〽️', '📊', '⚙️'][index]}</span>{action}</button>)}</div></section>
+      <section className="quick-actions quick-actions-primary" data-quick-actions data-as6-primary-actions="above-fold"><h2>Быстрые действия</h2><div>{quickActions.map((action, index) => <button type="button" key={action}><span>{['👥', '$', '🧾', '🛡️', '〽️', '📊', '⚙️'][index]}</span>{action}</button>)}</div></section>
     </main>
   )
 }

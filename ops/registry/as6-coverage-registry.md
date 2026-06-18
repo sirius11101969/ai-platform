@@ -1459,3 +1459,5 @@
 - ops/bin/as6-diagnose-meta-diagnostic-dedup | Coverage: diagnostic deduplication, duplicate-name prevention, diagnostic scale control
 - ops/bin/as6-diagnose-command-center-hook-order | Coverage: command-center runtime hook order, black-screen prevention, Executive OS V5 dependency order
 - ops/bin/as6-diagnose-command-center-deployment | Coverage: command-center deployment, nginx runtime marker, HTTP root, black-screen deployment prevention
+- ops/bin/as6-diagnose-command-center-mission-control-layout | Coverage: mission-control layout, duplicate vertical stack prevention, executive stream row, responsive command center
+- ops/bin/as6-diagnose-command-center-executive-ux-v6 | Coverage: primary actions above fold, interactive filters, compact copilot, pipeline board visualization

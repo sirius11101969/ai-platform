@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "=== AS6 Command Center Mission Control Layout Diagnostics ==="
+f="frontend/src/theme/as6Theme.css"
+fail=0
+grep -q "AS6 Command Center Mission Control Layout V1" "$f" && echo "AS6_COMMAND_CENTER_MISSION_CONTROL_CSS=PASS" || { echo "AS6_COMMAND_CENTER_MISSION_CONTROL_CSS=FAIL"; fail=1; }
+grep -q ".command-main-grid { display:grid; grid-template-columns:minmax(0,1fr) 360px" "$f" && echo "AS6_COMMAND_CENTER_MAIN_GRID=PASS" || { echo "AS6_COMMAND_CENTER_MAIN_GRID=FAIL"; fail=1; }
+grep -q ".command-executive-os, .command-executive-v3, .command-executive-workspace { display:none" "$f" && echo "AS6_COMMAND_CENTER_DUPLICATE_STACK_HIDE=PASS" || { echo "AS6_COMMAND_CENTER_DUPLICATE_STACK_HIDE=FAIL"; fail=1; }
+grep -q ".stream-list { display:grid; grid-template-columns:repeat(5" "$f" && echo "AS6_COMMAND_CENTER_EXECUTIVE_STREAM_ROW=PASS" || { echo "AS6_COMMAND_CENTER_EXECUTIVE_STREAM_ROW=FAIL"; fail=1; }
+if [ "$fail" -eq 0 ]; then echo "AS6_COMMAND_CENTER_MISSION_CONTROL_LAYOUT_RESULT=OK"; exit 0; fi
+echo "AS6_COMMAND_CENTER_MISSION_CONTROL_LAYOUT_RESULT=FAIL"; exit 1
