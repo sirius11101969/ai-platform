@@ -263,3 +263,7 @@
 | DIAGNOSE_ALL_EXIT_SIGNATURE_DRIFT | AEC_KEEP_DIAGNOSE_ALL_FINAL_EXIT_LAST | final-exit-must-be-last-line | ENABLED |
 | AUTONOMOUS_COVERAGE_GATE_LINKAGE_REPAIR | AEC_REQUIRE_AUTONOMOUS_COVERAGE_LINKAGE | autonomous-coverage-must-have-explicit-linkage | ENABLED |
 | HEARTBEAT_WRAPPER_REGISTRY_MATCH_DRIFT | AEC_REQUIRE_HEARTBEAT_WRAPPER_REGISTRY_MATCH | heartbeat-wrapper-diagnostic-must-have-canonical-registry-coverage-status | ENABLED |
+| AS6_TEST_ROUTER_DRIFT_WARN | AEC_GENERATED_FAILURE_CLASS_CONTROL | generated-failure-class-must-have-diagnostic-and-coverage | ENABLED |
+| AS6_TEST_ROUTER_GAP_FAIL | AEC_GENERATED_FAILURE_CLASS_CONTROL | generated-failure-class-must-have-diagnostic-and-coverage | ENABLED |
+| DIAGNOSTIC_STATUS_REGISTRY_DRIFT | AEC_REQUIRE_STATUS_REGISTRY_LINKAGE | every-diagnostic-must-have-status-registry-entry | ENABLED |
+| DIAGNOSTIC_STATUS_REGISTRY_SCHEMA_SYNC_DRIFT | AEC_REQUIRE_STATUS_REGISTRY_SCHEMA_SYNC | status-registry-sync-must-use-canonical-diagnostics-array | ENABLED |

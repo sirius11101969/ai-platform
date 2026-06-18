@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+echo "=== AS6 Diagnostic Status Registry Schema Sync Diagnostics ==="
+python3 - <<'PY'
+import json
+from pathlib import Path
+data = json.loads(Path("ops/status/diagnostic-status-registry.json").read_text())
+assert isinstance(data.get("diagnostics"), list)
+paths = {item.get("path") for item in data["diagnostics"] if isinstance(item, dict)}
+missing = []
+for p in sorted(Path("ops/bin").glob("as6-diagnose-*")):
+    if ".backup." in p.name:
+        continue
+    if str(p) not in paths:
+        missing.append(str(p))
+print(f"AS6_STATUS_REGISTRY_SCHEMA_COUNT={len(paths)}")
+if missing:
+    for p in missing:
+        print(f"AS6_STATUS_REGISTRY_SCHEMA_MISSING=FAIL:{p}")
+    raise SystemExit(1)
+print("AS6_STATUS_REGISTRY_SCHEMA_SYNC=PASS")
+PY
+echo "AS6_STATUS_REGISTRY_SCHEMA_SYNC_RESULT=OK"

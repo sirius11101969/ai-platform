@@ -1,0 +1,11 @@
+class: DIAGNOSTIC_STATUS_REGISTRY_DRIFT
+category: diagnostic-status-registry-drift
+severity: high
+root_cause: new diagnostics were registered in diagnostic and coverage registries but not synchronized into diagnostic-status-registry.json
+resolution: automatically synchronize all ops/bin/as6-diagnose-* into status registry
+diagnostic_required: true
+coverage_required: true
+governance_required: true
+prevention_required: true
+aec_required: true
+state_required: true

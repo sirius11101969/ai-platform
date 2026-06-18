@@ -14,6 +14,12 @@
       "source": "auto"
     },
     {
+      "check": "active-autonomy-score",
+      "path": "ops/bin/as6-diagnose-active-autonomy-score",
+      "status_visible": true,
+      "source": "as6-status-registry-schema-sync"
+    },
+    {
       "check": "agent-branch-writer",
       "path": "ops/bin/as6-diagnose-agent-branch-writer",
       "status_visible": true,
@@ -44,10 +50,34 @@
       "source": "auto"
     },
     {
+      "check": "all-live",
+      "path": "ops/bin/as6-diagnose-all-live",
+      "status_visible": true,
+      "source": "as6-status-registry-schema-sync"
+    },
+    {
       "check": "all-watch",
       "path": "ops/bin/as6-diagnose-all-watch",
       "status_visible": true,
       "source": "auto"
+    },
+    {
+      "check": "as6-test-router-drift-warn",
+      "path": "ops/bin/as6-diagnose-as6-test-router-drift-warn",
+      "status_visible": true,
+      "source": "as6-status-registry-schema-sync"
+    },
+    {
+      "check": "as6-test-router-gap-fail",
+      "path": "ops/bin/as6-diagnose-as6-test-router-gap-fail",
+      "status_visible": true,
+      "source": "as6-status-registry-schema-sync"
+    },
+    {
+      "check": "auto-expansion-router",
+      "path": "ops/bin/as6-diagnose-auto-expansion-router",
+      "status_visible": true,
+      "source": "as6-status-registry-schema-sync"
     },
     {
       "check": "automation-sources",
@@ -68,6 +98,12 @@
       "source": "auto"
     },
     {
+      "check": "autonomous-diagnostic-expansion-validation",
+      "path": "ops/bin/as6-diagnose-autonomous-diagnostic-expansion-validation",
+      "status_visible": true,
+      "source": "as6-status-registry-schema-sync"
+    },
+    {
       "check": "autonomous-repair-controller",
       "path": "ops/bin/as6-diagnose-autonomous-repair-controller",
       "status_visible": true,
@@ -86,6 +122,12 @@
       "source": "auto"
     },
     {
+      "check": "backup-discovery-drift",
+      "path": "ops/bin/as6-diagnose-backup-discovery-drift",
+      "status_visible": true,
+      "source": "as6-status-registry-schema-sync"
+    },
+    {
       "check": "backup-governance",
       "path": "ops/bin/as6-diagnose-backup-governance",
       "status_visible": true,
@@ -96,6 +138,12 @@
       "path": "ops/bin/as6-diagnose-backup-integrity",
       "status_visible": true,
       "source": "auto"
+    },
+    {
+      "check": "backup-secret-scan-contract",
+      "path": "ops/bin/as6-diagnose-backup-secret-scan-contract",
+      "status_visible": true,
+      "source": "as6-status-registry-schema-sync"
     },
     {
       "check": "change-governance",
@@ -134,6 +182,12 @@
       "source": "auto"
     },
     {
+      "check": "completion-marker-contract",
+      "path": "ops/bin/as6-diagnose-completion-marker-contract",
+      "status_visible": true,
+      "source": "as6-status-registry-schema-sync"
+    },
+    {
       "check": "constitution",
       "path": "ops/bin/as6-diagnose-constitution",
       "status_visible": true,
@@ -156,6 +210,12 @@
       "path": "ops/bin/as6-diagnose-controlled-write-mode",
       "status_visible": true,
       "source": "auto"
+    },
+    {
+      "check": "diagnose-all-wait-signature",
+      "path": "ops/bin/as6-diagnose-diagnose-all-wait-signature",
+      "status_visible": true,
+      "source": "as6-status-registry-schema-sync"
     },
     {
       "check": "diagnostic-contract",
@@ -218,6 +278,12 @@
       "source": "auto"
     },
     {
+      "check": "diagnostic-simplification",
+      "path": "ops/bin/as6-diagnose-diagnostic-simplification",
+      "status_visible": true,
+      "source": "as6-status-registry-schema-sync"
+    },
+    {
       "check": "diagnostic-status-registry",
       "path": "ops/bin/as6-diagnose-diagnostic-status-registry",
       "status_visible": true,
@@ -252,6 +318,12 @@
       "path": "ops/bin/as6-diagnose-env-contract",
       "status_visible": true,
       "source": "auto"
+    },
+    {
+      "check": "fast-summary",
+      "path": "ops/bin/as6-diagnose-fast-summary",
+      "status_visible": true,
+      "source": "as6-status-registry-schema-sync"
     },
     {
       "check": "freeze-correlation",
@@ -446,6 +518,12 @@
       "source": "auto"
     },
     {
+      "check": "heartbeat-wrapper-registry-match",
+      "path": "ops/bin/as6-diagnose-heartbeat-wrapper-registry-match",
+      "status_visible": true,
+      "source": "as6-status-registry-schema-sync"
+    },
+    {
       "check": "heredoc-safety",
       "path": "ops/bin/as6-diagnose-heredoc-safety",
       "status_visible": true,
@@ -524,10 +602,22 @@
       "source": "auto"
     },
     {
+      "check": "live-spinner-registration",
+      "path": "ops/bin/as6-diagnose-live-spinner-registration",
+      "status_visible": true,
+      "source": "as6-status-registry-schema-sync"
+    },
+    {
       "check": "nameerror-signatures",
       "path": "ops/bin/as6-diagnose-nameerror-signatures",
       "status_visible": true,
       "source": "auto"
+    },
+    {
+      "check": "one-command-standard",
+      "path": "ops/bin/as6-diagnose-one-command-standard",
+      "status_visible": true,
+      "source": "as6-status-registry-schema-sync"
     },
     {
       "check": "ops-agent",
@@ -564,6 +654,18 @@
       "path": "ops/bin/as6-diagnose-pre-reboot-forensics",
       "status_visible": true,
       "source": "auto"
+    },
+    {
+      "check": "primary-fail-repair",
+      "path": "ops/bin/as6-diagnose-primary-fail-repair",
+      "status_visible": true,
+      "source": "as6-status-registry-schema-sync"
+    },
+    {
+      "check": "primary-fail-repair-v2",
+      "path": "ops/bin/as6-diagnose-primary-fail-repair-v2",
+      "status_visible": true,
+      "source": "as6-status-registry-schema-sync"
     },
     {
       "check": "production-deployment-safety",
@@ -654,6 +756,12 @@
       "path": "ops/bin/as6-diagnose-reboot-origin",
       "status_visible": true,
       "source": "auto"
+    },
+    {
+      "check": "registered-diagnostic-git-tracking",
+      "path": "ops/bin/as6-diagnose-registered-diagnostic-git-tracking",
+      "status_visible": true,
+      "source": "as6-status-registry-schema-sync"
     },
     {
       "check": "restore-drill",
@@ -770,10 +878,40 @@
       "source": "auto"
     },
     {
+      "check": "runtime-stage-gap",
+      "path": "ops/bin/as6-diagnose-runtime-stage-gap",
+      "status_visible": true,
+      "source": "as6-status-registry-schema-sync"
+    },
+    {
+      "check": "runtime-stage-gap-exit-code",
+      "path": "ops/bin/as6-diagnose-runtime-stage-gap-exit-code",
+      "status_visible": true,
+      "source": "as6-status-registry-schema-sync"
+    },
+    {
+      "check": "runtime-stage-gap-final-marker",
+      "path": "ops/bin/as6-diagnose-runtime-stage-gap-final-marker",
+      "status_visible": true,
+      "source": "as6-status-registry-schema-sync"
+    },
+    {
+      "check": "runtime-stage-gap-policy-text",
+      "path": "ops/bin/as6-diagnose-runtime-stage-gap-policy-text",
+      "status_visible": true,
+      "source": "as6-status-registry-schema-sync"
+    },
+    {
       "check": "runtime-stale-tmp-artifacts",
       "path": "ops/bin/as6-diagnose-runtime-stale-tmp-artifacts",
       "status_visible": true,
       "source": "auto"
+    },
+    {
+      "check": "self-expanding-diagnostics",
+      "path": "ops/bin/as6-diagnose-self-expanding-diagnostics",
+      "status_visible": true,
+      "source": "as6-status-registry-schema-sync"
     },
     {
       "check": "ssh-heredoc-guard",
@@ -794,10 +932,34 @@
       "source": "auto"
     },
     {
+      "check": "status-registry-schema-sync",
+      "path": "ops/bin/as6-diagnose-status-registry-schema-sync",
+      "status_visible": true,
+      "source": "as6-status-registry-schema-sync"
+    },
+    {
+      "check": "status-registry-sync",
+      "path": "ops/bin/as6-diagnose-status-registry-sync",
+      "status_visible": true,
+      "source": "as6-status-registry-schema-sync"
+    },
+    {
       "check": "strategic-readiness",
       "path": "ops/bin/as6-diagnose-strategic-readiness",
       "status_visible": true,
       "source": "auto"
+    },
+    {
+      "check": "true-live-spinner",
+      "path": "ops/bin/as6-diagnose-true-live-spinner",
+      "status_visible": true,
+      "source": "as6-status-registry-schema-sync"
+    },
+    {
+      "check": "universal-heartbeat-wrapper",
+      "path": "ops/bin/as6-diagnose-universal-heartbeat-wrapper",
+      "status_visible": true,
+      "source": "as6-status-registry-schema-sync"
     },
     {
       "check": "unreachable-diagnostic-blocks",
@@ -812,36 +974,16 @@
       "source": "auto"
     },
     {
+      "check": "watch-heartbeat",
+      "path": "ops/bin/as6-diagnose-watch-heartbeat",
+      "status_visible": true,
+      "source": "as6-status-registry-schema-sync"
+    },
+    {
       "check": "workflow-yaml",
       "path": "ops/bin/as6-diagnose-workflow-yaml",
       "status_visible": true,
       "source": "auto"
-  ,"ops/bin/as6-diagnose-all-live": {"status":"registered","result":"OK","source":"as6-repair-live-spinner-registration"}
-  ,"ops/bin/as6-diagnose-true-live-spinner": {"status":"registered","result":"OK","source":"as6-repair-live-spinner-registration"}
-  ,"ops/bin/as6-diagnose-live-spinner-registration": {"status":"registered","result":"OK","source":"as6-repair-live-spinner-registration"}
-  ,"ops/bin/as6-diagnose-watch-heartbeat": {"status":"registered","result":"OK","source":"as6-simple-watch-heartbeat"}
-  ,"ops/bin/as6-diagnose-one-command-standard": {"status":"registered","result":"OK","source":"as6-repair-diagnostic-registration-and-secret-scan"}
-  ,"ops/bin/as6-diagnose-backup-secret-scan-contract": {"status":"registered","result":"OK","source":"as6-repair-diagnostic-registration-and-secret-scan"}
-  ,"ops/bin/as6-diagnose-completion-marker-contract": {"status":"registered","result":"OK","source":"as6-close-early-exit-control"}
-  ,"ops/bin/as6-diagnose-registered-diagnostic-git-tracking": {"status":"registered","result":"OK","source":"as6-track-completion-marker-diagnostic"}
-  ,"ops/bin/as6-diagnose-autonomous-diagnostic-expansion-validation": {"status":"registered","result":"OK","source":"as6-self-expand-diagnostics"}
-  ,"ops/bin/as6-self-expand-diagnostics": {"status":"registered","result":"OK","source":"as6-self-expanding-diagnostics-framework"}
-  ,"ops/bin/as6-diagnose-self-expanding-diagnostics": {"status":"registered","result":"OK","source":"as6-self-expanding-diagnostics-framework"}
-  ,"ops/bin/as6-auto-expansion-router": {"status":"registered","result":"OK","source":"as6-auto-expansion-router"}
-  ,"ops/bin/as6-diagnose-auto-expansion-router": {"status":"registered","result":"OK","source":"as6-auto-expansion-router"}
-  ,"ops/bin/as6-diagnose-runtime-stage-gap": {"status":"registered","result":"OK","source":"as6-repair-runtime-stage-gap"}
-  ,"ops/bin/as6-diagnose-runtime-stage-gap-exit-code": {"status":"registered","result":"OK","source":"as6-repair-runtime-stage-gap-exit-code"}
-  ,"ops/bin/as6-diagnose-runtime-stage-gap-final-marker": {"status":"registered","result":"OK","source":"as6-repair-runtime-stage-gap-premature-exit"}
-  ,"ops/bin/as6-diagnose-runtime-stage-gap-policy-text": {"status":"registered","result":"OK","source":"as6-repair-runtime-policy-text-contract"}
-  ,"ops/bin/as6-diagnose-diagnose-all-wait-signature": {"status":"registered","result":"OK","source":"as6-repair-diagnose-all-wait-signature"}
-  ,"ops/bin/as6-diagnose-backup-discovery-drift": {"status":"registered","result":"OK","source":"as6-repair-backup-diagnostic-discovery-drift"}
-  ,"ops/bin/as6-diagnose-fast-summary": {"status":"registered","result":"OK","source":"as6-simplify-and-speed-diagnostics"}
-  ,"ops/bin/as6-diagnose-diagnostic-simplification": {"status":"registered","result":"OK","source":"as6-simplify-and-speed-diagnostics"}
-  ,"ops/bin/as6-diagnose-active-autonomy-score": {"status":"registered","result":"OK","source":"as6-repair-autonomy-score-false-positive"}
-  ,"ops/bin/as6-diagnose-primary-fail-repair": {"status":"registered","result":"OK","source":"as6-primary-fail-repair"}
-  ,"ops/bin/as6-diagnose-primary-fail-repair-v2": {"status":"registered","result":"OK","source":"as6-primary-fail-repair-v2"}
-  ,"ops/bin/as6-diagnose-universal-heartbeat-wrapper": {"status":"registered","result":"OK","source":"as6-heartbeat-registry-match-repair"}
-  ,"ops/bin/as6-diagnose-heartbeat-wrapper-registry-match": {"status":"registered","result":"OK","source":"as6-heartbeat-registry-match-repair"}
     }
   ]
 }

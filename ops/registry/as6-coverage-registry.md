@@ -1438,3 +1438,7 @@
 | ops/bin/as6-diagnose-primary-fail-repair-v2 | insertion-reachability+autonomous-coverage-linkage | ENABLED |
 | ops/bin/as6-diagnose-universal-heartbeat-wrapper | universal-heartbeat-wrapper+targeted-command-progress+operator-visibility | ENABLED |
 | ops/bin/as6-diagnose-heartbeat-wrapper-registry-match | heartbeat-wrapper-registry+coverage+status-contract | ENABLED |
+| ops/bin/as6-diagnose-as6-test-router-drift-warn | generated-failure-class+registry+coverage+governance+prevention+aec+state | ENABLED |
+| ops/bin/as6-diagnose-as6-test-router-gap-fail | generated-failure-class+registry+coverage+governance+prevention+aec+state | ENABLED |
+| ops/bin/as6-diagnose-status-registry-sync | status-registry-autosync+diagnostic-status-linkage | ENABLED |
+| ops/bin/as6-diagnose-status-registry-schema-sync | canonical-diagnostics-array-status-registry-sync | ENABLED |

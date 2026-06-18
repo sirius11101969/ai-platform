@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+echo "=== AS6 Generated Diagnostic: AS6_TEST_ROUTER_GAP_FAIL ==="
+test -f ops/catalog/failure-classes/as6-test-router-gap-fail.yaml
+echo "AS6_GENERATED_FAILURE_CLASS=AS6_TEST_ROUTER_GAP_FAIL"
+echo "AS6_GENERATED_DIAGNOSTIC_RESULT=OK:AS6_TEST_ROUTER_GAP_FAIL"

@@ -393,3 +393,9 @@ exit "$fail"
 
 # AS6 heartbeat wrapper registry match
 [ -x ops/bin/as6-diagnose-heartbeat-wrapper-registry-match ] && ops/bin/as6-diagnose-heartbeat-wrapper-registry-match
+
+# AS6 diagnostic status registry sync
+[ -x ops/bin/as6-diagnose-status-registry-sync ] && ops/bin/as6-diagnose-status-registry-sync
+
+# AS6 diagnostic status registry schema sync
+[ -x ops/bin/as6-diagnose-status-registry-schema-sync ] && ops/bin/as6-diagnose-status-registry-schema-sync

@@ -1332,3 +1332,7 @@
 | ops/bin/as6-diagnose-primary-fail-repair-v2 | primary-fail-repair-v2 | ENABLED |
 | ops/bin/as6-diagnose-universal-heartbeat-wrapper | heartbeat-wrapper-diagnostic | ENABLED |
 | ops/bin/as6-diagnose-heartbeat-wrapper-registry-match | heartbeat-wrapper-registry-match | ENABLED |
+| ops/bin/as6-diagnose-as6-test-router-drift-warn | generated-failure-class-diagnostic | ENABLED |
+| ops/bin/as6-diagnose-as6-test-router-gap-fail | generated-failure-class-diagnostic | ENABLED |
+| ops/bin/as6-diagnose-status-registry-sync | diagnostic-status-registry-sync | ENABLED |
+| ops/bin/as6-diagnose-status-registry-schema-sync | diagnostic-status-registry-schema-sync | ENABLED |

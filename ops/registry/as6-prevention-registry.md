@@ -28,3 +28,7 @@
 | DIAGNOSE_ALL_EXIT_SIGNATURE_DRIFT | keep-final-exit-at-end-of-diagnose-all | ENABLED |
 | AUTONOMOUS_COVERAGE_GATE_LINKAGE_REPAIR | autonomous-coverage-must-validate-explicit-linkage | ENABLED |
 | HEARTBEAT_WRAPPER_REGISTRY_MATCH_DRIFT | canonicalize-heartbeat-wrapper-registry-coverage-status-linkage | ENABLED |
+| AS6_TEST_ROUTER_DRIFT_WARN | generated-prevention-control | ENABLED |
+| AS6_TEST_ROUTER_GAP_FAIL | generated-prevention-control | ENABLED |
+| DIAGNOSTIC_STATUS_REGISTRY_DRIFT | auto-sync-all-diagnostics-into-status-registry | ENABLED |
+| DIAGNOSTIC_STATUS_REGISTRY_SCHEMA_SYNC_DRIFT | sync-status-registry-through-canonical-diagnostics-array | ENABLED |

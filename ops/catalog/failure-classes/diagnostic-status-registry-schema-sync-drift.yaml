@@ -1,0 +1,5 @@
+class: DIAGNOSTIC_STATUS_REGISTRY_SCHEMA_SYNC_DRIFT
+category: diagnostic-status-registry-schema-drift
+severity: high
+root_cause: previous sync added root-level JSON keys while canonical status registry uses diagnostics array entries
+resolution: synchronize missing diagnostics into data.diagnostics array with check/path/status_visible/source fields

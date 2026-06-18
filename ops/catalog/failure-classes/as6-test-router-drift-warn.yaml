@@ -1,0 +1,8 @@
+class: AS6_TEST_ROUTER_DRIFT_WARN
+category: generated-failure-class
+diagnostic_required: true
+coverage_required: true
+governance_required: true
+prevention_required: true
+aec_required: true
+state_required: true

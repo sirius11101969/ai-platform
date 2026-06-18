@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+echo "=== AS6 Diagnostic Status Registry Sync Diagnostics ==="
+test -f ops/catalog/failure-classes/diagnostic-status-registry-drift.yaml
+test -f ops/governance/as6-diagnostic-status-registry-sync-policy.md
+test -f ops/status/diagnostic-status-registry.json
+fail=0
+for d in ops/bin/as6-diagnose-*; do
+  [ -f "$d" ] || continue
+  if grep -Fq "\"$d\"" ops/status/diagnostic-status-registry.json; then
+    echo "AS6_STATUS_REGISTRY_ENTRY=PASS:$d"
+  else
+    echo "AS6_STATUS_REGISTRY_ENTRY=FAIL:$d"
+    fail=1
+  fi
+done
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_DIAGNOSTIC_STATUS_REGISTRY_SYNC=PASS"
+  echo "AS6_DIAGNOSTIC_STATUS_REGISTRY_SYNC_RESULT=OK"
+  exit 0
+else
+  echo "AS6_DIAGNOSTIC_STATUS_REGISTRY_SYNC=FAIL"
+  echo "AS6_DIAGNOSTIC_STATUS_REGISTRY_SYNC_RESULT=FAIL"
+  exit 1
+fi
