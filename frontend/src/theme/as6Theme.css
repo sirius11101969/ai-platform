@@ -768,3 +768,88 @@
   max-height:132px!important;
   margin:4px auto 0!important;
 }
+
+/* AS6 Copilot authoritative style consolidation V38 */
+.command-right-rail .copilot-hero{
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  grid-template-areas:"head" "visual" "text" "cta"!important;
+  gap:10px!important;
+  min-height:0!important;
+  height:auto!important;
+  padding:16px!important;
+  overflow:hidden!important;
+  text-align:left!important;
+  align-items:start!important;
+  background:
+    radial-gradient(circle at 72% 18%,rgba(157,54,255,.22),transparent 30%),
+    radial-gradient(circle at 32% 42%,rgba(0,216,255,.20),transparent 36%),
+    linear-gradient(145deg,rgba(10,22,50,.98),rgba(91,25,168,.54))!important;
+}
+.command-right-rail .copilot-hero .copilot-top{
+  grid-area:head!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  margin:0!important;
+  min-height:24px!important;
+}
+.command-right-rail .copilot-hero .copilot-top h2{
+  margin:0!important;
+  font-size:18px!important;
+  line-height:1.15!important;
+  font-weight:1000!important;
+  color:#fff!important;
+}
+.command-right-rail .copilot-hero .copilot-top span{
+  color:#c084fc!important;
+  font-weight:1000!important;
+  text-shadow:0 0 16px rgba(147,51,234,.9)!important;
+}
+.command-right-rail .copilot-hero .as6-copilot-real-image{
+  grid-area:visual!important;
+  display:block!important;
+  width:138px!important;
+  max-width:138px!important;
+  height:auto!important;
+  max-height:112px!important;
+  object-fit:contain!important;
+  margin:0 auto!important;
+  filter:drop-shadow(0 18px 34px rgba(0,216,255,.18)) drop-shadow(0 0 22px rgba(139,44,255,.24))!important;
+}
+.command-right-rail .copilot-hero > .as6-copilot-real-image ~ .as6-copilot-real-image,
+.command-right-rail .copilot-hero > svg,
+.command-right-rail .copilot-hero > .robot-icon,
+.command-right-rail .copilot-hero > .copilot-avatar-v2{
+  display:none!important;
+}
+.command-right-rail .copilot-hero p{
+  grid-area:text!important;
+  margin:0 auto!important;
+  max-width:250px!important;
+  text-align:center!important;
+  font-size:13px!important;
+  line-height:1.45!important;
+  color:#dbeaff!important;
+}
+.command-right-rail .copilot-hero .copilot-action-link{
+  grid-area:cta!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  min-height:52px!important;
+  margin:2px 0 0!important;
+  padding:0 18px!important;
+  border-radius:17px!important;
+  text-decoration:none!important;
+  color:#fff!important;
+  font-size:16px!important;
+  font-weight:1000!important;
+  background:linear-gradient(135deg,#7c3cff,#00d8ff)!important;
+  box-shadow:0 18px 42px rgba(0,216,255,.22),inset 0 1px 0 rgba(255,255,255,.18)!important;
+}
+.command-right-rail .copilot-hero .copilot-action-link:hover{
+  transform:translateY(-1px)!important;
+  box-shadow:0 22px 52px rgba(0,216,255,.28),inset 0 1px 0 rgba(255,255,255,.22)!important;
+}

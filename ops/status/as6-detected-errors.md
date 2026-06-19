@@ -19,3 +19,8 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_COPILOT_DUPLICATE_VISUAL_ASSET
 Diagnostic: ops/bin/as6-diagnose-copilot-visual-cleanup-v37
 Status: REGISTERED
+
+## 2026-06-19 COPILOT_STYLE_LAYER_DRIFT_V38
+Failure Class: AS6_FAILURE_CLASS_COPILOT_STYLE_LAYER_DRIFT
+Diagnostic: ops/bin/as6-diagnose-copilot-style-consolidation-v38
+Status: REGISTERED

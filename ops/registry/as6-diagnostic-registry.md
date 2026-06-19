@@ -1406,3 +1406,8 @@ File: ops/bin/as6-diagnose-robot-asset-size-v36
 Status: ENABLED
 Scope: AI Copilot duplicate visual asset and CTA layout diagnostics
 File: ops/bin/as6-diagnose-copilot-visual-cleanup-v37
+
+## as6-diagnose-copilot-style-consolidation-v38
+Status: ENABLED
+Scope: Copilot CSS layer drift and authoritative style diagnostics
+File: ops/bin/as6-diagnose-copilot-style-consolidation-v38

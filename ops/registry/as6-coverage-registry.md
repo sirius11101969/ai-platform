@@ -1506,3 +1506,7 @@ Coverage: robot asset exists, size reduced, canonical import preserved, frontend
 ## COPILOT_VISUAL_CLEANUP_V37
 Diagnostic: ops/bin/as6-diagnose-copilot-visual-cleanup-v37
 Coverage: Copilot duplicate image guard, compact header, CTA normalization, build validation, production health
+
+## COPILOT_STYLE_CONSOLIDATION_V38
+Diagnostic: ops/bin/as6-diagnose-copilot-style-consolidation-v38
+Coverage: Copilot style layer drift, duplicate image guard, CTA authoritative placement, build validation, production health validation

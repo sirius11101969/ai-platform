@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+CSS="frontend/src/theme/as6Theme.css"
+PAGE="frontend/src/pages/CommandCenterPage.jsx"
+fail=0
+check(){ n="$1"; shift; if "$@"; then echo "PASS:$n"; else echo "FAIL:$n"; fail=1; fi; }
+check copilot_source_exists grep -q "copilot-hero" "$PAGE"
+check copilot_authoritative_block grep -q "AS6 Copilot authoritative style consolidation V38" "$CSS"
+check copilot_duplicate_image_guard grep -q "copilot-hero > .as6-copilot-real-image ~ .as6-copilot-real-image" "$CSS"
+check copilot_cta_authoritative grep -q "command-right-rail .copilot-hero .copilot-action-link" "$CSS"
+check copilot_visual_authoritative grep -q "command-right-rail .copilot-hero .as6-copilot-real-image" "$CSS"
+echo "COPILOT_HERO_STYLE_LAYER_COUNT=$(grep -c 'copilot-hero' "$CSS" || true)"
+exit "$fail"

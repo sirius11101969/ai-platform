@@ -2172,3 +2172,8 @@ Diagnostic: ops/bin/as6-diagnose-robot-asset-size-v36
 Status: APPLIED
 Root cause: duplicate Copilot visual asset and excessive header area in AI Copilot card.
 Diagnostic: ops/bin/as6-diagnose-copilot-visual-cleanup-v37
+
+## AS6 Copilot Style Consolidation V38
+Status: APPLIED
+Root cause: Copilot style layer drift from multiple historical CSS patch layers.
+Diagnostic: ops/bin/as6-diagnose-copilot-style-consolidation-v38
