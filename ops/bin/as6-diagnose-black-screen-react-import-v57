@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+APP="frontend/src/App.jsx"
+fail=0
+check(){ n="$1"; shift; if "$@"; then echo "PASS:$n"; else echo "FAIL:$n"; fail=1; fi; }
+check app_exists test -f "$APP"
+check lazy_used grep -q "lazy(() => import" "$APP"
+check suspense_used grep -q "Suspense" "$APP"
+check react_lazy_import_present grep -q "lazy" "$APP"
+check react_suspense_import_present grep -q "Suspense" "$APP"
+check react_lazy_suspense_same_import grep -q 'import React, { createContext, useContext, useEffect, useMemo, useState, lazy, Suspense } from "react";' "$APP"
+exit "$fail"

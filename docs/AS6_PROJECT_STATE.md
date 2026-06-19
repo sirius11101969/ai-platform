@@ -2270,3 +2270,8 @@ Note: No UI/CSS/layout changes were made in V55.
 Status: APPLIED
 Root cause: CRMPage and AiWorkersPage were statically imported in App.jsx, increasing main bundle pressure.
 Diagnostic: ops/bin/as6-diagnose-crm-route-chunk-v56
+
+## AS6 Black Screen React Import Fix V57
+Status: APPLIED
+Root cause: React lazy and Suspense were used in App.jsx without importing React APIs.
+Diagnostic: ops/bin/as6-diagnose-black-screen-react-import-v57

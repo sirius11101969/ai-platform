@@ -108,3 +108,8 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_CRM_PAGE_STATIC_IMPORT_IN_APP
 Diagnostic: ops/bin/as6-diagnose-crm-route-chunk-v56
 Status: REGISTERED
+
+## 2026-06-19 BLACK_SCREEN_REACT_IMPORT_V57
+Failure Class: AS6_FAILURE_CLASS_REACT_LAZY_API_NOT_IMPORTED
+Diagnostic: ops/bin/as6-diagnose-black-screen-react-import-v57
+Status: REGISTERED

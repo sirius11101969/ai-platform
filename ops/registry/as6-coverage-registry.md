@@ -1582,3 +1582,7 @@ Coverage: top-30 frontend file report, CRM/AiWorkers/styles/CommandCenter source
 ## CRM_ROUTE_CHUNK_V56
 Diagnostic: ops/bin/as6-diagnose-crm-route-chunk-v56
 Coverage: CRM lazy import, AI Workers lazy import, Suspense fallback, manual chunks, emitted route chunks, build validation, production health validation
+
+## BLACK_SCREEN_REACT_IMPORT_V57
+Diagnostic: ops/bin/as6-diagnose-black-screen-react-import-v57
+Coverage: lazy import guard, Suspense import guard, route lazy-loading runtime guard, build validation, production health validation

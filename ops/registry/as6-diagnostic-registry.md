@@ -1501,3 +1501,8 @@ File: ops/bin/as6-diagnose-frontend-heavy-files-v55
 Status: ENABLED
 Scope: CRM and AI Workers route-level lazy loading and chunk diagnostics
 File: ops/bin/as6-diagnose-crm-route-chunk-v56
+
+## as6-diagnose-black-screen-react-import-v57
+Status: ENABLED
+Scope: React lazy/Suspense import drift and black screen prevention
+File: ops/bin/as6-diagnose-black-screen-react-import-v57
