@@ -34,3 +34,8 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_COPILOT_CTA_VERTICAL_MISALIGNMENT
 Diagnostic: ops/bin/as6-diagnose-copilot-button-align-v41
 Status: REGISTERED
+
+## 2026-06-19 COPILOT_CSS_SYNTAX_CLEANUP_V42
+Failure Class: AS6_FAILURE_CLASS_CSS_SYNTAX_DRIFT
+Diagnostic: ops/bin/as6-diagnose-copilot-css-syntax-cleanup-v42
+Status: REGISTERED

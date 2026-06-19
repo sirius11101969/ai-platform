@@ -1522,3 +1522,7 @@ Coverage: Copilot header, inline logo, right CTA, text removal, CSS guard, build
 ## COPILOT_BUTTON_ALIGN_V41
 Diagnostic: ops/bin/as6-diagnose-copilot-button-align-v41
 Coverage: inline logo, opposite CTA, arrow removal, V41 CSS guard, build validation, production health validation
+
+## COPILOT_CSS_SYNTAX_CLEANUP_V42
+Diagnostic: ops/bin/as6-diagnose-copilot-css-syntax-cleanup-v42
+Coverage: orphan CSS declaration removal, V42 terminal style, CTA no-arrow guard, build validation, production health validation

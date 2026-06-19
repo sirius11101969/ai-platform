@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+CSS="frontend/src/theme/as6Theme.css"
+PAGE="frontend/src/pages/CommandCenterPage.jsx"
+fail=0
+check(){ n="$1"; shift; if "$@"; then echo "PASS:$n"; else echo "FAIL:$n"; fail=1; fi; }
+check copilot_v42_terminal_style grep -q "AS6 Copilot clean terminal style V42" "$CSS"
+check no_orphan_168px bash -c "! grep -q \"max-width:168px!important;\" frontend/src/theme/as6Theme.css"
+check copilot_cta_no_arrow grep -q "Спросить AI Copilot</a>" "$PAGE"
+check copilot_inline_layout grep -q "copilot-inline-layout" "$PAGE"
+exit "$fail"

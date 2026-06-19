@@ -1426,3 +1426,8 @@ File: ops/bin/as6-diagnose-copilot-inline-layout-v40
 Status: ENABLED
 Scope: AI Copilot logo opposite CTA alignment and CTA text diagnostics
 File: ops/bin/as6-diagnose-copilot-button-align-v41
+
+## as6-diagnose-copilot-css-syntax-cleanup-v42
+Status: ENABLED
+Scope: Copilot CSS syntax drift and terminal style diagnostics
+File: ops/bin/as6-diagnose-copilot-css-syntax-cleanup-v42

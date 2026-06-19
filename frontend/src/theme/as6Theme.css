@@ -529,7 +529,6 @@
   display:block!important;
   width:168px!important;
   max-width:100%!important;
-  height:auto!important;
   object-fit:contain!important;
   filter:drop-shadow(0 0 24px rgba(139,44,255,.62)) drop-shadow(0 0 12px rgba(0,216,255,.28))!important;
 }
@@ -577,7 +576,6 @@
 /* AS6 Robot KPI Blueprint V23 */
 .command-kpi.ai{
   position:relative!important;
-  overflow:hidden!important;
 }
 .command-kpi.ai i{
   background:none!important;
@@ -604,7 +602,6 @@
 /* AS6 AI Workforce Robot Final V24 */
 .command-kpi.ai{
   position:relative!important;
-  overflow:hidden!important;
 }
 .command-kpi.ai i{
   background:none!important;
@@ -653,7 +650,6 @@
   flex-direction:column!important;
   justify-content:flex-start!important;
   gap:12px!important;
-  overflow:hidden!important;
 }
 .ai-copilot-card h2,.command-copilot-card h2,.copilot-card h2,.command-card[class*="copilot"] h2,article[class*="copilot"] h2{
   margin:0!important;
@@ -666,10 +662,7 @@
 }
 .ai-copilot-card img,.command-copilot-card img,.copilot-card img,.command-card[class*="copilot"] img,article[class*="copilot"] img{
   display:block!important;
-  max-width:168px!important;
-  max-height:132px!important;
   object-fit:contain!important;
-  margin:4px auto 0!important;
 }
 .ai-copilot-card img:nth-of-type(n+2),.command-copilot-card img:nth-of-type(n+2),.copilot-card img:nth-of-type(n+2),.command-card[class*="copilot"] img:nth-of-type(n+2),article[class*="copilot"] img:nth-of-type(n+2){
   display:none!important;
@@ -680,21 +673,10 @@
   margin-top:4px!important;
   border-radius:18px!important;
 }
-  max-width:168px!important;
-  max-height:132px!important;
-  margin:4px auto 0!important;
 }
 
-  display:grid!important;
-  grid-template-columns:1fr!important;
   grid-template-areas:"head" "visual" "text" "cta"!important;
-  gap:10px!important;
-  min-height:0!important;
-  height:auto!important;
-  padding:16px!important;
-  overflow:hidden!important;
   text-align:left!important;
-  align-items:start!important;
   background:
     radial-gradient(circle at 72% 18%,rgba(157,54,255,.22),transparent 30%),
     radial-gradient(circle at 32% 42%,rgba(0,216,255,.20),transparent 36%),
@@ -721,7 +703,6 @@
   display:block!important;
   width:138px!important;
   max-width:138px!important;
-  height:auto!important;
   max-height:112px!important;
   object-fit:contain!important;
   margin:0 auto!important;
@@ -732,7 +713,6 @@
   grid-area:text!important;
   margin:0 auto!important;
   max-width:250px!important;
-  text-align:center!important;
   font-size:13px!important;
   line-height:1.45!important;
   color:#dbeaff!important;
@@ -760,7 +740,8 @@
 display:grid!important;grid-template-columns:1fr!important;grid-template-areas:"head" "visual" "text" "cta"!important;gap:10px!important;min-height:0!important;height:auto!important;padding:16px!important;overflow:hidden!important;text-align:center!important;align-items:start!important;background:radial-gradient(circle at 72% 18%,rgba(157,54,255,.22),transparent 30%),radial-gradient(circle at 32% 42%,rgba(0,216,255,.20),transparent 36%),linear-gradient(145deg,rgba(10,22,50,.98),rgba(91,25,168,.54))!important;}
 
 
-/* AS6 Copilot logo opposite CTA V41 */
+
+/* AS6 Copilot clean terminal style V42 */
 .command-right-rail .copilot-hero{display:grid!important;grid-template-columns:1fr!important;grid-template-areas:"head" "inline"!important;gap:12px!important;min-height:0!important;height:auto!important;padding:16px!important;overflow:hidden!important;text-align:left!important;background:radial-gradient(circle at 76% 18%,rgba(157,54,255,.22),transparent 30%),radial-gradient(circle at 22% 50%,rgba(0,216,255,.18),transparent 36%),linear-gradient(145deg,rgba(10,22,50,.98),rgba(91,25,168,.50))!important;}
 .command-right-rail .copilot-hero .copilot-top{grid-area:head!important;display:flex!important;align-items:center!important;justify-content:space-between!important;margin:0!important;min-height:24px!important;}
 .command-right-rail .copilot-hero .copilot-top h2{margin:0!important;font-size:18px!important;line-height:1.15!important;font-weight:1000!important;color:#fff!important;}

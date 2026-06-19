@@ -2192,3 +2192,8 @@ Diagnostic: ops/bin/as6-diagnose-copilot-inline-layout-v40
 Status: APPLIED
 Root cause: CTA was vertically lower than Copilot logo and retained arrow suffix.
 Diagnostic: ops/bin/as6-diagnose-copilot-button-align-v41
+
+## AS6 Copilot CSS Syntax Cleanup V42
+Status: APPLIED
+Root cause: orphan CSS declaration and accumulated Copilot style layers.
+Diagnostic: ops/bin/as6-diagnose-copilot-css-syntax-cleanup-v42
