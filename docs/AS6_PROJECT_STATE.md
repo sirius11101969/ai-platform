@@ -2253,3 +2253,9 @@ Diagnostic: ops/bin/as6-diagnose-css-and-bundle-budget-v52
 Status: APPLIED
 Root cause: legacy Command Center CSS and duplicate top logo render remained after visual iterations.
 Diagnostic: ops/bin/as6-diagnose-global-frontend-dead-code-v53
+
+## AS6 Command Center UI Restore V54
+Status: APPLIED
+Root cause: V53 removed too much legacy Command Center CSS and broke interface.
+Action: restored CommandCenterPage.jsx and as6Theme.css from pre-V53 commit 21d1888.
+Diagnostic: ops/bin/as6-diagnose-command-center-ui-restore-v54

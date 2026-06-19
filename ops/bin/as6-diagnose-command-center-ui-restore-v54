@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+PAGE="frontend/src/pages/CommandCenterPage.jsx"
+CSS="frontend/src/theme/as6Theme.css"
+fail=0
+check(){ n="$1"; shift; if "$@"; then echo "PASS:$n"; else echo "FAIL:$n"; fail=1; fi; }
+check page_exists test -f "$PAGE"
+check css_exists test -f "$CSS"
+check top_logo_restored grep -q "as6-command-center-logo-image" "$PAGE"
+check legacy_command_center_css_restored grep -q "AS6 Command Center Executive V10" "$CSS"
+check copilot_terminal_style grep -q "AS6 Copilot clean terminal style V42" "$CSS"
+check quick_action_robot_icon_css grep -q "quick-action-robot-icon" "$CSS"
+check executive_module_robot_icon_css grep -q "executive-module-robot-icon" "$CSS"
+exit "$fail"

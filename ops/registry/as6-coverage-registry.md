@@ -1570,3 +1570,7 @@ Coverage: CSS source budget, build CSS/JS output visibility, Command Center chun
 ## GLOBAL_FRONTEND_DEAD_CODE_V53
 Diagnostic: ops/bin/as6-diagnose-global-frontend-dead-code-v53
 Coverage: duplicate top logo removal, legacy CSS cleanup, current style preservation, top-20 frontend file size report, build validation, production health validation
+
+## COMMAND_CENTER_UI_RESTORE_V54
+Diagnostic: ops/bin/as6-diagnose-command-center-ui-restore-v54
+Coverage: known-good JSX/CSS restore, V53 cleanup regression prevention, build validation, production health validation

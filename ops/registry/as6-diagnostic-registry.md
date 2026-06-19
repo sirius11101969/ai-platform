@@ -1486,3 +1486,8 @@ File: ops/bin/as6-diagnose-css-and-bundle-budget-v52
 Status: ENABLED
 Scope: Global frontend dead code, legacy CSS, duplicate logo and file size diagnostics
 File: ops/bin/as6-diagnose-global-frontend-dead-code-v53
+
+## as6-diagnose-command-center-ui-restore-v54
+Status: ENABLED
+Scope: Restore Command Center UI after overbroad V53 cleanup regression
+File: ops/bin/as6-diagnose-command-center-ui-restore-v54

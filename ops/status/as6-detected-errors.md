@@ -93,3 +93,8 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_DUPLICATE_BRANDING_LOGO_RENDERED
 Diagnostic: ops/bin/as6-diagnose-global-frontend-dead-code-v53
 Status: REGISTERED
+
+## 2026-06-19 COMMAND_CENTER_UI_RESTORE_V54
+Failure Class: AS6_FAILURE_CLASS_OVERBROAD_LEGACY_CSS_REMOVAL
+Diagnostic: ops/bin/as6-diagnose-command-center-ui-restore-v54
+Status: REGISTERED
