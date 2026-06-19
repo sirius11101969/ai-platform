@@ -2197,3 +2197,13 @@ Diagnostic: ops/bin/as6-diagnose-copilot-button-align-v41
 Status: APPLIED
 Root cause: orphan CSS declaration and accumulated Copilot style layers.
 Diagnostic: ops/bin/as6-diagnose-copilot-css-syntax-cleanup-v42
+
+## AS6 CSS Orphan Brace Cleanup V43
+Status: APPLIED
+Root cause: orphan CSS closing brace left after Copilot CSS layer cleanup.
+Diagnostic: ops/bin/as6-diagnose-css-orphan-brace-v43
+
+## AS6 Copilot Orphan Fragment Cleanup V44
+Status: APPLIED
+Root cause: orphan Copilot CSS property fragment left after V39-V43 layer rewrites.
+Diagnostic: ops/bin/as6-diagnose-copilot-orphan-fragment-v44

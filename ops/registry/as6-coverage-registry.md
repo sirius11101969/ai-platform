@@ -1526,3 +1526,11 @@ Coverage: inline logo, opposite CTA, arrow removal, V41 CSS guard, build validat
 ## COPILOT_CSS_SYNTAX_CLEANUP_V42
 Diagnostic: ops/bin/as6-diagnose-copilot-css-syntax-cleanup-v42
 Coverage: orphan CSS declaration removal, V42 terminal style, CTA no-arrow guard, build validation, production health validation
+
+## CSS_ORPHAN_BRACE_V43
+Diagnostic: ops/bin/as6-diagnose-css-orphan-brace-v43
+Coverage: orphan CSS closing brace, Copilot terminal style preservation, build syntax warning validation, production health validation
+
+## COPILOT_ORPHAN_FRAGMENT_V44
+Diagnostic: ops/bin/as6-diagnose-copilot-orphan-fragment-v44
+Coverage: orphan Copilot CSS property fragment removal, V42 terminal style preservation, CTA no-arrow, build warning validation, production health validation

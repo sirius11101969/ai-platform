@@ -39,3 +39,13 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_CSS_SYNTAX_DRIFT
 Diagnostic: ops/bin/as6-diagnose-copilot-css-syntax-cleanup-v42
 Status: REGISTERED
+
+## 2026-06-19 CSS_ORPHAN_BRACE_V43
+Failure Class: AS6_FAILURE_CLASS_ORPHAN_CSS_CLOSING_BRACE
+Diagnostic: ops/bin/as6-diagnose-css-orphan-brace-v43
+Status: REGISTERED
+
+## 2026-06-19 COPILOT_ORPHAN_FRAGMENT_V44
+Failure Class: AS6_FAILURE_CLASS_ORPHAN_COPILOT_CSS_FRAGMENT
+Diagnostic: ops/bin/as6-diagnose-copilot-orphan-fragment-v44
+Status: REGISTERED

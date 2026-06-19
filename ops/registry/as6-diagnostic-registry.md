@@ -1431,3 +1431,13 @@ File: ops/bin/as6-diagnose-copilot-button-align-v41
 Status: ENABLED
 Scope: Copilot CSS syntax drift and terminal style diagnostics
 File: ops/bin/as6-diagnose-copilot-css-syntax-cleanup-v42
+
+## as6-diagnose-css-orphan-brace-v43
+Status: ENABLED
+Scope: CSS orphan closing brace and syntax warning diagnostics
+File: ops/bin/as6-diagnose-css-orphan-brace-v43
+
+## as6-diagnose-copilot-orphan-fragment-v44
+Status: ENABLED
+Scope: Copilot orphan CSS fragment and frontend CSS warning diagnostics
+File: ops/bin/as6-diagnose-copilot-orphan-fragment-v44
