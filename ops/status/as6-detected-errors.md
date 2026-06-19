@@ -113,3 +113,8 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_REACT_LAZY_API_NOT_IMPORTED
 Diagnostic: ops/bin/as6-diagnose-black-screen-react-import-v57
 Status: REGISTERED
+
+## 2026-06-19 FRONTEND_BUDGETS_V58
+Failure Class: AS6_FAILURE_CLASS_FRONTEND_BUDGET_DIAGNOSTIC_MISSING
+Diagnostic: ops/bin/as6-diagnose-frontend-budgets-v58
+Status: REGISTERED

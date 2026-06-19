@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+BUILD_LOG="${1:-}"
+OUT_DIR="${2:-runtime/as6-frontend-budgets-v58}"
+mkdir -p "$OUT_DIR"
+fail=0
+
+check(){ n="$1"; shift; if "$@"; then echo "PASS:$n"; else echo "FAIL:$n"; fail=1; fi; }
+
+check frontend_src_exists test -d frontend/src
+check app_exists test -f frontend/src/App.jsx
+check vite_exists test -f frontend/vite.config.js
+check command_center_exists test -f frontend/src/pages/CommandCenterPage.jsx
+check crm_lazy_import grep -q 'lazy(() => import("./pages/CRMPage"))' frontend/src/App.jsx
+check ai_workers_lazy_import grep -q 'lazy(() => import("./pages/AiWorkersPage"))' frontend/src/App.jsx
+check duplicate_top_logo_absent bash -c '! grep -q as6-command-center-logo-image frontend/src/pages/CommandCenterPage.jsx'
+check command_center_webp_logo grep -q "as6-logo.webp" frontend/src/pages/CommandCenterPage.jsx
+
+find frontend/src -type f \( -name "*.jsx" -o -name "*.js" -o -name "*.css" \) -printf "%s %p\n" | sort -nr | head -30 | tee "$OUT_DIR/top30-source-files.out"
+
+styles_bytes="$(wc -c < frontend/src/styles.css)"
+theme_bytes="$(wc -c < frontend/src/theme/as6Theme.css)"
+crm_bytes="$(wc -c < frontend/src/pages/CRMPage.jsx)"
+workers_bytes="$(wc -c < frontend/src/pages/AiWorkersPage.jsx)"
+command_bytes="$(wc -c < frontend/src/pages/CommandCenterPage.jsx)"
+
+echo "SOURCE_STYLES_BYTES=$styles_bytes"
+echo "SOURCE_THEME_BYTES=$theme_bytes"
+echo "SOURCE_CRM_BYTES=$crm_bytes"
+echo "SOURCE_AI_WORKERS_BYTES=$workers_bytes"
+echo "SOURCE_COMMAND_CENTER_BYTES=$command_bytes"
+
+if test "$styles_bytes" -lt 150000; then echo "PASS:source_styles_budget"; else echo "FAIL:source_styles_budget"; fail=1; fi
+if test "$theme_bytes" -lt 75000; then echo "PASS:source_theme_budget"; else echo "FAIL:source_theme_budget"; fail=1; fi
+if test "$crm_bytes" -lt 140000; then echo "PASS:source_crm_budget"; else echo "FAIL:source_crm_budget"; fail=1; fi
+if test "$workers_bytes" -lt 100000; then echo "PASS:source_ai_workers_budget"; else echo "FAIL:source_ai_workers_budget"; fail=1; fi
+if test "$command_bytes" -lt 30000; then echo "PASS:source_command_center_budget"; else echo "FAIL:source_command_center_budget"; fail=1; fi
+
+if test -n "$BUILD_LOG" && test -f "$BUILD_LOG"; then
+  grep -E "dist/assets/.*\.(js|css|png|webp)" "$BUILD_LOG" | tee "$OUT_DIR/build-assets.out" || true
+  check frontend_build_clean bash -c '! grep -q "css-syntax-error\|Expected identifier but found\|Unexpected \"}\"\|lazy is not defined\|Suspense is not defined" "$0"' "$BUILD_LOG"
+  check command_center_chunk_present grep -q "dist/assets/command-center-" "$BUILD_LOG"
+  check crm_chunk_present grep -q "dist/assets/crm-page-" "$BUILD_LOG"
+  check ai_workers_chunk_present grep -q "dist/assets/ai-workers-page-" "$BUILD_LOG"
+  check webp_logo_present grep -q "dist/assets/as6-logo-.*\.webp" "$BUILD_LOG"
+
+  main_js_kb="$(awk '/dist\/assets\/index-.*\.js/{print $(NF-3)}' "$BUILD_LOG" | tail -1)"
+  css_kb="$(awk '/dist\/assets\/index-.*\.css/{print $(NF-3)}' "$BUILD_LOG" | tail -1)"
+  command_kb="$(awk '/dist\/assets\/command-center-.*\.js/{print $(NF-3)}' "$BUILD_LOG" | tail -1)"
+  crm_kb="$(awk '/dist\/assets\/crm-page-.*\.js/{print $(NF-3)}' "$BUILD_LOG" | tail -1)"
+  workers_kb="$(awk '/dist\/assets\/ai-workers-page-.*\.js/{print $(NF-3)}' "$BUILD_LOG" | tail -1)"
+
+  echo "BUILD_MAIN_JS_KB=${main_js_kb:-unknown}"
+  echo "BUILD_CSS_KB=${css_kb:-unknown}"
+  echo "BUILD_COMMAND_CENTER_JS_KB=${command_kb:-unknown}"
+  echo "BUILD_CRM_JS_KB=${crm_kb:-unknown}"
+  echo "BUILD_AI_WORKERS_JS_KB=${workers_kb:-unknown}"
+
+  awk '/dist\/assets\/.*\.(js|css|png|webp)/{print}' "$BUILD_LOG" | sort -k2 -nr | head -20 | tee "$OUT_DIR/top20-build-assets.out" || true
+
+  awk 'BEGIN{bad=0} /dist\/assets\/index-.*\.js/{if($(NF-3)+0>220){bad=1}} END{if(bad){print "FAIL:main_js_bundle_budget"; exit 1}else print "PASS:main_js_bundle_budget"}' "$BUILD_LOG" || fail=1
+  awk 'BEGIN{bad=0} /dist\/assets\/index-.*\.css/{if($(NF-3)+0>180){bad=1}} END{if(bad){print "FAIL:css_bundle_budget"; exit 1}else print "PASS:css_bundle_budget"}' "$BUILD_LOG" || fail=1
+  awk 'BEGIN{bad=0} /dist\/assets\/command-center-.*\.js/{if($(NF-3)+0>30){bad=1}} END{if(bad){print "FAIL:command_center_chunk_budget"; exit 1}else print "PASS:command_center_chunk_budget"}' "$BUILD_LOG" || fail=1
+  awk 'BEGIN{bad=0} /dist\/assets\/crm-page-.*\.js/{if($(NF-3)+0>120){bad=1}} END{if(bad){print "FAIL:crm_chunk_budget"; exit 1}else print "PASS:crm_chunk_budget"}' "$BUILD_LOG" || fail=1
+  awk 'BEGIN{bad=0} /dist\/assets\/ai-workers-page-.*\.js/{if($(NF-3)+0>65){bad=1}} END{if(bad){print "FAIL:ai_workers_chunk_budget"; exit 1}else print "PASS:ai_workers_chunk_budget"}' "$BUILD_LOG" || fail=1
+fi
+
+exit "$fail"

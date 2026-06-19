@@ -1586,3 +1586,7 @@ Coverage: CRM lazy import, AI Workers lazy import, Suspense fallback, manual chu
 ## BLACK_SCREEN_REACT_IMPORT_V57
 Diagnostic: ops/bin/as6-diagnose-black-screen-react-import-v57
 Coverage: lazy import guard, Suspense import guard, route lazy-loading runtime guard, build validation, production health validation
+
+## FRONTEND_BUDGETS_V58
+Diagnostic: ops/bin/as6-diagnose-frontend-budgets-v58
+Coverage: main JS budget, CSS budget, route chunk budgets, image asset guard, source file budgets, duplicate logo guard, lazy route guard, build validation, production health validation

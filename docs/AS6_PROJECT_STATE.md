@@ -2275,3 +2275,8 @@ Diagnostic: ops/bin/as6-diagnose-crm-route-chunk-v56
 Status: APPLIED
 Root cause: React lazy and Suspense were used in App.jsx without importing React APIs.
 Diagnostic: ops/bin/as6-diagnose-black-screen-react-import-v57
+
+## AS6 Frontend Budgets V58
+Status: APPLIED
+Root cause: frontend JS/CSS/route/image budgets were not autonomously governed after route chunk optimization.
+Diagnostic: ops/bin/as6-diagnose-frontend-budgets-v58

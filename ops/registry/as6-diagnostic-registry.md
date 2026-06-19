@@ -1506,3 +1506,8 @@ File: ops/bin/as6-diagnose-crm-route-chunk-v56
 Status: ENABLED
 Scope: React lazy/Suspense import drift and black screen prevention
 File: ops/bin/as6-diagnose-black-screen-react-import-v57
+
+## as6-diagnose-frontend-budgets-v58
+Status: ENABLED
+Scope: Autonomous frontend JS/CSS/route/image/source budgets and regression prevention
+File: ops/bin/as6-diagnose-frontend-budgets-v58
