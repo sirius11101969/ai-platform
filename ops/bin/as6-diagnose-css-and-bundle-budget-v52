@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+CSS="frontend/src/theme/as6Theme.css"
+PAGE="frontend/src/pages/CommandCenterPage.jsx"
+VITE="frontend/vite.config.js"
+BUILD_LOG="${1:-runtime/as6-css-bundle-v52/build.out}"
+fail=0
+check(){ n="$1"; shift; if "$@"; then echo "PASS:$n"; else echo "FAIL:$n"; fail=1; fi; }
+check css_exists test -f "$CSS"
+check page_exists test -f "$PAGE"
+check vite_exists test -f "$VITE"
+check copilot_terminal_style grep -q "AS6 Copilot clean terminal style V42" "$CSS"
+check quick_action_robot_icon_css grep -q "quick-action-robot-icon" "$CSS"
+check executive_module_robot_icon_css grep -q "executive-module-robot-icon" "$CSS"
+check manual_chunks_present grep -q "manualChunks" "$VITE"
+css_bytes="$(wc -c < "$CSS")"
+page_bytes="$(wc -c < "$PAGE")"
+echo "SOURCE_CSS_BYTES=$css_bytes"
+echo "COMMAND_CENTER_PAGE_BYTES=$page_bytes"
+if test "$css_bytes" -lt 180000; then echo "PASS:source_css_budget"; else echo "FAIL:source_css_budget"; fail=1; fi
+if test -f "$BUILD_LOG"; then
+  css_kb="$(grep -E "dist/assets/index-.*\.css" "$BUILD_LOG" | tail -1 | awk "{print \$(NF-3)}" || true)"
+  main_kb="$(grep -E "dist/assets/index-.*\.js" "$BUILD_LOG" | tail -1 | awk "{print \$(NF-3)}" || true)"
+  command_kb="$(grep -E "dist/assets/command-center-.*\.js" "$BUILD_LOG" | tail -1 | awk "{print \$(NF-3)}" || true)"
+  echo "BUILD_CSS_KB=${css_kb:-unknown}"
+  echo "BUILD_MAIN_JS_KB=${main_kb:-unknown}"
+  echo "BUILD_COMMAND_CENTER_JS_KB=${command_kb:-unknown}"
+  if grep -q "dist/assets/command-center-" "$BUILD_LOG"; then echo "PASS:command_center_chunk_present"; else echo "FAIL:command_center_chunk_present"; fail=1; fi
+  if grep -q "css-syntax-error\|Expected identifier but found\|Unexpected \"}\"" "$BUILD_LOG"; then echo "FAIL:frontend_build_clean"; fail=1; else echo "PASS:frontend_build_clean"; fi
+fi
+exit "$fail"

@@ -83,3 +83,8 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_OVERSIZED_BRANDING_LOGO_ASSET
 Diagnostic: ops/bin/as6-diagnose-logo-optimization-v51
 Status: REGISTERED
+
+## 2026-06-19 CSS_AND_BUNDLE_BUDGET_V52
+Failure Class: AS6_FAILURE_CLASS_CSS_BUDGET_REGRESSION
+Diagnostic: ops/bin/as6-diagnose-css-and-bundle-budget-v52
+Status: REGISTERED

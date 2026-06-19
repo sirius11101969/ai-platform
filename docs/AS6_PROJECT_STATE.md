@@ -2243,3 +2243,8 @@ Diagnostic: ops/bin/as6-diagnose-executive-module-icon-v50
 Status: APPLIED
 Root cause: oversized branding logo asset remained largest frontend visual asset.
 Diagnostic: ops/bin/as6-diagnose-logo-optimization-v51
+
+## AS6 CSS And Bundle Budget V52
+Status: APPLIED
+Root cause: CSS and global frontend bundle budgets were not governed by diagnostics.
+Diagnostic: ops/bin/as6-diagnose-css-and-bundle-budget-v52

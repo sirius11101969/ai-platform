@@ -1476,3 +1476,8 @@ File: ops/bin/as6-diagnose-executive-module-icon-v50
 Status: ENABLED
 Scope: Logo WebP optimization and branding asset budget diagnostics
 File: ops/bin/as6-diagnose-logo-optimization-v51
+
+## as6-diagnose-css-and-bundle-budget-v52
+Status: ENABLED
+Scope: CSS source budget, frontend bundle budget, and Command Center chunk diagnostics
+File: ops/bin/as6-diagnose-css-and-bundle-budget-v52

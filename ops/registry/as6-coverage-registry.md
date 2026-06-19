@@ -1562,3 +1562,7 @@ Coverage: executive module robot img rendering, asset URL text prevention, build
 ## LOGO_OPTIMIZATION_V51
 Diagnostic: ops/bin/as6-diagnose-logo-optimization-v51
 Coverage: WebP logo generation, PNG fallback preservation, WebP import guard, asset budget, build validation, production health validation
+
+## CSS_AND_BUNDLE_BUDGET_V52
+Diagnostic: ops/bin/as6-diagnose-css-and-bundle-budget-v52
+Coverage: CSS source budget, build CSS/JS output visibility, Command Center chunk presence, style-contract preservation, build validation, production health validation

@@ -74,7 +74,6 @@ const recommendations = [
   { title: 'Риск', text: '2 сделки могут быть потеряны без действия. Потенциал: -$4,500', action: 'Посмотреть сделки', href: '/ai-executive-brain', tone: 'risk', icon: '💎' },
 ]
 
-
 const executiveModules = [
   { title: 'Revenue Intelligence', text: 'Выручка, воронка, прогноз и возможности роста', href: '/ai-revenue-intelligence', icon: '📈', tone: 'cyan' },
   { title: 'AI Workforce', text: 'AI сотрудники, загрузка, эффективность и задачи', href: '/ai-workforce-center', icon: <img src={as6Robot} alt="AI Workforce" className="executive-module-robot-icon" />, tone: 'violet' },
@@ -251,9 +250,6 @@ export default function CommandCenterPage() {
     return items
   }, [monthly, actionQueue, inboxItems, healthSummary, businessSummary])
 
-
-
-
   return (
     <main className="command-center-page" data-command-center-visual="premium-as6" data-as6-diagnostic-page="command-center-premium">
 <img className="as6-command-center-logo-image" src={as6Logo} alt="AS6" />
@@ -276,8 +272,6 @@ export default function CommandCenterPage() {
           <i>{item.icon}</i>
         </article>)}
       </section>
-
-
 
       <section className="quick-actions quick-actions-primary" data-quick-actions data-as6-primary-actions="above-fold"><h2>Быстрые действия</h2><div>{quickActions.map((action, index) => <a href={quickActionLinks[action] || "#"} role="button" key={action} aria-label={action}><span>{["👥", "$", "🧾", "🛡️", "〽️", "📊", <img src={as6Robot} alt="AI" className="quick-action-robot-icon" />][index]}</span>{action}</a>)}</div></section>
 
@@ -343,8 +337,6 @@ export default function CommandCenterPage() {
           <article className="command-card next-action-card"><h2>Следующее лучшее действие</h2>{nextActions.map((action) => <div className="next-action" key={action.label}><b>{action.icon}</b><span>{action.label}<small>{action.note}</small></span><strong>{action.value}</strong></div>)}<div className="expected-effect"><span>Ожидаемый эффект</span><strong>+$8,900</strong></div></article>
         </aside>
       </section>
-
-
 
       <section className="command-recommendations" data-ai-recommendations>
         <h2>AI рекомендации</h2><div>{recommendations.map((card) => <a className={`recommendation ${card.tone}`} href={card.href} key={card.title} aria-label={card.action}><b>{card.icon}</b><strong>{card.title}</strong><p>{card.text}</p><span className="recommendation-action">{card.action} →</span></a>)}</div>
