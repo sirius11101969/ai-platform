@@ -1483,3 +1483,7 @@
 ## COMMAND_CENTER_NO_EMOJI_AVATARS_V28
 Diagnostic: ops/bin/as6-diagnose-command-center-no-emoji-avatars-v28
 Coverage: no emoji avatar literals, real robot PNG avatar enforcement
+
+## COMMAND_CENTER_JSX_OBJECT_INTEGRITY_V31
+Diagnostic: ops/bin/as6-diagnose-command-center-jsx-object-integrity-v31
+Coverage: JSX object literal integrity, KPI icon schema, robot asset import/use consistency, Vite build validation, production health validation

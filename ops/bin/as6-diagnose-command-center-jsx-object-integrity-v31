@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -u
+PAGE="frontend/src/pages/CommandCenterPage.jsx"
+fail=0
+check(){ n="$1"; shift; if "$@"; then echo "PASS:$n"; else echo "FAIL:$n"; fail=1; fi; }
+check page_exists test -f "$PAGE"
+check robot_asset_exists test -f frontend/src/assets/as6-robot.png
+check robot_imported grep -q "import as6Robot from" "$PAGE"
+if grep -q "as6RobotAsset" "$PAGE"; then echo "FAIL:no_asset_variable_drift"; fail=1; else echo "PASS:no_asset_variable_drift"; fi
+if grep -nE "icon: <img[^,]*$|as6-ai-kpi-robot-image.*as6RobotAsset" "$PAGE"; then echo "FAIL:kpi_jsx_object_integrity"; fail=1; else echo "PASS:kpi_jsx_object_integrity"; fi
+check ai_kpi_robot_class grep -q "as6-ai-kpi-robot-image" "$PAGE"
+exit "$fail"

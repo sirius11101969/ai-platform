@@ -1378,3 +1378,8 @@
 Status: ENABLED
 Scope: AI Command Center emoji avatar regression prevention
 File: ops/bin/as6-diagnose-command-center-no-emoji-avatars-v28
+
+## as6-diagnose-command-center-jsx-object-integrity-v31
+Status: ENABLED
+Scope: CommandCenterPage JSX object integrity and asset variable drift diagnostics
+File: ops/bin/as6-diagnose-command-center-jsx-object-integrity-v31

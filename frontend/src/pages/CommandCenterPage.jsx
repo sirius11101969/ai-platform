@@ -36,8 +36,7 @@ const kpiBlueprint = [
   { key: 'revenueToday', label: 'Выручка сегодня', value: demoMetrics.revenueToday, delta: '+18.6%', tone: 'revenue', icon: '↗', spark: [18, 25, 20, 28, 24, 31, 42] },
   { key: 'leads', label: 'Новые лиды', value: demoMetrics.leads, delta: '+32%', tone: 'leads', icon: '👥', spark: [16, 22, 34, 31, 42, 50, 58] },
   { key: 'deals', label: 'Сделки в работе', value: demoMetrics.deals, delta: '+14%', tone: 'deals', icon: '💼', spark: [45, 36, 40, 32, 48, 52, 59] },
-  { key: 'aiEmployees', label: 'AI сотрудники', value: demoMetrics.aiEmployees, delta: 'Активны', tone: 'ai', icon: <img src={as6Robot} alt="AS6 AI Workforce" className="ai-workforce-avatar-image" />
-<img className="as6-ai-kpi-robot-image" src={as6RobotAsset} alt="AI Workforce" />, spark: [52, 50, 54, 53, 55, 56, 58] },
+  { key: "aiEmployees", label: "AI сотрудники", value: demoMetrics.aiEmployees, delta: "Активны", tone: "ai", icon: <img src={as6Robot} alt="AS6 AI Workforce" className="as6-ai-kpi-robot-image" />, spark: [52, 50, 54, 53, 55, 56, 58] },
   { key: 'conversion', label: 'Конверсия', value: demoMetrics.conversion, delta: '+8.3%', tone: 'conversion', icon: '◎', spark: [21, 26, 24, 31, 35, 39, 46] },
 ]
 
@@ -79,7 +78,7 @@ const recommendations = [
 
 const executiveModules = [
   { title: 'Revenue Intelligence', text: 'Выручка, воронка, прогноз и возможности роста', href: '/ai-revenue-intelligence', icon: '📈', tone: 'cyan' },
-  { title: 'AI Workforce', text: 'AI сотрудники, загрузка, эффективность и задачи', href: '/ai-workforce-center', icon: as6RobotAsset, tone: 'violet' },
+  { title: 'AI Workforce', text: 'AI сотрудники, загрузка, эффективность и задачи', href: '/ai-workforce-center', icon: as6Robot, tone: 'violet' },
   { title: 'Strategic Planning', text: 'Цели, планы, недельные и месячные приоритеты', href: '/ai-strategic-planning', icon: '🧭', tone: 'green' },
   { title: 'Execution Center', text: 'Исполнение, операции, действия и контроль результата', href: '/ai-execution-center', icon: '⚡', tone: 'orange' },
   { title: 'Approval Center', text: 'Очередь решений, approvals и human-in-the-loop контроль', href: '/ai-approval-center', icon: '🛡️', tone: 'pink' },
@@ -281,7 +280,7 @@ export default function CommandCenterPage() {
 
 
 
-      <section className="quick-actions quick-actions-primary" data-quick-actions data-as6-primary-actions="above-fold"><h2>Быстрые действия</h2><div>{quickActions.map((action, index) => <a href={quickActionLinks[action] || "#"} role="button" key={action} aria-label={action}><span>{["👥", "$", "🧾", "🛡️", "〽️", "📊", as6RobotAsset][index]}</span>{action}</a>)}</div></section>
+      <section className="quick-actions quick-actions-primary" data-quick-actions data-as6-primary-actions="above-fold"><h2>Быстрые действия</h2><div>{quickActions.map((action, index) => <a href={quickActionLinks[action] || "#"} role="button" key={action} aria-label={action}><span>{["👥", "$", "🧾", "🛡️", "〽️", "📊", as6Robot][index]}</span>{action}</a>)}</div></section>
 
       <section className="command-main-grid">
         <div className="command-core">

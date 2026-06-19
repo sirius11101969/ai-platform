@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+PAGE="frontend/src/pages/CommandCenterPage.jsx"
+CSS="frontend/src/theme/as6Theme.css"
+fail=0
+check(){ n="$1"; shift; if "$@"; then echo "PASS:$n"; else echo "FAIL:$n"; fail=1; fi; }
+check logo_asset_exists test -f frontend/src/assets/as6-logo.png
+check copilot_asset_exists test -f frontend/src/assets/as6-copilot-asset.png
+check robot_asset_exists test -f frontend/src/assets/as6-robot.png
+check logo_imported grep -q "as6-logo.png" "$PAGE"
+check copilot_imported grep -q "as6-copilot-asset.png" "$PAGE"
+check robot_imported grep -q "as6-robot.png" "$PAGE"
+check logo_rendered grep -q "as6-command-center-logo-image" "$PAGE"
+check copilot_rendered grep -q "as6-copilot-real-image" "$PAGE"
+check robot_kpi_rendered grep -q "as6-ai-kpi-robot-image" "$PAGE"
+check workforce_avatar_image grep -q "ai-workforce-avatar-image" "$PAGE"
+check css_v27 grep -q "visual parity real asset enforcement V27" "$CSS"
+if grep -Eq "🤖|🧠|⚙️|🚀" "$PAGE"; then echo "FAIL:no_emoji_avatars"; fail=1; else echo "PASS:no_emoji_avatars"; fi
+exit "$fail"

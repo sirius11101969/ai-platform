@@ -2139,3 +2139,10 @@ AS6_PREVENTION_AI_WORKFORCE_EMOJI_AVATAR_REGRESSION=ENABLED
 Status: PATCHED
 Root cause: remaining emoji avatar literals in CommandCenterPage.jsx.
 Diagnostic: ops/bin/as6-diagnose-command-center-no-emoji-avatars-v28
+
+## AS6 Command Center JSX Object Integrity V31
+Status: APPLIED
+Root cause: autopatch inserted a second JSX image inside aiEmployees KPI object and introduced asset variable drift.
+Fix: aiEmployees KPI icon normalized to one valid JSX img using as6Robot.
+Diagnostic: ops/bin/as6-diagnose-command-center-jsx-object-integrity-v31
+Validation: legacy Docker build fallback, compose up, production health.

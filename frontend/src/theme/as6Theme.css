@@ -722,3 +722,10 @@
   display:block!important;
   filter:drop-shadow(0 0 14px rgba(80,220,255,.35))!important;
 }
+
+/* AS6 Command Center visual parity real asset enforcement V27 */
+.as6-command-center-logo-image{display:block!important;width:96px!important;height:auto!important;object-fit:contain!important;}
+.as6-copilot-real-image{display:block!important;width:min(100%,360px)!important;max-height:260px!important;object-fit:contain!important;margin:0 auto!important;}
+.as6-ai-kpi-robot-image,.ai-workforce-avatar-image,img[src*="as6-robot.png"]{display:block!important;width:54px!important;height:54px!important;object-fit:contain!important;border-radius:18px!important;}
+.command-center-ai-workforce-avatar,.ai-workforce-avatar,[class*="workforce"][class*="avatar"]{font-size:0!important;overflow:hidden!important;}
+.command-center-ai-workforce-avatar::before,.command-center-ai-workforce-avatar::after,.ai-workforce-avatar::before,.ai-workforce-avatar::after,[class*="workforce"][class*="avatar"]::before,[class*="workforce"][class*="avatar"]::after{content:none!important;}
