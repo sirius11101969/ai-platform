@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -e
+grep -q 'src={as6Robot}' frontend/src/pages/CommandCenterPage.jsx
+grep -q 'as6-ai-kpi-robot-image' frontend/src/pages/CommandCenterPage.jsx
+echo PASS

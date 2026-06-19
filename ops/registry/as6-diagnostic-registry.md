@@ -1383,3 +1383,11 @@ File: ops/bin/as6-diagnose-command-center-no-emoji-avatars-v28
 Status: ENABLED
 Scope: CommandCenterPage JSX object integrity and asset variable drift diagnostics
 File: ops/bin/as6-diagnose-command-center-jsx-object-integrity-v31
+
+## as6-diagnose-ai-kpi-robot-asset-v32
+Status: ENABLED
+
+## as6-diagnose-post-deploy-health-readiness-v33
+Status: ENABLED
+Scope: Post-deploy nginx/backend health readiness validation
+File: ops/bin/as6-diagnose-post-deploy-health-readiness-v33

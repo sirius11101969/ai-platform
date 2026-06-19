@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+fail=0
+check(){ n="$1"; shift; if "$@"; then echo "PASS:$n"; else echo "FAIL:$n"; fail=1; fi; }
+check backend_container_running docker inspect ai-platform-backend-1 --format "{{.State.Running}}"
+check nginx_container_running docker inspect ai-platform-nginx-1 --format "{{.State.Running}}"
+ok=0
+i=1
+while test "$i" -le 30; do
+  if curl -kfsS https://www.as6.ru/api/health >/tmp/as6-health-v33.out 2>/tmp/as6-health-v33.err; then ok=1; break; fi
+  sleep 2
+  i=$((i+1))
+done
+if test "$ok" = "1"; then echo "PASS:https_health_ready"; cat /tmp/as6-health-v33.out; else echo "FAIL:https_health_ready"; cat /tmp/as6-health-v33.err || true; fail=1; fi
+if docker logs --since=2m ai-platform-nginx-1 2>&1 | grep -q "connect() failed (111: Connection refused)"; then echo "WARN:recent_nginx_upstream_refused_seen"; else echo "PASS:no_recent_nginx_upstream_refused"; fi
+exit "$fail"

@@ -1487,3 +1487,10 @@ Coverage: no emoji avatar literals, real robot PNG avatar enforcement
 ## COMMAND_CENTER_JSX_OBJECT_INTEGRITY_V31
 Diagnostic: ops/bin/as6-diagnose-command-center-jsx-object-integrity-v31
 Coverage: JSX object literal integrity, KPI icon schema, robot asset import/use consistency, Vite build validation, production health validation
+
+## AI_KPI_ROBOT_ASSET_V32
+Coverage: AI KPI robot image parity
+
+## POST_DEPLOY_HEALTH_READINESS_V33
+Diagnostic: ops/bin/as6-diagnose-post-deploy-health-readiness-v33
+Coverage: backend running, nginx running, HTTPS health retry readiness, nginx upstream startup race detection

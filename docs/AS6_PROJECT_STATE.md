@@ -2146,3 +2146,11 @@ Root cause: autopatch inserted a second JSX image inside aiEmployees KPI object 
 Fix: aiEmployees KPI icon normalized to one valid JSX img using as6Robot.
 Diagnostic: ops/bin/as6-diagnose-command-center-jsx-object-integrity-v31
 Validation: legacy Docker build fallback, compose up, production health.
+
+## AI KPI Robot Asset V32
+Use only frontend/src/assets/as6-robot.png
+
+## AS6 Post Deploy Health Readiness V33
+Status: APPLIED
+Root cause: nginx upstream startup race immediately after compose restart.
+Diagnostic: ops/bin/as6-diagnose-post-deploy-health-readiness-v33
