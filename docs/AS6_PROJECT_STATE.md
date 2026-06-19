@@ -2218,3 +2218,8 @@ COMMAND_CENTER_FINAL_V45=PASS
 Status: APPLIED
 Root cause: frontend visual asset size drift after Command Center visual work.
 Diagnostic: ops/bin/as6-diagnose-frontend-asset-budget-v46
+
+## AS6 Frontend Code Splitting V47
+Status: APPLIED
+Root cause: main frontend chunk still carries Command Center code without explicit route chunk registration.
+Diagnostic: ops/bin/as6-diagnose-frontend-code-splitting-v47

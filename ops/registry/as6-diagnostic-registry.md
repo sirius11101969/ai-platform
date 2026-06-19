@@ -1451,3 +1451,8 @@ File: ops/bin/as6-diagnose-command-center-final-v45
 Status: ENABLED
 Scope: Frontend visual asset budget and Command Center asset reference diagnostics
 File: ops/bin/as6-diagnose-frontend-asset-budget-v46
+
+## as6-diagnose-frontend-code-splitting-v47
+Status: ENABLED
+Scope: Frontend code splitting and Command Center chunk diagnostics
+File: ops/bin/as6-diagnose-frontend-code-splitting-v47

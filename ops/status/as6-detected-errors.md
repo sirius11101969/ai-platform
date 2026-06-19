@@ -58,3 +58,8 @@ Diagnostic: ops/bin/as6-diagnose-command-center-final-v45
 Failure Class: AS6_FAILURE_CLASS_FRONTEND_VISUAL_ASSET_SIZE_DRIFT
 Diagnostic: ops/bin/as6-diagnose-frontend-asset-budget-v46
 Status: REGISTERED
+
+## 2026-06-19 FRONTEND_CODE_SPLITTING_V47
+Failure Class: AS6_FAILURE_CLASS_COMMAND_CENTER_CHUNK_MISSING
+Diagnostic: ops/bin/as6-diagnose-frontend-code-splitting-v47
+Status: REGISTERED

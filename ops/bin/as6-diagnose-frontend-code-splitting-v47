@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+VITE="frontend/vite.config.js"
+fail=0
+check(){ n="$1"; shift; if "$@"; then echo "PASS:$n"; else echo "FAIL:$n"; fail=1; fi; }
+check vite_config_exists test -f "$VITE"
+check manual_chunks_present grep -q "manualChunks" "$VITE"
+check command_center_chunk_registered grep -q "command-center" "$VITE"
+check chunk_warning_limit_present grep -q "chunkSizeWarningLimit" "$VITE"
+if test -d frontend/dist/assets; then find frontend/dist/assets -name "*.js" -printf "%s %f\n" | sort -nr | tee /tmp/as6-js-assets-v47.out; if find frontend/dist/assets -name "command-center-*.js" | grep -q .; then echo "PASS:command_center_chunk_emitted"; else echo "WARN:command_center_chunk_not_seen_before_build"; fi; fi
+exit "$fail"

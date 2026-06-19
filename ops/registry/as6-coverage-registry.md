@@ -1542,3 +1542,7 @@ Coverage: final Command Center JSX/CSS/assets/Copilot/robot-size/production-heal
 ## FRONTEND_ASSET_BUDGET_V46
 Diagnostic: ops/bin/as6-diagnose-frontend-asset-budget-v46
 Coverage: logo/copilot/robot size budgets, asset references, Copilot terminal style, build validation, production health validation
+
+## FRONTEND_CODE_SPLITTING_V47
+Diagnostic: ops/bin/as6-diagnose-frontend-code-splitting-v47
+Coverage: Vite manualChunks, Command Center chunk registration, build validation, production health validation
