@@ -2213,3 +2213,8 @@ Status: PASS
 Command Center final diagnostics registered.
 Diagnostic: ops/bin/as6-diagnose-command-center-final-v45
 COMMAND_CENTER_FINAL_V45=PASS
+
+## AS6 Frontend Asset Optimization V46
+Status: APPLIED
+Root cause: frontend visual asset size drift after Command Center visual work.
+Diagnostic: ops/bin/as6-diagnose-frontend-asset-budget-v46

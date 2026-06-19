@@ -1446,3 +1446,8 @@ File: ops/bin/as6-diagnose-copilot-orphan-fragment-v44
 Status: ENABLED
 Scope: Final AI Command Center closure diagnostic
 File: ops/bin/as6-diagnose-command-center-final-v45
+
+## as6-diagnose-frontend-asset-budget-v46
+Status: ENABLED
+Scope: Frontend visual asset budget and Command Center asset reference diagnostics
+File: ops/bin/as6-diagnose-frontend-asset-budget-v46

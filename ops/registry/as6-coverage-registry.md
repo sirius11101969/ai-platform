@@ -1538,3 +1538,7 @@ Coverage: orphan Copilot CSS property fragment removal, V42 terminal style prese
 ## COMMAND_CENTER_FINAL_V45
 Diagnostic: ops/bin/as6-diagnose-command-center-final-v45
 Coverage: final Command Center JSX/CSS/assets/Copilot/robot-size/production-health closure
+
+## FRONTEND_ASSET_BUDGET_V46
+Diagnostic: ops/bin/as6-diagnose-frontend-asset-budget-v46
+Coverage: logo/copilot/robot size budgets, asset references, Copilot terminal style, build validation, production health validation

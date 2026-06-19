@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+LOGO="frontend/src/assets/as6-logo.png"
+COPILOT="frontend/src/assets/as6-copilot-asset.png"
+ROBOT="frontend/src/assets/as6-robot.png"
+PAGE="frontend/src/pages/CommandCenterPage.jsx"
+CSS="frontend/src/theme/as6Theme.css"
+fail=0
+
+check(){ n="$1"; shift; if "$@"; then echo "PASS:$n"; else echo "FAIL:$n"; fail=1; fi; }
+
+check logo_asset_exists test -f "$LOGO"
+check copilot_asset_exists test -f "$COPILOT"
+check robot_asset_exists test -f "$ROBOT"
+check page_references_logo grep -q "as6-logo.png" "$PAGE"
+check page_references_copilot grep -q "as6-copilot-asset.png" "$PAGE"
+check page_references_robot grep -q "as6-robot.png" "$PAGE"
+check copilot_v42_terminal_style grep -q "AS6 Copilot clean terminal style V42" "$CSS"
+logo_bytes="$(wc -c < "$LOGO")"
+copilot_bytes="$(wc -c < "$COPILOT")"
+robot_bytes="$(wc -c < "$ROBOT")"
+echo "LOGO_BYTES=$logo_bytes"
+echo "COPILOT_BYTES=$copilot_bytes"
+echo "ROBOT_BYTES=$robot_bytes"
+if test "$logo_bytes" -lt 500000; then echo "PASS:logo_asset_budget"; else echo "FAIL:logo_asset_budget"; fail=1; fi
+if test "$copilot_bytes" -lt 250000; then echo "PASS:copilot_asset_budget"; else echo "FAIL:copilot_asset_budget"; fail=1; fi
+if test "$robot_bytes" -lt 200000; then echo "PASS:robot_asset_budget"; else echo "FAIL:robot_asset_budget"; fail=1; fi
+exit "$fail"
