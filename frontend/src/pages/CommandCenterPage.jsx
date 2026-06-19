@@ -252,7 +252,6 @@ export default function CommandCenterPage() {
 
   return (
     <main className="command-center-page" data-command-center-visual="premium-as6" data-as6-diagnostic-page="command-center-premium">
-<img className="as6-command-center-logo-image" src={as6Logo} alt="AS6" />
       <section className="command-hero" data-as6-diagnostic-hero="executive-command-center">
         <div>
           <h1>Добро пожаловать, <span>Владимир!</span> 👋</h1>

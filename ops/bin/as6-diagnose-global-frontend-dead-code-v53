@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+PAGE="frontend/src/pages/CommandCenterPage.jsx"
+CSS="frontend/src/theme/as6Theme.css"
+fail=0
+check(){ n="$1"; shift; if "$@"; then echo "PASS:$n"; else echo "FAIL:$n"; fail=1; fi; }
+check page_exists test -f "$PAGE"
+check css_exists test -f "$CSS"
+check extra_top_logo_absent bash -c "! grep -q as6-command-center-logo-image frontend/src/pages/CommandCenterPage.jsx"
+check copilot_terminal_style grep -q "AS6 Copilot clean terminal style V42" "$CSS"
+check quick_action_robot_icon_css grep -q "quick-action-robot-icon" "$CSS"
+check executive_module_robot_icon_css grep -q "executive-module-robot-icon" "$CSS"
+check legacy_sidebar_copilot_removed bash -c "! grep -q as6-sidebar-copilot-card frontend/src/theme/as6Theme.css"
+find frontend/src -type f \( -name "*.jsx" -o -name "*.js" -o -name "*.css" \) -printf "%s %p\n" | sort -nr | head -20
+exit "$fail"

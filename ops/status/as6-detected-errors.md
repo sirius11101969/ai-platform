@@ -88,3 +88,8 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_CSS_BUDGET_REGRESSION
 Diagnostic: ops/bin/as6-diagnose-css-and-bundle-budget-v52
 Status: REGISTERED
+
+## 2026-06-19 GLOBAL_FRONTEND_DEAD_CODE_V53
+Failure Class: AS6_FAILURE_CLASS_DUPLICATE_BRANDING_LOGO_RENDERED
+Diagnostic: ops/bin/as6-diagnose-global-frontend-dead-code-v53
+Status: REGISTERED

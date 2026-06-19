@@ -1566,3 +1566,7 @@ Coverage: WebP logo generation, PNG fallback preservation, WebP import guard, as
 ## CSS_AND_BUNDLE_BUDGET_V52
 Diagnostic: ops/bin/as6-diagnose-css-and-bundle-budget-v52
 Coverage: CSS source budget, build CSS/JS output visibility, Command Center chunk presence, style-contract preservation, build validation, production health validation
+
+## GLOBAL_FRONTEND_DEAD_CODE_V53
+Diagnostic: ops/bin/as6-diagnose-global-frontend-dead-code-v53
+Coverage: duplicate top logo removal, legacy CSS cleanup, current style preservation, top-20 frontend file size report, build validation, production health validation

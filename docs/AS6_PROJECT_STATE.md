@@ -2248,3 +2248,8 @@ Diagnostic: ops/bin/as6-diagnose-logo-optimization-v51
 Status: APPLIED
 Root cause: CSS and global frontend bundle budgets were not governed by diagnostics.
 Diagnostic: ops/bin/as6-diagnose-css-and-bundle-budget-v52
+
+## AS6 Global Frontend Dead Code V53
+Status: APPLIED
+Root cause: legacy Command Center CSS and duplicate top logo render remained after visual iterations.
+Diagnostic: ops/bin/as6-diagnose-global-frontend-dead-code-v53

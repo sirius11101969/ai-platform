@@ -1481,3 +1481,8 @@ File: ops/bin/as6-diagnose-logo-optimization-v51
 Status: ENABLED
 Scope: CSS source budget, frontend bundle budget, and Command Center chunk diagnostics
 File: ops/bin/as6-diagnose-css-and-bundle-budget-v52
+
+## as6-diagnose-global-frontend-dead-code-v53
+Status: ENABLED
+Scope: Global frontend dead code, legacy CSS, duplicate logo and file size diagnostics
+File: ops/bin/as6-diagnose-global-frontend-dead-code-v53
