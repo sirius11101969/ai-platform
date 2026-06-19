@@ -98,12 +98,9 @@
 .pipeline-summary strong { color: #fff; font-size: 29px; line-height: 1; letter-spacing: -.055em; }
 .pipeline-summary em { color: #3ee981; font-style: normal; }
 .command-right-rail { display: grid; gap: 10px; }
-.copilot-hero { overflow: hidden; position: relative; text-align: center; background: radial-gradient(circle at 50% 20%, rgba(124,58,237,.44), transparent 50%), linear-gradient(180deg, rgba(10,16,40,.96), rgba(31, 9, 84, .78)); }
 .copilot-top { display: flex; align-items: center; justify-content: space-between; }
 .copilot-top span { color: #c084fc; font-weight: 950; text-shadow: 0 0 16px #9333ea; }
 .robot-icon { margin: 6px auto; width: 88px; height: 88px; display: grid; place-items: center; border-radius: 26px; background: linear-gradient(180deg, rgba(255,255,255,.22), rgba(96,165,250,.1)); font-size: 58px; filter: drop-shadow(0 0 24px rgba(96,165,250,.45)); }
-.copilot-hero p { max-width: 270px; margin: 0 auto 13px; font-size: 13px; line-height: 1.45; }
-.copilot-hero button { border: 0; border-radius: 13px; background: linear-gradient(135deg, #7c3aed, #a855f7); color: white; padding: 11px 15px; font-weight: 950; cursor: pointer; }
 .event-card, .next-action-card { font-size: 12px; }
 .event-row, .next-action { display: grid; grid-template-columns: 26px 1fr auto; align-items: center; gap: 8px; padding: 8px 0; border-top: 1px solid rgba(148,163,184,.09); }
 .event-row b, .next-action b { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 8px; background: rgba(14, 165, 233, .14); }
@@ -255,7 +252,6 @@
 .command-card { border-radius:18px; }
 .daily-goal, .pipeline-card, .employee-performance, .revenue-dynamics, .month-goals { min-height:0; }
 .command-right-rail { display:grid; gap:12px; align-content:start; position:sticky; top:12px; }
-.copilot-hero { min-height:185px; }
 .command-executive-stream { display:grid; grid-template-columns:1fr; gap:10px; }
 .stream-head { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px; }
 .stream-head h2 { font-size:16px; margin:0; }
@@ -298,18 +294,12 @@
 .pipeline-card .pipeline-board-slice { display:flex; }
 .pipeline-card .pipeline-board-slice { isolation:isolate; }
 .pipeline-card .pipeline-board-slice::after { content:attr(data-value); }
-.copilot-hero { min-height:0 !important; padding:16px !important; display:grid; grid-template-columns:82px minmax(0,1fr); gap:12px; align-items:center; }
-.copilot-hero .copilot-top { grid-column:1 / -1; margin-bottom:0; }
-.copilot-hero p { margin:0; font-size:12px; line-height:1.45; }
-.copilot-hero button { grid-column:1 / -1; min-height:40px; border-radius:12px; }
 .copilot-avatar-v2 { width:72px !important; height:72px !important; border-radius:22px !important; display:grid !important; place-items:center !important; background:radial-gradient(circle at 50% 30%,rgba(0,216,255,.9),rgba(139,44,255,.35) 55%,rgba(5,12,28,.95)); box-shadow:0 12px 38px rgba(139,44,255,.34); font-size:0 !important; }
 .copilot-avatar-v2 span { color:white; font-weight:950; font-size:15px; letter-spacing:.08em; }
 .copilot-avatar-v2 i { width:34px; height:8px; border-radius:999px; background:#071225; box-shadow:inset 0 0 0 2px rgba(255,255,255,.18),0 -14px 0 -2px rgba(255,255,255,.22); }
-@media (max-width:1280px){ .quick-actions-primary>div{grid-template-columns:repeat(3,minmax(0,1fr));} .copilot-hero{grid-template-columns:1fr;} }
 @media (max-width:760px){ .quick-actions-primary>div{grid-template-columns:1fr;} }
 
 /* AS6 Command Center Screenshot Match V7 */
-.command-right-rail .copilot-hero { display:none !important; }
 .as6-sidebar-copilot-card { margin:12px 10px 10px; padding:12px; border-radius:18px; border:1px solid rgba(139,44,255,.26); background:linear-gradient(180deg,rgba(20,24,54,.88),rgba(6,12,28,.96)); box-shadow:0 18px 60px rgba(139,44,255,.18); }
 .as6-sidebar-copilot-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
 .as6-sidebar-copilot-head strong { color:#fff; font-size:14px; }
@@ -341,7 +331,6 @@
 
 /* AS6 Command Center Pixel Perfect V8 */
 .command-executive-os, .command-executive-v3, .command-executive-workspace, .command-executive-stream { display:none !important; }
-.command-right-rail .copilot-hero { display:grid !important; }
 .as6-sidebar-copilot-card { display:none !important; }
 .quick-actions-primary { order:3; margin:0; }
 .quick-actions-primary > div { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:10px; }
@@ -356,7 +345,6 @@
 .pipeline-card .screenshot-funnel-slice.yellow { width:76% !important; background:linear-gradient(90deg,#9dd816,#ffe34a) !important; }
 .pipeline-card .screenshot-funnel-slice.orange { width:64% !important; background:linear-gradient(90deg,#ff9818,#ff6a24) !important; }
 .pipeline-card .screenshot-funnel-slice.pink { width:52% !important; background:linear-gradient(90deg,#ff3f60,#ec2aa0) !important; }
-.copilot-hero { min-height:190px !important; }
 .copilot-avatar-v2 { width:104px !important; height:104px !important; }
 @media (max-width:1280px){ .quick-actions-primary>div{grid-template-columns:repeat(3,minmax(0,1fr));} }
 @media (max-width:760px){ .quick-actions-primary>div{grid-template-columns:1fr;} }
@@ -364,16 +352,6 @@
 /* AS6 Command Center Executive V10 */
 .as6-sidebar-brand strong { display:block; font-size:46px !important; line-height:.82 !important; font-weight:1000 !important; letter-spacing:-.075em !important; color:#8d35ff !important; text-shadow:0 0 24px rgba(139,44,255,.65),0 0 2px rgba(255,255,255,.8); }
 .as6-sidebar-brand span { display:block; margin-top:6px; font-size:12px !important; line-height:1 !important; font-weight:1000 !important; letter-spacing:.025em !important; color:#fff !important; text-shadow:0 0 10px rgba(255,255,255,.25); }
-.copilot-hero { min-height:192px !important; padding:16px !important; overflow:hidden; background:radial-gradient(circle at 25% 40%,rgba(0,216,255,.18),transparent 34%),linear-gradient(135deg,rgba(18,24,55,.96),rgba(96,24,174,.38)) !important; }
-.copilot-hero .copilot-top { margin-bottom:2px !important; }
-.robot-icon.copilot-avatar-v2 { width:108px !important; height:108px !important; margin:2px auto 8px !important; position:relative; background:radial-gradient(circle at 50% 32%,#f7fbff 0 13%,#6fe8ff 14% 17%,#121b37 18% 46%,#dfe8ff 47% 66%,#6b7aa6 67% 100%) !important; border-radius:34px 34px 42px 42px !important; box-shadow:0 0 0 1px rgba(255,255,255,.18),0 0 28px rgba(0,216,255,.34),0 18px 42px rgba(139,44,255,.36) !important; }
-.robot-icon.copilot-avatar-v2::before { content:""; position:absolute; left:50%; top:-16px; width:8px; height:18px; border-radius:999px; transform:translateX(-50%); background:linear-gradient(#e9fbff,#6fdcff); box-shadow:0 0 14px rgba(0,216,255,.8); }
-.robot-icon.copilot-avatar-v2::after { content:""; position:absolute; left:50%; top:26px; width:62px; height:38px; transform:translateX(-50%); border-radius:18px; background:#071427; box-shadow:inset 0 0 0 2px rgba(255,255,255,.16),0 0 18px rgba(0,216,255,.35); }
-.robot-icon.copilot-avatar-v2 span { position:absolute; z-index:2; left:50%; top:38px; transform:translateX(-50%); width:44px; height:12px; overflow:hidden; text-indent:-999px; }
-.robot-icon.copilot-avatar-v2 span::before, .robot-icon.copilot-avatar-v2 span::after { content:""; position:absolute; top:0; width:11px; height:11px; border-radius:999px; background:#5ee7ff; box-shadow:0 0 12px rgba(94,231,255,.95); text-indent:0; }
-.robot-icon.copilot-avatar-v2 span::before { left:5px; }
-.robot-icon.copilot-avatar-v2 span::after { right:5px; }
-.robot-icon.copilot-avatar-v2 i { position:absolute; z-index:3; left:50%; bottom:25px; width:38px; height:10px; transform:translateX(-50%); border-radius:999px; background:#071427; box-shadow:inset 0 0 0 2px rgba(255,255,255,.16); }
 .pipeline-card .pipeline-funnel { gap:8px !important; justify-items:center !important; }
 .pipeline-card .funnel-row { grid-template-columns:118px minmax(0,1fr) !important; }
 .pipeline-card .screenshot-funnel-slice { height:34px !important; min-height:34px !important; border-radius:6px !important; clip-path:polygon(0 0,100% 0,93% 100%,7% 100%) !important; justify-content:flex-end !important; padding-right:18px !important; box-shadow:0 12px 24px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.22) !important; }
@@ -410,10 +388,6 @@
 .pipeline-card .funnel-row:nth-child(3) .screenshot-funnel-slice { width:76% !important; }
 .pipeline-card .funnel-row:nth-child(4) .screenshot-funnel-slice { width:64% !important; }
 .pipeline-card .funnel-row:nth-child(5) .screenshot-funnel-slice { width:52% !important; }
-.copilot-hero { min-height:204px !important; background:radial-gradient(circle at 23% 42%,rgba(0,216,255,.24),transparent 34%),linear-gradient(135deg,rgba(12,23,52,.98),rgba(95,26,180,.43)) !important; }
-.robot-icon.copilot-avatar-v2 { width:116px !important; height:116px !important; margin:0 auto 8px !important; border-radius:36px 36px 44px 44px !important; box-shadow:0 0 0 1px rgba(255,255,255,.2),0 0 34px rgba(0,216,255,.42),0 20px 48px rgba(139,44,255,.44) !important; }
-.copilot-hero p { font-size:13px !important; line-height:1.45 !important; }
-.copilot-hero button { min-height:42px !important; border-radius:13px !important; font-weight:900 !important; }
 .recommendation { min-height:122px !important; border-radius:18px !important; box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 18px 42px rgba(0,0,0,.22) !important; }
 .recommendation button { border-radius:13px !important; min-height:34px !important; font-weight:900 !important; }
 
@@ -429,14 +403,6 @@
 .pipeline-card .funnel-row:nth-child(3) .screenshot-funnel-slice { width:72% !important; }
 .pipeline-card .funnel-row:nth-child(4) .screenshot-funnel-slice { width:58% !important; }
 .pipeline-card .funnel-row:nth-child(5) .screenshot-funnel-slice { width:44% !important; }
-.copilot-hero { min-height:232px !important; padding:18px !important; background:radial-gradient(circle at 50% 40%,rgba(0,216,255,.24),transparent 33%),radial-gradient(circle at 18% 20%,rgba(255,255,255,.08),transparent 22%),linear-gradient(145deg,rgba(11,22,50,.98),rgba(94,28,178,.50)) !important; }
-.robot-icon.copilot-avatar-v2 { width:134px !important; height:134px !important; margin:4px auto 10px !important; border-radius:42px 42px 50px 50px !important; transform:translateZ(0) !important; box-shadow:0 0 0 1px rgba(255,255,255,.22),0 0 44px rgba(0,216,255,.48),0 25px 64px rgba(139,44,255,.48) !important; }
-.robot-icon.copilot-avatar-v2::before { top:-19px !important; height:22px !important; width:9px !important; }
-.robot-icon.copilot-avatar-v2::after { top:31px !important; width:72px !important; height:44px !important; border-radius:20px !important; }
-.robot-icon.copilot-avatar-v2 span { top:45px !important; width:52px !important; }
-.robot-icon.copilot-avatar-v2 i { bottom:29px !important; width:46px !important; height:11px !important; }
-.copilot-hero p { max-width:260px !important; margin:0 auto 12px !important; text-align:center !important; color:#d8e8ff !important; }
-.copilot-hero button { min-height:44px !important; border-radius:14px !important; background:linear-gradient(135deg,#7c3cff,#00d8ff) !important; box-shadow:0 16px 38px rgba(0,216,255,.18) !important; }
 .command-recommendations { margin-top:4px !important; }
 .command-recommendations h2 { color:#fff !important; font-size:21px !important; letter-spacing:-.02em !important; }
 .recommendation { position:relative !important; overflow:hidden !important; min-height:138px !important; border-radius:20px !important; border:1px solid rgba(255,255,255,.12) !important; background:linear-gradient(180deg,rgba(15,29,62,.92),rgba(8,16,35,.95)) !important; }
@@ -453,14 +419,6 @@
 .pipeline-card .funnel-row:nth-child(3) .screenshot-funnel-slice { width:72% !important; }
 .pipeline-card .funnel-row:nth-child(4) .screenshot-funnel-slice { width:58% !important; }
 .pipeline-card .funnel-row:nth-child(5) .screenshot-funnel-slice { width:44% !important; }
-.robot-icon.copilot-avatar-v2 { background:radial-gradient(circle at 50% 18%,#eff8ff 0 3px,transparent 4px),radial-gradient(circle at 50% 42%,#071426 0 38%,transparent 39%),linear-gradient(180deg,#f4f8ff 0%,#b8c8f4 48%,#52618c 100%) !important; border-radius:42px 42px 48px 48px !important; }
-.robot-icon.copilot-avatar-v2::before { content:""; position:absolute; left:50%; top:-20px; width:8px; height:24px; transform:translateX(-50%); border-radius:999px; background:linear-gradient(#ffffff,#74e5ff); box-shadow:0 0 18px rgba(0,216,255,.9) !important; }
-.robot-icon.copilot-avatar-v2::after { content:""; position:absolute; left:50%; top:34px; width:76px; height:48px; transform:translateX(-50%); border-radius:22px; background:#071426; box-shadow:inset 0 0 0 2px rgba(255,255,255,.18),0 0 22px rgba(0,216,255,.45) !important; }
-.robot-icon.copilot-avatar-v2 span { position:absolute !important; left:50% !important; top:50px !important; z-index:4 !important; transform:translateX(-50%) !important; width:48px !important; height:14px !important; text-indent:-999px !important; overflow:hidden !important; }
-.robot-icon.copilot-avatar-v2 span::before, .robot-icon.copilot-avatar-v2 span::after { content:""; position:absolute; top:1px; width:11px; height:11px; border-radius:999px; background:#5ee7ff; box-shadow:0 0 14px rgba(94,231,255,.95); }
-.robot-icon.copilot-avatar-v2 span::before { left:7px; }
-.robot-icon.copilot-avatar-v2 span::after { right:7px; }
-.robot-icon.copilot-avatar-v2 i { position:absolute !important; left:50% !important; bottom:30px !important; z-index:4 !important; width:46px !important; height:10px !important; transform:translateX(-50%) !important; border-radius:999px !important; background:#071426 !important; box-shadow:inset 0 0 0 2px rgba(255,255,255,.16) !important; }
 .command-kpi.ai i { position:relative !important; width:42px !important; height:42px !important; border-radius:14px !important; font-size:0 !important; background:linear-gradient(180deg,#eaf6ff,#7185c8) !important; box-shadow:0 0 22px rgba(0,216,255,.32) !important; }
 .command-kpi.ai i::before { content:""; position:absolute; left:50%; top:11px; width:27px; height:17px; transform:translateX(-50%); border-radius:9px; background:#061327; box-shadow:inset 0 0 0 1px rgba(255,255,255,.16); }
 .command-kpi.ai i::after { content:""; position:absolute; left:50%; top:17px; width:17px; height:5px; transform:translateX(-50%); border-radius:999px; background:linear-gradient(90deg,#5ee7ff 0 28%,transparent 29% 70%,#5ee7ff 71% 100%); filter:drop-shadow(0 0 6px rgba(94,231,255,.95)); }
@@ -473,11 +431,9 @@
 .command-top-actions a:hover { border-color:rgba(0,216,255,.35); box-shadow:0 0 26px rgba(0,216,255,.16); transform:translateY(-1px); }
 .command-top-actions a[data-badge]::after { content:attr(data-badge); position:absolute; top:-6px; right:-5px; min-width:16px; height:16px; border-radius:999px; background:#ff3868; color:#fff; font-size:10px; font-weight:950; display:grid; place-items:center; }
 .command-top-actions a.command-avatar { background:linear-gradient(135deg,#7c3cff,#8b35ff); font-weight:950; }
-.copilot-action-link { min-height:44px; border-radius:14px; display:flex; align-items:center; justify-content:center; text-decoration:none; color:#fff; font-weight:950; background:linear-gradient(135deg,#7c3cff,#00d8ff); box-shadow:0 16px 38px rgba(0,216,255,.18); }
 .command-profile-card, .command-help-card { text-decoration:none; color:inherit; }
 .command-profile-card:hover, .command-help-card:hover { border-color:rgba(0,216,255,.28); transform:translateY(-1px); }
 .pipeline-card .screenshot-funnel-slice { clip-path:polygon(0 0,100% 0,94% 100%,6% 100%) !important; }
-.robot-icon.copilot-avatar-v2 { background:radial-gradient(circle at 50% 18%,#eff8ff 0 3px,transparent 4px),radial-gradient(circle at 50% 42%,#071426 0 38%,transparent 39%),linear-gradient(180deg,#f4f8ff 0%,#b8c8f4 48%,#52618c 100%) !important; }
 .command-kpi.ai i { font-size:0 !important; width:42px !important; height:42px !important; border-radius:14px !important; background:linear-gradient(180deg,#eaf6ff,#7185c8) !important; position:relative !important; }
 .command-kpi.ai i::before { content:""; position:absolute; left:50%; top:11px; width:27px; height:17px; transform:translateX(-50%); border-radius:9px; background:#061327; }
 .command-kpi.ai i::after { content:""; position:absolute; left:50%; top:17px; width:17px; height:5px; transform:translateX(-50%); border-radius:999px; background:linear-gradient(90deg,#5ee7ff 0 28%,transparent 29% 70%,#5ee7ff 71% 100%); }
@@ -493,13 +449,10 @@
 .command-live-status a.green::before { content:""; width:7px; height:7px; border-radius:999px; background:#35ff94; box-shadow:0 0 12px rgba(53,255,148,.75); display:inline-block; margin-right:7px; vertical-align:1px; }
 .command-live-status a:not(.green)::before { content:""; width:7px; height:7px; border-radius:999px; background:#67e8ff; box-shadow:0 0 12px rgba(103,232,255,.65); display:inline-block; margin-right:7px; vertical-align:1px; }
 .command-top-actions a { text-decoration:none; }
-.command-top-actions a:focus-visible, .quick-actions-primary a:focus-visible, .command-recommendations a.recommendation:focus-visible, .copilot-action-link:focus-visible { outline:2px solid rgba(0,216,255,.72); outline-offset:3px; }
 .command-recommendations a.recommendation { cursor:pointer; text-decoration:none; color:inherit; display:block; }
 .recommendation-action { position:relative; z-index:2; display:inline-flex; align-items:center; justify-content:center; min-height:38px; padding:0 14px; border-radius:14px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.13); color:#eaf8ff; font-weight:900; }
 .command-recommendations a.recommendation:hover { transform:translateY(-2px); border-color:rgba(0,216,255,.3) !important; box-shadow:0 22px 52px rgba(0,216,255,.12); }
 .command-recommendations a.recommendation:hover .recommendation-action { background:rgba(0,216,255,.12); border-color:rgba(0,216,255,.28); }
-.robot-icon.copilot-avatar-v2 { isolation:isolate; }
-.robot-icon.copilot-avatar-v2 span::before, .robot-icon.copilot-avatar-v2 span::after { animation:as6RobotEyePulse 2.4s ease-in-out infinite; }
 @keyframes as6RobotEyePulse { 0%,100%{opacity:.72; transform:scale(1);} 50%{opacity:1; transform:scale(1.08);} }
 .command-kpi.ai i::before, .command-kpi.ai i::after { pointer-events:none; }
 .command-profile-card, .command-help-card { cursor:pointer; }
@@ -509,16 +462,6 @@
 .command-kpi.ai i::before { content:""; position:absolute; left:50%; top:15px; width:35px; height:22px; transform:translateX(-50%); border-radius:11px; background:#061327 !important; box-shadow:inset 0 0 0 2px rgba(255,255,255,.15),0 0 14px rgba(0,216,255,.26) !important; }
 .command-kpi.ai i::after { content:""; position:absolute; left:50%; top:23px; width:23px; height:7px; transform:translateX(-50%); border-radius:999px; background:linear-gradient(90deg,#5ee7ff 0 30%,transparent 31% 69%,#5ee7ff 70% 100%) !important; filter:drop-shadow(0 0 8px rgba(94,231,255,.98)); }
 .command-kpi.ai i b, .command-kpi.ai i span { display:none !important; }
-.copilot-hero { display:grid !important; grid-template-columns:126px minmax(0,1fr) !important; grid-template-areas:"head head" "avatar text" "cta cta" !important; gap:10px 18px !important; align-items:center !important; min-height:224px !important; padding:18px !important; }
-.copilot-hero .copilot-top { grid-area:head !important; margin:0 !important; }
-.copilot-hero .robot-icon.copilot-avatar-v2 { grid-area:avatar !important; width:112px !important; height:112px !important; min-width:112px !important; margin:0 !important; border-radius:34px 34px 42px 42px !important; background:radial-gradient(circle at 50% 15%,#ffffff 0 3px,transparent 4px),linear-gradient(180deg,#f6fbff 0%,#c6d3f5 42%,#5d6d9a 100%) !important; box-shadow:0 0 0 1px rgba(255,255,255,.24),0 0 34px rgba(0,216,255,.38),0 20px 44px rgba(139,44,255,.36) !important; }
-.copilot-hero .robot-icon.copilot-avatar-v2::before { top:-18px !important; width:8px !important; height:21px !important; background:linear-gradient(#fff,#74e5ff) !important; }
-.copilot-hero .robot-icon.copilot-avatar-v2::after { top:28px !important; width:70px !important; height:44px !important; border-radius:20px !important; background:#071426 !important; }
-.copilot-hero .robot-icon.copilot-avatar-v2 span { top:44px !important; width:48px !important; height:14px !important; }
-.copilot-hero .robot-icon.copilot-avatar-v2 i { bottom:28px !important; width:44px !important; height:10px !important; }
-.copilot-hero p { grid-area:text !important; margin:0 !important; max-width:none !important; text-align:left !important; font-size:13px !important; line-height:1.55 !important; color:#dbeaff !important; }
-.copilot-hero .copilot-action-link { grid-area:cta !important; width:100% !important; min-height:56px !important; border-radius:16px !important; display:flex !important; align-items:center !important; justify-content:center !important; text-align:center !important; font-size:16px !important; font-weight:950 !important; padding:0 20px !important; background:linear-gradient(135deg,#7c3cff,#00d8ff) !important; box-shadow:0 18px 42px rgba(0,216,255,.20),inset 0 1px 0 rgba(255,255,255,.18) !important; }
-.copilot-hero .copilot-action-link:hover { transform:translateY(-1px); box-shadow:0 22px 52px rgba(0,216,255,.28),inset 0 1px 0 rgba(255,255,255,.22) !important; }
 
 /* AS6 Command Center Visual Reference V18 */
 .as6-sidebar-brand strong{font-size:52px!important;line-height:.78!important;font-weight:1000!important;letter-spacing:-.095em!important;background:linear-gradient(135deg,#a751ff 0%,#7b2cff 45%,#18d6ff 100%)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important;text-shadow:0 0 28px rgba(139,44,255,.72)!important}
@@ -534,15 +477,6 @@
 .command-kpi.ai i{width:58px!important;height:58px!important;min-width:58px!important;border-radius:18px!important;position:relative!important;font-size:0!important;background:radial-gradient(circle at 50% 9%,#eafdff 0 3px,transparent 4px),linear-gradient(180deg,#f7fbff 0%,#b9c9f2 46%,#53618b 100%)!important;box-shadow:0 0 0 1px rgba(255,255,255,.24),0 0 24px rgba(0,216,255,.42),0 14px 28px rgba(0,0,0,.28)!important}
 .command-kpi.ai i:before{content:"";position:absolute;left:50%;top:16px;width:36px;height:23px;transform:translateX(-50%);border-radius:12px;background:#061327!important;box-shadow:inset 0 0 0 2px rgba(255,255,255,.16),0 0 16px rgba(0,216,255,.28)!important}
 .command-kpi.ai i:after{content:"";position:absolute;left:50%;top:25px;width:24px;height:7px;transform:translateX(-50%);border-radius:999px;background:linear-gradient(90deg,#62eaff 0 30%,transparent 31% 69%,#62eaff 70% 100%)!important;filter:drop-shadow(0 0 8px rgba(98,234,255,.98))}
-.copilot-hero{display:grid!important;grid-template-columns:122px minmax(0,1fr)!important;grid-template-areas:"head head" "avatar text" "cta cta"!important;gap:12px 18px!important;align-items:center!important;min-height:232px!important;padding:18px!important;background:radial-gradient(circle at 28% 38%,rgba(0,216,255,.20),transparent 35%),linear-gradient(145deg,rgba(10,22,50,.98),rgba(95,28,180,.52))!important}
-.copilot-hero .copilot-top{grid-area:head!important;margin:0!important}
-.copilot-hero .robot-icon.copilot-avatar-v2{grid-area:avatar!important;width:112px!important;height:112px!important;margin:0!important;border-radius:32px 32px 42px 42px!important;background:radial-gradient(circle at 50% 11%,#fff 0 3px,transparent 4px),linear-gradient(180deg,#f7fbff 0%,#c5d2f5 42%,#5c6b98 100%)!important;box-shadow:0 0 0 1px rgba(255,255,255,.24),0 0 34px rgba(0,216,255,.38),0 20px 44px rgba(139,44,255,.36)!important}
-.copilot-hero .robot-icon.copilot-avatar-v2:before{top:-17px!important;width:8px!important;height:21px!important;background:linear-gradient(#fff,#74e5ff)!important}
-.copilot-hero .robot-icon.copilot-avatar-v2:after{top:28px!important;width:70px!important;height:44px!important;border-radius:20px!important;background:#071426!important}
-.copilot-hero .robot-icon.copilot-avatar-v2 span{top:44px!important;width:48px!important;height:14px!important}
-.copilot-hero .robot-icon.copilot-avatar-v2 i{bottom:28px!important;width:44px!important;height:10px!important}
-.copilot-hero p{grid-area:text!important;margin:0!important;text-align:left!important;max-width:none!important;font-size:13px!important;line-height:1.55!important;color:#dbeaff!important}
-.copilot-hero .copilot-action-link{grid-area:cta!important;width:100%!important;min-height:58px!important;border-radius:17px!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;font-size:16px!important;font-weight:1000!important;padding:0 22px!important;background:linear-gradient(135deg,#7c3cff,#00d8ff)!important;box-shadow:0 20px 46px rgba(0,216,255,.22),inset 0 1px 0 rgba(255,255,255,.2)!important}
 
 /* AS6 Command Center Pixel Reference V19 */
 .as6-sidebar-brand{position:relative!important;padding:21px 18px 17px!important}
@@ -559,27 +493,12 @@
 .command-kpi.ai i{width:64px!important;height:64px!important;min-width:64px!important;right:18px!important;border-radius:21px!important;background:radial-gradient(circle at 50% 8%,#ffffff 0 3px,transparent 4px),linear-gradient(180deg,#f9fdff 0%,#bed0f6 43%,#566690 100%)!important;box-shadow:0 0 0 1px rgba(255,255,255,.28),0 0 30px rgba(0,216,255,.52),0 15px 30px rgba(0,0,0,.30)!important}
 .command-kpi.ai i:before{top:17px!important;width:40px!important;height:25px!important;border-radius:13px!important;background:#061327!important;box-shadow:inset 0 0 0 2px rgba(255,255,255,.17),0 0 18px rgba(0,216,255,.36)!important}
 .command-kpi.ai i:after{top:27px!important;width:27px!important;height:8px!important;background:linear-gradient(90deg,#63ebff 0 30%,transparent 31% 69%,#63ebff 70% 100%)!important;filter:drop-shadow(0 0 9px rgba(99,235,255,1))!important}
-.copilot-hero{grid-template-columns:132px minmax(0,1fr)!important;grid-template-areas:"head head" "avatar text" "cta cta"!important;gap:14px 20px!important;min-height:254px!important;padding:20px!important;background:radial-gradient(circle at 29% 42%,rgba(0,216,255,.28),transparent 34%),radial-gradient(circle at 84% 14%,rgba(157,54,255,.22),transparent 30%),linear-gradient(145deg,rgba(10,22,50,.99),rgba(97,28,183,.58))!important}
-.copilot-hero .robot-icon.copilot-avatar-v2{width:124px!important;height:124px!important;min-width:124px!important;border-radius:38px 38px 48px 48px!important;background:radial-gradient(circle at 50% 9%,#fff 0 4px,transparent 5px),linear-gradient(180deg,#f8fcff 0%,#c9d7f8 42%,#5a6a97 100%)!important;box-shadow:0 0 0 1px rgba(255,255,255,.28),0 0 42px rgba(0,216,255,.48),0 22px 50px rgba(139,44,255,.42)!important}
-.copilot-hero .robot-icon.copilot-avatar-v2:before{top:-20px!important;width:9px!important;height:25px!important}
-.copilot-hero .robot-icon.copilot-avatar-v2:after{top:31px!important;width:78px!important;height:50px!important;border-radius:23px!important;box-shadow:inset 0 0 0 2px rgba(255,255,255,.18),0 0 23px rgba(0,216,255,.45)!important}
-.copilot-hero .robot-icon.copilot-avatar-v2 span{top:49px!important;width:54px!important;height:15px!important}
-.copilot-hero .robot-icon.copilot-avatar-v2 span:before,.copilot-hero .robot-icon.copilot-avatar-v2 span:after{width:12px!important;height:12px!important;background:#63ebff!important}
-.copilot-hero .robot-icon.copilot-avatar-v2 i{bottom:31px!important;width:50px!important;height:11px!important}
-.copilot-hero p{font-size:13.5px!important;line-height:1.6!important;padding-right:4px!important}
-.copilot-hero .copilot-action-link{width:100%!important;min-height:62px!important;border-radius:18px!important;font-size:17px!important;font-weight:1000!important;padding:0 24px!important;background:linear-gradient(135deg,#7c3cff 0%,#9651ff 45%,#00d8ff 100%)!important;box-shadow:0 22px 52px rgba(0,216,255,.26),inset 0 1px 0 rgba(255,255,255,.22)!important}
-.copilot-hero .copilot-action-link:hover{transform:translateY(-2px)!important;box-shadow:0 26px 64px rgba(0,216,255,.34),inset 0 1px 0 rgba(255,255,255,.25)!important}
 
 /* AS6 Real Assets V20 */
 .as6-real-logo strong{display:block;font-size:52px;line-height:.78;font-weight:1000;letter-spacing:-.105em;background:linear-gradient(120deg,#b568ff 0%,#8732ff 45%,#17d8ff 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 18px rgba(139,44,255,.75));}
 .as6-real-logo span{display:block;margin-top:8px;color:#fff;font-size:12px;font-weight:1000;letter-spacing:.035em}
-.as6-copilot-asset{width:138px;height:138px;object-fit:contain;display:block;filter:drop-shadow(0 0 24px rgba(0,216,255,.35))}
-.as6-copilot-asset.compact{width:64px;height:64px}
 .ai-kpi-real-avatar{background:none!important;box-shadow:none!important;width:64px!important;height:64px!important}
 .ai-kpi-real-avatar::before,.ai-kpi-real-avatar::after{display:none!important}
-.copilot-hero{grid-template-columns:150px minmax(0,1fr)!important;min-height:260px!important}
-.copilot-hero .as6-copilot-asset{grid-area:avatar!important;margin:0!important}
-.copilot-hero .copilot-action-link{width:100%!important;min-height:64px!important;font-size:17px!important;border-radius:18px!important}
 .command-top-actions .top-icon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .command-top-actions .top-icon{color:#dce9ff}
 .command-profile-card,.command-help-card{text-decoration:none;color:inherit}
@@ -725,12 +644,10 @@
 
 /* AS6 Command Center visual parity real asset enforcement V27 */
 .as6-command-center-logo-image{display:block!important;width:96px!important;height:auto!important;object-fit:contain!important;}
-.as6-copilot-real-image{display:block!important;width:min(100%,360px)!important;max-height:260px!important;object-fit:contain!important;margin:0 auto!important;}
 .as6-ai-kpi-robot-image,.ai-workforce-avatar-image,img[src*="as6-robot.png"]{display:block!important;width:54px!important;height:54px!important;object-fit:contain!important;border-radius:18px!important;}
 .command-center-ai-workforce-avatar,.ai-workforce-avatar,[class*="workforce"][class*="avatar"]{font-size:0!important;overflow:hidden!important;}
 .command-center-ai-workforce-avatar::before,.command-center-ai-workforce-avatar::after,.ai-workforce-avatar::before,.ai-workforce-avatar::after,[class*="workforce"][class*="avatar"]::before,[class*="workforce"][class*="avatar"]::after{content:none!important;}
 
-/* AS6 Copilot visual cleanup V37 */
 .ai-copilot-card,.command-copilot-card,.copilot-card,.command-card.ai-copilot,.command-card[class*="copilot"],article[class*="copilot"]{
   display:flex!important;
   flex-direction:column!important;
@@ -763,14 +680,11 @@
   margin-top:4px!important;
   border-radius:18px!important;
 }
-.as6-copilot-real-image{
   max-width:168px!important;
   max-height:132px!important;
   margin:4px auto 0!important;
 }
 
-/* AS6 Copilot authoritative style consolidation V38 */
-.command-right-rail .copilot-hero{
   display:grid!important;
   grid-template-columns:1fr!important;
   grid-template-areas:"head" "visual" "text" "cta"!important;
@@ -786,7 +700,6 @@
     radial-gradient(circle at 32% 42%,rgba(0,216,255,.20),transparent 36%),
     linear-gradient(145deg,rgba(10,22,50,.98),rgba(91,25,168,.54))!important;
 }
-.command-right-rail .copilot-hero .copilot-top{
   grid-area:head!important;
   display:flex!important;
   align-items:center!important;
@@ -794,19 +707,16 @@
   margin:0!important;
   min-height:24px!important;
 }
-.command-right-rail .copilot-hero .copilot-top h2{
   margin:0!important;
   font-size:18px!important;
   line-height:1.15!important;
   font-weight:1000!important;
   color:#fff!important;
 }
-.command-right-rail .copilot-hero .copilot-top span{
   color:#c084fc!important;
   font-weight:1000!important;
   text-shadow:0 0 16px rgba(147,51,234,.9)!important;
 }
-.command-right-rail .copilot-hero .as6-copilot-real-image{
   grid-area:visual!important;
   display:block!important;
   width:138px!important;
@@ -817,13 +727,8 @@
   margin:0 auto!important;
   filter:drop-shadow(0 18px 34px rgba(0,216,255,.18)) drop-shadow(0 0 22px rgba(139,44,255,.24))!important;
 }
-.command-right-rail .copilot-hero > .as6-copilot-real-image ~ .as6-copilot-real-image,
-.command-right-rail .copilot-hero > svg,
-.command-right-rail .copilot-hero > .robot-icon,
-.command-right-rail .copilot-hero > .copilot-avatar-v2{
   display:none!important;
 }
-.command-right-rail .copilot-hero p{
   grid-area:text!important;
   margin:0 auto!important;
   max-width:250px!important;
@@ -832,7 +737,6 @@
   line-height:1.45!important;
   color:#dbeaff!important;
 }
-.command-right-rail .copilot-hero .copilot-action-link{
   grid-area:cta!important;
   display:flex!important;
   align-items:center!important;
@@ -849,7 +753,18 @@
   background:linear-gradient(135deg,#7c3cff,#00d8ff)!important;
   box-shadow:0 18px 42px rgba(0,216,255,.22),inset 0 1px 0 rgba(255,255,255,.18)!important;
 }
-.command-right-rail .copilot-hero .copilot-action-link:hover{
   transform:translateY(-1px)!important;
   box-shadow:0 22px 52px rgba(0,216,255,.28),inset 0 1px 0 rgba(255,255,255,.22)!important;
 }
+
+display:grid!important;grid-template-columns:1fr!important;grid-template-areas:"head" "visual" "text" "cta"!important;gap:10px!important;min-height:0!important;height:auto!important;padding:16px!important;overflow:hidden!important;text-align:center!important;align-items:start!important;background:radial-gradient(circle at 72% 18%,rgba(157,54,255,.22),transparent 30%),radial-gradient(circle at 32% 42%,rgba(0,216,255,.20),transparent 36%),linear-gradient(145deg,rgba(10,22,50,.98),rgba(91,25,168,.54))!important;}
+
+/* AS6 Copilot single authoritative style V39 repaired */
+.command-right-rail .copilot-hero{display:grid!important;grid-template-columns:1fr!important;grid-template-areas:"head" "visual" "text" "cta"!important;gap:10px!important;min-height:0!important;height:auto!important;padding:16px!important;overflow:hidden!important;text-align:center!important;align-items:start!important;background:radial-gradient(circle at 72% 18%,rgba(157,54,255,.22),transparent 30%),radial-gradient(circle at 32% 42%,rgba(0,216,255,.20),transparent 36%),linear-gradient(145deg,rgba(10,22,50,.98),rgba(91,25,168,.54))!important;}
+.command-right-rail .copilot-hero .copilot-top{grid-area:head!important;display:flex!important;align-items:center!important;justify-content:space-between!important;margin:0!important;min-height:24px!important;}
+.command-right-rail .copilot-hero .copilot-top h2{margin:0!important;font-size:18px!important;line-height:1.15!important;font-weight:1000!important;color:#fff!important;}
+.command-right-rail .copilot-hero .copilot-top span{color:#c084fc!important;font-weight:1000!important;text-shadow:0 0 16px rgba(147,51,234,.9)!important;}
+.command-right-rail .copilot-hero .as6-copilot-real-image{grid-area:visual!important;display:block!important;width:138px!important;max-width:138px!important;height:auto!important;max-height:112px!important;object-fit:contain!important;margin:0 auto!important;filter:drop-shadow(0 18px 34px rgba(0,216,255,.18)) drop-shadow(0 0 22px rgba(139,44,255,.24))!important;}
+.command-right-rail .copilot-hero > .as6-copilot-real-image ~ .as6-copilot-real-image,.command-right-rail .copilot-hero > svg,.command-right-rail .copilot-hero > .robot-icon,.command-right-rail .copilot-hero > .copilot-avatar-v2{display:none!important;}
+.command-right-rail .copilot-hero p{grid-area:text!important;margin:0 auto!important;max-width:250px!important;text-align:center!important;font-size:13px!important;line-height:1.45!important;color:#dbeaff!important;}
+.command-right-rail .copilot-hero .copilot-action-link{grid-area:cta!important;display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;min-height:52px!important;margin:2px 0 0!important;padding:0 18px!important;border-radius:17px!important;text-decoration:none!important;color:#fff!important;font-size:16px!important;font-weight:1000!important;background:linear-gradient(135deg,#7c3cff,#00d8ff)!important;box-shadow:0 18px 42px rgba(0,216,255,.22),inset 0 1px 0 rgba(255,255,255,.18)!important;}

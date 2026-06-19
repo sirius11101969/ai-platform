@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+PAGE="frontend/src/pages/CommandCenterPage.jsx"
+CSS="frontend/src/theme/as6Theme.css"
+ROBOT="frontend/src/assets/as6-robot.png"
+fail=0
+check(){ n="$1"; shift; if "$@"; then echo "PASS:$n"; else echo "FAIL:$n"; fail=1; fi; }
+check copilot_authoritative_v39_repaired grep -q "AS6 Copilot single authoritative style V39 repaired" "$CSS"
+check copilot_asset_duplicate_removed bash -c '! grep -q "CopilotAsset" frontend/src/pages/CommandCenterPage.jsx'
+count="$(grep -c "copilot-hero" "$CSS" || true)"
+echo "COPILOT_HERO_STYLE_LAYER_COUNT=$count"
+if test "$count" -lt 20; then echo "PASS:copilot_layer_count_reduced"; else echo "FAIL:copilot_layer_count_reduced"; fail=1; fi
+bytes="$(wc -c < "$ROBOT")"
+echo "ROBOT_BYTES=$bytes"
+if test "$bytes" -lt 200000; then echo "PASS:robot_asset_size_guard"; else echo "FAIL:robot_asset_size_guard"; fail=1; fi
+exit "$fail"

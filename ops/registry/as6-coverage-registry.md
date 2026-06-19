@@ -1510,3 +1510,7 @@ Coverage: Copilot duplicate image guard, compact header, CTA normalization, buil
 ## COPILOT_STYLE_CONSOLIDATION_V38
 Diagnostic: ops/bin/as6-diagnose-copilot-style-consolidation-v38
 Coverage: Copilot style layer drift, duplicate image guard, CTA authoritative placement, build validation, production health validation
+
+## COPILOT_CSS_AND_ROBOT_CLEANUP_V39
+Diagnostic: ops/bin/as6-diagnose-copilot-css-and-robot-cleanup-v39
+Coverage: Copilot duplicate removal, CSS layer reduction, robot asset size guard, build, health

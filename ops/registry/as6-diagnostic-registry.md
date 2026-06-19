@@ -1411,3 +1411,8 @@ File: ops/bin/as6-diagnose-copilot-visual-cleanup-v37
 Status: ENABLED
 Scope: Copilot CSS layer drift and authoritative style diagnostics
 File: ops/bin/as6-diagnose-copilot-style-consolidation-v38
+
+## as6-diagnose-copilot-css-and-robot-cleanup-v39
+Status: ENABLED
+Scope: Copilot CSS cleanup and robot asset guard
+File: ops/bin/as6-diagnose-copilot-css-and-robot-cleanup-v39

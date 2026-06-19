@@ -1,6 +1,4 @@
-import as6CopilotAsset from '../assets/as6-copilot-asset.png';
 import as6Logo from '../assets/as6-logo.png';
-import CopilotAsset from '../components/avatars/CopilotAsset.jsx'
 import { BellIcon, ChatIcon, HelpIcon } from '../components/icons/TopbarIcons.jsx'
 import { useEffect, useMemo, useState } from 'react'
 import { fetchAiCommandCenterActions, fetchAiCommandCenterBrief, fetchAiCommandCenterFocus, fetchAiCommandCenterInbox, fetchAiCommandCenterKpi, fetchAiCommandCenterOperations, fetchAiCommandCenterPlanningMonthly, fetchAiSystemHealth } from '../services/api'
@@ -334,8 +332,7 @@ export default function CommandCenterPage() {
 
         <aside className="command-right-rail" data-right-action-rail data-copilot-rail data-as6-diagnostic-copilot="right-action-rail">
           <article className="command-card copilot-hero" data-copilot-hero>
-<img className="as6-copilot-real-image" src={as6CopilotAsset} alt="AS6 Copilot" />
-            <div className="copilot-top"><h2>AI Copilot</h2><span>AS6</span></div><CopilotAsset />
+            <div className="copilot-top"><h2>AI Copilot</h2><span>AS6</span></div>
             <p>Я здесь, чтобы помочь вам принимать лучшие решения и достигать целей быстрее.</p><a className="copilot-action-link" href="/ai-executive-brain">Спросить AI Copilot →</a>
           </article>
           <article className="command-card event-card"><div className="command-card-head"><h2>Последние события</h2><a href="/dashboard">Все</a></div>{events.map((event) => <div className="event-row" key={event.text}><b>{event.icon}</b><span>{event.text}</span><time>{event.time}</time></div>)}</article>

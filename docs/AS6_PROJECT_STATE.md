@@ -2177,3 +2177,8 @@ Diagnostic: ops/bin/as6-diagnose-copilot-visual-cleanup-v37
 Status: APPLIED
 Root cause: Copilot style layer drift from multiple historical CSS patch layers.
 Diagnostic: ops/bin/as6-diagnose-copilot-style-consolidation-v38
+
+## AS6 Copilot CSS And Robot Cleanup V39 Final
+Status: APPLIED
+Root cause: residual CopilotAsset reference after partial V39 repair.
+Diagnostic: ops/bin/as6-diagnose-copilot-css-and-robot-cleanup-v39
