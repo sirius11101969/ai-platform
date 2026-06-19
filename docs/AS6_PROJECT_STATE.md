@@ -2280,3 +2280,9 @@ Diagnostic: ops/bin/as6-diagnose-black-screen-react-import-v57
 Status: APPLIED
 Root cause: frontend JS/CSS/route/image budgets were not autonomously governed after route chunk optimization.
 Diagnostic: ops/bin/as6-diagnose-frontend-budgets-v58
+
+## AS6 Image Asset Ownership V59
+Status: APPLIED
+Root cause: PNG logo asset ownership was not diagnostically proven before optimization/deletion.
+Diagnostic: ops/bin/as6-diagnose-image-asset-ownership-v59
+Note: No UI changes and no asset deletion were performed.

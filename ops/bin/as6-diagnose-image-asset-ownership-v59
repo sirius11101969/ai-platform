@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+BUILD_LOG="${1:-}"
+OUT_DIR="${2:-runtime/as6-image-assets-v59}"
+mkdir -p "$OUT_DIR"
+fail=0
+
+check(){ n="$1"; shift; if "$@"; then echo "PASS:$n"; else echo "FAIL:$n"; fail=1; fi; }
+
+check assets_dir_exists test -d frontend/src/assets
+check logo_png_exists test -f frontend/src/assets/as6-logo.png
+check logo_webp_exists test -f frontend/src/assets/as6-logo.webp
+check command_center_exists test -f frontend/src/pages/CommandCenterPage.jsx
+check command_center_webp_logo grep -q "as6-logo.webp" frontend/src/pages/CommandCenterPage.jsx
+check duplicate_top_logo_absent bash -c '! grep -q as6-command-center-logo-image frontend/src/pages/CommandCenterPage.jsx'
+
+find frontend/src/assets -type f -printf "%s %p\n" | sort -nr | tee "$OUT_DIR/source-assets.out"
+grep -R "as6-logo.png\|as6-logo.webp\|as6Logo\|as6-real-logo-image\|as6-command-center-logo-image" -n frontend/src | tee "$OUT_DIR/logo-usage.out" || true
+
+png_bytes="$(wc -c < frontend/src/assets/as6-logo.png)"
+webp_bytes="$(wc -c < frontend/src/assets/as6-logo.webp)"
+echo "SOURCE_LOGO_PNG_BYTES=$png_bytes"
+echo "SOURCE_LOGO_WEBP_BYTES=$webp_bytes"
+
+if test "$webp_bytes" -lt "$png_bytes"; then echo "PASS:webp_smaller_than_png"; else echo "FAIL:webp_smaller_than_png"; fail=1; fi
+if test "$webp_bytes" -lt 120000; then echo "PASS:webp_logo_budget"; else echo "FAIL:webp_logo_budget"; fail=1; fi
+if test "$png_bytes" -lt 500000; then echo "PASS:png_fallback_budget"; else echo "FAIL:png_fallback_budget"; fail=1; fi
+
+if test -n "$BUILD_LOG" && test -f "$BUILD_LOG"; then
+  grep -E "dist/assets/.*\.(png|webp|js|css)" "$BUILD_LOG" | tee "$OUT_DIR/build-assets.out" || true
+  check frontend_build_clean bash -c '! grep -q "css-syntax-error\|Expected identifier but found\|Unexpected \"}\"\|lazy is not defined\|Suspense is not defined" "$0"' "$BUILD_LOG"
+  check build_webp_logo_present grep -q "dist/assets/as6-logo-.*\.webp" "$BUILD_LOG"
+  check build_png_logo_visibility grep -q "dist/assets/as6-logo-.*\.png" "$BUILD_LOG"
+
+  png_build_kb="$(awk '/dist\/assets\/as6-logo-.*\.png/{print $(NF-1)}' "$BUILD_LOG" | tail -1)"
+  webp_build_kb="$(awk '/dist\/assets\/as6-logo-.*\.webp/{print $(NF-1)}' "$BUILD_LOG" | tail -1)"
+  echo "BUILD_LOGO_PNG_KB=${png_build_kb:-unknown}"
+  echo "BUILD_LOGO_WEBP_KB=${webp_build_kb:-unknown}"
+
+  if grep -R "as6-logo.png" -n frontend/src | grep -v "assets/as6-logo.png" >/dev/null 2>&1; then
+    echo "WARN:source_png_import_present"
+  else
+    echo "PASS:source_png_import_absent"
+  fi
+fi
+
+exit "$fail"

@@ -1511,3 +1511,8 @@ File: ops/bin/as6-diagnose-black-screen-react-import-v57
 Status: ENABLED
 Scope: Autonomous frontend JS/CSS/route/image/source budgets and regression prevention
 File: ops/bin/as6-diagnose-frontend-budgets-v58
+
+## as6-diagnose-image-asset-ownership-v59
+Status: ENABLED
+Scope: Image asset ownership, logo PNG/WebP usage, duplicate logo and build asset diagnostics
+File: ops/bin/as6-diagnose-image-asset-ownership-v59

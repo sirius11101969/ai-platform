@@ -1590,3 +1590,7 @@ Coverage: lazy import guard, Suspense import guard, route lazy-loading runtime g
 ## FRONTEND_BUDGETS_V58
 Diagnostic: ops/bin/as6-diagnose-frontend-budgets-v58
 Coverage: main JS budget, CSS budget, route chunk budgets, image asset guard, source file budgets, duplicate logo guard, lazy route guard, build validation, production health validation
+
+## IMAGE_ASSET_OWNERSHIP_V59
+Diagnostic: ops/bin/as6-diagnose-image-asset-ownership-v59
+Coverage: source assets, logo PNG/WebP usage, fallback budget, duplicate logo guard, build emitted assets, build validation, production health validation

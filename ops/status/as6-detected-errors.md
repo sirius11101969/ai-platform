@@ -118,3 +118,8 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_FRONTEND_BUDGET_DIAGNOSTIC_MISSING
 Diagnostic: ops/bin/as6-diagnose-frontend-budgets-v58
 Status: REGISTERED
+
+## 2026-06-19 IMAGE_ASSET_OWNERSHIP_V59
+Failure Class: AS6_FAILURE_CLASS_PNG_LOGO_ASSET_OWNERSHIP_UNKNOWN
+Diagnostic: ops/bin/as6-diagnose-image-asset-ownership-v59
+Status: REGISTERED
