@@ -1550,3 +1550,7 @@ Coverage: Vite manualChunks, Command Center chunk registration, build validation
 ## RENDERED_ASSET_PATHS_V48
 Diagnostic: ops/bin/as6-diagnose-rendered-asset-paths-v48
 Coverage: visible asset path prevention, hashed filename prevention, robot asset text-child prevention, build validation, production health validation
+
+## QUICK_ACTION_ICON_V49
+Diagnostic: ops/bin/as6-diagnose-quick-action-icon-v49
+Coverage: quick action robot img rendering, asset URL text prevention, build validation, production health validation

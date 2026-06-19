@@ -1461,3 +1461,8 @@ File: ops/bin/as6-diagnose-frontend-code-splitting-v47
 Status: ENABLED
 Scope: Rendered asset path and hashed PNG filename UI diagnostics
 File: ops/bin/as6-diagnose-rendered-asset-paths-v48
+
+## as6-diagnose-quick-action-icon-v49
+Status: ENABLED
+Scope: Quick action icon asset text rendering diagnostics
+File: ops/bin/as6-diagnose-quick-action-icon-v49

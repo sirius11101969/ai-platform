@@ -2228,3 +2228,8 @@ Diagnostic: ops/bin/as6-diagnose-frontend-code-splitting-v47
 Status: APPLIED
 Root cause: asset path rendered to UI instead of image element.
 Diagnostic: ops/bin/as6-diagnose-rendered-asset-paths-v48
+
+## AS6 Quick Action Icon Fix V49
+Status: APPLIED
+Root cause: quick action icon array used imported robot asset URL as text child.
+Diagnostic: ops/bin/as6-diagnose-quick-action-icon-v49

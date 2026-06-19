@@ -279,7 +279,7 @@ export default function CommandCenterPage() {
 
 
 
-      <section className="quick-actions quick-actions-primary" data-quick-actions data-as6-primary-actions="above-fold"><h2>Быстрые действия</h2><div>{quickActions.map((action, index) => <a href={quickActionLinks[action] || "#"} role="button" key={action} aria-label={action}><span>{["👥", "$", "🧾", "🛡️", "〽️", "📊", as6Robot][index]}</span>{action}</a>)}</div></section>
+      <section className="quick-actions quick-actions-primary" data-quick-actions data-as6-primary-actions="above-fold"><h2>Быстрые действия</h2><div>{quickActions.map((action, index) => <a href={quickActionLinks[action] || "#"} role="button" key={action} aria-label={action}><span>{["👥", "$", "🧾", "🛡️", "〽️", "📊", <img src={as6Robot} alt="AI" className="quick-action-robot-icon" />][index]}</span>{action}</a>)}</div></section>
 
       <section className="command-main-grid">
         <div className="command-core">

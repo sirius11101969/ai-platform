@@ -68,3 +68,8 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_ASSET_PATH_RENDERED_TO_UI
 Diagnostic: ops/bin/as6-diagnose-rendered-asset-paths-v48
 Status: REGISTERED
+
+## 2026-06-19 QUICK_ACTION_ICON_V49
+Failure Class: AS6_FAILURE_CLASS_ASSET_USED_AS_TEXT_ICON
+Diagnostic: ops/bin/as6-diagnose-quick-action-icon-v49
+Status: REGISTERED
