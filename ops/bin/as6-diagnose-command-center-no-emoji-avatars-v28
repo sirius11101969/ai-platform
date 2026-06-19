@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+PAGE="frontend/src/pages/CommandCenterPage.jsx"
+fail=0
+check(){ n="$1"; shift; if "$@"; then echo "PASS:$n"; else echo "FAIL:$n"; fail=1; fi; }
+check robot_asset_exists test -f frontend/src/assets/as6-robot.png
+check robot_imported grep -q "as6-robot.png" "$PAGE"
+check workforce_avatar_image grep -q "ai-workforce-avatar-image\|as6RobotAsset" "$PAGE"
+if grep -Eq "🤖|🧠|⚙️|🚀" "$PAGE"; then echo "FAIL:no_emoji_avatars"; grep -nE "🤖|🧠|⚙️|🚀" "$PAGE"; fail=1; else echo "PASS:no_emoji_avatars"; fi
+exit "$fail"

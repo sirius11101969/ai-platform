@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "=== AS6 Command Center Robot KPI V23 Diagnostics ==="
+fail=0
+test -f frontend/src/assets/as6-robot.png && echo "AS6_ROBOT_KPI_ASSET=PASS" || { echo "AS6_ROBOT_KPI_ASSET=FAIL"; fail=1; }
+count="$(grep -c 'import as6Robot from "../assets/as6-robot.png"' frontend/src/pages/CommandCenterPage.jsx || true)"
+if [ "$count" = "1" ]; then echo "AS6_ROBOT_KPI_IMPORT_SINGLE=PASS"; else echo "AS6_ROBOT_KPI_IMPORT_SINGLE=FAIL:$count"; fail=1; fi
+grep -q "icon: <img src={as6Robot}" frontend/src/pages/CommandCenterPage.jsx && grep -q "ai-workforce-avatar-image" frontend/src/pages/CommandCenterPage.jsx && echo "AS6_ROBOT_KPI_IMAGE_USED=PASS" || { echo "AS6_ROBOT_KPI_IMAGE_USED=FAIL"; fail=1; }
+grep -q "AS6 Robot KPI Blueprint V23" frontend/src/theme/as6Theme.css && echo "AS6_ROBOT_KPI_CSS=PASS" || { echo "AS6_ROBOT_KPI_CSS=FAIL"; fail=1; }
+if [ "$fail" -eq 0 ]; then echo "AS6_ROBOT_KPI_V23_RESULT=OK"; exit 0; fi
+echo "AS6_ROBOT_KPI_V23_RESULT=FAIL"; exit 1

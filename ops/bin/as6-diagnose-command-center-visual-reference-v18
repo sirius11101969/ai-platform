@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "=== AS6 Command Center Visual Reference V18 Diagnostics ==="
+css="frontend/src/theme/as6Theme.css"
+f="frontend/src/pages/CommandCenterPage.jsx"
+fail=0
+grep -q "AS6 Command Center Visual Reference V18" "$css" && echo "AS6_V18_CSS=PASS" || { echo "AS6_V18_CSS=FAIL"; fail=1; }
+grep -q "top-icon-bell" "$f" && grep -q "top-icon-chat" "$f" && echo "AS6_V18_TOP_ICONS_REFERENCE=PASS" || { echo "AS6_V18_TOP_ICONS_REFERENCE=FAIL"; fail=1; }
+grep -q ".as6-sidebar-brand strong" "$css" && grep -q "background:linear-gradient(135deg,#a751ff" "$css" && echo "AS6_V18_AS6_LOGO_REFERENCE=PASS" || { echo "AS6_V18_AS6_LOGO_REFERENCE=FAIL"; fail=1; }
+grep -q ".command-kpi.ai i{width:58px" "$css" && echo "AS6_V18_AI_KPI_AVATAR_REFERENCE=PASS" || { echo "AS6_V18_AI_KPI_AVATAR_REFERENCE=FAIL"; fail=1; }
+grep -q "grid-template-areas:\"head head\" \"avatar text\" \"cta cta\"" "$css" && echo "AS6_V18_COPILOT_GRID_REFERENCE=PASS" || { echo "AS6_V18_COPILOT_GRID_REFERENCE=FAIL"; fail=1; }
+grep -q "min-height:58px" "$css" && grep -q "copilot-action-link" "$css" && echo "AS6_V18_COPILOT_CTA_REFERENCE=PASS" || { echo "AS6_V18_COPILOT_CTA_REFERENCE=FAIL"; fail=1; }
+if [ "$fail" -eq 0 ]; then echo "AS6_COMMAND_CENTER_VISUAL_REFERENCE_V18_RESULT=OK"; exit 0; fi
+echo "AS6_COMMAND_CENTER_VISUAL_REFERENCE_V18_RESULT=FAIL"; exit 1

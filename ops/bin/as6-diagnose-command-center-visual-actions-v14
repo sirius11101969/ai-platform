@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "=== AS6 Command Center Visual Actions V14 Diagnostics ==="
+f="frontend/src/pages/CommandCenterPage.jsx"
+shell="frontend/src/components/AppShell.jsx"
+css="frontend/src/theme/as6Theme.css"
+fail=0
+grep -q "AS6 Command Center Visual Actions V14" "$css" && echo "AS6_V14_CSS=PASS" || { echo "AS6_V14_CSS=FAIL"; fail=1; }
+grep -q "href=\"/followups\"" "$f" && grep -q "href=\"/priority-inbox\"" "$f" && echo "AS6_V14_TOP_BUTTON_LINKS=PASS" || { echo "AS6_V14_TOP_BUTTON_LINKS=FAIL"; fail=1; }
+grep -q "href=\"/ai-executive-brain\"" "$f" && echo "AS6_V14_COPILOT_LINK=PASS" || { echo "AS6_V14_COPILOT_LINK=FAIL"; fail=1; }
+grep -q "href=\"/ai-system-health-center\"" "$shell" && echo "AS6_V14_SUPPORT_LINK=PASS" || { echo "AS6_V14_SUPPORT_LINK=FAIL"; fail=1; }
+grep -q "<option value=\"day\">День</option>" "$f" && grep -q "<option value=\"month\">Месяц</option>" "$f" && echo "AS6_V14_PIPELINE_FILTERS=PASS" || { echo "AS6_V14_PIPELINE_FILTERS=FAIL"; fail=1; }
+grep -q "useState('7d')" "$f" && echo "AS6_V14_REVENUE_DEFAULT=PASS" || { echo "AS6_V14_REVENUE_DEFAULT=FAIL"; fail=1; }
+if grep -Eq "pipelinePeriod ===|pipelineSummary\." "$f" && grep -q "revenueRange ===" "$f"; then echo "AS6_V14_REACTIVE_SUMMARIES=PASS"; else echo "AS6_V14_REACTIVE_SUMMARIES=FAIL"; fail=1; fi
+if [ "$fail" -eq 0 ]; then echo "AS6_COMMAND_CENTER_VISUAL_ACTIONS_V14_RESULT=OK"; exit 0; fi
+echo "AS6_COMMAND_CENTER_VISUAL_ACTIONS_V14_RESULT=FAIL"; exit 1

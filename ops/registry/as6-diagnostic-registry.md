@@ -1360,3 +1360,21 @@
 - ops/bin/as6-diagnose-command-center-executive-v10 | AS6 command center executive V10 pixel polish gate | GREEN
 - ops/bin/as6-diagnose-command-center-pixel-polish-v11 | AS6 command center pixel polish V11 visual gate | GREEN
 - ops/bin/as6-diagnose-command-center-final-pixel-v12 | AS6 command center final pixel V12 visual gate | GREEN
+- ops/bin/as6-diagnose-command-center-visual-fix-v13 | AS6 command center visual fix V13 gate | GREEN
+- ops/bin/as6-diagnose-command-center-visual-actions-v14 | AS6 command center visual actions V14 gate | GREEN
+- ops/bin/as6-diagnose-appshell-jsx-tag-integrity | AS6 AppShell JSX tag integrity gate | GREEN
+- ops/bin/as6-diagnose-command-center-recommendation-actions | AS6 command center recommendation action navigation gate | GREEN
+- ops/bin/as6-diagnose-command-center-executive-cleanup-v16 | AS6 command center executive cleanup V16 route and visual contract gate | GREEN
+- ops/bin/as6-diagnose-command-center-avatar-reference | AS6 command center avatar reference and Copilot CTA layout gate | GREEN
+- ops/bin/as6-diagnose-command-center-visual-reference-v18 | AS6 command center visual reference V18 brand/icon/avatar/CTA gate | GREEN
+- ops/bin/as6-diagnose-command-center-pixel-reference-v19 | AS6 command center pixel reference V19 logo/icon/avatar/CTA L2 gate | GREEN
+- ops/bin/as6-diagnose-command-center-real-assets-v20 | AS6 Command Center real asset components and AppShell tag gate | GREEN
+- ops/bin/as6-diagnose-command-center-real-logo-v21 | AS6 Command Center real logo asset gate | GREEN
+- ops/bin/as6-diagnose-command-center-logo-top-v22 | AS6 logo top placement gate | GREEN
+- ops/bin/as6-diagnose-command-center-robot-kpi-v23 | AS6 Command Center real robot KPI asset and single import gate | GREEN
+- ops/bin/as6-diagnose-command-center-ai-workforce-robot-v24 | AS6 real robot in KPI and AI workforce rows gate | GREEN
+
+## as6-diagnose-command-center-no-emoji-avatars-v28
+Status: ENABLED
+Scope: AI Command Center emoji avatar regression prevention
+File: ops/bin/as6-diagnose-command-center-no-emoji-avatars-v28

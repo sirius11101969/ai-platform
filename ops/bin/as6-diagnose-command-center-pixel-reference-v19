@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "=== AS6 Command Center Pixel Reference V19 Diagnostics ==="
+css="frontend/src/theme/as6Theme.css"
+fail=0
+grep -q "AS6 Command Center Pixel Reference V19" "$css" && echo "AS6_V19_CSS=PASS" || { echo "AS6_V19_CSS=FAIL"; fail=1; }
+grep -q "as6-sidebar-brand strong::after" "$css" && echo "AS6_V19_LOGO_RED_ACCENT=PASS" || { echo "AS6_V19_LOGO_RED_ACCENT=FAIL"; fail=1; }
+grep -q ".command-kpi.ai i{width:64px" "$css" && echo "AS6_V19_AI_KPI_AVATAR_L2=PASS" || { echo "AS6_V19_AI_KPI_AVATAR_L2=FAIL"; fail=1; }
+grep -q "min-height:254px" "$css" && echo "AS6_V19_COPILOT_CARD_PROPORTION=PASS" || { echo "AS6_V19_COPILOT_CARD_PROPORTION=FAIL"; fail=1; }
+grep -q "width:124px" "$css" && echo "AS6_V19_COPILOT_AVATAR_L2=PASS" || { echo "AS6_V19_COPILOT_AVATAR_L2=FAIL"; fail=1; }
+grep -q "min-height:62px" "$css" && echo "AS6_V19_COPILOT_CTA_L2=PASS" || { echo "AS6_V19_COPILOT_CTA_L2=FAIL"; fail=1; }
+grep -q ".command-top-actions a.top-icon" "$css" && echo "AS6_V19_TOPBAR_ICON_L2=PASS" || { echo "AS6_V19_TOPBAR_ICON_L2=FAIL"; fail=1; }
+if [ "$fail" -eq 0 ]; then echo "AS6_COMMAND_CENTER_PIXEL_REFERENCE_V19_RESULT=OK"; exit 0; fi
+echo "AS6_COMMAND_CENTER_PIXEL_REFERENCE_V19_RESULT=FAIL"; exit 1

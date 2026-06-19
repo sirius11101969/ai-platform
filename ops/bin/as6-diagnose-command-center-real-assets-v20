@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "=== AS6 Command Center Real Assets V20 Diagnostics ==="
+fail=0
+test -f frontend/src/assets/as6-copilot-asset.png && echo "AS6_REAL_COPILOT_ASSET=PASS" || { echo "AS6_REAL_COPILOT_ASSET=FAIL"; fail=1; }
+grep -q "CopilotAsset" frontend/src/pages/CommandCenterPage.jsx && echo "AS6_REAL_COPILOT_USED=PASS" || { echo "AS6_REAL_COPILOT_USED=FAIL"; fail=1; }
+grep -q "AS6Logo" frontend/src/components/AppShell.jsx && echo "AS6_REAL_LOGO_COMPONENT=PASS" || { echo "AS6_REAL_LOGO_COMPONENT=FAIL"; fail=1; }
+grep -q "BellIcon" frontend/src/pages/CommandCenterPage.jsx && echo "AS6_REAL_TOPBAR_ICONS=PASS" || { echo "AS6_REAL_TOPBAR_ICONS=FAIL"; fail=1; }
+grep -A3 '<a className="command-profile-card" href="/profile">' frontend/src/components/AppShell.jsx | grep -q '</a>' && echo "AS6_APPSHELL_PROFILE_TAG=PASS" || { echo "AS6_APPSHELL_PROFILE_TAG=FAIL"; fail=1; }
+grep -q "as6-copilot-asset" frontend/src/theme/as6Theme.css && echo "AS6_REAL_ASSET_CSS=PASS" || { echo "AS6_REAL_ASSET_CSS=FAIL"; fail=1; }
+if [ "$fail" -eq 0 ]; then echo "AS6_COMMAND_CENTER_REAL_ASSETS_V20_RESULT=OK"; exit 0; fi
+echo "AS6_COMMAND_CENTER_REAL_ASSETS_V20_RESULT=FAIL"; exit 1

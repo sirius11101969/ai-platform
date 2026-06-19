@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "=== AS6 Command Center Executive Cleanup V16 Diagnostics ==="
+f="frontend/src/pages/CommandCenterPage.jsx"
+shell="frontend/src/components/AppShell.jsx"
+css="frontend/src/theme/as6Theme.css"
+fail=0
+grep -q "AS6 Command Center Executive Cleanup V16" "$css" && echo "AS6_V16_CSS=PASS" || { echo "AS6_V16_CSS=FAIL"; fail=1; }
+grep -q "href=\"/followups\"" "$f" && grep -q "href=\"/priority-inbox\"" "$f" && grep -q "href=\"/profile\"" "$f" && echo "AS6_V16_TOP_ACTION_ROUTES=PASS" || { echo "AS6_V16_TOP_ACTION_ROUTES=FAIL"; fail=1; }
+grep -q "href=\"/ai-system-health-center\"" "$f" && grep -q "command-live-status" "$f" && echo "AS6_V16_STATUS_ROUTES=PASS" || { echo "AS6_V16_STATUS_ROUTES=FAIL"; fail=1; }
+grep -q "href={card.href}" "$f" && grep -q "recommendation-action" "$f" && echo "AS6_V16_RECOMMENDATION_CARD_ROUTES=PASS" || { echo "AS6_V16_RECOMMENDATION_CARD_ROUTES=FAIL"; fail=1; }
+grep -q "<a className=\"command-profile-card\" href=\"/profile\">" "$shell" && grep -A3 "<a className=\"command-profile-card\" href=\"/profile\">" "$shell" | grep -q "</a>" && echo "AS6_V16_PROFILE_ROUTE=PASS" || { echo "AS6_V16_PROFILE_ROUTE=FAIL"; fail=1; }
+grep -q "href=\"/ai-system-health-center\"" "$shell" && echo "AS6_V16_HELP_ROUTE=PASS" || { echo "AS6_V16_HELP_ROUTE=FAIL"; fail=1; }
+grep -q "as6RobotEyePulse" "$css" && echo "AS6_V16_ROBOT_AVATAR_PULSE=PASS" || { echo "AS6_V16_ROBOT_AVATAR_PULSE=FAIL"; fail=1; }
+if [ "$fail" -eq 0 ]; then echo "AS6_COMMAND_CENTER_EXECUTIVE_CLEANUP_V16_RESULT=OK"; exit 0; fi
+echo "AS6_COMMAND_CENTER_EXECUTIVE_CLEANUP_V16_RESULT=FAIL"; exit 1

@@ -1,5 +1,10 @@
+import as6CopilotAsset from '../assets/as6-copilot-asset.png';
+import as6Logo from '../assets/as6-logo.png';
+import CopilotAsset from '../components/avatars/CopilotAsset.jsx'
+import { BellIcon, ChatIcon, HelpIcon } from '../components/icons/TopbarIcons.jsx'
 import { useEffect, useMemo, useState } from 'react'
 import { fetchAiCommandCenterActions, fetchAiCommandCenterBrief, fetchAiCommandCenterFocus, fetchAiCommandCenterInbox, fetchAiCommandCenterKpi, fetchAiCommandCenterOperations, fetchAiCommandCenterPlanningMonthly, fetchAiSystemHealth } from '../services/api'
+import as6Robot from "../assets/as6-robot.png"
 
 const demoMetrics = {
   revenueToday: '$1,248,890',
@@ -31,7 +36,8 @@ const kpiBlueprint = [
   { key: 'revenueToday', label: 'Выручка сегодня', value: demoMetrics.revenueToday, delta: '+18.6%', tone: 'revenue', icon: '↗', spark: [18, 25, 20, 28, 24, 31, 42] },
   { key: 'leads', label: 'Новые лиды', value: demoMetrics.leads, delta: '+32%', tone: 'leads', icon: '👥', spark: [16, 22, 34, 31, 42, 50, 58] },
   { key: 'deals', label: 'Сделки в работе', value: demoMetrics.deals, delta: '+14%', tone: 'deals', icon: '💼', spark: [45, 36, 40, 32, 48, 52, 59] },
-  { key: 'aiEmployees', label: 'AI сотрудники', value: demoMetrics.aiEmployees, delta: 'Активны', tone: 'ai', icon: '🤖', spark: [52, 50, 54, 53, 55, 56, 58] },
+  { key: 'aiEmployees', label: 'AI сотрудники', value: demoMetrics.aiEmployees, delta: 'Активны', tone: 'ai', icon: <img src={as6Robot} alt="AS6 AI Workforce" className="ai-workforce-avatar-image" />
+<img className="as6-ai-kpi-robot-image" src={as6RobotAsset} alt="AI Workforce" />, spark: [52, 50, 54, 53, 55, 56, 58] },
   { key: 'conversion', label: 'Конверсия', value: demoMetrics.conversion, delta: '+8.3%', tone: 'conversion', icon: '◎', spark: [21, 26, 24, 31, 35, 39, 46] },
 ]
 
@@ -44,10 +50,10 @@ const funnelStages = [
 ]
 
 const aiEmployees = [
-  { name: 'AI SDR Agent', value: 156, suffix: '', progress: 86, delta: '+24%', avatar: '🤖', tone: 'cyan' },
-  { name: 'AI Closer Agent', value: '$842k', suffix: '', progress: 78, delta: '+31%', avatar: '👨‍💼', tone: 'violet' },
-  { name: 'AI Support Agent', value: 98, suffix: '%', progress: 72, delta: '+8%', avatar: '👩‍💻', tone: 'orange' },
-  { name: 'AI Analyst', value: 124, suffix: '', progress: 91, delta: '+15%', avatar: '🧠', tone: 'green' },
+  { name: 'AI SDR Agent', value: 156, suffix: '', progress: 86, delta: '+24%', avatar: <img src={as6Robot} alt="AS6 AI SDR Agent" className="agent-avatar-image" />, tone: 'cyan' },
+  { name: 'AI Closer Agent', value: '$842k', suffix: '', progress: 78, delta: '+31%', avatar: <img src={as6Robot} alt="AS6 AI Closer Agent" className="agent-avatar-image" />, tone: 'violet' },
+  { name: 'AI Support Agent', value: 98, suffix: '%', progress: 72, delta: '+8%', avatar: <img src={as6Robot} alt="AS6 AI Support Agent" className="agent-avatar-image" />, tone: 'orange' },
+  { name: 'AI Analyst', value: 124, suffix: '', progress: 91, delta: '+15%', avatar: <img src={as6Robot} alt="AS6 AI Analyst" className="agent-avatar-image" />, tone: 'green' },
 ]
 
 const events = [
@@ -64,16 +70,16 @@ const nextActions = [
 ]
 
 const recommendations = [
-  { title: 'Фокус: Высокий приоритет', text: 'Обработайте лидов из сектора SaaS сегодня. Потенциал: $56,400', action: 'Открыть лидов', tone: 'violet', icon: '👥' },
-  { title: 'Возможность роста', text: 'Увеличьте конверсию на этапе презентации. Потенциал: +$3,200', action: 'Смотреть аналитику', tone: 'cyan', icon: '📊' },
-  { title: 'Оптимизация', text: 'AI сотрудники могут обработать больше лидов. Потенциал: +$2,800', action: 'Настроить AI', tone: 'orange', icon: '⚡' },
-  { title: 'Риск', text: '2 сделки могут быть потеряны без действия. Потенциал: -$4,500', action: 'Посмотреть сделки', tone: 'risk', icon: '💎' },
+  { title: 'Фокус: Высокий приоритет', text: 'Обработайте лидов из сектора SaaS сегодня. Потенциал: $56,400', action: 'Открыть лидов', href: '/crm?filter=priority', tone: 'violet', icon: '👥' },
+  { title: 'Возможность роста', text: 'Увеличьте конверсию на этапе презентации. Потенциал: +$3,200', action: 'Смотреть аналитику', href: '/ai-revenue-intelligence', tone: 'cyan', icon: '📊' },
+  { title: 'Оптимизация', text: 'AI сотрудники могут обработать больше лидов. Потенциал: +$2,800', action: 'Настроить AI', href: '/ai-workforce-center', tone: 'orange', icon: '⚡' },
+  { title: 'Риск', text: '2 сделки могут быть потеряны без действия. Потенциал: -$4,500', action: 'Посмотреть сделки', href: '/ai-executive-brain', tone: 'risk', icon: '💎' },
 ]
 
 
 const executiveModules = [
   { title: 'Revenue Intelligence', text: 'Выручка, воронка, прогноз и возможности роста', href: '/ai-revenue-intelligence', icon: '📈', tone: 'cyan' },
-  { title: 'AI Workforce', text: 'AI сотрудники, загрузка, эффективность и задачи', href: '/ai-workforce-center', icon: '🤖', tone: 'violet' },
+  { title: 'AI Workforce', text: 'AI сотрудники, загрузка, эффективность и задачи', href: '/ai-workforce-center', icon: as6RobotAsset, tone: 'violet' },
   { title: 'Strategic Planning', text: 'Цели, планы, недельные и месячные приоритеты', href: '/ai-strategic-planning', icon: '🧭', tone: 'green' },
   { title: 'Execution Center', text: 'Исполнение, операции, действия и контроль результата', href: '/ai-execution-center', icon: '⚡', tone: 'orange' },
   { title: 'Approval Center', text: 'Очередь решений, approvals и human-in-the-loop контроль', href: '/ai-approval-center', icon: '🛡️', tone: 'pink' },
@@ -102,8 +108,24 @@ export default function CommandCenterPage() {
   const [apiState, setApiState] = useState({})
   const [apiLoading, setApiLoading] = useState(true)
   const [apiErrors, setApiErrors] = useState([])
-  const [pipelinePeriod, setPipelinePeriod] = useState('month')
-  const [revenueRange, setRevenueRange] = useState('30d')
+  const [pipelinePeriod, setPipelinePeriod] = useState('day')
+  const [revenueRange, setRevenueRange] = useState('7d')
+
+  const pipelineSummary = useMemo(() => ({
+    day: { process: '$482,000', won: '$128,900', growth: '+4.8%' },
+    week: { process: '$1,840,000', won: '$642,000', growth: '+12.4%' },
+    month: { process: '$4,782,000', won: '$1,248,890', growth: '+18.6%' },
+    quarter: { process: '$12,760,000', won: '$3,890,000', growth: '+18.6%' },
+    year: { process: '$48,900,000', won: '$14,820,000', growth: '+18.6%' },
+  }[pipelinePeriod] || { process: '$4,782,000', won: '$1,248,890', growth: '+18.6%' }), [pipelinePeriod])
+
+  const revenueSummary = useMemo(() => ({
+    '1d': { total: '$428,000', growth: '+3.1%' },
+    '7d': { total: '$2,940,000', growth: '+9.8%' },
+    '30d': { total: '$12,490,000', growth: '+22.4%' },
+    '90d': { total: '$31,800,000', growth: '+22.4%' },
+    '365d': { total: '$128,400,000', growth: '+22.4%' },
+  }[revenueRange] || { total: '$12,490,000', growth: '+22.4%' }), [revenueRange])
   const [workforceRange, setWorkforceRange] = useState('week')
 
   useEffect(() => {
@@ -236,21 +258,16 @@ export default function CommandCenterPage() {
 
   return (
     <main className="command-center-page" data-command-center-visual="premium-as6" data-as6-diagnostic-page="command-center-premium">
+<img className="as6-command-center-logo-image" src={as6Logo} alt="AS6" />
       <section className="command-hero" data-as6-diagnostic-hero="executive-command-center">
         <div>
           <h1>Добро пожаловать, <span>Владимир!</span> 👋</h1>
           <p>Ваш AI Command Center. Управляйте, анализируйте и масштабируйте выручку.</p>
-          <div className="command-live-status">
-            <span className={apiLoading ? 'loading' : 'green'}>{apiLoading ? 'Синхронизация...' : 'Live-ready'}</span>
-            <span>{apiErrors.length ? `API требует авторизацию: ${apiErrors.length}` : 'API подключён'}</span>
-          </div>
+          <div className="command-live-status"><a className={apiLoading ? 'loading' : 'green'} href="/ai-system-health-center">{apiLoading ? 'Синхронизация...' : 'Live-ready'}</a><a href="/ai-system-health-center">{apiErrors.length ? `API требует авторизацию: ${apiErrors.length}` : 'API подключён'}</a></div>
         </div>
         <div className="command-top-actions" aria-label="Command Center tools">
           <label className="command-search"><span>⌕</span><input type="search" placeholder="Поиск..." /></label>
-          <button type="button" data-badge="12">🔔</button>
-          <button type="button" data-badge="3">💬</button>
-          <button type="button">?</button>
-          <button type="button" className="command-avatar">A</button>
+          <a href="/followups" className="top-icon" data-badge="12" aria-label="Уведомления"><BellIcon /></a><a href="/priority-inbox" className="top-icon" data-badge="3" aria-label="AI коммуникации"><ChatIcon /></a><a href="/ai-system-health-center" className="top-icon" aria-label="Помощь"><HelpIcon /></a><a href="/profile" className="command-avatar top-icon-profile" aria-label="Профиль">A</a>
         </div>
       </section>
 
@@ -264,7 +281,7 @@ export default function CommandCenterPage() {
 
 
 
-      <section className="quick-actions quick-actions-primary" data-quick-actions data-as6-primary-actions="above-fold"><h2>Быстрые действия</h2><div>{quickActions.map((action, index) => <a href={quickActionLinks[action] || "#"} role="button" key={action}><span>{["👥", "$", "🧾", "🛡️", "〽️", "📊", "⚙️"][index]}</span>{action}</a>)}</div></section>
+      <section className="quick-actions quick-actions-primary" data-quick-actions data-as6-primary-actions="above-fold"><h2>Быстрые действия</h2><div>{quickActions.map((action, index) => <a href={quickActionLinks[action] || "#"} role="button" key={action} aria-label={action}><span>{["👥", "$", "🧾", "🛡️", "〽️", "📊", as6RobotAsset][index]}</span>{action}</a>)}</div></section>
 
       <section className="command-main-grid">
         <div className="command-core">
@@ -281,17 +298,14 @@ export default function CommandCenterPage() {
             </article>
 
             <article className="command-card pipeline-card" data-pipeline-funnel>
-              <div className="command-card-head"><h2>Pipeline Overview</h2><select className="command-filter-select" value={pipelinePeriod} onChange={(event) => setPipelinePeriod(event.target.value)} aria-label="Pipeline period"><option value="week">Неделя</option><option value="month">Этот месяц</option><option value="quarter">Квартал</option><option value="year">Год</option></select></div>
+              <div className="command-card-head"><h2>Pipeline Overview</h2><select className="command-filter-select" value={pipelinePeriod} onChange={(event) => setPipelinePeriod(event.target.value)} aria-label="Pipeline period"><option value="day">День</option><option value="week">Неделя</option><option value="month">Месяц</option><option value="quarter">Квартал</option><option value="year">Год</option></select></div>
               <div className="pipeline-layout">
                 <div className="pipeline-funnel">
                   {funnelStages.map((stage) => <div className="funnel-row" key={stage.label}>
                     <span>{stage.label}</span><strong className={`funnel-slice screenshot-funnel-slice ${stage.tone}`} style={{ '--stage-width': `${stage.width}%` }}><em>{stage.value}</em></strong>
                   </div>)}
                 </div>
-                <div className="pipeline-summary">
-                  <small>Сумма в процессе</small><strong>{demoMetrics.pipelineTotal}</strong>
-                  <small>В выигрыше</small><strong>{demoMetrics.wonTotal}</strong><em>+18.6%</em>
-                </div>
+                <div className="pipeline-summary"><small>Сумма в процессе</small><strong>{pipelineSummary.process}</strong><small>В выигрыше</small><strong>{pipelineSummary.won}</strong><em>{pipelineSummary.growth}</em></div>
               </div>
             </article>
           </section>
@@ -306,8 +320,8 @@ export default function CommandCenterPage() {
             </article>
 
             <article className="command-card revenue-dynamics">
-              <div className="command-card-head"><h2>Динамика выручки</h2><select className="command-filter-select" value={revenueRange} onChange={(event) => setRevenueRange(event.target.value)} aria-label="Revenue range"><option value="1d">1 день</option><option value="7d">7 дней</option><option value="30d">30 дней</option><option value="90d">90 дней</option><option value="365d">365 дней</option></select></div>
-              <strong className="chart-total">$12,490,000 <em>+22.4%</em></strong>
+              <div className="command-card-head"><h2>Динамика выручки</h2><select className="command-filter-select" value={revenueRange} onChange={(event) => setRevenueRange(event.target.value)} aria-label="Revenue range"><option value="1d">День</option><option value="7d">7 дней</option><option value="30d">30 дней</option><option value="90d">90 дней</option><option value="365d">365 дней</option></select></div>
+              <strong className="chart-total">{revenueRange === '1d' ? '$428,000' : revenueRange === '7d' ? '$2,940,000' : revenueRange === '90d' ? '$31,800,000' : revenueRange === '365d' ? '$128,400,000' : '$12,490,000'} <em>{revenueRange === '1d' ? '+3.1%' : revenueRange === '7d' ? '+9.8%' : '+22.4%'}</em></strong>
               <div className="mock-chart">{chartBars.map((height, index) => <span key={index} style={{ height: `${height}%` }} />)}<svg viewBox="0 0 240 100" preserveAspectRatio="none"><polyline points="0,76 34,58 68,66 102,38 136,52 170,24 204,36 240,12" /></svg></div>
             </article>
 
@@ -321,8 +335,9 @@ export default function CommandCenterPage() {
 
         <aside className="command-right-rail" data-right-action-rail data-copilot-rail data-as6-diagnostic-copilot="right-action-rail">
           <article className="command-card copilot-hero" data-copilot-hero>
-            <div className="copilot-top"><h2>AI Copilot</h2><span>AS6</span></div><div className="robot-icon copilot-avatar-v2"><span>AS6</span><i /></div>
-            <p>Я здесь, чтобы помочь вам принимать лучшие решения и достигать целей быстрее.</p><button type="button">Спросить AI Copilot →</button>
+<img className="as6-copilot-real-image" src={as6CopilotAsset} alt="AS6 Copilot" />
+            <div className="copilot-top"><h2>AI Copilot</h2><span>AS6</span></div><CopilotAsset />
+            <p>Я здесь, чтобы помочь вам принимать лучшие решения и достигать целей быстрее.</p><a className="copilot-action-link" href="/ai-executive-brain">Спросить AI Copilot →</a>
           </article>
           <article className="command-card event-card"><div className="command-card-head"><h2>Последние события</h2><a href="/dashboard">Все</a></div>{events.map((event) => <div className="event-row" key={event.text}><b>{event.icon}</b><span>{event.text}</span><time>{event.time}</time></div>)}</article>
           <article className="command-card next-action-card"><h2>Следующее лучшее действие</h2>{nextActions.map((action) => <div className="next-action" key={action.label}><b>{action.icon}</b><span>{action.label}<small>{action.note}</small></span><strong>{action.value}</strong></div>)}<div className="expected-effect"><span>Ожидаемый эффект</span><strong>+$8,900</strong></div></article>
@@ -332,7 +347,7 @@ export default function CommandCenterPage() {
 
 
       <section className="command-recommendations" data-ai-recommendations>
-        <h2>AI рекомендации</h2><div>{recommendations.map((card) => <article className={`recommendation ${card.tone}`} key={card.title}><b>{card.icon}</b><strong>{card.title}</strong><p>{card.text}</p><button type="button">{card.action} →</button></article>)}</div>
+        <h2>AI рекомендации</h2><div>{recommendations.map((card) => <a className={`recommendation ${card.tone}`} href={card.href} key={card.title} aria-label={card.action}><b>{card.icon}</b><strong>{card.title}</strong><p>{card.text}</p><span className="recommendation-action">{card.action} →</span></a>)}</div>
       </section>
     </main>
   )

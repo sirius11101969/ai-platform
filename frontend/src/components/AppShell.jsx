@@ -1,3 +1,4 @@
+import AS6Logo from './branding/AS6Logo.jsx'
 import React, { useEffect, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { creditSummary, userProfile } from "../data/mockData";
@@ -121,7 +122,7 @@ export function ProtectedLayout({ children }) {
       <aside className={`sidebar shell-glow ${isCommandCenter ? "command-sidebar" : ""}`} data-command-sidebar={isCommandCenter ? "premium" : undefined}>
         {isCommandCenter ? (
           <>
-            <div className="as6-sidebar-brand"><strong>AS6</strong><span>AI PLATFORM</span></div>
+            <div className="as6-sidebar-brand as6-sidebar-brand-top"><AS6Logo /></div>
             <div className="sidebar-scroll" role="presentation">
               <nav className="side-nav command-side-nav" aria-label="Command Center navigation">
                 <NavLink to="/command-center" className={({ isActive }) => (isActive ? "active command-center-active" : "command-center-link")}>🚀 Command Center</NavLink>
@@ -144,10 +145,10 @@ export function ProtectedLayout({ children }) {
               </div>
             </div>
             <div className="command-sidebar-bottom">
-              <section className="command-profile-card">
+              <a className="command-profile-card" href="/profile">
                 <div className="profile-photo">В</div><div><strong>AS6 Owner</strong><span>Владимир</span><small>● Онлайн</small></div>
-              </section>
-              <section className="command-help-card"><b>✦</b><span>Нужна помощь?</span><strong>Открыть AI поддержку</strong></section>
+              </a>
+              <a className="command-help-card" href="/ai-system-health-center"><b>✦</b><span>Нужна помощь?</span><strong>Открыть AI поддержку</strong></a>
             </div>
           </>
         ) : (

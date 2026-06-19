@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "=== AS6 Command Center Avatar Reference Diagnostics ==="
+css="frontend/src/theme/as6Theme.css"
+f="frontend/src/pages/CommandCenterPage.jsx"
+fail=0
+grep -q "AS6 Command Center Avatar Reference V17" "$css" && echo "AS6_AVATAR_REFERENCE_V17_CSS=PASS" || { echo "AS6_AVATAR_REFERENCE_V17_CSS=FAIL"; fail=1; }
+grep -q ".command-kpi.ai i { width:56px" "$css" && grep -q ".command-kpi.ai i::after" "$css" && echo "AS6_AI_KPI_AVATAR_REFERENCE=PASS" || { echo "AS6_AI_KPI_AVATAR_REFERENCE=FAIL"; fail=1; }
+grep -q "grid-template-areas:\"head head\" \"avatar text\" \"cta cta\"" "$css" && echo "AS6_COPILOT_GRID_REFERENCE=PASS" || { echo "AS6_COPILOT_GRID_REFERENCE=FAIL"; fail=1; }
+grep -q "width:112px" "$css" && grep -q "robot-icon.copilot-avatar-v2::after" "$css" && echo "AS6_COPILOT_AVATAR_REFERENCE=PASS" || { echo "AS6_COPILOT_AVATAR_REFERENCE=FAIL"; fail=1; }
+grep -q "width:100%" "$css" && grep -q "min-height:56px" "$css" && echo "AS6_COPILOT_CTA_FULL_WIDTH=PASS" || { echo "AS6_COPILOT_CTA_FULL_WIDTH=FAIL"; fail=1; }
+grep -q "copilot-action-link" "$f" && echo "AS6_COPILOT_ACTION_LINK_PRESENT=PASS" || { echo "AS6_COPILOT_ACTION_LINK_PRESENT=FAIL"; fail=1; }
+if [ "$fail" -eq 0 ]; then echo "AS6_COMMAND_CENTER_AVATAR_REFERENCE_RESULT=OK"; exit 0; fi
+echo "AS6_COMMAND_CENTER_AVATAR_REFERENCE_RESULT=FAIL"; exit 1

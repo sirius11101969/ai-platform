@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "=== AS6 Command Center Visual Fix V13 Diagnostics ==="
+f="frontend/src/pages/CommandCenterPage.jsx"
+css="frontend/src/theme/as6Theme.css"
+fail=0
+grep -q "AS6 Command Center Visual Fix V13" "$css" && echo "AS6_V13_CSS=PASS" || { echo "AS6_V13_CSS=FAIL"; fail=1; }
+grep -q "clip-path:polygon(0 0,100% 0,94% 100%,6% 100%)" "$css" && echo "AS6_V13_FUNNEL_NOT_INVERTED=PASS" || { echo "AS6_V13_FUNNEL_NOT_INVERTED=FAIL"; fail=1; }
+grep -q "<option value=\"day\">День</option>" "$f" && echo "AS6_V13_PIPELINE_DAY_OPTION=PASS" || { echo "AS6_V13_PIPELINE_DAY_OPTION=FAIL"; fail=1; }
+grep -q "<option value=\"month\">Месяц</option>" "$f" && echo "AS6_V13_PIPELINE_MONTH_LABEL=PASS" || { echo "AS6_V13_PIPELINE_MONTH_LABEL=FAIL"; fail=1; }
+grep -q "const \[revenueRange, setRevenueRange\] = useState('7d')" "$f" && echo "AS6_V13_REVENUE_DEFAULT_7D=PASS" || { echo "AS6_V13_REVENUE_DEFAULT_7D=FAIL"; fail=1; }
+grep -q ".command-kpi.ai i::after" "$css" && echo "AS6_V13_AI_KPI_ROBOT=PASS" || { echo "AS6_V13_AI_KPI_ROBOT=FAIL"; fail=1; }
+grep -q ".robot-icon.copilot-avatar-v2::after" "$css" && echo "AS6_V13_COPILOT_ROBOT=PASS" || { echo "AS6_V13_COPILOT_ROBOT=FAIL"; fail=1; }
+if [ "$fail" -eq 0 ]; then echo "AS6_COMMAND_CENTER_VISUAL_FIX_V13_RESULT=OK"; exit 0; fi
+echo "AS6_COMMAND_CENTER_VISUAL_FIX_V13_RESULT=FAIL"; exit 1

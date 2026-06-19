@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "=== AS6 Command Center Real Logo V21 Diagnostics ==="
+fail=0
+test -f frontend/src/assets/as6-logo.png && echo "AS6_REAL_LOGO_ASSET=PASS" || { echo "AS6_REAL_LOGO_ASSET=FAIL"; fail=1; }
+grep -q "import as6Logo" frontend/src/components/branding/AS6Logo.jsx && echo "AS6_REAL_LOGO_IMPORT=PASS" || { echo "AS6_REAL_LOGO_IMPORT=FAIL"; fail=1; }
+grep -q "as6-real-logo-image" frontend/src/components/branding/AS6Logo.jsx && echo "AS6_REAL_LOGO_COMPONENT=PASS" || { echo "AS6_REAL_LOGO_COMPONENT=FAIL"; fail=1; }
+grep -q "AS6 Real Logo Asset V21" frontend/src/theme/as6Theme.css && echo "AS6_REAL_LOGO_CSS=PASS" || { echo "AS6_REAL_LOGO_CSS=FAIL"; fail=1; }
+if [ "$fail" -eq 0 ]; then echo "AS6_COMMAND_CENTER_REAL_LOGO_V21_RESULT=OK"; exit 0; fi
+echo "AS6_COMMAND_CENTER_REAL_LOGO_V21_RESULT=FAIL"; exit 1

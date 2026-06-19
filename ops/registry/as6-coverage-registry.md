@@ -1466,3 +1466,20 @@
 - ops/bin/as6-diagnose-command-center-executive-v10 | Coverage: premium copilot avatar, AS6 brand lockup, symmetric funnel tuning, premium quick actions
 - ops/bin/as6-diagnose-command-center-pixel-polish-v11 | Coverage: V11 funnel geometry, copilot scale, AS6 brand lockup, quick action interaction, recommendation contrast
 - ops/bin/as6-diagnose-command-center-final-pixel-v12 | Coverage: centered symmetric funnel, larger copilot visual mass, executive recommendation CTA polish
+- ops/bin/as6-diagnose-command-center-visual-fix-v13 | Coverage: non-inverted funnel, branded Copilot robot, AI KPI robot, pipeline day/month labels, revenue default range
+- ops/bin/as6-diagnose-command-center-visual-actions-v14 | Coverage: top action links, status links, Copilot link, support/profile links, reactive summaries, final robot/funnel overrides
+- ops/bin/as6-diagnose-appshell-jsx-tag-integrity | Coverage: AppShell anchor/section tag integrity, profile/help card JSX closure prevention
+- ops/bin/as6-diagnose-command-center-recommendation-actions | Coverage: executive recommendation card navigation targets and clickable card CTA contract
+- ops/bin/as6-diagnose-command-center-executive-cleanup-v16 | Coverage: status routes, top action routes, recommendation routes, profile/help routes, focus-visible and robot pulse contracts
+- ops/bin/as6-diagnose-command-center-avatar-reference | Coverage: AI KPI avatar reference, Copilot avatar reference, Copilot grid reference, full-width Copilot CTA
+- ops/bin/as6-diagnose-command-center-visual-reference-v18 | Coverage: AS6 logo reference, top icon reference, AI KPI avatar reference, Copilot avatar/grid/CTA reference
+- ops/bin/as6-diagnose-command-center-pixel-reference-v19 | Coverage: L2 AS6 logo red accent, L2 AI KPI avatar, L2 Copilot avatar, card proportions, CTA width, topbar icons
+- ops/bin/as6-diagnose-command-center-real-assets-v20 | Coverage: real Copilot asset, AS6 logo component, SVG topbar icons, AppShell profile anchor closure
+- ops/bin/as6-diagnose-command-center-real-logo-v21 | Coverage: real AS6 logo image asset, imported branding component, sidebar logo rendering
+- ops/bin/as6-diagnose-command-center-logo-top-v22 | Coverage: AS6 real logo asset rendered at top of sidebar
+- ops/bin/as6-diagnose-command-center-robot-kpi-v23 | Coverage: real AS6 robot image in AI workforce KPI, duplicate import prevention
+- ops/bin/as6-diagnose-command-center-ai-workforce-robot-v24 | Coverage: real AS6 robot in top AI KPI and AI workforce agent rows, emoji regression prevention
+
+## COMMAND_CENTER_NO_EMOJI_AVATARS_V28
+Diagnostic: ops/bin/as6-diagnose-command-center-no-emoji-avatars-v28
+Coverage: no emoji avatar literals, real robot PNG avatar enforcement

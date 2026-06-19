@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "=== AS6 AppShell JSX Tag Integrity Diagnostics ==="
+f="frontend/src/components/AppShell.jsx"
+fail=0
+if grep -q "<a className=\"command-profile-card\" href=\"/profile\">" "$f" && grep -A3 "<a className=\"command-profile-card\" href=\"/profile\">" "$f" | grep -q "</a>"; then echo "AS6_APPSHELL_PROFILE_ANCHOR_TAG=PASS"; else echo "AS6_APPSHELL_PROFILE_ANCHOR_TAG=FAIL"; fail=1; fi
+if grep -A3 "<a className=\"command-profile-card\" href=\"/profile\">" "$f" | grep -q "</section>"; then echo "AS6_APPSHELL_PROFILE_STALE_SECTION_CLOSE=FAIL"; fail=1; else echo "AS6_APPSHELL_PROFILE_STALE_SECTION_CLOSE=PASS"; fi
+if grep -q "<a className=\"command-help-card\" href=\"/ai-system-health-center\">" "$f"; then echo "AS6_APPSHELL_HELP_ANCHOR=PASS"; else echo "AS6_APPSHELL_HELP_ANCHOR=FAIL"; fail=1; fi
+if [ "$fail" -eq 0 ]; then echo "AS6_APPSHELL_JSX_TAG_INTEGRITY_RESULT=OK"; exit 0; fi
+echo "AS6_APPSHELL_JSX_TAG_INTEGRITY_RESULT=FAIL"; exit 1

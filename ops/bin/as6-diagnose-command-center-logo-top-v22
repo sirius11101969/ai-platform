@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "=== AS6 Command Center Logo Top V22 Diagnostics ==="
+fail=0
+test -f frontend/src/assets/as6-logo.png && echo "AS6_LOGO_TOP_ASSET=PASS" || { echo "AS6_LOGO_TOP_ASSET=FAIL"; fail=1; }
+grep -q "AS6Logo" frontend/src/components/AppShell.jsx && echo "AS6_LOGO_TOP_COMPONENT_USED=PASS" || { echo "AS6_LOGO_TOP_COMPONENT_USED=FAIL"; fail=1; }
+grep -q "as6-sidebar-brand-top" frontend/src/components/AppShell.jsx && echo "AS6_LOGO_TOP_CLASS=PASS" || { echo "AS6_LOGO_TOP_CLASS=FAIL"; fail=1; }
+grep -q "AS6 Logo Top V22" frontend/src/theme/as6Theme.css && echo "AS6_LOGO_TOP_CSS=PASS" || { echo "AS6_LOGO_TOP_CSS=FAIL"; fail=1; }
+if [ "$fail" -eq 0 ]; then echo "AS6_LOGO_TOP_V22_RESULT=OK"; exit 0; fi
+echo "AS6_LOGO_TOP_V22_RESULT=FAIL"; exit 1
