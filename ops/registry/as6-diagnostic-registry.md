@@ -1466,3 +1466,8 @@ File: ops/bin/as6-diagnose-rendered-asset-paths-v48
 Status: ENABLED
 Scope: Quick action icon asset text rendering diagnostics
 File: ops/bin/as6-diagnose-quick-action-icon-v49
+
+## as6-diagnose-executive-module-icon-v50
+Status: ENABLED
+Scope: Executive module icon asset text rendering diagnostics
+File: ops/bin/as6-diagnose-executive-module-icon-v50

@@ -2233,3 +2233,8 @@ Diagnostic: ops/bin/as6-diagnose-rendered-asset-paths-v48
 Status: APPLIED
 Root cause: quick action icon array used imported robot asset URL as text child.
 Diagnostic: ops/bin/as6-diagnose-quick-action-icon-v49
+
+## AS6 Executive Module Icon Fix V50
+Status: APPLIED
+Root cause: executive module icon field used imported robot asset URL string.
+Diagnostic: ops/bin/as6-diagnose-executive-module-icon-v50

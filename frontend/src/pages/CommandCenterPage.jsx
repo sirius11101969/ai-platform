@@ -77,7 +77,7 @@ const recommendations = [
 
 const executiveModules = [
   { title: 'Revenue Intelligence', text: 'Выручка, воронка, прогноз и возможности роста', href: '/ai-revenue-intelligence', icon: '📈', tone: 'cyan' },
-  { title: 'AI Workforce', text: 'AI сотрудники, загрузка, эффективность и задачи', href: '/ai-workforce-center', icon: as6Robot, tone: 'violet' },
+  { title: 'AI Workforce', text: 'AI сотрудники, загрузка, эффективность и задачи', href: '/ai-workforce-center', icon: <img src={as6Robot} alt="AI Workforce" className="executive-module-robot-icon" />, tone: 'violet' },
   { title: 'Strategic Planning', text: 'Цели, планы, недельные и месячные приоритеты', href: '/ai-strategic-planning', icon: '🧭', tone: 'green' },
   { title: 'Execution Center', text: 'Исполнение, операции, действия и контроль результата', href: '/ai-execution-center', icon: '⚡', tone: 'orange' },
   { title: 'Approval Center', text: 'Очередь решений, approvals и human-in-the-loop контроль', href: '/ai-approval-center', icon: '🛡️', tone: 'pink' },

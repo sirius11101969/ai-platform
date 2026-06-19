@@ -698,3 +698,12 @@
   align-items:center!important;
   justify-content:center!important;
 }
+
+/* AS6 Executive Module Robot Icon V50 */
+.executive-module-robot-icon{
+  display:block!important;
+  width:28px!important;
+  height:28px!important;
+  object-fit:contain!important;
+  filter:drop-shadow(0 0 12px rgba(80,220,255,.42))!important;
+}

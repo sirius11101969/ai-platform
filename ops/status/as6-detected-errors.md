@@ -73,3 +73,8 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_ASSET_USED_AS_TEXT_ICON
 Diagnostic: ops/bin/as6-diagnose-quick-action-icon-v49
 Status: REGISTERED
+
+## 2026-06-19 EXECUTIVE_MODULE_ICON_V50
+Failure Class: AS6_FAILURE_CLASS_EXECUTIVE_MODULE_ICON_ASSET_URL_STRING
+Diagnostic: ops/bin/as6-diagnose-executive-module-icon-v50
+Status: REGISTERED

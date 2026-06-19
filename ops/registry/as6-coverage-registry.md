@@ -1554,3 +1554,7 @@ Coverage: visible asset path prevention, hashed filename prevention, robot asset
 ## QUICK_ACTION_ICON_V49
 Diagnostic: ops/bin/as6-diagnose-quick-action-icon-v49
 Coverage: quick action robot img rendering, asset URL text prevention, build validation, production health validation
+
+## EXECUTIVE_MODULE_ICON_V50
+Diagnostic: ops/bin/as6-diagnose-executive-module-icon-v50
+Coverage: executive module robot img rendering, asset URL text prevention, build validation, production health validation

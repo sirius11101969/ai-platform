@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+PAGE="frontend/src/pages/CommandCenterPage.jsx"
+CSS="frontend/src/theme/as6Theme.css"
+fail=0
+check(){ n="$1"; shift; if "$@"; then echo "PASS:$n"; else echo "FAIL:$n"; fail=1; fi; }
+check page_exists test -f "$PAGE"
+check css_exists test -f "$CSS"
+check executive_modules_exist grep -q "executiveModules" "$PAGE"
+check executive_robot_img_exists grep -q "executive-module-robot-icon" "$PAGE"
+check executive_robot_css_exists grep -q "AS6 Executive Module Robot Icon V50" "$CSS"
+check executive_asset_not_text bash -c '! grep -q "icon: as6Robot" frontend/src/pages/CommandCenterPage.jsx'
+check no_asset_path_rendered bash -c '! grep -Eq ">\s*/assets/as6-[^<]+\.png\s*<" frontend/src/pages/CommandCenterPage.jsx'
+exit "$fail"
