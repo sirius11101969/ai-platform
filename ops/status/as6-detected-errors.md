@@ -78,3 +78,8 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_EXECUTIVE_MODULE_ICON_ASSET_URL_STRING
 Diagnostic: ops/bin/as6-diagnose-executive-module-icon-v50
 Status: REGISTERED
+
+## 2026-06-19 LOGO_OPTIMIZATION_V51
+Failure Class: AS6_FAILURE_CLASS_OVERSIZED_BRANDING_LOGO_ASSET
+Diagnostic: ops/bin/as6-diagnose-logo-optimization-v51
+Status: REGISTERED

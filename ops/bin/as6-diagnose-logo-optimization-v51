@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+PAGE="frontend/src/pages/CommandCenterPage.jsx"
+LOGO_PNG="frontend/src/assets/as6-logo.png"
+LOGO_WEBP="frontend/src/assets/as6-logo.webp"
+fail=0
+check(){ n="$1"; shift; if "$@"; then echo "PASS:$n"; else echo "FAIL:$n"; fail=1; fi; }
+check logo_png_exists test -f "$LOGO_PNG"
+check logo_webp_exists test -f "$LOGO_WEBP"
+check page_references_webp_logo grep -q "as6-logo.webp" "$PAGE"
+png_bytes="$(wc -c < "$LOGO_PNG")"
+webp_bytes="$(wc -c < "$LOGO_WEBP")"
+echo "LOGO_PNG_BYTES=$png_bytes"
+echo "LOGO_WEBP_BYTES=$webp_bytes"
+if test "$webp_bytes" -lt "$png_bytes"; then echo "PASS:logo_webp_smaller_than_png"; else echo "FAIL:logo_webp_smaller_than_png"; fail=1; fi
+if test "$webp_bytes" -lt 150000; then echo "PASS:logo_webp_budget"; else echo "FAIL:logo_webp_budget"; fail=1; fi
+check no_png_logo_import bash -c "! grep -q \"../assets/as6-logo.png\" frontend/src/pages/CommandCenterPage.jsx"
+exit "$fail"

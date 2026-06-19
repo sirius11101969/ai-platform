@@ -2238,3 +2238,8 @@ Diagnostic: ops/bin/as6-diagnose-quick-action-icon-v49
 Status: APPLIED
 Root cause: executive module icon field used imported robot asset URL string.
 Diagnostic: ops/bin/as6-diagnose-executive-module-icon-v50
+
+## AS6 Logo Optimization V51
+Status: APPLIED
+Root cause: oversized branding logo asset remained largest frontend visual asset.
+Diagnostic: ops/bin/as6-diagnose-logo-optimization-v51

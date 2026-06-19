@@ -1,5 +1,5 @@
 import as6CopilotLogo from '../assets/as6-copilot-asset.png';
-import as6Logo from '../assets/as6-logo.png';
+import as6Logo from '../assets/as6-logo.webp';
 import { BellIcon, ChatIcon, HelpIcon } from '../components/icons/TopbarIcons.jsx'
 import { useEffect, useMemo, useState } from 'react'
 import { fetchAiCommandCenterActions, fetchAiCommandCenterBrief, fetchAiCommandCenterFocus, fetchAiCommandCenterInbox, fetchAiCommandCenterKpi, fetchAiCommandCenterOperations, fetchAiCommandCenterPlanningMonthly, fetchAiSystemHealth } from '../services/api'

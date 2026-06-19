@@ -1558,3 +1558,7 @@ Coverage: quick action robot img rendering, asset URL text prevention, build val
 ## EXECUTIVE_MODULE_ICON_V50
 Diagnostic: ops/bin/as6-diagnose-executive-module-icon-v50
 Coverage: executive module robot img rendering, asset URL text prevention, build validation, production health validation
+
+## LOGO_OPTIMIZATION_V51
+Diagnostic: ops/bin/as6-diagnose-logo-optimization-v51
+Coverage: WebP logo generation, PNG fallback preservation, WebP import guard, asset budget, build validation, production health validation

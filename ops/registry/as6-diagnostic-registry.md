@@ -1471,3 +1471,8 @@ File: ops/bin/as6-diagnose-quick-action-icon-v49
 Status: ENABLED
 Scope: Executive module icon asset text rendering diagnostics
 File: ops/bin/as6-diagnose-executive-module-icon-v50
+
+## as6-diagnose-logo-optimization-v51
+Status: ENABLED
+Scope: Logo WebP optimization and branding asset budget diagnostics
+File: ops/bin/as6-diagnose-logo-optimization-v51
