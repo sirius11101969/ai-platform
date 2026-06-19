@@ -1516,3 +1516,8 @@ File: ops/bin/as6-diagnose-frontend-budgets-v58
 Status: ENABLED
 Scope: Image asset ownership, logo PNG/WebP usage, duplicate logo and build asset diagnostics
 File: ops/bin/as6-diagnose-image-asset-ownership-v59
+
+## as6-diagnose-png-to-webp-branding-v60
+Status: ENABLED
+Scope: Sidebar branding PNG to WebP migration and branding asset budget diagnostics
+File: ops/bin/as6-diagnose-png-to-webp-branding-v60

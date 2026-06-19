@@ -2286,3 +2286,8 @@ Status: APPLIED
 Root cause: PNG logo asset ownership was not diagnostically proven before optimization/deletion.
 Diagnostic: ops/bin/as6-diagnose-image-asset-ownership-v59
 Note: No UI changes and no asset deletion were performed.
+
+## AS6 PNG To WebP Branding V60
+Status: APPLIED
+Root cause: sidebar branding component imported oversized PNG logo despite available optimized WebP logo.
+Diagnostic: ops/bin/as6-diagnose-png-to-webp-branding-v60

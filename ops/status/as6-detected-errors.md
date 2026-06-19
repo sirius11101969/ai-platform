@@ -123,3 +123,8 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_PNG_LOGO_ASSET_OWNERSHIP_UNKNOWN
 Diagnostic: ops/bin/as6-diagnose-image-asset-ownership-v59
 Status: REGISTERED
+
+## 2026-06-19 PNG_TO_WEBP_BRANDING_V60
+Failure Class: AS6_FAILURE_CLASS_SIDEBAR_BRANDING_PNG_IMPORT_REGRESSION
+Diagnostic: ops/bin/as6-diagnose-png-to-webp-branding-v60
+Status: REGISTERED
