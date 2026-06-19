@@ -1534,3 +1534,7 @@ Coverage: orphan CSS closing brace, Copilot terminal style preservation, build s
 ## COPILOT_ORPHAN_FRAGMENT_V44
 Diagnostic: ops/bin/as6-diagnose-copilot-orphan-fragment-v44
 Coverage: orphan Copilot CSS property fragment removal, V42 terminal style preservation, CTA no-arrow, build warning validation, production health validation
+
+## COMMAND_CENTER_FINAL_V45
+Diagnostic: ops/bin/as6-diagnose-command-center-final-v45
+Coverage: final Command Center JSX/CSS/assets/Copilot/robot-size/production-health closure

@@ -1441,3 +1441,8 @@ File: ops/bin/as6-diagnose-css-orphan-brace-v43
 Status: ENABLED
 Scope: Copilot orphan CSS fragment and frontend CSS warning diagnostics
 File: ops/bin/as6-diagnose-copilot-orphan-fragment-v44
+
+## as6-diagnose-command-center-final-v45
+Status: ENABLED
+Scope: Final AI Command Center closure diagnostic
+File: ops/bin/as6-diagnose-command-center-final-v45

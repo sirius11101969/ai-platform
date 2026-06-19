@@ -49,3 +49,7 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_ORPHAN_COPILOT_CSS_FRAGMENT
 Diagnostic: ops/bin/as6-diagnose-copilot-orphan-fragment-v44
 Status: REGISTERED
+
+## 2026-06-19 COMMAND_CENTER_FINAL_V45
+Status: FINAL_PASS_REGISTERED
+Diagnostic: ops/bin/as6-diagnose-command-center-final-v45

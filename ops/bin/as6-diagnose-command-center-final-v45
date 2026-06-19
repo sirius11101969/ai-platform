@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PAGE="frontend/src/pages/CommandCenterPage.jsx"
+CSS="frontend/src/theme/as6Theme.css"
+fail=0
+
+check(){ n="$1"; shift; if "$@"; then echo "PASS:$n"; else echo "FAIL:$n"; fail=1; fi; }
+
+check page_exists test -f "$PAGE"
+check css_exists test -f "$CSS"
+check logo_asset_exists test -f frontend/src/assets/as6-logo.png
+check copilot_asset_exists test -f frontend/src/assets/as6-copilot-asset.png
+check robot_asset_exists test -f frontend/src/assets/as6-robot.png
+check copilot_inline_layout grep -q "copilot-inline-layout" "$PAGE"
+check copilot_cta_no_arrow grep -q "Спросить AI Copilot</a>" "$PAGE"
+check copilot_v42_terminal_style grep -q "AS6 Copilot clean terminal style V42" "$CSS"
+check no_copilot_orphan_fragment bash -c '! grep -q '\''grid-template-areas:"head" "visual" "text" "cta"!important;'\'' frontend/src/theme/as6Theme.css'
+check no_css_orphan_168px bash -c '! grep -q "max-width:168px!important;" frontend/src/theme/as6Theme.css'
+check no_copilot_asset_component bash -c '! grep -q "CopilotAsset" frontend/src/pages/CommandCenterPage.jsx'
+robot_bytes="$(wc -c < frontend/src/assets/as6-robot.png)"
+echo "ROBOT_BYTES=$robot_bytes"
+if test "$robot_bytes" -lt 200000; then echo "PASS:robot_asset_size_guard"; else echo "FAIL:robot_asset_size_guard"; fail=1; fi
+check production_health curl -kfsS https://www.as6.ru/api/health
+
+exit "$fail"
