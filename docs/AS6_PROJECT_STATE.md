@@ -2182,3 +2182,8 @@ Diagnostic: ops/bin/as6-diagnose-copilot-style-consolidation-v38
 Status: APPLIED
 Root cause: residual CopilotAsset reference after partial V39 repair.
 Diagnostic: ops/bin/as6-diagnose-copilot-css-and-robot-cleanup-v39
+
+## AS6 Copilot Inline Layout V40
+Status: APPLIED
+Root cause: Copilot descriptive text used vertical space instead of compact logo plus CTA layout.
+Diagnostic: ops/bin/as6-diagnose-copilot-inline-layout-v40

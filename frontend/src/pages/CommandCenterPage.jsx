@@ -1,3 +1,4 @@
+import as6CopilotLogo from '../assets/as6-copilot-asset.png';
 import as6Logo from '../assets/as6-logo.png';
 import { BellIcon, ChatIcon, HelpIcon } from '../components/icons/TopbarIcons.jsx'
 import { useEffect, useMemo, useState } from 'react'
@@ -333,7 +334,10 @@ export default function CommandCenterPage() {
         <aside className="command-right-rail" data-right-action-rail data-copilot-rail data-as6-diagnostic-copilot="right-action-rail">
           <article className="command-card copilot-hero" data-copilot-hero>
             <div className="copilot-top"><h2>AI Copilot</h2><span>AS6</span></div>
-            <p>Я здесь, чтобы помочь вам принимать лучшие решения и достигать целей быстрее.</p><a className="copilot-action-link" href="/ai-executive-brain">Спросить AI Copilot →</a>
+            <div className="copilot-inline-layout">
+              <img className="as6-copilot-inline-logo" src={as6CopilotLogo} alt="AS6 Copilot" />
+              <a className="copilot-action-link" href="/ai-executive-brain">Спросить AI Copilot →</a>
+            </div>
           </article>
           <article className="command-card event-card"><div className="command-card-head"><h2>Последние события</h2><a href="/dashboard">Все</a></div>{events.map((event) => <div className="event-row" key={event.text}><b>{event.icon}</b><span>{event.text}</span><time>{event.time}</time></div>)}</article>
           <article className="command-card next-action-card"><h2>Следующее лучшее действие</h2>{nextActions.map((action) => <div className="next-action" key={action.label}><b>{action.icon}</b><span>{action.label}<small>{action.note}</small></span><strong>{action.value}</strong></div>)}<div className="expected-effect"><span>Ожидаемый эффект</span><strong>+$8,900</strong></div></article>

@@ -24,3 +24,8 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_COPILOT_STYLE_LAYER_DRIFT
 Diagnostic: ops/bin/as6-diagnose-copilot-style-consolidation-v38
 Status: REGISTERED
+
+## 2026-06-19 COPILOT_INLINE_LAYOUT_V40
+Failure Class: AS6_FAILURE_CLASS_COPILOT_TEXT_VERTICAL_WASTE
+Diagnostic: ops/bin/as6-diagnose-copilot-inline-layout-v40
+Status: REGISTERED

@@ -1514,3 +1514,7 @@ Coverage: Copilot style layer drift, duplicate image guard, CTA authoritative pl
 ## COPILOT_CSS_AND_ROBOT_CLEANUP_V39
 Diagnostic: ops/bin/as6-diagnose-copilot-css-and-robot-cleanup-v39
 Coverage: Copilot duplicate removal, CSS layer reduction, robot asset size guard, build, health
+
+## COPILOT_INLINE_LAYOUT_V40
+Diagnostic: ops/bin/as6-diagnose-copilot-inline-layout-v40
+Coverage: Copilot header, inline logo, right CTA, text removal, CSS guard, build validation, production health validation

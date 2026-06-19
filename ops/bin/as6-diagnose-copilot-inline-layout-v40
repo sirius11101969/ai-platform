@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+PAGE="frontend/src/pages/CommandCenterPage.jsx"
+CSS="frontend/src/theme/as6Theme.css"
+fail=0
+check(){ n="$1"; shift; if "$@"; then echo "PASS:$n"; else echo "FAIL:$n"; fail=1; fi; }
+check copilot_header_exists grep -q "AI Copilot" "$PAGE"
+check copilot_inline_layout_exists grep -q "copilot-inline-layout" "$PAGE"
+check copilot_inline_logo_exists grep -q "as6-copilot-inline-logo" "$PAGE"
+check copilot_cta_exists grep -q "copilot-action-link" "$PAGE"
+check copilot_text_removed bash -c "! grep -q \"Я здесь, чтобы помочь\" frontend/src/pages/CommandCenterPage.jsx"
+check copilot_inline_css grep -q "AS6 Copilot compact inline layout V40" "$CSS"
+exit "$fail"

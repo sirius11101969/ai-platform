@@ -1416,3 +1416,8 @@ File: ops/bin/as6-diagnose-copilot-style-consolidation-v38
 Status: ENABLED
 Scope: Copilot CSS cleanup and robot asset guard
 File: ops/bin/as6-diagnose-copilot-css-and-robot-cleanup-v39
+
+## as6-diagnose-copilot-inline-layout-v40
+Status: ENABLED
+Scope: AI Copilot compact inline logo plus CTA layout diagnostics
+File: ops/bin/as6-diagnose-copilot-inline-layout-v40
