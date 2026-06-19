@@ -2159,3 +2159,11 @@ Diagnostic: ops/bin/as6-diagnose-post-deploy-health-readiness-v33
 Status: APPLIED
 Root cause: frontend bundle-size drift and pipefail grep diagnostic abort.
 Diagnostic: ops/bin/as6-diagnose-frontend-bundle-v35
+
+## AS6 Robot Asset Optimization V36
+Status: APPLIED
+Root cause: oversized canonical robot PNG asset after visual parity work.
+Original bytes: 57548
+Final bytes: 20468
+Reduced bytes: 37080
+Diagnostic: ops/bin/as6-diagnose-robot-asset-size-v36

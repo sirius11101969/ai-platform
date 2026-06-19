@@ -1498,3 +1498,7 @@ Coverage: backend running, nginx running, HTTPS health retry readiness, nginx up
 ## FRONTEND_BUNDLE_V35
 Diagnostic: ops/bin/as6-diagnose-frontend-bundle-v35
 Coverage: Vite config, manualChunks, chunk warning limit, build validation, production health validation
+
+## ROBOT_ASSET_SIZE_V36
+Diagnostic: ops/bin/as6-diagnose-robot-asset-size-v36
+Coverage: robot asset exists, size reduced, canonical import preserved, frontend build, production health

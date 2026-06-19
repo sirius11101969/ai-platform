@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ASSET="frontend/src/assets/as6-robot.png"
+test -f "$ASSET"
+bytes="$(wc -c < "$ASSET")"
+echo "AS6_ROBOT_ASSET_BYTES=$bytes"
+test "$bytes" -lt 2686052
+grep -q "as6-robot.png" frontend/src/pages/CommandCenterPage.jsx
+echo PASS:optimized_robot_asset_registered

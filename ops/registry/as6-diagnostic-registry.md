@@ -1396,3 +1396,8 @@ File: ops/bin/as6-diagnose-post-deploy-health-readiness-v33
 Status: ENABLED
 Scope: Frontend Vite bundle diagnostics
 File: ops/bin/as6-diagnose-frontend-bundle-v35
+
+## as6-diagnose-robot-asset-size-v36
+Status: ENABLED
+Scope: Canonical AS6 robot PNG asset size diagnostics
+File: ops/bin/as6-diagnose-robot-asset-size-v36

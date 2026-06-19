@@ -9,3 +9,8 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_POST_DEPLOY_NGINX_UPSTREAM_STARTUP_RACE
 Diagnostic: ops/bin/as6-diagnose-post-deploy-health-readiness-v33
 Status: REGISTERED
+
+## 2026-06-19 OVERSIZED_ROBOT_ASSET_V36
+Failure Class: AS6_FAILURE_CLASS_OVERSIZED_ROBOT_ASSET
+Diagnostic: ops/bin/as6-diagnose-robot-asset-size-v36
+Status: REGISTERED
