@@ -103,3 +103,8 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_HEAVY_FRONTEND_FILE_UNGOVERNED
 Diagnostic: ops/bin/as6-diagnose-frontend-heavy-files-v55
 Status: REGISTERED
+
+## 2026-06-19 CRM_ROUTE_CHUNK_V56
+Failure Class: AS6_FAILURE_CLASS_CRM_PAGE_STATIC_IMPORT_IN_APP
+Diagnostic: ops/bin/as6-diagnose-crm-route-chunk-v56
+Status: REGISTERED

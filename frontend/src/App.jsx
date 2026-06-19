@@ -7,8 +7,8 @@ import LandingPage from "./pages/LandingPage";
 import { LoginPage, SignupPage } from "./pages/AuthPages";
 import PaymentSuccessPage from "./pages/PaymentSuccessPage";
 import DashboardPage from "./pages/DashboardPage";
-import CRMPage from "./pages/CRMPage";
-import AiWorkersPage from "./pages/AiWorkersPage";
+const CRMPage = lazy(() => import("./pages/CRMPage"));
+const AiWorkersPage = lazy(() => import("./pages/AiWorkersPage"));
 import FollowupsPage from "./pages/FollowupsPage";
 import PriorityInboxPage from "./pages/PriorityInboxPage";
 import PipelineCopilotPage from "./pages/PipelineCopilotPage";
@@ -102,7 +102,8 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Routes>
+        <Suspense fallback={<div className="as6-route-loading">Загрузка...</div>}>
+          <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
@@ -141,6 +142,7 @@ export default function App() {
           <Route path="/dashboard/revenue" element={<ProtectedRoute><RevenueDashboardPage /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        </Suspense>
       </BrowserRouter>
     </AuthProvider>
   );

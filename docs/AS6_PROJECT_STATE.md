@@ -2265,3 +2265,8 @@ Status: APPLIED
 Root cause: heavy frontend files were not governed by diagnostic budgets.
 Diagnostic: ops/bin/as6-diagnose-frontend-heavy-files-v55
 Note: No UI/CSS/layout changes were made in V55.
+
+## AS6 CRM Route Chunk V56
+Status: APPLIED
+Root cause: CRMPage and AiWorkersPage were statically imported in App.jsx, increasing main bundle pressure.
+Diagnostic: ops/bin/as6-diagnose-crm-route-chunk-v56

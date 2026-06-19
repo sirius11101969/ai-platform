@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+APP="frontend/src/App.jsx"
+VITE="frontend/vite.config.js"
+CRM="frontend/src/pages/CRMPage.jsx"
+WORKERS="frontend/src/pages/AiWorkersPage.jsx"
+BUILD_LOG="${1:-runtime/as6-crm-route-chunk-v56/build.out}"
+fail=0
+check(){ n="$1"; shift; if "$@"; then echo "PASS:$n"; else echo "FAIL:$n"; fail=1; fi; }
+
+check app_exists test -f "$APP"
+check vite_exists test -f "$VITE"
+check crm_page_exists test -f "$CRM"
+check ai_workers_page_exists test -f "$WORKERS"
+check crm_lazy_import grep -q 'lazy(() => import("./pages/CRMPage"))' "$APP"
+check ai_workers_lazy_import grep -q 'lazy(() => import("./pages/AiWorkersPage"))' "$APP"
+check suspense_present grep -q "Suspense" "$APP"
+check crm_static_import_absent bash -c '! grep -q '\''import CRMPage from "./pages/CRMPage"'\'' frontend/src/App.jsx'
+check ai_workers_static_import_absent bash -c '! grep -q '\''import AiWorkersPage from "./pages/AiWorkersPage"'\'' frontend/src/App.jsx'
+check crm_manual_chunk grep -q 'return "crm-page"' "$VITE"
+check ai_workers_manual_chunk grep -q 'return "ai-workers-page"' "$VITE"
+
+crm_bytes="$(wc -c < "$CRM")"
+workers_bytes="$(wc -c < "$WORKERS")"
+echo "CRM_PAGE_BYTES=$crm_bytes"
+echo "AI_WORKERS_PAGE_BYTES=$workers_bytes"
+if test "$crm_bytes" -lt 140000; then echo "PASS:crm_page_source_budget"; else echo "FAIL:crm_page_source_budget"; fail=1; fi
+if test "$workers_bytes" -lt 100000; then echo "PASS:ai_workers_page_source_budget"; else echo "FAIL:ai_workers_page_source_budget"; fail=1; fi
+
+if test -f "$BUILD_LOG"; then
+  if grep -q "dist/assets/crm-page-" "$BUILD_LOG"; then echo "PASS:crm_chunk_emitted"; else echo "FAIL:crm_chunk_emitted"; fail=1; fi
+  if grep -q "dist/assets/ai-workers-page-" "$BUILD_LOG"; then echo "PASS:ai_workers_chunk_emitted"; else echo "FAIL:ai_workers_chunk_emitted"; fail=1; fi
+  if grep -q "css-syntax-error\|Expected identifier but found\|Unexpected \"}\"" "$BUILD_LOG"; then echo "FAIL:frontend_build_clean"; fail=1; else echo "PASS:frontend_build_clean"; fi
+fi
+
+exit "$fail"

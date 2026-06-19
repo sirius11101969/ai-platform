@@ -1496,3 +1496,8 @@ File: ops/bin/as6-diagnose-command-center-ui-restore-v54
 Status: ENABLED
 Scope: Heavy frontend files, route/page source budgets, duplicate logo regression, WebP branding guard
 File: ops/bin/as6-diagnose-frontend-heavy-files-v55
+
+## as6-diagnose-crm-route-chunk-v56
+Status: ENABLED
+Scope: CRM and AI Workers route-level lazy loading and chunk diagnostics
+File: ops/bin/as6-diagnose-crm-route-chunk-v56

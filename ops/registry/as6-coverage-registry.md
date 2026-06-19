@@ -1578,3 +1578,7 @@ Coverage: known-good JSX/CSS restore, V53 cleanup regression prevention, build v
 ## FRONTEND_HEAVY_FILES_V55
 Diagnostic: ops/bin/as6-diagnose-frontend-heavy-files-v55
 Coverage: top-30 frontend file report, CRM/AiWorkers/styles/CommandCenter source budgets, duplicate logo guard, WebP logo guard, build validation, production health validation
+
+## CRM_ROUTE_CHUNK_V56
+Diagnostic: ops/bin/as6-diagnose-crm-route-chunk-v56
+Coverage: CRM lazy import, AI Workers lazy import, Suspense fallback, manual chunks, emitted route chunks, build validation, production health validation
