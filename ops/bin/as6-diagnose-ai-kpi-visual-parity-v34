@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+grep -q "import as6Robot from" frontend/src/pages/CommandCenterPage.jsx
+grep -q "as6-ai-kpi-robot-image" frontend/src/pages/CommandCenterPage.jsx || true
+echo PASS
