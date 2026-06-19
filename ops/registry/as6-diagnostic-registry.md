@@ -1401,3 +1401,8 @@ File: ops/bin/as6-diagnose-frontend-bundle-v35
 Status: ENABLED
 Scope: Canonical AS6 robot PNG asset size diagnostics
 File: ops/bin/as6-diagnose-robot-asset-size-v36
+
+## as6-diagnose-copilot-visual-cleanup-v37
+Status: ENABLED
+Scope: AI Copilot duplicate visual asset and CTA layout diagnostics
+File: ops/bin/as6-diagnose-copilot-visual-cleanup-v37

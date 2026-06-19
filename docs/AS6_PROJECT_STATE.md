@@ -2167,3 +2167,8 @@ Original bytes: 57548
 Final bytes: 20468
 Reduced bytes: 37080
 Diagnostic: ops/bin/as6-diagnose-robot-asset-size-v36
+
+## AS6 Copilot Visual Cleanup V37
+Status: APPLIED
+Root cause: duplicate Copilot visual asset and excessive header area in AI Copilot card.
+Diagnostic: ops/bin/as6-diagnose-copilot-visual-cleanup-v37

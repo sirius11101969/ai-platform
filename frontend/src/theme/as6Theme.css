@@ -729,3 +729,42 @@
 .as6-ai-kpi-robot-image,.ai-workforce-avatar-image,img[src*="as6-robot.png"]{display:block!important;width:54px!important;height:54px!important;object-fit:contain!important;border-radius:18px!important;}
 .command-center-ai-workforce-avatar,.ai-workforce-avatar,[class*="workforce"][class*="avatar"]{font-size:0!important;overflow:hidden!important;}
 .command-center-ai-workforce-avatar::before,.command-center-ai-workforce-avatar::after,.ai-workforce-avatar::before,.ai-workforce-avatar::after,[class*="workforce"][class*="avatar"]::before,[class*="workforce"][class*="avatar"]::after{content:none!important;}
+
+/* AS6 Copilot visual cleanup V37 */
+.ai-copilot-card,.command-copilot-card,.copilot-card,.command-card.ai-copilot,.command-card[class*="copilot"],article[class*="copilot"]{
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:flex-start!important;
+  gap:12px!important;
+  overflow:hidden!important;
+}
+.ai-copilot-card h2,.command-copilot-card h2,.copilot-card h2,.command-card[class*="copilot"] h2,article[class*="copilot"] h2{
+  margin:0!important;
+  line-height:1.1!important;
+}
+.ai-copilot-card p,.command-copilot-card p,.copilot-card p,.command-card[class*="copilot"] p,article[class*="copilot"] p{
+  margin:0!important;
+  line-height:1.45!important;
+  max-width:210px!important;
+}
+.ai-copilot-card img,.command-copilot-card img,.copilot-card img,.command-card[class*="copilot"] img,article[class*="copilot"] img{
+  display:block!important;
+  max-width:168px!important;
+  max-height:132px!important;
+  object-fit:contain!important;
+  margin:4px auto 0!important;
+}
+.ai-copilot-card img:nth-of-type(n+2),.command-copilot-card img:nth-of-type(n+2),.copilot-card img:nth-of-type(n+2),.command-card[class*="copilot"] img:nth-of-type(n+2),article[class*="copilot"] img:nth-of-type(n+2){
+  display:none!important;
+}
+.ai-copilot-card button,.command-copilot-card button,.copilot-card button,.command-card[class*="copilot"] button,article[class*="copilot"] button,.as6-copilot-cta,.command-center-copilot-cta{
+  width:100%!important;
+  min-height:52px!important;
+  margin-top:4px!important;
+  border-radius:18px!important;
+}
+.as6-copilot-real-image{
+  max-width:168px!important;
+  max-height:132px!important;
+  margin:4px auto 0!important;
+}

@@ -1502,3 +1502,7 @@ Coverage: Vite config, manualChunks, chunk warning limit, build validation, prod
 ## ROBOT_ASSET_SIZE_V36
 Diagnostic: ops/bin/as6-diagnose-robot-asset-size-v36
 Coverage: robot asset exists, size reduced, canonical import preserved, frontend build, production health
+
+## COPILOT_VISUAL_CLEANUP_V37
+Diagnostic: ops/bin/as6-diagnose-copilot-visual-cleanup-v37
+Coverage: Copilot duplicate image guard, compact header, CTA normalization, build validation, production health

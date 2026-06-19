@@ -14,3 +14,8 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_OVERSIZED_ROBOT_ASSET
 Diagnostic: ops/bin/as6-diagnose-robot-asset-size-v36
 Status: REGISTERED
+
+## 2026-06-19 COPILOT_DUPLICATE_VISUAL_ASSET_V37
+Failure Class: AS6_FAILURE_CLASS_COPILOT_DUPLICATE_VISUAL_ASSET
+Diagnostic: ops/bin/as6-diagnose-copilot-visual-cleanup-v37
+Status: REGISTERED

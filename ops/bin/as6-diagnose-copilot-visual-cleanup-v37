@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+CSS="frontend/src/theme/as6Theme.css"
+PAGE="frontend/src/pages/CommandCenterPage.jsx"
+fail=0
+check(){ n="$1"; shift; if "$@"; then echo "PASS:$n"; else echo "FAIL:$n"; fail=1; fi; }
+check copilot_source_exists grep -qi "copilot" "$PAGE"
+check copilot_cleanup_css grep -q "AS6 Copilot visual cleanup V37" "$CSS"
+check duplicate_copilot_image_guard grep -q "img:nth-of-type(n+2)" "$CSS"
+check copilot_cta_normalized grep -q "command-center-copilot-cta" "$CSS"
+exit "$fail"
