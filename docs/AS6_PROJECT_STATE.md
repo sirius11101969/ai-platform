@@ -2187,3 +2187,8 @@ Diagnostic: ops/bin/as6-diagnose-copilot-css-and-robot-cleanup-v39
 Status: APPLIED
 Root cause: Copilot descriptive text used vertical space instead of compact logo plus CTA layout.
 Diagnostic: ops/bin/as6-diagnose-copilot-inline-layout-v40
+
+## AS6 Copilot Button Align V41
+Status: APPLIED
+Root cause: CTA was vertically lower than Copilot logo and retained arrow suffix.
+Diagnostic: ops/bin/as6-diagnose-copilot-button-align-v41

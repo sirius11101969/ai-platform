@@ -1518,3 +1518,7 @@ Coverage: Copilot duplicate removal, CSS layer reduction, robot asset size guard
 ## COPILOT_INLINE_LAYOUT_V40
 Diagnostic: ops/bin/as6-diagnose-copilot-inline-layout-v40
 Coverage: Copilot header, inline logo, right CTA, text removal, CSS guard, build validation, production health validation
+
+## COPILOT_BUTTON_ALIGN_V41
+Diagnostic: ops/bin/as6-diagnose-copilot-button-align-v41
+Coverage: inline logo, opposite CTA, arrow removal, V41 CSS guard, build validation, production health validation

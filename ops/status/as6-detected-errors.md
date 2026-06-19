@@ -29,3 +29,8 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_COPILOT_TEXT_VERTICAL_WASTE
 Diagnostic: ops/bin/as6-diagnose-copilot-inline-layout-v40
 Status: REGISTERED
+
+## 2026-06-19 COPILOT_BUTTON_ALIGN_V41
+Failure Class: AS6_FAILURE_CLASS_COPILOT_CTA_VERTICAL_MISALIGNMENT
+Diagnostic: ops/bin/as6-diagnose-copilot-button-align-v41
+Status: REGISTERED

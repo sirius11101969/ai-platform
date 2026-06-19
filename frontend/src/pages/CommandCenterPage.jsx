@@ -336,7 +336,7 @@ export default function CommandCenterPage() {
             <div className="copilot-top"><h2>AI Copilot</h2><span>AS6</span></div>
             <div className="copilot-inline-layout">
               <img className="as6-copilot-inline-logo" src={as6CopilotLogo} alt="AS6 Copilot" />
-              <a className="copilot-action-link" href="/ai-executive-brain">Спросить AI Copilot →</a>
+              <a className="copilot-action-link" href="/ai-executive-brain">Спросить AI Copilot</a>
             </div>
           </article>
           <article className="command-card event-card"><div className="command-card-head"><h2>Последние события</h2><a href="/dashboard">Все</a></div>{events.map((event) => <div className="event-row" key={event.text}><b>{event.icon}</b><span>{event.text}</span><time>{event.time}</time></div>)}</article>

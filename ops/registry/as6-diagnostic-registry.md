@@ -1421,3 +1421,8 @@ File: ops/bin/as6-diagnose-copilot-css-and-robot-cleanup-v39
 Status: ENABLED
 Scope: AI Copilot compact inline logo plus CTA layout diagnostics
 File: ops/bin/as6-diagnose-copilot-inline-layout-v40
+
+## as6-diagnose-copilot-button-align-v41
+Status: ENABLED
+Scope: AI Copilot logo opposite CTA alignment and CTA text diagnostics
+File: ops/bin/as6-diagnose-copilot-button-align-v41
