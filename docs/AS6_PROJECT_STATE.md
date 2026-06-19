@@ -2259,3 +2259,9 @@ Status: APPLIED
 Root cause: V53 removed too much legacy Command Center CSS and broke interface.
 Action: restored CommandCenterPage.jsx and as6Theme.css from pre-V53 commit 21d1888.
 Diagnostic: ops/bin/as6-diagnose-command-center-ui-restore-v54
+
+## AS6 Frontend Heavy Files Diagnostics V55
+Status: APPLIED
+Root cause: heavy frontend files were not governed by diagnostic budgets.
+Diagnostic: ops/bin/as6-diagnose-frontend-heavy-files-v55
+Note: No UI/CSS/layout changes were made in V55.

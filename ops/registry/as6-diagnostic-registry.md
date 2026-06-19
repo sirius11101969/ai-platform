@@ -1491,3 +1491,8 @@ File: ops/bin/as6-diagnose-global-frontend-dead-code-v53
 Status: ENABLED
 Scope: Restore Command Center UI after overbroad V53 cleanup regression
 File: ops/bin/as6-diagnose-command-center-ui-restore-v54
+
+## as6-diagnose-frontend-heavy-files-v55
+Status: ENABLED
+Scope: Heavy frontend files, route/page source budgets, duplicate logo regression, WebP branding guard
+File: ops/bin/as6-diagnose-frontend-heavy-files-v55

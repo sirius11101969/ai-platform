@@ -98,3 +98,8 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_OVERBROAD_LEGACY_CSS_REMOVAL
 Diagnostic: ops/bin/as6-diagnose-command-center-ui-restore-v54
 Status: REGISTERED
+
+## 2026-06-19 FRONTEND_HEAVY_FILES_V55
+Failure Class: AS6_FAILURE_CLASS_HEAVY_FRONTEND_FILE_UNGOVERNED
+Diagnostic: ops/bin/as6-diagnose-frontend-heavy-files-v55
+Status: REGISTERED

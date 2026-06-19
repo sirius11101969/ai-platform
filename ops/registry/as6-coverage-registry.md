@@ -1574,3 +1574,7 @@ Coverage: duplicate top logo removal, legacy CSS cleanup, current style preserva
 ## COMMAND_CENTER_UI_RESTORE_V54
 Diagnostic: ops/bin/as6-diagnose-command-center-ui-restore-v54
 Coverage: known-good JSX/CSS restore, V53 cleanup regression prevention, build validation, production health validation
+
+## FRONTEND_HEAVY_FILES_V55
+Diagnostic: ops/bin/as6-diagnose-frontend-heavy-files-v55
+Coverage: top-30 frontend file report, CRM/AiWorkers/styles/CommandCenter source budgets, duplicate logo guard, WebP logo guard, build validation, production health validation

@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+OUT_DIR="${1:-runtime/as6-frontend-heavy-v55}"
+mkdir -p "$OUT_DIR"
+fail=0
+
+check(){ n="$1"; shift; if "$@"; then echo "PASS:$n"; else echo "FAIL:$n"; fail=1; fi; }
+
+check frontend_src_exists test -d frontend/src
+check styles_exists test -f frontend/src/styles.css
+check crm_page_exists test -f frontend/src/pages/CRMPage.jsx
+check ai_workers_page_exists test -f frontend/src/pages/AiWorkersPage.jsx
+check command_center_page_exists test -f frontend/src/pages/CommandCenterPage.jsx
+check vite_config_exists test -f frontend/vite.config.js
+check command_center_chunk_registered grep -q "CommandCenterPage" frontend/vite.config.js
+check extra_top_logo_absent bash -c "! grep -q as6-command-center-logo-image frontend/src/pages/CommandCenterPage.jsx"
+check command_center_webp_logo grep -q "as6-logo.webp" frontend/src/pages/CommandCenterPage.jsx
+
+find frontend/src -type f \( -name "*.jsx" -o -name "*.js" -o -name "*.css" \) -printf "%s %p\n" | sort -nr | head -30 | tee "$OUT_DIR/top30-frontend-files.out"
+
+styles_bytes="$(wc -c < frontend/src/styles.css)"
+crm_bytes="$(wc -c < frontend/src/pages/CRMPage.jsx)"
+workers_bytes="$(wc -c < frontend/src/pages/AiWorkersPage.jsx)"
+command_bytes="$(wc -c < frontend/src/pages/CommandCenterPage.jsx)"
+
+echo "STYLES_BYTES=$styles_bytes"
+echo "CRM_PAGE_BYTES=$crm_bytes"
+echo "AI_WORKERS_PAGE_BYTES=$workers_bytes"
+echo "COMMAND_CENTER_PAGE_BYTES=$command_bytes"
+
+if test "$styles_bytes" -lt 150000; then echo "PASS:styles_source_budget"; else echo "FAIL:styles_source_budget"; fail=1; fi
+if test "$crm_bytes" -lt 140000; then echo "PASS:crm_page_source_budget"; else echo "FAIL:crm_page_source_budget"; fail=1; fi
+if test "$workers_bytes" -lt 100000; then echo "PASS:ai_workers_page_source_budget"; else echo "FAIL:ai_workers_page_source_budget"; fail=1; fi
+if test "$command_bytes" -lt 30000; then echo "PASS:command_center_page_source_budget"; else echo "FAIL:command_center_page_source_budget"; fail=1; fi
+
+grep -R "from './pages/CRMPage\|from './pages/AiWorkersPage\|from './pages/CommandCenterPage\|CRMPage\|AiWorkersPage" -n frontend/src/App.jsx frontend/src 2>/dev/null | tee "$OUT_DIR/heavy-page-imports.out" || true
+
+exit "$fail"
