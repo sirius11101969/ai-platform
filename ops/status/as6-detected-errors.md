@@ -63,3 +63,8 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_COMMAND_CENTER_CHUNK_MISSING
 Diagnostic: ops/bin/as6-diagnose-frontend-code-splitting-v47
 Status: REGISTERED
+
+## 2026-06-19 RENDERED_ASSET_PATHS_V48
+Failure Class: AS6_FAILURE_CLASS_ASSET_PATH_RENDERED_TO_UI
+Diagnostic: ops/bin/as6-diagnose-rendered-asset-paths-v48
+Status: REGISTERED

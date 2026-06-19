@@ -2223,3 +2223,8 @@ Diagnostic: ops/bin/as6-diagnose-frontend-asset-budget-v46
 Status: APPLIED
 Root cause: main frontend chunk still carries Command Center code without explicit route chunk registration.
 Diagnostic: ops/bin/as6-diagnose-frontend-code-splitting-v47
+
+## AS6 Rendered Asset Path Fix V48
+Status: APPLIED
+Root cause: asset path rendered to UI instead of image element.
+Diagnostic: ops/bin/as6-diagnose-rendered-asset-paths-v48

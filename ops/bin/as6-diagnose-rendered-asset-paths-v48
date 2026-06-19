@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+PAGE="frontend/src/pages/CommandCenterPage.jsx"
+fail=0
+check(){ n="$1"; shift; if "$@"; then echo "PASS:$n"; else echo "FAIL:$n"; fail=1; fi; }
+check page_exists test -f "$PAGE"
+check robot_asset_imported grep -q "as6-robot.png" "$PAGE"
+check no_asset_path_rendered bash -c '! grep -Eq ">\s*/assets/as6-[^<]+\.png\s*<" frontend/src/pages/CommandCenterPage.jsx'
+check no_hashed_asset_name_rendered bash -c '! grep -Eq "LgharqKn|/assets/as6-robot-" frontend/src/pages/CommandCenterPage.jsx'
+check no_robot_asset_string_child bash -c '! grep -Eq "<(span|b|i)>[[:space:]]*\{[[:space:]]*as6Robot" frontend/src/pages/CommandCenterPage.jsx'
+exit "$fail"

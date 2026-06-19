@@ -1456,3 +1456,8 @@ File: ops/bin/as6-diagnose-frontend-asset-budget-v46
 Status: ENABLED
 Scope: Frontend code splitting and Command Center chunk diagnostics
 File: ops/bin/as6-diagnose-frontend-code-splitting-v47
+
+## as6-diagnose-rendered-asset-paths-v48
+Status: ENABLED
+Scope: Rendered asset path and hashed PNG filename UI diagnostics
+File: ops/bin/as6-diagnose-rendered-asset-paths-v48

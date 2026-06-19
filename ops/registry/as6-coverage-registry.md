@@ -1546,3 +1546,7 @@ Coverage: logo/copilot/robot size budgets, asset references, Copilot terminal st
 ## FRONTEND_CODE_SPLITTING_V47
 Diagnostic: ops/bin/as6-diagnose-frontend-code-splitting-v47
 Coverage: Vite manualChunks, Command Center chunk registration, build validation, production health validation
+
+## RENDERED_ASSET_PATHS_V48
+Diagnostic: ops/bin/as6-diagnose-rendered-asset-paths-v48
+Coverage: visible asset path prevention, hashed filename prevention, robot asset text-child prevention, build validation, production health validation
