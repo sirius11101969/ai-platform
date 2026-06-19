@@ -1494,3 +1494,7 @@ Coverage: AI KPI robot image parity
 ## POST_DEPLOY_HEALTH_READINESS_V33
 Diagnostic: ops/bin/as6-diagnose-post-deploy-health-readiness-v33
 Coverage: backend running, nginx running, HTTPS health retry readiness, nginx upstream startup race detection
+
+## FRONTEND_BUNDLE_V35
+Diagnostic: ops/bin/as6-diagnose-frontend-bundle-v35
+Coverage: Vite config, manualChunks, chunk warning limit, build validation, production health validation

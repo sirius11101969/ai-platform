@@ -2154,3 +2154,8 @@ Use only frontend/src/assets/as6-robot.png
 Status: APPLIED
 Root cause: nginx upstream startup race immediately after compose restart.
 Diagnostic: ops/bin/as6-diagnose-post-deploy-health-readiness-v33
+
+## AS6 Frontend Bundle Optimization V35
+Status: APPLIED
+Root cause: frontend bundle-size drift and pipefail grep diagnostic abort.
+Diagnostic: ops/bin/as6-diagnose-frontend-bundle-v35

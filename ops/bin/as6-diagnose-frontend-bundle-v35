@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+VITE_CONFIG="frontend/vite.config.js"
+fail=0
+check(){ n="$1"; shift; if "$@"; then echo "PASS:$n"; else echo "FAIL:$n"; fail=1; fi; }
+check vite_config_exists test -f "$VITE_CONFIG"
+check manual_chunks_present grep -q "manualChunks" "$VITE_CONFIG"
+check chunk_warning_limit_present grep -q "chunkSizeWarningLimit" "$VITE_CONFIG"
+check rollup_options_present grep -q "rollupOptions" "$VITE_CONFIG"
+exit "$fail"

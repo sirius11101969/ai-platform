@@ -1391,3 +1391,8 @@ Status: ENABLED
 Status: ENABLED
 Scope: Post-deploy nginx/backend health readiness validation
 File: ops/bin/as6-diagnose-post-deploy-health-readiness-v33
+
+## as6-diagnose-frontend-bundle-v35
+Status: ENABLED
+Scope: Frontend Vite bundle diagnostics
+File: ops/bin/as6-diagnose-frontend-bundle-v35
