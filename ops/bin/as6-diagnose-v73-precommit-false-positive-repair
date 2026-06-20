@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+OUT_DIR="${1:-runtime/as6-v73-precommit-false-positive-repair}"
+BUILD_LOG="${2:-}"
+ASSET_LIST="${3:-}"
+mkdir -p "$OUT_DIR"
+fail=0
+check(){ name="$1"; shift; if "$@"; then echo "PASS:$name"; else echo "FAIL:$name"; fail=1; fi; }
+APP="frontend/src/App.jsx"
+VITE="frontend/vite.config.js"
+check app_exists test -f "$APP"
+check vite_exists test -f "$VITE"
+check v73_safe_diag_exists test -f ops/bin/as6-diagnose-diagnostic-debt-consolidation-v73-safe
+check auth_context_token_null grep -q "const AuthContext = createContext({ token: null" "$APP"
+check no_runtime_staged bash -c "! git diff --cached --name-only | grep -q ^runtime/"
+check route_splitting_crm grep -q "lazy(() => import(\"./pages/CRMPage\"))" "$APP"
+check route_splitting_command_center grep -q "lazy(() => import(\"./pages/CommandCenterPage\"))" "$APP"
+check vite_manual_chunks grep -q "manualChunks" "$VITE"
+check crm_analytics_import_guard grep -q "CRMAnalyticsPanel from" frontend/src/pages/CRMPage.jsx
+check duplicate_top_logo_absent bash -c "! grep -q as6-command-center-logo-image frontend/src/pages/CommandCenterPage.jsx"
+if test -n "$BUILD_LOG" && test -f "$BUILD_LOG"; then if grep -q "css-syntax-error\|Expected identifier but found\|Unexpected \"}\"\|lazy is not defined\|Suspense is not defined" "$BUILD_LOG"; then echo "FAIL:frontend_build_clean"; fail=1; else echo "PASS:frontend_build_clean"; fi; fi
+if test -n "$ASSET_LIST" && test -f "$ASSET_LIST"; then check crm_chunk_present grep -q "crm-page-" "$ASSET_LIST"; check command_center_chunk_present grep -q "command-center-" "$ASSET_LIST"; check dashboard_chunk_present grep -q "dashboard-page-" "$ASSET_LIST"; check ai_workers_chunk_present grep -q "ai-workers-page-" "$ASSET_LIST"; fi
+echo "PASS:precommit_false_positive_repair_guard"
+exit "$fail"

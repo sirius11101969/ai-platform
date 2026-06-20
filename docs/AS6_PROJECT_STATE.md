@@ -2376,3 +2376,15 @@ Status: APPLIED
 Root cause: CRMAnalyticsPanel contract existed, but import/wiring guard was missing.
 Diagnostic: ops/bin/as6-diagnose-crm-analytics-panel-wiring-guard-v72
 Note: No visible UI changes and no CRMPage render replacement were performed.
+
+## AS6 Diagnostic Debt Consolidation Safe V73
+Status: APPLIED
+Root cause: route splitting and CRM extraction cycles left uncommitted frontend drift plus stale intermediate diagnostic artifacts.
+Diagnostic: ops/bin/as6-diagnose-diagnostic-debt-consolidation-v73-safe
+Note: stale intermediate artifacts were moved to runtime quarantine and runtime artifacts are not staged.
+
+## AS6 V73 Precommit False Positive Repair
+Status: APPLIED
+Root cause: precommit secret scan blocked validated V73-safe commit on AuthContext token:null false positive.
+Diagnostic: ops/bin/as6-diagnose-v73-precommit-false-positive-repair
+Note: no raw secret, token, key, or password values were requested or printed.

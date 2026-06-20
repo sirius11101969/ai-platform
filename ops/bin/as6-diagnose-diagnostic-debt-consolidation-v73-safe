@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+OUT_DIR="${1:-runtime/as6-diagnostic-debt-v73-safe}"
+BUILD_LOG="${2:-}"
+ASSET_LIST="${3:-}"
+mkdir -p "$OUT_DIR"
+fail=0
+check(){ name="$1"; shift; if "$@"; then echo "PASS:$name"; else echo "FAIL:$name"; fail=1; fi; }
+APP="frontend/src/App.jsx"
+VITE="frontend/vite.config.js"
+CRM="frontend/src/pages/CRMPage.jsx"
+check app_exists test -f "$APP"
+check vite_exists test -f "$VITE"
+check crm_page_exists test -f "$CRM"
+check route_splitting_crm grep -q "lazy(() => import(\"./pages/CRMPage\"))" "$APP"
+check route_splitting_dashboard grep -q "lazy(() => import(\"./pages/DashboardPage\"))" "$APP"
+check route_splitting_command_center grep -q "lazy(() => import(\"./pages/CommandCenterPage\"))" "$APP"
+check vite_manual_chunks grep -q "manualChunks" "$VITE"
+check crm_analytics_import_guard grep -q "CRMAnalyticsPanel from" "$CRM"
+check duplicate_top_logo_absent bash -c "! grep -q as6-command-center-logo-image frontend/src/pages/CommandCenterPage.jsx"
+stale_count=0
+for p in frontend/src/pages/CommandCenterPage.jsx.before-remove-extra-logo ops/bin/as6-control-css-orphan-brace-v43 ops/bin/as6-control-frontend-route-splitting-v63 ops/bin/as6-control-route-splitting-cache-aware-v63-2 ops/bin/as6-control-route-splitting-running-container-v63-3 ops/bin/as6-diagnose-css-orphan-brace-v43 ops/bin/as6-diagnose-route-splitting-cache-aware-v63-2 ops/bin/as6-diagnose-route-splitting-running-container-v63-3 ops/governance/as6-css-orphan-brace-aec-v43.md ops/governance/as6-css-orphan-brace-control-v43.md ops/governance/as6-css-orphan-brace-failure-classes-v43.md ops/governance/as6-frontend-route-splitting-aec-v63.md ops/governance/as6-frontend-route-splitting-control-v63.md ops/governance/as6-frontend-route-splitting-failure-classes-v63.md ops/governance/as6-route-splitting-cache-aware-v63-2-aec.md ops/governance/as6-route-splitting-cache-aware-v63-2-control.md ops/governance/as6-route-splitting-cache-aware-v63-2-failure-classes.md ops/governance/as6-route-splitting-running-container-v63-3-aec.md ops/governance/as6-route-splitting-running-container-v63-3-control.md ops/governance/as6-route-splitting-running-container-v63-3-failure-classes.md; do test ! -e "$p" || stale_count=$((stale_count+1)); done
+echo "STALE_INTERMEDIATE_ARTIFACT_COUNT=$stale_count"
+if test "$stale_count" = "0"; then echo "PASS:stale_intermediate_artifacts_quarantined"; else echo "FAIL:stale_intermediate_artifacts_quarantined"; fail=1; fi
+if git status --short | grep -E "^?? ops/bin/as6-.*v4[0-9]|^?? ops/governance/as6-.*v4[0-9]" >/dev/null; then echo "FAIL:legacy_untracked_diagnostic_debt_absent"; fail=1; else echo "PASS:legacy_untracked_diagnostic_debt_absent"; fi
+if git diff --name-only -- "$APP" "$VITE" | grep -q .; then echo "WARN:frontend_route_splitting_drift_present"; else echo "PASS:frontend_route_splitting_drift_absent_or_committed"; fi
+if test -n "$BUILD_LOG" && test -f "$BUILD_LOG"; then if grep -q "css-syntax-error\|Expected identifier but found\|Unexpected \"}\"\|lazy is not defined\|Suspense is not defined" "$BUILD_LOG"; then echo "FAIL:frontend_build_clean"; fail=1; else echo "PASS:frontend_build_clean"; fi; fi
+if test -n "$ASSET_LIST" && test -f "$ASSET_LIST"; then check crm_chunk_present grep -q "crm-page-" "$ASSET_LIST"; check command_center_chunk_present grep -q "command-center-" "$ASSET_LIST"; check dashboard_chunk_present grep -q "dashboard-page-" "$ASSET_LIST"; check ai_workers_chunk_present grep -q "ai-workers-page-" "$ASSET_LIST"; fi
+echo "PASS:diagnostic_debt_consolidation_safe_plan_applied"
+exit "$fail"

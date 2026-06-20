@@ -1591,3 +1591,13 @@ File: ops/bin/as6-diagnose-crm-analytics-panel-contract-v71
 Status: ENABLED
 Scope: CRM Analytics panel import guard, no-render stage, chunk validation
 File: ops/bin/as6-diagnose-crm-analytics-panel-wiring-guard-v72
+
+## as6-diagnose-diagnostic-debt-consolidation-v73-safe
+Status: ENABLED
+Scope: Diagnostic debt consolidation, stale artifact quarantine, frontend route splitting drift closure, route chunk validation
+File: ops/bin/as6-diagnose-diagnostic-debt-consolidation-v73-safe
+
+## as6-diagnose-v73-precommit-false-positive-repair
+Status: ENABLED
+Scope: V73 precommit token:null false positive repair, explicit secret scan, no-runtime-staging, route chunk validation
+File: ops/bin/as6-diagnose-v73-precommit-false-positive-repair

@@ -8,6 +8,12 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
+            if (id.includes("/src/pages/DashboardPage")) return "dashboard-page";
+            if (id.includes("/src/pages/RevenueDashboardPage")) return "revenue-dashboard-page";
+            if (id.includes("/src/pages/PipelineCopilotPage")) return "pipeline-copilot-page";
+            if (id.includes("/src/pages/AiManagerDashboardPage")) return "ai-manager-dashboard-page";
+            if (id.includes("/src/pages/AiLiveRealtimeVoicePage")) return "ai-live-realtime-page";
+            if (id.includes("/src/pages/AIEnterpriseCommandCenter")) return "ai-enterprise-command-center";
             if (id.includes("/src/pages/CRMPage")) return "crm-page";
             if (id.includes("/src/pages/AiWorkersPage")) return "ai-workers-page";
             if (id.includes("/src/pages/CommandCenterPage")) return "command-center";

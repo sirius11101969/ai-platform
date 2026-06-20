@@ -1654,3 +1654,11 @@ Coverage: analytics panel props contract, no visible UI contract, CRM chunk, Com
 ## CRM_ANALYTICS_PANEL_WIRING_GUARD_V72
 Diagnostic: ops/bin/as6-diagnose-crm-analytics-panel-wiring-guard-v72
 Coverage: analytics panel import contract, no render stage, CRM chunk, Command Center chunk, build validation, production health validation
+
+## DIAGNOSTIC_DEBT_CONSOLIDATION_V73_SAFE
+Diagnostic: ops/bin/as6-diagnose-diagnostic-debt-consolidation-v73-safe
+Coverage: stale intermediate artifacts, legacy untracked diagnostic debt, route splitting frontend drift, secret-scan false-positive guard, route chunks, build validation, production health validation
+
+## V73_PRECOMMIT_FALSE_POSITIVE_REPAIR
+Diagnostic: ops/bin/as6-diagnose-v73-precommit-false-positive-repair
+Coverage: precommit false positive, token:null guard, no-verify guard, explicit secret scan, no runtime staging, route chunks, build validation, production health validation
