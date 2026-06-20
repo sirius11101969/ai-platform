@@ -1874,3 +1874,12 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V96 | PAGE_BRAND_INCONSISTENCY | Full Mission Control Theme Rollout failure class | ENABLED
 - V96 | GLOBAL_THEME_IMPORT_MISSING | Full Mission Control Theme Rollout failure class | ENABLED
 - V96 | COMMAND_CENTER_BRAND_ROLLOUT_GAP | Full Mission Control Theme Rollout failure class | ENABLED
+- V97 | ops/bin/as6-diagnose-unified-page-shell-v97 | Unified Page Shell diagnostic | ENABLED
+- V97 | UNIFIED_PAGE_SHELL_MISSING | Unified Page Shell failure class | ENABLED
+- V97 | PAGE_HERO_DRIFT | Unified Page Shell failure class | ENABLED
+- V97 | KPI_STRIP_DRIFT | Unified Page Shell failure class | ENABLED
+- V97 | GLASS_CARD_SHELL_DRIFT | Unified Page Shell failure class | ENABLED
+- V97 | EMPTY_STATE_STYLE_DRIFT | Unified Page Shell failure class | ENABLED
+- V97 | LOADING_STATE_STYLE_DRIFT | Unified Page Shell failure class | ENABLED
+- V97 | ERROR_STATE_STYLE_DRIFT | Unified Page Shell failure class | ENABLED
+- V97 | PAGE_SHELL_IMPORT_MISSING | Unified Page Shell failure class | ENABLED

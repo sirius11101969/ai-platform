@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+for f in frontend/src/components/AS6UnifiedPageShell.jsx frontend/src/styles/as6-unified-page-shell.css; do
+  if [ ! -f "$f" ]; then echo "AS6_PAGE_SHELL_FILE_MISSING $f"; FAIL=1; fi
+done
+if ! grep -Rqs "as6-unified-page-shell.css" frontend/src/App.jsx; then echo "AS6_PAGE_SHELL_IMPORT_MISSING"; FAIL=1; fi
+for item in "AS6UnifiedPageShell" "AS6UnifiedGlassCard" "AS6UnifiedState" "as6-unified-page-hero" "as6-unified-kpi-strip" "as6-unified-glass-card"; do
+  if ! grep -Rqs "$item" frontend/src/components/AS6UnifiedPageShell.jsx frontend/src/styles/as6-unified-page-shell.css ops/governance docs ops/status ops/registry; then echo "AS6_PAGE_SHELL_ITEM_MISSING $item"; FAIL=1; fi
+done
+for cls in UNIFIED_PAGE_SHELL_MISSING PAGE_HERO_DRIFT KPI_STRIP_DRIFT GLASS_CARD_SHELL_DRIFT EMPTY_STATE_STYLE_DRIFT LOADING_STATE_STYLE_DRIFT ERROR_STATE_STYLE_DRIFT PAGE_SHELL_IMPORT_MISSING; do
+  if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then echo "AS6_PAGE_SHELL_CLASS_MISSING $cls"; FAIL=1; fi
+done
+if git diff --cached --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING_FAIL"; FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_UNIFIED_PAGE_SHELL=PASS"

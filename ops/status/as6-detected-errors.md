@@ -433,3 +433,9 @@ Status: REGISTERED
 - FAILURE_CLASSES: PAGE_THEME_DRIFT, LEGACY_LAYOUT_DRIFT, LEGACY_CARD_DRIFT, LEGACY_TABLE_DRIFT, LEGACY_FORM_DRIFT, PAGE_BRAND_INCONSISTENCY, GLOBAL_THEME_IMPORT_MISSING, COMMAND_CENTER_BRAND_ROLLOUT_GAP.
 - PREVENTION: V96 diagnostic/control validates theme rollout CSS, import, page family selectors, build and enforcement guard.
 - STATUS: registered and controlled.
+
+## V97 Unified Page Shell
+- ROOT_CAUSE: Theme rollout aligned CSS globally, but pages still needed a reusable shell contract for Command Center-style layout primitives.
+- FAILURE_CLASSES: UNIFIED_PAGE_SHELL_MISSING, PAGE_HERO_DRIFT, KPI_STRIP_DRIFT, GLASS_CARD_SHELL_DRIFT, EMPTY_STATE_STYLE_DRIFT, LOADING_STATE_STYLE_DRIFT, ERROR_STATE_STYLE_DRIFT, PAGE_SHELL_IMPORT_MISSING.
+- PREVENTION: V97 diagnostic/control validates page shell component, CSS, import, build and enforcement guard.
+- STATUS: registered and controlled.

@@ -2755,3 +2755,19 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - UX readiness after V96: 100%.
 - Brand unification after V96: 98%.
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=UNIFIED_PAGE_SHELL_V97
+- Base commit: 5fee3f1.
+- Project readiness before V97: 100%.
+- UX readiness before V97: 100%.
+- Brand unification before V97: 98%.
+- Purpose: add reusable page shell contract for Command Center style across all pages.
+- Added diagnostic: ops/bin/as6-diagnose-unified-page-shell-v97
+- Added control: ops/bin/as6-control-unified-page-shell-v97
+- Added component: frontend/src/components/AS6UnifiedPageShell.jsx
+- Added CSS artifact: frontend/src/styles/as6-unified-page-shell.css
+- Added failure classes: UNIFIED_PAGE_SHELL_MISSING, PAGE_HERO_DRIFT, KPI_STRIP_DRIFT, GLASS_CARD_SHELL_DRIFT, EMPTY_STATE_STYLE_DRIFT, LOADING_STATE_STYLE_DRIFT, ERROR_STATE_STYLE_DRIFT, PAGE_SHELL_IMPORT_MISSING.
+- Project readiness after V97: 100%.
+- UX readiness after V97: 100%.
+- Brand unification after V97: 100%.
+- Production health checked with raw URL: https://www.as6.ru/api/health
