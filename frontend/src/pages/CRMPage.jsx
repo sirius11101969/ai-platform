@@ -1125,6 +1125,18 @@ export default function CRMPage() {
         </div>
 <div className="ai-action-center-buttons"><button className="ghost-button" type="button" onClick={handleAnalyzeWorkspaceAi} disabled={aiAnalysisBusy}>{aiAnalysisBusy ? "Scoring запущен…" : "Запустить scoring"}</button><button className="btn primary compact" type="button" onClick={handleQueueInactiveFollowUps} disabled={inactiveQueueBusy}>{inactiveQueueBusy ? "AI ставит в очередь…" : "Поставить follow-up для неактивных"}</button></div>
       </section>
+      <CRMAnalyticsPanel
+        revenueIntelligence={revenueIntelligence}
+        revenueBrainBusy={revenueBrainBusy}
+        revenueToast={revenueToast}
+        visibleLeads={visibleLeads}
+        leadScoreSort={leadScoreSort}
+        leadScoreFilter={leadScoreFilter}
+        onRunRevenueBrain={handleRunRevenueBrain}
+        onAnalyzeWorkspaceAi={handleAnalyzeWorkspaceAi}
+        onLeadScoreSortChange={setLeadScoreSort}
+        onLeadScoreFilterChange={setLeadScoreFilter}
+      />
 
       <AiRevenueIntelligencePanel intelligence={revenueIntelligence} busy={revenueBrainBusy} toast={revenueToast} onRun={handleRunRevenueBrain} />
 

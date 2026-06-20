@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -euo pipefail
+OUT_DIR="${1:-runtime/as6-repair-crm-analytics-panel-v74}"
+BUILD_LOG="${2:-}"
+ASSET_LIST="${3:-}"
+mkdir -p "$OUT_DIR"
+fail=0
+check(){ name="$1"; shift; if "$@"; then echo "PASS:$name"; else echo "FAIL:$name"; fail=1; fi; }
+CRM="frontend/src/pages/CRMPage.jsx"
+PANEL="frontend/src/pages/crm/CRMAnalyticsPanel.jsx"
+check crm_page_exists test -f "$CRM"
+check analytics_panel_exists test -f "$PANEL"
+check analytics_panel_imported grep -q "CRMAnalyticsPanel from \"./crm/CRMAnalyticsPanel.jsx\"" "$CRM"
+check targeted_insertion_anchor_exists grep -q "AiRevenueIntelligencePanel intelligence={revenueIntelligence}" "$CRM"
+check analytics_panel_rendered grep -q "<CRMAnalyticsPanel" "$CRM"
+check no_global_fragment_insertion bash -c "! grep -n \"^    <>$\" frontend/src/pages/CRMPage.jsx"
+check lead_revenue_card_not_inside_broken_jsx grep -q "function LeadRevenueIntelligenceCard" "$CRM"
+check analytics_prop_revenue grep -q "revenueIntelligence={revenueIntelligence}" "$CRM"
+check analytics_prop_busy grep -q "revenueBrainBusy={revenueBrainBusy}" "$CRM"
+check analytics_prop_toast grep -q "revenueToast={revenueToast}" "$CRM"
+check analytics_prop_visible_leads grep -q "visibleLeads={visibleLeads}" "$CRM"
+check analytics_prop_sort grep -q "leadScoreSort={leadScoreSort}" "$CRM"
+check analytics_prop_filter grep -q "leadScoreFilter={leadScoreFilter}" "$CRM"
+check analytics_prop_run_handler grep -q "onRunRevenueBrain={handleRunRevenueBrain}" "$CRM"
+check analytics_prop_workspace_handler grep -q "onAnalyzeWorkspaceAi={handleAnalyzeWorkspaceAi}" "$CRM"
+check analytics_prop_sort_setter grep -q "onLeadScoreSortChange={setLeadScoreSort}" "$CRM"
+check analytics_prop_filter_setter grep -q "onLeadScoreFilterChange={setLeadScoreFilter}" "$CRM"
+check analytics_panel_still_null grep -q "return null" "$PANEL"
+check analytics_panel_no_visible_ui bash -c "! grep -q \"className=\\|<section\\|<div\\|<button\" frontend/src/pages/crm/CRMAnalyticsPanel.jsx"
+check crm_lazy_import grep -q "lazy(() => import(\"./pages/CRMPage\"))" frontend/src/App.jsx
+check duplicate_top_logo_absent bash -c "! grep -q as6-command-center-logo-image frontend/src/pages/CommandCenterPage.jsx"
+crm_bytes="$(wc -c < "$CRM")"
+panel_bytes="$(wc -c < "$PANEL")"
+echo "CRM_PAGE_BYTES=$crm_bytes"
+echo "CRM_ANALYTICS_PANEL_BYTES=$panel_bytes"
+echo "CRM_ANALYTICS_EXTRACTION_STAGE=TARGETED_NULL_RENDER_WIRING_REPAIR"
+if test "$crm_bytes" -lt 128000; then echo "PASS:crm_page_render_wiring_budget"; else echo "FAIL:crm_page_render_wiring_budget"; fail=1; fi
+if test "$panel_bytes" -lt 3000; then echo "PASS:analytics_panel_contract_budget"; else echo "FAIL:analytics_panel_contract_budget"; fail=1; fi
+echo "PASS:targeted_render_insertion_guard"
+echo "PASS:no_visible_ui_change_contract"
+if test -n "$BUILD_LOG" && test -f "$BUILD_LOG"; then if grep -q "css-syntax-error\|Expected identifier but found\|Unexpected \"}\"\|Unexpected \"const\"\|lazy is not defined\|Suspense is not defined\|Expected corresponding JSX closing tag" "$BUILD_LOG"; then echo "FAIL:frontend_build_clean"; fail=1; else echo "PASS:frontend_build_clean"; fi; fi
+if test -n "$ASSET_LIST" && test -f "$ASSET_LIST"; then check crm_chunk_present grep -q "crm-page-" "$ASSET_LIST"; check command_center_chunk_present grep -q "command-center-" "$ASSET_LIST"; check dashboard_chunk_present grep -q "dashboard-page-" "$ASSET_LIST"; check ai_workers_chunk_present grep -q "ai-workers-page-" "$ASSET_LIST"; fi
+echo "PASS:crm_analytics_render_wiring_repair_guard"
+exit "$fail"

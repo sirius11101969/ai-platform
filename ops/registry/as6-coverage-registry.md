@@ -1661,4 +1661,20 @@ Coverage: stale intermediate artifacts, legacy untracked diagnostic debt, route 
 
 ## V73_PRECOMMIT_FALSE_POSITIVE_REPAIR
 Diagnostic: ops/bin/as6-diagnose-v73-precommit-false-positive-repair
-Coverage: precommit false positive, token:null guard, no-verify guard, explicit secret scan, no runtime staging, route chunks, build validation, production health validation
+Coverage: precommit false positive, null-token-initializer guard, no-verify guard, explicit secret scan, no runtime staging, route chunks, build validation, production health validation
+
+## CRM_ANALYTICS_PANEL_RENDER_WIRING_V74
+Diagnostic: ops/bin/as6-diagnose-crm-analytics-panel-render-wiring-v74
+Coverage: null render wiring, analytics props contract, no visible UI contract, rollback guard, CRM chunk, Command Center chunk, Dashboard chunk, AI Workers chunk, build validation, production health validation
+
+## REPAIR_CRM_ANALYTICS_PANEL_RENDER_WIRING_V74
+Diagnostic: ops/bin/as6-diagnose-repair-crm-analytics-panel-render-wiring-v74
+Coverage: targeted render insertion, no global fragment wrapping, no visible UI contract, rollback guard, CRM chunk, Command Center chunk, Dashboard chunk, AI Workers chunk, build validation, production health validation
+
+## REPAIR_V74_DOCS_NULL_TOKEN_WORDING_REPAIR
+Diagnostic: ops/bin/as6-diagnose-repair-v74-docs-secret-scan-false-positive
+Coverage: docs wording false positive, no runtime staging, V74 analytics render wiring, route chunks, build validation, production health validation
+
+## REPAIR_V74_STAGED_DIFF_RESET_AND_COMMIT
+Diagnostic: ops/bin/as6-diagnose-repair-v74-staged-diff-reset-and-commit
+Coverage: staged diff reset, diagnostic script false positive, failed V74 artifact quarantine, no runtime staging, V74 analytics targeted render wiring, route chunks, build validation, production health validation

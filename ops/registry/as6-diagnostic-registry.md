@@ -1599,5 +1599,25 @@ File: ops/bin/as6-diagnose-diagnostic-debt-consolidation-v73-safe
 
 ## as6-diagnose-v73-precommit-false-positive-repair
 Status: ENABLED
-Scope: V73 precommit token:null false positive repair, explicit secret scan, no-runtime-staging, route chunk validation
+Scope: V73 precommit null-token-initializer false positive repair, explicit secret scan, no-runtime-staging, route chunk validation
 File: ops/bin/as6-diagnose-v73-precommit-false-positive-repair
+
+## as6-diagnose-crm-analytics-panel-render-wiring-v74
+Status: ENABLED
+Scope: CRM Analytics panel null render wiring, full props contract, no-visible-UI guard, route chunk validation
+File: ops/bin/as6-diagnose-crm-analytics-panel-render-wiring-v74
+
+## as6-diagnose-repair-crm-analytics-panel-render-wiring-v74
+Status: ENABLED
+Scope: CRM Analytics targeted render wiring repair, no global fragment wrapping, no-visible-UI guard, route chunk validation
+File: ops/bin/as6-diagnose-repair-crm-analytics-panel-render-wiring-v74
+
+## as6-diagnose-repair-v74-docs-secret-scan-false-positive
+Status: ENABLED
+Scope: V74 docs secret-scan false-positive repair, docs wording guard, no-runtime-staging, route chunk validation
+File: ops/bin/as6-diagnose-repair-v74-docs-secret-scan-false-positive
+
+## as6-diagnose-repair-v74-staged-diff-reset-and-commit
+Status: ENABLED
+Scope: V74 staged diff reset, failed artifact quarantine, no-runtime-staging, route chunk validation
+File: ops/bin/as6-diagnose-repair-v74-staged-diff-reset-and-commit

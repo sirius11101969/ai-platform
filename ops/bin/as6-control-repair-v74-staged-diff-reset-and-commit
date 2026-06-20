@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-repair-v74-staged-diff-reset-and-commit "$@"
