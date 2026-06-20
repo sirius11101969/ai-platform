@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -euo pipefail
+OUT_DIR="${1:-runtime/as6-crm-decomposition-v68}"
+BUILD_LOG="${2:-}"
+ASSET_LIST="${3:-}"
+mkdir -p "$OUT_DIR"
+fail=0
+check(){ name="$1"; shift; if "$@"; then echo "PASS:$name"; else echo "FAIL:$name"; fail=1; fi; }
+CRM="frontend/src/pages/CRMPage.jsx"
+APP="frontend/src/App.jsx"
+check crm_page_exists test -f "$CRM"
+check app_exists test -f "$APP"
+check v67_diagnostic_exists test -f ops/bin/as6-diagnose-frontend-page-decomposition-v67
+check crm_lazy_import grep -q "lazy(() => import(\"./pages/CRMPage\"))" "$APP"
+check duplicate_top_logo_absent bash -c "! grep -q as6-command-center-logo-image frontend/src/pages/CommandCenterPage.jsx"
+crm_bytes="$(wc -c < "$CRM")"
+echo "CRM_PAGE_BYTES=$crm_bytes"
+grep -n "function \|const .* = (\|useState\|useEffect\|return (" "$CRM" | head -160 | tee "$OUT_DIR/crm-structure.map" || true
+grep -n "pipeline\|Pipeline\|kanban\|Kanban\|filter\|Filter\|analytics\|Analytics\|action\|Action\|table\|Table\|lead\|Lead\|deal\|Deal" "$CRM" | head -160 | tee "$OUT_DIR/crm-decomposition-candidates.map" || true
+candidate_count="$(wc -l < "$OUT_DIR/crm-decomposition-candidates.map" | tr -d " ")"
+echo "CRM_DECOMPOSITION_CANDIDATE_COUNT=$candidate_count"
+echo "CRM_DECOMPOSITION_TARGET:frontend/src/pages/crm/CRMKanbanPanel.jsx"
+echo "CRM_DECOMPOSITION_TARGET:frontend/src/pages/crm/CRMPipelinePanel.jsx"
+echo "CRM_DECOMPOSITION_TARGET:frontend/src/pages/crm/CRMAnalyticsPanel.jsx"
+echo "CRM_DECOMPOSITION_TARGET:frontend/src/pages/crm/CRMFiltersPanel.jsx"
+echo "CRM_DECOMPOSITION_TARGET:frontend/src/pages/crm/CRMActionsPanel.jsx"
+if test "$crm_bytes" -lt 140000; then echo "PASS:crm_page_current_budget"; else echo "FAIL:crm_page_current_budget"; fail=1; fi
+if test "$candidate_count" -gt 10; then echo "PASS:crm_decomposition_candidates_found"; else echo "FAIL:crm_decomposition_candidates_found"; fail=1; fi
+if test -n "$BUILD_LOG" && test -f "$BUILD_LOG"; then if grep -q "css-syntax-error\|Expected identifier but found\|Unexpected \"}\"\|lazy is not defined\|Suspense is not defined" "$BUILD_LOG"; then echo "FAIL:frontend_build_clean"; fail=1; else echo "PASS:frontend_build_clean"; fi; fi
+if test -n "$ASSET_LIST" && test -f "$ASSET_LIST"; then check crm_chunk_present grep -q "crm-page-" "$ASSET_LIST"; check command_center_chunk_present grep -q "command-center-" "$ASSET_LIST"; fi
+echo "PASS:crm_decomposition_blueprint_generated"
+exit "$fail"

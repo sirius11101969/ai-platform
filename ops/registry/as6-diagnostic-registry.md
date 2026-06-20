@@ -1566,3 +1566,8 @@ File: ops/bin/as6-diagnose-css-consolidation-v66
 Status: ENABLED
 Scope: Oversized frontend pages, services, route chunk and decomposition plan diagnostics
 File: ops/bin/as6-diagnose-frontend-page-decomposition-v67
+
+## as6-diagnose-crm-page-decomposition-v68
+Status: ENABLED
+Scope: CRMPage decomposition blueprint, candidates, chunk validation and safety controls
+File: ops/bin/as6-diagnose-crm-page-decomposition-v68

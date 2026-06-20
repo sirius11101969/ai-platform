@@ -2346,3 +2346,9 @@ Status: APPLIED
 Root cause: oversized frontend page components require decomposition governance before code splitting.
 Diagnostic: ops/bin/as6-diagnose-frontend-page-decomposition-v67
 Note: No UI changes and no page decomposition were performed in this diagnostic gate.
+
+## AS6 CRM Page Decomposition V68
+Status: APPLIED
+Root cause: CRMPage is the largest frontend page and requires safe decomposition blueprint before code movement.
+Diagnostic: ops/bin/as6-diagnose-crm-page-decomposition-v68
+Note: No UI changes and no CRM extraction were performed in this safety gate.

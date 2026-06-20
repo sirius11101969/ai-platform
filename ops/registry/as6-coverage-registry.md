@@ -1634,3 +1634,7 @@ Coverage: CSS consolidation plan, dead candidates, protected selector guard, leg
 ## FRONTEND_PAGE_DECOMPOSITION_V67
 Diagnostic: ops/bin/as6-diagnose-frontend-page-decomposition-v67
 Coverage: CRMPage, AiWorkersPage, DashboardPage, API service budgets, route chunk preservation, build validation, production health validation
+
+## CRM_PAGE_DECOMPOSITION_V68
+Diagnostic: ops/bin/as6-diagnose-crm-page-decomposition-v68
+Coverage: CRMPage size, decomposition candidates, CRM chunk, Command Center chunk, build validation, production health validation

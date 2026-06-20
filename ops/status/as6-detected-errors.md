@@ -177,3 +177,8 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_OVERSIZED_FRONTEND_PAGE_COMPONENT
 Diagnostic: ops/bin/as6-diagnose-frontend-page-decomposition-v67
 Status: REGISTERED
+
+## 2026-06-19 CRM_PAGE_DECOMPOSITION_V68
+Failure Class: AS6_FAILURE_CLASS_CRM_PAGE_DECOMPOSITION_BLUEPRINT_MISSING
+Diagnostic: ops/bin/as6-diagnose-crm-page-decomposition-v68
+Status: REGISTERED
