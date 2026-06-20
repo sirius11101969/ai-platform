@@ -1646,3 +1646,7 @@ Coverage: CRM state complexity, handler complexity, helper complexity, extractio
 ## CRM_PANEL_EXTRACTION_SCAFFOLD_V70
 Diagnostic: ops/bin/as6-diagnose-crm-panel-extraction-scaffold-v70
 Coverage: CRM panel scaffold boundaries, no visible UI contract, CRM chunk, Command Center chunk, build validation, production health validation
+
+## CRM_ANALYTICS_PANEL_CONTRACT_V71
+Diagnostic: ops/bin/as6-diagnose-crm-analytics-panel-contract-v71
+Coverage: analytics panel props contract, no visible UI contract, CRM chunk, Command Center chunk, build validation, production health validation

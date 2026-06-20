@@ -2364,3 +2364,9 @@ Status: APPLIED
 Root cause: CRM extraction target modules were missing for safe incremental decomposition.
 Diagnostic: ops/bin/as6-diagnose-crm-panel-extraction-scaffold-v70
 Note: No visible UI changes and no CRMPage wiring changes were performed.
+
+## AS6 CRM Analytics Panel Contract V71
+Status: APPLIED
+Root cause: CRMAnalyticsPanel existed as empty scaffold without props extraction contract.
+Diagnostic: ops/bin/as6-diagnose-crm-analytics-panel-contract-v71
+Note: No visible UI changes and no CRMPage wiring changes were performed.

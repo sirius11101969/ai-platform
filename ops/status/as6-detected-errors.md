@@ -192,3 +192,8 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_CRM_PANEL_MODULE_BOUNDARY_MISSING
 Diagnostic: ops/bin/as6-diagnose-crm-panel-extraction-scaffold-v70
 Status: REGISTERED
+
+## 2026-06-20 CRM_ANALYTICS_PANEL_CONTRACT_V71
+Failure Class: AS6_FAILURE_CLASS_CRM_ANALYTICS_PANEL_PROPS_CONTRACT_MISSING
+Diagnostic: ops/bin/as6-diagnose-crm-analytics-panel-contract-v71
+Status: REGISTERED

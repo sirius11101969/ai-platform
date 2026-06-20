@@ -1581,3 +1581,8 @@ File: ops/bin/as6-diagnose-crm-decomposition-execution-guard-v69
 Status: ENABLED
 Scope: CRM panel module boundaries, no-UI scaffold contract, chunk validation
 File: ops/bin/as6-diagnose-crm-panel-extraction-scaffold-v70
+
+## as6-diagnose-crm-analytics-panel-contract-v71
+Status: ENABLED
+Scope: CRM Analytics panel props contract, no-UI contract stage, chunk validation
+File: ops/bin/as6-diagnose-crm-analytics-panel-contract-v71
