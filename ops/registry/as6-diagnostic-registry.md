@@ -1813,3 +1813,12 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V89 | COMMAND_PALETTE_MOUNT_GAP | AS6 Global Command Palette failure class | ENABLED
 - V89 | COMMAND_PALETTE_BRAND_DRIFT | AS6 Global Command Palette failure class | ENABLED
 - V89 | COMMAND_PALETTE_ACTION_REGISTRY_GAP | AS6 Global Command Palette failure class | ENABLED
+- V90 | ops/bin/as6-diagnose-mission-control-layout-engine-v90 | AS6 Mission Control Layout Engine diagnostic | ENABLED
+- V90 | MISSION_LAYOUT_ENGINE_MISSING | AS6 Mission Control Layout Engine failure class | ENABLED
+- V90 | COPILOT_RAIL_MISSING | AS6 Mission Control Layout Engine failure class | ENABLED
+- V90 | EVENT_STREAM_MISSING | AS6 Mission Control Layout Engine failure class | ENABLED
+- V90 | WIDGET_STANDARDIZATION_DRIFT | AS6 Mission Control Layout Engine failure class | ENABLED
+- V90 | EXECUTIVE_SUMMARY_MISSING | AS6 Mission Control Layout Engine failure class | ENABLED
+- V90 | CROSS_PAGE_LAYOUT_DRIFT | AS6 Mission Control Layout Engine failure class | ENABLED
+- V90 | COCKPIT_VISIBILITY_GAP | AS6 Mission Control Layout Engine failure class | ENABLED
+- V90 | MISSION_CONTEXT_GAP | AS6 Mission Control Layout Engine failure class | ENABLED

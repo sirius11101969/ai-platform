@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+for f in frontend/src/components/AS6MissionControlLayoutEngine.jsx frontend/src/styles/as6-mission-control-layout-engine.css; do
+  if [ ! -f "$f" ]; then echo "AS6_LAYOUT_ENGINE_FILE_MISSING $f"; FAIL=1; fi
+done
+if ! grep -Rqs "AS6MissionControlLayoutEngine.jsx" frontend/src/App.jsx; then echo "AS6_LAYOUT_ENGINE_IMPORT_MISSING"; FAIL=1; fi
+for item in "as6-mission-control-layout-engine-root" "Mission Context" "AS6 Copilot" "Live Stream" "Executive"; do
+  if ! grep -Rqs "$item" frontend/src/components/AS6MissionControlLayoutEngine.jsx frontend/src/styles/as6-mission-control-layout-engine.css ops/governance docs ops/status ops/registry; then echo "AS6_LAYOUT_ENGINE_ITEM_MISSING $item"; FAIL=1; fi
+done
+for cls in MISSION_LAYOUT_ENGINE_MISSING COPILOT_RAIL_MISSING EVENT_STREAM_MISSING WIDGET_STANDARDIZATION_DRIFT EXECUTIVE_SUMMARY_MISSING CROSS_PAGE_LAYOUT_DRIFT COCKPIT_VISIBILITY_GAP MISSION_CONTEXT_GAP; do
+  if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then echo "AS6_LAYOUT_ENGINE_CLASS_MISSING $cls"; FAIL=1; fi
+done
+if git diff --cached --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING_FAIL"; FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_MISSION_CONTROL_LAYOUT_ENGINE=PASS"

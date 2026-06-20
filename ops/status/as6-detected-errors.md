@@ -391,3 +391,9 @@ Status: REGISTERED
 - FAILURE_CLASSES: GLOBAL_COMMAND_PALETTE_MISSING, COMMAND_PALETTE_SHORTCUT_GAP, COMMAND_DISCOVERY_DRIFT, CROSS_PAGE_NAVIGATION_FRICTION, COMMAND_PALETTE_MOBILE_LAYOUT_DRIFT, COMMAND_PALETTE_MOUNT_GAP, COMMAND_PALETTE_BRAND_DRIFT, COMMAND_PALETTE_ACTION_REGISTRY_GAP.
 - PREVENTION: V89 diagnostic/control validates component, shortcut, mount, CSS, build and enforcement guard.
 - STATUS: registered and controlled.
+
+## V90 Mission Control Layout Engine
+- ROOT_CAUSE: pages needed a shared mission context layer beyond global health and command launcher.
+- FAILURE_CLASSES: MISSION_LAYOUT_ENGINE_MISSING, COPILOT_RAIL_MISSING, EVENT_STREAM_MISSING, WIDGET_STANDARDIZATION_DRIFT, EXECUTIVE_SUMMARY_MISSING, CROSS_PAGE_LAYOUT_DRIFT, COCKPIT_VISIBILITY_GAP, MISSION_CONTEXT_GAP.
+- PREVENTION: V90 diagnostic/control validates component, cockpit, copilot rail, event stream, executive summary, mount, build and enforcement guard.
+- STATUS: registered and controlled.

@@ -2646,3 +2646,17 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Expected UX readiness after V89: 97%.
 - Project readiness after V89: 100%.
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=MISSION_CONTROL_LAYOUT_ENGINE_V90
+- Base commit: 27b73f5.
+- Project readiness before V90: 100%.
+- UX readiness before V90: 97%.
+- Purpose: add reusable Mission Control layout engine with cockpit, copilot rail, event stream and executive summary.
+- Added diagnostic: ops/bin/as6-diagnose-mission-control-layout-engine-v90
+- Added control: ops/bin/as6-control-mission-control-layout-engine-v90
+- Added component: frontend/src/components/AS6MissionControlLayoutEngine.jsx
+- Added CSS artifact: frontend/src/styles/as6-mission-control-layout-engine.css
+- Added failure classes: MISSION_LAYOUT_ENGINE_MISSING, COPILOT_RAIL_MISSING, EVENT_STREAM_MISSING, WIDGET_STANDARDIZATION_DRIFT, EXECUTIVE_SUMMARY_MISSING, CROSS_PAGE_LAYOUT_DRIFT, COCKPIT_VISIBILITY_GAP, MISSION_CONTEXT_GAP.
+- Expected UX readiness after V90: 99%.
+- Project readiness after V90: 100%.
+- Production health checked with raw URL: https://www.as6.ru/api/health

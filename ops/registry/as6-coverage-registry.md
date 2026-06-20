@@ -1783,3 +1783,6 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V89 | ops/bin/as6-control-global-command-palette-v89 | Covers Command Palette component, mount, shortcut, CSS, build, health and enforcement guard | ENABLED
 - V89 | frontend/src/components/AS6GlobalCommandPalette.jsx | Reusable AS6 Global Command Palette component artifact | ENABLED
 - V89 | frontend/src/styles/as6-global-command-palette.css | AS6 Global Command Palette CSS artifact | ENABLED
+- V90 | ops/bin/as6-control-mission-control-layout-engine-v90 | Covers layout engine component, mount, CSS, build, health and enforcement guard | ENABLED
+- V90 | frontend/src/components/AS6MissionControlLayoutEngine.jsx | Reusable AS6 Mission Control Layout Engine component artifact | ENABLED
+- V90 | frontend/src/styles/as6-mission-control-layout-engine.css | AS6 Mission Control Layout Engine CSS artifact | ENABLED
