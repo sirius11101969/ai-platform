@@ -2675,3 +2675,19 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Expected UX readiness after V91: 100%.
 - Project readiness after V91: 100%.
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=AUTONOMOUS_OPERATIONS_TIMELINE_V92
+- Base commit: 7972a35.
+- Project readiness before V92: 100%.
+- UX readiness before V92: 100%.
+- Mission Control maturity before V92: 98%.
+- Purpose: add unified autonomous operations timeline across deployments, CRM, workforce, revenue, diagnostics, governance, approvals and incidents.
+- Added diagnostic: ops/bin/as6-diagnose-autonomous-operations-timeline-v92
+- Added control: ops/bin/as6-control-autonomous-operations-timeline-v92
+- Added component: frontend/src/components/AS6AutonomousOperationsTimeline.jsx
+- Added CSS artifact: frontend/src/styles/as6-autonomous-operations-timeline.css
+- Added failure classes: AUTONOMOUS_OPERATIONS_TIMELINE_MISSING, OPERATIONS_EVENT_SOURCE_GAP, DEPLOYMENT_TIMELINE_GAP, CRM_TIMELINE_GAP, GOVERNANCE_TIMELINE_GAP, DIAGNOSTIC_TIMELINE_GAP, INCIDENT_TIMELINE_GAP, TIMELINE_SEVERITY_DRIFT.
+- Expected Mission Control maturity after V92: 100%.
+- Project readiness after V92: 100%.
+- UX readiness after V92: 100%.
+- Production health checked with raw URL: https://www.as6.ru/api/health

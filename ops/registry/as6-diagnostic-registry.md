@@ -1830,3 +1830,12 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V91 | PRIORITY_QUEUE_MISSING | Autonomous Event Stream / Copilot Rail failure class | ENABLED
 - V91 | EXECUTIVE_ALERT_DRIFT | Autonomous Event Stream / Copilot Rail failure class | ENABLED
 - V91 | CROSS_PAGE_EVENT_CONTINUITY_GAP | Autonomous Event Stream / Copilot Rail failure class | ENABLED
+- V92 | ops/bin/as6-diagnose-autonomous-operations-timeline-v92 | Autonomous Operations Timeline diagnostic | ENABLED
+- V92 | AUTONOMOUS_OPERATIONS_TIMELINE_MISSING | Autonomous Operations Timeline failure class | ENABLED
+- V92 | OPERATIONS_EVENT_SOURCE_GAP | Autonomous Operations Timeline failure class | ENABLED
+- V92 | DEPLOYMENT_TIMELINE_GAP | Autonomous Operations Timeline failure class | ENABLED
+- V92 | CRM_TIMELINE_GAP | Autonomous Operations Timeline failure class | ENABLED
+- V92 | GOVERNANCE_TIMELINE_GAP | Autonomous Operations Timeline failure class | ENABLED
+- V92 | DIAGNOSTIC_TIMELINE_GAP | Autonomous Operations Timeline failure class | ENABLED
+- V92 | INCIDENT_TIMELINE_GAP | Autonomous Operations Timeline failure class | ENABLED
+- V92 | TIMELINE_SEVERITY_DRIFT | Autonomous Operations Timeline failure class | ENABLED

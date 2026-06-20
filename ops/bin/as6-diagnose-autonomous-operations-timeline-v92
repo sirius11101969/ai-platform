@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+for f in frontend/src/components/AS6AutonomousOperationsTimeline.jsx frontend/src/styles/as6-autonomous-operations-timeline.css; do
+  if [ ! -f "$f" ]; then echo "AS6_OPS_TIMELINE_FILE_MISSING $f"; FAIL=1; fi
+done
+if ! grep -Rqs "AS6AutonomousOperationsTimeline.jsx" frontend/src/App.jsx; then echo "AS6_OPS_TIMELINE_IMPORT_MISSING"; FAIL=1; fi
+for item in "as6-autonomous-operations-timeline-root" "Unified Timeline" "Deployments" "CRM" "AI Workforce" "Governance" "Diagnostics" "Revenue" "Approvals" "Incidents"; do
+  if ! grep -Rqs "$item" frontend/src/components/AS6AutonomousOperationsTimeline.jsx frontend/src/styles/as6-autonomous-operations-timeline.css ops/governance docs ops/status ops/registry; then echo "AS6_OPS_TIMELINE_ITEM_MISSING $item"; FAIL=1; fi
+done
+for cls in AUTONOMOUS_OPERATIONS_TIMELINE_MISSING OPERATIONS_EVENT_SOURCE_GAP DEPLOYMENT_TIMELINE_GAP CRM_TIMELINE_GAP GOVERNANCE_TIMELINE_GAP DIAGNOSTIC_TIMELINE_GAP INCIDENT_TIMELINE_GAP TIMELINE_SEVERITY_DRIFT; do
+  if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then echo "AS6_OPS_TIMELINE_CLASS_MISSING $cls"; FAIL=1; fi
+done
+if git diff --cached --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING_FAIL"; FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_AUTONOMOUS_OPERATIONS_TIMELINE=PASS"

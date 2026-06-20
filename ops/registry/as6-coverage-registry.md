@@ -1791,3 +1791,6 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V91 | frontend/src/components/AS6AICopilotRail.jsx | Autonomous Event Stream / AI Copilot Rail artifact | ENABLED
 - V91 | frontend/src/styles/as6-global-event-stream.css | Autonomous Event Stream / AI Copilot Rail artifact | ENABLED
 - V91 | frontend/src/styles/as6-ai-copilot-rail.css | Autonomous Event Stream / AI Copilot Rail artifact | ENABLED
+- V92 | ops/bin/as6-control-autonomous-operations-timeline-v92 | Covers operations timeline, source coverage, severity, build, health and enforcement guard | ENABLED
+- V92 | frontend/src/components/AS6AutonomousOperationsTimeline.jsx | Autonomous Operations Timeline component artifact | ENABLED
+- V92 | frontend/src/styles/as6-autonomous-operations-timeline.css | Autonomous Operations Timeline CSS artifact | ENABLED

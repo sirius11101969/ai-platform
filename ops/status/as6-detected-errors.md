@@ -403,3 +403,9 @@ Status: REGISTERED
 - FAILURE_CLASSES: GLOBAL_EVENT_STREAM_MISSING, EVENT_SOURCE_COVERAGE_DRIFT, COPILOT_RAIL_MISSING, AI_INSIGHT_PANEL_MISSING, AUTONOMOUS_RECOMMENDATION_GAP, PRIORITY_QUEUE_MISSING, EXECUTIVE_ALERT_DRIFT, CROSS_PAGE_EVENT_CONTINUITY_GAP.
 - PREVENTION: V91 diagnostic/control validates event stream, copilot rail, priority queue, recommendations, mount, build and enforcement guard.
 - STATUS: registered and controlled.
+
+## V92 Autonomous Operations Timeline
+- ROOT_CAUSE: Mission Control event stream needed a unified operational timeline across all major source domains.
+- FAILURE_CLASSES: AUTONOMOUS_OPERATIONS_TIMELINE_MISSING, OPERATIONS_EVENT_SOURCE_GAP, DEPLOYMENT_TIMELINE_GAP, CRM_TIMELINE_GAP, GOVERNANCE_TIMELINE_GAP, DIAGNOSTIC_TIMELINE_GAP, INCIDENT_TIMELINE_GAP, TIMELINE_SEVERITY_DRIFT.
+- PREVENTION: V92 diagnostic/control validates timeline component, source coverage, severity markers, mount, build and enforcement guard.
+- STATUS: registered and controlled.
