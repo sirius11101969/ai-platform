@@ -291,3 +291,15 @@ Status: REGISTERED
 - FAILURE_CLASSES: UNTRACKED_DIAGNOSTIC_ARTIFACTS, ORPHAN_DIAGNOSTIC_CONTROLS, DIAGNOSTIC_REGISTRY_DRIFT, DIAGNOSTIC_COVERAGE_DRIFT, GOVERNANCE_ARTIFACT_DRIFT.
 - PREVENTION: V79 diagnostic/control verifies reconciliation and runtime staging guard.
 - STATUS: registered and controlled.
+
+## V80 Project State Readiness Snapshot
+- ROOT_CAUSE: post-V78/V79 baseline needed a reusable readiness checkpoint.
+- FAILURE_CLASSES: PROJECT_STATE_BASELINE_MISSING, READINESS_REQUIRED_FILE_MISSING, REGISTRY_CONSISTENCY_GAP, COVERAGE_CONSISTENCY_GAP, DETECTED_ERRORS_REGISTRATION_GAP, WORKTREE_BASELINE_DRIFT, RUNTIME_STAGING_GAP, PRODUCTION_READINESS_SNAPSHOT_GAP.
+- PREVENTION: V80 diagnostic/control verifies readiness baseline before new functional stages.
+- STATUS: registered and controlled.
+
+## V80B Readiness Self-Validation Repair
+- ROOT_CAUSE: readiness diagnostic required overly strict V78D marker and failed on its own staged V80 files.
+- FAILURE_CLASSES: READINESS_BASELINE_MARKER_TOO_STRICT, READINESS_DIAGNOSTIC_SELF_VALIDATION_STAGED_CHANGE_FALSE_POSITIVE, PROJECT_STATE_COMPLETION_MARKER_ALIAS_GAP, V80_SELF_VALIDATION_WORKTREE_ALLOWLIST_GAP.
+- PREVENTION: readiness diagnostic accepts registered baseline evidence and allowlists staged V80 artifacts during self-validation.
+- STATUS: repaired and registered.

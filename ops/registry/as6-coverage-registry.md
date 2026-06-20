@@ -1703,3 +1703,5 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V79 | ops/bin/as6-control-crm-analytics-panel-visible-bridge-v75 | Reconciled historical diagnostic/control coverage | ENABLED
 - V79 | ops/bin/as6-diagnose-repair-v74-diag-script-secret-scan-false-positive | Reconciled historical diagnostic/control coverage | ENABLED
 - V79 | ops/bin/as6-control-repair-v74-diag-script-secret-scan-false-positive | Reconciled historical diagnostic/control coverage | ENABLED
+- V80 | ops/bin/as6-control-project-state-readiness-snapshot-v80 | Covers state baseline, registry consistency, coverage consistency, detected errors, build, health and runtime staging guard | ENABLED
+- V80B | readiness self-validation repair | Covers strict baseline marker gap and staged V80 self-validation false positive | ENABLED

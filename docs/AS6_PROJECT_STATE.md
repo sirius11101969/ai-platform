@@ -2471,3 +2471,18 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Added failure classes: UNTRACKED_DIAGNOSTIC_ARTIFACTS, ORPHAN_DIAGNOSTIC_CONTROLS, DIAGNOSTIC_REGISTRY_DRIFT, DIAGNOSTIC_COVERAGE_DRIFT, GOVERNANCE_ARTIFACT_DRIFT.
 - Registered Diagnostic Registry and Coverage Registry entries.
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=PROJECT_STATE_READINESS_SNAPSHOT_V80
+- Base commit: 9c4c948.
+- Purpose: clean readiness checkpoint after V78D and V79.
+- Added diagnostics: ops/bin/as6-diagnose-project-state-readiness-snapshot-v80
+- Added control: ops/bin/as6-control-project-state-readiness-snapshot-v80
+- Added failure classes: PROJECT_STATE_BASELINE_MISSING, READINESS_REQUIRED_FILE_MISSING, REGISTRY_CONSISTENCY_GAP, COVERAGE_CONSISTENCY_GAP, DETECTED_ERRORS_REGISTRATION_GAP, WORKTREE_BASELINE_DRIFT, RUNTIME_STAGING_GAP, PRODUCTION_READINESS_SNAPSHOT_GAP.
+- Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_REPAIR=V80B_READINESS_SELF_VALIDATION
+- Root cause: V80 diagnostic was too strict on V78 completion marker and treated its own staged readiness files as unexpected drift.
+- Added failure classes: READINESS_BASELINE_MARKER_TOO_STRICT, READINESS_DIAGNOSTIC_SELF_VALIDATION_STAGED_CHANGE_FALSE_POSITIVE, PROJECT_STATE_COMPLETION_MARKER_ALIAS_GAP, V80_SELF_VALIDATION_WORKTREE_ALLOWLIST_GAP.
+- Repaired diagnostic: ops/bin/as6-diagnose-project-state-readiness-snapshot-v80
+- Repaired control: ops/bin/as6-control-project-state-readiness-snapshot-v80
+- Production health checked with raw URL: https://www.as6.ru/api/health

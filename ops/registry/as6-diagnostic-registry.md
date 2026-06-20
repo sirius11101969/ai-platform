@@ -1650,3 +1650,6 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V79 | ops/bin/as6-control-crm-analytics-panel-visible-bridge-v75 | Reconciled historical diagnostic/control artifact | ENABLED
 - V79 | ops/bin/as6-diagnose-repair-v74-diag-script-secret-scan-false-positive | Reconciled historical diagnostic/control artifact | ENABLED
 - V79 | ops/bin/as6-control-repair-v74-diag-script-secret-scan-false-positive | Reconciled historical diagnostic/control artifact | ENABLED
+- V80 | ops/bin/as6-diagnose-project-state-readiness-snapshot-v80 | Project state production readiness snapshot diagnostic | ENABLED
+- V80B | READINESS_BASELINE_MARKER_TOO_STRICT | Prevents readiness baseline false negative from exact marker mismatch | ENABLED
+- V80B | READINESS_DIAGNOSTIC_SELF_VALIDATION_STAGED_CHANGE_FALSE_POSITIVE | Prevents staged self-validation worktree false positive | ENABLED

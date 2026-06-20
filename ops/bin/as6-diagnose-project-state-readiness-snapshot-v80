@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+for f in docs/AS6_PROJECT_STATE.md ops/registry/as6-diagnostic-registry.md ops/registry/as6-coverage-registry.md ops/status/as6-detected-errors.md frontend/package.json frontend/vite.config.js frontend/src/App.jsx frontend/src/pages/CRMPage.jsx frontend/src/pages/crm/CRMAnalyticsPanel.jsx; do
+  if [ ! -f "$f" ]; then
+    echo "AS6_READINESS_REQUIRED_FILE=FAIL:$f"
+    FAIL=1
+  fi
+done
+if ! grep -Rqs "CRM_ANALYTICS_REMOVE_LEGACY_ROLLBACK_COPY_V78" docs/AS6_PROJECT_STATE.md ops/status/as6-detected-errors.md ops/registry; then
+  echo "AS6_PROJECT_STATE_BASELINE=FAIL:CRM_ANALYTICS_REMOVE_LEGACY_ROLLBACK_COPY_V78 evidence missing"
+  FAIL=1
+fi
+if ! grep -Rqs "AS6_DONE=DIAGNOSTIC_ARTIFACT_RECONCILIATION_V79" docs/AS6_PROJECT_STATE.md; then
+  echo "AS6_PROJECT_STATE_BASELINE=FAIL:AS6_DONE=DIAGNOSTIC_ARTIFACT_RECONCILIATION_V79"
+  FAIL=1
+fi
+for needle in "ops/bin/as6-diagnose-diagnostic-artifact-reconciliation-v79" "ops/bin/as6-control-diagnostic-artifact-reconciliation-v79"; do
+  if ! grep -Rqs "$needle" ops/registry; then
+    echo "AS6_REGISTRY_CONSISTENCY=FAIL:$needle"
+    FAIL=1
+  fi
+done
+for needle in "UNTRACKED_DIAGNOSTIC_ARTIFACTS" "DIAGNOSTIC_REGISTRY_DRIFT" "DIAGNOSTIC_COVERAGE_DRIFT" "GOVERNANCE_ARTIFACT_DRIFT"; do
+  if ! grep -Rqs "$needle" ops/governance ops/registry ops/status docs; then
+    echo "AS6_GOVERNANCE_COVERAGE_CONSISTENCY=FAIL:$needle"
+    FAIL=1
+  fi
+done
+if git status --porcelain | grep -v "^?? runtime/" | grep -v "^M  docs/AS6_PROJECT_STATE.md$" | grep -v "^A  ops/bin/as6-control-project-state-readiness-snapshot-v80$" | grep -v "^A  ops/bin/as6-diagnose-project-state-readiness-snapshot-v80$" | grep -v "^A  ops/governance/as6-project-state-readiness-snapshot-" | grep -v "^M  ops/registry/as6-coverage-registry.md$" | grep -v "^M  ops/registry/as6-diagnostic-registry.md$" | grep -v "^M  ops/status/as6-detected-errors.md$" | grep -q .; then
+  echo "AS6_WORKTREE_BASELINE=FAIL:unexpected non-runtime non-v80 changes"
+  git status --porcelain | grep -v "^?? runtime/" || true
+  FAIL=1
+fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_PROJECT_STATE_READINESS_SNAPSHOT=PASS"
