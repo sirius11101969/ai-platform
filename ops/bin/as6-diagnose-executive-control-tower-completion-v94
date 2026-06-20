@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+for f in frontend/src/components/AS6ExecutiveControlTowerCompletion.jsx frontend/src/styles/as6-executive-control-tower-completion.css; do
+  if [ ! -f "$f" ]; then echo "AS6_EXEC_TOWER_FILE_MISSING $f"; FAIL=1; fi
+done
+if ! grep -Rqs "AS6ExecutiveControlTowerCompletion.jsx" frontend/src/App.jsx; then echo "AS6_EXEC_TOWER_IMPORT_MISSING"; FAIL=1; fi
+for item in "as6-executive-control-tower-completion-root" "Executive Control Tower" "Risk" "Revenue" "AI" "Action Queue" "100% Operational View"; do
+  if ! grep -Rqs "$item" frontend/src/components/AS6ExecutiveControlTowerCompletion.jsx frontend/src/styles/as6-executive-control-tower-completion.css ops/governance docs ops/status ops/registry; then echo "AS6_EXEC_TOWER_ITEM_MISSING $item"; FAIL=1; fi
+done
+for cls in EXECUTIVE_CONTROL_TOWER_COMPLETION_MISSING EXECUTIVE_DECISION_INTELLIGENCE_GAP EXECUTIVE_RISK_RADAR_GAP EXECUTIVE_ACTION_QUEUE_GAP EXECUTIVE_CONTROL_TOWER_COMPLETION_DRIFT; do
+  if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then echo "AS6_EXEC_TOWER_CLASS_MISSING $cls"; FAIL=1; fi
+done
+if git diff --cached --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING_FAIL"; FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_EXECUTIVE_CONTROL_TOWER_COMPLETION=PASS"

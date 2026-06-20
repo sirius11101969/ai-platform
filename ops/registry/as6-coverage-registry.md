@@ -1797,3 +1797,6 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V93 | ops/bin/as6-control-executive-command-dashboard-v93 | Covers executive dashboard, KPI pulses, alerts, build, health and enforcement guard | ENABLED
 - V93 | frontend/src/components/AS6ExecutiveCommandDashboard.jsx | Executive Command Dashboard component artifact | ENABLED
 - V93 | frontend/src/styles/as6-executive-command-dashboard.css | Executive Command Dashboard CSS artifact | ENABLED
+- V94 | ops/bin/as6-control-executive-control-tower-completion-v94 | Covers executive control tower completion, build, health and enforcement guard | ENABLED
+- V94 | frontend/src/components/AS6ExecutiveControlTowerCompletion.jsx | Executive Control Tower completion component artifact | ENABLED
+- V94 | frontend/src/styles/as6-executive-control-tower-completion.css | Executive Control Tower completion CSS artifact | ENABLED

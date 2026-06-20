@@ -1848,3 +1848,9 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V93 | GOVERNANCE_PULSE_GAP | Executive Command Dashboard failure class | ENABLED
 - V93 | DIAGNOSTIC_PULSE_GAP | Executive Command Dashboard failure class | ENABLED
 - V93 | EXECUTIVE_ALERT_VISIBILITY_GAP | Executive Command Dashboard failure class | ENABLED
+- V94 | ops/bin/as6-diagnose-executive-control-tower-completion-v94 | Executive Control Tower completion diagnostic | ENABLED
+- V94 | EXECUTIVE_CONTROL_TOWER_COMPLETION_MISSING | Executive Control Tower completion failure class | ENABLED
+- V94 | EXECUTIVE_DECISION_INTELLIGENCE_GAP | Executive Control Tower completion failure class | ENABLED
+- V94 | EXECUTIVE_RISK_RADAR_GAP | Executive Control Tower completion failure class | ENABLED
+- V94 | EXECUTIVE_ACTION_QUEUE_GAP | Executive Control Tower completion failure class | ENABLED
+- V94 | EXECUTIVE_CONTROL_TOWER_COMPLETION_DRIFT | Executive Control Tower completion failure class | ENABLED
