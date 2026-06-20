@@ -2303,3 +2303,22 @@ Status: APPLIED
 Root cause: CSS selector ownership map was missing before safe cleanup.
 Diagnostic: ops/bin/as6-diagnose-selector-ownership-map-v62
 Note: No CSS deletion and no UI changes were performed.
+
+## AS6 Frontend Route Splitting V63
+Status: APPLIED
+Root cause: several heavy protected pages were still statically imported.
+Diagnostic: ops/bin/as6-diagnose-frontend-route-splitting-v63
+
+## AS6 Route Splitting Cache-Aware Diagnostic Repair V63.2
+Status: APPLIED
+Root cause: cached Docker build output omitted dist/assets lines, causing route chunk false FAIL.
+Diagnostic: ops/bin/as6-diagnose-route-splitting-cache-aware-v63-2
+
+## AS6 Route Splitting Running Container Diagnostic Repair V63.3
+Status: APPLIED
+Root cause: cache-aware fallback inspected stale image tag instead of running nginx container assets.
+Diagnostic: ops/bin/as6-diagnose-route-splitting-running-container-v63-3
+
+## AS6 BusyBox Asset Diagnostic Fix V63.4
+Status: APPLIED
+Root cause: nginx Alpine BusyBox find does not support -printf.

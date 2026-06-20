@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+set -euo pipefail
+APP="frontend/src/App.jsx"
+VITE="frontend/vite.config.js"
+BUILD_LOG="${1:-}"
+ASSET_LIST="${2:-}"
+fail=0
+
+check(){ n="$1"; shift; if "$@"; then echo "PASS:$n"; else echo "FAIL:$n"; fail=1; fi; }
+
+check app_exists test -f "$APP"
+check vite_exists test -f "$VITE"
+check react_lazy_suspense_import grep -q "lazy, Suspense" "$APP"
+check crm_lazy_import grep -q 'lazy(() => import("./pages/CRMPage"))' "$APP"
+check ai_workers_lazy_import grep -q 'lazy(() => import("./pages/AiWorkersPage"))' "$APP"
+check dashboard_lazy_import grep -q 'lazy(() => import("./pages/DashboardPage"))' "$APP"
+check command_center_lazy_import grep -q 'lazy(() => import("./pages/CommandCenterPage"))' "$APP"
+check revenue_dashboard_lazy_import grep -q 'lazy(() => import("./pages/RevenueDashboardPage"))' "$APP"
+check pipeline_copilot_lazy_import grep -q 'lazy(() => import("./pages/PipelineCopilotPage"))' "$APP"
+check ai_manager_lazy_import grep -q 'lazy(() => import("./pages/AiManagerDashboardPage"))' "$APP"
+check dashboard_manual_chunk grep -q "dashboard-page" "$VITE"
+check duplicate_top_logo_absent bash -c "! grep -q as6-command-center-logo-image frontend/src/pages/CommandCenterPage.jsx"
+check sidebar_branding_webp grep -q "as6-logo.webp" frontend/src/components/branding/AS6Logo.jsx
+
+if test -n "$BUILD_LOG" && test -f "$BUILD_LOG"; then
+  if grep -q 'css-syntax-error\|Expected identifier but found\|Unexpected "}"\|lazy is not defined\|Suspense is not defined' "$BUILD_LOG"; then
+    echo "FAIL:frontend_build_clean"
+    fail=1
+  else
+    echo "PASS:frontend_build_clean"
+  fi
+fi
+
+TMP_ASSETS=""
+if test -n "$ASSET_LIST" && test -f "$ASSET_LIST"; then
+  TMP_ASSETS="$ASSET_LIST"
+elif test -n "$BUILD_LOG" && test -f "$BUILD_LOG" && grep -q "dist/assets/" "$BUILD_LOG"; then
+  TMP_ASSETS="$BUILD_LOG"
+else
+  TMP_ASSETS="$(mktemp)"
+  docker exec ai-platform-nginx-1 sh -c 'ls -1 /usr/share/nginx/html/assets | sort' > "" 2>/dev/null || docker run --rm ai-platform-nginx sh -c 'ls -1 /usr/share/nginx/html/assets | sort' > "" 2>/dev/null || true
+fi
+
+if test -n "$TMP_ASSETS" && test -f "$TMP_ASSETS"; then
+  check crm_chunk_present grep -q "crm-page-" "$TMP_ASSETS"
+  check ai_workers_chunk_present grep -q "ai-workers-page-" "$TMP_ASSETS"
+  check dashboard_chunk_present grep -q "dashboard-page-" "$TMP_ASSETS"
+  check command_center_chunk_present grep -q "command-center-" "$TMP_ASSETS"
+  check revenue_dashboard_chunk_present grep -q "revenue-dashboard-page-" "$TMP_ASSETS"
+  check pipeline_copilot_chunk_present grep -q "pipeline-copilot-page-" "$TMP_ASSETS"
+fi
+
+exit "$fail"

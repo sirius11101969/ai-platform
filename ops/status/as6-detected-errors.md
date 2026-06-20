@@ -138,3 +138,22 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_SELECTOR_OWNERSHIP_MAP_MISSING
 Diagnostic: ops/bin/as6-diagnose-selector-ownership-map-v62
 Status: REGISTERED
+
+## 2026-06-19 FRONTEND_ROUTE_SPLITTING_V63
+Failure Class: AS6_FAILURE_CLASS_HEAVY_ROUTE_STATIC_IMPORT_REGRESSION
+Diagnostic: ops/bin/as6-diagnose-frontend-route-splitting-v63
+Status: REGISTERED
+
+## 2026-06-19 ROUTE_SPLITTING_CACHE_AWARE_V63_2
+Failure Class: AS6_FAILURE_CLASS_CACHED_BUILD_OUTPUT_OMITS_DIST_ASSETS
+Diagnostic: ops/bin/as6-diagnose-route-splitting-cache-aware-v63-2
+Status: REGISTERED
+
+## 2026-06-19 ROUTE_SPLITTING_RUNNING_CONTAINER_V63_3
+Failure Class: AS6_FAILURE_CLASS_STALE_IMAGE_TAG_ASSET_DIAGNOSTIC
+Diagnostic: ops/bin/as6-diagnose-route-splitting-running-container-v63-3
+Status: REGISTERED
+
+## AS6 BusyBox Asset Diagnostic Fix V63.4
+Failure Class: AS6_FAILURE_CLASS_BUSYBOX_FIND_PRINTF_INCOMPATIBILITY
+Rule: nginx/alpine diagnostics must not rely on GNU find -printf; use BusyBox-safe ls/find.
