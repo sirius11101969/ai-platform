@@ -182,3 +182,8 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_CRM_PAGE_DECOMPOSITION_BLUEPRINT_MISSING
 Diagnostic: ops/bin/as6-diagnose-crm-page-decomposition-v68
 Status: REGISTERED
+
+## 2026-06-20 CRM_DECOMPOSITION_EXECUTION_GUARD_V69
+Failure Class: AS6_FAILURE_CLASS_CRM_EXTRACTION_CONTRACT_MISSING
+Diagnostic: ops/bin/as6-diagnose-crm-decomposition-execution-guard-v69
+Status: REGISTERED

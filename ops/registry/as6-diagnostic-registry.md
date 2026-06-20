@@ -1571,3 +1571,8 @@ File: ops/bin/as6-diagnose-frontend-page-decomposition-v67
 Status: ENABLED
 Scope: CRMPage decomposition blueprint, candidates, chunk validation and safety controls
 File: ops/bin/as6-diagnose-crm-page-decomposition-v68
+
+## as6-diagnose-crm-decomposition-execution-guard-v69
+Status: ENABLED
+Scope: CRM decomposition execution contract, complexity map, extraction sequence and chunk validation
+File: ops/bin/as6-diagnose-crm-decomposition-execution-guard-v69

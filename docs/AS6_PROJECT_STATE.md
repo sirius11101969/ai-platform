@@ -2352,3 +2352,9 @@ Status: APPLIED
 Root cause: CRMPage is the largest frontend page and requires safe decomposition blueprint before code movement.
 Diagnostic: ops/bin/as6-diagnose-crm-page-decomposition-v68
 Note: No UI changes and no CRM extraction were performed in this safety gate.
+
+## AS6 CRM Decomposition Execution Guard V69
+Status: APPLIED
+Root cause: CRM decomposition blueprint exists, but safe extraction execution contract was missing.
+Diagnostic: ops/bin/as6-diagnose-crm-decomposition-execution-guard-v69
+Note: No UI changes and no CRM code movement were performed.

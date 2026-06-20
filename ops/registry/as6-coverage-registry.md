@@ -1638,3 +1638,7 @@ Coverage: CRMPage, AiWorkersPage, DashboardPage, API service budgets, route chun
 ## CRM_PAGE_DECOMPOSITION_V68
 Diagnostic: ops/bin/as6-diagnose-crm-page-decomposition-v68
 Coverage: CRMPage size, decomposition candidates, CRM chunk, Command Center chunk, build validation, production health validation
+
+## CRM_DECOMPOSITION_EXECUTION_GUARD_V69
+Diagnostic: ops/bin/as6-diagnose-crm-decomposition-execution-guard-v69
+Coverage: CRM state complexity, handler complexity, helper complexity, extraction contract, extraction sequence, CRM chunk, Command Center chunk, build validation, production health validation

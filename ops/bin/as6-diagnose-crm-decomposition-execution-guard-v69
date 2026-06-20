@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -euo pipefail
+OUT_DIR="${1:-runtime/as6-crm-decomposition-v69}"
+BUILD_LOG="${2:-}"
+ASSET_LIST="${3:-}"
+mkdir -p "$OUT_DIR"
+fail=0
+check(){ name="$1"; shift; if "$@"; then echo "PASS:$name"; else echo "FAIL:$name"; fail=1; fi; }
+CRM="frontend/src/pages/CRMPage.jsx"
+check crm_page_exists test -f "$CRM"
+check v68_blueprint_exists test -f ops/bin/as6-diagnose-crm-page-decomposition-v68
+check v67_page_diag_exists test -f ops/bin/as6-diagnose-frontend-page-decomposition-v67
+check crm_lazy_import grep -q "lazy(() => import(\"./pages/CRMPage\"))" frontend/src/App.jsx
+check duplicate_top_logo_absent bash -c "! grep -q as6-command-center-logo-image frontend/src/pages/CommandCenterPage.jsx"
+crm_bytes="$(wc -c < "$CRM")"
+state_count="$(grep -c "useState" "$CRM" || true)"
+handler_count="$(grep -c "async function handle" "$CRM" || true)"
+helper_count="$(grep -c "^function " "$CRM" || true)"
+echo "CRM_PAGE_BYTES=$crm_bytes"
+echo "CRM_USESTATE_COUNT=$state_count"
+echo "CRM_ASYNC_HANDLER_COUNT=$handler_count"
+echo "CRM_HELPER_FUNCTION_COUNT=$helper_count"
+grep -n "async function handle\|function get\|function format\|function .*Label\|useState\|useMemo\|useCallback" "$CRM" | tee "$OUT_DIR/crm-extraction-map.out" || true
+printf "%s\n" "CRM_EXTRACTION_CONTRACT:do_not_move_state_before_component_boundary" "CRM_EXTRACTION_CONTRACT:extract_presentational_panels_first" "CRM_EXTRACTION_CONTRACT:preserve_existing_css_classes" "CRM_EXTRACTION_CONTRACT:preserve_crm_page_default_export" "CRM_EXTRACTION_CONTRACT:validate_crm_chunk_after_each_extraction" | tee "$OUT_DIR/crm-extraction-contract.out"
+printf "%s\n" "TARGET_1:CRMAnalyticsPanel:pure_presentational_first" "TARGET_2:CRMFiltersPanel:pure_presentational_second" "TARGET_3:CRMActionsPanel:requires_handlers_as_props" "TARGET_4:CRMPipelinePanel:requires_drag_drop_contract" "TARGET_5:CRMKanbanPanel:requires_stage_mutation_contract" | tee "$OUT_DIR/crm-extraction-sequence.out"
+if test "$crm_bytes" -lt 140000; then echo "PASS:crm_page_current_budget"; else echo "FAIL:crm_page_current_budget"; fail=1; fi
+if test "$state_count" -gt 20; then echo "PASS:crm_state_complexity_detected"; else echo "FAIL:crm_state_complexity_detected"; fail=1; fi
+if test "$handler_count" -gt 20; then echo "PASS:crm_handler_complexity_detected"; else echo "FAIL:crm_handler_complexity_detected"; fail=1; fi
+if test "$helper_count" -gt 20; then echo "PASS:crm_helper_complexity_detected"; else echo "FAIL:crm_helper_complexity_detected"; fail=1; fi
+echo "PASS:crm_extraction_contract_generated"
+echo "PASS:crm_extraction_sequence_generated"
+if test -n "$BUILD_LOG" && test -f "$BUILD_LOG"; then if grep -q "css-syntax-error\|Expected identifier but found\|Unexpected \"}\"\|lazy is not defined\|Suspense is not defined" "$BUILD_LOG"; then echo "FAIL:frontend_build_clean"; fail=1; else echo "PASS:frontend_build_clean"; fi; fi
+if test -n "$ASSET_LIST" && test -f "$ASSET_LIST"; then check crm_chunk_present grep -q "crm-page-" "$ASSET_LIST"; check command_center_chunk_present grep -q "command-center-" "$ASSET_LIST"; fi
+exit "$fail"
