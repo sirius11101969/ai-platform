@@ -1786,3 +1786,8 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V90 | ops/bin/as6-control-mission-control-layout-engine-v90 | Covers layout engine component, mount, CSS, build, health and enforcement guard | ENABLED
 - V90 | frontend/src/components/AS6MissionControlLayoutEngine.jsx | Reusable AS6 Mission Control Layout Engine component artifact | ENABLED
 - V90 | frontend/src/styles/as6-mission-control-layout-engine.css | AS6 Mission Control Layout Engine CSS artifact | ENABLED
+- V91 | ops/bin/as6-control-autonomous-event-stream-v91 | Covers event stream, copilot rail, priority queue, recommendations, build, health and enforcement guard | ENABLED
+- V91 | frontend/src/components/AS6GlobalEventStream.jsx | Autonomous Event Stream / AI Copilot Rail artifact | ENABLED
+- V91 | frontend/src/components/AS6AICopilotRail.jsx | Autonomous Event Stream / AI Copilot Rail artifact | ENABLED
+- V91 | frontend/src/styles/as6-global-event-stream.css | Autonomous Event Stream / AI Copilot Rail artifact | ENABLED
+- V91 | frontend/src/styles/as6-ai-copilot-rail.css | Autonomous Event Stream / AI Copilot Rail artifact | ENABLED

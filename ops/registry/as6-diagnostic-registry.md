@@ -1822,3 +1822,11 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V90 | CROSS_PAGE_LAYOUT_DRIFT | AS6 Mission Control Layout Engine failure class | ENABLED
 - V90 | COCKPIT_VISIBILITY_GAP | AS6 Mission Control Layout Engine failure class | ENABLED
 - V90 | MISSION_CONTEXT_GAP | AS6 Mission Control Layout Engine failure class | ENABLED
+- V91 | ops/bin/as6-diagnose-autonomous-event-stream-v91 | Autonomous Event Stream and AI Copilot Rail diagnostic | ENABLED
+- V91 | GLOBAL_EVENT_STREAM_MISSING | Autonomous Event Stream / Copilot Rail failure class | ENABLED
+- V91 | EVENT_SOURCE_COVERAGE_DRIFT | Autonomous Event Stream / Copilot Rail failure class | ENABLED
+- V91 | AI_INSIGHT_PANEL_MISSING | Autonomous Event Stream / Copilot Rail failure class | ENABLED
+- V91 | AUTONOMOUS_RECOMMENDATION_GAP | Autonomous Event Stream / Copilot Rail failure class | ENABLED
+- V91 | PRIORITY_QUEUE_MISSING | Autonomous Event Stream / Copilot Rail failure class | ENABLED
+- V91 | EXECUTIVE_ALERT_DRIFT | Autonomous Event Stream / Copilot Rail failure class | ENABLED
+- V91 | CROSS_PAGE_EVENT_CONTINUITY_GAP | Autonomous Event Stream / Copilot Rail failure class | ENABLED

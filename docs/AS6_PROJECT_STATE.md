@@ -2660,3 +2660,18 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Expected UX readiness after V90: 99%.
 - Project readiness after V90: 100%.
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=AUTONOMOUS_EVENT_STREAM_COPILOT_RAIL_V91
+- Base commit: 3c037bb.
+- Project readiness before V91: 100%.
+- UX readiness before V91: 99%.
+- Purpose: add autonomous event stream, priority queue and AI Copilot Rail.
+- Added diagnostic: ops/bin/as6-diagnose-autonomous-event-stream-v91
+- Added control: ops/bin/as6-control-autonomous-event-stream-v91
+- Added event component: frontend/src/components/AS6GlobalEventStream.jsx
+- Added copilot component: frontend/src/components/AS6AICopilotRail.jsx
+- Added CSS artifacts: frontend/src/styles/as6-global-event-stream.css, frontend/src/styles/as6-ai-copilot-rail.css
+- Added failure classes: GLOBAL_EVENT_STREAM_MISSING, EVENT_SOURCE_COVERAGE_DRIFT, COPILOT_RAIL_MISSING, AI_INSIGHT_PANEL_MISSING, AUTONOMOUS_RECOMMENDATION_GAP, PRIORITY_QUEUE_MISSING, EXECUTIVE_ALERT_DRIFT, CROSS_PAGE_EVENT_CONTINUITY_GAP.
+- Expected UX readiness after V91: 100%.
+- Project readiness after V91: 100%.
+- Production health checked with raw URL: https://www.as6.ru/api/health

@@ -397,3 +397,9 @@ Status: REGISTERED
 - FAILURE_CLASSES: MISSION_LAYOUT_ENGINE_MISSING, COPILOT_RAIL_MISSING, EVENT_STREAM_MISSING, WIDGET_STANDARDIZATION_DRIFT, EXECUTIVE_SUMMARY_MISSING, CROSS_PAGE_LAYOUT_DRIFT, COCKPIT_VISIBILITY_GAP, MISSION_CONTEXT_GAP.
 - PREVENTION: V90 diagnostic/control validates component, cockpit, copilot rail, event stream, executive summary, mount, build and enforcement guard.
 - STATUS: registered and controlled.
+
+## V91 Autonomous Event Stream + AI Copilot Rail
+- ROOT_CAUSE: Mission Control needed explicit autonomous event stream and AI recommendation rail beyond static layout context.
+- FAILURE_CLASSES: GLOBAL_EVENT_STREAM_MISSING, EVENT_SOURCE_COVERAGE_DRIFT, COPILOT_RAIL_MISSING, AI_INSIGHT_PANEL_MISSING, AUTONOMOUS_RECOMMENDATION_GAP, PRIORITY_QUEUE_MISSING, EXECUTIVE_ALERT_DRIFT, CROSS_PAGE_EVENT_CONTINUITY_GAP.
+- PREVENTION: V91 diagnostic/control validates event stream, copilot rail, priority queue, recommendations, mount, build and enforcement guard.
+- STATUS: registered and controlled.

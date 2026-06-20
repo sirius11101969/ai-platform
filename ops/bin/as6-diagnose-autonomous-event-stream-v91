@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+for f in frontend/src/components/AS6GlobalEventStream.jsx frontend/src/components/AS6AICopilotRail.jsx frontend/src/styles/as6-global-event-stream.css frontend/src/styles/as6-ai-copilot-rail.css; do
+  if [ ! -f "$f" ]; then echo "AS6_EVENT_COPILOT_FILE_MISSING $f"; FAIL=1; fi
+done
+if ! grep -Rqs "AS6GlobalEventStream.jsx" frontend/src/App.jsx; then echo "AS6_EVENT_STREAM_IMPORT_MISSING"; FAIL=1; fi
+if ! grep -Rqs "AS6AICopilotRail.jsx" frontend/src/App.jsx; then echo "AS6_COPILOT_RAIL_IMPORT_MISSING"; FAIL=1; fi
+for item in "as6-global-event-stream-root" "Autonomous Event Stream" "CRM" "Diagnostics" "Revenue" "Workforce" "as6-ai-copilot-rail-root" "AS6 Copilot" "Next Best Actions" "Priority"; do
+  if ! grep -Rqs "$item" frontend/src/components/AS6GlobalEventStream.jsx frontend/src/components/AS6AICopilotRail.jsx frontend/src/styles/as6-global-event-stream.css frontend/src/styles/as6-ai-copilot-rail.css ops/governance docs ops/status ops/registry; then echo "AS6_EVENT_COPILOT_ITEM_MISSING $item"; FAIL=1; fi
+done
+for cls in GLOBAL_EVENT_STREAM_MISSING EVENT_SOURCE_COVERAGE_DRIFT COPILOT_RAIL_MISSING AI_INSIGHT_PANEL_MISSING AUTONOMOUS_RECOMMENDATION_GAP PRIORITY_QUEUE_MISSING EXECUTIVE_ALERT_DRIFT CROSS_PAGE_EVENT_CONTINUITY_GAP; do
+  if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then echo "AS6_EVENT_COPILOT_CLASS_MISSING $cls"; FAIL=1; fi
+done
+if git diff --cached --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING_FAIL"; FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_AUTONOMOUS_EVENT_STREAM=PASS"

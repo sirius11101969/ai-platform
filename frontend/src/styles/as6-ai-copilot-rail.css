@@ -1,0 +1,115 @@
+/* AS6 AI Copilot Rail V91 */
+#as6-ai-copilot-rail-root {
+  position: relative;
+  z-index: 2147482390;
+}
+
+.as6-ai-copilot-rail {
+  position: fixed;
+  right: 18px;
+  bottom: 82px;
+  z-index: 2147482390;
+  color: var(--as6-text, #f6f9ff);
+}
+
+.as6-ai-copilot-rail-tab {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid rgba(139,92,246,.34);
+  border-radius: 16px;
+  color: #f1e9ff;
+  background: linear-gradient(135deg, rgba(139,92,246,.28), rgba(255,61,143,.16));
+  box-shadow: 0 16px 48px rgba(139,92,246,.18);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.as6-ai-copilot-rail-panel {
+  width: min(390px, calc(100vw - 36px));
+  margin-bottom: 10px;
+  border: 1px solid rgba(139,92,246,.34);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(139,92,246,.20), transparent 20rem),
+    radial-gradient(circle at 100% 100%, rgba(255,61,143,.16), transparent 18rem),
+    linear-gradient(145deg, rgba(25,20,55,.94), rgba(5,11,25,.90));
+  box-shadow: 0 28px 90px rgba(0,0,0,.46);
+  backdrop-filter: blur(18px);
+  overflow: hidden;
+}
+
+.as6-ai-copilot-rail-panel header {
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(139,92,246,.20);
+}
+
+.as6-ai-copilot-rail-panel header span {
+  color: #ddb9ff;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.as6-ai-copilot-rail-panel header strong {
+  font-size: 18px;
+  letter-spacing: -.04em;
+}
+
+.as6-ai-priority-queue {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+}
+
+.as6-ai-priority-queue article {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(139,92,246,.16);
+  border-radius: 16px;
+  background: rgba(255,255,255,.045);
+}
+
+.as6-ai-priority-queue em {
+  width: fit-content;
+  height: fit-content;
+  padding: 5px 8px;
+  border-radius: 999px;
+  color: #03111d;
+  background: linear-gradient(135deg, #ff3d8f, #25e4ff);
+  font-size: 10px;
+  font-weight: 900;
+  font-style: normal;
+}
+
+.as6-ai-priority-queue div {
+  display: grid;
+  gap: 3px;
+}
+
+.as6-ai-priority-queue small {
+  color: var(--as6-muted, #9fb2d5);
+}
+
+.as6-ai-copilot-rail-panel > button {
+  width: calc(100% - 20px);
+  margin: 0 10px 12px;
+  min-height: 40px;
+  border: 1px solid rgba(37,228,255,.30);
+  border-radius: 14px;
+  color: #03111d;
+  background: linear-gradient(135deg, #3178ff, #25e4ff);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+@media (max-width: 760px) {
+  .as6-ai-copilot-rail {
+    right: 12px;
+    bottom: 124px;
+  }
+}

@@ -1,0 +1,111 @@
+/* AS6 Global Event Stream V91 */
+#as6-global-event-stream-root {
+  position: relative;
+  z-index: 2147482400;
+}
+
+.as6-global-event-stream {
+  position: fixed;
+  left: 18px;
+  bottom: 18px;
+  z-index: 2147482400;
+  color: var(--as6-text, #f6f9ff);
+}
+
+.as6-global-event-stream-tab {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid rgba(50,245,169,.28);
+  border-radius: 16px;
+  color: #d7fff0;
+  background: linear-gradient(135deg, rgba(50,245,169,.18), rgba(37,228,255,.12));
+  box-shadow: 0 16px 48px rgba(50,245,169,.14);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.as6-global-event-stream-tab span {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
+  border-radius: 999px;
+  background: #32f5a9;
+  box-shadow: 0 0 14px #32f5a9;
+}
+
+.as6-global-event-stream-panel {
+  width: min(420px, calc(100vw - 36px));
+  margin-bottom: 10px;
+  border: 1px solid rgba(120,190,255,.24);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(50,245,169,.18), transparent 20rem),
+    linear-gradient(145deg, rgba(18,28,54,.92), rgba(5,11,25,.90));
+  box-shadow: 0 28px 90px rgba(0,0,0,.46);
+  backdrop-filter: blur(18px);
+  overflow: hidden;
+}
+
+.as6-global-event-stream-panel header,
+.as6-global-event-stream-list article {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.as6-global-event-stream-panel header {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(120,190,255,.14);
+}
+
+.as6-global-event-stream-panel header span {
+  color: #bdf7ff;
+  font-weight: 900;
+}
+
+.as6-global-event-stream-panel header strong,
+.as6-global-event-stream-list em {
+  color: var(--as6-muted, #9fb2d5);
+  font-size: 12px;
+  font-style: normal;
+}
+
+.as6-global-event-stream-list {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+}
+
+.as6-global-event-stream-list article {
+  padding: 10px;
+  border: 1px solid rgba(120,190,255,.12);
+  border-radius: 16px;
+  background: rgba(255,255,255,.04);
+}
+
+.as6-global-event-stream-list i {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #32f5a9;
+  box-shadow: 0 0 16px rgba(50,245,169,.54);
+}
+
+.as6-global-event-stream-list div {
+  display: grid;
+  gap: 3px;
+  flex: 1;
+}
+
+.as6-global-event-stream-list small {
+  color: var(--as6-muted, #9fb2d5);
+}
+
+@media (max-width: 760px) {
+  .as6-global-event-stream {
+    left: 12px;
+    bottom: 70px;
+  }
+}

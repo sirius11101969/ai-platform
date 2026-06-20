@@ -1,3 +1,5 @@
+import "./components/AS6GlobalEventStream.jsx";
+import "./components/AS6AICopilotRail.jsx";
 import "./components/AS6MissionControlLayoutEngine.jsx";
 import "./components/AS6GlobalCommandPalette.jsx";
 import "./components/AS6GlobalHealthBar.jsx";
