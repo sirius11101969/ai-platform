@@ -1,0 +1,117 @@
+/* AS6 Unified Mission Control UI System V95 */
+:root {
+  --as6-brand-bg: #020716;
+  --as6-brand-panel: rgba(13, 24, 48, .82);
+  --as6-brand-border: rgba(120, 190, 255, .20);
+  --as6-brand-cyan: #25e4ff;
+  --as6-brand-violet: #8b5cf6;
+  --as6-brand-green: #32f5a9;
+  --as6-brand-pink: #ff3d8f;
+  --as6-brand-orange: #ff9f1c;
+  --as6-brand-text: #f6f9ff;
+  --as6-brand-muted: #9fb2d5;
+}
+
+body {
+  background: radial-gradient(circle at 16% 0%, rgba(37,228,255,.10), transparent 28rem), radial-gradient(circle at 90% 8%, rgba(139,92,246,.10), transparent 30rem), var(--as6-brand-bg) !important;
+  color: var(--as6-brand-text);
+}
+
+.as6-mission-page, .dashboard-page, .crm-page, .revenue-page, .ai-workers-page, .ai-workforce-page, .approval-page, .execution-page, .executive-page, [class*="Dashboard"], [class*="Center"], [class*="Page"] {
+  --as6-page-radius: 28px;
+}
+
+.as6-mission-hero, .as6-page-hero, .page-hero, .dashboard-hero, .crm-hero {
+  border: 1px solid var(--as6-brand-border);
+  border-radius: 32px;
+  background: radial-gradient(circle at 8% 0%, rgba(37,228,255,.18), transparent 24rem), radial-gradient(circle at 88% 100%, rgba(139,92,246,.18), transparent 26rem), rgba(255,255,255,.045);
+  box-shadow: 0 30px 90px rgba(0,0,0,.34);
+}
+
+.as6-mission-hero span, .as6-section-kicker, .as6-ui-kicker, .badge, .status-badge {
+  border: 1px solid rgba(37,228,255,.28);
+  border-radius: 999px;
+  color: #bdf7ff;
+  background: rgba(37,228,255,.08);
+  font-weight: 900;
+}
+
+.as6-ui-card, .card, .panel, .widget, .metric-card, .kpi-card, .dashboard-card, .crm-card {
+  border: 1px solid var(--as6-brand-border) !important;
+  border-radius: 24px !important;
+  background: radial-gradient(circle at 14% 0%, rgba(37,228,255,.12), transparent 18rem), radial-gradient(circle at 100% 100%, rgba(255,61,143,.10), transparent 18rem), var(--as6-brand-panel) !important;
+  box-shadow: 0 20px 70px rgba(0,0,0,.28);
+}
+
+.as6-ui-kpi, .stat-card, .metric-tile, .kpi-tile {
+  display: grid;
+  gap: 8px;
+  min-height: 120px;
+  padding: 18px;
+  border: 1px solid var(--as6-brand-border);
+  border-radius: 24px;
+  background: linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.025));
+}
+
+.as6-ui-kpi small, .stat-card small, .metric-label, .kpi-label {
+  color: var(--as6-brand-muted);
+  font-weight: 800;
+}
+
+.as6-ui-kpi strong, .stat-value, .metric-value, .kpi-value {
+  color: var(--as6-brand-text);
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: .95;
+  letter-spacing: -.06em;
+}
+
+.as6-ui-kpi span, .metric-delta, .kpi-delta, .positive {
+  color: var(--as6-brand-green);
+  font-weight: 900;
+}
+
+.as6-ui-button, button.primary, .btn-primary, .action-button, .cta-button {
+  border: 1px solid rgba(37,228,255,.35) !important;
+  border-radius: 16px !important;
+  color: #03111d !important;
+  background: linear-gradient(135deg, #3178ff, var(--as6-brand-cyan)) !important;
+  box-shadow: 0 16px 42px rgba(37,228,255,.18);
+  font-weight: 900 !important;
+}
+
+.as6-ui-button-secondary, button.secondary, .btn-secondary {
+  color: var(--as6-brand-text) !important;
+  background: rgba(255,255,255,.055) !important;
+}
+
+input, select, textarea, .search-input {
+  border: 1px solid rgba(120,190,255,.20) !important;
+  border-radius: 16px !important;
+  color: var(--as6-brand-text) !important;
+  background: rgba(2,8,20,.62) !important;
+}
+
+table, .table, .data-grid, .as6-ui-data-grid {
+  border: 1px solid var(--as6-brand-border);
+  border-radius: 22px;
+  background: rgba(255,255,255,.035);
+  overflow: hidden;
+}
+
+.chart, .graph, .sparkline, canvas, svg {
+  filter: drop-shadow(0 10px 24px rgba(37,228,255,.10));
+}
+
+.sidebar, aside nav, .app-sidebar {
+  border-right: 1px solid rgba(120,190,255,.16);
+  background: linear-gradient(180deg, rgba(8,14,32,.94), rgba(4,8,20,.96));
+}
+
+@media (max-width: 760px) {
+  .as6-ui-card, .card, .panel, .widget, .metric-card, .kpi-card, .dashboard-card, .crm-card {
+    border-radius: 20px !important;
+  }
+  .as6-ui-kpi strong, .stat-value, .metric-value, .kpi-value {
+    font-size: 2rem;
+  }
+}

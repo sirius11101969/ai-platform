@@ -1800,3 +1800,6 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V94 | ops/bin/as6-control-executive-control-tower-completion-v94 | Covers executive control tower completion, build, health and enforcement guard | ENABLED
 - V94 | frontend/src/components/AS6ExecutiveControlTowerCompletion.jsx | Executive Control Tower completion component artifact | ENABLED
 - V94 | frontend/src/styles/as6-executive-control-tower-completion.css | Executive Control Tower completion CSS artifact | ENABLED
+- V95 | ops/bin/as6-control-unified-mission-control-ui-system-v95 | Covers unified UI system, brand tokens, build, health and enforcement guard | ENABLED
+- V95 | frontend/src/components/AS6MissionControlUI.jsx | AS6 Mission Control UI primitive component artifact | ENABLED
+- V95 | frontend/src/styles/as6-unified-mission-control-ui.css | AS6 Unified Mission Control UI CSS artifact | ENABLED

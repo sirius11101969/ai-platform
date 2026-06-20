@@ -421,3 +421,9 @@ Status: REGISTERED
 - FAILURE_CLASSES: EXECUTIVE_CONTROL_TOWER_COMPLETION_MISSING, EXECUTIVE_DECISION_INTELLIGENCE_GAP, EXECUTIVE_RISK_RADAR_GAP, EXECUTIVE_ACTION_QUEUE_GAP, EXECUTIVE_CONTROL_TOWER_COMPLETION_DRIFT.
 - PREVENTION: V94 diagnostic/control validates completion layer, mount, build and enforcement guard.
 - STATUS: registered and controlled.
+
+## V95 Unified Mission Control UI System
+- ROOT_CAUSE: Command Center had the strongest AS6 brand style, but other pages needed shared UI primitives and global brand alignment guardrails.
+- FAILURE_CLASSES: MISSION_PAGE_LAYOUT_DRIFT, CARD_SYSTEM_DRIFT, TYPOGRAPHY_DRIFT, COLOR_TOKEN_DRIFT, CHART_STYLE_DRIFT, TABLE_STYLE_DRIFT, FORM_STYLE_DRIFT, COPILOT_STYLE_DRIFT, SIDEBAR_STYLE_DRIFT, TOPBAR_STYLE_DRIFT.
+- PREVENTION: V95 diagnostic/control validates UI primitives, brand CSS, import, build and enforcement guard.
+- STATUS: registered and controlled.

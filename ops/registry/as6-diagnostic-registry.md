@@ -1854,3 +1854,14 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V94 | EXECUTIVE_RISK_RADAR_GAP | Executive Control Tower completion failure class | ENABLED
 - V94 | EXECUTIVE_ACTION_QUEUE_GAP | Executive Control Tower completion failure class | ENABLED
 - V94 | EXECUTIVE_CONTROL_TOWER_COMPLETION_DRIFT | Executive Control Tower completion failure class | ENABLED
+- V95 | ops/bin/as6-diagnose-unified-mission-control-ui-system-v95 | Unified Mission Control UI System diagnostic | ENABLED
+- V95 | MISSION_PAGE_LAYOUT_DRIFT | Unified Mission Control UI failure class | ENABLED
+- V95 | CARD_SYSTEM_DRIFT | Unified Mission Control UI failure class | ENABLED
+- V95 | TYPOGRAPHY_DRIFT | Unified Mission Control UI failure class | ENABLED
+- V95 | COLOR_TOKEN_DRIFT | Unified Mission Control UI failure class | ENABLED
+- V95 | CHART_STYLE_DRIFT | Unified Mission Control UI failure class | ENABLED
+- V95 | TABLE_STYLE_DRIFT | Unified Mission Control UI failure class | ENABLED
+- V95 | FORM_STYLE_DRIFT | Unified Mission Control UI failure class | ENABLED
+- V95 | COPILOT_STYLE_DRIFT | Unified Mission Control UI failure class | ENABLED
+- V95 | SIDEBAR_STYLE_DRIFT | Unified Mission Control UI failure class | ENABLED
+- V95 | TOPBAR_STYLE_DRIFT | Unified Mission Control UI failure class | ENABLED

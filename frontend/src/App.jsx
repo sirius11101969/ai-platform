@@ -1,3 +1,4 @@
+import "./styles/as6-unified-mission-control-ui.css";
 import "./components/AS6ExecutiveControlTowerCompletion.jsx";
 import "./components/AS6ExecutiveCommandDashboard.jsx";
 import "./components/AS6AutonomousOperationsTimeline.jsx";

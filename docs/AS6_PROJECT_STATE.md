@@ -2723,3 +2723,20 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - UX readiness after V94: 100%.
 - Executive Control Tower after V94: 100%.
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=UNIFIED_MISSION_CONTROL_UI_SYSTEM_V95
+- Base commit: 807b79a.
+- Project readiness before V95: 100%.
+- UX readiness before V95: 100%.
+- Executive Control Tower before V95: 100%.
+- Brand unification before V95: 82%.
+- Purpose: unify all pages under Command Center AS6 Mission Control brand style.
+- Added diagnostic: ops/bin/as6-diagnose-unified-mission-control-ui-system-v95
+- Added control: ops/bin/as6-control-unified-mission-control-ui-system-v95
+- Added component: frontend/src/components/AS6MissionControlUI.jsx
+- Added CSS artifact: frontend/src/styles/as6-unified-mission-control-ui.css
+- Added failure classes: MISSION_PAGE_LAYOUT_DRIFT, CARD_SYSTEM_DRIFT, TYPOGRAPHY_DRIFT, COLOR_TOKEN_DRIFT, CHART_STYLE_DRIFT, TABLE_STYLE_DRIFT, FORM_STYLE_DRIFT, COPILOT_STYLE_DRIFT, SIDEBAR_STYLE_DRIFT, TOPBAR_STYLE_DRIFT.
+- Project readiness after V95: 100%.
+- UX readiness after V95: 100%.
+- Brand unification after V95: 94%.
+- Production health checked with raw URL: https://www.as6.ru/api/health

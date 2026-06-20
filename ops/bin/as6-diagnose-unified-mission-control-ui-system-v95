@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+for f in frontend/src/components/AS6MissionControlUI.jsx frontend/src/styles/as6-unified-mission-control-ui.css; do
+  if [ ! -f "$f" ]; then echo "AS6_UNIFIED_UI_FILE_MISSING $f"; FAIL=1; fi
+done
+if ! grep -Rqs "as6-unified-mission-control-ui.css" frontend/src/App.jsx; then echo "AS6_UNIFIED_UI_IMPORT_MISSING"; FAIL=1; fi
+for item in "AS6MissionPage" "AS6Card" "AS6KPIWidget" "AS6Button" "AS6DataGrid" "--as6-brand-cyan" "--as6-brand-violet" "--as6-brand-green"; do
+  if ! grep -Rqs -- "$item" frontend/src/components/AS6MissionControlUI.jsx frontend/src/styles/as6-unified-mission-control-ui.css ops/governance docs ops/status ops/registry; then echo "AS6_UNIFIED_UI_ITEM_MISSING $item"; FAIL=1; fi
+done
+for cls in MISSION_PAGE_LAYOUT_DRIFT CARD_SYSTEM_DRIFT TYPOGRAPHY_DRIFT COLOR_TOKEN_DRIFT CHART_STYLE_DRIFT TABLE_STYLE_DRIFT FORM_STYLE_DRIFT COPILOT_STYLE_DRIFT SIDEBAR_STYLE_DRIFT TOPBAR_STYLE_DRIFT; do
+  if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then echo "AS6_UNIFIED_UI_CLASS_MISSING $cls"; FAIL=1; fi
+done
+if git diff --cached --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING_FAIL"; FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_UNIFIED_MISSION_CONTROL_UI_SYSTEM=PASS"
