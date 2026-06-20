@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+CRM="frontend/src/pages/CRMPage.jsx"
+PANEL="frontend/src/pages/crm/CRMAnalyticsPanel.jsx"
+test -f "$CRM"
+test -f "$PANEL"
+if grep -RInE "AS6_CRM_ANALYTICS_LEGACY_ROLLBACK_COPY|CRM_ANALYTICS_LEGACY_ROLLBACK_COPY|legacy rollback copy|rollback copy" "$CRM" "$PANEL"; then
+  echo "AS6_CRM_ANALYTICS_LEGACY_ROLLBACK_COPY=FAIL"
+  exit 1
+fi
+BAD_MARKDOWN_URL="$(printf "%s%s%s" "](" "https://www.as6.ru/api/health" ")")"
+if grep -RInF "$BAD_MARKDOWN_URL" "$CRM" "$PANEL" docs/AS6_PROJECT_STATE.md ops/status/as6-detected-errors.md 2>/dev/null; then
+  echo "AS6_MARKDOWN_HEALTH_URL=FAIL"
+  exit 1
+fi
+echo "AS6_CRM_ANALYTICS_LEGACY_ROLLBACK_COPY=PASS"
+echo "AS6_MARKDOWN_HEALTH_URL=PASS"

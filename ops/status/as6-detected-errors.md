@@ -265,3 +265,23 @@ Failure Class: AS6_FAILURE_CLASS_CRM_ANALYTICS_INTERNAL_OWNER_MISSING
 Failure Class: AS6_FAILURE_CLASS_CRM_ANALYTICS_RENDER_PROP_NOT_REMOVED
 Diagnostic: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 Status: REGISTERED
+
+## V78 CRM Analytics Legacy Rollback Copy
+- ROOT_CAUSE: prior V78 command used markdown-link curl URL.
+- PREVENTION: diagnostic rejects markdown health URL and legacy rollback copy markers.
+- STATUS: registered and controlled.
+
+## V78B Diagnostic Self-Match Repair
+- ROOT_CAUSE: markdown URL detector matched its own script text.
+- PREVENTION: diagnostic constructs bad markdown URL at runtime and scans target files only.
+- STATUS: repaired and registered.
+
+## V78C Build Runner Repair
+- ROOT_CAUSE: npm missing on host shell.
+- PREVENTION: control uses adaptive frontend build runner.
+- STATUS: repaired and registered.
+
+## V78D Docker Image Build Runner Repair
+- ROOT_CAUSE: docker compose treated node:20-alpine as missing service.
+- PREVENTION: control uses docker run for external image fallback.
+- STATUS: repaired and registered.

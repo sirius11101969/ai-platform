@@ -1641,3 +1641,7 @@ File: ops/bin/as6-diagnose-repair-v76-terminal-paste-integrity
 Status: ENABLED
 Scope: CRM Analytics internal panel owner migration, DOM class preservation, rollback copy guard, route chunk validation
 File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
+- V78 | ops/bin/as6-diagnose-crm-analytics-remove-legacy-rollback-copy-v78 | CRM analytics legacy rollback copy removal diagnostic | ENABLED
+- V78B | DIAGNOSTIC_SELF_MATCH_MARKDOWN_URL | Diagnostic self-match prevention | ENABLED
+- V78C | HOST_NPM_MISSING_BUILD_RUNNER_GAP | Control detects host npm absence and uses Docker build fallback | ENABLED
+- V78D | DOCKER_COMPOSE_IMAGE_AS_SERVICE_BUILD_RUNNER_GAP | Prevent external image from being treated as Compose service | ENABLED

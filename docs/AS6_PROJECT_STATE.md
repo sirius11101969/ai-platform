@@ -2436,3 +2436,29 @@ Status: APPLIED
 Root cause: V76 render-owner prop existed, but AiRevenueIntelligencePanel JSX still lived in CRMPage.
 Diagnostic: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CRMPage legacy component remains only for rollback compatibility.
+
+## AS6_DONE=CRM_ANALYTICS_REMOVE_LEGACY_ROLLBACK_COPY_V78
+- Production health checked with raw URL: https://www.as6.ru/api/health
+- Removed explicit CRM analytics legacy rollback copy marker blocks when present.
+- Added diagnostics: ops/bin/as6-diagnose-crm-analytics-remove-legacy-rollback-copy-v78
+- Added control: ops/bin/as6-control-crm-analytics-remove-legacy-rollback-copy-v78
+- Added governance: control, failure classes, AEC, root cause, plan.
+- Updated registry, coverage, detected errors and state.
+
+## AS6_REPAIR=V78B_NO_SELF_MATCH
+- Root cause: V78 diagnostic matched its own markdown URL grep pattern.
+- Added diagnostic prevention for DIAGNOSTIC_SELF_MATCH_MARKDOWN_URL.
+- Production health checked with raw URL: https://www.as6.ru/api/health
+- Build, control, registry, coverage and push required for closure.
+
+## AS6_REPAIR=V78C_BUILD_RUNNER
+- Root cause: V78B control assumed npm exists on host.
+- Added failure class: HOST_NPM_MISSING_BUILD_RUNNER_GAP.
+- Updated control to use host npm or Docker Compose Node fallback.
+- Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_REPAIR=V78D_DOCKER_IMAGE_BUILD_RUNNER
+- Root cause: V78C used docker compose run with an external image name.
+- Added failure class: DOCKER_COMPOSE_IMAGE_AS_SERVICE_BUILD_RUNNER_GAP.
+- Updated control to use host npm or docker run node:20-alpine fallback.
+- Production health checked with raw URL: https://www.as6.ru/api/health

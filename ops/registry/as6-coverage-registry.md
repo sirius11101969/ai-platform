@@ -1694,3 +1694,7 @@ Coverage: markdown fence paste corruption, partial push verification, render-own
 ## CRM_ANALYTICS_INTERNAL_PANEL_OWNER_V77
 Diagnostic: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 Coverage: internal analytics component ownership, render prop removal, DOM class preservation, rollback compatibility, CRM chunk, Command Center chunk, Dashboard chunk, AI Workers chunk, build validation, production health validation
+- V78 | ops/bin/as6-control-crm-analytics-remove-legacy-rollback-copy-v78 | Covers legacy rollback copy removal, markdown URL paste regression, build and production health | ENABLED
+- V78B | diagnostic self-match | Covers self-matching markdown URL detector regression | ENABLED
+- V78C | adaptive frontend build runner | Covers host npm missing and Docker Compose Node fallback build validation | ENABLED
+- V78D | docker run image fallback | Covers frontend build validation without host npm or Compose service assumption | ENABLED
