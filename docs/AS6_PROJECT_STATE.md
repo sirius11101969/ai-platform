@@ -2340,3 +2340,9 @@ Status: APPLIED
 Root cause: CSS consolidation requires safe ownership gate; previous generated script failed due quoting regression.
 Diagnostic: ops/bin/as6-diagnose-css-consolidation-v66
 Note: No CSS deletion and no UI changes were performed.
+
+## AS6 Frontend Page Decomposition V67
+Status: APPLIED
+Root cause: oversized frontend page components require decomposition governance before code splitting.
+Diagnostic: ops/bin/as6-diagnose-frontend-page-decomposition-v67
+Note: No UI changes and no page decomposition were performed in this diagnostic gate.

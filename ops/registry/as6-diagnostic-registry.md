@@ -1561,3 +1561,8 @@ File: ops/bin/as6-diagnose-css-dead-selectors-v65
 Status: ENABLED
 Scope: Safe CSS consolidation gate and protected selector guard
 File: ops/bin/as6-diagnose-css-consolidation-v66
+
+## as6-diagnose-frontend-page-decomposition-v67
+Status: ENABLED
+Scope: Oversized frontend pages, services, route chunk and decomposition plan diagnostics
+File: ops/bin/as6-diagnose-frontend-page-decomposition-v67

@@ -1630,3 +1630,7 @@ Coverage: CSS selector inventory, probable dead selectors, protected selector gu
 ## CSS_CONSOLIDATION_V66
 Diagnostic: ops/bin/as6-diagnose-css-consolidation-v66
 Coverage: CSS consolidation plan, dead candidates, protected selector guard, legacy CSS map, build validation, route chunk validation, production health validation
+
+## FRONTEND_PAGE_DECOMPOSITION_V67
+Diagnostic: ops/bin/as6-diagnose-frontend-page-decomposition-v67
+Coverage: CRMPage, AiWorkersPage, DashboardPage, API service budgets, route chunk preservation, build validation, production health validation

@@ -172,3 +172,8 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_V66_SCRIPT_QUOTING_REGRESSION
 Diagnostic: ops/bin/as6-diagnose-css-consolidation-v66
 Status: REGISTERED
+
+## 2026-06-19 FRONTEND_PAGE_DECOMPOSITION_V67
+Failure Class: AS6_FAILURE_CLASS_OVERSIZED_FRONTEND_PAGE_COMPONENT
+Diagnostic: ops/bin/as6-diagnose-frontend-page-decomposition-v67
+Status: REGISTERED

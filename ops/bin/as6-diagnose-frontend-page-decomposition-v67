@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -euo pipefail
+OUT_DIR="${1:-runtime/as6-page-decomposition-v67}"
+BUILD_LOG="${2:-}"
+ASSET_LIST="${3:-}"
+mkdir -p "$OUT_DIR"
+fail=0
+check(){ name="$1"; shift; if "$@"; then echo "PASS:$name"; else echo "FAIL:$name"; fail=1; fi; }
+check crm_page_exists test -f frontend/src/pages/CRMPage.jsx
+check ai_workers_page_exists test -f frontend/src/pages/AiWorkersPage.jsx
+check dashboard_page_exists test -f frontend/src/pages/DashboardPage.jsx
+check route_splitting_diag_exists test -f ops/bin/as6-diagnose-frontend-route-splitting-v63
+check css_consolidation_diag_exists test -f ops/bin/as6-diagnose-css-consolidation-v66
+check crm_lazy_import grep -q "lazy(() => import(\"./pages/CRMPage\"))" frontend/src/App.jsx
+check ai_workers_lazy_import grep -q "lazy(() => import(\"./pages/AiWorkersPage\"))" frontend/src/App.jsx
+check dashboard_lazy_import grep -q "lazy(() => import(\"./pages/DashboardPage\"))" frontend/src/App.jsx
+find frontend/src/pages frontend/src/services -type f \( -name "*.jsx" -o -name "*.js" \) -printf "%s %p\n" | sort -nr | head -30 | tee "$OUT_DIR/top30-js-files.out"
+crm_bytes="$(wc -c < frontend/src/pages/CRMPage.jsx)"
+workers_bytes="$(wc -c < frontend/src/pages/AiWorkersPage.jsx)"
+dashboard_bytes="$(wc -c < frontend/src/pages/DashboardPage.jsx)"
+api_bytes="$(wc -c < frontend/src/services/api.js)"
+echo "CRM_PAGE_BYTES=$crm_bytes"
+echo "AI_WORKERS_PAGE_BYTES=$workers_bytes"
+echo "DASHBOARD_PAGE_BYTES=$dashboard_bytes"
+echo "API_SERVICE_BYTES=$api_bytes"
+if test "$crm_bytes" -lt 140000; then echo "PASS:crm_page_budget"; else echo "FAIL:crm_page_budget"; fail=1; fi
+if test "$workers_bytes" -lt 100000; then echo "PASS:ai_workers_page_budget"; else echo "FAIL:ai_workers_page_budget"; fail=1; fi
+if test "$dashboard_bytes" -lt 55000; then echo "PASS:dashboard_page_budget"; else echo "FAIL:dashboard_page_budget"; fail=1; fi
+if test "$api_bytes" -lt 50000; then echo "PASS:api_service_budget"; else echo "FAIL:api_service_budget"; fail=1; fi
+echo "DECOMPOSITION_CANDIDATE:frontend/src/pages/CRMPage.jsx"
+echo "DECOMPOSITION_CANDIDATE:frontend/src/pages/AiWorkersPage.jsx"
+echo "DECOMPOSITION_CANDIDATE:frontend/src/pages/DashboardPage.jsx"
+echo "DECOMPOSITION_CANDIDATE:frontend/src/services/api.js"
+if test -n "$BUILD_LOG" && test -f "$BUILD_LOG"; then if grep -q "css-syntax-error\|Expected identifier but found\|Unexpected \"}\"\|lazy is not defined\|Suspense is not defined" "$BUILD_LOG"; then echo "FAIL:frontend_build_clean"; fail=1; else echo "PASS:frontend_build_clean"; fi; fi
+if test -n "$ASSET_LIST" && test -f "$ASSET_LIST"; then check crm_chunk_present grep -q "crm-page-" "$ASSET_LIST"; check ai_workers_chunk_present grep -q "ai-workers-page-" "$ASSET_LIST"; check dashboard_chunk_present grep -q "dashboard-page-" "$ASSET_LIST"; fi
+echo "PASS:page_decomposition_plan_generated"
+exit "$fail"
