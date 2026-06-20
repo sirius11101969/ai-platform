@@ -2370,3 +2370,9 @@ Status: APPLIED
 Root cause: CRMAnalyticsPanel existed as empty scaffold without props extraction contract.
 Diagnostic: ops/bin/as6-diagnose-crm-analytics-panel-contract-v71
 Note: No visible UI changes and no CRMPage wiring changes were performed.
+
+## AS6 CRM Analytics Panel Wiring Guard V72
+Status: APPLIED
+Root cause: CRMAnalyticsPanel contract existed, but import/wiring guard was missing.
+Diagnostic: ops/bin/as6-diagnose-crm-analytics-panel-wiring-guard-v72
+Note: No visible UI changes and no CRMPage render replacement were performed.

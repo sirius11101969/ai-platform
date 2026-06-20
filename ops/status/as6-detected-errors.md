@@ -197,3 +197,8 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_CRM_ANALYTICS_PANEL_PROPS_CONTRACT_MISSING
 Diagnostic: ops/bin/as6-diagnose-crm-analytics-panel-contract-v71
 Status: REGISTERED
+
+## 2026-06-20 CRM_ANALYTICS_PANEL_WIRING_GUARD_V72
+Failure Class: AS6_FAILURE_CLASS_CRM_ANALYTICS_PANEL_IMPORT_CONTRACT_MISSING
+Diagnostic: ops/bin/as6-diagnose-crm-analytics-panel-wiring-guard-v72
+Status: REGISTERED

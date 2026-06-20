@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+OUT_DIR="${1:-runtime/as6-crm-analytics-panel-v72}"
+BUILD_LOG="${2:-}"
+ASSET_LIST="${3:-}"
+mkdir -p "$OUT_DIR"
+fail=0
+check(){ name="$1"; shift; if "$@"; then echo "PASS:$name"; else echo "FAIL:$name"; fail=1; fi; }
+CRM="frontend/src/pages/CRMPage.jsx"
+PANEL="frontend/src/pages/crm/CRMAnalyticsPanel.jsx"
+check crm_page_exists test -f "$CRM"
+check analytics_panel_exists test -f "$PANEL"
+check v71_contract_exists test -f ops/bin/as6-diagnose-crm-analytics-panel-contract-v71
+check analytics_panel_imported grep -q "CRMAnalyticsPanel from \"./crm/CRMAnalyticsPanel.jsx\"" "$CRM"
+check analytics_contract_version grep -q "CRM_ANALYTICS_PANEL_CONTRACT_VERSION" "$PANEL"
+check analytics_props_contract_revenue grep -q "revenueIntelligence" "$PANEL"
+check analytics_props_contract_handlers grep -q "onRunRevenueBrain" "$PANEL"
+check analytics_panel_no_visible_ui bash -c "! grep -q \"className=\\|<section\\|<div\\|<button\" frontend/src/pages/crm/CRMAnalyticsPanel.jsx"
+check analytics_component_not_rendered_yet bash -c "! grep -q \"<CRMAnalyticsPanel\" frontend/src/pages/CRMPage.jsx"
+check crm_lazy_import grep -q "lazy(() => import(\"./pages/CRMPage\"))" frontend/src/App.jsx
+check duplicate_top_logo_absent bash -c "! grep -q as6-command-center-logo-image frontend/src/pages/CommandCenterPage.jsx"
+crm_bytes="$(wc -c < "$CRM")"
+panel_bytes="$(wc -c < "$PANEL")"
+echo "CRM_PAGE_BYTES=$crm_bytes"
+echo "CRM_ANALYTICS_PANEL_BYTES=$panel_bytes"
+echo "CRM_ANALYTICS_EXTRACTION_STAGE=IMPORT_CONTRACT_ONLY"
+if test "$crm_bytes" -lt 141000; then echo "PASS:crm_page_import_budget"; else echo "FAIL:crm_page_import_budget"; fail=1; fi
+if test "$panel_bytes" -lt 3000; then echo "PASS:analytics_panel_contract_budget"; else echo "FAIL:analytics_panel_contract_budget"; fail=1; fi
+echo "PASS:analytics_panel_import_contract_generated"
+echo "PASS:no_visible_ui_change_contract"
+if test -n "$BUILD_LOG" && test -f "$BUILD_LOG"; then if grep -q "css-syntax-error\|Expected identifier but found\|Unexpected \"}\"\|lazy is not defined\|Suspense is not defined" "$BUILD_LOG"; then echo "FAIL:frontend_build_clean"; fail=1; else echo "PASS:frontend_build_clean"; fi; fi
+if test -n "$ASSET_LIST" && test -f "$ASSET_LIST"; then check crm_chunk_present grep -q "crm-page-" "$ASSET_LIST"; check command_center_chunk_present grep -q "command-center-" "$ASSET_LIST"; fi
+exit "$fail"

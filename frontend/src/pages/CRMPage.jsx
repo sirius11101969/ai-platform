@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import CRMAnalyticsPanel from "./crm/CRMAnalyticsPanel.jsx";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Panel, PageHeading, StatCard } from "../components/AppShell";
 import { sanitizeCustomerVisibleText, sanitizeVisibleAiText } from "../utils/uiSanitizer";

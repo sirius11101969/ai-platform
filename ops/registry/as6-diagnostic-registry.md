@@ -1586,3 +1586,8 @@ File: ops/bin/as6-diagnose-crm-panel-extraction-scaffold-v70
 Status: ENABLED
 Scope: CRM Analytics panel props contract, no-UI contract stage, chunk validation
 File: ops/bin/as6-diagnose-crm-analytics-panel-contract-v71
+
+## as6-diagnose-crm-analytics-panel-wiring-guard-v72
+Status: ENABLED
+Scope: CRM Analytics panel import guard, no-render stage, chunk validation
+File: ops/bin/as6-diagnose-crm-analytics-panel-wiring-guard-v72
