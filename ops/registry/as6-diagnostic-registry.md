@@ -1531,3 +1531,23 @@ File: ops/bin/as6-diagnose-css-ownership-v61
 Status: ENABLED
 Scope: CSS selector ownership map, probable dead selector report, protected contract selector diagnostics
 File: ops/bin/as6-diagnose-selector-ownership-map-v62
+
+## as6-diagnose-frontend-route-splitting-v63
+Status: ENABLED
+Scope: Protected route lazy loading, route chunk emission, runtime import guards
+File: ops/bin/as6-diagnose-frontend-route-splitting-v63
+
+## as6-diagnose-route-splitting-cache-aware-v63-2
+Status: ENABLED
+Scope: Cache-aware route splitting diagnostic repair for Docker cached builds
+File: ops/bin/as6-diagnose-route-splitting-cache-aware-v63-2
+
+## as6-diagnose-route-splitting-running-container-v63-3
+Status: ENABLED
+Scope: Running nginx container route chunk asset validation and stale image false negative prevention
+File: ops/bin/as6-diagnose-route-splitting-running-container-v63-3
+
+## as6-diagnose-frontend-dead-code-v64
+Status: ENABLED
+Scope: Frontend dead-code ownership, unused pages/components/CSS, legacy Command Center CSS diagnostics
+File: ops/bin/as6-diagnose-frontend-dead-code-v64

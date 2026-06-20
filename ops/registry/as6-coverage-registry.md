@@ -1606,3 +1606,19 @@ Coverage: global/theme CSS budgets, selector report, duplicate selector report, 
 ## SELECTOR_OWNERSHIP_MAP_V62
 Diagnostic: ops/bin/as6-diagnose-selector-ownership-map-v62
 Coverage: selector inventory, source token map, probable dead selectors, protected selector contracts, CSS budget, build validation, production health validation
+
+## FRONTEND_ROUTE_SPLITTING_V63
+Diagnostic: ops/bin/as6-diagnose-frontend-route-splitting-v63
+Coverage: CRM, AI Workers, Dashboard, Command Center, Revenue Dashboard, Pipeline Copilot, AI Manager route chunks, build validation, production health validation
+
+## ROUTE_SPLITTING_CACHE_AWARE_V63_2
+Diagnostic: ops/bin/as6-diagnose-route-splitting-cache-aware-v63-2
+Coverage: cache-aware route chunk validation, nginx image asset fallback, false negative prevention, build validation, production health validation
+
+## ROUTE_SPLITTING_RUNNING_CONTAINER_V63_3
+Diagnostic: ops/bin/as6-diagnose-route-splitting-running-container-v63-3
+Coverage: running nginx asset validation, stale image fallback prevention, route chunk validation, production health validation
+
+## FRONTEND_DEAD_CODE_V64
+Diagnostic: ops/bin/as6-diagnose-frontend-dead-code-v64
+Coverage: unused pages, unused components, unused CSS selectors, legacy CSS blocks, route split preservation, build validation, production health validation

@@ -2322,3 +2322,9 @@ Diagnostic: ops/bin/as6-diagnose-route-splitting-running-container-v63-3
 ## AS6 BusyBox Asset Diagnostic Fix V63.4
 Status: APPLIED
 Root cause: nginx Alpine BusyBox find does not support -printf.
+
+## AS6 Frontend Dead Code Diagnostics V64
+Status: APPLIED
+Root cause: frontend dead-code ownership and route/component/CSS usage were not autonomously governed.
+Diagnostic: ops/bin/as6-diagnose-frontend-dead-code-v64
+Note: No code deletion and no UI changes were performed.

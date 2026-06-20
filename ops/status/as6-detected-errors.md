@@ -157,3 +157,8 @@ Status: REGISTERED
 ## AS6 BusyBox Asset Diagnostic Fix V63.4
 Failure Class: AS6_FAILURE_CLASS_BUSYBOX_FIND_PRINTF_INCOMPATIBILITY
 Rule: nginx/alpine diagnostics must not rely on GNU find -printf; use BusyBox-safe ls/find.
+
+## 2026-06-19 FRONTEND_DEAD_CODE_V64
+Failure Class: AS6_FAILURE_CLASS_FRONTEND_DEAD_CODE_OWNERSHIP_MISSING
+Diagnostic: ops/bin/as6-diagnose-frontend-dead-code-v64
+Status: REGISTERED
