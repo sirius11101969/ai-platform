@@ -2412,3 +2412,9 @@ Status: APPLIED
 Root cause: previous repair sanitized files but diagnostic read stale staged diff from a failed precommit attempt.
 Diagnostic: ops/bin/as6-diagnose-repair-v74-staged-diff-reset-and-commit
 Note: index reset is now mandatory before restaging after failed precommit attempts.
+
+## AS6 Repair CRM Analytics Panel Visible Bridge V75
+Status: APPLIED
+Root cause: V75 visible bridge failed because CRMAnalyticsPanel stayed self-closing and did not become a children wrapper.
+Diagnostic: ops/bin/as6-diagnose-repair-crm-analytics-visible-bridge-v75
+Note: CRMAnalyticsPanel now renders children only and wraps the existing AiRevenueIntelligencePanel without adding visible wrapper markup.

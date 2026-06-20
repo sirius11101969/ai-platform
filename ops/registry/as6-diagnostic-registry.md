@@ -1621,3 +1621,8 @@ File: ops/bin/as6-diagnose-repair-v74-docs-secret-scan-false-positive
 Status: ENABLED
 Scope: V74 staged diff reset, failed artifact quarantine, no-runtime-staging, route chunk validation
 File: ops/bin/as6-diagnose-repair-v74-staged-diff-reset-and-commit
+
+## as6-diagnose-repair-crm-analytics-visible-bridge-v75
+Status: ENABLED
+Scope: CRM Analytics visible bridge repair, explicit closing tag guard, no-wrapper guard, route chunk validation
+File: ops/bin/as6-diagnose-repair-crm-analytics-visible-bridge-v75

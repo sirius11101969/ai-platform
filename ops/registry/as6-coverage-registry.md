@@ -1678,3 +1678,7 @@ Coverage: docs wording false positive, no runtime staging, V74 analytics render 
 ## REPAIR_V74_STAGED_DIFF_RESET_AND_COMMIT
 Diagnostic: ops/bin/as6-diagnose-repair-v74-staged-diff-reset-and-commit
 Coverage: staged diff reset, diagnostic script false positive, failed V74 artifact quarantine, no runtime staging, V74 analytics targeted render wiring, route chunks, build validation, production health validation
+
+## REPAIR_CRM_ANALYTICS_VISIBLE_BRIDGE_V75
+Diagnostic: ops/bin/as6-diagnose-repair-crm-analytics-visible-bridge-v75
+Coverage: self-closing bridge repair, closing tag order, no-wrapper contract, existing analytics UI preservation, rollback guard, route chunks, build validation, production health validation
