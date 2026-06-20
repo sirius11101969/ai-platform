@@ -2358,3 +2358,9 @@ Status: APPLIED
 Root cause: CRM decomposition blueprint exists, but safe extraction execution contract was missing.
 Diagnostic: ops/bin/as6-diagnose-crm-decomposition-execution-guard-v69
 Note: No UI changes and no CRM code movement were performed.
+
+## AS6 CRM Panel Extraction Scaffold V70
+Status: APPLIED
+Root cause: CRM extraction target modules were missing for safe incremental decomposition.
+Diagnostic: ops/bin/as6-diagnose-crm-panel-extraction-scaffold-v70
+Note: No visible UI changes and no CRMPage wiring changes were performed.

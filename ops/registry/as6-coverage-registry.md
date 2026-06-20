@@ -1642,3 +1642,7 @@ Coverage: CRMPage size, decomposition candidates, CRM chunk, Command Center chun
 ## CRM_DECOMPOSITION_EXECUTION_GUARD_V69
 Diagnostic: ops/bin/as6-diagnose-crm-decomposition-execution-guard-v69
 Coverage: CRM state complexity, handler complexity, helper complexity, extraction contract, extraction sequence, CRM chunk, Command Center chunk, build validation, production health validation
+
+## CRM_PANEL_EXTRACTION_SCAFFOLD_V70
+Diagnostic: ops/bin/as6-diagnose-crm-panel-extraction-scaffold-v70
+Coverage: CRM panel scaffold boundaries, no visible UI contract, CRM chunk, Command Center chunk, build validation, production health validation

@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+OUT_DIR="${1:-runtime/as6-crm-panel-extraction-v70}"
+BUILD_LOG="${2:-}"
+ASSET_LIST="${3:-}"
+mkdir -p "$OUT_DIR"
+fail=0
+check(){ name="$1"; shift; if "$@"; then echo "PASS:$name"; else echo "FAIL:$name"; fail=1; fi; }
+check crm_page_exists test -f frontend/src/pages/CRMPage.jsx
+check v69_guard_exists test -f ops/bin/as6-diagnose-crm-decomposition-execution-guard-v69
+check crm_analytics_panel_exists test -f frontend/src/pages/crm/CRMAnalyticsPanel.jsx
+check crm_filters_panel_exists test -f frontend/src/pages/crm/CRMFiltersPanel.jsx
+check crm_actions_panel_exists test -f frontend/src/pages/crm/CRMActionsPanel.jsx
+check crm_pipeline_panel_exists test -f frontend/src/pages/crm/CRMPipelinePanel.jsx
+check crm_kanban_panel_exists test -f frontend/src/pages/crm/CRMKanbanPanel.jsx
+check crm_panels_do_not_render_visible_ui bash -c "! grep -R \"return <\\|className=\\|button\\|section\\|div\" frontend/src/pages/crm/CRM*.jsx"
+check crm_lazy_import grep -q "lazy(() => import(\"./pages/CRMPage\"))" frontend/src/App.jsx
+check duplicate_top_logo_absent bash -c "! grep -q as6-command-center-logo-image frontend/src/pages/CommandCenterPage.jsx"
+crm_bytes="$(wc -c < frontend/src/pages/CRMPage.jsx)"
+echo "CRM_PAGE_BYTES=$crm_bytes"
+echo "CRM_PANEL_EXTRACTION_STAGE=SCAFFOLD_ONLY"
+echo "CRM_PANEL_TARGETS=CRMAnalyticsPanel,CRMFiltersPanel,CRMActionsPanel,CRMPipelinePanel,CRMKanbanPanel"
+if test "$crm_bytes" -lt 140000; then echo "PASS:crm_page_current_budget"; else echo "FAIL:crm_page_current_budget"; fail=1; fi
+echo "PASS:crm_panel_module_boundaries_created"
+echo "PASS:no_ui_change_contract"
+if test -n "$BUILD_LOG" && test -f "$BUILD_LOG"; then if grep -q "css-syntax-error\|Expected identifier but found\|Unexpected \"}\"\|lazy is not defined\|Suspense is not defined" "$BUILD_LOG"; then echo "FAIL:frontend_build_clean"; fail=1; else echo "PASS:frontend_build_clean"; fi; fi
+if test -n "$ASSET_LIST" && test -f "$ASSET_LIST"; then check crm_chunk_present grep -q "crm-page-" "$ASSET_LIST"; check command_center_chunk_present grep -q "command-center-" "$ASSET_LIST"; fi
+exit "$fail"

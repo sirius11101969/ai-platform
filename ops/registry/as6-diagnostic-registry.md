@@ -1576,3 +1576,8 @@ File: ops/bin/as6-diagnose-crm-page-decomposition-v68
 Status: ENABLED
 Scope: CRM decomposition execution contract, complexity map, extraction sequence and chunk validation
 File: ops/bin/as6-diagnose-crm-decomposition-execution-guard-v69
+
+## as6-diagnose-crm-panel-extraction-scaffold-v70
+Status: ENABLED
+Scope: CRM panel module boundaries, no-UI scaffold contract, chunk validation
+File: ops/bin/as6-diagnose-crm-panel-extraction-scaffold-v70
