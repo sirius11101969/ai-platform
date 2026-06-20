@@ -1,0 +1,65 @@
+/* AS6 Real Page Shell Migration V98 */
+:root {
+  --as6-page-shell-max: 1480px;
+  --as6-page-shell-pad: clamp(16px, 2vw, 30px);
+}
+
+.dashboard-page, .crm-page, .revenue-page, .ai-workers-page, .ai-workforce-page, .approval-page, .execution-page, .services-page, .pipeline-page, .analytics-page, .executive-page {
+  width: min(var(--as6-page-shell-max), calc(100vw - 28px));
+  margin-inline: auto;
+  padding: var(--as6-page-shell-pad);
+}
+
+.dashboard-page::before, .crm-page::before, .revenue-page::before, .ai-workers-page::before, .ai-workforce-page::before, .approval-page::before, .execution-page::before, .services-page::before, .pipeline-page::before, .analytics-page::before, .executive-page::before {
+  content: "AS6 Mission Control";
+  display: inline-flex;
+  width: fit-content;
+  margin-bottom: 12px;
+  padding: 6px 11px;
+  border: 1px solid rgba(37,228,255,.28);
+  border-radius: 999px;
+  color: #bdf7ff;
+  background: rgba(37,228,255,.08);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.dashboard-page > :first-child, .crm-page > :first-child, .revenue-page > :first-child, .ai-workers-page > :first-child, .ai-workforce-page > :first-child, .approval-page > :first-child, .execution-page > :first-child, .services-page > :first-child, .pipeline-page > :first-child, .analytics-page > :first-child, .executive-page > :first-child {
+  border-radius: 30px;
+}
+
+.dashboard-page section, .crm-page section, .revenue-page section, .ai-workers-page section, .ai-workforce-page section, .approval-page section, .execution-page section, .services-page section, .pipeline-page section, .analytics-page section, .executive-page section {
+  border-color: rgba(120,190,255,.16);
+}
+
+.dashboard-page .grid, .crm-page .grid, .revenue-page .grid, .ai-workers-page .grid, .approval-page .grid, .execution-page .grid, .services-page .grid, .pipeline-page .grid, .analytics-page .grid, .executive-page .grid {
+  gap: 14px;
+}
+
+.dashboard-page table, .crm-page table, .revenue-page table, .ai-workers-page table, .approval-page table, .execution-page table, .services-page table, .pipeline-page table, .analytics-page table, .executive-page table {
+  width: 100%;
+}
+
+.dashboard-page form, .crm-page form, .revenue-page form, .ai-workers-page form, .approval-page form, .execution-page form, .services-page form, .pipeline-page form, .analytics-page form, .executive-page form {
+  border: 1px solid rgba(120,190,255,.16);
+  border-radius: 22px;
+  background: rgba(255,255,255,.035);
+}
+
+.dashboard-page .empty, .crm-page .empty, .revenue-page .empty, .ai-workers-page .empty, .approval-page .empty, .execution-page .empty, .services-page .empty, .pipeline-page .empty, .analytics-page .empty, .executive-page .empty,
+.dashboard-page .loading, .crm-page .loading, .revenue-page .loading, .ai-workers-page .loading, .approval-page .loading, .execution-page .loading, .services-page .loading, .pipeline-page .loading, .analytics-page .loading, .executive-page .loading,
+.dashboard-page .error, .crm-page .error, .revenue-page .error, .ai-workers-page .error, .approval-page .error, .execution-page .error, .services-page .error, .pipeline-page .error, .analytics-page .error, .executive-page .error {
+  border: 1px dashed rgba(120,190,255,.24);
+  border-radius: 22px;
+  background: rgba(255,255,255,.035);
+  color: var(--as6-brand-muted, #9fb2d5);
+}
+
+@media (max-width: 760px) {
+  .dashboard-page, .crm-page, .revenue-page, .ai-workers-page, .ai-workforce-page, .approval-page, .execution-page, .services-page, .pipeline-page, .analytics-page, .executive-page {
+    width: min(100vw, calc(100vw - 18px));
+    padding: 10px;
+  }
+}

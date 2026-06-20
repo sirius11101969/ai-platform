@@ -439,3 +439,9 @@ Status: REGISTERED
 - FAILURE_CLASSES: UNIFIED_PAGE_SHELL_MISSING, PAGE_HERO_DRIFT, KPI_STRIP_DRIFT, GLASS_CARD_SHELL_DRIFT, EMPTY_STATE_STYLE_DRIFT, LOADING_STATE_STYLE_DRIFT, ERROR_STATE_STYLE_DRIFT, PAGE_SHELL_IMPORT_MISSING.
 - PREVENTION: V97 diagnostic/control validates page shell component, CSS, import, build and enforcement guard.
 - STATUS: registered and controlled.
+
+## V98 Real Page Shell Migration
+- ROOT_CAUSE: V97 created the shell primitives, but real page families needed migration coverage and page-family enforcement.
+- FAILURE_CLASSES: REAL_PAGE_SHELL_MIGRATION_MISSING, DASHBOARD_PAGE_SHELL_DRIFT, CRM_PAGE_SHELL_DRIFT, REVENUE_PAGE_SHELL_DRIFT, WORKFORCE_PAGE_SHELL_DRIFT, APPROVAL_PAGE_SHELL_DRIFT, EXECUTION_PAGE_SHELL_DRIFT, PAGE_STATE_PRIMITIVE_DRIFT.
+- PREVENTION: V98 diagnostic/control validates migration CSS, page map, import, build and enforcement guard.
+- STATUS: registered and controlled.

@@ -1,3 +1,4 @@
+import "./styles/as6-real-page-shell-migration.css";
 import "./styles/as6-unified-page-shell.css";
 import "./styles/as6-full-mission-control-theme-rollout.css";
 import "./styles/as6-unified-mission-control-ui.css";

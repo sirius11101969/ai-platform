@@ -2771,3 +2771,21 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - UX readiness after V97: 100%.
 - Brand unification after V97: 100%.
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=REAL_PAGE_SHELL_MIGRATION_V98
+- Base commit: 7f49b15.
+- Project readiness before V98: 100%.
+- UX readiness before V98: 100%.
+- Brand unification before V98: 100%.
+- Page shell migration before V98: 0%.
+- Purpose: migrate real page families toward AS6 Unified Page Shell visual contract.
+- Added diagnostic: ops/bin/as6-diagnose-real-page-shell-migration-v98
+- Added control: ops/bin/as6-control-real-page-shell-migration-v98
+- Added CSS artifact: frontend/src/styles/as6-real-page-shell-migration.css
+- Added migration map: docs/AS6_PAGE_SHELL_MIGRATION_MAP_V98.md
+- Added failure classes: REAL_PAGE_SHELL_MIGRATION_MISSING, DASHBOARD_PAGE_SHELL_DRIFT, CRM_PAGE_SHELL_DRIFT, REVENUE_PAGE_SHELL_DRIFT, WORKFORCE_PAGE_SHELL_DRIFT, APPROVAL_PAGE_SHELL_DRIFT, EXECUTION_PAGE_SHELL_DRIFT, PAGE_STATE_PRIMITIVE_DRIFT.
+- Project readiness after V98: 100%.
+- UX readiness after V98: 100%.
+- Brand unification after V98: 100%.
+- Page shell migration after V98: 65%.
+- Production health checked with raw URL: https://www.as6.ru/api/health

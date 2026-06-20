@@ -1883,3 +1883,12 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V97 | LOADING_STATE_STYLE_DRIFT | Unified Page Shell failure class | ENABLED
 - V97 | ERROR_STATE_STYLE_DRIFT | Unified Page Shell failure class | ENABLED
 - V97 | PAGE_SHELL_IMPORT_MISSING | Unified Page Shell failure class | ENABLED
+- V98 | ops/bin/as6-diagnose-real-page-shell-migration-v98 | Real Page Shell Migration diagnostic | ENABLED
+- V98 | REAL_PAGE_SHELL_MIGRATION_MISSING | Real Page Shell Migration failure class | ENABLED
+- V98 | DASHBOARD_PAGE_SHELL_DRIFT | Real Page Shell Migration failure class | ENABLED
+- V98 | CRM_PAGE_SHELL_DRIFT | Real Page Shell Migration failure class | ENABLED
+- V98 | REVENUE_PAGE_SHELL_DRIFT | Real Page Shell Migration failure class | ENABLED
+- V98 | WORKFORCE_PAGE_SHELL_DRIFT | Real Page Shell Migration failure class | ENABLED
+- V98 | APPROVAL_PAGE_SHELL_DRIFT | Real Page Shell Migration failure class | ENABLED
+- V98 | EXECUTION_PAGE_SHELL_DRIFT | Real Page Shell Migration failure class | ENABLED
+- V98 | PAGE_STATE_PRIMITIVE_DRIFT | Real Page Shell Migration failure class | ENABLED

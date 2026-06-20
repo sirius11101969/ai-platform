@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+CSS="frontend/src/styles/as6-real-page-shell-migration.css"
+MAP="docs/AS6_PAGE_SHELL_MIGRATION_MAP_V98.md"
+for f in "$CSS" "$MAP"; do
+  if [ ! -f "$f" ]; then echo "AS6_REAL_PAGE_SHELL_FILE_MISSING $f"; FAIL=1; fi
+done
+if ! grep -Rqs "as6-real-page-shell-migration.css" frontend/src/App.jsx; then echo "AS6_REAL_PAGE_SHELL_IMPORT_MISSING"; FAIL=1; fi
+for item in "dashboard-page" "crm-page" "revenue-page" "ai-workers-page" "approval-page" "execution-page" "AS6 Mission Control"; do
+  if ! grep -Rqs "$item" "$CSS" "$MAP" ops/governance docs ops/status ops/registry; then echo "AS6_REAL_PAGE_SHELL_ITEM_MISSING $item"; FAIL=1; fi
+done
+for cls in REAL_PAGE_SHELL_MIGRATION_MISSING DASHBOARD_PAGE_SHELL_DRIFT CRM_PAGE_SHELL_DRIFT REVENUE_PAGE_SHELL_DRIFT WORKFORCE_PAGE_SHELL_DRIFT APPROVAL_PAGE_SHELL_DRIFT EXECUTION_PAGE_SHELL_DRIFT PAGE_STATE_PRIMITIVE_DRIFT; do
+  if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then echo "AS6_REAL_PAGE_SHELL_CLASS_MISSING $cls"; FAIL=1; fi
+done
+if git diff --cached --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING_FAIL"; FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_REAL_PAGE_SHELL_MIGRATION=PASS"

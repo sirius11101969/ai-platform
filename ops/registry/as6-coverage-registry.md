@@ -1808,3 +1808,6 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V97 | ops/bin/as6-control-unified-page-shell-v97 | Covers unified page shell, hero, KPI strip, states, build, health and enforcement guard | ENABLED
 - V97 | frontend/src/components/AS6UnifiedPageShell.jsx | Unified Page Shell component artifact | ENABLED
 - V97 | frontend/src/styles/as6-unified-page-shell.css | Unified Page Shell CSS artifact | ENABLED
+- V98 | ops/bin/as6-control-real-page-shell-migration-v98 | Covers real page shell migration, build, health and enforcement guard | ENABLED
+- V98 | frontend/src/styles/as6-real-page-shell-migration.css | Real Page Shell Migration artifact | ENABLED
+- V98 | docs/AS6_PAGE_SHELL_MIGRATION_MAP_V98.md | Real Page Shell Migration artifact | ENABLED
