@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+OUT_DIR="${1:-runtime/as6-css-ownership-v61}"
+BUILD_LOG="${2:-}"
+mkdir -p "$OUT_DIR"
+fail=0
+
+CSS_GLOBAL="frontend/src/styles.css"
+CSS_THEME="frontend/src/theme/as6Theme.css"
+
+check(){ n="$1"; shift; if "$@"; then echo "PASS:$n"; else echo "FAIL:$n"; fail=1; fi; }
+
+check css_global_exists test -f "$CSS_GLOBAL"
+check css_theme_exists test -f "$CSS_THEME"
+check frontend_src_exists test -d frontend/src
+check sidebar_branding_webp grep -q "as6-logo.webp" frontend/src/components/branding/AS6Logo.jsx
+check duplicate_top_logo_absent bash -c '! grep -q as6-command-center-logo-image frontend/src/pages/CommandCenterPage.jsx'
+check as6_real_logo_css_contract grep -q "as6-real-logo-image" "$CSS_THEME"
+check quick_action_robot_css_contract grep -q "quick-action-robot-icon" "$CSS_THEME"
+check executive_robot_css_contract grep -q "executive-module-robot-icon" "$CSS_THEME"
+check copilot_css_contract grep -q "copilot" "$CSS_THEME"
+
+global_bytes="$(wc -c < "$CSS_GLOBAL")"
+theme_bytes="$(wc -c < "$CSS_THEME")"
+echo "CSS_GLOBAL_BYTES=$global_bytes"
+echo "CSS_THEME_BYTES=$theme_bytes"
+
+if test "$global_bytes" -lt 150000; then echo "PASS:css_global_source_budget"; else echo "FAIL:css_global_source_budget"; fail=1; fi
+if test "$theme_bytes" -lt 75000; then echo "PASS:css_theme_source_budget"; else echo "FAIL:css_theme_source_budget"; fail=1; fi
+
+grep -oE '\.[a-zA-Z0-9_-]+' "$CSS_GLOBAL" "$CSS_THEME" | sed 's#^.*:##' | sort | uniq -c | sort -nr | head -80 | tee "$OUT_DIR/top-css-selectors.out" || true
+grep -oE '\.[a-zA-Z0-9_-]+' "$CSS_GLOBAL" "$CSS_THEME" | sed 's#^.*:##' | sort | uniq -d | tee "$OUT_DIR/duplicate-css-selectors.out" || true
+grep -n "AS6 Command Center\|copilot\|as6-command-center-logo-image\|as6-real-logo-image\|quick-action-robot-icon\|executive-module-robot-icon" "$CSS_GLOBAL" "$CSS_THEME" | tee "$OUT_DIR/as6-css-contracts.out" || true
+
+selector_count="$(grep -oE '\.[a-zA-Z0-9_-]+' "$CSS_GLOBAL" "$CSS_THEME" | sed 's#^.*:##' | sort -u | wc -l | tr -d ' ')"
+duplicate_count="$(grep -oE '\.[a-zA-Z0-9_-]+' "$CSS_GLOBAL" "$CSS_THEME" | sed 's#^.*:##' | sort | uniq -d | wc -l | tr -d ' ')"
+echo "CSS_UNIQUE_SELECTOR_COUNT=$selector_count"
+echo "CSS_DUPLICATE_SELECTOR_COUNT=$duplicate_count"
+
+if test "$selector_count" -lt 2500; then echo "PASS:selector_count_budget"; else echo "FAIL:selector_count_budget"; fail=1; fi
+if test "$duplicate_count" -lt 900; then echo "PASS:duplicate_selector_budget"; else echo "FAIL:duplicate_selector_budget"; fail=1; fi
+
+grep -R "className=" -n frontend/src | sed -E 's/.*className=\{?["'"'"'`]?([^"'"'"'`}]+).*/\1/' | tr ' ' '\n' | sed '/^$/d' | sort -u | tee "$OUT_DIR/jsx-classname-tokens.out" || true
+
+if test -n "$BUILD_LOG" && test -f "$BUILD_LOG"; then
+  check frontend_build_clean bash -c '! grep -q "css-syntax-error\|Expected identifier but found\|Unexpected \"}\"\|lazy is not defined\|Suspense is not defined" "$0"' "$BUILD_LOG"
+  check css_bundle_present grep -q "dist/assets/index-.*\.css" "$BUILD_LOG"
+  awk 'BEGIN{bad=0} /dist\/assets\/index-.*\.css/{if($(NF-3)+0>180){bad=1}} END{if(bad){print "FAIL:css_bundle_budget"; exit 1}else print "PASS:css_bundle_budget"}' "$BUILD_LOG" || fail=1
+fi
+
+exit "$fail"

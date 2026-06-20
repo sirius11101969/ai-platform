@@ -2291,3 +2291,9 @@ Note: No UI changes and no asset deletion were performed.
 Status: APPLIED
 Root cause: sidebar branding component imported oversized PNG logo despite available optimized WebP logo.
 Diagnostic: ops/bin/as6-diagnose-png-to-webp-branding-v60
+
+## AS6 CSS Ownership V61
+Status: APPLIED
+Root cause: CSS ownership and dead selector evidence were missing before safe optimization.
+Diagnostic: ops/bin/as6-diagnose-css-ownership-v61
+Note: No CSS deletion and no UI changes were performed.

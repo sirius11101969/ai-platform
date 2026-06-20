@@ -1521,3 +1521,8 @@ File: ops/bin/as6-diagnose-image-asset-ownership-v59
 Status: ENABLED
 Scope: Sidebar branding PNG to WebP migration and branding asset budget diagnostics
 File: ops/bin/as6-diagnose-png-to-webp-branding-v60
+
+## as6-diagnose-css-ownership-v61
+Status: ENABLED
+Scope: CSS ownership, selector duplication, CSS contracts, source and bundle budget diagnostics
+File: ops/bin/as6-diagnose-css-ownership-v61

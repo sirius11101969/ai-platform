@@ -128,3 +128,8 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_SIDEBAR_BRANDING_PNG_IMPORT_REGRESSION
 Diagnostic: ops/bin/as6-diagnose-png-to-webp-branding-v60
 Status: REGISTERED
+
+## 2026-06-19 CSS_OWNERSHIP_V61
+Failure Class: AS6_FAILURE_CLASS_CSS_OWNERSHIP_DIAGNOSTIC_MISSING
+Diagnostic: ops/bin/as6-diagnose-css-ownership-v61
+Status: REGISTERED

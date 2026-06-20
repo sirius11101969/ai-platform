@@ -1598,3 +1598,7 @@ Coverage: source assets, logo PNG/WebP usage, fallback budget, duplicate logo gu
 ## PNG_TO_WEBP_BRANDING_V60
 Diagnostic: ops/bin/as6-diagnose-png-to-webp-branding-v60
 Coverage: AS6Logo WebP import, PNG import absence, branding class preservation, duplicate logo guard, build validation, production health validation
+
+## CSS_OWNERSHIP_V61
+Diagnostic: ops/bin/as6-diagnose-css-ownership-v61
+Coverage: global/theme CSS budgets, selector report, duplicate selector report, JSX classname token report, AS6 CSS contracts, build validation, production health validation
