@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+for f in frontend/src/components/AS6GlobalHealthBar.jsx frontend/src/styles/as6-global-health-bar.css; do
+  if [ ! -f "$f" ]; then echo "AS6_GLOBAL_HEALTH_BAR_FILE_MISSING $f"; FAIL=1; fi
+done
+if ! grep -Rqs "AS6GlobalHealthBar.jsx" frontend/src/App.jsx; then echo "AS6_GLOBAL_HEALTH_BAR_IMPORT_MISSING"; FAIL=1; fi
+for item in "as6-global-health-bar-root" "AS6 Mission Control" "Production" "Diagnostics" "Governance" "Registry" "Autonomy"; do
+  if ! grep -Rqs "$item" frontend/src/components/AS6GlobalHealthBar.jsx frontend/src/styles/as6-global-health-bar.css ops/governance docs ops/status ops/registry; then echo "AS6_GLOBAL_HEALTH_BAR_ITEM_MISSING $item"; FAIL=1; fi
+done
+for cls in GLOBAL_HEALTH_BAR_MISSING GLOBAL_STATUS_VISIBILITY_GAP CROSS_PAGE_HEALTH_CONTEXT_DRIFT HEALTH_BAR_MOBILE_LAYOUT_DRIFT HEALTH_BAR_MOUNT_GAP; do
+  if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then echo "AS6_GLOBAL_HEALTH_CLASS_MISSING $cls"; FAIL=1; fi
+done
+if git diff --cached --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING_FAIL"; FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_GLOBAL_HEALTH_BAR=PASS"

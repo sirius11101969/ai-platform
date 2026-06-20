@@ -1796,3 +1796,11 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V87 | COMPONENT_REUSE_GAP | Frontend architecture audit failure class | ENABLED
 - V87 | UI_LAYOUT_ENGINE_GAP | Frontend architecture audit failure class | ENABLED
 - V87 | COMMAND_CENTER_COMPONENT_DRIFT | Frontend architecture audit failure class | ENABLED
+- V88 | ops/bin/as6-diagnose-global-health-bar-v88 | AS6 Global Health Bar diagnostic | ENABLED
+- V88 | GLOBAL_HEALTH_BAR_MISSING | AS6 Global Health Bar failure class | ENABLED
+- V88 | GLOBAL_STATUS_VISIBILITY_GAP | AS6 Global Health Bar failure class | ENABLED
+- V88 | CROSS_PAGE_HEALTH_CONTEXT_DRIFT | AS6 Global Health Bar failure class | ENABLED
+- V88 | HEALTH_BAR_MOBILE_LAYOUT_DRIFT | AS6 Global Health Bar failure class | ENABLED
+- V88 | HEALTH_BAR_MOUNT_GAP | AS6 Global Health Bar failure class | ENABLED
+- V88 | HEALTH_BAR_PERFORMANCE_DRIFT | AS6 Global Health Bar failure class | ENABLED
+- V88 | HEALTH_BAR_BRAND_DRIFT | AS6 Global Health Bar failure class | ENABLED

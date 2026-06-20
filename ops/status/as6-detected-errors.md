@@ -379,3 +379,9 @@ Status: REGISTERED
 - FAILURE_CLASSES: FRONTEND_ARCHITECTURE_MAP_MISSING, UI_COMPONENT_INVENTORY_GAP, BLIND_CSS_OVERLAY_DRIFT, UI_REFACTOR_ROADMAP_MISSING, FRONTEND_PAGE_MAP_DRIFT, COMPONENT_REUSE_GAP, UI_LAYOUT_ENGINE_GAP, COMMAND_CENTER_COMPONENT_DRIFT.
 - PREVENTION: V87 diagnostic/control validates architecture map, roadmap, design system, workspace, build and enforcement guard.
 - STATUS: registered and controlled.
+
+## V88 Global Health Bar
+- ROOT_CAUSE: pages needed reusable global health context instead of page-local status cards only.
+- FAILURE_CLASSES: GLOBAL_HEALTH_BAR_MISSING, GLOBAL_STATUS_VISIBILITY_GAP, CROSS_PAGE_HEALTH_CONTEXT_DRIFT, HEALTH_BAR_MOBILE_LAYOUT_DRIFT, HEALTH_BAR_MOUNT_GAP, HEALTH_BAR_PERFORMANCE_DRIFT, HEALTH_BAR_BRAND_DRIFT.
+- PREVENTION: V88 diagnostic/control validates component, mount, CSS, build and enforcement guard.
+- STATUS: registered and controlled.

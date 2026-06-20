@@ -1,0 +1,152 @@
+/* AS6 Global Health Bar V88 */
+:root {
+  --as6-healthbar-height: 54px;
+}
+
+body {
+  padding-top: var(--as6-healthbar-height);
+}
+
+#as6-global-health-bar-root {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 2147483000;
+  pointer-events: none;
+}
+
+.as6-global-health-bar {
+  height: var(--as6-healthbar-height);
+  display: grid;
+  grid-template-columns: minmax(210px, auto) 1fr minmax(110px, auto);
+  align-items: center;
+  gap: 14px;
+  padding: 8px clamp(12px, 2vw, 26px);
+  color: var(--as6-text, #f6f9ff);
+  background:
+    radial-gradient(circle at 4% 0%, rgba(37, 228, 255, .22), transparent 22rem),
+    radial-gradient(circle at 86% 0%, rgba(139, 92, 246, .22), transparent 24rem),
+    linear-gradient(90deg, rgba(5, 9, 20, .92), rgba(10, 21, 43, .88));
+  border-bottom: 1px solid rgba(120, 190, 255, .22);
+  box-shadow: 0 18px 60px rgba(0,0,0,.34);
+  backdrop-filter: blur(18px);
+  pointer-events: auto;
+}
+
+.as6-global-health-brand,
+.as6-global-health-tail,
+.as6-global-health-item {
+  display: inline-flex;
+  align-items: center;
+}
+
+.as6-global-health-brand {
+  gap: 10px;
+  font-weight: 900;
+  letter-spacing: -.035em;
+  white-space: nowrap;
+}
+
+.as6-global-health-orb {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: conic-gradient(from 180deg, #25e4ff, #8b5cf6, #ff3d8f, #25e4ff);
+  box-shadow: 0 0 24px rgba(37, 228, 255, .58);
+}
+
+.as6-global-health-items {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.as6-global-health-item {
+  gap: 7px;
+  min-width: 0;
+  padding: 7px 10px;
+  border: 1px solid rgba(120, 190, 255, .18);
+  border-radius: 999px;
+  background: rgba(255,255,255,.045);
+  white-space: nowrap;
+  font-size: 12px;
+}
+
+.as6-global-health-label {
+  color: var(--as6-muted, #9fb2d5);
+}
+
+.as6-global-health-item strong {
+  font-size: 12px;
+}
+
+.as6-global-health-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: currentColor;
+  box-shadow: 0 0 14px currentColor;
+}
+
+.as6-global-health-good {
+  color: var(--as6-green, #32f5a9);
+}
+
+.as6-global-health-info {
+  color: var(--as6-cyan, #25e4ff);
+}
+
+.as6-global-health-tail {
+  justify-content: flex-end;
+  gap: 10px;
+  color: var(--as6-muted, #9fb2d5);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.as6-global-health-command {
+  padding: 6px 9px;
+  border-radius: 10px;
+  border: 1px solid rgba(37, 228, 255, .28);
+  color: #bdf7ff;
+  background: rgba(37, 228, 255, .08);
+}
+
+@media (max-width: 1100px) {
+  .as6-global-health-bar {
+    grid-template-columns: auto 1fr;
+  }
+  .as6-global-health-tail {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  :root { --as6-healthbar-height: 62px; }
+  .as6-global-health-bar {
+    grid-template-columns: 1fr;
+    align-content: center;
+    gap: 4px;
+  }
+  .as6-global-health-brand {
+    font-size: 13px;
+  }
+  .as6-global-health-items {
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+  .as6-global-health-item {
+    font-size: 11px;
+    padding: 5px 8px;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .as6-global-health-orb {
+    animation: as6-health-orb 5s linear infinite;
+  }
+  @keyframes as6-health-orb {
+    to { transform: rotate(360deg); }
+  }
+}

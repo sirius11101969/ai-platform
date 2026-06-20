@@ -2618,3 +2618,17 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Expected UX readiness after V87: 93%.
 - Project readiness after V87: 100%.
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=GLOBAL_HEALTH_BAR_V88
+- Base commit: 2b3159e.
+- Project readiness before V88: 100%.
+- UX readiness before V88: 93%.
+- Purpose: add reusable global platform health/status layer across all pages.
+- Added diagnostic: ops/bin/as6-diagnose-global-health-bar-v88
+- Added control: ops/bin/as6-control-global-health-bar-v88
+- Added component: frontend/src/components/AS6GlobalHealthBar.jsx
+- Added CSS artifact: frontend/src/styles/as6-global-health-bar.css
+- Added failure classes: GLOBAL_HEALTH_BAR_MISSING, GLOBAL_STATUS_VISIBILITY_GAP, CROSS_PAGE_HEALTH_CONTEXT_DRIFT, HEALTH_BAR_MOBILE_LAYOUT_DRIFT, HEALTH_BAR_MOUNT_GAP, HEALTH_BAR_PERFORMANCE_DRIFT, HEALTH_BAR_BRAND_DRIFT.
+- Expected UX readiness after V88: 95%.
+- Project readiness after V88: 100%.
+- Production health checked with raw URL: https://www.as6.ru/api/health
