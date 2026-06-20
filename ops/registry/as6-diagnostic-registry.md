@@ -1626,3 +1626,8 @@ File: ops/bin/as6-diagnose-repair-v74-staged-diff-reset-and-commit
 Status: ENABLED
 Scope: CRM Analytics visible bridge repair, explicit closing tag guard, no-wrapper guard, route chunk validation
 File: ops/bin/as6-diagnose-repair-crm-analytics-visible-bridge-v75
+
+## as6-diagnose-crm-analytics-render-owner-v76
+Status: ENABLED
+Scope: CRM Analytics render ownership via render prop, no-wrapper guard, route chunk validation
+File: ops/bin/as6-diagnose-crm-analytics-render-owner-v76

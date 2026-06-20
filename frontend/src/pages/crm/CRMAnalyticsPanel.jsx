@@ -1,6 +1,6 @@
 import React from "react";
 
-export const CRM_ANALYTICS_PANEL_CONTRACT_VERSION = "V75_VISIBLE_BRIDGE";
+export const CRM_ANALYTICS_PANEL_CONTRACT_VERSION = "V76_RENDER_OWNER";
 
 export default function CRMAnalyticsPanel({
   revenueIntelligence = null,
@@ -13,6 +13,7 @@ export default function CRMAnalyticsPanel({
   onAnalyzeWorkspaceAi = null,
   onLeadScoreSortChange = null,
   onLeadScoreFilterChange = null,
+  renderRevenuePanel = null,
   children = null,
 } = {}) {
   void revenueIntelligence;
@@ -25,6 +26,10 @@ export default function CRMAnalyticsPanel({
   void onAnalyzeWorkspaceAi;
   void onLeadScoreSortChange;
   void onLeadScoreFilterChange;
+
+  if (typeof renderRevenuePanel === "function") {
+    return <>{renderRevenuePanel()}</>;
+  }
 
   return <>{children}</>;
 }

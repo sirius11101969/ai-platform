@@ -2418,3 +2418,9 @@ Status: APPLIED
 Root cause: V75 visible bridge failed because CRMAnalyticsPanel stayed self-closing and did not become a children wrapper.
 Diagnostic: ops/bin/as6-diagnose-repair-crm-analytics-visible-bridge-v75
 Note: CRMAnalyticsPanel now renders children only and wraps the existing AiRevenueIntelligencePanel without adding visible wrapper markup.
+
+## AS6 CRM Analytics Render Owner V76
+Status: APPLIED
+Root cause: CRMAnalyticsPanel visible bridge existed, but render execution ownership still lived as children in CRMPage.
+Diagnostic: ops/bin/as6-diagnose-crm-analytics-render-owner-v76
+Note: CRMAnalyticsPanel now owns render execution through renderRevenuePanel while preserving existing visible markup and CSS classes.

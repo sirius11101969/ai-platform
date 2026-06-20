@@ -1136,10 +1136,11 @@ export default function CRMPage() {
         onAnalyzeWorkspaceAi={handleAnalyzeWorkspaceAi}
         onLeadScoreSortChange={setLeadScoreSort}
         onLeadScoreFilterChange={setLeadScoreFilter}
-      >
+        renderRevenuePanel={() => (
 
       <AiRevenueIntelligencePanel intelligence={revenueIntelligence} busy={revenueBrainBusy} toast={revenueToast} onRun={handleRunRevenueBrain} />
-      </CRMAnalyticsPanel>
+        )}
+      />
 
       <section className="lead-list-controls" aria-label="AI Revenue lead filters">
         <div>

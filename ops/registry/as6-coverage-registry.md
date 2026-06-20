@@ -1682,3 +1682,7 @@ Coverage: staged diff reset, diagnostic script false positive, failed V74 artifa
 ## REPAIR_CRM_ANALYTICS_VISIBLE_BRIDGE_V75
 Diagnostic: ops/bin/as6-diagnose-repair-crm-analytics-visible-bridge-v75
 Coverage: self-closing bridge repair, closing tag order, no-wrapper contract, existing analytics UI preservation, rollback guard, route chunks, build validation, production health validation
+
+## CRM_ANALYTICS_RENDER_OWNER_V76
+Diagnostic: ops/bin/as6-diagnose-crm-analytics-render-owner-v76
+Coverage: render ownership prop, visible markup preservation, no-wrapper contract, rollback guard, CRM chunk, Command Center chunk, Dashboard chunk, AI Workers chunk, build validation, production health validation
