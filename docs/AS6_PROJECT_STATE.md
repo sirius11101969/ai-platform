@@ -2604,3 +2604,17 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Expected UX readiness after V86: 92%.
 - Project readiness after V86: 100%.
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=FRONTEND_ARCHITECTURE_AUDIT_V87
+- Base commit: 0cf1f56.
+- Project readiness before V87: 100%.
+- UX readiness before V87: 92%.
+- Purpose: frontend architecture inventory and component refactor roadmap before real UI component work.
+- Added diagnostic: ops/bin/as6-diagnose-frontend-architecture-audit-v87
+- Added control: ops/bin/as6-control-frontend-architecture-audit-v87
+- Added architecture map: docs/AS6_FRONTEND_ARCHITECTURE_MAP_V87.md
+- Added roadmap: docs/AS6_UI_REFACTOR_ROADMAP_V87.md
+- Added failure classes: FRONTEND_ARCHITECTURE_MAP_MISSING, UI_COMPONENT_INVENTORY_GAP, BLIND_CSS_OVERLAY_DRIFT, UI_REFACTOR_ROADMAP_MISSING, FRONTEND_PAGE_MAP_DRIFT, COMPONENT_REUSE_GAP, UI_LAYOUT_ENGINE_GAP, COMMAND_CENTER_COMPONENT_DRIFT.
+- Expected UX readiness after V87: 93%.
+- Project readiness after V87: 100%.
+- Production health checked with raw URL: https://www.as6.ru/api/health

@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+for f in frontend/src/App.jsx frontend/src/styles/as6-mission-control.css frontend/src/styles/as6-mission-workspace.css docs/AS6_FRONTEND_ARCHITECTURE_MAP_V87.md docs/AS6_UI_REFACTOR_ROADMAP_V87.md; do
+  if [ ! -f "$f" ]; then echo "AS6_FRONTEND_ARCHITECTURE_AUDIT_REQUIRED_FILE_MISSING $f"; FAIL=1; fi
+done
+find frontend/src -maxdepth 4 -type f \( -name "*.jsx" -o -name "*.tsx" -o -name "*.js" -o -name "*.ts" \) | sort > runtime/as6-v87/frontend-code.index
+if [ ! -s runtime/as6-v87/frontend-code.index ]; then echo "AS6_FRONTEND_CODE_INVENTORY_EMPTY"; FAIL=1; fi
+for marker in "V88 Global Health Bar" "V89 Command Palette" "V90 Copilot Rail" "V91 Realtime Event Stream" "V92 Widget Layout Engine"; do
+  if ! grep -Rqs "$marker" docs/AS6_UI_REFACTOR_ROADMAP_V87.md; then echo "AS6_UI_ROADMAP_MARKER_MISSING $marker"; FAIL=1; fi
+done
+for cls in FRONTEND_ARCHITECTURE_MAP_MISSING UI_COMPONENT_INVENTORY_GAP BLIND_CSS_OVERLAY_DRIFT UI_REFACTOR_ROADMAP_MISSING FRONTEND_PAGE_MAP_DRIFT; do
+  if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then echo "AS6_FRONTEND_AUDIT_CLASS_MISSING $cls"; FAIL=1; fi
+done
+if git diff --cached --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING_FAIL"; FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_FRONTEND_ARCHITECTURE_AUDIT=PASS"

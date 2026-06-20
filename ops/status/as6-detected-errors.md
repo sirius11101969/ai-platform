@@ -373,3 +373,9 @@ Status: REGISTERED
 - FAILURE_CLASSES: MISSION_CONTROL_WORKSPACE_DRIFT, COMMAND_CENTER_LAYOUT_DRIFT, CROSS_PAGE_WORKSPACE_INCONSISTENCY, COMPACT_DENSITY_DRIFT, DEBUG_UI_EXPOSURE_DRIFT, MOBILE_WORKSPACE_DRIFT, STICKY_COCKPIT_LAYOUT_GAP, WORKSPACE_PERFORMANCE_STYLE_GAP.
 - PREVENTION: V86 diagnostic/control validates workspace CSS, import, compact density, responsive behavior, build and enforcement guard.
 - STATUS: registered and controlled.
+
+## V87 Frontend Architecture Audit
+- ROOT_CAUSE: post-V86 improvements require architecture inventory before component-level UI refactoring.
+- FAILURE_CLASSES: FRONTEND_ARCHITECTURE_MAP_MISSING, UI_COMPONENT_INVENTORY_GAP, BLIND_CSS_OVERLAY_DRIFT, UI_REFACTOR_ROADMAP_MISSING, FRONTEND_PAGE_MAP_DRIFT, COMPONENT_REUSE_GAP, UI_LAYOUT_ENGINE_GAP, COMMAND_CENTER_COMPONENT_DRIFT.
+- PREVENTION: V87 diagnostic/control validates architecture map, roadmap, design system, workspace, build and enforcement guard.
+- STATUS: registered and controlled.

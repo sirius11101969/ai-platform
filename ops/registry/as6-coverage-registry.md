@@ -1774,3 +1774,6 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V85 | frontend/src/styles/as6-mission-control.css | Global AS6 Mission Control Design System artifact | ENABLED
 - V86 | ops/bin/as6-control-mission-control-workspace-v86 | Covers workspace CSS, import, compact density, build, health and enforcement guard | ENABLED
 - V86 | frontend/src/styles/as6-mission-workspace.css | AS6 Mission Control Workspace artifact | ENABLED
+- V87 | ops/bin/as6-control-frontend-architecture-audit-v87 | Covers frontend architecture map, roadmap, build, health and enforcement guard | ENABLED
+- V87 | docs/AS6_FRONTEND_ARCHITECTURE_MAP_V87.md | Frontend architecture map artifact | ENABLED
+- V87 | docs/AS6_UI_REFACTOR_ROADMAP_V87.md | UI refactor roadmap artifact | ENABLED

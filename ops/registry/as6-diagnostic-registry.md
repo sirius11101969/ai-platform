@@ -1787,3 +1787,12 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V86 | MOBILE_WORKSPACE_DRIFT | AS6 Mission Control Workspace failure class | ENABLED
 - V86 | STICKY_COCKPIT_LAYOUT_GAP | AS6 Mission Control Workspace failure class | ENABLED
 - V86 | WORKSPACE_PERFORMANCE_STYLE_GAP | AS6 Mission Control Workspace failure class | ENABLED
+- V87 | ops/bin/as6-diagnose-frontend-architecture-audit-v87 | Frontend architecture audit diagnostic | ENABLED
+- V87 | FRONTEND_ARCHITECTURE_MAP_MISSING | Frontend architecture audit failure class | ENABLED
+- V87 | UI_COMPONENT_INVENTORY_GAP | Frontend architecture audit failure class | ENABLED
+- V87 | BLIND_CSS_OVERLAY_DRIFT | Frontend architecture audit failure class | ENABLED
+- V87 | UI_REFACTOR_ROADMAP_MISSING | Frontend architecture audit failure class | ENABLED
+- V87 | FRONTEND_PAGE_MAP_DRIFT | Frontend architecture audit failure class | ENABLED
+- V87 | COMPONENT_REUSE_GAP | Frontend architecture audit failure class | ENABLED
+- V87 | UI_LAYOUT_ENGINE_GAP | Frontend architecture audit failure class | ENABLED
+- V87 | COMMAND_CENTER_COMPONENT_DRIFT | Frontend architecture audit failure class | ENABLED
