@@ -2328,3 +2328,9 @@ Status: APPLIED
 Root cause: frontend dead-code ownership and route/component/CSS usage were not autonomously governed.
 Diagnostic: ops/bin/as6-diagnose-frontend-dead-code-v64
 Note: No code deletion and no UI changes were performed.
+
+## AS6 CSS Dead Selectors Diagnostics V65
+Status: APPLIED
+Root cause: CSS unused selectors and legacy Command Center style drift were not governed by protected selector ownership diagnostics.
+Diagnostic: ops/bin/as6-diagnose-css-dead-selectors-v65
+Note: No CSS deletion and no UI changes were performed.

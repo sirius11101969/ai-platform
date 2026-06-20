@@ -1622,3 +1622,7 @@ Coverage: running nginx asset validation, stale image fallback prevention, route
 ## FRONTEND_DEAD_CODE_V64
 Diagnostic: ops/bin/as6-diagnose-frontend-dead-code-v64
 Coverage: unused pages, unused components, unused CSS selectors, legacy CSS blocks, route split preservation, build validation, production health validation
+
+## CSS_DEAD_SELECTORS_V65
+Diagnostic: ops/bin/as6-diagnose-css-dead-selectors-v65
+Coverage: CSS selector inventory, probable dead selectors, protected selector guard, legacy Command Center CSS blocks, route split preservation, build validation, production health validation

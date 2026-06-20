@@ -1551,3 +1551,8 @@ File: ops/bin/as6-diagnose-route-splitting-running-container-v63-3
 Status: ENABLED
 Scope: Frontend dead-code ownership, unused pages/components/CSS, legacy Command Center CSS diagnostics
 File: ops/bin/as6-diagnose-frontend-dead-code-v64
+
+## as6-diagnose-css-dead-selectors-v65
+Status: ENABLED
+Scope: CSS dead selector ownership, protected selector guard, legacy Command Center CSS drift diagnostics
+File: ops/bin/as6-diagnose-css-dead-selectors-v65

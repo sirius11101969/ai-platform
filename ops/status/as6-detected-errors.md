@@ -162,3 +162,8 @@ Rule: nginx/alpine diagnostics must not rely on GNU find -printf; use BusyBox-sa
 Failure Class: AS6_FAILURE_CLASS_FRONTEND_DEAD_CODE_OWNERSHIP_MISSING
 Diagnostic: ops/bin/as6-diagnose-frontend-dead-code-v64
 Status: REGISTERED
+
+## 2026-06-19 CSS_DEAD_SELECTORS_V65
+Failure Class: AS6_FAILURE_CLASS_UNUSED_CSS_SELECTOR
+Diagnostic: ops/bin/as6-diagnose-css-dead-selectors-v65
+Status: REGISTERED

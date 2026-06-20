@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+OUT_DIR="${1:-runtime/as6-css-dead-selectors-v65}"
+BUILD_LOG="${2:-}"
+ASSET_LIST="${3:-}"
+mkdir -p "$OUT_DIR"
+fail=0
+
+CSS_GLOBAL="frontend/src/styles.css"
+CSS_THEME="frontend/src/theme/as6Theme.css"
+
+check(){ n="$1"; shift; if "$@"; then echo "PASS:$n"; else echo "FAIL:$n"; fail=1; fi; }
+
+check css_global_exists test -f "$CSS_GLOBAL"
+check css_theme_exists test -f "$CSS_THEME"
+check frontend_src_exists test -d frontend/src
+check app_exists test -f frontend/src/App.jsx
+check command_center_exists test -f frontend/src/pages/CommandCenterPage.jsx
+check dead_code_v64_exists test -f ops/bin/as6-diagnose-frontend-dead-code-v64
+check duplicate_top_logo_absent bash -c '! grep -q as6-command-center-logo-image frontend/src/pages/CommandCenterPage.jsx'
+check sidebar_branding_webp grep -q "as6-logo.webp" frontend/src/components/branding/AS6Logo.jsx
+check as6_real_logo_css_contract grep -q "as6-real-logo-image" "$CSS_THEME"
+check quick_action_robot_css_contract grep -q "quick-action-robot-icon" "$CSS_THEME"
+check executive_robot_css_contract grep -q "executive-module-robot-icon" "$CSS_THEME"
+check copilot_css_contract grep -q "copilot" "$CSS_THEME"
+
+global_bytes="$(wc -c < "$CSS_GLOBAL")"
+theme_bytes="$(wc -c < "$CSS_THEME")"
+echo "CSS_GLOBAL_BYTES=$global_bytes"
+echo "CSS_THEME_BYTES=$theme_bytes"
+
+if test "$global_bytes" -lt 150000; then echo "PASS:css_global_source_budget"; else echo "FAIL:css_global_source_budget"; fail=1; fi
+if test "$theme_bytes" -lt 75000; then echo "PASS:css_theme_source_budget"; else echo "FAIL:css_theme_source_budget"; fail=1; fi
+
+grep -RhoE '\.[A-Za-z_-][A-Za-z0-9_-]+' "$CSS_GLOBAL" "$CSS_THEME" | sed 's/^\.//' | sort -u > "$OUT_DIR/css-selectors.all"
+
+grep -RohE 'className=("|\047|`)[^"\047`]+("|\047|`)' frontend/src 2>/dev/null \
+  | sed -E 's/^className=("|\047|`)//; s/("|\047|`)$//' \
+  | tr ' ' '\n' \
+  | sed '/^$/d' \
+  | sed 's/[^A-Za-z0-9_-].*$//' \
+  | grep -E '^[A-Za-z_-][A-Za-z0-9_-]*$' \
+  | sort -u > "$OUT_DIR/jsx-class-tokens.static" || true
+
+grep -RohE '"[A-Za-z_-][A-Za-z0-9_-]{2,}"|'\''[A-Za-z_-][A-Za-z0-9_-]{2,}'\''' frontend/src 2>/dev/null \
+  | tr -d '"' \
+  | tr -d "'" \
+  | sort -u > "$OUT_DIR/js-string-tokens" || true
+
+cat "$OUT_DIR/jsx-class-tokens.static" "$OUT_DIR/js-string-tokens" | sort -u > "$OUT_DIR/source-tokens.all"
+
+comm -12 "$OUT_DIR/css-selectors.all" "$OUT_DIR/source-tokens.all" > "$OUT_DIR/css-selectors.used.probable"
+comm -23 "$OUT_DIR/css-selectors.all" "$OUT_DIR/source-tokens.all" > "$OUT_DIR/css-selectors.dead.probable"
+
+selector_count="$(wc -l < "$OUT_DIR/css-selectors.all" | tr -d ' ')"
+used_count="$(wc -l < "$OUT_DIR/css-selectors.used.probable" | tr -d ' ')"
+dead_count="$(wc -l < "$OUT_DIR/css-selectors.dead.probable" | tr -d ' ')"
+
+echo "CSS_SELECTOR_COUNT=$selector_count"
+echo "CSS_USED_SELECTOR_PROBABLE_COUNT=$used_count"
+echo "CSS_DEAD_SELECTOR_PROBABLE_COUNT=$dead_count"
+
+grep -n "AS6 Command Center .*V[0-9]\|Command Center .*V[0-9]\|Pixel Perfect\|Pixel Polish\|Final Pixel\|Visual Fix\|Screenshot Match" "$CSS_THEME" "$CSS_GLOBAL" 2>/dev/null | tee "$OUT_DIR/legacy-command-center-css-blocks.out" || true
+legacy_count="$(wc -l < "$OUT_DIR/legacy-command-center-css-blocks.out" | tr -d ' ')"
+echo "LEGACY_COMMAND_CENTER_CSS_BLOCK_COUNT=$legacy_count"
+
+head -80 "$OUT_DIR/css-selectors.dead.probable" | tee "$OUT_DIR/top80-css-dead-selectors.probable.out"
+
+for protected in as6-real-logo-image quick-action-robot-icon executive-module-robot-icon copilot-hero as6-copilot-inline-logo copilot-action-link command-center-page command-hero command-right-rail; do
+  if grep -qx "$protected" "$OUT_DIR/css-selectors.dead.probable"; then
+    echo "FAIL:protected_selector_marked_dead:$protected"
+    fail=1
+  else
+    echo "PASS:protected_selector_not_dead:$protected"
+  fi
+done
+
+if test "$dead_count" -lt 250; then echo "PASS:dead_selector_inventory_budget"; else echo "FAIL:dead_selector_inventory_budget"; fail=1; fi
+if test "$legacy_count" -lt 40; then echo "PASS:legacy_command_center_css_budget"; else echo "FAIL:legacy_command_center_css_budget"; fail=1; fi
+
+find frontend/src -type f \( -name "*.jsx" -o -name "*.js" -o -name "*.css" \) -printf "%s %p\n" | sort -nr | head -30 | tee "$OUT_DIR/top30-source-files.out"
+
+if test -n "$BUILD_LOG" && test -f "$BUILD_LOG"; then
+  if grep -q 'css-syntax-error\|Expected identifier but found\|Unexpected "}"\|lazy is not defined\|Suspense is not defined' "$BUILD_LOG"; then
+    echo "FAIL:frontend_build_clean"
+    fail=1
+  else
+    echo "PASS:frontend_build_clean"
+  fi
+fi
+
+if test -n "$ASSET_LIST" && test -f "$ASSET_LIST"; then
+  check crm_chunk_present grep -q "crm-page-" "$ASSET_LIST"
+  check dashboard_chunk_present grep -q "dashboard-page-" "$ASSET_LIST"
+  check command_center_chunk_present grep -q "command-center-" "$ASSET_LIST"
+fi
+
+exit "$fail"
