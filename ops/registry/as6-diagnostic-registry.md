@@ -1556,3 +1556,8 @@ File: ops/bin/as6-diagnose-frontend-dead-code-v64
 Status: ENABLED
 Scope: CSS dead selector ownership, protected selector guard, legacy Command Center CSS drift diagnostics
 File: ops/bin/as6-diagnose-css-dead-selectors-v65
+
+## as6-diagnose-css-consolidation-v66
+Status: ENABLED
+Scope: Safe CSS consolidation gate and protected selector guard
+File: ops/bin/as6-diagnose-css-consolidation-v66

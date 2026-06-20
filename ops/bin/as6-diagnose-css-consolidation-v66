@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+OUT_DIR="${1:-runtime/as6-v66-safe}"
+BUILD_LOG="${2:-}"
+ASSET_LIST="${3:-}"
+mkdir -p "$OUT_DIR"
+
+fail=0
+check(){
+  name="$1"
+  shift
+  if "$@"; then
+    echo "PASS:$name"
+  else
+    echo "FAIL:$name"
+    fail=1
+  fi
+}
+
+CSS_GLOBAL="frontend/src/styles.css"
+CSS_THEME="frontend/src/theme/as6Theme.css"
+
+check css_global_exists test -f "$CSS_GLOBAL"
+check css_theme_exists test -f "$CSS_THEME"
+check v65_diagnostic_exists test -f ops/bin/as6-diagnose-css-dead-selectors-v65
+check duplicate_top_logo_absent bash -c '! grep -q as6-command-center-logo-image frontend/src/pages/CommandCenterPage.jsx'
+check sidebar_branding_webp grep -q "as6-logo.webp" frontend/src/components/branding/AS6Logo.jsx
+
+ops/bin/as6-diagnose-css-dead-selectors-v65 "$OUT_DIR" "$BUILD_LOG" "$ASSET_LIST"
+
+grep -RhoE '\.[A-Za-z_-][A-Za-z0-9_-]+' "$CSS_GLOBAL" "$CSS_THEME" \
+  | sed 's/^\.//' \
+  | sort -u > "$OUT_DIR/css-selectors.all"
+
+grep -RhoE 'className="[^"]+"' frontend/src 2>/dev/null \
+  | sed 's/^className="//; s/"$//' \
+  | tr ' ' '\n' \
+  | grep -E '^[A-Za-z_-][A-Za-z0-9_-]*$' \
+  | sort -u > "$OUT_DIR/css-selectors.active.static" || true
+
+comm -23 "$OUT_DIR/css-selectors.all" "$OUT_DIR/css-selectors.active.static" > "$OUT_DIR/css-selectors.dead.candidates" || true
+
+grep -n "AS6 Command Center .*V[0-9]\|Command Center .*V[0-9]\|Pixel Perfect\|Pixel Polish\|Final Pixel\|Visual Fix\|Screenshot Match" "$CSS_THEME" "$CSS_GLOBAL" \
+  > "$OUT_DIR/css-legacy-command-center.map" || true
+
+cat > "$OUT_DIR/css-selectors.protected" <<'AS6_PROTECTED'
+as6-real-logo-image
+quick-action-robot-icon
+executive-module-robot-icon
+copilot-hero
+as6-copilot-inline-logo
+copilot-action-link
+command-center-page
+command-hero
+command-right-rail
+AS6_PROTECTED
+
+dead_count="$(wc -l < "$OUT_DIR/css-selectors.dead.candidates" | tr -d ' ')"
+legacy_count="$(wc -l < "$OUT_DIR/css-legacy-command-center.map" | tr -d ' ')"
+protected_dead_count="$(comm -12 <(sort "$OUT_DIR/css-selectors.dead.candidates") <(sort "$OUT_DIR/css-selectors.protected") | wc -l | tr -d ' ')"
+
+echo "CSS_DEAD_CANDIDATE_COUNT=$dead_count"
+echo "CSS_LEGACY_COMMAND_CENTER_BLOCK_COUNT=$legacy_count"
+echo "CSS_PROTECTED_DEAD_FALSE_POSITIVE_COUNT=$protected_dead_count"
+
+head -80 "$OUT_DIR/css-selectors.dead.candidates" | tee "$OUT_DIR/top80-css-consolidation-candidates.out"
+
+if test "$protected_dead_count" = "0"; then
+  echo "PASS:protected_selector_false_positive_guard"
+else
+  echo "FAIL:protected_selector_false_positive_guard"
+  fail=1
+fi
+
+if test "$dead_count" -lt 250; then
+  echo "PASS:dead_candidate_budget"
+else
+  echo "FAIL:dead_candidate_budget"
+  fail=1
+fi
+
+if test "$legacy_count" -lt 40; then
+  echo "PASS:legacy_block_budget"
+else
+  echo "FAIL:legacy_block_budget"
+  fail=1
+fi
+
+echo "PASS:css_consolidation_plan_generated"
+exit "$fail"

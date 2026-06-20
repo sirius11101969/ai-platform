@@ -167,3 +167,8 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_UNUSED_CSS_SELECTOR
 Diagnostic: ops/bin/as6-diagnose-css-dead-selectors-v65
 Status: REGISTERED
+
+## 2026-06-19 CSS_CONSOLIDATION_V66
+Failure Class: AS6_FAILURE_CLASS_V66_SCRIPT_QUOTING_REGRESSION
+Diagnostic: ops/bin/as6-diagnose-css-consolidation-v66
+Status: REGISTERED

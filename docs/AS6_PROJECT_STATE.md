@@ -2334,3 +2334,9 @@ Status: APPLIED
 Root cause: CSS unused selectors and legacy Command Center style drift were not governed by protected selector ownership diagnostics.
 Diagnostic: ops/bin/as6-diagnose-css-dead-selectors-v65
 Note: No CSS deletion and no UI changes were performed.
+
+## AS6 CSS Consolidation V66
+Status: APPLIED
+Root cause: CSS consolidation requires safe ownership gate; previous generated script failed due quoting regression.
+Diagnostic: ops/bin/as6-diagnose-css-consolidation-v66
+Note: No CSS deletion and no UI changes were performed.

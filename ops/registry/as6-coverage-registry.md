@@ -1626,3 +1626,7 @@ Coverage: unused pages, unused components, unused CSS selectors, legacy CSS bloc
 ## CSS_DEAD_SELECTORS_V65
 Diagnostic: ops/bin/as6-diagnose-css-dead-selectors-v65
 Coverage: CSS selector inventory, probable dead selectors, protected selector guard, legacy Command Center CSS blocks, route split preservation, build validation, production health validation
+
+## CSS_CONSOLIDATION_V66
+Diagnostic: ops/bin/as6-diagnose-css-consolidation-v66
+Coverage: CSS consolidation plan, dead candidates, protected selector guard, legacy CSS map, build validation, route chunk validation, production health validation
