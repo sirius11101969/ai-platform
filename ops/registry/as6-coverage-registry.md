@@ -1690,3 +1690,7 @@ Coverage: render ownership prop, visible markup preservation, no-wrapper contrac
 ## REPAIR_V76_TERMINAL_PASTE_INTEGRITY
 Diagnostic: ops/bin/as6-diagnose-repair-v76-terminal-paste-integrity
 Coverage: markdown fence paste corruption, partial push verification, render-owner integrity, untracked artifact quarantine, build validation, route chunks, production health validation
+
+## CRM_ANALYTICS_INTERNAL_PANEL_OWNER_V77
+Diagnostic: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
+Coverage: internal analytics component ownership, render prop removal, DOM class preservation, rollback compatibility, CRM chunk, Command Center chunk, Dashboard chunk, AI Workers chunk, build validation, production health validation

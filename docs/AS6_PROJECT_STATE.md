@@ -2430,3 +2430,9 @@ Status: APPLIED
 Root cause: V76 command was pasted with markdown fence metadata, causing terminal command corruption before partial build/push.
 Diagnostic: ops/bin/as6-diagnose-repair-v76-terminal-paste-integrity
 Note: V76 render-owner shape is verified/repaired and terminal paste corruption is registered as a prevention class.
+
+## AS6 CRM Analytics Internal Panel Owner V77
+Status: APPLIED
+Root cause: V76 render-owner prop existed, but AiRevenueIntelligencePanel JSX still lived in CRMPage.
+Diagnostic: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
+Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CRMPage legacy component remains only for rollback compatibility.

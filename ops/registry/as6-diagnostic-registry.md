@@ -1636,3 +1636,8 @@ File: ops/bin/as6-diagnose-crm-analytics-render-owner-v76
 Status: ENABLED
 Scope: V76 terminal paste corruption repair, render-owner verification, no-runtime-staging, route chunk validation
 File: ops/bin/as6-diagnose-repair-v76-terminal-paste-integrity
+
+## as6-diagnose-crm-analytics-internal-panel-owner-v77
+Status: ENABLED
+Scope: CRM Analytics internal panel owner migration, DOM class preservation, rollback copy guard, route chunk validation
+File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77

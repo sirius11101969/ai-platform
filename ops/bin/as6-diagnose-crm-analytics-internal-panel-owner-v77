@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+set -euo pipefail
+OUT_DIR="${1:-runtime/as6-crm-analytics-internal-panel-owner-v77}"
+BUILD_LOG="${2:-}"
+ASSET_LIST="${3:-}"
+mkdir -p "$OUT_DIR"
+fail=0
+check(){ name="$1"; shift; if "$@"; then echo "PASS:$name"; else echo "FAIL:$name"; fail=1; fi; }
+CRM="frontend/src/pages/CRMPage.jsx"
+PANEL="frontend/src/pages/crm/CRMAnalyticsPanel.jsx"
+check crm_page_exists test -f "$CRM"
+check analytics_panel_exists test -f "$PANEL"
+check v76_repair_exists test -f ops/bin/as6-diagnose-repair-v76-terminal-paste-integrity
+check analytics_panel_imported grep -q "CRMAnalyticsPanel from \"./crm/CRMAnalyticsPanel.jsx\"" "$CRM"
+check analytics_panel_internal_owner_version grep -q "V77_INTERNAL_PANEL_OWNER" "$PANEL"
+check analytics_panel_imports_revenue_utils grep -q "../../utils/revenueIntelligence" "$PANEL"
+check analytics_panel_defines_revenue_component grep -q "function AiRevenueIntelligencePanel" "$PANEL"
+check analytics_panel_defines_lead_card grep -q "function LeadRevenueIntelligenceCard" "$PANEL"
+check analytics_panel_renders_internal_revenue_panel grep -q "<AiRevenueIntelligencePanel" "$PANEL"
+check analytics_panel_uses_get_revenue_cards grep -q "getRevenueCards" "$PANEL"
+check analytics_panel_uses_get_forecast_widget grep -q "getForecastWidget" "$PANEL"
+check crm_no_render_revenue_prop bash -c "! grep -q \"renderRevenuePanel={() =>\" frontend/src/pages/CRMPage.jsx"
+check crm_analytics_panel_self_closing grep -q "<CRMAnalyticsPanel" "$CRM"
+check crm_no_closing_bridge_tag bash -c "! grep -q \"</CRMAnalyticsPanel>\" frontend/src/pages/CRMPage.jsx"
+check crm_legacy_revenue_component_kept_for_rollback grep -q "function AiRevenueIntelligencePanel" "$CRM"
+check crm_legacy_lead_card_kept_for_rollback grep -q "function LeadRevenueIntelligenceCard" "$CRM"
+check analytics_prop_revenue grep -q "revenueIntelligence={revenueIntelligence}" "$CRM"
+check analytics_prop_busy grep -q "revenueBrainBusy={revenueBrainBusy}" "$CRM"
+check analytics_prop_toast grep -q "revenueToast={revenueToast}" "$CRM"
+check analytics_prop_visible_leads grep -q "visibleLeads={visibleLeads}" "$CRM"
+check analytics_prop_sort grep -q "leadScoreSort={leadScoreSort}" "$CRM"
+check analytics_prop_filter grep -q "leadScoreFilter={leadScoreFilter}" "$CRM"
+check analytics_prop_run_handler grep -q "onRunRevenueBrain={handleRunRevenueBrain}" "$CRM"
+check analytics_panel_preserves_root_class grep -q "ai-revenue-intelligence-panel" "$PANEL"
+check analytics_panel_preserves_card_class grep -q "ai-revenue-card" "$PANEL"
+check analytics_panel_preserves_lead_card_class grep -q "ai-lead-score-card" "$PANEL"
+check no_global_fragment_insertion bash -c "! grep -n \"^    <>$\" frontend/src/pages/CRMPage.jsx"
+check no_runtime_staged bash -c "! git diff --cached --name-only | grep -q ^runtime/"
+check crm_lazy_import grep -q "lazy(() => import(\"./pages/CRMPage\"))" frontend/src/App.jsx
+check vite_manual_chunks grep -q "manualChunks" frontend/vite.config.js
+check duplicate_top_logo_absent bash -c "! grep -q as6-command-center-logo-image frontend/src/pages/CommandCenterPage.jsx"
+crm_bytes="$(wc -c < "$CRM")"
+panel_bytes="$(wc -c < "$PANEL")"
+echo "CRM_PAGE_BYTES=$crm_bytes"
+echo "CRM_ANALYTICS_PANEL_BYTES=$panel_bytes"
+echo "CRM_ANALYTICS_EXTRACTION_STAGE=INTERNAL_PANEL_OWNER_V77_WITH_LEGACY_ROLLBACK_COPY"
+if test "$crm_bytes" -lt 128500; then echo "PASS:crm_page_internal_owner_budget"; else echo "FAIL:crm_page_internal_owner_budget"; fail=1; fi
+if test "$panel_bytes" -lt 7000; then echo "PASS:analytics_panel_internal_owner_budget"; else echo "FAIL:analytics_panel_internal_owner_budget"; fail=1; fi
+echo "PASS:visible_dom_class_preservation_contract"
+if test -n "$BUILD_LOG" && test -f "$BUILD_LOG"; then if grep -q "css-syntax-error\|Expected identifier but found\|Unexpected \"}\"\|Unexpected \"const\"\|lazy is not defined\|Suspense is not defined\|Expected corresponding JSX closing tag\|is not defined" "$BUILD_LOG"; then echo "FAIL:frontend_build_clean"; fail=1; else echo "PASS:frontend_build_clean"; fi; fi
+if test -n "$ASSET_LIST" && test -f "$ASSET_LIST"; then check crm_chunk_present grep -q "crm-page-" "$ASSET_LIST"; check command_center_chunk_present grep -q "command-center-" "$ASSET_LIST"; check dashboard_chunk_present grep -q "dashboard-page-" "$ASSET_LIST"; check ai_workers_chunk_present grep -q "ai-workers-page-" "$ASSET_LIST"; fi
+echo "PASS:crm_analytics_internal_panel_owner_guard"
+exit "$fail"
