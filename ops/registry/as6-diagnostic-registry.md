@@ -1839,3 +1839,12 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V92 | DIAGNOSTIC_TIMELINE_GAP | Autonomous Operations Timeline failure class | ENABLED
 - V92 | INCIDENT_TIMELINE_GAP | Autonomous Operations Timeline failure class | ENABLED
 - V92 | TIMELINE_SEVERITY_DRIFT | Autonomous Operations Timeline failure class | ENABLED
+- V93 | ops/bin/as6-diagnose-executive-command-dashboard-v93 | Executive Command Dashboard diagnostic | ENABLED
+- V93 | EXECUTIVE_COMMAND_DASHBOARD_MISSING | Executive Command Dashboard failure class | ENABLED
+- V93 | EXECUTIVE_KPI_STRIP_GAP | Executive Command Dashboard failure class | ENABLED
+- V93 | REVENUE_PULSE_GAP | Executive Command Dashboard failure class | ENABLED
+- V93 | CRM_PULSE_GAP | Executive Command Dashboard failure class | ENABLED
+- V93 | WORKFORCE_PULSE_GAP | Executive Command Dashboard failure class | ENABLED
+- V93 | GOVERNANCE_PULSE_GAP | Executive Command Dashboard failure class | ENABLED
+- V93 | DIAGNOSTIC_PULSE_GAP | Executive Command Dashboard failure class | ENABLED
+- V93 | EXECUTIVE_ALERT_VISIBILITY_GAP | Executive Command Dashboard failure class | ENABLED

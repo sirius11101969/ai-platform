@@ -1,3 +1,4 @@
+import "./components/AS6ExecutiveCommandDashboard.jsx";
 import "./components/AS6AutonomousOperationsTimeline.jsx";
 import "./components/AS6GlobalEventStream.jsx";
 import "./components/AS6AICopilotRail.jsx";

@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+for f in frontend/src/components/AS6ExecutiveCommandDashboard.jsx frontend/src/styles/as6-executive-command-dashboard.css; do
+  if [ ! -f "$f" ]; then echo "AS6_EXEC_DASHBOARD_FILE_MISSING $f"; FAIL=1; fi
+done
+if ! grep -Rqs "AS6ExecutiveCommandDashboard.jsx" frontend/src/App.jsx; then echo "AS6_EXEC_DASHBOARD_IMPORT_MISSING"; FAIL=1; fi
+for item in "as6-executive-command-dashboard-root" "Executive Layer" "Control Tower" "Revenue" "CRM" "Workforce" "Governance" "Diagnostics" "Incidents" "Autonomy"; do
+  if ! grep -Rqs "$item" frontend/src/components/AS6ExecutiveCommandDashboard.jsx frontend/src/styles/as6-executive-command-dashboard.css ops/governance docs ops/status ops/registry; then echo "AS6_EXEC_DASHBOARD_ITEM_MISSING $item"; FAIL=1; fi
+done
+for cls in EXECUTIVE_COMMAND_DASHBOARD_MISSING EXECUTIVE_KPI_STRIP_GAP REVENUE_PULSE_GAP CRM_PULSE_GAP WORKFORCE_PULSE_GAP GOVERNANCE_PULSE_GAP DIAGNOSTIC_PULSE_GAP EXECUTIVE_ALERT_VISIBILITY_GAP; do
+  if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then echo "AS6_EXEC_DASHBOARD_CLASS_MISSING $cls"; FAIL=1; fi
+done
+if git diff --cached --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING_FAIL"; FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_EXECUTIVE_COMMAND_DASHBOARD=PASS"

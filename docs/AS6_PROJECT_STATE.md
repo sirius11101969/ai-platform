@@ -2691,3 +2691,19 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Project readiness after V92: 100%.
 - UX readiness after V92: 100%.
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=EXECUTIVE_COMMAND_DASHBOARD_V93
+- Base commit: 2774cbc.
+- Project readiness before V93: 100%.
+- UX readiness before V93: 100%.
+- Mission Control maturity before V93: 100%.
+- Purpose: add executive command dashboard with KPI pulses, alerts and platform control tower view.
+- Added diagnostic: ops/bin/as6-diagnose-executive-command-dashboard-v93
+- Added control: ops/bin/as6-control-executive-command-dashboard-v93
+- Added component: frontend/src/components/AS6ExecutiveCommandDashboard.jsx
+- Added CSS artifact: frontend/src/styles/as6-executive-command-dashboard.css
+- Added failure classes: EXECUTIVE_COMMAND_DASHBOARD_MISSING, EXECUTIVE_KPI_STRIP_GAP, REVENUE_PULSE_GAP, CRM_PULSE_GAP, WORKFORCE_PULSE_GAP, GOVERNANCE_PULSE_GAP, DIAGNOSTIC_PULSE_GAP, EXECUTIVE_ALERT_VISIBILITY_GAP.
+- Project readiness after V93: 100%.
+- UX readiness after V93: 100%.
+- Executive Control Tower after V93: 95%.
+- Production health checked with raw URL: https://www.as6.ru/api/health

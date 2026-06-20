@@ -1794,3 +1794,6 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V92 | ops/bin/as6-control-autonomous-operations-timeline-v92 | Covers operations timeline, source coverage, severity, build, health and enforcement guard | ENABLED
 - V92 | frontend/src/components/AS6AutonomousOperationsTimeline.jsx | Autonomous Operations Timeline component artifact | ENABLED
 - V92 | frontend/src/styles/as6-autonomous-operations-timeline.css | Autonomous Operations Timeline CSS artifact | ENABLED
+- V93 | ops/bin/as6-control-executive-command-dashboard-v93 | Covers executive dashboard, KPI pulses, alerts, build, health and enforcement guard | ENABLED
+- V93 | frontend/src/components/AS6ExecutiveCommandDashboard.jsx | Executive Command Dashboard component artifact | ENABLED
+- V93 | frontend/src/styles/as6-executive-command-dashboard.css | Executive Command Dashboard CSS artifact | ENABLED

@@ -1,0 +1,131 @@
+/* AS6 Executive Command Dashboard V93 */
+#as6-executive-command-dashboard-root {
+  position: relative;
+  z-index: 2147482370;
+}
+
+.as6-executive-command-dashboard {
+  position: fixed;
+  left: 18px;
+  top: calc(var(--as6-healthbar-height, 54px) + 18px);
+  z-index: 2147482370;
+  color: var(--as6-text, #f6f9ff);
+}
+
+.as6-exec-dashboard-tab {
+  min-height: 42px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 61, 143, .32);
+  border-radius: 16px;
+  color: #ffe7f3;
+  background: linear-gradient(135deg, rgba(255,61,143,.22), rgba(37,228,255,.12));
+  box-shadow: 0 16px 48px rgba(255,61,143,.16);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.as6-exec-dashboard-panel {
+  width: min(720px, calc(100vw - 36px));
+  margin-top: 10px;
+  border: 1px solid rgba(120,190,255,.24);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(255,61,143,.18), transparent 22rem),
+    radial-gradient(circle at 100% 100%, rgba(37,228,255,.16), transparent 22rem),
+    linear-gradient(145deg, rgba(18,28,54,.94), rgba(5,11,25,.92));
+  box-shadow: 0 30px 100px rgba(0,0,0,.50);
+  backdrop-filter: blur(18px);
+  overflow: hidden;
+}
+
+.as6-exec-dashboard-panel header {
+  display: grid;
+  gap: 5px;
+  padding: 16px 18px;
+  border-bottom: 1px solid rgba(120,190,255,.14);
+}
+
+.as6-exec-dashboard-panel header span {
+  color: #bdf7ff;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.as6-exec-dashboard-panel header strong {
+  font-size: 24px;
+  letter-spacing: -.05em;
+}
+
+.as6-exec-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  padding: 12px;
+}
+
+.as6-exec-kpi-grid article {
+  display: grid;
+  gap: 5px;
+  min-height: 104px;
+  padding: 12px;
+  border: 1px solid rgba(120,190,255,.15);
+  border-radius: 18px;
+  background: rgba(255,255,255,.045);
+}
+
+.as6-exec-kpi-grid small {
+  color: var(--as6-muted, #9fb2d5);
+  font-weight: 800;
+}
+
+.as6-exec-kpi-grid strong {
+  color: var(--as6-green, #32f5a9);
+  font-size: 21px;
+  letter-spacing: -.035em;
+}
+
+.as6-exec-kpi-grid span {
+  color: var(--as6-muted, #9fb2d5);
+  font-size: 12px;
+}
+
+.as6-exec-alert-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 12px 12px;
+  padding: 12px;
+  border: 1px solid rgba(37,228,255,.20);
+  border-radius: 18px;
+  background: rgba(37,228,255,.07);
+}
+
+.as6-exec-alert-strip b {
+  color: #bdf7ff;
+}
+
+.as6-exec-alert-strip span {
+  color: var(--as6-muted, #9fb2d5);
+}
+
+@media (max-width: 900px) {
+  .as6-executive-command-dashboard {
+    left: 12px;
+    top: calc(var(--as6-healthbar-height, 62px) + 10px);
+  }
+  .as6-exec-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .as6-exec-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+  .as6-exec-alert-strip {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
