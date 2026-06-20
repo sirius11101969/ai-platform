@@ -1865,3 +1865,12 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V95 | COPILOT_STYLE_DRIFT | Unified Mission Control UI failure class | ENABLED
 - V95 | SIDEBAR_STYLE_DRIFT | Unified Mission Control UI failure class | ENABLED
 - V95 | TOPBAR_STYLE_DRIFT | Unified Mission Control UI failure class | ENABLED
+- V96 | ops/bin/as6-diagnose-full-mission-control-theme-rollout-v96 | Full Mission Control Theme Rollout diagnostic | ENABLED
+- V96 | PAGE_THEME_DRIFT | Full Mission Control Theme Rollout failure class | ENABLED
+- V96 | LEGACY_LAYOUT_DRIFT | Full Mission Control Theme Rollout failure class | ENABLED
+- V96 | LEGACY_CARD_DRIFT | Full Mission Control Theme Rollout failure class | ENABLED
+- V96 | LEGACY_TABLE_DRIFT | Full Mission Control Theme Rollout failure class | ENABLED
+- V96 | LEGACY_FORM_DRIFT | Full Mission Control Theme Rollout failure class | ENABLED
+- V96 | PAGE_BRAND_INCONSISTENCY | Full Mission Control Theme Rollout failure class | ENABLED
+- V96 | GLOBAL_THEME_IMPORT_MISSING | Full Mission Control Theme Rollout failure class | ENABLED
+- V96 | COMMAND_CENTER_BRAND_ROLLOUT_GAP | Full Mission Control Theme Rollout failure class | ENABLED

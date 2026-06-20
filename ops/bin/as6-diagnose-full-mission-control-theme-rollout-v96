@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+CSS="frontend/src/styles/as6-full-mission-control-theme-rollout.css"
+if [ ! -f "$CSS" ]; then echo "AS6_THEME_ROLLOUT_FILE_MISSING $CSS"; FAIL=1; fi
+if ! grep -Rqs "as6-full-mission-control-theme-rollout.css" frontend/src/App.jsx; then echo "AS6_THEME_ROLLOUT_IMPORT_MISSING"; FAIL=1; fi
+for item in "dashboard-page" "crm-page" "revenue-page" "ai-workers-page" "approval-page" "execution-page" "CARD_SYSTEM_DRIFT" "PAGE_THEME_DRIFT"; do
+  if ! grep -Rqs "$item" "$CSS" ops/governance docs ops/status ops/registry; then echo "AS6_THEME_ROLLOUT_ITEM_MISSING $item"; FAIL=1; fi
+done
+for cls in PAGE_THEME_DRIFT LEGACY_LAYOUT_DRIFT LEGACY_CARD_DRIFT LEGACY_TABLE_DRIFT LEGACY_FORM_DRIFT PAGE_BRAND_INCONSISTENCY GLOBAL_THEME_IMPORT_MISSING COMMAND_CENTER_BRAND_ROLLOUT_GAP; do
+  if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then echo "AS6_THEME_ROLLOUT_CLASS_MISSING $cls"; FAIL=1; fi
+done
+if git diff --cached --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING_FAIL"; FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_FULL_MISSION_CONTROL_THEME_ROLLOUT=PASS"

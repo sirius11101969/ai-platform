@@ -1803,3 +1803,5 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V95 | ops/bin/as6-control-unified-mission-control-ui-system-v95 | Covers unified UI system, brand tokens, build, health and enforcement guard | ENABLED
 - V95 | frontend/src/components/AS6MissionControlUI.jsx | AS6 Mission Control UI primitive component artifact | ENABLED
 - V95 | frontend/src/styles/as6-unified-mission-control-ui.css | AS6 Unified Mission Control UI CSS artifact | ENABLED
+- V96 | ops/bin/as6-control-full-mission-control-theme-rollout-v96 | Covers full theme rollout, page families, build, health and enforcement guard | ENABLED
+- V96 | frontend/src/styles/as6-full-mission-control-theme-rollout.css | Full Mission Control Theme Rollout CSS artifact | ENABLED

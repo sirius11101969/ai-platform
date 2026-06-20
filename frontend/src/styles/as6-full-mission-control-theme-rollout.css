@@ -1,0 +1,117 @@
+/* AS6 Full Mission Control Theme Rollout V96 */
+:root {
+  --as6-rollout-surface: rgba(8, 18, 38, .84);
+  --as6-rollout-surface-strong: rgba(12, 24, 50, .94);
+  --as6-rollout-line: rgba(120, 190, 255, .18);
+  --as6-rollout-glow: 0 24px 80px rgba(0,0,0,.32), 0 0 36px rgba(37,228,255,.08);
+}
+
+body {
+  background:
+    radial-gradient(circle at 14% 4%, rgba(37,228,255,.14), transparent 30rem),
+    radial-gradient(circle at 86% 12%, rgba(139,92,246,.14), transparent 32rem),
+    radial-gradient(circle at 50% 110%, rgba(255,61,143,.08), transparent 34rem),
+    #020716 !important;
+}
+
+.dashboard-page, .crm-page, .revenue-page, .ai-workers-page, .ai-workforce-page, .approval-page, .execution-page, .executive-page, .services-page, .pipeline-page, .analytics-page, .command-center, main[class*="page"], div[class*="Page"], div[class*="Dashboard"], div[class*="Center"] {
+  color: var(--as6-brand-text, #f6f9ff);
+}
+
+.dashboard-page > *, .crm-page > *, .revenue-page > *, .ai-workers-page > *, .ai-workforce-page > *, .approval-page > *, .execution-page > *, .executive-page > *, .pipeline-page > *, .analytics-page > * {
+  border-color: var(--as6-rollout-line);
+}
+
+.page-header, .dashboard-header, .crm-header, .revenue-header, .workers-header, .approval-header, .execution-header, .executive-header, header[class*="Header"] {
+  border: 1px solid var(--as6-rollout-line) !important;
+  border-radius: 30px !important;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(37,228,255,.16), transparent 22rem),
+    radial-gradient(circle at 100% 100%, rgba(139,92,246,.14), transparent 24rem),
+    var(--as6-rollout-surface) !important;
+  box-shadow: var(--as6-rollout-glow);
+}
+
+.card, .panel, .widget, .tile, .metric, .metric-card, .kpi-card, .dashboard-card, .crm-card, .revenue-card, .worker-card, .approval-card, .execution-card, .analytics-card, [class*="Card"], [class*="Panel"], [class*="Widget"], [class*="Tile"] {
+  border: 1px solid var(--as6-rollout-line) !important;
+  border-radius: 24px !important;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(37,228,255,.10), transparent 18rem),
+    radial-gradient(circle at 100% 100%, rgba(255,61,143,.08), transparent 18rem),
+    var(--as6-rollout-surface) !important;
+  box-shadow: var(--as6-rollout-glow);
+  backdrop-filter: blur(16px);
+}
+
+.card:hover, .panel:hover, .widget:hover, .tile:hover, .metric-card:hover, .kpi-card:hover, [class*="Card"]:hover, [class*="Panel"]:hover {
+  border-color: rgba(37,228,255,.34) !important;
+}
+
+h1, h2, h3, .page-title, .section-title, [class*="Title"], [class*="title"] {
+  color: var(--as6-brand-text, #f6f9ff);
+  letter-spacing: -.045em;
+}
+
+.label, .caption, .muted, small, [class*="Label"], [class*="Muted"] {
+  color: var(--as6-brand-muted, #9fb2d5);
+}
+
+.badge, .pill, .status, .chip, [class*="Badge"], [class*="Pill"], [class*="Status"], [class*="Chip"] {
+  border: 1px solid rgba(37,228,255,.26) !important;
+  border-radius: 999px !important;
+  color: #bdf7ff !important;
+  background: rgba(37,228,255,.08) !important;
+}
+
+button, .button, .btn, [role="button"] {
+  border-radius: 16px;
+}
+
+button:not(.as6-command-palette-trigger):not(.as6-global-event-stream-tab):not(.as6-ai-copilot-rail-tab):not(.as6-ops-timeline-tab):not(.as6-exec-dashboard-tab):not(.as6-exec-tower-tab), .button, .btn {
+  border: 1px solid rgba(120,190,255,.22);
+}
+
+table, .table, .data-table, .data-grid, [class*="Table"], [class*="Grid"] {
+  border: 1px solid var(--as6-rollout-line) !important;
+  border-radius: 22px !important;
+  background: rgba(255,255,255,.035) !important;
+  overflow: hidden;
+}
+
+th, thead, .table-header, [class*="TableHeader"] {
+  color: #bdf7ff !important;
+  background: rgba(37,228,255,.07) !important;
+}
+
+td, tr, .table-row, [class*="TableRow"] {
+  border-color: rgba(120,190,255,.10) !important;
+}
+
+input, textarea, select, .input, .select, .textarea, [class*="Input"], [class*="Select"] {
+  border: 1px solid rgba(120,190,255,.20) !important;
+  border-radius: 16px !important;
+  color: var(--as6-brand-text, #f6f9ff) !important;
+  background: rgba(2,8,20,.64) !important;
+}
+
+.chart, .graph, .sparkline, .analytics-chart, [class*="Chart"], [class*="Graph"], svg, canvas {
+  border-radius: 18px;
+  filter: drop-shadow(0 10px 24px rgba(37,228,255,.10));
+}
+
+.sidebar, .side-nav, .left-nav, aside, nav[class*="Sidebar"], div[class*="Sidebar"] {
+  border-right: 1px solid rgba(120,190,255,.16) !important;
+  background: linear-gradient(180deg, rgba(8,14,32,.96), rgba(4,8,20,.98)) !important;
+}
+
+.topbar, .top-nav, .app-header, [class*="Topbar"], [class*="TopBar"], [class*="Navbar"], [class*="NavBar"] {
+  border-bottom: 1px solid rgba(120,190,255,.16) !important;
+  background: rgba(5,12,26,.82) !important;
+  backdrop-filter: blur(18px);
+}
+
+@media (max-width: 760px) {
+  .card, .panel, .widget, .tile, .metric-card, .kpi-card, [class*="Card"], [class*="Panel"] {
+    border-radius: 20px !important;
+  }
+}

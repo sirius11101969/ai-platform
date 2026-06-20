@@ -427,3 +427,9 @@ Status: REGISTERED
 - FAILURE_CLASSES: MISSION_PAGE_LAYOUT_DRIFT, CARD_SYSTEM_DRIFT, TYPOGRAPHY_DRIFT, COLOR_TOKEN_DRIFT, CHART_STYLE_DRIFT, TABLE_STYLE_DRIFT, FORM_STYLE_DRIFT, COPILOT_STYLE_DRIFT, SIDEBAR_STYLE_DRIFT, TOPBAR_STYLE_DRIFT.
 - PREVENTION: V95 diagnostic/control validates UI primitives, brand CSS, import, build and enforcement guard.
 - STATUS: registered and controlled.
+
+## V96 Full Mission Control Theme Rollout
+- ROOT_CAUSE: AS6 pages needed explicit rollout from Command Center brand language to all major page families.
+- FAILURE_CLASSES: PAGE_THEME_DRIFT, LEGACY_LAYOUT_DRIFT, LEGACY_CARD_DRIFT, LEGACY_TABLE_DRIFT, LEGACY_FORM_DRIFT, PAGE_BRAND_INCONSISTENCY, GLOBAL_THEME_IMPORT_MISSING, COMMAND_CENTER_BRAND_ROLLOUT_GAP.
+- PREVENTION: V96 diagnostic/control validates theme rollout CSS, import, page family selectors, build and enforcement guard.
+- STATUS: registered and controlled.

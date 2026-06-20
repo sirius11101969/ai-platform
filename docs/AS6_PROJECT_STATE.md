@@ -2740,3 +2740,18 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - UX readiness after V95: 100%.
 - Brand unification after V95: 94%.
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=FULL_MISSION_CONTROL_THEME_ROLLOUT_V96
+- Base commit: f92832e.
+- Project readiness before V96: 100%.
+- UX readiness before V96: 100%.
+- Brand unification before V96: 94%.
+- Purpose: roll out Command Center AS6 Mission Control brand style across all major page families.
+- Added diagnostic: ops/bin/as6-diagnose-full-mission-control-theme-rollout-v96
+- Added control: ops/bin/as6-control-full-mission-control-theme-rollout-v96
+- Added CSS artifact: frontend/src/styles/as6-full-mission-control-theme-rollout.css
+- Added failure classes: PAGE_THEME_DRIFT, LEGACY_LAYOUT_DRIFT, LEGACY_CARD_DRIFT, LEGACY_TABLE_DRIFT, LEGACY_FORM_DRIFT, PAGE_BRAND_INCONSISTENCY, GLOBAL_THEME_IMPORT_MISSING, COMMAND_CENTER_BRAND_ROLLOUT_GAP.
+- Project readiness after V96: 100%.
+- UX readiness after V96: 100%.
+- Brand unification after V96: 98%.
+- Production health checked with raw URL: https://www.as6.ru/api/health
