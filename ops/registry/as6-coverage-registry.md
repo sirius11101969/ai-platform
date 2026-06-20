@@ -1780,3 +1780,6 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V88 | ops/bin/as6-control-global-health-bar-v88 | Covers Global Health Bar component, mount, CSS, build, health and enforcement guard | ENABLED
 - V88 | frontend/src/components/AS6GlobalHealthBar.jsx | Reusable AS6 Global Health Bar component artifact | ENABLED
 - V88 | frontend/src/styles/as6-global-health-bar.css | AS6 Global Health Bar CSS artifact | ENABLED
+- V89 | ops/bin/as6-control-global-command-palette-v89 | Covers Command Palette component, mount, shortcut, CSS, build, health and enforcement guard | ENABLED
+- V89 | frontend/src/components/AS6GlobalCommandPalette.jsx | Reusable AS6 Global Command Palette component artifact | ENABLED
+- V89 | frontend/src/styles/as6-global-command-palette.css | AS6 Global Command Palette CSS artifact | ENABLED

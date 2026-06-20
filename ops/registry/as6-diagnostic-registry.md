@@ -1804,3 +1804,12 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V88 | HEALTH_BAR_MOUNT_GAP | AS6 Global Health Bar failure class | ENABLED
 - V88 | HEALTH_BAR_PERFORMANCE_DRIFT | AS6 Global Health Bar failure class | ENABLED
 - V88 | HEALTH_BAR_BRAND_DRIFT | AS6 Global Health Bar failure class | ENABLED
+- V89 | ops/bin/as6-diagnose-global-command-palette-v89 | AS6 Global Command Palette diagnostic | ENABLED
+- V89 | GLOBAL_COMMAND_PALETTE_MISSING | AS6 Global Command Palette failure class | ENABLED
+- V89 | COMMAND_PALETTE_SHORTCUT_GAP | AS6 Global Command Palette failure class | ENABLED
+- V89 | COMMAND_DISCOVERY_DRIFT | AS6 Global Command Palette failure class | ENABLED
+- V89 | CROSS_PAGE_NAVIGATION_FRICTION | AS6 Global Command Palette failure class | ENABLED
+- V89 | COMMAND_PALETTE_MOBILE_LAYOUT_DRIFT | AS6 Global Command Palette failure class | ENABLED
+- V89 | COMMAND_PALETTE_MOUNT_GAP | AS6 Global Command Palette failure class | ENABLED
+- V89 | COMMAND_PALETTE_BRAND_DRIFT | AS6 Global Command Palette failure class | ENABLED
+- V89 | COMMAND_PALETTE_ACTION_REGISTRY_GAP | AS6 Global Command Palette failure class | ENABLED

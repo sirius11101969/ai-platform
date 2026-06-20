@@ -2632,3 +2632,17 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Expected UX readiness after V88: 95%.
 - Project readiness after V88: 100%.
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=GLOBAL_COMMAND_PALETTE_V89
+- Base commit: a9aa1c0.
+- Project readiness before V89: 100%.
+- UX readiness before V89: 95%.
+- Purpose: add reusable global command launcher and cross-page action discovery.
+- Added diagnostic: ops/bin/as6-diagnose-global-command-palette-v89
+- Added control: ops/bin/as6-control-global-command-palette-v89
+- Added component: frontend/src/components/AS6GlobalCommandPalette.jsx
+- Added CSS artifact: frontend/src/styles/as6-global-command-palette.css
+- Added failure classes: GLOBAL_COMMAND_PALETTE_MISSING, COMMAND_PALETTE_SHORTCUT_GAP, COMMAND_DISCOVERY_DRIFT, CROSS_PAGE_NAVIGATION_FRICTION, COMMAND_PALETTE_MOBILE_LAYOUT_DRIFT, COMMAND_PALETTE_MOUNT_GAP, COMMAND_PALETTE_BRAND_DRIFT, COMMAND_PALETTE_ACTION_REGISTRY_GAP.
+- Expected UX readiness after V89: 97%.
+- Project readiness after V89: 100%.
+- Production health checked with raw URL: https://www.as6.ru/api/health

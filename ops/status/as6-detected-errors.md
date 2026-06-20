@@ -385,3 +385,9 @@ Status: REGISTERED
 - FAILURE_CLASSES: GLOBAL_HEALTH_BAR_MISSING, GLOBAL_STATUS_VISIBILITY_GAP, CROSS_PAGE_HEALTH_CONTEXT_DRIFT, HEALTH_BAR_MOBILE_LAYOUT_DRIFT, HEALTH_BAR_MOUNT_GAP, HEALTH_BAR_PERFORMANCE_DRIFT, HEALTH_BAR_BRAND_DRIFT.
 - PREVENTION: V88 diagnostic/control validates component, mount, CSS, build and enforcement guard.
 - STATUS: registered and controlled.
+
+## V89 Global Command Palette
+- ROOT_CAUSE: users needed one global launcher for navigation and action discovery across the platform.
+- FAILURE_CLASSES: GLOBAL_COMMAND_PALETTE_MISSING, COMMAND_PALETTE_SHORTCUT_GAP, COMMAND_DISCOVERY_DRIFT, CROSS_PAGE_NAVIGATION_FRICTION, COMMAND_PALETTE_MOBILE_LAYOUT_DRIFT, COMMAND_PALETTE_MOUNT_GAP, COMMAND_PALETTE_BRAND_DRIFT, COMMAND_PALETTE_ACTION_REGISTRY_GAP.
+- PREVENTION: V89 diagnostic/control validates component, shortcut, mount, CSS, build and enforcement guard.
+- STATUS: registered and controlled.
