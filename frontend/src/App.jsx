@@ -6,6 +6,7 @@ import { ProtectedLayout } from "./components/AppShell";
 import LandingPage from "./pages/LandingPage";
 import { LoginPage, SignupPage } from "./pages/AuthPages";
 import PaymentSuccessPage from "./pages/PaymentSuccessPage";
+import "./styles/as6-mission-control.css";
 const DashboardPage = lazy(() => import("./pages/DashboardPage"));
 const CRMPage = lazy(() => import("./pages/CRMPage"));
 const AiWorkersPage = lazy(() => import("./pages/AiWorkersPage"));

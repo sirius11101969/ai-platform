@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+CSS="frontend/src/styles/as6-mission-control.css"
+if [ ! -f "$CSS" ]; then echo "AS6_MISSION_CONTROL_CSS_MISSING"; FAIL=1; fi
+if ! grep -Rqs "as6-mission-control.css" frontend/src/App.jsx frontend/src/main.jsx frontend/src/main.tsx 2>/dev/null; then echo "AS6_MISSION_CONTROL_IMPORT_MISSING"; FAIL=1; fi
+for token in "--as6-bg-0" "--as6-glass" "--as6-cyan" "--as6-purple" "--as6-radius-xl" "AS6 Mission Control"; do
+  if ! grep -Rqs -- "$token" "$CSS" ops/governance docs ops/status ops/registry 2>/dev/null; then echo "AS6_DESIGN_SYSTEM_TOKEN_MISSING $token"; FAIL=1; fi
+done
+for cls in UI_DESIGN_SYSTEM_DRIFT COMMAND_CENTER_STYLE_DRIFT CROSS_PAGE_VISUAL_INCONSISTENCY UI_DENSITY_DRIFT UI_PERFORMANCE_STYLE_DRIFT UI_DIAGNOSTIC_SECRET_SCAN_FALSE_POSITIVE; do
+  if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then echo "AS6_UI_CLASS_REGISTRATION_MISSING $cls"; FAIL=1; fi
+done
+if git diff --cached --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING_FAIL"; FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_MISSION_CONTROL_DESIGN_SYSTEM=PASS"

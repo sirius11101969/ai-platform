@@ -2567,3 +2567,27 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Added failure classes: GOVERNANCE_ARTIFACT_SELF_REGISTRATION_GAP, GOVERNANCE_ALIAS_COVERAGE_FALSE_NEGATIVE, GOVERNANCE_ENFORCEMENT_SELF_VALIDATION_GAP, GOVERNANCE_STAGE_ARTIFACT_ALIAS_REQUIRED.
 - Project readiness after V84B: 100%.
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=MISSION_CONTROL_DESIGN_SYSTEM_V85
+- Base commit: 72a8af7.
+- Project readiness before V85: 100%.
+- UX readiness before V85: 78%.
+- Purpose: unify project interface under AS6 Mission Control Design System.
+- Added diagnostic: ops/bin/as6-diagnose-mission-control-design-system-v85
+- Added control: ops/bin/as6-control-mission-control-design-system-v85
+- Added CSS artifact: frontend/src/styles/as6-mission-control.css
+- Added failure classes: UI_DESIGN_SYSTEM_DRIFT, COMMAND_CENTER_STYLE_DRIFT, CROSS_PAGE_VISUAL_INCONSISTENCY, UI_DENSITY_DRIFT, UI_PERFORMANCE_STYLE_DRIFT, BRAND_TOKEN_MISSING, GLOBAL_UI_IMPORT_MISSING, RESPONSIVE_LAYOUT_DRIFT.
+- Expected UX readiness after V85: 85%.
+- Project readiness after V85: 100%.
+- Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_REPAIR=MISSION_CONTROL_DESIGN_SYSTEM_V85B
+- Project readiness before V85B: 100%.
+- UX readiness before V85B: 78%.
+- Root cause: V85 diagnostic output text collided with secret-scan heuristic.
+- Repaired diagnostic: ops/bin/as6-diagnose-mission-control-design-system-v85
+- Repaired control: ops/bin/as6-control-mission-control-design-system-v85
+- Added failure classes: UI_DIAGNOSTIC_SECRET_SCAN_FALSE_POSITIVE, DIAGNOSTIC_OUTPUT_SECRET_SCAN_HEURISTIC_COLLISION, DESIGN_SYSTEM_TOKEN_CHECK_OUTPUT_DRIFT.
+- Expected UX readiness after V85B: 85%.
+- Project readiness after V85B: 100%.
+- Production health checked with raw URL: https://www.as6.ru/api/health

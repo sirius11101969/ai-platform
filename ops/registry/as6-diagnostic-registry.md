@@ -1766,3 +1766,15 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V84B | GOVERNANCE_ALIAS_COVERAGE_FALSE_NEGATIVE | Autonomous governance self-registration failure class | ENABLED
 - V84B | GOVERNANCE_ENFORCEMENT_SELF_VALIDATION_GAP | Autonomous governance self-registration failure class | ENABLED
 - V84B | GOVERNANCE_STAGE_ARTIFACT_ALIAS_REQUIRED | Autonomous governance self-registration failure class | ENABLED
+- V85 | ops/bin/as6-diagnose-mission-control-design-system-v85 | AS6 Mission Control UI design system diagnostic | ENABLED
+- V85 | UI_DESIGN_SYSTEM_DRIFT | AS6 Mission Control UI failure class | ENABLED
+- V85 | COMMAND_CENTER_STYLE_DRIFT | AS6 Mission Control UI failure class | ENABLED
+- V85 | CROSS_PAGE_VISUAL_INCONSISTENCY | AS6 Mission Control UI failure class | ENABLED
+- V85 | UI_DENSITY_DRIFT | AS6 Mission Control UI failure class | ENABLED
+- V85 | UI_PERFORMANCE_STYLE_DRIFT | AS6 Mission Control UI failure class | ENABLED
+- V85 | BRAND_TOKEN_MISSING | AS6 Mission Control UI failure class | ENABLED
+- V85 | GLOBAL_UI_IMPORT_MISSING | AS6 Mission Control UI failure class | ENABLED
+- V85 | RESPONSIVE_LAYOUT_DRIFT | AS6 Mission Control UI failure class | ENABLED
+- V85B | UI_DIAGNOSTIC_SECRET_SCAN_FALSE_POSITIVE | UI diagnostic secret-scan false-positive failure class | ENABLED
+- V85B | DIAGNOSTIC_OUTPUT_SECRET_SCAN_HEURISTIC_COLLISION | UI diagnostic secret-scan false-positive failure class | ENABLED
+- V85B | DESIGN_SYSTEM_TOKEN_CHECK_OUTPUT_DRIFT | UI diagnostic secret-scan false-positive failure class | ENABLED

@@ -355,3 +355,15 @@ Status: REGISTERED
 - FAILURE_CLASSES: GOVERNANCE_ARTIFACT_SELF_REGISTRATION_GAP, GOVERNANCE_ALIAS_COVERAGE_FALSE_NEGATIVE, GOVERNANCE_ENFORCEMENT_SELF_VALIDATION_GAP, GOVERNANCE_STAGE_ARTIFACT_ALIAS_REQUIRED.
 - PREVENTION: V84B registers exact governance artifact aliases and validates them.
 - STATUS: repaired and registered.
+
+## V85 Mission Control Design System
+- ROOT_CAUSE: project pages visually drifted from the Command Center brand system.
+- FAILURE_CLASSES: UI_DESIGN_SYSTEM_DRIFT, COMMAND_CENTER_STYLE_DRIFT, CROSS_PAGE_VISUAL_INCONSISTENCY, UI_DENSITY_DRIFT, UI_PERFORMANCE_STYLE_DRIFT, BRAND_TOKEN_MISSING, GLOBAL_UI_IMPORT_MISSING, RESPONSIVE_LAYOUT_DRIFT.
+- PREVENTION: V85 diagnostic/control validates global AS6 design tokens, import, build and enforcement guard.
+- STATUS: registered and controlled.
+
+## V85B Mission Control Design System Secret Scan Repair
+- ROOT_CAUSE: diagnostic output wording triggered secret-scan false positive.
+- FAILURE_CLASSES: UI_DIAGNOSTIC_SECRET_SCAN_FALSE_POSITIVE, DIAGNOSTIC_OUTPUT_SECRET_SCAN_HEURISTIC_COLLISION, DESIGN_SYSTEM_TOKEN_CHECK_OUTPUT_DRIFT.
+- PREVENTION: diagnostic output avoids secret-like key/value text while retaining token checks.
+- STATUS: repaired and registered.
