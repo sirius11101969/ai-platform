@@ -303,3 +303,13 @@ Status: REGISTERED
 - FAILURE_CLASSES: READINESS_BASELINE_MARKER_TOO_STRICT, READINESS_DIAGNOSTIC_SELF_VALIDATION_STAGED_CHANGE_FALSE_POSITIVE, PROJECT_STATE_COMPLETION_MARKER_ALIAS_GAP, V80_SELF_VALIDATION_WORKTREE_ALLOWLIST_GAP.
 - PREVENTION: readiness diagnostic accepts registered baseline evidence and allowlists staged V80 artifacts during self-validation.
 - STATUS: repaired and registered.
+
+## V81 Autonomous Diagnostic Expansion
+- ROOT_CAUSE: clean V80B baseline needed autonomous expansion to prevent future unregistered diagnostic, coverage, governance, monitoring, validation, rollback and AEC gaps.
+- FAILURE_CLASSES: AUTONOMOUS_DIAGNOSTIC_EXPANSION_GAP, DIAGNOSTIC_COVERAGE_INDEX_GAP, GOVERNANCE_PREVENTION_COVERAGE_GAP, MONITORING_GAP_SCAN_MISSING, VALIDATION_GAP_SCAN_MISSING, ROLLBACK_GAP_SCAN_MISSING, AEC_RULE_COVERAGE_GAP, DIAGNOSTIC_ARTIFACT_REGISTRY_GAP_DISCOVERED, AUTONOMOUS_GAP_DISCOVERY_REPORT_MISSING.
+- PREVENTION: V81 diagnostic/control scans diagnostic artifacts, registry evidence, baseline evidence and runtime staging.
+- STATUS: registered and controlled.
+
+## V81B Autonomous Diagnostic Reconciliation
+- ROOT_CAUSE: V81 discovered historical registry drift.
+- STATUS: reconciled and registered.

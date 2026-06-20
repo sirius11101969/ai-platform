@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-diagnostic-registry-reconciliation-v81b
+curl -kfsS https://www.as6.ru/api/health >/dev/null
+echo "AS6_CONTROL_DIAGNOSTIC_REGISTRY_RECONCILIATION_V81B=PASS"

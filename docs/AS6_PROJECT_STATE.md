@@ -2486,3 +2486,17 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Repaired diagnostic: ops/bin/as6-diagnose-project-state-readiness-snapshot-v80
 - Repaired control: ops/bin/as6-control-project-state-readiness-snapshot-v80
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=AUTONOMOUS_DIAGNOSTIC_EXPANSION_V81
+- Base commit: 4c9ab19.
+- Purpose: autonomous discovery and registration of diagnostic, coverage, governance, monitoring, validation, rollback and AEC gaps.
+- Added diagnostics: ops/bin/as6-diagnose-autonomous-diagnostic-expansion-v81
+- Added control: ops/bin/as6-control-autonomous-diagnostic-expansion-v81
+- Added failure classes: AUTONOMOUS_DIAGNOSTIC_EXPANSION_GAP, DIAGNOSTIC_COVERAGE_INDEX_GAP, GOVERNANCE_PREVENTION_COVERAGE_GAP, MONITORING_GAP_SCAN_MISSING, VALIDATION_GAP_SCAN_MISSING, ROLLBACK_GAP_SCAN_MISSING, AEC_RULE_COVERAGE_GAP, DIAGNOSTIC_ARTIFACT_REGISTRY_GAP_DISCOVERED, AUTONOMOUS_GAP_DISCOVERY_REPORT_MISSING.
+- Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=AUTONOMOUS_DIAGNOSTIC_RECONCILIATION_V81B
+- Added diagnostic: ops/bin/as6-diagnose-diagnostic-registry-reconciliation-v81b
+- Added control: ops/bin/as6-control-diagnostic-registry-reconciliation-v81b
+- Reconciled historical diagnostic/control registry evidence.
+- Added failure classes: DIAGNOSTIC_ARTIFACT_REGISTRY_GAP_DISCOVERED, AUTONOMOUS_DIAGNOSTIC_SELF_VALIDATION_ALLOWLIST_GAP, HISTORICAL_DIAGNOSTIC_REGISTRY_DRIFT, HISTORICAL_COVERAGE_REGISTRY_DRIFT.

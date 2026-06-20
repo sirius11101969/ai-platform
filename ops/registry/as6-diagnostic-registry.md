@@ -1653,3 +1653,66 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V80 | ops/bin/as6-diagnose-project-state-readiness-snapshot-v80 | Project state production readiness snapshot diagnostic | ENABLED
 - V80B | READINESS_BASELINE_MARKER_TOO_STRICT | Prevents readiness baseline false negative from exact marker mismatch | ENABLED
 - V80B | READINESS_DIAGNOSTIC_SELF_VALIDATION_STAGED_CHANGE_FALSE_POSITIVE | Prevents staged self-validation worktree false positive | ENABLED
+- V81 | ops/bin/as6-diagnose-autonomous-diagnostic-expansion-v81 | Autonomous diagnostic expansion scanner and gap discovery report | ENABLED
+- V81 | AUTONOMOUS_DIAGNOSTIC_EXPANSION_GAP | Autonomous diagnostic expansion failure class | ENABLED
+- V81 | DIAGNOSTIC_COVERAGE_INDEX_GAP | Autonomous diagnostic expansion failure class | ENABLED
+- V81 | GOVERNANCE_PREVENTION_COVERAGE_GAP | Autonomous diagnostic expansion failure class | ENABLED
+- V81 | MONITORING_GAP_SCAN_MISSING | Autonomous diagnostic expansion failure class | ENABLED
+- V81 | VALIDATION_GAP_SCAN_MISSING | Autonomous diagnostic expansion failure class | ENABLED
+- V81 | ROLLBACK_GAP_SCAN_MISSING | Autonomous diagnostic expansion failure class | ENABLED
+- V81 | AEC_RULE_COVERAGE_GAP | Autonomous diagnostic expansion failure class | ENABLED
+- V81 | DIAGNOSTIC_ARTIFACT_REGISTRY_GAP_DISCOVERED | Autonomous diagnostic expansion failure class | ENABLED
+- V81 | AUTONOMOUS_GAP_DISCOVERY_REPORT_MISSING | Autonomous diagnostic expansion failure class | ENABLED
+- V81B | ops/bin/as6-control-autonomous-diagnostic-expansion-v81 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-black-screen-react-import-v57 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-command-center-final-v45 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-command-center-jsx-v31 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-command-center-ui-restore-v54 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-copilot-button-align-v41 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-copilot-css-syntax-cleanup-v42 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-copilot-inline-layout-v40 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-copilot-orphan-fragment-v44 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-copilot-style-consolidation-v38 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-copilot-visual-cleanup-v37 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-crm-analytics-internal-panel-owner-v77 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-crm-analytics-panel-contract-v71 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-crm-analytics-panel-wiring-guard-v72 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-crm-analytics-remove-legacy-rollback-copy-v78 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-crm-analytics-render-owner-v76 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-crm-decomposition-execution-guard-v69 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-crm-page-decomposition-v68 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-crm-panel-extraction-scaffold-v70 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-crm-route-chunk-v56 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-css-and-bundle-budget-v52 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-css-consolidation-v66 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-css-dead-selectors-v65 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-css-ownership-v61 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-diagnostic-artifact-reconciliation-v79 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-diagnostic-debt-consolidation-v73-safe | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-executive-module-icon-v50 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-frontend-asset-budget-v46 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-frontend-budgets-v58 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-frontend-code-splitting-v47 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-frontend-dead-code-v64 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-frontend-heavy-files-v55 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-frontend-page-decomposition-v67 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-global-frontend-dead-code-v53 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-image-asset-ownership-v59 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-logo-optimization-v51 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-png-to-webp-branding-v60 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-post-deploy-health-v33 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-project-state-readiness-snapshot-v80 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-quick-action-icon-v49 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-rendered-asset-paths-v48 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-repair-crm-analytics-panel-render-wiring-v74 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-repair-crm-analytics-visible-bridge-v75 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-repair-v74-docs-secret-scan-false-positive | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-repair-v74-staged-diff-reset-and-commit | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-repair-v76-terminal-paste-integrity | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-robot-asset-size-v36 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-selector-ownership-map-v62 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-control-v73-precommit-false-positive-repair | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-diagnose-ai-kpi-robot-asset-v32 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-diagnose-ai-kpi-visual-parity-v34 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-diagnose-command-center-visual-parity-v27 | Historical diagnostic artifact reconciled | ENABLED
+- V81B | ops/bin/as6-diagnose-diagnostic-registry-reconciliation-v81b | Diagnostic registry reconciliation scanner | ENABLED

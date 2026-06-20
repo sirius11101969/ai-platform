@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+REPORT="${1:-runtime/as6-v81/autonomous-diagnostic-expansion-report.txt}"
+mkdir -p "$(dirname "$REPORT")"
+: > "$REPORT"
+FAIL=0
+for f in docs/AS6_PROJECT_STATE.md ops/registry/as6-diagnostic-registry.md ops/registry/as6-coverage-registry.md ops/status/as6-detected-errors.md; do
+  if [ ! -f "$f" ]; then
+    echo "AS6_CORE_DIAGNOSTIC_FILE=FAIL:$f" | tee -a "$REPORT"
+    FAIL=1
+  fi
+done
+for f in ops/bin/as6-diagnose-project-state-readiness-snapshot-v80 ops/bin/as6-control-project-state-readiness-snapshot-v80; do
+  if [ ! -x "$f" ]; then
+    echo "AS6_READINESS_BASELINE_EXECUTABLE=FAIL:$f" | tee -a "$REPORT"
+    FAIL=1
+  fi
+done
+for needle in "AS6_DONE=PROJECT_STATE_READINESS_SNAPSHOT_V80B" "READINESS_DIAGNOSTIC_SELF_VALIDATION_STAGED_CHANGE_FALSE_POSITIVE" "PROJECT_STATE_COMPLETION_MARKER_ALIAS_GAP"; do
+  if ! grep -Rqs "$needle" docs ops; then
+    echo "AS6_V80B_BASELINE_EVIDENCE=FAIL:$needle" | tee -a "$REPORT"
+    FAIL=1
+  fi
+done
+for needle in "AUTONOMOUS_DIAGNOSTIC_EXPANSION_GAP" "DIAGNOSTIC_COVERAGE_INDEX_GAP" "GOVERNANCE_PREVENTION_COVERAGE_GAP" "MONITORING_GAP_SCAN_MISSING" "VALIDATION_GAP_SCAN_MISSING" "ROLLBACK_GAP_SCAN_MISSING" "AEC_RULE_COVERAGE_GAP"; do
+  if ! grep -Rqs "$needle" ops/registry ops/governance ops/status docs 2>/dev/null; then
+    echo "AS6_V81_REGISTRATION_PENDING=$needle" | tee -a "$REPORT"
+  fi
+done
+find ops/bin -maxdepth 1 -type f \( -name "as6-diagnose-*" -o -name "as6-control-*" \) | sort > runtime/as6-v81/diagnostic-artifacts.index 2>/dev/null || true
+while IFS= read -r artifact; do
+  if [ -n "$artifact" ] && ! grep -Rqs "$artifact" ops/registry; then
+    echo "AS6_DISCOVERED_REGISTRY_GAP=$artifact" | tee -a "$REPORT"
+  fi
+done < runtime/as6-v81/diagnostic-artifacts.index
+if git diff --cached --name-only | grep -q "^runtime/"; then
+  echo "AS6_RUNTIME_STAGING=FAIL" | tee -a "$REPORT"
+  FAIL=1
+fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_AUTONOMOUS_DIAGNOSTIC_EXPANSION=PASS" | tee -a "$REPORT"
