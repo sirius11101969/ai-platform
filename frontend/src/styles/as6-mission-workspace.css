@@ -1,0 +1,170 @@
+/* AS6 Mission Control Workspace V86 */
+:root {
+  --as6-workspace-gap: clamp(14px, 1.2vw, 22px);
+  --as6-workspace-pad: clamp(16px, 2vw, 32px);
+  --as6-card-min: 220px;
+  --as6-card-max: 1fr;
+  --as6-topbar-height: 86px;
+}
+
+.as6-workspace-shell, .dashboard-page, .crm-page, .command-center, .ai-workforce-page, .ai-approval-page, .ai-execution-page, .ai-executive-page {
+  --as6-section-gap: clamp(16px, 1.4vw, 26px);
+}
+
+main, .content, [class*="Content"], [class*="content"] {
+  scroll-behavior: smooth;
+}
+
+.dashboard-page, .crm-page, .command-center, .ai-workforce-page, .ai-approval-page, .ai-execution-page, .ai-executive-page {
+  padding-bottom: 48px;
+}
+
+.as6-command-strip {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.as6-command-strip > * {
+  min-height: 44px;
+}
+
+.as6-metric-grid, .metrics-grid, .stats-grid, [class*="metricsGrid"], [class*="statsGrid"], [class*="MetricGrid"], [class*="StatsGrid"] {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--as6-card-min), var(--as6-card-max)));
+  gap: var(--as6-workspace-gap);
+}
+
+.card, .panel, .widget, .metric-card, .dashboard-card, .crm-card, .stat-card, section[class*="card"], div[class*="Card"], div[class*="panel"], div[class*="Panel"], div[class*="widget"], div[class*="Widget"] {
+  position: relative;
+  contain: paint;
+}
+
+.card:hover, .panel:hover, .widget:hover, .metric-card:hover, .dashboard-card:hover, .crm-card:hover, .stat-card:hover, div[class*="Card"]:hover, div[class*="Panel"]:hover {
+  border-color: rgba(37, 228, 255, 0.34);
+  box-shadow: 0 24px 90px rgba(0,0,0,.46), 0 0 34px rgba(37,228,255,.12);
+}
+
+.card h2, .panel h2, .widget h2, .card h3, .panel h3, .widget h3, div[class*="Card"] h2, div[class*="Panel"] h2, div[class*="Widget"] h2 {
+  letter-spacing: -0.035em;
+}
+
+.as6-page-kicker, .kicker, [class*="kicker"], [class*="Kicker"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 30px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  color: #bdf7ff;
+  background: linear-gradient(135deg, rgba(49,120,255,.24), rgba(37,228,255,.12));
+  border: 1px solid rgba(37,228,255,.34);
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .055em;
+}
+
+.as6-hero, .hero, [class*="hero"], [class*="Hero"] {
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 84% 0%, rgba(37,228,255,.20), transparent 26rem),
+    radial-gradient(circle at 24% 110%, rgba(139,92,246,.24), transparent 24rem),
+    linear-gradient(135deg, rgba(28,37,68,.86), rgba(5,18,30,.72));
+  border: 1px solid rgba(120,190,255,.24);
+  box-shadow: 0 28px 96px rgba(0,0,0,.42);
+}
+
+.as6-cockpit, .as6-right-rail, [class*="RightRail"], [class*="rightRail"], [class*="AsidePanel"] {
+  position: sticky;
+  top: 18px;
+  align-self: start;
+}
+
+.as6-compact-list, .activity-list, .timeline, [class*="timeline"], [class*="Timeline"], [class*="activity"], [class*="Activity"] {
+  display: grid;
+  gap: 10px;
+}
+
+.as6-compact-list > *, .activity-list > *, .timeline > *, [class*="timeline"] > *, [class*="Timeline"] > * {
+  border-radius: 14px;
+  border: 1px solid rgba(120,190,255,.14);
+  background: rgba(5, 13, 28, .36);
+}
+
+.kanban-column, [class*="kanban"], [class*="Kanban"] {
+  max-height: calc(100vh - 180px);
+  overflow: auto;
+}
+
+.kanban-column > *, [class*="kanban"] > *, [class*="Kanban"] > * {
+  scroll-margin-top: 24px;
+}
+
+.as6-debug-raw, pre, code {
+  max-width: 100%;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+pre {
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(120,190,255,.18);
+  background: rgba(2, 7, 18, .62);
+}
+
+.as6-action-row, .actions, [class*="actions"], [class*="Actions"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.as6-action-row button, .actions button, [class*="Actions"] button {
+  min-height: 42px;
+}
+
+.as6-health-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.as6-health-dots > * {
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: rgba(50,245,169,.10);
+  border: 1px solid rgba(50,245,169,.28);
+}
+
+.as6-focus-ring :focus-visible, button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid rgba(37,228,255,.82);
+  outline-offset: 3px;
+}
+
+@media (max-width: 1280px) {
+  .as6-command-strip { grid-template-columns: repeat(3, minmax(120px, 1fr)); }
+}
+
+@media (max-width: 900px) {
+  .as6-command-strip { grid-template-columns: repeat(2, minmax(120px, 1fr)); }
+  .as6-cockpit, .as6-right-rail, [class*="RightRail"], [class*="rightRail"], [class*="AsidePanel"] { position: static; }
+}
+
+@media (max-width: 640px) {
+  :root { --as6-card-min: 100%; }
+  .as6-command-strip { grid-template-columns: 1fr; }
+  .dashboard-page, .crm-page, .command-center, .ai-workforce-page, .ai-approval-page, .ai-execution-page, .ai-executive-page { padding-left: 12px; padding-right: 12px; }
+  h1 { letter-spacing: -0.045em; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .as6-command-strip > *, .as6-health-dots > * {
+    animation: as6-pop-in .28s ease both;
+  }
+  @keyframes as6-pop-in {
+    from { opacity: 0; transform: scale(.98) translateY(4px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+}

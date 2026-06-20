@@ -1778,3 +1778,12 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V85B | UI_DIAGNOSTIC_SECRET_SCAN_FALSE_POSITIVE | UI diagnostic secret-scan false-positive failure class | ENABLED
 - V85B | DIAGNOSTIC_OUTPUT_SECRET_SCAN_HEURISTIC_COLLISION | UI diagnostic secret-scan false-positive failure class | ENABLED
 - V85B | DESIGN_SYSTEM_TOKEN_CHECK_OUTPUT_DRIFT | UI diagnostic secret-scan false-positive failure class | ENABLED
+- V86 | ops/bin/as6-diagnose-mission-control-workspace-v86 | AS6 Mission Control Workspace diagnostic | ENABLED
+- V86 | MISSION_CONTROL_WORKSPACE_DRIFT | AS6 Mission Control Workspace failure class | ENABLED
+- V86 | COMMAND_CENTER_LAYOUT_DRIFT | AS6 Mission Control Workspace failure class | ENABLED
+- V86 | CROSS_PAGE_WORKSPACE_INCONSISTENCY | AS6 Mission Control Workspace failure class | ENABLED
+- V86 | COMPACT_DENSITY_DRIFT | AS6 Mission Control Workspace failure class | ENABLED
+- V86 | DEBUG_UI_EXPOSURE_DRIFT | AS6 Mission Control Workspace failure class | ENABLED
+- V86 | MOBILE_WORKSPACE_DRIFT | AS6 Mission Control Workspace failure class | ENABLED
+- V86 | STICKY_COCKPIT_LAYOUT_GAP | AS6 Mission Control Workspace failure class | ENABLED
+- V86 | WORKSPACE_PERFORMANCE_STYLE_GAP | AS6 Mission Control Workspace failure class | ENABLED

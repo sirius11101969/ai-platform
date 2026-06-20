@@ -1772,3 +1772,5 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V84 | ops/governance/as6-autonomous-governance-enforcement-automation-v84.md | Autonomous governance enforcement artifact coverage alias | ENABLED
 - V85 | ops/bin/as6-control-mission-control-design-system-v85 | Covers UI design system import, tokens, build, health and enforcement guard | ENABLED
 - V85 | frontend/src/styles/as6-mission-control.css | Global AS6 Mission Control Design System artifact | ENABLED
+- V86 | ops/bin/as6-control-mission-control-workspace-v86 | Covers workspace CSS, import, compact density, build, health and enforcement guard | ENABLED
+- V86 | frontend/src/styles/as6-mission-workspace.css | AS6 Mission Control Workspace artifact | ENABLED

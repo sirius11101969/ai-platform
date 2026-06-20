@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+CSS="frontend/src/styles/as6-mission-workspace.css"
+if [ ! -f "$CSS" ]; then echo "AS6_WORKSPACE_CSS_MISSING"; FAIL=1; fi
+if ! grep -Rqs "as6-mission-workspace.css" frontend/src/App.jsx frontend/src/main.jsx frontend/src/main.tsx 2>/dev/null; then echo "AS6_WORKSPACE_IMPORT_MISSING"; FAIL=1; fi
+for item in "--as6-workspace-gap" "--as6-card-min" "as6-command-strip" "as6-cockpit" "as6-health-dots" "as6-debug-raw"; do
+  if ! grep -Rqs -- "$item" "$CSS" ops/governance docs ops/status ops/registry 2>/dev/null; then echo "AS6_WORKSPACE_ITEM_MISSING $item"; FAIL=1; fi
+done
+for cls in MISSION_CONTROL_WORKSPACE_DRIFT COMMAND_CENTER_LAYOUT_DRIFT CROSS_PAGE_WORKSPACE_INCONSISTENCY COMPACT_DENSITY_DRIFT DEBUG_UI_EXPOSURE_DRIFT MOBILE_WORKSPACE_DRIFT; do
+  if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then echo "AS6_WORKSPACE_CLASS_MISSING $cls"; FAIL=1; fi
+done
+if git diff --cached --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING_FAIL"; FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_MISSION_CONTROL_WORKSPACE=PASS"

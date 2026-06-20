@@ -367,3 +367,9 @@ Status: REGISTERED
 - FAILURE_CLASSES: UI_DIAGNOSTIC_SECRET_SCAN_FALSE_POSITIVE, DIAGNOSTIC_OUTPUT_SECRET_SCAN_HEURISTIC_COLLISION, DESIGN_SYSTEM_TOKEN_CHECK_OUTPUT_DRIFT.
 - PREVENTION: diagnostic output avoids secret-like key/value text while retaining token checks.
 - STATUS: repaired and registered.
+
+## V86 Mission Control Workspace
+- ROOT_CAUSE: pages needed a unified workspace layer beyond visual tokens.
+- FAILURE_CLASSES: MISSION_CONTROL_WORKSPACE_DRIFT, COMMAND_CENTER_LAYOUT_DRIFT, CROSS_PAGE_WORKSPACE_INCONSISTENCY, COMPACT_DENSITY_DRIFT, DEBUG_UI_EXPOSURE_DRIFT, MOBILE_WORKSPACE_DRIFT, STICKY_COCKPIT_LAYOUT_GAP, WORKSPACE_PERFORMANCE_STYLE_GAP.
+- PREVENTION: V86 diagnostic/control validates workspace CSS, import, compact density, responsive behavior, build and enforcement guard.
+- STATUS: registered and controlled.

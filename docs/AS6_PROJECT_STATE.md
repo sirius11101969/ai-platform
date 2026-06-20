@@ -2591,3 +2591,16 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Expected UX readiness after V85B: 85%.
 - Project readiness after V85B: 100%.
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=MISSION_CONTROL_WORKSPACE_V86
+- Base commit: e43c5f8.
+- Project readiness before V86: 100%.
+- UX readiness before V86: 85%.
+- Purpose: add compact, modern, cross-page AS6 Mission Control Workspace layer.
+- Added diagnostic: ops/bin/as6-diagnose-mission-control-workspace-v86
+- Added control: ops/bin/as6-control-mission-control-workspace-v86
+- Added CSS artifact: frontend/src/styles/as6-mission-workspace.css
+- Added failure classes: MISSION_CONTROL_WORKSPACE_DRIFT, COMMAND_CENTER_LAYOUT_DRIFT, CROSS_PAGE_WORKSPACE_INCONSISTENCY, COMPACT_DENSITY_DRIFT, DEBUG_UI_EXPOSURE_DRIFT, MOBILE_WORKSPACE_DRIFT, STICKY_COCKPIT_LAYOUT_GAP, WORKSPACE_PERFORMANCE_STYLE_GAP.
+- Expected UX readiness after V86: 92%.
+- Project readiness after V86: 100%.
+- Production health checked with raw URL: https://www.as6.ru/api/health
