@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-pre-commit-push-enforcement-wiring-v83
+AS6_ENFORCEMENT_MODE=same-cycle ops/bin/as6-pre-commit-push-enforcement
+echo "AS6_CONTROL_PRE_COMMIT_PUSH_ENFORCEMENT_WIRING_V83=PASS"

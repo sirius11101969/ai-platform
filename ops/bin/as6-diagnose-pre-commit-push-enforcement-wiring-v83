@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+for f in ops/bin/as6-control-registry-reconciliation-enforcement-v82 ops/bin/as6-pre-commit-push-enforcement; do
+  if [ ! -x "$f" ]; then
+    echo "AS6_PRE_COMMIT_PUSH_ENFORCEMENT_WIRING=FAIL:not executable:$f"
+    FAIL=1
+  fi
+done
+for cls in PRE_COMMIT_ENFORCEMENT_WIRING_GAP PUSH_ENFORCEMENT_WIRING_GAP ENFORCEMENT_WORKFLOW_GUARD_MISSING ENFORCEMENT_WORKFLOW_SECRET_SCAN_GAP ENFORCEMENT_WORKFLOW_RUNTIME_STAGING_GAP V83_ENFORCEMENT_SELF_VALIDATION_ALLOWLIST_GAP SAME_CYCLE_ENFORCEMENT_MODE_REQUIRED SAME_CYCLE_INLINE_READINESS_REQUIRED STRICT_READINESS_DIAGNOSTIC_IN_SAME_CYCLE_GAP INLINE_READINESS_EVIDENCE_ALIAS_GAP READINESS_COMPLETION_MARKER_ALIAS_REQUIRED; do
+  if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then
+    echo "AS6_ENFORCEMENT_WIRING_CLASS_REGISTRATION=FAIL:$cls"
+    FAIL=1
+  fi
+done
+if ! grep -Rqs "as6-pre-commit-push-enforcement" ops/registry ops/governance docs; then
+  echo "AS6_ENFORCEMENT_WORKFLOW_REGISTRATION=FAIL:guard not registered"
+  FAIL=1
+fi
+if git diff --cached --name-only | grep -q "^runtime/"; then
+  echo "AS6_RUNTIME_STAGING=FAIL"
+  FAIL=1
+fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_PRE_COMMIT_PUSH_ENFORCEMENT_WIRING=PASS"

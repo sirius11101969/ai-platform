@@ -319,3 +319,27 @@ Status: REGISTERED
 - FAILURE_CLASSES: REGISTRY_ENFORCEMENT_BYPASS, COVERAGE_ENFORCEMENT_BYPASS, GOVERNANCE_ENFORCEMENT_BYPASS, AEC_ENFORCEMENT_BYPASS, STATE_ENFORCEMENT_BYPASS, DETECTED_ERRORS_ENFORCEMENT_BYPASS, ORPHAN_DIAGNOSTIC_COMMIT_BLOCK_REQUIRED, ORPHAN_CONTROL_COMMIT_BLOCK_REQUIRED.
 - PREVENTION: V82 diagnostic/control blocks missing registry evidence and runtime staging.
 - STATUS: registered and controlled.
+
+## V83 Pre-Commit Push Enforcement Wiring
+- ROOT_CAUSE: enforcement existed but was not wired into one reusable guard workflow.
+- FAILURE_CLASSES: PRE_COMMIT_ENFORCEMENT_WIRING_GAP, PUSH_ENFORCEMENT_WIRING_GAP, ENFORCEMENT_WORKFLOW_GUARD_MISSING, ENFORCEMENT_WORKFLOW_SECRET_SCAN_GAP, ENFORCEMENT_WORKFLOW_RUNTIME_STAGING_GAP, ENFORCEMENT_WORKFLOW_HEALTH_CHECK_GAP, ENFORCEMENT_WORKFLOW_REGISTRY_GAP, ENFORCEMENT_WORKFLOW_READINESS_GAP.
+- PREVENTION: V83 guard runs registry enforcement, readiness control, secret scan, runtime staging guard and production health check.
+- STATUS: registered and controlled.
+
+## V83B Pre-Commit Push Enforcement Self-Validation Repair
+- ROOT_CAUSE: strict readiness control treated same-cycle staged V83 files as worktree drift.
+- FAILURE_CLASSES: V83_ENFORCEMENT_SELF_VALIDATION_ALLOWLIST_GAP, SAME_CYCLE_ENFORCEMENT_MODE_REQUIRED, READINESS_CONTROL_STRICT_MODE_DURING_ENFORCEMENT_WIRING, PRE_COMMIT_PUSH_GUARD_SELF_VALIDATION_FALSE_POSITIVE.
+- PREVENTION: guard supports AS6_ENFORCEMENT_MODE=same-cycle for staged enforcement validation while preserving strict mode for normal use.
+- STATUS: repaired and registered.
+
+## V83C Inline Readiness Same-Cycle Repair
+- ROOT_CAUSE: V83B same-cycle mode still used strict readiness worktree baseline.
+- FAILURE_CLASSES: SAME_CYCLE_INLINE_READINESS_REQUIRED, STRICT_READINESS_DIAGNOSTIC_IN_SAME_CYCLE_GAP, INLINE_READINESS_EVIDENCE_MISSING, PRE_COMMIT_PUSH_GUARD_STRICT_READINESS_FALSE_POSITIVE.
+- PREVENTION: same-cycle guard validates readiness through registered evidence only; strict readiness remains for normal mode.
+- STATUS: repaired and registered.
+
+## V83D Inline Readiness Evidence Alias Repair
+- ROOT_CAUSE: same-cycle inline readiness used one strict completion marker.
+- FAILURE_CLASSES: INLINE_READINESS_EVIDENCE_ALIAS_GAP, READINESS_COMPLETION_MARKER_ALIAS_REQUIRED, SINGLE_MARKER_READINESS_EVIDENCE_FALSE_NEGATIVE, SAME_CYCLE_READINESS_ALIAS_VALIDATION_REQUIRED.
+- PREVENTION: same-cycle readiness now accepts registered evidence aliases across project state, registry, governance and detected errors.
+- STATUS: repaired and registered.

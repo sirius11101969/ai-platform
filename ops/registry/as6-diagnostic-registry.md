@@ -1725,3 +1725,24 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V82 | DETECTED_ERRORS_ENFORCEMENT_BYPASS | Registry reconciliation enforcement failure class | ENABLED
 - V82 | ORPHAN_DIAGNOSTIC_COMMIT_BLOCK_REQUIRED | Registry reconciliation enforcement failure class | ENABLED
 - V82 | ORPHAN_CONTROL_COMMIT_BLOCK_REQUIRED | Registry reconciliation enforcement failure class | ENABLED
+- V83 | ops/bin/as6-diagnose-pre-commit-push-enforcement-wiring-v83 | Pre-commit/push enforcement wiring diagnostic | ENABLED
+- V83 | PRE_COMMIT_ENFORCEMENT_WIRING_GAP | Pre-commit/push enforcement wiring failure class | ENABLED
+- V83 | PUSH_ENFORCEMENT_WIRING_GAP | Pre-commit/push enforcement wiring failure class | ENABLED
+- V83 | ENFORCEMENT_WORKFLOW_GUARD_MISSING | Pre-commit/push enforcement wiring failure class | ENABLED
+- V83 | ENFORCEMENT_WORKFLOW_SECRET_SCAN_GAP | Pre-commit/push enforcement wiring failure class | ENABLED
+- V83 | ENFORCEMENT_WORKFLOW_RUNTIME_STAGING_GAP | Pre-commit/push enforcement wiring failure class | ENABLED
+- V83 | ENFORCEMENT_WORKFLOW_HEALTH_CHECK_GAP | Pre-commit/push enforcement wiring failure class | ENABLED
+- V83 | ENFORCEMENT_WORKFLOW_REGISTRY_GAP | Pre-commit/push enforcement wiring failure class | ENABLED
+- V83 | ENFORCEMENT_WORKFLOW_READINESS_GAP | Pre-commit/push enforcement wiring failure class | ENABLED
+- V83B | V83_ENFORCEMENT_SELF_VALIDATION_ALLOWLIST_GAP | Pre-commit/push enforcement self-validation failure class | ENABLED
+- V83B | SAME_CYCLE_ENFORCEMENT_MODE_REQUIRED | Pre-commit/push enforcement self-validation failure class | ENABLED
+- V83B | READINESS_CONTROL_STRICT_MODE_DURING_ENFORCEMENT_WIRING | Pre-commit/push enforcement self-validation failure class | ENABLED
+- V83B | PRE_COMMIT_PUSH_GUARD_SELF_VALIDATION_FALSE_POSITIVE | Pre-commit/push enforcement self-validation failure class | ENABLED
+- V83C | SAME_CYCLE_INLINE_READINESS_REQUIRED | Same-cycle inline readiness enforcement failure class | ENABLED
+- V83C | STRICT_READINESS_DIAGNOSTIC_IN_SAME_CYCLE_GAP | Same-cycle inline readiness enforcement failure class | ENABLED
+- V83C | INLINE_READINESS_EVIDENCE_MISSING | Same-cycle inline readiness enforcement failure class | ENABLED
+- V83C | PRE_COMMIT_PUSH_GUARD_STRICT_READINESS_FALSE_POSITIVE | Same-cycle inline readiness enforcement failure class | ENABLED
+- V83D | INLINE_READINESS_EVIDENCE_ALIAS_GAP | Same-cycle readiness alias evidence failure class | ENABLED
+- V83D | READINESS_COMPLETION_MARKER_ALIAS_REQUIRED | Same-cycle readiness alias evidence failure class | ENABLED
+- V83D | SINGLE_MARKER_READINESS_EVIDENCE_FALSE_NEGATIVE | Same-cycle readiness alias evidence failure class | ENABLED
+- V83D | SAME_CYCLE_READINESS_ALIAS_VALIDATION_REQUIRED | Same-cycle readiness alias evidence failure class | ENABLED

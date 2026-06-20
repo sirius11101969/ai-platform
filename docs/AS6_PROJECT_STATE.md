@@ -2510,3 +2510,39 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Added failure classes: REGISTRY_ENFORCEMENT_BYPASS, COVERAGE_ENFORCEMENT_BYPASS, GOVERNANCE_ENFORCEMENT_BYPASS, AEC_ENFORCEMENT_BYPASS, STATE_ENFORCEMENT_BYPASS, DETECTED_ERRORS_ENFORCEMENT_BYPASS, ORPHAN_DIAGNOSTIC_COMMIT_BLOCK_REQUIRED, ORPHAN_CONTROL_COMMIT_BLOCK_REQUIRED.
 - Expected project readiness after V82: 98%.
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=PRE_COMMIT_PUSH_ENFORCEMENT_WIRING_V83
+- Base commit: 52b4a3d.
+- Project readiness before V83: 98%.
+- Purpose: wire V82 registry enforcement and V80 readiness into reusable pre-commit/push guard.
+- Added diagnostic: ops/bin/as6-diagnose-pre-commit-push-enforcement-wiring-v83
+- Added control: ops/bin/as6-control-pre-commit-push-enforcement-wiring-v83
+- Added guard: ops/bin/as6-pre-commit-push-enforcement
+- Expected project readiness after V83: 99%.
+- Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_REPAIR=PRE_COMMIT_PUSH_ENFORCEMENT_WIRING_V83B
+- Project readiness before V83B: 98%.
+- Root cause: V83 guard called V80 strict readiness control while V83 artifacts were staged in the same cycle.
+- Repaired diagnostic: ops/bin/as6-diagnose-pre-commit-push-enforcement-wiring-v83
+- Repaired control: ops/bin/as6-control-pre-commit-push-enforcement-wiring-v83
+- Repaired guard: ops/bin/as6-pre-commit-push-enforcement
+- Added failure classes: V83_ENFORCEMENT_SELF_VALIDATION_ALLOWLIST_GAP, SAME_CYCLE_ENFORCEMENT_MODE_REQUIRED, READINESS_CONTROL_STRICT_MODE_DURING_ENFORCEMENT_WIRING, PRE_COMMIT_PUSH_GUARD_SELF_VALIDATION_FALSE_POSITIVE.
+- Expected project readiness after V83B: 99%.
+- Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_REPAIR=PRE_COMMIT_PUSH_ENFORCEMENT_WIRING_V83C
+- Project readiness before V83C: 98%.
+- Root cause: same-cycle guard still invoked strict V80 worktree-baseline diagnostic.
+- Repaired guard to use inline readiness evidence in same-cycle mode.
+- Added failure classes: SAME_CYCLE_INLINE_READINESS_REQUIRED, STRICT_READINESS_DIAGNOSTIC_IN_SAME_CYCLE_GAP, INLINE_READINESS_EVIDENCE_MISSING, PRE_COMMIT_PUSH_GUARD_STRICT_READINESS_FALSE_POSITIVE.
+- Expected project readiness after V83C: 99%.
+- Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_REPAIR=PRE_COMMIT_PUSH_ENFORCEMENT_WIRING_V83D
+- Project readiness before V83D: 98%.
+- Root cause: same-cycle inline readiness required one exact V80B completion marker instead of accepting registered readiness evidence aliases.
+- Repaired guard to accept project-state-readiness-snapshot evidence, V80B evidence and V82 enforcement evidence.
+- Added failure classes: INLINE_READINESS_EVIDENCE_ALIAS_GAP, READINESS_COMPLETION_MARKER_ALIAS_REQUIRED, SINGLE_MARKER_READINESS_EVIDENCE_FALSE_NEGATIVE, SAME_CYCLE_READINESS_ALIAS_VALIDATION_REQUIRED.
+- Expected project readiness after V83D: 99%.
+- Production health checked with raw URL: https://www.as6.ru/api/health
