@@ -2424,3 +2424,9 @@ Status: APPLIED
 Root cause: CRMAnalyticsPanel visible bridge existed, but render execution ownership still lived as children in CRMPage.
 Diagnostic: ops/bin/as6-diagnose-crm-analytics-render-owner-v76
 Note: CRMAnalyticsPanel now owns render execution through renderRevenuePanel while preserving existing visible markup and CSS classes.
+
+## AS6 Repair V76 Terminal Paste Integrity
+Status: APPLIED
+Root cause: V76 command was pasted with markdown fence metadata, causing terminal command corruption before partial build/push.
+Diagnostic: ops/bin/as6-diagnose-repair-v76-terminal-paste-integrity
+Note: V76 render-owner shape is verified/repaired and terminal paste corruption is registered as a prevention class.

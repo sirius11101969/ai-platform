@@ -1631,3 +1631,8 @@ File: ops/bin/as6-diagnose-repair-crm-analytics-visible-bridge-v75
 Status: ENABLED
 Scope: CRM Analytics render ownership via render prop, no-wrapper guard, route chunk validation
 File: ops/bin/as6-diagnose-crm-analytics-render-owner-v76
+
+## as6-diagnose-repair-v76-terminal-paste-integrity
+Status: ENABLED
+Scope: V76 terminal paste corruption repair, render-owner verification, no-runtime-staging, route chunk validation
+File: ops/bin/as6-diagnose-repair-v76-terminal-paste-integrity

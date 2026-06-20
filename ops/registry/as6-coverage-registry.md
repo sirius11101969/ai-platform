@@ -1686,3 +1686,7 @@ Coverage: self-closing bridge repair, closing tag order, no-wrapper contract, ex
 ## CRM_ANALYTICS_RENDER_OWNER_V76
 Diagnostic: ops/bin/as6-diagnose-crm-analytics-render-owner-v76
 Coverage: render ownership prop, visible markup preservation, no-wrapper contract, rollback guard, CRM chunk, Command Center chunk, Dashboard chunk, AI Workers chunk, build validation, production health validation
+
+## REPAIR_V76_TERMINAL_PASTE_INTEGRITY
+Diagnostic: ops/bin/as6-diagnose-repair-v76-terminal-paste-integrity
+Coverage: markdown fence paste corruption, partial push verification, render-owner integrity, untracked artifact quarantine, build validation, route chunks, production health validation
