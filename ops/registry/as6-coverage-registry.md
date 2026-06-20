@@ -1602,3 +1602,7 @@ Coverage: AS6Logo WebP import, PNG import absence, branding class preservation, 
 ## CSS_OWNERSHIP_V61
 Diagnostic: ops/bin/as6-diagnose-css-ownership-v61
 Coverage: global/theme CSS budgets, selector report, duplicate selector report, JSX classname token report, AS6 CSS contracts, build validation, production health validation
+
+## SELECTOR_OWNERSHIP_MAP_V62
+Diagnostic: ops/bin/as6-diagnose-selector-ownership-map-v62
+Coverage: selector inventory, source token map, probable dead selectors, protected selector contracts, CSS budget, build validation, production health validation

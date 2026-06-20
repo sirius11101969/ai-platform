@@ -2297,3 +2297,9 @@ Status: APPLIED
 Root cause: CSS ownership and dead selector evidence were missing before safe optimization.
 Diagnostic: ops/bin/as6-diagnose-css-ownership-v61
 Note: No CSS deletion and no UI changes were performed.
+
+## AS6 Selector Ownership Map V62
+Status: APPLIED
+Root cause: CSS selector ownership map was missing before safe cleanup.
+Diagnostic: ops/bin/as6-diagnose-selector-ownership-map-v62
+Note: No CSS deletion and no UI changes were performed.

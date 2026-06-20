@@ -1526,3 +1526,8 @@ File: ops/bin/as6-diagnose-png-to-webp-branding-v60
 Status: ENABLED
 Scope: CSS ownership, selector duplication, CSS contracts, source and bundle budget diagnostics
 File: ops/bin/as6-diagnose-css-ownership-v61
+
+## as6-diagnose-selector-ownership-map-v62
+Status: ENABLED
+Scope: CSS selector ownership map, probable dead selector report, protected contract selector diagnostics
+File: ops/bin/as6-diagnose-selector-ownership-map-v62

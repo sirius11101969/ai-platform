@@ -133,3 +133,8 @@ Status: REGISTERED
 Failure Class: AS6_FAILURE_CLASS_CSS_OWNERSHIP_DIAGNOSTIC_MISSING
 Diagnostic: ops/bin/as6-diagnose-css-ownership-v61
 Status: REGISTERED
+
+## 2026-06-19 SELECTOR_OWNERSHIP_MAP_V62
+Failure Class: AS6_FAILURE_CLASS_SELECTOR_OWNERSHIP_MAP_MISSING
+Diagnostic: ops/bin/as6-diagnose-selector-ownership-map-v62
+Status: REGISTERED
