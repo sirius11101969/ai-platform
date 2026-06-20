@@ -1762,3 +1762,11 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V82 | ops/bin/as6-control-registry-reconciliation-enforcement-v82 | Covers registry, coverage, governance, AEC, state, detected-errors enforcement and runtime staging guard | ENABLED
 - V83 | ops/bin/as6-control-pre-commit-push-enforcement-wiring-v83 | Covers pre-commit/push enforcement wiring, guard execution, secret scan, runtime staging and production health | ENABLED
 - V83 | ops/bin/as6-pre-commit-push-enforcement | Reusable pre-commit/push enforcement workflow guard | ENABLED
+- V84 | ops/bin/as6-control-autonomous-governance-enforcement-v84 | Covers governance, AEC, control, failure-class, automation, state and detected-errors drift enforcement | ENABLED
+- V84 | ops/bin/as6-pre-commit-push-enforcement | Autonomous governance enforcement wired into pre-commit/push guard | ENABLED
+- V84 | ops/governance/as6-autonomous-governance-enforcement-root-cause-v84.md | Autonomous governance enforcement artifact coverage alias | ENABLED
+- V84 | ops/governance/as6-autonomous-governance-enforcement-plan-v84.md | Autonomous governance enforcement artifact coverage alias | ENABLED
+- V84 | ops/governance/as6-autonomous-governance-enforcement-control-v84.md | Autonomous governance enforcement artifact coverage alias | ENABLED
+- V84 | ops/governance/as6-autonomous-governance-enforcement-failure-classes-v84.md | Autonomous governance enforcement artifact coverage alias | ENABLED
+- V84 | ops/governance/as6-autonomous-governance-enforcement-aec-v84.md | Autonomous governance enforcement artifact coverage alias | ENABLED
+- V84 | ops/governance/as6-autonomous-governance-enforcement-automation-v84.md | Autonomous governance enforcement artifact coverage alias | ENABLED

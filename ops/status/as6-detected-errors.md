@@ -343,3 +343,15 @@ Status: REGISTERED
 - FAILURE_CLASSES: INLINE_READINESS_EVIDENCE_ALIAS_GAP, READINESS_COMPLETION_MARKER_ALIAS_REQUIRED, SINGLE_MARKER_READINESS_EVIDENCE_FALSE_NEGATIVE, SAME_CYCLE_READINESS_ALIAS_VALIDATION_REQUIRED.
 - PREVENTION: same-cycle readiness now accepts registered evidence aliases across project state, registry, governance and detected errors.
 - STATUS: repaired and registered.
+
+## V84 Autonomous Governance Enforcement
+- ROOT_CAUSE: final readiness gap was autonomous governance/AEC/control/failure-class/automation/state/detected-errors drift enforcement.
+- FAILURE_CLASSES: AUTONOMOUS_GOVERNANCE_DRIFT, AUTONOMOUS_AEC_DRIFT, AUTONOMOUS_CONTROL_DRIFT, AUTONOMOUS_FAILURE_CLASS_DRIFT, AUTONOMOUS_AUTOMATION_DRIFT, AUTONOMOUS_STATE_DRIFT, AUTONOMOUS_DETECTED_ERRORS_DRIFT, GOVERNANCE_ENFORCEMENT_COMMIT_BLOCK_REQUIRED, GOVERNANCE_ENFORCEMENT_PUSH_BLOCK_REQUIRED.
+- PREVENTION: V84 diagnostic/control and pre-commit/push guard enforce governance consistency.
+- STATUS: registered and controlled.
+
+## V84B Autonomous Governance Self-Registration Repair
+- ROOT_CAUSE: governance enforcement checked V84 artifact aliases before explicit registration evidence existed.
+- FAILURE_CLASSES: GOVERNANCE_ARTIFACT_SELF_REGISTRATION_GAP, GOVERNANCE_ALIAS_COVERAGE_FALSE_NEGATIVE, GOVERNANCE_ENFORCEMENT_SELF_VALIDATION_GAP, GOVERNANCE_STAGE_ARTIFACT_ALIAS_REQUIRED.
+- PREVENTION: V84B registers exact governance artifact aliases and validates them.
+- STATUS: repaired and registered.

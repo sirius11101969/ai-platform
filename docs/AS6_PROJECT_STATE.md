@@ -2546,3 +2546,24 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Added failure classes: INLINE_READINESS_EVIDENCE_ALIAS_GAP, READINESS_COMPLETION_MARKER_ALIAS_REQUIRED, SINGLE_MARKER_READINESS_EVIDENCE_FALSE_NEGATIVE, SAME_CYCLE_READINESS_ALIAS_VALIDATION_REQUIRED.
 - Expected project readiness after V83D: 99%.
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=AUTONOMOUS_GOVERNANCE_ENFORCEMENT_V84
+- Base commit: 65db6ad.
+- Project readiness before V84: 99%.
+- Purpose: autonomous enforcement of governance, AEC, control, failure-class, automation, state and detected-errors drift prevention.
+- Added diagnostic: ops/bin/as6-diagnose-autonomous-governance-enforcement-v84
+- Added control: ops/bin/as6-control-autonomous-governance-enforcement-v84
+- Wired guard: ops/bin/as6-pre-commit-push-enforcement
+- Added failure classes: AUTONOMOUS_GOVERNANCE_DRIFT, AUTONOMOUS_AEC_DRIFT, AUTONOMOUS_CONTROL_DRIFT, AUTONOMOUS_FAILURE_CLASS_DRIFT, AUTONOMOUS_AUTOMATION_DRIFT, AUTONOMOUS_STATE_DRIFT, AUTONOMOUS_DETECTED_ERRORS_DRIFT, GOVERNANCE_ENFORCEMENT_COMMIT_BLOCK_REQUIRED, GOVERNANCE_ENFORCEMENT_PUSH_BLOCK_REQUIRED.
+- Project readiness after V84: 100%.
+- Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_REPAIR=AUTONOMOUS_GOVERNANCE_ENFORCEMENT_V84B
+- Project readiness before V84B: 99%.
+- Root cause: V84 diagnostic checked governance artifact alias coverage before explicit self-registration aliases were present.
+- Added diagnostic repair: ops/bin/as6-diagnose-autonomous-governance-enforcement-v84
+- Added control repair: ops/bin/as6-control-autonomous-governance-enforcement-v84
+- Added guard repair: ops/bin/as6-pre-commit-push-enforcement
+- Added failure classes: GOVERNANCE_ARTIFACT_SELF_REGISTRATION_GAP, GOVERNANCE_ALIAS_COVERAGE_FALSE_NEGATIVE, GOVERNANCE_ENFORCEMENT_SELF_VALIDATION_GAP, GOVERNANCE_STAGE_ARTIFACT_ALIAS_REQUIRED.
+- Project readiness after V84B: 100%.
+- Production health checked with raw URL: https://www.as6.ru/api/health

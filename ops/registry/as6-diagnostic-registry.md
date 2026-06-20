@@ -1746,3 +1746,23 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V83D | READINESS_COMPLETION_MARKER_ALIAS_REQUIRED | Same-cycle readiness alias evidence failure class | ENABLED
 - V83D | SINGLE_MARKER_READINESS_EVIDENCE_FALSE_NEGATIVE | Same-cycle readiness alias evidence failure class | ENABLED
 - V83D | SAME_CYCLE_READINESS_ALIAS_VALIDATION_REQUIRED | Same-cycle readiness alias evidence failure class | ENABLED
+- V84 | ops/bin/as6-diagnose-autonomous-governance-enforcement-v84 | Autonomous governance enforcement diagnostic | ENABLED
+- V84 | AUTONOMOUS_GOVERNANCE_DRIFT | Autonomous governance enforcement failure class | ENABLED
+- V84 | AUTONOMOUS_AEC_DRIFT | Autonomous governance enforcement failure class | ENABLED
+- V84 | AUTONOMOUS_CONTROL_DRIFT | Autonomous governance enforcement failure class | ENABLED
+- V84 | AUTONOMOUS_FAILURE_CLASS_DRIFT | Autonomous governance enforcement failure class | ENABLED
+- V84 | AUTONOMOUS_AUTOMATION_DRIFT | Autonomous governance enforcement failure class | ENABLED
+- V84 | AUTONOMOUS_STATE_DRIFT | Autonomous governance enforcement failure class | ENABLED
+- V84 | AUTONOMOUS_DETECTED_ERRORS_DRIFT | Autonomous governance enforcement failure class | ENABLED
+- V84 | GOVERNANCE_ENFORCEMENT_COMMIT_BLOCK_REQUIRED | Autonomous governance enforcement failure class | ENABLED
+- V84 | GOVERNANCE_ENFORCEMENT_PUSH_BLOCK_REQUIRED | Autonomous governance enforcement failure class | ENABLED
+- V84 | ops/governance/as6-autonomous-governance-enforcement-root-cause-v84.md | Autonomous governance enforcement artifact alias | ENABLED
+- V84 | ops/governance/as6-autonomous-governance-enforcement-plan-v84.md | Autonomous governance enforcement artifact alias | ENABLED
+- V84 | ops/governance/as6-autonomous-governance-enforcement-control-v84.md | Autonomous governance enforcement artifact alias | ENABLED
+- V84 | ops/governance/as6-autonomous-governance-enforcement-failure-classes-v84.md | Autonomous governance enforcement artifact alias | ENABLED
+- V84 | ops/governance/as6-autonomous-governance-enforcement-aec-v84.md | Autonomous governance enforcement artifact alias | ENABLED
+- V84 | ops/governance/as6-autonomous-governance-enforcement-automation-v84.md | Autonomous governance enforcement artifact alias | ENABLED
+- V84B | GOVERNANCE_ARTIFACT_SELF_REGISTRATION_GAP | Autonomous governance self-registration failure class | ENABLED
+- V84B | GOVERNANCE_ALIAS_COVERAGE_FALSE_NEGATIVE | Autonomous governance self-registration failure class | ENABLED
+- V84B | GOVERNANCE_ENFORCEMENT_SELF_VALIDATION_GAP | Autonomous governance self-registration failure class | ENABLED
+- V84B | GOVERNANCE_STAGE_ARTIFACT_ALIAS_REQUIRED | Autonomous governance self-registration failure class | ENABLED

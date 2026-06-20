@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+for f in ops/governance/as6-autonomous-governance-enforcement-root-cause-v84.md ops/governance/as6-autonomous-governance-enforcement-plan-v84.md ops/governance/as6-autonomous-governance-enforcement-control-v84.md ops/governance/as6-autonomous-governance-enforcement-failure-classes-v84.md ops/governance/as6-autonomous-governance-enforcement-aec-v84.md ops/governance/as6-autonomous-governance-enforcement-automation-v84.md; do
+  if [ ! -f "$f" ]; then
+    echo "AS6_GOVERNANCE_ENFORCEMENT_REQUIRED_FILE=FAIL:$f"
+    FAIL=1
+  fi
+done
+for cls in AUTONOMOUS_GOVERNANCE_DRIFT AUTONOMOUS_AEC_DRIFT AUTONOMOUS_CONTROL_DRIFT AUTONOMOUS_FAILURE_CLASS_DRIFT AUTONOMOUS_AUTOMATION_DRIFT AUTONOMOUS_STATE_DRIFT AUTONOMOUS_DETECTED_ERRORS_DRIFT GOVERNANCE_ENFORCEMENT_COMMIT_BLOCK_REQUIRED GOVERNANCE_ARTIFACT_SELF_REGISTRATION_GAP; do
+  if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then
+    echo "AS6_GOVERNANCE_ENFORCEMENT_CLASS_REGISTRATION=FAIL:$cls"
+    FAIL=1
+  fi
+done
+for alias in "as6-autonomous-governance-enforcement-root-cause-v84.md" "as6-autonomous-governance-enforcement-plan-v84.md" "as6-autonomous-governance-enforcement-control-v84.md" "as6-autonomous-governance-enforcement-failure-classes-v84.md" "as6-autonomous-governance-enforcement-aec-v84.md" "as6-autonomous-governance-enforcement-automation-v84.md"; do
+  if ! grep -Rqs "$alias" ops/registry ops/governance ops/status docs; then
+    echo "AS6_GOVERNANCE_ARTIFACT_SELF_REGISTRATION=FAIL:$alias"
+    FAIL=1
+  fi
+done
+if ! grep -Rqs "as6-control-autonomous-governance-enforcement-v84" ops/bin/as6-pre-commit-push-enforcement ops/registry ops/governance docs; then
+  echo "AS6_GOVERNANCE_ENFORCEMENT_WIRING=FAIL"
+  FAIL=1
+fi
+if git diff --cached --name-only | grep -q "^runtime/"; then
+  echo "AS6_RUNTIME_STAGING=FAIL"
+  FAIL=1
+fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_AUTONOMOUS_GOVERNANCE_ENFORCEMENT=PASS"
