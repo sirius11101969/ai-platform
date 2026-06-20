@@ -1698,3 +1698,8 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V78B | diagnostic self-match | Covers self-matching markdown URL detector regression | ENABLED
 - V78C | adaptive frontend build runner | Covers host npm missing and Docker Compose Node fallback build validation | ENABLED
 - V78D | docker run image fallback | Covers frontend build validation without host npm or Compose service assumption | ENABLED
+- V79 | ops/bin/as6-control-diagnostic-artifact-reconciliation-v79 | Covers untracked diagnostics, orphan controls, registry drift, coverage drift and runtime staging guard | ENABLED
+- V79 | ops/bin/as6-diagnose-crm-analytics-panel-visible-bridge-v75 | Reconciled historical diagnostic/control coverage | ENABLED
+- V79 | ops/bin/as6-control-crm-analytics-panel-visible-bridge-v75 | Reconciled historical diagnostic/control coverage | ENABLED
+- V79 | ops/bin/as6-diagnose-repair-v74-diag-script-secret-scan-false-positive | Reconciled historical diagnostic/control coverage | ENABLED
+- V79 | ops/bin/as6-control-repair-v74-diag-script-secret-scan-false-positive | Reconciled historical diagnostic/control coverage | ENABLED

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-diagnostic-artifact-reconciliation-v79
+curl -kfsS https://www.as6.ru/api/health >/dev/null
+if git diff --cached --name-only | grep -q "^runtime/"; then
+  echo "AS6_RUNTIME_STAGING=FAIL"
+  exit 1
+fi
+echo "AS6_CONTROL_DIAGNOSTIC_ARTIFACT_RECONCILIATION_V79=PASS"

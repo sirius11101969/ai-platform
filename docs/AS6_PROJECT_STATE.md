@@ -2462,3 +2462,12 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Added failure class: DOCKER_COMPOSE_IMAGE_AS_SERVICE_BUILD_RUNNER_GAP.
 - Updated control to use host npm or docker run node:20-alpine fallback.
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=DIAGNOSTIC_ARTIFACT_RECONCILIATION_V79
+- Base commit: 003c8a9.
+- Root cause: untracked historical diagnostic/control artifacts and governance drift after V78D.
+- Added diagnostics: ops/bin/as6-diagnose-diagnostic-artifact-reconciliation-v79
+- Added control: ops/bin/as6-control-diagnostic-artifact-reconciliation-v79
+- Added failure classes: UNTRACKED_DIAGNOSTIC_ARTIFACTS, ORPHAN_DIAGNOSTIC_CONTROLS, DIAGNOSTIC_REGISTRY_DRIFT, DIAGNOSTIC_COVERAGE_DRIFT, GOVERNANCE_ARTIFACT_DRIFT.
+- Registered Diagnostic Registry and Coverage Registry entries.
+- Production health checked with raw URL: https://www.as6.ru/api/health

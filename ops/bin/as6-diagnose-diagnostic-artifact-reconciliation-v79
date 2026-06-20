@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+for f in ops/bin/as6-diagnose-crm-analytics-panel-visible-bridge-v75 ops/bin/as6-control-crm-analytics-panel-visible-bridge-v75 ops/bin/as6-diagnose-repair-v74-diag-script-secret-scan-false-positive ops/bin/as6-control-repair-v74-diag-script-secret-scan-false-positive; do
+  if [ -e "$f" ] && ! git ls-files --error-unmatch "$f" >/dev/null 2>&1; then
+    echo "AS6_UNTRACKED_DIAGNOSTIC_ARTIFACT=FAIL:$f"
+    FAIL=1
+  fi
+done
+for needle in "UNTRACKED_DIAGNOSTIC_ARTIFACTS" "ORPHAN_DIAGNOSTIC_CONTROLS" "DIAGNOSTIC_REGISTRY_DRIFT"; do
+  if ! grep -Rqs "$needle" ops/registry ops/governance ops/status docs; then
+    echo "AS6_DIAGNOSTIC_RECONCILIATION_REGISTRATION=FAIL:$needle"
+    FAIL=1
+  fi
+done
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_DIAGNOSTIC_ARTIFACT_RECONCILIATION=PASS"

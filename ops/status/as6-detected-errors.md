@@ -285,3 +285,9 @@ Status: REGISTERED
 - ROOT_CAUSE: docker compose treated node:20-alpine as missing service.
 - PREVENTION: control uses docker run for external image fallback.
 - STATUS: repaired and registered.
+
+## V79 Diagnostic Artifact Reconciliation
+- ROOT_CAUSE: historical diagnostic/control artifacts were present outside the latest committed reconciliation.
+- FAILURE_CLASSES: UNTRACKED_DIAGNOSTIC_ARTIFACTS, ORPHAN_DIAGNOSTIC_CONTROLS, DIAGNOSTIC_REGISTRY_DRIFT, DIAGNOSTIC_COVERAGE_DRIFT, GOVERNANCE_ARTIFACT_DRIFT.
+- PREVENTION: V79 diagnostic/control verifies reconciliation and runtime staging guard.
+- STATUS: registered and controlled.

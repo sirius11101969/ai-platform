@@ -1645,3 +1645,8 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V78B | DIAGNOSTIC_SELF_MATCH_MARKDOWN_URL | Diagnostic self-match prevention | ENABLED
 - V78C | HOST_NPM_MISSING_BUILD_RUNNER_GAP | Control detects host npm absence and uses Docker build fallback | ENABLED
 - V78D | DOCKER_COMPOSE_IMAGE_AS_SERVICE_BUILD_RUNNER_GAP | Prevent external image from being treated as Compose service | ENABLED
+- V79 | ops/bin/as6-diagnose-diagnostic-artifact-reconciliation-v79 | Diagnostic artifact reconciliation and drift detection | ENABLED
+- V79 | ops/bin/as6-diagnose-crm-analytics-panel-visible-bridge-v75 | Reconciled historical diagnostic/control artifact | ENABLED
+- V79 | ops/bin/as6-control-crm-analytics-panel-visible-bridge-v75 | Reconciled historical diagnostic/control artifact | ENABLED
+- V79 | ops/bin/as6-diagnose-repair-v74-diag-script-secret-scan-false-positive | Reconciled historical diagnostic/control artifact | ENABLED
+- V79 | ops/bin/as6-control-repair-v74-diag-script-secret-scan-false-positive | Reconciled historical diagnostic/control artifact | ENABLED
