@@ -313,3 +313,9 @@ Status: REGISTERED
 ## V81B Autonomous Diagnostic Reconciliation
 - ROOT_CAUSE: V81 discovered historical registry drift.
 - STATUS: reconciled and registered.
+
+## V82 Registry Reconciliation Enforcement
+- ROOT_CAUSE: V81B reconciled historical drift, but future drift still needed commit/push enforcement.
+- FAILURE_CLASSES: REGISTRY_ENFORCEMENT_BYPASS, COVERAGE_ENFORCEMENT_BYPASS, GOVERNANCE_ENFORCEMENT_BYPASS, AEC_ENFORCEMENT_BYPASS, STATE_ENFORCEMENT_BYPASS, DETECTED_ERRORS_ENFORCEMENT_BYPASS, ORPHAN_DIAGNOSTIC_COMMIT_BLOCK_REQUIRED, ORPHAN_CONTROL_COMMIT_BLOCK_REQUIRED.
+- PREVENTION: V82 diagnostic/control blocks missing registry evidence and runtime staging.
+- STATUS: registered and controlled.

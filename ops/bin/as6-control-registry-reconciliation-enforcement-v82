@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-registry-reconciliation-enforcement-v82
+ops/bin/as6-diagnose-diagnostic-registry-reconciliation-v81b
+curl -kfsS https://www.as6.ru/api/health >/dev/null
+if git diff --cached --name-only | grep -q "^runtime/"; then
+  echo "AS6_RUNTIME_STAGING=FAIL"
+  exit 1
+fi
+echo "AS6_CONTROL_REGISTRY_RECONCILIATION_ENFORCEMENT_V82=PASS"

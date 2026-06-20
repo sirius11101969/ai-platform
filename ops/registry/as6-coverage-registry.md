@@ -1759,3 +1759,4 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V81B | ops/bin/as6-diagnose-diagnostic-artifact-reconciliation-v79 | Historical coverage artifact reconciled | ENABLED
 - V81B | ops/bin/as6-diagnose-project-state-readiness-snapshot-v80 | Historical coverage artifact reconciled | ENABLED
 - V81B | ops/bin/as6-control-diagnostic-registry-reconciliation-v81b | Covers historical registry reconciliation | ENABLED
+- V82 | ops/bin/as6-control-registry-reconciliation-enforcement-v82 | Covers registry, coverage, governance, AEC, state, detected-errors enforcement and runtime staging guard | ENABLED

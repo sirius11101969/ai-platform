@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+mkdir -p runtime/as6-v82
+find ops/bin -maxdepth 1 -type f \( -name "as6-diagnose-*" -o -name "as6-control-*" \) | sort > runtime/as6-v82/enforcement-artifacts.index
+while IFS= read -r artifact; do
+  if ! grep -Rqs "$artifact" ops/registry; then
+    echo "AS6_REGISTRY_ENFORCEMENT=FAIL:missing registry evidence:$artifact"
+    FAIL=1
+  fi
+done < runtime/as6-v82/enforcement-artifacts.index
+for cls in REGISTRY_ENFORCEMENT_BYPASS COVERAGE_ENFORCEMENT_BYPASS GOVERNANCE_ENFORCEMENT_BYPASS AEC_ENFORCEMENT_BYPASS STATE_ENFORCEMENT_BYPASS DETECTED_ERRORS_ENFORCEMENT_BYPASS; do
+  if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then
+    echo "AS6_ENFORCEMENT_CLASS_REGISTRATION=FAIL:$cls"
+    FAIL=1
+  fi
+done
+if git diff --cached --name-only | grep -q "^runtime/"; then
+  echo "AS6_RUNTIME_STAGING=FAIL"
+  FAIL=1
+fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_REGISTRY_RECONCILIATION_ENFORCEMENT=PASS"

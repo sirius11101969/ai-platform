@@ -2500,3 +2500,13 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Added control: ops/bin/as6-control-diagnostic-registry-reconciliation-v81b
 - Reconciled historical diagnostic/control registry evidence.
 - Added failure classes: DIAGNOSTIC_ARTIFACT_REGISTRY_GAP_DISCOVERED, AUTONOMOUS_DIAGNOSTIC_SELF_VALIDATION_ALLOWLIST_GAP, HISTORICAL_DIAGNOSTIC_REGISTRY_DRIFT, HISTORICAL_COVERAGE_REGISTRY_DRIFT.
+
+## AS6_DONE=REGISTRY_RECONCILIATION_ENFORCEMENT_V82
+- Base commit: 7ebc690.
+- Project readiness before V82: 96%.
+- Purpose: enforce registry/coverage/governance/AEC/state/detected-errors consistency after V81B.
+- Added diagnostic: ops/bin/as6-diagnose-registry-reconciliation-enforcement-v82
+- Added control: ops/bin/as6-control-registry-reconciliation-enforcement-v82
+- Added failure classes: REGISTRY_ENFORCEMENT_BYPASS, COVERAGE_ENFORCEMENT_BYPASS, GOVERNANCE_ENFORCEMENT_BYPASS, AEC_ENFORCEMENT_BYPASS, STATE_ENFORCEMENT_BYPASS, DETECTED_ERRORS_ENFORCEMENT_BYPASS, ORPHAN_DIAGNOSTIC_COMMIT_BLOCK_REQUIRED, ORPHAN_CONTROL_COMMIT_BLOCK_REQUIRED.
+- Expected project readiness after V82: 98%.
+- Production health checked with raw URL: https://www.as6.ru/api/health

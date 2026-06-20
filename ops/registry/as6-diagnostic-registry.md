@@ -1716,3 +1716,12 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V81B | ops/bin/as6-diagnose-ai-kpi-visual-parity-v34 | Historical diagnostic artifact reconciled | ENABLED
 - V81B | ops/bin/as6-diagnose-command-center-visual-parity-v27 | Historical diagnostic artifact reconciled | ENABLED
 - V81B | ops/bin/as6-diagnose-diagnostic-registry-reconciliation-v81b | Diagnostic registry reconciliation scanner | ENABLED
+- V82 | ops/bin/as6-diagnose-registry-reconciliation-enforcement-v82 | Registry reconciliation enforcement diagnostic | ENABLED
+- V82 | REGISTRY_ENFORCEMENT_BYPASS | Registry reconciliation enforcement failure class | ENABLED
+- V82 | COVERAGE_ENFORCEMENT_BYPASS | Registry reconciliation enforcement failure class | ENABLED
+- V82 | GOVERNANCE_ENFORCEMENT_BYPASS | Registry reconciliation enforcement failure class | ENABLED
+- V82 | AEC_ENFORCEMENT_BYPASS | Registry reconciliation enforcement failure class | ENABLED
+- V82 | STATE_ENFORCEMENT_BYPASS | Registry reconciliation enforcement failure class | ENABLED
+- V82 | DETECTED_ERRORS_ENFORCEMENT_BYPASS | Registry reconciliation enforcement failure class | ENABLED
+- V82 | ORPHAN_DIAGNOSTIC_COMMIT_BLOCK_REQUIRED | Registry reconciliation enforcement failure class | ENABLED
+- V82 | ORPHAN_CONTROL_COMMIT_BLOCK_REQUIRED | Registry reconciliation enforcement failure class | ENABLED
