@@ -2092,3 +2092,8 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V116B | COMMAND_CENTER_LOGO_FRAME_SOURCE_DRIFT | Command Center cleanup/source fix failure class | ENABLED
 - V116B | COMMAND_CENTER_ACTION_BAR_SOURCE_DRIFT | Command Center cleanup/source fix failure class | ENABLED
 - V116B | COMMAND_CENTER_CARD_BORDER_SOURCE_DRIFT | Command Center cleanup/source fix failure class | ENABLED
+- V117 | ops/bin/as6-diagnose-command-center-final-reference-css-v117 | Final Command Center reference CSS diagnostic | ENABLED
+- V117 | COMMAND_CENTER_FINAL_CSS_ORDER_DRIFT | Final Command Center reference CSS failure class | ENABLED
+- V117 | COMMAND_CENTER_REFERENCE_CSS_NOT_LAST | Final Command Center reference CSS failure class | ENABLED
+- V117 | COMMAND_CENTER_VISUAL_LAYER_OVERRIDE | Final Command Center reference CSS failure class | ENABLED
+- V117 | COMMAND_CENTER_REFERENCE_STILL_NOT_MATCHED | Final Command Center reference CSS failure class | ENABLED

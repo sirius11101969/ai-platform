@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+test -f frontend/public/as6-command-center-final-reference.css || FAIL=1
+grep -q "/as6-command-center-final-reference.css" frontend/index.html || FAIL=1
+grep -q "quick-actions-primary" frontend/public/as6-command-center-final-reference.css || FAIL=1
+grep -q "as6-sidebar-brand" frontend/public/as6-command-center-final-reference.css || FAIL=1
+grep -q "copilot-hero" frontend/public/as6-command-center-final-reference.css || FAIL=1
+if [ "$FAIL" -ne 0 ]; then echo "AS6_COMMAND_CENTER_FINAL_REFERENCE_CSS=FAIL"; exit 1; fi
+echo "AS6_COMMAND_CENTER_FINAL_REFERENCE_CSS=PASS"

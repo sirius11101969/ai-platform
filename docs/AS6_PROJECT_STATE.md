@@ -3120,3 +3120,8 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Added CSS: frontend/src/styles/as6-command-center-real-reference-fix.css
 - Fixed real Command Center source selectors.
 - No App.jsx changes.
+
+## AS6_DONE=COMMAND_CENTER_FINAL_REFERENCE_CSS_V117
+- Added final public CSS loaded after bundle CSS.
+- Added source index.html link.
+- Final visual layer: frontend/public/as6-command-center-final-reference.css

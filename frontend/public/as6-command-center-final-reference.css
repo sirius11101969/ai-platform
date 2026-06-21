@@ -1,0 +1,218 @@
+/* AS6 V117 FINAL COMMAND CENTER REFERENCE CSS - loaded after bundle */
+body.as6-command-center-classic {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #030814 !important;
+  overflow-x: hidden !important;
+}
+body.as6-command-center-classic #root {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #030814 !important;
+  min-height: 100vh !important;
+}
+body.as6-command-center-classic .app-shell.command-shell {
+  display: grid !important;
+  grid-template-columns: 240px minmax(0, 1fr) !important;
+  gap: 16px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  min-height: 100vh !important;
+  background: #030814 !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+body.as6-command-center-classic .workspace {
+  margin: 0 !important;
+  padding: 0 14px 14px 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+body.as6-command-center-classic .command-center-page {
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 12px !important;
+  background: transparent !important;
+}
+body.as6-command-center-classic .command-sidebar {
+  width: 240px !important;
+  min-width: 240px !important;
+  height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 12px 10px !important;
+  border-radius: 0 18px 18px 0 !important;
+  border-top: 0 !important;
+  border-left: 0 !important;
+  border-bottom: 0 !important;
+  border-right: 1px solid rgba(55, 95, 145, .16) !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background: linear-gradient(180deg, rgba(4, 9, 22, .99), rgba(3, 8, 19, .99)) !important;
+  overflow: hidden !important;
+}
+body.as6-command-center-classic .as6-sidebar-brand,
+body.as6-command-center-classic .as6-sidebar-brand-top {
+  height: 112px !important;
+  min-height: 112px !important;
+  margin: 0 0 12px !important;
+  padding: 16px 0 8px !important;
+  background: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+body.as6-command-center-classic .as6-real-logo-image,
+body.as6-command-center-classic .as6-sidebar-brand img,
+body.as6-command-center-classic .as6-sidebar-brand-top img {
+  width: 166px !important;
+  max-width: 166px !important;
+  height: auto !important;
+  display: block !important;
+  margin: 0 auto !important;
+  background: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  filter: drop-shadow(0 0 16px rgba(37, 228, 255, .34)) !important;
+}
+body.as6-command-center-classic .side-nav,
+body.as6-command-center-classic .command-side-nav,
+body.as6-command-center-classic .sidebar-scroll {
+  background: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+body.as6-command-center-classic .side-nav a {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+body.as6-command-center-classic .side-nav a.active,
+body.as6-command-center-classic .side-nav a.command-center-active {
+  background: linear-gradient(100deg, #7c2dff 0%, #21d4ff 100%) !important;
+  border: 0 !important;
+  box-shadow: 0 10px 28px rgba(27, 181, 255, .16) !important;
+}
+body.as6-command-center-classic .command-hero {
+  margin: 0 !important;
+  min-height: 122px !important;
+  padding: 20px 22px !important;
+  border-radius: 0 0 18px 18px !important;
+  border-top: 0 !important;
+  border-left: 0 !important;
+  border-right: 1px solid rgba(64, 148, 182, .18) !important;
+  border-bottom: 1px solid rgba(64, 148, 182, .18) !important;
+  box-shadow: none !important;
+  background: radial-gradient(circle at 36% 0%, rgba(126, 87, 255, .20), transparent 30rem), linear-gradient(100deg, rgba(6, 14, 34, .94), rgba(4, 42, 58, .76)) !important;
+}
+body.as6-command-center-classic .command-kpis {
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  margin: 0 !important;
+}
+body.as6-command-center-classic .quick-actions-primary,
+body.as6-command-center-classic .quick-actions-primary > div {
+  background: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+body.as6-command-center-classic .quick-actions-primary > div {
+  display: grid !important;
+  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+body.as6-command-center-classic .quick-actions-primary a,
+body.as6-command-center-classic .quick-actions-primary button {
+  min-height: 54px !important;
+  border-radius: 12px !important;
+  color: #f7fbff !important;
+  background: linear-gradient(180deg, rgba(13, 28, 61, .96), rgba(5, 12, 30, .96)) !important;
+  border: 1px solid rgba(61, 118, 178, .52) !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+body.as6-command-center-classic .command-main-grid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) 350px !important;
+  gap: 12px !important;
+  margin: 0 !important;
+  align-items: start !important;
+}
+body.as6-command-center-classic .command-top-grid {
+  display: grid !important;
+  grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr) !important;
+  gap: 12px !important;
+}
+body.as6-command-center-classic .command-second-grid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, .9fr) minmax(0, .72fr) !important;
+  gap: 12px !important;
+}
+body.as6-command-center-classic .command-card,
+body.as6-command-center-classic .command-kpi,
+body.as6-command-center-classic .event-card,
+body.as6-command-center-classic .next-action-card {
+  border: 1px solid rgba(48, 98, 148, .30) !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background-color: rgba(3, 9, 23, .76) !important;
+}
+body.as6-command-center-classic .copilot-hero {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background: linear-gradient(135deg, rgba(21, 31, 76, .92), rgba(91, 34, 150, .72)) !important;
+}
+body.as6-command-center-classic .command-recommendations {
+  display: none !important;
+}
+body.as6-command-center-classic .command-sidebar::before,
+body.as6-command-center-classic .command-sidebar::after,
+body.as6-command-center-classic .sidebar-scroll::before,
+body.as6-command-center-classic .sidebar-scroll::after,
+body.as6-command-center-classic .as6-sidebar-brand::before,
+body.as6-command-center-classic .as6-sidebar-brand::after,
+body.as6-command-center-classic .as6-sidebar-brand-top::before,
+body.as6-command-center-classic .as6-sidebar-brand-top::after,
+body.as6-command-center-classic .command-hero::before,
+body.as6-command-center-classic .command-hero::after,
+body.as6-command-center-classic .quick-actions-primary::before,
+body.as6-command-center-classic .quick-actions-primary::after,
+body.as6-command-center-classic .quick-actions-primary > div::before,
+body.as6-command-center-classic .quick-actions-primary > div::after,
+body.as6-command-center-classic .command-card::before,
+body.as6-command-center-classic .command-card::after,
+body.as6-command-center-classic .command-kpi::before,
+body.as6-command-center-classic .command-kpi::after,
+body.as6-command-center-classic .workspace::before,
+body.as6-command-center-classic .workspace::after,
+body.as6-command-center-classic .command-center-page::before,
+body.as6-command-center-classic .command-center-page::after,
+body.as6-command-center-classic .command-main-grid::before,
+body.as6-command-center-classic .command-main-grid::after {
+  display: none !important;
+  content: none !important;
+}
+body.as6-command-center-classic > [id^="as6-"]:not(#root),
+body.as6-command-center-classic > [class*="as6-"],
+body.as6-command-center-classic [data-as6-command-center-overlay-hidden="true"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  max-width: 0 !important;
+  max-height: 0 !important;
+  overflow: hidden !important;
+}
