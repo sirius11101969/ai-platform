@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+test -f frontend/src/pages/CommandCenterPage.jsx || FAIL=1
+test -f frontend/src/styles/as6-command-center-appshell-reference.css || FAIL=1
+grep -Rqs "as6-command-center-appshell-reference" frontend/src/pages/CommandCenterPage.jsx frontend/src/styles/as6-command-center-appshell-reference.css || FAIL=1
+if grep -Rqs "as6-ref-sidebar\|as6-ref-logo-box\|as6-command-center-reference-page" frontend/src/pages/CommandCenterPage.jsx 2>/dev/null; then FAIL=1; fi
+if grep -Rqs "AS6 Mission Control\|AUTONOMOUS COCKPIT" frontend/src/pages/CommandCenterPage.jsx 2>/dev/null; then FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then echo "AS6_COMMAND_CENTER_APPSHELL_REFERENCE=FAIL"; exit 1; fi
+echo "AS6_COMMAND_CENTER_APPSHELL_REFERENCE=PASS"

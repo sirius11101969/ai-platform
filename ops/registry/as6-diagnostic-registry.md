@@ -2114,3 +2114,9 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V119 | COMMAND_CENTER_PAGE_REWRITE_REQUIRED | Command Center reference page failure class | ENABLED
 - V119 | COMMAND_CENTER_OLD_BADGE_DRIFT | Command Center reference page failure class | ENABLED
 - V119 | COMMAND_CENTER_REFERENCE_PAGE_NOT_ACTIVE | Command Center reference page failure class | ENABLED
+- V120 | ops/bin/as6-diagnose-command-center-appshell-reference-v120 | Command Center AppShell reference diagnostic | ENABLED
+- V120 | COMMAND_CENTER_DUPLICATE_SIDEBAR_DRIFT | Command Center AppShell reference failure class | ENABLED
+- V120 | COMMAND_CENTER_APPSHELL_CONTRACT_VIOLATION | Command Center AppShell reference failure class | ENABLED
+- V120 | COMMAND_CENTER_FULL_PAGE_SHELL_MISUSE | Command Center AppShell reference failure class | ENABLED
+- V120 | COMMAND_CENTER_REFERENCE_WORKSPACE_NOT_ACTIVE | Command Center AppShell reference failure class | ENABLED
+- V120 | COMMAND_CENTER_INTERNAL_NAVIGATION_DUPLICATION | Command Center AppShell reference failure class | ENABLED
