@@ -2041,3 +2041,15 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V112 | UNIFIED_PRIMITIVE_USAGE_GAP | Real Primitive Enforcement Engine failure class | ENABLED
 - V112B | BUILD_RUNNER_FALLBACK_GAP | Frontend control build runner fallback gap | ENABLED
 - V112B | PRIMITIVE_ENFORCEMENT_CONTROL_RUNNER_DRIFT | Primitive enforcement control runner drift | ENABLED
+- V113 | ops/bin/as6-diagnose-autonomous-ui-governance-engine-v113 | Autonomous UI Governance Engine | ENABLED
+- V113 | UI_GOVERNANCE_ENGINE_MISSING | UI governance failure class | ENABLED
+- V113 | PAGE_REGISTRY_DRIFT | UI governance failure class | ENABLED
+- V113 | COMPONENT_REGISTRY_DRIFT | UI governance failure class | ENABLED
+- V113 | KPI_REGISTRY_DRIFT | UI governance failure class | ENABLED
+- V113 | TABLE_REGISTRY_DRIFT | UI governance failure class | ENABLED
+- V113 | FORM_REGISTRY_DRIFT | UI governance failure class | ENABLED
+- V113 | STATE_REGISTRY_DRIFT | UI governance failure class | ENABLED
+- V113 | UI_INVENTORY_MISSING | UI governance failure class | ENABLED
+- V113 | UI_AUTONOMY_GAP | UI governance failure class | ENABLED
+- V113B | UI_GOVERNANCE_BUILD_RUNNER_FALLBACK_GAP | UI governance build runner fallback gap | ENABLED
+- V113B | UI_GOVERNANCE_CONTROL_RUNNER_DRIFT | UI governance control runner drift | ENABLED

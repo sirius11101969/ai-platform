@@ -535,3 +535,28 @@ Status: REGISTERED
 - FAILURE_CLASSES: BUILD_RUNNER_FALLBACK_GAP, PRIMITIVE_ENFORCEMENT_CONTROL_RUNNER_DRIFT.
 - PREVENTION: controls must include local npm plus docker/node fallback.
 - STATUS: registered and controlled.
+
+## V113 Autonomous UI Governance Engine
+
+ROOT_CAUSE:
+Manual UI inventory governance.
+
+FAILURE_CLASSES:
+- UI_GOVERNANCE_ENGINE_MISSING
+- PAGE_REGISTRY_DRIFT
+- COMPONENT_REGISTRY_DRIFT
+- KPI_REGISTRY_DRIFT
+- TABLE_REGISTRY_DRIFT
+- FORM_REGISTRY_DRIFT
+- STATE_REGISTRY_DRIFT
+- UI_INVENTORY_MISSING
+- UI_AUTONOMY_GAP
+
+STATUS:
+Governed and registered.
+
+## V113B UI Governance Build Runner Fallback
+- ROOT_CAUSE: V113 control had no docker/node fallback when local npm was unavailable.
+- FAILURE_CLASSES: UI_GOVERNANCE_BUILD_RUNNER_FALLBACK_GAP, UI_GOVERNANCE_CONTROL_RUNNER_DRIFT.
+- PREVENTION: UI governance controls must include local npm plus docker/node fallback.
+- STATUS: registered and controlled.
