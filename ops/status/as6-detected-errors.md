@@ -607,3 +607,15 @@ Governed and registered.
 - ROOT_CAUSE: previous CSS reached production but was not the final browser style layer.
 - FAILURE_CLASSES: COMMAND_CENTER_FINAL_CSS_ORDER_DRIFT, COMMAND_CENTER_REFERENCE_CSS_NOT_LAST, COMMAND_CENTER_VISUAL_LAYER_OVERRIDE, COMMAND_CENTER_REFERENCE_STILL_NOT_MATCHED.
 - STATUS: registered and controlled.
+
+## V118 Command Center Reference Restore
+- ROOT_CAUSE: visual CSS overlays were not effective enough to match the approved reference.
+- ACTION: restored CommandCenterPage.jsx from known-good reference commit 155975f and removed temporary patch layers.
+- FAILURE_CLASSES: COMMAND_CENTER_PATCH_LAYER_FAILURE, COMMAND_CENTER_REFERENCE_SOURCE_DRIFT, COMMAND_CENTER_CSS_OVERLAY_NOT_EFFECTIVE, COMMAND_CENTER_RESTORE_FROM_REFERENCE_REQUIRED, COMMAND_CENTER_TEMPORARY_PATCH_ARTIFACT_DRIFT.
+- STATUS: registered and controlled.
+
+## V118B Command Center Reference Restore Finish
+- ROOT_CAUSE: V118 stopped because git add referenced a missing temporary patch file.
+- ACTION: completed reference restore using safe staging and cleanup.
+- FAILURE_CLASSES: COMMAND_CENTER_REFERENCE_RESTORE_STAGE_FAILURE, COMMAND_CENTER_MISSING_PATHSPEC_STAGING_FAILURE, COMMAND_CENTER_PATCH_LAYER_CLEANUP_REQUIRED, COMMAND_CENTER_REFERENCE_SOURCE_RESTORE_REQUIRED, COMMAND_CENTER_TEMPORARY_PATCH_ARTIFACT_DRIFT.
+- STATUS: registered and controlled.

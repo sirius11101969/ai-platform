@@ -3125,3 +3125,15 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Added final public CSS loaded after bundle CSS.
 - Added source index.html link.
 - Final visual layer: frontend/public/as6-command-center-final-reference.css
+
+## AS6_DONE=COMMAND_CENTER_REFERENCE_RESTORE_V118
+- Restored CommandCenterPage.jsx from reference commit 155975f.
+- Removed temporary V115-V117 command-center CSS/JS patch layers.
+- Removed final public reference CSS link from frontend/index.html.
+- Reason: CSS patch layers did not visually match approved reference.
+
+## AS6_DONE=COMMAND_CENTER_REFERENCE_RESTORE_V118B
+- Finished V118 after missing pathspec staging failure.
+- Restored CommandCenterPage.jsx from reference commit 155975f.
+- Removed temporary V115-V117 command-center CSS/JS patch layers.
+- Used safe git add -A staging.

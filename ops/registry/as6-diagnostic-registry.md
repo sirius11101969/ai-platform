@@ -2097,3 +2097,14 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V117 | COMMAND_CENTER_REFERENCE_CSS_NOT_LAST | Final Command Center reference CSS failure class | ENABLED
 - V117 | COMMAND_CENTER_VISUAL_LAYER_OVERRIDE | Final Command Center reference CSS failure class | ENABLED
 - V117 | COMMAND_CENTER_REFERENCE_STILL_NOT_MATCHED | Final Command Center reference CSS failure class | ENABLED
+- V118 | ops/bin/as6-diagnose-command-center-reference-restore-v118 | Command Center reference restore diagnostic | ENABLED
+- V118 | COMMAND_CENTER_PATCH_LAYER_FAILURE | Command Center reference restore failure class | ENABLED
+- V118 | COMMAND_CENTER_REFERENCE_SOURCE_DRIFT | Command Center reference restore failure class | ENABLED
+- V118 | COMMAND_CENTER_CSS_OVERLAY_NOT_EFFECTIVE | Command Center reference restore failure class | ENABLED
+- V118 | COMMAND_CENTER_RESTORE_FROM_REFERENCE_REQUIRED | Command Center reference restore failure class | ENABLED
+- V118 | COMMAND_CENTER_TEMPORARY_PATCH_ARTIFACT_DRIFT | Command Center reference restore failure class | ENABLED
+- V118B | ops/bin/as6-diagnose-command-center-reference-restore-v118b | Command Center reference restore diagnostic | ENABLED
+- V118B | COMMAND_CENTER_REFERENCE_RESTORE_STAGE_FAILURE | Command Center reference restore failure class | ENABLED
+- V118B | COMMAND_CENTER_MISSING_PATHSPEC_STAGING_FAILURE | Command Center reference restore failure class | ENABLED
+- V118B | COMMAND_CENTER_PATCH_LAYER_CLEANUP_REQUIRED | Command Center reference restore failure class | ENABLED
+- V118B | COMMAND_CENTER_REFERENCE_SOURCE_RESTORE_REQUIRED | Command Center reference restore failure class | ENABLED

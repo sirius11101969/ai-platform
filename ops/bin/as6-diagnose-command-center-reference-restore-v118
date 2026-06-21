@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+test -f frontend/src/pages/CommandCenterPage.jsx || FAIL=1
+if grep -Rqs "as6-command-center-classic-restore\|as6-command-center-reference-dom-lock\|as6-command-center-final-reference.css" frontend/src frontend/index.html 2>/dev/null; then FAIL=1; fi
+if test -f frontend/src/as6-command-center-classic-restore.js; then FAIL=1; fi
+if test -f frontend/public/as6-command-center-final-reference.css; then FAIL=1; fi
+grep -Rqs "Command Center" frontend/src/pages/CommandCenterPage.jsx || FAIL=1
+if [ "$FAIL" -ne 0 ]; then echo "AS6_COMMAND_CENTER_REFERENCE_RESTORE=FAIL"; exit 1; fi
+echo "AS6_COMMAND_CENTER_REFERENCE_RESTORE=PASS"
