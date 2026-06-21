@@ -1,0 +1,33 @@
+# AS6 Real Primitive Enforcement Engine V112
+
+## Required primitives
+- AS6UnifiedKPI
+- AS6UnifiedCard
+- AS6UnifiedTable
+- AS6UnifiedFilterBar
+- AS6UnifiedActionBar
+- AS6UnifiedEmptyState
+- AS6UnifiedLoadingState
+- AS6UnifiedErrorState
+
+## Enforced surface classes
+- KPI
+- Card
+- Table
+- Filter
+- ActionBar
+- EmptyState
+- LoadingState
+- ErrorState
+
+## Failure classes
+- REAL_PRIMITIVE_ENFORCEMENT_MISSING
+- LOCAL_KPI_IMPLEMENTATION_DRIFT
+- LOCAL_CARD_IMPLEMENTATION_DRIFT
+- LOCAL_TABLE_IMPLEMENTATION_DRIFT
+- LOCAL_FILTER_IMPLEMENTATION_DRIFT
+- LOCAL_ACTION_BAR_IMPLEMENTATION_DRIFT
+- LOCAL_EMPTY_STATE_IMPLEMENTATION_DRIFT
+- LOCAL_LOADING_STATE_IMPLEMENTATION_DRIFT
+- LOCAL_ERROR_STATE_IMPLEMENTATION_DRIFT
+- UNIFIED_PRIMITIVE_USAGE_GAP

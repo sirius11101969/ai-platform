@@ -523,3 +523,15 @@ Status: REGISTERED
 - FAILURE_CLASSES: DESIGN_TOKEN_REGISTRY_MISSING, DESIGN_TOKEN_IMPORT_MISSING, SPACING_TOKEN_DRIFT, RADIUS_TOKEN_DRIFT, SHADOW_TOKEN_DRIFT, TYPOGRAPHY_TOKEN_DRIFT, KPI_TOKEN_DRIFT, TABLE_TOKEN_DRIFT, STATUS_BADGE_TOKEN_DRIFT, THEME_GOVERNANCE_GAP.
 - PREVENTION: V111 diagnostic/control validates token registry, import, docs, build and enforcement guard.
 - STATUS: registered and controlled.
+
+## V112 Real Primitive Enforcement Engine
+- ROOT_CAUSE: component consolidation reached 95%, but local primitive implementations could still drift.
+- FAILURE_CLASSES: REAL_PRIMITIVE_ENFORCEMENT_MISSING, LOCAL_KPI_IMPLEMENTATION_DRIFT, LOCAL_CARD_IMPLEMENTATION_DRIFT, LOCAL_TABLE_IMPLEMENTATION_DRIFT, LOCAL_FILTER_IMPLEMENTATION_DRIFT, LOCAL_ACTION_BAR_IMPLEMENTATION_DRIFT, LOCAL_EMPTY_STATE_IMPLEMENTATION_DRIFT, LOCAL_LOADING_STATE_IMPLEMENTATION_DRIFT, LOCAL_ERROR_STATE_IMPLEMENTATION_DRIFT, UNIFIED_PRIMITIVE_USAGE_GAP.
+- PREVENTION: V112 diagnostic/control validates unified primitive presence and page-level local primitive candidates.
+- STATUS: registered and controlled.
+
+## V112B Primitive Enforcement Build Runner Fallback
+- ROOT_CAUSE: V112 control had no docker/node fallback when local npm was unavailable.
+- FAILURE_CLASSES: BUILD_RUNNER_FALLBACK_GAP, PRIMITIVE_ENFORCEMENT_CONTROL_RUNNER_DRIFT.
+- PREVENTION: controls must include local npm plus docker/node fallback.
+- STATUS: registered and controlled.

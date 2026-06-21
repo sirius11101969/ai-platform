@@ -2028,3 +2028,16 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V111 | TABLE_TOKEN_DRIFT | Design Token Registry failure class | ENABLED
 - V111 | STATUS_BADGE_TOKEN_DRIFT | Design Token Registry failure class | ENABLED
 - V111 | THEME_GOVERNANCE_GAP | Design Token Registry failure class | ENABLED
+- V112 | ops/bin/as6-diagnose-real-primitive-enforcement-engine-v112 | Real Primitive Enforcement Engine diagnostic | ENABLED
+- V112 | REAL_PRIMITIVE_ENFORCEMENT_MISSING | Real Primitive Enforcement Engine failure class | ENABLED
+- V112 | LOCAL_KPI_IMPLEMENTATION_DRIFT | Real Primitive Enforcement Engine failure class | ENABLED
+- V112 | LOCAL_CARD_IMPLEMENTATION_DRIFT | Real Primitive Enforcement Engine failure class | ENABLED
+- V112 | LOCAL_TABLE_IMPLEMENTATION_DRIFT | Real Primitive Enforcement Engine failure class | ENABLED
+- V112 | LOCAL_FILTER_IMPLEMENTATION_DRIFT | Real Primitive Enforcement Engine failure class | ENABLED
+- V112 | LOCAL_ACTION_BAR_IMPLEMENTATION_DRIFT | Real Primitive Enforcement Engine failure class | ENABLED
+- V112 | LOCAL_EMPTY_STATE_IMPLEMENTATION_DRIFT | Real Primitive Enforcement Engine failure class | ENABLED
+- V112 | LOCAL_LOADING_STATE_IMPLEMENTATION_DRIFT | Real Primitive Enforcement Engine failure class | ENABLED
+- V112 | LOCAL_ERROR_STATE_IMPLEMENTATION_DRIFT | Real Primitive Enforcement Engine failure class | ENABLED
+- V112 | UNIFIED_PRIMITIVE_USAGE_GAP | Real Primitive Enforcement Engine failure class | ENABLED
+- V112B | BUILD_RUNNER_FALLBACK_GAP | Frontend control build runner fallback gap | ENABLED
+- V112B | PRIMITIVE_ENFORCEMENT_CONTROL_RUNNER_DRIFT | Primitive enforcement control runner drift | ENABLED

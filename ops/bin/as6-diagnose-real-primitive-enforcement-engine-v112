@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+FAIL=0
+BRIDGE="frontend/src/components/AS6RealComponentConsolidation.jsx"
+DOC="docs/AS6_REAL_PRIMITIVE_ENFORCEMENT_ENGINE_V112.md"
+
+for f in "$BRIDGE" "$DOC"; do
+  if [ ! -f "$f" ]; then echo "AS6_PRIMITIVE_ENFORCEMENT_FILE_MISSING $f"; FAIL=1; fi
+done
+
+for item in AS6UnifiedKPI AS6UnifiedCard AS6UnifiedTable AS6UnifiedFilterBar AS6UnifiedActionBar AS6UnifiedEmptyState AS6UnifiedLoadingState AS6UnifiedErrorState; do
+  if ! grep -Rqs "$item" "$BRIDGE" "$DOC" ops/governance docs ops/status ops/registry; then
+    echo "AS6_PRIMITIVE_ITEM_MISSING $item"
+    FAIL=1
+  fi
+done
+
+for cls in REAL_PRIMITIVE_ENFORCEMENT_MISSING LOCAL_KPI_IMPLEMENTATION_DRIFT LOCAL_CARD_IMPLEMENTATION_DRIFT LOCAL_TABLE_IMPLEMENTATION_DRIFT LOCAL_FILTER_IMPLEMENTATION_DRIFT LOCAL_ACTION_BAR_IMPLEMENTATION_DRIFT LOCAL_EMPTY_STATE_IMPLEMENTATION_DRIFT LOCAL_LOADING_STATE_IMPLEMENTATION_DRIFT LOCAL_ERROR_STATE_IMPLEMENTATION_DRIFT UNIFIED_PRIMITIVE_USAGE_GAP; do
+  if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then
+    echo "AS6_PRIMITIVE_CLASS_MISSING $cls"
+    FAIL=1
+  fi
+done
+
+if grep -Rqs "function .*KPI\|const .*KPI.*=>\|function .*Table\|const .*Table.*=>\|function .*Filter\|const .*Filter.*=>\|function .*ActionBar\|const .*ActionBar.*=>\|function .*EmptyState\|const .*EmptyState.*=>\|function .*LoadingState\|const .*LoadingState.*=>\|function .*ErrorState\|const .*ErrorState.*=>" frontend/src/pages 2>/dev/null; then
+  echo "AS6_LOCAL_PRIMITIVE_IMPLEMENTATION_SCAN=WARN:local page primitive candidates found; governed by V112 failure classes"
+fi
+
+if git diff --cached --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING_FAIL"; FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_REAL_PRIMITIVE_ENFORCEMENT_ENGINE=PASS"

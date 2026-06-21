@@ -1866,3 +1866,5 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V111 | ops/bin/as6-control-design-token-registry-governance-v111 | Covers design token governance, build, health and enforcement guard | ENABLED
 - V111 | frontend/src/styles/as6-design-token-registry.css | Design Token Registry artifact | ENABLED
 - V111 | docs/AS6_DESIGN_TOKEN_REGISTRY_V111.md | Design Token Registry artifact | ENABLED
+- V112 | ops/bin/as6-control-real-primitive-enforcement-engine-v112 | Covers primitive enforcement, build, health and enforcement guard | ENABLED
+- V112 | docs/AS6_REAL_PRIMITIVE_ENFORCEMENT_ENGINE_V112.md | Real Primitive Enforcement Engine artifact | ENABLED

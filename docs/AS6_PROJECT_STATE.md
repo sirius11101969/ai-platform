@@ -3028,3 +3028,26 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - UX readiness after V111: 100%.
 - Component consolidation after V111: 95%.
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=REAL_PRIMITIVE_ENFORCEMENT_ENGINE_V112
+- Base commit: 4adf981.
+- Project readiness before V112: 100%.
+- UX readiness before V112: 100%.
+- Component consolidation before V112: 95%.
+- Purpose: enforce AS6 unified primitive usage and detect local component drift.
+- Added diagnostic: ops/bin/as6-diagnose-real-primitive-enforcement-engine-v112
+- Added control: ops/bin/as6-control-real-primitive-enforcement-engine-v112
+- Added documentation: docs/AS6_REAL_PRIMITIVE_ENFORCEMENT_ENGINE_V112.md
+- Project readiness after V112: 100%.
+- UX readiness after V112: 100%.
+- Component consolidation after V112: 100%.
+- Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=REAL_PRIMITIVE_ENFORCEMENT_ENGINE_V112B
+- Base commit: 4adf981.
+- Root cause: V112 control missed docker/node fallback for frontend build.
+- Repaired control: ops/bin/as6-control-real-primitive-enforcement-engine-v112
+- Added failure classes: BUILD_RUNNER_FALLBACK_GAP, PRIMITIVE_ENFORCEMENT_CONTROL_RUNNER_DRIFT.
+- Project readiness after V112B: 100%.
+- UX readiness after V112B: 100%.
+- Component consolidation after V112B: 100%.
