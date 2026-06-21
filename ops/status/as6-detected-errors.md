@@ -566,3 +566,14 @@ Governed and registered.
 - FAILURE_CLASSES: REAL_MISSION_CONTROL_SHELL_MISSING, LEGACY_AI_OS_SHELL_DRIFT, COMMAND_CENTER_NAV_MISSING, GLOBAL_AS6_SIDEBAR_MISSING, GLOBAL_AS6_HEADER_MISSING, SHELL_CONTENT_OFFSET_GAP, VISUAL_MIGRATION_FALSE_POSITIVE, NON_COMMAND_CENTER_PAGE_SHELL_GAP.
 - PREVENTION: V114 mounts AS6 Mission Control shell globally and validates shell artifacts.
 - STATUS: registered and controlled.
+
+## V114B Production Mission Shell Force
+- ROOT_CAUSE: changes were committed but not visibly reflected in production.
+- FAILURE_CLASSES: PRODUCTION_SHELL_DEPLOYMENT_GAP, BROWSER_CACHE_VISUAL_STALE_BUNDLE, LEGACY_SIDEBAR_NOT_SUPPRESSED, SHELL_ADAPTER_NOT_VISIBLE_IN_PRODUCTION.
+- PREVENTION: production shell changes require build plus nginx/container redeploy.
+- STATUS: registered and controlled.
+
+## V114C Production Mission Control Shell
+- ROOT_CAUSE: previous shell was not visible in production because static bundle was not directly replaced and shell was not mounted from main entry.
+- FAILURE_CLASSES: MAIN_ENTRY_SHELL_MOUNT_MISSING, PRODUCTION_STATIC_BUNDLE_NOT_REPLACED, LEGACY_AI_OS_VISIBLE_AFTER_DEPLOY, NGINX_STATIC_RELOAD_MISSING, REAL_VISUAL_MIGRATION_NOT_VISIBLE.
+- STATUS: registered and controlled.

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+CSS="frontend/src/styles/as6-production-mission-shell-force.css"
+test -f "$CSS" || FAIL=1
+grep -Rqs "as6-production-mission-shell-force.css" frontend/src/App.jsx || FAIL=1
+grep -Rqs "as6-mission-shell-adopted" "$CSS" || FAIL=1
+grep -Rqs "as6-shell-v114-sidebar" "$CSS" || FAIL=1
+grep -Rqs "PRODUCTION_SHELL_DEPLOYMENT_GAP" ops docs || FAIL=1
+grep -Rqs "BROWSER_CACHE_VISUAL_STALE_BUNDLE" ops docs || FAIL=1
+grep -Rqs "LEGACY_SIDEBAR_NOT_SUPPRESSED" ops docs || FAIL=1
+if git diff --cached --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING_FAIL"; FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then echo "AS6_PRODUCTION_MISSION_SHELL_FORCE=FAIL"; exit 1; fi
+echo "AS6_PRODUCTION_MISSION_SHELL_FORCE=PASS"

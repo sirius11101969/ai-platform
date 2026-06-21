@@ -2062,3 +2062,14 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V114 | SHELL_CONTENT_OFFSET_GAP | Real Mission Control Shell Rollout failure class | ENABLED
 - V114 | VISUAL_MIGRATION_FALSE_POSITIVE | Real Mission Control Shell Rollout failure class | ENABLED
 - V114 | NON_COMMAND_CENTER_PAGE_SHELL_GAP | Real Mission Control Shell Rollout failure class | ENABLED
+- V114B | ops/bin/as6-diagnose-production-mission-shell-force-v114b | Production Mission Shell Force diagnostic | ENABLED
+- V114B | PRODUCTION_SHELL_DEPLOYMENT_GAP | Production visual migration failure class | ENABLED
+- V114B | BROWSER_CACHE_VISUAL_STALE_BUNDLE | Production visual migration failure class | ENABLED
+- V114B | LEGACY_SIDEBAR_NOT_SUPPRESSED | Production visual migration failure class | ENABLED
+- V114B | SHELL_ADAPTER_NOT_VISIBLE_IN_PRODUCTION | Production visual migration failure class | ENABLED
+- V114C | ops/bin/as6-diagnose-production-mission-control-shell-v114c | Production Mission Control Shell diagnostic | ENABLED
+- V114C | MAIN_ENTRY_SHELL_MOUNT_MISSING | Production visual migration failure class | ENABLED
+- V114C | PRODUCTION_STATIC_BUNDLE_NOT_REPLACED | Production visual migration failure class | ENABLED
+- V114C | LEGACY_AI_OS_VISIBLE_AFTER_DEPLOY | Production visual migration failure class | ENABLED
+- V114C | NGINX_STATIC_RELOAD_MISSING | Production visual migration failure class | ENABLED
+- V114C | REAL_VISUAL_MIGRATION_NOT_VISIBLE | Production visual migration failure class | ENABLED
