@@ -2132,3 +2132,10 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V122B | COMMAND_CENTER_TOP_OFFSET_DRIFT | Command Center route guard failure class | ENABLED
 - V122B | COMMAND_CENTER_MISSION_COCKPIT_REAPPEARED | Command Center route guard failure class | ENABLED
 - V122B | COMMAND_CENTER_REFERENCE_GUARD_MISSING | Command Center route guard failure class | ENABLED
+- V123C | ops/bin/as6-diagnose-command-center-reference-polish-v123c | Command Center reference polish hardened diagnostic | ENABLED
+- V123C | COMMAND_CENTER_MISSING_PATHSPEC_FAILURE | Command Center reference polish hardened failure class | ENABLED
+- V123C | COMMAND_CENTER_LEGACY_BADGE_DRIFT | Command Center reference polish hardened failure class | ENABLED
+- V123C | COMMAND_CENTER_LOGO_FRAME_DRIFT | Command Center reference polish hardened failure class | ENABLED
+- V123C | COMMAND_CENTER_ACTION_STRIP_DRIFT | Command Center reference polish hardened failure class | ENABLED
+- V123C | COMMAND_CENTER_COPILOT_BORDER_DRIFT | Command Center reference polish hardened failure class | ENABLED
+- V123C | COMMAND_CENTER_BOTTOM_NOISE_DRIFT | Command Center reference polish hardened failure class | ENABLED

@@ -3163,3 +3163,10 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Added side-effect route-aware guard: frontend/src/as6-command-center-reference-guard.js
 - Added scoped CSS: frontend/src/styles/as6-command-center-reference-guard.css
 - External AS6 overlay roots are suppressed by exact ID only on /command-center.
+
+## AS6_DONE=COMMAND_CENTER_REFERENCE_POLISH_HARDENED_V123C
+- Fixed missing pathspec failure.
+- Used hardened cleanup and git add -A staging.
+- Strengthened route-aware guard.
+- Added legacy text overlay suppression.
+- Added scoped CSS polish: frontend/src/styles/as6-command-center-reference-polish-v123c.css

@@ -1885,3 +1885,4 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V120 | ops/bin/as6-control-command-center-appshell-reference-v120 | Command Center AppShell reference coverage | ENABLED
 - V121 | ops/bin/as6-control-command-center-true-reference-lock-v121 | Command Center true reference lock coverage | ENABLED
 - V122B | ops/bin/as6-control-command-center-reference-guard-v122b | Real Command Center route guard coverage | ENABLED
+- V123C | ops/bin/as6-control-command-center-reference-polish-v123c | Command Center reference polish hardened coverage | ENABLED

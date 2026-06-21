@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+test -f frontend/src/as6-command-center-reference-guard.js || FAIL=1
+test -f frontend/src/styles/as6-command-center-reference-polish-v123c.css || FAIL=1
+grep -Rqs "Executive Command" frontend/src/as6-command-center-reference-guard.js || FAIL=1
+grep -Rqs "Control Tower 100%" frontend/src/as6-command-center-reference-guard.js || FAIL=1
+grep -Rqs "as6-command-center-reference-polish-v123c.css" frontend/src/as6-command-center-reference-guard.js || FAIL=1
+grep -Rqs "quick-actions-primary" frontend/src/styles/as6-command-center-reference-polish-v123c.css || FAIL=1
+grep -Rqs "as6-sidebar-brand" frontend/src/styles/as6-command-center-reference-polish-v123c.css || FAIL=1
+if [ "$FAIL" -ne 0 ]; then echo "AS6_COMMAND_CENTER_REFERENCE_POLISH_HARDENED=FAIL"; exit 1; fi
+echo "AS6_COMMAND_CENTER_REFERENCE_POLISH_HARDENED=PASS"
