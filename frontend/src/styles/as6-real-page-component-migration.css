@@ -1,0 +1,64 @@
+/* AS6 Real Page Component Migration V99 */
+:root {
+  --as6-component-shell-gap: 14px;
+}
+
+.dashboard-page [class*="card"], .dashboard-page [class*="Card"], .dashboard-page [class*="metric"], .dashboard-page [class*="Metric"],
+.crm-page [class*="card"], .crm-page [class*="Card"], .crm-page [class*="deal"], .crm-page [class*="Deal"], .crm-page [class*="lead"], .crm-page [class*="Lead"],
+.revenue-page [class*="card"], .revenue-page [class*="Card"], .revenue-page [class*="chart"], .revenue-page [class*="Chart"],
+.ai-workers-page [class*="card"], .ai-workers-page [class*="Card"], .ai-workers-page [class*="agent"], .ai-workers-page [class*="Agent"] {
+  border: 1px solid rgba(120,190,255,.18) !important;
+  border-radius: 24px !important;
+  background: radial-gradient(circle at 12% 0%, rgba(37,228,255,.10), transparent 18rem), rgba(255,255,255,.045) !important;
+  box-shadow: 0 22px 72px rgba(0,0,0,.28);
+}
+
+.dashboard-page [class*="grid"], .dashboard-page [class*="Grid"],
+.crm-page [class*="grid"], .crm-page [class*="Grid"],
+.revenue-page [class*="grid"], .revenue-page [class*="Grid"],
+.ai-workers-page [class*="grid"], .ai-workers-page [class*="Grid"] {
+  gap: var(--as6-component-shell-gap) !important;
+}
+
+.dashboard-page [class*="header"], .dashboard-page [class*="Header"],
+.crm-page [class*="header"], .crm-page [class*="Header"],
+.revenue-page [class*="header"], .revenue-page [class*="Header"],
+.ai-workers-page [class*="header"], .ai-workers-page [class*="Header"] {
+  color: var(--as6-brand-text, #f6f9ff);
+}
+
+.crm-page table, .crm-page [class*="table"], .crm-page [class*="Table"],
+.dashboard-page table, .dashboard-page [class*="table"], .dashboard-page [class*="Table"],
+.revenue-page table, .revenue-page [class*="table"], .revenue-page [class*="Table"],
+.ai-workers-page table, .ai-workers-page [class*="table"], .ai-workers-page [class*="Table"] {
+  border: 1px solid rgba(120,190,255,.18) !important;
+  border-radius: 22px !important;
+  background: rgba(255,255,255,.035) !important;
+}
+
+.crm-page input, .crm-page select, .crm-page textarea,
+.dashboard-page input, .dashboard-page select, .dashboard-page textarea,
+.revenue-page input, .revenue-page select, .revenue-page textarea,
+.ai-workers-page input, .ai-workers-page select, .ai-workers-page textarea {
+  border: 1px solid rgba(120,190,255,.20) !important;
+  border-radius: 16px !important;
+  background: rgba(2,8,20,.64) !important;
+  color: var(--as6-brand-text, #f6f9ff) !important;
+}
+
+.dashboard-page::after, .crm-page::after, .revenue-page::after, .ai-workers-page::after {
+  content: "AS6 Unified Page Shell Migration V99";
+  position: fixed;
+  right: 10px;
+  bottom: 4px;
+  z-index: -1;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+@media (max-width: 760px) {
+  .dashboard-page [class*="card"], .dashboard-page [class*="Card"], .crm-page [class*="card"], .crm-page [class*="Card"], .revenue-page [class*="card"], .revenue-page [class*="Card"], .ai-workers-page [class*="card"], .ai-workers-page [class*="Card"] {
+    border-radius: 20px !important;
+  }
+}

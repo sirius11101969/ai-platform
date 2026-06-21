@@ -1811,3 +1811,6 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V98 | ops/bin/as6-control-real-page-shell-migration-v98 | Covers real page shell migration, build, health and enforcement guard | ENABLED
 - V98 | frontend/src/styles/as6-real-page-shell-migration.css | Real Page Shell Migration artifact | ENABLED
 - V98 | docs/AS6_PAGE_SHELL_MIGRATION_MAP_V98.md | Real Page Shell Migration artifact | ENABLED
+- V99 | ops/bin/as6-control-real-page-component-migration-v99 | Covers real component migration, build, health and enforcement guard | ENABLED
+- V99 | frontend/src/styles/as6-real-page-component-migration.css | Real Page Component Migration artifact | ENABLED
+- V99 | docs/AS6_REAL_PAGE_COMPONENT_MIGRATION_V99.md | Real Page Component Migration artifact | ENABLED

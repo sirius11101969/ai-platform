@@ -1892,3 +1892,12 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V98 | APPROVAL_PAGE_SHELL_DRIFT | Real Page Shell Migration failure class | ENABLED
 - V98 | EXECUTION_PAGE_SHELL_DRIFT | Real Page Shell Migration failure class | ENABLED
 - V98 | PAGE_STATE_PRIMITIVE_DRIFT | Real Page Shell Migration failure class | ENABLED
+- V99 | ops/bin/as6-diagnose-real-page-component-migration-v99 | Real Page Component Migration diagnostic | ENABLED
+- V99 | REAL_PAGE_COMPONENT_MIGRATION_MISSING | Real Page Component Migration failure class | ENABLED
+- V99 | CRM_COMPONENT_SHELL_DRIFT | Real Page Component Migration failure class | ENABLED
+- V99 | DASHBOARD_COMPONENT_SHELL_DRIFT | Real Page Component Migration failure class | ENABLED
+- V99 | REVENUE_COMPONENT_SHELL_DRIFT | Real Page Component Migration failure class | ENABLED
+- V99 | WORKERS_COMPONENT_SHELL_DRIFT | Real Page Component Migration failure class | ENABLED
+- V99 | COMPONENT_TABLE_DRIFT | Real Page Component Migration failure class | ENABLED
+- V99 | COMPONENT_FORM_DRIFT | Real Page Component Migration failure class | ENABLED
+- V99 | COMPONENT_STATE_DRIFT | Real Page Component Migration failure class | ENABLED

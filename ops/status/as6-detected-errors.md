@@ -445,3 +445,9 @@ Status: REGISTERED
 - FAILURE_CLASSES: REAL_PAGE_SHELL_MIGRATION_MISSING, DASHBOARD_PAGE_SHELL_DRIFT, CRM_PAGE_SHELL_DRIFT, REVENUE_PAGE_SHELL_DRIFT, WORKFORCE_PAGE_SHELL_DRIFT, APPROVAL_PAGE_SHELL_DRIFT, EXECUTION_PAGE_SHELL_DRIFT, PAGE_STATE_PRIMITIVE_DRIFT.
 - PREVENTION: V98 diagnostic/control validates migration CSS, page map, import, build and enforcement guard.
 - STATUS: registered and controlled.
+
+## V99 Real Page Component Migration
+- ROOT_CAUSE: V98 migrated page families through global shell CSS, but concrete components needed explicit component-level migration coverage.
+- FAILURE_CLASSES: REAL_PAGE_COMPONENT_MIGRATION_MISSING, CRM_COMPONENT_SHELL_DRIFT, DASHBOARD_COMPONENT_SHELL_DRIFT, REVENUE_COMPONENT_SHELL_DRIFT, WORKERS_COMPONENT_SHELL_DRIFT, COMPONENT_TABLE_DRIFT, COMPONENT_FORM_DRIFT, COMPONENT_STATE_DRIFT.
+- PREVENTION: V99 diagnostic/control validates component migration CSS, manifest, import, build and enforcement guard.
+- STATUS: registered and controlled.
