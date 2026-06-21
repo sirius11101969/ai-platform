@@ -1825,3 +1825,8 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V102 | ops/bin/as6-control-real-data-surface-migration-v102 | Covers real data surface migration, build, health and enforcement guard | ENABLED
 - V102 | frontend/src/styles/as6-real-data-surface-migration.css | Real Data Surface Migration artifact | ENABLED
 - V102 | docs/AS6_REAL_DATA_SURFACE_MIGRATION_V102.md | Real Data Surface Migration artifact | ENABLED
+- V103 | ops/bin/as6-control-live-operational-data-integration-v103 | Covers live operational data integration, build, health and enforcement guard | ENABLED
+- V103 | frontend/src/data/as6LiveOperationalData.js | Live Operational Data Integration artifact | ENABLED
+- V103 | frontend/src/components/AS6LiveOperationalDataStatus.jsx | Live Operational Data Integration artifact | ENABLED
+- V103 | frontend/src/styles/as6-live-operational-data.css | Live Operational Data Integration artifact | ENABLED
+- V103 | docs/AS6_LIVE_OPERATIONAL_DATA_CONTRACT_V103.md | Live Operational Data Integration artifact | ENABLED

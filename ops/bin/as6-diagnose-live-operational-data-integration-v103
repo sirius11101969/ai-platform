@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+PROVIDER="frontend/src/data/as6LiveOperationalData.js"
+COMPONENT="frontend/src/components/AS6LiveOperationalDataStatus.jsx"
+CSS="frontend/src/styles/as6-live-operational-data.css"
+CONTRACT="docs/AS6_LIVE_OPERATIONAL_DATA_CONTRACT_V103.md"
+for f in "$PROVIDER" "$COMPONENT" "$CSS" "$CONTRACT"; do
+  if [ ! -f "$f" ]; then echo "AS6_LIVE_DATA_FILE_MISSING $f"; FAIL=1; fi
+done
+if ! grep -Rqs "AS6LiveOperationalDataStatus.jsx" frontend/src/App.jsx; then echo "AS6_LIVE_DATA_IMPORT_MISSING"; FAIL=1; fi
+for item in "AS6_LIVE_OPERATIONAL_DATA_V103" "createAS6OperationalSnapshot" "isAS6OperationalDataFresh" "productionHealth" "dashboard" "crm" "revenue" "workforce" "diagnostics" "governance"; do
+  if ! grep -Rqs "$item" "$PROVIDER" "$COMPONENT" "$CONTRACT" ops/governance docs ops/status ops/registry; then echo "AS6_LIVE_DATA_ITEM_MISSING $item"; FAIL=1; fi
+done
+for cls in LIVE_OPERATIONAL_DATA_PROVIDER_MISSING OPERATIONAL_DATA_STALE OPERATIONAL_DATA_SOURCE_UNAVAILABLE OPERATIONAL_DATA_CONTRACT_DRIFT DASHBOARD_LIVE_DATA_GAP CRM_LIVE_DATA_GAP REVENUE_LIVE_DATA_GAP WORKFORCE_LIVE_DATA_GAP DIAGNOSTIC_LIVE_DATA_GAP GOVERNANCE_LIVE_DATA_GAP; do
+  if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then echo "AS6_LIVE_DATA_CLASS_MISSING $cls"; FAIL=1; fi
+done
+if git diff --cached --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING_FAIL"; FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_LIVE_OPERATIONAL_DATA_INTEGRATION=PASS"

@@ -2863,3 +2863,22 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - UX readiness after V102: 100%.
 - Data surface unification after V102: 100%.
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=LIVE_OPERATIONAL_DATA_INTEGRATION_V103
+- Base commit: ddcf84a.
+- Project readiness before V103: 100%.
+- UX readiness before V103: 100%.
+- Data surface unification before V103: 100%.
+- Live operational data before V103: 45%.
+- Purpose: add live operational data provider, freshness checks, source availability contract and UI indicator.
+- Added diagnostic: ops/bin/as6-diagnose-live-operational-data-integration-v103
+- Added control: ops/bin/as6-control-live-operational-data-integration-v103
+- Added provider: frontend/src/data/as6LiveOperationalData.js
+- Added component: frontend/src/components/AS6LiveOperationalDataStatus.jsx
+- Added CSS artifact: frontend/src/styles/as6-live-operational-data.css
+- Added contract: docs/AS6_LIVE_OPERATIONAL_DATA_CONTRACT_V103.md
+- Added failure classes: LIVE_OPERATIONAL_DATA_PROVIDER_MISSING, OPERATIONAL_DATA_STALE, OPERATIONAL_DATA_SOURCE_UNAVAILABLE, OPERATIONAL_DATA_CONTRACT_DRIFT, DASHBOARD_LIVE_DATA_GAP, CRM_LIVE_DATA_GAP, REVENUE_LIVE_DATA_GAP, WORKFORCE_LIVE_DATA_GAP, DIAGNOSTIC_LIVE_DATA_GAP, GOVERNANCE_LIVE_DATA_GAP.
+- Project readiness after V103: 100%.
+- UX readiness after V103: 100%.
+- Live operational data after V103: 70%.
+- Production health checked with raw URL: https://www.as6.ru/api/health

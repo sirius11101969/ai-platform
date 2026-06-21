@@ -1930,3 +1930,14 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V102 | APPROVAL_DATA_SURFACE_DRIFT | Real Data Surface Migration failure class | ENABLED
 - V102 | EXECUTION_DATA_SURFACE_DRIFT | Real Data Surface Migration failure class | ENABLED
 - V102 | DATA_SURFACE_MIGRATION_GAP | Real Data Surface Migration failure class | ENABLED
+- V103 | ops/bin/as6-diagnose-live-operational-data-integration-v103 | Live Operational Data Integration diagnostic | ENABLED
+- V103 | LIVE_OPERATIONAL_DATA_PROVIDER_MISSING | Live Operational Data Integration failure class | ENABLED
+- V103 | OPERATIONAL_DATA_STALE | Live Operational Data Integration failure class | ENABLED
+- V103 | OPERATIONAL_DATA_SOURCE_UNAVAILABLE | Live Operational Data Integration failure class | ENABLED
+- V103 | OPERATIONAL_DATA_CONTRACT_DRIFT | Live Operational Data Integration failure class | ENABLED
+- V103 | DASHBOARD_LIVE_DATA_GAP | Live Operational Data Integration failure class | ENABLED
+- V103 | CRM_LIVE_DATA_GAP | Live Operational Data Integration failure class | ENABLED
+- V103 | REVENUE_LIVE_DATA_GAP | Live Operational Data Integration failure class | ENABLED
+- V103 | WORKFORCE_LIVE_DATA_GAP | Live Operational Data Integration failure class | ENABLED
+- V103 | DIAGNOSTIC_LIVE_DATA_GAP | Live Operational Data Integration failure class | ENABLED
+- V103 | GOVERNANCE_LIVE_DATA_GAP | Live Operational Data Integration failure class | ENABLED

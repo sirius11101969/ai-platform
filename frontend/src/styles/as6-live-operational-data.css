@@ -1,0 +1,22 @@
+/* AS6 Live Operational Data Integration V103 */
+#as6-live-operational-data-root { position: relative; z-index: 2147482350; }
+.as6-live-operational-data {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 2147482350;
+  display: grid;
+  gap: 3px;
+  width: min(260px, calc(100vw - 36px));
+  padding: 12px 14px;
+  border: 1px solid rgba(50,245,169,.28);
+  border-radius: 18px;
+  color: var(--as6-brand-text, #f6f9ff);
+  background: radial-gradient(circle at 0% 0%, rgba(50,245,169,.16), transparent 14rem), rgba(5,12,26,.88);
+  box-shadow: 0 20px 70px rgba(0,0,0,.34), 0 0 34px rgba(50,245,169,.10);
+  backdrop-filter: blur(16px);
+}
+.as6-live-operational-data strong { color: #d7fff0; font-size: 13px; letter-spacing: .02em; }
+.as6-live-operational-data span { color: var(--as6-brand-green, #32f5a9); font-weight: 900; }
+.as6-live-operational-data small { color: var(--as6-brand-muted, #9fb2d5); }
+@media (max-width: 760px) { .as6-live-operational-data { right: 12px; bottom: 74px; width: min(230px, calc(100vw - 24px)); } }
