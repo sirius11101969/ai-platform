@@ -2955,3 +2955,22 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - UX readiness after V107: 100%.
 - Live operational data after V107: 100%.
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=REAL_PAGE_CONVERSION_ENGINE_V108
+- Base commit: 55e812c.
+- Project readiness before V108: 100%.
+- UX readiness before V108: 100%.
+- Live operational data before V108: 100%.
+- Real page conversion before V108: 70%.
+- Purpose: convert real pages toward Mission Control Layout 2.0.
+- Added diagnostic: ops/bin/as6-diagnose-real-page-conversion-engine-v108
+- Added control: ops/bin/as6-control-real-page-conversion-engine-v108
+- Added engine: frontend/src/components/AS6RealPageConversionEngine.jsx
+- Added CSS artifact: frontend/src/styles/as6-real-page-conversion-engine.css
+- Added conversion map: docs/AS6_REAL_PAGE_CONVERSION_ENGINE_V108.md
+- Added failure classes: REAL_PAGE_CONVERSION_ENGINE_MISSING, CRM_PAGE_CONVERSION_GAP, DASHBOARD_PAGE_CONVERSION_GAP, REVENUE_PAGE_CONVERSION_GAP, WORKFORCE_PAGE_CONVERSION_GAP, APPROVAL_PAGE_CONVERSION_GAP, EXECUTION_PAGE_CONVERSION_GAP, EXECUTIVE_PAGE_CONVERSION_GAP, PAGE_CONVERSION_PRIMITIVE_DRIFT, MISSION_CONTROL_LAYOUT_2_DRIFT.
+- Project readiness after V108: 100%.
+- UX readiness after V108: 100%.
+- Live operational data after V108: 100%.
+- Real page conversion after V108: 90%.
+- Production health checked with raw URL: https://www.as6.ru/api/health

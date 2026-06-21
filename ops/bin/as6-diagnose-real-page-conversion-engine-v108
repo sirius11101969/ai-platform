@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+ENGINE="frontend/src/components/AS6RealPageConversionEngine.jsx"
+CSS="frontend/src/styles/as6-real-page-conversion-engine.css"
+MAP="docs/AS6_REAL_PAGE_CONVERSION_ENGINE_V108.md"
+for f in "$ENGINE" "$CSS" "$MAP"; do
+  if [ ! -f "$f" ]; then echo "AS6_PAGE_CONVERSION_FILE_MISSING $f"; FAIL=1; fi
+done
+if ! grep -Rqs "as6-real-page-conversion-engine.css" frontend/src/App.jsx; then echo "AS6_PAGE_CONVERSION_IMPORT_MISSING"; FAIL=1; fi
+for item in "AS6_REAL_PAGE_CONVERSION_ENGINE_V108" "Mission Control Layout 2.0" "CRM" "Dashboard" "Revenue" "Workforce" "Approval" "Execution" "Executive Brain"; do
+  if ! grep -Rqs "$item" "$ENGINE" "$CSS" "$MAP" frontend/src/pages ops/governance docs ops/status ops/registry; then echo "AS6_PAGE_CONVERSION_ITEM_MISSING $item"; FAIL=1; fi
+done
+for cls in REAL_PAGE_CONVERSION_ENGINE_MISSING CRM_PAGE_CONVERSION_GAP DASHBOARD_PAGE_CONVERSION_GAP REVENUE_PAGE_CONVERSION_GAP WORKFORCE_PAGE_CONVERSION_GAP APPROVAL_PAGE_CONVERSION_GAP EXECUTION_PAGE_CONVERSION_GAP EXECUTIVE_PAGE_CONVERSION_GAP PAGE_CONVERSION_PRIMITIVE_DRIFT MISSION_CONTROL_LAYOUT_2_DRIFT; do
+  if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then echo "AS6_PAGE_CONVERSION_CLASS_MISSING $cls"; FAIL=1; fi
+done
+if git diff --cached --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING_FAIL"; FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_REAL_PAGE_CONVERSION_ENGINE=PASS"

@@ -1851,3 +1851,7 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V107 | frontend/src/components/AS6RevenueCrmFusionStatus.jsx | Real Revenue CRM Fusion artifact | ENABLED
 - V107 | frontend/src/styles/as6-revenue-crm-fusion.css | Real Revenue CRM Fusion artifact | ENABLED
 - V107 | docs/AS6_REAL_REVENUE_CRM_FUSION_V107.md | Real Revenue CRM Fusion artifact | ENABLED
+- V108 | ops/bin/as6-control-real-page-conversion-engine-v108 | Covers page conversion engine, build, health and enforcement guard | ENABLED
+- V108 | frontend/src/components/AS6RealPageConversionEngine.jsx | Real Page Conversion Engine artifact | ENABLED
+- V108 | frontend/src/styles/as6-real-page-conversion-engine.css | Real Page Conversion Engine artifact | ENABLED
+- V108 | docs/AS6_REAL_PAGE_CONVERSION_ENGINE_V108.md | Real Page Conversion Engine artifact | ENABLED

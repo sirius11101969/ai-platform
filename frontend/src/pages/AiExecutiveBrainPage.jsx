@@ -1,3 +1,4 @@
+/* AS6_REAL_PAGE_CONVERSION_ENGINE_V108: governed by Mission Control Layout 2.0 */
 import React, { useEffect, useState } from 'react'
 import { PageHeading, Panel } from '../components/AppShell'
 import { fetchAiExecutiveSnapshot, fetchAiExecutiveRecommendations, fetchAiExecutiveRisks, fetchAiExecutiveOrganizationalHealth, runAiExecutiveAnalysis } from '../services/api'

@@ -1984,3 +1984,14 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V107 | EXECUTIVE_REVENUE_PULSE_GAP | Real Revenue CRM Fusion failure class | ENABLED
 - V107 | REVENUE_CRM_FUSION_CACHE_GAP | Real Revenue CRM Fusion failure class | ENABLED
 - V107 | REVENUE_CRM_FUSION_CONTRACT_DRIFT | Real Revenue CRM Fusion failure class | ENABLED
+- V108 | ops/bin/as6-diagnose-real-page-conversion-engine-v108 | Real Page Conversion Engine diagnostic | ENABLED
+- V108 | REAL_PAGE_CONVERSION_ENGINE_MISSING | Real Page Conversion Engine failure class | ENABLED
+- V108 | CRM_PAGE_CONVERSION_GAP | Real Page Conversion Engine failure class | ENABLED
+- V108 | DASHBOARD_PAGE_CONVERSION_GAP | Real Page Conversion Engine failure class | ENABLED
+- V108 | REVENUE_PAGE_CONVERSION_GAP | Real Page Conversion Engine failure class | ENABLED
+- V108 | WORKFORCE_PAGE_CONVERSION_GAP | Real Page Conversion Engine failure class | ENABLED
+- V108 | APPROVAL_PAGE_CONVERSION_GAP | Real Page Conversion Engine failure class | ENABLED
+- V108 | EXECUTION_PAGE_CONVERSION_GAP | Real Page Conversion Engine failure class | ENABLED
+- V108 | EXECUTIVE_PAGE_CONVERSION_GAP | Real Page Conversion Engine failure class | ENABLED
+- V108 | PAGE_CONVERSION_PRIMITIVE_DRIFT | Real Page Conversion Engine failure class | ENABLED
+- V108 | MISSION_CONTROL_LAYOUT_2_DRIFT | Real Page Conversion Engine failure class | ENABLED
