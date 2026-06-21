@@ -3156,3 +3156,10 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Removed duplicate sidebar risk.
 - Overlay roots restore previous styles on unmount.
 - Added CSS: frontend/src/styles/as6-command-center-true-reference-lock.css
+
+## AS6_DONE=REAL_COMMAND_CENTER_GUARD_SAFE_V122B
+- Fixed failed V122 sed injection.
+- Restored real CommandCenterPage.jsx from 155975f.
+- Added side-effect route-aware guard: frontend/src/as6-command-center-reference-guard.js
+- Added scoped CSS: frontend/src/styles/as6-command-center-reference-guard.css
+- External AS6 overlay roots are suppressed by exact ID only on /command-center.

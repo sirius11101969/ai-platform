@@ -2126,3 +2126,9 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V121 | COMMAND_CENTER_AUTONOMOUS_COCKPIT_REAPPEARED | Command Center true reference lock failure class | ENABLED
 - V121 | COMMAND_CENTER_FLOATING_WIDGET_REAPPEARED | Command Center true reference lock failure class | ENABLED
 - V121 | COMMAND_CENTER_REFERENCE_LOCK_NOT_ACTIVE | Command Center true reference lock failure class | ENABLED
+- V122B | ops/bin/as6-diagnose-command-center-reference-guard-v122b | Real Command Center route guard diagnostic | ENABLED
+- V122B | COMMAND_CENTER_SED_INJECTION_FAILURE | Command Center route guard failure class | ENABLED
+- V122B | COMMAND_CENTER_EXTERNAL_ROOT_OVERLAY_DRIFT | Command Center route guard failure class | ENABLED
+- V122B | COMMAND_CENTER_TOP_OFFSET_DRIFT | Command Center route guard failure class | ENABLED
+- V122B | COMMAND_CENTER_MISSION_COCKPIT_REAPPEARED | Command Center route guard failure class | ENABLED
+- V122B | COMMAND_CENTER_REFERENCE_GUARD_MISSING | Command Center route guard failure class | ENABLED
