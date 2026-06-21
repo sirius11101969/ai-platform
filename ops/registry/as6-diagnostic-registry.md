@@ -2139,3 +2139,8 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V123C | COMMAND_CENTER_ACTION_STRIP_DRIFT | Command Center reference polish hardened failure class | ENABLED
 - V123C | COMMAND_CENTER_COPILOT_BORDER_DRIFT | Command Center reference polish hardened failure class | ENABLED
 - V123C | COMMAND_CENTER_BOTTOM_NOISE_DRIFT | Command Center reference polish hardened failure class | ENABLED
+- V126 | ops/bin/as6-diagnose-command-center-arrow-fix-v126 | Command Center arrow fix diagnostic | ENABLED
+- V126 | COMMAND_CENTER_HERO_BORDER_DRIFT | Command Center arrow fix failure class | ENABLED
+- V126 | COMMAND_CENTER_SIDEBAR_SEPARATOR_DRIFT | Command Center arrow fix failure class | ENABLED
+- V126 | COMMAND_CENTER_COPILOT_DOUBLE_BORDER_DRIFT | Command Center arrow fix failure class | ENABLED
+- V126 | COMMAND_CENTER_FAILED_ENFORCEMENT_CALL_DRIFT | Command Center arrow fix failure class | ENABLED

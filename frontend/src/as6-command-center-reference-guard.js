@@ -1,4 +1,5 @@
 import "./styles/as6-command-center-reference-guard.css";
+import "./styles/as6-command-center-arrow-fix-v126.css";
 import "./styles/as6-command-center-reference-polish-v123c.css";
 
 const AS6_COMMAND_CENTER_EXTERNAL_ROOTS = [

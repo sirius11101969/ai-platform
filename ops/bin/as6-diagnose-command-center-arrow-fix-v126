@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/styles/as6-command-center-arrow-fix-v126.css
+grep -Rqs "as6-command-center-arrow-fix-v126.css" frontend/src/as6-command-center-reference-guard.js
+grep -Rqs "command-hero" frontend/src/styles/as6-command-center-arrow-fix-v126.css
+grep -Rqs "sidebar-favorites" frontend/src/styles/as6-command-center-arrow-fix-v126.css
+grep -Rqs "copilot-hero" frontend/src/styles/as6-command-center-arrow-fix-v126.css
+grep -Rqs "command-recommendations" frontend/src/styles/as6-command-center-arrow-fix-v126.css
+echo "AS6_COMMAND_CENTER_ARROW_FIX=PASS"

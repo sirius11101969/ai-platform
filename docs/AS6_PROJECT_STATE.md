@@ -3170,3 +3170,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Strengthened route-aware guard.
 - Added legacy text overlay suppression.
 - Added scoped CSS polish: frontend/src/styles/as6-command-center-reference-polish-v123c.css
+
+## AS6_DONE=COMMAND_CENTER_ARROW_FIX_V126
+- Fixed red-arrow visual drift areas.
+- Did not change CommandCenterPage.jsx.
+- Added scoped CSS: frontend/src/styles/as6-command-center-arrow-fix-v126.css
+- Removed explicit full baseline enforcement call from patch flow.

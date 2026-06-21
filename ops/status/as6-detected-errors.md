@@ -649,3 +649,8 @@ Governed and registered.
 - ACTION: replaced optional path staging with hardened cleanup and final git add -A.
 - FAILURE_CLASSES: COMMAND_CENTER_MISSING_PATHSPEC_FAILURE, COMMAND_CENTER_LEGACY_BADGE_DRIFT, COMMAND_CENTER_LOGO_FRAME_DRIFT, COMMAND_CENTER_ACTION_STRIP_DRIFT, COMMAND_CENTER_COPILOT_BORDER_DRIFT, COMMAND_CENTER_BOTTOM_NOISE_DRIFT.
 - STATUS: registered and controlled.
+
+## V126 Command Center Arrow Fix
+- ROOT_CAUSE: V125B called full enforcement after expected staged patch changes.
+- ACTION: reset failed V125B, added scoped CSS arrow fix and normal commit flow.
+- STATUS: registered and controlled.
