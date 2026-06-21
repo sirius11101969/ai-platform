@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+PROVIDER="frontend/src/data/as6RevenueCrmFusion.js"
+COMPONENT="frontend/src/components/AS6RevenueCrmFusionStatus.jsx"
+CSS="frontend/src/styles/as6-revenue-crm-fusion.css"
+CONTRACT="docs/AS6_REAL_REVENUE_CRM_FUSION_V107.md"
+for f in "$PROVIDER" "$COMPONENT" "$CSS" "$CONTRACT"; do
+  if [ ! -f "$f" ]; then echo "AS6_REVENUE_CRM_FUSION_FILE_MISSING $f"; FAIL=1; fi
+done
+if ! grep -Rqs "AS6RevenueCrmFusionStatus.jsx" frontend/src/App.jsx; then echo "AS6_REVENUE_CRM_FUSION_IMPORT_MISSING"; FAIL=1; fi
+for item in "AS6_REVENUE_CRM_FUSION_V107" "createAS6RevenueCrmFusionSnapshot" "getAS6RevenueCrmFusionStatus" "crmPipeline" "crmDeals" "crmConversion" "revenueForecast" "revenueProjection" "executiveRevenuePulse"; do
+  if ! grep -Rqs "$item" "$PROVIDER" "$COMPONENT" "$CONTRACT" ops/governance docs ops/status ops/registry; then echo "AS6_REVENUE_CRM_FUSION_ITEM_MISSING $item"; FAIL=1; fi
+done
+for cls in REVENUE_CRM_FUSION_MISSING CRM_PIPELINE_REVENUE_FEED_GAP CRM_DEALS_REVENUE_PROJECTION_GAP CRM_CONVERSION_REVENUE_KPI_GAP REVENUE_FORECAST_FRESHNESS_GAP REVENUE_CRM_CONSISTENCY_DRIFT EXECUTIVE_REVENUE_PULSE_GAP REVENUE_CRM_FUSION_CACHE_GAP REVENUE_CRM_FUSION_CONTRACT_DRIFT; do
+  if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then echo "AS6_REVENUE_CRM_FUSION_CLASS_MISSING $cls"; FAIL=1; fi
+done
+if git diff --cached --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING_FAIL"; FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_REAL_REVENUE_CRM_FUSION=PASS"

@@ -1,3 +1,4 @@
+import "./components/AS6RevenueCrmFusionStatus.jsx";
 import "./components/AS6CrmLiveDataStatus.jsx";
 import "./components/AS6DashboardLiveDataStatus.jsx";
 import "./components/AS6BackendConnectorStatus.jsx";

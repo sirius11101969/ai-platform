@@ -2937,3 +2937,21 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - UX readiness after V106: 100%.
 - Live operational data after V106: 98%.
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=REAL_REVENUE_CRM_FUSION_V107
+- Base commit: f942f00.
+- Project readiness before V107: 100%.
+- UX readiness before V107: 100%.
+- Live operational data before V107: 98%.
+- Purpose: fuse CRM pipeline, deals and conversion into Revenue forecast, projection and Executive Revenue Pulse.
+- Added diagnostic: ops/bin/as6-diagnose-real-revenue-crm-fusion-v107
+- Added control: ops/bin/as6-control-real-revenue-crm-fusion-v107
+- Added provider: frontend/src/data/as6RevenueCrmFusion.js
+- Added component: frontend/src/components/AS6RevenueCrmFusionStatus.jsx
+- Added CSS artifact: frontend/src/styles/as6-revenue-crm-fusion.css
+- Added contract: docs/AS6_REAL_REVENUE_CRM_FUSION_V107.md
+- Added failure classes: REVENUE_CRM_FUSION_MISSING, CRM_PIPELINE_REVENUE_FEED_GAP, CRM_DEALS_REVENUE_PROJECTION_GAP, CRM_CONVERSION_REVENUE_KPI_GAP, REVENUE_FORECAST_FRESHNESS_GAP, REVENUE_CRM_CONSISTENCY_DRIFT, EXECUTIVE_REVENUE_PULSE_GAP, REVENUE_CRM_FUSION_CACHE_GAP, REVENUE_CRM_FUSION_CONTRACT_DRIFT.
+- Project readiness after V107: 100%.
+- UX readiness after V107: 100%.
+- Live operational data after V107: 100%.
+- Production health checked with raw URL: https://www.as6.ru/api/health

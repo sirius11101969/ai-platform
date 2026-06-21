@@ -1974,3 +1974,13 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V106 | CRM_CONNECTOR_HEALTH_GAP | Real CRM Data Wiring failure class | ENABLED
 - V106 | CRM_FRESHNESS_BADGE_MISSING | Real CRM Data Wiring failure class | ENABLED
 - V106 | CRM_LIVE_SNAPSHOT_CONTRACT_DRIFT | Real CRM Data Wiring failure class | ENABLED
+- V107 | ops/bin/as6-diagnose-real-revenue-crm-fusion-v107 | Real Revenue CRM Fusion diagnostic | ENABLED
+- V107 | REVENUE_CRM_FUSION_MISSING | Real Revenue CRM Fusion failure class | ENABLED
+- V107 | CRM_PIPELINE_REVENUE_FEED_GAP | Real Revenue CRM Fusion failure class | ENABLED
+- V107 | CRM_DEALS_REVENUE_PROJECTION_GAP | Real Revenue CRM Fusion failure class | ENABLED
+- V107 | CRM_CONVERSION_REVENUE_KPI_GAP | Real Revenue CRM Fusion failure class | ENABLED
+- V107 | REVENUE_FORECAST_FRESHNESS_GAP | Real Revenue CRM Fusion failure class | ENABLED
+- V107 | REVENUE_CRM_CONSISTENCY_DRIFT | Real Revenue CRM Fusion failure class | ENABLED
+- V107 | EXECUTIVE_REVENUE_PULSE_GAP | Real Revenue CRM Fusion failure class | ENABLED
+- V107 | REVENUE_CRM_FUSION_CACHE_GAP | Real Revenue CRM Fusion failure class | ENABLED
+- V107 | REVENUE_CRM_FUSION_CONTRACT_DRIFT | Real Revenue CRM Fusion failure class | ENABLED

@@ -1,0 +1,36 @@
+/* AS6 Real Revenue CRM Fusion V107 */
+#as6-revenue-crm-fusion-status-root { position: relative; z-index: 2147482310; }
+.as6-revenue-crm-fusion-status {
+  position: fixed;
+  right: 18px;
+  bottom: 362px;
+  z-index: 2147482310;
+  display: grid;
+  gap: 3px;
+  width: min(260px, calc(100vw - 36px));
+  padding: 12px 14px;
+  border: 1px solid rgba(251,191,36,.32);
+  border-radius: 18px;
+  color: var(--as6-brand-text, #f6f9ff);
+  background: radial-gradient(circle at 0% 0%, rgba(251,191,36,.16), transparent 14rem), rgba(5,12,26,.88);
+  box-shadow: 0 20px 70px rgba(0,0,0,.34), 0 0 34px rgba(251,191,36,.10);
+  backdrop-filter: blur(16px);
+}
+.as6-revenue-crm-fusion-status strong { color: #fde68a; font-size: 13px; }
+.as6-revenue-crm-fusion-status span { color: var(--as6-brand-green, #32f5a9); font-weight: 900; }
+.as6-revenue-crm-fusion-status small { color: var(--as6-brand-muted, #9fb2d5); }
+.revenue-page [data-as6-revenue-crm-fusion], .crm-page [data-as6-revenue-crm-fusion], .executive-page [data-as6-revenue-crm-fusion] { position: relative; }
+.revenue-page [data-as6-revenue-crm-fusion]::after, .crm-page [data-as6-revenue-crm-fusion]::after, .executive-page [data-as6-revenue-crm-fusion]::after {
+  content: "CRM × REV LIVE";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 4px 8px;
+  border: 1px solid rgba(251,191,36,.34);
+  border-radius: 999px;
+  color: #fde68a;
+  background: rgba(251,191,36,.08);
+  font-size: 10px;
+  font-weight: 900;
+}
+@media (max-width: 760px) { .as6-revenue-crm-fusion-status { right: 12px; bottom: 306px; width: min(230px, calc(100vw - 24px)); } }

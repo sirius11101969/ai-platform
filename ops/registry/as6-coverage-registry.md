@@ -1846,3 +1846,8 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V106 | frontend/src/components/AS6CrmLiveDataStatus.jsx | Real CRM Data Wiring artifact | ENABLED
 - V106 | frontend/src/styles/as6-crm-live-data.css | Real CRM Data Wiring artifact | ENABLED
 - V106 | docs/AS6_REAL_CRM_DATA_WIRING_V106.md | Real CRM Data Wiring artifact | ENABLED
+- V107 | ops/bin/as6-control-real-revenue-crm-fusion-v107 | Covers revenue CRM fusion, build, health and enforcement guard | ENABLED
+- V107 | frontend/src/data/as6RevenueCrmFusion.js | Real Revenue CRM Fusion artifact | ENABLED
+- V107 | frontend/src/components/AS6RevenueCrmFusionStatus.jsx | Real Revenue CRM Fusion artifact | ENABLED
+- V107 | frontend/src/styles/as6-revenue-crm-fusion.css | Real Revenue CRM Fusion artifact | ENABLED
+- V107 | docs/AS6_REAL_REVENUE_CRM_FUSION_V107.md | Real Revenue CRM Fusion artifact | ENABLED
