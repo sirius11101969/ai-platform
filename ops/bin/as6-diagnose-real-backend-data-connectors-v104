@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+CONNECTORS="frontend/src/data/as6BackendDataConnectors.js"
+STORE="frontend/src/data/as6OperationalStore.js"
+COMPONENT="frontend/src/components/AS6BackendConnectorStatus.jsx"
+CSS="frontend/src/styles/as6-backend-data-connectors.css"
+CONTRACT="docs/AS6_REAL_BACKEND_DATA_CONNECTORS_V104.md"
+for f in "$CONNECTORS" "$STORE" "$COMPONENT" "$CSS" "$CONTRACT"; do
+  if [ ! -f "$f" ]; then echo "AS6_BACKEND_CONNECTOR_FILE_MISSING $f"; FAIL=1; fi
+done
+if ! grep -Rqs "AS6BackendConnectorStatus.jsx" frontend/src/App.jsx; then echo "AS6_BACKEND_CONNECTOR_IMPORT_MISSING"; FAIL=1; fi
+for item in "AS6_BACKEND_DATA_CONNECTORS_V104" "AS6_OPERATIONAL_STORE_V104" "productionHealth" "dashboard" "crm" "revenue" "workforce" "diagnostics" "governance" "failover"; do
+  if ! grep -Rqs "$item" "$CONNECTORS" "$STORE" "$COMPONENT" "$CONTRACT" ops/governance docs ops/status ops/registry; then echo "AS6_BACKEND_CONNECTOR_ITEM_MISSING $item"; FAIL=1; fi
+done
+for cls in BACKEND_DATA_CONNECTORS_MISSING BACKEND_CONNECTOR_SOURCE_UNAVAILABLE BACKEND_CONNECTOR_STALE_CACHE BACKEND_DATA_CONTRACT_DRIFT DASHBOARD_BACKEND_CONNECTOR_GAP CRM_BACKEND_CONNECTOR_GAP REVENUE_BACKEND_CONNECTOR_GAP WORKFORCE_BACKEND_CONNECTOR_GAP DIAGNOSTIC_BACKEND_CONNECTOR_GAP GOVERNANCE_BACKEND_CONNECTOR_GAP OPERATIONAL_STORE_MISSING CONNECTOR_FAILOVER_GAP; do
+  if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then echo "AS6_BACKEND_CONNECTOR_CLASS_MISSING $cls"; FAIL=1; fi
+done
+if git diff --cached --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING_FAIL"; FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_REAL_BACKEND_DATA_CONNECTORS=PASS"

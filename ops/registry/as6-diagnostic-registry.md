@@ -1941,3 +1941,16 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V103 | WORKFORCE_LIVE_DATA_GAP | Live Operational Data Integration failure class | ENABLED
 - V103 | DIAGNOSTIC_LIVE_DATA_GAP | Live Operational Data Integration failure class | ENABLED
 - V103 | GOVERNANCE_LIVE_DATA_GAP | Live Operational Data Integration failure class | ENABLED
+- V104 | ops/bin/as6-diagnose-real-backend-data-connectors-v104 | Real Backend Data Connectors diagnostic | ENABLED
+- V104 | BACKEND_DATA_CONNECTORS_MISSING | Real Backend Data Connectors failure class | ENABLED
+- V104 | BACKEND_CONNECTOR_SOURCE_UNAVAILABLE | Real Backend Data Connectors failure class | ENABLED
+- V104 | BACKEND_CONNECTOR_STALE_CACHE | Real Backend Data Connectors failure class | ENABLED
+- V104 | BACKEND_DATA_CONTRACT_DRIFT | Real Backend Data Connectors failure class | ENABLED
+- V104 | DASHBOARD_BACKEND_CONNECTOR_GAP | Real Backend Data Connectors failure class | ENABLED
+- V104 | CRM_BACKEND_CONNECTOR_GAP | Real Backend Data Connectors failure class | ENABLED
+- V104 | REVENUE_BACKEND_CONNECTOR_GAP | Real Backend Data Connectors failure class | ENABLED
+- V104 | WORKFORCE_BACKEND_CONNECTOR_GAP | Real Backend Data Connectors failure class | ENABLED
+- V104 | DIAGNOSTIC_BACKEND_CONNECTOR_GAP | Real Backend Data Connectors failure class | ENABLED
+- V104 | GOVERNANCE_BACKEND_CONNECTOR_GAP | Real Backend Data Connectors failure class | ENABLED
+- V104 | OPERATIONAL_STORE_MISSING | Real Backend Data Connectors failure class | ENABLED
+- V104 | CONNECTOR_FAILOVER_GAP | Real Backend Data Connectors failure class | ENABLED

@@ -1830,3 +1830,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V103 | frontend/src/components/AS6LiveOperationalDataStatus.jsx | Live Operational Data Integration artifact | ENABLED
 - V103 | frontend/src/styles/as6-live-operational-data.css | Live Operational Data Integration artifact | ENABLED
 - V103 | docs/AS6_LIVE_OPERATIONAL_DATA_CONTRACT_V103.md | Live Operational Data Integration artifact | ENABLED
+- V104 | ops/bin/as6-control-real-backend-data-connectors-v104 | Covers backend data connectors, operational store, build, health and enforcement guard | ENABLED
+- V104 | frontend/src/data/as6BackendDataConnectors.js | Real Backend Data Connectors artifact | ENABLED
+- V104 | frontend/src/data/as6OperationalStore.js | Real Backend Data Connectors artifact | ENABLED
+- V104 | frontend/src/components/AS6BackendConnectorStatus.jsx | Real Backend Data Connectors artifact | ENABLED
+- V104 | frontend/src/styles/as6-backend-data-connectors.css | Real Backend Data Connectors artifact | ENABLED
+- V104 | docs/AS6_REAL_BACKEND_DATA_CONNECTORS_V104.md | Real Backend Data Connectors artifact | ENABLED

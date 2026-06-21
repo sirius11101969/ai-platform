@@ -2882,3 +2882,22 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - UX readiness after V103: 100%.
 - Live operational data after V103: 70%.
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=REAL_BACKEND_DATA_CONNECTORS_V104
+- Base commit: f36373a.
+- Project readiness before V104: 100%.
+- UX readiness before V104: 100%.
+- Live operational data before V104: 70%.
+- Purpose: add real backend connector registry, unified operational store, freshness cache and failover contract.
+- Added diagnostic: ops/bin/as6-diagnose-real-backend-data-connectors-v104
+- Added control: ops/bin/as6-control-real-backend-data-connectors-v104
+- Added connectors: frontend/src/data/as6BackendDataConnectors.js
+- Added store: frontend/src/data/as6OperationalStore.js
+- Added component: frontend/src/components/AS6BackendConnectorStatus.jsx
+- Added CSS artifact: frontend/src/styles/as6-backend-data-connectors.css
+- Added contract: docs/AS6_REAL_BACKEND_DATA_CONNECTORS_V104.md
+- Added failure classes: BACKEND_DATA_CONNECTORS_MISSING, BACKEND_CONNECTOR_SOURCE_UNAVAILABLE, BACKEND_CONNECTOR_STALE_CACHE, BACKEND_DATA_CONTRACT_DRIFT, DASHBOARD_BACKEND_CONNECTOR_GAP, CRM_BACKEND_CONNECTOR_GAP, REVENUE_BACKEND_CONNECTOR_GAP, WORKFORCE_BACKEND_CONNECTOR_GAP, DIAGNOSTIC_BACKEND_CONNECTOR_GAP, GOVERNANCE_BACKEND_CONNECTOR_GAP, OPERATIONAL_STORE_MISSING, CONNECTOR_FAILOVER_GAP.
+- Project readiness after V104: 100%.
+- UX readiness after V104: 100%.
+- Live operational data after V104: 90%.
+- Production health checked with raw URL: https://www.as6.ru/api/health
