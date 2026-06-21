@@ -3012,3 +3012,19 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Real page conversion after V110: 100%.
 - Component consolidation after V110: 90%.
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=DESIGN_TOKEN_REGISTRY_GOVERNANCE_V111
+- Base commit: 4d5902a.
+- Project readiness before V111: 100%.
+- UX readiness before V111: 100%.
+- Component consolidation before V111: 90%.
+- Purpose: add canonical design token registry and theme governance.
+- Added diagnostic: ops/bin/as6-diagnose-design-token-registry-governance-v111
+- Added control: ops/bin/as6-control-design-token-registry-governance-v111
+- Added token registry: frontend/src/styles/as6-design-token-registry.css
+- Added documentation: docs/AS6_DESIGN_TOKEN_REGISTRY_V111.md
+- Added failure classes: DESIGN_TOKEN_REGISTRY_MISSING, DESIGN_TOKEN_IMPORT_MISSING, SPACING_TOKEN_DRIFT, RADIUS_TOKEN_DRIFT, SHADOW_TOKEN_DRIFT, TYPOGRAPHY_TOKEN_DRIFT, KPI_TOKEN_DRIFT, TABLE_TOKEN_DRIFT, STATUS_BADGE_TOKEN_DRIFT, THEME_GOVERNANCE_GAP.
+- Project readiness after V111: 100%.
+- UX readiness after V111: 100%.
+- Component consolidation after V111: 95%.
+- Production health checked with raw URL: https://www.as6.ru/api/health

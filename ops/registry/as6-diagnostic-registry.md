@@ -2017,3 +2017,14 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V110 | FILTER_COMPONENT_DUPLICATION_DRIFT | Real Component Consolidation failure class | ENABLED
 - V110 | ACTION_BAR_COMPONENT_DUPLICATION_DRIFT | Real Component Consolidation failure class | ENABLED
 - V110 | STATE_COMPONENT_DUPLICATION_DRIFT | Real Component Consolidation failure class | ENABLED
+- V111 | ops/bin/as6-diagnose-design-token-registry-governance-v111 | Design Token Registry Governance diagnostic | ENABLED
+- V111 | DESIGN_TOKEN_REGISTRY_MISSING | Design Token Registry failure class | ENABLED
+- V111 | DESIGN_TOKEN_IMPORT_MISSING | Design Token Registry failure class | ENABLED
+- V111 | SPACING_TOKEN_DRIFT | Design Token Registry failure class | ENABLED
+- V111 | RADIUS_TOKEN_DRIFT | Design Token Registry failure class | ENABLED
+- V111 | SHADOW_TOKEN_DRIFT | Design Token Registry failure class | ENABLED
+- V111 | TYPOGRAPHY_TOKEN_DRIFT | Design Token Registry failure class | ENABLED
+- V111 | KPI_TOKEN_DRIFT | Design Token Registry failure class | ENABLED
+- V111 | TABLE_TOKEN_DRIFT | Design Token Registry failure class | ENABLED
+- V111 | STATUS_BADGE_TOKEN_DRIFT | Design Token Registry failure class | ENABLED
+- V111 | THEME_GOVERNANCE_GAP | Design Token Registry failure class | ENABLED

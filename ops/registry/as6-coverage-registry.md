@@ -1863,3 +1863,6 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V110 | frontend/src/components/AS6RealComponentConsolidation.jsx | Real Component Consolidation artifact | ENABLED
 - V110 | frontend/src/styles/as6-real-component-consolidation.css | Real Component Consolidation artifact | ENABLED
 - V110 | docs/AS6_REAL_COMPONENT_CONSOLIDATION_V110.md | Real Component Consolidation artifact | ENABLED
+- V111 | ops/bin/as6-control-design-token-registry-governance-v111 | Covers design token governance, build, health and enforcement guard | ENABLED
+- V111 | frontend/src/styles/as6-design-token-registry.css | Design Token Registry artifact | ENABLED
+- V111 | docs/AS6_DESIGN_TOKEN_REGISTRY_V111.md | Design Token Registry artifact | ENABLED

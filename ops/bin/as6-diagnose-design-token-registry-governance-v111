@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+TOKENS="frontend/src/styles/as6-design-token-registry.css"
+DOC="docs/AS6_DESIGN_TOKEN_REGISTRY_V111.md"
+for f in "$TOKENS" "$DOC"; do
+  if [ ! -f "$f" ]; then echo "AS6_TOKEN_FILE_MISSING $f"; FAIL=1; fi
+done
+if ! grep -Rqs "as6-design-token-registry.css" frontend/src/App.jsx; then echo "AS6_TOKEN_IMPORT_MISSING"; FAIL=1; fi
+for item in "--as6-space-1" "--as6-radius-lg" "--as6-shadow-card" "--as6-font-ui" "--as6-kpi-bg" "--as6-table-bg" "--as6-badge-bg"; do
+  if ! grep -Rqs -- "$item" "$TOKENS" "$DOC" ops/governance docs ops/status ops/registry; then echo "AS6_TOKEN_ITEM_MISSING $item"; FAIL=1; fi
+done
+for cls in DESIGN_TOKEN_REGISTRY_MISSING DESIGN_TOKEN_IMPORT_MISSING SPACING_TOKEN_DRIFT RADIUS_TOKEN_DRIFT SHADOW_TOKEN_DRIFT TYPOGRAPHY_TOKEN_DRIFT KPI_TOKEN_DRIFT TABLE_TOKEN_DRIFT STATUS_BADGE_TOKEN_DRIFT THEME_GOVERNANCE_GAP; do
+  if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then echo "AS6_TOKEN_CLASS_MISSING $cls"; FAIL=1; fi
+done
+if git diff --cached --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING_FAIL"; FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_DESIGN_TOKEN_REGISTRY_GOVERNANCE=PASS"
