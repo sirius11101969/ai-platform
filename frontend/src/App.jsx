@@ -1,3 +1,4 @@
+import "./components/AS6MissionControlShellAdapter.jsx";
 import "./styles/as6-design-token-registry.css";
 import "./styles/as6-real-component-consolidation.css";
 import "./styles/as6-physical-page-refactor-migration.css";

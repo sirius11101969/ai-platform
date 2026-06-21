@@ -1,0 +1,27 @@
+/* AS6 Real Mission Control Shell Rollout V114 */
+#as6-mission-control-shell-adapter-root { position: relative; z-index: 2147482600; }
+body.as6-mission-shell-adopted { background: radial-gradient(circle at 20% 0%, rgba(126,87,255,.22), transparent 34rem), radial-gradient(circle at 80% 8%, rgba(37,228,255,.16), transparent 30rem), #040814 !important; }
+body.as6-mission-shell-adopted #root { padding-left: 282px !important; padding-top: 148px !important; min-height: 100vh; box-sizing: border-box; }
+.as6-shell-v114-sidebar { position: fixed; left: 14px; top: 14px; bottom: 14px; width: 252px; z-index: 2147482601; padding: 18px; border: 1px solid rgba(120,190,255,.22); border-radius: 26px; background: linear-gradient(180deg, rgba(13,21,51,.92), rgba(6,12,29,.94)); box-shadow: 0 30px 110px rgba(0,0,0,.48), inset 0 0 0 1px rgba(255,255,255,.04); backdrop-filter: blur(18px); overflow: auto; }
+.as6-shell-v114-logo { display: grid; place-items: center; gap: 4px; min-height: 110px; margin-bottom: 16px; text-decoration: none; border-radius: 22px; background: radial-gradient(circle at 50% 45%, rgba(37,228,255,.26), transparent 5rem), rgba(255,255,255,.035); }
+.as6-shell-v114-logo-mark { font-size: 46px; line-height: 1; font-weight: 1000; letter-spacing: -4px; font-style: italic; color: transparent; background: linear-gradient(100deg, #ff3dff, #7c3cff, #25e4ff); -webkit-background-clip: text; background-clip: text; filter: drop-shadow(0 0 18px rgba(37,228,255,.45)); }
+.as6-shell-v114-logo small { color: #a8c7ff; font-size: 10px; letter-spacing: .28em; }
+.as6-shell-v114-nav { display: grid; gap: 8px; }
+.as6-shell-v114-nav a { display: flex; align-items: center; min-height: 38px; padding: 0 12px; border: 1px solid rgba(120,190,255,.13); border-radius: 12px; color: #dce8ff; text-decoration: none; font-weight: 900; font-size: 13px; background: rgba(255,255,255,.035); }
+.as6-shell-v114-nav a.active, .as6-shell-v114-nav a:hover { color: white; border-color: rgba(37,228,255,.45); background: linear-gradient(100deg, rgba(126,87,255,.92), rgba(37,228,255,.92)); box-shadow: 0 12px 34px rgba(37,228,255,.18); }
+.as6-shell-v114-owner { margin-top: 18px; padding: 14px; border: 1px solid rgba(120,190,255,.18); border-radius: 18px; color: #f6f9ff; background: rgba(255,255,255,.045); }
+.as6-shell-v114-owner span { display: block; margin-top: 4px; color: #32f5a9; font-size: 12px; }
+.as6-shell-v114-header { position: fixed; left: 282px; right: 14px; top: 14px; z-index: 2147482600; display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 112px; padding: 18px 22px; border: 1px solid rgba(120,190,255,.20); border-radius: 26px; background: radial-gradient(circle at 0% 0%, rgba(126,87,255,.20), transparent 24rem), rgba(4,10,25,.86); box-shadow: 0 24px 86px rgba(0,0,0,.40); backdrop-filter: blur(18px); box-sizing: border-box; }
+.as6-shell-v114-header h1 { margin: 0; color: white; font-size: clamp(24px, 2.8vw, 38px); line-height: 1; letter-spacing: -.04em; }
+.as6-shell-v114-header h1 span { color: transparent; background: linear-gradient(100deg, #8b5cf6, #c084fc); -webkit-background-clip: text; background-clip: text; }
+.as6-shell-v114-header p { margin: 6px 0 0; color: #9fb2d5; font-size: 13px; }
+.as6-shell-v114-status { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.as6-shell-v114-status b { padding: 6px 10px; border: 1px solid rgba(50,245,169,.24); border-radius: 999px; color: #32f5a9; background: rgba(50,245,169,.08); font-size: 11px; }
+.as6-shell-v114-actions { display: flex; align-items: center; gap: 10px; }
+.as6-shell-v114-actions input { width: min(360px, 28vw); height: 42px; padding: 0 16px; border: 1px solid rgba(120,190,255,.16); border-radius: 14px; color: white; background: rgba(2,7,20,.78); outline: none; }
+.as6-shell-v114-actions button { width: 42px; height: 42px; border: 1px solid rgba(120,190,255,.18); border-radius: 14px; color: white; background: rgba(255,255,255,.055); font-weight: 900; }
+body.as6-mission-shell-adopted [class*="sidebar" i]:not(.as6-shell-v114-sidebar), body.as6-mission-shell-adopted [class*="SideBar"]:not(.as6-shell-v114-sidebar), body.as6-mission-shell-adopted aside:not(.as6-shell-v114-sidebar) { filter: saturate(.65) brightness(.92); }
+body.as6-mission-shell-adopted main, body.as6-mission-shell-adopted [class*="page" i] { color: #f6f9ff; }
+body.as6-mission-shell-adopted button, body.as6-mission-shell-adopted a { transition: transform .18s ease, border-color .18s ease, background .18s ease; }
+body.as6-mission-shell-adopted button:hover, body.as6-mission-shell-adopted a:hover { transform: translateY(-1px); }
+@media (max-width: 980px) { body.as6-mission-shell-adopted #root { padding-left: 0 !important; padding-top: 156px !important; } .as6-shell-v114-sidebar { display: none; } .as6-shell-v114-header { left: 10px; right: 10px; top: 10px; } .as6-shell-v114-actions input { display: none; } }

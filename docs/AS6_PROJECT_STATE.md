@@ -3068,3 +3068,13 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Project readiness after V113B: 100%.
 - UX readiness after V113B: 100%.
 - UI governance autonomy after V113B: 100%.
+
+## AS6_DONE=REAL_MISSION_CONTROL_SHELL_ROLLOUT_V114
+- Base commit: dfda1a7.
+- Root cause: legacy pages still used old AI-OS shell despite governance readiness.
+- Added shell adapter: frontend/src/components/AS6MissionControlShellAdapter.jsx
+- Added shell CSS: frontend/src/styles/as6-real-mission-control-shell-rollout.css
+- Added documentation: docs/AS6_REAL_MISSION_CONTROL_SHELL_ROLLOUT_V114.md
+- Real visual migration after V114: 80%.
+- Project readiness after V114: 100%.
+- UX readiness after V114: 100%.

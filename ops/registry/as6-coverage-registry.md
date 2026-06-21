@@ -1869,3 +1869,7 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V112 | ops/bin/as6-control-real-primitive-enforcement-engine-v112 | Covers primitive enforcement, build, health and enforcement guard | ENABLED
 - V112 | docs/AS6_REAL_PRIMITIVE_ENFORCEMENT_ENGINE_V112.md | Real Primitive Enforcement Engine artifact | ENABLED
 - V113 | ops/bin/as6-control-autonomous-ui-governance-engine-v113 | Autonomous UI Governance Engine coverage | ENABLED
+- V114 | ops/bin/as6-control-real-mission-control-shell-rollout-v114 | Real Mission Control Shell Rollout coverage | ENABLED
+- V114 | frontend/src/components/AS6MissionControlShellAdapter.jsx | Real Mission Control Shell Rollout artifact | ENABLED
+- V114 | frontend/src/styles/as6-real-mission-control-shell-rollout.css | Real Mission Control Shell Rollout artifact | ENABLED
+- V114 | docs/AS6_REAL_MISSION_CONTROL_SHELL_ROLLOUT_V114.md | Real Mission Control Shell Rollout artifact | ENABLED

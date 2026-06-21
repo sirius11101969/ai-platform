@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+SHELL="frontend/src/components/AS6MissionControlShellAdapter.jsx"
+CSS="frontend/src/styles/as6-real-mission-control-shell-rollout.css"
+DOC="docs/AS6_REAL_MISSION_CONTROL_SHELL_ROLLOUT_V114.md"
+for f in "$SHELL" "$CSS" "$DOC"; do if [ ! -f "$f" ]; then echo "AS6_SHELL_FILE_MISSING $f"; FAIL=1; fi; done
+if ! grep -Rqs "AS6MissionControlShellAdapter.jsx" frontend/src/App.jsx; then echo "AS6_SHELL_IMPORT_MISSING"; FAIL=1; fi
+for item in "Command Center" "as6-shell-v114-sidebar" "as6-shell-v114-header" "as6-mission-shell-adopted" "Добро пожаловать" "Live-ready" "API подключён"; do if ! grep -Rqs "$item" "$SHELL" "$CSS" "$DOC" ops docs; then echo "AS6_SHELL_ITEM_MISSING $item"; FAIL=1; fi; done
+for cls in REAL_MISSION_CONTROL_SHELL_MISSING LEGACY_AI_OS_SHELL_DRIFT COMMAND_CENTER_NAV_MISSING GLOBAL_AS6_SIDEBAR_MISSING GLOBAL_AS6_HEADER_MISSING SHELL_CONTENT_OFFSET_GAP VISUAL_MIGRATION_FALSE_POSITIVE NON_COMMAND_CENTER_PAGE_SHELL_GAP; do if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then echo "AS6_SHELL_CLASS_MISSING $cls"; FAIL=1; fi; done
+if git diff --cached --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING_FAIL"; FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_REAL_MISSION_CONTROL_SHELL_ROLLOUT=PASS"

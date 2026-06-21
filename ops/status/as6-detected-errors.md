@@ -560,3 +560,9 @@ Governed and registered.
 - FAILURE_CLASSES: UI_GOVERNANCE_BUILD_RUNNER_FALLBACK_GAP, UI_GOVERNANCE_CONTROL_RUNNER_DRIFT.
 - PREVENTION: UI governance controls must include local npm plus docker/node fallback.
 - STATUS: registered and controlled.
+
+## V114 Real Mission Control Shell Rollout
+- ROOT_CAUSE: screenshots showed legacy AI-OS shell drift on non-command-center pages.
+- FAILURE_CLASSES: REAL_MISSION_CONTROL_SHELL_MISSING, LEGACY_AI_OS_SHELL_DRIFT, COMMAND_CENTER_NAV_MISSING, GLOBAL_AS6_SIDEBAR_MISSING, GLOBAL_AS6_HEADER_MISSING, SHELL_CONTENT_OFFSET_GAP, VISUAL_MIGRATION_FALSE_POSITIVE, NON_COMMAND_CENTER_PAGE_SHELL_GAP.
+- PREVENTION: V114 mounts AS6 Mission Control shell globally and validates shell artifacts.
+- STATUS: registered and controlled.

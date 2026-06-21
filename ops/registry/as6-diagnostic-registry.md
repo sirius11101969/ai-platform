@@ -2053,3 +2053,12 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V113 | UI_AUTONOMY_GAP | UI governance failure class | ENABLED
 - V113B | UI_GOVERNANCE_BUILD_RUNNER_FALLBACK_GAP | UI governance build runner fallback gap | ENABLED
 - V113B | UI_GOVERNANCE_CONTROL_RUNNER_DRIFT | UI governance control runner drift | ENABLED
+- V114 | ops/bin/as6-diagnose-real-mission-control-shell-rollout-v114 | Real Mission Control Shell Rollout diagnostic | ENABLED
+- V114 | REAL_MISSION_CONTROL_SHELL_MISSING | Real Mission Control Shell Rollout failure class | ENABLED
+- V114 | LEGACY_AI_OS_SHELL_DRIFT | Real Mission Control Shell Rollout failure class | ENABLED
+- V114 | COMMAND_CENTER_NAV_MISSING | Real Mission Control Shell Rollout failure class | ENABLED
+- V114 | GLOBAL_AS6_SIDEBAR_MISSING | Real Mission Control Shell Rollout failure class | ENABLED
+- V114 | GLOBAL_AS6_HEADER_MISSING | Real Mission Control Shell Rollout failure class | ENABLED
+- V114 | SHELL_CONTENT_OFFSET_GAP | Real Mission Control Shell Rollout failure class | ENABLED
+- V114 | VISUAL_MIGRATION_FALSE_POSITIVE | Real Mission Control Shell Rollout failure class | ENABLED
+- V114 | NON_COMMAND_CENTER_PAGE_SHELL_GAP | Real Mission Control Shell Rollout failure class | ENABLED
