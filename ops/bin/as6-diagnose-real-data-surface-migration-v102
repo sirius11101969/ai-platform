@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+CSS="frontend/src/styles/as6-real-data-surface-migration.css"
+MANIFEST="docs/AS6_REAL_DATA_SURFACE_MIGRATION_V102.md"
+for f in "$CSS" "$MANIFEST"; do
+  if [ ! -f "$f" ]; then echo "AS6_REAL_DATA_SURFACE_FILE_MISSING $f"; FAIL=1; fi
+done
+if ! grep -Rqs "as6-real-data-surface-migration.css" frontend/src/App.jsx; then echo "AS6_REAL_DATA_SURFACE_IMPORT_MISSING"; FAIL=1; fi
+for item in "dashboard-page" "crm-page" "revenue-page" "ai-workers-page" "approval-page" "execution-page" "KPI surfaces" "Table surfaces"; do
+  if ! grep -Rqs "$item" "$CSS" "$MANIFEST" ops/governance docs ops/status ops/registry; then echo "AS6_REAL_DATA_SURFACE_ITEM_MISSING $item"; FAIL=1; fi
+done
+for cls in REAL_DATA_SURFACE_MIGRATION_MISSING DASHBOARD_DATA_SURFACE_DRIFT CRM_DATA_SURFACE_DRIFT REVENUE_DATA_SURFACE_DRIFT WORKFORCE_DATA_SURFACE_DRIFT APPROVAL_DATA_SURFACE_DRIFT EXECUTION_DATA_SURFACE_DRIFT DATA_SURFACE_MIGRATION_GAP; do
+  if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then echo "AS6_REAL_DATA_SURFACE_CLASS_MISSING $cls"; FAIL=1; fi
+done
+if git diff --cached --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING_FAIL"; FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_REAL_DATA_SURFACE_MIGRATION=PASS"

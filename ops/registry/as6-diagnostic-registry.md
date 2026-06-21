@@ -1921,3 +1921,12 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V101 | ACTION_BAR_SURFACE_DRIFT | Unified Data Surface System failure class | ENABLED
 - V101 | MODAL_DRAWER_SURFACE_DRIFT | Unified Data Surface System failure class | ENABLED
 - V101 | STATE_SURFACE_DRIFT | Unified Data Surface System failure class | ENABLED
+- V102 | ops/bin/as6-diagnose-real-data-surface-migration-v102 | Real Data Surface Migration diagnostic | ENABLED
+- V102 | REAL_DATA_SURFACE_MIGRATION_MISSING | Real Data Surface Migration failure class | ENABLED
+- V102 | DASHBOARD_DATA_SURFACE_DRIFT | Real Data Surface Migration failure class | ENABLED
+- V102 | CRM_DATA_SURFACE_DRIFT | Real Data Surface Migration failure class | ENABLED
+- V102 | REVENUE_DATA_SURFACE_DRIFT | Real Data Surface Migration failure class | ENABLED
+- V102 | WORKFORCE_DATA_SURFACE_DRIFT | Real Data Surface Migration failure class | ENABLED
+- V102 | APPROVAL_DATA_SURFACE_DRIFT | Real Data Surface Migration failure class | ENABLED
+- V102 | EXECUTION_DATA_SURFACE_DRIFT | Real Data Surface Migration failure class | ENABLED
+- V102 | DATA_SURFACE_MIGRATION_GAP | Real Data Surface Migration failure class | ENABLED

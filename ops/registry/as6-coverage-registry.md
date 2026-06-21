@@ -1822,3 +1822,6 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V101 | frontend/src/components/AS6UnifiedDataSurface.jsx | Unified Data Surface System artifact | ENABLED
 - V101 | frontend/src/styles/as6-unified-data-surface-system.css | Unified Data Surface System artifact | ENABLED
 - V101 | docs/AS6_UNIFIED_DATA_SURFACE_SYSTEM_V101.md | Unified Data Surface System artifact | ENABLED
+- V102 | ops/bin/as6-control-real-data-surface-migration-v102 | Covers real data surface migration, build, health and enforcement guard | ENABLED
+- V102 | frontend/src/styles/as6-real-data-surface-migration.css | Real Data Surface Migration artifact | ENABLED
+- V102 | docs/AS6_REAL_DATA_SURFACE_MIGRATION_V102.md | Real Data Surface Migration artifact | ENABLED
