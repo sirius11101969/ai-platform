@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+JS="frontend/src/as6-command-center-classic-restore.js"
+CSS="frontend/src/styles/as6-command-center-classic-restore.css"
+for f in "$JS" "$CSS"; do test -f "$f" || FAIL=1; done
+grep -Rqs "as6-command-center-classic-restore.js" frontend/src/main.jsx || FAIL=1
+for id in as6-global-health-bar-root as6-revenue-crm-fusion-status-root as6-crm-live-data-status-root as6-dashboard-live-data-status-root as6-backend-connector-status-root as6-live-operational-data-root as6-executive-control-tower-completion-root as6-executive-command-dashboard-root as6-autonomous-operations-timeline-root as6-global-event-stream-root as6-ai-copilot-rail-root as6-mission-control-layout-engine-root as6-global-command-palette-root; do grep -Rqs "$id" "$JS" "$CSS" || FAIL=1; done
+if grep -Rqs "AS6CommandCenterClassicRestore.jsx" frontend/src/App.jsx frontend/src/main.jsx 2>/dev/null; then FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then echo "AS6_COMMAND_CENTER_OVERLAY_ROOT_CLEANUP=FAIL"; exit 1; fi
+echo "AS6_COMMAND_CENTER_OVERLAY_ROOT_CLEANUP=PASS"

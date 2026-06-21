@@ -2068,3 +2068,9 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V115 | COMMAND_CENTER_AUTONOMOUS_COCKPIT_DRIFT | Command Center classic restore failure class | ENABLED
 - V115 | COMMAND_CENTER_CLASSIC_LAYOUT_PADDING_DRIFT | Command Center classic restore failure class | ENABLED
 - V115 | COMMAND_CENTER_REFERENCE_STYLE_GAP | Command Center classic restore failure class | ENABLED
+- V115C | ops/bin/as6-diagnose-command-center-overlay-root-cleanup-v115c | Command Center overlay root cleanup diagnostic | ENABLED
+- V115C | COMMAND_CENTER_OVERLAY_ROOT_DRIFT | Command Center overlay root cleanup failure class | ENABLED
+- V115C | COMMAND_CENTER_STATUS_WIDGET_OVERLAY_DRIFT | Command Center overlay root cleanup failure class | ENABLED
+- V115C | COMMAND_CENTER_FLOATING_TAB_OVERLAY_DRIFT | Command Center overlay root cleanup failure class | ENABLED
+- V115C | COMMAND_CENTER_COCKPIT_OVERLAY_DRIFT | Command Center overlay root cleanup failure class | ENABLED
+- V115C | COMMAND_CENTER_COPILOT_BUTTON_OVERLAY_DRIFT | Command Center overlay root cleanup failure class | ENABLED

@@ -3096,3 +3096,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Added CSS: frontend/src/styles/as6-command-center-classic-restore.css
 - Added diagnostic: ops/bin/as6-diagnose-command-center-classic-restore-v115
 - Added control: ops/bin/as6-control-command-center-classic-restore-v115
+
+## AS6_DONE=COMMAND_CENTER_OVERLAY_ROOT_CLEANUP_V115C
+- Root cause: remaining overlays were independent DOM roots outside #root.
+- Updated JS: frontend/src/as6-command-center-classic-restore.js
+- Updated CSS: frontend/src/styles/as6-command-center-classic-restore.css
+- Removed floating status/cockpit/timeline/event/copilot/command-palette overlays only on /command-center.

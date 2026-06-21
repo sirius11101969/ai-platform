@@ -1,9 +1,35 @@
-body.as6-command-center-classic [data-as6-classic-hidden="true"] {
+/* AS6 V115C Command Center Overlay Root Cleanup */
+body.as6-command-center-classic #as6-global-health-bar-root,
+body.as6-command-center-classic #as6-revenue-crm-fusion-status-root,
+body.as6-command-center-classic #as6-crm-live-data-status-root,
+body.as6-command-center-classic #as6-dashboard-live-data-status-root,
+body.as6-command-center-classic #as6-backend-connector-status-root,
+body.as6-command-center-classic #as6-live-operational-data-root,
+body.as6-command-center-classic #as6-executive-control-tower-completion-root,
+body.as6-command-center-classic #as6-executive-command-dashboard-root,
+body.as6-command-center-classic #as6-autonomous-operations-timeline-root,
+body.as6-command-center-classic #as6-global-event-stream-root,
+body.as6-command-center-classic #as6-ai-copilot-rail-root,
+body.as6-command-center-classic #as6-mission-control-layout-engine-root,
+body.as6-command-center-classic #as6-global-command-palette-root,
+body.as6-command-center-classic [data-as6-command-center-overlay-hidden="true"] {
   display: none !important;
   visibility: hidden !important;
+  opacity: 0 !important;
   pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  max-width: 0 !important;
+  max-height: 0 !important;
+  overflow: hidden !important;
+}
+body.as6-command-center-classic {
+  background: #030814 !important;
 }
 body.as6-command-center-classic #root {
   padding-top: 0 !important;
   margin-top: 0 !important;
+}
+body.as6-command-center-classic .command-center-page {
+  padding-top: 0 !important;
 }
