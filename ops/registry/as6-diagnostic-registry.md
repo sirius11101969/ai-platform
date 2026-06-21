@@ -2074,3 +2074,8 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V115C | COMMAND_CENTER_FLOATING_TAB_OVERLAY_DRIFT | Command Center overlay root cleanup failure class | ENABLED
 - V115C | COMMAND_CENTER_COCKPIT_OVERLAY_DRIFT | Command Center overlay root cleanup failure class | ENABLED
 - V115C | COMMAND_CENTER_COPILOT_BUTTON_OVERLAY_DRIFT | Command Center overlay root cleanup failure class | ENABLED
+- V115D | ops/bin/as6-diagnose-command-center-final-polish-v115d | Command Center final polish diagnostic | ENABLED
+- V115D | COMMAND_CENTER_TOP_EMPTY_SPACE_DRIFT | Command Center final polish failure class | ENABLED
+- V115D | COMMAND_CENTER_ROOT_SIBLING_OVERLAY_DRIFT | Command Center final polish failure class | ENABLED
+- V115D | COMMAND_CENTER_BOTTOM_LINE_DRIFT | Command Center final polish failure class | ENABLED
+- V115D | COMMAND_CENTER_RIGHT_WIDGET_OVERLAP_DRIFT | Command Center final polish failure class | ENABLED

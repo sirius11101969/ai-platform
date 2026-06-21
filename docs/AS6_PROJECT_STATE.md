@@ -3102,3 +3102,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Updated JS: frontend/src/as6-command-center-classic-restore.js
 - Updated CSS: frontend/src/styles/as6-command-center-classic-restore.css
 - Removed floating status/cockpit/timeline/event/copilot/command-palette overlays only on /command-center.
+
+## AS6_DONE=COMMAND_CENTER_FINAL_POLISH_V115D
+- Removed remaining root-sibling overlay widgets on /command-center.
+- Removed top empty spacing drift.
+- Removed bottom overlay line drift.
+- Preserved internal Command Center layout.

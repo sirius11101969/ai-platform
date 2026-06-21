@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+JS="frontend/src/as6-command-center-classic-restore.js"
+CSS="frontend/src/styles/as6-command-center-classic-restore.css"
+for f in "$JS" "$CSS"; do test -f "$f" || FAIL=1; done
+grep -Rqs "body.children" "$JS" || FAIL=1
+grep -Rqs "COMMAND_CENTER_FINAL_POLISH" ops docs || true
+grep -Rqs "as6-command-center-classic > \\[id\\^=\"as6-\"\\]" "$CSS" || FAIL=1
+grep -Rqs "padding-top: 0" "$CSS" || FAIL=1
+if [ "$FAIL" -ne 0 ]; then echo "AS6_COMMAND_CENTER_FINAL_POLISH=FAIL"; exit 1; fi
+echo "AS6_COMMAND_CENTER_FINAL_POLISH=PASS"
