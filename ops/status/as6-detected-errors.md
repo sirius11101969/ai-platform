@@ -571,3 +571,9 @@ Governed and registered.
 - ROOT_CAUSE: forced production shell broke UI.
 - ROLLBACK: reverted d5ad4a3 and redeployed restored frontend dist.
 - STATUS: rollback applied.
+
+## V114 Manual Safe Rollback
+- ROOT_CAUSE: revert of 457f23d conflicted in docs/status files.
+- ROLLBACK: manually removed V114 shell overlay artifacts and redeployed restored frontend dist.
+- FAILURE_CLASSES: REVERT_CONFLICT_ROLLBACK_GAP, SHELL_OVERLAY_MANUAL_REMOVAL_REQUIRED, UI_RESTORE_DEPLOY_REQUIRED.
+- STATUS: rollback applied.

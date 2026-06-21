@@ -3083,3 +3083,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Broken commit reverted: d5ad4a3.
 - Reason: production shell broke interface.
 - Restored previous UI bundle and redeployed nginx static files.
+
+## AS6_ROLLBACK=V114_MANUAL_SAFE_RESTORE
+- Aborted failed revert conflict.
+- Removed V114 shell overlay files and imports manually.
+- Restored UI without global Mission Control overlay.
+- Production dist redeployed directly to nginx.
