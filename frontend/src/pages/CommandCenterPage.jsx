@@ -1,5 +1,21 @@
-import React from "react";
-import "../styles/as6-command-center-appshell-reference.css";
+import React, { useEffect } from "react";
+import "../styles/as6-command-center-true-reference-lock.css";
+
+const AS6_COMMAND_CENTER_OVERLAY_ROOTS = [
+  "as6-global-health-bar-root",
+  "as6-revenue-crm-fusion-status-root",
+  "as6-crm-live-data-status-root",
+  "as6-dashboard-live-data-status-root",
+  "as6-backend-connector-status-root",
+  "as6-live-operational-data-root",
+  "as6-executive-control-tower-completion-root",
+  "as6-executive-command-dashboard-root",
+  "as6-autonomous-operations-timeline-root",
+  "as6-global-event-stream-root",
+  "as6-ai-copilot-rail-root",
+  "as6-mission-control-layout-engine-root",
+  "as6-global-command-palette-root"
+];
 
 const kpis = [
   { title: "Выручка сегодня", value: "$1,248,890", delta: "+18.6%", icon: "↗", tone: "green" },
@@ -22,9 +38,54 @@ const events = [
   ["✅", "Сделка Globex Inc. закрыта успешно", "25 мин назад"]
 ];
 
+function useCommandCenterReferenceLock() {
+  useEffect(() => {
+    document.body.classList.add("as6-command-center-reference-active");
+    const previous = new Map();
+    const hideNode = (node) => {
+      if (!node || previous.has(node)) return;
+      previous.set(node, node.getAttribute("style") || "");
+      node.setAttribute("data-as6-command-center-hidden", "true");
+      node.style.setProperty("display", "none", "important");
+      node.style.setProperty("visibility", "hidden", "important");
+      node.style.setProperty("opacity", "0", "important");
+      node.style.setProperty("pointer-events", "none", "important");
+      node.style.setProperty("width", "0", "important");
+      node.style.setProperty("height", "0", "important");
+      node.style.setProperty("max-width", "0", "important");
+      node.style.setProperty("max-height", "0", "important");
+      node.style.setProperty("overflow", "hidden", "important");
+      node.style.setProperty("position", "absolute", "important");
+      node.style.setProperty("z-index", "-1", "important");
+    };
+    const apply = () => {
+      AS6_COMMAND_CENTER_OVERLAY_ROOTS.forEach((id) => hideNode(document.getElementById(id)));
+      Array.from(document.body.children).forEach((node) => {
+        if (node.id === "root") return;
+        if (node.id && node.id.startsWith("as6-")) hideNode(node);
+      });
+    };
+    apply();
+    const observer = new MutationObserver(apply);
+    observer.observe(document.body, { childList: true, subtree: false });
+    const timers = [100, 400, 1000, 2500].map((ms) => window.setTimeout(apply, ms));
+    return () => {
+      observer.disconnect();
+      timers.forEach((timer) => window.clearTimeout(timer));
+      document.body.classList.remove("as6-command-center-reference-active");
+      previous.forEach((style, node) => {
+        if (style) node.setAttribute("style", style);
+        else node.removeAttribute("style");
+        node.removeAttribute("data-as6-command-center-hidden");
+      });
+    };
+  }, []);
+}
+
 export default function CommandCenterPage() {
+  useCommandCenterReferenceLock();
   return (
-    <main className="as6-command-center-appshell-reference">
+    <main className="as6-command-center-true-reference">
       <header className="as6-cc-hero">
         <div>
           <h1>Добро пожаловать, <span>Владимир!</span> 👋</h1>
@@ -40,10 +101,7 @@ export default function CommandCenterPage() {
       <section className="as6-cc-kpis">
         {kpis.map((item) => (
           <article key={item.title} className={`as6-cc-kpi ${item.tone}`}>
-            <small>{item.title}</small>
-            <div><strong>{item.value}</strong><i>{item.icon}</i></div>
-            <em>{item.delta}</em>
-            <span />
+            <small>{item.title}</small><div><strong>{item.value}</strong><i>{item.icon}</i></div><em>{item.delta}</em><span />
           </article>
         ))}
       </section>
@@ -72,10 +130,7 @@ export default function CommandCenterPage() {
           </div>
 
           <div className="as6-cc-bottom-grid">
-            <article className="as6-cc-card as6-cc-agents">
-              <header><h3>Производительность AI сотрудников</h3><button>Неделя</button></header>
-              {agents.map((a) => <div className="as6-cc-agent" key={a[1]}><i>{a[0]}</i><span>{a[1]}</span><b>{a[2]}</b><em>{a[3]}</em><div><span /></div></div>)}
-            </article>
+            <article className="as6-cc-card as6-cc-agents"><header><h3>Производительность AI сотрудников</h3><button>Неделя</button></header>{agents.map((a) => <div className="as6-cc-agent" key={a[1]}><i>{a[0]}</i><span>{a[1]}</span><b>{a[2]}</b><em>{a[3]}</em><div><span /></div></div>)}</article>
             <article className="as6-cc-card as6-cc-chart"><header><h3>Динамика выручки</h3><button>7 дней</button></header><h2>$2,940,000 <em>+9.8%</em></h2><div>{[42,55,50,67,61,78,72,86].map((h, i) => <span key={i} style={{ height: `${h}px` }} />)}</div></article>
             <article className="as6-cc-card as6-cc-ring"><h3>Цели на месяц</h3><div><strong>75%</strong><small>Выполнено</small></div></article>
           </div>

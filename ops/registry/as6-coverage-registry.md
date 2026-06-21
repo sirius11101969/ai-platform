@@ -1883,3 +1883,4 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V118B | ops/bin/as6-control-command-center-reference-restore-v118b | Command Center reference restore coverage | ENABLED
 - V119 | ops/bin/as6-control-command-center-reference-page-v119 | Command Center reference page coverage | ENABLED
 - V120 | ops/bin/as6-control-command-center-appshell-reference-v120 | Command Center AppShell reference coverage | ENABLED
+- V121 | ops/bin/as6-control-command-center-true-reference-lock-v121 | Command Center true reference lock coverage | ENABLED

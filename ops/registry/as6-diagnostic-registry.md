@@ -2120,3 +2120,9 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V120 | COMMAND_CENTER_FULL_PAGE_SHELL_MISUSE | Command Center AppShell reference failure class | ENABLED
 - V120 | COMMAND_CENTER_REFERENCE_WORKSPACE_NOT_ACTIVE | Command Center AppShell reference failure class | ENABLED
 - V120 | COMMAND_CENTER_INTERNAL_NAVIGATION_DUPLICATION | Command Center AppShell reference failure class | ENABLED
+- V121 | ops/bin/as6-diagnose-command-center-true-reference-lock-v121 | Command Center true reference lock diagnostic | ENABLED
+- V121 | COMMAND_CENTER_BODY_ROOT_OVERLAY_DRIFT | Command Center true reference lock failure class | ENABLED
+- V121 | COMMAND_CENTER_GLOBAL_HEALTH_BAR_REAPPEARED | Command Center true reference lock failure class | ENABLED
+- V121 | COMMAND_CENTER_AUTONOMOUS_COCKPIT_REAPPEARED | Command Center true reference lock failure class | ENABLED
+- V121 | COMMAND_CENTER_FLOATING_WIDGET_REAPPEARED | Command Center true reference lock failure class | ENABLED
+- V121 | COMMAND_CENTER_REFERENCE_LOCK_NOT_ACTIVE | Command Center true reference lock failure class | ENABLED

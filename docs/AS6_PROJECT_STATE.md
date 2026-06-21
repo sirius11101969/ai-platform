@@ -3149,3 +3149,10 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - CommandCenterPage.jsx now renders AppShell workspace content only.
 - Added isolated CSS: frontend/src/styles/as6-command-center-appshell-reference.css
 - Existing AppShell sidebar remains the only left navigation.
+
+## AS6_DONE=COMMAND_CENTER_TRUE_REFERENCE_LOCK_V121
+- Added exact body-level overlay root suppression by ID.
+- Kept CommandCenterPage.jsx as AppShell workspace content only.
+- Removed duplicate sidebar risk.
+- Overlay roots restore previous styles on unmount.
+- Added CSS: frontend/src/styles/as6-command-center-true-reference-lock.css
