@@ -2062,3 +2062,9 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V114 | SHELL_CONTENT_OFFSET_GAP | Real Mission Control Shell Rollout failure class | ENABLED
 - V114 | VISUAL_MIGRATION_FALSE_POSITIVE | Real Mission Control Shell Rollout failure class | ENABLED
 - V114 | NON_COMMAND_CENTER_PAGE_SHELL_GAP | Real Mission Control Shell Rollout failure class | ENABLED
+- V115 | ops/bin/as6-diagnose-command-center-classic-restore-v115 | Command Center Classic Restore diagnostic | ENABLED
+- V115 | COMMAND_CENTER_CLASSIC_RESTORE_MISSING | Command Center classic restore failure class | ENABLED
+- V115 | COMMAND_CENTER_TOP_OVERLAY_DRIFT | Command Center classic restore failure class | ENABLED
+- V115 | COMMAND_CENTER_AUTONOMOUS_COCKPIT_DRIFT | Command Center classic restore failure class | ENABLED
+- V115 | COMMAND_CENTER_CLASSIC_LAYOUT_PADDING_DRIFT | Command Center classic restore failure class | ENABLED
+- V115 | COMMAND_CENTER_REFERENCE_STYLE_GAP | Command Center classic restore failure class | ENABLED

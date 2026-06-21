@@ -577,3 +577,8 @@ Governed and registered.
 - ROLLBACK: manually removed V114 shell overlay artifacts and redeployed restored frontend dist.
 - FAILURE_CLASSES: REVERT_CONFLICT_ROLLBACK_GAP, SHELL_OVERLAY_MANUAL_REMOVAL_REQUIRED, UI_RESTORE_DEPLOY_REQUIRED.
 - STATUS: rollback applied.
+
+## V115 Command Center Classic Restore
+- ROOT_CAUSE: later global overlays changed the preferred /command-center visual layout.
+- FAILURE_CLASSES: COMMAND_CENTER_CLASSIC_RESTORE_MISSING, COMMAND_CENTER_TOP_OVERLAY_DRIFT, COMMAND_CENTER_AUTONOMOUS_COCKPIT_DRIFT, COMMAND_CENTER_CLASSIC_LAYOUT_PADDING_DRIFT, COMMAND_CENTER_REFERENCE_STYLE_GAP.
+- STATUS: registered and controlled.

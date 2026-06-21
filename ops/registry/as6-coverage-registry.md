@@ -1873,3 +1873,4 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V114 | frontend/src/components/AS6MissionControlShellAdapter.jsx | Real Mission Control Shell Rollout artifact | ENABLED
 - V114 | frontend/src/styles/as6-real-mission-control-shell-rollout.css | Real Mission Control Shell Rollout artifact | ENABLED
 - V114 | docs/AS6_REAL_MISSION_CONTROL_SHELL_ROLLOUT_V114.md | Real Mission Control Shell Rollout artifact | ENABLED
+- V115 | ops/bin/as6-control-command-center-classic-restore-v115 | Command Center Classic Restore coverage | ENABLED

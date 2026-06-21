@@ -3089,3 +3089,10 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Removed V114 shell overlay files and imports manually.
 - Restored UI without global Mission Control overlay.
 - Production dist redeployed directly to nginx.
+
+## AS6_DONE=COMMAND_CENTER_CLASSIC_RESTORE_V115
+- Restored /command-center to classic AS6 reference layout behavior.
+- Added component: frontend/src/components/AS6CommandCenterClassicRestore.jsx
+- Added CSS: frontend/src/styles/as6-command-center-classic-restore.css
+- Added diagnostic: ops/bin/as6-diagnose-command-center-classic-restore-v115
+- Added control: ops/bin/as6-control-command-center-classic-restore-v115

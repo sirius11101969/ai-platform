@@ -1,0 +1,9 @@
+body.as6-command-center-classic [data-as6-classic-hidden="true"] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+body.as6-command-center-classic #root {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}

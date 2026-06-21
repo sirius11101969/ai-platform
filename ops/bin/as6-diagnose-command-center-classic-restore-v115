@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+COMP="frontend/src/components/AS6CommandCenterClassicRestore.jsx"
+CSS="frontend/src/styles/as6-command-center-classic-restore.css"
+DOC="docs/AS6_COMMAND_CENTER_CLASSIC_RESTORE_V115.md"
+for f in "$COMP" "$CSS" "$DOC"; do test -f "$f" || FAIL=1; done
+grep -Rqs "AS6CommandCenterClassicRestore" frontend/src/App.jsx || FAIL=1
+grep -Rqs "as6-command-center-classic" "$COMP" "$CSS" || FAIL=1
+grep -Rqs "AUTONOMOUS COCKPIT" "$COMP" || FAIL=1
+grep -Rqs "AS6 Mission Control" "$COMP" || FAIL=1
+for cls in COMMAND_CENTER_CLASSIC_RESTORE_MISSING COMMAND_CENTER_TOP_OVERLAY_DRIFT COMMAND_CENTER_AUTONOMOUS_COCKPIT_DRIFT COMMAND_CENTER_CLASSIC_LAYOUT_PADDING_DRIFT COMMAND_CENTER_REFERENCE_STYLE_GAP; do grep -Rqs "$cls" ops docs || FAIL=1; done
+if [ "$FAIL" -ne 0 ]; then echo "AS6_COMMAND_CENTER_CLASSIC_RESTORE=FAIL"; exit 1; fi
+echo "AS6_COMMAND_CENTER_CLASSIC_RESTORE=PASS"
