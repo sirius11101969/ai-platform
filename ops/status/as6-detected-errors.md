@@ -566,3 +566,8 @@ Governed and registered.
 - FAILURE_CLASSES: REAL_MISSION_CONTROL_SHELL_MISSING, LEGACY_AI_OS_SHELL_DRIFT, COMMAND_CENTER_NAV_MISSING, GLOBAL_AS6_SIDEBAR_MISSING, GLOBAL_AS6_HEADER_MISSING, SHELL_CONTENT_OFFSET_GAP, VISUAL_MIGRATION_FALSE_POSITIVE, NON_COMMAND_CENTER_PAGE_SHELL_GAP.
 - PREVENTION: V114 mounts AS6 Mission Control shell globally and validates shell artifacts.
 - STATUS: registered and controlled.
+
+## V114C Rollback
+- ROOT_CAUSE: forced production shell broke UI.
+- ROLLBACK: reverted d5ad4a3 and redeployed restored frontend dist.
+- STATUS: rollback applied.

@@ -3078,3 +3078,8 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Real visual migration after V114: 80%.
 - Project readiness after V114: 100%.
 - UX readiness after V114: 100%.
+
+## AS6_ROLLBACK=V114C_RESTORE_UI
+- Broken commit reverted: d5ad4a3.
+- Reason: production shell broke interface.
+- Restored previous UI bundle and redeployed nginx static files.
