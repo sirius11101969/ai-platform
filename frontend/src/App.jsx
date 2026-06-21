@@ -1,4 +1,3 @@
-import "./styles/as6-production-mission-shell-force.css";
 import "./components/AS6MissionControlShellAdapter.jsx";
 import "./styles/as6-design-token-registry.css";
 import "./styles/as6-real-component-consolidation.css";
