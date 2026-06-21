@@ -3108,3 +3108,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Removed top empty spacing drift.
 - Removed bottom overlay line drift.
 - Preserved internal Command Center layout.
+
+## AS6_DONE=COMMAND_CENTER_REFERENCE_LOCK_V115E
+- Locked /command-center to approved AS6 reference screenshot.
+- Added reference CSS: frontend/src/styles/as6-command-center-reference-lock.css
+- Removed lower recommendation overflow from reference viewport.
+- Preserved internal Command Center content.

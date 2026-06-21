@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+CSS="frontend/src/styles/as6-command-center-reference-lock.css"
+test -f "$CSS" || FAIL=1
+grep -Rqs "as6-command-center-reference-lock.css" frontend/src/as6-command-center-classic-restore.js || FAIL=1
+grep -Rqs "grid-template-columns: 240px" "$CSS" || FAIL=1
+grep -Rqs "command-recommendations" "$CSS" || FAIL=1
+grep -Rqs "quick-actions-primary" "$CSS" || FAIL=1
+grep -Rqs "COMMAND_CENTER_REFERENCE_LOCK" ops docs || true
+if [ "$FAIL" -ne 0 ]; then echo "AS6_COMMAND_CENTER_REFERENCE_LOCK=FAIL"; exit 1; fi
+echo "AS6_COMMAND_CENTER_REFERENCE_LOCK=PASS"

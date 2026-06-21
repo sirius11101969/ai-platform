@@ -2079,3 +2079,9 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V115D | COMMAND_CENTER_ROOT_SIBLING_OVERLAY_DRIFT | Command Center final polish failure class | ENABLED
 - V115D | COMMAND_CENTER_BOTTOM_LINE_DRIFT | Command Center final polish failure class | ENABLED
 - V115D | COMMAND_CENTER_RIGHT_WIDGET_OVERLAP_DRIFT | Command Center final polish failure class | ENABLED
+- V115E | ops/bin/as6-diagnose-command-center-reference-lock-v115e | Command Center reference lock diagnostic | ENABLED
+- V115E | COMMAND_CENTER_REFERENCE_LOCK_MISSING | Command Center reference lock failure class | ENABLED
+- V115E | COMMAND_CENTER_REFERENCE_SPACING_DRIFT | Command Center reference lock failure class | ENABLED
+- V115E | COMMAND_CENTER_REFERENCE_GRID_DRIFT | Command Center reference lock failure class | ENABLED
+- V115E | COMMAND_CENTER_REFERENCE_SIDEBAR_DRIFT | Command Center reference lock failure class | ENABLED
+- V115E | COMMAND_CENTER_REFERENCE_RECOMMENDATION_OVERFLOW_DRIFT | Command Center reference lock failure class | ENABLED
