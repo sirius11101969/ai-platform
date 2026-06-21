@@ -1995,3 +1995,14 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V108 | EXECUTIVE_PAGE_CONVERSION_GAP | Real Page Conversion Engine failure class | ENABLED
 - V108 | PAGE_CONVERSION_PRIMITIVE_DRIFT | Real Page Conversion Engine failure class | ENABLED
 - V108 | MISSION_CONTROL_LAYOUT_2_DRIFT | Real Page Conversion Engine failure class | ENABLED
+- V109 | ops/bin/as6-diagnose-physical-page-refactor-migration-v109 | Physical Page Refactor Migration diagnostic | ENABLED
+- V109 | PHYSICAL_PAGE_REFACTOR_MISSING | Physical Page Refactor Migration failure class | ENABLED
+- V109 | PHYSICAL_CRM_REFACTOR_GAP | Physical Page Refactor Migration failure class | ENABLED
+- V109 | PHYSICAL_DASHBOARD_REFACTOR_GAP | Physical Page Refactor Migration failure class | ENABLED
+- V109 | PHYSICAL_REVENUE_REFACTOR_GAP | Physical Page Refactor Migration failure class | ENABLED
+- V109 | PHYSICAL_WORKFORCE_REFACTOR_GAP | Physical Page Refactor Migration failure class | ENABLED
+- V109 | PHYSICAL_APPROVAL_REFACTOR_GAP | Physical Page Refactor Migration failure class | ENABLED
+- V109 | PHYSICAL_EXECUTION_REFACTOR_GAP | Physical Page Refactor Migration failure class | ENABLED
+- V109 | PHYSICAL_EXECUTIVE_REFACTOR_GAP | Physical Page Refactor Migration failure class | ENABLED
+- V109 | LEGACY_LAYOUT_PHYSICAL_DRIFT | Physical Page Refactor Migration failure class | ENABLED
+- V109 | PHYSICAL_REFACTOR_PRIMITIVE_GAP | Physical Page Refactor Migration failure class | ENABLED

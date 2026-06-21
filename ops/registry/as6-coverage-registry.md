@@ -1855,3 +1855,7 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V108 | frontend/src/components/AS6RealPageConversionEngine.jsx | Real Page Conversion Engine artifact | ENABLED
 - V108 | frontend/src/styles/as6-real-page-conversion-engine.css | Real Page Conversion Engine artifact | ENABLED
 - V108 | docs/AS6_REAL_PAGE_CONVERSION_ENGINE_V108.md | Real Page Conversion Engine artifact | ENABLED
+- V109 | ops/bin/as6-control-physical-page-refactor-migration-v109 | Covers physical page refactor migration, build, health and enforcement guard | ENABLED
+- V109 | frontend/src/components/AS6PhysicalPageRefactorBridge.jsx | Physical Page Refactor Migration artifact | ENABLED
+- V109 | frontend/src/styles/as6-physical-page-refactor-migration.css | Physical Page Refactor Migration artifact | ENABLED
+- V109 | docs/AS6_PHYSICAL_PAGE_REFACTOR_MIGRATION_V109.md | Physical Page Refactor Migration artifact | ENABLED

@@ -2974,3 +2974,22 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Live operational data after V108: 100%.
 - Real page conversion after V108: 90%.
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=PHYSICAL_PAGE_REFACTOR_MIGRATION_V109
+- Base commit: 765a539.
+- Project readiness before V109: 100%.
+- UX readiness before V109: 100%.
+- Live operational data before V109: 100%.
+- Real page conversion before V109: 90%.
+- Purpose: physically govern page refactor migration toward AS6PhysicalPageRefactorBridge primitives.
+- Added diagnostic: ops/bin/as6-diagnose-physical-page-refactor-migration-v109
+- Added control: ops/bin/as6-control-physical-page-refactor-migration-v109
+- Added bridge: frontend/src/components/AS6PhysicalPageRefactorBridge.jsx
+- Added CSS artifact: frontend/src/styles/as6-physical-page-refactor-migration.css
+- Added refactor map: docs/AS6_PHYSICAL_PAGE_REFACTOR_MIGRATION_V109.md
+- Added failure classes: PHYSICAL_PAGE_REFACTOR_MISSING, PHYSICAL_CRM_REFACTOR_GAP, PHYSICAL_DASHBOARD_REFACTOR_GAP, PHYSICAL_REVENUE_REFACTOR_GAP, PHYSICAL_WORKFORCE_REFACTOR_GAP, PHYSICAL_APPROVAL_REFACTOR_GAP, PHYSICAL_EXECUTION_REFACTOR_GAP, PHYSICAL_EXECUTIVE_REFACTOR_GAP, LEGACY_LAYOUT_PHYSICAL_DRIFT, PHYSICAL_REFACTOR_PRIMITIVE_GAP.
+- Project readiness after V109: 100%.
+- UX readiness after V109: 100%.
+- Live operational data after V109: 100%.
+- Real page conversion after V109: 100%.
+- Production health checked with raw URL: https://www.as6.ru/api/health

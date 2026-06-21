@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+BRIDGE="frontend/src/components/AS6PhysicalPageRefactorBridge.jsx"
+CSS="frontend/src/styles/as6-physical-page-refactor-migration.css"
+MAP="docs/AS6_PHYSICAL_PAGE_REFACTOR_MIGRATION_V109.md"
+for f in "$BRIDGE" "$CSS" "$MAP"; do
+  if [ ! -f "$f" ]; then echo "AS6_PHYSICAL_REFACTOR_FILE_MISSING $f"; FAIL=1; fi
+done
+if ! grep -Rqs "as6-physical-page-refactor-migration.css" frontend/src/App.jsx; then echo "AS6_PHYSICAL_REFACTOR_IMPORT_MISSING"; FAIL=1; fi
+for item in "AS6_PHYSICAL_PAGE_REFACTOR_MIGRATION_V109" "AS6PhysicalPageRefactorBridge" "AS6PhysicalKpiRow" "AS6PhysicalActionBar" "CRM" "Dashboard" "Revenue" "Workforce" "Approval" "Execution" "Executive Brain"; do
+  if ! grep -Rqs "$item" "$BRIDGE" "$CSS" "$MAP" frontend/src/pages ops/governance docs ops/status ops/registry; then echo "AS6_PHYSICAL_REFACTOR_ITEM_MISSING $item"; FAIL=1; fi
+done
+for cls in PHYSICAL_PAGE_REFACTOR_MISSING PHYSICAL_CRM_REFACTOR_GAP PHYSICAL_DASHBOARD_REFACTOR_GAP PHYSICAL_REVENUE_REFACTOR_GAP PHYSICAL_WORKFORCE_REFACTOR_GAP PHYSICAL_APPROVAL_REFACTOR_GAP PHYSICAL_EXECUTION_REFACTOR_GAP PHYSICAL_EXECUTIVE_REFACTOR_GAP LEGACY_LAYOUT_PHYSICAL_DRIFT PHYSICAL_REFACTOR_PRIMITIVE_GAP; do
+  if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then echo "AS6_PHYSICAL_REFACTOR_CLASS_MISSING $cls"; FAIL=1; fi
+done
+if git diff --cached --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING_FAIL"; FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_PHYSICAL_PAGE_REFACTOR_MIGRATION=PASS"

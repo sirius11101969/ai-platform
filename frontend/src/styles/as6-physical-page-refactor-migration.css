@@ -1,0 +1,40 @@
+/* AS6 Physical Page Refactor Migration V109 */
+:root {
+  --as6-physical-refactor-border: rgba(37,228,255,.24);
+  --as6-physical-refactor-radius: 28px;
+}
+.dashboard-page, .crm-page, .revenue-page, .ai-workers-page, .ai-workforce-page, .approval-page, .execution-page, .executive-page {
+  --as6-physical-refactor-migration: V109;
+}
+.as6-physical-page-refactor, .as6-physical-refactor-surface, [data-as6-physical-refactor="v109"] {
+  border: 1px solid var(--as6-physical-refactor-border);
+  border-radius: var(--as6-physical-refactor-radius);
+  background: radial-gradient(circle at 12% 0%, rgba(37,228,255,.12), transparent 20rem), rgba(255,255,255,.045);
+  box-shadow: 0 24px 78px rgba(0,0,0,.28);
+}
+.as6-physical-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+.dashboard-page [class*="legacy"], .crm-page [class*="legacy"], .revenue-page [class*="legacy"], .ai-workers-page [class*="legacy"], .approval-page [class*="legacy"], .execution-page [class*="legacy"], .executive-page [class*="legacy"] {
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 22px;
+  background: rgba(255,255,255,.025);
+}
+.dashboard-page [class*="hero"], .crm-page [class*="hero"], .revenue-page [class*="hero"], .ai-workers-page [class*="hero"], .approval-page [class*="hero"], .execution-page [class*="hero"], .executive-page [class*="hero"],
+.dashboard-page [class*="Hero"], .crm-page [class*="Hero"], .revenue-page [class*="Hero"], .ai-workers-page [class*="Hero"], .approval-page [class*="Hero"], .execution-page [class*="Hero"], .executive-page [class*="Hero"] {
+  border-radius: 30px !important;
+  background: radial-gradient(circle at 8% 0%, rgba(37,228,255,.18), transparent 26rem), rgba(255,255,255,.045) !important;
+}
+.dashboard-page [class*="Filter"], .crm-page [class*="Filter"], .revenue-page [class*="Filter"], .ai-workers-page [class*="Filter"], .approval-page [class*="Filter"], .execution-page [class*="Filter"], .executive-page [class*="Filter"],
+.dashboard-page [class*="Table"], .crm-page [class*="Table"], .revenue-page [class*="Table"], .ai-workers-page [class*="Table"], .approval-page [class*="Table"], .execution-page [class*="Table"], .executive-page [class*="Table"],
+.dashboard-page [class*="Action"], .crm-page [class*="Action"], .revenue-page [class*="Action"], .ai-workers-page [class*="Action"], .approval-page [class*="Action"], .execution-page [class*="Action"], .executive-page [class*="Action"] {
+  border-radius: 22px !important;
+}
+@media (max-width: 900px) {
+  .as6-physical-kpi-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .as6-physical-kpi-row { grid-template-columns: 1fr; }
+}
