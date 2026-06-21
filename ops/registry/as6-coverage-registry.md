@@ -1877,3 +1877,4 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V115C | ops/bin/as6-control-command-center-overlay-root-cleanup-v115c | Command Center overlay root cleanup coverage | ENABLED
 - V115D | ops/bin/as6-control-command-center-final-polish-v115d | Command Center final polish coverage | ENABLED
 - V115E | ops/bin/as6-control-command-center-reference-lock-v115e | Command Center reference lock coverage | ENABLED
+- V116B | ops/bin/as6-control-command-center-real-reference-fix-v116b | Clean and real Command Center fix coverage | ENABLED

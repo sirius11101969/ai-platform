@@ -1,3 +1,4 @@
+import "./styles/as6-command-center-real-reference-fix.css";
 import "./styles/as6-command-center-reference-lock.css";
 import "./styles/as6-command-center-classic-restore.css";
 

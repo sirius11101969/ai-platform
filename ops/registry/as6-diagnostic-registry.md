@@ -2085,3 +2085,10 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V115E | COMMAND_CENTER_REFERENCE_GRID_DRIFT | Command Center reference lock failure class | ENABLED
 - V115E | COMMAND_CENTER_REFERENCE_SIDEBAR_DRIFT | Command Center reference lock failure class | ENABLED
 - V115E | COMMAND_CENTER_REFERENCE_RECOMMENDATION_OVERFLOW_DRIFT | Command Center reference lock failure class | ENABLED
+- V116B | ops/bin/as6-diagnose-command-center-real-reference-fix-v116b | Clean and real Command Center fix diagnostic | ENABLED
+- V116B | DIRTY_WORKTREE_BLOCKED_UI_FIX | Command Center cleanup/source fix failure class | ENABLED
+- V116B | STALE_V115_ARTIFACT_DRIFT | Command Center cleanup/source fix failure class | ENABLED
+- V116B | COMMAND_CENTER_REAL_REFERENCE_DRIFT | Command Center cleanup/source fix failure class | ENABLED
+- V116B | COMMAND_CENTER_LOGO_FRAME_SOURCE_DRIFT | Command Center cleanup/source fix failure class | ENABLED
+- V116B | COMMAND_CENTER_ACTION_BAR_SOURCE_DRIFT | Command Center cleanup/source fix failure class | ENABLED
+- V116B | COMMAND_CENTER_CARD_BORDER_SOURCE_DRIFT | Command Center cleanup/source fix failure class | ENABLED

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+CSS="frontend/src/styles/as6-command-center-real-reference-fix.css"
+test -f "$CSS" || FAIL=1
+grep -Rqs "as6-command-center-real-reference-fix.css" frontend/src/as6-command-center-classic-restore.js || FAIL=1
+grep -Rqs "as6-sidebar-brand" "$CSS" || FAIL=1
+grep -Rqs "quick-actions-primary" "$CSS" || FAIL=1
+grep -Rqs "copilot-hero" "$CSS" || FAIL=1
+grep -Rqs "command-recommendations" "$CSS" || FAIL=1
+if [ "$FAIL" -ne 0 ]; then echo "AS6_COMMAND_CENTER_REAL_REFERENCE_FIX=FAIL"; exit 1; fi
+echo "AS6_COMMAND_CENTER_REAL_REFERENCE_FIX=PASS"

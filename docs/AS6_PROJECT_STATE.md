@@ -3114,3 +3114,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Added reference CSS: frontend/src/styles/as6-command-center-reference-lock.css
 - Removed lower recommendation overflow from reference viewport.
 - Preserved internal Command Center content.
+
+## AS6_DONE=CLEAN_AND_REAL_COMMAND_CENTER_FIX_V116B
+- Cleaned stale V115 artifacts.
+- Added CSS: frontend/src/styles/as6-command-center-real-reference-fix.css
+- Fixed real Command Center source selectors.
+- No App.jsx changes.
