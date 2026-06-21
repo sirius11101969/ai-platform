@@ -1836,3 +1836,8 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V104 | frontend/src/components/AS6BackendConnectorStatus.jsx | Real Backend Data Connectors artifact | ENABLED
 - V104 | frontend/src/styles/as6-backend-data-connectors.css | Real Backend Data Connectors artifact | ENABLED
 - V104 | docs/AS6_REAL_BACKEND_DATA_CONNECTORS_V104.md | Real Backend Data Connectors artifact | ENABLED
+- V105 | ops/bin/as6-control-real-dashboard-data-wiring-v105 | Covers dashboard live data wiring, build, health and enforcement guard | ENABLED
+- V105 | frontend/src/data/as6DashboardLiveData.js | Real Dashboard Data Wiring artifact | ENABLED
+- V105 | frontend/src/components/AS6DashboardLiveDataStatus.jsx | Real Dashboard Data Wiring artifact | ENABLED
+- V105 | frontend/src/styles/as6-dashboard-live-data.css | Real Dashboard Data Wiring artifact | ENABLED
+- V105 | docs/AS6_REAL_DASHBOARD_DATA_WIRING_V105.md | Real Dashboard Data Wiring artifact | ENABLED

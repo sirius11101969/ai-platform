@@ -1,3 +1,4 @@
+import "./components/AS6DashboardLiveDataStatus.jsx";
 import "./components/AS6BackendConnectorStatus.jsx";
 import "./components/AS6LiveOperationalDataStatus.jsx";
 import "./styles/as6-real-data-surface-migration.css";

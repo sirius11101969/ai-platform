@@ -2901,3 +2901,21 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - UX readiness after V104: 100%.
 - Live operational data after V104: 90%.
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=REAL_DASHBOARD_DATA_WIRING_V105
+- Base commit: 0be019b.
+- Project readiness before V105: 100%.
+- UX readiness before V105: 100%.
+- Live operational data before V105: 90%.
+- Purpose: wire Dashboard live data to AS6OperationalStore with freshness, connector health and cached fallback.
+- Added diagnostic: ops/bin/as6-diagnose-real-dashboard-data-wiring-v105
+- Added control: ops/bin/as6-control-real-dashboard-data-wiring-v105
+- Added provider: frontend/src/data/as6DashboardLiveData.js
+- Added component: frontend/src/components/AS6DashboardLiveDataStatus.jsx
+- Added CSS artifact: frontend/src/styles/as6-dashboard-live-data.css
+- Added contract: docs/AS6_REAL_DASHBOARD_DATA_WIRING_V105.md
+- Added failure classes: DASHBOARD_DATA_WIRING_MISSING, DASHBOARD_OPERATIONAL_STORE_GAP, DASHBOARD_STALE_DATA_GAP, DASHBOARD_CACHE_FALLBACK_GAP, DASHBOARD_WIDGET_DATA_DRIFT, DASHBOARD_FRESHNESS_BADGE_MISSING, DASHBOARD_CONNECTOR_HEALTH_GAP, DASHBOARD_LIVE_SNAPSHOT_CONTRACT_DRIFT.
+- Project readiness after V105: 100%.
+- UX readiness after V105: 100%.
+- Live operational data after V105: 95%.
+- Production health checked with raw URL: https://www.as6.ru/api/health

@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+PROVIDER="frontend/src/data/as6DashboardLiveData.js"
+COMPONENT="frontend/src/components/AS6DashboardLiveDataStatus.jsx"
+CSS="frontend/src/styles/as6-dashboard-live-data.css"
+CONTRACT="docs/AS6_REAL_DASHBOARD_DATA_WIRING_V105.md"
+for f in "$PROVIDER" "$COMPONENT" "$CSS" "$CONTRACT"; do
+  if [ ! -f "$f" ]; then echo "AS6_DASHBOARD_DATA_FILE_MISSING $f"; FAIL=1; fi
+done
+if ! grep -Rqs "AS6DashboardLiveDataStatus.jsx" frontend/src/App.jsx; then echo "AS6_DASHBOARD_DATA_IMPORT_MISSING"; FAIL=1; fi
+for item in "AS6_DASHBOARD_LIVE_DATA_V105" "createAS6DashboardLiveSnapshot" "getAS6DashboardCachedSnapshot" "getAS6DashboardLiveDataStatus" "AS6_OPERATIONAL_STORE_V104" "productionHealth" "dashboard" "crm" "revenue" "workforce" "diagnostics" "governance"; do
+  if ! grep -Rqs "$item" "$PROVIDER" "$COMPONENT" "$CONTRACT" ops/governance docs ops/status ops/registry; then echo "AS6_DASHBOARD_DATA_ITEM_MISSING $item"; FAIL=1; fi
+done
+for cls in DASHBOARD_DATA_WIRING_MISSING DASHBOARD_OPERATIONAL_STORE_GAP DASHBOARD_STALE_DATA_GAP DASHBOARD_CACHE_FALLBACK_GAP DASHBOARD_WIDGET_DATA_DRIFT DASHBOARD_FRESHNESS_BADGE_MISSING DASHBOARD_CONNECTOR_HEALTH_GAP DASHBOARD_LIVE_SNAPSHOT_CONTRACT_DRIFT; do
+  if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then echo "AS6_DASHBOARD_DATA_CLASS_MISSING $cls"; FAIL=1; fi
+done
+if git diff --cached --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING_FAIL"; FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_REAL_DASHBOARD_DATA_WIRING=PASS"

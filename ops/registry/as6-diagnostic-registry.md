@@ -1954,3 +1954,12 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V104 | GOVERNANCE_BACKEND_CONNECTOR_GAP | Real Backend Data Connectors failure class | ENABLED
 - V104 | OPERATIONAL_STORE_MISSING | Real Backend Data Connectors failure class | ENABLED
 - V104 | CONNECTOR_FAILOVER_GAP | Real Backend Data Connectors failure class | ENABLED
+- V105 | ops/bin/as6-diagnose-real-dashboard-data-wiring-v105 | Real Dashboard Data Wiring diagnostic | ENABLED
+- V105 | DASHBOARD_DATA_WIRING_MISSING | Real Dashboard Data Wiring failure class | ENABLED
+- V105 | DASHBOARD_OPERATIONAL_STORE_GAP | Real Dashboard Data Wiring failure class | ENABLED
+- V105 | DASHBOARD_STALE_DATA_GAP | Real Dashboard Data Wiring failure class | ENABLED
+- V105 | DASHBOARD_CACHE_FALLBACK_GAP | Real Dashboard Data Wiring failure class | ENABLED
+- V105 | DASHBOARD_WIDGET_DATA_DRIFT | Real Dashboard Data Wiring failure class | ENABLED
+- V105 | DASHBOARD_FRESHNESS_BADGE_MISSING | Real Dashboard Data Wiring failure class | ENABLED
+- V105 | DASHBOARD_CONNECTOR_HEALTH_GAP | Real Dashboard Data Wiring failure class | ENABLED
+- V105 | DASHBOARD_LIVE_SNAPSHOT_CONTRACT_DRIFT | Real Dashboard Data Wiring failure class | ENABLED
