@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+PROVIDER="frontend/src/data/as6CrmLiveData.js"
+COMPONENT="frontend/src/components/AS6CrmLiveDataStatus.jsx"
+CSS="frontend/src/styles/as6-crm-live-data.css"
+CONTRACT="docs/AS6_REAL_CRM_DATA_WIRING_V106.md"
+for f in "$PROVIDER" "$COMPONENT" "$CSS" "$CONTRACT"; do
+  if [ ! -f "$f" ]; then echo "AS6_CRM_DATA_FILE_MISSING $f"; FAIL=1; fi
+done
+if ! grep -Rqs "AS6CrmLiveDataStatus.jsx" frontend/src/App.jsx; then echo "AS6_CRM_DATA_IMPORT_MISSING"; FAIL=1; fi
+for item in "AS6_CRM_LIVE_DATA_V106" "createAS6CrmLiveSnapshot" "getAS6CrmCachedSnapshot" "getAS6CrmLiveDataStatus" "AS6_OPERATIONAL_STORE_V104" "pipeline" "leads" "deals" "activities" "sla" "aiRecommendations"; do
+  if ! grep -Rqs "$item" "$PROVIDER" "$COMPONENT" "$CONTRACT" ops/governance docs ops/status ops/registry; then echo "AS6_CRM_DATA_ITEM_MISSING $item"; FAIL=1; fi
+done
+for cls in CRM_DATA_WIRING_MISSING CRM_OPERATIONAL_STORE_GAP CRM_PIPELINE_DATA_DRIFT CRM_SLA_DATA_GAP CRM_LEAD_STATUS_DRIFT CRM_ACTIVITY_DATA_GAP CRM_AI_RECOMMENDATION_DATA_GAP CRM_CONNECTOR_HEALTH_GAP CRM_FRESHNESS_BADGE_MISSING CRM_LIVE_SNAPSHOT_CONTRACT_DRIFT; do
+  if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then echo "AS6_CRM_DATA_CLASS_MISSING $cls"; FAIL=1; fi
+done
+if git diff --cached --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING_FAIL"; FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_REAL_CRM_DATA_WIRING=PASS"

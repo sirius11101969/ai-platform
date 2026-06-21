@@ -1841,3 +1841,8 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V105 | frontend/src/components/AS6DashboardLiveDataStatus.jsx | Real Dashboard Data Wiring artifact | ENABLED
 - V105 | frontend/src/styles/as6-dashboard-live-data.css | Real Dashboard Data Wiring artifact | ENABLED
 - V105 | docs/AS6_REAL_DASHBOARD_DATA_WIRING_V105.md | Real Dashboard Data Wiring artifact | ENABLED
+- V106 | ops/bin/as6-control-real-crm-data-wiring-v106 | Covers CRM live data wiring, build, health and enforcement guard | ENABLED
+- V106 | frontend/src/data/as6CrmLiveData.js | Real CRM Data Wiring artifact | ENABLED
+- V106 | frontend/src/components/AS6CrmLiveDataStatus.jsx | Real CRM Data Wiring artifact | ENABLED
+- V106 | frontend/src/styles/as6-crm-live-data.css | Real CRM Data Wiring artifact | ENABLED
+- V106 | docs/AS6_REAL_CRM_DATA_WIRING_V106.md | Real CRM Data Wiring artifact | ENABLED

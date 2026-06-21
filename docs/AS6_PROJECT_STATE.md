@@ -2919,3 +2919,21 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - UX readiness after V105: 100%.
 - Live operational data after V105: 95%.
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=REAL_CRM_DATA_WIRING_V106
+- Base commit: f655ea7.
+- Project readiness before V106: 100%.
+- UX readiness before V106: 100%.
+- Live operational data before V106: 95%.
+- Purpose: wire CRM live data to AS6OperationalStore with pipeline, leads, deals, activities, SLA, AI recommendations, freshness, connector health and cached fallback.
+- Added diagnostic: ops/bin/as6-diagnose-real-crm-data-wiring-v106
+- Added control: ops/bin/as6-control-real-crm-data-wiring-v106
+- Added provider: frontend/src/data/as6CrmLiveData.js
+- Added component: frontend/src/components/AS6CrmLiveDataStatus.jsx
+- Added CSS artifact: frontend/src/styles/as6-crm-live-data.css
+- Added contract: docs/AS6_REAL_CRM_DATA_WIRING_V106.md
+- Added failure classes: CRM_DATA_WIRING_MISSING, CRM_OPERATIONAL_STORE_GAP, CRM_PIPELINE_DATA_DRIFT, CRM_SLA_DATA_GAP, CRM_LEAD_STATUS_DRIFT, CRM_ACTIVITY_DATA_GAP, CRM_AI_RECOMMENDATION_DATA_GAP, CRM_CONNECTOR_HEALTH_GAP, CRM_FRESHNESS_BADGE_MISSING, CRM_LIVE_SNAPSHOT_CONTRACT_DRIFT.
+- Project readiness after V106: 100%.
+- UX readiness after V106: 100%.
+- Live operational data after V106: 98%.
+- Production health checked with raw URL: https://www.as6.ru/api/health

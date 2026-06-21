@@ -1963,3 +1963,14 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V105 | DASHBOARD_FRESHNESS_BADGE_MISSING | Real Dashboard Data Wiring failure class | ENABLED
 - V105 | DASHBOARD_CONNECTOR_HEALTH_GAP | Real Dashboard Data Wiring failure class | ENABLED
 - V105 | DASHBOARD_LIVE_SNAPSHOT_CONTRACT_DRIFT | Real Dashboard Data Wiring failure class | ENABLED
+- V106 | ops/bin/as6-diagnose-real-crm-data-wiring-v106 | Real CRM Data Wiring diagnostic | ENABLED
+- V106 | CRM_DATA_WIRING_MISSING | Real CRM Data Wiring failure class | ENABLED
+- V106 | CRM_OPERATIONAL_STORE_GAP | Real CRM Data Wiring failure class | ENABLED
+- V106 | CRM_PIPELINE_DATA_DRIFT | Real CRM Data Wiring failure class | ENABLED
+- V106 | CRM_SLA_DATA_GAP | Real CRM Data Wiring failure class | ENABLED
+- V106 | CRM_LEAD_STATUS_DRIFT | Real CRM Data Wiring failure class | ENABLED
+- V106 | CRM_ACTIVITY_DATA_GAP | Real CRM Data Wiring failure class | ENABLED
+- V106 | CRM_AI_RECOMMENDATION_DATA_GAP | Real CRM Data Wiring failure class | ENABLED
+- V106 | CRM_CONNECTOR_HEALTH_GAP | Real CRM Data Wiring failure class | ENABLED
+- V106 | CRM_FRESHNESS_BADGE_MISSING | Real CRM Data Wiring failure class | ENABLED
+- V106 | CRM_LIVE_SNAPSHOT_CONTRACT_DRIFT | Real CRM Data Wiring failure class | ENABLED
