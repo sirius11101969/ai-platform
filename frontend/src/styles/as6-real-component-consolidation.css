@@ -1,0 +1,44 @@
+/* AS6 Real Component Consolidation V110 */
+:root {
+  --as6-component-consolidation-border: rgba(120,190,255,.18);
+  --as6-component-consolidation-bg: rgba(255,255,255,.045);
+  --as6-component-consolidation-radius: 24px;
+}
+.as6-unified-filter-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--as6-component-consolidation-border);
+  border-radius: 22px;
+  background: rgba(255,255,255,.035);
+}
+.dashboard-page [class*="KPI"], .crm-page [class*="KPI"], .revenue-page [class*="KPI"], .ai-workers-page [class*="KPI"], .approval-page [class*="KPI"], .execution-page [class*="KPI"], .executive-page [class*="KPI"],
+.dashboard-page [class*="Metric"], .crm-page [class*="Metric"], .revenue-page [class*="Metric"], .ai-workers-page [class*="Metric"], .approval-page [class*="Metric"], .execution-page [class*="Metric"], .executive-page [class*="Metric"],
+.dashboard-page [class*="Card"], .crm-page [class*="Card"], .revenue-page [class*="Card"], .ai-workers-page [class*="Card"], .approval-page [class*="Card"], .execution-page [class*="Card"], .executive-page [class*="Card"] {
+  border: 1px solid var(--as6-component-consolidation-border) !important;
+  border-radius: var(--as6-component-consolidation-radius) !important;
+  background: radial-gradient(circle at 12% 0%, rgba(37,228,255,.10), transparent 18rem), var(--as6-component-consolidation-bg) !important;
+}
+.dashboard-page [class*="Table"], .crm-page [class*="Table"], .revenue-page [class*="Table"], .ai-workers-page [class*="Table"], .approval-page [class*="Table"], .execution-page [class*="Table"], .executive-page [class*="Table"],
+.dashboard-page table, .crm-page table, .revenue-page table, .ai-workers-page table, .approval-page table, .execution-page table, .executive-page table {
+  border: 1px solid var(--as6-component-consolidation-border) !important;
+  border-radius: 22px !important;
+  overflow: hidden;
+}
+.dashboard-page [class*="Filter"], .crm-page [class*="Filter"], .revenue-page [class*="Filter"], .ai-workers-page [class*="Filter"], .approval-page [class*="Filter"], .execution-page [class*="Filter"], .executive-page [class*="Filter"],
+.dashboard-page [class*="Action"], .crm-page [class*="Action"], .revenue-page [class*="Action"], .ai-workers-page [class*="Action"], .approval-page [class*="Action"], .execution-page [class*="Action"], .executive-page [class*="Action"] {
+  border: 1px solid rgba(120,190,255,.16) !important;
+  border-radius: 22px !important;
+  background: rgba(255,255,255,.035) !important;
+}
+.dashboard-page [class*="Empty"], .crm-page [class*="Empty"], .revenue-page [class*="Empty"], .ai-workers-page [class*="Empty"], .approval-page [class*="Empty"], .execution-page [class*="Empty"], .executive-page [class*="Empty"],
+.dashboard-page [class*="Loading"], .crm-page [class*="Loading"], .revenue-page [class*="Loading"], .ai-workers-page [class*="Loading"], .approval-page [class*="Loading"], .execution-page [class*="Loading"], .executive-page [class*="Loading"],
+.dashboard-page [class*="Error"], .crm-page [class*="Error"], .revenue-page [class*="Error"], .ai-workers-page [class*="Error"], .approval-page [class*="Error"], .execution-page [class*="Error"], .executive-page [class*="Error"] {
+  border: 1px dashed rgba(120,190,255,.24) !important;
+  border-radius: 22px !important;
+}
+@media (max-width: 760px) {
+  .as6-unified-filter-bar { padding: 10px; }
+}

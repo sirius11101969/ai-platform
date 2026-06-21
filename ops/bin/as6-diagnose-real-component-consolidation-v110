@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+BRIDGE="frontend/src/components/AS6RealComponentConsolidation.jsx"
+CSS="frontend/src/styles/as6-real-component-consolidation.css"
+MAP="docs/AS6_REAL_COMPONENT_CONSOLIDATION_V110.md"
+for f in "$BRIDGE" "$CSS" "$MAP"; do
+  if [ ! -f "$f" ]; then echo "AS6_COMPONENT_CONSOLIDATION_FILE_MISSING $f"; FAIL=1; fi
+done
+if ! grep -Rqs "as6-real-component-consolidation.css" frontend/src/App.jsx; then echo "AS6_COMPONENT_CONSOLIDATION_IMPORT_MISSING"; FAIL=1; fi
+for item in "AS6_REAL_COMPONENT_CONSOLIDATION_V110" "AS6UnifiedKPI" "AS6UnifiedCard" "AS6UnifiedTable" "AS6UnifiedFilterBar" "AS6UnifiedActionBar" "AS6UnifiedEmptyState" "AS6UnifiedLoadingState" "AS6UnifiedErrorState"; do
+  if ! grep -Rqs "$item" "$BRIDGE" "$CSS" "$MAP" ops/governance docs ops/status ops/registry; then echo "AS6_COMPONENT_CONSOLIDATION_ITEM_MISSING $item"; FAIL=1; fi
+done
+for cls in COMPONENT_CONSOLIDATION_MISSING COMPONENT_DUPLICATION_DRIFT PAGE_SPECIFIC_WIDGET_SPRAWL UNIFIED_COMPONENT_COVERAGE_GAP KPI_COMPONENT_DUPLICATION_DRIFT TABLE_COMPONENT_DUPLICATION_DRIFT CARD_COMPONENT_DUPLICATION_DRIFT FILTER_COMPONENT_DUPLICATION_DRIFT ACTION_BAR_COMPONENT_DUPLICATION_DRIFT STATE_COMPONENT_DUPLICATION_DRIFT; do
+  if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then echo "AS6_COMPONENT_CONSOLIDATION_CLASS_MISSING $cls"; FAIL=1; fi
+done
+if git diff --cached --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING_FAIL"; FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_REAL_COMPONENT_CONSOLIDATION=PASS"

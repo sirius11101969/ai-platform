@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-real-component-consolidation-v110
+ops/bin/as6-diagnose-physical-page-refactor-migration-v109
+ops/bin/as6-diagnose-real-page-conversion-engine-v108
+if command -v npm >/dev/null 2>&1; then
+  npm --prefix frontend run build
+elif command -v docker >/dev/null 2>&1; then
+  docker run --rm -v "$PWD/frontend:/frontend" -w /frontend node:20-alpine sh -lc "npm ci && npm run build"
+else
+  echo "AS6_FRONTEND_BUILD_RUNNER_FAIL"
+  exit 1
+fi
+curl -kfsS https://www.as6.ru/api/health >/dev/null
+AS6_ENFORCEMENT_MODE=same-cycle ops/bin/as6-pre-commit-push-enforcement
+echo "AS6_CONTROL_REAL_COMPONENT_CONSOLIDATION_V110=PASS"

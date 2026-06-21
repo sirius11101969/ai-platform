@@ -1,0 +1,34 @@
+# AS6 Real Component Consolidation V110
+
+Base commit: 143ca02.
+
+## Consolidated primitives
+- AS6UnifiedKPI
+- AS6UnifiedCard
+- AS6UnifiedTable
+- AS6UnifiedFilterBar
+- AS6UnifiedActionBar
+- AS6UnifiedEmptyState
+- AS6UnifiedLoadingState
+- AS6UnifiedErrorState
+
+## Target pages
+- CRM
+- Dashboard
+- Revenue
+- Workforce
+- Approval
+- Execution
+- Executive Brain
+
+## Failure classes
+- COMPONENT_CONSOLIDATION_MISSING
+- COMPONENT_DUPLICATION_DRIFT
+- PAGE_SPECIFIC_WIDGET_SPRAWL
+- UNIFIED_COMPONENT_COVERAGE_GAP
+- KPI_COMPONENT_DUPLICATION_DRIFT
+- TABLE_COMPONENT_DUPLICATION_DRIFT
+- CARD_COMPONENT_DUPLICATION_DRIFT
+- FILTER_COMPONENT_DUPLICATION_DRIFT
+- ACTION_BAR_COMPONENT_DUPLICATION_DRIFT
+- STATE_COMPONENT_DUPLICATION_DRIFT

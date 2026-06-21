@@ -2006,3 +2006,14 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V109 | PHYSICAL_EXECUTIVE_REFACTOR_GAP | Physical Page Refactor Migration failure class | ENABLED
 - V109 | LEGACY_LAYOUT_PHYSICAL_DRIFT | Physical Page Refactor Migration failure class | ENABLED
 - V109 | PHYSICAL_REFACTOR_PRIMITIVE_GAP | Physical Page Refactor Migration failure class | ENABLED
+- V110 | ops/bin/as6-diagnose-real-component-consolidation-v110 | Real Component Consolidation diagnostic | ENABLED
+- V110 | COMPONENT_CONSOLIDATION_MISSING | Real Component Consolidation failure class | ENABLED
+- V110 | COMPONENT_DUPLICATION_DRIFT | Real Component Consolidation failure class | ENABLED
+- V110 | PAGE_SPECIFIC_WIDGET_SPRAWL | Real Component Consolidation failure class | ENABLED
+- V110 | UNIFIED_COMPONENT_COVERAGE_GAP | Real Component Consolidation failure class | ENABLED
+- V110 | KPI_COMPONENT_DUPLICATION_DRIFT | Real Component Consolidation failure class | ENABLED
+- V110 | TABLE_COMPONENT_DUPLICATION_DRIFT | Real Component Consolidation failure class | ENABLED
+- V110 | CARD_COMPONENT_DUPLICATION_DRIFT | Real Component Consolidation failure class | ENABLED
+- V110 | FILTER_COMPONENT_DUPLICATION_DRIFT | Real Component Consolidation failure class | ENABLED
+- V110 | ACTION_BAR_COMPONENT_DUPLICATION_DRIFT | Real Component Consolidation failure class | ENABLED
+- V110 | STATE_COMPONENT_DUPLICATION_DRIFT | Real Component Consolidation failure class | ENABLED
