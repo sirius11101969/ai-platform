@@ -1881,3 +1881,4 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V117 | ops/bin/as6-control-command-center-final-reference-css-v117 | Final Command Center reference CSS coverage | ENABLED
 - V118 | ops/bin/as6-control-command-center-reference-restore-v118 | Command Center reference restore coverage | ENABLED
 - V118B | ops/bin/as6-control-command-center-reference-restore-v118b | Command Center reference restore coverage | ENABLED
+- V119 | ops/bin/as6-control-command-center-reference-page-v119 | Command Center reference page coverage | ENABLED

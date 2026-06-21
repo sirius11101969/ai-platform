@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-command-center-reference-page-v119
+if command -v npm >/dev/null 2>&1; then npm --prefix frontend run build; elif command -v docker >/dev/null 2>&1; then docker run --rm -v "$PWD/frontend:/frontend" -w /frontend node:20-alpine sh -lc "npm ci && npm run build"; else echo "AS6_FRONTEND_BUILD_RUNNER_FAIL"; exit 1; fi
+curl -kfsS https://www.as6.ru/api/health >/dev/null
+echo "AS6_CONTROL_COMMAND_CENTER_REFERENCE_PAGE_V119=PASS"

@@ -2108,3 +2108,9 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V118B | COMMAND_CENTER_MISSING_PATHSPEC_STAGING_FAILURE | Command Center reference restore failure class | ENABLED
 - V118B | COMMAND_CENTER_PATCH_LAYER_CLEANUP_REQUIRED | Command Center reference restore failure class | ENABLED
 - V118B | COMMAND_CENTER_REFERENCE_SOURCE_RESTORE_REQUIRED | Command Center reference restore failure class | ENABLED
+- V119 | ops/bin/as6-diagnose-command-center-reference-page-v119 | Command Center reference page diagnostic | ENABLED
+- V119 | COMMAND_CENTER_REFERENCE_COMMIT_MISMATCH | Command Center reference page failure class | ENABLED
+- V119 | COMMAND_CENTER_GLOBAL_OVERLAY_REAPPEARED | Command Center reference page failure class | ENABLED
+- V119 | COMMAND_CENTER_PAGE_REWRITE_REQUIRED | Command Center reference page failure class | ENABLED
+- V119 | COMMAND_CENTER_OLD_BADGE_DRIFT | Command Center reference page failure class | ENABLED
+- V119 | COMMAND_CENTER_REFERENCE_PAGE_NOT_ACTIVE | Command Center reference page failure class | ENABLED

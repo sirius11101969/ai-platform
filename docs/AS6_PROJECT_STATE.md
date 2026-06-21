@@ -3137,3 +3137,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Restored CommandCenterPage.jsx from reference commit 155975f.
 - Removed temporary V115-V117 command-center CSS/JS patch layers.
 - Used safe git add -A staging.
+
+## AS6_DONE=COMMAND_CENTER_REFERENCE_PAGE_V119
+- Replaced CommandCenterPage.jsx with clean reference implementation.
+- Added isolated CSS: frontend/src/styles/as6-command-center-reference-page.css
+- Hidden external overlay roots only while .as6-command-center-reference-page is active.
+- Removed dependency on failed V115-V118 CSS patch strategy.
