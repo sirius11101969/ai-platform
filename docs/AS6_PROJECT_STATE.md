@@ -3181,3 +3181,8 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Added final runtime style injector.
 - Fixed bundled CSS order override.
 - Did not change CommandCenterPage.jsx.
+
+## AS6_DONE=COMMAND_CENTER_HARD_RUNTIME_FIX_V128
+- Added public hard runtime script.
+- Injected script directly into frontend/index.html.
+- Did not change CommandCenterPage.jsx.

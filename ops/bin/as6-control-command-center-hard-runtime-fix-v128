@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-command-center-hard-runtime-fix-v128
+if command -v npm >/dev/null 2>&1; then npm --prefix frontend run build; else docker run --rm -v "$PWD/frontend:/frontend" -w /frontend node:20-alpine sh -lc "npm ci && npm run build"; fi
+grep -Rqs "as6-command-center-hard-fix-v128.js" frontend/dist/index.html
+curl -kfsS https://www.as6.ru/api/health >/dev/null
+echo "AS6_CONTROL_COMMAND_CENTER_HARD_RUNTIME_FIX_V128=PASS"
