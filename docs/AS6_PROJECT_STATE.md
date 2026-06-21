@@ -3176,3 +3176,8 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Did not change CommandCenterPage.jsx.
 - Added scoped CSS: frontend/src/styles/as6-command-center-arrow-fix-v126.css
 - Removed explicit full baseline enforcement call from patch flow.
+
+## AS6_DONE=COMMAND_CENTER_FINAL_RUNTIME_STYLE_V127
+- Added final runtime style injector.
+- Fixed bundled CSS order override.
+- Did not change CommandCenterPage.jsx.

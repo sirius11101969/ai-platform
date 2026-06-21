@@ -1887,3 +1887,4 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V122B | ops/bin/as6-control-command-center-reference-guard-v122b | Real Command Center route guard coverage | ENABLED
 - V123C | ops/bin/as6-control-command-center-reference-polish-v123c | Command Center reference polish hardened coverage | ENABLED
 - V126 | ops/bin/as6-control-command-center-arrow-fix-v126 | Command Center arrow fix coverage | ENABLED
+- V127 | ops/bin/as6-control-command-center-final-runtime-style-v127 | Command Center final runtime style coverage | ENABLED

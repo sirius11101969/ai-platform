@@ -2144,3 +2144,4 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V126 | COMMAND_CENTER_SIDEBAR_SEPARATOR_DRIFT | Command Center arrow fix failure class | ENABLED
 - V126 | COMMAND_CENTER_COPILOT_DOUBLE_BORDER_DRIFT | Command Center arrow fix failure class | ENABLED
 - V126 | COMMAND_CENTER_FAILED_ENFORCEMENT_CALL_DRIFT | Command Center arrow fix failure class | ENABLED
+- V127 | ops/bin/as6-diagnose-command-center-final-runtime-style-v127 | Command Center final runtime style diagnostic | ENABLED

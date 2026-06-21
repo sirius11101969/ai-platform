@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+grep -Rqs "as6-command-center-final-runtime-style-v127" frontend/src/as6-command-center-reference-guard.js
+grep -Rqs "injectFinalStyle" frontend/src/as6-command-center-reference-guard.js
+grep -Rqs "command-hero" frontend/src/as6-command-center-reference-guard.js
+grep -Rqs "sidebar-favorites" frontend/src/as6-command-center-reference-guard.js
+grep -Rqs "copilot-hero" frontend/src/as6-command-center-reference-guard.js
+grep -Rqs "command-recommendations" frontend/src/as6-command-center-reference-guard.js
+echo "AS6_COMMAND_CENTER_FINAL_RUNTIME_STYLE=PASS"
