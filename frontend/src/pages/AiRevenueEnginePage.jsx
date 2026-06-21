@@ -1,3 +1,4 @@
+/* AS6_DIRECT_PAGE_REWRITE_V100: governed by AS6UnifiedPageShell / AS6DirectPageRewriteFramework */
 import React, { useEffect, useState } from 'react'
 import { PageHeading, Panel } from '../components/AppShell'
 import { fetchAiRevenueEngineSnapshot, fetchAiRevenueEngineRecommendations, fetchAiRevenueEngineRisks, runAiRevenueEngineAnalysis } from '../services/api'

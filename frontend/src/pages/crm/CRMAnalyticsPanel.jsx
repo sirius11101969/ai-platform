@@ -1,3 +1,4 @@
+/* AS6_DIRECT_PAGE_REWRITE_V100: governed by AS6UnifiedPageShell / AS6DirectPageRewriteFramework */
 import React from "react";
 import { getForecastWidget, getRevenueCards } from "../../utils/revenueIntelligence";
 

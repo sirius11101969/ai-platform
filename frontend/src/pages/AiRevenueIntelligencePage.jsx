@@ -1,3 +1,4 @@
+/* AS6_DIRECT_PAGE_REWRITE_V100: governed by AS6UnifiedPageShell / AS6DirectPageRewriteFramework */
 import React, { useEffect, useMemo, useState } from "react";
 import { Panel, PageHeading, StatCard } from "../components/AppShell";
 import { getLeadScores, getRevenueIntelligence, triggerRevenueAnalysis } from "../services/api";

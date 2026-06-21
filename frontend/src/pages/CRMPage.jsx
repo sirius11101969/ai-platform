@@ -1,3 +1,4 @@
+/* AS6_DIRECT_PAGE_REWRITE_V100: governed by AS6UnifiedPageShell / AS6DirectPageRewriteFramework */
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import CRMAnalyticsPanel from "./crm/CRMAnalyticsPanel.jsx";
 import { useLocation, useNavigate } from "react-router-dom";

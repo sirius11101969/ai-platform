@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FAIL=0
+COMPONENT="frontend/src/components/AS6DirectPageRewriteFramework.jsx"
+CSS="frontend/src/styles/as6-direct-page-rewrite-framework.css"
+MANIFEST="docs/AS6_DIRECT_PAGE_REWRITE_FRAMEWORK_V100.md"
+for f in "$COMPONENT" "$CSS" "$MANIFEST"; do
+  if [ ! -f "$f" ]; then echo "AS6_DIRECT_REWRITE_FILE_MISSING $f"; FAIL=1; fi
+done
+if ! grep -Rqs "as6-direct-page-rewrite-framework.css" frontend/src/App.jsx; then echo "AS6_DIRECT_REWRITE_IMPORT_MISSING"; FAIL=1; fi
+for item in "AS6DirectPageRewriteFramework" "AS6UnifiedPageShell" "AS6UnifiedGlassCard" "AS6UnifiedState" "AS6_DIRECT_PAGE_REWRITE_V100"; do
+  if ! grep -Rqs "$item" "$COMPONENT" "$MANIFEST" frontend/src/pages ops/governance docs ops/status ops/registry; then echo "AS6_DIRECT_REWRITE_ITEM_MISSING $item"; FAIL=1; fi
+done
+for cls in DIRECT_PAGE_REWRITE_FRAMEWORK_MISSING DIRECT_CRM_PAGE_REWRITE_GAP DIRECT_DASHBOARD_PAGE_REWRITE_GAP DIRECT_REVENUE_PAGE_REWRITE_GAP DIRECT_WORKERS_PAGE_REWRITE_GAP LEGACY_PAGE_WRAPPER_DRIFT DIRECT_PAGE_REWRITE_MARKER_MISSING PAGE_SHELL_MIGRATION_COVERAGE_GAP; do
+  if ! grep -Rqs "$cls" ops/registry ops/governance ops/status docs; then echo "AS6_DIRECT_REWRITE_CLASS_MISSING $cls"; FAIL=1; fi
+done
+if git diff --cached --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING_FAIL"; FAIL=1; fi
+if [ "$FAIL" -ne 0 ]; then exit 1; fi
+echo "AS6_DIRECT_PAGE_REWRITE_FRAMEWORK=PASS"

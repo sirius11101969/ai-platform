@@ -1,3 +1,4 @@
+import "./styles/as6-direct-page-rewrite-framework.css";
 import "./styles/as6-real-page-component-migration.css";
 import "./styles/as6-real-page-shell-migration.css";
 import "./styles/as6-unified-page-shell.css";

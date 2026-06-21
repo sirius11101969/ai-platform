@@ -1,3 +1,4 @@
+/* AS6_DIRECT_PAGE_REWRITE_V100: governed by AS6UnifiedPageShell / AS6DirectPageRewriteFramework */
 import React, { useEffect, useMemo, useState } from 'react'
 import { PageHeading, Panel } from '../components/AppShell'
 import { fetchAiWorkforceActivityStream, fetchAiWorkforceAgents, fetchAiWorkforceAssignments, fetchAiWorkforceCommandGraph, fetchAiWorkforceEvents, fetchAiWorkforceExecutionPlans, fetchAiWorkforceMetrics, fetchAiWorkforceRealtimeMetrics, fetchAiWorkforceRealtimeMetricsHistory, fetchAiWorkforceTasks } from '../services/api'

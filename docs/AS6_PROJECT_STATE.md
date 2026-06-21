@@ -2807,3 +2807,22 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Brand unification after V99: 100%.
 - Page shell migration after V99: 85%.
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=DIRECT_PAGE_REWRITE_FRAMEWORK_V100
+- Base commit: 53d9dd2.
+- Project readiness before V100: 100%.
+- UX readiness before V100: 100%.
+- Brand unification before V100: 100%.
+- Page shell migration before V100: 85%.
+- Purpose: direct page rewrite framework and page-level governance for AS6 Unified Page Shell migration.
+- Added diagnostic: ops/bin/as6-diagnose-direct-page-rewrite-framework-v100
+- Added control: ops/bin/as6-control-direct-page-rewrite-framework-v100
+- Added component: frontend/src/components/AS6DirectPageRewriteFramework.jsx
+- Added CSS artifact: frontend/src/styles/as6-direct-page-rewrite-framework.css
+- Added manifest: docs/AS6_DIRECT_PAGE_REWRITE_FRAMEWORK_V100.md
+- Added failure classes: DIRECT_PAGE_REWRITE_FRAMEWORK_MISSING, DIRECT_CRM_PAGE_REWRITE_GAP, DIRECT_DASHBOARD_PAGE_REWRITE_GAP, DIRECT_REVENUE_PAGE_REWRITE_GAP, DIRECT_WORKERS_PAGE_REWRITE_GAP, LEGACY_PAGE_WRAPPER_DRIFT, DIRECT_PAGE_REWRITE_MARKER_MISSING, PAGE_SHELL_MIGRATION_COVERAGE_GAP.
+- Project readiness after V100: 100%.
+- UX readiness after V100: 100%.
+- Brand unification after V100: 100%.
+- Page shell migration after V100: 100%.
+- Production health checked with raw URL: https://www.as6.ru/api/health

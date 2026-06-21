@@ -1814,3 +1814,7 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V99 | ops/bin/as6-control-real-page-component-migration-v99 | Covers real component migration, build, health and enforcement guard | ENABLED
 - V99 | frontend/src/styles/as6-real-page-component-migration.css | Real Page Component Migration artifact | ENABLED
 - V99 | docs/AS6_REAL_PAGE_COMPONENT_MIGRATION_V99.md | Real Page Component Migration artifact | ENABLED
+- V100 | ops/bin/as6-control-direct-page-rewrite-framework-v100 | Covers direct page rewrite framework, build, health and enforcement guard | ENABLED
+- V100 | frontend/src/components/AS6DirectPageRewriteFramework.jsx | Direct Page Rewrite Framework artifact | ENABLED
+- V100 | frontend/src/styles/as6-direct-page-rewrite-framework.css | Direct Page Rewrite Framework artifact | ENABLED
+- V100 | docs/AS6_DIRECT_PAGE_REWRITE_FRAMEWORK_V100.md | Direct Page Rewrite Framework artifact | ENABLED

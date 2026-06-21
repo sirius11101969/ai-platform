@@ -1,0 +1,32 @@
+/* AS6 Direct Page Rewrite Framework V100 */
+:root {
+  --as6-direct-rewrite-ring: rgba(37,228,255,.28);
+}
+
+.as6-direct-page-rewrite, .as6-direct-rewrite-page {
+  width: min(1480px, calc(100vw - 32px));
+  margin: 0 auto;
+  padding: clamp(16px, 2vw, 30px);
+}
+
+.as6-direct-page-rewrite [data-as6-shell="AS6UnifiedPageShell"], .as6-direct-rewrite-page [data-as6-shell="AS6UnifiedPageShell"] {
+  border: 1px solid var(--as6-direct-rewrite-ring);
+  border-radius: 30px;
+}
+
+.dashboard-page, .crm-page, .revenue-page, .ai-workers-page, .ai-workforce-page {
+  outline: 1px solid transparent;
+  outline-offset: 0;
+}
+
+.dashboard-page [data-as6-direct-rewrite], .crm-page [data-as6-direct-rewrite], .revenue-page [data-as6-direct-rewrite], .ai-workers-page [data-as6-direct-rewrite] {
+  border-radius: 24px;
+  background: rgba(255,255,255,.045);
+}
+
+@media (max-width: 760px) {
+  .as6-direct-page-rewrite, .as6-direct-rewrite-page {
+    width: min(100vw, calc(100vw - 18px));
+    padding: 10px;
+  }
+}

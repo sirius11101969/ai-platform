@@ -451,3 +451,9 @@ Status: REGISTERED
 - FAILURE_CLASSES: REAL_PAGE_COMPONENT_MIGRATION_MISSING, CRM_COMPONENT_SHELL_DRIFT, DASHBOARD_COMPONENT_SHELL_DRIFT, REVENUE_COMPONENT_SHELL_DRIFT, WORKERS_COMPONENT_SHELL_DRIFT, COMPONENT_TABLE_DRIFT, COMPONENT_FORM_DRIFT, COMPONENT_STATE_DRIFT.
 - PREVENTION: V99 diagnostic/control validates component migration CSS, manifest, import, build and enforcement guard.
 - STATUS: registered and controlled.
+
+## V100 Direct Page Rewrite Framework
+- ROOT_CAUSE: V99 provided component-level migration, but direct page rewrite governance and markers were needed to reach 100% shell migration.
+- FAILURE_CLASSES: DIRECT_PAGE_REWRITE_FRAMEWORK_MISSING, DIRECT_CRM_PAGE_REWRITE_GAP, DIRECT_DASHBOARD_PAGE_REWRITE_GAP, DIRECT_REVENUE_PAGE_REWRITE_GAP, DIRECT_WORKERS_PAGE_REWRITE_GAP, LEGACY_PAGE_WRAPPER_DRIFT, DIRECT_PAGE_REWRITE_MARKER_MISSING, PAGE_SHELL_MIGRATION_COVERAGE_GAP.
+- PREVENTION: V100 diagnostic/control validates direct rewrite framework, page markers, manifest, build and enforcement guard.
+- STATUS: registered and controlled.
