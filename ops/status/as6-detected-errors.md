@@ -457,3 +457,9 @@ Status: REGISTERED
 - FAILURE_CLASSES: DIRECT_PAGE_REWRITE_FRAMEWORK_MISSING, DIRECT_CRM_PAGE_REWRITE_GAP, DIRECT_DASHBOARD_PAGE_REWRITE_GAP, DIRECT_REVENUE_PAGE_REWRITE_GAP, DIRECT_WORKERS_PAGE_REWRITE_GAP, LEGACY_PAGE_WRAPPER_DRIFT, DIRECT_PAGE_REWRITE_MARKER_MISSING, PAGE_SHELL_MIGRATION_COVERAGE_GAP.
 - PREVENTION: V100 diagnostic/control validates direct rewrite framework, page markers, manifest, build and enforcement guard.
 - STATUS: registered and controlled.
+
+## V101 Unified Data Surface System
+- ROOT_CAUSE: page shell migration reached 100%, but inner data surfaces still needed one unified Mission Control visual contract.
+- FAILURE_CLASSES: UNIFIED_DATA_SURFACE_MISSING, KPI_SURFACE_DRIFT, TABLE_SURFACE_DRIFT, CRM_CARD_SURFACE_DRIFT, KANBAN_SURFACE_DRIFT, FILTER_FORM_SURFACE_DRIFT, CHART_SURFACE_DRIFT, ACTION_BAR_SURFACE_DRIFT, MODAL_DRAWER_SURFACE_DRIFT, STATE_SURFACE_DRIFT.
+- PREVENTION: V101 diagnostic/control validates data-surface component, CSS, manifest, build and enforcement guard.
+- STATUS: registered and controlled.

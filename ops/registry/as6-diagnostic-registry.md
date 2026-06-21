@@ -1910,3 +1910,14 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V100 | LEGACY_PAGE_WRAPPER_DRIFT | Direct Page Rewrite Framework failure class | ENABLED
 - V100 | DIRECT_PAGE_REWRITE_MARKER_MISSING | Direct Page Rewrite Framework failure class | ENABLED
 - V100 | PAGE_SHELL_MIGRATION_COVERAGE_GAP | Direct Page Rewrite Framework failure class | ENABLED
+- V101 | ops/bin/as6-diagnose-unified-data-surface-system-v101 | Unified Data Surface System diagnostic | ENABLED
+- V101 | UNIFIED_DATA_SURFACE_MISSING | Unified Data Surface System failure class | ENABLED
+- V101 | KPI_SURFACE_DRIFT | Unified Data Surface System failure class | ENABLED
+- V101 | TABLE_SURFACE_DRIFT | Unified Data Surface System failure class | ENABLED
+- V101 | CRM_CARD_SURFACE_DRIFT | Unified Data Surface System failure class | ENABLED
+- V101 | KANBAN_SURFACE_DRIFT | Unified Data Surface System failure class | ENABLED
+- V101 | FILTER_FORM_SURFACE_DRIFT | Unified Data Surface System failure class | ENABLED
+- V101 | CHART_SURFACE_DRIFT | Unified Data Surface System failure class | ENABLED
+- V101 | ACTION_BAR_SURFACE_DRIFT | Unified Data Surface System failure class | ENABLED
+- V101 | MODAL_DRAWER_SURFACE_DRIFT | Unified Data Surface System failure class | ENABLED
+- V101 | STATE_SURFACE_DRIFT | Unified Data Surface System failure class | ENABLED

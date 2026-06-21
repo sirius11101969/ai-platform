@@ -1818,3 +1818,7 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V100 | frontend/src/components/AS6DirectPageRewriteFramework.jsx | Direct Page Rewrite Framework artifact | ENABLED
 - V100 | frontend/src/styles/as6-direct-page-rewrite-framework.css | Direct Page Rewrite Framework artifact | ENABLED
 - V100 | docs/AS6_DIRECT_PAGE_REWRITE_FRAMEWORK_V100.md | Direct Page Rewrite Framework artifact | ENABLED
+- V101 | ops/bin/as6-control-unified-data-surface-system-v101 | Covers unified data surfaces, build, health and enforcement guard | ENABLED
+- V101 | frontend/src/components/AS6UnifiedDataSurface.jsx | Unified Data Surface System artifact | ENABLED
+- V101 | frontend/src/styles/as6-unified-data-surface-system.css | Unified Data Surface System artifact | ENABLED
+- V101 | docs/AS6_UNIFIED_DATA_SURFACE_SYSTEM_V101.md | Unified Data Surface System artifact | ENABLED

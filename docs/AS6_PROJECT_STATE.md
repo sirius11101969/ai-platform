@@ -2826,3 +2826,24 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Brand unification after V100: 100%.
 - Page shell migration after V100: 100%.
 - Production health checked with raw URL: https://www.as6.ru/api/health
+
+## AS6_DONE=UNIFIED_DATA_SURFACE_SYSTEM_V101
+- Base commit: 53a3a7d.
+- Project readiness before V101: 100%.
+- UX readiness before V101: 100%.
+- Brand unification before V101: 100%.
+- Page shell migration before V101: 100%.
+- Data surface unification before V101: 70%.
+- Purpose: unify KPI, tables, CRM cards, Kanban, filters, forms, charts, action bars, drawers, modals and states.
+- Added diagnostic: ops/bin/as6-diagnose-unified-data-surface-system-v101
+- Added control: ops/bin/as6-control-unified-data-surface-system-v101
+- Added component: frontend/src/components/AS6UnifiedDataSurface.jsx
+- Added CSS artifact: frontend/src/styles/as6-unified-data-surface-system.css
+- Added manifest: docs/AS6_UNIFIED_DATA_SURFACE_SYSTEM_V101.md
+- Added failure classes: UNIFIED_DATA_SURFACE_MISSING, KPI_SURFACE_DRIFT, TABLE_SURFACE_DRIFT, CRM_CARD_SURFACE_DRIFT, KANBAN_SURFACE_DRIFT, FILTER_FORM_SURFACE_DRIFT, CHART_SURFACE_DRIFT, ACTION_BAR_SURFACE_DRIFT, MODAL_DRAWER_SURFACE_DRIFT, STATE_SURFACE_DRIFT.
+- Project readiness after V101: 100%.
+- UX readiness after V101: 100%.
+- Brand unification after V101: 100%.
+- Page shell migration after V101: 100%.
+- Data surface unification after V101: 90%.
+- Production health checked with raw URL: https://www.as6.ru/api/health
