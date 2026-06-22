@@ -3388,3 +3388,7 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 ## 20260622T071747Z AS6 V175B Revenue Chart Line Fix
 - Fixed: .mock-chart svg overflow visible changed to hidden.
 - Readiness after: 99%
+
+## 20260622T073257Z AS6 V176 Remove Real Horizontal Scrollbar Layer
+- Fixed: full-width horizontal scrollbar/scroll-layer on Command Center.
+- Readiness after: 99%

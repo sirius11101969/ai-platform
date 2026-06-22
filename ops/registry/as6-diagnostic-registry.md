@@ -2316,3 +2316,7 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 ## 20260622T071747Z revenue-chart-line-v175b
 - Diagnostic: ops/bin/as6-diagnose-revenue-chart-line-v175b
 - Failure class: MOCK_CHART_SVG_OVERFLOW_VISIBLE_DRAWS_LONG_PURPLE_LINE
+
+## 20260622T073257Z horizontal-scrollbar-layer-v176
+- Diagnostic: ops/bin/as6-diagnose-horizontal-scrollbar-layer-v176
+- Failure class: REAL_HORIZONTAL_SCROLLBAR_LAYER_VISIBLE_ACROSS_COMMAND_CENTER

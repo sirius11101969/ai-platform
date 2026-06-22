@@ -848,3 +848,8 @@ Governed and registered.
 - Class: MOCK_CHART_SVG_OVERFLOW_VISIBLE_DRAWS_LONG_PURPLE_LINE
 - Root cause: theme had .mock-chart svg overflow: visible.
 - Control: V175B clips chart SVG inside Revenue Dynamics card.
+
+## 20260622T073257Z detected-error
+- Class: REAL_HORIZONTAL_SCROLLBAR_LAYER_VISIBLE_ACROSS_COMMAND_CENTER
+- Root cause: visible line was horizontal scrollbar layer, not chart or card border.
+- Control: V176 disables horizontal scrollbar rendering and locks overflow-x on Command Center containers.

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=horizontal-scrollbar-layer-v176"
+grep -q "as6-command-center-no-horizontal-scrollbar-v176.css" frontend/src/main.jsx
+grep -q "AS6 V176" frontend/src/styles/as6-command-center-no-horizontal-scrollbar-v176.css
+grep -q "::-webkit-scrollbar:horizontal" frontend/src/styles/as6-command-center-no-horizontal-scrollbar-v176.css
+grep -q "overflow-x: hidden" frontend/src/styles/as6-command-center-no-horizontal-scrollbar-v176.css
+echo "AS6_HORIZONTAL_SCROLLBAR_LAYER_V176=PASS"
