@@ -753,3 +753,8 @@ Governed and registered.
 - Class: STRIP_IS_REAL_OVERLAY_LAYER_NOT_SCROLLBAR_AND_NOT_CARD_BORDER
 - Root cause: strip behaves as real visual overlay layer above page content.
 - Control: V155 geometry-based Command Center overlay strip guard.
+
+## 20260622T025900Z detected-error
+- Class: PARENT_CONTAINER_PSEUDO_ELEMENT_DRAWS_OVERLAY_STRIP
+- Root cause: strip is drawn by parent container pseudo-element, not card border or scrollbar.
+- Control: V156 parent overlay pseudo cleanup.

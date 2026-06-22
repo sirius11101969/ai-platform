@@ -2236,3 +2236,7 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 ## 20260622T025353Z command-center-real-overlay-strip-v155
 - Diagnostic: ops/bin/as6-diagnose-command-center-real-overlay-strip-v155
 - Failure class: STRIP_IS_REAL_OVERLAY_LAYER_NOT_SCROLLBAR_AND_NOT_CARD_BORDER
+
+## 20260622T025900Z command-center-parent-overlay-strip-v156
+- Diagnostic: ops/bin/as6-diagnose-command-center-parent-overlay-strip-v156
+- Failure class: PARENT_CONTAINER_PSEUDO_ELEMENT_DRAWS_OVERLAY_STRIP

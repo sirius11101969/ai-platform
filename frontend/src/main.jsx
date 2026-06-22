@@ -24,3 +24,5 @@ import "./styles/as6-command-center-hide-horizontal-scrollbar-v154.css";
 
 import "./as6-command-center-strip-guard-v155.js";
 import "./styles/as6-command-center-strip-guard-v155.css";
+
+import "./styles/as6-command-center-parent-overlay-strip-v156.css";

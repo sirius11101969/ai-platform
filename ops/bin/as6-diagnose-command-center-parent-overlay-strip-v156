@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-parent-overlay-strip-v156"
+grep -q "as6-command-center-parent-overlay-strip-v156.css" frontend/src/main.jsx
+grep -q "AS6 V156 remove parent overlay strip" frontend/src/styles/as6-command-center-parent-overlay-strip-v156.css
+grep -q ".workspace::after" frontend/src/styles/as6-command-center-parent-overlay-strip-v156.css
+grep -q ".app-shell::after" frontend/src/styles/as6-command-center-parent-overlay-strip-v156.css
+echo "AS6_COMMAND_CENTER_PARENT_OVERLAY_STRIP_V156=PASS"
