@@ -2240,3 +2240,7 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 ## 20260622T025900Z command-center-parent-overlay-strip-v156
 - Diagnostic: ops/bin/as6-diagnose-command-center-parent-overlay-strip-v156
 - Failure class: PARENT_CONTAINER_PSEUDO_ELEMENT_DRAWS_OVERLAY_STRIP
+
+## 20260622T030447Z command-center-real-strip-clean-v157
+- Diagnostic: ops/bin/as6-diagnose-command-center-real-strip-clean-v157
+- Failure class: FAILED_STRIP_FIXES_ADDED_FIXED_MASKS_AND_OVERLAY_GUARDS

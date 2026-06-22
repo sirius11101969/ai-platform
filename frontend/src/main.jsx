@@ -14,15 +14,10 @@ import "./styles/as6-command-center-final-etalon-v149.css";
 
 import "./styles/as6-command-center-copilot-etalon-v150.css";
 
-import "./styles/as6-command-center-bottom-line-fix.css";
 
-import "./styles/as6-command-center-bottom-strip-final-v151.css";
 
-import "./styles/as6-command-center-over-strip-v153.css";
 
-import "./styles/as6-command-center-hide-horizontal-scrollbar-v154.css";
 
-import "./as6-command-center-strip-guard-v155.js";
-import "./styles/as6-command-center-strip-guard-v155.css";
 
-import "./styles/as6-command-center-parent-overlay-strip-v156.css";
+
+import "./styles/as6-command-center-real-strip-clean-v157.css";

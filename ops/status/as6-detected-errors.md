@@ -758,3 +758,8 @@ Governed and registered.
 - Class: PARENT_CONTAINER_PSEUDO_ELEMENT_DRAWS_OVERLAY_STRIP
 - Root cause: strip is drawn by parent container pseudo-element, not card border or scrollbar.
 - Control: V156 parent overlay pseudo cleanup.
+
+## 20260622T030447Z detected-error
+- Class: FAILED_STRIP_FIXES_ADDED_FIXED_MASKS_AND_OVERLAY_GUARDS
+- Root cause: previous fixes added masks/guards instead of removing source.
+- Control: V157 purges failed strip layers and keeps clean parent pseudo reset.

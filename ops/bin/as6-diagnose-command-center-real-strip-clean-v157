@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-real-strip-clean-v157"
+grep -q "as6-command-center-real-strip-clean-v157.css" frontend/src/main.jsx
+! grep -qE "bottom-strip-final-v151|mid-strip-final-v152|over-strip-v153|hide-horizontal-scrollbar-v154|strip-guard-v155|parent-overlay-strip-v156" frontend/src/main.jsx
+grep -q "AS6 V157 clean strip fix" frontend/src/styles/as6-command-center-real-strip-clean-v157.css
+echo "AS6_COMMAND_CENTER_REAL_STRIP_CLEAN_V157=PASS"

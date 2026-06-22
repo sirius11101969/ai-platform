@@ -3309,3 +3309,7 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 ## 20260622T025900Z AS6 V156 Remove Parent Overlay Strip
 - Fixed: parent pseudo-layer horizontal strip over Command Center.
 - Readiness after: 99%
+
+## 20260622T030447Z AS6 V157 Purge Bad Strip Fixes
+- Fixed: removed failed fixed masks/overlay guards V151-V156.
+- Readiness after: 99%
