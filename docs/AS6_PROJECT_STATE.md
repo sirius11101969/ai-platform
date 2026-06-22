@@ -3507,3 +3507,21 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Diagnostic: ops/bin/as6-diagnose-command-center-flash-source-finder-v195
 - Runtime trace: window.AS6_COMMAND_CENTER_FLASH_SOURCE_V195
 - Readiness after: 99%
+
+## 20260622T135931Z AS6 V196 Eager Command Center Route
+- Fixed: Command Center runtime flash caused by delayed lazy route chunk.
+- Root cause: /command-center mounted after delayed command-center chunk load.
+- Diagnostic: ops/bin/as6-diagnose-command-center-eager-route-v196
+- Readiness after: 99%
+
+## 20260622T142530Z AS6 V197B HTML Route Stable AppShell
+- Fixed: Command Center AppShell gets stable route state from html class before React layout settles.
+- Root cause: real app-shell appeared without command route class in V195 trace.
+- Diagnostic: ops/bin/as6-diagnose-html-route-stable-appshell-v197b
+- Readiness after: 99%
+
+## 20260622T144605Z AS6 V198 Critical First Paint Background
+- Fixed: first-frame background now matches Command Center AppShell background.
+- Root cause: V195 trace showed initial HTML background #050712 and later AppShell #030814.
+- Diagnostic: ops/bin/as6-diagnose-critical-first-paint-background-v198
+- Readiness after: 99%

@@ -2434,3 +2434,23 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Check: static scan for fixed/top/global overlays.
 - Check: runtime top-stack scan.
 - Check: runtime stylesheet rule scan.
+
+## 20260622T135931Z command-center-eager-route-v196
+- Diagnostic: ops/bin/as6-diagnose-command-center-eager-route-v196
+- Failure class: COMMAND_CENTER_LAZY_CHUNK_DELAY_CAUSED_VISIBLE_RUNTIME_FLASH
+- Check: CommandCenterPage imported eagerly in App.jsx.
+- Check: V195 runtime tracer removed.
+
+## 20260622T142530Z html-route-stable-appshell-v197b
+- Diagnostic: ops/bin/as6-diagnose-html-route-stable-appshell-v197b
+- Failure class: REAL_APPSHELL_RENDERED_WITHOUT_COMMAND_ROUTE_CLASS
+- Check: early html route class script.
+- Check: stable AppShell CSS without body:has.
+- Check: V195 tracer removed.
+
+## 20260622T144605Z critical-first-paint-background-v198
+- Diagnostic: ops/bin/as6-diagnose-critical-first-paint-background-v198
+- Failure class: FIRST_FRAME_BACKGROUND_COLOR_DIFFERS_FROM_COMMAND_CENTER_APPSHELL
+- Check: early index.html critical background.
+- Check: source CSS background alignment.
+- Check: V195/V197B runtime tracers removed.

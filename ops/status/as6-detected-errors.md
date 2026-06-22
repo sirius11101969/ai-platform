@@ -941,3 +941,18 @@ Governed and registered.
 - Class: COMMAND_CENTER_FLASH_SOURCE_STILL_UNKNOWN_AFTER_ISOLATION_PAGE_CONFIRMED_APP_RUNTIME
 - Root cause: isolation page confirmed no browser/nginx flash; /command-center runtime still flashes.
 - Next step: inspect window.AS6_COMMAND_CENTER_FLASH_SOURCE_V195.
+
+## 20260622T135931Z detected-error
+- Class: COMMAND_CENTER_LAZY_CHUNK_DELAY_CAUSED_VISIBLE_RUNTIME_FLASH
+- Root cause: V195 showed only HTML until app runtime mounted later; command-center chunk was loaded separately.
+- Fix: V196 imports CommandCenterPage eagerly and removes runtime tracer.
+
+## 20260622T142530Z detected-error
+- Class: REAL_APPSHELL_RENDERED_WITHOUT_COMMAND_ROUTE_CLASS
+- Root cause: V195 showed .app-shell rendered without command-shell at runtime.
+- Fix: V197B adds early html route class and AppShell stabilization CSS.
+
+## 20260622T144605Z detected-error
+- Class: FIRST_FRAME_BACKGROUND_COLOR_DIFFERS_FROM_COMMAND_CENTER_APPSHELL
+- Root cause: first frame background differed from final Command Center AppShell background.
+- Fix: V198 aligns critical HTML/CSS first-paint background to #030814.

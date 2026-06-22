@@ -2049,3 +2049,7 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Coverage: /command-center app-runtime flash source isolation.
 - Files: frontend/src/as6-command-center-flash-source-finder-v195.js
 - Rule: capture top viewport DOM stack and active CSS rules during first 4 seconds.
+
+## 20260622T144605Z FIRST_FRAME_BACKGROUND_COLOR_DIFFERS_FROM_COMMAND_CENTER_APPSHELL
+- Coverage: /command-center first paint color stability.
+- Files: frontend/index.html, frontend/src/styles/as6-command-center-critical-first-paint-v198.css

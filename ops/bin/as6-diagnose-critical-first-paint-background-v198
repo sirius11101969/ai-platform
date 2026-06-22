@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=critical-first-paint-background-v198"
+grep -q "as6-command-center-critical-bg-v198" frontend/index.html
+grep -q "as6-command-center-critical-first-paint-v198.css" frontend/src/main.jsx
+grep -q "#030814" frontend/src/styles/as6-command-center-critical-first-paint-v198.css
+! grep -qE 'as6-command-center-flash-source-finder-v195|as6-command-center-html-route-v197b' frontend/src/main.jsx
+echo "AS6_CRITICAL_FIRST_PAINT_BACKGROUND_V198=PASS"

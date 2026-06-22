@@ -1,0 +1,21 @@
+/* AS6 V198: critical first-paint background alignment.
+   Root cause: first frame used #050712 while Command Center AppShell uses #030814.
+   No masks. No overlays. No body:has. */
+
+html,
+body,
+#root {
+  background: #030814 !important;
+  background-color: #030814 !important;
+}
+
+html.as6-route-command-center,
+body.as6-route-command-center,
+#root {
+  overflow-x: hidden;
+}
+
+.app-shell,
+.workspace {
+  background-color: #030814;
+}
