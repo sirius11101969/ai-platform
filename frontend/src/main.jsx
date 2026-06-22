@@ -17,3 +17,5 @@ import "./styles/as6-command-center-copilot-etalon-v150.css";
 import "./styles/as6-command-center-bottom-line-fix.css";
 
 import "./styles/as6-command-center-bottom-strip-final-v151.css";
+
+import "./styles/as6-command-center-over-strip-v153.css";
