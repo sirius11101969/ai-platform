@@ -1910,3 +1910,10 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers frontend build
 - Covers nginx web root deploy
 - Covers production DOM old asset absence
+
+## 20260622T003632Z coverage-command-center-real-visual-etalon-v134
+- Covers: hero upper line removal
+- Covers: sidebar favorites/menu line normalization
+- Covers: AI Copilot frame normalization
+- Covers: lower purple line removal
+- Covers: hidden injected status roots

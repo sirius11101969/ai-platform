@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-real-visual-etalon-v134"
+fail=0
+grep -q "as6-command-center-visual-etalon-v134.css" frontend/src/as6-command-center-reference-guard.js || { echo "FAIL v134-css-not-imported"; fail=1; }
+test -f frontend/src/styles/as6-command-center-visual-etalon-v134.css || { echo "FAIL v134-css-missing"; fail=1; }
+bad="$(grep -RInE "final-runtime-style-v127|hard-fix-v128|reference-polish-v123c|arrow-fix-v126|createElement\(\"style\"\)|appendChild\(style\)|style\.textContent|insertAdjacentHTML" frontend/src frontend/index.html frontend/public 2>/dev/null || true)"
+if [ -n "$bad" ]; then echo "FAIL forbidden-runtime-or-old-patch"; echo "$bad"; fail=1; else echo "PASS forbidden-runtime-or-old-patch"; fi
+if [ "$fail" -eq 0 ]; then echo "AS6_COMMAND_CENTER_REAL_VISUAL_ETALON_V134=PASS"; else echo "AS6_COMMAND_CENTER_REAL_VISUAL_ETALON_V134=FAIL"; exit 1; fi

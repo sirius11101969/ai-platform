@@ -673,3 +673,8 @@ Governed and registered.
 - Class: NPM_MISSING_FRONTEND_BUILD_NOT_EXECUTED
 - Root cause: npm was not installed on host.
 - Control: install npm before frontend build.
+
+## 20260622T003632Z detected-error
+- Class: ETALON_SOURCE_RESTORE_NOT_PIXEL_EQUAL_TO_TARGET_SCREENSHOT
+- Root cause: git etalon restore passed but did not match screenshot target.
+- Control: real DOM visual etalon CSS lock v134.

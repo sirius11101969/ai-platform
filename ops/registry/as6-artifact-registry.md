@@ -13,3 +13,9 @@
 ## 20260622T003142Z artifact-registration
 - Runtime evidence: runtime/as6-v133-install-build-deploy-etalon-20260622T003142Z
 - Validation: runtime/as6-v133-install-build-deploy-etalon-20260622T003142Z/validation.txt
+
+## 20260622T003632Z artifact-registration
+- Runtime evidence: runtime/as6-v134-real-visual-etalon-lock-20260622T003632Z
+- Source validation: runtime/as6-v134-real-visual-etalon-lock-20260622T003632Z/validation-source.txt
+- Production HTML before: runtime/as6-v134-real-visual-etalon-lock-20260622T003632Z/production-before.html
+- Production HTML after: runtime/as6-v134-real-visual-etalon-lock-20260622T003632Z/production-after.html

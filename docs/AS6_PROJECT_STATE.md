@@ -3216,3 +3216,10 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Built frontend from etalon-restored source
 - Deployed dist to nginx web root: /usr/share/nginx/html
 - Added diagnostic: ops/bin/as6-diagnose-command-center-real-production-etalon
+
+## 20260622T003632Z AS6 V134 Real Visual Etalon Lock
+- Readiness before: 99%
+- Readiness after: 99%
+- Added: frontend/src/styles/as6-command-center-visual-etalon-v134.css
+- Added diagnostic: ops/bin/as6-diagnose-command-center-real-visual-etalon-v134
+- Fixed selectors: command-hero, sidebar-favorites, copilot-hero, command-center-page, workspace, command-sidebar.

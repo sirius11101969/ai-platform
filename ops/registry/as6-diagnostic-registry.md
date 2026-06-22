@@ -2158,3 +2158,8 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Failure class: NPM_MISSING_FRONTEND_BUILD_NOT_EXECUTED
 - Failure class: FRONTEND_BUNDLE_DEPLOYMENT_GAP
 - Status: ENABLED
+
+## 20260622T003632Z command-center-real-visual-etalon-v134
+- Diagnostic: ops/bin/as6-diagnose-command-center-real-visual-etalon-v134
+- Failure class: ETALON_SOURCE_RESTORE_NOT_PIXEL_EQUAL_TO_TARGET_SCREENSHOT
+- Status: ENABLED

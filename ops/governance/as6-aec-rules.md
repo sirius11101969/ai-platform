@@ -12,3 +12,8 @@
 ## 20260622T003142Z AEC frontend-build-required
 - Frontend visual repair is not complete until npm build succeeds.
 - Production must be validated after nginx web root replacement.
+
+## 20260622T003632Z AEC real-visual-etalon-v134
+- Visual repair must be validated against real production DOM selectors.
+- Runtime JS visual injection remains forbidden.
+- Source CSS lock is allowed only after DOM diagnostics identifies concrete selectors.

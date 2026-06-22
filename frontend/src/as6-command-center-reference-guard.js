@@ -1,4 +1,5 @@
 import "./styles/as6-command-center-reference-guard.css";
+import "./styles/as6-command-center-visual-etalon-v134.css";
 
 const AS6_COMMAND_CENTER_EXTERNAL_ROOTS = [
   "as6-global-health-bar-root",

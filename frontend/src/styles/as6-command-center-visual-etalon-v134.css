@@ -1,0 +1,121 @@
+/* AS6 V134 real visual etalon lock. Source CSS only. No runtime JS. */
+body.as6-command-center-reference-guard-active {
+  background: #030814 !important;
+  overflow: auto !important;
+}
+body.as6-command-center-reference-guard-active .app-shell.command-shell {
+  min-height: 100vh !important;
+  background: #030814 !important;
+}
+body.as6-command-center-reference-guard-active .workspace {
+  background: radial-gradient(circle at 50% 0%, rgba(20, 130, 255, .12), transparent 35%), #030814 !important;
+  padding: 24px 32px 24px !important;
+  overflow: auto !important;
+}
+body.as6-command-center-reference-guard-active .command-center-page {
+  width: 100% !important;
+  max-width: none !important;
+  min-height: auto !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  overflow: visible !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+body.as6-command-center-reference-guard-active .command-center-page::before,
+body.as6-command-center-reference-guard-active .command-center-page::after,
+body.as6-command-center-reference-guard-active .workspace::before,
+body.as6-command-center-reference-guard-active .workspace::after,
+body.as6-command-center-reference-guard-active .command-main-grid::before,
+body.as6-command-center-reference-guard-active .command-main-grid::after {
+  display: none !important;
+  content: none !important;
+}
+body.as6-command-center-reference-guard-active .command-hero {
+  margin: 0 0 20px !important;
+  padding: 0 !important;
+  min-height: 92px !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  border-radius: 0 !important;
+}
+body.as6-command-center-reference-guard-active .command-hero h1 {
+  margin: 0 0 8px !important;
+  font-size: clamp(34px, 2.8vw, 48px) !important;
+  line-height: 1.08 !important;
+  letter-spacing: -.04em !important;
+}
+body.as6-command-center-reference-guard-active .command-hero p {
+  margin: 0 0 14px !important;
+}
+body.as6-command-center-reference-guard-active .command-sidebar {
+  background: linear-gradient(180deg, #06101f 0%, #030814 100%) !important;
+  border: 1px solid rgba(75, 130, 190, .28) !important;
+  border-radius: 0 22px 22px 0 !important;
+  box-shadow: none !important;
+}
+body.as6-command-center-reference-guard-active .command-side-nav {
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+}
+body.as6-command-center-reference-guard-active .sidebar-favorites {
+  border-top: 1px solid rgba(110, 150, 210, .18) !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+body.as6-command-center-reference-guard-active .sidebar-favorites a {
+  border: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+body.as6-command-center-reference-guard-active .command-kpis,
+body.as6-command-center-reference-guard-active .quick-actions-primary,
+body.as6-command-center-reference-guard-active .command-main-grid {
+  margin-top: 0 !important;
+}
+body.as6-command-center-reference-guard-active .quick-actions-primary {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+body.as6-command-center-reference-guard-active .quick-actions-primary h2 {
+  display: none !important;
+}
+body.as6-command-center-reference-guard-active .copilot-hero {
+  background: linear-gradient(135deg, rgba(84, 33, 156, .92), rgba(28, 15, 75, .96)) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  overflow: hidden !important;
+}
+body.as6-command-center-reference-guard-active .copilot-hero::before,
+body.as6-command-center-reference-guard-active .copilot-hero::after,
+body.as6-command-center-reference-guard-active .copilot-inline-layout::before,
+body.as6-command-center-reference-guard-active .copilot-inline-layout::after {
+  display: none !important;
+  content: none !important;
+}
+body.as6-command-center-reference-guard-active .command-recommendations {
+  display: none !important;
+}
+body.as6-command-center-reference-guard-active #as6-global-health-bar-root,
+body.as6-command-center-reference-guard-active #as6-revenue-crm-fusion-status-root,
+body.as6-command-center-reference-guard-active #as6-crm-live-data-status-root,
+body.as6-command-center-reference-guard-active #as6-dashboard-live-data-status-root,
+body.as6-command-center-reference-guard-active #as6-backend-connector-status-root,
+body.as6-command-center-reference-guard-active #as6-live-operational-data-root,
+body.as6-command-center-reference-guard-active #as6-executive-control-tower-completion-root,
+body.as6-command-center-reference-guard-active #as6-executive-command-dashboard-root,
+body.as6-command-center-reference-guard-active #as6-autonomous-operations-timeline-root,
+body.as6-command-center-reference-guard-active #as6-global-event-stream-root,
+body.as6-command-center-reference-guard-active #as6-ai-copilot-rail-root,
+body.as6-command-center-reference-guard-active #as6-mission-control-layout-engine-root,
+body.as6-command-center-reference-guard-active #as6-global-command-palette-root {
+  display: none !important;
+}
