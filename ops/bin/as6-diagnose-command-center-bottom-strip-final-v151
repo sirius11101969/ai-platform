@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-bottom-strip-final-v151"
+grep -q "as6-command-center-bottom-strip-final-v151.css" frontend/src/main.jsx
+grep -q "AS6 V151 final bottom strip remover" frontend/src/styles/as6-command-center-bottom-strip-final-v151.css
+grep -q "height: 18px" frontend/src/styles/as6-command-center-bottom-strip-final-v151.css
+echo "AS6_COMMAND_CENTER_BOTTOM_STRIP_FINAL_V151=PASS"

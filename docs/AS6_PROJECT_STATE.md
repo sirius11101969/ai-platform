@@ -3293,3 +3293,7 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 ## 20260622T022700Z AS6 V150 Copilot Etalon
 - Fixed: AI Copilot dark card background, logo, button, spacing.
 - Readiness after: 99%
+
+## 20260622T023653Z AS6 V151 Remove Bottom Strip Final
+- Fixed: bottom neon strip on Command Center.
+- Readiness after: 99%

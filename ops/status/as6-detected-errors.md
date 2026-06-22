@@ -738,3 +738,8 @@ Governed and registered.
 - Class: COPILOT_PURPLE_BACKGROUND_NOT_ETALON
 - Root cause: Copilot hero used purple background instead of dark etalon card.
 - Control: V150 final imported CSS.
+
+## 20260622T023653Z detected-error
+- Class: BOTTOM_STRIP_MASK_OVERRIDDEN_OR_NOT_COMMITTED
+- Root cause: previous fix stopped before commit/push and was not final imported layer.
+- Control: V151 final imported bottom mask.

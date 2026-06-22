@@ -2224,3 +2224,7 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 ## 20260622T022700Z command-center-copilot-etalon-v150
 - Diagnostic: ops/bin/as6-diagnose-command-center-copilot-etalon-v150
 - Failure class: COPILOT_PURPLE_BACKGROUND_NOT_ETALON
+
+## 20260622T023653Z command-center-bottom-strip-final-v151
+- Diagnostic: ops/bin/as6-diagnose-command-center-bottom-strip-final-v151
+- Failure class: BOTTOM_STRIP_MASK_OVERRIDDEN_OR_NOT_COMMITTED
