@@ -2173,3 +2173,8 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Diagnostic: ops/bin/as6-diagnose-command-center-bottom-neon-line-v136
 - Failure class: BOTTOM_NEON_LINE_FROM_OVERFLOW_OR_DECORATIVE_BORDER_LAYER
 - Status: ENABLED
+
+## 20260622T005124Z command-center-real-horizontal-strip-v137
+- Diagnostic: ops/bin/as6-diagnose-command-center-real-horizontal-strip-v137
+- Failure class: REAL_HORIZONTAL_SCROLLBAR_OR_OVERFLOW_LAYER
+- Status: ENABLED

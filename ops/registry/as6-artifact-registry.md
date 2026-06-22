@@ -29,3 +29,8 @@
 - Runtime evidence: runtime/as6-v136-remove-bottom-neon-line-20260622T004822Z
 - Source validation: runtime/as6-v136-remove-bottom-neon-line-20260622T004822Z/validation-source.txt
 - Production after: runtime/as6-v136-remove-bottom-neon-line-20260622T004822Z/production-after.html
+
+## 20260622T005124Z artifact-registration
+- Runtime evidence: runtime/as6-v137-remove-real-horizontal-strip-20260622T005124Z
+- Source validation: runtime/as6-v137-remove-real-horizontal-strip-20260622T005124Z/validation-source.txt
+- Production after: runtime/as6-v137-remove-real-horizontal-strip-20260622T005124Z/production-after.html

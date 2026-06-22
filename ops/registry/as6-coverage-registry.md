@@ -1929,3 +1929,8 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers: bottom pseudo-element removal
 - Covers: injected roots no-footprint control
 - Covers: runtime patch absence
+
+## 20260622T005124Z coverage-real-horizontal-strip-v137
+- Covers: horizontal scrollbar hiding
+- Covers: viewport width lock
+- Covers: overflow clip on Command Center containers

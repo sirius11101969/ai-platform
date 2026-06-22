@@ -688,3 +688,8 @@ Governed and registered.
 - Class: BOTTOM_NEON_LINE_FROM_OVERFLOW_OR_DECORATIVE_BORDER_LAYER
 - Root cause: horizontal visual artifact remained after V135.
 - Control: V136 overflow/pseudo/injected-root lock.
+
+## 20260622T005124Z detected-error
+- Class: REAL_HORIZONTAL_SCROLLBAR_OR_OVERFLOW_LAYER
+- Root cause: visible strip remained after border/pseudo cleanup.
+- Control: V137 scrollbar/overflow viewport lock.

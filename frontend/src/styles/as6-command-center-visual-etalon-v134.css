@@ -293,3 +293,79 @@ body.as6-command-center-reference-guard-active #as6-global-command-palette-root 
   box-shadow: none !important;
   background: none !important;
 }
+
+/* AS6 V137 remove real horizontal strip/scrollbar. Source CSS only. */
+html,
+body,
+#root,
+body.as6-command-center-reference-guard-active,
+body.as6-command-center-reference-guard-active #root,
+body.as6-command-center-reference-guard-active .app-shell.command-shell,
+body.as6-command-center-reference-guard-active .workspace,
+body.as6-command-center-reference-guard-active .command-center-page {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-x: clip !important;
+  scrollbar-width: none !important;
+}
+
+body.as6-command-center-reference-guard-active *,
+body.as6-command-center-reference-guard-active *::before,
+body.as6-command-center-reference-guard-active *::after {
+  box-sizing: border-box !important;
+}
+
+body.as6-command-center-reference-guard-active ::-webkit-scrollbar:horizontal {
+  height: 0 !important;
+  display: none !important;
+}
+
+body.as6-command-center-reference-guard-active .workspace {
+  width: calc(100vw - 252px) !important;
+  max-width: calc(100vw - 252px) !important;
+}
+
+body.as6-command-center-reference-guard-active .command-main-grid,
+body.as6-command-center-reference-guard-active .command-top-grid,
+body.as6-command-center-reference-guard-active .command-second-grid,
+body.as6-command-center-reference-guard-active .command-core,
+body.as6-command-center-reference-guard-active .command-right-rail,
+body.as6-command-center-reference-guard-active .command-kpis,
+body.as6-command-center-reference-guard-active .quick-actions-primary {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-x: clip !important;
+}
+
+body.as6-command-center-reference-guard-active .command-card,
+body.as6-command-center-reference-guard-active .command-kpi,
+body.as6-command-center-reference-guard-active .daily-goal,
+body.as6-command-center-reference-guard-active .pipeline-card,
+body.as6-command-center-reference-guard-active .employee-performance,
+body.as6-command-center-reference-guard-active .revenue-dynamics,
+body.as6-command-center-reference-guard-active .month-goals {
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+
+body.as6-command-center-reference-guard-active .command-recommendations,
+body.as6-command-center-reference-guard-active .as6-exec-tower-completion,
+body.as6-command-center-reference-guard-active .as6-executive-command-dashboard,
+body.as6-command-center-reference-guard-active .as6-ops-timeline,
+body.as6-command-center-reference-guard-active .as6-global-event-stream,
+body.as6-command-center-reference-guard-active .as6-ai-copilot-rail,
+body.as6-command-center-reference-guard-active .as6-layout-engine,
+body.as6-command-center-reference-guard-active .as6-command-palette-trigger {
+  display: none !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+  max-width: 0 !important;
+  max-height: 0 !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  transform: translateX(-99999px) !important;
+  pointer-events: none !important;
+}
