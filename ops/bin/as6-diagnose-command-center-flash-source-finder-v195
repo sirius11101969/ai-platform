@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-flash-source-finder-v195"
+grep -q "as6-command-center-flash-source-finder-v195.js" frontend/src/main.jsx
+grep -q "AS6_COMMAND_CENTER_FLASH_SOURCE_V195" frontend/src/as6-command-center-flash-source-finder-v195.js
+echo "AS6_COMMAND_CENTER_FLASH_SOURCE_FINDER_V195=PASS"

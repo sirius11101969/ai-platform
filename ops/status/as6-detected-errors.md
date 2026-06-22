@@ -936,3 +936,8 @@ Governed and registered.
 - Class: ACCUMULATED_INDEX_FIRST_PAINT_DIAGNOSTIC_LAYERS_CAUSE_COMMAND_CENTER_FLASH
 - Root cause: temporary diagnostic first-paint layers accumulated in frontend/index.html.
 - Fix: V194 purged them and restored clean SPA shell.
+
+## 20260622T134005Z detected-error
+- Class: COMMAND_CENTER_FLASH_SOURCE_STILL_UNKNOWN_AFTER_ISOLATION_PAGE_CONFIRMED_APP_RUNTIME
+- Root cause: isolation page confirmed no browser/nginx flash; /command-center runtime still flashes.
+- Next step: inspect window.AS6_COMMAND_CENTER_FLASH_SOURCE_V195.

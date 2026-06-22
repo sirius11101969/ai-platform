@@ -3500,3 +3500,10 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Root cause: V178/V185/V190/V191 diagnostic layers remained in index.html and applied only on /command-center.
 - Diagnostic: ops/bin/as6-diagnose-purge-first-paint-layers-v194
 - Readiness after: 99%
+
+## 20260622T134005Z AS6 V195 Deep Flash Source Finder
+- Added: deep static and runtime source finder for /command-center flash.
+- Isolation result: /as6-flash-isolation.html has no flash, /command-center still has flash.
+- Diagnostic: ops/bin/as6-diagnose-command-center-flash-source-finder-v195
+- Runtime trace: window.AS6_COMMAND_CENTER_FLASH_SOURCE_V195
+- Readiness after: 99%

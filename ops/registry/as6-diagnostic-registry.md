@@ -2427,3 +2427,10 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Failure class: ACCUMULATED_INDEX_FIRST_PAINT_DIAGNOSTIC_LAYERS_CAUSE_COMMAND_CENTER_FLASH
 - Check: no temporary first-paint style/script blocks in index.html.
 - Check: no body:has(.command-center-page) in index.html.
+
+## 20260622T134005Z command-center-flash-source-finder-v195
+- Diagnostic: ops/bin/as6-diagnose-command-center-flash-source-finder-v195
+- Failure class: COMMAND_CENTER_FLASH_SOURCE_STILL_UNKNOWN_AFTER_ISOLATION_PAGE_CONFIRMED_APP_RUNTIME
+- Check: static scan for fixed/top/global overlays.
+- Check: runtime top-stack scan.
+- Check: runtime stylesheet rule scan.

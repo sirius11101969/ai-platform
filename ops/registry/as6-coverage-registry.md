@@ -2044,3 +2044,8 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 ## 20260622T125839Z BOOTLOCK_UNLOCKED_IN_APPSHELL_BEFORE_COMMAND_CENTER_PAGE_MOUNTED
 - Coverage: Command Center first stable render.
 - Files: frontend/src/pages/CommandCenterPage.jsx, frontend/src/components/AppShell.jsx
+
+## 20260622T134005Z COMMAND_CENTER_FLASH_SOURCE_STILL_UNKNOWN_AFTER_ISOLATION_PAGE_CONFIRMED_APP_RUNTIME
+- Coverage: /command-center app-runtime flash source isolation.
+- Files: frontend/src/as6-command-center-flash-source-finder-v195.js
+- Rule: capture top viewport DOM stack and active CSS rules during first 4 seconds.
