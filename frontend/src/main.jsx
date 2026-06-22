@@ -9,3 +9,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <App />
   </React.StrictMode>
 )
+
+import "./styles/as6-command-center-final-etalon-v149.css";
+
+import "./styles/as6-command-center-copilot-etalon-v150.css";

@@ -2220,3 +2220,7 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Diagnostic: ops/bin/as6-diagnose-command-center-direct-etalon-v148
 - Failure class: BODY_GUARD_CLASS_NOT_PRESENT_SO_PREVIOUS_CSS_DID_NOT_APPLY
 - Status: ENABLED
+
+## 20260622T022700Z command-center-copilot-etalon-v150
+- Diagnostic: ops/bin/as6-diagnose-command-center-copilot-etalon-v150
+- Failure class: COPILOT_PURPLE_BACKGROUND_NOT_ETALON

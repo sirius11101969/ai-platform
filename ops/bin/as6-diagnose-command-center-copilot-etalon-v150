@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-copilot-etalon-v150"
+grep -q "as6-command-center-copilot-etalon-v150.css" frontend/src/main.jsx
+grep -q "AS6 V150 AI Copilot etalon" frontend/src/styles/as6-command-center-copilot-etalon-v150.css
+grep -q "background-image: linear-gradient(180deg, rgba(7, 18, 35" frontend/src/styles/as6-command-center-copilot-etalon-v150.css
+grep -q ".copilot-action-link" frontend/src/styles/as6-command-center-copilot-etalon-v150.css
+echo "AS6_COMMAND_CENTER_COPILOT_ETALON_V150=PASS"

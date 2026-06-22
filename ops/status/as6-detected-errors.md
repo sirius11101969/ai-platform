@@ -733,3 +733,8 @@ Governed and registered.
 - Class: BODY_GUARD_CLASS_NOT_PRESENT_SO_PREVIOUS_CSS_DID_NOT_APPLY
 - Root cause: previous CSS depended on missing body class.
 - Control: V148 uses direct page selector.
+
+## 20260622T022700Z detected-error
+- Class: COPILOT_PURPLE_BACKGROUND_NOT_ETALON
+- Root cause: Copilot hero used purple background instead of dark etalon card.
+- Control: V150 final imported CSS.

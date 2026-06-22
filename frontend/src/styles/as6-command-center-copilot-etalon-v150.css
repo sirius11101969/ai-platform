@@ -1,0 +1,120 @@
+/* AS6 V150 AI Copilot etalon. Imported last. No runtime JS. */
+
+.command-center-page[data-command-center-visual="premium-as6"] .copilot-hero,
+.copilot-hero {
+  min-height: 132px !important;
+  padding: 18px !important;
+  border-radius: 18px !important;
+  border: 1px solid rgba(55, 104, 154, .42) !important;
+  background: linear-gradient(180deg, rgba(7, 18, 35, .98), rgba(3, 9, 22, .98)) !important;
+  background-image: linear-gradient(180deg, rgba(7, 18, 35, .98), rgba(3, 9, 22, .98)) !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  overflow: hidden !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .copilot-hero::before,
+.command-center-page[data-command-center-visual="premium-as6"] .copilot-hero::after,
+.copilot-hero::before,
+.copilot-hero::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .copilot-top,
+.copilot-top {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin: 0 0 16px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .copilot-top h2,
+.command-center-page[data-command-center-visual="premium-as6"] .copilot-top h3,
+.copilot-top h2,
+.copilot-top h3 {
+  margin: 0 !important;
+  color: #ffffff !important;
+  font-size: 20px !important;
+  line-height: 1.1 !important;
+  font-weight: 900 !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .copilot-top span,
+.command-center-page[data-command-center-visual="premium-as6"] .copilot-top strong,
+.copilot-top span,
+.copilot-top strong {
+  color: #b36bff !important;
+  font-size: 18px !important;
+  font-weight: 900 !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .copilot-inline-layout,
+.copilot-inline-layout {
+  display: grid !important;
+  grid-template-columns: 76px 1fr !important;
+  align-items: center !important;
+  gap: 18px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .copilot-inline-layout::before,
+.command-center-page[data-command-center-visual="premium-as6"] .copilot-inline-layout::after,
+.copilot-inline-layout::before,
+.copilot-inline-layout::after {
+  display: none !important;
+  content: none !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .as6-copilot-inline-logo,
+.as6-copilot-inline-logo {
+  width: 72px !important;
+  height: 72px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .as6-copilot-inline-logo img,
+.as6-copilot-inline-logo img {
+  width: 68px !important;
+  height: 68px !important;
+  object-fit: contain !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .copilot-action-link,
+.copilot-action-link {
+  height: 64px !important;
+  min-height: 64px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 0 !important;
+  border-radius: 16px !important;
+  background: linear-gradient(100deg, #7c4dff 0%, #13d8ff 100%) !important;
+  color: #ffffff !important;
+  font-size: 17px !important;
+  font-weight: 900 !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}

@@ -3289,3 +3289,7 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Readiness after: 99%
 - Fixed: visual cleanup no longer depends on body guard class.
 - Added diagnostic: ops/bin/as6-diagnose-command-center-direct-etalon-v148
+
+## 20260622T022700Z AS6 V150 Copilot Etalon
+- Fixed: AI Copilot dark card background, logo, button, spacing.
+- Readiness after: 99%
