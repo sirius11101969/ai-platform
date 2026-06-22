@@ -2248,3 +2248,7 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 ## 20260622T031110Z command-center-strip-source-v158
 - Diagnostic: ops/bin/as6-diagnose-command-center-strip-source-v158
 - Failure class: STRIP_SOURCE_UNKNOWN_REQUIRES_BROWSER_COMPUTED_STYLE_DIAGNOSTIC
+
+## 20260622T031753Z command-center-pipeline-card-v159
+- Diagnostic: ops/bin/as6-diagnose-command-center-pipeline-card-v159
+- Failure class: PIPELINE_CARD_BORDER_AND_INSET_SHADOW_DRAW_VISIBLE_STRIP

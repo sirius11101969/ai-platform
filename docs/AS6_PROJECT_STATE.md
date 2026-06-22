@@ -3317,3 +3317,7 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 ## 20260622T031110Z AS6 V158 Strip Source Diagnostics
 - Diagnostic only: browser-side DOM/CSS source finder for visible horizontal strip.
 - Readiness after: 99%
+
+## 20260622T031753Z AS6 V159 Pipeline Card Strip Fix
+- Fixed: pipeline-card border/shadow visible strip.
+- Readiness after: 99%

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-pipeline-card-v159"
+grep -q "as6-command-center-pipeline-card-etalon-v159.css" frontend/src/main.jsx
+grep -q "AS6 V159 pipeline-card strip fix" frontend/src/styles/as6-command-center-pipeline-card-etalon-v159.css
+grep -q ".command-card.pipeline-card" frontend/src/styles/as6-command-center-pipeline-card-etalon-v159.css
+echo "AS6_COMMAND_CENTER_PIPELINE_CARD_V159=PASS"

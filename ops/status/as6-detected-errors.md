@@ -768,3 +768,8 @@ Governed and registered.
 - Class: STRIP_SOURCE_UNKNOWN_REQUIRES_BROWSER_COMPUTED_STYLE_DIAGNOSTIC
 - Root cause: CSS/DOM source not identifiable from server grep alone.
 - Control: V158 browser computed-style diagnostic.
+
+## 20260622T031753Z detected-error
+- Class: PIPELINE_CARD_BORDER_AND_INSET_SHADOW_DRAW_VISIBLE_STRIP
+- Root cause: browser computed-style diagnostic identified ARTICLE.command-card.pipeline-card.
+- Control: V159 removes pipeline-card border and inset shadow.
