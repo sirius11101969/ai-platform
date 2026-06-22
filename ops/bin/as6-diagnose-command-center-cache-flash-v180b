@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-cache-flash-v180b"
+curl -I -sS https://www.as6.ru/command-center | grep -iE 'cache-control|etag|last-modified|expires' || true
+curl -fsS https://www.as6.ru/api/health >/dev/null
+echo "AS6_COMMAND_CENTER_CACHE_FLASH_V180B=PASS"

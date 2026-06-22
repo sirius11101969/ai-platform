@@ -3416,3 +3416,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Diagnostic: ops/bin/as6-diagnose-command-center-no-stat-metric-pseudo-v179
 - Validation: compiled CSS has no unscoped [class*=stat|metric] pseudo-elements.
 - Readiness after: 99%
+
+## 20260622T101335Z AS6 V180B Cache/First Paint Flash Diagnostics
+- Diagnostic only: cache headers, production assets, and source flash candidates collected.
+- Root cause status: unconfirmed.
+- Diagnostic: ops/bin/as6-diagnose-command-center-cache-flash-v180b
+- Readiness after: 99%

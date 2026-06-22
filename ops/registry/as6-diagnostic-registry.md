@@ -2341,3 +2341,10 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Failure class: STAT_METRIC_PSEUDO_RULE_STILL_PRESENT_IN_COMPILED_CSS_OR_IMPORTED_SHARED_CSS
 - Check: source shared CSS has no unscoped wildcard pseudo-elements.
 - Check: compiled CSS has no unscoped wildcard pseudo-elements.
+
+## 20260622T101335Z command-center-cache-flash-v180b
+- Diagnostic: ops/bin/as6-diagnose-command-center-cache-flash-v180b
+- Failure class: CACHE_OR_FIRST_PAINT_FLASH_STILL_UNCONFIRMED
+- Check: production cache headers.
+- Check: production asset references.
+- Check: source flash candidates.
