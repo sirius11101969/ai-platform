@@ -3186,3 +3186,8 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Added public hard runtime script.
 - Injected script directly into frontend/index.html.
 - Did not change CommandCenterPage.jsx.
+
+## AS6_DONE=EMERGENCY_RESTORE_SITE_AFTER_V128
+- Removed V128 hard runtime public script.
+- Removed V128 index.html script injection.
+- Restored safe SPA loading path.

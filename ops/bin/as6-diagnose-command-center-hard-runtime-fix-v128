@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-set -euo pipefail
-test -f frontend/public/as6-command-center-hard-fix-v128.js
-grep -Rqs "as6-command-center-hard-fix-v128.js" frontend/index.html
-grep -Rqs "as6-v128-command-center-hard-fix" frontend/public/as6-command-center-hard-fix-v128.js
-grep -Rqs "command-hero" frontend/public/as6-command-center-hard-fix-v128.js
-grep -Rqs "copilot-hero" frontend/public/as6-command-center-hard-fix-v128.js
-echo "AS6_COMMAND_CENTER_HARD_RUNTIME_FIX=PASS"

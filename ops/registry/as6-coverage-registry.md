@@ -1889,3 +1889,4 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V126 | ops/bin/as6-control-command-center-arrow-fix-v126 | Command Center arrow fix coverage | ENABLED
 - V127 | ops/bin/as6-control-command-center-final-runtime-style-v127 | Command Center final runtime style coverage | ENABLED
 - V128 | ops/bin/as6-control-command-center-hard-runtime-fix-v128 | Command Center hard runtime fix coverage | ENABLED
+- V129 | ops/bin/as6-control-emergency-restore-site-after-v128 | Emergency restore after V128 coverage | ENABLED

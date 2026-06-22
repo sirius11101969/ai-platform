@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+! grep -Rqs "as6-command-center-hard-fix-v128.js" frontend/index.html
+! test -f frontend/public/as6-command-center-hard-fix-v128.js
+echo "AS6_EMERGENCY_RESTORE_SITE_AFTER_V128=PASS"

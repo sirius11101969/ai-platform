@@ -2146,3 +2146,4 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V126 | COMMAND_CENTER_FAILED_ENFORCEMENT_CALL_DRIFT | Command Center arrow fix failure class | ENABLED
 - V127 | ops/bin/as6-diagnose-command-center-final-runtime-style-v127 | Command Center final runtime style diagnostic | ENABLED
 - V128 | ops/bin/as6-diagnose-command-center-hard-runtime-fix-v128 | Command Center hard runtime fix diagnostic | ENABLED
+- V129 | ops/bin/as6-diagnose-emergency-restore-site-after-v128 | Emergency restore after V128 diagnostic | ENABLED
