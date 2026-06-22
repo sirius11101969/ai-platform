@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-purge-all-overlay-creators-v145"
+fail=0
+app_hit="$(grep -nE "import .*/components/AS6.*\\.jsx" frontend/src/App.jsx || true)"
+if [ -n "$app_hit" ]; then echo "FAIL app-side-effect-as6-imports"; echo "$app_hit"; fail=1; else echo "PASS app-side-effect-as6-imports"; fi
+src_hit="$(grep -RInE "createRoot|document.createElement|appendChild|root.id|Mission Control|Mission Context|Control Tower|Operations Timeline|Revenue × CRM|CRM Data|Dashboard Data|Backend Data|Live Data|Ctrl K|as6-.*-root" frontend/src/components/AS6*.jsx 2>/dev/null || true)"
+if [ -n "$src_hit" ]; then echo "FAIL overlay-source-creators"; echo "$src_hit"; fail=1; else echo "PASS overlay-source-creators"; fi
+if [ "$fail" -eq 0 ]; then echo "AS6_COMMAND_CENTER_PURGE_ALL_OVERLAY_CREATORS_V145=PASS"; else echo "AS6_COMMAND_CENTER_PURGE_ALL_OVERLAY_CREATORS_V145=FAIL"; exit 1; fi

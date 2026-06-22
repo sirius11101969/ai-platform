@@ -718,3 +718,8 @@ Governed and registered.
 - Class: APP_SIDE_EFFECT_IMPORTS_STILL_LOAD_OVERLAY_MODULES
 - Root cause: App.jsx imported global overlay modules for side effects.
 - Control: V144 removes imports and validates App.jsx.
+
+## 20260622T012800Z detected-error
+- Class: V146_DIAGNOSTIC_FALSE_POSITIVE_ON_VALID_WORKSPACE_AFTER_RESET
+- Root cause: diagnostic treated valid pseudo reset selector as old mask.
+- Control: V146B checks only real mask signatures.

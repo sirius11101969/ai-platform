@@ -2205,3 +2205,8 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Diagnostic: ops/bin/as6-diagnose-command-center-no-overlay-imports-v144
 - Failure class: APP_SIDE_EFFECT_IMPORTS_STILL_LOAD_OVERLAY_MODULES
 - Status: ENABLED
+
+## 20260622T012800Z command-center-clean-etalon-v146b
+- Diagnostic: ops/bin/as6-diagnose-command-center-clean-etalon-v146b
+- Failure class: V146_DIAGNOSTIC_FALSE_POSITIVE_ON_VALID_WORKSPACE_AFTER_RESET
+- Status: ENABLED

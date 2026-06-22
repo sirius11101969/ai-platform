@@ -62,3 +62,8 @@
 - App before: runtime/as6-v144-remove-overlay-imports-from-app-20260622T011700Z/App.before.jsx
 - Source validation: runtime/as6-v144-remove-overlay-imports-from-app-20260622T011700Z/validation-source.txt
 - Production after: runtime/as6-v144-remove-overlay-imports-from-app-20260622T011700Z/production-after.html
+
+## 20260622T012800Z artifact-registration
+- Runtime evidence: runtime/as6-v146b-fix-clean-etalon-diag-20260622T012800Z
+- Source validation: runtime/as6-v146b-fix-clean-etalon-diag-20260622T012800Z/validation-source.txt
+- Production after: runtime/as6-v146b-fix-clean-etalon-diag-20260622T012800Z/production-after.html

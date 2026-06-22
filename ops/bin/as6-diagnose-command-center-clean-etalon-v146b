@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "AS6_DIAGNOSTIC=command-center-clean-etalon-v146b"
+fail=0
+
+grep -q "AS6 V146 clean Command Center etalon" frontend/src/styles/as6-command-center-visual-etalon-v134.css || {
+  echo "FAIL v146-clean-css-missing"
+  fail=1
+}
+
+bad_css="$(grep -nE "AS6 V137|AS6 V138|z-index: 2147483647|height: 5px|Mission Control Layout 2.0|content: \"AS6 Mission Control\"" frontend/src/styles/as6-command-center-visual-etalon-v134.css || true)"
+if [ -n "$bad_css" ]; then
+  echo "FAIL accumulated-old-css-remains"
+  echo "$bad_css"
+  fail=1
+else
+  echo "PASS accumulated-old-css-removed"
+fi
+
+if grep -nE "workspace::after" frontend/src/styles/as6-command-center-visual-etalon-v134.css | grep -v "display: none" >/dev/null 2>&1; then
+  echo "INFO workspace-after-reset-present"
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_COMMAND_CENTER_CLEAN_ETALON_V146B=PASS"
+else
+  echo "AS6_COMMAND_CENTER_CLEAN_ETALON_V146B=FAIL"
+  exit 1
+fi
