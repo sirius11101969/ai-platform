@@ -19,3 +19,8 @@
 - Source validation: runtime/as6-v134-real-visual-etalon-lock-20260622T003632Z/validation-source.txt
 - Production HTML before: runtime/as6-v134-real-visual-etalon-lock-20260622T003632Z/production-before.html
 - Production HTML after: runtime/as6-v134-real-visual-etalon-lock-20260622T003632Z/production-after.html
+
+## 20260622T004134Z artifact-registration
+- Runtime evidence: runtime/as6-v135-fix-copilot-etalon-20260622T004134Z
+- Source validation: runtime/as6-v135-fix-copilot-etalon-20260622T004134Z/validation-source.txt
+- Production after: runtime/as6-v135-fix-copilot-etalon-20260622T004134Z/production-after.html

@@ -17,3 +17,7 @@
 - Visual repair must be validated against real production DOM selectors.
 - Runtime JS visual injection remains forbidden.
 - Source CSS lock is allowed only after DOM diagnostics identifies concrete selectors.
+
+## 20260622T004134Z AEC copilot-etalon-v135
+- AI Copilot visual fixes must be source CSS only.
+- Runtime JS injection remains forbidden.

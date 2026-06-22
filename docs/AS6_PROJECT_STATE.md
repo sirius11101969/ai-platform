@@ -3223,3 +3223,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Added: frontend/src/styles/as6-command-center-visual-etalon-v134.css
 - Added diagnostic: ops/bin/as6-diagnose-command-center-real-visual-etalon-v134
 - Fixed selectors: command-hero, sidebar-favorites, copilot-hero, command-center-page, workspace, command-sidebar.
+
+## 20260622T004134Z AS6 V135 Copilot Etalon Fix
+- Readiness before: 99%
+- Readiness after: 99%
+- Fixed: AI Copilot top line/frame/button/logo alignment.
+- Added diagnostic: ops/bin/as6-diagnose-command-center-copilot-etalon-v135

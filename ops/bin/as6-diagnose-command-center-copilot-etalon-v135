@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-copilot-etalon-v135"
+fail=0
+grep -q "AS6 V135 Copilot etalon correction" frontend/src/styles/as6-command-center-visual-etalon-v134.css || { echo "FAIL copilot-v135-css-missing"; fail=1; }
+grep -q ".copilot-top::before" frontend/src/styles/as6-command-center-visual-etalon-v134.css || { echo "FAIL copilot-top-line-control-missing"; fail=1; }
+grep -q ".copilot-action-link" frontend/src/styles/as6-command-center-visual-etalon-v134.css || { echo "FAIL copilot-button-control-missing"; fail=1; }
+bad="$(grep -RInE "final-runtime-style-v127|hard-fix-v128|reference-polish-v123c|arrow-fix-v126|createElement\(\"style\"\)|appendChild\(style\)|style\.textContent|insertAdjacentHTML" frontend/src frontend/index.html frontend/public 2>/dev/null || true)"
+if [ -n "$bad" ]; then echo "FAIL forbidden-runtime-or-old-patch"; echo "$bad"; fail=1; else echo "PASS forbidden-runtime-or-old-patch"; fi
+if [ "$fail" -eq 0 ]; then echo "AS6_COMMAND_CENTER_COPILOT_ETALON_V135=PASS"; else echo "AS6_COMMAND_CENTER_COPILOT_ETALON_V135=FAIL"; exit 1; fi

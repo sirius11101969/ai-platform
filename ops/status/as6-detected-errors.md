@@ -678,3 +678,8 @@ Governed and registered.
 - Class: ETALON_SOURCE_RESTORE_NOT_PIXEL_EQUAL_TO_TARGET_SCREENSHOT
 - Root cause: git etalon restore passed but did not match screenshot target.
 - Control: real DOM visual etalon CSS lock v134.
+
+## 20260622T004134Z detected-error
+- Class: COPILOT_CARD_EXTRA_FRAME_AND_TOP_LINE
+- Root cause: Copilot card needed separate etalon normalization after V134.
+- Control: V135 Copilot etalon CSS and diagnostic.

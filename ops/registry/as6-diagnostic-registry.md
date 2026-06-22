@@ -2163,3 +2163,8 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Diagnostic: ops/bin/as6-diagnose-command-center-real-visual-etalon-v134
 - Failure class: ETALON_SOURCE_RESTORE_NOT_PIXEL_EQUAL_TO_TARGET_SCREENSHOT
 - Status: ENABLED
+
+## 20260622T004134Z command-center-copilot-etalon-v135
+- Diagnostic: ops/bin/as6-diagnose-command-center-copilot-etalon-v135
+- Failure class: COPILOT_CARD_EXTRA_FRAME_AND_TOP_LINE
+- Status: ENABLED

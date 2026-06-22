@@ -1917,3 +1917,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers: AI Copilot frame normalization
 - Covers: lower purple line removal
 - Covers: hidden injected status roots
+
+## 20260622T004134Z coverage-copilot-etalon-v135
+- Covers: AI Copilot top line removal
+- Covers: AI Copilot soft frame
+- Covers: Copilot logo/button alignment
+- Covers: runtime patch absence
