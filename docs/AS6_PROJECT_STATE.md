@@ -3342,3 +3342,7 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 ## 20260622T042635Z AS6 V164 Clip Second Row Overflow Strip
 - Fixed: second-row inner chart/progress overflow strip.
 - Readiness after: 99%
+
+## 20260622T043702Z AS6 V165 Strip Crossing Diagnostics
+- Diagnostic only: lists all elements crossing strip Y-coordinate.
+- Readiness after: 99%

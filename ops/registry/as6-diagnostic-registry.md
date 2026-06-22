@@ -2272,3 +2272,7 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 ## 20260622T042635Z command-center-clip-second-row-v164
 - Diagnostic: ops/bin/as6-diagnose-command-center-clip-second-row-v164
 - Failure class: SECOND_ROW_INNER_CHART_OR_PROGRESS_OVERFLOW_ESCAPES_CARD_BOUNDS
+
+## 20260622T043702Z command-center-strip-crossing-v165
+- Diagnostic: ops/bin/as6-diagnose-command-center-strip-crossing-v165
+- Failure class: STRIP_REQUIRES_ALL_CROSSING_ELEMENTS_DIAGNOSTIC

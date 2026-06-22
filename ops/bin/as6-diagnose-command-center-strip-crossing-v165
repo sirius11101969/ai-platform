@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-strip-crossing-v165"
+grep -q "as6-command-center-strip-crossing-v165.js" frontend/src/main.jsx
+grep -q "AS6_SCAN_STRIP_Y" frontend/src/as6-command-center-strip-crossing-v165.js
+echo "AS6_COMMAND_CENTER_STRIP_CROSSING_V165=PASS"
