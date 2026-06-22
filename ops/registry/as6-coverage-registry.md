@@ -1970,3 +1970,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers: clean CSS reset diagnostic correction
 - Covers: old V137/V138 mask absence
 - Covers: build/deploy completion after V146 failure
+
+## 20260622T013806Z coverage-final-strip-cleanup-v147
+- Covers: KPI row layer
+- Covers: quick actions layer
+- Covers: Copilot frame
+- Covers: sidebar/bottom strip

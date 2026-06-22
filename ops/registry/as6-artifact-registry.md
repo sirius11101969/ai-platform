@@ -67,3 +67,9 @@
 - Runtime evidence: runtime/as6-v146b-fix-clean-etalon-diag-20260622T012800Z
 - Source validation: runtime/as6-v146b-fix-clean-etalon-diag-20260622T012800Z/validation-source.txt
 - Production after: runtime/as6-v146b-fix-clean-etalon-diag-20260622T012800Z/production-after.html
+
+## 20260622T013806Z artifact-registration
+- Runtime evidence: runtime/as6-v147-final-etalon-strip-cleanup-20260622T013806Z
+- CSS before: runtime/as6-v147-final-etalon-strip-cleanup-20260622T013806Z/as6-command-center-visual-etalon.before.css
+- Source validation: runtime/as6-v147-final-etalon-strip-cleanup-20260622T013806Z/validation-source.txt
+- Production after: runtime/as6-v147-final-etalon-strip-cleanup-20260622T013806Z/production-after.html

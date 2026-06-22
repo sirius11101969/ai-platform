@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "AS6_DIAGNOSTIC=command-center-final-strip-cleanup-v147"
+fail=0
+
+grep -q "AS6 V147 final real-selector strip cleanup" frontend/src/styles/as6-command-center-visual-etalon-v134.css || {
+  echo "FAIL v147-css-missing"
+  fail=1
+}
+
+grep -q ".command-kpis::before" frontend/src/styles/as6-command-center-visual-etalon-v134.css || {
+  echo "FAIL kpi-pseudo-cleanup-missing"
+  fail=1
+}
+
+grep -q ".quick-actions-primary > div::after" frontend/src/styles/as6-command-center-visual-etalon-v134.css || {
+  echo "FAIL quick-actions-layer-cleanup-missing"
+  fail=1
+}
+
+grep -q ".copilot-hero" frontend/src/styles/as6-command-center-visual-etalon-v134.css || {
+  echo "FAIL copilot-cleanup-missing"
+  fail=1
+}
+
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_COMMAND_CENTER_FINAL_STRIP_CLEANUP_V147=PASS"
+else
+  echo "AS6_COMMAND_CENTER_FINAL_STRIP_CLEANUP_V147=FAIL"
+  exit 1
+fi

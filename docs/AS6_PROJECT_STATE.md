@@ -3277,3 +3277,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Readiness after: 99%
 - Fixed: V146 diagnostic false-positive, build/deploy completed.
 - Added diagnostic: ops/bin/as6-diagnose-command-center-clean-etalon-v146b
+
+## 20260622T013806Z AS6 V147 Final Etalon Strip Cleanup
+- Readiness before: 99%
+- Readiness after: 99%
+- Fixed: remaining visible strip/frame selectors.
+- Added diagnostic: ops/bin/as6-diagnose-command-center-final-strip-cleanup-v147

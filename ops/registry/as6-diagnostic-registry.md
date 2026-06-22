@@ -2210,3 +2210,8 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Diagnostic: ops/bin/as6-diagnose-command-center-clean-etalon-v146b
 - Failure class: V146_DIAGNOSTIC_FALSE_POSITIVE_ON_VALID_WORKSPACE_AFTER_RESET
 - Status: ENABLED
+
+## 20260622T013806Z command-center-final-strip-cleanup-v147
+- Diagnostic: ops/bin/as6-diagnose-command-center-final-strip-cleanup-v147
+- Failure class: REAL_COMMAND_CENTER_BLOCK_STYLES_STILL_DRAW_VISIBLE_LINES
+- Status: ENABLED

@@ -723,3 +723,8 @@ Governed and registered.
 - Class: V146_DIAGNOSTIC_FALSE_POSITIVE_ON_VALID_WORKSPACE_AFTER_RESET
 - Root cause: diagnostic treated valid pseudo reset selector as old mask.
 - Control: V146B checks only real mask signatures.
+
+## 20260622T013806Z detected-error
+- Class: REAL_COMMAND_CENTER_BLOCK_STYLES_STILL_DRAW_VISIBLE_LINES
+- Root cause: remaining artifacts were real block styles, not overlays.
+- Control: V147 final selector cleanup.

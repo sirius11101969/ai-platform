@@ -214,3 +214,113 @@ body.as6-command-center-reference-guard-active [data-as6-command-center-referenc
   top: -999999px !important;
   z-index: -1 !important;
 }
+
+/* AS6 V147 final real-selector strip cleanup. Source CSS only. */
+body.as6-command-center-reference-guard-active .command-kpis,
+body.as6-command-center-reference-guard-active .quick-actions-primary,
+body.as6-command-center-reference-guard-active .quick-actions-primary > div,
+body.as6-command-center-reference-guard-active .command-main-grid,
+body.as6-command-center-reference-guard-active .command-top-grid,
+body.as6-command-center-reference-guard-active .command-second-grid,
+body.as6-command-center-reference-guard-active .command-core,
+body.as6-command-center-reference-guard-active .command-right-rail {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-top: 0 !important;
+  border-right: 0 !important;
+  border-bottom: 0 !important;
+  border-left: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+body.as6-command-center-reference-guard-active .command-kpis::before,
+body.as6-command-center-reference-guard-active .command-kpis::after,
+body.as6-command-center-reference-guard-active .quick-actions-primary::before,
+body.as6-command-center-reference-guard-active .quick-actions-primary::after,
+body.as6-command-center-reference-guard-active .quick-actions-primary > div::before,
+body.as6-command-center-reference-guard-active .quick-actions-primary > div::after,
+body.as6-command-center-reference-guard-active .command-card::before,
+body.as6-command-center-reference-guard-active .command-card::after,
+body.as6-command-center-reference-guard-active .command-sidebar *::before,
+body.as6-command-center-reference-guard-active .command-sidebar *::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+body.as6-command-center-reference-guard-active .command-hero,
+body.as6-command-center-reference-guard-active .command-kpis,
+body.as6-command-center-reference-guard-active .quick-actions-primary {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+body.as6-command-center-reference-guard-active .quick-actions-primary {
+  padding: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 18px !important;
+}
+
+body.as6-command-center-reference-guard-active .quick-actions-primary a {
+  background: linear-gradient(180deg, rgba(12, 27, 56, .96), rgba(5, 12, 30, .96)) !important;
+  border: 1px solid rgba(61, 118, 178, .34) !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+body.as6-command-center-reference-guard-active .copilot-hero,
+body.as6-command-center-reference-guard-active .copilot-top,
+body.as6-command-center-reference-guard-active .copilot-inline-layout {
+  border-top: 0 !important;
+  border-right: 0 !important;
+  border-bottom: 0 !important;
+  border-left: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+body.as6-command-center-reference-guard-active .copilot-hero {
+  border: 0 !important;
+  background: linear-gradient(135deg, rgba(33,22,86,.94), rgba(71,28,126,.86)) !important;
+}
+
+body.as6-command-center-reference-guard-active .as6-copilot-inline-logo {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+body.as6-command-center-reference-guard-active .command-sidebar,
+body.as6-command-center-reference-guard-active .sidebar-scroll,
+body.as6-command-center-reference-guard-active .command-side-nav,
+body.as6-command-center-reference-guard-active .sidebar-favorites,
+body.as6-command-center-reference-guard-active .command-sidebar-bottom,
+body.as6-command-center-reference-guard-active .command-profile-card,
+body.as6-command-center-reference-guard-active .command-help-card {
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+body.as6-command-center-reference-guard-active .sidebar-favorites {
+  border-top: 1px solid rgba(110,150,210,.10) !important;
+  border-bottom: 0 !important;
+}
+
+body.as6-command-center-reference-guard-active .command-sidebar-bottom {
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+}
+
+/* bottom strip hard cleanup */
+body.as6-command-center-reference-guard-active .workspace,
+body.as6-command-center-reference-guard-active .command-center-page {
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+  background-clip: padding-box !important;
+}
