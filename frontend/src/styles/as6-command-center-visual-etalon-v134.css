@@ -435,3 +435,5 @@ body.as6-command-center-reference-guard-active .command-sidebar-bottom {
   border-bottom: 0 !important;
   box-shadow: none !important;
 }
+
+/* AS6 V139 overlay roots must be removed from DOM by guard JS, not visually hidden. */

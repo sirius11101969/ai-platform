@@ -1939,3 +1939,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers: fixed bottom strip mask
 - Covers: hidden AS6 injected layer kill-switch
 - Covers: sidebar bottom decorative line removal
+
+## 20260622T010245Z coverage-overlay-roots-dom-v140
+- Covers: explicit guard rewrite
+- Covers: overlay root DOM removal
+- Covers: MutationObserver recurrence removal
+- Covers: runtime patch absence

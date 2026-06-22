@@ -2183,3 +2183,9 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Diagnostic: ops/bin/as6-diagnose-command-center-fixed-neon-strip-v138
 - Failure class: FIXED_DECORATIVE_NEON_STRIP_LAYER
 - Status: ENABLED
+
+## 20260622T010245Z command-center-overlay-roots-dom-v140
+- Diagnostic: ops/bin/as6-diagnose-command-center-overlay-roots-dom-v140
+- Failure class: V139_PATCH_PATTERN_DID_NOT_MATCH_CURRENT_GUARD_FILE
+- Failure class: HIDDEN_AS6_OVERLAY_ROOTS_REMAIN_IN_DOM
+- Status: ENABLED

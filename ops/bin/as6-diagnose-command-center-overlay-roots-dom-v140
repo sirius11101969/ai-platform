@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "AS6_DIAGNOSTIC=command-center-overlay-roots-dom-v140"
+fail=0
+
+grep -q "const removedReferenceNodes = new Map" frontend/src/as6-command-center-reference-guard.js || { echo "FAIL removed-reference-map-missing"; fail=1; }
+grep -q "node.parentNode.removeChild(node)" frontend/src/as6-command-center-reference-guard.js || { echo "FAIL dom-remove-missing"; fail=1; }
+grep -q "removeReferenceNode(document.getElementById(id))" frontend/src/as6-command-center-reference-guard.js || { echo "FAIL remove-call-missing"; fail=1; }
+grep -q "MutationObserver" frontend/src/as6-command-center-reference-guard.js || { echo "FAIL observer-missing"; fail=1; }
+
+bad="$(grep -RInE "final-runtime-style-v127|hard-fix-v128|reference-polish-v123c|arrow-fix-v126|createElement\(\"style\"\)|appendChild\(style\)|style\.textContent|insertAdjacentHTML|hideReferenceNode|previousStyles" frontend/src frontend/index.html frontend/public 2>/dev/null || true)"
+if [ -n "$bad" ]; then
+  echo "FAIL forbidden-runtime-or-old-patch"
+  echo "$bad"
+  fail=1
+else
+  echo "PASS forbidden-runtime-or-old-patch"
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_COMMAND_CENTER_OVERLAY_ROOTS_DOM_V140=PASS"
+else
+  echo "AS6_COMMAND_CENTER_OVERLAY_ROOTS_DOM_V140=FAIL"
+  exit 1
+fi

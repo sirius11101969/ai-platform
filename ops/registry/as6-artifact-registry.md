@@ -39,3 +39,9 @@
 - Runtime evidence: runtime/as6-v138-kill-fixed-neon-strip-20260622T005440Z
 - Source validation: runtime/as6-v138-kill-fixed-neon-strip-20260622T005440Z/validation-source.txt
 - Production after: runtime/as6-v138-kill-fixed-neon-strip-20260622T005440Z/production-after.html
+
+## 20260622T010245Z artifact-registration
+- Runtime evidence: runtime/as6-v140-rewrite-guard-remove-overlays-20260622T010245Z
+- Guard before: runtime/as6-v140-rewrite-guard-remove-overlays-20260622T010245Z/guard.before.js
+- Source validation: runtime/as6-v140-rewrite-guard-remove-overlays-20260622T010245Z/validation-source.txt
+- Production after: runtime/as6-v140-rewrite-guard-remove-overlays-20260622T010245Z/production-after.html

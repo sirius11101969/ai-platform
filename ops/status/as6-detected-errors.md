@@ -698,3 +698,8 @@ Governed and registered.
 - Class: FIXED_DECORATIVE_NEON_STRIP_LAYER
 - Root cause: visible line was not normal border/scrollbar.
 - Control: V138 fixed strip kill-switch.
+
+## 20260622T010245Z detected-error
+- Class: V139_PATCH_PATTERN_DID_NOT_MATCH_CURRENT_GUARD_FILE
+- Root cause: perl replacement did not match current guard source.
+- Control: V140 full guard rewrite.
