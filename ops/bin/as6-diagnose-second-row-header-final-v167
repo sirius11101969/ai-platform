@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=second-row-header-final-v167"
+grep -q "as6-command-center-second-row-header-final-v167.css" frontend/src/main.jsx
+grep -q "AS6 V167" frontend/src/styles/as6-command-center-second-row-header-final-v167.css
+grep -q ".command-card-head" frontend/src/styles/as6-command-center-second-row-header-final-v167.css
+echo "AS6_SECOND_ROW_HEADER_FINAL_V167=PASS"

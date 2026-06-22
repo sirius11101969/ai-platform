@@ -3350,3 +3350,7 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 ## 20260622T045350Z AS6 V166 Second Row Card Head Strip
 - Fixed: transparent second-row card-head exposed background strip.
 - Readiness after: 99%
+
+## 20260622T050147Z AS6 V167 Final Second Row Header Strip
+- Fixed: remaining second-row header/control/chart strip.
+- Readiness after: 99%

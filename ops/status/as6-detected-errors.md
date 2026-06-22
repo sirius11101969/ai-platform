@@ -803,3 +803,8 @@ Governed and registered.
 - Class: SECOND_ROW_COMMAND_CARD_HEAD_TRANSPARENT_LAYER_EXPOSES_BACKGROUND_STRIP
 - Root cause: AS6_SCAN_STRIP_Y showed strip crosses command-card-head in second row.
 - Control: V166 makes second-row cards/card-heads opaque and removes their pseudo/border layers.
+
+## 20260622T050147Z detected-error
+- Class: SECOND_ROW_HEADER_CONTROLS_OR_CHART_LAYER_STILL_DRAW_STRIP
+- Root cause: AS6_SCAN_STRIP_Y shows strip crossing command-card-head elements.
+- Control: V167 clamps headers, header controls, and chart layers.

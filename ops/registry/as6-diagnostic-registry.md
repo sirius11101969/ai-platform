@@ -2280,3 +2280,7 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 ## 20260622T045350Z command-second-row-head-strip-v166
 - Diagnostic: ops/bin/as6-diagnose-command-second-row-head-strip-v166
 - Failure class: SECOND_ROW_COMMAND_CARD_HEAD_TRANSPARENT_LAYER_EXPOSES_BACKGROUND_STRIP
+
+## 20260622T050147Z second-row-header-final-v167
+- Diagnostic: ops/bin/as6-diagnose-second-row-header-final-v167
+- Failure class: SECOND_ROW_HEADER_CONTROLS_OR_CHART_LAYER_STILL_DRAW_STRIP
