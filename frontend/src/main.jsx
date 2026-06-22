@@ -33,3 +33,5 @@ import "./styles/as6-command-center-second-grid-strip-v163.css";
 import "./styles/as6-command-center-clip-second-row-v164.css";
 
 import "./as6-command-center-strip-crossing-v165.js";
+
+import "./styles/as6-command-center-second-row-head-strip-v166.css";

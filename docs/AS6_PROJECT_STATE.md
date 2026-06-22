@@ -3346,3 +3346,7 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 ## 20260622T043702Z AS6 V165 Strip Crossing Diagnostics
 - Diagnostic only: lists all elements crossing strip Y-coordinate.
 - Readiness after: 99%
+
+## 20260622T045350Z AS6 V166 Second Row Card Head Strip
+- Fixed: transparent second-row card-head exposed background strip.
+- Readiness after: 99%

@@ -798,3 +798,8 @@ Governed and registered.
 - Class: SECOND_ROW_INNER_CHART_OR_PROGRESS_OVERFLOW_ESCAPES_CARD_BOUNDS
 - Root cause: line is not border; it is overflowing inner visual layer from second row.
 - Control: V164 clips second-row cards and visual children.
+
+## 20260622T045350Z detected-error
+- Class: SECOND_ROW_COMMAND_CARD_HEAD_TRANSPARENT_LAYER_EXPOSES_BACKGROUND_STRIP
+- Root cause: AS6_SCAN_STRIP_Y showed strip crosses command-card-head in second row.
+- Control: V166 makes second-row cards/card-heads opaque and removes their pseudo/border layers.
