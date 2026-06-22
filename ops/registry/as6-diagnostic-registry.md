@@ -2288,3 +2288,7 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 ## 20260622T051205Z real-edge-line-v168
 - Diagnostic: ops/bin/as6-diagnose-real-edge-line-v168
 - Failure class: REAL_EDGE_LINE_AT_COMMAND_SECOND_GRID_TOP_AND_SIDEBAR_HELP_BOTTOM
+
+## 20260622T051443Z command-center-clean-final-v169
+- Diagnostic: ops/bin/as6-diagnose-command-center-clean-final-v169
+- Failure class: ACCUMULATED_STRIP_PATCHES_V151_V168_CREATED_CONFLICTING_VISUAL_LAYERS

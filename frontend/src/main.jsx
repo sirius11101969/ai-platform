@@ -24,18 +24,12 @@ import "./styles/as6-command-center-copilot-etalon-v150.css";
 
 
 
-import "./styles/as6-command-center-html-strip-v161.css";
 
-import "./styles/as6-command-center-second-grid-strip-v162.css";
 
-import "./styles/as6-command-center-second-grid-strip-v163.css";
 
-import "./styles/as6-command-center-clip-second-row-v164.css";
 
-import "./as6-command-center-strip-crossing-v165.js";
 
-import "./styles/as6-command-center-second-row-head-strip-v166.css";
 
-import "./styles/as6-command-center-second-row-header-final-v167.css";
 
-import "./styles/as6-command-center-real-edge-line-v168.css";
+
+import "./styles/as6-command-center-clean-final-v169.css";

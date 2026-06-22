@@ -813,3 +813,8 @@ Governed and registered.
 - Class: REAL_EDGE_LINE_AT_COMMAND_SECOND_GRID_TOP_AND_SIDEBAR_HELP_BOTTOM
 - Root cause: visible line is the real top edge of command-second-grid and sidebar help bottom edge.
 - Control: V168 removes/neutralizes those exact edges.
+
+## 20260622T051443Z detected-error
+- Class: ACCUMULATED_STRIP_PATCHES_V151_V168_CREATED_CONFLICTING_VISUAL_LAYERS
+- Root cause: repeated strip CSS files masked/overrode each other instead of restoring clean layout.
+- Control: V169 purges failed strip patches and keeps one clean final stylesheet.

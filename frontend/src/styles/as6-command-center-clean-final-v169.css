@@ -1,0 +1,102 @@
+/* AS6 V169 clean final Command Center. No masks. No overlay hacks. */
+
+html,
+body,
+#root {
+  margin: 0 !important;
+  background: #030814 !important;
+  overflow-x: hidden !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"],
+.command-center-page[data-command-center-visual="premium-as6"] * {
+  box-sizing: border-box !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+/* Clean structural containers */
+.workspace,
+.app-shell.command-shell,
+.command-center-page,
+.command-main-grid,
+.command-core,
+.command-top-grid,
+.command-second-grid,
+.command-right-rail {
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+/* Remove only artificial pseudo layers, not real card content */
+.workspace::before,
+.workspace::after,
+.app-shell.command-shell::before,
+.app-shell.command-shell::after,
+.command-center-page::before,
+.command-center-page::after,
+.command-main-grid::before,
+.command-main-grid::after,
+.command-core::before,
+.command-core::after,
+.command-top-grid::before,
+.command-top-grid::after,
+.command-second-grid::before,
+.command-second-grid::after,
+.command-right-rail::before,
+.command-right-rail::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Normal second row: no full-width stripe, only individual cards */
+.command-second-grid {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+.command-second-grid > .command-card {
+  background: linear-gradient(180deg, rgba(8,15,34,.92), rgba(3,7,18,.86)) !important;
+  border: 1px solid rgba(55,104,154,.24) !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+}
+
+/* No shared horizontal edges inside second row */
+.command-second-grid > .command-card::before,
+.command-second-grid > .command-card::after,
+.command-second-grid .command-card-head::before,
+.command-second-grid .command-card-head::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Sidebar bottom must not continue a line into content */
+.command-sidebar,
+.command-sidebar *,
+.command-sidebar *::before,
+.command-sidebar *::after {
+  box-shadow: none !important;
+}
+
+.command-sidebar .command-sidebar-bottom,
+.command-sidebar [class*="help"],
+.command-sidebar [class*="support"] {
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+}

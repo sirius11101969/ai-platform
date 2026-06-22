@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-clean-final-v169"
+grep -q "as6-command-center-clean-final-v169.css" frontend/src/main.jsx
+! grep -qE "v151|v152|v153|v154|v155|v156|v157|v158|v159|v160|v161|v162|v163|v164|v165|v166|v167|v168" frontend/src/main.jsx
+grep -q "AS6 V169 clean final" frontend/src/styles/as6-command-center-clean-final-v169.css
+echo "AS6_COMMAND_CENTER_CLEAN_FINAL_V169=PASS"
