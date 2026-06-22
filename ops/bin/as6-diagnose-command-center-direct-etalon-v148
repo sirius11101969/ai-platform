@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-direct-etalon-v148"
+grep -q 'AS6 V148 direct Command Center etalon' frontend/src/styles/as6-command-center-visual-etalon-v134.css
+grep -q 'data-command-center-visual="premium-as6"' frontend/src/styles/as6-command-center-visual-etalon-v134.css
+echo "AS6_COMMAND_CENTER_DIRECT_ETALON_V148=PASS"

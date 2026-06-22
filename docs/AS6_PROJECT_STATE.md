@@ -3283,3 +3283,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Readiness after: 99%
 - Fixed: remaining visible strip/frame selectors.
 - Added diagnostic: ops/bin/as6-diagnose-command-center-final-strip-cleanup-v147
+
+## 20260622T014627Z AS6 V148 Direct Command Center Etalon
+- Readiness before: 99%
+- Readiness after: 99%
+- Fixed: visual cleanup no longer depends on body guard class.
+- Added diagnostic: ops/bin/as6-diagnose-command-center-direct-etalon-v148

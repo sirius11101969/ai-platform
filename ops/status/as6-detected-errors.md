@@ -728,3 +728,8 @@ Governed and registered.
 - Class: REAL_COMMAND_CENTER_BLOCK_STYLES_STILL_DRAW_VISIBLE_LINES
 - Root cause: remaining artifacts were real block styles, not overlays.
 - Control: V147 final selector cleanup.
+
+## 20260622T014627Z detected-error
+- Class: BODY_GUARD_CLASS_NOT_PRESENT_SO_PREVIOUS_CSS_DID_NOT_APPLY
+- Root cause: previous CSS depended on missing body class.
+- Control: V148 uses direct page selector.

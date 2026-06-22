@@ -324,3 +324,87 @@ body.as6-command-center-reference-guard-active .command-center-page {
   box-shadow: none !important;
   background-clip: padding-box !important;
 }
+
+/* AS6 V148 direct Command Center etalon. Does not depend on body guard class. */
+.command-center-page[data-command-center-visual="premium-as6"],
+.command-center-page[data-command-center-visual="premium-as6"] * {
+  box-sizing: border-box !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"]::before,
+.command-center-page[data-command-center-visual="premium-as6"]::after,
+.command-center-page[data-command-center-visual="premium-as6"] .command-hero::before,
+.command-center-page[data-command-center-visual="premium-as6"] .command-hero::after,
+.command-center-page[data-command-center-visual="premium-as6"] .command-kpis::before,
+.command-center-page[data-command-center-visual="premium-as6"] .command-kpis::after,
+.command-center-page[data-command-center-visual="premium-as6"] .quick-actions-primary::before,
+.command-center-page[data-command-center-visual="premium-as6"] .quick-actions-primary::after,
+.command-center-page[data-command-center-visual="premium-as6"] .command-main-grid::before,
+.command-center-page[data-command-center-visual="premium-as6"] .command-main-grid::after,
+.command-center-page[data-command-center-visual="premium-as6"] .command-card::before,
+.command-center-page[data-command-center-visual="premium-as6"] .command-card::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .command-hero,
+.command-center-page[data-command-center-visual="premium-as6"] .command-kpis,
+.command-center-page[data-command-center-visual="premium-as6"] .quick-actions-primary,
+.command-center-page[data-command-center-visual="premium-as6"] .command-main-grid,
+.command-center-page[data-command-center-visual="premium-as6"] .command-top-grid,
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid,
+.command-center-page[data-command-center-visual="premium-as6"] .command-core,
+.command-center-page[data-command-center-visual="premium-as6"] .command-right-rail {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .quick-actions-primary {
+  padding: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 18px !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .quick-actions-primary > div {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .quick-actions-primary a {
+  background: linear-gradient(180deg, rgba(12,27,56,.96), rgba(5,12,30,.96)) !important;
+  border: 1px solid rgba(61,118,178,.34) !important;
+  box-shadow: none !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .copilot-hero {
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  background: linear-gradient(135deg, rgba(33,22,86,.94), rgba(71,28,126,.86)) !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .copilot-top,
+.command-center-page[data-command-center-visual="premium-as6"] .copilot-inline-layout,
+.command-center-page[data-command-center-visual="premium-as6"] .as6-copilot-inline-logo {
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .command-recommendations {
+  display: none !important;
+}

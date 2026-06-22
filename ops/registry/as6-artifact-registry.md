@@ -73,3 +73,8 @@
 - CSS before: runtime/as6-v147-final-etalon-strip-cleanup-20260622T013806Z/as6-command-center-visual-etalon.before.css
 - Source validation: runtime/as6-v147-final-etalon-strip-cleanup-20260622T013806Z/validation-source.txt
 - Production after: runtime/as6-v147-final-etalon-strip-cleanup-20260622T013806Z/production-after.html
+
+## 20260622T014627Z artifact-registration
+- Runtime evidence: runtime/as6-v148-direct-command-center-etalon-20260622T014627Z
+- CSS before: runtime/as6-v148-direct-command-center-etalon-20260622T014627Z/css.before.css
+- Validation: runtime/as6-v148-direct-command-center-etalon-20260622T014627Z/validation-source.txt

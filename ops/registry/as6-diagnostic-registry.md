@@ -2215,3 +2215,8 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Diagnostic: ops/bin/as6-diagnose-command-center-final-strip-cleanup-v147
 - Failure class: REAL_COMMAND_CENTER_BLOCK_STYLES_STILL_DRAW_VISIBLE_LINES
 - Status: ENABLED
+
+## 20260622T014627Z command-center-direct-etalon-v148
+- Diagnostic: ops/bin/as6-diagnose-command-center-direct-etalon-v148
+- Failure class: BODY_GUARD_CLASS_NOT_PRESENT_SO_PREVIOUS_CSS_DID_NOT_APPLY
+- Status: ENABLED

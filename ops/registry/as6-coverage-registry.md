@@ -1976,3 +1976,8 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers: quick actions layer
 - Covers: Copilot frame
 - Covers: sidebar/bottom strip
+
+## 20260622T014627Z coverage-direct-etalon-v148
+- Covers: direct data-command-center-visual selector
+- Covers: KPI/action/copilot visible lines
+- Covers: guard-class independent styling
