@@ -778,3 +778,8 @@ Governed and registered.
 - Class: STRIP_SOURCE_REQUIRES_PIXEL_LEVEL_DOM_PICKER
 - Root cause: computed-style scan found pipeline-card but not actual visible strip.
 - Control: V160 pixel-level browser picker.
+
+## 20260622T035624Z detected-error
+- Class: VISIBLE_STRIP_IS_HTML_LEVEL_BACKGROUND_OR_DOCUMENT_LAYER
+- Root cause: pixel picker identified HTML as element at strip coordinate.
+- Control: V161 resets html/body/root backgrounds and removes failed strip diagnostic/fix layers.

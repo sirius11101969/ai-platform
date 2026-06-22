@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-html-strip-v161"
+grep -q "as6-command-center-html-strip-v161.css" frontend/src/main.jsx
+! grep -qE "strip-diagnostics-v158|pixel-strip-picker-v160|strip-guard-v155|bottom-strip-final-v151|mid-strip-final-v152|hide-horizontal-scrollbar-v154|pipeline-card-etalon-v159" frontend/src/main.jsx
+grep -q "AS6 V161" frontend/src/styles/as6-command-center-html-strip-v161.css
+echo "AS6_COMMAND_CENTER_HTML_STRIP_V161=PASS"

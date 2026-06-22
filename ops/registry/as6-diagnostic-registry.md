@@ -2256,3 +2256,7 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 ## 20260622T032621Z command-center-pixel-strip-picker-v160
 - Diagnostic: ops/bin/as6-diagnose-command-center-pixel-strip-picker-v160
 - Failure class: STRIP_SOURCE_REQUIRES_PIXEL_LEVEL_DOM_PICKER
+
+## 20260622T035624Z command-center-html-strip-v161
+- Diagnostic: ops/bin/as6-diagnose-command-center-html-strip-v161
+- Failure class: VISIBLE_STRIP_IS_HTML_LEVEL_BACKGROUND_OR_DOCUMENT_LAYER

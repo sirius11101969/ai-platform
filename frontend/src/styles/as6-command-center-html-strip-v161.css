@@ -1,0 +1,78 @@
+/* AS6 V161: remove HTML-level strip on /command-center. Imported last. */
+
+/* Причина: elementFromPoint на полоске вернул HTML, значит линия не внутри карточек,
+   а на уровне документа/фона/viewport. */
+
+html,
+body,
+#root {
+  background-color: #030814 !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  overflow-x: hidden !important;
+}
+
+html::before,
+html::after,
+body::before,
+body::after,
+#root::before,
+#root::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+/* Убираем документный фон только для Command Center, но без fixed-масок. */
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) {
+  background: #030814 !important;
+  background-image: none !important;
+}
+
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) #root,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .app-shell,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-shell,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .workspace {
+  background-color: #030814 !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+/* Важно: workspace может иметь radial-gradient, но не должен иметь линейную полосу. */
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .workspace {
+  background-image:
+    radial-gradient(circle at 50% 0%, rgba(20,130,255,.08), transparent 34%) !important;
+}
+
+/* Убираем document-level border/shadow у основных контейнеров. */
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .app-shell::before,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .app-shell::after,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-shell::before,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-shell::after,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .workspace::before,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .workspace::after,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-center-page::before,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-center-page::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Если полоска является разрывом фона под страницей — фиксируем высоту фона документа. */
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) {
+  min-height: 100vh !important;
+}
+
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) #root {
+  min-height: 100vh !important;
+}

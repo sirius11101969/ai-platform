@@ -3325,3 +3325,8 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 ## 20260622T032621Z AS6 V160 Pixel Strip Picker
 - Diagnostic only: pixel-level element picker for visible strip.
 - Readiness after: 99%
+
+## 20260622T035624Z AS6 V161 HTML-Level Strip Fix
+- Fixed: HTML-level strip/background layer on Command Center.
+- Removed failed strip fixes V151-V160 imports.
+- Readiness after: 99%
