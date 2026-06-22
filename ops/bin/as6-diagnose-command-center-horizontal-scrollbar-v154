@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-horizontal-scrollbar-v154"
+grep -q "as6-command-center-hide-horizontal-scrollbar-v154.css" frontend/src/main.jsx
+grep -q "AS6 V154" frontend/src/styles/as6-command-center-hide-horizontal-scrollbar-v154.css
+grep -q "::-webkit-scrollbar:horizontal" frontend/src/styles/as6-command-center-hide-horizontal-scrollbar-v154.css
+echo "AS6_COMMAND_CENTER_HORIZONTAL_SCROLLBAR_V154=PASS"

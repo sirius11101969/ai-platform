@@ -2228,3 +2228,7 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 ## 20260622T023653Z command-center-bottom-strip-final-v151
 - Diagnostic: ops/bin/as6-diagnose-command-center-bottom-strip-final-v151
 - Failure class: BOTTOM_STRIP_MASK_OVERRIDDEN_OR_NOT_COMMITTED
+
+## 20260622T024736Z command-center-horizontal-scrollbar-v154
+- Diagnostic: ops/bin/as6-diagnose-command-center-horizontal-scrollbar-v154
+- Failure class: VISIBLE_STRIP_IS_HORIZONTAL_SCROLLBAR_OR_OVERFLOW_LAYER

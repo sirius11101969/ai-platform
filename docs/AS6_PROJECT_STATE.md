@@ -3297,3 +3297,7 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 ## 20260622T023653Z AS6 V151 Remove Bottom Strip Final
 - Fixed: bottom neon strip on Command Center.
 - Readiness after: 99%
+
+## 20260622T024736Z AS6 V154 Hide Command Center Horizontal Scrollbar
+- Fixed: visible horizontal strip/scrollbar on Command Center.
+- Readiness after: 99%

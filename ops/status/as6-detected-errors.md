@@ -743,3 +743,8 @@ Governed and registered.
 - Class: BOTTOM_STRIP_MASK_OVERRIDDEN_OR_NOT_COMMITTED
 - Root cause: previous fix stopped before commit/push and was not final imported layer.
 - Control: V151 final imported bottom mask.
+
+## 20260622T024736Z detected-error
+- Class: VISIBLE_STRIP_IS_HORIZONTAL_SCROLLBAR_OR_OVERFLOW_LAYER
+- Root cause: strip behaves like horizontal scrollbar/overflow layer.
+- Control: V154 hides horizontal scrollbars and locks overflow-x.
