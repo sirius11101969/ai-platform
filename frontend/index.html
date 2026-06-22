@@ -19,6 +19,28 @@
       box-shadow: none !important;
     }
   </style>
+  <style id="as6-command-center-first-paint-neutralizer">
+    html, body, #root { background: #030814 !important; overflow-x: hidden !important; }
+    body:has(.command-center-page),
+    body:has(.command-center-page) #root,
+    body:has(.command-center-page) .app-shell,
+    body:has(.command-center-page) .workspace,
+    body:has(.command-center-page) .command-center-page {
+      background: #030814 !important;
+      background-image: none !important;
+      box-shadow: none !important;
+      border-top: 0 !important;
+      border-bottom: 0 !important;
+    }
+    body:has(.command-center-page) *::before,
+    body:has(.command-center-page) *::after {
+      background: none !important;
+      background-image: none !important;
+      box-shadow: none !important;
+      border-top: 0 !important;
+      border-bottom: 0 !important;
+    }
+  </style>
 </head>
 <body>
   <div id="root"></div>

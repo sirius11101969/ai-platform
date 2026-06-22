@@ -891,3 +891,8 @@ Governed and registered.
 - Class: REFERENCE_GUARD_IMPORTED_BEFORE_REACT_AND_CAUSED_FIRST_PAINT_LAYOUT_FLASH
 - Root cause: early reference guard changed body/layout during first paint.
 - Fix: V184 removed reference guard and temporary tracer import from main.jsx.
+
+## 20260622T112233Z detected-error
+- Class: UNKNOWN_FIRST_PAINT_VISUAL_FLASH_AFTER_GUARD_REMOVAL
+- Root cause: not yet isolated after V184; testing decorative background first-paint flash.
+- Control: V185 early neutralizer.

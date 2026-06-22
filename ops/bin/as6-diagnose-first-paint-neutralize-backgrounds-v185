@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=first-paint-neutralize-backgrounds-v185"
+grep -q "as6-command-center-first-paint-neutralizer" frontend/index.html
+echo "AS6_FIRST_PAINT_NEUTRALIZE_BACKGROUNDS_V185=PASS"

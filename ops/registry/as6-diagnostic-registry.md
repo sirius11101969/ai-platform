@@ -2369,3 +2369,8 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Failure class: REFERENCE_GUARD_IMPORTED_BEFORE_REACT_AND_CAUSED_FIRST_PAINT_LAYOUT_FLASH
 - Check: reference guard import removed from main.jsx.
 - Check: temporary V183 tracer import removed.
+
+## 20260622T112233Z first-paint-neutralize-backgrounds-v185
+- Diagnostic: ops/bin/as6-diagnose-first-paint-neutralize-backgrounds-v185
+- Failure class: UNKNOWN_FIRST_PAINT_VISUAL_FLASH_AFTER_GUARD_REMOVAL
+- Check: early first-paint neutralizer exists.

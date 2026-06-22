@@ -3446,3 +3446,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Root cause: frontend/src/main.jsx imported as6-command-center-reference-guard.js before React and global CSS.
 - Diagnostic: ops/bin/as6-diagnose-reference-guard-flash-v184
 - Readiness after: 99%
+
+## 20260622T112233Z AS6 V185 First Paint Background Neutralizer
+- Diagnostic/fix: neutralizes first-paint decorative backgrounds on /command-center.
+- Root cause status: testing background/radial-gradient first-paint flash.
+- Diagnostic: ops/bin/as6-diagnose-first-paint-neutralize-backgrounds-v185
+- Readiness after: 99%
