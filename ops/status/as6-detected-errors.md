@@ -683,3 +683,8 @@ Governed and registered.
 - Class: COPILOT_CARD_EXTRA_FRAME_AND_TOP_LINE
 - Root cause: Copilot card needed separate etalon normalization after V134.
 - Control: V135 Copilot etalon CSS and diagnostic.
+
+## 20260622T004822Z detected-error
+- Class: BOTTOM_NEON_LINE_FROM_OVERFLOW_OR_DECORATIVE_BORDER_LAYER
+- Root cause: horizontal visual artifact remained after V135.
+- Control: V136 overflow/pseudo/injected-root lock.

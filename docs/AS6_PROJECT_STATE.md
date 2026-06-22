@@ -3229,3 +3229,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Readiness after: 99%
 - Fixed: AI Copilot top line/frame/button/logo alignment.
 - Added diagnostic: ops/bin/as6-diagnose-command-center-copilot-etalon-v135
+
+## 20260622T004822Z AS6 V136 Remove Bottom Neon Line
+- Readiness before: 99%
+- Readiness after: 99%
+- Fixed: lower horizontal neon strip.
+- Added diagnostic: ops/bin/as6-diagnose-command-center-bottom-neon-line-v136

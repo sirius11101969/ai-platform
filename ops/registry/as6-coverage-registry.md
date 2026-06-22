@@ -1923,3 +1923,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers: AI Copilot soft frame
 - Covers: Copilot logo/button alignment
 - Covers: runtime patch absence
+
+## 20260622T004822Z coverage-bottom-neon-line-v136
+- Covers: horizontal overflow removal
+- Covers: bottom pseudo-element removal
+- Covers: injected roots no-footprint control
+- Covers: runtime patch absence

@@ -2168,3 +2168,8 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Diagnostic: ops/bin/as6-diagnose-command-center-copilot-etalon-v135
 - Failure class: COPILOT_CARD_EXTRA_FRAME_AND_TOP_LINE
 - Status: ENABLED
+
+## 20260622T004822Z command-center-bottom-neon-line-v136
+- Diagnostic: ops/bin/as6-diagnose-command-center-bottom-neon-line-v136
+- Failure class: BOTTOM_NEON_LINE_FROM_OVERFLOW_OR_DECORATIVE_BORDER_LAYER
+- Status: ENABLED

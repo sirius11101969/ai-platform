@@ -21,3 +21,7 @@
 ## 20260622T004134Z AEC copilot-etalon-v135
 - AI Copilot visual fixes must be source CSS only.
 - Runtime JS injection remains forbidden.
+
+## 20260622T004822Z AEC bottom-neon-line-v136
+- Bottom visual artifacts must be removed by source CSS only.
+- Runtime JS visual injection remains forbidden.

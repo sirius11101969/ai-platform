@@ -24,3 +24,8 @@
 - Runtime evidence: runtime/as6-v135-fix-copilot-etalon-20260622T004134Z
 - Source validation: runtime/as6-v135-fix-copilot-etalon-20260622T004134Z/validation-source.txt
 - Production after: runtime/as6-v135-fix-copilot-etalon-20260622T004134Z/production-after.html
+
+## 20260622T004822Z artifact-registration
+- Runtime evidence: runtime/as6-v136-remove-bottom-neon-line-20260622T004822Z
+- Source validation: runtime/as6-v136-remove-bottom-neon-line-20260622T004822Z/validation-source.txt
+- Production after: runtime/as6-v136-remove-bottom-neon-line-20260622T004822Z/production-after.html
