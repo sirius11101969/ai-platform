@@ -966,3 +966,8 @@ Governed and registered.
 - Class: COMMAND_CENTER_SIDEBAR_VISUAL_DRIFT_FROM_ETALON
 - Root cause: sidebar did not fully match provided etalon screenshot proportions, active item, favorite block, owner/help blocks.
 - Fix: V200 adds scoped sidebar etalon CSS.
+
+## 20260622T210438Z detected-error
+- Class: COMMAND_CENTER_SIDEBAR_SPACING_RADIUS_SCROLL_DRIFT_FROM_FINAL_ETALON
+- Root cause: sidebar had insufficient height/spacing, visible internal scroll and inconsistent rounded corners.
+- Fix: V201 applies final sidebar etalon CSS.

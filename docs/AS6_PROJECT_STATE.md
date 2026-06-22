@@ -3538,3 +3538,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Scope: /command-center sidebar only.
 - Diagnostic: ops/bin/as6-diagnose-command-center-sidebar-etalon-v200
 - Readiness after: 99%
+
+## 20260622T210438Z AS6 V201 Command Center Sidebar Final Etalon
+- Fixed: sidebar rounded corners, spacing and no-scroll layout according to final etalon image.
+- Scope: /command-center sidebar only.
+- Diagnostic: ops/bin/as6-diagnose-command-center-sidebar-final-etalon-v201
+- Readiness after: 99%

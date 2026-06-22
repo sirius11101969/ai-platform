@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-sidebar-final-etalon-v201"
+grep -q "as6-command-center-sidebar-final-etalon-v201.css" frontend/src/main.jsx
+grep -q "width: 300px" frontend/src/styles/as6-command-center-sidebar-final-etalon-v201.css
+grep -q "overflow: visible" frontend/src/styles/as6-command-center-sidebar-final-etalon-v201.css
+grep -q "border-radius: 0 26px 26px 0" frontend/src/styles/as6-command-center-sidebar-final-etalon-v201.css
+! grep -q "body:has" frontend/src/styles/as6-command-center-sidebar-final-etalon-v201.css
+echo "AS6_COMMAND_CENTER_SIDEBAR_FINAL_ETALON_V201=PASS"

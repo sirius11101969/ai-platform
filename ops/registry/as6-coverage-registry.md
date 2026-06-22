@@ -2063,3 +2063,8 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Coverage: /command-center sidebar visual consistency.
 - Files: frontend/src/styles/as6-command-center-sidebar-etalon-v200.css, frontend/src/main.jsx
 - Rule: sidebar changes must be scoped to command-shell and must not use fixed masks/overlays/body:has.
+
+## 20260622T210438Z COMMAND_CENTER_SIDEBAR_SPACING_RADIUS_SCROLL_DRIFT_FROM_FINAL_ETALON
+- Coverage: /command-center sidebar visual consistency.
+- Files: frontend/src/styles/as6-command-center-sidebar-final-etalon-v201.css, frontend/src/main.jsx
+- Rule: sidebar must not show internal scrollbar on desktop command-center layout.

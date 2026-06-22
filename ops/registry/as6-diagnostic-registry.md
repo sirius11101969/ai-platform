@@ -2469,3 +2469,11 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Check: sidebar width locked to 286px.
 - Check: active Command Center gradient matches etalon.
 - Check: no body:has in V200 CSS.
+
+## 20260622T210438Z command-center-sidebar-final-etalon-v201
+- Diagnostic: ops/bin/as6-diagnose-command-center-sidebar-final-etalon-v201
+- Failure class: COMMAND_CENTER_SIDEBAR_SPACING_RADIUS_SCROLL_DRIFT_FROM_FINAL_ETALON
+- Check: sidebar width locked to 300px.
+- Check: sidebar scroll removed.
+- Check: rounded corner radius applied.
+- Check: no body:has in V201 CSS.
