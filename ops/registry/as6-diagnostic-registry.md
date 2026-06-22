@@ -2260,3 +2260,7 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 ## 20260622T035624Z command-center-html-strip-v161
 - Diagnostic: ops/bin/as6-diagnose-command-center-html-strip-v161
 - Failure class: VISIBLE_STRIP_IS_HTML_LEVEL_BACKGROUND_OR_DOCUMENT_LAYER
+
+## 20260622T040410Z command-second-grid-strip-v162
+- Diagnostic: ops/bin/as6-diagnose-command-second-grid-strip-v162
+- Failure class: COMMAND_SECOND_GRID_DRAWS_HORIZONTAL_STRIP_OVER_CONTENT

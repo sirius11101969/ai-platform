@@ -3330,3 +3330,7 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Fixed: HTML-level strip/background layer on Command Center.
 - Removed failed strip fixes V151-V160 imports.
 - Readiness after: 99%
+
+## 20260622T040410Z AS6 V162 Remove Command Second Grid Strip
+- Fixed: horizontal strip source identified as SECTION.command-second-grid.
+- Readiness after: 99%

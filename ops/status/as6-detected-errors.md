@@ -783,3 +783,8 @@ Governed and registered.
 - Class: VISIBLE_STRIP_IS_HTML_LEVEL_BACKGROUND_OR_DOCUMENT_LAYER
 - Root cause: pixel picker identified HTML as element at strip coordinate.
 - Control: V161 resets html/body/root backgrounds and removes failed strip diagnostic/fix layers.
+
+## 20260622T040410Z detected-error
+- Class: COMMAND_SECOND_GRID_DRAWS_HORIZONTAL_STRIP_OVER_CONTENT
+- Root cause: pixel picker identified SECTION.command-second-grid at strip coordinate.
+- Control: V162 removes command-second-grid pseudo/border/shadow layers.
