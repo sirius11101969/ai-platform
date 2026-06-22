@@ -25,3 +25,5 @@ import "./styles/as6-command-center-real-strip-clean-v157.css";
 import "./as6-command-center-strip-diagnostics-v158.js";
 
 import "./styles/as6-command-center-pipeline-card-etalon-v159.css";
+
+import "./as6-command-center-pixel-strip-picker-v160.js";

@@ -773,3 +773,8 @@ Governed and registered.
 - Class: PIPELINE_CARD_BORDER_AND_INSET_SHADOW_DRAW_VISIBLE_STRIP
 - Root cause: browser computed-style diagnostic identified ARTICLE.command-card.pipeline-card.
 - Control: V159 removes pipeline-card border and inset shadow.
+
+## 20260622T032621Z detected-error
+- Class: STRIP_SOURCE_REQUIRES_PIXEL_LEVEL_DOM_PICKER
+- Root cause: computed-style scan found pipeline-card but not actual visible strip.
+- Control: V160 pixel-level browser picker.

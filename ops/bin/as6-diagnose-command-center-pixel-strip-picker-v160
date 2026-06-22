@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-pixel-strip-picker-v160"
+grep -q "as6-command-center-pixel-strip-picker-v160.js" frontend/src/main.jsx
+grep -q "AS6_PICK_STRIP" frontend/src/as6-command-center-pixel-strip-picker-v160.js
+echo "AS6_COMMAND_CENTER_PIXEL_STRIP_PICKER_V160=PASS"

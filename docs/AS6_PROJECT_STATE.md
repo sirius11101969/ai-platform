@@ -3321,3 +3321,7 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 ## 20260622T031753Z AS6 V159 Pipeline Card Strip Fix
 - Fixed: pipeline-card border/shadow visible strip.
 - Readiness after: 99%
+
+## 20260622T032621Z AS6 V160 Pixel Strip Picker
+- Diagnostic only: pixel-level element picker for visible strip.
+- Readiness after: 99%
