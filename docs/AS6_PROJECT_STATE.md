@@ -3532,3 +3532,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Cleaned: removed leftover V197B html-route runtime files/imports.
 - Diagnostic: ops/bin/as6-diagnose-command-center-stable-runtime-render-v199
 - Readiness after: 99%
+
+## 20260622T154747Z AS6 V200 Command Center Sidebar Etalon
+- Fixed: Command Center sidebar visual drift from provided etalon screenshot.
+- Scope: /command-center sidebar only.
+- Diagnostic: ops/bin/as6-diagnose-command-center-sidebar-etalon-v200
+- Readiness after: 99%

@@ -2461,3 +2461,11 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Check: no automatic Promise.allSettled hydration in CommandCenterPage.
 - Check: apiLoading starts stable false.
 - Check: V197B runtime route files removed.
+
+## 20260622T154747Z command-center-sidebar-etalon-v200
+- Diagnostic: ops/bin/as6-diagnose-command-center-sidebar-etalon-v200
+- Failure class: COMMAND_CENTER_SIDEBAR_VISUAL_DRIFT_FROM_ETALON
+- Check: sidebar etalon CSS imported.
+- Check: sidebar width locked to 286px.
+- Check: active Command Center gradient matches etalon.
+- Check: no body:has in V200 CSS.

@@ -2058,3 +2058,8 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Coverage: /command-center runtime render stability.
 - Files: frontend/src/pages/CommandCenterPage.jsx, frontend/src/main.jsx
 - Rule: Command Center must not replace visible dashboard state after first paint through automatic API hydration.
+
+## 20260622T154747Z COMMAND_CENTER_SIDEBAR_VISUAL_DRIFT_FROM_ETALON
+- Coverage: /command-center sidebar visual consistency.
+- Files: frontend/src/styles/as6-command-center-sidebar-etalon-v200.css, frontend/src/main.jsx
+- Rule: sidebar changes must be scoped to command-shell and must not use fixed masks/overlays/body:has.

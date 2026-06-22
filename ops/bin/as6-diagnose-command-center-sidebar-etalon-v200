@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-sidebar-etalon-v200"
+grep -q "as6-command-center-sidebar-etalon-v200.css" frontend/src/main.jsx
+grep -q "COMMAND_CENTER_SIDEBAR_VISUAL_DRIFT_FROM_ETALON" ops/status/as6-detected-errors.md 2>/dev/null || true
+grep -q "width: 286px" frontend/src/styles/as6-command-center-sidebar-etalon-v200.css
+grep -q "linear-gradient(100deg, #7c2dff" frontend/src/styles/as6-command-center-sidebar-etalon-v200.css
+! grep -q "body:has" frontend/src/styles/as6-command-center-sidebar-etalon-v200.css
+echo "AS6_COMMAND_CENTER_SIDEBAR_ETALON_V200=PASS"

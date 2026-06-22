@@ -961,3 +961,8 @@ Governed and registered.
 - Class: COMMAND_CENTER_FALLBACK_TO_LIVE_DATA_FULL_RERENDER
 - Root cause: CommandCenterPage automatic API hydration caused full visible rerender after initial fallback render.
 - Fix: V199 makes first render deterministic and removes automatic visible API replacement.
+
+## 20260622T154747Z detected-error
+- Class: COMMAND_CENTER_SIDEBAR_VISUAL_DRIFT_FROM_ETALON
+- Root cause: sidebar did not fully match provided etalon screenshot proportions, active item, favorite block, owner/help blocks.
+- Fix: V200 adds scoped sidebar etalon CSS.
