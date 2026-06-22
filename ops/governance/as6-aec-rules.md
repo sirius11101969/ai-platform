@@ -25,3 +25,7 @@
 ## 20260622T004822Z AEC bottom-neon-line-v136
 - Bottom visual artifacts must be removed by source CSS only.
 - Runtime JS visual injection remains forbidden.
+
+## 20260622T010732Z AEC overlay-sources-v141
+- Command Center must not mount global overlay/control-tower/mission layers.
+- Overlay source components must stay no-op unless explicitly re-enabled through diagnostics.

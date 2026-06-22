@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "AS6_DIAGNOSTIC=command-center-overlay-sources-v141"
+fail=0
+
+for file in \
+  frontend/src/components/AS6GlobalHealthBar.jsx \
+  frontend/src/components/AS6ExecutiveCommandDashboard.jsx \
+  frontend/src/components/AS6ExecutiveControlTowerCompletion.jsx \
+  frontend/src/components/AS6AICopilotRail.jsx \
+  frontend/src/components/AS6GlobalEventStream.jsx \
+  frontend/src/components/AS6GlobalCommandPalette.jsx \
+  frontend/src/components/AS6MissionControlLayoutEngine.jsx \
+  frontend/src/components/AS6AutonomousOperationsTimeline.jsx
+do
+  if [ -f "$file" ]; then
+    if grep -q "return null" "$file" && ! grep -qE "createRoot|document.createElement|appendChild|portal|as6-.*-root|position: fixed" "$file"; then
+      echo "PASS disabled-overlay-source $file"
+    else
+      echo "FAIL active-overlay-source $file"
+      sed -n '1,120p' "$file"
+      fail=1
+    fi
+  fi
+done
+
+bad="$(grep -RInE "final-runtime-style-v127|hard-fix-v128|reference-polish-v123c|arrow-fix-v126|createElement\(\"style\"\)|appendChild\(style\)|style\.textContent|insertAdjacentHTML" frontend/src frontend/index.html frontend/public 2>/dev/null || true)"
+if [ -n "$bad" ]; then
+  echo "FAIL forbidden-runtime-or-old-patch"
+  echo "$bad"
+  fail=1
+else
+  echo "PASS forbidden-runtime-or-old-patch"
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_COMMAND_CENTER_OVERLAY_SOURCES_V141=PASS"
+else
+  echo "AS6_COMMAND_CENTER_OVERLAY_SOURCES_V141=FAIL"
+  exit 1
+fi

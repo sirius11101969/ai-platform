@@ -2189,3 +2189,8 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Failure class: V139_PATCH_PATTERN_DID_NOT_MATCH_CURRENT_GUARD_FILE
 - Failure class: HIDDEN_AS6_OVERLAY_ROOTS_REMAIN_IN_DOM
 - Status: ENABLED
+
+## 20260622T010732Z command-center-overlay-sources-v141
+- Diagnostic: ops/bin/as6-diagnose-command-center-overlay-sources-v141
+- Failure class: OVERLAY_COMPONENTS_CREATE_VISIBLE_LAYERS_AFTER_GUARD_RUNS
+- Status: ENABLED

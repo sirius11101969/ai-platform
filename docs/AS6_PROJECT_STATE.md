@@ -3253,3 +3253,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Readiness after: 99%
 - Fixed: overlay/status roots are removed from DOM, not hidden.
 - Added diagnostic: ops/bin/as6-diagnose-command-center-overlay-roots-dom-v140
+
+## 20260622T010732Z AS6 V141 Disable Overlay Component Sources
+- Readiness before: 99%
+- Readiness after: 99%
+- Fixed: global Mission Control, Mission Context, Executive Command, Control Tower, Events, AI Copilot Rail overlay sources disabled.
+- Added diagnostic: ops/bin/as6-diagnose-command-center-overlay-sources-v141

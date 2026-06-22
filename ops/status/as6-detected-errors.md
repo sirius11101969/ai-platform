@@ -703,3 +703,8 @@ Governed and registered.
 - Class: V139_PATCH_PATTERN_DID_NOT_MATCH_CURRENT_GUARD_FILE
 - Root cause: perl replacement did not match current guard source.
 - Control: V140 full guard rewrite.
+
+## 20260622T010732Z detected-error
+- Class: OVERLAY_COMPONENTS_CREATE_VISIBLE_LAYERS_AFTER_GUARD_RUNS
+- Root cause: overlay components recreated layers after guard cleanup.
+- Control: V141 source modules converted to no-op.
