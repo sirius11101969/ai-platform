@@ -881,3 +881,8 @@ Governed and registered.
 - Class: GLOBAL_STAT_CARD_AFTER_GLOW_FLASHES_BEFORE_COMMAND_CENTER_FINAL_CSS
 - Root cause: global .stat-card::after glow in frontend/src/styles.css rendered during first paint.
 - Fix: V181 removed global stat-card pseudo glow source.
+
+## 20260622T102917Z detected-error
+- Class: COMMAND_CENTER_ROUTE_LOADING_FALLBACK_FLASH_BEFORE_PAGE_CSS_SETTLES
+- Root cause: generic Suspense fallback could flash before Command Center visual CSS settled.
+- Fix: V182 disables visible fallback only for /command-center.

@@ -2006,3 +2006,8 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Coverage: global styles pseudo-element flash prevention.
 - Files: frontend/src/styles.css
 - Rule: shared global stat cards must not use decorative ::after glows that can flash on unrelated pages.
+
+## 20260622T102917Z COMMAND_CENTER_ROUTE_LOADING_FALLBACK_FLASH_BEFORE_PAGE_CSS_SETTLES
+- Coverage: route-level first paint flash prevention.
+- Files: frontend/src/App.jsx
+- Rule: Command Center must not render generic loading shell before its scoped visual CSS.

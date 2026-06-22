@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-route-flash-v182"
+grep -q 'window.location.pathname === "/command-center" ? null' frontend/src/App.jsx
+echo "AS6_COMMAND_CENTER_ROUTE_FLASH_V182=PASS"

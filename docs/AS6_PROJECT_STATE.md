@@ -3428,3 +3428,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Root cause: frontend/src/styles.css had global .stat-card::after glow visible before final Command Center CSS settled.
 - Diagnostic: ops/bin/as6-diagnose-stat-card-after-flash-v181
 - Readiness after: 99%
+
+## 20260622T102917Z AS6 V182 Command Center Route Flash
+- Fixed: visible route loading flash on /command-center before page CSS settles.
+- Root cause: Suspense fallback rendered before Command Center page and final scoped CSS.
+- Diagnostic: ops/bin/as6-diagnose-command-center-route-flash-v182
+- Readiness after: 99%

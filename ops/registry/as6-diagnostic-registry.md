@@ -2353,3 +2353,8 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Diagnostic: ops/bin/as6-diagnose-stat-card-after-flash-v181
 - Failure class: GLOBAL_STAT_CARD_AFTER_GLOW_FLASHES_BEFORE_COMMAND_CENTER_FINAL_CSS
 - Check: no .stat-card::after/.violet::after/.pink::after glow in global styles.css.
+
+## 20260622T102917Z command-center-route-flash-v182
+- Diagnostic: ops/bin/as6-diagnose-command-center-route-flash-v182
+- Failure class: COMMAND_CENTER_ROUTE_LOADING_FALLBACK_FLASH_BEFORE_PAGE_CSS_SETTLES
+- Check: /command-center Suspense fallback is disabled.
