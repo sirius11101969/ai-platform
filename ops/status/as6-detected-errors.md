@@ -823,3 +823,8 @@ Governed and registered.
 - Class: V149_FIXED_BODY_AFTER_MASK_STILL_DRAWING_VISIBLE_STRIP
 - Root cause: V149 kept fixed body::after bottom mask after strip patch purge.
 - Control: V170B removes exact fixed mask and validates no z-index 2147483647 remains.
+
+## 20260622T053239Z detected-error
+- Class: V169_AND_BASE_THEME_STILL_DRAW_REAL_CARD_HELP_BORDERS
+- Root cause: remaining line is real top/bottom border of second-row cards and sidebar help/profile blocks.
+- Control: V171 removes source top/bottom borders without fixed masks.

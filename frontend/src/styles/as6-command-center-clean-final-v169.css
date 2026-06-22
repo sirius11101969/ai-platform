@@ -100,3 +100,45 @@ body,
   border-bottom: 0 !important;
   box-shadow: none !important;
 }
+
+/* AS6 V171: remove real remaining source edge line. No masks. */
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid,
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid > .command-card,
+.command-center-page[data-command-center-visual="premium-as6"] .employee-performance,
+.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics,
+.command-center-page[data-command-center-visual="premium-as6"] .month-goals,
+.command-center-page[data-command-center-visual="premium-as6"] .command-card-head,
+.command-sidebar .command-help-card,
+.command-sidebar .command-profile-card,
+.command-sidebar .command-sidebar-bottom {
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid > .command-card {
+  border-left: 1px solid rgba(55,104,154,.16) !important;
+  border-right: 1px solid rgba(55,104,154,.16) !important;
+}
+
+.command-sidebar .command-help-card,
+.command-sidebar .command-profile-card {
+  border-left: 1px solid rgba(56,189,248,.13) !important;
+  border-right: 1px solid rgba(56,189,248,.13) !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid::before,
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid::after,
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid > .command-card::before,
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid > .command-card::after,
+.command-sidebar .command-help-card::before,
+.command-sidebar .command-help-card::after,
+.command-sidebar .command-profile-card::before,
+.command-sidebar .command-profile-card::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}

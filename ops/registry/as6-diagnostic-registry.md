@@ -2296,3 +2296,7 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 ## 20260622T052516Z remove-v149-fixed-mask-v170b
 - Diagnostic: ops/bin/as6-diagnose-remove-v149-fixed-mask-v170b
 - Failure class: V149_FIXED_BODY_AFTER_MASK_STILL_DRAWING_VISIBLE_STRIP
+
+## 20260622T053239Z source-edge-line-v171
+- Diagnostic: ops/bin/as6-diagnose-source-edge-line-v171
+- Failure class: V169_AND_BASE_THEME_STILL_DRAW_REAL_CARD_HELP_BORDERS

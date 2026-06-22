@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=source-edge-line-v171"
+grep -q "AS6 V171" frontend/src/styles/as6-command-center-clean-final-v169.css
+grep -q "command-help-card" frontend/src/styles/as6-command-center-clean-final-v169.css
+grep -q "border-top: 0" frontend/src/styles/as6-command-center-clean-final-v169.css
+echo "AS6_SOURCE_EDGE_LINE_V171=PASS"

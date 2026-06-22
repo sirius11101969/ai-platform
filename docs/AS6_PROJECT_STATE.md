@@ -3367,3 +3367,7 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 ## 20260622T052516Z AS6 V170B Remove V149 Fixed Mask
 - Fixed: obsolete fixed body::after mask removed from V149.
 - Readiness after: 99%
+
+## 20260622T053239Z AS6 V171 Remove Source Edge Line
+- Fixed: real source edge line from second-row cards and sidebar help/profile card borders.
+- Readiness after: 99%
