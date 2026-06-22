@@ -2300,3 +2300,7 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 ## 20260622T053239Z source-edge-line-v171
 - Diagnostic: ops/bin/as6-diagnose-source-edge-line-v171
 - Failure class: V169_AND_BASE_THEME_STILL_DRAW_REAL_CARD_HELP_BORDERS
+
+## 20260622T053950Z real-progress-strip-v172
+- Diagnostic: ops/bin/as6-diagnose-real-progress-strip-v172
+- Failure class: REAL_PROGRESS_AND_CHART_LINES_LOOK_LIKE_PAGE_STRIP

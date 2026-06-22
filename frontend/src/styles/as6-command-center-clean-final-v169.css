@@ -142,3 +142,55 @@ body,
   border: 0 !important;
   box-shadow: none !important;
 }
+
+/* AS6 V172: remove real progress/chart horizontal strip. No overlay masks. */
+
+/* AI employee progress tracks */
+.command-center-page[data-command-center-visual="premium-as6"] .agent-progress {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .agent-progress i {
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+/* Revenue chart line that visually continues the strip */
+.command-center-page[data-command-center-visual="premium-as6"] .mock-chart svg,
+.command-center-page[data-command-center-visual="premium-as6"] .mock-chart polyline {
+  filter: none !important;
+  box-shadow: none !important;
+}
+
+/* Month goals row separators */
+.command-center-page[data-command-center-visual="premium-as6"] .month-goals dl div,
+.command-center-page[data-command-center-visual="premium-as6"] .month-goals dl,
+.command-center-page[data-command-center-visual="premium-as6"] .month-goals dd {
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Sidebar help/profile bottom edge */
+.command-sidebar .command-help-card,
+.command-sidebar .command-profile-card,
+.command-sidebar .command-sidebar-bottom {
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Final safety: no long pseudo-line on these real blocks */
+.command-center-page[data-command-center-visual="premium-as6"] .agent-progress::before,
+.command-center-page[data-command-center-visual="premium-as6"] .agent-progress::after,
+.command-center-page[data-command-center-visual="premium-as6"] .mock-chart::before,
+.command-center-page[data-command-center-visual="premium-as6"] .mock-chart::after,
+.command-center-page[data-command-center-visual="premium-as6"] .month-goals::before,
+.command-center-page[data-command-center-visual="premium-as6"] .month-goals::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}

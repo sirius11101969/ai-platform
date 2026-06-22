@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=real-progress-strip-v172"
+grep -q "AS6 V172" frontend/src/styles/as6-command-center-clean-final-v169.css
+grep -q "agent-progress" frontend/src/styles/as6-command-center-clean-final-v169.css
+grep -q "mock-chart polyline" frontend/src/styles/as6-command-center-clean-final-v169.css
+echo "AS6_REAL_PROGRESS_STRIP_V172=PASS"

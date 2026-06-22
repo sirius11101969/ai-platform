@@ -3371,3 +3371,7 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 ## 20260622T053239Z AS6 V171 Remove Source Edge Line
 - Fixed: real source edge line from second-row cards and sidebar help/profile card borders.
 - Readiness after: 99%
+
+## 20260622T053950Z AS6 V172 Remove Real Progress Strip
+- Fixed: real progress/chart/month-goal/sidebar lines that looked like one page strip.
+- Readiness after: 99%

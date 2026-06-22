@@ -828,3 +828,8 @@ Governed and registered.
 - Class: V169_AND_BASE_THEME_STILL_DRAW_REAL_CARD_HELP_BORDERS
 - Root cause: remaining line is real top/bottom border of second-row cards and sidebar help/profile blocks.
 - Control: V171 removes source top/bottom borders without fixed masks.
+
+## 20260622T053950Z detected-error
+- Class: REAL_PROGRESS_AND_CHART_LINES_LOOK_LIKE_PAGE_STRIP
+- Root cause: remaining line was not one overlay; it was aligned real progress/chart/sidebar UI lines.
+- Control: V172 removes those source visual lines.
