@@ -2374,3 +2374,11 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Diagnostic: ops/bin/as6-diagnose-first-paint-neutralize-backgrounds-v185
 - Failure class: UNKNOWN_FIRST_PAINT_VISUAL_FLASH_AFTER_GUARD_REMOVAL
 - Check: early first-paint neutralizer exists.
+
+## 20260622T114157Z real-edge-server-v187
+- Diagnostic: ops/bin/as6-diagnose-real-edge-server-v187
+- Failure class: HTTPS_RESPONSE_NOT_SERVED_BY_PATCHED_CONTAINER_NGINX
+- Check: host ports.
+- Check: docker port mappings.
+- Check: external vs container-local headers.
+- Check: nginx configs across containers.

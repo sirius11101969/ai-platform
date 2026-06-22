@@ -3452,3 +3452,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Root cause status: testing background/radial-gradient first-paint flash.
 - Diagnostic: ops/bin/as6-diagnose-first-paint-neutralize-backgrounds-v185
 - Readiness after: 99%
+
+## 20260622T114157Z AS6 V187 Real Edge Server Diagnostics
+- Diagnostic only: find real server/reverse proxy serving https://www.as6.ru/command-center.
+- Root cause: V186/V186B changed ai-platform-nginx-1 but external HTTPS headers did not change.
+- Diagnostic: ops/bin/as6-diagnose-real-edge-server-v187
+- Readiness after: 99%

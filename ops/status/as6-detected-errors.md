@@ -896,3 +896,8 @@ Governed and registered.
 - Class: UNKNOWN_FIRST_PAINT_VISUAL_FLASH_AFTER_GUARD_REMOVAL
 - Root cause: not yet isolated after V184; testing decorative background first-paint flash.
 - Control: V185 early neutralizer.
+
+## 20260622T114157Z detected-error
+- Class: HTTPS_RESPONSE_NOT_SERVED_BY_PATCHED_CONTAINER_NGINX
+- Root cause: V186B runtime nginx policy did not affect external HTTPS response.
+- Next control: identify and patch actual edge server.

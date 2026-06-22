@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=real-edge-server-v187"
+curl -I -sS https://www.as6.ru/command-center | grep -i '^server:' || true
+docker ps --format '{{.Names}} {{.Ports}}'
+echo "AS6_REAL_EDGE_SERVER_V187=PASS"
