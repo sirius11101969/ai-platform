@@ -2080,3 +2080,10 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
   - AEC-SIDEBAR-001
   - AEC-SIDEBAR-002
   - AEC-SIDEBAR-003
+
+## 20260622T224402Z SIDEBAR_PATCH_TARGETED_WRONG_PARENT_SELECTOR_AND_OLD_IMPORTS_REMAINED
+- Coverage: /command-center real sidebar DOM selector.
+- Files:
+  - frontend/src/styles/as6-command-center-real-sidebar-force-v203.css
+  - frontend/src/components/AppShell.jsx
+  - frontend/src/main.jsx

@@ -981,3 +981,8 @@ Governed and registered.
 - Class: SIDEBAR_DATA_ATTRIBUTE_DRIFT
 - Root cause: AppShell used datacommand-sidebar instead of data-command-sidebar.
 - Fix: V202 corrects the data attribute.
+
+## 20260622T224402Z detected-error
+- Class: SIDEBAR_PATCH_TARGETED_WRONG_PARENT_SELECTOR_AND_OLD_IMPORTS_REMAINED
+- Root cause: sidebar remained unchanged because previous CSS did not force the actual visible aside.sidebar.command-sidebar and old imports remained.
+- Fix: V203 targets actual sidebar DOM and removes old sidebar patch imports.

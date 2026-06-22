@@ -2494,3 +2494,11 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
   - Radius: 0 26px 26px 0
   - No V200/V201 sidebar imports
   - Valid data-command-sidebar attribute
+
+## 20260622T224402Z command-center-real-sidebar-v203
+- Diagnostic: ops/bin/as6-diagnose-command-center-real-sidebar-v203
+- Failure class: SIDEBAR_PATCH_TARGETED_WRONG_PARENT_SELECTOR_AND_OLD_IMPORTS_REMAINED
+- Check: real selector aside.sidebar.command-sidebar targeted.
+- Check: app-shell grid forced to 320px through direct sidebar parent match.
+- Check: V200/V201 imports removed.
+- Check: data-command-sidebar attribute corrected.

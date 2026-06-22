@@ -3554,3 +3554,10 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Diagnostic: ops/bin/as6-diagnose-command-center-sidebar-source-v202
 - Runtime tracer: ops/runtime-tracers/as6-command-center-sidebar-runtime-tracer-v202.js
 - Readiness after: 99%
+
+## 20260622T224402Z AS6 V203 Real Sidebar Force Etalon
+- Fixed: sidebar etalon applied to real DOM selector aside.sidebar.command-sidebar.
+- Root cause: previous patches targeted parent selectors that did not control actual visible sidebar.
+- Removed: V200/V201 sidebar CSS imports.
+- Diagnostic: ops/bin/as6-diagnose-command-center-real-sidebar-v203
+- Readiness after: 99%
