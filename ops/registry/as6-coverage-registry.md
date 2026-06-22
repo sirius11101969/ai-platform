@@ -2016,3 +2016,8 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Coverage: Command Center first paint layout flash.
 - Files: frontend/src/main.jsx
 - Rule: runtime visual guards must not be imported before React/global CSS.
+
+## 20260622T115432Z BODY_HAS_COMMAND_CENTER_CSS_LAYERS_RECALCULATE_LAYOUT_AFTER_FIRST_PAINT
+- Coverage: Command Center first paint CSS stability.
+- Files: frontend/src/main.jsx
+- Rule: Command Center visual CSS must not depend on body:has(.command-center-page) for first paint corrections.

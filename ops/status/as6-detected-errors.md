@@ -901,3 +901,8 @@ Governed and registered.
 - Class: HTTPS_RESPONSE_NOT_SERVED_BY_PATCHED_CONTAINER_NGINX
 - Root cause: V186B runtime nginx policy did not affect external HTTPS response.
 - Next control: identify and patch actual edge server.
+
+## 20260622T115432Z detected-error
+- Class: BODY_HAS_COMMAND_CENTER_CSS_LAYERS_RECALCULATE_LAYOUT_AFTER_FIRST_PAINT
+- Root cause: v174b/v176 body:has CSS layers applied only after CommandCenterPage appeared in DOM.
+- Fix: V188 removed late body:has flash layers from main.jsx.

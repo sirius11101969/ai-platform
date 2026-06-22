@@ -2382,3 +2382,9 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Check: docker port mappings.
 - Check: external vs container-local headers.
 - Check: nginx configs across containers.
+
+## 20260622T115432Z body-has-flash-layers-v188
+- Diagnostic: ops/bin/as6-diagnose-body-has-flash-layers-v188
+- Failure class: BODY_HAS_COMMAND_CENTER_CSS_LAYERS_RECALCULATE_LAYOUT_AFTER_FIRST_PAINT
+- Check: v174b/v176 body:has CSS imports removed from main.jsx.
+- Check: obsolete reference guard runtime file removed.

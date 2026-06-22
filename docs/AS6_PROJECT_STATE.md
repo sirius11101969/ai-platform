@@ -3458,3 +3458,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Root cause: V186/V186B changed ai-platform-nginx-1 but external HTTPS headers did not change.
 - Diagnostic: ops/bin/as6-diagnose-real-edge-server-v187
 - Readiness after: 99%
+
+## 20260622T115432Z AS6 V188 Remove Body:has Flash Layers
+- Fixed: Command Center first paint flash caused by late body:has CSS recalculation.
+- Root cause: v174b/v176 CSS layers used body:has(.command-center-page), causing layout recalculation after React inserted CommandCenterPage.
+- Diagnostic: ops/bin/as6-diagnose-body-has-flash-layers-v188
+- Readiness after: 99%

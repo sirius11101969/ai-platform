@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=body-has-flash-layers-v188"
+! grep -qE 'as6-command-center-final-no-strips-v174b\.css|as6-command-center-no-horizontal-scrollbar-v176\.css|as6-command-center-reference-guard\.js' frontend/src/main.jsx
+! test -f frontend/src/as6-command-center-reference-guard.js
+echo "AS6_BODY_HAS_FLASH_LAYERS_V188=PASS"
