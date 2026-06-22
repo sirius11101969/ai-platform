@@ -838,3 +838,8 @@ Governed and registered.
 - Class: QUICK_ACTIONS_STICKY_BOTTOM_BAR_DRAWING_HORIZONTAL_STRIP
 - Root cause: .quick-actions used position: sticky; bottom: 8px; z-index: 20.
 - Control: V173 makes quick-actions static and removes its strip edges.
+
+## 20260622T064326Z detected-error
+- Class: MULTIPLE_ACCUMULATED_COMMAND_CENTER_STRIP_FIXES_AND_REAL_THEME_LINES
+- Root cause: many layered fixes plus real theme borders/shadows/SVG/progress/sticky sources.
+- Control: V174B purges old strip files and applies one scoped final no-strips stylesheet.

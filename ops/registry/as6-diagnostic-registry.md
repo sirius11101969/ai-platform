@@ -2308,3 +2308,7 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 ## 20260622T061254Z sticky-quick-actions-strip-v173
 - Diagnostic: ops/bin/as6-diagnose-sticky-quick-actions-strip-v173
 - Failure class: QUICK_ACTIONS_STICKY_BOTTOM_BAR_DRAWING_HORIZONTAL_STRIP
+
+## 20260622T064326Z command-center-no-strips-v174b
+- Diagnostic: ops/bin/as6-diagnose-command-center-no-strips-v174b
+- Failure class: MULTIPLE_ACCUMULATED_COMMAND_CENTER_STRIP_FIXES_AND_REAL_THEME_LINES

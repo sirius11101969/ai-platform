@@ -3379,3 +3379,8 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 ## 20260622T061254Z AS6 V173 Remove Sticky Quick Actions Strip
 - Fixed: sticky quick-actions bottom bar was drawing horizontal strip over Command Center.
 - Readiness after: 99%
+
+## 20260622T064326Z AS6 V174B Professional No Strips Fix
+- Fixed: removed accumulated strip fixes and all command-center horizontal line sources.
+- Scope: /command-center only.
+- Readiness after: 99%

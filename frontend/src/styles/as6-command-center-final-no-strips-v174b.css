@@ -1,0 +1,132 @@
+/* AS6 V174B professional final Command Center no-strips fix.
+   Scope: only /command-center premium page.
+   No fixed masks. No runtime JS. No overlay layers. */
+
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) {
+  background: #030814 !important;
+  overflow-x: hidden !important;
+}
+
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) *,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) *::before,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) *::after {
+  box-sizing: border-box !important;
+}
+
+/* Убираем все горизонтальные источники: top/bottom border, inset shadows, glow shadows */
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-shell,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .workspace,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-center-page,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-sidebar,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-sidebar *,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-main-grid,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-core,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-top-grid,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-second-grid,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-right-rail,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-card,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-kpi,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .quick-actions,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .quick-actions-primary,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-recommendations,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-help-card,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-profile-card,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-card-head,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .event-row,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .next-action,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .expected-effect,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .activity-row {
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+/* Сохраняем аккуратные боковые границы карточек, без горизонтальных полос */
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-card,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-kpi,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-recommendations,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .quick-actions-primary a,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-help-card,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-profile-card {
+  border-left: 1px solid rgba(56,189,248,.10) !important;
+  border-right: 1px solid rgba(56,189,248,.10) !important;
+}
+
+/* Удаляем все псевдолинии, которые рисуют полосы */
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .workspace::before,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .workspace::after,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-center-page::before,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-center-page::after,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-shell::before,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-shell::after,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-sidebar::before,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-sidebar::after,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-sidebar *::before,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-sidebar *::after,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-main-grid::before,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-main-grid::after,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-top-grid::before,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-top-grid::after,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-second-grid::before,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-second-grid::after,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-card::before,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-card::after,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-kpi::before,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-kpi::after,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .quick-actions::before,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .quick-actions::after,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .quick-actions-primary::before,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .quick-actions-primary::after {
+  display: none !important;
+  content: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: none !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Убираем SVG/progress линии, которые визуально выглядят как длинная полоса */
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) svg line,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) svg polyline,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) svg path {
+  stroke: transparent !important;
+  filter: none !important;
+}
+
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .goal-progress,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .goal-progress span,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .agent-progress,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .agent-progress i,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .kpi-spark,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .mock-chart svg,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .mock-chart polyline {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+/* Отключаем sticky/floating элементы */
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .quick-actions,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .quick-actions-primary,
+body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-right-rail {
+  position: static !important;
+  top: auto !important;
+  bottom: auto !important;
+  z-index: auto !important;
+}
+
+/* Убираем любые старые fixed-маски/слои, если они остались */
+body:has(.command-center-page[data-command-center-visual="premium-as6"])::before,
+body:has(.command-center-page[data-command-center-visual="premium-as6"])::after,
+#root::before,
+#root::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}

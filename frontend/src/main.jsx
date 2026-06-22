@@ -32,4 +32,5 @@ import "./styles/as6-command-center-copilot-etalon-v150.css";
 
 
 
-import "./styles/as6-command-center-clean-final-v169.css";
+
+import "./styles/as6-command-center-final-no-strips-v174b.css";

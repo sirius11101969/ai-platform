@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-no-strips-v174b"
+grep -q "AS6 V174B professional final" frontend/src/styles/as6-command-center-final-no-strips-v174b.css
+grep -q "stroke: transparent" frontend/src/styles/as6-command-center-final-no-strips-v174b.css
+grep -q "position: static" frontend/src/styles/as6-command-center-final-no-strips-v174b.css
+! grep -qE "as6-command-center-(bottom|mid|over|hide|strip|parent|real|second|clip|html|pipeline|clean-final|source-edge|progress).*v1[4-7][0-9]|strip-crossing|pixel-strip|strip-diagnostics" frontend/src/main.jsx
+echo "AS6_COMMAND_CENTER_NO_STRIPS_V174B=PASS"
