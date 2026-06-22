@@ -2421,3 +2421,9 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Failure class: BOOTLOCK_UNLOCKED_IN_APPSHELL_BEFORE_COMMAND_CENTER_PAGE_MOUNTED
 - Check: CommandCenterPage controls bootlock unlock.
 - Check: AppShell no longer unlocks after 450ms.
+
+## 20260622T130549Z purge-first-paint-layers-v194
+- Diagnostic: ops/bin/as6-diagnose-purge-first-paint-layers-v194
+- Failure class: ACCUMULATED_INDEX_FIRST_PAINT_DIAGNOSTIC_LAYERS_CAUSE_COMMAND_CENTER_FLASH
+- Check: no temporary first-paint style/script blocks in index.html.
+- Check: no body:has(.command-center-page) in index.html.

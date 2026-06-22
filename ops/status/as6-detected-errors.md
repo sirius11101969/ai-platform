@@ -931,3 +931,8 @@ Governed and registered.
 - Class: BOOTLOCK_UNLOCKED_IN_APPSHELL_BEFORE_COMMAND_CENTER_PAGE_MOUNTED
 - Root cause: AppShell unlocked the page before CommandCenterPage mounted.
 - Fix: V193 moves unlock into CommandCenterPage after double requestAnimationFrame.
+
+## 20260622T130549Z detected-error
+- Class: ACCUMULATED_INDEX_FIRST_PAINT_DIAGNOSTIC_LAYERS_CAUSE_COMMAND_CENTER_FLASH
+- Root cause: temporary diagnostic first-paint layers accumulated in frontend/index.html.
+- Fix: V194 purged them and restored clean SPA shell.

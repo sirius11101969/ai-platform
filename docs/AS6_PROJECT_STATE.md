@@ -3494,3 +3494,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Root cause: /command-center became visible before the actual page completed first stable render.
 - Diagnostic: ops/bin/as6-diagnose-command-center-unlock-after-mount-v193
 - Readiness after: 99%
+
+## 20260622T130549Z AS6 V194 Purge First Paint Diagnostic Layers
+- Fixed: removed accumulated temporary first-paint diagnostic CSS/JS from frontend/index.html.
+- Root cause: V178/V185/V190/V191 diagnostic layers remained in index.html and applied only on /command-center.
+- Diagnostic: ops/bin/as6-diagnose-purge-first-paint-layers-v194
+- Readiness after: 99%

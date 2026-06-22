@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=purge-first-paint-layers-v194"
+! grep -qE 'as6-command-center-(early-no-strip-guard|first-paint-neutralizer|bootlock-v190|strong-bootlock-v191)|body:has\(\.command-center-page' frontend/index.html
+! grep -q 'as6-command-center-bootlock' frontend/src/pages/CommandCenterPage.jsx
+echo "AS6_PURGE_FIRST_PAINT_LAYERS_V194=PASS"
