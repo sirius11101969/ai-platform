@@ -3440,3 +3440,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Root cause status: unknown after V181/V182.
 - Diagnostic: ops/bin/as6-diagnose-command-center-first-paint-tracer-v183
 - Readiness after: 99%
+
+## 20260622T110801Z AS6 V184 Remove Reference Guard First Paint Flash
+- Fixed: Command Center flash caused by early reference guard import before React render.
+- Root cause: frontend/src/main.jsx imported as6-command-center-reference-guard.js before React and global CSS.
+- Diagnostic: ops/bin/as6-diagnose-reference-guard-flash-v184
+- Readiness after: 99%

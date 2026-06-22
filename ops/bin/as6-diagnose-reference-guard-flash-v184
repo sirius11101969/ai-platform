@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=reference-guard-flash-v184"
+! grep -q 'as6-command-center-reference-guard.js' frontend/src/main.jsx
+! grep -q 'as6-command-center-first-paint-tracer-v183.js' frontend/src/main.jsx
+echo "AS6_REFERENCE_GUARD_FLASH_V184=PASS"

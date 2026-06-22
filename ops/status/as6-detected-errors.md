@@ -886,3 +886,8 @@ Governed and registered.
 - Class: COMMAND_CENTER_ROUTE_LOADING_FALLBACK_FLASH_BEFORE_PAGE_CSS_SETTLES
 - Root cause: generic Suspense fallback could flash before Command Center visual CSS settled.
 - Fix: V182 disables visible fallback only for /command-center.
+
+## 20260622T110801Z detected-error
+- Class: REFERENCE_GUARD_IMPORTED_BEFORE_REACT_AND_CAUSED_FIRST_PAINT_LAYOUT_FLASH
+- Root cause: early reference guard changed body/layout during first paint.
+- Fix: V184 removed reference guard and temporary tracer import from main.jsx.

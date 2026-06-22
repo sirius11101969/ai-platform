@@ -2011,3 +2011,8 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Coverage: route-level first paint flash prevention.
 - Files: frontend/src/App.jsx
 - Rule: Command Center must not render generic loading shell before its scoped visual CSS.
+
+## 20260622T110801Z REFERENCE_GUARD_IMPORTED_BEFORE_REACT_AND_CAUSED_FIRST_PAINT_LAYOUT_FLASH
+- Coverage: Command Center first paint layout flash.
+- Files: frontend/src/main.jsx
+- Rule: runtime visual guards must not be imported before React/global CSS.

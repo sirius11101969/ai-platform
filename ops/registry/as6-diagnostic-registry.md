@@ -2363,3 +2363,9 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Diagnostic: ops/bin/as6-diagnose-command-center-first-paint-tracer-v183
 - Failure class: FIRST_PAINT_FLASH_SOURCE_UNKNOWN_AFTER_CSS_AND_ROUTE_FIXES
 - Check: DOM/CSS samples at immediate, raf1, 300ms, 800ms, 1500ms, 2500ms, 4000ms.
+
+## 20260622T110801Z reference-guard-flash-v184
+- Diagnostic: ops/bin/as6-diagnose-reference-guard-flash-v184
+- Failure class: REFERENCE_GUARD_IMPORTED_BEFORE_REACT_AND_CAUSED_FIRST_PAINT_LAYOUT_FLASH
+- Check: reference guard import removed from main.jsx.
+- Check: temporary V183 tracer import removed.

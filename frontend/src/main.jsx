@@ -1,4 +1,3 @@
-import "./as6-command-center-reference-guard.js";
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
@@ -40,4 +39,3 @@ import "./styles/as6-command-center-revenue-chart-clip-v175b.css";
 
 import "./styles/as6-command-center-no-horizontal-scrollbar-v176.css";
 
-import "./as6-command-center-first-paint-tracer-v183.js";
