@@ -2031,3 +2031,7 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Coverage: /command-center first paint stability.
 - Files: frontend/index.html, frontend/src/components/AppShell.jsx
 - Rule: Command Center must not be visible before stable route layout render.
+
+## 20260622T123520Z COMMAND_CENTER_FLASH_NOT_INSIDE_ROOT_OR_ROOT_BOOTLOCK_TOO_WEAK
+- Coverage: full-page first paint lock for /command-center.
+- Files: frontend/index.html, frontend/src/components/AppShell.jsx

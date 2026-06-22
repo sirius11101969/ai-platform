@@ -2401,3 +2401,10 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Failure class: COMMAND_CENTER_FIRST_PAINT_FLASH_BEFORE_REACT_LAYOUT_STABLE
 - Check: early HTML bootlock exists.
 - Check: AppShell unlocks after stable double requestAnimationFrame.
+
+## 20260622T123520Z command-center-strong-bootlock-v191
+- Diagnostic: ops/bin/as6-diagnose-command-center-strong-bootlock-v191
+- Failure class: COMMAND_CENTER_FLASH_NOT_INSIDE_ROOT_OR_ROOT_BOOTLOCK_TOO_WEAK
+- Check: strong HTML bootlock exists.
+- Check: body children hidden during bootlock.
+- Check: production HTML contains V191 bootlock.

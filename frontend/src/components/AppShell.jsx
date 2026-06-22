@@ -120,8 +120,9 @@ export function ProtectedLayout({ children }) {
   useEffect(() => {
     if (!isCommandCenter) return;
     const unlock = () => document.documentElement.classList.remove("as6-command-center-bootlock");
+    const timeout = window.setTimeout(unlock, 450);
     const frame = window.requestAnimationFrame(() => window.requestAnimationFrame(unlock));
-    return () => window.cancelAnimationFrame(frame);
+    return () => { window.clearTimeout(timeout); window.cancelAnimationFrame(frame); };
   }, [isCommandCenter]);
 
   return (

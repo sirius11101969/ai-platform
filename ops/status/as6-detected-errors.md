@@ -916,3 +916,8 @@ Governed and registered.
 - Class: COMMAND_CENTER_FIRST_PAINT_FLASH_BEFORE_REACT_LAYOUT_STABLE
 - Root cause: first-paint visual flash remained after source CSS, route, cache, guard, and body:has layers were removed.
 - Fix: V190 bootlock hides /command-center root until stable AppShell render.
+
+## 20260622T123520Z detected-error
+- Class: COMMAND_CENTER_FLASH_NOT_INSIDE_ROOT_OR_ROOT_BOOTLOCK_TOO_WEAK
+- Root cause: root-only bootlock did not suppress the observed first-paint flash.
+- Fix: V191 hides all body children and page pseudo-elements until stable render.

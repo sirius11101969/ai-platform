@@ -41,11 +41,31 @@
       border-bottom: 0 !important;
     }
   </style>
-  <style id="as6-command-center-bootlock-v190">
-    html.as6-command-center-bootlock, html.as6-command-center-bootlock body { background: #030814 !important; }
-    html.as6-command-center-bootlock #root { visibility: hidden !important; opacity: 0 !important; }
+  <style id="as6-command-center-strong-bootlock-v191">
+    html.as6-command-center-bootlock, html.as6-command-center-bootlock body {
+      margin: 0 !important;
+      background: #030814 !important;
+      overflow: hidden !important;
+    }
+    html.as6-command-center-bootlock body > *,
+    html.as6-command-center-bootlock #root,
+    html.as6-command-center-bootlock [id^="as6-"] {
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+    html.as6-command-center-bootlock::before,
+    html.as6-command-center-bootlock::after,
+    html.as6-command-center-bootlock body::before,
+    html.as6-command-center-bootlock body::after {
+      display: none !important;
+      content: none !important;
+      background: none !important;
+      border: 0 !important;
+      box-shadow: none !important;
+    }
   </style>
-  <script id="as6-command-center-bootlock-v190">
+  <script id="as6-command-center-strong-bootlock-v191">
     if (location.pathname === "/command-center") { document.documentElement.classList.add("as6-command-center-bootlock"); }
   </script>
 </head>
