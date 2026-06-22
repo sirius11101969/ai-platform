@@ -876,3 +876,8 @@ Governed and registered.
 - Class: STAT_METRIC_PSEUDO_RULE_STILL_PRESENT_IN_COMPILED_CSS_OR_IMPORTED_SHARED_CSS
 - Root cause: first React paint could still render shared wildcard pseudo-element before final visual state settled.
 - Fix: V179 purged remaining shared metric/stat pseudo source and validates compiled CSS.
+
+## 20260622T102016Z detected-error
+- Class: GLOBAL_STAT_CARD_AFTER_GLOW_FLASHES_BEFORE_COMMAND_CENTER_FINAL_CSS
+- Root cause: global .stat-card::after glow in frontend/src/styles.css rendered during first paint.
+- Fix: V181 removed global stat-card pseudo glow source.

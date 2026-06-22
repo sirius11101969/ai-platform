@@ -3422,3 +3422,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Root cause status: unconfirmed.
 - Diagnostic: ops/bin/as6-diagnose-command-center-cache-flash-v180b
 - Readiness after: 99%
+
+## 20260622T102016Z AS6 V181 Remove Stat Card Flash Source
+- Fixed: Command Center top flash from global .stat-card::after glow.
+- Root cause: frontend/src/styles.css had global .stat-card::after glow visible before final Command Center CSS settled.
+- Diagnostic: ops/bin/as6-diagnose-stat-card-after-flash-v181
+- Readiness after: 99%

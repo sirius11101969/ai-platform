@@ -194,9 +194,6 @@ button { font: inherit; }
 .two-columns { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 .align-start { align-items: start; }
 .stat-card { position: relative; overflow: hidden; min-height: 160px; }
-.stat-card::after { content: ""; position: absolute; inset: auto -20% -45% 30%; height: 130px; border-radius: 999px; filter: blur(34px); background: rgba(0,216,255,.42); }
-.stat-card.violet::after { background: rgba(124,92,255,.42); }
-.stat-card.pink::after { background: rgba(255,86,205,.36); }
 .stat-card span, .stat-card p { color: #aebde8; }
 .stat-card strong { display: block; margin: 16px 0 6px; font-size: clamp(34px, 5vw, 54px); letter-spacing: -.07em; }
 .stat-card p { margin: 0; }

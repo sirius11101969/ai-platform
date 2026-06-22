@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=stat-card-after-flash-v181"
+! grep -qE '\.stat-card(::after|\.violet::after|\.pink::after)' frontend/src/styles.css
+echo "AS6_STAT_CARD_AFTER_FLASH_V181=PASS"

@@ -2348,3 +2348,8 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Check: production cache headers.
 - Check: production asset references.
 - Check: source flash candidates.
+
+## 20260622T102016Z stat-card-after-flash-v181
+- Diagnostic: ops/bin/as6-diagnose-stat-card-after-flash-v181
+- Failure class: GLOBAL_STAT_CARD_AFTER_GLOW_FLASHES_BEFORE_COMMAND_CENTER_FINAL_CSS
+- Check: no .stat-card::after/.violet::after/.pink::after glow in global styles.css.

@@ -2001,3 +2001,8 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Coverage: source and compiled CSS pseudo-element validation.
 - Files: frontend/src/styles/*.css, frontend/src/theme/*.css, frontend/dist/assets/*.css
 - Rule: no unscoped [class*=stat|metric]::before/::after in shared CSS.
+
+## 20260622T102016Z GLOBAL_STAT_CARD_AFTER_GLOW_FLASHES_BEFORE_COMMAND_CENTER_FINAL_CSS
+- Coverage: global styles pseudo-element flash prevention.
+- Files: frontend/src/styles.css
+- Rule: shared global stat cards must not use decorative ::after glows that can flash on unrelated pages.
