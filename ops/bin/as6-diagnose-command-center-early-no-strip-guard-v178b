@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-early-no-strip-guard-v178b"
+grep -q "as6-command-center-early-no-strip-guard" frontend/index.html
+grep -q '\[class\*="stat"\]::after' frontend/index.html
+grep -q '#root::after' frontend/index.html
+echo "AS6_COMMAND_CENTER_EARLY_NO_STRIP_GUARD_V178B=PASS"

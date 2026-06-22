@@ -866,3 +866,8 @@ Governed and registered.
 - Class: REVENUE_DYNAMICS_CHART_VISUAL_ETALON_DRIFT
 - Root cause: Revenue Dynamics chart did not match etalon.
 - Fix: V177C finalized etalon chart CSS.
+
+## 20260622T093056Z detected-error
+- Class: COMMAND_CENTER_STRIP_FLASH_BEFORE_FINAL_CSS_LOADS
+- Root cause: old pseudo-element visual rules could paint before final scoped CSS loaded.
+- Fix: V178B added early index.html no-strip guard before app render.

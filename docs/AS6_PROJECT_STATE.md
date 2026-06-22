@@ -3403,3 +3403,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Fixed: Revenue Dynamics chart visual mismatch.
 - Diagnostic: ops/bin/as6-diagnose-revenue-dynamics-etalon-v177c
 - Readiness after: 99%
+
+## 20260622T093056Z AS6 V178B Early No Strip Guard
+- Fixed: first-paint Command Center strip flash before final CSS load.
+- Root cause: V178 perl delimiter failed on #root and final CSS applied after initial paint.
+- Diagnostic: ops/bin/as6-diagnose-command-center-early-no-strip-guard-v178b
+- Readiness after: 99%

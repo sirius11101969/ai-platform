@@ -2330,3 +2330,8 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 ## 20260622T091756Z revenue-dynamics-etalon-v177c
 - Diagnostic: ops/bin/as6-diagnose-revenue-dynamics-etalon-v177c
 - Failure class: REVENUE_DYNAMICS_CHART_VISUAL_ETALON_DRIFT
+
+## 20260622T093056Z command-center-early-no-strip-guard-v178b
+- Diagnostic: ops/bin/as6-diagnose-command-center-early-no-strip-guard-v178b
+- Failure class: COMMAND_CENTER_STRIP_FLASH_BEFORE_FINAL_CSS_LOADS
+- Check: early index.html guard exists.

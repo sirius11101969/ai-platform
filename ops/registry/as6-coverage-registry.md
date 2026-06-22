@@ -1991,3 +1991,8 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 ## 20260622T091756Z REVENUE_DYNAMICS_CHART_VISUAL_ETALON_DRIFT
 - Coverage: Command Center Revenue Dynamics visual etalon.
 - Files: frontend/src/theme/as6Theme.css
+
+## 20260622T093056Z COMMAND_CENTER_STRIP_FLASH_BEFORE_FINAL_CSS_LOADS
+- Coverage: first paint CSS guard.
+- Files: frontend/index.html
+- Rule: critical visual guards must exist before JS/CSS bundle paint.

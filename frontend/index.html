@@ -4,6 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI‑платформа продаж</title>
+  <style id="as6-command-center-early-no-strip-guard">
+    html, body, #root { background: #030814; overflow-x: hidden; }
+    body::before, body::after, #root::before, #root::after { display: none !important; content: none !important; }
+    [class*="stat"]::before, [class*="stat"]::after,
+    [class*="Stat"]::before, [class*="Stat"]::after,
+    [class*="metric"]::before, [class*="metric"]::after,
+    [class*="Metric"]::before, [class*="Metric"]::after {
+      display: none !important;
+      content: none !important;
+      height: 0 !important;
+      background: none !important;
+      border: 0 !important;
+      box-shadow: none !important;
+    }
+  </style>
 </head>
 <body>
   <div id="root"></div>
