@@ -911,3 +911,8 @@ Governed and registered.
 - Class: COMMAND_CENTER_FIRST_PAINT_STABILIZATION_DEPENDED_ON_CHILD_PAGE_CLASS
 - Root cause: earlier fixes depended on .command-center-page/body:has, which applies after child page appears.
 - Fix: V189 adds route-level AppShell data-route and stable first-paint CSS.
+
+## 20260622T122326Z detected-error
+- Class: COMMAND_CENTER_FIRST_PAINT_FLASH_BEFORE_REACT_LAYOUT_STABLE
+- Root cause: first-paint visual flash remained after source CSS, route, cache, guard, and body:has layers were removed.
+- Fix: V190 bootlock hides /command-center root until stable AppShell render.

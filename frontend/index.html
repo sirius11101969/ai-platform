@@ -41,6 +41,13 @@
       border-bottom: 0 !important;
     }
   </style>
+  <style id="as6-command-center-bootlock-v190">
+    html.as6-command-center-bootlock, html.as6-command-center-bootlock body { background: #030814 !important; }
+    html.as6-command-center-bootlock #root { visibility: hidden !important; opacity: 0 !important; }
+  </style>
+  <script id="as6-command-center-bootlock-v190">
+    if (location.pathname === "/command-center") { document.documentElement.classList.add("as6-command-center-bootlock"); }
+  </script>
 </head>
 <body>
   <div id="root"></div>

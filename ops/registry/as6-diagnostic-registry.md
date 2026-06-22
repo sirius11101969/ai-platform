@@ -2395,3 +2395,9 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Check: AppShell has data-route=command-center on first render.
 - Check: stable paint CSS uses route-level selector.
 - Check: no body:has in V189 CSS.
+
+## 20260622T122326Z command-center-bootlock-v190
+- Diagnostic: ops/bin/as6-diagnose-command-center-bootlock-v190
+- Failure class: COMMAND_CENTER_FIRST_PAINT_FLASH_BEFORE_REACT_LAYOUT_STABLE
+- Check: early HTML bootlock exists.
+- Check: AppShell unlocks after stable double requestAnimationFrame.

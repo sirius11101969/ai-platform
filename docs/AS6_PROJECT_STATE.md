@@ -3470,3 +3470,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Root cause: first paint CSS depended on child page class that appears after AppShell render.
 - Diagnostic: ops/bin/as6-diagnose-command-center-route-stable-paint-v189
 - Readiness after: 99%
+
+## 20260622T122326Z AS6 V190 Command Center Bootlock
+- Fixed: /command-center first paint flash before React layout becomes stable.
+- Root cause: visual flash persisted after CSS/cache/route cleanup, so first paint must be gated until stable AppShell render.
+- Diagnostic: ops/bin/as6-diagnose-command-center-bootlock-v190
+- Readiness after: 99%

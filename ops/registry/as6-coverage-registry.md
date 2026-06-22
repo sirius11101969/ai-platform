@@ -2026,3 +2026,8 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Coverage: route-level first paint visual stability.
 - Files: frontend/src/components/AppShell.jsx, frontend/src/styles/as6-command-center-route-stable-paint-v189.css
 - Rule: /command-center first paint stabilization must bind to AppShell route state, not child page existence.
+
+## 20260622T122326Z COMMAND_CENTER_FIRST_PAINT_FLASH_BEFORE_REACT_LAYOUT_STABLE
+- Coverage: /command-center first paint stability.
+- Files: frontend/index.html, frontend/src/components/AppShell.jsx
+- Rule: Command Center must not be visible before stable route layout render.

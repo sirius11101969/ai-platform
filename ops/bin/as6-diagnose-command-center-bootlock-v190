@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-bootlock-v190"
+grep -q "as6-command-center-bootlock-v190" frontend/index.html
+grep -q "as6-command-center-bootlock" frontend/src/components/AppShell.jsx
+grep -q "requestAnimationFrame" frontend/src/components/AppShell.jsx
+echo "AS6_COMMAND_CENTER_BOOTLOCK_V190=PASS"
