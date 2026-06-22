@@ -2264,3 +2264,7 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 ## 20260622T040410Z command-second-grid-strip-v162
 - Diagnostic: ops/bin/as6-diagnose-command-second-grid-strip-v162
 - Failure class: COMMAND_SECOND_GRID_DRAWS_HORIZONTAL_STRIP_OVER_CONTENT
+
+## 20260622T041954Z command-second-grid-strip-v163
+- Diagnostic: ops/bin/as6-diagnose-command-second-grid-strip-v163
+- Failure class: V162_LEFT_BORDER_TOP_ON_COMMAND_SECOND_GRID_CHILDREN

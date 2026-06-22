@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-second-grid-strip-v163"
+grep -q "as6-command-center-second-grid-strip-v163.css" frontend/src/main.jsx
+grep -q "border-top: 0" frontend/src/styles/as6-command-center-second-grid-strip-v163.css
+grep -q "command-second-grid > \\*" frontend/src/styles/as6-command-center-second-grid-strip-v163.css
+echo "AS6_COMMAND_SECOND_GRID_STRIP_V163=PASS"

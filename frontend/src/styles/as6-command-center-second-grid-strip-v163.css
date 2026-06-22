@@ -1,0 +1,53 @@
+/* AS6 V163: final remove horizontal line from command-second-grid children. Imported last. */
+
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid,
+.command-second-grid {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid::before,
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid::after,
+.command-second-grid::before,
+.command-second-grid::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Главное исправление: убираем линию, которую V162 оставил на дочерних карточках */
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid > *,
+.command-second-grid > * {
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+/* Убираем сквозные линии внутри нижнего ряда */
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid > *::before,
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid > *::after,
+.command-second-grid > *::before,
+.command-second-grid > *::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .employee-performance,
+.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics,
+.command-center-page[data-command-center-visual="premium-as6"] .month-goals,
+.employee-performance,
+.revenue-dynamics,
+.month-goals {
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+}

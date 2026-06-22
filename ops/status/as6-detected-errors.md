@@ -788,3 +788,8 @@ Governed and registered.
 - Class: COMMAND_SECOND_GRID_DRAWS_HORIZONTAL_STRIP_OVER_CONTENT
 - Root cause: pixel picker identified SECTION.command-second-grid at strip coordinate.
 - Control: V162 removes command-second-grid pseudo/border/shadow layers.
+
+## 20260622T041954Z detected-error
+- Class: V162_LEFT_BORDER_TOP_ON_COMMAND_SECOND_GRID_CHILDREN
+- Root cause: V162 accidentally preserved border-top/bottom on .command-second-grid children.
+- Control: V163 removes child borders.

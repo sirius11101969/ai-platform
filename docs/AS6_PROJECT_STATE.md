@@ -3334,3 +3334,7 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 ## 20260622T040410Z AS6 V162 Remove Command Second Grid Strip
 - Fixed: horizontal strip source identified as SECTION.command-second-grid.
 - Readiness after: 99%
+
+## 20260622T041954Z AS6 V163 Remove Second Grid Child Borders
+- Fixed: V162 child border-top/bottom line.
+- Readiness after: 99%
