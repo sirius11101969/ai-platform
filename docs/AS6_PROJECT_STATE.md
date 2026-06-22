@@ -3354,3 +3354,7 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 ## 20260622T050147Z AS6 V167 Final Second Row Header Strip
 - Fixed: remaining second-row header/control/chart strip.
 - Readiness after: 99%
+
+## 20260622T051205Z AS6 V168 Real Edge Line Fix
+- Fixed: real second-row top edge line and sidebar help bottom edge.
+- Readiness after: 99%

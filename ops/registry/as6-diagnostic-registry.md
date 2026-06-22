@@ -2284,3 +2284,7 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 ## 20260622T050147Z second-row-header-final-v167
 - Diagnostic: ops/bin/as6-diagnose-second-row-header-final-v167
 - Failure class: SECOND_ROW_HEADER_CONTROLS_OR_CHART_LAYER_STILL_DRAW_STRIP
+
+## 20260622T051205Z real-edge-line-v168
+- Diagnostic: ops/bin/as6-diagnose-real-edge-line-v168
+- Failure class: REAL_EDGE_LINE_AT_COMMAND_SECOND_GRID_TOP_AND_SIDEBAR_HELP_BOTTOM

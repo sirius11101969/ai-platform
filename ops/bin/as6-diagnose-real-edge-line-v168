@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=real-edge-line-v168"
+grep -q "as6-command-center-real-edge-line-v168.css" frontend/src/main.jsx
+grep -q "AS6 V168" frontend/src/styles/as6-command-center-real-edge-line-v168.css
+grep -q "command-second-grid::before" frontend/src/styles/as6-command-center-real-edge-line-v168.css
+echo "AS6_REAL_EDGE_LINE_V168=PASS"

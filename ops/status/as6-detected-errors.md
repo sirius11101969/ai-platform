@@ -808,3 +808,8 @@ Governed and registered.
 - Class: SECOND_ROW_HEADER_CONTROLS_OR_CHART_LAYER_STILL_DRAW_STRIP
 - Root cause: AS6_SCAN_STRIP_Y shows strip crossing command-card-head elements.
 - Control: V167 clamps headers, header controls, and chart layers.
+
+## 20260622T051205Z detected-error
+- Class: REAL_EDGE_LINE_AT_COMMAND_SECOND_GRID_TOP_AND_SIDEBAR_HELP_BOTTOM
+- Root cause: visible line is the real top edge of command-second-grid and sidebar help bottom edge.
+- Control: V168 removes/neutralizes those exact edges.

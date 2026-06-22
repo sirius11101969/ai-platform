@@ -1,0 +1,77 @@
+/* AS6 V168: remove real second-row edge line. Imported last. */
+
+/* Источник: верхняя кромка .command-second-grid и нижняя кромка sidebar help-блока. */
+
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid {
+  position: relative !important;
+  background: #030814 !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+}
+
+/* Закрываем ровно верхнюю 1-3px кромку второго ряда фоном страницы */
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute !important;
+  z-index: 50 !important;
+  left: 0 !important;
+  right: 0 !important;
+  top: 0 !important;
+  height: 4px !important;
+  background: #030814 !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  pointer-events: none !important;
+}
+
+/* Полностью убираем верхние/нижние линии у карточек второго ряда */
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid > .command-card,
+.command-center-page[data-command-center-visual="premium-as6"] .employee-performance,
+.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics,
+.command-center-page[data-command-center-visual="premium-as6"] .month-goals {
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  background-clip: padding-box !important;
+}
+
+/* Убираем остаточные линии у заголовков второго ряда */
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid .command-card-head,
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid .command-card-head *,
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid .command-card-head::before,
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid .command-card-head::after {
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+/* Левая часть полосы: нижняя кромка блока помощи в sidebar */
+.command-sidebar .command-sidebar-bottom,
+.command-sidebar [class*="help"],
+.command-sidebar [class*="support"] {
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+.command-sidebar .command-sidebar-bottom::after,
+.command-sidebar [class*="help"]::after,
+.command-sidebar [class*="support"]::after {
+  content: "" !important;
+  display: block !important;
+  position: absolute !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  height: 4px !important;
+  background: #030814 !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  pointer-events: none !important;
+}
