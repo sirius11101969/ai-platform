@@ -693,3 +693,8 @@ Governed and registered.
 - Class: REAL_HORIZONTAL_SCROLLBAR_OR_OVERFLOW_LAYER
 - Root cause: visible strip remained after border/pseudo cleanup.
 - Control: V137 scrollbar/overflow viewport lock.
+
+## 20260622T005440Z detected-error
+- Class: FIXED_DECORATIVE_NEON_STRIP_LAYER
+- Root cause: visible line was not normal border/scrollbar.
+- Control: V138 fixed strip kill-switch.

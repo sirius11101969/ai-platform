@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-fixed-neon-strip-v138"
+fail=0
+grep -q "AS6 V138 kill fixed neon strip" frontend/src/styles/as6-command-center-visual-etalon-v134.css || { echo "FAIL v138-css-missing"; fail=1; }
+grep -q "z-index: 2147483647" frontend/src/styles/as6-command-center-visual-etalon-v134.css || { echo "FAIL bottom-mask-missing"; fail=1; }
+grep -q "data-as6-command-center-reference-hidden" frontend/src/styles/as6-command-center-visual-etalon-v134.css || { echo "FAIL hidden-layer-kill-missing"; fail=1; }
+bad="$(grep -RInE "final-runtime-style-v127|hard-fix-v128|reference-polish-v123c|arrow-fix-v126|createElement\(\"style\"\)|appendChild\(style\)|style\.textContent|insertAdjacentHTML" frontend/src frontend/index.html frontend/public 2>/dev/null || true)"
+if [ -n "$bad" ]; then echo "FAIL forbidden-runtime-or-old-patch"; echo "$bad"; fail=1; else echo "PASS forbidden-runtime-or-old-patch"; fi
+if [ "$fail" -eq 0 ]; then echo "AS6_COMMAND_CENTER_FIXED_NEON_STRIP_V138=PASS"; else echo "AS6_COMMAND_CENTER_FIXED_NEON_STRIP_V138=FAIL"; exit 1; fi

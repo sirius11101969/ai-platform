@@ -3241,3 +3241,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Readiness after: 99%
 - Fixed: horizontal strip/scrollbar layer.
 - Added diagnostic: ops/bin/as6-diagnose-command-center-real-horizontal-strip-v137
+
+## 20260622T005440Z AS6 V138 Kill Fixed Neon Strip
+- Readiness before: 99%
+- Readiness after: 99%
+- Fixed: fixed decorative horizontal strip layer.
+- Added diagnostic: ops/bin/as6-diagnose-command-center-fixed-neon-strip-v138

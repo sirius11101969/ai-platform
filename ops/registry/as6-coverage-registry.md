@@ -1934,3 +1934,8 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers: horizontal scrollbar hiding
 - Covers: viewport width lock
 - Covers: overflow clip on Command Center containers
+
+## 20260622T005440Z coverage-fixed-neon-strip-v138
+- Covers: fixed bottom strip mask
+- Covers: hidden AS6 injected layer kill-switch
+- Covers: sidebar bottom decorative line removal

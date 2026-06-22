@@ -2178,3 +2178,8 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Diagnostic: ops/bin/as6-diagnose-command-center-real-horizontal-strip-v137
 - Failure class: REAL_HORIZONTAL_SCROLLBAR_OR_OVERFLOW_LAYER
 - Status: ENABLED
+
+## 20260622T005440Z command-center-fixed-neon-strip-v138
+- Diagnostic: ops/bin/as6-diagnose-command-center-fixed-neon-strip-v138
+- Failure class: FIXED_DECORATIVE_NEON_STRIP_LAYER
+- Status: ENABLED
