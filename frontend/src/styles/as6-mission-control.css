@@ -85,19 +85,11 @@ button:hover, .button:hover, [role="button"]:hover, a[class*="button"]:hover, .b
   backdrop-filter: blur(18px);
 }
 
-.metric-card, .stat-card, [class*="metric"], [class*="Metric"], [class*="stat"], [class*="Stat"] {
+.metric-card, .stat-card {
   overflow: hidden;
 }
 
-.metric-card::after, .stat-card::after, [class*="metric"]::after, [class*="Metric"]::after, [class*="stat"]::after, [class*="Stat"]::after {
-  content: "";
-  position: absolute;
-  inset: auto 18px 12px 18px;
-  height: 2px;
-  background: linear-gradient(90deg, var(--as6-cyan), var(--as6-purple), var(--as6-pink));
-  opacity: .42;
-  border-radius: 999px;
-}
+
 
 h1, .page-title, [class*="title"], [class*="Title"] {
   letter-spacing: -0.055em;
@@ -187,4 +179,23 @@ h1 {
     from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
   }
+}
+
+/* AS6: prevent global mission-control decorative stat line on Command Center */
+.command-center-page .goal-stats::before,
+.command-center-page .goal-stats::after,
+.command-center-page [class*="stats"]::before,
+.command-center-page [class*="stats"]::after,
+.command-center-page [class*="Stats"]::before,
+.command-center-page [class*="Stats"]::after {
+  display: none !important;
+  content: none !important;
+  height: 0 !important;
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.command-center-page .goal-stats {
+  position: relative !important;
 }
