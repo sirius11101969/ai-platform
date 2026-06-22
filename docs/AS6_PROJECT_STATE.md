@@ -3525,3 +3525,10 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Root cause: V195 trace showed initial HTML background #050712 and later AppShell #030814.
 - Diagnostic: ops/bin/as6-diagnose-critical-first-paint-background-v198
 - Readiness after: 99%
+
+## 20260622T151823Z AS6 V199 Command Center Stable Runtime Render
+- Fixed: disabled automatic fallback-to-live API replacement on /command-center first render.
+- Root cause: CommandCenterPage rendered fallback dashboard first, then useEffect/Promise.allSettled replaced visible state through setApiState/setApiErrors/setApiLoading.
+- Cleaned: removed leftover V197B html-route runtime files/imports.
+- Diagnostic: ops/bin/as6-diagnose-command-center-stable-runtime-render-v199
+- Readiness after: 99%

@@ -103,7 +103,7 @@ function sparklinePoints(values) {
 
 export default function CommandCenterPage() {
 const [apiState, setApiState] = useState({})
-  const [apiLoading, setApiLoading] = useState(true)
+  const [apiLoading, setApiLoading] = useState(false)
   const [apiErrors, setApiErrors] = useState([])
   const [pipelinePeriod, setPipelinePeriod] = useState('day')
   const [revenueRange, setRevenueRange] = useState('7d')
@@ -126,31 +126,12 @@ const [apiState, setApiState] = useState({})
   const [workforceRange, setWorkforceRange] = useState('week')
 
   useEffect(() => {
-    let active = true
-    setApiLoading(true)
-    Promise.allSettled([
-      fetchAiCommandCenterBrief(),
-      fetchAiCommandCenterOperations(),
-      fetchAiCommandCenterFocus(),
-      fetchAiCommandCenterKpi(),
-      fetchAiCommandCenterPlanningMonthly(),
-      fetchAiCommandCenterActions(),
-      fetchAiCommandCenterInbox(),
-      fetchAiSystemHealth(),
-    ]).then((results) => {
-      if (!active) return
-      const names = ['brief', 'operations', 'focus', 'kpi', 'monthly', 'actions', 'inbox', 'health']
-      const payload = {}
-      const errors = []
-      results.forEach((result, index) => {
-        if (result.status === 'fulfilled') payload[names[index]] = result.value
-        else errors.push(names[index])
-      })
-      setApiState(payload)
-      setApiErrors(errors)
-      setApiLoading(false)
-    })
-    return () => { active = false }
+    /* AS6 V199:
+       Keep Command Center visually stable on first paint.
+       Live API hydration is available only by explicit manual refresh,
+       so fallback -> live data replacement cannot flash the page. */
+    setApiLoading(false)
+    setApiErrors([])
   }, [])
 
   const kpis = useMemo(() => {

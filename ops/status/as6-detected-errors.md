@@ -956,3 +956,8 @@ Governed and registered.
 - Class: FIRST_FRAME_BACKGROUND_COLOR_DIFFERS_FROM_COMMAND_CENTER_APPSHELL
 - Root cause: first frame background differed from final Command Center AppShell background.
 - Fix: V198 aligns critical HTML/CSS first-paint background to #030814.
+
+## 20260622T151823Z detected-error
+- Class: COMMAND_CENTER_FALLBACK_TO_LIVE_DATA_FULL_RERENDER
+- Root cause: CommandCenterPage automatic API hydration caused full visible rerender after initial fallback render.
+- Fix: V199 makes first render deterministic and removes automatic visible API replacement.

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-stable-runtime-render-v199"
+grep -q "AS6 V199" frontend/src/pages/CommandCenterPage.jsx
+grep -q "const \[apiLoading, setApiLoading\] = useState(false)" frontend/src/pages/CommandCenterPage.jsx
+! grep -q "Promise.allSettled" frontend/src/pages/CommandCenterPage.jsx
+! grep -q "as6-command-center-html-route-v197b" frontend/src/main.jsx
+! test -f frontend/src/as6-command-center-html-route-v197b.js
+! test -f frontend/src/styles/as6-command-center-html-route-stable-v197b.css
+echo "AS6_COMMAND_CENTER_STABLE_RUNTIME_RENDER_V199=PASS"

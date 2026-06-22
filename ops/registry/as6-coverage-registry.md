@@ -2053,3 +2053,8 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 ## 20260622T144605Z FIRST_FRAME_BACKGROUND_COLOR_DIFFERS_FROM_COMMAND_CENTER_APPSHELL
 - Coverage: /command-center first paint color stability.
 - Files: frontend/index.html, frontend/src/styles/as6-command-center-critical-first-paint-v198.css
+
+## 20260622T151823Z COMMAND_CENTER_FALLBACK_TO_LIVE_DATA_FULL_RERENDER
+- Coverage: /command-center runtime render stability.
+- Files: frontend/src/pages/CommandCenterPage.jsx, frontend/src/main.jsx
+- Rule: Command Center must not replace visible dashboard state after first paint through automatic API hydration.
