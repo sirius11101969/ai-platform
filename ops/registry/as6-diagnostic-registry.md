@@ -2194,3 +2194,9 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Diagnostic: ops/bin/as6-diagnose-command-center-overlay-sources-v141
 - Failure class: OVERLAY_COMPONENTS_CREATE_VISIBLE_LAYERS_AFTER_GUARD_RUNS
 - Status: ENABLED
+
+## 20260622T011405Z command-center-status-overlays-v143
+- Diagnostic: ops/bin/as6-diagnose-command-center-status-overlays-v143
+- Failure class: V142_OVERMATCHED_CSS_AND_GUARD_FILES
+- Failure class: REMAINING_OPERATIONAL_STATUS_OVERLAY_ROOTS_STILL_MOUNTED
+- Status: ENABLED

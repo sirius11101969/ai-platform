@@ -708,3 +708,8 @@ Governed and registered.
 - Class: OVERLAY_COMPONENTS_CREATE_VISIBLE_LAYERS_AFTER_GUARD_RUNS
 - Root cause: overlay components recreated layers after guard cleanup.
 - Control: V141 source modules converted to no-op.
+
+## 20260622T011405Z detected-error
+- Class: V142_OVERMATCHED_CSS_AND_GUARD_FILES
+- Root cause: V142 grep loop modified CSS and guard files.
+- Control: V143 patches only explicit component JSX files.

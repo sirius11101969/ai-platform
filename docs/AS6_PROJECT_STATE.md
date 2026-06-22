@@ -3259,3 +3259,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Readiness after: 99%
 - Fixed: global Mission Control, Mission Context, Executive Command, Control Tower, Events, AI Copilot Rail overlay sources disabled.
 - Added diagnostic: ops/bin/as6-diagnose-command-center-overlay-sources-v141
+
+## 20260622T011405Z AS6 V143 Disable Status Overlays
+- Readiness before: 99%
+- Readiness after: 99%
+- Fixed: remaining five status overlay roots removed from production.
+- Added diagnostic: ops/bin/as6-diagnose-command-center-status-overlays-v143

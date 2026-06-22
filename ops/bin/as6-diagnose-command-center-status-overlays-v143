@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-status-overlays-v143"
+fail=0
+for file in frontend/src/components/AS6DashboardLiveDataStatus.jsx frontend/src/components/AS6LiveOperationalDataStatus.jsx frontend/src/components/AS6CrmLiveDataStatus.jsx frontend/src/components/AS6RevenueCrmFusionStatus.jsx frontend/src/components/AS6BackendConnectorStatus.jsx; do
+  grep -q "return null" "$file" || { echo "FAIL noop-missing $file"; fail=1; }
+  if grep -qE "createRoot|document.createElement|appendChild|root.id|render\\(" "$file"; then echo "FAIL active-overlay-source $file"; fail=1; else echo "PASS noop-overlay-source $file"; fi
+done
+for id in as6-revenue-crm-fusion-status-root as6-crm-live-data-status-root as6-dashboard-live-data-status-root as6-backend-connector-status-root as6-live-operational-data-root; do
+  grep -q "$id" frontend/src/as6-command-center-reference-guard.js || { echo "FAIL guard-missing-$id"; fail=1; }
+done
+if [ "$fail" -eq 0 ]; then echo "AS6_COMMAND_CENTER_STATUS_OVERLAYS_V143=PASS"; else echo "AS6_COMMAND_CENTER_STATUS_OVERLAYS_V143=FAIL"; exit 1; fi

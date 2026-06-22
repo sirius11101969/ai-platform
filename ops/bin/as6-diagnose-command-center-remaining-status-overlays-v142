@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-remaining-status-overlays-v142"
+fail=0
+for id in as6-revenue-crm-fusion-status-root as6-crm-live-data-status-root as6-dashboard-live-data-status-root as6-backend-connector-status-root as6-live-operational-data-root; do
+  grep -q "$id" frontend/src/as6-command-center-reference-guard.js || { echo "FAIL guard-missing-$id"; fail=1; }
+done
+active="$(grep -RInE "createRoot|document.createElement|appendChild|mount.*Status|as6-revenue-crm-fusion-status-root|as6-crm-live-data-status-root|as6-dashboard-live-data-status-root|as6-backend-connector-status-root|as6-live-operational-data-root" frontend/src 2>/dev/null || true)"
+allowed="$(printf "%s\n" "$active" | grep -v "as6-command-center-reference-guard.js" | grep -v "ops/" || true)"
+if [ -n "$allowed" ]; then echo "FAIL active-remaining-overlay-source"; echo "$allowed"; fail=1; else echo "PASS no-active-remaining-overlay-source"; fi
+if [ "$fail" -eq 0 ]; then echo "AS6_COMMAND_CENTER_REMAINING_STATUS_OVERLAYS_V142=PASS"; else echo "AS6_COMMAND_CENTER_REMAINING_STATUS_OVERLAYS_V142=FAIL"; exit 1; fi
