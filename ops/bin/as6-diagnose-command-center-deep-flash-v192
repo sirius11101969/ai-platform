@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-deep-flash-v192"
+test -f frontend/public/as6-flash-isolation.html
+grep -q "AS6 FLASH ISOLATION PAGE" frontend/public/as6-flash-isolation.html
+grep -q "as6-command-center-strong-bootlock-v191" frontend/index.html
+echo "AS6_COMMAND_CENTER_DEEP_FLASH_V192=PASS"

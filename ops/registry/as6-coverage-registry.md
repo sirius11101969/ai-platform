@@ -2035,3 +2035,8 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 ## 20260622T123520Z COMMAND_CENTER_FLASH_NOT_INSIDE_ROOT_OR_ROOT_BOOTLOCK_TOO_WEAK
 - Coverage: full-page first paint lock for /command-center.
 - Files: frontend/index.html, frontend/src/components/AppShell.jsx
+
+## 20260622T124631Z FIRST_PAINT_FLASH_SOURCE_UNCONFIRMED_AFTER_FULL_DOM_BOOTLOCK
+- Coverage: DOM-vs-browser/external-paint isolation.
+- Files: frontend/public/as6-flash-isolation.html, frontend/index.html
+- Rule: if flash appears on clean isolation page, source is outside React DOM.

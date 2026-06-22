@@ -921,3 +921,8 @@ Governed and registered.
 - Class: COMMAND_CENTER_FLASH_NOT_INSIDE_ROOT_OR_ROOT_BOOTLOCK_TOO_WEAK
 - Root cause: root-only bootlock did not suppress the observed first-paint flash.
 - Fix: V191 hides all body children and page pseudo-elements until stable render.
+
+## 20260622T124631Z detected-error
+- Class: FIRST_PAINT_FLASH_SOURCE_UNCONFIRMED_AFTER_FULL_DOM_BOOTLOCK
+- Root cause: flash remained after CSS, route, cache, reference guard, body:has and full DOM bootlock controls.
+- Next diagnostic: compare /command-center with /as6-flash-isolation.html.

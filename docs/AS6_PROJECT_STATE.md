@@ -3482,3 +3482,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Root cause: V190 root-only bootlock did not cover remaining flash source.
 - Diagnostic: ops/bin/as6-diagnose-command-center-strong-bootlock-v191
 - Readiness after: 99%
+
+## 20260622T124631Z AS6 V192 Deep Command Center Flash Diagnostics
+- Added: production isolation page /as6-flash-isolation.html.
+- Purpose: determine whether flash is inside React/DOM or outside page paint.
+- Diagnostic: ops/bin/as6-diagnose-command-center-deep-flash-v192
+- Readiness after: 99%

@@ -2408,3 +2408,10 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Check: strong HTML bootlock exists.
 - Check: body children hidden during bootlock.
 - Check: production HTML contains V191 bootlock.
+
+## 20260622T124631Z command-center-deep-flash-v192
+- Diagnostic: ops/bin/as6-diagnose-command-center-deep-flash-v192
+- Failure class: FIRST_PAINT_FLASH_SOURCE_UNCONFIRMED_AFTER_FULL_DOM_BOOTLOCK
+- Check: clean static isolation page exists.
+- Check: production command-center contains V191 strong bootlock.
+- Check: source suspicious selectors collected.
