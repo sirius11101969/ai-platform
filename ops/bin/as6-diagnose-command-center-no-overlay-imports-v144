@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "AS6_DIAGNOSTIC=command-center-no-overlay-imports-v144"
+fail=0
+
+app_hit="$(grep -nE 'AS6ExecutiveControlTowerCompletion|AS6ExecutiveCommandDashboard|AS6AutonomousOperationsTimeline|AS6GlobalEventStream|AS6AICopilotRail|AS6MissionControlLayoutEngine|AS6GlobalCommandPalette|AS6GlobalHealthBar|AS6DashboardLiveDataStatus|AS6LiveOperationalDataStatus|AS6CrmLiveDataStatus|AS6RevenueCrmFusionStatus|AS6BackendConnectorStatus' frontend/src/App.jsx || true)"
+if [ -n "$app_hit" ]; then
+  echo "FAIL app-overlay-imports-still-exist"
+  echo "$app_hit"
+  fail=1
+else
+  echo "PASS app-overlay-imports-removed"
+fi
+
+active="$(grep -RInE 'createRoot|document\.createElement|appendChild|root\.id|render\(' frontend/src/components/AS6* 2>/dev/null || true)"
+if [ -n "$active" ]; then
+  echo "FAIL active-overlay-component-code"
+  echo "$active"
+  fail=1
+else
+  echo "PASS overlay-components-noop"
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_COMMAND_CENTER_NO_OVERLAY_IMPORTS_V144=PASS"
+else
+  echo "AS6_COMMAND_CENTER_NO_OVERLAY_IMPORTS_V144=FAIL"
+  exit 1
+fi

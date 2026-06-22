@@ -1960,3 +1960,8 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers: five status overlay components as no-op
 - Covers: CSS/guard repair after V142 overmatch
 - Covers: production HTML absence validation
+
+## 20260622T011700Z coverage-no-overlay-imports-v144
+- Covers: App.jsx overlay side-effect imports
+- Covers: overlay component no-op state
+- Covers: production overlay text absence

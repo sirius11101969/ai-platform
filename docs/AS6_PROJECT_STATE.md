@@ -3265,3 +3265,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Readiness after: 99%
 - Fixed: remaining five status overlay roots removed from production.
 - Added diagnostic: ops/bin/as6-diagnose-command-center-status-overlays-v143
+
+## 20260622T011700Z AS6 V144 Remove Overlay Imports From App
+- Readiness before: 99%
+- Readiness after: 99%
+- Fixed: overlay modules no longer imported from App.jsx.
+- Added diagnostic: ops/bin/as6-diagnose-command-center-no-overlay-imports-v144

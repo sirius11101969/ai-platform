@@ -2200,3 +2200,8 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Failure class: V142_OVERMATCHED_CSS_AND_GUARD_FILES
 - Failure class: REMAINING_OPERATIONAL_STATUS_OVERLAY_ROOTS_STILL_MOUNTED
 - Status: ENABLED
+
+## 20260622T011700Z command-center-no-overlay-imports-v144
+- Diagnostic: ops/bin/as6-diagnose-command-center-no-overlay-imports-v144
+- Failure class: APP_SIDE_EFFECT_IMPORTS_STILL_LOAD_OVERLAY_MODULES
+- Status: ENABLED

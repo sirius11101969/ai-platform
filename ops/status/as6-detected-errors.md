@@ -713,3 +713,8 @@ Governed and registered.
 - Class: V142_OVERMATCHED_CSS_AND_GUARD_FILES
 - Root cause: V142 grep loop modified CSS and guard files.
 - Control: V143 patches only explicit component JSX files.
+
+## 20260622T011700Z detected-error
+- Class: APP_SIDE_EFFECT_IMPORTS_STILL_LOAD_OVERLAY_MODULES
+- Root cause: App.jsx imported global overlay modules for side effects.
+- Control: V144 removes imports and validates App.jsx.
