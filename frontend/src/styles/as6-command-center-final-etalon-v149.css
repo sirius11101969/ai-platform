@@ -202,19 +202,4 @@
   display: none !important;
 }
 
-/* Жёсткое удаление нижней цветной линии */
-body:has(.command-center-page[data-command-center-visual="premium-as6"]) {
-  overflow-x: hidden !important;
-}
-
-body:has(.command-center-page[data-command-center-visual="premium-as6"])::after {
-  content: "" !important;
-  position: fixed !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  height: 4px !important;
-  background: #030814 !important;
-  z-index: 2147483647 !important;
-  pointer-events: none !important;
-}
+/* AS6 V170: removed obsolete fixed bottom mask from V149. */

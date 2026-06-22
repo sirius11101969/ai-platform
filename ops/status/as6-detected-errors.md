@@ -818,3 +818,8 @@ Governed and registered.
 - Class: ACCUMULATED_STRIP_PATCHES_V151_V168_CREATED_CONFLICTING_VISUAL_LAYERS
 - Root cause: repeated strip CSS files masked/overrode each other instead of restoring clean layout.
 - Control: V169 purges failed strip patches and keeps one clean final stylesheet.
+
+## 20260622T052516Z detected-error
+- Class: V149_FIXED_BODY_AFTER_MASK_STILL_DRAWING_VISIBLE_STRIP
+- Root cause: V149 kept fixed body::after bottom mask after strip patch purge.
+- Control: V170B removes exact fixed mask and validates no z-index 2147483647 remains.

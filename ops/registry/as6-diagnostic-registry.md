@@ -2292,3 +2292,7 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 ## 20260622T051443Z command-center-clean-final-v169
 - Diagnostic: ops/bin/as6-diagnose-command-center-clean-final-v169
 - Failure class: ACCUMULATED_STRIP_PATCHES_V151_V168_CREATED_CONFLICTING_VISUAL_LAYERS
+
+## 20260622T052516Z remove-v149-fixed-mask-v170b
+- Diagnostic: ops/bin/as6-diagnose-remove-v149-fixed-mask-v170b
+- Failure class: V149_FIXED_BODY_AFTER_MASK_STILL_DRAWING_VISIBLE_STRIP

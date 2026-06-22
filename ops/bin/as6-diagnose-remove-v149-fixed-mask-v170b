@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=remove-v149-fixed-mask-v170b"
+! grep -qE 'Жёсткое удаление нижней цветной линии|z-index:\s*2147483647|position:\s*fixed\s*!important|body:has\(\.command-center-page\[data-command-center-visual="premium-as6"\]\)::after' frontend/src/styles/as6-command-center-final-etalon-v149.css
+echo "AS6_REMOVE_V149_FIXED_MASK_V170B=PASS"
