@@ -765,3 +765,26 @@
   display: block !important;
   margin-bottom: 14px !important;
 }
+
+/* AS6 V179 source-level no stat/metric pseudo flash on Command Center */
+.command-center-page[data-command-center-visual="premium-as6"] [class*="stat"]::before,
+.command-center-page[data-command-center-visual="premium-as6"] [class*="stat"]::after,
+.command-center-page[data-command-center-visual="premium-as6"] [class*="Stat"]::before,
+.command-center-page[data-command-center-visual="premium-as6"] [class*="Stat"]::after,
+.command-center-page[data-command-center-visual="premium-as6"] [class*="metric"]::before,
+.command-center-page[data-command-center-visual="premium-as6"] [class*="metric"]::after,
+.command-center-page[data-command-center-visual="premium-as6"] [class*="Metric"]::before,
+.command-center-page[data-command-center-visual="premium-as6"] [class*="Metric"]::after,
+.command-center-page[data-command-center-visual="premium-as6"] .goal-stats::before,
+.command-center-page[data-command-center-visual="premium-as6"] .goal-stats::after {
+  display: none !important;
+  content: none !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
+  background: none !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  opacity: 0 !important;
+}

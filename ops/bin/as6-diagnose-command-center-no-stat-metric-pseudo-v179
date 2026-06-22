@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-no-stat-metric-pseudo-v179"
+
+if grep -RInE '\[class\*="(stat|Stat|metric|Metric)"\]::(before|after)' frontend/src/styles/as6-mission-control.css frontend/src/styles.css frontend/src/theme 2>/dev/null | grep -v 'command-center-page'; then
+  echo "AS6_COMMAND_CENTER_NO_STAT_METRIC_PSEUDO_V179=FAIL source wildcard pseudo remains"
+  exit 1
+fi
+
+echo "AS6_COMMAND_CENTER_NO_STAT_METRIC_PSEUDO_V179=PASS"

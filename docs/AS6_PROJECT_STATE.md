@@ -3409,3 +3409,10 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Root cause: V178 perl delimiter failed on #root and final CSS applied after initial paint.
 - Diagnostic: ops/bin/as6-diagnose-command-center-early-no-strip-guard-v178b
 - Readiness after: 99%
+
+## 20260622T100111Z AS6 V179 Purge Stat/Metric Pseudo Flash Source
+- Fixed: Command Center strip flash after refresh.
+- Root cause: shared stat/metric pseudo-element rule could still exist in compiled CSS or imported shared CSS.
+- Diagnostic: ops/bin/as6-diagnose-command-center-no-stat-metric-pseudo-v179
+- Validation: compiled CSS has no unscoped [class*=stat|metric] pseudo-elements.
+- Readiness after: 99%

@@ -2335,3 +2335,9 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Diagnostic: ops/bin/as6-diagnose-command-center-early-no-strip-guard-v178b
 - Failure class: COMMAND_CENTER_STRIP_FLASH_BEFORE_FINAL_CSS_LOADS
 - Check: early index.html guard exists.
+
+## 20260622T100111Z command-center-no-stat-metric-pseudo-v179
+- Diagnostic: ops/bin/as6-diagnose-command-center-no-stat-metric-pseudo-v179
+- Failure class: STAT_METRIC_PSEUDO_RULE_STILL_PRESENT_IN_COMPILED_CSS_OR_IMPORTED_SHARED_CSS
+- Check: source shared CSS has no unscoped wildcard pseudo-elements.
+- Check: compiled CSS has no unscoped wildcard pseudo-elements.

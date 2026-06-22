@@ -871,3 +871,8 @@ Governed and registered.
 - Class: COMMAND_CENTER_STRIP_FLASH_BEFORE_FINAL_CSS_LOADS
 - Root cause: old pseudo-element visual rules could paint before final scoped CSS loaded.
 - Fix: V178B added early index.html no-strip guard before app render.
+
+## 20260622T100111Z detected-error
+- Class: STAT_METRIC_PSEUDO_RULE_STILL_PRESENT_IN_COMPILED_CSS_OR_IMPORTED_SHARED_CSS
+- Root cause: first React paint could still render shared wildcard pseudo-element before final visual state settled.
+- Fix: V179 purged remaining shared metric/stat pseudo source and validates compiled CSS.

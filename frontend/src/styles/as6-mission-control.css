@@ -85,12 +85,6 @@ button:hover, .button:hover, [role="button"]:hover, a[class*="button"]:hover, .b
   backdrop-filter: blur(18px);
 }
 
-.metric-card, .stat-card {
-  overflow: hidden;
-}
-
-
-
 h1, .page-title, [class*="title"], [class*="Title"] {
   letter-spacing: -0.055em;
 }

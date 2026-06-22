@@ -1996,3 +1996,8 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Coverage: first paint CSS guard.
 - Files: frontend/index.html
 - Rule: critical visual guards must exist before JS/CSS bundle paint.
+
+## 20260622T100111Z STAT_METRIC_PSEUDO_RULE_STILL_PRESENT_IN_COMPILED_CSS_OR_IMPORTED_SHARED_CSS
+- Coverage: source and compiled CSS pseudo-element validation.
+- Files: frontend/src/styles/*.css, frontend/src/theme/*.css, frontend/dist/assets/*.css
+- Rule: no unscoped [class*=stat|metric]::before/::after in shared CSS.
