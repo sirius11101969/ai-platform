@@ -843,3 +843,8 @@ Governed and registered.
 - Class: MULTIPLE_ACCUMULATED_COMMAND_CENTER_STRIP_FIXES_AND_REAL_THEME_LINES
 - Root cause: many layered fixes plus real theme borders/shadows/SVG/progress/sticky sources.
 - Control: V174B purges old strip files and applies one scoped final no-strips stylesheet.
+
+## 20260622T071747Z detected-error
+- Class: MOCK_CHART_SVG_OVERFLOW_VISIBLE_DRAWS_LONG_PURPLE_LINE
+- Root cause: theme had .mock-chart svg overflow: visible.
+- Control: V175B clips chart SVG inside Revenue Dynamics card.

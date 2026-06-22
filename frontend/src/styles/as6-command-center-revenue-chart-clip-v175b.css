@@ -1,0 +1,18 @@
+/* AS6 V175B: final source fix for Revenue Dynamics purple line. */
+
+.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics,
+.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics .mock-chart {
+  overflow: hidden !important;
+  contain: paint !important;
+  isolation: isolate !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics .mock-chart svg {
+  overflow: hidden !important;
+  max-width: 100% !important;
+  clip-path: inset(0 0 0 0 round 16px) !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics .mock-chart polyline {
+  filter: none !important;
+}

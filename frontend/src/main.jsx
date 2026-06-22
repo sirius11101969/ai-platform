@@ -34,3 +34,7 @@ import "./styles/as6-command-center-copilot-etalon-v150.css";
 
 
 import "./styles/as6-command-center-final-no-strips-v174b.css";
+
+import "./styles/as6-command-center-revenue-chart-clip-v175.css";
+
+import "./styles/as6-command-center-revenue-chart-clip-v175b.css";

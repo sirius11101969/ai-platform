@@ -3384,3 +3384,7 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Fixed: removed accumulated strip fixes and all command-center horizontal line sources.
 - Scope: /command-center only.
 - Readiness after: 99%
+
+## 20260622T071747Z AS6 V175B Revenue Chart Line Fix
+- Fixed: .mock-chart svg overflow visible changed to hidden.
+- Readiness after: 99%

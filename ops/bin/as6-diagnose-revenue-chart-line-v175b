@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=revenue-chart-line-v175b"
+grep -q "as6-command-center-revenue-chart-clip-v175b.css" frontend/src/main.jsx
+grep -q "AS6 V175B" frontend/src/styles/as6-command-center-revenue-chart-clip-v175b.css
+! grep -q "\.mock-chart svg .*overflow: visible" frontend/src/theme/as6Theme.css
+grep -q "overflow: hidden" frontend/src/theme/as6Theme.css
+echo "AS6_REVENUE_CHART_LINE_V175B=PASS"

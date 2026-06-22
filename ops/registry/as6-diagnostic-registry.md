@@ -2312,3 +2312,7 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 ## 20260622T064326Z command-center-no-strips-v174b
 - Diagnostic: ops/bin/as6-diagnose-command-center-no-strips-v174b
 - Failure class: MULTIPLE_ACCUMULATED_COMMAND_CENTER_STRIP_FIXES_AND_REAL_THEME_LINES
+
+## 20260622T071747Z revenue-chart-line-v175b
+- Diagnostic: ops/bin/as6-diagnose-revenue-chart-line-v175b
+- Failure class: MOCK_CHART_SVG_OVERFLOW_VISIBLE_DRAWS_LONG_PURPLE_LINE
