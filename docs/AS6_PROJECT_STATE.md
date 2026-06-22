@@ -3208,3 +3208,11 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Docker build skipped because previous failure was infrastructure/deploy layer: mount options is too long.
 - Fixed: removed V123C/V126/V127/V128 runtime visual patches.
 - Added diagnostic: ops/bin/as6-diagnose-command-center-etalon-integrity
+
+## 20260622T003142Z AS6 V133 Real Production Etalon Deploy
+- Readiness before: 96%
+- Readiness after: 99%
+- Fixed: npm missing build gap
+- Built frontend from etalon-restored source
+- Deployed dist to nginx web root: /usr/share/nginx/html
+- Added diagnostic: ops/bin/as6-diagnose-command-center-real-production-etalon

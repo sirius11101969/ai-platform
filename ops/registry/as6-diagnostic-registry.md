@@ -2152,3 +2152,9 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Diagnostic: ops/bin/as6-diagnose-command-center-etalon-integrity
 - Failure class: COMMAND_CENTER_VISUAL_DRIFT_FROM_RUNTIME_STYLE_PATCHES
 - Status: ENABLED
+
+## 20260622T003142Z command-center-real-production-etalon
+- Diagnostic: ops/bin/as6-diagnose-command-center-real-production-etalon
+- Failure class: NPM_MISSING_FRONTEND_BUILD_NOT_EXECUTED
+- Failure class: FRONTEND_BUNDLE_DEPLOYMENT_GAP
+- Status: ENABLED

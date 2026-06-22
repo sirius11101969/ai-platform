@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-production-etalon-deploy"
+fail=0
+local_hit="$(grep -RInE "reference-polish-v123c|arrow-fix-v126|final-runtime-style-v127|hard-fix-v128|createElement\(\"style\"\)|appendChild\(style\)|style\.textContent|insertAdjacentHTML" frontend/src frontend/index.html frontend/public 2>/dev/null || true)"
+if [ -n "$local_hit" ]; then echo "FAIL local-source-runtime-patches"; echo "$local_hit"; fail=1; else echo "PASS local-source-runtime-patches"; fi
+if command -v curl >/dev/null 2>&1; then
+  tmp="$(mktemp)"
+  curl -fsSL https://www.as6.ru/command-center -o "$tmp" || true
+  prod_hit="$(grep -nE "final-runtime-style-v127|reference-polish-v123c|arrow-fix-v126|hard-fix-v128" "$tmp" || true)"
+  rm -f "$tmp"
+  if [ -n "$prod_hit" ]; then echo "FAIL production-old-runtime-assets"; echo "$prod_hit"; fail=1; else echo "PASS production-old-runtime-assets"; fi
+fi
+if [ "$fail" -eq 0 ]; then echo "AS6_COMMAND_CENTER_PRODUCTION_ETALON_DEPLOY=PASS"; else echo "AS6_COMMAND_CENTER_PRODUCTION_ETALON_DEPLOY=FAIL"; exit 1; fi

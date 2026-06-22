@@ -1904,3 +1904,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - frontend/src/styles/as6-command-center-reference-page.css
 - frontend/src/styles/as6-command-center-true-reference-lock.css
 - absence of V123C/V126/V127/V128 runtime files
+
+## 20260622T003142Z coverage-command-center-real-production-etalon
+- Covers npm presence
+- Covers frontend build
+- Covers nginx web root deploy
+- Covers production DOM old asset absence

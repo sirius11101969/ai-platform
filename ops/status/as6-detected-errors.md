@@ -668,3 +668,8 @@ Governed and registered.
 - Class: COMMAND_CENTER_VISUAL_DRIFT_FROM_RUNTIME_STYLE_PATCHES
 - Root cause: runtime visual patches after etalon.
 - Control: etalon integrity diagnostic blocks recurrence.
+
+## 20260622T003142Z detected-error
+- Class: NPM_MISSING_FRONTEND_BUILD_NOT_EXECUTED
+- Root cause: npm was not installed on host.
+- Control: install npm before frontend build.

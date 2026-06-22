@@ -9,3 +9,7 @@
 ## 20260622T002731Z artifact-registration
 - Runtime evidence: runtime/as6-v131-finish-etalon-restore-20260622T002731Z
 - Validation: runtime/as6-v131-finish-etalon-restore-20260622T002731Z/validation.txt
+
+## 20260622T003142Z artifact-registration
+- Runtime evidence: runtime/as6-v133-install-build-deploy-etalon-20260622T003142Z
+- Validation: runtime/as6-v133-install-build-deploy-etalon-20260622T003142Z/validation.txt

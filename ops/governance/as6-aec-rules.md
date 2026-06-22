@@ -8,3 +8,7 @@
 - Block runtime style injection outside React.
 - Block blind CSS patches.
 - Block Docker build as mandatory step for visual-only repair when build layer has known infra failure.
+
+## 20260622T003142Z AEC frontend-build-required
+- Frontend visual repair is not complete until npm build succeeds.
+- Production must be validated after nginx web root replacement.
