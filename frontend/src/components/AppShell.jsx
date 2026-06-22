@@ -117,14 +117,6 @@ export function ProtectedLayout({ children }) {
   const roleLabels = { owner: "Владелец", admin: "Администратор", sales: "Продажи", viewer: "Наблюдатель" };
   const isCommandCenter = location.pathname === "/command-center";
 
-  useEffect(() => {
-    if (!isCommandCenter) return;
-    const unlock = () => document.documentElement.classList.remove("as6-command-center-bootlock");
-    const timeout = window.setTimeout(unlock, 450);
-    const frame = window.requestAnimationFrame(() => window.requestAnimationFrame(unlock));
-    return () => { window.clearTimeout(timeout); window.cancelAnimationFrame(frame); };
-  }, [isCommandCenter]);
-
   return (
     <div className={`app-shell `} data-route={isCommandCenter ? "command-center" : "app"}>
       <aside className={`sidebar shell-glow ${isCommandCenter ? "command-sidebar" : ""}`} data-command-sidebar={isCommandCenter ? "premium" : undefined}>

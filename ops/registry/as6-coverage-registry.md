@@ -2040,3 +2040,7 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Coverage: DOM-vs-browser/external-paint isolation.
 - Files: frontend/public/as6-flash-isolation.html, frontend/index.html
 - Rule: if flash appears on clean isolation page, source is outside React DOM.
+
+## 20260622T125839Z BOOTLOCK_UNLOCKED_IN_APPSHELL_BEFORE_COMMAND_CENTER_PAGE_MOUNTED
+- Coverage: Command Center first stable render.
+- Files: frontend/src/pages/CommandCenterPage.jsx, frontend/src/components/AppShell.jsx

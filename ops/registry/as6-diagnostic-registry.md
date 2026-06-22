@@ -2415,3 +2415,9 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Check: clean static isolation page exists.
 - Check: production command-center contains V191 strong bootlock.
 - Check: source suspicious selectors collected.
+
+## 20260622T125839Z command-center-unlock-after-mount-v193
+- Diagnostic: ops/bin/as6-diagnose-command-center-unlock-after-mount-v193
+- Failure class: BOOTLOCK_UNLOCKED_IN_APPSHELL_BEFORE_COMMAND_CENTER_PAGE_MOUNTED
+- Check: CommandCenterPage controls bootlock unlock.
+- Check: AppShell no longer unlocks after 450ms.

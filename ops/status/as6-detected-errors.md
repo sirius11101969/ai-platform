@@ -926,3 +926,8 @@ Governed and registered.
 - Class: FIRST_PAINT_FLASH_SOURCE_UNCONFIRMED_AFTER_FULL_DOM_BOOTLOCK
 - Root cause: flash remained after CSS, route, cache, reference guard, body:has and full DOM bootlock controls.
 - Next diagnostic: compare /command-center with /as6-flash-isolation.html.
+
+## 20260622T125839Z detected-error
+- Class: BOOTLOCK_UNLOCKED_IN_APPSHELL_BEFORE_COMMAND_CENTER_PAGE_MOUNTED
+- Root cause: AppShell unlocked the page before CommandCenterPage mounted.
+- Fix: V193 moves unlock into CommandCenterPage after double requestAnimationFrame.

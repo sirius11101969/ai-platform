@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-unlock-after-mount-v193"
+grep -q "data-as6-command-center-mounted" frontend/src/pages/CommandCenterPage.jsx
+! grep -q "const timeout = window.setTimeout(unlock, 450)" frontend/src/components/AppShell.jsx
+echo "AS6_COMMAND_CENTER_UNLOCK_AFTER_MOUNT_V193=PASS"

@@ -3488,3 +3488,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Purpose: determine whether flash is inside React/DOM or outside page paint.
 - Diagnostic: ops/bin/as6-diagnose-command-center-deep-flash-v192
 - Readiness after: 99%
+
+## 20260622T125839Z AS6 V193 Command Center Unlock After Mount
+- Fixed: bootlock was unlocked in AppShell before CommandCenterPage finished mounting.
+- Root cause: /command-center became visible before the actual page completed first stable render.
+- Diagnostic: ops/bin/as6-diagnose-command-center-unlock-after-mount-v193
+- Readiness after: 99%

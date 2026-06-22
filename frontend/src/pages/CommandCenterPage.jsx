@@ -102,6 +102,22 @@ function sparklinePoints(values) {
 }
 
 export default function CommandCenterPage() {
+  /* AS6 V193: unlock Command Center only after page itself is mounted */
+  useEffect(() => {
+    if (window.location.pathname !== "/command-center") return;
+    const unlock = () => {
+      document.documentElement.classList.remove("as6-command-center-bootlock");
+      document.documentElement.setAttribute("data-as6-command-center-mounted", "true");
+    };
+    const frame = window.requestAnimationFrame(() => window.requestAnimationFrame(unlock));
+    const timeout = window.setTimeout(unlock, 2500);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.clearTimeout(timeout);
+    };
+  }, []);
+  /* AS6 V193 END */
+
   const [apiState, setApiState] = useState({})
   const [apiLoading, setApiLoading] = useState(true)
   const [apiErrors, setApiErrors] = useState([])
