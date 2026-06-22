@@ -2477,3 +2477,20 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Check: sidebar scroll removed.
 - Check: rounded corner radius applied.
 - Check: no body:has in V201 CSS.
+
+## 20260622T222438Z command-center-sidebar-source-v202
+- Diagnostic: ops/bin/as6-diagnose-command-center-sidebar-source-v202
+- Runtime tracer: ops/runtime-tracers/as6-command-center-sidebar-runtime-tracer-v202.js
+- Failure classes:
+  - COMMAND_CENTER_THEME_OVERRIDE_DRIFT
+  - COMMAND_CENTER_MULTIPLE_STYLE_AUTHORITIES
+  - SIDEBAR_SELECTOR_DRIFT
+  - SIDEBAR_COMPUTED_STYLE_MISMATCH
+  - SIDEBAR_GEOMETRY_OVERRIDE
+  - SIDEBAR_DATA_ATTRIBUTE_DRIFT
+- Checks:
+  - Single source of truth: frontend/src/theme/as6Theme.css
+  - Width: 300px
+  - Radius: 0 26px 26px 0
+  - No V200/V201 sidebar imports
+  - Valid data-command-sidebar attribute

@@ -2068,3 +2068,15 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Coverage: /command-center sidebar visual consistency.
 - Files: frontend/src/styles/as6-command-center-sidebar-final-etalon-v201.css, frontend/src/main.jsx
 - Rule: sidebar must not show internal scrollbar on desktop command-center layout.
+
+## 20260622T222438Z COMMAND_CENTER_SIDEBAR_SINGLE_SOURCE_OF_TRUTH
+- Coverage: /command-center sidebar CSS cascade and computed geometry.
+- Files:
+  - frontend/src/theme/as6Theme.css
+  - frontend/src/components/AppShell.jsx
+  - frontend/src/main.jsx
+  - ops/runtime-tracers/as6-command-center-sidebar-runtime-tracer-v202.js
+- AEC:
+  - AEC-SIDEBAR-001
+  - AEC-SIDEBAR-002
+  - AEC-SIDEBAR-003

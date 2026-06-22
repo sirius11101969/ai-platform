@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-sidebar-source-v202"
+grep -q "AS6 V202 Command Center Sidebar Single Source of Truth" frontend/src/theme/as6Theme.css
+grep -q "grid-template-columns: 300px minmax(0, 1fr)" frontend/src/theme/as6Theme.css
+grep -q "width: 300px" frontend/src/theme/as6Theme.css
+grep -q "border-radius: 0 26px 26px 0" frontend/src/theme/as6Theme.css
+grep -q "data-command-sidebar=" frontend/src/components/AppShell.jsx
+! grep -q "datacommand-sidebar=" frontend/src/components/AppShell.jsx
+! grep -q "as6-command-center-sidebar-etalon-v200.css" frontend/src/main.jsx
+! grep -q "as6-command-center-sidebar-final-etalon-v201.css" frontend/src/main.jsx
+! test -f frontend/src/styles/as6-command-center-sidebar-etalon-v200.css
+! test -f frontend/src/styles/as6-command-center-sidebar-final-etalon-v201.css
+echo "AS6_COMMAND_CENTER_SIDEBAR_SOURCE_V202=PASS"

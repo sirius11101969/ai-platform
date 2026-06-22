@@ -971,3 +971,13 @@ Governed and registered.
 - Class: COMMAND_CENTER_SIDEBAR_SPACING_RADIUS_SCROLL_DRIFT_FROM_FINAL_ETALON
 - Root cause: sidebar had insufficient height/spacing, visible internal scroll and inconsistent rounded corners.
 - Fix: V201 applies final sidebar etalon CSS.
+
+## 20260622T222438Z detected-error
+- Class: COMMAND_CENTER_MULTIPLE_STYLE_AUTHORITIES
+- Root cause: sidebar was controlled by theme/as6Theme.css plus V200/V201 side CSS patches.
+- Fix: V202 consolidates sidebar source into theme/as6Theme.css and removes V200/V201 imports/files.
+
+## 20260622T222438Z detected-error
+- Class: SIDEBAR_DATA_ATTRIBUTE_DRIFT
+- Root cause: AppShell used datacommand-sidebar instead of data-command-sidebar.
+- Fix: V202 corrects the data attribute.

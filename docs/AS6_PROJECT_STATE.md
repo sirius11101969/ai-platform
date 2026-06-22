@@ -3544,3 +3544,13 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Scope: /command-center sidebar only.
 - Diagnostic: ops/bin/as6-diagnose-command-center-sidebar-final-etalon-v201
 - Readiness after: 99%
+
+## 20260622T222438Z AS6 V202 Command Center Sidebar Single Source of Truth
+- Fixed: sidebar style authority drift.
+- Root cause: multiple CSS files controlled .command-sidebar while theme/as6Theme.css remained the actual source.
+- Source of truth: frontend/src/theme/as6Theme.css
+- Removed: V200/V201 sidebar CSS imports and files.
+- Fixed: AppShell data attribute drift datacommand-sidebar -> data-command-sidebar.
+- Diagnostic: ops/bin/as6-diagnose-command-center-sidebar-source-v202
+- Runtime tracer: ops/runtime-tracers/as6-command-center-sidebar-runtime-tracer-v202.js
+- Readiness after: 99%
