@@ -1,0 +1,64 @@
+/* AS6 V164: final clip for horizontal strip.
+   Source: visual line is overflow from second-row inner chart/progress layer, not border. */
+
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid,
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid > *,
+.command-center-page[data-command-center-visual="premium-as6"] .employee-performance,
+.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics,
+.command-center-page[data-command-center-visual="premium-as6"] .month-goals,
+.command-second-grid,
+.command-second-grid > *,
+.employee-performance,
+.revenue-dynamics,
+.month-goals {
+  overflow: hidden !important;
+  overflow-x: hidden !important;
+  contain: paint !important;
+  isolation: isolate !important;
+}
+
+/* Не даём SVG/графикам/линиям второго ряда вылезать за карточку */
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid svg,
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid canvas,
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid img,
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid [class*="chart"],
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid [class*="graph"],
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid [class*="progress"],
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid [class*="bar"],
+.command-second-grid svg,
+.command-second-grid canvas,
+.command-second-grid img,
+.command-second-grid [class*="chart"],
+.command-second-grid [class*="graph"],
+.command-second-grid [class*="progress"],
+.command-second-grid [class*="bar"] {
+  max-width: 100% !important;
+  overflow: hidden !important;
+  contain: paint !important;
+}
+
+/* Убираем длинные декоративные псевдолинии у второго ряда */
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid::before,
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid::after,
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid > *::before,
+.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid > *::after,
+.command-second-grid::before,
+.command-second-grid::after,
+.command-second-grid > *::before,
+.command-second-grid > *::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Возвращаем нормальные рамки карточек, но без сквозной линии */
+.command-center-page[data-command-center-visual="premium-as6"] .employee-performance,
+.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics,
+.command-center-page[data-command-center-visual="premium-as6"] .month-goals {
+  border: 1px solid rgba(55, 104, 154, .24) !important;
+  box-shadow: none !important;
+  background-clip: padding-box !important;
+}

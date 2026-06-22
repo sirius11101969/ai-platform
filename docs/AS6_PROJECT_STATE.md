@@ -3338,3 +3338,7 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 ## 20260622T041954Z AS6 V163 Remove Second Grid Child Borders
 - Fixed: V162 child border-top/bottom line.
 - Readiness after: 99%
+
+## 20260622T042635Z AS6 V164 Clip Second Row Overflow Strip
+- Fixed: second-row inner chart/progress overflow strip.
+- Readiness after: 99%

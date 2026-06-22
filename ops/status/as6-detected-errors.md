@@ -793,3 +793,8 @@ Governed and registered.
 - Class: V162_LEFT_BORDER_TOP_ON_COMMAND_SECOND_GRID_CHILDREN
 - Root cause: V162 accidentally preserved border-top/bottom on .command-second-grid children.
 - Control: V163 removes child borders.
+
+## 20260622T042635Z detected-error
+- Class: SECOND_ROW_INNER_CHART_OR_PROGRESS_OVERFLOW_ESCAPES_CARD_BOUNDS
+- Root cause: line is not border; it is overflowing inner visual layer from second row.
+- Control: V164 clips second-row cards and visual children.

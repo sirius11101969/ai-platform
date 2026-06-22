@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-clip-second-row-v164"
+grep -q "as6-command-center-clip-second-row-v164.css" frontend/src/main.jsx
+grep -q "AS6 V164" frontend/src/styles/as6-command-center-clip-second-row-v164.css
+grep -q "contain: paint" frontend/src/styles/as6-command-center-clip-second-row-v164.css
+grep -q "overflow: hidden" frontend/src/styles/as6-command-center-clip-second-row-v164.css
+echo "AS6_COMMAND_CENTER_CLIP_SECOND_ROW_V164=PASS"

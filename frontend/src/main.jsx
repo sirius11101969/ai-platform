@@ -29,3 +29,5 @@ import "./styles/as6-command-center-html-strip-v161.css";
 import "./styles/as6-command-center-second-grid-strip-v162.css";
 
 import "./styles/as6-command-center-second-grid-strip-v163.css";
+
+import "./styles/as6-command-center-clip-second-row-v164.css";

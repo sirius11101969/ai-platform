@@ -2268,3 +2268,7 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 ## 20260622T041954Z command-second-grid-strip-v163
 - Diagnostic: ops/bin/as6-diagnose-command-second-grid-strip-v163
 - Failure class: V162_LEFT_BORDER_TOP_ON_COMMAND_SECOND_GRID_CHILDREN
+
+## 20260622T042635Z command-center-clip-second-row-v164
+- Diagnostic: ops/bin/as6-diagnose-command-center-clip-second-row-v164
+- Failure class: SECOND_ROW_INNER_CHART_OR_PROGRESS_OVERFLOW_ESCAPES_CARD_BOUNDS
