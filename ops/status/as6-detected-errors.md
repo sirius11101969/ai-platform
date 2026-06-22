@@ -861,3 +861,8 @@ Governed and registered.
 - Impact: horizontal neon strip on /command-center.
 - Fixed by commit: 2bc246a
 - Prevention: forbid wildcard class pseudo-elements in shared CSS unless page-scoped.
+
+## 20260622T091756Z detected-error
+- Class: REVENUE_DYNAMICS_CHART_VISUAL_ETALON_DRIFT
+- Root cause: Revenue Dynamics chart did not match etalon.
+- Fix: V177C finalized etalon chart CSS.

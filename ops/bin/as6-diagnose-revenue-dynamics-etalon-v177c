@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=revenue-dynamics-etalon-v177c"
+grep -q "AS6 V177B Revenue Dynamics etalon chart" frontend/src/theme/as6Theme.css
+grep -q "height: 190px" frontend/src/theme/as6Theme.css
+grep -q "padding: 34px 16px 48px" frontend/src/theme/as6Theme.css
+echo "AS6_REVENUE_DYNAMICS_ETALON_V177C=PASS"

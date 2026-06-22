@@ -3398,3 +3398,8 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Fixed commit: 2bc246a
 - Diagnostic added: ops/bin/as6-diagnose-css-wildcard-pseudoelement-collision
 - Readiness after: 99%
+
+## 20260622T091756Z AS6 V177C Revenue Dynamics Etalon
+- Fixed: Revenue Dynamics chart visual mismatch.
+- Diagnostic: ops/bin/as6-diagnose-revenue-dynamics-etalon-v177c
+- Readiness after: 99%

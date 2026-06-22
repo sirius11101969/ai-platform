@@ -2326,3 +2326,7 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Failure class: GLOBAL_WILDCARD_CSS_PSEUDOELEMENT_COLLISION
 - GitHub issue: #328
 - Check: no [class*=stat|metric]::before/::after in shared CSS.
+
+## 20260622T091756Z revenue-dynamics-etalon-v177c
+- Diagnostic: ops/bin/as6-diagnose-revenue-dynamics-etalon-v177c
+- Failure class: REVENUE_DYNAMICS_CHART_VISUAL_ETALON_DRIFT

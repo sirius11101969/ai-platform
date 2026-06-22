@@ -1987,3 +1987,7 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Files: frontend/src/styles/*.css, frontend/src/theme/*.css
 - Rule: decorative pseudo-elements must be page/module scoped.
 - GitHub issue: #328
+
+## 20260622T091756Z REVENUE_DYNAMICS_CHART_VISUAL_ETALON_DRIFT
+- Coverage: Command Center Revenue Dynamics visual etalon.
+- Files: frontend/src/theme/as6Theme.css

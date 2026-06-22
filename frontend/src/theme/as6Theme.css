@@ -707,3 +707,61 @@
   object-fit:contain!important;
   filter:drop-shadow(0 0 12px rgba(80,220,255,.42))!important;
 }
+
+
+/* AS6 V177B Revenue Dynamics etalon chart.
+   Scope: /command-center only.
+   Goal: match reference screenshot: lower bars, softer line, more bottom space. */
+.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics {
+  overflow: hidden !important;
+  contain: paint !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics .mock-chart {
+  position: relative !important;
+  height: 190px !important;
+  min-height: 190px !important;
+  padding: 34px 16px 48px !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  overflow: hidden !important;
+  contain: paint !important;
+  border-radius: 16px !important;
+  background: linear-gradient(180deg, rgba(14, 22, 52, .72), rgba(4, 9, 22, .42)) !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics .mock-chart span {
+  flex: 1 1 0 !important;
+  max-width: 42px !important;
+  min-width: 24px !important;
+  border-radius: 10px 10px 2px 2px !important;
+  background: linear-gradient(180deg, rgba(168, 85, 247, .96), rgba(91, 33, 182, .58) 58%, rgba(14, 165, 233, .18)) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.16) !important;
+  opacity: .92 !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics .mock-chart svg {
+  position: absolute !important;
+  left: 16px !important;
+  right: 16px !important;
+  top: 40px !important;
+  bottom: 54px !important;
+  width: calc(100% - 32px) !important;
+  height: calc(100% - 94px) !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+  clip-path: inset(0 0 0 0 round 14px) !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics .mock-chart polyline {
+  stroke: rgba(196, 181, 253, .88) !important;
+  stroke-width: 3 !important;
+  filter: drop-shadow(0 0 4px rgba(167, 139, 250, .45)) !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics .chart-total {
+  display: block !important;
+  margin-bottom: 14px !important;
+}
