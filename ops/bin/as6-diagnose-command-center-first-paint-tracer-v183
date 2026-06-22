@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-first-paint-tracer-v183"
+grep -q "as6-command-center-first-paint-tracer-v183.js" frontend/src/main.jsx
+grep -q "AS6_FIRST_PAINT_FLASH_TRACE_V183" frontend/src/as6-command-center-first-paint-tracer-v183.js
+echo "AS6_COMMAND_CENTER_FIRST_PAINT_TRACER_V183=PASS"

@@ -2358,3 +2358,8 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Diagnostic: ops/bin/as6-diagnose-command-center-route-flash-v182
 - Failure class: COMMAND_CENTER_ROUTE_LOADING_FALLBACK_FLASH_BEFORE_PAGE_CSS_SETTLES
 - Check: /command-center Suspense fallback is disabled.
+
+## 20260622T104209Z command-center-first-paint-tracer-v183
+- Diagnostic: ops/bin/as6-diagnose-command-center-first-paint-tracer-v183
+- Failure class: FIRST_PAINT_FLASH_SOURCE_UNKNOWN_AFTER_CSS_AND_ROUTE_FIXES
+- Check: DOM/CSS samples at immediate, raf1, 300ms, 800ms, 1500ms, 2500ms, 4000ms.

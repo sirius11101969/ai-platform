@@ -3434,3 +3434,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Root cause: Suspense fallback rendered before Command Center page and final scoped CSS.
 - Diagnostic: ops/bin/as6-diagnose-command-center-route-flash-v182
 - Readiness after: 99%
+
+## 20260622T104209Z AS6 V183 First Paint Flash Tracer
+- Diagnostic only: browser-side first paint trace for /command-center.
+- Root cause status: unknown after V181/V182.
+- Diagnostic: ops/bin/as6-diagnose-command-center-first-paint-tracer-v183
+- Readiness after: 99%
