@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-compact-sidebar-v205"
+grep -q 'AS6 V205 Compact Sidebar Exact Etalon' frontend/src/theme/as6Theme.css
+grep -q 'grid-template-columns: 286px minmax(0, 1fr)' frontend/src/theme/as6Theme.css
+grep -q 'width: 286px' frontend/src/theme/as6Theme.css
+grep -q 'font-size: 14px' frontend/src/theme/as6Theme.css
+grep -q 'gap: 8px' frontend/src/theme/as6Theme.css
+grep -q 'data-command-sidebar=' frontend/src/components/AppShell.jsx
+! grep -q 'datacommand-sidebar=' frontend/src/components/AppShell.jsx
+! grep -qE 'as6-command-center-sidebar-etalon-v200\.css|as6-command-center-sidebar-final-etalon-v201\.css|as6-command-center-real-sidebar-force-v203\.css' frontend/src/main.jsx
+echo "AS6_COMMAND_CENTER_COMPACT_SIDEBAR_V205=PASS"

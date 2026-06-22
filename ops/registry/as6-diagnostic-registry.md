@@ -2510,3 +2510,12 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Check: sidebar width 342px.
 - Check: sidebar height auto with no overlap.
 - Check: legacy V200/V201/V203 imports removed.
+
+## 20260622T235248Z command-center-compact-sidebar-v205
+- Diagnostic: ops/bin/as6-diagnose-command-center-compact-sidebar-v205
+- Failure class: SIDEBAR_V204_OVERSIZED_SPACING_FONT_AND_WIDTH_DRIFT_FROM_ETALON
+- Check: sidebar width 286px.
+- Check: nav font 14px.
+- Check: nav gap 8px.
+- Check: compact owner/help cards.
+- Check: stale V200/V201/V203 imports absent.

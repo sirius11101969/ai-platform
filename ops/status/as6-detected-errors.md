@@ -991,3 +991,8 @@ Governed and registered.
 - Class: APPSHELL_LOST_COMMAND_SHELL_CLASS_AND_SIDEBAR_HEIGHT_FORCED_OVERLAP
 - Root cause: real AppShell rendered without command-shell class and prior sidebar patch forced viewport height causing overlap.
 - Fix: V204 restores command-shell and uses auto-height final sidebar etalon in theme/as6Theme.css.
+
+## 20260622T235248Z detected-error
+- Class: SIDEBAR_V204_OVERSIZED_SPACING_FONT_AND_WIDTH_DRIFT_FROM_ETALON
+- Root cause: V204 matched the correct DOM but used oversized geometry and typography.
+- Fix: V205 applies compact exact etalon geometry, typography and spacing.

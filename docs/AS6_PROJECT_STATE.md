@@ -3567,3 +3567,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Root cause: AppShell lost command-shell class, so previous command-shell sidebar CSS did not match; forced height also caused card overlap.
 - Diagnostic: ops/bin/as6-diagnose-command-center-final-real-sidebar-v204
 - Readiness after: 99%
+
+## 20260622T235248Z AS6 V205 Compact Sidebar Exact Etalon
+- Fixed: sidebar proportions, text size and spacing now match compact etalon.
+- Root cause: V204 sidebar was oversized: 342px width, 18px menu font and excessive gaps.
+- Diagnostic: ops/bin/as6-diagnose-command-center-compact-sidebar-v205
+- Readiness after: 99%

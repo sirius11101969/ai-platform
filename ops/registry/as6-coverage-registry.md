@@ -2094,3 +2094,10 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
   - frontend/src/components/AppShell.jsx
   - frontend/src/theme/as6Theme.css
   - frontend/src/main.jsx
+
+## 20260622T235248Z SIDEBAR_V204_OVERSIZED_SPACING_FONT_AND_WIDTH_DRIFT_FROM_ETALON
+- Coverage: /command-center compact sidebar visual etalon.
+- Files:
+  - frontend/src/theme/as6Theme.css
+  - frontend/src/components/AppShell.jsx
+  - frontend/src/main.jsx
