@@ -2244,3 +2244,7 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 ## 20260622T030447Z command-center-real-strip-clean-v157
 - Diagnostic: ops/bin/as6-diagnose-command-center-real-strip-clean-v157
 - Failure class: FAILED_STRIP_FIXES_ADDED_FIXED_MASKS_AND_OVERLAY_GUARDS
+
+## 20260622T031110Z command-center-strip-source-v158
+- Diagnostic: ops/bin/as6-diagnose-command-center-strip-source-v158
+- Failure class: STRIP_SOURCE_UNKNOWN_REQUIRES_BROWSER_COMPUTED_STYLE_DIAGNOSTIC

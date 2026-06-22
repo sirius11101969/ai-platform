@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-strip-source-v158"
+grep -q "as6-command-center-strip-diagnostics-v158.js" frontend/src/main.jsx
+grep -q "AS6_STRIP_DIAGNOSTICS_V158" frontend/src/as6-command-center-strip-diagnostics-v158.js
+echo "AS6_COMMAND_CENTER_STRIP_SOURCE_DIAGNOSTIC_V158=PASS"

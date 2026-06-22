@@ -3313,3 +3313,7 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 ## 20260622T030447Z AS6 V157 Purge Bad Strip Fixes
 - Fixed: removed failed fixed masks/overlay guards V151-V156.
 - Readiness after: 99%
+
+## 20260622T031110Z AS6 V158 Strip Source Diagnostics
+- Diagnostic only: browser-side DOM/CSS source finder for visible horizontal strip.
+- Readiness after: 99%

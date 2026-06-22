@@ -763,3 +763,8 @@ Governed and registered.
 - Class: FAILED_STRIP_FIXES_ADDED_FIXED_MASKS_AND_OVERLAY_GUARDS
 - Root cause: previous fixes added masks/guards instead of removing source.
 - Control: V157 purges failed strip layers and keeps clean parent pseudo reset.
+
+## 20260622T031110Z detected-error
+- Class: STRIP_SOURCE_UNKNOWN_REQUIRES_BROWSER_COMPUTED_STYLE_DIAGNOSTIC
+- Root cause: CSS/DOM source not identifiable from server grep alone.
+- Control: V158 browser computed-style diagnostic.
