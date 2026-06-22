@@ -853,3 +853,11 @@ Governed and registered.
 - Class: REAL_HORIZONTAL_SCROLLBAR_LAYER_VISIBLE_ACROSS_COMMAND_CENTER
 - Root cause: visible line was horizontal scrollbar layer, not chart or card border.
 - Control: V176 disables horizontal scrollbar rendering and locks overflow-x on Command Center containers.
+
+## 20260622T084241Z detected-error
+- GitHub issue: #328
+- Class: GLOBAL_WILDCARD_CSS_PSEUDOELEMENT_COLLISION
+- Root cause: global wildcard CSS selectors [class*=stat]/[class*=metric] created decorative ::after on Command Center goal-stats.
+- Impact: horizontal neon strip on /command-center.
+- Fixed by commit: 2bc246a
+- Prevention: forbid wildcard class pseudo-elements in shared CSS unless page-scoped.

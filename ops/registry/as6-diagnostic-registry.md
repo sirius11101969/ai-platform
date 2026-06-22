@@ -2320,3 +2320,9 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 ## 20260622T073257Z horizontal-scrollbar-layer-v176
 - Diagnostic: ops/bin/as6-diagnose-horizontal-scrollbar-layer-v176
 - Failure class: REAL_HORIZONTAL_SCROLLBAR_LAYER_VISIBLE_ACROSS_COMMAND_CENTER
+
+## 20260622T084241Z css-wildcard-pseudoelement-collision
+- Diagnostic: ops/bin/as6-diagnose-css-wildcard-pseudoelement-collision
+- Failure class: GLOBAL_WILDCARD_CSS_PSEUDOELEMENT_COLLISION
+- GitHub issue: #328
+- Check: no [class*=stat|metric]::before/::after in shared CSS.

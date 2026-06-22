@@ -1981,3 +1981,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers: direct data-command-center-visual selector
 - Covers: KPI/action/copilot visible lines
 - Covers: guard-class independent styling
+
+## 20260622T084241Z CSS_WILDCARD_PSEUDOELEMENT_COLLISION
+- Coverage: shared CSS wildcard pseudo-element collision.
+- Files: frontend/src/styles/*.css, frontend/src/theme/*.css
+- Rule: decorative pseudo-elements must be page/module scoped.
+- GitHub issue: #328

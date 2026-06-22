@@ -3392,3 +3392,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 ## 20260622T073257Z AS6 V176 Remove Real Horizontal Scrollbar Layer
 - Fixed: full-width horizontal scrollbar/scroll-layer on Command Center.
 - Readiness after: 99%
+
+## 20260622T084241Z AS6 CSS Wildcard Pseudoelement Collision Registered
+- Issue: #328
+- Fixed commit: 2bc246a
+- Diagnostic added: ops/bin/as6-diagnose-css-wildcard-pseudoelement-collision
+- Readiness after: 99%

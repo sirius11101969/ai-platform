@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=css-wildcard-pseudoelement-collision"
+
+if grep -RInE '\[class\*="(stat|Stat|metric|Metric)"\]::(before|after)' frontend/src/styles frontend/src/theme 2>/dev/null; then
+  echo "AS6_CSS_WILDCARD_PSEUDOELEMENT_COLLISION=FAIL"
+  exit 1
+fi
+
+echo "AS6_CSS_WILDCARD_PSEUDOELEMENT_COLLISION=PASS"
