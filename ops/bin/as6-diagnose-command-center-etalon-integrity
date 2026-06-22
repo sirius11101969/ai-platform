@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-etalon-integrity"
+fail=0
+
+hit="$(grep -RInE 'reference-polish-v123c|arrow-fix-v126|final-runtime-style-v127|hard-fix-v128|createElement\("style"\)|appendChild\(style\)|style\.textContent|insertAdjacentHTML' frontend/src frontend/index.html frontend/public 2>/dev/null || true)"
+
+if [ -n "$hit" ]; then
+  echo "AS6_COMMAND_CENTER_ETALON_INTEGRITY=FAIL"
+  echo "$hit"
+  fail=1
+else
+  echo "AS6_COMMAND_CENTER_ETALON_INTEGRITY=PASS"
+fi
+
+exit "$fail"

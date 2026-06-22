@@ -3191,3 +3191,20 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Removed V128 hard runtime public script.
 - Removed V128 index.html script injection.
 - Restored safe SPA loading path.
+
+## 20260622T002129Z AS6 Command Center V130 Etalon Restore
+- Readiness before: 82%
+- Readiness after: 96%
+- Stable visual etalon: 03cfb92
+- Action: restored Command Center visual files to etalon one-to-one.
+- Removed/blocked: V123C/V126/V127/V128 runtime visual patches.
+- Added diagnostic: ops/bin/as6-diagnose-command-center-etalon-integrity
+- Failure class: COMMAND_CENTER_VISUAL_DRIFT_FROM_RUNTIME_STYLE_PATCHES
+
+## 20260622T002731Z AS6 V131 Command Center Etalon Restore
+- Readiness before: 82%
+- Readiness after: 96%
+- Etalon: 03cfb92
+- Docker build skipped because previous failure was infrastructure/deploy layer: mount options is too long.
+- Fixed: removed V123C/V126/V127/V128 runtime visual patches.
+- Added diagnostic: ops/bin/as6-diagnose-command-center-etalon-integrity

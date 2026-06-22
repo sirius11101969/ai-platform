@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "AS6_DIAGNOSTIC=command-center-runtime-integrity"
+
+fail=0
+
+check_file() {
+  file="$1"
+  pattern="$2"
+  label="$3"
+  if [ -f "$file" ] && grep -nE "$pattern" "$file" >/tmp/as6-cc-runtime-hit.$$ 2>/dev/null; then
+    echo "FAIL $label file=$file"
+    cat /tmp/as6-cc-runtime-hit.$$
+    fail=1
+  else
+    echo "PASS $label file=$file"
+  fi
+  rm -f /tmp/as6-cc-runtime-hit.$$
+}
+
+check_file frontend/index.html 'as6-command-center-hard-fix-v128\.js' 'no-v128-index-runtime-script'
+check_file frontend/public/as6-command-center-hard-fix-v128.js 'querySelector|appendChild|insertAdjacent|style\.|setAttribute\("style"|border|boxShadow|linear-gradient' 'v128-file-is-noop'
+check_file frontend/src/as6-command-center-reference-guard.js 'insertAdjacentHTML|appendChild|style\.border|style\.boxShadow|setAttribute\("style"' 'reference-guard-no-hard-dom-style'
+
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_COMMAND_CENTER_RUNTIME_INTEGRITY=PASS"
+else
+  echo "AS6_COMMAND_CENTER_RUNTIME_INTEGRITY=FAIL"
+  exit 1
+fi

@@ -1890,3 +1890,17 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - V127 | ops/bin/as6-control-command-center-final-runtime-style-v127 | Command Center final runtime style coverage | ENABLED
 - V128 | ops/bin/as6-control-command-center-hard-runtime-fix-v128 | Command Center hard runtime fix coverage | ENABLED
 - V129 | ops/bin/as6-control-emergency-restore-site-after-v128 | Emergency restore after V128 coverage | ENABLED
+
+## 20260622T002129Z coverage-command-center-etalon-integrity
+- Covers: frontend/index.html
+- Covers: frontend/src/pages/CommandCenterPage.jsx
+- Covers: frontend/src/as6-command-center-reference-guard.js
+- Covers: frontend/public/as6-command-center-hard-fix-v128.js absence
+- Covers: V123C/V126/V127/V128 runtime visual patch absence
+
+## 20260622T002731Z coverage-command-center-etalon
+- frontend/src/as6-command-center-reference-guard.js
+- frontend/src/styles/as6-command-center-appshell-reference.css
+- frontend/src/styles/as6-command-center-reference-page.css
+- frontend/src/styles/as6-command-center-true-reference-lock.css
+- absence of V123C/V126/V127/V128 runtime files

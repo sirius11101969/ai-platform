@@ -2147,3 +2147,8 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - V127 | ops/bin/as6-diagnose-command-center-final-runtime-style-v127 | Command Center final runtime style diagnostic | ENABLED
 - V128 | ops/bin/as6-diagnose-command-center-hard-runtime-fix-v128 | Command Center hard runtime fix diagnostic | ENABLED
 - V129 | ops/bin/as6-diagnose-emergency-restore-site-after-v128 | Emergency restore after V128 diagnostic | ENABLED
+
+## 20260622T002129Z command-center-etalon-integrity
+- Diagnostic: ops/bin/as6-diagnose-command-center-etalon-integrity
+- Failure class: COMMAND_CENTER_VISUAL_DRIFT_FROM_RUNTIME_STYLE_PATCHES
+- Status: ENABLED

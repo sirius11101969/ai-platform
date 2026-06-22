@@ -654,3 +654,17 @@ Governed and registered.
 - ROOT_CAUSE: V125B called full enforcement after expected staged patch changes.
 - ACTION: reset failed V125B, added scoped CSS arrow fix and normal commit flow.
 - STATUS: registered and controlled.
+
+## 20260622T002129Z detected-error
+- Class: COMMAND_CENTER_VISUAL_DRIFT_FROM_RUNTIME_STYLE_PATCHES
+- Root cause: V123C/V126/V127/V128 runtime visual patch chain.
+- Remediation: restored Command Center visual layer to etalon 03cfb92.
+
+## 20260622T002731Z detected-error
+- Class: DOCKER_COMPOSE_BUILD_MOUNT_OPTIONS_TOO_LONG
+- Root cause: docker build failed before commit/push/deploy.
+- Control: use no-build restart for this visual restore.
+
+- Class: COMMAND_CENTER_VISUAL_DRIFT_FROM_RUNTIME_STYLE_PATCHES
+- Root cause: runtime visual patches after etalon.
+- Control: etalon integrity diagnostic blocks recurrence.
