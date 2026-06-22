@@ -194,3 +194,26 @@ body,
   border: 0 !important;
   box-shadow: none !important;
 }
+
+/* AS6 V173: remove sticky quick-actions horizontal strip. Source fix, no mask. */
+.command-center-page[data-command-center-visual="premium-as6"] .quick-actions,
+.command-center-page[data-command-center-visual="premium-as6"] .quick-actions-primary {
+  position: static !important;
+  bottom: auto !important;
+  top: auto !important;
+  z-index: auto !important;
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+  background-clip: padding-box !important;
+}
+.command-center-page[data-command-center-visual="premium-as6"] .quick-actions::before,
+.command-center-page[data-command-center-visual="premium-as6"] .quick-actions::after,
+.command-center-page[data-command-center-visual="premium-as6"] .quick-actions-primary::before,
+.command-center-page[data-command-center-visual="premium-as6"] .quick-actions-primary::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}

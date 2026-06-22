@@ -833,3 +833,8 @@ Governed and registered.
 - Class: REAL_PROGRESS_AND_CHART_LINES_LOOK_LIKE_PAGE_STRIP
 - Root cause: remaining line was not one overlay; it was aligned real progress/chart/sidebar UI lines.
 - Control: V172 removes those source visual lines.
+
+## 20260622T061254Z detected-error
+- Class: QUICK_ACTIONS_STICKY_BOTTOM_BAR_DRAWING_HORIZONTAL_STRIP
+- Root cause: .quick-actions used position: sticky; bottom: 8px; z-index: 20.
+- Control: V173 makes quick-actions static and removes its strip edges.

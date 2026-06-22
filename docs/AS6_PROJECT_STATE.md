@@ -3375,3 +3375,7 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 ## 20260622T053950Z AS6 V172 Remove Real Progress Strip
 - Fixed: real progress/chart/month-goal/sidebar lines that looked like one page strip.
 - Readiness after: 99%
+
+## 20260622T061254Z AS6 V173 Remove Sticky Quick Actions Strip
+- Fixed: sticky quick-actions bottom bar was drawing horizontal strip over Command Center.
+- Readiness after: 99%

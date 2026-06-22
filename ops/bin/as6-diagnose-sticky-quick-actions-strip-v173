@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=sticky-quick-actions-strip-v173"
+! grep -qE "\.quick-actions\s*\{\s*position:\s*sticky;\s*bottom:\s*8px;\s*z-index:\s*20" frontend/src/theme/as6Theme.css
+grep -q "AS6 V173" frontend/src/styles/as6-command-center-clean-final-v169.css
+grep -q "position: static !important" frontend/src/styles/as6-command-center-clean-final-v169.css
+echo "AS6_STICKY_QUICK_ACTIONS_STRIP_V173=PASS"

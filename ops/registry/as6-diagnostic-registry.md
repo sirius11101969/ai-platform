@@ -2304,3 +2304,7 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 ## 20260622T053950Z real-progress-strip-v172
 - Diagnostic: ops/bin/as6-diagnose-real-progress-strip-v172
 - Failure class: REAL_PROGRESS_AND_CHART_LINES_LOOK_LIKE_PAGE_STRIP
+
+## 20260622T061254Z sticky-quick-actions-strip-v173
+- Diagnostic: ops/bin/as6-diagnose-sticky-quick-actions-strip-v173
+- Failure class: QUICK_ACTIONS_STICKY_BOTTOM_BAR_DRAWING_HORIZONTAL_STRIP
