@@ -118,7 +118,7 @@ export function ProtectedLayout({ children }) {
   const isCommandCenter = location.pathname === "/command-center";
 
   return (
-    <div className={`app-shell `} data-route={isCommandCenter ? "command-center" : "app"}>
+    <div className={`app-shell ${isCommandCenter ? "command-shell" : ""}`} data-route={isCommandCenter ? "command-center" : "app"}>
       <aside className={`sidebar shell-glow ${isCommandCenter ? "command-sidebar" : ""}`} data-command-sidebar={isCommandCenter ? "premium" : undefined}>
         {isCommandCenter ? (
           <>

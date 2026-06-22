@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-final-real-sidebar-v204"
+grep -q 'app-shell ${isCommandCenter ? "command-shell" : ""}' frontend/src/components/AppShell.jsx
+grep -q 'data-command-sidebar=' frontend/src/components/AppShell.jsx
+! grep -q 'datacommand-sidebar=' frontend/src/components/AppShell.jsx
+! grep -qE 'as6-command-center-sidebar-etalon-v200\.css|as6-command-center-sidebar-final-etalon-v201\.css|as6-command-center-real-sidebar-force-v203\.css' frontend/src/main.jsx
+grep -q 'AS6 V204 Final Real Sidebar Etalon' frontend/src/theme/as6Theme.css
+grep -q 'grid-template-columns: 342px minmax(0, 1fr)' frontend/src/theme/as6Theme.css
+grep -q 'width: 342px' frontend/src/theme/as6Theme.css
+grep -q 'border-radius: 34px' frontend/src/theme/as6Theme.css
+echo "AS6_COMMAND_CENTER_FINAL_REAL_SIDEBAR_V204=PASS"

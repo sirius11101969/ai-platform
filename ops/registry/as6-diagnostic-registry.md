@@ -2502,3 +2502,11 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Check: app-shell grid forced to 320px through direct sidebar parent match.
 - Check: V200/V201 imports removed.
 - Check: data-command-sidebar attribute corrected.
+
+## 20260622T232241Z command-center-final-real-sidebar-v204
+- Diagnostic: ops/bin/as6-diagnose-command-center-final-real-sidebar-v204
+- Failure class: APPSHELL_LOST_COMMAND_SHELL_CLASS_AND_SIDEBAR_HEIGHT_FORCED_OVERLAP
+- Check: command-shell restored in AppShell.
+- Check: sidebar width 342px.
+- Check: sidebar height auto with no overlap.
+- Check: legacy V200/V201/V203 imports removed.

@@ -3561,3 +3561,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Removed: V200/V201 sidebar CSS imports.
 - Diagnostic: ops/bin/as6-diagnose-command-center-real-sidebar-v203
 - Readiness after: 99%
+
+## 20260622T232241Z AS6 V204 Final Real Sidebar Etalon
+- Fixed: restored command-shell on real AppShell and applied final sidebar etalon to actual aside.sidebar.command-sidebar.
+- Root cause: AppShell lost command-shell class, so previous command-shell sidebar CSS did not match; forced height also caused card overlap.
+- Diagnostic: ops/bin/as6-diagnose-command-center-final-real-sidebar-v204
+- Readiness after: 99%

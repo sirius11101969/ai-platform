@@ -986,3 +986,8 @@ Governed and registered.
 - Class: SIDEBAR_PATCH_TARGETED_WRONG_PARENT_SELECTOR_AND_OLD_IMPORTS_REMAINED
 - Root cause: sidebar remained unchanged because previous CSS did not force the actual visible aside.sidebar.command-sidebar and old imports remained.
 - Fix: V203 targets actual sidebar DOM and removes old sidebar patch imports.
+
+## 20260622T232241Z detected-error
+- Class: APPSHELL_LOST_COMMAND_SHELL_CLASS_AND_SIDEBAR_HEIGHT_FORCED_OVERLAP
+- Root cause: real AppShell rendered without command-shell class and prior sidebar patch forced viewport height causing overlap.
+- Fix: V204 restores command-shell and uses auto-height final sidebar etalon in theme/as6Theme.css.

@@ -2087,3 +2087,10 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
   - frontend/src/styles/as6-command-center-real-sidebar-force-v203.css
   - frontend/src/components/AppShell.jsx
   - frontend/src/main.jsx
+
+## 20260622T232241Z APPSHELL_LOST_COMMAND_SHELL_CLASS_AND_SIDEBAR_HEIGHT_FORCED_OVERLAP
+- Coverage: /command-center final sidebar etalon.
+- Files:
+  - frontend/src/components/AppShell.jsx
+  - frontend/src/theme/as6Theme.css
+  - frontend/src/main.jsx
