@@ -21,3 +21,6 @@ import "./styles/as6-command-center-bottom-strip-final-v151.css";
 import "./styles/as6-command-center-over-strip-v153.css";
 
 import "./styles/as6-command-center-hide-horizontal-scrollbar-v154.css";
+
+import "./as6-command-center-strip-guard-v155.js";
+import "./styles/as6-command-center-strip-guard-v155.css";

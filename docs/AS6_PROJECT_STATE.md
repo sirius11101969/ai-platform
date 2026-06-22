@@ -3301,3 +3301,7 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 ## 20260622T024736Z AS6 V154 Hide Command Center Horizontal Scrollbar
 - Fixed: visible horizontal strip/scrollbar on Command Center.
 - Readiness after: 99%
+
+## 20260622T025353Z AS6 V155 Remove Real Overlay Strip
+- Fixed: real thin overlay strip above Command Center content.
+- Readiness after: 99%

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-real-overlay-strip-v155"
+grep -q "as6-command-center-strip-guard-v155.js" frontend/src/main.jsx
+grep -q "data-as6-v155-strip-removed" frontend/src/as6-command-center-strip-guard-v155.js
+grep -q "isVisibleLine" frontend/src/as6-command-center-strip-guard-v155.js
+echo "AS6_COMMAND_CENTER_REAL_OVERLAY_STRIP_V155=PASS"

@@ -748,3 +748,8 @@ Governed and registered.
 - Class: VISIBLE_STRIP_IS_HORIZONTAL_SCROLLBAR_OR_OVERFLOW_LAYER
 - Root cause: strip behaves like horizontal scrollbar/overflow layer.
 - Control: V154 hides horizontal scrollbars and locks overflow-x.
+
+## 20260622T025353Z detected-error
+- Class: STRIP_IS_REAL_OVERLAY_LAYER_NOT_SCROLLBAR_AND_NOT_CARD_BORDER
+- Root cause: strip behaves as real visual overlay layer above page content.
+- Control: V155 geometry-based Command Center overlay strip guard.
