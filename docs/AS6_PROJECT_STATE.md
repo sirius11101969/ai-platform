@@ -3464,3 +3464,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Root cause: v174b/v176 CSS layers used body:has(.command-center-page), causing layout recalculation after React inserted CommandCenterPage.
 - Diagnostic: ops/bin/as6-diagnose-body-has-flash-layers-v188
 - Readiness after: 99%
+
+## 20260622T121514Z AS6 V189 Route-Level Command Center Stable Paint
+- Fixed: Command Center first paint stabilization no longer depends on child .command-center-page class.
+- Root cause: first paint CSS depended on child page class that appears after AppShell render.
+- Diagnostic: ops/bin/as6-diagnose-command-center-route-stable-paint-v189
+- Readiness after: 99%

@@ -2388,3 +2388,10 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Failure class: BODY_HAS_COMMAND_CENTER_CSS_LAYERS_RECALCULATE_LAYOUT_AFTER_FIRST_PAINT
 - Check: v174b/v176 body:has CSS imports removed from main.jsx.
 - Check: obsolete reference guard runtime file removed.
+
+## 20260622T121514Z command-center-route-stable-paint-v189
+- Diagnostic: ops/bin/as6-diagnose-command-center-route-stable-paint-v189
+- Failure class: COMMAND_CENTER_FIRST_PAINT_STABILIZATION_DEPENDED_ON_CHILD_PAGE_CLASS
+- Check: AppShell has data-route=command-center on first render.
+- Check: stable paint CSS uses route-level selector.
+- Check: no body:has in V189 CSS.

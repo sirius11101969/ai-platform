@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-route-stable-paint-v189"
+grep -q 'data-route={isCommandCenter ? "command-center" : "app"}' frontend/src/components/AppShell.jsx
+grep -q 'as6-command-center-route-stable-paint-v189.css' frontend/src/main.jsx
+grep -q '\.app-shell\[data-route="command-center"\]' frontend/src/styles/as6-command-center-route-stable-paint-v189.css
+! grep -q 'body:has' frontend/src/styles/as6-command-center-route-stable-paint-v189.css
+echo "AS6_COMMAND_CENTER_ROUTE_STABLE_PAINT_V189=PASS"

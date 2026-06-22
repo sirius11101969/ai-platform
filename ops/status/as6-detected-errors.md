@@ -906,3 +906,8 @@ Governed and registered.
 - Class: BODY_HAS_COMMAND_CENTER_CSS_LAYERS_RECALCULATE_LAYOUT_AFTER_FIRST_PAINT
 - Root cause: v174b/v176 body:has CSS layers applied only after CommandCenterPage appeared in DOM.
 - Fix: V188 removed late body:has flash layers from main.jsx.
+
+## 20260622T121514Z detected-error
+- Class: COMMAND_CENTER_FIRST_PAINT_STABILIZATION_DEPENDED_ON_CHILD_PAGE_CLASS
+- Root cause: earlier fixes depended on .command-center-page/body:has, which applies after child page appears.
+- Fix: V189 adds route-level AppShell data-route and stable first-paint CSS.

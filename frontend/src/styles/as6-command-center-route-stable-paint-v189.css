@@ -1,0 +1,52 @@
+/* AS6 V189: route-level first paint stabilization.
+   Uses data-route on AppShell, available before CommandCenterPage child exists.
+   No body:has, no overlays, no masks. */
+
+.app-shell[data-route="command-center"],
+.app-shell[data-route="command-center"] .workspace,
+.app-shell[data-route="command-center"] .command-sidebar,
+.app-shell[data-route="command-center"] .sidebar-scroll,
+.app-shell[data-route="command-center"] .command-sidebar-bottom {
+  background: #030814 !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+}
+
+.app-shell[data-route="command-center"] {
+  min-height: 100vh !important;
+  overflow-x: hidden !important;
+}
+
+.app-shell[data-route="command-center"] .workspace {
+  min-width: 0 !important;
+  overflow-x: hidden !important;
+}
+
+.app-shell[data-route="command-center"]::before,
+.app-shell[data-route="command-center"]::after,
+.app-shell[data-route="command-center"] .workspace::before,
+.app-shell[data-route="command-center"] .workspace::after,
+.app-shell[data-route="command-center"] .command-sidebar::before,
+.app-shell[data-route="command-center"] .command-sidebar::after,
+.app-shell[data-route="command-center"] .sidebar-scroll::before,
+.app-shell[data-route="command-center"] .sidebar-scroll::after,
+.app-shell[data-route="command-center"] .command-sidebar-bottom::before,
+.app-shell[data-route="command-center"] .command-sidebar-bottom::after {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  background-image: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.app-shell[data-route="command-center"] .sidebar {
+  background: linear-gradient(180deg, #06101f 0%, #030814 100%) !important;
+  box-shadow: none !important;
+}
+
+.app-shell[data-route="command-center"] .command-center-page {
+  background: transparent !important;
+}

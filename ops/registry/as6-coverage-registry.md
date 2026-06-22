@@ -2021,3 +2021,8 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Coverage: Command Center first paint CSS stability.
 - Files: frontend/src/main.jsx
 - Rule: Command Center visual CSS must not depend on body:has(.command-center-page) for first paint corrections.
+
+## 20260622T121514Z COMMAND_CENTER_FIRST_PAINT_STABILIZATION_DEPENDED_ON_CHILD_PAGE_CLASS
+- Coverage: route-level first paint visual stability.
+- Files: frontend/src/components/AppShell.jsx, frontend/src/styles/as6-command-center-route-stable-paint-v189.css
+- Rule: /command-center first paint stabilization must bind to AppShell route state, not child page existence.
