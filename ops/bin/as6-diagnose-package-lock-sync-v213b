@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+FRONTEND="$ROOT/frontend"
+PACKAGE_JSON="$FRONTEND/package.json"
+PACKAGE_LOCK="$FRONTEND/package-lock.json"
+
+fail() {
+  echo "PACKAGE_LOCK_SYNC_RESULT=FAIL"
+  echo "PACKAGE_LOCK_SYNC_FAILURE_CLASS=$1"
+  echo "PACKAGE_LOCK_SYNC_DETAIL=$2"
+  exit 1
+}
+
+echo "AS6_DIAGNOSTIC=package-lock-sync-v213b"
+[ -f "$PACKAGE_JSON" ] || fail "FRONTEND_DEPENDENCY_DRIFT" "frontend/package.json is missing"
+[ -f "$PACKAGE_LOCK" ] || fail "PACKAGE_LOCK_OUT_OF_SYNC" "frontend/package-lock.json is missing"
+
+node - "$PACKAGE_JSON" "$PACKAGE_LOCK" <<'NODE'
+const fs = require('fs');
+const [packageJsonPath, packageLockPath] = process.argv.slice(2);
+const pkg = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+const lock = JSON.parse(fs.readFileSync(packageLockPath, 'utf8'));
+const root = lock.packages && lock.packages[''];
+const wanted = pkg.dependencies || {};
+const locked = (root && root.dependencies) || {};
+const missing = [];
+const drift = [];
+for (const [name, spec] of Object.entries(wanted)) {
+  if (locked[name] !== spec) drift.push(`${name}:package=${spec}:lock=${locked[name] || '<missing>'}`);
+  const nodeModule = lock.packages && lock.packages[`node_modules/${name}`];
+  if (!nodeModule) missing.push(`${name}:node_modules/${name}`);
+  if (spec.startsWith('file:')) {
+    const vendorPath = spec.replace(/^file:\.?\/?/, '');
+    const vendorEntry = lock.packages && lock.packages[vendorPath];
+    const linked = nodeModule && nodeModule.link === true && nodeModule.resolved === vendorPath;
+    const legacyFileEntry = nodeModule && typeof nodeModule.resolved === 'string' && nodeModule.resolved.startsWith('file:');
+    if (!vendorEntry && !linked && !legacyFileEntry) missing.push(`${name}:${vendorPath}`);
+  }
+}
+if (drift.length) {
+  console.log('PACKAGE_LOCK_SYNC_RESULT=FAIL');
+  console.log('PACKAGE_LOCK_SYNC_FAILURE_CLASS=FRONTEND_DEPENDENCY_DRIFT');
+  console.log(`PACKAGE_LOCK_SYNC_DETAIL=${drift.join(',')}`);
+  process.exit(1);
+}
+if (missing.length) {
+  console.log('PACKAGE_LOCK_SYNC_RESULT=FAIL');
+  console.log('PACKAGE_LOCK_SYNC_FAILURE_CLASS=PACKAGE_LOCK_OUT_OF_SYNC');
+  console.log(`PACKAGE_LOCK_SYNC_DETAIL=${missing.join(',')}`);
+  process.exit(1);
+}
+console.log('PACKAGE_LOCK_SYNC_RESULT=OK');
+console.log('PACKAGE_LOCK_SYNC_LOCKFILE_VERSION=' + lock.lockfileVersion);
+NODE
