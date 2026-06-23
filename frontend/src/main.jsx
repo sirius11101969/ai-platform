@@ -18,3 +18,5 @@ import "./styles/as6-command-center-revenue-chart-clip-v175b.css";
 
 import "./styles/as6-command-center-route-stable-paint-v189.css";
 
+
+import "./styles/as6-command-center-ui-quality-v215.css";

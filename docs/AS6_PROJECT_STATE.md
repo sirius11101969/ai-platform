@@ -3627,3 +3627,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Current branch must be main before continuing work.
 - Diagnostic status registry lifecycle must stay PASS.
 - Readiness after: 99%.
+
+## 20260623T220810Z AS6 V215 Command Center UI Quality
+- Root cause: Command Center needed final production spacing, typography, card and chart control layer.
+- Added UI quality CSS layer: frontend/src/styles/as6-command-center-ui-quality-v215.css.
+- Added diagnostic: ops/bin/as6-diagnose-command-center-ui-quality-v215.
+- Readiness after: 99%.

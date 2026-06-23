@@ -1,0 +1,139 @@
+/* AS6 V215 Command Center UI Quality Layer */
+
+.command-shell {
+  --as6-v215-radius-xl: 28px;
+  --as6-v215-radius-lg: 22px;
+  --as6-v215-radius-md: 16px;
+  --as6-v215-card-pad: 18px;
+  --as6-v215-gap: 16px;
+  --as6-v215-text-main: #111827;
+  --as6-v215-text-muted: #64748b;
+  --as6-v215-border: rgba(15, 23, 42, 0.08);
+}
+
+.command-shell .command-center-page {
+  gap: var(--as6-v215-gap) !important;
+}
+
+.command-shell .command-card,
+.command-shell .command-kpi,
+.command-shell .quick-actions,
+.command-shell .command-hero {
+  border-radius: var(--as6-v215-radius-xl) !important;
+  border: 1px solid var(--as6-v215-border) !important;
+}
+
+.command-shell .command-card {
+  padding: var(--as6-v215-card-pad) !important;
+}
+
+.command-shell .command-card h2,
+.command-shell .quick-actions h2,
+.command-shell .command-card-head h2 {
+  font-size: 15px !important;
+  line-height: 1.25 !important;
+  letter-spacing: -0.015em !important;
+}
+
+.command-shell .command-card p,
+.command-shell .command-card small,
+.command-shell .command-card span,
+.command-shell .command-card time {
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+}
+
+.command-shell .command-kpis {
+  gap: 14px !important;
+}
+
+.command-shell .command-kpi {
+  min-height: 112px !important;
+  padding: 16px !important;
+}
+
+.command-shell .command-kpi strong {
+  font-size: 25px !important;
+  line-height: 1.05 !important;
+}
+
+.command-shell .command-kpi span,
+.command-shell .command-kpi em {
+  font-size: 12px !important;
+}
+
+.command-shell .command-main-grid,
+.command-shell .command-top-grid,
+.command-shell .command-second-grid {
+  gap: 16px !important;
+}
+
+.command-shell .mock-chart {
+  min-height: 188px !important;
+  padding: 14px 10px 8px !important;
+  border-radius: 18px !important;
+}
+
+.command-shell .mock-chart span {
+  border-radius: 999px 999px 8px 8px !important;
+}
+
+.command-shell .pipeline-layout {
+  gap: 14px !important;
+}
+
+.command-shell .funnel-row {
+  gap: 9px !important;
+}
+
+.command-shell .funnel-row span,
+.command-shell .funnel-slice em {
+  font-size: 12px !important;
+}
+
+.command-shell .command-right-rail {
+  gap: 16px !important;
+}
+
+.command-shell .event-row,
+.command-shell .next-action,
+.command-shell .agent-row {
+  min-height: 38px !important;
+  gap: 10px !important;
+}
+
+.command-shell .quick-actions > div {
+  gap: 10px !important;
+}
+
+.command-shell .quick-actions a {
+  min-height: 44px !important;
+  border-radius: 15px !important;
+  font-size: 13px !important;
+}
+
+@media (max-width: 1440px) {
+  .command-shell .command-sidebar {
+    width: 276px !important;
+    min-width: 276px !important;
+  }
+
+  .command-shell .command-card {
+    padding: 16px !important;
+  }
+
+  .command-shell .command-kpi strong {
+    font-size: 23px !important;
+  }
+}
+
+@media (max-width: 1180px) {
+  .command-shell .command-main-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .command-shell .command-right-rail {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}

@@ -2585,3 +2585,11 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Check: current branch is main
 - Check: diagnostic status registry PASS
 - Check: lifecycle diagnostic PASS
+
+## 20260623T220810Z command-center-ui-quality-v215
+- Diagnostic: ops/bin/as6-diagnose-command-center-ui-quality-v215
+- Failure classes: COMMAND_CENTER_VISUAL_DRIFT, COMMAND_CENTER_SPACING_DRIFT, COMMAND_CENTER_TYPOGRAPHY_DRIFT, COMMAND_CENTER_RESPONSIVE_DRIFT
+- Check: UI quality CSS imported
+- Check: card radius tokens present
+- Check: chart spacing control present
+- Check: KPI typography control present

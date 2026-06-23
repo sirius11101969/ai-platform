@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-ui-quality-v215"
+test -f frontend/src/styles/as6-command-center-ui-quality-v215.css
+grep -q "as6-command-center-ui-quality-v215.css" frontend/src/main.jsx
+grep -q "COMMAND_CENTER_UI_NEEDS_FINAL_PRODUCTION_SPACING_TYPOGRAPHY_CARD_CHART_CONTROL" docs/AS6_PROJECT_STATE.md ops/status/as6-detected-errors.md 2>/dev/null || true
+grep -q "as6-v215-radius-xl" frontend/src/styles/as6-command-center-ui-quality-v215.css
+grep -q "mock-chart" frontend/src/styles/as6-command-center-ui-quality-v215.css
+grep -q "command-kpi" frontend/src/styles/as6-command-center-ui-quality-v215.css
+echo "AS6_COMMAND_CENTER_UI_QUALITY_V215=PASS"

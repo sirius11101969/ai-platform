@@ -1040,3 +1040,8 @@ Governed and registered.
 - Class: STALE_PR_BRANCH_AFTER_DIRECT_MAIN_FIX
 - Root cause: PR #333 was obsolete after V213E was committed directly to main.
 - Fix: V214 records PR lifecycle cleanup and validates continuing from main.
+
+## 20260623T220810Z detected-error
+- Class: COMMAND_CENTER_VISUAL_DRIFT
+- Root cause: final Command Center production UI quality layer was missing.
+- Fix: V215 added spacing, typography, cards, charts and responsive controls.

@@ -2147,3 +2147,6 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 
 ## 20260623T165211Z PR lifecycle cleanup coverage
 - Files: ops/bin/as6-diagnose-pr-lifecycle-cleanup-v214, docs/AS6_PROJECT_STATE.md, ops/registry/as6-diagnostic-registry.md, ops/registry/as6-coverage-registry.md, ops/status/as6-detected-errors.md
+
+## 20260623T220810Z Command Center UI quality coverage
+- Files: frontend/src/styles/as6-command-center-ui-quality-v215.css, frontend/src/main.jsx, ops/bin/as6-diagnose-command-center-ui-quality-v215
