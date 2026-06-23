@@ -1,6 +1,13 @@
 # AS6 MASTER CONTEXT
 
-Last updated: 20260623T050133Z
+LAST_UPDATE_UTC=20260623T055159Z
+CURRENT_BRANCH=work
+LAST_COMMIT=8da415e
+LAST_COMMIT_MESSAGE=test: verify AS6 finish pipeline
+PROJECT_READINESS=99%
+CURRENT_PRIORITY=MASTER_CONTEXT_AUTOSYNC_V211
+ACTIVE_WORKSTREAM=AS6 governance continuity and handoff automation
+LAST_STAGE=V211 MASTER_CONTEXT_AUTOSYNC
 
 ## Project
 - Name: AS6 AI Platform
@@ -33,6 +40,9 @@ Diagnostics → Root Cause → Structure → Plan → Change → Re-Diagnostics 
 
 ops/bin/as6-finish
 
+## AEC Rule
+AEC-MASTER-CONTEXT-001: every AS6 patch must update docs/AS6_MASTER_CONTEXT.md and docs/AS6_HANDOFF.md through ops/bin/as6-update-handoff before commit.
+
 ## Key Frontend Files
 - frontend/src/main.jsx
 - frontend/src/App.jsx
@@ -46,6 +56,7 @@ ops/bin/as6-finish
 - ops/bin/as6-update-handoff
 - ops/bin/as6-diagnose-handoff-finish-policy-v209
 - ops/bin/as6-diagnose-master-context-v210
+- ops/bin/as6-diagnose-master-context-autosync-v211
 - ops/governance/as6-finish-policy.md
 
 ## Last Confirmed Stages
@@ -53,6 +64,8 @@ ops/bin/as6-finish
 - V205-V207: Command Center sidebar visual etalon improved.
 - V208: Revenue Dynamics chart full-height correction.
 - V209/V209B: Handoff docs and finish policy added.
+- V210: Master context added for new-chat continuity.
+- V211: Master context and handoff autosync added to finish path.
 
 ## Active UI Focus
 - Command Center visual etalon.
@@ -67,6 +80,7 @@ ops/bin/as6-finish
 - SIDEBAR_V204_OVERSIZED_SPACING_FONT_AND_WIDTH_DRIFT_FROM_ETALON
 - REVENUE_DYNAMICS_CHART_USED_ONLY_TOP_PART_OF_CARD_LEAVING_EMPTY_BOTTOM_SPACE
 - ISSUE_330_PARTIALLY_IMPLEMENTED_FINISH_POLICY_MISSING
+- MASTER_CONTEXT_AUTOSYNC_FAILED
 
 ## Current Rules
 - Do not rely on chat memory.

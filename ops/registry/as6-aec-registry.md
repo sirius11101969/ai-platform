@@ -279,3 +279,4 @@
 | AUTONOMOUS_CONTROLLER_CLUSTER_STATUS_REGISTRY_DRIFT | AEC_REQUIRE_CONTROLLER_CLUSTER_STATUS_REGISTRY | autonomous-controller-cluster-diagnostic-must-be-in-status-registry | ENABLED |
 | FULL_DIAGNOSE_LONG_RUN_SSH_RESET_DRIFT | AEC_REQUIRE_FAST_FINAL_GREEN_PROOF | final-readiness-proof-must-be-fast-deterministic-heartbeat-visible | ENABLED |
 | FULL_DIAGNOSE_LONG_RUN_SSH_RESET_DRIFT | AEC_FORBID_FULL_DIAGNOSE_RECURSION_IN_FAST_PROOF | fast-proof-must-not-call-full-diagnose-all | ENABLED |
+| MASTER_CONTEXT_AUTOSYNC_V211 | AEC-MASTER-CONTEXT-001 | every AS6 patch must update docs/AS6_MASTER_CONTEXT.md and docs/AS6_HANDOFF.md through ops/bin/as6-update-handoff before commit | ENABLED |

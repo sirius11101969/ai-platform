@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -x ops/bin/as6-update-handoff
+test -x ops/bin/as6-finish
+grep -q "ops/bin/as6-update-handoff" ops/bin/as6-finish
+test -f docs/AS6_MASTER_CONTEXT.md
+test -f docs/AS6_HANDOFF.md
+for key in LAST_UPDATE_UTC CURRENT_BRANCH LAST_COMMIT LAST_COMMIT_MESSAGE PROJECT_READINESS CURRENT_PRIORITY ACTIVE_WORKSTREAM LAST_STAGE; do
+  grep -q "^${key}=" docs/AS6_MASTER_CONTEXT.md
+ done
+grep -q "V211 MASTER_CONTEXT_AUTOSYNC" docs/AS6_MASTER_CONTEXT.md
+grep -q "AEC-MASTER-CONTEXT-001" docs/AS6_MASTER_CONTEXT.md
+grep -q "docs/AS6_MASTER_CONTEXT.md" docs/AS6_HANDOFF.md
+grep -q "ops/bin/as6-diagnose-master-context-autosync-v211" ops/registry/as6-diagnostic-registry.md
+grep -q "ops/bin/as6-diagnose-master-context-autosync-v211" ops/registry/as6-coverage-registry.md
+grep -q "MASTER_CONTEXT_AUTOSYNC_FAILED" ops/status/as6-detected-errors.md
+echo "AS6_MASTER_CONTEXT_AUTOSYNC_V211=PASS"

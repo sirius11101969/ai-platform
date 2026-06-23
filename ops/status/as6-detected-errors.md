@@ -1030,3 +1030,13 @@ Governed and registered.
 - Class: NEW_CHAT_CONTEXT_LOSS
 - Root cause: new chat could lose long project history if only short handoff was used.
 - Fix: V210 adds docs/AS6_MASTER_CONTEXT.md as durable project memory.
+
+## 20260623T055133Z MASTER_CONTEXT_AUTOSYNC_V211
+- Class: MASTER_CONTEXT_LAST_STAGE_OUTDATED
+- Class: MASTER_CONTEXT_PRIORITY_MISSING
+- Class: MASTER_CONTEXT_WORKSTREAM_MISSING
+- Class: MASTER_CONTEXT_COMMIT_MISMATCH
+- Class: MASTER_CONTEXT_AUTOSYNC_FAILED
+- Root cause: AS6 finish updated handoff only, leaving durable master context fields stale or missing for new-chat continuity.
+- Fix: ops/bin/as6-update-handoff now regenerates docs/AS6_MASTER_CONTEXT.md and docs/AS6_HANDOFF.md before commit through ops/bin/as6-finish.
+- AEC: AEC-MASTER-CONTEXT-001: every AS6 patch must update docs/AS6_MASTER_CONTEXT.md and docs/AS6_HANDOFF.md through ops/bin/as6-update-handoff before commit.

@@ -3,9 +3,108 @@ set -euo pipefail
 
 TS="$(date -u +%Y%m%dT%H%M%SZ)"
 LAST_COMMIT="$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
+LAST_COMMIT_MESSAGE="$(git log -1 --pretty=%s 2>/dev/null || echo unknown)"
 BRANCH="$(git branch --show-current 2>/dev/null || echo unknown)"
+PROJECT_READINESS="99%"
+CURRENT_PRIORITY="MASTER_CONTEXT_AUTOSYNC_V211"
+ACTIVE_WORKSTREAM="AS6 governance continuity and handoff automation"
+LAST_STAGE="V211 MASTER_CONTEXT_AUTOSYNC"
 
 mkdir -p docs
+
+{
+  echo "# AS6 MASTER CONTEXT"
+  echo
+  echo "LAST_UPDATE_UTC=$TS"
+  echo "CURRENT_BRANCH=$BRANCH"
+  echo "LAST_COMMIT=$LAST_COMMIT"
+  echo "LAST_COMMIT_MESSAGE=$LAST_COMMIT_MESSAGE"
+  echo "PROJECT_READINESS=$PROJECT_READINESS"
+  echo "CURRENT_PRIORITY=$CURRENT_PRIORITY"
+  echo "ACTIVE_WORKSTREAM=$ACTIVE_WORKSTREAM"
+  echo "LAST_STAGE=$LAST_STAGE"
+  echo
+  echo "## Project"
+  echo "- Name: AS6 AI Platform"
+  echo "- Repository: github.com/sirius11101969/ai-platform"
+  echo "- Production: https://www.as6.ru"
+  echo "- Health: https://www.as6.ru/api/health"
+  echo "- Server path: /var/www/ai-platform"
+  echo "- Readiness: $PROJECT_READINESS"
+  echo
+  echo "## Purpose"
+  echo "AS6 is an AI Platform / Command Center project focused on creating a modern, simple, beautiful, useful interface and service for clients."
+  echo
+  echo "## Current Source Of Truth"
+  echo "- docs/AS6_MASTER_CONTEXT.md"
+  echo "- docs/AS6_HANDOFF.md"
+  echo "- docs/AS6_PROJECT_STATE.md"
+  echo "- docs/AS6_CODEX_PROMPT.md"
+  echo "- ops/registry/as6-diagnostic-registry.md"
+  echo "- ops/registry/as6-coverage-registry.md"
+  echo "- ops/status/as6-detected-errors.md"
+  echo
+  echo "## Mandatory New Chat Start"
+  echo "Продолжаем AS6. Прочитай docs/AS6_MASTER_CONTEXT.md, docs/AS6_HANDOFF.md и docs/AS6_CODEX_PROMPT.md из GitHub репозитория sirius11101969/ai-platform. Продолжай с последнего завершённого этапа по AS6 Diagnostics First."
+  echo
+  echo "## Mandatory Workflow"
+  echo "Diagnostics → Root Cause → Structure → Plan → Change → Re-Diagnostics → Diagnostic Artifacts → Checks → Controls → Failure Classes → AEC Rules → GitHub → Diagnostic Registry → Coverage Registry → Governance → State → Detected Errors → Automation → Validation → Commit → Push"
+  echo
+  echo "## Finish Rule"
+  echo "Любой AS6 патч считается незавершённым, если не выполнен:"
+  echo
+  echo "ops/bin/as6-finish"
+  echo
+  echo "## AEC Rule"
+  echo "AEC-MASTER-CONTEXT-001: every AS6 patch must update docs/AS6_MASTER_CONTEXT.md and docs/AS6_HANDOFF.md through ops/bin/as6-update-handoff before commit."
+  echo
+  echo "## Key Frontend Files"
+  echo "- frontend/src/main.jsx"
+  echo "- frontend/src/App.jsx"
+  echo "- frontend/src/components/AppShell.jsx"
+  echo "- frontend/src/pages/CommandCenterPage.jsx"
+  echo "- frontend/src/theme/as6Theme.css"
+  echo "- frontend/src/styles.css"
+  echo
+  echo "## Key Ops Files"
+  echo "- ops/bin/as6-finish"
+  echo "- ops/bin/as6-update-handoff"
+  echo "- ops/bin/as6-diagnose-handoff-finish-policy-v209"
+  echo "- ops/bin/as6-diagnose-master-context-v210"
+  echo "- ops/bin/as6-diagnose-master-context-autosync-v211"
+  echo "- ops/governance/as6-finish-policy.md"
+  echo
+  echo "## Last Confirmed Stages"
+  echo "- V199: Command Center flash fixed."
+  echo "- V205-V207: Command Center sidebar visual etalon improved."
+  echo "- V208: Revenue Dynamics chart full-height correction."
+  echo "- V209/V209B: Handoff docs and finish policy added."
+  echo "- V210: Master context added for new-chat continuity."
+  echo "- V211: Master context and handoff autosync added to finish path."
+  echo
+  echo "## Active UI Focus"
+  echo "- Command Center visual etalon."
+  echo "- Left sidebar final polish."
+  echo "- Revenue chart layout."
+  echo "- Card spacing, radius and typography."
+  echo "- Stable no-flash first render."
+  echo
+  echo "## Known Important Root Causes"
+  echo "- COMMAND_CENTER_FALLBACK_TO_LIVE_DATA_FULL_RERENDER"
+  echo "- COMMAND_CENTER_MULTIPLE_STYLE_AUTHORITIES"
+  echo "- SIDEBAR_V204_OVERSIZED_SPACING_FONT_AND_WIDTH_DRIFT_FROM_ETALON"
+  echo "- REVENUE_DYNAMICS_CHART_USED_ONLY_TOP_PART_OF_CARD_LEAVING_EMPTY_BOTTOM_SPACE"
+  echo "- ISSUE_330_PARTIALLY_IMPLEMENTED_FINISH_POLICY_MISSING"
+  echo "- MASTER_CONTEXT_AUTOSYNC_FAILED"
+  echo
+  echo "## Current Rules"
+  echo "- Do not rely on chat memory."
+  echo "- GitHub docs are the project memory."
+  echo "- Before any UI change, find actual React component, actual DOM node, actual CSS owner."
+  echo "- Add runtime tracer if source is unknown."
+  echo "- Always update diagnostics, coverage, governance, state and detected errors."
+  echo "- Always finish through ops/bin/as6-finish."
+} > docs/AS6_MASTER_CONTEXT.md
 
 {
   echo "# AS6 HANDOFF"
@@ -13,21 +112,26 @@ mkdir -p docs
   echo "Last updated: $TS"
   echo "Branch: $BRANCH"
   echo "Last commit: $LAST_COMMIT"
+  echo "Last commit message: $LAST_COMMIT_MESSAGE"
+  echo "Last stage: $LAST_STAGE"
+  echo "Current priority: $CURRENT_PRIORITY"
+  echo "Active workstream: $ACTIVE_WORKSTREAM"
   echo
   echo "## Project"
   echo "- Name: AS6 AI Platform"
   echo "- Repository: github.com/sirius11101969/ai-platform"
   echo "- Production: https://www.as6.ru"
   echo "- Health: https://www.as6.ru/api/health"
-  echo "- Readiness: 99%"
+  echo "- Readiness: $PROJECT_READINESS"
   echo
   echo "## New Chat Instruction"
-  echo "Продолжаем AS6. Источник истины: docs/AS6_HANDOFF.md. Сначала прочитай состояние проекта, выполни диагностику и продолжай с последнего завершенного этапа."
+  echo "Продолжаем AS6. Источник истины: docs/AS6_MASTER_CONTEXT.md + docs/AS6_HANDOFF.md. Сначала прочитай состояние проекта, выполни диагностику и продолжай с последнего завершенного этапа."
   echo
   echo "## Mandatory Workflow"
   echo "Diagnostics → Root Cause → Structure → Plan → Change → Re-Diagnostics → Diagnostic Artifacts → Checks → Controls → Failure Classes → AEC Rules → GitHub → Diagnostic Registry → Coverage Registry → Governance → State → Detected Errors → Automation → Validation → Commit → Push"
   echo
   echo "## Always Update"
+  echo "- docs/AS6_MASTER_CONTEXT.md"
   echo "- docs/AS6_HANDOFF.md"
   echo "- docs/AS6_CURRENT_STATE.md"
   echo "- docs/AS6_ARCHITECTURE.md"
@@ -38,4 +142,5 @@ mkdir -p docs
   echo "- ops/status/as6-detected-errors.md"
 } > docs/AS6_HANDOFF.md
 
+echo "AS6_MASTER_CONTEXT_UPDATED=$TS"
 echo "AS6_HANDOFF_UPDATED=$TS"
