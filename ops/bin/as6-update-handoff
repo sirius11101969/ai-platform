@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+TS="$(date -u +%Y%m%dT%H%M%SZ)"
+LAST_COMMIT="$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
+BRANCH="$(git branch --show-current 2>/dev/null || echo unknown)"
+
+mkdir -p docs
+
+{
+  echo "# AS6 HANDOFF"
+  echo
+  echo "Last updated: $TS"
+  echo "Branch: $BRANCH"
+  echo "Last commit: $LAST_COMMIT"
+  echo
+  echo "## Project"
+  echo "- Name: AS6 AI Platform"
+  echo "- Repository: github.com/sirius11101969/ai-platform"
+  echo "- Production: https://www.as6.ru"
+  echo "- Health: https://www.as6.ru/api/health"
+  echo "- Readiness: 99%"
+  echo
+  echo "## New Chat Instruction"
+  echo "Продолжаем AS6. Источник истины: docs/AS6_HANDOFF.md. Сначала прочитай состояние проекта, выполни диагностику и продолжай с последнего завершенного этапа."
+  echo
+  echo "## Mandatory Workflow"
+  echo "Diagnostics → Root Cause → Structure → Plan → Change → Re-Diagnostics → Diagnostic Artifacts → Checks → Controls → Failure Classes → AEC Rules → GitHub → Diagnostic Registry → Coverage Registry → Governance → State → Detected Errors → Automation → Validation → Commit → Push"
+  echo
+  echo "## Always Update"
+  echo "- docs/AS6_HANDOFF.md"
+  echo "- docs/AS6_CURRENT_STATE.md"
+  echo "- docs/AS6_ARCHITECTURE.md"
+  echo "- docs/AS6_UI_ETALONS.md"
+  echo "- docs/AS6_PROJECT_STATE.md"
+  echo "- ops/registry/as6-diagnostic-registry.md"
+  echo "- ops/registry/as6-coverage-registry.md"
+  echo "- ops/status/as6-detected-errors.md"
+} > docs/AS6_HANDOFF.md
+
+echo "AS6_HANDOFF_UPDATED=$TS"

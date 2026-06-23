@@ -1016,3 +1016,8 @@ Governed and registered.
 - Class: REVENUE_DYNAMICS_CHART_USED_ONLY_TOP_PART_OF_CARD_LEAVING_EMPTY_BOTTOM_SPACE
 - Root cause: mock-chart did not consume full vertical card space.
 - Fix: V208 makes Revenue Dynamics card flex-based and stretches mock-chart to full available height.
+
+## 20260623T014555Z detected-error
+- Class: NEW_CHAT_CONTEXT_REQUIRES_PROJECT_HANDOFF_SOURCE_OF_TRUTH
+- Root cause: new chat cannot reliably know current project state without repository handoff file.
+- Fix: V209 creates handoff/state/architecture/UI etalon/Codex prompt docs and update automation.

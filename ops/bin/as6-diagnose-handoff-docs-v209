@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=handoff-docs-v209"
+test -f docs/AS6_HANDOFF.md
+test -f docs/AS6_CURRENT_STATE.md
+test -f docs/AS6_ARCHITECTURE.md
+test -f docs/AS6_UI_ETALONS.md
+test -f docs/AS6_CODEX_PROMPT.md
+test -x ops/bin/as6-update-handoff
+grep -q "Источник истины" docs/AS6_HANDOFF.md
+grep -q "AS6 Diagnostics First" docs/AS6_CODEX_PROMPT.md
+echo "AS6_HANDOFF_DOCS_V209=PASS"

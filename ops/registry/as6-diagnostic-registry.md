@@ -2548,3 +2548,13 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Check: chart min-height 205px.
 - Check: bottom padding reduced.
 - Check: SVG line stretched to full chart height.
+
+## 20260623T014555Z handoff-docs-v209
+- Diagnostic: ops/bin/as6-diagnose-handoff-docs-v209
+- Failure class: NEW_CHAT_CONTEXT_REQUIRES_PROJECT_HANDOFF_SOURCE_OF_TRUTH
+- Check: docs/AS6_HANDOFF.md exists.
+- Check: docs/AS6_CURRENT_STATE.md exists.
+- Check: docs/AS6_ARCHITECTURE.md exists.
+- Check: docs/AS6_UI_ETALONS.md exists.
+- Check: docs/AS6_CODEX_PROMPT.md exists.
+- Automation: ops/bin/as6-update-handoff

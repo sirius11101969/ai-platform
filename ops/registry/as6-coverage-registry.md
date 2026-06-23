@@ -2120,3 +2120,13 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Coverage: /command-center Revenue Dynamics visual layout.
 - Files: frontend/src/theme/as6Theme.css
 - Rule: revenue chart must fill visible card height without large empty lower zone.
+
+## 20260623T014555Z NEW_CHAT_CONTEXT_REQUIRES_PROJECT_HANDOFF_SOURCE_OF_TRUTH
+- Coverage: new chat handoff continuity.
+- Files:
+  - docs/AS6_HANDOFF.md
+  - docs/AS6_CURRENT_STATE.md
+  - docs/AS6_ARCHITECTURE.md
+  - docs/AS6_UI_ETALONS.md
+  - docs/AS6_CODEX_PROMPT.md
+  - ops/bin/as6-update-handoff
