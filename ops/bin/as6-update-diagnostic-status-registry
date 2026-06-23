@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+OUT="ops/status/diagnostic-status-registry.json"
+TMP="$(mktemp)"
+
+python3 - <<'PY' > "$TMP"
+import json
+from pathlib import Path
+
+out = Path("ops/status/diagnostic-status-registry.json")
+valid = {"ACTIVE", "ARCHIVED", "DEPRECATED", "REMOVED"}
+existing_by_path = {}
+if out.exists():
+    try:
+        data = json.loads(out.read_text())
+        for item in data.get("diagnostics", []):
+            if not isinstance(item, dict) or not item.get("path"):
+                continue
+            status = item.get("lifecycle_status", item.get("record_status", "ACTIVE"))
+            if status not in valid:
+                status = "ACTIVE" if Path(item["path"]).is_file() else "ARCHIVED"
+            item["lifecycle_status"] = status
+            existing_by_path[item["path"]] = item
+    except json.JSONDecodeError:
+        existing_by_path = {}
+
+for p in sorted(Path("ops/bin").glob("as6-diagnose-*")):
+    if p.name.endswith(".backup") or ".backup." in p.name or not p.is_file():
+        continue
+    key = str(p)
+    check = p.name.replace("as6-diagnose-", "")
+    if key in existing_by_path:
+        existing_by_path[key].setdefault("check", check)
+        existing_by_path[key].setdefault("status_visible", True)
+        existing_by_path[key].setdefault("source", "auto")
+    else:
+        existing_by_path[key] = {
+            "check": check,
+            "path": key,
+            "lifecycle_status": "ACTIVE",
+            "status_visible": True,
+            "source": "auto",
+        }
+
+items = [existing_by_path[p] for p in sorted(existing_by_path)]
+Path("ops/status").mkdir(parents=True, exist_ok=True)
+print(json.dumps({"version": 2, "lifecycle_statuses": sorted(valid), "diagnostics": items}, ensure_ascii=False, indent=2))
+PY
+
+mv "$TMP" "$OUT"
+echo "DIAGNOSTIC_STATUS_REGISTRY_UPDATED=$OUT"
+echo "DIAGNOSTIC_STATUS_REGISTRY_UPDATE_RESULT=OK"
