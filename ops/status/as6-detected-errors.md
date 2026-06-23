@@ -1030,3 +1030,23 @@ Governed and registered.
 - Class: NEW_CHAT_CONTEXT_LOSS
 - Root cause: new chat could lose long project history if only short handoff was used.
 - Fix: V210 adds docs/AS6_MASTER_CONTEXT.md as durable project memory.
+
+## 20260623T000000Z detected-error
+- Class: DIAGNOSTIC_STATUS_ACTIVE_ENTRY_MISSING
+- Root cause: an ACTIVE diagnostic status registry entry can drift away from its backing ops/bin/as6-diagnose-* file.
+- Fix: V213C lifecycle diagnostics fail only ACTIVE missing files and the updater marks real files ACTIVE.
+
+## 20260623T000000Z detected-error
+- Class: DIAGNOSTIC_STATUS_HISTORICAL_ENTRY_MISCLASSIFIED
+- Root cause: historical registry entries were treated as active diagnostics even when files were intentionally removed, replaced or archived.
+- Fix: V213C adds ARCHIVED / DEPRECATED / REMOVED lifecycle statuses that do not fail for missing files.
+
+## 20260623T000000Z detected-error
+- Class: DIAGNOSTIC_STATUS_ARCHIVE_NOT_SUPPORTED
+- Root cause: registry tooling did not preserve history with archive-aware validation.
+- Fix: V213C updater preserves old entries and archives missing historical diagnostics.
+
+## 20260623T000000Z detected-error
+- Class: DIAGNOSTIC_STATUS_REGISTRY_LIFECYCLE_DRIFT
+- Root cause: registry entries could lack an allowed lifecycle status.
+- Fix: V213C lifecycle diagnostic enforces ACTIVE / ARCHIVED / DEPRECATED / REMOVED only.
