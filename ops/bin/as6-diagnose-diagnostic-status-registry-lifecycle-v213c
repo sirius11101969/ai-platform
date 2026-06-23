@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+echo "=== AS6 Diagnostic Status Registry Lifecycle v213c ==="
+python3 - <<'PY'
+import json
+from pathlib import Path
+
+registry = Path("ops/status/diagnostic-status-registry.json")
+data = json.loads(registry.read_text())
+items = data.get("diagnostics", [])
+valid = {"ACTIVE", "ARCHIVED", "DEPRECATED", "REMOVED"}
+invalid = [item.get("path", "<missing-path>") for item in items if item.get("status") not in valid]
+active_missing = [item.get("path") for item in items if item.get("status") == "ACTIVE" and not Path(item.get("path", "")).is_file()]
+historical_missing = [item.get("path") for item in items if item.get("status") in {"ARCHIVED", "DEPRECATED", "REMOVED"} and not Path(item.get("path", "")).is_file()]
+
+if invalid:
+    for path in invalid:
+        print(f"DIAGNOSTIC_STATUS_REGISTRY_LIFECYCLE_STATUS=FAIL:{path}")
+    raise SystemExit(1)
+if active_missing:
+    for path in active_missing:
+        print(f"DIAGNOSTIC_STATUS_REGISTRY_LIFECYCLE_ACTIVE_MISSING=FAIL:{path}")
+    raise SystemExit(1)
+
+print(f"DIAGNOSTIC_STATUS_REGISTRY_LIFECYCLE_HISTORICAL_MISSING_ALLOWED={len(historical_missing)}")
+print("DIAGNOSTIC_STATUS_REGISTRY_LIFECYCLE_RESULT=PASS")
+PY

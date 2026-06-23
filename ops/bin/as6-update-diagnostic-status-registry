@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+OUT="ops/status/diagnostic-status-registry.json"
+TMP="$(mktemp)"
+
+python3 - <<'PY' > "$TMP"
+import json
+from pathlib import Path
+
+out = Path("ops/status/diagnostic-status-registry.json")
+existing = {}
+order = []
+if out.exists():
+    data = json.loads(out.read_text())
+    if not isinstance(data, dict) or not isinstance(data.get("diagnostics"), list):
+        raise SystemExit("registry json must be an object with diagnostics list")
+    for item in data["diagnostics"]:
+        if not isinstance(item, dict) or not item.get("path"):
+            continue
+        path = item["path"]
+        if path not in existing:
+            existing[path] = dict(item)
+            order.append(path)
+
+current = {}
+for p in sorted(Path("ops/bin").glob("as6-diagnose-*")):
+    if p.name.endswith(".backup") or ".backup." in p.name:
+        continue
+    if not p.is_file():
+        continue
+    path = str(p)
+    current[path] = {
+        "check": p.name.replace("as6-diagnose-", ""),
+        "path": path,
+        "status_visible": True,
+        "source": existing.get(path, {}).get("source", "auto"),
+        "status": "ACTIVE",
+    }
+
+for path in current:
+    if path not in existing:
+        order.append(path)
+
+items = []
+seen = set()
+for path in order:
+    if path in seen:
+        continue
+    seen.add(path)
+    if path in current:
+        item = existing.get(path, {})
+        item.update(current[path])
+    else:
+        item = existing[path]
+        item.setdefault("check", Path(path).name.replace("as6-diagnose-", ""))
+        item.setdefault("status_visible", True)
+        item.setdefault("source", "auto")
+        if item.get("status") == "ACTIVE" or item.get("status") not in {"ARCHIVED", "DEPRECATED", "REMOVED"}:
+            item["status"] = "ARCHIVED"
+    items.append(item)
+
+Path("ops/status").mkdir(parents=True, exist_ok=True)
+print(json.dumps({"version": 1, "diagnostics": items}, ensure_ascii=False, indent=2))
+PY
+
+mv "$TMP" "$OUT"
+echo "DIAGNOSTIC_STATUS_REGISTRY_UPDATED=$OUT"
+echo "DIAGNOSTIC_STATUS_REGISTRY_COUNT=$(python3 - <<'PY'
+import json
+print(len(json.load(open("ops/status/diagnostic-status-registry.json")).get("diagnostics", [])))
+PY
+)"
+echo "DIAGNOSTIC_STATUS_REGISTRY_UPDATE_RESULT=PASS"
