@@ -75,3 +75,10 @@ ops/bin/as6-finish
 - Add runtime tracer if source is unknown.
 - Always update diagnostics, coverage, governance, state and detected errors.
 - Always finish through ops/bin/as6-finish.
+
+## 20260623 AS6 V213C Diagnostic Status Registry Lifecycle
+- Diagnostic status registry entries now carry lifecycle_status values: ACTIVE, ARCHIVED, DEPRECATED, REMOVED.
+- ACTIVE entries must point to an existing ops/bin/as6-diagnose-* file.
+- ARCHIVED, DEPRECATED and REMOVED entries preserve historical diagnostics and may point to files that no longer exist without failing registry diagnostics.
+- Update command: ops/bin/as6-update-diagnostic-status-registry preserves history, marks existing files ACTIVE, archives missing historical entries and writes deterministic sorted JSON.
+- Validation: ops/bin/as6-diagnose-diagnostic-status-registry and ops/bin/as6-diagnose-diagnostic-status-registry-lifecycle-v213c must PASS.

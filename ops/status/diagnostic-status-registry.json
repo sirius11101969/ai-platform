@@ -1,1181 +1,2755 @@
 {
-  "version": 1,
   "diagnostics": [
     {
       "check": "actions-node24",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-actions-node24",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "actions-node24-migration",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-actions-node24-migration",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "active-autonomy-score",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-active-autonomy-score",
-      "status_visible": true,
-      "source": "as6-status-registry-schema-sync"
+      "source": "as6-status-registry-schema-sync",
+      "status_visible": true
     },
     {
       "check": "agent-branch-writer",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-agent-branch-writer",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "agent-branch-writer-e2e",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-agent-branch-writer-e2e",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "agent-pr-factory-e2e",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-agent-pr-factory-e2e",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "agent-write-mode",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-agent-write-mode",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "ai-kpi-robot-asset-v32",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-ai-kpi-robot-asset-v32",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "ai-kpi-visual-parity-v34",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-ai-kpi-visual-parity-v34",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "all",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-all",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "all-live",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-all-live",
-      "status_visible": true,
-      "source": "as6-status-registry-schema-sync"
+      "source": "as6-status-registry-schema-sync",
+      "status_visible": true
     },
     {
       "check": "all-watch",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-all-watch",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "appshell-jsx-tag-integrity",
+      "lifecycle_status": "ACTIVE",
+      "owner": "AS6_APPSHELL_JSX_TAG_INTEGRITY",
+      "path": "ops/bin/as6-diagnose-appshell-jsx-tag-integrity",
+      "source": "auto",
+      "status": "GREEN",
+      "status_visible": true
     },
     {
       "check": "as6-test-router-drift-warn",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-as6-test-router-drift-warn",
-      "status_visible": true,
-      "source": "as6-status-registry-schema-sync"
+      "source": "as6-status-registry-schema-sync",
+      "status_visible": true
     },
     {
       "check": "as6-test-router-gap-fail",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-as6-test-router-gap-fail",
-      "status_visible": true,
-      "source": "as6-status-registry-schema-sync"
+      "source": "as6-status-registry-schema-sync",
+      "status_visible": true
     },
     {
       "check": "auto-expansion-router",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-auto-expansion-router",
-      "status_visible": true,
-      "source": "as6-status-registry-schema-sync"
+      "source": "as6-status-registry-schema-sync",
+      "status_visible": true
     },
     {
       "check": "automation-sources",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-automation-sources",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "autonomous-change-approval-controller",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-autonomous-change-approval-controller",
-      "status_visible": true,
-      "source": "as6-registration-matcher-canonical-fix"
+      "source": "as6-registration-matcher-canonical-fix",
+      "status_visible": true
     },
     {
       "check": "autonomous-change-controller",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-autonomous-change-controller",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "autonomous-controller-cluster",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-autonomous-controller-cluster",
-      "status_visible": true,
-      "source": "as6-controller-cluster-status-registry-fix"
+      "source": "as6-controller-cluster-status-registry-fix",
+      "status_visible": true
     },
     {
       "check": "autonomous-coverage",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-autonomous-coverage",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "autonomous-diagnostic-expansion-v81",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-autonomous-diagnostic-expansion-v81",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "autonomous-diagnostic-expansion-validation",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-autonomous-diagnostic-expansion-validation",
-      "status_visible": true,
-      "source": "as6-status-registry-schema-sync"
+      "source": "as6-status-registry-schema-sync",
+      "status_visible": true
+    },
+    {
+      "check": "autonomous-event-stream-v91",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-autonomous-event-stream-v91",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "autonomous-governance-enforcement-v84",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-autonomous-governance-enforcement-v84",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "autonomous-incident-governance-controller",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-autonomous-incident-governance-controller",
-      "status_visible": true,
-      "source": "as6-registration-matcher-canonical-fix"
+      "source": "as6-registration-matcher-canonical-fix",
+      "status_visible": true
     },
     {
       "check": "autonomous-incident-lifecycle-controller",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-autonomous-incident-lifecycle-controller",
-      "status_visible": true,
-      "source": "as6-registration-matcher-canonical-fix"
+      "source": "as6-registration-matcher-canonical-fix",
+      "status_visible": true
     },
     {
       "check": "autonomous-knowledge-base-controller",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-autonomous-knowledge-base-controller",
-      "status_visible": true,
-      "source": "as6-registration-matcher-canonical-fix"
+      "source": "as6-registration-matcher-canonical-fix",
+      "status_visible": true
+    },
+    {
+      "check": "autonomous-operations-timeline-v92",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-autonomous-operations-timeline-v92",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "autonomous-repair-controller",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-autonomous-repair-controller",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "autonomous-ui-governance-engine-v113",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-autonomous-ui-governance-engine-v113",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "autonomous-validation-controller",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-autonomous-validation-controller",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "autonomy-operating-standard",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-autonomy-operating-standard",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "backup-discovery-drift",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-backup-discovery-drift",
-      "status_visible": true,
-      "source": "as6-status-registry-schema-sync"
+      "source": "as6-status-registry-schema-sync",
+      "status_visible": true
     },
     {
       "check": "backup-governance",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-backup-governance",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "backup-integrity",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-backup-integrity",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "backup-secret-scan-contract",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-backup-secret-scan-contract",
-      "status_visible": true,
-      "source": "as6-status-registry-schema-sync"
+      "source": "as6-status-registry-schema-sync",
+      "status_visible": true
+    },
+    {
+      "check": "black-screen-react-import-v57",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-black-screen-react-import-v57",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "body-has-flash-layers-v188",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-body-has-flash-layers-v188",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "change-governance",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-change-governance",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "change-pipeline-controller",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-change-pipeline-controller",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "codex-review-scope",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-codex-review-scope",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "codex-workflow",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-codex-workflow",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "command-center",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-command-center",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-ai-workforce-robot-v24",
+      "lifecycle_status": "ACTIVE",
+      "owner": "AS6_AI_WORKFORCE_ROBOT_V24",
+      "path": "ops/bin/as6-diagnose-command-center-ai-workforce-robot-v24",
+      "source": "auto",
+      "status": "GREEN",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-appshell-reference-v120",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-appshell-reference-v120",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-arrow-fix-v126",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-arrow-fix-v126",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-avatar-reference",
+      "lifecycle_status": "ACTIVE",
+      "owner": "AS6_COMMAND_CENTER_AVATAR_REFERENCE",
+      "path": "ops/bin/as6-diagnose-command-center-avatar-reference",
+      "source": "auto",
+      "status": "GREEN",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-bootlock-v190",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-bootlock-v190",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-bottom-neon-line-v136",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-bottom-neon-line-v136",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-bottom-strip-final-v151",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-bottom-strip-final-v151",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-cache-flash-v180b",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-cache-flash-v180b",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-classic-restore-v115",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-classic-restore-v115",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-clean-etalon-v146",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-clean-etalon-v146",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-clean-etalon-v146b",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-clean-etalon-v146b",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-clean-final-v169",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-clean-final-v169",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-clip-second-row-v164",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-clip-second-row-v164",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-compact-sidebar-v205",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-compact-sidebar-v205",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-copilot-etalon-v135",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-copilot-etalon-v135",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-copilot-etalon-v150",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-copilot-etalon-v150",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-deep-flash-v192",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-deep-flash-v192",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-deployment",
+      "lifecycle_status": "ACTIVE",
+      "owner": "AS6_COMMAND_CENTER_DEPLOY_VERIFY_V1",
+      "path": "ops/bin/as6-diagnose-command-center-deployment",
+      "source": "auto",
+      "status": "GREEN",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-direct-etalon-v148",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-direct-etalon-v148",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-early-no-strip-guard-v178b",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-early-no-strip-guard-v178b",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-etalon-integrity",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-etalon-integrity",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-executive-cleanup-v16",
+      "lifecycle_status": "ACTIVE",
+      "owner": "AS6_COMMAND_CENTER_EXECUTIVE_CLEANUP_V16",
+      "path": "ops/bin/as6-diagnose-command-center-executive-cleanup-v16",
+      "source": "auto",
+      "status": "GREEN",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-executive-ux-v6",
+      "lifecycle_status": "ACTIVE",
+      "owner": "AS6_COMMAND_CENTER_EXECUTIVE_UX_V6",
+      "path": "ops/bin/as6-diagnose-command-center-executive-ux-v6",
+      "source": "auto",
+      "status": "GREEN",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-executive-v10",
+      "lifecycle_status": "ACTIVE",
+      "owner": "AS6_COMMAND_CENTER_EXECUTIVE_V10",
+      "path": "ops/bin/as6-diagnose-command-center-executive-v10",
+      "source": "auto",
+      "status": "GREEN",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-final-pixel-v12",
+      "lifecycle_status": "ACTIVE",
+      "owner": "AS6_COMMAND_CENTER_FINAL_PIXEL_V12",
+      "path": "ops/bin/as6-diagnose-command-center-final-pixel-v12",
+      "source": "auto",
+      "status": "GREEN",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-final-polish-v115d",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-final-polish-v115d",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-final-real-sidebar-v204",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-final-real-sidebar-v204",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-final-reference-css-v117",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-final-reference-css-v117",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-final-runtime-style-v127",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-final-runtime-style-v127",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-final-strip-cleanup-v147",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-final-strip-cleanup-v147",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-final-v45",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-final-v45",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-first-paint-tracer-v183",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-first-paint-tracer-v183",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-fixed-neon-strip-v138",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-fixed-neon-strip-v138",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-flash-source-finder-v195",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-flash-source-finder-v195",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-hook-order",
+      "lifecycle_status": "ACTIVE",
+      "owner": "AS6_COMMAND_CENTER_BLACK_SCREEN_FIX_V1",
+      "path": "ops/bin/as6-diagnose-command-center-hook-order",
+      "source": "auto",
+      "status": "GREEN",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-horizontal-scrollbar-v154",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-horizontal-scrollbar-v154",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-html-strip-v161",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-html-strip-v161",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-jsx-object-integrity-v31",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-jsx-object-integrity-v31",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-logo-top-v22",
+      "lifecycle_status": "ACTIVE",
+      "owner": "AS6_LOGO_TOP_V22",
+      "path": "ops/bin/as6-diagnose-command-center-logo-top-v22",
+      "source": "auto",
+      "status": "GREEN",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-mission-control-layout",
+      "lifecycle_status": "ACTIVE",
+      "owner": "AS6_COMMAND_CENTER_MISSION_CONTROL_LAYOUT_V1",
+      "path": "ops/bin/as6-diagnose-command-center-mission-control-layout",
+      "source": "auto",
+      "status": "GREEN",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-no-emoji-avatars-v28",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-no-emoji-avatars-v28",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-no-overlay-imports-v144",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-no-overlay-imports-v144",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-no-stat-metric-pseudo-v179",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-no-stat-metric-pseudo-v179",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-no-strips-v174b",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-no-strips-v174b",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-overlay-root-cleanup-v115c",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-overlay-root-cleanup-v115c",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-overlay-roots-dom-v139",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-overlay-roots-dom-v139",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-overlay-roots-dom-v140",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-overlay-roots-dom-v140",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-overlay-sources-v141",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-overlay-sources-v141",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-parent-overlay-strip-v156",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-parent-overlay-strip-v156",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-pipeline-card-v159",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-pipeline-card-v159",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-pixel-perfect-v8",
+      "lifecycle_status": "ACTIVE",
+      "owner": "AS6_COMMAND_CENTER_PIXEL_PERFECT_V8",
+      "path": "ops/bin/as6-diagnose-command-center-pixel-perfect-v8",
+      "source": "auto",
+      "status": "GREEN",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-pixel-polish-v11",
+      "lifecycle_status": "ACTIVE",
+      "owner": "AS6_COMMAND_CENTER_PIXEL_POLISH_V11",
+      "path": "ops/bin/as6-diagnose-command-center-pixel-polish-v11",
+      "source": "auto",
+      "status": "GREEN",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-pixel-reference-v19",
+      "lifecycle_status": "ACTIVE",
+      "owner": "AS6_COMMAND_CENTER_PIXEL_REFERENCE_V19",
+      "path": "ops/bin/as6-diagnose-command-center-pixel-reference-v19",
+      "source": "auto",
+      "status": "GREEN",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-pixel-strip-picker-v160",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-pixel-strip-picker-v160",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-production-etalon-deploy",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-production-etalon-deploy",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-purge-all-overlay-creators-v145",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-purge-all-overlay-creators-v145",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-real-assets-v20",
+      "lifecycle_status": "ACTIVE",
+      "owner": "AS6_COMMAND_CENTER_REAL_ASSETS_V20",
+      "path": "ops/bin/as6-diagnose-command-center-real-assets-v20",
+      "source": "auto",
+      "status": "GREEN",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-real-horizontal-strip-v137",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-real-horizontal-strip-v137",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-real-logo-v21",
+      "lifecycle_status": "ACTIVE",
+      "owner": "AS6_REAL_LOGO_ASSET_V21",
+      "path": "ops/bin/as6-diagnose-command-center-real-logo-v21",
+      "source": "auto",
+      "status": "GREEN",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-real-overlay-strip-v155",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-real-overlay-strip-v155",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-real-production-etalon",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-real-production-etalon",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-real-reference-fix-v116b",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-real-reference-fix-v116b",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-real-sidebar-v203",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-real-sidebar-v203",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-real-strip-clean-v157",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-real-strip-clean-v157",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-real-visual-etalon-v134",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-real-visual-etalon-v134",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-recommendation-actions",
+      "lifecycle_status": "ACTIVE",
+      "owner": "AS6_COMMAND_CENTER_RECOMMENDATION_ACTIONS",
+      "path": "ops/bin/as6-diagnose-command-center-recommendation-actions",
+      "source": "auto",
+      "status": "GREEN",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-reference-guard-v122b",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-reference-guard-v122b",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-reference-lock-v115e",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-reference-lock-v115e",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-reference-page-v119",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-reference-page-v119",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-reference-polish-v123c",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-reference-polish-v123c",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-reference-restore-v118",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-reference-restore-v118",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-reference-restore-v118b",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-reference-restore-v118b",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-remaining-status-overlays-v142",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-remaining-status-overlays-v142",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-robot-kpi-v23",
+      "lifecycle_status": "ACTIVE",
+      "owner": "AS6_ROBOT_KPI_V23",
+      "path": "ops/bin/as6-diagnose-command-center-robot-kpi-v23",
+      "source": "auto",
+      "status": "GREEN",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-route-flash-v182",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-route-flash-v182",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-route-stable-paint-v189",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-route-stable-paint-v189",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-runtime-integrity",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-runtime-integrity",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-screenshot-match-v7",
+      "lifecycle_status": "ACTIVE",
+      "owner": "AS6_COMMAND_CENTER_SCREENSHOT_MATCH_V7",
+      "path": "ops/bin/as6-diagnose-command-center-screenshot-match-v7",
+      "source": "auto",
+      "status": "GREEN",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-sidebar-annotated-fix-v206",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-sidebar-annotated-fix-v206",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-sidebar-etalon-v200",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-sidebar-etalon-v200",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-sidebar-final-alignment-v207",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-sidebar-final-alignment-v207",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-sidebar-final-etalon-v201",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-sidebar-final-etalon-v201",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-sidebar-source-v202",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-sidebar-source-v202",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-stable-runtime-render-v199",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-stable-runtime-render-v199",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-status-overlays-v143",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-status-overlays-v143",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-strip-crossing-v165",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-strip-crossing-v165",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-strip-source-v158",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-strip-source-v158",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-strong-bootlock-v191",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-strong-bootlock-v191",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-true-reference-lock-v121",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-true-reference-lock-v121",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-ui-restore-v54",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-ui-restore-v54",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-unlock-after-mount-v193",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-unlock-after-mount-v193",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-visual-actions-v14",
+      "lifecycle_status": "ACTIVE",
+      "owner": "AS6_COMMAND_CENTER_VISUAL_ACTIONS_V14",
+      "path": "ops/bin/as6-diagnose-command-center-visual-actions-v14",
+      "source": "auto",
+      "status": "GREEN",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-visual-fix-v13",
+      "lifecycle_status": "ACTIVE",
+      "owner": "AS6_COMMAND_CENTER_VISUAL_FIX_V13",
+      "path": "ops/bin/as6-diagnose-command-center-visual-fix-v13",
+      "source": "auto",
+      "status": "GREEN",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-visual-parity-v27",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-center-visual-parity-v27",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-center-visual-reference-v18",
+      "lifecycle_status": "ACTIVE",
+      "owner": "AS6_COMMAND_CENTER_VISUAL_REFERENCE_V18",
+      "path": "ops/bin/as6-diagnose-command-center-visual-reference-v18",
+      "source": "auto",
+      "status": "GREEN",
+      "status_visible": true
     },
     {
       "check": "command-length-safety",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-command-length-safety",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-second-grid-strip-v162",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-second-grid-strip-v162",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-second-grid-strip-v163",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-second-grid-strip-v163",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "command-second-row-head-strip-v166",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-command-second-row-head-strip-v166",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "completion-marker-contract",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-completion-marker-contract",
-      "status_visible": true,
-      "source": "as6-status-registry-schema-sync"
+      "source": "as6-status-registry-schema-sync",
+      "status_visible": true
     },
     {
       "check": "constitution",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-constitution",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "control-panel-reboot-correlation",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-control-panel-reboot-correlation",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "controlled-branch-writer",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-controlled-branch-writer",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "controlled-write-mode",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-controlled-write-mode",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "controller-cluster-status-registry",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-controller-cluster-status-registry",
-      "status_visible": true,
-      "source": "as6-controller-cluster-status-registry-fix"
+      "source": "as6-controller-cluster-status-registry-fix",
+      "status_visible": true
+    },
+    {
+      "check": "copilot-button-align-v41",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-copilot-button-align-v41",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "copilot-css-and-robot-cleanup-v39",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-copilot-css-and-robot-cleanup-v39",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "copilot-css-syntax-cleanup-v42",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-copilot-css-syntax-cleanup-v42",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "copilot-inline-layout-v40",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-copilot-inline-layout-v40",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "copilot-orphan-fragment-v44",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-copilot-orphan-fragment-v44",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "copilot-style-consolidation-v38",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-copilot-style-consolidation-v38",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "copilot-visual-cleanup-v37",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-copilot-visual-cleanup-v37",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "critical-first-paint-background-v198",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-critical-first-paint-background-v198",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "crm-analytics-internal-panel-owner-v77",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "crm-analytics-panel-contract-v71",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-crm-analytics-panel-contract-v71",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "crm-analytics-panel-visible-bridge-v75",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-crm-analytics-panel-visible-bridge-v75",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "crm-analytics-panel-wiring-guard-v72",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-crm-analytics-panel-wiring-guard-v72",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "crm-analytics-remove-legacy-rollback-copy-v78",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-crm-analytics-remove-legacy-rollback-copy-v78",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "crm-analytics-render-owner-v76",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-crm-analytics-render-owner-v76",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "crm-decomposition-execution-guard-v69",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-crm-decomposition-execution-guard-v69",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "crm-page-decomposition-v68",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-crm-page-decomposition-v68",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "crm-panel-extraction-scaffold-v70",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-crm-panel-extraction-scaffold-v70",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "crm-route-chunk-v56",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-crm-route-chunk-v56",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "css-and-bundle-budget-v52",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-css-and-bundle-budget-v52",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "css-consolidation-v66",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-css-consolidation-v66",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "css-dead-selectors-v65",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-css-dead-selectors-v65",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "css-ownership-v61",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-css-ownership-v61",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "css-wildcard-pseudoelement-collision",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-css-wildcard-pseudoelement-collision",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "design-token-registry-governance-v111",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-design-token-registry-governance-v111",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "diagnose-all-wait-signature",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-diagnose-all-wait-signature",
-      "status_visible": true,
-      "source": "as6-status-registry-schema-sync"
+      "source": "as6-status-registry-schema-sync",
+      "status_visible": true
+    },
+    {
+      "check": "diagnostic-artifact-reconciliation-v79",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-diagnostic-artifact-reconciliation-v79",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "diagnostic-contract",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-diagnostic-contract",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "diagnostic-coverage",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-diagnostic-coverage",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "diagnostic-debt-consolidation-v73-safe",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-diagnostic-debt-consolidation-v73-safe",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "diagnostic-flow",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-diagnostic-flow",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "diagnostic-flow-guard",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-diagnostic-flow-guard",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "diagnostic-governance",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-diagnostic-governance",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "diagnostic-insertion-points",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-diagnostic-insertion-points",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "diagnostic-performance",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-diagnostic-performance",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "diagnostic-recursion",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-diagnostic-recursion",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "diagnostic-registration",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-diagnostic-registration",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "diagnostic-registry",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-diagnostic-registry",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "diagnostic-registry-reconciliation-v81b",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-diagnostic-registry-reconciliation-v81b",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "diagnostic-simplification",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-diagnostic-simplification",
-      "status_visible": true,
-      "source": "as6-status-registry-schema-sync"
+      "source": "as6-status-registry-schema-sync",
+      "status_visible": true
     },
     {
       "check": "diagnostic-status-registry",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-diagnostic-status-registry",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "diagnostic-status-registry-lifecycle-v213c",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-diagnostic-status-registry-lifecycle-v213c",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "diagnostic-timeout-governance",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-diagnostic-timeout-governance",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "diagnostic-tracking",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-diagnostic-tracking",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "diagnostics-first-operating-standard",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-diagnostics-first-operating-standard",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "direct-page-rewrite-framework-v100",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-direct-page-rewrite-framework-v100",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "disaster-recovery",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-disaster-recovery",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "emergency-restore-site-after-v128",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-emergency-restore-site-after-v128",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "env-contract",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-env-contract",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "executive-command-dashboard-v93",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-executive-command-dashboard-v93",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "executive-control-tower-completion-v94",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-executive-control-tower-completion-v94",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "executive-module-icon-v50",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-executive-module-icon-v50",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "fast-final-green-proof",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-fast-final-green-proof",
-      "status_visible": true,
-      "source": "as6-fast-final-green-proof"
+      "source": "as6-fast-final-green-proof",
+      "status_visible": true
     },
     {
       "check": "fast-final-green-proof-control",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-fast-final-green-proof-control",
-      "status_visible": true,
-      "source": "as6-fast-final-green-proof"
+      "source": "as6-fast-final-green-proof",
+      "status_visible": true
     },
     {
       "check": "fast-summary",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-fast-summary",
-      "status_visible": true,
-      "source": "as6-status-registry-schema-sync"
+      "source": "as6-status-registry-schema-sync",
+      "status_visible": true
     },
     {
       "check": "final-registry-convergence",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-final-registry-convergence",
-      "status_visible": true,
-      "source": "as6-registration-matcher-canonical-fix"
+      "source": "as6-registration-matcher-canonical-fix",
+      "status_visible": true
+    },
+    {
+      "check": "first-paint-neutralize-backgrounds-v185",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-first-paint-neutralize-backgrounds-v185",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "freeze-correlation",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-freeze-correlation",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "frontend-architecture-audit-v87",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-frontend-architecture-audit-v87",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "frontend-asset-budget-v46",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-frontend-asset-budget-v46",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "frontend-budgets-v58",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-frontend-budgets-v58",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "frontend-bundle-v35",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-frontend-bundle-v35",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "frontend-code-splitting-v47",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-frontend-code-splitting-v47",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "frontend-dead-code-v64",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-frontend-dead-code-v64",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "frontend-heavy-files-v55",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-frontend-heavy-files-v55",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "frontend-page-decomposition-v67",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-frontend-page-decomposition-v67",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "frontend-route-splitting-v63",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-frontend-route-splitting-v63",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "full-mission-control-theme-rollout-v96",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-full-mission-control-theme-rollout-v96",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "function-order",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-function-order",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "generated-python-contract-coverage",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-generated-python-contract-coverage",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "generated-python-contracts",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-generated-python-contracts",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "generated-python-imports",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-generated-python-imports",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "generated-python-nameerror",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-generated-python-nameerror",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "generated-python-regression",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-generated-python-regression",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "generated-python-runtime",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-generated-python-runtime",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "generated-python-safety",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-generated-python-safety",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "git-hygiene",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-git-hygiene",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "git-main-sync",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-git-main-sync",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "global-command-palette-v89",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-global-command-palette-v89",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "global-frontend-dead-code-v53",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-global-frontend-dead-code-v53",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "global-health-bar-v88",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-global-health-bar-v88",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "governance-controller-convergence",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-governance-controller-convergence",
-      "status_visible": true,
-      "source": "as6-registration-matcher-canonical-fix"
+      "source": "as6-registration-matcher-canonical-fix",
+      "status_visible": true
+    },
+    {
+      "check": "handoff-docs-v209",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-handoff-docs-v209",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "handoff-finish-policy-v209",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-handoff-finish-policy-v209",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "health-alerts",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-health-alerts",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "health-anomaly-root-cause",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-health-anomaly-root-cause",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "health-cache",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-health-cache",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "health-cache-freshness",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-health-cache-freshness",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "health-cache-timer-freshness",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-health-cache-timer-freshness",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "health-cleanup",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-health-cleanup",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "health-dashboard-integration",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-health-dashboard-integration",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "health-history-anomaly",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-health-history-anomaly",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "health-history-corruption",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-health-history-corruption",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "health-history-gap-root-cause",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-health-history-gap-root-cause",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "health-history-gap-suppression",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-health-history-gap-suppression",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "health-history-historical-only",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-health-history-historical-only",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "health-history-recovery-window",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-health-history-recovery-window",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "health-history-stall-root-cause",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-health-history-stall-root-cause",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "health-recovery",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-health-recovery",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "health-runtime-policy",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-health-runtime-policy",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "health-status",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-health-status",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "health-timer",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-health-timer",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "health-timer-dashboard",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-health-timer-dashboard",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "health-timer-runtime",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-health-timer-runtime",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "health-trend",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-health-trend",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "heartbeat-wrapper-registry-match",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-heartbeat-wrapper-registry-match",
-      "status_visible": true,
-      "source": "as6-status-registry-schema-sync"
+      "source": "as6-status-registry-schema-sync",
+      "status_visible": true
     },
     {
       "check": "heredoc-safety",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-heredoc-safety",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "historical-gap-aging",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-historical-gap-aging",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "historical-incident-api",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-historical-incident-api",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "historical-incident-archive",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-historical-incident-archive",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "historical-incident-autoclose",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-historical-incident-autoclose",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "historical-incident-canonicalization",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-historical-incident-canonicalization",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "historical-incident-suppressor",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-historical-incident-suppressor",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "horizontal-scrollbar-layer-v176",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-horizontal-scrollbar-layer-v176",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "host-freeze-history",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-host-freeze-history",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "host-freeze-investigation-pack",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-host-freeze-investigation-pack",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "host-freeze-network",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-host-freeze-network",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "host-stability",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-host-stability",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "hypervisor-reboot",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-hypervisor-reboot",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "image-asset-ownership-v59",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-image-asset-ownership-v59",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "issue-router",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-issue-router",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "live-operational-data-integration-v103",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-live-operational-data-integration-v103",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "live-spinner-registration",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-live-spinner-registration",
-      "status_visible": true,
-      "source": "as6-status-registry-schema-sync"
+      "source": "as6-status-registry-schema-sync",
+      "status_visible": true
+    },
+    {
+      "check": "logo-optimization-v51",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-logo-optimization-v51",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "master-context-v210",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-master-context-v210",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "meta-diagnostic-dedup",
+      "lifecycle_status": "ACTIVE",
+      "owner": "AS6_META_DIAGNOSTIC_DEDUP",
+      "path": "ops/bin/as6-diagnose-meta-diagnostic-dedup",
+      "source": "auto",
+      "status": "GREEN",
+      "status_visible": true
+    },
+    {
+      "check": "meta-diagnostic-quality",
+      "lifecycle_status": "ACTIVE",
+      "owner": "AS6_META_DIAGNOSTIC_QUALITY_GATE",
+      "path": "ops/bin/as6-diagnose-meta-diagnostic-quality",
+      "source": "auto",
+      "status": "GREEN",
+      "status_visible": true
+    },
+    {
+      "check": "mission-control-design-system-v85",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-mission-control-design-system-v85",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "mission-control-layout-engine-v90",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-mission-control-layout-engine-v90",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "mission-control-workspace-v86",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-mission-control-workspace-v86",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "nameerror-signatures",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-nameerror-signatures",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "one-command-standard",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-one-command-standard",
-      "status_visible": true,
-      "source": "as6-status-registry-schema-sync"
+      "source": "as6-status-registry-schema-sync",
+      "status_visible": true
     },
     {
       "check": "ops-agent",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-ops-agent",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "output-format",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-output-format",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "patch-mode",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-patch-mode",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "patch-structure",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-patch-structure",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "physical-page-refactor-migration-v109",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-physical-page-refactor-migration-v109",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "png-to-webp-branding-v60",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-png-to-webp-branding-v60",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "post-deploy-health-readiness-v33",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-post-deploy-health-readiness-v33",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "pr-factory",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-pr-factory",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "pre-commit-push-enforcement-wiring-v83",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-pre-commit-push-enforcement-wiring-v83",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "pre-reboot-forensics",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-pre-reboot-forensics",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "primary-fail-repair",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-primary-fail-repair",
-      "status_visible": true,
-      "source": "as6-status-registry-schema-sync"
+      "source": "as6-status-registry-schema-sync",
+      "status_visible": true
     },
     {
       "check": "primary-fail-repair-v2",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-primary-fail-repair-v2",
-      "status_visible": true,
-      "source": "as6-status-registry-schema-sync"
+      "source": "as6-status-registry-schema-sync",
+      "status_visible": true
     },
     {
       "check": "production-deployment-safety",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-production-deployment-safety",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "production-freeze-guard",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-production-freeze-guard",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "project-state-readiness-snapshot-v80",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-project-state-readiness-snapshot-v80",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "provider-control-plane",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-provider-control-plane",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "provider-event-correlation",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-provider-event-correlation",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "provider-hypervisor-reboot",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-provider-hypervisor-reboot",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "public-health",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-public-health",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "purge-first-paint-layers-v194",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-purge-first-paint-layers-v194",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "python-artifact-git-hygiene",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-python-artifact-git-hygiene",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "python-variable-contract",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-python-variable-contract",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "quick-action-icon-v49",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-quick-action-icon-v49",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "raw-fail-consumers",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-raw-fail-consumers",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "real-backend-data-connectors-v104",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-real-backend-data-connectors-v104",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "real-component-consolidation-v110",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-real-component-consolidation-v110",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "real-crm-data-wiring-v106",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-real-crm-data-wiring-v106",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "real-dashboard-data-wiring-v105",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-real-dashboard-data-wiring-v105",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "real-data-surface-migration-v102",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-real-data-surface-migration-v102",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "real-edge-line-v168",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-real-edge-line-v168",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "real-edge-server-v187",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-real-edge-server-v187",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "real-page-component-migration-v99",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-real-page-component-migration-v99",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "real-page-conversion-engine-v108",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-real-page-conversion-engine-v108",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "real-page-shell-migration-v98",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-real-page-shell-migration-v98",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "real-primitive-enforcement-engine-v112",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-real-primitive-enforcement-engine-v112",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "real-progress-strip-v172",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-real-progress-strip-v172",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "real-revenue-crm-fusion-v107",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-real-revenue-crm-fusion-v107",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "reboot-evidence-cache",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-reboot-evidence-cache",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "reboot-evidence-self-heal",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-reboot-evidence-self-heal",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "reboot-evidence-symbols",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-reboot-evidence-symbols",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "reboot-forensics",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-reboot-forensics",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "reboot-forensics-runtime",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-reboot-forensics-runtime",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "reboot-origin",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-reboot-origin",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "reference-guard-flash-v184",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-reference-guard-flash-v184",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "registered-diagnostic-git-tracking",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-registered-diagnostic-git-tracking",
-      "status_visible": true,
-      "source": "as6-status-registry-schema-sync"
+      "source": "as6-status-registry-schema-sync",
+      "status_visible": true
     },
     {
       "check": "registration-matcher-canonical",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-registration-matcher-canonical",
-      "status_visible": true,
-      "source": "as6-registration-matcher-canonical-fix"
+      "source": "as6-registration-matcher-canonical-fix",
+      "status_visible": true
+    },
+    {
+      "check": "registry-reconciliation-enforcement-v82",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-registry-reconciliation-enforcement-v82",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "remove-v149-fixed-mask-v170b",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-remove-v149-fixed-mask-v170b",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "rendered-asset-paths-v48",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-rendered-asset-paths-v48",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "repair-crm-analytics-panel-render-wiring-v74",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-repair-crm-analytics-panel-render-wiring-v74",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "repair-crm-analytics-visible-bridge-v75",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-repair-crm-analytics-visible-bridge-v75",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "repair-v74-diag-script-secret-scan-false-positive",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-repair-v74-diag-script-secret-scan-false-positive",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "repair-v74-docs-secret-scan-false-positive",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-repair-v74-docs-secret-scan-false-positive",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "repair-v74-staged-diff-reset-and-commit",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-repair-v74-staged-diff-reset-and-commit",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "repair-v76-terminal-paste-integrity",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-repair-v76-terminal-paste-integrity",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "restore-drill",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-restore-drill",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "restore-drill-history",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-restore-drill-history",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "restore-readiness",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-restore-readiness",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "revenue-chart-full-height-v208",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-revenue-chart-full-height-v208",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "revenue-chart-line-v175b",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-revenue-chart-line-v175b",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "revenue-dynamics-etalon-v177c",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-revenue-dynamics-etalon-v177c",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "robot-asset-size-v36",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-robot-asset-size-v36",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "rollback-readiness",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-rollback-readiness",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "root-cause-cache",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-root-cause-cache",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "root-cause-canonicalization",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-root-cause-canonicalization",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "root-cause-contract",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-root-cause-contract",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "root-cause-dashboard",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-root-cause-dashboard",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "root-cause-governance",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-root-cause-governance",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "root-cause-knowledge-base",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-root-cause-knowledge-base",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "root-cause-remediation",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-root-cause-remediation",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "root-cause-router",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-root-cause-router",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "root-cause-staleness",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-root-cause-staleness",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "root-cause-token-policy",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-root-cause-token-policy",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "root-cause-v2",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-root-cause-v2",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "root-cause-validation",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-root-cause-validation",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "runtime-artifact-format",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-runtime-artifact-format",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "runtime-artifacts",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-runtime-artifacts",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "runtime-binary-artifacts",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-runtime-binary-artifacts",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "runtime-stage-gap",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-runtime-stage-gap",
-      "status_visible": true,
-      "source": "as6-status-registry-schema-sync"
+      "source": "as6-status-registry-schema-sync",
+      "status_visible": true
     },
     {
       "check": "runtime-stage-gap-exit-code",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-runtime-stage-gap-exit-code",
-      "status_visible": true,
-      "source": "as6-status-registry-schema-sync"
+      "source": "as6-status-registry-schema-sync",
+      "status_visible": true
     },
     {
       "check": "runtime-stage-gap-final-marker",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-runtime-stage-gap-final-marker",
-      "status_visible": true,
-      "source": "as6-status-registry-schema-sync"
+      "source": "as6-status-registry-schema-sync",
+      "status_visible": true
     },
     {
       "check": "runtime-stage-gap-policy-text",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-runtime-stage-gap-policy-text",
-      "status_visible": true,
-      "source": "as6-status-registry-schema-sync"
+      "source": "as6-status-registry-schema-sync",
+      "status_visible": true
     },
     {
       "check": "runtime-stale-tmp-artifacts",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-runtime-stale-tmp-artifacts",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "second-row-header-final-v167",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-second-row-header-final-v167",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "selector-ownership-map-v62",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-selector-ownership-map-v62",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "self-expanding-diagnostics",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-self-expanding-diagnostics",
-      "status_visible": true,
-      "source": "as6-status-registry-schema-sync"
+      "source": "as6-status-registry-schema-sync",
+      "status_visible": true
+    },
+    {
+      "check": "source-edge-line-v171",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-source-edge-line-v171",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "ssh-heredoc-guard",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-ssh-heredoc-guard",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "ssh-stability",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-ssh-stability",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "stat-card-after-flash-v181",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-stat-card-after-flash-v181",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "status-registry-consistency",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-status-registry-consistency",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "status-registry-schema-sync",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-status-registry-schema-sync",
-      "status_visible": true,
-      "source": "as6-status-registry-schema-sync"
+      "source": "as6-status-registry-schema-sync",
+      "status_visible": true
     },
     {
       "check": "status-registry-sync",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-status-registry-sync",
-      "status_visible": true,
-      "source": "as6-status-registry-schema-sync"
+      "source": "as6-status-registry-schema-sync",
+      "status_visible": true
+    },
+    {
+      "check": "sticky-quick-actions-strip-v173",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-sticky-quick-actions-strip-v173",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "strategic-readiness",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-strategic-readiness",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "true-live-spinner",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-true-live-spinner",
-      "status_visible": true,
-      "source": "as6-status-registry-schema-sync"
+      "source": "as6-status-registry-schema-sync",
+      "status_visible": true
     },
     {
       "check": "unified-autonomy-orchestrator",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-unified-autonomy-orchestrator",
-      "status_visible": true,
-      "source": "as6-registration-matcher-canonical-fix"
+      "source": "as6-registration-matcher-canonical-fix",
+      "status_visible": true
+    },
+    {
+      "check": "unified-data-surface-system-v101",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-unified-data-surface-system-v101",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "unified-mission-control-ui-system-v95",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-unified-mission-control-ui-system-v95",
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "unified-page-shell-v97",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-unified-page-shell-v97",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "universal-heartbeat-wrapper",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-universal-heartbeat-wrapper",
-      "status_visible": true,
-      "source": "as6-status-registry-schema-sync"
+      "source": "as6-status-registry-schema-sync",
+      "status_visible": true
     },
     {
       "check": "unreachable-diagnostic-blocks",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-unreachable-diagnostic-blocks",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
+    },
+    {
+      "check": "v73-precommit-false-positive-repair",
+      "lifecycle_status": "ACTIVE",
+      "path": "ops/bin/as6-diagnose-v73-precommit-false-positive-repair",
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "vps-baseline",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-vps-baseline",
-      "status_visible": true,
-      "source": "auto"
+      "source": "auto",
+      "status_visible": true
     },
     {
       "check": "watch-heartbeat",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-watch-heartbeat",
-      "status_visible": true,
-      "source": "as6-status-registry-schema-sync"
+      "source": "as6-status-registry-schema-sync",
+      "status_visible": true
     },
     {
       "check": "workflow-yaml",
+      "lifecycle_status": "ACTIVE",
       "path": "ops/bin/as6-diagnose-workflow-yaml",
-      "status_visible": true,
-      "source": "auto"
-    },
-    {
-      "path": "ops/bin/as6-diagnose-meta-diagnostic-quality",
-      "status": "GREEN",
-      "owner": "AS6_META_DIAGNOSTIC_QUALITY_GATE"
-    },
-    {
-      "path": "ops/bin/as6-diagnose-meta-diagnostic-dedup",
-      "status": "GREEN",
-      "owner": "AS6_META_DIAGNOSTIC_DEDUP"
-    },
-    {
-      "path": "ops/bin/as6-diagnose-command-center-hook-order",
-      "status": "GREEN",
-      "owner": "AS6_COMMAND_CENTER_BLACK_SCREEN_FIX_V1"
-    },
-    {
-      "path": "ops/bin/as6-diagnose-command-center-deployment",
-      "status": "GREEN",
-      "owner": "AS6_COMMAND_CENTER_DEPLOY_VERIFY_V1"
-    },
-    {
-      "path": "ops/bin/as6-diagnose-command-center-mission-control-layout",
-      "status": "GREEN",
-      "owner": "AS6_COMMAND_CENTER_MISSION_CONTROL_LAYOUT_V1"
-    },
-    {
-      "path": "ops/bin/as6-diagnose-command-center-executive-ux-v6",
-      "status": "GREEN",
-      "owner": "AS6_COMMAND_CENTER_EXECUTIVE_UX_V6"
-    },
-    {
-      "path": "ops/bin/as6-diagnose-command-center-screenshot-match-v7",
-      "status": "GREEN",
-      "owner": "AS6_COMMAND_CENTER_SCREENSHOT_MATCH_V7"
-    },
-    {
-      "path": "ops/bin/as6-diagnose-command-center-pixel-perfect-v8",
-      "status": "GREEN",
-      "owner": "AS6_COMMAND_CENTER_PIXEL_PERFECT_V8"
-    },
-    {
-      "path": "ops/bin/as6-diagnose-command-center-executive-v10",
-      "status": "GREEN",
-      "owner": "AS6_COMMAND_CENTER_EXECUTIVE_V10"
-    },
-    {
-      "path": "ops/bin/as6-diagnose-command-center-pixel-polish-v11",
-      "status": "GREEN",
-      "owner": "AS6_COMMAND_CENTER_PIXEL_POLISH_V11"
-    },
-    {
-      "path": "ops/bin/as6-diagnose-command-center-final-pixel-v12",
-      "status": "GREEN",
-      "owner": "AS6_COMMAND_CENTER_FINAL_PIXEL_V12"
-    },
-    {
-      "path": "ops/bin/as6-diagnose-command-center-visual-fix-v13",
-      "status": "GREEN",
-      "owner": "AS6_COMMAND_CENTER_VISUAL_FIX_V13"
-    },
-    {
-      "path": "ops/bin/as6-diagnose-command-center-visual-actions-v14",
-      "status": "GREEN",
-      "owner": "AS6_COMMAND_CENTER_VISUAL_ACTIONS_V14"
-    },
-    {
-      "path": "ops/bin/as6-diagnose-appshell-jsx-tag-integrity",
-      "status": "GREEN",
-      "owner": "AS6_APPSHELL_JSX_TAG_INTEGRITY"
-    },
-    {
-      "path": "ops/bin/as6-diagnose-command-center-recommendation-actions",
-      "status": "GREEN",
-      "owner": "AS6_COMMAND_CENTER_RECOMMENDATION_ACTIONS"
-    },
-    {
-      "path": "ops/bin/as6-diagnose-command-center-executive-cleanup-v16",
-      "status": "GREEN",
-      "owner": "AS6_COMMAND_CENTER_EXECUTIVE_CLEANUP_V16"
-    },
-    {
-      "path": "ops/bin/as6-diagnose-command-center-avatar-reference",
-      "status": "GREEN",
-      "owner": "AS6_COMMAND_CENTER_AVATAR_REFERENCE"
-    },
-    {
-      "path": "ops/bin/as6-diagnose-command-center-visual-reference-v18",
-      "status": "GREEN",
-      "owner": "AS6_COMMAND_CENTER_VISUAL_REFERENCE_V18"
-    },
-    {
-      "path": "ops/bin/as6-diagnose-command-center-pixel-reference-v19",
-      "status": "GREEN",
-      "owner": "AS6_COMMAND_CENTER_PIXEL_REFERENCE_V19"
-    },
-    {
-      "path": "ops/bin/as6-diagnose-command-center-real-assets-v20",
-      "status": "GREEN",
-      "owner": "AS6_COMMAND_CENTER_REAL_ASSETS_V20"
-    },
-    {
-      "path": "ops/bin/as6-diagnose-command-center-real-logo-v21",
-      "status": "GREEN",
-      "owner": "AS6_REAL_LOGO_ASSET_V21"
-    },
-    {
-      "path": "ops/bin/as6-diagnose-command-center-logo-top-v22",
-      "status": "GREEN",
-      "owner": "AS6_LOGO_TOP_V22"
-    },
-    {
-      "path": "ops/bin/as6-diagnose-command-center-robot-kpi-v23",
-      "status": "GREEN",
-      "owner": "AS6_ROBOT_KPI_V23"
-    },
-    {
-      "path": "ops/bin/as6-diagnose-command-center-ai-workforce-robot-v24",
-      "status": "GREEN",
-      "owner": "AS6_AI_WORKFORCE_ROBOT_V24"
+      "source": "auto",
+      "status_visible": true
     }
-  ]
+  ],
+  "version": 1
 }

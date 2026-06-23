@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+OUT="ops/status/diagnostic-status-registry.json"
+TMP="$(mktemp)"
+
+python3 - <<'PY' > "$TMP"
+import json
+from pathlib import Path
+
+out = Path("ops/status/diagnostic-status-registry.json")
+existing = {}
+version = 1
+if out.exists():
+    with out.open() as fh:
+        old = json.load(fh)
+    version = old.get("version", 1)
+    for item in old.get("diagnostics", []):
+        path = item.get("path")
+        if path:
+            existing[path] = dict(item)
+
+actual = {
+    str(p)
+    for p in Path("ops/bin").glob("as6-diagnose-*")
+    if p.is_file() and ".backup." not in p.name and not p.name.endswith(".backup")
+}
+
+merged = []
+for path in sorted(set(existing) | actual):
+    item = dict(existing.get(path, {}))
+    item["path"] = path
+    item.setdefault("check", Path(path).name.replace("as6-diagnose-", ""))
+    item.setdefault("status_visible", True)
+    item.setdefault("source", "auto")
+    item["lifecycle_status"] = "ACTIVE" if path in actual else item.get("lifecycle_status", "ARCHIVED")
+    if path not in actual and item["lifecycle_status"] == "ACTIVE":
+        item["lifecycle_status"] = "ARCHIVED"
+    merged.append({k: item[k] for k in sorted(item)})
+
+merged.sort(key=lambda x: (x.get("check", ""), x.get("path", "")))
+Path("ops/status").mkdir(parents=True, exist_ok=True)
+print(json.dumps({"version": version, "diagnostics": merged}, ensure_ascii=False, indent=2, sort_keys=True))
+PY
+
+mv "$TMP" "$OUT"
+echo "DIAGNOSTIC_STATUS_REGISTRY_UPDATED=$OUT"
+echo "DIAGNOSTIC_STATUS_REGISTRY_COUNT=$(python3 - <<'PY'
+import json
+print(len(json.load(open("ops/status/diagnostic-status-registry.json")).get("diagnostics", [])))
+PY
+)"
+echo "DIAGNOSTIC_STATUS_REGISTRY_UPDATE_RESULT=PASS"

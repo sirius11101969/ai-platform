@@ -3615,3 +3615,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Updated: docs/AS6_CODEX_PROMPT.md.
 - Rule: new chats start from AS6_MASTER_CONTEXT + HANDOFF + CODEX_PROMPT.
 - Readiness after: 99%.
+
+## 20260623 AS6 V213C Diagnostic Status Registry Lifecycle
+- State: diagnostic status registry lifecycle model is enabled.
+- ACTIVE diagnostic status registry entries are file-backed.
+- Historical entries are preserved as ARCHIVED / DEPRECATED / REMOVED and are not treated as missing active diagnostics.
+- Failure classes registered: DIAGNOSTIC_STATUS_ACTIVE_ENTRY_MISSING, DIAGNOSTIC_STATUS_HISTORICAL_ENTRY_MISCLASSIFIED, DIAGNOSTIC_STATUS_ARCHIVE_NOT_SUPPORTED, DIAGNOSTIC_STATUS_REGISTRY_LIFECYCLE_DRIFT.

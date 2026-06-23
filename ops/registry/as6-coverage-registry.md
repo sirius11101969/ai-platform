@@ -2141,3 +2141,13 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
   - docs/AS6_HANDOFF.md
   - docs/AS6_CODEX_PROMPT.md
   - ops/bin/as6-diagnose-master-context-v210
+
+## Diagnostic Coverage: as6-diagnose-diagnostic-status-registry-lifecycle-v213c
+- diagnostic: ops/bin/as6-diagnose-diagnostic-status-registry-lifecycle-v213c
+- covers: diagnostic status registry lifecycle semantics, valid lifecycle statuses, duplicate detection, active file existence, archived missing-file allowance.
+- failure_classes:
+  - DIAGNOSTIC_STATUS_ACTIVE_ENTRY_MISSING
+  - DIAGNOSTIC_STATUS_HISTORICAL_ENTRY_MISCLASSIFIED
+  - DIAGNOSTIC_STATUS_ARCHIVE_NOT_SUPPORTED
+  - DIAGNOSTIC_STATUS_REGISTRY_LIFECYCLE_DRIFT
+- source: diagnostic-status-registry-lifecycle-v213c

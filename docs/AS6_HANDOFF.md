@@ -26,3 +26,11 @@ Diagnostics → Root Cause → Structure → Plan → Change → Re-Diagnostics 
 - ops/registry/as6-diagnostic-registry.md
 - ops/registry/as6-coverage-registry.md
 - ops/status/as6-detected-errors.md
+
+## 20260623T000000Z AS6 V213C Diagnostic Status Registry Lifecycle
+- Fixed diagnostic status registry lifecycle handling for historical entries.
+- Registry entries now include lifecycle_status: ACTIVE, ARCHIVED, DEPRECATED, REMOVED.
+- ACTIVE entries require an existing diagnostic file; historical statuses may be file-missing without failure.
+- Added ops/bin/as6-update-diagnostic-status-registry deterministic lifecycle updater.
+- Added ops/bin/as6-diagnose-diagnostic-status-registry-lifecycle-v213c.
+- Validation required: update registry, diagnose registry, diagnose lifecycle v213c.

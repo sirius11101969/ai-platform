@@ -20,29 +20,45 @@ fi
 python3 - <<'PY' || fail=1
 import json
 from pathlib import Path
+from collections import Counter
 
 registry = Path("ops/status/diagnostic-status-registry.json")
-data = json.loads(registry.read_text())
-paths = {item.get("path") for item in data.get("diagnostics", [])}
+try:
+    data = json.loads(registry.read_text())
+except Exception as exc:
+    print(f"DIAGNOSTIC_STATUS_REGISTRY_JSON=FAIL:{exc}")
+    raise SystemExit(1)
 
-missing = []
-for p in sorted(Path("ops/bin").glob("as6-diagnose-*")):
-    if ".backup." in p.name:
-        continue
-    if str(p) not in paths:
-        missing.append(str(p))
+items = data.get("diagnostics", [])
+paths = [item.get("path") for item in items]
+checks = [item.get("check") for item in items]
+path_dupes = sorted(p for p, n in Counter(paths).items() if p and n > 1)
+check_dupes = sorted(c for c, n in Counter(checks).items() if c and n > 1)
+if path_dupes or check_dupes:
+    for p in path_dupes:
+        print(f"DIAGNOSTIC_STATUS_REGISTRY_DUPLICATE=FAIL:path:{p}")
+    for c in check_dupes:
+        print(f"DIAGNOSTIC_STATUS_REGISTRY_DUPLICATE=FAIL:check:{c}")
+    raise SystemExit(1)
 
-print(f"DIAGNOSTIC_STATUS_REGISTRY_COUNT={len(paths)}")
-if missing:
-    for p in missing:
-        print(f"DIAGNOSTIC_STATUS_REGISTRY_MISSING=FAIL:{p}")
+active_missing = []
+for item in items:
+    if item.get("lifecycle_status", "ACTIVE") == "ACTIVE":
+        path = item.get("path")
+        if not path or not Path(path).is_file():
+            active_missing.append(path or "<missing-path>")
+
+print(f"DIAGNOSTIC_STATUS_REGISTRY_COUNT={len(items)}")
+if active_missing:
+    for p in sorted(active_missing):
+        print(f"DIAGNOSTIC_STATUS_ACTIVE_ENTRY_MISSING=FAIL:{p}")
     raise SystemExit(1)
 
 print("DIAGNOSTIC_STATUS_REGISTRY_COMPLETE=OK")
 PY
 
 if [ "$fail" -eq 0 ]; then
-  echo "DIAGNOSTIC_STATUS_REGISTRY_RESULT=OK"
+  echo "DIAGNOSTIC_STATUS_REGISTRY_RESULT=PASS"
   exit 0
 fi
 

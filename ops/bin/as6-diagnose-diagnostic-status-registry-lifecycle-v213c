@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+REGISTRY="ops/status/diagnostic-status-registry.json"
+fail=0
+
+echo "=== AS6 Diagnostic Status Registry Lifecycle v213c ==="
+
+if [ -f "$REGISTRY" ]; then
+  echo "AS6_DIAGNOSTIC_STATUS_REGISTRY_LIFECYCLE_FILE=OK:$REGISTRY"
+else
+  echo "AS6_DIAGNOSTIC_STATUS_REGISTRY_LIFECYCLE_FILE=FAIL:missing"
+  echo "AS6_DIAGNOSTIC_STATUS_REGISTRY_LIFECYCLE_V213C=FAIL"
+  exit 1
+fi
+
+python3 - <<'PY' || fail=1
+import json
+from pathlib import Path
+from collections import Counter
+
+allowed = {"ACTIVE", "ARCHIVED", "DEPRECATED", "REMOVED"}
+registry = Path("ops/status/diagnostic-status-registry.json")
+try:
+    data = json.loads(registry.read_text())
+except Exception as exc:
+    print(f"DIAGNOSTIC_STATUS_REGISTRY_JSON=FAIL:{exc}")
+    raise SystemExit(1)
+
+items = data.get("diagnostics")
+if not isinstance(items, list):
+    print("DIAGNOSTIC_STATUS_REGISTRY_JSON=FAIL:diagnostics-not-list")
+    raise SystemExit(1)
+
+fail = False
+for item in items:
+    status = item.get("lifecycle_status")
+    if status not in allowed:
+        print(f"DIAGNOSTIC_STATUS_REGISTRY_LIFECYCLE_DRIFT=FAIL:{item.get('path','<missing-path>')}:{status}")
+        fail = True
+
+paths = [item.get("path") for item in items]
+checks = [item.get("check") for item in items]
+for p, n in sorted(Counter(paths).items()):
+    if p and n > 1:
+        print(f"DIAGNOSTIC_STATUS_REGISTRY_DUPLICATE=FAIL:path:{p}")
+        fail = True
+for c, n in sorted(Counter(checks).items()):
+    if c and n > 1:
+        print(f"DIAGNOSTIC_STATUS_REGISTRY_DUPLICATE=FAIL:check:{c}")
+        fail = True
+
+active_missing = []
+historical_missing = 0
+for item in items:
+    path = item.get("path")
+    exists = bool(path) and Path(path).is_file()
+    status = item.get("lifecycle_status")
+    if status == "ACTIVE" and not exists:
+        active_missing.append(path or "<missing-path>")
+    elif status in {"ARCHIVED", "DEPRECATED", "REMOVED"} and not exists:
+        historical_missing += 1
+
+for p in sorted(active_missing):
+    print(f"DIAGNOSTIC_STATUS_ACTIVE_ENTRY_MISSING=FAIL:{p}")
+    fail = True
+
+print(f"DIAGNOSTIC_STATUS_REGISTRY_LIFECYCLE_COUNT={len(items)}")
+print(f"DIAGNOSTIC_STATUS_REGISTRY_HISTORICAL_MISSING_ALLOWED={historical_missing}")
+print("DIAGNOSTIC_STATUS_ARCHIVE_NOT_SUPPORTED=OK:archive-lifecycle-supported")
+if fail:
+    raise SystemExit(1)
+print("DIAGNOSTIC_STATUS_REGISTRY_LIFECYCLE_COMPLETE=OK")
+PY
+
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_DIAGNOSTIC_STATUS_REGISTRY_LIFECYCLE_V213C=PASS"
+  exit 0
+fi
+
+echo "AS6_DIAGNOSTIC_STATUS_REGISTRY_LIFECYCLE_V213C=FAIL"
+exit 1

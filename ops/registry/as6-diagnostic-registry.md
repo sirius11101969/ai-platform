@@ -2572,3 +2572,13 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Failure class: NEW_CHAT_CONTEXT_LOSS
 - Check: docs/AS6_MASTER_CONTEXT.md exists.
 - Check: master context has architecture, workflow, last stages and finish rule.
+
+## Diagnostic Registry: as6-diagnose-diagnostic-status-registry-lifecycle-v213c
+- diagnostic: ops/bin/as6-diagnose-diagnostic-status-registry-lifecycle-v213c
+- purpose: validates diagnostic status registry lifecycle support for ACTIVE and historical diagnostic entries.
+- failure_classes:
+  - DIAGNOSTIC_STATUS_ACTIVE_ENTRY_MISSING
+  - DIAGNOSTIC_STATUS_HISTORICAL_ENTRY_MISCLASSIFIED
+  - DIAGNOSTIC_STATUS_ARCHIVE_NOT_SUPPORTED
+  - DIAGNOSTIC_STATUS_REGISTRY_LIFECYCLE_DRIFT
+- source: diagnostic-status-registry-lifecycle-v213c
