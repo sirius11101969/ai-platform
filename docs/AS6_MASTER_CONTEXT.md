@@ -1,6 +1,6 @@
 # AS6 MASTER CONTEXT
 
-Last updated: 20260623T050133Z
+Last updated: 20260623T060000Z
 
 ## Project
 - Name: AS6 AI Platform
@@ -75,3 +75,8 @@ ops/bin/as6-finish
 - Add runtime tracer if source is unknown.
 - Always update diagnostics, coverage, governance, state and detected errors.
 - Always finish through ops/bin/as6-finish.
+
+## 20260623T060000Z AS6 V213B PR Guardian
+- Added ops/bin/as6-diagnose-pr-guardian-v213b.
+- Registered failure classes: PR_GUARDIAN_MERGE_BLOCKED, FRONTEND_DOCKER_CONTEXT_MISMATCH, NPM_CI_EXECUTED_OUTSIDE_FRONTEND.
+- Guardian frontend build invariant: docker compose builds nginx from ./frontend and npm ci runs with frontend/package-lock.json available.

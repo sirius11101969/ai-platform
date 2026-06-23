@@ -2572,3 +2572,15 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Failure class: NEW_CHAT_CONTEXT_LOSS
 - Check: docs/AS6_MASTER_CONTEXT.md exists.
 - Check: master context has architecture, workflow, last stages and finish rule.
+
+## 20260623T060000Z pr-guardian-v213b
+- Diagnostic: ops/bin/as6-diagnose-pr-guardian-v213b
+- Failure classes:
+  - PR_GUARDIAN_MERGE_BLOCKED
+  - FRONTEND_DOCKER_CONTEXT_MISMATCH
+  - NPM_CI_EXECUTED_OUTSIDE_FRONTEND
+- Checks:
+  - AS6 PR Guardian workflow and script exist.
+  - nginx Docker compose build context is ./frontend.
+  - frontend/Dockerfile runs npm ci after copying frontend package manifests.
+  - frontend/package-lock.json exists.
