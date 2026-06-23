@@ -2105,3 +2105,13 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 ## 20260623T003529Z SIDEBAR_ANNOTATED_ETALON_MISMATCH_LOGO_FRAME_NAV_GAP_FAVORITES_FRAME_WIDTH_HELP_HEIGHT
 - Coverage: /command-center annotated sidebar visual correction.
 - Files: frontend/src/theme/as6Theme.css, frontend/src/components/AppShell.jsx, frontend/src/main.jsx
+
+## 20260623T005837Z SIDEBAR_RIGHT_SEPARATOR_ARTIFACT_AND_LOGO_CENTER_ALIGNMENT_DRIFT
+- Coverage: /command-center final sidebar alignment.
+- Files:
+  - frontend/src/theme/as6Theme.css
+  - frontend/src/components/AppShell.jsx
+  - ops/runtime-tracers/as6-command-center-sidebar-alignment-tracer-v207.js
+- AEC:
+  - AEC-SIDEBAR-004
+  - AEC-SIDEBAR-005

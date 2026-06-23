@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-sidebar-final-alignment-v207"
+grep -q "AS6 V207 Sidebar Final Alignment" frontend/src/theme/as6Theme.css
+grep -q "transform: translateX(-3px)" frontend/src/theme/as6Theme.css
+grep -q "sidebar-scroll::after" frontend/src/theme/as6Theme.css
+grep -q "sidebar-favorites::after" frontend/src/theme/as6Theme.css
+grep -q "AS6_SIDEBAR_ALIGNMENT_TRACE_V207" ops/runtime-tracers/as6-command-center-sidebar-alignment-tracer-v207.js
+! grep -q "datacommand-sidebar=" frontend/src/components/AppShell.jsx
+! grep -qE "as6-command-center-sidebar-etalon-v200\.css|as6-command-center-sidebar-final-etalon-v201\.css|as6-command-center-real-sidebar-force-v203\.css" frontend/src/main.jsx
+echo "AS6_COMMAND_CENTER_SIDEBAR_FINAL_ALIGNMENT_V207=PASS"

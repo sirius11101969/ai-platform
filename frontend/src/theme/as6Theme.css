@@ -1311,3 +1311,88 @@ aside.sidebar.shell-glow.command-sidebar[data-command-sidebar="premium"] {
 }
 
 /* AS6 V206 END */
+
+/* AS6 V207 Sidebar Final Alignment */
+.app-shell.command-shell > aside.sidebar.shell-glow.command-sidebar,
+.app-shell.command-shell > aside.sidebar.command-sidebar,
+aside.sidebar.shell-glow.command-sidebar[data-command-sidebar="premium"] {
+  border-right: 1px solid rgba(23, 107, 174, .42) !important;
+  box-shadow: inset 0 0 0 1px rgba(125,239,255,.035), 0 0 24px rgba(0,216,255,.07) !important;
+}
+
+.app-shell.command-shell > aside.sidebar.command-sidebar::before,
+.app-shell.command-shell > aside.sidebar.command-sidebar::after,
+.app-shell.command-shell .sidebar-scroll::before,
+.app-shell.command-shell .sidebar-scroll::after,
+.app-shell.command-shell .side-nav::before,
+.app-shell.command-shell .side-nav::after,
+.app-shell.command-shell nav::before,
+.app-shell.command-shell nav::after {
+  display: none !important;
+  content: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.app-shell.command-shell .sidebar-scroll,
+.app-shell.command-shell .side-nav,
+.app-shell.command-shell nav {
+  border-right: 0 !important;
+  border-left: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+.app-shell.command-shell .sidebar-scroll {
+  overflow: visible !important;
+  scrollbar-width: none !important;
+}
+
+.app-shell.command-shell .sidebar-scroll::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+  display: none !important;
+}
+
+.app-shell.command-shell .as6-sidebar-brand,
+.app-shell.command-shell .as6-sidebar-brand-top {
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  transform: translateX(-3px) !important;
+}
+
+.app-shell.command-shell .as6-sidebar-brand img,
+.app-shell.command-shell .as6-sidebar-brand svg,
+.app-shell.command-shell .as6-real-logo-image {
+  display: block !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  transform: translateX(-2px) !important;
+  object-fit: contain !important;
+}
+
+.app-shell.command-shell .sidebar-favorites {
+  border-top: 0 !important;
+  border-right: 0 !important;
+  border-bottom: 0 !important;
+  border-left: 0 !important;
+  box-shadow: none !important;
+}
+
+.app-shell.command-shell .sidebar-favorites::before,
+.app-shell.command-shell .sidebar-favorites::after {
+  display: none !important;
+  content: none !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+/* AS6 V207 END */

@@ -3579,3 +3579,10 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Root cause: sidebar still had oversized etalon geometry after V205.
 - Diagnostic: ops/bin/as6-diagnose-command-center-sidebar-annotated-fix-v206
 - Readiness after: 99%
+
+## 20260623T005837Z AS6 V207 Sidebar Final Alignment
+- Fixed: removed right separator artifact and centered AS6 logo in left sidebar.
+- Root cause: sidebar scroll/nav/favorites pseudo-elements and logo container offset created visual drift from annotated etalon.
+- Diagnostic: ops/bin/as6-diagnose-command-center-sidebar-final-alignment-v207
+- Runtime tracer: ops/runtime-tracers/as6-command-center-sidebar-alignment-tracer-v207.js
+- Readiness after: 99%

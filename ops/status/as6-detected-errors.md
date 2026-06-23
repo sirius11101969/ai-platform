@@ -1001,3 +1001,13 @@ Governed and registered.
 - Class: SIDEBAR_ANNOTATED_ETALON_MISMATCH_LOGO_FRAME_NAV_GAP_FAVORITES_FRAME_WIDTH_HELP_HEIGHT
 - Root cause: logo and favorites blocks kept unnecessary frames/backgrounds; nav spacing and help card height were too large.
 - Fix: V206 compact annotated sidebar patch.
+
+## 20260623T005837Z detected-error
+- Class: SIDEBAR_RIGHT_SEPARATOR_ARTIFACT
+- Root cause: sidebar scroll/nav pseudo-elements created a visible vertical line at the right edge.
+- Fix: V207 disables sidebar/nav/scroll/favorites pseudo-elements and scrollbar visuals.
+
+## 20260623T005837Z detected-error
+- Class: SIDEBAR_LOGO_CENTER_ALIGNMENT_DRIFT
+- Root cause: logo container/image alignment was shifted from the visual center.
+- Fix: V207 applies explicit flex centering and final offset correction.

@@ -2528,3 +2528,15 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Check: nav gap 5px.
 - Check: favorites frame/background removed.
 - Check: help card compact height 54px.
+
+## 20260623T005837Z command-center-sidebar-final-alignment-v207
+- Diagnostic: ops/bin/as6-diagnose-command-center-sidebar-final-alignment-v207
+- Runtime tracer: ops/runtime-tracers/as6-command-center-sidebar-alignment-tracer-v207.js
+- Failure classes:
+  - SIDEBAR_RIGHT_SEPARATOR_ARTIFACT
+  - SIDEBAR_LOGO_CENTER_ALIGNMENT_DRIFT
+  - SIDEBAR_NESTED_CONTAINER_ARTIFACT_DRIFT
+- Checks:
+  - sidebar-scroll/nav pseudo-elements disabled
+  - logo centered with final offset correction
+  - favorites pseudo-elements disabled
