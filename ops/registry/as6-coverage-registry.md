@@ -2133,3 +2133,11 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 
 ## 20260623T040004Z AS6 handoff finish policy coverage
 - Files: docs/AS6_HANDOFF.md, docs/AS6_CODEX_PROMPT.md, ops/bin/as6-update-handoff, ops/bin/as6-finish, ops/governance/as6-finish-policy.md
+
+## 20260623T050133Z MASTER_CONTEXT_FOR_NEW_CHAT_CONTINUITY
+- Coverage: AS6 new chat continuity.
+- Files:
+  - docs/AS6_MASTER_CONTEXT.md
+  - docs/AS6_HANDOFF.md
+  - docs/AS6_CODEX_PROMPT.md
+  - ops/bin/as6-diagnose-master-context-v210

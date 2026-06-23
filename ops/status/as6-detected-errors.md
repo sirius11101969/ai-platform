@@ -1025,3 +1025,8 @@ Governed and registered.
 ## 20260623T040004Z detected-error
 - Class: ISSUE_330_PARTIALLY_IMPLEMENTED_FINISH_POLICY_MISSING
 - Fix: V209B added finish script, governance policy and validation diagnostic.
+
+## 20260623T050133Z detected-error
+- Class: NEW_CHAT_CONTEXT_LOSS
+- Root cause: new chat could lose long project history if only short handoff was used.
+- Fix: V210 adds docs/AS6_MASTER_CONTEXT.md as durable project memory.

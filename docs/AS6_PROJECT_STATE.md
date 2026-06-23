@@ -3607,3 +3607,11 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Added ops/governance/as6-finish-policy.md.
 - Added ops/bin/as6-diagnose-handoff-finish-policy-v209.
 - Rule: every AS6 patch must finish through ops/bin/as6-finish.
+
+## 20260623T050133Z AS6 V210 Master Context
+- Added: docs/AS6_MASTER_CONTEXT.md.
+- Added: ops/bin/as6-diagnose-master-context-v210.
+- Updated: docs/AS6_HANDOFF.md.
+- Updated: docs/AS6_CODEX_PROMPT.md.
+- Rule: new chats start from AS6_MASTER_CONTEXT + HANDOFF + CODEX_PROMPT.
+- Readiness after: 99%.

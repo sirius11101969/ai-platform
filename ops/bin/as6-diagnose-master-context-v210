@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=master-context-v210"
+test -f docs/AS6_MASTER_CONTEXT.md
+grep -q "AS6 MASTER CONTEXT" docs/AS6_MASTER_CONTEXT.md
+grep -q "Mandatory New Chat Start" docs/AS6_MASTER_CONTEXT.md
+grep -q "ops/bin/as6-finish" docs/AS6_MASTER_CONTEXT.md
+grep -q "docs/AS6_HANDOFF.md" docs/AS6_MASTER_CONTEXT.md
+grep -q "docs/AS6_CODEX_PROMPT.md" docs/AS6_MASTER_CONTEXT.md
+echo "AS6_MASTER_CONTEXT_V210=PASS"
