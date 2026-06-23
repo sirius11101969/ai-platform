@@ -2141,3 +2141,15 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
   - docs/AS6_HANDOFF.md
   - docs/AS6_CODEX_PROMPT.md
   - ops/bin/as6-diagnose-master-context-v210
+
+## 20260623T104209Z PACKAGE_LOCK_OUT_OF_SYNC
+- Coverage: frontend npm lockfile/package metadata synchronization.
+- Files: frontend/package.json, frontend/package-lock.json, ops/bin/as6-diagnose-package-lock-sync-v213b, ops/bin/as6-finish.
+- Rule: npm ci must pass before build and Guardian Docker validation.
+
+## 20260623T104209Z NPM_CI_LOCKFILE_MISMATCH
+- Coverage: npm ci deterministic install gate for frontend.
+- Diagnostic: ops/bin/as6-diagnose-package-lock-sync-v213b.
+
+## 20260623T104209Z FRONTEND_DEPENDENCY_DRIFT
+- Coverage: frontend dependency changes require package-lock validation and finish automation enforcement.
