@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=handoff-finish-policy-v209"
+test -f docs/AS6_HANDOFF.md
+test -f docs/AS6_CODEX_PROMPT.md
+test -x ops/bin/as6-update-handoff
+test -x ops/bin/as6-finish
+test -f ops/governance/as6-finish-policy.md
+echo "AS6_HANDOFF_FINISH_POLICY_V209=PASS"

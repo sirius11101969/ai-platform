@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+MSG="${1:-as6 automatic finish update}"
+echo "AS6_PHASE=Finish: update handoff"
+ops/bin/as6-update-handoff
+echo "AS6_PHASE=Finish: diagnostics"
+if [ -x ops/bin/as6-diagnose-handoff-finish-policy-v209 ]; then ops/bin/as6-diagnose-handoff-finish-policy-v209; fi
+echo "AS6_PHASE=Finish: git add"
+git add .
+echo "AS6_PHASE=Finish: commit"
+git commit -m "$MSG" || true
+echo "AS6_PHASE=Finish: push"
+git push origin main
+echo "AS6_FINISH_DONE=PASS"

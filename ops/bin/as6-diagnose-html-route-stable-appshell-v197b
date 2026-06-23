@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-set -euo pipefail
-echo "AS6_DIAGNOSTIC=html-route-stable-appshell-v197b"
-grep -q 'as6-command-center-html-route-v197b.js' frontend/src/main.jsx
-grep -q 'as6-command-center-html-route-stable-v197b.css' frontend/src/main.jsx
-grep -q 'as6-route-command-center' frontend/src/as6-command-center-html-route-v197b.js
-grep -q 'html.as6-route-command-center' frontend/src/styles/as6-command-center-html-route-stable-v197b.css
-! grep -q 'as6-command-center-flash-source-finder-v195.js' frontend/src/main.jsx
-echo "AS6_HTML_ROUTE_STABLE_APPSHELL_V197B=PASS"

@@ -1021,3 +1021,7 @@ Governed and registered.
 - Class: NEW_CHAT_CONTEXT_REQUIRES_PROJECT_HANDOFF_SOURCE_OF_TRUTH
 - Root cause: new chat cannot reliably know current project state without repository handoff file.
 - Fix: V209 creates handoff/state/architecture/UI etalon/Codex prompt docs and update automation.
+
+## 20260623T040004Z detected-error
+- Class: ISSUE_330_PARTIALLY_IMPLEMENTED_FINISH_POLICY_MISSING
+- Fix: V209B added finish script, governance policy and validation diagnostic.

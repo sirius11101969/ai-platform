@@ -2558,3 +2558,8 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Check: docs/AS6_UI_ETALONS.md exists.
 - Check: docs/AS6_CODEX_PROMPT.md exists.
 - Automation: ops/bin/as6-update-handoff
+
+## 20260623T040004Z handoff-finish-policy-v209b
+- Diagnostic: ops/bin/as6-diagnose-handoff-finish-policy-v209
+- Failure classes: HANDOFF_NOT_UPDATED_BEFORE_COMMIT, PROJECT_STATE_NOT_SYNCHRONIZED, GOVERNANCE_NOT_UPDATED, COVERAGE_NOT_UPDATED, FINISH_PIPELINE_BYPASSED, CODEX_PROMPT_MISSING
+- AEC: AEC-HANDOFF-001, AEC-HANDOFF-002, AEC-HANDOFF-003

@@ -2130,3 +2130,6 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
   - docs/AS6_UI_ETALONS.md
   - docs/AS6_CODEX_PROMPT.md
   - ops/bin/as6-update-handoff
+
+## 20260623T040004Z AS6 handoff finish policy coverage
+- Files: docs/AS6_HANDOFF.md, docs/AS6_CODEX_PROMPT.md, ops/bin/as6-update-handoff, ops/bin/as6-finish, ops/governance/as6-finish-policy.md

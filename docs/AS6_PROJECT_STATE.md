@@ -3601,3 +3601,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Created docs/AS6_CODEX_PROMPT.md.
 - Created automation: ops/bin/as6-update-handoff.
 - Readiness after: 99%.
+
+## 20260623T040004Z AS6 V209B Finish Policy Complete
+- Added ops/bin/as6-finish.
+- Added ops/governance/as6-finish-policy.md.
+- Added ops/bin/as6-diagnose-handoff-finish-policy-v209.
+- Rule: every AS6 patch must finish through ops/bin/as6-finish.
