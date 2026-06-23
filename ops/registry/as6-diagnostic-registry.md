@@ -2593,3 +2593,11 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Check: card radius tokens present
 - Check: chart spacing control present
 - Check: KPI typography control present
+
+## 20260623T230650Z ui-restore-policy-v216
+- Diagnostic: ops/bin/as6-diagnose-ui-restore-policy-v216
+- Failure classes: UI_RESTORE_POINT_MISSING, UI_RESTORE_TAG_MISSING, UI_ROLLBACK_PATH_UNDEFINED, UI_GOLDEN_STATE_NOT_REGISTERED
+- Check: restore point creator exists
+- Check: restore command exists
+- Check: as6-finish creates restore point
+- Check: as6-finish pushes restore tag

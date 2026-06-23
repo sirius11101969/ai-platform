@@ -1045,3 +1045,8 @@ Governed and registered.
 - Class: COMMAND_CENTER_VISUAL_DRIFT
 - Root cause: final Command Center production UI quality layer was missing.
 - Fix: V215 added spacing, typography, cards, charts and responsive controls.
+
+## 20260623T230650Z detected-error
+- Class: UI_ROLLBACK_PATH_UNDEFINED
+- Root cause: previous Command Center UI drift could not be restored one-to-one from a registered UI restore point.
+- Fix: V216 introduced restore manifests, restore tags and safe rollback command.

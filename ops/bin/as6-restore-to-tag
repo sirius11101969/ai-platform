@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+TARGET="${1:-}"
+PUSH_MODE="${2:-}"
+if [ -z "$TARGET" ]; then echo "AS6_RESTORE_FAIL=missing-target-tag-or-commit"; exit 1; fi
+echo "AS6_RESTORE_TARGET=$TARGET"
+git fetch origin --tags
+git checkout main
+git reset --hard "$TARGET"
+echo "AS6_RESTORE_LOCAL_DONE=PASS"
+if [ "$PUSH_MODE" = "--push" ]; then
+  if [ "${CONFIRM_AS6_RESTORE:-}" != "YES" ]; then echo "AS6_RESTORE_PUSH_BLOCKED=set CONFIRM_AS6_RESTORE=YES"; exit 1; fi
+  git push --force-with-lease origin main
+  echo "AS6_RESTORE_REMOTE_PUSH_DONE=PASS"
+fi

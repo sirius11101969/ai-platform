@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=ui-restore-policy-v216"
+test -x ops/bin/as6-create-restore-point
+test -x ops/bin/as6-restore-to-tag
+test -x ops/bin/as6-finish
+test -f ops/governance/as6-ui-restore-policy.md
+test -f ops/registry/as6-ui-restore-registry.md
+grep -q "as6-create-restore-point" ops/bin/as6-finish
+grep -q "git tag -a -f" ops/bin/as6-finish
+grep -q "git push origin.*TAG" ops/bin/as6-finish
+grep -q "CONFIRM_AS6_RESTORE=YES" ops/bin/as6-restore-to-tag
+echo "AS6_UI_RESTORE_POLICY_V216=PASS"

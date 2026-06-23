@@ -3,12 +3,23 @@ set -euo pipefail
 MSG="${1:-as6 automatic finish update}"
 echo "AS6_PHASE=Finish: update handoff"
 ops/bin/as6-update-handoff
+echo "AS6_PHASE=Finish: update diagnostic status registry"
+if [ -x ops/bin/as6-update-diagnostic-status-registry ]; then ops/bin/as6-update-diagnostic-status-registry; fi
 echo "AS6_PHASE=Finish: diagnostics"
 if [ -x ops/bin/as6-diagnose-handoff-finish-policy-v209 ]; then ops/bin/as6-diagnose-handoff-finish-policy-v209; fi
+if [ -x ops/bin/as6-diagnose-diagnostic-status-registry ]; then ops/bin/as6-diagnose-diagnostic-status-registry; fi
+echo "AS6_PHASE=Finish: restore point"
+if [ -x ops/bin/as6-create-restore-point ]; then ops/bin/as6-create-restore-point pre-commit "$MSG"; fi
 echo "AS6_PHASE=Finish: git add"
 git add .
 echo "AS6_PHASE=Finish: commit"
 git commit -m "$MSG" || true
+SHORT_SHA="$(git rev-parse --short HEAD)"
+TAG="AS6_RESTORE_${SHORT_SHA}"
+echo "AS6_PHASE=Finish: tag restore point $TAG"
+git tag -a -f "$TAG" -m "AS6 restore point: $MSG"
 echo "AS6_PHASE=Finish: push"
 git push origin main
+git push origin "$TAG" --force
+echo "AS6_RESTORE_TAG=$TAG"
 echo "AS6_FINISH_DONE=PASS"

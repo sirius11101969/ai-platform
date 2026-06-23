@@ -2150,3 +2150,6 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 
 ## 20260623T220810Z Command Center UI quality coverage
 - Files: frontend/src/styles/as6-command-center-ui-quality-v215.css, frontend/src/main.jsx, ops/bin/as6-diagnose-command-center-ui-quality-v215
+
+## 20260623T230650Z UI restore policy coverage
+- Files: ops/bin/as6-create-restore-point, ops/bin/as6-restore-to-tag, ops/bin/as6-diagnose-ui-restore-policy-v216, ops/governance/as6-ui-restore-policy.md, ops/registry/as6-ui-restore-registry.md, ops/bin/as6-finish

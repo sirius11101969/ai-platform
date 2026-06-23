@@ -3633,3 +3633,11 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Added UI quality CSS layer: frontend/src/styles/as6-command-center-ui-quality-v215.css.
 - Added diagnostic: ops/bin/as6-diagnose-command-center-ui-quality-v215.
 - Readiness after: 99%.
+
+## 20260623T230650Z AS6 V216 UI Restore Policy
+- Root cause: no guaranteed UI restore point before/after patches.
+- Added restore point creator: ops/bin/as6-create-restore-point.
+- Added restore command: ops/bin/as6-restore-to-tag.
+- Updated ops/bin/as6-finish to create restore manifest and Git restore tag after every finish.
+- Added governance: ops/governance/as6-ui-restore-policy.md.
+- Readiness after: 99%.
