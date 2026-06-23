@@ -11,19 +11,48 @@ python3 - <<'PY' > "$TMP"
 import json
 from pathlib import Path
 
+OUT = Path("ops/status/diagnostic-status-registry.json")
+VALID_STATUSES = {"ACTIVE", "ARCHIVED", "DEPRECATED", "ORPHANED"}
+
+def check_from_path(path: str) -> str:
+    return Path(path).name.replace("as6-diagnose-", "", 1)
+
+existing_by_path = {}
+if OUT.exists():
+    data = json.loads(OUT.read_text())
+    for item in data.get("diagnostics", []):
+        if not isinstance(item, dict):
+            continue
+        path = item.get("path")
+        if not isinstance(path, str) or not path or path in existing_by_path:
+            continue
+        existing_by_path[path] = dict(item)
+
+fs_paths = sorted(
+    str(p)
+    for p in Path("ops/bin").glob("as6-diagnose-*")
+    if p.is_file() and ".backup." not in p.name and not p.name.endswith(".backup")
+)
+fs_set = set(fs_paths)
 items = []
-for p in sorted(Path("ops/bin").glob("as6-diagnose-*")):
-    if p.name.endswith(".backup") or ".backup." in p.name:
-        continue
-    if not p.is_file():
-        continue
-    check = p.name.replace("as6-diagnose-", "")
-    items.append({
-        "check": check,
-        "path": str(p),
-        "status_visible": True,
-        "source": "auto"
+
+for path in sorted(set(existing_by_path) | fs_set):
+    item = existing_by_path.get(path, {})
+    status = item.get("status")
+    if status not in VALID_STATUSES:
+        status = "ACTIVE" if path in fs_set else "ARCHIVED"
+    if path not in fs_set and status == "ACTIVE":
+        status = "ARCHIVED"
+    item.update({
+        "check": item.get("check") or check_from_path(path),
+        "path": path,
+        "status": status,
+        "status_visible": bool(item.get("status_visible", True)),
+        "source": item.get("source") or ("auto" if path in fs_set else "historical"),
     })
+    if path in fs_set and item.get("source") == "historical":
+        item["source"] = "auto"
+    items.append(item)
 
 Path("ops/status").mkdir(parents=True, exist_ok=True)
 print(json.dumps({"version": 1, "diagnostics": items}, ensure_ascii=False, indent=2))
