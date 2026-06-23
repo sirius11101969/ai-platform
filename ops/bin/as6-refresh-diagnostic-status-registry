@@ -4,33 +4,9 @@ set -euo pipefail
 ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
 cd "$ROOT"
 
-OUT="ops/status/diagnostic-status-registry.json"
-TMP="$(mktemp)"
+ops/bin/as6-update-diagnostic-status-registry >/dev/null
 
-python3 - <<'PY' > "$TMP"
-import json
-from pathlib import Path
-
-items = []
-for p in sorted(Path("ops/bin").glob("as6-diagnose-*")):
-    if p.name.endswith(".backup") or ".backup." in p.name:
-        continue
-    if not p.is_file():
-        continue
-    check = p.name.replace("as6-diagnose-", "")
-    items.append({
-        "check": check,
-        "path": str(p),
-        "status_visible": True,
-        "source": "auto"
-    })
-
-Path("ops/status").mkdir(parents=True, exist_ok=True)
-print(json.dumps({"version": 1, "diagnostics": items}, ensure_ascii=False, indent=2))
-PY
-
-mv "$TMP" "$OUT"
-echo "DIAGNOSTIC_STATUS_REGISTRY_REFRESHED=$OUT"
+echo "DIAGNOSTIC_STATUS_REGISTRY_REFRESHED=ops/status/diagnostic-status-registry.json"
 echo "DIAGNOSTIC_STATUS_REGISTRY_COUNT=$(python3 - <<'PY'
 import json
 print(len(json.load(open("ops/status/diagnostic-status-registry.json")).get("diagnostics", [])))

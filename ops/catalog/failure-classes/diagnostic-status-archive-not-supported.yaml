@@ -1,0 +1,11 @@
+class: DIAGNOSTIC_STATUS_ARCHIVE_NOT_SUPPORTED
+category: diagnostic-status-registry-lifecycle
+severity: high
+root_cause: an existing diagnostic file is missing from ACTIVE registry coverage
+resolution: run ops/bin/as6-update-diagnostic-status-registry so new diagnostics are registered as ACTIVE
+diagnostic_required: true
+coverage_required: true
+governance_required: true
+prevention_required: true
+aec_required: true
+state_required: true

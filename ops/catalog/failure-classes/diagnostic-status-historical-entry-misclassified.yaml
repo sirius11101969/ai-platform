@@ -1,0 +1,11 @@
+class: DIAGNOSTIC_STATUS_HISTORICAL_ENTRY_MISCLASSIFIED
+category: diagnostic-status-registry-lifecycle
+severity: high
+root_cause: a diagnostic status registry entry has no supported lifecycle status
+resolution: assign one of ACTIVE, ARCHIVED, DEPRECATED, or REMOVED to every registry entry
+diagnostic_required: true
+coverage_required: true
+governance_required: true
+prevention_required: true
+aec_required: true
+state_required: true

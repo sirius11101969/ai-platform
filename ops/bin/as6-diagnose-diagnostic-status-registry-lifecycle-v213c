@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+echo "=== AS6 Diagnostic Status Registry Lifecycle v213c ==="
+
+for class_file in \
+  ops/catalog/failure-classes/diagnostic-status-active-entry-missing.yaml \
+  ops/catalog/failure-classes/diagnostic-status-historical-entry-misclassified.yaml \
+  ops/catalog/failure-classes/diagnostic-status-archive-not-supported.yaml; do
+  if [ -f "$class_file" ]; then
+    echo "DIAGNOSTIC_STATUS_LIFECYCLE_FAILURE_CLASS=PASS:$class_file"
+  else
+    echo "DIAGNOSTIC_STATUS_LIFECYCLE_FAILURE_CLASS=FAIL:$class_file"
+    exit 1
+  fi
+done
+
+python3 - <<'PY'
+import json
+from pathlib import Path
+
+data = json.loads(Path("ops/status/diagnostic-status-registry.json").read_text())
+valid = {"ACTIVE", "ARCHIVED", "DEPRECATED", "REMOVED"}
+statuses = {item.get("lifecycle_status") for item in data.get("diagnostics", []) if isinstance(item, dict)}
+missing = statuses - valid
+if missing:
+    print(f"DIAGNOSTIC_STATUS_LIFECYCLE_SCHEMA=FAIL:invalid_statuses={sorted(missing)}")
+    raise SystemExit(1)
+print(f"DIAGNOSTIC_STATUS_LIFECYCLE_STATUSES=PASS:{','.join(sorted(valid))}")
+PY
+
+ops/bin/as6-diagnose-diagnostic-status-registry
+
+echo "DIAGNOSTIC_STATUS_REGISTRY_LIFECYCLE_V213C_RESULT=PASS"
