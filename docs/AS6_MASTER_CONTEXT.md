@@ -75,3 +75,9 @@ ops/bin/as6-finish
 - Add runtime tracer if source is unknown.
 - Always update diagnostics, coverage, governance, state and detected errors.
 - Always finish through ops/bin/as6-finish.
+
+## 20260623T130000Z Package Lock Sync V213B
+- Active blocker: PR #333 Architecture Guardian frontend Docker build failed because frontend/package.json and frontend/package-lock.json were out of sync.
+- Fix scope: frontend/package-lock.json only for dependency lock synchronization, plus diagnostics/docs/registries for prevention.
+- Diagnostic: ops/bin/as6-diagnose-package-lock-sync-v213b
+- Failure classes: PACKAGE_LOCK_OUT_OF_SYNC, NPM_CI_LOCKFILE_MISMATCH, FRONTEND_DEPENDENCY_DRIFT

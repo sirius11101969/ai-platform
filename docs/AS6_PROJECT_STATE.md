@@ -3615,3 +3615,8 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Updated: docs/AS6_CODEX_PROMPT.md.
 - Rule: new chats start from AS6_MASTER_CONTEXT + HANDOFF + CODEX_PROMPT.
 - Readiness after: 99%.
+
+## 20260623T130000Z PR #333 Package Lock Sync V213B
+- Status: frontend/package-lock.json synchronized with frontend/package.json for local file dependencies.
+- Prevention diagnostic: ops/bin/as6-diagnose-package-lock-sync-v213b
+- Failure classes registered: PACKAGE_LOCK_OUT_OF_SYNC, NPM_CI_LOCKFILE_MISMATCH, FRONTEND_DEPENDENCY_DRIFT
