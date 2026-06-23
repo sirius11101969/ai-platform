@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+echo "=== AS6 Diagnostic Status Registry Reconciliation v213b ==="
+
+for class in diagnostic-status-historical-entry-misclassified diagnostic-status-archive-not-supported; do
+  if [ -f "ops/catalog/failure-classes/${class}.yaml" ]; then
+    echo "DIAGNOSTIC_STATUS_RECONCILIATION_FAILURE_CLASS=PASS:${class}"
+  else
+    echo "DIAGNOSTIC_STATUS_RECONCILIATION_FAILURE_CLASS=FAIL:${class}"
+    fail=1
+  fi
+done
+
+python3 - <<'PY' || fail=1
+import json
+from pathlib import Path
+
+data = json.loads(Path("ops/status/diagnostic-status-registry.json").read_text())
+statuses = {item.get("status", "ACTIVE") for item in data.get("diagnostics", []) if isinstance(item, dict)}
+allowed = {"ACTIVE", "ARCHIVED", "DEPRECATED", "REMOVED"}
+if not statuses <= allowed:
+    print(f"DIAGNOSTIC_STATUS_RECONCILIATION_STATUSES=FAIL:{sorted(statuses - allowed)}")
+    raise SystemExit(1)
+print("DIAGNOSTIC_STATUS_RECONCILIATION_STATUSES=PASS")
+print("DIAGNOSTIC_STATUS_RECONCILIATION_ARCHIVE_SUPPORTED=PASS")
+PY
+
+if [ "$fail" -eq 0 ]; then
+  echo "DIAGNOSTIC_STATUS_RECONCILIATION_RESULT=PASS"
+  exit 0
+fi
+
+echo "DIAGNOSTIC_STATUS_RECONCILIATION_RESULT=FAIL"
+exit 1

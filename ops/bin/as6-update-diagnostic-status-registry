@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+OUT="ops/status/diagnostic-status-registry.json"
+TMP="$(mktemp)"
+
+python3 - <<'PY' > "$TMP"
+import json
+from pathlib import Path
+
+OUT = Path("ops/status/diagnostic-status-registry.json")
+VALID_STATUSES = {"ACTIVE", "ARCHIVED", "DEPRECATED", "REMOVED"}
+
+def status_for_existing(item):
+    raw = item.get("status")
+    if isinstance(raw, str) and raw.upper() in VALID_STATUSES:
+        return raw.upper()
+    path = item.get("path")
+    if isinstance(path, str) and path and not Path(path).exists():
+        return "ARCHIVED"
+    return "ACTIVE"
+
+existing = {}
+items = []
+if OUT.exists():
+    data = json.loads(OUT.read_text())
+    for item in data.get("diagnostics", []):
+        if isinstance(item, dict) and isinstance(item.get("path"), str):
+            item = dict(item)
+            existing[item["path"]] = item
+            items.append(item)
+
+for path, item in list(existing.items()):
+    item["status"] = status_for_existing(item)
+    if item["status"] == "ACTIVE" and not Path(path).exists():
+        item["status"] = "ARCHIVED"
+
+for p in sorted(Path("ops/bin").glob("as6-diagnose-*")):
+    if p.name.endswith(".backup") or ".backup." in p.name or not p.is_file():
+        continue
+    path = str(p)
+    check = p.name.replace("as6-diagnose-", "")
+    item = existing.get(path)
+    if item is None:
+        item = {}
+        existing[path] = item
+        items.append(item)
+    item.setdefault("check", check)
+    item["path"] = path
+    item.setdefault("status_visible", True)
+    item.setdefault("source", "auto")
+    item["status"] = "ACTIVE"
+Path("ops/status").mkdir(parents=True, exist_ok=True)
+print(json.dumps({"version": 1, "diagnostics": items}, ensure_ascii=False, indent=2))
+PY
+
+mv "$TMP" "$OUT"
+echo "DIAGNOSTIC_STATUS_REGISTRY_UPDATED=$OUT"
+echo "DIAGNOSTIC_STATUS_REGISTRY_UPDATE_RESULT=OK"
