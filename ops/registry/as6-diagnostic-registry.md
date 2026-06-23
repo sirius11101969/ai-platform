@@ -2540,3 +2540,11 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
   - sidebar-scroll/nav pseudo-elements disabled
   - logo centered with final offset correction
   - favorites pseudo-elements disabled
+
+## 20260623T010945Z revenue-chart-full-height-v208
+- Diagnostic: ops/bin/as6-diagnose-revenue-chart-full-height-v208
+- Failure class: REVENUE_DYNAMICS_CHART_USED_ONLY_TOP_PART_OF_CARD_LEAVING_EMPTY_BOTTOM_SPACE
+- Check: revenue card flex column.
+- Check: chart min-height 205px.
+- Check: bottom padding reduced.
+- Check: SVG line stretched to full chart height.

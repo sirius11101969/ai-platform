@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=revenue-chart-full-height-v208"
+grep -q "AS6 V208 Revenue Chart Full Height" frontend/src/theme/as6Theme.css
+grep -q "min-height: 310px" frontend/src/theme/as6Theme.css
+grep -q "min-height: 205px" frontend/src/theme/as6Theme.css
+grep -q "padding: 20px 16px 8px" frontend/src/theme/as6Theme.css
+echo "AS6_REVENUE_CHART_FULL_HEIGHT_V208=PASS"

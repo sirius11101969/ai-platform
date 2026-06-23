@@ -2115,3 +2115,8 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - AEC:
   - AEC-SIDEBAR-004
   - AEC-SIDEBAR-005
+
+## 20260623T010945Z REVENUE_DYNAMICS_CHART_USED_ONLY_TOP_PART_OF_CARD_LEAVING_EMPTY_BOTTOM_SPACE
+- Coverage: /command-center Revenue Dynamics visual layout.
+- Files: frontend/src/theme/as6Theme.css
+- Rule: revenue chart must fill visible card height without large empty lower zone.

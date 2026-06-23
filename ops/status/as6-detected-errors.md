@@ -1011,3 +1011,8 @@ Governed and registered.
 - Class: SIDEBAR_LOGO_CENTER_ALIGNMENT_DRIFT
 - Root cause: logo container/image alignment was shifted from the visual center.
 - Fix: V207 applies explicit flex centering and final offset correction.
+
+## 20260623T010945Z detected-error
+- Class: REVENUE_DYNAMICS_CHART_USED_ONLY_TOP_PART_OF_CARD_LEAVING_EMPTY_BOTTOM_SPACE
+- Root cause: mock-chart did not consume full vertical card space.
+- Fix: V208 makes Revenue Dynamics card flex-based and stretches mock-chart to full available height.

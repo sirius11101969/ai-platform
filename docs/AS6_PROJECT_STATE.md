@@ -3586,3 +3586,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Diagnostic: ops/bin/as6-diagnose-command-center-sidebar-final-alignment-v207
 - Runtime tracer: ops/runtime-tracers/as6-command-center-sidebar-alignment-tracer-v207.js
 - Readiness after: 99%
+
+## 20260623T010945Z AS6 V208 Revenue Chart Full Height
+- Fixed: Revenue Dynamics chart now uses full available card height.
+- Root cause: chart area had fixed/limited height and left excessive empty bottom space.
+- Diagnostic: ops/bin/as6-diagnose-revenue-chart-full-height-v208
+- Readiness after: 99%

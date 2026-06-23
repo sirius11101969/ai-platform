@@ -1396,3 +1396,47 @@ aside.sidebar.shell-glow.command-sidebar[data-command-sidebar="premium"] {
   box-shadow: none !important;
 }
 /* AS6 V207 END */
+
+/* AS6 V208 Revenue Chart Full Height */
+.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 310px !important;
+  padding-bottom: 16px !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics .command-card-head {
+  flex: 0 0 auto !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics .chart-total {
+  flex: 0 0 auto !important;
+  display: block !important;
+  margin: 8px 0 12px !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics .mock-chart {
+  flex: 1 1 auto !important;
+  min-height: 205px !important;
+  height: auto !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding: 20px 16px 8px !important;
+  align-items: flex-end !important;
+  overflow: hidden !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics .mock-chart span {
+  min-height: 44px !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics .mock-chart svg {
+  top: 18px !important;
+  bottom: 8px !important;
+  height: calc(100% - 26px) !important;
+}
+
+.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics .mock-chart polyline {
+  stroke-width: 4 !important;
+}
+/* AS6 V208 END */
