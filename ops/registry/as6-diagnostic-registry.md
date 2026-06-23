@@ -2519,3 +2519,12 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Check: nav gap 8px.
 - Check: compact owner/help cards.
 - Check: stale V200/V201/V203 imports absent.
+
+## 20260623T003529Z command-center-sidebar-annotated-fix-v206
+- Diagnostic: ops/bin/as6-diagnose-command-center-sidebar-annotated-fix-v206
+- Failure class: SIDEBAR_ANNOTATED_ETALON_MISMATCH_LOGO_FRAME_NAV_GAP_FAVORITES_FRAME_WIDTH_HELP_HEIGHT
+- Check: sidebar width 266px.
+- Check: logo frame/background removed.
+- Check: nav gap 5px.
+- Check: favorites frame/background removed.
+- Check: help card compact height 54px.

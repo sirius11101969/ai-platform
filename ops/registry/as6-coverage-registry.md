@@ -2101,3 +2101,7 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
   - frontend/src/theme/as6Theme.css
   - frontend/src/components/AppShell.jsx
   - frontend/src/main.jsx
+
+## 20260623T003529Z SIDEBAR_ANNOTATED_ETALON_MISMATCH_LOGO_FRAME_NAV_GAP_FAVORITES_FRAME_WIDTH_HELP_HEIGHT
+- Coverage: /command-center annotated sidebar visual correction.
+- Files: frontend/src/theme/as6Theme.css, frontend/src/components/AppShell.jsx, frontend/src/main.jsx

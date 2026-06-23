@@ -1169,3 +1169,145 @@ aside.sidebar.shell-glow.command-sidebar[data-command-sidebar="premium"] {
   .app-shell.command-shell > aside.sidebar.command-sidebar { width: 100% !important; min-width: 0 !important; max-width: 100% !important; min-height: auto !important; border-radius: 22px !important; }
 }
 /* AS6 V205 END */
+
+/* AS6 V206 Sidebar Annotated Etalon Fix */
+.app-shell.command-shell {
+  grid-template-columns: 266px minmax(0, 1fr) !important;
+  gap: 16px !important;
+  padding: 12px !important;
+}
+
+.app-shell.command-shell > aside.sidebar.shell-glow.command-sidebar,
+.app-shell.command-shell > aside.sidebar.command-sidebar,
+aside.sidebar.shell-glow.command-sidebar[data-command-sidebar="premium"] {
+  width: 266px !important;
+  min-width: 266px !important;
+  max-width: 266px !important;
+  padding: 10px !important;
+  gap: 8px !important;
+  border-radius: 20px !important;
+  overflow: visible !important;
+}
+
+.app-shell.command-shell .as6-sidebar-brand,
+.app-shell.command-shell .as6-sidebar-brand-top {
+  min-height: 96px !important;
+  margin: 0 0 8px !important;
+  padding: 4px 8px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.app-shell.command-shell .as6-sidebar-brand img,
+.app-shell.command-shell .as6-sidebar-brand svg {
+  width: 170px !important;
+  max-width: 170px !important;
+}
+
+.app-shell.command-shell .side-nav,
+.app-shell.command-shell .sidebar-nav,
+.app-shell.command-shell nav {
+  gap: 5px !important;
+}
+
+.app-shell.command-shell .side-nav a,
+.app-shell.command-shell .side-nav button {
+  min-height: 34px !important;
+  padding: 0 10px !important;
+  gap: 9px !important;
+  font-size: 13px !important;
+  font-weight: 850 !important;
+  border-radius: 11px !important;
+}
+
+.app-shell.command-shell .side-nav a.command-center-active,
+.app-shell.command-shell .side-nav a.active,
+.app-shell.command-shell .side-nav a[aria-current="page"] {
+  min-height: 42px !important;
+  border-radius: 13px !important;
+}
+
+.app-shell.command-shell .side-nav .nav-badge,
+.app-shell.command-shell .side-nav .badge {
+  min-width: 20px !important;
+  height: 20px !important;
+  font-size: 10px !important;
+}
+
+.app-shell.command-shell .sidebar-favorites {
+  margin: 8px 0 0 !important;
+  padding: 6px 8px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.app-shell.command-shell .sidebar-favorites span:first-child,
+.app-shell.command-shell .sidebar-favorites h3 {
+  margin: 0 0 7px !important;
+  font-size: 10px !important;
+}
+
+.app-shell.command-shell .sidebar-favorites a {
+  min-height: 32px !important;
+  padding: 0 2px !important;
+  font-size: 13px !important;
+}
+
+.app-shell.command-shell .sidebar-favorites em {
+  min-width: 22px !important;
+  height: 22px !important;
+  font-size: 11px !important;
+}
+
+.app-shell.command-shell .command-sidebar-bottom {
+  gap: 8px !important;
+  margin-top: 8px !important;
+}
+
+.app-shell.command-shell .command-profile-card {
+  min-height: 64px !important;
+  padding: 10px !important;
+  border-radius: 15px !important;
+  grid-template-columns: 48px minmax(0, 1fr) !important;
+  gap: 10px !important;
+}
+
+.app-shell.command-shell .profile-photo {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 12px !important;
+  font-size: 18px !important;
+}
+
+.app-shell.command-shell .command-profile-card strong {
+  font-size: 13px !important;
+}
+
+.app-shell.command-shell .command-profile-card span,
+.app-shell.command-shell .command-profile-card small {
+  font-size: 12px !important;
+}
+
+.app-shell.command-shell .command-help-card {
+  min-height: 54px !important;
+  padding: 9px 10px !important;
+  border-radius: 15px !important;
+  grid-template-columns: 34px minmax(0, 1fr) !important;
+  gap: 9px !important;
+}
+
+.app-shell.command-shell .command-help-card b {
+  font-size: 24px !important;
+}
+
+.app-shell.command-shell .command-help-card span,
+.app-shell.command-shell .command-help-card strong {
+  font-size: 12px !important;
+  line-height: 1.15 !important;
+}
+
+/* AS6 V206 END */

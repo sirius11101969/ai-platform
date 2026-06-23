@@ -996,3 +996,8 @@ Governed and registered.
 - Class: SIDEBAR_V204_OVERSIZED_SPACING_FONT_AND_WIDTH_DRIFT_FROM_ETALON
 - Root cause: V204 matched the correct DOM but used oversized geometry and typography.
 - Fix: V205 applies compact exact etalon geometry, typography and spacing.
+
+## 20260623T003529Z detected-error
+- Class: SIDEBAR_ANNOTATED_ETALON_MISMATCH_LOGO_FRAME_NAV_GAP_FAVORITES_FRAME_WIDTH_HELP_HEIGHT
+- Root cause: logo and favorites blocks kept unnecessary frames/backgrounds; nav spacing and help card height were too large.
+- Fix: V206 compact annotated sidebar patch.

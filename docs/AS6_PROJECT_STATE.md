@@ -3573,3 +3573,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Root cause: V204 sidebar was oversized: 342px width, 18px menu font and excessive gaps.
 - Diagnostic: ops/bin/as6-diagnose-command-center-compact-sidebar-v205
 - Readiness after: 99%
+
+## 20260623T003529Z AS6 V206 Sidebar Annotated Etalon Fix
+- Fixed: removed logo frame/background, reduced nav gaps, removed favorites frame/background, narrowed sidebar, reduced help card height.
+- Root cause: sidebar still had oversized etalon geometry after V205.
+- Diagnostic: ops/bin/as6-diagnose-command-center-sidebar-annotated-fix-v206
+- Readiness after: 99%

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=command-center-sidebar-annotated-fix-v206"
+grep -q "AS6 V206 Sidebar Annotated Etalon Fix" frontend/src/theme/as6Theme.css
+grep -q "grid-template-columns: 266px minmax(0, 1fr)" frontend/src/theme/as6Theme.css
+grep -q "background: transparent !important;" frontend/src/theme/as6Theme.css
+grep -q "min-height: 54px" frontend/src/theme/as6Theme.css
+grep -q "gap: 5px" frontend/src/theme/as6Theme.css
+! grep -q "datacommand-sidebar=" frontend/src/components/AppShell.jsx
+echo "AS6_COMMAND_CENTER_SIDEBAR_ANNOTATED_FIX_V206=PASS"
