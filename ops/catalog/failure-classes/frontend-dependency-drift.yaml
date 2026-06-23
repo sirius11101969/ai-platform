@@ -1,0 +1,5 @@
+class: FRONTEND_DEPENDENCY_DRIFT
+category: frontend-dependency-lockfile-drift
+severity: high
+root_cause: frontend dependency metadata drifted across package.json, package-lock.json, and install/build validation
+resolution: keep frontend package manifests synchronized and validate npm ci before Docker frontend builds

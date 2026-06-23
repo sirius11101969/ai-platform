@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+failures=0
+
+if [ ! -f frontend/package.json ]; then
+  echo "PACKAGE_LOCK_SYNC_PACKAGE_JSON=FAIL:missing_frontend_package_json"
+  echo "PACKAGE_LOCK_SYNC_FAILURE_CLASS=FRONTEND_DEPENDENCY_DRIFT"
+  failures=$((failures + 1))
+else
+  echo "PACKAGE_LOCK_SYNC_PACKAGE_JSON=OK"
+fi
+
+if [ ! -f frontend/package-lock.json ]; then
+  echo "PACKAGE_LOCK_SYNC_LOCKFILE=FAIL:missing_frontend_package_lock"
+  echo "PACKAGE_LOCK_SYNC_FAILURE_CLASS=PACKAGE_LOCK_OUT_OF_SYNC"
+  failures=$((failures + 1))
+else
+  echo "PACKAGE_LOCK_SYNC_LOCKFILE=OK"
+fi
+
+if [ "$failures" -eq 0 ]; then
+  tmp_log="$(mktemp)"
+  if (cd frontend && npm ci) >"$tmp_log" 2>&1; then
+    cat "$tmp_log"
+    echo "PACKAGE_LOCK_SYNC_NPM_CI=OK"
+  else
+    cat "$tmp_log"
+    echo "PACKAGE_LOCK_SYNC_NPM_CI=FAIL"
+    echo "PACKAGE_LOCK_SYNC_FAILURE_CLASS=PACKAGE_LOCK_OUT_OF_SYNC"
+    echo "PACKAGE_LOCK_SYNC_FAILURE_CLASS=NPM_CI_LOCKFILE_MISMATCH"
+    echo "PACKAGE_LOCK_SYNC_FAILURE_CLASS=FRONTEND_DEPENDENCY_DRIFT"
+    failures=$((failures + 1))
+  fi
+  rm -f "$tmp_log"
+fi
+
+if [ "$failures" -eq 0 ]; then
+  echo "PACKAGE_LOCK_SYNC_RESULT=OK"
+  exit 0
+fi
+
+echo "PACKAGE_LOCK_SYNC_RESULT=FAIL"
+echo "PACKAGE_LOCK_SYNC_FAILURES=$failures"
+exit 1
