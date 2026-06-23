@@ -5,6 +5,9 @@ echo "AS6_PHASE=Finish: update handoff"
 ops/bin/as6-update-handoff
 echo "AS6_PHASE=Finish: diagnostics"
 if [ -x ops/bin/as6-diagnose-handoff-finish-policy-v209 ]; then ops/bin/as6-diagnose-handoff-finish-policy-v209; fi
+echo "AS6_PHASE=Finish: frontend npm ci"
+(cd frontend && npm ci)
+if [ -x ops/bin/as6-diagnose-package-lock-sync-v213b ]; then ops/bin/as6-diagnose-package-lock-sync-v213b; fi
 echo "AS6_PHASE=Finish: git add"
 git add .
 echo "AS6_PHASE=Finish: commit"

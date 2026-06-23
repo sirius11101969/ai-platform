@@ -1,0 +1,5 @@
+class: PACKAGE_LOCK_OUT_OF_SYNC
+category: frontend-dependency-lockfile-drift
+severity: high
+root_cause: frontend/package.json dependency declarations changed without a synchronized frontend/package-lock.json
+resolution: run npm install in frontend, commit the updated package-lock.json, and validate with npm ci

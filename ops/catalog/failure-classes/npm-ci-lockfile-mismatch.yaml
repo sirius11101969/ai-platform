@@ -1,0 +1,5 @@
+class: NPM_CI_LOCKFILE_MISMATCH
+category: frontend-dependency-lockfile-drift
+severity: high
+root_cause: npm ci rejected frontend/package-lock.json because it does not satisfy frontend/package.json
+resolution: regenerate frontend/package-lock.json from frontend/package.json and re-run npm ci
