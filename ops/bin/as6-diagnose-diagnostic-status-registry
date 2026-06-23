@@ -7,42 +7,98 @@ cd "$ROOT"
 REGISTRY="ops/status/diagnostic-status-registry.json"
 fail=0
 
-echo "=== AS6 Diagnostic Status Registry Diagnostics ==="
+printf '%s\n' "=== AS6 Diagnostic Status Registry Diagnostics ==="
 
 if [ -f "$REGISTRY" ]; then
   echo "DIAGNOSTIC_STATUS_REGISTRY_FILE=OK:$REGISTRY"
 else
   echo "DIAGNOSTIC_STATUS_REGISTRY_FILE=FAIL:missing"
+  echo "DIAGNOSTIC_STATUS_REGISTRY_FAILURE_CLASS=DIAGNOSTIC_STATUS_ACTIVE_ENTRY_MISSING"
   echo "DIAGNOSTIC_STATUS_REGISTRY_RESULT=FAIL"
   exit 1
 fi
 
 python3 - <<'PY' || fail=1
 import json
+from collections import Counter
 from pathlib import Path
 
-registry = Path("ops/status/diagnostic-status-registry.json")
-data = json.loads(registry.read_text())
-paths = {item.get("path") for item in data.get("diagnostics", [])}
+REGISTRY = Path("ops/status/diagnostic-status-registry.json")
+ACTIVE = "ACTIVE"
+HISTORICAL = {"ARCHIVED", "DEPRECATED", "REMOVED"}
+SUPPORTED = {ACTIVE, *HISTORICAL}
 
-missing = []
-for p in sorted(Path("ops/bin").glob("as6-diagnose-*")):
-    if ".backup." in p.name:
-        continue
-    if str(p) not in paths:
-        missing.append(str(p))
-
-print(f"DIAGNOSTIC_STATUS_REGISTRY_COUNT={len(paths)}")
-if missing:
-    for p in missing:
-        print(f"DIAGNOSTIC_STATUS_REGISTRY_MISSING=FAIL:{p}")
+try:
+    data = json.loads(REGISTRY.read_text())
+except Exception as exc:
+    print(f"DIAGNOSTIC_STATUS_REGISTRY_PARSE=FAIL:{exc.__class__.__name__}")
+    print("DIAGNOSTIC_STATUS_REGISTRY_FAILURE_CLASS=DIAGNOSTIC_STATUS_ARCHIVE_NOT_SUPPORTED")
     raise SystemExit(1)
+
+if not isinstance(data, dict) or not isinstance(data.get("diagnostics"), list):
+    print("DIAGNOSTIC_STATUS_REGISTRY_SCHEMA=FAIL:diagnostics-array-missing")
+    print("DIAGNOSTIC_STATUS_REGISTRY_FAILURE_CLASS=DIAGNOSTIC_STATUS_ARCHIVE_NOT_SUPPORTED")
+    raise SystemExit(1)
+
+entries = data["diagnostics"]
+paths = []
+statuses = Counter()
+invalid = []
+active_missing = []
+historical_missing = []
+
+for idx, item in enumerate(entries):
+    if not isinstance(item, dict):
+        invalid.append(f"index:{idx}:not-object")
+        continue
+    path = item.get("path")
+    if not isinstance(path, str) or not path:
+        invalid.append(f"index:{idx}:missing-path")
+        continue
+    status = item.get("status", ACTIVE)
+    if status not in SUPPORTED:
+        invalid.append(f"{path}:unsupported-status:{status}")
+        continue
+    paths.append(path)
+    statuses[status] += 1
+    exists = Path(path).is_file()
+    if status == ACTIVE and not exists:
+        active_missing.append(path)
+    elif status in HISTORICAL and not exists:
+        historical_missing.append(f"{status}:{path}")
+
+duplicates = sorted(path for path, count in Counter(paths).items() if count > 1)
+
+print(f"DIAGNOSTIC_STATUS_REGISTRY_COUNT={len(entries)}")
+for status in ("ACTIVE", "ARCHIVED", "DEPRECATED", "REMOVED"):
+    print(f"DIAGNOSTIC_STATUS_REGISTRY_{status}_COUNT={statuses[status]}")
+
+if invalid:
+    for item in invalid:
+        print(f"DIAGNOSTIC_STATUS_REGISTRY_SCHEMA=FAIL:{item}")
+    print("DIAGNOSTIC_STATUS_REGISTRY_FAILURE_CLASS=DIAGNOSTIC_STATUS_ARCHIVE_NOT_SUPPORTED")
+    raise SystemExit(1)
+
+if duplicates:
+    for path in duplicates:
+        print(f"DIAGNOSTIC_STATUS_REGISTRY_DUPLICATE=FAIL:{path}")
+    print("DIAGNOSTIC_STATUS_REGISTRY_FAILURE_CLASS=DIAGNOSTIC_STATUS_HISTORICAL_ENTRY_MISCLASSIFIED")
+    raise SystemExit(1)
+
+if active_missing:
+    for path in active_missing:
+        print(f"DIAGNOSTIC_STATUS_REGISTRY_ACTIVE_MISSING=FAIL:{path}")
+    print("DIAGNOSTIC_STATUS_REGISTRY_FAILURE_CLASS=DIAGNOSTIC_STATUS_ACTIVE_ENTRY_MISSING")
+    raise SystemExit(1)
+
+for item in historical_missing:
+    print(f"DIAGNOSTIC_STATUS_REGISTRY_HISTORICAL_MISSING=OK:{item}")
 
 print("DIAGNOSTIC_STATUS_REGISTRY_COMPLETE=OK")
 PY
 
 if [ "$fail" -eq 0 ]; then
-  echo "DIAGNOSTIC_STATUS_REGISTRY_RESULT=OK"
+  echo "DIAGNOSTIC_STATUS_REGISTRY_RESULT=PASS"
   exit 0
 fi
 
