@@ -1,0 +1,11 @@
+class: DIAGNOSTIC_STATUS_HISTORICAL_ENTRY_MISCLASSIFIED
+category: diagnostic-status-registry
+severity: high
+root_cause: historical diagnostic status registry entries are treated as active failures
+resolution: preserve ACTIVE/ARCHIVED/DEPRECATED/REMOVED status semantics and fail only for active missing diagnostics, duplicates, or corrupt registry data
+diagnostic_required: true
+coverage_required: true
+governance_required: true
+prevention_required: true
+aec_required: true
+state_required: true
