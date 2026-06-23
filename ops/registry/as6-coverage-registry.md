@@ -2141,3 +2141,18 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
   - docs/AS6_HANDOFF.md
   - docs/AS6_CODEX_PROMPT.md
   - ops/bin/as6-diagnose-master-context-v210
+
+## 20260623T060000Z PR_GUARDIAN_MERGE_BLOCKED
+- Coverage: AS6 Architecture Guardian / Diagnose PR safety merge gate.
+- Diagnostic: ops/bin/as6-diagnose-pr-guardian-v213b
+- Files: .github/workflows/as6-pr-guardian.yml, ops/bin/as6-pr-guardian, docker-compose.yml, frontend/Dockerfile, frontend/package.json, frontend/package-lock.json
+
+## 20260623T060000Z FRONTEND_DOCKER_CONTEXT_MISMATCH
+- Coverage: frontend/nginx Docker build context must be ./frontend.
+- Diagnostic: ops/bin/as6-diagnose-pr-guardian-v213b
+- Files: docker-compose.yml, frontend/Dockerfile
+
+## 20260623T060000Z NPM_CI_EXECUTED_OUTSIDE_FRONTEND
+- Coverage: npm ci must execute where frontend/package-lock.json is available.
+- Diagnostic: ops/bin/as6-diagnose-pr-guardian-v213b
+- Files: frontend/Dockerfile, frontend/package-lock.json

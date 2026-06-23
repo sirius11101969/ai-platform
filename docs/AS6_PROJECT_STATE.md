@@ -3615,3 +3615,11 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Updated: docs/AS6_CODEX_PROMPT.md.
 - Rule: new chats start from AS6_MASTER_CONTEXT + HANDOFF + CODEX_PROMPT.
 - Readiness after: 99%.
+
+## 20260623T060000Z AS6 V213B PR Guardian Reconciliation
+- Fixed: added static PR Guardian diagnostic for frontend Docker context and npm ci lockfile location.
+- Root cause: AS6 Architecture Guardian can block merge when frontend build runs npm ci outside the frontend context that owns package.json and package-lock.json.
+- Verified actual files: docker-compose.yml builds nginx from ./frontend; frontend/Dockerfile copies package*.json and runs npm ci inside /app; frontend/package-lock.json exists.
+- Diagnostic: ops/bin/as6-diagnose-pr-guardian-v213b
+- Failure classes: PR_GUARDIAN_MERGE_BLOCKED, FRONTEND_DOCKER_CONTEXT_MISMATCH, NPM_CI_EXECUTED_OUTSIDE_FRONTEND
+- Readiness after: 99% / PR #333 merge-gate ready after Guardian rerun.

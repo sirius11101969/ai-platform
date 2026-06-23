@@ -1030,3 +1030,18 @@ Governed and registered.
 - Class: NEW_CHAT_CONTEXT_LOSS
 - Root cause: new chat could lose long project history if only short handoff was used.
 - Fix: V210 adds docs/AS6_MASTER_CONTEXT.md as durable project memory.
+
+## 20260623T060000Z detected-error
+- Class: PR_GUARDIAN_MERGE_BLOCKED
+- Root cause: AS6 Architecture Guardian remained the only merge-blocking check for PR #333.
+- Fix: V213B adds a targeted diagnostic to reconcile the Guardian workflow, frontend Docker context and npm ci lockfile location.
+
+## 20260623T060000Z detected-error
+- Class: FRONTEND_DOCKER_CONTEXT_MISMATCH
+- Root cause: frontend Docker builds fail if nginx is built from repository root instead of ./frontend where package manifests live.
+- Fix: V213B validates docker-compose.yml uses build: ./frontend for nginx.
+
+## 20260623T060000Z detected-error
+- Class: NPM_CI_EXECUTED_OUTSIDE_FRONTEND
+- Root cause: npm ci fails when run outside the frontend package directory because the frontend lockfile is not present there.
+- Fix: V213B validates frontend/Dockerfile copies frontend package*.json and runs npm ci inside the frontend image context.

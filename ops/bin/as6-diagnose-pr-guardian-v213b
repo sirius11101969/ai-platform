@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+
+pass(){ echo "$1=PASS"; }
+failc(){ echo "$1=FAIL"; fail=1; }
+
+[ -f .github/workflows/as6-pr-guardian.yml ] && pass PR_GUARDIAN_WORKFLOW_PRESENT || failc PR_GUARDIAN_WORKFLOW_PRESENT
+[ -x ops/bin/as6-pr-guardian ] && pass PR_GUARDIAN_SCRIPT_EXECUTABLE || failc PR_GUARDIAN_SCRIPT_EXECUTABLE
+[ -f docker-compose.yml ] && pass PR_GUARDIAN_COMPOSE_PRESENT || failc PR_GUARDIAN_COMPOSE_PRESENT
+[ -f frontend/Dockerfile ] && pass FRONTEND_DOCKERFILE_PRESENT || failc FRONTEND_DOCKERFILE_PRESENT
+[ -f frontend/package.json ] && pass FRONTEND_PACKAGE_JSON_PRESENT || failc FRONTEND_PACKAGE_JSON_PRESENT
+[ -f frontend/package-lock.json ] && pass FRONTEND_PACKAGE_LOCK_PRESENT || failc FRONTEND_PACKAGE_LOCK_PRESENT
+
+if grep -Eq 'build:[[:space:]]*\./frontend' docker-compose.yml; then
+  pass FRONTEND_DOCKER_CONTEXT_FRONTEND
+else
+  failc FRONTEND_DOCKER_CONTEXT_FRONTEND
+fi
+
+if awk '/nginx:/{in_nginx=1} in_nginx && /build:[[:space:]]*\.[[:space:]]*$/ {bad=1} END{exit bad?0:1}' docker-compose.yml; then
+  failc FRONTEND_DOCKER_CONTEXT_MISMATCH
+else
+  pass FRONTEND_DOCKER_CONTEXT_MISMATCH
+fi
+
+if grep -Eq '^WORKDIR[[:space:]]+/app' frontend/Dockerfile && grep -Eq '^COPY[[:space:]]+package\*\.json[[:space:]]+\./' frontend/Dockerfile && grep -Eq '^RUN[[:space:]]+npm ci([[:space:]]|$)' frontend/Dockerfile; then
+  pass NPM_CI_EXECUTED_INSIDE_FRONTEND_IMAGE_CONTEXT
+else
+  failc NPM_CI_EXECUTED_INSIDE_FRONTEND_IMAGE_CONTEXT
+fi
+
+if [ -f package-lock.json ] && grep -Eq 'docker compose build nginx|npm ci' ops/bin/as6-pr-guardian .github/workflows/as6-pr-guardian.yml; then
+  failc NPM_CI_EXECUTED_OUTSIDE_FRONTEND
+else
+  pass NPM_CI_EXECUTED_OUTSIDE_FRONTEND
+fi
+
+if grep -Fq 'docker compose build nginx' ops/bin/as6-pr-guardian; then
+  pass PR_GUARDIAN_FRONTEND_BUILD_TARGET_NGINX
+else
+  failc PR_GUARDIAN_FRONTEND_BUILD_TARGET_NGINX
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "PR_GUARDIAN_V213B_RESULT=PASS"
+  exit 0
+fi
+
+echo "PR_GUARDIAN_V213B_RESULT=FAIL"
+exit 1

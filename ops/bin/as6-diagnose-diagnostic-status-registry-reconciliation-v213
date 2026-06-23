@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+tmp="$(mktemp)"
+if ./ops/bin/as6-diagnose-diagnostic-status-registry >"$tmp" 2>&1; then
+  cat "$tmp"
+  if grep -Fq 'DIAGNOSTIC_STATUS_REGISTRY_RESULT=OK' "$tmp"; then
+    echo 'DIAGNOSTIC_STATUS_REGISTRY_RESULT=PASS'
+    echo 'DIAGNOSTIC_STATUS_REGISTRY_RECONCILIATION_V213_RESULT=PASS'
+    rm -f "$tmp"
+    exit 0
+  fi
+fi
+cat "$tmp"
+rm -f "$tmp"
+echo 'DIAGNOSTIC_STATUS_REGISTRY_RECONCILIATION_V213_RESULT=FAIL'
+exit 1

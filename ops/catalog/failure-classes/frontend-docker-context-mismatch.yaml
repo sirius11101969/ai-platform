@@ -1,0 +1,5 @@
+id: FRONTEND_DOCKER_CONTEXT_MISMATCH
+category: frontend-build
+detected_by: ops/bin/as6-diagnose-pr-guardian-v213b
+root_cause: frontend Docker build was invoked with a context that does not contain frontend/package.json and frontend/package-lock.json.
+resolution: build the nginx/frontend service with build context ./frontend or set the Dockerfile/workdir so npm ci runs where the frontend lockfile exists.

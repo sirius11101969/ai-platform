@@ -1,0 +1,5 @@
+id: PR_GUARDIAN_MERGE_BLOCKED
+category: pr-safety
+detected_by: ops/bin/as6-diagnose-pr-guardian-v213b
+root_cause: AS6 Architecture Guardian returned MERGE_BLOCKED because one of its required safety checks failed in CI.
+resolution: inspect AS6 Architecture Guardian / Diagnose PR safety log, fix the exact failing check, and rerun guardian validation before merge.

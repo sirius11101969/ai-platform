@@ -1,6 +1,6 @@
 # AS6 HANDOFF
 
-Last updated: 20260623T052728Z
+Last updated: 20260623T060000Z
 Branch: main
 Last commit: 04d62b7
 
@@ -26,3 +26,8 @@ Diagnostics → Root Cause → Structure → Plan → Change → Re-Diagnostics 
 - ops/registry/as6-diagnostic-registry.md
 - ops/registry/as6-coverage-registry.md
 - ops/status/as6-detected-errors.md
+
+## 20260623T060000Z AS6 V213B PR Guardian
+- Added ops/bin/as6-diagnose-pr-guardian-v213b.
+- Registered failure classes: PR_GUARDIAN_MERGE_BLOCKED, FRONTEND_DOCKER_CONTEXT_MISMATCH, NPM_CI_EXECUTED_OUTSIDE_FRONTEND.
+- Guardian frontend build invariant: docker compose builds nginx from ./frontend and npm ci runs with frontend/package-lock.json available.

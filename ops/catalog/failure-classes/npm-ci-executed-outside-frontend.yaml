@@ -1,0 +1,5 @@
+id: NPM_CI_EXECUTED_OUTSIDE_FRONTEND
+category: frontend-build
+detected_by: ops/bin/as6-diagnose-pr-guardian-v213b
+root_cause: npm ci was executed outside the frontend package directory, so npm could not find the frontend package-lock.json.
+resolution: run npm ci from frontend/ or use the frontend Docker context where package-lock.json is copied before npm ci.
