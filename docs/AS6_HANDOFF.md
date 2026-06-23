@@ -26,3 +26,12 @@ Diagnostics → Root Cause → Structure → Plan → Change → Re-Diagnostics 
 - ops/registry/as6-diagnostic-registry.md
 - ops/registry/as6-coverage-registry.md
 - ops/status/as6-detected-errors.md
+
+## 20260623T102000Z package-lock-sync-v213b
+- Diagnostic: ops/bin/as6-diagnose-package-lock-sync-v213b
+- Failure classes:
+  - PACKAGE_LOCK_OUT_OF_SYNC
+  - NPM_CI_LOCKFILE_MISMATCH
+  - FRONTEND_DEPENDENCY_DRIFT
+- Fix: frontend/package-lock.json regenerated so npm ci recognizes local vendor dependencies framer-motion@11.18.2 and react-router-dom@6.26.2.
+- Validation target: npm ci, npm run build, docker build, AS6 guardian.

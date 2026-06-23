@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+FRONTEND_DIR="frontend"
+PACKAGE_JSON="$FRONTEND_DIR/package.json"
+PACKAGE_LOCK="$FRONTEND_DIR/package-lock.json"
+
+fail=0
+
+echo "=== AS6 Package Lock Sync Diagnostic v213b ==="
+
+if [ ! -f "$PACKAGE_JSON" ]; then
+  echo "PACKAGE_JSON_PRESENT=FAIL"
+  fail=1
+else
+  echo "PACKAGE_JSON_PRESENT=OK"
+fi
+
+if [ ! -f "$PACKAGE_LOCK" ]; then
+  echo "PACKAGE_LOCK_PRESENT=FAIL"
+  fail=1
+else
+  echo "PACKAGE_LOCK_PRESENT=OK"
+fi
+
+if [ "$fail" -ne 0 ]; then
+  echo "PACKAGE_LOCK_SYNC_RESULT=FAIL"
+  exit 1
+fi
+
+python3 - <<'PY' || fail=1
+import json
+import sys
+from pathlib import Path
+
+package = json.loads(Path("frontend/package.json").read_text())
+lock = json.loads(Path("frontend/package-lock.json").read_text())
+
+required = {
+    "framer-motion": "11.18.2",
+    "react-router-dom": "6.26.2",
+}
+
+root_lock = lock.get("packages", {}).get("", {}).get("dependencies", {})
+packages = lock.get("packages", {})
+lock_deps = lock.get("dependencies", {})
+failed = False
+
+for name, expected_version in required.items():
+    package_spec = package.get("dependencies", {}).get(name)
+    root_spec = root_lock.get(name)
+    node_key = f"node_modules/{name}"
+    node_entry = packages.get(node_key, {})
+    legacy_entry = lock_deps.get(name, {})
+    package_spec_path = package_spec.removeprefix("file:./").removeprefix("file:") if package_spec else ""
+    vendor_entry = packages.get(package_spec_path, {}) if package_spec_path else {}
+    actual_version = node_entry.get("version") or vendor_entry.get("version") or legacy_entry.get("version")
+
+    if not package_spec:
+        print(f"PACKAGE_LOCK_REQUIRED_DEP=FAIL:{name}:missing-package-json")
+        failed = True
+    elif root_spec != package_spec:
+        print(f"PACKAGE_LOCK_ROOT_DEP=FAIL:{name}:package={package_spec}:lock={root_spec}")
+        failed = True
+    elif actual_version != expected_version:
+        print(f"PACKAGE_LOCK_DEP_VERSION=FAIL:{name}:expected={expected_version}:actual={actual_version}")
+        failed = True
+    else:
+        print(f"PACKAGE_LOCK_DEP_VERSION=OK:{name}@{actual_version}")
+
+if failed:
+    print("PACKAGE_LOCK_STATIC_SYNC=FAIL")
+    sys.exit(1)
+
+print("PACKAGE_LOCK_STATIC_SYNC=OK")
+PY
+
+if (cd "$FRONTEND_DIR" && timeout "${AS6_NPM_CI_TIMEOUT_SECONDS:-180}" env -u npm_config_http_proxy -u npm_config_https_proxy npm ci --dry-run --ignore-scripts --no-audit --no-fund); then
+  echo "NPM_CI_LOCKFILE_DRY_RUN_SYNC=OK"
+else
+  echo "NPM_CI_LOCKFILE_DRY_RUN_SYNC=FAIL"
+  fail=1
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "PACKAGE_LOCK_SYNC_RESULT=OK"
+  exit 0
+fi
+
+echo "PACKAGE_LOCK_SYNC_RESULT=FAIL"
+exit 1

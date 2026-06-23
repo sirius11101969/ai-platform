@@ -75,3 +75,9 @@ ops/bin/as6-finish
 - Add runtime tracer if source is unknown.
 - Always update diagnostics, coverage, governance, state and detected errors.
 - Always finish through ops/bin/as6-finish.
+
+## 20260623T102000Z package-lock-sync-v213b
+- Root cause confirmed by Guardian: frontend package.json and package-lock.json drift caused npm ci to fail.
+- Fixed dependency lock entries for local vendor packages framer-motion@11.18.2 and react-router-dom@6.26.2.
+- Diagnostic: ops/bin/as6-diagnose-package-lock-sync-v213b.
+- Failure classes: PACKAGE_LOCK_OUT_OF_SYNC, NPM_CI_LOCKFILE_MISMATCH, FRONTEND_DEPENDENCY_DRIFT.

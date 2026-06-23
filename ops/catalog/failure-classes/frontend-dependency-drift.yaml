@@ -1,0 +1,4 @@
+id: FRONTEND_DEPENDENCY_DRIFT
+category: frontend-dependency-lock
+root_cause: frontend package.json, package-lock.json and vendored dependency metadata can drift independently
+resolution: keep manifest, lockfile and vendor package metadata synchronized and covered by ops/bin/as6-diagnose-package-lock-sync-v213b

@@ -1,0 +1,4 @@
+id: PACKAGE_LOCK_OUT_OF_SYNC
+category: frontend-dependency-lock
+root_cause: frontend dependency manifest and package-lock metadata drift can make npm ci reject the lockfile
+resolution: regenerate frontend/package-lock.json and validate with ops/bin/as6-diagnose-package-lock-sync-v213b before merge

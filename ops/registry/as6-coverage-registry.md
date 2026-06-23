@@ -2141,3 +2141,16 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
   - docs/AS6_HANDOFF.md
   - docs/AS6_CODEX_PROMPT.md
   - ops/bin/as6-diagnose-master-context-v210
+
+## 20260623T102000Z PACKAGE_LOCK_OUT_OF_SYNC
+- Coverage: frontend npm lockfile synchronization.
+- Files:
+  - frontend/package.json
+  - frontend/package-lock.json
+  - frontend/vendor/framer-motion/package.json
+  - frontend/vendor/react-router-dom/package.json
+  - ops/bin/as6-diagnose-package-lock-sync-v213b
+- Failure classes:
+  - PACKAGE_LOCK_OUT_OF_SYNC
+  - NPM_CI_LOCKFILE_MISMATCH
+  - FRONTEND_DEPENDENCY_DRIFT

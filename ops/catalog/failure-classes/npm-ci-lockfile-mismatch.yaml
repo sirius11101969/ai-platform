@@ -1,0 +1,4 @@
+id: NPM_CI_LOCKFILE_MISMATCH
+category: frontend-dependency-lock
+root_cause: npm ci rejects lockfiles that do not encode every package.json dependency in the expected lockfile shape
+resolution: run npm install in frontend to refresh package-lock.json and verify with npm ci or the package lock sync diagnostic

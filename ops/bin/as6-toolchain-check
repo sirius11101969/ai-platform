@@ -4,7 +4,7 @@ set -euo pipefail
 missing=0
 
 echo "=== required host tools ==="
-for tool in git docker grep python3 rg; do
+for tool in git grep python3 rg; do
   if command -v "$tool" >/dev/null 2>&1; then
     echo "TOOL_OK=$tool"
   else
@@ -15,7 +15,7 @@ done
 
 echo
 echo "=== optional host tools ==="
-for tool in node npm; do
+for tool in docker node npm; do
   if command -v "$tool" >/dev/null 2>&1; then
     echo "${tool^^}_HOST_RESULT=OK"
   else
