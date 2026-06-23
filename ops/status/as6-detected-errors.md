@@ -1030,3 +1030,18 @@ Governed and registered.
 - Class: NEW_CHAT_CONTEXT_LOSS
 - Root cause: new chat could lose long project history if only short handoff was used.
 - Fix: V210 adds docs/AS6_MASTER_CONTEXT.md as durable project memory.
+
+## 20260623T094700Z detected-error
+- Class: PACKAGE_LOCK_OUT_OF_SYNC
+- Root cause: frontend/package.json declared local framer-motion and react-router-dom file dependencies while frontend/package-lock.json did not use the npm v11 linked vendor shape required by npm ci.
+- Fix: V213B synchronizes frontend/package-lock.json and adds package-lock sync diagnostic coverage.
+
+## 20260623T094700Z detected-error
+- Class: NPM_CI_LOCKFILE_MISMATCH
+- Root cause: npm ci rejects dependency declarations when package-lock metadata does not exactly match package.json and local file dependency entries.
+- Fix: V213B validates package-lock root dependency metadata and linked local vendor packages before Guardian.
+
+## 20260623T094700Z detected-error
+- Class: FRONTEND_DEPENDENCY_DRIFT
+- Root cause: frontend dependency changes can bypass Guardian until docker build reaches npm ci.
+- Fix: V213B adds an explicit frontend package-lock sync diagnostic.

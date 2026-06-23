@@ -75,3 +75,10 @@ ops/bin/as6-finish
 - Add runtime tracer if source is unknown.
 - Always update diagnostics, coverage, governance, state and detected errors.
 - Always finish through ops/bin/as6-finish.
+
+## 2026-06-23 V213B Package Lock Sync Guardian Repair
+- Root cause: AS6 Architecture Guardian failed during frontend docker build because npm ci detected package-lock drift for local file dependencies framer-motion@11.18.2 and react-router-dom@6.26.2.
+- Repair: run npm install in frontend to synchronize frontend/package-lock.json with frontend/package.json and local vendor dependency metadata.
+- Diagnostic: ops/bin/as6-diagnose-package-lock-sync-v213b validates root dependency parity and local file dependency lock entries before Guardian.
+- Failure classes: PACKAGE_LOCK_OUT_OF_SYNC, NPM_CI_LOCKFILE_MISMATCH, FRONTEND_DEPENDENCY_DRIFT.
+- Required validation: npm ci, npm run build, ops/bin/as6-diagnose-package-lock-sync-v213b, ops/bin/as6-pr-guardian.

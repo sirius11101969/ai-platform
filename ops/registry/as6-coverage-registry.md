@@ -2141,3 +2141,14 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
   - docs/AS6_HANDOFF.md
   - docs/AS6_CODEX_PROMPT.md
   - ops/bin/as6-diagnose-master-context-v210
+
+## 20260623T094700Z FRONTEND_PACKAGE_LOCK_SYNC
+- Coverage: frontend dependency lockfile sync before Guardian docker build.
+- Files:
+  - frontend/package.json
+  - frontend/package-lock.json
+  - frontend/vendor/framer-motion/package.json
+  - frontend/vendor/react-router-dom/package.json
+  - ops/bin/as6-diagnose-package-lock-sync-v213b
+- Failure classes: PACKAGE_LOCK_OUT_OF_SYNC, NPM_CI_LOCKFILE_MISMATCH, FRONTEND_DEPENDENCY_DRIFT.
+- Rule: package-lock must include all frontend dependencies required by npm ci and docker compose build nginx.

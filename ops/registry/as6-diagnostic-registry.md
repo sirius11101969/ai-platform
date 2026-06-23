@@ -2572,3 +2572,13 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Failure class: NEW_CHAT_CONTEXT_LOSS
 - Check: docs/AS6_MASTER_CONTEXT.md exists.
 - Check: master context has architecture, workflow, last stages and finish rule.
+
+## 20260623T094700Z package-lock-sync-v213b
+- Diagnostic: ops/bin/as6-diagnose-package-lock-sync-v213b
+- Failure classes:
+  - PACKAGE_LOCK_OUT_OF_SYNC
+  - NPM_CI_LOCKFILE_MISMATCH
+  - FRONTEND_DEPENDENCY_DRIFT
+- Check: frontend/package.json dependency declarations match frontend/package-lock.json root package dependencies.
+- Check: file: vendor dependencies are represented as linked package-lock entries with vendor package metadata.
+- Prevention: run npm install in frontend after dependency changes, then validate with npm ci and npm run build.
