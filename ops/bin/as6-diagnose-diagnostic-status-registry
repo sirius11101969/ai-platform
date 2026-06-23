@@ -19,30 +19,95 @@ fi
 
 python3 - <<'PY' || fail=1
 import json
+from collections import Counter
 from pathlib import Path
 
-registry = Path("ops/status/diagnostic-status-registry.json")
-data = json.loads(registry.read_text())
-paths = {item.get("path") for item in data.get("diagnostics", [])}
+REGISTRY = Path("ops/status/diagnostic-status-registry.json")
+VALID_STATUSES = {"ACTIVE", "ARCHIVED", "DEPRECATED", "REMOVED"}
+HISTORICAL_STATUSES = {"ARCHIVED", "REMOVED"}
 
-missing = []
-for p in sorted(Path("ops/bin").glob("as6-diagnose-*")):
-    if ".backup." in p.name:
+def normalized_status(item):
+    status = item.get("status", "ACTIVE")
+    if isinstance(status, str):
+        status = status.upper()
+    return status
+
+try:
+    data = json.loads(REGISTRY.read_text())
+except Exception as exc:
+    print(f"DIAGNOSTIC_STATUS_REGISTRY_PARSE=FAIL:{exc}")
+    raise SystemExit(1)
+
+items = data.get("diagnostics")
+if not isinstance(items, list):
+    print("DIAGNOSTIC_STATUS_REGISTRY_SCHEMA=FAIL:diagnostics_not_list")
+    raise SystemExit(1)
+
+malformed = []
+invalid_status = []
+paths = []
+active_paths = set()
+missing_active = []
+historical_missing = []
+
+for idx, item in enumerate(items):
+    if not isinstance(item, dict):
+        malformed.append(f"index:{idx}:not_object")
         continue
-    if str(p) not in paths:
-        missing.append(str(p))
+    path = item.get("path")
+    if not isinstance(path, str) or not path:
+        malformed.append(f"index:{idx}:missing_path")
+        continue
+    status = normalized_status(item)
+    if status not in VALID_STATUSES:
+        invalid_status.append(f"{path}:{status}")
+        continue
+    paths.append(path)
+    if status == "ACTIVE":
+        active_paths.add(path)
+        if not Path(path).is_file():
+            missing_active.append(path)
+    elif status in HISTORICAL_STATUSES and not Path(path).exists():
+        historical_missing.append(path)
+
+duplicates = sorted(path for path, count in Counter(paths).items() if count > 1)
+missing_from_registry = []
+for p in sorted(Path("ops/bin").glob("as6-diagnose-*")):
+    if p.name.endswith(".backup") or ".backup." in p.name:
+        continue
+    if not p.is_file():
+        continue
+    if str(p) not in active_paths:
+        missing_from_registry.append(str(p))
 
 print(f"DIAGNOSTIC_STATUS_REGISTRY_COUNT={len(paths)}")
-if missing:
-    for p in missing:
-        print(f"DIAGNOSTIC_STATUS_REGISTRY_MISSING=FAIL:{p}")
+print(f"DIAGNOSTIC_STATUS_REGISTRY_ACTIVE_COUNT={len(active_paths)}")
+print(f"DIAGNOSTIC_STATUS_REGISTRY_HISTORICAL_MISSING_COUNT={len(historical_missing)}")
+
+if malformed:
+    for item in malformed:
+        print(f"DIAGNOSTIC_STATUS_REGISTRY_MALFORMED=FAIL:{item}")
+if invalid_status:
+    for item in invalid_status:
+        print(f"DIAGNOSTIC_STATUS_REGISTRY_STATUS=FAIL:{item}")
+if duplicates:
+    for path in duplicates:
+        print(f"DIAGNOSTIC_STATUS_REGISTRY_DUPLICATE=FAIL:{path}")
+if missing_active:
+    for path in missing_active:
+        print(f"DIAGNOSTIC_STATUS_REGISTRY_ACTIVE_MISSING=FAIL:{path}")
+if missing_from_registry:
+    for path in missing_from_registry:
+        print(f"DIAGNOSTIC_STATUS_REGISTRY_MISSING=FAIL:{path}")
+
+if malformed or invalid_status or duplicates or missing_active or missing_from_registry:
     raise SystemExit(1)
 
 print("DIAGNOSTIC_STATUS_REGISTRY_COMPLETE=OK")
 PY
 
 if [ "$fail" -eq 0 ]; then
-  echo "DIAGNOSTIC_STATUS_REGISTRY_RESULT=OK"
+  echo "DIAGNOSTIC_STATUS_REGISTRY_RESULT=PASS"
   exit 0
 fi
 

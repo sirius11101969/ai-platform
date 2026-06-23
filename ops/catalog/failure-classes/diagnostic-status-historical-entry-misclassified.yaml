@@ -1,0 +1,9 @@
+class: DIAGNOSTIC_STATUS_HISTORICAL_ENTRY_MISCLASSIFIED
+category: diagnostic-status-registry-drift
+severity: high
+diagnostic_required: true
+coverage_required: true
+governance_required: true
+prevention_required: true
+aec_required: true
+state_required: true
