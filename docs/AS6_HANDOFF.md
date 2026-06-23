@@ -1,8 +1,12 @@
 # AS6 HANDOFF
 
-Last updated: 20260623T052728Z
-Branch: main
-Last commit: 04d62b7
+Last updated: 20260623T055159Z
+Branch: work
+Last commit: 8da415e
+Last commit message: test: verify AS6 finish pipeline
+Last stage: V211 MASTER_CONTEXT_AUTOSYNC
+Current priority: MASTER_CONTEXT_AUTOSYNC_V211
+Active workstream: AS6 governance continuity and handoff automation
 
 ## Project
 - Name: AS6 AI Platform
@@ -12,12 +16,13 @@ Last commit: 04d62b7
 - Readiness: 99%
 
 ## New Chat Instruction
-Продолжаем AS6. Источник истины: docs/AS6_HANDOFF.md. Сначала прочитай состояние проекта, выполни диагностику и продолжай с последнего завершенного этапа.
+Продолжаем AS6. Источник истины: docs/AS6_MASTER_CONTEXT.md + docs/AS6_HANDOFF.md. Сначала прочитай состояние проекта, выполни диагностику и продолжай с последнего завершенного этапа.
 
 ## Mandatory Workflow
 Diagnostics → Root Cause → Structure → Plan → Change → Re-Diagnostics → Diagnostic Artifacts → Checks → Controls → Failure Classes → AEC Rules → GitHub → Diagnostic Registry → Coverage Registry → Governance → State → Detected Errors → Automation → Validation → Commit → Push
 
 ## Always Update
+- docs/AS6_MASTER_CONTEXT.md
 - docs/AS6_HANDOFF.md
 - docs/AS6_CURRENT_STATE.md
 - docs/AS6_ARCHITECTURE.md

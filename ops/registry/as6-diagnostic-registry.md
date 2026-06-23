@@ -2572,3 +2572,13 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Failure class: NEW_CHAT_CONTEXT_LOSS
 - Check: docs/AS6_MASTER_CONTEXT.md exists.
 - Check: master context has architecture, workflow, last stages and finish rule.
+
+## 20260623T055133Z MASTER_CONTEXT_AUTOSYNC_V211
+| diagnostic | scope | status |
+| --- | --- | --- |
+| ops/bin/as6-diagnose-master-context-autosync-v211 | master-context+handoff-autosync+finish-policy | ENABLED |
+| MASTER_CONTEXT_LAST_STAGE_OUTDATED | failure-class | ENABLED |
+| MASTER_CONTEXT_PRIORITY_MISSING | failure-class | ENABLED |
+| MASTER_CONTEXT_WORKSTREAM_MISSING | failure-class | ENABLED |
+| MASTER_CONTEXT_COMMIT_MISMATCH | failure-class | ENABLED |
+| MASTER_CONTEXT_AUTOSYNC_FAILED | failure-class | ENABLED |

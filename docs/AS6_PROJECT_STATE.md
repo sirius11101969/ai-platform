@@ -3615,3 +3615,11 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Updated: docs/AS6_CODEX_PROMPT.md.
 - Rule: new chats start from AS6_MASTER_CONTEXT + HANDOFF + CODEX_PROMPT.
 - Readiness after: 99%.
+
+## 20260623T055133Z AS6 V211 Master Context Autosync
+- Updated ops/bin/as6-update-handoff to regenerate both docs/AS6_MASTER_CONTEXT.md and docs/AS6_HANDOFF.md on every finish run.
+- Added required master context fields: LAST_UPDATE_UTC, CURRENT_BRANCH, LAST_COMMIT, LAST_COMMIT_MESSAGE, PROJECT_READINESS, CURRENT_PRIORITY, ACTIVE_WORKSTREAM, LAST_STAGE.
+- Added diagnostic: ops/bin/as6-diagnose-master-context-autosync-v211.
+- Added failure classes: MASTER_CONTEXT_LAST_STAGE_OUTDATED, MASTER_CONTEXT_PRIORITY_MISSING, MASTER_CONTEXT_WORKSTREAM_MISSING, MASTER_CONTEXT_COMMIT_MISMATCH, MASTER_CONTEXT_AUTOSYNC_FAILED.
+- Added AEC rule: AEC-MASTER-CONTEXT-001.
+- Readiness after: 99%.
