@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=pr-lifecycle-cleanup-v214"
+BRANCH="$(git branch --show-current)"
+test "$BRANCH" = "main"
+ops/bin/as6-diagnose-diagnostic-status-registry
+ops/bin/as6-diagnose-diagnostic-status-registry-lifecycle-v213e
+if command -v gh >/dev/null 2>&1; then
+  STATE="$(gh pr view 333 --repo sirius11101969/ai-platform --json state --jq .state 2>/dev/null || true)"
+  if [ -n "$STATE" ]; then echo "AS6_PR333_STATE=$STATE"; fi
+fi
+echo "AS6_PR_LIFECYCLE_CLEANUP_V214=PASS"

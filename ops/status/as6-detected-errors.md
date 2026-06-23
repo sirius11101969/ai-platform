@@ -1035,3 +1035,8 @@ Governed and registered.
 - Class: DIAGNOSTIC_STATUS_HISTORICAL_ENTRY_MISCLASSIFIED
 - Root cause: historical diagnostics were treated as missing active files.
 - Fix: V213E introduced lifecycle statuses and archive-safe validation.
+
+## 20260623T165211Z detected-error
+- Class: STALE_PR_BRANCH_AFTER_DIRECT_MAIN_FIX
+- Root cause: PR #333 was obsolete after V213E was committed directly to main.
+- Fix: V214 records PR lifecycle cleanup and validates continuing from main.

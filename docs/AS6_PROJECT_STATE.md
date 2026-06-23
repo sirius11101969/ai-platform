@@ -3621,3 +3621,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Added lifecycle statuses: ACTIVE, ARCHIVED, DEPRECATED, REMOVED.
 - Archived historical missing diagnostics no longer fail registry validation.
 - Readiness after: 99%.
+
+## 20260623T165211Z AS6 V214 PR Lifecycle Cleanup
+- Root cause: PR #333 became obsolete after direct main fix V213E.
+- Current branch must be main before continuing work.
+- Diagnostic status registry lifecycle must stay PASS.
+- Readiness after: 99%.

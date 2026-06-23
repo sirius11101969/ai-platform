@@ -2578,3 +2578,10 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Failure classes: DIAGNOSTIC_STATUS_ACTIVE_ENTRY_MISSING, DIAGNOSTIC_STATUS_HISTORICAL_ENTRY_MISCLASSIFIED, DIAGNOSTIC_STATUS_ARCHIVE_NOT_SUPPORTED, DIAGNOSTIC_STATUS_REGISTRY_LIFECYCLE_DRIFT
 - Check: ACTIVE diagnostics must exist.
 - Check: ARCHIVED/DEPRECATED/REMOVED diagnostics may be historical and missing.
+
+## 20260623T165211Z pr-lifecycle-cleanup-v214
+- Diagnostic: ops/bin/as6-diagnose-pr-lifecycle-cleanup-v214
+- Failure classes: STALE_PR_BRANCH_AFTER_DIRECT_MAIN_FIX, CLOSED_PR_RECHECK_CONFUSION, PR_HEAD_EQUALS_MAIN_NO_DIFF
+- Check: current branch is main
+- Check: diagnostic status registry PASS
+- Check: lifecycle diagnostic PASS

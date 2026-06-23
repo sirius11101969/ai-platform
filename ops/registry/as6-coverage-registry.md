@@ -2144,3 +2144,6 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 
 ## 20260623T142220Z diagnostic-status-registry-lifecycle coverage
 - Files: ops/bin/as6-update-diagnostic-status-registry, ops/bin/as6-diagnose-diagnostic-status-registry, ops/bin/as6-diagnose-diagnostic-status-registry-lifecycle-v213e, ops/status/diagnostic-status-registry.json
+
+## 20260623T165211Z PR lifecycle cleanup coverage
+- Files: ops/bin/as6-diagnose-pr-lifecycle-cleanup-v214, docs/AS6_PROJECT_STATE.md, ops/registry/as6-diagnostic-registry.md, ops/registry/as6-coverage-registry.md, ops/status/as6-detected-errors.md
