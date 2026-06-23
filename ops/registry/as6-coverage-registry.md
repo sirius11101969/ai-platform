@@ -2141,3 +2141,6 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
   - docs/AS6_HANDOFF.md
   - docs/AS6_CODEX_PROMPT.md
   - ops/bin/as6-diagnose-master-context-v210
+
+## 20260623T142220Z diagnostic-status-registry-lifecycle coverage
+- Files: ops/bin/as6-update-diagnostic-status-registry, ops/bin/as6-diagnose-diagnostic-status-registry, ops/bin/as6-diagnose-diagnostic-status-registry-lifecycle-v213e, ops/status/diagnostic-status-registry.json

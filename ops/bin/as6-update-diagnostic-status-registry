@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+REG="ops/status/diagnostic-status-registry.json"
+mkdir -p ops/status
+node - "$REG" <<'NODE'
+const fs = require("fs");
+const regPath = process.argv[2];
+const now = new Date().toISOString();
+const active = fs.readdirSync("ops/bin").filter(x => x.startsWith("as6-diagnose-")).map(x => `ops/bin/${x}`).sort();
+let old = null;
+try { old = JSON.parse(fs.readFileSync(regPath, "utf8")); } catch (_) { old = null; }
+const oldEntries = Array.isArray(old) ? old : Array.isArray(old?.entries) ? old.entries : Object.entries(old || {}).map(([path, value]) => ({ path, ...(typeof value === "object" && value ? value : {}) }));
+const map = new Map();
+for (const e of oldEntries) {
+  const p = e.path || e.diagnostic || e.file || e.name;
+  if (!p || !String(p).startsWith("ops/bin/as6-diagnose-")) continue;
+  map.set(p, { path: p, status: fs.existsSync(p) ? "ACTIVE" : (e.status || "ARCHIVED"), updated_at: e.updated_at || now });
+}
+for (const p of active) map.set(p, { path: p, status: "ACTIVE", updated_at: now });
+const entries = [...map.values()].map(e => ({ path: e.path, status: fs.existsSync(e.path) ? "ACTIVE" : (["ARCHIVED","DEPRECATED","REMOVED"].includes(e.status) ? e.status : "ARCHIVED"), updated_at: e.updated_at || now })).sort((a,b) => a.path.localeCompare(b.path));
+const out = { schema: "as6-diagnostic-status-registry-v213e", generated_at: now, entries };
+fs.writeFileSync(regPath, JSON.stringify(out, null, 2) + "\n");
+console.log(`AS6_DIAGNOSTIC_STATUS_REGISTRY_UPDATED=${entries.length}`);
+NODE

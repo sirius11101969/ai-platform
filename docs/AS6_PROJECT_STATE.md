@@ -3615,3 +3615,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Updated: docs/AS6_CODEX_PROMPT.md.
 - Rule: new chats start from AS6_MASTER_CONTEXT + HANDOFF + CODEX_PROMPT.
 - Readiness after: 99%.
+
+## 20260623T142220Z AS6 V213E Diagnostic Status Registry Lifecycle Fix
+- Root cause: historical diagnostic registry entries were treated as active required files.
+- Added lifecycle statuses: ACTIVE, ARCHIVED, DEPRECATED, REMOVED.
+- Archived historical missing diagnostics no longer fail registry validation.
+- Readiness after: 99%.

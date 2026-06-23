@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=diagnostic-status-registry-lifecycle-v213e"
+ops/bin/as6-update-diagnostic-status-registry >/dev/null
+ops/bin/as6-diagnose-diagnostic-status-registry
+grep -q "as6-diagnostic-status-registry-v213e" ops/status/diagnostic-status-registry.json
+echo "AS6_DIAGNOSTIC_STATUS_REGISTRY_LIFECYCLE_V213E=PASS"

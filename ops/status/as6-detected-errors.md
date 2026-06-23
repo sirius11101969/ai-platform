@@ -1030,3 +1030,8 @@ Governed and registered.
 - Class: NEW_CHAT_CONTEXT_LOSS
 - Root cause: new chat could lose long project history if only short handoff was used.
 - Fix: V210 adds docs/AS6_MASTER_CONTEXT.md as durable project memory.
+
+## 20260623T142220Z detected-error
+- Class: DIAGNOSTIC_STATUS_HISTORICAL_ENTRY_MISCLASSIFIED
+- Root cause: historical diagnostics were treated as missing active files.
+- Fix: V213E introduced lifecycle statuses and archive-safe validation.
