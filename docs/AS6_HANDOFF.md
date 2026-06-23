@@ -26,3 +26,9 @@ Diagnostics → Root Cause → Structure → Plan → Change → Re-Diagnostics 
 - ops/registry/as6-diagnostic-registry.md
 - ops/registry/as6-coverage-registry.md
 - ops/status/as6-detected-errors.md
+
+## 20260623T130000Z Package Lock Sync V213B
+- Current PR: #333
+- Blocker fixed: frontend npm lockfile drift for framer-motion and react-router-dom.
+- Diagnostic added: ops/bin/as6-diagnose-package-lock-sync-v213b
+- Required validation: npm ci, npm run build, docker compose build frontend, ops/bin/as6-pr-guardian.

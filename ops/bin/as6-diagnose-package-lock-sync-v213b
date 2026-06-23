@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+echo "AS6_DIAGNOSTIC=package-lock-sync-v213b"
+
+test -f frontend/package.json || { echo "FRONTEND_PACKAGE_JSON=FAIL"; exit 1; }
+echo "FRONTEND_PACKAGE_JSON=PASS"
+
+test -f frontend/package-lock.json || { echo "FRONTEND_PACKAGE_LOCK=FAIL"; exit 1; }
+echo "FRONTEND_PACKAGE_LOCK=PASS"
+
+grep -q '"framer-motion"' frontend/package-lock.json || { echo "FRONTEND_LOCK_FRAMER_MOTION=FAIL"; exit 1; }
+echo "FRONTEND_LOCK_FRAMER_MOTION=PASS"
+
+grep -q '"react-router-dom"' frontend/package-lock.json || { echo "FRONTEND_LOCK_REACT_ROUTER_DOM=FAIL"; exit 1; }
+echo "FRONTEND_LOCK_REACT_ROUTER_DOM=PASS"
+
+(
+  cd frontend
+  npm ci
+) >/tmp/as6-package-lock-sync-v213b-npm-ci.log 2>&1 || {
+  cat /tmp/as6-package-lock-sync-v213b-npm-ci.log
+  echo "FRONTEND_NPM_CI=FAIL"
+  exit 1
+}
+
+echo "FRONTEND_NPM_CI=PASS"
+echo "AS6_PACKAGE_LOCK_SYNC_V213B=PASS"

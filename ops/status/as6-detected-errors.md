@@ -1030,3 +1030,18 @@ Governed and registered.
 - Class: NEW_CHAT_CONTEXT_LOSS
 - Root cause: new chat could lose long project history if only short handoff was used.
 - Fix: V210 adds docs/AS6_MASTER_CONTEXT.md as durable project memory.
+
+## 20260623T130000Z detected-error
+- Class: PACKAGE_LOCK_OUT_OF_SYNC
+- Root cause: frontend/package.json declared framer-motion and react-router-dom file dependencies while frontend/package-lock.json lacked synchronized local package entries.
+- Fix: V213B regenerates frontend/package-lock.json with npm install --package-lock-only and adds package-lock sync diagnostic coverage.
+
+## 20260623T130000Z detected-error
+- Class: NPM_CI_LOCKFILE_MISMATCH
+- Root cause: Docker frontend build runs npm ci, which rejects package/lock drift before building assets.
+- Fix: V213B validates npm ci inside frontend through ops/bin/as6-diagnose-package-lock-sync-v213b.
+
+## 20260623T130000Z detected-error
+- Class: FRONTEND_DEPENDENCY_DRIFT
+- Root cause: frontend dependency changes were not mirrored in lockfile governance.
+- Fix: V213B registers dependency drift coverage for framer-motion and react-router-dom.
