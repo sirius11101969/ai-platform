@@ -2572,3 +2572,9 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Failure class: NEW_CHAT_CONTEXT_LOSS
 - Check: docs/AS6_MASTER_CONTEXT.md exists.
 - Check: master context has architecture, workflow, last stages and finish rule.
+
+## 20260623T104209Z AS6 V213B Frontend Package Lock Sync
+- Diagnostic: ops/bin/as6-diagnose-package-lock-sync-v213b | validates frontend package-lock vendor dependency sync | ENABLED
+- Failure class: PACKAGE_LOCK_OUT_OF_SYNC | frontend package-lock missing package metadata required by package.json | ENABLED
+- Failure class: NPM_CI_LOCKFILE_MISMATCH | npm ci rejects unsynchronized frontend lockfile | ENABLED
+- Failure class: FRONTEND_DEPENDENCY_DRIFT | frontend dependency metadata drift before Guardian Docker build | ENABLED

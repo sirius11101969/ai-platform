@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+fail=0
+frontend_dir="frontend"
+package_json="$frontend_dir/package.json"
+package_lock="$frontend_dir/package-lock.json"
+
+if [ ! -f "$package_json" ]; then
+  echo "PACKAGE_LOCK_OUT_OF_SYNC=FAIL:frontend package.json missing"
+  echo "FRONTEND_PACKAGE_JSON=$package_json"
+  exit 1
+fi
+
+if [ ! -f "$package_lock" ]; then
+  echo "PACKAGE_LOCK_OUT_OF_SYNC=FAIL:frontend package-lock.json missing"
+  echo "FRONTEND_PACKAGE_LOCK=$package_lock"
+  exit 1
+fi
+
+echo "FRONTEND_PACKAGE_JSON=$package_json"
+echo "FRONTEND_PACKAGE_LOCK=$package_lock"
+
+if ! node -e '
+const fs = require("fs");
+const lock = JSON.parse(fs.readFileSync("frontend/package-lock.json", "utf8"));
+const required = {
+  "node_modules/framer-motion": "vendor/framer-motion",
+  "node_modules/react-router-dom": "vendor/react-router-dom",
+  "vendor/framer-motion": "11.18.2",
+  "vendor/react-router-dom": "6.26.2",
+};
+const packages = lock.packages || {};
+const failures = [];
+for (const [key, expected] of Object.entries(required)) {
+  if (!packages[key]) {
+    failures.push(`${key}:missing`);
+    continue;
+  }
+  if (key.startsWith("node_modules/") && packages[key].resolved !== expected) {
+    failures.push(`${key}:resolved=${packages[key].resolved || "missing"}`);
+  }
+  if (key.startsWith("vendor/") && packages[key].version !== expected) {
+    failures.push(`${key}:version=${packages[key].version || "missing"}`);
+  }
+}
+if (failures.length) {
+  console.log(`PACKAGE_LOCK_OUT_OF_SYNC=FAIL:${failures.join(",")}`);
+  process.exit(1);
+}
+console.log("PACKAGE_LOCK_OUT_OF_SYNC=PASS");
+'; then
+  fail=1
+fi
+
+if ! npm --prefix "$frontend_dir" ci --package-lock-only --ignore-scripts --no-audit --fund=false >/tmp/as6-npm-ci-lock-sync.log 2>&1; then
+  cat /tmp/as6-npm-ci-lock-sync.log
+  echo "NPM_CI_LOCKFILE_MISMATCH=FAIL"
+  fail=1
+else
+  echo "NPM_CI_LOCKFILE_MISMATCH=PASS"
+fi
+
+if git diff --quiet -- "$package_json" "$package_lock"; then
+  echo "FRONTEND_DEPENDENCY_DRIFT=PASS"
+else
+  echo "FRONTEND_DEPENDENCY_DRIFT=INFO:package metadata has pending tracked changes"
+fi
+
+if [ "$fail" -eq 0 ]; then
+  echo "AS6_PACKAGE_LOCK_SYNC_RESULT=PASS"
+else
+  echo "AS6_PACKAGE_LOCK_SYNC_RESULT=FAIL"
+fi
+
+exit "$fail"

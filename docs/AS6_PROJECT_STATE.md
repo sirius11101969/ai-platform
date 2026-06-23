@@ -3615,3 +3615,11 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Updated: docs/AS6_CODEX_PROMPT.md.
 - Rule: new chats start from AS6_MASTER_CONTEXT + HANDOFF + CODEX_PROMPT.
 - Readiness after: 99%.
+
+## 20260623T104209Z AS6 V213B Frontend Package Lock Sync
+- Fixed: synchronized frontend/package-lock.json with frontend/package.json for local vendor dependencies.
+- Root cause: Guardian Docker build ran npm ci while package-lock.json lacked framer-motion@11.18.2 and react-router-dom@6.26.2 vendor package entries.
+- Diagnostic: ops/bin/as6-diagnose-package-lock-sync-v213b
+- Automation: ops/bin/as6-finish now validates frontend package-lock sync before finish diagnostics.
+- Added failure classes: PACKAGE_LOCK_OUT_OF_SYNC, NPM_CI_LOCKFILE_MISMATCH, FRONTEND_DEPENDENCY_DRIFT.
+- Readiness after: 99%.

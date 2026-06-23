@@ -75,3 +75,10 @@ ops/bin/as6-finish
 - Add runtime tracer if source is unknown.
 - Always update diagnostics, coverage, governance, state and detected errors.
 - Always finish through ops/bin/as6-finish.
+
+## 20260623T104209Z AS6 V213B Frontend Package Lock Sync
+- Guardian root cause: npm ci lockfile mismatch in frontend.
+- Source package: frontend/package.json.
+- Synchronized lockfile: frontend/package-lock.json.
+- Diagnostic/control: ops/bin/as6-diagnose-package-lock-sync-v213b and ops/bin/as6-finish frontend package-lock validation.
+- Failure classes: PACKAGE_LOCK_OUT_OF_SYNC, NPM_CI_LOCKFILE_MISMATCH, FRONTEND_DEPENDENCY_DRIFT.

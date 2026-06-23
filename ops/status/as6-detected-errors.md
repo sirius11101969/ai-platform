@@ -1030,3 +1030,18 @@ Governed and registered.
 - Class: NEW_CHAT_CONTEXT_LOSS
 - Root cause: new chat could lose long project history if only short handoff was used.
 - Fix: V210 adds docs/AS6_MASTER_CONTEXT.md as durable project memory.
+
+## 20260623T104209Z detected-error
+- Class: PACKAGE_LOCK_OUT_OF_SYNC
+- Root cause: frontend/package-lock.json missed vendor package entries for framer-motion@11.18.2 and react-router-dom@6.26.2 while frontend/package.json required them.
+- Fix: synchronized frontend/package-lock.json via npm install package-lock update.
+
+## 20260623T104209Z detected-error
+- Class: NPM_CI_LOCKFILE_MISMATCH
+- Root cause: AS6 Guardian Docker build used npm ci, which refuses package.json/package-lock.json drift.
+- Fix: added ops/bin/as6-diagnose-package-lock-sync-v213b and validated npm ci.
+
+## 20260623T104209Z detected-error
+- Class: FRONTEND_DEPENDENCY_DRIFT
+- Root cause: frontend dependency metadata changed without lockfile validation in finish workflow.
+- Fix: ops/bin/as6-finish now runs frontend package-lock validation.
