@@ -42,6 +42,16 @@ run_check() {
   rm -f "$tmp"
 }
 
+
+frontend_docker_build() {
+  if ! command -v docker >/dev/null 2>&1; then
+    echo "FRONTEND_DOCKER_BUILD_RESULT=SKIP_NO_DOCKER"
+    return 0
+  fi
+
+  docker compose build nginx
+}
+
 : > "$LOG"
 
 echo "==================================================" | tee -a "$LOG"
@@ -53,10 +63,11 @@ run_check "git diff check" "" git diff --check
 run_check "secret scan" "SECRET_SCAN_RESULT=OK" ./ops/bin/as6-pre-commit-secret-scan
 run_check "command center diagnostic" "COMMAND_CENTER_RESULT=OK" ./ops/bin/as6-diagnose-command-center
 run_check "ui merge gate" "UI_AUDIT_RESULT=OK" ./ops/bin/as6-ui-merge-gate
-run_check "frontend docker build" "" docker compose build nginx
+run_check "package lock sync" "PACKAGE_LOCK_SYNC_RESULT=OK" ./ops/bin/as6-diagnose-package-lock-sync-v213b
+run_check "frontend docker build" "" frontend_docker_build
 
 if [ "$failures" -eq 0 ]; then
-  verdict="SAFE_TO_MERGE"
+  verdict="PASS"
 else
   verdict="MERGE_BLOCKED"
 fi
