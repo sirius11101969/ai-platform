@@ -1,22 +1,28 @@
 # AS6 MASTER CONTEXT
 
-LAST_COMPLETED_STAGE=V220B
+LAST_COMPLETED_STAGE=V220
 PROJECT_READINESS=99%
-NEXT_RECOMMENDED_STAGE=V220 — Design System Foundation
+NEXT_RECOMMENDED_STAGE=V221 — Command Center Foundation Adoption
 SAFE_TO_CHANGE=YES
 
 ## Source Of Truth
-- Current commit: run `git rev-parse HEAD`
-- Current restore tag: run `git tag --points-at HEAD | grep AS6_RESTORE_`
+- Current commit: use git rev-parse HEAD
+- Current restore tag: use git tag --points-at HEAD | grep AS6_RESTORE_
 - Full history: docs/AS6_PROJECT_STATE.md
 - Diagnostics: ops/registry/as6-diagnostic-registry.md
+
+## V220 Summary
+- Design System Foundation registered.
+- Runtime tracer registered.
+- Diagnostic, coverage, governance and state artifacts added.
+- Next UX step: apply foundation to Command Center.
 
 ## Rule
 Do not store self-referential commit hashes in MASTER/HANDOFF/CODEX.
 
 ## AS6 Product Philosophy
 - Mission: AS6 — Ваш бизнес. Простыми словами.
-- Promise: AS6 помогает принимать умные решения.
-- Emotional KPI: Я понимаю ситуацию; Я знаю следующий шаг; У меня есть план; У меня есть решение; Сегодня будет хороший день.
+- Promise: AS6 helps users make smart decisions.
+- Emotional KPI: I understand the situation; I know the next step; I have a plan; I have a solution; Today will be a good day.
 - Blueprint: docs/AS6_UX_BLUEPRINT.md
 - Design principles: docs/AS6_DESIGN_PRINCIPLES.md
