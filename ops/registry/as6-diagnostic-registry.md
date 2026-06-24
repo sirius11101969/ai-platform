@@ -2636,3 +2636,9 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Check: exactly one restore tag in each context document
 - Check: restore tag equality across MASTER/HANDOFF/CODEX
 - Check: V219A present in all context documents
+
+## 20260624T065700Z final-context-sync-v219b
+- Diagnostic: ops/bin/as6-diagnose-final-context-sync-v219b
+- Failure classes: FINAL_CONTEXT_SYNC_MISSING, FINAL_CONTEXT_TAG_DRIFT, INTERMEDIATE_COMMIT_CONTEXT_LEAK
+- Check: one restore tag in MASTER/HANDOFF/CODEX
+- Check: restore tag equality across MASTER/HANDOFF/CODEX

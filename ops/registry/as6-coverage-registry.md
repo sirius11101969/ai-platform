@@ -2168,3 +2168,6 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 
 ## 20260624T050230Z Context restore tag drift coverage
 - Files: ops/bin/as6-update-handoff, docs/AS6_MASTER_CONTEXT.md, docs/AS6_HANDOFF.md, docs/AS6_CODEX_PROMPT.md, ops/bin/as6-diagnose-context-restore-tag-drift-v219a
+
+## 20260624T065700Z final-context-sync coverage
+- Files: ops/bin/as6-final-context-sync, ops/bin/as6-diagnose-final-context-sync-v219b, docs/AS6_MASTER_CONTEXT.md, docs/AS6_HANDOFF.md, docs/AS6_CODEX_PROMPT.md

@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=final-context-sync-v219b"
+
+test -x ops/bin/as6-final-context-sync
+
+for f in docs/AS6_MASTER_CONTEXT.md docs/AS6_HANDOFF.md docs/AS6_CODEX_PROMPT.md; do
+  TAG_COUNT="$(grep -Eo 'AS6_RESTORE_[0-9a-f]+' "$f" | sort -u | wc -l | tr -d ' ')"
+  test "$TAG_COUNT" = "1"
+done
+
+M_TAG="$(grep -Eo 'AS6_RESTORE_[0-9a-f]+' docs/AS6_MASTER_CONTEXT.md | sort -u)"
+H_TAG="$(grep -Eo 'AS6_RESTORE_[0-9a-f]+' docs/AS6_HANDOFF.md | sort -u)"
+C_TAG="$(grep -Eo 'AS6_RESTORE_[0-9a-f]+' docs/AS6_CODEX_PROMPT.md | sort -u)"
+
+test "$M_TAG" = "$H_TAG"
+test "$M_TAG" = "$C_TAG"
+
+echo "AS6_FINAL_CONTEXT_SYNC_V219B=PASS"

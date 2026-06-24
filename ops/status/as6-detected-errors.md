@@ -1075,3 +1075,8 @@ Governed and registered.
 - Class: CONTEXT_STALE_RESTORE_TAG_SECTION
 - Root cause: lower context sections retained old AS6_RESTORE tags after final context refresh.
 - Fix: V219A rewrites all context files so only one current restore tag exists per file.
+
+## 20260624T065700Z detected-error
+- Class: INTERMEDIATE_COMMIT_CONTEXT_LEAK
+- Root cause: new chat saw intermediate commit/tag instead of final HEAD/tag.
+- Fix: V219B adds explicit final context sync command.

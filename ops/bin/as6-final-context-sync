@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+TS="$(date -u +%Y%m%dT%H%M%SZ)"
+COMMIT="$(git rev-parse HEAD)"
+SHORT="$(git rev-parse --short HEAD)"
+TAG="AS6_RESTORE_${SHORT}"
+MSG="$(git log -1 --pretty=%s)"
+READINESS="99%"
+
+git tag -a -f "$TAG" -m "AS6 final restore point: $MSG"
+
+for f in docs/AS6_MASTER_CONTEXT.md docs/AS6_HANDOFF.md docs/AS6_CODEX_PROMPT.md; do
+  test -f "$f"
+  sed -i -E "s/AS6_RESTORE_[0-9a-f]+/${TAG}/g" "$f"
+  sed -i -E "s/^LAST_COMMIT=.*/LAST_COMMIT=${COMMIT}/" "$f" || true
+  sed -i -E "s/^LAST_COMMIT_SHORT=.*/LAST_COMMIT_SHORT=${SHORT}/" "$f" || true
+  sed -i -E "s/^LAST_RESTORE_TAG=.*/LAST_RESTORE_TAG=${TAG}/" "$f" || true
+  sed -i -E "s/^LAST_UPDATE_UTC=.*/LAST_UPDATE_UTC=${TS}/" "$f" || true
+  sed -i -E "s/^Текущий commit:.*/Текущий commit: ${COMMIT}/" "$f" || true
+  sed -i -E "s/^Текущий short commit:.*/Текущий short commit: ${SHORT}/" "$f" || true
+  sed -i -E "s/^Restore tag:.*/Restore tag: ${TAG}/" "$f" || true
+  sed -i -E "s/^Readiness:.*/Readiness: ${READINESS}/" "$f" || true
+done
+
+echo "AS6_FINAL_CONTEXT_SYNC_COMMIT=$COMMIT"
+echo "AS6_FINAL_CONTEXT_SYNC_TAG=$TAG"
