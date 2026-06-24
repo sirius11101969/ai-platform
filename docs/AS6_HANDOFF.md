@@ -1,14 +1,14 @@
 # AS6 HANDOFF
 
-LAST_UPDATE_UTC=20260624T050231Z
-LAST_COMMIT=ad828ace0f14b484a142b0c2cb69e27de3577da9
-LAST_COMMIT_SHORT=ad828ac
-LAST_COMMIT_MESSAGE=docs: refresh AS6 context after finish
+LAST_UPDATE_UTC=20260624T050232Z
+LAST_COMMIT=d5448b0943c879eb3cd8fbbde8d06e9e931fb59f
+LAST_COMMIT_SHORT=d5448b0
+LAST_COMMIT_MESSAGE=docs: cleanup AS6 context restore tag drift v219a
 LAST_COMPLETED_STAGE=V219A
 CURRENT_STAGE=V219A
 NEXT_RECOMMENDED_STAGE=V219 — Design System Foundation
 PROJECT_READINESS=99%
-LAST_RESTORE_TAG=AS6_RESTORE_ad828ac
+LAST_RESTORE_TAG=AS6_RESTORE_d5448b0
 SAFE_TO_CHANGE=YES
 
 ## New Chat Instruction
@@ -20,7 +20,7 @@ SAFE_TO_CHANGE=YES
 - Diagnostic Status Registry: PASS
 - UI Restore Policy: PASS
 - Finish Pipeline: PASS
-- Latest restore tag: AS6_RESTORE_ad828ac
+- Latest restore tag: AS6_RESTORE_484b2ce
 
 ## Recent Stages
 - V213E Diagnostic Status Registry Lifecycle Fix — PASS
