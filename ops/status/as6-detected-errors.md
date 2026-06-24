@@ -1080,3 +1080,8 @@ Governed and registered.
 - Class: INTERMEDIATE_COMMIT_CONTEXT_LEAK
 - Root cause: new chat saw intermediate commit/tag instead of final HEAD/tag.
 - Fix: V219B adds explicit final context sync command.
+
+## 2026-06-24 KNOWLEDGE_BASE_V219KB
+Failure Classes: KNOWLEDGE_BASE_MISSING, OBSIDIAN_COMPATIBLE_STRUCTURE_MISSING, PROJECT_MEMORY_NOT_VERSIONED, KNOWLEDGE_BASE_NOT_LINKED_TO_AS6_CONTEXT
+Diagnostic: ops/bin/as6-diagnose-knowledge-base-v219kb
+Status: REGISTERED

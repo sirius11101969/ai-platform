@@ -2642,3 +2642,23 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Failure classes: FINAL_CONTEXT_SYNC_MISSING, FINAL_CONTEXT_TAG_DRIFT, INTERMEDIATE_COMMIT_CONTEXT_LEAK
 - Check: one restore tag in MASTER/HANDOFF/CODEX
 - Check: restore tag equality across MASTER/HANDOFF/CODEX
+
+## Root Cause: KNOWLEDGE_BASE_MISSING
+- diagnostic: ops/bin/as6-diagnose-knowledge-base-v219kb
+- class: KNOWLEDGE_BASE_MISSING
+- source: v219kb-knowledge-base
+
+## Root Cause: OBSIDIAN_COMPATIBLE_STRUCTURE_MISSING
+- diagnostic: ops/bin/as6-diagnose-knowledge-base-v219kb
+- class: OBSIDIAN_COMPATIBLE_STRUCTURE_MISSING
+- source: v219kb-knowledge-base
+
+## Root Cause: PROJECT_MEMORY_NOT_VERSIONED
+- diagnostic: ops/bin/as6-diagnose-knowledge-base-v219kb
+- class: PROJECT_MEMORY_NOT_VERSIONED
+- source: v219kb-knowledge-base
+
+## Root Cause: KNOWLEDGE_BASE_NOT_LINKED_TO_AS6_CONTEXT
+- diagnostic: ops/bin/as6-diagnose-knowledge-base-v219kb
+- class: KNOWLEDGE_BASE_NOT_LINKED_TO_AS6_CONTEXT
+- source: v219kb-knowledge-base
