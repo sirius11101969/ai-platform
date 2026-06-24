@@ -1,4 +1,5 @@
 import "./styles/as6-design-token-registry.css";
+import "./styles/as6-design-system-foundation-v220.css";
 import "./styles/as6-real-component-consolidation.css";
 import "./styles/as6-physical-page-refactor-migration.css";
 import "./styles/as6-real-page-conversion-engine.css";
@@ -11,6 +12,7 @@ import "./styles/as6-unified-page-shell.css";
 import "./styles/as6-full-mission-control-theme-rollout.css";
 import "./styles/as6-unified-mission-control-ui.css";
 import "./styles/as6-mission-workspace.css";
+import { markAs6DesignSystemReady } from "./utils/as6RuntimeTracer";
 import React, { createContext, useContext, useEffect, useMemo, useState, lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./styles.css";
@@ -62,6 +64,8 @@ function AuthProvider({ children }) {
   const [authState, setAuthState] = useState(getAuthState);
 
   useEffect(() => {
+    markAs6DesignSystemReady({ route: window.location.pathname });
+
     function syncAuthState(event) {
       if (event?.type === "ai-platform-auth-updated" && event.detail?.token) {
         setAuthState({
