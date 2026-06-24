@@ -1055,3 +1055,8 @@ Governed and registered.
 - Class: UPDATE_HANDOFF_RUNTIME_VARIABLE_EXPANSION_BUG
 - Root cause: generated update-handoff script expanded BRANCH before runtime.
 - Fix: V217B rewrote update-handoff with quoted runtime-safe script body.
+
+## 20260624T004358Z detected-error
+- Class: RESTORE_TAG_ONE_STEP_BEHIND
+- Root cause: handoff/master context captured previous commit/tag before finish commit completed.
+- Fix: V218B adds post-commit context refresh and final restore tag.

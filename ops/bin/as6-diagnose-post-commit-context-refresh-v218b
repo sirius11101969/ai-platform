@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=post-commit-context-refresh-v218b"
+test -x ops/bin/as6-finish
+grep -q "post-commit handoff refresh" ops/bin/as6-finish
+grep -q "post-commit context commit" ops/bin/as6-finish
+grep -q "final restore tag" ops/bin/as6-finish
+grep -q "docs: refresh AS6 context after finish" ops/bin/as6-finish
+echo "AS6_POST_COMMIT_CONTEXT_REFRESH_V218B=PASS"

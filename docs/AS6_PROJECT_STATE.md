@@ -3647,3 +3647,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Fixed ops/bin/as6-update-handoff with runtime-safe variable expansion.
 - Enforced fresh top-level master context, handoff and Codex prompt fields.
 - Readiness after: 99%.
+
+## 20260624T004358Z AS6 V218B Post-Commit Context Refresh
+- Root cause: AS6_MASTER_CONTEXT and AS6_HANDOFF were written before commit/tag, causing new chats to see one-step stale commit and restore tag.
+- Updated ops/bin/as6-finish to refresh context after commit/tag and create a second context-refresh commit when needed.
+- Added diagnostic: ops/bin/as6-diagnose-post-commit-context-refresh-v218b.
+- Readiness after: 99%.

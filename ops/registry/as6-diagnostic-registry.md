@@ -2608,3 +2608,10 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Check: update-handoff is executable
 - Check: master context has fresh stage/commit/restore tag
 - Check: handoff blocks fallback to V209B
+
+## 20260624T004358Z post-commit-context-refresh-v218b
+- Diagnostic: ops/bin/as6-diagnose-post-commit-context-refresh-v218b
+- Failure classes: HANDOFF_POST_COMMIT_STALE, MASTER_CONTEXT_POST_COMMIT_STALE, RESTORE_TAG_ONE_STEP_BEHIND, POST_FINISH_CONTEXT_REFRESH_MISSING
+- Check: as6-finish performs post-commit handoff refresh
+- Check: as6-finish can create post-commit context refresh commit
+- Check: as6-finish creates final restore tag

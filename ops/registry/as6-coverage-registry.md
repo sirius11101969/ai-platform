@@ -2156,3 +2156,6 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 
 ## 20260624T002252Z Master context freshness repair coverage
 - Files: ops/bin/as6-update-handoff, docs/AS6_MASTER_CONTEXT.md, docs/AS6_HANDOFF.md, docs/AS6_CODEX_PROMPT.md, ops/bin/as6-diagnose-master-context-freshness-v217
+
+## 20260624T004358Z Post-commit context refresh coverage
+- Files: ops/bin/as6-finish, ops/bin/as6-diagnose-post-commit-context-refresh-v218b, docs/AS6_MASTER_CONTEXT.md, docs/AS6_HANDOFF.md, docs/AS6_CODEX_PROMPT.md
