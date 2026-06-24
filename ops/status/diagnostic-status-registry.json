@@ -1368,6 +1368,11 @@
       "updated_at": "2026-06-24T05:02:32.839Z"
     },
     {
+      "path": "ops/bin/as6-diagnose-knowledge-base-v219kb",
+      "status": "ACTIVE",
+      "updated_at": "2026-06-24T00:00:00.000Z"
+    },
+    {
       "path": "ops/bin/as6-diagnose-live-operational-data-integration-v103",
       "status": "ACTIVE",
       "updated_at": "2026-06-24T05:02:32.839Z"

@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+fail=0
+check_file() {
+  local label="$1" path="$2"
+  if [ -f "$path" ]; then echo "${label}=PASS:$path"; else echo "${label}=FAIL:$path"; fail=1; fi
+}
+check_dir() {
+  local label="$1" path="$2"
+  if [ -d "$path" ]; then echo "${label}=PASS:$path"; else echo "${label}=FAIL:$path"; fail=1; fi
+}
+check_file "AS6_KNOWLEDGE_BASE_README" "knowledge/README.md"
+check_dir "AS6_KNOWLEDGE_BASE_DASHBOARD" "knowledge/00-Dashboard"
+check_dir "AS6_KNOWLEDGE_BASE_ARCHITECTURE" "knowledge/02-Architecture"
+check_file "AS6_KNOWLEDGE_BASE_RESTORE_POINTS" "knowledge/05-Restore/RESTORE_POINTS.md"
+check_file "AS6_KNOWLEDGE_BASE_ROADMAP_V219" "knowledge/06-Roadmap/V219.md"
+check_file "AS6_KNOWLEDGE_BASE_DECISIONS" "knowledge/07-Decisions/DECISIONS.md"
+check_file "AS6_KNOWLEDGE_BASE_OBSIDIAN_PLACEHOLDER" "knowledge/.obsidian-placeholder.md"
+grep -q "AS6_RESTORE_0b8ccd5" knowledge/01-Context/AS6_MASTER_CONTEXT.md || { echo "AS6_KNOWLEDGE_BASE_CONTEXT_LINK=FAIL"; fail=1; }
+grep -q "Obsidian" knowledge/README.md && echo "AS6_KNOWLEDGE_BASE_OBSIDIAN_COMPATIBLE=PASS" || { echo "AS6_KNOWLEDGE_BASE_OBSIDIAN_COMPATIBLE=FAIL"; fail=1; }
+if [ "$fail" -eq 0 ]; then echo "AS6_KNOWLEDGE_BASE_V219KB_RESULT=OK"; exit 0; fi
+echo "AS6_KNOWLEDGE_BASE_V219KB_RESULT=FAIL"; exit 1
