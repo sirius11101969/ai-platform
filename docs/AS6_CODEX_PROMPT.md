@@ -15,8 +15,8 @@
 - Если другой документ показывает более старый этап, считать его stale и обновить через ops/bin/as6-update-handoff.
 - Каждый патч завершается только через ops/bin/as6-finish.
 
-Текущий commit: 7d1d833ff2484388b406de46b59d8a6ac669caee
+Текущий commit: 97851d2e95632a030772f1c0c7022306838eeeef
 Текущий stage: V218B
 Следующий stage: V218
 Readiness: 99%
-Restore tag: AS6_RESTORE_7d1d833
+Restore tag: AS6_RESTORE_97851d2
