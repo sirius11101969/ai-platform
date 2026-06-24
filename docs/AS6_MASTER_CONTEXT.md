@@ -1,15 +1,15 @@
 # AS6 MASTER CONTEXT
 
-LAST_UPDATE_UTC=20260624T082501Z
+LAST_UPDATE_UTC=20260624T082502Z
 CURRENT_BRANCH=main
-LAST_COMMIT=728308fc68ca5bf4c664d8ec54b33bb551da5bd3
-LAST_COMMIT_SHORT=728308f
-LAST_COMMIT_MESSAGE=docs: add final AS6 context sync v219b
+LAST_COMMIT=de5721efef0ed200505c5adeb808be5e92d4532c
+LAST_COMMIT_SHORT=de5721e
+LAST_COMMIT_MESSAGE=fix: frontend build integrity v219c
 LAST_COMPLETED_STAGE=V219A
 CURRENT_STAGE=V219A
 NEXT_RECOMMENDED_STAGE=V219 — Design System Foundation
 PROJECT_READINESS=99%
-LAST_RESTORE_TAG=AS6_RESTORE_728308f
+LAST_RESTORE_TAG=AS6_RESTORE_de5721e
 ACTIVE_WORKSTREAM=AS6 platform stabilization, UI restore safety, Command Center production quality
 CURRENT_PRIORITY=Design System Foundation after context restore tag drift cleanup
 CURRENT_ROOT_CAUSE=none
@@ -45,9 +45,9 @@ SAFE_TO_CHANGE=YES
 - V219A: Context Restore Tag Drift Cleanup — PASS
 
 ## Restore Safety
-- Latest restore tag: AS6_RESTORE_728308f
-- Local restore command: ops/bin/as6-restore-to-tag AS6_RESTORE_728308f
-- Remote restore command: CONFIRM_AS6_RESTORE=YES ops/bin/as6-restore-to-tag AS6_RESTORE_728308f --push
+- Latest restore tag: AS6_RESTORE_69a7a09
+- Local restore command: ops/bin/as6-restore-to-tag AS6_RESTORE_69a7a09
+- Remote restore command: CONFIRM_AS6_RESTORE=YES ops/bin/as6-restore-to-tag AS6_RESTORE_69a7a09 --push
 
 ## Mandatory New Chat Start
 Продолжаем AS6. Прочитай docs/AS6_MASTER_CONTEXT.md, docs/AS6_HANDOFF.md и docs/AS6_CODEX_PROMPT.md из GitHub репозитория sirius11101969/ai-platform. Источник истины: LAST_COMPLETED_STAGE, LAST_COMMIT, LAST_RESTORE_TAG должны совпадать во всех трёх файлах, и в каждом файле должен быть только один актуальный AS6_RESTORE tag.
