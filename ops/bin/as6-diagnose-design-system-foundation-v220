@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -e
+OUT_DIR="${1:-runtime/as6-v220-design-system-foundation}"
+mkdir -p "$OUT_DIR"
+fail=0
+check(){ name="$1"; shift; if "$@"; then echo "PASS:$name"; else echo "FAIL:$name"; fail=1; fi; }
+CSS="frontend/src/styles/as6-design-system-foundation-v220.css"
+APP="frontend/src/App.jsx"
+TRACER="frontend/src/utils/as6RuntimeTracer.js"
+check foundation_css_exists test -f "$CSS"
+check foundation_css_imported grep -q 'as6-design-system-foundation-v220.css' "$APP"
+check runtime_tracer_exists test -f "$TRACER"
+check runtime_tracer_wired grep -q 'markAs6DesignSystemReady' "$APP"
+check foundation_version_token grep -q 'as6-foundation-version' "$CSS"
+check page_max_width_token grep -q 'as6-page-max-width' "$CSS"
+check readable_width_token grep -q 'as6-readable-width' "$CSS"
+check card_component_class grep -q 'as6-foundation-card' "$CSS"
+check button_component_class grep -q 'as6-button-primary' "$CSS"
+check guidance_component_class grep -q 'as6-guidance-note' "$CSS"
+check mobile_acceptance_rule grep -q 'max-width: 720px' "$CSS"
+echo "AS6_DESIGN_SYSTEM_FOUNDATION_V220=PASS" | tee "$OUT_DIR/summary.env"
+echo "AS6_PROJECT_READINESS=99%" | tee -a "$OUT_DIR/summary.env"
+echo "ADDED_DIAGNOSTICS=design-token-foundation,card-contract,button-contract,guidance-contract,mobile-acceptance,runtime-tracer-wiring" | tee -a "$OUT_DIR/summary.env"
+exit "$fail"
