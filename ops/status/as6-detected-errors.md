@@ -1085,3 +1085,16 @@ Governed and registered.
 - Class: DOCKER_PACKAGE_LAYER_CACHE_STALE
 - Root cause: Guardian Docker build could reuse stale package*.json layer and fail npm ci despite local lock containing vendor dependencies.
 - Fix: V219C enforces --no-cache build and validates npm ci locally.
+
+## 20260624T165013Z AS6 V220B Philosophy & UX Blueprint Foundation
+- Detected gap: product philosophy, emotional KPI and UX blueprint were not registered as durable project architecture.
+- Root cause class: UX_GOVERNANCE_GAP.
+- Prevention: docs/AS6_UX_BLUEPRINT.md, docs/AS6_DESIGN_PRINCIPLES.md, governance, diagnostic and control checks.
+- Status: fixed in V220B.
+
+## 20260624T165513Z AS6 V220B Repair Commit Without Runtime
+- Detected gap: V220B attempted to stage ignored runtime/ artifacts.
+- Failure class: GITIGNORE_RUNTIME_COMMIT_GAP.
+- Root cause: runtime/ is intentionally ignored by git, but the stage command included runtime evidence path in git add.
+- Prevention: future AS6 stages must not git add ignored runtime/ paths unless explicitly using git add -f for approved evidence.
+- Status: fixed by committing durable docs, diagnostics, registries and governance without runtime/.

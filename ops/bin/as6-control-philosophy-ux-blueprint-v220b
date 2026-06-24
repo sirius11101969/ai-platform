@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-philosophy-ux-blueprint-v220b
+grep -q 'V220B' docs/AS6_PROJECT_STATE.md
+grep -q 'AS6_PHILOSOPHY_UX_BLUEPRINT_V220B' ops/registry/as6-diagnostic-registry.md
+grep -q 'AS6 Philosophy & UX Blueprint Foundation' ops/registry/as6-coverage-registry.md
+echo AS6_CONTROL_PHILOSOPHY_UX_BLUEPRINT_V220B=PASS

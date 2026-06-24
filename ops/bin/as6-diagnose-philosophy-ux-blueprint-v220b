@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo AS6_DIAGNOSTIC=philosophy-ux-blueprint-v220b
+grep -q 'AS6 — Ваш бизнес. Простыми словами.' docs/AS6_UX_BLUEPRINT.md
+grep -q 'AS6 помогает принимать умные решения.' docs/AS6_UX_BLUEPRINT.md
+grep -q 'Я понимаю ситуацию.' docs/AS6_UX_BLUEPRINT.md
+grep -q 'У меня есть решение.' docs/AS6_UX_BLUEPRINT.md
+grep -q 'Сегодня будет хороший день.' docs/AS6_UX_BLUEPRINT.md
+grep -q 'AS6 Simple First Principle' docs/AS6_DESIGN_PRINCIPLES.md
+grep -q 'AS6 Confidence Principle' docs/AS6_DESIGN_PRINCIPLES.md
+grep -q 'AS6 Ownership Principle' docs/AS6_DESIGN_PRINCIPLES.md
+grep -q 'AS6 Positive Guidance Principle' docs/AS6_DESIGN_PRINCIPLES.md
+grep -q 'AS6 Morning Motivation Principle' docs/AS6_DESIGN_PRINCIPLES.md
+grep -q 'AS6 Human Language Principle' docs/AS6_DESIGN_PRINCIPLES.md
+grep -q 'AS6 Daily Value Principle' docs/AS6_DESIGN_PRINCIPLES.md
+echo AS6_PHILOSOPHY_UX_BLUEPRINT_V220B=PASS

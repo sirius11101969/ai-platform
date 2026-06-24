@@ -2651,3 +2651,16 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Check: npm ci PASS
 - Check: npm run build PASS
 - Check: Guardian uses docker compose build --no-cache nginx
+
+## AS6_PHILOSOPHY_UX_BLUEPRINT_V220B
+- Stage: V220B
+- Diagnostic: ops/bin/as6-diagnose-philosophy-ux-blueprint-v220b
+- Control: ops/bin/as6-control-philosophy-ux-blueprint-v220b
+- Purpose: ensures AS6 mission, UX blueprint, design principles and emotional KPI are durable project architecture.
+- Status: PASS
+
+## GITIGNORE_RUNTIME_COMMIT_GAP — V220B Repair
+- Failure class: git ignored runtime evidence path during commit.
+- Detection: git add failure mentioning ignored runtime path.
+- Prevention: durable project artifacts are committed; runtime evidence remains local unless explicitly forced.
+- Status: registered.

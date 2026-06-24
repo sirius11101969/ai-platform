@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+TS="$(date -u +%Y%m%dT%H%M%SZ)"
+COMMIT="$(git rev-parse HEAD)"
+SHORT="$(git rev-parse --short HEAD)"
+TAG="AS6_RESTORE_${SHORT}"
+STAGE="V219D"
+NEXT="V220"
+READINESS="99%"
+
+cat > docs/AS6_MASTER_CONTEXT.md <<MASTER
+# AS6 MASTER CONTEXT
+
+LAST_UPDATE_UTC=$TS
+LAST_COMPLETED_STAGE=$STAGE
+LAST_COMMIT=$COMMIT
+LAST_COMMIT_SHORT=$SHORT
+LAST_RESTORE_TAG=$TAG
+PROJECT_READINESS=$READINESS
+NEXT_RECOMMENDED_STAGE=$NEXT — Design System Foundation
+SAFE_TO_CHANGE=YES
+
+## Source Of Truth
+
+History and detailed state live in:
+
+- docs/AS6_PROJECT_STATE.md
+- ops/registry/as6-diagnostic-registry.md
+- ops/registry/as6-coverage-registry.md
+- ops/status/as6-detected-errors.md
+
+This file is a generated short summary only.
+
+## Restore
+
+Local rollback:
+
+ops/bin/as6-restore-to-tag $TAG
+
+Emergency stable baseline:
+
+ops/bin/as6-restore-to-tag AS6_RESTORE_0e422a9
+
+## New Chat Start
+
+Продолжаем AS6. Прочитай docs/AS6_MASTER_CONTEXT.md, docs/AS6_HANDOFF.md, docs/AS6_CODEX_PROMPT.md. Источник истории: docs/AS6_PROJECT_STATE.md. Используй LAST_COMPLETED_STAGE, LAST_COMMIT и LAST_RESTORE_TAG из верхних полей.
+MASTER
+
+cat > docs/AS6_HANDOFF.md <<HANDOFF
+# AS6 HANDOFF
+
+LAST_UPDATE_UTC=$TS
+LAST_COMPLETED_STAGE=$STAGE
+LAST_COMMIT=$COMMIT
+LAST_COMMIT_SHORT=$SHORT
+LAST_RESTORE_TAG=$TAG
+PROJECT_READINESS=$READINESS
+NEXT_RECOMMENDED_STAGE=$NEXT — Design System Foundation
+SAFE_TO_CHANGE=YES
+
+## Continue From
+
+- Stage: $STAGE
+- Commit: $SHORT
+- Restore: $TAG
+- Readiness: $READINESS
+
+## Rule
+
+Do not read old restore tags from historical sections.
+Use only top-level fields in this file.
+HANDOFF
+
+cat > docs/AS6_CODEX_PROMPT.md <<CODEX
+# AS6 CODEX PROMPT
+
+Продолжаем AS6.
+
+Read first:
+1. docs/AS6_MASTER_CONTEXT.md
+2. docs/AS6_HANDOFF.md
+3. docs/AS6_PROJECT_STATE.md
+
+Current:
+- Stage: $STAGE
+- Commit: $COMMIT
+- Short: $SHORT
+- Restore tag: $TAG
+- Readiness: $READINESS
+- Next: $NEXT — Design System Foundation
+
+Rules:
+- AS6_PROJECT_STATE.md stores history.
+- MASTER/HANDOFF/CODEX are generated summaries.
+- Do not duplicate historical restore tags in summary files.
+- Every AS6 patch ends with ops/bin/as6-finish or explicit final context sync.
+CODEX
+
+echo "AS6_CONTEXT_SUMMARY_SYNCED=$TS"
