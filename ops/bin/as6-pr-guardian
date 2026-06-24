@@ -53,7 +53,7 @@ run_check "git diff check" "" git diff --check
 run_check "secret scan" "SECRET_SCAN_RESULT=OK" ./ops/bin/as6-pre-commit-secret-scan
 run_check "command center diagnostic" "COMMAND_CENTER_RESULT=OK" ./ops/bin/as6-diagnose-command-center
 run_check "ui merge gate" "UI_AUDIT_RESULT=OK" ./ops/bin/as6-ui-merge-gate
-run_check "frontend docker build" "" docker compose build nginx
+run_check "frontend docker build" "" docker compose build --no-cache nginx
 
 if [ "$failures" -eq 0 ]; then
   verdict="SAFE_TO_MERGE"

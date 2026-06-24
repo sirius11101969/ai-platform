@@ -1080,3 +1080,8 @@ Governed and registered.
 - Class: INTERMEDIATE_COMMIT_CONTEXT_LEAK
 - Root cause: new chat saw intermediate commit/tag instead of final HEAD/tag.
 - Fix: V219B adds explicit final context sync command.
+
+## 20260624T082440Z detected-error
+- Class: DOCKER_PACKAGE_LAYER_CACHE_STALE
+- Root cause: Guardian Docker build could reuse stale package*.json layer and fail npm ci despite local lock containing vendor dependencies.
+- Fix: V219C enforces --no-cache build and validates npm ci locally.

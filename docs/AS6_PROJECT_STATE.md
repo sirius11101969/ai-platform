@@ -3677,3 +3677,10 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Added ops/bin/as6-final-context-sync.
 - Enforced one restore tag across MASTER/HANDOFF/CODEX.
 - Readiness after: 99%.
+
+## 20260624T082440Z AS6 V219C Frontend Build Integrity
+- Root cause: CI/Docker Guardian used stale package-lock or cached package layer.
+- Verified frontend/package-lock contains framer-motion and react-router-dom vendor dependencies.
+- Enforced docker compose build --no-cache nginx in AS6 Guardian.
+- Added diagnostic: ops/bin/as6-diagnose-frontend-build-integrity-v219c.
+- Readiness after: 99%.

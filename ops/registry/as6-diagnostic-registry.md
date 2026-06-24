@@ -2642,3 +2642,12 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Failure classes: FINAL_CONTEXT_SYNC_MISSING, FINAL_CONTEXT_TAG_DRIFT, INTERMEDIATE_COMMIT_CONTEXT_LEAK
 - Check: one restore tag in MASTER/HANDOFF/CODEX
 - Check: restore tag equality across MASTER/HANDOFF/CODEX
+
+## 20260624T082440Z frontend-build-integrity-v219c
+- Diagnostic: ops/bin/as6-diagnose-frontend-build-integrity-v219c
+- Failure classes: FRONTEND_PACKAGE_LOCK_STALE_IN_CI, DOCKER_PACKAGE_LAYER_CACHE_STALE, NPM_CI_VENDOR_DEPENDENCY_DRIFT
+- Check: framer-motion exists in package-lock
+- Check: react-router-dom exists in package-lock
+- Check: npm ci PASS
+- Check: npm run build PASS
+- Check: Guardian uses docker compose build --no-cache nginx

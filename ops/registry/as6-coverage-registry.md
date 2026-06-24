@@ -2171,3 +2171,6 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 
 ## 20260624T065700Z final-context-sync coverage
 - Files: ops/bin/as6-final-context-sync, ops/bin/as6-diagnose-final-context-sync-v219b, docs/AS6_MASTER_CONTEXT.md, docs/AS6_HANDOFF.md, docs/AS6_CODEX_PROMPT.md
+
+## 20260624T082440Z frontend build integrity coverage
+- Files: frontend/package.json, frontend/package-lock.json, frontend/vendor/framer-motion, frontend/vendor/react-router-dom, ops/bin/as6-pr-guardian, ops/bin/as6-diagnose-frontend-build-integrity-v219c

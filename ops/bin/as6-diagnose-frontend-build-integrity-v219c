@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=frontend-build-integrity-v219c"
+test -f frontend/package.json
+test -f frontend/package-lock.json
+grep -q '"framer-motion": "file:./vendor/framer-motion"' frontend/package.json
+grep -q '"react-router-dom": "file:./vendor/react-router-dom"' frontend/package.json
+grep -q '"node_modules/framer-motion"' frontend/package-lock.json
+grep -q '"node_modules/react-router-dom"' frontend/package-lock.json
+grep -q 'docker compose build --no-cache nginx' ops/bin/as6-pr-guardian
+cd frontend
+npm ci
+npm run build
+cd ..
+echo "AS6_FRONTEND_BUILD_INTEGRITY_V219C=PASS"

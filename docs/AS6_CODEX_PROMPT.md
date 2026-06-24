@@ -17,9 +17,9 @@
 - Каждый патч завершается только через ops/bin/as6-finish.
 - После каждого finish новый чат должен видеть один и тот же LAST_COMMIT и LAST_RESTORE_TAG во всех трёх документах.
 
-Текущий commit: 0b8ccd511dce288f678021251bf829bf88d59851
-Текущий short commit: 0b8ccd5
+Текущий commit: 728308fc68ca5bf4c664d8ec54b33bb551da5bd3
+Текущий short commit: 728308f
 Текущий stage: V219A
 Следующий stage: V219
 Readiness: 99%
-Restore tag: AS6_RESTORE_0b8ccd5
+Restore tag: AS6_RESTORE_728308f
