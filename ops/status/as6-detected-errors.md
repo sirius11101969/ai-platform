@@ -1065,3 +1065,8 @@ Governed and registered.
 - Class: FINAL_CONTEXT_COMMIT_STALE
 - Root cause: new chat saw the intermediate V218B commit instead of final post-refresh commit.
 - Fix: V218C adds final self-refresh and amend before push.
+
+## 20260624T034733Z detected-error
+- Class: MASTER_HANDOFF_CODEX_COMMIT_DIVERGENCE
+- Root cause: new chat saw different commit/tag values in MASTER, HANDOFF and CODEX.
+- Fix: V218D enforces one source of truth across all three files.

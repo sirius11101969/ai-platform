@@ -2162,3 +2162,6 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 
 ## 20260624T030734Z Final context self-refresh coverage
 - Files: ops/bin/as6-finish, ops/bin/as6-diagnose-final-context-self-refresh-v218c, docs/AS6_MASTER_CONTEXT.md, docs/AS6_HANDOFF.md, docs/AS6_CODEX_PROMPT.md
+
+## 20260624T034733Z Context consistency coverage
+- Files: ops/bin/as6-update-handoff, docs/AS6_MASTER_CONTEXT.md, docs/AS6_HANDOFF.md, docs/AS6_CODEX_PROMPT.md, ops/bin/as6-diagnose-context-consistency-v218d

@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=context-consistency-v218d"
+test -f docs/AS6_MASTER_CONTEXT.md
+test -f docs/AS6_HANDOFF.md
+test -f docs/AS6_CODEX_PROMPT.md
+
+MASTER_COMMIT="$(grep -E '^LAST_COMMIT=' docs/AS6_MASTER_CONTEXT.md | head -1 | cut -d= -f2-)"
+HANDOFF_COMMIT="$(grep -E '^LAST_COMMIT=' docs/AS6_HANDOFF.md | head -1 | cut -d= -f2-)"
+CODEX_COMMIT="$(grep -E '^Текущий commit:' docs/AS6_CODEX_PROMPT.md | head -1 | sed 's/^Текущий commit: //')"
+
+MASTER_TAG="$(grep -E '^LAST_RESTORE_TAG=' docs/AS6_MASTER_CONTEXT.md | head -1 | cut -d= -f2-)"
+HANDOFF_TAG="$(grep -E '^LAST_RESTORE_TAG=' docs/AS6_HANDOFF.md | head -1 | cut -d= -f2-)"
+CODEX_TAG="$(grep -E '^Restore tag:' docs/AS6_CODEX_PROMPT.md | head -1 | sed 's/^Restore tag: //')"
+
+test "$MASTER_COMMIT" = "$HANDOFF_COMMIT"
+test "$MASTER_COMMIT" = "$CODEX_COMMIT"
+test "$MASTER_TAG" = "$HANDOFF_TAG"
+test "$MASTER_TAG" = "$CODEX_TAG"
+
+grep -q "V218D" docs/AS6_MASTER_CONTEXT.md
+grep -q "V218D" docs/AS6_HANDOFF.md
+grep -q "V218D" docs/AS6_CODEX_PROMPT.md
+
+echo "AS6_CONTEXT_CONSISTENCY_V218D=PASS"

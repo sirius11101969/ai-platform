@@ -1,17 +1,17 @@
 # AS6 MASTER CONTEXT
 
-LAST_UPDATE_UTC=20260624T030737Z
+LAST_UPDATE_UTC=20260624T034736Z
 CURRENT_BRANCH=main
-LAST_COMMIT=0131203549dc3fbe52cbac858c2e266143a35663
-LAST_COMMIT_SHORT=0131203
-LAST_COMMIT_MESSAGE=ops: add final AS6 context self-refresh v218c
-LAST_COMPLETED_STAGE=V218C
-CURRENT_STAGE=V218C
-NEXT_RECOMMENDED_STAGE=V218 — Design System Foundation
+LAST_COMMIT=ba35f8a2eee6670576d50529e86379a42b14d506
+LAST_COMMIT_SHORT=ba35f8a
+LAST_COMMIT_MESSAGE=docs: refresh AS6 context after finish
+LAST_COMPLETED_STAGE=V218D
+CURRENT_STAGE=V218D
+NEXT_RECOMMENDED_STAGE=V219 — Design System Foundation
 PROJECT_READINESS=99%
-LAST_RESTORE_TAG=AS6_RESTORE_0131203
+LAST_RESTORE_TAG=AS6_RESTORE_ba35f8a
 ACTIVE_WORKSTREAM=AS6 platform stabilization, UI restore safety, Command Center production quality
-CURRENT_PRIORITY=Keep project context fresh for new chats and prevent stale handoff recovery
+CURRENT_PRIORITY=Design System Foundation after verified context consistency
 CURRENT_ROOT_CAUSE=none
 SAFE_TO_CHANGE=YES
 
@@ -38,15 +38,18 @@ SAFE_TO_CHANGE=YES
 - V214: PR Lifecycle Cleanup — PASS
 - V215: Command Center UI Quality — PASS
 - V216: UI Restore Policy — PASS
-- V217: Master Context Freshness Enforcement — PASS
+- V217B: Master Context Freshness Repair — PASS
+- V218B: Post-Commit Context Refresh — PASS
+- V218C: Final Context Self-Refresh — PASS
+- V218D: Context Consistency Repair — PASS
 
 ## Restore Safety
-- Latest restore tag: AS6_RESTORE_3698281
-- Local restore command: ops/bin/as6-restore-to-tag AS6_RESTORE_3698281
-- Remote restore command: CONFIRM_AS6_RESTORE=YES ops/bin/as6-restore-to-tag AS6_RESTORE_3698281 --push
+- Latest restore tag: AS6_RESTORE_ba35f8a
+- Local restore command: ops/bin/as6-restore-to-tag AS6_RESTORE_ba35f8a
+- Remote restore command: CONFIRM_AS6_RESTORE=YES ops/bin/as6-restore-to-tag AS6_RESTORE_ba35f8a --push
 
 ## Mandatory New Chat Start
-Продолжаем AS6. Прочитай docs/AS6_MASTER_CONTEXT.md, docs/AS6_HANDOFF.md и docs/AS6_CODEX_PROMPT.md из GitHub репозитория sirius11101969/ai-platform. Продолжай с LAST_COMPLETED_STAGE и не используй старые этапы, если LAST_COMMIT отличается.
+Продолжаем AS6. Прочитай docs/AS6_MASTER_CONTEXT.md, docs/AS6_HANDOFF.md и docs/AS6_CODEX_PROMPT.md из GitHub репозитория sirius11101969/ai-platform. Источник истины: LAST_COMPLETED_STAGE, LAST_COMMIT, LAST_RESTORE_TAG должны совпадать во всех трёх файлах.
 
 ## Mandatory Workflow
 Diagnostics → Root Cause → Structure → Plan → Change → Re-Diagnostics → Diagnostic Artifacts → Checks → Controls → Failure Classes → AEC Rules → GitHub → Diagnostic Registry → Coverage Registry → Governance → State → Detected Errors → Automation → Validation → Commit → Push → Restore Tag.

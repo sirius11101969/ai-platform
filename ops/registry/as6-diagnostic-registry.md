@@ -2622,3 +2622,10 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Check: as6-finish rewrites final LAST_COMMIT
 - Check: as6-finish rewrites final LAST_RESTORE_TAG
 - Check: as6-finish amends final context before push
+
+## 20260624T034733Z context-consistency-v218d
+- Diagnostic: ops/bin/as6-diagnose-context-consistency-v218d
+- Failure classes: MASTER_HANDOFF_CODEX_COMMIT_DIVERGENCE, MASTER_HANDOFF_CODEX_RESTORE_TAG_DIVERGENCE, CONTEXT_STALE_SECTION_DRIFT
+- Check: MASTER/HANDOFF/CODEX commit equality
+- Check: MASTER/HANDOFF/CODEX restore tag equality
+- Check: V218D present in all context documents

@@ -3659,3 +3659,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Updated ops/bin/as6-finish to self-refresh context fields and amend final commit before push.
 - Added diagnostic: ops/bin/as6-diagnose-final-context-self-refresh-v218c.
 - Readiness after: 99%.
+
+## 20260624T034733Z AS6 V218D Context Consistency Repair
+- Root cause: AS6_MASTER_CONTEXT, AS6_HANDOFF and AS6_CODEX_PROMPT contained divergent commit/tag fields after V218C.
+- Updated ops/bin/as6-update-handoff to rewrite all three files from one runtime source of truth.
+- Added diagnostic: ops/bin/as6-diagnose-context-consistency-v218d.
+- Readiness after: 99%.
