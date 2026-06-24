@@ -3665,3 +3665,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Updated ops/bin/as6-update-handoff to rewrite all three files from one runtime source of truth.
 - Added diagnostic: ops/bin/as6-diagnose-context-consistency-v218d.
 - Readiness after: 99%.
+
+## 20260624T050230Z AS6 V219A Context Restore Tag Drift Cleanup
+- Root cause: stale AS6_RESTORE tags remained in lower context sections after final self-refresh.
+- Updated ops/bin/as6-update-handoff to rewrite all three context files with exactly one restore tag each.
+- Added diagnostic: ops/bin/as6-diagnose-context-restore-tag-drift-v219a.
+- Readiness after: 99%.

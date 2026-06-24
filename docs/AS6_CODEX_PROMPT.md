@@ -12,13 +12,14 @@
 
 Правило свежести:
 - LAST_COMPLETED_STAGE, LAST_COMMIT и LAST_RESTORE_TAG должны совпадать в AS6_MASTER_CONTEXT, AS6_HANDOFF и AS6_CODEX_PROMPT.
+- В каждом из трёх context-документов допустим только один уникальный AS6_RESTORE tag.
 - Если другой документ показывает более старый этап или другой commit/tag, считать его stale и обновить через ops/bin/as6-update-handoff.
 - Каждый патч завершается только через ops/bin/as6-finish.
 - После каждого finish новый чат должен видеть один и тот же LAST_COMMIT и LAST_RESTORE_TAG во всех трёх документах.
 
-Текущий commit: d789f5b3c5b323ebc8a6983983b41aef4a3ccbf8
-Текущий short commit: d789f5b
-Текущий stage: V218D
+Текущий commit: ad828ace0f14b484a142b0c2cb69e27de3577da9
+Текущий short commit: ad828ac
+Текущий stage: V219A
 Следующий stage: V219
 Readiness: 99%
-Restore tag: AS6_RESTORE_1fe32eb
+Restore tag: AS6_RESTORE_ad828ac

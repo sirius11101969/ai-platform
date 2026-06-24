@@ -1070,3 +1070,8 @@ Governed and registered.
 - Class: MASTER_HANDOFF_CODEX_COMMIT_DIVERGENCE
 - Root cause: new chat saw different commit/tag values in MASTER, HANDOFF and CODEX.
 - Fix: V218D enforces one source of truth across all three files.
+
+## 20260624T050230Z detected-error
+- Class: CONTEXT_STALE_RESTORE_TAG_SECTION
+- Root cause: lower context sections retained old AS6_RESTORE tags after final context refresh.
+- Fix: V219A rewrites all context files so only one current restore tag exists per file.

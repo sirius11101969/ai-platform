@@ -2629,3 +2629,10 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Check: MASTER/HANDOFF/CODEX commit equality
 - Check: MASTER/HANDOFF/CODEX restore tag equality
 - Check: V218D present in all context documents
+
+## 20260624T050230Z context-restore-tag-drift-v219a
+- Diagnostic: ops/bin/as6-diagnose-context-restore-tag-drift-v219a
+- Failure classes: CONTEXT_MULTIPLE_RESTORE_TAGS, CONTEXT_STALE_RESTORE_TAG_SECTION, MASTER_HANDOFF_CODEX_RESTORE_TAG_DIVERGENCE
+- Check: exactly one restore tag in each context document
+- Check: restore tag equality across MASTER/HANDOFF/CODEX
+- Check: V219A present in all context documents

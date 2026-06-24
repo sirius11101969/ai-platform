@@ -6,7 +6,7 @@ COMMIT="$(git rev-parse HEAD)"
 SHORT="$(git rev-parse --short HEAD)"
 BRANCH="$(git branch --show-current)"
 LAST_MSG="$(git log -1 --pretty=%s)"
-LAST_STAGE="V218D"
+LAST_STAGE="V219A"
 NEXT_STAGE="V219"
 READINESS="99%"
 RESTORE_TAG="AS6_RESTORE_${SHORT}"
@@ -27,7 +27,7 @@ NEXT_RECOMMENDED_STAGE=$NEXT_STAGE — Design System Foundation
 PROJECT_READINESS=$READINESS
 LAST_RESTORE_TAG=$RESTORE_TAG
 ACTIVE_WORKSTREAM=AS6 platform stabilization, UI restore safety, Command Center production quality
-CURRENT_PRIORITY=Design System Foundation after verified context consistency
+CURRENT_PRIORITY=Design System Foundation after context restore tag drift cleanup
 CURRENT_ROOT_CAUSE=none
 SAFE_TO_CHANGE=YES
 
@@ -58,6 +58,7 @@ SAFE_TO_CHANGE=YES
 - V218B: Post-Commit Context Refresh — PASS
 - V218C: Final Context Self-Refresh — PASS
 - V218D: Context Consistency Repair — PASS
+- V219A: Context Restore Tag Drift Cleanup — PASS
 
 ## Restore Safety
 - Latest restore tag: $RESTORE_TAG
@@ -65,7 +66,7 @@ SAFE_TO_CHANGE=YES
 - Remote restore command: CONFIRM_AS6_RESTORE=YES ops/bin/as6-restore-to-tag $RESTORE_TAG --push
 
 ## Mandatory New Chat Start
-Продолжаем AS6. Прочитай docs/AS6_MASTER_CONTEXT.md, docs/AS6_HANDOFF.md и docs/AS6_CODEX_PROMPT.md из GitHub репозитория sirius11101969/ai-platform. Источник истины: LAST_COMPLETED_STAGE, LAST_COMMIT, LAST_RESTORE_TAG должны совпадать во всех трёх файлах.
+Продолжаем AS6. Прочитай docs/AS6_MASTER_CONTEXT.md, docs/AS6_HANDOFF.md и docs/AS6_CODEX_PROMPT.md из GitHub репозитория sirius11101969/ai-platform. Источник истины: LAST_COMPLETED_STAGE, LAST_COMMIT, LAST_RESTORE_TAG должны совпадать во всех трёх файлах, и в каждом файле должен быть только один актуальный AS6_RESTORE tag.
 
 ## Mandatory Workflow
 Diagnostics → Root Cause → Structure → Plan → Change → Re-Diagnostics → Diagnostic Artifacts → Checks → Controls → Failure Classes → AEC Rules → GitHub → Diagnostic Registry → Coverage Registry → Governance → State → Detected Errors → Automation → Validation → Commit → Push → Restore Tag.
@@ -86,7 +87,7 @@ LAST_RESTORE_TAG=$RESTORE_TAG
 SAFE_TO_CHANGE=YES
 
 ## New Chat Instruction
-Продолжаем AS6. Сначала прочитай docs/AS6_MASTER_CONTEXT.md, затем docs/AS6_HANDOFF.md и docs/AS6_CODEX_PROMPT.md. Последний актуальный этап указан в LAST_COMPLETED_STAGE. Не откатывайся к V209B/V216/V218C, если здесь указан более новый этап.
+Продолжаем AS6. Сначала прочитай docs/AS6_MASTER_CONTEXT.md, затем docs/AS6_HANDOFF.md и docs/AS6_CODEX_PROMPT.md. Последний актуальный этап указан в LAST_COMPLETED_STAGE. Не откатывайся к V209B/V216/V218C/V218D, если здесь указан более новый этап.
 
 ## Current Known Good State
 - Production: HEALTHY
@@ -105,6 +106,7 @@ SAFE_TO_CHANGE=YES
 - V218B Post-Commit Context Refresh — PASS
 - V218C Final Context Self-Refresh — PASS
 - V218D Context Consistency Repair — PASS
+- V219A Context Restore Tag Drift Cleanup — PASS
 HANDOFF
 
 cat > docs/AS6_CODEX_PROMPT.md <<CODEX
@@ -122,6 +124,7 @@ cat > docs/AS6_CODEX_PROMPT.md <<CODEX
 
 Правило свежести:
 - LAST_COMPLETED_STAGE, LAST_COMMIT и LAST_RESTORE_TAG должны совпадать в AS6_MASTER_CONTEXT, AS6_HANDOFF и AS6_CODEX_PROMPT.
+- В каждом из трёх context-документов допустим только один уникальный AS6_RESTORE tag.
 - Если другой документ показывает более старый этап или другой commit/tag, считать его stale и обновить через ops/bin/as6-update-handoff.
 - Каждый патч завершается только через ops/bin/as6-finish.
 - После каждого finish новый чат должен видеть один и тот же LAST_COMMIT и LAST_RESTORE_TAG во всех трёх документах.

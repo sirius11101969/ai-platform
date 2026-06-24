@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=context-restore-tag-drift-v219a"
+
+test -f docs/AS6_MASTER_CONTEXT.md
+test -f docs/AS6_HANDOFF.md
+test -f docs/AS6_CODEX_PROMPT.md
+
+for f in docs/AS6_MASTER_CONTEXT.md docs/AS6_HANDOFF.md docs/AS6_CODEX_PROMPT.md; do
+  TAG_COUNT="$(grep -Eo 'AS6_RESTORE_[0-9a-f]+' "$f" | sort -u | wc -l | tr -d ' ')"
+  test "$TAG_COUNT" = "1"
+done
+
+MASTER_TAG="$(grep -Eo 'AS6_RESTORE_[0-9a-f]+' docs/AS6_MASTER_CONTEXT.md | sort -u)"
+HANDOFF_TAG="$(grep -Eo 'AS6_RESTORE_[0-9a-f]+' docs/AS6_HANDOFF.md | sort -u)"
+CODEX_TAG="$(grep -Eo 'AS6_RESTORE_[0-9a-f]+' docs/AS6_CODEX_PROMPT.md | sort -u)"
+
+test "$MASTER_TAG" = "$HANDOFF_TAG"
+test "$MASTER_TAG" = "$CODEX_TAG"
+
+grep -q "V219A" docs/AS6_MASTER_CONTEXT.md
+grep -q "V219A" docs/AS6_HANDOFF.md
+grep -q "V219A" docs/AS6_CODEX_PROMPT.md
+
+echo "AS6_CONTEXT_RESTORE_TAG_DRIFT_V219A=PASS"
