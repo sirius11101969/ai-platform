@@ -1050,3 +1050,8 @@ Governed and registered.
 - Class: UI_ROLLBACK_PATH_UNDEFINED
 - Root cause: previous Command Center UI drift could not be restored one-to-one from a registered UI restore point.
 - Fix: V216 introduced restore manifests, restore tags and safe rollback command.
+
+## 20260624T002252Z detected-error
+- Class: UPDATE_HANDOFF_RUNTIME_VARIABLE_EXPANSION_BUG
+- Root cause: generated update-handoff script expanded BRANCH before runtime.
+- Fix: V217B rewrote update-handoff with quoted runtime-safe script body.

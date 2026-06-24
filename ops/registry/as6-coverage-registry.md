@@ -2153,3 +2153,6 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 
 ## 20260623T230650Z UI restore policy coverage
 - Files: ops/bin/as6-create-restore-point, ops/bin/as6-restore-to-tag, ops/bin/as6-diagnose-ui-restore-policy-v216, ops/governance/as6-ui-restore-policy.md, ops/registry/as6-ui-restore-registry.md, ops/bin/as6-finish
+
+## 20260624T002252Z Master context freshness repair coverage
+- Files: ops/bin/as6-update-handoff, docs/AS6_MASTER_CONTEXT.md, docs/AS6_HANDOFF.md, docs/AS6_CODEX_PROMPT.md, ops/bin/as6-diagnose-master-context-freshness-v217

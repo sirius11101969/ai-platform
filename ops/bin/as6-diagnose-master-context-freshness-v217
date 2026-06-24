@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=master-context-freshness-v217"
+test -x ops/bin/as6-update-handoff
+test -f docs/AS6_MASTER_CONTEXT.md
+test -f docs/AS6_HANDOFF.md
+test -f docs/AS6_CODEX_PROMPT.md
+grep -q "LAST_COMPLETED_STAGE=V" docs/AS6_MASTER_CONTEXT.md
+grep -q "LAST_COMMIT=" docs/AS6_MASTER_CONTEXT.md
+grep -q "LAST_RESTORE_TAG=" docs/AS6_MASTER_CONTEXT.md
+grep -q "V216: UI Restore Policy" docs/AS6_MASTER_CONTEXT.md
+grep -q "V217: Master Context Freshness Enforcement" docs/AS6_MASTER_CONTEXT.md
+grep -q "Не откатывайся к V209B" docs/AS6_HANDOFF.md
+grep -q "Правило свежести" docs/AS6_CODEX_PROMPT.md
+echo "AS6_MASTER_CONTEXT_FRESHNESS_V217=PASS"

@@ -2601,3 +2601,10 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Check: restore command exists
 - Check: as6-finish creates restore point
 - Check: as6-finish pushes restore tag
+
+## 20260624T002252Z master-context-freshness-v217b
+- Diagnostic: ops/bin/as6-diagnose-master-context-freshness-v217
+- Failure classes: MASTER_CONTEXT_STALE_STAGE, HANDOFF_STALE_COMMIT, RESTORE_TAG_NOT_IN_HANDOFF, NEW_CHAT_READS_OLD_STAGE, MASTER_CONTEXT_TOP_SUMMARY_MISSING, UPDATE_HANDOFF_RUNTIME_VARIABLE_EXPANSION_BUG
+- Check: update-handoff is executable
+- Check: master context has fresh stage/commit/restore tag
+- Check: handoff blocks fallback to V209B

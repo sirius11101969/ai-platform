@@ -1,8 +1,22 @@
 # AS6 CODEX PROMPT
 
-Use this in Codex or a new AI coding session:
+Продолжаем AS6.
 
-Продолжаем AS6. Источник истины: docs/AS6_HANDOFF.md. Работай строго по AS6 Diagnostics First. Перед изменениями выполни диагностику, найди root cause, проверь структуру, добавь диагностические артефакты, checks, controls, failure classes, AEC rules, registry, coverage, governance, state, validation, commit и push. Всегда обновляй docs/AS6_HANDOFF.md через ops/bin/as6-update-handoff.
+Перед любым изменением обязательно прочитай:
+1. docs/AS6_MASTER_CONTEXT.md
+2. docs/AS6_HANDOFF.md
+3. docs/AS6_PROJECT_STATE.md
+4. ops/registry/as6-diagnostic-registry.md
+5. ops/registry/as6-coverage-registry.md
+6. ops/status/as6-detected-errors.md
 
-## Master Context Rule
-Before any work, read docs/AS6_MASTER_CONTEXT.md, docs/AS6_HANDOFF.md and docs/AS6_PROJECT_STATE.md.
+Правило свежести:
+- LAST_COMPLETED_STAGE из docs/AS6_MASTER_CONTEXT.md является источником истины.
+- Если другой документ показывает более старый этап, считать его stale и обновить через ops/bin/as6-update-handoff.
+- Каждый патч завершается только через ops/bin/as6-finish.
+
+Текущий commit: 0e422a9d7dc9b44929e37f1ae2dac7119ede1c60
+Текущий stage: V218
+Следующий stage: V218
+Readiness: 99%
+Restore tag: AS6_RESTORE_0e422a9

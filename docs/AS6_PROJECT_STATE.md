@@ -3641,3 +3641,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Updated ops/bin/as6-finish to create restore manifest and Git restore tag after every finish.
 - Added governance: ops/governance/as6-ui-restore-policy.md.
 - Readiness after: 99%.
+
+## 20260624T002252Z AS6 V217B Master Context Freshness Repair
+- Root cause: V217 script generated runtime variables too early and failed with BRANCH unbound variable.
+- Fixed ops/bin/as6-update-handoff with runtime-safe variable expansion.
+- Enforced fresh top-level master context, handoff and Codex prompt fields.
+- Readiness after: 99%.

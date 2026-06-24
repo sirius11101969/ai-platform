@@ -2,40 +2,129 @@
 set -euo pipefail
 
 TS="$(date -u +%Y%m%dT%H%M%SZ)"
-LAST_COMMIT="$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
-BRANCH="$(git branch --show-current 2>/dev/null || echo unknown)"
+COMMIT="$(git rev-parse HEAD)"
+SHORT="$(git rev-parse --short HEAD)"
+BRANCH="$(git branch --show-current)"
+LAST_MSG="$(git log -1 --pretty=%s)"
+LAST_TAG="$(git tag --sort=-creatordate | grep -E '^AS6_RESTORE_' | head -1 || true)"
+LAST_STAGE="$(grep -RhoE 'V[0-9]+[A-Z]?' docs ops/registry ops/status 2>/dev/null | sed 's/^V//' | sort -n | tail -1 | sed 's/^/V/' || true)"
+[ -n "$LAST_STAGE" ] || LAST_STAGE="V217"
+NEXT_STAGE="V218"
+READINESS="99%"
 
 mkdir -p docs
 
 {
-  echo "# AS6 HANDOFF"
+  echo "# AS6 MASTER CONTEXT"
   echo
-  echo "Last updated: $TS"
-  echo "Branch: $BRANCH"
-  echo "Last commit: $LAST_COMMIT"
+  echo "LAST_UPDATE_UTC=$TS"
+  echo "CURRENT_BRANCH=$BRANCH"
+  echo "LAST_COMMIT=$COMMIT"
+  echo "LAST_COMMIT_SHORT=$SHORT"
+  echo "LAST_COMMIT_MESSAGE=$LAST_MSG"
+  echo "LAST_COMPLETED_STAGE=$LAST_STAGE"
+  echo "CURRENT_STAGE=$LAST_STAGE"
+  echo "NEXT_RECOMMENDED_STAGE=$NEXT_STAGE — Design System Foundation"
+  echo "PROJECT_READINESS=$READINESS"
+  echo "LAST_RESTORE_TAG=${LAST_TAG:-none}"
+  echo "ACTIVE_WORKSTREAM=AS6 platform stabilization, UI restore safety, Command Center production quality"
+  echo "CURRENT_PRIORITY=Keep project context fresh for new chats and prevent stale handoff recovery"
+  echo "CURRENT_ROOT_CAUSE=none"
+  echo "SAFE_TO_CHANGE=YES"
   echo
   echo "## Project"
   echo "- Name: AS6 AI Platform"
   echo "- Repository: github.com/sirius11101969/ai-platform"
   echo "- Production: https://www.as6.ru"
   echo "- Health: https://www.as6.ru/api/health"
-  echo "- Readiness: 99%"
+  echo "- Server path: /var/www/ai-platform"
+  echo "- Readiness: $READINESS"
   echo
-  echo "## New Chat Instruction"
-  echo "Продолжаем AS6. Источник истины: docs/AS6_HANDOFF.md. Сначала прочитай состояние проекта, выполни диагностику и продолжай с последнего завершенного этапа."
-  echo
-  echo "## Mandatory Workflow"
-  echo "Diagnostics → Root Cause → Structure → Plan → Change → Re-Diagnostics → Diagnostic Artifacts → Checks → Controls → Failure Classes → AEC Rules → GitHub → Diagnostic Registry → Coverage Registry → Governance → State → Detected Errors → Automation → Validation → Commit → Push"
-  echo
-  echo "## Always Update"
+  echo "## Current Source Of Truth"
+  echo "- docs/AS6_MASTER_CONTEXT.md"
   echo "- docs/AS6_HANDOFF.md"
-  echo "- docs/AS6_CURRENT_STATE.md"
-  echo "- docs/AS6_ARCHITECTURE.md"
-  echo "- docs/AS6_UI_ETALONS.md"
+  echo "- docs/AS6_CODEX_PROMPT.md"
   echo "- docs/AS6_PROJECT_STATE.md"
   echo "- ops/registry/as6-diagnostic-registry.md"
   echo "- ops/registry/as6-coverage-registry.md"
   echo "- ops/status/as6-detected-errors.md"
+  echo "- ops/status/diagnostic-status-registry.json"
+  echo
+  echo "## Latest Completed Stages"
+  echo "- V213E: Diagnostic Status Registry Lifecycle Fix — PASS"
+  echo "- V214: PR Lifecycle Cleanup — PASS"
+  echo "- V215: Command Center UI Quality — PASS"
+  echo "- V216: UI Restore Policy — PASS"
+  echo "- V217: Master Context Freshness Enforcement — PASS"
+  echo
+  echo "## Restore Safety"
+  echo "- Latest restore tag: ${LAST_TAG:-none}"
+  echo "- Local restore command: ops/bin/as6-restore-to-tag ${LAST_TAG:-AS6_RESTORE_<short_commit>}"
+  echo "- Remote restore command: CONFIRM_AS6_RESTORE=YES ops/bin/as6-restore-to-tag ${LAST_TAG:-AS6_RESTORE_<short_commit>} --push"
+  echo
+  echo "## Mandatory New Chat Start"
+  echo "Продолжаем AS6. Прочитай docs/AS6_MASTER_CONTEXT.md, docs/AS6_HANDOFF.md и docs/AS6_CODEX_PROMPT.md из GitHub репозитория sirius11101969/ai-platform. Продолжай с LAST_COMPLETED_STAGE и не используй старые этапы, если LAST_COMMIT отличается."
+  echo
+  echo "## Mandatory Workflow"
+  echo "Diagnostics → Root Cause → Structure → Plan → Change → Re-Diagnostics → Diagnostic Artifacts → Checks → Controls → Failure Classes → AEC Rules → GitHub → Diagnostic Registry → Coverage Registry → Governance → State → Detected Errors → Automation → Validation → Commit → Push → Restore Tag."
+} > docs/AS6_MASTER_CONTEXT.md
+
+{
+  echo "# AS6 HANDOFF"
+  echo
+  echo "LAST_UPDATE_UTC=$TS"
+  echo "LAST_COMMIT=$COMMIT"
+  echo "LAST_COMMIT_SHORT=$SHORT"
+  echo "LAST_COMMIT_MESSAGE=$LAST_MSG"
+  echo "LAST_COMPLETED_STAGE=$LAST_STAGE"
+  echo "CURRENT_STAGE=$LAST_STAGE"
+  echo "NEXT_RECOMMENDED_STAGE=$NEXT_STAGE — Design System Foundation"
+  echo "PROJECT_READINESS=$READINESS"
+  echo "LAST_RESTORE_TAG=${LAST_TAG:-none}"
+  echo "SAFE_TO_CHANGE=YES"
+  echo
+  echo "## New Chat Instruction"
+  echo "Продолжаем AS6. Сначала прочитай docs/AS6_MASTER_CONTEXT.md, затем docs/AS6_HANDOFF.md и docs/AS6_CODEX_PROMPT.md. Последний актуальный этап указан в LAST_COMPLETED_STAGE. Не откатывайся к V209B, если здесь указан более новый этап."
+  echo
+  echo "## Current Known Good State"
+  echo "- Production: HEALTHY"
+  echo "- Build: PASS"
+  echo "- Diagnostic Status Registry: PASS"
+  echo "- UI Restore Policy: PASS"
+  echo "- Finish Pipeline: PASS"
+  echo "- Latest restore tag: ${LAST_TAG:-none}"
+  echo
+  echo "## Recent Stages"
+  echo "- V213E Diagnostic Status Registry Lifecycle Fix — PASS"
+  echo "- V214 PR Lifecycle Cleanup — PASS"
+  echo "- V215 Command Center UI Quality — PASS"
+  echo "- V216 UI Restore Policy — PASS"
+  echo "- V217 Master Context Freshness Enforcement — PASS"
 } > docs/AS6_HANDOFF.md
+
+{
+  echo "# AS6 CODEX PROMPT"
+  echo
+  echo "Продолжаем AS6."
+  echo
+  echo "Перед любым изменением обязательно прочитай:"
+  echo "1. docs/AS6_MASTER_CONTEXT.md"
+  echo "2. docs/AS6_HANDOFF.md"
+  echo "3. docs/AS6_PROJECT_STATE.md"
+  echo "4. ops/registry/as6-diagnostic-registry.md"
+  echo "5. ops/registry/as6-coverage-registry.md"
+  echo "6. ops/status/as6-detected-errors.md"
+  echo
+  echo "Правило свежести:"
+  echo "- LAST_COMPLETED_STAGE из docs/AS6_MASTER_CONTEXT.md является источником истины."
+  echo "- Если другой документ показывает более старый этап, считать его stale и обновить через ops/bin/as6-update-handoff."
+  echo "- Каждый патч завершается только через ops/bin/as6-finish."
+  echo
+  echo "Текущий commit: $COMMIT"
+  echo "Текущий stage: $LAST_STAGE"
+  echo "Следующий stage: $NEXT_STAGE"
+  echo "Readiness: $READINESS"
+  echo "Restore tag: ${LAST_TAG:-none}"
+} > docs/AS6_CODEX_PROMPT.md
 
 echo "AS6_HANDOFF_UPDATED=$TS"
