@@ -2,24 +2,23 @@
 
 Продолжаем AS6.
 
-Перед любым изменением обязательно прочитай:
+Read first:
 1. docs/AS6_MASTER_CONTEXT.md
 2. docs/AS6_HANDOFF.md
 3. docs/AS6_PROJECT_STATE.md
-4. ops/registry/as6-diagnostic-registry.md
-5. ops/registry/as6-coverage-registry.md
-6. ops/status/as6-detected-errors.md
 
-Правило свежести:
-- LAST_COMPLETED_STAGE, LAST_COMMIT и LAST_RESTORE_TAG должны совпадать в AS6_MASTER_CONTEXT, AS6_HANDOFF и AS6_CODEX_PROMPT.
-- В каждом из трёх context-документов допустим только один уникальный AS6_RESTORE tag.
-- Если другой документ показывает более старый этап или другой commit/tag, считать его stale и обновить через ops/bin/as6-update-handoff.
-- Каждый патч завершается только через ops/bin/as6-finish.
-- После каждого finish новый чат должен видеть один и тот же LAST_COMMIT и LAST_RESTORE_TAG во всех трёх документах.
+Current:
+- Stage: V219D
+- Commit: a462ee7397488a997a86bae132fc1dedd5bd2cd7
+- Short: a462ee7
+- Restore tag: AS6_RESTORE_a462ee7
+- Readiness: 99%
+- Next: V220 — Design System Foundation
 
-Текущий commit: 69a7a09cb6f12280f1602ce48e24f7bdb544ff4b
-Текущий short commit: 69a7a09
-Текущий stage: V219A
-Следующий stage: V219
-Readiness: 99%
-Restore tag: AS6_RESTORE_de5721e
+Rules:
+- AS6_PROJECT_STATE.md stores history.
+- MASTER/HANDOFF/CODEX are generated summaries.
+- Do not duplicate historical restore tags in summary files.
+- Every AS6 patch ends with ops/bin/as6-finish or explicit final context sync.
+
+Restore tag: AS6_RESTORE_a462ee7

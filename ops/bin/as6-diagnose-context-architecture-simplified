@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=context-architecture-simplified"
+
+test -x ops/bin/as6-sync-context-summary
+
+CURRENT_TAG="$(grep -E '^LAST_RESTORE_TAG=' docs/AS6_MASTER_CONTEXT.md | head -1 | cut -d= -f2-)"
+test -n "$CURRENT_TAG"
+
+for f in docs/AS6_MASTER_CONTEXT.md docs/AS6_HANDOFF.md docs/AS6_CODEX_PROMPT.md; do
+  test -f "$f"
+  grep -q "$CURRENT_TAG" "$f"
+  DRIFT="$(grep -Eo 'AS6_RESTORE_[0-9a-f]+' "$f" | sort -u | grep -v "$CURRENT_TAG" | grep -v 'AS6_RESTORE_0e422a9' || true)"
+  test -z "$DRIFT" || { echo "RESTORE_TAG_DRIFT_FAIL=$f:$DRIFT"; exit 1; }
+done
+
+M="$(grep -E '^LAST_RESTORE_TAG=' docs/AS6_MASTER_CONTEXT.md | head -1 | cut -d= -f2-)"
+H="$(grep -E '^LAST_RESTORE_TAG=' docs/AS6_HANDOFF.md | head -1 | cut -d= -f2-)"
+C="$(grep -E '^Restore tag:' docs/AS6_CODEX_PROMPT.md | head -1 | sed 's/^Restore tag: //')"
+
+test "$M" = "$H"
+test "$M" = "$C"
+
+echo "AS6_CONTEXT_ARCHITECTURE_SIMPLIFIED=PASS"
