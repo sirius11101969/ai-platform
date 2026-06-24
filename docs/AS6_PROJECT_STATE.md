@@ -3653,3 +3653,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Updated ops/bin/as6-finish to refresh context after commit/tag and create a second context-refresh commit when needed.
 - Added diagnostic: ops/bin/as6-diagnose-post-commit-context-refresh-v218b.
 - Readiness after: 99%.
+
+## 20260624T030734Z AS6 V218C Final Context Self-Refresh
+- Root cause: post-commit context refresh still recorded intermediate commit/tag instead of final HEAD.
+- Updated ops/bin/as6-finish to self-refresh context fields and amend final commit before push.
+- Added diagnostic: ops/bin/as6-diagnose-final-context-self-refresh-v218c.
+- Readiness after: 99%.

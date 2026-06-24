@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=final-context-self-refresh-v218c"
+test -x ops/bin/as6-finish
+grep -q "final context self-refresh marker" ops/bin/as6-finish
+grep -q "final self-refresh amend" ops/bin/as6-finish
+grep -q "git push origin main --force-with-lease" ops/bin/as6-finish
+grep -q "AS6_FINAL_COMMIT" ops/bin/as6-finish
+echo "AS6_FINAL_CONTEXT_SELF_REFRESH_V218C=PASS"

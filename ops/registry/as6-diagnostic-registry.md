@@ -2615,3 +2615,10 @@ File: ops/bin/as6-diagnose-crm-analytics-internal-panel-owner-v77
 - Check: as6-finish performs post-commit handoff refresh
 - Check: as6-finish can create post-commit context refresh commit
 - Check: as6-finish creates final restore tag
+
+## 20260624T030734Z final-context-self-refresh-v218c
+- Diagnostic: ops/bin/as6-diagnose-final-context-self-refresh-v218c
+- Failure classes: FINAL_CONTEXT_COMMIT_STALE, FINAL_RESTORE_TAG_STALE, POST_REFRESH_RECORDED_INTERMEDIATE_HEAD, FINAL_SELF_REFRESH_MISSING
+- Check: as6-finish rewrites final LAST_COMMIT
+- Check: as6-finish rewrites final LAST_RESTORE_TAG
+- Check: as6-finish amends final context before push

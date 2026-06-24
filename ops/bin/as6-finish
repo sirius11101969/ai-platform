@@ -27,14 +27,8 @@ fi
 echo "AS6_PHASE=Finish: git add"
 git add .
 
-echo "AS6_PHASE=Finish: commit"
+echo "AS6_PHASE=Finish: primary commit"
 git commit -m "$MSG" || true
-
-SHORT_SHA="$(git rev-parse --short HEAD)"
-TAG="AS6_RESTORE_${SHORT_SHA}"
-
-echo "AS6_PHASE=Finish: tag restore point $TAG"
-git tag -a -f "$TAG" -m "AS6 restore point: $MSG"
 
 echo "AS6_PHASE=Finish: post-commit handoff refresh"
 ops/bin/as6-update-handoff
@@ -45,20 +39,42 @@ if [ -x ops/bin/as6-update-diagnostic-status-registry ]; then
 fi
 
 if ! git diff --quiet -- docs/AS6_MASTER_CONTEXT.md docs/AS6_HANDOFF.md docs/AS6_CODEX_PROMPT.md ops/status/diagnostic-status-registry.json; then
-  echo "AS6_PHASE=Finish: post-commit context commit"
+  echo "AS6_PHASE=Finish: context commit"
   git add docs/AS6_MASTER_CONTEXT.md docs/AS6_HANDOFF.md docs/AS6_CODEX_PROMPT.md ops/status/diagnostic-status-registry.json
   git commit -m "docs: refresh AS6 context after finish"
 fi
 
-SHORT_SHA="$(git rev-parse --short HEAD)"
-TAG="AS6_RESTORE_${SHORT_SHA}"
+FINAL_COMMIT="$(git rev-parse HEAD)"
+FINAL_SHORT="$(git rev-parse --short HEAD)"
+FINAL_TAG="AS6_RESTORE_${FINAL_SHORT}"
 
-echo "AS6_PHASE=Finish: final restore tag $TAG"
-git tag -a -f "$TAG" -m "AS6 final restore point: $MSG"
+echo "AS6_PHASE=Finish: final context self-refresh marker"
+for f in docs/AS6_MASTER_CONTEXT.md docs/AS6_HANDOFF.md docs/AS6_CODEX_PROMPT.md; do
+  if [ -f "$f" ]; then
+    sed -i -E "s/^LAST_COMMIT=.*/LAST_COMMIT=${FINAL_COMMIT}/" "$f"
+    sed -i -E "s/^LAST_COMMIT_SHORT=.*/LAST_COMMIT_SHORT=${FINAL_SHORT}/" "$f"
+    sed -i -E "s/^LAST_RESTORE_TAG=.*/LAST_RESTORE_TAG=${FINAL_TAG}/" "$f"
+    sed -i -E "s/^Restore tag:.*/Restore tag: ${FINAL_TAG}/" "$f" || true
+  fi
+done
+
+if ! git diff --quiet -- docs/AS6_MASTER_CONTEXT.md docs/AS6_HANDOFF.md docs/AS6_CODEX_PROMPT.md; then
+  echo "AS6_PHASE=Finish: final self-refresh amend"
+  git add docs/AS6_MASTER_CONTEXT.md docs/AS6_HANDOFF.md docs/AS6_CODEX_PROMPT.md
+  git commit --amend --no-edit
+fi
+
+FINAL_COMMIT="$(git rev-parse HEAD)"
+FINAL_SHORT="$(git rev-parse --short HEAD)"
+FINAL_TAG="AS6_RESTORE_${FINAL_SHORT}"
+
+echo "AS6_PHASE=Finish: final restore tag $FINAL_TAG"
+git tag -a -f "$FINAL_TAG" -m "AS6 final restore point: $MSG"
 
 echo "AS6_PHASE=Finish: push"
-git push origin main
-git push origin "$TAG" --force
+git push origin main --force-with-lease
+git push origin "$FINAL_TAG" --force
 
-echo "AS6_RESTORE_TAG=$TAG"
+echo "AS6_RESTORE_TAG=$FINAL_TAG"
+echo "AS6_FINAL_COMMIT=$FINAL_COMMIT"
 echo "AS6_FINISH_DONE=PASS"
