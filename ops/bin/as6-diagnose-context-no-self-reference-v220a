@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "AS6_DIAGNOSTIC=context-no-self-reference-v220a"
+! grep -R "^LAST_COMMIT=" docs/AS6_MASTER_CONTEXT.md docs/AS6_HANDOFF.md docs/AS6_CODEX_PROMPT.md
+! grep -R "^LAST_RESTORE_TAG=" docs/AS6_MASTER_CONTEXT.md docs/AS6_HANDOFF.md docs/AS6_CODEX_PROMPT.md
+grep -q "Current commit: run" docs/AS6_MASTER_CONTEXT.md
+grep -q "Current restore tag: run" docs/AS6_MASTER_CONTEXT.md
+echo "AS6_CONTEXT_NO_SELF_REFERENCE_V220A=PASS"

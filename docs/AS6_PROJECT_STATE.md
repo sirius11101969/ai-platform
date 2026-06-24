@@ -3684,3 +3684,10 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Enforced docker compose build --no-cache nginx in AS6 Guardian.
 - Added diagnostic: ops/bin/as6-diagnose-frontend-build-integrity-v219c.
 - Readiness after: 99%.
+
+## 20260624T093104Z AS6 V220A Context No Self Reference
+- Root cause: Git commit hash cannot be reliably stored inside the same commit that changes the file.
+- Fix: MASTER/HANDOFF/CODEX no longer store LAST_COMMIT/LAST_RESTORE_TAG as source of truth.
+- Current commit is resolved from Git HEAD.
+- Restore tag is resolved from Git tags.
+- Readiness after: 99%.
