@@ -11,10 +11,11 @@ Rules:
 - Current commit is Git HEAD, not a markdown field.
 - Restore tag is resolved from Git tags, not duplicated in markdown history.
 - MASTER/HANDOFF/CODEX are short summaries only.
-- Continue with V220 — Design System Foundation.
+- Continue with V221 — Command Center Foundation Adoption.
 
-V220B Product Philosophy:
+V220 Design System Foundation:
 - Read docs/AS6_UX_BLUEPRINT.md and docs/AS6_DESIGN_PRINCIPLES.md before changing Command Center UX.
 - Preserve mission: AS6 — Ваш бизнес. Простыми словами.
-- Preserve promise: AS6 помогает принимать умные решения.
-- Preserve emotional KPI: Я понимаю ситуацию; Я знаю следующий шаг; У меня есть план; У меня есть решение; Сегодня будет хороший день.
+- Use frontend/src/styles/as6-design-system-foundation-v220.css as the governed foundation layer.
+- Keep frontend/src/utils/as6RuntimeTracer.js wired for design-system readiness evidence.
+- Validate with ops/bin/as6-diagnose-design-system-foundation-v220.
