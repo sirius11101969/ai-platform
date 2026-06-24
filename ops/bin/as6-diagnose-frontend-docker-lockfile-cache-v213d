@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+failures=0
+pass() { echo "PASS: $1"; }
+fail() { echo "FAIL: $1"; failures=$((failures + 1)); }
+
+if grep -q '"framer-motion"' frontend/package-lock.json; then
+  pass "frontend/package-lock.json contains framer-motion"
+else
+  echo "FAILURE_CLASS=CI_USED_STALE_PACKAGE_LOCK"
+  fail "frontend/package-lock.json is missing framer-motion"
+fi
+
+if grep -q '"react-router-dom"' frontend/package-lock.json; then
+  pass "frontend/package-lock.json contains react-router-dom"
+else
+  echo "FAILURE_CLASS=CI_USED_STALE_PACKAGE_LOCK"
+  fail "frontend/package-lock.json is missing react-router-dom"
+fi
+
+if grep -q '"framer-motion"' frontend/package.json; then
+  pass "frontend/package.json contains framer-motion"
+else
+  echo "FAILURE_CLASS=FRONTEND_LOCKFILE_SYNC_NOT_VERIFIED_IN_CI"
+  fail "frontend/package.json is missing framer-motion"
+fi
+
+if grep -q '"react-router-dom"' frontend/package.json; then
+  pass "frontend/package.json contains react-router-dom"
+else
+  echo "FAILURE_CLASS=FRONTEND_LOCKFILE_SYNC_NOT_VERIFIED_IN_CI"
+  fail "frontend/package.json is missing react-router-dom"
+fi
+
+if grep -qE 'docker compose build --no-cache nginx|as6-diagnose-frontend-docker-lockfile-cache-v213d' ops/bin/as6-pr-guardian; then
+  pass "AS6 Guardian Docker build uses --no-cache or validates lock before docker build"
+else
+  echo "FAILURE_CLASS=DOCKER_BUILD_CACHE_STALE_PACKAGE_JSON"
+  fail "AS6 Guardian Docker build can reuse stale package metadata cache"
+fi
+
+if [ "$failures" -eq 0 ]; then
+  echo "FRONTEND_DOCKER_LOCKFILE_CACHE_RESULT=PASS"
+else
+  echo "FRONTEND_DOCKER_LOCKFILE_CACHE_RESULT=FAIL"
+  exit 1
+fi
