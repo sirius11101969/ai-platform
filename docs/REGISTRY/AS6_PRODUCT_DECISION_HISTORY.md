@@ -9,3 +9,10 @@
 - Reason: V222.1B identified first-experience complexity as the first confirmed product risk.
 - Product Result: clearer user-value explanation and clearer primary CTA outcome.
 - Engineering Result: isolated frontend copy change, no architecture change.
+
+## V222.3 First Experience Effect Review
+- Decision: close V222.2 as statically effective, but not fully user-validated.
+- Reason: first-screen copy now contains clearer value language and technical labels are removed.
+- Product Result: first screen clarity improvement retained.
+- Engineering Result: no product code change; effect-review artifacts added.
+- Remaining Issue: post-auth first destination still requires diagnostic review.

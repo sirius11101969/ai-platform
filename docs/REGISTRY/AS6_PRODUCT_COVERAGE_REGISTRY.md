@@ -14,3 +14,7 @@
 ## V222.2 First Experience Coverage
 - Covered: Landing hero copy, primary CTA wording, secondary CTA wording, proof labels.
 - Not changed: routes, auth, backend, CRM logic, AI modules, Governance.
+
+## V222.3 First Experience Effect Coverage
+- Covered: Landing hero retained value copy, CTA clarity, technical label leakage regression.
+- Not covered: real user comprehension analytics, post-auth destination clarity.

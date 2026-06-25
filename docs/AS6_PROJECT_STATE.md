@@ -3730,3 +3730,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Result: Landing first experience made clearer with one minimal copy-only product change.
 - Restore Tag: AS6_RESTORE_V222_2_FIRST_EXPERIENCE_CLARITY_REPAIR_20260625T165516Z
 - Next Stage: V222.3 re-diagnostic and effect review.
+
+## V222.3 First Experience Effect Review
+- Status: PASS
+- Result: V222.2 static effect confirmed; real user validation remains pending.
+- Restore Tag: AS6_RESTORE_V222_3_FIRST_EXPERIENCE_EFFECT_REVIEW_20260625T170200Z
+- Next Stage: V222.4 post-auth first destination diagnostic.

@@ -21,3 +21,10 @@
 - Runtime: runtime/as6-v222-2-first-experience-clarity
 - Status: ops/status/as6-v222-2-first-experience-clarity-status.md
 - Failure Classes: PRODUCT_FIRST_EXPERIENCE_CLARITY_GAP, PRODUCT_TECHNICAL_PROOF_LABEL_LEAK, PRODUCT_COPY_REPLACEMENT_PATTERN_GAP
+
+## V222.3 First Experience Effect Review
+- Artifact: docs/PRODUCT/AS6_FIRST_EXPERIENCE_EFFECT_REVIEW_V222_3.md
+- Stage Passport: docs/STAGE_PASSPORTS/V222_3_FIRST_EXPERIENCE_EFFECT_REVIEW.md
+- Runtime: runtime/as6-v222-3-first-experience-effect-review
+- Status: ops/status/as6-v222-3-first-experience-effect-review-status.md
+- Failure Classes: PRODUCT_EFFECT_UNMEASURED_BY_USERS, PRODUCT_POST_AUTH_DESTINATION_AMBIGUITY_PENDING
