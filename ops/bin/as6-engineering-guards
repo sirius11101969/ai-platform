@@ -9,4 +9,5 @@ ops/bin/as6-knowledge-guard
 ops/bin/as6-product-alignment-guard
 ops/bin/as6-first-product-screen-validation
 ops/bin/as6-ui-quality-guard
+ops/bin/as6-production-health-guard runtime/as6-v221-production-health/health.guard.json
 echo 'AS6_ENGINEERING_GUARDS=PASS'

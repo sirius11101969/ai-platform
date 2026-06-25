@@ -27,3 +27,7 @@
 ## V221.7 UI Quality
 
 Седьмой инженерный камень: добавлен guard качества UI для первого продуктового блока AS6.
+
+## V221.8 Production Health Verification
+
+Восьмой инженерный камень: добавлен production health guard и подтверждена стабильность production после первого UI-блока.

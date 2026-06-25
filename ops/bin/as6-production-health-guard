@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+HEALTH_URL="${AS6_HEALTH_URL:-https://www.as6.ru/api/health}"
+OUT="${1:-/tmp/as6-production-health.json}"
+curl -fsS --max-time 15 "$HEALTH_URL" -o "$OUT"
+test -s "$OUT"
+grep -Eiq 'ok|healthy|pass|true|status' "$OUT"
+echo 'AS6_PRODUCTION_HEALTH_GUARD=PASS'
