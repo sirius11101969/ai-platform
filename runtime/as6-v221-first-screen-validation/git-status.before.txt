@@ -1,0 +1,7 @@
+ M docs/BOOKS/AS6_BUILDERS_LOG.md
+ M docs/MATURITY/AS6_MATURITY_INDEX.md
+ M ops/bin/as6-engineering-guards
+?? docs/REGISTRY/AS6_FIRST_SCREEN_VALIDATION_REGISTRY.md
+?? docs/STAGE_PASSPORTS/V221_6_FIRST_SCREEN_VALIDATION.md
+?? ops/bin/as6-first-product-screen-validation
+?? ops/status/as6-v221-6-first-screen-validation-status.md

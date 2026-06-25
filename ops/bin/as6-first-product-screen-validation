@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+COMPONENT='frontend/src/components/as6/AS6FirstDawnPanel.jsx'
+PAGE='frontend/src/pages/CRMPage.jsx'
+test -f "$COMPONENT"
+test -f "$PAGE"
+grep -q "export default function AS6FirstDawnPanel" "$COMPONENT"
+grep -q "AS6 · Первый Рассвет" "$COMPONENT"
+grep -q "Сегодня AS6 помогает понять ситуацию" "$COMPONENT"
+grep -q "AS6FirstDawnPanel" "$PAGE"
+grep -q "<AS6FirstDawnPanel />" "$PAGE"
+echo 'AS6_FIRST_PRODUCT_SCREEN_VALIDATION=PASS'

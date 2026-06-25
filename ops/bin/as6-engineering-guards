@@ -7,4 +7,5 @@ ops/bin/as6-restore-guard
 ops/bin/as6-repository-structure-guard
 ops/bin/as6-knowledge-guard
 ops/bin/as6-product-alignment-guard
+ops/bin/as6-first-product-screen-validation
 echo 'AS6_ENGINEERING_GUARDS=PASS'
