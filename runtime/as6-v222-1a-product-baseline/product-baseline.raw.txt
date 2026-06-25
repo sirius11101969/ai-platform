@@ -1,0 +1,1111 @@
+HEAD=5d03b5091e6989f1f7396351eb7cf5dfd1365267
+RESTORE_TAGS=AS6_RESTORE_V221_9_RELEASE_PASSPORT_20260625T152933Z
+
+== ROOT ==
+.
+./backend
+./backend/assets
+./backend/migrations
+./backend/src
+./backend/tests
+./database
+./db
+./db/migrations
+./db/seeds
+./docs
+./docs/architecture
+./docs/BOOKS
+./docs/CANON
+./docs/coverage
+./docs/CULTURE
+./docs/diagnostics
+./docs/FOUNDATION
+./docs/governance
+./docs/GUARDIANS
+./docs/KNOWLEDGE
+./docs/MATURITY
+./docs/operations
+./docs/presentation
+./docs/PRODUCT
+./docs/RECOVERY
+./docs/REGISTRY
+./docs/RELEASES
+./docs/STAGE_PASSPORTS
+./frontend
+./frontend/dist
+./frontend/node_modules
+./frontend/public
+./frontend/src
+./frontend/tests
+./frontend/vendor
+./.git
+./.git/branches
+./.git/hooks
+./.github
+./.github/agent-tasks
+./.github/codex
+./.github/workflows
+./.git/info
+./.git/logs
+./.git/objects
+./.git/refs
+./ops
+./ops/backups
+./ops/bin
+./ops/catalog
+./ops/governance
+./ops/lib
+./ops/registry
+./ops/restore-points
+./ops/runtime-tracers
+./ops/state
+./ops/status
+./ops/systemd
+./ops/validation
+./prompts
+./quarantine
+./quarantine/ui-backups
+./runtime
+./runtime/architecture-evolution
+./runtime/as6
+./runtime/as6-asset-optimization-v46
+./runtime/as6-black-screen
+./runtime/as6-black-screen-react-import-v57
+./runtime/as6-branding-webp-v60
+./runtime/as6-code-splitting-v47
+./runtime/as6-command-center-final-v45
+./runtime/as6-command-center-jsx-v31
+./runtime/as6-command-center-production-validation
+./runtime/as6-command-center-v129-diagnostics-first-repair-20260622T001553Z
+./runtime/as6-command-center-v130-restore-etalon-20260622T002129Z
+./runtime/as6-command-center-v27
+./runtime/as6-command-center-v28
+./runtime/as6-command-center-visual-parity
+./runtime/as6-command-center-visual-parity-no-node
+./runtime/as6-copilot-button-v41
+./runtime/as6-copilot-cleanup-v37
+./runtime/as6-copilot-css-v42
+./runtime/as6-copilot-fragment-v44
+./runtime/as6-copilot-inline-v40
+./runtime/as6-copilot-style-v38
+./runtime/as6-crm-analytics-internal-panel-owner-v77
+./runtime/as6-crm-analytics-panel-v71
+./runtime/as6-crm-analytics-panel-v72
+./runtime/as6-crm-analytics-panel-v74
+./runtime/as6-crm-analytics-panel-v75
+./runtime/as6-crm-analytics-remove-legacy-v78
+./runtime/as6-crm-analytics-render-owner-v76
+./runtime/as6-crm-decomposition-v68
+./runtime/as6-crm-decomposition-v69
+./runtime/as6-crm-panel-extraction-v70
+./runtime/as6-crm-route-chunk-v56
+./runtime/as6-css-brace-v43
+./runtime/as6-css-bundle-v52
+./runtime/as6-css-consolidation-v66
+./runtime/as6-css-dead-selectors-v65
+./runtime/as6-css-ownership-v61
+./runtime/as6-diagnostic-debt-v73-safe
+./runtime/as6-docker-overlay-v30
+./runtime/as6-executive-module-icon-v50
+./runtime/as6-frontend-budgets-v58
+./runtime/as6-frontend-bundle-v35
+./runtime/as6-frontend-bundle-v35-fix
+./runtime/as6-frontend-dead-code-v64
+./runtime/as6-frontend-heavy-v55
+./runtime/as6-global-dead-code-v53
+./runtime/as6-image-assets-v59
+./runtime/as6-logo-optimization-v51
+./runtime/as6-page-decomposition-v67
+./runtime/as6-post-deploy-health-v33
+./runtime/as6-quick-action-icon-v49
+./runtime/as6-rendered-asset-path-v48
+./runtime/as6-repair-crm-analytics-panel-v74
+./runtime/as6-repair-crm-analytics-visible-bridge-v75
+./runtime/as6-repair-v74-diag-script-secret-scan
+./runtime/as6-repair-v74-docs-secret-scan
+./runtime/as6-repair-v74-staged-diff-reset
+./runtime/as6-repair-v76-terminal-paste-integrity
+./runtime/as6-restore-command-center-v54
+./runtime/as6-robot-asset-v36
+./runtime/as6-rollback-v114c
+./runtime/as6-rollback-v114-full
+./runtime/as6-rollback-v114-safe
+./runtime/as6-route-splitting-v63
+./runtime/as6-route-splitting-v63-1
+./runtime/as6-route-splitting-v63-2
+./runtime/as6-route-splitting-v63-3
+./runtime/as6-route-splitting-v63-4
+./runtime/as6-selector-ownership-v62
+./runtime/as6-strip-final-20260622T083036Z
+./runtime/as6-v100
+./runtime/as6-v101
+./runtime/as6-v102
+./runtime/as6-v103
+./runtime/as6-v104
+./runtime/as6-v105
+./runtime/as6-v106
+./runtime/as6-v107
+./runtime/as6-v108
+./runtime/as6-v109
+./runtime/as6-v110
+./runtime/as6-v111
+./runtime/as6-v112
+./runtime/as6-v112b
+./runtime/as6-v113
+./runtime/as6-v113b
+./runtime/as6-v114
+./runtime/as6-v114b
+./runtime/as6-v114c
+./runtime/as6-v115
+./runtime/as6-v115b
+./runtime/as6-v115c
+./runtime/as6-v115d
+./runtime/as6-v115e
+./runtime/as6-v115f
+./runtime/as6-v115-repair
+./runtime/as6-v116
+./runtime/as6-v116b
+./runtime/as6-v116-real-css
+./runtime/as6-v117
+./runtime/as6-v118
+./runtime/as6-v118b
+./runtime/as6-v119
+./runtime/as6-v120
+./runtime/as6-v121
+./runtime/as6-v122
+./runtime/as6-v122b
+./runtime/as6-v123
+./runtime/as6-v123b
+./runtime/as6-v123c
+./runtime/as6-v124
+./runtime/as6-v124b
+./runtime/as6-v125
+./runtime/as6-v125b
+./runtime/as6-v126
+./runtime/as6-v127
+./runtime/as6-v128
+./runtime/as6-v129
+./runtime/as6-v131-finish-etalon-restore-20260622T002731Z
+./runtime/as6-v132-build-deploy-etalon-20260622T002934Z
+./runtime/as6-v133-install-build-deploy-etalon-20260622T003142Z
+./runtime/as6-v134-real-visual-etalon-lock-20260622T003632Z
+./runtime/as6-v135-fix-copilot-etalon-20260622T004134Z
+./runtime/as6-v136-remove-bottom-neon-line-20260622T004822Z
+./runtime/as6-v137-remove-real-horizontal-strip-20260622T005124Z
+./runtime/as6-v138-kill-fixed-neon-strip-20260622T005440Z
+./runtime/as6-v139-remove-overlay-roots-from-dom-20260622T005944Z
+./runtime/as6-v140-rewrite-guard-remove-overlays-20260622T010245Z
+./runtime/as6-v141-disable-overlay-component-sources-20260622T010732Z
+./runtime/as6-v142-disable-remaining-status-overlays-20260622T011136Z
+./runtime/as6-v143-repair-disable-status-overlays-20260622T011405Z
+./runtime/as6-v144-remove-overlay-imports-from-app-20260622T011700Z
+./runtime/as6-v145-purge-all-overlay-creators-20260622T012008Z
+./runtime/as6-v146b-fix-clean-etalon-diag-20260622T012800Z
+./runtime/as6-v146-clean-command-center-etalon-20260622T012539Z
+./runtime/as6-v147-final-etalon-strip-cleanup-20260622T013806Z
+./runtime/as6-v148-direct-command-center-etalon-20260622T014627Z
+./runtime/as6-v149-final-command-center-etalon-20260622T020805Z
+./runtime/as6-v150-fix-copilot-etalon-20260622T022700Z
+./runtime/as6-v151-remove-bottom-strip-final-20260622T023653Z
+./runtime/as6-v153-20260622T024410Z
+./runtime/as6-v154-hide-horizontal-scrollbar-20260622T024736Z
+./runtime/as6-v155-remove-real-overlay-strip-20260622T025353Z
+./runtime/as6-v156-remove-parent-overlay-strip-20260622T025900Z
+./runtime/as6-v157-purge-bad-strip-fixes-20260622T030447Z
+./runtime/as6-v158-diagnose-real-strip-source-20260622T031110Z
+./runtime/as6-v159-fix-pipeline-card-strip-20260622T031753Z
+./runtime/as6-v160-pixel-pick-strip-source-20260622T032621Z
+./runtime/as6-v161-fix-html-level-strip-20260622T035624Z
+./runtime/as6-v162-remove-command-second-grid-strip-20260622T040410Z
+./runtime/as6-v163-remove-second-grid-child-borders-20260622T041954Z
+./runtime/as6-v164-clip-second-row-overflow-strip-20260622T042635Z
+./runtime/as6-v165-strip-crossing-diagnostics-20260622T043702Z
+./runtime/as6-v166-fix-second-row-card-head-strip-20260622T045350Z
+./runtime/as6-v167-final-second-row-header-strip-20260622T050147Z
+./runtime/as6-v168-remove-real-second-row-edge-line-20260622T051205Z
+./runtime/as6-v169-purge-all-strip-patches-20260622T051443Z
+./runtime/as6-v170b-remove-v149-fixed-mask-20260622T052516Z
+./runtime/as6-v170-remove-v149-fixed-bottom-mask-20260622T052125Z
+./runtime/as6-v171-remove-source-edge-line-20260622T053239Z
+./runtime/as6-v172-remove-real-progress-strip-20260622T053950Z
+./runtime/as6-v173-remove-sticky-quick-actions-strip-20260622T061254Z
+./runtime/as6-v174b-professional-strip-fix-20260622T064326Z
+./runtime/as6-v175b-fix-revenue-chart-line-20260622T071747Z
+./runtime/as6-v175-fix-revenue-chart-overflow-line-20260622T070850Z
+./runtime/as6-v176-remove-real-horizontal-scrollbar-layer-20260622T073257Z
+./runtime/as6-v177b-revenue-dynamics-etalon-repair-20260622T090933Z
+./runtime/as6-v177c-20260622T091756Z
+./runtime/as6-v177-revenue-dynamics-etalon-20260622T085834Z
+./runtime/as6-v178b-early-no-strip-guard-20260622T093056Z
+./runtime/as6-v178-early-no-strip-guard-20260622T092633Z
+./runtime/as6-v179-purge-flash-source-20260622T100111Z
+./runtime/as6-v180b-cache-flash-diagnostics-20260622T101335Z
+./runtime/as6-v180-disable-index-cache-flash-20260622T100755Z
+./runtime/as6-v181-20260622T102016Z
+./runtime/as6-v182-command-center-route-flash-20260622T102917Z
+./runtime/as6-v183-first-paint-flash-tracer-20260622T104209Z
+./runtime/as6-v184-reference-guard-flash-20260622T110801Z
+./runtime/as6-v185-first-paint-neutralize-20260622T112233Z
+./runtime/as6-v186b-active-nginx-location-20260622T113609Z
+./runtime/as6-v186-persistent-nginx-no-store-20260622T113009Z
+./runtime/as6-v187-find-real-edge-server-20260622T114157Z
+./runtime/as6-v188-remove-body-has-flash-layers-20260622T115432Z
+./runtime/as6-v189-route-stable-paint-20260622T121514Z
+./runtime/as6-v190-command-center-bootlock-20260622T122326Z
+./runtime/as6-v191-strong-page-bootlock-20260622T123520Z
+./runtime/as6-v192-deep-command-center-flash-20260622T124631Z
+./runtime/as6-v193-command-center-unlock-after-mount-20260622T125839Z
+./runtime/as6-v194-purge-first-paint-layers-20260622T130549Z
+./runtime/as6-v195-deep-flash-source-finder-20260622T134005Z
+./runtime/as6-v196-eager-command-center-route-20260622T135931Z
+./runtime/as6-v197b-html-route-stable-appshell-20260622T142530Z
+./runtime/as6-v197-real-appshell-route-class-20260622T141626Z
+./runtime/as6-v198-critical-first-paint-background-20260622T144605Z
+./runtime/as6-v199-command-center-stable-runtime-render-20260622T151823Z
+./runtime/as6-v200-command-center-sidebar-etalon-20260622T154747Z
+./runtime/as6-v201-command-center-sidebar-final-etalon-20260622T210438Z
+./runtime/as6-v202-sidebar-single-source-20260622T222438Z
+./runtime/as6-v203-real-sidebar-force-20260622T224402Z
+./runtime/as6-v204-final-real-sidebar-etalon-20260622T232241Z
+./runtime/as6-v205-compact-sidebar-exact-etalon-20260622T235248Z
+./runtime/as6-v206-sidebar-annotated-fix-20260623T003529Z
+./runtime/as6-v207-sidebar-final-alignment-20260623T005837Z
+./runtime/as6-v208-revenue-chart-full-height-20260623T010945Z
+./runtime/as6-v209-handoff-docs-20260623T014555Z
+./runtime/as6-v213e-diagnostic-status-lifecycle-20260623T142220Z
+./runtime/as6-v214-pr-lifecycle-cleanup-20260623T165211Z
+./runtime/as6-v215-command-center-ui-quality-20260623T220810Z
+./runtime/as6-v216-ui-restore-policy-20260623T230650Z
+./runtime/as6-v217b-master-context-freshness-repair-20260624T002252Z
+./runtime/as6-v217-master-context-freshness-20260623T235745Z
+./runtime/as6-v218b-post-commit-context-refresh-20260624T004358Z
+./runtime/as6-v218c-final-context-self-refresh-20260624T030734Z
+./runtime/as6-v218d-context-consistency-20260624T034733Z
+./runtime/as6-v219a-context-restore-tag-drift-20260624T050230Z
+./runtime/as6-v220b-philosophy-ux-blueprint-20260624T165013Z
+./runtime/as6-v221-engineering-guards
+./runtime/as6-v221-first-product-screen
+./runtime/as6-v221-first-screen-validation
+./runtime/as6-v221-foundation
+./runtime/as6-v221-knowledge
+./runtime/as6-v221-product-alignment
+./runtime/as6-v221-production-health
+./runtime/as6-v221-release-passport
+./runtime/as6-v221-ui-quality
+./runtime/as6-v222-1a-product-baseline
+./runtime/as6-v39-cleanup
+./runtime/as6-v39-final
+./runtime/as6-v39-repair
+./runtime/as6-v66-safe
+./runtime/as6-v73-precommit-false-positive-repair
+./runtime/as6-v78
+./runtime/as6-v78b
+./runtime/as6-v78c
+./runtime/as6-v78d
+./runtime/as6-v79
+./runtime/as6-v80
+./runtime/as6-v80b
+./runtime/as6-v81
+./runtime/as6-v81b
+./runtime/as6-v82
+./runtime/as6-v83
+./runtime/as6-v83b
+./runtime/as6-v83c
+./runtime/as6-v83d
+./runtime/as6-v84
+./runtime/as6-v84b
+./runtime/as6-v85
+./runtime/as6-v85b
+./runtime/as6-v86
+./runtime/as6-v87
+./runtime/as6-v88
+./runtime/as6-v89
+./runtime/as6-v90
+./runtime/as6-v91
+./runtime/as6-v92
+./runtime/as6-v93
+./runtime/as6-v94
+./runtime/as6-v95
+./runtime/as6-v96
+./runtime/as6-v97
+./runtime/as6-v98
+./runtime/as6-v99
+./runtime/as6-visual-parity-v34
+./runtime/autonomy-score
+./runtime/change-approval
+./runtime/change-controller
+./runtime/change-impact
+./runtime/controller-wrapper-repair
+./runtime/coverage-contract-repair
+./runtime/deployment-controller
+./runtime/diagnostic-backups
+./runtime/diagnostic-flow
+./runtime/diagnostic-status-registry-rebuild
+./runtime/evidence-correlation
+./runtime/final-fail-repair
+./runtime/governance-compliance
+./runtime/health
+./runtime/incident-auto-close
+./runtime/incident-commander
+./runtime/incident-governance
+./runtime/incident-lifecycle
+./runtime/incidents
+./runtime/kb-incident-cascade
+./runtime/knowledge-base-controller
+./runtime/post-merge
+./runtime/pre-reboot-forensics
+./runtime/production-policy
+./runtime/quarantine
+./runtime/reboot-forensics
+./runtime/repair-controller
+./runtime/restore-drill
+./runtime/rollback-verification
+./runtime/root-cause
+./runtime/root-cause-deduplication
+./runtime/root-cause-governance-aggregator-consistency
+./runtime/root-cause-governance-auto-sync
+./runtime/root-cause-governance-bulk
+./runtime/root-cause-governance-completion
+./runtime/root-cause-governance-final-reconciliation
+./runtime/root-cause-governance-sync-authority
+./runtime/root-cause-registry-auto-sync
+./runtime/runtime-binary-artifact-repair
+./runtime/unified-autonomy-orchestrator
+./runtime/validation-controller
+./.secret-quarantine
+./var
+./var/cache
+
+== FRONTEND ROUTES ==
+frontend/src/App.jsx:125:          <Route path="/" element={<LandingPage />} />
+frontend/src/App.jsx:126:          <Route path="/signup" element={<SignupPage />} />
+frontend/src/App.jsx:127:          <Route path="/login" element={<LoginPage />} />
+frontend/src/App.jsx:128:          <Route path="/payment/success" element={<PaymentSuccessPage />} />
+frontend/src/App.jsx:129:          <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+frontend/src/App.jsx:130:          <Route path="/crm" element={<ProtectedRoute><CRMPage /></ProtectedRoute>} />
+frontend/src/App.jsx:131:          <Route path="/ai-workers" element={<ProtectedRoute><AiWorkersPage /></ProtectedRoute>} />
+frontend/src/App.jsx:132:          <Route path="/followups" element={<ProtectedRoute><FollowupsPage /></ProtectedRoute>} />
+frontend/src/App.jsx:133:          <Route path="/priority-inbox" element={<ProtectedRoute><PriorityInboxPage /></ProtectedRoute>} />
+frontend/src/App.jsx:134:          <Route path="/pipeline-copilot" element={<ProtectedRoute><PipelineCopilotPage /></ProtectedRoute>} />
+frontend/src/App.jsx:135:          <Route path="/ai-manager-dashboard" element={<ProtectedRoute><AiManagerDashboardPage /></ProtectedRoute>} />
+frontend/src/App.jsx:136:          <Route path="/ai-voice-outreach" element={<ProtectedRoute><AiVoiceOutreachPage /></ProtectedRoute>} />
+frontend/src/App.jsx:137:          <Route path="/ai-realtime-voice" element={<ProtectedRoute><AiRealtimeVoicePage /></ProtectedRoute>} />
+frontend/src/App.jsx:138:          <Route path="/ai-live-streaming" element={<ProtectedRoute><AiLiveRealtimeVoicePage /></ProtectedRoute>} />
+frontend/src/App.jsx:139:          <Route path="/ai-revenue-intelligence" element={<ProtectedRoute><AiRevenueIntelligencePage /></ProtectedRoute>} />
+frontend/src/App.jsx:140:          <Route path="/ai-revenue-engine" element={<ProtectedRoute><AiRevenueEnginePage /></ProtectedRoute>} />
+frontend/src/App.jsx:141:          <Route path="/ai-approval-center" element={<ProtectedRoute><AiApprovalCenterPage /></ProtectedRoute>} />
+frontend/src/App.jsx:142:          <Route path="/ai-execution-center" element={<ProtectedRoute><AiExecutionCenterPage /></ProtectedRoute>} />
+frontend/src/App.jsx:143:          <Route path="/ai-workforce-center" element={<ProtectedRoute><AiWorkforceCenterPage /></ProtectedRoute>} />
+frontend/src/App.jsx:144:          <Route path="/ai-executive-brain" element={<ProtectedRoute><AiExecutiveBrainPage /></ProtectedRoute>} />
+frontend/src/App.jsx:145:          <Route path="/ai-executive-dashboard" element={<ProtectedRoute><AiExecutiveUnifiedDashboardPage /></ProtectedRoute>} />
+frontend/src/App.jsx:146:          <Route path="/ai-company-simulation" element={<ProtectedRoute><AiCompanySimulationPage /></ProtectedRoute>} />
+frontend/src/App.jsx:147:          <Route path="/ai-strategic-planning" element={<ProtectedRoute><AiStrategicPlanningPage /></ProtectedRoute>} />
+frontend/src/App.jsx:148:          <Route path="/ai/strategic-planning" element={<ProtectedRoute><AiStrategicPlanningPage /></ProtectedRoute>} />
+frontend/src/App.jsx:149:          <Route path="/ai-enterprise-coordination" element={<ProtectedRoute><AiEnterpriseCoordinationPage /></ProtectedRoute>} />
+frontend/src/App.jsx:150:          <Route path="/ai/enterprise-coordination" element={<ProtectedRoute><AiEnterpriseCoordinationPage /></ProtectedRoute>} />
+frontend/src/App.jsx:151:          <Route path="/ai-organizational-memory" element={<ProtectedRoute><AiOrganizationalMemoryPage /></ProtectedRoute>} />
+frontend/src/App.jsx:152:          <Route path="/ai/organizational-memory" element={<ProtectedRoute><AiOrganizationalMemoryPage /></ProtectedRoute>} />
+frontend/src/App.jsx:153:          <Route path="/ai-system-health-center" element={<ProtectedRoute><AiSystemHealthCenterPage /></ProtectedRoute>} />
+frontend/src/App.jsx:154:          <Route path="/ai/system-health" element={<ProtectedRoute><AiSystemHealthCenterPage /></ProtectedRoute>} />
+frontend/src/App.jsx:155:          <Route path="/ai/revenue-engine" element={<ProtectedRoute><AiRevenueEnginePage /></ProtectedRoute>} />
+frontend/src/App.jsx:156:          <Route path="/ai/workforce" element={<ProtectedRoute><AiWorkforceCenterPage /></ProtectedRoute>} />
+frontend/src/App.jsx:157:          <Route path="/ai/approval-center" element={<ProtectedRoute><AiApprovalCenterPage /></ProtectedRoute>} />
+frontend/src/App.jsx:158:          <Route path="/ai-enterprise-command-center" element={<ProtectedRoute><AIEnterpriseCommandCenter /></ProtectedRoute>} />
+frontend/src/App.jsx:159:          <Route path="/command-center" element={<ProtectedRoute><CommandCenterPage /></ProtectedRoute>} />
+frontend/src/App.jsx:160:          <Route path="/dashboard/revenue" element={<ProtectedRoute><RevenueDashboardPage /></ProtectedRoute>} />
+frontend/src/App.jsx:161:          <Route path="*" element={<Navigate to="/" replace />} />
+
+== FRONTEND PAGES ==
+frontend/src/pages/AiApprovalCenterPage.jsx
+frontend/src/pages/AiCompanySimulationPage.jsx
+frontend/src/pages/AIEnterpriseCommandCenter.jsx
+frontend/src/pages/AiEnterpriseCoordinationPage.jsx
+frontend/src/pages/AiExecutionCenterPage.jsx
+frontend/src/pages/AiExecutiveBrainPage.jsx
+frontend/src/pages/AiExecutiveUnifiedDashboardPage.jsx
+frontend/src/pages/AiLiveRealtimeVoicePage.jsx
+frontend/src/pages/AiManagerDashboardPage.jsx
+frontend/src/pages/AiOrganizationalMemoryPage.jsx
+frontend/src/pages/AiRealtimeVoicePage.jsx
+frontend/src/pages/AiRevenueEnginePage.jsx
+frontend/src/pages/AiRevenueIntelligencePage.jsx
+frontend/src/pages/AiStrategicPlanningPage.jsx
+frontend/src/pages/AiSystemHealthCenterPage.jsx
+frontend/src/pages/AiVoiceOutreachPage.jsx
+frontend/src/pages/AiWorkersPage.jsx
+frontend/src/pages/AiWorkforceCenterPage.jsx
+frontend/src/pages/AuthPages.jsx
+frontend/src/pages/CommandCenterPage.jsx
+frontend/src/pages/crm/CRMActionsPanel.jsx
+frontend/src/pages/crm/CRMAnalyticsPanel.jsx
+frontend/src/pages/crm/CRMFiltersPanel.jsx
+frontend/src/pages/crm/CRMKanbanPanel.jsx
+frontend/src/pages/crm/CRMPipelinePanel.jsx
+frontend/src/pages/CRMPage.jsx
+frontend/src/pages/DashboardPage.jsx
+frontend/src/pages/FollowupsPage.jsx
+frontend/src/pages/LandingPage.jsx
+frontend/src/pages/PaymentSuccessPage.jsx
+frontend/src/pages/PipelineCopilotPage.jsx
+frontend/src/pages/PriorityInboxPage.jsx
+frontend/src/pages/RevenueDashboardPage.jsx
+
+== FRONTEND COMPONENTS ==
+frontend/src/components/AppShell.jsx
+frontend/src/components/AS6AICopilotRail.jsx
+frontend/src/components/as6/AS6FirstDawnPanel.jsx
+frontend/src/components/AS6AutonomousOperationsTimeline.jsx
+frontend/src/components/AS6BackendConnectorStatus.jsx
+frontend/src/components/AS6CrmLiveDataStatus.jsx
+frontend/src/components/AS6DashboardLiveDataStatus.jsx
+frontend/src/components/AS6DirectPageRewriteFramework.jsx
+frontend/src/components/AS6ExecutiveCommandDashboard.jsx
+frontend/src/components/AS6ExecutiveControlTowerCompletion.jsx
+frontend/src/components/AS6GlobalCommandPalette.jsx
+frontend/src/components/AS6GlobalEventStream.jsx
+frontend/src/components/AS6GlobalHealthBar.jsx
+frontend/src/components/AS6LiveOperationalDataStatus.jsx
+frontend/src/components/AS6MissionControlLayoutEngine.jsx
+frontend/src/components/AS6MissionControlUI.jsx
+frontend/src/components/AS6PhysicalPageRefactorBridge.jsx
+frontend/src/components/AS6RealComponentConsolidation.jsx
+frontend/src/components/AS6RealPageConversionEngine.jsx
+frontend/src/components/AS6RevenueCrmFusionStatus.jsx
+frontend/src/components/AS6UnifiedDataSurface.jsx
+frontend/src/components/AS6UnifiedPageShell.jsx
+frontend/src/components/avatars/CopilotAsset.jsx
+frontend/src/components/branding/AS6Logo.jsx
+frontend/src/components/icons/TopbarIcons.jsx
+
+== CTA CANDIDATES ==
+frontend/src/pages/PipelineCopilotPage.jsx:51:function ActionButtons({ item = {}, ctas = {}, navigate, onCreateAction, busyActionKey }) {
+frontend/src/pages/PipelineCopilotPage.jsx:52:  const leadId = item.leadId || item.id || ctas.leadId;
+frontend/src/pages/PipelineCopilotPage.jsx:54:  const aiWorkersRoute = actionId ? `/ai-workers?actionId=${encodeURIComponent(actionId)}` : leadId ? `/ai-workers?leadId=${encodeURIComponent(leadId)}` : (ctas.openAiWorkers || "/ai-workers");
+frontend/src/pages/PipelineCopilotPage.jsx:55:  const buttons = [
+frontend/src/pages/PipelineCopilotPage.jsx:56:    { label: "Open Lead", route: ctas.openLead || (leadId ? `/crm?leadId=${encodeURIComponent(leadId)}` : "/crm"), log: "[pipeline-copilot] open lead requested" },
+frontend/src/pages/PipelineCopilotPage.jsx:57:    { label: "Open AI Workers", route: ctas.openAiWorkers || aiWorkersRoute },
+frontend/src/pages/PipelineCopilotPage.jsx:58:    { label: "Open Priority Inbox", route: ctas.openPriorityInbox || (leadId ? `/priority-inbox?leadId=${encodeURIComponent(leadId)}` : "/priority-inbox") },
+frontend/src/pages/PipelineCopilotPage.jsx:63:      {buttons.map((button) => (
+frontend/src/pages/PipelineCopilotPage.jsx:64:        <button key={button.label} type="button" onClick={() => { if (button.log) console.info(button.log, { leadId }); navigate(button.route); }}>{button.label}</button>
+frontend/src/pages/PipelineCopilotPage.jsx:66:      <button type="button" onClick={() => onCreateAction?.(item, "followup")} title={followupCooldownReason} disabled={!leadId || Boolean(followupCooldownReason) || busyActionKey === `${leadId}:followup`}>
+frontend/src/pages/PipelineCopilotPage.jsx:68:      </button>
+frontend/src/pages/PipelineCopilotPage.jsx:69:      <button type="button" onClick={() => onCreateAction?.(item, "meeting")} disabled={!leadId || busyActionKey === `${leadId}:meeting`}>
+frontend/src/pages/PipelineCopilotPage.jsx:71:      </button>
+frontend/src/pages/PipelineCopilotPage.jsx:156:      <button className="pipeline-show-all" type="button" onClick={() => setExpandedSections((current) => ({ ...current, [sectionKey]: !expanded }))}>
+frontend/src/pages/PipelineCopilotPage.jsx:158:      </button>
+frontend/src/pages/PipelineCopilotPage.jsx:168:        action={<button className="ghost-button" type="button" onClick={loadCockpit} disabled={loading}>{loading ? "Обновляем…" : "Обновить"}</button>}
+frontend/src/pages/PipelineCopilotPage.jsx:218:              <ActionButtons item={action} ctas={action.ctas} navigate={navigate} onCreateAction={handleCreatePipelineAction} busyActionKey={busyActionKey} />
+frontend/src/pages/PipelineCopilotPage.jsx:239:                <ActionButtons item={lead} ctas={lead.ctas} navigate={navigate} onCreateAction={handleCreatePipelineAction} busyActionKey={busyActionKey} />
+frontend/src/pages/PipelineCopilotPage.jsx:259:                <ActionButtons item={lead} ctas={lead.ctas} navigate={navigate} onCreateAction={handleCreatePipelineAction} busyActionKey={busyActionKey} />
+frontend/src/pages/PipelineCopilotPage.jsx:278:                <ActionButtons item={meeting} ctas={meeting.ctas} navigate={navigate} onCreateAction={handleCreatePipelineAction} busyActionKey={busyActionKey} />
+frontend/src/pages/PipelineCopilotPage.jsx:295:                <ActionButtons item={item} ctas={item.ctas} navigate={navigate} onCreateAction={handleCreatePipelineAction} busyActionKey={busyActionKey} />
+frontend/src/pages/PipelineCopilotPage.jsx:312:                <ActionButtons item={item} ctas={item.ctas} navigate={navigate} onCreateAction={handleCreatePipelineAction} busyActionKey={busyActionKey} />
+frontend/src/pages/AiVoiceOutreachPage.jsx:150:            <button className="btn primary" type="button" onClick={handleCreateMockCall} disabled={creating || !selectedLeadId}>{creating ? "Starting…" : "Start Mock Voice Call"}</button>
+frontend/src/pages/AiVoiceOutreachPage.jsx:178:          <button className="ghost-button compact" type="button" onClick={loadVoiceWorkspace} disabled={loading}>Refresh</button>
+frontend/src/pages/AiVoiceOutreachPage.jsx:200:                  <tr key={call.id} onClick={() => openCallDetail(call)} className="clickable-row">
+frontend/src/pages/AiVoiceOutreachPage.jsx:201:                    <td><button type="button" className="link-button" onClick={(event) => { event.stopPropagation(); openCallDetail(call); }}>{call.leadName}</button></td>
+frontend/src/pages/AiVoiceOutreachPage.jsx:227:              <button className="modal-close" type="button" onClick={() => setDetailCall(null)} aria-label="Close">×</button>
+frontend/src/pages/AiEnterpriseCoordinationPage.jsx:5:export default function AiEnterpriseCoordinationPage(){const [runs,setRuns]=useState([]);const [sync,setSync]=useState([]);const [routes,setRoutes]=useState([]);const [conflicts,setConflicts]=useState([]);const [escalations,setEscalations]=useState([]);const load=async()=>{const [a,b,c,d,e]=await Promise.all([fetchAiEnterpriseRuns(),fetchAiEnterpriseSynchronization(),fetchAiEnterpriseRoutes(),fetchAiEnterpriseConflicts(),fetchAiEnterpriseEscalations()]);setRuns(a.runs||[]);setSync(b.synchronization||[]);setRoutes(c.routes||[]);setConflicts(d.conflicts||[]);setEscalations(e.escalations||[])};useEffect(()=>{load().catch(()=>{})},[]);const latest=runs[0]?.coordination_payload||{};return <div className='workforce-center'><PageHeading eyebrow='AI Enterprise Coordination' title='AI Enterprise Orchestration Engine (Coordination Only)' copy='Coordinates departments, initiatives, and dependencies with mandatory human approval.' action={<button className='btn primary compact' onClick={()=>runAiEnterpriseCoordination().then(load)}>Run coordination</button>} /><Panel><strong>Governance labels:</strong><div className='safety-pills'>{labels.map((l)=><span key={l}>{l}</span>)}</div></Panel><section className='workforce-grid'><Panel><h3>Enterprise Coordination Dashboard</h3><p>Coordination priority: {latest.departments?.[0]?.coordinationPriority||'n/a'}</p><p>Orchestration status: {latest.orchestration?.orchestrationStatus||'idle'}</p><p>Scaling readiness: {latest.scaling?.scalingReadiness||0}</p></Panel><Panel><h3>Department Synchronization</h3><p>Synchronization health: {sync[0]?.synchronization_payload?.synchronizationHealth||0}</p></Panel><Panel><h3>Initiative Routing</h3><p>Dependency pressure: {routes[0]?.route_payload?.dependencyPressure||0}</p></Panel><Panel><h3>Dependency Resolution</h3><p>{JSON.stringify(latest.dependencies||[])}</p></Panel><Panel><h3>Executive Escalations</h3><p>Escalation level: {escalations[0]?.escalation_level||'none'}</p></Panel><Panel><h3>Organizational Conflicts</h3><p>Conflict severity: {conflicts[0]?.severity||'low'}</p></Panel><Panel><h3>Scaling Coordination</h3><p>{JSON.stringify(latest.scaling||{})}</p></Panel><Panel><h3>Cross-Team Orchestration</h3><p>{JSON.stringify(latest.orchestration||{})}</p></Panel><Panel><h3>Coordination Memory</h3><p>Enterprise coordination memory is persisted for synchronization continuity.</p></Panel></section></div>}
+frontend/src/pages/AuthPages.jsx:66:        <button className="btn primary" type="submit" disabled={isSubmitting}>
+frontend/src/pages/AuthPages.jsx:68:        </button>
+frontend/src/pages/LandingPage.jsx:67:function LeadCaptureForm({ source = "landing_cta", compact = false }) {
+frontend/src/pages/LandingPage.jsx:128:      <button className="btn primary" type="submit" disabled={status === "sending"}>{status === "sending" ? "Отправляем…" : "Оставить заявку"}</button>
+frontend/src/pages/LandingPage.jsx:198:        <a href="#top" className="brand"><span>AI</span> Платформа продаж</a>
+frontend/src/pages/LandingPage.jsx:200:          <a href="#agents">Агенты</a>
+frontend/src/pages/LandingPage.jsx:201:          <a href="#workflow">CRM</a>
+frontend/src/pages/LandingPage.jsx:202:          <a href="#pricing">Тарифы</a>
+frontend/src/pages/LandingPage.jsx:205:  <a className="nav-cta" href="/login">Войти</a>
+frontend/src/pages/LandingPage.jsx:206:  <a className="nav-cta" href="https://t.me/" target="_blank" rel="noreferrer">Демо в Telegram</a>
+frontend/src/pages/LandingPage.jsx:219:            <a className="btn primary" href="#lead-form">Получить демо</a>
+frontend/src/pages/LandingPage.jsx:220:            <a className="btn secondary" href="#calculator">Рассчитать выручку</a>
+frontend/src/pages/LandingPage.jsx:344:            <button
+frontend/src/pages/LandingPage.jsx:345:type="button"
+frontend/src/pages/LandingPage.jsx:346:className="pricing-cta-btn"
+frontend/src/pages/LandingPage.jsx:347:onClick={() => startCheckout(plan)}
+frontend/src/pages/LandingPage.jsx:350:</button>
+frontend/src/pages/LandingPage.jsx:375:    <section className="final-cta">
+frontend/src/pages/LandingPage.jsx:376:      <motion.div className="cta-panel shell-glow" {...fadeUp}>
+frontend/src/pages/LandingPage.jsx:381:          <a className="btn primary" href="#lead-form">Получить демо</a>
+frontend/src/pages/LandingPage.jsx:382:          <a className="btn secondary" href="#pricing">Сравнить тарифы</a>
+frontend/src/pages/LandingPage.jsx:384:        <LeadCaptureForm source="final_cta" compact />
+frontend/src/pages/FollowupsPage.jsx:191:        action={<button className="btn primary" type="button" onClick={handleScan} disabled={scanBusy}>{scanBusy ? "Сканируем…" : "Запустить scan"}</button>}
+frontend/src/pages/FollowupsPage.jsx:236:                  <button
+frontend/src/pages/FollowupsPage.jsx:237:                    className="ghost-button compact followup-approve-button"
+frontend/src/pages/FollowupsPage.jsx:238:                    type="button"
+frontend/src/pages/FollowupsPage.jsx:239:                    onClick={() => handleAction(item, "approve")}
+frontend/src/pages/FollowupsPage.jsx:244:                  </button>
+frontend/src/pages/FollowupsPage.jsx:246:                <button
+frontend/src/pages/FollowupsPage.jsx:247:                  className="ghost-button compact followup-edit-button"
+frontend/src/pages/FollowupsPage.jsx:248:                  type="button"
+frontend/src/pages/FollowupsPage.jsx:249:                  onClick={() => handleEdit(item)}
+frontend/src/pages/FollowupsPage.jsx:254:                </button>
+frontend/src/pages/FollowupsPage.jsx:256:                  <button
+frontend/src/pages/FollowupsPage.jsx:257:                    className="ghost-button compact danger-action followup-reject-button"
+frontend/src/pages/FollowupsPage.jsx:258:                    type="button"
+frontend/src/pages/FollowupsPage.jsx:259:                    onClick={() => handleAction(item, "reject")}
+frontend/src/pages/FollowupsPage.jsx:264:                  </button>
+frontend/src/pages/FollowupsPage.jsx:267:                  <button className="btn primary compact followup-send-button" type="button" onClick={() => handleAction(item, "send")} disabled={sendButtonDisabled} aria-busy={isSending}>
+frontend/src/pages/FollowupsPage.jsx:269:                  </button>
+frontend/src/pages/FollowupsPage.jsx:272:                <Link className="ghost-button compact" to={`/crm?lead=${item.leadId}`}>CRM</Link>
+frontend/src/pages/AiRevenueEnginePage.jsx:15:    <PageHeading eyebrow='AI Revenue Engine' title='Autonomous AI Revenue Engine (Recommendation-Only)' copy='Analyzes revenue workflow performance and suggests optimization strategies with human governance.' action={<button className='btn primary compact' onClick={() => runAiRevenueEngineAnalysis().then(load)}>Run analysis</button>} />
+frontend/src/pages/AiManagerDashboardPage.jsx:102:                    <button className="ai-manager-event-toggle" type="button" onClick={() => toggleGroup(itemKey)}>
+frontend/src/pages/AiManagerDashboardPage.jsx:104:                    </button>
+frontend/src/pages/AiManagerDashboardPage.jsx:164:              <button key={option.value} className={range === option.value ? "active" : ""} type="button" onClick={() => setRange(option.value)}>
+frontend/src/pages/AiManagerDashboardPage.jsx:166:              </button>
+frontend/src/pages/AiRealtimeVoicePage.jsx:163:          <button className="btn primary" type="button" onClick={handleStartSession} disabled={creating || !selectedLeadId}>{creating ? "Simulating…" : "Start Simulation"}</button>
+frontend/src/pages/AiRealtimeVoicePage.jsx:174:            <button className="ghost-button compact" type="button" onClick={loadWorkspace} disabled={loading}>Refresh</button>
+frontend/src/pages/AiRealtimeVoicePage.jsx:180:              <button key={session.id} type="button" className={`realtime-session-card ${activeSession?.id === session.id ? "active" : ""}`} onClick={() => openSession(session)}>
+frontend/src/pages/AiRealtimeVoicePage.jsx:185:              </button>
+frontend/src/pages/crm/CRMAnalyticsPanel.jsx:86:        <button className="btn primary compact" type="button" onClick={onRun} disabled={busy}>
+frontend/src/pages/crm/CRMAnalyticsPanel.jsx:88:        </button>
+frontend/src/pages/AiCompanySimulationPage.jsx:5:export default function AiCompanySimulationPage(){const [runs,setRuns]=useState([]);const [scenarios,setScenarios]=useState([]);const [results,setResults]=useState([]);const [risks,setRisks]=useState([]);const load=async()=>{const [a,b,c,d]=await Promise.all([fetchAiCompanySimulationRuns(),fetchAiCompanySimulationScenarios(),fetchAiCompanySimulationResults(),fetchAiCompanySimulationRisks()]);setRuns(a.runs||[]);setScenarios(b.scenarios||[]);setResults(c.results||[]);setRisks(d.risks||[])};useEffect(()=>{load().catch(()=>{})},[]);return <div className='workforce-center'><PageHeading eyebrow='AI Strategic Operating Simulator' title='AI Company Simulation (Recommendation-Only)' copy='Simulation-only strategic operating layer for growth, bottlenecks, revenue expansion, and workforce planning.' action={<button className='btn primary compact' onClick={()=>runAiCompanySimulation({baseline:{}}).then(load)}>Run simulation</button>} /><Panel><strong>Governance labels:</strong><div className='safety-pills'>{labels.map((l)=><span key={l}>{l}</span>)}</div></Panel><section className='workforce-grid'><Panel><h3>Strategic Simulation Dashboard</h3><p>Total runs: {runs.length}</p><p>Latest projected revenue delta: {results[0]?.result_payload?.projectedRevenueDelta||0}</p></Panel><Panel><h3>Growth Scenarios</h3>{scenarios.filter(x=>String(x.scenario_type).includes('growth')).map((x)=><p key={x.id}>{x.scenario_type}</p>)}</Panel><Panel><h3>Revenue Expansion Scenarios</h3>{scenarios.filter(x=>String(x.scenario_type).includes('revenue')).map((x)=><p key={x.id}>{x.scenario_type}</p>)}</Panel><Panel><h3>Workforce Load Simulation</h3>{scenarios.filter(x=>String(x.scenario_type).includes('workforce')).map((x)=><p key={x.id}>{x.scenario_type}</p>)}</Panel><Panel><h3>Bottleneck Forecast</h3>{scenarios.filter(x=>String(x.scenario_type).includes('bottleneck')).map((x)=><p key={x.id}>{x.scenario_type}</p>)}</Panel><Panel><h3>Department Stress Map</h3>{scenarios.filter(x=>String(x.scenario_type).includes('department')).map((x)=><p key={x.id}>{x.scenario_type}</p>)}</Panel><Panel><h3>Pipeline Collapse Risk</h3>{risks.filter(x=>String(x.risk_type).includes('pipeline')).map((x)=><p key={x.id}>{x.risk_type} · {x.severity}</p>)}</Panel><Panel><h3>Churn Risk Simulation</h3>{risks.filter(x=>String(x.risk_type).includes('churn')).map((x)=><p key={x.id}>{x.risk_type} · {x.severity}</p>)}</Panel><Panel><h3>Strategic What-If Simulator</h3>{scenarios.filter(x=>String(x.scenario_type).includes('what_if')).map((x)=><p key={x.id}>{x.scenario_type}</p>)}</Panel><Panel><h3>Simulation Memory</h3><p>Strategic simulation memory is retained for future scenario continuity.</p></Panel></section><section className='workforce-grid'><Panel><h3>Scenario Cards</h3>{scenarios.slice(0,12).map((s)=><p key={s.id}>{s.scenario_type} · impact:{s.scenario_payload?.projectedImpact} · confidence:{s.scenario_payload?.confidenceScore} · risk:{s.scenario_payload?.riskLevel} · action:{s.scenario_payload?.recommendedHumanAction} · horizon:{s.scenario_payload?.simulationHorizon}</p>)}</Panel></section></div>}
+frontend/src/pages/PriorityInboxPage.jsx:100:    console.log("[priority-inbox] action button clicked", { leadId: lead.leadId, actionType });
+frontend/src/pages/PriorityInboxPage.jsx:125:        action={<button className="ghost-button" type="button" onClick={() => loadInbox(mode)} disabled={loading}>{loading ? "Обновляем…" : "Обновить"}</button>}
+frontend/src/pages/PriorityInboxPage.jsx:150:            <button key={item.key} type="button" role="tab" aria-selected={mode === item.key} className={mode === item.key ? "active" : ""} onClick={() => selectMode(item.key)}>{item.label}</button>
+frontend/src/pages/PriorityInboxPage.jsx:197:              <button type="button" onClick={() => handlePriorityAction(lead, "telegram")} title={lead.actionDisabledReasons?.telegram || ""} disabled={Boolean(lead.actionDisabledReasons?.telegram) || isActionBusy(lead, "telegram")}>{isActionBusy(lead, "telegram") ? "Создаём…" : "Telegram"}</button>
+frontend/src/pages/PriorityInboxPage.jsx:198:              <button type="button" onClick={() => handlePriorityAction(lead, "email")} title={lead.actionDisabledReasons?.email || ""} disabled={Boolean(lead.actionDisabledReasons?.email) || isActionBusy(lead, "email")}>{isActionBusy(lead, "email") ? "Создаём…" : "Email"}</button>
+frontend/src/pages/PriorityInboxPage.jsx:199:              <button type="button" onClick={() => handlePriorityAction(lead, "followup")} title={lead.actionDisabledReasons?.followup || ""} disabled={Boolean(lead.actionDisabledReasons?.followup) || isActionBusy(lead, "followup")}>{isActionBusy(lead, "followup") ? "Создаём…" : "Create Follow-up"}</button>
+frontend/src/pages/PriorityInboxPage.jsx:200:              <button type="button" onClick={() => handlePriorityAction(lead, "meeting")} disabled={isActionBusy(lead, "meeting")}>{isActionBusy(lead, "meeting") ? "Создаём…" : "Meeting"}</button>
+frontend/src/pages/PriorityInboxPage.jsx:201:              <button type="button" className="primary-card-action" onClick={() => openLead(lead, "lead")}>Open CRM Lead</button>
+frontend/src/pages/AiLiveRealtimeVoicePage.jsx:192:      <Panel><h3>AI Live Streaming</h3><button className='btn primary' onClick={startSimulation}>Start Live Simulation</button><button className='btn secondary' onClick={prepareWebrtcTransport}>Prepare WebRTC</button><div className='voice-indicator-row'><span className={stream.thinking ? 'active' : ''}>AI Thinking</span><span className={stream.speaking ? 'active' : ''}>AI Speaking</span><span className={stream.interruptionDetected ? 'interrupted' : ''}>Interruption</span><span className={stream.resumed ? 'active' : ''}>Resume</span><span className={stream.completed ? 'active' : ''}>Completed</span></div><p className='eyebrow'>Simulation safety badge active.</p></Panel>
+frontend/src/pages/AiLiveRealtimeVoicePage.jsx:196:        <div className='mic-controls'><button className='btn compact primary' onClick={enableMicrophone}>Enable Microphone</button><button className='btn compact secondary' onClick={disableMicrophone}>Disable Microphone</button><button className='btn compact secondary' onClick={toggleMute}>{micState.muted ? 'Unmute' : 'Mute'}</button><button className='btn compact secondary' onClick={simulateActivity}>Simulate Audio Activity</button></div>
+frontend/src/pages/AiLiveRealtimeVoicePage.jsx:208:        <button className='btn compact secondary' onClick={closeWebrtcConnection}>Close WebRTC Connection</button>
+frontend/src/pages/AiLiveRealtimeVoicePage.jsx:218:        <div className='mic-controls'><button className='btn compact primary' onClick={startSandboxAudioSession}>Start Sandbox Audio Session</button><button className='btn compact secondary' onClick={stopSandboxAudioSession}>Stop Session</button></div>
+frontend/src/pages/AiLiveRealtimeVoicePage.jsx:228:        <div className='mic-controls'><button className='btn compact primary' onClick={startPilotSession}>Connect Pilot</button><button className='btn compact secondary' onClick={stopPilotSession}>Disconnect Pilot</button></div>
+frontend/src/pages/AiOrganizationalMemoryPage.jsx:5:export default function AiOrganizationalMemoryPage(){const [snapshot,setSnapshot]=useState([]);const [lineage,setLineage]=useState([]);const [timeline,setTimeline]=useState([]);const [drift,setDrift]=useState([]);const [learning,setLearning]=useState([]);const load=async()=>{const [a,b,c,d,e]=await Promise.all([fetchAiOrganizationalSnapshot(),fetchAiOrganizationalLineage(),fetchAiOrganizationalTimeline(),fetchAiOrganizationalDrift(),fetchAiOrganizationalLearning()]);setSnapshot(a.snapshot||[]);setLineage(b.lineage||[]);setTimeline(c.timeline||[]);setDrift(d.drift||[]);setLearning(e.learning||[])};useEffect(()=>{load().catch(()=>{})},[]);const latest=snapshot[0]?.snapshot_payload||{};return <div className='workforce-center'><PageHeading eyebrow='AI Organizational Memory' title='Organizational Memory & Decision Lineage (Memory Only)' copy='Human-controlled insights across strategic evolution, decision lineage, and institutional learning.' action={<button className='btn primary compact' onClick={()=>runAiOrganizationalMemory().then(load)}>Run memory layer</button>} /><Panel><strong>Governance labels:</strong><div className='safety-pills'>{labels.map((l)=><span key={l}>{l}</span>)}</div></Panel><section className='workforce-grid'><Panel><h3>Memory Snapshot</h3><p>{JSON.stringify(latest.snapshot||{})}</p></Panel><Panel><h3>Decision Lineage</h3><p>{lineage[0]?.lineage_key||'n/a'}</p></Panel><Panel><h3>Initiative History</h3><p>{timeline.find((x)=>x.event_type==='initiative_update')?.event_type||'n/a'}</p></Panel><Panel><h3>Strategic Drift</h3><p>{drift[0]?.drift_payload?.driftLevel||'low'}</p></Panel><Panel><h3>Institutional Learning</h3><p>{learning[0]?.learning_payload?.insight||'n/a'}</p></Panel><Panel><h3>Timeline</h3><p>{timeline.length} events tracked</p></Panel><Panel><h3>Knowledge Graph</h3><p>{JSON.stringify(latest.knowledgeConsolidation||{})}</p></Panel><Panel><h3>Memory Evolution</h3><p>{latest.snapshot?.memoryEvolution||'incremental'}</p></Panel></section></div>}
+frontend/src/pages/CRMPage.jsx:1131:<div className="ai-action-center-buttons"><button className="ghost-button" type="button" onClick={handleAnalyzeWorkspaceAi} disabled={aiAnalysisBusy}>{aiAnalysisBusy ? "Scoring запущен…" : "Запустить scoring"}</button><button className="btn primary compact" type="button" onClick={handleQueueInactiveFollowUps} disabled={inactiveQueueBusy}>{inactiveQueueBusy ? "AI ставит в очередь…" : "Поставить follow-up для неактивных"}</button></div>
+frontend/src/pages/CRMPage.jsx:1202:                      onClick={() => openDetail(lead)}
+frontend/src/pages/CRMPage.jsx:1394:        <button className="btn primary compact" type="button" onClick={onRun} disabled={busy}>{busy ? "Running analysis…" : "Run Revenue Analysis Now"}</button>
+frontend/src/pages/CRMPage.jsx:1457:          <button className="modal-close" type="button" onClick={onClose} aria-label="Закрыть">×</button>
+frontend/src/pages/CRMPage.jsx:1494:          <button className="modal-close" type="button" onClick={onClose} disabled={saving} aria-label="Закрыть">×</button>
+frontend/src/pages/CRMPage.jsx:1504:          <div className="form-actions modal-actions"><span>{saving ? "Сохраняем данные…" : "JWT + PostgreSQL"}</span><button className="btn primary compact" disabled={saving} type="submit">{saving && <i className="button-spinner" />}{saving ? "Сохраняем…" : submitLabel}</button></div>
+frontend/src/pages/CRMPage.jsx:1518:    <div className="modal-backdrop crm-modal-backdrop" role="presentation" onClick={(e) => { if (e.target === e.currentTarget) closeLeadModal(); }}>
+frontend/src/pages/CRMPage.jsx:1519:      <section className="ai-task-modal lead-detail-modal" role="dialog" aria-modal="true" aria-labelledby="lead-detail-title" onClick={(e) => e.stopPropagation()}>
+frontend/src/pages/CRMPage.jsx:1528:          <button className="modal-close lead-modal-close" type="button" onClick={(e) => { e.preventDefault(); e.stopPropagation(); closeLeadModal(); }} aria-label="Закрыть карточку лида"><span aria-hidden="true">×</span></button>
+frontend/src/pages/CRMPage.jsx:1561:                <button className="btn primary compact" type="button" onClick={onStartAiSequence} disabled={Boolean(aiSequence) || aiSequenceBusy === "start"}>{aiSequenceBusy === "start" ? "Starting…" : "Start AI Sequence"}</button>
+frontend/src/pages/CRMPage.jsx:1562:                <button className="ghost-button compact" type="button" onClick={() => onPauseAiSequence(aiSequence)} disabled={!aiSequence || aiSequenceBusy === "pause"}>{aiSequenceBusy === "pause" ? "Pausing…" : "Pause"}</button>
+frontend/src/pages/CRMPage.jsx:1563:                <button className="ghost-button compact danger-action" type="button" onClick={() => onStopAiSequence(aiSequence)} disabled={!aiSequence || aiSequenceBusy === "stop"}>{aiSequenceBusy === "stop" ? "Stopping…" : "Stop"}</button>
+frontend/src/pages/CRMPage.jsx:1583:                <div className="execution-buttons">
+frontend/src/pages/CRMPage.jsx:1584:                  <button type="button" className="ghost-button compact" onClick={() => onApproveApprovalQueueItem(getStageRecommendation(lead, actionCenter))} disabled={executionBusy[getStageRecommendation(lead, actionCenter).id] || !['pending_approval','failed'].includes(getStageRecommendation(lead, actionCenter).status)}>{executionBusy[getStageRecommendation(lead, actionCenter).id] ? 'Обновляем…' : 'Approve stage change'}</button>
+frontend/src/pages/CRMPage.jsx:1585:                  <button type="button" className="btn primary compact" onClick={() => onExecuteApprovalQueueItem(getStageRecommendation(lead, actionCenter))} disabled={executionBusy[getStageRecommendation(lead, actionCenter).id] || getStageRecommendation(lead, actionCenter).status !== 'approved'}>{executionBusy[getStageRecommendation(lead, actionCenter).id] ? 'Выполняем…' : 'Execute stage change'}</button>
+frontend/src/pages/CRMPage.jsx:1586:                  <button type="button" className="ghost-button compact danger-action" onClick={() => onRejectApprovalQueueItem(getStageRecommendation(lead, actionCenter))} disabled={executionBusy[getStageRecommendation(lead, actionCenter).id] || ['executing','completed','executed','rejected'].includes(getStageRecommendation(lead, actionCenter).status)}>Reject</button>
+frontend/src/pages/CRMPage.jsx:1667:                <button className="ghost-button" type="button" onClick={onAnalyzeLeadAi} disabled={aiActionBusy[`${lead.id}:lead_ai_score`]}>{aiActionBusy[`${lead.id}:lead_ai_score`] ? 'AI считает…' : 'Рассчитать AI score'}</button>
+frontend/src/pages/CRMPage.jsx:1688:              {getLeadAiScore(lead) && <div className="ai-advisor-strip"><p><b>AI рекомендация:</b> {sanitizeVisibleAiText(getLeadAiScore(lead).recommendedNextStep || getLeadAiScore(lead).nextBestAction || "Назначить следующий шаг")}</p><p><b>Рекомендуемый CTA:</b> {sanitizeVisibleAiText(getLeadAiScore(lead).recommendedCta || "Назначить следующий шаг")}</p><p><b>Возражения:</b> {sanitizeVisibleAiText((getLeadAiScore(lead).objectionsDetected || []).join(", ") || "не обнаружены")}</p><p><b>AI Outreach Engine:</b> {telegramOutreachDrafts.length + emailOutreachDrafts.length} черновиков ждут approval · readiness {getLeadAiScore(lead).temperature === 'hot' ? 'немедленно' : getLeadAiScore(lead).temperature === 'warm' ? 'первый контакт' : 'только рекомендация'}</p>{getLatestAiVoiceCall(lead) && <p><b>AI Voice outcome:</b> {getLatestAiVoiceCall(lead).sentiment || '—'} · {getLatestAiVoiceCall(lead).outcome || '—'} · {sanitizeVisibleAiText(getLatestAiVoiceCall(lead).nextAction || '—')}</p>}</div>}
+frontend/src/pages/CRMPage.jsx:1712:                  {meeting.googleMeetUrl && <a className="calendar-meet-url" href={meeting.googleMeetUrl} target="_blank" rel="noreferrer">{meeting.googleMeetUrl}</a>}
+frontend/src/pages/CRMPage.jsx:1715:                    {meeting.googleMeetUrl && <a className="btn primary compact" href={meeting.googleMeetUrl} target="_blank" rel="noreferrer">Открыть Google Meet</a>}
+frontend/src/pages/CRMPage.jsx:1716:                    <button type="button" className="btn primary compact" onClick={() => onDownloadMeetingIcs?.(meeting)} disabled={!meeting.hasIcs || meetingIcsDownloadingId === meeting.id}>{meetingIcsDownloadingId === meeting.id ? 'Скачиваем…' : meeting.hasIcs ? 'Скачать .ics' : '.ics готовится'}</button>
+frontend/src/pages/CRMPage.jsx:1727:              <div className="ai-action-buttons">
+frontend/src/pages/CRMPage.jsx:1728:                <button className="ghost-button" type="button" onClick={onAnalyzeLeadAi} disabled={aiActionBusy[`${lead.id}:lead_ai_score`]}>{aiActionBusy[`${lead.id}:lead_ai_score`] ? "AI считает…" : "AI score + прогноз"}</button>
+frontend/src/pages/CRMPage.jsx:1737:                ].map(([actionType, title]) => <button className="ghost-button" type="button" key={actionType} onClick={() => onCreateExecutionAction(actionType)} disabled={executionBusy.create}>{title}</button>)}
+frontend/src/pages/CRMPage.jsx:1742:                <button className="ghost-button compact" type="button" onClick={() => onSendMaterials(['presentation'], isTelegramLead(lead) ? 'telegram' : 'email')} disabled={executionBusy.materials}>Отправить презентацию</button>
+frontend/src/pages/CRMPage.jsx:1743:                <button className="ghost-button compact" type="button" onClick={() => onSendMaterials(['screenshot_1', 'screenshot_2'], isTelegramLead(lead) ? 'telegram' : 'email')} disabled={executionBusy.materials}>Отправить скриншоты</button>
+frontend/src/pages/CRMPage.jsx:1752:                    <div className="execution-buttons">
+frontend/src/pages/CRMPage.jsx:1753:                      <button type="button" className="ghost-button compact" onClick={() => onApproveApprovalQueueItem(item)} disabled={executionBusy[item.id] || !['pending_approval','failed'].includes(item.status)}>{executionBusy[item.id] ? 'Работаем…' : 'Одобрить'}</button>
+frontend/src/pages/CRMPage.jsx:1754:                      <button type="button" className="btn primary compact" onClick={() => onExecuteApprovalQueueItem(item)} disabled={executionBusy[item.id] || item.status !== 'approved'}>{executionBusy[item.id] ? 'Отправляем…' : 'Отправить'}</button>
+frontend/src/pages/CRMPage.jsx:1755:                      <button type="button" className="ghost-button compact" onClick={() => onEditApprovalQueueItem(item)} disabled={executionBusy[item.id] || ['executing','completed','executed'].includes(item.status)}>Изменить</button>
+frontend/src/pages/CRMPage.jsx:1756:                      <button type="button" className="ghost-button compact danger-action" onClick={() => onRejectApprovalQueueItem(item)} disabled={executionBusy[item.id] || ['executing','completed','executed','rejected'].includes(item.status)}>Отклонить</button>
+frontend/src/pages/CRMPage.jsx:1778:                    <div className="execution-buttons">
+frontend/src/pages/CRMPage.jsx:1779:                      <button type="button" className="ghost-button compact" onClick={() => onApproveExecutionAction(action)} disabled={executionBusy[action.id] || ['approved','sent','cancelled'].includes(action.status)}>Одобрить</button>
+frontend/src/pages/CRMPage.jsx:1780:                      <button type="button" className="btn primary compact" onClick={() => onSendExecutionAction(action)} disabled={executionBusy[action.id] || ['sent','failed','cancelled'].includes(action.status)}>Отправить</button>
+frontend/src/pages/CRMPage.jsx:1781:                      <button type="button" className="ghost-button compact" onClick={() => onEditExecutionAction(action)} disabled={executionBusy[action.id] || ['sent','cancelled'].includes(action.status)}>Изменить</button>
+frontend/src/pages/CRMPage.jsx:1782:                      <button type="button" className="ghost-button compact danger-action" onClick={() => onCancelExecutionAction(action)} disabled={executionBusy[action.id] || ['sent','cancelled'].includes(action.status)}>Отклонить</button>
+frontend/src/pages/CRMPage.jsx:1823:                          <a href={lead.metadata.sequence_checkout_url} target="_blank" rel="noreferrer">
+frontend/src/pages/CRMPage.jsx:1890:                    <div className="execution-buttons"><button type="button" className="ghost-button compact" onClick={() => onApproveApprovalQueueItem(draft)} disabled={executionBusy[draft.id] || !['pending_approval','failed'].includes(draft.status)}>{executionBusy[draft.id] ? 'Работаем…' : 'Одобрить'}</button><button type="button" className="ghost-button compact" onClick={() => onEditApprovalQueueItem(draft)} disabled={executionBusy[draft.id] || ['executing','completed'].includes(draft.status)}>Изменить</button><button type="button" className="btn primary compact" onClick={() => onExecuteApprovalQueueItem(draft)} disabled={executionBusy[draft.id] || draft.status !== 'approved'}>{executionBusy[draft.id] ? 'Отправляем…' : 'Отправить'}</button></div>
+frontend/src/pages/CRMPage.jsx:1893:                {telegramOutreachDrafts.map((draft) => <p className="ai-sequence-draft" key={draft.id}><b>{outreachTypeLabel(draft.outreachType)}:</b> {sanitizeCustomerVisibleText(draft.text)}<small>{actionStatusLabel(draft.status)} · score {draft.score || '—'} · {draft.temperature || 'AI'} · {formatDate(draft.createdAt)}</small><span className="execution-buttons"><button type="button" className="ghost-button compact" onClick={() => onApproveApprovalQueueItem(draft)} disabled={executionBusy[draft.id] || !['pending_approval','failed'].includes(draft.status)}>{executionBusy[draft.id] ? 'Работаем…' : 'Одобрить'}</button><button type="button" className="btn primary compact" onClick={() => onExecuteApprovalQueueItem(draft)} disabled={executionBusy[draft.id] || draft.status !== 'approved'}>{executionBusy[draft.id] ? 'Отправляем…' : 'Отправить'}</button></span></p>)}
+frontend/src/pages/CRMPage.jsx:1914:                      <button className="ghost-button compact" type="button" disabled={!getLeadTelegramConnectLink(lead)} onClick={() => navigator.clipboard?.writeText(getLeadTelegramConnectLink(lead))}>Скопировать</button>
+frontend/src/pages/CRMPage.jsx:1915:                      <a className={`btn primary compact ${!getLeadTelegramConnectLink(lead) ? 'disabled-link' : ''}`} href={getLeadTelegramConnectLink(lead) || undefined} target="_blank" rel="noreferrer" aria-disabled={!getLeadTelegramConnectLink(lead)}>Открыть Telegram</a>
+frontend/src/pages/CRMPage.jsx:1930:                  <button className="btn primary compact" disabled={telegramSending || !telegramDraft.trim() || !hasTelegramChatId(lead)} type="submit">{telegramSending ? 'Отправляем…' : 'Ответить в Telegram'}</button>
+frontend/src/pages/CRMPage.jsx:1945:                {emailOutreachDrafts.map((draft) => <p className="ai-sequence-draft" key={draft.id}><b>{outreachTypeLabel(draft.outreachType)} · {draft.subject}:</b> {sanitizeCustomerVisibleText(draft.text)}<small>{draft.status} · CTA: {draft.cta || '—'} · {formatDate(draft.createdAt)}</small>{draft.demoProposal && <small>{sanitizeVisibleAiText(draft.demoProposal)}</small>}</p>)}
+frontend/src/pages/CRMPage.jsx:1956:                  <label className="ghost-button file-upload-button">Загрузить вложение<input type="file" onChange={onUploadEmailAttachment} /></label>
+frontend/src/pages/CRMPage.jsx:1957:                  <button className="ghost-button" type="button" onClick={onGenerateEmail} disabled={emailBusy}>{emailBusy ? 'AI готовит…' : 'AI сгенерировать письмо'}</button>
+frontend/src/pages/CRMPage.jsx:1958:                  <button className="btn primary compact" type="submit" disabled={emailBusy || !emailComposer.to || !emailComposer.subject}>{emailBusy ? 'Отправляем…' : 'Отправить email'}</button>
+frontend/src/pages/CRMPage.jsx:1982:                <button className="btn primary compact" type="submit">Добавить заметку</button>
+frontend/src/pages/CRMPage.jsx:1987:              <button className="btn primary compact" type="button" onClick={onFollowUp} disabled={followUpLoading}>{followUpLoading ? "AI думает…" : "Сгенерировать AI‑дожим"}</button>
+frontend/src/pages/CRMPage.jsx:1988:              <button className="ghost-button" type="button" onClick={onEdit}>Редактировать</button>
+frontend/src/pages/CRMPage.jsx:1989:              <button className="ghost-button danger-action" type="button" onClick={onDelete}>Удалить</button>
+frontend/src/pages/CRMPage.jsx:2021:          <button className="ghost-button compact" type="button" onClick={() => onAiSecretaryCrmAction?.(lead, "call")}>📞 Позвонить</button>
+frontend/src/pages/CRMPage.jsx:2022:          <button className="ghost-button compact" type="button" onClick={() => onAiSecretaryCrmAction?.(lead, "meeting")}>📅 Встреча</button>
+frontend/src/pages/CRMPage.jsx:2023:          <button className="ghost-button compact" type="button" onClick={() => onAiSecretaryCrmAction?.(lead, "proposal")}>📨 КП</button>
+frontend/src/pages/CRMPage.jsx:2024:          <button className="btn primary compact" type="button" onClick={() => onAiSecretaryCrmAction?.(lead, "checkout")}>💳 Оплата</button>
+frontend/src/pages/CRMPage.jsx:2025:          <button className="btn primary compact" type="button" onClick={() => onTestPaymentPaid?.(lead)}>✅ Test Paid</button>
+frontend/src/pages/CRMPage.jsx:2026:          <button className="ghost-button" type="button" onClick={closeLeadModal}>Закрыть</button>
+frontend/src/pages/AiRevenueIntelligencePage.jsx:112:        action={<button className="btn primary compact pulse-action" type="button" onClick={handleRunRevenueAnalysis} disabled={revenueBusy}>{revenueBusy ? "Running analysis…" : "Run Revenue Analysis Now"}</button>}
+frontend/src/pages/AiRevenueIntelligencePage.jsx:171:          <button className="ghost-button" type="button" onClick={() => loadRevenueIntelligence()} disabled={loading}>Refresh</button>
+frontend/src/pages/AiStrategicPlanningPage.jsx:5:export default function AiStrategicPlanningPage(){const [plans,setPlans]=useState([]);const [okrs,setOkrs]=useState(null);const [initiatives,setInitiatives]=useState(null);const [dependency,setDependency]=useState(null);const [resources,setResources]=useState(null);const load=async()=>{const [p,o,i,d,r]=await Promise.all([fetchAiStrategicPlans(),fetchAiStrategicOkrs(),fetchAiStrategicInitiatives(),fetchAiStrategicDependencyGraph(),fetchAiStrategicResourceAllocation()]);setPlans(p.plans||[]);setOkrs(o.okrs);setInitiatives(i.initiatives);setDependency(d.dependencyGraph);setResources(r.resourceAllocation)};useEffect(()=>{load().catch(()=>{})},[]);const cards=initiatives?.initiatives_payload?.initiatives||[];return <div className='workforce-center'><PageHeading eyebrow='AI Strategic Planning' title='AI Corporate Strategy Engine (Planning Only)' copy='Strategic planning, prioritization and organizational alignment with human approval gates.' action={<button className='btn primary compact' onClick={()=>runAiStrategicPlanning().then(load)}>Run planning</button>} /><Panel><strong>Governance labels:</strong><div className='safety-pills'>{labels.map((l)=><span key={l}>{l}</span>)}</div></Panel><section className='workforce-grid'><Panel><h3>Strategic Planning Dashboard</h3><p>Total plans: {plans.length}</p></Panel><Panel><h3>AI OKRs</h3><p>{JSON.stringify(okrs?.plan_payload?.okrs||[])}</p></Panel><Panel><h3>Strategic Initiatives</h3>{cards.map((c)=><p key={c.strategicPriority}>{c.strategicPriority} · impact {c.expectedImpact} · deps {c.dependencyCount} · alignment {c.organizationalAlignmentScore} · pressure {c.resourcePressure} · horizon quarterly · confidence {c.confidenceScore}</p>)}</Panel><Panel><h3>Quarterly Planning</h3><p>{JSON.stringify(plans[0]?.plan_payload?.quarterlyPlan||{})}</p></Panel><Panel><h3>Dependency Graph</h3><p>{JSON.stringify(dependency?.graph_payload||{})}</p></Panel><Panel><h3>Resource Allocation</h3><p>{JSON.stringify(resources?.allocation_payload||{})}</p></Panel><Panel><h3>Organizational Alignment</h3><p>{JSON.stringify(plans[0]?.plan_payload?.organizationalAlignment||{})}</p></Panel><Panel><h3>Growth Planning</h3><p>{JSON.stringify(plans[0]?.plan_payload?.growthPlan||{})}</p></Panel><Panel><h3>Strategic Memory</h3><p>Stored in ai_strategic_memory for planning continuity.</p></Panel></section></div>}
+frontend/src/pages/AiWorkersPage.jsx:261:      {meeting?.googleMeetUrl && <a className="ghost-button compact" href={meeting.googleMeetUrl} target="_blank" rel="noreferrer">Google Meet</a>}
+frontend/src/pages/AiWorkersPage.jsx:262:      {meeting?.hasIcs && <button type="button" className="ghost-button compact" onClick={() => onDownloadIcs?.(meeting)}>Скачать .ics</button>}
+frontend/src/pages/AiWorkersPage.jsx:329:              <button type="button" className="btn primary compact" onClick={onSaveEdit} disabled={editBusy || !editText.trim()}>{editBusy ? "Сохраняем…" : "Сохранить черновик"}</button>
+frontend/src/pages/AiWorkersPage.jsx:330:              <button type="button" className="ghost-button compact" onClick={onCancelEdit} disabled={editBusy}>Отмена</button>
+frontend/src/pages/AiWorkersPage.jsx:372:              <button type="button" className="btn primary compact" onClick={onSaveEdit} disabled={editBusy || !editText.trim()}>{editBusy ? "Сохраняем…" : "Сохранить черновик"}</button>
+frontend/src/pages/AiWorkersPage.jsx:373:              <button type="button" className="ghost-button compact" onClick={onCancelEdit} disabled={editBusy}>Отмена</button>
+frontend/src/pages/AiWorkersPage.jsx:434:  const buttonEnabled = Boolean(isExecutable && (canExecuteApproved || canExecutePendingDraft) && !isItemBusy && !isExecutingThisAction);
+frontend/src/pages/AiWorkersPage.jsx:438:    buttonEnabled,
+frontend/src/pages/AiWorkersPage.jsx:439:    disabled: !buttonEnabled,
+frontend/src/pages/AiWorkersPage.jsx:703:            <p>Сработала защита от реального render crash. Попробуйте обновить страницу или перейти на <a href="/ai-workers">/ai-workers</a>.</p>
+frontend/src/pages/AiWorkersPage.jsx:867:function logTelegramSendButtonState(item, buttonState) {
+frontend/src/pages/AiWorkersPage.jsx:868:  console.log("[ai-workers-ui] send button state", {
+frontend/src/pages/AiWorkersPage.jsx:870:    actionType: buttonState.actionType,
+frontend/src/pages/AiWorkersPage.jsx:872:    buttonEnabled: buttonState.buttonEnabled,
+frontend/src/pages/AiWorkersPage.jsx:873:    disabled: buttonState.disabled,
+frontend/src/pages/AiWorkersPage.jsx:874:    loadingKey: buttonState.loadingKey,
+frontend/src/pages/AiWorkersPage.jsx:1233:  const selectableSequenceLeads = useMemo(() => [...safeArray(crmLeads)].sort((a, b) => getLeadPriorityValue(b) - getLeadPriorityValue(a)).slice(0, 25), [crmLeads]);
+frontend/src/pages/AiWorkersPage.jsx:1378:              buttonEnabled={String(executableButtonState.buttonEnabled)} · actionId={itemId} · status={itemStatus}
+frontend/src/pages/AiWorkersPage.jsx:1389:            <button type="button" className="ghost-button compact" onClick={() => handleApprovalAction(item, "approve")} disabled={isItemBusy}>{isApproveBusy ? busyLabel : "Одобрить"}</button>
+frontend/src/pages/AiWorkersPage.jsx:1392:            <button type="button" className="ghost-button compact" onClick={() => handleEditApprovalItem(item)} disabled={isItemBusy || ["executing","completed"].includes(itemStatus)}>{isEditBusy ? "Сохраняем…" : "Изменить"}</button>
+frontend/src/pages/AiWorkersPage.jsx:1395:            <button type="button" className="ghost-button compact danger-action" onClick={() => handleApprovalAction(item, "reject")} disabled={isItemBusy}>{isRejectBusy ? busyLabel : "Отклонить"}</button>
+frontend/src/pages/AiWorkersPage.jsx:1399:              <button type="button" className="btn primary compact approval-send-button" onClick={() => handleApprovalAction(item, "execute")} disabled={executableButtonState.disabled} aria-busy={isExecuteActionBusy}>{isExecuteActionBusy ? approvalActionLoadingLabels.send : "Отправить"}</button>
+frontend/src/pages/AiWorkersPage.jsx:1401:              <button type="button" className="btn primary compact" onClick={() => handleApprovalAction(item, "execute")} disabled={executableButtonState.disabled}>{isExecuteActionBusy ? busyLabel : "Выполнить"}</button>
+frontend/src/pages/AiWorkersPage.jsx:1542:        action={<button className="btn primary compact pulse-action" type="button" onClick={() => loadCommandCenter()} disabled={loading}>Обновить центр</button>}
+frontend/src/pages/AiWorkersPage.jsx:1565:        <button className="btn primary compact demo-pipeline-button" type="button" onClick={handleSeedDemoPipeline} disabled={demoBusy}>
+frontend/src/pages/AiWorkersPage.jsx:1567:        </button>
+frontend/src/pages/AiWorkersPage.jsx:1604:            <label className="crm-field"><span>High-priority lead</span><select value={sequenceLeadId} onChange={(event) => setSequenceLeadId(event.target.value)}><option value="">Select lead</option>{selectableSequenceLeads.map((lead) => <option key={lead.id} value={lead.id}>{lead.name} · {lead.company || stageLabel(lead.status)} · score {lead.aiScore?.score || lead.aiPriority || "—"}</option>)}</select></label>
+frontend/src/pages/AiWorkersPage.jsx:1606:            <button className="btn primary compact" type="button" onClick={handleStartSelectedSequence} disabled={sequenceBusy || !sequenceLeadId}>{sequenceBusy ? "Starting sequence…" : "Start sequence for selected lead"}</button>
+frontend/src/pages/AiWorkersPage.jsx:1644:            <button
+frontend/src/pages/AiWorkersPage.jsx:1646:              type="button"
+frontend/src/pages/AiWorkersPage.jsx:1650:              onClick={() => setActiveApprovalTab(tab.id)}
+frontend/src/pages/AiWorkersPage.jsx:1654:            </button>
+frontend/src/pages/AiWorkersPage.jsx:1686:              <button className="btn primary compact" type="button" onClick={() => handleRun(worker)} disabled={busyWorker === worker.id || worker.status === "paused"}>
+frontend/src/pages/AiWorkersPage.jsx:1688:              </button>
+frontend/src/pages/AiWorkersPage.jsx:1689:              <button className="ghost-button" type="button" onClick={() => handlePause(worker)} disabled={busyWorker === worker.id}>
+frontend/src/pages/AiWorkersPage.jsx:1691:              </button>
+frontend/src/pages/AiWorkersPage.jsx:1692:              <button className="ghost-button" type="button" onClick={() => setMessage(`${worker.name}: настройки режимов будут расширены в следующем релизе.`)}>Настройки</button>
+frontend/src/pages/AiApprovalCenterPage.jsx:26:    {Object.entries({ 'Pending Approvals': sections.pending, 'High Urgency': sections.high, Escalations: sections.escalations, 'Approved Today': sections.approvedToday, 'Rejected Today': sections.rejectedToday, 'Snoozed Items': sections.snoozed }).map(([title, list]) => <Panel key={title}><h3>{title}</h3>{list.map(item => <article key={item.id}><p><b>{item.leadName || item.leadId}</b> · {item.recommendationType} · confidence {item.confidenceScore} · urgency {item.urgency}</p><p>AI Recommendation Details: {(item.recommendationPayload?.suggestedAction || item.recommendationPayload?.reasoning || item.recommendationPayload?.reason || 'n/a')}</p><p>lead state: {item.recommendationPayload?.leadState || '—'} · source: {item.recommendationPayload?.source || '—'} · objection summary: {item.recommendationPayload?.objectionSummary || '—'} · meeting intent: {item.recommendationPayload?.meetingIntent || '—'} · AI memory summary: {item.recommendationPayload?.aiMemorySummary || '—'}</p><div><button onClick={()=>act(approveAiApprovalCenterItem,item.id)}>Approve</button><button onClick={()=>act(rejectAiApprovalCenterItem,item.id)}>Reject</button><button onClick={()=>act(snoozeAiApprovalCenterItem,item.id,{snoozeUntil:new Date(Date.now()+86400000).toISOString()})}>Snooze</button><button onClick={()=>act(escalateAiApprovalCenterItem,item.id)}>Escalate</button></div></article>)}</Panel>)}
+frontend/src/pages/CommandCenterPage.jsx:239:          <div className="command-live-status"><a className={apiLoading ? 'loading' : 'green'} href="/ai-system-health-center">{apiLoading ? 'Синхронизация...' : 'Live-ready'}</a><a href="/ai-system-health-center">{apiErrors.length ? `API требует авторизацию: ${apiErrors.length}` : 'API подключён'}</a></div>
+frontend/src/pages/CommandCenterPage.jsx:243:          <a href="/followups" className="top-icon" data-badge="12" aria-label="Уведомления"><BellIcon /></a><a href="/priority-inbox" className="top-icon" data-badge="3" aria-label="AI коммуникации"><ChatIcon /></a><a href="/ai-system-health-center" className="top-icon" aria-label="Помощь"><HelpIcon /></a><a href="/profile" className="command-avatar top-icon-profile" aria-label="Профиль">A</a>
+frontend/src/pages/CommandCenterPage.jsx:255:      <section className="quick-actions quick-actions-primary" data-quick-actions data-as6-primary-actions="above-fold"><h2>Быстрые действия</h2><div>{quickActions.map((action, index) => <a href={quickActionLinks[action] || "#"} role="button" key={action} aria-label={action}><span>{["👥", "$", "🧾", "🛡️", "〽️", "📊", <img src={as6Robot} alt="AI" className="quick-action-robot-icon" />][index]}</span>{action}</a>)}</div></section>
+frontend/src/pages/CommandCenterPage.jsx:312:              <a className="copilot-action-link" href="/ai-executive-brain">Спросить AI Copilot</a>
+frontend/src/pages/CommandCenterPage.jsx:315:          <article className="command-card event-card"><div className="command-card-head"><h2>Последние события</h2><a href="/dashboard">Все</a></div>{events.map((event) => <div className="event-row" key={event.text}><b>{event.icon}</b><span>{event.text}</span><time>{event.time}</time></div>)}</article>
+frontend/src/pages/CommandCenterPage.jsx:321:        <h2>AI рекомендации</h2><div>{recommendations.map((card) => <a className={`recommendation ${card.tone}`} href={card.href} key={card.title} aria-label={card.action}><b>{card.icon}</b><strong>{card.title}</strong><p>{card.text}</p><span className="recommendation-action">{card.action} →</span></a>)}</div>
+frontend/src/pages/DashboardPage.jsx:61:    .replace('CTA: Invite the reader to launch the next AI workflow.', 'Призыв: предложите запустить следующий AI‑сценарий.')
+frontend/src/pages/DashboardPage.jsx:65:    .replace('Recommended CTA:', 'Рекомендуемый призыв:')
+frontend/src/pages/DashboardPage.jsx:70:    .replace('3) Soft CTA: ask if they want a 2-minute workflow audit.', '3) Мягкий призыв: спросите, нужен ли 2‑минутный аудит процесса.')
+frontend/src/pages/DashboardPage.jsx:313:        action={<button className="btn primary compact pulse-action" type="button" onClick={() => setModalOpen(true)}>Создать AI‑задачу</button>}
+frontend/src/pages/DashboardPage.jsx:380:            <Link className="ghost-button" to="/ai-revenue-intelligence">Open full Revenue Intelligence</Link>
+frontend/src/pages/DashboardPage.jsx:381:            <button className="btn primary compact" type="button" onClick={handleRunRevenueAnalysis} disabled={revenueBusy}>{revenueBusy ? "Running analysis…" : "Run Revenue Analysis Now"}</button>
+frontend/src/pages/DashboardPage.jsx:436:              <button type="button" key={type} onClick={() => { setTaskForm({ ...initialTaskForm, type }); setModalOpen(true); }}>
+frontend/src/pages/DashboardPage.jsx:439:              </button>
+frontend/src/pages/DashboardPage.jsx:460:            <button className="ghost-button" type="button" onClick={() => loadDashboard()} disabled={loading}>Обновить</button>
+frontend/src/pages/DashboardPage.jsx:512:          <Link className="ghost-button" to="/crm">Открыть CRM</Link>
+frontend/src/pages/DashboardPage.jsx:526:          {quickActions.map((action) => <button type="button" key={action} onClick={() => handleQuickActionClick(action)}>{action}</button>)}
+frontend/src/pages/DashboardPage.jsx:538:              <button className="modal-close" type="button" onClick={() => setCheckoutModalOpen(false)} disabled={revenueBusy}>×</button>
+frontend/src/pages/DashboardPage.jsx:541:              <button type="button" onClick={() => handleCheckoutStart("starter")} disabled={revenueBusy}>Starter credits</button>
+frontend/src/pages/DashboardPage.jsx:542:              <button type="button" onClick={() => handleCheckoutStart("pro")} disabled={revenueBusy}>Pro credits</button>
+frontend/src/pages/DashboardPage.jsx:543:              <button type="button" onClick={() => handleCheckoutStart("business")} disabled={revenueBusy}>Business credits</button>
+frontend/src/pages/DashboardPage.jsx:559:              <button className="modal-close" type="button" onClick={() => setModalOpen(false)} disabled={saving}>×</button>
+frontend/src/pages/DashboardPage.jsx:589:                <button className="btn primary compact" disabled={saving || loading} type="submit">
+frontend/src/pages/DashboardPage.jsx:590:                  {saving ? <><i className="button-spinner" />Запускаем…</> : "Создать и выполнить"}
+frontend/src/pages/DashboardPage.jsx:591:                </button>
+frontend/src/pages/AiExecutiveBrainPage.jsx:7:export default function AiExecutiveBrainPage(){const [snapshot,setSnapshot]=useState(null);const [recommendations,setRecommendations]=useState([]);const [risks,setRisks]=useState([]);const [health,setHealth]=useState(null);const load=async()=>{const [s,r,k,h]=await Promise.all([fetchAiExecutiveSnapshot(),fetchAiExecutiveRecommendations(),fetchAiExecutiveRisks(),fetchAiExecutiveOrganizationalHealth()]);setSnapshot(s.snapshot);setRecommendations(r.recommendations||[]);setRisks(k.risks||[]);setHealth(h.organizationalHealth)};useEffect(()=>{load().catch(()=>{})},[]);return <div className='workforce-center'><PageHeading eyebrow='AI Executive Brain' title='AI Executive Brain (Recommendation-Only)' copy='Executive strategic intelligence for the full AI operating system.' action={<button className='btn primary compact' onClick={()=>runAiExecutiveAnalysis().then(load)}>Run analysis</button>} /><Panel><strong>Safety Labels:</strong><div className='safety-pills'>{safetyLabels.map((l)=><span key={l}>{l}</span>)}</div></Panel><section className='workforce-grid'><Panel><h3>Executive Snapshot</h3><p>Org health score: {health?.health_score || snapshot?.snapshot_payload?.snapshot?.organizationalHealthScore || 0}</p><p>Revenue expansion opportunity: {snapshot?.snapshot_payload?.forecast?.projectedRevenueExpansion || 0}</p><p>Enterprise opportunity count: {snapshot?.snapshot_payload?.snapshot?.enterpriseOpportunityCount || 0}</p><p>Workforce utilization: {snapshot?.snapshot_payload?.snapshot?.workforceUtilization || 0}%</p><p>Strategic bottlenecks: {snapshot?.snapshot_payload?.snapshot?.approvalBottlenecks || 0}</p><p>Execution pressure: {snapshot?.snapshot_payload?.snapshot?.executionPressure || 0}</p><p>Executive risk level: {risks[0]?.severity || 'low'}</p><p>Conversion trend: {snapshot?.snapshot_payload?.forecast?.conversionTrend || 0}</p><p>Scaling readiness score: {snapshot?.snapshot_payload?.forecast?.scalingReadinessScore || 0}</p></Panel><Panel><h3>Strategic Recommendations</h3>{recommendations.map((x)=><p key={x.id}>{x.recommendation_type}</p>)}</Panel><Panel><h3>Organizational Health</h3><p>{JSON.stringify(health?.health_payload||{})}</p></Panel><Panel><h3>Revenue Forecast</h3><p>{JSON.stringify(snapshot?.snapshot_payload?.forecast||{})}</p></Panel><Panel><h3>Strategic Risks</h3>{risks.map((x)=><p key={x.id}>{x.risk_type} · {x.severity}</p>)}</Panel><Panel><h3>Workforce Coordination</h3><p>Human-approved workforce coordination only.</p></Panel><Panel><h3>Department Coordination</h3><p>{JSON.stringify(snapshot?.snapshot_payload?.coordination||[])}</p></Panel><Panel><h3>Pipeline Intelligence</h3><p>Pipeline value: {snapshot?.snapshot_payload?.snapshot?.pipelineValue || 0}</p></Panel><Panel><h3>Scaling Opportunities</h3><p>Enterprise opportunities: {snapshot?.snapshot_payload?.snapshot?.enterpriseOpportunityCount || 0}</p></Panel><Panel><h3>AI Executive Memory</h3><p>Memory persisted for executive strategic continuity.</p></Panel></section></div>}
+frontend/src/components/AppShell.jsx:148:              <a className="command-profile-card" href="/profile">
+frontend/src/components/AppShell.jsx:151:              <a className="command-help-card" href="/ai-system-health-center"><b>✦</b><span>Нужна помощь?</span><strong>Открыть AI поддержку</strong></a>
+frontend/src/components/AppShell.jsx:182:                  <button className="sidebar-create-lead" type="button" onClick={openCreateLead}>+ Создать лид</button>
+frontend/src/components/AppShell.jsx:183:                  <button className="sidebar-activity-feed" type="button" onClick={openActivityFeed}>Лента активности</button>
+frontend/src/components/AppShell.jsx:185:                <Link to="/login" onClick={handleLogout}>Выйти</Link>
+frontend/src/components/AppShell.jsx:206:            <button className="workspace-settings-btn" type="button" onClick={() => setSettingsOpen(true)}>Команда и тариф</button>
+frontend/src/components/AppShell.jsx:305:        <button className="modal-close" type="button" onClick={onClose}>Закрыть</button>
+frontend/src/components/AppShell.jsx:315:            <button type="submit" disabled={!canManage}>Сохранить</button>
+frontend/src/components/AppShell.jsx:343:            <button type="submit" disabled={!canManage}>Добавить</button>
+frontend/src/components/AppShell.jsx:350:            <button type="submit">Создать пространство</button>
+
+== PACKAGE SCRIPTS ==
+{
+  "name": "ai-bot-frontend",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --host",
+    "test:ui-sanitizer": "node tests/uiSanitizer.test.mjs",
+    "test:revenue-intelligence": "node tests/revenueIntelligence.test.mjs",
+    "test:ai-voice-outreach": "node tests/aiVoiceOutreach.test.mjs",
+    "test:ai-workforce-routes": "node tests/aiWorkforceApiRoutes.test.mjs",
+    "test:revenue-dashboard-workspace": "node tests/revenueDashboardWorkspace.test.mjs"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "framer-motion": "file:./vendor/framer-motion",
+    "react-router-dom": "file:./vendor/react-router-dom"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.0",
+    "vite": "^5.0.0"
+  },
+  "type": "module"
+}
+
+== EXISTING V221/V222 DOCS ==
+docs/architecture/landing_form_production.md
+docs/architecture/production_ai_execution_runner.md
+docs/AS6_DESIGN_TOKEN_REGISTRY_V111.md
+docs/coverage/as6-autonomous-production-drift-controller-coverage.md
+docs/coverage/as6-autonomous-production-policy-engine-coverage.md
+docs/coverage/as6-diagnostic-status-registry-autobuild-coverage.md
+docs/coverage/as6-diagnostic-status-registry-coverage.md
+docs/coverage/as6-production-drift-coverage.md
+docs/coverage/as6-root-cause-registry-auto-sync-coverage.md
+docs/diagnostics/as6-autonomous-production-policy-engine-diagnostics.md
+docs/diagnostics/as6-diagnostic-status-registry-diagnostics.md
+docs/diagnostics/as6-p0-diagnostic-status-registry-rebuild-diagnostics.md
+docs/diagnostics/as6-production-drift-diagnostics.md
+docs/diagnostics/as6-root-cause-registry-auto-sync-diagnostics.md
+docs/FOUNDATION/AS6_FOUNDATION_SNAPSHOT_V221.md
+docs/governance/as6-autonomous-production-drift-controller.md
+docs/governance/as6-autonomous-production-policy-engine.md
+docs/governance/as6-diagnostic-status-registry-autobuild.md
+docs/governance/as6-diagnostic-status-registry-repair.md
+docs/governance/as6-root-cause-governance-auto-sync-registry.md
+docs/governance/as6-root-cause-governance-completion-registry.md
+docs/governance/as6-root-cause-governance-sync-authority-registry.md
+docs/governance/as6-root-cause-registry-auto-sync-registry.md
+docs/operations/as6-autonomous-production-policy-engine-runbook.md
+docs/operations/as6-diagnostic-status-registry-runbook.md
+docs/operations/as6-p0-diagnostic-status-registry-rebuild-runbook.md
+docs/operations/as6-root-cause-registry-auto-sync-runbook.md
+docs/PRODUCT/AS6_FIRST_PRODUCT_SCREEN_V221_5.md
+docs/PRODUCT/AS6_PRODUCT_ALIGNMENT.md
+docs/RECOVERY/AS6_RECOVERY_PLAYBOOK_V221_2.md
+docs/REGISTRY/AS6_ENGINEERING_GUARDS_REGISTRY.md
+docs/REGISTRY/AS6_FIRST_PRODUCT_SCREEN_REGISTRY.md
+docs/REGISTRY/AS6_FIRST_SCREEN_VALIDATION_REGISTRY.md
+docs/REGISTRY/AS6_KNOWLEDGE_REGISTRY.md
+docs/REGISTRY/AS6_PRODUCT_ALIGNMENT_REGISTRY.md
+docs/REGISTRY/AS6_PRODUCTION_HEALTH_REGISTRY.md
+docs/REGISTRY/AS6_RELEASE_REGISTRY.md
+docs/REGISTRY/AS6_UI_QUALITY_REGISTRY.md
+docs/RELEASES/AS6_RELEASE_PASSPORT_V221.md
+docs/STAGE_PASSPORTS/V221_1_FOUNDATION.md
+docs/STAGE_PASSPORTS/V221_2_ENGINEERING_GUARDS.md
+docs/STAGE_PASSPORTS/V221_4_PRODUCT_ALIGNMENT.md
+docs/STAGE_PASSPORTS/V221_5_FIRST_PRODUCT_SCREEN.md
+docs/STAGE_PASSPORTS/V221_6_FIRST_SCREEN_VALIDATION.md
+docs/STAGE_PASSPORTS/V221_7_UI_QUALITY.md
+docs/STAGE_PASSPORTS/V221_8_PRODUCTION_HEALTH.md
+docs/STAGE_PASSPORTS/V221_9_RELEASE_PASSPORT.md
+ops/backups/diagnostics/as6-unified-autonomy-orchestrator.before-final-registry-fix.20260618044739
+ops/bin/as6-ai-workforce-status
+ops/bin/as6-autonomous-production-drift-controller
+ops/bin/as6-autonomous-production-policy-engine
+ops/bin/as6-control-design-token-registry-governance-v111
+ops/bin/as6-control-diagnostic-registry-reconciliation-v81b
+ops/bin/as6-control-registry-reconciliation-enforcement-v82
+ops/bin/as6-diagnose-command-center-production-etalon-deploy
+ops/bin/as6-diagnose-command-center-real-production-etalon
+ops/bin/as6-diagnose-command-center-remaining-status-overlays-v142
+ops/bin/as6-diagnose-command-center-status-overlays-v143
+ops/bin/as6-diagnose-controller-cluster-status-registry
+ops/bin/as6-diagnose-design-token-registry-governance-v111
+ops/bin/as6-diagnose-diagnostic-registry
+ops/bin/as6-diagnose-diagnostic-registry-reconciliation-v81b
+ops/bin/as6-diagnose-diagnostic-status-registry
+ops/bin/as6-diagnose-diagnostic-status-registry-lifecycle-v213e
+ops/bin/as6-diagnose-final-registry-convergence
+ops/bin/as6-diagnose-health-status
+ops/bin/as6-diagnose-heartbeat-wrapper-registry-match
+ops/bin/as6-diagnose-production-deployment-safety
+ops/bin/as6-diagnose-production-freeze-guard
+ops/bin/as6-diagnose-registry-reconciliation-enforcement-v82
+ops/bin/as6-diagnose-status-registry-consistency
+ops/bin/as6-diagnose-status-registry-schema-sync
+ops/bin/as6-diagnose-status-registry-sync
+ops/bin/as6-diagnostic-registry
+ops/bin/as6-first-product-screen-validation
+ops/bin/as6-health-status
+ops/bin/as6-product-alignment-guard
+ops/bin/as6-production-health-guard
+ops/bin/as6-refresh-diagnostic-status-registry
+ops/bin/as6-root-cause-registry-auto-sync-controller
+ops/bin/as6-stage-passport-guard
+ops/bin/as6-update-diagnostic-status-registry
+ops/catalog/failure-classes/autonomous-controller-cluster-status-registry-drift.yaml
+ops/catalog/failure-classes/diagnostic-status-registry-drift-for-new-diagnostic.yaml
+ops/catalog/failure-classes/diagnostic-status-registry-drift.yaml
+ops/catalog/failure-classes/diagnostic-status-registry-schema-sync-drift.yaml
+ops/catalog/failure-classes/governance-convergence-registry-drift.yaml
+ops/catalog/failure-classes/heartbeat-wrapper-registry-match-drift.yaml
+ops/catalog/failure-classes/status-registry-canonical-array-sync-drift.yaml
+ops/governance/as6-autonomous-controller-cluster-status-registry-policy.md
+ops/governance/as6-design-token-registry-governance-aec-v111.md
+ops/governance/as6-design-token-registry-governance-automation-v111.md
+ops/governance/as6-design-token-registry-governance-control-v111.md
+ops/governance/as6-design-token-registry-governance-failure-classes-v111.md
+ops/governance/as6-design-token-registry-governance-plan-v111.md
+ops/governance/as6-design-token-registry-governance-root-cause-v111.md
+ops/governance/as6-diagnostic-registry-reconciliation-aec-v81b.md
+ops/governance/as6-diagnostic-registry-reconciliation-automation-v81b.md
+ops/governance/as6-diagnostic-registry-reconciliation-control-v81b.md
+ops/governance/as6-diagnostic-registry-reconciliation-failure-classes-v81b.md
+ops/governance/as6-diagnostic-registry-reconciliation-plan-v81b.md
+ops/governance/as6-diagnostic-registry-reconciliation-root-cause-v81b.md
+ops/governance/as6-diagnostic-status-registry-schema-sync-policy.md
+ops/governance/as6-diagnostic-status-registry-sync-policy.md
+ops/governance/as6-final-registry-convergence-policy.md
+ops/governance/as6-heartbeat-wrapper-registry-match-policy.md
+ops/governance/as6-production-deployment-safety.md
+ops/governance/as6-production-freeze-guard.md
+ops/governance/as6-registry-reconciliation-enforcement-aec-v82.md
+ops/governance/as6-registry-reconciliation-enforcement-automation-v82.md
+ops/governance/as6-registry-reconciliation-enforcement-control-v82.md
+ops/governance/as6-registry-reconciliation-enforcement-failure-classes-v82.md
+ops/governance/as6-registry-reconciliation-enforcement-plan-v82.md
+ops/governance/as6-registry-reconciliation-enforcement-root-cause-v82.md
+ops/registry/as6-aec-registry.md
+ops/registry/as6-artifact-registry.md
+ops/registry/as6-coverage-registry.md
+ops/registry/as6-coverage-registry-v220.md
+ops/registry/as6-diagnostic-registry.md
+ops/registry/as6-prevention-registry.md
+ops/registry/as6-ui-restore-registry.md
+ops/status/as6-detected-errors.md
+ops/status/as6-detected-errors-v220.md
+ops/status/as6-v221-2-engineering-guards-status.md
+ops/status/as6-v221-3-knowledge-status.md
+ops/status/as6-v221-4-product-alignment-status.md
+ops/status/as6-v221-5-first-product-screen-status.md
+ops/status/as6-v221-6-first-screen-validation-status.md
+ops/status/as6-v221-7-ui-quality-status.md
+ops/status/as6-v221-8-production-health-status.md
+ops/status/as6-v221-9-release-passport-status.md
+ops/status/diagnostic-status-registry.json
+ops/status/diagnostic-status-registry.json.backup.20260617133256
+runtime/as6-command-center-final-v45/git-status.before
+runtime/as6-command-center-jsx-v31/git-status-before.out
+runtime/as6-diagnostic-debt-v73-safe/git-status.before
+runtime/as6-docker-overlay-v30/git-status-before.out
+runtime/as6-frontend-bundle-v35/git-status.before
+runtime/as6-repair-v74-diag-script-secret-scan/git-status.before
+runtime/as6-repair-v74-docs-secret-scan/git-status.before
+runtime/as6-repair-v74-staged-diff-reset/git-status.before
+runtime/as6-repair-v76-terminal-paste-integrity/git-status.before
+runtime/as6-robot-asset-v36/git-status.before
+runtime/as6-v100/git-status.before.txt
+runtime/as6-v101/git-status.before.txt
+runtime/as6-v102/git-status.before.txt
+runtime/as6-v103/git-status.before.txt
+runtime/as6-v104/git-status.before.txt
+runtime/as6-v105/git-status.before.txt
+runtime/as6-v106/git-status.before.txt
+runtime/as6-v107/git-status.before.txt
+runtime/as6-v108/git-status.before.txt
+runtime/as6-v109/git-status.before.txt
+runtime/as6-v110/git-status.before.txt
+runtime/as6-v111/git-status.before.txt
+runtime/as6-v112b/git-status.before.txt
+runtime/as6-v112/git-status.before.txt
+runtime/as6-v113b/git-status.before.txt
+runtime/as6-v113/git-status.before.txt
+runtime/as6-v114b/git-status.before.txt
+runtime/as6-v114c/git-status.before.txt
+runtime/as6-v114/git-status.before.txt
+runtime/as6-v115f/git-status.before.txt
+runtime/as6-v115/git-status.before.txt
+runtime/as6-v116/git-status.before.txt
+runtime/as6-v116-real-css/git-status.before.txt
+runtime/as6-v117/git-status.before.txt
+runtime/as6-v118/git-status.before.txt
+runtime/as6-v119/git-status.before.txt
+runtime/as6-v120/git-status.before.txt
+runtime/as6-v121/git-status.before.txt
+runtime/as6-v122/git-status.before.txt
+runtime/as6-v123/git-status.before.txt
+runtime/as6-v125b/git-status.after-cleanup.txt
+runtime/as6-v125/git-status.before.txt
+runtime/as6-v131-finish-etalon-restore-20260622T002731Z/production-health.json
+runtime/as6-v132-build-deploy-etalon-20260622T002934Z/production-command-center.html
+runtime/as6-v134-real-visual-etalon-lock-20260622T003632Z/production-after.html
+runtime/as6-v134-real-visual-etalon-lock-20260622T003632Z/production-before.html
+runtime/as6-v135-fix-copilot-etalon-20260622T004134Z/production-after.html
+runtime/as6-v135-fix-copilot-etalon-20260622T004134Z/production-before.html
+runtime/as6-v136-remove-bottom-neon-line-20260622T004822Z/production-after.html
+runtime/as6-v136-remove-bottom-neon-line-20260622T004822Z/production-before.html
+runtime/as6-v137-remove-real-horizontal-strip-20260622T005124Z/production-after.html
+runtime/as6-v138-kill-fixed-neon-strip-20260622T005440Z/production-after.html
+runtime/as6-v140-rewrite-guard-remove-overlays-20260622T010245Z/production-after.html
+runtime/as6-v141-disable-overlay-component-sources-20260622T010732Z/production-after.html
+runtime/as6-v142-disable-remaining-status-overlays-20260622T011136Z/AS6BackendConnectorStatus.jsx.before
+runtime/as6-v142-disable-remaining-status-overlays-20260622T011136Z/as6-backend-data-connectors.css.before
+runtime/as6-v142-disable-remaining-status-overlays-20260622T011136Z/as6-command-center-reference-guard.js.before
+runtime/as6-v142-disable-remaining-status-overlays-20260622T011136Z/as6-command-center-visual-etalon-v134.css.before
+runtime/as6-v142-disable-remaining-status-overlays-20260622T011136Z/as6-crm-live-data.css.before
+runtime/as6-v142-disable-remaining-status-overlays-20260622T011136Z/AS6CrmLiveDataStatus.jsx.before
+runtime/as6-v142-disable-remaining-status-overlays-20260622T011136Z/as6-dashboard-live-data.css.before
+runtime/as6-v142-disable-remaining-status-overlays-20260622T011136Z/AS6DashboardLiveDataStatus.jsx.before
+runtime/as6-v142-disable-remaining-status-overlays-20260622T011136Z/as6-live-operational-data.css.before
+runtime/as6-v142-disable-remaining-status-overlays-20260622T011136Z/AS6LiveOperationalDataStatus.jsx.before
+runtime/as6-v142-disable-remaining-status-overlays-20260622T011136Z/as6-revenue-crm-fusion.css.before
+runtime/as6-v142-disable-remaining-status-overlays-20260622T011136Z/AS6RevenueCrmFusionStatus.jsx.before
+runtime/as6-v142-disable-remaining-status-overlays-20260622T011136Z/remaining-overlay-diagnostics.txt
+runtime/as6-v142-disable-remaining-status-overlays-20260622T011136Z/root-cause.txt
+runtime/as6-v142-disable-remaining-status-overlays-20260622T011136Z/validation-source.txt
+runtime/as6-v143-repair-disable-status-overlays-20260622T011405Z/AS6BackendConnectorStatus.jsx.before
+runtime/as6-v143-repair-disable-status-overlays-20260622T011405Z/AS6CrmLiveDataStatus.jsx.before
+runtime/as6-v143-repair-disable-status-overlays-20260622T011405Z/AS6DashboardLiveDataStatus.jsx.before
+runtime/as6-v143-repair-disable-status-overlays-20260622T011405Z/AS6LiveOperationalDataStatus.jsx.before
+runtime/as6-v143-repair-disable-status-overlays-20260622T011405Z/AS6RevenueCrmFusionStatus.jsx.before
+runtime/as6-v143-repair-disable-status-overlays-20260622T011405Z/frontend-dist.tar
+runtime/as6-v143-repair-disable-status-overlays-20260622T011405Z/health.json
+runtime/as6-v143-repair-disable-status-overlays-20260622T011405Z/production-after.html
+runtime/as6-v143-repair-disable-status-overlays-20260622T011405Z/validation-source.txt
+runtime/as6-v144-remove-overlay-imports-from-app-20260622T011700Z/production-after.html
+runtime/as6-v146b-fix-clean-etalon-diag-20260622T012800Z/production-after.html
+runtime/as6-v147-final-etalon-strip-cleanup-20260622T013806Z/production-after.html
+runtime/as6-v180b-cache-flash-diagnostics-20260622T101335Z/git-status-before.txt
+runtime/as6-v192-deep-command-center-flash-20260622T124631Z/git-status.txt
+runtime/as6-v192-deep-command-center-flash-20260622T124631Z/production-command-center.html
+runtime/as6-v197b-html-route-stable-appshell-20260622T142530Z/git-status.before.txt
+runtime/as6-v202-sidebar-single-source-20260622T222438Z/git-status.before.txt
+runtime/as6-v204-final-real-sidebar-etalon-20260622T232241Z/git-status.before.txt
+runtime/as6-v209-handoff-docs-20260623T014555Z/git-status.before.txt
+runtime/as6-v213e-diagnostic-status-lifecycle-20260623T142220Z/as6-diagnose-diagnostic-status-registry.before
+runtime/as6-v213e-diagnostic-status-lifecycle-20260623T142220Z/diagnostic-status-registry.before.json
+runtime/as6-v214-pr-lifecycle-cleanup-20260623T165211Z/git-status.before.txt
+runtime/as6-v215-command-center-ui-quality-20260623T220810Z/git-status.before.txt
+runtime/as6-v216-ui-restore-policy-20260623T230650Z/git-status.before.txt
+runtime/as6-v217b-master-context-freshness-repair-20260624T002252Z/git-status.before.txt
+runtime/as6-v217-master-context-freshness-20260623T235745Z/git-status.before.txt
+runtime/as6-v218b-post-commit-context-refresh-20260624T004358Z/git-status.before.txt
+runtime/as6-v218c-final-context-self-refresh-20260624T030734Z/git-status.before.txt
+runtime/as6-v218d-context-consistency-20260624T034733Z/git-status.before.txt
+runtime/as6-v219a-context-restore-tag-drift-20260624T050230Z/git-status.before.txt
+runtime/as6-v220b-philosophy-ux-blueprint-20260624T165013Z/git-status.before.txt
+runtime/as6-v221-engineering-guards/git-status.after.txt
+runtime/as6-v221-engineering-guards/git-status.before.txt
+runtime/as6-v221-first-product-screen/git-status.after.txt
+runtime/as6-v221-first-product-screen/git-status.before.txt
+runtime/as6-v221-first-product-screen/head.before.txt
+runtime/as6-v221-first-product-screen/tags-at-head.before.txt
+runtime/as6-v221-first-screen-validation/git-status.after.txt
+runtime/as6-v221-first-screen-validation/git-status.before.txt
+runtime/as6-v221-foundation/git-status.before.txt
+runtime/as6-v221-foundation/git-status.finalize.txt
+runtime/as6-v221-foundation/git-status.repair.txt
+runtime/as6-v221-knowledge/git-status.after.txt
+runtime/as6-v221-knowledge/git-status.before.txt
+runtime/as6-v221-product-alignment/git-status.after.txt
+runtime/as6-v221-product-alignment/git-status.before.txt
+runtime/as6-v221-product-alignment/head.before.txt
+runtime/as6-v221-product-alignment/tags-at-head.before.txt
+runtime/as6-v221-production-health/git-status.after.txt
+runtime/as6-v221-production-health/git-status.before.txt
+runtime/as6-v221-production-health/head.before.txt
+runtime/as6-v221-production-health/health.before.json
+runtime/as6-v221-production-health/health.guard.json
+runtime/as6-v221-production-health/tags-at-head.before.txt
+runtime/as6-v221-release-passport/git-status.after.txt
+runtime/as6-v221-release-passport/git-status.before.txt
+runtime/as6-v221-release-passport/head.before.txt
+runtime/as6-v221-release-passport/health.release.json
+runtime/as6-v221-release-passport/tags-at-head.before.txt
+runtime/as6-v221-ui-quality/git-status.after.txt
+runtime/as6-v221-ui-quality/git-status.before.txt
+runtime/as6-v222-1a-product-baseline/product-baseline.raw.txt
+runtime/as6-v73-precommit-false-positive-repair/git-status.before
+runtime/as6-v79/git-status.before.txt
+runtime/as6-v80b/git-status.before.txt
+runtime/as6-v80/git-status.before.txt
+runtime/as6-v81b/git-status.before.txt
+runtime/as6-v81/git-status.before.txt
+runtime/as6-v82/git-status.before.txt
+runtime/as6-v83b/git-status.before.txt
+runtime/as6-v83/git-status.before.txt
+runtime/as6-v84/git-status.before.txt
+runtime/as6-v85/git-status.before.txt
+runtime/as6-v86/git-status.before.txt
+runtime/as6-v87/git-status.before.txt
+runtime/as6-v88/git-status.before.txt
+runtime/as6-v89/git-status.before.txt
+runtime/as6-v90/git-status.before.txt
+runtime/as6-v91/git-status.before.txt
+runtime/as6-v92/git-status.before.txt
+runtime/as6-v93/git-status.before.txt
+runtime/as6-v94/git-status.before.txt
+runtime/as6-v95/git-status.before.txt
+runtime/as6-v96/git-status.before.txt
+runtime/as6-v97/git-status.before.txt
+runtime/as6-v98/git-status.before.txt
+runtime/as6-v99/git-status.before.txt
+runtime/change-approval/evidence/production-deployment-safety.out
+runtime/change-controller/git-status.txt
+runtime/coverage-contract-repair/as6-diagnostic-status-registry-autobuild-coverage.md.before.bak
+runtime/coverage-contract-repair/as6-root-cause-registry-auto-sync-coverage.md.before.bak
+runtime/diagnostic-backups/bin/as6-diagnose-all.production-autonomy-safety.20260615-023020
+runtime/diagnostic-backups/bin/as6-diagnose-root-cause-governance.production-autonomy-safety.20260615-023020
+runtime/diagnostic-backups/git-stage/final-status-before-commit.20260611-163902.txt
+runtime/diagnostic-backups/git-stage/python-artifact-status-before.20260612-004305.txt
+runtime/diagnostic-backups/git-stage/status-before-stage.20260611-160648.txt
+runtime/diagnostic-backups/governance/root-cause-catalog.production-autonomy-safety.20260615-023020
+runtime/diagnostic-backups/status/diagnostic-status-registry.autonomous-change-controller.20260615-001446
+runtime/diagnostic-backups/status/diagnostic-status-registry.autonomy-standard.20260614-145204
+runtime/diagnostic-backups/status/diagnostic-status-registry.before-stage.20260611-160648.json
+runtime/diagnostic-backups/status/diagnostic-status-registry.change-governance.20260614-204218
+runtime/diagnostic-backups/status/diagnostic-status-registry.change-pipeline.20260615-084328
+runtime/diagnostic-backups/status/diagnostic-status-registry.env-contract.20260614-022340
+runtime/diagnostic-backups/status/diagnostic-status-registry.json.backup-scope.20260612-012041
+runtime/diagnostic-backups/status/diagnostic-status-registry.json.compile-target.20260612-123516
+runtime/diagnostic-backups/status/diagnostic-status-registry.json.dcl-v1.20260611-080644
+runtime/diagnostic-backups/status/diagnostic-status-registry.json.dcl-v2.20260611-103308
+runtime/diagnostic-backups/status/diagnostic-status-registry.json.diagnostic-registration.20260611-154420
+runtime/diagnostic-backups/status/diagnostic-status-registry.json.generated-python-contracts.20260612-143613
+runtime/diagnostic-backups/status/diagnostic-status-registry.json.gprg-v2.20260611-231550
+runtime/diagnostic-backups/status/diagnostic-status-registry.json.gpy-contract-coverage.20260612-224658
+runtime/diagnostic-backups/status/diagnostic-status-registry.json.gpy-contracts-tracking.20260612-161325
+runtime/diagnostic-backups/status/diagnostic-status-registry.json.gpy-runtime-contract.20260612-102525
+runtime/diagnostic-backups/status/diagnostic-status-registry.json.import-guard.20260612-154648
+runtime/diagnostic-backups/status/diagnostic-status-registry.json.py-artifact-hygiene.20260612-004305
+runtime/diagnostic-backups/status/diagnostic-status-registry.json.pycache-drift.20260612-115242
+runtime/diagnostic-backups/status/diagnostic-status-registry.json.rcrv-drift.20260611-145846
+runtime/diagnostic-backups/status/diagnostic-status-registry.json.rcrv-v1.20260611-114010
+runtime/diagnostic-backups/status/diagnostic-status-registry.json.self-import.20260612-111010
+runtime/diagnostic-backups/status/diagnostic-status-registry.json.tracking-drift.20260612-133054
+runtime/diagnostic-backups/status/diagnostic-status-registry.panel-reboot.20260614-132021
+runtime/diagnostic-backups/status/diagnostic-status-registry.production-autonomy-safety.20260615-023020
+runtime/diagnostic-backups/status/diagnostic-status-registry.repair-controller.20260615-105339
+runtime/diagnostic-backups/status/diagnostic-status-registry.validation-controller.20260615-124048
+runtime/diagnostic-backups/systemd/as6-automation-registry.service.20260610-095127.txt
+runtime/diagnostic-flow/as6-diagnose-diagnostic-status-registry.before.20260616T105649Z.bak
+runtime/diagnostic-flow/diagnostic-status-registry.before.20260616T105649Z.json
+runtime/diagnostic-status-registry-rebuild/all-diagnostics.before.txt
+runtime/diagnostic-status-registry-rebuild/as6-diagnose-all.before.bak
+runtime/diagnostic-status-registry-rebuild/diagnostic-status-registry.before.json
+runtime/diagnostic-status-registry-rebuild/post-diagnose-all.out
+runtime/diagnostic-status-registry-rebuild/post-generated-python-coverage.out
+runtime/diagnostic-status-registry-rebuild/post-status-registry.out
+runtime/diagnostic-status-registry-rebuild/pre-diagnose-all.out
+runtime/diagnostic-status-registry-rebuild/pre-status-registry.out
+runtime/final-fail-repair/as6-root-cause-registry-auto-sync-controller.before.bak
+runtime/final-fail-repair/as6-root-cause-registry-auto-sync-controller.out
+runtime/incident-auto-close/production-drift.out
+runtime/incident-auto-close/public-production-health.out
+runtime/incident-governance/evidence/production-drift.out
+runtime/incident-lifecycle/evidence/production-drift.out
+runtime/production-policy/latest.out
+runtime/production-policy/production-policy-matrix.tsv
+runtime/production-policy/production-policy-summary.env
+runtime/repair-controller/git-status.txt
+runtime/root-cause-governance-auto-sync/as6-coverage-registry.before.md
+runtime/root-cause-governance-auto-sync/as6-diagnostic-registry.before.md
+runtime/root-cause-governance-bulk/as6-coverage-registry.before.md
+runtime/root-cause-governance-bulk/as6-diagnostic-registry.before.md
+runtime/root-cause-governance-bulk/diagnostic-status-registry.before.json
+runtime/root-cause-governance-completion/as6-coverage-registry.before.md
+runtime/root-cause-governance-completion/as6-diagnostic-registry.before.md
+runtime/root-cause-governance-sync-authority/as6-coverage-registry.before.md
+runtime/root-cause-governance-sync-authority/as6-diagnostic-registry.before.md
+runtime/root-cause-registry-auto-sync/as6-coverage-registry.before.md
+runtime/root-cause-registry-auto-sync/as6-diagnostic-registry.before.md
+runtime/root-cause-registry-auto-sync/AS6_PROJECT_STATE.before.md
+runtime/root-cause-registry-auto-sync/fails.tsv
+runtime/root-cause-registry-auto-sync/latest.out
+runtime/root-cause-registry-auto-sync/post-autonomy-score.out
+runtime/root-cause-registry-auto-sync/post-diagnose-all.out
+runtime/root-cause-registry-auto-sync/post-governance.out
+runtime/root-cause-registry-auto-sync/pre-diagnose-all.out
+runtime/root-cause-registry-auto-sync/pre-governance.out
+runtime/root-cause-registry-auto-sync/pre-router.out
+runtime/root-cause-registry-auto-sync/root-cause-registry-auto-sync-matrix.tsv
+runtime/root-cause-registry-auto-sync/routes.tsv
+runtime/unified-autonomy-orchestrator/evidence/production_drift.out
+runtime/unified-autonomy-orchestrator/evidence/production_health_public.out
+runtime/unified-autonomy-orchestrator/evidence/production_policy_engine.out
+runtime/validation-controller/git-status.txt
+runtime/validation-controller/health-status.out

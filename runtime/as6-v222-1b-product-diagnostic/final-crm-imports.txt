@@ -1,0 +1,25 @@
+/* AS6_PHYSICAL_PAGE_REFACTOR_MIGRATION_V109: physical refactor governed by AS6PhysicalPageRefactorBridge */
+/* AS6_REAL_PAGE_CONVERSION_ENGINE_V108: governed by Mission Control Layout 2.0 */
+/* AS6_DIRECT_PAGE_REWRITE_V100: governed by AS6UnifiedPageShell / AS6DirectPageRewriteFramework */
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import CRMAnalyticsPanel from "./crm/CRMAnalyticsPanel.jsx";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Panel, PageHeading, StatCard } from "../components/AppShell";
+import { sanitizeCustomerVisibleText, sanitizeVisibleAiText } from "../utils/uiSanitizer";
+import { REVENUE_LEAD_FILTERS, REVENUE_SORT_OPTIONS, buildRecommendationQueue, filterAndSortRevenueLeads, getForecastWidget, getRevenueCards } from "../utils/revenueIntelligence";
+import AS6FirstDawnPanel from '../components/as6/AS6FirstDawnPanel.jsx';
+import {
+  addCrmLeadNote,
+  createCrmFollowUp,
+  createAiAgentAction,
+  createCrmLead,
+  deleteCrmLead,
+  downloadCrmMeetingIcs,
+  fetchCrmActivity,
+  fetchCrmLeads,
+  fetchCrmLead,
+  fetchCrmStages,
+  fetchCrmStats,
+  fetchTelegramMessages,
+  fetchEmailTemplates,
+  fetchLeadEmails,
