@@ -1,0 +1,8 @@
+ M docs/BOOKS/AS6_BUILDERS_LOG.md
+ M docs/MATURITY/AS6_MATURITY_INDEX.md
+ M ops/bin/as6-engineering-guards
+?? docs/PRODUCT/
+?? docs/REGISTRY/AS6_PRODUCT_ALIGNMENT_REGISTRY.md
+?? docs/STAGE_PASSPORTS/V221_4_PRODUCT_ALIGNMENT.md
+?? ops/bin/as6-product-alignment-guard
+?? ops/status/as6-v221-4-product-alignment-status.md

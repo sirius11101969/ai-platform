@@ -6,4 +6,5 @@ ops/bin/as6-stage-passport-guard
 ops/bin/as6-restore-guard
 ops/bin/as6-repository-structure-guard
 ops/bin/as6-knowledge-guard
+ops/bin/as6-product-alignment-guard
 echo 'AS6_ENGINEERING_GUARDS=PASS'

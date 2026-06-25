@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+test -f docs/PRODUCT/AS6_PRODUCT_ALIGNMENT.md
+grep -q 'understand the business faster' docs/PRODUCT/AS6_PRODUCT_ALIGNMENT.md
+grep -q 'make a better decision' docs/PRODUCT/AS6_PRODUCT_ALIGNMENT.md
+grep -q 'Canon 1.0' docs/PRODUCT/AS6_PRODUCT_ALIGNMENT.md
+grep -q 'North Star' docs/PRODUCT/AS6_PRODUCT_ALIGNMENT.md
+test -f docs/REGISTRY/AS6_PRODUCT_ALIGNMENT_REGISTRY.md
+test -f docs/STAGE_PASSPORTS/V221_4_PRODUCT_ALIGNMENT.md
+echo 'AS6_PRODUCT_ALIGNMENT_GUARD=PASS'
