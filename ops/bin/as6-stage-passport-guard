@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+test -d docs/STAGE_PASSPORTS
+test -f docs/STAGE_PASSPORTS/V221_1_FOUNDATION.md
+grep -q 'Result Commit: 459be4e167c47b9d4a9c7886b72b43c4f335e53b' docs/STAGE_PASSPORTS/V221_1_FOUNDATION.md
+echo 'AS6_STAGE_PASSPORT_GUARD=PASS'

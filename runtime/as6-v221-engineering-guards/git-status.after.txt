@@ -1,0 +1,8 @@
+?? docs/RECOVERY/
+?? docs/REGISTRY/
+?? docs/STAGE_PASSPORTS/
+?? ops/bin/as6-engineering-guards
+?? ops/bin/as6-repository-structure-guard
+?? ops/bin/as6-restore-guard
+?? ops/bin/as6-stage-passport-guard
+?? ops/status/as6-v221-2-engineering-guards-status.md

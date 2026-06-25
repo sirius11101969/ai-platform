@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+test -f MANIFESTO.md
+test -d docs/FOUNDATION
+test -d docs/CANON
+test -d docs/CULTURE
+test -d docs/BOOKS
+test -d docs/GUARDIANS
+test -d docs/STAGE_PASSPORTS
+test -d docs/RECOVERY
+test -d docs/REGISTRY
+echo 'AS6_REPOSITORY_STRUCTURE_GUARD=PASS'

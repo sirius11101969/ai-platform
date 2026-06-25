@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+ops/bin/as6-canon-before-code
+ops/bin/as6-foundation-first
+ops/bin/as6-stage-passport-guard
+ops/bin/as6-restore-guard
+ops/bin/as6-repository-structure-guard
+echo 'AS6_ENGINEERING_GUARDS=PASS'

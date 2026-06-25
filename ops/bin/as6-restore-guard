@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+HEAD_SHA="$(git rev-parse HEAD)"
+git tag --points-at "$HEAD_SHA" | grep -q '^AS6_RESTORE_' || { echo 'AS6_RESTORE_GUARD=FAIL'; exit 1; }
+echo 'AS6_RESTORE_GUARD=PASS'
