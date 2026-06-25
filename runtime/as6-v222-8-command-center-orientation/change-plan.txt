@@ -1,0 +1,7 @@
+# V222.8 Change Plan
+- Confirmed problem: Command Center needs clearer first-time orientation after auth.
+- Minimal change: add one orientation block between hero and KPI row.
+- Add three first actions: check leads, review AI decisions, see revenue focus.
+- No route change.
+- No backend change.
+- No Governance change.

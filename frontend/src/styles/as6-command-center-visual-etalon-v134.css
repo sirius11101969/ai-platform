@@ -482,3 +482,56 @@ body.as6-command-center-reference-guard-active .command-center-page {
   border-radius: 0 !important;
   box-shadow: none !important;
 }
+
+/* as6 v222.8 command center orientation */
+body.as6-command-center-reference-guard-active .command-orientation {
+  margin: 0 0 20px !important;
+  padding: 18px 20px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.5fr) minmax(260px, .9fr) !important;
+  gap: 18px !important;
+  align-items: center !important;
+  border: 1px solid rgba(90,140,220,.28) !important;
+  border-radius: 18px !important;
+  background: linear-gradient(135deg, rgba(15,31,61,.94), rgba(7,17,35,.94)) !important;
+}
+body.as6-command-center-reference-guard-active .command-orientation-copy span {
+  display: inline-flex !important;
+  margin: 0 0 8px !important;
+  color: #7dd3fc !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  letter-spacing: .12em !important;
+  text-transform: uppercase !important;
+}
+body.as6-command-center-reference-guard-active .command-orientation-copy h2 {
+  margin: 0 0 8px !important;
+  font-size: clamp(20px, 1.8vw, 28px) !important;
+  line-height: 1.16 !important;
+}
+body.as6-command-center-reference-guard-active .command-orientation-copy p {
+  margin: 0 !important;
+  color: rgba(226,238,255,.78) !important;
+  line-height: 1.55 !important;
+}
+body.as6-command-center-reference-guard-active .command-orientation-actions {
+  display: grid !important;
+  gap: 10px !important;
+}
+body.as6-command-center-reference-guard-active .command-orientation-actions a {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 44px !important;
+  border-radius: 14px !important;
+  border: 1px solid rgba(125,211,252,.28) !important;
+  background: rgba(15,35,70,.92) !important;
+  color: #eef7ff !important;
+  text-decoration: none !important;
+  font-weight: 800 !important;
+}
+@media (max-width: 920px) {
+  body.as6-command-center-reference-guard-active .command-orientation {
+    grid-template-columns: 1fr !important;
+  }
+}

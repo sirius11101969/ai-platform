@@ -1,0 +1,41 @@
+    { label: 'Planning', value: pickMetric(apiState.monthly?.planning?.status, 'ACTIVE'), note: `Осталось: ${monthly.remaining}` },
+  ]), [apiState, monthly])
+
+  const executiveStream = useMemo(() => {
+    const items = [
+      { type: 'Revenue', title: 'Финансовый фокус', text: `Факт месяца: ${monthly.actual}. Осталось до цели: ${monthly.remaining}.`, status: 'LIVE' },
+      { type: 'Approvals', title: 'Очередь решений', text: `${actionQueue.length} AI-действия готовы к проверке.`, status: actionQueue.length ? 'ACTION' : 'CLEAR' },
+      { type: 'Inbox', title: 'AI Inbox', text: `${inboxItems.length} входящих executive-сигнала.`, status: inboxItems.length ? 'REVIEW' : 'CLEAR' },
+      { type: 'Health', title: 'Стабильность системы', text: `AS6: ${healthSummary.find((x) => x.label === 'AS6')?.value || 'GREEN'}.`, status: 'GREEN' },
+      { type: 'Planning', title: 'Планирование', text: businessSummary.find((x) => x.label === 'Planning')?.note || 'План активен.', status: 'ACTIVE' },
+    ]
+    return items
+  }, [monthly, actionQueue, inboxItems, healthSummary, businessSummary])
+
+  return (
+    <main className="command-center-page" data-command-center-visual="premium-as6" data-as6-diagnostic-page="command-center-premium"><section className="command-hero" data-as6-diagnostic-hero="executive-command-center">
+        <div>
+          <h1>Добро пожаловать, <span>Владимир!</span> 👋</h1>
+          <p>Ваш AI Command Center. Управляйте, анализируйте и масштабируйте выручку.</p>
+          <div className="command-live-status"><a className={apiLoading ? 'loading' : 'green'} href="/ai-system-health-center">{apiLoading ? 'Синхронизация...' : 'Live-ready'}</a><a href="/ai-system-health-center">{apiErrors.length ? `API требует авторизацию: ${apiErrors.length}` : 'API подключён'}</a></div>
+        </div>
+        <div className="command-top-actions" aria-label="Command Center tools">
+          <label className="command-search"><span>⌕</span><input type="search" placeholder="Поиск..." /></label>
+          <a href="/followups" className="top-icon" data-badge="12" aria-label="Уведомления"><BellIcon /></a><a href="/priority-inbox" className="top-icon" data-badge="3" aria-label="AI коммуникации"><ChatIcon /></a><a href="/ai-system-health-center" className="top-icon" aria-label="Помощь"><HelpIcon /></a><a href="/profile" className="command-avatar top-icon-profile" aria-label="Профиль">A</a>
+        </div>
+      </section>
+
+      <section className="command-kpis" data-command-kpi-row data-as6-diagnostic-kpis="executive-kpi-row">
+        {kpis.map((item) => <article className={`command-kpi ${item.tone}`} key={item.key}>
+          <div className="kpi-copy"><span>{item.label}</span><strong>{item.value}</strong><em>{item.delta}</em></div>
+          <svg className="kpi-spark" viewBox="0 0 100 64" preserveAspectRatio="none" aria-hidden="true"><polyline points={sparklinePoints(item.spark)} /></svg>
+          <i>{item.icon}</i>
+        </article>)}
+      </section>
+
+      <section className="quick-actions quick-actions-primary" data-quick-actions data-as6-primary-actions="above-fold"><h2>Быстрые действия</h2><div>{quickActions.map((action, index) => <a href={quickActionLinks[action] || "#"} role="button" key={action} aria-label={action}><span>{["👥", "$", "🧾", "🛡️", "〽️", "📊", <img src={as6Robot} alt="AI" className="quick-action-robot-icon" />][index]}</span>{action}</a>)}</div></section>
+
+      <section className="command-main-grid">
+        <div className="command-core">
+          <section className="command-top-grid">
+            <article className="command-card daily-goal">

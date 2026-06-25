@@ -3766,3 +3766,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Result: Command Center first-time orientation diagnosed as a product decision point.
 - Restore Tag: AS6_RESTORE_V222_7_COMMAND_CENTER_FIRST_TIME_ORIENTATION_DIAGNOSTIC_20260625T173644Z
 - Next Stage: V222.8 minimal orientation improvement if confirmed.
+
+## V222.8 Command Center First-time Orientation
+- Status: PASS
+- Result: minimal orientation block added to Command Center.
+- Restore Tag: AS6_RESTORE_V222_8_COMMAND_CENTER_ORIENTATION_20260625T174723Z
+- Next Stage: V222.9 Command Center orientation effect review.

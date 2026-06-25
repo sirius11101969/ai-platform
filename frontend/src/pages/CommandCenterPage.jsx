@@ -244,6 +244,19 @@ const [apiState, setApiState] = useState({})
         </div>
       </section>
 
+      <section className="command-orientation" data-as6-first-time-orientation="v222-8" aria-label="Первый шаг в AS6">
+        <div className="command-orientation-copy">
+          <span>Первый шаг</span>
+          <h2>Начните с главного: посмотрите, где сейчас деньги, клиенты и решения.</h2>
+          <p>Command Center собирает заявки, CRM, AI-действия и выручку в один рабочий центр. Сначала проверьте лиды, затем решения AI, затем фокус по выручке.</p>
+        </div>
+        <div className="command-orientation-actions">
+          <a href="/crm?filter=priority">Проверить лиды</a>
+          <a href="/ai-approval-center">Одобрить AI-действия</a>
+          <a href="/dashboard/revenue">Посмотреть выручку</a>
+        </div>
+      </section>
+
       <section className="command-kpis" data-command-kpi-row data-as6-diagnostic-kpis="executive-kpi-row">
         {kpis.map((item) => <article className={`command-kpi ${item.tone}`} key={item.key}>
           <div className="kpi-copy"><span>{item.label}</span><strong>{item.value}</strong><em>{item.delta}</em></div>

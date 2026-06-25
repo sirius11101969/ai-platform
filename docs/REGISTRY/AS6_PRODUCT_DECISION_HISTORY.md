@@ -43,3 +43,9 @@
 - Product Result: first-time orientation becomes explicit decision point.
 - Engineering Result: no UI change; static snapshots recorded.
 - Finding: Command Center requires first-time orientation review after becoming the post-auth destination.
+
+## V222.8 Command Center First-time Orientation
+- Decision: add one minimal orientation block to Command Center.
+- Reason: V222.7 diagnosed first-time orientation as pending after Command Center became post-auth destination.
+- Product Result: clearer first useful actions after login/signup.
+- Engineering Result: isolated frontend UI/CSS change, no architecture change.

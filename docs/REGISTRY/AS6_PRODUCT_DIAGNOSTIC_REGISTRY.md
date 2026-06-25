@@ -61,3 +61,10 @@
 - Runtime: runtime/as6-v222-7-command-center-first-time-orientation
 - Status: ops/status/as6-v222-7-command-center-first-time-orientation-status.md
 - Failure Classes: PRODUCT_COMMAND_CENTER_FIRST_TIME_ORIENTATION_GAP, PRODUCT_COMMAND_CENTER_NO_VISIBLE_ACTION_SURFACE, PRODUCT_FIRST_TIME_COMMAND_CENTER_ORIENTATION_PENDING
+
+## V222.8 Command Center First-time Orientation
+- Artifact: docs/PRODUCT/AS6_COMMAND_CENTER_ORIENTATION_V222_8.md
+- Stage Passport: docs/STAGE_PASSPORTS/V222_8_COMMAND_CENTER_ORIENTATION.md
+- Runtime: runtime/as6-v222-8-command-center-orientation
+- Status: ops/status/as6-v222-8-command-center-orientation-status.md
+- Failure Classes: PRODUCT_COMMAND_CENTER_FIRST_TIME_ORIENTATION_GAP, PRODUCT_COMMAND_CENTER_FIRST_ACTION_AMBIGUITY

@@ -37,3 +37,7 @@
 ## V222.7 Command Center Orientation Coverage
 - Covered: CommandCenterPage source, action surface, next-step language, CRM/AI context signals.
 - Not changed: CommandCenter UI, routes, backend, ProtectedRoute, Governance.
+
+## V222.8 Command Center Orientation Coverage
+- Covered: CommandCenter orientation block, first-action CTAs, scoped CSS.
+- Not changed: routes, auth, backend, CRM logic, ProtectedRoute, Governance.
