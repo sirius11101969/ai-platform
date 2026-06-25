@@ -75,3 +75,10 @@
 - Runtime: runtime/as6-v222-9-command-center-orientation-effect-review
 - Status: ops/status/as6-v222-9-command-center-orientation-effect-review-status.md
 - Failure Classes: PRODUCT_COMMAND_CENTER_ORIENTATION_EFFECT_UNMEASURED_BY_USERS, PRODUCT_COMMAND_CENTER_FIRST_ACTION_ANALYTICS_PENDING
+
+## V222.10 First-action Analytics Diagnostic
+- Artifact: docs/PRODUCT/AS6_FIRST_ACTION_ANALYTICS_DIAGNOSTIC_V222_10.md
+- Stage Passport: docs/STAGE_PASSPORTS/V222_10_FIRST_ACTION_ANALYTICS_DIAGNOSTIC.md
+- Runtime: runtime/as6-v222-10-first-action-analytics-diagnostic
+- Status: ops/status/as6-v222-10-first-action-analytics-diagnostic-status.md
+- Failure Classes: PRODUCT_COMMAND_CENTER_FIRST_ACTION_ANALYTICS_PENDING, PRODUCT_COMMAND_CENTER_FIRST_ACTION_CTA_MISSING, PRODUCT_FIRST_ACTION_ANALYTICS_REQUIRES_EFFECT_REVIEW

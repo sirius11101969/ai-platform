@@ -3778,3 +3778,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Result: V222.8 static effect confirmed; behavioral validation remains pending.
 - Restore Tag: AS6_RESTORE_V222_9_COMMAND_CENTER_ORIENTATION_EFFECT_REVIEW_20260625T175438Z
 - Next Stage: V222.10 first-action analytics diagnostic.
+
+## V222.10 First-action Analytics Diagnostic
+- Status: PASS
+- Result: first-action analytics diagnosed as a product validation gap.
+- Restore Tag: AS6_RESTORE_V222_10_FIRST_ACTION_ANALYTICS_DIAGNOSTIC_20260625T180144Z
+- Next Stage: V222.11 minimal first-action telemetry if confirmed.

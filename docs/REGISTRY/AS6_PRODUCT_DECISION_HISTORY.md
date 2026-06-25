@@ -56,3 +56,10 @@
 - Product Result: clearer first guidance inside Command Center.
 - Engineering Result: no product code change; effect-review artifacts added.
 - Remaining Issue: first-action analytics remains pending.
+
+## V222.10 First-action Analytics Diagnostic
+- Decision: diagnose first-action analytics before adding telemetry.
+- Reason: V222.9 confirmed UI exists, but behavior remains unmeasured.
+- Product Result: behavior validation gap is explicit.
+- Engineering Result: no product code change; diagnostic artifacts added.
+- Finding: Command Center has first-action CTAs, but static source does not confirm first-action analytics instrumentation.

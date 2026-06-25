@@ -1,0 +1,2 @@
+FAILURE_CLASS=PRODUCT_COMMAND_CENTER_FIRST_ACTION_ANALYTICS_PENDING
+FINDING=Command Center has first-action CTAs, but static source does not confirm first-action analytics instrumentation.

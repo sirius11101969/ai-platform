@@ -45,3 +45,7 @@
 ## V222.9 Command Center Orientation Effect Coverage
 - Covered: orientation block, first-step text, three first-action CTAs, scoped CSS, route existence.
 - Not covered: real user analytics and click behavior.
+
+## V222.10 First-action Analytics Coverage
+- Covered: CommandCenterPage orientation CTAs and existing analytics/tracking signal scan.
+- Not changed: telemetry, backend, routes, auth, UI, Governance.

@@ -1,0 +1,18 @@
+57:const events = [
+235:    <main className="command-center-page" data-command-center-visual="premium-as6" data-as6-diagnostic-page="command-center-premium"><section className="command-hero" data-as6-diagnostic-hero="executive-command-center">
+243:          <a href="/followups" className="top-icon" data-badge="12" aria-label="Уведомления"><BellIcon /></a><a href="/priority-inbox" className="top-icon" data-badge="3" aria-label="AI коммуникации"><ChatIcon /></a><a href="/ai-system-health-center" className="top-icon" aria-label="Помощь"><HelpIcon /></a><a href="/profile" className="command-avatar top-icon-profile" aria-label="Профиль">A</a>
+247:      <section className="command-orientation" data-as6-first-time-orientation="v222-8" aria-label="Первый шаг в AS6">
+249:          <span>Первый шаг</span>
+254:          <a href="/crm?filter=priority">Проверить лиды</a>
+255:          <a href="/ai-approval-center">Одобрить AI-действия</a>
+256:          <a href="/dashboard/revenue">Посмотреть выручку</a>
+260:      <section className="command-kpis" data-command-kpi-row data-as6-diagnostic-kpis="executive-kpi-row">
+268:      <section className="quick-actions quick-actions-primary" data-quick-actions data-as6-primary-actions="above-fold"><h2>Быстрые действия</h2><div>{quickActions.map((action, index) => <a href={quickActionLinks[action] || "#"} role="button" key={action} aria-label={action}><span>{["👥", "$", "🧾", "🛡️", "〽️", "📊", <img src={as6Robot} alt="AI" className="quick-action-robot-icon" />][index]}</span>{action}</a>)}</div></section>
+284:            <article className="command-card pipeline-card" data-pipeline-funnel>
+285:              <div className="command-card-head"><h2>Pipeline Overview</h2><select className="command-filter-select" value={pipelinePeriod} onChange={(event) => setPipelinePeriod(event.target.value)} aria-label="Pipeline period"><option value="day">День</option><option value="week">Неделя</option><option value="month">Месяц</option><option value="quarter">Квартал</option><option value="year">Год</option></select></div>
+299:              <div className="command-card-head"><h2>Производительность AI сотрудников</h2><select className="command-filter-select" value={workforceRange} onChange={(event) => setWorkforceRange(event.target.value)} aria-label="AI workforce period"><option value="today">Сегодня</option><option value="week">Неделя</option><option value="month">Месяц</option></select></div>
+307:              <div className="command-card-head"><h2>Динамика выручки</h2><select className="command-filter-select" value={revenueRange} onChange={(event) => setRevenueRange(event.target.value)} aria-label="Revenue range"><option value="1d">День</option><option value="7d">7 дней</option><option value="30d">30 дней</option><option value="90d">90 дней</option><option value="365d">365 дней</option></select></div>
+320:        <aside className="command-right-rail" data-right-action-rail data-copilot-rail data-as6-diagnostic-copilot="right-action-rail">
+321:          <article className="command-card copilot-hero" data-copilot-hero>
+328:          <article className="command-card event-card"><div className="command-card-head"><h2>Последние события</h2><a href="/dashboard">Все</a></div>{events.map((event) => <div className="event-row" key={event.text}><b>{event.icon}</b><span>{event.text}</span><time>{event.time}</time></div>)}</article>
+333:      <section className="command-recommendations" data-ai-recommendations>
