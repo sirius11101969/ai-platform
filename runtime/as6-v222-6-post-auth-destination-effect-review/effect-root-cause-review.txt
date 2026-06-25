@@ -1,0 +1,3 @@
+ROOT_CAUSE_REVIEW=V222.5 resolved static post-auth destination ambiguity
+HYPOTHESIS_STATUS=PARTIALLY_CONFIRMED_STATIC
+DETAIL=Static diagnostics confirm AuthPages targets /command-center and App.jsx protects the Command Center route.

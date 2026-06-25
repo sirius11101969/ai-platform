@@ -47,3 +47,10 @@
 - Runtime: runtime/as6-v222-5-post-auth-command-center
 - Status: ops/status/as6-v222-5-post-auth-destination-strategy-status.md
 - Failure Classes: PRODUCT_POST_AUTH_DESTINATION_AMBIGUITY, PRODUCT_AUTH_NAVIGATION_VALUE_MISMATCH
+
+## V222.6 Post-auth Destination Effect Review
+- Artifact: docs/PRODUCT/AS6_POST_AUTH_DESTINATION_EFFECT_REVIEW_V222_6.md
+- Stage Passport: docs/STAGE_PASSPORTS/V222_6_POST_AUTH_DESTINATION_EFFECT_REVIEW.md
+- Runtime: runtime/as6-v222-6-post-auth-destination-effect-review
+- Status: ops/status/as6-v222-6-post-auth-destination-effect-review-status.md
+- Failure Classes: PRODUCT_POST_AUTH_DESTINATION_EFFECT_UNMEASURED_BY_USERS, PRODUCT_FIRST_TIME_COMMAND_CENTER_ORIENTATION_PENDING

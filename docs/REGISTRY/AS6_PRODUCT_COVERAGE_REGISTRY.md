@@ -29,3 +29,7 @@
 ## V222.5 Post-auth Destination Coverage
 - Covered: AuthPages post-auth navigation target and Command Center route existence.
 - Not changed: backend, auth API, route table, ProtectedRoute, CRM logic, Governance.
+
+## V222.6 Post-auth Destination Effect Coverage
+- Covered: AuthPages command-center target, dashboard fallback regression, Command Center ProtectedRoute.
+- Not covered: real user analytics, first-time orientation quality.

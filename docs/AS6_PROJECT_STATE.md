@@ -3754,3 +3754,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Result: post-auth destination strategy selected and applied to AuthPages.
 - Restore Tag: AS6_RESTORE_V222_5_POST_AUTH_COMMAND_CENTER_20260625T172050Z
 - Next Stage: V222.6 post-auth destination effect review.
+
+## V222.6 Post-auth Destination Effect Review
+- Status: PASS
+- Result: V222.5 static effect confirmed; user behavior validation remains pending.
+- Restore Tag: AS6_RESTORE_V222_6_POST_AUTH_DESTINATION_EFFECT_REVIEW_20260625T172820Z
+- Next Stage: V222.7 first-time Command Center orientation diagnostic.

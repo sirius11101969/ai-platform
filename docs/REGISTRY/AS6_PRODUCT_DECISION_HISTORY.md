@@ -29,3 +29,10 @@
 - Reason: V222.4 diagnosed post-auth destination as unresolved.
 - Product Result: clearer first workspace after auth.
 - Engineering Result: isolated AuthPages navigation change.
+
+## V222.6 Post-auth Destination Effect Review
+- Decision: close V222.5 as statically effective, but not fully user-validated.
+- Reason: AuthPages now points to /command-center and route remains protected.
+- Product Result: clear primary workspace after auth.
+- Engineering Result: no product code change; effect-review artifacts added.
+- Remaining Issue: first-time Command Center orientation remains pending.
