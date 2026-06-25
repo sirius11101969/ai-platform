@@ -1,0 +1,3 @@
+FAILURE_CLASS=PRODUCT_POST_AUTH_DESTINATION_REQUIRES_VALUE_ALIGNMENT_REVIEW
+FINDING=AuthPages appears to send user toward dashboard; value alignment still requires review against Product Map.
+POST_AUTH_DESTINATION=dashboard

@@ -1,0 +1,99 @@
+frontend/src/pages/AuthPages.jsx:2:import { Link, useNavigate } from "react-router-dom";
+frontend/src/pages/AuthPages.jsx:4:import { login, saveAuthSession, signup } from "../services/api";
+frontend/src/pages/AuthPages.jsx:7:  const isSignup = mode === "signup";
+frontend/src/pages/AuthPages.jsx:8:  const navigate = useNavigate();
+frontend/src/pages/AuthPages.jsx:21:        ? await signup({ email, password })
+frontend/src/pages/AuthPages.jsx:22:        : await login({ email, password });
+frontend/src/pages/AuthPages.jsx:25:      navigate("/dashboard");
+frontend/src/pages/AuthPages.jsx:70:          {isSignup ? "Уже есть аккаунт?" : "Нет аккаунта?"} <Link to={isSignup ? "/login" : "/signup"}>{isSignup ? "Войти" : "Зарегистрироваться"}</Link>
+frontend/src/pages/AuthPages.jsx:78:  return <AuthCard mode="signup" />;
+frontend/src/pages/AuthPages.jsx:82:  return <AuthCard mode="login" />;
+frontend/src/App.jsx:17:import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+frontend/src/App.jsx:64:  const [authState, setAuthState] = useState(getAuthState);
+frontend/src/App.jsx:67:    markAs6DesignSystemReady({ route: window.location.pathname });
+frontend/src/App.jsx:70:      if (event?.type === "ai-platform-auth-updated" && event.detail?.token) {
+frontend/src/App.jsx:71:        setAuthState({
+frontend/src/App.jsx:80:        setAuthState({ authField: [REDACTED], user: null, isAuthenticated: false });
+frontend/src/App.jsx:84:      setAuthState(getAuthState());
+frontend/src/App.jsx:87:    window.addEventListener("ai-platform-auth-updated", syncAuthState);
+frontend/src/App.jsx:92:      window.removeEventListener("ai-platform-auth-updated", syncAuthState);
+frontend/src/App.jsx:108:  return isAuthenticated ? children : <Navigate to="/login" replace />;
+frontend/src/App.jsx:123:        <Suspense fallback={window.location.pathname === "/command-center" ? null : <div className="as6-route-loading">Загрузка...</div>}>
+frontend/src/App.jsx:126:          <Route path="/signup" element={<SignupPage />} />
+frontend/src/App.jsx:127:          <Route path="/login" element={<LoginPage />} />
+frontend/src/App.jsx:129:          <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+frontend/src/App.jsx:130:          <Route path="/crm" element={<ProtectedRoute><CRMPage /></ProtectedRoute>} />
+frontend/src/App.jsx:135:          <Route path="/ai-manager-dashboard" element={<ProtectedRoute><AiManagerDashboardPage /></ProtectedRoute>} />
+frontend/src/App.jsx:145:          <Route path="/ai-executive-dashboard" element={<ProtectedRoute><AiExecutiveUnifiedDashboardPage /></ProtectedRoute>} />
+frontend/src/App.jsx:160:          <Route path="/dashboard/revenue" element={<ProtectedRoute><RevenueDashboardPage /></ProtectedRoute>} />
+frontend/src/App.jsx:161:          <Route path="*" element={<Navigate to="/" replace />} />
+frontend/src/components/AppShell.jsx:3:import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+frontend/src/components/AppShell.jsx:21:  const navigate = useNavigate();
+frontend/src/components/AppShell.jsx:22:  const location = useLocation();
+frontend/src/components/AppShell.jsx:34:          navigate("/login", { replace: true });
+frontend/src/components/AppShell.jsx:47:  }, [navigate]);
+frontend/src/components/AppShell.jsx:87:    window.location.reload();
+frontend/src/components/AppShell.jsx:97:    window.sessionStorage?.setItem('crm-open-create-lead', '1');
+frontend/src/components/AppShell.jsx:98:    navigate('/crm');
+frontend/src/components/AppShell.jsx:99:    window.setTimeout(() => window.dispatchEvent(new CustomEvent('crm-open-create-lead')), 80);
+frontend/src/components/AppShell.jsx:103:    window.sessionStorage?.setItem('crm-open-activity-feed', '1');
+frontend/src/components/AppShell.jsx:104:    navigate('/crm');
+frontend/src/components/AppShell.jsx:105:    window.setTimeout(() => window.dispatchEvent(new CustomEvent('crm-open-activity-feed')), 80);
+frontend/src/components/AppShell.jsx:111:    navigate("/login", { replace: true });
+frontend/src/components/AppShell.jsx:118:  const isCommandCenter = location.pathname === "/command-center";
+frontend/src/components/AppShell.jsx:129:                <NavLink to="/dashboard">▦ Dashboard</NavLink>
+frontend/src/components/AppShell.jsx:130:                <NavLink to="/crm">▧ CRM</NavLink>
+frontend/src/components/AppShell.jsx:131:                <NavLink to="/dashboard/revenue">↗ Revenue</NavLink>
+frontend/src/components/AppShell.jsx:159:                <NavLink to="/dashboard" className={({ isActive }) => (isActive ? "active" : "")}>Дашборд</NavLink>
+frontend/src/components/AppShell.jsx:160:                <NavLink to="/crm" className={({ isActive }) => (isActive ? "active" : "")}>CRM‑воронка</NavLink>
+frontend/src/components/AppShell.jsx:169:                <NavLink to="/dashboard/revenue" className={({ isActive }) => (isActive ? "active" : "")}>Revenue Dashboard</NavLink>
+frontend/src/components/AppShell.jsx:176:                <NavLink to="/ai-manager-dashboard" className={({ isActive }) => (isActive ? "active" : "")}>AI Manager Dashboard</NavLink>
+frontend/src/components/AppShell.jsx:181:                <div className="sidebar-crm-actions" aria-label="Действия CRM">
+frontend/src/components/AppShell.jsx:185:                <Link to="/login" onClick={handleLogout}>Выйти</Link>
+frontend/src/services/api.js:48:    return readStorage(window.localStorage) || readStorage(window.sessionStorage)
+frontend/src/services/api.js:64:  try { return window.localStorage.getItem(WORKSPACE_STORAGE_KEY) || null } catch (_error) { return null }
+frontend/src/services/api.js:70:  window.localStorage.setItem(WORKSPACE_STORAGE_KEY, workspaceId)
+frontend/src/services/api.js:82:  const storage = remember ? window.localStorage : window.sessionStorage
+frontend/src/services/api.js:86:  const fallbackStorage = remember ? window.sessionStorage : window.localStorage
+frontend/src/services/api.js:90:  window.dispatchEvent(new CustomEvent('ai-platform-auth-updated', { detail: nextSession }))
+frontend/src/services/api.js:109:  window.localStorage.removeItem(AUTH_STORAGE_KEY)
+frontend/src/services/api.js:113:    window.localStorage.removeItem(key)
+frontend/src/services/api.js:243:export function signup({ email, password }) {
+frontend/src/services/api.js:244:  return publicRequest('/auth/signup', {
+frontend/src/services/api.js:250:export function login({ email, password }) {
+frontend/src/services/api.js:251:  return publicRequest('/auth/login', {
+frontend/src/services/api.js:266:  return request('/dashboard/profile')
+frontend/src/services/api.js:270:  return request('/crm/leads')
+frontend/src/services/api.js:274:  return request(`/crm/leads/${id}`)
+frontend/src/services/api.js:295:  return request(`/crm/meetings/${meetingId}`)
+frontend/src/services/api.js:302:  const response = await fetch(`${API_BASE_URL}/crm/meetings/${meetingId}/ics`, {
+frontend/src/services/api.js:323:  return request('/crm/stages')
+frontend/src/services/api.js:327:  return request(`/crm/stages/${status}`, {
+frontend/src/services/api.js:334:  return request('/crm/leads', {
+frontend/src/services/api.js:341:  return request(`/crm/leads/${id}`, {
+frontend/src/services/api.js:349:  return request(`/crm/leads/${id}`, { method: 'DELETE' })
+frontend/src/services/api.js:353:  return request(`/crm/leads/${id}/followups`, { method: 'POST' })
+frontend/src/services/api.js:357:  return request(`/crm/leads/${id}/ai-analysis`, { method: 'POST' })
+frontend/src/services/api.js:361:  return request(`/crm/leads/${id}/lead-scoring`, { method: 'POST' })
+frontend/src/services/api.js:365:  return request('/crm/ai-analysis', { method: 'POST', body: JSON.stringify(payload) })
+frontend/src/services/api.js:369:  return request('/crm/lead-scoring/run', { method: 'POST', body: JSON.stringify(payload) })
+frontend/src/services/api.js:468:  return request('/crm/activity')
+frontend/src/services/api.js:472:  return request(`/crm/leads/${id}/notes`, {
+frontend/src/services/api.js:479:  return request('/crm/stats')
+frontend/src/services/api.js:563:  return request(`/ai/manager-dashboard${query ? `?${query}` : ''}`)
+frontend/src/services/api.js:646:  return request(`/crm/leads/${leadId}/telegram-messages`)
+frontend/src/services/api.js:650:  return request(`/crm/leads/${leadId}/telegram-messages`, {
+frontend/src/services/api.js:668:  return request(`/crm/leads/${leadId}/emails`)
+frontend/src/services/api.js:672:  return request(`/crm/leads/${leadId}/emails/generate`, {
+frontend/src/services/api.js:679:  return request(`/crm/leads/${leadId}/emails`, {
+frontend/src/services/api.js:732:  return request(`/execution/crm/leads/${leadId}/action-center`)
+frontend/src/services/api.js:736:  return request(`/execution/crm/leads/${leadId}/actions`, { method: 'POST', body: JSON.stringify(payload) })
+frontend/src/services/api.js:740:  return request(`/execution/crm/actions/${actionId}`, { method: 'PATCH', body: JSON.stringify(payload) })
+frontend/src/services/api.js:744:  return request(`/execution/crm/actions/${actionId}/approve`, { method: 'POST' })
+frontend/src/services/api.js:748:  return request(`/execution/crm/actions/${actionId}/cancel`, { method: 'POST' })
+frontend/src/services/api.js:752:  return request(`/execution/crm/actions/${actionId}/send`, { method: 'POST' })
+frontend/src/services/api.js:850:export function fetchAiStrategicResourceAllocation(){return request('/ai/strategic-planning/resource-allocation')}
+frontend/src/services/api.js:868:export function fetchAiExecutiveUnifiedOverview(){return request('/ai/executive-dashboard/overview')}
+frontend/src/services/api.js:918:  return request(`/payments/dashboard${query}`, { workspaceId })
+frontend/src/services/api.js:934:    localStorage.getItem("payment_webhook_secret") ||
+frontend/src/services/api.js:941:  localStorage.setItem("payment_webhook_secret", secret)

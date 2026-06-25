@@ -16,3 +16,10 @@
 - Product Result: first screen clarity improvement retained.
 - Engineering Result: no product code change; effect-review artifacts added.
 - Remaining Issue: post-auth first destination still requires diagnostic review.
+
+## V222.4 Post-auth First Destination Diagnostic
+- Decision: diagnose post-auth destination before any route or UI change.
+- Reason: V222.3 left post-auth first destination unresolved.
+- Product Result: post-auth destination is now a documented decision point.
+- Engineering Result: no UI change; auth/navigation snapshots recorded.
+- Finding: AuthPages appears to send user toward dashboard; value alignment still requires review against Product Map.

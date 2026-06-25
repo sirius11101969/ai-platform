@@ -3736,3 +3736,15 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Result: V222.2 static effect confirmed; real user validation remains pending.
 - Restore Tag: AS6_RESTORE_V222_3_FIRST_EXPERIENCE_EFFECT_REVIEW_20260625T170200Z
 - Next Stage: V222.4 post-auth first destination diagnostic.
+
+## V222.4 Post-auth First Destination Diagnostic
+- Status: PASS
+- Result: post-auth first destination diagnosed as a product decision point.
+- Restore Tag: AS6_RESTORE_V222_4_POST_AUTH_FIRST_DESTINATION_DIAGNOSTIC_20260625T170800Z
+- Next Stage: V222.5 post-auth destination strategy decision.
+
+## V222.4 Final Repair
+- Status: PASS
+- Failure Class: DIAGNOSTIC_SNAPSHOT_AUTH_FIELD_NAME_FALSE_POSITIVE
+- Result: V222.4 runtime snapshots sanitized and ready for commit.
+- Restore Tag: AS6_RESTORE_V222_4_POST_AUTH_FIRST_DESTINATION_DIAGNOSTIC_REPAIR_20260625T171404Z

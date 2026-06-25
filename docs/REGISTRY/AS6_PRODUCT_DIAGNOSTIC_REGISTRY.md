@@ -28,3 +28,15 @@
 - Runtime: runtime/as6-v222-3-first-experience-effect-review
 - Status: ops/status/as6-v222-3-first-experience-effect-review-status.md
 - Failure Classes: PRODUCT_EFFECT_UNMEASURED_BY_USERS, PRODUCT_POST_AUTH_DESTINATION_AMBIGUITY_PENDING
+
+## V222.4 Post-auth First Destination Diagnostic
+- Artifact: docs/PRODUCT/AS6_POST_AUTH_FIRST_DESTINATION_DIAGNOSTIC_V222_4.md
+- Stage Passport: docs/STAGE_PASSPORTS/V222_4_POST_AUTH_FIRST_DESTINATION_DIAGNOSTIC.md
+- Runtime: runtime/as6-v222-4-post-auth-first-destination-diagnostic
+- Status: ops/status/as6-v222-4-post-auth-first-destination-diagnostic-status.md
+- Failure Classes: PRODUCT_POST_AUTH_DESTINATION_NOT_EXPLICIT, PRODUCT_POST_AUTH_DESTINATION_REQUIRES_VALUE_ALIGNMENT_REVIEW
+
+## V222.4 Final Repair Diagnostic
+- Failure Class: DIAGNOSTIC_SNAPSHOT_AUTH_FIELD_NAME_FALSE_POSITIVE
+- Runtime: runtime/as6-v222-4-post-auth-first-destination-diagnostic
+- Control: runtime snapshots must avoid token-like field names even when values are redacted.

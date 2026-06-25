@@ -18,3 +18,10 @@
 ## V222.3 First Experience Effect Coverage
 - Covered: Landing hero retained value copy, CTA clarity, technical label leakage regression.
 - Not covered: real user comprehension analytics, post-auth destination clarity.
+
+## V222.4 Post-auth Destination Coverage
+- Covered: AuthPages, App routes, AppShell, auth service references, protected route surface.
+- Not changed: login behavior, signup behavior, ProtectedRoute, route table, UI.
+
+## V222.4 Final Repair Coverage
+- Covered: sanitized auth-field runtime snapshots for secret scan compatibility.
