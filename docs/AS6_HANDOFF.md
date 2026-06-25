@@ -18,3 +18,7 @@ Use git rev-parse HEAD for commit and git tag --points-at HEAD for restore tag.
 - Mission: AS6 — Ваш бизнес. Простыми словами.
 - Promise: AS6 helps users make smart decisions.
 - Continue V221 by applying the V220 foundation to Command Center using docs/AS6_UX_BLUEPRINT.md and docs/AS6_DESIGN_PRINCIPLES.md.
+
+## AS6 V221.1 Foundation
+- Canon 1.0, Foundation First, Safe Point First and Canon Before Code are mandatory before new product work.
+- Required entry points: MANIFESTO.md, docs/FOUNDATION/AS6_FOUNDATION.md, docs/CANON/AS6_CANON.md.

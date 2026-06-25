@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+test -f docs/FOUNDATION/AS6_FOUNDATION.md
+test -f docs/CULTURE/AS6_CULTURE.md
+test -f docs/BOOKS/AS6_BUILDERS_LOG.md
+test -f docs/GUARDIANS/AS6_GUARDIAN_CODE.md
+echo 'AS6_FOUNDATION_FIRST=PASS'

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+test -f MANIFESTO.md
+test -f docs/FOUNDATION/AS6_FOUNDATION.md
+test -f docs/CANON/AS6_CANON.md
+grep -q 'уважением к человеку' MANIFESTO.md
+grep -q 'Canon Before Code' docs/CANON/AS6_CANON.md
+echo 'AS6_CANON_BEFORE_CODE=PASS'

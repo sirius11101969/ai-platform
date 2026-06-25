@@ -1,0 +1,12 @@
+A  MANIFESTO.md
+ M docs/AS6_CODEX_PROMPT.md
+ M docs/AS6_HANDOFF.md
+ M docs/AS6_MASTER_CONTEXT.md
+A  docs/BOOKS/AS6_BUILDERS_LOG.md
+A  docs/CANON/AS6_CANON.md
+A  docs/CULTURE/AS6_CULTURE.md
+A  docs/FOUNDATION/AS6_FOUNDATION.md
+AM docs/FOUNDATION/AS6_FOUNDATION_SNAPSHOT_V221.md
+A  docs/GUARDIANS/AS6_GUARDIAN_CODE.md
+A  ops/bin/as6-canon-before-code
+A  ops/bin/as6-foundation-first

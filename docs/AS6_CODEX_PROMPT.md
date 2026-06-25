@@ -19,3 +19,7 @@ V220 Design System Foundation:
 - Use frontend/src/styles/as6-design-system-foundation-v220.css as the governed foundation layer.
 - Keep frontend/src/utils/as6RuntimeTracer.js wired for design-system readiness evidence.
 - Validate with ops/bin/as6-diagnose-design-system-foundation-v220.
+
+## AS6 V221.1 Foundation
+- Canon 1.0, Foundation First, Safe Point First and Canon Before Code are mandatory before new product work.
+- Required entry points: MANIFESTO.md, docs/FOUNDATION/AS6_FOUNDATION.md, docs/CANON/AS6_CANON.md.

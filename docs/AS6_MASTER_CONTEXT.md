@@ -26,3 +26,5 @@ Do not store self-referential commit hashes in MASTER/HANDOFF/CODEX.
 - Emotional KPI: I understand the situation; I know the next step; I have a plan; I have a solution; Today will be a good day.
 - Blueprint: docs/AS6_UX_BLUEPRINT.md
 - Design principles: docs/AS6_DESIGN_PRINCIPLES.md
+
+## AS6 V221.1 Foundation
