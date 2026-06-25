@@ -14,3 +14,10 @@
 - Failure Class: DIAGNOSTIC_RUNTIME_ARTIFACT_IGNORED_BY_GIT
 - Artifact: runtime/as6-v222-1b-product-diagnostic/finalize-packaging-root-cause.txt
 - Control: scoped git add -f for intended V222 runtime diagnostic artifacts.
+
+## V222.2 First Experience Clarity
+- Artifact: docs/PRODUCT/AS6_FIRST_EXPERIENCE_CLARITY_V222_2.md
+- Stage Passport: docs/STAGE_PASSPORTS/V222_2_FIRST_EXPERIENCE_CLARITY.md
+- Runtime: runtime/as6-v222-2-first-experience-clarity
+- Status: ops/status/as6-v222-2-first-experience-clarity-status.md
+- Failure Classes: PRODUCT_FIRST_EXPERIENCE_CLARITY_GAP, PRODUCT_TECHNICAL_PROOF_LABEL_LEAK, PRODUCT_COPY_REPLACEMENT_PATTERN_GAP

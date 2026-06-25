@@ -1,0 +1,3 @@
+ROOT_CAUSE=First screen uses broad platform wording and technical proof labels
+FAILURE_CLASS=PRODUCT_FIRST_EXPERIENCE_CLARITY_GAP
+DETAIL=V222.1B confirmed broad product surface. Landing first screen should reduce ambiguity by explaining AS6 in user terms and making the first CTA outcome explicit.

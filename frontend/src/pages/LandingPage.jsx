@@ -209,21 +209,20 @@ function Hero() {
 
       <div className="hero-grid">
         <motion.div className="hero-copy" initial={{ opacity: 0, y: 26 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-          <span className="hero-badge">Корпоративный AI‑стек · CRM · агенты · платежи</span>
-          <h1>AI‑платформа, которая превращает лиды в управляемую выручку</h1>
+          <span className="hero-badge">AS6 помогает понять продажи, клиентов и следующий шаг</span>
+          <h1>AS6 показывает, что происходит в продажах и что делать дальше</h1>
           <p className="lead">
-            Запускайте AI‑агентов для продаж и поддержки, автоматизируйте Telegram‑воронки,
-            ведите сделки в CRM и считайте экономику роста из единого премиального дашборда.
+            Соберите заявки, CRM, AI-подсказки и выручку в одном рабочем центре. Пользователь видит ситуацию, следующий шаг и понятный план действий.
           </p>
           <div className="actions">
-            <a className="btn primary" href="#lead-form">Получить демо</a>
-            <a className="btn secondary" href="#calculator">Рассчитать выручку</a>
+            <a className="btn primary" href="#lead-form">Получить демо и план</a>
+            <a className="btn secondary" href="#calculator">Посчитать эффект</a>
           </div>
           <div className="hero-proof">
-            <span>Проверенные AI‑сценарии</span>
-            <strong>CRM готова</strong>
-            <strong>Docker готов</strong>
-            <strong>Vite для продакшена</strong>
+            <span>Понятный старт за 10 секунд</span>
+            <strong>CRM и заявки</strong>
+            <strong>AI подсказывает шаг</strong>
+            <strong>Контроль выручки</strong>
           </div>
         </motion.div>
         <div id="lead-form" className="hero-form-stack"><LeadCaptureForm source="hero_demo" /></div>
@@ -378,7 +377,7 @@ function FinalCta() {
         <h2>Соберите AI‑операционную систему продаж за дни, не месяцы</h2>
         <p>Премиальный лендинг, CRM‑ядро, Telegram‑воронки, AI‑кредиты и агенты готовы стать фундаментом нового SaaS‑направления.</p>
         <div className="actions center">
-          <a className="btn primary" href="#lead-form">Получить демо</a>
+          <a className="btn primary" href="#lead-form">Получить демо и план</a>
           <a className="btn secondary" href="#pricing">Сравнить тарифы</a>
         </div>
         <LeadCaptureForm source="final_cta" compact />

@@ -10,3 +10,7 @@
 ## V222.1B Finalization Coverage
 - Covered: ignored runtime artifact packaging failure.
 - Validation: build and engineering guard checks before commit.
+
+## V222.2 First Experience Coverage
+- Covered: Landing hero copy, primary CTA wording, secondary CTA wording, proof labels.
+- Not changed: routes, auth, backend, CRM logic, AI modules, Governance.

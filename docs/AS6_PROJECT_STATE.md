@@ -3724,3 +3724,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Failure Class: DIAGNOSTIC_RUNTIME_ARTIFACT_IGNORED_BY_GIT
 - Result: V222.1B diagnostic artifacts packaged, validated, committed and tagged.
 - Restore Tag: AS6_RESTORE_V222_1B_PRODUCT_DIAGNOSTIC_REPAIR_20260625T163846Z
+
+## V222.2 First Experience Clarity
+- Status: PASS
+- Result: Landing first experience made clearer with one minimal copy-only product change.
+- Restore Tag: AS6_RESTORE_V222_2_FIRST_EXPERIENCE_CLARITY_REPAIR_20260625T165516Z
+- Next Stage: V222.3 re-diagnostic and effect review.

@@ -1,0 +1,7 @@
+# V222.2 Change Plan
+- Problem: first-experience clarity gap after V222.1B product diagnostic.
+- Minimal Change: update Landing hero copy and proof labels only.
+- No Route Change: yes.
+- No Backend Change: yes.
+- No Governance Change: yes.
+- Expected Effect: user sees business value and next action faster.

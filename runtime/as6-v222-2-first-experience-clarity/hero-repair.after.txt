@@ -1,0 +1,40 @@
+    <section className="hero" id="top">
+      <FloatingParticles />
+      <div className="aurora aurora-one" />
+      <div className="aurora aurora-two" />
+      <nav className="nav">
+        <a href="#top" className="brand"><span>AI</span> Платформа продаж</a>
+        <div className="nav-links">
+          <a href="#agents">Агенты</a>
+          <a href="#workflow">CRM</a>
+          <a href="#pricing">Тарифы</a>
+        </div>
+        <div style={{display:"flex",gap:"10px",alignItems:"center"}}>
+  <a className="nav-cta" href="/login">Войти</a>
+  <a className="nav-cta" href="https://t.me/" target="_blank" rel="noreferrer">Демо в Telegram</a>
+</div>
+      </nav>
+
+      <div className="hero-grid">
+        <motion.div className="hero-copy" initial={{ opacity: 0, y: 26 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
+          <span className="hero-badge">AS6 помогает понять продажи, клиентов и следующий шаг</span>
+          <h1>AS6 показывает, что происходит в продажах и что делать дальше</h1>
+          <p className="lead">
+            Соберите заявки, CRM, AI-подсказки и выручку в одном рабочем центре. Пользователь видит ситуацию, следующий шаг и понятный план действий.
+          </p>
+          <div className="actions">
+            <a className="btn primary" href="#lead-form">Получить демо и план</a>
+            <a className="btn secondary" href="#calculator">Посчитать эффект</a>
+          </div>
+          <div className="hero-proof">
+            <span>Понятный старт за 10 секунд</span>
+            <strong>CRM и заявки</strong>
+            <strong>AI подсказывает шаг</strong>
+            <strong>Контроль выручки</strong>
+          </div>
+        </motion.div>
+        <div id="lead-form" className="hero-form-stack"><LeadCaptureForm source="hero_demo" /></div>
+      </div>
+    </section>
+  );
+}
