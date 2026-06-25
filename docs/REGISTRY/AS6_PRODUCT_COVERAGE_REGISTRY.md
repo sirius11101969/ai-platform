@@ -25,3 +25,7 @@
 
 ## V222.4 Final Repair Coverage
 - Covered: sanitized auth-field runtime snapshots for secret scan compatibility.
+
+## V222.5 Post-auth Destination Coverage
+- Covered: AuthPages post-auth navigation target and Command Center route existence.
+- Not changed: backend, auth API, route table, ProtectedRoute, CRM logic, Governance.

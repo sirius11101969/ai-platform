@@ -1,0 +1,7 @@
+# V222.5 Change Plan
+- Confirmed problem: post-auth first destination requires explicit product strategy.
+- Strategy: use /command-center as the primary post-auth product workspace.
+- Minimal change: update AuthPages navigation target only.
+- No backend change.
+- No route table change.
+- No Governance change.

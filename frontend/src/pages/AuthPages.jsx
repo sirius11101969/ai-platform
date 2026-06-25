@@ -22,7 +22,7 @@ function AuthCard({ mode }) {
         : await login({ email, password });
 
       saveAuthSession(session);
-      navigate("/dashboard");
+      navigate("/command-center");
     } catch (apiError) {
       setError(apiError.status === 401 ? "Неверная эл. почта или пароль. Проверьте данные и попробуйте снова." : apiError.message);
     } finally {

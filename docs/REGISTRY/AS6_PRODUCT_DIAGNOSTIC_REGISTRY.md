@@ -40,3 +40,10 @@
 - Failure Class: DIAGNOSTIC_SNAPSHOT_AUTH_FIELD_NAME_FALSE_POSITIVE
 - Runtime: runtime/as6-v222-4-post-auth-first-destination-diagnostic
 - Control: runtime snapshots must avoid token-like field names even when values are redacted.
+
+## V222.5 Post-auth Destination Strategy
+- Artifact: docs/PRODUCT/AS6_POST_AUTH_DESTINATION_STRATEGY_V222_5.md
+- Stage Passport: docs/STAGE_PASSPORTS/V222_5_POST_AUTH_DESTINATION_STRATEGY.md
+- Runtime: runtime/as6-v222-5-post-auth-command-center
+- Status: ops/status/as6-v222-5-post-auth-destination-strategy-status.md
+- Failure Classes: PRODUCT_POST_AUTH_DESTINATION_AMBIGUITY, PRODUCT_AUTH_NAVIGATION_VALUE_MISMATCH

@@ -3748,3 +3748,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Failure Class: DIAGNOSTIC_SNAPSHOT_AUTH_FIELD_NAME_FALSE_POSITIVE
 - Result: V222.4 runtime snapshots sanitized and ready for commit.
 - Restore Tag: AS6_RESTORE_V222_4_POST_AUTH_FIRST_DESTINATION_DIAGNOSTIC_REPAIR_20260625T171404Z
+
+## V222.5 Post-auth Destination Strategy
+- Status: PASS
+- Result: post-auth destination strategy selected and applied to AuthPages.
+- Restore Tag: AS6_RESTORE_V222_5_POST_AUTH_COMMAND_CENTER_20260625T172050Z
+- Next Stage: V222.6 post-auth destination effect review.

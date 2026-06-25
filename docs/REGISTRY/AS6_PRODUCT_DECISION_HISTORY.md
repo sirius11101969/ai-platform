@@ -23,3 +23,9 @@
 - Product Result: post-auth destination is now a documented decision point.
 - Engineering Result: no UI change; auth/navigation snapshots recorded.
 - Finding: AuthPages appears to send user toward dashboard; value alignment still requires review against Product Map.
+
+## V222.5 Post-auth Destination Strategy
+- Decision: set Command Center as the primary post-auth destination.
+- Reason: V222.4 diagnosed post-auth destination as unresolved.
+- Product Result: clearer first workspace after auth.
+- Engineering Result: isolated AuthPages navigation change.
