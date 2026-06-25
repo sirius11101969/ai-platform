@@ -68,3 +68,10 @@
 - Runtime: runtime/as6-v222-8-command-center-orientation
 - Status: ops/status/as6-v222-8-command-center-orientation-status.md
 - Failure Classes: PRODUCT_COMMAND_CENTER_FIRST_TIME_ORIENTATION_GAP, PRODUCT_COMMAND_CENTER_FIRST_ACTION_AMBIGUITY
+
+## V222.9 Command Center Orientation Effect Review
+- Artifact: docs/PRODUCT/AS6_COMMAND_CENTER_ORIENTATION_EFFECT_REVIEW_V222_9.md
+- Stage Passport: docs/STAGE_PASSPORTS/V222_9_COMMAND_CENTER_ORIENTATION_EFFECT_REVIEW.md
+- Runtime: runtime/as6-v222-9-command-center-orientation-effect-review
+- Status: ops/status/as6-v222-9-command-center-orientation-effect-review-status.md
+- Failure Classes: PRODUCT_COMMAND_CENTER_ORIENTATION_EFFECT_UNMEASURED_BY_USERS, PRODUCT_COMMAND_CENTER_FIRST_ACTION_ANALYTICS_PENDING

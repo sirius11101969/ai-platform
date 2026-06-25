@@ -41,3 +41,7 @@
 ## V222.8 Command Center Orientation Coverage
 - Covered: CommandCenter orientation block, first-action CTAs, scoped CSS.
 - Not changed: routes, auth, backend, CRM logic, ProtectedRoute, Governance.
+
+## V222.9 Command Center Orientation Effect Coverage
+- Covered: orientation block, first-step text, three first-action CTAs, scoped CSS, route existence.
+- Not covered: real user analytics and click behavior.

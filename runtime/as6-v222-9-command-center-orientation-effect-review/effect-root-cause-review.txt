@@ -1,0 +1,3 @@
+ROOT_CAUSE_REVIEW=V222.8 added static Command Center first-time orientation
+HYPOTHESIS_STATUS=PARTIALLY_CONFIRMED_STATIC
+DETAIL=Static diagnostics confirm the orientation block, first-step text, three first-action CTAs and scoped CSS are present.

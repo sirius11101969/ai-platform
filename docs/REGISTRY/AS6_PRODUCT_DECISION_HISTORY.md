@@ -49,3 +49,10 @@
 - Reason: V222.7 diagnosed first-time orientation as pending after Command Center became post-auth destination.
 - Product Result: clearer first useful actions after login/signup.
 - Engineering Result: isolated frontend UI/CSS change, no architecture change.
+
+## V222.9 Command Center Orientation Effect Review
+- Decision: close V222.8 as statically effective, but not fully behavior-validated.
+- Reason: orientation block, first-step text, three CTAs and scoped CSS are present.
+- Product Result: clearer first guidance inside Command Center.
+- Engineering Result: no product code change; effect-review artifacts added.
+- Remaining Issue: first-action analytics remains pending.
