@@ -54,3 +54,10 @@
 - Runtime: runtime/as6-v222-6-post-auth-destination-effect-review
 - Status: ops/status/as6-v222-6-post-auth-destination-effect-review-status.md
 - Failure Classes: PRODUCT_POST_AUTH_DESTINATION_EFFECT_UNMEASURED_BY_USERS, PRODUCT_FIRST_TIME_COMMAND_CENTER_ORIENTATION_PENDING
+
+## V222.7 Command Center First-time Orientation Diagnostic
+- Artifact: docs/PRODUCT/AS6_COMMAND_CENTER_FIRST_TIME_ORIENTATION_DIAGNOSTIC_V222_7.md
+- Stage Passport: docs/STAGE_PASSPORTS/V222_7_COMMAND_CENTER_FIRST_TIME_ORIENTATION_DIAGNOSTIC.md
+- Runtime: runtime/as6-v222-7-command-center-first-time-orientation
+- Status: ops/status/as6-v222-7-command-center-first-time-orientation-status.md
+- Failure Classes: PRODUCT_COMMAND_CENTER_FIRST_TIME_ORIENTATION_GAP, PRODUCT_COMMAND_CENTER_NO_VISIBLE_ACTION_SURFACE, PRODUCT_FIRST_TIME_COMMAND_CENTER_ORIENTATION_PENDING

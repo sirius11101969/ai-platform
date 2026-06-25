@@ -33,3 +33,7 @@
 ## V222.6 Post-auth Destination Effect Coverage
 - Covered: AuthPages command-center target, dashboard fallback regression, Command Center ProtectedRoute.
 - Not covered: real user analytics, first-time orientation quality.
+
+## V222.7 Command Center Orientation Coverage
+- Covered: CommandCenterPage source, action surface, next-step language, CRM/AI context signals.
+- Not changed: CommandCenter UI, routes, backend, ProtectedRoute, Governance.

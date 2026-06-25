@@ -36,3 +36,10 @@
 - Product Result: clear primary workspace after auth.
 - Engineering Result: no product code change; effect-review artifacts added.
 - Remaining Issue: first-time Command Center orientation remains pending.
+
+## V222.7 Command Center First-time Orientation Diagnostic
+- Decision: diagnose Command Center orientation before adding onboarding UI.
+- Reason: V222.6 confirmed Command Center as post-auth destination.
+- Product Result: first-time orientation becomes explicit decision point.
+- Engineering Result: no UI change; static snapshots recorded.
+- Finding: Command Center requires first-time orientation review after becoming the post-auth destination.

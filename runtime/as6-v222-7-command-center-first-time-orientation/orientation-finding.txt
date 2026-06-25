@@ -1,0 +1,2 @@
+FAILURE_CLASS=PRODUCT_FIRST_TIME_COMMAND_CENTER_ORIENTATION_PENDING
+FINDING=Command Center requires first-time orientation review after becoming the post-auth destination.

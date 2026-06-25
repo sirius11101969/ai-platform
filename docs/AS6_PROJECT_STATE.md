@@ -3760,3 +3760,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Result: V222.5 static effect confirmed; user behavior validation remains pending.
 - Restore Tag: AS6_RESTORE_V222_6_POST_AUTH_DESTINATION_EFFECT_REVIEW_20260625T172820Z
 - Next Stage: V222.7 first-time Command Center orientation diagnostic.
+
+## V222.7 Command Center First-time Orientation Diagnostic
+- Status: PASS
+- Result: Command Center first-time orientation diagnosed as a product decision point.
+- Restore Tag: AS6_RESTORE_V222_7_COMMAND_CENTER_FIRST_TIME_ORIENTATION_DIAGNOSTIC_20260625T173644Z
+- Next Stage: V222.8 minimal orientation improvement if confirmed.
