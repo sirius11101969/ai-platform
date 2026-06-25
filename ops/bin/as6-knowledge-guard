@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+test -f docs/STAGE_PASSPORTS/V221_1_FOUNDATION.md
+test -f docs/STAGE_PASSPORTS/V221_2_ENGINEERING_GUARDS.md
+test -f docs/BOOKS/AS6_BUILDERS_LOG.md
+test -f docs/KNOWLEDGE/AS6_KNOWLEDGE_SYSTEM.md
+test -f docs/MATURITY/AS6_MATURITY_INDEX.md
+test -f docs/REGISTRY/AS6_KNOWLEDGE_REGISTRY.md
+grep -q 'V221.3 Knowledge' docs/BOOKS/AS6_BUILDERS_LOG.md
+grep -q '99.4%' docs/MATURITY/AS6_MATURITY_INDEX.md
+echo 'AS6_KNOWLEDGE_GUARD=PASS'

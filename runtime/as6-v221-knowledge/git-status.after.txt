@@ -1,0 +1,8 @@
+ M docs/BOOKS/AS6_BUILDERS_LOG.md
+ M docs/STAGE_PASSPORTS/V221_2_ENGINEERING_GUARDS.md
+ M ops/bin/as6-engineering-guards
+?? docs/KNOWLEDGE/
+?? docs/MATURITY/
+?? docs/REGISTRY/AS6_KNOWLEDGE_REGISTRY.md
+?? ops/bin/as6-knowledge-guard
+?? ops/status/as6-v221-3-knowledge-status.md
