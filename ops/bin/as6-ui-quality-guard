@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+COMPONENT='frontend/src/components/as6/AS6FirstDawnPanel.jsx'
+test -f "$COMPONENT"
+grep -q 'aria-label="AS6 First Dawn"' "$COMPONENT"
+grep -q 'Сегодня AS6 помогает понять ситуацию' "$COMPONENT"
+grep -q 'Ваш бизнес' "$COMPONENT"
+grep -q 'следующий шаг' "$COMPONENT"
+! grep -Eq 'console\.log|debugger|TODO|FIXME' "$COMPONENT"
+grep -q 'borderRadius' "$COMPONENT"
+grep -q 'maxWidth' "$COMPONENT"
+echo 'AS6_UI_QUALITY_GUARD=PASS'
