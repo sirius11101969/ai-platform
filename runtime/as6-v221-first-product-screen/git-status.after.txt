@@ -1,0 +1,8 @@
+ M docs/BOOKS/AS6_BUILDERS_LOG.md
+ M docs/MATURITY/AS6_MATURITY_INDEX.md
+ M frontend/src/pages/CRMPage.jsx
+?? docs/PRODUCT/AS6_FIRST_PRODUCT_SCREEN_V221_5.md
+?? docs/REGISTRY/AS6_FIRST_PRODUCT_SCREEN_REGISTRY.md
+?? docs/STAGE_PASSPORTS/V221_5_FIRST_PRODUCT_SCREEN.md
+?? frontend/src/components/as6/
+?? ops/status/as6-v221-5-first-product-screen-status.md

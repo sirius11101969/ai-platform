@@ -8,6 +8,7 @@ import { Panel, PageHeading, StatCard } from "../components/AppShell";
 import { sanitizeCustomerVisibleText, sanitizeVisibleAiText } from "../utils/uiSanitizer";
 import { REVENUE_LEAD_FILTERS, REVENUE_SORT_OPTIONS, buildRecommendationQueue, filterAndSortRevenueLeads, getForecastWidget, getRevenueCards } from "../utils/revenueIntelligence";
 import {
+import AS6FirstDawnPanel from '../components/as6/AS6FirstDawnPanel.jsx';
   addCrmLeadNote,
   createCrmFollowUp,
   createAiAgentAction,
@@ -1092,6 +1093,7 @@ export default function CRMPage() {
 
   return (
     <main className="workspace-page crm-workspace-page">
+      <AS6FirstDawnPanel />
       <PageHeading
         eyebrow="CRM‑воронка"
         title="AI‑CRM для продаж"
