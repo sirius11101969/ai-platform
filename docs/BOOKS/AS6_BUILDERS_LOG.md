@@ -31,3 +31,7 @@
 ## V221.8 Production Health Verification
 
 Восьмой инженерный камень: добавлен production health guard и подтверждена стабильность production после первого UI-блока.
+
+## V221.9 Final V221 Closure
+
+Девятый инженерный камень: V221 закрыт как завершённый инженерный релиз с Release Passport, полной цепочкой restore tags и итоговой готовностью 100% в рамках V221.
