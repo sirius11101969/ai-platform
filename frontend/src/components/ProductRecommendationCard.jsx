@@ -1,13 +1,13 @@
 const cardStyle = {
   width: '100%',
-  padding: '17px 18px 18px',
+  padding: '18px 18px 18px',
   gap: '12px',
   borderRadius: '20px',
 }
 
 const summaryStyle = {
   maxWidth: '96%',
-  fontSize: '12.6px',
+  fontSize: '12.5px',
   lineHeight: '1.36',
 }
 
@@ -17,20 +17,20 @@ const actionStyle = {
 }
 
 const actionTextStyle = {
-  fontSize: '12.4px',
+  fontSize: '12.35px',
   lineHeight: '1.22',
 }
 
 const actionSmallStyle = {
-  fontSize: '10.4px',
+  fontSize: '10.25px',
   lineHeight: '1.2',
 }
 
 const buttonStyle = {
-  width: '78%',
+  width: '74%',
   minHeight: '40px',
   height: '40px',
-  margin: '4px auto 0',
+  margin: '8px auto 0',
   borderRadius: '12px',
   fontSize: '13px',
 }
@@ -38,14 +38,12 @@ const buttonStyle = {
 export default function ProductRecommendationCard({ recommendationState }) {
   const recommendation = recommendationState?.recommendation
 
-  if (!recommendation) {
-    return null
-  }
+  if (!recommendation) return null
 
   return (
     <article
       className="command-card as6-product-recommendation-card"
-      data-as6-product-recommendation="v222-31-etalon-final"
+      data-as6-product-recommendation="v222-32-visual-lock"
       style={cardStyle}
     >
       <div className="command-card-head">
@@ -69,7 +67,7 @@ export default function ProductRecommendationCard({ recommendationState }) {
       <a
         className="copilot-action-link as6-product-recommendation-card__button"
         href={recommendation.href}
-        data-as6-product-recommendation-action="v222-31-etalon-final"
+        data-as6-product-recommendation-action="v222-32-visual-lock"
         style={buttonStyle}
       >
         {recommendation.actionLabel}
