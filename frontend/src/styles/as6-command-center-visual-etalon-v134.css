@@ -718,3 +718,72 @@ body.as6-command-center-reference-guard-active .command-orientation-actions a {
   border-radius: 14px !important;
   font-size: 14px !important;
 }
+
+/* AS6 — Recommendation Card reference alignment */
+.command-right-rail .as6-product-recommendation-card {
+  width: 100% !important;
+  max-width: none !important;
+  padding: 18px 18px 19px !important;
+  gap: 10px !important;
+  border-radius: 20px !important;
+}
+
+.command-right-rail .as6-product-recommendation-card .command-card-head {
+  margin-bottom: 2px !important;
+}
+
+.command-right-rail .as6-product-recommendation-card__summary {
+  font-size: 13px !important;
+  line-height: 1.42 !important;
+  max-width: 100% !important;
+  margin-bottom: 6px !important;
+}
+
+.command-right-rail .as6-product-recommendation-card__action {
+  padding-top: 10px !important;
+  gap: 10px !important;
+  align-items: center !important;
+}
+
+.command-right-rail .as6-product-recommendation-card__action span {
+  font-size: 13px !important;
+  line-height: 1.25 !important;
+}
+
+.command-right-rail .as6-product-recommendation-card__action small {
+  margin-top: 4px !important;
+  font-size: 10.5px !important;
+  line-height: 1.25 !important;
+}
+
+.command-right-rail .as6-product-recommendation-card__button {
+  width: 200px !important;
+  max-width: 200px !important;
+  min-height: 38px !important;
+  height: 38px !important;
+  margin: 10px auto 0 !important;
+  border-radius: 10px !important;
+  font-size: 12px !important;
+}
+
+/* AS6 V222_51 — final hard override for recommendation card button */
+.command-right-rail .as6-product-recommendation-card a.as6-product-recommendation-card__button.copilot-action-link {
+  width: 148px !important;
+  max-width: 148px !important;
+  min-width: 148px !important;
+  flex: 0 0 148px !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  max-height: 34px !important;
+  padding: 0 14px !important;
+  margin: 10px auto 0 !important;
+  align-self: center !important;
+  justify-self: center !important;
+  font-size: 11px !important;
+  line-height: 34px !important;
+  border-radius: 10px !important;
+}
+
+.command-right-rail .as6-product-recommendation-card {
+  min-height: auto !important;
+}

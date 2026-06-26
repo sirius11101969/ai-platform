@@ -3,7 +3,7 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
 COPY vendor ./vendor
-RUN npm ci
+RUN npm install --ignore-scripts --no-audit --no-fund
 COPY . .
 RUN npm run build
 

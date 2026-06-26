@@ -1,34 +1,31 @@
 export default function ProductRecommendationCard() {
   return (
-    <article
-      className="command-card as6-product-recommendation-card"
-      data-as6-product-recommendation="v222-42-reference-css-owned"
-    >
-      <div className="command-card-head">
+    <article className="as6-ref-card" data-as6-ref-card="v222-55-etalon">
+      <div className="as6-ref-card__head">
         <h2>Рекомендация AS6</h2>
         <span>PI</span>
       </div>
 
-      <p className="as6-product-recommendation-card__summary">
+      <p className="as6-ref-card__text">
         AS6 рекомендует начать с проверки приоритетных лидов, потому что это самое короткое действие с прямой пользовательской ценностью.
       </p>
 
-      <div className="next-action as6-product-recommendation-card__action">
-        <b>🧠</b>
-        <span>
-          Проверить приоритетные лиды CRM
+      <div className="as6-ref-card__line" />
+
+      <div className="as6-ref-card__action">
+        <div className="as6-ref-card__icon">🧠</div>
+
+        <div className="as6-ref-card__copy">
+          <strong>Проверить приоритетные лиды CRM</strong>
           <small>
             подтверждено Product Intelligence · основано на Product Evidence · связано с первым действием пользователя
           </small>
-        </span>
-        <strong>Evidence</strong>
+        </div>
+
+        <b>Evidence</b>
       </div>
 
-      <a
-        className="copilot-action-link as6-product-recommendation-card__button"
-        href="/crm?filter=priority"
-        data-as6-product-recommendation-action="v222-42-reference-css-owned"
-      >
+      <a className="as6-ref-card__button" href="/crm?filter=priority">
         Открыть CRM
       </a>
     </article>

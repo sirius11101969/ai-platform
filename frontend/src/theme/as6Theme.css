@@ -1440,3 +1440,377 @@ aside.sidebar.shell-glow.command-sidebar[data-command-sidebar="premium"] {
   stroke-width: 4 !important;
 }
 /* AS6 V208 END */
+
+/* AS6 V222_52 — definitive product recommendation button override */
+.command-right-rail .as6-product-recommendation-card .as6-product-recommendation-card__button,
+.command-right-rail .as6-product-recommendation-card a.as6-product-recommendation-card__button,
+.command-right-rail .as6-product-recommendation-card a.copilot-action-link.as6-product-recommendation-card__button {
+  width: 148px !important;
+  max-width: 148px !important;
+  min-width: 148px !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  max-height: 34px !important;
+  flex: 0 0 148px !important;
+  padding: 0 12px !important;
+  margin: 10px auto 0 !important;
+  align-self: center !important;
+  justify-self: center !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 11px !important;
+  line-height: 34px !important;
+  border-radius: 10px !important;
+}
+
+/* AS6 V222_53 — compact full-width recommendation card */
+.command-right-rail .as6-product-recommendation-slot-card {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.command-right-rail .as6-product-recommendation-card {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: auto !important;
+  padding: 16px 18px 16px !important;
+  gap: 8px !important;
+}
+
+.command-right-rail .as6-product-recommendation-card__summary {
+  margin-bottom: 2px !important;
+  font-size: 12.5px !important;
+  line-height: 1.35 !important;
+}
+
+.command-right-rail .as6-product-recommendation-card__action {
+  padding-top: 8px !important;
+  gap: 9px !important;
+}
+
+.command-right-rail .as6-product-recommendation-card__button {
+  width: 170px !important;
+  max-width: 170px !important;
+  min-width: 170px !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  max-height: 34px !important;
+  margin: 9px auto 0 !important;
+  padding: 0 12px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 10px !important;
+  font-size: 11px !important;
+  line-height: 34px !important;
+  font-weight: 900 !important;
+}
+
+/* AS6 FINAL — pixel reference recommendation card rewrite */
+.command-right-rail .as6-product-recommendation-slot-card {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.command-right-rail .as6-reference-recommendation-card {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 0 !important;
+  box-sizing: border-box !important;
+
+  padding: 24px 26px 26px !important;
+  border-radius: 24px !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+
+  background:
+    radial-gradient(circle at 100% 0%, rgba(37, 228, 255, 0.10), transparent 34%),
+    radial-gradient(circle at 0% 100%, rgba(139, 92, 246, 0.10), transparent 36%),
+    linear-gradient(180deg, rgba(8, 18, 38, 0.98), rgba(3, 10, 24, 0.98)) !important;
+
+  border: 1px solid rgba(57, 130, 210, 0.36) !important;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.025) inset,
+    0 26px 70px rgba(0, 0, 0, 0.34) !important;
+
+  color: #f7fbff !important;
+  overflow: hidden !important;
+}
+
+.command-right-rail .as6-reference-recommendation-card__header {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 18px !important;
+  margin: 0 0 16px !important;
+}
+
+.command-right-rail .as6-reference-recommendation-card__header h2 {
+  margin: 0 !important;
+  color: #ffffff !important;
+  font-size: 20px !important;
+  line-height: 1.08 !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.04em !important;
+}
+
+.command-right-rail .as6-reference-recommendation-card__header span {
+  color: #32f5a9 !important;
+  font-size: 16px !important;
+  line-height: 1 !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.02em !important;
+}
+
+.command-right-rail .as6-reference-recommendation-card__summary {
+  width: 72% !important;
+  max-width: 72% !important;
+  margin: 0 !important;
+  color: rgba(236, 244, 255, 0.82) !important;
+  font-size: 15px !important;
+  line-height: 1.55 !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.015em !important;
+}
+
+.command-right-rail .as6-reference-recommendation-card__divider {
+  width: 100% !important;
+  height: 1px !important;
+  margin: 22px 0 18px !important;
+  background: linear-gradient(90deg, rgba(120, 190, 255, 0.18), rgba(120, 190, 255, 0.08)) !important;
+}
+
+.command-right-rail .as6-reference-recommendation-card__action {
+  display: grid !important;
+  grid-template-columns: 52px minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 16px !important;
+  margin: 0 !important;
+}
+
+.command-right-rail .as6-reference-recommendation-card__icon {
+  width: 52px !important;
+  height: 52px !important;
+  min-width: 52px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  border-radius: 14px !important;
+  border: 1px solid rgba(72, 145, 230, 0.36) !important;
+  background: linear-gradient(145deg, rgba(22, 44, 84, 0.94), rgba(8, 18, 38, 0.92)) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05) !important;
+
+  font-size: 25px !important;
+  line-height: 1 !important;
+}
+
+.command-right-rail .as6-reference-recommendation-card__action-copy {
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+
+.command-right-rail .as6-reference-recommendation-card__action-copy strong {
+  color: #ffffff !important;
+  font-size: 15px !important;
+  line-height: 1.22 !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.025em !important;
+}
+
+.command-right-rail .as6-reference-recommendation-card__action-copy small {
+  display: block !important;
+  max-width: 100% !important;
+  color: rgba(158, 174, 210, 0.86) !important;
+  font-size: 12px !important;
+  line-height: 1.34 !important;
+  font-weight: 500 !important;
+}
+
+.command-right-rail .as6-reference-recommendation-card__action b {
+  justify-self: end !important;
+  color: #32f5a9 !important;
+  font-size: 15px !important;
+  line-height: 1 !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.02em !important;
+}
+
+.command-right-rail .as6-reference-recommendation-card__button {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 52px !important;
+  min-height: 52px !important;
+
+  margin: 22px 0 0 !important;
+  padding: 0 22px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  border: 0 !important;
+  border-radius: 14px !important;
+  background: linear-gradient(100deg, #7c2cff 0%, #2563ff 48%, #13d8ff 100%) !important;
+  color: #ffffff !important;
+
+  font-size: 17px !important;
+  line-height: 1 !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.025em !important;
+  text-decoration: none !important;
+
+  box-shadow: 0 18px 42px rgba(19, 216, 255, 0.18) !important;
+}
+
+.command-right-rail .as6-reference-recommendation-card__button:hover {
+  transform: translateY(-1px) !important;
+  filter: brightness(1.05) !important;
+}
+
+/* AS6 V222_55 — exact etalon recommendation card */
+.command-right-rail .as6-product-recommendation-slot-card {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.command-right-rail .as6-ref-card {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 20px 22px 20px !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(63, 139, 220, .34) !important;
+  background:
+    radial-gradient(circle at 92% 0%, rgba(34, 211, 238, .09), transparent 34%),
+    linear-gradient(180deg, rgba(9, 20, 42, .98), rgba(4, 12, 28, .98)) !important;
+  box-shadow: 0 20px 60px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.035) !important;
+  color: #fff !important;
+  overflow: hidden !important;
+}
+
+.command-right-rail .as6-ref-card__head {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+  margin: 0 0 12px !important;
+}
+
+.command-right-rail .as6-ref-card__head h2 {
+  margin: 0 !important;
+  font-size: 18px !important;
+  line-height: 1.1 !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.035em !important;
+}
+
+.command-right-rail .as6-ref-card__head span {
+  color: #35f5a3 !important;
+  font-size: 14px !important;
+  font-weight: 950 !important;
+}
+
+.command-right-rail .as6-ref-card__text {
+  width: 78% !important;
+  max-width: 78% !important;
+  margin: 0 !important;
+  color: rgba(238,244,255,.82) !important;
+  font-size: 13.5px !important;
+  line-height: 1.46 !important;
+  font-weight: 500 !important;
+}
+
+.command-right-rail .as6-ref-card__line {
+  height: 1px !important;
+  margin: 16px 0 14px !important;
+  background: rgba(120,190,255,.14) !important;
+}
+
+.command-right-rail .as6-ref-card__action {
+  display: grid !important;
+  grid-template-columns: 42px minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.command-right-rail .as6-ref-card__icon {
+  width: 42px !important;
+  height: 42px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(63,139,220,.35) !important;
+  background: rgba(12, 29, 58, .72) !important;
+  font-size: 22px !important;
+}
+
+.command-right-rail .as6-ref-card__copy {
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+}
+
+.command-right-rail .as6-ref-card__copy strong {
+  color: #fff !important;
+  font-size: 13.5px !important;
+  line-height: 1.2 !important;
+  font-weight: 900 !important;
+}
+
+.command-right-rail .as6-ref-card__copy small {
+  color: rgba(160,176,210,.84) !important;
+  font-size: 10.8px !important;
+  line-height: 1.28 !important;
+  font-weight: 500 !important;
+}
+
+.command-right-rail .as6-ref-card__action b {
+  color: #35f5a3 !important;
+  font-size: 13.5px !important;
+  font-weight: 950 !important;
+  white-space: nowrap !important;
+}
+
+.command-right-rail .as6-ref-card__button {
+  width: 100% !important;
+  height: 46px !important;
+  min-height: 46px !important;
+  margin: 18px 0 0 !important;
+  padding: 0 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 0 !important;
+  border-radius: 13px !important;
+  background: linear-gradient(100deg, #7c2cff 0%, #2563ff 46%, #13d8ff 100%) !important;
+  color: #fff !important;
+  font-size: 15px !important;
+  line-height: 1 !important;
+  font-weight: 950 !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
+}
