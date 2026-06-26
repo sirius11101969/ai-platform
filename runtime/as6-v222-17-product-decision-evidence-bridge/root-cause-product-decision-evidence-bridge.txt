@@ -1,0 +1,3 @@
+ROOT_CAUSE=Product Intelligence can produce insights but has no bridge into Product Decision History evidence records
+FAILURE_CLASS=PRODUCT_DECISION_EVIDENCE_BRIDGE_MISSING
+DETAIL=V222.16 added first-action insights. V222.17 adds a minimal bridge that creates decision-ready evidence records from observation, telemetry, metrics, insights and recommended next decision.

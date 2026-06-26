@@ -124,3 +124,10 @@
 - Runtime: runtime/as6-v222-16-first-action-insights-foundation
 - Status: ops/status/as6-v222-16-first-action-insights-foundation-status.md
 - Failure Classes: PRODUCT_FIRST_ACTION_INSIGHTS_PENDING, PRODUCT_FIRST_ACTION_INSIGHTS_EXPORT_GAP, PRODUCT_FIRST_ACTION_INSIGHTS_RUNTIME_GAP
+
+## V222.17 Product Decision History Evidence Bridge
+- Artifact: docs/PRODUCT/AS6_PRODUCT_DECISION_EVIDENCE_BRIDGE_V222_17.md
+- Stage Passport: docs/STAGE_PASSPORTS/V222_17_PRODUCT_DECISION_EVIDENCE_BRIDGE.md
+- Runtime: runtime/as6-v222-17-product-decision-evidence-bridge
+- Status: ops/status/as6-v222-17-product-decision-evidence-bridge-status.md
+- Failure Classes: PRODUCT_DECISION_EVIDENCE_BRIDGE_MISSING, PRODUCT_DECISION_EVIDENCE_BRIDGE_EXPORT_GAP, PRODUCT_DECISION_EVIDENCE_BRIDGE_RUNTIME_GAP

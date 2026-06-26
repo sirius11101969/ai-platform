@@ -3820,3 +3820,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Result: first-action insights foundation added to Product Intelligence.
 - Restore Tag: AS6_RESTORE_V222_16_FIRST_ACTION_INSIGHTS_FOUNDATION_20260626T020337Z
 - Next Stage: V222.17 Product Decision History evidence bridge.
+
+## V222.17 Product Decision History Evidence Bridge
+- Status: PASS
+- Result: Product Decision History evidence bridge added to Product Intelligence.
+- Restore Tag: AS6_RESTORE_V222_17_PRODUCT_DECISION_EVIDENCE_BRIDGE_20260626T021122Z
+- Next Stage: V222.18 Product Decision History evidence effect review.

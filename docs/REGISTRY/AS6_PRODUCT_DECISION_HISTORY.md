@@ -100,3 +100,9 @@
 - Reason: V222.15 created metrics, but insights remained pending.
 - Product Result: first-action metrics can now produce decision-ready product signals.
 - Engineering Result: isolated Product Intelligence insights extension.
+
+## V222.17 Product Decision History Evidence Bridge
+- Decision: add a formal bridge from Product Intelligence evidence to Product Decision History.
+- Reason: V222.16 created insights, but decision evidence records were still missing.
+- Product Result: observations, telemetry, metrics and insights can become decision-ready evidence.
+- Engineering Result: isolated Product Intelligence decision-history extension.

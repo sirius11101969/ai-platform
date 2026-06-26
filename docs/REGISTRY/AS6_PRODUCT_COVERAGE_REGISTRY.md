@@ -73,3 +73,7 @@
 ## V222.16 First-action Insights Coverage
 - Covered: insight status, top action, top destination, Product Intelligence export, runtime sample validation.
 - Not changed: UI, routes, backend, auth, CRM, telemetry wiring, Governance.
+
+## V222.17 Product Decision Evidence Bridge Coverage
+- Covered: bridge record creation, bridge validation, schema version, decision status, Product Intelligence export, runtime sample validation.
+- Not changed: UI, routes, backend, auth, CRM, telemetry, metrics, insights, Governance.

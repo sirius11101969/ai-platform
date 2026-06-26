@@ -1,0 +1,7 @@
+# V222.17 Change Plan
+- Extend Product Intelligence decision-history module.
+- Add createProductEvidenceBridgeRecord.
+- Add validateProductEvidenceBridgeRecord.
+- Keep record aggregate and privacy-safe.
+- Do not change UI, telemetry storage, metrics, insights, backend, routes or Governance.
+- Validate with sample first-action evidence.
