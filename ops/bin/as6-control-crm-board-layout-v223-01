@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-crm-board-layout-v223-01
+printf '%s\n' 'AS6_CONTROL_CRM_BOARD_LAYOUT_V223_01=PASS'

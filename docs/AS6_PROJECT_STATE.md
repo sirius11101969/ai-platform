@@ -4138,3 +4138,13 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Added diagnostics: pipeline_column_height_guard, compact_lead_card_guard, pipeline_runtime_tracer_guard, frontend_build_guard, docker_guardian_guard.
 
 - Project readiness: 99%.
+
+## V223_01 CRM Board Layout Fix
+
+- Root cause: compact pipeline improved height but columns remained too narrow and page horizontal scroll was not fully contained.
+
+- Fixed: converted CRM board to contained horizontal flex scroll with 360px columns and denser cards.
+
+- Added diagnostics: contained_board_scroll_guard, wide_column_guard, compact_card_density_guard, visual_runtime_tracer_guard, frontend_build_guard, docker_guardian_guard.
+
+- Project readiness: 99%.

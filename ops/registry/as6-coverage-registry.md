@@ -2358,3 +2358,13 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers pipeline compact runtime tracer.
 
 - Covers build, Docker and Guardian validation.
+
+## V223_01 Coverage — CRM Board Layout
+
+- Covers contained CRM board horizontal scroll.
+
+- Covers 360px stage columns.
+
+- Covers compact lead card density.
+
+- Covers build, Docker and Guardian validation.

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/design-system/crm/as6CrmPipelineCompact.css
+test -f frontend/src/design-system/crm/as6CrmBoardLayoutTraceAuto.js
+grep -q 'V223_01' frontend/src/design-system/crm/as6CrmBoardLayoutTraceAuto.js
+grep -q 'overflow-x: hidden !important' frontend/src/design-system/crm/as6CrmPipelineCompact.css
+grep -q 'flex: 0 0 360px !important' frontend/src/design-system/crm/as6CrmPipelineCompact.css
+grep -q 'overflow-x: auto !important' frontend/src/design-system/crm/as6CrmPipelineCompact.css
+printf '%s\n' 'AS6_CRM_BOARD_LAYOUT_FIX_V223_01=PASS'

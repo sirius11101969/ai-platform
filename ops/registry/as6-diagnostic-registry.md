@@ -450,3 +450,13 @@
 - Runtime evidence: runtime/as6-v223-00/
 
 - Failure class: CRM_PIPELINE_TALL_EMPTY_COLUMN_SURFACE
+
+## V223_01 CRM Board Layout Fix
+
+- Diagnostic: ops/bin/as6-diagnose-crm-board-layout-v223-01
+
+- Control: ops/bin/as6-control-crm-board-layout-v223-01
+
+- Runtime evidence: runtime/as6-v223-01/
+
+- Failure class: CRM_BOARD_HORIZONTAL_SCROLL_LEAK_AND_NARROW_COLUMNS

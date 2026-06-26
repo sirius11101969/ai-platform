@@ -1,4 +1,3 @@
-import '../design-system/crm/as6CrmBoardLayoutTraceAuto.js';
 import '../design-system/crm/as6CrmPipelineCompactTraceAuto.js';
 import '../design-system/crm/as6CrmPipelineCompact.css';
 import '../design-system/crm/as6CrmVisualRuntimeTraceAuto.js';
