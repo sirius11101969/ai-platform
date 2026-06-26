@@ -1,0 +1,3 @@
+ROOT_CAUSE=compact recommendation CSS was not visibly applied in production
+FAILURE_CLASS=PRODUCT_RECOMMENDATION_COMPACT_CSS_SPECIFICITY_GAP
+DETAIL=The V222.29 visual patch used normal specificity and public CSS marker verification was empty. Repair uses a stronger scoped selector with !important and verifies compiled/public CSS.
