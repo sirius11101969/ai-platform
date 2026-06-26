@@ -3902,3 +3902,8 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Status: PASS
 - Result: Full layout diagnostics registered before further card changes.
 - Restore Tag: AS6_RESTORE_V222_35_PRODUCT_RECOMMENDATION_LAYOUT_CHAIN_DIAGNOSTIC_20260626T083254Z
+
+## V222.36 Product Recommendation DOM Geometry Diagnostic
+- Status: PASS
+- Result: DOM geometry diagnostics registered before further card changes.
+- Restore Tag: AS6_RESTORE_V222_36_PRODUCT_RECOMMENDATION_DOM_GEOMETRY_DIAGNOSTIC_20260626T085501Z

@@ -1,0 +1,3 @@
+FINDING=V222.36 registered geometry diagnostics requirement and captured available production/static evidence.
+NO_UI_CHANGE=TRUE
+NEXT_REQUIRED_STEP=If browser binary is not available on VPS, run the generated runtime dom-geometry-probe.js in Chrome DevTools Console and paste/save the JSON result before any UI change.

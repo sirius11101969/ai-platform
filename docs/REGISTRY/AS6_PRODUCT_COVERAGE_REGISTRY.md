@@ -132,3 +132,7 @@
 ## V222.35 Product Recommendation Layout Chain Coverage
 - Covered: render path, component ownership, parent layout chain, CSS import graph, dist JS/CSS, Docker nginx, public HTTPS bundle markers.
 - Not changed: UI, backend, auth, CRM logic, telemetry, product intelligence engine.
+
+## V222.36 Product Recommendation DOM Geometry Coverage
+- Covered: DOM geometry probe, computed style requirements, layout parent chain, source ownership, dist/public bundle evidence.
+- Not changed: UI, backend, auth, CRM logic, telemetry, product intelligence engine.

@@ -205,3 +205,7 @@ Use the Product Intelligence evidence chain as the default decision path for fut
 ## V222.35 Product Recommendation Layout Chain Diagnostic
 - Decision: stop visual trial-and-error and diagnose full layout chain before next UI edit.
 - UI Change: NONE.
+
+## V222.36 Product Recommendation DOM Geometry Diagnostic
+- Decision: no more Product Recommendation visual changes before DOM geometry and computed styles are captured.
+- UI Change: NONE.
