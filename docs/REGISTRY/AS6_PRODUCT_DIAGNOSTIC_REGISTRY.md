@@ -165,3 +165,10 @@
 - Stage Passport: docs/STAGE_PASSPORTS/V222_22_FIRST_DECISION_HISTORY_EVIDENCE_ENTRY.md
 - Runtime: runtime/as6-v222-22-first-decision-history-evidence-entry
 - Status: ops/status/as6-v222-22-first-decision-history-evidence-entry-status.md
+
+## V222.23 First Evidence Entry Effect Review
+- Artifact: docs/PRODUCT/AS6_FIRST_EVIDENCE_ENTRY_EFFECT_REVIEW_V222_23.md
+- Stage Passport: docs/STAGE_PASSPORTS/V222_23_FIRST_EVIDENCE_ENTRY_EFFECT_REVIEW.md
+- Runtime: runtime/as6-v222-23-first-evidence-entry-effect-review
+- Status: ops/status/as6-v222-23-first-evidence-entry-effect-review-status.md
+- Failure Classes: PRODUCT_DECISION_HISTORY_FIRST_EVIDENCE_EFFECT_UNREVIEWED, PRODUCT_DECISION_HISTORY_DUPLICATE_EVIDENCE_ENTRY, PRODUCT_DECISION_HISTORY_EVIDENCE_STRUCTURE_DRIFT, DIAGNOSTIC_PRIVACY_CHECK_FALSE_POSITIVE

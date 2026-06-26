@@ -97,3 +97,7 @@
 ## V222.22 First Decision History Evidence Coverage
 - Covered: first durable evidence append, schema, decision status, next stage, duplicate prevention.
 - Not changed: UI, routes, backend, auth, CRM, telemetry, metrics, insights, helper code, Governance.
+
+## V222.23 First Evidence Entry Effect Coverage
+- Covered: evidence entry presence, uniqueness, schema, decision status, next-stage link, telemetry section, metrics section, insight section, recommendation section.
+- Not changed: UI, routes, backend, auth, CRM, telemetry, metrics, insights, helper code, Governance.

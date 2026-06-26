@@ -1,0 +1,3 @@
+ROOT_CAUSE=privacy check matched safety guarantee text instead of unsafe fields
+FAILURE_CLASS=DIAGNOSTIC_PRIVACY_CHECK_FALSE_POSITIVE
+DETAIL=V222.23 matched the word cookies inside the safe phrase no cookies. Repair uses exact unsafe assignment/pair patterns instead of broad word matching.
