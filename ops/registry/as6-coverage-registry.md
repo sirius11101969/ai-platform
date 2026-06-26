@@ -2348,3 +2348,13 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers scoped page visual standard.
 
 - Covers build, Docker and Guardian validation.
+
+## V223_00 Coverage — CRM Pipeline Compact Design System
+
+- Covers content-sized pipeline columns.
+
+- Covers compact CRM lead cards.
+
+- Covers pipeline compact runtime tracer.
+
+- Covers build, Docker and Guardian validation.

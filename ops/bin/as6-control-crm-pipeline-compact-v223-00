@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-crm-pipeline-compact-v223-00
+printf '%s\n' 'AS6_CONTROL_CRM_PIPELINE_COMPACT_V223_00=PASS'

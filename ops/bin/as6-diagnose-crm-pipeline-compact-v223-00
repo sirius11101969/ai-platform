@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/design-system/crm/as6CrmPipelineCompact.css
+test -f frontend/src/design-system/crm/as6CrmPipelineCompactTraceAuto.js
+grep -q 'as6CrmPipelineCompact.css' frontend/src/pages/CRMPage.jsx
+grep -q 'height: auto !important' frontend/src/design-system/crm/as6CrmPipelineCompact.css
+grep -q 'min-height: 0 !important' frontend/src/design-system/crm/as6CrmPipelineCompact.css
+grep -q "stage: 'V223_00'" frontend/src/design-system/crm/as6CrmPipelineCompactTraceAuto.js
+printf '%s\n' 'AS6_CRM_PIPELINE_COMPACT_DESIGN_SYSTEM_V223_00=PASS'

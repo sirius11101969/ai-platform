@@ -440,3 +440,13 @@
 - Runtime evidence: runtime/as6-v222-62/
 
 - Failure class: CRM_VISUAL_SURFACE_DRIFT_FROM_COMMAND_CENTER
+
+## V223_00 CRM Pipeline Compact Design System
+
+- Diagnostic: ops/bin/as6-diagnose-crm-pipeline-compact-v223-00
+
+- Control: ops/bin/as6-control-crm-pipeline-compact-v223-00
+
+- Runtime evidence: runtime/as6-v223-00/
+
+- Failure class: CRM_PIPELINE_TALL_EMPTY_COLUMN_SURFACE

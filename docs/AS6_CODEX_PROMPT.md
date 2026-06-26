@@ -11,7 +11,7 @@ Rules:
 - Current commit is Git HEAD, not a markdown field.
 - Restore tag is resolved from Git tags, not duplicated in markdown history.
 - MASTER/HANDOFF/CODEX are short summaries only.
-- Continue with V222_63 — Browser visual verification of CRM Command Center standard.
+- Continue with V223_01 — Browser visual verification of compact CRM pipeline.
 
 V222_40 State Restore Tag Reconciliation completed; continue product work from governed foundation:
 - Read docs/AS6_UX_BLUEPRINT.md and docs/AS6_DESIGN_PRINCIPLES.md before changing Command Center UX.

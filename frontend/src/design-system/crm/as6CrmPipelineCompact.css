@@ -1,0 +1,190 @@
+/* AS6 V223_00 — CRM Pipeline Compact Design System */
+.as6-ds-crm-page .production-pipeline,
+.as6-ds-crm-page .pipeline-board {
+  display: grid !important;
+  grid-template-columns: repeat(6, minmax(248px, 1fr)) !important;
+  gap: 16px !important;
+  align-items: start !important;
+  overflow-x: auto !important;
+  padding: 14px !important;
+  border-radius: 28px !important;
+  background: linear-gradient(180deg, rgba(8,18,38,.7), rgba(5,9,20,.92)) !important;
+}
+.as6-ds-crm-page .stage-column {
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  align-self: start !important;
+  padding: 14px !important;
+  border-radius: 22px !important;
+  background: radial-gradient(circle at 50% 0%, rgba(37,228,255,.12), transparent 11rem), rgba(9,25,45,.9) !important;
+  box-shadow: 0 18px 54px rgba(0,0,0,.34) !important;
+}
+.as6-ds-crm-page .stage-head {
+  min-height: 52px !important;
+  padding: 10px 12px !important;
+  margin-bottom: 12px !important;
+  border-radius: 16px !important;
+  background: rgba(37,228,255,.08) !important;
+  border: 1px solid rgba(37,228,255,.22) !important;
+}
+.as6-ds-crm-page .stage-title-input {
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: #25e4ff !important;
+  font-size: 15px !important;
+  font-weight: 950 !important;
+}
+.as6-ds-crm-page .lead-list,
+.as6-ds-crm-page .compact-lead-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  min-height: 0 !important;
+}
+.as6-ds-crm-page .lead-card,
+.as6-ds-crm-page .premium-lead-card,
+.as6-ds-crm-page .compact-pipeline-card {
+  padding: 12px !important;
+  border-radius: 18px !important;
+  background: linear-gradient(180deg, rgba(18,35,63,.92), rgba(8,18,38,.96)) !important;
+  border: 1px solid rgba(120,190,255,.2) !important;
+  box-shadow: 0 14px 36px rgba(0,0,0,.28) !important;
+}
+.as6-ds-crm-page .lead-topline {
+  display: flex !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  margin-bottom: 8px !important;
+}
+.as6-ds-crm-page .lead-topline strong {
+  font-size: 13px !important;
+  line-height: 1.15 !important;
+}
+.as6-ds-crm-page .lead-topline span {
+  color: #25e4ff !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+}
+.as6-ds-crm-page .lead-intelligence-kpis,
+.as6-ds-crm-page .lead-revenue-kpis {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 6px !important;
+  margin: 6px 0 !important;
+}
+.as6-ds-crm-page .lead-intelligence-kpis b,
+.as6-ds-crm-page .lead-intelligence-kpis span,
+.as6-ds-crm-page .lead-intelligence-kpis em,
+.as6-ds-crm-page .lead-revenue-kpis span {
+  min-height: 30px !important;
+  padding: 7px 8px !important;
+  border-radius: 12px !important;
+  background: rgba(37,228,255,.08) !important;
+  border: 1px solid rgba(37,228,255,.2) !important;
+  color: #25e4ff !important;
+  font-size: 11px !important;
+  line-height: 1.1 !important;
+  font-weight: 900 !important;
+  font-style: normal !important;
+  text-transform: none !important;
+}
+.as6-ds-crm-page .lead-revenue-kpis span:nth-child(3) {
+  grid-column: 1 / -1 !important;
+}
+.as6-ds-crm-page .forecast-progress {
+  height: 7px !important;
+  margin: 8px 0 !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+  background: rgba(255,255,255,.06) !important;
+}
+.as6-ds-crm-page .forecast-progress span {
+  display: none !important;
+}
+.as6-ds-crm-page .forecast-progress i {
+  display: block !important;
+  height: 100% !important;
+  border-radius: inherit !important;
+  background: linear-gradient(90deg, #25e4ff, #8b5cf6, #ff3d8f) !important;
+}
+.as6-ds-crm-page .lead-card p {
+  margin: 7px 0 !important;
+  color: #25e4ff !important;
+  font-size: 12px !important;
+  font-weight: 850 !important;
+}
+.as6-ds-crm-page .lead-card-meta,
+.as6-ds-crm-page .telegram-card-status {
+  min-height: 26px !important;
+  padding: 5px 8px !important;
+  border-radius: 999px !important;
+  background: rgba(37,228,255,.06) !important;
+  border: 1px solid rgba(37,228,255,.18) !important;
+  color: #25e4ff !important;
+  font-size: 11px !important;
+  font-weight: 850 !important;
+}
+.as6-ds-crm-page .ai-card-recommendation {
+  min-height: 38px !important;
+  padding: 8px 10px !important;
+  margin: 8px 0 !important;
+  border-radius: 16px !important;
+  background: linear-gradient(135deg, rgba(139,92,246,.18), rgba(37,228,255,.08)) !important;
+  border: 1px solid rgba(120,190,255,.22) !important;
+  color: rgba(246,249,255,.9) !important;
+  font-size: 12px !important;
+  line-height: 1.22 !important;
+  font-weight: 850 !important;
+}
+.as6-ds-crm-page .ai-card-recommendation span {
+  width: 24px !important;
+  height: 24px !important;
+  min-width: 24px !important;
+  margin-right: 8px !important;
+  border-radius: 999px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: linear-gradient(135deg, #8b5cf6, #ff3d8f) !important;
+}
+.as6-ds-crm-page .ai-revenue-cards {
+  display: grid !important;
+  grid-template-columns: repeat(6, minmax(150px, 1fr)) !important;
+  gap: 12px !important;
+}
+.as6-ds-crm-page .ai-revenue-card {
+  padding: 14px !important;
+  min-height: 112px !important;
+}
+.as6-ds-crm-page .ai-revenue-card strong {
+  display: block !important;
+  margin: 8px 0 4px !important;
+  color: #fff !important;
+  font-size: clamp(1.6rem, 2.2vw, 2.6rem) !important;
+  line-height: .95 !important;
+  letter-spacing: -.06em !important;
+}
+.as6-ds-crm-page .ai-action-center-panel,
+.as6-ds-crm-page .ai-revenue-intelligence-panel,
+.as6-ds-crm-page .lead-list-controls {
+  border-radius: 24px !important;
+  padding: 18px !important;
+  border: 1px solid rgba(120,190,255,.2) !important;
+  background: radial-gradient(circle at 0 0, rgba(37,228,255,.1), transparent 18rem), rgba(13,24,48,.82) !important;
+}
+@media (max-width: 1280px) {
+  .as6-ds-crm-page .production-pipeline,
+  .as6-ds-crm-page .pipeline-board {
+    grid-template-columns: repeat(6, 260px) !important;
+  }
+}
+@media (max-width: 920px) {
+  .as6-ds-crm-page .production-pipeline,
+  .as6-ds-crm-page .pipeline-board {
+    grid-template-columns: 1fr !important;
+  }
+}

@@ -1,8 +1,8 @@
 # AS6 HANDOFF
 
-LAST_COMPLETED_STAGE=V222_62
+LAST_COMPLETED_STAGE=V223_00
 PROJECT_READINESS=99%
-NEXT_RECOMMENDED_STAGE=V222_63 — Browser visual verification of CRM Command Center standard
+NEXT_RECOMMENDED_STAGE=V223_01 — Browser visual verification of compact CRM pipeline
 SAFE_TO_CHANGE=YES
 
 Continue from current Git HEAD.

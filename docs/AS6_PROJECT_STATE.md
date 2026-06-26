@@ -4128,3 +4128,13 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Added diagnostics: crm_visual_bridge_presence_guard, crm_visual_runtime_tracer_guard, command_center_standard_guard, frontend_build_guard, docker_guardian_guard.
 
 - Project readiness: 99%.
+
+## V223_00 CRM Pipeline Compact Design System
+
+- Root cause: CRM pipeline columns rendered as tall empty surfaces because column height was not content-sized.
+
+- Fixed: added compact CRM pipeline design system layer.
+
+- Added diagnostics: pipeline_column_height_guard, compact_lead_card_guard, pipeline_runtime_tracer_guard, frontend_build_guard, docker_guardian_guard.
+
+- Project readiness: 99%.

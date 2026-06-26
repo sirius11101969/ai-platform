@@ -1,5 +1,3 @@
-import '../design-system/crm/as6CrmPipelineCompactTraceAuto.js';
-import '../design-system/crm/as6CrmPipelineCompact.css';
 import '../design-system/crm/as6CrmVisualRuntimeTraceAuto.js';
 import '../design-system/crm/as6CrmCommandCenterVisual.css';
 import '../design-system/crm/as6CrmRuntimeTraceAuto.js';
