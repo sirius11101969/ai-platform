@@ -1,0 +1,30 @@
+Unable to find image 'node:20-bookworm' locally
+20-bookworm: Pulling from library/node
+0b22ec2d9b1a: Pulling fs layer
+db53381ee51f: Pulling fs layer
+e5203b2bfeff: Pulling fs layer
+8fcda2b4d799: Pulling fs layer
+2933ecab0f11: Pulling fs layer
+76e6b8204a89: Pulling fs layer
+2f2ab6e4eb46: Pulling fs layer
+c83419f44309: Pulling fs layer
+2f2ab6e4eb46: Download complete
+c83419f44309: Download complete
+0b22ec2d9b1a: Download complete
+3e22c7cc721e: Download complete
+6db081db89c0: Download complete
+e5203b2bfeff: Download complete
+db53381ee51f: Download complete
+76e6b8204a89: Download complete
+db53381ee51f: Pull complete
+8fcda2b4d799: Download complete
+e5203b2bfeff: Pull complete
+8fcda2b4d799: Pull complete
+2933ecab0f11: Download complete
+c83419f44309: Pull complete
+2933ecab0f11: Pull complete
+76e6b8204a89: Pull complete
+2f2ab6e4eb46: Pull complete
+0b22ec2d9b1a: Pull complete
+Digest: sha256:8f693eaa7e0a8e71560c9a82b55fd54c2ae920a2ba5d2cde28bac7d1c01c9ba5
+Status: Downloaded newer image for node:20-bookworm

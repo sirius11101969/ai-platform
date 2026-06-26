@@ -148,3 +148,7 @@
 ## V222.38 Docker Playwright DOM Geometry Capture Repair Coverage
 - Covered: module path discovery, NODE_PATH repair, capture retry, geometry summary, screenshot/JSON evidence if available.
 - Not changed: UI, backend, auth, CRM logic, telemetry, product intelligence engine.
+
+## V222.39 NPX Playwright DOM Geometry Capture Coverage
+- Covered: isolated npm Playwright install, Chromium install, geometry JSON/screenshot attempt, geometry summary, error logs.
+- Not changed: UI, backend, auth, CRM logic, telemetry, product intelligence engine.

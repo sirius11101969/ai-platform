@@ -223,3 +223,8 @@ Use the Product Intelligence evidence chain as the default decision path for fut
 - Decision: repair Docker Playwright module resolution before any visual UI change.
 - UI Change: NONE.
 - Capture Result: DOM_GEOMETRY_CAPTURE_REPAIR=FAILED
+
+## V222.39 NPX Playwright DOM Geometry Capture
+- Decision: use isolated Docker npm Playwright capture after Playwright image module resolution failed.
+- UI Change: NONE.
+- Capture Result: DOM_GEOMETRY_CAPTURE_NPX=FAILED

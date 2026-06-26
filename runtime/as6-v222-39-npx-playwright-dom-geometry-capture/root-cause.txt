@@ -1,0 +1,4 @@
+ROOT_CAUSE=Playwright Docker image existed but did not expose require('playwright') to /work script module resolution
+FAILURE_CLASS=PLAYWRIGHT_IMAGE_WITHOUT_NODE_MODULE
+FAILURE_CLASS=NPM_EPHEMERAL_PLAYWRIGHT_CAPTURE_REQUIRED
+DETAIL=V222.39 uses a temporary npm project inside Docker and npx/install-time Playwright package to capture DOM geometry without modifying VPS packages.

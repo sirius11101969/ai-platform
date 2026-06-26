@@ -1,0 +1,59 @@
+Downloading Chromium 131.0.6778.33 (playwright build v1148) from https://playwright.azureedge.net/builds/chromium/1148/chromium-linux.zip
+|                                                                                |   0% of 161.3 MiB
+|■■■■■■■■                                                                        |  10% of 161.3 MiB
+|■■■■■■■■■■■■■■■■                                                                |  20% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 161.3 MiB
+[Error: ENOSPC: no space left on device, write] {
+  errno: -28,
+  code: 'ENOSPC',
+  syscall: 'write'
+}
+(node:45) [DEP0147] DeprecationWarning: In future versions of Node.js, fs.rmdir(path, { recursive: true }) will be removed. Use fs.rm(path, { recursive: true }) instead
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Downloading Chromium 131.0.6778.33 (playwright build v1148) from https://playwright-akamai.azureedge.net/builds/chromium/1148/chromium-linux.zip
+|                                                                                |   0% of 161.3 MiB
+|■■■■■■■■                                                                        |  10% of 161.3 MiB
+|■■■■■■■■■■■■■■■■                                                                |  20% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 161.3 MiB
+[Error: ENOSPC: no space left on device, write] {
+  errno: -28,
+  code: 'ENOSPC',
+  syscall: 'write'
+}
+Downloading Chromium 131.0.6778.33 (playwright build v1148) from https://playwright-verizon.azureedge.net/builds/chromium/1148/chromium-linux.zip
+|                                                                                |   0% of 161.3 MiB
+|■■■■■■■■                                                                        |  10% of 161.3 MiB
+|■■■■■■■■■■■■■■■■                                                                |  20% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 161.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 161.3 MiB
+[Error: ENOSPC: no space left on device, write] {
+  errno: -28,
+  code: 'ENOSPC',
+  syscall: 'write'
+}
+Failed to install browsers
+Error: Failed to download Chromium 131.0.6778.33 (playwright build v1148), caused by
+Error: Download failure, code=1
+    at ChildProcess.<anonymous> (/tmp/node_modules/playwright-core/lib/server/registry/browserFetcher.js:91:16)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12)
