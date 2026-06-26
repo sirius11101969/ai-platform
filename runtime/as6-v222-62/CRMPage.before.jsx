@@ -1,5 +1,3 @@
-import '../design-system/crm/as6CrmVisualRuntimeTraceAuto.js';
-import '../design-system/crm/as6CrmCommandCenterVisual.css';
 import '../design-system/crm/as6CrmRuntimeTraceAuto.js';
 import '../design-system/crm/as6CrmDesignSystem.css';
 /* AS6_PHYSICAL_PAGE_REFACTOR_MIGRATION_V109: physical refactor governed by AS6PhysicalPageRefactorBridge */

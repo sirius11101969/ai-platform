@@ -430,3 +430,13 @@
 - Runtime evidence: runtime/as6-v222-61-false-secret-repair/
 
 - Failure class: SECRET_SCAN_FALSE_POSITIVE_MARKER_NAMING
+
+## V222_62 CRM Visual Rewrite
+
+- Diagnostic: ops/bin/as6-diagnose-crm-visual-rewrite-v222-62
+
+- Control: ops/bin/as6-control-crm-visual-rewrite-v222-62
+
+- Runtime evidence: runtime/as6-v222-62/
+
+- Failure class: CRM_VISUAL_SURFACE_DRIFT_FROM_COMMAND_CENTER

@@ -2338,3 +2338,13 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers secret scan false-positive prevention.
 
 - Covers build, Docker and Guardian validation.
+
+## V222_62 Coverage — CRM Visual Rewrite
+
+- Covers CRM Command Center visual bridge.
+
+- Covers CRM visual runtime tracer.
+
+- Covers scoped page visual standard.
+
+- Covers build, Docker and Guardian validation.

@@ -1,0 +1,83 @@
+/* AS6 V222_59 — CRM migration bridge to AS6 Design System */
+
+.as6-ds-crm-page {
+  --as6-crm-bg: #050914;
+  --as6-crm-panel: rgba(13, 24, 48, .82);
+  --as6-crm-panel-strong: rgba(19, 31, 56, .88);
+  --as6-crm-border: rgba(120, 190, 255, .2);
+  --as6-crm-text: #f6f9ff;
+  --as6-crm-muted: #9fb2d5;
+  --as6-crm-cyan: #25e4ff;
+  --as6-crm-green: #32f5a9;
+  --as6-crm-violet: #8b5cf6;
+  color: var(--as6-crm-text);
+}
+
+.as6-ds-crm-page section,
+.as6-ds-crm-page article,
+.as6-ds-crm-page .card,
+.as6-ds-crm-page .panel,
+.as6-ds-crm-page [class*="card"],
+.as6-ds-crm-page [class*="panel"] {
+  border-color: var(--as6-crm-border) !important;
+  border-radius: 22px !important;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(37, 228, 255, .08), transparent 18rem),
+    rgba(13, 24, 48, .82) !important;
+  box-shadow: 0 22px 80px rgba(0, 0, 0, .32) !important;
+}
+
+.as6-ds-crm-page h1,
+.as6-ds-crm-page h2,
+.as6-ds-crm-page h3 {
+  color: var(--as6-crm-text) !important;
+  letter-spacing: -0.04em;
+}
+
+.as6-ds-crm-page p,
+.as6-ds-crm-page span,
+.as6-ds-crm-page small,
+.as6-ds-crm-page td,
+.as6-ds-crm-page th {
+  color: inherit;
+}
+
+.as6-ds-crm-page button,
+.as6-ds-crm-page a[class*="button"],
+.as6-ds-crm-page a[class*="action"] {
+  border-radius: 16px !important;
+  font-weight: 900 !important;
+}
+
+.as6-ds-crm-page button:not([class*="ghost"]):not([class*="secondary"]),
+.as6-ds-crm-page a[class*="primary"],
+.as6-ds-crm-page a[class*="action"] {
+  background: linear-gradient(100deg, #7c2cff, #2563ff 46%, #13d8ff) !important;
+  color: #fff !important;
+  border-color: transparent !important;
+}
+
+.as6-ds-crm-page input,
+.as6-ds-crm-page select,
+.as6-ds-crm-page textarea {
+  border-radius: 16px !important;
+  border: 1px solid var(--as6-crm-border) !important;
+  background: rgba(255, 255, 255, .055) !important;
+  color: var(--as6-crm-text) !important;
+}
+
+.as6-ds-crm-page table {
+  border-color: var(--as6-crm-border) !important;
+}
+
+.as6-ds-crm-page thead {
+  background: rgba(37, 228, 255, .07) !important;
+}
+
+.as6-ds-crm-page [class*="badge"],
+.as6-ds-crm-page [class*="tag"] {
+  border-radius: 999px !important;
+  border: 1px solid rgba(37, 228, 255, .28) !important;
+  background: rgba(37, 228, 255, .08) !important;
+  color: var(--as6-crm-cyan) !important;
+}

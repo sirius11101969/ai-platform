@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/design-system/crm/as6CrmCommandCenterVisual.css
+test -f frontend/src/design-system/crm/as6CrmVisualRuntimeTraceAuto.js
+grep -q 'as6CrmCommandCenterVisual.css' frontend/src/pages/CRMPage.jsx
+grep -q 'as6CrmVisualRuntimeTraceAuto.js' frontend/src/pages/CRMPage.jsx
+grep -q 'AS6 V222_62' frontend/src/design-system/crm/as6CrmCommandCenterVisual.css
+grep -q "stage: 'V222_62'" frontend/src/design-system/crm/as6CrmVisualRuntimeTraceAuto.js
+printf '%s\n' 'AS6_CRM_VISUAL_REWRITE_V222_62=PASS'

@@ -1,8 +1,8 @@
 # AS6 HANDOFF
 
-LAST_COMPLETED_STAGE=V222_61
+LAST_COMPLETED_STAGE=V222_62
 PROJECT_READINESS=99%
-NEXT_RECOMMENDED_STAGE=V222_62 — CRM visual rewrite to Command Center standard
+NEXT_RECOMMENDED_STAGE=V222_63 — Browser visual verification of CRM Command Center standard
 SAFE_TO_CHANGE=YES
 
 Continue from current Git HEAD.
