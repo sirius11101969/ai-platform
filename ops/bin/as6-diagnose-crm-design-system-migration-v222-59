@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/pages/CRMPage.jsx
+test -f frontend/src/design-system/crm/as6CrmDesignSystem.css
+grep -q "../design-system/crm/as6CrmDesignSystem.css" frontend/src/pages/CRMPage.jsx
+grep -q "as6-ds-crm-page" frontend/src/pages/CRMPage.jsx
+grep -q "AS6 V222_59" frontend/src/design-system/crm/as6CrmDesignSystem.css
+printf '%s\n' 'AS6_CRM_DESIGN_SYSTEM_MIGRATION=PASS'

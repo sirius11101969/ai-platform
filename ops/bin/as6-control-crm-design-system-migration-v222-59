@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-crm-design-system-migration-v222-59
+printf '%s\n' 'AS6_CONTROL_CRM_DESIGN_SYSTEM_MIGRATION_V222_59=PASS'
