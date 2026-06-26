@@ -138,3 +138,10 @@
 - Runtime: runtime/as6-v222-18-product-decision-evidence-effect-review
 - Status: ops/status/as6-v222-18-product-decision-evidence-effect-review-status.md
 - Failure Classes: PRODUCT_DECISION_EVIDENCE_EFFECT_UNREVIEWED, PRODUCT_DECISION_EVIDENCE_VALIDATION_GAP, PRODUCT_DECISION_EVIDENCE_AUTOMATION_PENDING
+
+## V222.19 Decision History Persistence Diagnostic
+- Artifact: docs/PRODUCT/AS6_DECISION_HISTORY_PERSISTENCE_DIAGNOSTIC_V222_19.md
+- Stage Passport: docs/STAGE_PASSPORTS/V222_19_DECISION_HISTORY_PERSISTENCE_DIAGNOSTIC.md
+- Runtime: runtime/as6-v222-19-decision-history-persistence-diagnostic
+- Status: ops/status/as6-v222-19-decision-history-persistence-diagnostic-status.md
+- Failure Classes: PRODUCT_DECISION_EVIDENCE_PERSISTENCE_UNSPECIFIED, PRODUCT_DECISION_HISTORY_WRITE_TARGET_UNSPECIFIED, PRODUCT_DECISION_EVIDENCE_DURABILITY_GAP

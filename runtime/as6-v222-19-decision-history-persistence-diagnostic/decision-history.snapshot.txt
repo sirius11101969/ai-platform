@@ -1,0 +1,38 @@
+2:## V222.1B Product Diagnostic
+3:- Decision: keep Governance unchanged and diagnose product baseline before UI changes.
+4:- Reason: V222.1A confirmed broad product surface and dense CRM action surface.
+8:- Decision: improve only Landing first-screen copy and proof labels.
+9:- Reason: V222.1B identified first-experience complexity as the first confirmed product risk.
+14:- Decision: close V222.2 as statically effective, but not fully user-validated.
+21:- Decision: diagnose post-auth destination before any route or UI change.
+28:- Decision: set Command Center as the primary post-auth destination.
+34:- Decision: close V222.5 as statically effective, but not fully user-validated.
+41:- Decision: diagnose Command Center orientation before adding onboarding UI.
+48:- Decision: add one minimal orientation block to Command Center.
+54:- Decision: close V222.8 as statically effective, but not fully behavior-validated.
+60:## V222.10 First-action Analytics Diagnostic
+61:- Decision: diagnose first-action analytics before adding telemetry.
+67:## V222.11 AS6 Product Intelligence Foundation
+68:- Decision: create AS6 Product Intelligence as a small internal foundation before wiring first-action telemetry.
+69:- Reason: V222.10 confirmed that first-action behavior remains unmeasured.
+73:## V222.12 Command Center First-action Telemetry
+74:- Decision: wire the three Command Center orientation CTAs to AS6 Product Intelligence.
+75:- Reason: V222.10 diagnosed missing first-action analytics and V222.11 created the foundation.
+79:## V222.13 First-action Telemetry Effect Review
+80:- Decision: close V222.12 as statically effective, but not runtime-validated.
+86:## V222.14 Runtime Telemetry Storage Validation
+87:- Decision: validate Product Intelligence runtime storage before deriving metrics.
+88:- Reason: V222.13 confirmed static wiring but not runtime storage behavior.
+92:## V222.15 First-action Metrics Foundation
+93:- Decision: add minimal first-action metrics helpers before deriving product insights.
+94:- Reason: V222.14 validated runtime telemetry storage, but metrics were still pending.
+98:## V222.16 First-action Insights Foundation
+99:- Decision: add minimal first-action insights helpers before automating Product Decision History evidence.
+100:- Reason: V222.15 created metrics, but insights remained pending.
+104:## V222.17 Product Decision History Evidence Bridge
+105:- Decision: add a formal bridge from Product Intelligence evidence to Product Decision History.
+106:- Reason: V222.16 created insights, but decision evidence records were still missing.
+110:## V222.18 Product Decision Evidence Effect Review
+111:- Decision: close V222.17 as effective and validated for sample evidence records.
+113:- Product Result: Product Intelligence can now feed Product Decision History with validated evidence records.
+115:- Remaining Issue: automatic persistence into Product Decision History.

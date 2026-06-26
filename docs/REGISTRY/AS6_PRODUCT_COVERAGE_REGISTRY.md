@@ -81,3 +81,7 @@
 ## V222.18 Product Decision Evidence Effect Coverage
 - Covered: evidence bridge creation, validation, required fields, Product Intelligence export, valid record acceptance, invalid record rejection.
 - Not covered: automatic persistence, real user evidence, decision automation.
+
+## V222.19 Decision History Persistence Coverage
+- Covered: persistence gap, persistence options, recommended write target, privacy-safe boundary.
+- Not changed: Product Intelligence code, UI, routes, backend, auth, telemetry, metrics, insights, Governance.

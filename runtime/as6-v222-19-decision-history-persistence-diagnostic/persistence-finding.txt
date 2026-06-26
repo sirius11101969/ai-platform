@@ -1,0 +1,3 @@
+FINDING=Product Intelligence can create validated evidence records, but persistence into AS6_PRODUCT_DECISION_HISTORY is still manual and document-level.
+FAILURE_CLASS=PRODUCT_DECISION_EVIDENCE_PERSISTENCE_UNSPECIFIED
+ROOT_CAUSE=V222.17/V222.18 created and validated evidence record structure, but did not define a persistence boundary, write target, append format or lifecycle for durable Product Decision History entries.

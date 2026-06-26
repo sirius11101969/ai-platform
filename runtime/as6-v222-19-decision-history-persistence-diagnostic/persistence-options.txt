@@ -1,0 +1,11 @@
+OPTION_A=Frontend localStorage persistence only
+STATUS=Rejected for Product Decision History durability
+REASON=Local browser evidence is useful for telemetry but not durable project knowledge.
+
+OPTION_B=Backend persistence
+STATUS=Deferred
+REASON=Requires API, storage, privacy and auth decisions; too large for current small cycle.
+
+OPTION_C=Document-level evidence append format
+STATUS=Recommended next
+REASON=Fits current V222 architecture, uses existing docs/REGISTRY/AS6_PRODUCT_DECISION_HISTORY.md, keeps evidence aggregate, reviewable and commit-backed.

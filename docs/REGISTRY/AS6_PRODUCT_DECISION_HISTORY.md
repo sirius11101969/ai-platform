@@ -113,3 +113,9 @@
 - Product Result: Product Intelligence can now feed Product Decision History with validated evidence records.
 - Engineering Result: no product code change; effect-review artifacts added.
 - Remaining Issue: automatic persistence into Product Decision History.
+
+## V222.19 Decision History Persistence Diagnostic
+- Decision: diagnose persistence before implementing durable evidence writes.
+- Reason: V222.18 validated evidence records, but persistence boundary remained unspecified.
+- Product Result: document-level append-only Product Decision History persistence is recommended as the next minimal cycle.
+- Engineering Result: no product code change; persistence diagnostic artifacts added.

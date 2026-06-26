@@ -1,0 +1,4 @@
+PERSISTENCE_BOUNDARY=Product Intelligence creates evidence records; durable project knowledge is persisted into docs/REGISTRY/AS6_PRODUCT_DECISION_HISTORY.md through explicit stage cycles.
+WRITE_TARGET=docs/REGISTRY/AS6_PRODUCT_DECISION_HISTORY.md
+FORMAT=Append-only markdown section with schemaVersion, stage, observation, telemetry, metrics, insight, recommendation, decisionStatus, nextStage.
+RULE=No raw personal data, no secrets, no auth values, no cookies, no IP, no raw user identifiers.
