@@ -2256,3 +2256,23 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers false positive exclusion for legitimate chart/progress inline styles.
 
 - Covers reference CSS ownership.
+
+## V222_43 Coverage — Real Recommended Product Card
+
+- Covers visible text/product UI owner discovery.
+
+- Covers prevention against editing the wrong recommendation component.
+
+- Covers right rail real product-card reference layout.
+
+- Covers CSS ownership for the user-marked recommended product card.
+
+## V222_44 Coverage — Production Bundle Refresh
+
+- Covers stale production marker detection.
+
+- Covers frontend rebuild.
+
+- Covers production container redeploy/restart.
+
+- Covers post-deploy health evidence.

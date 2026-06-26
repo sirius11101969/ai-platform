@@ -1,8 +1,8 @@
 # AS6 MASTER CONTEXT
 
-LAST_COMPLETED_STAGE=V222_42
+LAST_COMPLETED_STAGE=V222_44
 PROJECT_READINESS=99%
-NEXT_RECOMMENDED_STAGE=V222_43 — Command Center production visual verification
+NEXT_RECOMMENDED_STAGE=V222_45 — Browser visual verification of recommendation card
 SAFE_TO_CHANGE=YES
 
 ## Source Of Truth

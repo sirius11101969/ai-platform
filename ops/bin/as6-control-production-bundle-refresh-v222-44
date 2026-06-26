@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-production-bundle-refresh-v222-44
+printf '%s\n' 'AS6_CONTROL_PRODUCTION_BUNDLE_REFRESH_V222_44=PASS'

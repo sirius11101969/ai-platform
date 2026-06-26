@@ -348,3 +348,25 @@
 - Failure class: OVERBROAD_INLINE_STYLE_GUARD_FALSE_POSITIVE
 
 - Root cause: previous_guard_blocked_legitimate_progress_chart_inline_styles
+
+## V222_43 Real Recommended Product Card Owner Alignment
+
+- Diagnostic: ops/bin/as6-diagnose-real-recommended-product-card-v222-43
+
+- Control: ops/bin/as6-control-real-recommended-product-card-v222-43
+
+- Runtime evidence: runtime/as6-v222-43/diagnostic-report.md
+
+- Failure class: WRONG_VISUAL_COMPONENT_TARGETED
+
+- Root cause: previous_repairs_targeted_AS6_recommendation_card_but_user_marked_recommended_product_card
+
+## V222_44 Production Bundle Refresh
+
+- Diagnostic: ops/bin/as6-diagnose-production-bundle-refresh-v222-44
+
+- Control: ops/bin/as6-control-production-bundle-refresh-v222-44
+
+- Runtime evidence: runtime/as6-v222-44/
+
+- Failure class: STALE_PRODUCTION_FRONTEND_BUNDLE

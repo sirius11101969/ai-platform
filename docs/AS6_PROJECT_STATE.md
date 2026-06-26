@@ -4028,3 +4028,27 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Failure class: OVERBROAD_INLINE_STYLE_GUARD_FALSE_POSITIVE.
 
 - Project readiness: 99%.
+
+## V222_43 Real Recommended Product Card Owner Alignment
+
+- Root cause: previous repairs targeted AS6 text recommendation card, while user marked the real recommended product card.
+
+- Fixed: located owner by visible product-card/product UI signals and added dedicated real recommended product card CSS ownership.
+
+- Added diagnostics: visible_text_owner_guard, recommended_product_owner_guard, wrong_component_regression_guard, product_card_reference_layout_guard.
+
+- Failure class: WRONG_VISUAL_COMPONENT_TARGETED.
+
+- Project readiness: 99%.
+
+## V222_44 Production Bundle Refresh — Recommendation Card
+
+- Root cause: production served stale v222_33 bundle with inline recommendation card styles.
+
+- Fixed: frontend rebuilt and production containers restarted/redeployed.
+
+- Added diagnostics: production_bundle_stale_marker_guard, source_inline_absence_guard, dist_marker_refresh_guard, container_redeploy_guard.
+
+- Failure class: STALE_PRODUCTION_FRONTEND_BUNDLE.
+
+- Project readiness: 99%.

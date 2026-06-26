@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -s runtime/as6-v222-44/diagnostic-report.md
+test -s runtime/as6-v222-44/production-command-center.html
+test -s runtime/as6-v222-44/production-health.json
+if grep -RIn 'v222-33-hard-proof' frontend/src/components/ProductRecommendationCard.jsx frontend/src/pages/CommandCenterPage.jsx 2>/dev/null; then
+  exit 1
+fi
+printf '%s\n' 'AS6_PRODUCTION_BUNDLE_REFRESH_RECOMMENDATION_CARD=PASS'
