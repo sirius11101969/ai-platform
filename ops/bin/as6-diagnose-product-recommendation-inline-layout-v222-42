@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/pages/CommandCenterPage.jsx
+test -f frontend/src/components/ProductRecommendationCard.jsx
+if grep -RIn --include='*.jsx' --include='*.js' "width: '280px'\|maxWidth: '280px'\|width: '210px'\|minHeight: '38px'\|height: '38px'\|style={cardStyle}\|style={buttonStyle}\|style={summaryStyle}\|style={actionStyle}" frontend/src/components/ProductRecommendationCard.jsx; then exit 1; fi
+node -e 'const fs=require("fs");const s=fs.readFileSync("frontend/src/pages/CommandCenterPage.jsx","utf8");const i=s.indexOf("as6-product-recommendation-slot-card");const block=i>=0?s.slice(Math.max(0,i-260),i+900):"";if(!block.includes("v222-42-reference-css-owned")){process.exit(1)};if(/style=\{\{|width:\s*["'"'"']280px["'"'"']|maxWidth:\s*["'"'"']280px["'"'"']|width:\s*["'"'"']210px["'"'"']|height:\s*["'"'"']38px["'"'"']/.test(block)){console.error(block);process.exit(1)}'
+grep -q 'data-as6-product-recommendation="v222-42-reference-css-owned"' frontend/src/components/ProductRecommendationCard.jsx
+grep -q 'className="command-card as6-product-recommendation-card"' frontend/src/components/ProductRecommendationCard.jsx
+grep -q 'className="copilot-action-link as6-product-recommendation-card__button"' frontend/src/components/ProductRecommendationCard.jsx
+grep -RIn --include='*.css' 'as6-product-recommendation-card__button' frontend/src | grep -q 'as6-product-recommendation-card__button'
+printf '%s\n' 'AS6_PRODUCT_RECOMMENDATION_TARGETED_INLINE_GUARD=PASS'

@@ -312,3 +312,39 @@
 - Failure class: PRODUCT_RECOMMENDATION_INLINE_MICRO_LAYOUT_DRIFT
 
 - Repair class: DIAGNOSTIC_RUNTIME_BACKUP_SCOPE_FALSE_POSITIVE
+
+## V222_42 Product Recommendation Inline Layout Removal
+
+- Diagnostic: ops/bin/as6-diagnose-product-recommendation-inline-layout-v222-42
+
+- Control: ops/bin/as6-control-product-recommendation-inline-layout-v222-42
+
+- Runtime evidence: runtime/as6-v222-42/diagnostic-report.md
+
+- Failure class: REACT_INLINE_LAYOUT_OVERRIDES_REFERENCE_CSS
+
+- Root cause: react_inline_style_overrode_reference_css_for_product_recommendation_card
+
+## V222_42 Repair — Product Recommendation CSS-Owned Component
+
+- Diagnostic: ops/bin/as6-diagnose-product-recommendation-inline-layout-v222-42
+
+- Control: ops/bin/as6-control-product-recommendation-inline-layout-v222-42
+
+- Runtime evidence: runtime/as6-v222-42-repair/diagnostic-report.md
+
+- Failure class: EXACT_BLOCK_PATCH_MISSED_INLINE_LAYOUT_DECLARATIONS
+
+- Root cause: previous_patch_used_exact_block_replacement_but_component_style_blocks_did_not_match_exactly
+
+## V222_42 Targeted Inline Guard Repair
+
+- Diagnostic: ops/bin/as6-diagnose-product-recommendation-inline-layout-v222-42
+
+- Control: ops/bin/as6-control-product-recommendation-inline-layout-v222-42
+
+- Runtime evidence: runtime/as6-v222-42-targeted-repair/diagnostic-report.md
+
+- Failure class: OVERBROAD_INLINE_STYLE_GUARD_FALSE_POSITIVE
+
+- Root cause: previous_guard_blocked_legitimate_progress_chart_inline_styles

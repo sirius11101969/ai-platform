@@ -2226,3 +2226,33 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers 280px/210px micro layout regression prevention.
 
 - Covers governed CSS reference alignment.
+
+## V222_42 Coverage — Product Recommendation Inline Layout
+
+- Covers removal of React inline width/maxWidth from product recommendation slot.
+
+- Covers removal of React inline cardStyle/buttonStyle/summaryStyle/actionStyle.
+
+- Covers reference CSS ownership.
+
+- Covers built asset micro layout regression guard.
+
+## V222_42 Repair Coverage — CSS-Owned Product Recommendation
+
+- Covers complete rewrite of ProductRecommendationCard to CSS-owned layout.
+
+- Covers absence of inline 280px/210px/38px constraints.
+
+- Covers CommandCenterPage slot inline style removal.
+
+- Covers reference CSS ownership.
+
+## V222_42 Targeted Guard Coverage
+
+- Covers product recommendation slot inline layout removal.
+
+- Covers ProductRecommendationCard CSS-owned layout.
+
+- Covers false positive exclusion for legitimate chart/progress inline styles.
+
+- Covers reference CSS ownership.

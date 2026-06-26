@@ -1,0 +1,15 @@
+ M docs/AS6_CODEX_PROMPT.md
+ M docs/AS6_HANDOFF.md
+ M docs/AS6_MASTER_CONTEXT.md
+ M docs/AS6_PROJECT_STATE.md
+ M frontend/src/components/ProductRecommendationCard.jsx
+ M frontend/src/pages/CommandCenterPage.jsx
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+ M runtime/as6-v222-36-product-recommendation-dom-geometry-diagnostic/source-layout-ownership.txt
+ M runtime/as6-v222-37-production-dom-geometry-capture-recover/source-layout-constraints.txt
+ M runtime/as6-v222-38-docker-playwright-dom-geometry-capture/source-layout-constraints.txt
+?? ops/bin/as6-control-product-recommendation-inline-layout-v222-42
+?? ops/bin/as6-diagnose-product-recommendation-inline-layout-v222-42
+?? ops/governance/as6-product-recommendation-inline-layout-v222-42.md

@@ -3984,3 +3984,47 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Failure class: PRODUCT_RECOMMENDATION_INLINE_MICRO_LAYOUT_DRIFT.
 
 - Project readiness: 99%.
+
+## V222_42 Product Recommendation Inline Layout Removal
+
+- Root cause: React inline styles overrode reference CSS for the product recommendation card.
+
+- Fixed: removed inline card width/maxWidth/padding/gap/radius from CommandCenterPage and ProductRecommendationCard.
+
+- Fixed: removed inline CTA width/height/minHeight and text micro typography from ProductRecommendationCard.
+
+- Ownership: visual layout now belongs to as6-command-center-visual-etalon-v134.css.
+
+- Added diagnostics: react_inline_card_width_guard, react_inline_cta_width_guard, reference_css_ownership_guard, built_asset_micro_layout_guard.
+
+- Failure class: REACT_INLINE_LAYOUT_OVERRIDES_REFERENCE_CSS.
+
+- Project readiness: 99%.
+
+## V222_42 Repair — Product Recommendation CSS-Owned Component
+
+- Root cause: previous exact-block replacement did not match current ProductRecommendationCard style declarations.
+
+- Fixed: ProductRecommendationCard rewritten as CSS-owned component with no inline layout dimensions.
+
+- Fixed: CommandCenterPage product recommendation slot no longer uses inline 280px layout.
+
+- Added diagnostics: css_owned_component_guard, slot_inline_style_absence_guard, cta_inline_style_absence_guard, reference_css_ownership_guard.
+
+- Failure class: EXACT_BLOCK_PATCH_MISSED_INLINE_LAYOUT_DECLARATIONS.
+
+- Project readiness: 99%.
+
+## V222_42 Targeted Product Recommendation Inline Guard Repair
+
+- Root cause: previous guard blocked legitimate progress/chart inline styles in CommandCenterPage.
+
+- Fixed: guard now checks only ProductRecommendationCard and the product recommendation slot block.
+
+- Fixed: ProductRecommendationCard is CSS-owned and contains no inline layout dimensions.
+
+- Added diagnostics: targeted_slot_inline_guard, component_inline_layout_guard, reference_css_ownership_guard, false_positive_progress_style_exclusion.
+
+- Failure class: OVERBROAD_INLINE_STYLE_GUARD_FALSE_POSITIVE.
+
+- Project readiness: 99%.
