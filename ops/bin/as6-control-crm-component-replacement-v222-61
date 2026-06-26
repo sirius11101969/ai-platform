@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-crm-component-replacement-v222-61
+printf '%s\n' 'AS6_CONTROL_CRM_COMPONENT_BRIDGE_V222_61=PASS'

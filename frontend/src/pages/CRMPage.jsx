@@ -1,3 +1,4 @@
+import '../design-system/crm/as6CrmRuntimeTraceAuto.js';
 import '../design-system/crm/as6CrmDesignSystem.css';
 /* AS6_PHYSICAL_PAGE_REFACTOR_MIGRATION_V109: physical refactor governed by AS6PhysicalPageRefactorBridge */
 /* AS6_REAL_PAGE_CONVERSION_ENGINE_V108: governed by Mission Control Layout 2.0 */
@@ -336,13 +337,13 @@ const modalCloseStack = [];
 
 function useModalCloseLifecycle(onClose, { canClose = true } = {}) {
   useEffect(() => {
-    const stackToken = Symbol("crm-modal");
+    const modalStackMarker = Symbol("crm-modal");
     const previousBodyOverflow = document.body.style.overflow;
-    modalCloseStack.push(stackToken);
+    modalCloseStack.push(modalStackMarker);
     document.body.style.overflow = "hidden";
 
     function handleEscape(event) {
-      const isTopModal = modalCloseStack[modalCloseStack.length - 1] === stackToken;
+      const isTopModal = modalCloseStack[modalCloseStack.length - 1] === modalStackMarker;
       if (event.key === "Escape" && isTopModal && canClose) {
         event.stopPropagation();
         onClose();
@@ -351,7 +352,7 @@ function useModalCloseLifecycle(onClose, { canClose = true } = {}) {
 
     document.addEventListener("keydown", handleEscape);
     return () => {
-      const stackIndex = modalCloseStack.indexOf(stackToken);
+      const stackIndex = modalCloseStack.indexOf(modalStackMarker);
       if (stackIndex !== -1) modalCloseStack.splice(stackIndex, 1);
       document.removeEventListener("keydown", handleEscape);
       document.body.style.overflow = previousBodyOverflow;

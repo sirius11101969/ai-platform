@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/design-system/crm/index.jsx
+test -f frontend/src/design-system/crm/as6CrmComponents.css
+test -f frontend/src/design-system/crm/as6CrmRuntimeTraceAuto.js
+grep -q "as6CrmRuntimeTraceAuto" frontend/src/pages/CRMPage.jsx
+grep -q "stage: 'V222_61'" frontend/src/design-system/crm/as6CrmRuntimeTraceAuto.js
+grep -q "modalStackMarker" frontend/src/pages/CRMPage.jsx
+printf '%s\n' 'AS6_CRM_COMPONENT_BRIDGE_V222_61=PASS'

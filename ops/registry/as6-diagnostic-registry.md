@@ -410,3 +410,23 @@
 - Runtime evidence: runtime/as6-v222-60/
 
 - Failure class: ROOT_DISK_BACKUP_ACCUMULATION
+
+## V222_61 CRM Component Replacement
+
+- Diagnostic: ops/bin/as6-diagnose-crm-component-replacement-v222-61
+
+- Control: ops/bin/as6-control-crm-component-replacement-v222-61
+
+- Runtime evidence: runtime/as6-v222-61-safe/
+
+- Failure class: FRAGILE_JSX_TRACER_INJECTION
+
+## V222_61 Repair — False Secret Modal Stack Marker
+
+- Diagnostic: ops/bin/as6-diagnose-crm-false-secret-modal-stack-marker-v222-61
+
+- Control: ops/bin/as6-control-crm-false-secret-modal-stack-marker-v222-61
+
+- Runtime evidence: runtime/as6-v222-61-false-secret-repair/
+
+- Failure class: SECRET_SCAN_FALSE_POSITIVE_MARKER_NAMING

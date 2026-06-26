@@ -1,0 +1,21 @@
+/* AS6 V222_61 — CRM BaseCard/Button component bridge */
+.as6-crm-card {
+  border-radius: 22px !important;
+  border-color: rgba(120,190,255,.2) !important;
+  background: radial-gradient(circle at 12% 0%, rgba(37,228,255,.08), transparent 18rem), rgba(13,24,48,.82) !important;
+  box-shadow: 0 22px 80px rgba(0,0,0,.32) !important;
+}
+
+.as6-ds-crm-page [data-as6-crm-component='card'] {
+  border-radius: 22px !important;
+  border: 1px solid rgba(120,190,255,.2) !important;
+  background: radial-gradient(circle at 12% 0%, rgba(37,228,255,.08), transparent 18rem), rgba(13,24,48,.82) !important;
+}
+
+.as6-ds-crm-page [data-as6-crm-component='primary-action'] {
+  min-height: 44px !important;
+  border-radius: 16px !important;
+  background: linear-gradient(100deg,#7c2cff,#2563ff 46%,#13d8ff) !important;
+  color: #fff !important;
+  font-weight: 900 !important;
+}

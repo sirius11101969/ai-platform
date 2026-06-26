@@ -1,8 +1,8 @@
 # AS6 HANDOFF
 
-LAST_COMPLETED_STAGE=V222_60
+LAST_COMPLETED_STAGE=V222_61
 PROJECT_READINESS=99%
-NEXT_RECOMMENDED_STAGE=V222_61 — CRM component replacement with AS6 BaseCard and Buttons
+NEXT_RECOMMENDED_STAGE=V222_62 — CRM visual rewrite to Command Center standard
 SAFE_TO_CHANGE=YES
 
 Continue from current Git HEAD.

@@ -2318,3 +2318,23 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers safe Docker cleanup.
 
 - Covers journal cleanup.
+
+## V222_61 Coverage — Safe CRM Runtime Tracer
+
+- Covers safe side-effect runtime tracer import.
+
+- Covers fragile JSX tracer injection absence.
+
+- Covers CRM component bridge.
+
+- Covers build, Docker and Guardian validation.
+
+## V222_61 Coverage — False Secret Modal Stack Marker
+
+- Covers non-secret marker-like local variable naming.
+
+- Covers CRM modal stack marker.
+
+- Covers secret scan false-positive prevention.
+
+- Covers build, Docker and Guardian validation.

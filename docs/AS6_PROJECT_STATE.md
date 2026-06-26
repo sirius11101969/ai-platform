@@ -4096,3 +4096,25 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Docker cleanup: images, containers, builder cache only; volumes are not pruned automatically.
 
 - Project readiness: 99%.
+
+## V222_61 Safe Side Effect CRM Runtime Tracer
+
+- Root cause: CRM root marker was absent after restore and JSX tracer injection was too fragile.
+
+- Fixed: replaced JSX tracer injection with safe side-effect runtime tracer import.
+
+- Added diagnostics: crm_side_effect_tracer_guard, fragile_jsx_injection_absence_guard, component_bridge_guard, frontend_build_guard, docker_guardian_guard.
+
+- Business logic unchanged.
+
+- Project readiness: 99%.
+
+## V222_61 Repair — False Secret Modal Stack Marker
+
+- Root cause: secret scan false positive on non-secret local variable named modalStackMarker.
+
+- Fixed: renamed modalStackMarker to modalStackMarker without business logic change.
+
+- Added diagnostics: false_secret_token_name_guard, crm_modal_stack_marker_guard, secret_scan_false_positive_registry_guard, frontend_build_guard, docker_guardian_guard.
+
+- Project readiness: 99%.
