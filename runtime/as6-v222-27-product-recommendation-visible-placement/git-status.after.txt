@@ -1,0 +1,9 @@
+ M docs/AS6_PROJECT_STATE.md
+ M docs/REGISTRY/AS6_PRODUCT_COVERAGE_REGISTRY.md
+ M docs/REGISTRY/AS6_PRODUCT_DECISION_HISTORY.md
+ M docs/REGISTRY/AS6_PRODUCT_DIAGNOSTIC_REGISTRY.md
+ M frontend/src/components/ProductRecommendationCard.jsx
+ M frontend/src/pages/CommandCenterPage.jsx
+?? docs/PRODUCT/AS6_PRODUCT_RECOMMENDATION_VISIBLE_PLACEMENT_V222_27.md
+?? docs/STAGE_PASSPORTS/V222_27_PRODUCT_RECOMMENDATION_VISIBLE_PLACEMENT.md
+?? ops/status/as6-v222-27-product-recommendation-visible-placement-status.md

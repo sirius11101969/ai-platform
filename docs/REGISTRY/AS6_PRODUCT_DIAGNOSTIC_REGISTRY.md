@@ -193,3 +193,10 @@
 - Runtime: runtime/as6-v222-26-first-user-value-recommendation
 - Status: ops/status/as6-v222-26-first-user-value-recommendation-status.md
 - Failure Classes: PRODUCT_INTELLIGENCE_USER_VALUE_NOT_VISIBLE, PRODUCT_RECOMMENDATION_ENGINE_MISSING, PRODUCT_RECOMMENDATION_UI_SLOT_MISSING, PRODUCT_RECOMMENDATION_UI_SLOT_INSERTION_GAP
+
+## V222.27 Product Recommendation Visible Placement
+- Artifact: docs/PRODUCT/AS6_PRODUCT_RECOMMENDATION_VISIBLE_PLACEMENT_V222_27.md
+- Stage Passport: docs/STAGE_PASSPORTS/V222_27_PRODUCT_RECOMMENDATION_VISIBLE_PLACEMENT.md
+- Runtime: runtime/as6-v222-27-product-recommendation-visible-placement
+- Status: ops/status/as6-v222-27-product-recommendation-visible-placement-status.md
+- Failure Classes: PRODUCT_RECOMMENDATION_INVISIBLE_PLACEMENT, PRODUCT_RECOMMENDATION_RIGHT_RAIL_SLOT_MISSING, PRODUCT_RECOMMENDATION_VISUAL_INTEGRATION_GAP

@@ -3874,3 +3874,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Result: first visible Product Intelligence recommendation added to Command Center.
 - Restore Tag: AS6_RESTORE_V222_26_FIRST_USER_VALUE_RECOMMENDATION_REPAIR_20260626T040042Z
 - Next Stage: V222.27 recommendation explanation.
+
+## V222.27 Product Recommendation Visible Placement
+- Status: PASS
+- Result: Product Intelligence recommendation placed in visible Command Center right rail.
+- Restore Tag: AS6_RESTORE_V222_27_PRODUCT_RECOMMENDATION_VISIBLE_PLACEMENT_20260626T045006Z
+- Next Stage: V222.28 recommendation visibility effect review.

@@ -1,0 +1,3 @@
+ROOT_CAUSE=first recommendation existed in code but was not placed in a visible Command Center decision area
+FAILURE_CLASS=PRODUCT_RECOMMENDATION_INVISIBLE_PLACEMENT
+DETAIL=V222.26 created ProductRecommendationCard and Product Intelligence recommendation modules, but the placement did not match the visible right-rail decision area observed in the deployed Command Center screenshot/HTML.

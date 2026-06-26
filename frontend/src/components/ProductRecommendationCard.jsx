@@ -6,20 +6,35 @@ export default function ProductRecommendationCard({ recommendationState }) {
   }
 
   return (
-    <section className="as6-product-recommendation" data-as6-product-recommendation="v222-26">
-      <div className="as6-product-recommendation__eyebrow">🧠 Рекомендация AS6</div>
-      <h2>{recommendation.title}</h2>
-      <p>{recommendation.summary}</p>
+    <article
+      className="command-card as6-product-recommendation-card"
+      data-as6-product-recommendation="v222-27"
+    >
+      <div className="command-card-head">
+        <h2>Рекомендация AS6</h2>
+        <span>PI</span>
+      </div>
 
-      <ul>
-        {recommendation.evidence.map((item) => (
-          <li key={item}>✓ {item}</li>
-        ))}
-      </ul>
+      <p className="as6-product-recommendation-card__summary">
+        {recommendation.summary}
+      </p>
 
-      <a className="as6-product-recommendation__action" href={recommendation.href}>
+      <div className="next-action as6-product-recommendation-card__action">
+        <b>🧠</b>
+        <span>
+          {recommendation.title}
+          <small>{recommendation.evidence.join(' · ')}</small>
+        </span>
+        <strong>Evidence</strong>
+      </div>
+
+      <a
+        className="copilot-action-link"
+        href={recommendation.href}
+        data-as6-product-recommendation-action="v222-27"
+      >
         {recommendation.actionLabel}
       </a>
-    </section>
+    </article>
   )
 }

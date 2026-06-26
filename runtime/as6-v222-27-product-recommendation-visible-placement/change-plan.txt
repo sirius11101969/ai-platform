@@ -1,0 +1,6 @@
+# V222.27 Change Plan
+- Remove the previous top-level recommendation slot if present.
+- Insert ProductRecommendationCard inside command-right-rail before next-action-card.
+- Keep the recommendation deterministic and privacy-safe.
+- Preserve all existing navigation and cards.
+- Do not change backend, routes, auth, CRM logic, telemetry, metrics, insights or Governance.

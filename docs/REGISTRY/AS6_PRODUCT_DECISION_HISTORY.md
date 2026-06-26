@@ -180,3 +180,9 @@ Use the Product Intelligence evidence chain as the default decision path for fut
 - User Value: AS6 recommends checking priority CRM leads as the next useful action.
 - Reason: this is the smallest user-facing improvement derived from the evidence chain.
 - Next Stage: V222.27 Recommendation Explanation.
+
+## V222.27 Product Recommendation Visible Placement
+- Decision: move the first Product Intelligence recommendation into the visible Command Center right rail.
+- Reason: user screenshot/HTML showed no visible ProductRecommendationCard after V222.26.
+- Product Result: recommendation is now placed before "Следующее лучшее действие".
+- Next Stage: V222.28 Recommendation Visibility Effect Review.

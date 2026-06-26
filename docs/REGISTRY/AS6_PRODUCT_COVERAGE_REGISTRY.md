@@ -113,3 +113,7 @@
 ## V222.26 First User Value Recommendation Coverage
 - Covered: recommendation registry, engine, provider, UI card, Command Center slot, external analytics absence.
 - Not changed: backend, auth, CRM logic, telemetry storage, metrics, insights, Governance.
+
+## V222.27 Product Recommendation Visible Placement Coverage
+- Covered: right-rail placement, old invisible slot removal, component visual compatibility, deployed UI screenshot/HTML feedback.
+- Not changed: backend, auth, CRM logic, telemetry storage, metrics, insights, Governance.

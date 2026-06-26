@@ -253,10 +253,6 @@ const [apiState, setApiState] = useState({})
 
   return (
     <>
-      <div data-as6-product-recommendation-slot="v222-26">
-        <ProductRecommendationCard recommendationState={commandCenterRecommendation} />
-      </div>
-
     <main className="command-center-page" data-command-center-visual="premium-as6" data-as6-diagnostic-page="command-center-premium"><section className="command-hero" data-as6-diagnostic-hero="executive-command-center">
         <div>
           <h1>Добро пожаловать, <span>Владимир!</span> 👋</h1>
@@ -351,7 +347,12 @@ const [apiState, setApiState] = useState({})
             </div>
           </article>
           <article className="command-card event-card"><div className="command-card-head"><h2>Последние события</h2><a href="/dashboard">Все</a></div>{events.map((event) => <div className="event-row" key={event.text}><b>{event.icon}</b><span>{event.text}</span><time>{event.time}</time></div>)}</article>
-          <article className="command-card next-action-card"><h2>Следующее лучшее действие</h2>{nextActions.map((action) => <div className="next-action" key={action.label}><b>{action.icon}</b><span>{action.label}<small>{action.note}</small></span><strong>{action.value}</strong></div>)}<div className="expected-effect"><span>Ожидаемый эффект</span><strong>+$8,900</strong></div></article>
+          <article
+            className="command-card as6-product-recommendation-slot-card"
+            data-as6-product-recommendation-slot="v222-27"
+          >
+            <ProductRecommendationCard recommendationState={commandCenterRecommendation} />
+          </article><article className="command-card next-action-card"><h2>Следующее лучшее действие</h2>{nextActions.map((action) => <div className="next-action" key={action.label}><b>{action.icon}</b><span>{action.label}<small>{action.note}</small></span><strong>{action.value}</strong></div>)}<div className="expected-effect"><span>Ожидаемый эффект</span><strong>+$8,900</strong></div></article>
         </aside>
       </section>
 
