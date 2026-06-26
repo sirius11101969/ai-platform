@@ -101,3 +101,7 @@
 ## V222.23 First Evidence Entry Effect Coverage
 - Covered: evidence entry presence, uniqueness, schema, decision status, next-stage link, telemetry section, metrics section, insight section, recommendation section.
 - Not changed: UI, routes, backend, auth, CRM, telemetry, metrics, insights, helper code, Governance.
+
+## V222.24 Evidence Chain Product Problem Selection Coverage
+- Covered: evidence chain availability, product problem candidate review, selected problem, root cause, failure class, next stage.
+- Not changed: UI, routes, backend, auth, CRM, telemetry, metrics, insights, helper code, Governance.

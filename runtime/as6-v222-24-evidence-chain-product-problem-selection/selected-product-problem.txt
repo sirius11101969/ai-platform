@@ -1,0 +1,5 @@
+SELECTED_PROBLEM=Command Center first-action evidence chain is ready, but it has not yet been used to select and frame the next product improvement.
+FAILURE_CLASS=PRODUCT_EVIDENCE_CHAIN_DECISION_USE_GAP
+ROOT_CAUSE=V222.11-V222.23 built and validated the Product Intelligence chain, but the chain has not yet been used as the primary mechanism for choosing the next user-value improvement.
+WHY_NOW=This is the smallest safe step that proves Product Intelligence is not just infrastructure, but a working product decision system.
+NEXT_STAGE=V222.25 Product Problem Framing from Evidence Chain

@@ -1,0 +1,23 @@
+CANDIDATE_A=Runtime first-action evidence is not yet connected to a visible product review surface
+TYPE=Product Intelligence Usage Gap
+EVIDENCE=V222.14 runtime storage validation, V222.15 metrics, V222.16 insights, V222.22 durable evidence entry
+IMPACT=High
+EFFORT=Medium
+RISK=Low
+RECOMMENDATION=Defer until there is enough real user event data or a review surface is needed.
+
+CANDIDATE_B=Command Center first-action telemetry exists but no product problem has been selected from the evidence chain
+TYPE=Decision Activation Gap
+EVIDENCE=V222.22 evidence entry and V222.23 effect review confirm the chain is ready for decision use
+IMPACT=High
+EFFORT=Low
+RISK=Low
+RECOMMENDATION=Select as next problem because it converts Product Intelligence from infrastructure into product decision flow.
+
+CANDIDATE_C=First-action evidence still uses foundation-level sample evidence rather than real user click evidence
+TYPE=Evidence Maturity Gap
+EVIDENCE=V222.13 static effect review, V222.14 runtime simulation
+IMPACT=Medium
+EFFORT=Medium
+RISK=Low
+RECOMMENDATION=Track as follow-up, but not first selection because current architecture still needs a decision-use cycle.

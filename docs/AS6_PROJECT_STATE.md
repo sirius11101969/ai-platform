@@ -3862,3 +3862,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Result: first Product Decision History evidence entry effect confirmed.
 - Restore Tag: AS6_RESTORE_V222_23_FIRST_EVIDENCE_ENTRY_EFFECT_REVIEW_REPAIR_20260626T031501Z
 - Next Stage: V222.24 use evidence chain to select next product problem.
+
+## V222.24 Evidence Chain Product Problem Selection
+- Status: PASS
+- Result: next product problem selected from Product Intelligence evidence chain.
+- Restore Tag: AS6_RESTORE_V222_24_EVIDENCE_CHAIN_PRODUCT_PROBLEM_SELECTION_20260626T032636Z
+- Next Stage: V222.25 Product Problem Framing from Evidence Chain.

@@ -172,3 +172,10 @@
 - Runtime: runtime/as6-v222-23-first-evidence-entry-effect-review
 - Status: ops/status/as6-v222-23-first-evidence-entry-effect-review-status.md
 - Failure Classes: PRODUCT_DECISION_HISTORY_FIRST_EVIDENCE_EFFECT_UNREVIEWED, PRODUCT_DECISION_HISTORY_DUPLICATE_EVIDENCE_ENTRY, PRODUCT_DECISION_HISTORY_EVIDENCE_STRUCTURE_DRIFT, DIAGNOSTIC_PRIVACY_CHECK_FALSE_POSITIVE
+
+## V222.24 Evidence Chain Product Problem Selection
+- Artifact: docs/PRODUCT/AS6_EVIDENCE_CHAIN_PRODUCT_PROBLEM_SELECTION_V222_24.md
+- Stage Passport: docs/STAGE_PASSPORTS/V222_24_EVIDENCE_CHAIN_PRODUCT_PROBLEM_SELECTION.md
+- Runtime: runtime/as6-v222-24-evidence-chain-product-problem-selection
+- Status: ops/status/as6-v222-24-evidence-chain-product-problem-selection-status.md
+- Failure Classes: PRODUCT_EVIDENCE_CHAIN_DECISION_USE_GAP, PRODUCT_PROBLEM_SELECTION_WITHOUT_EVIDENCE, PRODUCT_INTELLIGENCE_INFRASTRUCTURE_WITHOUT_DECISION_USE

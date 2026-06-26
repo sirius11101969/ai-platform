@@ -168,3 +168,9 @@ Use the Product Intelligence evidence chain as the default decision path for fut
 - Reason: first durable evidence entry is present, unique, structured and privacy-safe.
 - Product Result: Product Decision History now contains a confirmed evidence entry from the Product Intelligence chain.
 - Engineering Result: no product code change; effect-review artifacts added.
+
+## V222.24 Evidence Chain Product Problem Selection
+- Decision: select the next product problem from the confirmed Product Intelligence evidence chain.
+- Reason: V222.22 and V222.23 confirmed the first durable evidence entry.
+- Selected Problem: Product Intelligence evidence exists, but has not yet been used to frame the next user-value improvement.
+- Next Stage: V222.25 Product Problem Framing from Evidence Chain.
