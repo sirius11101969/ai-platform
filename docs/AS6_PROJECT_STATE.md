@@ -4064,3 +4064,13 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Failure class: FRONTEND_PACKAGE_LOCK_DRIFT_BLOCKED_IMAGE_REBUILD.
 
 - Project readiness: 99%.
+
+## V222_57 Etalon Recommendation Card Full Rewrite
+
+- Root cause: legacy CSS conflicts and previous node eval regex escape failure blocked etalon rewrite.
+
+- Fixed: rewritten independent recommendation card component using v57 namespace.
+
+- Added diagnostics: eval_regex_escape_failure_guard, independent_namespace_guard, legacy_class_absence_guard, docker_guardian_guard.
+
+- Project readiness: 99%.

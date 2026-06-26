@@ -380,3 +380,13 @@
 - Runtime evidence: runtime/as6-v222-45-copy-dist/
 
 - Failure class: FRONTEND_PACKAGE_LOCK_DRIFT_BLOCKED_IMAGE_REBUILD
+
+## V222_57 Etalon Recommendation Card Full Rewrite
+
+- Diagnostic: ops/bin/as6-diagnose-etalon-recommendation-card-v222-57
+
+- Control: ops/bin/as6-control-etalon-recommendation-card-v222-57
+
+- Runtime evidence: runtime/as6-v222-57-repair/
+
+- Failure class: NODE_EVAL_REGEX_ESCAPE_FAILURE_AND_LEGACY_CARD_CSS_CONFLICT

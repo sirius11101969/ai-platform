@@ -2286,3 +2286,13 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers live asset hash refresh.
 
 - Covers stale v222_33 marker absence.
+
+## V222_57 Coverage — Etalon Recommendation Card
+
+- Covers independent component rewrite.
+
+- Covers legacy class absence.
+
+- Covers full-width right rail slot.
+
+- Covers Docker/Guardian validation.

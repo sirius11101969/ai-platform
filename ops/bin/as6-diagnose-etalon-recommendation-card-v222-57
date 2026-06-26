@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+grep -q 'data-as6-recommendation-card="v222-57-final"' frontend/src/components/ProductRecommendationCard.jsx
+grep -q 'as6-v57-recommendation-slot' frontend/src/pages/CommandCenterPage.jsx
+grep -q 'AS6 V222_57 — final independent etalon recommendation card' frontend/src/theme/as6Theme.css
+! grep -q 'copilot-action-link\|next-action\|command-card as6-product-recommendation-card' frontend/src/components/ProductRecommendationCard.jsx
+printf '%s\n' 'AS6_ETALON_RECOMMENDATION_CARD_FULL_REWRITE=PASS'

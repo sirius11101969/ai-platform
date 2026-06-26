@@ -1,8 +1,8 @@
 # AS6 HANDOFF
 
-LAST_COMPLETED_STAGE=V222_45
+LAST_COMPLETED_STAGE=V222_57
 PROJECT_READINESS=99%
-NEXT_RECOMMENDED_STAGE=V222_46 — Browser visual verification and package-lock repair
+NEXT_RECOMMENDED_STAGE=V222_58 — Browser visual verification of etalon recommendation card
 SAFE_TO_CHANGE=YES
 
 Continue from current Git HEAD.

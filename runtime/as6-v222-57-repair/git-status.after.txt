@@ -1,0 +1,13 @@
+ M docs/AS6_CODEX_PROMPT.md
+ M docs/AS6_HANDOFF.md
+ M docs/AS6_MASTER_CONTEXT.md
+ M docs/AS6_PROJECT_STATE.md
+ M frontend/src/components/ProductRecommendationCard.jsx
+ M frontend/src/pages/CommandCenterPage.jsx
+ M frontend/src/theme/as6Theme.css
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? ops/bin/as6-control-etalon-recommendation-card-v222-57
+?? ops/bin/as6-diagnose-etalon-recommendation-card-v222-57
+?? ops/governance/as6-etalon-recommendation-card-v222-57.md
