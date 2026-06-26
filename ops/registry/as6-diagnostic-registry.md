@@ -370,3 +370,13 @@
 - Runtime evidence: runtime/as6-v222-44/
 
 - Failure class: STALE_PRODUCTION_FRONTEND_BUNDLE
+
+## V222_45 Repair Copy Fresh Dist Into Nginx
+
+- Diagnostic: ops/bin/as6-diagnose-copy-dist-into-nginx-v222-45
+
+- Control: ops/bin/as6-control-copy-dist-into-nginx-v222-45
+
+- Runtime evidence: runtime/as6-v222-45-copy-dist/
+
+- Failure class: FRONTEND_PACKAGE_LOCK_DRIFT_BLOCKED_IMAGE_REBUILD

@@ -4052,3 +4052,15 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Failure class: STALE_PRODUCTION_FRONTEND_BUNDLE.
 
 - Project readiness: 99%.
+
+## V222_45 Repair — Copy Fresh Dist Into Running Nginx
+
+- Root cause: no-cache nginx image rebuild failed because frontend package-lock was not in sync with package.json.
+
+- Fixed: rebuilt frontend locally, copied fresh frontend/dist into running nginx container, reloaded nginx.
+
+- Added diagnostics: package_lock_drift_build_failure_guard, running_nginx_dist_copy_guard, live_asset_hash_refresh_guard, stale_v222_33_dom_marker_guard.
+
+- Failure class: FRONTEND_PACKAGE_LOCK_DRIFT_BLOCKED_IMAGE_REBUILD.
+
+- Project readiness: 99%.

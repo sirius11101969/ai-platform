@@ -2276,3 +2276,13 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers production container redeploy/restart.
 
 - Covers post-deploy health evidence.
+
+## V222_45 Repair Coverage — Copy Dist Into Nginx
+
+- Covers package-lock drift that blocks image rebuild.
+
+- Covers direct fresh dist copy into running nginx container.
+
+- Covers live asset hash refresh.
+
+- Covers stale v222_33 marker absence.

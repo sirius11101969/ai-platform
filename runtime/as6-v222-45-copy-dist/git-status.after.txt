@@ -1,0 +1,10 @@
+ M docs/AS6_CODEX_PROMPT.md
+ M docs/AS6_HANDOFF.md
+ M docs/AS6_MASTER_CONTEXT.md
+ M docs/AS6_PROJECT_STATE.md
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? ops/bin/as6-control-copy-dist-into-nginx-v222-45
+?? ops/bin/as6-diagnose-copy-dist-into-nginx-v222-45
+?? ops/governance/as6-copy-dist-into-nginx-v222-45.md

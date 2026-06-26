@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-copy-dist-into-nginx-v222-45
+printf '%s\n' 'AS6_CONTROL_COPY_DIST_INTO_NGINX_V222_45=PASS'

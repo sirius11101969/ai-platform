@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -s runtime/as6-v222-45-copy-dist/live-assets.after.txt
+test -s runtime/as6-v222-45-copy-dist/container-assets.after.txt
+if grep -q 'index-CvSp2KdU.js\|index-Cd6Z8JqA.css' runtime/as6-v222-45-copy-dist/live-assets.after.txt; then exit 1; fi
+if grep -q 'v222-33-hard-proof' runtime/as6-v222-45-copy-dist/live-command-center.after.html; then exit 1; fi
+printf '%s\n' 'AS6_COPY_FRESH_DIST_INTO_RUNNING_NGINX=PASS'
