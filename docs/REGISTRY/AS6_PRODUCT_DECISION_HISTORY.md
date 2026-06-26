@@ -218,3 +218,8 @@ Use the Product Intelligence evidence chain as the default decision path for fut
 - Decision: use browser-grade geometry evidence before any further Product Recommendation UI change.
 - UI Change: NONE.
 - Capture Result: DOM_GEOMETRY_CAPTURE=FAILED
+
+## V222.38 Docker Playwright DOM Geometry Capture Repair
+- Decision: repair Docker Playwright module resolution before any visual UI change.
+- UI Change: NONE.
+- Capture Result: DOM_GEOMETRY_CAPTURE_REPAIR=FAILED

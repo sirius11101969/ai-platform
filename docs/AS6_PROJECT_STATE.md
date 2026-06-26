@@ -3918,3 +3918,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Result: Docker Playwright geometry capture stage completed.
 - Capture Result: DOM_GEOMETRY_CAPTURE=FAILED
 - Restore Tag: AS6_RESTORE_V222_38_DOCKER_PLAYWRIGHT_DOM_GEOMETRY_CAPTURE_20260626T102204Z
+
+## V222.38 Docker Playwright DOM Geometry Capture Repair
+- Status: PASS
+- Result: Docker Playwright capture repair completed.
+- Capture Result: DOM_GEOMETRY_CAPTURE_REPAIR=FAILED
+- Restore Tag: AS6_RESTORE_V222_38_DOCKER_PLAYWRIGHT_GEOMETRY_REPAIR_20260626T104915Z

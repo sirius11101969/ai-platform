@@ -1,0 +1,4 @@
+ROOT_CAUSE=Docker Playwright image was available, but Node executed /work/capture-geometry.cjs outside the image module resolution path, causing Cannot find module 'playwright'
+FAILURE_CLASS=PLAYWRIGHT_MODULE_RESOLUTION_FAILED
+FAILURE_CLASS=DOCKER_PLAYWRIGHT_NODE_PATH_MISMATCH
+DETAIL=Repair runs the script with NODE_PATH resolved inside the Playwright container.
