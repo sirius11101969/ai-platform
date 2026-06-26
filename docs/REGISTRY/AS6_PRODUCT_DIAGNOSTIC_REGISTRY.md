@@ -179,3 +179,10 @@
 - Runtime: runtime/as6-v222-24-evidence-chain-product-problem-selection
 - Status: ops/status/as6-v222-24-evidence-chain-product-problem-selection-status.md
 - Failure Classes: PRODUCT_EVIDENCE_CHAIN_DECISION_USE_GAP, PRODUCT_PROBLEM_SELECTION_WITHOUT_EVIDENCE, PRODUCT_INTELLIGENCE_INFRASTRUCTURE_WITHOUT_DECISION_USE
+
+## V222.25 Product Problem Framing from Evidence
+- Artifact: docs/PRODUCT/AS6_PRODUCT_PROBLEM_FRAMING_FROM_EVIDENCE_V222_25.md
+- Stage Passport: docs/STAGE_PASSPORTS/V222_25_PRODUCT_PROBLEM_FRAMING_FROM_EVIDENCE.md
+- Runtime: runtime/as6-v222-25-product-problem-framing-from-evidence
+- Status: ops/status/as6-v222-25-product-problem-framing-from-evidence-status.md
+- Failure Classes: PRODUCT_PROBLEM_SELECTED_BUT_NOT_FRAMED, PRODUCT_EVIDENCE_WITHOUT_USER_VALUE_FRAME, PRODUCT_IMPROVEMENT_WITHOUT_NON_GOALS

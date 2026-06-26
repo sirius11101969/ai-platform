@@ -1,0 +1,7 @@
+PROBLEM_ID=PRODUCT_EVIDENCE_CHAIN_DECISION_USE_GAP
+PROBLEM_STATEMENT=AS6 has a working Product Intelligence evidence chain, but the product does not yet expose a clear reviewed next action that turns this evidence into a concrete user-value improvement.
+USER_IMPACT=The team can collect and validate evidence, but without a framed next action the evidence chain remains internal infrastructure instead of improving the user's workflow.
+ROOT_CAUSE=The evidence chain was validated before a product-facing decision frame was created.
+SUCCESS_CRITERIA=The next stage must define one minimal user-facing improvement derived from the evidence chain.
+NON_GOALS=No redesign. No new Governance. No backend persistence. No external analytics. No broad refactor.
+NEXT_STAGE=V222.26 Minimal User-Value Improvement Proposal from Evidence

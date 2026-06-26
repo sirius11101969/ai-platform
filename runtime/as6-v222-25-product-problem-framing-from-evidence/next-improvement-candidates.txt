@@ -1,0 +1,20 @@
+CANDIDATE_A=Show first-action review hint inside Command Center
+USER_VALUE=Helps user understand what to do next after entering Command Center
+EFFORT=Low
+RISK=Low
+EVIDENCE_LINK=First-action telemetry and orientation chain
+DECISION=Recommended
+
+CANDIDATE_B=Create internal analytics review page
+USER_VALUE=Helps team inspect product evidence
+EFFORT=Medium
+RISK=Medium
+EVIDENCE_LINK=Product Intelligence chain
+DECISION=Defer because it serves team review before user value
+
+CANDIDATE_C=Add backend event persistence
+USER_VALUE=Improves durability of analytics
+EFFORT=High
+RISK=Medium
+EVIDENCE_LINK=Runtime storage validation
+DECISION=Defer because backend persistence requires separate diagnostic cycle

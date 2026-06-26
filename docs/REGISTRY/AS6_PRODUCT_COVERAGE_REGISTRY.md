@@ -105,3 +105,7 @@
 ## V222.24 Evidence Chain Product Problem Selection Coverage
 - Covered: evidence chain availability, product problem candidate review, selected problem, root cause, failure class, next stage.
 - Not changed: UI, routes, backend, auth, CRM, telemetry, metrics, insights, helper code, Governance.
+
+## V222.25 Product Problem Framing Coverage
+- Covered: selected problem, user impact, success criteria, non-goals, candidate comparison, next-stage linkage.
+- Not changed: UI, routes, backend, auth, CRM, telemetry, metrics, insights, helper code, Governance.
