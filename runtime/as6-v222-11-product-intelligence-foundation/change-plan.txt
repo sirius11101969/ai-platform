@@ -1,0 +1,8 @@
+# V222.11 Change Plan
+- Create frontend/src/product-intelligence as a small internal product analytics foundation.
+- Add event registry, schema, config, telemetry, metrics, insights, knowledge and decision history modules.
+- Keep telemetry disabled-by-config capable and local-only.
+- Do not integrate tracking into UI yet.
+- Do not add external analytics.
+- Do not collect PII, secrets, emails, IPs, cookies or tokens.
+- Validate with build and guards.

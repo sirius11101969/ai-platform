@@ -63,3 +63,9 @@
 - Product Result: behavior validation gap is explicit.
 - Engineering Result: no product code change; diagnostic artifacts added.
 - Finding: Command Center has first-action CTAs, but static source does not confirm first-action analytics instrumentation.
+
+## V222.11 AS6 Product Intelligence Foundation
+- Decision: create AS6 Product Intelligence as a small internal foundation before wiring first-action telemetry.
+- Reason: V222.10 confirmed that first-action behavior remains unmeasured.
+- Product Result: AS6 now has a foundation for future product evidence.
+- Engineering Result: modular frontend-only Product Intelligence foundation, no UI/backend/route change.

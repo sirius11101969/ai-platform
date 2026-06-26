@@ -82,3 +82,10 @@
 - Runtime: runtime/as6-v222-10-first-action-analytics-diagnostic
 - Status: ops/status/as6-v222-10-first-action-analytics-diagnostic-status.md
 - Failure Classes: PRODUCT_COMMAND_CENTER_FIRST_ACTION_ANALYTICS_PENDING, PRODUCT_COMMAND_CENTER_FIRST_ACTION_CTA_MISSING, PRODUCT_FIRST_ACTION_ANALYTICS_REQUIRES_EFFECT_REVIEW
+
+## V222.11 AS6 Product Intelligence Foundation
+- Artifact: docs/PRODUCT/AS6_PRODUCT_INTELLIGENCE_FOUNDATION_V222_11.md
+- Stage Passport: docs/STAGE_PASSPORTS/V222_11_PRODUCT_INTELLIGENCE_FOUNDATION.md
+- Runtime: runtime/as6-v222-11-product-intelligence-foundation
+- Status: ops/status/as6-v222-11-product-intelligence-foundation-status.md
+- Failure Classes: PRODUCT_INTELLIGENCE_FOUNDATION_MISSING, PRODUCT_EVENT_REGISTRY_MISSING, PRODUCT_TELEMETRY_PRIVACY_GUARD_MISSING, PRODUCT_EXTERNAL_ANALYTICS_DRIFT

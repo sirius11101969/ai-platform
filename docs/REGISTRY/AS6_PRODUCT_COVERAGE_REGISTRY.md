@@ -49,3 +49,7 @@
 ## V222.10 First-action Analytics Coverage
 - Covered: CommandCenterPage orientation CTAs and existing analytics/tracking signal scan.
 - Not changed: telemetry, backend, routes, auth, UI, Governance.
+
+## V222.11 Product Intelligence Coverage
+- Covered: telemetry foundation, event registry, event schema, privacy sanitizer, metrics, insights, product knowledge, decision history.
+- Not changed: Command Center UI, event wiring, backend, auth, routes, CRM, Governance.
