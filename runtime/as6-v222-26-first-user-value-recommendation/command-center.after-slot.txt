@@ -1,0 +1,18 @@
+  const commandCenterRecommendation = getCommandCenterRecommendation()
+
+  return (
+      <div data-as6-product-recommendation-slot="v222-26">
+        <ProductRecommendationCard recommendationState={commandCenterRecommendation} />
+      </div>
+
+    <main className="command-center-page" data-command-center-visual="premium-as6" data-as6-diagnostic-page="command-center-premium"><section className="command-hero" data-as6-diagnostic-hero="executive-command-center">
+        <div>
+          <h1>Добро пожаловать, <span>Владимир!</span> 👋</h1>
+          <p>Ваш AI Command Center. Управляйте, анализируйте и масштабируйте выручку.</p>
+          <div className="command-live-status"><a className={apiLoading ? 'loading' : 'green'} href="/ai-system-health-center">{apiLoading ? 'Синхронизация...' : 'Live-ready'}</a><a href="/ai-system-health-center">{apiErrors.length ? `API требует авторизацию: ${apiErrors.length}` : 'API подключён'}</a></div>
+        </div>
+        <div className="command-top-actions" aria-label="Command Center tools">
+          <label className="command-search"><span>⌕</span><input type="search" placeholder="Поиск..." /></label>
+          <a href="/followups" className="top-icon" data-badge="12" aria-label="Уведомления"><BellIcon /></a><a href="/priority-inbox" className="top-icon" data-badge="3" aria-label="AI коммуникации"><ChatIcon /></a><a href="/ai-system-health-center" className="top-icon" aria-label="Помощь"><HelpIcon /></a><a href="/profile" className="command-avatar top-icon-profile" aria-label="Профиль">A</a>
+        </div>
+      </section>

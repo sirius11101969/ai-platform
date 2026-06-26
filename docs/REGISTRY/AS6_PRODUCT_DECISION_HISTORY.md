@@ -174,3 +174,9 @@ Use the Product Intelligence evidence chain as the default decision path for fut
 - Reason: V222.22 and V222.23 confirmed the first durable evidence entry.
 - Selected Problem: Product Intelligence evidence exists, but has not yet been used to frame the next user-value improvement.
 - Next Stage: V222.25 Product Problem Framing from Evidence Chain.
+
+## V222.26 First User Value Recommendation
+- Decision: add first visible Product Intelligence recommendation to Command Center.
+- User Value: AS6 recommends checking priority CRM leads as the next useful action.
+- Reason: this is the smallest user-facing improvement derived from the evidence chain.
+- Next Stage: V222.27 Recommendation Explanation.

@@ -4,6 +4,8 @@ import { BellIcon, ChatIcon, HelpIcon } from '../components/icons/TopbarIcons.js
 import { useEffect, useMemo, useState } from 'react'
 import { fetchAiCommandCenterActions, fetchAiCommandCenterBrief, fetchAiCommandCenterFocus, fetchAiCommandCenterInbox, fetchAiCommandCenterKpi, fetchAiCommandCenterOperations, fetchAiCommandCenterPlanningMonthly, fetchAiSystemHealth } from '../services/api'
 import as6Robot from "../assets/as6-robot.png"
+import ProductRecommendationCard from '../components/ProductRecommendationCard'
+import { getCommandCenterRecommendation } from '../product-intelligence'
 import { AS6_PRODUCT_EVENTS, AS6_PRODUCT_EVENT_CATEGORIES, trackProductEvent } from '../product-intelligence'
 
 const demoMetrics = {
@@ -247,7 +249,14 @@ const [apiState, setApiState] = useState({})
     })
   }
 
+  const commandCenterRecommendation = getCommandCenterRecommendation()
+
   return (
+    <>
+      <div data-as6-product-recommendation-slot="v222-26">
+        <ProductRecommendationCard recommendationState={commandCenterRecommendation} />
+      </div>
+
     <main className="command-center-page" data-command-center-visual="premium-as6" data-as6-diagnostic-page="command-center-premium"><section className="command-hero" data-as6-diagnostic-hero="executive-command-center">
         <div>
           <h1>Добро пожаловать, <span>Владимир!</span> 👋</h1>
@@ -350,5 +359,6 @@ const [apiState, setApiState] = useState({})
         <h2>AI рекомендации</h2><div>{recommendations.map((card) => <a className={`recommendation ${card.tone}`} href={card.href} key={card.title} aria-label={card.action}><b>{card.icon}</b><strong>{card.title}</strong><p>{card.text}</p><span className="recommendation-action">{card.action} →</span></a>)}</div>
       </section>
     </main>
+    </>
   )
 }

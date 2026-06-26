@@ -1,0 +1,3 @@
+ROOT_CAUSE=Command Center recommendation slot insertion pattern did not match current page structure
+FAILURE_CLASS=PRODUCT_RECOMMENDATION_UI_SLOT_INSERTION_GAP
+DETAIL=Recommendation modules and imports were created, but the UI render slot was not inserted because the expected command-orientation section pattern was not present in the current CommandCenterPage structure.

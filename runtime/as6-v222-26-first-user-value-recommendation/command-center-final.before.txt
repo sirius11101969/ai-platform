@@ -1,0 +1,18 @@
+   248	      },
+   249	    })
+   250	  }
+   251	
+   252	  const commandCenterRecommendation = getCommandCenterRecommendation()
+   253	
+   254	  return (
+   255	      <div data-as6-product-recommendation-slot="v222-26">
+   256	        <ProductRecommendationCard recommendationState={commandCenterRecommendation} />
+   257	      </div>
+   258	
+   259	    <main className="command-center-page" data-command-center-visual="premium-as6" data-as6-diagnostic-page="command-center-premium"><section className="command-hero" data-as6-diagnostic-hero="executive-command-center">
+   260	        <div>
+   261	          <h1>Добро пожаловать, <span>Владимир!</span> 👋</h1>
+   262	          <p>Ваш AI Command Center. Управляйте, анализируйте и масштабируйте выручку.</p>
+   263	          <div className="command-live-status"><a className={apiLoading ? 'loading' : 'green'} href="/ai-system-health-center">{apiLoading ? 'Синхронизация...' : 'Live-ready'}</a><a href="/ai-system-health-center">{apiErrors.length ? `API требует авторизацию: ${apiErrors.length}` : 'API подключён'}</a></div>
+   264	        </div>
+   265	        <div className="command-top-actions" aria-label="Command Center tools">

@@ -7,3 +7,7 @@ export { countProductEvents, getFirstActionEvents, groupFirstActionsByMetadata, 
 export { buildProductInsights, getTopMetricEntry, buildFirstActionInsights } from './insights/insights'
 export { AS6_PRODUCT_KNOWLEDGE_LEVELS, createProductKnowledgeRecord } from './knowledge/productKnowledge'
 export { createProductDecisionRecord, createProductEvidenceBridgeRecord, validateProductEvidenceBridgeRecord, formatProductEvidenceBridgeRecordForDecisionHistory, createProductDecisionHistoryAppendEntry } from './decision-history/decisionHistory'
+export { getCommandCenterRecommendation } from './recommendations/recommendationProvider'
+export { buildProductRecommendation } from './recommendations/recommendationEngine'
+export { AS6_RECOMMENDATIONS } from './recommendations/recommendationRegistry'
+export { AS6_RECOMMENDATION_TYPES, AS6_RECOMMENDATION_STATUS } from './recommendations/recommendationTypes'

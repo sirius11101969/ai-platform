@@ -1,0 +1,3 @@
+ROOT_CAUSE=Product Intelligence evidence chain selected a user-value improvement but no visible recommendation exists in Command Center
+FAILURE_CLASS=PRODUCT_INTELLIGENCE_USER_VALUE_NOT_VISIBLE
+DETAIL=V222.25 selected a first-action review hint as the next minimal user-value improvement. V222.26 adds a deterministic Product Intelligence recommendation card inside Command Center.

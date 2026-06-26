@@ -109,3 +109,7 @@
 ## V222.25 Product Problem Framing Coverage
 - Covered: selected problem, user impact, success criteria, non-goals, candidate comparison, next-stage linkage.
 - Not changed: UI, routes, backend, auth, CRM, telemetry, metrics, insights, helper code, Governance.
+
+## V222.26 First User Value Recommendation Coverage
+- Covered: recommendation registry, engine, provider, UI card, Command Center slot, external analytics absence.
+- Not changed: backend, auth, CRM logic, telemetry storage, metrics, insights, Governance.

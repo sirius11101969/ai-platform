@@ -1,0 +1,3 @@
+ROOT_CAUSE=recommendation slot was inserted before main without wrapping return JSX in a fragment
+FAILURE_CLASS=COMMAND_CENTER_JSX_FRAGMENT_MISSING
+DETAIL=V222.26 repair inserted ProductRecommendationCard before the existing main element, creating adjacent JSX roots without a fragment.

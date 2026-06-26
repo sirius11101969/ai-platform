@@ -1,0 +1,11 @@
+ M docs/AS6_PROJECT_STATE.md
+ M docs/REGISTRY/AS6_PRODUCT_COVERAGE_REGISTRY.md
+ M docs/REGISTRY/AS6_PRODUCT_DECISION_HISTORY.md
+ M docs/REGISTRY/AS6_PRODUCT_DIAGNOSTIC_REGISTRY.md
+ M frontend/src/pages/CommandCenterPage.jsx
+ M frontend/src/product-intelligence/index.js
+?? docs/PRODUCT/AS6_FIRST_USER_VALUE_RECOMMENDATION_V222_26.md
+?? docs/STAGE_PASSPORTS/V222_26_FIRST_USER_VALUE_RECOMMENDATION.md
+?? frontend/src/components/ProductRecommendationCard.jsx
+?? frontend/src/product-intelligence/recommendations/
+?? ops/status/as6-v222-26-first-user-value-recommendation-status.md

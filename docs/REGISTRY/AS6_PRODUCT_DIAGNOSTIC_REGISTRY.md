@@ -186,3 +186,10 @@
 - Runtime: runtime/as6-v222-25-product-problem-framing-from-evidence
 - Status: ops/status/as6-v222-25-product-problem-framing-from-evidence-status.md
 - Failure Classes: PRODUCT_PROBLEM_SELECTED_BUT_NOT_FRAMED, PRODUCT_EVIDENCE_WITHOUT_USER_VALUE_FRAME, PRODUCT_IMPROVEMENT_WITHOUT_NON_GOALS
+
+## V222.26 First User Value Recommendation
+- Artifact: docs/PRODUCT/AS6_FIRST_USER_VALUE_RECOMMENDATION_V222_26.md
+- Stage Passport: docs/STAGE_PASSPORTS/V222_26_FIRST_USER_VALUE_RECOMMENDATION.md
+- Runtime: runtime/as6-v222-26-first-user-value-recommendation
+- Status: ops/status/as6-v222-26-first-user-value-recommendation-status.md
+- Failure Classes: PRODUCT_INTELLIGENCE_USER_VALUE_NOT_VISIBLE, PRODUCT_RECOMMENDATION_ENGINE_MISSING, PRODUCT_RECOMMENDATION_UI_SLOT_MISSING, PRODUCT_RECOMMENDATION_UI_SLOT_INSERTION_GAP

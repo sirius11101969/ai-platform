@@ -1,0 +1,4 @@
+ M frontend/src/pages/CommandCenterPage.jsx
+ M frontend/src/product-intelligence/index.js
+?? frontend/src/components/ProductRecommendationCard.jsx
+?? frontend/src/product-intelligence/recommendations/
