@@ -266,3 +266,25 @@
 - failure class: AS6_FAILURE_CLASS_DESIGN_SYSTEM_FOUNDATION_DRIFT
 - runtime tracer: frontend/src/utils/as6RuntimeTracer.js
 - governance: ops/governance/as6-design-system-foundation-aec-v220.md
+
+## V222_40 State Restore Tag Reconciliation
+
+- Diagnostic: ops/bin/as6-diagnose-state-restore-tag-reconciliation-v222-40
+
+- Control: ops/bin/as6-control-state-restore-tag-reconciliation-v222-40
+
+- Runtime evidence: runtime/as6-v222-40/diagnostic-report.md
+
+- Failure class: MARKDOWN_STATE_RESTORE_TAG_DRIFT
+
+- Root cause: markdown_state_lagged_behind_restore_tag
+
+## V222_40 Repair — Ignored Runtime Evidence
+
+- Diagnostic added: ignored_runtime_evidence_add_check.
+
+- Control added: forced_runtime_artifact_tracking_check.
+
+- Pathspec guard added: commit_push_pathspec_guard_check.
+
+- Failure class: IGNORED_RUNTIME_EVIDENCE_PATHSPEC.

@@ -1,8 +1,8 @@
 # AS6 HANDOFF
 
-LAST_COMPLETED_STAGE=V222_40
+LAST_COMPLETED_STAGE=V220
 PROJECT_READINESS=99%
-NEXT_RECOMMENDED_STAGE=V222_41 — Command Center Foundation Adoption Continuation
+NEXT_RECOMMENDED_STAGE=V221 — Command Center Foundation Adoption
 SAFE_TO_CHANGE=YES
 
 Continue from current Git HEAD.

@@ -11,9 +11,9 @@ Rules:
 - Current commit is Git HEAD, not a markdown field.
 - Restore tag is resolved from Git tags, not duplicated in markdown history.
 - MASTER/HANDOFF/CODEX are short summaries only.
-- Continue with V222_41 — Command Center Foundation Adoption Continuation.
+- Continue with V221 — Command Center Foundation Adoption.
 
-V222_40 State Restore Tag Reconciliation completed; continue product work from governed foundation:
+V220 Design System Foundation:
 - Read docs/AS6_UX_BLUEPRINT.md and docs/AS6_DESIGN_PRINCIPLES.md before changing Command Center UX.
 - Preserve mission: AS6 — Ваш бизнес. Простыми словами.
 - Use frontend/src/styles/as6-design-system-foundation-v220.css as the governed foundation layer.

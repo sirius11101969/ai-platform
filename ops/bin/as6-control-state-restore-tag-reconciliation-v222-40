@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-state-restore-tag-reconciliation-v222-40
+printf '%s\n' 'AS6_CONTROL_STATE_RESTORE_TAG_RECONCILIATION_V222_40=PASS'

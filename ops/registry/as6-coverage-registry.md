@@ -2186,3 +2186,21 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers: ignored runtime commit gap.
 - Covers: durable V220B philosophy docs and governance committed without runtime/.
 - Covers: prevention rule to avoid staging ignored runtime/ paths by default.
+
+## V222_40 Coverage
+
+- Covers restore tag presence check.
+
+- Covers MASTER/HANDOFF/CODEX stage drift check.
+
+- Covers same-cycle state reconciliation evidence.
+
+- Covers prevention control for future markdown state lag.
+
+## V222_40 Repair Coverage — Ignored Runtime Evidence
+
+- Covers ignored runtime evidence pathspec failure.
+
+- Covers forced git tracking for selected runtime evidence.
+
+- Covers commit/push continuation after ignored pathspec interruption.

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+HEAD_NOW="$(git rev-parse HEAD)"
+RESTORE_TAG="$(git tag --points-at HEAD | grep AS6_RESTORE_ | head -n 1 || true)"
+test -n "$HEAD_NOW"
+test -n "$RESTORE_TAG"
+grep -q 'LAST_COMPLETED_STAGE=V222_40' docs/AS6_MASTER_CONTEXT.md
+grep -q 'NEXT_RECOMMENDED_STAGE=V222_41' docs/AS6_MASTER_CONTEXT.md
+grep -q 'STATE_RESTORE_TAG_RECONCILIATION=PASS' ops/status/as6-detected-errors.md
+printf '%s\n' 'AS6_STATE_RESTORE_TAG_RECONCILIATION=PASS'

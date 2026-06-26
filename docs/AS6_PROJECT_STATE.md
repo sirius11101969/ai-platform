@@ -3930,3 +3930,31 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Result: NPX Playwright geometry capture stage completed.
 - Capture Result: DOM_GEOMETRY_CAPTURE_NPX=FAILED
 - Restore Tag: AS6_RESTORE_V222_39_NPX_PLAYWRIGHT_DOM_GEOMETRY_CAPTURE_20260626T111353Z
+
+## V222_40 State / Restore Tag Reconciliation
+
+- Current commit at reconciliation: 245f70fcedf6c06f336716abbd29653a4e9a0404
+
+- Restore tag at reconciliation: AS6_RESTORE_V222_39_NPX_PLAYWRIGHT_DOM_GEOMETRY_CAPTURE_20260626T111353Z
+
+- Root cause: MASTER/HANDOFF/CODEX lagged behind restore tag evidence.
+
+- Added diagnostics: restore_tag_presence_check, master_handoff_codex_stage_drift_check, state_reconciliation_evidence_check.
+
+- Result: STATE_RESTORE_TAG_RECONCILIATION=PASS.
+
+- Project readiness: 99%.
+
+## V222_40 Repair — Ignored Runtime Evidence
+
+- Failure class: IGNORED_RUNTIME_EVIDENCE_PATHSPEC
+
+- Root cause: runtime_directory_is_gitignored_and_requires_force_add_for_evidence.
+
+- Added diagnostics: ignored_runtime_evidence_add_check, forced_runtime_artifact_tracking_check, commit_push_pathspec_guard_check.
+
+- Control: use git add -f for governed runtime evidence when runtime/ is intentionally ignored.
+
+- Result: PASS.
+
+- Project readiness: 99%.
