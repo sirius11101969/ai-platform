@@ -3897,3 +3897,8 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Status: PASS
 - Rule: full UI diagnostics required before any interface change.
 - Restore Tag: AS6_RESTORE_V222_34_UI_DIAGNOSTICS_FIRST_CANON_FINAL_20260626T081515Z
+
+## V222.35 Product Recommendation Layout Chain Diagnostic
+- Status: PASS
+- Result: Full layout diagnostics registered before further card changes.
+- Restore Tag: AS6_RESTORE_V222_35_PRODUCT_RECOMMENDATION_LAYOUT_CHAIN_DIAGNOSTIC_20260626T083254Z

@@ -128,3 +128,7 @@
 
 ## V222.34 UI Diagnostics First Coverage
 - Covered: UI ownership, render path, CSS import graph, dist bundle, Docker nginx deploy, public HTTPS asset, DOM marker, screenshot comparison, registry/state governance.
+
+## V222.35 Product Recommendation Layout Chain Coverage
+- Covered: render path, component ownership, parent layout chain, CSS import graph, dist JS/CSS, Docker nginx, public HTTPS bundle markers.
+- Not changed: UI, backend, auth, CRM logic, telemetry, product intelligence engine.

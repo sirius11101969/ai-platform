@@ -1,0 +1,4 @@
+FINDING=Full layout chain evidence collected before any further UI edit.
+NO_UI_CHANGE=TRUE
+NEXT_REQUIRED_STEP=Review runtime/as6-v222-35-product-recommendation-layout-chain-diagnostic files and identify exact parent constraint before changing dimensions.
+LIKELY_CONSTRAINTS_TO_REVIEW=command-right-rail, command-main-grid, command-card, as6-product-recommendation-slot-card, ProductRecommendationCard inline style.

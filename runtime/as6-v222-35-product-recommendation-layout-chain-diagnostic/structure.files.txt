@@ -1,0 +1,4 @@
+frontend/src/pages/CommandCenterPage.jsx
+frontend/src/components/ProductRecommendationCard.jsx
+frontend/src/App.jsx
+frontend/src/main.jsx

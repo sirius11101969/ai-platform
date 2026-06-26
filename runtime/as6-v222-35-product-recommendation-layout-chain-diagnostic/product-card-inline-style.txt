@@ -1,0 +1,11 @@
+1:const cardStyle = {
+2:  width: '280px',
+3:  maxWidth: '280px',
+10:  maxWidth: '100%',
+30:const buttonStyle = {
+31:  width: '210px',
+33:  height: '38px',
+46:      data-as6-product-recommendation="v222-33-hard-proof"
+47:      style={cardStyle}
+70:        data-as6-product-recommendation-action="v222-33-hard-proof"
+71:        style={buttonStyle}

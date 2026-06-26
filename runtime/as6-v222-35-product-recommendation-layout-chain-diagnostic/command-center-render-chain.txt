@@ -1,0 +1,9 @@
+7:import ProductRecommendationCard from '../components/ProductRecommendationCard'
+280:      <section className="command-main-grid">
+281:        <div className="command-core">
+330:        <aside className="command-right-rail" data-right-action-rail data-copilot-rail data-as6-diagnostic-copilot="right-action-rail">
+339:            className="command-card as6-product-recommendation-slot-card"
+340:            data-as6-product-recommendation-slot="v222-33-hard-proof"
+352:            <ProductRecommendationCard recommendationState={commandCenterRecommendation} />
+353:          </article><article className="command-card event-card"><div className="command-card-head"><h2>Последние события</h2><a href="/dashboard">Все</a></div>{events.map((event) => <div className="event-row" key={event.text}><b>{event.icon}</b><span>{event.text}</span><time>{event.time}</time></div>)}</article>
+354:          <article className="command-card next-action-card"><h2>Следующее лучшее действие</h2>{nextActions.map((action) => <div className="next-action" key={action.label}><b>{action.icon}</b><span>{action.label}<small>{action.note}</small></span><strong>{action.value}</strong></div>)}<div className="expected-effect"><span>Ожидаемый эффект</span><strong>+$8,900</strong></div></article>

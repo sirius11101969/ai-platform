@@ -1,0 +1,5 @@
+ROOT_CAUSE=Product recommendation visual changes reached production bundle, but visible geometry remained close to unchanged because the complete parent layout chain and active sizing constraints were not diagnosed before UI edits.
+FAILURE_CLASS=PRODUCT_RECOMMENDATION_LAYOUT_CHAIN_NOT_DIAGNOSED
+FAILURE_CLASS=PARENT_GRID_CONSTRAINT_NOT_PROVEN
+FAILURE_CLASS=RIGHT_RAIL_WIDTH_CONSTRAINT_NOT_PROVEN
+DETAIL=V222.35 performs diagnostics only. No UI change is made.

@@ -201,3 +201,7 @@ Use the Product Intelligence evidence chain as the default decision path for fut
 ## V222.34 UI Diagnostics First Canon
 - Decision: all future interface changes require full project diagnostics before modification.
 - Codex Prompt: docs/PROMPTS/AS6_CODEX_UI_DIAGNOSTICS_FIRST_PROMPT_V222_34.md
+
+## V222.35 Product Recommendation Layout Chain Diagnostic
+- Decision: stop visual trial-and-error and diagnose full layout chain before next UI edit.
+- UI Change: NONE.

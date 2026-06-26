@@ -1,0 +1,493 @@
+frontend/src/pages/AuthPages.jsx:25:      navigate("/command-center");
+frontend/src/pages/CommandCenterPage.jsx:7:import ProductRecommendationCard from '../components/ProductRecommendationCard'
+frontend/src/pages/CommandCenterPage.jsx:107:export default function CommandCenterPage() {
+frontend/src/pages/CommandCenterPage.jsx:256:    <main className="command-center-page" data-command-center-visual="premium-as6" data-as6-diagnostic-page="command-center-premium"><section className="command-hero" data-as6-diagnostic-hero="executive-command-center">
+frontend/src/pages/CommandCenterPage.jsx:339:            className="command-card as6-product-recommendation-slot-card"
+frontend/src/pages/CommandCenterPage.jsx:340:            data-as6-product-recommendation-slot="v222-33-hard-proof"
+frontend/src/pages/CommandCenterPage.jsx:352:            <ProductRecommendationCard recommendationState={commandCenterRecommendation} />
+frontend/src/pages/DashboardPage.jsx:372:      <section className="dashboard-revenue-command-center">
+frontend/src/pages/DashboardPage.jsx:512:          <Link className="ghost-button" to="/crm">Открыть CRM</Link>
+frontend/src/App.jsx:48:const CommandCenterPage = lazy(() => import("./pages/CommandCenterPage"));
+frontend/src/App.jsx:123:        <Suspense fallback={window.location.pathname === "/command-center" ? null : <div className="as6-route-loading">Загрузка...</div>}>
+frontend/src/App.jsx:158:          <Route path="/ai-enterprise-command-center" element={<ProtectedRoute><AIEnterpriseCommandCenter /></ProtectedRoute>} />
+frontend/src/App.jsx:159:          <Route path="/command-center" element={<ProtectedRoute><CommandCenterPage /></ProtectedRoute>} />
+frontend/src/product-intelligence/index.js:9:export { createProductDecisionRecord, createProductEvidenceBridgeRecord, validateProductEvidenceBridgeRecord, formatProductEvidenceBridgeRecordForDecisionHistory, createProductDecisionHistoryAppendEntry } from './decision-history/decisionHistory'
+frontend/src/product-intelligence/insights/insights.js:8:    hasFirstActionEvidence: firstActions.length > 0,
+frontend/src/product-intelligence/insights/insights.js:10:      ? 'AS6 has first-action evidence available.'
+frontend/src/product-intelligence/insights/insights.js:11:      : 'AS6 has no first-action evidence yet.',
+frontend/src/product-intelligence/insights/insights.js:34:  if (!metrics.hasFirstActionEvidence) {
+frontend/src/product-intelligence/insights/insights.js:36:      status: 'no_evidence',
+frontend/src/product-intelligence/insights/insights.js:37:      summary: 'AS6 has no first-action evidence yet.',
+frontend/src/product-intelligence/insights/insights.js:47:      status: 'single_evidence_point',
+frontend/src/product-intelligence/insights/insights.js:48:      summary: 'AS6 has one first-action evidence point.',
+frontend/src/product-intelligence/insights/insights.js:49:      recommendation: 'Continue collecting evidence before changing the product.',
+frontend/src/product-intelligence/insights/insights.js:57:    status: 'evidence_available',
+frontend/src/product-intelligence/insights/insights.js:58:    summary: 'AS6 has first-action evidence available for product review.',
+frontend/src/product-intelligence/decision-history/decisionHistory.js:24:export function createProductEvidenceBridgeRecord({
+frontend/src/product-intelligence/decision-history/decisionHistory.js:35:    schemaVersion: 'as6-product-decision-evidence/v1',
+frontend/src/product-intelligence/decision-history/decisionHistory.js:48:export function validateProductEvidenceBridgeRecord(record) {
+frontend/src/product-intelligence/decision-history/decisionHistory.js:74:export function formatProductEvidenceBridgeRecordForDecisionHistory(record) {
+frontend/src/product-intelligence/decision-history/decisionHistory.js:75:  const validation = validateProductEvidenceBridgeRecord(record)
+frontend/src/product-intelligence/decision-history/decisionHistory.js:80:      reason: 'AS6_PRODUCT_EVIDENCE_RECORD_INVALID',
+frontend/src/product-intelligence/decision-history/decisionHistory.js:87:    `## ${record.stage} Product Decision Evidence`,
+frontend/src/product-intelligence/decision-history/decisionHistory.js:124:  const formatted = formatProductEvidenceBridgeRecordForDecisionHistory(record)
+frontend/src/product-intelligence/metrics/metrics.js:28:    hasFirstActionEvidence: firstActions.length > 0,
+frontend/src/product-intelligence/knowledge/productKnowledge.js:9:export function createProductKnowledgeRecord({ stage, finding, evidence, level }) {
+frontend/src/product-intelligence/knowledge/productKnowledge.js:13:    evidence,
+frontend/src/product-intelligence/recommendations/recommendationRegistry.js:9:    actionLabel: 'Открыть CRM',
+frontend/src/product-intelligence/recommendations/recommendationRegistry.js:11:    evidence: [
+frontend/src/product-intelligence/recommendations/recommendationRegistry.js:13:      'основано на Product Evidence',
+frontend/src/styles.css:2471:.dashboard-revenue-command-center {
+frontend/src/components/AppShell.jsx:118:  const isCommandCenter = location.pathname === "/command-center";
+frontend/src/components/AppShell.jsx:121:    <div className={`app-shell ${isCommandCenter ? "command-shell" : ""}`} data-route={isCommandCenter ? "command-center" : "app"}>
+frontend/src/components/AppShell.jsx:128:                <NavLink to="/command-center" className={({ isActive }) => (isActive ? "active command-center-active" : "command-center-link")}>🚀 Command Center</NavLink>
+frontend/src/components/AppShell.jsx:166:                <NavLink to="/ai-enterprise-command-center" className={({ isActive }) => (isActive ? "active" : "")}>AI Enterprise Command Center</NavLink>
+frontend/src/components/ProductRecommendationCard.jsx:39:export default function ProductRecommendationCard({ recommendationState }) {
+frontend/src/components/ProductRecommendationCard.jsx:45:      className="command-card as6-product-recommendation-card"
+frontend/src/components/ProductRecommendationCard.jsx:46:      data-as6-product-recommendation="v222-33-hard-proof"
+frontend/src/components/ProductRecommendationCard.jsx:50:        <h2>Рекомендация AS6</h2>
+frontend/src/components/ProductRecommendationCard.jsx:54:      <p className="as6-product-recommendation-card__summary" style={summaryStyle}>
+frontend/src/components/ProductRecommendationCard.jsx:58:      <div className="next-action as6-product-recommendation-card__action" style={actionStyle}>
+frontend/src/components/ProductRecommendationCard.jsx:62:          <small style={actionSmallStyle}>{recommendation.evidence.join(' · ')}</small>
+frontend/src/components/ProductRecommendationCard.jsx:64:        <strong>Evidence</strong>
+frontend/src/components/ProductRecommendationCard.jsx:68:        className="copilot-action-link as6-product-recommendation-card__button"
+frontend/src/components/ProductRecommendationCard.jsx:70:        data-as6-product-recommendation-action="v222-33-hard-proof"
+frontend/src/components/ProductRecommendationCard.jsx:73:        Открыть CRM
+frontend/src/services/api.js:549:  return request('/ai/command-center')
+frontend/src/services/api.js:871:export function fetchAiCommandCenterOverview(){return request('/ai/command-center/overview')}
+frontend/src/services/api.js:872:export function fetchAiCommandCenterTimeline(){return request('/ai/command-center/timeline')}
+frontend/src/services/api.js:873:export function fetchAiCommandCenterBrief(){return request('/ai/command-center/brief')}
+frontend/src/services/api.js:874:export function fetchAiCommandCenterOperations(){return request('/ai/command-center/operations')}
+frontend/src/services/api.js:875:export function fetchAiCommandCenterFocus(){return request('/ai/command-center/focus')}
+frontend/src/services/api.js:876:export function fetchAiCommandCenterDailyReport(){return request('/ai/command-center/report/daily')}
+frontend/src/services/api.js:877:export function fetchAiCommandCenterWeeklyReport(){return request('/ai/command-center/report/weekly')}
+frontend/src/services/api.js:878:export function fetchAiCommandCenterKpi(){return request('/ai/command-center/kpi')}
+frontend/src/services/api.js:880:export function fetchAiCommandCenterPlanning(){return request('/ai/command-center/planning')}
+frontend/src/services/api.js:881:export function fetchAiCommandCenterPlanningWeekly(){return request('/ai/command-center/planning/weekly')}
+frontend/src/services/api.js:882:export function fetchAiCommandCenterPlanningMonthly(){return request('/ai/command-center/planning/monthly')}
+frontend/src/services/api.js:883:export function fetchAiCommandCenterReview(){return request('/ai/command-center/review')}
+frontend/src/services/api.js:884:export function fetchAiCommandCenterStability(){return request('/ai/command-center/stability')}
+frontend/src/services/api.js:885:export function fetchAiCommandCenterReadiness(){return request('/ai/command-center/readiness')}
+frontend/src/services/api.js:886:export function fetchAiCommandCenterQuality(){return request('/ai/command-center/quality')}
+frontend/src/services/api.js:888:export function fetchAiCommandCenterActions(){return request('/ai/command-center/actions')}
+frontend/src/services/api.js:889:export function fetchAiCommandCenterInbox(){return request('/ai/command-center/inbox')}
+frontend/src/services/api.js:890:export function requestAiCommandCenterAction(payload){return request('/ai/command-center/actions/request',{method:'POST',body:JSON.stringify(payload||{})})}
+frontend/src/services/api.js:891:export function approveAiCommandCenterAction(id,payload={}){return request(`/ai/command-center/actions/${id}/approve`,{method:'POST',body:JSON.stringify(payload)})}
+frontend/src/services/api.js:892:export function rejectAiCommandCenterAction(id,payload={}){return request(`/ai/command-center/actions/${id}/reject`,{method:'POST',body:JSON.stringify(payload)})}
+frontend/src/services/api.js:893:export function fetchAiCommandCenterActionAudit(id){return request(`/ai/command-center/actions/${id}/audit`)}
+frontend/src/services/api.js:927:  return request('/revenue/command-center')
+frontend/src/main.jsx:1:import "./styles/as6-command-center-critical-first-paint-v198.css";
+frontend/src/main.jsx:13:import "./styles/as6-command-center-final-etalon-v149.css";
+frontend/src/main.jsx:15:import "./styles/as6-command-center-copilot-etalon-v150.css";
+frontend/src/main.jsx:17:import "./styles/as6-command-center-revenue-chart-clip-v175b.css";
+frontend/src/main.jsx:19:import "./styles/as6-command-center-route-stable-paint-v189.css";
+frontend/src/main.jsx:22:import "./styles/as6-command-center-ui-quality-v215.css";
+frontend/src/styles/as6-command-center-final-etalon-v149.css:2:   Цель: привести /command-center к эталонному виду без runtime JS.
+frontend/src/styles/as6-command-center-final-etalon-v149.css:6:.command-center-page[data-command-center-visual="premium-as6"],
+frontend/src/styles/as6-command-center-final-etalon-v149.css:7:.command-center-page[data-command-center-visual="premium-as6"] * {
+frontend/src/styles/as6-command-center-final-etalon-v149.css:11:.command-center-page[data-command-center-visual="premium-as6"] {
+frontend/src/styles/as6-command-center-final-etalon-v149.css:19:.command-center-page[data-command-center-visual="premium-as6"]::before,
+frontend/src/styles/as6-command-center-final-etalon-v149.css:20:.command-center-page[data-command-center-visual="premium-as6"]::after,
+frontend/src/styles/as6-command-center-final-etalon-v149.css:21:.command-center-page[data-command-center-visual="premium-as6"] .command-hero::before,
+frontend/src/styles/as6-command-center-final-etalon-v149.css:22:.command-center-page[data-command-center-visual="premium-as6"] .command-hero::after,
+frontend/src/styles/as6-command-center-final-etalon-v149.css:23:.command-center-page[data-command-center-visual="premium-as6"] .command-kpis::before,
+frontend/src/styles/as6-command-center-final-etalon-v149.css:24:.command-center-page[data-command-center-visual="premium-as6"] .command-kpis::after,
+frontend/src/styles/as6-command-center-final-etalon-v149.css:25:.command-center-page[data-command-center-visual="premium-as6"] .quick-actions-primary::before,
+frontend/src/styles/as6-command-center-final-etalon-v149.css:26:.command-center-page[data-command-center-visual="premium-as6"] .quick-actions-primary::after,
+frontend/src/styles/as6-command-center-final-etalon-v149.css:27:.command-center-page[data-command-center-visual="premium-as6"] .command-main-grid::before,
+frontend/src/styles/as6-command-center-final-etalon-v149.css:28:.command-center-page[data-command-center-visual="premium-as6"] .command-main-grid::after,
+frontend/src/styles/as6-command-center-final-etalon-v149.css:29:.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid::before,
+frontend/src/styles/as6-command-center-final-etalon-v149.css:30:.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid::after,
+frontend/src/styles/as6-command-center-final-etalon-v149.css:31:.command-center-page[data-command-center-visual="premium-as6"] .command-core::before,
+frontend/src/styles/as6-command-center-final-etalon-v149.css:32:.command-center-page[data-command-center-visual="premium-as6"] .command-core::after,
+frontend/src/styles/as6-command-center-final-etalon-v149.css:33:.command-center-page[data-command-center-visual="premium-as6"] .command-card::before,
+frontend/src/styles/as6-command-center-final-etalon-v149.css:34:.command-center-page[data-command-center-visual="premium-as6"] .command-card::after,
+frontend/src/styles/as6-command-center-final-etalon-v149.css:35:.command-center-page[data-command-center-visual="premium-as6"] .copilot-hero::before,
+frontend/src/styles/as6-command-center-final-etalon-v149.css:36:.command-center-page[data-command-center-visual="premium-as6"] .copilot-hero::after,
+frontend/src/styles/as6-command-center-final-etalon-v149.css:37:.command-center-page[data-command-center-visual="premium-as6"] .copilot-top::before,
+frontend/src/styles/as6-command-center-final-etalon-v149.css:38:.command-center-page[data-command-center-visual="premium-as6"] .copilot-top::after,
+frontend/src/styles/as6-command-center-final-etalon-v149.css:39:.command-center-page[data-command-center-visual="premium-as6"] .copilot-inline-layout::before,
+frontend/src/styles/as6-command-center-final-etalon-v149.css:40:.command-center-page[data-command-center-visual="premium-as6"] .copilot-inline-layout::after {
+frontend/src/styles/as6-command-center-final-etalon-v149.css:49:.command-center-page[data-command-center-visual="premium-as6"] .command-hero {
+frontend/src/styles/as6-command-center-final-etalon-v149.css:61:.command-center-page[data-command-center-visual="premium-as6"] .command-kpis {
+frontend/src/styles/as6-command-center-final-etalon-v149.css:72:.command-center-page[data-command-center-visual="premium-as6"] .quick-actions-primary,
+frontend/src/styles/as6-command-center-final-etalon-v149.css:73:.command-center-page[data-command-center-visual="premium-as6"] .quick-actions-primary > div {
+frontend/src/styles/as6-command-center-final-etalon-v149.css:82:.command-center-page[data-command-center-visual="premium-as6"] .quick-actions-primary {
+frontend/src/styles/as6-command-center-final-etalon-v149.css:87:.command-center-page[data-command-center-visual="premium-as6"] .quick-actions-primary h2 {
+frontend/src/styles/as6-command-center-final-etalon-v149.css:91:.command-center-page[data-command-center-visual="premium-as6"] .quick-actions-primary a,
+frontend/src/styles/as6-command-center-final-etalon-v149.css:92:.command-center-page[data-command-center-visual="premium-as6"] .quick-actions-primary button {
+frontend/src/styles/as6-command-center-final-etalon-v149.css:102:.command-center-page[data-command-center-visual="premium-as6"] .command-main-grid,
+frontend/src/styles/as6-command-center-final-etalon-v149.css:103:.command-center-page[data-command-center-visual="premium-as6"] .command-top-grid,
+frontend/src/styles/as6-command-center-final-etalon-v149.css:104:.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid,
+frontend/src/styles/as6-command-center-final-etalon-v149.css:105:.command-center-page[data-command-center-visual="premium-as6"] .command-core,
+frontend/src/styles/as6-command-center-final-etalon-v149.css:106:.command-center-page[data-command-center-visual="premium-as6"] .command-right-rail {
+frontend/src/styles/as6-command-center-final-etalon-v149.css:119:.command-center-page[data-command-center-visual="premium-as6"] .copilot-hero {
+frontend/src/styles/as6-command-center-final-etalon-v149.css:130:.command-center-page[data-command-center-visual="premium-as6"] .copilot-top {
+frontend/src/styles/as6-command-center-final-etalon-v149.css:140:.command-center-page[data-command-center-visual="premium-as6"] .copilot-inline-layout {
+frontend/src/styles/as6-command-center-final-etalon-v149.css:153:.command-center-page[data-command-center-visual="premium-as6"] .as6-copilot-inline-logo {
+frontend/src/styles/as6-command-center-final-etalon-v149.css:163:.command-center-page[data-command-center-visual="premium-as6"] .copilot-action-link {
+frontend/src/styles/as6-command-center-final-etalon-v149.css:201:.command-center-page[data-command-center-visual="premium-as6"] .command-recommendations {
+frontend/src/styles/as6-command-center-route-stable-paint-v189.css:2:   Uses data-route on AppShell, available before CommandCenterPage child exists.
+frontend/src/styles/as6-command-center-route-stable-paint-v189.css:5:.app-shell[data-route="command-center"],
+frontend/src/styles/as6-command-center-route-stable-paint-v189.css:6:.app-shell[data-route="command-center"] .workspace,
+frontend/src/styles/as6-command-center-route-stable-paint-v189.css:7:.app-shell[data-route="command-center"] .command-sidebar,
+frontend/src/styles/as6-command-center-route-stable-paint-v189.css:8:.app-shell[data-route="command-center"] .sidebar-scroll,
+frontend/src/styles/as6-command-center-route-stable-paint-v189.css:9:.app-shell[data-route="command-center"] .command-sidebar-bottom {
+frontend/src/styles/as6-command-center-route-stable-paint-v189.css:17:.app-shell[data-route="command-center"] {
+frontend/src/styles/as6-command-center-route-stable-paint-v189.css:22:.app-shell[data-route="command-center"] .workspace {
+frontend/src/styles/as6-command-center-route-stable-paint-v189.css:27:.app-shell[data-route="command-center"]::before,
+frontend/src/styles/as6-command-center-route-stable-paint-v189.css:28:.app-shell[data-route="command-center"]::after,
+frontend/src/styles/as6-command-center-route-stable-paint-v189.css:29:.app-shell[data-route="command-center"] .workspace::before,
+frontend/src/styles/as6-command-center-route-stable-paint-v189.css:30:.app-shell[data-route="command-center"] .workspace::after,
+frontend/src/styles/as6-command-center-route-stable-paint-v189.css:31:.app-shell[data-route="command-center"] .command-sidebar::before,
+frontend/src/styles/as6-command-center-route-stable-paint-v189.css:32:.app-shell[data-route="command-center"] .command-sidebar::after,
+frontend/src/styles/as6-command-center-route-stable-paint-v189.css:33:.app-shell[data-route="command-center"] .sidebar-scroll::before,
+frontend/src/styles/as6-command-center-route-stable-paint-v189.css:34:.app-shell[data-route="command-center"] .sidebar-scroll::after,
+frontend/src/styles/as6-command-center-route-stable-paint-v189.css:35:.app-shell[data-route="command-center"] .command-sidebar-bottom::before,
+frontend/src/styles/as6-command-center-route-stable-paint-v189.css:36:.app-shell[data-route="command-center"] .command-sidebar-bottom::after {
+frontend/src/styles/as6-command-center-route-stable-paint-v189.css:45:.app-shell[data-route="command-center"] .sidebar {
+frontend/src/styles/as6-command-center-route-stable-paint-v189.css:50:.app-shell[data-route="command-center"] .command-center-page {
+frontend/src/styles/as6-command-center-true-reference-lock.css:1:body.as6-command-center-reference-active { margin: 0 !important; background: #030814 !important; overflow-x: hidden !important; }
+frontend/src/styles/as6-command-center-true-reference-lock.css:2:body.as6-command-center-reference-active > [id^="as6-"]:not(#root), body.as6-command-center-reference-active [data-as6-command-center-hidden="true"] { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; width: 0 !important; height: 0 !important; max-width: 0 !important; max-height: 0 !important; overflow: hidden !important; position: absolute !important; z-index: -1 !important; }
+frontend/src/styles/as6-command-center-true-reference-lock.css:3:body.as6-command-center-reference-active .app-shell.command-shell { padding: 0 !important; margin: 0 !important; background: #030814 !important; }
+frontend/src/styles/as6-command-center-true-reference-lock.css:4:body.as6-command-center-reference-active .workspace { padding: 0 14px 14px 0 !important; margin: 0 !important; background: #030814 !important; }
+frontend/src/styles/as6-command-center-true-reference-lock.css:5:.as6-command-center-true-reference, .as6-command-center-true-reference * { box-sizing: border-box; }
+frontend/src/styles/as6-command-center-true-reference-lock.css:6:.as6-command-center-true-reference { width: 100%; min-width: 0; min-height: 100vh; padding: 0; display: grid; gap: 12px; color: #f7fbff; font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-weight: 800; background: radial-gradient(circle at 82% -12%, rgba(24,190,210,.13), transparent 34%), #030814; }
+frontend/src/styles/as6-command-center-no-horizontal-scrollbar-v176.css:1:/* AS6 V176: remove real horizontal scrollbar layer on /command-center.
+frontend/src/styles/as6-command-center-no-horizontal-scrollbar-v176.css:12:body:has(.command-center-page[data-command-center-visual="premium-as6"]) {
+frontend/src/styles/as6-command-center-no-horizontal-scrollbar-v176.css:17:body:has(.command-center-page[data-command-center-visual="premium-as6"]) #root,
+frontend/src/styles/as6-command-center-no-horizontal-scrollbar-v176.css:18:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .app-shell,
+frontend/src/styles/as6-command-center-no-horizontal-scrollbar-v176.css:19:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-shell,
+frontend/src/styles/as6-command-center-no-horizontal-scrollbar-v176.css:20:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .workspace,
+frontend/src/styles/as6-command-center-no-horizontal-scrollbar-v176.css:21:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-center-page,
+frontend/src/styles/as6-command-center-no-horizontal-scrollbar-v176.css:22:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-main-grid,
+frontend/src/styles/as6-command-center-no-horizontal-scrollbar-v176.css:23:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-core,
+frontend/src/styles/as6-command-center-no-horizontal-scrollbar-v176.css:24:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-top-grid,
+frontend/src/styles/as6-command-center-no-horizontal-scrollbar-v176.css:25:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-second-grid,
+frontend/src/styles/as6-command-center-no-horizontal-scrollbar-v176.css:26:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-right-rail,
+frontend/src/styles/as6-command-center-no-horizontal-scrollbar-v176.css:27:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-sidebar,
+frontend/src/styles/as6-command-center-no-horizontal-scrollbar-v176.css:28:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .sidebar-scroll {
+frontend/src/styles/as6-command-center-no-horizontal-scrollbar-v176.css:34:body:has(.command-center-page[data-command-center-visual="premium-as6"]) *::-webkit-scrollbar:horizontal {
+frontend/src/styles/as6-command-center-no-horizontal-scrollbar-v176.css:40:body:has(.command-center-page[data-command-center-visual="premium-as6"]) *::-webkit-scrollbar-thumb:horizontal,
+frontend/src/styles/as6-command-center-no-horizontal-scrollbar-v176.css:41:body:has(.command-center-page[data-command-center-visual="premium-as6"]) *::-webkit-scrollbar-track:horizontal {
+frontend/src/styles/as6-command-center-no-horizontal-scrollbar-v176.css:48:body:has(.command-center-page[data-command-center-visual="premium-as6"]) * {
+frontend/src/styles/as6-command-center-no-horizontal-scrollbar-v176.css:53:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .workspace,
+frontend/src/styles/as6-command-center-no-horizontal-scrollbar-v176.css:54:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-center-page {
+frontend/src/styles/as6-command-center-no-horizontal-scrollbar-v176.css:60:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-kpis,
+frontend/src/styles/as6-command-center-no-horizontal-scrollbar-v176.css:61:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .quick-actions-primary,
+frontend/src/styles/as6-command-center-no-horizontal-scrollbar-v176.css:62:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-top-grid,
+frontend/src/styles/as6-command-center-no-horizontal-scrollbar-v176.css:63:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-main-grid,
+frontend/src/styles/as6-command-center-no-horizontal-scrollbar-v176.css:64:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-second-grid {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:3:body.as6-command-center-reference-guard-active {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:9:body.as6-command-center-reference-guard-active,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:10:body.as6-command-center-reference-guard-active * {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:14:body.as6-command-center-reference-guard-active .app-shell.command-shell {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:20:body.as6-command-center-reference-guard-active .workspace {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:31:body.as6-command-center-reference-guard-active .workspace::before,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:32:body.as6-command-center-reference-guard-active .workspace::after,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:33:body.as6-command-center-reference-guard-active .command-center-page::before,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:34:body.as6-command-center-reference-guard-active .command-center-page::after,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:35:body.as6-command-center-reference-guard-active .command-main-grid::before,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:36:body.as6-command-center-reference-guard-active .command-main-grid::after,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:37:body.as6-command-center-reference-guard-active .command-core::before,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:38:body.as6-command-center-reference-guard-active .command-core::after,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:39:body.as6-command-center-reference-guard-active .command-second-grid::before,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:40:body.as6-command-center-reference-guard-active .command-second-grid::after,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:41:body.as6-command-center-reference-guard-active .quick-actions-primary::before,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:42:body.as6-command-center-reference-guard-active .quick-actions-primary::after,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:43:body.as6-command-center-reference-guard-active .command-hero::before,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:44:body.as6-command-center-reference-guard-active .command-hero::after {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:49:body.as6-command-center-reference-guard-active .command-center-page {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:59:body.as6-command-center-reference-guard-active .command-hero {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:70:body.as6-command-center-reference-guard-active .command-hero h1 {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:77:body.as6-command-center-reference-guard-active .command-sidebar {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:85:body.as6-command-center-reference-guard-active .command-sidebar::before,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:86:body.as6-command-center-reference-guard-active .command-sidebar::after,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:87:body.as6-command-center-reference-guard-active .sidebar-scroll::before,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:88:body.as6-command-center-reference-guard-active .sidebar-scroll::after,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:89:body.as6-command-center-reference-guard-active .command-sidebar-bottom::before,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:90:body.as6-command-center-reference-guard-active .command-sidebar-bottom::after {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:95:body.as6-command-center-reference-guard-active .sidebar-favorites {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:102:body.as6-command-center-reference-guard-active .quick-actions-primary {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:111:body.as6-command-center-reference-guard-active .quick-actions-primary h2 {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:115:body.as6-command-center-reference-guard-active .quick-actions-primary > div {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:122:body.as6-command-center-reference-guard-active .quick-actions-primary a {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:128:body.as6-command-center-reference-guard-active .copilot-hero {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:142:body.as6-command-center-reference-guard-active .copilot-hero::before,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:143:body.as6-command-center-reference-guard-active .copilot-hero::after,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:144:body.as6-command-center-reference-guard-active .copilot-top::before,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:145:body.as6-command-center-reference-guard-active .copilot-top::after,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:146:body.as6-command-center-reference-guard-active .copilot-inline-layout::before,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:147:body.as6-command-center-reference-guard-active .copilot-inline-layout::after {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:152:body.as6-command-center-reference-guard-active .copilot-top {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:160:body.as6-command-center-reference-guard-active .copilot-inline-layout {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:171:body.as6-command-center-reference-guard-active .as6-copilot-inline-logo {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:179:body.as6-command-center-reference-guard-active .copilot-action-link {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:188:body.as6-command-center-reference-guard-active .command-main-grid,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:189:body.as6-command-center-reference-guard-active .command-top-grid,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:190:body.as6-command-center-reference-guard-active .command-second-grid,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:191:body.as6-command-center-reference-guard-active .command-core,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:192:body.as6-command-center-reference-guard-active .command-right-rail {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:200:body.as6-command-center-reference-guard-active .command-recommendations,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:201:body.as6-command-center-reference-guard-active [id^="as6-"][id$="-root"],
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:202:body.as6-command-center-reference-guard-active [data-as6-command-center-reference-hidden="true"] {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:219:body.as6-command-center-reference-guard-active .command-kpis,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:220:body.as6-command-center-reference-guard-active .quick-actions-primary,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:221:body.as6-command-center-reference-guard-active .quick-actions-primary > div,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:222:body.as6-command-center-reference-guard-active .command-main-grid,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:223:body.as6-command-center-reference-guard-active .command-top-grid,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:224:body.as6-command-center-reference-guard-active .command-second-grid,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:225:body.as6-command-center-reference-guard-active .command-core,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:226:body.as6-command-center-reference-guard-active .command-right-rail {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:238:body.as6-command-center-reference-guard-active .command-kpis::before,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:239:body.as6-command-center-reference-guard-active .command-kpis::after,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:240:body.as6-command-center-reference-guard-active .quick-actions-primary::before,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:241:body.as6-command-center-reference-guard-active .quick-actions-primary::after,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:242:body.as6-command-center-reference-guard-active .quick-actions-primary > div::before,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:243:body.as6-command-center-reference-guard-active .quick-actions-primary > div::after,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:244:body.as6-command-center-reference-guard-active .command-card::before,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:245:body.as6-command-center-reference-guard-active .command-card::after,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:246:body.as6-command-center-reference-guard-active .command-sidebar *::before,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:247:body.as6-command-center-reference-guard-active .command-sidebar *::after {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:255:body.as6-command-center-reference-guard-active .command-hero,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:256:body.as6-command-center-reference-guard-active .command-kpis,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:257:body.as6-command-center-reference-guard-active .quick-actions-primary {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:264:body.as6-command-center-reference-guard-active .quick-actions-primary {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:270:body.as6-command-center-reference-guard-active .quick-actions-primary a {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:277:body.as6-command-center-reference-guard-active .copilot-hero,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:278:body.as6-command-center-reference-guard-active .copilot-top,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:279:body.as6-command-center-reference-guard-active .copilot-inline-layout {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:288:body.as6-command-center-reference-guard-active .copilot-hero {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:293:body.as6-command-center-reference-guard-active .as6-copilot-inline-logo {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:299:body.as6-command-center-reference-guard-active .command-sidebar,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:300:body.as6-command-center-reference-guard-active .sidebar-scroll,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:301:body.as6-command-center-reference-guard-active .command-side-nav,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:302:body.as6-command-center-reference-guard-active .sidebar-favorites,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:303:body.as6-command-center-reference-guard-active .command-sidebar-bottom,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:304:body.as6-command-center-reference-guard-active .command-profile-card,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:305:body.as6-command-center-reference-guard-active .command-help-card {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:310:body.as6-command-center-reference-guard-active .sidebar-favorites {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:315:body.as6-command-center-reference-guard-active .command-sidebar-bottom {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:321:body.as6-command-center-reference-guard-active .workspace,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:322:body.as6-command-center-reference-guard-active .command-center-page {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:329:.command-center-page[data-command-center-visual="premium-as6"],
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:330:.command-center-page[data-command-center-visual="premium-as6"] * {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:334:.command-center-page[data-command-center-visual="premium-as6"] {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:341:.command-center-page[data-command-center-visual="premium-as6"]::before,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:342:.command-center-page[data-command-center-visual="premium-as6"]::after,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:343:.command-center-page[data-command-center-visual="premium-as6"] .command-hero::before,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:344:.command-center-page[data-command-center-visual="premium-as6"] .command-hero::after,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:345:.command-center-page[data-command-center-visual="premium-as6"] .command-kpis::before,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:346:.command-center-page[data-command-center-visual="premium-as6"] .command-kpis::after,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:347:.command-center-page[data-command-center-visual="premium-as6"] .quick-actions-primary::before,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:348:.command-center-page[data-command-center-visual="premium-as6"] .quick-actions-primary::after,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:349:.command-center-page[data-command-center-visual="premium-as6"] .command-main-grid::before,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:350:.command-center-page[data-command-center-visual="premium-as6"] .command-main-grid::after,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:351:.command-center-page[data-command-center-visual="premium-as6"] .command-card::before,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:352:.command-center-page[data-command-center-visual="premium-as6"] .command-card::after {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:360:.command-center-page[data-command-center-visual="premium-as6"] .command-hero,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:361:.command-center-page[data-command-center-visual="premium-as6"] .command-kpis,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:362:.command-center-page[data-command-center-visual="premium-as6"] .quick-actions-primary,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:363:.command-center-page[data-command-center-visual="premium-as6"] .command-main-grid,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:364:.command-center-page[data-command-center-visual="premium-as6"] .command-top-grid,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:365:.command-center-page[data-command-center-visual="premium-as6"] .command-second-grid,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:366:.command-center-page[data-command-center-visual="premium-as6"] .command-core,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:367:.command-center-page[data-command-center-visual="premium-as6"] .command-right-rail {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:375:.command-center-page[data-command-center-visual="premium-as6"] .quick-actions-primary {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:381:.command-center-page[data-command-center-visual="premium-as6"] .quick-actions-primary > div {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:387:.command-center-page[data-command-center-visual="premium-as6"] .quick-actions-primary a {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:393:.command-center-page[data-command-center-visual="premium-as6"] .copilot-hero {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:400:.command-center-page[data-command-center-visual="premium-as6"] .copilot-top,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:401:.command-center-page[data-command-center-visual="premium-as6"] .copilot-inline-layout,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:402:.command-center-page[data-command-center-visual="premium-as6"] .as6-copilot-inline-logo {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:408:.command-center-page[data-command-center-visual="premium-as6"] .command-recommendations {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:415:.command-center-page[data-command-center-visual="premium-as6"] .copilot-hero,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:426:.command-center-page[data-command-center-visual="premium-as6"] .copilot-top,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:438:.command-center-page[data-command-center-visual="premium-as6"] .copilot-inline-layout,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:450:.command-center-page[data-command-center-visual="premium-as6"] .as6-copilot-inline-logo,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:462:.command-center-page[data-command-center-visual="premium-as6"] .as6-copilot-inline-logo img,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:469:.command-center-page[data-command-center-visual="premium-as6"] .copilot-action-link,
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:487:body.as6-command-center-reference-guard-active .command-orientation {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:498:body.as6-command-center-reference-guard-active .command-orientation-copy span {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:507:body.as6-command-center-reference-guard-active .command-orientation-copy h2 {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:512:body.as6-command-center-reference-guard-active .command-orientation-copy p {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:517:body.as6-command-center-reference-guard-active .command-orientation-actions {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:521:body.as6-command-center-reference-guard-active .command-orientation-actions a {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:534:  body.as6-command-center-reference-guard-active .command-orientation {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:540:.as6-product-recommendation-slot-card {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:547:.as6-product-recommendation-card {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:563:.as6-product-recommendation-card .command-card-head span {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:568:.as6-product-recommendation-card__summary {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:575:.as6-product-recommendation-card__action {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:581:.as6-product-recommendation-card__action small {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:587:.as6-product-recommendation-card__action strong {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:591:.as6-product-recommendation-card__button {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:601:.command-right-rail .as6-product-recommendation-slot-card {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:607:.command-right-rail .as6-product-recommendation-card {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:613:.command-right-rail .as6-product-recommendation-card .command-card-head {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:617:.command-right-rail .as6-product-recommendation-card .command-card-head h2 {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:622:.command-right-rail .as6-product-recommendation-card__summary {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:628:.command-right-rail .as6-product-recommendation-card__action {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:634:.command-right-rail .as6-product-recommendation-card__action b {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:643:.command-right-rail .as6-product-recommendation-card__action span {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:648:.command-right-rail .as6-product-recommendation-card__action small {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:654:.command-right-rail .as6-product-recommendation-card__action strong {
+frontend/src/styles/as6-command-center-visual-etalon-v134.css:659:.command-right-rail .as6-product-recommendation-card__button {
+frontend/src/styles/as6-command-center-copilot-etalon-v150.css:3:.command-center-page[data-command-center-visual="premium-as6"] .copilot-hero,
+frontend/src/styles/as6-command-center-copilot-etalon-v150.css:16:.command-center-page[data-command-center-visual="premium-as6"] .copilot-hero::before,
+frontend/src/styles/as6-command-center-copilot-etalon-v150.css:17:.command-center-page[data-command-center-visual="premium-as6"] .copilot-hero::after,
+frontend/src/styles/as6-command-center-copilot-etalon-v150.css:27:.command-center-page[data-command-center-visual="premium-as6"] .copilot-top,
+frontend/src/styles/as6-command-center-copilot-etalon-v150.css:41:.command-center-page[data-command-center-visual="premium-as6"] .copilot-top h2,
+frontend/src/styles/as6-command-center-copilot-etalon-v150.css:42:.command-center-page[data-command-center-visual="premium-as6"] .copilot-top h3,
+frontend/src/styles/as6-command-center-copilot-etalon-v150.css:52:.command-center-page[data-command-center-visual="premium-as6"] .copilot-top span,
+frontend/src/styles/as6-command-center-copilot-etalon-v150.css:53:.command-center-page[data-command-center-visual="premium-as6"] .copilot-top strong,
+frontend/src/styles/as6-command-center-copilot-etalon-v150.css:61:.command-center-page[data-command-center-visual="premium-as6"] .copilot-inline-layout,
+frontend/src/styles/as6-command-center-copilot-etalon-v150.css:75:.command-center-page[data-command-center-visual="premium-as6"] .copilot-inline-layout::before,
+frontend/src/styles/as6-command-center-copilot-etalon-v150.css:76:.command-center-page[data-command-center-visual="premium-as6"] .copilot-inline-layout::after,
+frontend/src/styles/as6-command-center-copilot-etalon-v150.css:83:.command-center-page[data-command-center-visual="premium-as6"] .as6-copilot-inline-logo,
+frontend/src/styles/as6-command-center-copilot-etalon-v150.css:97:.command-center-page[data-command-center-visual="premium-as6"] .as6-copilot-inline-logo img,
+frontend/src/styles/as6-command-center-copilot-etalon-v150.css:104:.command-center-page[data-command-center-visual="premium-as6"] .copilot-action-link,
+frontend/src/styles/as6-command-center-critical-first-paint-v198.css:12:html.as6-route-command-center,
+frontend/src/styles/as6-command-center-critical-first-paint-v198.css:13:body.as6-route-command-center,
+frontend/src/styles/as6-mission-workspace.css:10:.as6-workspace-shell, .dashboard-page, .crm-page, .command-center, .ai-workforce-page, .ai-approval-page, .ai-execution-page, .ai-executive-page {
+frontend/src/styles/as6-mission-workspace.css:18:.dashboard-page, .crm-page, .command-center, .ai-workforce-page, .ai-approval-page, .ai-execution-page, .ai-executive-page {
+frontend/src/styles/as6-mission-workspace.css:158:  .dashboard-page, .crm-page, .command-center, .ai-workforce-page, .ai-approval-page, .ai-execution-page, .ai-executive-page { padding-left: 12px; padding-right: 12px; }
+frontend/src/styles/as6-mission-control.css:44:.as6-page, .dashboard-page, .crm-page, .command-center, .ai-workforce-page, .ai-approval-page, .ai-execution-page, .ai-executive-page, main {
+frontend/src/styles/as6-mission-control.css:48:.as6-page::before, .dashboard-page::before, .crm-page::before, .command-center::before, .ai-workforce-page::before, .ai-approval-page::before, .ai-execution-page::before, .ai-executive-page::before {
+frontend/src/styles/as6-mission-control.css:179:.command-center-page .goal-stats::before,
+frontend/src/styles/as6-mission-control.css:180:.command-center-page .goal-stats::after,
+frontend/src/styles/as6-mission-control.css:181:.command-center-page [class*="stats"]::before,
+frontend/src/styles/as6-mission-control.css:182:.command-center-page [class*="stats"]::after,
+frontend/src/styles/as6-mission-control.css:183:.command-center-page [class*="Stats"]::before,
+frontend/src/styles/as6-mission-control.css:184:.command-center-page [class*="Stats"]::after {
+frontend/src/styles/as6-mission-control.css:193:.command-center-page .goal-stats {
+frontend/src/styles/as6-command-center-revenue-chart-clip-v175b.css:3:.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics,
+frontend/src/styles/as6-command-center-revenue-chart-clip-v175b.css:4:.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics .mock-chart {
+frontend/src/styles/as6-command-center-revenue-chart-clip-v175b.css:10:.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics .mock-chart svg {
+frontend/src/styles/as6-command-center-revenue-chart-clip-v175b.css:16:.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics .mock-chart polyline {
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:2:   Scope: only /command-center premium page.
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:5:body:has(.command-center-page[data-command-center-visual="premium-as6"]) {
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:10:body:has(.command-center-page[data-command-center-visual="premium-as6"]) *,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:11:body:has(.command-center-page[data-command-center-visual="premium-as6"]) *::before,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:12:body:has(.command-center-page[data-command-center-visual="premium-as6"]) *::after {
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:17:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-shell,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:18:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .workspace,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:19:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-center-page,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:20:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-sidebar,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:21:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-sidebar *,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:22:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-main-grid,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:23:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-core,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:24:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-top-grid,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:25:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-second-grid,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:26:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-right-rail,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:27:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-card,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:28:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-kpi,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:29:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .quick-actions,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:30:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .quick-actions-primary,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:31:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-recommendations,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:32:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-help-card,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:33:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-profile-card,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:34:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-card-head,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:35:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .event-row,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:36:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .next-action,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:37:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .expected-effect,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:38:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .activity-row {
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:46:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-card,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:47:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-kpi,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:48:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-recommendations,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:49:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .quick-actions-primary a,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:50:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-help-card,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:51:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-profile-card {
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:57:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .workspace::before,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:58:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .workspace::after,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:59:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-center-page::before,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:60:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-center-page::after,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:61:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-shell::before,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:62:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-shell::after,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:63:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-sidebar::before,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:64:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-sidebar::after,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:65:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-sidebar *::before,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:66:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-sidebar *::after,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:67:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-main-grid::before,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:68:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-main-grid::after,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:69:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-top-grid::before,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:70:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-top-grid::after,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:71:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-second-grid::before,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:72:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-second-grid::after,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:73:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-card::before,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:74:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-card::after,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:75:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-kpi::before,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:76:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-kpi::after,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:77:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .quick-actions::before,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:78:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .quick-actions::after,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:79:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .quick-actions-primary::before,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:80:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .quick-actions-primary::after {
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:92:body:has(.command-center-page[data-command-center-visual="premium-as6"]) svg line,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:93:body:has(.command-center-page[data-command-center-visual="premium-as6"]) svg polyline,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:94:body:has(.command-center-page[data-command-center-visual="premium-as6"]) svg path {
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:99:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .goal-progress,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:100:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .goal-progress span,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:101:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .agent-progress,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:102:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .agent-progress i,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:103:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .kpi-spark,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:104:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .mock-chart svg,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:105:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .mock-chart polyline {
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:113:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .quick-actions,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:114:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .quick-actions-primary,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:115:body:has(.command-center-page[data-command-center-visual="premium-as6"]) .command-right-rail {
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:123:body:has(.command-center-page[data-command-center-visual="premium-as6"])::before,
+frontend/src/styles/as6-command-center-final-no-strips-v174b.css:124:body:has(.command-center-page[data-command-center-visual="premium-as6"])::after,
+frontend/src/styles/as6-command-center-reference-guard.css:1:body.as6-command-center-reference-guard-active {
+frontend/src/styles/as6-command-center-reference-guard.css:8:body.as6-command-center-reference-guard-active > [id^="as6-"]:not(#root),
+frontend/src/styles/as6-command-center-reference-guard.css:9:body.as6-command-center-reference-guard-active [data-as6-command-center-reference-hidden="true"] {
+frontend/src/styles/as6-command-center-reference-guard.css:23:body.as6-command-center-reference-guard-active #root,
+frontend/src/styles/as6-command-center-reference-guard.css:24:body.as6-command-center-reference-guard-active .app-shell.command-shell,
+frontend/src/styles/as6-command-center-reference-guard.css:25:body.as6-command-center-reference-guard-active .workspace,
+frontend/src/styles/as6-command-center-reference-guard.css:26:body.as6-command-center-reference-guard-active main {
+frontend/src/styles/as6-command-center-reference-guard.css:31:body.as6-command-center-reference-guard-active .workspace {
+frontend/src/styles/as6-command-center-reference-guard.css:35:body.as6-command-center-reference-guard-active .command-sidebar {
+frontend/src/styles/as6-command-center-ui-quality-v215.css:14:.command-shell .command-center-page {
+frontend/src/styles/as6-command-center-appshell-reference.css:1:body:has(.as6-command-center-appshell-reference) > div:not(#root) { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; width: 0 !important; height: 0 !important; overflow: hidden !important; }
+frontend/src/styles/as6-command-center-appshell-reference.css:2:.as6-command-center-appshell-reference, .as6-command-center-appshell-reference * { box-sizing: border-box; }
+frontend/src/styles/as6-command-center-appshell-reference.css:3:.as6-command-center-appshell-reference { width: 100%; min-width: 0; min-height: 100vh; padding: 0 14px 14px 0; display: grid; gap: 12px; color: #f7fbff; font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-weight: 800; background: radial-gradient(circle at 82% -12%, rgba(24,190,210,.13), transparent 34%), #030814; }
+frontend/src/styles/as6-command-center-appshell-reference.css:4:body:has(.as6-command-center-appshell-reference) .workspace, body:has(.as6-command-center-appshell-reference) .app-main, body:has(.as6-command-center-appshell-reference) .page-content { padding-top: 0 !important; margin-top: 0 !important; background: #030814 !important; }
+frontend/src/styles/as6-command-center-reference-page.css:1:body:has(.as6-command-center-reference-page) { margin: 0 !important; background: #030814 !important; overflow-x: hidden !important; }
+frontend/src/styles/as6-command-center-reference-page.css:2:body:has(.as6-command-center-reference-page) > div:not(#root) { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; width: 0 !important; height: 0 !important; overflow: hidden !important; }
+frontend/src/styles/as6-command-center-reference-page.css:3:.as6-command-center-reference-page, .as6-command-center-reference-page * { box-sizing: border-box; }
+frontend/src/styles/as6-command-center-reference-page.css:4:.as6-command-center-reference-page { min-height: 100vh; display: grid; grid-template-columns: 244px minmax(0, 1fr); gap: 16px; background: radial-gradient(circle at 80% -10%, rgba(24,190,210,.13), transparent 34%), #030814; color: #f7fbff; font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-weight: 800; }
+frontend/src/styles/as6-command-center-reference-page.css:33:@media (max-width: 1280px) { .as6-command-center-reference-page { grid-template-columns: 1fr; } .as6-ref-sidebar { display:none; } .as6-ref-workspace { padding:10px; } .as6-ref-main-grid { grid-template-columns:1fr; } .as6-ref-actions { grid-template-columns:repeat(3,1fr); } .as6-ref-kpis { grid-template-columns:repeat(2,1fr); } }
+frontend/src/styles/as6-full-mission-control-theme-rollout.css:17:.dashboard-page, .crm-page, .revenue-page, .ai-workers-page, .ai-workforce-page, .approval-page, .execution-page, .executive-page, .services-page, .pipeline-page, .analytics-page, .command-center, main[class*="page"], div[class*="Page"], div[class*="Dashboard"], div[class*="Center"] {
+frontend/src/theme/as6Theme.css:24:.command-side-nav a.command-center-active { color: #fff; background: linear-gradient(135deg, #8b2cff, #5b00ff 65%, #00d8ff); box-shadow: 0 14px 36px rgba(91, 0, 255, .38), inset 0 1px rgba(255,255,255,.25); }
+frontend/src/theme/as6Theme.css:39:.command-center-page { display: grid; gap: 9px; min-height: calc(100vh - 16px); padding-bottom: 74px; color: #eef6ff; }
+frontend/src/theme/as6Theme.css:244:.command-center-page { grid-template-columns: minmax(0, 1fr); align-content:start; }
+frontend/src/theme/as6Theme.css:643:.as6-command-center-logo-image{display:block!important;width:96px!important;height:auto!important;object-fit:contain!important;}
+frontend/src/theme/as6Theme.css:645:.command-center-ai-workforce-avatar,.ai-workforce-avatar,[class*="workforce"][class*="avatar"]{font-size:0!important;overflow:hidden!important;}
+frontend/src/theme/as6Theme.css:646:.command-center-ai-workforce-avatar::before,.command-center-ai-workforce-avatar::after,.ai-workforce-avatar::before,.ai-workforce-avatar::after,[class*="workforce"][class*="avatar"]::before,[class*="workforce"][class*="avatar"]::after{content:none!important;}
+frontend/src/theme/as6Theme.css:670:.ai-copilot-card button,.command-copilot-card button,.copilot-card button,.command-card[class*="copilot"] button,article[class*="copilot"] button,.as6-copilot-cta,.command-center-copilot-cta{
+frontend/src/theme/as6Theme.css:713:   Scope: /command-center only.
+frontend/src/theme/as6Theme.css:715:.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics {
+frontend/src/theme/as6Theme.css:720:.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics .mock-chart {
+frontend/src/theme/as6Theme.css:735:.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics .mock-chart span {
+frontend/src/theme/as6Theme.css:745:.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics .mock-chart svg {
+frontend/src/theme/as6Theme.css:758:.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics .mock-chart polyline {
+frontend/src/theme/as6Theme.css:764:.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics .chart-total {
+frontend/src/theme/as6Theme.css:770:.command-center-page[data-command-center-visual="premium-as6"] [class*="stat"]::before,
+frontend/src/theme/as6Theme.css:771:.command-center-page[data-command-center-visual="premium-as6"] [class*="stat"]::after,
+frontend/src/theme/as6Theme.css:772:.command-center-page[data-command-center-visual="premium-as6"] [class*="Stat"]::before,
+frontend/src/theme/as6Theme.css:773:.command-center-page[data-command-center-visual="premium-as6"] [class*="Stat"]::after,
+frontend/src/theme/as6Theme.css:774:.command-center-page[data-command-center-visual="premium-as6"] [class*="metric"]::before,
+frontend/src/theme/as6Theme.css:775:.command-center-page[data-command-center-visual="premium-as6"] [class*="metric"]::after,
+frontend/src/theme/as6Theme.css:776:.command-center-page[data-command-center-visual="premium-as6"] [class*="Metric"]::before,
+frontend/src/theme/as6Theme.css:777:.command-center-page[data-command-center-visual="premium-as6"] [class*="Metric"]::after,
+frontend/src/theme/as6Theme.css:778:.command-center-page[data-command-center-visual="premium-as6"] .goal-stats::before,
+frontend/src/theme/as6Theme.css:779:.command-center-page[data-command-center-visual="premium-as6"] .goal-stats::after {
+frontend/src/theme/as6Theme.css:1038:.app-shell.command-shell .side-nav a.command-center-active,
+frontend/src/theme/as6Theme.css:1225:.app-shell.command-shell .side-nav a.command-center-active,
+frontend/src/theme/as6Theme.css:1401:.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics {
+frontend/src/theme/as6Theme.css:1408:.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics .command-card-head {
+frontend/src/theme/as6Theme.css:1412:.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics .chart-total {
+frontend/src/theme/as6Theme.css:1418:.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics .mock-chart {
+frontend/src/theme/as6Theme.css:1429:.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics .mock-chart span {
+frontend/src/theme/as6Theme.css:1433:.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics .mock-chart svg {
+frontend/src/theme/as6Theme.css:1439:.command-center-page[data-command-center-visual="premium-as6"] .revenue-dynamics .mock-chart polyline {
+frontend/src/data/mockData.js:22:export const quickActions = ["Создать AI‑задачу", "Импортировать лиды", "Открыть CRM", "Пополнить AI‑кредиты"];
