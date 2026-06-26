@@ -1,0 +1,7 @@
+● as6-disk-maintenance.timer - Run AS6 Disk Maintenance daily
+     Loaded: loaded (/etc/systemd/system/as6-disk-maintenance.timer; enabled; preset: enabled)
+     Active: active (waiting) since Fri 2026-06-26 16:40:42 UTC; 3s ago
+    Trigger: Sat 2026-06-27 04:15:00 UTC; 11h left
+   Triggers: ● as6-disk-maintenance.service
+
+Jun 26 16:40:42 zawenuqgdh systemd[1]: Started as6-disk-maintenance.timer - Run AS6 Disk Maintenance daily.

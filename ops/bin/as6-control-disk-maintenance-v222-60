@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-disk-maintenance-v222-60
+printf '%s\n' 'AS6_CONTROL_DISK_MAINTENANCE_V222_60=PASS'

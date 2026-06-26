@@ -1,0 +1,11 @@
+ M docs/AS6_CODEX_PROMPT.md
+ M docs/AS6_HANDOFF.md
+ M docs/AS6_MASTER_CONTEXT.md
+ M docs/AS6_PROJECT_STATE.md
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? ops/bin/as6-control-disk-maintenance-v222-60
+?? ops/bin/as6-diagnose-disk-maintenance-v222-60
+?? ops/bin/as6-disk-maintenance-v222-60
+?? ops/governance/as6-disk-maintenance-v222-60.md

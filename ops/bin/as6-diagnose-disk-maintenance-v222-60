@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -x /usr/local/sbin/as6-disk-maintenance
+test -x ops/bin/as6-disk-maintenance-v222-60
+systemctl is-enabled as6-disk-maintenance.timer >/dev/null
+systemctl list-timers --all | grep -q as6-disk-maintenance
+grep -q "KEEP_BACKUPS=\"3\"" ops/bin/as6-disk-maintenance-v222-60
+printf '%s\n' 'AS6_DISK_MAINTENANCE_AUTOMATION=PASS'

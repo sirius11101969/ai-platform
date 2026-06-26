@@ -4084,3 +4084,15 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Added diagnostics: design_system_presence_guard, source_of_truth_guard, base_card_guard, button_guard, token_registry_guard.
 
 - Project readiness: 99%.
+
+## V222_60 Disk Maintenance Automation
+
+- Root cause: project backups accumulated until root disk reached 100%.
+
+- Fixed: installed daily disk maintenance timer.
+
+- Retention: keep latest 3 project backups.
+
+- Docker cleanup: images, containers, builder cache only; volumes are not pruned automatically.
+
+- Project readiness: 99%.

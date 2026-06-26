@@ -400,3 +400,13 @@
 - Runtime evidence: runtime/as6-v222-58/
 
 - Failure class: FRAGMENTED_UI_VISUAL_LANGUAGE
+
+## V222_60 Disk Maintenance Automation
+
+- Diagnostic: ops/bin/as6-diagnose-disk-maintenance-v222-60
+
+- Control: ops/bin/as6-control-disk-maintenance-v222-60
+
+- Runtime evidence: runtime/as6-v222-60/
+
+- Failure class: ROOT_DISK_BACKUP_ACCUMULATION

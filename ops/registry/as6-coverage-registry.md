@@ -2308,3 +2308,13 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers Button foundation.
 
 - Covers token registry foundation.
+
+## V222_60 Coverage — Disk Maintenance
+
+- Covers backup retention.
+
+- Covers daily systemd timer.
+
+- Covers safe Docker cleanup.
+
+- Covers journal cleanup.
