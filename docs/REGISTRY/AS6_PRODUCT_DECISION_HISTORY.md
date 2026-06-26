@@ -125,3 +125,9 @@
 - Reason: V222.19 diagnosed persistence boundary but helper was missing.
 - Product Result: validated evidence records can now become append-ready Decision History entries.
 - Engineering Result: isolated Product Intelligence helper; no automatic file writes.
+
+## V222.21 Append Helper Effect Review
+- Decision: close V222.20 as effective after validating append helper behavior.
+- Reason: append helper formats valid records, rejects invalid records and performs no automatic writes.
+- Product Result: Product Decision History evidence persistence is ready for first reviewed append entry.
+- Engineering Result: no product code change; effect-review artifacts added.

@@ -152,3 +152,10 @@
 - Runtime: runtime/as6-v222-20-decision-history-evidence-persistence-helper
 - Status: ops/status/as6-v222-20-decision-history-evidence-persistence-helper-status.md
 - Failure Classes: PRODUCT_DECISION_HISTORY_EVIDENCE_APPEND_HELPER_MISSING, PRODUCT_DECISION_HISTORY_APPEND_FORMAT_GAP, PRODUCT_DECISION_HISTORY_APPEND_VALIDATION_GAP
+
+## V222.21 Append Helper Effect Review
+- Artifact: docs/PRODUCT/AS6_APPEND_HELPER_EFFECT_REVIEW_V222_21.md
+- Stage Passport: docs/STAGE_PASSPORTS/V222_21_APPEND_HELPER_EFFECT_REVIEW.md
+- Runtime: runtime/as6-v222-21-append-helper-effect-review
+- Status: ops/status/as6-v222-21-append-helper-effect-review-status.md
+- Failure Classes: PRODUCT_DECISION_HISTORY_APPEND_EFFECT_UNREVIEWED, PRODUCT_DECISION_HISTORY_AUTO_WRITE_DRIFT, PRODUCT_DECISION_HISTORY_INVALID_APPEND_ACCEPTANCE

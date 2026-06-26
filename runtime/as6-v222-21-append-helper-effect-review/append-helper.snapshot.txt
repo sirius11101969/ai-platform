@@ -1,0 +1,6 @@
+74:export function formatProductEvidenceBridgeRecordForDecisionHistory(record) {
+80:      reason: 'AS6_PRODUCT_EVIDENCE_RECORD_INVALID',
+123:export function createProductDecisionHistoryAppendEntry(record) {
+124:  const formatted = formatProductEvidenceBridgeRecordForDecisionHistory(record)
+130:    target: 'docs/REGISTRY/AS6_PRODUCT_DECISION_HISTORY.md',
+131:    mode: 'append_only',

@@ -89,3 +89,7 @@
 ## V222.20 Decision History Evidence Persistence Coverage
 - Covered: append helper, target, append-only mode, valid append entry, invalid append rejection, Product Intelligence export.
 - Not changed: UI, routes, backend, auth, CRM, telemetry, metrics, insights, Governance, automatic file writes.
+
+## V222.21 Append Helper Effect Coverage
+- Covered: append helper effect, target, mode, valid markdown formatting, invalid record rejection, no automatic write behavior.
+- Not covered: actual durable append entry, review workflow, backend persistence.
