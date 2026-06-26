@@ -3,7 +3,7 @@ export { AS6_PRODUCT_EVENT_SCHEMA_VERSION, sanitizeProductMetadata } from './sch
 export { AS6_PRODUCT_TELEMETRY_CONFIG } from './telemetry/telemetryConfig'
 export { createProductEvent, trackProductEvent } from './telemetry/trackEvent'
 export { readStoredProductEvents, writeStoredProductEvents } from './telemetry/telemetryProvider'
-export { countProductEvents, getFirstActionEvents } from './metrics/metrics'
+export { countProductEvents, getFirstActionEvents, groupFirstActionsByMetadata, buildFirstActionMetrics } from './metrics/metrics'
 export { buildProductInsights } from './insights/insights'
 export { AS6_PRODUCT_KNOWLEDGE_LEVELS, createProductKnowledgeRecord } from './knowledge/productKnowledge'
 export { createProductDecisionRecord } from './decision-history/decisionHistory'

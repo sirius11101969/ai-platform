@@ -110,3 +110,10 @@
 - Runtime: runtime/as6-v222-14-runtime-telemetry-storage-validation
 - Status: ops/status/as6-v222-14-runtime-telemetry-storage-validation-status.md
 - Failure Classes: PRODUCT_TELEMETRY_RUNTIME_STORAGE_UNVALIDATED, PRODUCT_TELEMETRY_SANITIZATION_RUNTIME_GAP, PRODUCT_TELEMETRY_DISABLE_CONTROL_RUNTIME_GAP, PRODUCT_TELEMETRY_UNREGISTERED_EVENT_RUNTIME_GAP
+
+## V222.15 First-action Metrics Foundation
+- Artifact: docs/PRODUCT/AS6_FIRST_ACTION_METRICS_FOUNDATION_V222_15.md
+- Stage Passport: docs/STAGE_PASSPORTS/V222_15_FIRST_ACTION_METRICS_FOUNDATION.md
+- Runtime: runtime/as6-v222-15-first-action-metrics-foundation
+- Status: ops/status/as6-v222-15-first-action-metrics-foundation-status.md
+- Failure Classes: PRODUCT_FIRST_ACTION_METRICS_PENDING, PRODUCT_FIRST_ACTION_METRICS_EXPORT_GAP, PRODUCT_FIRST_ACTION_METRICS_RUNTIME_GAP

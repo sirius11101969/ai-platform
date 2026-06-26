@@ -1,0 +1,5 @@
+AS6_FIRST_ACTION_METRICS_VALIDATION=PASS
+FIRST_ACTION_COUNT=2
+HAS_FIRST_ACTION_EVIDENCE=true
+ACTIONS=check_leads,review_revenue
+DESTINATIONS=/crm?filter=priority,/dashboard/revenue

@@ -1,0 +1,7 @@
+# V222.15 Change Plan
+- Extend existing Product Intelligence metrics module.
+- Add first-action metrics summary.
+- Count first-action events.
+- Group first actions by metadata.action and metadata.destination.
+- Do not change UI, telemetry wiring, routes, backend, auth, CRM or Governance.
+- Validate with sample local events.

@@ -88,3 +88,9 @@
 - Reason: V222.13 confirmed static wiring but not runtime storage behavior.
 - Product Result: first-action telemetry now has runtime storage evidence.
 - Engineering Result: no product code change; runtime validation artifacts added.
+
+## V222.15 First-action Metrics Foundation
+- Decision: add minimal first-action metrics helpers before deriving product insights.
+- Reason: V222.14 validated runtime telemetry storage, but metrics were still pending.
+- Product Result: first-action evidence can now be counted and grouped.
+- Engineering Result: isolated Product Intelligence metrics extension.

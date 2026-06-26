@@ -1,0 +1,3 @@
+ROOT_CAUSE=first-action telemetry can store events but has no dedicated first-action metrics foundation
+FAILURE_CLASS=PRODUCT_FIRST_ACTION_METRICS_PENDING
+DETAIL=V222.14 validated runtime telemetry storage. V222.15 adds minimal metrics helpers to count first actions, group them by action/destination, and expose a safe metrics summary.

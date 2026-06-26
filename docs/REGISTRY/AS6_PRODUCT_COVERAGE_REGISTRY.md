@@ -65,3 +65,7 @@
 ## V222.14 Runtime Telemetry Coverage
 - Covered: runtime localStorage event storage, metadata sanitization, disabled telemetry skip, unregistered event rejection, external analytics absence.
 - Not changed: product code, backend, routes, auth, UI, Governance.
+
+## V222.15 First-action Metrics Coverage
+- Covered: first-action count, evidence flag, grouping by action, grouping by destination, Product Intelligence export.
+- Not changed: UI, routes, backend, auth, CRM, telemetry wiring, Governance.

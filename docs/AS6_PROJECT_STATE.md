@@ -3808,3 +3808,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Result: Product Intelligence localStorage runtime behavior validated.
 - Restore Tag: AS6_RESTORE_V222_14_RUNTIME_TELEMETRY_STORAGE_VALIDATION_20260626T014318Z
 - Next Stage: V222.15 first-action metrics foundation.
+
+## V222.15 First-action Metrics Foundation
+- Status: PASS
+- Result: first-action metrics foundation added to Product Intelligence.
+- Restore Tag: AS6_RESTORE_V222_15_FIRST_ACTION_METRICS_FOUNDATION_20260626T015554Z
+- Next Stage: V222.16 first-action insights foundation.
