@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-product-recommendation-card-v222-41
+printf '%s\n' 'AS6_CONTROL_PRODUCT_RECOMMENDATION_CARD_V222_41=PASS'

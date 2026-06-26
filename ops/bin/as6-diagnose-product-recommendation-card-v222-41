@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+TARGETS="$(grep -RIl --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=build --exclude-dir=.git 'as6-product-recommendation' frontend 2>/dev/null || true)"
+test -n "$TARGETS"
+
+if grep -RIn --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=build --exclude-dir=.git 'width:[[:space:]]*280px\|max-width:[[:space:]]*280px\|width:[[:space:]]*210px\|max-width:[[:space:]]*210px' frontend 2>/dev/null | grep 'as6-product-recommendation'; then
+  exit 1
+fi
+
+grep -RIn --include='*.css' 'AS6 V222_41 — Product Recommendation reference alignment' frontend | grep -q 'AS6 V222_41'
+grep -RIn --include='*.css' 'min-height: 238px\|min-height: 48px' frontend | grep -q 'min-height: 238px'
+
+printf '%s\n' 'AS6_PRODUCT_RECOMMENDATION_CARD_REFERENCE_ALIGNMENT=PASS'

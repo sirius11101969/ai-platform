@@ -1,0 +1,3 @@
+frontend/src/pages/CommandCenterPage.jsx
+frontend/src/components/ProductRecommendationCard.jsx
+frontend/src/styles/as6-command-center-visual-etalon-v134.css

@@ -2204,3 +2204,25 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers forced git tracking for selected runtime evidence.
 
 - Covers commit/push continuation after ignored pathspec interruption.
+
+## V222_41 Coverage — Product Recommendation Card
+
+- Covers source presence for AS6 product recommendation card.
+
+- Covers prevention of 280px card width regression.
+
+- Covers prevention of 210px CTA regression.
+
+- Covers governed CSS reference alignment for right rail card.
+
+- Covers visual spacing drift class.
+
+## V222_41 Coverage — Product Recommendation Card
+
+- Covers frontend-only source scan.
+
+- Covers runtime backup false positive prevention.
+
+- Covers 280px/210px micro layout regression prevention.
+
+- Covers governed CSS reference alignment.

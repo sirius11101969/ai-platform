@@ -3958,3 +3958,29 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Result: PASS.
 
 - Project readiness: 99%.
+
+## V222_41 Product Recommendation Card Reference Alignment
+
+- Root cause: product recommendation card was constrained by inline micro width/padding/button dimensions.
+
+- Fixed: card uses right rail width up to 340px, reference padding, stronger spacing, full-width CTA.
+
+- Added diagnostics: product_recommendation_source_presence_check, inline_micro_width_guard, button_width_guard, css_reference_alignment_guard, right_rail_overflow_guard.
+
+- Failure class: PRODUCT_RECOMMENDATION_INLINE_MICRO_LAYOUT_DRIFT.
+
+- Validation: ops/bin/as6-diagnose-product-recommendation-card-v222-41 and control PASS.
+
+- Project readiness: 99%.
+
+## V222_41 Product Recommendation Card Reference Alignment
+
+- Root cause: card was visually constrained by micro layout dimensions and repair diagnostic initially scanned runtime backups.
+
+- Fixed: diagnostic scope limited to frontend source; card aligned to right rail reference width, padding, spacing and full-width CTA.
+
+- Added diagnostics: runtime_scan_scope_guard, frontend_source_only_card_guard, reference_card_css_guard, inline_micro_layout_regression_guard.
+
+- Failure class: PRODUCT_RECOMMENDATION_INLINE_MICRO_LAYOUT_DRIFT.
+
+- Project readiness: 99%.

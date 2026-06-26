@@ -288,3 +288,27 @@
 - Pathspec guard added: commit_push_pathspec_guard_check.
 
 - Failure class: IGNORED_RUNTIME_EVIDENCE_PATHSPEC.
+
+## V222_41 Product Recommendation Card Reference Alignment
+
+- Diagnostic: ops/bin/as6-diagnose-product-recommendation-card-v222-41
+
+- Control: ops/bin/as6-control-product-recommendation-card-v222-41
+
+- Runtime evidence: runtime/as6-v222-41/diagnostic-report.md
+
+- Failure class: PRODUCT_RECOMMENDATION_INLINE_MICRO_LAYOUT_DRIFT
+
+- Root cause: product_recommendation_card_was_constrained_by_inline_micro_width_and_padding
+
+## V222_41 Product Recommendation Card Reference Alignment
+
+- Diagnostic: ops/bin/as6-diagnose-product-recommendation-card-v222-41
+
+- Control: ops/bin/as6-control-product-recommendation-card-v222-41
+
+- Runtime evidence: runtime/as6-v222-41/diagnostic-report.md
+
+- Failure class: PRODUCT_RECOMMENDATION_INLINE_MICRO_LAYOUT_DRIFT
+
+- Repair class: DIAGNOSTIC_RUNTIME_BACKUP_SCOPE_FALSE_POSITIVE
