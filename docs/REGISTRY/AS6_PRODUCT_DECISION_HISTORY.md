@@ -197,3 +197,7 @@ Use the Product Intelligence evidence chain as the default decision path for fut
 - Decision: make the visible Product Intelligence recommendation card narrower and more compact.
 - Product Result: right-rail recommendation now better matches the approved visual reference.
 - Next Stage: V222.30 Compact Card Effect Review.
+
+## V222.34 UI Diagnostics First Canon
+- Decision: all future interface changes require full project diagnostics before modification.
+- Codex Prompt: docs/PROMPTS/AS6_CODEX_UI_DIAGNOSTICS_FIRST_PROMPT_V222_34.md

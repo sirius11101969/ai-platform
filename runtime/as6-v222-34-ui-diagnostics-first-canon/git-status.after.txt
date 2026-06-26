@@ -1,0 +1,8 @@
+ M docs/AS6_PROJECT_STATE.md
+ M docs/REGISTRY/AS6_PRODUCT_COVERAGE_REGISTRY.md
+ M docs/REGISTRY/AS6_PRODUCT_DECISION_HISTORY.md
+ M docs/REGISTRY/AS6_PRODUCT_DIAGNOSTIC_REGISTRY.md
+ M ops/status/as6-detected-errors.md
+?? docs/GOVERNANCE/
+?? docs/PROMPTS/
+?? ops/status/as6-v222-34-ui-diagnostics-first-canon-status.md

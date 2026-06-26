@@ -1,0 +1,5 @@
+ROOT_CAUSE=UI work continued without a mandatory full interface diagnostic gate and left CSS experiment tails in the worktree
+FAILURE_CLASS=UI_CHANGE_WITHOUT_FULL_DIAGNOSTIC_GATE
+FAILURE_CLASS=CSS_EXPERIMENT_TAILS_LEFT_IN_WORKTREE
+FAILURE_CLASS=SELF_GENERATED_RUNTIME_DIRTY_TREE_CHECK
+DETAIL=CSS experiment tails were reset before registering the UI diagnostics-first canon.

@@ -3892,3 +3892,8 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Result: Product Recommendation card visually compacted to approved etalon direction.
 - Restore Tag: AS6_RESTORE_V222_29_PRODUCT_RECOMMENDATION_CARD_COMPACT_ETALON_20260626T061733Z
 - Next Stage: V222.30 compact card effect review.
+
+## V222.34 UI Diagnostics First Canon
+- Status: PASS
+- Rule: full UI diagnostics required before any interface change.
+- Restore Tag: AS6_RESTORE_V222_34_UI_DIAGNOSTICS_FIRST_CANON_FINAL_20260626T081515Z

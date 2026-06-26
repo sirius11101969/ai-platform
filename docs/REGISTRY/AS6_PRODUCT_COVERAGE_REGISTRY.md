@@ -125,3 +125,6 @@
 ## V222.29 Product Recommendation Card Compact Etalon Coverage
 - Covered: card compact width, CTA compact width, CTA height, CTA radius, internal spacing, visual density.
 - Not changed: backend, auth, CRM logic, recommendation engine, telemetry, metrics, insights, Governance.
+
+## V222.34 UI Diagnostics First Coverage
+- Covered: UI ownership, render path, CSS import graph, dist bundle, Docker nginx deploy, public HTTPS asset, DOM marker, screenshot comparison, registry/state governance.

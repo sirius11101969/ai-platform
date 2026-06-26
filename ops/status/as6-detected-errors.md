@@ -1098,3 +1098,13 @@ Governed and registered.
 - Root cause: runtime/ is intentionally ignored by git, but the stage command included runtime evidence path in git add.
 - Prevention: future AS6 stages must not git add ignored runtime/ paths unless explicitly using git add -f for approved evidence.
 - Status: fixed by committing durable docs, diagnostics, registries and governance without runtime/.
+
+## V222.34 Registered UI Diagnostic Errors
+- UI_CHANGE_WITHOUT_FULL_DIAGNOSTIC_GATE
+- CSS_SOURCE_NOT_IMPORTED
+- CSS_PATCH_NOT_IN_DIST
+- WRAPPER_SLOT_NOT_CONTROLLED
+- VISUAL_CHANGE_WITHOUT_DOM_PROOF
+- PUBLIC_BUNDLE_MISMATCH
+- SELF_GENERATED_RUNTIME_DIRTY_TREE_CHECK
+- CSS_EXPERIMENT_TAILS_LEFT_IN_WORKTREE
