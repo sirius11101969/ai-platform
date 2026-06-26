@@ -3790,3 +3790,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Result: internal Product Intelligence foundation added.
 - Restore Tag: AS6_RESTORE_V222_11_PRODUCT_INTELLIGENCE_FOUNDATION_20260626T004355Z
 - Next Stage: V222.12 minimal first-action telemetry wiring.
+
+## V222.12 Command Center First-action Telemetry
+- Status: PASS
+- Result: three Command Center first-action CTAs wired to Product Intelligence.
+- Restore Tag: AS6_RESTORE_V222_12_COMMAND_CENTER_FIRST_ACTION_TELEMETRY_20260626T005316Z
+- Next Stage: V222.13 first-action telemetry effect review.

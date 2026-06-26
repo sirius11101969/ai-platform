@@ -1,0 +1,3 @@
+ROOT_CAUSE=Command Center first-action CTAs exist but are not connected to Product Intelligence
+FAILURE_CLASS=PRODUCT_FIRST_ACTION_TELEMETRY_NOT_WIRED
+DETAIL=V222.11 created Product Intelligence foundation. V222.12 wires the three Command Center orientation CTAs to local-first telemetry without PII, secrets, external analytics or route changes.

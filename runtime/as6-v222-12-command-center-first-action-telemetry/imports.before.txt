@@ -1,0 +1,24 @@
+import as6CopilotLogo from '../assets/as6-copilot-asset.png';
+import as6Logo from '../assets/as6-logo.webp';
+import { BellIcon, ChatIcon, HelpIcon } from '../components/icons/TopbarIcons.jsx'
+import { useEffect, useMemo, useState } from 'react'
+import { fetchAiCommandCenterActions, fetchAiCommandCenterBrief, fetchAiCommandCenterFocus, fetchAiCommandCenterInbox, fetchAiCommandCenterKpi, fetchAiCommandCenterOperations, fetchAiCommandCenterPlanningMonthly, fetchAiSystemHealth } from '../services/api'
+import as6Robot from "../assets/as6-robot.png"
+
+const demoMetrics = {
+  revenueToday: '$1,248,890',
+  leads: '247',
+  deals: '87',
+  aiEmployees: '28 / 28',
+  conversion: '24.6%',
+  pipelineTotal: '$4,782,000',
+  wonTotal: '$1,248,890',
+  monthlyTarget: '$16,600,000',
+  monthlyActual: '$12,490,000',
+  monthlyRemaining: '$4,110,000',
+}
+
+function pickMetric(value, fallback) {
+  if (value === null || value === undefined) return fallback
+  if (typeof value === 'number' && value === 0) return fallback
+  if (typeof value === 'string' && (!value.trim() || value.trim() === '0' || value.trim() === '$0' || value.trim() === '0%')) return fallback

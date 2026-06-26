@@ -53,3 +53,7 @@
 ## V222.11 Product Intelligence Coverage
 - Covered: telemetry foundation, event registry, event schema, privacy sanitizer, metrics, insights, product knowledge, decision history.
 - Not changed: Command Center UI, event wiring, backend, auth, routes, CRM, Governance.
+
+## V222.12 First-action Telemetry Coverage
+- Covered: Command Center orientation CTA telemetry wiring, event registry usage, local-first metadata, navigation preservation.
+- Not changed: backend, routes, auth, CRM logic, external analytics, Governance.

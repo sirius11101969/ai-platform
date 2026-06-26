@@ -4,6 +4,7 @@ import { BellIcon, ChatIcon, HelpIcon } from '../components/icons/TopbarIcons.js
 import { useEffect, useMemo, useState } from 'react'
 import { fetchAiCommandCenterActions, fetchAiCommandCenterBrief, fetchAiCommandCenterFocus, fetchAiCommandCenterInbox, fetchAiCommandCenterKpi, fetchAiCommandCenterOperations, fetchAiCommandCenterPlanningMonthly, fetchAiSystemHealth } from '../services/api'
 import as6Robot from "../assets/as6-robot.png"
+import { AS6_PRODUCT_EVENTS, AS6_PRODUCT_EVENT_CATEGORIES, trackProductEvent } from '../product-intelligence'
 
 const demoMetrics = {
   revenueToday: '$1,248,890',
@@ -231,6 +232,21 @@ const [apiState, setApiState] = useState({})
     return items
   }, [monthly, actionQueue, inboxItems, healthSummary, businessSummary])
 
+  function handleFirstActionClick(action, destination) {
+    trackProductEvent({
+      event: AS6_PRODUCT_EVENTS.COMMAND_CENTER_FIRST_ACTION_CLICKED,
+      category: AS6_PRODUCT_EVENT_CATEGORIES.FIRST_ACTION,
+      journey: 'post_auth_command_center_activation',
+      screen: 'command_center',
+      source: 'command_center_orientation',
+      version: 'V222.12',
+      metadata: {
+        action,
+        destination,
+      },
+    })
+  }
+
   return (
     <main className="command-center-page" data-command-center-visual="premium-as6" data-as6-diagnostic-page="command-center-premium"><section className="command-hero" data-as6-diagnostic-hero="executive-command-center">
         <div>
@@ -251,9 +267,9 @@ const [apiState, setApiState] = useState({})
           <p>Command Center собирает заявки, CRM, AI-действия и выручку в один рабочий центр. Сначала проверьте лиды, затем решения AI, затем фокус по выручке.</p>
         </div>
         <div className="command-orientation-actions">
-          <a href="/crm?filter=priority">Проверить лиды</a>
-          <a href="/ai-approval-center">Одобрить AI-действия</a>
-          <a href="/dashboard/revenue">Посмотреть выручку</a>
+          <a href="/crm?filter=priority" onClick={() => handleFirstActionClick('check_leads', '/crm?filter=priority')}>Проверить лиды</a>
+          <a href="/ai-approval-center" onClick={() => handleFirstActionClick('approve_ai_actions', '/ai-approval-center')}>Одобрить AI-действия</a>
+          <a href="/dashboard/revenue" onClick={() => handleFirstActionClick('review_revenue', '/dashboard/revenue')}>Посмотреть выручку</a>
         </div>
       </section>
 

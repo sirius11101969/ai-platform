@@ -89,3 +89,10 @@
 - Runtime: runtime/as6-v222-11-product-intelligence-foundation
 - Status: ops/status/as6-v222-11-product-intelligence-foundation-status.md
 - Failure Classes: PRODUCT_INTELLIGENCE_FOUNDATION_MISSING, PRODUCT_EVENT_REGISTRY_MISSING, PRODUCT_TELEMETRY_PRIVACY_GUARD_MISSING, PRODUCT_EXTERNAL_ANALYTICS_DRIFT
+
+## V222.12 Command Center First-action Telemetry
+- Artifact: docs/PRODUCT/AS6_COMMAND_CENTER_FIRST_ACTION_TELEMETRY_V222_12.md
+- Stage Passport: docs/STAGE_PASSPORTS/V222_12_COMMAND_CENTER_FIRST_ACTION_TELEMETRY.md
+- Runtime: runtime/as6-v222-12-command-center-first-action-telemetry
+- Status: ops/status/as6-v222-12-command-center-first-action-telemetry-status.md
+- Failure Classes: PRODUCT_FIRST_ACTION_TELEMETRY_NOT_WIRED, PRODUCT_FIRST_ACTION_EVENT_REGISTRY_DRIFT, PRODUCT_FIRST_ACTION_TELEMETRY_PRIVACY_DRIFT

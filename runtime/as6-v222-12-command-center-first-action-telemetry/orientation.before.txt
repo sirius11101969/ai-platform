@@ -1,0 +1,5 @@
+247:      <section className="command-orientation" data-as6-first-time-orientation="v222-8" aria-label="Первый шаг в AS6">
+253:        <div className="command-orientation-actions">
+254:          <a href="/crm?filter=priority">Проверить лиды</a>
+255:          <a href="/ai-approval-center">Одобрить AI-действия</a>
+256:          <a href="/dashboard/revenue">Посмотреть выручку</a>

@@ -1,0 +1,8 @@
+# V222.12 Change Plan
+- Import Product Intelligence helpers into CommandCenterPage.
+- Add one local handleFirstActionClick function.
+- Attach telemetry to the three orientation CTAs only.
+- Keep href navigation unchanged.
+- Do not add external analytics.
+- Do not collect PII, secrets, tokens, email, IP, cookies or auth values.
+- Validate build, guards, secret scan, registry and runtime evidence.

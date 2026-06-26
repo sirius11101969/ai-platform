@@ -1,0 +1,5 @@
+235:  function handleFirstActionClick(action, destination) {
+237:      event: AS6_PRODUCT_EVENTS.COMMAND_CENTER_FIRST_ACTION_CLICKED,
+270:          <a href="/crm?filter=priority" onClick={() => handleFirstActionClick('check_leads', '/crm?filter=priority')}>Проверить лиды</a>
+271:          <a href="/ai-approval-center" onClick={() => handleFirstActionClick('approve_ai_actions', '/ai-approval-center')}>Одобрить AI-действия</a>
+272:          <a href="/dashboard/revenue" onClick={() => handleFirstActionClick('review_revenue', '/dashboard/revenue')}>Посмотреть выручку</a>

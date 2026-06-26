@@ -69,3 +69,9 @@
 - Reason: V222.10 confirmed that first-action behavior remains unmeasured.
 - Product Result: AS6 now has a foundation for future product evidence.
 - Engineering Result: modular frontend-only Product Intelligence foundation, no UI/backend/route change.
+
+## V222.12 Command Center First-action Telemetry
+- Decision: wire the three Command Center orientation CTAs to AS6 Product Intelligence.
+- Reason: V222.10 diagnosed missing first-action analytics and V222.11 created the foundation.
+- Product Result: first-action behavior can now become evidence.
+- Engineering Result: isolated frontend telemetry wiring, no route/backend/UI redesign.
