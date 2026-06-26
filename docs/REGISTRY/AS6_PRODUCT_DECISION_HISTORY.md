@@ -192,3 +192,8 @@ Use the Product Intelligence evidence chain as the default decision path for fut
 - Product Result: Recommendation AS6 remains visible under AI Copilot.
 - UX Result: first-step orientation no longer pushes the top dashboard down.
 - Next Stage: V222.29 Layout Effect Review.
+
+## V222.29 Product Recommendation Card Compact Etalon
+- Decision: make the visible Product Intelligence recommendation card narrower and more compact.
+- Product Result: right-rail recommendation now better matches the approved visual reference.
+- Next Stage: V222.30 Compact Card Effect Review.

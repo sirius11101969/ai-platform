@@ -121,3 +121,7 @@
 ## V222.28 Command Center Layout Alignment Coverage
 - Covered: hero/KPI/quick-actions order, right rail order, recommendation visibility, first-step above-fold removal, CSS visual alignment.
 - Not changed: backend, auth, CRM logic, telemetry storage, metrics, insights, Governance.
+
+## V222.29 Product Recommendation Card Compact Etalon Coverage
+- Covered: card compact width, CTA compact width, CTA height, CTA radius, internal spacing, visual density.
+- Not changed: backend, auth, CRM logic, recommendation engine, telemetry, metrics, insights, Governance.

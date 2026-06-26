@@ -3886,3 +3886,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Result: Command Center matches approved visual layout target.
 - Restore Tag: AS6_RESTORE_V222_28_COMMAND_CENTER_LAYOUT_ALIGNMENT_20260626T055542Z
 - Next Stage: V222.29 layout effect review.
+
+## V222.29 Product Recommendation Card Compact Etalon
+- Status: PASS
+- Result: Product Recommendation card visually compacted to approved etalon direction.
+- Restore Tag: AS6_RESTORE_V222_29_PRODUCT_RECOMMENDATION_CARD_COMPACT_ETALON_20260626T061733Z
+- Next Stage: V222.30 compact card effect review.

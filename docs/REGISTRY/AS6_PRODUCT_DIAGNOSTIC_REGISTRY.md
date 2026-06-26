@@ -207,3 +207,10 @@
 - Runtime: runtime/as6-v222-28-command-center-layout-alignment
 - Status: ops/status/as6-v222-28-command-center-layout-alignment-status.md
 - Failure Classes: COMMAND_CENTER_VISUAL_ALIGNMENT_GAP, COMMAND_CENTER_FIRST_STEP_ABOVE_FOLD_PUSH_DOWN, PRODUCT_RECOMMENDATION_RIGHT_RAIL_ORDER_DRIFT
+
+## V222.29 Product Recommendation Card Compact Etalon
+- Artifact: docs/PRODUCT/AS6_PRODUCT_RECOMMENDATION_CARD_COMPACT_ETALON_V222_29.md
+- Stage Passport: docs/STAGE_PASSPORTS/V222_29_PRODUCT_RECOMMENDATION_CARD_COMPACT_ETALON.md
+- Runtime: runtime/as6-v222-29-product-recommendation-card-compact-etalon
+- Status: ops/status/as6-v222-29-product-recommendation-card-compact-etalon-status.md
+- Failure Classes: PRODUCT_RECOMMENDATION_CARD_WIDTH_DRIFT, PRODUCT_RECOMMENDATION_CTA_WIDTH_DRIFT, PRODUCT_RECOMMENDATION_VISUAL_DENSITY_DRIFT

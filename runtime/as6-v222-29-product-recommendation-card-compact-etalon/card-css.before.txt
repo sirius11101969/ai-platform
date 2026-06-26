@@ -1,0 +1,8 @@
+540:.as6-product-recommendation-slot-card {
+547:.as6-product-recommendation-card {
+563:.as6-product-recommendation-card .command-card-head span {
+568:.as6-product-recommendation-card__summary {
+575:.as6-product-recommendation-card__action {
+581:.as6-product-recommendation-card__action small {
+587:.as6-product-recommendation-card__action strong {
+591:.as6-product-recommendation-card__button {

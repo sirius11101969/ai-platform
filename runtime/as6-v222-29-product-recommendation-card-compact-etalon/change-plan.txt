@@ -1,0 +1,7 @@
+# V222.29 Change Plan
+- Keep existing recommendation logic and placement.
+- Compact the recommendation card visually.
+- Make CTA button narrower, lower and centered.
+- Improve internal breathing room.
+- Preserve AS6 dark premium style.
+- Build, validate, commit, push and deploy to Docker nginx.

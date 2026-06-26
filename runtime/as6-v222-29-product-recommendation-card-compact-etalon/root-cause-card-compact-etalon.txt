@@ -1,0 +1,3 @@
+ROOT_CAUSE=Product Recommendation card is visible but visually wider and heavier than approved compact etalon
+FAILURE_CLASS=PRODUCT_RECOMMENDATION_CARD_WIDTH_DRIFT
+DETAIL=The approved visual reference shows a narrower recommendation card and a narrower/lower CTA button with more side breathing room.
