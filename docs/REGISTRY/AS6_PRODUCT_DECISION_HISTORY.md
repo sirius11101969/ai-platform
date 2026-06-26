@@ -209,3 +209,7 @@ Use the Product Intelligence evidence chain as the default decision path for fut
 ## V222.36 Product Recommendation DOM Geometry Diagnostic
 - Decision: no more Product Recommendation visual changes before DOM geometry and computed styles are captured.
 - UI Change: NONE.
+
+## V222.37 Production DOM Geometry Capture Recover
+- Decision: no more Product Recommendation visual changes until computed DOM geometry JSON is captured.
+- UI Change: NONE.

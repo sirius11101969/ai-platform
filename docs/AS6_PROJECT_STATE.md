@@ -3907,3 +3907,8 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Status: PASS
 - Result: DOM geometry diagnostics registered before further card changes.
 - Restore Tag: AS6_RESTORE_V222_36_PRODUCT_RECOMMENDATION_DOM_GEOMETRY_DIAGNOSTIC_20260626T085501Z
+
+## V222.37 Production DOM Geometry Capture Recover
+- Status: PASS
+- Result: Interrupted DOM geometry capture diagnosed and recovery probe registered.
+- Restore Tag: AS6_RESTORE_V222_37_PRODUCTION_DOM_GEOMETRY_CAPTURE_RECOVER_20260626T094942Z

@@ -1,0 +1,3 @@
+FINDING=Automatic computed DOM geometry is still pending because browser/CDP capture is unavailable or interrupted.
+NO_UI_CHANGE=TRUE
+REQUIRED_NEXT_ACTION=Run runtime/as6-v222-37-production-dom-geometry-capture-recover/manual-devtools-dom-geometry-probe.js in Chrome DevTools Console on https://www.as6.ru/command-center and save output as production-dom-geometry.manual.json before any UI fix.

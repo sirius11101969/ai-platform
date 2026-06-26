@@ -1,0 +1,5 @@
+ROOT_CAUSE=V222.37 attempted Chromium installation and stopped before computed DOM geometry capture
+FAILURE_CLASS=APT_CHROMIUM_INSTALL_INTERRUPTED
+FAILURE_CLASS=HEADLESS_BROWSER_CAPTURE_UNAVAILABLE
+FAILURE_CLASS=DOM_GEOMETRY_CAPTURE_RECOVERY_REQUIRED
+DETAIL=Recovery records apt/browser state and registers that UI must not be changed until computed geometry is captured by browser/CDP/Playwright/Puppeteer or manual DevTools JSON.

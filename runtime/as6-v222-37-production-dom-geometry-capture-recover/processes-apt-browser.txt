@@ -1,0 +1,8 @@
+root     1530698  0.2  1.5 100964 31016 ?        S    09:11   0:04 apt-get install -y chromium
+root     1531102  0.0  1.7  39492 35408 pts/1    Ss+  09:11   0:00 /usr/bin/dpkg --status-fd 68 --no-triggers --unpack --auto-deconfigure /var/cache/apt/archives/chromium-browser_2%3a1snap1-0ubuntu2_amd64.deb
+root     1531103  0.0  0.0   2800  1852 pts/1    S+   09:11   0:00 sh -c -- (test -x /usr/lib/needrestart/dpkg-status && /usr/lib/needrestart/dpkg-status || cat > /dev/null)
+root     1531104  0.0  0.0   2800   912 pts/1    S+   09:11   0:00 sh -c -- (test -x /usr/lib/needrestart/dpkg-status && /usr/lib/needrestart/dpkg-status || cat > /dev/null)
+root     1531105  0.0  0.0   2800  1856 pts/1    S+   09:11   0:00 /bin/sh /usr/lib/needrestart/dpkg-status
+root     1531112  0.0  0.7  24720 15960 pts/1    S+   09:11   0:00 /usr/bin/perl /usr/share/debconf/frontend /var/lib/dpkg/tmp.ci/preinst install
+root     1531120  0.0  0.0   2800  1888 pts/1    S+   09:11   0:00 /bin/sh /var/lib/dpkg/tmp.ci/preinst install
+root     1531127  0.0  0.1  10856  3564 pts/1    S+   09:11   0:00 whiptail --backtitle Package configuration --title Configuring chromium-browser --output-fd 11 --nocancel --msgbox Your system is unable to reach the snap store, please make sure you're  connected to the Internet and update any firewall or proxy settings as  needed so that you can reach the snap store.  You can manually check for connectivity by running "snap info chromium"  Aborting will cause the upgrade to fail and will require it to be  re-attempted once snapd is functional on the system.  Skipping will let the package upgrade continue but chromium will not be  functional until the chromium snap is installed. 17 77

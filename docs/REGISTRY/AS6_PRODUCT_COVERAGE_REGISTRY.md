@@ -136,3 +136,7 @@
 ## V222.36 Product Recommendation DOM Geometry Coverage
 - Covered: DOM geometry probe, computed style requirements, layout parent chain, source ownership, dist/public bundle evidence.
 - Not changed: UI, backend, auth, CRM logic, telemetry, product intelligence engine.
+
+## V222.37 Production DOM Geometry Capture Recover Coverage
+- Covered: apt/browser state, static DOM markers, source layout constraints, public JS/CSS markers, manual DevTools probe.
+- Not changed: UI, backend, auth, CRM logic, telemetry, product intelligence engine.
