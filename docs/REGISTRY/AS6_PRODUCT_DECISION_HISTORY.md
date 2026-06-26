@@ -106,3 +106,10 @@
 - Reason: V222.16 created insights, but decision evidence records were still missing.
 - Product Result: observations, telemetry, metrics and insights can become decision-ready evidence.
 - Engineering Result: isolated Product Intelligence decision-history extension.
+
+## V222.18 Product Decision Evidence Effect Review
+- Decision: close V222.17 as effective and validated for sample evidence records.
+- Reason: evidence bridge can create valid records and reject incomplete records.
+- Product Result: Product Intelligence can now feed Product Decision History with validated evidence records.
+- Engineering Result: no product code change; effect-review artifacts added.
+- Remaining Issue: automatic persistence into Product Decision History.

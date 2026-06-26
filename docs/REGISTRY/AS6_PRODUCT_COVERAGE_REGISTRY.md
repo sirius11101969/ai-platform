@@ -77,3 +77,7 @@
 ## V222.17 Product Decision Evidence Bridge Coverage
 - Covered: bridge record creation, bridge validation, schema version, decision status, Product Intelligence export, runtime sample validation.
 - Not changed: UI, routes, backend, auth, CRM, telemetry, metrics, insights, Governance.
+
+## V222.18 Product Decision Evidence Effect Coverage
+- Covered: evidence bridge creation, validation, required fields, Product Intelligence export, valid record acceptance, invalid record rejection.
+- Not covered: automatic persistence, real user evidence, decision automation.

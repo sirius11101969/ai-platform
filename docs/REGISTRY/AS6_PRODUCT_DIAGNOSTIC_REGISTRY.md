@@ -131,3 +131,10 @@
 - Runtime: runtime/as6-v222-17-product-decision-evidence-bridge
 - Status: ops/status/as6-v222-17-product-decision-evidence-bridge-status.md
 - Failure Classes: PRODUCT_DECISION_EVIDENCE_BRIDGE_MISSING, PRODUCT_DECISION_EVIDENCE_BRIDGE_EXPORT_GAP, PRODUCT_DECISION_EVIDENCE_BRIDGE_RUNTIME_GAP
+
+## V222.18 Product Decision Evidence Effect Review
+- Artifact: docs/PRODUCT/AS6_PRODUCT_DECISION_EVIDENCE_EFFECT_REVIEW_V222_18.md
+- Stage Passport: docs/STAGE_PASSPORTS/V222_18_PRODUCT_DECISION_EVIDENCE_EFFECT_REVIEW.md
+- Runtime: runtime/as6-v222-18-product-decision-evidence-effect-review
+- Status: ops/status/as6-v222-18-product-decision-evidence-effect-review-status.md
+- Failure Classes: PRODUCT_DECISION_EVIDENCE_EFFECT_UNREVIEWED, PRODUCT_DECISION_EVIDENCE_VALIDATION_GAP, PRODUCT_DECISION_EVIDENCE_AUTOMATION_PENDING

@@ -3826,3 +3826,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Result: Product Decision History evidence bridge added to Product Intelligence.
 - Restore Tag: AS6_RESTORE_V222_17_PRODUCT_DECISION_EVIDENCE_BRIDGE_20260626T021122Z
 - Next Stage: V222.18 Product Decision History evidence effect review.
+
+## V222.18 Product Decision Evidence Effect Review
+- Status: PASS
+- Result: Product Decision History evidence bridge effect confirmed.
+- Restore Tag: AS6_RESTORE_V222_18_PRODUCT_DECISION_EVIDENCE_EFFECT_REVIEW_20260626T021855Z
+- Next Stage: V222.19 Product Intelligence Decision History persistence diagnostic.

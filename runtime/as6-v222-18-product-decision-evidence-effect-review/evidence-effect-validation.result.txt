@@ -1,0 +1,6 @@
+AS6_PRODUCT_DECISION_EVIDENCE_EFFECT_REVIEW=PASS
+VALID_RECORD=true
+INVALID_RECORD=false
+MISSING_FIELDS=schemaVersion,telemetry,metrics,insight,recommendation,decisionStatus,nextStage,createdAt
+SCHEMA=as6-product-decision-evidence/v1
+NEXT_STAGE=V222.19

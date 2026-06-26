@@ -1,0 +1,11 @@
+24:export function createProductEvidenceBridgeRecord({
+31:  decisionStatus = 'pending_decision',
+32:  nextStage,
+35:    schemaVersion: 'as6-product-decision-evidence/v1',
+42:    decisionStatus,
+43:    nextStage,
+48:export function validateProductEvidenceBridgeRecord(record) {
+49:  const requiredFields = [
+57:    'decisionStatus',
+58:    'nextStage',
+62:  const missingFields = requiredFields.filter((field) => !record?.[field])
