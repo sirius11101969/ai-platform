@@ -6,4 +6,4 @@ export { readStoredProductEvents, writeStoredProductEvents } from './telemetry/t
 export { countProductEvents, getFirstActionEvents, groupFirstActionsByMetadata, buildFirstActionMetrics } from './metrics/metrics'
 export { buildProductInsights, getTopMetricEntry, buildFirstActionInsights } from './insights/insights'
 export { AS6_PRODUCT_KNOWLEDGE_LEVELS, createProductKnowledgeRecord } from './knowledge/productKnowledge'
-export { createProductDecisionRecord, createProductEvidenceBridgeRecord, validateProductEvidenceBridgeRecord } from './decision-history/decisionHistory'
+export { createProductDecisionRecord, createProductEvidenceBridgeRecord, validateProductEvidenceBridgeRecord, formatProductEvidenceBridgeRecordForDecisionHistory, createProductDecisionHistoryAppendEntry } from './decision-history/decisionHistory'

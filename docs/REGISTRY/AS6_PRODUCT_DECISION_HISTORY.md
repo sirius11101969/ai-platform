@@ -119,3 +119,9 @@
 - Reason: V222.18 validated evidence records, but persistence boundary remained unspecified.
 - Product Result: document-level append-only Product Decision History persistence is recommended as the next minimal cycle.
 - Engineering Result: no product code change; persistence diagnostic artifacts added.
+
+## V222.20 Decision History Evidence Persistence Helper
+- Decision: add a pure append-only formatter for Product Decision History evidence.
+- Reason: V222.19 diagnosed persistence boundary but helper was missing.
+- Product Result: validated evidence records can now become append-ready Decision History entries.
+- Engineering Result: isolated Product Intelligence helper; no automatic file writes.

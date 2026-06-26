@@ -1,0 +1,6 @@
+# V222.20 Change Plan
+- Extend Product Intelligence decision-history module.
+- Add formatProductEvidenceBridgeRecordForDecisionHistory.
+- Add createProductDecisionHistoryAppendEntry.
+- Keep helper pure: no filesystem writes, no backend calls, no UI changes.
+- Validate append-only markdown output with sample evidence.

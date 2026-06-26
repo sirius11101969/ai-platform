@@ -85,3 +85,7 @@
 ## V222.19 Decision History Persistence Coverage
 - Covered: persistence gap, persistence options, recommended write target, privacy-safe boundary.
 - Not changed: Product Intelligence code, UI, routes, backend, auth, telemetry, metrics, insights, Governance.
+
+## V222.20 Decision History Evidence Persistence Coverage
+- Covered: append helper, target, append-only mode, valid append entry, invalid append rejection, Product Intelligence export.
+- Not changed: UI, routes, backend, auth, CRM, telemetry, metrics, insights, Governance, automatic file writes.

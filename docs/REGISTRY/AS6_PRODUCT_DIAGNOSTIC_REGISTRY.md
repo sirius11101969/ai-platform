@@ -145,3 +145,10 @@
 - Runtime: runtime/as6-v222-19-decision-history-persistence-diagnostic
 - Status: ops/status/as6-v222-19-decision-history-persistence-diagnostic-status.md
 - Failure Classes: PRODUCT_DECISION_EVIDENCE_PERSISTENCE_UNSPECIFIED, PRODUCT_DECISION_HISTORY_WRITE_TARGET_UNSPECIFIED, PRODUCT_DECISION_EVIDENCE_DURABILITY_GAP
+
+## V222.20 Decision History Evidence Persistence Helper
+- Artifact: docs/PRODUCT/AS6_DECISION_HISTORY_EVIDENCE_PERSISTENCE_HELPER_V222_20.md
+- Stage Passport: docs/STAGE_PASSPORTS/V222_20_DECISION_HISTORY_EVIDENCE_PERSISTENCE_HELPER.md
+- Runtime: runtime/as6-v222-20-decision-history-evidence-persistence-helper
+- Status: ops/status/as6-v222-20-decision-history-evidence-persistence-helper-status.md
+- Failure Classes: PRODUCT_DECISION_HISTORY_EVIDENCE_APPEND_HELPER_MISSING, PRODUCT_DECISION_HISTORY_APPEND_FORMAT_GAP, PRODUCT_DECISION_HISTORY_APPEND_VALIDATION_GAP
