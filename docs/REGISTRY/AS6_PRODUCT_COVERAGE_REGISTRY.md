@@ -69,3 +69,7 @@
 ## V222.15 First-action Metrics Coverage
 - Covered: first-action count, evidence flag, grouping by action, grouping by destination, Product Intelligence export.
 - Not changed: UI, routes, backend, auth, CRM, telemetry wiring, Governance.
+
+## V222.16 First-action Insights Coverage
+- Covered: insight status, top action, top destination, Product Intelligence export, runtime sample validation.
+- Not changed: UI, routes, backend, auth, CRM, telemetry wiring, Governance.

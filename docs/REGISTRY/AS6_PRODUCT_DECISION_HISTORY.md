@@ -94,3 +94,9 @@
 - Reason: V222.14 validated runtime telemetry storage, but metrics were still pending.
 - Product Result: first-action evidence can now be counted and grouped.
 - Engineering Result: isolated Product Intelligence metrics extension.
+
+## V222.16 First-action Insights Foundation
+- Decision: add minimal first-action insights helpers before automating Product Decision History evidence.
+- Reason: V222.15 created metrics, but insights remained pending.
+- Product Result: first-action metrics can now produce decision-ready product signals.
+- Engineering Result: isolated Product Intelligence insights extension.

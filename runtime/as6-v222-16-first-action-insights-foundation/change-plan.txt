@@ -1,0 +1,7 @@
+# V222.16 Change Plan
+- Extend Product Intelligence insights module.
+- Add first-action insight builder.
+- Classify evidence as none/single/multiple.
+- Identify leading first action when available.
+- Keep output aggregate and privacy-safe.
+- Do not change UI, routes, backend, telemetry wiring, metrics implementation or Governance.

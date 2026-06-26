@@ -1,0 +1,7 @@
+AS6_FIRST_ACTION_INSIGHTS_VALIDATION=PASS
+EMPTY_STATUS=no_evidence
+SINGLE_STATUS=single_evidence_point
+MULTI_STATUS=evidence_available
+TOP_ACTION=check_leads
+TOP_ACTION_COUNT=2
+TOP_DESTINATION=/crm?filter=priority

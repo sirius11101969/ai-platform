@@ -1,0 +1,3 @@
+ROOT_CAUSE=first-action metrics exist but AS6 has no dedicated insight layer for interpreting them
+FAILURE_CLASS=PRODUCT_FIRST_ACTION_INSIGHTS_PENDING
+DETAIL=V222.15 added first-action metrics. V222.16 adds a minimal insights foundation that turns first-action metrics into simple decision-ready product signals without UI, backend, external analytics or PII.

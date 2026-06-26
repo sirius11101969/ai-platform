@@ -117,3 +117,10 @@
 - Runtime: runtime/as6-v222-15-first-action-metrics-foundation
 - Status: ops/status/as6-v222-15-first-action-metrics-foundation-status.md
 - Failure Classes: PRODUCT_FIRST_ACTION_METRICS_PENDING, PRODUCT_FIRST_ACTION_METRICS_EXPORT_GAP, PRODUCT_FIRST_ACTION_METRICS_RUNTIME_GAP
+
+## V222.16 First-action Insights Foundation
+- Artifact: docs/PRODUCT/AS6_FIRST_ACTION_INSIGHTS_FOUNDATION_V222_16.md
+- Stage Passport: docs/STAGE_PASSPORTS/V222_16_FIRST_ACTION_INSIGHTS_FOUNDATION.md
+- Runtime: runtime/as6-v222-16-first-action-insights-foundation
+- Status: ops/status/as6-v222-16-first-action-insights-foundation-status.md
+- Failure Classes: PRODUCT_FIRST_ACTION_INSIGHTS_PENDING, PRODUCT_FIRST_ACTION_INSIGHTS_EXPORT_GAP, PRODUCT_FIRST_ACTION_INSIGHTS_RUNTIME_GAP
