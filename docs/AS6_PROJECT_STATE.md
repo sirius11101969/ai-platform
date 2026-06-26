@@ -3850,3 +3850,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Result: append-only Product Decision History evidence helper effect confirmed.
 - Restore Tag: AS6_RESTORE_V222_21_APPEND_HELPER_EFFECT_REVIEW_20260626T024526Z
 - Next Stage: V222.22 first append-only evidence entry into Product Decision History.
+
+## V222.22 First Decision History Evidence Entry
+- Status: PASS
+- Result: first append-only Product Decision History evidence entry added.
+- Restore Tag: AS6_RESTORE_V222_22_FIRST_DECISION_HISTORY_EVIDENCE_ENTRY_20260626T025959Z
+- Next Stage: V222.23 first evidence entry effect review.

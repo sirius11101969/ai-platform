@@ -93,3 +93,7 @@
 ## V222.21 Append Helper Effect Coverage
 - Covered: append helper effect, target, mode, valid markdown formatting, invalid record rejection, no automatic write behavior.
 - Not covered: actual durable append entry, review workflow, backend persistence.
+
+## V222.22 First Decision History Evidence Coverage
+- Covered: first durable evidence append, schema, decision status, next stage, duplicate prevention.
+- Not changed: UI, routes, backend, auth, CRM, telemetry, metrics, insights, helper code, Governance.

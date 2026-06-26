@@ -1,0 +1,3 @@
+ROOT_CAUSE=previous V222.22 paste was interrupted by heredoc/quote corruption
+FAILURE_CLASS=TERMINAL_HEREDOC_PASTE_CORRUPTION
+DETAIL=No repository changes were made. Safe repair uses shorter markdown-only append without nested code fences.

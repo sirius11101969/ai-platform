@@ -131,3 +131,34 @@
 - Reason: append helper formats valid records, rejects invalid records and performs no automatic writes.
 - Product Result: Product Decision History evidence persistence is ready for first reviewed append entry.
 - Engineering Result: no product code change; effect-review artifacts added.
+
+## V222.22 Product Decision Evidence
+
+- Schema: as6-product-decision-evidence/v1
+- Decision Status: pending_decision
+- Next Stage: V222.23
+- Evidence Type: append-only durable Product Decision History entry
+- Privacy: aggregate, no personal data, no secrets, no auth values, no cookies, no IP
+
+### Observation
+AS6 completed the first Product Intelligence evidence chain: telemetry foundation, runtime storage validation, metrics, insights, evidence bridge, append helper and append helper effect review.
+
+### Telemetry Evidence
+- Source: AS6 Product Intelligence
+- Event: command_center_first_action_clicked
+- Scope: stage-level evidence
+- Runtime validation: V222.14
+
+### Metrics Evidence
+- Foundation: V222.15
+- Metrics available: firstActionCount, hasFirstActionEvidence, byAction, byDestination
+- Status: foundation_ready
+
+### Insight Evidence
+- Foundation: V222.16
+- Insight statuses available: no_evidence, single_evidence_point, evidence_available
+- Status: foundation_ready
+
+### Recommendation
+Use the Product Intelligence evidence chain as the default decision path for future V222 product cycles: telemetry evidence first, then metrics, then insights, then Product Decision History entry, then effect review.
+

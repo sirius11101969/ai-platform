@@ -159,3 +159,9 @@
 - Runtime: runtime/as6-v222-21-append-helper-effect-review
 - Status: ops/status/as6-v222-21-append-helper-effect-review-status.md
 - Failure Classes: PRODUCT_DECISION_HISTORY_APPEND_EFFECT_UNREVIEWED, PRODUCT_DECISION_HISTORY_AUTO_WRITE_DRIFT, PRODUCT_DECISION_HISTORY_INVALID_APPEND_ACCEPTANCE
+
+## V222.22 First Decision History Evidence Entry
+- Artifact: docs/PRODUCT/AS6_FIRST_DECISION_HISTORY_EVIDENCE_ENTRY_V222_22.md
+- Stage Passport: docs/STAGE_PASSPORTS/V222_22_FIRST_DECISION_HISTORY_EVIDENCE_ENTRY.md
+- Runtime: runtime/as6-v222-22-first-decision-history-evidence-entry
+- Status: ops/status/as6-v222-22-first-decision-history-evidence-entry-status.md
