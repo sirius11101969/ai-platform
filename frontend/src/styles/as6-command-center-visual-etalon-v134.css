@@ -535,3 +535,64 @@ body.as6-command-center-reference-guard-active .command-orientation-actions a {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* AS6 V222.28 — Product Recommendation visible right-rail alignment */
+.as6-product-recommendation-slot-card {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.as6-product-recommendation-card {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 22px;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(34, 211, 238, 0.12), transparent 32%),
+    radial-gradient(circle at 0% 100%, rgba(139, 92, 246, 0.14), transparent 34%),
+    linear-gradient(180deg, rgba(18, 22, 38, 0.98), rgba(10, 14, 28, 0.98));
+  border: 1px solid rgba(90, 120, 255, 0.22);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+    0 20px 60px rgba(0, 0, 0, 0.45);
+}
+
+.as6-product-recommendation-card .command-card-head span {
+  color: #35f5a3;
+  font-weight: 900;
+}
+
+.as6-product-recommendation-card__summary {
+  margin: 0;
+  color: rgba(238, 244, 255, 0.88);
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+.as6-product-recommendation-card__action {
+  align-items: flex-start;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.as6-product-recommendation-card__action small {
+  margin-top: 4px;
+  color: rgba(191, 203, 226, 0.78);
+  line-height: 1.35;
+}
+
+.as6-product-recommendation-card__action strong {
+  color: #35f5a3;
+}
+
+.as6-product-recommendation-card__button {
+  width: 100%;
+  min-height: 56px;
+  border-radius: 16px;
+  font-weight: 900;
+  background: linear-gradient(90deg, #8b5cf6, #22d3ee);
+  color: #ffffff;
+}

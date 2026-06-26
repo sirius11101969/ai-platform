@@ -186,3 +186,9 @@ Use the Product Intelligence evidence chain as the default decision path for fut
 - Reason: user screenshot/HTML showed no visible ProductRecommendationCard after V222.26.
 - Product Result: recommendation is now placed before "Следующее лучшее действие".
 - Next Stage: V222.28 Recommendation Visibility Effect Review.
+
+## V222.28 Command Center Layout Alignment
+- Decision: align Command Center layout with approved screenshot.
+- Product Result: Recommendation AS6 remains visible under AI Copilot.
+- UX Result: first-step orientation no longer pushes the top dashboard down.
+- Next Stage: V222.29 Layout Effect Review.

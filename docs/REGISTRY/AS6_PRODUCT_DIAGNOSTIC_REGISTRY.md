@@ -200,3 +200,10 @@
 - Runtime: runtime/as6-v222-27-product-recommendation-visible-placement
 - Status: ops/status/as6-v222-27-product-recommendation-visible-placement-status.md
 - Failure Classes: PRODUCT_RECOMMENDATION_INVISIBLE_PLACEMENT, PRODUCT_RECOMMENDATION_RIGHT_RAIL_SLOT_MISSING, PRODUCT_RECOMMENDATION_VISUAL_INTEGRATION_GAP
+
+## V222.28 Command Center Layout Alignment
+- Artifact: docs/PRODUCT/AS6_COMMAND_CENTER_LAYOUT_ALIGNMENT_V222_28.md
+- Stage Passport: docs/STAGE_PASSPORTS/V222_28_COMMAND_CENTER_LAYOUT_ALIGNMENT.md
+- Runtime: runtime/as6-v222-28-command-center-layout-alignment
+- Status: ops/status/as6-v222-28-command-center-layout-alignment-status.md
+- Failure Classes: COMMAND_CENTER_VISUAL_ALIGNMENT_GAP, COMMAND_CENTER_FIRST_STEP_ABOVE_FOLD_PUSH_DOWN, PRODUCT_RECOMMENDATION_RIGHT_RAIL_ORDER_DRIFT

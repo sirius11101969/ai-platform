@@ -265,18 +265,7 @@ const [apiState, setApiState] = useState({})
         </div>
       </section>
 
-      <section className="command-orientation" data-as6-first-time-orientation="v222-8" aria-label="Первый шаг в AS6">
-        <div className="command-orientation-copy">
-          <span>Первый шаг</span>
-          <h2>Начните с главного: посмотрите, где сейчас деньги, клиенты и решения.</h2>
-          <p>Command Center собирает заявки, CRM, AI-действия и выручку в один рабочий центр. Сначала проверьте лиды, затем решения AI, затем фокус по выручке.</p>
-        </div>
-        <div className="command-orientation-actions">
-          <a href="/crm?filter=priority" onClick={() => handleFirstActionClick('check_leads', '/crm?filter=priority')}>Проверить лиды</a>
-          <a href="/ai-approval-center" onClick={() => handleFirstActionClick('approve_ai_actions', '/ai-approval-center')}>Одобрить AI-действия</a>
-          <a href="/dashboard/revenue" onClick={() => handleFirstActionClick('review_revenue', '/dashboard/revenue')}>Посмотреть выручку</a>
-        </div>
-      </section>
+      {/* AS6 V222.28: first-step orientation preserved for controlled future placement, hidden from above-fold layout. */}
 
       <section className="command-kpis" data-command-kpi-row data-as6-diagnostic-kpis="executive-kpi-row">
         {kpis.map((item) => <article className={`command-kpi ${item.tone}`} key={item.key}>
@@ -346,13 +335,13 @@ const [apiState, setApiState] = useState({})
               <a className="copilot-action-link" href="/ai-executive-brain">Спросить AI Copilot</a>
             </div>
           </article>
-          <article className="command-card event-card"><div className="command-card-head"><h2>Последние события</h2><a href="/dashboard">Все</a></div>{events.map((event) => <div className="event-row" key={event.text}><b>{event.icon}</b><span>{event.text}</span><time>{event.time}</time></div>)}</article>
           <article
             className="command-card as6-product-recommendation-slot-card"
             data-as6-product-recommendation-slot="v222-27"
           >
             <ProductRecommendationCard recommendationState={commandCenterRecommendation} />
-          </article><article className="command-card next-action-card"><h2>Следующее лучшее действие</h2>{nextActions.map((action) => <div className="next-action" key={action.label}><b>{action.icon}</b><span>{action.label}<small>{action.note}</small></span><strong>{action.value}</strong></div>)}<div className="expected-effect"><span>Ожидаемый эффект</span><strong>+$8,900</strong></div></article>
+          </article><article className="command-card event-card"><div className="command-card-head"><h2>Последние события</h2><a href="/dashboard">Все</a></div>{events.map((event) => <div className="event-row" key={event.text}><b>{event.icon}</b><span>{event.text}</span><time>{event.time}</time></div>)}</article>
+          <article className="command-card next-action-card"><h2>Следующее лучшее действие</h2>{nextActions.map((action) => <div className="next-action" key={action.label}><b>{action.icon}</b><span>{action.label}<small>{action.note}</small></span><strong>{action.value}</strong></div>)}<div className="expected-effect"><span>Ожидаемый эффект</span><strong>+$8,900</strong></div></article>
         </aside>
       </section>
 

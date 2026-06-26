@@ -8,7 +8,7 @@ export default function ProductRecommendationCard({ recommendationState }) {
   return (
     <article
       className="command-card as6-product-recommendation-card"
-      data-as6-product-recommendation="v222-27"
+      data-as6-product-recommendation="v222-28"
     >
       <div className="command-card-head">
         <h2>Рекомендация AS6</h2>
@@ -29,9 +29,9 @@ export default function ProductRecommendationCard({ recommendationState }) {
       </div>
 
       <a
-        className="copilot-action-link"
+        className="copilot-action-link as6-product-recommendation-card__button"
         href={recommendation.href}
-        data-as6-product-recommendation-action="v222-27"
+        data-as6-product-recommendation-action="v222-28"
       >
         {recommendation.actionLabel}
       </a>

@@ -1,0 +1,7 @@
+# V222.28 Change Plan
+- Keep the recommendation in the right rail.
+- Ensure right rail order: AI Copilot, Recommendation AS6, Recent Events, Next Best Action.
+- Move the first-step orientation block out of the above-fold hero area by disabling its full render for now.
+- Preserve first-action telemetry links in code for future controlled placement.
+- Improve ProductRecommendationCard visual style to match approved screenshot.
+- Build, validate, commit, push, then deploy to Docker nginx root.

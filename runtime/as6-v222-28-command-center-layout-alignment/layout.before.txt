@@ -1,0 +1,8 @@
+268:      <section className="command-orientation" data-as6-first-time-orientation="v222-8" aria-label="Первый шаг в AS6">
+269:        <div className="command-orientation-copy">
+274:        <div className="command-orientation-actions">
+342:          <article className="command-card copilot-hero" data-copilot-hero>
+349:          <article className="command-card event-card"><div className="command-card-head"><h2>Последние события</h2><a href="/dashboard">Все</a></div>{events.map((event) => <div className="event-row" key={event.text}><b>{event.icon}</b><span>{event.text}</span><time>{event.time}</time></div>)}</article>
+351:            className="command-card as6-product-recommendation-slot-card"
+352:            data-as6-product-recommendation-slot="v222-27"
+355:          </article><article className="command-card next-action-card"><h2>Следующее лучшее действие</h2>{nextActions.map((action) => <div className="next-action" key={action.label}><b>{action.icon}</b><span>{action.label}<small>{action.note}</small></span><strong>{action.value}</strong></div>)}<div className="expected-effect"><span>Ожидаемый эффект</span><strong>+$8,900</strong></div></article>
