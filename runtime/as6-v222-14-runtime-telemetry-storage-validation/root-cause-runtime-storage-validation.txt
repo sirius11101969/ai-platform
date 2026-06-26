@@ -1,0 +1,3 @@
+ROOT_CAUSE=first-action telemetry was statically confirmed but runtime localStorage behavior was not validated
+FAILURE_CLASS=PRODUCT_TELEMETRY_RUNTIME_STORAGE_UNVALIDATED
+DETAIL=V222.13 confirmed static telemetry wiring. V222.14 validates runtime storage behavior for Product Intelligence without browser automation, external analytics, backend dependency, PII or blockedFieldBs.

@@ -103,3 +103,10 @@
 - Runtime: runtime/as6-v222-13-first-action-telemetry-effect-review
 - Status: ops/status/as6-v222-13-first-action-telemetry-effect-review-status.md
 - Failure Classes: PRODUCT_FIRST_ACTION_TELEMETRY_RUNTIME_UNVALIDATED, PRODUCT_FIRST_ACTION_METRICS_PENDING, PRODUCT_FIRST_ACTION_INSIGHTS_PENDING, DIAGNOSTIC_COUNTER_FALSE_POSITIVE
+
+## V222.14 Runtime Telemetry Storage Validation
+- Artifact: docs/PRODUCT/AS6_RUNTIME_TELEMETRY_STORAGE_VALIDATION_V222_14.md
+- Stage Passport: docs/STAGE_PASSPORTS/V222_14_RUNTIME_TELEMETRY_STORAGE_VALIDATION.md
+- Runtime: runtime/as6-v222-14-runtime-telemetry-storage-validation
+- Status: ops/status/as6-v222-14-runtime-telemetry-storage-validation-status.md
+- Failure Classes: PRODUCT_TELEMETRY_RUNTIME_STORAGE_UNVALIDATED, PRODUCT_TELEMETRY_SANITIZATION_RUNTIME_GAP, PRODUCT_TELEMETRY_DISABLE_CONTROL_RUNTIME_GAP, PRODUCT_TELEMETRY_UNREGISTERED_EVENT_RUNTIME_GAP

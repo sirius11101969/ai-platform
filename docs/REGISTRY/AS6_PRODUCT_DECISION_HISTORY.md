@@ -82,3 +82,9 @@
 - Product Result: first-action evidence path exists.
 - Engineering Result: no product code change; effect-review artifacts added.
 - Remaining Issue: runtime browser event storage validation.
+
+## V222.14 Runtime Telemetry Storage Validation
+- Decision: validate Product Intelligence runtime storage before deriving metrics.
+- Reason: V222.13 confirmed static wiring but not runtime storage behavior.
+- Product Result: first-action telemetry now has runtime storage evidence.
+- Engineering Result: no product code change; runtime validation artifacts added.

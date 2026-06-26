@@ -1,0 +1,8 @@
+# V222.14 Change Plan
+- Add a runtime validation script for Product Intelligence localStorage behavior.
+- Use browser-like window.localStorage simulation.
+- Validate registered first-action event storage.
+- Validate forbidden metadata sanitization.
+- Validate disabled telemetry skip behavior.
+- Validate unregistered event rejection.
+- Do not change UI, routes, backend or telemetry implementation.
