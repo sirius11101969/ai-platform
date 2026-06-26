@@ -3912,3 +3912,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Status: PASS
 - Result: Interrupted DOM geometry capture diagnosed and recovery probe registered.
 - Restore Tag: AS6_RESTORE_V222_37_PRODUCTION_DOM_GEOMETRY_CAPTURE_RECOVER_20260626T094942Z
+
+## V222.38 Docker Playwright DOM Geometry Capture
+- Status: PASS
+- Result: Docker Playwright geometry capture stage completed.
+- Capture Result: DOM_GEOMETRY_CAPTURE=FAILED
+- Restore Tag: AS6_RESTORE_V222_38_DOCKER_PLAYWRIGHT_DOM_GEOMETRY_CAPTURE_20260626T102204Z

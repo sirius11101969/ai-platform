@@ -1,0 +1,4 @@
+ROOT_CAUSE=V222.37 recover registered manual DevTools geometry requirement, but automatic browser capture was still missing.
+FAILURE_CLASS=MANUAL_DEVTOOLS_GEOMETRY_REQUIRED
+FAILURE_CLASS=DOCKER_PLAYWRIGHT_GEOMETRY_CAPTURE_REQUIRED
+DETAIL=V222.38 attempts real production DOM geometry capture through a Docker Playwright browser without changing UI.

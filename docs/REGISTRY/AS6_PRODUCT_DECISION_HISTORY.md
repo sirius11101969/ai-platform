@@ -213,3 +213,8 @@ Use the Product Intelligence evidence chain as the default decision path for fut
 ## V222.37 Production DOM Geometry Capture Recover
 - Decision: no more Product Recommendation visual changes until computed DOM geometry JSON is captured.
 - UI Change: NONE.
+
+## V222.38 Docker Playwright DOM Geometry Capture
+- Decision: use browser-grade geometry evidence before any further Product Recommendation UI change.
+- UI Change: NONE.
+- Capture Result: DOM_GEOMETRY_CAPTURE=FAILED

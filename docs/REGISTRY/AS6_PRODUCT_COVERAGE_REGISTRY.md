@@ -140,3 +140,7 @@
 ## V222.37 Production DOM Geometry Capture Recover Coverage
 - Covered: apt/browser state, static DOM markers, source layout constraints, public JS/CSS markers, manual DevTools probe.
 - Not changed: UI, backend, auth, CRM logic, telemetry, product intelligence engine.
+
+## V222.38 Docker Playwright DOM Geometry Coverage
+- Covered: Docker Playwright capture, geometry JSON, screenshot evidence, source layout constraints, public JS/CSS markers.
+- Not changed: UI, backend, auth, CRM logic, telemetry, product intelligence engine.

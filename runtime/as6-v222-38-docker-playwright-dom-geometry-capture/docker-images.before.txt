@@ -1,0 +1,8 @@
+REPOSITORY                     TAG             SIZE
+ai-platform-nginx              latest          103MB
+ai-platform-backend            latest          224MB
+nginx                          alpine          102MB
+postgres                       15              633MB
+redis                          7-alpine        57.8MB
+node                           20-alpine       194MB
+mcr.microsoft.com/playwright   v1.49.1-noble   3.47GB
