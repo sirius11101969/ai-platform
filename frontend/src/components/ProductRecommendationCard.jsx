@@ -1,41 +1,41 @@
 const cardStyle = {
-  width: 'calc(100% - 34px)',
-  maxWidth: '342px',
-  marginLeft: 'auto',
-  marginRight: 'auto',
-  padding: '17px 18px 18px',
-  gap: '12px',
-  borderRadius: '19px',
+  width: '100%',
+  maxWidth: 'none',
+  marginLeft: '0',
+  marginRight: '0',
+  padding: '18px 20px 19px',
+  gap: '13px',
+  borderRadius: '20px',
 }
 
 const summaryStyle = {
-  maxWidth: '88%',
-  fontSize: '12.25px',
-  lineHeight: '1.35',
+  maxWidth: '100%',
+  fontSize: '12.75px',
+  lineHeight: '1.38',
 }
 
 const actionStyle = {
-  paddingTop: '9px',
-  gap: '8px',
+  paddingTop: '10px',
+  gap: '10px',
 }
 
 const actionTextStyle = {
-  fontSize: '12.25px',
-  lineHeight: '1.22',
+  fontSize: '12.75px',
+  lineHeight: '1.24',
 }
 
 const actionSmallStyle = {
-  fontSize: '10.25px',
-  lineHeight: '1.2',
+  fontSize: '10.75px',
+  lineHeight: '1.22',
 }
 
 const buttonStyle = {
-  width: '80%',
-  minHeight: '42px',
-  height: '42px',
-  margin: '2px auto 0',
-  borderRadius: '12px',
-  fontSize: '13px',
+  width: '86%',
+  minHeight: '44px',
+  height: '44px',
+  margin: '4px auto 0',
+  borderRadius: '13px',
+  fontSize: '13.5px',
 }
 
 export default function ProductRecommendationCard({ recommendationState }) {
@@ -48,7 +48,7 @@ export default function ProductRecommendationCard({ recommendationState }) {
   return (
     <article
       className="command-card as6-product-recommendation-card"
-      data-as6-product-recommendation="v222-29-inline"
+      data-as6-product-recommendation="v222-29-width-balance"
       style={cardStyle}
     >
       <div className="command-card-head">
@@ -72,7 +72,7 @@ export default function ProductRecommendationCard({ recommendationState }) {
       <a
         className="copilot-action-link as6-product-recommendation-card__button"
         href={recommendation.href}
-        data-as6-product-recommendation-action="v222-29-inline"
+        data-as6-product-recommendation-action="v222-29-width-balance"
         style={buttonStyle}
       >
         {recommendation.actionLabel}
