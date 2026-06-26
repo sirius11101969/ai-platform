@@ -335,10 +335,7 @@ const [apiState, setApiState] = useState({})
               <a className="copilot-action-link" href="/ai-executive-brain">Спросить AI Copilot</a>
             </div>
           </article>
-          <article
-            className="command-card as6-product-recommendation-slot-card"
-            data-as6-product-recommendation-slot="v222-42-reference-css-owned"
-          >
+          <article className="as6-etalon-recommendation-slot" data-as6-recommendation-slot="etalon-final">
             <ProductRecommendationCard recommendationState={commandCenterRecommendation} />
           </article><article className="command-card event-card"><div className="command-card-head"><h2>Последние события</h2><a href="/dashboard">Все</a></div>{events.map((event) => <div className="event-row" key={event.text}><b>{event.icon}</b><span>{event.text}</span><time>{event.time}</time></div>)}</article>
           <article className="command-card next-action-card"><h2>Следующее лучшее действие</h2>{nextActions.map((action) => <div className="next-action" key={action.label}><b>{action.icon}</b><span>{action.label}<small>{action.note}</small></span><strong>{action.value}</strong></div>)}<div className="expected-effect"><span>Ожидаемый эффект</span><strong>+$8,900</strong></div></article>
