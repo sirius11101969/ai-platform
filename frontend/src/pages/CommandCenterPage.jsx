@@ -337,10 +337,10 @@ const [apiState, setApiState] = useState({})
           </article>
           <article
             className="command-card as6-product-recommendation-slot-card"
-            data-as6-product-recommendation-slot="v222-30-etalon"
+            data-as6-product-recommendation-slot="v222-31-etalon-final"
             style={{
-              width: 'calc(100% - 54px)',
-              maxWidth: '318px',
+              width: '100%',
+              maxWidth: 'none',
               marginLeft: 'auto',
               marginRight: 'auto',
               padding: 0,
