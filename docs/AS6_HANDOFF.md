@@ -1,8 +1,8 @@
 # AS6 HANDOFF
 
-LAST_COMPLETED_STAGE=V222_57
+LAST_COMPLETED_STAGE=V222_58
 PROJECT_READINESS=99%
-NEXT_RECOMMENDED_STAGE=V222_58 — Browser visual verification of etalon recommendation card
+NEXT_RECOMMENDED_STAGE=V222_59 — CRM migration to AS6 Design System
 SAFE_TO_CHANGE=YES
 
 Continue from current Git HEAD.

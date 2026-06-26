@@ -390,3 +390,13 @@
 - Runtime evidence: runtime/as6-v222-57-repair/
 
 - Failure class: NODE_EVAL_REGEX_ESCAPE_FAILURE_AND_LEGACY_CARD_CSS_CONFLICT
+
+## V222_58 Design System Foundation
+
+- Diagnostic: ops/bin/as6-diagnose-design-system-foundation-v222-58
+
+- Control: ops/bin/as6-control-design-system-foundation-v222-58
+
+- Runtime evidence: runtime/as6-v222-58/
+
+- Failure class: FRAGMENTED_UI_VISUAL_LANGUAGE

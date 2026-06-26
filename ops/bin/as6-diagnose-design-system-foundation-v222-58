@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f docs/AS6_DESIGN_SYSTEM.md
+test -f frontend/src/design-system/index.js
+test -f frontend/src/design-system/components/BaseCard.jsx
+test -f frontend/src/design-system/components/Button.jsx
+grep -q 'SOURCE_OF_TRUTH=Command Center' docs/AS6_DESIGN_SYSTEM.md
+printf '%s\n' 'AS6_DESIGN_SYSTEM_FOUNDATION=PASS'

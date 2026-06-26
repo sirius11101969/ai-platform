@@ -1,0 +1,16 @@
+.as6-ds-button {
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(120, 190, 255, .22);
+  font-weight: 900;
+  cursor: pointer;
+}
+.as6-ds-button--primary {
+  background: linear-gradient(100deg, #7c2cff, #2563ff 46%, #13d8ff);
+  color: #fff;
+}
+.as6-ds-button--secondary {
+  background: rgba(255,255,255,.08);
+  color: #f6f9ff;
+}

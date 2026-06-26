@@ -1,0 +1,12 @@
+ M docs/AS6_CODEX_PROMPT.md
+ M docs/AS6_HANDOFF.md
+ M docs/AS6_MASTER_CONTEXT.md
+ M docs/AS6_PROJECT_STATE.md
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? docs/AS6_DESIGN_SYSTEM.md
+?? frontend/src/design-system/
+?? ops/bin/as6-control-design-system-foundation-v222-58
+?? ops/bin/as6-diagnose-design-system-foundation-v222-58
+?? ops/governance/as6-design-system-foundation-v222-58.md

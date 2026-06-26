@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-design-system-foundation-v222-58
+printf '%s\n' 'AS6_CONTROL_DESIGN_SYSTEM_FOUNDATION_V222_58=PASS'
