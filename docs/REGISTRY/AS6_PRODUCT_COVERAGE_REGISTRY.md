@@ -57,3 +57,7 @@
 ## V222.12 First-action Telemetry Coverage
 - Covered: Command Center orientation CTA telemetry wiring, event registry usage, local-first metadata, navigation preservation.
 - Not changed: backend, routes, auth, CRM logic, external analytics, Governance.
+
+## V222.13 First-action Telemetry Effect Coverage
+- Covered: telemetry import, event handler, registered event usage, first-action category, three CTA actions, href preservation, privacy sanitizer, external analytics absence.
+- Not covered: runtime browser storage, real click evidence, metrics, insights.

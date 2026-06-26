@@ -3796,3 +3796,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Result: three Command Center first-action CTAs wired to Product Intelligence.
 - Restore Tag: AS6_RESTORE_V222_12_COMMAND_CENTER_FIRST_ACTION_TELEMETRY_20260626T005316Z
 - Next Stage: V222.13 first-action telemetry effect review.
+
+## V222.13 First-action Telemetry Effect Review
+- Status: PASS
+- Result: V222.12 first-action telemetry static effect confirmed.
+- Restore Tag: AS6_RESTORE_V222_13_FIRST_ACTION_TELEMETRY_EFFECT_REVIEW_REPAIR_20260626T012501Z
+- Next Stage: V222.14 runtime browser telemetry storage validation.

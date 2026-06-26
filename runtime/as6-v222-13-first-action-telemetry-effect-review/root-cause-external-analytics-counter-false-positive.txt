@@ -1,0 +1,3 @@
+ROOT_CAUSE=external analytics diagnostic counter used grep -Rci and produced file:0 lines
+FAILURE_CLASS=DIAGNOSTIC_COUNTER_FALSE_POSITIVE
+DETAIL=grep -Rci returns per-file zero-count lines. The V222.13 diagnostic interpreted non-empty file:0 output as external analytics presence even when no matches existed.

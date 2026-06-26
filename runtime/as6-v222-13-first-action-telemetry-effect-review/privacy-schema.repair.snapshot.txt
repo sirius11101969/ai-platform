@@ -1,0 +1,9 @@
+16:export const AS6_FORBIDDEN_METADATA_KEYS = Object.freeze([
+17:  'email',
+19:  'password',
+20:  'secret',
+21:  'token',
+24:  'ip',
+25:  'cookie',
+27:  'authorization',
+37:    const forbidden = AS6_FORBIDDEN_METADATA_KEYS.some((blocked) =>

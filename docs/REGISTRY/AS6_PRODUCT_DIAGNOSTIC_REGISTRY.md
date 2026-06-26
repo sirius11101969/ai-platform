@@ -96,3 +96,10 @@
 - Runtime: runtime/as6-v222-12-command-center-first-action-telemetry
 - Status: ops/status/as6-v222-12-command-center-first-action-telemetry-status.md
 - Failure Classes: PRODUCT_FIRST_ACTION_TELEMETRY_NOT_WIRED, PRODUCT_FIRST_ACTION_EVENT_REGISTRY_DRIFT, PRODUCT_FIRST_ACTION_TELEMETRY_PRIVACY_DRIFT
+
+## V222.13 First-action Telemetry Effect Review
+- Artifact: docs/PRODUCT/AS6_FIRST_ACTION_TELEMETRY_EFFECT_REVIEW_V222_13.md
+- Stage Passport: docs/STAGE_PASSPORTS/V222_13_FIRST_ACTION_TELEMETRY_EFFECT_REVIEW.md
+- Runtime: runtime/as6-v222-13-first-action-telemetry-effect-review
+- Status: ops/status/as6-v222-13-first-action-telemetry-effect-review-status.md
+- Failure Classes: PRODUCT_FIRST_ACTION_TELEMETRY_RUNTIME_UNVALIDATED, PRODUCT_FIRST_ACTION_METRICS_PENDING, PRODUCT_FIRST_ACTION_INSIGHTS_PENDING, DIAGNOSTIC_COUNTER_FALSE_POSITIVE

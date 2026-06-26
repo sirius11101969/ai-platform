@@ -75,3 +75,10 @@
 - Reason: V222.10 diagnosed missing first-action analytics and V222.11 created the foundation.
 - Product Result: first-action behavior can now become evidence.
 - Engineering Result: isolated frontend telemetry wiring, no route/backend/UI redesign.
+
+## V222.13 First-action Telemetry Effect Review
+- Decision: close V222.12 as statically effective, but not runtime-validated.
+- Reason: telemetry wiring, registry usage, category usage and navigation preservation are confirmed.
+- Product Result: first-action evidence path exists.
+- Engineering Result: no product code change; effect-review artifacts added.
+- Remaining Issue: runtime browser event storage validation.
