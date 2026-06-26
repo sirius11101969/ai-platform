@@ -337,7 +337,17 @@ const [apiState, setApiState] = useState({})
           </article>
           <article
             className="command-card as6-product-recommendation-slot-card"
-            data-as6-product-recommendation-slot="v222-27"
+            data-as6-product-recommendation-slot="v222-30-etalon"
+            style={{
+              width: 'calc(100% - 54px)',
+              maxWidth: '318px',
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              padding: 0,
+              background: 'transparent',
+              border: 0,
+              boxShadow: 'none',
+            }}
           >
             <ProductRecommendationCard recommendationState={commandCenterRecommendation} />
           </article><article className="command-card event-card"><div className="command-card-head"><h2>Последние события</h2><a href="/dashboard">Все</a></div>{events.map((event) => <div className="event-row" key={event.text}><b>{event.icon}</b><span>{event.text}</span><time>{event.time}</time></div>)}</article>

@@ -1,41 +1,38 @@
 const cardStyle = {
   width: '100%',
-  maxWidth: 'none',
-  marginLeft: '0',
-  marginRight: '0',
-  padding: '18px 20px 19px',
-  gap: '13px',
+  padding: '17px 18px 18px',
+  gap: '12px',
   borderRadius: '20px',
 }
 
 const summaryStyle = {
   maxWidth: '100%',
-  fontSize: '12.75px',
-  lineHeight: '1.38',
+  fontSize: '12.6px',
+  lineHeight: '1.36',
 }
 
 const actionStyle = {
   paddingTop: '10px',
-  gap: '10px',
+  gap: '9px',
 }
 
 const actionTextStyle = {
-  fontSize: '12.75px',
-  lineHeight: '1.24',
-}
-
-const actionSmallStyle = {
-  fontSize: '10.75px',
+  fontSize: '12.4px',
   lineHeight: '1.22',
 }
 
+const actionSmallStyle = {
+  fontSize: '10.4px',
+  lineHeight: '1.2',
+}
+
 const buttonStyle = {
-  width: '86%',
-  minHeight: '44px',
-  height: '44px',
+  width: '82%',
+  minHeight: '42px',
+  height: '42px',
   margin: '4px auto 0',
-  borderRadius: '13px',
-  fontSize: '13.5px',
+  borderRadius: '12px',
+  fontSize: '13px',
 }
 
 export default function ProductRecommendationCard({ recommendationState }) {
@@ -48,7 +45,7 @@ export default function ProductRecommendationCard({ recommendationState }) {
   return (
     <article
       className="command-card as6-product-recommendation-card"
-      data-as6-product-recommendation="v222-29-width-balance"
+      data-as6-product-recommendation="v222-30-etalon"
       style={cardStyle}
     >
       <div className="command-card-head">
@@ -72,7 +69,7 @@ export default function ProductRecommendationCard({ recommendationState }) {
       <a
         className="copilot-action-link as6-product-recommendation-card__button"
         href={recommendation.href}
-        data-as6-product-recommendation-action="v222-29-width-balance"
+        data-as6-product-recommendation-action="v222-30-etalon"
         style={buttonStyle}
       >
         {recommendation.actionLabel}
