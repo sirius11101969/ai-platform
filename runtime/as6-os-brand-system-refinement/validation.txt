@@ -1,0 +1,7 @@
+STAGE=AS6_OS_BRAND_SYSTEM_REFINEMENT
+READINESS=99%
+CHECK_CSS_LAYER=PASS
+CHECK_IMPORT_COUNT=PASS
+CHECK_BUILD=PASS
+FAILURE_CLASS=crm-saas-brand-drift
+AEC_RULE=os-brand-refinement-requires-build-and-import-count

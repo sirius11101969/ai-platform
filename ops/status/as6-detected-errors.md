@@ -1418,3 +1418,8 @@ Governed and registered.
 - Detected error: CSS import inserted inside multi-line import block.
 - Root cause: line-based import detection ignored multi-line import state.
 - Prevention: state-aware import insertion and build validation added.
+
+## AS6_OS_BRAND_SYSTEM_REFINEMENT
+- Detected risk: AS6 may be perceived as CRM/SaaS instead of AI Operating System.
+- Root cause: CRM Workspace visual layer needed dedicated OS brand refinement.
+- Prevention: non-destructive OS brand CSS layer, import-count control, build validation and governance registration.

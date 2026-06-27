@@ -1,0 +1,142 @@
+/* AS6 OS Brand System Refinement — non-destructive premium layer */
+
+:root {
+  --as6-brand-bg-deep: #020713;
+  --as6-brand-panel: rgba(7, 18, 38, 0.88);
+  --as6-brand-panel-strong: rgba(10, 28, 58, 0.94);
+  --as6-brand-border: rgba(0, 229, 255, 0.18);
+  --as6-brand-border-strong: rgba(124, 92, 255, 0.34);
+  --as6-brand-text: #f8fbff;
+  --as6-brand-muted: rgba(216, 230, 255, 0.72);
+  --as6-brand-cyan: #00e5ff;
+  --as6-brand-violet: #7c5cff;
+  --as6-brand-green: #22ff88;
+  --as6-brand-shadow: 0 28px 90px rgba(0, 0, 0, 0.38);
+}
+
+.app-shell[data-as6-workspace],
+.workspace,
+.workspace-page,
+.crm-workspace-page {
+  background:
+    radial-gradient(circle at 8% 0%, rgba(124, 92, 255, 0.18), transparent 34%),
+    radial-gradient(circle at 92% 6%, rgba(0, 229, 255, 0.12), transparent 30%),
+    var(--as6-brand-bg-deep);
+}
+
+.workspace-header,
+.sidebar,
+.app-panel,
+.ai-action-center-panel,
+.ai-revenue-intelligence-panel,
+.lead-list-controls,
+.as6-crm-workspace-client-surface {
+  border-color: var(--as6-brand-border) !important;
+  box-shadow: var(--as6-brand-shadow);
+}
+
+.workspace-header {
+  background:
+    linear-gradient(135deg, rgba(10, 25, 54, 0.94), rgba(4, 11, 28, 0.96)) !important;
+}
+
+.workspace-header h1::after {
+  content: " AS6 OS";
+  display: inline-flex;
+  margin-left: 10px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: white;
+  background: linear-gradient(135deg, var(--as6-brand-violet), var(--as6-brand-cyan));
+  vertical-align: middle;
+}
+
+.sidebar .brand,
+.app-brand {
+  letter-spacing: -0.03em;
+  text-shadow: 0 0 28px rgba(0, 229, 255, 0.34);
+}
+
+.side-nav a.active,
+.side-nav a[aria-current="page"] {
+  border-color: var(--as6-brand-border-strong) !important;
+  background:
+    linear-gradient(135deg, rgba(124, 92, 255, 0.24), rgba(0, 229, 255, 0.12)) !important;
+}
+
+.as6-crm-workspace-client-surface {
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(124, 92, 255, 0.26), transparent 36%),
+    radial-gradient(circle at 100% 0%, rgba(0, 229, 255, 0.16), transparent 34%),
+    linear-gradient(135deg, rgba(7, 18, 38, 0.96), rgba(3, 10, 26, 0.94)) !important;
+}
+
+.as6-crm-workspace-client-surface::after {
+  content: "AS6 Operating System";
+  position: absolute;
+  right: 22px;
+  top: 18px;
+  z-index: 1;
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 229, 255, 0.22);
+  color: var(--as6-brand-muted);
+  background: rgba(2, 7, 19, 0.52);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+[data-as6-core-mark],
+[data-as6-assistant-status-pill],
+[data-as6-focus-signal],
+[data-as6-core-signal] {
+  box-shadow: 0 0 34px rgba(0, 229, 255, 0.16);
+}
+
+[data-as6-core-action],
+[data-as6-focus-action],
+[data-as6-assistant-action],
+.btn.primary,
+.sidebar-create-lead {
+  background:
+    linear-gradient(135deg, var(--as6-brand-violet), var(--as6-brand-cyan)) !important;
+  border: 0 !important;
+  box-shadow: 0 18px 42px rgba(0, 229, 255, 0.18);
+}
+
+.ai-action-center-panel,
+.ai-revenue-intelligence-panel,
+.production-crm-layout .stage-column,
+.production-crm-layout .lead-card {
+  backdrop-filter: blur(18px);
+}
+
+.production-crm-layout .lead-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0, 229, 255, 0.32) !important;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.3);
+}
+
+.stat-card strong,
+.ai-revenue-card strong,
+[data-as6-right-rail-metric] strong {
+  color: var(--as6-brand-text);
+}
+
+.eyebrow,
+[data-as6-focus-header] strong,
+[data-as6-assistant-header] strong {
+  color: var(--as6-brand-cyan) !important;
+}
+
+@media (max-width: 980px) {
+  .workspace-header h1::after,
+  .as6-crm-workspace-client-surface::after {
+    display: none;
+  }
+}

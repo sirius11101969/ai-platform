@@ -4234,3 +4234,10 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Added state-aware import insertion control.
 - Added non-destructive CRM Workspace client polish layer.
 - Project readiness: 99%.
+
+## AS6 OS Brand System Refinement
+- Added non-destructive premium AS6 OS brand layer.
+- Added OS perception marker: AS6 Operating System.
+- Reduced CRM/SaaS visual drift while preserving CRM production logic.
+- Added governance artifact: ops/governance/as6-os-brand-system-refinement-governance.md.
+- Project readiness: 99%.

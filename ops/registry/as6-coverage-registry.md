@@ -2552,3 +2552,10 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Coverage: multi-line import safe patching.
 - Coverage: CRM Workspace client visual polish.
 - Failure class covered: css-import-inserted-inside-multiline-import.
+
+## AS6_OS_BRAND_SYSTEM_REFINEMENT
+- Coverage: AS6 OS premium brand layer.
+- Coverage: CRM-as-module visual positioning.
+- Coverage: safe CSS-only production refinement.
+- Failure class covered: crm-saas-brand-drift.
+- AEC rule: os-brand-refinement-requires-build-and-import-count.

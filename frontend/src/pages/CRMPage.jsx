@@ -9,6 +9,7 @@ import '../design-system/crm/as6CrmCommandCenterVisual.css';
 import '../design-system/crm/as6CrmRuntimeTraceAuto.js';
 import '../design-system/crm/as6CrmDesignSystem.css';
 import "../styles/as6-crm-workspace-client-polish-v243.css";
+import "../styles/as6-os-brand-system-refinement.css";
 /* AS6_PHYSICAL_PAGE_REFACTOR_MIGRATION_V109: physical refactor governed by AS6PhysicalPageRefactorBridge */
 /* AS6_REAL_PAGE_CONVERSION_ENGINE_V108: governed by Mission Control Layout 2.0 */
 /* AS6_DIRECT_PAGE_REWRITE_V100: governed by AS6UnifiedPageShell / AS6DirectPageRewriteFramework */

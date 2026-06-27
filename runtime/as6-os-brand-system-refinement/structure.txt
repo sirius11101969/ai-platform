@@ -1,0 +1,6 @@
+CRM_PAGE=frontend/src/pages/CRMPage.jsx
+CSS_LAYER=frontend/src/styles/as6-os-brand-system-refinement.css
+STATE=docs/AS6_PROJECT_STATE.md
+DIAG_REGISTRY=ops/registry/as6-diagnostic-registry.md
+COVERAGE_REGISTRY=ops/registry/as6-coverage-registry.md
+GOVERNANCE=ops/governance/as6-os-brand-system-refinement-governance.md

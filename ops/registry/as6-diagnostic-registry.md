@@ -652,3 +652,11 @@
 - Validation: CRMPage restored from HEAD before patch.
 - Validation: CSS import count equals 1.
 - Validation: frontend production build PASS.
+
+## AS6_OS_BRAND_SYSTEM_REFINEMENT
+- Diagnostic artifact: runtime/as6-os-brand-system-refinement/
+- Root cause: docs/AS6_OS_BRAND_SYSTEM_REFINEMENT_ROOT_CAUSE.md
+- Governance: ops/governance/as6-os-brand-system-refinement-governance.md
+- Validation: CSS layer exists.
+- Validation: CRMPage imports brand layer exactly once.
+- Validation: frontend production build PASS.
