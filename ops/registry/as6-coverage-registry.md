@@ -2546,3 +2546,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Coverage: Right Rail and AI Copilot layer.
 - Coverage: Module Host foundation.
 - Failure class covered: crm-centric-platform-architecture-drift.
+
+## AS6_V243_CRM_WORKSPACE_CLIENT_POLISH_FIX
+
+- Coverage: multi-line import safe patching.
+- Coverage: CRM Workspace client visual polish.
+- Failure class covered: css-import-inserted-inside-multiline-import.

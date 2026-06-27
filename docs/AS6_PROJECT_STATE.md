@@ -4227,3 +4227,10 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Added AS6OSShell, AS6OSToday, AS6OSActionCenter, AS6OSRevenueBrain and AS6OSModuleHost.
 - CRM is now positioned as a module inside AS6 OS, not as the product center.
 - Project readiness: 99%.
+
+## AS6 V243 CRM Workspace Client Polish Fix
+
+- Repaired CRMPage CSS import placement after multi-line import syntax failure.
+- Added state-aware import insertion control.
+- Added non-destructive CRM Workspace client polish layer.
+- Project readiness: 99%.

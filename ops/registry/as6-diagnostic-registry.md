@@ -644,3 +644,11 @@
 - Validation: AS6 OS route count equals 1.
 - Validation: AS6 OS import count equals 1.
 - Validation: frontend production build PASS.
+
+## AS6_V243_CRM_WORKSPACE_CLIENT_POLISH_FIX
+
+- Diagnostic artifact: runtime/as6-v243-crm-workspace-client-polish-fix/
+- Root cause: docs/AS6_V243_CRM_WORKSPACE_CLIENT_POLISH_FIX_ROOT_CAUSE.md
+- Validation: CRMPage restored from HEAD before patch.
+- Validation: CSS import count equals 1.
+- Validation: frontend production build PASS.

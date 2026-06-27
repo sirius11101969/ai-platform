@@ -1412,3 +1412,9 @@ Governed and registered.
 - Detected risk: AS6 could remain perceived as CRM with AI instead of AI Operating System.
 - Root cause: modules existed before a canonical OS shell was introduced.
 - Prevention: AS6 OS Foundation route and reusable OS components added.
+
+## AS6_V243_CRM_WORKSPACE_CLIENT_POLISH_FIX
+
+- Detected error: CSS import inserted inside multi-line import block.
+- Root cause: line-based import detection ignored multi-line import state.
+- Prevention: state-aware import insertion and build validation added.
