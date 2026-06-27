@@ -546,3 +546,9 @@
 - Runtime evidence: runtime/as6-v231-crm-workspace-client/
 - Failure class: AS6_CRM_WORKSPACE_CLIENT_MIGRATION_GAP
 - Repair failure class: AS6_REGEX_PATCH_OPTIONAL_CHAINING_COLLISION
+
+## AS6 CRM Workspace Client Visual Refinement V232
+- Diagnostic: ops/bin/as6-diagnose-crm-workspace-visual-refinement-v232
+- Control: ops/bin/as6-control-crm-workspace-visual-refinement-v232
+- Runtime evidence: runtime/as6-v232-crm-workspace-visual/
+- Failure class: AS6_CRM_WORKSPACE_VISUAL_REFINEMENT_GAP

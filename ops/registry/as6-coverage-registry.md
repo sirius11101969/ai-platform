@@ -2455,3 +2455,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers non-destructive CRM migration before full CRM rewrite.
 - Covers optional chaining safe Node patch repair.
 - Covers build validation and runtime marker.
+
+## AS6 CRM Workspace Client Visual Refinement V232
+- Covers CRM Workspace client visual density.
+- Covers responsive layout breakpoints.
+- Covers overflow protection for AS6 Core, Assistant, Focus and Right Rail client cards.
+- Covers non-destructive CSS-only refinement and build validation.

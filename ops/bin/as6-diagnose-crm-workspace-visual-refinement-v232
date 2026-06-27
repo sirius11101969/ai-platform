@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/styles/as6-crm-workspace-client-v232.css
+grep -q "as6-crm-workspace-client-v232.css" frontend/src/App.jsx
+grep -q "data-as6-core='v228'" frontend/src/styles/as6-crm-workspace-client-v232.css
+grep -q "data-as6-focus='v230'" frontend/src/styles/as6-crm-workspace-client-v232.css
+grep -q "data-as6-assistant='v229'" frontend/src/styles/as6-crm-workspace-client-v232.css
+grep -q "data-as6-right-rail='v227'" frontend/src/styles/as6-crm-workspace-client-v232.css
+grep -q "max-width: 1200px" frontend/src/styles/as6-crm-workspace-client-v232.css
+grep -q "max-width: 760px" frontend/src/styles/as6-crm-workspace-client-v232.css
+grep -q "data-as6-crm-workspace-client=\"v231\"" frontend/src/pages/CRMPage.jsx
+printf '%s\n' 'AS6_CRM_WORKSPACE_VISUAL_REFINEMENT_V232=PASS'

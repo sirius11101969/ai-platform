@@ -1,0 +1,9 @@
+ M frontend/src/App.jsx
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? frontend/src/styles/as6-crm-workspace-client-v232.css
+?? ops/bin/as6-control-crm-workspace-visual-refinement-v232
+?? ops/bin/as6-diagnose-crm-workspace-visual-refinement-v232
+?? ops/governance/as6-crm-workspace-visual-refinement-v232.md
+?? ops/state/as6-crm-workspace-visual-refinement-v232.md

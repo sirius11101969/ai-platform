@@ -1,0 +1,91 @@
+/* AS6 CRM Workspace Client Visual Refinement V232 */
+.as6-crm-workspace-client-surface {
+  position: relative;
+  isolation: isolate;
+}
+
+.as6-crm-workspace-client-surface::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: 32px;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(37, 228, 255, 0.10), transparent 26rem),
+    radial-gradient(circle at 92% 12%, rgba(50, 245, 169, 0.08), transparent 24rem);
+  pointer-events: none;
+}
+
+.as6-crm-workspace-client-surface [data-as6-core='v228'],
+.as6-crm-workspace-client-surface [data-as6-focus='v230'],
+.as6-crm-workspace-client-surface [data-as6-assistant='v229'],
+.as6-crm-workspace-client-surface [data-as6-right-rail='v227'] {
+  min-height: 220px;
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.26);
+}
+
+.as6-crm-workspace-client-surface [data-as6-core-mark='v228'] {
+  margin-bottom: 2px;
+}
+
+.as6-crm-workspace-client-surface [data-as6-core-action='v228'],
+.as6-crm-workspace-client-surface [data-as6-focus-action='v230'],
+.as6-crm-workspace-client-surface [data-as6-assistant-action='v229'] {
+  justify-self: start;
+  padding-inline: 16px;
+}
+
+.as6-crm-workspace-client-surface [data-as6-core-signal='v228'],
+.as6-crm-workspace-client-surface [data-as6-focus-signal='v230'],
+.as6-crm-workspace-client-surface [data-as6-right-rail-metric='v227'] {
+  min-height: 72px;
+}
+
+.as6-crm-workspace-client-surface [data-as6-assistant-message='v229'] {
+  min-height: 76px;
+  line-height: 1.45;
+}
+
+.as6-crm-workspace-client-surface [data-as6-focus-step='v230'] {
+  min-height: 92px;
+}
+
+.as6-crm-workspace-client-surface strong,
+.as6-crm-workspace-client-surface h3 {
+  overflow-wrap: anywhere;
+}
+
+.as6-crm-workspace-client-surface span,
+.as6-crm-workspace-client-surface p,
+.as6-crm-workspace-client-surface small {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1200px) {
+  .as6-crm-workspace-client-surface {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .as6-crm-right-rail-client {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 760px) {
+  .as6-crm-workspace-client-surface {
+    margin-top: 14px;
+    gap: 12px;
+  }
+
+  .as6-crm-workspace-client-surface [data-as6-core='v228'],
+  .as6-crm-workspace-client-surface [data-as6-focus='v230'],
+  .as6-crm-workspace-client-surface [data-as6-assistant='v229'],
+  .as6-crm-workspace-client-surface [data-as6-right-rail='v227'] {
+    min-height: unset;
+    border-radius: 22px;
+  }
+
+  .as6-crm-core-signals {
+    grid-template-columns: 1fr;
+  }
+}

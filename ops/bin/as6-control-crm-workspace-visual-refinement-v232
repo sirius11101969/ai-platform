@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-crm-workspace-visual-refinement-v232
+printf '%s\n' 'AS6_CONTROL_CRM_WORKSPACE_VISUAL_REFINEMENT_V232=PASS'
