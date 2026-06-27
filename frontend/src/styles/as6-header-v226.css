@@ -1,0 +1,32 @@
+/* AS6 Header Implementation V226 */
+[data-as6-header='v226'] {
+  min-height: var(--as6-topbar-height, 86px);
+}
+
+[data-as6-header-title='v226'] {
+  min-width: 0;
+}
+
+[data-as6-header-title='v226'] h1 {
+  margin: 0;
+}
+
+[data-as6-header-toolbar='v226'] {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+[data-as6-workspace-selector='v226'] {
+  display: grid;
+  gap: 4px;
+}
+
+[data-as6-profile-pill='v226'] {
+  display: grid;
+  gap: 2px;
+}
+
+[data-as6-header-action='v226'] {
+  white-space: nowrap;
+}

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-header-implementation-v226
+printf '%s\n' 'AS6_CONTROL_HEADER_IMPLEMENTATION_V226=PASS'

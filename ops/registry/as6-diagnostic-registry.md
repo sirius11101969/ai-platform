@@ -508,3 +508,10 @@
 - Control: ops/bin/as6-control-sidebar-implementation-v225
 - Runtime evidence: runtime/as6-v225-sidebar/
 - Failure class: AS6_SIDEBAR_CANONICAL_COMPONENT_GAP
+
+## AS6 Header Implementation V226
+- Diagnostic: ops/bin/as6-diagnose-header-implementation-v226
+- Control: ops/bin/as6-control-header-implementation-v226
+- Runtime evidence: runtime/as6-v226-header/
+- Failure class: AS6_HEADER_CANONICAL_COMPONENT_GAP
+- Repair failure class: AS6_REGEX_PATCH_OPTIONAL_CHAINING_COLLISION

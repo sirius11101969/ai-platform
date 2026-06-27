@@ -14,6 +14,7 @@ import "./styles/as6-unified-mission-control-ui.css";
 import "./styles/as6-mission-workspace.css";
 import "./styles/as6-workspace-v224.css";
 import "./styles/as6-sidebar-v225.css";
+import "./styles/as6-header-v226.css";
 import { markAs6DesignSystemReady } from "./utils/as6RuntimeTracer";
 import React, { createContext, useContext, useEffect, useMemo, useState, lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";

@@ -2417,3 +2417,10 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers primary and favorite navigation model.
 - Covers AppShell sidebar wiring to AS6SidebarShell.
 - Covers sidebar CSS foundation and runtime marker.
+
+## AS6 Header Implementation V226
+- Covers AS6 Header component family.
+- Covers workspace selector and profile pill contracts.
+- Covers AppShell header wiring to AS6HeaderShell.
+- Covers header CSS foundation and runtime marker.
+- Covers optional chaining patch collision prevention.

@@ -1,0 +1,12 @@
+ M frontend/src/App.jsx
+ M frontend/src/components/AppShell.jsx
+ M frontend/src/components/as6-workspace/AS6Workspace.jsx
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? frontend/src/components/as6-workspace/AS6Header.jsx
+?? frontend/src/styles/as6-header-v226.css
+?? ops/bin/as6-control-header-implementation-v226
+?? ops/bin/as6-diagnose-header-implementation-v226
+?? ops/governance/as6-header-implementation-v226.md
+?? ops/state/as6-header-implementation-v226.md

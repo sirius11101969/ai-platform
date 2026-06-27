@@ -1,0 +1,5 @@
+ M frontend/src/App.jsx
+ M frontend/src/components/AppShell.jsx
+ M frontend/src/components/as6-workspace/AS6Workspace.jsx
+?? frontend/src/components/as6-workspace/AS6Header.jsx
+?? frontend/src/styles/as6-header-v226.css

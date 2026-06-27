@@ -1,6 +1,7 @@
 import AS6Logo from './branding/AS6Logo.jsx'
 import { AS6Workspace } from './as6-workspace/AS6Workspace.jsx'
 import { AS6SidebarShell } from './as6-workspace/AS6Sidebar.jsx'
+import { AS6HeaderShell, AS6HeaderTitle, AS6HeaderToolbar, AS6WorkspaceSelector, AS6ProfilePill, AS6HeaderAction } from './as6-workspace/AS6Header.jsx'
 import React, { useEffect, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { creditSummary, userProfile } from "../data/mockData";

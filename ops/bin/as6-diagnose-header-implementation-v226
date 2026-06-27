@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/components/as6-workspace/AS6Header.jsx
+test -f frontend/src/styles/as6-header-v226.css
+grep -q "export function AS6HeaderShell" frontend/src/components/as6-workspace/AS6Header.jsx
+grep -q "export function AS6HeaderTitle" frontend/src/components/as6-workspace/AS6Header.jsx
+grep -q "export function AS6HeaderToolbar" frontend/src/components/as6-workspace/AS6Header.jsx
+grep -q "export function AS6WorkspaceSelector" frontend/src/components/as6-workspace/AS6Header.jsx
+grep -q "export function AS6ProfilePill" frontend/src/components/as6-workspace/AS6Header.jsx
+grep -q "export function AS6HeaderAction" frontend/src/components/as6-workspace/AS6Header.jsx
+grep -q "AS6HeaderShell" frontend/src/components/AppShell.jsx
+grep -q "AS6WorkspaceSelector" frontend/src/components/AppShell.jsx
+grep -q "data-as6-header" frontend/src/components/as6-workspace/AS6Header.jsx
+grep -q "as6-header-v226.css" frontend/src/App.jsx
+printf '%s\n' 'AS6_HEADER_IMPLEMENTATION_V226=PASS'
