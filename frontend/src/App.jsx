@@ -25,6 +25,7 @@ import "./styles/as6-crm-workspace-ui-review-v236.css";
 import { markAs6DesignSystemReady } from "./utils/as6RuntimeTracer";
 import React, { createContext, useContext, useEffect, useMemo, useState, lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import CRMWorkspacePage from "./pages/CRMWorkspacePage";
 import AS6WorkspacePage from "./pages/AS6WorkspacePage";
 import "./styles.css";
 import "./theme/as6Theme.css";
@@ -133,6 +134,7 @@ export default function App() {
       <BrowserRouter>
         <Suspense fallback={window.location.pathname === "/command-center" ? null : <div className="as6-route-loading">Загрузка...</div>}>
           <Routes>
+          <Route path="/crm-workspace" element={<CRMWorkspacePage />} />
           <Route path="/as6-workspace" element={<AS6WorkspacePage />} />
           <Route path="/" element={<LandingPage />} />
           <Route path="/signup" element={<SignupPage />} />

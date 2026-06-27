@@ -4206,3 +4206,18 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Added AS6 Sidebar, Header, Right Rail, Focus and Assistant placeholders.
 - Added unified workspace CSS tokens.
 - Readiness: 99%.
+
+## AS6 Workspace Route Integration Safe Patch
+
+- Repaired route integration after duplicate import failure.
+- Added exactly one AS6WorkspacePage import.
+- Added exactly one /as6-workspace route.
+- Added prevention control for duplicate route/import patching.
+- Project readiness: 99%.
+
+## AS6 CRM Workspace Migration
+
+- Added CRMWorkspacePage.
+- Added route: /crm-workspace.
+- CRM can now be tested inside AS6Workspace without replacing production /crm route.
+- Project readiness: 99%.

@@ -621,3 +621,19 @@
 - Root cause: docs/AS6_WORKSPACE_V1_ROOT_CAUSE.md
 - UI component: frontend/src/components/as6/AS6Workspace.jsx
 - Style artifact: frontend/src/styles/as6-workspace.css
+
+## AS6_WORKSPACE_ROUTE_INTEGRATION_SAFE_PATCH
+
+- Diagnostic artifact: runtime/as6-workspace-route-integration-safe-patch/
+- Failure diagnosed: duplicate AS6WorkspacePage imports caused Vite build failure.
+- Validation: import count equals 1.
+- Validation: /as6-workspace route count equals 1.
+- Validation: frontend production build PASS.
+
+## AS6_CRM_WORKSPACE_MIGRATION
+
+- Diagnostic artifact: runtime/as6-crm-workspace-migration/
+- Root cause: docs/AS6_CRM_WORKSPACE_MIGRATION_ROOT_CAUSE.md
+- Validation: CRMWorkspacePage exists.
+- Validation: /crm-workspace route count equals 1.
+- Validation: frontend build PASS.

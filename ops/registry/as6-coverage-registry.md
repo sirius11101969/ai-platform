@@ -2525,3 +2525,15 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 ## AS6_WORKSPACE_IMPLEMENTATION_V1
 - Coverage: Workspace shell, Sidebar, Header, Right Rail, Focus, Assistant, reusable CSS tokens.
 - Failure class covered: workspace-foundation-missing.
+
+## AS6_WORKSPACE_ROUTE_INTEGRATION_SAFE_PATCH
+
+- Coverage: duplicate import prevention.
+- Coverage: duplicate route prevention.
+- Coverage: safe App.jsx route integration.
+- Failure class covered: regex-route-patch-import-duplication.
+
+## AS6_CRM_WORKSPACE_MIGRATION
+
+- Coverage: CRM route-level workspace migration.
+- Failure class covered: crm-page-outside-as6-workspace-foundation.

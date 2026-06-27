@@ -1396,3 +1396,14 @@ Governed and registered.
 ## AS6_WORKSPACE_IMPLEMENTATION_V1
 - Detected risk: modules may drift into isolated page-specific UI.
 - Prevention: reusable AS6Workspace foundation added before CRM migration.
+
+## AS6_WORKSPACE_ROUTE_INTEGRATION_SAFE_PATCH
+
+- Detected error: regex-based route patch inserted AS6WorkspacePage import after every import line.
+- Root cause: broad sed pattern matched all import statements.
+- Prevention: node-based idempotent patch removes duplicates and enforces exact count checks.
+
+## AS6_CRM_WORKSPACE_MIGRATION
+
+- Detected risk: CRM may remain isolated from AS6 Operating System shell.
+- Prevention: /crm-workspace added as safe migration route before replacing /crm.

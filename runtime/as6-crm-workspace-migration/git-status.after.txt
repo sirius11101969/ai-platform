@@ -1,0 +1,7 @@
+ M docs/AS6_PROJECT_STATE.md
+ M frontend/src/App.jsx
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? docs/AS6_CRM_WORKSPACE_MIGRATION_ROOT_CAUSE.md
+?? frontend/src/pages/CRMWorkspacePage.jsx
