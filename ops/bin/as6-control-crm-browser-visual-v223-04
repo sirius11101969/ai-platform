@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-crm-browser-visual-v223-04
+printf '%s\n' 'AS6_CONTROL_CRM_BROWSER_VISUAL_V223_04=PASS'

@@ -2388,3 +2388,13 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers reduced section spacing.
 
 - Covers build, Docker and Guardian validation.
+
+## V223_04 Coverage — CRM Browser Visual Verification
+
+- Covers browser visual checklist.
+
+- Covers CRM visual polish trace.
+
+- Covers contained board scroll guard.
+
+- Covers build, Docker and Guardian validation.

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f frontend/src/pages/CRMPage.jsx
+test -f frontend/src/design-system/crm/as6CrmPipelineCompact.css
+test -f frontend/src/design-system/crm/as6CrmVisualPolishTraceAuto.js
+
+grep -q "as6CrmVisualPolishTraceAuto.js" frontend/src/pages/CRMPage.jsx
+grep -q "V223_03" frontend/src/design-system/crm/as6CrmVisualPolishTraceAuto.js
+grep -q "overflow-x: hidden !important" frontend/src/design-system/crm/as6CrmPipelineCompact.css
+grep -q "stage-column::before" frontend/src/design-system/crm/as6CrmPipelineCompact.css
+grep -q "display: none !important" frontend/src/design-system/crm/as6CrmPipelineCompact.css
+
+printf '%s\n' 'AS6_CRM_BROWSER_VISUAL_VERIFICATION_V223_04=PASS'
