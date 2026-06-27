@@ -1,0 +1,39 @@
+/* AS6 Core Implementation V228 */
+[data-as6-core='v228'] {
+  display: grid;
+  gap: 14px;
+  border-radius: 28px;
+  border: 1px solid rgba(120, 190, 255, 0.22);
+  background: radial-gradient(circle at 20% 0%, rgba(37, 228, 255, 0.16), transparent 28rem), rgba(5, 13, 28, 0.58);
+  padding: 18px;
+}
+
+[data-as6-core-mark='v228'] {
+  display: inline-grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+  border: 1px solid rgba(37, 228, 255, 0.34);
+  background: rgba(37, 228, 255, 0.12);
+  font-weight: 900;
+  letter-spacing: -0.06em;
+}
+
+[data-as6-core-promise='v228'] {
+  margin: 0;
+  color: rgba(225, 245, 255, 0.88);
+}
+
+[data-as6-core-action='v228'] {
+  min-height: 42px;
+  border-radius: 999px;
+}
+
+[data-as6-core-signal='v228'] {
+  display: grid;
+  gap: 3px;
+  border-radius: 18px;
+  border: 1px solid rgba(120, 190, 255, 0.16);
+  padding: 12px;
+}

@@ -2430,3 +2430,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers section, card, metric and action contracts.
 - Covers CSS foundation and runtime marker.
 - Covers non-invasive implementation before CRM migration.
+
+## AS6 Core Implementation V228
+- Covers AS6 Core component family.
+- Covers core mark, promise, action and signal contracts.
+- Covers slogan and primary action constants.
+- Covers CSS foundation and runtime marker.

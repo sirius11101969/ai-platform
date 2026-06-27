@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-core-implementation-v228
+printf '%s\n' 'AS6_CONTROL_CORE_IMPLEMENTATION_V228=PASS'

@@ -33,3 +33,5 @@ export { AS6SidebarShell, AS6SidebarNav, AS6SidebarSection, AS6SidebarProfile, A
 export { AS6HeaderShell, AS6HeaderTitle, AS6HeaderToolbar, AS6WorkspaceSelector, AS6ProfilePill, AS6HeaderAction } from './AS6Header.jsx';
 
 export { AS6RightRailShell, AS6RightRailSection, AS6RightRailCard, AS6RightRailMetric, AS6RightRailAction } from './AS6RightRail.jsx';
+
+export { AS6CoreShell, AS6CoreMark, AS6CorePromise, AS6CoreAction, AS6CoreSignal, AS6_CORE_PROMISE, AS6_CORE_ACTION } from './AS6Core.jsx';

@@ -521,3 +521,9 @@
 - Control: ops/bin/as6-control-right-rail-implementation-v227
 - Runtime evidence: runtime/as6-v227-right-rail/
 - Failure class: AS6_RIGHT_RAIL_CANONICAL_COMPONENT_GAP
+
+## AS6 Core Implementation V228
+- Diagnostic: ops/bin/as6-diagnose-core-implementation-v228
+- Control: ops/bin/as6-control-core-implementation-v228
+- Runtime evidence: runtime/as6-v228-core/
+- Failure class: AS6_CORE_CANONICAL_COMPONENT_GAP
