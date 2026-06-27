@@ -4249,3 +4249,12 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Interface changed: AS6 Assistant and Focus blocks receive stronger command-layer emphasis.
 - Added governance artifact: ops/governance/as6-os-assistant-command-layer-governance.md.
 - Project readiness: 99%.
+
+## AS6 OS Interactive Command Palette
+- Page changed: /crm.
+- Interface changed: bottom-right command affordance is now a real clickable button.
+- Interface changed: Ctrl+K / Cmd+K opens AS6 Command Palette overlay.
+- Interface changed: Escape closes palette; arrows and Enter select command.
+- Added reusable component: frontend/src/components/as6-os/AS6CommandPalette.jsx.
+- Added governance artifact: ops/governance/as6-os-interactive-command-palette-governance.md.
+- Project readiness: 99%.

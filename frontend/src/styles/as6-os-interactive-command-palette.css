@@ -1,0 +1,211 @@
+/* AS6 OS Interactive Command Palette
+Page changed: /crm
+Where: bottom-right clickable trigger + full-screen overlay
+*/
+
+.as6-command-trigger {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 120;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 12px;
+  align-items: center;
+  min-width: 280px;
+  max-width: min(420px, calc(100vw - 44px));
+  border: 1px solid rgba(0, 229, 255, 0.36);
+  border-radius: 22px;
+  padding: 14px 16px;
+  color: #f8fbff;
+  background:
+    linear-gradient(135deg, rgba(124, 92, 255, 0.94), rgba(0, 229, 255, 0.84)),
+    rgba(2, 7, 19, 0.94);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.42), 0 0 38px rgba(0, 229, 255, 0.18);
+  cursor: pointer;
+  text-align: left;
+}
+
+.as6-command-trigger span {
+  grid-column: 1 / -1;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.78;
+}
+
+.as6-command-trigger strong {
+  font-size: 15px;
+}
+
+.as6-command-trigger kbd {
+  border-radius: 10px;
+  padding: 6px 8px;
+  background: rgba(2, 7, 19, 0.46);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.as6-command-status {
+  position: fixed;
+  right: 22px;
+  bottom: 88px;
+  z-index: 119;
+  max-width: min(360px, calc(100vw - 44px));
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  padding: 8px 12px;
+  color: rgba(248, 251, 255, 0.78);
+  background: rgba(2, 7, 19, 0.78);
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.as6-command-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: grid;
+  place-items: start center;
+  padding: 8vh 18px 18px;
+}
+
+.as6-command-backdrop {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at top, rgba(124, 92, 255, 0.22), transparent 36%),
+    rgba(1, 5, 14, 0.76);
+  backdrop-filter: blur(12px);
+}
+
+.as6-command-panel {
+  position: relative;
+  z-index: 1;
+  width: min(760px, 100%);
+  border: 1px solid rgba(0, 229, 255, 0.24);
+  border-radius: 28px;
+  padding: 18px;
+  color: #f8fbff;
+  background:
+    linear-gradient(135deg, rgba(8, 20, 42, 0.98), rgba(2, 7, 19, 0.96));
+  box-shadow: 0 32px 100px rgba(0, 0, 0, 0.52);
+}
+
+.as6-command-panel header {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+
+.as6-command-panel header span,
+.as6-command-search span {
+  color: #00e5ff;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.as6-command-panel h2 {
+  margin: 4px 0;
+  font-size: 28px;
+}
+
+.as6-command-panel p {
+  margin: 0;
+  color: rgba(216, 230, 255, 0.72);
+}
+
+.as6-command-panel header button {
+  align-self: start;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  padding: 8px 10px;
+  color: #f8fbff;
+  background: rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+}
+
+.as6-command-search {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.as6-command-search input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 229, 255, 0.26);
+  border-radius: 18px;
+  padding: 16px 18px;
+  color: #f8fbff;
+  background: rgba(2, 7, 19, 0.82);
+  font-size: 17px;
+  outline: none;
+}
+
+.as6-command-search input:focus {
+  border-color: rgba(0, 229, 255, 0.62);
+  box-shadow: 0 0 0 4px rgba(0, 229, 255, 0.1);
+}
+
+.as6-command-list {
+  display: grid;
+  gap: 8px;
+  max-height: min(52vh, 480px);
+  overflow: auto;
+}
+
+.as6-command-list button,
+.as6-command-empty {
+  display: grid;
+  gap: 4px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 16px;
+  padding: 14px;
+  color: #f8fbff;
+  background: rgba(7, 18, 38, 0.72);
+  text-align: left;
+}
+
+.as6-command-list button {
+  cursor: pointer;
+}
+
+.as6-command-list button.active,
+.as6-command-list button:hover {
+  border-color: rgba(0, 229, 255, 0.42);
+  background: linear-gradient(135deg, rgba(124, 92, 255, 0.22), rgba(0, 229, 255, 0.12));
+}
+
+.as6-command-list span {
+  color: #00e5ff;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.as6-command-list small {
+  color: rgba(216, 230, 255, 0.7);
+}
+
+@media (max-width: 760px) {
+  .as6-command-trigger {
+    left: 14px;
+    right: 14px;
+    bottom: 14px;
+    min-width: 0;
+  }
+
+  .as6-command-status {
+    left: 14px;
+    right: 14px;
+    bottom: 82px;
+    text-align: center;
+  }
+
+  .as6-command-overlay {
+    padding-top: 4vh;
+  }
+}

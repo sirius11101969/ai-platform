@@ -1428,3 +1428,8 @@ Governed and registered.
 - Detected risk: AS6 Assistant may not feel persistent enough in CRM workspace.
 - Root cause: command affordance existed as content block, not as OS-level interaction layer.
 - Prevention: non-destructive command layer CSS, import-count control, build validation and governance registration.
+
+## AS6_OS_INTERACTIVE_COMMAND_PALETTE
+- Detected risk: AS6 Command Layer was visible but static.
+- Root cause: no interactive palette or keyboard command control existed yet.
+- Prevention: reusable command palette component, keyboard controls, import/render count checks and build validation.

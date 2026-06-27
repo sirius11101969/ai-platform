@@ -669,3 +669,13 @@
 - Validation: CRMPage imports command layer exactly once.
 - Validation: frontend production build PASS.
 - UI page changed: /crm.
+
+## AS6_OS_INTERACTIVE_COMMAND_PALETTE
+- Diagnostic artifact: runtime/as6-os-interactive-command-palette/
+- Root cause: docs/AS6_OS_INTERACTIVE_COMMAND_PALETTE_ROOT_CAUSE.md
+- Governance: ops/governance/as6-os-interactive-command-palette-governance.md
+- Validation: AS6CommandPalette component exists.
+- Validation: CRMPage imports AS6CommandPalette exactly once.
+- Validation: CRMPage renders AS6CommandPalette exactly once.
+- Validation: frontend production build PASS.
+- UI page changed: /crm.

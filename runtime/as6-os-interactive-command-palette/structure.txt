@@ -1,0 +1,7 @@
+CRM_FILE=frontend/src/pages/CRMPage.jsx
+COMPONENT=frontend/src/components/as6-os/AS6CommandPalette.jsx
+CSS_FILE=frontend/src/styles/as6-os-interactive-command-palette.css
+PAGE_CHANGED=/crm
+UI_CHANGE_1=interactive command palette overlay
+UI_CHANGE_2=clickable bottom-right AS6 command button
+UI_CHANGE_3=Ctrl+K and Escape keyboard control

@@ -1,0 +1,10 @@
+ M docs/AS6_PROJECT_STATE.md
+ M frontend/src/pages/CRMPage.jsx
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? docs/AS6_OS_INTERACTIVE_COMMAND_PALETTE_ROOT_CAUSE.md
+?? docs/AS6_V243_CRM_WORKSPACE_CLIENT_POLISH_ROOT_CAUSE.md
+?? frontend/src/components/as6-os/AS6CommandPalette.jsx
+?? frontend/src/styles/as6-os-interactive-command-palette.css
+?? ops/governance/as6-os-interactive-command-palette-governance.md

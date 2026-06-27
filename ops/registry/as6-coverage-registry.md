@@ -2566,3 +2566,11 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Coverage: mobile-safe command layer behavior.
 - Failure class covered: assistant-command-affordance-gap.
 - AEC rule: assistant-command-layer-requires-build-import-count-and-mobile-safety.
+
+## AS6_OS_INTERACTIVE_COMMAND_PALETTE
+- Coverage: Ctrl+K / Cmd+K command palette.
+- Coverage: Escape close control.
+- Coverage: arrow navigation and Enter command selection.
+- Coverage: clickable bottom-right AS6 command trigger.
+- Failure class covered: static-command-layer-without-interaction.
+- AEC rule: interactive-command-palette-requires-build-import-count-keyboard-control.

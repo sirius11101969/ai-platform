@@ -1,0 +1,13 @@
+STAGE=AS6_OS_INTERACTIVE_COMMAND_PALETTE
+PROJECT_READINESS=99%
+PAGE_CHANGED=/crm
+UI_CHANGE_1=interactive command palette overlay
+UI_CHANGE_2=clickable bottom-right AS6 command button
+UI_CHANGE_3=Ctrl+K and Escape keyboard control
+CHECK_COMPONENT_EXISTS=PASS
+CHECK_CSS_EXISTS=PASS
+CHECK_IMPORT_COUNT=PASS
+CHECK_RENDER_COUNT=PASS
+CHECK_BUILD=PASS
+FAILURE_CLASS=static-command-layer-without-interaction
+AEC_RULE=interactive-command-palette-requires-build-import-count-keyboard-control
