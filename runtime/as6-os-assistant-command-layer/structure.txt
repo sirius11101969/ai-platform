@@ -1,0 +1,5 @@
+CRM_FILE=frontend/src/pages/CRMPage.jsx
+CSS_FILE=frontend/src/styles/as6-os-assistant-command-layer.css
+PAGE_CHANGED=/crm
+UI_CHANGE_BOTTOM_RIGHT=AS6 Command Layer floating affordance
+UI_CHANGE_TOP_SURFACE=AS6 OS command readiness marker

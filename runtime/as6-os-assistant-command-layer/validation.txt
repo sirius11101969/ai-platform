@@ -1,0 +1,11 @@
+STAGE=AS6_OS_ASSISTANT_COMMAND_LAYER
+PROJECT_READINESS=99%
+PAGE_CHANGED=/crm
+UI_CHANGE_1=bottom-right fixed AS6 Command Layer
+UI_CHANGE_2=workspace header AS6 Assistant ready marker
+UI_CHANGE_3=AS6 Assistant and Focus visual emphasis
+CHECK_CSS_LAYER=PASS
+CHECK_IMPORT_COUNT=PASS
+CHECK_BUILD=PASS
+FAILURE_CLASS=assistant-command-affordance-gap
+AEC_RULE=assistant-command-layer-requires-build-import-count-and-mobile-safety

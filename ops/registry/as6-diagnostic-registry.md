@@ -660,3 +660,12 @@
 - Validation: CSS layer exists.
 - Validation: CRMPage imports brand layer exactly once.
 - Validation: frontend production build PASS.
+
+## AS6_OS_ASSISTANT_COMMAND_LAYER
+- Diagnostic artifact: runtime/as6-os-assistant-command-layer/
+- Root cause: docs/AS6_OS_ASSISTANT_COMMAND_LAYER_ROOT_CAUSE.md
+- Governance: ops/governance/as6-os-assistant-command-layer-governance.md
+- Validation: CSS layer exists.
+- Validation: CRMPage imports command layer exactly once.
+- Validation: frontend production build PASS.
+- UI page changed: /crm.

@@ -4241,3 +4241,11 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Reduced CRM/SaaS visual drift while preserving CRM production logic.
 - Added governance artifact: ops/governance/as6-os-brand-system-refinement-governance.md.
 - Project readiness: 99%.
+
+## AS6 OS Assistant Command Layer
+- Page changed: /crm.
+- Interface changed: bottom-right floating AS6 Command Layer.
+- Interface changed: Workspace header gets AS6 Assistant readiness marker.
+- Interface changed: AS6 Assistant and Focus blocks receive stronger command-layer emphasis.
+- Added governance artifact: ops/governance/as6-os-assistant-command-layer-governance.md.
+- Project readiness: 99%.

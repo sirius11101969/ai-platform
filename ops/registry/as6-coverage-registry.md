@@ -2559,3 +2559,10 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Coverage: safe CSS-only production refinement.
 - Failure class covered: crm-saas-brand-drift.
 - AEC rule: os-brand-refinement-requires-build-and-import-count.
+
+## AS6_OS_ASSISTANT_COMMAND_LAYER
+- Coverage: persistent assistant command affordance.
+- Coverage: /crm bottom-right AS6 Command Layer.
+- Coverage: mobile-safe command layer behavior.
+- Failure class covered: assistant-command-affordance-gap.
+- AEC rule: assistant-command-layer-requires-build-import-count-and-mobile-safety.

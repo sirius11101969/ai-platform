@@ -1423,3 +1423,8 @@ Governed and registered.
 - Detected risk: AS6 may be perceived as CRM/SaaS instead of AI Operating System.
 - Root cause: CRM Workspace visual layer needed dedicated OS brand refinement.
 - Prevention: non-destructive OS brand CSS layer, import-count control, build validation and governance registration.
+
+## AS6_OS_ASSISTANT_COMMAND_LAYER
+- Detected risk: AS6 Assistant may not feel persistent enough in CRM workspace.
+- Root cause: command affordance existed as content block, not as OS-level interaction layer.
+- Prevention: non-destructive command layer CSS, import-count control, build validation and governance registration.
