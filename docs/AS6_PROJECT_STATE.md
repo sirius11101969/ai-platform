@@ -4221,3 +4221,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Added route: /crm-workspace.
 - CRM can now be tested inside AS6Workspace without replacing production /crm route.
 - Project readiness: 99%.
+
+## AS6 OS Foundation V1
+- Added canonical AS6 OS Foundation route: /as6-os.
+- Added AS6OSShell, AS6OSToday, AS6OSActionCenter, AS6OSRevenueBrain and AS6OSModuleHost.
+- CRM is now positioned as a module inside AS6 OS, not as the product center.
+- Project readiness: 99%.

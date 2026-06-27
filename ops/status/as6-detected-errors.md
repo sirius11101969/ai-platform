@@ -1407,3 +1407,8 @@ Governed and registered.
 
 - Detected risk: CRM may remain isolated from AS6 Operating System shell.
 - Prevention: /crm-workspace added as safe migration route before replacing /crm.
+
+## AS6_OS_FOUNDATION_V1
+- Detected risk: AS6 could remain perceived as CRM with AI instead of AI Operating System.
+- Root cause: modules existed before a canonical OS shell was introduced.
+- Prevention: AS6 OS Foundation route and reusable OS components added.

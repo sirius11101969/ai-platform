@@ -1,0 +1,258 @@
+:root {
+  --as6-os-bg: #020713;
+  --as6-os-panel: rgba(8, 20, 42, 0.86);
+  --as6-os-border: rgba(0, 212, 255, 0.18);
+  --as6-os-text: #f7fbff;
+  --as6-os-muted: #9fb3cf;
+  --as6-os-cyan: #00e5ff;
+  --as6-os-purple: #7c3cff;
+  --as6-os-green: #20ff7a;
+}
+
+.as6-os {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr) 310px;
+  gap: 18px;
+  padding: 16px;
+  background: radial-gradient(circle at top left, rgba(124, 60, 255, 0.28), transparent 32%), var(--as6-os-bg);
+  color: var(--as6-os-text);
+}
+
+.as6-os-sidebar,
+.as6-os-main,
+.as6-os-right,
+.as6-os-card,
+.as6-os-panel,
+.as6-os-metric,
+.as6-os-stage,
+.as6-os-lead {
+  border: 1px solid var(--as6-os-border);
+  background: var(--as6-os-panel);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+}
+
+.as6-os-sidebar,
+.as6-os-right {
+  border-radius: 22px;
+  padding: 16px;
+}
+
+.as6-os-logo {
+  font-size: 42px;
+  font-weight: 900;
+  letter-spacing: -0.08em;
+  color: var(--as6-os-cyan);
+  text-shadow: 0 0 28px rgba(124, 60, 255, 0.95);
+  margin-bottom: 18px;
+}
+
+.as6-os-logo span {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  color: var(--as6-os-muted);
+}
+
+.as6-os-nav {
+  display: grid;
+  gap: 8px;
+}
+
+.as6-os-nav button,
+.as6-os-toolbar button,
+.as6-os-actions button,
+.as6-os-card button,
+.as6-os-recommendation button,
+.as6-os-stage button {
+  border: 1px solid rgba(90, 136, 255, 0.28);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(20, 35, 70, 0.9), rgba(10, 20, 45, 0.94));
+  color: var(--as6-os-text);
+  padding: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.as6-os-nav button.active,
+.as6-os-card button,
+.as6-os-recommendation button {
+  background: linear-gradient(135deg, var(--as6-os-purple), var(--as6-os-cyan));
+}
+
+.as6-os-owner,
+.as6-os-credits {
+  margin-top: 16px;
+  border-radius: 16px;
+  padding: 14px;
+  background: rgba(5, 16, 34, 0.86);
+}
+
+.as6-os-main {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.as6-os-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.as6-os-eyebrow {
+  color: var(--as6-os-cyan);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 12px;
+}
+
+.as6-os-header h1 {
+  margin: 6px 0;
+  font-size: 34px;
+}
+
+.as6-os-header em {
+  font-size: 14px;
+  border-radius: 9px;
+  padding: 5px 8px;
+  background: linear-gradient(135deg, var(--as6-os-purple), #2458ff);
+  font-style: normal;
+}
+
+.as6-os-header p,
+.as6-os-card p,
+.as6-os-metric span,
+.as6-os-panel h2,
+.as6-os-lead small {
+  color: var(--as6-os-muted);
+}
+
+.as6-os-toolbar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.as6-os-today {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.as6-os-metric,
+.as6-os-panel,
+.as6-os-card {
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.as6-os-metric strong {
+  display: block;
+  font-size: 26px;
+  margin: 8px 0;
+}
+
+.as6-os-metric em {
+  color: var(--as6-os-green);
+  font-style: normal;
+}
+
+.as6-os-panel {
+  margin-bottom: 16px;
+}
+
+.as6-os-panel h2 {
+  margin-top: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 14px;
+}
+
+.as6-os-actions,
+.as6-os-brain-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.as6-os-brain-grid article {
+  border-radius: 14px;
+  padding: 14px;
+  background: rgba(4, 14, 32, 0.84);
+}
+
+.as6-os-brain-grid strong {
+  display: block;
+  font-size: 22px;
+  margin-top: 8px;
+}
+
+.as6-os-recommendation {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+  border-radius: 16px;
+  padding: 14px;
+  background: rgba(7, 19, 42, 0.9);
+}
+
+.as6-os-pipeline {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.as6-os-stage {
+  border-radius: 16px;
+  padding: 12px;
+}
+
+.as6-os-stage header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.as6-os-lead {
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.as6-os-lead span {
+  display: block;
+  color: var(--as6-os-cyan);
+  margin: 8px 0;
+}
+
+.as6-os-right {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+
+.as6-os-copilot strong {
+  display: block;
+  font-size: 22px;
+  margin: 8px 0;
+}
+
+@media (max-width: 1200px) {
+  .as6-os {
+    grid-template-columns: 1fr;
+  }
+
+  .as6-os-today,
+  .as6-os-actions,
+  .as6-os-brain-grid,
+  .as6-os-pipeline {
+    grid-template-columns: 1fr 1fr;
+  }
+}

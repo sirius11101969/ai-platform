@@ -637,3 +637,10 @@
 - Validation: CRMWorkspacePage exists.
 - Validation: /crm-workspace route count equals 1.
 - Validation: frontend build PASS.
+
+## AS6_OS_FOUNDATION_V1
+- Diagnostic artifact: runtime/as6-os-foundation-v1/
+- Root cause: docs/AS6_OS_FOUNDATION_V1_ROOT_CAUSE.md
+- Validation: AS6 OS route count equals 1.
+- Validation: AS6 OS import count equals 1.
+- Validation: frontend production build PASS.

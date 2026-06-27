@@ -1,0 +1,9 @@
+ M docs/AS6_PROJECT_STATE.md
+ M frontend/src/App.jsx
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? docs/AS6_OS_FOUNDATION_V1_ROOT_CAUSE.md
+?? frontend/src/components/as6-os/
+?? frontend/src/pages/AS6OSPage.jsx
+?? frontend/src/styles/as6-os-foundation.css

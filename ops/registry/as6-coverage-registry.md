@@ -2537,3 +2537,12 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 
 - Coverage: CRM route-level workspace migration.
 - Failure class covered: crm-page-outside-as6-workspace-foundation.
+
+## AS6_OS_FOUNDATION_V1
+- Coverage: OS shell foundation.
+- Coverage: Today layer.
+- Coverage: Action Center.
+- Coverage: Revenue Brain.
+- Coverage: Right Rail and AI Copilot layer.
+- Coverage: Module Host foundation.
+- Failure class covered: crm-centric-platform-architecture-drift.
