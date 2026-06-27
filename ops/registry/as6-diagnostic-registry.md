@@ -565,3 +565,10 @@
 - Validation: ops/bin/as6-validate-crm-workspace-browser-v234
 - Runtime evidence: runtime/as6-v234-crm-workspace-browser-validation/
 - Failure class: AS6_CRM_WORKSPACE_BROWSER_VALIDATION_GAP
+
+## AS6 CRM Workspace Client Production Check V235
+- Diagnostic: ops/bin/as6-diagnose-crm-workspace-production-check-v235
+- Control: ops/bin/as6-control-crm-workspace-production-check-v235
+- Production check: ops/bin/as6-production-check-crm-workspace-client-v235
+- Runtime evidence: runtime/as6-v235-crm-workspace-production-check/
+- Failure class: AS6_CRM_WORKSPACE_PRODUCTION_CHECK_GAP

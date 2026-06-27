@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-production-check-crm-workspace-client-v235
+printf '%s\n' "AS6_DIAGNOSE_CRM_WORKSPACE_PRODUCTION_CHECK_V235=PASS"

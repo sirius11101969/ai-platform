@@ -1,0 +1,8 @@
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? ops/bin/as6-control-crm-workspace-production-check-v235
+?? ops/bin/as6-diagnose-crm-workspace-production-check-v235
+?? ops/bin/as6-production-check-crm-workspace-client-v235
+?? ops/governance/as6-crm-workspace-production-check-v235.md
+?? ops/state/as6-crm-workspace-production-check-v235.md

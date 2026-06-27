@@ -2474,3 +2474,10 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers runtime tracer marker validation.
 - Covers CSS wiring and build validation.
 - Covers no-visual-change validation on /crm.
+
+## AS6 CRM Workspace Client Production Check V235
+- Covers CRM Workspace client production readiness gate.
+- Covers reuse of V234 browser validation.
+- Covers runtime tracer readiness.
+- Covers production health capture.
+- Covers no-visual-change production check on /crm.

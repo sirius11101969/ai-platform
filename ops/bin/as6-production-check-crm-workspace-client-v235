@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f frontend/src/pages/CRMPage.jsx
+test -f frontend/src/design-system/crm/as6CrmWorkspaceClientTraceAuto.js
+test -f frontend/src/styles/as6-crm-workspace-client-v231.css
+test -f frontend/src/styles/as6-crm-workspace-client-v232.css
+test -x ops/bin/as6-validate-crm-workspace-browser-v234
+
+ops/bin/as6-validate-crm-workspace-browser-v234 >/tmp/as6-v235-browser-validation.out
+
+grep -q "data-as6-crm-workspace-client=\"v231\"" frontend/src/pages/CRMPage.jsx
+grep -q "__AS6_CRM_WORKSPACE_CLIENT_TRACE__" frontend/src/design-system/crm/as6CrmWorkspaceClientTraceAuto.js
+grep -q "AS6_CRM_WORKSPACE_BROWSER_VALIDATION_V234=PASS" /tmp/as6-v235-browser-validation.out
+
+printf '%s\n' "AS6_CRM_WORKSPACE_PRODUCTION_CHECK_V235=PASS"
