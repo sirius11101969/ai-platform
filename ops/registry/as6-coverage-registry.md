@@ -2411,3 +2411,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers AppShell Workspace wiring.
 - Covers runtime marker data-as6-workspace=v224.
 - Covers pre-existing governance drift detection.
+
+## AS6 Sidebar Implementation V225
+- Covers AS6 Sidebar component family.
+- Covers primary and favorite navigation model.
+- Covers AppShell sidebar wiring to AS6SidebarShell.
+- Covers sidebar CSS foundation and runtime marker.

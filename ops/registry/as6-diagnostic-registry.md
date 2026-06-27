@@ -502,3 +502,9 @@
 - Control: ops/bin/as6-control-workspace-implementation-v224
 - Runtime evidence: runtime/as6-v224-workspace/
 - Failure class: AS6_WORKSPACE_CANONICAL_COMPONENT_GAP
+
+## AS6 Sidebar Implementation V225
+- Diagnostic: ops/bin/as6-diagnose-sidebar-implementation-v225
+- Control: ops/bin/as6-control-sidebar-implementation-v225
+- Runtime evidence: runtime/as6-v225-sidebar/
+- Failure class: AS6_SIDEBAR_CANONICAL_COMPONENT_GAP

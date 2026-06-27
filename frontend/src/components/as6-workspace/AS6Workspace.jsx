@@ -27,3 +27,5 @@ export function AS6Assistant({ children, className = '' }) {
 export function AS6Focus({ children, className = '' }) {
   return <section className={className} data-as6-focus="v224" aria-label="AS6 Focus">{children}</section>;
 }
+
+export { AS6SidebarShell, AS6SidebarNav, AS6SidebarSection, AS6SidebarProfile, AS6SidebarAction, AS6_NAVIGATION_PRIMARY, AS6_NAVIGATION_FAVORITES } from './AS6Sidebar.jsx';

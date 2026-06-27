@@ -1,0 +1,22 @@
+/* AS6 Sidebar Implementation V225 */
+[data-as6-sidebar='v225'] {
+  contain: layout paint;
+}
+
+[data-as6-sidebar='v225'] [data-as6-sidebar-nav='v225'] a {
+  min-height: 42px;
+}
+
+[data-as6-sidebar='v225'] [data-as6-sidebar-section='v225'] {
+  display: grid;
+  gap: 8px;
+}
+
+[data-as6-sidebar-profile='v225'] {
+  display: grid;
+  gap: 10px;
+}
+
+[data-as6-sidebar-action='v225'] {
+  width: 100%;
+}

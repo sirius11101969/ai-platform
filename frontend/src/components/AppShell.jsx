@@ -1,5 +1,6 @@
 import AS6Logo from './branding/AS6Logo.jsx'
 import { AS6Workspace } from './as6-workspace/AS6Workspace.jsx'
+import { AS6SidebarShell } from './as6-workspace/AS6Sidebar.jsx'
 import React, { useEffect, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { creditSummary, userProfile } from "../data/mockData";
@@ -120,7 +121,7 @@ export function ProtectedLayout({ children }) {
 
   return (
     <AS6Workspace className={`app-shell `} dataRoute={isCommandCenter ? "command-center" : "app"} mode={isCommandCenter ? "command-center" : "app"}>
-      <aside className={`sidebar shell-glow ${isCommandCenter ? "command-sidebar" : ""}`} data-command-sidebar={isCommandCenter ? "premium" : undefined}>
+      <AS6SidebarShell className={`sidebar shell-glow `} command={isCommandCenter} data-command-sidebar={isCommandCenter ? "premium" : undefined}>
         {isCommandCenter ? (
           <>
             <div className="as6-sidebar-brand as6-sidebar-brand-top"><AS6Logo /></div>
@@ -189,7 +190,7 @@ export function ProtectedLayout({ children }) {
             <CreditsMiniBlock credits={currentWorkspace?.creditsPool ?? profile?.credits} />
           </>
         )}
-      </aside>
+      </AS6SidebarShell>
       <div className="workspace">
         {!isCommandCenter && <header className="workspace-header shell-glow">
           <div>

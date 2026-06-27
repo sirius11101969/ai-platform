@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/components/as6-workspace/AS6Sidebar.jsx
+test -f frontend/src/styles/as6-sidebar-v225.css
+grep -q "export function AS6SidebarShell" frontend/src/components/as6-workspace/AS6Sidebar.jsx
+grep -q "export function AS6SidebarNav" frontend/src/components/as6-workspace/AS6Sidebar.jsx
+grep -q "export function AS6SidebarSection" frontend/src/components/as6-workspace/AS6Sidebar.jsx
+grep -q "export function AS6SidebarProfile" frontend/src/components/as6-workspace/AS6Sidebar.jsx
+grep -q "export function AS6SidebarAction" frontend/src/components/as6-workspace/AS6Sidebar.jsx
+grep -q "AS6_NAVIGATION_PRIMARY" frontend/src/components/as6-workspace/AS6Sidebar.jsx
+grep -q "AS6_NAVIGATION_FAVORITES" frontend/src/components/as6-workspace/AS6Sidebar.jsx
+grep -q "AS6SidebarShell" frontend/src/components/AppShell.jsx
+grep -q "data-as6-sidebar" frontend/src/components/as6-workspace/AS6Sidebar.jsx
+grep -q "as6-sidebar-v225.css" frontend/src/App.jsx
+printf '%s\n' 'AS6_SIDEBAR_IMPLEMENTATION_V225=PASS'
