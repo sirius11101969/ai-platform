@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-crm-workspace-deploy-drift-v238
+printf '%s\n' "AS6_CONTROL_CRM_WORKSPACE_DEPLOY_DRIFT_V238=PASS"

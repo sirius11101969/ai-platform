@@ -2494,3 +2494,10 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers AS6 Core, Assistant, Focus and Right Rail visual selector validation.
 - Covers responsive breakpoint validation from V232.
 - Covers no-new-visual-change validation on /crm.
+
+## AS6 CRM Workspace Production Deploy Drift Check V238
+- Covers source CRM Workspace marker validation.
+- Covers dist bundle marker validation.
+- Covers production /crm HTML capture.
+- Covers production old asset detection from user screenshot/saved HTML mismatch.
+- Covers no-new-visual-change drift diagnosis.

@@ -585,3 +585,9 @@
 - Visual check: ops/bin/as6-visual-check-crm-workspace-client-v237
 - Runtime evidence: runtime/as6-v237-crm-workspace-browser-visual-check/
 - Failure class: AS6_CRM_WORKSPACE_BROWSER_VISUAL_CHECK_GAP
+
+## AS6 CRM Workspace Production Deploy Drift Check V238
+- Diagnostic: ops/bin/as6-diagnose-crm-workspace-deploy-drift-v238
+- Control: ops/bin/as6-control-crm-workspace-deploy-drift-v238
+- Runtime evidence: runtime/as6-v238-crm-workspace-deploy-drift-check/
+- Failure class: AS6_CRM_WORKSPACE_PRODUCTION_DEPLOY_DRIFT

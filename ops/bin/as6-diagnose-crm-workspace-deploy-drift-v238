@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f frontend/src/pages/CRMPage.jsx
+grep -q "data-as6-crm-workspace-client=\"v231\"" frontend/src/pages/CRMPage.jsx
+grep -q "as6-crm-workspace-ui-review-v236.css" frontend/src/App.jsx
+grep -q "__AS6_CRM_WORKSPACE_CLIENT_TRACE__" frontend/src/design-system/crm/as6CrmWorkspaceClientTraceAuto.js
+
+printf '%s\n' "AS6_SOURCE_CRM_WORKSPACE_CLIENT=PASS"
