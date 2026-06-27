@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-workspace-implementation-v224
+printf '%s\n' 'AS6_CONTROL_WORKSPACE_IMPLEMENTATION_V224=PASS'

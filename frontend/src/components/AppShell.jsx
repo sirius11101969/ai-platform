@@ -1,4 +1,5 @@
 import AS6Logo from './branding/AS6Logo.jsx'
+import { AS6Workspace } from './as6-workspace/AS6Workspace.jsx'
 import React, { useEffect, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { creditSummary, userProfile } from "../data/mockData";
@@ -118,7 +119,7 @@ export function ProtectedLayout({ children }) {
   const isCommandCenter = location.pathname === "/command-center";
 
   return (
-    <div className={`app-shell ${isCommandCenter ? "command-shell" : ""}`} data-route={isCommandCenter ? "command-center" : "app"}>
+    <AS6Workspace className={`app-shell `} dataRoute={isCommandCenter ? "command-center" : "app"} mode={isCommandCenter ? "command-center" : "app"}>
       <aside className={`sidebar shell-glow ${isCommandCenter ? "command-sidebar" : ""}`} data-command-sidebar={isCommandCenter ? "premium" : undefined}>
         {isCommandCenter ? (
           <>
@@ -214,7 +215,7 @@ export function ProtectedLayout({ children }) {
         {children}
         {settingsOpen && <WorkspaceSettings workspace={currentWorkspace} roleLabels={roleLabels} onClose={() => setSettingsOpen(false)} onRefresh={refreshCurrentWorkspace} />}
       </div>
-    </div>
+    </AS6Workspace>
   );
 }
 

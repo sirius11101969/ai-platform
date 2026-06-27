@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/components/as6-workspace/AS6Workspace.jsx
+test -f frontend/src/styles/as6-workspace-v224.css
+grep -q 'export function AS6Workspace' frontend/src/components/as6-workspace/AS6Workspace.jsx
+grep -q 'export function AS6Sidebar' frontend/src/components/as6-workspace/AS6Workspace.jsx
+grep -q 'export function AS6Header' frontend/src/components/as6-workspace/AS6Workspace.jsx
+grep -q 'export function AS6RightRail' frontend/src/components/as6-workspace/AS6Workspace.jsx
+grep -q 'export function AS6Core' frontend/src/components/as6-workspace/AS6Workspace.jsx
+grep -q 'export function AS6Assistant' frontend/src/components/as6-workspace/AS6Workspace.jsx
+grep -q 'export function AS6Focus' frontend/src/components/as6-workspace/AS6Workspace.jsx
+grep -q 'AS6Workspace' frontend/src/components/AppShell.jsx
+grep -q 'as6-workspace-v224.css' frontend/src/App.jsx
+printf '%s\n' 'AS6_WORKSPACE_IMPLEMENTATION_V224=PASS'

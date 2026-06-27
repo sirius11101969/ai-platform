@@ -1,0 +1,12 @@
+ M frontend/src/App.jsx
+ M frontend/src/components/AppShell.jsx
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? frontend/src/components/as6-workspace/
+?? frontend/src/styles/as6-workspace-v224.css
+?? ops/bin/as6-control-workspace-implementation-v224
+?? ops/bin/as6-diagnose-workspace-implementation-v224
+?? ops/governance/as6-crm-component-replacement-v222-61.md
+?? ops/governance/as6-workspace-implementation-v224.md
+?? ops/state/as6-workspace-implementation-v224.md

@@ -2405,3 +2405,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers Great Architecture document presence.
 - Covers Master Start Prompt hardening.
 - Covers Project Status execution phase.
+
+## AS6 Workspace Implementation V224
+- Covers AS6 Workspace component family.
+- Covers AppShell Workspace wiring.
+- Covers runtime marker data-as6-workspace=v224.
+- Covers pre-existing governance drift detection.

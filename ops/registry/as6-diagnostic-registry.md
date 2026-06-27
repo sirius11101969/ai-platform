@@ -496,3 +496,9 @@
 - Diagnostic: ops/bin/as6-diagnose-docs-bootstrap-hardening
 - Control: ops/bin/as6-control-docs-bootstrap-hardening
 - Runtime evidence: runtime/as6-docs-bootstrap-hardening/
+
+## AS6 Workspace Implementation V224
+- Diagnostic: ops/bin/as6-diagnose-workspace-implementation-v224
+- Control: ops/bin/as6-control-workspace-implementation-v224
+- Runtime evidence: runtime/as6-v224-workspace/
+- Failure class: AS6_WORKSPACE_CANONICAL_COMPONENT_GAP
