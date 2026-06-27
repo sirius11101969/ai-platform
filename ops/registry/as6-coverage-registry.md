@@ -2461,3 +2461,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers responsive layout breakpoints.
 - Covers overflow protection for AS6 Core, Assistant, Focus and Right Rail client cards.
 - Covers non-destructive CSS-only refinement and build validation.
+
+## AS6 CRM Workspace Client Runtime Tracer V233
+- Covers browser runtime evidence for CRM Workspace client.
+- Covers AS6 Core, Assistant, Focus and Right Rail DOM marker detection.
+- Covers custom event as6-crm-workspace-client-trace.
+- Covers no-visual-change tracer import on /crm.

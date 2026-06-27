@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/design-system/crm/as6CrmWorkspaceClientTraceAuto.js
+grep -q "as6CrmWorkspaceClientTraceAuto" frontend/src/design-system/crm/as6CrmWorkspaceClientTraceAuto.js
+grep -q "__AS6_CRM_WORKSPACE_CLIENT_TRACE__" frontend/src/design-system/crm/as6CrmWorkspaceClientTraceAuto.js
+grep -q "as6-crm-workspace-client-trace" frontend/src/design-system/crm/as6CrmWorkspaceClientTraceAuto.js
+grep -q "data-as6-crm-workspace-client" frontend/src/design-system/crm/as6CrmWorkspaceClientTraceAuto.js
+grep -q "data-as6-core" frontend/src/design-system/crm/as6CrmWorkspaceClientTraceAuto.js
+grep -q "data-as6-assistant" frontend/src/design-system/crm/as6CrmWorkspaceClientTraceAuto.js
+grep -q "data-as6-focus" frontend/src/design-system/crm/as6CrmWorkspaceClientTraceAuto.js
+grep -q "data-as6-right-rail" frontend/src/design-system/crm/as6CrmWorkspaceClientTraceAuto.js
+grep -q "as6CrmWorkspaceClientTraceAuto.js" frontend/src/pages/CRMPage.jsx
+printf '%s\n' 'AS6_CRM_WORKSPACE_RUNTIME_TRACER_V233=PASS'

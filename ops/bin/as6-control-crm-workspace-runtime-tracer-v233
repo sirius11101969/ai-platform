@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-crm-workspace-runtime-tracer-v233
+printf '%s\n' 'AS6_CONTROL_CRM_WORKSPACE_RUNTIME_TRACER_V233=PASS'

@@ -552,3 +552,9 @@
 - Control: ops/bin/as6-control-crm-workspace-visual-refinement-v232
 - Runtime evidence: runtime/as6-v232-crm-workspace-visual/
 - Failure class: AS6_CRM_WORKSPACE_VISUAL_REFINEMENT_GAP
+
+## AS6 CRM Workspace Client Runtime Tracer V233
+- Diagnostic: ops/bin/as6-diagnose-crm-workspace-runtime-tracer-v233
+- Control: ops/bin/as6-control-crm-workspace-runtime-tracer-v233
+- Runtime evidence: runtime/as6-v233-crm-workspace-runtime-tracer/
+- Failure class: AS6_CRM_WORKSPACE_RUNTIME_TRACE_GAP

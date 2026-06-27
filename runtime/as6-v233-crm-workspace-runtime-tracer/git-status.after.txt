@@ -1,0 +1,9 @@
+ M frontend/src/pages/CRMPage.jsx
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? frontend/src/design-system/crm/as6CrmWorkspaceClientTraceAuto.js
+?? ops/bin/as6-control-crm-workspace-runtime-tracer-v233
+?? ops/bin/as6-diagnose-crm-workspace-runtime-tracer-v233
+?? ops/governance/as6-crm-workspace-runtime-tracer-v233.md
+?? ops/state/as6-crm-workspace-runtime-tracer-v233.md
