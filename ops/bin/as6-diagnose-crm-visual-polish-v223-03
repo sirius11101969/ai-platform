@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/design-system/crm/as6CrmVisualPolishTraceAuto.js
+grep -q "V223_03" frontend/src/design-system/crm/as6CrmVisualPolishTraceAuto.js
+grep -q "stage-column::before" frontend/src/design-system/crm/as6CrmPipelineCompact.css
+grep -q "flex: 0 0 332px !important" frontend/src/design-system/crm/as6CrmPipelineCompact.css
+grep -q "margin: 12px 0 !important" frontend/src/design-system/crm/as6CrmPipelineCompact.css
+printf "%s\n" "AS6_CRM_VISUAL_POLISH_V223_03=PASS"

@@ -4158,3 +4158,15 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Added diagnostics: column_capsule_removal_guard, final_card_density_guard, section_gap_guard, visual_runtime_tracer_guard, frontend_build_guard, docker_guardian_guard.
 
 - Project readiness: 99%.
+
+## V223_03 CRM Visual Polish
+
+- Removed remaining CRM board halos.
+
+- Reduced vertical section gaps.
+
+- Polished CRM card density and board surface.
+
+- Added diagnostics: remaining_halo_removal_guard, card_density_guard, section_gap_guard, visual_polish_runtime_tracer_guard, frontend_build_guard, docker_guardian_guard.
+
+- Project readiness: 99%.

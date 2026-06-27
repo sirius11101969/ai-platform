@@ -470,3 +470,13 @@
 - Runtime evidence: runtime/as6-v223-02/
 
 - Failure class: CRM_COLUMN_CAPSULE_AND_CARD_DENSITY_DRIFT
+
+## V223_03 CRM Visual Polish
+
+- Diagnostic: ops/bin/as6-diagnose-crm-visual-polish-v223-03
+
+- Control: ops/bin/as6-control-crm-visual-polish-v223-03
+
+- Runtime evidence: runtime/as6-v223-03/
+
+- Failure class: CRM_VISUAL_POLISH_DRIFT

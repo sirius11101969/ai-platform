@@ -1,3 +1,4 @@
+import '../design-system/crm/as6CrmVisualPolishTraceAuto.js';
 import '../design-system/crm/as6CrmFinalDensityTraceAuto.js';
 import '../design-system/crm/as6CrmBoardLayoutTraceAuto.js';
 import '../design-system/crm/as6CrmPipelineCompactTraceAuto.js';
