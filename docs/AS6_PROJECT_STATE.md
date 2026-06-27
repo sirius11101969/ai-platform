@@ -4180,3 +4180,14 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - No business logic changed.
 
 - Project readiness: 99%.
+
+## AS6 Bootstrap Canon
+
+- Added canonical new-chat transition documents.
+- Added 00_READ_FIRST.md as project entry point.
+- Added 05_AS6_MASTER_START_PROMPT.md as AI-agnostic start prompt.
+- Added 01_AS6_GREAT_ARCHITECTURE.md as canonical architecture summary.
+- Added AS6_PROJECT_STATUS.md as execution status snapshot.
+- Project phase: EXECUTION.
+- Architecture status: CANONICAL_FROZEN.
+- Project readiness: 99%.

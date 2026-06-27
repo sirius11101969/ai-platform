@@ -1,0 +1,6 @@
+ M docs/AS6_PROJECT_STATE.md
+?? docs/00_READ_FIRST.md
+?? docs/01_AS6_GREAT_ARCHITECTURE.md
+?? docs/05_AS6_MASTER_START_PROMPT.md
+?? docs/AS6_PROJECT_STATUS.md
+?? ops/governance/as6-crm-component-replacement-v222-61.md
