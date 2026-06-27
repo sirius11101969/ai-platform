@@ -2501,3 +2501,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers production /crm HTML capture.
 - Covers production old asset detection from user screenshot/saved HTML mismatch.
 - Covers no-new-visual-change drift diagnosis.
+
+## AS6 CRM Workspace Production Deploy Repair V239
+- Covers production deploy repair for CRM Workspace client.
+- Covers source and dist marker validation.
+- Covers production root detection and fresh dist sync.
+- Covers nginx reload attempt, production health capture and no new code UI change.

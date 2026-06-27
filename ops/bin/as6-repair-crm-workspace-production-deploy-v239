@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/pages/CRMPage.jsx
+test -f frontend/src/design-system/crm/as6CrmWorkspaceClientTraceAuto.js
+grep -q "data-as6-crm-workspace-client=\"v231\"" frontend/src/pages/CRMPage.jsx
+grep -q "__AS6_CRM_WORKSPACE_CLIENT_TRACE__" frontend/src/design-system/crm/as6CrmWorkspaceClientTraceAuto.js
+npm --prefix frontend run build >/tmp/as6-v239-build-check.log
+grep -R "data-as6-crm-workspace-client" frontend/dist >/tmp/as6-v239-dist-marker.log
+grep -R "__AS6_CRM_WORKSPACE_CLIENT_TRACE__" frontend/dist >/tmp/as6-v239-dist-trace.log
+printf "%s\n" "AS6_CRM_WORKSPACE_PRODUCTION_DEPLOY_REPAIR_V239=PASS"

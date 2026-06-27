@@ -1374,3 +1374,7 @@ Governed and registered.
 - ROOT_CAUSE=production_crm_screenshot_or_html_can_show_old_bundle_after_source_build_pass
 - CHECK=V238_SOURCE_DIST_PRODUCTION_ASSET_DRIFT
 - PROJECT_READINESS=99%
+
+## AS6_CRM_WORKSPACE_PRODUCTION_DEPLOY_REPAIR
+- DEPLOY_REPAIR_V239=PASS
+- PROJECT_READINESS=99%

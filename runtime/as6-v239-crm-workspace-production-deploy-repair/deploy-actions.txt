@@ -1,0 +1,2 @@
+SRC_DIST_IS_PRODUCTION_ROOT=/var/www/ai-platform/frontend/dist
+DEPLOYED_SRC_DIST_TO=/var/www/html

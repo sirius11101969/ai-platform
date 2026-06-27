@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-repair-crm-workspace-production-deploy-v239
+printf "%s\n" "AS6_DIAGNOSE_CRM_WORKSPACE_PRODUCTION_DEPLOY_REPAIR_V239=PASS"

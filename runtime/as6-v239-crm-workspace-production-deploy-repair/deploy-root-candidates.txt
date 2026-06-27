@@ -1,0 +1,4 @@
+/var/www/ai-platform/dist
+/var/www/ai-platform/frontend/dist
+/var/www/example.com
+/var/www/html

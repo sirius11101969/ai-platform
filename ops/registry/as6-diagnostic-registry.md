@@ -591,3 +591,10 @@
 - Control: ops/bin/as6-control-crm-workspace-deploy-drift-v238
 - Runtime evidence: runtime/as6-v238-crm-workspace-deploy-drift-check/
 - Failure class: AS6_CRM_WORKSPACE_PRODUCTION_DEPLOY_DRIFT
+
+## AS6 CRM Workspace Production Deploy Repair V239
+- Diagnostic: ops/bin/as6-diagnose-crm-workspace-production-deploy-repair-v239
+- Control: ops/bin/as6-control-crm-workspace-production-deploy-repair-v239
+- Repair: ops/bin/as6-repair-crm-workspace-production-deploy-v239
+- Runtime evidence: runtime/as6-v239-crm-workspace-production-deploy-repair/
+- Failure class: AS6_CRM_WORKSPACE_PRODUCTION_DEPLOY_DRIFT
