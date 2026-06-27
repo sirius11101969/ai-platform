@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-visual-check-crm-workspace-client-v237
+printf '%s\n' "AS6_DIAGNOSE_CRM_WORKSPACE_BROWSER_VISUAL_CHECK_V237=PASS"

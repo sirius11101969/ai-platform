@@ -2487,3 +2487,10 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers CSS-only implementation with no CRM business logic change.
 - Covers AS6 Core, Assistant, Focus and Right Rail visual consistency.
 - Covers reduced-motion guard and build validation.
+
+## AS6 CRM Workspace Client Browser Visual Check V237
+- Covers V236 CRM Workspace UI review CSS import.
+- Covers hover and reduced-motion visual guards.
+- Covers AS6 Core, Assistant, Focus and Right Rail visual selector validation.
+- Covers responsive breakpoint validation from V232.
+- Covers no-new-visual-change validation on /crm.

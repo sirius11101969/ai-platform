@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f frontend/src/styles/as6-crm-workspace-ui-review-v236.css
+test -f frontend/src/styles/as6-crm-workspace-client-v231.css
+test -f frontend/src/styles/as6-crm-workspace-client-v232.css
+test -f frontend/src/pages/CRMPage.jsx
+
+grep -q "as6-crm-workspace-ui-review-v236.css" frontend/src/App.jsx
+grep -q "data-as6-crm-workspace-client=\"v231\"" frontend/src/pages/CRMPage.jsx
+grep -q "as6-crm-workspace-client-surface" frontend/src/styles/as6-crm-workspace-ui-review-v236.css
+grep -q ":hover" frontend/src/styles/as6-crm-workspace-ui-review-v236.css
+grep -q "prefers-reduced-motion" frontend/src/styles/as6-crm-workspace-ui-review-v236.css
+grep -q "data-as6-core='v228'" frontend/src/styles/as6-crm-workspace-ui-review-v236.css
+grep -q "data-as6-focus='v230'" frontend/src/styles/as6-crm-workspace-ui-review-v236.css
+grep -q "data-as6-assistant='v229'" frontend/src/styles/as6-crm-workspace-ui-review-v236.css
+grep -q "data-as6-right-rail='v227'" frontend/src/styles/as6-crm-workspace-ui-review-v236.css
+grep -q "max-width: 760px" frontend/src/styles/as6-crm-workspace-client-v232.css
+grep -q "max-width: 1200px" frontend/src/styles/as6-crm-workspace-client-v232.css
+
+printf '%s\n' "AS6_CRM_WORKSPACE_BROWSER_VISUAL_CHECK_V237=PASS"

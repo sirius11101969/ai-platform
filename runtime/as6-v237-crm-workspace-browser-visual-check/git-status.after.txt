@@ -1,0 +1,8 @@
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? ops/bin/as6-control-crm-workspace-browser-visual-check-v237
+?? ops/bin/as6-diagnose-crm-workspace-browser-visual-check-v237
+?? ops/bin/as6-visual-check-crm-workspace-client-v237
+?? ops/governance/as6-crm-workspace-browser-visual-check-v237.md
+?? ops/state/as6-crm-workspace-browser-visual-check-v237.md

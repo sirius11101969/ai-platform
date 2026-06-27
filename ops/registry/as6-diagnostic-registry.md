@@ -578,3 +578,10 @@
 - Control: ops/bin/as6-control-crm-workspace-ui-review-v236
 - Runtime evidence: runtime/as6-v236-crm-workspace-ui-review/
 - Failure class: AS6_CRM_WORKSPACE_UI_REVIEW_GAP
+
+## AS6 CRM Workspace Client Browser Visual Check V237
+- Diagnostic: ops/bin/as6-diagnose-crm-workspace-browser-visual-check-v237
+- Control: ops/bin/as6-control-crm-workspace-browser-visual-check-v237
+- Visual check: ops/bin/as6-visual-check-crm-workspace-client-v237
+- Runtime evidence: runtime/as6-v237-crm-workspace-browser-visual-check/
+- Failure class: AS6_CRM_WORKSPACE_BROWSER_VISUAL_CHECK_GAP
