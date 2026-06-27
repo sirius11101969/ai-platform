@@ -189,3 +189,18 @@ AS6 Assistant
 Фраза подтверждения:
 
 Изучил проект. Архитектуру AS6 принимаю как каноническую. Готов перейти к реализации.
+
+## Bootstrap Hardening Rule
+
+Before starting implementation, verify:
+
+- docs/00_READ_FIRST.md exists.
+- docs/01_AS6_GREAT_ARCHITECTURE.md exists.
+- docs/05_AS6_MASTER_START_PROMPT.md exists.
+- docs/AS6_PROJECT_STATUS.md exists.
+- Git HEAD is detected from repository.
+- Restore Tag is detected from repository.
+- Architecture is accepted as canonical.
+- Project phase is EXECUTION.
+
+Do not continue from memory.

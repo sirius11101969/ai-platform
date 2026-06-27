@@ -1,0 +1,10 @@
+ M docs/00_READ_FIRST.md
+ M docs/05_AS6_MASTER_START_PROMPT.md
+ M docs/AS6_PROJECT_STATE.md
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? ops/bin/as6-control-docs-bootstrap-hardening
+?? ops/bin/as6-diagnose-docs-bootstrap-hardening
+?? ops/governance/as6-crm-component-replacement-v222-61.md
+?? ops/governance/as6-docs-bootstrap-hardening.md

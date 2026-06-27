@@ -2398,3 +2398,10 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers contained board scroll guard.
 
 - Covers build, Docker and Guardian validation.
+
+## AS6 Docs Bootstrap Hardening Coverage
+
+- Covers canonical documentation entry point.
+- Covers Great Architecture document presence.
+- Covers Master Start Prompt hardening.
+- Covers Project Status execution phase.

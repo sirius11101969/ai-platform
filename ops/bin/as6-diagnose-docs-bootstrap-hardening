@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f docs/00_READ_FIRST.md
+test -f docs/01_AS6_GREAT_ARCHITECTURE.md
+test -f docs/05_AS6_MASTER_START_PROMPT.md
+test -f docs/AS6_PROJECT_STATUS.md
+
+grep -q "AS6_WORKSPACE_IMPLEMENTATION" docs/00_READ_FIRST.md
+grep -q "Dush" docs/01_AS6_GREAT_ARCHITECTURE.md 2>/dev/null || grep -q "Душа AS6" docs/01_AS6_GREAT_ARCHITECTURE.md
+grep -q "Bootstrap Hardening Rule" docs/05_AS6_MASTER_START_PROMPT.md
+grep -q "PROJECT_PHASE=EXECUTION" docs/AS6_PROJECT_STATUS.md
+
+printf '%s\n' 'AS6_DOCS_BOOTSTRAP_HARDENING=PASS'

@@ -17,3 +17,26 @@ AS6 находится в стадии практической реализац
 Душа AS6 всегда выше Конституции.
 
 Проект больше не расширяет философскую часть без необходимости. Главный режим работы — реализация.
+
+## AS6 Documentation Navigation
+
+Canonical entry:
+
+- docs/00_READ_FIRST.md
+- docs/01_AS6_GREAT_ARCHITECTURE.md
+- docs/05_AS6_MASTER_START_PROMPT.md
+- docs/AS6_PROJECT_STATUS.md
+
+Working context:
+
+- docs/AS6_MASTER_CONTEXT.md
+- docs/AS6_HANDOFF.md
+- docs/AS6_CODEX_PROMPT.md
+
+Execution rule:
+
+After reading the canonical documents, continue only with diagnostics and factual Git state.
+
+Current execution priority:
+
+AS6_WORKSPACE_IMPLEMENTATION

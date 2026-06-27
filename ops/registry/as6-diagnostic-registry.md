@@ -490,3 +490,9 @@
 - Runtime evidence: runtime/as6-v223-04/
 
 - Failure class: CRM_BROWSER_VISUAL_VERIFICATION_GAP
+
+## AS6 Docs Bootstrap Hardening
+
+- Diagnostic: ops/bin/as6-diagnose-docs-bootstrap-hardening
+- Control: ops/bin/as6-control-docs-bootstrap-hardening
+- Runtime evidence: runtime/as6-docs-bootstrap-hardening/

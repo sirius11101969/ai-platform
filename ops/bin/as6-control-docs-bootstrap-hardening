@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-docs-bootstrap-hardening
+printf '%s\n' 'AS6_CONTROL_DOCS_BOOTSTRAP_HARDENING=PASS'
