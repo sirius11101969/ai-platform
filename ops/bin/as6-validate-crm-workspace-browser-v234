@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f frontend/src/pages/CRMPage.jsx
+test -f frontend/src/design-system/crm/as6CrmWorkspaceClientTraceAuto.js
+test -f frontend/src/styles/as6-crm-workspace-client-v231.css
+test -f frontend/src/styles/as6-crm-workspace-client-v232.css
+
+grep -q "data-as6-crm-workspace-client=\"v231\"" frontend/src/pages/CRMPage.jsx
+grep -q "AS6CoreShell" frontend/src/pages/CRMPage.jsx
+grep -q "AS6AssistantShell" frontend/src/pages/CRMPage.jsx
+grep -q "AS6FocusShell" frontend/src/pages/CRMPage.jsx
+grep -q "AS6RightRailShell" frontend/src/pages/CRMPage.jsx
+grep -q "as6CrmWorkspaceClientTraceAuto.js" frontend/src/pages/CRMPage.jsx
+
+grep -q "__AS6_CRM_WORKSPACE_CLIENT_TRACE__" frontend/src/design-system/crm/as6CrmWorkspaceClientTraceAuto.js
+grep -q "as6-crm-workspace-client-trace" frontend/src/design-system/crm/as6CrmWorkspaceClientTraceAuto.js
+grep -q "crmWorkspaceClient" frontend/src/design-system/crm/as6CrmWorkspaceClientTraceAuto.js
+grep -q "as6Core" frontend/src/design-system/crm/as6CrmWorkspaceClientTraceAuto.js
+grep -q "as6Assistant" frontend/src/design-system/crm/as6CrmWorkspaceClientTraceAuto.js
+grep -q "as6Focus" frontend/src/design-system/crm/as6CrmWorkspaceClientTraceAuto.js
+grep -q "as6RightRail" frontend/src/design-system/crm/as6CrmWorkspaceClientTraceAuto.js
+
+grep -q "as6-crm-workspace-client-v231.css" frontend/src/App.jsx
+grep -q "as6-crm-workspace-client-v232.css" frontend/src/App.jsx
+
+printf '%s\n' "AS6_CRM_WORKSPACE_BROWSER_VALIDATION_V234=PASS"

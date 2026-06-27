@@ -2467,3 +2467,10 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers AS6 Core, Assistant, Focus and Right Rail DOM marker detection.
 - Covers custom event as6-crm-workspace-client-trace.
 - Covers no-visual-change tracer import on /crm.
+
+## AS6 CRM Workspace Client Browser Validation V234
+- Covers CRM Workspace client DOM marker validation.
+- Covers AS6 Core, Assistant, Focus and Right Rail marker validation.
+- Covers runtime tracer marker validation.
+- Covers CSS wiring and build validation.
+- Covers no-visual-change validation on /crm.

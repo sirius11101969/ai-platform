@@ -558,3 +558,10 @@
 - Control: ops/bin/as6-control-crm-workspace-runtime-tracer-v233
 - Runtime evidence: runtime/as6-v233-crm-workspace-runtime-tracer/
 - Failure class: AS6_CRM_WORKSPACE_RUNTIME_TRACE_GAP
+
+## AS6 CRM Workspace Client Browser Validation V234
+- Diagnostic: ops/bin/as6-diagnose-crm-workspace-browser-validation-v234
+- Control: ops/bin/as6-control-crm-workspace-browser-validation-v234
+- Validation: ops/bin/as6-validate-crm-workspace-browser-v234
+- Runtime evidence: runtime/as6-v234-crm-workspace-browser-validation/
+- Failure class: AS6_CRM_WORKSPACE_BROWSER_VALIDATION_GAP

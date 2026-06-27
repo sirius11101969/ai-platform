@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-crm-workspace-browser-validation-v234
+printf '%s\n' "AS6_CONTROL_CRM_WORKSPACE_BROWSER_VALIDATION_V234=PASS"
