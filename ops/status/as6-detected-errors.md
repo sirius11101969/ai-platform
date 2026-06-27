@@ -1449,3 +1449,9 @@ Governed and registered.
 - Detected error: /crm-v2 behaved like it returned to landing.
 - Root cause: preview route was not aligned with protected workspace route pattern.
 - Prevention: ProtectedRoute wrapping and route validation.
+
+## AS6_DOCKER_FRONTEND_DIST_SYNC
+
+- Detected error: container served stale frontend assets without /crm-v2.
+- Root cause: production Docker Nginx html was not synced with host frontend/dist.
+- Prevention: Docker Nginx dist sync and marker validation registered.

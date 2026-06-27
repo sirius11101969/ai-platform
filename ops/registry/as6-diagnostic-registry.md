@@ -706,3 +706,12 @@
 - Validation: /crm-v2 route count equals 1.
 - Validation: /crm-v2 uses ProtectedRoute.
 - Validation: frontend production build PASS.
+
+## AS6_DOCKER_FRONTEND_DIST_SYNC
+
+- Diagnostic artifact: runtime/as6-docker-frontend-dist-sync/
+- Root cause: docs/AS6_DOCKER_FRONTEND_DIST_SYNC_ROOT_CAUSE.md
+- Governance: ops/governance/as6-docker-frontend-dist-sync-governance.md
+- Validation: host frontend/dist contains /crm-v2 markers.
+- Validation: Docker Nginx html contains /crm-v2 markers after sync.
+- Validation: Docker Nginx config test PASS.

@@ -4279,3 +4279,11 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Page not changed: /crm.
 - Interface routing changed: /crm-v2 now uses ProtectedRoute and workspace shell.
 - Project readiness: 99%.
+
+## AS6 Docker Frontend Dist Sync
+
+- Page changed: /crm-v2.
+- Page not changed: /crm.
+- Synced fresh frontend/dist into Docker Nginx /usr/share/nginx/html.
+- Container bundle now validates CRM v2 markers.
+- Project readiness: 99%.

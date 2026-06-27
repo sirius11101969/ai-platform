@@ -2595,3 +2595,11 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Coverage: workspace shell route parity with /crm.
 - Failure class covered: crm-v2-public-route-workspace-bypass.
 - AEC rule: crm-preview-route-must-use-protected-workspace-shell.
+
+## AS6_DOCKER_FRONTEND_DIST_SYNC
+
+- Coverage: Docker Nginx frontend deploy path.
+- Coverage: production bundle marker validation.
+- Coverage: stale container build prevention.
+- Failure class covered: docker-nginx-serving-stale-frontend-build.
+- AEC rule: frontend-ui-change-requires-docker-nginx-dist-sync.
