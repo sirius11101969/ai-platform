@@ -1,0 +1,2 @@
+28:import CRMBrandV2Page from "./pages/CRMBrandV2Page";
+139:          <Route path="/crm-v2" element={<ProtectedRoute><CRMBrandV2Page /></ProtectedRoute>} />

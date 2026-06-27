@@ -4273,3 +4273,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Source route exists and build passes.
 - Added production deploy diagnostics for nginx root, dist bundle markers, local HTTP and public HTTP evidence.
 - Project readiness: 99%.
+
+## AS6 CRM V2 Protected Route Fix
+- Page changed: /crm-v2.
+- Page not changed: /crm.
+- Interface routing changed: /crm-v2 now uses ProtectedRoute and workspace shell.
+- Project readiness: 99%.

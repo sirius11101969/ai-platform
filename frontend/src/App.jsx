@@ -136,7 +136,7 @@ export default function App() {
       <BrowserRouter>
         <Suspense fallback={window.location.pathname === "/command-center" ? null : <div className="as6-route-loading">Загрузка...</div>}>
           <Routes>
-          <Route path="/crm-v2" element={<CRMBrandV2Page />} />
+          <Route path="/crm-v2" element={<ProtectedRoute><CRMBrandV2Page /></ProtectedRoute>} />
           <Route path="/as6-os" element={<AS6OSPage />} />
           <Route path="/crm-workspace" element={<CRMWorkspacePage />} />
           <Route path="/as6-workspace" element={<AS6WorkspacePage />} />

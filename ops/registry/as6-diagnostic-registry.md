@@ -698,3 +698,11 @@
 - Validation: dist marker evidence captured.
 - Validation: nginx/root diagnostics captured.
 - Validation: local and public HTTP headers captured.
+
+## AS6_CRM_V2_PROTECTED_ROUTE_FIX
+- Diagnostic artifact: runtime/as6-crm-v2-protected-route-fix/
+- Root cause: docs/AS6_CRM_V2_PROTECTED_ROUTE_FIX_ROOT_CAUSE.md
+- Governance: ops/governance/as6-crm-v2-protected-route-fix-governance.md
+- Validation: /crm-v2 route count equals 1.
+- Validation: /crm-v2 uses ProtectedRoute.
+- Validation: frontend production build PASS.

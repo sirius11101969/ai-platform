@@ -2589,3 +2589,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Coverage: nginx root/deploy path drift detection.
 - Failure class covered: source-route-exists-but-production-serves-old-bundle.
 - AEC rule: new-ui-route-requires-production-bundle-marker-validation.
+
+## AS6_CRM_V2_PROTECTED_ROUTE_FIX
+- Coverage: protected preview route.
+- Coverage: workspace shell route parity with /crm.
+- Failure class covered: crm-v2-public-route-workspace-bypass.
+- AEC rule: crm-preview-route-must-use-protected-workspace-shell.

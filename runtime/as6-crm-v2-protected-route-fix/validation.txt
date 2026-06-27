@@ -1,0 +1,10 @@
+STAGE=AS6_CRM_V2_PROTECTED_ROUTE_FIX
+PROJECT_READINESS=99%
+PAGE_CHANGED=/crm-v2
+PAGE_NOT_CHANGED=/crm
+UI_CHANGE=/crm-v2 now opens inside protected workspace shell
+CHECK_ROUTE_COUNT=PASS
+CHECK_PROTECTED_ROUTE=PASS
+CHECK_BUILD=PASS
+FAILURE_CLASS=crm-v2-public-route-workspace-bypass
+AEC_RULE=crm-preview-route-must-use-protected-workspace-shell

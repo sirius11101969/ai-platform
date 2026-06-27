@@ -1,0 +1,8 @@
+ M docs/AS6_PROJECT_STATE.md
+ M frontend/src/App.jsx
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? docs/AS6_CRM_V2_PROTECTED_ROUTE_FIX_ROOT_CAUSE.md
+?? docs/AS6_V243_CRM_WORKSPACE_CLIENT_POLISH_ROOT_CAUSE.md
+?? ops/governance/as6-crm-v2-protected-route-fix-governance.md

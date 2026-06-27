@@ -1444,3 +1444,8 @@ Governed and registered.
 - Detected error: /crm-v2 exists in source but user cannot open it in browser.
 - Root cause under validation: production deploy drift or stale frontend bundle.
 - Prevention: add production marker validation before considering UI route complete.
+
+## AS6_CRM_V2_PROTECTED_ROUTE_FIX
+- Detected error: /crm-v2 behaved like it returned to landing.
+- Root cause: preview route was not aligned with protected workspace route pattern.
+- Prevention: ProtectedRoute wrapping and route validation.
