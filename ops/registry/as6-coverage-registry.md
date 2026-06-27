@@ -2481,3 +2481,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers runtime tracer readiness.
 - Covers production health capture.
 - Covers no-visual-change production check on /crm.
+
+## AS6 CRM Workspace Client UI Review V236
+- Covers visible AS6 brand refinement on /crm top workspace client surface only.
+- Covers CSS-only implementation with no CRM business logic change.
+- Covers AS6 Core, Assistant, Focus and Right Rail visual consistency.
+- Covers reduced-motion guard and build validation.

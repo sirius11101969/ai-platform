@@ -572,3 +572,9 @@
 - Production check: ops/bin/as6-production-check-crm-workspace-client-v235
 - Runtime evidence: runtime/as6-v235-crm-workspace-production-check/
 - Failure class: AS6_CRM_WORKSPACE_PRODUCTION_CHECK_GAP
+
+## AS6 CRM Workspace Client UI Review V236
+- Diagnostic: ops/bin/as6-diagnose-crm-workspace-ui-review-v236
+- Control: ops/bin/as6-control-crm-workspace-ui-review-v236
+- Runtime evidence: runtime/as6-v236-crm-workspace-ui-review/
+- Failure class: AS6_CRM_WORKSPACE_UI_REVIEW_GAP

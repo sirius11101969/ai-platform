@@ -1,0 +1,30 @@
+
+> ai-bot-frontend@1.0.0 build
+> vite build
+
+vite v5.4.21 building for production...
+transforming...
+✓ 154 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                         0.97 kB │ gzip:  0.52 kB
+dist/assets/as6-robot-LgharqKn.png                     31.88 kB
+dist/assets/as6-copilot-asset-Tv9D6goR.png             43.70 kB
+dist/assets/as6-logo-CVJWh6mG.webp                     90.99 kB
+dist/assets/crm-page-CW8-gLuP.css                      21.71 kB │ gzip:  3.56 kB
+dist/assets/index-DYeacKhh.css                        269.69 kB │ gzip: 46.27 kB
+dist/assets/assets-aVZfBiUq.js                          0.15 kB │ gzip:  0.13 kB
+dist/assets/vendor-BU3sXhSV.js                          4.85 kB │ gzip:  2.16 kB
+dist/assets/revenue-dashboard-page-BVrEcrfv.js          7.25 kB │ gzip:  2.61 kB
+dist/assets/ai-enterprise-command-center-C1DaZeLY.js    9.39 kB │ gzip:  2.67 kB
+dist/assets/ai-manager-dashboard-page-CBbPsjG5.js      10.99 kB │ gzip:  4.09 kB
+dist/assets/pipeline-copilot-page-KjQDveWP.js          12.27 kB │ gzip:  3.96 kB
+dist/assets/ai-live-realtime-page-Bb5EVl5U.js          18.94 kB │ gzip:  5.38 kB
+dist/assets/command-center-CjgSB5qE.js                 20.91 kB │ gzip:  7.28 kB
+dist/assets/services-D4FGpwdi.js                       31.97 kB │ gzip:  9.67 kB
+dist/assets/dashboard-page-BCNcBrle.js                 52.24 kB │ gzip: 16.19 kB
+dist/assets/ai-workers-page-CCnVh078.js                52.39 kB │ gzip: 16.36 kB
+dist/assets/crm-page-KdzUgKaZ.js                       88.45 kB │ gzip: 23.74 kB
+dist/assets/index-C8Q1ADDq.js                          95.36 kB │ gzip: 26.18 kB
+dist/assets/vendor-react-UpjCw5p4.js                  140.03 kB │ gzip: 44.92 kB
+✓ built in 3.78s

@@ -1,0 +1,80 @@
+/* AS6 CRM Workspace Client UI Review V236 */
+.as6-crm-workspace-client-surface {
+  padding: clamp(12px, 1.2vw, 18px);
+  border-radius: 34px;
+  border: 1px solid rgba(120, 190, 255, 0.16);
+  background: linear-gradient(135deg, rgba(8, 20, 38, 0.42), rgba(5, 13, 28, 0.16));
+}
+
+.as6-crm-workspace-client-surface [data-as6-core='v228'],
+.as6-crm-workspace-client-surface [data-as6-focus='v230'],
+.as6-crm-workspace-client-surface [data-as6-assistant='v229'],
+.as6-crm-workspace-client-surface [data-as6-right-rail='v227'] {
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+  border-color: rgba(120, 190, 255, 0.24);
+}
+
+.as6-crm-workspace-client-surface [data-as6-core='v228']:hover,
+.as6-crm-workspace-client-surface [data-as6-focus='v230']:hover,
+.as6-crm-workspace-client-surface [data-as6-assistant='v229']:hover,
+.as6-crm-workspace-client-surface [data-as6-right-rail='v227']:hover {
+  transform: translateY(-2px);
+  border-color: rgba(37, 228, 255, 0.38);
+  box-shadow: 0 26px 80px rgba(0, 0, 0, 0.34), 0 0 34px rgba(37, 228, 255, 0.10);
+}
+
+.as6-crm-workspace-client-surface [data-as6-core-promise='v228'],
+.as6-crm-workspace-client-surface [data-as6-assistant-header='v229'] span,
+.as6-crm-workspace-client-surface [data-as6-focus-header='v230'] span {
+  color: rgba(225, 245, 255, 0.78);
+  line-height: 1.45;
+}
+
+.as6-crm-workspace-client-surface [data-as6-core-action='v228'],
+.as6-crm-workspace-client-surface [data-as6-focus-action='v230'],
+.as6-crm-workspace-client-surface [data-as6-assistant-action='v229'] {
+  border: 1px solid rgba(37, 228, 255, 0.34);
+  background: linear-gradient(135deg, rgba(37, 228, 255, 0.18), rgba(50, 245, 169, 0.10));
+  color: #eaffff;
+  font-weight: 800;
+}
+
+.as6-crm-workspace-client-surface [data-as6-core-action='v228']:hover,
+.as6-crm-workspace-client-surface [data-as6-focus-action='v230']:hover,
+.as6-crm-workspace-client-surface [data-as6-assistant-action='v229']:hover {
+  border-color: rgba(50, 245, 169, 0.46);
+}
+
+.as6-crm-workspace-client-surface [data-as6-assistant-status-pill='v229'] {
+  background: rgba(50, 245, 169, 0.10);
+  color: #c9ffe9;
+}
+
+.as6-crm-workspace-client-surface [data-as6-right-rail-section='v227'] h3 {
+  margin: 0;
+  font-size: 14px;
+  color: rgba(225, 245, 255, 0.92);
+}
+
+.as6-crm-workspace-client-surface [data-as6-right-rail-metric='v227'] strong,
+.as6-crm-workspace-client-surface [data-as6-core-signal='v228'] strong,
+.as6-crm-workspace-client-surface [data-as6-focus-signal='v230'] strong {
+  font-size: clamp(18px, 1.4vw, 24px);
+  letter-spacing: -0.04em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .as6-crm-workspace-client-surface [data-as6-core='v228'],
+  .as6-crm-workspace-client-surface [data-as6-focus='v230'],
+  .as6-crm-workspace-client-surface [data-as6-assistant='v229'],
+  .as6-crm-workspace-client-surface [data-as6-right-rail='v227'] {
+    transition: none;
+  }
+
+  .as6-crm-workspace-client-surface [data-as6-core='v228']:hover,
+  .as6-crm-workspace-client-surface [data-as6-focus='v230']:hover,
+  .as6-crm-workspace-client-surface [data-as6-assistant='v229']:hover,
+  .as6-crm-workspace-client-surface [data-as6-right-rail='v227']:hover {
+    transform: none;
+  }
+}

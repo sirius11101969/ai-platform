@@ -1,0 +1,9 @@
+ M frontend/src/App.jsx
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? frontend/src/styles/as6-crm-workspace-ui-review-v236.css
+?? ops/bin/as6-control-crm-workspace-ui-review-v236
+?? ops/bin/as6-diagnose-crm-workspace-ui-review-v236
+?? ops/governance/as6-crm-workspace-ui-review-v236.md
+?? ops/state/as6-crm-workspace-ui-review-v236.md

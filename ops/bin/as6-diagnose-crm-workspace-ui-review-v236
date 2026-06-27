@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/styles/as6-crm-workspace-ui-review-v236.css
+grep -q "as6-crm-workspace-ui-review-v236.css" frontend/src/App.jsx
+grep -q "as6-crm-workspace-client-surface" frontend/src/styles/as6-crm-workspace-ui-review-v236.css
+grep -q "data-as6-core" frontend/src/styles/as6-crm-workspace-ui-review-v236.css
+grep -q "data-as6-focus" frontend/src/styles/as6-crm-workspace-ui-review-v236.css
+grep -q "data-as6-assistant" frontend/src/styles/as6-crm-workspace-ui-review-v236.css
+grep -q "data-as6-right-rail" frontend/src/styles/as6-crm-workspace-ui-review-v236.css
+grep -q "prefers-reduced-motion" frontend/src/styles/as6-crm-workspace-ui-review-v236.css
+grep -q "data-as6-crm-workspace-client=\"v231\"" frontend/src/pages/CRMPage.jsx
+printf "%s\n" "AS6_CRM_WORKSPACE_UI_REVIEW_V236=PASS"
