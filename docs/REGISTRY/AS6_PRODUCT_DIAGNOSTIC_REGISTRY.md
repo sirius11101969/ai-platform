@@ -258,3 +258,8 @@
 - Artifact: docs/PRODUCT/AS6_NPX_PLAYWRIGHT_DOM_GEOMETRY_CAPTURE_V222_39.md
 - Capture Result: DOM_GEOMETRY_CAPTURE_NPX=FAILED
 - Failure Classes: PLAYWRIGHT_IMAGE_WITHOUT_NODE_MODULE, NPM_EPHEMERAL_PLAYWRIGHT_CAPTURE_REQUIRED, DOCKER_NPX_PLAYWRIGHT_GEOMETRY_CAPTURE, DOM_GEOMETRY_CAPTURE_NPX_FAILED.
+
+## 2026-06-27 — AS6 ONE review route
+- Diagnostic: isolated premium AS6 ONE interface added for owner validation.
+- Routes: `/as6-one`, `/crm-enterprise`, `/crm-v3`.
+- Guard: current `/crm` and `/crm-v2` remain unchanged.
