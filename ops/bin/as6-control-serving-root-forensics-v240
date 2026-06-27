@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-serving-root-forensics-v240
+printf '%s\n' "AS6_CONTROL_SERVING_ROOT_FORENSICS_V240=PASS"

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f runtime/as6-v240-serving-root-forensics/serving-root-forensics.txt
+grep -q "PRODUCTION HTML ASSETS" runtime/as6-v240-serving-root-forensics/serving-root-forensics.txt
+grep -q "LOCAL DIST ASSETS" runtime/as6-v240-serving-root-forensics/serving-root-forensics.txt
+printf '%s\n' "AS6_SERVING_ROOT_FORENSICS_V240=PASS"

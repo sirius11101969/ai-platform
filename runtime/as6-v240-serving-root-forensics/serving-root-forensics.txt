@@ -1,0 +1,85 @@
+=== HEAD ===
+185f5b2d2c5047197c1dca66984810f3f7bd45fe
+
+=== RESTORE TAGS ===
+AS6_RESTORE_V239_CRM_WORKSPACE_PRODUCTION_DEPLOY_REPAIR_20260627T123318Z
+
+=== NGINX ROOTS ===
+/etc/nginx/sites-enabled/default:41:	root /var/www/html;
+/etc/nginx/sites-enabled/default:46:	server_name _;
+/etc/nginx/sites-enabled/default:51:		try_files $uri $uri/ =404;
+/etc/nginx/sites-enabled/default:83:#	server_name example.com;
+/etc/nginx/sites-enabled/default:85:#	root /var/www/example.com;
+/etc/nginx/sites-enabled/default:89:#		try_files $uri $uri/ =404;
+
+=== SYSTEMD ===
+  as6-automation-registry.service                loaded    inactive dead    AS6 Automation Registry Refresh
+  as6-dashboard-cache.service                    loaded    inactive dead    AS6 Dashboard Cache Refresh
+  as6-disk-maintenance.service                   loaded    inactive dead    AS6 Disk Maintenance
+  as6-health-cache.service                       loaded    inactive dead    AS6 Health Cache Refresh
+  as6-ops-agent.service                          loaded    active   running AS6 Ops Agent
+  as6-pre-reboot-forensics.service               loaded    inactive dead    AS6 Pre Reboot Forensics
+  as6-reboot-forensics-cache.service             loaded    inactive dead    AS6 Reboot Forensics Evidence Cache
+  kmod-static-nodes.service                      loaded    active   exited  Create List of Static Device Nodes
+  systemd-pcrmachine.service                     loaded    inactive dead    TPM2 PCR Machine ID Measurement
+  systemd-pcrphase-initrd.service                loaded    inactive dead    TPM2 PCR Barrier (initrd)
+  systemd-pcrphase-sysinit.service               loaded    inactive dead    TPM2 PCR Barrier (Initialization)
+  systemd-pcrphase.service                       loaded    inactive dead    TPM2 PCR Barrier (User)
+  systemd-tmpfiles-setup-dev-early.service       loaded    active   exited  Create Static Device Nodes in /dev gracefully
+  systemd-tmpfiles-setup-dev.service             loaded    active   exited  Create Static Device Nodes in /dev
+  systemd-tpm2-setup-early.service               loaded    inactive dead    TPM2 SRK Setup (Early)
+  systemd-tpm2-setup.service                     loaded    inactive dead    TPM2 SRK Setup
+
+=== PM2 ===
+
+=== LISTEN PORTS ===
+State  Recv-Q Send-Q Local Address:Port  Peer Address:PortProcess                                                 
+LISTEN 0      4096         0.0.0.0:80         0.0.0.0:*    users:(("docker-proxy",pid=119355,fd=7))               
+LISTEN 0      4096      127.0.0.54:53         0.0.0.0:*    users:(("systemd-resolve",pid=779,fd=17))              
+LISTEN 0      4096         0.0.0.0:22         0.0.0.0:*    users:(("sshd",pid=1221,fd=3),("systemd",pid=1,fd=169))
+LISTEN 0      4096         0.0.0.0:40222      0.0.0.0:*    users:(("sshd",pid=1221,fd=5),("systemd",pid=1,fd=171))
+LISTEN 0      5         172.18.0.1:8787       0.0.0.0:*    users:(("python3",pid=160869,fd=3))                    
+LISTEN 0      4096   127.0.0.53%lo:53         0.0.0.0:*    users:(("systemd-resolve",pid=779,fd=15))              
+LISTEN 0      4096         0.0.0.0:443        0.0.0.0:*    users:(("docker-proxy",pid=119375,fd=7))               
+LISTEN 0      4096       127.0.0.1:39267      0.0.0.0:*    users:(("containerd",pid=1198,fd=14))                  
+LISTEN 0      4096            [::]:80            [::]:*    users:(("docker-proxy",pid=119360,fd=7))               
+LISTEN 0      4096            [::]:22            [::]:*    users:(("sshd",pid=1221,fd=4),("systemd",pid=1,fd=170))
+LISTEN 0      4096            [::]:40222         [::]:*    users:(("sshd",pid=1221,fd=6),("systemd",pid=1,fd=172))
+LISTEN 0      4096            [::]:443           [::]:*    users:(("docker-proxy",pid=119380,fd=7))               
+
+=== PROCESS TREE ===
+root        1195  0.1  1.8 517164 37928 ?        Ssl  Jun26   1:23 /usr/bin/python3 /usr/bin/fail2ban-server -xf start
+dnsmasq     1643  0.6  0.2  39380  4492 ?        Ssl  Jun26   8:10 redis-server *:6379
+root        1949  0.5  2.2 11205528 44540 ?      Sl   Jun26   6:25 node src/index.js
+root      119316  0.0  0.3  10664  6776 ?        Ss   06:27   0:00 nginx: master process nginx -g daemon off;
+message+  119423  0.0  0.3  12752  8044 ?        S    06:27   0:01 nginx: worker process
+
+=== PRODUCTION HTML ASSETS ===
+assets/assets-aVZfBiUq.js
+assets/dashboard-page-haRz1oF8.js
+assets/index-BkA-aneB.js
+assets/index-DItu1DTO.css
+assets/services-D4FGpwdi.js
+assets/vendor-DYLXRpC5.js
+assets/vendor-react-R8b3LX-z.js
+
+=== LOCAL DIST ASSETS ===
+assets/ai-enterprise-command-center-C1DaZeLY.js
+assets/ai-live-realtime-page-Bb5EVl5U.js
+assets/ai-manager-dashboard-page-CBbPsjG5.js
+assets/ai-workers-page-CCnVh078.js
+assets/as6-copilot-asset-Tv9D6goR.png
+assets/as6-logo-CVJWh6mG.webp
+assets/as6-robot-LgharqKn.png
+assets/assets-aVZfBiUq.js
+assets/command-center-CjgSB5qE.js
+assets/crm-page-CW8-gLuP.css
+assets/crm-page-KdzUgKaZ.js
+assets/dashboard-page-BCNcBrle.js
+assets/index-C8Q1ADDq.js
+assets/index-DYeacKhh.css
+assets/pipeline-copilot-page-KjQDveWP.js
+assets/revenue-dashboard-page-BVrEcrfv.js
+assets/services-D4FGpwdi.js
+assets/vendor-BU3sXhSV.js
+assets/vendor-react-UpjCw5p4.js

@@ -598,3 +598,9 @@
 - Repair: ops/bin/as6-repair-crm-workspace-production-deploy-v239
 - Runtime evidence: runtime/as6-v239-crm-workspace-production-deploy-repair/
 - Failure class: AS6_CRM_WORKSPACE_PRODUCTION_DEPLOY_DRIFT
+
+## AS6 Serving Root Forensics V240
+- Diagnostic: ops/bin/as6-diagnose-serving-root-forensics-v240
+- Control: ops/bin/as6-control-serving-root-forensics-v240
+- Runtime evidence: runtime/as6-v240-serving-root-forensics/
+- Failure class: AS6_PRODUCTION_SERVING_ROOT_UNKNOWN

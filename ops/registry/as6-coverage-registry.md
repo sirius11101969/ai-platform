@@ -2507,3 +2507,8 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers source and dist marker validation.
 - Covers production root detection and fresh dist sync.
 - Covers nginx reload attempt, production health capture and no new code UI change.
+
+## AS6 Serving Root Forensics V240
+- Covers real production serving root discovery.
+- Covers nginx/proxy/process/port/asset forensics.
+- Covers no-visual-change investigation before repair.
