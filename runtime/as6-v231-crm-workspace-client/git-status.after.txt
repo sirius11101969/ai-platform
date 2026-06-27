@@ -1,0 +1,10 @@
+ M frontend/src/App.jsx
+ M frontend/src/pages/CRMPage.jsx
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? frontend/src/styles/as6-crm-workspace-client-v231.css
+?? ops/bin/as6-control-crm-workspace-client-migration-v231
+?? ops/bin/as6-diagnose-crm-workspace-client-migration-v231
+?? ops/governance/as6-crm-workspace-client-migration-v231.md
+?? ops/state/as6-crm-workspace-client-migration-v231.md

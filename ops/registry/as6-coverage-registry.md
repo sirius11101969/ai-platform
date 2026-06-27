@@ -2448,3 +2448,10 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers header, step, action, signal and empty contracts.
 - Covers next-best-step product wording.
 - Covers CSS foundation and runtime marker.
+
+## AS6 CRM Workspace Client Migration V231
+- Covers CRM as first AS6 Workspace client.
+- Covers CRM wiring to AS6Core, AS6Assistant, AS6Focus and AS6RightRail.
+- Covers non-destructive CRM migration before full CRM rewrite.
+- Covers optional chaining safe Node patch repair.
+- Covers build validation and runtime marker.

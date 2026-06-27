@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/pages/CRMPage.jsx
+test -f frontend/src/styles/as6-crm-workspace-client-v231.css
+grep -q "AS6CoreShell" frontend/src/pages/CRMPage.jsx
+grep -q "AS6AssistantShell" frontend/src/pages/CRMPage.jsx
+grep -q "AS6FocusShell" frontend/src/pages/CRMPage.jsx
+grep -q "AS6RightRailShell" frontend/src/pages/CRMPage.jsx
+grep -q "data-as6-crm-workspace-client=\"v231\"" frontend/src/pages/CRMPage.jsx
+grep -q "CRM стала первым клиентом AS6 Workspace" frontend/src/pages/CRMPage.jsx
+grep -q "Спросить AS6" frontend/src/pages/CRMPage.jsx
+grep -q "as6-crm-workspace-client-v231.css" frontend/src/App.jsx
+printf '%s\n' 'AS6_CRM_WORKSPACE_CLIENT_MIGRATION_V231=PASS'

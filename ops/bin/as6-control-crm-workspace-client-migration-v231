@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-crm-workspace-client-migration-v231
+printf '%s\n' 'AS6_CONTROL_CRM_WORKSPACE_CLIENT_MIGRATION_V231=PASS'

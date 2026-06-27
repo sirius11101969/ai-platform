@@ -539,3 +539,10 @@
 - Control: ops/bin/as6-control-focus-implementation-v230
 - Runtime evidence: runtime/as6-v230-focus/
 - Failure class: AS6_FOCUS_CANONICAL_COMPONENT_GAP
+
+## AS6 CRM Workspace Client Migration V231
+- Diagnostic: ops/bin/as6-diagnose-crm-workspace-client-migration-v231
+- Control: ops/bin/as6-control-crm-workspace-client-migration-v231
+- Runtime evidence: runtime/as6-v231-crm-workspace-client/
+- Failure class: AS6_CRM_WORKSPACE_CLIENT_MIGRATION_GAP
+- Repair failure class: AS6_REGEX_PATCH_OPTIONAL_CHAINING_COLLISION

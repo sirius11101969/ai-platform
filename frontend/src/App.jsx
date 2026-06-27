@@ -19,6 +19,7 @@ import "./styles/as6-right-rail-v227.css";
 import "./styles/as6-core-v228.css";
 import "./styles/as6-assistant-v229.css";
 import "./styles/as6-focus-v230.css";
+import "./styles/as6-crm-workspace-client-v231.css";
 import { markAs6DesignSystemReady } from "./utils/as6RuntimeTracer";
 import React, { createContext, useContext, useEffect, useMemo, useState, lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";

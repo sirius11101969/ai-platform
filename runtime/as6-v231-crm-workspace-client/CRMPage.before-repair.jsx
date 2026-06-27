@@ -1113,42 +1113,6 @@ export default function CRMPage() {
         copy="Компактная production‑воронка: лиды, этапы, история, заметки и AI‑дожим сохраняются в PostgreSQL и доступны только текущему пользователю через JWT."
       />
 
-      <section className="as6-crm-workspace-client-surface" data-as6-crm-workspace-client="v231" aria-label="AS6 CRM Workspace client">
-        <AS6CoreShell className="as6-crm-core-client" status={loading ? "loading" : "ready"}>
-          <AS6CoreMark />
-          <AS6CorePromise>CRM стала первым клиентом AS6 Workspace.</AS6CorePromise>
-          <div className="as6-crm-core-signals">
-            <AS6CoreSignal label="Лидов" value={loading ? "…" : String(stats?.totalLeads || 0)} tone="crm" />
-            <AS6CoreSignal label="Pipeline" value={loading ? "…" : formatCurrency(stats?.pipelineValue)} tone="revenue" />
-          </div>
-          <AS6CoreAction onClick={() => setIsCreateOpen(true)}>Создать лид</AS6CoreAction>
-        </AS6CoreShell>
-
-        <AS6FocusShell className="as6-crm-focus-client" priority={(stats?.aiMetrics?.leadsNeedingFollowUp || 0) > 0 ? "high" : "normal"}>
-          <AS6FocusHeader />
-          <AS6FocusStep number={1} title="Разобрать приоритетных лидов">
-            <p>{loading ? "AS6 анализирует CRM…" : `${stats?.aiMetrics?.priorityLeads || 0} priority leads · ${stats?.aiMetrics?.leadsNeedingFollowUp || 0} требуют follow-up`}</p>
-          </AS6FocusStep>
-          <AS6FocusSignal label="Pipeline health" value={loading ? "…" : `${stats?.aiMetrics?.pipelineHealth || 0}%`} tone="crm" />
-          <AS6FocusAction onClick={handleQueueInactiveFollowUps} disabled={inactiveQueueBusy}>{inactiveQueueBusy ? "AI ставит в очередь…" : "Поставить follow-up"}</AS6FocusAction>
-        </AS6FocusShell>
-
-        <AS6AssistantShell className="as6-crm-assistant-client" status={aiAnalysisBusy ? "working" : "ready"}>
-          <AS6AssistantHeader subtitle="Помогает управлять CRM и следующим лучшим шагом." />
-          <AS6AssistantStatus label={aiAnalysisBusy ? "Scoring запущен" : "Готов помочь"} />
-          <AS6AssistantMessage>{error || "Выберите лид, запустите scoring или поставьте follow-up для неактивных клиентов."}</AS6AssistantMessage>
-          <AS6AssistantAction onClick={handleAnalyzeWorkspaceAi} disabled={aiAnalysisBusy}>{aiAnalysisBusy ? "Scoring запущен…" : "Спросить AS6"}</AS6AssistantAction>
-        </AS6AssistantShell>
-
-        <AS6RightRailShell className="as6-crm-right-rail-client">
-          <AS6RightRailSection title="CRM контроль">
-            <AS6RightRailMetric label="At-risk" value={loading ? "…" : String(stats?.aiMetrics?.atRiskDeals || 0)} hint="сделки с риском" />
-            <AS6RightRailMetric label="Hot leads" value={loading ? "…" : String(stats?.aiMetrics?.hotLeads || 0)} hint="горячие лиды" />
-            <AS6RightRailMetric label="Forecast" value={loading ? "…" : formatCurrency(stats?.aiMetrics?.aiForecastedRevenue || stats?.aiMetrics?.predictedRevenue || 0)} hint="weighted forecast" />
-          </AS6RightRailSection>
-        </AS6RightRailShell>
-      </section>
-
       {error && <p className="auth-error crm-alert">{error}</p>}
 
       <section className="dashboard-stats crm-stat-grid">

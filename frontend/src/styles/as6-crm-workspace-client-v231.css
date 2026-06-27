@@ -1,0 +1,41 @@
+/* AS6 CRM Workspace Client Migration V231 */
+.as6-crm-workspace-client-surface {
+  display: grid;
+  grid-template-columns: minmax(240px, 1.05fr) minmax(260px, 1.2fr) minmax(260px, 1.2fr) minmax(240px, .9fr);
+  gap: var(--as6-workspace-gap, 16px);
+  align-items: stretch;
+  margin: 18px 0 22px;
+}
+
+.as6-crm-workspace-client-surface > * {
+  min-width: 0;
+}
+
+.as6-crm-core-client,
+.as6-crm-focus-client,
+.as6-crm-assistant-client,
+.as6-crm-right-rail-client {
+  height: 100%;
+}
+
+.as6-crm-core-signals {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.as6-crm-workspace-client-surface p {
+  margin: 0;
+}
+
+@media (max-width: 1500px) {
+  .as6-crm-workspace-client-surface {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .as6-crm-workspace-client-surface {
+    grid-template-columns: 1fr;
+  }
+}
