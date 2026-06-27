@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/components/as6-workspace/AS6RightRail.jsx
+test -f frontend/src/styles/as6-right-rail-v227.css
+grep -q "export function AS6RightRailShell" frontend/src/components/as6-workspace/AS6RightRail.jsx
+grep -q "export function AS6RightRailSection" frontend/src/components/as6-workspace/AS6RightRail.jsx
+grep -q "export function AS6RightRailCard" frontend/src/components/as6-workspace/AS6RightRail.jsx
+grep -q "export function AS6RightRailMetric" frontend/src/components/as6-workspace/AS6RightRail.jsx
+grep -q "export function AS6RightRailAction" frontend/src/components/as6-workspace/AS6RightRail.jsx
+grep -q "AS6RightRailShell" frontend/src/components/as6-workspace/AS6Workspace.jsx
+grep -q "data-as6-right-rail" frontend/src/components/as6-workspace/AS6RightRail.jsx
+grep -q "as6-right-rail-v227.css" frontend/src/App.jsx
+printf '%s\n' 'AS6_RIGHT_RAIL_IMPLEMENTATION_V227=PASS'

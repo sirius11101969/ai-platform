@@ -1325,3 +1325,7 @@ Governed and registered.
 - ROOT_CAUSE=perl_regex_patch_collided_with_jsx_optional_chaining
 - REPAIR=node_exact_block_patch
 - PROJECT_READINESS=99%
+
+## AS6_RIGHT_RAIL_CANONICAL_COMPONENT_GAP
+- RIGHT_RAIL_IMPLEMENTATION_V227=PASS
+- PROJECT_READINESS=99%

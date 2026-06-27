@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-right-rail-implementation-v227
+printf '%s\n' 'AS6_CONTROL_RIGHT_RAIL_IMPLEMENTATION_V227=PASS'

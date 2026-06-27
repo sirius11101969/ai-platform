@@ -515,3 +515,9 @@
 - Runtime evidence: runtime/as6-v226-header/
 - Failure class: AS6_HEADER_CANONICAL_COMPONENT_GAP
 - Repair failure class: AS6_REGEX_PATCH_OPTIONAL_CHAINING_COLLISION
+
+## AS6 Right Rail Implementation V227
+- Diagnostic: ops/bin/as6-diagnose-right-rail-implementation-v227
+- Control: ops/bin/as6-control-right-rail-implementation-v227
+- Runtime evidence: runtime/as6-v227-right-rail/
+- Failure class: AS6_RIGHT_RAIL_CANONICAL_COMPONENT_GAP

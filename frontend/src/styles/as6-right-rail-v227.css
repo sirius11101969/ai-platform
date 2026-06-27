@@ -1,0 +1,33 @@
+/* AS6 Right Rail Implementation V227 */
+[data-as6-right-rail='v227'] {
+  display: grid;
+  gap: 14px;
+  align-self: start;
+  min-width: 260px;
+  max-width: 360px;
+}
+
+[data-as6-right-rail-section='v227'] {
+  display: grid;
+  gap: 10px;
+}
+
+[data-as6-right-rail-card='v227'], [data-as6-right-rail-metric='v227'] {
+  display: grid;
+  gap: 6px;
+  border-radius: 22px;
+  border: 1px solid rgba(120, 190, 255, 0.18);
+  background: rgba(5, 13, 28, 0.52);
+  padding: 14px;
+}
+
+[data-as6-right-rail-action='v227'] {
+  width: 100%;
+}
+
+@media (max-width: 1100px) {
+  [data-as6-right-rail='v227'] {
+    max-width: none;
+    min-width: 0;
+  }
+}

@@ -2424,3 +2424,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers AppShell header wiring to AS6HeaderShell.
 - Covers header CSS foundation and runtime marker.
 - Covers optional chaining patch collision prevention.
+
+## AS6 Right Rail Implementation V227
+- Covers AS6 Right Rail component family.
+- Covers section, card, metric and action contracts.
+- Covers CSS foundation and runtime marker.
+- Covers non-invasive implementation before CRM migration.

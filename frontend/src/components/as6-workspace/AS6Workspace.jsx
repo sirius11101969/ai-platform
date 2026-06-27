@@ -31,3 +31,5 @@ export function AS6Focus({ children, className = '' }) {
 export { AS6SidebarShell, AS6SidebarNav, AS6SidebarSection, AS6SidebarProfile, AS6SidebarAction, AS6_NAVIGATION_PRIMARY, AS6_NAVIGATION_FAVORITES } from './AS6Sidebar.jsx';
 
 export { AS6HeaderShell, AS6HeaderTitle, AS6HeaderToolbar, AS6WorkspaceSelector, AS6ProfilePill, AS6HeaderAction } from './AS6Header.jsx';
+
+export { AS6RightRailShell, AS6RightRailSection, AS6RightRailCard, AS6RightRailMetric, AS6RightRailAction } from './AS6RightRail.jsx';
