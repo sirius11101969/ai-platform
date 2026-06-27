@@ -1,0 +1,4 @@
+AS6_WORKSPACE_STRUCTURE=PASS
+FRONTEND_SRC=frontend/src
+COMPONENT_TARGET=frontend/src/components/as6
+STYLE_TARGET=frontend/src/styles

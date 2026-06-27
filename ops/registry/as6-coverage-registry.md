@@ -2521,3 +2521,7 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 
 ## V242 CRM Workspace Production Visual Confirmation
 - Covers production /crm Workspace block confirmation.
+
+## AS6_WORKSPACE_IMPLEMENTATION_V1
+- Coverage: Workspace shell, Sidebar, Header, Right Rail, Focus, Assistant, reusable CSS tokens.
+- Failure class covered: workspace-foundation-missing.

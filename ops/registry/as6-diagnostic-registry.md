@@ -615,3 +615,9 @@
 ## V242 CRM Workspace Production Visual Confirmation
 - Control: ops/bin/as6-v242-confirm
 - Runtime: runtime/as6-v242-close/
+
+## AS6_WORKSPACE_IMPLEMENTATION_V1
+- Diagnostic artifact: runtime/as6-workspace-v1/
+- Root cause: docs/AS6_WORKSPACE_V1_ROOT_CAUSE.md
+- UI component: frontend/src/components/as6/AS6Workspace.jsx
+- Style artifact: frontend/src/styles/as6-workspace.css

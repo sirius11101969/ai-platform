@@ -1392,3 +1392,7 @@ Governed and registered.
 ## AS6_V242_PRODUCTION_VISUAL_CONFIRMATION
 - PASS
 - PROJECT_READINESS=99%
+
+## AS6_WORKSPACE_IMPLEMENTATION_V1
+- Detected risk: modules may drift into isolated page-specific UI.
+- Prevention: reusable AS6Workspace foundation added before CRM migration.
