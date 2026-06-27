@@ -2518,3 +2518,6 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers fresh dist sync into container nginx root.
 - Covers old/new production asset comparison.
 - Covers visible /crm repair expectation.
+
+## V242 CRM Workspace Production Visual Confirmation
+- Covers production /crm Workspace block confirmation.

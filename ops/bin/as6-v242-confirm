@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+grep -q 'data-as6-crm-workspace-client="v231"' runtime/as6-v242-close/crm.html
+echo AS6_V242_CONFIRM=PASS

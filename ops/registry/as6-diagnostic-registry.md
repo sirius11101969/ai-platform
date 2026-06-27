@@ -611,3 +611,7 @@
 - Repair: ops/bin/as6-repair-docker-frontend-serving-root-v241
 - Runtime evidence: runtime/as6-v241-docker-frontend-serving-root-repair/
 - Failure class: AS6_DOCKER_FRONTEND_SERVING_ROOT_DRIFT
+
+## V242 CRM Workspace Production Visual Confirmation
+- Control: ops/bin/as6-v242-confirm
+- Runtime: runtime/as6-v242-close/
