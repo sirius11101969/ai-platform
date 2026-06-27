@@ -1,0 +1,51 @@
+/* AS6 Focus Implementation V230 */
+[data-as6-focus='v230'] {
+  display: grid;
+  gap: 14px;
+  border-radius: 28px;
+  border: 1px solid rgba(50, 245, 169, 0.22);
+  background: radial-gradient(circle at 0% 0%, rgba(50, 245, 169, 0.14), transparent 24rem), rgba(5, 13, 28, 0.58);
+  padding: 16px;
+}
+
+[data-as6-focus-header='v230'] {
+  display: grid;
+  gap: 3px;
+}
+
+[data-as6-focus-step='v230'] {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 10px;
+  align-items: start;
+  border-radius: 18px;
+  border: 1px solid rgba(120, 190, 255, 0.16);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 12px;
+}
+
+[data-as6-focus-step='v230'] > span {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: rgba(50, 245, 169, 0.12);
+}
+
+[data-as6-focus-action='v230'] {
+  min-height: 42px;
+  border-radius: 999px;
+}
+
+[data-as6-focus-signal='v230'] {
+  display: grid;
+  gap: 3px;
+  border-radius: 18px;
+  border: 1px solid rgba(120, 190, 255, 0.16);
+  padding: 12px;
+}
+
+[data-as6-focus-empty='v230'] {
+  margin: 0;
+}

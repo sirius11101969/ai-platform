@@ -533,3 +533,9 @@
 - Control: ops/bin/as6-control-assistant-implementation-v229
 - Runtime evidence: runtime/as6-v229-assistant/
 - Failure class: AS6_ASSISTANT_CANONICAL_COMPONENT_GAP
+
+## AS6 Focus Implementation V230
+- Diagnostic: ops/bin/as6-diagnose-focus-implementation-v230
+- Control: ops/bin/as6-control-focus-implementation-v230
+- Runtime evidence: runtime/as6-v230-focus/
+- Failure class: AS6_FOCUS_CANONICAL_COMPONENT_GAP

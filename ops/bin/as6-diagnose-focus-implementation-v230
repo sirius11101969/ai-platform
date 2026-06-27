@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/components/as6-workspace/AS6Focus.jsx
+test -f frontend/src/styles/as6-focus-v230.css
+grep -q "export function AS6FocusShell" frontend/src/components/as6-workspace/AS6Focus.jsx
+grep -q "export function AS6FocusHeader" frontend/src/components/as6-workspace/AS6Focus.jsx
+grep -q "export function AS6FocusStep" frontend/src/components/as6-workspace/AS6Focus.jsx
+grep -q "export function AS6FocusAction" frontend/src/components/as6-workspace/AS6Focus.jsx
+grep -q "export function AS6FocusSignal" frontend/src/components/as6-workspace/AS6Focus.jsx
+grep -q "export function AS6FocusEmpty" frontend/src/components/as6-workspace/AS6Focus.jsx
+grep -q "AS6_FOCUS_TITLE" frontend/src/components/as6-workspace/AS6Focus.jsx
+grep -q "Следующий лучший шаг" frontend/src/components/as6-workspace/AS6Focus.jsx
+grep -q "AS6FocusShell" frontend/src/components/as6-workspace/AS6Workspace.jsx
+grep -q "data-as6-focus" frontend/src/components/as6-workspace/AS6Focus.jsx
+grep -q "as6-focus-v230.css" frontend/src/App.jsx
+printf '%s\n' 'AS6_FOCUS_IMPLEMENTATION_V230=PASS'

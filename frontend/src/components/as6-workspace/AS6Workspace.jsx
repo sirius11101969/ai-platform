@@ -37,3 +37,5 @@ export { AS6RightRailShell, AS6RightRailSection, AS6RightRailCard, AS6RightRailM
 export { AS6CoreShell, AS6CoreMark, AS6CorePromise, AS6CoreAction, AS6CoreSignal, AS6_CORE_PROMISE, AS6_CORE_ACTION } from './AS6Core.jsx';
 
 export { AS6AssistantShell, AS6AssistantHeader, AS6AssistantMessage, AS6AssistantAction, AS6AssistantStatus, AS6AssistantComposer, AS6_ASSISTANT_NAME, AS6_ASSISTANT_PRIMARY_ACTION, AS6_ASSISTANT_PROMISE } from './AS6Assistant.jsx';
+
+export { AS6FocusShell, AS6FocusHeader, AS6FocusStep, AS6FocusAction, AS6FocusSignal, AS6FocusEmpty, AS6_FOCUS_TITLE, AS6_FOCUS_PROMISE } from './AS6Focus.jsx';

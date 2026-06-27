@@ -2442,3 +2442,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers header, message, action, status and composer contracts.
 - Covers primary action text: Спросить AS6.
 - Covers CSS foundation and runtime marker.
+
+## AS6 Focus Implementation V230
+- Covers AS6 Focus component family.
+- Covers header, step, action, signal and empty contracts.
+- Covers next-best-step product wording.
+- Covers CSS foundation and runtime marker.
