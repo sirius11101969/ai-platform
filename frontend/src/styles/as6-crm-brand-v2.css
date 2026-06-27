@@ -1,0 +1,74 @@
+:root {
+  --as6-v2-bg: #020713;
+  --as6-v2-panel: rgba(7, 18, 38, 0.9);
+  --as6-v2-panel-strong: rgba(10, 28, 58, 0.96);
+  --as6-v2-border: rgba(0, 229, 255, 0.18);
+  --as6-v2-border-strong: rgba(124, 92, 255, 0.38);
+  --as6-v2-text: #f8fbff;
+  --as6-v2-muted: rgba(216, 230, 255, 0.72);
+  --as6-v2-cyan: #00e5ff;
+  --as6-v2-violet: #7c5cff;
+  --as6-v2-green: #22ff88;
+  --as6-v2-orange: #ff9f1a;
+}
+
+.as6-crm-v2 {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr) 310px;
+  gap: 18px;
+  padding: 16px;
+  color: var(--as6-v2-text);
+  background: radial-gradient(circle at top left, rgba(124, 92, 255, 0.25), transparent 30%), radial-gradient(circle at top right, rgba(0, 229, 255, 0.14), transparent 34%), var(--as6-v2-bg);
+}
+
+.as6-crm-v2-sidebar, .as6-crm-v2-right, .as6-crm-v2-metrics article, .as6-crm-v2-action-center, .as6-crm-v2-brain, .as6-crm-v2-pipeline, .as6-crm-v2-card, .as6-crm-v2-copilot {
+  border: 1px solid var(--as6-v2-border);
+  background: var(--as6-v2-panel);
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.38);
+  backdrop-filter: blur(18px);
+}
+
+.as6-crm-v2-sidebar, .as6-crm-v2-right { border-radius: 24px; padding: 16px; }
+.as6-crm-v2-logo { font-size: 46px; font-weight: 950; letter-spacing: -0.09em; color: var(--as6-v2-cyan); text-shadow: 0 0 34px rgba(124, 92, 255, 0.9); margin-bottom: 20px; }
+.as6-crm-v2-logo span { display: block; font-size: 10px; letter-spacing: 0.28em; color: var(--as6-v2-muted); }
+.as6-crm-v2-nav { display: grid; gap: 8px; }
+.as6-crm-v2-nav button, .as6-crm-v2-toolbar button, .as6-crm-v2-action-center button, .as6-crm-v2-recommendation button, .as6-crm-v2-card button, .as6-crm-v2-copilot button, .as6-crm-v2-stage button {
+  border: 1px solid rgba(90, 136, 255, 0.28); border-radius: 13px; padding: 12px; color: var(--as6-v2-text); background: linear-gradient(135deg, rgba(20, 35, 70, 0.9), rgba(10, 20, 45, 0.94)); font-weight: 800; cursor: pointer;
+}
+.as6-crm-v2-nav button.active, .as6-crm-v2-copilot button, .as6-crm-v2-recommendation button { background: linear-gradient(135deg, var(--as6-v2-violet), var(--as6-v2-cyan)); }
+.as6-crm-v2-owner, .as6-crm-v2-credits { margin-top: 16px; border-radius: 18px; padding: 14px; background: rgba(5, 16, 34, 0.86); }
+.as6-crm-v2-credits strong { display: block; font-size: 32px; color: var(--as6-v2-cyan); margin: 8px 0; }
+.as6-crm-v2-main { min-width: 0; }
+.as6-crm-v2-header { display: flex; justify-content: space-between; gap: 18px; margin-bottom: 18px; }
+.as6-crm-v2-eyebrow { color: var(--as6-v2-cyan); text-transform: uppercase; letter-spacing: 0.14em; font-size: 12px; }
+.as6-crm-v2-header h1 { margin: 6px 0; font-size: 38px; line-height: 1; }
+.as6-crm-v2-header em { font-size: 14px; font-style: normal; border-radius: 9px; padding: 5px 8px; background: linear-gradient(135deg, var(--as6-v2-violet), #2458ff); }
+.as6-crm-v2-header p, .as6-crm-v2-card p, .as6-crm-v2-copilot p { color: var(--as6-v2-muted); }
+.as6-crm-v2-toolbar { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
+.as6-crm-v2-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+.as6-crm-v2-metrics article, .as6-crm-v2-action-center, .as6-crm-v2-brain, .as6-crm-v2-pipeline, .as6-crm-v2-card, .as6-crm-v2-copilot { border-radius: 20px; padding: 16px; }
+.as6-crm-v2-metrics strong { display: block; font-size: 28px; margin: 8px 0; }
+.as6-crm-v2-metrics em, .as6-crm-v2-brain-grid em { color: var(--as6-v2-green); font-style: normal; }
+.as6-crm-v2-action-center, .as6-crm-v2-brain, .as6-crm-v2-pipeline { margin-bottom: 16px; }
+.as6-crm-v2-action-center h2, .as6-crm-v2-brain h2, .as6-crm-v2-pipeline h2 { margin-top: 0; color: var(--as6-v2-cyan); text-transform: uppercase; letter-spacing: 0.1em; font-size: 14px; }
+.as6-crm-v2-action-center div { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 10px; }
+.as6-crm-v2-brain-title { display: flex; align-items: center; gap: 12px; }
+.as6-crm-v2-brain-title span { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 18px; color: var(--as6-v2-cyan); border: 1px solid var(--as6-v2-border); }
+.as6-crm-v2-brain-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
+.as6-crm-v2-brain-grid article { border-radius: 16px; padding: 14px; background: rgba(4, 14, 32, 0.84); }
+.as6-crm-v2-brain-grid strong { display: block; font-size: 24px; margin: 8px 0; }
+.as6-crm-v2-recommendation { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; margin-top: 14px; border-radius: 18px; padding: 14px; background: rgba(7, 19, 42, 0.9); }
+.as6-crm-v2-stages { display: grid; grid-template-columns: repeat(5, minmax(220px, 1fr)); gap: 12px; }
+.as6-crm-v2-stage { border: 1px solid var(--as6-v2-border); border-radius: 18px; padding: 12px; background: rgba(4, 14, 32, 0.84); }
+.as6-crm-v2-stage header { display: flex; justify-content: space-between; margin-bottom: 12px; }
+.as6-crm-v2-stage header span { display: block; color: var(--as6-v2-cyan); margin-top: 4px; }
+.as6-crm-v2-stage b { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 10px; background: rgba(0, 229, 255, 0.14); }
+.as6-crm-v2-lead { border: 1px solid rgba(148, 163, 184, 0.16); border-radius: 15px; padding: 12px; margin-bottom: 10px; background: linear-gradient(135deg, rgba(11, 27, 56, 0.94), rgba(5, 13, 30, 0.96)); }
+.as6-crm-v2-lead span { display: block; color: var(--as6-v2-cyan); margin: 8px 0; }
+.as6-crm-v2-lead small { color: var(--as6-v2-muted); }
+.as6-crm-v2-right { display: grid; align-content: start; gap: 12px; }
+.as6-crm-v2-copilot strong, .as6-crm-v2-card strong { display: block; font-size: 22px; margin: 8px 0; }
+.as6-crm-v2-copilot span, .as6-crm-v2-card span { color: var(--as6-v2-cyan); text-transform: uppercase; letter-spacing: 0.1em; font-size: 12px; }
+@media (max-width: 1240px) { .as6-crm-v2 { grid-template-columns: 1fr; } .as6-crm-v2-metrics, .as6-crm-v2-action-center div, .as6-crm-v2-brain-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .as6-crm-v2-stages { overflow-x: auto; } }
+@media (max-width: 720px) { .as6-crm-v2 { padding: 10px; } .as6-crm-v2-header { display: grid; } .as6-crm-v2-metrics, .as6-crm-v2-action-center div, .as6-crm-v2-brain-grid, .as6-crm-v2-recommendation { grid-template-columns: 1fr; } }

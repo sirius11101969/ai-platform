@@ -4258,3 +4258,11 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Added reusable component: frontend/src/components/as6-os/AS6CommandPalette.jsx.
 - Added governance artifact: ops/governance/as6-os-interactive-command-palette-governance.md.
 - Project readiness: 99%.
+
+## AS6 CRM Brand Rewrite V1
+- Page changed: /crm-v2.
+- Page not changed: /crm.
+- Interface changed: new full AS6 OS CRM page created from scratch.
+- Interface changed: Sidebar, Header, KPI, AI Action Center, Revenue Brain, Pipeline, Right Rail.
+- Old production CRM remains available for rollback.
+- Project readiness: 99%.

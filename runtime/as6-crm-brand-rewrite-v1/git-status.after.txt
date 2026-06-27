@@ -1,0 +1,10 @@
+ M docs/AS6_PROJECT_STATE.md
+ M frontend/src/App.jsx
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? docs/AS6_CRM_BRAND_REWRITE_V1_ROOT_CAUSE.md
+?? docs/AS6_V243_CRM_WORKSPACE_CLIENT_POLISH_ROOT_CAUSE.md
+?? frontend/src/pages/CRMBrandV2Page.jsx
+?? frontend/src/styles/as6-crm-brand-v2.css
+?? ops/governance/as6-crm-brand-rewrite-v1-governance.md

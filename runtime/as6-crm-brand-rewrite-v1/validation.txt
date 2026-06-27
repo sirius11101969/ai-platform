@@ -1,0 +1,16 @@
+STAGE=AS6_CRM_BRAND_REWRITE_V1
+PROJECT_READINESS=99%
+PAGE_CHANGED=/crm-v2
+PAGE_NOT_CHANGED=/crm
+UI_CHANGE_1=new AS6 CRM OS page from scratch
+UI_CHANGE_2=left navigation in AS6 brand style
+UI_CHANGE_3=top KPI cards
+UI_CHANGE_4=AI Action Center
+UI_CHANGE_5=Revenue Brain
+UI_CHANGE_6=CRM Pipeline in new brand style
+UI_CHANGE_7=right rail AI Copilot and recommendations
+CHECK_ROUTE_COUNT=PASS
+CHECK_IMPORT_COUNT=PASS
+CHECK_BUILD=PASS
+FAILURE_CLASS=old-crm-brand-architecture-drift
+AEC_RULE=crm-brand-rewrite-must-use-safe-parallel-route-before-cutover

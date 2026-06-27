@@ -679,3 +679,13 @@
 - Validation: CRMPage renders AS6CommandPalette exactly once.
 - Validation: frontend production build PASS.
 - UI page changed: /crm.
+
+## AS6_CRM_BRAND_REWRITE_V1
+- Diagnostic artifact: runtime/as6-crm-brand-rewrite-v1/
+- Root cause: docs/AS6_CRM_BRAND_REWRITE_V1_ROOT_CAUSE.md
+- Governance: ops/governance/as6-crm-brand-rewrite-v1-governance.md
+- Validation: /crm-v2 route count equals 1.
+- Validation: CRMBrandV2Page import count equals 1.
+- Validation: frontend production build PASS.
+- UI page changed: /crm-v2.
+- UI page not changed: /crm.

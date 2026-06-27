@@ -1433,3 +1433,8 @@ Governed and registered.
 - Detected risk: AS6 Command Layer was visible but static.
 - Root cause: no interactive palette or keyboard command control existed yet.
 - Prevention: reusable command palette component, keyboard controls, import/render count checks and build validation.
+
+## AS6_CRM_BRAND_REWRITE_V1
+- Detected risk: /crm remained visually old despite CSS layers.
+- Root cause: old CRM architecture could not be transformed reliably with polish layers only.
+- Prevention: new /crm-v2 AS6 OS page from scratch, old /crm preserved for rollback, build and route validation required before cutover.

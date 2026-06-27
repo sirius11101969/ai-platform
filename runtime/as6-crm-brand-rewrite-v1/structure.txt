@@ -1,0 +1,8 @@
+STAGE=AS6_CRM_BRAND_REWRITE_V1
+PAGE_CHANGED=/crm-v2
+PAGE_NOT_CHANGED=/crm
+APP_FILE=frontend/src/App.jsx
+PAGE_FILE=frontend/src/pages/CRMBrandV2Page.jsx
+CSS_FILE=frontend/src/styles/as6-crm-brand-v2.css
+FAILURE_CLASS=old-crm-brand-architecture-drift
+AEC_RULE=crm-brand-rewrite-must-use-safe-parallel-route-before-cutover

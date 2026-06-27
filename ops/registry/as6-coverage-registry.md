@@ -2574,3 +2574,10 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Coverage: clickable bottom-right AS6 command trigger.
 - Failure class covered: static-command-layer-without-interaction.
 - AEC rule: interactive-command-palette-requires-build-import-count-keyboard-control.
+
+## AS6_CRM_BRAND_REWRITE_V1
+- Coverage: safe parallel CRM rewrite route.
+- Coverage: AS6 OS brand UI foundation for CRM.
+- Coverage: rollback-safe production strategy.
+- Failure class covered: old-crm-brand-architecture-drift.
+- AEC rule: crm-brand-rewrite-must-use-safe-parallel-route-before-cutover.
