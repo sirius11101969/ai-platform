@@ -1,0 +1,4 @@
+0fd0b15fd3ba ai-platform-nginx ai-platform-nginx-1 0.0.0.0:80->80/tcp, [::]:80->80/tcp, 0.0.0.0:443->443/tcp, [::]:443->443/tcp
+c49827cef74b ai-platform-backend ai-platform-backend-1 
+42cef3d3a6ce postgres:15 ai-platform-db-1 5432/tcp
+a673938a4638 redis:7-alpine ai-platform-redis-1 6379/tcp

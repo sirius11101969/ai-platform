@@ -2512,3 +2512,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers real production serving root discovery.
 - Covers nginx/proxy/process/port/asset forensics.
 - Covers no-visual-change investigation before repair.
+
+## AS6 Docker Frontend Serving Root Repair V241
+- Covers Docker frontend serving root discovery.
+- Covers fresh dist sync into container nginx root.
+- Covers old/new production asset comparison.
+- Covers visible /crm repair expectation.

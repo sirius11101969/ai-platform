@@ -604,3 +604,10 @@
 - Control: ops/bin/as6-control-serving-root-forensics-v240
 - Runtime evidence: runtime/as6-v240-serving-root-forensics/
 - Failure class: AS6_PRODUCTION_SERVING_ROOT_UNKNOWN
+
+## AS6 Docker Frontend Serving Root Repair V241
+- Diagnostic: ops/bin/as6-diagnose-docker-frontend-serving-root-repair-v241
+- Control: ops/bin/as6-control-docker-frontend-serving-root-repair-v241
+- Repair: ops/bin/as6-repair-docker-frontend-serving-root-v241
+- Runtime evidence: runtime/as6-v241-docker-frontend-serving-root-repair/
+- Failure class: AS6_DOCKER_FRONTEND_SERVING_ROOT_DRIFT

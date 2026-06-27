@@ -1,0 +1,13 @@
+=== CONTAINER 0fd0b15fd3ba ===
+Name=/ai-platform-nginx-1 Image=ai-platform-nginx
+/
+/usr/share/nginx/html/index.html
+=== CONTAINER 42cef3d3a6ce ===
+Name=/ai-platform-db-1 Image=postgres:15
+/
+=== CONTAINER a673938a4638 ===
+Name=/ai-platform-redis-1 Image=redis:7-alpine
+/data
+=== CONTAINER c49827cef74b ===
+Name=/ai-platform-backend-1 Image=ai-platform-backend
+/app

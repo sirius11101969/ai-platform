@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f ops/bin/as6-repair-docker-frontend-serving-root-v241
+grep -q "docker ps" ops/bin/as6-repair-docker-frontend-serving-root-v241
+grep -q "docker cp" ops/bin/as6-repair-docker-frontend-serving-root-v241
+grep -q "data-as6-crm-workspace-client" ops/bin/as6-repair-docker-frontend-serving-root-v241
+grep -q "__AS6_CRM_WORKSPACE_CLIENT_TRACE__" ops/bin/as6-repair-docker-frontend-serving-root-v241
+printf '%s\n' "AS6_DIAGNOSE_DOCKER_FRONTEND_SERVING_ROOT_REPAIR_V241=PASS"

@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd /var/www/ai-platform
+
+SRC_DIST="/var/www/ai-platform/frontend/dist"
+RUNTIME_DIR="${1:-runtime/as6-v241-docker-frontend-serving-root-repair}"
+
+test -d "$SRC_DIST"
+test -f "$SRC_DIST/index.html"
+grep -R "data-as6-crm-workspace-client" "$SRC_DIST" >/tmp/as6-v241-dist-crm-marker.log
+grep -R "__AS6_CRM_WORKSPACE_CLIENT_TRACE__" "$SRC_DIST" >/tmp/as6-v241-dist-trace-marker.log
+
+docker ps --format '{{.ID}} {{.Image}} {{.Names}} {{.Ports}}' > "$RUNTIME_DIR/docker-ps.txt"
+
+CANDIDATES="$(awk 'tolower($0) ~ /nginx|frontend|web|as6|ai-platform/ {print $1}' "$RUNTIME_DIR/docker-ps.txt" | sort -u)"
+if [ -z "$CANDIDATES" ]; then
+  echo "NO_DOCKER_FRONTEND_CONTAINER_CANDIDATE"
+  exit 1
+fi
+
+: > "$RUNTIME_DIR/docker-container-probe.txt"
+: > "$RUNTIME_DIR/docker-deploy-actions.txt"
+
+DEPLOYED=0
+
+for CID in $CANDIDATES; do
+  {
+    echo "=== CONTAINER $CID ==="
+    docker inspect "$CID" --format 'Name={{.Name}} Image={{.Config.Image}}'
+    docker exec "$CID" sh -lc 'pwd; find /usr/share/nginx/html /var/www/html /app/dist /app/frontend/dist -maxdepth 2 -name index.html 2>/dev/null || true'
+  } >> "$RUNTIME_DIR/docker-container-probe.txt" 2>&1 || true
+
+  ROOTS="$(docker exec "$CID" sh -lc 'find /usr/share/nginx/html /var/www/html /app/dist /app/frontend/dist -maxdepth 2 -name index.html 2>/dev/null | xargs -r -n1 dirname | sort -u' 2>/dev/null || true)"
+
+  for ROOT in $ROOTS; do
+    if ! docker exec "$CID" sh -lc "test -f '$ROOT/index.html' && grep -q 'assets/' '$ROOT/index.html'"; then
+      continue
+    fi
+
+    mkdir -p "$RUNTIME_DIR/container-snapshots/$CID"
+    docker cp "$CID:$ROOT/index.html" "$RUNTIME_DIR/container-snapshots/$CID/index.before.html" 2>/dev/null || true
+
+    TAR_FILE="$RUNTIME_DIR/frontend-dist-v241.tar"
+    tar -C "$SRC_DIST" -cf "$TAR_FILE" .
+    docker exec "$CID" sh -lc "rm -rf '$ROOT/assets' '$ROOT/index.html' && mkdir -p '$ROOT'"
+    docker cp "$TAR_FILE" "$CID:/tmp/as6-frontend-dist-v241.tar"
+    docker exec "$CID" sh -lc "tar -C '$ROOT' -xf /tmp/as6-frontend-dist-v241.tar && rm -f /tmp/as6-frontend-dist-v241.tar"
+
+    docker cp "$CID:$ROOT/index.html" "$RUNTIME_DIR/container-snapshots/$CID/index.after.html" 2>/dev/null || true
+
+    if docker exec "$CID" sh -lc "grep -q 'index-C8Q1ADDq.js' '$ROOT/index.html' || grep -q 'index-' '$ROOT/index.html'"; then
+      echo "DEPLOYED_TO_CONTAINER=$CID ROOT=$ROOT" >> "$RUNTIME_DIR/docker-deploy-actions.txt"
+      DEPLOYED=1
+    fi
+
+    docker exec "$CID" sh -lc 'nginx -s reload 2>/dev/null || true'
+  done
+done
+
+if [ "$DEPLOYED" != "1" ]; then
+  echo "DOCKER_FRONTEND_ROOT_NOT_REPAIRED"
+  exit 1
+fi
+
+printf '%s\n' "AS6_DOCKER_FRONTEND_SERVING_ROOT_REPAIR_V241=PASS"

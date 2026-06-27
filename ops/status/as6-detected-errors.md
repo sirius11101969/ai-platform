@@ -1383,3 +1383,8 @@ Governed and registered.
 - ROOT_CAUSE=production_still_serves_old_crm_bundle_after_dist_sync
 - CHECK=V240_SERVING_ROOT_FORENSICS
 - PROJECT_READINESS=99%
+
+## AS6_DOCKER_FRONTEND_SERVING_ROOT_DRIFT
+- ROOT_CAUSE=host_deploy_repair_did_not_affect_docker_nginx_frontend_root
+- REPAIR=V241_DOCKER_FRONTEND_SERVING_ROOT_REPAIR
+- PROJECT_READINESS=99%
