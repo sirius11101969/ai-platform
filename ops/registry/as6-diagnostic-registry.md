@@ -460,3 +460,13 @@
 - Runtime evidence: runtime/as6-v223-01/
 
 - Failure class: CRM_BOARD_HORIZONTAL_SCROLL_LEAK_AND_NARROW_COLUMNS
+
+## V223_02 CRM Final Density Tuning
+
+- Diagnostic: ops/bin/as6-diagnose-crm-final-density-v223-02
+
+- Control: ops/bin/as6-control-crm-final-density-v223-02
+
+- Runtime evidence: runtime/as6-v223-02/
+
+- Failure class: CRM_COLUMN_CAPSULE_AND_CARD_DENSITY_DRIFT

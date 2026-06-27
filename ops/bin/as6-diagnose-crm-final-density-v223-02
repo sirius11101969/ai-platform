@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/design-system/crm/as6CrmFinalDensityTraceAuto.js
+grep -q 'V223_02' frontend/src/design-system/crm/as6CrmFinalDensityTraceAuto.js
+grep -q 'stage-column::before' frontend/src/design-system/crm/as6CrmPipelineCompact.css
+grep -q 'display: none !important' frontend/src/design-system/crm/as6CrmPipelineCompact.css
+grep -q 'flex: 0 0 340px !important' frontend/src/design-system/crm/as6CrmPipelineCompact.css
+printf '%s\n' 'AS6_CRM_FINAL_DENSITY_V223_02=PASS'

@@ -1,8 +1,8 @@
 # AS6 MASTER CONTEXT
 
-LAST_COMPLETED_STAGE=V223_01
+LAST_COMPLETED_STAGE=V223_02
 PROJECT_READINESS=99%
-NEXT_RECOMMENDED_STAGE=V223_02 — CRM visual screenshot verification and final density tuning
+NEXT_RECOMMENDED_STAGE=V223_03 — CRM browser visual verification
 SAFE_TO_CHANGE=YES
 
 ## Source Of Truth

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-crm-final-density-v223-02
+printf '%s\n' 'AS6_CONTROL_CRM_FINAL_DENSITY_V223_02=PASS'
