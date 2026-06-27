@@ -4266,3 +4266,10 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Interface changed: Sidebar, Header, KPI, AI Action Center, Revenue Brain, Pipeline, Right Rail.
 - Old production CRM remains available for rollback.
 - Project readiness: 99%.
+
+## AS6 CRM V2 Production Deploy Validation
+
+- Page expected: /crm-v2.
+- Source route exists and build passes.
+- Added production deploy diagnostics for nginx root, dist bundle markers, local HTTP and public HTTP evidence.
+- Project readiness: 99%.

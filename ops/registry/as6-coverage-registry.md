@@ -2581,3 +2581,11 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Coverage: rollback-safe production strategy.
 - Failure class covered: old-crm-brand-architecture-drift.
 - AEC rule: crm-brand-rewrite-must-use-safe-parallel-route-before-cutover.
+
+## AS6_CRM_V2_PRODUCTION_DEPLOY_VALIDATION
+
+- Coverage: production route visibility.
+- Coverage: deployed bundle marker detection.
+- Coverage: nginx root/deploy path drift detection.
+- Failure class covered: source-route-exists-but-production-serves-old-bundle.
+- AEC rule: new-ui-route-requires-production-bundle-marker-validation.

@@ -1438,3 +1438,9 @@ Governed and registered.
 - Detected risk: /crm remained visually old despite CSS layers.
 - Root cause: old CRM architecture could not be transformed reliably with polish layers only.
 - Prevention: new /crm-v2 AS6 OS page from scratch, old /crm preserved for rollback, build and route validation required before cutover.
+
+## AS6_CRM_V2_PRODUCTION_DEPLOY_VALIDATION
+
+- Detected error: /crm-v2 exists in source but user cannot open it in browser.
+- Root cause under validation: production deploy drift or stale frontend bundle.
+- Prevention: add production marker validation before considering UI route complete.

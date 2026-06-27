@@ -1,0 +1,8 @@
+HTTP/1.1 301 Moved Permanently
+Server: nginx/1.31.2
+Date: Sat, 27 Jun 2026 17:10:15 GMT
+Content-Type: text/html
+Content-Length: 169
+Connection: keep-alive
+Location: https://www.as6.ru/crm-v2
+

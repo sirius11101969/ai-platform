@@ -1,0 +1,4 @@
+/var/www/ai-platform/frontend/src/assets
+/var/www/ai-platform/frontend/dist/assets
+/var/www/ai-platform/backend/assets
+/var/www/html/assets

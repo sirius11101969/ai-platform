@@ -1,0 +1,8 @@
+24:	# server_names_hash_bucket_size 64;
+25:	# server_name_in_redirect off;
+230:	root /var/www/html;
+235:	server_name _;
+240:		try_files $uri $uri/ =404;
+272:#	server_name example.com;
+274:#	root /var/www/example.com;
+278:#		try_files $uri $uri/ =404;

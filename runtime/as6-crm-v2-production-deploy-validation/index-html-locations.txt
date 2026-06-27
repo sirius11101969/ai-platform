@@ -1,0 +1,4 @@
+/var/www/ai-platform/runtime/as6-black-screen/index.html
+/var/www/ai-platform/frontend/index.html
+/var/www/ai-platform/frontend/dist/index.html
+/var/www/html/index.html

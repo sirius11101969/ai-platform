@@ -1,0 +1,40 @@
+  apt-daily-upgrade.service                      loaded    inactive   dead          Daily apt upgrade and clean activities
+  apt-daily.service                              loaded    inactive   dead          Daily apt download activities
+  as6-automation-registry.service                loaded    inactive   dead          AS6 Automation Registry Refresh
+  as6-dashboard-cache.service                    loaded    inactive   dead          AS6 Dashboard Cache Refresh
+  as6-disk-maintenance.service                   loaded    inactive   dead          AS6 Disk Maintenance
+  as6-health-cache.service                       loaded    inactive   dead          AS6 Health Cache Refresh
+  as6-ops-agent.service                          loaded    active     running       AS6 Ops Agent
+  as6-pre-reboot-forensics.service               loaded    activating start   start AS6 Pre Reboot Forensics
+  as6-reboot-forensics-cache.service             loaded    inactive   dead          AS6 Reboot Forensics Evidence Cache
+  blk-availability.service                       loaded    active     exited        Availability of block devices
+  containerd.service                             loaded    active     running       containerd container runtime
+  docker.service                                 loaded    active     running       Docker Application Container Engine
+  dpkg-db-backup.service                         loaded    inactive   dead          Daily dpkg database backup service
+  fail2ban.service                               loaded    active     running       Fail2Ban Service
+  getty-static.service                           loaded    inactive   dead          getty on tty2-tty6 if dbus and logind are not available
+  grub-initrd-fallback.service                   loaded    inactive   dead          GRUB failed boot detection
+  kmod-static-nodes.service                      loaded    active     exited        Create List of Static Device Nodes
+  man-db.service                                 loaded    inactive   dead          Daily man-db regeneration
+  networking.service                             loaded    active     exited        Raise network interfaces
+  NetworkManager-wait-online.service             loaded    active     exited        Network Manager Wait Online
+  plymouth-quit-wait.service                     loaded    active     exited        Hold until boot process finishes up
+  snapd.core-fixup.service                       loaded    inactive   dead          Automatically repair incorrect owner/permissions on core devices
+  snapd.failure.service                          loaded    inactive   dead          Failure handling of the snapd snap
+  snapd.recovery-chooser-trigger.service         loaded    inactive   dead          Wait for the Ubuntu Core chooser trigger
+  snapd.seeded.service                           loaded    active     exited        Wait until snapd is fully seeded
+  snapd.snap-repair.service                      loaded    inactive   dead          Automatically fetch and run repair assertions
+  sysstat-summary.service                        loaded    inactive   dead          Generate a daily summary of process accounting
+● systemd-networkd-wait-online.service           masked    inactive   dead          systemd-networkd-wait-online.service
+  systemd-pcrmachine.service                     loaded    inactive   dead          TPM2 PCR Machine ID Measurement
+  systemd-pcrphase-initrd.service                loaded    inactive   dead          TPM2 PCR Barrier (initrd)
+  systemd-pcrphase-sysinit.service               loaded    inactive   dead          TPM2 PCR Barrier (Initialization)
+  systemd-pcrphase.service                       loaded    inactive   dead          TPM2 PCR Barrier (User)
+  systemd-pstore.service                         loaded    inactive   dead          Platform Persistent Storage Archival
+  systemd-tmpfiles-setup-dev-early.service       loaded    active     exited        Create Static Device Nodes in /dev gracefully
+  systemd-tmpfiles-setup-dev.service             loaded    active     exited        Create Static Device Nodes in /dev
+  systemd-tpm2-setup-early.service               loaded    inactive   dead          TPM2 SRK Setup (Early)
+  systemd-tpm2-setup.service                     loaded    inactive   dead          TPM2 SRK Setup
+  systemd-udev-settle.service                    loaded    inactive   dead          Wait for udev To Complete Device Initialization
+  update-notifier-download.service               loaded    inactive   dead          Download data for packages that failed at package install time
+  update-notifier-motd.service                   loaded    inactive   dead          Check to see whether there is a new version of Ubuntu available

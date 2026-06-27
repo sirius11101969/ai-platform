@@ -689,3 +689,12 @@
 - Validation: frontend production build PASS.
 - UI page changed: /crm-v2.
 - UI page not changed: /crm.
+
+## AS6_CRM_V2_PRODUCTION_DEPLOY_VALIDATION
+
+- Diagnostic artifact: runtime/as6-crm-v2-production-deploy-validation/
+- Root cause: docs/AS6_CRM_V2_PRODUCTION_DEPLOY_VALIDATION_ROOT_CAUSE.md
+- Validation: source route evidence captured.
+- Validation: dist marker evidence captured.
+- Validation: nginx/root diagnostics captured.
+- Validation: local and public HTTP headers captured.
