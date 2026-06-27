@@ -2436,3 +2436,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers core mark, promise, action and signal contracts.
 - Covers slogan and primary action constants.
 - Covers CSS foundation and runtime marker.
+
+## AS6 Assistant Implementation V229
+- Covers AS6 Assistant component family.
+- Covers header, message, action, status and composer contracts.
+- Covers primary action text: Спросить AS6.
+- Covers CSS foundation and runtime marker.

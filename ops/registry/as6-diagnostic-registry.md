@@ -527,3 +527,9 @@
 - Control: ops/bin/as6-control-core-implementation-v228
 - Runtime evidence: runtime/as6-v228-core/
 - Failure class: AS6_CORE_CANONICAL_COMPONENT_GAP
+
+## AS6 Assistant Implementation V229
+- Diagnostic: ops/bin/as6-diagnose-assistant-implementation-v229
+- Control: ops/bin/as6-control-assistant-implementation-v229
+- Runtime evidence: runtime/as6-v229-assistant/
+- Failure class: AS6_ASSISTANT_CANONICAL_COMPONENT_GAP

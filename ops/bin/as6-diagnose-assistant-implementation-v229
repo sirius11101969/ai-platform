@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/components/as6-workspace/AS6Assistant.jsx
+test -f frontend/src/styles/as6-assistant-v229.css
+grep -q "export function AS6AssistantShell" frontend/src/components/as6-workspace/AS6Assistant.jsx
+grep -q "export function AS6AssistantHeader" frontend/src/components/as6-workspace/AS6Assistant.jsx
+grep -q "export function AS6AssistantMessage" frontend/src/components/as6-workspace/AS6Assistant.jsx
+grep -q "export function AS6AssistantAction" frontend/src/components/as6-workspace/AS6Assistant.jsx
+grep -q "export function AS6AssistantStatus" frontend/src/components/as6-workspace/AS6Assistant.jsx
+grep -q "export function AS6AssistantComposer" frontend/src/components/as6-workspace/AS6Assistant.jsx
+grep -q "AS6_ASSISTANT_PRIMARY_ACTION" frontend/src/components/as6-workspace/AS6Assistant.jsx
+grep -q "Спросить AS6" frontend/src/components/as6-workspace/AS6Assistant.jsx
+grep -q "AS6AssistantShell" frontend/src/components/as6-workspace/AS6Workspace.jsx
+grep -q "data-as6-assistant" frontend/src/components/as6-workspace/AS6Assistant.jsx
+grep -q "as6-assistant-v229.css" frontend/src/App.jsx
+printf '%s\n' 'AS6_ASSISTANT_IMPLEMENTATION_V229=PASS'

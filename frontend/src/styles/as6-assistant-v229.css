@@ -1,0 +1,44 @@
+/* AS6 Assistant Implementation V229 */
+[data-as6-assistant='v229'] {
+  display: grid;
+  gap: 14px;
+  border-radius: 28px;
+  border: 1px solid rgba(37, 228, 255, 0.22);
+  background: radial-gradient(circle at 100% 0%, rgba(37, 228, 255, 0.14), transparent 24rem), rgba(5, 13, 28, 0.58);
+  padding: 16px;
+}
+
+[data-as6-assistant-header='v229'] {
+  display: grid;
+  gap: 3px;
+}
+
+[data-as6-assistant-message='v229'] {
+  border-radius: 18px;
+  border: 1px solid rgba(120, 190, 255, 0.16);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 12px;
+}
+
+[data-as6-assistant-action='v229'] {
+  min-height: 42px;
+  border-radius: 999px;
+}
+
+[data-as6-assistant-status-pill='v229'] {
+  display: inline-flex;
+  width: fit-content;
+  border-radius: 999px;
+  border: 1px solid rgba(50, 245, 169, 0.28);
+  padding: 6px 10px;
+}
+
+[data-as6-assistant-composer='v229'] {
+  display: flex;
+  gap: 10px;
+}
+
+[data-as6-assistant-composer='v229'] input {
+  min-width: 0;
+  flex: 1;
+}
