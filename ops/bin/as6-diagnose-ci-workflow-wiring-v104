@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+WORKFLOW=".github/workflows/as6-validate.yml"
+VALIDATE="ops/bin/as6-validate"
+
+test -f "$WORKFLOW" || { echo "AS6_CI_WORKFLOW_WIRING_V104=FAIL workflow_missing"; exit 1; }
+test -x "$VALIDATE" || { echo "AS6_CI_WORKFLOW_WIRING_V104=FAIL validate_missing"; exit 1; }
+
+grep -q "AS6 Validate" "$WORKFLOW" || { echo "AS6_CI_WORKFLOW_WIRING_V104=FAIL workflow_name_missing"; exit 1; }
+grep -q "pull_request" "$WORKFLOW" || { echo "AS6_CI_WORKFLOW_WIRING_V104=FAIL pull_request_trigger_missing"; exit 1; }
+grep -q "npm ci" "$WORKFLOW" || { echo "AS6_CI_WORKFLOW_WIRING_V104=FAIL npm_ci_missing"; exit 1; }
+grep -q "npm run build" "$WORKFLOW" || { echo "AS6_CI_WORKFLOW_WIRING_V104=FAIL build_missing"; exit 1; }
+grep -q "ops/bin/as6-validate" "$WORKFLOW" || { echo "AS6_CI_WORKFLOW_WIRING_V104=FAIL validate_step_missing"; exit 1; }
+
+echo "AS6_CI_WORKFLOW_WIRING_V104=PASS"

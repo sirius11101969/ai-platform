@@ -2825,3 +2825,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers DAG runner CI/manual integration.
 - Covers compact validation log path.
 - Covers legacy control-chain bypass prevention.
+
+## AS6_CI_WORKFLOW_WIRING_V104
+- Covers GitHub Actions AS6 validation workflow.
+- Covers pull_request validation trigger.
+- Covers frontend build in CI.
+- Covers ops/bin/as6-validate CI execution.

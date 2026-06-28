@@ -960,3 +960,10 @@
 - Validate entrypoint: ops/bin/as6-validate
 - Runner: ops/bin/as6-control-runner
 - Added failure class: AS6_VALIDATE_ENTRYPOINT_DRIFT.
+
+## AS6_CI_WORKFLOW_WIRING_V104
+- Diagnostic: ops/bin/as6-diagnose-ci-workflow-wiring-v104
+- Control: ops/bin/as6-control-ci-workflow-wiring-v104
+- Workflow: .github/workflows/as6-validate.yml
+- Validate entrypoint: ops/bin/as6-validate
+- Added failure class: AS6_CI_WORKFLOW_WIRING_DRIFT.

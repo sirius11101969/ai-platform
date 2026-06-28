@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-ci-workflow-wiring-v104
+ops/bin/as6-control-control-runner-ci-integration-v103
+
+grep -RIn "AS6_CI_WORKFLOW_WIRING_DRIFT" docs ops .github frontend/src >/dev/null || {
+  echo "AS6_CONTROL_CI_WORKFLOW_WIRING_V104=FAIL ci_workflow_drift_class_missing"
+  exit 1
+}
+
+echo "AS6_CONTROL_CI_WORKFLOW_WIRING_V104=PASS"

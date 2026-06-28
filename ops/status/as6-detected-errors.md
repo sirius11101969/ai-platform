@@ -1638,3 +1638,8 @@ Governed and registered.
 - Detected: AS6_CI_VALIDATION_ENTRYPOINT_GAP.
 - Root cause: DAG runner existed but no canonical validate command was registered.
 - Resolution: ops/bin/as6-validate added.
+
+## AS6_CI_WORKFLOW_WIRING_V104
+- Detected: AS6_VALIDATE_CI_BYPASS_RISK.
+- Root cause: canonical DAG validate command existed but was not wired into CI.
+- Resolution: .github/workflows/as6-validate.yml added.
