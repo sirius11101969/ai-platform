@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+AUTH_FILE="frontend/src/as6/auth/AS6RouteAuth.jsx"
+APP_FILE="frontend/src/App.jsx"
+ROUTES="frontend/src/as6/living-spaces/AS6LivingSpaceRoutes.jsx"
+
+test -f "$AUTH_FILE" || { echo "AS6_AUTH_WRAPPER_MODULE_V91F=FAIL auth_module_missing"; exit 1; }
+
+grep -q "export function RequireAuth" "$AUTH_FILE" || { echo "AS6_AUTH_WRAPPER_MODULE_V91F=FAIL require_auth_export_missing"; exit 1; }
+grep -q "export function ProtectedRoute" "$AUTH_FILE" || { echo "AS6_AUTH_WRAPPER_MODULE_V91F=FAIL protected_route_export_missing"; exit 1; }
+
+grep -q 'from "./as6/auth/AS6RouteAuth"' "$APP_FILE" || { echo "AS6_AUTH_WRAPPER_MODULE_V91F=FAIL app_auth_import_missing"; exit 1; }
+grep -q 'from "../auth/AS6RouteAuth"' "$ROUTES" || { echo "AS6_AUTH_WRAPPER_MODULE_V91F=FAIL routes_auth_import_missing"; exit 1; }
+
+! grep -q 'components/RequireAuth' "$ROUTES" || { echo "AS6_AUTH_WRAPPER_MODULE_V91F=FAIL stale_components_requireauth_import"; exit 1; }
+
+grep -q "<AS6LivingSpaceRoutes />" "$APP_FILE" || { echo "AS6_AUTH_WRAPPER_MODULE_V91F=FAIL registry_routes_missing"; exit 1; }
+grep -q "authRequired" frontend/src/as6/living-spaces/as6LivingSpaceRegistry.js || { echo "AS6_AUTH_WRAPPER_MODULE_V91F=FAIL auth_policy_missing"; exit 1; }
+
+echo "AS6_AUTH_WRAPPER_MODULE_REPAIR_V91F=PASS"

@@ -2,12 +2,23 @@
 set -euo pipefail
 
 APP_FILE="frontend/src/App.jsx"
+ROUTES="frontend/src/as6/living-spaces/AS6LivingSpaceRoutes.jsx"
+REGISTRY="frontend/src/as6/living-spaces/as6LivingSpaceRegistry.js"
+SALES_ADAPTER="frontend/src/as6-sales/AS6SalesShellAdapter.jsx"
 
 ! grep -q 'lazy(() => import("./pages/CRMPage"))' "$APP_FILE" || { echo "AS6_CRM_LAZY_IMPORT_CONSOLIDATION_V89=FAIL direct_crmpage_lazy_import_present"; exit 1; }
 ! grep -q "lazy(() => import('./pages/CRMPage'))" "$APP_FILE" || { echo "AS6_CRM_LAZY_IMPORT_CONSOLIDATION_V89=FAIL direct_crmpage_lazy_import_present"; exit 1; }
 
-grep -q 'path="/as6-sales"' "$APP_FILE" || { echo "AS6_CRM_LAZY_IMPORT_CONSOLIDATION_V89=FAIL as6_sales_route_missing"; exit 1; }
-grep -q "AS6SalesShellAdapter" "$APP_FILE" || { echo "AS6_CRM_LAZY_IMPORT_CONSOLIDATION_V89=FAIL sales_adapter_route_missing"; exit 1; }
-grep -q "CRMWorkspacePage" frontend/src/as6-sales/AS6SalesShellAdapter.jsx || { echo "AS6_CRM_LAZY_IMPORT_CONSOLIDATION_V89=FAIL crm_workspace_not_adapter_entry"; exit 1; }
+if grep -q 'path="/as6-sales"' "$APP_FILE"; then
+  grep -q "AS6SalesShellAdapter" "$APP_FILE" || { echo "AS6_CRM_LAZY_IMPORT_CONSOLIDATION_V89=FAIL sales_adapter_route_missing"; exit 1; }
+else
+  test -f "$ROUTES" || { echo "AS6_CRM_LAZY_IMPORT_CONSOLIDATION_V89=FAIL routes_module_missing"; exit 1; }
+  test -f "$REGISTRY" || { echo "AS6_CRM_LAZY_IMPORT_CONSOLIDATION_V89=FAIL registry_missing"; exit 1; }
+  grep -q 'route: "/as6-sales"' "$REGISTRY" || { echo "AS6_CRM_LAZY_IMPORT_CONSOLIDATION_V89=FAIL registry_as6_sales_route_missing"; exit 1; }
+  grep -q "AS6SalesShellAdapter" "$ROUTES" || { echo "AS6_CRM_LAZY_IMPORT_CONSOLIDATION_V89=FAIL routes_sales_adapter_missing"; exit 1; }
+  grep -q "<AS6LivingSpaceRoutes />" "$APP_FILE" || { echo "AS6_CRM_LAZY_IMPORT_CONSOLIDATION_V89=FAIL app_registry_routes_missing"; exit 1; }
+fi
+
+grep -q "CRMWorkspacePage" "$SALES_ADAPTER" || { echo "AS6_CRM_LAZY_IMPORT_CONSOLIDATION_V89=FAIL crm_workspace_not_adapter_entry"; exit 1; }
 
 echo "AS6_CRM_LAZY_IMPORT_CONSOLIDATION_V89=PASS"

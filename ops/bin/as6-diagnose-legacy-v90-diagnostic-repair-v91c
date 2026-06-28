@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+APP_FILE="frontend/src/App.jsx"
+ROUTES="frontend/src/as6/living-spaces/AS6LivingSpaceRoutes.jsx"
+V90_DIAG="ops/bin/as6-diagnose-living-space-registry-v90"
+
+ops/bin/as6-diagnose-living-space-registry-v90
+ops/bin/as6-diagnose-registry-auth-routes-v91b
+
+grep -q "<AS6LivingSpaceRoutes />" "$APP_FILE" || { echo "AS6_LEGACY_V90_DIAGNOSTIC_REPAIR_V91C=FAIL app_registry_delegate_missing"; exit 1; }
+grep -q "as6LivingSpaces.map" "$ROUTES" || { echo "AS6_LEGACY_V90_DIAGNOSTIC_REPAIR_V91C=FAIL route_registry_map_missing"; exit 1; }
+grep -q "AS6LivingSpaceRoutes" "$V90_DIAG" || { echo "AS6_LEGACY_V90_DIAGNOSTIC_REPAIR_V91C=FAIL v90_diag_not_registry_aware"; exit 1; }
+
+echo "AS6_LEGACY_V90_DIAGNOSTIC_REPAIR_V91C=PASS"

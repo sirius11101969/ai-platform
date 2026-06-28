@@ -12,6 +12,7 @@ export const as6LivingSpaces = [
     intelligenceRailMode: "adaptive",
     businessLogicPolicy: "preserve-existing-page-logic",
     status: "active",
+    authRequired: true,
   },
   {
     id: "as6-sales",
@@ -24,6 +25,7 @@ export const as6LivingSpaces = [
     intelligenceRailMode: "adaptive",
     businessLogicPolicy: "preserve-existing-crm-logic",
     status: "active",
+    authRequired: false,
   },
 ];
 

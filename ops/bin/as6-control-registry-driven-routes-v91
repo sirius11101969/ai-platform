@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-registry-driven-routes-v91
+ops/bin/as6-diagnose-living-space-registry-v90
+ops/bin/as6-diagnose-crm-lazy-import-v89
+
+grep -RIn "AS6_REGISTRY_ROUTE_RENDERING_DRIFT" docs ops frontend/src >/dev/null || { echo "AS6_CONTROL_REGISTRY_DRIVEN_ROUTES_V91=FAIL route_rendering_drift_not_registered"; exit 1; }
+grep -RIn "AS6_APP_MANUAL_LIVING_SPACE_ROUTE_DRIFT" docs ops frontend/src >/dev/null || { echo "AS6_CONTROL_REGISTRY_DRIVEN_ROUTES_V91=FAIL manual_living_route_drift_not_registered"; exit 1; }
+
+echo "AS6_CONTROL_REGISTRY_DRIVEN_ROUTE_RENDERING_V91=PASS"

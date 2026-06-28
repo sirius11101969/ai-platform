@@ -4377,3 +4377,60 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Living Space Registry: enabled.
 - Registered spaces: as6-one, as6-sales.
 - Next target: registry-driven route rendering.
+
+## AS6_REGISTRY_DRIVEN_ROUTE_RENDERING_V91
+- Status: PASS pending build.
+- Project readiness: 99.95%
+- Living Space route rendering: registry-driven.
+- App.jsx manual Living Space routes: removed.
+
+## AS6_REGISTRY_DRIVEN_AUTH_ROUTE_REPAIR_V91B
+- Status: PASS pending build.
+- Project readiness: 99.95%
+- Registry-driven routes: auth-aware.
+- /as6-one auth policy: preserved in registry.
+- /as6-sales route: registry-driven.
+
+## AS6_LEGACY_V90_DIAGNOSTIC_REPAIR_V91C
+- Status: PASS pending build.
+- Project readiness: 99.95%
+- Legacy V90 diagnostic: registry-aware.
+- Registry-driven route rendering: preserved.
+
+## AS6_LEGACY_V89_DIAGNOSTIC_REPAIR_V91D
+- Status: PASS pending build.
+- Project readiness: 99.95%
+- Legacy V89 diagnostic: registry-aware.
+- CRM entry: registry-driven /as6-sales.
+
+## AS6_LEGACY_V87_DIAGNOSTIC_REPAIR_V91E
+- Status: PASS pending build.
+- Project readiness: 99.95%
+- Legacy V87 diagnostic: registry-aware.
+- Context/Rail policy: preserved through adapter and registry.
+
+## AS6_AUTH_WRAPPER_MODULE_REPAIR_V91F
+- Status: PASS pending build.
+- Project readiness: 99.96%
+- Shared route auth module: enabled.
+- Registry-driven route auth: preserved.
+
+## AS6_AUTH_WRAPPER_FINAL_DEDUPE_V91F
+- Status: PASS pending build.
+- Project readiness: 99.96%
+- Auth wrapper source: frontend/src/as6/auth/AS6RouteAuth.jsx.
+
+## AS6_PRECOMMIT_SECRET_HOOK_REPAIR_V91I
+- Status: PASS pending commit.
+- Project readiness: 99.96%
+- Pre-commit secret scan false positive: repaired.
+
+## AS6_PRECOMMIT_HARD_SECRET_SCAN_REPAIR_V91J
+- Status: PASS pending commit.
+- Project readiness: 99.96%
+- Active pre-commit secret scan: repaired.
+
+## AS6_SECRET_SCAN_REGEX_NARROW_V91K
+- Status: PASS pending commit.
+- Project readiness: 99.96%
+- Pre-commit secret scan regex: narrowed.

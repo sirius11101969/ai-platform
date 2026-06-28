@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-legacy-v90-diagnostic-repair-v91c
+ops/bin/as6-diagnose-crm-lazy-import-v89
+ops/bin/as6-diagnose-context-rail-contract-v87
+
+grep -RIn "AS6_LEGACY_DIAGNOSTIC_ROUTE_MODEL_DRIFT" docs ops frontend/src >/dev/null || { echo "AS6_CONTROL_LEGACY_V90_DIAGNOSTIC_REPAIR_V91C=FAIL legacy_route_model_drift_missing"; exit 1; }
+
+echo "AS6_CONTROL_LEGACY_V90_DIAGNOSTIC_REPAIR_V91C=PASS"

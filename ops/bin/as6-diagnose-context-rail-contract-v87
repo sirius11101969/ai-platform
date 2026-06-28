@@ -4,6 +4,9 @@ set -euo pipefail
 CONTRACT="frontend/src/as6/shell/AS6ShellZones.contract.md"
 ADAPTER="frontend/src/as6-one/AS6OneShellAdapter.jsx"
 SHELL_FILE="frontend/src/as6/shell/AS6Shell.jsx"
+APP_FILE="frontend/src/App.jsx"
+ROUTES="frontend/src/as6/living-spaces/AS6LivingSpaceRoutes.jsx"
+REGISTRY="frontend/src/as6/living-spaces/as6LivingSpaceRegistry.js"
 
 test -f "$CONTRACT" || { echo "AS6_CONTEXT_RAIL_CONTRACT_V87=FAIL contract_missing"; exit 1; }
 test -f "$ADAPTER" || { echo "AS6_CONTEXT_RAIL_CONTRACT_V87=FAIL adapter_missing"; exit 1; }
@@ -14,6 +17,16 @@ grep -q "Intelligence Rail" "$CONTRACT" || { echo "AS6_CONTEXT_RAIL_CONTRACT_V87
 grep -q 'contextBarMode="adaptive"' "$ADAPTER" || { echo "AS6_CONTEXT_RAIL_CONTRACT_V87=FAIL adapter_context_bar_mode_missing"; exit 1; }
 grep -q 'intelligenceRailMode="adaptive"' "$ADAPTER" || { echo "AS6_CONTEXT_RAIL_CONTRACT_V87=FAIL adapter_intelligence_rail_mode_missing"; exit 1; }
 grep -q "/as6-sales" "$CONTRACT" "$ADAPTER" || { echo "AS6_CONTEXT_RAIL_CONTRACT_V87=FAIL living_space_target_missing"; exit 1; }
-grep -RIn "AS6OneShellAdapter" frontend/src/App.* frontend/src/main.* >/dev/null || { echo "AS6_CONTEXT_RAIL_CONTRACT_V87=FAIL route_adapter_reference_missing"; exit 1; }
+
+if grep -q "AS6OneShellAdapter" "$APP_FILE"; then
+  true
+else
+  test -f "$ROUTES" || { echo "AS6_CONTEXT_RAIL_CONTRACT_V87=FAIL routes_module_missing"; exit 1; }
+  test -f "$REGISTRY" || { echo "AS6_CONTEXT_RAIL_CONTRACT_V87=FAIL registry_missing"; exit 1; }
+  grep -q "AS6OneShellAdapter" "$ROUTES" || { echo "AS6_CONTEXT_RAIL_CONTRACT_V87=FAIL routes_module_adapter_missing"; exit 1; }
+  grep -q 'id: "as6-one"' "$REGISTRY" || { echo "AS6_CONTEXT_RAIL_CONTRACT_V87=FAIL registry_as6_one_missing"; exit 1; }
+  grep -q 'contextBarMode: "adaptive"' "$REGISTRY" || { echo "AS6_CONTEXT_RAIL_CONTRACT_V87=FAIL registry_context_bar_policy_missing"; exit 1; }
+  grep -q 'intelligenceRailMode: "adaptive"' "$REGISTRY" || { echo "AS6_CONTEXT_RAIL_CONTRACT_V87=FAIL registry_intelligence_rail_policy_missing"; exit 1; }
+fi
 
 echo "AS6_CONTEXT_BAR_INTELLIGENCE_RAIL_CONTRACT_V87=PASS"

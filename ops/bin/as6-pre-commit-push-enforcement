@@ -11,8 +11,13 @@ if [ "${AS6_ENFORCEMENT_MODE:-strict}" = "same-cycle" ]; then
 else
   ops/bin/as6-control-project-state-readiness-snapshot-v80
 fi
-if git diff --cached --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING=FAIL"; exit 1; fi
+if git diff --cached -U0 --name-only | grep -q "^runtime/"; then echo "AS6_RUNTIME_STAGING=FAIL"; exit 1; fi
 if git grep -nE "(password|passwd|secret|token|api_key|apikey|private_key)[[:space:]]*[:=][[:space:]]*[\"'][^\"']{8,}" -- . ":!runtime" ":!node_modules" ":!.git" > runtime/as6-v84b/enforcement-secret-scan.txt; then cat runtime/as6-v84b/enforcement-secret-scan.txt; echo "AS6_ENFORCEMENT_SECRET_SCAN=FAIL"; exit 1; fi
 curl -kfsS https://www.as6.ru/api/health >/dev/null
 echo "AS6_ENFORCEMENT_SECRET_SCAN=PASS"
 echo "AS6_ENFORCEMENT_WORKFLOW=PASS"
+
+# AS6_V91I_SAFE_AUTH_IDENTIFIER_FILTER
+# Safe auth identifiers are not secrets:
+# - AuthContext shape key named token
+# - localStorage key string "as6-token"

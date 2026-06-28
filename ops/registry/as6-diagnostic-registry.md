@@ -805,3 +805,68 @@
 - Added Living Space registry validation.
 - Added failure class: AS6_LIVING_SPACE_REGISTRY_DRIFT.
 - Added failure class: AS6_MANUAL_ROUTE_DRIFT.
+
+## AS6_REGISTRY_DRIVEN_ROUTE_RENDERING_V91
+- Diagnostic: ops/bin/as6-diagnose-registry-driven-routes-v91
+- Control: ops/bin/as6-control-registry-driven-routes-v91
+- Route module: frontend/src/as6/living-spaces/AS6LivingSpaceRoutes.jsx
+- Registry: frontend/src/as6/living-spaces/as6LivingSpaceRegistry.js
+- Added registry-driven route rendering validation.
+- Added failure class: AS6_REGISTRY_ROUTE_RENDERING_DRIFT.
+- Added failure class: AS6_APP_MANUAL_LIVING_SPACE_ROUTE_DRIFT.
+
+## AS6_REGISTRY_DRIVEN_AUTH_ROUTE_REPAIR_V91B
+- Diagnostic: ops/bin/as6-diagnose-registry-auth-routes-v91b
+- Control: ops/bin/as6-control-registry-auth-routes-v91b
+- Added auth-aware registry route rendering validation.
+- Added failure class: AS6_REGISTRY_AUTH_POLICY_DRIFT.
+- Added failure class: AS6_MANUAL_AUTH_WRAPPED_ROUTE_DRIFT.
+
+## AS6_LEGACY_V90_DIAGNOSTIC_REPAIR_V91C
+- Diagnostic: ops/bin/as6-diagnose-legacy-v90-diagnostic-repair-v91c
+- Control: ops/bin/as6-control-legacy-v90-diagnostic-repair-v91c
+- Repaired legacy diagnostic: ops/bin/as6-diagnose-living-space-registry-v90
+- Added registry-driven compatibility to V90 diagnostic.
+- Added failure class: AS6_LEGACY_DIAGNOSTIC_ROUTE_MODEL_DRIFT.
+
+## AS6_LEGACY_V89_DIAGNOSTIC_REPAIR_V91D
+- Diagnostic: ops/bin/as6-diagnose-legacy-v89-diagnostic-repair-v91d
+- Control: ops/bin/as6-control-legacy-v89-diagnostic-repair-v91d
+- Repaired legacy diagnostic: ops/bin/as6-diagnose-crm-lazy-import-v89
+- Added registry-driven compatibility to V89 CRM lazy import diagnostic.
+- Added failure class: AS6_LEGACY_CRM_ENTRY_DIAGNOSTIC_ROUTE_MODEL_DRIFT.
+
+## AS6_LEGACY_V87_DIAGNOSTIC_REPAIR_V91E
+- Diagnostic: ops/bin/as6-diagnose-legacy-v87-diagnostic-repair-v91e
+- Control: ops/bin/as6-control-legacy-v87-diagnostic-repair-v91e
+- Repaired legacy diagnostic: ops/bin/as6-diagnose-context-rail-contract-v87
+- Added registry-driven compatibility to V87 Context/Rail diagnostic.
+- Added failure class: AS6_LEGACY_CONTEXT_RAIL_DIAGNOSTIC_ROUTE_MODEL_DRIFT.
+
+## AS6_AUTH_WRAPPER_MODULE_REPAIR_V91F
+- Diagnostic: ops/bin/as6-diagnose-auth-wrapper-module-v91f
+- Control: ops/bin/as6-control-auth-wrapper-module-v91f
+- Auth module: frontend/src/as6/auth/AS6RouteAuth.jsx
+- Added shared RequireAuth/ProtectedRoute validation.
+- Added failure class: AS6_AUTH_WRAPPER_MODULE_DRIFT.
+
+## AS6_AUTH_WRAPPER_FINAL_DEDUPE_V91F
+- Diagnostic: ops/bin/as6-diagnose-auth-wrapper-final-dedupe-v91f
+- Control: ops/bin/as6-control-auth-wrapper-final-dedupe-v91f
+- Added duplicate auth symbol detection.
+- Added failure class: AS6_AUTH_WRAPPER_DUPLICATE_SYMBOL_DRIFT.
+
+## AS6_PRECOMMIT_SECRET_HOOK_REPAIR_V91I
+- Diagnostic: ops/bin/as6-diagnose-precommit-secret-hook-v91i
+- Control: ops/bin/as6-control-precommit-secret-hook-v91i
+- Added failure class: AS6_PRECOMMIT_SECRET_SCAN_CONTEXT_FALSE_POSITIVE.
+
+## AS6_PRECOMMIT_HARD_SECRET_SCAN_REPAIR_V91J
+- Diagnostic: ops/bin/as6-diagnose-precommit-hook-hard-secret-scan-v91j
+- Control: ops/bin/as6-control-precommit-hook-hard-secret-scan-v91j
+- Added failure class: AS6_PRECOMMIT_ACTIVE_HOOK_SECRET_SCAN_DRIFT.
+
+## AS6_SECRET_SCAN_REGEX_NARROW_V91K
+- Diagnostic: ops/bin/as6-diagnose-secret-scan-regex-narrow-v91k
+- Control: ops/bin/as6-control-secret-scan-regex-narrow-v91k
+- Added failure class: AS6_SECRET_SCAN_BROAD_REGEX_FALSE_POSITIVE.

@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+APP_FILE="frontend/src/App.jsx"
+ROUTES="frontend/src/as6/living-spaces/AS6LivingSpaceRoutes.jsx"
+REGISTRY="frontend/src/as6/living-spaces/as6LivingSpaceRegistry.js"
+
+test -f "$ROUTES" || { echo "AS6_REGISTRY_AUTH_ROUTES_V91B=FAIL routes_module_missing"; exit 1; }
+test -f "$REGISTRY" || { echo "AS6_REGISTRY_AUTH_ROUTES_V91B=FAIL registry_missing"; exit 1; }
+
+grep -q "<AS6LivingSpaceRoutes />" "$APP_FILE" || { echo "AS6_REGISTRY_AUTH_ROUTES_V91B=FAIL app_registry_routes_missing"; exit 1; }
+! grep -q 'path="/as6-one"' "$APP_FILE" || { echo "AS6_REGISTRY_AUTH_ROUTES_V91B=FAIL manual_as6_one_route_present"; exit 1; }
+! grep -q 'path="/as6-sales"' "$APP_FILE" || { echo "AS6_REGISTRY_AUTH_ROUTES_V91B=FAIL manual_as6_sales_route_present"; exit 1; }
+
+grep -q 'authRequired: true' "$REGISTRY" || { echo "AS6_REGISTRY_AUTH_ROUTES_V91B=FAIL auth_required_true_missing"; exit 1; }
+grep -q 'authRequired: false' "$REGISTRY" || { echo "AS6_REGISTRY_AUTH_ROUTES_V91B=FAIL auth_required_false_missing"; exit 1; }
+grep -q "RequireAuth" "$ROUTES" || { echo "AS6_REGISTRY_AUTH_ROUTES_V91B=FAIL require_auth_renderer_missing"; exit 1; }
+grep -q "as6LivingSpaces.map" "$ROUTES" || { echo "AS6_REGISTRY_AUTH_ROUTES_V91B=FAIL registry_map_missing"; exit 1; }
+
+echo "AS6_REGISTRY_DRIVEN_AUTH_ROUTE_REPAIR_V91B=PASS"

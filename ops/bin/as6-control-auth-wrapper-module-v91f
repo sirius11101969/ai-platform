@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-auth-wrapper-module-v91f
+ops/bin/as6-diagnose-legacy-v87-diagnostic-repair-v91e
+ops/bin/as6-diagnose-legacy-v89-diagnostic-repair-v91d
+ops/bin/as6-diagnose-legacy-v90-diagnostic-repair-v91c
+
+grep -RIn "AS6_AUTH_WRAPPER_MODULE_DRIFT" docs ops frontend/src >/dev/null || { echo "AS6_CONTROL_AUTH_WRAPPER_MODULE_V91F=FAIL auth_wrapper_drift_missing"; exit 1; }
+
+echo "AS6_CONTROL_AUTH_WRAPPER_MODULE_REPAIR_V91F=PASS"

@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+APP_FILE="frontend/src/App.jsx"
+ROUTES="frontend/src/as6/living-spaces/AS6LivingSpaceRoutes.jsx"
+REGISTRY="frontend/src/as6/living-spaces/as6LivingSpaceRegistry.js"
+V89_DIAG="ops/bin/as6-diagnose-crm-lazy-import-v89"
+
+ops/bin/as6-diagnose-crm-lazy-import-v89
+ops/bin/as6-diagnose-living-space-registry-v90
+ops/bin/as6-diagnose-registry-auth-routes-v91b
+
+grep -q "<AS6LivingSpaceRoutes />" "$APP_FILE" || { echo "AS6_LEGACY_V89_DIAGNOSTIC_REPAIR_V91D=FAIL app_registry_delegate_missing"; exit 1; }
+grep -q 'route: "/as6-sales"' "$REGISTRY" || { echo "AS6_LEGACY_V89_DIAGNOSTIC_REPAIR_V91D=FAIL registry_sales_route_missing"; exit 1; }
+grep -q "AS6SalesShellAdapter" "$ROUTES" || { echo "AS6_LEGACY_V89_DIAGNOSTIC_REPAIR_V91D=FAIL routes_sales_adapter_missing"; exit 1; }
+grep -q "AS6LivingSpaceRoutes" "$V89_DIAG" || { echo "AS6_LEGACY_V89_DIAGNOSTIC_REPAIR_V91D=FAIL v89_diag_not_registry_aware"; exit 1; }
+
+echo "AS6_LEGACY_V89_DIAGNOSTIC_REPAIR_V91D=PASS"

@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+APP_FILE="frontend/src/App.jsx"
+ROUTES="frontend/src/as6/living-spaces/AS6LivingSpaceRoutes.jsx"
+REGISTRY="frontend/src/as6/living-spaces/as6LivingSpaceRegistry.js"
+
+test -f "$ROUTES" || { echo "AS6_REGISTRY_DRIVEN_ROUTES_V91=FAIL routes_module_missing"; exit 1; }
+test -f "$REGISTRY" || { echo "AS6_REGISTRY_DRIVEN_ROUTES_V91=FAIL registry_missing"; exit 1; }
+
+grep -q "as6LivingSpaces.map" "$ROUTES" || { echo "AS6_REGISTRY_DRIVEN_ROUTES_V91=FAIL registry_map_missing"; exit 1; }
+grep -q "AS6OneShellAdapter" "$ROUTES" || { echo "AS6_REGISTRY_DRIVEN_ROUTES_V91=FAIL as6_one_adapter_missing"; exit 1; }
+grep -q "AS6SalesShellAdapter" "$ROUTES" || { echo "AS6_REGISTRY_DRIVEN_ROUTES_V91=FAIL as6_sales_adapter_missing"; exit 1; }
+grep -q "<AS6LivingSpaceRoutes />" "$APP_FILE" || { echo "AS6_REGISTRY_DRIVEN_ROUTES_V91=FAIL app_registry_routes_missing"; exit 1; }
+
+! grep -q 'path="/as6-one"' "$APP_FILE" || { echo "AS6_REGISTRY_DRIVEN_ROUTES_V91=FAIL manual_as6_one_route_present"; exit 1; }
+! grep -q 'path="/as6-sales"' "$APP_FILE" || { echo "AS6_REGISTRY_DRIVEN_ROUTES_V91=FAIL manual_as6_sales_route_present"; exit 1; }
+
+grep -q 'route: "/as6-one"' "$REGISTRY" || { echo "AS6_REGISTRY_DRIVEN_ROUTES_V91=FAIL registry_as6_one_missing"; exit 1; }
+grep -q 'route: "/as6-sales"' "$REGISTRY" || { echo "AS6_REGISTRY_DRIVEN_ROUTES_V91=FAIL registry_as6_sales_missing"; exit 1; }
+
+echo "AS6_REGISTRY_DRIVEN_ROUTE_RENDERING_V91=PASS"

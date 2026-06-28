@@ -2687,3 +2687,56 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers adapter policy for AS6OneShellAdapter and AS6SalesShellAdapter.
 - Covers Context Bar and Intelligence Rail adaptive policy.
 - Covers future registry-driven route migration.
+
+## AS6_REGISTRY_DRIVEN_ROUTE_RENDERING_V91
+- Covers registry-driven Living Space route rendering.
+- Covers AS6LivingSpaceRoutes.jsx.
+- Covers App.jsx removal of manual /as6-one and /as6-sales routes.
+- Covers adapter map for as6-one and as6-sales.
+
+## AS6_REGISTRY_DRIVEN_AUTH_ROUTE_REPAIR_V91B
+- Covers registry-driven Living Space routes with auth policy.
+- Covers /as6-one RequireAuth preservation.
+- Covers /as6-sales public/adapter policy.
+- Covers App.jsx manual route removal.
+
+## AS6_LEGACY_V90_DIAGNOSTIC_REPAIR_V91C
+- Covers legacy V90 diagnostic compatibility with registry-driven routes.
+- Covers AS6LivingSpaceRoutes as valid route evidence.
+- Covers prevention of manual route drift regression.
+
+## AS6_LEGACY_V89_DIAGNOSTIC_REPAIR_V91D
+- Covers legacy V89 diagnostic compatibility with registry-driven /as6-sales.
+- Covers AS6LivingSpaceRoutes as valid CRM entry route evidence.
+- Covers prevention of manual /as6-sales route regression.
+
+## AS6_LEGACY_V87_DIAGNOSTIC_REPAIR_V91E
+- Covers legacy V87 diagnostic compatibility with registry-driven routes.
+- Covers Context Bar and Intelligence Rail checks through adapter and registry evidence.
+- Covers prevention of manual AS6OneShellAdapter route reference regression.
+
+## AS6_AUTH_WRAPPER_MODULE_REPAIR_V91F
+- Covers shared route auth module.
+- Covers App.jsx auth import.
+- Covers AS6LivingSpaceRoutes auth import.
+- Covers registry-driven auth preservation.
+
+## AS6_AUTH_WRAPPER_FINAL_DEDUPE_V91F
+- Covers final auth wrapper dedupe.
+- Covers App.jsx local auth wrapper removal.
+- Covers shared AS6RouteAuth usage.
+
+## AS6_PRECOMMIT_SECRET_HOOK_REPAIR_V91I
+- Covers pre-commit zero-context staged diff scanning.
+- Covers safe auth identifier false positive prevention.
+- Covers V91 registry-route auth commit path.
+
+## AS6_PRECOMMIT_HARD_SECRET_SCAN_REPAIR_V91J
+- Covers active local pre-commit hook replacement.
+- Covers zero-context added-line scan.
+- Covers safe auth identifier false positive prevention.
+
+## AS6_SECRET_SCAN_REGEX_NARROW_V91K
+- Covers narrowed pre-commit secret value detection.
+- Covers documentation false positive prevention.
+- Covers V91 registry-route auth final commit path.

@@ -37,7 +37,6 @@ import { LoginPage, SignupPage } from "./pages/AuthPages";
 import PaymentSuccessPage from "./pages/PaymentSuccessPage";
 import "./styles/as6-mission-control.css";
 const DashboardPage = lazy(() => import("./pages/DashboardPage"));
-const AS6SalesShellAdapter = lazy(() => import('./as6-sales/AS6SalesShellAdapter'));
 const AiWorkersPage = lazy(() => import("./pages/AiWorkersPage"));
 import FollowupsPage from "./pages/FollowupsPage";
 import PriorityInboxPage from "./pages/PriorityInboxPage";
@@ -60,10 +59,11 @@ import AiOrganizationalMemoryPage from "./pages/AiOrganizationalMemoryPage";
 import AiSystemHealthCenterPage from "./pages/AiSystemHealthCenterPage";
 const AIEnterpriseCommandCenter = lazy(() => import("./pages/AIEnterpriseCommandCenter"));
 const CommandCenterPage = lazy(() => import("./pages/CommandCenterPage"));
-const AS6OnePage = lazy(() => import('./as6-one/AS6OneShellAdapter'));
 const RevenueDashboardPage = lazy(() => import("./pages/RevenueDashboardPage"));
 import { getAuthToken, getStoredUser } from "./services/api";
 
+import { AS6LivingSpaceRoutes } from "./as6/living-spaces/AS6LivingSpaceRoutes";
+import { RequireAuth, ProtectedRoute } from "./as6/auth/AS6RouteAuth";
 const AuthContext = createContext({ token: null, user: null, isAuthenticated: false });
 
 function getAuthState() {
@@ -118,29 +118,17 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-function RequireAuth({ children }) {
-  const { isAuthenticated } = useAuth();
-  return isAuthenticated ? children : <Navigate to="/login" replace />;
-}
-
-function ProtectedRoute({ children }) {
-  return (
-    <RequireAuth>
-      <ProtectedLayout>{children}</ProtectedLayout>
-    </RequireAuth>
-  );
-}
-
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Suspense fallback={window.location.pathname === "/command-center" ? null : <div className="as6-route-loading">Загрузка...</div>}>
           <Routes>
+
+          <AS6LivingSpaceRoutes />
           <Route path="/crm-v2" element={<ProtectedRoute><CRMBrandV2Page /></ProtectedRoute>} />
           <Route path="/as6-os" element={<AS6OSPage />} />
           <Route path="/crm-workspace" element={<CRMWorkspacePage />} />
-          <Route path="/as6-sales" element={<AS6SalesShellAdapter />} />
           <Route path="/as6-workspace" element={<AS6WorkspacePage />} />
           <Route path="/" element={<LandingPage />} />
           <Route path="/signup" element={<SignupPage />} />
@@ -176,7 +164,6 @@ export default function App() {
           <Route path="/ai/approval-center" element={<ProtectedRoute><AiApprovalCenterPage /></ProtectedRoute>} />
           <Route path="/ai-enterprise-command-center" element={<ProtectedRoute><AIEnterpriseCommandCenter /></ProtectedRoute>} />
           <Route path="/command-center" element={<ProtectedRoute><CommandCenterPage /></ProtectedRoute>} />
-          <Route path="/as6-one" element={<RequireAuth><AS6OnePage /></RequireAuth>} />
           <Route path="/dashboard/revenue" element={<ProtectedRoute><RevenueDashboardPage /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

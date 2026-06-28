@@ -4,6 +4,7 @@ set -euo pipefail
 REGISTRY="frontend/src/as6/living-spaces/as6LivingSpaceRegistry.js"
 CONTRACT="frontend/src/as6/living-spaces/AS6LivingSpaceRegistry.contract.md"
 APP_FILE="frontend/src/App.jsx"
+ROUTES="frontend/src/as6/living-spaces/AS6LivingSpaceRoutes.jsx"
 
 test -f "$REGISTRY" || { echo "AS6_LIVING_SPACE_REGISTRY_V90=FAIL registry_missing"; exit 1; }
 test -f "$CONTRACT" || { echo "AS6_LIVING_SPACE_REGISTRY_V90=FAIL contract_missing"; exit 1; }
@@ -20,7 +21,14 @@ grep -q 'contextBarMode: "adaptive"' "$REGISTRY" || { echo "AS6_LIVING_SPACE_REG
 grep -q 'intelligenceRailMode: "adaptive"' "$REGISTRY" || { echo "AS6_LIVING_SPACE_REGISTRY_V90=FAIL intelligence_rail_policy_missing"; exit 1; }
 grep -q 'businessLogicPolicy:' "$REGISTRY" || { echo "AS6_LIVING_SPACE_REGISTRY_V90=FAIL business_logic_policy_missing"; exit 1; }
 
-grep -q 'path="/as6-one"' "$APP_FILE" || { echo "AS6_LIVING_SPACE_REGISTRY_V90=FAIL app_as6_one_route_missing"; exit 1; }
-grep -q 'path="/as6-sales"' "$APP_FILE" || { echo "AS6_LIVING_SPACE_REGISTRY_V90=FAIL app_as6_sales_route_missing"; exit 1; }
+if grep -q "<AS6LivingSpaceRoutes />" "$APP_FILE"; then
+  test -f "$ROUTES" || { echo "AS6_LIVING_SPACE_REGISTRY_V90=FAIL routes_module_missing"; exit 1; }
+  grep -q "as6LivingSpaces.map" "$ROUTES" || { echo "AS6_LIVING_SPACE_REGISTRY_V90=FAIL routes_module_registry_map_missing"; exit 1; }
+  grep -q "AS6OneShellAdapter" "$ROUTES" || { echo "AS6_LIVING_SPACE_REGISTRY_V90=FAIL routes_module_as6_one_adapter_missing"; exit 1; }
+  grep -q "AS6SalesShellAdapter" "$ROUTES" || { echo "AS6_LIVING_SPACE_REGISTRY_V90=FAIL routes_module_as6_sales_adapter_missing"; exit 1; }
+else
+  grep -q 'path="/as6-one"' "$APP_FILE" || { echo "AS6_LIVING_SPACE_REGISTRY_V90=FAIL app_as6_one_route_missing"; exit 1; }
+  grep -q 'path="/as6-sales"' "$APP_FILE" || { echo "AS6_LIVING_SPACE_REGISTRY_V90=FAIL app_as6_sales_route_missing"; exit 1; }
+fi
 
 echo "AS6_LIVING_SPACE_REGISTRY_V90=PASS"

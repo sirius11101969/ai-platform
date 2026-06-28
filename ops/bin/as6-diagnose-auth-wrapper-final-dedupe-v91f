@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+APP_FILE="frontend/src/App.jsx"
+AUTH_FILE="frontend/src/as6/auth/AS6RouteAuth.jsx"
+ROUTES="frontend/src/as6/living-spaces/AS6LivingSpaceRoutes.jsx"
+
+grep -q 'from "./as6/auth/AS6RouteAuth"' "$APP_FILE" || { echo "AS6_AUTH_WRAPPER_FINAL_DEDUPE_V91F=FAIL app_auth_import_missing"; exit 1; }
+! grep -q '^function RequireAuth' "$APP_FILE" || { echo "AS6_AUTH_WRAPPER_FINAL_DEDUPE_V91F=FAIL local_require_auth_still_present"; exit 1; }
+! grep -q '^function ProtectedRoute' "$APP_FILE" || { echo "AS6_AUTH_WRAPPER_FINAL_DEDUPE_V91F=FAIL local_protected_route_still_present"; exit 1; }
+
+grep -q 'export function RequireAuth' "$AUTH_FILE" || { echo "AS6_AUTH_WRAPPER_FINAL_DEDUPE_V91F=FAIL shared_require_auth_missing"; exit 1; }
+grep -q 'export function ProtectedRoute' "$AUTH_FILE" || { echo "AS6_AUTH_WRAPPER_FINAL_DEDUPE_V91F=FAIL shared_protected_route_missing"; exit 1; }
+grep -q 'from "../auth/AS6RouteAuth"' "$ROUTES" || { echo "AS6_AUTH_WRAPPER_FINAL_DEDUPE_V91F=FAIL routes_auth_import_missing"; exit 1; }
+
+echo "AS6_AUTH_WRAPPER_FINAL_DEDUPE_V91F=PASS"
