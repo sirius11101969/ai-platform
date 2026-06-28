@@ -1623,3 +1623,8 @@ Governed and registered.
 - Detected: AS6_RUNTIME_STATE_DUPLICATION_RISK.
 - Root cause: V92-V99 created multiple shell subsystems without a shared runtime API.
 - Resolution: AS6 Runtime Orchestrator added.
+
+## AS6_EVENT_BUS_V101
+- Detected: AS6_EVENT_LISTENER_DUPLICATION_RISK.
+- Root cause: Runtime existed without shared event bus.
+- Resolution: AS6 Event Bus added.

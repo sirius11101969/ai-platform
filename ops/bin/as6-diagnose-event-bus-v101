@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+EVENT_BUS="frontend/src/as6/runtime/as6EventBus.js"
+CONTRACT="frontend/src/as6/runtime/AS6EventBus.contract.md"
+
+test -f "$EVENT_BUS" || { echo "AS6_EVENT_BUS_V101=FAIL event_bus_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_EVENT_BUS_V101=FAIL contract_missing"; exit 1; }
+
+grep -q "emitAS6Event" "$EVENT_BUS" || { echo "AS6_EVENT_BUS_V101=FAIL emit_missing"; exit 1; }
+grep -q "onAS6Event" "$EVENT_BUS" || { echo "AS6_EVENT_BUS_V101=FAIL on_missing"; exit 1; }
+grep -q "onceAS6Event" "$EVENT_BUS" || { echo "AS6_EVENT_BUS_V101=FAIL once_missing"; exit 1; }
+grep -q "offAS6Event" "$EVENT_BUS" || { echo "AS6_EVENT_BUS_V101=FAIL off_missing"; exit 1; }
+grep -q "getAS6EventHistory" "$EVENT_BUS" || { echo "AS6_EVENT_BUS_V101=FAIL history_missing"; exit 1; }
+grep -q "createAS6RuntimeEventBridge" "$EVENT_BUS" || { echo "AS6_EVENT_BUS_V101=FAIL runtime_bridge_missing"; exit 1; }
+grep -q "validateAS6EventBusPolicy" "$EVENT_BUS" || { echo "AS6_EVENT_BUS_V101=FAIL validator_missing"; exit 1; }
+
+echo "AS6_EVENT_BUS_V101=PASS"

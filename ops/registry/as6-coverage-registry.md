@@ -2805,3 +2805,10 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers snapshot/restore.
 - Covers runtime export/import.
 - Covers future Plugin/EventBus/Copilot readiness.
+
+## AS6_EVENT_BUS_V101
+- Covers AS6 Event Bus.
+- Covers emit/on/off/once.
+- Covers bounded event history.
+- Covers Runtime Event Bridge foundation.
+- Covers Copilot/Plugin/EventBus readiness.

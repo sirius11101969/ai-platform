@@ -939,3 +939,10 @@
 - Runtime: frontend/src/as6/runtime/as6Runtime.js
 - Contract: frontend/src/as6/runtime/AS6Runtime.contract.md
 - Added failure class: AS6_RUNTIME_ORCHESTRATOR_DRIFT.
+
+## AS6_EVENT_BUS_V101
+- Diagnostic: ops/bin/as6-diagnose-event-bus-v101
+- Control: ops/bin/as6-control-event-bus-v101
+- Event Bus: frontend/src/as6/runtime/as6EventBus.js
+- Contract: frontend/src/as6/runtime/AS6EventBus.contract.md
+- Added failure class: AS6_EVENT_BUS_DRIFT.

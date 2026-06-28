@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-event-bus-v101
+ops/bin/as6-control-runtime-orchestrator-v100
+ops/bin/as6-control-workspace-persistence-v99
+
+grep -RIn "AS6_EVENT_BUS_DRIFT" docs ops frontend/src >/dev/null || {
+  echo "AS6_CONTROL_EVENT_BUS_V101=FAIL event_bus_drift_class_missing"
+  exit 1
+}
+
+echo "AS6_CONTROL_EVENT_BUS_V101=PASS"
