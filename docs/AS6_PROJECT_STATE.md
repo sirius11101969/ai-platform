@@ -4287,3 +4287,12 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Synced fresh frontend/dist into Docker Nginx /usr/share/nginx/html.
 - Container bundle now validates CRM v2 markers.
 - Project readiness: 99%.
+
+## AS6 Fix Command Center Nav Guardian
+
+- Fixed COMMAND_CENTER_NAV=FAIL by restoring explicit Command Center navigation marker.
+- Build: PASS.
+- AS6 PR Guardian: PASS.
+- Pages not changed: /crm, /crm-v2.
+- AS6 ONE preview preserved.
+- Project readiness: 99%.
