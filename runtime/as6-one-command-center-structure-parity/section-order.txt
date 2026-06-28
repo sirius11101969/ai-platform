@@ -1,0 +1,2 @@
+CommandCenterPage: command-hero > command-kpis > quick-actions > command-main-grid > command-recommendations
+AS6OnePage: command-hero > command-kpis > quick-actions > command-main-grid > command-recommendations
