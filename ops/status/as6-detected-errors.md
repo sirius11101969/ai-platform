@@ -1517,3 +1517,8 @@ Governed and registered.
 - Detected: AS6_CRM_DUPLICATE_DYNAMIC_STATIC_IMPORT_DRIFT.
 - Root cause: CRMPage was both dynamically imported by App.jsx and statically imported by CRMWorkspacePage.
 - Resolution: CRMPage direct App.jsx lazy entry removed; /as6-sales remains the CRM Living Space entry.
+
+## AS6_LIVING_SPACE_REGISTRY_V90
+- Detected: AS6_LIVING_SPACE_REGISTRY_DRIFT risk.
+- Detected: AS6_MANUAL_ROUTE_DRIFT risk.
+- Resolution: as6LivingSpaceRegistry.js created as declarative source of truth.

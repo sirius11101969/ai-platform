@@ -796,3 +796,12 @@
 - Added duplicate CRM dynamic/static import detection.
 - Added failure class: AS6_CRM_DUPLICATE_DYNAMIC_STATIC_IMPORT_DRIFT.
 - Added failure class: AS6_SALES_ADAPTER_ENTRY_BYPASS.
+
+## AS6_LIVING_SPACE_REGISTRY_V90
+- Diagnostic: ops/bin/as6-diagnose-living-space-registry-v90
+- Control: ops/bin/as6-control-living-space-registry-v90
+- Registry: frontend/src/as6/living-spaces/as6LivingSpaceRegistry.js
+- Contract: frontend/src/as6/living-spaces/AS6LivingSpaceRegistry.contract.md
+- Added Living Space registry validation.
+- Added failure class: AS6_LIVING_SPACE_REGISTRY_DRIFT.
+- Added failure class: AS6_MANUAL_ROUTE_DRIFT.

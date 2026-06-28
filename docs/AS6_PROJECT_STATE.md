@@ -4370,3 +4370,10 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Project readiness: 99.8%
 - CRM entry: /as6-sales -> AS6SalesShellAdapter -> CRMWorkspacePage -> CRMPage.
 - Direct CRMPage lazy entry in App.jsx: removed.
+
+## AS6_LIVING_SPACE_REGISTRY_V90
+- Status: PASS pending build.
+- Project readiness: 99.9%
+- Living Space Registry: enabled.
+- Registered spaces: as6-one, as6-sales.
+- Next target: registry-driven route rendering.

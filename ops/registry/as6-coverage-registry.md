@@ -2679,3 +2679,11 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers /as6-sales as single CRM Living Space entry.
 - Covers App.jsx direct CRMPage lazy import removal.
 - Covers Vite chunk split warning prevention.
+
+## AS6_LIVING_SPACE_REGISTRY_V90
+- Covers Living Space Registry.
+- Covers /as6-one registry entry.
+- Covers /as6-sales registry entry.
+- Covers adapter policy for AS6OneShellAdapter and AS6SalesShellAdapter.
+- Covers Context Bar and Intelligence Rail adaptive policy.
+- Covers future registry-driven route migration.

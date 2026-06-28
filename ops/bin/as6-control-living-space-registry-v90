@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-living-space-registry-v90
+ops/bin/as6-diagnose-crm-lazy-import-v89
+ops/bin/as6-diagnose-crm-living-space-route-jsx-v88b
+ops/bin/as6-diagnose-context-rail-contract-v87
+
+grep -RIn "AS6_LIVING_SPACE_REGISTRY_DRIFT" docs ops frontend/src >/dev/null || { echo "AS6_CONTROL_LIVING_SPACE_REGISTRY_V90=FAIL registry_drift_class_missing"; exit 1; }
+grep -RIn "AS6_MANUAL_ROUTE_DRIFT" docs ops frontend/src >/dev/null || { echo "AS6_CONTROL_LIVING_SPACE_REGISTRY_V90=FAIL manual_route_drift_class_missing"; exit 1; }
+
+echo "AS6_CONTROL_LIVING_SPACE_REGISTRY_V90=PASS"
