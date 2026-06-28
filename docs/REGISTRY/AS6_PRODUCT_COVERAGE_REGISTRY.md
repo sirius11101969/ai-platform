@@ -152,3 +152,8 @@
 ## V222.39 NPX Playwright DOM Geometry Capture Coverage
 - Covered: isolated npm Playwright install, Chromium install, geometry JSON/screenshot attempt, geometry summary, error logs.
 - Not changed: UI, backend, auth, CRM logic, telemetry, product intelligence engine.
+
+## 20260628 coverage-as6-one-command-center-visual-foundation
+- Covers: /as6-one, /crm-enterprise, /crm-v3 Command Center visual foundation reuse.
+- Covers: AS6OnePage production markers and Command Center AppShell mode reuse.
+- Excludes: /crm and /crm-v2 visual changes.

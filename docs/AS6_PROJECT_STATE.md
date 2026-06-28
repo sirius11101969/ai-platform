@@ -4287,3 +4287,11 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Synced fresh frontend/dist into Docker Nginx /usr/share/nginx/html.
 - Container bundle now validates CRM v2 markers.
 - Project readiness: 99%.
+
+## 20260628 AS6 ONE Command Center Visual Foundation
+- Fixed AS6 ONE visual drift by adding AS6OnePage as a semantic Command Center clone/fork.
+- Routes: /as6-one, /crm-enterprise, /crm-v3.
+- Root cause: AS6 ONE visually drifted from Command Center because it reimplemented layout instead of reusing Command Center visual foundation.
+- Failure class: as6-one-command-center-visual-drift.
+- AEC rule: as6-one-must-reuse-command-center-visual-foundation-before-crm-cutover.
+- Production markers: AS6OnePage, as6-one, as6-command-center-visual-foundation, as6-one-exact-command-center-clone, as6-revenue-flow, as6-general-director, as6-core.

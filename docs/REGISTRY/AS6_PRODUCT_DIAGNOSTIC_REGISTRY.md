@@ -258,3 +258,9 @@
 - Artifact: docs/PRODUCT/AS6_NPX_PLAYWRIGHT_DOM_GEOMETRY_CAPTURE_V222_39.md
 - Capture Result: DOM_GEOMETRY_CAPTURE_NPX=FAILED
 - Failure Classes: PLAYWRIGHT_IMAGE_WITHOUT_NODE_MODULE, NPM_EPHEMERAL_PLAYWRIGHT_CAPTURE_REQUIRED, DOCKER_NPX_PLAYWRIGHT_GEOMETRY_CAPTURE, DOM_GEOMETRY_CAPTURE_NPX_FAILED.
+
+## 20260628 as6-one-command-center-visual-drift
+- Failure class: as6-one-command-center-visual-drift
+- Root cause: docs/AS6_ONE_COMMAND_CENTER_VISUAL_DRIFT_ROOT_CAUSE.md
+- Runtime: runtime/20260628-as6-one-command-center-visual-foundation
+- Status: AS6 ONE reuses Command Center visual foundation.

@@ -60,6 +60,7 @@ import AiOrganizationalMemoryPage from "./pages/AiOrganizationalMemoryPage";
 import AiSystemHealthCenterPage from "./pages/AiSystemHealthCenterPage";
 const AIEnterpriseCommandCenter = lazy(() => import("./pages/AIEnterpriseCommandCenter"));
 const CommandCenterPage = lazy(() => import("./pages/CommandCenterPage"));
+const AS6OnePage = lazy(() => import("./pages/AS6OnePage"));
 const RevenueDashboardPage = lazy(() => import("./pages/RevenueDashboardPage"));
 import { getAuthToken, getStoredUser } from "./services/api";
 
@@ -134,7 +135,7 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Suspense fallback={window.location.pathname === "/command-center" ? null : <div className="as6-route-loading">Загрузка...</div>}>
+        <Suspense fallback={["/command-center", "/as6-one", "/crm-enterprise", "/crm-v3"].includes(window.location.pathname) ? null : <div className="as6-route-loading">Загрузка...</div>}>
           <Routes>
           <Route path="/crm-v2" element={<ProtectedRoute><CRMBrandV2Page /></ProtectedRoute>} />
           <Route path="/as6-os" element={<AS6OSPage />} />
@@ -175,6 +176,9 @@ export default function App() {
           <Route path="/ai/approval-center" element={<ProtectedRoute><AiApprovalCenterPage /></ProtectedRoute>} />
           <Route path="/ai-enterprise-command-center" element={<ProtectedRoute><AIEnterpriseCommandCenter /></ProtectedRoute>} />
           <Route path="/command-center" element={<ProtectedRoute><CommandCenterPage /></ProtectedRoute>} />
+          <Route path="/as6-one" element={<ProtectedRoute><AS6OnePage /></ProtectedRoute>} />
+          <Route path="/crm-enterprise" element={<ProtectedRoute><AS6OnePage /></ProtectedRoute>} />
+          <Route path="/crm-v3" element={<ProtectedRoute><AS6OnePage /></ProtectedRoute>} />
           <Route path="/dashboard/revenue" element={<ProtectedRoute><RevenueDashboardPage /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
