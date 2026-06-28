@@ -715,3 +715,11 @@
 - Validation: host frontend/dist contains /crm-v2 markers.
 - Validation: Docker Nginx html contains /crm-v2 markers after sync.
 - Validation: Docker Nginx config test PASS.
+
+## AS6_FIX_COMMAND_CENTER_NAV_GUARDIAN
+
+- Diagnostic artifact: runtime/as6-fix-command-center-nav-guardian/
+- Root cause: docs/AS6_FIX_COMMAND_CENTER_NAV_GUARDIAN_ROOT_CAUSE.md
+- Validation: Command Center nav marker restored.
+- Validation: npm frontend build PASS.
+- Validation: AS6 PR Guardian PASS.

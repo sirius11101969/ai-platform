@@ -2603,3 +2603,10 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Coverage: stale container build prevention.
 - Failure class covered: docker-nginx-serving-stale-frontend-build.
 - AEC rule: frontend-ui-change-requires-docker-nginx-dist-sync.
+
+## AS6_FIX_COMMAND_CENTER_NAV_GUARDIAN
+
+- Coverage: Command Center navigation marker.
+- Coverage: Guardian merge gate compatibility.
+- Failure class covered: command-center-nav-marker-drift.
+- AEC rule: command-center-nav-anchor-required-before-merge.

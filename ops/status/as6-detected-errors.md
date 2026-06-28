@@ -1455,3 +1455,9 @@ Governed and registered.
 - Detected error: container served stale frontend assets without /crm-v2.
 - Root cause: production Docker Nginx html was not synced with host frontend/dist.
 - Prevention: Docker Nginx dist sync and marker validation registered.
+
+## AS6_FIX_COMMAND_CENTER_NAV_GUARDIAN
+
+- Detected error: COMMAND_CENTER_NAV=FAIL.
+- Root cause: required Command Center nav marker drift.
+- Prevention: restored explicit /command-center navigation anchor and registered governance rule.

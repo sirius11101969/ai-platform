@@ -1,0 +1,5 @@
+121:  const isCommandCenter = location.pathname === "/command-center";
+124:    <AS6Workspace className={`app-shell `} dataRoute={isCommandCenter ? "command-center" : "app"} mode={isCommandCenter ? "command-center" : "app"}>
+130:              <nav className="side-nav command-side-nav" aria-label="Command Center navigation">
+131:                <NavLink to="/command-center" className={({ isActive }) => (isActive ? "active command-center-active" : "command-center-link")}>🚀 Command Center</NavLink>
+169:                <NavLink to="/ai-enterprise-command-center" className={({ isActive }) => (isActive ? "active" : "")}>AI Enterprise Command Center</NavLink>

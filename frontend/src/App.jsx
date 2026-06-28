@@ -29,6 +29,7 @@ import CRMBrandV2Page from "./pages/CRMBrandV2Page";
 import AS6OSPage from "./pages/AS6OSPage";
 import CRMWorkspacePage from "./pages/CRMWorkspacePage";
 import AS6WorkspacePage from "./pages/AS6WorkspacePage";
+import AS6OnePage from "./pages/AS6OnePage";
 import "./styles.css";
 import "./theme/as6Theme.css";
 import { ProtectedLayout } from "./components/AppShell";
@@ -137,6 +138,9 @@ export default function App() {
         <Suspense fallback={window.location.pathname === "/command-center" ? null : <div className="as6-route-loading">Загрузка...</div>}>
           <Routes>
           <Route path="/crm-v2" element={<ProtectedRoute><CRMBrandV2Page /></ProtectedRoute>} />
+          <Route path="/as6-one" element={<AS6OnePage />} />
+          <Route path="/crm-enterprise" element={<AS6OnePage />} />
+          <Route path="/crm-v3" element={<AS6OnePage />} />
           <Route path="/as6-os" element={<AS6OSPage />} />
           <Route path="/crm-workspace" element={<CRMWorkspacePage />} />
           <Route path="/as6-workspace" element={<AS6WorkspacePage />} />
