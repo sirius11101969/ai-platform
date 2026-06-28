@@ -279,3 +279,7 @@
 | AUTONOMOUS_CONTROLLER_CLUSTER_STATUS_REGISTRY_DRIFT | AEC_REQUIRE_CONTROLLER_CLUSTER_STATUS_REGISTRY | autonomous-controller-cluster-diagnostic-must-be-in-status-registry | ENABLED |
 | FULL_DIAGNOSE_LONG_RUN_SSH_RESET_DRIFT | AEC_REQUIRE_FAST_FINAL_GREEN_PROOF | final-readiness-proof-must-be-fast-deterministic-heartbeat-visible | ENABLED |
 | FULL_DIAGNOSE_LONG_RUN_SSH_RESET_DRIFT | AEC_FORBID_FULL_DIAGNOSE_RECURSION_IN_FAST_PROOF | fast-proof-must-not-call-full-diagnose-all | ENABLED |
+
+## as6-one-must-preserve-command-center-section-order-and-pipeline-before-crm-cutover
+- Failure class: `as6-one-command-center-pixel-drift`
+- Control: AS6 ONE route aliases must preserve Command Center visual foundation and section order before CRM cutover.

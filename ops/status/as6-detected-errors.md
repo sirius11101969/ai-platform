@@ -1455,3 +1455,7 @@ Governed and registered.
 - Detected error: container served stale frontend assets without /crm-v2.
 - Root cause: production Docker Nginx html was not synced with host frontend/dist.
 - Prevention: Docker Nginx dist sync and marker validation registered.
+
+## as6-one-command-center-pixel-drift
+- Detected: AS6 ONE page composition drifted from Command Center reference by changing section order, simplifying Revenue Brain, and replacing the pipeline with a funnel chart.
+- Status: repaired with Command Center fork markers and route aliases.

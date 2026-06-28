@@ -715,3 +715,8 @@
 - Validation: host frontend/dist contains /crm-v2 markers.
 - Validation: Docker Nginx html contains /crm-v2 markers after sync.
 - Validation: Docker Nginx config test PASS.
+
+## as6-one-command-center-pixel-drift
+- Runtime artifacts: `runtime/as6-one-command-center-pixel-drift/diagnostic-artifacts.md`
+- Failure class: `as6-one-command-center-pixel-drift`
+- AEC rule: `as6-one-must-preserve-command-center-section-order-and-pipeline-before-crm-cutover`

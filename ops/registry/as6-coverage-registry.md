@@ -2603,3 +2603,6 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Coverage: stale container build prevention.
 - Failure class covered: docker-nginx-serving-stale-frontend-build.
 - AEC rule: frontend-ui-change-requires-docker-nginx-dist-sync.
+
+## as6-one-command-center-pixel-drift
+- Coverage: `/as6-one`, `/crm-enterprise`, `/crm-v3` route aliases render `AS6OnePage` with Command Center visual foundation markers.
