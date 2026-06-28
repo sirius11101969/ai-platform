@@ -967,3 +967,10 @@
 - Workflow: .github/workflows/as6-validate.yml
 - Validate entrypoint: ops/bin/as6-validate
 - Added failure class: AS6_CI_WORKFLOW_WIRING_DRIFT.
+
+## AS6_CI_STATUS_BADGE_VALIDATION_GOVERNANCE_V105
+- Diagnostic: ops/bin/as6-diagnose-ci-status-badge-governance-v105
+- Control: ops/bin/as6-control-ci-status-badge-governance-v105
+- README badge: README.md
+- Governance doc: ops/governance/as6-ci-validation-governance-v105.md
+- Added failure class: AS6_CI_STATUS_BADGE_DRIFT.

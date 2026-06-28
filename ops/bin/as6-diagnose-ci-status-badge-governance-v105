@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+README="README.md"
+WORKFLOW=".github/workflows/as6-validate.yml"
+VALIDATE="ops/bin/as6-validate"
+GOV_DOC="ops/governance/as6-ci-validation-governance-v105.md"
+
+test -f "$README" || { echo "AS6_CI_STATUS_BADGE_GOVERNANCE_V105=FAIL readme_missing"; exit 1; }
+test -f "$WORKFLOW" || { echo "AS6_CI_STATUS_BADGE_GOVERNANCE_V105=FAIL workflow_missing"; exit 1; }
+test -x "$VALIDATE" || { echo "AS6_CI_STATUS_BADGE_GOVERNANCE_V105=FAIL validate_missing"; exit 1; }
+test -f "$GOV_DOC" || { echo "AS6_CI_STATUS_BADGE_GOVERNANCE_V105=FAIL governance_doc_missing"; exit 1; }
+
+grep -q "actions/workflows/as6-validate.yml/badge.svg" "$README" || { echo "AS6_CI_STATUS_BADGE_GOVERNANCE_V105=FAIL badge_missing"; exit 1; }
+grep -q "ops/bin/as6-validate" "$WORKFLOW" || { echo "AS6_CI_STATUS_BADGE_GOVERNANCE_V105=FAIL workflow_validate_step_missing"; exit 1; }
+grep -q "pull_request" "$WORKFLOW" || { echo "AS6_CI_STATUS_BADGE_GOVERNANCE_V105=FAIL pull_request_trigger_missing"; exit 1; }
+grep -q "Canonical validation entrypoint" "$GOV_DOC" || { echo "AS6_CI_STATUS_BADGE_GOVERNANCE_V105=FAIL governance_entrypoint_missing"; exit 1; }
+
+echo "AS6_CI_STATUS_BADGE_VALIDATION_GOVERNANCE_V105=PASS"

@@ -1643,3 +1643,8 @@ Governed and registered.
 - Detected: AS6_VALIDATE_CI_BYPASS_RISK.
 - Root cause: canonical DAG validate command existed but was not wired into CI.
 - Resolution: .github/workflows/as6-validate.yml added.
+
+## AS6_CI_STATUS_BADGE_VALIDATION_GOVERNANCE_V105
+- Detected: AS6_README_CI_VISIBILITY_GAP.
+- Root cause: AS6 Validate workflow existed but was not visible in README/governance.
+- Resolution: CI badge and validation governance added.

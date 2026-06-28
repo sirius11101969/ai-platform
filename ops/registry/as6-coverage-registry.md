@@ -2831,3 +2831,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers pull_request validation trigger.
 - Covers frontend build in CI.
 - Covers ops/bin/as6-validate CI execution.
+
+## AS6_CI_STATUS_BADGE_VALIDATION_GOVERNANCE_V105
+- Covers README CI status badge.
+- Covers CI validation governance documentation.
+- Covers workflow visibility.
+- Covers canonical validation entrypoint discoverability.

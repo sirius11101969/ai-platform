@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-ci-status-badge-governance-v105
+ops/bin/as6-control-ci-workflow-wiring-v104
+
+grep -RIn "AS6_CI_STATUS_BADGE_DRIFT" README.md docs ops .github frontend/src >/dev/null || {
+  echo "AS6_CONTROL_CI_STATUS_BADGE_GOVERNANCE_V105=FAIL badge_drift_class_missing"
+  exit 1
+}
+
+echo "AS6_CONTROL_CI_STATUS_BADGE_VALIDATION_GOVERNANCE_V105=PASS"
