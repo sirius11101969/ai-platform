@@ -2776,3 +2776,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers Nav + Context Bar top zone.
 - Covers Intelligence Rail responsive rail zone.
 - Covers tablet/mobile layout breakpoints.
+
+## AS6_GLOBAL_COMMAND_PALETTE_V97
+- Covers shell-level Global Command Palette.
+- Covers Ctrl+K command access.
+- Covers Living Space command generation from engine.
+- Covers key product page commands.

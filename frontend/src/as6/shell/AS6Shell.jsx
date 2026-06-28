@@ -4,6 +4,7 @@ import { AS6LivingSpaceNav } from "../living-spaces/AS6LivingSpaceNav";
 import { AS6ActiveLivingSpaceContextBar } from "../living-spaces/AS6ActiveLivingSpaceContextBar";
 import { AS6DynamicIntelligenceRail } from "../living-spaces/AS6DynamicIntelligenceRail";
 import "./AS6Shell.css";
+import { AS6GlobalCommandPalette } from "../commands/AS6GlobalCommandPalette";
 export function AS6Shell({
   navigation,
   contextBar,
@@ -17,7 +18,8 @@ export function AS6Shell({
       <div className="as6-shell-layout__main">
         <div className="as6-shell" data-as6-shell="foundation">
               <div className="as6-shell-composition__top">
-                <AS6LivingSpaceNav />
+                <AS6GlobalCommandPalette />
+        <AS6LivingSpaceNav />
                 <AS6ActiveLivingSpaceContextBar />
               </div>
               <div className="as6-shell-composition__rail">

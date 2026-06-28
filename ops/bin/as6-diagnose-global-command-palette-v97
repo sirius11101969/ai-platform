@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PALETTE="frontend/src/as6/commands/AS6GlobalCommandPalette.jsx"
+PALETTE_CSS="frontend/src/as6/commands/AS6GlobalCommandPalette.css"
+SHELL="frontend/src/as6/shell/AS6Shell.jsx"
+CONTRACT="frontend/src/as6/commands/AS6GlobalCommandPalette.contract.md"
+
+test -f "$PALETTE" || { echo "AS6_GLOBAL_COMMAND_PALETTE_V97=FAIL palette_missing"; exit 1; }
+test -f "$PALETTE_CSS" || { echo "AS6_GLOBAL_COMMAND_PALETTE_V97=FAIL palette_css_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_GLOBAL_COMMAND_PALETTE_V97=FAIL contract_missing"; exit 1; }
+
+grep -q "getAS6LivingSpaceMenuItems" "$PALETTE" || { echo "AS6_GLOBAL_COMMAND_PALETTE_V97=FAIL living_space_engine_missing"; exit 1; }
+grep -q "useNavigate" "$PALETTE" || { echo "AS6_GLOBAL_COMMAND_PALETTE_V97=FAIL navigate_missing"; exit 1; }
+grep -q "ctrlKey" "$PALETTE" || { echo "AS6_GLOBAL_COMMAND_PALETTE_V97=FAIL ctrl_k_missing"; exit 1; }
+grep -q "AS6GlobalCommandPalette" "$SHELL" || { echo "AS6_GLOBAL_COMMAND_PALETTE_V97=FAIL shell_import_missing"; exit 1; }
+grep -q "<AS6GlobalCommandPalette />" "$SHELL" || { echo "AS6_GLOBAL_COMMAND_PALETTE_V97=FAIL shell_render_missing"; exit 1; }
+
+echo "AS6_GLOBAL_COMMAND_PALETTE_V97=PASS"

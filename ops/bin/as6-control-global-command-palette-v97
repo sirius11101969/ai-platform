@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-global-command-palette-v97
+ops/bin/as6-control-shell-layout-polish-v96
+ops/bin/as6-control-dynamic-living-space-engine-v92
+
+grep -RIn "AS6_GLOBAL_COMMAND_PALETTE_DRIFT" docs ops frontend/src >/dev/null || {
+  echo "AS6_CONTROL_GLOBAL_COMMAND_PALETTE_V97=FAIL command_palette_drift_class_missing"
+  exit 1
+}
+
+echo "AS6_CONTROL_GLOBAL_COMMAND_PALETTE_V97=PASS"

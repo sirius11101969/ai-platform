@@ -4470,3 +4470,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Project readiness: 99.995%
 - Shell layout polish: enabled.
 - Responsive composition: desktop/tablet/mobile.
+
+## AS6_GLOBAL_COMMAND_PALETTE_V97
+- Status: PASS pending build.
+- Project readiness: 99.997%
+- Global Command Palette: enabled.
+- Shortcut: Ctrl+K.

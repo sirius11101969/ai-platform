@@ -911,3 +911,10 @@
 - Shell CSS: frontend/src/as6/shell/AS6Shell.css
 - Contract: frontend/src/as6/shell/AS6ShellLayout.contract.md
 - Added failure class: AS6_SHELL_LAYOUT_COMPOSITION_DRIFT.
+
+## AS6_GLOBAL_COMMAND_PALETTE_V97
+- Diagnostic: ops/bin/as6-diagnose-global-command-palette-v97
+- Control: ops/bin/as6-control-global-command-palette-v97
+- Command Palette: frontend/src/as6/commands/AS6GlobalCommandPalette.jsx
+- Contract: frontend/src/as6/commands/AS6GlobalCommandPalette.contract.md
+- Added failure class: AS6_GLOBAL_COMMAND_PALETTE_DRIFT.

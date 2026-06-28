@@ -1603,3 +1603,8 @@ Governed and registered.
 - Detected: AS6_SHELL_SURFACE_OVERLAP_RISK.
 - Root cause: shell surfaces existed but needed governed responsive composition.
 - Resolution: AS6Shell layout composition and responsive CSS added.
+
+## AS6_GLOBAL_COMMAND_PALETTE_V97
+- Detected: AS6_KEYBOARD_NAVIGATION_GAP.
+- Root cause: AS6Shell had navigation UI but no fast keyboard command surface.
+- Resolution: AS6GlobalCommandPalette added and wired into AS6Shell.
