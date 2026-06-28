@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+STORAGE="frontend/src/as6/workspace/as6WorkspaceStorage.js"
+CONTRACT="frontend/src/as6/workspace/AS6WorkspacePersistence.contract.md"
+
+test -f "$STORAGE" || { echo "AS6_WORKSPACE_PERSISTENCE_V99=FAIL storage_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_WORKSPACE_PERSISTENCE_V99=FAIL contract_missing"; exit 1; }
+
+grep -q "createAS6WorkspaceSession" "$STORAGE" || { echo "AS6_WORKSPACE_PERSISTENCE_V99=FAIL create_session_missing"; exit 1; }
+grep -q "saveAS6WorkspaceSession" "$STORAGE" || { echo "AS6_WORKSPACE_PERSISTENCE_V99=FAIL save_session_missing"; exit 1; }
+grep -q "getAS6WorkspaceSessions" "$STORAGE" || { echo "AS6_WORKSPACE_PERSISTENCE_V99=FAIL list_sessions_missing"; exit 1; }
+grep -q "setAS6ActiveWorkspaceSession" "$STORAGE" || { echo "AS6_WORKSPACE_PERSISTENCE_V99=FAIL switch_session_missing"; exit 1; }
+grep -q "cloneAS6WorkspaceSession" "$STORAGE" || { echo "AS6_WORKSPACE_PERSISTENCE_V99=FAIL clone_session_missing"; exit 1; }
+grep -q "deleteAS6WorkspaceSession" "$STORAGE" || { echo "AS6_WORKSPACE_PERSISTENCE_V99=FAIL delete_session_missing"; exit 1; }
+grep -q "exportAS6WorkspaceStore" "$STORAGE" || { echo "AS6_WORKSPACE_PERSISTENCE_V99=FAIL export_missing"; exit 1; }
+grep -q "importAS6WorkspaceStore" "$STORAGE" || { echo "AS6_WORKSPACE_PERSISTENCE_V99=FAIL import_missing"; exit 1; }
+grep -q "validateAS6WorkspacePersistencePolicy" "$STORAGE" || { echo "AS6_WORKSPACE_PERSISTENCE_V99=FAIL validator_missing"; exit 1; }
+
+echo "AS6_WORKSPACE_PERSISTENCE_MULTI_SESSION_ENGINE_V99=PASS"

@@ -925,3 +925,10 @@
 - Workspace Manager: frontend/src/as6/workspace/as6WorkspaceManager.js
 - Contract: frontend/src/as6/workspace/AS6WorkspaceManager.contract.md
 - Added failure class: AS6_WORKSPACE_MANAGER_DRIFT.
+
+## AS6_WORKSPACE_PERSISTENCE_MULTI_SESSION_ENGINE_V99
+- Diagnostic: ops/bin/as6-diagnose-workspace-persistence-v99
+- Control: ops/bin/as6-control-workspace-persistence-v99
+- Workspace Storage: frontend/src/as6/workspace/as6WorkspaceStorage.js
+- Contract: frontend/src/as6/workspace/AS6WorkspacePersistence.contract.md
+- Added failure class: AS6_WORKSPACE_PERSISTENCE_DRIFT.

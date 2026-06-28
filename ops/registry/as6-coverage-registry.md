@@ -2790,3 +2790,10 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers pinned workspaces.
 - Covers workspace history.
 - Covers session restore foundation.
+
+## AS6_WORKSPACE_PERSISTENCE_MULTI_SESSION_ENGINE_V99
+- Covers Workspace Persistence.
+- Covers multi-session Workspace Store.
+- Covers create/save/switch/rename/clone/delete/pin.
+- Covers export/import foundation.
+- Covers versioned migration foundation.

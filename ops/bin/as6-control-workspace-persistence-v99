@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-workspace-persistence-v99
+ops/bin/as6-control-universal-workspace-manager-v98
+ops/bin/as6-control-global-command-palette-v97
+
+grep -RIn "AS6_WORKSPACE_PERSISTENCE_DRIFT" docs ops frontend/src >/dev/null || {
+  echo "AS6_CONTROL_WORKSPACE_PERSISTENCE_V99=FAIL persistence_drift_class_missing"
+  exit 1
+}
+
+echo "AS6_CONTROL_WORKSPACE_PERSISTENCE_MULTI_SESSION_ENGINE_V99=PASS"

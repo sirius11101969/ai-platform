@@ -1613,3 +1613,8 @@ Governed and registered.
 - Detected: AS6_WORKSPACE_STATE_DUPLICATION_RISK.
 - Root cause: Shell surfaces existed without centralized workspace/session state.
 - Resolution: AS6 Universal Workspace Manager added.
+
+## AS6_WORKSPACE_PERSISTENCE_MULTI_SESSION_ENGINE_V99
+- Detected: AS6_WORKSPACE_STORAGE_DUPLICATION_RISK.
+- Root cause: V98 manager existed without dedicated versioned multi-session persistence layer.
+- Resolution: as6WorkspaceStorage.js added.
