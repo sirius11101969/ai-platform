@@ -1455,3 +1455,8 @@ Governed and registered.
 - Detected error: container served stale frontend assets without /crm-v2.
 - Root cause: production Docker Nginx html was not synced with host frontend/dist.
 - Prevention: Docker Nginx dist sync and marker validation registered.
+
+## AS6_SHELL_FOUNDATION
+
+- Detected architecture gap: no reusable AS6Shell for Living Spaces.
+- Prevention: shell foundation components added.

@@ -715,3 +715,9 @@
 - Validation: host frontend/dist contains /crm-v2 markers.
 - Validation: Docker Nginx html contains /crm-v2 markers after sync.
 - Validation: Docker Nginx config test PASS.
+
+## AS6_SHELL_FOUNDATION
+
+- Diagnostic artifact: runtime/as6-shell-foundation/
+- Root cause: docs/genesis/08_AS6_SHELL_FOUNDATION_ROOT_CAUSE.md
+- Validation: frontend build and guardian.
