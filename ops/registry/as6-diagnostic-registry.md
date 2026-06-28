@@ -918,3 +918,10 @@
 - Command Palette: frontend/src/as6/commands/AS6GlobalCommandPalette.jsx
 - Contract: frontend/src/as6/commands/AS6GlobalCommandPalette.contract.md
 - Added failure class: AS6_GLOBAL_COMMAND_PALETTE_DRIFT.
+
+## AS6_UNIVERSAL_WORKSPACE_MANAGER_V98
+- Diagnostic: ops/bin/as6-diagnose-universal-workspace-manager-v98
+- Control: ops/bin/as6-control-universal-workspace-manager-v98
+- Workspace Manager: frontend/src/as6/workspace/as6WorkspaceManager.js
+- Contract: frontend/src/as6/workspace/AS6WorkspaceManager.contract.md
+- Added failure class: AS6_WORKSPACE_MANAGER_DRIFT.

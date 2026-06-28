@@ -1608,3 +1608,8 @@ Governed and registered.
 - Detected: AS6_KEYBOARD_NAVIGATION_GAP.
 - Root cause: AS6Shell had navigation UI but no fast keyboard command surface.
 - Resolution: AS6GlobalCommandPalette added and wired into AS6Shell.
+
+## AS6_UNIVERSAL_WORKSPACE_MANAGER_V98
+- Detected: AS6_WORKSPACE_STATE_DUPLICATION_RISK.
+- Root cause: Shell surfaces existed without centralized workspace/session state.
+- Resolution: AS6 Universal Workspace Manager added.

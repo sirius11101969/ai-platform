@@ -2782,3 +2782,11 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers Ctrl+K command access.
 - Covers Living Space command generation from engine.
 - Covers key product page commands.
+
+## AS6_UNIVERSAL_WORKSPACE_MANAGER_V98
+- Covers Universal Workspace Manager.
+- Covers active workspace state.
+- Covers recent workspaces.
+- Covers pinned workspaces.
+- Covers workspace history.
+- Covers session restore foundation.

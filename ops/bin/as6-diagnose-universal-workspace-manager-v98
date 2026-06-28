@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+MANAGER="frontend/src/as6/workspace/as6WorkspaceManager.js"
+CONTRACT="frontend/src/as6/workspace/AS6WorkspaceManager.contract.md"
+
+test -f "$MANAGER" || { echo "AS6_UNIVERSAL_WORKSPACE_MANAGER_V98=FAIL manager_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_UNIVERSAL_WORKSPACE_MANAGER_V98=FAIL contract_missing"; exit 1; }
+
+grep -q "setAS6ActiveWorkspace" "$MANAGER" || { echo "AS6_UNIVERSAL_WORKSPACE_MANAGER_V98=FAIL active_setter_missing"; exit 1; }
+grep -q "getAS6RecentWorkspaces" "$MANAGER" || { echo "AS6_UNIVERSAL_WORKSPACE_MANAGER_V98=FAIL recent_missing"; exit 1; }
+grep -q "getAS6PinnedWorkspaces" "$MANAGER" || { echo "AS6_UNIVERSAL_WORKSPACE_MANAGER_V98=FAIL pinned_missing"; exit 1; }
+grep -q "getAS6WorkspaceHistory" "$MANAGER" || { echo "AS6_UNIVERSAL_WORKSPACE_MANAGER_V98=FAIL history_missing"; exit 1; }
+grep -q "restoreAS6Workspace" "$MANAGER" || { echo "AS6_UNIVERSAL_WORKSPACE_MANAGER_V98=FAIL restore_missing"; exit 1; }
+grep -q "validateAS6WorkspaceManagerPolicy" "$MANAGER" || { echo "AS6_UNIVERSAL_WORKSPACE_MANAGER_V98=FAIL validator_missing"; exit 1; }
+grep -q "as6-workspace-manager:v98" "$MANAGER" || { echo "AS6_UNIVERSAL_WORKSPACE_MANAGER_V98=FAIL storage_key_missing"; exit 1; }
+
+echo "AS6_UNIVERSAL_WORKSPACE_MANAGER_V98=PASS"
