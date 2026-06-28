@@ -1455,3 +1455,14 @@ Governed and registered.
 - Detected error: container served stale frontend assets without /crm-v2.
 - Root cause: production Docker Nginx html was not synced with host frontend/dist.
 - Prevention: Docker Nginx dist sync and marker validation registered.
+
+## AS6_SHELL_FOUNDATION
+
+- Detected architecture gap: no reusable AS6Shell for Living Spaces.
+- Prevention: shell foundation components added.
+
+## AS6_VITE_CONFIG_SYNTAX_REPAIR
+
+- Detected error: vite.config.js invalid syntax after partial manualChunks rewrite.
+- Root cause: unsafe regex patch left orphan if statements.
+- Prevention: explicit config rewrite and validation registered.

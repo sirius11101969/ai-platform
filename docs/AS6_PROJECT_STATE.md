@@ -4287,3 +4287,22 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Synced fresh frontend/dist into Docker Nginx /usr/share/nginx/html.
 - Container bundle now validates CRM v2 markers.
 - Project readiness: 99%.
+
+## AS6 Shell Foundation
+
+- Stage: AS6_SHELL_FOUNDATION
+- Added reusable AS6Shell foundation.
+- Added Navigation, Context Bar, Workspace, Intelligence Rail, Pulse and Status Bar foundation components.
+- Existing UI routes not changed.
+- Next stage: AS6_ONE_SHELL_ADAPTER.
+- Project readiness: 99%.
+
+## AS6 Vite Config Syntax Repair
+
+- Stage: AS6_VITE_CONFIG_SYNTAX_REPAIR
+- Fixed invalid frontend/vite.config.js syntax after partial manualChunks patch.
+- Interface changed: none.
+- Pages changed: none.
+- Build: PASS without Circular chunk warning.
+- Guardian: SAFE_TO_MERGE.
+- Project readiness: 99%.

@@ -1,0 +1,32 @@
+
+> ai-bot-frontend@1.0.0 build
+> vite build
+
+vite v5.4.21 building for production...
+transforming...
+✓ 174 modules transformed.
+rendering chunks...
+[plugin:vite:reporter] [plugin vite:reporter] 
+(!) /var/www/ai-platform/frontend/src/pages/CRMPage.jsx is dynamically imported by /var/www/ai-platform/frontend/src/App.jsx but also statically imported by /var/www/ai-platform/frontend/src/pages/CRMWorkspacePage.jsx, dynamic import will not move module into another chunk.
+
+computing gzip size...
+dist/index.html                                      0.81 kB │ gzip:  0.49 kB
+dist/assets/as6-robot-LgharqKn.png                  31.88 kB
+dist/assets/as6-copilot-asset-Tv9D6goR.png          43.70 kB
+dist/assets/as6-logo-CVJWh6mG.webp                  90.99 kB
+dist/assets/AS6OnePage-DQ7spHTC.css                  8.79 kB │ gzip:  2.62 kB
+dist/assets/index-BXQC_qQr.css                     312.21 kB │ gzip: 52.94 kB
+dist/assets/assets-aVZfBiUq.js                       0.15 kB │ gzip:  0.13 kB
+dist/assets/RevenueDashboardPage-C8PnfYL9.js         7.21 kB │ gzip:  2.60 kB
+dist/assets/AS6OnePage-QRvoDmne.js                   8.61 kB │ gzip:  3.24 kB
+dist/assets/AIEnterpriseCommandCenter-Kj4OiMXF.js    9.34 kB │ gzip:  2.65 kB
+dist/assets/AiManagerDashboardPage-Xgp89Pii.js      10.95 kB │ gzip:  4.07 kB
+dist/assets/PipelineCopilotPage-BPM3P10a.js         12.23 kB │ gzip:  3.94 kB
+dist/assets/AiLiveRealtimeVoicePage-Co3y16Ln.js     18.90 kB │ gzip:  5.37 kB
+dist/assets/CommandCenterPage-BdBKhbKU.js           20.87 kB │ gzip:  7.27 kB
+dist/assets/DashboardPage-DRUxeA8T.js               29.32 kB │ gzip:  9.79 kB
+dist/assets/services-D4FGpwdi.js                    31.97 kB │ gzip:  9.67 kB
+dist/assets/AiWorkersPage-BjC0uC7Q.js               52.35 kB │ gzip: 16.34 kB
+dist/assets/vendor-D1LqeeMi.js                     144.92 kB │ gzip: 46.66 kB
+dist/assets/index-1DJrxFEP.js                      221.32 kB │ gzip: 58.55 kB
+✓ built in 3.71s

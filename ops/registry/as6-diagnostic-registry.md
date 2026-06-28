@@ -715,3 +715,17 @@
 - Validation: host frontend/dist contains /crm-v2 markers.
 - Validation: Docker Nginx html contains /crm-v2 markers after sync.
 - Validation: Docker Nginx config test PASS.
+
+## AS6_SHELL_FOUNDATION
+
+- Diagnostic artifact: runtime/as6-shell-foundation/
+- Root cause: docs/genesis/08_AS6_SHELL_FOUNDATION_ROOT_CAUSE.md
+- Validation: frontend build and guardian.
+
+## AS6_VITE_CONFIG_SYNTAX_REPAIR
+
+- Diagnostic artifact: runtime/as6-vite-config-syntax-repair/
+- Root cause: docs/genesis/10_AS6_VITE_CONFIG_SYNTAX_REPAIR_ROOT_CAUSE.md
+- Validation: frontend build PASS.
+- Validation: no Circular chunk warning.
+- Validation: AS6 Guardian SAFE_TO_MERGE.

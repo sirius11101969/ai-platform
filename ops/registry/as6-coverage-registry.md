@@ -2603,3 +2603,19 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Coverage: stale container build prevention.
 - Failure class covered: docker-nginx-serving-stale-frontend-build.
 - AEC rule: frontend-ui-change-requires-docker-nginx-dist-sync.
+
+## AS6_SHELL_FOUNDATION
+
+- Coverage: AS6Shell.
+- Coverage: Navigation foundation.
+- Coverage: Context Bar foundation.
+- Coverage: Workspace foundation.
+- Coverage: Intelligence Rail foundation.
+- Coverage: Pulse foundation.
+
+## AS6_VITE_CONFIG_SYNTAX_REPAIR
+
+- Coverage: Vite config syntax.
+- Coverage: manualChunks stability.
+- Failure class covered: config-regex-partial-rewrite-syntax-break.
+- AEC rule: config-file-rewrites-must-be-explicit-and-build-validated.
