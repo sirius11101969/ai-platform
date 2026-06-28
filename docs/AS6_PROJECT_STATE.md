@@ -4458,3 +4458,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Status: PASS pending build.
 - Project readiness: 99.985%
 - V94 control dependency: repaired.
+
+## AS6_DYNAMIC_INTELLIGENCE_RAIL_V95
+- Status: PASS pending build.
+- Project readiness: 99.99%
+- Dynamic Intelligence Rail: enabled.
+- Intelligence source: Dynamic Living Space Engine.

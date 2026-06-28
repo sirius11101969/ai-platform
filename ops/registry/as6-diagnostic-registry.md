@@ -897,3 +897,10 @@
 - Repaired control: ops/bin/as6-control-active-living-space-context-bar-v94
 - Added alias: ops/bin/as6-control-registry-driven-navigation-ui-v93
 - Added failure class: AS6_CONTROL_DEPENDENCY_NAME_DRIFT.
+
+## AS6_DYNAMIC_INTELLIGENCE_RAIL_V95
+- Diagnostic: ops/bin/as6-diagnose-dynamic-intelligence-rail-v95
+- Control: ops/bin/as6-control-dynamic-intelligence-rail-v95
+- Intelligence Rail: frontend/src/as6/living-spaces/AS6DynamicIntelligenceRail.jsx
+- Contract: frontend/src/as6/living-spaces/AS6DynamicIntelligenceRail.contract.md
+- Added failure class: AS6_DYNAMIC_INTELLIGENCE_RAIL_DRIFT.

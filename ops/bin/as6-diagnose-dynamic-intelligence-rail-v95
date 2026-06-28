@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+RAIL="frontend/src/as6/living-spaces/AS6DynamicIntelligenceRail.jsx"
+RAIL_CSS="frontend/src/as6/living-spaces/AS6DynamicIntelligenceRail.css"
+ENGINE="frontend/src/as6/living-spaces/as6LivingSpaceEngine.js"
+SHELL="frontend/src/as6/shell/AS6Shell.jsx"
+
+test -f "$RAIL" || { echo "AS6_DYNAMIC_INTELLIGENCE_RAIL_V95=FAIL rail_missing"; exit 1; }
+test -f "$RAIL_CSS" || { echo "AS6_DYNAMIC_INTELLIGENCE_RAIL_V95=FAIL rail_css_missing"; exit 1; }
+
+grep -q "useLocation" "$RAIL" || { echo "AS6_DYNAMIC_INTELLIGENCE_RAIL_V95=FAIL location_missing"; exit 1; }
+grep -q "getAS6ActiveLivingSpace" "$RAIL" || { echo "AS6_DYNAMIC_INTELLIGENCE_RAIL_V95=FAIL active_lookup_missing"; exit 1; }
+grep -q "getAS6ActiveLivingSpace" "$ENGINE" || { echo "AS6_DYNAMIC_INTELLIGENCE_RAIL_V95=FAIL engine_active_lookup_missing"; exit 1; }
+grep -q "AS6DynamicIntelligenceRail" "$SHELL" || { echo "AS6_DYNAMIC_INTELLIGENCE_RAIL_V95=FAIL shell_import_missing"; exit 1; }
+grep -q "<AS6DynamicIntelligenceRail />" "$SHELL" || { echo "AS6_DYNAMIC_INTELLIGENCE_RAIL_V95=FAIL shell_render_missing"; exit 1; }
+
+echo "AS6_DYNAMIC_INTELLIGENCE_RAIL_V95=PASS"

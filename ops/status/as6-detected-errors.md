@@ -1593,3 +1593,8 @@ Governed and registered.
 - Detected: AS6_CONTROL_DEPENDENCY_NAME_DRIFT.
 - Root cause: V94 control called non-existent V93 control filename.
 - Resolution: V94 control patched and compatibility alias added.
+
+## AS6_DYNAMIC_INTELLIGENCE_RAIL_V95
+- Detected: AS6_ACTIVE_SPACE_INTELLIGENCE_CONTEXT_GAP.
+- Root cause: active Living Space context existed but Shell had no dynamic Intelligence Rail.
+- Resolution: AS6DynamicIntelligenceRail added and wired into AS6Shell.

@@ -2764,3 +2764,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers V94 -> V93 control dependency compatibility.
 - Covers registry navigation UI control alias.
 - Covers active context bar control chain.
+
+## AS6_DYNAMIC_INTELLIGENCE_RAIL_V95
+- Covers Dynamic Intelligence Rail.
+- Covers getAS6ActiveLivingSpace(pathname) Intelligence Rail usage.
+- Covers AS6Shell intelligence rendering.
+- Covers shell-level Intelligence Rail policy.

@@ -2,6 +2,7 @@ import React from "react";
 
 import { AS6LivingSpaceNav } from "../living-spaces/AS6LivingSpaceNav";
 import { AS6ActiveLivingSpaceContextBar } from "../living-spaces/AS6ActiveLivingSpaceContextBar";
+import { AS6DynamicIntelligenceRail } from "../living-spaces/AS6DynamicIntelligenceRail";
 export function AS6Shell({
   navigation,
   contextBar,
@@ -14,6 +15,7 @@ export function AS6Shell({
     <div className="as6-shell" data-as6-shell="foundation">
       <AS6LivingSpaceNav />
       <AS6ActiveLivingSpaceContextBar />
+      <AS6DynamicIntelligenceRail />
       <aside className="as6-shell__navigation">{navigation}</aside>
       <main className="as6-shell__main">
         <header className="as6-shell__context">{contextBar}</header>

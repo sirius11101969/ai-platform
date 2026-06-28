@@ -1,0 +1,66 @@
+.as6-dynamic-intelligence-rail {
+  display: grid;
+  gap: 12px;
+  min-width: 220px;
+  max-width: 320px;
+  padding: 14px;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at top left, rgba(59, 130, 246, 0.22), transparent 34%),
+    rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 18px 52px rgba(15, 23, 42, 0.1);
+  backdrop-filter: blur(18px);
+}
+
+.as6-dynamic-intelligence-rail__header {
+  display: grid;
+  gap: 4px;
+}
+
+.as6-dynamic-intelligence-rail__eyebrow {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(15, 23, 42, 0.5);
+}
+
+.as6-dynamic-intelligence-rail__header strong {
+  font-size: 15px;
+  color: rgba(15, 23, 42, 0.92);
+}
+
+.as6-dynamic-intelligence-rail__body {
+  display: grid;
+  gap: 8px;
+}
+
+.as6-dynamic-intelligence-rail__card {
+  display: grid;
+  gap: 3px;
+  padding: 10px;
+  border-radius: 16px;
+  background: rgba(248, 250, 252, 0.86);
+  border: 1px solid rgba(15, 23, 42, 0.07);
+}
+
+.as6-dynamic-intelligence-rail__card span {
+  font-size: 11px;
+  font-weight: 800;
+  color: rgba(15, 23, 42, 0.48);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.as6-dynamic-intelligence-rail__card strong {
+  font-size: 13px;
+  color: rgba(15, 23, 42, 0.88);
+}
+
+@media (max-width: 960px) {
+  .as6-dynamic-intelligence-rail {
+    max-width: none;
+    width: 100%;
+  }
+}

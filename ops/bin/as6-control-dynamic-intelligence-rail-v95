@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-dynamic-intelligence-rail-v95
+ops/bin/as6-control-active-living-space-context-bar-v94
+ops/bin/as6-control-dynamic-living-space-engine-v92
+
+grep -RIn "AS6_DYNAMIC_INTELLIGENCE_RAIL_DRIFT" docs ops frontend/src >/dev/null || {
+  echo "AS6_CONTROL_DYNAMIC_INTELLIGENCE_RAIL_V95=FAIL rail_drift_class_missing"
+  exit 1
+}
+
+echo "AS6_CONTROL_DYNAMIC_INTELLIGENCE_RAIL_V95=PASS"
