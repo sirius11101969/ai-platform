@@ -1583,3 +1583,13 @@ Governed and registered.
 - Detected: AS6_HARDCODED_LIVING_SPACE_MENU_DRIFT risk.
 - Root cause: Dynamic Living Space Engine existed but no registry-backed navigation UI rendered it.
 - Resolution: AS6LivingSpaceNav added and wired into AS6Shell.
+
+## AS6_ACTIVE_LIVING_SPACE_CONTEXT_BAR_V94
+- Detected: AS6_ACTIVE_SPACE_LOOKUP_UI_GAP.
+- Root cause: Living Space Engine exposed active lookup but Shell had no active context UI.
+- Resolution: AS6ActiveLivingSpaceContextBar added and wired into AS6Shell.
+
+## AS6_ACTIVE_CONTEXT_BAR_CONTROL_ALIAS_REPAIR_V94B
+- Detected: AS6_CONTROL_DEPENDENCY_NAME_DRIFT.
+- Root cause: V94 control called non-existent V93 control filename.
+- Resolution: V94 control patched and compatibility alias added.

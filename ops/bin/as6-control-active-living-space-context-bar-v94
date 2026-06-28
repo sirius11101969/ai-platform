@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-active-living-space-context-bar-v94
+ops/bin/as6-control-registry-navigation-ui-v93
+ops/bin/as6-control-dynamic-living-space-engine-v92
+
+grep -RIn "AS6_ACTIVE_CONTEXT_BAR_DRIFT" docs ops frontend/src >/dev/null || {
+  echo "AS6_CONTROL_ACTIVE_CONTEXT_BAR_V94=FAIL active_context_bar_drift_class_missing"
+  exit 1
+}
+
+echo "AS6_CONTROL_ACTIVE_LIVING_SPACE_CONTEXT_BAR_V94=PASS"

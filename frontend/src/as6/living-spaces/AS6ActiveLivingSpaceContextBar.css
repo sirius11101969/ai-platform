@@ -1,0 +1,64 @@
+.as6-active-context-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 10px 0 14px;
+  padding: 14px 16px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.86), rgba(30, 64, 175, 0.82));
+  color: #ffffff;
+  box-shadow: 0 18px 46px rgba(15, 23, 42, 0.18);
+}
+
+.as6-active-context-bar__main {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.as6-active-context-bar__eyebrow {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.72;
+}
+
+.as6-active-context-bar__title {
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.as6-active-context-bar__route {
+  font-size: 12px;
+  opacity: 0.76;
+}
+
+.as6-active-context-bar__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  justify-content: flex-end;
+}
+
+.as6-active-context-bar__meta span {
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .as6-active-context-bar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .as6-active-context-bar__meta {
+    justify-content: flex-start;
+  }
+}

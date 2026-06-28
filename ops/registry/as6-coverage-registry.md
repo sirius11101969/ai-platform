@@ -2753,3 +2753,14 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers AS6LivingSpaceNav.
 - Covers AS6Shell nav rendering.
 - Covers Dynamic Living Space Engine menu usage.
+
+## AS6_ACTIVE_LIVING_SPACE_CONTEXT_BAR_V94
+- Covers active Living Space Context Bar.
+- Covers getAS6ActiveLivingSpace(pathname) UI usage.
+- Covers AS6Shell context rendering.
+- Covers shell-level Context Bar policy.
+
+## AS6_ACTIVE_CONTEXT_BAR_CONTROL_ALIAS_REPAIR_V94B
+- Covers V94 -> V93 control dependency compatibility.
+- Covers registry navigation UI control alias.
+- Covers active context bar control chain.

@@ -885,3 +885,15 @@
 - Navigation UI: frontend/src/as6/living-spaces/AS6LivingSpaceNav.jsx
 - Contract: frontend/src/as6/living-spaces/AS6LivingSpaceNav.contract.md
 - Added failure class: AS6_REGISTRY_NAVIGATION_UI_DRIFT.
+
+## AS6_ACTIVE_LIVING_SPACE_CONTEXT_BAR_V94
+- Diagnostic: ops/bin/as6-diagnose-active-living-space-context-bar-v94
+- Control: ops/bin/as6-control-active-living-space-context-bar-v94
+- Context Bar: frontend/src/as6/living-spaces/AS6ActiveLivingSpaceContextBar.jsx
+- Contract: frontend/src/as6/living-spaces/AS6ActiveLivingSpaceContextBar.contract.md
+- Added failure class: AS6_ACTIVE_CONTEXT_BAR_DRIFT.
+
+## AS6_ACTIVE_CONTEXT_BAR_CONTROL_ALIAS_REPAIR_V94B
+- Repaired control: ops/bin/as6-control-active-living-space-context-bar-v94
+- Added alias: ops/bin/as6-control-registry-driven-navigation-ui-v93
+- Added failure class: AS6_CONTROL_DEPENDENCY_NAME_DRIFT.

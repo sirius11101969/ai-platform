@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+CONTEXT="frontend/src/as6/living-spaces/AS6ActiveLivingSpaceContextBar.jsx"
+CONTEXT_CSS="frontend/src/as6/living-spaces/AS6ActiveLivingSpaceContextBar.css"
+ENGINE="frontend/src/as6/living-spaces/as6LivingSpaceEngine.js"
+SHELL="frontend/src/as6/shell/AS6Shell.jsx"
+
+test -f "$CONTEXT" || { echo "AS6_ACTIVE_CONTEXT_BAR_V94=FAIL context_bar_missing"; exit 1; }
+test -f "$CONTEXT_CSS" || { echo "AS6_ACTIVE_CONTEXT_BAR_V94=FAIL context_bar_css_missing"; exit 1; }
+
+grep -q "useLocation" "$CONTEXT" || { echo "AS6_ACTIVE_CONTEXT_BAR_V94=FAIL location_missing"; exit 1; }
+grep -q "getAS6ActiveLivingSpace" "$CONTEXT" || { echo "AS6_ACTIVE_CONTEXT_BAR_V94=FAIL active_lookup_missing"; exit 1; }
+grep -q "getAS6ActiveLivingSpace" "$ENGINE" || { echo "AS6_ACTIVE_CONTEXT_BAR_V94=FAIL engine_active_lookup_missing"; exit 1; }
+grep -q "AS6ActiveLivingSpaceContextBar" "$SHELL" || { echo "AS6_ACTIVE_CONTEXT_BAR_V94=FAIL shell_import_missing"; exit 1; }
+grep -q "<AS6ActiveLivingSpaceContextBar />" "$SHELL" || { echo "AS6_ACTIVE_CONTEXT_BAR_V94=FAIL shell_render_missing"; exit 1; }
+
+echo "AS6_ACTIVE_LIVING_SPACE_CONTEXT_BAR_V94=PASS"

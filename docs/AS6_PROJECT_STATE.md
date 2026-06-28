@@ -4447,3 +4447,14 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Project readiness: 99.98%
 - Registry-driven navigation UI: enabled.
 - Shell navigation source: Dynamic Living Space Engine.
+
+## AS6_ACTIVE_LIVING_SPACE_CONTEXT_BAR_V94
+- Status: PASS pending build.
+- Project readiness: 99.985%
+- Active Living Space Context Bar: enabled.
+- Context source: Dynamic Living Space Engine.
+
+## AS6_ACTIVE_CONTEXT_BAR_CONTROL_ALIAS_REPAIR_V94B
+- Status: PASS pending build.
+- Project readiness: 99.985%
+- V94 control dependency: repaired.
