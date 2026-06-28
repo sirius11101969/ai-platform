@@ -750,3 +750,16 @@
 - Diagnostic added: prefer app-level frontend package.json.
 - Diagnostic added: reject node_modules build directory.
 - Diagnostic added: avoid committing ignored runtime directory.
+
+## AS6_ONE_SHELL_REAL_WIRING_V86
+- Diagnostic: ops/bin/as6-diagnose-one-shell-real-wiring-v86
+- Control: ops/bin/as6-control-one-shell-real-wiring-v86
+- Added real route wiring validation for /as6-one -> AS6OneShellAdapter -> AS6Shell.
+- Added failure class: AS6_ONE_SHELL_ROUTE_WIRING_DRIFT.
+- Added failure class: AS6_ONE_BUSINESS_LOGIC_REWRITE_DRIFT.
+
+## AS6_ONE_SHELL_EXPORT_REPAIR_V86B
+- Diagnostic added: AS6Shell export style detection.
+- Diagnostic added: AS6OneShellAdapter import style validation.
+- Failure class added: AS6_SHELL_EXPORT_INTERFACE_DRIFT.
+- Failure class added: AS6_ONE_SHELL_IMPORT_STYLE_MISMATCH.

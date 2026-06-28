@@ -4330,3 +4330,15 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Build directory: ./frontend
 - /as6-one adapter contract preserved.
 - Living Spaces preparation path: /as6-sales.
+
+## AS6_ONE_SHELL_REAL_WIRING_V86
+- Status: PASS pending build.
+- Project readiness: 99.5%
+- /as6-one real shell wiring: enabled.
+- Existing business logic: preserved in AS6OnePage.
+- Living Spaces preparation: /as6-sales target retained.
+
+## AS6_ONE_SHELL_EXPORT_REPAIR_V86B
+- Status: PASS pending build.
+- Project readiness: 99.5%
+- /as6-one real shell wiring: repaired for AS6Shell export interface.

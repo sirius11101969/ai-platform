@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SHELL_FILE="frontend/src/as6/shell/AS6Shell.jsx"
+ADAPTER="frontend/src/as6-one/AS6OneShellAdapter.jsx"
+
+test -f "$SHELL_FILE" || { echo "AS6_ONE_SHELL_EXPORT_V86B=FAIL shell_missing"; exit 1; }
+test -f "$ADAPTER" || { echo "AS6_ONE_SHELL_EXPORT_V86B=FAIL adapter_missing"; exit 1; }
+
+if grep -qE 'export[[:space:]]+(function|const)[[:space:]]+AS6Shell|export[[:space:]]*\{[^}]*AS6Shell' "$SHELL_FILE"; then
+  grep -q "import { AS6Shell } from '../as6/shell/AS6Shell';" "$ADAPTER" || { echo "AS6_ONE_SHELL_EXPORT_V86B=FAIL named_import_missing"; exit 1; }
+elif grep -qE 'export[[:space:]]+default[[:space:]]+AS6Shell|export[[:space:]]+default[[:space:]]+function[[:space:]]+AS6Shell' "$SHELL_FILE"; then
+  grep -q "import AS6Shell from '../as6/shell/AS6Shell';" "$ADAPTER" || { echo "AS6_ONE_SHELL_EXPORT_V86B=FAIL default_import_missing"; exit 1; }
+else
+  echo "AS6_ONE_SHELL_EXPORT_V86B=FAIL export_style_unknown"
+  exit 1
+fi
+
+grep -q "AS6OnePage" "$ADAPTER" || { echo "AS6_ONE_SHELL_EXPORT_V86B=FAIL business_page_missing"; exit 1; }
+grep -q "livingSpaceTarget=\"/as6-sales\"" "$ADAPTER" || { echo "AS6_ONE_SHELL_EXPORT_V86B=FAIL living_space_target_missing"; exit 1; }
+
+echo "AS6_ONE_SHELL_EXPORT_V86B=PASS"

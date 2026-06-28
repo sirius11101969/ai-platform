@@ -2641,3 +2641,15 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers AS6_RUNTIME_IGNORED_ARTIFACT_COMMIT_DRIFT.
 - Covers /as6-one AS6Shell adapter.
 - Covers Living Spaces preparation for /as6-sales.
+
+## AS6_ONE_SHELL_REAL_WIRING_V86
+- Covers /as6-one real shell wiring.
+- Covers AS6OneShellAdapter.jsx.
+- Covers AS6Shell wrapper boundary.
+- Covers AS6OnePage preservation.
+- Covers future Living Space target /as6-sales.
+
+## AS6_ONE_SHELL_EXPORT_REPAIR_V86B
+- Covers AS6Shell named/default export interface.
+- Covers AS6OneShellAdapter import compatibility.
+- Covers /as6-one real shell wiring build validation.

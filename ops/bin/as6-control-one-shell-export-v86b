@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-one-shell-export-v86b
+ops/bin/as6-diagnose-one-shell-real-wiring-v86
+
+grep -RIn "AS6_SHELL_EXPORT_INTERFACE_DRIFT" docs ops >/dev/null || { echo "AS6_CONTROL_ONE_SHELL_EXPORT_V86B=FAIL export_drift_not_registered"; exit 1; }
+
+echo "AS6_CONTROL_ONE_SHELL_EXPORT_V86B=PASS"

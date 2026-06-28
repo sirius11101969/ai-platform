@@ -1485,3 +1485,14 @@ Governed and registered.
 - Detected: AS6_BUILD_SELECTOR_NODE_MODULES_DRIFT.
 - Detected: AS6_RUNTIME_IGNORED_ARTIFACT_COMMIT_DRIFT.
 - Resolution: build selector excludes node_modules and commit excludes runtime.
+
+## AS6_ONE_SHELL_REAL_WIRING_V86
+- Detected: AS6_ONE_SHELL_ROUTE_WIRING_DRIFT.
+- Root cause: V85E provided adapter contract but not guaranteed real route-level wiring.
+- Resolution: /as6-one route now references AS6OneShellAdapter and adapter wraps AS6OnePage with AS6Shell.
+
+## AS6_ONE_SHELL_EXPORT_REPAIR_V86B
+- Detected: AS6_SHELL_EXPORT_INTERFACE_DRIFT.
+- Detected: AS6_ONE_SHELL_IMPORT_STYLE_MISMATCH.
+- Root cause: AS6Shell did not export default while adapter imported default.
+- Resolution: adapter import patched to match actual AS6Shell export style.

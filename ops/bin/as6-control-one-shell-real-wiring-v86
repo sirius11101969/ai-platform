@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-one-shell-real-wiring-v86
+grep -RIn "AS6_ONE_SHELL_REAL_WIRING_V86" docs ops frontend/src >/dev/null || { echo "AS6_CONTROL_ONE_SHELL_REAL_WIRING_V86=FAIL marker_missing"; exit 1; }
+grep -RIn "AS6_ONE_SHELL_ROUTE_WIRING_DRIFT" docs ops >/dev/null || { echo "AS6_CONTROL_ONE_SHELL_REAL_WIRING_V86=FAIL failure_class_missing"; exit 1; }
+echo "AS6_CONTROL_ONE_SHELL_REAL_WIRING_V86=PASS"

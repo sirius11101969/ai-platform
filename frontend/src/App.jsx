@@ -60,7 +60,7 @@ import AiOrganizationalMemoryPage from "./pages/AiOrganizationalMemoryPage";
 import AiSystemHealthCenterPage from "./pages/AiSystemHealthCenterPage";
 const AIEnterpriseCommandCenter = lazy(() => import("./pages/AIEnterpriseCommandCenter"));
 const CommandCenterPage = lazy(() => import("./pages/CommandCenterPage"));
-const AS6OnePage = lazy(() => import("./pages/AS6OnePage"));
+const AS6OnePage = lazy(() => import('./as6-one/AS6OneShellAdapter'));
 const RevenueDashboardPage = lazy(() => import("./pages/RevenueDashboardPage"));
 import { getAuthToken, getStoredUser } from "./services/api";
 
