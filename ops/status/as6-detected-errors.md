@@ -1648,3 +1648,8 @@ Governed and registered.
 - Detected: AS6_README_CI_VISIBILITY_GAP.
 - Root cause: AS6 Validate workflow existed but was not visible in README/governance.
 - Resolution: CI badge and validation governance added.
+
+## AS6_RELEASE_READINESS_GATE_V106
+- Detected: AS6_RELEASE_VALIDATION_BYPASS_RISK.
+- Root cause: CI validation existed but no canonical release-readiness command existed.
+- Resolution: ops/bin/as6-release-gate added.

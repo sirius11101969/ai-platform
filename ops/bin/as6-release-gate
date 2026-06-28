@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+TARGET="${1:-as6-control-event-bus-v101}"
+RUN_DIR="${AS6_RELEASE_GATE_RUN_DIR:-runtime/as6-release-gate}"
+mkdir -p "$RUN_DIR"
+
+STATE="docs/AS6_PROJECT_STATE.md"
+DIAG_REG="ops/registry/as6-diagnostic-registry.md"
+COV_REG="ops/registry/as6-coverage-registry.md"
+DETECTED="ops/status/as6-detected-errors.md"
+
+echo "== AS6 Release Gate =="
+echo "AS6_RELEASE_GATE_TARGET=$TARGET"
+
+echo "== Worktree check =="
+git status --short | tee "$RUN_DIR/git-status.txt"
+
+echo "== Build check =="
+(cd frontend && npm run build) | tee "$RUN_DIR/build.log"
+
+echo "== DAG validation =="
+AS6_VALIDATE_LOG_DIR="$RUN_DIR/as6-validate" ops/bin/as6-validate "$TARGET" | tee "$RUN_DIR/as6-validate.log"
+
+echo "== Governance completeness =="
+test -f "$STATE" || { echo "AS6_RELEASE_GATE=FAIL state_missing"; exit 1; }
+test -f "$DIAG_REG" || { echo "AS6_RELEASE_GATE=FAIL diagnostic_registry_missing"; exit 1; }
+test -f "$COV_REG" || { echo "AS6_RELEASE_GATE=FAIL coverage_registry_missing"; exit 1; }
+test -f "$DETECTED" || { echo "AS6_RELEASE_GATE=FAIL detected_errors_missing"; exit 1; }
+
+grep -q "AS6_CI_STATUS_BADGE_VALIDATION_GOVERNANCE_V105" "$STATE" || { echo "AS6_RELEASE_GATE=FAIL v105_state_missing"; exit 1; }
+grep -q "AS6_CONTROL_RUNNER_CI_INTEGRATION_V103" "$DIAG_REG" || { echo "AS6_RELEASE_GATE=FAIL v103_diagnostic_registry_missing"; exit 1; }
+grep -q "AS6_CI_WORKFLOW_WIRING_V104" "$COV_REG" || { echo "AS6_RELEASE_GATE=FAIL v104_coverage_missing"; exit 1; }
+grep -q "AS6_README_CI_VISIBILITY_GAP" "$DETECTED" || { echo "AS6_RELEASE_GATE=FAIL v105_detected_status_missing"; exit 1; }
+
+echo "AS6_RELEASE_GATE=PASS"

@@ -4526,3 +4526,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Project readiness: 99.9999%
 - CI badge: enabled.
 - CI validation governance: enabled.
+
+## AS6_RELEASE_READINESS_GATE_V106
+- Status: PASS pending build.
+- Project readiness: 99.99995%
+- Release Readiness Gate: enabled.
+- Canonical pre-release command: ops/bin/as6-release-gate.

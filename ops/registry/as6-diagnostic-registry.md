@@ -974,3 +974,10 @@
 - README badge: README.md
 - Governance doc: ops/governance/as6-ci-validation-governance-v105.md
 - Added failure class: AS6_CI_STATUS_BADGE_DRIFT.
+
+## AS6_RELEASE_READINESS_GATE_V106
+- Diagnostic: ops/bin/as6-diagnose-release-readiness-gate-v106
+- Control: ops/bin/as6-control-release-readiness-gate-v106
+- Release gate: ops/bin/as6-release-gate
+- Validate entrypoint: ops/bin/as6-validate
+- Added failure class: AS6_RELEASE_GATE_DRIFT.

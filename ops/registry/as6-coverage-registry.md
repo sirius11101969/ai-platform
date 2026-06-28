@@ -2837,3 +2837,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers CI validation governance documentation.
 - Covers workflow visibility.
 - Covers canonical validation entrypoint discoverability.
+
+## AS6_RELEASE_READINESS_GATE_V106
+- Covers release readiness gate.
+- Covers build-before-release.
+- Covers DAG validation before release.
+- Covers governance/registry/coverage/state/status completeness.

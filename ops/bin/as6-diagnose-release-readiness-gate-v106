@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+RELEASE_GATE="ops/bin/as6-release-gate"
+VALIDATE="ops/bin/as6-validate"
+
+test -x "$RELEASE_GATE" || { echo "AS6_RELEASE_READINESS_GATE_V106=FAIL release_gate_missing"; exit 1; }
+test -x "$VALIDATE" || { echo "AS6_RELEASE_READINESS_GATE_V106=FAIL validate_missing"; exit 1; }
+
+grep -q "npm run build" "$RELEASE_GATE" || { echo "AS6_RELEASE_READINESS_GATE_V106=FAIL build_check_missing"; exit 1; }
+grep -q "ops/bin/as6-validate" "$RELEASE_GATE" || { echo "AS6_RELEASE_READINESS_GATE_V106=FAIL dag_validation_missing"; exit 1; }
+grep -q "Governance completeness" "$RELEASE_GATE" || { echo "AS6_RELEASE_READINESS_GATE_V106=FAIL governance_completeness_missing"; exit 1; }
+grep -q "AS6_RELEASE_GATE=PASS" "$RELEASE_GATE" || { echo "AS6_RELEASE_READINESS_GATE_V106=FAIL pass_marker_missing"; exit 1; }
+
+echo "AS6_RELEASE_READINESS_GATE_V106=PASS"
