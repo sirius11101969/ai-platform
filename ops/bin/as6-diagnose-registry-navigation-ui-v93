@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+NAV="frontend/src/as6/living-spaces/AS6LivingSpaceNav.jsx"
+NAV_CSS="frontend/src/as6/living-spaces/AS6LivingSpaceNav.css"
+ENGINE="frontend/src/as6/living-spaces/as6LivingSpaceEngine.js"
+SHELL="frontend/src/as6/shell/AS6Shell.jsx"
+
+test -f "$NAV" || { echo "AS6_REGISTRY_NAVIGATION_UI_V93=FAIL nav_missing"; exit 1; }
+test -f "$NAV_CSS" || { echo "AS6_REGISTRY_NAVIGATION_UI_V93=FAIL nav_css_missing"; exit 1; }
+
+grep -q "getAS6LivingSpaceMenuItems" "$NAV" || { echo "AS6_REGISTRY_NAVIGATION_UI_V93=FAIL engine_menu_usage_missing"; exit 1; }
+grep -q "NavLink" "$NAV" || { echo "AS6_REGISTRY_NAVIGATION_UI_V93=FAIL navlink_missing"; exit 1; }
+grep -q "AS6LivingSpaceNav" "$SHELL" || { echo "AS6_REGISTRY_NAVIGATION_UI_V93=FAIL shell_nav_import_missing"; exit 1; }
+grep -q "<AS6LivingSpaceNav />" "$SHELL" || { echo "AS6_REGISTRY_NAVIGATION_UI_V93=FAIL shell_nav_render_missing"; exit 1; }
+grep -q "getAS6LivingSpaceMenuItems" "$ENGINE" || { echo "AS6_REGISTRY_NAVIGATION_UI_V93=FAIL engine_menu_export_missing"; exit 1; }
+
+echo "AS6_REGISTRY_DRIVEN_NAVIGATION_UI_V93=PASS"

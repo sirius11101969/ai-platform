@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-registry-navigation-ui-v93
+ops/bin/as6-control-dynamic-living-space-engine-v92
+ops/bin/as6-control-secret-scan-regex-narrow-v91k
+
+grep -RIn "AS6_REGISTRY_NAVIGATION_UI_DRIFT" docs ops frontend/src >/dev/null || {
+  echo "AS6_CONTROL_REGISTRY_NAVIGATION_UI_V93=FAIL navigation_drift_class_missing"
+  exit 1
+}
+
+echo "AS6_CONTROL_REGISTRY_DRIVEN_NAVIGATION_UI_V93=PASS"

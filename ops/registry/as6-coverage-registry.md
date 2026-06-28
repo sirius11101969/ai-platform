@@ -2747,3 +2747,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers active Living Space lookup.
 - Covers engine policy validator.
 - Covers registry-backed future Context Bar and Intelligence Rail integrations.
+
+## AS6_REGISTRY_DRIVEN_NAVIGATION_UI_V93
+- Covers registry-driven Living Space navigation UI.
+- Covers AS6LivingSpaceNav.
+- Covers AS6Shell nav rendering.
+- Covers Dynamic Living Space Engine menu usage.

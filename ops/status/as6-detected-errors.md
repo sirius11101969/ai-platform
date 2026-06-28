@@ -1578,3 +1578,8 @@ Governed and registered.
 - Detected: AS6_REGISTRY_PARSING_DUPLICATION_RISK.
 - Root cause: Living Space Registry existed but no reusable engine exposed menu/active-space/policy utilities.
 - Resolution: Dynamic Living Space Engine added.
+
+## AS6_REGISTRY_DRIVEN_NAVIGATION_UI_V93
+- Detected: AS6_HARDCODED_LIVING_SPACE_MENU_DRIFT risk.
+- Root cause: Dynamic Living Space Engine existed but no registry-backed navigation UI rendered it.
+- Resolution: AS6LivingSpaceNav added and wired into AS6Shell.

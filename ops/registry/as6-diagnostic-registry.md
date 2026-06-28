@@ -878,3 +878,10 @@
 - Contract: frontend/src/as6/living-spaces/AS6LivingSpaceEngine.contract.md
 - Added failure class: AS6_LIVING_SPACE_ENGINE_DRIFT.
 - Added failure class: AS6_LIVING_SPACE_MENU_METADATA_GAP.
+
+## AS6_REGISTRY_DRIVEN_NAVIGATION_UI_V93
+- Diagnostic: ops/bin/as6-diagnose-registry-navigation-ui-v93
+- Control: ops/bin/as6-control-registry-navigation-ui-v93
+- Navigation UI: frontend/src/as6/living-spaces/AS6LivingSpaceNav.jsx
+- Contract: frontend/src/as6/living-spaces/AS6LivingSpaceNav.contract.md
+- Added failure class: AS6_REGISTRY_NAVIGATION_UI_DRIFT.
