@@ -60,6 +60,7 @@ import AiOrganizationalMemoryPage from "./pages/AiOrganizationalMemoryPage";
 import AiSystemHealthCenterPage from "./pages/AiSystemHealthCenterPage";
 const AIEnterpriseCommandCenter = lazy(() => import("./pages/AIEnterpriseCommandCenter"));
 const CommandCenterPage = lazy(() => import("./pages/CommandCenterPage"));
+const AS6OnePage = lazy(() => import("./pages/AS6OnePage"));
 const RevenueDashboardPage = lazy(() => import("./pages/RevenueDashboardPage"));
 import { getAuthToken, getStoredUser } from "./services/api";
 
@@ -175,6 +176,7 @@ export default function App() {
           <Route path="/ai/approval-center" element={<ProtectedRoute><AiApprovalCenterPage /></ProtectedRoute>} />
           <Route path="/ai-enterprise-command-center" element={<ProtectedRoute><AIEnterpriseCommandCenter /></ProtectedRoute>} />
           <Route path="/command-center" element={<ProtectedRoute><CommandCenterPage /></ProtectedRoute>} />
+          <Route path="/as6-one" element={<RequireAuth><AS6OnePage /></RequireAuth>} />
           <Route path="/dashboard/revenue" element={<ProtectedRoute><RevenueDashboardPage /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
