@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-dynamic-living-space-engine-v92
+ops/bin/as6-control-auth-wrapper-final-dedupe-v91f
+ops/bin/as6-control-secret-scan-regex-narrow-v91k
+
+grep -RIn "AS6_LIVING_SPACE_ENGINE_DRIFT" docs ops frontend/src >/dev/null || {
+  echo "AS6_CONTROL_DYNAMIC_LIVING_SPACE_ENGINE_V92=FAIL engine_drift_class_missing"
+  exit 1
+}
+
+echo "AS6_CONTROL_DYNAMIC_LIVING_SPACE_ENGINE_V92=PASS"

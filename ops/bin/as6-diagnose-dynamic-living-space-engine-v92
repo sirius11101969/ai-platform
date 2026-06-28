@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ENGINE="frontend/src/as6/living-spaces/as6LivingSpaceEngine.js"
+REGISTRY="frontend/src/as6/living-spaces/as6LivingSpaceRegistry.js"
+CONTRACT="frontend/src/as6/living-spaces/AS6LivingSpaceEngine.contract.md"
+
+test -f "$ENGINE" || { echo "AS6_DYNAMIC_LIVING_SPACE_ENGINE_V92=FAIL engine_missing"; exit 1; }
+test -f "$REGISTRY" || { echo "AS6_DYNAMIC_LIVING_SPACE_ENGINE_V92=FAIL registry_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_DYNAMIC_LIVING_SPACE_ENGINE_V92=FAIL contract_missing"; exit 1; }
+
+grep -q "getAS6LivingSpaceMenuItems" "$ENGINE" || { echo "AS6_DYNAMIC_LIVING_SPACE_ENGINE_V92=FAIL menu_engine_missing"; exit 1; }
+grep -q "getAS6ActiveLivingSpace" "$ENGINE" || { echo "AS6_DYNAMIC_LIVING_SPACE_ENGINE_V92=FAIL active_space_lookup_missing"; exit 1; }
+grep -q "validateAS6LivingSpaceEnginePolicy" "$ENGINE" || { echo "AS6_DYNAMIC_LIVING_SPACE_ENGINE_V92=FAIL policy_validator_missing"; exit 1; }
+
+grep -q "menuLabel:" "$REGISTRY" || { echo "AS6_DYNAMIC_LIVING_SPACE_ENGINE_V92=FAIL menu_label_missing"; exit 1; }
+grep -q "menuGroup:" "$REGISTRY" || { echo "AS6_DYNAMIC_LIVING_SPACE_ENGINE_V92=FAIL menu_group_missing"; exit 1; }
+grep -q "menuOrder:" "$REGISTRY" || { echo "AS6_DYNAMIC_LIVING_SPACE_ENGINE_V92=FAIL menu_order_missing"; exit 1; }
+grep -q "engineEnabled: true" "$REGISTRY" || { echo "AS6_DYNAMIC_LIVING_SPACE_ENGINE_V92=FAIL engine_enabled_missing"; exit 1; }
+
+echo "AS6_DYNAMIC_LIVING_SPACE_ENGINE_V92=PASS"

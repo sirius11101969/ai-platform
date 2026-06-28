@@ -2740,3 +2740,10 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers narrowed pre-commit secret value detection.
 - Covers documentation false positive prevention.
 - Covers V91 registry-route auth final commit path.
+
+## AS6_DYNAMIC_LIVING_SPACE_ENGINE_V92
+- Covers Dynamic Living Space Engine.
+- Covers Living Space menu metadata.
+- Covers active Living Space lookup.
+- Covers engine policy validator.
+- Covers registry-backed future Context Bar and Intelligence Rail integrations.

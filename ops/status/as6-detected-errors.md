@@ -1573,3 +1573,8 @@ Governed and registered.
 - Detected: AS6_SECRET_SCAN_BROAD_REGEX_FALSE_POSITIVE.
 - Root cause: generic secret-related words in documentation were blocked.
 - Resolution: hook now checks assignment/value-like secret patterns and known token formats.
+
+## AS6_DYNAMIC_LIVING_SPACE_ENGINE_V92
+- Detected: AS6_REGISTRY_PARSING_DUPLICATION_RISK.
+- Root cause: Living Space Registry existed but no reusable engine exposed menu/active-space/policy utilities.
+- Resolution: Dynamic Living Space Engine added.

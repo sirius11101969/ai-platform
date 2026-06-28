@@ -870,3 +870,11 @@
 - Diagnostic: ops/bin/as6-diagnose-secret-scan-regex-narrow-v91k
 - Control: ops/bin/as6-control-secret-scan-regex-narrow-v91k
 - Added failure class: AS6_SECRET_SCAN_BROAD_REGEX_FALSE_POSITIVE.
+
+## AS6_DYNAMIC_LIVING_SPACE_ENGINE_V92
+- Diagnostic: ops/bin/as6-diagnose-dynamic-living-space-engine-v92
+- Control: ops/bin/as6-control-dynamic-living-space-engine-v92
+- Engine: frontend/src/as6/living-spaces/as6LivingSpaceEngine.js
+- Contract: frontend/src/as6/living-spaces/AS6LivingSpaceEngine.contract.md
+- Added failure class: AS6_LIVING_SPACE_ENGINE_DRIFT.
+- Added failure class: AS6_LIVING_SPACE_MENU_METADATA_GAP.
