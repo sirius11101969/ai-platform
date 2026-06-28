@@ -119,25 +119,44 @@ export function ProtectedLayout({ children }) {
   const workspaceName = currentWorkspace?.name || "Моё пространство";
   const roleLabels = { owner: "Владелец", admin: "Администратор", sales: "Продажи", viewer: "Наблюдатель" };
   const isCommandCenter = location.pathname === "/command-center";
+  const isAs6OnePreview = ["/as6-one", "/crm-enterprise", "/crm-v3"].includes(location.pathname);
+  const usesCommandShell = isCommandCenter || isAs6OnePreview;
 
   return (
-    <AS6Workspace className={`app-shell `} dataRoute={isCommandCenter ? "command-center" : "app"} mode={isCommandCenter ? "command-center" : "app"}>
-      <AS6SidebarShell className={`sidebar shell-glow `} command={isCommandCenter} data-command-sidebar={isCommandCenter ? "premium" : undefined}>
-        {isCommandCenter ? (
+    <AS6Workspace className={`app-shell `} dataRoute={usesCommandShell ? "command-center" : "app"} mode={usesCommandShell ? "command-center" : "app"}>
+      <AS6SidebarShell className={`sidebar shell-glow `} command={usesCommandShell} data-command-sidebar={usesCommandShell ? "premium" : undefined}>
+        {usesCommandShell ? (
           <>
             <div className="as6-sidebar-brand as6-sidebar-brand-top"><AS6Logo /></div>
             <div className="sidebar-scroll" role="presentation">
               <nav className="side-nav command-side-nav" aria-label="Command Center navigation">
-                <NavLink to="/command-center" className={({ isActive }) => (isActive ? "active command-center-active" : "command-center-link")}>🚀 Command Center</NavLink>
-                <NavLink to="/dashboard">▦ Dashboard</NavLink>
-                <NavLink to="/crm">▧ CRM</NavLink>
-                <NavLink to="/dashboard/revenue">↗ Revenue</NavLink>
-                <NavLink to="/ai-workforce-center">👥 AI сотрудники</NavLink>
-                <NavLink to="/followups">☑ AI задачи <span className="nav-badge">12</span></NavLink>
-                <NavLink to="/ai-revenue-intelligence">⌁ AI аналитика</NavLink>
-                <NavLink to="/priority-inbox">✉ AI коммуникации <span className="nav-badge">3</span></NavLink>
-                <NavLink to="/ai-system-health-center">◇ AI DevOps Center</NavLink>
-                <NavLink to="/ai-enterprise-coordination">⚙ AI настройки</NavLink>
+{isAs6OnePreview ? (<>
+                  <NavLink to="/as6-one" className={({ isActive }) => (isActive ? "active command-center-active" : "command-center-link")}>Главная</NavLink>
+                  <NavLink to="/as6-one">AS6 CORE</NavLink>
+                  <NavLink to="/ai-executive-brain">AS6 Генеральный директор</NavLink>
+                  <NavLink to="/crm">Продажи</NavLink>
+                  <NavLink to="/crm">Клиенты</NavLink>
+                  <NavLink to="/dashboard/revenue">Финансы</NavLink>
+                  <NavLink to="/ai-revenue-intelligence">Маркетинг</NavLink>
+                  <NavLink to="/ai-workforce-center">AS6 Сотрудники</NavLink>
+                  <NavLink to="/ai-enterprise-coordination">AS6 Команды</NavLink>
+                  <NavLink to="/ai-execution-center">AS6 Автоматизация</NavLink>
+                  <NavLink to="/followups">Документы</NavLink>
+                  <NavLink to="/ai-revenue-intelligence">Аналитика</NavLink>
+                  <NavLink to="/ai-system-health-center">Интеграции</NavLink>
+                  <NavLink to="/ai-enterprise-coordination">Настройки</NavLink>
+                </>) : (<>
+                  <NavLink to="/command-center" className={({ isActive }) => (isActive ? "active command-center-active" : "command-center-link")}>🚀 Command Center</NavLink>
+                  <NavLink to="/dashboard">▦ Dashboard</NavLink>
+                  <NavLink to="/crm">▧ CRM</NavLink>
+                  <NavLink to="/dashboard/revenue">↗ Revenue</NavLink>
+                  <NavLink to="/ai-workforce-center">👥 AI сотрудники</NavLink>
+                  <NavLink to="/followups">☑ AI задачи <span className="nav-badge">12</span></NavLink>
+                  <NavLink to="/ai-revenue-intelligence">⌁ AI аналитика</NavLink>
+                  <NavLink to="/priority-inbox">✉ AI коммуникации <span className="nav-badge">3</span></NavLink>
+                  <NavLink to="/ai-system-health-center">◇ AI DevOps Center</NavLink>
+                  <NavLink to="/ai-enterprise-coordination">⚙ AI настройки</NavLink>
+                </>)}
               </nav>
               <div className="sidebar-favorites" data-sidebar-favorites>
                 <span>ИЗБРАННОЕ</span>
@@ -193,7 +212,7 @@ export function ProtectedLayout({ children }) {
         )}
       </AS6SidebarShell>
       <div className="workspace">
-        {!isCommandCenter && <header className="workspace-header shell-glow">
+        {!usesCommandShell && <header className="workspace-header shell-glow">
           <div>
             <span className="eyebrow">Защищённое рабочее пространство</span>
             <h1>AI‑ОС выручки</h1>
@@ -213,7 +232,7 @@ export function ProtectedLayout({ children }) {
             </div>
           </div>
         </header>}
-        {!isCommandCenter && <div className="workspace-current-name">Текущее пространство: <strong>{workspaceName}</strong></div>}
+        {!usesCommandShell && <div className="workspace-current-name">Текущее пространство: <strong>{workspaceName}</strong></div>}
         {children}
         {settingsOpen && <WorkspaceSettings workspace={currentWorkspace} roleLabels={roleLabels} onClose={() => setSettingsOpen(false)} onRefresh={refreshCurrentWorkspace} />}
       </div>
