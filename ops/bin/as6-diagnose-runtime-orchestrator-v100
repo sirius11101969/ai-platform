@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+RUNTIME="frontend/src/as6/runtime/as6Runtime.js"
+CONTRACT="frontend/src/as6/runtime/AS6Runtime.contract.md"
+
+test -f "$RUNTIME" || { echo "AS6_RUNTIME_ORCHESTRATOR_V100=FAIL runtime_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_RUNTIME_ORCHESTRATOR_V100=FAIL contract_missing"; exit 1; }
+
+grep -q "getAS6RuntimeState" "$RUNTIME" || { echo "AS6_RUNTIME_ORCHESTRATOR_V100=FAIL state_api_missing"; exit 1; }
+grep -q "dispatchAS6Runtime" "$RUNTIME" || { echo "AS6_RUNTIME_ORCHESTRATOR_V100=FAIL dispatch_missing"; exit 1; }
+grep -q "subscribeAS6Runtime" "$RUNTIME" || { echo "AS6_RUNTIME_ORCHESTRATOR_V100=FAIL subscribe_missing"; exit 1; }
+grep -q "getAS6RuntimeSnapshot" "$RUNTIME" || { echo "AS6_RUNTIME_ORCHESTRATOR_V100=FAIL snapshot_missing"; exit 1; }
+grep -q "restoreAS6Runtime" "$RUNTIME" || { echo "AS6_RUNTIME_ORCHESTRATOR_V100=FAIL restore_missing"; exit 1; }
+grep -q "exportAS6RuntimeSnapshot" "$RUNTIME" || { echo "AS6_RUNTIME_ORCHESTRATOR_V100=FAIL export_missing"; exit 1; }
+grep -q "importAS6RuntimeSnapshot" "$RUNTIME" || { echo "AS6_RUNTIME_ORCHESTRATOR_V100=FAIL import_missing"; exit 1; }
+grep -q "validateAS6RuntimePolicy" "$RUNTIME" || { echo "AS6_RUNTIME_ORCHESTRATOR_V100=FAIL validator_missing"; exit 1; }
+
+echo "AS6_RUNTIME_ORCHESTRATOR_V100=PASS"

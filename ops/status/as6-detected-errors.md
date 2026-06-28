@@ -1618,3 +1618,8 @@ Governed and registered.
 - Detected: AS6_WORKSPACE_STORAGE_DUPLICATION_RISK.
 - Root cause: V98 manager existed without dedicated versioned multi-session persistence layer.
 - Resolution: as6WorkspaceStorage.js added.
+
+## AS6_RUNTIME_ORCHESTRATOR_V100
+- Detected: AS6_RUNTIME_STATE_DUPLICATION_RISK.
+- Root cause: V92-V99 created multiple shell subsystems without a shared runtime API.
+- Resolution: AS6 Runtime Orchestrator added.

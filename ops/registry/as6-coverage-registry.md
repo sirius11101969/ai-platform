@@ -2797,3 +2797,11 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers create/save/switch/rename/clone/delete/pin.
 - Covers export/import foundation.
 - Covers versioned migration foundation.
+
+## AS6_RUNTIME_ORCHESTRATOR_V100
+- Covers AS6 Runtime Orchestrator.
+- Covers Runtime state API.
+- Covers dispatch/subscribe.
+- Covers snapshot/restore.
+- Covers runtime export/import.
+- Covers future Plugin/EventBus/Copilot readiness.

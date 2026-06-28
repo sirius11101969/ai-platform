@@ -932,3 +932,10 @@
 - Workspace Storage: frontend/src/as6/workspace/as6WorkspaceStorage.js
 - Contract: frontend/src/as6/workspace/AS6WorkspacePersistence.contract.md
 - Added failure class: AS6_WORKSPACE_PERSISTENCE_DRIFT.
+
+## AS6_RUNTIME_ORCHESTRATOR_V100
+- Diagnostic: ops/bin/as6-diagnose-runtime-orchestrator-v100
+- Control: ops/bin/as6-control-runtime-orchestrator-v100
+- Runtime: frontend/src/as6/runtime/as6Runtime.js
+- Contract: frontend/src/as6/runtime/AS6Runtime.contract.md
+- Added failure class: AS6_RUNTIME_ORCHESTRATOR_DRIFT.
