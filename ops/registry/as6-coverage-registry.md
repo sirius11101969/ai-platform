@@ -2819,3 +2819,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers one-run-per-control validation.
 - Covers cycle detection.
 - Covers compact summary output.
+
+## AS6_CONTROL_RUNNER_CI_INTEGRATION_V103
+- Covers canonical validation entrypoint.
+- Covers DAG runner CI/manual integration.
+- Covers compact validation log path.
+- Covers legacy control-chain bypass prevention.

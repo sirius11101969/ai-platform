@@ -4508,3 +4508,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Project readiness: 99.9997%
 - Control Runner DAG: enabled.
 - Validation complexity target: O(N), not O(N²).
+
+## AS6_CONTROL_RUNNER_CI_INTEGRATION_V103
+- Status: PASS pending build.
+- Project readiness: 99.9998%
+- Canonical validation entrypoint: ops/bin/as6-validate.
+- DAG validation: enabled for CI/manual use.

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-control-runner-ci-integration-v103
+AS6_VALIDATE_LOG_DIR="runtime/as6-v103-control-runner-ci-integration/as6-validate-logs" ops/bin/as6-validate as6-control-event-bus-v101
+
+grep -RIn "AS6_VALIDATE_ENTRYPOINT_DRIFT" docs ops frontend/src >/dev/null || {
+  echo "AS6_CONTROL_RUNNER_CI_INTEGRATION_V103=FAIL validate_entrypoint_drift_class_missing"
+  exit 1
+}
+
+echo "AS6_CONTROL_CONTROL_RUNNER_CI_INTEGRATION_V103=PASS"

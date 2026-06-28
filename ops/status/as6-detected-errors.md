@@ -1633,3 +1633,8 @@ Governed and registered.
 - Detected: AS6_CONTROL_LOG_QUADRATIC_GROWTH_RISK.
 - Root cause: direct nested control invocation repeats earlier checks many times.
 - Resolution: DAG Control Runner added with visited-set execution.
+
+## AS6_CONTROL_RUNNER_CI_INTEGRATION_V103
+- Detected: AS6_CI_VALIDATION_ENTRYPOINT_GAP.
+- Root cause: DAG runner existed but no canonical validate command was registered.
+- Resolution: ops/bin/as6-validate added.

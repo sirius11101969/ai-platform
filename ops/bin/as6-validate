@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+TARGET="${1:-as6-control-event-bus-v101}"
+MANIFEST="${AS6_CONTROL_MANIFEST:-ops/registry/as6-control-dependency-manifest.tsv}"
+LOG_DIR="${AS6_VALIDATE_LOG_DIR:-runtime/as6-validate}"
+
+mkdir -p "$LOG_DIR"
+
+echo "== AS6 Validate =="
+echo "AS6_VALIDATE_TARGET=$TARGET"
+echo "AS6_VALIDATE_MANIFEST=$MANIFEST"
+echo "AS6_VALIDATE_LOG_DIR=$LOG_DIR"
+
+AS6_CONTROL_RUNNER_LOG_DIR="$LOG_DIR/control-runner" \
+  ops/bin/as6-control-runner "$MANIFEST" "$TARGET"
+
+echo "AS6_VALIDATE=PASS"

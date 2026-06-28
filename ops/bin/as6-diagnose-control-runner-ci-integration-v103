@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ENTRYPOINT="ops/bin/as6-validate"
+RUNNER="ops/bin/as6-control-runner"
+MANIFEST="ops/registry/as6-control-dependency-manifest.tsv"
+
+test -x "$ENTRYPOINT" || { echo "AS6_CONTROL_RUNNER_CI_INTEGRATION_V103=FAIL validate_entrypoint_missing"; exit 1; }
+test -x "$RUNNER" || { echo "AS6_CONTROL_RUNNER_CI_INTEGRATION_V103=FAIL runner_missing"; exit 1; }
+test -f "$MANIFEST" || { echo "AS6_CONTROL_RUNNER_CI_INTEGRATION_V103=FAIL manifest_missing"; exit 1; }
+
+grep -q "AS6_CONTROL_RUNNER_LOG_DIR" "$ENTRYPOINT" || { echo "AS6_CONTROL_RUNNER_CI_INTEGRATION_V103=FAIL runner_log_dir_missing"; exit 1; }
+grep -q "ops/bin/as6-control-runner" "$ENTRYPOINT" || { echo "AS6_CONTROL_RUNNER_CI_INTEGRATION_V103=FAIL runner_call_missing"; exit 1; }
+grep -q "AS6_VALIDATE=PASS" "$ENTRYPOINT" || { echo "AS6_CONTROL_RUNNER_CI_INTEGRATION_V103=FAIL pass_marker_missing"; exit 1; }
+
+echo "AS6_CONTROL_RUNNER_CI_INTEGRATION_V103=PASS"

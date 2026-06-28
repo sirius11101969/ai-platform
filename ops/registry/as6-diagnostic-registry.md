@@ -953,3 +953,10 @@
 - Runner: ops/bin/as6-control-runner
 - Manifest: ops/registry/as6-control-dependency-manifest.tsv
 - Added failure class: AS6_CONTROL_RUNNER_DUPLICATE_EXECUTION_DRIFT.
+
+## AS6_CONTROL_RUNNER_CI_INTEGRATION_V103
+- Diagnostic: ops/bin/as6-diagnose-control-runner-ci-integration-v103
+- Control: ops/bin/as6-control-control-runner-ci-integration-v103
+- Validate entrypoint: ops/bin/as6-validate
+- Runner: ops/bin/as6-control-runner
+- Added failure class: AS6_VALIDATE_ENTRYPOINT_DRIFT.
