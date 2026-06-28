@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-control-runner-dag-v102
+AS6_CONTROL_RUNNER_LOG_DIR="runtime/as6-v102-control-runner-dag/runner-logs" ops/bin/as6-control-runner ops/registry/as6-control-dependency-manifest.tsv as6-control-event-bus-v101
+
+grep -RIn "AS6_CONTROL_RUNNER_DUPLICATE_EXECUTION_DRIFT" docs ops frontend/src >/dev/null || {
+  echo "AS6_CONTROL_RUNNER_DAG_V102=FAIL drift_class_missing"
+  exit 1
+}
+
+echo "AS6_CONTROL_CONTROL_RUNNER_DAG_V102=PASS"

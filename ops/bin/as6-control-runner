@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+MANIFEST="${1:-ops/registry/as6-control-dependency-manifest.tsv}"
+TARGET="${2:-as6-control-event-bus-v101}"
+LOG_DIR="${AS6_CONTROL_RUNNER_LOG_DIR:-runtime/as6-control-runner}"
+mkdir -p "$LOG_DIR"
+
+declare -A DEPS
+declare -A VISITED
+declare -A RUNNING
+declare -a ORDER
+
+while IFS=$'\t' read -r control depends_on; do
+  [[ -z "${control:-}" || "$control" =~ ^# ]] && continue
+  DEPS["$control"]="${depends_on:-}"
+done < "$MANIFEST"
+
+run_control() {
+  local control="$1"
+
+  if [[ "${VISITED[$control]:-0}" == "1" ]]; then
+    return 0
+  fi
+
+  if [[ "${RUNNING[$control]:-0}" == "1" ]]; then
+    echo "AS6_CONTROL_RUNNER=FAIL cycle_detected:$control"
+    exit 1
+  fi
+
+  RUNNING["$control"]=1
+
+  local depends="${DEPS[$control]:-}"
+  if [[ -n "$depends" ]]; then
+    IFS=',' read -ra dep_list <<< "$depends"
+    for dep in "${dep_list[@]}"; do
+      dep="$(echo "$dep" | xargs)"
+      [[ -z "$dep" ]] && continue
+      run_control "$dep"
+    done
+  fi
+
+  local path="ops/bin/$control"
+  if [[ ! -x "$path" ]]; then
+    echo "AS6_CONTROL_RUNNER=FAIL missing_or_not_executable:$path"
+    exit 1
+  fi
+
+  echo "RUN $control"
+  "$path" > "$LOG_DIR/$control.log" 2>&1
+
+  VISITED["$control"]=1
+  RUNNING["$control"]=0
+  ORDER+=("$control")
+}
+
+run_control "$TARGET"
+
+{
+  echo "AS6_CONTROL_RUNNER=PASS"
+  echo "AS6_CONTROL_RUNNER_TARGET=$TARGET"
+  echo "AS6_CONTROL_RUNNER_UNIQUE_COUNT=${#ORDER[@]}"
+  echo "AS6_CONTROL_RUNNER_ORDER:"
+  for control in "${ORDER[@]}"; do
+    echo "- $control"
+  done
+} | tee "$LOG_DIR/summary.txt"

@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+RUNNER="ops/bin/as6-control-runner"
+MANIFEST="ops/registry/as6-control-dependency-manifest.tsv"
+
+test -x "$RUNNER" || { echo "AS6_CONTROL_RUNNER_DAG_V102=FAIL runner_missing"; exit 1; }
+test -f "$MANIFEST" || { echo "AS6_CONTROL_RUNNER_DAG_V102=FAIL manifest_missing"; exit 1; }
+
+grep -q "VISITED" "$RUNNER" || { echo "AS6_CONTROL_RUNNER_DAG_V102=FAIL visited_set_missing"; exit 1; }
+grep -q "cycle_detected" "$RUNNER" || { echo "AS6_CONTROL_RUNNER_DAG_V102=FAIL cycle_detection_missing"; exit 1; }
+grep -q "AS6_CONTROL_RUNNER_UNIQUE_COUNT" "$RUNNER" || { echo "AS6_CONTROL_RUNNER_DAG_V102=FAIL summary_missing"; exit 1; }
+grep -q "as6-control-event-bus-v101" "$MANIFEST" || { echo "AS6_CONTROL_RUNNER_DAG_V102=FAIL v101_manifest_missing"; exit 1; }
+
+echo "AS6_CONTROL_RUNNER_DAG_V102=PASS"

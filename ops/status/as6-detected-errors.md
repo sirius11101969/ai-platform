@@ -1628,3 +1628,8 @@ Governed and registered.
 - Detected: AS6_EVENT_LISTENER_DUPLICATION_RISK.
 - Root cause: Runtime existed without shared event bus.
 - Resolution: AS6 Event Bus added.
+
+## AS6_CONTROL_RUNNER_DAG_V102
+- Detected: AS6_CONTROL_LOG_QUADRATIC_GROWTH_RISK.
+- Root cause: direct nested control invocation repeats earlier checks many times.
+- Resolution: DAG Control Runner added with visited-set execution.

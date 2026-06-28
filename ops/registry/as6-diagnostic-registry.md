@@ -946,3 +946,10 @@
 - Event Bus: frontend/src/as6/runtime/as6EventBus.js
 - Contract: frontend/src/as6/runtime/AS6EventBus.contract.md
 - Added failure class: AS6_EVENT_BUS_DRIFT.
+
+## AS6_CONTROL_RUNNER_DAG_V102
+- Diagnostic: ops/bin/as6-diagnose-control-runner-dag-v102
+- Control: ops/bin/as6-control-control-runner-dag-v102
+- Runner: ops/bin/as6-control-runner
+- Manifest: ops/registry/as6-control-dependency-manifest.tsv
+- Added failure class: AS6_CONTROL_RUNNER_DUPLICATE_EXECUTION_DRIFT.

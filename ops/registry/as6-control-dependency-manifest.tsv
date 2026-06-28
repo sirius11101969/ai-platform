@@ -1,0 +1,12 @@
+# control	depends_on
+as6-control-dynamic-living-space-engine-v92	
+as6-control-registry-navigation-ui-v93	as6-control-dynamic-living-space-engine-v92
+as6-control-registry-driven-navigation-ui-v93	as6-control-registry-navigation-ui-v93
+as6-control-active-living-space-context-bar-v94	as6-control-registry-navigation-ui-v93,as6-control-dynamic-living-space-engine-v92
+as6-control-dynamic-intelligence-rail-v95	as6-control-active-living-space-context-bar-v94,as6-control-dynamic-living-space-engine-v92
+as6-control-shell-layout-polish-v96	as6-control-dynamic-intelligence-rail-v95,as6-control-active-living-space-context-bar-v94,as6-control-registry-navigation-ui-v93
+as6-control-global-command-palette-v97	as6-control-shell-layout-polish-v96,as6-control-dynamic-living-space-engine-v92
+as6-control-universal-workspace-manager-v98	as6-control-global-command-palette-v97,as6-control-shell-layout-polish-v96,as6-control-dynamic-living-space-engine-v92
+as6-control-workspace-persistence-v99	as6-control-universal-workspace-manager-v98,as6-control-global-command-palette-v97
+as6-control-runtime-orchestrator-v100	as6-control-workspace-persistence-v99,as6-control-universal-workspace-manager-v98,as6-control-global-command-palette-v97
+as6-control-event-bus-v101	as6-control-runtime-orchestrator-v100,as6-control-workspace-persistence-v99

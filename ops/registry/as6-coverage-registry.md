@@ -2812,3 +2812,10 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers bounded event history.
 - Covers Runtime Event Bridge foundation.
 - Covers Copilot/Plugin/EventBus readiness.
+
+## AS6_CONTROL_RUNNER_DAG_V102
+- Covers AS6 Control Runner DAG.
+- Covers dependency manifest.
+- Covers one-run-per-control validation.
+- Covers cycle detection.
+- Covers compact summary output.
