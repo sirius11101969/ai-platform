@@ -904,3 +904,10 @@
 - Intelligence Rail: frontend/src/as6/living-spaces/AS6DynamicIntelligenceRail.jsx
 - Contract: frontend/src/as6/living-spaces/AS6DynamicIntelligenceRail.contract.md
 - Added failure class: AS6_DYNAMIC_INTELLIGENCE_RAIL_DRIFT.
+
+## AS6_SHELL_LAYOUT_POLISH_RESPONSIVE_COMPOSITION_V96
+- Diagnostic: ops/bin/as6-diagnose-shell-layout-polish-v96
+- Control: ops/bin/as6-control-shell-layout-polish-v96
+- Shell CSS: frontend/src/as6/shell/AS6Shell.css
+- Contract: frontend/src/as6/shell/AS6ShellLayout.contract.md
+- Added failure class: AS6_SHELL_LAYOUT_COMPOSITION_DRIFT.

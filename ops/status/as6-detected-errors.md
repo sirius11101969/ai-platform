@@ -1598,3 +1598,8 @@ Governed and registered.
 - Detected: AS6_ACTIVE_SPACE_INTELLIGENCE_CONTEXT_GAP.
 - Root cause: active Living Space context existed but Shell had no dynamic Intelligence Rail.
 - Resolution: AS6DynamicIntelligenceRail added and wired into AS6Shell.
+
+## AS6_SHELL_LAYOUT_POLISH_RESPONSIVE_COMPOSITION_V96
+- Detected: AS6_SHELL_SURFACE_OVERLAP_RISK.
+- Root cause: shell surfaces existed but needed governed responsive composition.
+- Resolution: AS6Shell layout composition and responsive CSS added.

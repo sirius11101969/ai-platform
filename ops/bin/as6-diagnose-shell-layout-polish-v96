@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SHELL="frontend/src/as6/shell/AS6Shell.jsx"
+SHELL_CSS="frontend/src/as6/shell/AS6Shell.css"
+CONTRACT="frontend/src/as6/shell/AS6ShellLayout.contract.md"
+
+test -f "$SHELL" || { echo "AS6_SHELL_LAYOUT_POLISH_V96=FAIL shell_missing"; exit 1; }
+test -f "$SHELL_CSS" || { echo "AS6_SHELL_LAYOUT_POLISH_V96=FAIL shell_css_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_SHELL_LAYOUT_POLISH_V96=FAIL contract_missing"; exit 1; }
+
+grep -q 'AS6Shell.css' "$SHELL" || { echo "AS6_SHELL_LAYOUT_POLISH_V96=FAIL css_import_missing"; exit 1; }
+grep -q 'as6-shell-layout' "$SHELL" || { echo "AS6_SHELL_LAYOUT_POLISH_V96=FAIL layout_class_missing"; exit 1; }
+grep -q 'as6-shell-composition__top' "$SHELL" || { echo "AS6_SHELL_LAYOUT_POLISH_V96=FAIL top_composition_missing"; exit 1; }
+grep -q 'as6-shell-composition__rail' "$SHELL" || { echo "AS6_SHELL_LAYOUT_POLISH_V96=FAIL rail_composition_missing"; exit 1; }
+grep -q '@media (max-width: 1080px)' "$SHELL_CSS" || { echo "AS6_SHELL_LAYOUT_POLISH_V96=FAIL tablet_breakpoint_missing"; exit 1; }
+grep -q '@media (max-width: 760px)' "$SHELL_CSS" || { echo "AS6_SHELL_LAYOUT_POLISH_V96=FAIL mobile_breakpoint_missing"; exit 1; }
+
+echo "AS6_SHELL_LAYOUT_POLISH_RESPONSIVE_COMPOSITION_V96=PASS"

@@ -2770,3 +2770,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers getAS6ActiveLivingSpace(pathname) Intelligence Rail usage.
 - Covers AS6Shell intelligence rendering.
 - Covers shell-level Intelligence Rail policy.
+
+## AS6_SHELL_LAYOUT_POLISH_RESPONSIVE_COMPOSITION_V96
+- Covers AS6Shell responsive composition.
+- Covers Nav + Context Bar top zone.
+- Covers Intelligence Rail responsive rail zone.
+- Covers tablet/mobile layout breakpoints.
