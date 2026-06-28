@@ -1,0 +1,4 @@
+id: as6-one-command-center-pixel-drift
+summary: AS6 ONE diverges from Command Center reference composition.
+aec_rule: as6-one-must-preserve-command-center-section-order-and-pipeline-before-crm-cutover
+status: active

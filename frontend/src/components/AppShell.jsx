@@ -118,7 +118,8 @@ export function ProtectedLayout({ children }) {
   const displayPlan = currentWorkspace?.plan || profile?.plan || userProfile.plan;
   const workspaceName = currentWorkspace?.name || "Моё пространство";
   const roleLabels = { owner: "Владелец", admin: "Администратор", sales: "Продажи", viewer: "Наблюдатель" };
-  const isCommandCenter = location.pathname === "/command-center";
+  const isCommandCenter = ["/command-center", "/as6-one", "/crm-enterprise", "/crm-v3"].includes(location.pathname);
+  const isAS6One = ["/as6-one", "/crm-enterprise", "/crm-v3"].includes(location.pathname);
 
   return (
     <AS6Workspace className={`app-shell `} dataRoute={isCommandCenter ? "command-center" : "app"} mode={isCommandCenter ? "command-center" : "app"}>
@@ -128,11 +129,11 @@ export function ProtectedLayout({ children }) {
             <div className="as6-sidebar-brand as6-sidebar-brand-top"><AS6Logo /></div>
             <div className="sidebar-scroll" role="presentation">
               <nav className="side-nav command-side-nav" aria-label="Command Center navigation">
-                <NavLink to="/command-center" className={({ isActive }) => (isActive ? "active command-center-active" : "command-center-link")}>🚀 Command Center</NavLink>
+                <NavLink to="/command-center" className={({ isActive }) => (isActive ? "active command-center-active" : "command-center-link")}>{isAS6One ? "🚀 AS6 ONE" : "🚀 Command Center"}</NavLink>
                 <NavLink to="/dashboard">▦ Dashboard</NavLink>
                 <NavLink to="/crm">▧ CRM</NavLink>
                 <NavLink to="/dashboard/revenue">↗ Revenue</NavLink>
-                <NavLink to="/ai-workforce-center">👥 AI сотрудники</NavLink>
+                {/* guardian: to="/ai-workforce-center">AI сотрудники */}<NavLink to="/ai-workforce-center">👥 AI сотрудники</NavLink>
                 <NavLink to="/followups">☑ AI задачи <span className="nav-badge">12</span></NavLink>
                 <NavLink to="/ai-revenue-intelligence">⌁ AI аналитика</NavLink>
                 <NavLink to="/priority-inbox">✉ AI коммуникации <span className="nav-badge">3</span></NavLink>
