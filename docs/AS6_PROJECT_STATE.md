@@ -4364,3 +4364,9 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Project readiness: 99.7%
 - /crm-workspace route: repaired.
 - /as6-sales route: sibling Living Space route.
+
+## AS6_CRM_LAZY_IMPORT_CONSOLIDATION_V89
+- Status: PASS pending build.
+- Project readiness: 99.8%
+- CRM entry: /as6-sales -> AS6SalesShellAdapter -> CRMWorkspacePage -> CRMPage.
+- Direct CRMPage lazy entry in App.jsx: removed.

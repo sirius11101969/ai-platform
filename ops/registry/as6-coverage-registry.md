@@ -2673,3 +2673,9 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers /as6-sales sibling route integrity.
 - Covers JSX route nesting drift prevention.
 - Covers CRM Living Space adapter validation after route repair.
+
+## AS6_CRM_LAZY_IMPORT_CONSOLIDATION_V89
+- Covers CRM lazy import consolidation.
+- Covers /as6-sales as single CRM Living Space entry.
+- Covers App.jsx direct CRMPage lazy import removal.
+- Covers Vite chunk split warning prevention.

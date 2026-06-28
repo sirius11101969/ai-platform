@@ -1512,3 +1512,8 @@ Governed and registered.
 - Detected: AS6_ROUTE_PATCHER_PARTIAL_ELEMENT_MATCH.
 - Root cause: /as6-sales was inserted inside an incomplete /crm-workspace JSX Route.
 - Resolution: normalized routes as valid siblings.
+
+## AS6_CRM_LAZY_IMPORT_CONSOLIDATION_V89
+- Detected: AS6_CRM_DUPLICATE_DYNAMIC_STATIC_IMPORT_DRIFT.
+- Root cause: CRMPage was both dynamically imported by App.jsx and statically imported by CRMWorkspacePage.
+- Resolution: CRMPage direct App.jsx lazy entry removed; /as6-sales remains the CRM Living Space entry.

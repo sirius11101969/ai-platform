@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-crm-lazy-import-v89
+ops/bin/as6-diagnose-crm-living-space-route-jsx-v88b
+ops/bin/as6-diagnose-crm-living-space-adapter-v88
+
+grep -RIn "AS6_CRM_DUPLICATE_DYNAMIC_STATIC_IMPORT_DRIFT" docs ops >/dev/null || { echo "AS6_CONTROL_CRM_LAZY_IMPORT_CONSOLIDATION_V89=FAIL duplicate_import_drift_not_registered"; exit 1; }
+
+echo "AS6_CONTROL_CRM_LAZY_IMPORT_CONSOLIDATION_V89=PASS"

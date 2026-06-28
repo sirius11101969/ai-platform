@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+APP_FILE="frontend/src/App.jsx"
+
+! grep -q 'lazy(() => import("./pages/CRMPage"))' "$APP_FILE" || { echo "AS6_CRM_LAZY_IMPORT_CONSOLIDATION_V89=FAIL direct_crmpage_lazy_import_present"; exit 1; }
+! grep -q "lazy(() => import('./pages/CRMPage'))" "$APP_FILE" || { echo "AS6_CRM_LAZY_IMPORT_CONSOLIDATION_V89=FAIL direct_crmpage_lazy_import_present"; exit 1; }
+
+grep -q 'path="/as6-sales"' "$APP_FILE" || { echo "AS6_CRM_LAZY_IMPORT_CONSOLIDATION_V89=FAIL as6_sales_route_missing"; exit 1; }
+grep -q "AS6SalesShellAdapter" "$APP_FILE" || { echo "AS6_CRM_LAZY_IMPORT_CONSOLIDATION_V89=FAIL sales_adapter_route_missing"; exit 1; }
+grep -q "CRMWorkspacePage" frontend/src/as6-sales/AS6SalesShellAdapter.jsx || { echo "AS6_CRM_LAZY_IMPORT_CONSOLIDATION_V89=FAIL crm_workspace_not_adapter_entry"; exit 1; }
+
+echo "AS6_CRM_LAZY_IMPORT_CONSOLIDATION_V89=PASS"

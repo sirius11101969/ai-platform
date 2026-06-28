@@ -38,7 +38,6 @@ import PaymentSuccessPage from "./pages/PaymentSuccessPage";
 import "./styles/as6-mission-control.css";
 const DashboardPage = lazy(() => import("./pages/DashboardPage"));
 const AS6SalesShellAdapter = lazy(() => import('./as6-sales/AS6SalesShellAdapter'));
-const CRMPage = lazy(() => import("./pages/CRMPage"));
 const AiWorkersPage = lazy(() => import("./pages/AiWorkersPage"));
 import FollowupsPage from "./pages/FollowupsPage";
 import PriorityInboxPage from "./pages/PriorityInboxPage";
@@ -148,7 +147,6 @@ export default function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/payment/success" element={<PaymentSuccessPage />} />
           <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-          <Route path="/crm" element={<ProtectedRoute><CRMPage /></ProtectedRoute>} />
           <Route path="/ai-workers" element={<ProtectedRoute><AiWorkersPage /></ProtectedRoute>} />
           <Route path="/followups" element={<ProtectedRoute><FollowupsPage /></ProtectedRoute>} />
           <Route path="/priority-inbox" element={<ProtectedRoute><PriorityInboxPage /></ProtectedRoute>} />

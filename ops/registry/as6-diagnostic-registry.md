@@ -789,3 +789,10 @@
 - Added route JSX sibling validation.
 - Added failure class: AS6_ROUTE_JSX_NESTING_DRIFT.
 - Added failure class: AS6_ROUTE_PATCHER_PARTIAL_ELEMENT_MATCH.
+
+## AS6_CRM_LAZY_IMPORT_CONSOLIDATION_V89
+- Diagnostic: ops/bin/as6-diagnose-crm-lazy-import-v89
+- Control: ops/bin/as6-control-crm-lazy-import-v89
+- Added duplicate CRM dynamic/static import detection.
+- Added failure class: AS6_CRM_DUPLICATE_DYNAMIC_STATIC_IMPORT_DRIFT.
+- Added failure class: AS6_SALES_ADAPTER_ENTRY_BYPASS.
