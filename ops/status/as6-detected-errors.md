@@ -1501,3 +1501,14 @@ Governed and registered.
 - Detected: AS6_CONTEXT_RAIL_ZONE_DRIFT risk.
 - Detected: AS6_LIVING_SPACE_UI_DUPLICATION_RISK.
 - Resolution: shell-zone contract and controls registered before /as6-sales migration.
+
+## AS6_CRM_LIVING_SPACE_ADAPTER_V88
+- Detected: AS6_CRM_LIVING_SPACE_ROUTE_DRIFT risk.
+- Detected: AS6_CRM_BUSINESS_LOGIC_REWRITE_RISK.
+- Resolution: /as6-sales adapter wraps existing CRM page through AS6Shell.
+
+## AS6_CRM_LIVING_SPACE_ROUTE_JSX_REPAIR_V88B
+- Detected: AS6_ROUTE_JSX_NESTING_DRIFT.
+- Detected: AS6_ROUTE_PATCHER_PARTIAL_ELEMENT_MATCH.
+- Root cause: /as6-sales was inserted inside an incomplete /crm-workspace JSX Route.
+- Resolution: normalized routes as valid siblings.

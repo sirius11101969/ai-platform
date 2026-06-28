@@ -37,6 +37,7 @@ import { LoginPage, SignupPage } from "./pages/AuthPages";
 import PaymentSuccessPage from "./pages/PaymentSuccessPage";
 import "./styles/as6-mission-control.css";
 const DashboardPage = lazy(() => import("./pages/DashboardPage"));
+const AS6SalesShellAdapter = lazy(() => import('./as6-sales/AS6SalesShellAdapter'));
 const CRMPage = lazy(() => import("./pages/CRMPage"));
 const AiWorkersPage = lazy(() => import("./pages/AiWorkersPage"));
 import FollowupsPage from "./pages/FollowupsPage";
@@ -140,6 +141,7 @@ export default function App() {
           <Route path="/crm-v2" element={<ProtectedRoute><CRMBrandV2Page /></ProtectedRoute>} />
           <Route path="/as6-os" element={<AS6OSPage />} />
           <Route path="/crm-workspace" element={<CRMWorkspacePage />} />
+          <Route path="/as6-sales" element={<AS6SalesShellAdapter />} />
           <Route path="/as6-workspace" element={<AS6WorkspacePage />} />
           <Route path="/" element={<LandingPage />} />
           <Route path="/signup" element={<SignupPage />} />

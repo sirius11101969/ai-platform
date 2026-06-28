@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+APP_FILE="frontend/src/App.jsx"
+
+grep -RIn 'path="/crm-workspace" element={<CRMWorkspacePage />} />' "$APP_FILE" >/dev/null || { echo "AS6_CRM_LIVING_SPACE_ROUTE_JSX_V88B=FAIL crm_workspace_route_invalid"; exit 1; }
+grep -RIn 'path="/as6-sales" element={<AS6SalesShellAdapter />} />' "$APP_FILE" >/dev/null || { echo "AS6_CRM_LIVING_SPACE_ROUTE_JSX_V88B=FAIL as6_sales_route_invalid"; exit 1; }
+
+if grep -n 'CRMWorkspacePage.*/as6-sales\|/as6-sales.*CRMWorkspacePage' "$APP_FILE" >/dev/null; then
+  echo "AS6_CRM_LIVING_SPACE_ROUTE_JSX_V88B=FAIL nested_route_corruption"
+  exit 1
+fi
+
+echo "AS6_CRM_LIVING_SPACE_ROUTE_JSX_V88B=PASS"

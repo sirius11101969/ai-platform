@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ADAPTER="frontend/src/as6-sales/AS6SalesShellAdapter.jsx"
+CONTRACT="frontend/src/as6-sales/AS6SalesShellAdapter.contract.md"
+SHELL_FILE="frontend/src/as6/shell/AS6Shell.jsx"
+
+test -f "$ADAPTER" || { echo "AS6_CRM_LIVING_SPACE_ADAPTER_V88=FAIL adapter_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_CRM_LIVING_SPACE_ADAPTER_V88=FAIL contract_missing"; exit 1; }
+test -f "$SHELL_FILE" || { echo "AS6_CRM_LIVING_SPACE_ADAPTER_V88=FAIL shell_missing"; exit 1; }
+
+grep -q "AS6Shell" "$ADAPTER" || { echo "AS6_CRM_LIVING_SPACE_ADAPTER_V88=FAIL shell_import_missing"; exit 1; }
+grep -q "CRMWorkspacePage" "$ADAPTER" || { echo "AS6_CRM_LIVING_SPACE_ADAPTER_V88=FAIL crm_page_missing"; exit 1; }
+grep -q 'spaceId="as6-sales"' "$ADAPTER" || { echo "AS6_CRM_LIVING_SPACE_ADAPTER_V88=FAIL space_id_missing"; exit 1; }
+grep -q 'contextBarMode="adaptive"' "$ADAPTER" || { echo "AS6_CRM_LIVING_SPACE_ADAPTER_V88=FAIL context_bar_mode_missing"; exit 1; }
+grep -q 'intelligenceRailMode="adaptive"' "$ADAPTER" || { echo "AS6_CRM_LIVING_SPACE_ADAPTER_V88=FAIL intelligence_rail_mode_missing"; exit 1; }
+grep -q "preserve existing CRM page logic" "$CONTRACT" || { echo "AS6_CRM_LIVING_SPACE_ADAPTER_V88=FAIL business_logic_policy_missing"; exit 1; }
+grep -RIn 'path="/as6-sales"' frontend/src/App.* frontend/src/main.* >/dev/null || { echo "AS6_CRM_LIVING_SPACE_ADAPTER_V88=FAIL route_missing"; exit 1; }
+
+echo "AS6_CRM_LIVING_SPACE_ADAPTER_V88=PASS"

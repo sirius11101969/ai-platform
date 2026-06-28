@@ -4350,3 +4350,17 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Intelligence Rail: shell-level adaptive zone.
 - Living Spaces adapter policy: registered.
 - Next target: CRM Living Space /as6-sales.
+
+## AS6_CRM_LIVING_SPACE_ADAPTER_V88
+- Status: PASS pending build.
+- Project readiness: 99.7%
+- CRM Living Space route: /as6-sales.
+- CRM business logic: preserved in frontend/src/pages/CRMWorkspacePage.jsx.
+- Shell: AS6Shell.
+- Context Bar / Intelligence Rail: adaptive.
+
+## AS6_CRM_LIVING_SPACE_ROUTE_JSX_REPAIR_V88B
+- Status: PASS pending build.
+- Project readiness: 99.7%
+- /crm-workspace route: repaired.
+- /as6-sales route: sibling Living Space route.

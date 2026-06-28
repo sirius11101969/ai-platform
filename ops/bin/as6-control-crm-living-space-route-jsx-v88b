@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-crm-living-space-route-jsx-v88b
+ops/bin/as6-diagnose-crm-living-space-adapter-v88
+ops/bin/as6-diagnose-context-rail-contract-v87
+
+grep -RIn "AS6_ROUTE_JSX_NESTING_DRIFT" docs ops >/dev/null || { echo "AS6_CONTROL_CRM_LIVING_SPACE_ROUTE_JSX_V88B=FAIL route_jsx_drift_not_registered"; exit 1; }
+
+echo "AS6_CONTROL_CRM_LIVING_SPACE_ROUTE_JSX_V88B=PASS"

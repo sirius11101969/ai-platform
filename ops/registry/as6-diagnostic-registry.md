@@ -772,3 +772,20 @@
 - Added adapter zone mode validation.
 - Added failure class: AS6_CONTEXT_RAIL_ZONE_DRIFT.
 - Added failure class: AS6_LIVING_SPACE_ADAPTER_ZONE_POLICY.
+
+## AS6_CRM_LIVING_SPACE_ADAPTER_V88
+- Diagnostic: ops/bin/as6-diagnose-crm-living-space-adapter-v88
+- Control: ops/bin/as6-control-crm-living-space-adapter-v88
+- Adapter: frontend/src/as6-sales/AS6SalesShellAdapter.jsx
+- Contract: frontend/src/as6-sales/AS6SalesShellAdapter.contract.md
+- Added /as6-sales route validation.
+- Added CRM Living Space adapter validation.
+- Added failure class: AS6_CRM_LIVING_SPACE_ROUTE_DRIFT.
+- Added failure class: AS6_CRM_BUSINESS_LOGIC_REWRITE_RISK.
+
+## AS6_CRM_LIVING_SPACE_ROUTE_JSX_REPAIR_V88B
+- Diagnostic: ops/bin/as6-diagnose-crm-living-space-route-jsx-v88b
+- Control: ops/bin/as6-control-crm-living-space-route-jsx-v88b
+- Added route JSX sibling validation.
+- Added failure class: AS6_ROUTE_JSX_NESTING_DRIFT.
+- Added failure class: AS6_ROUTE_PATCHER_PARTIAL_ELEMENT_MATCH.

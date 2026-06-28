@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-crm-living-space-adapter-v88
+ops/bin/as6-diagnose-context-rail-contract-v87
+ops/bin/as6-diagnose-one-shell-export-v86b
+
+grep -RIn "AS6_CRM_LIVING_SPACE_ROUTE_DRIFT" docs ops frontend/src >/dev/null || { echo "AS6_CONTROL_CRM_LIVING_SPACE_ADAPTER_V88=FAIL crm_route_drift_class_missing"; exit 1; }
+grep -RIn "AS6_CRM_BUSINESS_LOGIC_REWRITE_RISK" docs ops frontend/src >/dev/null || { echo "AS6_CONTROL_CRM_LIVING_SPACE_ADAPTER_V88=FAIL crm_rewrite_risk_missing"; exit 1; }
+
+echo "AS6_CONTROL_CRM_LIVING_SPACE_ADAPTER_V88=PASS"

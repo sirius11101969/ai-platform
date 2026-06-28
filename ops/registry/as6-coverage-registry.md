@@ -2660,3 +2660,16 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers Living Space adapter zone policy.
 - Covers /as6-one adapter readiness.
 - Covers future CRM Living Space target /as6-sales.
+
+## AS6_CRM_LIVING_SPACE_ADAPTER_V88
+- Covers /as6-sales route.
+- Covers AS6SalesShellAdapter.
+- Covers CRM page preservation: frontend/src/pages/CRMWorkspacePage.jsx.
+- Covers AS6Shell wrapper.
+- Covers Context Bar and Intelligence Rail adaptive policy.
+
+## AS6_CRM_LIVING_SPACE_ROUTE_JSX_REPAIR_V88B
+- Covers /crm-workspace route integrity.
+- Covers /as6-sales sibling route integrity.
+- Covers JSX route nesting drift prevention.
+- Covers CRM Living Space adapter validation after route repair.
