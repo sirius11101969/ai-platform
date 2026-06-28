@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+check(){ name="$1"; shift; if "$@"; then echo "PASS $name"; else echo "FAIL $name"; exit 1; fi; }
+check page_marker grep -q "AS6OnePage" frontend/src/pages/AS6OnePage.jsx
+check route_as6_one grep -q 'path="/as6-one"' frontend/src/App.jsx
+check route_crm_enterprise grep -q 'path="/crm-enterprise"' frontend/src/App.jsx
+check route_crm_v3 grep -q 'path="/crm-v3"' frontend/src/App.jsx
+check shell_foundation grep -q "as6-command-center-shell-foundation" frontend/src/pages/AS6OnePage.jsx
+check as6_core grep -q "as6-core" frontend/src/pages/AS6OnePage.jsx
+check living_company grep -q "as6-living-company" frontend/src/pages/AS6OnePage.jsx
+check revenue_flow grep -q "as6-revenue-flow" frontend/src/pages/AS6OnePage.jsx
+if git diff --name-only -- frontend/src/pages/CRMPage.jsx frontend/src/pages/CRMBrandV2Page.jsx | grep -q .; then echo "FAIL no_crm_edit"; exit 1; else echo "PASS no_crm_edit"; fi

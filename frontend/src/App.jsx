@@ -22,12 +22,14 @@ import "./styles/as6-focus-v230.css";
 import "./styles/as6-crm-workspace-client-v231.css";
 import "./styles/as6-crm-workspace-client-v232.css";
 import "./styles/as6-crm-workspace-ui-review-v236.css";
+import "./styles/as6-one-command-center-foundation.css";
 import { markAs6DesignSystemReady } from "./utils/as6RuntimeTracer";
 import React, { createContext, useContext, useEffect, useMemo, useState, lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import CRMBrandV2Page from "./pages/CRMBrandV2Page";
 import AS6OSPage from "./pages/AS6OSPage";
 import CRMWorkspacePage from "./pages/CRMWorkspacePage";
+import AS6OnePage from "./pages/AS6OnePage";
 import AS6WorkspacePage from "./pages/AS6WorkspacePage";
 import "./styles.css";
 import "./theme/as6Theme.css";
@@ -138,6 +140,9 @@ export default function App() {
           <Routes>
           <Route path="/crm-v2" element={<ProtectedRoute><CRMBrandV2Page /></ProtectedRoute>} />
           <Route path="/as6-os" element={<AS6OSPage />} />
+          <Route path="/as6-one" element={<ProtectedRoute><AS6OnePage /></ProtectedRoute>} />
+          <Route path="/crm-enterprise" element={<ProtectedRoute><AS6OnePage /></ProtectedRoute>} />
+          <Route path="/crm-v3" element={<ProtectedRoute><AS6OnePage /></ProtectedRoute>} />
           <Route path="/crm-workspace" element={<CRMWorkspacePage />} />
           <Route path="/as6-workspace" element={<AS6WorkspacePage />} />
           <Route path="/" element={<LandingPage />} />

@@ -258,3 +258,7 @@
 - Artifact: docs/PRODUCT/AS6_NPX_PLAYWRIGHT_DOM_GEOMETRY_CAPTURE_V222_39.md
 - Capture Result: DOM_GEOMETRY_CAPTURE_NPX=FAILED
 - Failure Classes: PLAYWRIGHT_IMAGE_WITHOUT_NODE_MODULE, NPM_EPHEMERAL_PLAYWRIGHT_CAPTURE_REQUIRED, DOCKER_NPX_PLAYWRIGHT_GEOMETRY_CAPTURE, DOM_GEOMETRY_CAPTURE_NPX_FAILED.
+
+- Diagnostic: ops/bin/as6-diagnose-as6-one-command-center-shell-foundation
+- Runtime: runtime/as6-one-command-center-shell-foundation
+- Scope: /as6-one Command Center shell foundation.

@@ -4287,3 +4287,10 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Synced fresh frontend/dist into Docker Nginx /usr/share/nginx/html.
 - Container bundle now validates CRM v2 markers.
 - Project readiness: 99%.
+
+## AS6 ONE Command Center shell foundation
+- Fixed /as6-one preview by adding AS6OnePage on the existing Command Center visual shell.
+- Routes added: /as6-one, /crm-enterprise, /crm-v3.
+- Root cause: docs/AS6_ONE_COMMAND_CENTER_SHELL_FOUNDATION_ROOT_CAUSE.md
+- Runtime: runtime/as6-one-command-center-shell-foundation
+- Diagnostic: ops/bin/as6-diagnose-as6-one-command-center-shell-foundation
