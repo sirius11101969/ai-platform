@@ -2612,3 +2612,10 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Coverage: Workspace foundation.
 - Coverage: Intelligence Rail foundation.
 - Coverage: Pulse foundation.
+
+## AS6_VITE_CONFIG_SYNTAX_REPAIR
+
+- Coverage: Vite config syntax.
+- Coverage: manualChunks stability.
+- Failure class covered: config-regex-partial-rewrite-syntax-break.
+- AEC rule: config-file-rewrites-must-be-explicit-and-build-validated.

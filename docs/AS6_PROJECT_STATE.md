@@ -4296,3 +4296,13 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Existing UI routes not changed.
 - Next stage: AS6_ONE_SHELL_ADAPTER.
 - Project readiness: 99%.
+
+## AS6 Vite Config Syntax Repair
+
+- Stage: AS6_VITE_CONFIG_SYNTAX_REPAIR
+- Fixed invalid frontend/vite.config.js syntax after partial manualChunks patch.
+- Interface changed: none.
+- Pages changed: none.
+- Build: PASS without Circular chunk warning.
+- Guardian: SAFE_TO_MERGE.
+- Project readiness: 99%.

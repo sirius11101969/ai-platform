@@ -1,0 +1,13 @@
+ M docs/AS6_PROJECT_STATE.md
+ M frontend/vite.config.js
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? docs/AS6_NGINX_BACKUP_FILE_FIX_ROOT_CAUSE.md
+?? docs/AS6_NGINX_SPA_ROUTING_FIX_ROOT_CAUSE.md
+?? docs/AS6_V243_CRM_WORKSPACE_CLIENT_POLISH_ROOT_CAUSE.md
+?? docs/genesis/09_AS6_VITE_MANUALCHUNKS_CYCLE_FIX_ROOT_CAUSE.md
+?? docs/genesis/10_AS6_VITE_CONFIG_SYNTAX_REPAIR_ROOT_CAUSE.md
+?? ops/governance/as6-nginx-backup-file-fix-governance.md
+?? ops/governance/as6-nginx-spa-routing-fix-governance.md
+?? ops/governance/as6-vite-config-syntax-repair-governance.md

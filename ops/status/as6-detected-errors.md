@@ -1460,3 +1460,9 @@ Governed and registered.
 
 - Detected architecture gap: no reusable AS6Shell for Living Spaces.
 - Prevention: shell foundation components added.
+
+## AS6_VITE_CONFIG_SYNTAX_REPAIR
+
+- Detected error: vite.config.js invalid syntax after partial manualChunks rewrite.
+- Root cause: unsafe regex patch left orphan if statements.
+- Prevention: explicit config rewrite and validation registered.
