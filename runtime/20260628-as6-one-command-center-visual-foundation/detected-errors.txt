@@ -1,0 +1,4 @@
+Detected errors:
+- AS6 ONE page implementation was missing from the route table.
+- `/as6-one`, `/crm-enterprise`, and `/crm-v3` did not render through the Command Center AppShell mode.
+- Prior AS6 ONE direction risked custom layout drift instead of Command Center reuse.

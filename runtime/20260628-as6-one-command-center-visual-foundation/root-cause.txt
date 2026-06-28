@@ -1,0 +1,3 @@
+Root cause: AS6 ONE visually drifted from Command Center because it reimplemented layout instead of reusing Command Center visual foundation.
+Failure class: as6-one-command-center-visual-drift
+AEC rule: as6-one-must-reuse-command-center-visual-foundation-before-crm-cutover

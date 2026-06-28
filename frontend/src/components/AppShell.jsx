@@ -118,7 +118,7 @@ export function ProtectedLayout({ children }) {
   const displayPlan = currentWorkspace?.plan || profile?.plan || userProfile.plan;
   const workspaceName = currentWorkspace?.name || "Моё пространство";
   const roleLabels = { owner: "Владелец", admin: "Администратор", sales: "Продажи", viewer: "Наблюдатель" };
-  const isCommandCenter = location.pathname === "/command-center";
+  const isCommandCenter = location.pathname === "/command-center" || location.pathname === "/as6-one" || location.pathname === "/crm-enterprise" || location.pathname === "/crm-v3";
 
   return (
     <AS6Workspace className={`app-shell `} dataRoute={isCommandCenter ? "command-center" : "app"} mode={isCommandCenter ? "command-center" : "app"}>

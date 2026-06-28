@@ -1,0 +1,4 @@
+Project state:
+- AS6 ONE is now a Command Center visual clone/fork with semantic text replacement.
+- Command Center route remains unchanged.
+- CRM and CRM v2 route implementations remain unchanged.

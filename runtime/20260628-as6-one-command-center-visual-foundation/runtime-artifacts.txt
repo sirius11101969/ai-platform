@@ -1,0 +1,6 @@
+Artifacts:
+- frontend/src/pages/AS6OnePage.jsx
+- frontend/src/App.jsx
+- frontend/src/components/AppShell.jsx
+- docs/AS6_ONE_COMMAND_CENTER_VISUAL_DRIFT_ROOT_CAUSE.md
+- docs/GOVERNANCE/AS6_ONE_COMMAND_CENTER_VISUAL_FOUNDATION_GOVERNANCE.md
