@@ -4306,3 +4306,27 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Build: PASS without Circular chunk warning.
 - Guardian: SAFE_TO_MERGE.
 - Project readiness: 99%.
+
+## AS6_ONE_SHELL_ADAPTER_V85B_REPAIR
+- Status: PASS
+- Project readiness: 99.2%
+- /as6-one prepared for AS6Shell adapter contract.
+- Living Spaces path prepared: /as6-sales.
+- Previous untracked governance/root-cause artifacts registered.
+
+## AS6_ONE_SHELL_ADAPTER_V85C_BUILD_PATH_REPAIR
+- Status: PASS after build-path repair.
+- Project readiness: 99.3%
+- Build path: ./backend
+
+## AS6_ONE_SHELL_ADAPTER_V85D_BUILD_SCRIPT_REPAIR
+- Status: PASS after build-script repair.
+- Project readiness: 99.3%
+- Build-capable directory: ./frontend/node_modules/baseline-browser-mapping
+
+## AS6_ONE_SHELL_ADAPTER_V85E_BUILD_SELECTOR_FINAL
+- Status: PASS
+- Project readiness: 99.4%
+- Build directory: ./frontend
+- /as6-one adapter contract preserved.
+- Living Spaces preparation path: /as6-sales.

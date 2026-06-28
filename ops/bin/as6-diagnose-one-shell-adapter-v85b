@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+grep -RIn "/as6-one" frontend/src >/dev/null || { echo "AS6_ONE_SHELL_ADAPTER_V85B=FAIL route_missing"; exit 1; }
+grep -RIn "AS6Shell" frontend/src >/dev/null || { echo "AS6_ONE_SHELL_ADAPTER_V85B=FAIL shell_missing"; exit 1; }
+
+test -f frontend/src/as6-one/AS6OneShellAdapter.contract.md || { echo "AS6_ONE_SHELL_ADAPTER_V85B=FAIL contract_missing"; exit 1; }
+grep -q "preserve existing business logic" frontend/src/as6-one/AS6OneShellAdapter.contract.md || { echo "AS6_ONE_SHELL_ADAPTER_V85B=FAIL preserve_policy_missing"; exit 1; }
+grep -q "/as6-sales" frontend/src/as6-one/AS6OneShellAdapter.contract.md || { echo "AS6_ONE_SHELL_ADAPTER_V85B=FAIL living_space_target_missing"; exit 1; }
+
+echo "AS6_ONE_SHELL_ADAPTER_V85B=PASS"

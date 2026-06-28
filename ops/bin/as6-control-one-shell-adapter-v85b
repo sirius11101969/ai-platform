@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-one-shell-adapter-v85b
+grep -RIn "AS6_ONE_SHELL_ADAPTER_V85B" docs ops frontend/src >/dev/null || { echo "AS6_CONTROL_ONE_SHELL_ADAPTER_V85B=FAIL marker_missing"; exit 1; }
+grep -RIn "AS6_CLEAN_WORKTREE_DRIFT_BEFORE_V85" docs ops runtime >/dev/null || { echo "AS6_CONTROL_ONE_SHELL_ADAPTER_V85B=FAIL drift_registration_missing"; exit 1; }
+
+echo "AS6_CONTROL_ONE_SHELL_ADAPTER_V85B=PASS"

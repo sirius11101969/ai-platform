@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-one-shell-adapter-v85e
+grep -RIn "AS6_BUILD_SELECTOR_NODE_MODULES_DRIFT" docs ops >/dev/null || { echo "AS6_CONTROL_ONE_SHELL_ADAPTER_V85E=FAIL build_selector_drift_not_registered"; exit 1; }
+echo "AS6_CONTROL_ONE_SHELL_ADAPTER_V85E=PASS"

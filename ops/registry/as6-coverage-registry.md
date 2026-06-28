@@ -2619,3 +2619,25 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Coverage: manualChunks stability.
 - Failure class covered: config-regex-partial-rewrite-syntax-break.
 - AEC rule: config-file-rewrites-must-be-explicit-and-build-validated.
+
+## AS6_ONE_SHELL_ADAPTER_V85B_REPAIR
+- Covers clean-worktree drift before shell adapter changes.
+- Covers /as6-one route preparation.
+- Covers AS6Shell adapter readiness.
+- Covers future Living Space /as6-sales preparation.
+
+## AS6_ONE_SHELL_ADAPTER_V85C_BUILD_PATH_REPAIR
+- Covers build path drift.
+- Covers V85B shell adapter diagnostics.
+- Covers frontend build validation from detected package.json directory.
+
+## AS6_ONE_SHELL_ADAPTER_V85D_BUILD_SCRIPT_REPAIR
+- Covers npm build script drift.
+- Covers build-capable frontend package detection.
+- Covers /as6-one AS6Shell adapter contract.
+
+## AS6_ONE_SHELL_ADAPTER_V85E_BUILD_SELECTOR_FINAL
+- Covers AS6_BUILD_SELECTOR_NODE_MODULES_DRIFT.
+- Covers AS6_RUNTIME_IGNORED_ARTIFACT_COMMIT_DRIFT.
+- Covers /as6-one AS6Shell adapter.
+- Covers Living Spaces preparation for /as6-sales.

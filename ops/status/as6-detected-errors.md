@@ -1466,3 +1466,22 @@ Governed and registered.
 - Detected error: vite.config.js invalid syntax after partial manualChunks rewrite.
 - Root cause: unsafe regex patch left orphan if statements.
 - Prevention: explicit config rewrite and validation registered.
+
+## AS6_ONE_SHELL_ADAPTER_V85B_REPAIR
+- Detected: AS6_CLEAN_WORKTREE_DRIFT_BEFORE_V85.
+- Root cause: previous untracked diagnostic/governance artifacts were not committed before V85.
+- Resolution: artifacts are preserved and registered.
+
+## AS6_ONE_SHELL_ADAPTER_V85C_BUILD_PATH_REPAIR
+- Detected: AS6_BUILD_PATH_DRIFT_ROOT_PACKAGE_JSON_MISSING.
+- Root cause: npm build was launched from repository root instead of detected frontend directory.
+- Resolution: build command now runs from detected package.json location.
+
+## AS6_ONE_SHELL_ADAPTER_V85D_BUILD_SCRIPT_REPAIR
+- Detected: AS6_BUILD_SCRIPT_DRIFT_PACKAGE_WITHOUT_BUILD_SELECTED.
+- Resolution: build package is selected only when package.json contains scripts.build.
+
+## AS6_ONE_SHELL_ADAPTER_V85E_BUILD_SELECTOR_FINAL
+- Detected: AS6_BUILD_SELECTOR_NODE_MODULES_DRIFT.
+- Detected: AS6_RUNTIME_IGNORED_ARTIFACT_COMMIT_DRIFT.
+- Resolution: build selector excludes node_modules and commit excludes runtime.

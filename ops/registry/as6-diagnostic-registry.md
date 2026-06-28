@@ -729,3 +729,24 @@
 - Validation: frontend build PASS.
 - Validation: no Circular chunk warning.
 - Validation: AS6 Guardian SAFE_TO_MERGE.
+
+## AS6_ONE_SHELL_ADAPTER_V85B_REPAIR
+- Repair diagnostic: clean-worktree guard correctly stopped V85.
+- Registered untracked artifacts from previous governance/root-cause cycles.
+- Added AS6 ONE Shell Adapter contract validation.
+
+## AS6_ONE_SHELL_ADAPTER_V85C_BUILD_PATH_REPAIR
+- Diagnostic added: package.json location detection before npm build.
+- Diagnostic added: build directory evidence.
+- Control added: AS6_ONE_SHELL_ADAPTER_V85B must remain PASS before commit.
+
+## AS6_ONE_SHELL_ADAPTER_V85D_BUILD_SCRIPT_REPAIR
+- Diagnostic added: detect package.json with explicit build script.
+- Diagnostic added: prevent selecting package without build script.
+- Control reused: AS6_ONE_SHELL_ADAPTER_V85B must remain PASS.
+
+## AS6_ONE_SHELL_ADAPTER_V85E_BUILD_SELECTOR_FINAL
+- Diagnostic added: prune all node_modules package.json candidates.
+- Diagnostic added: prefer app-level frontend package.json.
+- Diagnostic added: reject node_modules build directory.
+- Diagnostic added: avoid committing ignored runtime directory.
