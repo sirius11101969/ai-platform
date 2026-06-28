@@ -4342,3 +4342,11 @@ Note: CRMAnalyticsPanel now owns an internal AiRevenueIntelligencePanel copy; CR
 - Status: PASS pending build.
 - Project readiness: 99.5%
 - /as6-one real shell wiring: repaired for AS6Shell export interface.
+
+## AS6_CONTEXT_BAR_INTELLIGENCE_RAIL_CONTRACT_V87
+- Status: PASS pending build.
+- Project readiness: 99.6%
+- Context Bar: shell-level adaptive zone.
+- Intelligence Rail: shell-level adaptive zone.
+- Living Spaces adapter policy: registered.
+- Next target: CRM Living Space /as6-sales.

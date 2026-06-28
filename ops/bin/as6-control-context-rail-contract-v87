@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-context-rail-contract-v87
+ops/bin/as6-diagnose-one-shell-export-v86b
+ops/bin/as6-diagnose-one-shell-real-wiring-v86
+
+grep -RIn "AS6_CONTEXT_RAIL_ZONE_DRIFT" docs ops frontend/src >/dev/null || { echo "AS6_CONTROL_CONTEXT_RAIL_CONTRACT_V87=FAIL zone_drift_class_missing"; exit 1; }
+grep -RIn "AS6_LIVING_SPACE_ADAPTER_ZONE_POLICY" docs ops frontend/src >/dev/null || { echo "AS6_CONTROL_CONTEXT_RAIL_CONTRACT_V87=FAIL adapter_zone_policy_missing"; exit 1; }
+
+echo "AS6_CONTROL_CONTEXT_BAR_INTELLIGENCE_RAIL_CONTRACT_V87=PASS"

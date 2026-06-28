@@ -763,3 +763,12 @@
 - Diagnostic added: AS6OneShellAdapter import style validation.
 - Failure class added: AS6_SHELL_EXPORT_INTERFACE_DRIFT.
 - Failure class added: AS6_ONE_SHELL_IMPORT_STYLE_MISMATCH.
+
+## AS6_CONTEXT_BAR_INTELLIGENCE_RAIL_CONTRACT_V87
+- Diagnostic: ops/bin/as6-diagnose-context-rail-contract-v87
+- Control: ops/bin/as6-control-context-rail-contract-v87
+- Contract: frontend/src/as6/shell/AS6ShellZones.contract.md
+- Added shell-zone contract validation.
+- Added adapter zone mode validation.
+- Added failure class: AS6_CONTEXT_RAIL_ZONE_DRIFT.
+- Added failure class: AS6_LIVING_SPACE_ADAPTER_ZONE_POLICY.

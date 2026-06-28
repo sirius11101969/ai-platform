@@ -1496,3 +1496,8 @@ Governed and registered.
 - Detected: AS6_ONE_SHELL_IMPORT_STYLE_MISMATCH.
 - Root cause: AS6Shell did not export default while adapter imported default.
 - Resolution: adapter import patched to match actual AS6Shell export style.
+
+## AS6_CONTEXT_BAR_INTELLIGENCE_RAIL_CONTRACT_V87
+- Detected: AS6_CONTEXT_RAIL_ZONE_DRIFT risk.
+- Detected: AS6_LIVING_SPACE_UI_DUPLICATION_RISK.
+- Resolution: shell-zone contract and controls registered before /as6-sales migration.

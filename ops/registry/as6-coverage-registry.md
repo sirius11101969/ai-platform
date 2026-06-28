@@ -2653,3 +2653,10 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers AS6Shell named/default export interface.
 - Covers AS6OneShellAdapter import compatibility.
 - Covers /as6-one real shell wiring build validation.
+
+## AS6_CONTEXT_BAR_INTELLIGENCE_RAIL_CONTRACT_V87
+- Covers Context Bar as AS6Shell-level adaptive zone.
+- Covers Intelligence Rail as AS6Shell-level adaptive zone.
+- Covers Living Space adapter zone policy.
+- Covers /as6-one adapter readiness.
+- Covers future CRM Living Space target /as6-sales.
