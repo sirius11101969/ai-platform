@@ -118,7 +118,8 @@ export function ProtectedLayout({ children }) {
   const displayPlan = currentWorkspace?.plan || profile?.plan || userProfile.plan;
   const workspaceName = currentWorkspace?.name || "Моё пространство";
   const roleLabels = { owner: "Владелец", admin: "Администратор", sales: "Продажи", viewer: "Наблюдатель" };
-  const isCommandCenter = location.pathname === "/command-center";
+  const isCommandCenter = location.pathname === "/command-center" || location.pathname === "/as6-one";
+  const isAs6One = location.pathname === "/as6-one";
 
   return (
     <AS6Workspace className={`app-shell `} dataRoute={isCommandCenter ? "command-center" : "app"} mode={isCommandCenter ? "command-center" : "app"}>
@@ -128,23 +129,23 @@ export function ProtectedLayout({ children }) {
             <div className="as6-sidebar-brand as6-sidebar-brand-top"><AS6Logo /></div>
             <div className="sidebar-scroll" role="presentation">
               <nav className="side-nav command-side-nav" aria-label="Command Center navigation">
-                <NavLink to="/command-center" className={({ isActive }) => (isActive ? "active command-center-active" : "command-center-link")}>🚀 Command Center</NavLink>
+                <NavLink to={isAs6One ? "/as6-one" : "/command-center"} className={({ isActive }) => (isActive ? "active command-center-active" : "command-center-link")}>🚀 {isAs6One ? "AS6 ONE" : "Command Center"}</NavLink>
                 <NavLink to="/dashboard">▦ Dashboard</NavLink>
                 <NavLink to="/crm">▧ CRM</NavLink>
                 <NavLink to="/dashboard/revenue">↗ Revenue</NavLink>
-                <NavLink to="/ai-workforce-center">👥 AI сотрудники</NavLink>
+                <NavLink to="/ai-workforce-center">👥 {isAs6One ? "AS6 Сотрудники" : "AI сотрудники"}</NavLink>
                 <NavLink to="/followups">☑ AI задачи <span className="nav-badge">12</span></NavLink>
-                <NavLink to="/ai-revenue-intelligence">⌁ AI аналитика</NavLink>
+                <NavLink to="/ai-revenue-intelligence">⌁ {isAs6One ? "AS6 Помощник" : "AI аналитика"}</NavLink>
                 <NavLink to="/priority-inbox">✉ AI коммуникации <span className="nav-badge">3</span></NavLink>
                 <NavLink to="/ai-system-health-center">◇ AI DevOps Center</NavLink>
-                <NavLink to="/ai-enterprise-coordination">⚙ AI настройки</NavLink>
+                <NavLink to="/ai-enterprise-coordination">⚙ {isAs6One ? "AS6 Автоматизация" : "AI настройки"}</NavLink>
               </nav>
               <div className="sidebar-favorites" data-sidebar-favorites>
                 <span>ИЗБРАННОЕ</span>
                 <NavLink to="/pipeline-copilot">▣ Pipeline Copilot</NavLink>
                 <NavLink to="/ai-approval-center">▢ Approval Queue <em>7</em></NavLink>
                 <NavLink to="/ai-workforce-center">⌘ AI SDR Agents</NavLink>
-                <NavLink to="/ai-executive-brain">✧ Executive Brain</NavLink>
+                <NavLink to="/ai-executive-brain">✧ {isAs6One ? "AS6 Генеральный директор" : "Executive Brain"}</NavLink>
               </div>
             </div>
             <div className="command-sidebar-bottom">
