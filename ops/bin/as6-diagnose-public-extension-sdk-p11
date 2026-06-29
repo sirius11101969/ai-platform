@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f frontend/src/as6/sdk/plugin/AS6PluginSDK.js || { echo "AS6_PLATFORM_V2_PUBLIC_EXTENSION_SDK_P11=FAIL sdk_missing"; exit 1; }
+test -f frontend/src/as6/sdk/plugin/createAS6Plugin.js || { echo "AS6_PLATFORM_V2_PUBLIC_EXTENSION_SDK_P11=FAIL create_missing"; exit 1; }
+test -f frontend/src/as6/sdk/plugin/examples.js || { echo "AS6_PLATFORM_V2_PUBLIC_EXTENSION_SDK_P11=FAIL examples_missing"; exit 1; }
+test -f docs/platform-v2/sdk/public-extension-sdk-p11.md || { echo "AS6_PLATFORM_V2_PUBLIC_EXTENSION_SDK_P11=FAIL docs_missing"; exit 1; }
+
+grep -q "defineAS6Plugin" frontend/src/as6/sdk/plugin/AS6PluginSDK.js
+grep -q "validateAS6PluginSDKCompatibility" frontend/src/as6/sdk/plugin/AS6PluginSDK.js
+grep -q "createAS6WidgetPlugin" frontend/src/as6/sdk/plugin/createAS6Plugin.js
+grep -q "createAS6AIActionPlugin" frontend/src/as6/sdk/plugin/createAS6Plugin.js
+grep -q "createAS6BusPlugin" frontend/src/as6/sdk/plugin/createAS6Plugin.js
+grep -q "AS6_PUBLIC_EXTENSION_SDK_DRIFT" ops/governance/as6-public-extension-sdk-aec-p11.md
+
+echo "AS6_PLATFORM_V2_PUBLIC_EXTENSION_SDK_P11=PASS"

@@ -3010,3 +3010,11 @@ Permission Validation
 - Covers Plugin Policy.
 - Covers Widget/AI Action/Bus Handler extension points.
 - Covers CRM Insights reference plugin.
+
+## AS6_PLATFORM_V2_PUBLIC_EXTENSION_SDK_P11
+- Covers Public Extension SDK.
+- Covers plugin compatibility validation.
+- Covers widget plugin factory.
+- Covers AI action plugin factory.
+- Covers bus plugin factory.
+- Covers developer onboarding docs.

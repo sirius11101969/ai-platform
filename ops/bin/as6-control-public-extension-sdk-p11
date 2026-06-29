@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-public-extension-sdk-p11
+grep -RIn "AS6_PUBLIC_EXTENSION_SDK_DRIFT" README.md docs ops .github frontend/src >/dev/null
+echo "AS6_CONTROL_PUBLIC_EXTENSION_SDK_P11=PASS"

@@ -1150,3 +1150,10 @@ ops/bin/as6-control-permission-engine-v114
 - Runtime: frontend/src/as6/plugins/AS6PluginRuntime.js
 - Marketplace: frontend/src/as6/plugins/AS6PluginMarketplace.js
 - Added failure class: AS6_PLUGIN_MARKETPLACE_RUNTIME_DRIFT.
+
+## AS6_PLATFORM_V2_PUBLIC_EXTENSION_SDK_P11
+- Diagnostic: ops/bin/as6-diagnose-public-extension-sdk-p11
+- Control: ops/bin/as6-control-public-extension-sdk-p11
+- SDK: frontend/src/as6/sdk/plugin/AS6PluginSDK.js
+- Docs: docs/platform-v2/sdk/public-extension-sdk-p11.md
+- Added failure class: AS6_PUBLIC_EXTENSION_SDK_DRIFT.

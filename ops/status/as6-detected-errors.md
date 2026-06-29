@@ -1766,3 +1766,8 @@ Governed and registered.
 - Detected: AS6_PLUGIN_RUNTIME_INSTALL_GAP.
 - Root cause: Platform V2 lacked plugin installation and marketplace extension runtime.
 - Resolution: Plugin Marketplace / Extension Runtime added.
+
+## AS6_PLATFORM_V2_PUBLIC_EXTENSION_SDK_P11
+- Detected: AS6_PLUGIN_DEVELOPER_DOCS_GAP.
+- Root cause: Plugin Runtime existed without public SDK onboarding.
+- Resolution: Public Extension SDK and docs added.
