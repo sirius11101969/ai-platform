@@ -2948,3 +2948,10 @@ Permission Validation
 - Covers Space Runtime foundation.
 - Covers Space Context model.
 - Covers CRM reference manifest.
+
+## AS6_PLATFORM_V2_CRM_LIVING_SPACE_RUNTIME_P2
+- Covers CRM Living Space Runtime.
+- Covers CRM manifest registration.
+- Covers CRM activation/deactivation lifecycle.
+- Covers CRM context publication.
+- Covers CRM as Platform V2 reference Living Space.

@@ -1089,3 +1089,10 @@ ops/bin/as6-control-permission-engine-v114
 - Spec: docs/platform-v2/living-spaces-2.0-spec.md
 - Schema: frontend/src/as6/spaces/as6SpaceManifest.schema.js
 - Added failure class: AS6_LIVING_SPACE_2_SPEC_DRIFT.
+
+## AS6_PLATFORM_V2_CRM_LIVING_SPACE_RUNTIME_P2
+- Diagnostic: ops/bin/as6-diagnose-crm-living-space-runtime-p2
+- Control: ops/bin/as6-control-crm-living-space-runtime-p2
+- Runtime: frontend/src/as6/spaces/crm/as6CrmLivingSpaceRuntime.js
+- Contract: frontend/src/as6/spaces/crm/AS6CrmLivingSpaceRuntime.contract.md
+- Added failure class: AS6_CRM_LIVING_SPACE_RUNTIME_DRIFT.

@@ -1723,3 +1723,8 @@ Governed and registered.
 - Detected: AS6_SPACE_MANIFEST_SCHEMA_GAP.
 - Root cause: product spaces lacked unified Living Spaces 2.0 contract.
 - Resolution: Living Spaces 2.0 spec/schema/runtime/context/registry added.
+
+## AS6_PLATFORM_V2_CRM_LIVING_SPACE_RUNTIME_P2
+- Detected: AS6_CRM_SPACE_REFERENCE_IMPLEMENTATION_GAP.
+- Root cause: P1 created CRM manifest but CRM lacked a runtime module.
+- Resolution: CRM Living Space Runtime added.

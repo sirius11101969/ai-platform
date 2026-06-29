@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+RUNTIME="frontend/src/as6/spaces/crm/as6CrmLivingSpaceRuntime.js"
+CONTRACT="frontend/src/as6/spaces/crm/AS6CrmLivingSpaceRuntime.contract.md"
+INDEX="frontend/src/as6/spaces/crm/index.js"
+MANIFEST="frontend/src/as6/spaces/examples/crm.space.js"
+
+test -f "$RUNTIME" || { echo "AS6_PLATFORM_V2_CRM_LIVING_SPACE_RUNTIME_P2=FAIL runtime_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_PLATFORM_V2_CRM_LIVING_SPACE_RUNTIME_P2=FAIL contract_missing"; exit 1; }
+test -f "$INDEX" || { echo "AS6_PLATFORM_V2_CRM_LIVING_SPACE_RUNTIME_P2=FAIL index_missing"; exit 1; }
+test -f "$MANIFEST" || { echo "AS6_PLATFORM_V2_CRM_LIVING_SPACE_RUNTIME_P2=FAIL manifest_missing"; exit 1; }
+
+grep -q "registerAS6CrmLivingSpace" "$RUNTIME" || { echo "AS6_PLATFORM_V2_CRM_LIVING_SPACE_RUNTIME_P2=FAIL register_missing"; exit 1; }
+grep -q "activateAS6CrmLivingSpace" "$RUNTIME" || { echo "AS6_PLATFORM_V2_CRM_LIVING_SPACE_RUNTIME_P2=FAIL activate_missing"; exit 1; }
+grep -q "deactivateAS6CrmLivingSpace" "$RUNTIME" || { echo "AS6_PLATFORM_V2_CRM_LIVING_SPACE_RUNTIME_P2=FAIL deactivate_missing"; exit 1; }
+grep -q "updateAS6CrmLivingSpaceContext" "$RUNTIME" || { echo "AS6_PLATFORM_V2_CRM_LIVING_SPACE_RUNTIME_P2=FAIL context_update_missing"; exit 1; }
+grep -q "validateAS6CrmLivingSpaceRuntimePolicy" "$RUNTIME" || { echo "AS6_PLATFORM_V2_CRM_LIVING_SPACE_RUNTIME_P2=FAIL validator_missing"; exit 1; }
+grep -q "registerAS6SpaceManifest" "$RUNTIME" || { echo "AS6_PLATFORM_V2_CRM_LIVING_SPACE_RUNTIME_P2=FAIL registry_integration_missing"; exit 1; }
+grep -q "createAS6SpaceContext" "$RUNTIME" || { echo "AS6_PLATFORM_V2_CRM_LIVING_SPACE_RUNTIME_P2=FAIL context_integration_missing"; exit 1; }
+
+echo "AS6_PLATFORM_V2_CRM_LIVING_SPACE_RUNTIME_P2=PASS"

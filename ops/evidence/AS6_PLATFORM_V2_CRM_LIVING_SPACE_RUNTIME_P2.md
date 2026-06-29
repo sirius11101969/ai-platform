@@ -1,0 +1,21 @@
+# AS6 Release Evidence Manifest
+
+Stage: AS6_PLATFORM_V2_CRM_LIVING_SPACE_RUNTIME_P2
+
+Branch: preview/pr-359
+
+Head: a4977ab9ee1241fcf511038ef98139b2d10720e8
+
+Target: as6-control-crm-living-space-runtime-p2
+
+Readiness: 99.9999995%
+
+Evidence:
+- Git status: runtime/as6-p2-crm-living-space-runtime/release/evidence/git-status.txt
+- Validate log: runtime/as6-p2-crm-living-space-runtime/release/evidence/as6-validate.log
+- Release gate log: runtime/as6-p2-crm-living-space-runtime/release/evidence/as6-release-gate.log
+
+Results:
+- AS6_VALIDATE: PASS
+- AS6_RELEASE_GATE: PASS
+- BUILD: PASS
