@@ -2,6 +2,7 @@ import { crmLivingSpaceManifest } from "../examples/crm.space";
 import { registerAS6Space, activateAS6Space, deactivateAS6Space } from "../as6SpaceRuntime";
 import { registerAS6SpaceManifest } from "../as6SpaceRegistry";
 import { createAS6SpaceContext, mergeAS6SpaceContext } from "../as6SpaceContext";
+import { publishAS6LivingSpaceContext } from "../../ai/context";
 
 export const AS6_CRM_LIVING_SPACE_RUNTIME_VERSION = "P2";
 
@@ -43,6 +44,7 @@ export function activateAS6CrmLivingSpace(contextPatch = {}) {
   }
 
   crmContext = mergeAS6SpaceContext(crmContext, contextPatch);
+  publishAS6LivingSpaceContext("crm", crmContext.values, { priority: 900, source: "crm-runtime" });
   crmRuntimeState = activateAS6Space(crmRuntimeState, crmContext);
 
   return {

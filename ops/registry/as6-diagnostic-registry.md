@@ -1103,3 +1103,10 @@ ops/bin/as6-control-permission-engine-v114
 - Bridge: frontend/src/as6/spaces/crm/AS6CrmRuntimeBridge.jsx
 - Shell integration: frontend/src/as6-sales/AS6SalesShellAdapter.jsx
 - Added failure class: AS6_CRM_RUNTIME_UI_INTEGRATION_DRIFT.
+
+## AS6_PLATFORM_V2_AI_CONTEXT_ENGINE_P4
+- Diagnostic: ops/bin/as6-diagnose-ai-context-engine-p4
+- Control: ops/bin/as6-control-ai-context-engine-p4
+- Engine: frontend/src/as6/ai/context/AS6AIContextEngine.js
+- Bridge: frontend/src/as6/ai/context/AS6AIContextBridge.js
+- Added failure class: AS6_AI_CONTEXT_DRIFT.

@@ -1733,3 +1733,8 @@ Governed and registered.
 - Detected: AS6_CRM_RUNTIME_ACTIVATION_GAP.
 - Root cause: CRM runtime existed but was not integrated into React shell.
 - Resolution: CRM Runtime Bridge and shell status integration added.
+
+## AS6_PLATFORM_V2_AI_CONTEXT_ENGINE_P4
+- Detected: AS6_AI_CONTEXT_PROVIDER_GAP.
+- Root cause: CRM runtime existed but AI lacked shared context access.
+- Resolution: AI Context Engine and CRM context publishing added.

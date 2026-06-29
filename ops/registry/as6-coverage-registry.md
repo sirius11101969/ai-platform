@@ -2962,3 +2962,10 @@ Permission Validation
 - Covers CRM runtime status UI.
 - Covers CRM context update bridge.
 - Covers Sales shell integration.
+
+## AS6_PLATFORM_V2_AI_CONTEXT_ENGINE_P4
+- Covers AI Context Engine.
+- Covers AI Context Bridge.
+- Covers CRM context publishing.
+- Covers context snapshot.
+- Covers merged Living Space context.

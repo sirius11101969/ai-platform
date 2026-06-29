@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ENGINE="frontend/src/as6/ai/context/AS6AIContextEngine.js"
+BRIDGE="frontend/src/as6/ai/context/AS6AIContextBridge.js"
+POLICY="frontend/src/as6/ai/context/AS6AIContextPolicy.js"
+CONTRACT="frontend/src/as6/ai/context/AS6AIContextEngine.contract.md"
+CRM_RUNTIME="frontend/src/as6/spaces/crm/as6CrmLivingSpaceRuntime.js"
+
+test -f "$ENGINE" || { echo "AS6_PLATFORM_V2_AI_CONTEXT_ENGINE_P4=FAIL engine_missing"; exit 1; }
+test -f "$BRIDGE" || { echo "AS6_PLATFORM_V2_AI_CONTEXT_ENGINE_P4=FAIL bridge_missing"; exit 1; }
+test -f "$POLICY" || { echo "AS6_PLATFORM_V2_AI_CONTEXT_ENGINE_P4=FAIL policy_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_PLATFORM_V2_AI_CONTEXT_ENGINE_P4=FAIL contract_missing"; exit 1; }
+
+grep -q "registerLivingSpaceContext" "$ENGINE" || { echo "AS6_PLATFORM_V2_AI_CONTEXT_ENGINE_P4=FAIL register_context_missing"; exit 1; }
+grep -q "getMergedContext" "$ENGINE" || { echo "AS6_PLATFORM_V2_AI_CONTEXT_ENGINE_P4=FAIL merged_context_missing"; exit 1; }
+grep -q "getCurrentCustomer" "$ENGINE" || { echo "AS6_PLATFORM_V2_AI_CONTEXT_ENGINE_P4=FAIL current_customer_missing"; exit 1; }
+grep -q "getCurrentDeal" "$ENGINE" || { echo "AS6_PLATFORM_V2_AI_CONTEXT_ENGINE_P4=FAIL current_deal_missing"; exit 1; }
+grep -q "getCurrentPipeline" "$ENGINE" || { echo "AS6_PLATFORM_V2_AI_CONTEXT_ENGINE_P4=FAIL current_pipeline_missing"; exit 1; }
+grep -q "getContextSnapshot" "$ENGINE" || { echo "AS6_PLATFORM_V2_AI_CONTEXT_ENGINE_P4=FAIL snapshot_missing"; exit 1; }
+grep -q "publishAS6LivingSpaceContext" "$BRIDGE" || { echo "AS6_PLATFORM_V2_AI_CONTEXT_ENGINE_P4=FAIL bridge_publish_missing"; exit 1; }
+grep -q "publishAS6LivingSpaceContext" "$CRM_RUNTIME" || { echo "AS6_PLATFORM_V2_AI_CONTEXT_ENGINE_P4=FAIL crm_context_publish_missing"; exit 1; }
+
+echo "AS6_PLATFORM_V2_AI_CONTEXT_ENGINE_P4=PASS"

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-ai-context-engine-p4
+
+grep -RIn "AS6_AI_CONTEXT_DRIFT" README.md docs ops .github frontend/src >/dev/null || {
+  echo "AS6_CONTROL_AI_CONTEXT_ENGINE_P4=FAIL drift_class_missing"
+  exit 1
+}
+
+echo "AS6_CONTROL_AI_CONTEXT_ENGINE_P4=PASS"

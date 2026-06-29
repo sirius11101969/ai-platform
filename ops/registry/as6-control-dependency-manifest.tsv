@@ -46,3 +46,5 @@ as6-control-living-spaces-spec-p1	as6-control-release-snapshot-gate-v122
 as6-control-crm-living-space-runtime-p2	as6-control-living-spaces-spec-p1
 
 as6-control-crm-runtime-ui-integration-p3	as6-control-crm-living-space-runtime-p2
+
+as6-control-ai-context-engine-p4	as6-control-crm-runtime-ui-integration-p3
