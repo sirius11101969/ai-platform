@@ -3,6 +3,7 @@ import { registerAS6Space, activateAS6Space, deactivateAS6Space } from "../as6Sp
 import { registerAS6SpaceManifest } from "../as6SpaceRegistry";
 import { createAS6SpaceContext, mergeAS6SpaceContext } from "../as6SpaceContext";
 import { publishAS6LivingSpaceContext } from "../../ai/context";
+import { registerAS6CrmAIActions } from "../../ai/actions";
 
 export const AS6_CRM_LIVING_SPACE_RUNTIME_VERSION = "P2";
 
@@ -25,6 +26,7 @@ export function registerAS6CrmLivingSpace() {
   }
 
   crmRuntimeState = registerAS6Space(crmLivingSpaceManifest);
+  registerAS6CrmAIActions();
 
   return {
     ok: true,

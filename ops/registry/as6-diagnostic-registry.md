@@ -1110,3 +1110,10 @@ ops/bin/as6-control-permission-engine-v114
 - Engine: frontend/src/as6/ai/context/AS6AIContextEngine.js
 - Bridge: frontend/src/as6/ai/context/AS6AIContextBridge.js
 - Added failure class: AS6_AI_CONTEXT_DRIFT.
+
+## AS6_PLATFORM_V2_AI_ACTION_ENGINE_P5
+- Diagnostic: ops/bin/as6-diagnose-ai-action-engine-p5
+- Control: ops/bin/as6-control-ai-action-engine-p5
+- Engine: frontend/src/as6/ai/actions/AS6AIActionEngine.js
+- CRM actions: frontend/src/as6/ai/actions/AS6CrmAIActions.js
+- Added failure class: AS6_AI_ACTION_ENGINE_DRIFT.

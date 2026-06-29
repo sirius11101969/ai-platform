@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ENGINE="frontend/src/as6/ai/actions/AS6AIActionEngine.js"
+CRM="frontend/src/as6/ai/actions/AS6CrmAIActions.js"
+POLICY="frontend/src/as6/ai/actions/AS6AIActionPolicy.js"
+CONTRACT="frontend/src/as6/ai/actions/AS6AIActionEngine.contract.md"
+INDEX="frontend/src/as6/ai/actions/index.js"
+CRM_RUNTIME="frontend/src/as6/spaces/crm/as6CrmLivingSpaceRuntime.js"
+
+test -f "$ENGINE" || { echo "AS6_PLATFORM_V2_AI_ACTION_ENGINE_P5=FAIL engine_missing"; exit 1; }
+test -f "$CRM" || { echo "AS6_PLATFORM_V2_AI_ACTION_ENGINE_P5=FAIL crm_actions_missing"; exit 1; }
+test -f "$POLICY" || { echo "AS6_PLATFORM_V2_AI_ACTION_ENGINE_P5=FAIL policy_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_PLATFORM_V2_AI_ACTION_ENGINE_P5=FAIL contract_missing"; exit 1; }
+test -f "$INDEX" || { echo "AS6_PLATFORM_V2_AI_ACTION_ENGINE_P5=FAIL index_missing"; exit 1; }
+
+grep -q "registerAS6AIAction" "$ENGINE" || { echo "AS6_PLATFORM_V2_AI_ACTION_ENGINE_P5=FAIL register_missing"; exit 1; }
+grep -q "executeAS6AIAction" "$ENGINE" || { echo "AS6_PLATFORM_V2_AI_ACTION_ENGINE_P5=FAIL execute_missing"; exit 1; }
+grep -q "validateAS6AIActionRequest" "$ENGINE" || { echo "AS6_PLATFORM_V2_AI_ACTION_ENGINE_P5=FAIL validator_missing"; exit 1; }
+grep -q "canAccessAS6Capability" "$ENGINE" || { echo "AS6_PLATFORM_V2_AI_ACTION_ENGINE_P5=FAIL policy_integration_missing"; exit 1; }
+grep -q "getAS6AIContextForPrompt" "$ENGINE" || { echo "AS6_PLATFORM_V2_AI_ACTION_ENGINE_P5=FAIL context_integration_missing"; exit 1; }
+grep -q "crm.openCustomer" "$CRM" || { echo "AS6_PLATFORM_V2_AI_ACTION_ENGINE_P5=FAIL crm_open_customer_missing"; exit 1; }
+grep -q "crm.openDeal" "$CRM" || { echo "AS6_PLATFORM_V2_AI_ACTION_ENGINE_P5=FAIL crm_open_deal_missing"; exit 1; }
+grep -q "crm.analyzePipeline" "$CRM" || { echo "AS6_PLATFORM_V2_AI_ACTION_ENGINE_P5=FAIL crm_pipeline_missing"; exit 1; }
+grep -q "registerAS6CrmAIActions" "$CRM_RUNTIME" || { echo "AS6_PLATFORM_V2_AI_ACTION_ENGINE_P5=FAIL crm_runtime_registration_missing"; exit 1; }
+
+echo "AS6_PLATFORM_V2_AI_ACTION_ENGINE_P5=PASS"

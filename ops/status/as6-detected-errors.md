@@ -1738,3 +1738,8 @@ Governed and registered.
 - Detected: AS6_AI_CONTEXT_PROVIDER_GAP.
 - Root cause: CRM runtime existed but AI lacked shared context access.
 - Resolution: AI Context Engine and CRM context publishing added.
+
+## AS6_PLATFORM_V2_AI_ACTION_ENGINE_P5
+- Detected: AS6_AI_ACTION_CONTEXT_GAP.
+- Root cause: AI had context but no governed action execution layer.
+- Resolution: AI Action Engine and CRM AI actions added.

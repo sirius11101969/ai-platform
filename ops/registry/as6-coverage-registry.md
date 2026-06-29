@@ -2969,3 +2969,10 @@ Permission Validation
 - Covers CRM context publishing.
 - Covers context snapshot.
 - Covers merged Living Space context.
+
+## AS6_PLATFORM_V2_AI_ACTION_ENGINE_P5
+- Covers AI Action Engine.
+- Covers policy-gated AI actions.
+- Covers AI Context injection into actions.
+- Covers CRM AI action registration.
+- Covers CRM open customer/deal/pipeline actions.
