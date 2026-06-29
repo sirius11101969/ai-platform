@@ -1010,3 +1010,10 @@
 - Graph: frontend/src/as6/dependencies/as6ServiceDependencyGraph.js
 - Engine: frontend/src/as6/dependencies/as6DependencyEngine.js
 - Added failure class: AS6_SERVICE_DEPENDENCY_GRAPH_DRIFT.
+
+## AS6_PLUGIN_LOADER_V111
+- Diagnostic: ops/bin/as6-diagnose-plugin-loader-v111
+- Control: ops/bin/as6-control-plugin-loader-v111
+- Loader: frontend/src/as6/plugins/as6PluginLoader.js
+- Contract: frontend/src/as6/plugins/AS6PluginLoader.contract.md
+- Added failure class: AS6_PLUGIN_LOADER_DRIFT.

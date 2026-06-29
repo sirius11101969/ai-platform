@@ -2872,3 +2872,10 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers service dependency validation.
 - Covers service impact mapping.
 - Covers plugin dependency reference foundation.
+
+## AS6_PLUGIN_LOADER_V111
+- Covers AS6 Plugin Loader.
+- Covers plugin validate/resolve/load/unload/reload lifecycle.
+- Covers Service Registry integration.
+- Covers Dependency Graph integration.
+- Covers Event Bus lifecycle status events.

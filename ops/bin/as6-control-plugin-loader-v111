@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-plugin-loader-v111
+ops/bin/as6-control-service-dependency-graph-v110
+
+grep -RIn "AS6_PLUGIN_LOADER_DRIFT" README.md docs ops .github frontend/src >/dev/null || {
+  echo "AS6_CONTROL_PLUGIN_LOADER_V111=FAIL plugin_loader_drift_class_missing"
+  exit 1
+}
+
+echo "AS6_CONTROL_PLUGIN_LOADER_V111=PASS"

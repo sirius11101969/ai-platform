@@ -1673,3 +1673,8 @@ Governed and registered.
 - Detected: AS6_HIDDEN_SERVICE_COUPLING_RISK.
 - Root cause: Service Registry and Plugin SDK existed without explicit dependency graph.
 - Resolution: AS6 Service Dependency Graph added.
+
+## AS6_PLUGIN_LOADER_V111
+- Detected: AS6_PLUGIN_DIRECT_ACTIVATION_RISK.
+- Root cause: Plugin SDK existed without centralized Plugin Loader lifecycle.
+- Resolution: AS6 Plugin Loader added.

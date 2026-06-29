@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+LOADER="frontend/src/as6/plugins/as6PluginLoader.js"
+CONTRACT="frontend/src/as6/plugins/AS6PluginLoader.contract.md"
+
+test -f "$LOADER" || { echo "AS6_PLUGIN_LOADER_V111=FAIL loader_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_PLUGIN_LOADER_V111=FAIL contract_missing"; exit 1; }
+
+grep -q "loadAS6Plugin" "$LOADER" || { echo "AS6_PLUGIN_LOADER_V111=FAIL load_missing"; exit 1; }
+grep -q "unloadAS6Plugin" "$LOADER" || { echo "AS6_PLUGIN_LOADER_V111=FAIL unload_missing"; exit 1; }
+grep -q "loadAllAS6Plugins" "$LOADER" || { echo "AS6_PLUGIN_LOADER_V111=FAIL load_all_missing"; exit 1; }
+grep -q "reloadAS6Plugin" "$LOADER" || { echo "AS6_PLUGIN_LOADER_V111=FAIL reload_missing"; exit 1; }
+grep -q "resolveAS6PluginDependencies" "$LOADER" || { echo "AS6_PLUGIN_LOADER_V111=FAIL dependency_resolver_missing"; exit 1; }
+grep -q "validateAS6PluginLoaderPolicy" "$LOADER" || { echo "AS6_PLUGIN_LOADER_V111=FAIL validator_missing"; exit 1; }
+grep -q "emitAS6Event" "$LOADER" || { echo "AS6_PLUGIN_LOADER_V111=FAIL event_bus_integration_missing"; exit 1; }
+grep -q "getAS6ImpactMap" "$LOADER" || { echo "AS6_PLUGIN_LOADER_V111=FAIL dependency_graph_integration_missing"; exit 1; }
+
+echo "AS6_PLUGIN_LOADER_V111=PASS"
