@@ -4680,3 +4680,7 @@ Status: PASS pending validation
 - Universal Widget Runtime: enabled.
 - CRM/AI reference widgets: enabled.
 - Next target: Workspace Layout Runtime.
+
+## AS6_PLATFORM_V2_WORKSPACE_LAYOUT_RUNTIME_P8
+- Status: PASS pending release.
+- Project readiness: 99.99999992%

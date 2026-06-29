@@ -1753,3 +1753,6 @@ Governed and registered.
 - Detected: AS6_WORKSPACE_COMPOSITION_GAP.
 - Root cause: Platform V2 modules lacked reusable widget lifecycle/runtime.
 - Resolution: Universal Widget Runtime added.
+
+## AS6_PLATFORM_V2_WORKSPACE_LAYOUT_RUNTIME_P8
+- Resolution: Workspace Runtime added.

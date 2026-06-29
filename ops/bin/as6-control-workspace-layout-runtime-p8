@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-workspace-layout-runtime-p8
+
+grep -RIn AS6_WORKSPACE_LAYOUT_RUNTIME_DRIFT README.md docs ops frontend/src >/dev/null
+
+echo AS6_CONTROL_WORKSPACE_LAYOUT_RUNTIME_P8=PASS

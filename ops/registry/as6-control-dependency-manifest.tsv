@@ -54,3 +54,5 @@ as6-control-ai-action-engine-p5	as6-control-ai-context-engine-p4
 as6-control-universal-service-bus-p6	as6-control-ai-action-engine-p5
 
 as6-control-universal-widget-runtime-p7	as6-control-universal-service-bus-p6
+
+as6-control-workspace-layout-runtime-p8	as6-control-universal-widget-runtime-p7

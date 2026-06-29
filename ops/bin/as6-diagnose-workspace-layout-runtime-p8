@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f frontend/src/as6/workspaces/AS6WorkspaceRuntime.js
+test -f frontend/src/as6/workspaces/AS6WorkspaceBridge.jsx
+test -f frontend/src/as6/workspaces/index.js
+
+grep -q registerAS6Workspace frontend/src/as6/workspaces/AS6WorkspaceRuntime.js
+grep -q attachWidgetToWorkspace frontend/src/as6/workspaces/AS6WorkspaceRuntime.js
+grep -q saveWorkspaceLayout frontend/src/as6/workspaces/AS6WorkspaceRuntime.js
+grep -q createWorkspaceFromCurrentWidgets frontend/src/as6/workspaces/AS6WorkspaceRuntime.js
+
+echo AS6_PLATFORM_V2_WORKSPACE_LAYOUT_RUNTIME_P8=PASS

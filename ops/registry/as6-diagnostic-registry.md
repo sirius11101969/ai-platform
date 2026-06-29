@@ -1131,3 +1131,7 @@ ops/bin/as6-control-permission-engine-v114
 - Runtime: frontend/src/as6/widgets/AS6WidgetRuntime.js
 - Registry: frontend/src/as6/widgets/AS6WidgetRegistry.js
 - Added failure class: AS6_UNIVERSAL_WIDGET_RUNTIME_DRIFT.
+
+## AS6_PLATFORM_V2_WORKSPACE_LAYOUT_RUNTIME_P8
+- Runtime: frontend/src/as6/workspaces/AS6WorkspaceRuntime.js
+- Control: ops/bin/as6-control-workspace-layout-runtime-p8

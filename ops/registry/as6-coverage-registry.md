@@ -2990,3 +2990,8 @@ Permission Validation
 - Covers Widget lifecycle.
 - Covers Widget Service Bus integration.
 - Covers CRM and AI reference widgets.
+
+## AS6_PLATFORM_V2_WORKSPACE_LAYOUT_RUNTIME_P8
+- Workspace Runtime
+- Widget Layout
+- Workspace Persistence
