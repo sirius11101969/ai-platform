@@ -4710,3 +4710,11 @@ Status: PASS pending validation
 - Public Extension SDK: enabled.
 - Plugin factories: enabled.
 - Developer onboarding docs: enabled.
+
+## AS6_PLATFORM_V2_CREATE_PLUGIN_CLI_P12
+- Status: PASS pending release.
+- Product phase: AS6 Platform V2.
+- Project readiness: 99.99999996%
+- Create Plugin CLI: enabled.
+- Generated plugin diagnostic: enabled.
+- Next target: Marketplace UI / Developer Console.

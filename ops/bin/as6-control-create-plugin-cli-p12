@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-create-plugin-cli-p12
+TEST_PLUGIN="p12-smoke-plugin"
+rm -rf "frontend/src/as6/plugins/generated/$TEST_PLUGIN"
+ops/bin/as6-create-plugin "$TEST_PLUGIN" "P12 Smoke Plugin" >/tmp/as6-p12-create-plugin-smoke.log
+ops/bin/as6-diagnose-generated-plugin "$TEST_PLUGIN" >/tmp/as6-p12-generated-plugin-smoke.log
+grep -q "AS6_CREATE_PLUGIN=PASS" /tmp/as6-p12-create-plugin-smoke.log
+grep -q "AS6_GENERATED_PLUGIN=PASS" /tmp/as6-p12-generated-plugin-smoke.log
+rm -rf "frontend/src/as6/plugins/generated/$TEST_PLUGIN"
+echo "AS6_CONTROL_CREATE_PLUGIN_CLI_P12=PASS"

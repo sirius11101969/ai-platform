@@ -3018,3 +3018,10 @@ Permission Validation
 - Covers AI action plugin factory.
 - Covers bus plugin factory.
 - Covers developer onboarding docs.
+
+## AS6_PLATFORM_V2_CREATE_PLUGIN_CLI_P12
+- Covers create plugin CLI.
+- Covers generated plugin manifest.
+- Covers generated plugin README.
+- Covers SDK-based plugin template.
+- Covers generated plugin smoke validation.

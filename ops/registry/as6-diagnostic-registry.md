@@ -1157,3 +1157,10 @@ ops/bin/as6-control-permission-engine-v114
 - SDK: frontend/src/as6/sdk/plugin/AS6PluginSDK.js
 - Docs: docs/platform-v2/sdk/public-extension-sdk-p11.md
 - Added failure class: AS6_PUBLIC_EXTENSION_SDK_DRIFT.
+
+## AS6_PLATFORM_V2_CREATE_PLUGIN_CLI_P12
+- Diagnostic: ops/bin/as6-diagnose-create-plugin-cli-p12
+- Control: ops/bin/as6-control-create-plugin-cli-p12
+- CLI: ops/bin/as6-create-plugin
+- Generated plugin diagnostic: ops/bin/as6-diagnose-generated-plugin
+- Added failure class: AS6_CREATE_PLUGIN_CLI_DRIFT.

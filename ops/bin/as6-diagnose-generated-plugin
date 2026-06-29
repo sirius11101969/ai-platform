@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+PLUGIN_ID="${1:-}"
+test -n "$PLUGIN_ID" || { echo "AS6_GENERATED_PLUGIN=FAIL plugin_id_missing"; exit 1; }
+PLUGIN_DIR="frontend/src/as6/plugins/generated/$PLUGIN_ID"
+MANIFEST="$PLUGIN_DIR/manifest.js"
+README="$PLUGIN_DIR/README.md"
+test -d "$PLUGIN_DIR" || { echo "AS6_GENERATED_PLUGIN=FAIL dir_missing:$PLUGIN_DIR"; exit 1; }
+test -f "$MANIFEST" || { echo "AS6_GENERATED_PLUGIN=FAIL manifest_missing"; exit 1; }
+test -f "$README" || { echo "AS6_GENERATED_PLUGIN=FAIL readme_missing"; exit 1; }
+grep -q "defineAS6Plugin" "$MANIFEST" || { echo "AS6_GENERATED_PLUGIN=FAIL sdk_define_missing"; exit 1; }
+grep -q "widgets:" "$MANIFEST" || { echo "AS6_GENERATED_PLUGIN=FAIL widget_missing"; exit 1; }
+grep -q "aiActions:" "$MANIFEST" || { echo "AS6_GENERATED_PLUGIN=FAIL ai_action_missing"; exit 1; }
+grep -q "busHandlers:" "$MANIFEST" || { echo "AS6_GENERATED_PLUGIN=FAIL bus_handler_missing"; exit 1; }
+echo "AS6_GENERATED_PLUGIN=PASS"
+echo "AS6_PLUGIN_ID=$PLUGIN_ID"

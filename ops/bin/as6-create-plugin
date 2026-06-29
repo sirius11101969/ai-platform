@@ -1,0 +1,66 @@
+#!/usr/bin/env node
+const fs = require("fs");
+const path = require("path");
+
+const pluginId = process.argv[2] || "";
+const pluginTitle = process.argv[3] || pluginId;
+
+if (!pluginId) {
+  console.log("AS6_CREATE_PLUGIN=FAIL plugin_id_missing");
+  console.log("Usage: ops/bin/as6-create-plugin my-plugin \"My Plugin\"");
+  process.exit(1);
+}
+
+const safeId = pluginId.toLowerCase().replace(/[^a-z0-9._-]+/g, "-").replace(/^-+|-+$/g, "");
+const pluginDir = path.join("frontend/src/as6/plugins/generated", safeId);
+
+if (fs.existsSync(pluginDir)) {
+  console.log("AS6_CREATE_PLUGIN=FAIL plugin_already_exists:" + pluginDir);
+  process.exit(1);
+}
+
+fs.mkdirSync(pluginDir, { recursive: true });
+
+const manifest = [
+  "import { defineAS6Plugin } from \"../../../sdk/plugin\";",
+  "",
+  "export default defineAS6Plugin({",
+  "  id: \"" + safeId + "\",",
+  "  title: \"" + pluginTitle.replace(/"/g, "\\\"") + "\",",
+  "  version: \"0.1.0\",",
+  "  publisher: \"AS6 Developer\",",
+  "  description: \"Generated AS6 Platform V2 plugin.\",",
+  "  permissions: [],",
+  "  capabilities: [\"analytics\"],",
+  "  livingSpaces: [],",
+  "  widgets: [{ id: \"" + safeId + ".widget\", title: \"" + pluginTitle.replace(/"/g, "\\\"") + " Widget\", spaceId: \"crm\", type: \"panel\", capability: \"analytics\", service: \"crm\", size: \"medium\" }],",
+  "  aiActions: [{ id: \"" + safeId + ".action\", title: \"" + pluginTitle.replace(/"/g, "\\\"") + " AI Action\", capability: \"analytics\", service: \"crm\", livingSpace: \"as6-sales\", risk: \"low\", execute: async () => ({ ok: true, source: \"" + safeId + "\" }) }],",
+  "  busHandlers: [{ type: \"query\", name: \"" + safeId + ".query\", risk: \"low\", handler: async () => ({ ok: true, source: \"" + safeId + "\" }) }]",
+  "});",
+  ""
+].join("\n");
+
+const readme = [
+  "# " + pluginTitle,
+  "",
+  "Generated AS6 Platform V2 plugin.",
+  "",
+  "## Files",
+  "- manifest.js",
+  "",
+  "## Extension points",
+  "- Widget",
+  "- AI Action",
+  "- Universal Service Bus query handler",
+  "",
+  "## Validation",
+  "Run: ops/bin/as6-diagnose-generated-plugin " + safeId,
+  ""
+].join("\n");
+
+fs.writeFileSync(path.join(pluginDir, "manifest.js"), manifest);
+fs.writeFileSync(path.join(pluginDir, "README.md"), readme);
+
+console.log("AS6_CREATE_PLUGIN=PASS");
+console.log("AS6_PLUGIN_ID=" + safeId);
+console.log("AS6_PLUGIN_DIR=" + pluginDir);

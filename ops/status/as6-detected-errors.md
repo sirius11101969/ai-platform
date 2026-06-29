@@ -1771,3 +1771,8 @@ Governed and registered.
 - Detected: AS6_PLUGIN_DEVELOPER_DOCS_GAP.
 - Root cause: Plugin Runtime existed without public SDK onboarding.
 - Resolution: Public Extension SDK and docs added.
+
+## AS6_PLATFORM_V2_CREATE_PLUGIN_CLI_P12
+- Detected: AS6_PLUGIN_ONBOARDING_AUTOMATION_GAP.
+- Root cause: Public Extension SDK existed without plugin generation CLI.
+- Resolution: create plugin CLI and generated plugin diagnostic added.

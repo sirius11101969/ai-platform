@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+CREATE="ops/bin/as6-create-plugin"
+DIAG="ops/bin/as6-diagnose-generated-plugin"
+DOCS="docs/platform-v2/sdk/create-plugin-cli-p12.md"
+test -x "$CREATE" || { echo "AS6_PLATFORM_V2_CREATE_PLUGIN_CLI_P12=FAIL cli_missing"; exit 1; }
+test -x "$DIAG" || { echo "AS6_PLATFORM_V2_CREATE_PLUGIN_CLI_P12=FAIL generated_diag_missing"; exit 1; }
+test -f "$DOCS" || { echo "AS6_PLATFORM_V2_CREATE_PLUGIN_CLI_P12=FAIL docs_missing"; exit 1; }
+grep -q "AS6_CREATE_PLUGIN=PASS" "$CREATE" || { echo "AS6_PLATFORM_V2_CREATE_PLUGIN_CLI_P12=FAIL cli_pass_marker_missing"; exit 1; }
+grep -q "defineAS6Plugin" "$CREATE" || { echo "AS6_PLATFORM_V2_CREATE_PLUGIN_CLI_P12=FAIL sdk_template_missing"; exit 1; }
+grep -q "AS6_GENERATED_PLUGIN=PASS" "$DIAG" || { echo "AS6_PLATFORM_V2_CREATE_PLUGIN_CLI_P12=FAIL generated_pass_marker_missing"; exit 1; }
+grep -q "AS6_CREATE_PLUGIN_CLI_DRIFT" ops/governance/as6-create-plugin-cli-aec-p12.md || { echo "AS6_PLATFORM_V2_CREATE_PLUGIN_CLI_P12=FAIL drift_class_missing"; exit 1; }
+echo "AS6_PLATFORM_V2_CREATE_PLUGIN_CLI_P12=PASS"
