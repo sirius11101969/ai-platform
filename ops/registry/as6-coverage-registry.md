@@ -2912,3 +2912,8 @@ Permission Validation
 - Covers nested release-gate removal from controls.
 - Covers manifest-driven DAG validation.
 - Covers AS6 Control Runner as single dependency executor.
+
+## AS6_BUILD_ONCE_VALIDATION_V117
+- Covers build-once validation policy.
+- Covers Release Gate as canonical build owner.
+- Covers duplicate build prevention.

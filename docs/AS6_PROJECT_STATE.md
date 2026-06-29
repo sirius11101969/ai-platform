@@ -4595,3 +4595,9 @@ Status: PASS pending validation
 - Direct control chaining: removed for V106-V115.
 - Dependency source of truth: ops/registry/as6-control-dependency-manifest.tsv.
 - Canonical validation: ops/bin/as6-validate and ops/bin/as6-release-gate.
+
+## AS6_BUILD_ONCE_VALIDATION_V117
+- Status: PASS pending release gate.
+- Project readiness: 99.9999993%
+- Build validation owner: ops/bin/as6-release-gate.
+- Duplicate post-release-gate build: deprecated.

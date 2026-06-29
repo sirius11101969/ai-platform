@@ -1053,3 +1053,8 @@ ops/bin/as6-control-permission-engine-v114
 - Scope: control files V106-V115.
 - Added failure class: AS6_CONTROL_DIRECT_CHAIN_DRIFT.
 - Added failure class: AS6_NESTED_RELEASE_GATE_DRIFT.
+
+## AS6_BUILD_ONCE_VALIDATION_V117
+- Diagnostic: ops/bin/as6-diagnose-build-once-validation-v117
+- Control: ops/bin/as6-control-build-once-validation-v117
+- Added failure class: AS6_BUILD_ONCE_VALIDATION_DRIFT.

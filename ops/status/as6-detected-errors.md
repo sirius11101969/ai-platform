@@ -1693,3 +1693,8 @@ Governed and registered.
 - Detected: AS6_VALIDATION_DUPLICATION_RISK.
 - Root cause: controls still called previous controls directly after DAG runner existed.
 - Resolution: direct control chaining removed from V106-V115 controls.
+
+## AS6_BUILD_ONCE_VALIDATION_V117
+- Detected: AS6_DUPLICATE_BUILD_VALIDATION_RISK.
+- Root cause: build ran inside Release Gate and again after Release Gate.
+- Resolution: Release Gate designated as single build validation owner.

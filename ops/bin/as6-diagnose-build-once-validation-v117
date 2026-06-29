@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -x ops/bin/as6-release-gate || { echo "AS6_BUILD_ONCE_VALIDATION_V117=FAIL release_gate_missing"; exit 1; }
+test -x ops/bin/as6-validate || { echo "AS6_BUILD_ONCE_VALIDATION_V117=FAIL validate_missing"; exit 1; }
+
+grep -q "npm run build" ops/bin/as6-release-gate || {
+  echo "AS6_BUILD_ONCE_VALIDATION_V117=FAIL release_gate_build_missing"
+  exit 1
+}
+
+grep -q "AS6_RELEASE_GATE=PASS" ops/bin/as6-release-gate || {
+  echo "AS6_BUILD_ONCE_VALIDATION_V117=FAIL release_gate_pass_marker_missing"
+  exit 1
+}
+
+echo "AS6_BUILD_ONCE_VALIDATION_V117=PASS"
