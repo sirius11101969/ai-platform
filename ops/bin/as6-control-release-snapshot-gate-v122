@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-release-snapshot-gate-v122
+ops/bin/as6-release-snapshot-gate
+
+grep -RIn "AS6_RELEASE_SNAPSHOT_GATE_DRIFT" README.md docs ops .github frontend/src >/dev/null || {
+  echo "AS6_CONTROL_RELEASE_SNAPSHOT_GATE_V122=FAIL drift_class_missing"
+  exit 1
+}
+
+echo "AS6_CONTROL_RELEASE_SNAPSHOT_GATE_V122=PASS"

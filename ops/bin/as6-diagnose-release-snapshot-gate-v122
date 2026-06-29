@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -x ops/bin/as6-release-snapshot || { echo "AS6_RELEASE_SNAPSHOT_GATE_V122=FAIL snapshot_tool_missing"; exit 1; }
+test -x ops/bin/as6-release-snapshot-gate || { echo "AS6_RELEASE_SNAPSHOT_GATE_V122=FAIL snapshot_gate_missing"; exit 1; }
+
+grep -q "AS6_RELEASE_SNAPSHOT=PASS" ops/bin/as6-release-snapshot || { echo "AS6_RELEASE_SNAPSHOT_GATE_V122=FAIL snapshot_pass_marker_missing"; exit 1; }
+grep -q "AS6_RELEASE_SNAPSHOT_GATE=PASS" ops/bin/as6-release-snapshot-gate || { echo "AS6_RELEASE_SNAPSHOT_GATE_V122=FAIL gate_pass_marker_missing"; exit 1; }
+grep -q "JSON.parse" ops/bin/as6-release-snapshot-gate || { echo "AS6_RELEASE_SNAPSHOT_GATE_V122=FAIL json_validation_missing"; exit 1; }
+grep -q "evidence_sha256" ops/bin/as6-release-snapshot-gate || { echo "AS6_RELEASE_SNAPSHOT_GATE_V122=FAIL evidence_hash_validation_missing"; exit 1; }
+
+echo "AS6_RELEASE_SNAPSHOT_GATE_V122=PASS"

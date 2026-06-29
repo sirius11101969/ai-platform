@@ -4619,3 +4619,9 @@ Status: PASS pending validation
 - Project readiness: 99.9999997%
 - Canonical release command: ops/bin/as6-release.
 - Release sequence: validate → release gate → evidence → evidence gate.
+
+## AS6_RELEASE_SNAPSHOT_GATE_V122
+- Status: PASS pending release.
+- Project readiness: 99.99999985%
+- Release Snapshot Gate: enabled.
+- Snapshot validation: JSON/schema/evidence/PASS markers.

@@ -38,3 +38,5 @@ as6-control-release-evidence-manifest-v118	as6-control-build-once-validation-v11
 as6-control-release-evidence-gate-v119	as6-control-release-evidence-manifest-v118
 
 as6-control-release-command-v120	as6-control-release-evidence-gate-v119
+
+as6-control-release-snapshot-gate-v122	as6-control-release-command-v120

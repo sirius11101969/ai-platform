@@ -2935,3 +2935,9 @@ Permission Validation
 - Covers canonical AS6 release command.
 - Covers validate → release gate → evidence → evidence gate sequence.
 - Covers release evidence integration.
+
+## AS6_RELEASE_SNAPSHOT_GATE_V122
+- Covers release snapshot validation.
+- Covers snapshot JSON schema.
+- Covers snapshot PASS markers.
+- Covers snapshot evidence reference.

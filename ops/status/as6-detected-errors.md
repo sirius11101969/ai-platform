@@ -1713,3 +1713,8 @@ Governed and registered.
 - Detected: AS6_RELEASE_PARTIAL_EXECUTION_RISK.
 - Root cause: release steps existed but were not consolidated into one command.
 - Resolution: ops/bin/as6-release added.
+
+## AS6_RELEASE_SNAPSHOT_GATE_V122
+- Detected: AS6_RELEASE_SNAPSHOT_SCHEMA_GAP.
+- Root cause: immutable release snapshot existed without a validation gate.
+- Resolution: ops/bin/as6-release-snapshot-gate added.

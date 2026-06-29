@@ -1076,3 +1076,9 @@ ops/bin/as6-control-permission-engine-v114
 - Control: ops/bin/as6-control-release-command-v120
 - Release command: ops/bin/as6-release
 - Added failure class: AS6_RELEASE_COMMAND_DRIFT.
+
+## AS6_RELEASE_SNAPSHOT_GATE_V122
+- Diagnostic: ops/bin/as6-diagnose-release-snapshot-gate-v122
+- Control: ops/bin/as6-control-release-snapshot-gate-v122
+- Gate: ops/bin/as6-release-snapshot-gate
+- Added failure class: AS6_RELEASE_SNAPSHOT_GATE_DRIFT.
