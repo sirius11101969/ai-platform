@@ -1124,3 +1124,10 @@ ops/bin/as6-control-permission-engine-v114
 - Bus: frontend/src/as6/bus/AS6UniversalServiceBus.js
 - Bridge: frontend/src/as6/bus/AS6ServiceBusBridge.js
 - Added failure class: AS6_UNIVERSAL_SERVICE_BUS_DRIFT.
+
+## AS6_PLATFORM_V2_UNIVERSAL_WIDGET_RUNTIME_P7
+- Diagnostic: ops/bin/as6-diagnose-universal-widget-runtime-p7
+- Control: ops/bin/as6-control-universal-widget-runtime-p7
+- Runtime: frontend/src/as6/widgets/AS6WidgetRuntime.js
+- Registry: frontend/src/as6/widgets/AS6WidgetRegistry.js
+- Added failure class: AS6_UNIVERSAL_WIDGET_RUNTIME_DRIFT.

@@ -2983,3 +2983,10 @@ Permission Validation
 - Covers Living Space bus bridge.
 - Covers AI Action Engine bus integration.
 - Covers direct module coupling prevention.
+
+## AS6_PLATFORM_V2_UNIVERSAL_WIDGET_RUNTIME_P7
+- Covers Universal Widget Runtime.
+- Covers Widget Registry.
+- Covers Widget lifecycle.
+- Covers Widget Service Bus integration.
+- Covers CRM and AI reference widgets.

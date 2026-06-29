@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-universal-widget-runtime-p7
+
+grep -RIn "AS6_UNIVERSAL_WIDGET_RUNTIME_DRIFT" README.md docs ops .github frontend/src >/dev/null || {
+  echo "AS6_CONTROL_UNIVERSAL_WIDGET_RUNTIME_P7=FAIL drift_class_missing"
+  exit 1
+}
+
+echo "AS6_CONTROL_UNIVERSAL_WIDGET_RUNTIME_P7=PASS"

@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+RUNTIME="frontend/src/as6/widgets/AS6WidgetRuntime.js"
+REGISTRY="frontend/src/as6/widgets/AS6WidgetRegistry.js"
+BRIDGE="frontend/src/as6/widgets/AS6WidgetBridge.jsx"
+CONTRACT="frontend/src/as6/widgets/AS6WidgetRuntime.contract.md"
+INDEX="frontend/src/as6/widgets/index.js"
+
+test -f "$RUNTIME" || { echo "AS6_PLATFORM_V2_UNIVERSAL_WIDGET_RUNTIME_P7=FAIL runtime_missing"; exit 1; }
+test -f "$REGISTRY" || { echo "AS6_PLATFORM_V2_UNIVERSAL_WIDGET_RUNTIME_P7=FAIL registry_missing"; exit 1; }
+test -f "$BRIDGE" || { echo "AS6_PLATFORM_V2_UNIVERSAL_WIDGET_RUNTIME_P7=FAIL bridge_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_PLATFORM_V2_UNIVERSAL_WIDGET_RUNTIME_P7=FAIL contract_missing"; exit 1; }
+test -f "$INDEX" || { echo "AS6_PLATFORM_V2_UNIVERSAL_WIDGET_RUNTIME_P7=FAIL index_missing"; exit 1; }
+
+grep -q "registerAS6Widget" "$RUNTIME" || { echo "AS6_PLATFORM_V2_UNIVERSAL_WIDGET_RUNTIME_P7=FAIL register_missing"; exit 1; }
+grep -q "activateAS6Widget" "$RUNTIME" || { echo "AS6_PLATFORM_V2_UNIVERSAL_WIDGET_RUNTIME_P7=FAIL activate_missing"; exit 1; }
+grep -q "deactivateAS6Widget" "$RUNTIME" || { echo "AS6_PLATFORM_V2_UNIVERSAL_WIDGET_RUNTIME_P7=FAIL deactivate_missing"; exit 1; }
+grep -q "emitAS6BusEvent" "$RUNTIME" || { echo "AS6_PLATFORM_V2_UNIVERSAL_WIDGET_RUNTIME_P7=FAIL bus_integration_missing"; exit 1; }
+grep -q "crm.dashboard.widget" "$REGISTRY" || { echo "AS6_PLATFORM_V2_UNIVERSAL_WIDGET_RUNTIME_P7=FAIL crm_dashboard_widget_missing"; exit 1; }
+grep -q "ai.context.widget" "$REGISTRY" || { echo "AS6_PLATFORM_V2_UNIVERSAL_WIDGET_RUNTIME_P7=FAIL ai_widget_missing"; exit 1; }
+grep -q "useAS6WidgetRuntimeBridge" "$BRIDGE" || { echo "AS6_PLATFORM_V2_UNIVERSAL_WIDGET_RUNTIME_P7=FAIL react_bridge_missing"; exit 1; }
+
+echo "AS6_PLATFORM_V2_UNIVERSAL_WIDGET_RUNTIME_P7=PASS"

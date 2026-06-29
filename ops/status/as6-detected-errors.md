@@ -1748,3 +1748,8 @@ Governed and registered.
 - Detected: AS6_DIRECT_MODULE_COUPLING_RISK.
 - Root cause: Platform V2 modules lacked a shared event/command/query communication layer.
 - Resolution: Universal Service Bus added.
+
+## AS6_PLATFORM_V2_UNIVERSAL_WIDGET_RUNTIME_P7
+- Detected: AS6_WORKSPACE_COMPOSITION_GAP.
+- Root cause: Platform V2 modules lacked reusable widget lifecycle/runtime.
+- Resolution: Universal Widget Runtime added.
