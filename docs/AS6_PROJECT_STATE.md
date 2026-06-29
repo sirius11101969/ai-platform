@@ -4577,3 +4577,7 @@ Status: PASS pending validation
 - AS6 Capability Registry: enabled.
 - AS6 Capability Engine: enabled.
 - Next target: Permission Engine.
+
+## AS6_PERMISSION_ENGINE_V114
+
+Status: PASS pending validation

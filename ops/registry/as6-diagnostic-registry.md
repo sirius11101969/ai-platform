@@ -1032,3 +1032,10 @@ ops/bin/as6-control-capability-resolver-v112
 - Registry: frontend/src/as6/capabilities/as6CapabilityRegistry.js
 - Engine: frontend/src/as6/capabilities/as6CapabilityEngine.js
 - Added failure class: AS6_CAPABILITY_REGISTRY_DRIFT.
+
+## AS6_PERMISSION_ENGINE_V114
+Diagnostic:
+ops/bin/as6-diagnose-permission-engine-v114
+
+Control:
+ops/bin/as6-control-permission-engine-v114

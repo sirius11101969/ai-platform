@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-permission-engine-v114
+ops/bin/as6-control-capability-registry-v113
+
+echo AS6_CONTROL_PERMISSION_ENGINE_V114=PASS

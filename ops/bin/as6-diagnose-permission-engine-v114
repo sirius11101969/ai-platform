@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f frontend/src/as6/security/as6PermissionEngine.js
+test -f frontend/src/as6/security/AS6PermissionEngine.contract.md
+
+grep -q permissionMatrix frontend/src/as6/security/as6PermissionEngine.js
+grep -q hasCapability frontend/src/as6/security/as6PermissionEngine.js
+grep -q validatePermissionPolicy frontend/src/as6/security/as6PermissionEngine.js
+
+echo AS6_PERMISSION_ENGINE_V114=PASS

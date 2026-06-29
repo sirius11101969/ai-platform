@@ -2893,3 +2893,9 @@ Plugin activation
 - Covers capability priority/status metadata.
 - Covers capability service/plugin binding metadata.
 - Covers registry-aware capability resolution.
+
+## AS6_PERMISSION_ENGINE_V114
+Coverage:
+RBAC
+Capability Authorization
+Permission Validation

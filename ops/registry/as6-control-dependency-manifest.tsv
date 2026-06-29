@@ -24,3 +24,5 @@ as6-control-plugin-loader-v111	as6-control-service-dependency-graph-v110
 as6-control-capability-resolver-v112	as6-control-plugin-loader-v111
 
 as6-control-capability-registry-v113	as6-control-capability-resolver-v112
+
+as6-control-permission-engine-v114	as6-control-capability-registry-v113
