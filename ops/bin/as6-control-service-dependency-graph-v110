@@ -2,7 +2,6 @@
 set -euo pipefail
 
 ops/bin/as6-diagnose-service-dependency-graph-v110
-ops/bin/as6-control-plugin-sdk-v109
 
 grep -RIn "AS6_SERVICE_DEPENDENCY_GRAPH_DRIFT" README.md docs ops .github frontend/src >/dev/null || {
   echo "AS6_CONTROL_SERVICE_DEPENDENCY_GRAPH_V110=FAIL dependency_graph_drift_class_missing"

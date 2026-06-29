@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+CONTROL_FILES="
+ops/bin/as6-control-release-readiness-gate-v106
+ops/bin/as6-control-architecture-drift-detector-v107
+ops/bin/as6-control-service-registry-v108
+ops/bin/as6-control-plugin-sdk-v109
+ops/bin/as6-control-service-dependency-graph-v110
+ops/bin/as6-control-plugin-loader-v111
+ops/bin/as6-control-capability-resolver-v112
+ops/bin/as6-control-capability-registry-v113
+ops/bin/as6-control-permission-engine-v114
+ops/bin/as6-control-policy-engine-v115
+"
+
+for f in $CONTROL_FILES; do
+  test -x "$f" || { echo "AS6_CONTROL_CHAIN_DEDUPE_V116=FAIL control_missing_or_not_exec:$f"; exit 1; }
+done
+
+if grep -RIn '^[[:space:]]*ops/bin/as6-control-' $CONTROL_FILES; then
+  echo "AS6_CONTROL_CHAIN_DEDUPE_V116=FAIL direct_control_chain_present"
+  exit 1
+fi
+
+if grep -RIn '^[[:space:]]*\(AS6_RELEASE_GATE_RUN_DIR=.*\)\?ops/bin/as6-release-gate' $CONTROL_FILES; then
+  echo "AS6_CONTROL_CHAIN_DEDUPE_V116=FAIL nested_release_gate_present"
+  exit 1
+fi
+
+test -x ops/bin/as6-control-runner || { echo "AS6_CONTROL_CHAIN_DEDUPE_V116=FAIL runner_missing"; exit 1; }
+test -x ops/bin/as6-validate || { echo "AS6_CONTROL_CHAIN_DEDUPE_V116=FAIL validate_missing"; exit 1; }
+test -f ops/registry/as6-control-dependency-manifest.tsv || { echo "AS6_CONTROL_CHAIN_DEDUPE_V116=FAIL manifest_missing"; exit 1; }
+
+grep -q "as6-control-policy-engine-v115" ops/registry/as6-control-dependency-manifest.tsv || {
+  echo "AS6_CONTROL_CHAIN_DEDUPE_V116=FAIL v115_manifest_missing"
+  exit 1
+}
+
+echo "AS6_CONTROL_CHAIN_DEDUPE_V116=PASS"

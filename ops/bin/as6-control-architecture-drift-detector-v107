@@ -3,7 +3,6 @@ set -euo pipefail
 
 ops/bin/as6-diagnose-architecture-drift-detector-v107
 ops/bin/as6-detect-architecture-drift
-ops/bin/as6-control-release-readiness-gate-v106
 
 grep -RIn "AS6_ARCHITECTURE_DRIFT_DETECTOR_DRIFT" README.md docs ops .github frontend/src >/dev/null || {
   echo "AS6_CONTROL_ARCHITECTURE_DRIFT_DETECTOR_V107=FAIL drift_class_missing"

@@ -1046,3 +1046,10 @@ ops/bin/as6-control-permission-engine-v114
 - Engine: frontend/src/as6/security/as6PolicyEngine.js
 - Contract: frontend/src/as6/security/AS6PolicyEngine.contract.md
 - Added failure class: AS6_POLICY_ENGINE_DRIFT.
+
+## AS6_CONTROL_CHAIN_DEDUPE_V116
+- Diagnostic: ops/bin/as6-diagnose-control-chain-dedupe-v116
+- Control: ops/bin/as6-control-control-chain-dedupe-v116
+- Scope: control files V106-V115.
+- Added failure class: AS6_CONTROL_DIRECT_CHAIN_DRIFT.
+- Added failure class: AS6_NESTED_RELEASE_GATE_DRIFT.

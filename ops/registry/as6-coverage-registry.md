@@ -2906,3 +2906,9 @@ Permission Validation
 - Covers deny-by-default decision path.
 - Covers Permission Engine integration.
 - Covers Capability Registry and Service Registry checks.
+
+## AS6_CONTROL_CHAIN_DEDUPE_V116
+- Covers direct control-chain removal.
+- Covers nested release-gate removal from controls.
+- Covers manifest-driven DAG validation.
+- Covers AS6 Control Runner as single dependency executor.

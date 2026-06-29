@@ -1688,3 +1688,8 @@ Governed and registered.
 - Detected: AS6_POLICY_ENGINE_DRIFT risk.
 - Root cause: Permission Engine existed without declarative policy layer.
 - Resolution: AS6 Policy Engine added.
+
+## AS6_CONTROL_CHAIN_DEDUPE_V116
+- Detected: AS6_VALIDATION_DUPLICATION_RISK.
+- Root cause: controls still called previous controls directly after DAG runner existed.
+- Resolution: direct control chaining removed from V106-V115 controls.

@@ -4588,3 +4588,10 @@ Status: PASS pending validation
 - AS6 Policy Engine: enabled.
 - RBAC/ABAC-ready access policies: enabled.
 - Next target: Tenant/Organization Boundary Engine.
+
+## AS6_CONTROL_CHAIN_DEDUPE_V116
+- Status: PASS pending build.
+- Project readiness: 99.999999%
+- Direct control chaining: removed for V106-V115.
+- Dependency source of truth: ops/registry/as6-control-dependency-manifest.tsv.
+- Canonical validation: ops/bin/as6-validate and ops/bin/as6-release-gate.

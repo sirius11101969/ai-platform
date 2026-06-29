@@ -2,7 +2,6 @@
 set -euo pipefail
 
 ops/bin/as6-diagnose-capability-registry-v113
-ops/bin/as6-control-capability-resolver-v112
 
 grep -RIn "AS6_CAPABILITY_REGISTRY_DRIFT" README.md docs ops .github frontend/src >/dev/null || {
   echo "AS6_CONTROL_CAPABILITY_REGISTRY_V113=FAIL capability_registry_drift_class_missing"

@@ -2,7 +2,6 @@
 set -euo pipefail
 
 ops/bin/as6-diagnose-plugin-sdk-v109
-ops/bin/as6-control-service-registry-v108
 
 grep -RIn "AS6_PLUGIN_SDK_DRIFT" README.md docs ops .github frontend/src >/dev/null || {
   echo "AS6_CONTROL_PLUGIN_SDK_V109=FAIL plugin_sdk_drift_class_missing"

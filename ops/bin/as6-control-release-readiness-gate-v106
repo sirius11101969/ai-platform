@@ -2,8 +2,6 @@
 set -euo pipefail
 
 ops/bin/as6-diagnose-release-readiness-gate-v106
-AS6_RELEASE_GATE_RUN_DIR="runtime/as6-v106-release-readiness-gate/gate-logs" ops/bin/as6-release-gate as6-control-event-bus-v101
-ops/bin/as6-control-ci-status-badge-governance-v105
 
 grep -RIn "AS6_RELEASE_GATE_DRIFT" README.md docs ops .github frontend/src >/dev/null || {
   echo "AS6_CONTROL_RELEASE_READINESS_GATE_V106=FAIL release_gate_drift_class_missing"
