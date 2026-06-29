@@ -1117,3 +1117,10 @@ ops/bin/as6-control-permission-engine-v114
 - Engine: frontend/src/as6/ai/actions/AS6AIActionEngine.js
 - CRM actions: frontend/src/as6/ai/actions/AS6CrmAIActions.js
 - Added failure class: AS6_AI_ACTION_ENGINE_DRIFT.
+
+## AS6_PLATFORM_V2_UNIVERSAL_SERVICE_BUS_P6
+- Diagnostic: ops/bin/as6-diagnose-universal-service-bus-p6
+- Control: ops/bin/as6-control-universal-service-bus-p6
+- Bus: frontend/src/as6/bus/AS6UniversalServiceBus.js
+- Bridge: frontend/src/as6/bus/AS6ServiceBusBridge.js
+- Added failure class: AS6_UNIVERSAL_SERVICE_BUS_DRIFT.

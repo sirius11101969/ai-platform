@@ -50,3 +50,5 @@ as6-control-crm-runtime-ui-integration-p3	as6-control-crm-living-space-runtime-p
 as6-control-ai-context-engine-p4	as6-control-crm-runtime-ui-integration-p3
 
 as6-control-ai-action-engine-p5	as6-control-ai-context-engine-p4
+
+as6-control-universal-service-bus-p6	as6-control-ai-action-engine-p5

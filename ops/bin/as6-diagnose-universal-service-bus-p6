@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+BUS="frontend/src/as6/bus/AS6UniversalServiceBus.js"
+BRIDGE="frontend/src/as6/bus/AS6ServiceBusBridge.js"
+POLICY="frontend/src/as6/bus/AS6BusPolicy.js"
+CONTRACT="frontend/src/as6/bus/AS6UniversalServiceBus.contract.md"
+INDEX="frontend/src/as6/bus/index.js"
+ACTIONS="frontend/src/as6/ai/actions/AS6AIActionEngine.js"
+
+test -f "$BUS" || { echo "AS6_PLATFORM_V2_UNIVERSAL_SERVICE_BUS_P6=FAIL bus_missing"; exit 1; }
+test -f "$BRIDGE" || { echo "AS6_PLATFORM_V2_UNIVERSAL_SERVICE_BUS_P6=FAIL bridge_missing"; exit 1; }
+test -f "$POLICY" || { echo "AS6_PLATFORM_V2_UNIVERSAL_SERVICE_BUS_P6=FAIL policy_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_PLATFORM_V2_UNIVERSAL_SERVICE_BUS_P6=FAIL contract_missing"; exit 1; }
+test -f "$INDEX" || { echo "AS6_PLATFORM_V2_UNIVERSAL_SERVICE_BUS_P6=FAIL index_missing"; exit 1; }
+
+grep -q "registerAS6BusHandler" "$BUS" || { echo "AS6_PLATFORM_V2_UNIVERSAL_SERVICE_BUS_P6=FAIL register_missing"; exit 1; }
+grep -q "dispatchAS6BusMessage" "$BUS" || { echo "AS6_PLATFORM_V2_UNIVERSAL_SERVICE_BUS_P6=FAIL dispatch_missing"; exit 1; }
+grep -q "emitAS6BusEvent" "$BUS" || { echo "AS6_PLATFORM_V2_UNIVERSAL_SERVICE_BUS_P6=FAIL event_missing"; exit 1; }
+grep -q "runAS6BusCommand" "$BUS" || { echo "AS6_PLATFORM_V2_UNIVERSAL_SERVICE_BUS_P6=FAIL command_missing"; exit 1; }
+grep -q "queryAS6Bus" "$BUS" || { echo "AS6_PLATFORM_V2_UNIVERSAL_SERVICE_BUS_P6=FAIL query_missing"; exit 1; }
+grep -q "registerAS6LivingSpaceBusHandlers" "$BRIDGE" || { echo "AS6_PLATFORM_V2_UNIVERSAL_SERVICE_BUS_P6=FAIL living_space_bridge_missing"; exit 1; }
+grep -q "runAS6BusCommand" "$ACTIONS" || { echo "AS6_PLATFORM_V2_UNIVERSAL_SERVICE_BUS_P6=FAIL ai_action_bus_integration_missing"; exit 1; }
+
+echo "AS6_PLATFORM_V2_UNIVERSAL_SERVICE_BUS_P6=PASS"

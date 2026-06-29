@@ -1,5 +1,6 @@
 import { getAS6AIContextForPrompt } from "../context";
 import { canAccessAS6Capability } from "../../security";
+import { runAS6BusCommand } from "../../bus";
 
 export const AS6_AI_ACTION_ENGINE_VERSION = "P5";
 
@@ -77,10 +78,17 @@ export async function executeAS6AIAction(request = {}) {
     aiContext,
   });
 
+  const busResult = await runAS6BusCommand(validation.action.id, request.payload || {}, {
+    source: "ai-action-engine",
+    actionId: request.actionId,
+    aiContext,
+  }).catch(() => ({ ok: false, skipped: true }));
+
   return {
     ok: true,
     actionId: request.actionId,
     result,
+    busResult,
     aiContext,
   };
 }

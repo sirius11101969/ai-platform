@@ -2976,3 +2976,10 @@ Permission Validation
 - Covers AI Context injection into actions.
 - Covers CRM AI action registration.
 - Covers CRM open customer/deal/pipeline actions.
+
+## AS6_PLATFORM_V2_UNIVERSAL_SERVICE_BUS_P6
+- Covers Universal Service Bus.
+- Covers event/command/query routing.
+- Covers Living Space bus bridge.
+- Covers AI Action Engine bus integration.
+- Covers direct module coupling prevention.

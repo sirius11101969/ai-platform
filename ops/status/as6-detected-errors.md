@@ -1743,3 +1743,8 @@ Governed and registered.
 - Detected: AS6_AI_ACTION_CONTEXT_GAP.
 - Root cause: AI had context but no governed action execution layer.
 - Resolution: AI Action Engine and CRM AI actions added.
+
+## AS6_PLATFORM_V2_UNIVERSAL_SERVICE_BUS_P6
+- Detected: AS6_DIRECT_MODULE_COUPLING_RISK.
+- Root cause: Platform V2 modules lacked a shared event/command/query communication layer.
+- Resolution: Universal Service Bus added.
