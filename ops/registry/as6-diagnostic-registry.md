@@ -1164,3 +1164,10 @@ ops/bin/as6-control-permission-engine-v114
 - CLI: ops/bin/as6-create-plugin
 - Generated plugin diagnostic: ops/bin/as6-diagnose-generated-plugin
 - Added failure class: AS6_CREATE_PLUGIN_CLI_DRIFT.
+
+## AS6_PLATFORM_V2_PLUGIN_REGISTRY_DISCOVERY_P13
+- Diagnostic: ops/bin/as6-diagnose-plugin-registry-discovery-p13
+- Control: ops/bin/as6-control-plugin-registry-discovery-p13
+- Discovery: frontend/src/as6/plugins/AS6PluginDiscovery.js
+- Registry: frontend/src/as6/plugins/AS6PluginRegistry.js
+- Added failure class: AS6_PLUGIN_REGISTRY_DISCOVERY_DRIFT.

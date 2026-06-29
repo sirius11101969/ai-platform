@@ -3025,3 +3025,10 @@ Permission Validation
 - Covers generated plugin README.
 - Covers SDK-based plugin template.
 - Covers generated plugin smoke validation.
+
+## AS6_PLATFORM_V2_PLUGIN_REGISTRY_DISCOVERY_P13
+- Covers plugin discovery.
+- Covers plugin registry state.
+- Covers duplicate plugin ID detection.
+- Covers SDK compatibility discovery.
+- Covers Marketplace visibility preparation.

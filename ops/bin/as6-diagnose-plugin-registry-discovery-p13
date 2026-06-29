@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+DISCOVERY="frontend/src/as6/plugins/AS6PluginDiscovery.js"
+REGISTRY="frontend/src/as6/plugins/AS6PluginRegistry.js"
+CONTRACT="frontend/src/as6/plugins/AS6PluginDiscovery.contract.md"
+DOCS="docs/platform-v2/sdk/plugin-registry-discovery-p13.md"
+INDEX="frontend/src/as6/plugins/index.js"
+test -f "$DISCOVERY" || { echo "AS6_PLATFORM_V2_PLUGIN_REGISTRY_DISCOVERY_P13=FAIL discovery_missing"; exit 1; }
+test -f "$REGISTRY" || { echo "AS6_PLATFORM_V2_PLUGIN_REGISTRY_DISCOVERY_P13=FAIL registry_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_PLATFORM_V2_PLUGIN_REGISTRY_DISCOVERY_P13=FAIL contract_missing"; exit 1; }
+test -f "$DOCS" || { echo "AS6_PLATFORM_V2_PLUGIN_REGISTRY_DISCOVERY_P13=FAIL docs_missing"; exit 1; }
+grep -q "createAS6PluginDiscoveryIndex" "$DISCOVERY" || { echo "AS6_PLATFORM_V2_PLUGIN_REGISTRY_DISCOVERY_P13=FAIL discovery_index_missing"; exit 1; }
+grep -q "getAS6DiscoverablePlugins" "$DISCOVERY" || { echo "AS6_PLATFORM_V2_PLUGIN_REGISTRY_DISCOVERY_P13=FAIL discoverable_missing"; exit 1; }
+grep -q "duplicate_plugin_id" "$DISCOVERY" || { echo "AS6_PLATFORM_V2_PLUGIN_REGISTRY_DISCOVERY_P13=FAIL duplicate_detection_missing"; exit 1; }
+grep -q "validateAS6PluginSDKCompatibility" "$DISCOVERY" || { echo "AS6_PLATFORM_V2_PLUGIN_REGISTRY_DISCOVERY_P13=FAIL sdk_compat_missing"; exit 1; }
+grep -q "refreshAS6PluginRegistry" "$REGISTRY" || { echo "AS6_PLATFORM_V2_PLUGIN_REGISTRY_DISCOVERY_P13=FAIL refresh_missing"; exit 1; }
+grep -q "validateAS6PluginRegistryPolicy" "$REGISTRY" || { echo "AS6_PLATFORM_V2_PLUGIN_REGISTRY_DISCOVERY_P13=FAIL policy_missing"; exit 1; }
+grep -q "AS6_PLUGIN_REGISTRY_DISCOVERY_DRIFT" ops/governance/as6-plugin-registry-discovery-aec-p13.md || { echo "AS6_PLATFORM_V2_PLUGIN_REGISTRY_DISCOVERY_P13=FAIL drift_class_missing"; exit 1; }
+grep -q "AS6PluginDiscovery" "$INDEX" || { echo "AS6_PLATFORM_V2_PLUGIN_REGISTRY_DISCOVERY_P13=FAIL index_export_missing"; exit 1; }
+echo "AS6_PLATFORM_V2_PLUGIN_REGISTRY_DISCOVERY_P13=PASS"

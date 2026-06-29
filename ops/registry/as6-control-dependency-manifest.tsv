@@ -64,3 +64,5 @@ as6-control-plugin-marketplace-runtime-p10	as6-control-tenant-boundary-engine-p9
 as6-control-public-extension-sdk-p11	as6-control-plugin-marketplace-runtime-p10
 
 as6-control-create-plugin-cli-p12	as6-control-public-extension-sdk-p11
+
+as6-control-plugin-registry-discovery-p13	as6-control-create-plugin-cli-p12

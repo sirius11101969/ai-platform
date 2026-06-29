@@ -1776,3 +1776,8 @@ Governed and registered.
 - Detected: AS6_PLUGIN_ONBOARDING_AUTOMATION_GAP.
 - Root cause: Public Extension SDK existed without plugin generation CLI.
 - Resolution: create plugin CLI and generated plugin diagnostic added.
+
+## AS6_PLATFORM_V2_PLUGIN_REGISTRY_DISCOVERY_P13
+- Detected: AS6_PLUGIN_DISCOVERY_GAP.
+- Root cause: Plugin CLI existed without registry discovery state.
+- Resolution: Plugin Registry & Discovery Engine added.

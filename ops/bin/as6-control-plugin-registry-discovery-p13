@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-plugin-registry-discovery-p13
+grep -RIn "AS6_PLUGIN_REGISTRY_DISCOVERY_DRIFT" README.md docs ops .github frontend/src >/dev/null
+echo "AS6_CONTROL_PLUGIN_REGISTRY_DISCOVERY_P13=PASS"
