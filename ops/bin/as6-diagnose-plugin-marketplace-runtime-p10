@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+RUNTIME="frontend/src/as6/plugins/AS6PluginRuntime.js"
+MARKET="frontend/src/as6/plugins/AS6PluginMarketplace.js"
+POLICY="frontend/src/as6/plugins/AS6PluginPolicy.js"
+EXAMPLE="frontend/src/as6/plugins/examples.crm-insights.plugin.js"
+CONTRACT="frontend/src/as6/plugins/AS6PluginRuntime.contract.md"
+INDEX="frontend/src/as6/plugins/index.js"
+
+test -f "$RUNTIME" || { echo "AS6_PLATFORM_V2_PLUGIN_MARKETPLACE_RUNTIME_P10=FAIL runtime_missing"; exit 1; }
+test -f "$MARKET" || { echo "AS6_PLATFORM_V2_PLUGIN_MARKETPLACE_RUNTIME_P10=FAIL marketplace_missing"; exit 1; }
+test -f "$POLICY" || { echo "AS6_PLATFORM_V2_PLUGIN_MARKETPLACE_RUNTIME_P10=FAIL policy_missing"; exit 1; }
+test -f "$EXAMPLE" || { echo "AS6_PLATFORM_V2_PLUGIN_MARKETPLACE_RUNTIME_P10=FAIL example_plugin_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_PLATFORM_V2_PLUGIN_MARKETPLACE_RUNTIME_P10=FAIL contract_missing"; exit 1; }
+test -f "$INDEX" || { echo "AS6_PLATFORM_V2_PLUGIN_MARKETPLACE_RUNTIME_P10=FAIL index_missing"; exit 1; }
+
+grep -q "installAS6Plugin" "$RUNTIME" || { echo "AS6_PLATFORM_V2_PLUGIN_MARKETPLACE_RUNTIME_P10=FAIL install_missing"; exit 1; }
+grep -q "enableAS6Plugin" "$RUNTIME" || { echo "AS6_PLATFORM_V2_PLUGIN_MARKETPLACE_RUNTIME_P10=FAIL enable_missing"; exit 1; }
+grep -q "disableAS6Plugin" "$RUNTIME" || { echo "AS6_PLATFORM_V2_PLUGIN_MARKETPLACE_RUNTIME_P10=FAIL disable_missing"; exit 1; }
+grep -q "removeAS6Plugin" "$RUNTIME" || { echo "AS6_PLATFORM_V2_PLUGIN_MARKETPLACE_RUNTIME_P10=FAIL remove_missing"; exit 1; }
+grep -q "registerAS6Widget" "$RUNTIME" || { echo "AS6_PLATFORM_V2_PLUGIN_MARKETPLACE_RUNTIME_P10=FAIL widget_registration_missing"; exit 1; }
+grep -q "registerAS6AIAction" "$RUNTIME" || { echo "AS6_PLATFORM_V2_PLUGIN_MARKETPLACE_RUNTIME_P10=FAIL ai_action_registration_missing"; exit 1; }
+grep -q "registerAS6BusHandler" "$RUNTIME" || { echo "AS6_PLATFORM_V2_PLUGIN_MARKETPLACE_RUNTIME_P10=FAIL bus_handler_registration_missing"; exit 1; }
+grep -q "publishAS6MarketplacePlugin" "$MARKET" || { echo "AS6_PLATFORM_V2_PLUGIN_MARKETPLACE_RUNTIME_P10=FAIL publish_missing"; exit 1; }
+grep -q "validateAS6PluginPolicy" "$POLICY" || { echo "AS6_PLATFORM_V2_PLUGIN_MARKETPLACE_RUNTIME_P10=FAIL policy_validator_missing"; exit 1; }
+grep -q "crmInsightsPlugin" "$EXAMPLE" || { echo "AS6_PLATFORM_V2_PLUGIN_MARKETPLACE_RUNTIME_P10=FAIL crm_reference_plugin_missing"; exit 1; }
+
+echo "AS6_PLATFORM_V2_PLUGIN_MARKETPLACE_RUNTIME_P10=PASS"

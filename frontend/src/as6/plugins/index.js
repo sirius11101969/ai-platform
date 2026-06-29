@@ -1,2 +1,4 @@
-export * from "./as6PluginRegistry";
-export * from "./as6PluginSDK";
+export * from "./AS6PluginRuntime";
+export * from "./AS6PluginMarketplace";
+export * from "./AS6PluginPolicy";
+export * from "./examples.crm-insights.plugin";

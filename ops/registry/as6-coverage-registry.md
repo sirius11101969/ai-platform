@@ -3003,3 +3003,10 @@ Permission Validation
 - Covers Workspace tenant ownership.
 - Covers Widget tenant ownership.
 - Covers AI Context tenant ownership.
+
+## AS6_PLATFORM_V2_PLUGIN_MARKETPLACE_RUNTIME_P10
+- Covers Plugin Runtime.
+- Covers Plugin Marketplace.
+- Covers Plugin Policy.
+- Covers Widget/AI Action/Bus Handler extension points.
+- Covers CRM Insights reference plugin.

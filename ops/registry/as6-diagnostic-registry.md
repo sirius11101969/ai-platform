@@ -1143,3 +1143,10 @@ ops/bin/as6-control-permission-engine-v114
 - Boundary: frontend/src/as6/tenant/AS6OrganizationBoundary.js
 - Policy: frontend/src/as6/tenant/AS6TenantPolicy.js
 - Added failure class: AS6_TENANT_BOUNDARY_DRIFT.
+
+## AS6_PLATFORM_V2_PLUGIN_MARKETPLACE_RUNTIME_P10
+- Diagnostic: ops/bin/as6-diagnose-plugin-marketplace-runtime-p10
+- Control: ops/bin/as6-control-plugin-marketplace-runtime-p10
+- Runtime: frontend/src/as6/plugins/AS6PluginRuntime.js
+- Marketplace: frontend/src/as6/plugins/AS6PluginMarketplace.js
+- Added failure class: AS6_PLUGIN_MARKETPLACE_RUNTIME_DRIFT.

@@ -1761,3 +1761,8 @@ Governed and registered.
 - Detected: AS6_TENANT_ISOLATION_GAP.
 - Root cause: Platform V2 had workspace/widget/context runtime but no tenant isolation.
 - Resolution: Tenant Boundary Engine added.
+
+## AS6_PLATFORM_V2_PLUGIN_MARKETPLACE_RUNTIME_P10
+- Detected: AS6_PLUGIN_RUNTIME_INSTALL_GAP.
+- Root cause: Platform V2 lacked plugin installation and marketplace extension runtime.
+- Resolution: Plugin Marketplace / Extension Runtime added.

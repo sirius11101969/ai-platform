@@ -4693,3 +4693,12 @@ Status: PASS pending validation
 - Organization Boundary: enabled.
 - Workspace/Widget/AI Context isolation: enabled.
 - Next target: Plugin Marketplace / Extension Runtime.
+
+## AS6_PLATFORM_V2_PLUGIN_MARKETPLACE_RUNTIME_P10
+- Status: PASS pending release.
+- Product phase: AS6 Platform V2.
+- Project readiness: 99.99999994%
+- Plugin Runtime: enabled.
+- Plugin Marketplace: enabled.
+- CRM Insights reference plugin: enabled.
+- Next target: Public Extension SDK docs and developer onboarding.
