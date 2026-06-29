@@ -20,3 +20,5 @@ as6-control-plugin-sdk-v109	as6-control-service-registry-v108
 as6-control-service-dependency-graph-v110	as6-control-plugin-sdk-v109
 
 as6-control-plugin-loader-v111	as6-control-service-dependency-graph-v110
+
+as6-control-capability-resolver-v112	as6-control-plugin-loader-v111

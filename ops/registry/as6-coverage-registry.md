@@ -2879,3 +2879,10 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers Service Registry integration.
 - Covers Dependency Graph integration.
 - Covers Event Bus lifecycle status events.
+
+## AS6_CAPABILITY_RESOLVER_V112
+
+Coverage:
+Capability routing
+Plugin selection
+Plugin activation

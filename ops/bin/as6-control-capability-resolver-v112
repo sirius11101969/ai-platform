@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-capability-resolver-v112
+ops/bin/as6-control-plugin-loader-v111
+
+echo AS6_CONTROL_CAPABILITY_RESOLVER_V112=PASS

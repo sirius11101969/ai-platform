@@ -1017,3 +1017,11 @@
 - Loader: frontend/src/as6/plugins/as6PluginLoader.js
 - Contract: frontend/src/as6/plugins/AS6PluginLoader.contract.md
 - Added failure class: AS6_PLUGIN_LOADER_DRIFT.
+
+## AS6_CAPABILITY_RESOLVER_V112
+
+Diagnostic:
+ops/bin/as6-diagnose-capability-resolver-v112
+
+Control:
+ops/bin/as6-control-capability-resolver-v112

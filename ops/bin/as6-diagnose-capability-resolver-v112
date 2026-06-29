@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f frontend/src/as6/capabilities/as6CapabilityResolver.js
+test -f frontend/src/as6/capabilities/AS6CapabilityResolver.contract.md
+
+grep -q resolveCapability frontend/src/as6/capabilities/as6CapabilityResolver.js
+grep -q activateCapability frontend/src/as6/capabilities/as6CapabilityResolver.js
+grep -q loadAS6Plugin frontend/src/as6/capabilities/as6CapabilityResolver.js
+
+echo AS6_CAPABILITY_RESOLVER_V112=PASS
