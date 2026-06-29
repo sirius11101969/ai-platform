@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-release-command-v120
+
+grep -RIn "AS6_RELEASE_COMMAND_DRIFT" README.md docs ops .github frontend/src >/dev/null || {
+  echo "AS6_CONTROL_RELEASE_COMMAND_V120=FAIL drift_class_missing"
+  exit 1
+}
+
+echo "AS6_CONTROL_RELEASE_COMMAND_V120=PASS"

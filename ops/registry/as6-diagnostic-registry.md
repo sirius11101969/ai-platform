@@ -1070,3 +1070,9 @@ ops/bin/as6-control-permission-engine-v114
 - Control: ops/bin/as6-control-release-evidence-gate-v119
 - Gate: ops/bin/as6-release-evidence-gate
 - Added failure class: AS6_RELEASE_EVIDENCE_GATE_DRIFT.
+
+## AS6_RELEASE_COMMAND_V120
+- Diagnostic: ops/bin/as6-diagnose-release-command-v120
+- Control: ops/bin/as6-control-release-command-v120
+- Release command: ops/bin/as6-release
+- Added failure class: AS6_RELEASE_COMMAND_DRIFT.

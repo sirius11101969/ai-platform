@@ -1708,3 +1708,8 @@ Governed and registered.
 - Detected: AS6_RELEASE_EVIDENCE_GATE_DRIFT risk.
 - Root cause: evidence manifest existed but was not yet enforced as a gate.
 - Resolution: ops/bin/as6-release-evidence-gate added.
+
+## AS6_RELEASE_COMMAND_V120
+- Detected: AS6_RELEASE_PARTIAL_EXECUTION_RISK.
+- Root cause: release steps existed but were not consolidated into one command.
+- Resolution: ops/bin/as6-release added.

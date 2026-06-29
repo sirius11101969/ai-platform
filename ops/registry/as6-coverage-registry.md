@@ -2930,3 +2930,8 @@ Permission Validation
 - Covers evidence file existence.
 - Covers validate/release/build PASS markers.
 - Covers target/head/readiness evidence.
+
+## AS6_RELEASE_COMMAND_V120
+- Covers canonical AS6 release command.
+- Covers validate → release gate → evidence → evidence gate sequence.
+- Covers release evidence integration.

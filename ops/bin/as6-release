@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+TARGET="${1:-as6-control-release-evidence-gate-v119}"
+STAGE="${2:-AS6_RELEASE_COMMAND}"
+RUN_DIR="${AS6_RELEASE_RUN_DIR:-runtime/as6-release}"
+
+mkdir -p "$RUN_DIR"
+
+echo "== AS6 Release Command =="
+echo "AS6_RELEASE_TARGET=$TARGET"
+echo "AS6_RELEASE_STAGE=$STAGE"
+echo "AS6_RELEASE_RUN_DIR=$RUN_DIR"
+
+echo "== Validate =="
+ops/bin/as6-validate "$TARGET" | tee "$RUN_DIR/as6-validate.log"
+
+echo "== Release Gate =="
+AS6_RELEASE_GATE_RUN_DIR="$RUN_DIR/release-gate" ops/bin/as6-release-gate "$TARGET" | tee "$RUN_DIR/as6-release-gate.log"
+
+echo "== Release Evidence =="
+AS6_EVIDENCE_RUN_DIR="$RUN_DIR/evidence" ops/bin/as6-release-evidence "$TARGET" "$STAGE" | tee "$RUN_DIR/as6-release-evidence.log"
+
+EVIDENCE_FILE="ops/evidence/${STAGE}.md"
+
+echo "== Evidence Gate =="
+ops/bin/as6-release-evidence-gate "$EVIDENCE_FILE" | tee "$RUN_DIR/as6-release-evidence-gate.log"
+
+echo "AS6_RELEASE=PASS"
+echo "AS6_RELEASE_EVIDENCE_FILE=$EVIDENCE_FILE"

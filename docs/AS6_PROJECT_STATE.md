@@ -4613,3 +4613,9 @@ Status: PASS pending validation
 - Project readiness: 99.9999996%
 - Release Evidence Gate: enabled.
 - Evidence manifest is now a required release-readiness artifact.
+
+## AS6_RELEASE_COMMAND_V120
+- Status: PASS pending release command.
+- Project readiness: 99.9999997%
+- Canonical release command: ops/bin/as6-release.
+- Release sequence: validate → release gate → evidence → evidence gate.
