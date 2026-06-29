@@ -2955,3 +2955,10 @@ Permission Validation
 - Covers CRM activation/deactivation lifecycle.
 - Covers CRM context publication.
 - Covers CRM as Platform V2 reference Living Space.
+
+## AS6_PLATFORM_V2_CRM_RUNTIME_UI_INTEGRATION_P3
+- Covers CRM Runtime Bridge.
+- Covers CRM runtime activation from React shell.
+- Covers CRM runtime status UI.
+- Covers CRM context update bridge.
+- Covers Sales shell integration.

@@ -1728,3 +1728,8 @@ Governed and registered.
 - Detected: AS6_CRM_SPACE_REFERENCE_IMPLEMENTATION_GAP.
 - Root cause: P1 created CRM manifest but CRM lacked a runtime module.
 - Resolution: CRM Living Space Runtime added.
+
+## AS6_PLATFORM_V2_CRM_RUNTIME_UI_INTEGRATION_P3
+- Detected: AS6_CRM_RUNTIME_ACTIVATION_GAP.
+- Root cause: CRM runtime existed but was not integrated into React shell.
+- Resolution: CRM Runtime Bridge and shell status integration added.

@@ -1096,3 +1096,10 @@ ops/bin/as6-control-permission-engine-v114
 - Runtime: frontend/src/as6/spaces/crm/as6CrmLivingSpaceRuntime.js
 - Contract: frontend/src/as6/spaces/crm/AS6CrmLivingSpaceRuntime.contract.md
 - Added failure class: AS6_CRM_LIVING_SPACE_RUNTIME_DRIFT.
+
+## AS6_PLATFORM_V2_CRM_RUNTIME_UI_INTEGRATION_P3
+- Diagnostic: ops/bin/as6-diagnose-crm-runtime-ui-integration-p3
+- Control: ops/bin/as6-control-crm-runtime-ui-integration-p3
+- Bridge: frontend/src/as6/spaces/crm/AS6CrmRuntimeBridge.jsx
+- Shell integration: frontend/src/as6-sales/AS6SalesShellAdapter.jsx
+- Added failure class: AS6_CRM_RUNTIME_UI_INTEGRATION_DRIFT.

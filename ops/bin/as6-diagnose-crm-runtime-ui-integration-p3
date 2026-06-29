@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+BRIDGE="frontend/src/as6/spaces/crm/AS6CrmRuntimeBridge.jsx"
+CONTRACT="frontend/src/as6/spaces/crm/AS6CrmRuntimeBridge.contract.md"
+SHELL="frontend/src/as6-sales/AS6SalesShellAdapter.jsx"
+CSS="frontend/src/as6/spaces/crm/as6CrmRuntimeBridge.css"
+
+test -f "$BRIDGE" || { echo "AS6_PLATFORM_V2_CRM_RUNTIME_UI_INTEGRATION_P3=FAIL bridge_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_PLATFORM_V2_CRM_RUNTIME_UI_INTEGRATION_P3=FAIL contract_missing"; exit 1; }
+test -f "$SHELL" || { echo "AS6_PLATFORM_V2_CRM_RUNTIME_UI_INTEGRATION_P3=FAIL shell_missing"; exit 1; }
+test -f "$CSS" || { echo "AS6_PLATFORM_V2_CRM_RUNTIME_UI_INTEGRATION_P3=FAIL css_missing"; exit 1; }
+
+grep -q "useAS6CrmRuntimeBridge" "$BRIDGE" || { echo "AS6_PLATFORM_V2_CRM_RUNTIME_UI_INTEGRATION_P3=FAIL hook_missing"; exit 1; }
+grep -q "AS6CrmRuntimeStatus" "$BRIDGE" || { echo "AS6_PLATFORM_V2_CRM_RUNTIME_UI_INTEGRATION_P3=FAIL status_component_missing"; exit 1; }
+grep -q "activateAS6CrmLivingSpace" "$BRIDGE" || { echo "AS6_PLATFORM_V2_CRM_RUNTIME_UI_INTEGRATION_P3=FAIL activation_missing"; exit 1; }
+grep -q "updateAS6CrmLivingSpaceContext" "$BRIDGE" || { echo "AS6_PLATFORM_V2_CRM_RUNTIME_UI_INTEGRATION_P3=FAIL context_update_missing"; exit 1; }
+grep -q "useAS6CrmRuntimeBridge" "$SHELL" || { echo "AS6_PLATFORM_V2_CRM_RUNTIME_UI_INTEGRATION_P3=FAIL shell_hook_missing"; exit 1; }
+grep -q "AS6CrmRuntimeStatus" "$SHELL" || { echo "AS6_PLATFORM_V2_CRM_RUNTIME_UI_INTEGRATION_P3=FAIL shell_status_missing"; exit 1; }
+
+echo "AS6_PLATFORM_V2_CRM_RUNTIME_UI_INTEGRATION_P3=PASS"
