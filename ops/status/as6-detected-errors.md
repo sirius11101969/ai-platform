@@ -1703,3 +1703,8 @@ Governed and registered.
 - Detected: AS6_RELEASE_EVIDENCE_MISSING.
 - Root cause: release validation existed without one consolidated evidence manifest.
 - Resolution: ops/bin/as6-release-evidence added.
+
+## AS6_RELEASE_EVIDENCE_GATE_V119
+- Detected: AS6_RELEASE_EVIDENCE_GATE_DRIFT risk.
+- Root cause: evidence manifest existed but was not yet enforced as a gate.
+- Resolution: ops/bin/as6-release-evidence-gate added.

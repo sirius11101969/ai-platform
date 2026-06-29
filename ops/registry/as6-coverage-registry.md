@@ -2924,3 +2924,9 @@ Permission Validation
 - Covers release gate evidence.
 - Covers build evidence.
 - Covers readiness evidence.
+
+## AS6_RELEASE_EVIDENCE_GATE_V119
+- Covers release evidence gate.
+- Covers evidence file existence.
+- Covers validate/release/build PASS markers.
+- Covers target/head/readiness evidence.

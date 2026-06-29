@@ -34,3 +34,5 @@ as6-control-control-chain-dedupe-v116	as6-control-policy-engine-v115
 as6-control-build-once-validation-v117	as6-control-control-chain-dedupe-v116
 
 as6-control-release-evidence-manifest-v118	as6-control-build-once-validation-v117
+
+as6-control-release-evidence-gate-v119	as6-control-release-evidence-manifest-v118

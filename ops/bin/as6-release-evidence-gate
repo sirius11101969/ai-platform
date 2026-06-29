@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+EVIDENCE_FILE="${1:-ops/evidence/AS6_RELEASE_EVIDENCE_MANIFEST_V118.md}"
+
+test -f "$EVIDENCE_FILE" || {
+  echo "AS6_RELEASE_EVIDENCE_GATE=FAIL evidence_missing:$EVIDENCE_FILE"
+  exit 1
+}
+
+grep -q "AS6_VALIDATE: PASS" "$EVIDENCE_FILE" || {
+  echo "AS6_RELEASE_EVIDENCE_GATE=FAIL validate_pass_missing"
+  exit 1
+}
+
+grep -q "AS6_RELEASE_GATE: PASS" "$EVIDENCE_FILE" || {
+  echo "AS6_RELEASE_EVIDENCE_GATE=FAIL release_gate_pass_missing"
+  exit 1
+}
+
+grep -q "BUILD: PASS" "$EVIDENCE_FILE" || {
+  echo "AS6_RELEASE_EVIDENCE_GATE=FAIL build_pass_missing"
+  exit 1
+}
+
+grep -q "Readiness:" "$EVIDENCE_FILE" || {
+  echo "AS6_RELEASE_EVIDENCE_GATE=FAIL readiness_missing"
+  exit 1
+}
+
+grep -q "Target:" "$EVIDENCE_FILE" || {
+  echo "AS6_RELEASE_EVIDENCE_GATE=FAIL target_missing"
+  exit 1
+}
+
+grep -q "Head:" "$EVIDENCE_FILE" || {
+  echo "AS6_RELEASE_EVIDENCE_GATE=FAIL head_missing"
+  exit 1
+}
+
+echo "AS6_RELEASE_EVIDENCE_GATE=PASS"
+echo "AS6_RELEASE_EVIDENCE_FILE=$EVIDENCE_FILE"
