@@ -996,3 +996,10 @@
 - Registry: frontend/src/as6/services/as6ServiceRegistry.js
 - Engine: frontend/src/as6/services/as6ServiceEngine.js
 - Added failure class: AS6_SERVICE_REGISTRY_DRIFT.
+
+## AS6_PLUGIN_SDK_V109
+- Diagnostic: ops/bin/as6-diagnose-plugin-sdk-v109
+- Control: ops/bin/as6-control-plugin-sdk-v109
+- Plugin Registry: frontend/src/as6/plugins/as6PluginRegistry.js
+- Plugin SDK: frontend/src/as6/plugins/as6PluginSDK.js
+- Added failure class: AS6_PLUGIN_SDK_DRIFT.

@@ -1663,3 +1663,8 @@ Governed and registered.
 - Detected: AS6_SERVICE_METADATA_DUPLICATION_RISK.
 - Root cause: product services existed without a single service registry.
 - Resolution: AS6 Service Registry and Service Engine added.
+
+## AS6_PLUGIN_SDK_V109
+- Detected: AS6_PLUGIN_CORE_MODIFICATION_RISK.
+- Root cause: Service Registry existed but no formal plugin extension API existed.
+- Resolution: AS6 Plugin SDK added.

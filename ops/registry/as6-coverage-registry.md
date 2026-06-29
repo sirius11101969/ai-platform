@@ -2858,3 +2858,10 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers CRM and AS6 One service metadata.
 - Covers command palette/workspace service flags.
 - Covers service permissions and capabilities metadata.
+
+## AS6_PLUGIN_SDK_V109
+- Covers AS6 Plugin Registry.
+- Covers AS6 Plugin SDK.
+- Covers plugin activation/deactivation lifecycle.
+- Covers Service Registry integration.
+- Covers Event Bus integration.

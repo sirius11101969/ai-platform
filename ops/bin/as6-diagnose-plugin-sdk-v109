@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REGISTRY="frontend/src/as6/plugins/as6PluginRegistry.js"
+SDK="frontend/src/as6/plugins/as6PluginSDK.js"
+CONTRACT="frontend/src/as6/plugins/AS6PluginSDK.contract.md"
+INDEX="frontend/src/as6/plugins/index.js"
+
+test -f "$REGISTRY" || { echo "AS6_PLUGIN_SDK_V109=FAIL registry_missing"; exit 1; }
+test -f "$SDK" || { echo "AS6_PLUGIN_SDK_V109=FAIL sdk_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_PLUGIN_SDK_V109=FAIL contract_missing"; exit 1; }
+test -f "$INDEX" || { echo "AS6_PLUGIN_SDK_V109=FAIL index_missing"; exit 1; }
+
+grep -q "registerAS6Plugin" "$REGISTRY" || { echo "AS6_PLUGIN_SDK_V109=FAIL register_missing"; exit 1; }
+grep -q "unregisterAS6Plugin" "$REGISTRY" || { echo "AS6_PLUGIN_SDK_V109=FAIL unregister_missing"; exit 1; }
+grep -q "validateAS6PluginRegistryPolicy" "$REGISTRY" || { echo "AS6_PLUGIN_SDK_V109=FAIL registry_validator_missing"; exit 1; }
+grep -q "activateAS6Plugin" "$SDK" || { echo "AS6_PLUGIN_SDK_V109=FAIL activate_missing"; exit 1; }
+grep -q "deactivateAS6Plugin" "$SDK" || { echo "AS6_PLUGIN_SDK_V109=FAIL deactivate_missing"; exit 1; }
+grep -q "emitAS6Event" "$SDK" || { echo "AS6_PLUGIN_SDK_V109=FAIL event_bus_integration_missing"; exit 1; }
+grep -q "getAS6ServiceById" "$SDK" || { echo "AS6_PLUGIN_SDK_V109=FAIL service_registry_integration_missing"; exit 1; }
+grep -q "validateAS6PluginSDKPolicy" "$SDK" || { echo "AS6_PLUGIN_SDK_V109=FAIL sdk_validator_missing"; exit 1; }
+
+echo "AS6_PLUGIN_SDK_V109=PASS"
