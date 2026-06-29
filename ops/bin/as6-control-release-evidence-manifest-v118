@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-release-evidence-manifest-v118
+
+grep -RIn "AS6_RELEASE_EVIDENCE_MANIFEST_DRIFT" README.md docs ops .github frontend/src >/dev/null || {
+  echo "AS6_CONTROL_RELEASE_EVIDENCE_MANIFEST_V118=FAIL drift_class_missing"
+  exit 1
+}
+
+echo "AS6_CONTROL_RELEASE_EVIDENCE_MANIFEST_V118=PASS"

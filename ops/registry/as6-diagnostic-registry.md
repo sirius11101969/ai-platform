@@ -1058,3 +1058,9 @@ ops/bin/as6-control-permission-engine-v114
 - Diagnostic: ops/bin/as6-diagnose-build-once-validation-v117
 - Control: ops/bin/as6-control-build-once-validation-v117
 - Added failure class: AS6_BUILD_ONCE_VALIDATION_DRIFT.
+
+## AS6_RELEASE_EVIDENCE_MANIFEST_V118
+- Diagnostic: ops/bin/as6-diagnose-release-evidence-manifest-v118
+- Control: ops/bin/as6-control-release-evidence-manifest-v118
+- Evidence tool: ops/bin/as6-release-evidence
+- Added failure class: AS6_RELEASE_EVIDENCE_MANIFEST_DRIFT.

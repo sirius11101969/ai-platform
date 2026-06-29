@@ -2917,3 +2917,10 @@ Permission Validation
 - Covers build-once validation policy.
 - Covers Release Gate as canonical build owner.
 - Covers duplicate build prevention.
+
+## AS6_RELEASE_EVIDENCE_MANIFEST_V118
+- Covers release evidence manifest.
+- Covers validate evidence.
+- Covers release gate evidence.
+- Covers build evidence.
+- Covers readiness evidence.

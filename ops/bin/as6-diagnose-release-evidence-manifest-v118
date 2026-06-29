@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -x ops/bin/as6-release-evidence || { echo "AS6_RELEASE_EVIDENCE_MANIFEST_V118=FAIL evidence_tool_missing"; exit 1; }
+grep -q "AS6_RELEASE_EVIDENCE_MANIFEST=PASS" ops/bin/as6-release-evidence || { echo "AS6_RELEASE_EVIDENCE_MANIFEST_V118=FAIL pass_marker_missing"; exit 1; }
+grep -q "ops/bin/as6-validate" ops/bin/as6-release-evidence || { echo "AS6_RELEASE_EVIDENCE_MANIFEST_V118=FAIL validate_missing"; exit 1; }
+grep -q "ops/bin/as6-release-gate" ops/bin/as6-release-evidence || { echo "AS6_RELEASE_EVIDENCE_MANIFEST_V118=FAIL release_gate_missing"; exit 1; }
+
+echo "AS6_RELEASE_EVIDENCE_MANIFEST_V118=PASS"

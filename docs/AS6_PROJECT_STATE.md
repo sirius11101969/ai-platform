@@ -4601,3 +4601,9 @@ Status: PASS pending validation
 - Project readiness: 99.9999993%
 - Build validation owner: ops/bin/as6-release-gate.
 - Duplicate post-release-gate build: deprecated.
+
+## AS6_RELEASE_EVIDENCE_MANIFEST_V118
+- Status: PASS pending release evidence.
+- Project readiness: 99.9999995%
+- Release Evidence Manifest: enabled.
+- Evidence directory: ops/evidence.

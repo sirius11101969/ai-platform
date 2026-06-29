@@ -1698,3 +1698,8 @@ Governed and registered.
 - Detected: AS6_DUPLICATE_BUILD_VALIDATION_RISK.
 - Root cause: build ran inside Release Gate and again after Release Gate.
 - Resolution: Release Gate designated as single build validation owner.
+
+## AS6_RELEASE_EVIDENCE_MANIFEST_V118
+- Detected: AS6_RELEASE_EVIDENCE_MISSING.
+- Root cause: release validation existed without one consolidated evidence manifest.
+- Resolution: ops/bin/as6-release-evidence added.
