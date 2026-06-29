@@ -2941,3 +2941,10 @@ Permission Validation
 - Covers snapshot JSON schema.
 - Covers snapshot PASS markers.
 - Covers snapshot evidence reference.
+
+## AS6_PLATFORM_V2_LIVING_SPACES_SPEC_P1
+- Covers Living Spaces 2.0 architecture specification.
+- Covers Space Manifest schema.
+- Covers Space Runtime foundation.
+- Covers Space Context model.
+- Covers CRM reference manifest.

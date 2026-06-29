@@ -40,3 +40,5 @@ as6-control-release-evidence-gate-v119	as6-control-release-evidence-manifest-v11
 as6-control-release-command-v120	as6-control-release-evidence-gate-v119
 
 as6-control-release-snapshot-gate-v122	as6-control-release-command-v120
+
+as6-control-living-spaces-spec-p1	as6-control-release-snapshot-gate-v122

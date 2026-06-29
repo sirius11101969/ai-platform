@@ -4625,3 +4625,10 @@ Status: PASS pending validation
 - Project readiness: 99.99999985%
 - Release Snapshot Gate: enabled.
 - Snapshot validation: JSON/schema/evidence/PASS markers.
+
+## AS6_PLATFORM_V2_LIVING_SPACES_SPEC_P1
+- Status: PASS pending release.
+- Product phase: AS6 Platform V2.
+- Project readiness: 99.99999985%
+- Living Spaces 2.0 Specification: enabled.
+- Next target: CRM Living Space 2.0 reference implementation.

@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f docs/platform-v2/living-spaces-2.0-spec.md || { echo "AS6_PLATFORM_V2_LIVING_SPACES_SPEC_P1=FAIL spec_missing"; exit 1; }
+test -f frontend/src/as6/spaces/AS6LivingSpace.contract.md || { echo "AS6_PLATFORM_V2_LIVING_SPACES_SPEC_P1=FAIL contract_missing"; exit 1; }
+test -f frontend/src/as6/spaces/as6SpaceManifest.schema.js || { echo "AS6_PLATFORM_V2_LIVING_SPACES_SPEC_P1=FAIL schema_missing"; exit 1; }
+test -f frontend/src/as6/spaces/as6SpaceRuntime.js || { echo "AS6_PLATFORM_V2_LIVING_SPACES_SPEC_P1=FAIL runtime_missing"; exit 1; }
+test -f frontend/src/as6/spaces/as6SpaceContext.js || { echo "AS6_PLATFORM_V2_LIVING_SPACES_SPEC_P1=FAIL context_missing"; exit 1; }
+test -f frontend/src/as6/spaces/as6SpaceRegistry.js || { echo "AS6_PLATFORM_V2_LIVING_SPACES_SPEC_P1=FAIL registry_missing"; exit 1; }
+test -f frontend/src/as6/spaces/examples/crm.space.js || { echo "AS6_PLATFORM_V2_LIVING_SPACES_SPEC_P1=FAIL crm_example_missing"; exit 1; }
+
+grep -q "validateAS6SpaceManifest" frontend/src/as6/spaces/as6SpaceManifest.schema.js || { echo "AS6_PLATFORM_V2_LIVING_SPACES_SPEC_P1=FAIL validator_missing"; exit 1; }
+grep -q "registerAS6Space" frontend/src/as6/spaces/as6SpaceRuntime.js || { echo "AS6_PLATFORM_V2_LIVING_SPACES_SPEC_P1=FAIL runtime_register_missing"; exit 1; }
+grep -q "crmLivingSpaceManifest" frontend/src/as6/spaces/examples/crm.space.js || { echo "AS6_PLATFORM_V2_LIVING_SPACES_SPEC_P1=FAIL crm_manifest_missing"; exit 1; }
+
+echo "AS6_PLATFORM_V2_LIVING_SPACES_SPEC_P1=PASS"

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-living-spaces-spec-p1
+
+grep -RIn "AS6_LIVING_SPACE_2_SPEC_DRIFT" README.md docs ops .github frontend/src >/dev/null || {
+  echo "AS6_CONTROL_LIVING_SPACES_SPEC_P1=FAIL drift_class_missing"
+  exit 1
+}
+
+echo "AS6_CONTROL_LIVING_SPACES_SPEC_P1=PASS"

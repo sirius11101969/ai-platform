@@ -1718,3 +1718,8 @@ Governed and registered.
 - Detected: AS6_RELEASE_SNAPSHOT_SCHEMA_GAP.
 - Root cause: immutable release snapshot existed without a validation gate.
 - Resolution: ops/bin/as6-release-snapshot-gate added.
+
+## AS6_PLATFORM_V2_LIVING_SPACES_SPEC_P1
+- Detected: AS6_SPACE_MANIFEST_SCHEMA_GAP.
+- Root cause: product spaces lacked unified Living Spaces 2.0 contract.
+- Resolution: Living Spaces 2.0 spec/schema/runtime/context/registry added.

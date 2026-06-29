@@ -1082,3 +1082,10 @@ ops/bin/as6-control-permission-engine-v114
 - Control: ops/bin/as6-control-release-snapshot-gate-v122
 - Gate: ops/bin/as6-release-snapshot-gate
 - Added failure class: AS6_RELEASE_SNAPSHOT_GATE_DRIFT.
+
+## AS6_PLATFORM_V2_LIVING_SPACES_SPEC_P1
+- Diagnostic: ops/bin/as6-diagnose-living-spaces-spec-p1
+- Control: ops/bin/as6-control-living-spaces-spec-p1
+- Spec: docs/platform-v2/living-spaces-2.0-spec.md
+- Schema: frontend/src/as6/spaces/as6SpaceManifest.schema.js
+- Added failure class: AS6_LIVING_SPACE_2_SPEC_DRIFT.

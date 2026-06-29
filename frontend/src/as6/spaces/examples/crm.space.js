@@ -1,0 +1,30 @@
+export const crmLivingSpaceManifest = {
+  id: "crm",
+  title: "CRM",
+  version: "2.0.0",
+  category: "sales",
+  routeBase: "/as6-sales",
+  status: "active",
+  routes: [
+    { id: "crm-dashboard", path: "/", title: "CRM Dashboard" },
+    { id: "crm-customers", path: "/customers", title: "Customers" },
+    { id: "crm-deals", path: "/deals", title: "Deals" },
+  ],
+  navigation: [
+    { id: "dashboard", title: "Dashboard", route: "/as6-sales" },
+    { id: "customers", title: "Customers", route: "/as6-sales/customers" },
+    { id: "deals", title: "Deals", route: "/as6-sales/deals" },
+  ],
+  widgets: [],
+  services: ["crm", "pipeline-copilot", "revenue"],
+  commands: ["crm.open", "crm.search", "crm.createDeal"],
+  permissions: ["crm.read"],
+  policies: ["manager_sales_access"],
+  capabilities: ["customers", "deals", "analytics", "pipeline"],
+  aiActions: ["crm.summarizeCustomer", "crm.nextBestAction", "crm.analyzePipeline"],
+  searchProviders: ["crm.customers", "crm.deals"],
+  contextProviders: ["crm.currentCustomer", "crm.currentDeal"],
+  settings: {
+    defaultView: "dashboard",
+  },
+};
