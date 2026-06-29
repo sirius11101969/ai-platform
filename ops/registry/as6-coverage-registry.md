@@ -3032,3 +3032,10 @@ Permission Validation
 - Covers duplicate plugin ID detection.
 - Covers SDK compatibility discovery.
 - Covers Marketplace visibility preparation.
+
+## AS6_PLATFORM_V2_MARKETPLACE_UI_DEVELOPER_CONSOLE_P14
+- Covers Marketplace Developer Console UI.
+- Covers plugin registry UI visibility.
+- Covers SDK compatibility visibility.
+- Covers plugin lifecycle actions UI.
+- Covers Developer Console documentation.

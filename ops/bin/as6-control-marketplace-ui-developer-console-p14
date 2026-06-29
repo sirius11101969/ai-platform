@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-marketplace-ui-developer-console-p14
+grep -RIn "AS6_MARKETPLACE_UI_DEVELOPER_CONSOLE_DRIFT" README.md docs ops .github frontend/src >/dev/null
+echo "AS6_CONTROL_MARKETPLACE_UI_DEVELOPER_CONSOLE_P14=PASS"

@@ -4726,3 +4726,11 @@ Status: PASS pending validation
 - Plugin Discovery Engine: enabled.
 - Plugin Registry State: enabled.
 - Next target: Marketplace UI / Developer Console.
+
+## AS6_PLATFORM_V2_MARKETPLACE_UI_DEVELOPER_CONSOLE_P14
+- Status: PASS pending release.
+- Product phase: AS6 Platform V2.
+- Project readiness: 99.99999998%
+- Marketplace Developer Console: enabled.
+- Plugin Registry UI: enabled.
+- Next target: Marketplace route integration into AS6 Shell.

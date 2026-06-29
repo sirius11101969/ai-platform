@@ -5,3 +5,5 @@ export * from "./examples.crm-insights.plugin";
 
 export * from "./AS6PluginDiscovery";
 export * from "./AS6PluginRegistry";
+
+export * from "./ui";

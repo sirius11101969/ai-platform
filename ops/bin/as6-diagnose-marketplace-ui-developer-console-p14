@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+UI="frontend/src/as6/plugins/ui/AS6MarketplaceDeveloperConsole.jsx"
+CSS="frontend/src/as6/plugins/ui/AS6MarketplaceDeveloperConsole.css"
+CONTRACT="frontend/src/as6/plugins/ui/AS6MarketplaceDeveloperConsole.contract.md"
+INDEX="frontend/src/as6/plugins/ui/index.js"
+DOCS="docs/platform-v2/sdk/marketplace-developer-console-p14.md"
+MAIN_INDEX="frontend/src/as6/plugins/index.js"
+test -f "$UI" || { echo "AS6_PLATFORM_V2_MARKETPLACE_UI_DEVELOPER_CONSOLE_P14=FAIL ui_missing"; exit 1; }
+test -f "$CSS" || { echo "AS6_PLATFORM_V2_MARKETPLACE_UI_DEVELOPER_CONSOLE_P14=FAIL css_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_PLATFORM_V2_MARKETPLACE_UI_DEVELOPER_CONSOLE_P14=FAIL contract_missing"; exit 1; }
+test -f "$INDEX" || { echo "AS6_PLATFORM_V2_MARKETPLACE_UI_DEVELOPER_CONSOLE_P14=FAIL index_missing"; exit 1; }
+test -f "$DOCS" || { echo "AS6_PLATFORM_V2_MARKETPLACE_UI_DEVELOPER_CONSOLE_P14=FAIL docs_missing"; exit 1; }
+grep -q "useAS6MarketplaceDeveloperConsole" "$UI" || { echo "AS6_PLATFORM_V2_MARKETPLACE_UI_DEVELOPER_CONSOLE_P14=FAIL hook_missing"; exit 1; }
+grep -q "AS6MarketplaceDeveloperConsole" "$UI" || { echo "AS6_PLATFORM_V2_MARKETPLACE_UI_DEVELOPER_CONSOLE_P14=FAIL component_missing"; exit 1; }
+grep -q "getAS6PluginRegistryState" "$UI" || { echo "AS6_PLATFORM_V2_MARKETPLACE_UI_DEVELOPER_CONSOLE_P14=FAIL registry_integration_missing"; exit 1; }
+grep -q "enableAS6Plugin" "$UI" || { echo "AS6_PLATFORM_V2_MARKETPLACE_UI_DEVELOPER_CONSOLE_P14=FAIL enable_missing"; exit 1; }
+grep -q "disableAS6Plugin" "$UI" || { echo "AS6_PLATFORM_V2_MARKETPLACE_UI_DEVELOPER_CONSOLE_P14=FAIL disable_missing"; exit 1; }
+grep -q "removeAS6Plugin" "$UI" || { echo "AS6_PLATFORM_V2_MARKETPLACE_UI_DEVELOPER_CONSOLE_P14=FAIL remove_missing"; exit 1; }
+grep -q "AS6_MARKETPLACE_UI_DEVELOPER_CONSOLE_DRIFT" ops/governance/as6-marketplace-ui-developer-console-aec-p14.md || { echo "AS6_PLATFORM_V2_MARKETPLACE_UI_DEVELOPER_CONSOLE_P14=FAIL drift_class_missing"; exit 1; }
+grep -q "./ui" "$MAIN_INDEX" || { echo "AS6_PLATFORM_V2_MARKETPLACE_UI_DEVELOPER_CONSOLE_P14=FAIL main_export_missing"; exit 1; }
+echo "AS6_PLATFORM_V2_MARKETPLACE_UI_DEVELOPER_CONSOLE_P14=PASS"

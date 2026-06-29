@@ -1,0 +1,56 @@
+.as6-marketplace-console {
+  display: grid;
+  gap: 16px;
+  padding: 16px;
+}
+
+.as6-marketplace-console__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.as6-marketplace-console__eyebrow {
+  margin: 0;
+  opacity: 0.7;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.as6-marketplace-console__search {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(120,120,160,0.25);
+}
+
+.as6-marketplace-console__grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.as6-marketplace-console__card {
+  padding: 14px;
+  border: 1px solid rgba(120,120,160,0.18);
+  border-radius: 16px;
+}
+
+.as6-marketplace-console__card header {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.as6-marketplace-console__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.as6-marketplace-console__last-action {
+  padding: 12px;
+  border-radius: 12px;
+  overflow: auto;
+}

@@ -1171,3 +1171,10 @@ ops/bin/as6-control-permission-engine-v114
 - Discovery: frontend/src/as6/plugins/AS6PluginDiscovery.js
 - Registry: frontend/src/as6/plugins/AS6PluginRegistry.js
 - Added failure class: AS6_PLUGIN_REGISTRY_DISCOVERY_DRIFT.
+
+## AS6_PLATFORM_V2_MARKETPLACE_UI_DEVELOPER_CONSOLE_P14
+- Diagnostic: ops/bin/as6-diagnose-marketplace-ui-developer-console-p14
+- Control: ops/bin/as6-control-marketplace-ui-developer-console-p14
+- UI: frontend/src/as6/plugins/ui/AS6MarketplaceDeveloperConsole.jsx
+- Console: frontend/src/as6/plugins/ui/AS6MarketplaceDeveloperConsole.contract.md
+- Added failure class: AS6_MARKETPLACE_UI_DEVELOPER_CONSOLE_DRIFT.

@@ -1781,3 +1781,8 @@ Governed and registered.
 - Detected: AS6_PLUGIN_DISCOVERY_GAP.
 - Root cause: Plugin CLI existed without registry discovery state.
 - Resolution: Plugin Registry & Discovery Engine added.
+
+## AS6_PLATFORM_V2_MARKETPLACE_UI_DEVELOPER_CONSOLE_P14
+- Detected: AS6_PLUGIN_REGISTRY_UI_GAP.
+- Root cause: Plugin Registry existed without user/developer console UI.
+- Resolution: Marketplace UI / Developer Console added.
