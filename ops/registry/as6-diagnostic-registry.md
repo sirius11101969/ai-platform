@@ -1025,3 +1025,10 @@ ops/bin/as6-diagnose-capability-resolver-v112
 
 Control:
 ops/bin/as6-control-capability-resolver-v112
+
+## AS6_CAPABILITY_REGISTRY_V113
+- Diagnostic: ops/bin/as6-diagnose-capability-registry-v113
+- Control: ops/bin/as6-control-capability-registry-v113
+- Registry: frontend/src/as6/capabilities/as6CapabilityRegistry.js
+- Engine: frontend/src/as6/capabilities/as6CapabilityEngine.js
+- Added failure class: AS6_CAPABILITY_REGISTRY_DRIFT.

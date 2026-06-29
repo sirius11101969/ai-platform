@@ -1678,3 +1678,8 @@ Governed and registered.
 - Detected: AS6_PLUGIN_DIRECT_ACTIVATION_RISK.
 - Root cause: Plugin SDK existed without centralized Plugin Loader lifecycle.
 - Resolution: AS6 Plugin Loader added.
+
+## AS6_CAPABILITY_REGISTRY_V113
+- Detected: AS6_CAPABILITY_METADATA_DUPLICATION_RISK.
+- Root cause: Capability Resolver existed without central capability metadata registry.
+- Resolution: AS6 Capability Registry and Capability Engine added.

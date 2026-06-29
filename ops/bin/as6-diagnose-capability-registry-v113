@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REGISTRY="frontend/src/as6/capabilities/as6CapabilityRegistry.js"
+ENGINE="frontend/src/as6/capabilities/as6CapabilityEngine.js"
+CONTRACT="frontend/src/as6/capabilities/AS6CapabilityRegistry.contract.md"
+INDEX="frontend/src/as6/capabilities/index.js"
+
+test -f "$REGISTRY" || { echo "AS6_CAPABILITY_REGISTRY_V113=FAIL registry_missing"; exit 1; }
+test -f "$ENGINE" || { echo "AS6_CAPABILITY_REGISTRY_V113=FAIL engine_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_CAPABILITY_REGISTRY_V113=FAIL contract_missing"; exit 1; }
+test -f "$INDEX" || { echo "AS6_CAPABILITY_REGISTRY_V113=FAIL index_missing"; exit 1; }
+
+grep -q "as6CapabilityRegistry" "$REGISTRY" || { echo "AS6_CAPABILITY_REGISTRY_V113=FAIL registry_export_missing"; exit 1; }
+grep -q "validateAS6CapabilityRegistryPolicy" "$REGISTRY" || { echo "AS6_CAPABILITY_REGISTRY_V113=FAIL registry_validator_missing"; exit 1; }
+grep -q "resolveAS6CapabilityWithRegistry" "$ENGINE" || { echo "AS6_CAPABILITY_REGISTRY_V113=FAIL registry_aware_resolver_missing"; exit 1; }
+grep -q "validateAS6CapabilityEnginePolicy" "$ENGINE" || { echo "AS6_CAPABILITY_REGISTRY_V113=FAIL engine_validator_missing"; exit 1; }
+grep -q 'id: "customers"' "$REGISTRY" || { echo "AS6_CAPABILITY_REGISTRY_V113=FAIL customers_capability_missing"; exit 1; }
+grep -q 'id: "workspace"' "$REGISTRY" || { echo "AS6_CAPABILITY_REGISTRY_V113=FAIL workspace_capability_missing"; exit 1; }
+
+echo "AS6_CAPABILITY_REGISTRY_V113=PASS"

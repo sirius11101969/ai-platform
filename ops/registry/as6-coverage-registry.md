@@ -2886,3 +2886,10 @@ Coverage:
 Capability routing
 Plugin selection
 Plugin activation
+
+## AS6_CAPABILITY_REGISTRY_V113
+- Covers AS6 Capability Registry.
+- Covers AS6 Capability Engine.
+- Covers capability priority/status metadata.
+- Covers capability service/plugin binding metadata.
+- Covers registry-aware capability resolution.
