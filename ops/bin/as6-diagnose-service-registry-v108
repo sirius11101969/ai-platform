@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REGISTRY="frontend/src/as6/services/as6ServiceRegistry.js"
+ENGINE="frontend/src/as6/services/as6ServiceEngine.js"
+CONTRACT="frontend/src/as6/services/AS6ServiceRegistry.contract.md"
+
+test -f "$REGISTRY" || { echo "AS6_SERVICE_REGISTRY_V108=FAIL registry_missing"; exit 1; }
+test -f "$ENGINE" || { echo "AS6_SERVICE_REGISTRY_V108=FAIL engine_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_SERVICE_REGISTRY_V108=FAIL contract_missing"; exit 1; }
+
+grep -q "as6ServiceRegistry" "$REGISTRY" || { echo "AS6_SERVICE_REGISTRY_V108=FAIL registry_export_missing"; exit 1; }
+grep -q "validateAS6ServiceRegistryPolicy" "$REGISTRY" || { echo "AS6_SERVICE_REGISTRY_V108=FAIL registry_validator_missing"; exit 1; }
+grep -q "getAS6ServiceEngineState" "$ENGINE" || { echo "AS6_SERVICE_REGISTRY_V108=FAIL engine_state_missing"; exit 1; }
+grep -q "validateAS6ServiceEnginePolicy" "$ENGINE" || { echo "AS6_SERVICE_REGISTRY_V108=FAIL engine_validator_missing"; exit 1; }
+grep -q 'id: "crm"' "$REGISTRY" || { echo "AS6_SERVICE_REGISTRY_V108=FAIL crm_missing"; exit 1; }
+grep -q 'id: "as6-one"' "$REGISTRY" || { echo "AS6_SERVICE_REGISTRY_V108=FAIL as6_one_missing"; exit 1; }
+
+echo "AS6_SERVICE_REGISTRY_V108=PASS"

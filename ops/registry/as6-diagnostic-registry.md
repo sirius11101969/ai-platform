@@ -989,3 +989,10 @@
 - Added failure class: AS6_ARCHITECTURE_DRIFT_DETECTOR_DRIFT.
 - Added failure class: AS6_UNREGISTERED_ROUTE_DRIFT.
 - Added failure class: AS6_UNREGISTERED_CONTROL_DRIFT.
+
+## AS6_SERVICE_REGISTRY_V108
+- Diagnostic: ops/bin/as6-diagnose-service-registry-v108
+- Control: ops/bin/as6-control-service-registry-v108
+- Registry: frontend/src/as6/services/as6ServiceRegistry.js
+- Engine: frontend/src/as6/services/as6ServiceEngine.js
+- Added failure class: AS6_SERVICE_REGISTRY_DRIFT.

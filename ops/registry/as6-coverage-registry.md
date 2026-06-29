@@ -2851,3 +2851,10 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers controls/diagnostics presence.
 - Covers governance artifact presence.
 - Covers registry/coverage/state/status completeness.
+
+## AS6_SERVICE_REGISTRY_V108
+- Covers AS6 Service Registry.
+- Covers AS6 Service Engine.
+- Covers CRM and AS6 One service metadata.
+- Covers command palette/workspace service flags.
+- Covers service permissions and capabilities metadata.

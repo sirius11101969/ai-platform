@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-service-registry-v108
+ops/bin/as6-control-architecture-drift-detector-v107
+
+grep -RIn "AS6_SERVICE_REGISTRY_DRIFT" README.md docs ops .github frontend/src >/dev/null || {
+  echo "AS6_CONTROL_SERVICE_REGISTRY_V108=FAIL service_registry_drift_class_missing"
+  exit 1
+}
+
+echo "AS6_CONTROL_SERVICE_REGISTRY_V108=PASS"

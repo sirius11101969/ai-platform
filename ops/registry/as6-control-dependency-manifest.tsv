@@ -12,3 +12,5 @@ as6-control-runtime-orchestrator-v100	as6-control-workspace-persistence-v99,as6-
 as6-control-event-bus-v101	as6-control-runtime-orchestrator-v100,as6-control-workspace-persistence-v99
 
 as6-control-architecture-drift-detector-v107	as6-control-release-readiness-gate-v106
+
+as6-control-service-registry-v108	as6-control-architecture-drift-detector-v107

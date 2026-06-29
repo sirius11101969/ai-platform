@@ -1658,3 +1658,8 @@ Governed and registered.
 - Detected: AS6_REGISTRY_COVERAGE_STATE_DRIFT risk.
 - Root cause: release readiness existed but standalone architecture drift detector did not.
 - Resolution: ops/bin/as6-detect-architecture-drift added.
+
+## AS6_SERVICE_REGISTRY_V108
+- Detected: AS6_SERVICE_METADATA_DUPLICATION_RISK.
+- Root cause: product services existed without a single service registry.
+- Resolution: AS6 Service Registry and Service Engine added.
