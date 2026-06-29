@@ -1683,3 +1683,8 @@ Governed and registered.
 - Detected: AS6_CAPABILITY_METADATA_DUPLICATION_RISK.
 - Root cause: Capability Resolver existed without central capability metadata registry.
 - Resolution: AS6 Capability Registry and Capability Engine added.
+
+## AS6_POLICY_ENGINE_V115
+- Detected: AS6_POLICY_ENGINE_DRIFT risk.
+- Root cause: Permission Engine existed without declarative policy layer.
+- Resolution: AS6 Policy Engine added.

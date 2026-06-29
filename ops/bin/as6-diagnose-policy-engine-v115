@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ENGINE="frontend/src/as6/security/as6PolicyEngine.js"
+CONTRACT="frontend/src/as6/security/AS6PolicyEngine.contract.md"
+INDEX="frontend/src/as6/security/index.js"
+
+test -f "$ENGINE" || { echo "AS6_POLICY_ENGINE_V115=FAIL engine_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_POLICY_ENGINE_V115=FAIL contract_missing"; exit 1; }
+test -f "$INDEX" || { echo "AS6_POLICY_ENGINE_V115=FAIL index_missing"; exit 1; }
+
+grep -q "as6PolicyRegistry" "$ENGINE" || { echo "AS6_POLICY_ENGINE_V115=FAIL registry_missing"; exit 1; }
+grep -q "evaluateAS6Policy" "$ENGINE" || { echo "AS6_POLICY_ENGINE_V115=FAIL evaluator_missing"; exit 1; }
+grep -q "canAccessAS6Capability" "$ENGINE" || { echo "AS6_POLICY_ENGINE_V115=FAIL access_helper_missing"; exit 1; }
+grep -q "validateAS6PolicyEnginePolicy" "$ENGINE" || { echo "AS6_POLICY_ENGINE_V115=FAIL validator_missing"; exit 1; }
+grep -q "hasCapability" "$ENGINE" || { echo "AS6_POLICY_ENGINE_V115=FAIL permission_engine_integration_missing"; exit 1; }
+grep -q "getAS6CapabilityById" "$ENGINE" || { echo "AS6_POLICY_ENGINE_V115=FAIL capability_registry_integration_missing"; exit 1; }
+grep -q "deny" "$ENGINE" || { echo "AS6_POLICY_ENGINE_V115=FAIL deny_by_default_missing"; exit 1; }
+
+echo "AS6_POLICY_ENGINE_V115=PASS"

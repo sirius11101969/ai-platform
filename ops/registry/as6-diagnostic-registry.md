@@ -1039,3 +1039,10 @@ ops/bin/as6-diagnose-permission-engine-v114
 
 Control:
 ops/bin/as6-control-permission-engine-v114
+
+## AS6_POLICY_ENGINE_V115
+- Diagnostic: ops/bin/as6-diagnose-policy-engine-v115
+- Control: ops/bin/as6-control-policy-engine-v115
+- Engine: frontend/src/as6/security/as6PolicyEngine.js
+- Contract: frontend/src/as6/security/AS6PolicyEngine.contract.md
+- Added failure class: AS6_POLICY_ENGINE_DRIFT.

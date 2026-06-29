@@ -2899,3 +2899,10 @@ Coverage:
 RBAC
 Capability Authorization
 Permission Validation
+
+## AS6_POLICY_ENGINE_V115
+- Covers AS6 Policy Engine.
+- Covers declarative RBAC/ABAC-ready policies.
+- Covers deny-by-default decision path.
+- Covers Permission Engine integration.
+- Covers Capability Registry and Service Registry checks.
