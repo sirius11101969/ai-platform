@@ -1135,3 +1135,11 @@ ops/bin/as6-control-permission-engine-v114
 ## AS6_PLATFORM_V2_WORKSPACE_LAYOUT_RUNTIME_P8
 - Runtime: frontend/src/as6/workspaces/AS6WorkspaceRuntime.js
 - Control: ops/bin/as6-control-workspace-layout-runtime-p8
+
+## AS6_PLATFORM_V2_TENANT_BOUNDARY_ENGINE_P9
+- Diagnostic: ops/bin/as6-diagnose-tenant-boundary-engine-p9
+- Control: ops/bin/as6-control-tenant-boundary-engine-p9
+- Runtime: frontend/src/as6/tenant/AS6TenantRuntime.js
+- Boundary: frontend/src/as6/tenant/AS6OrganizationBoundary.js
+- Policy: frontend/src/as6/tenant/AS6TenantPolicy.js
+- Added failure class: AS6_TENANT_BOUNDARY_DRIFT.

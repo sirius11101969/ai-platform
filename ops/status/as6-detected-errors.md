@@ -1756,3 +1756,8 @@ Governed and registered.
 
 ## AS6_PLATFORM_V2_WORKSPACE_LAYOUT_RUNTIME_P8
 - Resolution: Workspace Runtime added.
+
+## AS6_PLATFORM_V2_TENANT_BOUNDARY_ENGINE_P9
+- Detected: AS6_TENANT_ISOLATION_GAP.
+- Root cause: Platform V2 had workspace/widget/context runtime but no tenant isolation.
+- Resolution: Tenant Boundary Engine added.

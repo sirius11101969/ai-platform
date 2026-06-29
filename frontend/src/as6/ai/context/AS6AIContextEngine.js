@@ -1,3 +1,5 @@
+import { validateAS6TenantPolicy } from "../../tenant";
+
 export const AS6_AI_CONTEXT_ENGINE_VERSION = "P4";
 
 const contextProviders = new Map();
@@ -6,6 +8,9 @@ export function registerLivingSpaceContext(spaceId, context = {}, options = {}) 
   if (!spaceId) {
     return { ok: false, error: "AS6_AI_CONTEXT_SPACE_ID_MISSING" };
   }
+
+  const tenantPolicy = validateAS6TenantPolicy({ aiContextSpaceId: spaceId });
+  if (!tenantPolicy.ok) return { ok: false, error: "AS6_AI_CONTEXT_TENANT_MISMATCH", failures: tenantPolicy.failures };
 
   contextProviders.set(spaceId, {
     spaceId,

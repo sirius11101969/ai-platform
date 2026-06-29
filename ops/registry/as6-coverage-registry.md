@@ -2995,3 +2995,11 @@ Permission Validation
 - Workspace Runtime
 - Widget Layout
 - Workspace Persistence
+
+## AS6_PLATFORM_V2_TENANT_BOUNDARY_ENGINE_P9
+- Covers Tenant Runtime.
+- Covers Organization Boundary.
+- Covers Tenant Policy.
+- Covers Workspace tenant ownership.
+- Covers Widget tenant ownership.
+- Covers AI Context tenant ownership.

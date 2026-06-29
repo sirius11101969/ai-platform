@@ -1,5 +1,6 @@
 import { emitAS6BusEvent } from "../bus";
 import { getAS6Widgets } from "../widgets";
+import { validateAS6TenantPolicy } from "../tenant";
 
 export const AS6_WORKSPACE_RUNTIME_VERSION = "P8";
 
@@ -23,6 +24,8 @@ export function registerAS6Workspace(workspace) {
 }
 
 export function attachWidgetToWorkspace(workspaceId,widgetId,position={}){
+  const workspaceTenantPolicy = validateAS6TenantPolicy({ workspaceId, widgetId });
+  if (!workspaceTenantPolicy.ok) return { ok:false, error:"AS6_WORKSPACE_TENANT_MISMATCH", failures: workspaceTenantPolicy.failures };
   const ws=workspaceRegistry.get(workspaceId);
   if(!ws) return {ok:false,error:"WORKSPACE_NOT_FOUND"};
 

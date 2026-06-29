@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+RUNTIME="frontend/src/as6/tenant/AS6TenantRuntime.js"
+BOUNDARY="frontend/src/as6/tenant/AS6OrganizationBoundary.js"
+POLICY="frontend/src/as6/tenant/AS6TenantPolicy.js"
+CONTRACT="frontend/src/as6/tenant/AS6TenantBoundary.contract.md"
+INDEX="frontend/src/as6/tenant/index.js"
+WORKSPACE="frontend/src/as6/workspaces/AS6WorkspaceRuntime.js"
+AI_CONTEXT="frontend/src/as6/ai/context/AS6AIContextEngine.js"
+
+test -f "$RUNTIME" || { echo "AS6_PLATFORM_V2_TENANT_BOUNDARY_ENGINE_P9=FAIL runtime_missing"; exit 1; }
+test -f "$BOUNDARY" || { echo "AS6_PLATFORM_V2_TENANT_BOUNDARY_ENGINE_P9=FAIL boundary_missing"; exit 1; }
+test -f "$POLICY" || { echo "AS6_PLATFORM_V2_TENANT_BOUNDARY_ENGINE_P9=FAIL policy_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_PLATFORM_V2_TENANT_BOUNDARY_ENGINE_P9=FAIL contract_missing"; exit 1; }
+test -f "$INDEX" || { echo "AS6_PLATFORM_V2_TENANT_BOUNDARY_ENGINE_P9=FAIL index_missing"; exit 1; }
+
+grep -q "registerAS6Tenant" "$RUNTIME" || { echo "AS6_PLATFORM_V2_TENANT_BOUNDARY_ENGINE_P9=FAIL register_missing"; exit 1; }
+grep -q "activateAS6Tenant" "$RUNTIME" || { echo "AS6_PLATFORM_V2_TENANT_BOUNDARY_ENGINE_P9=FAIL activate_missing"; exit 1; }
+grep -q "getCurrentTenant" "$RUNTIME" || { echo "AS6_PLATFORM_V2_TENANT_BOUNDARY_ENGINE_P9=FAIL current_missing"; exit 1; }
+grep -q "assertAS6TenantAccess" "$BOUNDARY" || { echo "AS6_PLATFORM_V2_TENANT_BOUNDARY_ENGINE_P9=FAIL access_assert_missing"; exit 1; }
+grep -q "canAccessAS6Workspace" "$BOUNDARY" || { echo "AS6_PLATFORM_V2_TENANT_BOUNDARY_ENGINE_P9=FAIL workspace_boundary_missing"; exit 1; }
+grep -q "canAccessAS6Widget" "$BOUNDARY" || { echo "AS6_PLATFORM_V2_TENANT_BOUNDARY_ENGINE_P9=FAIL widget_boundary_missing"; exit 1; }
+grep -q "canAccessAS6AIContext" "$BOUNDARY" || { echo "AS6_PLATFORM_V2_TENANT_BOUNDARY_ENGINE_P9=FAIL ai_boundary_missing"; exit 1; }
+grep -q "validateAS6TenantPolicy" "$POLICY" || { echo "AS6_PLATFORM_V2_TENANT_BOUNDARY_ENGINE_P9=FAIL policy_validator_missing"; exit 1; }
+grep -q "validateAS6TenantPolicy" "$WORKSPACE" || { echo "AS6_PLATFORM_V2_TENANT_BOUNDARY_ENGINE_P9=FAIL workspace_integration_missing"; exit 1; }
+grep -q "validateAS6TenantPolicy" "$AI_CONTEXT" || { echo "AS6_PLATFORM_V2_TENANT_BOUNDARY_ENGINE_P9=FAIL ai_context_integration_missing"; exit 1; }
+
+echo "AS6_PLATFORM_V2_TENANT_BOUNDARY_ENGINE_P9=PASS"

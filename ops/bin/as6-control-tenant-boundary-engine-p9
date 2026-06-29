@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-tenant-boundary-engine-p9
+
+grep -RIn "AS6_TENANT_BOUNDARY_DRIFT" README.md docs ops .github frontend/src >/dev/null || {
+  echo "AS6_CONTROL_TENANT_BOUNDARY_ENGINE_P9=FAIL drift_class_missing"
+  exit 1
+}
+
+echo "AS6_CONTROL_TENANT_BOUNDARY_ENGINE_P9=PASS"
