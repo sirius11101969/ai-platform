@@ -1003,3 +1003,10 @@
 - Plugin Registry: frontend/src/as6/plugins/as6PluginRegistry.js
 - Plugin SDK: frontend/src/as6/plugins/as6PluginSDK.js
 - Added failure class: AS6_PLUGIN_SDK_DRIFT.
+
+## AS6_SERVICE_DEPENDENCY_GRAPH_V110
+- Diagnostic: ops/bin/as6-diagnose-service-dependency-graph-v110
+- Control: ops/bin/as6-control-service-dependency-graph-v110
+- Graph: frontend/src/as6/dependencies/as6ServiceDependencyGraph.js
+- Engine: frontend/src/as6/dependencies/as6DependencyEngine.js
+- Added failure class: AS6_SERVICE_DEPENDENCY_GRAPH_DRIFT.

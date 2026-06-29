@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+GRAPH="frontend/src/as6/dependencies/as6ServiceDependencyGraph.js"
+ENGINE="frontend/src/as6/dependencies/as6DependencyEngine.js"
+CONTRACT="frontend/src/as6/dependencies/AS6ServiceDependencyGraph.contract.md"
+INDEX="frontend/src/as6/dependencies/index.js"
+
+test -f "$GRAPH" || { echo "AS6_SERVICE_DEPENDENCY_GRAPH_V110=FAIL graph_missing"; exit 1; }
+test -f "$ENGINE" || { echo "AS6_SERVICE_DEPENDENCY_GRAPH_V110=FAIL engine_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_SERVICE_DEPENDENCY_GRAPH_V110=FAIL contract_missing"; exit 1; }
+test -f "$INDEX" || { echo "AS6_SERVICE_DEPENDENCY_GRAPH_V110=FAIL index_missing"; exit 1; }
+
+grep -q "as6ServiceDependencyGraph" "$GRAPH" || { echo "AS6_SERVICE_DEPENDENCY_GRAPH_V110=FAIL graph_export_missing"; exit 1; }
+grep -q "validateAS6ServiceDependencyGraphPolicy" "$GRAPH" || { echo "AS6_SERVICE_DEPENDENCY_GRAPH_V110=FAIL graph_validator_missing"; exit 1; }
+grep -q "getAS6DependencyEngineState" "$ENGINE" || { echo "AS6_SERVICE_DEPENDENCY_GRAPH_V110=FAIL engine_state_missing"; exit 1; }
+grep -q "getAS6ImpactMap" "$ENGINE" || { echo "AS6_SERVICE_DEPENDENCY_GRAPH_V110=FAIL impact_map_missing"; exit 1; }
+grep -q "crm" "$GRAPH" || { echo "AS6_SERVICE_DEPENDENCY_GRAPH_V110=FAIL crm_dependency_node_missing"; exit 1; }
+grep -q "pipeline-copilot" "$GRAPH" || { echo "AS6_SERVICE_DEPENDENCY_GRAPH_V110=FAIL pipeline_dependency_node_missing"; exit 1; }
+
+echo "AS6_SERVICE_DEPENDENCY_GRAPH_V110=PASS"

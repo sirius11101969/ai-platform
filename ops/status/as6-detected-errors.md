@@ -1668,3 +1668,8 @@ Governed and registered.
 - Detected: AS6_PLUGIN_CORE_MODIFICATION_RISK.
 - Root cause: Service Registry existed but no formal plugin extension API existed.
 - Resolution: AS6 Plugin SDK added.
+
+## AS6_SERVICE_DEPENDENCY_GRAPH_V110
+- Detected: AS6_HIDDEN_SERVICE_COUPLING_RISK.
+- Root cause: Service Registry and Plugin SDK existed without explicit dependency graph.
+- Resolution: AS6 Service Dependency Graph added.
