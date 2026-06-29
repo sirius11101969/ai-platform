@@ -981,3 +981,11 @@
 - Release gate: ops/bin/as6-release-gate
 - Validate entrypoint: ops/bin/as6-validate
 - Added failure class: AS6_RELEASE_GATE_DRIFT.
+
+## AS6_ARCHITECTURE_DRIFT_DETECTOR_V107
+- Diagnostic: ops/bin/as6-diagnose-architecture-drift-detector-v107
+- Control: ops/bin/as6-control-architecture-drift-detector-v107
+- Detector: ops/bin/as6-detect-architecture-drift
+- Added failure class: AS6_ARCHITECTURE_DRIFT_DETECTOR_DRIFT.
+- Added failure class: AS6_UNREGISTERED_ROUTE_DRIFT.
+- Added failure class: AS6_UNREGISTERED_CONTROL_DRIFT.

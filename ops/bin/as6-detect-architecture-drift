@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+fail=0
+
+need_file(){ [ -f "$1" ] || { echo "AS6_ARCH_DRIFT=FAIL missing:$1"; fail=1; }; }
+need_exec(){ [ -x "$1" ] || { echo "AS6_ARCH_DRIFT=FAIL missing_or_not_executable:$1"; fail=1; }; }
+need_text(){ grep -q "$2" "$1" || { echo "AS6_ARCH_DRIFT=FAIL missing_text:$2 in $1"; fail=1; }; }
+
+echo "== AS6 Architecture Drift Detector =="
+
+need_file docs/AS6_PROJECT_STATE.md
+need_file ops/registry/as6-diagnostic-registry.md
+need_file ops/registry/as6-coverage-registry.md
+need_file ops/status/as6-detected-errors.md
+
+need_file frontend/src/as6/living-spaces/as6LivingSpaceRegistry.js
+need_file frontend/src/as6/living-spaces/as6LivingSpaceEngine.js
+need_file frontend/src/as6/living-spaces/AS6LivingSpaceRoutes.jsx
+need_file frontend/src/as6/shell/AS6Shell.jsx
+need_file frontend/src/as6/runtime/as6Runtime.js
+need_file frontend/src/as6/runtime/as6EventBus.js
+need_file frontend/src/as6/workspace/as6WorkspaceManager.js
+need_file frontend/src/as6/workspace/as6WorkspaceStorage.js
+
+need_exec ops/bin/as6-control-runner
+need_exec ops/bin/as6-validate
+need_exec ops/bin/as6-release-gate
+need_exec ops/bin/as6-diagnose-architecture-drift-detector-v107
+need_exec ops/bin/as6-control-architecture-drift-detector-v107
+
+need_file ops/governance/as6-architecture-drift-detector-aec-v107.md
+need_file ops/governance/as6-architecture-drift-detector-root-cause-v107.md
+need_file ops/registry/as6-control-dependency-manifest.tsv
+
+need_text ops/registry/as6-diagnostic-registry.md "AS6_ARCHITECTURE_DRIFT_DETECTOR_V107"
+need_text ops/registry/as6-coverage-registry.md "AS6_ARCHITECTURE_DRIFT_DETECTOR_V107"
+need_text ops/status/as6-detected-errors.md "AS6_ARCHITECTURE_DRIFT_DETECTOR_V107"
+need_text docs/AS6_PROJECT_STATE.md "AS6_ARCHITECTURE_DRIFT_DETECTOR_V107"
+need_text ops/registry/as6-control-dependency-manifest.tsv "as6-control-architecture-drift-detector-v107"
+
+[ "$fail" -eq 0 ] || { echo "AS6_ARCHITECTURE_DRIFT_DETECTOR=FAIL"; exit 1; }
+
+echo "AS6_ARCHITECTURE_DRIFT_DETECTOR=PASS"

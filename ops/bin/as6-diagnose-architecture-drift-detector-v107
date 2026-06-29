@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -x ops/bin/as6-detect-architecture-drift || { echo "AS6_ARCHITECTURE_DRIFT_DETECTOR_V107=FAIL detector_missing"; exit 1; }
+grep -q "AS6 Architecture Drift Detector" ops/bin/as6-detect-architecture-drift || { echo "AS6_ARCHITECTURE_DRIFT_DETECTOR_V107=FAIL banner_missing"; exit 1; }
+grep -q "as6LivingSpaceRegistry" ops/bin/as6-detect-architecture-drift || { echo "AS6_ARCHITECTURE_DRIFT_DETECTOR_V107=FAIL living_space_check_missing"; exit 1; }
+grep -q "as6Runtime" ops/bin/as6-detect-architecture-drift || { echo "AS6_ARCHITECTURE_DRIFT_DETECTOR_V107=FAIL runtime_check_missing"; exit 1; }
+grep -q "as6-release-gate" ops/bin/as6-detect-architecture-drift || { echo "AS6_ARCHITECTURE_DRIFT_DETECTOR_V107=FAIL release_gate_check_missing"; exit 1; }
+
+echo "AS6_ARCHITECTURE_DRIFT_DETECTOR_V107=PASS"

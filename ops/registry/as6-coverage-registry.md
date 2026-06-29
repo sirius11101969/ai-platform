@@ -2843,3 +2843,11 @@ Coverage: internal analytics component ownership, render prop removal, DOM class
 - Covers build-before-release.
 - Covers DAG validation before release.
 - Covers governance/registry/coverage/state/status completeness.
+
+## AS6_ARCHITECTURE_DRIFT_DETECTOR_V107
+- Covers architecture drift detector.
+- Covers Living Spaces core presence.
+- Covers Runtime core presence.
+- Covers controls/diagnostics presence.
+- Covers governance artifact presence.
+- Covers registry/coverage/state/status completeness.

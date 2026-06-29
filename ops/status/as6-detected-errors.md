@@ -1653,3 +1653,8 @@ Governed and registered.
 - Detected: AS6_RELEASE_VALIDATION_BYPASS_RISK.
 - Root cause: CI validation existed but no canonical release-readiness command existed.
 - Resolution: ops/bin/as6-release-gate added.
+
+## AS6_ARCHITECTURE_DRIFT_DETECTOR_V107
+- Detected: AS6_REGISTRY_COVERAGE_STATE_DRIFT risk.
+- Root cause: release readiness existed but standalone architecture drift detector did not.
+- Resolution: ops/bin/as6-detect-architecture-drift added.

@@ -10,3 +10,5 @@ as6-control-universal-workspace-manager-v98	as6-control-global-command-palette-v
 as6-control-workspace-persistence-v99	as6-control-universal-workspace-manager-v98,as6-control-global-command-palette-v97
 as6-control-runtime-orchestrator-v100	as6-control-workspace-persistence-v99,as6-control-universal-workspace-manager-v98,as6-control-global-command-palette-v97
 as6-control-event-bus-v101	as6-control-runtime-orchestrator-v100,as6-control-workspace-persistence-v99
+
+as6-control-architecture-drift-detector-v107	as6-control-release-readiness-gate-v106
