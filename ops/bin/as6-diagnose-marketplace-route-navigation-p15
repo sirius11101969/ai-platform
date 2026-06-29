@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+PAGE="frontend/src/as6/plugins/marketplace-route/AS6MarketplacePage.jsx"
+NAV="frontend/src/as6/plugins/marketplace-route/AS6MarketplaceNavigation.js"
+INDEX="frontend/src/as6/plugins/marketplace-route/index.js"
+CONTRACT="frontend/src/as6/plugins/marketplace-route/AS6MarketplaceRoute.contract.md"
+DOCS="docs/platform-v2/sdk/marketplace-route-navigation-p15.md"
+PLUGIN_INDEX="frontend/src/as6/plugins/index.js"
+test -f "$PAGE" || { echo "AS6_PLATFORM_V2_MARKETPLACE_ROUTE_NAVIGATION_P15=FAIL page_missing"; exit 1; }
+test -f "$NAV" || { echo "AS6_PLATFORM_V2_MARKETPLACE_ROUTE_NAVIGATION_P15=FAIL navigation_missing"; exit 1; }
+test -f "$INDEX" || { echo "AS6_PLATFORM_V2_MARKETPLACE_ROUTE_NAVIGATION_P15=FAIL index_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_PLATFORM_V2_MARKETPLACE_ROUTE_NAVIGATION_P15=FAIL contract_missing"; exit 1; }
+test -f "$DOCS" || { echo "AS6_PLATFORM_V2_MARKETPLACE_ROUTE_NAVIGATION_P15=FAIL docs_missing"; exit 1; }
+grep -q "AS6MarketplaceDeveloperConsole" "$PAGE" || { echo "AS6_PLATFORM_V2_MARKETPLACE_ROUTE_NAVIGATION_P15=FAIL console_integration_missing"; exit 1; }
+grep -q "/marketplace" "$NAV" || { echo "AS6_PLATFORM_V2_MARKETPLACE_ROUTE_NAVIGATION_P15=FAIL marketplace_path_missing"; exit 1; }
+grep -q "as6MarketplaceNavigationItem" "$NAV" || { echo "AS6_PLATFORM_V2_MARKETPLACE_ROUTE_NAVIGATION_P15=FAIL nav_item_missing"; exit 1; }
+grep -q "getAS6MarketplaceRouteDefinition" "$NAV" || { echo "AS6_PLATFORM_V2_MARKETPLACE_ROUTE_NAVIGATION_P15=FAIL route_definition_missing"; exit 1; }
+grep -q "./marketplace-route" "$PLUGIN_INDEX" || { echo "AS6_PLATFORM_V2_MARKETPLACE_ROUTE_NAVIGATION_P15=FAIL plugin_index_export_missing"; exit 1; }
+grep -q "AS6_MARKETPLACE_ROUTE_NAVIGATION_DRIFT" ops/governance/as6-marketplace-route-navigation-aec-p15.md || { echo "AS6_PLATFORM_V2_MARKETPLACE_ROUTE_NAVIGATION_P15=FAIL drift_class_missing"; exit 1; }
+echo "AS6_PLATFORM_V2_MARKETPLACE_ROUTE_NAVIGATION_P15=PASS"

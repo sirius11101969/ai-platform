@@ -3039,3 +3039,10 @@ Permission Validation
 - Covers SDK compatibility visibility.
 - Covers plugin lifecycle actions UI.
 - Covers Developer Console documentation.
+
+## AS6_PLATFORM_V2_MARKETPLACE_ROUTE_NAVIGATION_P15
+- Covers Marketplace route-ready page.
+- Covers Marketplace navigation metadata.
+- Covers route definition metadata.
+- Covers plugin index export.
+- Covers dynamic navigation preparation.

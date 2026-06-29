@@ -4734,3 +4734,11 @@ Status: PASS pending validation
 - Marketplace Developer Console: enabled.
 - Plugin Registry UI: enabled.
 - Next target: Marketplace route integration into AS6 Shell.
+
+## AS6_PLATFORM_V2_MARKETPLACE_ROUTE_NAVIGATION_P15
+- Status: PASS pending release.
+- Product phase: AS6 Platform V2.
+- Project readiness: 99.999999985%
+- Marketplace Route: enabled.
+- Marketplace Navigation metadata: enabled.
+- Next target: Shell route wiring and visible menu placement.

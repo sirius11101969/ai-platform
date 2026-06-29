@@ -1178,3 +1178,10 @@ ops/bin/as6-control-permission-engine-v114
 - UI: frontend/src/as6/plugins/ui/AS6MarketplaceDeveloperConsole.jsx
 - Console: frontend/src/as6/plugins/ui/AS6MarketplaceDeveloperConsole.contract.md
 - Added failure class: AS6_MARKETPLACE_UI_DEVELOPER_CONSOLE_DRIFT.
+
+## AS6_PLATFORM_V2_MARKETPLACE_ROUTE_NAVIGATION_P15
+- Diagnostic: ops/bin/as6-diagnose-marketplace-route-navigation-p15
+- Control: ops/bin/as6-control-marketplace-route-navigation-p15
+- Page: frontend/src/as6/plugins/marketplace-route/AS6MarketplacePage.jsx
+- Navigation: frontend/src/as6/plugins/marketplace-route/AS6MarketplaceNavigation.js
+- Added failure class: AS6_MARKETPLACE_ROUTE_NAVIGATION_DRIFT.

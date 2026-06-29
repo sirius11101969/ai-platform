@@ -1786,3 +1786,8 @@ Governed and registered.
 - Detected: AS6_PLUGIN_REGISTRY_UI_GAP.
 - Root cause: Plugin Registry existed without user/developer console UI.
 - Resolution: Marketplace UI / Developer Console added.
+
+## AS6_PLATFORM_V2_MARKETPLACE_ROUTE_NAVIGATION_P15
+- Detected: AS6_MARKETPLACE_ROUTE_GAP.
+- Root cause: Marketplace Console existed without route/navigation metadata.
+- Resolution: Marketplace route page and navigation definition added.

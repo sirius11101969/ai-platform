@@ -7,3 +7,5 @@ export * from "./AS6PluginDiscovery";
 export * from "./AS6PluginRegistry";
 
 export * from "./ui";
+
+export * from "./marketplace-route";
