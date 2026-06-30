@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+TRUST="frontend/src/as6/plugins/AS6PluginTrust.js"
+test -f "$TRUST" || { echo "AS6_PLATFORM_V2_CRYPTOGRAPHIC_SIGNATURE_VERIFICATION_P28=FAIL trust_missing"; exit 1; }
+grep -q "AS6_PLUGIN_SIGNATURE_VERIFICATION_VERSION" "$TRUST" || { echo "AS6_PLATFORM_V2_CRYPTOGRAPHIC_SIGNATURE_VERIFICATION_P28=FAIL version_missing"; exit 1; }
+grep -q "registerAS6TrustedPublisherKey" "$TRUST" || { echo "AS6_PLATFORM_V2_CRYPTOGRAPHIC_SIGNATURE_VERIFICATION_P28=FAIL key_registry_missing"; exit 1; }
+grep -q "rotateAS6TrustedPublisherKey" "$TRUST" || { echo "AS6_PLATFORM_V2_CRYPTOGRAPHIC_SIGNATURE_VERIFICATION_P28=FAIL key_rotation_missing"; exit 1; }
+grep -q "verifyAS6PluginPackageSignature" "$TRUST" || { echo "AS6_PLATFORM_V2_CRYPTOGRAPHIC_SIGNATURE_VERIFICATION_P28=FAIL verify_missing"; exit 1; }
+grep -q "crypto.subtle.verify" "$TRUST" || { echo "AS6_PLATFORM_V2_CRYPTOGRAPHIC_SIGNATURE_VERIFICATION_P28=FAIL webcrypto_verify_missing"; exit 1; }
+grep -q "trusted_publisher_key_missing" "$TRUST" || { echo "AS6_PLATFORM_V2_CRYPTOGRAPHIC_SIGNATURE_VERIFICATION_P28=FAIL key_validation_missing"; exit 1; }
+grep -q "AS6_CRYPTOGRAPHIC_SIGNATURE_VERIFICATION_DRIFT" ops/governance/as6-cryptographic-signature-verification-aec-p28.md || { echo "AS6_PLATFORM_V2_CRYPTOGRAPHIC_SIGNATURE_VERIFICATION_P28=FAIL drift_class_missing"; exit 1; }
+echo "AS6_PLATFORM_V2_CRYPTOGRAPHIC_SIGNATURE_VERIFICATION_P28=PASS"

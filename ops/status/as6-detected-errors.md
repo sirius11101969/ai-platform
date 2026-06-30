@@ -1856,3 +1856,8 @@ Governed and registered.
 - Detected: AS6_PLUGIN_PACKAGE_SIGNATURE_GAP.
 - Root cause: Remote Marketplace could sync plugins without package trust validation.
 - Resolution: Signed Plugin Packages Trust Validation added.
+
+## AS6_PLATFORM_V2_CRYPTOGRAPHIC_SIGNATURE_VERIFICATION_P28
+- Detected: AS6_PLUGIN_SIGNATURE_VERIFICATION_GAP.
+- Root cause: P27 checked signature metadata without cryptographic verification.
+- Resolution: Cryptographic Signature Verification Engine added.

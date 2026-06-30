@@ -3126,3 +3126,9 @@ Permission Validation
 - Covers plugin package SHA-256 helper.
 - Covers package trust validation.
 - Covers Marketplace trust status annotation.
+
+## AS6_PLATFORM_V2_CRYPTOGRAPHIC_SIGNATURE_VERIFICATION_P28
+- Covers trusted publisher key registry.
+- Covers Web Crypto signature verification helper.
+- Covers trusted key rotation.
+- Covers key-aware trust validation.
