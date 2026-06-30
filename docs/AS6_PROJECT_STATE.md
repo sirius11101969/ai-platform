@@ -4866,3 +4866,16 @@ Status: PASS pending validation
 - Project readiness: 99.99999999985%
 - Public Marketplace: enabled.
 - Next target: Developer Portal P32.
+
+## AS6_PLATFORM_V2_DEVELOPER_PORTAL_P32
+- Status: PASS pending release.
+- Product phase: AS6 Platform V2 Stable cycle.
+- Project readiness: 99.9999999999%
+- Developer Portal: enabled.
+- Next target: Security and Administration P33.
+
+## AS6_PLATFORM_V2_DEVELOPER_PORTAL_IMPORT_REPAIR_P32B
+- Status: PASS pending release.
+- Product phase: AS6 Platform V2 Stable cycle.
+- Project readiness: 99.9999999999%
+- Developer Portal import repair: enabled.

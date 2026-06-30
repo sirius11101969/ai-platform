@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-developer-portal-import-repair-p32b
+ops/bin/as6-diagnose-developer-portal-p32
+grep -RIn "AS6_DEVELOPER_PORTAL_SDK_IMPORT_DRIFT" README.md docs ops .github frontend/src >/dev/null
+echo "AS6_CONTROL_DEVELOPER_PORTAL_IMPORT_REPAIR_P32B=PASS"

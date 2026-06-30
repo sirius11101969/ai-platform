@@ -1297,3 +1297,15 @@ ops/bin/as6-control-permission-engine-v114
 - Control: ops/bin/as6-control-public-marketplace-p31
 - Public Marketplace: frontend/src/as6/plugins/AS6PublicMarketplace.js
 - Added failure class: AS6_PUBLIC_MARKETPLACE_DRIFT.
+
+## AS6_PLATFORM_V2_DEVELOPER_PORTAL_P32
+- Diagnostic: ops/bin/as6-diagnose-developer-portal-p32
+- Control: ops/bin/as6-control-developer-portal-p32
+- Developer Portal: frontend/src/as6/plugins/AS6DeveloperPortal.js
+- Added failure class: AS6_DEVELOPER_PORTAL_DRIFT.
+
+## AS6_PLATFORM_V2_DEVELOPER_PORTAL_IMPORT_REPAIR_P32B
+- Diagnostic: ops/bin/as6-diagnose-developer-portal-import-repair-p32b
+- Control: ops/bin/as6-control-developer-portal-import-repair-p32b
+- Repaired: frontend/src/as6/plugins/AS6DeveloperPortal.js
+- Added failure class: AS6_DEVELOPER_PORTAL_SDK_IMPORT_DRIFT.

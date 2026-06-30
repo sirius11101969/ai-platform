@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+PORTAL="frontend/src/as6/plugins/AS6DeveloperPortal.js"
+INDEX="frontend/src/as6/plugins/index.js"
+test -f "$PORTAL" || { echo "AS6_PLATFORM_V2_DEVELOPER_PORTAL_P32=FAIL portal_missing"; exit 1; }
+grep -q "AS6_DEVELOPER_PORTAL_VERSION" "$PORTAL" || { echo "AS6_PLATFORM_V2_DEVELOPER_PORTAL_P32=FAIL version_missing"; exit 1; }
+grep -q "createAS6DeveloperPluginDraft" "$PORTAL" || { echo "AS6_PLATFORM_V2_DEVELOPER_PORTAL_P32=FAIL draft_missing"; exit 1; }
+grep -q "validateAS6DeveloperPluginDraft" "$PORTAL" || { echo "AS6_PLATFORM_V2_DEVELOPER_PORTAL_P32=FAIL validate_missing"; exit 1; }
+grep -q "packageAS6DeveloperPlugin" "$PORTAL" || { echo "AS6_PLATFORM_V2_DEVELOPER_PORTAL_P32=FAIL package_missing"; exit 1; }
+grep -q "publishAS6DeveloperPlugin" "$PORTAL" || { echo "AS6_PLATFORM_V2_DEVELOPER_PORTAL_P32=FAIL publish_missing"; exit 1; }
+grep -q "bumpAS6DeveloperPluginVersion" "$PORTAL" || { echo "AS6_PLATFORM_V2_DEVELOPER_PORTAL_P32=FAIL version_bump_missing"; exit 1; }
+grep -q "getAS6DeveloperReleaseLog" "$PORTAL" || { echo "AS6_PLATFORM_V2_DEVELOPER_PORTAL_P32=FAIL release_log_missing"; exit 1; }
+grep -q "AS6DeveloperPortal" "$INDEX" || { echo "AS6_PLATFORM_V2_DEVELOPER_PORTAL_P32=FAIL index_export_missing"; exit 1; }
+grep -q "AS6_DEVELOPER_PORTAL_DRIFT" ops/governance/as6-developer-portal-aec-p32.md || { echo "AS6_PLATFORM_V2_DEVELOPER_PORTAL_P32=FAIL drift_class_missing"; exit 1; }
+echo "AS6_PLATFORM_V2_DEVELOPER_PORTAL_P32=PASS"

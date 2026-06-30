@@ -1876,3 +1876,13 @@ Governed and registered.
 - Detected: AS6_PUBLIC_MARKETPLACE_SOURCE_GAP.
 - Root cause: Marketplace had package/catalog primitives without public catalog layer.
 - Resolution: Public Marketplace added.
+
+## AS6_PLATFORM_V2_DEVELOPER_PORTAL_P32
+- Detected: AS6_DEVELOPER_PUBLICATION_WORKFLOW_GAP.
+- Root cause: Public Marketplace existed without developer publication workflow.
+- Resolution: Developer Portal added.
+
+## AS6_PLATFORM_V2_DEVELOPER_PORTAL_IMPORT_REPAIR_P32B
+- Detected: AS6_PLATFORM_V2_SDK_IMPORT_GAP.
+- Root cause: Developer Portal imported SDK helpers from legacy plugins/as6PluginSDK.js.
+- Resolution: Import path repaired to ../sdk/plugin/AS6PluginSDK.

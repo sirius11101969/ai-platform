@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+PORTAL="frontend/src/as6/plugins/AS6DeveloperPortal.js"
+grep -q "../sdk/plugin/AS6PluginSDK" "$PORTAL" || { echo "AS6_PLATFORM_V2_DEVELOPER_PORTAL_IMPORT_REPAIR_P32B=FAIL sdk_import_missing"; exit 1; }
+grep -q "defineAS6Plugin" "$PORTAL" || { echo "AS6_PLATFORM_V2_DEVELOPER_PORTAL_IMPORT_REPAIR_P32B=FAIL define_missing"; exit 1; }
+grep -q "AS6_DEVELOPER_PORTAL_SDK_IMPORT_DRIFT" ops/governance/as6-developer-portal-import-repair-aec-p32b.md || { echo "AS6_PLATFORM_V2_DEVELOPER_PORTAL_IMPORT_REPAIR_P32B=FAIL drift_class_missing"; exit 1; }
+echo "AS6_PLATFORM_V2_DEVELOPER_PORTAL_IMPORT_REPAIR_P32B=PASS"

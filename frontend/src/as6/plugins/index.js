@@ -19,3 +19,5 @@ export * from "./AS6MarketplaceTrustPolicy";
 export * from "./AS6PluginPackageManager";
 
 export * from "./AS6PublicMarketplace";
+
+export * from "./AS6DeveloperPortal";

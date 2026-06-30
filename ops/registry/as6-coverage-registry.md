@@ -3150,3 +3150,15 @@ Permission Validation
 - Covers public plugin metadata.
 - Covers search, categories and sorting.
 - Covers trust summary in listings.
+
+## AS6_PLATFORM_V2_DEVELOPER_PORTAL_P32
+- Covers developer plugin drafts.
+- Covers draft validation.
+- Covers package workflow.
+- Covers publication workflow.
+- Covers version bump validation.
+
+## AS6_PLATFORM_V2_DEVELOPER_PORTAL_IMPORT_REPAIR_P32B
+- Covers Developer Portal SDK import repair.
+- Covers Platform V2 SDK helper import path.
+- Covers P32 build regression prevention.
