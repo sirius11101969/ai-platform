@@ -78,3 +78,5 @@ as6-control-shell-runtime-integration-p17	as6-control-dynamic-shell-integration-
 as6-control-app-runtime-integration-p18	as6-control-shell-runtime-integration-p17
 
 as6-control-real-app-wiring-p19	as6-control-app-runtime-integration-p18
+
+as6-control-direct-app-integration-p20	as6-control-real-app-wiring-p19

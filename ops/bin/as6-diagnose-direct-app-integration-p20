@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+APP="frontend/src/App.jsx"
+DOCS="docs/platform-v2/sdk/direct-app-integration-p20.md"
+test -f "$APP" || { echo "AS6_PLATFORM_V2_DIRECT_APP_INTEGRATION_P20=FAIL app_missing"; exit 1; }
+test -f "$DOCS" || { echo "AS6_PLATFORM_V2_DIRECT_APP_INTEGRATION_P20=FAIL docs_missing"; exit 1; }
+grep -q "AS6RealAppWiring" "$APP" || { echo "AS6_PLATFORM_V2_DIRECT_APP_INTEGRATION_P20=FAIL wiring_import_missing"; exit 1; }
+grep -q "/marketplace" "$APP" || { echo "AS6_PLATFORM_V2_DIRECT_APP_INTEGRATION_P20=FAIL marketplace_route_missing"; exit 1; }
+grep -q "AS6_DIRECT_APP_INTEGRATION_DRIFT" ops/governance/as6-direct-app-integration-aec-p20.md || { echo "AS6_PLATFORM_V2_DIRECT_APP_INTEGRATION_P20=FAIL drift_class_missing"; exit 1; }
+echo "AS6_PLATFORM_V2_DIRECT_APP_INTEGRATION_P20=PASS"

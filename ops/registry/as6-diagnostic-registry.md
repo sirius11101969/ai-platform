@@ -1213,3 +1213,9 @@ ops/bin/as6-control-permission-engine-v114
 - Wiring: frontend/src/as6/app/wiring/AS6RealAppWiring.jsx
 - App index export: frontend/src/as6/app/index.js
 - Added failure class: AS6_REAL_APP_WIRING_DRIFT.
+
+## AS6_PLATFORM_V2_DIRECT_APP_INTEGRATION_P20
+- Diagnostic: ops/bin/as6-diagnose-direct-app-integration-p20
+- Control: ops/bin/as6-control-direct-app-integration-p20
+- App: frontend/src/App.jsx
+- Added failure class: AS6_DIRECT_APP_INTEGRATION_DRIFT.

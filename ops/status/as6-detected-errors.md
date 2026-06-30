@@ -1811,3 +1811,8 @@ Governed and registered.
 - Detected: AS6_APP_WIRING_BRIDGE_GAP.
 - Root cause: App Runtime Integration existed without safe real app wiring bridge.
 - Resolution: Real App Wiring bridge added.
+
+## AS6_PLATFORM_V2_DIRECT_APP_INTEGRATION_P20
+- Detected: AS6_MARKETPLACE_APP_ROUTE_GAP.
+- Root cause: Real App Wiring existed without direct App.jsx route exposure.
+- Resolution: Direct App Integration added.

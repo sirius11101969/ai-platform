@@ -1,4 +1,5 @@
 import "./styles/as6-design-token-registry.css";
+import { AS6RealAppWiring } from "./as6/app";
 import "./styles/as6-design-system-foundation-v220.css";
 import "./styles/as6-real-component-consolidation.css";
 import "./styles/as6-physical-page-refactor-migration.css";
@@ -119,6 +120,7 @@ export function useAuth() {
 }
 
 export default function App() {
+  if (typeof window !== "undefined" && window.location.pathname === "/marketplace") return <AS6RealAppWiring path="/marketplace" data-as6-direct-app-integration="AS6_DIRECT_APP_INTEGRATION_P20" />;
   return (
     <AuthProvider>
       <BrowserRouter>

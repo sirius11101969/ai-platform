@@ -3074,3 +3074,9 @@ Permission Validation
 - Covers App index export.
 - Covers direct App.jsx edit risk prevention.
 - Covers visible runtime integration preparation.
+
+## AS6_PLATFORM_V2_DIRECT_APP_INTEGRATION_P20
+- Covers direct App.jsx marketplace route.
+- Covers AS6RealAppWiring consumption.
+- Covers visible Marketplace route.
+- Covers App route visibility.

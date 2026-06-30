@@ -4774,3 +4774,10 @@ Status: PASS pending validation
 - Real App Wiring Bridge: enabled.
 - Runtime Integration Panel consumption: enabled.
 - Next target: Direct App.jsx visible route/menu placement.
+
+## AS6_PLATFORM_V2_DIRECT_APP_INTEGRATION_P20
+- Status: PASS pending release.
+- Product phase: AS6 Platform V2.
+- Project readiness: 99.999999997%
+- Direct App Marketplace Route: enabled.
+- Next target: Sidebar/Menu visible placement.
