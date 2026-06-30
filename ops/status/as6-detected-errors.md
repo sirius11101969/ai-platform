@@ -1796,3 +1796,8 @@ Governed and registered.
 - Detected: AS6_DYNAMIC_ROUTE_REGISTRY_GAP.
 - Root cause: Marketplace route metadata existed without dynamic shell registry.
 - Resolution: Dynamic Shell Integration added.
+
+## AS6_PLATFORM_V2_SHELL_RUNTIME_INTEGRATION_P17
+- Detected: AS6_SHELL_RUNTIME_ROUTE_CONSUMER_GAP.
+- Root cause: Dynamic Shell Registry existed without Shell runtime consumers.
+- Resolution: Shell Runtime Integration added.

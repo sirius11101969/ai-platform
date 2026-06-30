@@ -3053,3 +3053,10 @@ Permission Validation
 - Covers Marketplace route bootstrap.
 - Covers React shell integration bridge.
 - Covers manual Shell/App route wiring prevention.
+
+## AS6_PLATFORM_V2_SHELL_RUNTIME_INTEGRATION_P17
+- Covers Shell runtime route consumption.
+- Covers Shell runtime navigation consumption.
+- Covers dynamic route outlet.
+- Covers runtime navigation component.
+- Covers Dynamic Shell Registry consumption.

@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+RUNTIME="frontend/src/as6/shell/runtime/AS6ShellRuntimeIntegration.jsx"
+CSS="frontend/src/as6/shell/runtime/AS6ShellRuntimeIntegration.css"
+INDEX="frontend/src/as6/shell/runtime/index.js"
+CONTRACT="frontend/src/as6/shell/runtime/AS6ShellRuntimeIntegration.contract.md"
+DOCS="docs/platform-v2/sdk/shell-runtime-integration-p17.md"
+SHELL_INDEX="frontend/src/as6/shell/index.js"
+test -f "$RUNTIME" || { echo "AS6_PLATFORM_V2_SHELL_RUNTIME_INTEGRATION_P17=FAIL runtime_missing"; exit 1; }
+test -f "$CSS" || { echo "AS6_PLATFORM_V2_SHELL_RUNTIME_INTEGRATION_P17=FAIL css_missing"; exit 1; }
+test -f "$INDEX" || { echo "AS6_PLATFORM_V2_SHELL_RUNTIME_INTEGRATION_P17=FAIL index_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_PLATFORM_V2_SHELL_RUNTIME_INTEGRATION_P17=FAIL contract_missing"; exit 1; }
+test -f "$DOCS" || { echo "AS6_PLATFORM_V2_SHELL_RUNTIME_INTEGRATION_P17=FAIL docs_missing"; exit 1; }
+grep -q "getAS6ShellRuntimeRoutes" "$RUNTIME" || { echo "AS6_PLATFORM_V2_SHELL_RUNTIME_INTEGRATION_P17=FAIL routes_missing"; exit 1; }
+grep -q "getAS6ShellRuntimeNavigation" "$RUNTIME" || { echo "AS6_PLATFORM_V2_SHELL_RUNTIME_INTEGRATION_P17=FAIL navigation_missing"; exit 1; }
+grep -q "useAS6ShellRuntimeIntegration" "$RUNTIME" || { echo "AS6_PLATFORM_V2_SHELL_RUNTIME_INTEGRATION_P17=FAIL hook_missing"; exit 1; }
+grep -q "AS6ShellRuntimeNavigation" "$RUNTIME" || { echo "AS6_PLATFORM_V2_SHELL_RUNTIME_INTEGRATION_P17=FAIL nav_component_missing"; exit 1; }
+grep -q "AS6ShellRuntimeRouteOutlet" "$RUNTIME" || { echo "AS6_PLATFORM_V2_SHELL_RUNTIME_INTEGRATION_P17=FAIL outlet_missing"; exit 1; }
+grep -q "bootstrapAS6DynamicShellRegistry" "$RUNTIME" || { echo "AS6_PLATFORM_V2_SHELL_RUNTIME_INTEGRATION_P17=FAIL dynamic_bootstrap_missing"; exit 1; }
+grep -q "./runtime" "$SHELL_INDEX" || { echo "AS6_PLATFORM_V2_SHELL_RUNTIME_INTEGRATION_P17=FAIL shell_index_export_missing"; exit 1; }
+grep -q "AS6_SHELL_RUNTIME_INTEGRATION_DRIFT" ops/governance/as6-shell-runtime-integration-aec-p17.md || { echo "AS6_PLATFORM_V2_SHELL_RUNTIME_INTEGRATION_P17=FAIL drift_class_missing"; exit 1; }
+echo "AS6_PLATFORM_V2_SHELL_RUNTIME_INTEGRATION_P17=PASS"

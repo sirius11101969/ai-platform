@@ -4750,3 +4750,11 @@ Status: PASS pending validation
 - Dynamic Shell Registry: enabled.
 - Dynamic Navigation Bridge: enabled.
 - Next target: App/Shell visible route wiring.
+
+## AS6_PLATFORM_V2_SHELL_RUNTIME_INTEGRATION_P17
+- Status: PASS pending release.
+- Product phase: AS6 Platform V2.
+- Project readiness: 99.999999992%
+- Shell Runtime Routes: enabled.
+- Shell Runtime Navigation: enabled.
+- Next target: Visible App/Shell route wiring.

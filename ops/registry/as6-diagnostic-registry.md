@@ -1192,3 +1192,10 @@ ops/bin/as6-control-permission-engine-v114
 - Registry: frontend/src/as6/shell/dynamic/AS6DynamicShellRegistry.js
 - Bridge: frontend/src/as6/shell/dynamic/AS6DynamicShellBridge.jsx
 - Added failure class: AS6_DYNAMIC_SHELL_INTEGRATION_DRIFT.
+
+## AS6_PLATFORM_V2_SHELL_RUNTIME_INTEGRATION_P17
+- Diagnostic: ops/bin/as6-diagnose-shell-runtime-integration-p17
+- Control: ops/bin/as6-control-shell-runtime-integration-p17
+- Runtime: frontend/src/as6/shell/runtime/AS6ShellRuntimeIntegration.jsx
+- Shell index export: frontend/src/as6/shell/index.js
+- Added failure class: AS6_SHELL_RUNTIME_INTEGRATION_DRIFT.

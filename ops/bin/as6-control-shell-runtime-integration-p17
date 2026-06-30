@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-shell-runtime-integration-p17
+grep -RIn "AS6_SHELL_RUNTIME_INTEGRATION_DRIFT" README.md docs ops .github frontend/src >/dev/null
+echo "AS6_CONTROL_SHELL_RUNTIME_INTEGRATION_P17=PASS"
