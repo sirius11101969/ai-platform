@@ -3120,3 +3120,9 @@ Permission Validation
 - Covers manual remote catalog sync.
 - Covers source/timestamp/error visibility.
 - Covers local fallback visibility.
+
+## AS6_PLATFORM_V2_SIGNED_PLUGIN_PACKAGES_TRUST_VALIDATION_P27
+- Covers trusted publisher registry.
+- Covers plugin package SHA-256 helper.
+- Covers package trust validation.
+- Covers Marketplace trust status annotation.

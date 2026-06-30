@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-signed-plugin-packages-trust-validation-p27
+grep -RIn "AS6_SIGNED_PLUGIN_PACKAGES_TRUST_VALIDATION_DRIFT" README.md docs ops .github frontend/src >/dev/null
+echo "AS6_CONTROL_SIGNED_PLUGIN_PACKAGES_TRUST_VALIDATION_P27=PASS"

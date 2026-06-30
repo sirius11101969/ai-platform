@@ -1,19 +1,21 @@
 import { installAS6Plugin, enableAS6Plugin, getAS6PluginUpdateStatus, updateAS6Plugin } from "./AS6PluginRuntime";
+import { annotateAS6PluginTrust } from "./AS6PluginTrust";
 
 export const AS6_PLUGIN_MARKETPLACE_VERSION = "P10";
+export const AS6_PLUGIN_MARKETPLACE_TRUST_VERSION = "P27";
 
 const marketplaceRegistry = new Map();
 
 export function publishAS6MarketplacePlugin(plugin = {}) {
   if (!plugin.id) return { ok: false, error: "AS6_MARKETPLACE_PLUGIN_ID_MISSING" };
 
-  marketplaceRegistry.set(plugin.id, {
+  marketplaceRegistry.set(plugin.id, annotateAS6PluginTrust({
     status: "published",
     publishedAt: new Date().toISOString(),
     rating: 0,
     installs: 0,
     ...plugin,
-  });
+  }));
 
   return { ok: true, pluginId: plugin.id };
 }
@@ -51,4 +53,10 @@ export function updateAS6MarketplacePlugin(pluginId) {
   const plugin = marketplaceRegistry.get(pluginId);
   if (!plugin) return { ok: false, error: "AS6_MARKETPLACE_PLUGIN_NOT_FOUND", pluginId };
   return updateAS6Plugin(plugin);
+}
+
+export function getAS6MarketplacePluginTrustStatus(pluginId) {
+  const plugin = marketplaceRegistry.get(pluginId);
+  if (!plugin) return { ok: false, error: "AS6_MARKETPLACE_PLUGIN_NOT_FOUND", pluginId };
+  return plugin.trust || annotateAS6PluginTrust(plugin).trust;
 }

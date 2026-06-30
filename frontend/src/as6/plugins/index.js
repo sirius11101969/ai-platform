@@ -11,3 +11,5 @@ export * from "./ui";
 export * from "./marketplace-route";
 
 export * from "./AS6RemoteMarketplaceCatalog";
+
+export * from "./AS6PluginTrust";

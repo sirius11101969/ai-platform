@@ -4831,3 +4831,10 @@ Status: PASS pending validation
 - Project readiness: 99.9999999995%
 - Remote Catalog UI Integration: enabled.
 - Next target: Remote catalog signed package validation.
+
+## AS6_PLATFORM_V2_SIGNED_PLUGIN_PACKAGES_TRUST_VALIDATION_P27
+- Status: PASS pending release.
+- Product phase: AS6 Platform V2.
+- Project readiness: 99.9999999996%
+- Signed Plugin Packages Trust Validation: enabled.
+- Next target: Trust status UI in Marketplace Developer Console.

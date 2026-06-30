@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+TRUST="frontend/src/as6/plugins/AS6PluginTrust.js"
+MARKETPLACE="frontend/src/as6/plugins/AS6PluginMarketplace.js"
+INDEX="frontend/src/as6/plugins/index.js"
+test -f "$TRUST" || { echo "AS6_PLATFORM_V2_SIGNED_PLUGIN_PACKAGES_TRUST_VALIDATION_P27=FAIL trust_missing"; exit 1; }
+grep -q "AS6_PLUGIN_TRUST_VERSION" "$TRUST" || { echo "AS6_PLATFORM_V2_SIGNED_PLUGIN_PACKAGES_TRUST_VALIDATION_P27=FAIL trust_version_missing"; exit 1; }
+grep -q "registerAS6TrustedPublisher" "$TRUST" || { echo "AS6_PLATFORM_V2_SIGNED_PLUGIN_PACKAGES_TRUST_VALIDATION_P27=FAIL trusted_publisher_missing"; exit 1; }
+grep -q "calculateAS6PluginPackageSHA256" "$TRUST" || { echo "AS6_PLATFORM_V2_SIGNED_PLUGIN_PACKAGES_TRUST_VALIDATION_P27=FAIL sha256_missing"; exit 1; }
+grep -q "validateAS6PluginPackageTrust" "$TRUST" || { echo "AS6_PLATFORM_V2_SIGNED_PLUGIN_PACKAGES_TRUST_VALIDATION_P27=FAIL trust_validation_missing"; exit 1; }
+grep -q "annotateAS6PluginTrust" "$MARKETPLACE" || { echo "AS6_PLATFORM_V2_SIGNED_PLUGIN_PACKAGES_TRUST_VALIDATION_P27=FAIL marketplace_annotation_missing"; exit 1; }
+grep -q "getAS6MarketplacePluginTrustStatus" "$MARKETPLACE" || { echo "AS6_PLATFORM_V2_SIGNED_PLUGIN_PACKAGES_TRUST_VALIDATION_P27=FAIL marketplace_status_missing"; exit 1; }
+grep -q "AS6PluginTrust" "$INDEX" || { echo "AS6_PLATFORM_V2_SIGNED_PLUGIN_PACKAGES_TRUST_VALIDATION_P27=FAIL index_export_missing"; exit 1; }
+grep -q "AS6_SIGNED_PLUGIN_PACKAGES_TRUST_VALIDATION_DRIFT" ops/governance/as6-signed-plugin-packages-trust-validation-aec-p27.md || { echo "AS6_PLATFORM_V2_SIGNED_PLUGIN_PACKAGES_TRUST_VALIDATION_P27=FAIL drift_class_missing"; exit 1; }
+echo "AS6_PLATFORM_V2_SIGNED_PLUGIN_PACKAGES_TRUST_VALIDATION_P27=PASS"

@@ -94,3 +94,5 @@ as6-control-plugin-version-update-manager-p25	as6-control-marketplace-install-pe
 as6-control-remote-marketplace-catalog-p26a	as6-control-plugin-version-update-manager-p25
 
 as6-control-remote-catalog-ui-integration-p26b	as6-control-remote-marketplace-catalog-p26a
+
+as6-control-signed-plugin-packages-trust-validation-p27	as6-control-remote-catalog-ui-integration-p26b

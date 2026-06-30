@@ -1851,3 +1851,8 @@ Governed and registered.
 - Detected: AS6_MARKETPLACE_REMOTE_SYNC_UI_GAP.
 - Root cause: Remote catalog contract existed without Developer Console visibility.
 - Resolution: Remote Catalog UI Integration added.
+
+## AS6_PLATFORM_V2_SIGNED_PLUGIN_PACKAGES_TRUST_VALIDATION_P27
+- Detected: AS6_PLUGIN_PACKAGE_SIGNATURE_GAP.
+- Root cause: Remote Marketplace could sync plugins without package trust validation.
+- Resolution: Signed Plugin Packages Trust Validation added.

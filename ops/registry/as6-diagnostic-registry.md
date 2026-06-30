@@ -1263,3 +1263,10 @@ ops/bin/as6-control-permission-engine-v114
 - Control: ops/bin/as6-control-remote-catalog-ui-integration-p26b
 - UI: frontend/src/as6/plugins/ui/AS6MarketplaceDeveloperConsole.jsx
 - Added failure class: AS6_REMOTE_CATALOG_UI_INTEGRATION_DRIFT.
+
+## AS6_PLATFORM_V2_SIGNED_PLUGIN_PACKAGES_TRUST_VALIDATION_P27
+- Diagnostic: ops/bin/as6-diagnose-signed-plugin-packages-trust-validation-p27
+- Control: ops/bin/as6-control-signed-plugin-packages-trust-validation-p27
+- Trust: frontend/src/as6/plugins/AS6PluginTrust.js
+- Marketplace: frontend/src/as6/plugins/AS6PluginMarketplace.js
+- Added failure class: AS6_SIGNED_PLUGIN_PACKAGES_TRUST_VALIDATION_DRIFT.
