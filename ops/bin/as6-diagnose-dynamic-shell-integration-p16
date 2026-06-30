@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+REG="frontend/src/as6/shell/dynamic/AS6DynamicShellRegistry.js"
+BRIDGE="frontend/src/as6/shell/dynamic/AS6DynamicShellBridge.jsx"
+INDEX="frontend/src/as6/shell/dynamic/index.js"
+CONTRACT="frontend/src/as6/shell/dynamic/AS6DynamicShellIntegration.contract.md"
+DOCS="docs/platform-v2/sdk/dynamic-shell-integration-p16.md"
+test -f "$REG" || { echo "AS6_PLATFORM_V2_DYNAMIC_SHELL_INTEGRATION_P16=FAIL registry_missing"; exit 1; }
+test -f "$BRIDGE" || { echo "AS6_PLATFORM_V2_DYNAMIC_SHELL_INTEGRATION_P16=FAIL bridge_missing"; exit 1; }
+test -f "$INDEX" || { echo "AS6_PLATFORM_V2_DYNAMIC_SHELL_INTEGRATION_P16=FAIL index_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_PLATFORM_V2_DYNAMIC_SHELL_INTEGRATION_P16=FAIL contract_missing"; exit 1; }
+test -f "$DOCS" || { echo "AS6_PLATFORM_V2_DYNAMIC_SHELL_INTEGRATION_P16=FAIL docs_missing"; exit 1; }
+grep -q "registerAS6DynamicShellRoute" "$REG" || { echo "AS6_PLATFORM_V2_DYNAMIC_SHELL_INTEGRATION_P16=FAIL route_register_missing"; exit 1; }
+grep -q "registerAS6DynamicShellNavigation" "$REG" || { echo "AS6_PLATFORM_V2_DYNAMIC_SHELL_INTEGRATION_P16=FAIL nav_register_missing"; exit 1; }
+grep -q "bootstrapAS6DynamicShellRegistry" "$REG" || { echo "AS6_PLATFORM_V2_DYNAMIC_SHELL_INTEGRATION_P16=FAIL bootstrap_missing"; exit 1; }
+grep -q "/marketplace" "$REG" || { echo "AS6_PLATFORM_V2_DYNAMIC_SHELL_INTEGRATION_P16=FAIL marketplace_route_missing"; exit 1; }
+grep -q "useAS6DynamicShellIntegration" "$BRIDGE" || { echo "AS6_PLATFORM_V2_DYNAMIC_SHELL_INTEGRATION_P16=FAIL hook_missing"; exit 1; }
+grep -q "AS6DynamicShellNavigationList" "$BRIDGE" || { echo "AS6_PLATFORM_V2_DYNAMIC_SHELL_INTEGRATION_P16=FAIL nav_component_missing"; exit 1; }
+grep -q "AS6_DYNAMIC_SHELL_INTEGRATION_DRIFT" ops/governance/as6-dynamic-shell-integration-aec-p16.md || { echo "AS6_PLATFORM_V2_DYNAMIC_SHELL_INTEGRATION_P16=FAIL drift_class_missing"; exit 1; }
+echo "AS6_PLATFORM_V2_DYNAMIC_SHELL_INTEGRATION_P16=PASS"

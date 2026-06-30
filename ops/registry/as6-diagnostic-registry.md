@@ -1185,3 +1185,10 @@ ops/bin/as6-control-permission-engine-v114
 - Page: frontend/src/as6/plugins/marketplace-route/AS6MarketplacePage.jsx
 - Navigation: frontend/src/as6/plugins/marketplace-route/AS6MarketplaceNavigation.js
 - Added failure class: AS6_MARKETPLACE_ROUTE_NAVIGATION_DRIFT.
+
+## AS6_PLATFORM_V2_DYNAMIC_SHELL_INTEGRATION_P16
+- Diagnostic: ops/bin/as6-diagnose-dynamic-shell-integration-p16
+- Control: ops/bin/as6-control-dynamic-shell-integration-p16
+- Registry: frontend/src/as6/shell/dynamic/AS6DynamicShellRegistry.js
+- Bridge: frontend/src/as6/shell/dynamic/AS6DynamicShellBridge.jsx
+- Added failure class: AS6_DYNAMIC_SHELL_INTEGRATION_DRIFT.

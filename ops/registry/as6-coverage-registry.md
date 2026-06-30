@@ -3046,3 +3046,10 @@ Permission Validation
 - Covers route definition metadata.
 - Covers plugin index export.
 - Covers dynamic navigation preparation.
+
+## AS6_PLATFORM_V2_DYNAMIC_SHELL_INTEGRATION_P16
+- Covers dynamic shell route registry.
+- Covers dynamic navigation registry.
+- Covers Marketplace route bootstrap.
+- Covers React shell integration bridge.
+- Covers manual Shell/App route wiring prevention.

@@ -1791,3 +1791,8 @@ Governed and registered.
 - Detected: AS6_MARKETPLACE_ROUTE_GAP.
 - Root cause: Marketplace Console existed without route/navigation metadata.
 - Resolution: Marketplace route page and navigation definition added.
+
+## AS6_PLATFORM_V2_DYNAMIC_SHELL_INTEGRATION_P16
+- Detected: AS6_DYNAMIC_ROUTE_REGISTRY_GAP.
+- Root cause: Marketplace route metadata existed without dynamic shell registry.
+- Resolution: Dynamic Shell Integration added.

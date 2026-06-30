@@ -70,3 +70,5 @@ as6-control-plugin-registry-discovery-p13	as6-control-create-plugin-cli-p12
 as6-control-marketplace-ui-developer-console-p14	as6-control-plugin-registry-discovery-p13
 
 as6-control-marketplace-route-navigation-p15	as6-control-marketplace-ui-developer-console-p14
+
+as6-control-dynamic-shell-integration-p16	as6-control-marketplace-route-navigation-p15
