@@ -1244,3 +1244,10 @@ ops/bin/as6-control-permission-engine-v114
 - Control: ops/bin/as6-control-marketplace-install-persistence-p24
 - Runtime: frontend/src/as6/plugins/AS6PluginRuntime.js
 - Added failure class: AS6_MARKETPLACE_INSTALL_PERSISTENCE_DRIFT.
+
+## AS6_PLATFORM_V2_PLUGIN_VERSION_UPDATE_MANAGER_P25
+- Diagnostic: ops/bin/as6-diagnose-plugin-version-update-manager-p25
+- Control: ops/bin/as6-control-plugin-version-update-manager-p25
+- Runtime: frontend/src/as6/plugins/AS6PluginRuntime.js
+- Marketplace: frontend/src/as6/plugins/AS6PluginMarketplace.js
+- Added failure class: AS6_PLUGIN_VERSION_UPDATE_MANAGER_DRIFT.

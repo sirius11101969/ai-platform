@@ -6,8 +6,69 @@ import { registerAS6SpaceManifest } from "../spaces";
 export const AS6_PLUGIN_RUNTIME_VERSION = "P10";
 export const AS6_PLUGIN_INSTALL_PERSISTENCE_VERSION = "P24";
 export const AS6_PLUGIN_INSTALL_STORAGE_KEY = "as6.plugin.install.state.v1";
+export const AS6_PLUGIN_VERSION_UPDATE_MANAGER_VERSION = "P25";
 
 const pluginRegistry = new Map();
+const pluginRollbackRegistry = new Map();
+
+export function compareAS6PluginVersions(currentVersion = "0.0.0", nextVersion = "0.0.0") {
+  const current = String(currentVersion).split(".").map((value) => Number(value) || 0);
+  const next = String(nextVersion).split(".").map((value) => Number(value) || 0);
+  const max = Math.max(current.length, next.length);
+  for (let index = 0; index < max; index += 1) {
+    const left = current[index] || 0;
+    const right = next[index] || 0;
+    if (right > left) return 1;
+    if (right < left) return -1;
+  }
+  return 0;
+}
+
+export function getAS6PluginUpdateStatus(pluginId, availablePlugin) {
+  const installed = pluginRegistry.get(pluginId);
+  if (!installed) return { ok: false, error: "AS6_PLUGIN_NOT_INSTALLED", pluginId };
+  if (!availablePlugin?.version) return { ok: false, error: "AS6_PLUGIN_AVAILABLE_VERSION_MISSING", pluginId };
+  const comparison = compareAS6PluginVersions(installed.version, availablePlugin.version);
+  return {
+    ok: true,
+    pluginId,
+    installedVersion: installed.version,
+    availableVersion: availablePlugin.version,
+    updateAvailable: comparison === 1,
+    comparison,
+  };
+}
+
+export function updateAS6Plugin(plugin = {}) {
+  const installed = pluginRegistry.get(plugin.id);
+  if (!installed) return { ok: false, error: "AS6_PLUGIN_NOT_INSTALLED", pluginId: plugin.id };
+  const updateStatus = getAS6PluginUpdateStatus(plugin.id, plugin);
+  if (!updateStatus.ok) return updateStatus;
+  if (!updateStatus.updateAvailable) return { ok: true, skipped: true, reason: "no_update_available", updateStatus };
+  const validation = validateAS6PluginManifest(plugin);
+  if (!validation.ok) return { ok: false, error: "AS6_PLUGIN_UPDATE_MANIFEST_INVALID", validation };
+  pluginRollbackRegistry.set(plugin.id, installed);
+  pluginRegistry.set(plugin.id, {
+    ...installed,
+    ...plugin,
+    status: installed.status || "installed",
+    updatedAt: new Date().toISOString(),
+    previousVersion: installed.version,
+  });
+  persistAS6PluginInstallState();
+  emitAS6BusEvent("plugin.updated", { pluginId: plugin.id, version: plugin.version });
+  return { ok: true, pluginId: plugin.id, updateStatus };
+}
+
+export function rollbackAS6PluginUpdate(pluginId) {
+  const previous = pluginRollbackRegistry.get(pluginId);
+  if (!previous) return { ok: false, error: "AS6_PLUGIN_ROLLBACK_SNAPSHOT_MISSING", pluginId };
+  pluginRegistry.set(pluginId, previous);
+  pluginRollbackRegistry.delete(pluginId);
+  persistAS6PluginInstallState();
+  emitAS6BusEvent("plugin.rollback", { pluginId });
+  return { ok: true, pluginId, restoredVersion: previous.version };
+}
 
 function canUseAS6PluginStorage() {
   return typeof window !== "undefined" && Boolean(window.localStorage);
@@ -146,6 +207,7 @@ export function getAS6PluginRuntimeState() {
   return {
     version: AS6_PLUGIN_RUNTIME_VERSION,
     pluginCount: pluginRegistry.size,
+    rollbackCount: pluginRollbackRegistry.size,
     plugins: getAS6Plugins(),
   };
 }

@@ -3102,3 +3102,9 @@ Permission Validation
 - Covers plugin install persistence.
 - Covers plugin restore helper.
 - Covers enable/disable/remove persistence.
+
+## AS6_PLATFORM_V2_PLUGIN_VERSION_UPDATE_MANAGER_P25
+- Covers plugin version comparison.
+- Covers plugin update detection.
+- Covers marketplace update operation.
+- Covers rollback snapshot support.

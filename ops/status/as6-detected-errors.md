@@ -1836,3 +1836,8 @@ Governed and registered.
 - Detected: AS6_PLUGIN_INSTALL_STATE_VOLATILE.
 - Root cause: Plugin runtime state was memory-only.
 - Resolution: Marketplace Install Persistence added.
+
+## AS6_PLATFORM_V2_PLUGIN_VERSION_UPDATE_MANAGER_P25
+- Detected: AS6_PLUGIN_UPDATE_DETECTION_GAP.
+- Root cause: Plugin persistence existed without version/update management.
+- Resolution: Plugin Version Update Manager added.

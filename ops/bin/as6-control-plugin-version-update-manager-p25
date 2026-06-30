@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-plugin-version-update-manager-p25
+grep -RIn "AS6_PLUGIN_VERSION_UPDATE_MANAGER_DRIFT" README.md docs ops .github frontend/src >/dev/null
+echo "AS6_CONTROL_PLUGIN_VERSION_UPDATE_MANAGER_P25=PASS"

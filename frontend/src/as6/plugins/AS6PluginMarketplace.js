@@ -1,4 +1,4 @@
-import { installAS6Plugin, enableAS6Plugin } from "./AS6PluginRuntime";
+import { installAS6Plugin, enableAS6Plugin, getAS6PluginUpdateStatus, updateAS6Plugin } from "./AS6PluginRuntime";
 
 export const AS6_PLUGIN_MARKETPLACE_VERSION = "P10";
 
@@ -39,4 +39,16 @@ export function getAS6MarketplacePlugins() {
 
 export function getAS6MarketplacePluginById(pluginId) {
   return marketplaceRegistry.get(pluginId) || null;
+}
+
+export function getAS6MarketplacePluginUpdateStatus(pluginId) {
+  const plugin = marketplaceRegistry.get(pluginId);
+  if (!plugin) return { ok: false, error: "AS6_MARKETPLACE_PLUGIN_NOT_FOUND", pluginId };
+  return getAS6PluginUpdateStatus(pluginId, plugin);
+}
+
+export function updateAS6MarketplacePlugin(pluginId) {
+  const plugin = marketplaceRegistry.get(pluginId);
+  if (!plugin) return { ok: false, error: "AS6_MARKETPLACE_PLUGIN_NOT_FOUND", pluginId };
+  return updateAS6Plugin(plugin);
 }

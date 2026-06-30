@@ -4810,3 +4810,10 @@ Status: PASS pending validation
 - Project readiness: 99.9999999992%
 - Marketplace Install Persistence: enabled.
 - Next target: plugin update/version management.
+
+## AS6_PLATFORM_V2_PLUGIN_VERSION_UPDATE_MANAGER_P25
+- Status: PASS pending release.
+- Product phase: AS6 Platform V2.
+- Project readiness: 99.9999999993%
+- Plugin Version Update Manager: enabled.
+- Next target: Marketplace remote catalog.

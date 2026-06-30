@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+RUNTIME="frontend/src/as6/plugins/AS6PluginRuntime.js"
+MARKETPLACE="frontend/src/as6/plugins/AS6PluginMarketplace.js"
+test -f "$RUNTIME" || { echo "AS6_PLATFORM_V2_PLUGIN_VERSION_UPDATE_MANAGER_P25=FAIL runtime_missing"; exit 1; }
+test -f "$MARKETPLACE" || { echo "AS6_PLATFORM_V2_PLUGIN_VERSION_UPDATE_MANAGER_P25=FAIL marketplace_missing"; exit 1; }
+grep -q "AS6_PLUGIN_VERSION_UPDATE_MANAGER_VERSION" "$RUNTIME" || { echo "AS6_PLATFORM_V2_PLUGIN_VERSION_UPDATE_MANAGER_P25=FAIL version_missing"; exit 1; }
+grep -q "compareAS6PluginVersions" "$RUNTIME" || { echo "AS6_PLATFORM_V2_PLUGIN_VERSION_UPDATE_MANAGER_P25=FAIL comparator_missing"; exit 1; }
+grep -q "getAS6PluginUpdateStatus" "$RUNTIME" || { echo "AS6_PLATFORM_V2_PLUGIN_VERSION_UPDATE_MANAGER_P25=FAIL update_status_missing"; exit 1; }
+grep -q "updateAS6Plugin" "$RUNTIME" || { echo "AS6_PLATFORM_V2_PLUGIN_VERSION_UPDATE_MANAGER_P25=FAIL update_missing"; exit 1; }
+grep -q "rollbackAS6PluginUpdate" "$RUNTIME" || { echo "AS6_PLATFORM_V2_PLUGIN_VERSION_UPDATE_MANAGER_P25=FAIL rollback_missing"; exit 1; }
+grep -q "getAS6MarketplacePluginUpdateStatus" "$MARKETPLACE" || { echo "AS6_PLATFORM_V2_PLUGIN_VERSION_UPDATE_MANAGER_P25=FAIL marketplace_update_status_missing"; exit 1; }
+grep -q "updateAS6MarketplacePlugin" "$MARKETPLACE" || { echo "AS6_PLATFORM_V2_PLUGIN_VERSION_UPDATE_MANAGER_P25=FAIL marketplace_update_missing"; exit 1; }
+grep -q "AS6_PLUGIN_VERSION_UPDATE_MANAGER_DRIFT" ops/governance/as6-plugin-version-update-manager-aec-p25.md || { echo "AS6_PLATFORM_V2_PLUGIN_VERSION_UPDATE_MANAGER_P25=FAIL drift_class_missing"; exit 1; }
+echo "AS6_PLATFORM_V2_PLUGIN_VERSION_UPDATE_MANAGER_P25=PASS"
