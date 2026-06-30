@@ -1321,3 +1321,10 @@ ops/bin/as6-control-permission-engine-v114
 - Control: ops/bin/as6-control-marketplace-production-services-p34
 - Production Services: frontend/src/as6/plugins/AS6MarketplaceProductionServices.js
 - Added failure class: AS6_MARKETPLACE_PRODUCTION_SERVICES_DRIFT.
+
+## AS6_PLATFORM_V2_MARKETPLACE_GA_P35
+- Diagnostic: ops/bin/as6-diagnose-marketplace-ga-p35
+- Control: ops/bin/as6-control-marketplace-ga-p35
+- GA: frontend/src/as6/plugins/AS6MarketplaceGA.js
+- Freeze manifest: ops/governance/as6-marketplace-ga-freeze-manifest-p35.md
+- Added failure class: AS6_MARKETPLACE_GA_DRIFT.

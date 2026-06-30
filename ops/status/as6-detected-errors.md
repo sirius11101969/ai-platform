@@ -1896,3 +1896,8 @@ Governed and registered.
 - Detected: AS6_MARKETPLACE_PRODUCTION_SERVICES_DRIFT.
 - Root cause: Marketplace Administration existed without backend-ready production service facade.
 - Resolution: Marketplace Production Services added.
+
+## AS6_PLATFORM_V2_MARKETPLACE_GA_P35
+- Detected: AS6_MARKETPLACE_GA_READINESS_GAP.
+- Root cause: Marketplace had production services without GA freeze declaration.
+- Resolution: Marketplace GA readiness and freeze manifest added.

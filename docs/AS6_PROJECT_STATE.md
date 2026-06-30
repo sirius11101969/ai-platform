@@ -4893,3 +4893,11 @@ Status: PASS pending validation
 - Project readiness: 99.99999999996%
 - Marketplace Production Services: enabled.
 - Next target: Platform V2 Stable Freeze P35.
+
+## AS6_PLATFORM_V2_MARKETPLACE_GA_P35
+- Status: PASS pending release.
+- Product phase: AS6 Platform V2 Stable cycle.
+- Project readiness: 100% for Marketplace Platform V2 scope.
+- Marketplace GA: AS6_MARKETPLACE_1_0_GA.
+- Infrastructure freeze: enabled.
+- Next target: product modules above Platform V2 stable APIs.

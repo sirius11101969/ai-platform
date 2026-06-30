@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+GA="frontend/src/as6/plugins/AS6MarketplaceGA.js"
+INDEX="frontend/src/as6/plugins/index.js"
+test -f "$GA" || { echo "AS6_PLATFORM_V2_MARKETPLACE_GA_P35=FAIL ga_missing"; exit 1; }
+grep -q "AS6_MARKETPLACE_GA_VERSION" "$GA" || { echo "AS6_PLATFORM_V2_MARKETPLACE_GA_P35=FAIL version_missing"; exit 1; }
+grep -q "AS6_MARKETPLACE_1_0_GA" "$GA" || { echo "AS6_PLATFORM_V2_MARKETPLACE_GA_P35=FAIL ga_status_missing"; exit 1; }
+grep -q "validateAS6MarketplaceGAReadiness" "$GA" || { echo "AS6_PLATFORM_V2_MARKETPLACE_GA_P35=FAIL readiness_missing"; exit 1; }
+grep -q "getAS6MarketplaceGALifecycleChecklist" "$GA" || { echo "AS6_PLATFORM_V2_MARKETPLACE_GA_P35=FAIL lifecycle_missing"; exit 1; }
+grep -q "bootstrapAS6MarketplaceGA" "$GA" || { echo "AS6_PLATFORM_V2_MARKETPLACE_GA_P35=FAIL bootstrap_missing"; exit 1; }
+grep -q "AS6MarketplaceGA" "$INDEX" || { echo "AS6_PLATFORM_V2_MARKETPLACE_GA_P35=FAIL index_export_missing"; exit 1; }
+grep -q "AS6_MARKETPLACE_GA_DRIFT" ops/governance/as6-marketplace-ga-aec-p35.md || { echo "AS6_PLATFORM_V2_MARKETPLACE_GA_P35=FAIL drift_class_missing"; exit 1; }
+grep -q "AS6_MARKETPLACE_1_0_GA" ops/governance/as6-marketplace-ga-freeze-manifest-p35.md || { echo "AS6_PLATFORM_V2_MARKETPLACE_GA_P35=FAIL freeze_manifest_missing"; exit 1; }
+echo "AS6_PLATFORM_V2_MARKETPLACE_GA_P35=PASS"

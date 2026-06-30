@@ -112,3 +112,5 @@ as6-control-developer-portal-import-repair-p32b	as6-control-developer-portal-p32
 as6-control-marketplace-administration-p33	as6-control-developer-portal-import-repair-p32b
 
 as6-control-marketplace-production-services-p34	as6-control-marketplace-administration-p33
+
+as6-control-marketplace-ga-p35	as6-control-marketplace-production-services-p34

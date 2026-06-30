@@ -3175,3 +3175,9 @@ Permission Validation
 - Covers remote catalog sync facade.
 - Covers upload/download package facade.
 - Covers search, cache, health and telemetry services.
+
+## AS6_PLATFORM_V2_MARKETPLACE_GA_P35
+- Covers Marketplace GA readiness.
+- Covers Platform V2 stable freeze manifest.
+- Covers lifecycle checklist.
+- Covers GA evidence.
