@@ -1219,3 +1219,9 @@ ops/bin/as6-control-permission-engine-v114
 - Control: ops/bin/as6-control-direct-app-integration-p20
 - App: frontend/src/App.jsx
 - Added failure class: AS6_DIRECT_APP_INTEGRATION_DRIFT.
+
+## AS6_PLATFORM_V2_SIDEBAR_MENU_VISIBLE_PLACEMENT_P21
+- Diagnostic: ops/bin/as6-diagnose-sidebar-menu-visible-placement-p21
+- Control: ops/bin/as6-control-sidebar-menu-visible-placement-p21
+- Sidebar: frontend/src/components/as6-workspace/AS6Sidebar.jsx
+- Added failure class: AS6_SIDEBAR_MENU_VISIBLE_PLACEMENT_DRIFT.

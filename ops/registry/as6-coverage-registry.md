@@ -3080,3 +3080,8 @@ Permission Validation
 - Covers AS6RealAppWiring consumption.
 - Covers visible Marketplace route.
 - Covers App route visibility.
+
+## AS6_PLATFORM_V2_SIDEBAR_MENU_VISIBLE_PLACEMENT_P21
+- Covers visible Marketplace sidebar item.
+- Covers /marketplace navigation target.
+- Covers sidebar menu route discovery.

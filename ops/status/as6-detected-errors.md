@@ -1816,3 +1816,8 @@ Governed and registered.
 - Detected: AS6_MARKETPLACE_APP_ROUTE_GAP.
 - Root cause: Real App Wiring existed without direct App.jsx route exposure.
 - Resolution: Direct App Integration added.
+
+## AS6_PLATFORM_V2_SIDEBAR_MENU_VISIBLE_PLACEMENT_P21
+- Detected: AS6_MARKETPLACE_MENU_ITEM_GAP.
+- Root cause: Marketplace route existed without visible sidebar item.
+- Resolution: Marketplace sidebar item added.

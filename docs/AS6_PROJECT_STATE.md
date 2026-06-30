@@ -4781,3 +4781,10 @@ Status: PASS pending validation
 - Project readiness: 99.999999997%
 - Direct App Marketplace Route: enabled.
 - Next target: Sidebar/Menu visible placement.
+
+## AS6_PLATFORM_V2_SIDEBAR_MENU_VISIBLE_PLACEMENT_P21
+- Status: PASS pending release.
+- Product phase: AS6 Platform V2.
+- Project readiness: 99.999999998%
+- Marketplace Sidebar Menu: enabled.
+- Next target: Marketplace end-to-end UI validation.

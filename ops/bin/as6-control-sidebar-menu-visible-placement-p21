@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-sidebar-menu-visible-placement-p21
+grep -RIn "AS6_SIDEBAR_MENU_VISIBLE_PLACEMENT_DRIFT" README.md docs ops .github frontend/src >/dev/null
+echo "AS6_CONTROL_SIDEBAR_MENU_VISIBLE_PLACEMENT_P21=PASS"

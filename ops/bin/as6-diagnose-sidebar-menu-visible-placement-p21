@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+SIDEBAR="frontend/src/components/as6-workspace/AS6Sidebar.jsx"
+test -f "$SIDEBAR" || { echo "AS6_PLATFORM_V2_SIDEBAR_MENU_VISIBLE_PLACEMENT_P21=FAIL sidebar_missing"; exit 1; }
+grep -q "/marketplace" "$SIDEBAR" || { echo "AS6_PLATFORM_V2_SIDEBAR_MENU_VISIBLE_PLACEMENT_P21=FAIL marketplace_path_missing"; exit 1; }
+grep -q "Marketplace" "$SIDEBAR" || { echo "AS6_PLATFORM_V2_SIDEBAR_MENU_VISIBLE_PLACEMENT_P21=FAIL marketplace_label_missing"; exit 1; }
+grep -q "AS6_MARKETPLACE_MENU_VISIBLE_P21" "$SIDEBAR" || { echo "AS6_PLATFORM_V2_SIDEBAR_MENU_VISIBLE_PLACEMENT_P21=FAIL marker_missing"; exit 1; }
+grep -q "AS6_SIDEBAR_MENU_VISIBLE_PLACEMENT_DRIFT" ops/governance/as6-sidebar-menu-visible-placement-aec-p21.md || { echo "AS6_PLATFORM_V2_SIDEBAR_MENU_VISIBLE_PLACEMENT_P21=FAIL drift_class_missing"; exit 1; }
+echo "AS6_PLATFORM_V2_SIDEBAR_MENU_VISIBLE_PLACEMENT_P21=PASS"
