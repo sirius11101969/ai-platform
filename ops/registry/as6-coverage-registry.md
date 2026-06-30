@@ -3169,3 +3169,9 @@ Permission Validation
 - Covers moderation queue.
 - Covers plugin blocklist and version revocation.
 - Covers admin audit log.
+
+## AS6_PLATFORM_V2_MARKETPLACE_PRODUCTION_SERVICES_P34
+- Covers production service registry.
+- Covers remote catalog sync facade.
+- Covers upload/download package facade.
+- Covers search, cache, health and telemetry services.

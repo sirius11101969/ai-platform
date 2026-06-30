@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+SERVICE="frontend/src/as6/plugins/AS6MarketplaceProductionServices.js"
+INDEX="frontend/src/as6/plugins/index.js"
+test -f "$SERVICE" || { echo "AS6_PLATFORM_V2_MARKETPLACE_PRODUCTION_SERVICES_P34=FAIL service_missing"; exit 1; }
+grep -q "AS6_MARKETPLACE_PRODUCTION_SERVICES_VERSION" "$SERVICE" || { echo "AS6_PLATFORM_V2_MARKETPLACE_PRODUCTION_SERVICES_P34=FAIL version_missing"; exit 1; }
+grep -q "registerAS6MarketplaceProductionService" "$SERVICE" || { echo "AS6_PLATFORM_V2_MARKETPLACE_PRODUCTION_SERVICES_P34=FAIL registry_missing"; exit 1; }
+grep -q "syncAS6MarketplaceProductionRemoteCatalog" "$SERVICE" || { echo "AS6_PLATFORM_V2_MARKETPLACE_PRODUCTION_SERVICES_P34=FAIL remote_catalog_service_missing"; exit 1; }
+grep -q "downloadAS6MarketplaceProductionPackage" "$SERVICE" || { echo "AS6_PLATFORM_V2_MARKETPLACE_PRODUCTION_SERVICES_P34=FAIL download_service_missing"; exit 1; }
+grep -q "uploadAS6MarketplaceProductionPackage" "$SERVICE" || { echo "AS6_PLATFORM_V2_MARKETPLACE_PRODUCTION_SERVICES_P34=FAIL upload_service_missing"; exit 1; }
+grep -q "searchAS6MarketplaceProductionCatalog" "$SERVICE" || { echo "AS6_PLATFORM_V2_MARKETPLACE_PRODUCTION_SERVICES_P34=FAIL search_service_missing"; exit 1; }
+grep -q "cacheAS6MarketplaceProductionValue" "$SERVICE" || { echo "AS6_PLATFORM_V2_MARKETPLACE_PRODUCTION_SERVICES_P34=FAIL cache_service_missing"; exit 1; }
+grep -q "getAS6MarketplaceProductionHealth" "$SERVICE" || { echo "AS6_PLATFORM_V2_MARKETPLACE_PRODUCTION_SERVICES_P34=FAIL health_service_missing"; exit 1; }
+grep -q "getAS6MarketplaceProductionTelemetry" "$SERVICE" || { echo "AS6_PLATFORM_V2_MARKETPLACE_PRODUCTION_SERVICES_P34=FAIL telemetry_service_missing"; exit 1; }
+grep -q "bootstrapAS6MarketplaceProductionServices" "$SERVICE" || { echo "AS6_PLATFORM_V2_MARKETPLACE_PRODUCTION_SERVICES_P34=FAIL bootstrap_missing"; exit 1; }
+grep -q "AS6MarketplaceProductionServices" "$INDEX" || { echo "AS6_PLATFORM_V2_MARKETPLACE_PRODUCTION_SERVICES_P34=FAIL index_export_missing"; exit 1; }
+grep -q "AS6_MARKETPLACE_PRODUCTION_SERVICES_DRIFT" ops/governance/as6-marketplace-production-services-aec-p34.md || { echo "AS6_PLATFORM_V2_MARKETPLACE_PRODUCTION_SERVICES_P34=FAIL drift_class_missing"; exit 1; }
+echo "AS6_PLATFORM_V2_MARKETPLACE_PRODUCTION_SERVICES_P34=PASS"

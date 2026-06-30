@@ -1891,3 +1891,8 @@ Governed and registered.
 - Detected: AS6_MARKETPLACE_MODERATION_GAP.
 - Root cause: Public Marketplace existed without administration workflow.
 - Resolution: Marketplace Administration added.
+
+## AS6_PLATFORM_V2_MARKETPLACE_PRODUCTION_SERVICES_P34
+- Detected: AS6_MARKETPLACE_PRODUCTION_SERVICES_DRIFT.
+- Root cause: Marketplace Administration existed without backend-ready production service facade.
+- Resolution: Marketplace Production Services added.

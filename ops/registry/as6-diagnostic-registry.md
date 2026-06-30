@@ -1315,3 +1315,9 @@ ops/bin/as6-control-permission-engine-v114
 - Control: ops/bin/as6-control-marketplace-administration-p33
 - Administration: frontend/src/as6/plugins/AS6MarketplaceAdministration.js
 - Added failure class: AS6_MARKETPLACE_ADMINISTRATION_DRIFT.
+
+## AS6_PLATFORM_V2_MARKETPLACE_PRODUCTION_SERVICES_P34
+- Diagnostic: ops/bin/as6-diagnose-marketplace-production-services-p34
+- Control: ops/bin/as6-control-marketplace-production-services-p34
+- Production Services: frontend/src/as6/plugins/AS6MarketplaceProductionServices.js
+- Added failure class: AS6_MARKETPLACE_PRODUCTION_SERVICES_DRIFT.
