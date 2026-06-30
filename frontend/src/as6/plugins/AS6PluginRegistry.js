@@ -1,9 +1,10 @@
 import { createAS6PluginDiscoveryIndex, getAS6DiscoverablePlugins } from "./AS6PluginDiscovery";
 import { crmInsightsPlugin } from "./examples.crm-insights.plugin";
+import { getAS6GeneratedPlugins } from "./generated";
 
 export const AS6_PLUGIN_REGISTRY_VERSION = "P13";
 
-const pluginSources = [crmInsightsPlugin];
+const pluginSources = [crmInsightsPlugin, ...getAS6GeneratedPlugins()];
 let pluginRegistryState = createAS6PluginDiscoveryIndex(pluginSources);
 
 export function refreshAS6PluginRegistry(extraPlugins = []) {

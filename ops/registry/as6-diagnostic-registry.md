@@ -1231,3 +1231,10 @@ ops/bin/as6-control-permission-engine-v114
 - Control: ops/bin/as6-control-marketplace-e2e-plugin-validation-p22
 - Smoke plugin: frontend/src/as6/plugins/generated/p22-marketplace-smoke
 - Added failure class: AS6_MARKETPLACE_E2E_PLUGIN_VALIDATION_DRIFT.
+
+## AS6_PLATFORM_V2_GENERATED_PLUGIN_AUTO_DISCOVERY_P23
+- Diagnostic: ops/bin/as6-diagnose-generated-plugin-auto-discovery-p23
+- Control: ops/bin/as6-control-generated-plugin-auto-discovery-p23
+- Generated index: frontend/src/as6/plugins/generated/index.js
+- Generated manifest: frontend/src/as6/plugins/generated/generated-plugin-manifest.json
+- Added failure class: AS6_GENERATED_PLUGIN_AUTO_DISCOVERY_DRIFT.

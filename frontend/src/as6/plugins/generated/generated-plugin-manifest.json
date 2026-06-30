@@ -1,0 +1,11 @@
+{
+  "version": "P23",
+  "generatedAt": "2026-06-30T05:34:35.757Z",
+  "plugins": [
+    {
+      "id": "p22-marketplace-smoke",
+      "manifest": "frontend/src/as6/plugins/generated/p22-marketplace-smoke/manifest.js",
+      "readme": "frontend/src/as6/plugins/generated/p22-marketplace-smoke/README.md"
+    }
+  ]
+}

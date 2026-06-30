@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+GEN_INDEX="frontend/src/as6/plugins/generated/index.js"
+GEN_MANIFEST="frontend/src/as6/plugins/generated/generated-plugin-manifest.json"
+REGISTRY="frontend/src/as6/plugins/AS6PluginRegistry.js"
+DOCS="docs/platform-v2/sdk/generated-plugin-auto-discovery-p23.md"
+test -f "$GEN_INDEX" || { echo "AS6_PLATFORM_V2_GENERATED_PLUGIN_AUTO_DISCOVERY_P23=FAIL generated_index_missing"; exit 1; }
+test -f "$GEN_MANIFEST" || { echo "AS6_PLATFORM_V2_GENERATED_PLUGIN_AUTO_DISCOVERY_P23=FAIL generated_manifest_missing"; exit 1; }
+test -f "$DOCS" || { echo "AS6_PLATFORM_V2_GENERATED_PLUGIN_AUTO_DISCOVERY_P23=FAIL docs_missing"; exit 1; }
+grep -q "as6GeneratedPlugins" "$GEN_INDEX" || { echo "AS6_PLATFORM_V2_GENERATED_PLUGIN_AUTO_DISCOVERY_P23=FAIL generated_plugins_export_missing"; exit 1; }
+grep -q "p22-marketplace-smoke" "$GEN_MANIFEST" || { echo "AS6_PLATFORM_V2_GENERATED_PLUGIN_AUTO_DISCOVERY_P23=FAIL smoke_plugin_manifest_missing"; exit 1; }
+grep -q "getAS6GeneratedPlugins" "$REGISTRY" || { echo "AS6_PLATFORM_V2_GENERATED_PLUGIN_AUTO_DISCOVERY_P23=FAIL registry_generated_import_missing"; exit 1; }
+grep -q "AS6_GENERATED_PLUGIN_AUTO_DISCOVERY_DRIFT" ops/governance/as6-generated-plugin-auto-discovery-aec-p23.md || { echo "AS6_PLATFORM_V2_GENERATED_PLUGIN_AUTO_DISCOVERY_P23=FAIL drift_class_missing"; exit 1; }
+echo "AS6_PLATFORM_V2_GENERATED_PLUGIN_AUTO_DISCOVERY_P23=PASS"

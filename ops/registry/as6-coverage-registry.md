@@ -3091,3 +3091,9 @@ Permission Validation
 - Covers create plugin CLI output.
 - Covers generated plugin diagnostic.
 - Covers Marketplace E2E validation preparation.
+
+## AS6_PLATFORM_V2_GENERATED_PLUGIN_AUTO_DISCOVERY_P23
+- Covers generated plugin index export.
+- Covers generated plugin manifest.
+- Covers AS6PluginRegistry generated plugin inclusion.
+- Covers generated plugin registry visibility.

@@ -1826,3 +1826,8 @@ Governed and registered.
 - Detected: AS6_PLUGIN_LIFECYCLE_VALIDATION_GAP.
 - Root cause: Platform V2 had plugin infrastructure without generated plugin E2E smoke validation.
 - Resolution: Marketplace E2E smoke plugin validation added.
+
+## AS6_PLATFORM_V2_GENERATED_PLUGIN_AUTO_DISCOVERY_P23
+- Detected: AS6_GENERATED_PLUGIN_REGISTRY_GAP.
+- Root cause: Generated plugins existed without automatic registry inclusion.
+- Resolution: Generated Plugin Auto Discovery added.

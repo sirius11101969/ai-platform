@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-generated-plugin-auto-discovery-p23
+grep -RIn "AS6_GENERATED_PLUGIN_AUTO_DISCOVERY_DRIFT" README.md docs ops .github frontend/src >/dev/null
+echo "AS6_CONTROL_GENERATED_PLUGIN_AUTO_DISCOVERY_P23=PASS"
