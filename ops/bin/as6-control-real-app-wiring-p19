@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-real-app-wiring-p19
+grep -RIn "AS6_REAL_APP_WIRING_DRIFT" README.md docs ops .github frontend/src >/dev/null
+echo "AS6_CONTROL_REAL_APP_WIRING_P19=PASS"

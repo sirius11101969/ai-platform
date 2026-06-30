@@ -1806,3 +1806,8 @@ Governed and registered.
 - Detected: AS6_APP_RUNTIME_ROUTE_OUTLET_GAP.
 - Root cause: Shell Runtime Integration existed without App-level consumer helpers.
 - Resolution: App Runtime Integration added.
+
+## AS6_PLATFORM_V2_REAL_APP_WIRING_P19
+- Detected: AS6_APP_WIRING_BRIDGE_GAP.
+- Root cause: App Runtime Integration existed without safe real app wiring bridge.
+- Resolution: Real App Wiring bridge added.

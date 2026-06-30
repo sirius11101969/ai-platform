@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+WIRING="frontend/src/as6/app/wiring/AS6RealAppWiring.jsx"
+INDEX="frontend/src/as6/app/wiring/index.js"
+APP_INDEX="frontend/src/as6/app/index.js"
+CONTRACT="frontend/src/as6/app/wiring/AS6RealAppWiring.contract.md"
+DOCS="docs/platform-v2/sdk/real-app-wiring-p19.md"
+test -f "$WIRING" || { echo "AS6_PLATFORM_V2_REAL_APP_WIRING_P19=FAIL wiring_missing"; exit 1; }
+test -f "$INDEX" || { echo "AS6_PLATFORM_V2_REAL_APP_WIRING_P19=FAIL index_missing"; exit 1; }
+test -f "$APP_INDEX" || { echo "AS6_PLATFORM_V2_REAL_APP_WIRING_P19=FAIL app_index_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_PLATFORM_V2_REAL_APP_WIRING_P19=FAIL contract_missing"; exit 1; }
+test -f "$DOCS" || { echo "AS6_PLATFORM_V2_REAL_APP_WIRING_P19=FAIL docs_missing"; exit 1; }
+grep -q "getAS6RealAppWiringConfig" "$WIRING" || { echo "AS6_PLATFORM_V2_REAL_APP_WIRING_P19=FAIL config_missing"; exit 1; }
+grep -q "AS6RealAppWiring" "$WIRING" || { echo "AS6_PLATFORM_V2_REAL_APP_WIRING_P19=FAIL component_missing"; exit 1; }
+grep -q "AS6AppRuntimeIntegrationPanel" "$WIRING" || { echo "AS6_PLATFORM_V2_REAL_APP_WIRING_P19=FAIL runtime_panel_missing"; exit 1; }
+grep -q "./wiring" "$APP_INDEX" || { echo "AS6_PLATFORM_V2_REAL_APP_WIRING_P19=FAIL app_index_export_missing"; exit 1; }
+grep -q "AS6_REAL_APP_WIRING_DRIFT" ops/governance/as6-real-app-wiring-aec-p19.md || { echo "AS6_PLATFORM_V2_REAL_APP_WIRING_P19=FAIL drift_class_missing"; exit 1; }
+echo "AS6_PLATFORM_V2_REAL_APP_WIRING_P19=PASS"

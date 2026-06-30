@@ -76,3 +76,5 @@ as6-control-dynamic-shell-integration-p16	as6-control-marketplace-route-navigati
 as6-control-shell-runtime-integration-p17	as6-control-dynamic-shell-integration-p16
 
 as6-control-app-runtime-integration-p18	as6-control-shell-runtime-integration-p17
+
+as6-control-real-app-wiring-p19	as6-control-app-runtime-integration-p18

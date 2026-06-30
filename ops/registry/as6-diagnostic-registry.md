@@ -1206,3 +1206,10 @@ ops/bin/as6-control-permission-engine-v114
 - App runtime: frontend/src/as6/app/AS6AppRuntimeIntegration.jsx
 - App index export: frontend/src/as6/app/index.js
 - Added failure class: AS6_APP_RUNTIME_INTEGRATION_DRIFT.
+
+## AS6_PLATFORM_V2_REAL_APP_WIRING_P19
+- Diagnostic: ops/bin/as6-diagnose-real-app-wiring-p19
+- Control: ops/bin/as6-control-real-app-wiring-p19
+- Wiring: frontend/src/as6/app/wiring/AS6RealAppWiring.jsx
+- App index export: frontend/src/as6/app/index.js
+- Added failure class: AS6_REAL_APP_WIRING_DRIFT.

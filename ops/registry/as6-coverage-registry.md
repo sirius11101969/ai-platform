@@ -3067,3 +3067,10 @@ Permission Validation
 - Covers App runtime route outlet.
 - Covers Shell Runtime Integration consumption.
 - Covers dynamic plugin route visibility preparation.
+
+## AS6_PLATFORM_V2_REAL_APP_WIRING_P19
+- Covers Real App Wiring bridge.
+- Covers App Runtime Integration panel consumption.
+- Covers App index export.
+- Covers direct App.jsx edit risk prevention.
+- Covers visible runtime integration preparation.
