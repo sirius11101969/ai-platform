@@ -90,3 +90,5 @@ as6-control-generated-plugin-auto-discovery-p23	as6-control-marketplace-e2e-plug
 as6-control-marketplace-install-persistence-p24	as6-control-generated-plugin-auto-discovery-p23
 
 as6-control-plugin-version-update-manager-p25	as6-control-marketplace-install-persistence-p24
+
+as6-control-remote-marketplace-catalog-p26a	as6-control-plugin-version-update-manager-p25

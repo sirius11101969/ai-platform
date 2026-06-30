@@ -1251,3 +1251,9 @@ ops/bin/as6-control-permission-engine-v114
 - Runtime: frontend/src/as6/plugins/AS6PluginRuntime.js
 - Marketplace: frontend/src/as6/plugins/AS6PluginMarketplace.js
 - Added failure class: AS6_PLUGIN_VERSION_UPDATE_MANAGER_DRIFT.
+
+## AS6_PLATFORM_V2_REMOTE_MARKETPLACE_CATALOG_P26A
+- Diagnostic: ops/bin/as6-diagnose-remote-marketplace-catalog-p26a
+- Control: ops/bin/as6-control-remote-marketplace-catalog-p26a
+- Catalog: frontend/src/as6/plugins/AS6RemoteMarketplaceCatalog.js
+- Added failure class: AS6_REMOTE_MARKETPLACE_CATALOG_DRIFT.

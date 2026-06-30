@@ -3108,3 +3108,9 @@ Permission Validation
 - Covers plugin update detection.
 - Covers marketplace update operation.
 - Covers rollback snapshot support.
+
+## AS6_PLATFORM_V2_REMOTE_MARKETPLACE_CATALOG_P26A
+- Covers remote Marketplace catalog contract.
+- Covers local fallback behavior.
+- Covers remote catalog normalization.
+- Covers remote catalog Marketplace registration.

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+CATALOG="frontend/src/as6/plugins/AS6RemoteMarketplaceCatalog.js"
+INDEX="frontend/src/as6/plugins/index.js"
+test -f "$CATALOG" || { echo "AS6_PLATFORM_V2_REMOTE_MARKETPLACE_CATALOG_P26A=FAIL catalog_missing"; exit 1; }
+grep -q "AS6_REMOTE_MARKETPLACE_CATALOG_VERSION" "$CATALOG" || { echo "AS6_PLATFORM_V2_REMOTE_MARKETPLACE_CATALOG_P26A=FAIL version_missing"; exit 1; }
+grep -q "fetchAS6RemoteMarketplaceCatalog" "$CATALOG" || { echo "AS6_PLATFORM_V2_REMOTE_MARKETPLACE_CATALOG_P26A=FAIL fetch_missing"; exit 1; }
+grep -q "normalizeAS6RemoteMarketplaceCatalog" "$CATALOG" || { echo "AS6_PLATFORM_V2_REMOTE_MARKETPLACE_CATALOG_P26A=FAIL normalize_missing"; exit 1; }
+grep -q "registerAS6RemoteMarketplaceCatalog" "$CATALOG" || { echo "AS6_PLATFORM_V2_REMOTE_MARKETPLACE_CATALOG_P26A=FAIL register_missing"; exit 1; }
+grep -q "fallback" "$CATALOG" || { echo "AS6_PLATFORM_V2_REMOTE_MARKETPLACE_CATALOG_P26A=FAIL fallback_missing"; exit 1; }
+grep -q "AS6RemoteMarketplaceCatalog" "$INDEX" || { echo "AS6_PLATFORM_V2_REMOTE_MARKETPLACE_CATALOG_P26A=FAIL index_export_missing"; exit 1; }
+grep -q "AS6_REMOTE_MARKETPLACE_CATALOG_DRIFT" ops/governance/as6-remote-marketplace-catalog-aec-p26a.md || { echo "AS6_PLATFORM_V2_REMOTE_MARKETPLACE_CATALOG_P26A=FAIL drift_class_missing"; exit 1; }
+echo "AS6_PLATFORM_V2_REMOTE_MARKETPLACE_CATALOG_P26A=PASS"

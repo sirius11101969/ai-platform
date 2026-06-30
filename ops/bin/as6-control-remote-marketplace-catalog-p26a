@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-remote-marketplace-catalog-p26a
+grep -RIn "AS6_REMOTE_MARKETPLACE_CATALOG_DRIFT" README.md docs ops .github frontend/src >/dev/null
+echo "AS6_CONTROL_REMOTE_MARKETPLACE_CATALOG_P26A=PASS"

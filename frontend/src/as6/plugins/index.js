@@ -9,3 +9,5 @@ export * from "./AS6PluginRegistry";
 export * from "./ui";
 
 export * from "./marketplace-route";
+
+export * from "./AS6RemoteMarketplaceCatalog";

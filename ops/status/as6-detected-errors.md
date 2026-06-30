@@ -1841,3 +1841,8 @@ Governed and registered.
 - Detected: AS6_PLUGIN_UPDATE_DETECTION_GAP.
 - Root cause: Plugin persistence existed without version/update management.
 - Resolution: Plugin Version Update Manager added.
+
+## AS6_PLATFORM_V2_REMOTE_MARKETPLACE_CATALOG_P26A
+- Detected: AS6_MARKETPLACE_REMOTE_CATALOG_GAP.
+- Root cause: Marketplace had local lifecycle but no remote catalog contract.
+- Resolution: Remote Marketplace Catalog Contract added.

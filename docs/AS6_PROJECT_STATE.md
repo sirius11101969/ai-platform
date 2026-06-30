@@ -4817,3 +4817,10 @@ Status: PASS pending validation
 - Project readiness: 99.9999999993%
 - Plugin Version Update Manager: enabled.
 - Next target: Marketplace remote catalog.
+
+## AS6_PLATFORM_V2_REMOTE_MARKETPLACE_CATALOG_P26A
+- Status: PASS pending release.
+- Product phase: AS6 Platform V2.
+- Project readiness: 99.9999999994%
+- Remote Marketplace Catalog Contract: enabled.
+- Next target: Developer Console remote catalog UI integration.
