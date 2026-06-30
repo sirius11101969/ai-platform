@@ -100,3 +100,5 @@ as6-control-signed-plugin-packages-trust-validation-p27	as6-control-remote-catal
 as6-control-cryptographic-signature-verification-p28	as6-control-signed-plugin-packages-trust-validation-p27
 
 as6-control-marketplace-trust-ui-installation-policy-p29	as6-control-cryptographic-signature-verification-p28
+
+as6-control-signed-package-manager-p30	as6-control-marketplace-trust-ui-installation-policy-p29

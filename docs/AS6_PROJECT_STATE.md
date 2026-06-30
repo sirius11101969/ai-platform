@@ -4852,3 +4852,10 @@ Status: PASS pending validation
 - Project readiness: 99.99999999975%
 - Marketplace Trust UI and Installation Policy: enabled.
 - Next target: Signed Package Manager P30.
+
+## AS6_PLATFORM_V2_SIGNED_PACKAGE_MANAGER_P30
+- Status: PASS pending release.
+- Product phase: AS6 Platform V2 Stable cycle.
+- Project readiness: 99.9999999998%
+- Signed Package Manager: enabled.
+- Next target: Public Marketplace P31.

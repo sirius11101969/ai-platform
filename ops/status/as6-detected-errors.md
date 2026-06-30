@@ -1866,3 +1866,8 @@ Governed and registered.
 - Detected: AS6_PLUGIN_INSTALL_POLICY_ENFORCEMENT_GAP.
 - Root cause: Trust verification existed without Marketplace UI/policy enforcement.
 - Resolution: Marketplace Trust UI and Installation Policy added.
+
+## AS6_PLATFORM_V2_SIGNED_PACKAGE_MANAGER_P30
+- Detected: AS6_PLUGIN_PACKAGE_IMPORT_GAP.
+- Root cause: Marketplace trust existed without signed package import/export manager.
+- Resolution: Signed Package Manager added.

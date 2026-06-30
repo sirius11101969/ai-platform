@@ -15,3 +15,5 @@ export * from "./AS6RemoteMarketplaceCatalog";
 export * from "./AS6PluginTrust";
 
 export * from "./AS6MarketplaceTrustPolicy";
+
+export * from "./AS6PluginPackageManager";

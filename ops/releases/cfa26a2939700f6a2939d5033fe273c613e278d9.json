@@ -1,0 +1,15 @@
+{
+  "timestamp":"2026-06-30T12:27:00Z",
+  "branch":"preview/pr-359",
+  "commit":"cfa26a2939700f6a2939d5033fe273c613e278d9",
+  "target":"as6-control-signed-package-manager-p30",
+  "node":"v18.19.1",
+  "npm":"9.2.0",
+  "vite":"vite/5.4.21 linux-x64 node-v18.19.1",
+  "evidence":"ops/evidence/AS6_RELEASE_COMMAND_V120.md",
+  "evidence_sha256":"0998b14996a499033a2bb897e67d4ab11fd086ef3c19757cb1a03ef0ed9f8ba9",
+  "validate":"PASS",
+  "release_gate":"PASS",
+  "release":"PASS",
+  "readiness":"99.9999998%"
+}

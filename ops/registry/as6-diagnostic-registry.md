@@ -1284,3 +1284,10 @@ ops/bin/as6-control-permission-engine-v114
 - Marketplace: frontend/src/as6/plugins/AS6PluginMarketplace.js
 - UI: frontend/src/as6/plugins/ui/AS6MarketplaceDeveloperConsole.jsx
 - Added failure class: AS6_MARKETPLACE_TRUST_UI_INSTALLATION_POLICY_DRIFT.
+
+## AS6_PLATFORM_V2_SIGNED_PACKAGE_MANAGER_P30
+- Diagnostic: ops/bin/as6-diagnose-signed-package-manager-p30
+- Control: ops/bin/as6-control-signed-package-manager-p30
+- Package Manager: frontend/src/as6/plugins/AS6PluginPackageManager.js
+- Marketplace: frontend/src/as6/plugins/AS6PluginMarketplace.js
+- Added failure class: AS6_SIGNED_PACKAGE_MANAGER_DRIFT.

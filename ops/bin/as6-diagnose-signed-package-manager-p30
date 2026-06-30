@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+MANAGER="frontend/src/as6/plugins/AS6PluginPackageManager.js"
+MARKETPLACE="frontend/src/as6/plugins/AS6PluginMarketplace.js"
+INDEX="frontend/src/as6/plugins/index.js"
+test -f "$MANAGER" || { echo "AS6_PLATFORM_V2_SIGNED_PACKAGE_MANAGER_P30=FAIL manager_missing"; exit 1; }
+grep -q "AS6_PLUGIN_PACKAGE_MANAGER_VERSION" "$MANAGER" || { echo "AS6_PLATFORM_V2_SIGNED_PACKAGE_MANAGER_P30=FAIL version_missing"; exit 1; }
+grep -q "AS6_PLUGIN_PACKAGE_EXTENSION" "$MANAGER" || { echo "AS6_PLATFORM_V2_SIGNED_PACKAGE_MANAGER_P30=FAIL extension_missing"; exit 1; }
+grep -q "exportAS6PluginPackage" "$MANAGER" || { echo "AS6_PLATFORM_V2_SIGNED_PACKAGE_MANAGER_P30=FAIL export_missing"; exit 1; }
+grep -q "importAS6PluginPackage" "$MANAGER" || { echo "AS6_PLATFORM_V2_SIGNED_PACKAGE_MANAGER_P30=FAIL import_missing"; exit 1; }
+grep -q "validateAS6PluginPackage" "$MANAGER" || { echo "AS6_PLATFORM_V2_SIGNED_PACKAGE_MANAGER_P30=FAIL validation_missing"; exit 1; }
+grep -q "verifyAS6PluginPackageSignature" "$MANAGER" || { echo "AS6_PLATFORM_V2_SIGNED_PACKAGE_MANAGER_P30=FAIL signature_verify_missing"; exit 1; }
+grep -q "localPackageRepository" "$MANAGER" || { echo "AS6_PLATFORM_V2_SIGNED_PACKAGE_MANAGER_P30=FAIL local_repo_missing"; exit 1; }
+grep -q "exportAS6MarketplacePluginPackage" "$MARKETPLACE" || { echo "AS6_PLATFORM_V2_SIGNED_PACKAGE_MANAGER_P30=FAIL marketplace_export_missing"; exit 1; }
+grep -q "importAS6MarketplacePluginPackage" "$MARKETPLACE" || { echo "AS6_PLATFORM_V2_SIGNED_PACKAGE_MANAGER_P30=FAIL marketplace_import_missing"; exit 1; }
+grep -q "AS6PluginPackageManager" "$INDEX" || { echo "AS6_PLATFORM_V2_SIGNED_PACKAGE_MANAGER_P30=FAIL index_export_missing"; exit 1; }
+grep -q "AS6_SIGNED_PACKAGE_MANAGER_DRIFT" ops/governance/as6-signed-package-manager-aec-p30.md || { echo "AS6_PLATFORM_V2_SIGNED_PACKAGE_MANAGER_P30=FAIL drift_class_missing"; exit 1; }
+echo "AS6_PLATFORM_V2_SIGNED_PACKAGE_MANAGER_P30=PASS"

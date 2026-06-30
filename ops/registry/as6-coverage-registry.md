@@ -3138,3 +3138,9 @@ Permission Validation
 - Covers installation policy guard.
 - Covers trust audit log.
 - Covers policy mode visibility.
+
+## AS6_PLATFORM_V2_SIGNED_PACKAGE_MANAGER_P30
+- Covers .as6plugin package format.
+- Covers signed package import/export.
+- Covers package trust validation.
+- Covers local package repository.
