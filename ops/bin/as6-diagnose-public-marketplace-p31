@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+PUBLIC="frontend/src/as6/plugins/AS6PublicMarketplace.js"
+INDEX="frontend/src/as6/plugins/index.js"
+test -f "$PUBLIC" || { echo "AS6_PLATFORM_V2_PUBLIC_MARKETPLACE_P31=FAIL public_missing"; exit 1; }
+grep -q "AS6_PUBLIC_MARKETPLACE_VERSION" "$PUBLIC" || { echo "AS6_PLATFORM_V2_PUBLIC_MARKETPLACE_P31=FAIL version_missing"; exit 1; }
+grep -q "registerAS6PublicMarketplaceSource" "$PUBLIC" || { echo "AS6_PLATFORM_V2_PUBLIC_MARKETPLACE_P31=FAIL source_missing"; exit 1; }
+grep -q "publishAS6PublicMarketplacePlugin" "$PUBLIC" || { echo "AS6_PLATFORM_V2_PUBLIC_MARKETPLACE_P31=FAIL publish_missing"; exit 1; }
+grep -q "searchAS6PublicMarketplacePlugins" "$PUBLIC" || { echo "AS6_PLATFORM_V2_PUBLIC_MARKETPLACE_P31=FAIL search_missing"; exit 1; }
+grep -q "getAS6PublicMarketplaceCategories" "$PUBLIC" || { echo "AS6_PLATFORM_V2_PUBLIC_MARKETPLACE_P31=FAIL categories_missing"; exit 1; }
+grep -q "syncAS6PublicMarketplaceCatalog" "$PUBLIC" || { echo "AS6_PLATFORM_V2_PUBLIC_MARKETPLACE_P31=FAIL sync_missing"; exit 1; }
+grep -q "getAS6MarketplacePluginTrustSummary" "$PUBLIC" || { echo "AS6_PLATFORM_V2_PUBLIC_MARKETPLACE_P31=FAIL trust_summary_missing"; exit 1; }
+grep -q "AS6PublicMarketplace" "$INDEX" || { echo "AS6_PLATFORM_V2_PUBLIC_MARKETPLACE_P31=FAIL index_export_missing"; exit 1; }
+grep -q "AS6_PUBLIC_MARKETPLACE_DRIFT" ops/governance/as6-public-marketplace-aec-p31.md || { echo "AS6_PLATFORM_V2_PUBLIC_MARKETPLACE_P31=FAIL drift_class_missing"; exit 1; }
+echo "AS6_PLATFORM_V2_PUBLIC_MARKETPLACE_P31=PASS"

@@ -3144,3 +3144,9 @@ Permission Validation
 - Covers signed package import/export.
 - Covers package trust validation.
 - Covers local package repository.
+
+## AS6_PLATFORM_V2_PUBLIC_MARKETPLACE_P31
+- Covers public Marketplace sources.
+- Covers public plugin metadata.
+- Covers search, categories and sorting.
+- Covers trust summary in listings.

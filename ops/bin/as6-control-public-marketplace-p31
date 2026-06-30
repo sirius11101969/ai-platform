@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-public-marketplace-p31
+grep -RIn "AS6_PUBLIC_MARKETPLACE_DRIFT" README.md docs ops .github frontend/src >/dev/null
+echo "AS6_CONTROL_PUBLIC_MARKETPLACE_P31=PASS"

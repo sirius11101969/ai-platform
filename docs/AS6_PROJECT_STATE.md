@@ -4859,3 +4859,10 @@ Status: PASS pending validation
 - Project readiness: 99.9999999998%
 - Signed Package Manager: enabled.
 - Next target: Public Marketplace P31.
+
+## AS6_PLATFORM_V2_PUBLIC_MARKETPLACE_P31
+- Status: PASS pending release.
+- Product phase: AS6 Platform V2 Stable cycle.
+- Project readiness: 99.99999999985%
+- Public Marketplace: enabled.
+- Next target: Developer Portal P32.

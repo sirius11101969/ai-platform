@@ -1291,3 +1291,9 @@ ops/bin/as6-control-permission-engine-v114
 - Package Manager: frontend/src/as6/plugins/AS6PluginPackageManager.js
 - Marketplace: frontend/src/as6/plugins/AS6PluginMarketplace.js
 - Added failure class: AS6_SIGNED_PACKAGE_MANAGER_DRIFT.
+
+## AS6_PLATFORM_V2_PUBLIC_MARKETPLACE_P31
+- Diagnostic: ops/bin/as6-diagnose-public-marketplace-p31
+- Control: ops/bin/as6-control-public-marketplace-p31
+- Public Marketplace: frontend/src/as6/plugins/AS6PublicMarketplace.js
+- Added failure class: AS6_PUBLIC_MARKETPLACE_DRIFT.

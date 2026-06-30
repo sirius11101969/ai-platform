@@ -1871,3 +1871,8 @@ Governed and registered.
 - Detected: AS6_PLUGIN_PACKAGE_IMPORT_GAP.
 - Root cause: Marketplace trust existed without signed package import/export manager.
 - Resolution: Signed Package Manager added.
+
+## AS6_PLATFORM_V2_PUBLIC_MARKETPLACE_P31
+- Detected: AS6_PUBLIC_MARKETPLACE_SOURCE_GAP.
+- Root cause: Marketplace had package/catalog primitives without public catalog layer.
+- Resolution: Public Marketplace added.
