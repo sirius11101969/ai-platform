@@ -3097,3 +3097,8 @@ Permission Validation
 - Covers generated plugin manifest.
 - Covers AS6PluginRegistry generated plugin inclusion.
 - Covers generated plugin registry visibility.
+
+## AS6_PLATFORM_V2_MARKETPLACE_INSTALL_PERSISTENCE_P24
+- Covers plugin install persistence.
+- Covers plugin restore helper.
+- Covers enable/disable/remove persistence.

@@ -4803,3 +4803,10 @@ Status: PASS pending validation
 - Project readiness: 99.9999999991%
 - Generated Plugin Auto Discovery: enabled.
 - Next target: Marketplace install/remove persistence.
+
+## AS6_PLATFORM_V2_MARKETPLACE_INSTALL_PERSISTENCE_P24
+- Status: PASS pending release.
+- Product phase: AS6 Platform V2.
+- Project readiness: 99.9999999992%
+- Marketplace Install Persistence: enabled.
+- Next target: plugin update/version management.

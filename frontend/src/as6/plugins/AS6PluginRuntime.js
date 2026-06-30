@@ -4,8 +4,30 @@ import { registerAS6AIAction } from "../ai/actions";
 import { registerAS6SpaceManifest } from "../spaces";
 
 export const AS6_PLUGIN_RUNTIME_VERSION = "P10";
+export const AS6_PLUGIN_INSTALL_PERSISTENCE_VERSION = "P24";
+export const AS6_PLUGIN_INSTALL_STORAGE_KEY = "as6.plugin.install.state.v1";
 
 const pluginRegistry = new Map();
+
+function canUseAS6PluginStorage() {
+  return typeof window !== "undefined" && Boolean(window.localStorage);
+}
+
+export function persistAS6PluginInstallState() {
+  if (!canUseAS6PluginStorage()) return { ok: false, skipped: true, reason: "local_storage_unavailable" };
+  const state = getAS6PluginRuntimeState();
+  window.localStorage.setItem(AS6_PLUGIN_INSTALL_STORAGE_KEY, JSON.stringify(state));
+  return { ok: true, pluginCount: state.pluginCount };
+}
+
+export function restoreAS6PluginInstallState() {
+  if (!canUseAS6PluginStorage()) return { ok: false, skipped: true, reason: "local_storage_unavailable" };
+  const raw = window.localStorage.getItem(AS6_PLUGIN_INSTALL_STORAGE_KEY);
+  if (!raw) return { ok: true, restored: 0 };
+  const state = JSON.parse(raw);
+  for (const plugin of state.plugins || []) pluginRegistry.set(plugin.id, plugin);
+  return { ok: true, restored: pluginRegistry.size };
+}
 
 export function validateAS6PluginManifest(plugin = {}) {
   const failures = [];
@@ -44,6 +66,7 @@ export function installAS6Plugin(plugin = {}) {
     ...plugin,
   });
 
+  persistAS6PluginInstallState();
   emitAS6BusEvent("plugin.installed", { pluginId: plugin.id });
 
   return { ok: true, pluginId: plugin.id };
@@ -79,6 +102,7 @@ export function enableAS6Plugin(pluginId) {
   };
 
   pluginRegistry.set(pluginId, enabledPlugin);
+  persistAS6PluginInstallState();
   emitAS6BusEvent("plugin.enabled", { pluginId });
 
   return { ok: true, plugin: enabledPlugin };
@@ -94,6 +118,7 @@ export function disableAS6Plugin(pluginId) {
     disabledAt: new Date().toISOString(),
   });
 
+  persistAS6PluginInstallState();
   emitAS6BusEvent("plugin.disabled", { pluginId });
 
   return { ok: true, pluginId };
@@ -103,6 +128,7 @@ export function removeAS6Plugin(pluginId) {
   if (!pluginRegistry.has(pluginId)) return { ok: false, error: "AS6_PLUGIN_NOT_FOUND", pluginId };
 
   pluginRegistry.delete(pluginId);
+  persistAS6PluginInstallState();
   emitAS6BusEvent("plugin.removed", { pluginId });
 
   return { ok: true, pluginId };

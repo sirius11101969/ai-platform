@@ -1831,3 +1831,8 @@ Governed and registered.
 - Detected: AS6_GENERATED_PLUGIN_REGISTRY_GAP.
 - Root cause: Generated plugins existed without automatic registry inclusion.
 - Resolution: Generated Plugin Auto Discovery added.
+
+## AS6_PLATFORM_V2_MARKETPLACE_INSTALL_PERSISTENCE_P24
+- Detected: AS6_PLUGIN_INSTALL_STATE_VOLATILE.
+- Root cause: Plugin runtime state was memory-only.
+- Resolution: Marketplace Install Persistence added.

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+RUNTIME="frontend/src/as6/plugins/AS6PluginRuntime.js"
+test -f "$RUNTIME" || { echo "AS6_PLATFORM_V2_MARKETPLACE_INSTALL_PERSISTENCE_P24=FAIL runtime_missing"; exit 1; }
+grep -q "AS6_PLUGIN_INSTALL_PERSISTENCE_VERSION" "$RUNTIME" || { echo "AS6_PLATFORM_V2_MARKETPLACE_INSTALL_PERSISTENCE_P24=FAIL version_missing"; exit 1; }
+grep -q "persistAS6PluginInstallState" "$RUNTIME" || { echo "AS6_PLATFORM_V2_MARKETPLACE_INSTALL_PERSISTENCE_P24=FAIL persist_missing"; exit 1; }
+grep -q "restoreAS6PluginInstallState" "$RUNTIME" || { echo "AS6_PLATFORM_V2_MARKETPLACE_INSTALL_PERSISTENCE_P24=FAIL restore_missing"; exit 1; }
+grep -q "AS6_MARKETPLACE_INSTALL_PERSISTENCE_DRIFT" ops/governance/as6-marketplace-install-persistence-aec-p24.md || { echo "AS6_PLATFORM_V2_MARKETPLACE_INSTALL_PERSISTENCE_P24=FAIL drift_class_missing"; exit 1; }
+echo "AS6_PLATFORM_V2_MARKETPLACE_INSTALL_PERSISTENCE_P24=PASS"

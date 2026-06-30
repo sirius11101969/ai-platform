@@ -1238,3 +1238,9 @@ ops/bin/as6-control-permission-engine-v114
 - Generated index: frontend/src/as6/plugins/generated/index.js
 - Generated manifest: frontend/src/as6/plugins/generated/generated-plugin-manifest.json
 - Added failure class: AS6_GENERATED_PLUGIN_AUTO_DISCOVERY_DRIFT.
+
+## AS6_PLATFORM_V2_MARKETPLACE_INSTALL_PERSISTENCE_P24
+- Diagnostic: ops/bin/as6-diagnose-marketplace-install-persistence-p24
+- Control: ops/bin/as6-control-marketplace-install-persistence-p24
+- Runtime: frontend/src/as6/plugins/AS6PluginRuntime.js
+- Added failure class: AS6_MARKETPLACE_INSTALL_PERSISTENCE_DRIFT.
