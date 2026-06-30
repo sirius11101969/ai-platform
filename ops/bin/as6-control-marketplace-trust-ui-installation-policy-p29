@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-marketplace-trust-ui-installation-policy-p29
+grep -RIn "AS6_MARKETPLACE_TRUST_UI_INSTALLATION_POLICY_DRIFT" README.md docs ops .github frontend/src >/dev/null
+echo "AS6_CONTROL_MARKETPLACE_TRUST_UI_INSTALLATION_POLICY_P29=PASS"

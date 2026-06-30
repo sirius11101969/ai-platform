@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+POLICY="frontend/src/as6/plugins/AS6MarketplaceTrustPolicy.js"
+MARKETPLACE="frontend/src/as6/plugins/AS6PluginMarketplace.js"
+UI="frontend/src/as6/plugins/ui/AS6MarketplaceDeveloperConsole.jsx"
+INDEX="frontend/src/as6/plugins/index.js"
+test -f "$POLICY" || { echo "AS6_PLATFORM_V2_MARKETPLACE_TRUST_UI_INSTALLATION_POLICY_P29=FAIL policy_missing"; exit 1; }
+grep -q "AS6_MARKETPLACE_TRUST_POLICY_VERSION" "$POLICY" || { echo "AS6_PLATFORM_V2_MARKETPLACE_TRUST_UI_INSTALLATION_POLICY_P29=FAIL policy_version_missing"; exit 1; }
+grep -q "evaluateAS6MarketplaceInstallationPolicy" "$POLICY" || { echo "AS6_PLATFORM_V2_MARKETPLACE_TRUST_UI_INSTALLATION_POLICY_P29=FAIL evaluate_missing"; exit 1; }
+grep -q "getAS6MarketplaceTrustAuditLog" "$POLICY" || { echo "AS6_PLATFORM_V2_MARKETPLACE_TRUST_UI_INSTALLATION_POLICY_P29=FAIL audit_missing"; exit 1; }
+grep -q "AS6_MARKETPLACE_INSTALLATION_POLICY_BLOCKED" "$MARKETPLACE" || { echo "AS6_PLATFORM_V2_MARKETPLACE_TRUST_UI_INSTALLATION_POLICY_P29=FAIL install_guard_missing"; exit 1; }
+grep -q "AS6_MARKETPLACE_TRUST_UI_VERSION" "$UI" || { echo "AS6_PLATFORM_V2_MARKETPLACE_TRUST_UI_INSTALLATION_POLICY_P29=FAIL ui_version_missing"; exit 1; }
+grep -q "Trust:" "$UI" || { echo "AS6_PLATFORM_V2_MARKETPLACE_TRUST_UI_INSTALLATION_POLICY_P29=FAIL trust_ui_missing"; exit 1; }
+grep -q "AS6MarketplaceTrustPolicy" "$INDEX" || { echo "AS6_PLATFORM_V2_MARKETPLACE_TRUST_UI_INSTALLATION_POLICY_P29=FAIL index_export_missing"; exit 1; }
+grep -q "AS6_MARKETPLACE_TRUST_UI_INSTALLATION_POLICY_DRIFT" ops/governance/as6-marketplace-trust-ui-installation-policy-aec-p29.md || { echo "AS6_PLATFORM_V2_MARKETPLACE_TRUST_UI_INSTALLATION_POLICY_P29=FAIL drift_class_missing"; exit 1; }
+echo "AS6_PLATFORM_V2_MARKETPLACE_TRUST_UI_INSTALLATION_POLICY_P29=PASS"

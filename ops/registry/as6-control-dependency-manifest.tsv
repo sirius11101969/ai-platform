@@ -98,3 +98,5 @@ as6-control-remote-catalog-ui-integration-p26b	as6-control-remote-marketplace-ca
 as6-control-signed-plugin-packages-trust-validation-p27	as6-control-remote-catalog-ui-integration-p26b
 
 as6-control-cryptographic-signature-verification-p28	as6-control-signed-plugin-packages-trust-validation-p27
+
+as6-control-marketplace-trust-ui-installation-policy-p29	as6-control-cryptographic-signature-verification-p28

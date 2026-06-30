@@ -4845,3 +4845,10 @@ Status: PASS pending validation
 - Project readiness: 99.9999999997%
 - Cryptographic Signature Verification Engine: enabled.
 - Next target: Marketplace trust status UI.
+
+## AS6_PLATFORM_V2_MARKETPLACE_TRUST_UI_INSTALLATION_POLICY_P29
+- Status: PASS pending release.
+- Product phase: AS6 Platform V2 Stable cycle.
+- Project readiness: 99.99999999975%
+- Marketplace Trust UI and Installation Policy: enabled.
+- Next target: Signed Package Manager P30.

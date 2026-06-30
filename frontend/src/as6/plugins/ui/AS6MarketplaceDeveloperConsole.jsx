@@ -9,6 +9,11 @@ import {
   installAS6MarketplacePlugin,
 } from "../AS6PluginMarketplace";
 import {
+  getAS6MarketplacePluginTrustSummary,
+  getAS6MarketplaceTrustPolicy,
+  getAS6MarketplaceTrustAuditLog,
+} from "../AS6MarketplaceTrustPolicy";
+import {
   fetchAS6RemoteMarketplaceCatalog,
   getAS6RemoteMarketplaceCatalogState,
   registerAS6RemoteMarketplaceCatalog,
@@ -22,6 +27,7 @@ import {
 
 export const AS6_MARKETPLACE_DEVELOPER_CONSOLE_VERSION = "P14";
 export const AS6_REMOTE_CATALOG_UI_INTEGRATION_VERSION = "P26B";
+export const AS6_MARKETPLACE_TRUST_UI_VERSION = "P29";
 
 export function useAS6MarketplaceDeveloperConsole() {
   const [query, setQuery] = useState("");
@@ -32,6 +38,8 @@ export function useAS6MarketplaceDeveloperConsole() {
   const registry = getAS6PluginRegistryState();
   const runtime = getAS6PluginRuntimeState();
   const marketplace = getAS6MarketplacePlugins();
+  const trustPolicy = getAS6MarketplaceTrustPolicy();
+  const trustAuditLog = getAS6MarketplaceTrustAuditLog();
   const registeredIds = getAS6RegisteredPluginIds();
 
   const filteredRegistry = useMemo(() => {
@@ -80,6 +88,8 @@ export function useAS6MarketplaceDeveloperConsole() {
     registry,
     runtime,
     marketplace,
+    trustPolicy,
+    trustAuditLog,
     remoteCatalog,
     remoteCatalogUrl,
     setRemoteCatalogUrl,
@@ -144,6 +154,10 @@ export function AS6MarketplaceDeveloperConsole() {
             <p>{item.publisher || "Unknown publisher"}</p>
             <p>Version: {item.version || "unknown"}</p>
             <p>SDK: {item.compatibility?.ok ? "compatible" : "incompatible"}</p>
+            <p>Trust: {getAS6MarketplacePluginTrustSummary(item.plugin || item).trustStatus}</p>
+            <p>Publisher: {getAS6MarketplacePluginTrustSummary(item.plugin || item).publisherId}</p>
+            <p>Signature: {getAS6MarketplacePluginTrustSummary(item.plugin || item).signatureVerified ? "verified" : "not verified"}</p>
+            <p>Policy: {consoleState.trustPolicy.mode}</p>
             <div className="as6-marketplace-console__actions">
               <button type="button" onClick={() => consoleState.enable(item.id)}>Enable</button>
               <button type="button" onClick={() => consoleState.disable(item.id)}>Disable</button>
@@ -157,6 +171,11 @@ export function AS6MarketplaceDeveloperConsole() {
           </article>
         ))}
       </div>
+
+      <section className="as6-marketplace-console__trust" data-as6-marketplace-trust-ui="P29">
+        <strong>Trust policy: {consoleState.trustPolicy.mode}</strong>
+        <span>Audit records: {consoleState.trustAuditLog.length}</span>
+      </section>
 
       {consoleState.lastAction ? (
         <pre className="as6-marketplace-console__last-action">

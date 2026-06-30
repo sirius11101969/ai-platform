@@ -3132,3 +3132,9 @@ Permission Validation
 - Covers Web Crypto signature verification helper.
 - Covers trusted key rotation.
 - Covers key-aware trust validation.
+
+## AS6_PLATFORM_V2_MARKETPLACE_TRUST_UI_INSTALLATION_POLICY_P29
+- Covers Marketplace trust UI.
+- Covers installation policy guard.
+- Covers trust audit log.
+- Covers policy mode visibility.

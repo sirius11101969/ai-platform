@@ -1861,3 +1861,8 @@ Governed and registered.
 - Detected: AS6_PLUGIN_SIGNATURE_VERIFICATION_GAP.
 - Root cause: P27 checked signature metadata without cryptographic verification.
 - Resolution: Cryptographic Signature Verification Engine added.
+
+## AS6_PLATFORM_V2_MARKETPLACE_TRUST_UI_INSTALLATION_POLICY_P29
+- Detected: AS6_PLUGIN_INSTALL_POLICY_ENFORCEMENT_GAP.
+- Root cause: Trust verification existed without Marketplace UI/policy enforcement.
+- Resolution: Marketplace Trust UI and Installation Policy added.

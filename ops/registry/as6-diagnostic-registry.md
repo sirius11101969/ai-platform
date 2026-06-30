@@ -1276,3 +1276,11 @@ ops/bin/as6-control-permission-engine-v114
 - Control: ops/bin/as6-control-cryptographic-signature-verification-p28
 - Trust: frontend/src/as6/plugins/AS6PluginTrust.js
 - Added failure class: AS6_CRYPTOGRAPHIC_SIGNATURE_VERIFICATION_DRIFT.
+
+## AS6_PLATFORM_V2_MARKETPLACE_TRUST_UI_INSTALLATION_POLICY_P29
+- Diagnostic: ops/bin/as6-diagnose-marketplace-trust-ui-installation-policy-p29
+- Control: ops/bin/as6-control-marketplace-trust-ui-installation-policy-p29
+- Policy: frontend/src/as6/plugins/AS6MarketplaceTrustPolicy.js
+- Marketplace: frontend/src/as6/plugins/AS6PluginMarketplace.js
+- UI: frontend/src/as6/plugins/ui/AS6MarketplaceDeveloperConsole.jsx
+- Added failure class: AS6_MARKETPLACE_TRUST_UI_INSTALLATION_POLICY_DRIFT.
