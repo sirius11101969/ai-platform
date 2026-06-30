@@ -1886,3 +1886,8 @@ Governed and registered.
 - Detected: AS6_PLATFORM_V2_SDK_IMPORT_GAP.
 - Root cause: Developer Portal imported SDK helpers from legacy plugins/as6PluginSDK.js.
 - Resolution: Import path repaired to ../sdk/plugin/AS6PluginSDK.
+
+## AS6_PLATFORM_V2_MARKETPLACE_ADMINISTRATION_P33
+- Detected: AS6_MARKETPLACE_MODERATION_GAP.
+- Root cause: Public Marketplace existed without administration workflow.
+- Resolution: Marketplace Administration added.

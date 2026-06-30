@@ -4879,3 +4879,10 @@ Status: PASS pending validation
 - Product phase: AS6 Platform V2 Stable cycle.
 - Project readiness: 99.9999999999%
 - Developer Portal import repair: enabled.
+
+## AS6_PLATFORM_V2_MARKETPLACE_ADMINISTRATION_P33
+- Status: PASS pending release.
+- Product phase: AS6 Platform V2 Stable cycle.
+- Project readiness: 99.99999999993%
+- Marketplace Administration: enabled.
+- Next target: Marketplace Production Services P34.

@@ -3162,3 +3162,10 @@ Permission Validation
 - Covers Developer Portal SDK import repair.
 - Covers Platform V2 SDK helper import path.
 - Covers P32 build regression prevention.
+
+## AS6_PLATFORM_V2_MARKETPLACE_ADMINISTRATION_P33
+- Covers trusted publisher administration.
+- Covers key registration and rotation.
+- Covers moderation queue.
+- Covers plugin blocklist and version revocation.
+- Covers admin audit log.

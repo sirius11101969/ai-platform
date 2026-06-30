@@ -21,3 +21,5 @@ export * from "./AS6PluginPackageManager";
 export * from "./AS6PublicMarketplace";
 
 export * from "./AS6DeveloperPortal";
+
+export * from "./AS6MarketplaceAdministration";

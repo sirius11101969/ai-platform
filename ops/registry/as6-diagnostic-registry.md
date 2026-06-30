@@ -1309,3 +1309,9 @@ ops/bin/as6-control-permission-engine-v114
 - Control: ops/bin/as6-control-developer-portal-import-repair-p32b
 - Repaired: frontend/src/as6/plugins/AS6DeveloperPortal.js
 - Added failure class: AS6_DEVELOPER_PORTAL_SDK_IMPORT_DRIFT.
+
+## AS6_PLATFORM_V2_MARKETPLACE_ADMINISTRATION_P33
+- Diagnostic: ops/bin/as6-diagnose-marketplace-administration-p33
+- Control: ops/bin/as6-control-marketplace-administration-p33
+- Administration: frontend/src/as6/plugins/AS6MarketplaceAdministration.js
+- Added failure class: AS6_MARKETPLACE_ADMINISTRATION_DRIFT.

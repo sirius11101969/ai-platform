@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ADMIN="frontend/src/as6/plugins/AS6MarketplaceAdministration.js"
+INDEX="frontend/src/as6/plugins/index.js"
+test -f "$ADMIN" || { echo "AS6_PLATFORM_V2_MARKETPLACE_ADMINISTRATION_P33=FAIL admin_missing"; exit 1; }
+grep -q "AS6_MARKETPLACE_ADMINISTRATION_VERSION" "$ADMIN" || { echo "AS6_PLATFORM_V2_MARKETPLACE_ADMINISTRATION_P33=FAIL version_missing"; exit 1; }
+grep -q "approveAS6MarketplacePublisher" "$ADMIN" || { echo "AS6_PLATFORM_V2_MARKETPLACE_ADMINISTRATION_P33=FAIL publisher_approval_missing"; exit 1; }
+grep -q "registerAS6MarketplacePublisherKey" "$ADMIN" || { echo "AS6_PLATFORM_V2_MARKETPLACE_ADMINISTRATION_P33=FAIL key_registration_missing"; exit 1; }
+grep -q "rotateAS6MarketplacePublisherKey" "$ADMIN" || { echo "AS6_PLATFORM_V2_MARKETPLACE_ADMINISTRATION_P33=FAIL key_rotation_missing"; exit 1; }
+grep -q "submitAS6MarketplaceModerationRequest" "$ADMIN" || { echo "AS6_PLATFORM_V2_MARKETPLACE_ADMINISTRATION_P33=FAIL moderation_submit_missing"; exit 1; }
+grep -q "approveAS6MarketplaceModeration" "$ADMIN" || { echo "AS6_PLATFORM_V2_MARKETPLACE_ADMINISTRATION_P33=FAIL moderation_approve_missing"; exit 1; }
+grep -q "rejectAS6MarketplaceModeration" "$ADMIN" || { echo "AS6_PLATFORM_V2_MARKETPLACE_ADMINISTRATION_P33=FAIL moderation_reject_missing"; exit 1; }
+grep -q "blockAS6MarketplacePlugin" "$ADMIN" || { echo "AS6_PLATFORM_V2_MARKETPLACE_ADMINISTRATION_P33=FAIL block_missing"; exit 1; }
+grep -q "revokeAS6MarketplacePluginVersion" "$ADMIN" || { echo "AS6_PLATFORM_V2_MARKETPLACE_ADMINISTRATION_P33=FAIL revoke_missing"; exit 1; }
+grep -q "getAS6MarketplaceAdminAuditLog" "$ADMIN" || { echo "AS6_PLATFORM_V2_MARKETPLACE_ADMINISTRATION_P33=FAIL audit_missing"; exit 1; }
+grep -q "AS6MarketplaceAdministration" "$INDEX" || { echo "AS6_PLATFORM_V2_MARKETPLACE_ADMINISTRATION_P33=FAIL index_export_missing"; exit 1; }
+grep -q "AS6_MARKETPLACE_ADMINISTRATION_DRIFT" ops/governance/as6-marketplace-administration-aec-p33.md || { echo "AS6_PLATFORM_V2_MARKETPLACE_ADMINISTRATION_P33=FAIL drift_class_missing"; exit 1; }
+echo "AS6_PLATFORM_V2_MARKETPLACE_ADMINISTRATION_P33=PASS"
