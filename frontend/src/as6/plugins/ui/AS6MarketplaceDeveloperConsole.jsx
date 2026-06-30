@@ -9,6 +9,11 @@ import {
   installAS6MarketplacePlugin,
 } from "../AS6PluginMarketplace";
 import {
+  fetchAS6RemoteMarketplaceCatalog,
+  getAS6RemoteMarketplaceCatalogState,
+  registerAS6RemoteMarketplaceCatalog,
+} from "../AS6RemoteMarketplaceCatalog";
+import {
   getAS6PluginRuntimeState,
   enableAS6Plugin,
   disableAS6Plugin,
@@ -16,10 +21,13 @@ import {
 } from "../AS6PluginRuntime";
 
 export const AS6_MARKETPLACE_DEVELOPER_CONSOLE_VERSION = "P14";
+export const AS6_REMOTE_CATALOG_UI_INTEGRATION_VERSION = "P26B";
 
 export function useAS6MarketplaceDeveloperConsole() {
   const [query, setQuery] = useState("");
   const [lastAction, setLastAction] = useState(null);
+  const [remoteCatalog, setRemoteCatalog] = useState(() => getAS6RemoteMarketplaceCatalogState());
+  const [remoteCatalogUrl, setRemoteCatalogUrl] = useState("");
 
   const registry = getAS6PluginRegistryState();
   const runtime = getAS6PluginRuntimeState();
@@ -33,6 +41,14 @@ export function useAS6MarketplaceDeveloperConsole() {
       return [item.id, item.title, item.publisher, item.status].filter(Boolean).join(" ").toLowerCase().includes(q);
     });
   }, [query, registry]);
+
+  async function syncRemoteCatalog(url = remoteCatalogUrl) {
+    const result = await fetchAS6RemoteMarketplaceCatalog(url);
+    if (result.catalog) registerAS6RemoteMarketplaceCatalog(result.catalog);
+    setRemoteCatalog(getAS6RemoteMarketplaceCatalogState());
+    setLastAction({ type: "remote_catalog_sync", result });
+    return result;
+  }
 
   function install(pluginId) {
     const result = installAS6MarketplacePlugin(pluginId);
@@ -64,6 +80,10 @@ export function useAS6MarketplaceDeveloperConsole() {
     registry,
     runtime,
     marketplace,
+    remoteCatalog,
+    remoteCatalogUrl,
+    setRemoteCatalogUrl,
+    syncRemoteCatalog,
     registeredIds,
     filteredRegistry,
     lastAction,
@@ -87,6 +107,24 @@ export function AS6MarketplaceDeveloperConsole() {
         </div>
         <strong>{consoleState.registry.count || 0} plugins</strong>
       </header>
+
+      <div className="as6-marketplace-console__remote" data-as6-remote-catalog-ui="P26B">
+        <div>
+          <strong>Catalog source: {consoleState.remoteCatalog.source || "local"}</strong>
+          <span>Synced: {consoleState.remoteCatalog.syncedAt || "not synced"}</span>
+          {consoleState.remoteCatalog.error ? <span>Error: {consoleState.remoteCatalog.error}</span> : null}
+        </div>
+        <input
+          aria-label="Remote catalog URL"
+          value={consoleState.remoteCatalogUrl}
+          onChange={(event) => consoleState.setRemoteCatalogUrl(event.target.value)}
+          placeholder="Remote catalog URL..."
+          className="as6-marketplace-console__search"
+        />
+        <button type="button" onClick={() => consoleState.syncRemoteCatalog()}>
+          Sync remote catalog
+        </button>
+      </div>
 
       <input
         aria-label="Search plugins"

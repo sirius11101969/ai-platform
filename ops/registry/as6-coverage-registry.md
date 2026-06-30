@@ -3114,3 +3114,9 @@ Permission Validation
 - Covers local fallback behavior.
 - Covers remote catalog normalization.
 - Covers remote catalog Marketplace registration.
+
+## AS6_PLATFORM_V2_REMOTE_CATALOG_UI_INTEGRATION_P26B
+- Covers remote catalog UI state.
+- Covers manual remote catalog sync.
+- Covers source/timestamp/error visibility.
+- Covers local fallback visibility.

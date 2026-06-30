@@ -1257,3 +1257,9 @@ ops/bin/as6-control-permission-engine-v114
 - Control: ops/bin/as6-control-remote-marketplace-catalog-p26a
 - Catalog: frontend/src/as6/plugins/AS6RemoteMarketplaceCatalog.js
 - Added failure class: AS6_REMOTE_MARKETPLACE_CATALOG_DRIFT.
+
+## AS6_PLATFORM_V2_REMOTE_CATALOG_UI_INTEGRATION_P26B
+- Diagnostic: ops/bin/as6-diagnose-remote-catalog-ui-integration-p26b
+- Control: ops/bin/as6-control-remote-catalog-ui-integration-p26b
+- UI: frontend/src/as6/plugins/ui/AS6MarketplaceDeveloperConsole.jsx
+- Added failure class: AS6_REMOTE_CATALOG_UI_INTEGRATION_DRIFT.

@@ -92,3 +92,5 @@ as6-control-marketplace-install-persistence-p24	as6-control-generated-plugin-aut
 as6-control-plugin-version-update-manager-p25	as6-control-marketplace-install-persistence-p24
 
 as6-control-remote-marketplace-catalog-p26a	as6-control-plugin-version-update-manager-p25
+
+as6-control-remote-catalog-ui-integration-p26b	as6-control-remote-marketplace-catalog-p26a

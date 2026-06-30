@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-remote-catalog-ui-integration-p26b
+grep -RIn "AS6_REMOTE_CATALOG_UI_INTEGRATION_DRIFT" README.md docs ops .github frontend/src >/dev/null
+echo "AS6_CONTROL_REMOTE_CATALOG_UI_INTEGRATION_P26B=PASS"

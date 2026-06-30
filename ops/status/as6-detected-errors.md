@@ -1846,3 +1846,8 @@ Governed and registered.
 - Detected: AS6_MARKETPLACE_REMOTE_CATALOG_GAP.
 - Root cause: Marketplace had local lifecycle but no remote catalog contract.
 - Resolution: Remote Marketplace Catalog Contract added.
+
+## AS6_PLATFORM_V2_REMOTE_CATALOG_UI_INTEGRATION_P26B
+- Detected: AS6_MARKETPLACE_REMOTE_SYNC_UI_GAP.
+- Root cause: Remote catalog contract existed without Developer Console visibility.
+- Resolution: Remote Catalog UI Integration added.

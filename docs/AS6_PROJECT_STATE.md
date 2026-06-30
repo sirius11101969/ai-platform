@@ -4824,3 +4824,10 @@ Status: PASS pending validation
 - Project readiness: 99.9999999994%
 - Remote Marketplace Catalog Contract: enabled.
 - Next target: Developer Console remote catalog UI integration.
+
+## AS6_PLATFORM_V2_REMOTE_CATALOG_UI_INTEGRATION_P26B
+- Status: PASS pending release.
+- Product phase: AS6 Platform V2.
+- Project readiness: 99.9999999995%
+- Remote Catalog UI Integration: enabled.
+- Next target: Remote catalog signed package validation.

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+CONSOLE="frontend/src/as6/plugins/ui/AS6MarketplaceDeveloperConsole.jsx"
+test -f "$CONSOLE" || { echo "AS6_PLATFORM_V2_REMOTE_CATALOG_UI_INTEGRATION_P26B=FAIL console_missing"; exit 1; }
+grep -q "AS6_REMOTE_CATALOG_UI_INTEGRATION_VERSION" "$CONSOLE" || { echo "AS6_PLATFORM_V2_REMOTE_CATALOG_UI_INTEGRATION_P26B=FAIL version_missing"; exit 1; }
+grep -q "fetchAS6RemoteMarketplaceCatalog" "$CONSOLE" || { echo "AS6_PLATFORM_V2_REMOTE_CATALOG_UI_INTEGRATION_P26B=FAIL fetch_integration_missing"; exit 1; }
+grep -q "registerAS6RemoteMarketplaceCatalog" "$CONSOLE" || { echo "AS6_PLATFORM_V2_REMOTE_CATALOG_UI_INTEGRATION_P26B=FAIL register_integration_missing"; exit 1; }
+grep -q "Sync remote catalog" "$CONSOLE" || { echo "AS6_PLATFORM_V2_REMOTE_CATALOG_UI_INTEGRATION_P26B=FAIL sync_button_missing"; exit 1; }
+grep -q "Catalog source" "$CONSOLE" || { echo "AS6_PLATFORM_V2_REMOTE_CATALOG_UI_INTEGRATION_P26B=FAIL source_status_missing"; exit 1; }
+grep -q "AS6_REMOTE_CATALOG_UI_INTEGRATION_DRIFT" ops/governance/as6-remote-catalog-ui-integration-aec-p26b.md || { echo "AS6_PLATFORM_V2_REMOTE_CATALOG_UI_INTEGRATION_P26B=FAIL drift_class_missing"; exit 1; }
+echo "AS6_PLATFORM_V2_REMOTE_CATALOG_UI_INTEGRATION_P26B=PASS"
