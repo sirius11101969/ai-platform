@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+PLUGIN="p22-marketplace-smoke"
+DIR="frontend/src/as6/plugins/generated/$PLUGIN"
+DOCS="docs/platform-v2/sdk/marketplace-e2e-plugin-validation-p22.md"
+test -d "$DIR" || { echo "AS6_PLATFORM_V2_MARKETPLACE_E2E_PLUGIN_VALIDATION_P22=FAIL plugin_dir_missing"; exit 1; }
+test -f "$DIR/manifest.js" || { echo "AS6_PLATFORM_V2_MARKETPLACE_E2E_PLUGIN_VALIDATION_P22=FAIL manifest_missing"; exit 1; }
+test -f "$DIR/README.md" || { echo "AS6_PLATFORM_V2_MARKETPLACE_E2E_PLUGIN_VALIDATION_P22=FAIL readme_missing"; exit 1; }
+test -f "$DOCS" || { echo "AS6_PLATFORM_V2_MARKETPLACE_E2E_PLUGIN_VALIDATION_P22=FAIL docs_missing"; exit 1; }
+ops/bin/as6-diagnose-generated-plugin "$PLUGIN" >/tmp/as6-p22-generated-plugin.log
+grep -q "AS6_GENERATED_PLUGIN=PASS" /tmp/as6-p22-generated-plugin.log || { echo "AS6_PLATFORM_V2_MARKETPLACE_E2E_PLUGIN_VALIDATION_P22=FAIL generated_plugin_diag_failed"; exit 1; }
+grep -q "defineAS6Plugin" "$DIR/manifest.js" || { echo "AS6_PLATFORM_V2_MARKETPLACE_E2E_PLUGIN_VALIDATION_P22=FAIL sdk_define_missing"; exit 1; }
+grep -q "AS6_MARKETPLACE_E2E_PLUGIN_VALIDATION_DRIFT" ops/governance/as6-marketplace-e2e-plugin-validation-aec-p22.md || { echo "AS6_PLATFORM_V2_MARKETPLACE_E2E_PLUGIN_VALIDATION_P22=FAIL drift_class_missing"; exit 1; }
+echo "AS6_PLATFORM_V2_MARKETPLACE_E2E_PLUGIN_VALIDATION_P22=PASS"

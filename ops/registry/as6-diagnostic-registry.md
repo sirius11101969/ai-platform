@@ -1225,3 +1225,9 @@ ops/bin/as6-control-permission-engine-v114
 - Control: ops/bin/as6-control-sidebar-menu-visible-placement-p21
 - Sidebar: frontend/src/components/as6-workspace/AS6Sidebar.jsx
 - Added failure class: AS6_SIDEBAR_MENU_VISIBLE_PLACEMENT_DRIFT.
+
+## AS6_PLATFORM_V2_MARKETPLACE_E2E_PLUGIN_VALIDATION_P22
+- Diagnostic: ops/bin/as6-diagnose-marketplace-e2e-plugin-validation-p22
+- Control: ops/bin/as6-control-marketplace-e2e-plugin-validation-p22
+- Smoke plugin: frontend/src/as6/plugins/generated/p22-marketplace-smoke
+- Added failure class: AS6_MARKETPLACE_E2E_PLUGIN_VALIDATION_DRIFT.

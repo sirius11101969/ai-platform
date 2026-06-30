@@ -1821,3 +1821,8 @@ Governed and registered.
 - Detected: AS6_MARKETPLACE_MENU_ITEM_GAP.
 - Root cause: Marketplace route existed without visible sidebar item.
 - Resolution: Marketplace sidebar item added.
+
+## AS6_PLATFORM_V2_MARKETPLACE_E2E_PLUGIN_VALIDATION_P22
+- Detected: AS6_PLUGIN_LIFECYCLE_VALIDATION_GAP.
+- Root cause: Platform V2 had plugin infrastructure without generated plugin E2E smoke validation.
+- Resolution: Marketplace E2E smoke plugin validation added.

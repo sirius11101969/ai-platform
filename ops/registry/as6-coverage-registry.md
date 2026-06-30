@@ -3085,3 +3085,9 @@ Permission Validation
 - Covers visible Marketplace sidebar item.
 - Covers /marketplace navigation target.
 - Covers sidebar menu route discovery.
+
+## AS6_PLATFORM_V2_MARKETPLACE_E2E_PLUGIN_VALIDATION_P22
+- Covers generated plugin lifecycle smoke validation.
+- Covers create plugin CLI output.
+- Covers generated plugin diagnostic.
+- Covers Marketplace E2E validation preparation.
