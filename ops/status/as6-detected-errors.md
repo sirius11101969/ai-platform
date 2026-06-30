@@ -1801,3 +1801,8 @@ Governed and registered.
 - Detected: AS6_SHELL_RUNTIME_ROUTE_CONSUMER_GAP.
 - Root cause: Dynamic Shell Registry existed without Shell runtime consumers.
 - Resolution: Shell Runtime Integration added.
+
+## AS6_PLATFORM_V2_APP_RUNTIME_INTEGRATION_P18
+- Detected: AS6_APP_RUNTIME_ROUTE_OUTLET_GAP.
+- Root cause: Shell Runtime Integration existed without App-level consumer helpers.
+- Resolution: App Runtime Integration added.

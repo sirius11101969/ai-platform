@@ -1199,3 +1199,10 @@ ops/bin/as6-control-permission-engine-v114
 - Runtime: frontend/src/as6/shell/runtime/AS6ShellRuntimeIntegration.jsx
 - Shell index export: frontend/src/as6/shell/index.js
 - Added failure class: AS6_SHELL_RUNTIME_INTEGRATION_DRIFT.
+
+## AS6_PLATFORM_V2_APP_RUNTIME_INTEGRATION_P18
+- Diagnostic: ops/bin/as6-diagnose-app-runtime-integration-p18
+- Control: ops/bin/as6-control-app-runtime-integration-p18
+- App runtime: frontend/src/as6/app/AS6AppRuntimeIntegration.jsx
+- App index export: frontend/src/as6/app/index.js
+- Added failure class: AS6_APP_RUNTIME_INTEGRATION_DRIFT.

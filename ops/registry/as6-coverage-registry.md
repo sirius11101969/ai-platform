@@ -3060,3 +3060,10 @@ Permission Validation
 - Covers dynamic route outlet.
 - Covers runtime navigation component.
 - Covers Dynamic Shell Registry consumption.
+
+## AS6_PLATFORM_V2_APP_RUNTIME_INTEGRATION_P18
+- Covers App runtime hook.
+- Covers App runtime navigation.
+- Covers App runtime route outlet.
+- Covers Shell Runtime Integration consumption.
+- Covers dynamic plugin route visibility preparation.

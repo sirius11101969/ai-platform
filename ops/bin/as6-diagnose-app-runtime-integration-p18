@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+APP="frontend/src/as6/app/AS6AppRuntimeIntegration.jsx"
+INDEX="frontend/src/as6/app/index.js"
+CONTRACT="frontend/src/as6/app/AS6AppRuntimeIntegration.contract.md"
+DOCS="docs/platform-v2/sdk/app-runtime-integration-p18.md"
+test -f "$APP" || { echo "AS6_PLATFORM_V2_APP_RUNTIME_INTEGRATION_P18=FAIL app_missing"; exit 1; }
+test -f "$INDEX" || { echo "AS6_PLATFORM_V2_APP_RUNTIME_INTEGRATION_P18=FAIL index_missing"; exit 1; }
+test -f "$CONTRACT" || { echo "AS6_PLATFORM_V2_APP_RUNTIME_INTEGRATION_P18=FAIL contract_missing"; exit 1; }
+test -f "$DOCS" || { echo "AS6_PLATFORM_V2_APP_RUNTIME_INTEGRATION_P18=FAIL docs_missing"; exit 1; }
+grep -q "useAS6AppRuntimeIntegration" "$APP" || { echo "AS6_PLATFORM_V2_APP_RUNTIME_INTEGRATION_P18=FAIL hook_missing"; exit 1; }
+grep -q "AS6AppRuntimeNavigation" "$APP" || { echo "AS6_PLATFORM_V2_APP_RUNTIME_INTEGRATION_P18=FAIL navigation_missing"; exit 1; }
+grep -q "AS6AppRuntimeRouteOutlet" "$APP" || { echo "AS6_PLATFORM_V2_APP_RUNTIME_INTEGRATION_P18=FAIL route_outlet_missing"; exit 1; }
+grep -q "AS6AppRuntimeIntegrationPanel" "$APP" || { echo "AS6_PLATFORM_V2_APP_RUNTIME_INTEGRATION_P18=FAIL panel_missing"; exit 1; }
+grep -q "AS6ShellRuntimeNavigation" "$APP" || { echo "AS6_PLATFORM_V2_APP_RUNTIME_INTEGRATION_P18=FAIL shell_nav_integration_missing"; exit 1; }
+grep -q "AS6ShellRuntimeRouteOutlet" "$APP" || { echo "AS6_PLATFORM_V2_APP_RUNTIME_INTEGRATION_P18=FAIL shell_outlet_integration_missing"; exit 1; }
+grep -q "AS6_APP_RUNTIME_INTEGRATION_DRIFT" ops/governance/as6-app-runtime-integration-aec-p18.md || { echo "AS6_PLATFORM_V2_APP_RUNTIME_INTEGRATION_P18=FAIL drift_class_missing"; exit 1; }
+echo "AS6_PLATFORM_V2_APP_RUNTIME_INTEGRATION_P18=PASS"
