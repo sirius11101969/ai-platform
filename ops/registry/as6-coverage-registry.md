@@ -3193,3 +3193,9 @@ Permission Validation
 - Covers Navigation API facade.
 - Covers section/item registry and tree.
 - Covers search, favorite, open and Marketplace bridge.
+
+## AS6_EPIC001_BUSINESS_HOME_FOUNDATION
+- Covers AXS tokens.
+- Covers AXS primitives.
+- Covers Business Home foundation.
+- Covers AI Brief, metrics, workspaces, recommendations and activity surface.

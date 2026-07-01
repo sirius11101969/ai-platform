@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+TOKENS="frontend/src/as6/experience-system/AS6ExperienceTokens.js"
+PRIM="frontend/src/as6/experience-system/AS6ExperiencePrimitives.jsx"
+HOME="frontend/src/as6/business-home/AS6BusinessHome.jsx"
+test -f "$TOKENS" || { echo "AS6_EPIC001_BUSINESS_HOME_FOUNDATION=FAIL tokens_missing"; exit 1; }
+test -f "$PRIM" || { echo "AS6_EPIC001_BUSINESS_HOME_FOUNDATION=FAIL primitives_missing"; exit 1; }
+test -f "$HOME" || { echo "AS6_EPIC001_BUSINESS_HOME_FOUNDATION=FAIL home_missing"; exit 1; }
+grep -q "AS6_EXPERIENCE_SYSTEM_VERSION" "$TOKENS" || { echo "AS6_EPIC001_BUSINESS_HOME_FOUNDATION=FAIL axs_version_missing"; exit 1; }
+grep -q "AS6ExperienceCard" "$PRIM" || { echo "AS6_EPIC001_BUSINESS_HOME_FOUNDATION=FAIL card_missing"; exit 1; }
+grep -q "AS6_BUSINESS_HOME_VERSION" "$HOME" || { echo "AS6_EPIC001_BUSINESS_HOME_FOUNDATION=FAIL home_version_missing"; exit 1; }
+grep -q "AI Brief" "$HOME" || { echo "AS6_EPIC001_BUSINESS_HOME_FOUNDATION=FAIL ai_brief_missing"; exit 1; }
+grep -q "Recommendations" "$HOME" || { echo "AS6_EPIC001_BUSINESS_HOME_FOUNDATION=FAIL recommendations_missing"; exit 1; }
+grep -q "AS6_AXS_FOUNDATION_DRIFT" ops/governance/as6-epic001-business-home-foundation-aec.md || { echo "AS6_EPIC001_BUSINESS_HOME_FOUNDATION=FAIL drift_class_missing"; exit 1; }
+echo "AS6_EPIC001_BUSINESS_HOME_FOUNDATION=PASS"

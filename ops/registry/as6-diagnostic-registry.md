@@ -1342,3 +1342,10 @@ ops/bin/as6-control-permission-engine-v114
 - Runtime: frontend/src/as6/business-navigation/AS6BusinessNavigationRuntime.js
 - API: frontend/src/as6/business-navigation/AS6BusinessNavigationAPI.js
 - Added failure class: AS6_BUSINESS_UNIVERSAL_NAVIGATION_DRIFT.
+
+## AS6_EPIC001_BUSINESS_HOME_FOUNDATION
+- Diagnostic: ops/bin/as6-diagnose-epic001-business-home-foundation
+- Control: ops/bin/as6-control-epic001-business-home-foundation
+- AXS: frontend/src/as6/experience-system
+- Business Home: frontend/src/as6/business-home
+- Added failure class: AS6_AXS_FOUNDATION_DRIFT.

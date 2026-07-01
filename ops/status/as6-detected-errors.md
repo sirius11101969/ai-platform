@@ -1911,3 +1911,8 @@ Governed and registered.
 - Detected: AS6_BUSINESS_NAVIGATION_REGISTRY_GAP.
 - Root cause: Business Workspace existed without Universal Navigation facade.
 - Resolution: Universal Navigation B2 added.
+
+## AS6_EPIC001_BUSINESS_HOME_FOUNDATION
+- Detected: AS6_BUSINESS_HOME_FOUNDATION_GAP.
+- Root cause: Business OS had workspace/navigation foundation without executable Business Home artifact.
+- Resolution: EPIC-001 Business Home Foundation added.

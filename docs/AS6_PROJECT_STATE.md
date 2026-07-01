@@ -4917,3 +4917,10 @@ Status: PASS pending validation
 - Project readiness: 100% Platform V2; Business OS B2 started.
 - Universal Navigation: enabled.
 - Next target: Dashboard Engine B3.
+
+## AS6_EPIC001_BUSINESS_HOME_FOUNDATION
+- Status: PASS pending release.
+- Product phase: AS6 Business OS Product Execution.
+- Marketplace status: AS6_MARKETPLACE_1_0_GA.
+- Project readiness: 100% Platform V2; Business Home Foundation started.
+- Next target: Business Home route integration.
