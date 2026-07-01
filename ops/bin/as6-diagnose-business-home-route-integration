@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+APP="frontend/src/App.jsx"
+grep -q "AS6BusinessHome" "$APP" || { echo "AS6_EPIC001_BUSINESS_HOME_ROUTE_INTEGRATION=FAIL import_missing"; exit 1; }
+grep -q "path=\"/business-home\"" "$APP" || { echo "AS6_EPIC001_BUSINESS_HOME_ROUTE_INTEGRATION=FAIL route_missing"; exit 1; }
+grep -q "<ProtectedRoute><AS6BusinessHome /></ProtectedRoute>" "$APP" || { echo "AS6_EPIC001_BUSINESS_HOME_ROUTE_INTEGRATION=FAIL protected_route_missing"; exit 1; }
+grep -q "AS6RealAppWiring path=\"/marketplace\"" "$APP" || { echo "AS6_EPIC001_BUSINESS_HOME_ROUTE_INTEGRATION=FAIL marketplace_route_drift"; exit 1; }
+grep -q "AS6_BUSINESS_HOME_ROUTE_GAP" ops/governance/as6-business-home-route-integration-aec.md || { echo "AS6_EPIC001_BUSINESS_HOME_ROUTE_INTEGRATION=FAIL aec_missing"; exit 1; }
+echo "AS6_EPIC001_BUSINESS_HOME_ROUTE_INTEGRATION=PASS"

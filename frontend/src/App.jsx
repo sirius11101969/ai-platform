@@ -30,6 +30,7 @@ import CRMBrandV2Page from "./pages/CRMBrandV2Page";
 import AS6OSPage from "./pages/AS6OSPage";
 import CRMWorkspacePage from "./pages/CRMWorkspacePage";
 import AS6WorkspacePage from "./pages/AS6WorkspacePage";
+import { AS6BusinessHome } from "./as6/business-home";
 import "./styles.css";
 import "./theme/as6Theme.css";
 import { ProtectedLayout } from "./components/AppShell";
@@ -167,6 +168,7 @@ export default function App() {
           <Route path="/ai-enterprise-command-center" element={<ProtectedRoute><AIEnterpriseCommandCenter /></ProtectedRoute>} />
           <Route path="/command-center" element={<ProtectedRoute><CommandCenterPage /></ProtectedRoute>} />
           <Route path="/dashboard/revenue" element={<ProtectedRoute><RevenueDashboardPage /></ProtectedRoute>} />
+          <Route path="/business-home" element={<ProtectedRoute><AS6BusinessHome /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         </Suspense>

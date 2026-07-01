@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-business-home-route-integration
+grep -RIn "AS6_BUSINESS_HOME_ROUTE_GAP" README.md docs ops .github frontend/src >/dev/null
+echo "AS6_CONTROL_BUSINESS_HOME_ROUTE_INTEGRATION=PASS"

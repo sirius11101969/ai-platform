@@ -1349,3 +1349,10 @@ ops/bin/as6-control-permission-engine-v114
 - AXS: frontend/src/as6/experience-system
 - Business Home: frontend/src/as6/business-home
 - Added failure class: AS6_AXS_FOUNDATION_DRIFT.
+
+## AS6_EPIC001_BUSINESS_HOME_ROUTE_INTEGRATION
+- Diagnostic: ops/bin/as6-diagnose-business-home-route-integration
+- Control: ops/bin/as6-control-business-home-route-integration
+- Route: /business-home
+- File: frontend/src/App.jsx
+- Added failure class: AS6_BUSINESS_HOME_ROUTE_GAP.

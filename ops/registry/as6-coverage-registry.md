@@ -3199,3 +3199,8 @@ Permission Validation
 - Covers AXS primitives.
 - Covers Business Home foundation.
 - Covers AI Brief, metrics, workspaces, recommendations and activity surface.
+
+## AS6_EPIC001_BUSINESS_HOME_ROUTE_INTEGRATION
+- Covers /business-home route registration.
+- Covers ProtectedRoute integration.
+- Covers Marketplace direct route preservation.

@@ -1916,3 +1916,8 @@ Governed and registered.
 - Detected: AS6_BUSINESS_HOME_FOUNDATION_GAP.
 - Root cause: Business OS had workspace/navigation foundation without executable Business Home artifact.
 - Resolution: EPIC-001 Business Home Foundation added.
+
+## AS6_EPIC001_BUSINESS_HOME_ROUTE_INTEGRATION
+- Detected: AS6_BUSINESS_HOME_ROUTE_GAP.
+- Root cause: Business Home existed but was not reachable by URL.
+- Resolution: /business-home route integrated.
