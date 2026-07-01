@@ -4931,3 +4931,10 @@ Status: PASS pending validation
 - Route: /business-home.
 - Project readiness: 100% Platform V2; Business Home reachable.
 - Next target: Business Home live data integration.
+
+## AS6_EPIC001_BUSINESS_HOME_LIVE_DATA
+- Status: PASS pending release.
+- Product phase: AS6 Business OS Product Execution.
+- Route: /business-home.
+- Project readiness: 100% Platform V2; Business Home live data connected.
+- Next target: Business Home default landing decision.

@@ -3204,3 +3204,10 @@ Permission Validation
 - Covers /business-home route registration.
 - Covers ProtectedRoute integration.
 - Covers Marketplace direct route preservation.
+
+## AS6_EPIC001_BUSINESS_HOME_LIVE_DATA
+- Covers Dashboard Live Data integration.
+- Covers Business Workspace integration.
+- Covers Universal Navigation integration.
+- Covers Marketplace GA integration.
+- Covers safe fallback behavior.

@@ -1921,3 +1921,8 @@ Governed and registered.
 - Detected: AS6_BUSINESS_HOME_ROUTE_GAP.
 - Root cause: Business Home existed but was not reachable by URL.
 - Resolution: /business-home route integrated.
+
+## AS6_EPIC001_BUSINESS_HOME_LIVE_DATA
+- Detected: AS6_BUSINESS_HOME_STATIC_DATA_DRIFT.
+- Root cause: Business Home used static metrics after route integration.
+- Resolution: Business Home live data aggregator connected.

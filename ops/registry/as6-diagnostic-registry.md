@@ -1356,3 +1356,9 @@ ops/bin/as6-control-permission-engine-v114
 - Route: /business-home
 - File: frontend/src/App.jsx
 - Added failure class: AS6_BUSINESS_HOME_ROUTE_GAP.
+
+## AS6_EPIC001_BUSINESS_HOME_LIVE_DATA
+- Diagnostic: ops/bin/as6-diagnose-business-home-live-data
+- Control: ops/bin/as6-control-business-home-live-data
+- Aggregator: frontend/src/as6/business-home/AS6BusinessHomeLiveData.js
+- Added failure class: AS6_BUSINESS_HOME_STATIC_DATA_DRIFT.

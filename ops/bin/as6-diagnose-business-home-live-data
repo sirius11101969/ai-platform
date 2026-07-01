@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+LIVE="frontend/src/as6/business-home/AS6BusinessHomeLiveData.js"
+HOME="frontend/src/as6/business-home/AS6BusinessHome.jsx"
+INDEX="frontend/src/as6/business-home/index.js"
+test -f "$LIVE" || { echo "AS6_EPIC001_BUSINESS_HOME_LIVE_DATA=FAIL live_data_missing"; exit 1; }
+grep -q "AS6_BUSINESS_HOME_LIVE_DATA_VERSION" "$LIVE" || { echo "AS6_EPIC001_BUSINESS_HOME_LIVE_DATA=FAIL version_missing"; exit 1; }
+grep -q "createAS6DashboardLiveSnapshot" "$LIVE" || { echo "AS6_EPIC001_BUSINESS_HOME_LIVE_DATA=FAIL dashboard_source_missing"; exit 1; }
+grep -q "getAS6BusinessWorkspaceState" "$LIVE" || { echo "AS6_EPIC001_BUSINESS_HOME_LIVE_DATA=FAIL workspace_source_missing"; exit 1; }
+grep -q "getAS6BusinessNavigationState" "$LIVE" || { echo "AS6_EPIC001_BUSINESS_HOME_LIVE_DATA=FAIL navigation_source_missing"; exit 1; }
+grep -q "getAS6MarketplaceGAState" "$LIVE" || { echo "AS6_EPIC001_BUSINESS_HOME_LIVE_DATA=FAIL marketplace_source_missing"; exit 1; }
+grep -q "safeCall" "$LIVE" || { echo "AS6_EPIC001_BUSINESS_HOME_LIVE_DATA=FAIL safe_fallback_missing"; exit 1; }
+grep -q "createAS6BusinessHomeLiveData" "$HOME" || { echo "AS6_EPIC001_BUSINESS_HOME_LIVE_DATA=FAIL home_not_connected"; exit 1; }
+grep -q "state.recommendations.map" "$HOME" || { echo "AS6_EPIC001_BUSINESS_HOME_LIVE_DATA=FAIL dynamic_recommendations_missing"; exit 1; }
+grep -q "state.activity.map" "$HOME" || { echo "AS6_EPIC001_BUSINESS_HOME_LIVE_DATA=FAIL dynamic_activity_missing"; exit 1; }
+grep -q "AS6BusinessHomeLiveData" "$INDEX" || { echo "AS6_EPIC001_BUSINESS_HOME_LIVE_DATA=FAIL index_export_missing"; exit 1; }
+grep -q "AS6_BUSINESS_HOME_STATIC_DATA_DRIFT" ops/governance/as6-business-home-live-data-aec.md || { echo "AS6_EPIC001_BUSINESS_HOME_LIVE_DATA=FAIL aec_missing"; exit 1; }
+echo "AS6_EPIC001_BUSINESS_HOME_LIVE_DATA=PASS"
