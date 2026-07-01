@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+NAV="frontend/src/as6/business-navigation/AS6BusinessNavigationRuntime.js"
+API="frontend/src/as6/business-navigation/AS6BusinessNavigationAPI.js"
+INDEX="frontend/src/as6/business-navigation/index.js"
+test -f "$NAV" || { echo "AS6_BUSINESS_UNIVERSAL_NAVIGATION_B2=FAIL runtime_missing"; exit 1; }
+test -f "$API" || { echo "AS6_BUSINESS_UNIVERSAL_NAVIGATION_B2=FAIL api_missing"; exit 1; }
+grep -q "AS6_BUSINESS_NAVIGATION_VERSION" "$NAV" || { echo "AS6_BUSINESS_UNIVERSAL_NAVIGATION_B2=FAIL version_missing"; exit 1; }
+grep -q "registerAS6BusinessNavigationSection" "$NAV" || { echo "AS6_BUSINESS_UNIVERSAL_NAVIGATION_B2=FAIL section_registry_missing"; exit 1; }
+grep -q "registerAS6BusinessNavigationItem" "$NAV" || { echo "AS6_BUSINESS_UNIVERSAL_NAVIGATION_B2=FAIL item_registry_missing"; exit 1; }
+grep -q "getAS6BusinessNavigationTree" "$NAV" || { echo "AS6_BUSINESS_UNIVERSAL_NAVIGATION_B2=FAIL tree_missing"; exit 1; }
+grep -q "openAS6BusinessNavigationItem" "$NAV" || { echo "AS6_BUSINESS_UNIVERSAL_NAVIGATION_B2=FAIL open_missing"; exit 1; }
+grep -q "favoriteAS6BusinessNavigationItem" "$NAV" || { echo "AS6_BUSINESS_UNIVERSAL_NAVIGATION_B2=FAIL favorite_missing"; exit 1; }
+grep -q "searchAS6BusinessNavigation" "$NAV" || { echo "AS6_BUSINESS_UNIVERSAL_NAVIGATION_B2=FAIL search_missing"; exit 1; }
+grep -q "getAS6MarketplaceNavigationItem" "$NAV" || { echo "AS6_BUSINESS_UNIVERSAL_NAVIGATION_B2=FAIL marketplace_bridge_missing"; exit 1; }
+grep -q "AS6BusinessNavigationAPI" "$INDEX" || { echo "AS6_BUSINESS_UNIVERSAL_NAVIGATION_B2=FAIL index_missing"; exit 1; }
+grep -q "AS6_BUSINESS_UNIVERSAL_NAVIGATION_DRIFT" ops/governance/as6-universal-navigation-aec-b2.md || { echo "AS6_BUSINESS_UNIVERSAL_NAVIGATION_B2=FAIL drift_class_missing"; exit 1; }
+echo "AS6_BUSINESS_UNIVERSAL_NAVIGATION_B2=PASS"

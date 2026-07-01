@@ -1335,3 +1335,10 @@ ops/bin/as6-control-permission-engine-v114
 - Runtime: frontend/src/as6/business-workspace/AS6BusinessWorkspaceRuntime.js
 - API: frontend/src/as6/business-workspace/AS6BusinessWorkspaceAPI.js
 - Added failure class: AS6_BUSINESS_WORKSPACE_FOUNDATION_DRIFT.
+
+## AS6_BUSINESS_UNIVERSAL_NAVIGATION_B2
+- Diagnostic: ops/bin/as6-diagnose-universal-navigation-b2
+- Control: ops/bin/as6-control-universal-navigation-b2
+- Runtime: frontend/src/as6/business-navigation/AS6BusinessNavigationRuntime.js
+- API: frontend/src/as6/business-navigation/AS6BusinessNavigationAPI.js
+- Added failure class: AS6_BUSINESS_UNIVERSAL_NAVIGATION_DRIFT.

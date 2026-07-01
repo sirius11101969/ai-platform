@@ -1906,3 +1906,8 @@ Governed and registered.
 - Detected: AS6_BUSINESS_WORKSPACE_API_GAP.
 - Root cause: Platform V2 Marketplace GA existed without Business OS workspace facade.
 - Resolution: Business Workspace Foundation added.
+
+## AS6_BUSINESS_UNIVERSAL_NAVIGATION_B2
+- Detected: AS6_BUSINESS_NAVIGATION_REGISTRY_GAP.
+- Root cause: Business Workspace existed without Universal Navigation facade.
+- Resolution: Universal Navigation B2 added.

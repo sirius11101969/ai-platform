@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-universal-navigation-b2
+grep -RIn "AS6_BUSINESS_UNIVERSAL_NAVIGATION_DRIFT" README.md docs ops .github frontend/src >/dev/null
+echo "AS6_CONTROL_BUSINESS_UNIVERSAL_NAVIGATION_B2=PASS"

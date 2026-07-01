@@ -4909,3 +4909,11 @@ Status: PASS pending validation
 - Project readiness: 100% Platform V2; Business OS B1 started.
 - Business Workspace Foundation: enabled.
 - Next target: Universal Navigation B2.
+
+## AS6_BUSINESS_UNIVERSAL_NAVIGATION_B2
+- Status: PASS pending release.
+- Product phase: AS6 Business OS.
+- Marketplace status: AS6_MARKETPLACE_1_0_GA.
+- Project readiness: 100% Platform V2; Business OS B2 started.
+- Universal Navigation: enabled.
+- Next target: Dashboard Engine B3.

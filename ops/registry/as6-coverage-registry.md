@@ -3187,3 +3187,9 @@ Permission Validation
 - Covers Workspace API facade.
 - Covers module and command registry.
 - Covers context, favorites, recent items, notifications and search.
+
+## AS6_BUSINESS_UNIVERSAL_NAVIGATION_B2
+- Covers Universal Navigation runtime.
+- Covers Navigation API facade.
+- Covers section/item registry and tree.
+- Covers search, favorite, open and Marketplace bridge.
