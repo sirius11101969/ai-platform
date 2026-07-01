@@ -3181,3 +3181,9 @@ Permission Validation
 - Covers Platform V2 stable freeze manifest.
 - Covers lifecycle checklist.
 - Covers GA evidence.
+
+## AS6_BUSINESS_WORKSPACE_FOUNDATION_B1
+- Covers Business Workspace runtime.
+- Covers Workspace API facade.
+- Covers module and command registry.
+- Covers context, favorites, recent items, notifications and search.

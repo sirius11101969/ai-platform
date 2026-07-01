@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+BW="frontend/src/as6/business-workspace/AS6BusinessWorkspaceRuntime.js"
+API="frontend/src/as6/business-workspace/AS6BusinessWorkspaceAPI.js"
+INDEX="frontend/src/as6/business-workspace/index.js"
+test -f "$BW" || { echo "AS6_BUSINESS_WORKSPACE_FOUNDATION_B1=FAIL runtime_missing"; exit 1; }
+test -f "$API" || { echo "AS6_BUSINESS_WORKSPACE_FOUNDATION_B1=FAIL api_missing"; exit 1; }
+grep -q "AS6_BUSINESS_WORKSPACE_VERSION" "$BW" || { echo "AS6_BUSINESS_WORKSPACE_FOUNDATION_B1=FAIL version_missing"; exit 1; }
+grep -q "registerAS6BusinessModule" "$BW" || { echo "AS6_BUSINESS_WORKSPACE_FOUNDATION_B1=FAIL module_registry_missing"; exit 1; }
+grep -q "registerAS6BusinessCommand" "$BW" || { echo "AS6_BUSINESS_WORKSPACE_FOUNDATION_B1=FAIL command_registry_missing"; exit 1; }
+grep -q "setAS6BusinessWorkspaceContext" "$BW" || { echo "AS6_BUSINESS_WORKSPACE_FOUNDATION_B1=FAIL context_missing"; exit 1; }
+grep -q "favoriteAS6BusinessItem" "$BW" || { echo "AS6_BUSINESS_WORKSPACE_FOUNDATION_B1=FAIL favorites_missing"; exit 1; }
+grep -q "searchAS6BusinessWorkspace" "$BW" || { echo "AS6_BUSINESS_WORKSPACE_FOUNDATION_B1=FAIL search_missing"; exit 1; }
+grep -q "bootstrapAS6BusinessWorkspace" "$BW" || { echo "AS6_BUSINESS_WORKSPACE_FOUNDATION_B1=FAIL bootstrap_missing"; exit 1; }
+grep -q "AS6BusinessWorkspaceAPI" "$INDEX" || { echo "AS6_BUSINESS_WORKSPACE_FOUNDATION_B1=FAIL index_missing"; exit 1; }
+grep -q "AS6_BUSINESS_WORKSPACE_FOUNDATION_DRIFT" ops/governance/as6-business-workspace-foundation-aec-b1.md || { echo "AS6_BUSINESS_WORKSPACE_FOUNDATION_B1=FAIL drift_class_missing"; exit 1; }
+echo "AS6_BUSINESS_WORKSPACE_FOUNDATION_B1=PASS"

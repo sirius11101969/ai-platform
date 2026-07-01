@@ -1901,3 +1901,8 @@ Governed and registered.
 - Detected: AS6_MARKETPLACE_GA_READINESS_GAP.
 - Root cause: Marketplace had production services without GA freeze declaration.
 - Resolution: Marketplace GA readiness and freeze manifest added.
+
+## AS6_BUSINESS_WORKSPACE_FOUNDATION_B1
+- Detected: AS6_BUSINESS_WORKSPACE_API_GAP.
+- Root cause: Platform V2 Marketplace GA existed without Business OS workspace facade.
+- Resolution: Business Workspace Foundation added.

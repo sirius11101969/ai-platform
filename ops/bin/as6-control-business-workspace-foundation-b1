@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-business-workspace-foundation-b1
+grep -RIn "AS6_BUSINESS_WORKSPACE_FOUNDATION_DRIFT" README.md docs ops .github frontend/src >/dev/null
+echo "AS6_CONTROL_BUSINESS_WORKSPACE_FOUNDATION_B1=PASS"

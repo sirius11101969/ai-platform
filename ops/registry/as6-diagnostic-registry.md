@@ -1328,3 +1328,10 @@ ops/bin/as6-control-permission-engine-v114
 - GA: frontend/src/as6/plugins/AS6MarketplaceGA.js
 - Freeze manifest: ops/governance/as6-marketplace-ga-freeze-manifest-p35.md
 - Added failure class: AS6_MARKETPLACE_GA_DRIFT.
+
+## AS6_BUSINESS_WORKSPACE_FOUNDATION_B1
+- Diagnostic: ops/bin/as6-diagnose-business-workspace-foundation-b1
+- Control: ops/bin/as6-control-business-workspace-foundation-b1
+- Runtime: frontend/src/as6/business-workspace/AS6BusinessWorkspaceRuntime.js
+- API: frontend/src/as6/business-workspace/AS6BusinessWorkspaceAPI.js
+- Added failure class: AS6_BUSINESS_WORKSPACE_FOUNDATION_DRIFT.

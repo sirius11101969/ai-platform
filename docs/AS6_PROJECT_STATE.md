@@ -4901,3 +4901,11 @@ Status: PASS pending validation
 - Marketplace GA: AS6_MARKETPLACE_1_0_GA.
 - Infrastructure freeze: enabled.
 - Next target: product modules above Platform V2 stable APIs.
+
+## AS6_BUSINESS_WORKSPACE_FOUNDATION_B1
+- Status: PASS pending release.
+- Product phase: AS6 Business OS.
+- Marketplace status: AS6_MARKETPLACE_1_0_GA.
+- Project readiness: 100% Platform V2; Business OS B1 started.
+- Business Workspace Foundation: enabled.
+- Next target: Universal Navigation B2.
