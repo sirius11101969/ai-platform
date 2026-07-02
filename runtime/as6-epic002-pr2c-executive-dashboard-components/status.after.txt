@@ -1,0 +1,6 @@
+ M docs/AS6_PROJECT_STATE.md
+ M frontend/src/components/AS6BackendConnectorStatus.jsx
+ M frontend/src/components/AS6ExecutiveCommandDashboard.jsx
+?? docs/coverage/as6-epic002-pr2c-executive-dashboard-components-coverage.md
+?? docs/diagnostics/as6-epic002-pr2c-executive-dashboard-components.md
+?? docs/governance/as6-epic002-pr2c-executive-dashboard-components-governance.md
