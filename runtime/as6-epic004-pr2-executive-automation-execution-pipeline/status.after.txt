@@ -1,0 +1,6 @@
+ M docs/AS6_PROJECT_STATE.md
+ M frontend/src/as6/business-home/AS6BusinessHome.jsx
+ M frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js
+?? docs/coverage/as6-epic004-pr2-executive-automation-execution-pipeline-coverage.md
+?? docs/diagnostics/as6-epic004-pr2-executive-automation-execution-pipeline.md
+?? docs/governance/as6-epic004-pr2-executive-automation-execution-pipeline-governance.md
