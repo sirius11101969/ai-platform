@@ -1,3 +1,4 @@
+import AS6ExecutiveAutomationAuditTrailPanel from './AS6ExecutiveAutomationAuditTrailPanel.jsx';
 export const executiveAutomationPolicyExplanations = [
   {
     actionId: 'executive.summary.refresh',
