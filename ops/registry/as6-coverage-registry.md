@@ -3260,3 +3260,14 @@ Permission Validation
 - ops/bin/as6-control-scenario-planner-pr3
 - ops/governance/as6-scenario-planner-root-cause-pr3.md
 - ops/governance/as6-scenario-planner-aec-pr3.md
+
+## AS6_EPIC008_PR4_PREDICTIVE_EXECUTION
+
+- frontend/src/lib/as6PredictiveExecution.js
+- frontend/src/components/as6/AS6PredictiveExecutionPanel.jsx
+- ops/bin/as6-diagnose-epic-scope-drift-pr4
+- ops/bin/as6-diagnose-predictive-execution-pr4
+- ops/bin/as6-control-predictive-execution-pr4
+- ops/governance/as6-epic-scope-drift-root-cause-pr4.md
+- ops/governance/as6-predictive-execution-root-cause-pr4.md
+- ops/governance/as6-predictive-execution-aec-pr4.md

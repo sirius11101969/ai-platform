@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+CURRENT_STAGE="${AS6_STAGE:-AS6_EPIC008_PR4_PREDICTIVE_EXECUTION}"
+DRIFT_FILE="runtime/as6-epic-scope-drift.txt"
+mkdir -p runtime
+git diff --cached --name-only > "${DRIFT_FILE}.staged" || true
+git status --short | awk '{print $2}' > "${DRIFT_FILE}.worktree" || true
+cat "${DRIFT_FILE}.staged" "${DRIFT_FILE}.worktree" | sort -u > "${DRIFT_FILE}.all"
+if grep -E 'epic006|EPIC006|epic-006|EPIC-006' "${DRIFT_FILE}.all" >/dev/null 2>&1; then
+  if ! grep -q 'AS6_EPIC_SCOPE_DRIFT_ALLOWED' ops/governance/as6-epic-scope-drift-root-cause-pr4.md 2>/dev/null; then
+    echo AS6_EPIC_SCOPE_DRIFT=FAIL
+    cat "${DRIFT_FILE}.all"
+    exit 1
+  fi
+fi
+echo AS6_EPIC_SCOPE_DRIFT=PASS

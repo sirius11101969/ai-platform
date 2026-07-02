@@ -1974,3 +1974,8 @@ Governed and registered.
 - Detected gap: Scenario Planner layer missing after Recommendation Engine.
 - Root cause registered: AS6_SCENARIO_PLANNER_MISSING.
 - Status: repaired in PR-3.
+
+## AS6_EPIC008_PR4_PREDICTIVE_EXECUTION
+
+- AS6_EPIC_SCOPE_DRIFT: registered and controlled.
+- AS6_PREDICTIVE_EXECUTION_MISSING: repaired in PR-4.

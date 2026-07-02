@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/lib/as6PredictiveExecution.js
+test -f frontend/src/components/as6/AS6PredictiveExecutionPanel.jsx
+grep -q createAS6PredictiveExecutionModel frontend/src/lib/as6PredictiveExecution.js
+grep -q no-new-persistent-storage frontend/src/lib/as6PredictiveExecution.js
+! grep -R "localStorage\|sessionStorage\|indexedDB" frontend/src/lib/as6PredictiveExecution.js frontend/src/components/as6/AS6PredictiveExecutionPanel.jsx
+echo AS6_PREDICTIVE_EXECUTION_DIAGNOSTIC=PASS

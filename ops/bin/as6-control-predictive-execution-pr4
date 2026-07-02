@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-epic-scope-drift-pr4
+ops/bin/as6-diagnose-predictive-execution-pr4
+grep -q AS6_EPIC_SCOPE_DRIFT ops/governance/as6-epic-scope-drift-root-cause-pr4.md
+grep -q AS6_AEC_PREDICTIVE_EXECUTION_REQUIRED ops/governance/as6-predictive-execution-aec-pr4.md
+echo AS6_PREDICTIVE_EXECUTION_CONTROL=PASS

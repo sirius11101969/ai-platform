@@ -1415,3 +1415,12 @@ ops/bin/as6-control-permission-engine-v114
 - Failure class: AS6_SCENARIO_PLANNER_MISSING
 - Root cause: Executive Intelligence needed planning layer after Recommendation Engine.
 - Storage drift control: no localStorage, no sessionStorage, no indexedDB.
+
+## AS6_EPIC008_PR4_PREDICTIVE_EXECUTION
+
+- Diagnostic: ops/bin/as6-diagnose-epic-scope-drift-pr4
+- Diagnostic: ops/bin/as6-diagnose-predictive-execution-pr4
+- Control: ops/bin/as6-control-predictive-execution-pr4
+- Failure class: AS6_EPIC_SCOPE_DRIFT
+- Failure class: AS6_PREDICTIVE_EXECUTION_MISSING
+- Runtime artifacts: runtime/as6-epic008-pr4-predictive-execution/20260702T110054Z
