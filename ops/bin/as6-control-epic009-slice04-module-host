@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-epic009-slice04-module-host
+! grep -R "localStorage\|sessionStorage\|indexedDB" frontend/src/as6os/modules
+! grep -R "CRM\|Revenue\|business logic" frontend/src/as6os/modules
+echo AS6_EPIC009_SLICE04_MODULE_HOST_CONTROL=PASS

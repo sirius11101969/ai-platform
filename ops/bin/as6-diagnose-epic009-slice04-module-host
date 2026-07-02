@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/as6os/modules/moduleHost.js
+test -f frontend/src/as6os/modules/AS6ModuleHost.jsx
+grep -q as6ModuleHostRegistry frontend/src/as6os/modules/moduleHost.js
+grep -q registerAS6HostedModule frontend/src/as6os/modules/moduleHost.js
+grep -q initializeAS6HostedModule frontend/src/as6os/modules/moduleHost.js
+grep -q activateAS6HostedModule frontend/src/as6os/modules/moduleHost.js
+grep -q AS6ModuleHost frontend/src/as6os/modules/AS6ModuleHost.jsx
+grep -q AS6ModuleHost frontend/src/as6os/workspace/AS6WorkspaceShell.jsx
+echo AS6_EPIC009_SLICE04_MODULE_HOST_DIAGNOSTIC=PASS

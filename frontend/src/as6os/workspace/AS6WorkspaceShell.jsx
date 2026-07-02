@@ -2,6 +2,7 @@ import React from 'react';
 import { as6RuntimeContext } from '../index.js';
 import './workspaceShell.css';
 import { AS6NavigationList } from '../navigation/index.js';
+import { AS6ModuleHost } from '../modules/index.js';
 
 export function AS6WorkspaceShell({ children }) {
   return (
@@ -19,15 +20,3 @@ export function AS6WorkspaceShell({ children }) {
           <button type='button'>Спросить AS6</button>
         </header>
         <main className='as6-os-main'>
-          {children || <div className='as6-os-placeholder'>AS6 OS Workspace Shell готов к подключению модулей.</div>}
-        </main>
-      </section>
-      <aside className='as6-os-right-rail' aria-label='AS6 Right Rail'>
-        <strong>AS6 Assistant</strong>
-        <span>Right Rail placeholder</span>
-      </aside>
-    </div>
-  );
-}
-
-export default AS6WorkspaceShell;
