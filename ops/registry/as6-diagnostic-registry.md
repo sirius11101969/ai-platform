@@ -1576,3 +1576,18 @@ ops/bin/as6-control-permission-engine-v114
 - Compatibility Contracts: docs/epic009/as6-epic009-compatibility-contracts.md
 - Solution Design Input: docs/epic009/as6-epic009-solution-design-input.md
 - Runtime artifacts: runtime/as6-epic009-architecture-review/20260702T145434Z
+
+## AS6_EPIC009_SOLUTION_DESIGN
+
+- Diagnostic: ops/bin/as6-diagnose-epic009-solution-design
+- Control: ops/bin/as6-control-epic009-solution-design
+- Solution Design Package: docs/epic009/as6-epic009-solution-design-package.md
+- Operating System Specification: docs/epic009/as6-operating-system-specification.md
+- Capability Map: docs/epic009/as6-operating-system-capability-map.md
+- Workspace Architecture: docs/epic009/as6-workspace-architecture.md
+- Platform Contracts: docs/epic009/as6-platform-contracts.md
+- Operating Experience: docs/epic009/as6-operating-experience-specification.md
+- Runtime Observability: docs/epic009/as6-runtime-observability-model.md
+- Compatibility Migration: docs/epic009/as6-compatibility-migration-package.md
+- Implementation Blueprint: docs/epic009/as6-epic009-implementation-blueprint.md
+- Runtime artifacts: runtime/as6-epic009-solution-design/20260702T151931Z

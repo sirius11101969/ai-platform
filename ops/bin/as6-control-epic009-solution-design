@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-epic009-solution-design
+grep -q AS6_SOLUTION_DESIGN_PACKAGE_MISSING ops/governance/as6-epic009-solution-design-root-cause.md
+grep -q AS6_AEC_EPIC009_SOLUTION_DESIGN_PACKAGE_REQUIRED ops/governance/as6-epic009-solution-design-aec.md
+echo AS6_EPIC009_SOLUTION_DESIGN_CONTROL=PASS

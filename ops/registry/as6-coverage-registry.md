@@ -3397,3 +3397,20 @@ Permission Validation
 - ops/governance/as6-epic009-architecture-review-root-cause.md
 - ops/governance/as6-epic009-architecture-review-aec.md
 - runtime/as6-epic009-architecture-review/20260702T145434Z/runtime-trace.txt
+
+## AS6_EPIC009_SOLUTION_DESIGN
+
+- docs/epic009/as6-epic009-solution-design-package.md
+- docs/epic009/as6-operating-system-specification.md
+- docs/epic009/as6-operating-system-capability-map.md
+- docs/epic009/as6-workspace-architecture.md
+- docs/epic009/as6-platform-contracts.md
+- docs/epic009/as6-operating-experience-specification.md
+- docs/epic009/as6-runtime-observability-model.md
+- docs/epic009/as6-compatibility-migration-package.md
+- docs/epic009/as6-epic009-implementation-blueprint.md
+- ops/bin/as6-diagnose-epic009-solution-design
+- ops/bin/as6-control-epic009-solution-design
+- ops/governance/as6-epic009-solution-design-root-cause.md
+- ops/governance/as6-epic009-solution-design-aec.md
+- runtime/as6-epic009-solution-design/20260702T151931Z/runtime-trace.txt

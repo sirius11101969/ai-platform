@@ -1,0 +1,17 @@
+ M docs/AS6_PROJECT_STATE.md
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? docs/epic009/as6-compatibility-migration-package.md
+?? docs/epic009/as6-epic009-implementation-blueprint.md
+?? docs/epic009/as6-epic009-solution-design-package.md
+?? docs/epic009/as6-operating-experience-specification.md
+?? docs/epic009/as6-operating-system-capability-map.md
+?? docs/epic009/as6-operating-system-specification.md
+?? docs/epic009/as6-platform-contracts.md
+?? docs/epic009/as6-runtime-observability-model.md
+?? docs/epic009/as6-workspace-architecture.md
+?? ops/bin/as6-control-epic009-solution-design
+?? ops/bin/as6-diagnose-epic009-solution-design
+?? ops/governance/as6-epic009-solution-design-aec.md
+?? ops/governance/as6-epic009-solution-design-root-cause.md
