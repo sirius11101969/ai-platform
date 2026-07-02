@@ -1,0 +1,18 @@
+frontend/src/as6/workspace/index.js:83:  createAS6RecommendationEngineSnapshot,
+frontend/src/as6/workspace/index.js:87:  validateAS6RecommendationEngine,
+frontend/src/as6/workspace/index.js:88:} from './AS6RecommendationEngine.js';
+frontend/src/as6/workspace/index.js:91:  default as AS6RecommendationEnginePanel,
+frontend/src/as6/workspace/index.js:93:} from './AS6RecommendationEnginePanel.jsx';
+frontend/src/as6/workspace/AS6RecommendationEngine.js:52:export function createAS6RecommendationEngineSnapshot(workspaceState = {}) {
+frontend/src/as6/workspace/AS6RecommendationEngine.js:123:export function validateAS6RecommendationEngine(engineSnapshot) {
+frontend/src/as6/workspace/AS6RecommendationEnginePanel.jsx:2:import './AS6RecommendationEnginePanel.css';
+frontend/src/as6/workspace/AS6RecommendationEnginePanel.jsx:5:  createAS6RecommendationEngineSnapshot,
+frontend/src/as6/workspace/AS6RecommendationEnginePanel.jsx:6:  validateAS6RecommendationEngine,
+frontend/src/as6/workspace/AS6RecommendationEnginePanel.jsx:7:} from './AS6RecommendationEngine.js';
+frontend/src/as6/workspace/AS6RecommendationEnginePanel.jsx:11:export default function AS6RecommendationEnginePanel() {
+frontend/src/as6/workspace/AS6RecommendationEnginePanel.jsx:13:  const snapshot = useMemo(() => createAS6RecommendationEngineSnapshot(state), [state]);
+frontend/src/as6/workspace/AS6RecommendationEnginePanel.jsx:14:  const validation = useMemo(() => validateAS6RecommendationEngine(snapshot), [snapshot]);
+frontend/src/as6/workspace/AS6RecommendationEnginePanel.jsx:78:        <strong>{validation.valid ? 'QGT-008 PASS' : 'QGT-008 FAIL'}</strong>
+docs/architecture/AS6_ARCHITECTURE_CHARTER.md:76:- PRN-004 Intelligence Uses Context.
+docs/architecture/AS6_ARCHITECTURE_CHARTER.md:82:- INV-010 Single Intelligence Context.
+docs/architecture/AS6_ARCHITECTURE_CHARTER.md:88:- QGT-008 Recommendation Explainability.

@@ -1,0 +1,118 @@
+.as6-recommendation-engine {
+  display: grid;
+  gap: 16px;
+  margin: 24px;
+}
+
+.as6-recommendation-engine__header,
+.as6-recommendation-engine__top,
+.as6-recommendation-engine__grid article,
+.as6-recommendation-engine__validation {
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, .045);
+}
+
+.as6-recommendation-engine__header span,
+.as6-recommendation-engine__top span,
+.as6-recommendation-engine__score span {
+  display: inline-flex;
+  margin-bottom: 8px;
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  opacity: .72;
+}
+
+.as6-recommendation-engine__header h2,
+.as6-recommendation-engine__top h3,
+.as6-recommendation-engine__grid h3 {
+  margin: 0 0 8px;
+}
+
+.as6-recommendation-engine__header p,
+.as6-recommendation-engine__top p,
+.as6-recommendation-engine__grid p {
+  margin: 8px 0 0;
+  opacity: .78;
+}
+
+.as6-recommendation-engine__top,
+.as6-recommendation-engine__validation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.as6-recommendation-engine__top[data-confidence='high'] {
+  background: rgba(34, 197, 94, .08);
+}
+
+.as6-recommendation-engine__top[data-confidence='medium'] {
+  background: rgba(59, 130, 246, .08);
+}
+
+.as6-recommendation-engine__top[data-confidence='low'] {
+  background: rgba(234, 179, 8, .1);
+}
+
+.as6-recommendation-engine__top button {
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 999px;
+  background: rgba(59, 130, 246, .2);
+  color: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.as6-recommendation-engine__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.as6-recommendation-engine__score {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.as6-recommendation-engine__score strong {
+  font-size: 28px;
+}
+
+.as6-recommendation-engine__grid dl {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 6px 12px;
+  margin: 14px 0 0;
+}
+
+.as6-recommendation-engine__grid dt {
+  opacity: .62;
+}
+
+.as6-recommendation-engine__grid dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.as6-recommendation-engine__validation small {
+  opacity: .68;
+}
+
+@media(max-width:1000px) {
+  .as6-recommendation-engine__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .as6-recommendation-engine__top,
+  .as6-recommendation-engine__validation {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

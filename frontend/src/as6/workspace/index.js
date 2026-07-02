@@ -75,3 +75,19 @@ export {
   default as AS6ContextIntelligencePanel,
   AS6_CONTEXT_INTELLIGENCE_PANEL_VERSION,
 } from './AS6ContextIntelligencePanel.jsx';
+
+export {
+  AS6_RECOMMENDATION_ENGINE_VERSION,
+  AS6_RECOMMENDATION_SOURCES,
+  AS6_RECOMMENDATION_CANDIDATES,
+  createAS6RecommendationEngineSnapshot,
+  rankAS6Recommendations,
+  explainAS6Recommendation,
+  buildAS6RecommendationReason,
+  validateAS6RecommendationEngine,
+} from './AS6RecommendationEngine.js';
+
+export {
+  default as AS6RecommendationEnginePanel,
+  AS6_RECOMMENDATION_ENGINE_PANEL_VERSION,
+} from './AS6RecommendationEnginePanel.jsx';

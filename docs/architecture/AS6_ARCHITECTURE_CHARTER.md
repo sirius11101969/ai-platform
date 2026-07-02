@@ -70,3 +70,21 @@ Rule: all intelligent platform features must work through the unified AI Workspa
 - PRN-003 Intelligence Uses Platform.
 
 Rule: every intelligence feature must use Workspace Context, Module Registry, Executive Runtime, Governance, Execution Engine and AI Workspace before creating new independent mechanisms.
+
+## EPIC-008 PR2 Principle Addition
+
+- PRN-004 Intelligence Uses Context.
+
+Rule: every intelligence capability must use Context Intelligence Snapshot as the primary source of user and platform state.
+
+## EPIC-008 PR2 Invariant Addition
+
+- INV-010 Single Intelligence Context.
+
+Rule: Recommendation Engine, Scenario Planner, Predictive Execution and future AI Workforce must use one Context Intelligence model.
+
+## EPIC-008 PR2 Quality Gate Addition
+
+- QGT-008 Recommendation Explainability.
+
+Rule: every recommendation must include reason, context source, confidence and safe alternative.

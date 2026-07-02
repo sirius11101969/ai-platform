@@ -1,0 +1,19 @@
+ M docs/AS6_PROJECT_STATE.md
+ M docs/architecture/AS6_ARCHITECTURE_CHARTER.md
+ M frontend/src/as6/workspace/index.js
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? docs/aec/as6-epic006-pr3-execution-orchestrator-aec.md
+?? docs/aec/as6-epic008-pr2-recommendation-engine-aec.md
+?? docs/coverage/as6-epic006-pr3-execution-orchestrator-coverage.md
+?? docs/coverage/as6-epic008-pr2-recommendation-engine-coverage.md
+?? docs/diagnostics/as6-epic006-pr3-execution-orchestrator.md
+?? docs/diagnostics/as6-epic008-pr2-recommendation-engine.md
+?? docs/governance/as6-epic006-pr3-execution-orchestrator-governance.md
+?? docs/governance/as6-epic008-pr2-recommendation-engine-governance.md
+?? frontend/src/as6/business-home/AS6ExecutionOrchestratorPanel.css
+?? frontend/src/as6/business-home/AS6ExecutionOrchestratorPanel.jsx
+?? frontend/src/as6/workspace/AS6RecommendationEngine.js
+?? frontend/src/as6/workspace/AS6RecommendationEnginePanel.css
+?? frontend/src/as6/workspace/AS6RecommendationEnginePanel.jsx
