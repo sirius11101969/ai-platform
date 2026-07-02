@@ -1448,3 +1448,15 @@ ops/bin/as6-control-permission-engine-v114
 - Failure class: AS6_SCENARIO_FEEDBACK_BINDING_GAP
 - Failure class: AS6_PREDICTION_ACCURACY_GAP
 - Root cause: Executive Audit Trail explains decisions, but AS6 does not yet convert outcomes into analytical feedback.
+
+## AS6_EPIC008_PR7_EXECUTIVE_DECISION_QUALITY_SCORE
+
+- Diagnostic: ops/bin/as6-diagnose-executive-decision-quality-score-pr7
+- Control: ops/bin/as6-control-executive-decision-quality-score-pr7
+- Runtime artifacts: runtime/as6-epic008-pr7-executive-decision-quality-score/20260702T113308Z
+- Failure class: AS6_EXECUTIVE_DECISION_QUALITY_SCORE_MISSING
+- Failure class: AS6_DECISION_QUALITY_MODEL_GAP
+- Failure class: AS6_FEEDBACK_QUALITY_BINDING_GAP
+- Failure class: AS6_DECISION_SCORE_TRACE_GAP
+- Failure class: AS6_QUALITY_SCORE_EXPLAINABILITY_GAP
+- Root cause: Executive Feedback Loop exists, but AS6 does not yet compute explainable decision quality score.

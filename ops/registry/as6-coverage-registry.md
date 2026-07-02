@@ -3289,3 +3289,12 @@ Permission Validation
 - ops/bin/as6-control-executive-feedback-loop-pr6
 - ops/governance/as6-executive-feedback-loop-root-cause-pr6.md
 - ops/governance/as6-executive-feedback-loop-aec-pr6.md
+
+## AS6_EPIC008_PR7_EXECUTIVE_DECISION_QUALITY_SCORE
+
+- frontend/src/lib/as6ExecutiveDecisionQualityScore.js
+- frontend/src/components/as6/AS6ExecutiveDecisionQualityScorePanel.jsx
+- ops/bin/as6-diagnose-executive-decision-quality-score-pr7
+- ops/bin/as6-control-executive-decision-quality-score-pr7
+- ops/governance/as6-executive-decision-quality-score-root-cause-pr7.md
+- ops/governance/as6-executive-decision-quality-score-aec-pr7.md

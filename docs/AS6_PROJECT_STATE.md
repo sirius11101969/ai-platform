@@ -5472,3 +5472,13 @@ Status: PASS pending validation
 - Added prediction accuracy scoring.
 - Added no-storage, no-completed-decision-mutation and no-execution-mutation diagnostics.
 - Executive Intelligence readiness after PR-6: 80%.
+
+## AS6_EPIC008_PR7_EXECUTIVE_DECISION_QUALITY_SCORE
+
+- Added Executive Decision Quality Score analytical scoring layer.
+- Added decision quality model.
+- Added feedback quality binding.
+- Added decision score trace.
+- Added quality score explainability.
+- Added no-storage, no-execution-mutation and no-feedback-mutation diagnostics.
+- Executive Intelligence readiness after PR-7: 90%.

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-executive-decision-quality-score-pr7
+grep -q AS6_EXECUTIVE_DECISION_QUALITY_SCORE_MISSING ops/governance/as6-executive-decision-quality-score-root-cause-pr7.md
+grep -q AS6_DECISION_QUALITY_MODEL_GAP ops/governance/as6-executive-decision-quality-score-root-cause-pr7.md
+grep -q AS6_FEEDBACK_QUALITY_BINDING_GAP ops/governance/as6-executive-decision-quality-score-root-cause-pr7.md
+grep -q AS6_DECISION_SCORE_TRACE_GAP ops/governance/as6-executive-decision-quality-score-root-cause-pr7.md
+grep -q AS6_QUALITY_SCORE_EXPLAINABILITY_GAP ops/governance/as6-executive-decision-quality-score-root-cause-pr7.md
+grep -q AS6_AEC_EXECUTIVE_DECISION_QUALITY_SCORE_REQUIRED ops/governance/as6-executive-decision-quality-score-aec-pr7.md
+echo AS6_EXECUTIVE_DECISION_QUALITY_SCORE_CONTROL=PASS

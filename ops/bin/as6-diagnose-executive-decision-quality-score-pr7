@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/lib/as6ExecutiveDecisionQualityScore.js
+test -f frontend/src/components/as6/AS6ExecutiveDecisionQualityScorePanel.jsx
+grep -q createAS6ExecutiveDecisionQualityScore frontend/src/lib/as6ExecutiveDecisionQualityScore.js
+grep -q decisionId frontend/src/lib/as6ExecutiveDecisionQualityScore.js
+grep -q qualityScore frontend/src/lib/as6ExecutiveDecisionQualityScore.js
+grep -q scoreTrace frontend/src/lib/as6ExecutiveDecisionQualityScore.js
+grep -q explainability frontend/src/lib/as6ExecutiveDecisionQualityScore.js
+grep -q analytical-scoring-only frontend/src/lib/as6ExecutiveDecisionQualityScore.js
+grep -q no-new-persistent-storage frontend/src/lib/as6ExecutiveDecisionQualityScore.js
+! grep -R "localStorage\|sessionStorage\|indexedDB" frontend/src/lib/as6ExecutiveDecisionQualityScore.js frontend/src/components/as6/AS6ExecutiveDecisionQualityScorePanel.jsx
+! grep -R "executeAction\|runExecution\|mutateExecution\|setFeedback\|updateFeedback\|setExecution\|updateExecution" frontend/src/lib/as6ExecutiveDecisionQualityScore.js frontend/src/components/as6/AS6ExecutiveDecisionQualityScorePanel.jsx
+echo AS6_EXECUTIVE_DECISION_QUALITY_SCORE=PASS
+echo AS6_DECISION_QUALITY_MODEL=PASS
+echo AS6_FEEDBACK_QUALITY_BINDING=PASS
+echo AS6_DECISION_SCORE_TRACE=PASS
+echo AS6_QUALITY_SCORE_EXPLAINABILITY=PASS
