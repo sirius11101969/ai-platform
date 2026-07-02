@@ -5431,3 +5431,13 @@ Status: PASS pending validation
 - Does not execute scenarios, does not create new AI Context and does not create persistent storage.
 - Context intelligence readiness: 40%.
 - Executive intelligence readiness: 20%.
+
+## AS6_EPIC008_PR3_SCENARIO_PLANNER
+
+- Added Scenario Planner planning-only engine.
+- Added Scenario Planner Panel.
+- Added diagnostics for planner presence, invariant presence and storage drift.
+- Added control for diagnostic, root cause and AEC registration.
+- Added failure class AS6_SCENARIO_PLANNER_MISSING.
+- Added AEC rules for Scenario Planner binding and no-storage policy.
+- Executive Intelligence readiness target after PR-3: 35%.

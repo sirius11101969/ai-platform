@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/lib/as6ScenarioPlanner.js
+test -f frontend/src/components/as6/AS6ScenarioPlannerPanel.jsx
+grep -q "createAS6ScenarioPlan" frontend/src/lib/as6ScenarioPlanner.js
+grep -q "no-new-persistent-storage" frontend/src/lib/as6ScenarioPlanner.js
+! grep -R "localStorage\|sessionStorage\|indexedDB" frontend/src/lib/as6ScenarioPlanner.js frontend/src/components/as6/AS6ScenarioPlannerPanel.jsx
+echo AS6_SCENARIO_PLANNER_DIAGNOSTIC=PASS

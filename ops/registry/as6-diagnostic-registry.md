@@ -1406,3 +1406,12 @@ ops/bin/as6-control-permission-engine-v114
 - AS6_RECOMMENDATION_EXPLAINABILITY_GAP.
 - AS6_RECOMMENDATION_STORAGE_DRIFT.
 - AS6_INTELLIGENCE_FRAGMENTATION_DRIFT.
+
+## AS6_EPIC008_PR3_SCENARIO_PLANNER
+
+- Diagnostic: ops/bin/as6-diagnose-scenario-planner-pr3
+- Control: ops/bin/as6-control-scenario-planner-pr3
+- Runtime artifacts: runtime/as6-epic008-pr3-scenario-planner/20260702T105445Z
+- Failure class: AS6_SCENARIO_PLANNER_MISSING
+- Root cause: Executive Intelligence needed planning layer after Recommendation Engine.
+- Storage drift control: no localStorage, no sessionStorage, no indexedDB.

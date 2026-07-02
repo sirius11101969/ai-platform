@@ -1968,3 +1968,9 @@ Governed and registered.
 - AS6_RECOMMENDATION_EXPLAINABILITY_GAP: closed.
 - AS6_RECOMMENDATION_STORAGE_DRIFT: checked.
 - AS6_INTELLIGENCE_FRAGMENTATION_DRIFT: controlled.
+
+## AS6_EPIC008_PR3_SCENARIO_PLANNER
+
+- Detected gap: Scenario Planner layer missing after Recommendation Engine.
+- Root cause registered: AS6_SCENARIO_PLANNER_MISSING.
+- Status: repaired in PR-3.

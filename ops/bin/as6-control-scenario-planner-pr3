@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-scenario-planner-pr3
+grep -q "AS6_SCENARIO_PLANNER_MISSING" ops/governance/as6-scenario-planner-root-cause-pr3.md
+grep -q "AS6_AEC_SCENARIO_PLANNER_REQUIRED" ops/governance/as6-scenario-planner-aec-pr3.md
+echo AS6_SCENARIO_PLANNER_CONTROL=PASS

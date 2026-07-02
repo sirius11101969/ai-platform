@@ -3251,3 +3251,12 @@ Permission Validation
 - Execution Engine binding coverage.
 - Recommendation Explainability coverage.
 - Intelligence Fragmentation prevention coverage.
+
+## AS6_EPIC008_PR3_SCENARIO_PLANNER
+
+- frontend/src/lib/as6ScenarioPlanner.js
+- frontend/src/components/as6/AS6ScenarioPlannerPanel.jsx
+- ops/bin/as6-diagnose-scenario-planner-pr3
+- ops/bin/as6-control-scenario-planner-pr3
+- ops/governance/as6-scenario-planner-root-cause-pr3.md
+- ops/governance/as6-scenario-planner-aec-pr3.md
