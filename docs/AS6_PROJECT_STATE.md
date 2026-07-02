@@ -4981,3 +4981,12 @@ Status: PASS pending validation
 - Added AS6_BUSINESS_HOME_JSX_STRUCTURE_DRIFT diagnostic class after failed partial JSX replacement attempt.
 - Added diagnostics, governance and coverage artifacts.
 - Project readiness: 99.8%.
+
+## AS6 EPIC-001 PR-8 — Drag Drop Layout
+
+- AS6_DONE=AS6_EPIC001_PR8_DRAG_DROP_LAYOUT.
+- Added drag and drop ordering for Business Home widget customizer.
+- Reused existing contextState.businessHome layout model.
+- Reused existing debounce autosave and Workspace Storage V99.
+- Added drag/drop diagnostics, governance and coverage artifacts.
+- Project readiness: 99.9%.

@@ -1,0 +1,6 @@
+ M docs/AS6_PROJECT_STATE.md
+ M frontend/src/as6/business-home/AS6BusinessHome.css
+ M frontend/src/as6/business-home/AS6BusinessHome.jsx
+?? docs/coverage/as6-epic001-pr8-drag-drop-layout-coverage.md
+?? docs/diagnostics/as6-epic001-pr8-drag-drop-layout.md
+?? docs/governance/as6-epic001-pr8-drag-drop-layout-governance.md

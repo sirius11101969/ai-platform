@@ -225,14 +225,3 @@
 @media (max-width: 720px) {
   .as6-business-home__customizer-row { grid-template-columns: 1fr 1fr; }
 }
-
-.as6-business-home__customizer-row[draggable="true"] {
-  user-select: none;
-}
-.as6-business-home__customizer-row[draggable="true"]:hover {
-  outline: 1px dashed rgba(148, 163, 184, 0.42);
-}
-.as6-business-home__customizer-row[data-as6-dragging="true"] {
-  opacity: 0.58;
-  transform: scale(0.995);
-}

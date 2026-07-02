@@ -11,7 +11,7 @@ import { getAS6ActiveWorkspaceSession, getAS6WorkspaceSessions, saveAS6Workspace
 import { AS6Workspace, AS6Sidebar, AS6Header, AS6RightRail, AS6Assistant, AS6Focus } from "../../components/as6-workspace/AS6Workspace.jsx";
 import "./AS6BusinessHome.css";
 
-export const AS6_BUSINESS_HOME_VERSION = "EPIC001_PR8";
+export const AS6_BUSINESS_HOME_VERSION = "EPIC001_PR7";
 export const AS6_BUSINESS_HOME_LAYOUT_SCHEMA_VERSION = 1;
 
 export const AS6_BUSINESS_HOME_WIDGETS = [
@@ -101,7 +101,6 @@ export function AS6BusinessHome() {
   const [workspaceRevision, setWorkspaceRevision] = useState(0);
   const state = useMemo(() => getAS6BusinessHomeState(), [workspaceRevision]);
   const [layout, setLayout] = useState(state.businessHomeLayout);
-  const [draggedWidgetId, setDraggedWidgetId] = useState(null);
 
   useEffect(() => {
     setLayout(state.businessHomeLayout);
@@ -166,36 +165,6 @@ export function AS6BusinessHome() {
       next[targetIndex] = current;
       return { ...currentLayout, widgets: next.map((widget, order) => ({ ...widget, order })) };
     });
-  }
-
-  function handleBusinessHomeWidgetDragStart(widgetId) {
-    setDraggedWidgetId(widgetId);
-  }
-
-  function handleBusinessHomeWidgetDragOver(event) {
-    event.preventDefault();
-  }
-
-  function handleBusinessHomeWidgetDrop(targetWidgetId) {
-    if (!draggedWidgetId || draggedWidgetId === targetWidgetId) {
-      setDraggedWidgetId(null);
-      return;
-    }
-    updateBusinessHomeLayout((currentLayout) => {
-      const ordered = sortAS6BusinessHomeWidgets(currentLayout.widgets);
-      const sourceIndex = ordered.findIndex((widget) => widget.id === draggedWidgetId);
-      const targetIndex = ordered.findIndex((widget) => widget.id === targetWidgetId);
-      if (sourceIndex < 0 || targetIndex < 0) return currentLayout;
-      const next = [...ordered];
-      const [source] = next.splice(sourceIndex, 1);
-      next.splice(targetIndex, 0, source);
-      return { ...currentLayout, widgets: next.map((widget, order) => ({ ...widget, order })) };
-    });
-    setDraggedWidgetId(null);
-  }
-
-  function handleBusinessHomeWidgetDragEnd() {
-    setDraggedWidgetId(null);
   }
 
   function renderBusinessHomeWidget(widgetId) {
@@ -275,7 +244,7 @@ export function AS6BusinessHome() {
             <section className="as6-business-home__customizer" aria-label="Business Home widgets">
               <strong>Настройка виджетов</strong>
               {orderedWidgets.map((widget) => (
-                <div className="as6-business-home__customizer-row" key={widget.id} draggable="true" data-as6-dragging={draggedWidgetId === widget.id ? "true" : "false"} onDragStart={() => handleBusinessHomeWidgetDragStart(widget.id)} onDragOver={handleBusinessHomeWidgetDragOver} onDrop={() => handleBusinessHomeWidgetDrop(widget.id)} onDragEnd={handleBusinessHomeWidgetDragEnd}>
+                <div className="as6-business-home__customizer-row" key={widget.id}>
                   <span>{widget.id}</span>
                   <button type="button" onClick={() => moveBusinessHomeWidget(widget.id, "up")}>↑</button>
                   <button type="button" onClick={() => moveBusinessHomeWidget(widget.id, "down")}>↓</button>
