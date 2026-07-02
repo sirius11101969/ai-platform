@@ -9,10 +9,9 @@ import {
 import { createAS6BusinessHomeLiveData } from "./AS6BusinessHomeLiveData";
 import { getAS6ActiveWorkspaceSession, getAS6WorkspaceSessions, saveAS6WorkspaceSession, setAS6ActiveWorkspaceSession, validateAS6WorkspacePersistencePolicy } from "../workspace/as6WorkspaceStorage.js";
 import { AS6Workspace, AS6Sidebar, AS6Header, AS6RightRail, AS6Assistant, AS6Focus } from "../../components/as6-workspace/AS6Workspace.jsx";
-import { AS6DataSurface, AS6DataKPI, AS6DataState } from "../../components/AS6UnifiedDataSurface.jsx";
 import "./AS6BusinessHome.css";
 
-export const AS6_BUSINESS_HOME_VERSION = "EPIC002_PR1";
+export const AS6_BUSINESS_HOME_VERSION = "EPIC001_PR9";
 export const AS6_BUSINESS_HOME_LAYOUT_SCHEMA_VERSION = 1;
 
 export const AS6_BUSINESS_HOME_WIDGETS = [
@@ -22,9 +21,6 @@ export const AS6_BUSINESS_HOME_WIDGETS = [
   { id: "recommendations", title: "Recommendations", defaultPinned: false },
   { id: "activity", title: "Activity", defaultPinned: false },
   { id: "adaptive-suggestions", title: "Adaptive Suggestions", defaultPinned: false },
-  { id: "executive-kpi", title: "Executive KPI", defaultPinned: true },
-  { id: "executive-platform-health", title: "Executive Platform Health", defaultPinned: false },
-  { id: "executive-risk-brief", title: "Executive Risk Brief", defaultPinned: false },
 ];
 
 export function createAS6BusinessHomeDefaultLayout() {
@@ -268,16 +264,6 @@ export function AS6BusinessHome() {
     if (widgetId === "adaptive-suggestions") {
       const suggestions = createAS6BusinessHomeAdaptiveSuggestions(state);
       return <AS6ExperienceCard eyebrow="AI Adaptive Home" title="Рекомендации AS6" key={widgetId} data-widget-id={widgetId}><div className="as6-business-home__adaptive-list">{suggestions.map((suggestion) => <article key={suggestion.id}><strong>{suggestion.title}</strong><span>{suggestion.reason}</span><button type="button" onClick={() => applyAS6AdaptiveSuggestion(suggestion)}>Применить</button></article>)}</div></AS6ExperienceCard>;
-    }
-    if (widgetId === "executive-kpi") {
-      return <AS6DataSurface title="Executive KPI" key={widgetId} data-widget-id={widgetId}><div className="as6-business-home__executive-grid">{state.metrics.map((metric) => <AS6DataKPI key={metric.label} label={metric.label} value={metric.value} detail={metric.trend} />)}</div></AS6DataSurface>;
-    }
-    if (widgetId === "executive-platform-health") {
-      return <AS6DataSurface title="Platform Health" key={widgetId} data-widget-id={widgetId}><div className="as6-business-home__executive-grid"><AS6DataKPI label="Dashboard" value={state.platformStatus?.dashboard || "UNKNOWN"} detail={(state.platformStatus?.widgets || 0) + " widgets"} /><AS6DataKPI label="Marketplace" value={state.platformStatus?.marketplace || "UNKNOWN"} detail={(state.platformStatus?.packages || 0) + " packages"} /><AS6DataKPI label="Navigation" value={state.platformStatus?.navigationItems || 0} detail="items" /><AS6DataKPI label="Workspace" value={state.platformStatus?.workspaceModules || 0} detail="modules" /></div></AS6DataSurface>;
-    }
-    if (widgetId === "executive-risk-brief") {
-      const hasRisk = state.marketplace?.failures?.length || state.dashboardStatus?.status !== "LIVE";
-      return <AS6DataSurface title="Executive Risk Brief" key={widgetId} data-widget-id={widgetId}>{hasRisk ? <ul className="as6-business-home__list">{state.recommendations.map((item) => <li key={item}>{item}</li>)}</ul> : <AS6DataState type="empty" title="Критических рисков не обнаружено" detail="AS6 использует текущие live/fallback данные Business Home." />}</AS6DataSurface>;
     }
     return null;
   }

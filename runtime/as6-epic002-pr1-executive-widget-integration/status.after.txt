@@ -1,0 +1,6 @@
+ M docs/AS6_PROJECT_STATE.md
+ M frontend/src/as6/business-home/AS6BusinessHome.css
+ M frontend/src/as6/business-home/AS6BusinessHome.jsx
+?? docs/coverage/as6-epic002-pr1-executive-widget-integration-coverage.md
+?? docs/diagnostics/as6-epic002-pr1-executive-widget-integration.md
+?? docs/governance/as6-epic002-pr1-executive-widget-integration-governance.md

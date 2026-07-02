@@ -261,3 +261,12 @@
   color: inherit;
   cursor: pointer;
 }
+
+.as6-business-home__executive-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+@media (max-width: 980px) {
+  .as6-business-home__executive-grid { grid-template-columns: 1fr; }
+}
