@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-next-major-epic-selection
+grep -q AS6_PORTFOLIO_DECISION_RECORD_MISSING ops/governance/as6-next-major-epic-selection-root-cause.md
+grep -q AS6_AEC_PORTFOLIO_DECISION_RECORD_REQUIRED ops/governance/as6-next-major-epic-selection-aec.md
+grep -q AS6_AEC_IMPLEMENTATION_AUTHORIZATION_REQUIRED ops/governance/as6-next-major-epic-selection-aec.md
+echo NEXT_MAJOR_EPIC_SELECTION_CONTROL=PASS

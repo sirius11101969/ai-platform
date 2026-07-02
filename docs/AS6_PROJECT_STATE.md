@@ -5555,3 +5555,21 @@ Status: PASS pending validation
 - Executive Intelligence v1 baseline remains immutable.
 - Project readiness remains 99%.
 - Executive Intelligence readiness remains 100%.
+
+## NEXT_MAJOR_EPIC_SELECTION
+
+- Selected next major EPIC: AS6_EPIC009_OPERATING_SYSTEM_UNIFICATION.
+- Added Portfolio Decision Record.
+- Added EPIC Charter.
+- Added ADR.
+- Added Architecture Review.
+- Added Diagnostics Plan.
+- Added Validation Plan.
+- Added Definition of Done.
+- Added Rollback Strategy.
+- Added Baseline Compatibility Review.
+- IMPLEMENTATION_AUTHORIZED=TRUE.
+- Executive Intelligence v1 remains immutable.
+- Reference Meta-Model remains canonical.
+- Project readiness remains 99%.
+- Executive Intelligence readiness remains 100%.

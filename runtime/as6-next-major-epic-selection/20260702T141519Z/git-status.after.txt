@@ -1,0 +1,10 @@
+ M docs/AS6_PROJECT_STATE.md
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? docs/adr/as6-adr-epic009-operating-system-unification.md
+?? docs/planning/
+?? ops/bin/as6-control-next-major-epic-selection
+?? ops/bin/as6-diagnose-next-major-epic-selection
+?? ops/governance/as6-next-major-epic-selection-aec.md
+?? ops/governance/as6-next-major-epic-selection-root-cause.md

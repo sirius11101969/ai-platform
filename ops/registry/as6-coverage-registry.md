@@ -3359,3 +3359,20 @@ Permission Validation
 - ops/governance/as6-reference-meta-model-root-cause.md
 - ops/governance/as6-reference-meta-model-aec.md
 - runtime/as6-reference-meta-model-canon/20260702T135858Z/runtime-trace.txt
+
+## NEXT_MAJOR_EPIC_SELECTION
+
+- docs/planning/as6-next-major-epic-selection-pdr.md
+- docs/planning/as6-epic009-operating-system-unification-charter.md
+- docs/adr/as6-adr-epic009-operating-system-unification.md
+- docs/planning/as6-epic009-architecture-review.md
+- docs/planning/as6-epic009-diagnostics-plan.md
+- docs/planning/as6-epic009-validation-plan.md
+- docs/planning/as6-epic009-definition-of-done.md
+- docs/planning/as6-epic009-rollback-strategy.md
+- docs/planning/as6-epic009-baseline-compatibility-review.md
+- ops/bin/as6-diagnose-next-major-epic-selection
+- ops/bin/as6-control-next-major-epic-selection
+- ops/governance/as6-next-major-epic-selection-root-cause.md
+- ops/governance/as6-next-major-epic-selection-aec.md
+- runtime/as6-next-major-epic-selection/20260702T141519Z/runtime-trace.txt

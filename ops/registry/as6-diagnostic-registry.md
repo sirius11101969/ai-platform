@@ -1540,3 +1540,19 @@ ops/bin/as6-control-permission-engine-v114
 - Failure class: AS6_SYNTAX_DEPENDENCY_RISK
 - Failure class: AS6_META_MODEL_SUPERSTANDARD_RISK
 - Failure class: AS6_EXPRESSIVENESS_STABILITY_GAP
+
+## NEXT_MAJOR_EPIC_SELECTION
+
+- Diagnostic: ops/bin/as6-diagnose-next-major-epic-selection
+- Control: ops/bin/as6-control-next-major-epic-selection
+- Portfolio Decision Record: docs/planning/as6-next-major-epic-selection-pdr.md
+- EPIC Charter: docs/planning/as6-epic009-operating-system-unification-charter.md
+- ADR: docs/adr/as6-adr-epic009-operating-system-unification.md
+- Architecture Review: docs/planning/as6-epic009-architecture-review.md
+- Diagnostics Plan: docs/planning/as6-epic009-diagnostics-plan.md
+- Validation Plan: docs/planning/as6-epic009-validation-plan.md
+- Definition of Done: docs/planning/as6-epic009-definition-of-done.md
+- Rollback Strategy: docs/planning/as6-epic009-rollback-strategy.md
+- Baseline Compatibility: docs/planning/as6-epic009-baseline-compatibility-review.md
+- Runtime artifacts: runtime/as6-next-major-epic-selection/20260702T141519Z
+- Failure classes: portfolio decision missing, selection gap, charter missing, ADR missing, scope gap, diagnostics gap, validation gap, DoD gap, rollback gap, baseline compatibility gap, authorization missing.
