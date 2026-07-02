@@ -3519,3 +3519,17 @@ Permission Validation
 - No business logic control=covered
 - No CRM features control=covered
 - No persistent storage control=covered
+
+## AS6 EPIC010 Slice 02 Coverage Registry
+- Workspace Layout Engine=covered
+- Workspace Layout Controller=covered
+- Layout Registry=covered
+- Layout Contract=covered
+- Workspace Regions=covered
+- Workspace Slots=covered
+- Responsive Layout Controller=covered
+- Layout Runtime Tracer=covered
+- Layout Health Snapshot=covered
+- No business logic control=covered
+- No CRM features control=covered
+- No persistent storage control=covered

@@ -2136,3 +2136,8 @@ Governed and registered.
 - AS6_WORKSPACE_CONTEXT_MISSING: Workspace Experience context provider or context factory is missing.
 - AS6_WORKSPACE_SERVICE_BINDING_MISSING: Workspace Experience cannot resolve required Platform Services bindings.
 - AS6_WORKSPACE_BASELINE_MUTATION_FORBIDDEN: Workspace Experience attempts to mutate AS6 Operating System V1 or Executive Intelligence baseline.
+
+## AS6 EPIC010 Slice 02 Failure Classes
+- AS6_LAYOUT_CONTRACT_MISSING: Workspace Layout has no stable contract for regions or slots.
+- AS6_LAYOUT_REGISTRY_DRIFT: Layout declarations drift from the Layout Contract.
+- AS6_LAYOUT_CONTROLLER_STATE_DUPLICATION: Layout Controller becomes a second source of Workspace state instead of a coordinator.

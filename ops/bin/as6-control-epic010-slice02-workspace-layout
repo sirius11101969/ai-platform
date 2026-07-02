@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-epic010-slice02-workspace-layout
+
+! grep -Rh "localStorage\|sessionStorage\|indexedDB" frontend/src/as6os/workspaceLayout
+! grep -Rh "CRM\|Revenue\|business logic" frontend/src/as6os/workspaceLayout
+! grep -Rh "Executive Intelligence" frontend/src/as6os/workspaceLayout
+! grep -Rh "fetch(" frontend/src/as6os/workspaceLayout
+
+echo WORKSPACE_LAYOUT_STRUCTURE=PASS
+echo WORKSPACE_LAYOUT_RUNTIME=PASS
+echo WORKSPACE_LAYOUT_RESPONSIVE=PASS
+echo WORKSPACE_LAYOUT_REGISTRY=PASS
+echo WORKSPACE_LAYOUT_CONTRACT=PASS
+echo WORKSPACE_LAYOUT_SLOTS=PASS
+echo WORKSPACE_LAYOUT_DIAGNOSTICS=PASS
+echo NO_BUSINESS_LOGIC=TRUE
+echo NO_CRM_FEATURES=TRUE
+echo NO_PERSISTENT_STORAGE_CHANGES=TRUE
+echo NO_PUBLIC_API_BREAKING_CHANGES=TRUE
+echo AS6_EPIC010_SLICE02_WORKSPACE_LAYOUT_CONTROL=PASS

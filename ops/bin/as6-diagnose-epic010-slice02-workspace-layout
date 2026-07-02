@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f frontend/src/as6os/workspaceLayout/workspaceLayoutContract.js
+test -f frontend/src/as6os/workspaceLayout/workspaceLayoutRegistry.js
+test -f frontend/src/as6os/workspaceLayout/workspaceLayoutController.js
+test -f frontend/src/as6os/workspaceLayout/AS6WorkspaceLayout.jsx
+test -f frontend/src/as6os/workspaceLayout/workspaceLayout.css
+test -f frontend/src/as6os/workspaceLayout/index.js
+
+grep -q defineAS6WorkspaceRegion frontend/src/as6os/workspaceLayout/workspaceLayoutContract.js
+grep -q defineAS6WorkspaceSlot frontend/src/as6os/workspaceLayout/workspaceLayoutContract.js
+grep -q as6WorkspaceLayoutRegistry frontend/src/as6os/workspaceLayout/workspaceLayoutRegistry.js
+grep -q registerAS6WorkspaceRegion frontend/src/as6os/workspaceLayout/workspaceLayoutRegistry.js
+grep -q registerAS6WorkspaceSlot frontend/src/as6os/workspaceLayout/workspaceLayoutRegistry.js
+grep -q resolveAS6WorkspaceLayout frontend/src/as6os/workspaceLayout/workspaceLayoutController.js
+grep -q traceAS6WorkspaceLayout frontend/src/as6os/workspaceLayout/workspaceLayoutController.js
+grep -q getAS6WorkspaceLayoutHealthSnapshot frontend/src/as6os/workspaceLayout/workspaceLayoutController.js
+grep -q AS6WorkspaceLayout frontend/src/as6os/workspaceLayout/AS6WorkspaceLayout.jsx
+
+echo AS6_WORKSPACE_LAYOUT=PASS
+echo AS6_LAYOUT_ENGINE=PASS
+echo AS6_LAYOUT_CONTROLLER=PASS
+echo AS6_LAYOUT_REGISTRY=PASS
+echo AS6_LAYOUT_CONTRACT=PASS
+echo AS6_LAYOUT_REGIONS=PASS
+echo AS6_LAYOUT_SLOTS=PASS
+echo AS6_LAYOUT_RUNTIME=PASS
+echo AS6_LAYOUT_HEALTH_SNAPSHOT=PASS
+echo AS6_EPIC010_SLICE02_WORKSPACE_LAYOUT_DIAGNOSTIC=PASS

@@ -1,0 +1,13 @@
+.as6-workspace-layout{display:grid;grid-template-columns:260px minmax(0,1fr)320px;grid-template-rows:auto minmax(0,1fr)auto;gap:16px;min-height:100%;color:#f8fafc}
+.as6-workspace-layout__region{border:1px solid rgba(255,255,255,.12);border-radius:20px;background:rgba(255,255,255,.035);overflow:hidden}
+.as6-workspace-layout__region[data-active="false"]{display:none}
+.as6-workspace-layout__region--header{grid-column:1/-1}
+.as6-workspace-layout__region--sidebar{grid-column:1}
+.as6-workspace-layout__region--main{grid-column:2}
+.as6-workspace-layout__region--rightRail{grid-column:3}
+.as6-workspace-layout__region--footer{grid-column:1/-1}
+.as6-workspace-layout__region-label{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.1);font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#94a3b8}
+.as6-workspace-layout__slots{display:grid;gap:10px;padding:14px}
+.as6-workspace-layout__slot{border-radius:14px;padding:14px;background:rgba(255,255,255,.035);color:#cbd5e1}
+@media (max-width:1100px){.as6-workspace-layout{grid-template-columns:220px minmax(0,1fr)}.as6-workspace-layout__region--main{grid-column:2}.as6-workspace-layout__region--rightRail{display:none}}
+@media (max-width:720px){.as6-workspace-layout{grid-template-columns:1fr}.as6-workspace-layout__region--sidebar{display:none}.as6-workspace-layout__region--main{grid-column:1}}
