@@ -1,0 +1,6 @@
+ M docs/AS6_PROJECT_STATE.md
+ M frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js
+?? docs/coverage/as6-epic005-pr1-executive-automation-governance-safety-coverage.md
+?? docs/diagnostics/as6-epic005-pr1-executive-automation-governance-safety.md
+?? docs/governance/as6-epic005-pr1-executive-automation-governance-safety-governance.md
+?? frontend/src/as6/business-home/as6ExecutiveAutomationGovernance.js

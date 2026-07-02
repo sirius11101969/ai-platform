@@ -1,3 +1,4 @@
+import { guardAS6ExecutiveAutomationScenario } from "./as6ExecutiveAutomationGovernance.js";
 import { getAS6ExecutiveActionById, validateAS6ExecutiveActionRegistry } from "./as6ExecutiveActionRegistry.js";
 import { executeAS6ExecutiveAction } from "./as6ExecutiveActions.js";
 
@@ -61,6 +62,8 @@ export function createAS6ExecutiveAutomationPlan(scenarioId = "businessHomeInsig
 }
 
 export function executeAS6ExecutiveAutomationScenario(scenarioId = "businessHomeInsights") {
+  const governance = guardAS6ExecutiveAutomationScenario(scenarioId = "businessHomeInsights");
+  if (!governance.allowed) return governance;
   const plan = createAS6ExecutiveAutomationPlan(scenarioId);
   const firstAction = plan.actions[0];
   if (!firstAction?.safe) return { ok: false, plan };
