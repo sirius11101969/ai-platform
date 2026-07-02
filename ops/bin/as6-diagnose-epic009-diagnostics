@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f docs/planning/as6-next-major-epic-selection-pdr.md
+test -f docs/planning/as6-epic009-operating-system-unification-charter.md
+test -f docs/adr/as6-adr-epic009-operating-system-unification.md
+test -f docs/standards/as6-reference-meta-model.md
+test -f docs/standards/as6-engineering-meta-architecture.md
+test -f docs/epic009/as6-epic009-diagnostics-report.md
+test -f ops/registry/as6-diagnostic-registry.md
+test -f ops/registry/as6-coverage-registry.md
+test -f docs/AS6_PROJECT_STATE.md
+test -f frontend/src/components/AppShell.jsx
+test -f frontend/src/App.jsx
+test -f frontend/src/theme/as6Theme.css
+grep -q 'NEXT_MAJOR_EPIC=AS6_EPIC009_OPERATING_SYSTEM_UNIFICATION' docs/planning/as6-next-major-epic-selection-pdr.md
+grep -q 'IMPLEMENTATION_AUTHORIZED=TRUE' docs/planning/as6-next-major-epic-selection-pdr.md
+grep -q 'EPIC_CHARTER=APPROVED' docs/planning/as6-epic009-operating-system-unification-charter.md
+grep -q 'ADR_STATUS=APPROVED' docs/adr/as6-adr-epic009-operating-system-unification.md
+grep -q 'DOCUMENT_TYPE=REFERENCE_META_MODEL' docs/standards/as6-reference-meta-model.md
+grep -q 'EXECUTIVE_INTELLIGENCE_V1=IMMUTABLE' docs/planning/as6-epic009-baseline-compatibility-review.md
+grep -q 'EPIC009_DIAGNOSTICS=PASS' docs/epic009/as6-epic009-diagnostics-report.md
+grep -q 'NEXT_STAGE=AS6_EPIC009_ARCHITECTURE_REVIEW' docs/epic009/as6-epic009-diagnostics-report.md
+echo AS6_EPIC009_DIAGNOSTICS=PASS
+echo AS6_OPERATING_SYSTEM_SCOPE=CONFIRMED
+echo AS6_EXECUTIVE_BASELINE=IMMUTABLE
+echo AS6_REFERENCE_META_MODEL=CANON
+echo AS6_ARCHITECTURE_REVIEW_READY=TRUE

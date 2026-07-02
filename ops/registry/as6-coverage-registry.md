@@ -3376,3 +3376,12 @@ Permission Validation
 - ops/governance/as6-next-major-epic-selection-root-cause.md
 - ops/governance/as6-next-major-epic-selection-aec.md
 - runtime/as6-next-major-epic-selection/20260702T141519Z/runtime-trace.txt
+
+## AS6_EPIC009_DIAGNOSTICS
+
+- docs/epic009/as6-epic009-diagnostics-report.md
+- ops/bin/as6-diagnose-epic009-diagnostics
+- ops/bin/as6-control-epic009-diagnostics
+- ops/governance/as6-epic009-diagnostics-root-cause.md
+- ops/governance/as6-epic009-diagnostics-aec.md
+- runtime/as6-epic009-diagnostics/20260702T142726Z/runtime-trace.txt

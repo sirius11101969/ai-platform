@@ -1,0 +1,16 @@
+# AS6 EPIC-009 Diagnostics Root Cause
+
+STAGE=AS6_EPIC009_DIAGNOSTICS
+
+FAILURE_CLASS=AS6_OPERATING_SYSTEM_DIAGNOSTIC_BASELINE_MISSING
+FAILURE_CLASS=AS6_WORKSPACE_HOSTING_MODEL_UNKNOWN
+FAILURE_CLASS=AS6_OS_NAVIGATION_STRUCTURE_UNKNOWN
+FAILURE_CLASS=AS6_DESIGN_SYSTEM_COMPATIBILITY_UNKNOWN
+FAILURE_CLASS=AS6_COMPONENT_REUSE_BASELINE_UNKNOWN
+FAILURE_CLASS=AS6_CRM_MIGRATION_PATH_UNKNOWN
+FAILURE_CLASS=AS6_EXECUTIVE_BASELINE_MUTATION_RISK
+FAILURE_CLASS=AS6_REFERENCE_META_MODEL_MUTATION_RISK
+
+ROOT_CAUSE=EPIC-009 implementation is authorized, but Operating System Unification must start with factual diagnostics before architecture review or code changes.
+
+CONTROL=Validate baseline commit, planning artifacts, reference meta-model, executive baseline immutability, shell files, registries, diagnostics report and next stage before commit/push.

@@ -1556,3 +1556,13 @@ ops/bin/as6-control-permission-engine-v114
 - Baseline Compatibility: docs/planning/as6-epic009-baseline-compatibility-review.md
 - Runtime artifacts: runtime/as6-next-major-epic-selection/20260702T141519Z
 - Failure classes: portfolio decision missing, selection gap, charter missing, ADR missing, scope gap, diagnostics gap, validation gap, DoD gap, rollback gap, baseline compatibility gap, authorization missing.
+
+## AS6_EPIC009_DIAGNOSTICS
+
+- Diagnostic: ops/bin/as6-diagnose-epic009-diagnostics
+- Control: ops/bin/as6-control-epic009-diagnostics
+- Diagnostics report: docs/epic009/as6-epic009-diagnostics-report.md
+- Root cause: ops/governance/as6-epic009-diagnostics-root-cause.md
+- AEC: ops/governance/as6-epic009-diagnostics-aec.md
+- Runtime artifacts: runtime/as6-epic009-diagnostics/20260702T142726Z
+- Failure classes: diagnostic baseline missing, workspace hosting model unknown, OS navigation structure unknown, design system compatibility unknown, component reuse baseline unknown, CRM migration path unknown, executive baseline mutation risk, reference meta-model mutation risk.

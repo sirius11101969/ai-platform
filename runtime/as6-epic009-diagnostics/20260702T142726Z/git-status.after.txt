@@ -1,0 +1,9 @@
+ M docs/AS6_PROJECT_STATE.md
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? docs/epic009/
+?? ops/bin/as6-control-epic009-diagnostics
+?? ops/bin/as6-diagnose-epic009-diagnostics
+?? ops/governance/as6-epic009-diagnostics-aec.md
+?? ops/governance/as6-epic009-diagnostics-root-cause.md

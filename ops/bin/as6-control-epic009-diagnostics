@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-epic009-diagnostics
+grep -q AS6_OPERATING_SYSTEM_DIAGNOSTIC_BASELINE_MISSING ops/governance/as6-epic009-diagnostics-root-cause.md
+grep -q AS6_AEC_EPIC009_DIAGNOSTIC_BASELINE_REQUIRED ops/governance/as6-epic009-diagnostics-aec.md
+grep -q AS6_AEC_EPIC009_ARCHITECTURE_REVIEW_NEXT ops/governance/as6-epic009-diagnostics-aec.md
+echo AS6_EPIC009_DIAGNOSTICS_CONTROL=PASS
