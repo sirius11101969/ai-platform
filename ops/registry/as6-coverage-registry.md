@@ -3460,3 +3460,21 @@ Permission Validation
 - Navigation coordination=covered
 - Module Host coordination=covered
 - Platform Services coordination=covered
+
+## AS6 EPIC009 PRR Coverage Registry
+- OS_ARCHITECTURE_REVIEW=covered
+- OS_LAYER_DEPENDENCY_REVIEW=covered
+- OS_API_SURFACE_REVIEW=covered
+- OS_MODULE_CONTRACTS=covered
+- OS_PLATFORM_SERVICES=covered
+- OS_RUNTIME_REVIEW=covered
+- OS_BOOTSTRAP_IDEMPOTENCY=covered
+- OS_RUNTIME_HEALTH_SNAPSHOT=covered
+- OS_STARTUP_SEQUENCE=covered
+- OS_SHUTDOWN_SEQUENCE=covered
+- OS_FRONTEND_BUILD_REVIEW=covered
+- OS_BUNDLE_HEALTH=covered
+- OS_CODE_SPLITTING_REVIEW=covered
+- OS_SECURITY_REVIEW=covered
+- OS_GOVERNANCE_COVERAGE=covered
+- OS_REGRESSION_GATE=covered

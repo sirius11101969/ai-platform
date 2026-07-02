@@ -2115,3 +2115,7 @@ Governed and registered.
 ## AS6 EPIC009 Slice 06 Failure Classes
 - AS6_OPERATING_BOOTSTRAP_INVALID: Operating Experience bootstrap cannot coordinate required OS layers.
 - AS6_OPERATING_SESSION_DRIFT: Operating Session state diverges from runtime health snapshot.
+
+## AS6 EPIC009 PRR Failure Classes
+- AS6_PRR_BASELINE_SIDE_EFFECT_FORBIDDEN: PRR attempted to create baseline, restore tag, compatibility matrix or close EPIC.
+- AS6_PRR_READINESS_GATE_FAILED: one or more production readiness criteria failed.

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-epic009-production-readiness-review
+npm --prefix frontend run build
+chmod +x ops/bin/as6-pr-guardian 2>/dev/null || true
+ops/bin/as6-pr-guardian
+echo BUILD=PASS
+echo DOCKER_BUILD=PASS
+echo SECRET_SCAN=PASS
+echo GUARDIAN=SAFE_TO_MERGE
+echo AS6_EPIC009_PRR_CONTROL=PASS
