@@ -1,0 +1,289 @@
+frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js:7:    reason: 'ActionId известен, сценарий только обновляет аналитическое представление и не меняет persistent storage.',
+frontend/src/as6/business-home/as6ExecutiveAutomationAuditTrail.js:11:    governanceExplanation: 'ActionId is known and does not mutate persistent storage.',
+frontend/src/as6/business-home/as6ExecutiveScenarioPriorities.js:17:export function normalizeAS6ExecutiveScenarioPriority(priority = "normal") {
+frontend/src/as6/business-home/as6ExecutiveScenarioPriorities.js:18:  return AS6_EXECUTIVE_SCENARIO_PRIORITY_VALUES[priority]?.value || "normal";
+frontend/src/as6/business-home/as6ExecutiveScenarioPriorities.js:21:export function getAS6ExecutiveScenarioPriorityWeight(priority = "normal") {
+frontend/src/as6/business-home/as6ExecutiveScenarioPriorities.js:22:  return AS6_EXECUTIVE_SCENARIO_PRIORITY_VALUES[normalizeAS6ExecutiveScenarioPriority(priority)].weight;
+frontend/src/as6/business-home/as6ExecutiveScenarioPriorities.js:27:    scenario.priority || AS6_EXECUTIVE_SCENARIO_PRIORITY_BY_ID[scenario.id] || "normal"
+frontend/src/as6/business-home/as6ExecutiveScenarioPriorities.js:32:  const priority = getAS6ExecutiveScenarioPriority(scenario);
+frontend/src/as6/business-home/as6ExecutiveScenarioPriorities.js:33:  const weight = getAS6ExecutiveScenarioPriorityWeight(priority);
+frontend/src/as6/business-home/as6ExecutiveScenarioPriorities.js:35:    priority,
+frontend/src/as6/business-home/as6ExecutiveScenarioPriorities.js:37:    explanation: `Scenario "${scenario.title || scenario.id || "unknown"}" is ordered by runtime priority "${priority}" with weight ${weight}.`,
+frontend/src/as6/business-home/as6ExecutiveScenarioPriorities.js:43:    const priorityDelta = getAS6ExecutiveScenarioPriorityWeight(getAS6ExecutiveScenarioPriority(b)) - getAS6ExecutiveScenarioPriorityWeight(getAS6ExecutiveScenarioPriority(a));
+frontend/src/as6/business-home/as6ExecutiveScenarioPriorities.js:44:    if (priorityDelta !== 0) return priorityDelta;
+frontend/src/as6/business-home/as6ExecutiveScenarioPriorities.js:51:  const priorityValues = Object.keys(AS6_EXECUTIVE_SCENARIO_PRIORITY_VALUES);
+frontend/src/as6/business-home/as6ExecutiveScenarioPriorities.js:52:  const invalid = scenarios.filter((scenario) => !priorityValues.includes(getAS6ExecutiveScenarioPriority(scenario)));
+frontend/src/as6/business-home/as6ExecutiveScenarioPriorities.js:54:  if (!priorityValues.includes("critical") || !priorityValues.includes("high") || !priorityValues.includes("normal") || !priorityValues.includes("low")) {
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:108:    priority: getAS6ExecutiveScenarioPriority(scenario),
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:109:    priorityExplanation: explainAS6ExecutiveScenarioPriority(scenario),
+frontend/src/as6/business-home/AS6BusinessHome.jsx:132:    const rawUser = localStorage.getItem("as6-user") || localStorage.getItem("user");
+docs/STAGE_PASSPORTS/V222_14_RUNTIME_TELEMETRY_STORAGE_VALIDATION.md:9:Hypothesis Status: Runtime storage behavior confirmed in browser-like localStorage simulation.
+docs/presentation/AS6_AI_CRM_Platform_Deck.html:581:            <div class="metric"><b class="gradient-text">Docker</b><span>Production deployment: backend, nginx/frontend, PostgreSQL и persistent storage.</span></div>
+docs/AS6_PROJECT_STATUS.md:10:Current priority:
+docs/00_READ_FIRST.md:40:Current execution priority:
+docs/platform-v2/sdk/marketplace-install-persistence-p24.md:3:P24 adds persistent plugin install state through localStorage-backed runtime persistence.
+docs/diagnostics/as6-epic004-pr4-executive-automation-queue-scheduler.md:6:- AS6_EXECUTIVE_AUTOMATION_RUNTIME_QUEUE_DRIFT: queue state is runtime-only and does not mutate persistent storage.
+docs/diagnostics/as6-epic004-pr4-executive-automation-queue-scheduler.md:8:- Workspace Storage V99, contextState.businessHome, layout schema, localStorage and Live Data were not changed.
+docs/diagnostics/as6-epic002-pr2b-operational-health-components.md:8:- Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home were not changed.
+docs/diagnostics/as6-autonomy-score-diagnostics.md:23:- autonomy_human_dependency_calculation
+docs/diagnostics/as6-epic004-pr5-executive-automation-retry-recovery.md:6:- AS6_EXECUTIVE_AUTOMATION_RUNTIME_RECOVERY_DRIFT: retry/recovery state is runtime-only and does not mutate persistent storage.
+docs/diagnostics/as6-epic004-pr5-executive-automation-retry-recovery.md:8:- Workspace Storage V99, contextState.businessHome, layout schema, localStorage and Live Data were not changed.
+docs/diagnostics/as6-epic002-pr1-executive-widget-integration.md:5:- AS6_EXECUTIVE_WIDGET_LAYOUT_DRIFT: widgets reuse contextState.businessHome layout.
+docs/diagnostics/as6-epic002-pr2a-executive-live-data-components.md:7:- Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home were not changed.
+docs/diagnostics/as6-epic001-user-workspace-customization.md:9:- Layout is stored only in Workspace contextState.businessHome.
+docs/diagnostics/as6-epic001-user-workspace-customization.md:11:- No new localStorage key is introduced.
+docs/diagnostics/as6-epic005-pr3-executive-automation-policy-explanations.md:26:- Workspace Storage V99 unchanged.
+docs/diagnostics/as6-epic005-pr3-executive-automation-policy-explanations.md:27:- contextState.businessHome unchanged.
+docs/diagnostics/as6-epic005-pr3-executive-automation-policy-explanations.md:29:- persistent storage unchanged.
+docs/diagnostics/as6-epic003-pr3-executive-action-validation-ui-feedback.md:8:- Workspace Storage V99, contextState.businessHome and layout schema were not changed.
+docs/diagnostics/as6-epic001-pr8-drag-drop-layout.md:6:- contextState.businessHome schema is unchanged.
+docs/diagnostics/as6-epic001-pr8-drag-drop-layout.md:7:- Workspace Storage V99 and debounce autosave are reused.
+docs/diagnostics/as6-epic001-pr8-drag-drop-layout.md:8:- No new localStorage key is introduced.
+docs/diagnostics/as6-epic004-pr1-executive-automation-scenarios.md:6:- AS6_EXECUTIVE_AUTOMATION_RUNTIME_ONLY_DRIFT: automation plans are runtime-only and do not mutate persistent storage.
+docs/diagnostics/as6-epic004-pr1-executive-automation-scenarios.md:8:- Workspace Storage V99, contextState.businessHome, layout schema, localStorage and Live Data were not changed.
+docs/diagnostics/as6-epic005-pr1-executive-automation-governance-safety.md:8:- Workspace Storage V99, contextState.businessHome, layout schema and localStorage were not changed.
+docs/diagnostics/as6-epic003-pr4-executive-action-history-audit-trail.md:6:- AS6_EXECUTIVE_ACTION_HISTORY_STORAGE_DRIFT: audit trail is runtime-only and does not change Workspace Storage V99, contextState.businessHome, localStorage or layout schema.
+docs/diagnostics/as6-epic004-pr2-executive-automation-execution-pipeline.md:7:- AS6_EXECUTIVE_AUTOMATION_RUNTIME_PIPELINE_DRIFT: pipeline state is runtime-only and does not mutate persistent storage.
+docs/diagnostics/as6-epic002-pr5-executive-insights-recommendations.md:6:- AS6_EXECUTIVE_INSIGHTS_STORAGE_DRIFT: no contextState.businessHome, Workspace Storage V99 or layout schema changes were introduced.
+docs/diagnostics/as6-epic001-pr9-ai-adaptive-home.md:7:- contextState.businessHome schema is unchanged.
+docs/diagnostics/as6-epic001-pr9-ai-adaptive-home.md:8:- Workspace Storage V99 and debounce autosave are reused.
+docs/diagnostics/as6-epic002-pr2c-executive-dashboard-components.md:8:- Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home were not changed.
+docs/diagnostics/as6-epic004-pr3-executive-automation-monitoring-control.md:6:- AS6_EXECUTIVE_AUTOMATION_RUNTIME_MONITORING_DRIFT: monitoring is runtime-only and does not mutate persistent storage.
+docs/diagnostics/as6-epic004-pr3-executive-automation-monitoring-control.md:8:- Workspace Storage V99, contextState.businessHome, layout schema, localStorage and Live Data were not changed.
+docs/diagnostics/as6-epic002-pr3-executive-workspace-integration.md:5:- AS6_EXECUTIVE_WORKSPACE_PERSISTENCE_DRIFT: widgets reuse contextState.businessHome and Workspace Storage V99.
+docs/diagnostics/as6-epic003-pr5-executive-action-analytics-metrics.md:7:- AS6_EXECUTIVE_ACTION_ANALYTICS_STORAGE_DRIFT: analytics are runtime-only and do not modify Workspace Storage V99, contextState.businessHome, localStorage or layout schema.
+docs/diagnostics/as6-epic006-pr1-scenario-priorities.md:3:- AS6_EXECUTIVE_SCENARIO_PRIORITY_MODEL_GAP: added runtime-only priority model.
+docs/diagnostics/as6-epic006-pr1-scenario-priorities.md:5:- AS6_EXECUTIVE_SCENARIO_PRIORITY_ORDER_DRIFT: scenarios sorted by runtime priority weight.
+docs/diagnostics/as6-epic006-pr1-scenario-priorities.md:6:- AS6_EXECUTIVE_SCENARIO_PRIORITY_EXPLANATION_GAP: added per-scenario priority explanation.
+docs/diagnostics/as6-epic006-pr1-scenario-priorities.md:7:- AS6_EXECUTIVE_SCENARIO_PRIORITY_STORAGE_DRIFT: Workspace Storage V99, contextState.businessHome, layout schema, localStorage and persistent storage were not changed.
+docs/diagnostics/as6-epic003-pr2-executive-action-orchestration.md:9:- Workspace Storage V99, contextState.businessHome and layout schema were not changed.
+docs/diagnostics/as6-epic003-pr1-executive-automation-actions.md:7:- AS6_EXECUTIVE_AUTOMATION_STORAGE_DRIFT: Workspace Storage V99, contextState.businessHome and layout schema were not changed.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail-complete.md:21:- No Workspace Storage V99 changes.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail-complete.md:22:- No contextState.businessHome changes.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail-complete.md:24:- No persistent storage changes.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail-complete.md:25:- No localStorage changes.
+docs/diagnostics/as6-epic002-pr4-executive-personalization.md:9:- contextState.businessHome, Workspace Storage V99 and layout schema were not changed.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail.md:25:- Workspace Storage V99 unchanged.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail.md:26:- contextState.businessHome unchanged.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail.md:32:- persistent storage unchanged.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail.md:33:- localStorage unchanged.
+docs/AS6_PROJECT_STATE.md:740:- autonomy_human_dependency_calculation
+docs/AS6_PROJECT_STATE.md:2668:- Purpose: add autonomous event stream, priority queue and AI Copilot Rail.
+docs/AS6_PROJECT_STATE.md:3145:- Removed dependency on failed V115-V118 CSS patch strategy.
+docs/AS6_PROJECT_STATE.md:3808:- Result: Product Intelligence localStorage runtime behavior validated.
+docs/AS6_PROJECT_STATE.md:4460:- V94 control dependency: repaired.
+docs/AS6_PROJECT_STATE.md:4596:- Dependency source of truth: ops/registry/as6-control-dependency-manifest.tsv.
+docs/AS6_PROJECT_STATE.md:4965:- Business Home now uses existing Workspace Storage V99.
+docs/AS6_PROJECT_STATE.md:4975:- Business Home layout stored only in contextState.businessHome.
+docs/AS6_PROJECT_STATE.md:4980:- Added debounce autosave through Workspace Storage V99.
+docs/AS6_PROJECT_STATE.md:4989:- Reused existing contextState.businessHome layout model.
+docs/AS6_PROJECT_STATE.md:4990:- Reused existing debounce autosave and Workspace Storage V99.
+docs/AS6_PROJECT_STATE.md:5000:- Reused contextState.businessHome, debounce autosave and Workspace Storage V99.
+docs/AS6_PROJECT_STATE.md:5009:- Preserved contextState.businessHome, Workspace Storage V99, drag/drop and AI Adaptive Home.
+docs/AS6_PROJECT_STATE.md:5020:- Preserved Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home.
+docs/AS6_PROJECT_STATE.md:5030:- Preserved Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home.
+docs/AS6_PROJECT_STATE.md:5040:- Preserved Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home.
+docs/AS6_PROJECT_STATE.md:5048:- Preserved contextState.businessHome, Workspace Storage V99, drag/drop and AI Adaptive Home.
+docs/AS6_PROJECT_STATE.md:5058:- Preserved contextState.businessHome, Workspace Storage V99, drag/drop, AI Adaptive Home and layout schema.
+docs/AS6_PROJECT_STATE.md:5068:- Preserved contextState.businessHome, Workspace Storage V99, layout schema, drag/drop, Executive components and Live Data sources.
+docs/AS6_PROJECT_STATE.md:5078:- Preserved contextState.businessHome, Workspace Storage V99, layout schema, drag/drop, AI Adaptive Home, Executive Insights, Executive Components and Live Data.
+docs/AS6_PROJECT_STATE.md:5089:- Preserved contextState.businessHome, Workspace Storage V99, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5099:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5109:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5119:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5128:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5138:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5149:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5159:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5171:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5199:- Workspace Storage V99 unchanged.
+docs/AS6_PROJECT_STATE.md:5200:- contextState.businessHome unchanged.
+docs/AS6_PROJECT_STATE.md:5201:- layout schema and persistent storage unchanged.
+docs/AS6_PROJECT_STATE.md:5211:- Workspace Storage V99 unchanged.
+docs/AS6_PROJECT_STATE.md:5212:- contextState.businessHome unchanged.
+docs/AS6_PROJECT_STATE.md:5213:- layout schema, drag & drop, AI Adaptive Home, Executive Components, Live Data, persistent storage and localStorage unchanged.
+docs/AS6_PROJECT_STATE.md:5233:- Workspace Storage V99 unchanged.
+docs/AS6_PROJECT_STATE.md:5234:- contextState.businessHome unchanged.
+docs/AS6_PROJECT_STATE.md:5235:- layout schema, persistent storage and localStorage unchanged.
+docs/AS6_PROJECT_STATE.md:5243:- Added runtime-only scenario priority model.
+docs/AS6_PROJECT_STATE.md:5244:- Added priority values: critical, high, normal, low.
+docs/AS6_PROJECT_STATE.md:5245:- Added priority sorting for automation scenarios.
+docs/AS6_PROJECT_STATE.md:5246:- Added per-scenario priority explanation.
+docs/AS6_PROJECT_STATE.md:5247:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, localStorage and persistent storage.
+docs/architecture/ai_sales_worker_v1.md:93:- `customerText` must not contain `Контекст:`, `Плюсы:`, `Итог:`, `ai_score`, `ai_priority`, or `ai_risk_level`.
+docs/architecture/ai_revenue_intelligence.md:5:The AI Revenue Intelligence layer is the Revenue Brain above CRM, AI Workers, AI Sequences, the autonomous execution loop, Redis orchestration, OpenAI execution, and the approval queue. It continuously converts available sales signals into probabilistic revenue guidance without auto-sending customer communication.
+docs/architecture/ai_revenue_intelligence.md:9:- lead priority;
+docs/architecture/ai_revenue_intelligence.md:22:- `priority_score` and `close_probability` are bounded 0-100 values.
+docs/architecture/ai_revenue_intelligence.md:125:- Redis orchestration;
+docs/architecture/openai_realtime_webrtc_foundation.md:17:- `realtimeTransportGateway.js`: orchestration layer, persistence, state transitions, event publishing, and Revenue Brain trigger.
+docs/architecture/ai_enterprise_coordination_layer.md:10:- Cross-team orchestration
+docs/architecture/adr/ADR-002-backend-framework-choice.md:13:The platform requires API development, CRM backend logic, integrations, AI orchestration, and workflow support.
+docs/architecture/adr/ADR-003-n8n-before-temporal.md:14:Complex distributed orchestration is not yet required.
+docs/architecture/adr/ADR-003-n8n-before-temporal.md:19:Introduce Temporal only when orchestration complexity requires it.
+docs/architecture/adr/ADR-003-n8n-before-temporal.md:32:* Limited scalability for highly complex orchestration
+docs/architecture/adr/ADR-003-n8n-before-temporal.md:41:* High concurrency/agent orchestration emerges
+docs/architecture/adr/ADR-003-n8n-before-temporal.md:46:* Custom orchestration engine
+docs/architecture/ai_voice_outreach.md:46:Both job types run through the existing autonomous execution runner so Redis orchestration, worker metrics, retries, and execution logs remain compatible.
+docs/architecture/ai_voice_outreach.md:60:`VoiceOutreachService` owns the orchestration boundary:
+docs/architecture/ai_voice_outreach.md:72:7. Trigger Revenue Brain re-scoring so engagement, priority, and close probability can react to voice outcomes.
+docs/architecture/ai_voice_outreach.md:135:Backend compatibility is preserved by not changing the call execution contract, Redis job types, autonomous execution loop, sequence orchestration, or Revenue Brain public APIs.
+docs/architecture/ai_voice_outreach.md:158:## SDR orchestration roadmap
+docs/architecture/ai_voice_outreach.md:168:7. Revenue Brain updates priority and forecast.
+docs/architecture/ai_priority_inbox_v1.md:17:- `/priority-inbox`
+docs/architecture/ai_priority_inbox_v1.md:43:  - `ai_priority`
+docs/architecture/ai_priority_inbox_v1.md:65:GET /api/ai/priority-inbox
+docs/architecture/ai_priority_inbox_v1.md:83:      "ai_priority": "high",
+docs/architecture/ai_priority_inbox_v1.md:103:    "priorityLeads": 0,
+docs/architecture/ai_priority_inbox_v1.md:121:6. urgent priority → **Связаться сегодня**
+docs/architecture/ai_priority_inbox_v1.md:123:8. high score/high priority → **Связаться сегодня**
+docs/architecture/ai_priority_inbox_v1.md:142:[priority-inbox] inbox requested
+docs/architecture/ai_priority_inbox_v1.md:148:[priority-inbox] action generated
+docs/architecture/ai_priority_inbox_v1.md:153:- `ai_priority_inbox_viewed`
+docs/architecture/ai_priority_inbox_v1.md:163:- `ai_score`, `ai_priority`, `ai_risk_level`
+docs/architecture/ai_priority_inbox_v1.md:164:- `score`, `intent`, `priority`, `urgent`, `risk`, `confidence`
+docs/architecture/ai_priority_inbox_v1.md:183:- `/priority-inbox` loads for authenticated users.
+docs/architecture/ai_priority_inbox_v1.md:192:Focus Mode v2 turns the overloaded Priority Inbox into the default executive sales cockpit. The default route still uses `/priority-inbox`, but the page now requests the focused API mode by default:
+docs/architecture/ai_priority_inbox_v1.md:195:GET /api/ai/priority-inbox?mode=focus
+docs/architecture/ai_priority_inbox_v1.md:211:1. `ai_priority IN ('priority', 'urgent')`
+docs/architecture/ai_priority_inbox_v1.md:215:Generic noisy leads such as `ai_priority='high'`, `ai_score < 70`, and low/no risk are intentionally excluded from Focus Mode. They remain visible only in **All Leads**.
+docs/architecture/ai_priority_inbox_v1.md:245:4. priority leads
+docs/architecture/ai_priority_inbox_v1.md:278:[priority-inbox] focus mode applied
+docs/architecture/ai_workforce_command_graph.md:20:Each node includes id, type, label, status, priority, timestamp, payload summary, and source table.
+docs/architecture/ai_agent_system.md:18:У всех operational-сущностей есть `id`, `workspace_id`, `lead_id` (где применимо), `task_type`, `status`, `priority`, `input_context`, `output_result`, `created_at`, `updated_at`. Статусы очереди: `queued`, `running`, `completed`, `failed`.
+docs/architecture/ai_lead_qualification_pipeline.md:15:  → priority / recommended_channel / recommended_next_step
+docs/architecture/ai_lead_qualification_pipeline.md:65:`leadQualificationService.priorityFromScore` классифицирует лиды так:
+docs/architecture/ai_lead_qualification_pipeline.md:100:- priority badge (`HOT`, `WARM`, `COLD`);
+docs/architecture/ai_lead_qualification_pipeline.md:116:4. Проверить `lead_ai_scores`: создан score, priority, канал и recommendation.
+docs/architecture/ai_sequence_orchestrator.md:84:- hidden scoring, priority, or risk fields.
+docs/architecture/ai_sequence_orchestrator.md:146:- a high-priority lead selector and Start sequence button.
+docs/architecture/ai_manager_dashboard_kpi_layer.md:38:- `crm_leads` — priority, urgency, risk, value, probability, and pipeline monitoring totals.
+docs/architecture/ai_manager_dashboard_kpi_layer.md:94:- priority leads
+docs/architecture/autonomous_execution_loop.md:62:Job ordering remains priority-based:
+docs/architecture/autonomous_execution_loop.md:65:ORDER BY priority ASC, run_after ASC, created_at ASC
+docs/architecture/autonomous_execution_loop.md:134:The current loop intentionally stays small and production-compatible. Temporal or LangGraph can be introduced later for higher-order orchestration:
+docs/architecture/autonomous_execution_loop.md:139:- Redis can continue to serve as a fast coordination/cache layer or be replaced by the orchestration engine's native worker coordination.
+docs/architecture/enterprise_ai_execution_platform.md:9:3. **Queue and worker layer** — PostgreSQL-backed durable jobs with priority, `run_after` scheduling, worker-node heartbeats, cancellation, timeout recovery, retry limits, and dead-lettering.
+docs/architecture/enterprise_ai_execution_platform.md:62:- `ai_execution_jobs` — durable priority/scheduled/cancellable execution queue.
+docs/architecture/enterprise_ai_execution_platform.md:63:- `orchestration_workflows` — workflow state, context, trace, parent/child recursion.
+docs/architecture/enterprise_ai_execution_platform.md:81:  -> ai_execution_jobs insert(status=queued, priority, run_after)
+docs/architecture/enterprise_ai_execution_platform.md:98:For orchestration:
+docs/architecture/enterprise_ai_execution_platform.md:124:      -> orchestration_workflows
+docs/architecture/enterprise_ai_execution_platform.md:138:7. Add orchestration workflows and agent messages.
+docs/architecture/enterprise_ai_execution_platform.md:157:- cancellation and priority scheduling.
+docs/architecture/enterprise_ai_execution_platform.md:165:### Sprint 4 — Multi-agent orchestration
+docs/architecture/ai_safety_copy_guard.md:12:- `isInternalAiContext(text)` detects internal scoring markers such as `Плюсы:`, `Минусы:`, `Итог:`, `+18`, `ai_score`, `ai_priority`, `ai_risk_level`, `Контекст:` and `scoring_reason`.
+docs/architecture/ai_safety_copy_guard.md:24:- Unsafe internal context markers include `Плюсы:`, `Минусы:`, `Итог:`, `Контекст:`, `ai_score:`, `ai_priority:`, `ai_risk_level:`, `scoring_reason`, and scoring deltas such as `+18`.
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:694:            <p>500+ клиентов. Microservice decomposition, Temporal/LangGraph orchestration, event bus, dedicated memory/vector stores, replicas, multi-region readiness, tracing.</p>
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:698:              <div class="layer-head">Advanced AI orchestration</div>
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:803:        migration: "MVP: Telegram API + backend handlers. Growth: вынести bot worker и retries в Redis queue. Scale: channel abstraction для Telegram, SMS, WhatsApp и email orchestration."
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:827:        migration: "MVP: простые агенты через backend/n8n. Growth: separated agent services, prompt versions, HITL. Scale: LangGraph/Temporal multi-agent orchestration."
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:832:        description: "Практичный automation layer для быстрого запуска сценариев без преждевременной custom orchestration платформы.",
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:835:        migration: "MVP: n8n как основной workflow engine. Growth: критичные jobs вынести в workers. Scale: Temporal/LangGraph для durable multi-step orchestration."
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:891:        migration: "Growth: отдельные services/workers. Scale: multi-agent orchestration через LangGraph/Temporal с memory/context store."
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:939:        migration: "Growth: Dockerized workers. Scale: autoscaled worker pools per service and orchestration via Temporal/LangGraph."
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:1035:        migration: "MVP/Growth: Docker on VPS/Hetzner/AWS. Scale: autoscaling groups or orchestration only when operating load justifies it."
+docs/architecture/ai_workforce_coordination.md:3:## Workforce orchestration architecture
+docs/architecture/ai_workforce_coordination.md:5:The AI Workforce Coordination layer adds a policy-governed orchestration slice on top of existing AI Sales Brain, Autonomous SDR Loop, Approval Center, and AI Execution Layer. It introduces specialized worker roles, routing, load balancing, collaboration planning, and execution planning while preserving human approvals and auditability.
+docs/architecture/ai_workforce_coordination.md:8:- `workforceCoordinator.js`: end-to-end assignment + orchestration entrypoint
+docs/architecture/ai_workforce_coordination.md:84:The Workforce Control Center adds a dedicated operations API and UI surface on top of existing orchestration persistence:
+docs/architecture/ai_workforce_coordination.md:127:- dependency graph entries from `execution_dependencies`
+docs/architecture/ai_workforce_coordination.md:130:The presentation layer is cosmetic only and does not alter orchestration decisions, routing rules, or approval enforcement.
+docs/architecture/ai_workforce_coordination.md:137:The command graph endpoint and UI map connect lead intelligence, SDR actions, approval gates, execution queue state, workforce orchestration, and realtime operational telemetry into a single governed view.
+docs/architecture/ai_execution_runner_loop.md:32:- `priority` on `enqueue-test` and `enqueue-openai-test` — lower values run first; defaults to `100`.
+docs/architecture/ai_execution_runner_loop.md:46:- `queues`: `['default', 'priority', 'ai-execution']`
+docs/architecture/ai_execution_runner_loop.md:65: ORDER BY priority ASC, run_after ASC, created_at ASC
+docs/architecture/ai_execution_runner_loop.md:144:- Lower numeric priority values execute first.
+docs/architecture/ai_strategic_planning_layer.md:4:The AI Corporate Strategy Engine is a recommendation-only planning subsystem that synthesizes workspace signals into strategic plans, OKRs, initiative priorities, dependency graphs, resource strategies, and growth plans.
+docs/architecture/ai_strategic_planning_layer.md:10:`dependencyGraphEngine` emits initiative nodes and dependency edges to identify blockers and sequence initiatives.
+docs/architecture/ai_outreach_engine.md:18:## Trigger and priority logic
+docs/architecture/ai_outreach_engine.md:22:| Lead priority | Condition | Generation behavior |
+docs/architecture/ai_execution_layer.md:13:## AI workforce orchestration
+docs/architecture/production_ai_execution_runner.md:75:Workflow orchestration:
+docs/architecture/production_ai_execution_runner.md:85:- Add per-workspace rate limits, quotas, and priority lanes.
+docs/architecture/ai_sales_employee_brain.md:4:The AI Sales Employee Brain sits beside the realtime conversation pipeline and enriches events with safe CRM intelligence, lead context, objections, intent signals, and suggestion-only workflow orchestration.
+docs/architecture/crm_ai_master_build_order.html:116:          <div><h2>Exact Recommended Implementation Sequence</h2><span>Ordered by dependency, product value and infrastructure burden.</span></div>
+docs/architecture/crm_ai_master_build_order.html:656:            <p>Introduce durable orchestration only for proven multi-step agent workflows.</p>
+docs/architecture/crm_ai_master_build_order.html:793:          <li>Use n8n for early workflow velocity instead of custom orchestration.</li>
+docs/architecture/crm_ai_master_build_order.html:840:      s(29,"Temporal/LangGraph runtime hardening","Introduce durable orchestration only for proven multi-step agent workflows.","scale","ai","Sprint 14",true,"Steps 24,27","Workflow state is durable and replayable","Temporal/LangGraph is scale infrastructure, not Sprint 1–4 work."),
+docs/architecture/crm_ai_engineering_implementation_backlog.html:1342:              <div class="task-title"><strong>Select orchestration engine</strong><span class="tag neutral">P1 · C3 · AI</span></div>
+docs/architecture/crm_ai_engineering_implementation_backlog.html:1358:                <div class="mini"><b>Acceptance</b>One critical journey runs in durable orchestration.</div>
+docs/architecture/crm_ai_engineering_implementation_backlog.html:3294:          <li>Durable orchestration and event bus handle multi-step automation.</li>
+docs/architecture/crm_ai_engineering_implementation_backlog.html:3423:              task("Select orchestration engine", 3, "AI", ["Compare LangGraph vs Temporal", "Define workflow state model", "Document operational impact"], "Decision is recorded with migration plan."),
+docs/architecture/crm_ai_engineering_implementation_backlog.html:3424:              task("Implement pilot workflow", 5, "AI", ["Qualification to booking flow", "Human handoff step", "Retry/fallback branches"], "One critical journey runs in durable orchestration."),
+docs/architecture/crm_ai_engineering_implementation_backlog.html:3645:      return { title, complexity, owner, subtasks, acceptance, priority: complexity >= 4 ? "P0" : complexity === 3 ? "P1" : "P2" };
+docs/architecture/crm_ai_engineering_implementation_backlog.html:3736:              <div class="task-title"><strong>${task.title}</strong><span class="tag neutral">${task.priority} · C${task.complexity} · ${task.owner}</span></div>
+docs/architecture/crm_ai_engineering_implementation_backlog.html:3738:                <div class="mini"><b>Priority</b>${task.priority}</div>
+docs/architecture/crm_ai_sprint_delivery_dashboard.html:231:        <article class="item"><strong>M3 Scale Architecture Ready</strong><p>Service extraction, event bus, orchestration, memory/vector, tracing and replicas.</p><div class="mini-tags"><span class="tag info">Future</span><span class="tag">Sprint 13+</span></div></article>
+docs/architecture/crm_ai_sprint_delivery_dashboard.html:326:      {name:"M3 Scale Architecture Ready", target:"Sprint 13+", status:"Future", health:"info", desc:"Service extraction, event bus, orchestration, memory/vector, tracing and replicas."}
+docs/architecture/realtime_ai_voice_core.md:110:- Qualification confidence proxy through higher engagement, priority score, and hot lead scoring.
+docs/architecture/realtime_ai_voice_core.md:184:The core is additive. It does not replace or alter existing AI Voice Outreach mock calls, Revenue Intelligence UI, AI Workers, AI Sequences, Redis orchestration, autonomous execution, or OpenAI execution paths.
+docs/architecture/ai_lead_scoring_engine_v1.md:3:AI Lead Scoring Engine v1 turns the CRM scoring layer into a deterministic AI Revenue Operating System component. It calculates a 0–100 lead score, priority, temperature, risk level, reasoning, timeline events, and approval-center recommendations from CRM, Telegram, email, meetings, follow-ups, notes, and activity history.
+docs/architecture/ai_lead_scoring_engine_v1.md:10:- `ai_priority VARCHAR(20) DEFAULT 'medium'` — `low`, `medium`, `high`, `priority`, or `urgent`.
+docs/architecture/ai_lead_scoring_engine_v1.md:12:- `ai_temperature VARCHAR(20) DEFAULT 'warm'` — `cold`, `warm`, `hot`, or `priority`.
+docs/architecture/ai_lead_scoring_engine_v1.md:25:| 76–100 | `priority` | High-priority revenue opportunity. |
+docs/architecture/ai_lead_scoring_engine_v1.md:72:- score, priority, temperature, risk, and reasoning in payload.
+docs/architecture/ai_lead_scoring_engine_v1.md:74:If a lead becomes high priority or high risk, the Approval Center receives:
+docs/architecture/ai_lead_scoring_engine_v1.md:76:- `action_type = 'lead_priority_recommendation'`;
+docs/architecture/ai_lead_scoring_engine_v1.md:82:The v2 calibration keeps the v1 data model and worker, but changes the scoring distribution so the sales queue is not flooded with 84–100 scores. The score is now an opportunity score, risk is tracked separately, and operational priority combines score with strong buying signals and risk.
+docs/architecture/ai_lead_scoring_engine_v1.md:86:| Score | Sales category | `ai_priority` | `ai_temperature` |
+docs/architecture/ai_lead_scoring_engine_v1.md:91:| 70–84 | priority | `priority` | `hot` |
+docs/architecture/ai_lead_scoring_engine_v1.md:92:| 85–100 | urgent / top priority only | `urgent` only when there is a strong buying signal or high risk, otherwise `priority` | `priority` |
+docs/architecture/ai_lead_scoring_engine_v1.md:98:Inactivity penalties are tiered and skipped when a meeting is already booked: inactive for more than 3 days applies `-10`, more than 7 days applies `-20`, and more than 14 days applies `-35`. Closed-lost leads are capped at 20, forced to `ai_priority='low'`, and forced to `ai_temperature='cold'`. Closed-won leads keep their analytics score but are forced to `ai_priority='low'` so they do not pollute the active priority queue.
+docs/architecture/ai_lead_scoring_engine_v1.md:104:The Approval Center now creates `lead_priority_recommendation` items only when `ai_priority` is `priority`/`urgent` or `ai_risk_level` is `medium`/`high`; won/lost leads are skipped. Reasoning text is compacted under 500 characters and lists positive signals, negative penalties, risks, and the final score/category.
+docs/architecture/ai_lead_scoring_engine_v1.md:108:Priority Leads count only active leads whose latest `crm_leads.ai_priority` is `priority` or `urgent`; won/lost leads are excluded. At-risk Deals count both `medium` and `high` risk levels. This keeps won/lost deals and merely warm leads out of the priority dashboard while still surfacing stalled deals that need operational follow-up.
+docs/architecture/ai_lead_scoring_engine_v1.md:133:- priority badge;
+docs/architecture/ai_lead_scoring_engine_v1.md:161:- Meeting booked adds a strong positive factor and should move the lead to hot/priority.
+docs/architecture/ai_lead_scoring_engine_v1.md:164:- Lead cards and detail modal should render latest score, priority, temperature, risk, and reasoning.
+docs/architecture/crm_ai_development_execution_roadmap.html:514:          <div class="cell">Define adapter interface for cache/session/queue use; avoid hard dependency unless needed.</div>
+docs/architecture/ai_pipeline_copilot_v1.md:41:- CRM leads (`crm_leads`) for focus leads, risk deals, AI scores, priority, stage, and revenue values.
+docs/architecture/ai_pipeline_copilot_v1.md:75:4. urgent/priority/high focus leads;
+docs/architecture/ai_pipeline_copilot_v1.md:84:- `priority`
+docs/architecture/ai_pipeline_copilot_v1.md:101:4. urgent priority;
+docs/architecture/ai_pipeline_copilot_v1.md:105:Within a bucket, urgency priority is used first, then lead name for stable ordering.
+docs/architecture/ai_pipeline_copilot_v1.md:172:  4. urgent/priority focus leads;
+docs/architecture/ai_pipeline_copilot_v1.md:175:- Generic 51–59 or low-signal high-priority leads are excluded from the default action set.
+docs/architecture/ai_pipeline_copilot_v1.md:177:  - `ai_priority IN ('urgent','priority')`; or
+docs/architecture/ai_pipeline_copilot_v1.md:180:- Focus Leads excludes `ai_priority='high'` leads below score 70 when they do not have elevated risk.
+docs/architecture/ai_pipeline_copilot_v1.md:182:- Pending Approvals counts only actionable sales approvals: Telegram/email/follow-up/meeting/next-best-action items with `pending_approval` or `approved` status. It excludes stale lead scoring updates, noisy legacy actions, and generic low-signal `lead_priority_recommendation` items below score 70.
+docs/architecture/ai_pipeline_copilot_v1.md:203:- **Open Priority Inbox** routes to `/priority-inbox?leadId=<lead_id>`. Priority Inbox switches to the broad lead list when needed, scrolls to the matching lead card, and highlights it.
+docs/architecture/ai_next_best_action_engine_v1.md:29:For every active lead (`status`/`stage` not `won` or `lost`), the engine evaluates rules in this exact priority order and creates no more than one action:
+docs/architecture/ai_next_best_action_engine_v1.md:47:Before any customer-facing action is inserted, the engine calls `getBestContactChannel(lead)` and uses this priority order:
+docs/architecture/ai_next_best_action_engine_v1.md:89:    "ai_priority": "medium",
+docs/architecture/ai_next_best_action_engine_v1.md:98:Customer-facing copy is generated from fixed templates after channel selection and passed through `assertCustomerSafeText` before queue insertion. Scoring, risk, priority, and reasoning details stay inside `internalContext` and are not included in `customerText`.
+docs/architecture/ai_workers_focus_queue_v2.md:14:The default tab is **Focus** and it renders at most 10 active actionable tasks. The queue is deterministic: actions are sorted by focus priority and then by creation time descending.
+docs/architecture/ai_workers_focus_queue_v2.md:34:- Generic low/medium-value `lead_priority_recommendation` records.
+docs/architecture/autonomous_ai_sdr_loop.md:12:## AI orchestration loop
+docs/architecture/autonomous_ai_sdr_loop.md:27:- Forecast-aware orchestration with approval queue policies.
+docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md:99:Required priority:
+docs/REGISTRY/AS6_PRODUCT_COVERAGE_REGISTRY.md:66:- Covered: runtime localStorage event storage, metadata sanitization, disabled telemetry skip, unregistered event rejection, external analytics absence.
+docs/REGISTRY/AS6_PRODUCT_DECISION_HISTORY.md:180:- User Value: AS6 recommends checking priority CRM leads as the next useful action.
+docs/coverage/as6-epic001-user-workspace-customization-coverage.md:9:- No duplicate localStorage coverage: PASS
+docs/coverage/as6-epic003-pr2-executive-action-orchestration-coverage.md:6:- Fallback orchestration coverage: PASS
+docs/coverage/as6-epic006-pr1-scenario-priorities-coverage.md:3:- Runtime priority model coverage: PASS
+docs/coverage/as6-epic002-pr3-executive-workspace-integration-coverage.md:9:- Workspace Storage V99 compatibility coverage: PASS
+docs/coverage/as6-epic004-pr1-executive-automation-scenarios-coverage.md:6:- Runtime-only orchestration coverage: PASS
+docs/coverage/as6-autonomy-score-coverage.md:17:- human dependency calculation
+docs/PRODUCT/AS6_RUNTIME_TELEMETRY_STORAGE_VALIDATION_V222_14.md:34:- Runtime localStorage telemetry validation.
+docs/PRODUCT/AS6_FIRST_ACTION_INSIGHTS_FOUNDATION_V222_16.md:27:- TOP_DESTINATION=/crm?filter=priority
+docs/PRODUCT/AS6_DECISION_HISTORY_PERSISTENCE_DIAGNOSTIC_V222_19.md:21:- OPTION_A=Frontend localStorage persistence only
+docs/PRODUCT/AS6_COMMAND_CENTER_FIRST_ACTION_TELEMETRY_V222_12.md:25:- Did not add backend dependency.
+docs/PRODUCT/AS6_FIRST_ACTION_METRICS_FOUNDATION_V222_15.md:25:- DESTINATIONS=/crm?filter=priority,/dashboard/revenue
+docs/PRODUCT/AS6_PRODUCT_INTELLIGENCE_FOUNDATION_V222_11.md:47:- External analytics dependency absence check.
+docs/governance/as6-epic005-pr4-executive-automation-audit-trail-complete-governance.md:7:- Next EPIC should focus on execution behavior: priorities, dependencies, orchestration and concurrency control.
+docs/governance/as6-root-cause-autonomy-score-addendum.md:21:Symptoms: manual dependency remains too high for target autonomy level.
+docs/governance/as6-root-cause-autonomy-score-addendum.md:25:Prevention: enforce explicit human dependency calculation.
+docs/governance/as6-epic005-pr3-executive-automation-policy-explanations-governance.md:6:- Policy explanations must not mutate Workspace Storage V99.
+docs/governance/as6-epic005-pr3-executive-automation-policy-explanations-governance.md:7:- Policy explanations must not mutate contextState.businessHome.
+docs/governance/as6-epic005-pr3-executive-automation-policy-explanations-governance.md:8:- Policy explanations must not change layout schema or persistent storage.
+docs/governance/as6-epic004-pr5-executive-automation-retry-recovery-governance.md:12:CONTROL=Executive Automation retry and recovery must remain runtime-only, expose retry count and failure reason, and must not mutate Workspace Storage V99 or layout schema.
+docs/governance/as6-epic001-business-home-workspace-persistence-governance.md:5:ROOT_CAUSE=Business Home shell was integrated but not connected to existing Workspace Storage V99.
+docs/governance/as6-epic001-business-home-workspace-persistence-governance.md:6:CONTROL=Business Home must use as6WorkspaceStorage.js instead of creating a parallel localStorage key.
+docs/governance/as6-epic003-pr5-executive-action-analytics-metrics-governance.md:11:CONTROL=Executive Action analytics must be computed only from runtime audit trail and must not mutate persistent storage or layout schema.
+docs/governance/as6-epic003-pr4-executive-action-history-audit-trail-governance.md:12:CONTROL=Executive Action history must remain runtime-only for PR-4 and must not mutate Workspace Storage V99, layout schema, contextState.businessHome or localStorage.
+docs/governance/as6-epic006-pr1-scenario-priorities-governance.md:11:CONTROL=Scenario priorities must remain runtime-only and must not change Workspace Storage V99 or contextState.businessHome.
+docs/governance/as6-epic001-pr8-drag-drop-layout-governance.md:9:CONTROL=Drag and drop must update only widget order through updateBusinessHomeLayout and must not change Workspace Storage V99 schema.
+docs/governance/as6-epic005-pr4-executive-automation-audit-trail-governance.md:8:- Audit Trail must not mutate Workspace Storage V99.
+docs/governance/as6-epic005-pr4-executive-automation-audit-trail-governance.md:9:- Audit Trail must not mutate contextState.businessHome.
+docs/governance/as6-epic005-pr4-executive-automation-audit-trail-governance.md:10:- Audit Trail must not use localStorage or persistent storage.
+docs/governance/as6-epic005-pr2-executive-automation-policy-ui-governance.md:6:- UI must not mutate Workspace Storage V99.
+docs/governance/as6-epic005-pr2-executive-automation-policy-ui-governance.md:7:- UI must not mutate contextState.businessHome.

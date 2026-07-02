@@ -1,0 +1,9 @@
+ M docs/AS6_PROJECT_STATE.md
+ M frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js
+?? docs/aec/as6-epic006-pr2-scenario-dependencies-aec.md
+?? docs/coverage/as6-epic006-pr2-scenario-dependencies-coverage.md
+?? docs/diagnostics/as6-epic006-pr2-scenario-dependencies.md
+?? docs/governance/as6-epic006-pr2-scenario-dependencies-governance.md
+?? frontend/src/as6/business-home/AS6ExecutiveScenarioDependenciesPanel.css
+?? frontend/src/as6/business-home/AS6ExecutiveScenarioDependenciesPanel.jsx
+?? frontend/src/as6/business-home/as6ExecutiveScenarioDependencies.js

@@ -1,3 +1,4 @@
+import AS6ExecutiveScenarioDependenciesPanel from './AS6ExecutiveScenarioDependenciesPanel.jsx';
 import AS6ExecutiveAutomationAuditTrailPanel from './AS6ExecutiveAutomationAuditTrailPanel.jsx';
 export const executiveAutomationPolicyExplanations = [
   {

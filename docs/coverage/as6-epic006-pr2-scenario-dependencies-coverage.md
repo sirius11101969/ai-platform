@@ -1,0 +1,12 @@
+# EPIC-006 PR-2 — Scenario Dependencies Coverage
+
+- Covers AS6_EXECUTIVE_SCENARIO_DEPENDENCY_MODEL_GAP.
+- Covers AS6_EXECUTIVE_SCENARIO_DEPENDENCY_VALIDATION_GAP.
+- Covers AS6_EXECUTIVE_SCENARIO_DEPENDENCY_WAIT_REASON_GAP.
+- Covers AS6_EXECUTIVE_SCENARIO_DEPENDENCY_CYCLE_DRIFT.
+- Covers AS6_EXECUTIVE_SCENARIO_DEPENDENCY_STORAGE_DRIFT.
+- Covers dependsOn.
+- Covers missingDependencies.
+- Covers canRun.
+- Covers waitReason.
+- Covers cycle detection.

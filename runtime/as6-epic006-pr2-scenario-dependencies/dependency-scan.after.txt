@@ -1,0 +1,17 @@
+frontend/src/as6/business-home/AS6ExecutiveScenarioDependenciesPanel.jsx:3:import { validateExecutiveScenarioDependencies, hasExecutiveScenarioDependencyCycle } from './as6ExecutiveScenarioDependencies.js';
+frontend/src/as6/business-home/AS6ExecutiveScenarioDependenciesPanel.jsx:8:  const dependencyRows = validateExecutiveScenarioDependencies(demoCompletedScenarios);
+frontend/src/as6/business-home/AS6ExecutiveScenarioDependenciesPanel.jsx:9:  const hasCycle = hasExecutiveScenarioDependencyCycle();
+frontend/src/as6/business-home/AS6ExecutiveScenarioDependenciesPanel.jsx:15:        <p>AS6 проверяет dependsOn перед запуском сценария и объясняет, почему сценарий готов, ожидает или заблокирован. Модель остаётся runtime-only.</p>
+frontend/src/as6/business-home/AS6ExecutiveScenarioDependenciesPanel.jsx:18:        <strong>Cycle check:</strong> {hasCycle ? 'Blocked — dependency cycle detected' : 'PASS — no dependency cycles'}
+frontend/src/as6/business-home/AS6ExecutiveScenarioDependenciesPanel.jsx:27:            <p><b>Depends on:</b> {item.dependsOn.length ? item.dependsOn.join(', ') : 'None'}</p>
+frontend/src/as6/business-home/AS6ExecutiveScenarioDependenciesPanel.jsx:29:            <p><b>Wait reason:</b> {item.waitReason}</p>
+frontend/src/as6/business-home/as6ExecutiveScenarioDependencies.js:1:export const executiveScenarioDependencies = [
+frontend/src/as6/business-home/as6ExecutiveScenarioDependencies.js:4:    dependsOn: [],
+frontend/src/as6/business-home/as6ExecutiveScenarioDependencies.js:10:    dependsOn: ['executive.summary.refresh'],
+frontend/src/as6/business-home/as6ExecutiveScenarioDependencies.js:16:    dependsOn: ['executive.automation.launchApproved'],
+frontend/src/as6/business-home/as6ExecutiveScenarioDependencies.js:23:  return executiveScenarioDependencies.find((item) => item.scenarioId === scenarioId) || null;
+frontend/src/as6/business-home/as6ExecutiveScenarioDependencies.js:26:export function hasExecutiveScenarioDependencyCycle(items = executiveScenarioDependencies) {
+frontend/src/as6/business-home/as6ExecutiveScenarioDependencies.js:27:  const graph = new Map(items.map((item) => [item.scenarioId, item.dependsOn || []]));
+frontend/src/as6/business-home/as6ExecutiveScenarioDependencies.js:48:export function validateExecutiveScenarioDependencies(completedScenarioIds = [], items = executiveScenarioDependencies) {
+frontend/src/as6/business-home/as6ExecutiveScenarioDependencies.js:50:  const hasCycle = hasExecutiveScenarioDependencyCycle(items);
+frontend/src/as6/business-home/as6ExecutiveScenarioDependencies.js:52:    const missingDependencies = (item.dependsOn || []).filter((dependencyId) => !completed.has(dependencyId));

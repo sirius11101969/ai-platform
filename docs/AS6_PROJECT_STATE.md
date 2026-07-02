@@ -5247,3 +5247,14 @@ Status: PASS pending validation
 - Preserved Workspace Storage V99, contextState.businessHome, layout schema, localStorage and persistent storage.
 - Added diagnostics, governance and coverage artifacts.
 - Project readiness: 99.96%.
+
+## EPIC-006 PR-2 — Scenario Dependencies
+
+- Added runtime-only dependency model for Executive Automation scenarios.
+- Added dependsOn, dependency validation, missing dependency detection, cycle detection and wait reason explanation.
+- Added Business Home dependencies panel.
+- Added diagnostics, governance, coverage and AEC artifacts.
+- Workspace Storage V99 unchanged.
+- contextState.businessHome unchanged.
+- layout schema, localStorage and persistent storage unchanged.
+- Project readiness: 99.97%.
