@@ -21,7 +21,7 @@ import { createAS6ExecutiveInsights } from "./as6ExecutiveInsights.js";
 import { createAS6ExecutiveAction, executeAS6ExecutiveAction, validateAS6ExecutiveAction } from "./as6ExecutiveActions.js";
 import "./AS6BusinessHome.css";
 
-export const AS6_BUSINESS_HOME_VERSION = "EPIC003_PR4";
+export const AS6_BUSINESS_HOME_VERSION = "EPIC003_PR3";
 export const AS6_BUSINESS_HOME_LAYOUT_SCHEMA_VERSION = 1;
 
 export const AS6_BUSINESS_HOME_WIDGETS = [
@@ -138,7 +138,6 @@ export function AS6BusinessHome() {
   const [layout, setLayout] = useState(state.businessHomeLayout);
   const [draggedWidgetId, setDraggedWidgetId] = useState(null);
   const [executiveActionStatus, setExecutiveActionStatus] = useState(null);
-  const [executiveActionHistory, setExecutiveActionHistory] = useState([]);
 
   useEffect(() => {
     setLayout(state.businessHomeLayout);
@@ -235,29 +234,10 @@ export function AS6BusinessHome() {
     setDraggedWidgetId(null);
   }
 
-  function appendAS6ExecutiveActionAuditEvent(event) {
-    const auditEvent = {
-      id: "as6-action-" + Date.now(),
-      createdAt: new Date().toISOString(),
-      ...event,
-    };
-    setExecutiveActionHistory((history) => [auditEvent, ...history].slice(0, 8));
-  }
-
   function handleAS6ExecutiveAction(insight) {
     const action = createAS6ExecutiveAction(insight);
     const validation = validateAS6ExecutiveAction(action);
-    const actionStatus = { ...validation, label: action.label, actionId: action.actionId || "showNextStep" };
-    setExecutiveActionStatus(actionStatus);
-    appendAS6ExecutiveActionAuditEvent({
-      title: insight?.title || "Executive Action",
-      actionId: actionStatus.actionId,
-      label: actionStatus.label,
-      target: actionStatus.target,
-      status: actionStatus.status,
-      fallback: !validation.ok,
-      message: actionStatus.message,
-    });
+    setExecutiveActionStatus({ ...validation, label: action.label, actionId: action.actionId || "showNextStep" });
     if (!validation.ok) return;
     executeAS6ExecutiveAction(action);
   }
@@ -335,7 +315,7 @@ export function AS6BusinessHome() {
     if (widgetId === "dashboard-live-data-status") return <AS6DashboardLiveDataStatus key={widgetId} data-widget-id={widgetId} />;
     if (widgetId === "revenue-crm-fusion-status") return <AS6RevenueCrmFusionStatus key={widgetId} data-widget-id={widgetId} />;
     if (widgetId === "executive-insights") {
-      return <AS6DataSurface title="Executive Insights & Recommendations" key={widgetId} data-widget-id={widgetId}><ul className="as6-business-home__list">{executiveInsights.recommendations.map((insight) => <li key={insight.id}><strong>{insight.title}</strong><br /><span>{insight.reason}</span><br /><small>{insight.action}</small><br /><button type="button" onClick={() => handleAS6ExecutiveAction(insight)}>Выполнить безопасное действие</button><br /><small>Target: {validateAS6ExecutiveAction(createAS6ExecutiveAction(insight)).target}</small></li>)}</ul>{executiveActionStatus && <AS6DataState type={executiveActionStatus.ok ? "success" : "warning"} title={executiveActionStatus.status} detail={(executiveActionStatus.label || "Action") + " → " + executiveActionStatus.target + " / " + executiveActionStatus.message} />}{executiveActionHistory.length > 0 && <section className="as6-business-home__action-audit" aria-label="Executive Action Audit Trail"><strong>Action Audit Trail</strong>{executiveActionHistory.map((event) => <article key={event.id}><span>{event.createdAt}</span><strong>{event.actionId}</strong><small>{event.label} → {event.target}</small><small>Status: {event.status} / Fallback: {event.fallback ? "YES" : "NO"}</small></article>)}</section>}<AS6DataState type="empty" title={executiveInsights.profileName} detail={executiveInsights.source} /></AS6DataSurface>;
+      return <AS6DataSurface title="Executive Insights & Recommendations" key={widgetId} data-widget-id={widgetId}><ul className="as6-business-home__list">{executiveInsights.recommendations.map((insight) => <li key={insight.id}><strong>{insight.title}</strong><br /><span>{insight.reason}</span><br /><small>{insight.action}</small><br /><button type="button" onClick={() => handleAS6ExecutiveAction(insight)}>Выполнить безопасное действие</button><br /><small>Target: {validateAS6ExecutiveAction(createAS6ExecutiveAction(insight)).target}</small></li>)}</ul>{executiveActionStatus && <AS6DataState type={executiveActionStatus.ok ? "success" : "warning"} title={executiveActionStatus.status} detail={(executiveActionStatus.label || "Action") + " → " + executiveActionStatus.target + " / " + executiveActionStatus.message} />}<AS6DataState type="empty" title={executiveInsights.profileName} detail={executiveInsights.source} /></AS6DataSurface>;
     }
     return null;
   }
