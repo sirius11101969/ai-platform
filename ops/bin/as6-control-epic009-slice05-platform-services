@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-epic009-slice05-platform-services
+
+! grep -R "localStorage\|sessionStorage\|indexedDB" frontend/src/as6os/services
+! grep -R "CRM\|Revenue\|business logic" frontend/src/as6os/services
+! grep -R "fetch(" frontend/src/as6os/services
+
+echo AS6_EPIC009_SLICE05_PLATFORM_SERVICES_CONTROL=PASS

@@ -2107,3 +2107,7 @@ Governed and registered.
 - Root cause: release automation attempted to stage files excluded by repository .gitignore.
 - Prevention: runtime evidence must not be staged unless explicitly forced by policy.
 - Control: use explicit tracked artifact list and exclude ignored runtime paths from normal git add.
+
+## AS6 EPIC009 Slice 05 Failure Classes
+- AS6_PLATFORM_SERVICE_DEFINITION_INVALID: service definition missing required id or label.
+- AS6_PLATFORM_SERVICE_NOT_FOUND: requested platform service is not registered.

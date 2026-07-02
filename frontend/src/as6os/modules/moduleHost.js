@@ -1,3 +1,4 @@
+import { getAS6PlatformService, traceAS6PlatformService } from '../services/index.js';
 export const AS6_MODULE_HOST_STAGE = 'AS6_EPIC009_SLICE04_MODULE_HOST';
 
 export const as6ModuleHostState = {
@@ -42,6 +43,8 @@ export function resolveAS6HostedModule(moduleId) {
 }
 
 export function initializeAS6HostedModule(moduleId) {
+  const moduleService = getAS6PlatformService('as6.modules');
+  traceAS6PlatformService('module.initialize.requested', { moduleId, serviceAvailable: Boolean(moduleService) });
   const module = resolveAS6HostedModule(moduleId);
   if (!module) throw new Error('AS6_MODULE_NOT_FOUND');
   if (typeof module.lifecycle.initialize === 'function') module.lifecycle.initialize(module);
@@ -50,6 +53,7 @@ export function initializeAS6HostedModule(moduleId) {
 }
 
 export function activateAS6HostedModule(moduleId) {
+  traceAS6PlatformService('module.activate.requested', { moduleId });
   const module = initializeAS6HostedModule(moduleId);
   as6ModuleHostState.activeModuleId = moduleId;
   if (typeof module.lifecycle.activate === 'function') module.lifecycle.activate(module);

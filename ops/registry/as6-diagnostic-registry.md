@@ -1612,3 +1612,11 @@ ops/bin/as6-control-permission-engine-v114
 - ROOT_CAUSE=release automation attempted to stage ignored runtime evidence.
 - PREVENTIVE_CONTROL=exclude runtime from normal git add or use git add -f only by explicit policy.
 - STAGE=AS6_EPIC009_SLICE01_OS_FOUNDATION
+
+## AS6 EPIC009 Slice 05 Diagnostic Registry
+- STAGE=AS6_EPIC009_SLICE05_PLATFORM_SERVICES
+- DIAGNOSTIC=ops/bin/as6-diagnose-epic009-slice05-platform-services
+- CONTROL=ops/bin/as6-control-epic009-slice05-platform-services
+- RUNTIME_TRACER=traceAS6PlatformService
+- FAILURE_CLASS=AS6_PLATFORM_SERVICE_DEFINITION_INVALID
+- FAILURE_CLASS=AS6_PLATFORM_SERVICE_NOT_FOUND

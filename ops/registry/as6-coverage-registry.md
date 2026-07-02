@@ -3436,3 +3436,13 @@ Permission Validation
 - AS6_EPIC009_SLICE01_OS_FOUNDATION=covered
 - AS6_GIT_IGNORE_CONFLICT=covered
 - Runtime evidence is retained locally and excluded from normal git staging.
+
+## AS6 EPIC009 Slice 05 Coverage Registry
+- Platform Services Registry=covered
+- Service registration contract=covered
+- Service lookup contract=covered
+- Service lifecycle initialize/dispose=covered
+- Module Host service consumption=covered
+- Runtime tracer=covered
+- No business logic control=covered
+- No persistent storage control=covered

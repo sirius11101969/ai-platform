@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f frontend/src/as6os/services/platformServices.js
+test -f frontend/src/as6os/services/index.js
+
+grep -q as6PlatformServicesRegistry frontend/src/as6os/services/platformServices.js
+grep -q registerAS6PlatformService frontend/src/as6os/services/platformServices.js
+grep -q getAS6PlatformService frontend/src/as6os/services/platformServices.js
+grep -q initializeAS6PlatformService frontend/src/as6os/services/platformServices.js
+grep -q disposeAS6PlatformService frontend/src/as6os/services/platformServices.js
+grep -q traceAS6PlatformService frontend/src/as6os/services/platformServices.js
+grep -q getAS6PlatformService frontend/src/as6os/modules/moduleHost.js
+grep -q traceAS6PlatformService frontend/src/as6os/modules/moduleHost.js
+
+echo AS6_EPIC009_SLICE05_PLATFORM_SERVICES_DIAGNOSTIC=PASS
