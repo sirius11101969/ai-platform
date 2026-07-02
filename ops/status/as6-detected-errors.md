@@ -2141,3 +2141,8 @@ Governed and registered.
 - AS6_LAYOUT_CONTRACT_MISSING: Workspace Layout has no stable contract for regions or slots.
 - AS6_LAYOUT_REGISTRY_DRIFT: Layout declarations drift from the Layout Contract.
 - AS6_LAYOUT_CONTROLLER_STATE_DUPLICATION: Layout Controller becomes a second source of Workspace state instead of a coordinator.
+
+## AS6 EPIC010 Slice 03 Failure Classes
+- AS6_NAVIGATION_CONTRACT_MISSING: Workspace Navigation has no stable contract for groups, items or capabilities.
+- AS6_NAVIGATION_RESOLVER_DRIFT: Navigation Resolver output drifts from registry declarations.
+- AS6_NAVIGATION_ITEM_NOT_FOUND: requested navigation item is not registered.

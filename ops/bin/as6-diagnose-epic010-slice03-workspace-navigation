@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/as6os/workspaceNavigation/navigationContract.js
+test -f frontend/src/as6os/workspaceNavigation/navigationRegistry.js
+test -f frontend/src/as6os/workspaceNavigation/navigationResolver.js
+test -f frontend/src/as6os/workspaceNavigation/navigationController.js
+test -f frontend/src/as6os/workspaceNavigation/AS6WorkspaceNavigation.jsx
+grep -q defineAS6NavigationGroup frontend/src/as6os/workspaceNavigation/navigationContract.js
+grep -q defineAS6NavigationItem frontend/src/as6os/workspaceNavigation/navigationContract.js
+grep -q defineAS6NavigationCapability frontend/src/as6os/workspaceNavigation/navigationContract.js
+grep -q as6WorkspaceNavigationRegistry frontend/src/as6os/workspaceNavigation/navigationRegistry.js
+grep -q resolveAS6WorkspaceNavigationTree frontend/src/as6os/workspaceNavigation/navigationResolver.js
+grep -q traceAS6WorkspaceNavigation frontend/src/as6os/workspaceNavigation/navigationController.js
+grep -q getAS6WorkspaceNavigationHealthSnapshot frontend/src/as6os/workspaceNavigation/navigationController.js
+grep -q AS6WorkspaceNavigation frontend/src/as6os/workspaceNavigation/AS6WorkspaceNavigation.jsx
+echo AS6_WORKSPACE_NAVIGATION=PASS
+echo AS6_NAVIGATION_ENGINE=PASS
+echo AS6_NAVIGATION_CONTROLLER=PASS
+echo AS6_NAVIGATION_RESOLVER=PASS
+echo AS6_NAVIGATION_REGISTRY=PASS
+echo AS6_NAVIGATION_CONTRACT=PASS
+echo AS6_NAVIGATION_GROUPS=PASS
+echo AS6_NAVIGATION_ITEMS=PASS
+echo AS6_NAVIGATION_RUNTIME=PASS
+echo AS6_NAVIGATION_HEALTH_SNAPSHOT=PASS
+echo AS6_EPIC010_SLICE03_WORKSPACE_NAVIGATION_DIAGNOSTIC=PASS

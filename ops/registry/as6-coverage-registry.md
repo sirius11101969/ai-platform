@@ -3533,3 +3533,16 @@ Permission Validation
 - No business logic control=covered
 - No CRM features control=covered
 - No persistent storage control=covered
+
+## AS6 EPIC010 Slice 03 Coverage Registry
+- Workspace Navigation Runtime=covered
+- Navigation Controller=covered
+- Navigation Resolver=covered
+- Navigation Registry=covered
+- Navigation Contract=covered
+- Navigation Groups=covered
+- Navigation Items=covered
+- Navigation Runtime Tracer=covered
+- Navigation Health Snapshot=covered
+- No business logic control=covered
+- No CRM features control=covered

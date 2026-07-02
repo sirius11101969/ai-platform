@@ -1,0 +1,5 @@
+.as6-workspace-navigation{display:grid;gap:18px}
+.as6-workspace-navigation__group{display:grid;gap:8px}
+.as6-workspace-navigation__group strong{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#94a3b8}
+.as6-workspace-navigation__group a{color:#cbd5e1;text-decoration:none;border-radius:14px;padding:10px 12px;background:rgba(255,255,255,.035)}
+.as6-workspace-navigation__group a.is-active{color:#f8fafc;background:rgba(255,255,255,.12)}
