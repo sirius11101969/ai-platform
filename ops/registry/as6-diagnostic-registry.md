@@ -1472,3 +1472,16 @@ ops/bin/as6-control-permission-engine-v114
 - Failure class: AS6_EXECUTIVE_DASHBOARD_NO_STORAGE_DRIFT
 - Failure class: AS6_EXECUTIVE_DASHBOARD_MUTATION_RISK
 - Root cause: Executive Intelligence modules exist without unified visualization dashboard.
+
+## AS6_EPIC008_EXECUTIVE_INTELLIGENCE_HARDENING
+
+- Diagnostic: ops/bin/as6-diagnose-executive-intelligence-hardening
+- Control: ops/bin/as6-control-executive-intelligence-hardening
+- Runtime artifacts: runtime/as6-epic008-executive-intelligence-hardening/20260702T115713Z
+- Failure class: AS6_EXECUTIVE_INTELLIGENCE_REGRESSION_RISK
+- Failure class: AS6_DECISION_ID_CHAIN_CONSISTENCY_GAP
+- Failure class: AS6_EXECUTIVE_DASHBOARD_RUNTIME_TRACE_GAP
+- Failure class: AS6_EXECUTIVE_MODULE_CONTRACT_DRIFT
+- Failure class: AS6_EXECUTIVE_GOVERNANCE_COVERAGE_GAP
+- AEC: ops/governance/as6-executive-intelligence-hardening-aec.md
+- Root cause: ops/governance/as6-executive-intelligence-hardening-root-cause.md

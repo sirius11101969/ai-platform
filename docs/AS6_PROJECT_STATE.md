@@ -5491,3 +5491,17 @@ Status: PASS pending validation
 - Added no-storage drift diagnostic.
 - Added no-mutation risk diagnostic.
 - Executive Intelligence readiness after PR-8: 100%.
+
+## AS6_EPIC008_EXECUTIVE_INTELLIGENCE_HARDENING
+
+- Added Runtime Hardening diagnostics.
+- Added Contract Hardening diagnostics.
+- Added decisionId Hardening diagnostics.
+- Added Dashboard Hardening diagnostics.
+- Added Governance Hardening diagnostics.
+- Added Regression Hardening diagnostics.
+- Added Guardian Executive Gate control.
+- Corrected decision trace class: AS6_EXECUTIVE_DECISION_TRACE_COMPLETE.
+- No new business functionality added.
+- Project readiness remains 99%.
+- Executive Intelligence readiness remains 100%.

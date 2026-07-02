@@ -3307,3 +3307,11 @@ Permission Validation
 - ops/bin/as6-control-executive-intelligence-dashboard-pr8
 - ops/governance/as6-executive-intelligence-dashboard-root-cause-pr8.md
 - ops/governance/as6-executive-intelligence-dashboard-aec-pr8.md
+
+## AS6_EPIC008_EXECUTIVE_INTELLIGENCE_HARDENING
+
+- ops/bin/as6-diagnose-executive-intelligence-hardening
+- ops/bin/as6-control-executive-intelligence-hardening
+- ops/governance/as6-executive-intelligence-hardening-root-cause.md
+- ops/governance/as6-executive-intelligence-hardening-aec.md
+- runtime/as6-epic008-executive-intelligence-hardening/20260702T115713Z/runtime-trace.txt

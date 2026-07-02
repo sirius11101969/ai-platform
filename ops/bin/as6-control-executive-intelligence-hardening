@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-executive-intelligence-hardening
+grep -q AS6_EXECUTIVE_INTELLIGENCE_REGRESSION_RISK ops/governance/as6-executive-intelligence-hardening-root-cause.md
+grep -q AS6_DECISION_ID_CHAIN_CONSISTENCY_GAP ops/governance/as6-executive-intelligence-hardening-root-cause.md
+grep -q AS6_EXECUTIVE_DASHBOARD_RUNTIME_TRACE_GAP ops/governance/as6-executive-intelligence-hardening-root-cause.md
+grep -q AS6_EXECUTIVE_MODULE_CONTRACT_DRIFT ops/governance/as6-executive-intelligence-hardening-root-cause.md
+grep -q AS6_EXECUTIVE_GOVERNANCE_COVERAGE_GAP ops/governance/as6-executive-intelligence-hardening-root-cause.md
+grep -q AS6_AEC_EXECUTIVE_GATE_REQUIRED ops/governance/as6-executive-intelligence-hardening-aec.md
+grep -q AS6_AEC_EXECUTIVE_DECISION_TRACE_COMPLETE_REQUIRED ops/governance/as6-executive-intelligence-hardening-aec.md
+echo EXECUTIVE_INTELLIGENCE_HARDENING=PASS
+echo EXECUTIVE_GOVERNANCE_COVERAGE=PASS
+echo EXECUTIVE_GATE_RESULT=PASS

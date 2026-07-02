@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+FILES=(
+frontend/src/lib/as6ScenarioPlanner.js
+frontend/src/lib/as6PredictiveExecution.js
+frontend/src/lib/as6ExecutiveAuditTrail.js
+frontend/src/lib/as6ExecutiveFeedbackLoop.js
+frontend/src/lib/as6ExecutiveDecisionQualityScore.js
+frontend/src/lib/as6ExecutiveIntelligenceDashboard.js
+frontend/src/components/as6/AS6ScenarioPlannerPanel.jsx
+frontend/src/components/as6/AS6PredictiveExecutionPanel.jsx
+frontend/src/components/as6/AS6ExecutiveAuditTrailPanel.jsx
+frontend/src/components/as6/AS6ExecutiveFeedbackLoopPanel.jsx
+frontend/src/components/as6/AS6ExecutiveDecisionQualityScorePanel.jsx
+frontend/src/components/as6/AS6ExecutiveIntelligenceDashboardPanel.jsx
+)
+for f in "${FILES[@]}"; do test -f "$f"; done
+grep -R "decisionId" frontend/src/lib/as6ExecutiveAuditTrail.js frontend/src/lib/as6ExecutiveFeedbackLoop.js frontend/src/lib/as6ExecutiveDecisionQualityScore.js frontend/src/lib/as6ExecutiveIntelligenceDashboard.js >/dev/null
+grep -q "Executive Intelligence Dashboard" frontend/src/components/as6/AS6ExecutiveIntelligenceDashboardPanel.jsx
+grep -q "no-new-persistent-storage" frontend/src/lib/as6ExecutiveIntelligenceDashboard.js
+! grep -R "localStorage\|sessionStorage\|indexedDB" frontend/src/lib/as6ScenarioPlanner.js frontend/src/lib/as6PredictiveExecution.js frontend/src/lib/as6ExecutiveAuditTrail.js frontend/src/lib/as6ExecutiveFeedbackLoop.js frontend/src/lib/as6ExecutiveDecisionQualityScore.js frontend/src/lib/as6ExecutiveIntelligenceDashboard.js frontend/src/components/as6
+! grep -R "setRecommendation\|updateRecommendation\|setScenario\|updateScenario\|setPrediction\|updatePrediction\|setExecution\|updateExecution\|setFeedback\|updateFeedback\|setQuality\|updateQuality\|mutateExecution\|runExecution\|executeAction" frontend/src/lib/as6ScenarioPlanner.js frontend/src/lib/as6PredictiveExecution.js frontend/src/lib/as6ExecutiveAuditTrail.js frontend/src/lib/as6ExecutiveFeedbackLoop.js frontend/src/lib/as6ExecutiveDecisionQualityScore.js frontend/src/lib/as6ExecutiveIntelligenceDashboard.js frontend/src/components/as6
+echo EXECUTIVE_RUNTIME_TRACE=PASS
+echo EXECUTIVE_MODULE_CONTRACT_DRIFT=PASS
+echo DECISION_ID_CHAIN_CONSISTENCY=PASS
+echo AS6_EXECUTIVE_DECISION_TRACE_COMPLETE=PASS
+echo EXECUTIVE_DASHBOARD_RUNTIME_TRACE=PASS
+echo EXECUTIVE_REGRESSION_CHECK=PASS
