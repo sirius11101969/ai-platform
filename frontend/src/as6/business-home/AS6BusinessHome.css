@@ -236,3 +236,28 @@
   opacity: 0.58;
   transform: scale(0.995);
 }
+
+.as6-business-home__adaptive-list {
+  display: grid;
+  gap: 12px;
+}
+.as6-business-home__adaptive-list article {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.36);
+}
+.as6-business-home__adaptive-list span {
+  color: rgba(226, 232, 240, 0.72);
+}
+.as6-business-home__adaptive-list button {
+  justify-self: start;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 12px;
+  padding: 8px 12px;
+  background: rgba(15, 23, 42, 0.52);
+  color: inherit;
+  cursor: pointer;
+}

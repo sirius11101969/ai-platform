@@ -11,7 +11,7 @@ import { getAS6ActiveWorkspaceSession, getAS6WorkspaceSessions, saveAS6Workspace
 import { AS6Workspace, AS6Sidebar, AS6Header, AS6RightRail, AS6Assistant, AS6Focus } from "../../components/as6-workspace/AS6Workspace.jsx";
 import "./AS6BusinessHome.css";
 
-export const AS6_BUSINESS_HOME_VERSION = "EPIC001_PR9";
+export const AS6_BUSINESS_HOME_VERSION = "EPIC001_PR8";
 export const AS6_BUSINESS_HOME_LAYOUT_SCHEMA_VERSION = 1;
 
 export const AS6_BUSINESS_HOME_WIDGETS = [
@@ -20,7 +20,6 @@ export const AS6_BUSINESS_HOME_WIDGETS = [
   { id: "workspace", title: "Workspaces", defaultPinned: false },
   { id: "recommendations", title: "Recommendations", defaultPinned: false },
   { id: "activity", title: "Activity", defaultPinned: false },
-  { id: "adaptive-suggestions", title: "Adaptive Suggestions", defaultPinned: false },
 ];
 
 export function createAS6BusinessHomeDefaultLayout() {
@@ -63,20 +62,6 @@ export function validateAS6BusinessHomeLayout(layout) {
   if (!normalized.widgets.every((widget) => typeof widget.visible === "boolean")) failures.push("AS6_BUSINESS_HOME_WIDGET_VISIBILITY_DRIFT");
   if (!normalized.widgets.every((widget) => typeof widget.pinned === "boolean")) failures.push("AS6_BUSINESS_HOME_PINNED_WIDGET_DRIFT");
   return { ok: failures.length === 0, failures, layout: normalized };
-}
-
-export function createAS6BusinessHomeAdaptiveSuggestions(state) {
-  const suggestions = [];
-  if (state.recommendations?.length) {
-    suggestions.push({ id: "pin-ai-brief", title: "Закрепить AI Brief", reason: state.recommendations[0], action: { type: "pin", widgetId: "ai-brief" } });
-  }
-  if ((state.platformStatus?.workspaceModules || 0) > 0) {
-    suggestions.push({ id: "raise-workspace", title: "Поднять Workspaces выше", reason: "Workspace Runtime содержит активные модули.", action: { type: "move-first", widgetId: "workspace" } });
-  }
-  if ((state.platformStatus?.navigationItems || 0) > 0) {
-    suggestions.push({ id: "show-recommendations", title: "Показать рекомендации", reason: "Universal Navigation содержит рабочие переходы.", action: { type: "show", widgetId: "recommendations" } });
-  }
-  return suggestions.slice(0, 3);
 }
 
 function sortAS6BusinessHomeWidgets(widgets) {
@@ -213,27 +198,6 @@ export function AS6BusinessHome() {
     setDraggedWidgetId(null);
   }
 
-  function applyAS6AdaptiveSuggestion(suggestion) {
-    if (!suggestion?.action?.widgetId) return;
-    updateBusinessHomeLayout((currentLayout) => {
-      const widgetId = suggestion.action.widgetId;
-      if (suggestion.action.type === "pin") {
-        return { ...currentLayout, widgets: currentLayout.widgets.map((widget) => widget.id === widgetId ? { ...widget, pinned: true, visible: true } : widget) };
-      }
-      if (suggestion.action.type === "show") {
-        return { ...currentLayout, widgets: currentLayout.widgets.map((widget) => widget.id === widgetId ? { ...widget, visible: true } : widget) };
-      }
-      if (suggestion.action.type === "move-first") {
-        const ordered = sortAS6BusinessHomeWidgets(currentLayout.widgets);
-        const target = ordered.find((widget) => widget.id === widgetId);
-        if (!target) return currentLayout;
-        const rest = ordered.filter((widget) => widget.id !== widgetId);
-        return { ...currentLayout, widgets: [target, ...rest].map((widget, order) => ({ ...widget, visible: widget.id === widgetId ? true : widget.visible, order })) };
-      }
-      return currentLayout;
-    });
-  }
-
   function renderBusinessHomeWidget(widgetId) {
     if (widgetId === "ai-brief") {
       return (
@@ -260,10 +224,6 @@ export function AS6BusinessHome() {
     }
     if (widgetId === "activity") {
       return <AS6ExperienceCard eyebrow="Activity" title="Последние события" key={widgetId} data-widget-id={widgetId}><ul className="as6-business-home__list">{state.activity.map((item) => <li key={item}>{item}</li>)}</ul></AS6ExperienceCard>;
-    }
-    if (widgetId === "adaptive-suggestions") {
-      const suggestions = createAS6BusinessHomeAdaptiveSuggestions(state);
-      return <AS6ExperienceCard eyebrow="AI Adaptive Home" title="Рекомендации AS6" key={widgetId} data-widget-id={widgetId}><div className="as6-business-home__adaptive-list">{suggestions.map((suggestion) => <article key={suggestion.id}><strong>{suggestion.title}</strong><span>{suggestion.reason}</span><button type="button" onClick={() => applyAS6AdaptiveSuggestion(suggestion)}>Применить</button></article>)}</div></AS6ExperienceCard>;
     }
     return null;
   }

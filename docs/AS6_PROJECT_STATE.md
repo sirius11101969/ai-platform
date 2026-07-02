@@ -4990,3 +4990,13 @@ Status: PASS pending validation
 - Reused existing debounce autosave and Workspace Storage V99.
 - Added drag/drop diagnostics, governance and coverage artifacts.
 - Project readiness: 99.9%.
+
+## AS6 EPIC-001 PR-9 — AI Adaptive Home
+
+- AS6_DONE=AS6_EPIC001_PR9_AI_ADAPTIVE_HOME.
+- Added Adaptive Suggestions widget.
+- AI recommends layout improvements without overriding user layout.
+- Apply action uses existing updateBusinessHomeLayout flow.
+- Reused contextState.businessHome, debounce autosave and Workspace Storage V99.
+- Added AI adaptive diagnostics, governance and coverage artifacts.
+- Project readiness: 100% for EPIC-001 Business Home scope.
