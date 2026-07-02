@@ -3385,3 +3385,15 @@ Permission Validation
 - ops/governance/as6-epic009-diagnostics-root-cause.md
 - ops/governance/as6-epic009-diagnostics-aec.md
 - runtime/as6-epic009-diagnostics/20260702T142726Z/runtime-trace.txt
+
+## AS6_EPIC009_ARCHITECTURE_REVIEW
+
+- docs/epic009/as6-epic009-architecture-review.md
+- docs/adr/as6-adr-epic009-operating-system-architecture.md
+- docs/epic009/as6-epic009-compatibility-contracts.md
+- docs/epic009/as6-epic009-solution-design-input.md
+- ops/bin/as6-diagnose-epic009-architecture-review
+- ops/bin/as6-control-epic009-architecture-review
+- ops/governance/as6-epic009-architecture-review-root-cause.md
+- ops/governance/as6-epic009-architecture-review-aec.md
+- runtime/as6-epic009-architecture-review/20260702T145434Z/runtime-trace.txt

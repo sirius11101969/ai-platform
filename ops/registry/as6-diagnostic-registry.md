@@ -1566,3 +1566,13 @@ ops/bin/as6-control-permission-engine-v114
 - AEC: ops/governance/as6-epic009-diagnostics-aec.md
 - Runtime artifacts: runtime/as6-epic009-diagnostics/20260702T142726Z
 - Failure classes: diagnostic baseline missing, workspace hosting model unknown, OS navigation structure unknown, design system compatibility unknown, component reuse baseline unknown, CRM migration path unknown, executive baseline mutation risk, reference meta-model mutation risk.
+
+## AS6_EPIC009_ARCHITECTURE_REVIEW
+
+- Diagnostic: ops/bin/as6-diagnose-epic009-architecture-review
+- Control: ops/bin/as6-control-epic009-architecture-review
+- Architecture Review: docs/epic009/as6-epic009-architecture-review.md
+- ADR: docs/adr/as6-adr-epic009-operating-system-architecture.md
+- Compatibility Contracts: docs/epic009/as6-epic009-compatibility-contracts.md
+- Solution Design Input: docs/epic009/as6-epic009-solution-design-input.md
+- Runtime artifacts: runtime/as6-epic009-architecture-review/20260702T145434Z
