@@ -5625,3 +5625,23 @@ Status: PASS pending validation
 - SLICE01_OS_FOUNDATION_READY=TRUE.
 - NEXT_STAGE=AS6_EPIC009_SLICE01_OS_FOUNDATION.
 - Project readiness remains 99%.
+
+## AS6_DONE=AS6_EPIC009_SLICE01_OS_FOUNDATION
+- Added frontend/src/as6os/index.js.
+- Added OS runtime context.
+- Added module registry.
+- Added service registry.
+- Added event bus skeleton.
+- Added diagnostics hook coverage.
+- Added diagnostic script ops/bin/as6-diagnose-epic009-slice01-os-foundation.
+- Added control script ops/bin/as6-control-epic009-slice01-os-foundation.
+- Added governance root cause and AEC artifacts.
+- PROJECT_READINESS=99%.
+- NEXT_STAGE=AS6_EPIC009_SLICE02_WORKSPACE_SHELL.
+
+## AS6 EPIC009 Slice 01 Finalization
+- Completed Git finalization after ignored runtime staging conflict.
+- Added failure class AS6_GIT_IGNORE_CONFLICT.
+- Added preventive control for ignored runtime evidence.
+- PROJECT_READINESS=99%.
+- NEXT_STAGE=AS6_EPIC009_SLICE02_WORKSPACE_SHELL.

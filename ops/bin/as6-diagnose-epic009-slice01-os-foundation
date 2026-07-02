@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/as6os/index.js
+grep -q AS6_EPIC009_SLICE01_OS_FOUNDATION frontend/src/as6os/index.js
+grep -q as6RuntimeContext frontend/src/as6os/index.js
+grep -q as6ModuleRegistry frontend/src/as6os/index.js
+grep -q as6ServiceRegistry frontend/src/as6os/index.js
+grep -q as6EventBus frontend/src/as6os/index.js
+echo AS6_EPIC009_SLICE01_OS_FOUNDATION_DIAGNOSTIC=PASS

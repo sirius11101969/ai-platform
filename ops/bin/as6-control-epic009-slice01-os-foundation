@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-epic009-slice01-os-foundation
+echo AS6_EPIC009_SLICE01_OS_FOUNDATION_CONTROL=PASS

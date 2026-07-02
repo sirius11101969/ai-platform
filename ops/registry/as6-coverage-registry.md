@@ -3431,3 +3431,8 @@ Permission Validation
 - ops/governance/as6-epic009-implementation-plan-root-cause.md
 - ops/governance/as6-epic009-implementation-plan-aec.md
 - runtime/as6-epic009-implementation-plan/20260702T153538Z/runtime-trace.txt
+
+## AS6 EPIC009 Slice 01 Coverage
+- AS6_EPIC009_SLICE01_OS_FOUNDATION=covered
+- AS6_GIT_IGNORE_CONFLICT=covered
+- Runtime evidence is retained locally and excluded from normal git staging.

@@ -1606,3 +1606,9 @@ ops/bin/as6-control-permission-engine-v114
 - Runtime Evidence Matrix: docs/epic009/as6-epic009-runtime-evidence-matrix.md
 - Definition of Done Matrix: docs/epic009/as6-epic009-definition-of-done-matrix.md
 - Runtime artifacts: runtime/as6-epic009-implementation-plan/20260702T153538Z
+
+## AS6 Git Ignore Conflict Prevention
+- FAILURE_CLASS=AS6_GIT_IGNORE_CONFLICT
+- ROOT_CAUSE=release automation attempted to stage ignored runtime evidence.
+- PREVENTIVE_CONTROL=exclude runtime from normal git add or use git add -f only by explicit policy.
+- STAGE=AS6_EPIC009_SLICE01_OS_FOUNDATION

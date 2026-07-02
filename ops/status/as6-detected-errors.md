@@ -2102,3 +2102,8 @@ Governed and registered.
 - AS6_VALIDATION_MATRIX_MISSING: controlled.
 - AS6_RUNTIME_EVIDENCE_MATRIX_MISSING: controlled.
 - AS6_DEFINITION_OF_DONE_MATRIX_MISSING: controlled.
+
+## AS6 Failure Class: AS6_GIT_IGNORE_CONFLICT
+- Root cause: release automation attempted to stage files excluded by repository .gitignore.
+- Prevention: runtime evidence must not be staged unless explicitly forced by policy.
+- Control: use explicit tracked artifact list and exclude ignored runtime paths from normal git add.
