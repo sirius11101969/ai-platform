@@ -1,0 +1,14 @@
+frontend/src/as6/business-home/as6ExecutionConcurrencyControl.js:1:export const executiveConcurrencyLocks = [
+frontend/src/as6/business-home/as6ExecutionConcurrencyControl.js:7:    reason: 'Automation launch owns a runtime lock because it may trigger a state-changing execution path.'
+frontend/src/as6/business-home/as6ExecutionConcurrencyControl.js:18:export function getExecutiveScenarioConcurrencyDecision(scenario = {}, locks = executiveConcurrencyLocks) {
+frontend/src/as6/business-home/as6ExecutionConcurrencyControl.js:28:      ? 'No active runtime lock conflicts with this scenario.'
+frontend/src/as6/business-home/as6ExecutionConcurrencyControl.js:29:      : 'Scenario is blocked by active runtime lock: ' + conflicts.map((lock) => lock.lockId).join(', '),
+frontend/src/as6/business-home/as6ExecutionConcurrencyControl.js:32:      : 'Wait until conflicting runtime lock is released or show fallback to the user.',
+frontend/src/as6/business-home/as6ExecutionConcurrencyControl.js:39:export function evaluateExecutiveConcurrency(scenarios = [], locks = executiveConcurrencyLocks) {
+frontend/src/as6/business-home/as6ExecutionConcurrencyControl.js:40:  return scenarios.map((scenario) => getExecutiveScenarioConcurrencyDecision(scenario, locks));
+frontend/src/as6/business-home/AS6ExecutionConcurrencyPanel.jsx:3:import { evaluateExecutiveConcurrency, executiveConcurrencyLocks } from './as6ExecutionConcurrencyControl.js';
+frontend/src/as6/business-home/AS6ExecutionConcurrencyPanel.jsx:12:  const decisions = evaluateExecutiveConcurrency(demoConcurrencyScenarios);
+frontend/src/as6/business-home/AS6ExecutionConcurrencyPanel.jsx:18:        <p>AS6 использует runtime lock, чтобы не запускать несовместимые сценарии одновременно. Решение не записывается в storage.</p>
+frontend/src/as6/business-home/AS6ExecutionConcurrencyPanel.jsx:21:        {executiveConcurrencyLocks.map((lock) => (
+frontend/src/as6/business-home/AS6ExecutionConcurrencyPanel.jsx:40:            <p><b>Conflict reason:</b> {item.conflictReason}</p>
+frontend/src/as6/business-home/AS6ExecutionConcurrencyPanel.jsx:41:            <p><b>Wait decision:</b> {item.waitDecision}</p>

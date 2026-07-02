@@ -1,0 +1,445 @@
+frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js:9:    reason: 'ActionId известен, сценарий только обновляет аналитическое представление и не меняет persistent storage.',
+frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js:26:    status: 'blocked',
+frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js:35:    status: 'blocked',
+frontend/src/as6/business-home/AS6ExecutiveAutomationAuditTrailPanel.jsx:11:        <p>AS6 показывает путь выполнения сценария: шаги, статусы, причину остановки, fallback и governance-объяснение. История остаётся runtime-only.</p>
+frontend/src/as6/business-home/as6ExecutionOrchestrator.js:8:  reason: 'No scenario can be selected because all candidates are waiting, blocked or not allowed by governance.',
+frontend/src/as6/business-home/as6ExecutionOrchestrator.js:9:  safeNextStep: 'Show wait/block reasons and ask the user to resolve dependencies or review governance policy before execution.'
+frontend/src/as6/business-home/as6ExecutionOrchestrator.js:28:      governanceStatus: governanceAllowed ? 'allowed' : 'blocked',
+frontend/src/as6/business-home/as6ExecutionOrchestrator.js:34:          ? 'Scenario passed dependencies but is blocked by governance: ' + (governance ? governance.reason : 'No governance reason available.')
+frontend/src/as6/business-home/as6ExecutiveAutomationAuditTrail.js:7:    duration: 'runtime-only',
+frontend/src/as6/business-home/as6ExecutiveAutomationAuditTrail.js:11:    governanceExplanation: 'ActionId is known and does not mutate persistent storage.',
+frontend/src/as6/business-home/as6ExecutiveAutomationAuditTrail.js:23:    duration: 'runtime-only',
+frontend/src/as6/business-home/as6ExecutiveAutomationAuditTrail.js:24:    finalStatus: 'Blocked',
+frontend/src/as6/business-home/as6ExecutiveAutomationAuditTrail.js:27:    governanceExplanation: 'Scenario blocked because a chain step can mutate state without enough governance evidence.',
+frontend/src/as6/business-home/as6ExecutiveAutomationAuditTrail.js:29:      { order: 1, actionId: 'executive.unsafe.chain', label: 'Policy check', status: 'Blocked', detail: 'Unsafe chain detected.' },
+frontend/src/as6/business-home/as6ExecutiveAutomationGovernance.js:10:  blockedActionIds: [],
+frontend/src/as6/business-home/as6ExecutiveAutomationGovernance.js:46:export function createAS6ExecutiveAutomationGovernanceFallback(reason = "Scenario blocked by governance policy") {
+frontend/src/as6/business-home/as6ExecutiveAutomationGovernance.js:50:    blocked: true,
+frontend/src/as6/business-home/as6ExecutiveAutomationGovernance.js:51:    status: "blocked",
+frontend/src/as6/business-home/as6ExecutiveAutomationGovernance.js:66:    blocked: false,
+frontend/src/as6/business-home/AS6ExecutiveScenarioDependenciesPanel.jsx:15:        <p>AS6 проверяет dependsOn перед запуском сценария и объясняет, почему сценарий готов, ожидает или заблокирован. Модель остаётся runtime-only.</p>
+frontend/src/as6/business-home/AS6ExecutiveScenarioDependenciesPanel.jsx:18:        <strong>Cycle check:</strong> {hasCycle ? 'Blocked — dependency cycle detected' : 'PASS — no dependency cycles'}
+frontend/src/as6/business-home/AS6ExecutiveScenarioDependenciesPanel.css:10:.as6-dependencies__card[data-dependency-status='blocked']{background:rgba(239,68,68,.1)}
+frontend/src/as6/business-home/as6ExecutiveScenarioDependencies.js:17:    dependencyStatus: 'blocked',
+frontend/src/as6/business-home/as6ExecutiveScenarioDependencies.js:18:    waitReason: 'Dependency chain reaches a governance-blocked scenario. Execution must wait for safe review.'
+frontend/src/as6/business-home/as6ExecutiveScenarioDependencies.js:58:      dependencyStatus: hasCycle ? 'blocked' : canRun ? 'ready' : 'waiting',
+frontend/src/as6/business-home/as6ExecutiveScenarioDependencies.js:60:        ? 'Dependency cycle detected. Scenario launch is blocked until the cycle is removed.'
+frontend/src/as6/business-home/AS6ExecutionOrchestratorPanel.jsx:32:              <strong>{item.canSelect ? 'Selectable' : 'Waiting/Blocked'}</strong>
+frontend/src/as6/business-home/AS6ExecutiveAutomationAuditTrailPanel.css:7:.as6-audit-trail__card[data-final-status='blocked']{background:rgba(239,68,68,.1)}
+frontend/src/as6/business-home/AS6ExecutiveAutomationAuditTrailPanel.css:14:.as6-audit-trail__steps span,.as6-audit-trail__steps strong,.as6-audit-trail__steps small{display:block}
+frontend/src/as6/business-home/AS6ExecutiveAutomationPolicyPanel.css:8:.as6-policy-ui__card span{display:block;font-size:12px;opacity:.68}
+frontend/src/as6/business-home/AS6ExecutiveAutomationPolicyPanel.css:9:.as6-policy-ui__card strong{display:block;margin-top:6px}
+frontend/src/as6/business-home/AS6ExecutiveAutomationPolicyPanel.css:28:.as6-policy-ui__explanation-card[data-policy-status='blocked'] {
+frontend/src/as6/business-home/AS6ExecutiveAutomationPolicyPanel.jsx:8:  { label: 'Unknown actionId', value: 'Blocked' },
+frontend/src/as6/business-home/AS6ExecutiveAutomationPolicyPanel.jsx:33:              <strong>{item.status === 'allowed' ? 'Allowed' : 'Blocked'}</strong>
+frontend/src/as6/business-home/AS6BusinessHome.jsx:132:    const rawUser = localStorage.getItem("as6-user") || localStorage.getItem("user");
+docs/STAGE_PASSPORTS/V221_7_UI_QUALITY.md:8:Goal: add UI quality guard for the first AS6 product block.
+docs/STAGE_PASSPORTS/V221_7_UI_QUALITY.md:10:Architecture Result: first product block is protected by presence, accessibility and content-quality checks.
+docs/STAGE_PASSPORTS/V221_6_FIRST_SCREEN_VALIDATION.md:11:User Result: the first AS6 product promise block is protected from accidental removal.
+docs/STAGE_PASSPORTS/V221_8_PRODUCTION_HEALTH.md:8:Goal: verify production health after Foundation, guards and first UI block.
+docs/STAGE_PASSPORTS/V221_5_FIRST_PRODUCT_SCREEN.md:8:Goal: add the first small product block aligned with Canon/North Star.
+docs/STAGE_PASSPORTS/V222_14_RUNTIME_TELEMETRY_STORAGE_VALIDATION.md:9:Hypothesis Status: Runtime storage behavior confirmed in browser-like localStorage simulation.
+docs/presentation/AS6_AI_CRM_Platform_Deck.html:301:      display: block;
+docs/presentation/AS6_AI_CRM_Platform_Deck.html:321:      display: block;
+docs/presentation/AS6_AI_CRM_Platform_Deck.html:437:    .lead-card b { display: block; font-size: 15px; margin-bottom: 6px; }
+docs/presentation/AS6_AI_CRM_Platform_Deck.html:438:    .lead-card span { display: block; color: var(--dim); font-size: 12px; margin-bottom: 8px; }
+docs/presentation/AS6_AI_CRM_Platform_Deck.html:444:    .memory-row b { display: block; font-size: 15px; margin-bottom: 5px; }
+docs/presentation/AS6_AI_CRM_Platform_Deck.html:581:            <div class="metric"><b class="gradient-text">Docker</b><span>Production deployment: backend, nginx/frontend, PostgreSQL и persistent storage.</span></div>
+docs/RELEASES/AS6_RELEASE_PASSPORT_V221.md:29:V221 converted AS6 Canon/Foundation from conversation into repository structure, guards, knowledge system, first product UI block, validation, production health check and release passport.
+docs/platform-v2/sdk/marketplace-ga-p35.md:24:After P35, infrastructure development should be frozen unless a regression, security issue or production blocker is detected.
+docs/platform-v2/sdk/marketplace-administration-p33.md:10:- block/unblock plugins
+docs/platform-v2/sdk/marketplace-trust-ui-installation-policy-p29.md:7:- install allow/warn/block policy
+docs/platform-v2/sdk/marketplace-install-persistence-p24.md:3:P24 adds persistent plugin install state through localStorage-backed runtime persistence.
+docs/diagnostics/as6-epic004-pr4-executive-automation-queue-scheduler.md:6:- AS6_EXECUTIVE_AUTOMATION_RUNTIME_QUEUE_DRIFT: queue state is runtime-only and does not mutate persistent storage.
+docs/diagnostics/as6-epic004-pr4-executive-automation-queue-scheduler.md:8:- Workspace Storage V99, contextState.businessHome, layout schema, localStorage and Live Data were not changed.
+docs/diagnostics/as6-epic002-pr2b-operational-health-components.md:8:- Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home were not changed.
+docs/diagnostics/as6-epic004-pr5-executive-automation-retry-recovery.md:6:- AS6_EXECUTIVE_AUTOMATION_RUNTIME_RECOVERY_DRIFT: retry/recovery state is runtime-only and does not mutate persistent storage.
+docs/diagnostics/as6-epic004-pr5-executive-automation-retry-recovery.md:8:- Workspace Storage V99, contextState.businessHome, layout schema, localStorage and Live Data were not changed.
+docs/diagnostics/as6-epic002-pr1-executive-widget-integration.md:5:- AS6_EXECUTIVE_WIDGET_LAYOUT_DRIFT: widgets reuse contextState.businessHome layout.
+docs/diagnostics/as6-epic002-pr2a-executive-live-data-components.md:7:- Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home were not changed.
+docs/diagnostics/as6-epic001-user-workspace-customization.md:9:- Layout is stored only in Workspace contextState.businessHome.
+docs/diagnostics/as6-epic001-user-workspace-customization.md:11:- No new localStorage key is introduced.
+docs/diagnostics/as6-epic005-pr3-executive-automation-policy-explanations.md:26:- Workspace Storage V99 unchanged.
+docs/diagnostics/as6-epic005-pr3-executive-automation-policy-explanations.md:27:- contextState.businessHome unchanged.
+docs/diagnostics/as6-epic005-pr3-executive-automation-policy-explanations.md:29:- persistent storage unchanged.
+docs/diagnostics/as6-epic003-pr3-executive-action-validation-ui-feedback.md:8:- Workspace Storage V99, contextState.businessHome and layout schema were not changed.
+docs/diagnostics/as6-epic006-pr3-execution-orchestrator-export-contract-repair.md:19:- Export contract drift is merge-blocking.
+docs/diagnostics/as6-epic001-pr8-drag-drop-layout.md:6:- contextState.businessHome schema is unchanged.
+docs/diagnostics/as6-epic001-pr8-drag-drop-layout.md:7:- Workspace Storage V99 and debounce autosave are reused.
+docs/diagnostics/as6-epic001-pr8-drag-drop-layout.md:8:- No new localStorage key is introduced.
+docs/diagnostics/as6-epic006-pr3-execution-orchestrator-complete.md:19:- No Workspace Storage V99 changes.
+docs/diagnostics/as6-epic006-pr3-execution-orchestrator-complete.md:20:- No contextState.businessHome changes.
+docs/diagnostics/as6-epic006-pr3-execution-orchestrator-complete.md:22:- No localStorage changes.
+docs/diagnostics/as6-epic006-pr3-execution-orchestrator-complete.md:23:- No persistent storage changes.
+docs/diagnostics/as6-epic004-pr1-executive-automation-scenarios.md:6:- AS6_EXECUTIVE_AUTOMATION_RUNTIME_ONLY_DRIFT: automation plans are runtime-only and do not mutate persistent storage.
+docs/diagnostics/as6-epic004-pr1-executive-automation-scenarios.md:8:- Workspace Storage V99, contextState.businessHome, layout schema, localStorage and Live Data were not changed.
+docs/diagnostics/as6-epic005-pr1-executive-automation-governance-safety.md:5:- AS6_EXECUTIVE_AUTOMATION_UNSAFE_CHAIN_DRIFT: blocks unknown or unsafe actionId chains.
+docs/diagnostics/as6-epic005-pr1-executive-automation-governance-safety.md:7:- AS6_EXECUTIVE_AUTOMATION_GOVERNANCE_FALLBACK_GAP: added blocked fallback result.
+docs/diagnostics/as6-epic005-pr1-executive-automation-governance-safety.md:8:- Workspace Storage V99, contextState.businessHome, layout schema and localStorage were not changed.
+docs/diagnostics/as6-autonomous-incident-lifecycle-diagnostics.md:18:- incident_auto_repair_apply_block
+docs/diagnostics/as6-epic006-pr3-execution-orchestrator.md:17:- Added runtime-only execution orchestrator.
+docs/diagnostics/as6-epic006-pr3-execution-orchestrator.md:25:- Workspace Storage V99 unchanged.
+docs/diagnostics/as6-epic006-pr3-execution-orchestrator.md:26:- contextState.businessHome unchanged.
+docs/diagnostics/as6-epic006-pr3-execution-orchestrator.md:28:- localStorage unchanged.
+docs/diagnostics/as6-epic006-pr3-execution-orchestrator.md:29:- persistent storage unchanged.
+docs/diagnostics/as6-epic003-pr4-executive-action-history-audit-trail.md:3:- AS6_EXECUTIVE_ACTION_HISTORY_GAP: runtime-only Executive Action history is now maintained in component state.
+docs/diagnostics/as6-epic003-pr4-executive-action-history-audit-trail.md:6:- AS6_EXECUTIVE_ACTION_HISTORY_STORAGE_DRIFT: audit trail is runtime-only and does not change Workspace Storage V99, contextState.businessHome, localStorage or layout schema.
+docs/diagnostics/as6-epic004-pr2-executive-automation-execution-pipeline.md:7:- AS6_EXECUTIVE_AUTOMATION_RUNTIME_PIPELINE_DRIFT: pipeline state is runtime-only and does not mutate persistent storage.
+docs/diagnostics/as6-epic002-pr5-executive-insights-recommendations.md:6:- AS6_EXECUTIVE_INSIGHTS_STORAGE_DRIFT: no contextState.businessHome, Workspace Storage V99 or layout schema changes were introduced.
+docs/diagnostics/as6-epic001-pr9-ai-adaptive-home.md:7:- contextState.businessHome schema is unchanged.
+docs/diagnostics/as6-epic001-pr9-ai-adaptive-home.md:8:- Workspace Storage V99 and debounce autosave are reused.
+docs/diagnostics/as6-epic002-pr2c-executive-dashboard-components.md:8:- Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home were not changed.
+docs/diagnostics/as6-epic004-pr3-executive-automation-monitoring-control.md:6:- AS6_EXECUTIVE_AUTOMATION_RUNTIME_MONITORING_DRIFT: monitoring is runtime-only and does not mutate persistent storage.
+docs/diagnostics/as6-epic004-pr3-executive-automation-monitoring-control.md:8:- Workspace Storage V99, contextState.businessHome, layout schema, localStorage and Live Data were not changed.
+docs/diagnostics/as6-epic002-pr3-executive-workspace-integration.md:5:- AS6_EXECUTIVE_WORKSPACE_PERSISTENCE_DRIFT: widgets reuse contextState.businessHome and Workspace Storage V99.
+docs/diagnostics/as6-epic003-pr5-executive-action-analytics-metrics.md:7:- AS6_EXECUTIVE_ACTION_ANALYTICS_STORAGE_DRIFT: analytics are runtime-only and do not modify Workspace Storage V99, contextState.businessHome, localStorage or layout schema.
+docs/diagnostics/as6-epic006-pr1-scenario-priorities.md:3:- AS6_EXECUTIVE_SCENARIO_PRIORITY_MODEL_GAP: added runtime-only priority model.
+docs/diagnostics/as6-epic006-pr1-scenario-priorities.md:7:- AS6_EXECUTIVE_SCENARIO_PRIORITY_STORAGE_DRIFT: Workspace Storage V99, contextState.businessHome, layout schema, localStorage and persistent storage were not changed.
+docs/diagnostics/as6-epic003-pr2-executive-action-orchestration.md:9:- Workspace Storage V99, contextState.businessHome and layout schema were not changed.
+docs/diagnostics/as6-epic005-pr2-executive-automation-policy-ui.md:14:Runtime governance blocks unsafe automation, but Business Home needs visible policy status, block reason and fallback.
+docs/diagnostics/as6-epic005-pr2-executive-automation-policy-ui.md:20:- Added unknown actionId blocked status.
+docs/diagnostics/as6-epic005-pr2-executive-automation-policy-ui.md:21:- Added allow/block explanation cards.
+docs/diagnostics/as6-epic003-pr1-executive-automation-actions.md:7:- AS6_EXECUTIVE_AUTOMATION_STORAGE_DRIFT: Workspace Storage V99, contextState.businessHome and layout schema were not changed.
+docs/diagnostics/as6-epic006-pr2-scenario-dependencies.md:14:EPIC-006 PR-1 introduced priorities, but execution order also needs runtime-only dependency validation before orchestration can safely select the next scenario.
+docs/diagnostics/as6-epic006-pr2-scenario-dependencies.md:17:- Added runtime-only dependsOn model.
+docs/diagnostics/as6-epic006-pr2-scenario-dependencies.md:25:- Workspace Storage V99 unchanged.
+docs/diagnostics/as6-epic006-pr2-scenario-dependencies.md:26:- contextState.businessHome unchanged.
+docs/diagnostics/as6-epic006-pr2-scenario-dependencies.md:28:- localStorage unchanged.
+docs/diagnostics/as6-epic006-pr2-scenario-dependencies.md:29:- persistent storage unchanged.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail-complete.md:21:- No Workspace Storage V99 changes.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail-complete.md:22:- No contextState.businessHome changes.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail-complete.md:24:- No persistent storage changes.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail-complete.md:25:- No localStorage changes.
+docs/diagnostics/as6-epic002-pr4-executive-personalization.md:9:- contextState.businessHome, Workspace Storage V99 and layout schema were not changed.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail.md:14:Executive Automation had governance, policy UI and explanations, but did not expose a runtime-only execution trail with scenarioId, executionId, step status, fallback, stop reason and final status.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail.md:17:- Added runtime-only audit trail catalog.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail.md:21:- Added final status visibility: Success, Blocked, Failed, Cancelled model coverage.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail.md:25:- Workspace Storage V99 unchanged.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail.md:26:- contextState.businessHome unchanged.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail.md:32:- persistent storage unchanged.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail.md:33:- localStorage unchanged.
+docs/AS6_V243_CRM_WORKSPACE_CLIENT_POLISH_FIX_ROOT_CAUSE.md:3:- V243 initial patch inserted CSS import inside a multi-line JavaScript import block.
+docs/AS6_PROJECT_STATE.md:523:- incident_auto_repair_apply_block
+docs/AS6_PROJECT_STATE.md:722:- L8 blocker: no conditional auto-apply for safe changes
+docs/AS6_PROJECT_STATE.md:2388:Root cause: precommit secret scan blocked validated V73-safe commit on AuthContext null-token-initializer false positive.
+docs/AS6_PROJECT_STATE.md:2406:Root cause: V74 validation passed but commit was blocked by documentation wording false positive around null-token-initializer text.
+docs/AS6_PROJECT_STATE.md:2442:- Removed explicit CRM analytics legacy rollback copy marker blocks when present.
+docs/AS6_PROJECT_STATE.md:3088:- Aborted failed revert conflict.
+docs/AS6_PROJECT_STATE.md:3114:- Added reference CSS: frontend/src/styles/as6-command-center-reference-lock.css
+docs/AS6_PROJECT_STATE.md:3158:- Added CSS: frontend/src/styles/as6-command-center-true-reference-lock.css
+docs/AS6_PROJECT_STATE.md:3200:- Removed/blocked: V123C/V126/V127/V128 runtime visual patches.
+docs/AS6_PROJECT_STATE.md:3364:- Fixed: conflicting visual layers from repeated CSS patches.
+docs/AS6_PROJECT_STATE.md:3474:## 20260622T122326Z AS6 V190 Command Center Bootlock
+docs/AS6_PROJECT_STATE.md:3477:- Diagnostic: ops/bin/as6-diagnose-command-center-bootlock-v190
+docs/AS6_PROJECT_STATE.md:3480:## 20260622T123520Z AS6 V191 Strong Page Bootlock
+docs/AS6_PROJECT_STATE.md:3481:- Fixed/tested: stronger /command-center first paint lock outside #root.
+docs/AS6_PROJECT_STATE.md:3482:- Root cause: V190 root-only bootlock did not cover remaining flash source.
+docs/AS6_PROJECT_STATE.md:3483:- Diagnostic: ops/bin/as6-diagnose-command-center-strong-bootlock-v191
+docs/AS6_PROJECT_STATE.md:3492:## 20260622T125839Z AS6 V193 Command Center Unlock After Mount
+docs/AS6_PROJECT_STATE.md:3493:- Fixed: bootlock was unlocked in AppShell before CommandCenterPage finished mounting.
+docs/AS6_PROJECT_STATE.md:3495:- Diagnostic: ops/bin/as6-diagnose-command-center-unlock-after-mount-v193
+docs/AS6_PROJECT_STATE.md:3682:- Root cause: CI/Docker Guardian used stale package-lock or cached package layer.
+docs/AS6_PROJECT_STATE.md:3683:- Verified frontend/package-lock contains framer-motion and react-router-dom vendor dependencies.
+docs/AS6_PROJECT_STATE.md:3719:- Result: frontend build blocker repaired and V222.1B diagnostic cycle completed.
+docs/AS6_PROJECT_STATE.md:3772:- Result: minimal orientation block added to Command Center.
+docs/AS6_PROJECT_STATE.md:3808:- Result: Product Intelligence localStorage runtime behavior validated.
+docs/AS6_PROJECT_STATE.md:4006:- Root cause: previous exact-block replacement did not match current ProductRecommendationCard style declarations.
+docs/AS6_PROJECT_STATE.md:4020:- Root cause: previous guard blocked legitimate progress/chart inline styles in CommandCenterPage.
+docs/AS6_PROJECT_STATE.md:4022:- Fixed: guard now checks only ProductRecommendationCard and the product recommendation slot block.
+docs/AS6_PROJECT_STATE.md:4058:- Root cause: no-cache nginx image rebuild failed because frontend package-lock was not in sync with package.json.
+docs/AS6_PROJECT_STATE.md:4062:- Added diagnostics: package_lock_drift_build_failure_guard, running_nginx_dist_copy_guard, live_asset_hash_refresh_guard, stale_v222_33_dom_marker_guard.
+docs/AS6_PROJECT_STATE.md:4070:- Root cause: legacy CSS conflicts and previous node eval regex escape failure blocked etalon rewrite.
+docs/AS6_PROJECT_STATE.md:4249:- Interface changed: AS6 Assistant and Focus blocks receive stronger command-layer emphasis.
+docs/AS6_PROJECT_STATE.md:4965:- Business Home now uses existing Workspace Storage V99.
+docs/AS6_PROJECT_STATE.md:4975:- Business Home layout stored only in contextState.businessHome.
+docs/AS6_PROJECT_STATE.md:4980:- Added debounce autosave through Workspace Storage V99.
+docs/AS6_PROJECT_STATE.md:4989:- Reused existing contextState.businessHome layout model.
+docs/AS6_PROJECT_STATE.md:4990:- Reused existing debounce autosave and Workspace Storage V99.
+docs/AS6_PROJECT_STATE.md:5000:- Reused contextState.businessHome, debounce autosave and Workspace Storage V99.
+docs/AS6_PROJECT_STATE.md:5009:- Preserved contextState.businessHome, Workspace Storage V99, drag/drop and AI Adaptive Home.
+docs/AS6_PROJECT_STATE.md:5020:- Preserved Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home.
+docs/AS6_PROJECT_STATE.md:5030:- Preserved Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home.
+docs/AS6_PROJECT_STATE.md:5040:- Preserved Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home.
+docs/AS6_PROJECT_STATE.md:5048:- Preserved contextState.businessHome, Workspace Storage V99, drag/drop and AI Adaptive Home.
+docs/AS6_PROJECT_STATE.md:5058:- Preserved contextState.businessHome, Workspace Storage V99, drag/drop, AI Adaptive Home and layout schema.
+docs/AS6_PROJECT_STATE.md:5068:- Preserved contextState.businessHome, Workspace Storage V99, layout schema, drag/drop, Executive components and Live Data sources.
+docs/AS6_PROJECT_STATE.md:5078:- Preserved contextState.businessHome, Workspace Storage V99, layout schema, drag/drop, AI Adaptive Home, Executive Insights, Executive Components and Live Data.
+docs/AS6_PROJECT_STATE.md:5089:- Preserved contextState.businessHome, Workspace Storage V99, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5096:- Added runtime-only Executive Action history.
+docs/AS6_PROJECT_STATE.md:5099:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5106:- Added runtime-only Executive Action Metrics.
+docs/AS6_PROJECT_STATE.md:5109:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5116:- Added runtime-only Executive Automation scenarios.
+docs/AS6_PROJECT_STATE.md:5119:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5126:- Added runtime-only execution pipeline for Executive Automation scenarios.
+docs/AS6_PROJECT_STATE.md:5128:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5138:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5145:- Added runtime-only Executive Automation queue.
+docs/AS6_PROJECT_STATE.md:5149:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5159:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5169:- Added unsafe action chain blocking.
+docs/AS6_PROJECT_STATE.md:5171:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5188:- Added allow/block explanation cards.
+docs/AS6_PROJECT_STATE.md:5199:- Workspace Storage V99 unchanged.
+docs/AS6_PROJECT_STATE.md:5200:- contextState.businessHome unchanged.
+docs/AS6_PROJECT_STATE.md:5201:- layout schema and persistent storage unchanged.
+docs/AS6_PROJECT_STATE.md:5206:- Added runtime-only audit trail for Executive Automation.
+docs/AS6_PROJECT_STATE.md:5211:- Workspace Storage V99 unchanged.
+docs/AS6_PROJECT_STATE.md:5212:- contextState.businessHome unchanged.
+docs/AS6_PROJECT_STATE.md:5213:- layout schema, drag & drop, AI Adaptive Home, Executive Components, Live Data, persistent storage and localStorage unchanged.
+docs/AS6_PROJECT_STATE.md:5229:- Confirmed runtime-only audit trail.
+docs/AS6_PROJECT_STATE.md:5233:- Workspace Storage V99 unchanged.
+docs/AS6_PROJECT_STATE.md:5234:- contextState.businessHome unchanged.
+docs/AS6_PROJECT_STATE.md:5235:- layout schema, persistent storage and localStorage unchanged.
+docs/AS6_PROJECT_STATE.md:5243:- Added runtime-only scenario priority model.
+docs/AS6_PROJECT_STATE.md:5247:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, localStorage and persistent storage.
+docs/AS6_PROJECT_STATE.md:5253:- Added runtime-only dependency model for Executive Automation scenarios.
+docs/AS6_PROJECT_STATE.md:5257:- Workspace Storage V99 unchanged.
+docs/AS6_PROJECT_STATE.md:5258:- contextState.businessHome unchanged.
+docs/AS6_PROJECT_STATE.md:5259:- layout schema, localStorage and persistent storage unchanged.
+docs/AS6_PROJECT_STATE.md:5264:- Added runtime-only execution orchestrator.
+docs/AS6_PROJECT_STATE.md:5269:- Workspace Storage V99 unchanged.
+docs/AS6_PROJECT_STATE.md:5270:- contextState.businessHome unchanged.
+docs/AS6_PROJECT_STATE.md:5271:- layout schema, localStorage and persistent storage unchanged.
+docs/AS6_PROJECT_STATE.md:5286:- Confirmed runtime-only selection engine.
+docs/AS6_PROJECT_STATE.md:5290:- Workspace Storage V99 unchanged.
+docs/AS6_PROJECT_STATE.md:5291:- contextState.businessHome unchanged.
+docs/AS6_PROJECT_STATE.md:5292:- layout schema, localStorage and persistent storage unchanged.
+docs/AS6_AUTONOMOUS_UI_GOVERNANCE_ENGINE_V113.md:14:- KPI Blocks
+docs/MATURITY/AS6_MATURITY_INDEX.md:9:| V221.5 First Product Screen | 99.6% | UI component | Isolated product block | Restore tag | Product screen registry | PASS |
+docs/architecture/ai_revenue_intelligence.md:70:1. The autonomous execution loop acquires the existing Redis/Postgres lock path.
+docs/architecture/google_calendar_integration_v1.md:3:Google Calendar Integration v1 extends the AS6 AI CRM meeting execution flow. After an approved `meeting_schedule_proposal` is executed and a `crm_meetings` row is created, the backend tries to create a Google Calendar event with a Google Meet conference link. The existing ICS flow remains the safe fallback and is never blocked by missing Google credentials or Google API failures.
+docs/architecture/ai_worker_system.md:145:- lease/lock для `ai_worker_queue`;
+docs/architecture/autonomous_ai_revenue_engine.md:13:- **revenueRiskDetector**: flags stalled opportunities, approval gridlock, and queue overload risk.
+docs/architecture/ai_enterprise_coordination_layer.md:14:Organizational conflicts are generated from blocked dependencies and surfaced as recommendation artifacts only.
+docs/architecture/ai_enterprise_coordination_layer.md:17:High-severity conflicts route into executive escalations with human approval gates.
+docs/architecture/README.md:31:blockers section;
+docs/architecture/adr/ADR-003-n8n-before-temporal.md:41:* High concurrency/agent orchestration emerges
+docs/architecture/ai_priority_inbox_v1.md:160:Outbound customer copy is protected by a reusable backend guard, `assertCustomerSafeText(text)`, before any customer-reachable execution path sends or queues text. The guard is intentionally conservative for AI-generated drafts and blocks internal scoring/debug context such as:
+docs/architecture/ai_priority_inbox_v1.md:169:If unsafe copy is detected during queue execution, the send is not attempted. The queue item is marked `failed`, `error_message` is set to `Blocked by copy guard: internal AI context leak`, and the backend emits:
+docs/architecture/ai_priority_inbox_v1.md:172:[copy-guard] blocked internal context leak
+docs/architecture/ai_sequence_orchestrator.md:77:Sequence generation blocks or strips unsafe output. Messages must be no longer than 700 characters and must not include:
+docs/architecture/ai_sequence_orchestrator.md:126:The CRM lead details modal includes an **AI Sequence** block for the selected lead. It shows:
+docs/architecture/ai_manager_dashboard_kpi_layer.md:37:- `ai_worker_queue` — AI action funnel, approval state, completion state, failed unresolved actions, copy guard blocks, revenue-linked actions.
+docs/architecture/ai_manager_dashboard_kpi_layer.md:57:- blocked by safety/copy guard
+docs/architecture/ai_manager_dashboard_kpi_layer.md:59:Copy guard blocks are detected from failed queue items and safety-test/copy-guard text in `error_message`, `title`, `recommendation`, or `payload`.
+docs/architecture/ai_manager_dashboard_kpi_layer.md:70:- unsafe copy blocked
+docs/architecture/ai_manager_dashboard_kpi_layer.md:116:- `Copy guard blocked unsafe draft`
+docs/architecture/ai_manager_dashboard_kpi_layer.md:123:- copy guard blocks
+docs/architecture/ai_manager_dashboard_kpi_layer.md:135:Single-item rendering is intentionally preserved for copy guard blocks, failed unresolved actions, fallback-to-email events, route-highlight recoveries, and single cooldown rows. This keeps KPI counts accurate while removing visual noise from repeated `AI follow-up пропущен` / `Недавнее исходящее сообщение клиенту — cooldown 48 часов.` events.
+docs/architecture/ai_manager_dashboard_kpi_layer.md:157:7. Confirm unsafe copy guard tests appear as individual safety events when queue items are blocked by copy guard.
+docs/architecture/autonomous_execution_loop.md:36:1. **Distributed execution lock** — short-lived `SET NX PX` locks gate recovery and dispatch polling across backend replicas.
+docs/architecture/autonomous_execution_loop.md:38:3. **Worker coordination** — Redis lock contention reduces duplicate polling pressure when multiple backend containers are online.
+docs/architecture/autonomous_execution_loop.md:57:The loop enforces concurrency at two layers:
+docs/architecture/autonomous_execution_loop.md:60:2. **Database ownership**: `claimNextJob()` uses PostgreSQL row locks and stores `locked_by`, `locked_at`, `heartbeat_at`, and `timeout_at` on `ai_execution_jobs`.
+docs/architecture/autonomous_execution_loop.md:76:3. Clears `locked_by`, `locked_at`, and `timeout_at`.
+docs/architecture/autonomous_execution_loop.md:80:5. Decrements the previous worker's `current_concurrency` defensively.
+docs/architecture/autonomous_execution_loop.md:111:3. Let Redis locks reduce duplicate poll pressure.
+docs/architecture/autonomous_execution_loop.md:112:4. Let PostgreSQL row locks guarantee that only one worker owns a job.
+docs/architecture/autonomous_execution_loop.md:129:5. Add per-provider and per-workspace concurrency quotas.
+docs/architecture/enterprise_ai_execution_platform.md:54:- `worker_nodes` — active worker registration, pool capability, concurrency, heartbeat, status.
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:556:      .layout { display: block; height: auto; }
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:730:          <div class="matrix-title">Stack locked to actual project scope</div>
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:890:        kpis: [["50–500", "target clients"], ["Async", "no API blocking"], ["Per-agent", "metrics"], ["Fallback", "growth"]],
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:938:        kpis: [["Horizontal", "worker scale"], ["No API block", "latency"], ["Job status", "visibility"], ["Retry", "required"]],
+docs/architecture/ai_workforce_coordination.md:33:- blocked
+docs/architecture/ai_workforce_coordination.md:76:Current release deliberately blocks autonomous execution chains. Future phases can progressively allow constrained autonomy behind explicit governance milestones:
+docs/architecture/ai_execution_runner_loop.md:47:- `max_concurrency`: `process.env.AI_MAX_CONCURRENT_JOBS || 4`
+docs/architecture/ai_execution_runner_loop.md:57:`run-once` calls the runner service to claim exactly one job for the requested queue. Claiming is performed inside a PostgreSQL transaction and uses row-level locking to stay safe under concurrent callers:
+docs/architecture/ai_execution_runner_loop.md:73:- `locked_by = worker_nodes.id`
+docs/architecture/ai_execution_runner_loop.md:74:- `locked_at = NOW()`
+docs/architecture/ai_execution_runner_loop.md:79:The worker row is locked during the same transaction so `current_concurrency` never exceeds `max_concurrency` for that node.
+docs/architecture/ai_execution_runner_loop.md:112:Completion updates the job to `completed`, clears timeout/error state, stores the result JSON, writes `execution_logs`, writes `worker_metrics`, optionally writes `task_execution_history` when a job has `task_id`, decrements worker concurrency, and logs:
+docs/architecture/ai_execution_runner_loop.md:120:If execution throws, the runner only updates rows it still owns (`status = 'running'` and `locked_by = worker.id`) to preserve idempotency.
+docs/architecture/ai_execution_runner_loop.md:128:Every failure path writes `execution_logs`, `worker_metrics`, optional `task_execution_history`, decrements worker concurrency, and logs:
+docs/architecture/ai_strategic_planning_layer.md:10:`dependencyGraphEngine` emits initiative nodes and dependency edges to identify blockers and sequence initiatives.
+docs/architecture/ai_execution_layer.md:4:The AI Execution Layer enforces **Human Approved Execution Only** and blocks autonomous outbound outreach. Every execution request passes policy validation and approval checks before any run starts.
+docs/architecture/production_ai_execution_runner.md:5:The production AI execution runner is the backend worker path for durable AI jobs. API endpoints enqueue work in `ai_execution_jobs`; runner processes register in `worker_nodes`, claim jobs with row-level locking, execute provider calls, persist results, and release worker capacity. The runner currently supports internal smoke-test jobs and OpenAI Responses API text generation jobs.
+docs/architecture/production_ai_execution_runner.md:9:- `ai_execution_jobs` stores queue, status, payload, attempts, lock ownership, timeout, result, and failure state.
+docs/architecture/production_ai_execution_runner.md:10:- `worker_nodes` stores runner registration, supported queues, heartbeat, and concurrency.
+docs/architecture/production_ai_execution_runner.md:21:4. Claiming sets the job to `running`, assigns `locked_by`, increments `attempt_count`, and records `timeout_at`.
+docs/architecture/production_ai_execution_runner.md:35:Failures are separated into manager-safe messages and technical details. The job `error_message` uses the safe message. Technical metadata is redacted before it is written to execution logs. Worker concurrency is decremented on every terminal or retrying failure path so capacity does not leak.
+docs/architecture/production_ai_execution_runner.md:83:- Add autoscaling from queue depth, oldest-job age, and active worker concurrency.
+docs/architecture/production_ai_execution_runner.md:84:- Split model/provider queues for differentiated concurrency and rate-limit policies.
+docs/architecture/crm_ai_master_build_order.html:40:    .metric strong{display:block;margin-bottom:7px;font-size:23px;line-height:1}.metric span{color:var(--muted);font-size:12px;line-height:1.42}
+docs/architecture/crm_ai_master_build_order.html:59:    .box b{display:block;margin-bottom:3px;color:var(--muted);font-size:9.5px;text-transform:uppercase;letter-spacing:.06em}
+docs/architecture/crm_ai_master_build_order.html:108:        <article class="metric"><strong>24</strong><span>Critical path steps that unblock core delivery.</span></article>
+docs/architecture/crm_ai_master_build_order.html:135:            <div class="box"><b>Why this order</b>Small schema unlocks the first working pipeline fastest.</div>
+docs/architecture/crm_ai_master_build_order.html:229:            <div class="box"><b>Definition of Done</b>Optional infra does not block first pipeline success</div>
+docs/architecture/crm_ai_master_build_order.html:812:      s(1,"Simplified PostgreSQL schema","Create only users, leads, lead_stages and notes/activity tables needed for the first lead pipeline.","mvp","platform","Sprint 1",true,"None","Lead can be saved with stage and activity history","Small schema unlocks the first working pipeline fastest."),
+docs/architecture/crm_ai_master_build_order.html:817:      s(6,"Docker/Sentry/hosting stretch","Add Docker baseline, Sentry or hosting hardening only if Sprint 1 core scope is complete.","mvp","platform","Sprint 1",false,"Steps 1–5","Optional infra does not block first pipeline success","Infra hardening is useful, but not allowed to delay the pilot path."),
+docs/architecture/crm_ai_master_build_order.html:873:        <article class="metric"><strong>${critical}</strong><span>Critical path steps that unblock core delivery.</span></article>
+docs/architecture/crm_ai_engineering_implementation_backlog.html:151:      display: block;
+docs/architecture/crm_ai_engineering_implementation_backlog.html:262:      display: block;
+docs/architecture/crm_ai_engineering_implementation_backlog.html:388:      display: block;
+docs/architecture/crm_ai_engineering_implementation_backlog.html:455:      display: block;
+docs/architecture/crm_ai_engineering_implementation_backlog.html:652:              <div class="mini"><b>Feature Acceptance</b>Lead form creates CRM lead with source and consent; Pricing and CTA blocks are publish-ready; Integration showcase is visible</div>
+docs/architecture/crm_ai_engineering_implementation_backlog.html:996:                <div class="mini"><b>Acceptance</b>Messages are blocked without consent.</div>
+docs/architecture/crm_ai_engineering_implementation_backlog.html:1173:                <div class="mini"><b>Acceptance</b>Agent execution no longer blocks API.</div>
+docs/architecture/crm_ai_engineering_implementation_backlog.html:1752:              <div class="mini"><b>Feature Acceptance</b>Heavy jobs no longer block API; Workers scale independently</div>
+docs/architecture/crm_ai_engineering_implementation_backlog.html:2126:              <p>Stretch-only Sprint 1 hardening that must not block the first lead pipeline.</p>
+docs/architecture/crm_ai_engineering_implementation_backlog.html:2172:              <div class="mini"><b>Feature Acceptance</b>Optional infra does not block Sprint 1 success; Baseline can be completed if core pipeline is done early</div>
+docs/architecture/crm_ai_engineering_implementation_backlog.html:2346:              <div class="mini"><b>Feature Acceptance</b>Heavy jobs no longer block API; Workers scale independently</div>
+docs/architecture/crm_ai_engineering_implementation_backlog.html:2386:                <div class="mini"><b>Acceptance</b>Requests over quota are blocked clearly.</div>
+docs/architecture/crm_ai_engineering_implementation_backlog.html:3311:            ["Lead form creates CRM lead with source and consent", "Pricing and CTA blocks are publish-ready", "Integration showcase is visible"],
+docs/architecture/crm_ai_engineering_implementation_backlog.html:3369:              task("Add consent/preference model", 2, "Backend", ["Store opt-in channel", "Add unsubscribe status", "Expose preference API"], "Messages are blocked without consent."),
+docs/architecture/crm_ai_engineering_implementation_backlog.html:3399:              task("Extract agent runtime worker", 4, "AI", ["Read jobs from queue", "Call model/provider", "Persist output status"], "Agent execution no longer blocks API."),
+docs/architecture/crm_ai_engineering_implementation_backlog.html:3483:            ["Heavy jobs no longer block API", "Workers scale independently"],
+docs/architecture/crm_ai_engineering_implementation_backlog.html:3544:          feature("Optional Docker / Sentry / Hosting Baseline", "Stretch-only Sprint 1 hardening that must not block the first lead pipeline.", "mvp", "stub", "DevOps", "Sprint 1", 2, false,
+docs/architecture/crm_ai_engineering_implementation_backlog.html:3546:            ["Optional infra does not block Sprint 1 success", "Baseline can be completed if core pipeline is done early"],
+docs/architecture/crm_ai_engineering_implementation_backlog.html:3570:            ["Heavy jobs no longer block API", "Workers scale independently"],
+docs/architecture/crm_ai_engineering_implementation_backlog.html:3581:              task("Add enforcement middleware", 3, "Backend", ["API limits", "AI/voice limits", "Telegram webhook protection"], "Requests over quota are blocked clearly."),
+docs/architecture/AI_ENTERPRISE_OS_V1_STABLE.md:50:2. Disable `/api/ai/system-health` route mount if runtime conflicts are detected.
+docs/architecture/crm_ai_sprint_delivery_dashboard.html:34:    .metric{padding:13px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.025)}.metric strong{display:block;margin-bottom:6px;font-size:23px}.metric span{color:var(--faint);font-size:11px;line-height:1.35}
+docs/architecture/crm_ai_sprint_delivery_dashboard.html:43:    .task strong{display:block;margin-bottom:5px;font-size:11.5px;line-height:1.25}.task p{color:var(--faint);font-size:10px;line-height:1.35;margin-bottom:7px}
+docs/architecture/crm_ai_sprint_delivery_dashboard.html:48:    .list{display:grid;gap:8px;padding:12px}.item{padding:10px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.025)}.item strong{display:block;margin-bottom:5px;font-size:11.5px}.item p{color:var(--faint);font-size:10.5px;line-height:1.4}
+docs/architecture/crm_ai_sprint_delivery_dashboard.html:49:    .workload{padding:12px;display:grid;gap:10px}.role{display:grid;grid-template-columns:86px minmax(0,1fr) 42px;gap:8px;align-items:center;color:var(--muted);font-size:11px}.rolebar{height:9px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.045);overflow:hidden}.rolebar span{display:block;height:100%;border-radius:999px;background:var(--role)}
+docs/architecture/crm_ai_sprint_delivery_dashboard.html:59:      <div class="subtitle">Sprint planning board · committed tasks · burn-up · blockers · milestones · delivery health · team workload</div>
+docs/architecture/crm_ai_sprint_delivery_dashboard.html:213:          <div class="panel-head"><h2>Blockers</h2><span id="blockerCount">2 open</span></div>
+docs/architecture/crm_ai_sprint_delivery_dashboard.html:214:          <div class="list" id="blockers">
+docs/architecture/crm_ai_sprint_delivery_dashboard.html:215:        <article class="item"><strong>Backend framework decision</strong><p>FastAPI vs NestJS must be locked before minimal lead API implementation starts.</p><div class="mini-tags"><span class="tag risk">RISK</span><span class="tag">Sprint 1</span></div></article>
+docs/architecture/crm_ai_sprint_delivery_dashboard.html:217:        <article class="item"><strong>Do not expand infra scope</strong><p>Docker, Sentry and hosting hardening are stretch only and must not block first lead pipeline success.</p><div class="mini-tags"><span class="tag warn">WARN</span><span class="tag">Sprint 1</span></div></article>
+docs/architecture/crm_ai_sprint_delivery_dashboard.html:296:      t("S1-06","Optional Docker/Sentry baseline","Stretch only: add Docker baseline or Sentry if core pipeline is done.","Sprint 1","DevOps",2,"Backlog",false,["S1-01","S1-05"],"Optional infra does not block Sprint 1 success."),
+docs/architecture/crm_ai_sprint_delivery_dashboard.html:315:      t("S5-02","Background workers","Create worker runtime for AI/proposal/notification jobs.","Sprint 5","Backend",4,"Backlog",true,["S5-01"],"Heavy jobs no longer block API."),
+docs/architecture/crm_ai_sprint_delivery_dashboard.html:329:    const blockers = [
+docs/architecture/crm_ai_sprint_delivery_dashboard.html:330:      {sprint:"Sprint 1", title:"Backend framework decision", desc:"FastAPI vs NestJS must be locked before minimal lead API implementation starts.", severity:"risk"},
+docs/architecture/crm_ai_sprint_delivery_dashboard.html:331:      {sprint:"Sprint 1", title:"Do not expand infra scope", desc:"Docker, Sentry and hosting hardening are stretch only and must not block first lead pipeline success.", severity:"warn"},
+docs/architecture/crm_ai_sprint_delivery_dashboard.html:408:    function renderBlockers(){
+docs/architecture/crm_ai_sprint_delivery_dashboard.html:409:      const list = selectedSprint === "All" ? blockers : blockers.filter(b => b.sprint === selectedSprint);
+docs/architecture/crm_ai_sprint_delivery_dashboard.html:410:      document.getElementById("blockerCount").textContent = `${list.length} open`;
+docs/architecture/crm_ai_sprint_delivery_dashboard.html:411:      document.getElementById("blockers").innerHTML = list.map(b => `
+docs/architecture/crm_ai_sprint_delivery_dashboard.html:413:      `).join("") || `<article class="item"><p>No active blockers for this sprint.</p></article>`;
+docs/architecture/crm_ai_sprint_delivery_dashboard.html:444:      renderGoal();renderMetrics();renderBoard();renderChart();renderBlockers();renderWorkload();renderMilestones();renderSprintOverview();
+docs/architecture/telegram_real_execution.md:77:- Missing `telegram_chat_id` blocks Telegram execution with a clear error.
+docs/architecture/crm_ai_development_execution_roadmap.html:144:      display: block;
+docs/architecture/crm_ai_development_execution_roadmap.html:295:      display: block;
+docs/architecture/crm_ai_development_execution_roadmap.html:442:          <div class="cell">Next.js + Tailwind pages, lead capture forms, source attribution, plan/pricing blocks, integration showcase.</div>
+docs/architecture/crm_ai_development_execution_roadmap.html:553:        <div class="row item" data-phase="growth" data-status="build" data-layer="ops" style="--accent:var(--ops)"><div class="cell component"><div class="icon">WRK</div><div><strong>Background Job Workers</strong><span>Async CRM, AI, voice, proposal and analytics jobs.</span></div></div><div class="cell"><span class="tag build">Build Now</span></div><div class="cell">Ops</div><div class="cell">Dedicated worker processes for AI, voice, proposals, notifications, analytics aggregation.</div><div class="cell mono">Redis queues, Docker, monitoring</div><div class="cell">Heavy jobs no longer block API request path; workers can scale independently.</div><div class="cell">Backend/DevOps</div></div>
+docs/architecture/calendar_integration_v1.md:46:- A simple Moscow `VTIMEZONE` block.
+docs/architecture/ai_pipeline_copilot_v1.md:50:## Summary block
+docs/architecture/ai_pipeline_copilot_v1.md:72:1. failed/blocked AI worker queue items;
+docs/architecture/ai_pipeline_copilot_v1.md:98:1. failed/blocked fixes;
+docs/architecture/limited_real_audio_pilot.md:38:2. Add workspace-level rate limits and concurrency caps.
+docs/architecture/demo_sales_pipeline.md:64:Для защиты от параллельных повторных запусков используется транзакционный advisory lock PostgreSQL по ключу demo seed + workspace + user.
+docs/architecture/ai_copy_quality.md:76:- no large text blocks;
+docs/architecture/ai_workers_focus_queue_v2.md:176:The cooldown does not block manual manager actions, meeting confirmations, non-follow-up recommendations, scoring updates, copy guard behavior, route highlighting, or Focus Queue rendering.
+docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md:76:- unfinished heredoc blocks;
+docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md:512:- interactive SSH patch blocks must stay small, preferably under 100 lines;
+docs/REGISTRY/AS6_PRODUCT_COVERAGE_REGISTRY.md:7:- Covered: frontend build blocker caused by CRMPage import syntax.
+docs/REGISTRY/AS6_PRODUCT_COVERAGE_REGISTRY.md:42:- Covered: CommandCenter orientation block, first-action CTAs, scoped CSS.
+docs/REGISTRY/AS6_PRODUCT_COVERAGE_REGISTRY.md:46:- Covered: orientation block, first-step text, three first-action CTAs, scoped CSS, route existence.
+docs/REGISTRY/AS6_PRODUCT_COVERAGE_REGISTRY.md:66:- Covered: runtime localStorage event storage, metadata sanitization, disabled telemetry skip, unregistered event rejection, external analytics absence.
+docs/REGISTRY/AS6_PRODUCT_DECISION_HISTORY.md:48:- Decision: add one minimal orientation block to Command Center.
+docs/REGISTRY/AS6_PRODUCT_DECISION_HISTORY.md:55:- Reason: orientation block, first-step text, three CTAs and scoped CSS are present.
+docs/REGISTRY/AS6_PRODUCT_DIAGNOSTIC_REGISTRY.md:10:- Artifact: runtime/as6-v222-1b-product-diagnostic/root-cause-build-blocker.txt
+docs/coverage/as6-epic005-pr4-executive-automation-audit-trail-coverage.md:12:- Covers Success, Blocked, Failed and Cancelled status model.
+docs/coverage/as6-epic001-user-workspace-customization-coverage.md:9:- No duplicate localStorage coverage: PASS
+docs/coverage/as6-diagnostic-status-registry-autobuild-coverage.md:529:## as6-diagnose-unreachable-diagnostic-blocks
+docs/coverage/as6-diagnostic-status-registry-autobuild-coverage.md:530:- diagnostic: ops/bin/as6-diagnose-unreachable-diagnostic-blocks
+docs/coverage/as6-epic005-pr2-executive-automation-policy-ui-coverage.md:5:- Covers allow/block status visibility.
+docs/coverage/as6-epic005-pr2-executive-automation-policy-ui-coverage.md:6:- Covers block reason visibility.
+docs/coverage/as6-epic005-pr3-executive-automation-policy-explanations-coverage.md:11:- Covers blocked scenario explanation.
+docs/coverage/as6-epic005-pr1-executive-automation-governance-safety-coverage.md:5:- Unsafe chain blocking coverage: PASS
+docs/coverage/as6-epic002-pr3-executive-workspace-integration-coverage.md:9:- Workspace Storage V99 compatibility coverage: PASS
+docs/AS6_OS_ASSISTANT_COMMAND_LAYER_ROOT_CAUSE.md:4:- Interface gap: CRM has AS6 Assistant blocks, but no always-visible lightweight command layer.
+docs/AS6_REAL_PAGE_COMPONENT_MIGRATION_V99.md:13:- Use AS6UnifiedGlassCard for new card blocks.
+docs/PRODUCT/AS6_COMMAND_CENTER_ORIENTATION_V222_8.md:13:- Added one first-time orientation block after Command Center hero.
+docs/PRODUCT/AS6_COMMAND_CENTER_ORIENTATION_V222_8.md:15:- Added scoped CSS only for the new orientation block.
+docs/PRODUCT/AS6_COMMAND_CENTER_ORIENTATION_V222_8.md:21:One isolated CommandCenterPage UI block plus scoped CSS. No routes, backend, auth logic or Governance changed.
+docs/PRODUCT/AS6_RUNTIME_TELEMETRY_STORAGE_VALIDATION_V222_14.md:14:- Repair: replaced guard-sensitive test fields with neutral blockedField aliases in runtime artifacts.
+docs/PRODUCT/AS6_RUNTIME_TELEMETRY_STORAGE_VALIDATION_V222_14.md:34:- Runtime localStorage telemetry validation.
+docs/PRODUCT/AS6_RUNTIME_TELEMETRY_STORAGE_VALIDATION_V222_14.md:35:- Blocked metadata sanitization runtime check.
+docs/PRODUCT/AS6_PRODUCT_DIAGNOSTIC_PASSPORT_V222_1B.md:58:- Repair: moved AS6FirstDawnPanel import outside named import block.
+docs/PRODUCT/AS6_FIRST_DECISION_HISTORY_EVIDENCE_ENTRY_V222_22.md:36:- Duplicate stage evidence entries must be blocked.
+docs/PRODUCT/AS6_COMMAND_CENTER_FIRST_TIME_ORIENTATION_DIAGNOSTIC_V222_7.md:59:If orientation gap is confirmed, add one minimal first-time orientation block to Command Center.
+docs/PRODUCT/AS6_DECISION_HISTORY_PERSISTENCE_DIAGNOSTIC_V222_19.md:21:- OPTION_A=Frontend localStorage persistence only
+docs/PRODUCT/AS6_COMMAND_CENTER_FIRST_ACTION_TELEMETRY_V222_12.md:37:AS6 can now collect first-action evidence from the Command Center orientation block.
+docs/PRODUCT/AS6_COMMAND_CENTER_LAYOUT_ALIGNMENT_V222_28.md:20:The first-step orientation block no longer pushes the above-fold dashboard down.
+docs/PRODUCT/AS6_FIRST_PRODUCT_SCREEN_V221_5.md:3:Goal: add the first small product-facing block of the new AS6 era.
+docs/PRODUCT/AS6_COMMAND_CENTER_ORIENTATION_EFFECT_REVIEW_V222_9.md:12:- Command Center orientation block
+docs/PRODUCT/AS6_COMMAND_CENTER_ORIENTATION_EFFECT_REVIEW_V222_9.md:29:V222.8 static effect is confirmed: Command Center contains a first-time orientation block with three first useful actions.
+docs/PRODUCT/AS6_PRODUCT_RECOMMENDATION_CARD_COMPACT_ETALON_V222_29.md:17:- Text blocks made more compact and readable.
+docs/PRODUCT/AS6_PRODUCT_RECOMMENDATION_CARD_COMPACT_ETALON_V222_29.md:18:- Evidence block made tighter.
+docs/PRODUCT/AS6_FIRST_ACTION_ANALYTICS_DIAGNOSTIC_V222_10.md:12:- CommandCenterPage first-time orientation block
+docs/governance/as6-epic005-pr4-executive-automation-audit-trail-complete-governance.md:4:- Audit Trail remains runtime-only.
+docs/governance/as6-epic005-pr4-executive-automation-audit-trail-complete-governance.md:7:- Next EPIC should focus on execution behavior: priorities, dependencies, orchestration and concurrency control.
+docs/governance/as6-root-cause-autonomous-incident-governance-addendum.md:8:Rollback: block repair apply.
+docs/governance/as6-root-cause-autonomous-incident-governance-addendum.md:16:Rollback: block repair apply.
+docs/governance/as6-root-cause-autonomous-incident-governance-addendum.md:24:Rollback: block repair apply.
+docs/governance/as6-root-cause-autonomous-incident-governance-addendum.md:32:Rollback: block repair apply.
+docs/governance/as6-root-cause-autonomous-incident-governance-addendum.md:37:Symptoms: incident state conflicts with current diagnostics.
+docs/governance/as6-root-cause-autonomous-incident-governance-addendum.md:40:Rollback: block automation.
+docs/governance/as6-root-cause-deduplication-addendum.md:24:Rollback: block promotion.
+docs/governance/as6-epic004-pr1-executive-automation-scenarios-governance.md:11:CONTROL=Executive Automation scenarios must use only registered safe actionId sequences and must remain runtime-only.
+docs/governance/as6-epic006-pr3-execution-orchestrator-complete-governance.md:4:- Execution Orchestrator must remain runtime-only unless persistence is explicitly approved.
+docs/governance/as6-epic006-pr3-execution-orchestrator-complete-governance.md:6:- Next PR must focus on runtime concurrency control, not storage changes.
+docs/governance/as6-diagnostic-status-registry-autobuild.md:525:## as6-diagnose-unreachable-diagnostic-blocks
+docs/governance/as6-diagnostic-status-registry-autobuild.md:526:- diagnostic: ops/bin/as6-diagnose-unreachable-diagnostic-blocks
+docs/governance/as6-root-cause-autonomous-deployment-addendum.md:8:Rollback: block deployment.
+docs/governance/as6-root-cause-autonomous-deployment-addendum.md:16:Rollback: block deployment.
+docs/governance/as6-root-cause-autonomous-deployment-addendum.md:24:Rollback: block deployment.
+docs/governance/as6-root-cause-autonomous-deployment-addendum.md:32:Rollback: block deployment.
+docs/governance/as6-root-cause-autonomous-deployment-addendum.md:40:Rollback: block autonomous deployment.
+docs/governance/as6-epic005-pr3-executive-automation-policy-explanations-governance.md:4:- Every blocked actionId must have a safe next step.
+docs/governance/as6-epic005-pr3-executive-automation-policy-explanations-governance.md:6:- Policy explanations must not mutate Workspace Storage V99.
+docs/governance/as6-epic005-pr3-executive-automation-policy-explanations-governance.md:7:- Policy explanations must not mutate contextState.businessHome.
+docs/governance/as6-epic005-pr3-executive-automation-policy-explanations-governance.md:8:- Policy explanations must not change layout schema or persistent storage.
+docs/governance/as6-epic004-pr5-executive-automation-retry-recovery-governance.md:12:CONTROL=Executive Automation retry and recovery must remain runtime-only, expose retry count and failure reason, and must not mutate Workspace Storage V99 or layout schema.
+docs/governance/as6-root-cause-autonomous-change-approval-addendum.md:8:Rollback: block production apply.
+docs/governance/as6-root-cause-autonomous-change-approval-addendum.md:16:Rollback: block production apply.
+docs/governance/as6-root-cause-autonomous-change-approval-addendum.md:24:Rollback: block production apply.
+docs/governance/as6-root-cause-autonomous-change-approval-addendum.md:32:Rollback: block autonomous apply.
+docs/governance/as6-root-cause-autonomous-change-approval-addendum.md:40:Rollback: immediately block apply.
+docs/governance/as6-epic005-pr4-jsx-template-literal-bash-substitution-governance.md:5:- Any key={} corruption is merge-blocking.
+docs/governance/as6-epic004-pr4-executive-automation-queue-scheduler-governance.md:12:CONTROL=Executive Automation queue and scheduler must remain runtime-only, preserve scenario order and expose current/pending scenarios without storage mutation.
+docs/governance/as6-epic001-business-home-workspace-persistence-governance.md:5:ROOT_CAUSE=Business Home shell was integrated but not connected to existing Workspace Storage V99.
+docs/governance/as6-epic001-business-home-workspace-persistence-governance.md:6:CONTROL=Business Home must use as6WorkspaceStorage.js instead of creating a parallel localStorage key.
+docs/governance/as6-epic004-pr3-executive-automation-monitoring-control-governance.md:12:CONTROL=Executive Automation monitoring must remain runtime-only, show timing/progress/completion, and provide cancel control without storage mutation.
+docs/governance/as6-epic003-pr5-executive-action-analytics-metrics-governance.md:11:CONTROL=Executive Action analytics must be computed only from runtime audit trail and must not mutate persistent storage or layout schema.
+docs/governance/as6-epic003-pr4-executive-action-history-audit-trail-governance.md:12:CONTROL=Executive Action history must remain runtime-only for PR-4 and must not mutate Workspace Storage V99, layout schema, contextState.businessHome or localStorage.
+docs/governance/as6-epic006-pr3-execution-orchestrator-export-contract-governance.md:5:- Export contract drift is merge-blocking.
+docs/governance/as6-root-cause-rollback-verification-addendum.md:8:Rollback: block deployment until rollback plan exists.
+docs/governance/as6-root-cause-rollback-verification-addendum.md:16:Rollback: block deployment until evidence exists.
+docs/governance/as6-root-cause-rollback-verification-addendum.md:24:Rollback: block deployment until restore procedure exists.
+docs/governance/as6-root-cause-rollback-verification-addendum.md:32:Rollback: block deployment until valid backup exists.
+docs/governance/as6-root-cause-rollback-verification-addendum.md:40:Rollback: block deployment until validation passes.
+docs/governance/as6-epic006-pr1-scenario-priorities-governance.md:11:CONTROL=Scenario priorities must remain runtime-only and must not change Workspace Storage V99 or contextState.businessHome.
+docs/governance/as6-root-cause-autonomous-knowledge-base-addendum.md:8:Rollback: block knowledge-base promotion.
+docs/governance/as6-root-cause-autonomous-knowledge-base-addendum.md:16:Rollback: block L7 promotion.
+docs/governance/as6-root-cause-autonomous-knowledge-base-addendum.md:24:Rollback: block L7 promotion.
+docs/governance/as6-root-cause-autonomous-knowledge-base-addendum.md:32:Rollback: block autonomous action.
+docs/governance/as6-root-cause-autonomous-knowledge-base-addendum.md:40:Rollback: block state promotion.
+docs/governance/as6-epic001-pr8-drag-drop-layout-governance.md:9:CONTROL=Drag and drop must update only widget order through updateBusinessHomeLayout and must not change Workspace Storage V99 schema.
+docs/governance/as6-epic005-pr4-executive-automation-audit-trail-governance.md:3:- Audit Trail must be runtime-only unless long-term audit is explicitly requested.
+docs/governance/as6-epic005-pr4-executive-automation-audit-trail-governance.md:6:- Blocked executions must expose stop reason.
+docs/governance/as6-epic005-pr4-executive-automation-audit-trail-governance.md:8:- Audit Trail must not mutate Workspace Storage V99.
+docs/governance/as6-epic005-pr4-executive-automation-audit-trail-governance.md:9:- Audit Trail must not mutate contextState.businessHome.
+docs/governance/as6-epic005-pr4-executive-automation-audit-trail-governance.md:10:- Audit Trail must not use localStorage or persistent storage.
+docs/governance/as6-epic006-pr2-scenario-dependencies-governance.md:3:- Scenario dependencies must remain runtime-only unless persistence is explicitly approved.
+docs/governance/as6-epic006-pr2-scenario-dependencies-governance.md:4:- Every dependency-blocked scenario must expose a wait reason.
+docs/governance/as6-epic006-pr2-scenario-dependencies-governance.md:5:- Dependency cycles are merge-blocking.
+docs/governance/as6-epic006-pr2-scenario-dependencies-governance.md:6:- Dependencies must not mutate Workspace Storage V99.
+docs/governance/as6-epic006-pr2-scenario-dependencies-governance.md:7:- Dependencies must not mutate contextState.businessHome.
+docs/governance/as6-epic006-pr2-scenario-dependencies-governance.md:8:- Dependencies must not use localStorage or persistent storage.
+docs/governance/as6-autonomous-change-approval-controller.md:5:Validate whether a change is approved for planning/evidence and block automatic production apply without human approval.
+docs/governance/as6-root-cause-autonomous-incident-commander-addendum.md:8:Rollback: block autonomous incident actions.
+docs/governance/as6-root-cause-autonomous-incident-commander-addendum.md:24:Rollback: block auto repair.
+docs/governance/as6-root-cause-autonomous-incident-commander-addendum.md:32:Rollback: block repair apply.
+docs/governance/as6-root-cause-autonomous-governance-compliance-addendum.md:8:Rollback: block controller promotion.
+docs/governance/as6-root-cause-autonomous-governance-compliance-addendum.md:16:Rollback: block controller promotion.
+docs/governance/as6-root-cause-autonomous-governance-compliance-addendum.md:24:Rollback: block controller promotion.
+docs/governance/as6-root-cause-autonomous-governance-compliance-addendum.md:32:Rollback: block state promotion.
+docs/governance/as6-root-cause-autonomous-governance-compliance-addendum.md:40:Rollback: block autonomous promotion.
+docs/governance/as6-root-cause-autonomous-incident-lifecycle-addendum.md:8:Rollback: block incident automation.
+docs/governance/as6-root-cause-autonomous-incident-lifecycle-addendum.md:16:Rollback: block incident closure.
+docs/governance/as6-root-cause-autonomous-incident-lifecycle-addendum.md:24:Rollback: block incident workflow.
+docs/governance/as6-epic006-pr3-execution-orchestrator-governance.md:3:- Execution Orchestrator must remain runtime-only unless persistence is explicitly approved.
+docs/governance/as6-epic006-pr3-execution-orchestrator-governance.md:6:- Orchestrator must not mutate Workspace Storage V99.
+docs/governance/as6-epic006-pr3-execution-orchestrator-governance.md:7:- Orchestrator must not mutate contextState.businessHome.
+docs/governance/as6-epic006-pr3-execution-orchestrator-governance.md:8:- Orchestrator must not use localStorage or persistent storage.
+docs/governance/as6-epic005-pr2-executive-automation-policy-ui-governance.md:4:- Unknown actionId must be shown as blocked in UI.
+docs/governance/as6-epic005-pr2-executive-automation-policy-ui-governance.md:6:- UI must not mutate Workspace Storage V99.
+docs/governance/as6-epic005-pr2-executive-automation-policy-ui-governance.md:7:- UI must not mutate contextState.businessHome.
+docs/governance/as6-root-cause-autonomous-evidence-correlation-addendum.md:8:Rollback: block evidence promotion.
+docs/governance/as6-root-cause-autonomous-evidence-correlation-addendum.md:16:Rollback: block autonomous promotion.
+docs/AS6_V243_CRM_WORKSPACE_CLIENT_POLISH_ROOT_CAUSE.md:3:- Production confirms CRM Workspace block is visible.

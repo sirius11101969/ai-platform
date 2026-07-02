@@ -1,0 +1,11 @@
+.as6-concurrency{margin:24px 0;padding:20px;border:1px solid rgba(255,255,255,.1);border-radius:24px;background:linear-gradient(135deg,rgba(244,63,94,.12),rgba(15,23,42,.72));color:inherit}
+.as6-concurrency__eyebrow{display:inline-flex;margin-bottom:8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.74}
+.as6-concurrency__header h2{margin:0 0 8px;font-size:22px}
+.as6-concurrency__header p{margin:0;max-width:860px;opacity:.78}
+.as6-concurrency__locks,.as6-concurrency__decisions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+.as6-concurrency__lock,.as6-concurrency__decision{padding:14px;border:1px solid rgba(255,255,255,.1);border-radius:18px;background:rgba(255,255,255,.055)}
+.as6-concurrency__lock[data-lock-status='active'],.as6-concurrency__decision[data-concurrency-status='blocked']{background:rgba(239,68,68,.1)}
+.as6-concurrency__lock[data-lock-status='shared'],.as6-concurrency__decision[data-concurrency-status='ready']{background:rgba(34,197,94,.08)}
+.as6-concurrency__topline{display:flex;justify-content:space-between;gap:12px;font-size:13px}
+.as6-concurrency__lock p,.as6-concurrency__decision p{margin:8px 0 0;opacity:.78}
+@media(max-width:1000px){.as6-concurrency__locks,.as6-concurrency__decisions{grid-template-columns:1fr}}

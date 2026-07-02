@@ -1,3 +1,5 @@
+import AS6ExecutionConcurrencyPanel from './AS6ExecutionConcurrencyPanel.jsx';
+import AS6ExecutionOrchestratorPanel from './AS6ExecutionOrchestratorPanel.jsx';
 import AS6ExecutiveScenarioDependenciesPanel from './AS6ExecutiveScenarioDependenciesPanel.jsx';
 import AS6ExecutiveAutomationAuditTrailPanel from './AS6ExecutiveAutomationAuditTrailPanel.jsx';
 export const executiveAutomationPolicyExplanations = [

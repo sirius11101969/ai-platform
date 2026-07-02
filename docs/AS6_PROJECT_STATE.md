@@ -5292,3 +5292,15 @@ Status: PASS pending validation
 - layout schema, localStorage and persistent storage unchanged.
 - Project readiness: 99.98%.
 - Next stage: AS6_EPIC006_PR4_CONCURRENCY_CONTROL.
+
+## EPIC-006 PR-4 — Concurrency Control
+
+- Added runtime-only concurrency lock model.
+- Added conflict detection for incompatible scenario launches.
+- Added blocking decision, conflict explanation, wait decision and fallback.
+- Added Business Home concurrency panel.
+- Added diagnostics, governance, coverage and AEC artifacts.
+- Workspace Storage V99 unchanged.
+- contextState.businessHome unchanged.
+- layout schema, localStorage and persistent storage unchanged.
+- Project readiness: 99.99%.
