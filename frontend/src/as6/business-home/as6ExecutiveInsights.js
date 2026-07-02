@@ -1,22 +1,22 @@
-export const AS6_EXECUTIVE_INSIGHTS_VERSION = "EPIC003_PR1";
+export const AS6_EXECUTIVE_INSIGHTS_VERSION = "EPIC003_PR2";
 
 export function createAS6ExecutiveFallbackInsights(profileName = "Administrator") {
   return [{
     id: "executive-fallback-insight",
     title: "Executive Insights работают в fallback-режиме",
     reason: "AS6 не получил полный executive context, но сохраняет рекомендации для профиля " + profileName + ".",
-    action: "Проверить Live Data и Executive Widgets",
+    action: "Проверить Live Data и Executive Widgets", actionId: "openDashboard",
   }];
 }
 
 export function createAS6ExecutiveProfileInsights(state, profileName = "Administrator") {
   const insights = [];
-  if (profileName === "Sales") insights.push({ id: "sales-revenue-focus", title: "Фокус на Revenue CRM Fusion", reason: "Sales-профилю важнее сделки, CRM и revenue-сигналы.", action: "Проверить Revenue CRM Fusion" });
-  if (profileName === "Finance") insights.push({ id: "finance-kpi-focus", title: "Фокус на Executive KPI", reason: "Finance-профилю важнее KPI, прогноз и риски.", action: "Проверить Executive KPI" });
-  if (profileName === "Operations") insights.push({ id: "operations-health-focus", title: "Фокус на Operational Health", reason: "Operations-профилю важнее health, connector и operational signals.", action: "Проверить Global Health" });
-  if (profileName === "Administrator") insights.push({ id: "admin-command-focus", title: "Фокус на Executive Command Dashboard", reason: "Administrator-профилю нужен общий контроль сигналов платформы.", action: "Открыть Executive Command Dashboard" });
-  if (state.platformStatus?.dashboard !== "LIVE") insights.push({ id: "dashboard-fallback-risk", title: "Dashboard Live Data требует внимания", reason: "Текущий Dashboard status: " + (state.platformStatus?.dashboard || "UNKNOWN"), action: "Проверить Dashboard Live Data" });
-  if (state.marketplace?.failures?.length) insights.push({ id: "marketplace-risk", title: "Marketplace сообщает о рисках", reason: "Обнаружены Marketplace failures.", action: "Проверить Marketplace GA" });
+  if (profileName === "Sales") insights.push({ id: "sales-revenue-focus", title: "Фокус на Revenue CRM Fusion", reason: "Sales-профилю важнее сделки, CRM и revenue-сигналы.", action: "Проверить Revenue CRM Fusion", actionId: "openCrm" });
+  if (profileName === "Finance") insights.push({ id: "finance-kpi-focus", title: "Фокус на Executive KPI", reason: "Finance-профилю важнее KPI, прогноз и риски.", action: "Проверить Executive KPI", actionId: "openExecutiveDashboard" });
+  if (profileName === "Operations") insights.push({ id: "operations-health-focus", title: "Фокус на Operational Health", reason: "Operations-профилю важнее health, connector и operational signals.", action: "Проверить Global Health", actionId: "openDashboard" });
+  if (profileName === "Administrator") insights.push({ id: "admin-command-focus", title: "Фокус на Executive Command Dashboard", reason: "Administrator-профилю нужен общий контроль сигналов платформы.", action: "Открыть Executive Command Dashboard", actionId: "openCommandCenter" });
+  if (state.platformStatus?.dashboard !== "LIVE") insights.push({ id: "dashboard-fallback-risk", title: "Dashboard Live Data требует внимания", reason: "Текущий Dashboard status: " + (state.platformStatus?.dashboard || "UNKNOWN"), action: "Проверить Dashboard Live Data", actionId: "openDashboard" });
+  if (state.marketplace?.failures?.length) insights.push({ id: "marketplace-risk", title: "Marketplace сообщает о рисках", reason: "Обнаружены Marketplace failures.", action: "Проверить Marketplace GA", actionId: "openBusinessHome" });
   return insights;
 }
 
@@ -26,7 +26,7 @@ export function createAS6ExecutiveRecommendations(state, profileName = "Administ
     id: "adaptive-" + suggestion.id,
     title: suggestion.title,
     reason: suggestion.reason,
-    action: "Применить через AI Adaptive Home",
+    action: "Применить через AI Adaptive Home", actionId: "openBusinessHome",
   }));
   return [...profileInsights, ...adaptiveInsights].slice(0, 5);
 }

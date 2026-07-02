@@ -1,0 +1,6 @@
+ M frontend/src/as6/business-home/as6ExecutiveActions.js
+ M frontend/src/as6/business-home/as6ExecutiveInsights.js
+?? docs/coverage/as6-epic003-pr2-executive-action-orchestration-coverage.md
+?? docs/diagnostics/as6-epic003-pr2-executive-action-orchestration.md
+?? docs/governance/as6-epic003-pr2-executive-action-orchestration-governance.md
+?? frontend/src/as6/business-home/as6ExecutiveActionRegistry.js

@@ -1,44 +1,33 @@
-export const AS6_EXECUTIVE_ACTIONS_VERSION = "EPIC003_PR1";
+import { AS6_EXECUTIVE_ACTION_REGISTRY, resolveAS6ExecutiveRegisteredAction } from "./as6ExecutiveActionRegistry.js";
 
-export const AS6_EXECUTIVE_ACTION_TARGETS = {
-  businessHome: "/business-home",
-  crm: "/crm-workspace",
-  dashboard: "/dashboard",
-  workspace: "/as6-workspace",
-  executiveDashboard: "/ai-executive-dashboard",
-  commandCenter: "/command-center",
-};
+export const AS6_EXECUTIVE_ACTIONS_VERSION = "EPIC003_PR2";
+
+export const AS6_EXECUTIVE_ACTION_TARGETS = Object.fromEntries(Object.entries(AS6_EXECUTIVE_ACTION_REGISTRY).map(([key, action]) => [key, action.target]));
 
 export function createAS6ExecutiveFallbackAction(reason = "Безопасное действие не определено") {
   return {
-    type: "suggest-next-step",
-    label: "Показать следующий шаг",
-    target: AS6_EXECUTIVE_ACTION_TARGETS.businessHome,
+    ...resolveAS6ExecutiveRegisteredAction("showNextStep"),
     reason,
-    safe: true,
   };
 }
 
 export function resolveAS6ExecutiveActionTarget(actionText = "") {
   const value = String(actionText).toLowerCase();
-  if (value.includes("crm") || value.includes("revenue")) return AS6_EXECUTIVE_ACTION_TARGETS.crm;
-  if (value.includes("dashboard") || value.includes("live data")) return AS6_EXECUTIVE_ACTION_TARGETS.dashboard;
-  if (value.includes("workspace")) return AS6_EXECUTIVE_ACTION_TARGETS.workspace;
-  if (value.includes("command")) return AS6_EXECUTIVE_ACTION_TARGETS.commandCenter;
-  if (value.includes("executive")) return AS6_EXECUTIVE_ACTION_TARGETS.executiveDashboard;
-  return AS6_EXECUTIVE_ACTION_TARGETS.businessHome;
+  if (value.includes("crm") || value.includes("revenue")) return resolveAS6ExecutiveRegisteredAction("openCrm").target;
+  if (value.includes("dashboard") || value.includes("live data")) return resolveAS6ExecutiveRegisteredAction("openDashboard").target;
+  if (value.includes("workspace")) return resolveAS6ExecutiveRegisteredAction("openWorkspace").target;
+  if (value.includes("command")) return resolveAS6ExecutiveRegisteredAction("openCommandCenter").target;
+  if (value.includes("executive")) return resolveAS6ExecutiveRegisteredAction("openExecutiveDashboard").target;
+  return resolveAS6ExecutiveRegisteredAction("openBusinessHome").target;
 }
 
 export function createAS6ExecutiveAction(insight) {
   if (!insight) return createAS6ExecutiveFallbackAction();
-  const target = resolveAS6ExecutiveActionTarget(insight.action || insight.title || insight.reason);
-  return {
-    type: "navigate",
-    label: insight.action || "Открыть связанный модуль",
-    target,
-    reason: insight.reason || "AS6 Executive recommendation",
-    safe: Object.values(AS6_EXECUTIVE_ACTION_TARGETS).includes(target),
-  };
+  const registeredAction = insight.actionId ? resolveAS6ExecutiveRegisteredAction(insight.actionId) : null;
+  if (registeredAction?.safe) return { ...registeredAction, reason: insight.reason || "AS6 Executive recommendation" };
+  const fallbackTarget = resolveAS6ExecutiveActionTarget(insight.action || insight.title || insight.reason);
+  const fallbackAction = Object.values(AS6_EXECUTIVE_ACTION_REGISTRY).find((action) => action.target === fallbackTarget) || resolveAS6ExecutiveRegisteredAction("showNextStep");
+  return { ...fallbackAction, reason: insight.reason || "AS6 Executive recommendation" };
 }
 
 export function executeAS6ExecutiveAction(action) {
