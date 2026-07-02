@@ -1,0 +1,1 @@
+export { default as AS6WorkspaceFoundation, AS6WorkspaceSidebar, AS6WorkspaceHeader, AS6WorkspaceRouterContainer, AS6WorkspaceSlot, AS6_WORKSPACE_FOUNDATION_VERSION, AS6_WORKSPACE_MODULES } from './AS6WorkspaceFoundation.jsx';

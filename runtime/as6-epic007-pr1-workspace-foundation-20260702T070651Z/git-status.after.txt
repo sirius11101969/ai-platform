@@ -1,0 +1,14 @@
+ M docs/AS6_PROJECT_STATE.md
+?? docs/aec/as6-epic006-pr3-execution-orchestrator-aec.md
+?? docs/aec/as6-epic007-pr1-workspace-foundation-aec.md
+?? docs/coverage/as6-epic006-pr3-execution-orchestrator-coverage.md
+?? docs/coverage/as6-epic007-pr1-workspace-foundation-coverage.md
+?? docs/diagnostics/as6-epic006-pr3-execution-orchestrator.md
+?? docs/diagnostics/as6-epic007-pr1-workspace-foundation.md
+?? docs/governance/as6-epic006-pr3-execution-orchestrator-governance.md
+?? docs/governance/as6-epic007-pr1-workspace-foundation-governance.md
+?? frontend/src/as6/business-home/AS6ExecutionOrchestratorPanel.css
+?? frontend/src/as6/business-home/AS6ExecutionOrchestratorPanel.jsx
+?? frontend/src/as6/workspace/AS6WorkspaceFoundation.css
+?? frontend/src/as6/workspace/AS6WorkspaceFoundation.jsx
+?? frontend/src/as6/workspace/index.js

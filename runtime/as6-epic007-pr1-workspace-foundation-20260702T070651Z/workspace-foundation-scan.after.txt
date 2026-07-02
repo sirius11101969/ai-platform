@@ -1,0 +1,12 @@
+frontend/src/as6/workspace/index.js:1:export { default as AS6WorkspaceFoundation, AS6WorkspaceSidebar, AS6WorkspaceHeader, AS6WorkspaceRouterContainer, AS6WorkspaceSlot, AS6_WORKSPACE_FOUNDATION_VERSION, AS6_WORKSPACE_MODULES } from './AS6WorkspaceFoundation.jsx';
+frontend/src/as6/workspace/AS6WorkspaceFoundation.jsx:2:import './AS6WorkspaceFoundation.css';
+frontend/src/as6/workspace/AS6WorkspaceFoundation.jsx:6:export const AS6_WORKSPACE_MODULES = [
+frontend/src/as6/workspace/AS6WorkspaceFoundation.jsx:15:export function AS6WorkspaceSidebar({ modules = AS6_WORKSPACE_MODULES, activeModule = 'business-home' }) {
+frontend/src/as6/workspace/AS6WorkspaceFoundation.jsx:31:export function AS6WorkspaceHeader({ title = 'Unified AI Workspace', subtitle = 'Всегда знает следующий лучший шаг.' }) {
+frontend/src/as6/workspace/AS6WorkspaceFoundation.jsx:44:export function AS6WorkspaceSlot({ activeModule = 'business-home', children }) {
+frontend/src/as6/workspace/AS6WorkspaceFoundation.jsx:58:export function AS6WorkspaceRouterContainer({ activeModule = 'business-home', children }) {
+frontend/src/as6/workspace/AS6WorkspaceFoundation.jsx:61:      <AS6WorkspaceSlot activeModule={activeModule}>{children}</AS6WorkspaceSlot>
+frontend/src/as6/workspace/AS6WorkspaceFoundation.jsx:66:export default function AS6WorkspaceFoundation({ activeModule = 'business-home', children }) {
+frontend/src/as6/workspace/AS6WorkspaceFoundation.jsx:69:      <AS6WorkspaceSidebar activeModule={activeModule} />
+frontend/src/as6/workspace/AS6WorkspaceFoundation.jsx:71:        <AS6WorkspaceHeader />
+frontend/src/as6/workspace/AS6WorkspaceFoundation.jsx:72:        <AS6WorkspaceRouterContainer activeModule={activeModule}>{children}</AS6WorkspaceRouterContainer>
