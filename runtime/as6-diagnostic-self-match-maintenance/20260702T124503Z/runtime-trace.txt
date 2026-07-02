@@ -1,0 +1,7 @@
+STAGE=AS6_DIAGNOSTIC_SELF_MATCH_MAINTENANCE
+FAILURE_CLASS=AS6_DIAGNOSTIC_SELF_MATCH
+ROOT_CAUSE=Diagnostic matched its own literal forbidden pattern and produced unreliable PASS/FAIL behavior.
+CONTROL=Exclude diagnostic/control implementation files from the target scan.
+BASELINE_IMPACT=NONE
+ARCHITECTURE_IMPACT=NONE
+COMPATIBILITY=UNCHANGED

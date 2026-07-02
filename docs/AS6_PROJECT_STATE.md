@@ -5518,3 +5518,15 @@ Status: PASS pending validation
 - Runtime artifacts: runtime/as6-epic008-production-readiness-review/20260702T121307Z
 - Build fingerprint: a1dc2683b9cd8bc5f239c36804a386ba0e811384d4189d883e365e4b7883dd1a
 - Docker image reference: sha256:a457b4653c522c9e6ae2f53b6bb5f5ae80f048a169a4efdb717fb9b551ba3d5c
+
+## AS6_PRR_TOOLING_FIND_OPTION_ORDER_MAINTENANCE
+
+- Added AS6_GOVERNANCE_TOOLING_MAINTENANCE_RULE.
+- Added diagnostic for PRR find option order warning.
+- Added control for tooling-only maintenance classification.
+- Added failure class AS6_PRR_TOOLING_FIND_OPTION_ORDER_WARNING.
+- Added AEC rules for tooling-only maintenance without baseline revalidation.
+- Baseline remains unchanged.
+- Executive Intelligence v1 remains immutable.
+- Project readiness remains 99%.
+- Executive Intelligence readiness remains 100%.

@@ -2026,3 +2026,10 @@ Governed and registered.
 - Executive Intelligence v1 baseline validated.
 - Baseline immutability rule registered.
 - EPIC008_STATUS=CLOSED.
+
+## AS6_PRR_TOOLING_FIND_OPTION_ORDER_MAINTENANCE
+
+- AS6_PRR_TOOLING_FIND_OPTION_ORDER_WARNING: controlled.
+- AS6_GOVERNANCE_TOOLING_MAINTENANCE_RULE: registered.
+- BASELINE_IMPACT=NONE.
+- COMPATIBILITY=UNCHANGED.

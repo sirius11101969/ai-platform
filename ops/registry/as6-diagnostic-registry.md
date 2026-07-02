@@ -1493,3 +1493,17 @@ ops/bin/as6-control-permission-engine-v114
 - Compatibility matrix: docs/baselines/as6-baseline-executive-intelligence-v1-compatibility-matrix.md
 - Immutability rule: ops/governance/as6-baseline-immutability-rule-executive-intelligence-v1.md
 - Runtime artifacts: runtime/as6-epic008-production-readiness-review/20260702T121307Z
+
+## AS6_PRR_TOOLING_FIND_OPTION_ORDER_MAINTENANCE
+
+- Diagnostic: ops/bin/as6-diagnose-prr-tooling-find-option-order
+- Control: ops/bin/as6-control-prr-tooling-find-option-order
+- Governance rule: ops/governance/as6-tooling-maintenance-rule.md
+- Root cause: ops/governance/as6-prr-tooling-find-option-order-root-cause.md
+- AEC: ops/governance/as6-prr-tooling-find-option-order-aec.md
+- Runtime artifacts: runtime/as6-prr-tooling-find-option-order-maintenance/20260702T123035Z
+- Failure class: AS6_PRR_TOOLING_FIND_OPTION_ORDER_WARNING
+- Change class: MAINTENANCE
+- Scope: TOOLING
+- Baseline impact: NONE
+- Compatibility: UNCHANGED

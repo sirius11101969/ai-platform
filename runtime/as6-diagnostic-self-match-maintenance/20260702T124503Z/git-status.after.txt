@@ -1,0 +1,10 @@
+M  docs/AS6_PROJECT_STATE.md
+A  ops/bin/as6-control-prr-tooling-find-option-order
+AM ops/bin/as6-diagnose-prr-tooling-find-option-order
+A  ops/governance/as6-prr-tooling-find-option-order-aec.md
+A  ops/governance/as6-prr-tooling-find-option-order-root-cause.md
+A  ops/governance/as6-tooling-maintenance-rule.md
+M  ops/registry/as6-coverage-registry.md
+M  ops/registry/as6-diagnostic-registry.md
+M  ops/status/as6-detected-errors.md
+?? ops/governance/as6-diagnostic-self-match-rule.md

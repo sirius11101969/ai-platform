@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+BAD=0
+
+while IFS= read -r f; do
+  case "$f" in
+    ops/bin/as6-diagnose-*|ops/bin/as6-control-*)
+      continue
+      ;;
+  esac
+
+  if [ -f "$f" ] && grep -q "find frontend/dist -type f -maxdepth 3" "$f"; then
+    echo "AS6_BAD_FIND_OPTION_ORDER_FILE=$f"
+    BAD=1
+  fi
+done < <(git ls-files)
+
+if [ "$BAD" -ne 0 ]; then
+  echo AS6_PRR_TOOLING_FIND_OPTION_ORDER=FAIL
+  exit 1
+fi
+
+grep -q AS6_GOVERNANCE_TOOLING_MAINTENANCE_RULE ops/governance/as6-tooling-maintenance-rule.md
+grep -q AS6_PRR_TOOLING_FIND_OPTION_ORDER_WARNING ops/governance/as6-prr-tooling-find-option-order-root-cause.md
+
+echo AS6_PRR_TOOLING_FIND_OPTION_ORDER=PASS
+echo AS6_GOVERNANCE_TOOLING_MAINTENANCE_RULE=PASS

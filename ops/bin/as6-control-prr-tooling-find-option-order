@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-prr-tooling-find-option-order
+grep -q AS6_AEC_PRR_FIND_GLOBAL_OPTIONS_BEFORE_PREDICATES ops/governance/as6-prr-tooling-find-option-order-aec.md
+grep -q BASELINE_IMPACT=NONE ops/governance/as6-prr-tooling-find-option-order-root-cause.md
+grep -q COMPATIBILITY=UNCHANGED ops/governance/as6-prr-tooling-find-option-order-root-cause.md
+echo AS6_PRR_TOOLING_FIND_OPTION_ORDER_CONTROL=PASS

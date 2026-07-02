@@ -3326,3 +3326,14 @@ Permission Validation
 - runtime/as6-epic008-production-readiness-review/20260702T121307Z/docker-build.log
 - runtime/as6-epic008-production-readiness-review/20260702T121307Z/guardian.log
 - runtime/as6-epic008-production-readiness-review/20260702T121307Z/summary.txt
+
+## AS6_PRR_TOOLING_FIND_OPTION_ORDER_MAINTENANCE
+
+- ops/bin/as6-diagnose-prr-tooling-find-option-order
+- ops/bin/as6-control-prr-tooling-find-option-order
+- ops/governance/as6-tooling-maintenance-rule.md
+- ops/governance/as6-prr-tooling-find-option-order-root-cause.md
+- ops/governance/as6-prr-tooling-find-option-order-aec.md
+- runtime/as6-prr-tooling-find-option-order-maintenance/20260702T123035Z/runtime-trace.txt
+- runtime/as6-prr-tooling-find-option-order-maintenance/20260702T123035Z/bad-find-patterns.before.txt
+- runtime/as6-prr-tooling-find-option-order-maintenance/20260702T123035Z/fixed-find-patterns.after.txt
