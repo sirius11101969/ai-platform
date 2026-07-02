@@ -1,0 +1,22 @@
+frontend/src/as6/workspace/index.js:49:  AS6_WORKSPACE_MODULE_REGISTRY_VERSION,
+frontend/src/as6/workspace/index.js:51:  AS6_WORKSPACE_MODULE_REGISTRY,
+frontend/src/as6/workspace/index.js:54:  validateAS6WorkspaceModuleRegistry,
+frontend/src/as6/workspace/index.js:58:  default as AS6WorkspaceModuleIntegration,
+frontend/src/as6/workspace/index.js:62:  AS6WorkspaceModuleIntegrationTracer,
+frontend/src/as6/workspace/index.js:64:} from './AS6WorkspaceModuleIntegration.jsx';
+frontend/src/as6/workspace/AS6WorkspaceModuleIntegration.jsx:2:import './AS6WorkspaceModuleIntegration.css';
+frontend/src/as6/workspace/AS6WorkspaceModuleIntegration.jsx:5:  AS6_WORKSPACE_MODULE_REGISTRY,
+frontend/src/as6/workspace/AS6WorkspaceModuleIntegration.jsx:7:  validateAS6WorkspaceModuleRegistry,
+frontend/src/as6/workspace/AS6WorkspaceModuleIntegration.jsx:49:  const validation = useMemo(() => validateAS6WorkspaceModuleRegistry(), []);
+frontend/src/as6/workspace/AS6WorkspaceModuleIntegration.jsx:52:    <section className="as6-workspace-module-slot" data-as6-component="workspace-module-slot-binding">
+frontend/src/as6/workspace/AS6WorkspaceModuleIntegration.jsx:67:  const validation = useMemo(() => validateAS6WorkspaceModuleRegistry(), []);
+frontend/src/as6/workspace/AS6WorkspaceModuleIntegration.jsx:71:      <span>Route Compatibility</span>
+frontend/src/as6/workspace/AS6WorkspaceModuleIntegration.jsx:84:export function AS6WorkspaceModuleIntegrationTracer() {
+frontend/src/as6/workspace/AS6WorkspaceModuleIntegration.jsx:96:export default function AS6WorkspaceModuleIntegration() {
+frontend/src/as6/workspace/AS6WorkspaceModuleIntegration.jsx:108:        {AS6_WORKSPACE_MODULE_REGISTRY.map((module) => (
+frontend/src/as6/workspace/AS6WorkspaceModuleIntegration.jsx:114:      <AS6WorkspaceModuleIntegrationTracer />
+frontend/src/as6/workspace/AS6WorkspaceModuleRegistry.js:1:export const AS6_WORKSPACE_MODULE_REGISTRY_VERSION = 'EPIC007_PR5';
+frontend/src/as6/workspace/AS6WorkspaceModuleRegistry.js:9:export const AS6_WORKSPACE_MODULE_REGISTRY = [
+frontend/src/as6/workspace/AS6WorkspaceModuleRegistry.js:73:  return AS6_WORKSPACE_MODULE_REGISTRY.find((module) => module.id === moduleId) || AS6_WORKSPACE_MODULE_REGISTRY[0];
+frontend/src/as6/workspace/AS6WorkspaceModuleRegistry.js:77:  return AS6_WORKSPACE_MODULE_REGISTRY;
+frontend/src/as6/workspace/AS6WorkspaceModuleRegistry.js:80:export function validateAS6WorkspaceModuleRegistry(modules = AS6_WORKSPACE_MODULE_REGISTRY) {

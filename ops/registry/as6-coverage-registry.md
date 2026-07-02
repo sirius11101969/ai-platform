@@ -3219,3 +3219,11 @@ Permission Validation
 - Workspace Preferences coverage.
 - Personalized AI Context coverage.
 - INV-009 Single AI Workspace coverage.
+
+## EPIC-007 PR5 — Module Integration Coverage
+
+- Workspace Module Registry coverage.
+- Workspace Module Slot Binding coverage.
+- Route Compatibility coverage.
+- Existing module reuse coverage.
+- Storage safety coverage.

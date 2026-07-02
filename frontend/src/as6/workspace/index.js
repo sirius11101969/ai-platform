@@ -44,3 +44,21 @@ export {
   AS6_WORKSPACE_PROFILE,
   AS6_WORKSPACE_PREFERENCES,
 } from './AS6WorkspacePersonalization.jsx';
+
+export {
+  AS6_WORKSPACE_MODULE_REGISTRY_VERSION,
+  AS6_WORKSPACE_MODULE_STATUS,
+  AS6_WORKSPACE_MODULE_REGISTRY,
+  getAS6WorkspaceModule,
+  listAS6WorkspaceModules,
+  validateAS6WorkspaceModuleRegistry,
+} from './AS6WorkspaceModuleRegistry.js';
+
+export {
+  default as AS6WorkspaceModuleIntegration,
+  AS6WorkspaceModuleCard,
+  AS6WorkspaceModuleSlotBinding,
+  AS6WorkspaceRouteCompatibilityPanel,
+  AS6WorkspaceModuleIntegrationTracer,
+  AS6_WORKSPACE_MODULE_INTEGRATION_VERSION,
+} from './AS6WorkspaceModuleIntegration.jsx';
