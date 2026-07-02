@@ -1,0 +1,416 @@
+frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js:3:    actionId: 'executive.summary.refresh',
+frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js:6:    reason: 'ActionId известен, сценарий только обновляет аналитическое представление и не меняет persistent storage.',
+frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js:9:    fallback: 'Если источник данных недоступен, показать последнее безопасное состояние без записи в storage.'
+frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js:12:    actionId: 'executive.automation.launchApproved',
+frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js:16:    stepStatus: 'Проверка actionId → PASS. Проверка unsafe chain → PASS. Проверка fallback → PASS.',
+frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js:18:    fallback: 'Если один из шагов станет небезопасным, остановить цепочку и показать причину блокировки.'
+frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js:21:    actionId: 'unknown.actionId',
+frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js:25:    stepStatus: 'Проверка actionId → FAIL. Проверка safe next step → PASS. Запуск сценария → BLOCKED.',
+frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js:26:    safeNextStep: 'Не запускать сценарий. Зарегистрировать actionId в governance и добавить диагностическое покрытие.',
+frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js:27:    fallback: 'Показать пользователю объяснение: действие пока не поддерживается, безопасный запуск невозможен.'
+frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js:30:    actionId: 'executive.unsafe.chain',
+frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js:34:    stepStatus: 'Проверка chain safety → FAIL. Проверка fallback → PASS. Запуск сценария → BLOCKED.',
+frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js:36:    fallback: 'Показать пользователю безопасную рекомендацию вместо запуска автоматизации.'
+frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js:40:export function getExecutiveAutomationPolicyExplanation(actionId) {
+frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js:41:  return executiveAutomationPolicyExplanations.find((item) => item.actionId === actionId) || executiveAutomationPolicyExplanations.find((item) => item.actionId === 'unknown.actionId');
+frontend/src/as6/business-home/as6ExecutiveActions.js:26:  const registeredAction = insight.actionId ? resolveAS6ExecutiveRegisteredAction(insight.actionId) : null;
+frontend/src/as6/business-home/as6ExecutiveActions.js:28:  const fallbackTarget = resolveAS6ExecutiveActionTarget(insight.action || insight.title || insight.reason);
+frontend/src/as6/business-home/as6ExecutiveActions.js:29:  const fallbackAction = Object.values(AS6_EXECUTIVE_ACTION_REGISTRY).find((action) => action.target === fallbackTarget) || resolveAS6ExecutiveRegisteredAction("showNextStep");
+frontend/src/as6/business-home/as6ExecutiveActions.js:30:  return { ...fallbackAction, reason: insight.reason || "AS6 Executive recommendation" };
+frontend/src/as6/business-home/as6ExecutiveActions.js:40:    message: ok ? "Safe registered action" : "Unknown or unsafe action resolved to fallback",
+frontend/src/as6/business-home/AS6BusinessHome.css:299:.as6-business-home__action-audit {
+frontend/src/as6/business-home/AS6BusinessHome.css:308:.as6-business-home__action-audit article {
+frontend/src/as6/business-home/AS6BusinessHome.css:315:.as6-business-home__action-audit span,
+frontend/src/as6/business-home/AS6BusinessHome.css:316:.as6-business-home__action-audit small {
+frontend/src/as6/business-home/as6ExecutiveInsights.js:5:    id: "executive-fallback-insight",
+frontend/src/as6/business-home/as6ExecutiveInsights.js:6:    title: "Executive Insights работают в fallback-режиме",
+frontend/src/as6/business-home/as6ExecutiveInsights.js:8:    action: "Проверить Live Data и Executive Widgets", actionId: "openDashboard",
+frontend/src/as6/business-home/as6ExecutiveInsights.js:14:  if (profileName === "Sales") insights.push({ id: "sales-revenue-focus", title: "Фокус на Revenue CRM Fusion", reason: "Sales-профилю важнее сделки, CRM и revenue-сигналы.", action: "Проверить Revenue CRM Fusion", actionId: "openCrm" });
+frontend/src/as6/business-home/as6ExecutiveInsights.js:15:  if (profileName === "Finance") insights.push({ id: "finance-kpi-focus", title: "Фокус на Executive KPI", reason: "Finance-профилю важнее KPI, прогноз и риски.", action: "Проверить Executive KPI", actionId: "openExecutiveDashboard" });
+frontend/src/as6/business-home/as6ExecutiveInsights.js:16:  if (profileName === "Operations") insights.push({ id: "operations-health-focus", title: "Фокус на Operational Health", reason: "Operations-профилю важнее health, connector и operational signals.", action: "Проверить Global Health", actionId: "openDashboard" });
+frontend/src/as6/business-home/as6ExecutiveInsights.js:17:  if (profileName === "Administrator") insights.push({ id: "admin-command-focus", title: "Фокус на Executive Command Dashboard", reason: "Administrator-профилю нужен общий контроль сигналов платформы.", action: "Открыть Executive Command Dashboard", actionId: "openCommandCenter" });
+frontend/src/as6/business-home/as6ExecutiveInsights.js:18:  if (state.platformStatus?.dashboard !== "LIVE") insights.push({ id: "dashboard-fallback-risk", title: "Dashboard Live Data требует внимания", reason: "Текущий Dashboard status: " + (state.platformStatus?.dashboard || "UNKNOWN"), action: "Проверить Dashboard Live Data", actionId: "openDashboard" });
+frontend/src/as6/business-home/as6ExecutiveInsights.js:19:  if (state.marketplace?.failures?.length) insights.push({ id: "marketplace-risk", title: "Marketplace сообщает о рисках", reason: "Обнаружены Marketplace failures.", action: "Проверить Marketplace GA", actionId: "openBusinessHome" });
+frontend/src/as6/business-home/as6ExecutiveInsights.js:29:    action: "Применить через AI Adaptive Home", actionId: "openBusinessHome",
+frontend/src/as6/business-home/as6ExecutiveAutomationGovernance.js:17:  const actionIds = steps.map((step) => step.actionId).filter(Boolean);
+frontend/src/as6/business-home/as6ExecutiveAutomationGovernance.js:23:  const unknownActions = actionIds.filter((actionId) => !AS6_EXECUTIVE_ACTION_REGISTRY[actionId]);
+frontend/src/as6/business-home/as6ExecutiveAutomationGovernance.js:26:  const unsafeActions = actionIds.filter((actionId) => AS6_EXECUTIVE_ACTION_REGISTRY[actionId]?.safe !== true);
+frontend/src/as6/business-home/as6ExecutiveAutomationGovernance.js:33:    actionIds,
+frontend/src/as6/business-home/as6ExecutiveAutomationGovernance.js:54:    fallback: true,
+frontend/src/as6/business-home/as6ExecutiveActionRegistry.js:4:  openBusinessHome: { actionId: "openBusinessHome", type: "navigate", label: "Открыть Business Home", target: "/business-home", safe: true },
+frontend/src/as6/business-home/as6ExecutiveActionRegistry.js:5:  openCrm: { actionId: "openCrm", type: "navigate", label: "Открыть CRM", target: "/crm-workspace", safe: true },
+frontend/src/as6/business-home/as6ExecutiveActionRegistry.js:6:  openDashboard: { actionId: "openDashboard", type: "navigate", label: "Открыть Dashboard", target: "/dashboard", safe: true },
+frontend/src/as6/business-home/as6ExecutiveActionRegistry.js:7:  openWorkspace: { actionId: "openWorkspace", type: "navigate", label: "Открыть Workspace", target: "/as6-workspace", safe: true },
+frontend/src/as6/business-home/as6ExecutiveActionRegistry.js:8:  openExecutiveDashboard: { actionId: "openExecutiveDashboard", type: "navigate", label: "Открыть Executive Dashboard", target: "/ai-executive-dashboard", safe: true },
+frontend/src/as6/business-home/as6ExecutiveActionRegistry.js:9:  openCommandCenter: { actionId: "openCommandCenter", type: "navigate", label: "Открыть Command Center", target: "/command-center", safe: true },
+frontend/src/as6/business-home/as6ExecutiveActionRegistry.js:10:  showNextStep: { actionId: "showNextStep", type: "navigate", label: "Показать следующий шаг", target: "/business-home", safe: true },
+frontend/src/as6/business-home/as6ExecutiveActionRegistry.js:13:export function getAS6ExecutiveActionById(actionId = "showNextStep") {
+frontend/src/as6/business-home/as6ExecutiveActionRegistry.js:14:  return AS6_EXECUTIVE_ACTION_REGISTRY[actionId] || AS6_EXECUTIVE_ACTION_REGISTRY.showNextStep;
+frontend/src/as6/business-home/as6ExecutiveActionRegistry.js:19:  const ids = new Set(actions.map((action) => action.actionId));
+frontend/src/as6/business-home/as6ExecutiveActionRegistry.js:23:  if (!actions.every((action) => action.actionId && action.type && action.target)) failures.push("AS6_EXECUTIVE_ACTION_ID_BINDING_GAP");
+frontend/src/as6/business-home/as6ExecutiveActionRegistry.js:29:export function resolveAS6ExecutiveRegisteredAction(actionId = "showNextStep") {
+frontend/src/as6/business-home/as6ExecutiveActionRegistry.js:30:  const action = getAS6ExecutiveActionById(actionId);
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:9:    scenarioId: "dashboardHealthExecutive",
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:11:    actionIds: ["openDashboard", "openCommandCenter", "openExecutiveDashboard"],
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:14:    scenarioId: "crmRevenueFusion",
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:16:    actionIds: ["openCrm", "openDashboard"],
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:19:    scenarioId: "workspaceNextStep",
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:21:    actionIds: ["openWorkspace", "showNextStep"],
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:24:    scenarioId: "businessHomeInsights",
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:26:    actionIds: ["openBusinessHome", "showNextStep"],
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:32:    scenarioId: "fallback",
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:43:  if (!scenario?.scenarioId || !Array.isArray(scenario?.actionIds)) failures.push("AS6_EXECUTIVE_AUTOMATION_SCENARIO_GAP");
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:44:  const actions = (scenario?.actionIds || []).map((actionId) => getAS6ExecutiveActionById(actionId));
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:45:  if (!actions.every((action) => action?.actionId && action?.safe)) failures.push("AS6_EXECUTIVE_AUTOMATION_UNKNOWN_ACTION_GAP");
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:50:export function createAS6ExecutiveAutomationPlan(scenarioId = "businessHomeInsights") {
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:51:  const scenario = AS6_EXECUTIVE_AUTOMATION_SCENARIOS[scenarioId];
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:52:  if (!scenario) return createAS6ExecutiveAutomationFallbackPlan("Unknown scenarioId: " + scenarioId);
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:56:    scenarioId: scenario.scenarioId,
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:64:export function executeAS6ExecutiveAutomationScenario(scenarioId = "businessHomeInsights") {
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:65:  const governance = guardAS6ExecutiveAutomationScenario(scenarioId = "businessHomeInsights");
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:67:  const plan = createAS6ExecutiveAutomationPlan(scenarioId);
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:77:    scenarioId: plan?.scenarioId || "fallback",
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:96:      return { ...pipeline, status: "failed", currentStep: index + 1, progress: Math.round((index / pipeline.totalSteps) * 100), completed, reason: "Unsafe action: " + (action?.actionId || "unknown") };
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:98:    completed.push(action.actionId);
+frontend/src/as6/business-home/AS6BusinessHomeLiveData.js:8:function safeCall(fn, fallback) {
+frontend/src/as6/business-home/AS6BusinessHomeLiveData.js:12:    return { ...fallback, error: error?.message || "AS6_BUSINESS_HOME_LIVE_DATA_ERROR" };
+frontend/src/as6/business-home/AS6BusinessHomeLiveData.js:16:function compactNumber(value, fallback = "0") {
+frontend/src/as6/business-home/AS6BusinessHomeLiveData.js:17:  if (value === null || value === undefined) return fallback;
+frontend/src/as6/business-home/AS6BusinessHomeLiveData.js:22:function getMetricSource(snapshot, path, fallback) {
+frontend/src/as6/business-home/AS6BusinessHomeLiveData.js:23:  return path.reduce((acc, key) => acc?.[key], snapshot?.widgets) ?? fallback;
+frontend/src/as6/business-home/AS6BusinessHomeLiveData.js:27:  const dashboardSnapshot = safeCall(() => createAS6DashboardLiveSnapshot(), { widgets: {}, freshness: "fallback" });
+frontend/src/as6/business-home/AS6BusinessHomeLiveData.js:62:    title: dashboardStatus.status === "LIVE" ? "Business Home подключён к живым данным" : "Business Home использует fallback snapshot",
+frontend/src/as6/business-home/AS6ExecutiveAutomationPolicyPanel.css:6:.as6-policy-ui__card,.as6-policy-ui__status-card,.as6-policy-ui__fallback{border:1px solid rgba(255,255,255,.1);border-radius:18px;background:rgba(255,255,255,.055)}
+frontend/src/as6/business-home/AS6ExecutiveAutomationPolicyPanel.css:13:.as6-policy-ui__fallback{margin-top:12px;padding:14px}
+frontend/src/as6/business-home/AS6ExecutiveAutomationPolicyPanel.jsx:8:  { label: 'Unknown actionId', value: 'Blocked' },
+frontend/src/as6/business-home/AS6ExecutiveAutomationPolicyPanel.jsx:18:        <p>AS6 показывает точную причину разрешения или блокировки по каждому actionId, безопасный следующий шаг и fallback до выполнения сценария.</p>
+frontend/src/as6/business-home/AS6ExecutiveAutomationPolicyPanel.jsx:30:          <article className="as6-policy-ui__explanation-card" key={item.actionId} data-policy-status={item.status}>
+frontend/src/as6/business-home/AS6ExecutiveAutomationPolicyPanel.jsx:32:              <span>{item.actionId}</span>
+frontend/src/as6/business-home/AS6ExecutiveAutomationPolicyPanel.jsx:39:            <p><b>Fallback:</b> {item.fallback}</p>
+frontend/src/as6/business-home/AS6BusinessHome.jsx:106:  const fallback = events.filter((event) => event.fallback).length;
+frontend/src/as6/business-home/AS6BusinessHome.jsx:107:  const successful = events.filter((event) => event.status === "VALID" && !event.fallback).length;
+frontend/src/as6/business-home/AS6BusinessHome.jsx:109:    const actionId = event.actionId || "unknown";
+frontend/src/as6/business-home/AS6BusinessHome.jsx:110:    acc[actionId] = (acc[actionId] || 0) + 1;
+frontend/src/as6/business-home/AS6BusinessHome.jsx:118:    fallback,
+frontend/src/as6/business-home/AS6BusinessHome.jsx:120:    fallbackRate: total ? Math.round((fallback / total) * 100) : 0,
+frontend/src/as6/business-home/AS6BusinessHome.jsx:132:    const rawUser = localStorage.getItem("as6-user") || localStorage.getItem("user");
+frontend/src/as6/business-home/AS6BusinessHome.jsx:268:  function appendAS6ExecutiveActionAuditEvent(event) {
+frontend/src/as6/business-home/AS6BusinessHome.jsx:269:    const auditEvent = {
+frontend/src/as6/business-home/AS6BusinessHome.jsx:274:    setExecutiveActionHistory((history) => [auditEvent, ...history].slice(0, 8));
+frontend/src/as6/business-home/AS6BusinessHome.jsx:285:        { id: "monitor-start-" + Date.now(), type: "started", scenarioId: plan?.scenarioId || "unknown", at: startedAt },
+frontend/src/as6/business-home/AS6BusinessHome.jsx:286:        { id: "monitor-end-" + Date.now(), type: cancelled ? "cancelled" : pipeline?.status || "completed", scenarioId: plan?.scenarioId || "unknown", at: endedAt, reason: cancelled ? "User cancelled scenario" : pipeline?.reason || null },
+frontend/src/as6/business-home/AS6BusinessHome.jsx:304:  function enqueueAS6ExecutiveAutomationScenario(scenarioId) {
+frontend/src/as6/business-home/AS6BusinessHome.jsx:305:    const scenario = AS6_EXECUTIVE_AUTOMATION_SCENARIOS[scenarioId];
+frontend/src/as6/business-home/AS6BusinessHome.jsx:307:    setExecutiveAutomationQueue((queue) => [...queue, { id: "queue-" + Date.now(), scenarioId, title: scenario.title, status: "queued" }]);
+frontend/src/as6/business-home/AS6BusinessHome.jsx:320:    const scenarioId = executiveAutomationCurrentScenario?.scenarioId || executiveAutomationPlan?.scenarioId;
+frontend/src/as6/business-home/AS6BusinessHome.jsx:321:    if (!scenarioId) return;
+frontend/src/as6/business-home/AS6BusinessHome.jsx:323:    handleAS6ExecutiveAutomationScenario(scenarioId);
+frontend/src/as6/business-home/AS6BusinessHome.jsx:328:    const scenarioId = executiveAutomationCurrentScenario?.scenarioId || executiveAutomationPlan?.scenarioId;
+frontend/src/as6/business-home/AS6BusinessHome.jsx:329:    if (!scenarioId) return;
+frontend/src/as6/business-home/AS6BusinessHome.jsx:332:    handleAS6ExecutiveAutomationScenario(scenarioId);
+frontend/src/as6/business-home/AS6BusinessHome.jsx:337:    const scenarioId = executiveAutomationCurrentScenario?.scenarioId || executiveAutomationPlan?.scenarioId;
+frontend/src/as6/business-home/AS6BusinessHome.jsx:338:    if (!scenarioId) return;
+frontend/src/as6/business-home/AS6BusinessHome.jsx:340:    handleAS6ExecutiveAutomationScenario(scenarioId);
+frontend/src/as6/business-home/AS6BusinessHome.jsx:349:      handleAS6ExecutiveAutomationScenario(nextScenario.scenarioId);
+frontend/src/as6/business-home/AS6BusinessHome.jsx:354:  function handleAS6ExecutiveAutomationScenario(scenarioId) {
+frontend/src/as6/business-home/AS6BusinessHome.jsx:355:    const plan = createAS6ExecutiveAutomationPlan(scenarioId);
+frontend/src/as6/business-home/AS6BusinessHome.jsx:365:    const actionStatus = { ...validation, label: action.label, actionId: action.actionId || "showNextStep" };
+frontend/src/as6/business-home/AS6BusinessHome.jsx:367:    appendAS6ExecutiveActionAuditEvent({
+frontend/src/as6/business-home/AS6BusinessHome.jsx:369:      actionId: actionStatus.actionId,
+frontend/src/as6/business-home/AS6BusinessHome.jsx:373:      fallback: !validation.ok,
+frontend/src/as6/business-home/AS6BusinessHome.jsx:444:      return <AS6DataSurface title="Executive Risk Brief" key={widgetId} data-widget-id={widgetId}>{hasRisk ? <ul className="as6-business-home__list">{state.recommendations.map((item) => <li key={item}>{item}</li>)}</ul> : <AS6DataState type="empty" title="Критических рисков не обнаружено" detail="AS6 использует текущие live/fallback данные Business Home." />}</AS6DataSurface>;
+frontend/src/as6/business-home/AS6BusinessHome.jsx:453:      return <AS6DataSurface title="Executive Insights & Recommendations" key={widgetId} data-widget-id={widgetId}><ul className="as6-business-home__list">{executiveInsights.recommendations.map((insight) => <li key={insight.id}><strong>{insight.title}</strong><br /><span>{insight.reason}</span><br /><small>{insight.action}</small><br /><button type="button" onClick={() => handleAS6ExecutiveAction(insight)}>Выполнить безопасное действие</button><br /><small>Target: {validateAS6ExecutiveAction(createAS6ExecutiveAction(insight)).target}</small></li>)}</ul><section className="as6-business-home__automation-scenarios" aria-label="Executive Automation Scenarios"><strong>Executive Automation Scenarios</strong>{Object.values(AS6_EXECUTIVE_AUTOMATION_SCENARIOS).map((scenario) => <button type="button" key={scenario.scenarioId} onClick={() => enqueueAS6ExecutiveAutomationScenario(scenario.scenarioId)}>Queue: {scenario.title}</button>)}<button type="button" onClick={runAS6ExecutiveAutomationQueue}>Run Queue</button><button type="button" onClick={clearAS6ExecutiveAutomationQueue}>Clear Queue</button><section className="as6-business-home__automation-queue" aria-label="Executive Automation Queue"><strong>Automation Queue</strong><small>Current: {executiveAutomationCurrentScenario?.title || "none"}</small>{executiveAutomationQueue.length === 0 ? <small>No queued scenarios</small> : executiveAutomationQueue.map((item, index) => <article key={item.id}><span>{index + 1}. {item.title}</span><button type="button" onClick={() => removeAS6ExecutiveAutomationScenarioFromQueue(item.id)}>Remove</button></article>)}</section>{executiveAutomationPlan && <small>Plan: {executiveAutomationPlan.title} / Actions: {executiveAutomationPlan.actions.map((action) => action.actionId).join(" → ")} / Runtime-only</small>}{executiveAutomationPipeline && <small>Status: {executiveAutomationPipeline.status} / Step: {executiveAutomationPipeline.currentStep} of {executiveAutomationPipeline.totalSteps} / Progress: {executiveAutomationPipeline.progress}%{executiveAutomationPipeline.reason ? " / Stop: " + executiveAutomationPipeline.reason : ""}</small>}<button type="button" onClick={cancelAS6ExecutiveAutomationScenario}>Cancel Scenario</button><section className="as6-business-home__automation-monitor" aria-label="Executive Automation Monitor"><strong>Automation Monitor</strong><small>Started: {executiveAutomationMonitor.startedAt || "not started"}</small><small>Ended: {executiveAutomationMonitor.endedAt || "not ended"}</small><small>Duration: {executiveAutomationMonitor.durationMs}ms</small><small>Successful Steps: {executiveAutomationMonitor.successfulSteps}</small><small>Stopped/Skipped Steps: {executiveAutomationMonitor.stoppedSteps}</small><small>Completion: {executiveAutomationMonitor.completionSignal}</small><small>Reason: {executiveAutomationMonitor.reason || "none"}</small>{executiveAutomationMonitor.events.map((event) => <small key={event.id}>{event.type} / {event.at} / {event.reason || "ok"}</small>)}</section></section><section className="as6-business-home__automation-recovery" aria-label="Executive Automation Retry Recovery"><strong>Retry & Recovery</strong><button type="button" onClick={retryAS6ExecutiveAutomationScenario}>Retry Scenario</button><button type="button" onClick={retryAS6ExecutiveAutomationStep}>Retry Step</button><button type="button" onClick={recoverAS6ExecutiveAutomationScenario}>Recover From Last Step</button><small>Status: {executiveAutomationRecovery.status}</small><small>Retry Count: {executiveAutomationRecovery.retryCount}</small><small>Recovering From Step: {executiveAutomationRecovery.recoveringFromStep ?? "none"}</small><small>Last Successful Step: {executiveAutomationRecovery.lastSuccessfulStep}</small><small>Last Failure: {executiveAutomationRecovery.lastFailureReason || executiveAutomationPipeline?.reason || "none"}</small></section><section className="as6-business-home__action-metrics" aria-label="Executive Action Metrics"><strong>Executive Action Metrics</strong><div><span>Total: {executiveActionMetrics.total}</span><span>Success: {executiveActionMetrics.successful}</span><span>Success Rate: {executiveActionMetrics.successRate}%</span><span>Fallback: {executiveActionMetrics.fallback}</span><span>Fallback Rate: {executiveActionMetrics.fallbackRate}%</span><span>Top Action: {executiveActionMetrics.topAction}</span><span>Recent Routes: {executiveActionMetrics.recentTargets.join(", ") || "none"}</span></div></section>{executiveActionStatus && <AS6DataState type={executiveActionStatus.ok ? "success" : "warning"} title={executiveActionStatus.status} detail={(executiveActionStatus.label || "Action") + " → " + executiveActionStatus.target + " / " + executiveActionStatus.message} />}{executiveActionHistory.length > 0 && <section className="as6-business-home__action-audit" aria-label="Executive Action Audit Trail"><strong>Action Audit Trail</strong>{executiveActionHistory.map((event) => <article key={event.id}><span>{event.createdAt}</span><strong>{event.actionId}</strong><small>{event.label} → {event.target}</small><small>Status: {event.status} / Fallback: {event.fallback ? "YES" : "NO"}</small></article>)}</section>}<AS6DataState type="empty" title={executiveInsights.profileName} detail={executiveInsights.source} /></AS6DataSurface>;
+docs/STAGE_PASSPORTS/V221_9_RELEASE_PASSPORT.md:10:Architecture Result: V221 chain is now auditable end-to-end.
+docs/STAGE_PASSPORTS/V222_14_RUNTIME_TELEMETRY_STORAGE_VALIDATION.md:9:Hypothesis Status: Runtime storage behavior confirmed in browser-like localStorage simulation.
+docs/presentation/AS6_AI_CRM_Platform_Deck.html:581:            <div class="metric"><b class="gradient-text">Docker</b><span>Production deployment: backend, nginx/frontend, PostgreSQL и persistent storage.</span></div>
+docs/presentation/AS6_AI_CRM_Platform_Deck.html:799:            <div class="card"><strong class="accent-cyan">Next · SaaS leverage</strong><ul class="bullets"><li>Drag-and-drop pipeline и team workspace.</li><li>Advanced analytics по конверсии и AI ROI.</li><li>Календарь, звонки и автоматические cadences.</li><li>Marketplace шаблонов AI-задач.</li><li>Enterprise security controls и audit log.</li></ul></div>
+docs/presentation/AS6_AI_CRM_Platform_Deck.html:815:            <div class="card price-card"><strong>Enterprise</strong><div class="price accent-pink">Custom</div><p>Security, audit, интеграции, выделенные лимиты и premium support.</p></div>
+docs/presentation/AS6_AI_CRM_Platform_Deck.md:154:- fallback-сценарии, если AI API недоступен.
+docs/presentation/AS6_AI_CRM_Platform_Deck.md:245:- enterprise security controls и audit log.
+docs/presentation/AS6_AI_CRM_Platform_Deck.md:260:| Enterprise | крупные клиенты | security, audit, кастомные интеграции, выделенные лимиты и поддержка |
+docs/AS6_REAL_REVENUE_CRM_FUSION_V107.md:23:- Cached fallback must exist.
+docs/platform-v2/sdk/marketplace-administration-p33.md:12:- admin audit log
+docs/platform-v2/sdk/marketplace-trust-ui-installation-policy-p29.md:8:- trust audit log
+docs/platform-v2/sdk/remote-marketplace-catalog-p26a.md:3:P26A adds a remote Marketplace catalog contract with local fallback.
+docs/platform-v2/sdk/remote-marketplace-catalog-p26a.md:9:- local fallback
+docs/platform-v2/sdk/marketplace-install-persistence-p24.md:3:P24 adds persistent plugin install state through localStorage-backed runtime persistence.
+docs/platform-v2/sdk/remote-catalog-ui-integration-p26b.md:8:- sync error/fallback display
+docs/diagnostics/as6-epic004-pr4-executive-automation-queue-scheduler.md:6:- AS6_EXECUTIVE_AUTOMATION_RUNTIME_QUEUE_DRIFT: queue state is runtime-only and does not mutate persistent storage.
+docs/diagnostics/as6-epic004-pr4-executive-automation-queue-scheduler.md:8:- Workspace Storage V99, contextState.businessHome, layout schema, localStorage and Live Data were not changed.
+docs/diagnostics/as6-root-cause-governance-completion-diagnostics.md:11:- root_cause_governance_gap_audit
+docs/diagnostics/as6-root-cause-governance-completion-diagnostics.md:12:- root_cause_artifact_generation_audit
+docs/diagnostics/as6-epic002-pr2b-operational-health-components.md:8:- Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home were not changed.
+docs/diagnostics/as6-epic004-pr5-executive-automation-retry-recovery.md:6:- AS6_EXECUTIVE_AUTOMATION_RUNTIME_RECOVERY_DRIFT: retry/recovery state is runtime-only and does not mutate persistent storage.
+docs/diagnostics/as6-epic004-pr5-executive-automation-retry-recovery.md:8:- Workspace Storage V99, contextState.businessHome, layout schema, localStorage and Live Data were not changed.
+docs/diagnostics/as6-epic002-pr1-executive-widget-integration.md:5:- AS6_EXECUTIVE_WIDGET_LAYOUT_DRIFT: widgets reuse contextState.businessHome layout.
+docs/diagnostics/as6-epic002-pr2a-executive-live-data-components.md:7:- Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home were not changed.
+docs/diagnostics/as6-epic001-user-workspace-customization.md:9:- Layout is stored only in Workspace contextState.businessHome.
+docs/diagnostics/as6-epic001-user-workspace-customization.md:11:- No new localStorage key is introduced.
+docs/diagnostics/as6-epic005-pr3-executive-automation-policy-explanations.md:14:PR-2 exposed general policy status, but users still needed exact per-actionId reason, step status, safe next step and fallback recommendation.
+docs/diagnostics/as6-epic005-pr3-executive-automation-policy-explanations.md:18:- Added per-actionId explanation catalog.
+docs/diagnostics/as6-epic005-pr3-executive-automation-policy-explanations.md:19:- Added reason per actionId.
+docs/diagnostics/as6-epic005-pr3-executive-automation-policy-explanations.md:22:- Added fallback recommendation.
+docs/diagnostics/as6-epic005-pr3-executive-automation-policy-explanations.md:26:- Workspace Storage V99 unchanged.
+docs/diagnostics/as6-epic005-pr3-executive-automation-policy-explanations.md:27:- contextState.businessHome unchanged.
+docs/diagnostics/as6-epic005-pr3-executive-automation-policy-explanations.md:29:- persistent storage unchanged.
+docs/diagnostics/as6-epic003-pr3-executive-action-validation-ui-feedback.md:6:- AS6_EXECUTIVE_ACTION_FALLBACK_VISIBILITY_GAP: fallback validation is visible when action is unsafe or unknown.
+docs/diagnostics/as6-epic003-pr3-executive-action-validation-ui-feedback.md:7:- AS6_EXECUTIVE_ACTION_UNSAFE_EXECUTION_DRIFT: unsafe actions are not executed and resolve to fallback state.
+docs/diagnostics/as6-epic003-pr3-executive-action-validation-ui-feedback.md:8:- Workspace Storage V99, contextState.businessHome and layout schema were not changed.
+docs/diagnostics/as6-epic001-pr8-drag-drop-layout.md:6:- contextState.businessHome schema is unchanged.
+docs/diagnostics/as6-epic001-pr8-drag-drop-layout.md:7:- Workspace Storage V99 and debounce autosave are reused.
+docs/diagnostics/as6-epic001-pr8-drag-drop-layout.md:8:- No new localStorage key is introduced.
+docs/diagnostics/as6-epic004-pr1-executive-automation-scenarios.md:4:- AS6_EXECUTIVE_AUTOMATION_ACTION_SEQUENCE_DRIFT: scenarios are composed from ordered registered actionId sequences.
+docs/diagnostics/as6-epic004-pr1-executive-automation-scenarios.md:5:- AS6_EXECUTIVE_AUTOMATION_UNKNOWN_ACTION_GAP: scenario validation resolves unknown actionId to fallback plan.
+docs/diagnostics/as6-epic004-pr1-executive-automation-scenarios.md:6:- AS6_EXECUTIVE_AUTOMATION_RUNTIME_ONLY_DRIFT: automation plans are runtime-only and do not mutate persistent storage.
+docs/diagnostics/as6-epic004-pr1-executive-automation-scenarios.md:7:- AS6_EXECUTIVE_AUTOMATION_FALLBACK_GAP: fallback plan uses showNextStep action.
+docs/diagnostics/as6-epic004-pr1-executive-automation-scenarios.md:8:- Workspace Storage V99, contextState.businessHome, layout schema, localStorage and Live Data were not changed.
+docs/diagnostics/as6-epic005-pr1-executive-automation-governance-safety.md:5:- AS6_EXECUTIVE_AUTOMATION_UNSAFE_CHAIN_DRIFT: blocks unknown or unsafe actionId chains.
+docs/diagnostics/as6-epic005-pr1-executive-automation-governance-safety.md:7:- AS6_EXECUTIVE_AUTOMATION_GOVERNANCE_FALLBACK_GAP: added blocked fallback result.
+docs/diagnostics/as6-epic005-pr1-executive-automation-governance-safety.md:8:- Workspace Storage V99, contextState.businessHome, layout schema and localStorage were not changed.
+docs/diagnostics/as6-epic003-pr4-executive-action-history-audit-trail.md:4:- AS6_EXECUTIVE_ACTION_AUDIT_EVENT_GAP: each action records title, actionId, label, target, status, fallback, message and createdAt.
+docs/diagnostics/as6-epic003-pr4-executive-action-history-audit-trail.md:5:- AS6_EXECUTIVE_ACTION_FALLBACK_AUDIT_GAP: fallback state is included in every audit event.
+docs/diagnostics/as6-epic003-pr4-executive-action-history-audit-trail.md:6:- AS6_EXECUTIVE_ACTION_HISTORY_STORAGE_DRIFT: audit trail is runtime-only and does not change Workspace Storage V99, contextState.businessHome, localStorage or layout schema.
+docs/diagnostics/as6-epic003-pr4-executive-action-history-audit-trail.md:7:- AS6_EXECUTIVE_ACTION_AUDIT_VISIBILITY_GAP: visible Action Audit Trail is rendered inside Executive Insights.
+docs/diagnostics/as6-epic004-pr2-executive-automation-execution-pipeline.md:4:- AS6_EXECUTIVE_AUTOMATION_STEP_SEQUENCE_DRIFT: pipeline preserves ordered actionId sequence from scenario plan.
+docs/diagnostics/as6-epic004-pr2-executive-automation-execution-pipeline.md:7:- AS6_EXECUTIVE_AUTOMATION_RUNTIME_PIPELINE_DRIFT: pipeline state is runtime-only and does not mutate persistent storage.
+docs/diagnostics/as6-epic002-pr5-executive-insights-recommendations.md:6:- AS6_EXECUTIVE_INSIGHTS_STORAGE_DRIFT: no contextState.businessHome, Workspace Storage V99 or layout schema changes were introduced.
+docs/diagnostics/as6-epic002-pr5-executive-insights-recommendations.md:7:- AS6_EXECUTIVE_RECOMMENDATION_FALLBACK_GAP: fallback insights are provided when recommendation context is incomplete.
+docs/diagnostics/as6-epic001-pr9-ai-adaptive-home.md:7:- contextState.businessHome schema is unchanged.
+docs/diagnostics/as6-epic001-pr9-ai-adaptive-home.md:8:- Workspace Storage V99 and debounce autosave are reused.
+docs/diagnostics/as6-epic002-pr2c-executive-dashboard-components.md:8:- Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home were not changed.
+docs/diagnostics/as6-epic004-pr3-executive-automation-monitoring-control.md:6:- AS6_EXECUTIVE_AUTOMATION_RUNTIME_MONITORING_DRIFT: monitoring is runtime-only and does not mutate persistent storage.
+docs/diagnostics/as6-epic004-pr3-executive-automation-monitoring-control.md:8:- Workspace Storage V99, contextState.businessHome, layout schema, localStorage and Live Data were not changed.
+docs/diagnostics/as6-epic002-pr3-executive-workspace-integration.md:5:- AS6_EXECUTIVE_WORKSPACE_PERSISTENCE_DRIFT: widgets reuse contextState.businessHome and Workspace Storage V99.
+docs/diagnostics/as6-epic003-pr5-executive-action-analytics-metrics.md:3:- AS6_EXECUTIVE_ACTION_ANALYTICS_GAP: runtime Executive Action metrics are computed from Action Audit Trail.
+docs/diagnostics/as6-epic003-pr5-executive-action-analytics-metrics.md:4:- AS6_EXECUTIVE_ACTION_METRICS_DRIFT: metrics include total, successful, fallback, top action and recent routes.
+docs/diagnostics/as6-epic003-pr5-executive-action-analytics-metrics.md:6:- AS6_EXECUTIVE_ACTION_FALLBACK_METRICS_GAP: fallback count and fallback rate are visible.
+docs/diagnostics/as6-epic003-pr5-executive-action-analytics-metrics.md:7:- AS6_EXECUTIVE_ACTION_ANALYTICS_STORAGE_DRIFT: analytics are runtime-only and do not modify Workspace Storage V99, contextState.businessHome, localStorage or layout schema.
+docs/diagnostics/as6-epic003-pr2-executive-action-orchestration.md:4:- AS6_EXECUTIVE_ACTION_ID_BINDING_GAP: Executive Insights now use structured actionId values.
+docs/diagnostics/as6-epic003-pr2-executive-action-orchestration.md:6:- AS6_EXECUTIVE_ACTION_ORCHESTRATION_FALLBACK_GAP: unknown actionId resolves to showNextStep fallback.
+docs/diagnostics/as6-epic003-pr2-executive-action-orchestration.md:9:- Workspace Storage V99, contextState.businessHome and layout schema were not changed.
+docs/diagnostics/as6-epic005-pr2-executive-automation-policy-ui.md:14:Runtime governance blocks unsafe automation, but Business Home needs visible policy status, block reason and fallback.
+docs/diagnostics/as6-epic005-pr2-executive-automation-policy-ui.md:20:- Added unknown actionId blocked status.
+docs/diagnostics/as6-epic005-pr2-executive-automation-policy-ui.md:22:- Added fallback explanation.
+docs/diagnostics/as6-epic001-business-home-default-start.md:7:- Greeting uses stored session user with safe fallback.
+docs/diagnostics/as6-epic003-pr1-executive-automation-actions.md:6:- AS6_EXECUTIVE_ACTION_FALLBACK_GAP: fallback action is provided when action resolution fails.
+docs/diagnostics/as6-epic003-pr1-executive-automation-actions.md:7:- AS6_EXECUTIVE_AUTOMATION_STORAGE_DRIFT: Workspace Storage V99, contextState.businessHome and layout schema were not changed.
+docs/diagnostics/as6-root-cause-governance-bulk-diagnostics.md:10:- governance_bulk_registration_audit
+docs/diagnostics/as6-epic002-pr4-executive-personalization.md:9:- contextState.businessHome, Workspace Storage V99 and layout schema were not changed.
+docs/AS6_PROJECT_STATE.md:220:- local health fallback matrix
+docs/AS6_PROJECT_STATE.md:937:- governance_bulk_registration_audit
+docs/AS6_PROJECT_STATE.md:967:- root_cause_governance_gap_audit
+docs/AS6_PROJECT_STATE.md:968:- root_cause_artifact_generation_audit
+docs/AS6_PROJECT_STATE.md:2148:Validation: legacy Docker build fallback, compose up, production health.
+docs/AS6_PROJECT_STATE.md:2319:Root cause: cache-aware fallback inspected stale image tag instead of running nginx container assets.
+docs/AS6_PROJECT_STATE.md:2457:- Updated control to use host npm or Docker Compose Node fallback.
+docs/AS6_PROJECT_STATE.md:2463:- Updated control to use host npm or docker run node:20-alpine fallback.
+docs/AS6_PROJECT_STATE.md:2613:- Added diagnostic: ops/bin/as6-diagnose-frontend-architecture-audit-v87
+docs/AS6_PROJECT_STATE.md:2614:- Added control: ops/bin/as6-control-frontend-architecture-audit-v87
+docs/AS6_PROJECT_STATE.md:2910:- Purpose: wire Dashboard live data to AS6OperationalStore with freshness, connector health and cached fallback.
+docs/AS6_PROJECT_STATE.md:2928:- Purpose: wire CRM live data to AS6OperationalStore with pipeline, leads, deals, activities, SLA, AI recommendations, freshness, connector health and cached fallback.
+docs/AS6_PROJECT_STATE.md:3048:- Root cause: V112 control missed docker/node fallback for frontend build.
+docs/AS6_PROJECT_STATE.md:3065:- Root cause: V113 control directly called npm without docker/node fallback.
+docs/AS6_PROJECT_STATE.md:3434:- Root cause: Suspense fallback rendered before Command Center page and final scoped CSS.
+docs/AS6_PROJECT_STATE.md:3530:- Fixed: disabled automatic fallback-to-live API replacement on /command-center first render.
+docs/AS6_PROJECT_STATE.md:3531:- Root cause: CommandCenterPage rendered fallback dashboard first, then useEffect/Promise.allSettled replaced visible state through setApiState/setApiErrors/setApiLoading.
+docs/AS6_PROJECT_STATE.md:3808:- Result: Product Intelligence localStorage runtime behavior validated.
+docs/AS6_PROJECT_STATE.md:4949:- Added session-aware welcome fallback.
+docs/AS6_PROJECT_STATE.md:4965:- Business Home now uses existing Workspace Storage V99.
+docs/AS6_PROJECT_STATE.md:4975:- Business Home layout stored only in contextState.businessHome.
+docs/AS6_PROJECT_STATE.md:4980:- Added debounce autosave through Workspace Storage V99.
+docs/AS6_PROJECT_STATE.md:4989:- Reused existing contextState.businessHome layout model.
+docs/AS6_PROJECT_STATE.md:4990:- Reused existing debounce autosave and Workspace Storage V99.
+docs/AS6_PROJECT_STATE.md:5000:- Reused contextState.businessHome, debounce autosave and Workspace Storage V99.
+docs/AS6_PROJECT_STATE.md:5009:- Preserved contextState.businessHome, Workspace Storage V99, drag/drop and AI Adaptive Home.
+docs/AS6_PROJECT_STATE.md:5020:- Preserved Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home.
+docs/AS6_PROJECT_STATE.md:5030:- Preserved Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home.
+docs/AS6_PROJECT_STATE.md:5040:- Preserved Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home.
+docs/AS6_PROJECT_STATE.md:5048:- Preserved contextState.businessHome, Workspace Storage V99, drag/drop and AI Adaptive Home.
+docs/AS6_PROJECT_STATE.md:5058:- Preserved contextState.businessHome, Workspace Storage V99, drag/drop, AI Adaptive Home and layout schema.
+docs/AS6_PROJECT_STATE.md:5068:- Preserved contextState.businessHome, Workspace Storage V99, layout schema, drag/drop, Executive components and Live Data sources.
+docs/AS6_PROJECT_STATE.md:5078:- Preserved contextState.businessHome, Workspace Storage V99, layout schema, drag/drop, AI Adaptive Home, Executive Insights, Executive Components and Live Data.
+docs/AS6_PROJECT_STATE.md:5088:- Added fallback visibility for unknown or unsafe actions.
+docs/AS6_PROJECT_STATE.md:5089:- Preserved contextState.businessHome, Workspace Storage V99, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5093:## AS6 EPIC-003 PR-4 — Executive Action History & Audit Trail
+docs/AS6_PROJECT_STATE.md:5097:- Added visible Action Audit Trail for Executive Insights.
+docs/AS6_PROJECT_STATE.md:5098:- Recorded actionId, label, target, status, fallback and timestamp for each handled action.
+docs/AS6_PROJECT_STATE.md:5099:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5107:- Added total actions, successful actions, success rate, fallback count, fallback rate, top action and recent routes.
+docs/AS6_PROJECT_STATE.md:5108:- Metrics are computed from runtime Action Audit Trail only.
+docs/AS6_PROJECT_STATE.md:5109:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5117:- Added scenario plans from registered safe actionId sequences.
+docs/AS6_PROJECT_STATE.md:5119:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5128:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5138:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5149:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5159:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5170:- Added visible governance explanation and fallback.
+docs/AS6_PROJECT_STATE.md:5171:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5187:- Added runtime policy, safety guard, unknown actionId and unsafe-chain status cards.
+docs/AS6_PROJECT_STATE.md:5189:- Added fallback explanation before automation execution.
+docs/AS6_PROJECT_STATE.md:5195:- Added per-actionId governance explanations.
+docs/AS6_PROJECT_STATE.md:5196:- Added action reason, step status, safe next step and fallback recommendation.
+docs/AS6_PROJECT_STATE.md:5199:- Workspace Storage V99 unchanged.
+docs/AS6_PROJECT_STATE.md:5200:- contextState.businessHome unchanged.
+docs/AS6_PROJECT_STATE.md:5201:- layout schema and persistent storage unchanged.
+docs/business-os/universal-navigation-b2.md:13:- audit log
+docs/business-os/epic001-business-home-live-data.md:8:- Keep safe fallbacks for unavailable sources.
+docs/AS6_REAL_CRM_DATA_WIRING_V106.md:22:- CRM must provide cached fallback.
+docs/architecture/ai_approval_queue_center.md:52:- Ошибка выполнения переводит элемент в `failed`, сохраняет `error_message`, добавляет audit/timeline событие и остаётся видимой в UI.
+docs/architecture/ai_approval_queue_center.md:72:Будущий автономный режим должен быть отдельным workspace-level feature flag с granular permissions. Даже в автономном режиме рекомендуем сохранить guardrails: лимиты по каналу, allowlist типов действий, denylist фраз, дневные лимиты отправки, audit trail, dry-run режим и быстрый kill switch. До включения такого режима текущая архитектура остаётся human-in-the-loop.
+docs/architecture/unified_ai_control_gateway.md:39:- Uses `x-ai-execution-key` (or compatible key query fallback from existing runner auth logic).
+docs/architecture/ai_revenue_intelligence.md:75:6. Lead analysis updates `ai_lead_scores`, CRM AI fields, timeline events, and a completed `revenue_next_best_action` queue record for auditability.
+docs/architecture/ai_revenue_intelligence.md:96:- recommendation acceptance/audit counts.
+docs/architecture/google_calendar_integration_v1.md:3:Google Calendar Integration v1 extends the AS6 AI CRM meeting execution flow. After an approved `meeting_schedule_proposal` is executed and a `crm_meetings` row is created, the backend tries to create a Google Calendar event with a Google Meet conference link. The existing ICS flow remains the safe fallback and is never blocked by missing Google credentials or Google API failures.
+docs/architecture/google_calendar_integration_v1.md:29:- Missing values are treated as a graceful fallback, not a startup error.
+docs/architecture/google_calendar_integration_v1.md:63:- `ics_uid text` and `ics_content text` — preserved fallback invitation.
+docs/architecture/google_calendar_integration_v1.md:66:- `calendar_error text` — last Google sync error, when fallback was used.
+docs/architecture/google_calendar_integration_v1.md:84:### ICS fallback
+docs/architecture/google_calendar_integration_v1.md:96:- backend logs `[calendar] google disabled, using ics fallback`.
+docs/architecture/ai_worker_system.md:129:5. Audit trail: immutable журнал prompts, inputs, outputs, approvals, отправок и ошибок.
+docs/architecture/ai_sdr_approval_center.md:10:## Audit architecture
+docs/architecture/ai_sdr_approval_center.md:14:- `ai_approval_audit_log`: immutable audit events with previous/new status.
+docs/architecture/ai_sdr_approval_center.md:17:- Explicit safety labels: Human Approval Required, Suggestion Only, No Automatic Outreach, Audit Logging Enabled.
+docs/architecture/ai_sdr_approval_center.md:24:Phase 3: scoped autonomy for low-risk internal-only recommendations, still audit-first.
+docs/architecture/ai_execution_center.md:5:AI Execution Center converts AI recommendations into controlled, auditable sales actions. The system never auto-sends generated content: every action starts as a draft or pending approval item, a user reviews it, approves it, and then explicitly sends it.
+docs/architecture/ai_voice_outreach.md:150:1. **Compliance foundation** — consent records, DNC suppression, call windows, caller identity, audit logging, opt-out handling, and jurisdiction policy checks.
+docs/architecture/ai_priority_inbox_v1.md:40:  - company/email/Telegram fallback
+docs/architecture/ai_priority_inbox_v1.md:125:10. fallback → **Сделать follow-up**
+docs/architecture/ai_agent_system.md:118:- Recommendations require OpenAI API key and real lead context; no fake recommendation fallback.
+docs/architecture/ai_agent_system.md:123:- Redis/BullMQ for delayed retries while PostgreSQL remains audit source.
+docs/architecture/ai_lead_qualification_pipeline.md:22:`publicLeadService.createPublicLead` после записи `crm_leads` создаёт задачу `ai_worker_queue` с `action_type = lead_prioritization` и статусом `pending_approval`. Затем `scheduleLeadQualification` запускает in-process квалификацию сразу после commit, а `startLeadQualificationWorker` периодически подбирает непросчитанные задачи как fallback.
+docs/architecture/ai_manager_dashboard_kpi_layer.md:8:2. **Operational safety** — approval, cooldown, duplicate prevention, copy guard, fallback, and failure visibility remain measurable.
+docs/architecture/ai_manager_dashboard_kpi_layer.md:39:- `lead_timeline_events` — cooldown audit events, duplicate-prevention/fallback/route-highlight safety events where tracked, and safety timeline items.
+docs/architecture/ai_manager_dashboard_kpi_layer.md:126:- fallback-to-email events
+docs/architecture/ai_manager_dashboard_kpi_layer.md:135:Single-item rendering is intentionally preserved for copy guard blocks, failed unresolved actions, fallback-to-email events, route-highlight recoveries, and single cooldown rows. This keeps KPI counts accurate while removing visual noise from repeated `AI follow-up пропущен` / `Недавнее исходящее сообщение клиенту — cooldown 48 часов.` events.
+docs/architecture/ai_manager_dashboard_kpi_layer.md:155:5. Confirm a single “Telegram Connect Test” cooldown audit appears when there is only one `ai_followup_skipped_cooldown` row in the current hourly bucket.
+docs/architecture/enterprise_ai_execution_platform.md:14:8. **Security layer** — secret-only environment configuration, audit-ready logs, request validation, webhook verification hooks, and future KMS-backed API-key encryption.
+docs/architecture/enterprise_ai_execution_platform.md:183:- webhook signature verification and audit logs.
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:703:                <button class="card" data-id="agentAnalytics" data-phase="scale" data-status="scale" data-layer="ai" style="--accent:var(--ai)"><div class="icon">AKA</div><div class="name">Agent Analytics + Fallback</div><div class="desc">Agent KPIs, retry/fallback logic, model quality and cost tracking</div><div class="badges"><span class="badge scale">Scale Only</span><span class="badge">Quality</span></div></button>
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:758:          <div class="kpis"><div class="kpi"><div class="kpi-n">Core</div><div class="kpi-l">главный модуль</div></div><div class="kpi"><div class="kpi-n">0–50</div><div class="kpi-l">shared DB ok</div></div><div class="kpi"><div class="kpi-n">Fast UI</div><div class="kpi-l">операторская работа</div></div><div class="kpi"><div class="kpi-n">Audit</div><div class="kpi-l">history required</div></div></div>
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:810:        kpis: [["Core", "главный модуль"], ["0–50", "shared DB ok"], ["Fast UI", "операторская работа"], ["Audit", "history required"]],
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:818:        kpis: [["Stub", "минимум в MVP"], ["RBAC", "must be planned"], ["Billing", "manual first"], ["Audit", "later"]],
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:819:        migration: "MVP: минимальная админка и ручное управление тарифами. Growth: роли и subscription logic. Scale: отдельный admin/billing boundary с audit trail."
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:826:        kpis: [["Basic", "agents now"], ["Human fallback", "planned"], ["CRM sync", "обязательно"], ["Scripts", "версионировать позже"]],
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:905:        responsibilities: [["Confidence threshold", "AI safety"], ["Manager handoff", "CRM assignment"], ["Escalation reason", "audit"], ["Notification", "Telegram/CRM"]],
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:915:        migration: "Growth: prompt registry in DB/admin. Scale: prompt analytics, experiment tracking, model fallback and cost controls."
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:971:        migration: "Growth: S3/R2 bucket and signed URLs. Scale: lifecycle policies, retention, regional strategy and access audit."
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:985:        responsibilities: [["Durable workflows", "long-running automation"], ["Agent coordination", "multi-step"], ["Retries/fallback", "systematic"], ["Human handoff", "stateful"]],
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:987:        migration: "Scale only. До этого достаточно n8n + workers. Вводить, когда workflow state, retries и audit становятся критичными."
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:1008:        description: "Agent performance, retry/fallback logic, model quality, cost tracking and conversion impact analytics.",
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:1009:        responsibilities: [["Agent KPIs", "quality"], ["Retry/fallback", "resilience"], ["Model cost", "unit economics"], ["Conversion impact", "business ROI"]],
+docs/architecture/ai_workforce_coordination.md:5:The AI Workforce Coordination layer adds a policy-governed orchestration slice on top of existing AI Sales Brain, Autonomous SDR Loop, Approval Center, and AI Execution Layer. It introduces specialized worker roles, routing, load balancing, collaboration planning, and execution planning while preserving human approvals and auditability.
+docs/architecture/ai_workforce_coordination.md:13:- `workforceAuditLogger.js`: structured governance logging
+docs/architecture/ai_workforce_coordination.md:57:- Audit Logging Enabled
+docs/architecture/ai_workforce_coordination.md:96:The control center renders workforce event types as a live audit stream:
+docs/architecture/ai_workforce_coordination.md:104:These events are designed to map directly to existing collaboration + audit flows without bypassing approval or execution policy gates.
+docs/architecture/ai_meeting_scheduler_v1.md:50:The parser supports simple Russian relative dates and times. It uses `APP_TIMEZONE` when configured; default is `Europe/Moscow`, with `UTC` fallback if the configured timezone is invalid. Parsed times are stored as ISO UTC strings in `proposedStartTime`.
+docs/architecture/ai_meeting_scheduler_v1.md:109:If time was not parsed, the safe fallback draft is:
+docs/architecture/ai_outreach_engine.md:46:Drafts are deterministic fallback AI copy generated from CRM intelligence context:
+docs/architecture/ai_execution_layer.md:11:5. Structured audit events are persisted in `ai_execution_audit_log`.
+docs/architecture/ai_execution_layer.md:27:## Audit model
+docs/architecture/crm_ai_engineering_implementation_backlog.html:1300:                <div class="mini"><b>Acceptance</b>Agent output is auditable.</div>
+docs/architecture/crm_ai_engineering_implementation_backlog.html:1360:              <ul class="subtasks"><li>Qualification to booking flow</li><li>Human handoff step</li><li>Retry/fallback branches</li></ul>
+docs/architecture/crm_ai_engineering_implementation_backlog.html:2609:              <ul class="subtasks"><li>Move session state out</li><li>Use shared storage</li><li>Audit local file usage</li></ul>
+docs/architecture/crm_ai_engineering_implementation_backlog.html:3416:              task("Attach prompt version to runs", 2, "AI", ["Include version id in agent job", "Persist model/provider metadata", "Write output trace"], "Agent output is auditable."),
+docs/architecture/crm_ai_engineering_implementation_backlog.html:3424:              task("Implement pilot workflow", 5, "AI", ["Qualification to booking flow", "Human handoff step", "Retry/fallback branches"], "One critical journey runs in durable orchestration."),
+docs/architecture/crm_ai_engineering_implementation_backlog.html:3612:              task("Make services stateless", 3, "Backend", ["Move session state out", "Use shared storage", "Audit local file usage"], "API replicas can run concurrently."),
+docs/architecture/ai_autonomous_followup_engine.md:50:If `OPENAI_API_KEY` is configured, the backend calls the OpenAI Responses API and stores model metadata. If OpenAI is not configured or returns an error, v1 creates a conservative fallback draft and records the reason in metadata so scans remain operational in development.
+docs/architecture/ai_autonomous_followup_engine.md:108:Even in autonomous mode, the same job/attempt tables and timeline events should remain the audit trail.
+docs/architecture/telegram_connect_reply_sync.md:65:Если payload некорректный или lead не найден, бот отвечает безопасным fallback без раскрытия внутренних деталей. Если chat_id уже привязан к другому активному лиду, бот просит связаться с менеджером для переподключения.
+docs/architecture/first_live_realtime_audio_connection.md:14:6. If unavailable, simulation fallback remains active.
+docs/architecture/first_live_realtime_audio_connection.md:35:- Structured audit events logged without secrets.
+docs/architecture/AI_ENTERPRISE_OS_V1_STABLE.md:44:- Schema variability across AI layer tables requires fallback queries in some services.
+docs/architecture/AI_ENTERPRISE_OS_V1_STABLE.md:64:- Added `ai_command_center_actions` persistence to audit executive requests and governance controls (`humanApprovalRequired`, `noAutonomousExecution`, `noCustomerActions`, `noPricingChanges`).
+docs/architecture/AI_ENTERPRISE_OS_V1_STABLE.md:65:- Logged `command_center_action_requested` and `command_center_actions_loaded` events for audit visibility.
+docs/architecture/AI_ENTERPRISE_OS_V1_STABLE.md:68:- Added Executive Inbox workflow for Command Center actions: `GET /api/ai/command-center/inbox`, `POST /api/ai/command-center/actions/:id/approve`, `POST /api/ai/command-center/actions/:id/reject`, and `GET /api/ai/command-center/actions/:id/audit`.
+docs/architecture/AI_ENTERPRISE_OS_V1_STABLE.md:69:- Workflow is status-only and governance-first: request → inbox review → approve/reject → audit trail. No autonomous execution, no customer outreach, no pricing changes, and no destructive external side effects.
+docs/architecture/AI_ENTERPRISE_OS_V1_STABLE.md:70:- Added migration `044_command_center_action_approvals.sql` extending `ai_command_center_actions` with approval metadata and creating `ai_command_center_action_audit_log`.
+docs/architecture/AI_ENTERPRISE_OS_V1_STABLE.md:71:- Frontend `/ai-enterprise-command-center` now includes Executive Inbox with governance labels, review actions, and audit loading controls behind explicit confirmation.
+docs/architecture/openai_realtime_ephemeral_session_flow.md:70:- Denied requests return `allowed=false` with reason and simulation fallback metadata.
+docs/architecture/telegram_real_execution.md:15:Existing leads are not recreated when Telegram sends more messages. Matching uses the Telegram user id, chat id, stored metadata fallback, and username fallback.
+docs/architecture/telegram_real_execution.md:47:When executed, the backend checks the lead and sends through Telegram only when a real `telegram_chat_id` exists. Successful sends are saved as outbound Telegram messages and audited as completed AI actions. If the chat id is missing, execution is marked `failed` and stores the clear Russian error:
+docs/architecture/telegram_real_execution.md:61:Telegram capture never creates orphan leads. The bot resolves a CRM user from `TELEGRAM_CRM_USER_EMAIL` / `CRM_DEFAULT_USER_EMAIL` when configured, otherwise uses the oldest user. Workspace assignment uses the existing workspace model fallback: an owner workspace is selected when present, and a default owner workspace is created only if the user has no workspace. This keeps every Telegram lead tied to both `user_id` and `workspace_id`.
+docs/architecture/landing_form_production.md:88:2. Email fallback if no manager chat id exists and SMTP/admin configuration is present.
+docs/architecture/landing_form_production.md:90:Email fallback recipient resolution:
+docs/architecture/ai_telegram_reply_composer.md:24:- `recommended_next_step` из последнего AI score или fallback-рекомендация;
+docs/architecture/ai_telegram_reply_composer.md:42:- последнее входящее Telegram-сообщение (`payload.inboundText`, fallback `payload.inboundMessage` / `payload.customerMessage`);
+docs/architecture/ai_telegram_reply_composer.md:43:- полный AI draft response (`payload.draftText`, fallback `payload.text` / `payload.message`);
+docs/architecture/ai_telegram_reply_composer.md:70:5. `recommendation` / `title` как последний fallback.
+docs/architecture/ai_lead_scoring_engine_v1.md:68:Each scoring run writes an `ai_worker_queue` audit item with:
+docs/architecture/ai_lead_scoring_engine_v1.md:126:Each trigger passes a `source` value into the scoring payload for auditability.
+docs/architecture/crm_ai_development_execution_roadmap.html:582:        <div class="row item" data-phase="scale" data-status="scale" data-layer="ai" style="--accent:var(--ai)"><div class="cell component"><div class="icon">AKA</div><div><strong>Agent Analytics + Fallback</strong><span>Agent quality, retry/fallback, model cost and ROI.</span></div></div><div class="cell"><span class="tag scale">Scale Only</span></div><div class="cell">AI</div><div class="cell">Track cost/lead, fallback rate, booking uplift, prompt/model performance and provider errors.</div><div class="cell mono">Agent events, analytics, event bus</div><div class="cell">Product can compare agents/prompts/models by conversion, cost and failure rate.</div><div class="cell">AI/Data</div></div>
+docs/architecture/ai_pipeline_copilot_v1.md:48:- Workspace audit/activity via `crm_activity`.
+docs/architecture/ai_pipeline_copilot_v1.md:117:## Timeline / audit event
+docs/architecture/ai_pipeline_copilot_v1.md:124:This avoids noisy per-lead timeline events while keeping a workspace-level audit trail.
+docs/architecture/ai_pipeline_copilot_v1.md:142:- mobile single-column fallback;
+docs/architecture/ai_pipeline_copilot_v1.md:150:- Дмитрий email fallback completed appears through completed/failed historical AI action context when present in queue data.
+docs/architecture/ai_pipeline_copilot_v1.md:181:- Failed Actions counts only unresolved failed customer-facing actions. A failed item is treated as resolved when the same lead has a newer completed/executed customer-facing fallback/action, so old Telegram failures resolved by newer email fallbacks do not appear as urgent sales work.
+docs/architecture/ai_pipeline_copilot_v1.md:202:- **Open AI Workers** routes to `/ai-workers?actionId=<action_id>` when the cockpit item already maps to an AI action. If no action exists yet, it routes to `/ai-workers?leadId=<lead_id>`. AI Workers uses these query parameters to load, scroll to, and highlight the matching approval item/action or lead-related actions.
+docs/architecture/ai_pipeline_copilot_v1.md:204:- **Create Follow-up** calls `POST /api/ai/pipeline-copilot/actions/followup` with `{ leadId }`. The backend creates a `followup_sequence_draft` AI worker queue item with `status = pending_approval`, `payload.source = pipeline_copilot`, copy-guarded customer text, and a manager-safe recommendation. The UI then opens `/ai-workers?actionId=<new_action_id>`.
+docs/architecture/ai_pipeline_copilot_v1.md:205:- **Schedule Meeting** calls `POST /api/ai/pipeline-copilot/actions/meeting` with `{ leadId }`. The backend creates a `meeting_schedule_proposal` AI worker queue item with `status = pending_approval`, `payload.source = pipeline_copilot`, safe customer text where needed, and a manager-safe recommendation. The UI then opens `/ai-workers?actionId=<new_action_id>`.
+docs/architecture/ai_pipeline_copilot_v1.md:209:Deduplication is enforced per lead, action type, `payload.source = pipeline_copilot`, and 24-hour window. If an active `pending_approval` or `approved` follow-up/meeting action already exists, the API returns the existing `actionId` and the message `Уже есть активная AI задача для этого лида.` instead of inserting a duplicate.
+docs/architecture/ai_sales_pipeline_automation.md:75:Approval writes timeline/audit events:
+docs/architecture/ai_next_best_action_engine_v1.md:82:  "fallbackReason": "telegram_missing|telegram_missing_no_outbound_channel",
+docs/architecture/ai_next_best_action_engine_v1.md:113:The AI Workers page shows the `AI Next Best Action Engine` worker card with the button `Run Next Best Actions`. Generated items appear in the Approval Center. Email fallback drafts show `channel=email`, type `Черновик email follow-up`, and the send button `Отправить`, and AI Workers metrics include:
+docs/architecture/ai_next_best_action_engine_v1.md:124:- `[next-best-action] fallback to email`
+docs/architecture/landing_lead_capture.md:56:  - `user_id` owner/admin/sales fallback
+docs/architecture/landing_lead_capture.md:67:- Background processing is scheduled with `aiAgentModel.processAction(actionId)`.
+docs/architecture/openai_realtime_audio_sandbox.md:8:- Simulation mode remains active as fallback whenever sandbox is denied or disabled.
+docs/architecture/openai_realtime_audio_sandbox.md:31:- Add workspace-level admin controls and audit exports.
+docs/architecture/ai_followup_and_scoring_system.md:108:6. Audit log для каждой autonomous action.
+docs/architecture/ai_workers_focus_queue_v2.md:5:AI Workers Focus Queue v2 makes the Approval Center production-friendly for a sales manager. The default view no longer exposes every historical, legacy, or safety-test queue row as urgent work. Instead, it presents a short high-signal queue and moves noisy records into collapsed audit/history sections.
+docs/architecture/ai_workers_focus_queue_v2.md:31:- Old failed actions that have a newer completed customer-facing fallback for the same lead.
+docs/architecture/ai_workers_focus_queue_v2.md:43:- **Failed unresolved** — failed actions without newer completed fallback.
+docs/architecture/ai_workers_focus_queue_v2.md:45:- **Completed history** — completed/executed/rejected/cancelled audit rows.
+docs/architecture/ai_workers_focus_queue_v2.md:61:The following sections are collapsed by default and stay available for audit/debugging:
+docs/architecture/ai_workers_focus_queue_v2.md:70:Route highlighting remains supported for `/ai-workers?actionId=<id>` and lead deep links. If the target action is hidden from the selected tab, the UI automatically opens the relevant collapsed section and scrolls/highlights the row.
+docs/architecture/ai_workers_focus_queue_v2.md:78:Send-button diagnostic badges (`send-debug-badge`, including `buttonEnabled`, `actionId`, and raw status text) are hidden from production manager/customer UI. They render only in Vite development mode or when `VITE_SHOW_AI_SEND_DEBUG_BADGE=true` is explicitly enabled for developer diagnostics. The route-highlight badge `Открыто по ссылке` remains visible for deep-linked actions.
+docs/architecture/ai_workers_focus_queue_v2.md:98:- Old failed Telegram issues should not be urgent when a newer email fallback completed for the same lead.
+docs/architecture/ai_workers_focus_queue_v2.md:99:- `/ai-workers?actionId=89b2651a-3a7b-49ab-81ed-f22c3f6df03a` should still expand, scroll, and highlight the action when present in the payload.
+docs/architecture/ai_workers_focus_queue_v2.md:111:Useful operational cards remain visible: active AI employees, AI efficiency, AI-scheduled meetings, pending meeting proposals, Next Best Actions pending/generated today, and revenue under AI control. If the full queue size is useful for audit context, it appears only as small secondary text: `Всего AI задач в истории: <count>`.
+docs/architecture/ai_workers_focus_queue_v2.md:139:- `[ai-workers-focus] route highlight expanded hidden section` when a requested `actionId` or `leadId` belongs to a collapsed section.
+docs/architecture/ai_workers_focus_queue_v2.md:172:### Cooldown audit timeline event
+docs/architecture/ai_workers_focus_queue_v2.md:174:The guard writes a manager-safe timeline audit event `ai_followup_skipped_cooldown` with title `AI follow-up пропущен` and body `Недавнее исходящее сообщение клиенту — cooldown 48 часов.` To avoid timeline spam, this skip event is limited to one event per lead per 24 hours. Backend logs distinguish new and deduplicated audit writes with `[followup-cooldown] timeline audit event created` and `[followup-cooldown] timeline audit already exists`.
+docs/REGISTRY/AS6_PRODUCT_COVERAGE_REGISTRY.md:34:- Covered: AuthPages command-center target, dashboard fallback regression, Command Center ProtectedRoute.
+docs/REGISTRY/AS6_PRODUCT_COVERAGE_REGISTRY.md:66:- Covered: runtime localStorage event storage, metadata sanitization, disabled telemetry skip, unregistered event rejection, external analytics absence.
+docs/coverage/as6-epic001-user-workspace-customization-coverage.md:9:- No duplicate localStorage coverage: PASS
+docs/coverage/as6-epic003-pr2-executive-action-orchestration-coverage.md:4:- actionId binding coverage: PASS
+docs/coverage/as6-epic005-pr2-executive-automation-policy-ui-coverage.md:7:- Covers fallback visibility.
+docs/coverage/as6-epic005-pr2-executive-automation-policy-ui-coverage.md:8:- Covers unknown actionId visibility.
+docs/coverage/as6-epic005-pr3-executive-automation-policy-explanations-coverage.md:8:- Covers unknown.actionId.
+docs/coverage/as6-production-drift-coverage.md:11:- local health fallback matrix
+docs/coverage/as6-epic003-pr4-executive-action-history-audit-trail-coverage.md:4:- Audit event schema coverage: PASS
+docs/coverage/as6-epic003-pr4-executive-action-history-audit-trail-coverage.md:5:- Fallback audit coverage: PASS
+docs/coverage/as6-epic003-pr4-executive-action-history-audit-trail-coverage.md:6:- Audit visibility coverage: PASS
+docs/coverage/as6-epic003-pr5-executive-action-analytics-metrics-coverage.md:6:- Fallback count and fallback rate coverage: PASS
+docs/coverage/as6-epic005-pr1-executive-automation-governance-safety-coverage.md:7:- Governance fallback coverage: PASS
+docs/coverage/as6-epic002-pr3-executive-workspace-integration-coverage.md:9:- Workspace Storage V99 compatibility coverage: PASS
+docs/coverage/as6-epic004-pr1-executive-automation-scenarios-coverage.md:5:- Unknown action fallback coverage: PASS
+docs/coverage/as6-epic001-business-home-default-start-coverage.md:6:- Greeting fallback coverage: PASS
+docs/AS6_NGINX_SPA_ROUTING_FIX_ROOT_CAUSE.md:5:- Resolution: configure Nginx root to /var/www/ai-platform/frontend/dist and fallback to /index.html.
+docs/PRODUCT/AS6_RUNTIME_TELEMETRY_STORAGE_VALIDATION_V222_14.md:34:- Runtime localStorage telemetry validation.
+docs/PRODUCT/AS6_DECISION_HISTORY_PERSISTENCE_DIAGNOSTIC_V222_19.md:21:- OPTION_A=Frontend localStorage persistence only
+docs/PRODUCT/AS6_POST_AUTH_DESTINATION_STRATEGY_V222_5.md:30:- Dashboard fallback regression check.
+docs/PRODUCT/AS6_POST_AUTH_DESTINATION_EFFECT_REVIEW_V222_6.md:15:- Dashboard fallback regression check
+docs/PRODUCT/AS6_POST_AUTH_DESTINATION_EFFECT_REVIEW_V222_6.md:44:- Dashboard auth fallback regression check.
+docs/governance/as6-epic004-pr1-executive-automation-scenarios-governance.md:11:CONTROL=Executive Automation scenarios must use only registered safe actionId sequences and must remain runtime-only.
+docs/governance/as6-epic005-pr3-executive-automation-policy-explanations-governance.md:3:- Every automation actionId must have a human-readable reason.
+docs/governance/as6-epic005-pr3-executive-automation-policy-explanations-governance.md:4:- Every blocked actionId must have a safe next step.
+docs/governance/as6-epic005-pr3-executive-automation-policy-explanations-governance.md:5:- Every unsafe chain must have a fallback recommendation.
+docs/governance/as6-epic005-pr3-executive-automation-policy-explanations-governance.md:6:- Policy explanations must not mutate Workspace Storage V99.
+docs/governance/as6-epic005-pr3-executive-automation-policy-explanations-governance.md:7:- Policy explanations must not mutate contextState.businessHome.
+docs/governance/as6-epic005-pr3-executive-automation-policy-explanations-governance.md:8:- Policy explanations must not change layout schema or persistent storage.
+docs/governance/as6-epic004-pr5-executive-automation-retry-recovery-governance.md:12:CONTROL=Executive Automation retry and recovery must remain runtime-only, expose retry count and failure reason, and must not mutate Workspace Storage V99 or layout schema.
+docs/governance/as6-epic001-business-home-workspace-persistence-governance.md:5:ROOT_CAUSE=Business Home shell was integrated but not connected to existing Workspace Storage V99.
+docs/governance/as6-epic001-business-home-workspace-persistence-governance.md:6:CONTROL=Business Home must use as6WorkspaceStorage.js instead of creating a parallel localStorage key.
+docs/governance/as6-epic003-pr5-executive-action-analytics-metrics-governance.md:11:CONTROL=Executive Action analytics must be computed only from runtime audit trail and must not mutate persistent storage or layout schema.
+docs/governance/as6-epic003-pr4-executive-action-history-audit-trail-governance.md:12:CONTROL=Executive Action history must remain runtime-only for PR-4 and must not mutate Workspace Storage V99, layout schema, contextState.businessHome or localStorage.
+docs/governance/as6-epic001-pr8-drag-drop-layout-governance.md:9:CONTROL=Drag and drop must update only widget order through updateBusinessHomeLayout and must not change Workspace Storage V99 schema.
+docs/governance/as6-epic005-pr2-executive-automation-policy-ui-governance.md:4:- Unknown actionId must be shown as blocked in UI.
+docs/governance/as6-epic005-pr2-executive-automation-policy-ui-governance.md:5:- Unsafe action chains must show fallback.
+docs/governance/as6-epic005-pr2-executive-automation-policy-ui-governance.md:6:- UI must not mutate Workspace Storage V99.
+docs/governance/as6-epic005-pr2-executive-automation-policy-ui-governance.md:7:- UI must not mutate contextState.businessHome.
+docs/governance/as6-epic003-pr2-executive-action-orchestration-governance.md:13:CONTROL=Executive actions must resolve through the central action registry using safe existing routes and fallback for unknown actionId. Automation must not use literal escaped newline sequences inside python3 -c.
+docs/governance/as6-epic003-pr3-executive-action-validation-ui-feedback-governance.md:12:CONTROL=Executive Actions must show validation, target route, fallback state and execution status before or during action handling.
+docs/AS6_REAL_DASHBOARD_DATA_WIRING_V105.md:22:- Dashboard must provide cached fallback.
