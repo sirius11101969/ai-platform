@@ -362,3 +362,16 @@
 .as6-business-home__automation-scenarios small {
   color: rgba(226, 232, 240, 0.72);
 }
+
+.as6-business-home__automation-monitor {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.32);
+}
+.as6-business-home__automation-monitor small {
+  color: rgba(226, 232, 240, 0.74);
+}

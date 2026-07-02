@@ -22,7 +22,7 @@ import { createAS6ExecutiveAction, executeAS6ExecutiveAction, validateAS6Executi
 import { AS6_EXECUTIVE_AUTOMATION_SCENARIOS, createAS6ExecutiveAutomationPlan, executeAS6ExecutiveAutomationPipeline } from "./as6ExecutiveAutomationScenarios.js";
 import "./AS6BusinessHome.css";
 
-export const AS6_BUSINESS_HOME_VERSION = "EPIC004_PR3";
+export const AS6_BUSINESS_HOME_VERSION = "EPIC004_PR2";
 export const AS6_BUSINESS_HOME_LAYOUT_SCHEMA_VERSION = 1;
 
 export const AS6_BUSINESS_HOME_WIDGETS = [
@@ -165,7 +165,6 @@ export function AS6BusinessHome() {
   const [executiveActionHistory, setExecutiveActionHistory] = useState([]);
   const [executiveAutomationPlan, setExecutiveAutomationPlan] = useState(null);
   const [executiveAutomationPipeline, setExecutiveAutomationPipeline] = useState({ status: "idle", currentStep: 0, totalSteps: 0, progress: 0, reason: null, completed: [] });
-  const [executiveAutomationMonitor, setExecutiveAutomationMonitor] = useState({ events: [], startedAt: null, endedAt: null, durationMs: 0, successfulSteps: 0, stoppedSteps: 0, cancelled: false, completionSignal: "idle" });
 
   useEffect(() => {
     setLayout(state.businessHomeLayout);
@@ -271,39 +270,11 @@ export function AS6BusinessHome() {
     setExecutiveActionHistory((history) => [auditEvent, ...history].slice(0, 8));
   }
 
-  function createAS6ExecutiveAutomationMonitorState(plan, pipeline, cancelled = false) {
-    const startedAt = new Date().toISOString();
-    const endedAt = new Date().toISOString();
-    const successfulSteps = Array.isArray(pipeline?.completed) ? pipeline.completed.length : 0;
-    const totalSteps = pipeline?.totalSteps || 0;
-    const stoppedSteps = Math.max(totalSteps - successfulSteps, 0);
-    return {
-      events: [
-        { id: "monitor-start-" + Date.now(), type: "started", scenarioId: plan?.scenarioId || "unknown", at: startedAt },
-        { id: "monitor-end-" + Date.now(), type: cancelled ? "cancelled" : pipeline?.status || "completed", scenarioId: plan?.scenarioId || "unknown", at: endedAt, reason: cancelled ? "User cancelled scenario" : pipeline?.reason || null },
-      ],
-      startedAt,
-      endedAt,
-      durationMs: Math.max(new Date(endedAt).getTime() - new Date(startedAt).getTime(), 0),
-      successfulSteps,
-      stoppedSteps,
-      cancelled,
-      completionSignal: cancelled ? "cancelled" : pipeline?.status || "completed",
-      reason: cancelled ? "User cancelled scenario" : pipeline?.reason || null,
-    };
-  }
-
-  function cancelAS6ExecutiveAutomationScenario() {
-    setExecutiveAutomationPipeline((pipeline) => ({ ...pipeline, status: "failed", reason: "User cancelled scenario" }));
-    setExecutiveAutomationMonitor((monitor) => ({ ...monitor, endedAt: new Date().toISOString(), cancelled: true, completionSignal: "cancelled", reason: "User cancelled scenario", stoppedSteps: Math.max((executiveAutomationPipeline.totalSteps || 0) - (executiveAutomationPipeline.completed?.length || 0), 0), events: [{ id: "monitor-cancel-" + Date.now(), type: "cancelled", at: new Date().toISOString(), reason: "User cancelled scenario" }, ...(monitor.events || [])] }));
-  }
-
   function handleAS6ExecutiveAutomationScenario(scenarioId) {
     const plan = createAS6ExecutiveAutomationPlan(scenarioId);
     setExecutiveAutomationPlan(plan);
     const pipeline = executeAS6ExecutiveAutomationPipeline(plan);
     setExecutiveAutomationPipeline(pipeline);
-    setExecutiveAutomationMonitor(createAS6ExecutiveAutomationMonitorState(plan, pipeline));
   }
 
   function handleAS6ExecutiveAction(insight) {
@@ -397,7 +368,7 @@ export function AS6BusinessHome() {
     if (widgetId === "dashboard-live-data-status") return <AS6DashboardLiveDataStatus key={widgetId} data-widget-id={widgetId} />;
     if (widgetId === "revenue-crm-fusion-status") return <AS6RevenueCrmFusionStatus key={widgetId} data-widget-id={widgetId} />;
     if (widgetId === "executive-insights") {
-      return <AS6DataSurface title="Executive Insights & Recommendations" key={widgetId} data-widget-id={widgetId}><ul className="as6-business-home__list">{executiveInsights.recommendations.map((insight) => <li key={insight.id}><strong>{insight.title}</strong><br /><span>{insight.reason}</span><br /><small>{insight.action}</small><br /><button type="button" onClick={() => handleAS6ExecutiveAction(insight)}>Выполнить безопасное действие</button><br /><small>Target: {validateAS6ExecutiveAction(createAS6ExecutiveAction(insight)).target}</small></li>)}</ul><section className="as6-business-home__automation-scenarios" aria-label="Executive Automation Scenarios"><strong>Executive Automation Scenarios</strong>{Object.values(AS6_EXECUTIVE_AUTOMATION_SCENARIOS).map((scenario) => <button type="button" key={scenario.scenarioId} onClick={() => handleAS6ExecutiveAutomationScenario(scenario.scenarioId)}>{scenario.title}</button>)}{executiveAutomationPlan && <small>Plan: {executiveAutomationPlan.title} / Actions: {executiveAutomationPlan.actions.map((action) => action.actionId).join(" → ")} / Runtime-only</small>}{executiveAutomationPipeline && <small>Status: {executiveAutomationPipeline.status} / Step: {executiveAutomationPipeline.currentStep} of {executiveAutomationPipeline.totalSteps} / Progress: {executiveAutomationPipeline.progress}%{executiveAutomationPipeline.reason ? " / Stop: " + executiveAutomationPipeline.reason : ""}</small>}<button type="button" onClick={cancelAS6ExecutiveAutomationScenario}>Cancel Scenario</button><section className="as6-business-home__automation-monitor" aria-label="Executive Automation Monitor"><strong>Automation Monitor</strong><small>Started: {executiveAutomationMonitor.startedAt || "not started"}</small><small>Ended: {executiveAutomationMonitor.endedAt || "not ended"}</small><small>Duration: {executiveAutomationMonitor.durationMs}ms</small><small>Successful Steps: {executiveAutomationMonitor.successfulSteps}</small><small>Stopped/Skipped Steps: {executiveAutomationMonitor.stoppedSteps}</small><small>Completion: {executiveAutomationMonitor.completionSignal}</small><small>Reason: {executiveAutomationMonitor.reason || "none"}</small>{executiveAutomationMonitor.events.map((event) => <small key={event.id}>{event.type} / {event.at} / {event.reason || "ok"}</small>)}</section></section><section className="as6-business-home__action-metrics" aria-label="Executive Action Metrics"><strong>Executive Action Metrics</strong><div><span>Total: {executiveActionMetrics.total}</span><span>Success: {executiveActionMetrics.successful}</span><span>Success Rate: {executiveActionMetrics.successRate}%</span><span>Fallback: {executiveActionMetrics.fallback}</span><span>Fallback Rate: {executiveActionMetrics.fallbackRate}%</span><span>Top Action: {executiveActionMetrics.topAction}</span><span>Recent Routes: {executiveActionMetrics.recentTargets.join(", ") || "none"}</span></div></section>{executiveActionStatus && <AS6DataState type={executiveActionStatus.ok ? "success" : "warning"} title={executiveActionStatus.status} detail={(executiveActionStatus.label || "Action") + " → " + executiveActionStatus.target + " / " + executiveActionStatus.message} />}{executiveActionHistory.length > 0 && <section className="as6-business-home__action-audit" aria-label="Executive Action Audit Trail"><strong>Action Audit Trail</strong>{executiveActionHistory.map((event) => <article key={event.id}><span>{event.createdAt}</span><strong>{event.actionId}</strong><small>{event.label} → {event.target}</small><small>Status: {event.status} / Fallback: {event.fallback ? "YES" : "NO"}</small></article>)}</section>}<AS6DataState type="empty" title={executiveInsights.profileName} detail={executiveInsights.source} /></AS6DataSurface>;
+      return <AS6DataSurface title="Executive Insights & Recommendations" key={widgetId} data-widget-id={widgetId}><ul className="as6-business-home__list">{executiveInsights.recommendations.map((insight) => <li key={insight.id}><strong>{insight.title}</strong><br /><span>{insight.reason}</span><br /><small>{insight.action}</small><br /><button type="button" onClick={() => handleAS6ExecutiveAction(insight)}>Выполнить безопасное действие</button><br /><small>Target: {validateAS6ExecutiveAction(createAS6ExecutiveAction(insight)).target}</small></li>)}</ul><section className="as6-business-home__automation-scenarios" aria-label="Executive Automation Scenarios"><strong>Executive Automation Scenarios</strong>{Object.values(AS6_EXECUTIVE_AUTOMATION_SCENARIOS).map((scenario) => <button type="button" key={scenario.scenarioId} onClick={() => handleAS6ExecutiveAutomationScenario(scenario.scenarioId)}>{scenario.title}</button>)}{executiveAutomationPlan && <small>Plan: {executiveAutomationPlan.title} / Actions: {executiveAutomationPlan.actions.map((action) => action.actionId).join(" → ")} / Runtime-only</small>}{executiveAutomationPipeline && <small>Status: {executiveAutomationPipeline.status} / Step: {executiveAutomationPipeline.currentStep} of {executiveAutomationPipeline.totalSteps} / Progress: {executiveAutomationPipeline.progress}%{executiveAutomationPipeline.reason ? " / Stop: " + executiveAutomationPipeline.reason : ""}</small>}</section><section className="as6-business-home__action-metrics" aria-label="Executive Action Metrics"><strong>Executive Action Metrics</strong><div><span>Total: {executiveActionMetrics.total}</span><span>Success: {executiveActionMetrics.successful}</span><span>Success Rate: {executiveActionMetrics.successRate}%</span><span>Fallback: {executiveActionMetrics.fallback}</span><span>Fallback Rate: {executiveActionMetrics.fallbackRate}%</span><span>Top Action: {executiveActionMetrics.topAction}</span><span>Recent Routes: {executiveActionMetrics.recentTargets.join(", ") || "none"}</span></div></section>{executiveActionStatus && <AS6DataState type={executiveActionStatus.ok ? "success" : "warning"} title={executiveActionStatus.status} detail={(executiveActionStatus.label || "Action") + " → " + executiveActionStatus.target + " / " + executiveActionStatus.message} />}{executiveActionHistory.length > 0 && <section className="as6-business-home__action-audit" aria-label="Executive Action Audit Trail"><strong>Action Audit Trail</strong>{executiveActionHistory.map((event) => <article key={event.id}><span>{event.createdAt}</span><strong>{event.actionId}</strong><small>{event.label} → {event.target}</small><small>Status: {event.status} / Fallback: {event.fallback ? "YES" : "NO"}</small></article>)}</section>}<AS6DataState type="empty" title={executiveInsights.profileName} detail={executiveInsights.source} /></AS6DataSurface>;
     }
     return null;
   }

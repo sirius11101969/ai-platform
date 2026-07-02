@@ -5128,3 +5128,13 @@ Status: PASS pending validation
 - Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
 - Added diagnostics, governance and coverage artifacts.
 - Project readiness: 99.8%.
+
+## AS6 EPIC-004 PR-3 — Executive Automation Monitoring & Control
+
+- AS6_DONE=AS6_EPIC004_PR3_EXECUTIVE_AUTOMATION_MONITORING_CONTROL.
+- Added runtime monitoring for Executive Automation scenarios.
+- Added startedAt, endedAt, durationMs, successful steps, stopped/skipped steps and completion signal.
+- Added cancel control and stop/cancel reason visibility.
+- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+- Added diagnostics, governance and coverage artifacts.
+- Project readiness: 99.8%.
