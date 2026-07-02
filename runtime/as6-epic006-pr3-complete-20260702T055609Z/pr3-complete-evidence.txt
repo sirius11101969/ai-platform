@@ -1,0 +1,34 @@
+frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js:43:export function getExecutiveAutomationPolicyExplanation(actionId) {
+frontend/src/as6/business-home/as6ExecutionOrchestrator.js:1:import { sortAS6ExecutiveScenariosByPriority } from './as6ExecutiveScenarioPriorities.js';
+frontend/src/as6/business-home/as6ExecutionOrchestrator.js:2:import { validateExecutiveScenarioDependencies } from './as6ExecutiveScenarioDependencies.js';
+frontend/src/as6/business-home/as6ExecutionOrchestrator.js:3:import { getExecutiveAutomationPolicyExplanation } from './as6ExecutiveAutomationPolicyExplanations.js';
+frontend/src/as6/business-home/as6ExecutionOrchestrator.js:5:export const executiveOrchestratorFallback = {
+frontend/src/as6/business-home/as6ExecutionOrchestrator.js:12:export function selectNextExecutiveScenario({
+frontend/src/as6/business-home/as6ExecutionOrchestrator.js:16:  const prioritized = sortAS6ExecutiveScenariosByPriority(scenarios);
+frontend/src/as6/business-home/as6ExecutionOrchestrator.js:17:  const dependencyRows = validateExecutiveScenarioDependencies(completedScenarioIds);
+frontend/src/as6/business-home/as6ExecutionOrchestrator.js:21:    const governance = getExecutiveAutomationPolicyExplanation(scenario.actionId || scenario.scenarioId);
+frontend/src/as6/business-home/as6ExecutionOrchestrator.js:43:    fallback: selected ? null : executiveOrchestratorFallback
+frontend/src/as6/business-home/AS6ExecutiveScenarioDependenciesPanel.jsx:3:import { validateExecutiveScenarioDependencies, hasExecutiveScenarioDependencyCycle } from './as6ExecutiveScenarioDependencies.js';
+frontend/src/as6/business-home/AS6ExecutiveScenarioDependenciesPanel.jsx:8:  const dependencyRows = validateExecutiveScenarioDependencies(demoCompletedScenarios);
+frontend/src/as6/business-home/as6ExecutiveScenarioPriorities.js:41:export function sortAS6ExecutiveScenariosByPriority(scenarios = []) {
+frontend/src/as6/business-home/as6ExecutiveScenarioDependencies.js:48:export function validateExecutiveScenarioDependencies(completedScenarioIds = [], items = executiveScenarioDependencies) {
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:1:import { explainAS6ExecutiveScenarioPriority, getAS6ExecutiveScenarioPriority, sortAS6ExecutiveScenariosByPriority, validateAS6ExecutiveScenarioPriorities } from "./as6ExecutiveScenarioPriorities.js";
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:106:  return sortAS6ExecutiveScenariosByPriority(scenarios).map((scenario) => ({
+frontend/src/as6/business-home/AS6ExecutionOrchestratorPanel.jsx:3:import { selectNextExecutiveScenario } from './as6ExecutionOrchestrator.js';
+frontend/src/as6/business-home/AS6ExecutionOrchestratorPanel.jsx:14:  const result = selectNextExecutiveScenario({ scenarios: demoScenarios, completedScenarioIds: demoCompletedScenarioIds });
+docs/diagnostics/as6-epic006-pr3-execution-orchestrator-export-contract-repair.md:7:AS6_EXECUTION_ORCHESTRATOR_EXPORT_CONTRACT_GAP
+docs/diagnostics/as6-epic006-pr3-execution-orchestrator-export-contract-repair.md:13:- Replaced sortExecutiveScenariosByPriority with sortAS6ExecutiveScenariosByPriority.
+docs/diagnostics/as6-epic006-pr3-execution-orchestrator.md:18:- Added selectNextExecutiveScenario.
+docs/AS6_PROJECT_STATE.md:5276:- Failure class added: AS6_EXECUTION_ORCHESTRATOR_EXPORT_CONTRACT_GAP.
+docs/AS6_PROJECT_STATE.md:5277:- Root cause: orchestrator imported sortExecutiveScenariosByPriority, but priority module exports sortAS6ExecutiveScenariosByPriority.
+docs/coverage/as6-epic006-pr3-execution-orchestrator-export-contract-coverage.md:3:- Covers AS6_EXECUTION_ORCHESTRATOR_EXPORT_CONTRACT_GAP.
+docs/coverage/as6-epic006-pr3-execution-orchestrator-coverage.md:8:- Covers selectNextExecutiveScenario.
+runtime/as6-epic006-pr3-execution-orchestrator/export-contract.after.txt:1:frontend/src/as6/business-home/as6ExecutionOrchestrator.js:1:import { sortAS6ExecutiveScenariosByPriority } from './as6ExecutiveScenarioPriorities.js';
+runtime/as6-epic006-pr3-execution-orchestrator/export-contract.after.txt:2:frontend/src/as6/business-home/as6ExecutionOrchestrator.js:16:  const prioritized = sortAS6ExecutiveScenariosByPriority(scenarios);
+runtime/as6-epic006-pr3-execution-orchestrator/export-contract.after.txt:3:frontend/src/as6/business-home/as6ExecutiveScenarioPriorities.js:41:export function sortAS6ExecutiveScenariosByPriority(scenarios = []) {
+runtime/as6-epic006-pr3-execution-orchestrator/export-contract.before.txt:3:frontend/src/as6/business-home/as6ExecutiveScenarioPriorities.js:41:export function sortAS6ExecutiveScenariosByPriority(scenarios = []) {
+runtime/as6-epic006-pr3-execution-orchestrator/orchestrator-scan.after.txt:17:frontend/src/as6/business-home/as6ExecutionOrchestrator.js:12:export function selectNextExecutiveScenario({
+runtime/as6-epic006-pr3-execution-orchestrator/orchestrator-scan.after.txt:23:frontend/src/as6/business-home/as6ExecutionOrchestrator.js:43:    fallback: selected ? null : executiveOrchestratorFallback
+runtime/as6-epic006-pr3-execution-orchestrator/orchestrator-scan.after.txt:61:frontend/src/as6/business-home/AS6ExecutionOrchestratorPanel.jsx:3:import { selectNextExecutiveScenario } from './as6ExecutionOrchestrator.js';
+runtime/as6-epic006-pr3-execution-orchestrator/orchestrator-scan.after.txt:65:frontend/src/as6/business-home/AS6ExecutionOrchestratorPanel.jsx:14:  const result = selectNextExecutiveScenario({ scenarios: demoScenarios, completedScenarioIds: demoCompletedScenarioIds });
+runtime/as6-epic006-pr3-execution-orchestrator/orchestrator-scan.before.txt:12:frontend/src/as6/business-home/AS6ExecutiveScenarioDependenciesPanel.jsx:8:  const dependencyRows = validateExecutiveScenarioDependencies(demoCompletedScenarios);
