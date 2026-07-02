@@ -1,5 +1,6 @@
 import React from 'react';
 import './AS6ExecutiveAutomationPolicyPanel.css';
+import { executiveAutomationPolicyExplanations } from './as6ExecutiveAutomationPolicyExplanations.js';
 
 const policyRows = [
   { label: 'Runtime policy', value: 'Active' },
@@ -8,18 +9,13 @@ const policyRows = [
   { label: 'Unsafe chain', value: 'Fallback required' }
 ];
 
-const statusRows = [
-  { status: 'Allowed', text: 'Scenario passed governance policy and can be launched.' },
-  { status: 'Blocked', text: 'Scenario failed governance policy. Reason and fallback are shown before execution.' }
-];
-
 export default function AS6ExecutiveAutomationPolicyPanel() {
   return (
     <section className="as6-policy-ui" data-as6-component="executive-automation-policy-ui">
       <div className="as6-policy-ui__header">
         <span className="as6-policy-ui__eyebrow">Governance Policy</span>
         <h2>Проверка автоматизации перед запуском</h2>
-        <p>AS6 показывает статус safety-проверки, причину блокировки и безопасный fallback до выполнения сценария.</p>
+        <p>AS6 показывает точную причину разрешения или блокировки по каждому actionId, безопасный следующий шаг и fallback до выполнения сценария.</p>
       </div>
       <div className="as6-policy-ui__grid">
         {policyRows.map((row) => (
@@ -29,16 +25,20 @@ export default function AS6ExecutiveAutomationPolicyPanel() {
           </article>
         ))}
       </div>
-      <div className="as6-policy-ui__status">
-        {statusRows.map((row) => (
-          <article className="as6-policy-ui__status-card" key={row.status} data-policy-status={row.status.toLowerCase()}>
-            <strong>{row.status}</strong>
-            <p>{row.text}</p>
+      <div className="as6-policy-ui__explanations">
+        {executiveAutomationPolicyExplanations.map((item) => (
+          <article className="as6-policy-ui__explanation-card" key={item.actionId} data-policy-status={item.status}>
+            <div className="as6-policy-ui__explanation-topline">
+              <span>{item.actionId}</span>
+              <strong>{item.status === 'allowed' ? 'Allowed' : 'Blocked'}</strong>
+            </div>
+            <h3>{item.label}</h3>
+            <p><b>Причина:</b> {item.reason}</p>
+            <p><b>Статус шагов:</b> {item.stepStatus}</p>
+            <p><b>Следующий безопасный шаг:</b> {item.safeNextStep}</p>
+            <p><b>Fallback:</b> {item.fallback}</p>
           </article>
         ))}
-      </div>
-      <div className="as6-policy-ui__fallback">
-        <strong>Fallback:</strong> если actionId неизвестен или цепочка действий небезопасна, сценарий не запускается, а пользователь получает объяснение и следующий безопасный шаг.
       </div>
     </section>
   );

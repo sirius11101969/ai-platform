@@ -1,0 +1,1 @@
+frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js:6:    reason: 'ActionId известен, сценарий только обновляет аналитическое представление и не меняет persistent storage.',

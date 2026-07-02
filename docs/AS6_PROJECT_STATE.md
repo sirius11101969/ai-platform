@@ -5189,3 +5189,14 @@ Status: PASS pending validation
 - Added fallback explanation before automation execution.
 - Added diagnostics, governance, coverage and runtime artifacts.
 - Project readiness: 99.85%.
+
+## EPIC-005 PR-3 — Executive Automation Policy Explanations
+
+- Added per-actionId governance explanations.
+- Added action reason, step status, safe next step and fallback recommendation.
+- Added diagnostics for policy explanation gaps.
+- Added AEC rules for explanation requirements and no-storage-change rule.
+- Workspace Storage V99 unchanged.
+- contextState.businessHome unchanged.
+- layout schema and persistent storage unchanged.
+- Project readiness: 99.9%.

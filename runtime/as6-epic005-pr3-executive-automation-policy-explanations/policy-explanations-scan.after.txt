@@ -1,0 +1,9 @@
+frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js:1:export const executiveAutomationPolicyExplanations = [
+frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js:21:    actionId: 'unknown.actionId',
+frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js:30:    actionId: 'executive.unsafe.chain',
+frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js:41:  return executiveAutomationPolicyExplanations.find((item) => item.actionId === actionId) || executiveAutomationPolicyExplanations.find((item) => item.actionId === 'unknown.actionId');
+frontend/src/as6/business-home/AS6ExecutiveAutomationPolicyPanel.jsx:3:import { executiveAutomationPolicyExplanations } from './as6ExecutiveAutomationPolicyExplanations.js';
+frontend/src/as6/business-home/AS6ExecutiveAutomationPolicyPanel.jsx:29:        {executiveAutomationPolicyExplanations.map((item) => (
+frontend/src/as6/business-home/AS6ExecutiveAutomationPolicyPanel.jsx:36:            <p><b>Причина:</b> {item.reason}</p>
+frontend/src/as6/business-home/AS6ExecutiveAutomationPolicyPanel.jsx:37:            <p><b>Статус шагов:</b> {item.stepStatus}</p>
+frontend/src/as6/business-home/AS6ExecutiveAutomationPolicyPanel.jsx:38:            <p><b>Следующий безопасный шаг:</b> {item.safeNextStep}</p>
