@@ -1,0 +1,26 @@
+frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js:1:import AS6ExecutiveAutomationAuditTrailPanel from './AS6ExecutiveAutomationAuditTrailPanel.jsx';
+frontend/src/as6/business-home/AS6ExecutiveAutomationAuditTrailPanel.jsx:2:import './AS6ExecutiveAutomationAuditTrailPanel.css';
+frontend/src/as6/business-home/AS6ExecutiveAutomationAuditTrailPanel.jsx:3:import { executiveAutomationAuditTrail } from './as6ExecutiveAutomationAuditTrail.js';
+frontend/src/as6/business-home/AS6ExecutiveAutomationAuditTrailPanel.jsx:5:export default function AS6ExecutiveAutomationAuditTrailPanel() {
+frontend/src/as6/business-home/AS6ExecutiveAutomationAuditTrailPanel.jsx:14:        {executiveAutomationAuditTrail.map((item) => (
+frontend/src/as6/business-home/as6ExecutiveAutomationAuditTrail.js:1:export const executiveAutomationAuditTrail = [
+docs/diagnostics/as6-epic005-pr4-jsx-template-literal-bash-substitution-repair.md:7:AS6_JSX_TEMPLATE_LITERAL_BASH_SUBSTITUTION_GAP
+docs/AS6_PROJECT_STATE.md:5218:- Failure class added: AS6_JSX_TEMPLATE_LITERAL_BASH_SUBSTITUTION_GAP.
+docs/aec/as6-epic005-pr4-executive-automation-audit-trail-aec.md:3:- AS6_AEC_EXECUTIVE_AUTOMATION_AUDIT_REQUIRED.
+docs/coverage/as6-epic005-pr4-jsx-template-literal-bash-substitution-coverage.md:3:- Covers AS6_JSX_TEMPLATE_LITERAL_BASH_SUBSTITUTION_GAP.
+docs/governance/as6-epic005-pr4-jsx-template-literal-bash-substitution-governance.md:6:- AS6_JSX_TEMPLATE_LITERAL_BASH_SUBSTITUTION_GAP must be registered as a known failure class.
+runtime/as6-epic005-pr4-executive-automation-audit-trail/status.before.repair.txt:7:?? frontend/src/as6/business-home/AS6ExecutiveAutomationAuditTrailPanel.css
+runtime/as6-epic005-pr4-executive-automation-audit-trail/status.before.repair.txt:8:?? frontend/src/as6/business-home/AS6ExecutiveAutomationAuditTrailPanel.jsx
+runtime/as6-epic005-pr4-executive-automation-audit-trail/audit-trail-scan.after.txt:1:frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js:1:import AS6ExecutiveAutomationAuditTrailPanel from './AS6ExecutiveAutomationAuditTrailPanel.jsx';
+runtime/as6-epic005-pr4-executive-automation-audit-trail/audit-trail-scan.after.txt:2:frontend/src/as6/business-home/AS6ExecutiveAutomationAuditTrailPanel.jsx:2:import './AS6ExecutiveAutomationAuditTrailPanel.css';
+runtime/as6-epic005-pr4-executive-automation-audit-trail/audit-trail-scan.after.txt:3:frontend/src/as6/business-home/AS6ExecutiveAutomationAuditTrailPanel.jsx:3:import { executiveAutomationAuditTrail } from './as6ExecutiveAutomationAuditTrail.js';
+runtime/as6-epic005-pr4-executive-automation-audit-trail/audit-trail-scan.after.txt:4:frontend/src/as6/business-home/AS6ExecutiveAutomationAuditTrailPanel.jsx:5:export default function AS6ExecutiveAutomationAuditTrailPanel() {
+runtime/as6-epic005-pr4-executive-automation-audit-trail/audit-trail-scan.after.txt:5:frontend/src/as6/business-home/AS6ExecutiveAutomationAuditTrailPanel.jsx:14:        {executiveAutomationAuditTrail.map((item) => (
+runtime/as6-epic005-pr4-executive-automation-audit-trail/audit-trail-scan.after.txt:6:frontend/src/as6/business-home/AS6ExecutiveAutomationAuditTrailPanel.jsx:15:          <article className="as6-audit-trail__card" key={item.executionId} data-final-status={item.finalStatus.toLowerCase()}>
+runtime/as6-epic005-pr4-executive-automation-audit-trail/audit-trail-scan.after.txt:7:frontend/src/as6/business-home/AS6ExecutiveAutomationAuditTrailPanel.jsx:17:              <span>{item.scenarioId}</span>
+runtime/as6-epic005-pr4-executive-automation-audit-trail/audit-trail-scan.after.txt:8:frontend/src/as6/business-home/AS6ExecutiveAutomationAuditTrailPanel.jsx:18:              <strong>{item.finalStatus}</strong>
+runtime/as6-epic005-pr4-executive-automation-audit-trail/audit-trail-scan.after.txt:9:frontend/src/as6/business-home/AS6ExecutiveAutomationAuditTrailPanel.jsx:21:              <span>Execution: {item.executionId}</span>
+runtime/as6-epic005-pr4-executive-automation-audit-trail/audit-trail-scan.after.txt:10:frontend/src/as6/business-home/AS6ExecutiveAutomationAuditTrailPanel.jsx:25:            <p><b>Fallback:</b> {item.fallbackUsed}</p>
+runtime/as6-epic005-pr4-executive-automation-audit-trail/audit-trail-scan.after.txt:11:frontend/src/as6/business-home/as6ExecutiveAutomationAuditTrail.js:1:export const executiveAutomationAuditTrail = [
+runtime/as6-epic005-pr4-executive-automation-audit-trail/status.after.repair.txt:11:?? frontend/src/as6/business-home/AS6ExecutiveAutomationAuditTrailPanel.css
+runtime/as6-epic005-pr4-executive-automation-audit-trail/status.after.repair.txt:12:?? frontend/src/as6/business-home/AS6ExecutiveAutomationAuditTrailPanel.jsx

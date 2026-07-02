@@ -1,0 +1,12 @@
+ M docs/AS6_PROJECT_STATE.md
+ M frontend/src/as6/business-home/as6ExecutiveAutomationPolicyExplanations.js
+?? docs/aec/as6-epic005-pr4-executive-automation-audit-trail-aec.md
+?? docs/aec/as6-epic005-pr4-executive-automation-audit-trail-complete-aec.md
+?? docs/coverage/as6-epic005-pr4-executive-automation-audit-trail-complete-coverage.md
+?? docs/coverage/as6-epic005-pr4-executive-automation-audit-trail-coverage.md
+?? docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail-complete.md
+?? docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail.md
+?? docs/governance/as6-epic005-pr4-executive-automation-audit-trail-complete-governance.md
+?? docs/governance/as6-epic005-pr4-executive-automation-audit-trail-governance.md
+?? frontend/src/as6/business-home/AS6ExecutiveAutomationAuditTrailPanel.css
+?? frontend/src/as6/business-home/as6ExecutiveAutomationAuditTrail.js
