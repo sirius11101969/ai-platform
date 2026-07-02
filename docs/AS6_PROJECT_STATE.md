@@ -5149,3 +5149,13 @@ Status: PASS pending validation
 - Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
 - Added diagnostics, governance and coverage artifacts.
 - Project readiness: 99.8%.
+
+## AS6 EPIC-004 PR-5 — Executive Automation Retry & Recovery
+
+- AS6_DONE=AS6_EPIC004_PR5_EXECUTIVE_AUTOMATION_RETRY_RECOVERY.
+- Added runtime retry for scenarios and steps.
+- Added runtime recovery from last successful step.
+- Added retryCount, recovering/retrying state and last failure reason visibility.
+- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+- Added diagnostics, governance and coverage artifacts.
+- Project readiness: 99.8%.

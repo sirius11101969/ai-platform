@@ -398,3 +398,25 @@
 .as6-business-home__automation-queue span {
   color: rgba(226, 232, 240, 0.74);
 }
+
+.as6-business-home__automation-recovery {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.32);
+}
+.as6-business-home__automation-recovery button {
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 12px;
+  padding: 8px 12px;
+  background: rgba(15, 23, 42, 0.52);
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+.as6-business-home__automation-recovery small {
+  color: rgba(226, 232, 240, 0.74);
+}
