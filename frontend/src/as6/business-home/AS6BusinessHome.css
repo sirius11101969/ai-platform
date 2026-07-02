@@ -375,3 +375,26 @@
 .as6-business-home__automation-monitor small {
   color: rgba(226, 232, 240, 0.74);
 }
+
+.as6-business-home__automation-queue {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.32);
+}
+.as6-business-home__automation-queue article {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.34);
+}
+.as6-business-home__automation-queue small,
+.as6-business-home__automation-queue span {
+  color: rgba(226, 232, 240, 0.74);
+}

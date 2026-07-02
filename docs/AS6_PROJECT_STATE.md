@@ -5138,3 +5138,14 @@ Status: PASS pending validation
 - Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
 - Added diagnostics, governance and coverage artifacts.
 - Project readiness: 99.8%.
+
+## AS6 EPIC-004 PR-4 — Executive Automation Queue & Scheduler
+
+- AS6_DONE=AS6_EPIC004_PR4_EXECUTIVE_AUTOMATION_QUEUE_SCHEDULER.
+- Added runtime-only Executive Automation queue.
+- Added queue add, remove and clear controls.
+- Added sequential runtime scheduler.
+- Added visible current and pending scenario queue.
+- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+- Added diagnostics, governance and coverage artifacts.
+- Project readiness: 99.8%.
