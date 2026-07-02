@@ -2131,3 +2131,8 @@ Governed and registered.
 
 ## AS6 EPIC010 Workspace Experience Planning Failure Classes
 - AS6_CONTROL_SCOPE_FALSE_POSITIVE: control searched outside current EPIC scope and matched historical authorization artifacts.
+
+## AS6 EPIC010 Slice 01 Failure Classes
+- AS6_WORKSPACE_CONTEXT_MISSING: Workspace Experience context provider or context factory is missing.
+- AS6_WORKSPACE_SERVICE_BINDING_MISSING: Workspace Experience cannot resolve required Platform Services bindings.
+- AS6_WORKSPACE_BASELINE_MUTATION_FORBIDDEN: Workspace Experience attempts to mutate AS6 Operating System V1 or Executive Intelligence baseline.

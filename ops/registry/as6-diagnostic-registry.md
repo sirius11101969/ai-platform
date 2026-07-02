@@ -1656,3 +1656,13 @@ ops/bin/as6-control-permission-engine-v114
 - DIAGNOSTIC=ops/bin/as6-diagnose-epic010-workspace-experience-planning
 - CONTROL=ops/bin/as6-control-epic010-workspace-experience-planning
 - FAILURE_CLASS=AS6_CONTROL_SCOPE_FALSE_POSITIVE
+
+## AS6 EPIC010 Slice 01 Diagnostic Registry
+- STAGE=AS6_EPIC010_SLICE01_WORKSPACE_EXPERIENCE_FOUNDATION
+- DIAGNOSTIC=ops/bin/as6-diagnose-epic010-slice01-workspace-experience-foundation
+- CONTROL=ops/bin/as6-control-epic010-slice01-workspace-experience-foundation
+- RUNTIME_TRACER=traceAS6WorkspaceExperience
+- HEALTH_SNAPSHOT=getAS6WorkspaceHealthSnapshot
+- FAILURE_CLASS=AS6_WORKSPACE_CONTEXT_MISSING
+- FAILURE_CLASS=AS6_WORKSPACE_SERVICE_BINDING_MISSING
+- FAILURE_CLASS=AS6_WORKSPACE_BASELINE_MUTATION_FORBIDDEN

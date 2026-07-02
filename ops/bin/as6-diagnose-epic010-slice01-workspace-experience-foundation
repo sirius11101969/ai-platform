@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/as6os/workspaceExperience/workspaceExperienceRuntime.jsx
+test -f frontend/src/as6os/workspaceExperience/AS6WorkspaceExperienceFoundation.jsx
+test -f frontend/src/as6os/workspaceExperience/workspaceExperience.css
+test -f frontend/src/as6os/workspaceExperience/index.js
+grep -q AS6_WORKSPACE_EXPERIENCE_STAGE frontend/src/as6os/workspaceExperience/workspaceExperienceRuntime.jsx
+grep -q createAS6WorkspaceContext frontend/src/as6os/workspaceExperience/workspaceExperienceRuntime.jsx
+grep -q bootstrapAS6WorkspaceExperience frontend/src/as6os/workspaceExperience/workspaceExperienceRuntime.jsx
+grep -q shutdownAS6WorkspaceExperience frontend/src/as6os/workspaceExperience/workspaceExperienceRuntime.jsx
+grep -q traceAS6WorkspaceExperience frontend/src/as6os/workspaceExperience/workspaceExperienceRuntime.jsx
+grep -q getAS6WorkspaceHealthSnapshot frontend/src/as6os/workspaceExperience/workspaceExperienceRuntime.jsx
+grep -q getAS6WorkspaceServiceBindings frontend/src/as6os/workspaceExperience/workspaceExperienceRuntime.jsx
+grep -q AS6WorkspaceExperienceProvider frontend/src/as6os/workspaceExperience/workspaceExperienceRuntime.jsx
+grep -q AS6WorkspaceExperienceFoundation frontend/src/as6os/workspaceExperience/AS6WorkspaceExperienceFoundation.jsx
+echo AS6_WORKSPACE_FOUNDATION=PASS
+echo AS6_WORKSPACE_RUNTIME=PASS
+echo AS6_WORKSPACE_CONTEXT=PASS
+echo AS6_WORKSPACE_LIFECYCLE=PASS
+echo AS6_WORKSPACE_BOOTSTRAP=PASS
+echo AS6_WORKSPACE_HEALTH_SNAPSHOT=PASS
+echo AS6_WORKSPACE_SERVICE_BINDINGS=PASS
+echo AS6_EPIC010_SLICE01_WORKSPACE_EXPERIENCE_FOUNDATION_DIAGNOSTIC=PASS

@@ -1,0 +1,8 @@
+.as6-workspace-experience-foundation{display:grid;gap:20px}
+.as6-workspace-experience-foundation__header{display:grid;gap:8px;border:1px solid rgba(255,255,255,.14);border-radius:24px;padding:24px;background:rgba(255,255,255,.04)}
+.as6-workspace-experience-foundation__header span{color:#94a3b8;font-size:12px;text-transform:uppercase;letter-spacing:.12em}
+.as6-workspace-experience-foundation__header strong{font-size:24px;color:#f8fafc}
+.as6-workspace-experience-foundation__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.as6-workspace-experience-foundation__grid article{border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:18px;background:rgba(255,255,255,.035);color:#cbd5e1}
+.as6-workspace-experience-foundation__grid b{display:block;color:#f8fafc;margin-bottom:8px}
+@media (max-width: 920px){.as6-workspace-experience-foundation__grid{grid-template-columns:1fr}}

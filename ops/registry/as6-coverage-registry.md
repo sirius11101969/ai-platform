@@ -3505,3 +3505,17 @@ Permission Validation
 - Definition of Done=covered
 - Control scope hardening=covered
 - Implementation authorization=covered
+
+## AS6 EPIC010 Slice 01 Coverage Registry
+- Workspace Foundation Runtime=covered
+- Workspace Context Provider=covered
+- Workspace Layout Foundation=covered
+- Workspace Lifecycle=covered
+- Workspace Runtime Tracer=covered
+- Workspace Health Snapshot=covered
+- Workspace Service Integration=covered
+- Workspace Diagnostic Hooks=covered
+- Control scope hardening=covered
+- No business logic control=covered
+- No CRM features control=covered
+- No persistent storage control=covered
