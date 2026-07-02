@@ -16,10 +16,9 @@ import AS6GlobalHealthBar from "../../components/AS6GlobalHealthBar.jsx";
 import AS6LiveOperationalDataStatus from "../../components/AS6LiveOperationalDataStatus.jsx";
 import AS6DashboardLiveDataStatus from "../../components/AS6DashboardLiveDataStatus.jsx";
 import AS6RevenueCrmFusionStatus from "../../components/AS6RevenueCrmFusionStatus.jsx";
-import { applyAS6ExecutiveWorkspaceProfile, createAS6ExecutiveProfileRecommendation, getAS6ExecutiveWorkspaceProfiles } from "./as6ExecutiveWorkspaceProfiles.js";
 import "./AS6BusinessHome.css";
 
-export const AS6_BUSINESS_HOME_VERSION = "EPIC002_PR4";
+export const AS6_BUSINESS_HOME_VERSION = "EPIC002_PR3";
 export const AS6_BUSINESS_HOME_LAYOUT_SCHEMA_VERSION = 1;
 
 export const AS6_BUSINESS_HOME_WIDGETS = [
@@ -230,10 +229,6 @@ export function AS6BusinessHome() {
     setDraggedWidgetId(null);
   }
 
-  function applyAS6ExecutiveProfile(profileName) {
-    updateBusinessHomeLayout((currentLayout) => applyAS6ExecutiveWorkspaceProfile(currentLayout, profileName));
-  }
-
   function applyAS6AdaptiveSuggestion(suggestion) {
     if (!suggestion?.action?.widgetId) return;
     updateBusinessHomeLayout((currentLayout) => {
@@ -349,15 +344,6 @@ export function AS6BusinessHome() {
               </div>
               <AS6ExperienceButton>Что вы хотите сделать?</AS6ExperienceButton>
             </header>
-            <section className="as6-business-home__executive-profiles" aria-label="Executive Workspace profiles">
-              <strong>Executive Profiles</strong>
-              <div>
-                {getAS6ExecutiveWorkspaceProfiles().map((profileName) => (
-                  <button type="button" key={profileName} onClick={() => applyAS6ExecutiveProfile(profileName)}>{profileName}</button>
-                ))}
-              </div>
-              <small>{createAS6ExecutiveProfileRecommendation("Administrator").reason}</small>
-            </section>
             <section className="as6-business-home__customizer" aria-label="Business Home widgets">
               <strong>Настройка виджетов</strong>
               {orderedWidgets.map((widget) => (
