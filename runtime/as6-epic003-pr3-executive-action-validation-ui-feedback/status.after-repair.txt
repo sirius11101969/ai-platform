@@ -1,0 +1,6 @@
+ M docs/AS6_PROJECT_STATE.md
+ M frontend/src/as6/business-home/AS6BusinessHome.jsx
+ M frontend/src/as6/business-home/as6ExecutiveActions.js
+?? docs/coverage/as6-epic003-pr3-executive-action-validation-ui-feedback-coverage.md
+?? docs/diagnostics/as6-epic003-pr3-executive-action-validation-ui-feedback.md
+?? docs/governance/as6-epic003-pr3-executive-action-validation-ui-feedback-governance.md

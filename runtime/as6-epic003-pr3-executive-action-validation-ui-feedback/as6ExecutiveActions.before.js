@@ -30,20 +30,8 @@ export function createAS6ExecutiveAction(insight) {
   return { ...fallbackAction, reason: insight.reason || "AS6 Executive recommendation" };
 }
 
-export function validateAS6ExecutiveAction(action) {
-  const isKnownSafeRoute = Object.values(AS6_EXECUTIVE_ACTION_TARGETS).includes(action?.target);
-  const ok = Boolean(action?.safe && action?.type === "navigate" && isKnownSafeRoute);
-  return {
-    ok,
-    status: ok ? "VALID" : "FALLBACK",
-    target: ok ? action.target : resolveAS6ExecutiveRegisteredAction("showNextStep").target,
-    message: ok ? "Safe registered action" : "Unknown or unsafe action resolved to fallback",
-  };
-}
-
 export function executeAS6ExecutiveAction(action) {
-  const validation = validateAS6ExecutiveAction(action);
-  const safeAction = validation.ok ? action : createAS6ExecutiveFallbackAction("Action target failed safety validation");
+  const safeAction = action?.safe ? action : createAS6ExecutiveFallbackAction("Action target failed safety validation");
   if (safeAction.type === "navigate" && safeAction.target) {
     window.location.assign(safeAction.target);
     return { ok: true, action: safeAction };

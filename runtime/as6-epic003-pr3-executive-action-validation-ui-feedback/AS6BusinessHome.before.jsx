@@ -18,10 +18,10 @@ import AS6DashboardLiveDataStatus from "../../components/AS6DashboardLiveDataSta
 import AS6RevenueCrmFusionStatus from "../../components/AS6RevenueCrmFusionStatus.jsx";
 import { applyAS6ExecutiveWorkspaceProfile, createAS6ExecutiveProfileRecommendation, getAS6ExecutiveWorkspaceProfiles } from "./as6ExecutiveWorkspaceProfiles.js";
 import { createAS6ExecutiveInsights } from "./as6ExecutiveInsights.js";
-import { createAS6ExecutiveAction, executeAS6ExecutiveAction, validateAS6ExecutiveAction } from "./as6ExecutiveActions.js";
+import { createAS6ExecutiveAction, executeAS6ExecutiveAction } from "./as6ExecutiveActions.js";
 import "./AS6BusinessHome.css";
 
-export const AS6_BUSINESS_HOME_VERSION = "EPIC003_PR3";
+export const AS6_BUSINESS_HOME_VERSION = "EPIC003_PR1";
 export const AS6_BUSINESS_HOME_LAYOUT_SCHEMA_VERSION = 1;
 
 export const AS6_BUSINESS_HOME_WIDGETS = [
@@ -137,7 +137,6 @@ export function AS6BusinessHome() {
   const state = useMemo(() => getAS6BusinessHomeState(), [workspaceRevision]);
   const [layout, setLayout] = useState(state.businessHomeLayout);
   const [draggedWidgetId, setDraggedWidgetId] = useState(null);
-  const [executiveActionStatus, setExecutiveActionStatus] = useState(null);
 
   useEffect(() => {
     setLayout(state.businessHomeLayout);
@@ -234,14 +233,6 @@ export function AS6BusinessHome() {
     setDraggedWidgetId(null);
   }
 
-  function handleAS6ExecutiveAction(insight) {
-    const action = createAS6ExecutiveAction(insight);
-    const validation = validateAS6ExecutiveAction(action);
-    setExecutiveActionStatus({ ...validation, label: action.label, actionId: action.actionId || "showNextStep" });
-    if (!validation.ok) return;
-    executeAS6ExecutiveAction(action);
-  }
-
   function applyAS6ExecutiveProfile(profileName) {
     updateBusinessHomeLayout((currentLayout) => applyAS6ExecutiveWorkspaceProfile(currentLayout, profileName));
   }
@@ -315,7 +306,7 @@ export function AS6BusinessHome() {
     if (widgetId === "dashboard-live-data-status") return <AS6DashboardLiveDataStatus key={widgetId} data-widget-id={widgetId} />;
     if (widgetId === "revenue-crm-fusion-status") return <AS6RevenueCrmFusionStatus key={widgetId} data-widget-id={widgetId} />;
     if (widgetId === "executive-insights") {
-      return <AS6DataSurface title="Executive Insights & Recommendations" key={widgetId} data-widget-id={widgetId}><ul className="as6-business-home__list">{executiveInsights.recommendations.map((insight) => <li key={insight.id}><strong>{insight.title}</strong><br /><span>{insight.reason}</span><br /><small>{insight.action}</small><br /><button type="button" onClick={() => handleAS6ExecutiveAction(insight)}>Выполнить безопасное действие</button><br /><small>Target: {validateAS6ExecutiveAction(createAS6ExecutiveAction(insight)).target}</small></li>)}</ul>{executiveActionStatus && <AS6DataState type={executiveActionStatus.ok ? "success" : "warning"} title={executiveActionStatus.status} detail={(executiveActionStatus.label || "Action") + " → " + executiveActionStatus.target + " / " + executiveActionStatus.message} />}<AS6DataState type="empty" title={executiveInsights.profileName} detail={executiveInsights.source} /></AS6DataSurface>;
+      return <AS6DataSurface title="Executive Insights & Recommendations" key={widgetId} data-widget-id={widgetId}><ul className="as6-business-home__list">{executiveInsights.recommendations.map((insight) => <li key={insight.id}><strong>{insight.title}</strong><br /><span>{insight.reason}</span><br /><small>{insight.action}</small><br /><button type="button" onClick={() => executeAS6ExecutiveAction(createAS6ExecutiveAction(insight))}>Выполнить безопасное действие</button></li>)}</ul><AS6DataState type="empty" title={executiveInsights.profileName} detail={executiveInsights.source} /></AS6DataSurface>;
     }
     return null;
   }
