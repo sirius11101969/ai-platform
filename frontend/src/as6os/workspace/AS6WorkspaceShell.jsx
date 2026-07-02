@@ -1,17 +1,14 @@
 import React from 'react';
 import { as6RuntimeContext } from '../index.js';
 import './workspaceShell.css';
+import { AS6NavigationList } from '../navigation/index.js';
 
 export function AS6WorkspaceShell({ children }) {
   return (
     <div className='as6-os-shell' data-stage={as6RuntimeContext.stage}>
       <aside className='as6-os-sidebar' aria-label='AS6 Sidebar'>
         <div className='as6-os-brand'>AS6 Core</div>
-        <nav className='as6-os-nav'>
-          <span>Workspace</span>
-          <span>Modules</span>
-          <span>Diagnostics</span>
-        </nav>
+        <AS6NavigationList activeId='workspace' />
       </aside>
       <section className='as6-os-body'>
         <header className='as6-os-header'>

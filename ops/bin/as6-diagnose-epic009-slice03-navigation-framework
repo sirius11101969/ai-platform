@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/as6os/navigation/navigationRegistry.js
+test -f frontend/src/as6os/navigation/AS6NavigationList.jsx
+grep -q as6NavigationRegistry frontend/src/as6os/navigation/navigationRegistry.js
+grep -q registerAS6NavigationItem frontend/src/as6os/navigation/navigationRegistry.js
+grep -q getAS6NavigationItems frontend/src/as6os/navigation/navigationRegistry.js
+grep -q AS6NavigationList frontend/src/as6os/navigation/AS6NavigationList.jsx
+grep -q AS6NavigationList frontend/src/as6os/workspace/AS6WorkspaceShell.jsx
+echo AS6_EPIC009_SLICE03_NAVIGATION_FRAMEWORK_DIAGNOSTIC=PASS
