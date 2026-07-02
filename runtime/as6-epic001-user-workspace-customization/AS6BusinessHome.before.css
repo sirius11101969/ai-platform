@@ -195,33 +195,3 @@
 .as6-business-home-shell__persistence small {
   color: rgba(226, 232, 240, 0.72);
 }
-
-.as6-business-home__customizer {
-  display: grid;
-  gap: 10px;
-  padding: 16px;
-  border: 1px solid rgba(148, 163, 184, 0.22);
-  border-radius: 24px;
-  background: rgba(15, 23, 42, 0.38);
-}
-.as6-business-home__customizer-row {
-  display: grid;
-  grid-template-columns: minmax(120px, 1fr) repeat(4, auto);
-  align-items: center;
-  gap: 8px;
-}
-.as6-business-home__customizer-row button {
-  border: 1px solid rgba(148, 163, 184, 0.24);
-  border-radius: 12px;
-  padding: 8px 10px;
-  background: rgba(15, 23, 42, 0.52);
-  color: inherit;
-  cursor: pointer;
-}
-.as6-business-home__dynamic-widgets {
-  display: grid;
-  gap: 14px;
-}
-@media (max-width: 720px) {
-  .as6-business-home__customizer-row { grid-template-columns: 1fr 1fr; }
-}

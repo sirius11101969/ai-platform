@@ -4968,3 +4968,16 @@ Status: PASS pending validation
 - Added persistence policy visibility in Right Rail.
 - Added diagnostics, governance and coverage artifacts.
 - Project readiness: 99.6%.
+
+## AS6 EPIC-001 PR-7 — User Workspace Customization
+
+- AS6_DONE=AS6_EPIC001_USER_WORKSPACE_CUSTOMIZATION.
+- Business Home layout stored only in contextState.businessHome.
+- Added widget order controls.
+- Added widget visibility controls.
+- Added pinned widget controls.
+- Added automatic restore and schema normalization.
+- Added debounce autosave through Workspace Storage V99.
+- Added AS6_BUSINESS_HOME_JSX_STRUCTURE_DRIFT diagnostic class after failed partial JSX replacement attempt.
+- Added diagnostics, governance and coverage artifacts.
+- Project readiness: 99.8%.
