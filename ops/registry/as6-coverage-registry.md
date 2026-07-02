@@ -3234,3 +3234,11 @@ Permission Validation
 - Era transition coverage.
 - Executive Intelligence baseline coverage.
 - PRN-003 Intelligence Uses Platform coverage.
+
+## EPIC-008 PR1 — Context Intelligence Coverage
+
+- Context Intelligence Snapshot coverage.
+- Workspace Context binding coverage.
+- Module Registry binding coverage.
+- Execution Engine reference coverage.
+- Storage drift coverage.

@@ -62,3 +62,16 @@ export {
   AS6WorkspaceModuleIntegrationTracer,
   AS6_WORKSPACE_MODULE_INTEGRATION_VERSION,
 } from './AS6WorkspaceModuleIntegration.jsx';
+
+export {
+  AS6_CONTEXT_INTELLIGENCE_VERSION,
+  AS6_CONTEXT_INTELLIGENCE_SOURCES,
+  createAS6ContextIntelligenceSnapshot,
+  buildAS6ContextInterpretation,
+  validateAS6ContextIntelligence,
+} from './AS6ContextIntelligence.js';
+
+export {
+  default as AS6ContextIntelligencePanel,
+  AS6_CONTEXT_INTELLIGENCE_PANEL_VERSION,
+} from './AS6ContextIntelligencePanel.jsx';

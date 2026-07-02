@@ -1,0 +1,18 @@
+ M docs/AS6_PROJECT_STATE.md
+ M frontend/src/as6/workspace/index.js
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? docs/aec/as6-epic006-pr3-execution-orchestrator-aec.md
+?? docs/aec/as6-epic008-pr1-context-intelligence-aec.md
+?? docs/coverage/as6-epic006-pr3-execution-orchestrator-coverage.md
+?? docs/coverage/as6-epic008-pr1-context-intelligence-coverage.md
+?? docs/diagnostics/as6-epic006-pr3-execution-orchestrator.md
+?? docs/diagnostics/as6-epic008-pr1-context-intelligence.md
+?? docs/governance/as6-epic006-pr3-execution-orchestrator-governance.md
+?? docs/governance/as6-epic008-pr1-context-intelligence-governance.md
+?? frontend/src/as6/business-home/AS6ExecutionOrchestratorPanel.css
+?? frontend/src/as6/business-home/AS6ExecutionOrchestratorPanel.jsx
+?? frontend/src/as6/workspace/AS6ContextIntelligence.js
+?? frontend/src/as6/workspace/AS6ContextIntelligencePanel.css
+?? frontend/src/as6/workspace/AS6ContextIntelligencePanel.jsx

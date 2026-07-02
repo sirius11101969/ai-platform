@@ -1,0 +1,44 @@
+frontend/src/as6/workspace/index.js:69:  createAS6ContextIntelligenceSnapshot,
+frontend/src/as6/workspace/index.js:71:  validateAS6ContextIntelligence,
+frontend/src/as6/workspace/index.js:72:} from './AS6ContextIntelligence.js';
+frontend/src/as6/workspace/index.js:75:  default as AS6ContextIntelligencePanel,
+frontend/src/as6/workspace/index.js:77:} from './AS6ContextIntelligencePanel.jsx';
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.jsx:2:import './AS6ContextIntelligencePanel.css';
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.jsx:5:  createAS6ContextIntelligenceSnapshot,
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.jsx:6:  validateAS6ContextIntelligence,
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.jsx:7:} from './AS6ContextIntelligence.js';
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.jsx:11:export default function AS6ContextIntelligencePanel() {
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.jsx:13:  const snapshot = useMemo(() => createAS6ContextIntelligenceSnapshot(state), [state]);
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.jsx:14:  const validation = useMemo(() => validateAS6ContextIntelligence(snapshot), [snapshot]);
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.jsx:17:    <section className="as6-context-intelligence" data-as6-component="context-intelligence">
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.jsx:18:      <div className="as6-context-intelligence__header">
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.jsx:24:      <div className="as6-context-intelligence__summary" data-intelligence-status={snapshot.interpretation.status}>
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.jsx:33:            source: 'context-intelligence',
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.jsx:43:      <div className="as6-context-intelligence__grid">
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.jsx:53:      <div className="as6-context-intelligence__validation">
+frontend/src/as6/workspace/AS6ContextIntelligence.js:19:export function createAS6ContextIntelligenceSnapshot(workspaceState = {}) {
+frontend/src/as6/workspace/AS6ContextIntelligence.js:114:export function validateAS6ContextIntelligence(snapshot) {
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.css:1:.as6-context-intelligence {
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.css:7:.as6-context-intelligence__header,
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.css:8:.as6-context-intelligence__summary,
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.css:9:.as6-context-intelligence__grid article,
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.css:10:.as6-context-intelligence__validation {
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.css:17:.as6-context-intelligence__header span,
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.css:18:.as6-context-intelligence__summary span,
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.css:19:.as6-context-intelligence__grid article span {
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.css:28:.as6-context-intelligence__header h2,
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.css:29:.as6-context-intelligence__summary h3 {
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.css:33:.as6-context-intelligence__header p,
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.css:34:.as6-context-intelligence__summary p,
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.css:35:.as6-context-intelligence__grid article p {
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.css:40:.as6-context-intelligence__summary,
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.css:41:.as6-context-intelligence__validation {
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.css:48:.as6-context-intelligence__summary[data-intelligence-status='ready'] {
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.css:52:.as6-context-intelligence__summary[data-intelligence-status='blocked'] {
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.css:56:.as6-context-intelligence__summary button {
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.css:66:.as6-context-intelligence__grid {
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.css:72:.as6-context-intelligence__grid article strong {
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.css:76:.as6-context-intelligence__validation small {
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.css:81:  .as6-context-intelligence__grid {
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.css:85:  .as6-context-intelligence__summary,
+frontend/src/as6/workspace/AS6ContextIntelligencePanel.css:86:  .as6-context-intelligence__validation {
