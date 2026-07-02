@@ -1,3 +1,4 @@
+import { explainAS6ExecutiveScenarioPriority, getAS6ExecutiveScenarioPriority, sortAS6ExecutiveScenariosByPriority, validateAS6ExecutiveScenarioPriorities } from "./as6ExecutiveScenarioPriorities.js";
 import { guardAS6ExecutiveAutomationScenario } from "./as6ExecutiveAutomationGovernance.js";
 import { getAS6ExecutiveActionById, validateAS6ExecutiveActionRegistry } from "./as6ExecutiveActionRegistry.js";
 import { executeAS6ExecutiveAction } from "./as6ExecutiveActions.js";
@@ -98,4 +99,17 @@ export function executeAS6ExecutiveAutomationPipeline(plan) {
     completed.push(action.actionId);
   }
   return { ...pipeline, status: "completed", currentStep: pipeline.totalSteps, progress: 100, completed, reason: null };
+}
+
+
+export function createAS6ExecutivePrioritizedAutomationScenarios(scenarios = Object.values(AS6_EXECUTIVE_AUTOMATION_SCENARIOS)) {
+  return sortAS6ExecutiveScenariosByPriority(scenarios).map((scenario) => ({
+    ...scenario,
+    priority: getAS6ExecutiveScenarioPriority(scenario),
+    priorityExplanation: explainAS6ExecutiveScenarioPriority(scenario),
+  }));
+}
+
+export function validateAS6ExecutiveAutomationScenarioPriorityModel() {
+  return validateAS6ExecutiveScenarioPriorities(Object.values(AS6_EXECUTIVE_AUTOMATION_SCENARIOS));
 }

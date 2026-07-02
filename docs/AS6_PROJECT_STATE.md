@@ -5235,3 +5235,15 @@ Status: PASS pending validation
 - layout schema, persistent storage and localStorage unchanged.
 - Project readiness: 99.95%.
 - Next recommended EPIC: AS6_EPIC006_EXECUTION_ORCHESTRATION.
+
+
+## AS6 EPIC-006 PR-1 — Scenario Priorities
+
+- AS6_DONE=AS6_EPIC006_PR1_SCENARIO_PRIORITIES.
+- Added runtime-only scenario priority model.
+- Added priority values: critical, high, normal, low.
+- Added priority sorting for automation scenarios.
+- Added per-scenario priority explanation.
+- Preserved Workspace Storage V99, contextState.businessHome, layout schema, localStorage and persistent storage.
+- Added diagnostics, governance and coverage artifacts.
+- Project readiness: 99.96%.
