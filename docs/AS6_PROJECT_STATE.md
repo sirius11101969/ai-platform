@@ -5714,3 +5714,17 @@ Status: PASS pending validation
 - AS6_OPERATING_SYSTEM_V1=READY_FOR_BASELINE.
 - PROJECT_READINESS=99%.
 - NEXT_STAGE=AS6_EPIC009_BASELINE_OPERATING_SYSTEM_V1.
+
+## AS6_DONE=AS6_EPIC009_BASELINE_OPERATING_SYSTEM_V1
+- Created Operating System V1 baseline manifest.
+- Updated Operating System V1 compatibility matrix.
+- Registered AS6 Operating System V1 as BASELINED.
+- Added baseline governance, diagnostic registry, coverage registry and detected failure classes.
+- Confirmed baseline stage did not rerun PRR, build, docker build, secret scan or guardian.
+- AS6_OPERATING_SYSTEM_V1=BASELINED.
+- BASELINE_STATUS=VALIDATED.
+- BASELINE_MANIFEST=CREATED.
+- COMPATIBILITY_MATRIX=UPDATED.
+- EPIC009_STATUS=CLOSED.
+- PROJECT_READINESS=99%.
+- NEXT_STAGE=NEXT_MAJOR_EPIC_SELECTION.

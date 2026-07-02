@@ -2119,3 +2119,7 @@ Governed and registered.
 ## AS6 EPIC009 PRR Failure Classes
 - AS6_PRR_BASELINE_SIDE_EFFECT_FORBIDDEN: PRR attempted to create baseline, restore tag, compatibility matrix or close EPIC.
 - AS6_PRR_READINESS_GATE_FAILED: one or more production readiness criteria failed.
+
+## AS6 EPIC009 Baseline Failure Classes
+- AS6_BASELINE_WITHOUT_APPROVED_PRR: baseline attempted without approved Production Readiness Review.
+- AS6_BASELINE_IMPLEMENTATION_MUTATION_FORBIDDEN: baseline attempted to change implementation code after PRR.

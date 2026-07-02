@@ -3478,3 +3478,12 @@ Permission Validation
 - OS_SECURITY_REVIEW=covered
 - OS_GOVERNANCE_COVERAGE=covered
 - OS_REGRESSION_GATE=covered
+
+## AS6 EPIC009 Baseline Coverage Registry
+- Baseline manifest=covered
+- Compatibility matrix=covered
+- Restore tag creation=covered
+- Operating System V1 baseline registration=covered
+- EPIC009 closure=covered
+- No PRR rerun policy=covered
+- No implementation mutation policy=covered
