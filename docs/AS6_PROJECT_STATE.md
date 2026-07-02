@@ -5258,3 +5258,23 @@ Status: PASS pending validation
 - contextState.businessHome unchanged.
 - layout schema, localStorage and persistent storage unchanged.
 - Project readiness: 99.97%.
+
+## EPIC-006 PR-3 — Execution Orchestrator
+
+- Added runtime-only execution orchestrator.
+- Added scenario selection by priority, dependency readiness and governance decision.
+- Added fallback when no scenario can be selected.
+- Added Business Home orchestrator panel.
+- Added diagnostics, governance, coverage and AEC artifacts.
+- Workspace Storage V99 unchanged.
+- contextState.businessHome unchanged.
+- layout schema, localStorage and persistent storage unchanged.
+- Project readiness: 99.98%.
+
+## EPIC-006 PR-3 Repair — Export Contract Gap
+
+- Failure class added: AS6_EXECUTION_ORCHESTRATOR_EXPORT_CONTRACT_GAP.
+- Root cause: orchestrator imported sortExecutiveScenariosByPriority, but priority module exports sortAS6ExecutiveScenariosByPriority.
+- Repair: aligned orchestrator import and function call with existing exported symbol.
+- Control added: PR modules must verify named exports before binding runtime layers.
+- Project readiness remains: 99.97% until PR-3 completes.

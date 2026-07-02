@@ -1,0 +1,3 @@
+frontend/src/as6/business-home/as6ExecutionOrchestrator.js:1:import { sortExecutiveScenariosByPriority } from './as6ExecutiveScenarioPriorities.js';
+frontend/src/as6/business-home/as6ExecutionOrchestrator.js:16:  const prioritized = sortExecutiveScenariosByPriority(scenarios);
+frontend/src/as6/business-home/as6ExecutiveScenarioPriorities.js:41:export function sortAS6ExecutiveScenariosByPriority(scenarios = []) {
