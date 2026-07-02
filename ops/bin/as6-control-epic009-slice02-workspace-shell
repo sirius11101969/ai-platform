@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-epic009-slice02-workspace-shell
+grep -R "localStorage\|sessionStorage\|indexedDB" frontend/src/as6os/workspace && exit 1 || true
+echo AS6_EPIC009_SLICE02_WORKSPACE_SHELL_CONTROL=PASS

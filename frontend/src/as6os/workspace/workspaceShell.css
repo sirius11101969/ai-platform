@@ -1,0 +1,11 @@
+.as6-os-shell{min-height:100vh;display:grid;grid-template-columns:260px minmax(0,1fr)320px;background:#080b12;color:#f8fafc}
+.as6-os-sidebar{border-right:1px solid rgba(255,255,255,.1);padding:24px;background:rgba(255,255,255,.03)}
+.as6-os-brand{font-size:22px;font-weight:800;margin-bottom:28px}
+.as6-os-nav{display:grid;gap:12px;color:#cbd5e1}
+.as6-os-body{display:grid;grid-template-rows:76px minmax(0,1fr)}
+.as6-os-header{display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.02)}
+.as6-os-header small{display:block;color:#94a3b8;margin-top:4px}
+.as6-os-header button{border:0;border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer}
+.as6-os-main{padding:28px}
+.as6-os-placeholder{border:1px dashed rgba(255,255,255,.18);border-radius:24px;padding:32px;color:#cbd5e1;background:rgba(255,255,255,.03)}
+.as6-os-right-rail{border-left:1px solid rgba(255,255,255,.1);padding:24px;background:rgba(255,255,255,.025);display:grid;align-content:start;gap:8px;color:#cbd5e1}

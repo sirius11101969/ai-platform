@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/as6os/workspace/AS6WorkspaceShell.jsx
+test -f frontend/src/as6os/workspace/workspaceShell.css
+grep -q AS6WorkspaceShell frontend/src/as6os/workspace/AS6WorkspaceShell.jsx
+grep -q as6-os-sidebar frontend/src/as6os/workspace/AS6WorkspaceShell.jsx
+grep -q as6-os-header frontend/src/as6os/workspace/AS6WorkspaceShell.jsx
+grep -q as6-os-right-rail frontend/src/as6os/workspace/AS6WorkspaceShell.jsx
+echo AS6_EPIC009_SLICE02_WORKSPACE_SHELL_DIAGNOSTIC=PASS

@@ -36,3 +36,4 @@ export const registerAS6Service = (name, service) => {
   as6ServiceRegistry.set(name, service);
   return as6ServiceRegistry.get(name);
 };
+export * from './workspace/index.js';
