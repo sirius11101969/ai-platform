@@ -1460,3 +1460,15 @@ ops/bin/as6-control-permission-engine-v114
 - Failure class: AS6_DECISION_SCORE_TRACE_GAP
 - Failure class: AS6_QUALITY_SCORE_EXPLAINABILITY_GAP
 - Root cause: Executive Feedback Loop exists, but AS6 does not yet compute explainable decision quality score.
+
+## AS6_EPIC008_PR8_EXECUTIVE_INTELLIGENCE_DASHBOARD
+
+- Diagnostic: ops/bin/as6-diagnose-executive-intelligence-dashboard-pr8
+- Control: ops/bin/as6-control-executive-intelligence-dashboard-pr8
+- Runtime artifacts: runtime/as6-epic008-pr8-executive-intelligence-dashboard/20260702T114312Z
+- Failure class: AS6_EXECUTIVE_INTELLIGENCE_DASHBOARD_MISSING
+- Failure class: AS6_EXECUTIVE_MODULE_AGGREGATION_GAP
+- Failure class: AS6_DECISION_ID_DASHBOARD_TRACE_GAP
+- Failure class: AS6_EXECUTIVE_DASHBOARD_NO_STORAGE_DRIFT
+- Failure class: AS6_EXECUTIVE_DASHBOARD_MUTATION_RISK
+- Root cause: Executive Intelligence modules exist without unified visualization dashboard.

@@ -3298,3 +3298,12 @@ Permission Validation
 - ops/bin/as6-control-executive-decision-quality-score-pr7
 - ops/governance/as6-executive-decision-quality-score-root-cause-pr7.md
 - ops/governance/as6-executive-decision-quality-score-aec-pr7.md
+
+## AS6_EPIC008_PR8_EXECUTIVE_INTELLIGENCE_DASHBOARD
+
+- frontend/src/lib/as6ExecutiveIntelligenceDashboard.js
+- frontend/src/components/as6/AS6ExecutiveIntelligenceDashboardPanel.jsx
+- ops/bin/as6-diagnose-executive-intelligence-dashboard-pr8
+- ops/bin/as6-control-executive-intelligence-dashboard-pr8
+- ops/governance/as6-executive-intelligence-dashboard-root-cause-pr8.md
+- ops/governance/as6-executive-intelligence-dashboard-aec-pr8.md

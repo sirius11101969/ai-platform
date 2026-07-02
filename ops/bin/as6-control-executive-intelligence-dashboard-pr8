@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-executive-intelligence-dashboard-pr8
+grep -q AS6_EXECUTIVE_INTELLIGENCE_DASHBOARD_MISSING ops/governance/as6-executive-intelligence-dashboard-root-cause-pr8.md
+grep -q AS6_EXECUTIVE_MODULE_AGGREGATION_GAP ops/governance/as6-executive-intelligence-dashboard-root-cause-pr8.md
+grep -q AS6_DECISION_ID_DASHBOARD_TRACE_GAP ops/governance/as6-executive-intelligence-dashboard-root-cause-pr8.md
+grep -q AS6_EXECUTIVE_DASHBOARD_NO_STORAGE_DRIFT ops/governance/as6-executive-intelligence-dashboard-root-cause-pr8.md
+grep -q AS6_EXECUTIVE_DASHBOARD_MUTATION_RISK ops/governance/as6-executive-intelligence-dashboard-root-cause-pr8.md
+grep -q AS6_AEC_EXECUTIVE_INTELLIGENCE_DASHBOARD_REQUIRED ops/governance/as6-executive-intelligence-dashboard-aec-pr8.md
+echo AS6_EXECUTIVE_INTELLIGENCE_DASHBOARD_CONTROL=PASS

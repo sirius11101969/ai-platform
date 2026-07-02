@@ -5482,3 +5482,12 @@ Status: PASS pending validation
 - Added quality score explainability.
 - Added no-storage, no-execution-mutation and no-feedback-mutation diagnostics.
 - Executive Intelligence readiness after PR-7: 90%.
+
+## AS6_EPIC008_PR8_EXECUTIVE_INTELLIGENCE_DASHBOARD
+
+- Added Executive Intelligence Dashboard visualization and aggregation layer.
+- Added executive module aggregation.
+- Added decisionId dashboard trace.
+- Added no-storage drift diagnostic.
+- Added no-mutation risk diagnostic.
+- Executive Intelligence readiness after PR-8: 100%.

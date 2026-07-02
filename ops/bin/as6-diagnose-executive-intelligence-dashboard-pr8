@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/lib/as6ExecutiveIntelligenceDashboard.js
+test -f frontend/src/components/as6/AS6ExecutiveIntelligenceDashboardPanel.jsx
+grep -q createAS6ExecutiveIntelligenceDashboard frontend/src/lib/as6ExecutiveIntelligenceDashboard.js
+grep -q decisionId frontend/src/lib/as6ExecutiveIntelligenceDashboard.js
+grep -q aggregationScore frontend/src/lib/as6ExecutiveIntelligenceDashboard.js
+grep -q visualization-and-aggregation-only frontend/src/lib/as6ExecutiveIntelligenceDashboard.js
+grep -q no-new-persistent-storage frontend/src/lib/as6ExecutiveIntelligenceDashboard.js
+grep -q no-executive-module-mutation frontend/src/lib/as6ExecutiveIntelligenceDashboard.js
+grep -q Recommendation frontend/src/lib/as6ExecutiveIntelligenceDashboard.js
+grep -q Scenario frontend/src/lib/as6ExecutiveIntelligenceDashboard.js
+grep -q Predictive frontend/src/lib/as6ExecutiveIntelligenceDashboard.js
+grep -q Audit frontend/src/lib/as6ExecutiveIntelligenceDashboard.js
+grep -q Feedback frontend/src/lib/as6ExecutiveIntelligenceDashboard.js
+grep -q Quality frontend/src/lib/as6ExecutiveIntelligenceDashboard.js
+! grep -R "localStorage\|sessionStorage\|indexedDB" frontend/src/lib/as6ExecutiveIntelligenceDashboard.js frontend/src/components/as6/AS6ExecutiveIntelligenceDashboardPanel.jsx
+! grep -R "executeAction\|runExecution\|mutateExecution\|setRecommendation\|updateRecommendation\|setScenario\|updateScenario\|setPrediction\|updatePrediction\|setFeedback\|updateFeedback\|setQuality\|updateQuality" frontend/src/lib/as6ExecutiveIntelligenceDashboard.js frontend/src/components/as6/AS6ExecutiveIntelligenceDashboardPanel.jsx
+echo AS6_EXECUTIVE_INTELLIGENCE_DASHBOARD=PASS
+echo AS6_EXECUTIVE_MODULE_AGGREGATION=PASS
+echo AS6_DECISION_ID_DASHBOARD_TRACE=PASS
+echo AS6_EXECUTIVE_DASHBOARD_NO_STORAGE_DRIFT=PASS
+echo AS6_EXECUTIVE_DASHBOARD_MUTATION_RISK=PASS
