@@ -8,11 +8,23 @@ import {
 import { createAS6BusinessHomeLiveData } from "./AS6BusinessHomeLiveData";
 import "./AS6BusinessHome.css";
 
-export const AS6_BUSINESS_HOME_VERSION = "EPIC001_PR3";
+export const AS6_BUSINESS_HOME_VERSION = "EPIC001_PR4";
+
+export function getAS6BusinessHomeUserName() {
+  try {
+    const rawUser = localStorage.getItem("as6-user") || localStorage.getItem("user");
+    if (rawUser === null) return "Добро пожаловать";
+    const user = JSON.parse(rawUser);
+    return user?.name || user?.firstName || user?.email || "Добро пожаловать";
+  } catch {
+    return "Добро пожаловать";
+  }
+}
 
 export function getAS6BusinessHomeState() {
   return {
     version: AS6_BUSINESS_HOME_VERSION,
+    userName: getAS6BusinessHomeUserName(),
     ...createAS6BusinessHomeLiveData(),
   };
 }
@@ -26,8 +38,12 @@ export function AS6BusinessHome() {
         <header className="as6-business-home__hero">
           <div>
             <p className="as6x-eyebrow">AS6 Business OS</p>
-            <h1>Доброе утро, Владимир</h1>
+            <h1>{state.userName === "Добро пожаловать" ? state.userName : `Доброе утро, ${state.userName}`}</h1>
             <p>Состояние бизнеса, рекомендации AI и быстрый запуск рабочих сценариев.</p>
+          </div>
+          <div className="as6-business-home__commandbar" role="search" aria-label="AS6 AI Command Bar">
+            <span>Ask AS6...</span>
+            <small>Search • Ask AI • Open Module</small>
           </div>
           <AS6ExperienceButton>Что вы хотите сделать?</AS6ExperienceButton>
         </header>

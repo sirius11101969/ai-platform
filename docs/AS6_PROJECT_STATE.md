@@ -4938,3 +4938,14 @@ Status: PASS pending validation
 - Route: /business-home.
 - Project readiness: 100% Platform V2; Business Home live data connected.
 - Next target: Business Home default landing decision.
+
+## AS6 EPIC-001 PR-4 — Business Home Default Start Page
+
+- AS6_DONE=AS6_EPIC001_BUSINESS_HOME_DEFAULT_START_PAGE.
+- Authenticated root route redirects to /business-home.
+- Anonymous root route remains LandingPage.
+- Business Home version advanced to EPIC001_PR4.
+- Added AI Command Bar placeholder.
+- Added session-aware welcome fallback.
+- Added diagnostics, governance and coverage artifacts.
+- Project readiness: 99.2%.

@@ -120,6 +120,11 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
+function RootEntryRoute() {
+  const { isAuthenticated } = useAuth();
+  return isAuthenticated ? <Navigate to="/business-home" replace /> : <LandingPage />;
+}
+
 export default function App() {
   if (typeof window !== "undefined" && window.location.pathname === "/marketplace") return <AS6RealAppWiring path="/marketplace" data-as6-direct-app-integration="AS6_DIRECT_APP_INTEGRATION_P20" />;
   return (
@@ -133,7 +138,7 @@ export default function App() {
           <Route path="/as6-os" element={<AS6OSPage />} />
           <Route path="/crm-workspace" element={<CRMWorkspacePage />} />
           <Route path="/as6-workspace" element={<AS6WorkspacePage />} />
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/" element={<RootEntryRoute />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/payment/success" element={<PaymentSuccessPage />} />
