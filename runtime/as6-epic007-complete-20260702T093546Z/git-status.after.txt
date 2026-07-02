@@ -1,0 +1,15 @@
+ M docs/AS6_PROJECT_STATE.md
+ M docs/architecture/AS6_ARCHITECTURE_CHARTER.md
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? docs/aec/as6-epic006-pr3-execution-orchestrator-aec.md
+?? docs/aec/as6-epic007-complete-aec.md
+?? docs/coverage/as6-epic006-pr3-execution-orchestrator-coverage.md
+?? docs/coverage/as6-epic007-complete-coverage.md
+?? docs/diagnostics/as6-epic006-pr3-execution-orchestrator.md
+?? docs/diagnostics/as6-epic007-complete.md
+?? docs/governance/as6-epic006-pr3-execution-orchestrator-governance.md
+?? docs/governance/as6-epic007-complete-governance.md
+?? frontend/src/as6/business-home/AS6ExecutionOrchestratorPanel.css
+?? frontend/src/as6/business-home/AS6ExecutionOrchestratorPanel.jsx

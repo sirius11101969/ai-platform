@@ -64,3 +64,9 @@ Rule: AI features must use Workspace Context before introducing local AI state.
 - INV-009 Single AI Workspace.
 
 Rule: all intelligent platform features must work through the unified AI Workspace and Workspace Context.
+
+## EPIC-007 Complete — Era 3 Principle Addition
+
+- PRN-003 Intelligence Uses Platform.
+
+Rule: every intelligence feature must use Workspace Context, Module Registry, Executive Runtime, Governance, Execution Engine and AI Workspace before creating new independent mechanisms.

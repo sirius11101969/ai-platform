@@ -1,0 +1,96 @@
+docs/diagnostics/as6-epic007-pr1-workspace-foundation.md:1:# EPIC-007 PR1 — Workspace Foundation
+docs/diagnostics/as6-epic007-pr1-workspace-foundation.md:7:- Workspace Foundation gap detected and closed.
+docs/diagnostics/as6-epic007-pr1-workspace-foundation.md:32:EXECUTION_LAYER_READINESS=100%
+docs/diagnostics/as6-epic007-pr1-workspace-foundation.md:33:WORKSPACE_READINESS=10%
+docs/diagnostics/as6-epic007-pr0-architecture-governance-framework.md:1:# EPIC-007 PR0 — Architecture Governance Framework
+docs/diagnostics/as6-epic007-pr4-workspace-personalization.md:1:# EPIC-007 PR4 — Workspace Personalization
+docs/diagnostics/as6-epic007-pr4-workspace-personalization.md:16:Workspace Foundation, Context and AI Workspace existed, but user role, workspace profile, preferences and personalized AI were not represented as a unified runtime-only Workspace layer.
+docs/diagnostics/as6-epic007-pr4-workspace-personalization.md:25:- Added Workspace Personalization Runtime Tracer.
+docs/diagnostics/as6-epic007-pr4-workspace-personalization.md:26:- Added INV-009 Single AI Workspace.
+docs/diagnostics/as6-epic007-pr4-workspace-personalization.md:33:- No AI Workspace duplication.
+docs/diagnostics/as6-epic007-pr4-workspace-personalization.md:34:- Workspace Context reused.
+docs/diagnostics/as6-epic007-pr4-workspace-personalization.md:36:EXECUTION_LAYER_READINESS=100%
+docs/diagnostics/as6-epic007-pr4-workspace-personalization.md:37:WORKSPACE_READINESS=65%
+docs/diagnostics/as6-epic007-pr2-workspace-context.md:1:# EPIC-007 PR2 — Workspace Context
+docs/diagnostics/as6-epic007-pr2-workspace-context.md:19:Workspace Foundation created the canonical shell, but Workspace still needed a single runtime-only context for active module, focus, right rail, actions and events.
+docs/diagnostics/as6-epic007-pr2-workspace-context.md:39:- Added Workspace Context Panel.
+docs/diagnostics/as6-epic007-pr2-workspace-context.md:54:- Workspace Context remains runtime-only.
+docs/diagnostics/as6-epic007-pr2-workspace-context.md:61:EXECUTION_LAYER_READINESS=100%
+docs/diagnostics/as6-epic007-pr2-workspace-context.md:62:WORKSPACE_READINESS=25%
+docs/diagnostics/as6-epic007-pr3-ai-workspace.md:1:# EPIC-007 PR3 — AI Workspace
+docs/diagnostics/as6-epic007-pr3-ai-workspace.md:17:Workspace Foundation and Workspace Context existed, but AI was not yet embedded as a context-aware Workspace layer.
+docs/diagnostics/as6-epic007-pr3-ai-workspace.md:34:- AI uses Workspace Context.
+docs/diagnostics/as6-epic007-pr3-ai-workspace.md:36:EXECUTION_LAYER_READINESS=100%
+docs/diagnostics/as6-epic007-pr3-ai-workspace.md:37:WORKSPACE_READINESS=45%
+docs/diagnostics/as6-epic007-pr5-module-integration.md:1:# EPIC-007 PR5 — Module Integration
+docs/diagnostics/as6-epic007-pr5-module-integration.md:14:Workspace Foundation, Context, AI and Personalization existed, but existing product modules were not yet represented as first-class Workspace modules through a registry and slot binding.
+docs/diagnostics/as6-epic007-pr5-module-integration.md:21:- Added Module Integration Runtime Tracer.
+docs/diagnostics/as6-epic007-pr5-module-integration.md:31:EXECUTION_LAYER_READINESS=100%
+docs/diagnostics/as6-epic007-pr5-module-integration.md:32:WORKSPACE_READINESS=85%
+docs/AS6_PROJECT_STATE.md:4910:- Business Workspace Foundation: enabled.
+docs/AS6_PROJECT_STATE.md:5318:## EPIC-007 PR0 — Architecture Governance Framework
+docs/AS6_PROJECT_STATE.md:5331:## EPIC-007 PR1 — Workspace Foundation
+docs/AS6_PROJECT_STATE.md:5333:- Added canonical AS6 Workspace Foundation.
+docs/AS6_PROJECT_STATE.md:5343:## EPIC-007 PR2 — Workspace Context
+docs/AS6_PROJECT_STATE.md:5345:- Added canonical runtime-only Workspace Context.
+docs/AS6_PROJECT_STATE.md:5348:- Added Workspace Context Panel.
+docs/AS6_PROJECT_STATE.md:5356:## EPIC-007 PR3 — AI Workspace
+docs/AS6_PROJECT_STATE.md:5358:- Added AI Workspace as context-aware Workspace layer.
+docs/AS6_PROJECT_STATE.md:5361:- AI uses Workspace Context and does not create separate AI Context.
+docs/AS6_PROJECT_STATE.md:5367:## EPIC-007 PR4 — Workspace Personalization
+docs/AS6_PROJECT_STATE.md:5369:- Added Workspace Personalization as runtime-only Workspace layer.
+docs/AS6_PROJECT_STATE.md:5371:- Added Workspace Personalization Runtime Tracer.
+docs/AS6_PROJECT_STATE.md:5372:- Added INV-009 Single AI Workspace.
+docs/AS6_PROJECT_STATE.md:5373:- Workspace Context reused.
+docs/AS6_PROJECT_STATE.md:5379:## EPIC-007 PR5 — Module Integration
+docs/AS6_PROJECT_STATE.md:5385:- Added Module Integration Runtime Tracer.
+docs/aec/as6-epic007-pr4-workspace-personalization-aec.md:1:# EPIC-007 PR4 — AEC Workspace Personalization
+docs/aec/as6-epic007-pr0-architecture-governance-framework-aec.md:1:# EPIC-007 PR0 AEC
+docs/aec/as6-epic007-pr3-ai-workspace-aec.md:1:# EPIC-007 PR3 — AEC AI Workspace
+docs/aec/as6-epic007-pr1-workspace-foundation-aec.md:1:# EPIC-007 PR1 — AEC Workspace Foundation
+docs/aec/as6-epic007-pr5-module-integration-aec.md:1:# EPIC-007 PR5 — AEC Module Integration
+docs/aec/as6-epic007-pr2-workspace-context-aec.md:1:# EPIC-007 PR2 — AEC Workspace Context
+docs/business-os/business-workspace-foundation-b1.md:1:# AS6 Business OS — Business Workspace Foundation B1
+docs/architecture/AS6_ARCHITECTURE_CHARTER.md:56:## EPIC-007 PR3 Quality Gate Addition
+docs/architecture/AS6_ARCHITECTURE_CHARTER.md:60:Rule: AI features must use Workspace Context before introducing local AI state.
+docs/architecture/AS6_ARCHITECTURE_CHARTER.md:62:## EPIC-007 PR4 Architecture Invariant Addition
+docs/architecture/AS6_ARCHITECTURE_CHARTER.md:64:- INV-009 Single AI Workspace.
+docs/architecture/AS6_ARCHITECTURE_CHARTER.md:66:Rule: all intelligent platform features must work through the unified AI Workspace and Workspace Context.
+docs/architecture/AS6_ARCHITECTURE_DECISIONS.md:17:Consequences: EPIC-007 must follow Workspace First and Reuse Before Build.
+docs/architecture/AS6_WORKSPACE_GUIDELINES.md:11:- Use Workspace Context before creating local module context.
+docs/coverage/as6-epic007-pr2-workspace-context-coverage.md:1:# EPIC-007 PR2 — Workspace Context Coverage
+docs/coverage/as6-epic007-pr1-workspace-foundation-coverage.md:1:# EPIC-007 PR1 — Workspace Foundation Coverage
+docs/coverage/as6-epic007-pr3-ai-workspace-coverage.md:1:# EPIC-007 PR3 — AI Workspace Coverage
+docs/coverage/as6-epic007-pr0-architecture-governance-framework-coverage.md:1:# EPIC-007 PR0 Coverage
+docs/coverage/as6-epic007-pr5-module-integration-coverage.md:1:# EPIC-007 PR5 — Module Integration Coverage
+docs/coverage/as6-epic007-pr4-workspace-personalization-coverage.md:1:# EPIC-007 PR4 — Workspace Personalization Coverage
+docs/coverage/as6-epic007-pr4-workspace-personalization-coverage.md:10:- Covers INV-009 Single AI Workspace.
+docs/governance/as6-epic007-pr0-architecture-governance-framework-governance.md:1:# EPIC-007 PR0 Governance
+docs/governance/as6-epic007-pr2-workspace-context-governance.md:1:# EPIC-007 PR2 — Workspace Context Governance
+docs/governance/as6-epic007-pr2-workspace-context-governance.md:3:- Workspace Context is the canonical runtime context for Workspace modules.
+docs/governance/as6-epic007-pr2-workspace-context-governance.md:4:- Modules must use Workspace Context before creating local module context.
+docs/governance/as6-epic007-pr2-workspace-context-governance.md:5:- Active Module must be represented through Workspace Context.
+docs/governance/as6-epic007-pr2-workspace-context-governance.md:6:- Focus Context must be represented through Workspace Context.
+docs/governance/as6-epic007-pr2-workspace-context-governance.md:7:- Right Rail state must be represented through Workspace Context.
+docs/governance/as6-epic007-pr2-workspace-context-governance.md:10:- Workspace Context must not mutate Workspace Storage V99.
+docs/governance/as6-epic007-pr2-workspace-context-governance.md:11:- Workspace Context must not mutate contextState.businessHome.
+docs/governance/as6-epic007-pr1-workspace-foundation-governance.md:1:# EPIC-007 PR1 — Workspace Foundation Governance
+docs/governance/as6-epic007-pr1-workspace-foundation-governance.md:3:- Workspace Foundation is the canonical UI shell for EPIC-007.
+docs/governance/as6-epic007-pr1-workspace-foundation-governance.md:8:- Execution Layer must not be changed by Workspace Foundation.
+docs/governance/as6-epic007-pr5-module-integration-governance.md:1:# EPIC-007 PR5 — Module Integration Governance
+docs/governance/as6-epic007-pr3-ai-workspace-governance.md:1:# EPIC-007 PR3 — AI Workspace Governance
+docs/governance/as6-epic007-pr3-ai-workspace-governance.md:3:- AI Workspace must be embedded into Workspace, not implemented as a parallel module shell.
+docs/governance/as6-epic007-pr3-ai-workspace-governance.md:4:- AI features must use Workspace Context.
+docs/governance/as6-epic007-pr3-ai-workspace-governance.md:9:- QGT-007 Context Awareness is mandatory for AI Workspace.
+docs/governance/as6-epic007-pr4-workspace-personalization-governance.md:1:# EPIC-007 PR4 — Workspace Personalization Governance
+docs/governance/as6-epic007-pr4-workspace-personalization-governance.md:3:- Workspace Personalization must personalize the existing Workspace, not create a new shell.
+docs/governance/as6-epic007-pr4-workspace-personalization-governance.md:4:- Role-based Workspace must reuse existing Workspace Context.
+docs/governance/as6-epic007-pr4-workspace-personalization-governance.md:8:- INV-009 Single AI Workspace is mandatory.
+frontend/src/as6/workspace/AS6AIWorkspace.jsx:31:      text: 'AI использует Workspace Context: activeModule=' + state.activeModule + ', focus=' + state.focusContext?.mode + '.',
+frontend/src/as6/workspace/AS6AIWorkspace.jsx:140:        <h3>Диагностика AI Workspace</h3>
+frontend/src/as6/workspace/AS6WorkspaceContextPanel.jsx:10:        <span>Workspace Context</span>
+frontend/src/as6/workspace/AS6WorkspaceModuleIntegration.jsx:89:      <span>Module Integration Runtime Tracer</span>
+frontend/src/as6/workspace/AS6WorkspaceModuleIntegration.jsx:100:        <span>Module Integration</span>
+frontend/src/as6/workspace/AS6WorkspaceFoundation.jsx:31:export function AS6WorkspaceHeader({ title = 'Unified AI Workspace', subtitle = 'Всегда знает следующий лучший шаг.' }) {
+frontend/src/as6/workspace/AS6WorkspacePersonalization.jsx:131:        <span>Workspace Personalization</span>
+frontend/src/as6/workspace/AS6WorkspacePersonalization.jsx:133:        <p>Профиль, роль, настройки интерфейса и Personalized AI используют Workspace Context без нового storage.</p>
