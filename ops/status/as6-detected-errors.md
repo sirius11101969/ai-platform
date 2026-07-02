@@ -1979,3 +1979,11 @@ Governed and registered.
 
 - AS6_EPIC_SCOPE_DRIFT: registered and controlled.
 - AS6_PREDICTIVE_EXECUTION_MISSING: repaired in PR-4.
+
+## AS6_EPIC008_PR5_EXECUTIVE_AUDIT_TRAIL
+
+- AS6_EXECUTIVE_AUDIT_TRAIL_MISSING: repaired in PR-5.
+- AS6_REASON_TRACE_GAP: repaired in PR-5.
+- AS6_DECISION_HISTORY_GAP: repaired in PR-5.
+- AS6_PREDICTION_EXECUTION_LINK_GAP: repaired in PR-5.
+- AS6_DECISION_ID_TRACE_GAP: repaired in PR-5.

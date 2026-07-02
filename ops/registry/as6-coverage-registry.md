@@ -3271,3 +3271,12 @@ Permission Validation
 - ops/governance/as6-epic-scope-drift-root-cause-pr4.md
 - ops/governance/as6-predictive-execution-root-cause-pr4.md
 - ops/governance/as6-predictive-execution-aec-pr4.md
+
+## AS6_EPIC008_PR5_EXECUTIVE_AUDIT_TRAIL
+
+- frontend/src/lib/as6ExecutiveAuditTrail.js
+- frontend/src/components/as6/AS6ExecutiveAuditTrailPanel.jsx
+- ops/bin/as6-diagnose-executive-audit-trail-pr5
+- ops/bin/as6-control-executive-audit-trail-pr5
+- ops/governance/as6-executive-audit-trail-root-cause-pr5.md
+- ops/governance/as6-executive-audit-trail-aec-pr5.md

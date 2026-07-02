@@ -5451,3 +5451,14 @@ Status: PASS pending validation
 - Added no-storage drift check.
 - Added Scenario Planner, Execution Engine and Audit Trail binding rule.
 - Executive Intelligence readiness after PR-4: 50%.
+
+## AS6_EPIC008_PR5_EXECUTIVE_AUDIT_TRAIL
+
+- Added Executive Audit Trail explainability-only layer.
+- Added decisionId end-to-end trace.
+- Added Reason Trace.
+- Added Decision History.
+- Added Prediction to Execution link.
+- Added no-storage and no-mutation diagnostics.
+- Added failure classes: AS6_EXECUTIVE_AUDIT_TRAIL_MISSING, AS6_REASON_TRACE_GAP, AS6_DECISION_HISTORY_GAP, AS6_PREDICTION_EXECUTION_LINK_GAP, AS6_DECISION_ID_TRACE_GAP.
+- Executive Intelligence readiness after PR-5: 65%.

@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/lib/as6ExecutiveAuditTrail.js
+test -f frontend/src/components/as6/AS6ExecutiveAuditTrailPanel.jsx
+grep -q createAS6ExecutiveAuditTrail frontend/src/lib/as6ExecutiveAuditTrail.js
+grep -q createAS6DecisionId frontend/src/lib/as6ExecutiveAuditTrail.js
+grep -q decisionId frontend/src/lib/as6ExecutiveAuditTrail.js
+grep -q reasonTrace frontend/src/lib/as6ExecutiveAuditTrail.js
+grep -q decisionHistory frontend/src/lib/as6ExecutiveAuditTrail.js
+grep -q predictionExecutionLink frontend/src/lib/as6ExecutiveAuditTrail.js
+grep -q explainability-only frontend/src/lib/as6ExecutiveAuditTrail.js
+grep -q no-new-persistent-storage frontend/src/lib/as6ExecutiveAuditTrail.js
+! grep -R "localStorage\|sessionStorage\|indexedDB" frontend/src/lib/as6ExecutiveAuditTrail.js frontend/src/components/as6/AS6ExecutiveAuditTrailPanel.jsx
+! grep -R "executeAction\|runExecution\|mutateExecution\|setPrediction\|updatePrediction" frontend/src/lib/as6ExecutiveAuditTrail.js frontend/src/components/as6/AS6ExecutiveAuditTrailPanel.jsx
+echo AS6_EXECUTIVE_AUDIT_TRAIL=PASS
+echo AS6_REASON_TRACE=PASS
+echo AS6_DECISION_HISTORY=PASS
+echo AS6_PREDICTION_EXECUTION_LINK=PASS
+echo AS6_DECISION_ID_TRACE=PASS

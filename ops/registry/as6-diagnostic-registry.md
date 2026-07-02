@@ -1424,3 +1424,15 @@ ops/bin/as6-control-permission-engine-v114
 - Failure class: AS6_EPIC_SCOPE_DRIFT
 - Failure class: AS6_PREDICTIVE_EXECUTION_MISSING
 - Runtime artifacts: runtime/as6-epic008-pr4-predictive-execution/20260702T110054Z
+
+## AS6_EPIC008_PR5_EXECUTIVE_AUDIT_TRAIL
+
+- Diagnostic: ops/bin/as6-diagnose-executive-audit-trail-pr5
+- Control: ops/bin/as6-control-executive-audit-trail-pr5
+- Runtime artifacts: runtime/as6-epic008-pr5-executive-audit-trail/20260702T111021Z
+- Failure class: AS6_EXECUTIVE_AUDIT_TRAIL_MISSING
+- Failure class: AS6_REASON_TRACE_GAP
+- Failure class: AS6_DECISION_HISTORY_GAP
+- Failure class: AS6_PREDICTION_EXECUTION_LINK_GAP
+- Failure class: AS6_DECISION_ID_TRACE_GAP
+- Root cause: Predictive and execution decisions exist without explainable decision history.

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-executive-audit-trail-pr5
+grep -q AS6_EXECUTIVE_AUDIT_TRAIL_MISSING ops/governance/as6-executive-audit-trail-root-cause-pr5.md
+grep -q AS6_REASON_TRACE_GAP ops/governance/as6-executive-audit-trail-root-cause-pr5.md
+grep -q AS6_DECISION_HISTORY_GAP ops/governance/as6-executive-audit-trail-root-cause-pr5.md
+grep -q AS6_PREDICTION_EXECUTION_LINK_GAP ops/governance/as6-executive-audit-trail-root-cause-pr5.md
+grep -q AS6_DECISION_ID_TRACE_GAP ops/governance/as6-executive-audit-trail-root-cause-pr5.md
+grep -q AS6_AEC_EXECUTIVE_AUDIT_TRAIL_REQUIRED ops/governance/as6-executive-audit-trail-aec-pr5.md
+echo AS6_EXECUTIVE_AUDIT_TRAIL_CONTROL=PASS
