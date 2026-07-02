@@ -316,3 +316,27 @@
 .as6-business-home__action-audit small {
   color: rgba(226, 232, 240, 0.72);
 }
+
+.as6-business-home__action-metrics {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.32);
+}
+.as6-business-home__action-metrics div {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.as6-business-home__action-metrics span {
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.34);
+  color: rgba(226, 232, 240, 0.78);
+}
+@media (max-width: 980px) {
+  .as6-business-home__action-metrics div { grid-template-columns: 1fr; }
+}

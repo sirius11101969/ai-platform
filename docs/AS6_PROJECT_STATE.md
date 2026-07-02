@@ -5099,3 +5099,13 @@ Status: PASS pending validation
 - Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
 - Added diagnostics, governance and coverage artifacts.
 - Project readiness: 99.8%.
+
+## AS6 EPIC-003 PR-5 — Executive Action Analytics & Metrics
+
+- AS6_DONE=AS6_EPIC003_PR5_EXECUTIVE_ACTION_ANALYTICS_METRICS.
+- Added runtime-only Executive Action Metrics.
+- Added total actions, successful actions, success rate, fallback count, fallback rate, top action and recent routes.
+- Metrics are computed from runtime Action Audit Trail only.
+- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+- Added diagnostics, governance and coverage artifacts.
+- Project readiness: 99.8%.

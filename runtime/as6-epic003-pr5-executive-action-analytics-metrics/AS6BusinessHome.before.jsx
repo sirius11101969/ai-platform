@@ -21,7 +21,7 @@ import { createAS6ExecutiveInsights } from "./as6ExecutiveInsights.js";
 import { createAS6ExecutiveAction, executeAS6ExecutiveAction, validateAS6ExecutiveAction } from "./as6ExecutiveActions.js";
 import "./AS6BusinessHome.css";
 
-export const AS6_BUSINESS_HOME_VERSION = "EPIC003_PR5";
+export const AS6_BUSINESS_HOME_VERSION = "EPIC003_PR4";
 export const AS6_BUSINESS_HOME_LAYOUT_SCHEMA_VERSION = 1;
 
 export const AS6_BUSINESS_HOME_WIDGETS = [
@@ -97,29 +97,6 @@ export function createAS6BusinessHomeAdaptiveSuggestions(state) {
     suggestions.push({ id: "show-recommendations", title: "Показать рекомендации", reason: "Universal Navigation содержит рабочие переходы.", action: { type: "show", widgetId: "recommendations" } });
   }
   return suggestions.slice(0, 3);
-}
-
-function createAS6ExecutiveActionMetrics(history) {
-  const events = Array.isArray(history) ? history : [];
-  const total = events.length;
-  const fallback = events.filter((event) => event.fallback).length;
-  const successful = events.filter((event) => event.status === "VALID" && !event.fallback).length;
-  const actionCounts = events.reduce((acc, event) => {
-    const actionId = event.actionId || "unknown";
-    acc[actionId] = (acc[actionId] || 0) + 1;
-    return acc;
-  }, {});
-  const topAction = Object.entries(actionCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || "none";
-  const recentTargets = [...new Set(events.map((event) => event.target).filter(Boolean))].slice(0, 3);
-  return {
-    total,
-    successful,
-    fallback,
-    successRate: total ? Math.round((successful / total) * 100) : 0,
-    fallbackRate: total ? Math.round((fallback / total) * 100) : 0,
-    topAction,
-    recentTargets,
-  };
 }
 
 function sortAS6BusinessHomeWidgets(widgets) {
@@ -358,13 +335,12 @@ export function AS6BusinessHome() {
     if (widgetId === "dashboard-live-data-status") return <AS6DashboardLiveDataStatus key={widgetId} data-widget-id={widgetId} />;
     if (widgetId === "revenue-crm-fusion-status") return <AS6RevenueCrmFusionStatus key={widgetId} data-widget-id={widgetId} />;
     if (widgetId === "executive-insights") {
-      return <AS6DataSurface title="Executive Insights & Recommendations" key={widgetId} data-widget-id={widgetId}><ul className="as6-business-home__list">{executiveInsights.recommendations.map((insight) => <li key={insight.id}><strong>{insight.title}</strong><br /><span>{insight.reason}</span><br /><small>{insight.action}</small><br /><button type="button" onClick={() => handleAS6ExecutiveAction(insight)}>Выполнить безопасное действие</button><br /><small>Target: {validateAS6ExecutiveAction(createAS6ExecutiveAction(insight)).target}</small></li>)}</ul><section className="as6-business-home__action-metrics" aria-label="Executive Action Metrics"><strong>Executive Action Metrics</strong><div><span>Total: {executiveActionMetrics.total}</span><span>Success: {executiveActionMetrics.successful}</span><span>Success Rate: {executiveActionMetrics.successRate}%</span><span>Fallback: {executiveActionMetrics.fallback}</span><span>Fallback Rate: {executiveActionMetrics.fallbackRate}%</span><span>Top Action: {executiveActionMetrics.topAction}</span><span>Recent Routes: {executiveActionMetrics.recentTargets.join(", ") || "none"}</span></div></section>{executiveActionStatus && <AS6DataState type={executiveActionStatus.ok ? "success" : "warning"} title={executiveActionStatus.status} detail={(executiveActionStatus.label || "Action") + " → " + executiveActionStatus.target + " / " + executiveActionStatus.message} />}{executiveActionHistory.length > 0 && <section className="as6-business-home__action-audit" aria-label="Executive Action Audit Trail"><strong>Action Audit Trail</strong>{executiveActionHistory.map((event) => <article key={event.id}><span>{event.createdAt}</span><strong>{event.actionId}</strong><small>{event.label} → {event.target}</small><small>Status: {event.status} / Fallback: {event.fallback ? "YES" : "NO"}</small></article>)}</section>}<AS6DataState type="empty" title={executiveInsights.profileName} detail={executiveInsights.source} /></AS6DataSurface>;
+      return <AS6DataSurface title="Executive Insights & Recommendations" key={widgetId} data-widget-id={widgetId}><ul className="as6-business-home__list">{executiveInsights.recommendations.map((insight) => <li key={insight.id}><strong>{insight.title}</strong><br /><span>{insight.reason}</span><br /><small>{insight.action}</small><br /><button type="button" onClick={() => handleAS6ExecutiveAction(insight)}>Выполнить безопасное действие</button><br /><small>Target: {validateAS6ExecutiveAction(createAS6ExecutiveAction(insight)).target}</small></li>)}</ul>{executiveActionStatus && <AS6DataState type={executiveActionStatus.ok ? "success" : "warning"} title={executiveActionStatus.status} detail={(executiveActionStatus.label || "Action") + " → " + executiveActionStatus.target + " / " + executiveActionStatus.message} />}{executiveActionHistory.length > 0 && <section className="as6-business-home__action-audit" aria-label="Executive Action Audit Trail"><strong>Action Audit Trail</strong>{executiveActionHistory.map((event) => <article key={event.id}><span>{event.createdAt}</span><strong>{event.actionId}</strong><small>{event.label} → {event.target}</small><small>Status: {event.status} / Fallback: {event.fallback ? "YES" : "NO"}</small></article>)}</section>}<AS6DataState type="empty" title={executiveInsights.profileName} detail={executiveInsights.source} /></AS6DataSurface>;
     }
     return null;
   }
 
   const executiveInsights = useMemo(() => createAS6ExecutiveInsights(state, "Administrator", createAS6BusinessHomeAdaptiveSuggestions(state)), [state]);
-  const executiveActionMetrics = useMemo(() => createAS6ExecutiveActionMetrics(executiveActionHistory), [executiveActionHistory]);
   const orderedWidgets = sortAS6BusinessHomeWidgets(layout.widgets);
   const visibleWidgets = orderedWidgets.filter((widget) => widget.visible);
 
