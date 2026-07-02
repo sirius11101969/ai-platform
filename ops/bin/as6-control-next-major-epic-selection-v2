@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-next-major-epic-selection
+
+! grep -R "IMPLEMENTATION_AUTHORIZED=TRUE" docs/portfolio docs/epic010
+! grep -R "AS6_EPIC010_SLICE01" docs/portfolio docs/epic010
+
+echo AS6_NEXT_MAJOR_EPIC_SELECTION_CONTROL=PASS

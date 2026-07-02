@@ -1,28 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
-test -f docs/planning/as6-next-major-epic-selection-pdr.md
-test -f docs/planning/as6-epic009-operating-system-unification-charter.md
-test -f docs/adr/as6-adr-epic009-operating-system-unification.md
-test -f docs/planning/as6-epic009-architecture-review.md
-test -f docs/planning/as6-epic009-diagnostics-plan.md
-test -f docs/planning/as6-epic009-validation-plan.md
-test -f docs/planning/as6-epic009-definition-of-done.md
-test -f docs/planning/as6-epic009-rollback-strategy.md
-test -f docs/planning/as6-epic009-baseline-compatibility-review.md
-grep -q 'PORTFOLIO_DECISION_RECORD=APPROVED' docs/planning/as6-next-major-epic-selection-pdr.md
-grep -q 'NEXT_MAJOR_EPIC=AS6_EPIC009_OPERATING_SYSTEM_UNIFICATION' docs/planning/as6-next-major-epic-selection-pdr.md
-grep -q 'EPIC_CHARTER=APPROVED' docs/planning/as6-epic009-operating-system-unification-charter.md
-grep -q 'ADR_STATUS=APPROVED' docs/adr/as6-adr-epic009-operating-system-unification.md
-grep -q 'ARCHITECTURE_REVIEW=APPROVED' docs/planning/as6-epic009-architecture-review.md
-grep -q 'DIAGNOSTICS_PLAN=APPROVED' docs/planning/as6-epic009-diagnostics-plan.md
-grep -q 'VALIDATION_PLAN=APPROVED' docs/planning/as6-epic009-validation-plan.md
-grep -q 'DEFINITION_OF_DONE=APPROVED' docs/planning/as6-epic009-definition-of-done.md
-grep -q 'ROLLBACK_STRATEGY=APPROVED' docs/planning/as6-epic009-rollback-strategy.md
-grep -q 'BASELINE_COMPATIBILITY=CONFIRMED' docs/planning/as6-epic009-baseline-compatibility-review.md
-grep -q 'IMPLEMENTATION_AUTHORIZED=TRUE' docs/planning/as6-next-major-epic-selection-pdr.md
-echo NEXT_MAJOR_EPIC_SELECTION=PASS
-echo PORTFOLIO_DECISION_RECORD=APPROVED
-echo NEXT_MAJOR_EPIC=AS6_EPIC009_OPERATING_SYSTEM_UNIFICATION
-echo EPIC_CHARTER=APPROVED
-echo ADR_STATUS=APPROVED
-echo IMPLEMENTATION_AUTHORIZED=TRUE
+
+test -f docs/portfolio/as6-portfolio-registry.md
+test -f docs/portfolio/as6-next-major-epic-selection.md
+test -f docs/epic010/as6-epic010-workspace-experience-planning-entry.md
+
+grep -q "EPIC_ID=AS6_EPIC010_WORKSPACE_EXPERIENCE" docs/portfolio/as6-portfolio-registry.md
+grep -q "OWNING_BASELINE=AS6_OPERATING_SYSTEM_V1" docs/portfolio/as6-portfolio-registry.md
+grep -q "AFFECTED_COMPONENTS=" docs/portfolio/as6-portfolio-registry.md
+grep -q "IMPLEMENTATION_STATUS=NOT_AUTHORIZED" docs/portfolio/as6-portfolio-registry.md
+grep -q "IMPLEMENTATION_AUTHORIZED=FALSE" docs/portfolio/as6-next-major-epic-selection.md
+grep -q "NEXT_STAGE=AS6_EPIC010_WORKSPACE_EXPERIENCE_PLANNING" docs/portfolio/as6-next-major-epic-selection.md
+
+echo AS6_NEXT_MAJOR_EPIC_SELECTION_DIAGNOSTIC=PASS

@@ -2123,3 +2123,8 @@ Governed and registered.
 ## AS6 EPIC009 Baseline Failure Classes
 - AS6_BASELINE_WITHOUT_APPROVED_PRR: baseline attempted without approved Production Readiness Review.
 - AS6_BASELINE_IMPLEMENTATION_MUTATION_FORBIDDEN: baseline attempted to change implementation code after PRR.
+
+## AS6 Next Major EPIC Selection Failure Classes
+- AS6_EPIC_SELECTION_WITH_IMPLEMENTATION_AUTHORIZATION: portfolio selection attempted to authorize implementation before planning approval.
+- AS6_EPIC_SELECTION_WITHOUT_OWNING_BASELINE: selected EPIC does not declare its owning baseline.
+- AS6_EPIC_SELECTION_WITHOUT_AFFECTED_COMPONENTS: selected EPIC does not declare affected architecture components.

@@ -3487,3 +3487,12 @@ Permission Validation
 - EPIC009 closure=covered
 - No PRR rerun policy=covered
 - No implementation mutation policy=covered
+
+## AS6 Next Major EPIC Selection Coverage Registry
+- Portfolio Registry=covered
+- Portfolio Decision Record=covered
+- Selected EPIC=covered
+- OWNING_BASELINE=covered
+- AFFECTED_COMPONENTS=covered
+- IMPLEMENTATION_AUTHORIZED_FALSE=covered
+- Planning handoff=covered
