@@ -5180,3 +5180,12 @@ Status: PASS pending validation
 - Added governance rule: no Workspace implementation before diagnostics.
 - Added coverage record for Workspace implementation start.
 - Project readiness: 99%.
+
+## EPIC-005 PR-2 — Executive Automation Policy UI
+
+- Added visible governance policy UI to Business Home.
+- Added runtime policy, safety guard, unknown actionId and unsafe-chain status cards.
+- Added allow/block explanation cards.
+- Added fallback explanation before automation execution.
+- Added diagnostics, governance, coverage and runtime artifacts.
+- Project readiness: 99.85%.

@@ -1,0 +1,12 @@
+frontend/src/as6/business-home/AS6BusinessHome.css
+frontend/src/as6/business-home/AS6BusinessHome.jsx
+frontend/src/as6/business-home/AS6BusinessHomeLiveData.js
+frontend/src/as6/business-home/as6ExecutiveActionRegistry.js
+frontend/src/as6/business-home/as6ExecutiveActions.js
+frontend/src/as6/business-home/as6ExecutiveAutomationGovernance.js
+frontend/src/as6/business-home/AS6ExecutiveAutomationPolicyPanel.css
+frontend/src/as6/business-home/AS6ExecutiveAutomationPolicyPanel.jsx
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js
+frontend/src/as6/business-home/as6ExecutiveInsights.js
+frontend/src/as6/business-home/as6ExecutiveWorkspaceProfiles.js
+frontend/src/as6/business-home/index.js

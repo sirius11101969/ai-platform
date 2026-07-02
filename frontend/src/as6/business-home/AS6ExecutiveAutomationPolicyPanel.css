@@ -1,0 +1,14 @@
+.as6-policy-ui{margin:24px 0;padding:20px;border:1px solid rgba(255,255,255,.1);border-radius:24px;background:linear-gradient(135deg,rgba(59,130,246,.14),rgba(15,23,42,.72));color:inherit}
+.as6-policy-ui__eyebrow{display:inline-flex;margin-bottom:8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.74}
+.as6-policy-ui__header h2{margin:0 0 8px;font-size:22px}
+.as6-policy-ui__header p{margin:0;max-width:760px;opacity:.78}
+.as6-policy-ui__grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:18px}
+.as6-policy-ui__card,.as6-policy-ui__status-card,.as6-policy-ui__fallback{border:1px solid rgba(255,255,255,.1);border-radius:18px;background:rgba(255,255,255,.055)}
+.as6-policy-ui__card{padding:14px}
+.as6-policy-ui__card span{display:block;font-size:12px;opacity:.68}
+.as6-policy-ui__card strong{display:block;margin-top:6px}
+.as6-policy-ui__status{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+.as6-policy-ui__status-card{padding:14px}
+.as6-policy-ui__status-card p{margin:6px 0 0;opacity:.76}
+.as6-policy-ui__fallback{margin-top:12px;padding:14px}
+@media(max-width:900px){.as6-policy-ui__grid,.as6-policy-ui__status{grid-template-columns:1fr}}

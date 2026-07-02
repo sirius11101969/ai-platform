@@ -1,0 +1,7 @@
+ M docs/AS6_PROJECT_STATE.md
+ M frontend/src/as6/business-home/index.js
+?? docs/coverage/as6-epic005-pr2-executive-automation-policy-ui-coverage.md
+?? docs/diagnostics/as6-epic005-pr2-executive-automation-policy-ui.md
+?? docs/governance/as6-epic005-pr2-executive-automation-policy-ui-governance.md
+?? frontend/src/as6/business-home/AS6ExecutiveAutomationPolicyPanel.css
+?? frontend/src/as6/business-home/AS6ExecutiveAutomationPolicyPanel.jsx
