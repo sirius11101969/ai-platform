@@ -1,0 +1,11 @@
+ M docs/AS6_PROJECT_STATE.md
+?? docs/aec/as6-epic006-complete-aec.md
+?? docs/aec/as6-epic006-pr3-execution-orchestrator-aec.md
+?? docs/coverage/as6-epic006-complete-coverage.md
+?? docs/coverage/as6-epic006-pr3-execution-orchestrator-coverage.md
+?? docs/diagnostics/as6-epic006-complete.md
+?? docs/diagnostics/as6-epic006-pr3-execution-orchestrator.md
+?? docs/governance/as6-epic006-complete-governance.md
+?? docs/governance/as6-epic006-pr3-execution-orchestrator-governance.md
+?? frontend/src/as6/business-home/AS6ExecutionOrchestratorPanel.css
+?? frontend/src/as6/business-home/AS6ExecutionOrchestratorPanel.jsx

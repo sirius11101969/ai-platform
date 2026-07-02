@@ -1,0 +1,68 @@
+docs/diagnostics/as6-epic004-pr4-executive-automation-queue-scheduler.md:6:- AS6_EXECUTIVE_AUTOMATION_RUNTIME_QUEUE_DRIFT: queue state is runtime-only and does not mutate persistent storage.
+docs/diagnostics/as6-epic004-pr5-executive-automation-retry-recovery.md:6:- AS6_EXECUTIVE_AUTOMATION_RUNTIME_RECOVERY_DRIFT: retry/recovery state is runtime-only and does not mutate persistent storage.
+docs/diagnostics/as6-epic006-pr4-concurrency-control.md:1:# EPIC-006 PR-4 — Concurrency Control
+docs/diagnostics/as6-epic006-pr4-concurrency-control.md:14:Execution Orchestrator can choose the next scenario, but AS6 also needs runtime-only conflict protection before scenarios execute in parallel.
+docs/diagnostics/as6-epic006-pr4-concurrency-control.md:17:- Added runtime-only concurrency lock model.
+docs/diagnostics/as6-epic006-pr3-execution-orchestrator-export-contract-repair.md:1:# EPIC-006 PR-3 Repair — Execution Orchestrator Export Contract
+docs/diagnostics/as6-epic006-pr3-execution-orchestrator-complete.md:1:# EPIC-006 PR-3 — Execution Orchestrator Complete
+docs/diagnostics/as6-epic006-pr3-execution-orchestrator-complete.md:7:- Execution Orchestrator exists.
+docs/diagnostics/as6-epic004-pr1-executive-automation-scenarios.md:6:- AS6_EXECUTIVE_AUTOMATION_RUNTIME_ONLY_DRIFT: automation plans are runtime-only and do not mutate persistent storage.
+docs/diagnostics/as6-epic006-pr3-execution-orchestrator.md:1:# EPIC-006 PR-3 — Execution Orchestrator
+docs/diagnostics/as6-epic006-pr3-execution-orchestrator.md:17:- Added runtime-only execution orchestrator.
+docs/diagnostics/as6-epic003-pr4-executive-action-history-audit-trail.md:3:- AS6_EXECUTIVE_ACTION_HISTORY_GAP: runtime-only Executive Action history is now maintained in component state.
+docs/diagnostics/as6-epic003-pr4-executive-action-history-audit-trail.md:6:- AS6_EXECUTIVE_ACTION_HISTORY_STORAGE_DRIFT: audit trail is runtime-only and does not change Workspace Storage V99, contextState.businessHome, localStorage or layout schema.
+docs/diagnostics/as6-epic004-pr2-executive-automation-execution-pipeline.md:7:- AS6_EXECUTIVE_AUTOMATION_RUNTIME_PIPELINE_DRIFT: pipeline state is runtime-only and does not mutate persistent storage.
+docs/diagnostics/as6-epic004-pr3-executive-automation-monitoring-control.md:6:- AS6_EXECUTIVE_AUTOMATION_RUNTIME_MONITORING_DRIFT: monitoring is runtime-only and does not mutate persistent storage.
+docs/diagnostics/as6-epic003-pr5-executive-action-analytics-metrics.md:7:- AS6_EXECUTIVE_ACTION_ANALYTICS_STORAGE_DRIFT: analytics are runtime-only and do not modify Workspace Storage V99, contextState.businessHome, localStorage or layout schema.
+docs/diagnostics/as6-epic006-pr1-scenario-priorities.md:3:- AS6_EXECUTIVE_SCENARIO_PRIORITY_MODEL_GAP: added runtime-only priority model.
+docs/diagnostics/as6-epic006-pr2-scenario-dependencies.md:1:# EPIC-006 PR-2 — Scenario Dependencies
+docs/diagnostics/as6-epic006-pr2-scenario-dependencies.md:14:EPIC-006 PR-1 introduced priorities, but execution order also needs runtime-only dependency validation before orchestration can safely select the next scenario.
+docs/diagnostics/as6-epic006-pr2-scenario-dependencies.md:17:- Added runtime-only dependsOn model.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail.md:14:Executive Automation had governance, policy UI and explanations, but did not expose a runtime-only execution trail with scenarioId, executionId, step status, fallback, stop reason and final status.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail.md:17:- Added runtime-only audit trail catalog.
+docs/AS6_PROJECT_STATE.md:5096:- Added runtime-only Executive Action history.
+docs/AS6_PROJECT_STATE.md:5106:- Added runtime-only Executive Action Metrics.
+docs/AS6_PROJECT_STATE.md:5116:- Added runtime-only Executive Automation scenarios.
+docs/AS6_PROJECT_STATE.md:5126:- Added runtime-only execution pipeline for Executive Automation scenarios.
+docs/AS6_PROJECT_STATE.md:5145:- Added runtime-only Executive Automation queue.
+docs/AS6_PROJECT_STATE.md:5206:- Added runtime-only audit trail for Executive Automation.
+docs/AS6_PROJECT_STATE.md:5229:- Confirmed runtime-only audit trail.
+docs/AS6_PROJECT_STATE.md:5240:## AS6 EPIC-006 PR-1 — Scenario Priorities
+docs/AS6_PROJECT_STATE.md:5243:- Added runtime-only scenario priority model.
+docs/AS6_PROJECT_STATE.md:5251:## EPIC-006 PR-2 — Scenario Dependencies
+docs/AS6_PROJECT_STATE.md:5253:- Added runtime-only dependency model for Executive Automation scenarios.
+docs/AS6_PROJECT_STATE.md:5262:## EPIC-006 PR-3 — Execution Orchestrator
+docs/AS6_PROJECT_STATE.md:5264:- Added runtime-only execution orchestrator.
+docs/AS6_PROJECT_STATE.md:5282:## EPIC-006 PR-3 — Execution Orchestrator Complete
+docs/AS6_PROJECT_STATE.md:5285:- Final capability status: Execution Orchestrator is complete.
+docs/AS6_PROJECT_STATE.md:5286:- Confirmed runtime-only selection engine.
+docs/AS6_PROJECT_STATE.md:5296:## EPIC-006 PR-4 — Concurrency Control
+docs/AS6_PROJECT_STATE.md:5298:- Added runtime-only concurrency lock model.
+docs/aec/as6-epic006-pr3-execution-orchestrator-aec.md:1:# EPIC-006 PR-3 — AEC Execution Orchestrator
+docs/aec/as6-epic006-pr2-scenario-dependencies-aec.md:1:# EPIC-006 PR-2 — AEC Scenario Dependencies
+docs/aec/as6-epic006-pr4-concurrency-control-aec.md:1:# EPIC-006 PR-4 — AEC Concurrency Control
+docs/coverage/as6-epic006-pr2-scenario-dependencies-coverage.md:1:# EPIC-006 PR-2 — Scenario Dependencies Coverage
+docs/coverage/as6-epic006-pr4-concurrency-control-coverage.md:1:# EPIC-006 PR-4 — Concurrency Control Coverage
+docs/coverage/as6-epic006-pr3-execution-orchestrator-complete-coverage.md:3:- Covers final Execution Orchestrator registration.
+docs/coverage/as6-epic005-pr4-executive-automation-audit-trail-complete-coverage.md:7:- Covers transition to Scenario Priorities and Orchestration.
+docs/coverage/as6-epic006-pr3-execution-orchestrator-coverage.md:1:# EPIC-006 PR-3 — Execution Orchestrator Coverage
+docs/governance/as6-epic005-pr4-executive-automation-audit-trail-complete-governance.md:4:- Audit Trail remains runtime-only.
+docs/governance/as6-epic006-pr4-concurrency-control-governance.md:1:# EPIC-006 PR-4 — Concurrency Control Governance
+docs/governance/as6-epic006-pr4-concurrency-control-governance.md:3:- Concurrency control must remain runtime-only unless persistence is explicitly approved.
+docs/governance/as6-epic004-pr1-executive-automation-scenarios-governance.md:11:CONTROL=Executive Automation scenarios must use only registered safe actionId sequences and must remain runtime-only.
+docs/governance/as6-epic006-pr3-execution-orchestrator-complete-governance.md:4:- Execution Orchestrator must remain runtime-only unless persistence is explicitly approved.
+docs/governance/as6-epic004-pr5-executive-automation-retry-recovery-governance.md:12:CONTROL=Executive Automation retry and recovery must remain runtime-only, expose retry count and failure reason, and must not mutate Workspace Storage V99 or layout schema.
+docs/governance/as6-epic004-pr4-executive-automation-queue-scheduler-governance.md:12:CONTROL=Executive Automation queue and scheduler must remain runtime-only, preserve scenario order and expose current/pending scenarios without storage mutation.
+docs/governance/as6-epic004-pr3-executive-automation-monitoring-control-governance.md:12:CONTROL=Executive Automation monitoring must remain runtime-only, show timing/progress/completion, and provide cancel control without storage mutation.
+docs/governance/as6-epic003-pr4-executive-action-history-audit-trail-governance.md:12:CONTROL=Executive Action history must remain runtime-only for PR-4 and must not mutate Workspace Storage V99, layout schema, contextState.businessHome or localStorage.
+docs/governance/as6-epic006-pr1-scenario-priorities-governance.md:11:CONTROL=Scenario priorities must remain runtime-only and must not change Workspace Storage V99 or contextState.businessHome.
+docs/governance/as6-epic005-pr4-executive-automation-audit-trail-governance.md:3:- Audit Trail must be runtime-only unless long-term audit is explicitly requested.
+docs/governance/as6-epic006-pr2-scenario-dependencies-governance.md:1:# EPIC-006 PR-2 — Scenario Dependencies Governance
+docs/governance/as6-epic006-pr2-scenario-dependencies-governance.md:3:- Scenario dependencies must remain runtime-only unless persistence is explicitly approved.
+docs/governance/as6-epic006-pr3-execution-orchestrator-governance.md:1:# EPIC-006 PR-3 — Execution Orchestrator Governance
+docs/governance/as6-epic006-pr3-execution-orchestrator-governance.md:3:- Execution Orchestrator must remain runtime-only unless persistence is explicitly approved.
+frontend/src/as6/business-home/AS6ExecutiveAutomationAuditTrailPanel.jsx:11:        <p>AS6 показывает путь выполнения сценария: шаги, статусы, причину остановки, fallback и governance-объяснение. История остаётся runtime-only.</p>
+frontend/src/as6/business-home/as6ExecutiveAutomationAuditTrail.js:7:    duration: 'runtime-only',
+frontend/src/as6/business-home/as6ExecutiveAutomationAuditTrail.js:23:    duration: 'runtime-only',
+frontend/src/as6/business-home/AS6ExecutiveScenarioDependenciesPanel.jsx:15:        <p>AS6 проверяет dependsOn перед запуском сценария и объясняет, почему сценарий готов, ожидает или заблокирован. Модель остаётся runtime-only.</p>
+frontend/src/as6/business-home/AS6ExecutionConcurrencyPanel.jsx:16:        <span className="as6-concurrency__eyebrow">Runtime Concurrency Control</span>
