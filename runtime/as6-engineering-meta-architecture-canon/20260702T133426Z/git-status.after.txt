@@ -1,0 +1,10 @@
+ M docs/AS6_PROJECT_STATE.md
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? docs/adr/
+?? docs/standards/
+?? ops/bin/as6-control-engineering-meta-architecture
+?? ops/bin/as6-diagnose-engineering-meta-architecture
+?? ops/governance/as6-engineering-meta-architecture-aec.md
+?? ops/governance/as6-engineering-meta-architecture-root-cause.md

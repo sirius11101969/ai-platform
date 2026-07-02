@@ -3337,3 +3337,14 @@ Permission Validation
 - runtime/as6-prr-tooling-find-option-order-maintenance/20260702T123035Z/runtime-trace.txt
 - runtime/as6-prr-tooling-find-option-order-maintenance/20260702T123035Z/bad-find-patterns.before.txt
 - runtime/as6-prr-tooling-find-option-order-maintenance/20260702T123035Z/fixed-find-patterns.after.txt
+
+## AS6_ENGINEERING_META_ARCHITECTURE_CANON
+
+- docs/standards/as6-engineering-meta-architecture.md
+- docs/standards/as6-project-governance-map.md
+- docs/adr/as6-adr-engineering-meta-architecture-canon.md
+- ops/bin/as6-diagnose-engineering-meta-architecture
+- ops/bin/as6-control-engineering-meta-architecture
+- ops/governance/as6-engineering-meta-architecture-root-cause.md
+- ops/governance/as6-engineering-meta-architecture-aec.md
+- runtime/as6-engineering-meta-architecture-canon/20260702T133426Z/runtime-trace.txt

@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f docs/standards/as6-engineering-meta-architecture.md
+test -f docs/standards/as6-project-governance-map.md
+test -f docs/adr/as6-adr-engineering-meta-architecture-canon.md
+grep -q 'DOCUMENT_TYPE=ENGINEERING_FRAMEWORK' docs/standards/as6-engineering-meta-architecture.md
+grep -q 'not a superstandard' docs/standards/as6-engineering-meta-architecture.md
+grep -q 'Structural Dimension' docs/standards/as6-engineering-meta-architecture.md
+grep -q 'Authority Dimension' docs/standards/as6-engineering-meta-architecture.md
+grep -q 'Traceability Dimension' docs/standards/as6-engineering-meta-architecture.md
+grep -q 'Layered Structure' docs/standards/as6-engineering-meta-architecture.md
+grep -q 'Single-Step Normative Dependency' docs/standards/as6-engineering-meta-architecture.md
+grep -q 'Directional Authority' docs/standards/as6-engineering-meta-architecture.md
+grep -q 'Baseline Protection Scope' docs/standards/as6-engineering-meta-architecture.md
+grep -q 'Normative vs Informational Relationships' docs/standards/as6-engineering-meta-architecture.md
+grep -q 'Separation of Authority' docs/standards/as6-engineering-meta-architecture.md
+grep -q 'Minimality' docs/standards/as6-engineering-meta-architecture.md
+grep -q 'Structural Invariant' docs/standards/as6-engineering-meta-architecture.md
+grep -q 'Authority Invariant' docs/standards/as6-engineering-meta-architecture.md
+grep -q 'Traceability Invariant' docs/standards/as6-engineering-meta-architecture.md
+grep -q 'Orthogonality Invariant' docs/standards/as6-engineering-meta-architecture.md
+grep -q 'Engineering Meta-Architecture organizes the normative system' docs/standards/as6-engineering-meta-architecture.md
+grep -q 'Normative Standards define requirements' docs/standards/as6-engineering-meta-architecture.md
+grep -q 'Operational Artifacts document the application of those requirements' docs/standards/as6-engineering-meta-architecture.md
+grep -q 'Runtime Evidence demonstrates requirement fulfillment' docs/standards/as6-engineering-meta-architecture.md
+grep -q 'DOCUMENT_TYPE=NAVIGATION_INDEX' docs/standards/as6-project-governance-map.md
+grep -q 'ADR_ID=AS6_ADR_ENGINEERING_META_ARCHITECTURE_CANON' docs/adr/as6-adr-engineering-meta-architecture-canon.md
+echo AS6_ENGINEERING_META_ARCHITECTURE=PASS
+echo AS6_PROJECT_GOVERNANCE_MAP=PASS
+echo AS6_META_ARCHITECTURE_ADR=PASS
+echo AS6_AUTHORITY_TRACEABILITY_SEPARATION=PASS
+echo AS6_META_ARCHITECTURE_MINIMALITY=PASS

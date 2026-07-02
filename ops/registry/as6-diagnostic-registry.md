@@ -1507,3 +1507,19 @@ ops/bin/as6-control-permission-engine-v114
 - Scope: TOOLING
 - Baseline impact: NONE
 - Compatibility: UNCHANGED
+
+## AS6_ENGINEERING_META_ARCHITECTURE_CANON
+
+- Diagnostic: ops/bin/as6-diagnose-engineering-meta-architecture
+- Control: ops/bin/as6-control-engineering-meta-architecture
+- Governance Map: docs/standards/as6-project-governance-map.md
+- Meta-Architecture: docs/standards/as6-engineering-meta-architecture.md
+- ADR: docs/adr/as6-adr-engineering-meta-architecture-canon.md
+- Root cause: ops/governance/as6-engineering-meta-architecture-root-cause.md
+- AEC: ops/governance/as6-engineering-meta-architecture-aec.md
+- Runtime artifacts: runtime/as6-engineering-meta-architecture-canon/20260702T133426Z
+- Failure class: AS6_ENGINEERING_META_ARCHITECTURE_MISSING
+- Failure class: AS6_NORMATIVE_SYSTEM_STRUCTURE_GAP
+- Failure class: AS6_AUTHORITY_TRACEABILITY_OVERLAP
+- Failure class: AS6_META_ARCHITECTURE_SUPERSTANDARD_RISK
+- Failure class: AS6_META_ARCHITECTURE_MINIMALITY_GAP
