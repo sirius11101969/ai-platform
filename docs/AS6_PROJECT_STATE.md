@@ -4958,3 +4958,13 @@ Status: PASS pending validation
 - Preserved PR-4 default start route and PR-3 live data aggregator.
 - Added diagnostics, governance and coverage artifacts.
 - Project readiness: 99.4%.
+
+## AS6 EPIC-001 PR-6 — Business Home Workspace Persistence
+
+- AS6_DONE=AS6_EPIC001_BUSINESS_HOME_WORKSPACE_PERSISTENCE.
+- Business Home now uses existing Workspace Storage V99.
+- Added active Workspace selector.
+- Added save current Business OS Workspace action.
+- Added persistence policy visibility in Right Rail.
+- Added diagnostics, governance and coverage artifacts.
+- Project readiness: 99.6%.

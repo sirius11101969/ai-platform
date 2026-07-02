@@ -1,4 +1,3 @@
-import { useMemo, useState } from "react";
 import {
   AS6ExperienceButton,
   AS6ExperienceCard,
@@ -7,11 +6,10 @@ import {
   AS6ExperienceShell,
 } from "../experience-system";
 import { createAS6BusinessHomeLiveData } from "./AS6BusinessHomeLiveData";
-import { getAS6ActiveWorkspaceSession, getAS6WorkspaceSessions, saveAS6WorkspaceSession, setAS6ActiveWorkspaceSession, validateAS6WorkspacePersistencePolicy } from "../workspace/as6WorkspaceStorage.js";
 import { AS6Workspace, AS6Sidebar, AS6Header, AS6RightRail, AS6Assistant, AS6Focus } from "../../components/as6-workspace/AS6Workspace.jsx";
 import "./AS6BusinessHome.css";
 
-export const AS6_BUSINESS_HOME_VERSION = "EPIC001_PR6";
+export const AS6_BUSINESS_HOME_VERSION = "EPIC001_PR5";
 
 export function getAS6BusinessHomeUserName() {
   try {
@@ -24,52 +22,16 @@ export function getAS6BusinessHomeUserName() {
   }
 }
 
-export function getAS6BusinessHomeWorkspaceState() {
-  const activeWorkspace = getAS6ActiveWorkspaceSession() || null;
-  const workspaceSessions = getAS6WorkspaceSessions();
-  const policy = validateAS6WorkspacePersistencePolicy();
-  return {
-    activeWorkspace,
-    workspaceSessions,
-    policy,
-  };
-}
-
 export function getAS6BusinessHomeState() {
   return {
     version: AS6_BUSINESS_HOME_VERSION,
     userName: getAS6BusinessHomeUserName(),
     ...createAS6BusinessHomeLiveData(),
-    ...getAS6BusinessHomeWorkspaceState(),
   };
 }
 
 export function AS6BusinessHome() {
-  const [workspaceRevision, setWorkspaceRevision] = useState(0);
-  const state = useMemo(() => getAS6BusinessHomeState(), [workspaceRevision]);
-
-  function refreshWorkspaceState() {
-    setWorkspaceRevision((value) => value + 1);
-  }
-
-  function saveCurrentBusinessWorkspace() {
-    saveAS6WorkspaceSession({
-      id: state.activeWorkspace?.id || "business-home-default",
-      title: state.activeWorkspace?.title || "Business Home",
-      activeLivingSpace: "/business-home",
-      openedPanels: ["sidebar", "header", "rightRail", "assistant", "focus"],
-      contextState: { source: "AS6BusinessHome", version: state.version },
-      intelligenceState: { recommendation: state.recommendations?.[0] || null },
-      pinned: true,
-    });
-    refreshWorkspaceState();
-  }
-
-  function switchBusinessWorkspace(event) {
-    const workspaceId = event.target.value;
-    setAS6ActiveWorkspaceSession(workspaceId);
-    refreshWorkspaceState();
-  }
+  const state = getAS6BusinessHomeState();
 
   return (
     <AS6ExperienceShell>
@@ -90,14 +52,7 @@ export function AS6BusinessHome() {
               <span className="as6x-eyebrow">Unified Workspace</span>
               <strong>AS6 Business OS</strong>
             </div>
-            <div className="as6-business-home-shell__workspace-control">
-              <span>{state.version}</span>
-              <select aria-label="Saved Business OS Workspace" value={state.activeWorkspace?.id || ""} onChange={switchBusinessWorkspace}>
-                <option value="">Default Workspace</option>
-                {state.workspaceSessions.map((workspace) => <option key={workspace.id} value={workspace.id}>{workspace.title}</option>)}
-              </select>
-              <button type="button" onClick={saveCurrentBusinessWorkspace}>Сохранить Workspace</button>
-            </div>
+            <span>{state.version}</span>
           </AS6Header>
           <section className="as6-business-home">
         <header className="as6-business-home__hero">
@@ -150,11 +105,6 @@ export function AS6BusinessHome() {
       </section>
         </main>
         <AS6RightRail className="as6-business-home-shell__rail">
-          <section className="as6-business-home-shell__persistence" aria-label="Workspace Persistence">
-            <strong>Workspace Persistence</strong>
-            <span>Active: {state.activeWorkspace?.title || "Default Workspace"}</span>
-            <small>Policy: {state.policy.ok ? "PASS" : state.policy.failures.join(", ")}</small>
-          </section>
           <AS6Focus className="as6-business-home-shell__focus">
             <strong>Следующий лучший шаг</strong>
             <span>{state.recommendations?.[0] || "AS6 готов определить приоритет."}</span>
