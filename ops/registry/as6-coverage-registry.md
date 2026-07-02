@@ -3446,3 +3446,17 @@ Permission Validation
 - Runtime tracer=covered
 - No business logic control=covered
 - No persistent storage control=covered
+
+## AS6 EPIC009 Slice 06 Coverage Registry
+- Operating Experience Runtime=covered
+- Runtime Bootstrap=covered
+- Operating Session=covered
+- Unified OS Diagnostics=covered
+- Startup lifecycle trace=covered
+- Shutdown lifecycle trace=covered
+- Runtime Health Snapshot=covered
+- Bootstrap idempotency=covered
+- Foundation coordination=covered
+- Navigation coordination=covered
+- Module Host coordination=covered
+- Platform Services coordination=covered

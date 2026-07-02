@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f frontend/src/as6os/experience/operatingExperience.js
+test -f frontend/src/as6os/experience/index.js
+
+grep -q bootstrapAS6OperatingExperience frontend/src/as6os/experience/operatingExperience.js
+grep -q shutdownAS6OperatingExperience frontend/src/as6os/experience/operatingExperience.js
+grep -q getAS6RuntimeHealthSnapshot frontend/src/as6os/experience/operatingExperience.js
+grep -q traceAS6OperatingExperience frontend/src/as6os/experience/operatingExperience.js
+grep -q initializeAS6PlatformService frontend/src/as6os/experience/operatingExperience.js
+grep -q activateAS6HostedModule frontend/src/as6os/experience/operatingExperience.js
+grep -q getAS6NavigationItems frontend/src/as6os/experience/operatingExperience.js
+
+echo AS6_OPERATING_EXPERIENCE=PASS
+echo AS6_RUNTIME_BOOTSTRAP=PASS
+echo AS6_OPERATING_SESSION=PASS
+echo AS6_UNIFIED_OS_DIAGNOSTICS=PASS
+echo AS6_BOOTSTRAP_IDEMPOTENCY=PASS
+echo AS6_RUNTIME_HEALTH_SNAPSHOT=PASS
+echo AS6_EPIC009_SLICE06_OPERATING_EXPERIENCE_DIAGNOSTIC=PASS

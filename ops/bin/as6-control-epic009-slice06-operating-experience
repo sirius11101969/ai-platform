@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-epic009-slice06-operating-experience
+
+! grep -R "localStorage\|sessionStorage\|indexedDB" frontend/src/as6os/experience
+! grep -R "CRM\|Revenue\|business logic" frontend/src/as6os/experience
+! grep -R "Executive Intelligence" frontend/src/as6os/experience
+! grep -R "fetch(" frontend/src/as6os/experience
+
+echo AS6_EPIC009_SLICE06_OPERATING_EXPERIENCE_CONTROL=PASS

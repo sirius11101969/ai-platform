@@ -2111,3 +2111,7 @@ Governed and registered.
 ## AS6 EPIC009 Slice 05 Failure Classes
 - AS6_PLATFORM_SERVICE_DEFINITION_INVALID: service definition missing required id or label.
 - AS6_PLATFORM_SERVICE_NOT_FOUND: requested platform service is not registered.
+
+## AS6 EPIC009 Slice 06 Failure Classes
+- AS6_OPERATING_BOOTSTRAP_INVALID: Operating Experience bootstrap cannot coordinate required OS layers.
+- AS6_OPERATING_SESSION_DRIFT: Operating Session state diverges from runtime health snapshot.

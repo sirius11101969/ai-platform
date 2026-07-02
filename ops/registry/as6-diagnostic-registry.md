@@ -1620,3 +1620,12 @@ ops/bin/as6-control-permission-engine-v114
 - RUNTIME_TRACER=traceAS6PlatformService
 - FAILURE_CLASS=AS6_PLATFORM_SERVICE_DEFINITION_INVALID
 - FAILURE_CLASS=AS6_PLATFORM_SERVICE_NOT_FOUND
+
+## AS6 EPIC009 Slice 06 Diagnostic Registry
+- STAGE=AS6_EPIC009_SLICE06_OPERATING_EXPERIENCE
+- DIAGNOSTIC=ops/bin/as6-diagnose-epic009-slice06-operating-experience
+- CONTROL=ops/bin/as6-control-epic009-slice06-operating-experience
+- RUNTIME_TRACER=traceAS6OperatingExperience
+- HEALTH_SNAPSHOT=getAS6RuntimeHealthSnapshot
+- FAILURE_CLASS=AS6_OPERATING_BOOTSTRAP_INVALID
+- FAILURE_CLASS=AS6_OPERATING_SESSION_DRIFT

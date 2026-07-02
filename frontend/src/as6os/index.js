@@ -40,3 +40,4 @@ export * from './workspace/index.js';
 export * from './navigation/index.js';
 export * from './modules/index.js';
 export * from './services/index.js';
+export * from './experience/index.js';
