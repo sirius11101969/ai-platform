@@ -4949,3 +4949,12 @@ Status: PASS pending validation
 - Added session-aware welcome fallback.
 - Added diagnostics, governance and coverage artifacts.
 - Project readiness: 99.2%.
+
+## AS6 EPIC-001 PR-5 — Business OS Shell Integration
+
+- AS6_DONE=AS6_EPIC001_BUSINESS_OS_SHELL_INTEGRATION.
+- Business Home now uses AS6Workspace shell composition.
+- Integrated AS6Sidebar, AS6Header, AS6RightRail, AS6Assistant and AS6Focus.
+- Preserved PR-4 default start route and PR-3 live data aggregator.
+- Added diagnostics, governance and coverage artifacts.
+- Project readiness: 99.4%.

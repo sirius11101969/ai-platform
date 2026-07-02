@@ -6,10 +6,9 @@ import {
   AS6ExperienceShell,
 } from "../experience-system";
 import { createAS6BusinessHomeLiveData } from "./AS6BusinessHomeLiveData";
-import { AS6Workspace, AS6Sidebar, AS6Header, AS6RightRail, AS6Assistant, AS6Focus } from "../../components/as6-workspace/AS6Workspace.jsx";
 import "./AS6BusinessHome.css";
 
-export const AS6_BUSINESS_HOME_VERSION = "EPIC001_PR5";
+export const AS6_BUSINESS_HOME_VERSION = "EPIC001_PR4";
 
 export function getAS6BusinessHomeUserName() {
   try {
@@ -35,26 +34,7 @@ export function AS6BusinessHome() {
 
   return (
     <AS6ExperienceShell>
-      <AS6Workspace className="as6-business-home-shell" dataRoute="business-home" mode="business-os">
-        <AS6Sidebar className="as6-business-home-shell__sidebar">
-          <strong>AS6</strong>
-          <span>Business OS</span>
-          <nav aria-label="Business OS navigation">
-            <a href="/business-home">Home</a>
-            <a href="/crm-workspace">CRM</a>
-            <a href="/dashboard">Dashboard</a>
-            <a href="/marketplace">Marketplace</a>
-          </nav>
-        </AS6Sidebar>
-        <main className="as6-business-home-shell__main">
-          <AS6Header className="as6-business-home-shell__header">
-            <div>
-              <span className="as6x-eyebrow">Unified Workspace</span>
-              <strong>AS6 Business OS</strong>
-            </div>
-            <span>{state.version}</span>
-          </AS6Header>
-          <section className="as6-business-home">
+      <section className="as6-business-home">
         <header className="as6-business-home__hero">
           <div>
             <p className="as6x-eyebrow">AS6 Business OS</p>
@@ -103,19 +83,6 @@ export function AS6BusinessHome() {
           </AS6ExperienceCard>
         </section>
       </section>
-        </main>
-        <AS6RightRail className="as6-business-home-shell__rail">
-          <AS6Focus className="as6-business-home-shell__focus">
-            <strong>Следующий лучший шаг</strong>
-            <span>{state.recommendations?.[0] || "AS6 готов определить приоритет."}</span>
-          </AS6Focus>
-          <AS6Assistant className="as6-business-home-shell__assistant">
-            <strong>AS6 Assistant</strong>
-            <span>Всегда знает следующий лучший шаг.</span>
-            <button type="button">Спросить AS6</button>
-          </AS6Assistant>
-        </AS6RightRail>
-      </AS6Workspace>
     </AS6ExperienceShell>
   );
 }
