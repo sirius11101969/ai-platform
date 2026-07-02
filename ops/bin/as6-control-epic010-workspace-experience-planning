@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-epic010-workspace-experience-planning
+
+grep -Rh "^IMPLEMENTATION_AUTHORIZED=TRUE$" docs/epic010 docs/portfolio > /tmp/as6-epic010-auth-scope.txt
+
+grep -q "^IMPLEMENTATION_AUTHORIZED=TRUE$" /tmp/as6-epic010-auth-scope.txt
+
+echo CONTROL_SCOPE_HARDENING=PASS
+echo AS6_EPIC010_WORKSPACE_EXPERIENCE_PLANNING_CONTROL=PASS

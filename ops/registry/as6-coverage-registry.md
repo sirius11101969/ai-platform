@@ -3496,3 +3496,12 @@ Permission Validation
 - AFFECTED_COMPONENTS=covered
 - IMPLEMENTATION_AUTHORIZED_FALSE=covered
 - Planning handoff=covered
+
+## AS6 EPIC010 Workspace Experience Planning Coverage Registry
+- EPIC Charter=covered
+- ADR=covered
+- Diagnostics Plan=covered
+- Validation Plan=covered
+- Definition of Done=covered
+- Control scope hardening=covered
+- Implementation authorization=covered

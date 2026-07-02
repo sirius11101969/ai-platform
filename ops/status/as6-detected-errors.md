@@ -2128,3 +2128,6 @@ Governed and registered.
 - AS6_EPIC_SELECTION_WITH_IMPLEMENTATION_AUTHORIZATION: portfolio selection attempted to authorize implementation before planning approval.
 - AS6_EPIC_SELECTION_WITHOUT_OWNING_BASELINE: selected EPIC does not declare its owning baseline.
 - AS6_EPIC_SELECTION_WITHOUT_AFFECTED_COMPONENTS: selected EPIC does not declare affected architecture components.
+
+## AS6 EPIC010 Workspace Experience Planning Failure Classes
+- AS6_CONTROL_SCOPE_FALSE_POSITIVE: control searched outside current EPIC scope and matched historical authorization artifacts.

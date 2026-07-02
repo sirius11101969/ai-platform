@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f docs/epic010/as6-epic010-workspace-experience-charter.md
+test -f docs/adr/as6-adr-epic010-workspace-experience.md
+test -f docs/epic010/as6-epic010-workspace-experience-diagnostics-plan.md
+test -f docs/epic010/as6-epic010-workspace-experience-validation-plan.md
+test -f docs/epic010/as6-epic010-workspace-experience-definition-of-done.md
+
+grep -q "^EPIC_CHARTER=APPROVED$" docs/epic010/as6-epic010-workspace-experience-charter.md
+grep -q "^ADR_STATUS=APPROVED$" docs/adr/as6-adr-epic010-workspace-experience.md
+grep -q "^DIAGNOSTICS_PLAN=APPROVED$" docs/epic010/as6-epic010-workspace-experience-diagnostics-plan.md
+grep -q "^VALIDATION_PLAN=APPROVED$" docs/epic010/as6-epic010-workspace-experience-validation-plan.md
+grep -q "^DEFINITION_OF_DONE=APPROVED$" docs/epic010/as6-epic010-workspace-experience-definition-of-done.md
+grep -q "FAILURE_CLASS=AS6_CONTROL_SCOPE_FALSE_POSITIVE" docs/epic010/as6-epic010-workspace-experience-diagnostics-plan.md
+
+echo AS6_EPIC010_WORKSPACE_EXPERIENCE_PLANNING_DIAGNOSTIC=PASS
