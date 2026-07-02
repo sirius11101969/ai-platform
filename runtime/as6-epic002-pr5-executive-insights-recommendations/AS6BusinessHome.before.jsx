@@ -17,10 +17,9 @@ import AS6LiveOperationalDataStatus from "../../components/AS6LiveOperationalDat
 import AS6DashboardLiveDataStatus from "../../components/AS6DashboardLiveDataStatus.jsx";
 import AS6RevenueCrmFusionStatus from "../../components/AS6RevenueCrmFusionStatus.jsx";
 import { applyAS6ExecutiveWorkspaceProfile, createAS6ExecutiveProfileRecommendation, getAS6ExecutiveWorkspaceProfiles } from "./as6ExecutiveWorkspaceProfiles.js";
-import { createAS6ExecutiveInsights } from "./as6ExecutiveInsights.js";
 import "./AS6BusinessHome.css";
 
-export const AS6_BUSINESS_HOME_VERSION = "EPIC002_PR5";
+export const AS6_BUSINESS_HOME_VERSION = "EPIC002_PR4";
 export const AS6_BUSINESS_HOME_LAYOUT_SCHEMA_VERSION = 1;
 
 export const AS6_BUSINESS_HOME_WIDGETS = [
@@ -39,7 +38,6 @@ export const AS6_BUSINESS_HOME_WIDGETS = [
   { id: "live-operational-data-status", title: "Live Operational Data Status", defaultPinned: false },
   { id: "dashboard-live-data-status", title: "Dashboard Live Data Status", defaultPinned: false },
   { id: "revenue-crm-fusion-status", title: "Revenue CRM Fusion Status", defaultPinned: false },
-  { id: "executive-insights", title: "Executive Insights", defaultPinned: true },
 ];
 
 export function createAS6BusinessHomeDefaultLayout() {
@@ -304,13 +302,9 @@ export function AS6BusinessHome() {
     if (widgetId === "live-operational-data-status") return <AS6LiveOperationalDataStatus key={widgetId} data-widget-id={widgetId} />;
     if (widgetId === "dashboard-live-data-status") return <AS6DashboardLiveDataStatus key={widgetId} data-widget-id={widgetId} />;
     if (widgetId === "revenue-crm-fusion-status") return <AS6RevenueCrmFusionStatus key={widgetId} data-widget-id={widgetId} />;
-    if (widgetId === "executive-insights") {
-      return <AS6DataSurface title="Executive Insights & Recommendations" key={widgetId} data-widget-id={widgetId}><ul className="as6-business-home__list">{executiveInsights.recommendations.map((insight) => <li key={insight.id}><strong>{insight.title}</strong><br /><span>{insight.reason}</span><br /><small>{insight.action}</small></li>)}</ul><AS6DataState type="empty" title={executiveInsights.profileName} detail={executiveInsights.source} /></AS6DataSurface>;
-    }
     return null;
   }
 
-  const executiveInsights = useMemo(() => createAS6ExecutiveInsights(state, "Administrator", createAS6BusinessHomeAdaptiveSuggestions(state)), [state]);
   const orderedWidgets = sortAS6BusinessHomeWidgets(layout.widgets);
   const visibleWidgets = orderedWidgets.filter((widget) => widget.visible);
 

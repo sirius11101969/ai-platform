@@ -5058,3 +5058,13 @@ Status: PASS pending validation
 - Preserved contextState.businessHome, Workspace Storage V99, drag/drop, AI Adaptive Home and layout schema.
 - Added diagnostics, governance and coverage artifacts.
 - Project readiness: 99.8%.
+
+## AS6 EPIC-002 PR-5 — Executive Insights & Recommendations
+
+- AS6_DONE=AS6_EPIC002_PR5_EXECUTIVE_INSIGHTS_RECOMMENDATIONS.
+- Added as6ExecutiveInsights.js module.
+- Added Executive Insights widget.
+- Reused Executive Profiles, Business Home Live Data and AI Adaptive Home.
+- Preserved contextState.businessHome, Workspace Storage V99, layout schema, drag/drop, Executive components and Live Data sources.
+- Added diagnostics, governance and coverage artifacts.
+- Project readiness: 99.8%.
