@@ -1,0 +1,27 @@
+frontend/src/as6/workspace/index.js:23:  default as AS6AIWorkspace,
+frontend/src/as6/workspace/index.js:24:  AS6Assistant,
+frontend/src/as6/workspace/index.js:25:  AS6AIActionBar,
+frontend/src/as6/workspace/index.js:26:  AS6WorkspaceRecommendations,
+frontend/src/as6/workspace/index.js:27:  AS6ContextSuggestions,
+frontend/src/as6/workspace/index.js:28:  AS6QuickActions,
+frontend/src/as6/workspace/index.js:29:  AS6AIRuntimePanel,
+frontend/src/as6/workspace/index.js:31:} from './AS6AIWorkspace.jsx';
+frontend/src/as6/workspace/AS6AIWorkspace.jsx:2:import './AS6AIWorkspace.css';
+frontend/src/as6/workspace/AS6AIWorkspace.jsx:7:export function createAS6WorkspaceRecommendations(state) {
+frontend/src/as6/workspace/AS6AIWorkspace.jsx:26:export function createAS6ContextSuggestions(state) {
+frontend/src/as6/workspace/AS6AIWorkspace.jsx:41:export function AS6Assistant() {
+frontend/src/as6/workspace/AS6AIWorkspace.jsx:53:export function AS6AIActionBar() {
+frontend/src/as6/workspace/AS6AIWorkspace.jsx:75:export function AS6WorkspaceRecommendations() {
+frontend/src/as6/workspace/AS6AIWorkspace.jsx:77:  const recommendations = useMemo(() => createAS6WorkspaceRecommendations(state), [state]);
+frontend/src/as6/workspace/AS6AIWorkspace.jsx:97:export function AS6ContextSuggestions() {
+frontend/src/as6/workspace/AS6AIWorkspace.jsx:99:  const suggestions = useMemo(() => createAS6ContextSuggestions(state), [state]);
+frontend/src/as6/workspace/AS6AIWorkspace.jsx:118:export function AS6QuickActions() {
+frontend/src/as6/workspace/AS6AIWorkspace.jsx:134:export function AS6AIRuntimePanel() {
+frontend/src/as6/workspace/AS6AIWorkspace.jsx:153:export default function AS6AIWorkspace() {
+frontend/src/as6/workspace/AS6AIWorkspace.jsx:156:      <AS6Assistant />
+frontend/src/as6/workspace/AS6AIWorkspace.jsx:157:      <AS6AIActionBar />
+frontend/src/as6/workspace/AS6AIWorkspace.jsx:158:      <AS6WorkspaceRecommendations />
+frontend/src/as6/workspace/AS6AIWorkspace.jsx:159:      <AS6ContextSuggestions />
+frontend/src/as6/workspace/AS6AIWorkspace.jsx:160:      <AS6QuickActions />
+frontend/src/as6/workspace/AS6AIWorkspace.jsx:161:      <AS6AIRuntimePanel />
+docs/architecture/AS6_ARCHITECTURE_CHARTER.md:58:- QGT-007 Context Awareness.

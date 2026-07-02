@@ -18,3 +18,14 @@ export {
 } from './AS6WorkspaceContext.jsx';
 
 export { default as AS6WorkspaceContextPanel } from './AS6WorkspaceContextPanel.jsx';
+
+export {
+  default as AS6AIWorkspace,
+  AS6Assistant,
+  AS6AIActionBar,
+  AS6WorkspaceRecommendations,
+  AS6ContextSuggestions,
+  AS6QuickActions,
+  AS6AIRuntimePanel,
+  AS6_AI_WORKSPACE_VERSION,
+} from './AS6AIWorkspace.jsx';

@@ -1,0 +1,15 @@
+.as6-ai-workspace{display:grid;gap:16px;margin:24px}
+.as6-ai-assistant,.as6-ai-recommendations,.as6-ai-suggestions,.as6-ai-runtime-panel{padding:20px;border:1px solid rgba(255,255,255,.1);border-radius:24px;background:rgba(255,255,255,.045)}
+.as6-ai-assistant span,.as6-ai-section-title span{display:inline-flex;margin-bottom:8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.72}
+.as6-ai-assistant h2,.as6-ai-section-title h3{margin:0 0 8px}
+.as6-ai-assistant p{margin:0 0 14px;opacity:.76}
+.as6-ai-assistant button,.as6-ai-action-bar button,.as6-ai-quick-actions button{padding:10px 14px;border:1px solid rgba(255,255,255,.14);border-radius:999px;background:rgba(59,130,246,.2);color:inherit;cursor:pointer}
+.as6-ai-action-bar,.as6-ai-quick-actions{display:flex;gap:10px;flex-wrap:wrap}
+.as6-ai-card-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.as6-ai-card-grid article{padding:14px;border:1px solid rgba(255,255,255,.1);border-radius:18px;background:rgba(255,255,255,.05)}
+.as6-ai-card-grid p{margin:8px 0;opacity:.76}
+.as6-ai-card-grid small{opacity:.62}
+.as6-ai-runtime-panel dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:8px 14px;margin:0}
+.as6-ai-runtime-panel dt{opacity:.64}
+.as6-ai-runtime-panel dd{margin:0;font-weight:700}
+@media(max-width:900px){.as6-ai-card-grid{grid-template-columns:1fr}.as6-ai-runtime-panel dl{grid-template-columns:1fr}}

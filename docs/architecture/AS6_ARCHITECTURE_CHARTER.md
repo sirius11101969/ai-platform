@@ -52,3 +52,9 @@ PRIMARY_PRODUCT_GOAL=UNIFIED_AI_WORKSPACE
 ## Primary Risk
 
 PRIMARY_ARCHITECTURE_RISK=WORKSPACE_FRAGMENTATION
+
+## EPIC-007 PR3 Quality Gate Addition
+
+- QGT-007 Context Awareness.
+
+Rule: AI features must use Workspace Context before introducing local AI state.

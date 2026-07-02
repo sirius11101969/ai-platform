@@ -1,0 +1,260 @@
+frontend/src/as6/workspace/as6WorkspaceStorage.js:5:  return typeof window !== "undefined" && Boolean(window.localStorage);
+frontend/src/as6/workspace/as6WorkspaceStorage.js:50:    const raw = window.localStorage.getItem(STORAGE_KEY);
+frontend/src/as6/workspace/as6WorkspaceStorage.js:64:    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+frontend/src/as6/workspace/AS6WorkspaceManager.contract.md:23:- localStorage key: as6-workspace-manager:v98
+frontend/src/as6/workspace/AS6WorkspaceContextPanel.jsx:12:        <p>Active Module, Focus Context, Right Rail, Actions и Events работают без persistent storage.</p>
+frontend/src/as6/workspace/AS6WorkspacePersistence.contract.md:9:- Prevent localStorage duplication across Shell surfaces.
+frontend/src/as6/workspace/as6WorkspaceManager.js:11:  return typeof window !== "undefined" && Boolean(window.localStorage);
+frontend/src/as6/workspace/as6WorkspaceManager.js:20:    const raw = window.localStorage.getItem(STORAGE_KEY);
+frontend/src/as6/workspace/as6WorkspaceManager.js:32:  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+docs/STAGE_PASSPORTS/V222_36_PRODUCT_RECOMMENDATION_DOM_GEOMETRY_DIAGNOSTIC.md:1:# Stage Passport: V222.36 Product Recommendation DOM Geometry Diagnostic
+docs/STAGE_PASSPORTS/V222_26_FIRST_USER_VALUE_RECOMMENDATION.md:1:# Stage Passport: V222.26 First User Value Recommendation
+docs/STAGE_PASSPORTS/V222_27_PRODUCT_RECOMMENDATION_VISIBLE_PLACEMENT.md:1:# Stage Passport: V222.27 Product Recommendation Visible Placement
+docs/STAGE_PASSPORTS/V222_29_PRODUCT_RECOMMENDATION_CARD_COMPACT_ETALON.md:1:# Stage Passport: V222.29 Product Recommendation Card Compact Etalon
+docs/STAGE_PASSPORTS/V222_29_PRODUCT_RECOMMENDATION_CARD_COMPACT_ETALON.md:6:Product Result: Product Recommendation card now visually matches compact etalon better.
+docs/STAGE_PASSPORTS/V222_14_RUNTIME_TELEMETRY_STORAGE_VALIDATION.md:9:Hypothesis Status: Runtime storage behavior confirmed in browser-like localStorage simulation.
+docs/STAGE_PASSPORTS/V222_35_PRODUCT_RECOMMENDATION_LAYOUT_CHAIN_DIAGNOSTIC.md:1:# Stage Passport: V222.35 Product Recommendation Layout Chain Diagnostic
+docs/presentation/AS6_AI_CRM_Platform_Deck.html:581:            <div class="metric"><b class="gradient-text">Docker</b><span>Production deployment: backend, nginx/frontend, PostgreSQL и persistent storage.</span></div>
+docs/platform-v2/sdk/create-plugin-cli-p12.md:20:- AI Action
+docs/platform-v2/sdk/marketplace-install-persistence-p24.md:3:P24 adds persistent plugin install state through localStorage-backed runtime persistence.
+docs/platform-v2/sdk/public-extension-sdk-p11.md:18:- AI Actions
+docs/diagnostics/as6-epic007-pr1-workspace-foundation.md:28:- Workspace Storage V99 unchanged.
+docs/diagnostics/as6-epic007-pr1-workspace-foundation.md:30:- persistent storage unchanged.
+docs/diagnostics/as6-epic004-pr4-executive-automation-queue-scheduler.md:6:- AS6_EXECUTIVE_AUTOMATION_RUNTIME_QUEUE_DRIFT: queue state is runtime-only and does not mutate persistent storage.
+docs/diagnostics/as6-epic004-pr4-executive-automation-queue-scheduler.md:8:- Workspace Storage V99, contextState.businessHome, layout schema, localStorage and Live Data were not changed.
+docs/diagnostics/as6-epic002-pr2b-operational-health-components.md:8:- Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home were not changed.
+docs/diagnostics/as6-epic004-pr5-executive-automation-retry-recovery.md:6:- AS6_EXECUTIVE_AUTOMATION_RUNTIME_RECOVERY_DRIFT: retry/recovery state is runtime-only and does not mutate persistent storage.
+docs/diagnostics/as6-epic004-pr5-executive-automation-retry-recovery.md:8:- Workspace Storage V99, contextState.businessHome, layout schema, localStorage and Live Data were not changed.
+docs/diagnostics/as6-epic002-pr1-executive-widget-integration.md:5:- AS6_EXECUTIVE_WIDGET_LAYOUT_DRIFT: widgets reuse contextState.businessHome layout.
+docs/diagnostics/as6-epic002-pr2a-executive-live-data-components.md:7:- Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home were not changed.
+docs/diagnostics/as6-epic001-user-workspace-customization.md:9:- Layout is stored only in Workspace contextState.businessHome.
+docs/diagnostics/as6-epic001-user-workspace-customization.md:11:- No new localStorage key is introduced.
+docs/diagnostics/as6-epic006-pr4-concurrency-control.md:25:- Workspace Storage V99 unchanged.
+docs/diagnostics/as6-epic006-pr4-concurrency-control.md:26:- contextState.businessHome unchanged.
+docs/diagnostics/as6-epic006-pr4-concurrency-control.md:28:- localStorage unchanged.
+docs/diagnostics/as6-epic006-pr4-concurrency-control.md:29:- persistent storage unchanged.
+docs/diagnostics/as6-epic005-pr3-executive-automation-policy-explanations.md:26:- Workspace Storage V99 unchanged.
+docs/diagnostics/as6-epic005-pr3-executive-automation-policy-explanations.md:27:- contextState.businessHome unchanged.
+docs/diagnostics/as6-epic005-pr3-executive-automation-policy-explanations.md:29:- persistent storage unchanged.
+docs/diagnostics/as6-epic003-pr3-executive-action-validation-ui-feedback.md:8:- Workspace Storage V99, contextState.businessHome and layout schema were not changed.
+docs/diagnostics/as6-epic001-pr8-drag-drop-layout.md:6:- contextState.businessHome schema is unchanged.
+docs/diagnostics/as6-epic001-pr8-drag-drop-layout.md:7:- Workspace Storage V99 and debounce autosave are reused.
+docs/diagnostics/as6-epic001-pr8-drag-drop-layout.md:8:- No new localStorage key is introduced.
+docs/diagnostics/as6-epic006-pr3-execution-orchestrator-complete.md:19:- No Workspace Storage V99 changes.
+docs/diagnostics/as6-epic006-pr3-execution-orchestrator-complete.md:20:- No contextState.businessHome changes.
+docs/diagnostics/as6-epic006-pr3-execution-orchestrator-complete.md:22:- No localStorage changes.
+docs/diagnostics/as6-epic006-pr3-execution-orchestrator-complete.md:23:- No persistent storage changes.
+docs/diagnostics/as6-epic007-pr2-workspace-context.md:55:- No new persistent storage.
+docs/diagnostics/as6-epic007-pr2-workspace-context.md:56:- No localStorage usage.
+docs/diagnostics/as6-epic007-pr2-workspace-context.md:57:- No Workspace Storage V99 mutation.
+docs/diagnostics/as6-epic007-pr2-workspace-context.md:58:- No contextState.businessHome mutation.
+docs/diagnostics/as6-epic004-pr1-executive-automation-scenarios.md:6:- AS6_EXECUTIVE_AUTOMATION_RUNTIME_ONLY_DRIFT: automation plans are runtime-only and do not mutate persistent storage.
+docs/diagnostics/as6-epic004-pr1-executive-automation-scenarios.md:8:- Workspace Storage V99, contextState.businessHome, layout schema, localStorage and Live Data were not changed.
+docs/diagnostics/as6-epic005-pr1-executive-automation-governance-safety.md:8:- Workspace Storage V99, contextState.businessHome, layout schema and localStorage were not changed.
+docs/diagnostics/as6-epic006-pr3-execution-orchestrator.md:25:- Workspace Storage V99 unchanged.
+docs/diagnostics/as6-epic006-pr3-execution-orchestrator.md:26:- contextState.businessHome unchanged.
+docs/diagnostics/as6-epic006-pr3-execution-orchestrator.md:28:- localStorage unchanged.
+docs/diagnostics/as6-epic006-pr3-execution-orchestrator.md:29:- persistent storage unchanged.
+docs/diagnostics/as6-epic003-pr4-executive-action-history-audit-trail.md:6:- AS6_EXECUTIVE_ACTION_HISTORY_STORAGE_DRIFT: audit trail is runtime-only and does not change Workspace Storage V99, contextState.businessHome, localStorage or layout schema.
+docs/diagnostics/as6-epic004-pr2-executive-automation-execution-pipeline.md:7:- AS6_EXECUTIVE_AUTOMATION_RUNTIME_PIPELINE_DRIFT: pipeline state is runtime-only and does not mutate persistent storage.
+docs/diagnostics/as6-epic001-business-os-shell-integration.md:7:- AS6Assistant and AS6Focus are integrated as right-side operating panels.
+docs/diagnostics/as6-epic002-pr5-executive-insights-recommendations.md:6:- AS6_EXECUTIVE_INSIGHTS_STORAGE_DRIFT: no contextState.businessHome, Workspace Storage V99 or layout schema changes were introduced.
+docs/diagnostics/as6-epic001-pr9-ai-adaptive-home.md:7:- contextState.businessHome schema is unchanged.
+docs/diagnostics/as6-epic001-pr9-ai-adaptive-home.md:8:- Workspace Storage V99 and debounce autosave are reused.
+docs/diagnostics/as6-epic002-pr2c-executive-dashboard-components.md:8:- Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home were not changed.
+docs/diagnostics/as6-epic004-pr3-executive-automation-monitoring-control.md:6:- AS6_EXECUTIVE_AUTOMATION_RUNTIME_MONITORING_DRIFT: monitoring is runtime-only and does not mutate persistent storage.
+docs/diagnostics/as6-epic004-pr3-executive-automation-monitoring-control.md:8:- Workspace Storage V99, contextState.businessHome, layout schema, localStorage and Live Data were not changed.
+docs/diagnostics/as6-epic002-pr3-executive-workspace-integration.md:5:- AS6_EXECUTIVE_WORKSPACE_PERSISTENCE_DRIFT: widgets reuse contextState.businessHome and Workspace Storage V99.
+docs/diagnostics/as6-epic003-pr5-executive-action-analytics-metrics.md:7:- AS6_EXECUTIVE_ACTION_ANALYTICS_STORAGE_DRIFT: analytics are runtime-only and do not modify Workspace Storage V99, contextState.businessHome, localStorage or layout schema.
+docs/diagnostics/as6-epic006-pr1-scenario-priorities.md:7:- AS6_EXECUTIVE_SCENARIO_PRIORITY_STORAGE_DRIFT: Workspace Storage V99, contextState.businessHome, layout schema, localStorage and persistent storage were not changed.
+docs/diagnostics/as6-epic003-pr2-executive-action-orchestration.md:9:- Workspace Storage V99, contextState.businessHome and layout schema were not changed.
+docs/diagnostics/as6-epic003-pr1-executive-automation-actions.md:7:- AS6_EXECUTIVE_AUTOMATION_STORAGE_DRIFT: Workspace Storage V99, contextState.businessHome and layout schema were not changed.
+docs/diagnostics/as6-epic006-complete.md:20:- Workspace Storage V99 unchanged.
+docs/diagnostics/as6-epic006-complete.md:21:- contextState.businessHome unchanged.
+docs/diagnostics/as6-epic006-complete.md:23:- localStorage unchanged.
+docs/diagnostics/as6-epic006-complete.md:24:- persistent storage unchanged.
+docs/diagnostics/as6-epic006-pr2-scenario-dependencies.md:25:- Workspace Storage V99 unchanged.
+docs/diagnostics/as6-epic006-pr2-scenario-dependencies.md:26:- contextState.businessHome unchanged.
+docs/diagnostics/as6-epic006-pr2-scenario-dependencies.md:28:- localStorage unchanged.
+docs/diagnostics/as6-epic006-pr2-scenario-dependencies.md:29:- persistent storage unchanged.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail-complete.md:21:- No Workspace Storage V99 changes.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail-complete.md:22:- No contextState.businessHome changes.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail-complete.md:24:- No persistent storage changes.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail-complete.md:25:- No localStorage changes.
+docs/diagnostics/as6-epic002-pr4-executive-personalization.md:9:- contextState.businessHome, Workspace Storage V99 and layout schema were not changed.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail.md:25:- Workspace Storage V99 unchanged.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail.md:26:- contextState.businessHome unchanged.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail.md:32:- persistent storage unchanged.
+docs/diagnostics/as6-epic005-pr4-executive-automation-audit-trail.md:33:- localStorage unchanged.
+docs/AS6_PROJECT_STATE.md:2058:## AS6 Command Center Recommendation Actions
+docs/AS6_PROJECT_STATE.md:2232:## AS6 Quick Action Icon Fix V49
+docs/AS6_PROJECT_STATE.md:3379:## 20260622T061254Z AS6 V173 Remove Sticky Quick Actions Strip
+docs/AS6_PROJECT_STATE.md:3808:- Result: Product Intelligence localStorage runtime behavior validated.
+docs/AS6_PROJECT_STATE.md:3872:## V222.26 First User Value Recommendation
+docs/AS6_PROJECT_STATE.md:3878:## V222.27 Product Recommendation Visible Placement
+docs/AS6_PROJECT_STATE.md:3890:## V222.29 Product Recommendation Card Compact Etalon
+docs/AS6_PROJECT_STATE.md:3892:- Result: Product Recommendation card visually compacted to approved etalon direction.
+docs/AS6_PROJECT_STATE.md:3901:## V222.35 Product Recommendation Layout Chain Diagnostic
+docs/AS6_PROJECT_STATE.md:3906:## V222.36 Product Recommendation DOM Geometry Diagnostic
+docs/AS6_PROJECT_STATE.md:3962:## V222_41 Product Recommendation Card Reference Alignment
+docs/AS6_PROJECT_STATE.md:3976:## V222_41 Product Recommendation Card Reference Alignment
+docs/AS6_PROJECT_STATE.md:3988:## V222_42 Product Recommendation Inline Layout Removal
+docs/AS6_PROJECT_STATE.md:3992:- Fixed: removed inline card width/maxWidth/padding/gap/radius from CommandCenterPage and ProductRecommendationCard.
+docs/AS6_PROJECT_STATE.md:3994:- Fixed: removed inline CTA width/height/minHeight and text micro typography from ProductRecommendationCard.
+docs/AS6_PROJECT_STATE.md:4004:## V222_42 Repair — Product Recommendation CSS-Owned Component
+docs/AS6_PROJECT_STATE.md:4006:- Root cause: previous exact-block replacement did not match current ProductRecommendationCard style declarations.
+docs/AS6_PROJECT_STATE.md:4008:- Fixed: ProductRecommendationCard rewritten as CSS-owned component with no inline layout dimensions.
+docs/AS6_PROJECT_STATE.md:4018:## V222_42 Targeted Product Recommendation Inline Guard Repair
+docs/AS6_PROJECT_STATE.md:4022:- Fixed: guard now checks only ProductRecommendationCard and the product recommendation slot block.
+docs/AS6_PROJECT_STATE.md:4024:- Fixed: ProductRecommendationCard is CSS-owned and contains no inline layout dimensions.
+docs/AS6_PROJECT_STATE.md:4044:## V222_44 Production Bundle Refresh — Recommendation Card
+docs/AS6_PROJECT_STATE.md:4068:## V222_57 Etalon Recommendation Card Full Rewrite
+docs/AS6_PROJECT_STATE.md:4266:- Interface changed: Sidebar, Header, KPI, AI Action Center, Revenue Brain, Pipeline, Right Rail.
+docs/AS6_PROJECT_STATE.md:4650:- Next target: CRM Context-aware AI Actions.
+docs/AS6_PROJECT_STATE.md:4658:- Next target: CRM Context-aware AI Actions.
+docs/AS6_PROJECT_STATE.md:4664:- AI Action Engine: enabled.
+docs/AS6_PROJECT_STATE.md:4665:- CRM AI Actions: enabled.
+docs/AS6_PROJECT_STATE.md:4957:- Integrated AS6Sidebar, AS6Header, AS6RightRail, AS6Assistant and AS6Focus.
+docs/AS6_PROJECT_STATE.md:4965:- Business Home now uses existing Workspace Storage V99.
+docs/AS6_PROJECT_STATE.md:4975:- Business Home layout stored only in contextState.businessHome.
+docs/AS6_PROJECT_STATE.md:4980:- Added debounce autosave through Workspace Storage V99.
+docs/AS6_PROJECT_STATE.md:4989:- Reused existing contextState.businessHome layout model.
+docs/AS6_PROJECT_STATE.md:4990:- Reused existing debounce autosave and Workspace Storage V99.
+docs/AS6_PROJECT_STATE.md:5000:- Reused contextState.businessHome, debounce autosave and Workspace Storage V99.
+docs/AS6_PROJECT_STATE.md:5009:- Preserved contextState.businessHome, Workspace Storage V99, drag/drop and AI Adaptive Home.
+docs/AS6_PROJECT_STATE.md:5020:- Preserved Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home.
+docs/AS6_PROJECT_STATE.md:5030:- Preserved Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home.
+docs/AS6_PROJECT_STATE.md:5040:- Preserved Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home.
+docs/AS6_PROJECT_STATE.md:5048:- Preserved contextState.businessHome, Workspace Storage V99, drag/drop and AI Adaptive Home.
+docs/AS6_PROJECT_STATE.md:5058:- Preserved contextState.businessHome, Workspace Storage V99, drag/drop, AI Adaptive Home and layout schema.
+docs/AS6_PROJECT_STATE.md:5062:## AS6 EPIC-002 PR-5 — Executive Insights & Recommendations
+docs/AS6_PROJECT_STATE.md:5068:- Preserved contextState.businessHome, Workspace Storage V99, layout schema, drag/drop, Executive components and Live Data sources.
+docs/AS6_PROJECT_STATE.md:5078:- Preserved contextState.businessHome, Workspace Storage V99, layout schema, drag/drop, AI Adaptive Home, Executive Insights, Executive Components and Live Data.
+docs/AS6_PROJECT_STATE.md:5089:- Preserved contextState.businessHome, Workspace Storage V99, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5099:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5109:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5119:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5128:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5138:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5149:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5159:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5171:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5199:- Workspace Storage V99 unchanged.
+docs/AS6_PROJECT_STATE.md:5200:- contextState.businessHome unchanged.
+docs/AS6_PROJECT_STATE.md:5201:- layout schema and persistent storage unchanged.
+docs/AS6_PROJECT_STATE.md:5211:- Workspace Storage V99 unchanged.
+docs/AS6_PROJECT_STATE.md:5212:- contextState.businessHome unchanged.
+docs/AS6_PROJECT_STATE.md:5213:- layout schema, drag & drop, AI Adaptive Home, Executive Components, Live Data, persistent storage and localStorage unchanged.
+docs/AS6_PROJECT_STATE.md:5233:- Workspace Storage V99 unchanged.
+docs/AS6_PROJECT_STATE.md:5234:- contextState.businessHome unchanged.
+docs/AS6_PROJECT_STATE.md:5235:- layout schema, persistent storage and localStorage unchanged.
+docs/AS6_PROJECT_STATE.md:5247:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, localStorage and persistent storage.
+docs/AS6_PROJECT_STATE.md:5257:- Workspace Storage V99 unchanged.
+docs/AS6_PROJECT_STATE.md:5258:- contextState.businessHome unchanged.
+docs/AS6_PROJECT_STATE.md:5259:- layout schema, localStorage and persistent storage unchanged.
+docs/AS6_PROJECT_STATE.md:5269:- Workspace Storage V99 unchanged.
+docs/AS6_PROJECT_STATE.md:5270:- contextState.businessHome unchanged.
+docs/AS6_PROJECT_STATE.md:5271:- layout schema, localStorage and persistent storage unchanged.
+docs/AS6_PROJECT_STATE.md:5290:- Workspace Storage V99 unchanged.
+docs/AS6_PROJECT_STATE.md:5291:- contextState.businessHome unchanged.
+docs/AS6_PROJECT_STATE.md:5292:- layout schema, localStorage and persistent storage unchanged.
+docs/AS6_PROJECT_STATE.md:5303:- Workspace Storage V99 unchanged.
+docs/AS6_PROJECT_STATE.md:5304:- contextState.businessHome unchanged.
+docs/AS6_PROJECT_STATE.md:5305:- layout schema, localStorage and persistent storage unchanged.
+docs/AS6_PROJECT_STATE.md:5313:- Workspace Storage V99 unchanged.
+docs/AS6_PROJECT_STATE.md:5314:- contextState.businessHome unchanged.
+docs/AS6_PROJECT_STATE.md:5315:- layout schema, localStorage and persistent storage unchanged.
+docs/AS6_PROJECT_STATE.md:5338:- Workspace Storage V99 unchanged.
+docs/AS6_PROJECT_STATE.md:5350:- Workspace Storage V99 unchanged.
+docs/AS6_PROJECT_STATE.md:5351:- contextState.businessHome unchanged.
+docs/business-os/epic001-business-home-foundation.md:12:- Recommendations
+docs/AS6_REAL_CRM_DATA_WIRING_V106.md:15:- aiRecommendations
+docs/architecture/ai_revenue_intelligence.md:155:   - AI Recommendations.
+docs/architecture/ai_revenue_intelligence.md:171:- AI Recommendation;
+docs/architecture/autonomous_ai_revenue_engine.md:1:# Autonomous AI Revenue Engine (Recommendation-Only)
+docs/architecture/ai_agent_system.md:52:1. Менеджер нажимает действие в AI Action Center или запускается inactive follow-up queue.
+docs/architecture/ai_agent_system.md:89:### AI Action Center
+docs/architecture/ai_agent_system.md:118:- Recommendations require OpenAI API key and real lead context; no fake recommendation fallback.
+docs/architecture/ai_manager_dashboard_kpi_layer.md:47:### A. AI Action Funnel
+docs/architecture/AI_ENTERPRISE_OS_V1_STABLE.md:41:- Recommendation-only AI posture for strategic and executive layers.
+docs/architecture/ai_sales_pipeline_automation.md:25:Recommendations are created as `ai_worker_queue.action_type = 'stage_change_recommendation'` with:
+docs/REGISTRY/AS6_PRODUCT_COVERAGE_REGISTRY.md:66:- Covered: runtime localStorage event storage, metadata sanitization, disabled telemetry skip, unregistered event rejection, external analytics absence.
+docs/REGISTRY/AS6_PRODUCT_COVERAGE_REGISTRY.md:113:## V222.26 First User Value Recommendation Coverage
+docs/REGISTRY/AS6_PRODUCT_COVERAGE_REGISTRY.md:117:## V222.27 Product Recommendation Visible Placement Coverage
+docs/REGISTRY/AS6_PRODUCT_COVERAGE_REGISTRY.md:125:## V222.29 Product Recommendation Card Compact Etalon Coverage
+docs/REGISTRY/AS6_PRODUCT_COVERAGE_REGISTRY.md:132:## V222.35 Product Recommendation Layout Chain Coverage
+docs/REGISTRY/AS6_PRODUCT_COVERAGE_REGISTRY.md:136:## V222.36 Product Recommendation DOM Geometry Coverage
+docs/REGISTRY/AS6_PRODUCT_DECISION_HISTORY.md:162:### Recommendation
+docs/REGISTRY/AS6_PRODUCT_DECISION_HISTORY.md:178:## V222.26 First User Value Recommendation
+docs/REGISTRY/AS6_PRODUCT_DECISION_HISTORY.md:182:- Next Stage: V222.27 Recommendation Explanation.
+docs/REGISTRY/AS6_PRODUCT_DECISION_HISTORY.md:184:## V222.27 Product Recommendation Visible Placement
+docs/REGISTRY/AS6_PRODUCT_DECISION_HISTORY.md:186:- Reason: user screenshot/HTML showed no visible ProductRecommendationCard after V222.26.
+docs/REGISTRY/AS6_PRODUCT_DECISION_HISTORY.md:188:- Next Stage: V222.28 Recommendation Visibility Effect Review.
+docs/REGISTRY/AS6_PRODUCT_DECISION_HISTORY.md:192:- Product Result: Recommendation AS6 remains visible under AI Copilot.
+docs/REGISTRY/AS6_PRODUCT_DECISION_HISTORY.md:196:## V222.29 Product Recommendation Card Compact Etalon
+docs/REGISTRY/AS6_PRODUCT_DECISION_HISTORY.md:205:## V222.35 Product Recommendation Layout Chain Diagnostic
+docs/REGISTRY/AS6_PRODUCT_DECISION_HISTORY.md:209:## V222.36 Product Recommendation DOM Geometry Diagnostic
+docs/REGISTRY/AS6_PRODUCT_DECISION_HISTORY.md:210:- Decision: no more Product Recommendation visual changes before DOM geometry and computed styles are captured.
+docs/REGISTRY/AS6_PRODUCT_DECISION_HISTORY.md:214:- Decision: no more Product Recommendation visual changes until computed DOM geometry JSON is captured.
+docs/REGISTRY/AS6_PRODUCT_DECISION_HISTORY.md:218:- Decision: use browser-grade geometry evidence before any further Product Recommendation UI change.
+docs/REGISTRY/AS6_PRODUCT_DIAGNOSTIC_REGISTRY.md:190:## V222.26 First User Value Recommendation
+docs/REGISTRY/AS6_PRODUCT_DIAGNOSTIC_REGISTRY.md:197:## V222.27 Product Recommendation Visible Placement
+docs/REGISTRY/AS6_PRODUCT_DIAGNOSTIC_REGISTRY.md:211:## V222.29 Product Recommendation Card Compact Etalon
+docs/REGISTRY/AS6_PRODUCT_DIAGNOSTIC_REGISTRY.md:223:## V222.35 Product Recommendation Layout Chain Diagnostic
+docs/REGISTRY/AS6_PRODUCT_DIAGNOSTIC_REGISTRY.md:224:- Added diagnostics-only gate for Product Recommendation visible layout chain.
+docs/REGISTRY/AS6_PRODUCT_DIAGNOSTIC_REGISTRY.md:229:## V222.36 Product Recommendation DOM Geometry Diagnostic
+docs/coverage/as6-epic003-pr1-executive-automation-actions-coverage.md:5:- Recommendation action coverage: PASS
+docs/coverage/as6-epic001-user-workspace-customization-coverage.md:9:- No duplicate localStorage coverage: PASS
+docs/coverage/as6-epic001-business-os-shell-integration-coverage.md:7:- AS6Assistant coverage: PASS
+docs/coverage/as6-epic002-pr3-executive-workspace-integration-coverage.md:9:- Workspace Storage V99 compatibility coverage: PASS
+docs/PRODUCT/AS6_RUNTIME_TELEMETRY_STORAGE_VALIDATION_V222_14.md:34:- Runtime localStorage telemetry validation.
+docs/PRODUCT/AS6_COMMAND_CENTER_FIRST_TIME_ORIENTATION_DIAGNOSTIC_V222_7.md:58:## Recommendation For V222.8
+docs/PRODUCT/AS6_PRODUCT_RECOMMENDATION_VISIBLE_PLACEMENT_V222_27.md:1:# AS6 Product Recommendation Visible Placement V222.27
+docs/PRODUCT/AS6_PRODUCT_RECOMMENDATION_VISIBLE_PLACEMENT_V222_27.md:4:Stage: V222.27 Product Recommendation Visible Placement
+docs/PRODUCT/AS6_PRODUCT_RECOMMENDATION_VISIBLE_PLACEMENT_V222_27.md:17:- Reworked ProductRecommendationCard to use existing Command Center card styles.
+docs/PRODUCT/AS6_PRODUCT_RECOMMENDATION_VISIBLE_PLACEMENT_V222_27.md:30:- ProductRecommendationCard style compatibility check.
+docs/PRODUCT/AS6_PRODUCT_RECOMMENDATION_VISIBLE_PLACEMENT_V222_27.md:41:- Recommendation placement must be validated against actual deployed UI screenshots/HTML.
+docs/PRODUCT/AS6_FIRST_USER_VALUE_RECOMMENDATION_V222_26.md:1:# AS6 First User Value Recommendation V222.26
+docs/PRODUCT/AS6_FIRST_USER_VALUE_RECOMMENDATION_V222_26.md:22:- Added ProductRecommendationCard.
+docs/PRODUCT/AS6_FIRST_USER_VALUE_RECOMMENDATION_V222_26.md:27:- Recommendation registry check.
+docs/PRODUCT/AS6_FIRST_USER_VALUE_RECOMMENDATION_V222_26.md:28:- Recommendation engine check.
+docs/PRODUCT/AS6_PRODUCT_RECOMMENDATION_LAYOUT_CHAIN_DIAGNOSTIC_V222_35.md:1:# AS6 Product Recommendation Layout Chain Diagnostic V222.35
+docs/PRODUCT/AS6_PRODUCT_RECOMMENDATION_LAYOUT_CHAIN_DIAGNOSTIC_V222_35.md:4:Stage: V222.35 Product Recommendation Layout Chain Diagnostic
+docs/PRODUCT/AS6_PRODUCT_RECOMMENDATION_LAYOUT_CHAIN_DIAGNOSTIC_V222_35.md:14:- ProductRecommendationCard ownership evidence.
+docs/PRODUCT/AS6_DECISION_HISTORY_PERSISTENCE_DIAGNOSTIC_V222_19.md:21:- OPTION_A=Frontend localStorage persistence only
+docs/PRODUCT/AS6_COMMAND_CENTER_LAYOUT_ALIGNMENT_V222_28.md:14:- Right rail order: AI Copilot, Recommendation AS6, Recent Events, Next Best Action.
+docs/PRODUCT/AS6_COMMAND_CENTER_LAYOUT_ALIGNMENT_V222_28.md:24:- Recommendation card visibility check.
+docs/PRODUCT/AS6_POST_AUTH_FIRST_DESTINATION_DIAGNOSTIC_V222_4.md:55:## Recommendation For V222.5
+docs/PRODUCT/AS6_PRODUCT_RECOMMENDATION_DOM_GEOMETRY_DIAGNOSTIC_V222_36.md:1:# AS6 Product Recommendation DOM Geometry Diagnostic V222.36
+docs/PRODUCT/AS6_PRODUCT_RECOMMENDATION_DOM_GEOMETRY_DIAGNOSTIC_V222_36.md:4:Stage: V222.36 Product Recommendation DOM Geometry Diagnostic
+docs/PRODUCT/AS6_PRODUCT_RECOMMENDATION_CARD_COMPACT_ETALON_V222_29.md:1:# AS6 Product Recommendation Card Compact Etalon V222.29
+docs/PRODUCT/AS6_PRODUCT_RECOMMENDATION_CARD_COMPACT_ETALON_V222_29.md:4:Stage: V222.29 Product Recommendation Card Compact Etalon
+docs/PRODUCT/AS6_PRODUCT_RECOMMENDATION_CARD_COMPACT_ETALON_V222_29.md:34:- Recommendation card must stay visually compact inside the right rail.
+docs/PRODUCT/AS6_FIRST_ACTION_ANALYTICS_DIAGNOSTIC_V222_10.md:55:## Recommendation For V222.11
+docs/governance/as6-epic006-pr4-concurrency-control-governance.md:7:- Concurrency control must not mutate Workspace Storage V99.
+docs/governance/as6-epic006-pr4-concurrency-control-governance.md:8:- Concurrency control must not mutate contextState.businessHome.
+docs/governance/as6-epic006-pr4-concurrency-control-governance.md:9:- Concurrency control must not use localStorage or persistent storage.
+docs/governance/as6-epic005-pr3-executive-automation-policy-explanations-governance.md:6:- Policy explanations must not mutate Workspace Storage V99.
+docs/governance/as6-epic005-pr3-executive-automation-policy-explanations-governance.md:7:- Policy explanations must not mutate contextState.businessHome.
+docs/governance/as6-epic005-pr3-executive-automation-policy-explanations-governance.md:8:- Policy explanations must not change layout schema or persistent storage.
+docs/governance/as6-epic004-pr5-executive-automation-retry-recovery-governance.md:12:CONTROL=Executive Automation retry and recovery must remain runtime-only, expose retry count and failure reason, and must not mutate Workspace Storage V99 or layout schema.
+docs/governance/as6-epic007-pr2-workspace-context-governance.md:10:- Workspace Context must not mutate Workspace Storage V99.
+docs/governance/as6-epic007-pr2-workspace-context-governance.md:11:- Workspace Context must not mutate contextState.businessHome.
+docs/governance/as6-epic001-business-home-workspace-persistence-governance.md:5:ROOT_CAUSE=Business Home shell was integrated but not connected to existing Workspace Storage V99.
+docs/governance/as6-epic001-business-home-workspace-persistence-governance.md:6:CONTROL=Business Home must use as6WorkspaceStorage.js instead of creating a parallel localStorage key.
+docs/governance/as6-epic001-business-os-shell-integration-governance.md:6:CONTROL=Business Home must reuse AS6Workspace, AS6Sidebar, AS6Header, AS6RightRail, AS6Assistant and AS6Focus instead of creating a parallel shell.
+docs/governance/as6-epic003-pr5-executive-action-analytics-metrics-governance.md:11:CONTROL=Executive Action analytics must be computed only from runtime audit trail and must not mutate persistent storage or layout schema.
+docs/governance/as6-epic003-pr4-executive-action-history-audit-trail-governance.md:12:CONTROL=Executive Action history must remain runtime-only for PR-4 and must not mutate Workspace Storage V99, layout schema, contextState.businessHome or localStorage.
+docs/governance/as6-epic006-pr1-scenario-priorities-governance.md:11:CONTROL=Scenario priorities must remain runtime-only and must not change Workspace Storage V99 or contextState.businessHome.
+docs/governance/as6-epic001-pr8-drag-drop-layout-governance.md:9:CONTROL=Drag and drop must update only widget order through updateBusinessHomeLayout and must not change Workspace Storage V99 schema.
+docs/governance/as6-epic005-pr4-executive-automation-audit-trail-governance.md:8:- Audit Trail must not mutate Workspace Storage V99.
+docs/governance/as6-epic005-pr4-executive-automation-audit-trail-governance.md:9:- Audit Trail must not mutate contextState.businessHome.
+docs/governance/as6-epic005-pr4-executive-automation-audit-trail-governance.md:10:- Audit Trail must not use localStorage or persistent storage.
+docs/governance/as6-epic006-pr2-scenario-dependencies-governance.md:6:- Dependencies must not mutate Workspace Storage V99.
+docs/governance/as6-epic006-pr2-scenario-dependencies-governance.md:7:- Dependencies must not mutate contextState.businessHome.
+docs/governance/as6-epic006-pr2-scenario-dependencies-governance.md:8:- Dependencies must not use localStorage or persistent storage.
+docs/governance/as6-epic006-pr3-execution-orchestrator-governance.md:6:- Orchestrator must not mutate Workspace Storage V99.
+docs/governance/as6-epic006-pr3-execution-orchestrator-governance.md:7:- Orchestrator must not mutate contextState.businessHome.
+docs/governance/as6-epic006-pr3-execution-orchestrator-governance.md:8:- Orchestrator must not use localStorage or persistent storage.
+docs/governance/as6-epic005-pr2-executive-automation-policy-ui-governance.md:6:- UI must not mutate Workspace Storage V99.
+docs/governance/as6-epic005-pr2-executive-automation-policy-ui-governance.md:7:- UI must not mutate contextState.businessHome.
