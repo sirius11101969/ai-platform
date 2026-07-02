@@ -1,4 +1,4 @@
-export const AS6_EXECUTIVE_INSIGHTS_VERSION = "EPIC003_PR1";
+export const AS6_EXECUTIVE_INSIGHTS_VERSION = "EPIC002_PR5";
 
 export function createAS6ExecutiveFallbackInsights(profileName = "Administrator") {
   return [{

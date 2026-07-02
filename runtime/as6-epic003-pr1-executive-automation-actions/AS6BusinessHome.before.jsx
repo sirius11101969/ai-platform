@@ -18,10 +18,9 @@ import AS6DashboardLiveDataStatus from "../../components/AS6DashboardLiveDataSta
 import AS6RevenueCrmFusionStatus from "../../components/AS6RevenueCrmFusionStatus.jsx";
 import { applyAS6ExecutiveWorkspaceProfile, createAS6ExecutiveProfileRecommendation, getAS6ExecutiveWorkspaceProfiles } from "./as6ExecutiveWorkspaceProfiles.js";
 import { createAS6ExecutiveInsights } from "./as6ExecutiveInsights.js";
-import { createAS6ExecutiveAction, executeAS6ExecutiveAction } from "./as6ExecutiveActions.js";
 import "./AS6BusinessHome.css";
 
-export const AS6_BUSINESS_HOME_VERSION = "EPIC003_PR1";
+export const AS6_BUSINESS_HOME_VERSION = "EPIC002_PR5";
 export const AS6_BUSINESS_HOME_LAYOUT_SCHEMA_VERSION = 1;
 
 export const AS6_BUSINESS_HOME_WIDGETS = [
@@ -306,7 +305,7 @@ export function AS6BusinessHome() {
     if (widgetId === "dashboard-live-data-status") return <AS6DashboardLiveDataStatus key={widgetId} data-widget-id={widgetId} />;
     if (widgetId === "revenue-crm-fusion-status") return <AS6RevenueCrmFusionStatus key={widgetId} data-widget-id={widgetId} />;
     if (widgetId === "executive-insights") {
-      return <AS6DataSurface title="Executive Insights & Recommendations" key={widgetId} data-widget-id={widgetId}><ul className="as6-business-home__list">{executiveInsights.recommendations.map((insight) => <li key={insight.id}><strong>{insight.title}</strong><br /><span>{insight.reason}</span><br /><small>{insight.action}</small><br /><button type="button" onClick={() => executeAS6ExecutiveAction(createAS6ExecutiveAction(insight))}>Выполнить безопасное действие</button></li>)}</ul><AS6DataState type="empty" title={executiveInsights.profileName} detail={executiveInsights.source} /></AS6DataSurface>;
+      return <AS6DataSurface title="Executive Insights & Recommendations" key={widgetId} data-widget-id={widgetId}><ul className="as6-business-home__list">{executiveInsights.recommendations.map((insight) => <li key={insight.id}><strong>{insight.title}</strong><br /><span>{insight.reason}</span><br /><small>{insight.action}</small></li>)}</ul><AS6DataState type="empty" title={executiveInsights.profileName} detail={executiveInsights.source} /></AS6DataSurface>;
     }
     return null;
   }

@@ -1,0 +1,7 @@
+ M docs/AS6_PROJECT_STATE.md
+ M frontend/src/as6/business-home/AS6BusinessHome.jsx
+ M frontend/src/as6/business-home/as6ExecutiveInsights.js
+?? docs/coverage/as6-epic003-pr1-executive-automation-actions-coverage.md
+?? docs/diagnostics/as6-epic003-pr1-executive-automation-actions.md
+?? docs/governance/as6-epic003-pr1-executive-automation-actions-governance.md
+?? frontend/src/as6/business-home/as6ExecutiveActions.js
