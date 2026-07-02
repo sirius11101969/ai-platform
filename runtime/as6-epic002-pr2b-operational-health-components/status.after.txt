@@ -1,0 +1,6 @@
+ M docs/AS6_PROJECT_STATE.md
+ M frontend/src/components/AS6GlobalHealthBar.jsx
+ M frontend/src/components/AS6LiveOperationalDataStatus.jsx
+?? docs/coverage/as6-epic002-pr2b-operational-health-components-coverage.md
+?? docs/diagnostics/as6-epic002-pr2b-operational-health-components.md
+?? docs/governance/as6-epic002-pr2b-operational-health-components-governance.md

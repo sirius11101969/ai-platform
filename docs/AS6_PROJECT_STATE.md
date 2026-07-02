@@ -5019,3 +5019,13 @@ Status: PASS pending validation
 - Reused AS6UnifiedDataSurface primitives.
 - Preserved Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home.
 - Project readiness: 99.8%.
+
+## AS6 EPIC-002 PR-2B — Operational Health Components
+
+- AS6_DONE=AS6_EPIC002_PR2B_OPERATIONAL_HEALTH_COMPONENTS.
+- Implemented AS6GlobalHealthBar.
+- Implemented AS6LiveOperationalDataStatus.
+- Bound components to existing operational health data via Dashboard Live Data V105 / Operational Store V104.
+- Reused AS6UnifiedDataSurface primitives.
+- Preserved Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home.
+- Project readiness: 99.8%.
