@@ -18,3 +18,101 @@
 .as6-workspace-slot__placeholder h2{margin:8px 0;font-size:24px}
 .as6-workspace-slot__placeholder p{margin:0;opacity:.74}
 @media(max-width:1000px){.as6-workspace-foundation{grid-template-columns:1fr}.as6-workspace-sidebar{display:none}.as6-workspace-header{align-items:flex-start;flex-direction:column}.as6-workspace-router{padding:16px}}
+
+.as6-workspace-context-panel {
+  margin: 24px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, .04);
+}
+
+.as6-workspace-context-panel__header span,
+.as6-workspace-runtime-tracer span {
+  display: inline-flex;
+  margin-bottom: 8px;
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  opacity: .7;
+}
+
+.as6-workspace-context-panel__header h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+}
+
+.as6-workspace-context-panel__header p {
+  margin: 0;
+  opacity: .76;
+}
+
+.as6-workspace-context-panel__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.as6-workspace-context-panel__grid article,
+.as6-workspace-context-panel__events,
+.as6-workspace-runtime-tracer {
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .05);
+}
+
+.as6-workspace-context-panel__grid article span,
+.as6-workspace-context-panel__grid article strong {
+  display: block;
+}
+
+.as6-workspace-context-panel__grid article strong {
+  margin: 6px 0 10px;
+}
+
+.as6-workspace-context-panel__grid button {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, .14);
+  border-radius: 999px;
+  background: rgba(59, 130, 246, .18);
+  color: inherit;
+  cursor: pointer;
+}
+
+.as6-workspace-context-panel__events {
+  margin-top: 12px;
+}
+
+.as6-workspace-context-panel__events ol {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.as6-workspace-context-panel__events li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .045);
+}
+
+.as6-workspace-runtime-tracer {
+  margin: 0 24px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+@media(max-width:1000px) {
+  .as6-workspace-context-panel__grid {
+    grid-template-columns: 1fr;
+  }
+}

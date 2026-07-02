@@ -1,0 +1,15 @@
+ M docs/AS6_PROJECT_STATE.md
+ M frontend/src/as6/workspace/AS6WorkspaceFoundation.css
+ M frontend/src/as6/workspace/index.js
+?? docs/aec/as6-epic006-pr3-execution-orchestrator-aec.md
+?? docs/aec/as6-epic007-pr2-workspace-context-aec.md
+?? docs/coverage/as6-epic006-pr3-execution-orchestrator-coverage.md
+?? docs/coverage/as6-epic007-pr2-workspace-context-coverage.md
+?? docs/diagnostics/as6-epic006-pr3-execution-orchestrator.md
+?? docs/diagnostics/as6-epic007-pr2-workspace-context.md
+?? docs/governance/as6-epic006-pr3-execution-orchestrator-governance.md
+?? docs/governance/as6-epic007-pr2-workspace-context-governance.md
+?? frontend/src/as6/business-home/AS6ExecutionOrchestratorPanel.css
+?? frontend/src/as6/business-home/AS6ExecutionOrchestratorPanel.jsx
+?? frontend/src/as6/workspace/AS6WorkspaceContext.jsx
+?? frontend/src/as6/workspace/AS6WorkspaceContextPanel.jsx

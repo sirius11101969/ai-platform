@@ -1,0 +1,9 @@
+frontend/src/as6/workspace/as6WorkspaceStorage.js:5:  return typeof window !== "undefined" && Boolean(window.localStorage);
+frontend/src/as6/workspace/as6WorkspaceStorage.js:50:    const raw = window.localStorage.getItem(STORAGE_KEY);
+frontend/src/as6/workspace/as6WorkspaceStorage.js:64:    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+frontend/src/as6/workspace/AS6WorkspaceManager.contract.md:23:- localStorage key: as6-workspace-manager:v98
+frontend/src/as6/workspace/AS6WorkspaceContextPanel.jsx:12:        <p>Active Module, Focus Context, Right Rail, Actions и Events работают без persistent storage.</p>
+frontend/src/as6/workspace/AS6WorkspacePersistence.contract.md:9:- Prevent localStorage duplication across Shell surfaces.
+frontend/src/as6/workspace/as6WorkspaceManager.js:11:  return typeof window !== "undefined" && Boolean(window.localStorage);
+frontend/src/as6/workspace/as6WorkspaceManager.js:20:    const raw = window.localStorage.getItem(STORAGE_KEY);
+frontend/src/as6/workspace/as6WorkspaceManager.js:32:  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));

@@ -1,0 +1,8 @@
+frontend/src/as6/workspace/AS6WorkspaceFoundation.css
+frontend/src/as6/workspace/AS6WorkspaceFoundation.jsx
+frontend/src/as6/workspace/AS6Workspace.jsx
+frontend/src/as6/workspace/AS6WorkspaceManager.contract.md
+frontend/src/as6/workspace/as6WorkspaceManager.js
+frontend/src/as6/workspace/AS6WorkspacePersistence.contract.md
+frontend/src/as6/workspace/as6WorkspaceStorage.js
+frontend/src/as6/workspace/index.js

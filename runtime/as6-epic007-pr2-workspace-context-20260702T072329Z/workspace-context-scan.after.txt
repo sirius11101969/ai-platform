@@ -1,0 +1,24 @@
+frontend/src/as6/workspace/index.js:12:  AS6WorkspaceProvider,
+frontend/src/as6/workspace/index.js:13:  AS6WorkspaceRuntimeTracer,
+frontend/src/as6/workspace/index.js:14:  useAS6WorkspaceContext,
+frontend/src/as6/workspace/index.js:17:  AS6_WORKSPACE_EVENT_TYPES,
+frontend/src/as6/workspace/index.js:20:export { default as AS6WorkspaceContextPanel } from './AS6WorkspaceContextPanel.jsx';
+frontend/src/as6/workspace/AS6WorkspaceContext.jsx:21:export const AS6_WORKSPACE_EVENT_TYPES = {
+frontend/src/as6/workspace/AS6WorkspaceContext.jsx:47:    case AS6_WORKSPACE_EVENT_TYPES.MODULE_ACTIVATED: {
+frontend/src/as6/workspace/AS6WorkspaceContext.jsx:56:    case AS6_WORKSPACE_EVENT_TYPES.FOCUS_CHANGED: {
+frontend/src/as6/workspace/AS6WorkspaceContext.jsx:69:    case AS6_WORKSPACE_EVENT_TYPES.RIGHT_RAIL_CHANGED: {
+frontend/src/as6/workspace/AS6WorkspaceContext.jsx:82:    case AS6_WORKSPACE_EVENT_TYPES.ACTION_REGISTERED: {
+frontend/src/as6/workspace/AS6WorkspaceContext.jsx:97:    case AS6_WORKSPACE_EVENT_TYPES.EVENT_PUBLISHED: {
+frontend/src/as6/workspace/AS6WorkspaceContext.jsx:112:export function AS6WorkspaceProvider({ children, initialState = AS6_WORKSPACE_DEFAULT_STATE }) {
+frontend/src/as6/workspace/AS6WorkspaceContext.jsx:121:      dispatch({ type: AS6_WORKSPACE_EVENT_TYPES.MODULE_ACTIVATED, activeModule });
+frontend/src/as6/workspace/AS6WorkspaceContext.jsx:124:      dispatch({ type: AS6_WORKSPACE_EVENT_TYPES.FOCUS_CHANGED, focusContext });
+frontend/src/as6/workspace/AS6WorkspaceContext.jsx:127:      dispatch({ type: AS6_WORKSPACE_EVENT_TYPES.RIGHT_RAIL_CHANGED, rightRail });
+frontend/src/as6/workspace/AS6WorkspaceContext.jsx:130:      dispatch({ type: AS6_WORKSPACE_EVENT_TYPES.ACTION_REGISTERED, workspaceAction });
+frontend/src/as6/workspace/AS6WorkspaceContext.jsx:133:      dispatch({ type: AS6_WORKSPACE_EVENT_TYPES.EVENT_PUBLISHED, workspaceEvent });
+frontend/src/as6/workspace/AS6WorkspaceContext.jsx:144:export function useAS6WorkspaceContext() {
+frontend/src/as6/workspace/AS6WorkspaceContext.jsx:148:    throw new Error('useAS6WorkspaceContext must be used inside AS6WorkspaceProvider');
+frontend/src/as6/workspace/AS6WorkspaceContext.jsx:154:export function AS6WorkspaceRuntimeTracer() {
+frontend/src/as6/workspace/AS6WorkspaceContext.jsx:155:  const { state } = useAS6WorkspaceContext();
+frontend/src/as6/workspace/AS6WorkspaceContextPanel.jsx:2:import { useAS6WorkspaceContext } from './AS6WorkspaceContext.jsx';
+frontend/src/as6/workspace/AS6WorkspaceContextPanel.jsx:4:export default function AS6WorkspaceContextPanel() {
+frontend/src/as6/workspace/AS6WorkspaceContextPanel.jsx:5:  const { state, activateModule, setFocusContext, setRightRail, registerWorkspaceAction } = useAS6WorkspaceContext();
