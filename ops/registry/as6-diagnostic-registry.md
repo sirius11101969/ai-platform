@@ -1591,3 +1591,18 @@ ops/bin/as6-control-permission-engine-v114
 - Compatibility Migration: docs/epic009/as6-compatibility-migration-package.md
 - Implementation Blueprint: docs/epic009/as6-epic009-implementation-blueprint.md
 - Runtime artifacts: runtime/as6-epic009-solution-design/20260702T151931Z
+
+## AS6_EPIC009_IMPLEMENTATION_PLAN
+
+- Diagnostic: ops/bin/as6-diagnose-epic009-implementation-plan
+- Control: ops/bin/as6-control-epic009-implementation-plan
+- Implementation Plan Package: docs/epic009/as6-epic009-implementation-plan-package.md
+- Master Implementation Plan: docs/epic009/as6-epic009-master-implementation-plan.md
+- Slice Roadmap: docs/epic009/as6-epic009-slice-roadmap.md
+- Dependency Matrix: docs/epic009/as6-epic009-dependency-matrix.md
+- Capability Slice Matrix: docs/epic009/as6-epic009-capability-slice-matrix.md
+- ADR Slice Matrix: docs/epic009/as6-epic009-adr-slice-matrix.md
+- Validation Matrix: docs/epic009/as6-epic009-validation-matrix.md
+- Runtime Evidence Matrix: docs/epic009/as6-epic009-runtime-evidence-matrix.md
+- Definition of Done Matrix: docs/epic009/as6-epic009-definition-of-done-matrix.md
+- Runtime artifacts: runtime/as6-epic009-implementation-plan/20260702T153538Z

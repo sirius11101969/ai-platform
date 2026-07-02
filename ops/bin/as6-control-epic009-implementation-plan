@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-epic009-implementation-plan
+grep -q AS6_IMPLEMENTATION_PLAN_PACKAGE_MISSING ops/governance/as6-epic009-implementation-plan-root-cause.md
+grep -q AS6_AEC_EPIC009_IMPLEMENTATION_PLAN_REQUIRED ops/governance/as6-epic009-implementation-plan-aec.md
+grep -q AS6_AEC_EPIC009_SLICE01_OS_FOUNDATION_NEXT ops/governance/as6-epic009-implementation-plan-aec.md
+echo AS6_EPIC009_IMPLEMENTATION_PLAN_CONTROL=PASS

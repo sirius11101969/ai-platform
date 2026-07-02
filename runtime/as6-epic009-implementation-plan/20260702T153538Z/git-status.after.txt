@@ -1,0 +1,17 @@
+ M docs/AS6_PROJECT_STATE.md
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? docs/epic009/as6-epic009-adr-slice-matrix.md
+?? docs/epic009/as6-epic009-capability-slice-matrix.md
+?? docs/epic009/as6-epic009-definition-of-done-matrix.md
+?? docs/epic009/as6-epic009-dependency-matrix.md
+?? docs/epic009/as6-epic009-implementation-plan-package.md
+?? docs/epic009/as6-epic009-master-implementation-plan.md
+?? docs/epic009/as6-epic009-runtime-evidence-matrix.md
+?? docs/epic009/as6-epic009-slice-roadmap.md
+?? docs/epic009/as6-epic009-validation-matrix.md
+?? ops/bin/as6-control-epic009-implementation-plan
+?? ops/bin/as6-diagnose-epic009-implementation-plan
+?? ops/governance/as6-epic009-implementation-plan-aec.md
+?? ops/governance/as6-epic009-implementation-plan-root-cause.md

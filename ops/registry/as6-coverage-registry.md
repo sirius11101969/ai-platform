@@ -3414,3 +3414,20 @@ Permission Validation
 - ops/governance/as6-epic009-solution-design-root-cause.md
 - ops/governance/as6-epic009-solution-design-aec.md
 - runtime/as6-epic009-solution-design/20260702T151931Z/runtime-trace.txt
+
+## AS6_EPIC009_IMPLEMENTATION_PLAN
+
+- docs/epic009/as6-epic009-implementation-plan-package.md
+- docs/epic009/as6-epic009-master-implementation-plan.md
+- docs/epic009/as6-epic009-slice-roadmap.md
+- docs/epic009/as6-epic009-dependency-matrix.md
+- docs/epic009/as6-epic009-capability-slice-matrix.md
+- docs/epic009/as6-epic009-adr-slice-matrix.md
+- docs/epic009/as6-epic009-validation-matrix.md
+- docs/epic009/as6-epic009-runtime-evidence-matrix.md
+- docs/epic009/as6-epic009-definition-of-done-matrix.md
+- ops/bin/as6-diagnose-epic009-implementation-plan
+- ops/bin/as6-control-epic009-implementation-plan
+- ops/governance/as6-epic009-implementation-plan-root-cause.md
+- ops/governance/as6-epic009-implementation-plan-aec.md
+- runtime/as6-epic009-implementation-plan/20260702T153538Z/runtime-trace.txt

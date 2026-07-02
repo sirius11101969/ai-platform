@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f docs/epic009/as6-epic009-implementation-plan-package.md
+test -f docs/epic009/as6-epic009-master-implementation-plan.md
+test -f docs/epic009/as6-epic009-slice-roadmap.md
+test -f docs/epic009/as6-epic009-dependency-matrix.md
+test -f docs/epic009/as6-epic009-capability-slice-matrix.md
+test -f docs/epic009/as6-epic009-adr-slice-matrix.md
+test -f docs/epic009/as6-epic009-validation-matrix.md
+test -f docs/epic009/as6-epic009-runtime-evidence-matrix.md
+test -f docs/epic009/as6-epic009-definition-of-done-matrix.md
+grep -q "IMPLEMENTATION_PLAN_PACKAGE=APPROVED" docs/epic009/as6-epic009-implementation-plan-package.md
+grep -q "SLICE_01=OPERATING_SYSTEM_FOUNDATION" docs/epic009/as6-epic009-master-implementation-plan.md
+grep -q "CAPABILITY_SLICE_MATRIX=APPROVED" docs/epic009/as6-epic009-capability-slice-matrix.md
+grep -q "ADR_SLICE_MATRIX=APPROVED" docs/epic009/as6-epic009-adr-slice-matrix.md
+grep -q "VALIDATION_MATRIX=APPROVED" docs/epic009/as6-epic009-validation-matrix.md
+grep -q "RUNTIME_EVIDENCE_MATRIX=APPROVED" docs/epic009/as6-epic009-runtime-evidence-matrix.md
+grep -q "DEFINITION_OF_DONE_MATRIX=APPROVED" docs/epic009/as6-epic009-definition-of-done-matrix.md
+grep -q "NEXT_STAGE=AS6_EPIC009_SLICE01_OS_FOUNDATION" docs/epic009/as6-epic009-implementation-plan-package.md
+echo AS6_EPIC009_IMPLEMENTATION_PLAN=PASS
+echo IMPLEMENTATION_PLAN_PACKAGE=APPROVED
+echo SLICE01_OS_FOUNDATION_READY=TRUE
