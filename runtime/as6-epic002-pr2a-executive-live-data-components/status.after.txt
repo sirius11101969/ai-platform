@@ -1,0 +1,6 @@
+ M docs/AS6_PROJECT_STATE.md
+ M frontend/src/components/AS6DashboardLiveDataStatus.jsx
+ M frontend/src/components/AS6RevenueCrmFusionStatus.jsx
+?? docs/coverage/as6-epic002-pr2a-executive-live-data-components-coverage.md
+?? docs/diagnostics/as6-epic002-pr2a-executive-live-data-components.md
+?? docs/governance/as6-epic002-pr2a-executive-live-data-components-governance.md

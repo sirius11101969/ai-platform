@@ -5009,3 +5009,13 @@ Status: PASS pending validation
 - Preserved contextState.businessHome, Workspace Storage V99, drag/drop and AI Adaptive Home.
 - Registered null Executive component gap in diagnostics/governance.
 - Project readiness: 100% EPIC-001; EPIC-002 started.
+
+## AS6 EPIC-002 PR-2A — Executive Live Data Components
+
+- AS6_DONE=AS6_EPIC002_PR2A_EXECUTIVE_LIVE_DATA_COMPONENTS.
+- Implemented AS6DashboardLiveDataStatus.
+- Implemented AS6RevenueCrmFusionStatus.
+- Bound components to existing Dashboard Live Data V105 and Revenue CRM Fusion V107.
+- Reused AS6UnifiedDataSurface primitives.
+- Preserved Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home.
+- Project readiness: 99.8%.
