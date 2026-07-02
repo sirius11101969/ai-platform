@@ -1485,3 +1485,11 @@ ops/bin/as6-control-permission-engine-v114
 - Failure class: AS6_EXECUTIVE_GOVERNANCE_COVERAGE_GAP
 - AEC: ops/governance/as6-executive-intelligence-hardening-aec.md
 - Root cause: ops/governance/as6-executive-intelligence-hardening-root-cause.md
+
+## AS6_EPIC008_PRODUCTION_READINESS_REVIEW
+
+- Review report: docs/reviews/as6-epic008-production-readiness-review.md
+- Baseline manifest: docs/baselines/as6-baseline-executive-intelligence-v1.md
+- Compatibility matrix: docs/baselines/as6-baseline-executive-intelligence-v1-compatibility-matrix.md
+- Immutability rule: ops/governance/as6-baseline-immutability-rule-executive-intelligence-v1.md
+- Runtime artifacts: runtime/as6-epic008-production-readiness-review/20260702T121307Z

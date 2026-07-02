@@ -3315,3 +3315,14 @@ Permission Validation
 - ops/governance/as6-executive-intelligence-hardening-root-cause.md
 - ops/governance/as6-executive-intelligence-hardening-aec.md
 - runtime/as6-epic008-executive-intelligence-hardening/20260702T115713Z/runtime-trace.txt
+
+## AS6_EPIC008_PRODUCTION_READINESS_REVIEW
+
+- docs/reviews/as6-epic008-production-readiness-review.md
+- docs/baselines/as6-baseline-executive-intelligence-v1.md
+- docs/baselines/as6-baseline-executive-intelligence-v1-compatibility-matrix.md
+- ops/governance/as6-baseline-immutability-rule-executive-intelligence-v1.md
+- runtime/as6-epic008-production-readiness-review/20260702T121307Z/frontend-build.log
+- runtime/as6-epic008-production-readiness-review/20260702T121307Z/docker-build.log
+- runtime/as6-epic008-production-readiness-review/20260702T121307Z/guardian.log
+- runtime/as6-epic008-production-readiness-review/20260702T121307Z/summary.txt
