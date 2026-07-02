@@ -10,15 +10,9 @@ import { createAS6BusinessHomeLiveData } from "./AS6BusinessHomeLiveData";
 import { getAS6ActiveWorkspaceSession, getAS6WorkspaceSessions, saveAS6WorkspaceSession, setAS6ActiveWorkspaceSession, validateAS6WorkspacePersistencePolicy } from "../workspace/as6WorkspaceStorage.js";
 import { AS6Workspace, AS6Sidebar, AS6Header, AS6RightRail, AS6Assistant, AS6Focus } from "../../components/as6-workspace/AS6Workspace.jsx";
 import { AS6DataSurface, AS6DataKPI, AS6DataState } from "../../components/AS6UnifiedDataSurface.jsx";
-import AS6ExecutiveCommandDashboard from "../../components/AS6ExecutiveCommandDashboard.jsx";
-import AS6BackendConnectorStatus from "../../components/AS6BackendConnectorStatus.jsx";
-import AS6GlobalHealthBar from "../../components/AS6GlobalHealthBar.jsx";
-import AS6LiveOperationalDataStatus from "../../components/AS6LiveOperationalDataStatus.jsx";
-import AS6DashboardLiveDataStatus from "../../components/AS6DashboardLiveDataStatus.jsx";
-import AS6RevenueCrmFusionStatus from "../../components/AS6RevenueCrmFusionStatus.jsx";
 import "./AS6BusinessHome.css";
 
-export const AS6_BUSINESS_HOME_VERSION = "EPIC002_PR3";
+export const AS6_BUSINESS_HOME_VERSION = "EPIC002_PR1";
 export const AS6_BUSINESS_HOME_LAYOUT_SCHEMA_VERSION = 1;
 
 export const AS6_BUSINESS_HOME_WIDGETS = [
@@ -31,12 +25,6 @@ export const AS6_BUSINESS_HOME_WIDGETS = [
   { id: "executive-kpi", title: "Executive KPI", defaultPinned: true },
   { id: "executive-platform-health", title: "Executive Platform Health", defaultPinned: false },
   { id: "executive-risk-brief", title: "Executive Risk Brief", defaultPinned: false },
-  { id: "executive-command-dashboard", title: "Executive Command Dashboard", defaultPinned: true },
-  { id: "backend-connector-status", title: "Backend Connector Status", defaultPinned: false },
-  { id: "global-health-bar", title: "Global Health Bar", defaultPinned: false },
-  { id: "live-operational-data-status", title: "Live Operational Data Status", defaultPinned: false },
-  { id: "dashboard-live-data-status", title: "Dashboard Live Data Status", defaultPinned: false },
-  { id: "revenue-crm-fusion-status", title: "Revenue CRM Fusion Status", defaultPinned: false },
 ];
 
 export function createAS6BusinessHomeDefaultLayout() {
@@ -291,12 +279,6 @@ export function AS6BusinessHome() {
       const hasRisk = state.marketplace?.failures?.length || state.dashboardStatus?.status !== "LIVE";
       return <AS6DataSurface title="Executive Risk Brief" key={widgetId} data-widget-id={widgetId}>{hasRisk ? <ul className="as6-business-home__list">{state.recommendations.map((item) => <li key={item}>{item}</li>)}</ul> : <AS6DataState type="empty" title="Критических рисков не обнаружено" detail="AS6 использует текущие live/fallback данные Business Home." />}</AS6DataSurface>;
     }
-    if (widgetId === "executive-command-dashboard") return <AS6ExecutiveCommandDashboard key={widgetId} data-widget-id={widgetId} />;
-    if (widgetId === "backend-connector-status") return <AS6BackendConnectorStatus key={widgetId} data-widget-id={widgetId} />;
-    if (widgetId === "global-health-bar") return <AS6GlobalHealthBar key={widgetId} data-widget-id={widgetId} />;
-    if (widgetId === "live-operational-data-status") return <AS6LiveOperationalDataStatus key={widgetId} data-widget-id={widgetId} />;
-    if (widgetId === "dashboard-live-data-status") return <AS6DashboardLiveDataStatus key={widgetId} data-widget-id={widgetId} />;
-    if (widgetId === "revenue-crm-fusion-status") return <AS6RevenueCrmFusionStatus key={widgetId} data-widget-id={widgetId} />;
     return null;
   }
 
