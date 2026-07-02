@@ -5109,3 +5109,13 @@ Status: PASS pending validation
 - Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
 - Added diagnostics, governance and coverage artifacts.
 - Project readiness: 99.8%.
+
+## AS6 EPIC-004 PR-1 — Executive Automation Scenarios
+
+- AS6_DONE=AS6_EPIC004_PR1_EXECUTIVE_AUTOMATION_SCENARIOS.
+- Added runtime-only Executive Automation scenarios.
+- Added scenario plans from registered safe actionId sequences.
+- Added visible scenario launcher in Business Home.
+- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+- Added diagnostics, governance and coverage artifacts.
+- Project readiness: 99.8%.

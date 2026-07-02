@@ -19,10 +19,9 @@ import AS6RevenueCrmFusionStatus from "../../components/AS6RevenueCrmFusionStatu
 import { applyAS6ExecutiveWorkspaceProfile, createAS6ExecutiveProfileRecommendation, getAS6ExecutiveWorkspaceProfiles } from "./as6ExecutiveWorkspaceProfiles.js";
 import { createAS6ExecutiveInsights } from "./as6ExecutiveInsights.js";
 import { createAS6ExecutiveAction, executeAS6ExecutiveAction, validateAS6ExecutiveAction } from "./as6ExecutiveActions.js";
-import { AS6_EXECUTIVE_AUTOMATION_SCENARIOS, createAS6ExecutiveAutomationPlan, executeAS6ExecutiveAutomationScenario } from "./as6ExecutiveAutomationScenarios.js";
 import "./AS6BusinessHome.css";
 
-export const AS6_BUSINESS_HOME_VERSION = "EPIC004_PR1";
+export const AS6_BUSINESS_HOME_VERSION = "EPIC003_PR5";
 export const AS6_BUSINESS_HOME_LAYOUT_SCHEMA_VERSION = 1;
 
 export const AS6_BUSINESS_HOME_WIDGETS = [
@@ -163,7 +162,6 @@ export function AS6BusinessHome() {
   const [draggedWidgetId, setDraggedWidgetId] = useState(null);
   const [executiveActionStatus, setExecutiveActionStatus] = useState(null);
   const [executiveActionHistory, setExecutiveActionHistory] = useState([]);
-  const [executiveAutomationPlan, setExecutiveAutomationPlan] = useState(null);
 
   useEffect(() => {
     setLayout(state.businessHomeLayout);
@@ -269,13 +267,6 @@ export function AS6BusinessHome() {
     setExecutiveActionHistory((history) => [auditEvent, ...history].slice(0, 8));
   }
 
-  function handleAS6ExecutiveAutomationScenario(scenarioId) {
-    const plan = createAS6ExecutiveAutomationPlan(scenarioId);
-    setExecutiveAutomationPlan(plan);
-    if (!plan?.actions?.[0]?.safe) return;
-    executeAS6ExecutiveAutomationScenario(scenarioId);
-  }
-
   function handleAS6ExecutiveAction(insight) {
     const action = createAS6ExecutiveAction(insight);
     const validation = validateAS6ExecutiveAction(action);
@@ -367,7 +358,7 @@ export function AS6BusinessHome() {
     if (widgetId === "dashboard-live-data-status") return <AS6DashboardLiveDataStatus key={widgetId} data-widget-id={widgetId} />;
     if (widgetId === "revenue-crm-fusion-status") return <AS6RevenueCrmFusionStatus key={widgetId} data-widget-id={widgetId} />;
     if (widgetId === "executive-insights") {
-      return <AS6DataSurface title="Executive Insights & Recommendations" key={widgetId} data-widget-id={widgetId}><ul className="as6-business-home__list">{executiveInsights.recommendations.map((insight) => <li key={insight.id}><strong>{insight.title}</strong><br /><span>{insight.reason}</span><br /><small>{insight.action}</small><br /><button type="button" onClick={() => handleAS6ExecutiveAction(insight)}>Выполнить безопасное действие</button><br /><small>Target: {validateAS6ExecutiveAction(createAS6ExecutiveAction(insight)).target}</small></li>)}</ul><section className="as6-business-home__automation-scenarios" aria-label="Executive Automation Scenarios"><strong>Executive Automation Scenarios</strong>{Object.values(AS6_EXECUTIVE_AUTOMATION_SCENARIOS).map((scenario) => <button type="button" key={scenario.scenarioId} onClick={() => handleAS6ExecutiveAutomationScenario(scenario.scenarioId)}>{scenario.title}</button>)}{executiveAutomationPlan && <small>Plan: {executiveAutomationPlan.title} / Actions: {executiveAutomationPlan.actions.map((action) => action.actionId).join(" → ")} / Runtime-only</small>}</section><section className="as6-business-home__action-metrics" aria-label="Executive Action Metrics"><strong>Executive Action Metrics</strong><div><span>Total: {executiveActionMetrics.total}</span><span>Success: {executiveActionMetrics.successful}</span><span>Success Rate: {executiveActionMetrics.successRate}%</span><span>Fallback: {executiveActionMetrics.fallback}</span><span>Fallback Rate: {executiveActionMetrics.fallbackRate}%</span><span>Top Action: {executiveActionMetrics.topAction}</span><span>Recent Routes: {executiveActionMetrics.recentTargets.join(", ") || "none"}</span></div></section>{executiveActionStatus && <AS6DataState type={executiveActionStatus.ok ? "success" : "warning"} title={executiveActionStatus.status} detail={(executiveActionStatus.label || "Action") + " → " + executiveActionStatus.target + " / " + executiveActionStatus.message} />}{executiveActionHistory.length > 0 && <section className="as6-business-home__action-audit" aria-label="Executive Action Audit Trail"><strong>Action Audit Trail</strong>{executiveActionHistory.map((event) => <article key={event.id}><span>{event.createdAt}</span><strong>{event.actionId}</strong><small>{event.label} → {event.target}</small><small>Status: {event.status} / Fallback: {event.fallback ? "YES" : "NO"}</small></article>)}</section>}<AS6DataState type="empty" title={executiveInsights.profileName} detail={executiveInsights.source} /></AS6DataSurface>;
+      return <AS6DataSurface title="Executive Insights & Recommendations" key={widgetId} data-widget-id={widgetId}><ul className="as6-business-home__list">{executiveInsights.recommendations.map((insight) => <li key={insight.id}><strong>{insight.title}</strong><br /><span>{insight.reason}</span><br /><small>{insight.action}</small><br /><button type="button" onClick={() => handleAS6ExecutiveAction(insight)}>Выполнить безопасное действие</button><br /><small>Target: {validateAS6ExecutiveAction(createAS6ExecutiveAction(insight)).target}</small></li>)}</ul><section className="as6-business-home__action-metrics" aria-label="Executive Action Metrics"><strong>Executive Action Metrics</strong><div><span>Total: {executiveActionMetrics.total}</span><span>Success: {executiveActionMetrics.successful}</span><span>Success Rate: {executiveActionMetrics.successRate}%</span><span>Fallback: {executiveActionMetrics.fallback}</span><span>Fallback Rate: {executiveActionMetrics.fallbackRate}%</span><span>Top Action: {executiveActionMetrics.topAction}</span><span>Recent Routes: {executiveActionMetrics.recentTargets.join(", ") || "none"}</span></div></section>{executiveActionStatus && <AS6DataState type={executiveActionStatus.ok ? "success" : "warning"} title={executiveActionStatus.status} detail={(executiveActionStatus.label || "Action") + " → " + executiveActionStatus.target + " / " + executiveActionStatus.message} />}{executiveActionHistory.length > 0 && <section className="as6-business-home__action-audit" aria-label="Executive Action Audit Trail"><strong>Action Audit Trail</strong>{executiveActionHistory.map((event) => <article key={event.id}><span>{event.createdAt}</span><strong>{event.actionId}</strong><small>{event.label} → {event.target}</small><small>Status: {event.status} / Fallback: {event.fallback ? "YES" : "NO"}</small></article>)}</section>}<AS6DataState type="empty" title={executiveInsights.profileName} detail={executiveInsights.source} /></AS6DataSurface>;
     }
     return null;
   }

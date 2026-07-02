@@ -340,3 +340,25 @@
 @media (max-width: 980px) {
   .as6-business-home__action-metrics div { grid-template-columns: 1fr; }
 }
+
+.as6-business-home__automation-scenarios {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.32);
+}
+.as6-business-home__automation-scenarios button {
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 12px;
+  padding: 8px 12px;
+  background: rgba(15, 23, 42, 0.52);
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+.as6-business-home__automation-scenarios small {
+  color: rgba(226, 232, 240, 0.72);
+}
