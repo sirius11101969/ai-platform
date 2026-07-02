@@ -1,0 +1,743 @@
+frontend/src/pages/PipelineCopilotPage.jsx:9:  focusLeads: "Focus Leads",
+frontend/src/pages/PipelineCopilotPage.jsx:226:          <SectionHeader title="Focus Leads" hint="Only leads that need manager attention now: elevated risk, booked/proposal stage, or clear buying intent." action={showAllButton("focusLeads", cockpit?.focusLeads || [], 6)} />
+frontend/src/pages/PipelineCopilotPage.jsx:325:          <Panel><span>Focus Pipeline</span><strong>{formatMoney(revenue.focusPipelineValue)}</strong><p>Value in today’s focus set</p></Panel>
+frontend/src/pages/AiVoiceOutreachPage.jsx:51:  async function loadVoiceWorkspace() {
+frontend/src/pages/AiVoiceOutreachPage.jsx:70:    loadVoiceWorkspace().catch((requestError) => {
+frontend/src/pages/AiVoiceOutreachPage.jsx:178:          <button className="ghost-button compact" type="button" onClick={loadVoiceWorkspace} disabled={loading}>Refresh</button>
+frontend/src/pages/AS6WorkspacePage.jsx:2:import AS6Workspace from "../components/as6/AS6Workspace";
+frontend/src/pages/AS6WorkspacePage.jsx:4:export default function AS6WorkspacePage() {
+frontend/src/pages/AS6WorkspacePage.jsx:6:    <AS6Workspace
+frontend/src/pages/AS6WorkspacePage.jsx:11:          <strong>AS6 Assistant</strong>
+frontend/src/pages/AS6WorkspacePage.jsx:17:        <strong>Workspace integration active</strong>
+frontend/src/pages/AS6WorkspacePage.jsx:18:        <p>AS6 Workspace подключён как маршрут и готов к миграции CRM на общий foundation.</p>
+frontend/src/pages/AS6WorkspacePage.jsx:20:    </AS6Workspace>
+frontend/src/pages/RevenueDashboardPage.jsx:6:import { fetchRevenueOverview, fetchRevenueFunnel, fetchRevenueOrders, fetchWorkspaces, getActiveWorkspaceId, fetchPaymentDashboard, fetchRevenueCommandCenter } from '../services/api'
+frontend/src/pages/RevenueDashboardPage.jsx:11:  const [workspaceId, setWorkspaceId] = useState(() => getActiveWorkspaceId())
+frontend/src/pages/RevenueDashboardPage.jsx:13:  const [workspaces, setWorkspaces] = useState([])
+frontend/src/pages/RevenueDashboardPage.jsx:22:        const workspaceId = getActiveWorkspaceId()
+frontend/src/pages/RevenueDashboardPage.jsx:35:          fetchWorkspaces(),
+frontend/src/pages/RevenueDashboardPage.jsx:43:        setWorkspaces(workspaces || [])
+frontend/src/pages/RevenueDashboardPage.jsx:55:    const handleWorkspaceUpdate = (event) => setWorkspaceId(event?.detail?.workspaceId || getActiveWorkspaceId())
+frontend/src/pages/RevenueDashboardPage.jsx:56:    window.addEventListener('ai-platform-workspace-updated', handleWorkspaceUpdate)
+frontend/src/pages/RevenueDashboardPage.jsx:57:    return () => window.removeEventListener('ai-platform-workspace-updated', handleWorkspaceUpdate)
+frontend/src/pages/RevenueDashboardPage.jsx:69:      fetchWorkspaces(),
+frontend/src/pages/RevenueDashboardPage.jsx:78:        setWorkspaces(w.workspaces || [])
+frontend/src/pages/AiRealtimeVoicePage.jsx:53:  async function loadWorkspace() {
+frontend/src/pages/AiRealtimeVoicePage.jsx:77:    loadWorkspace();
+frontend/src/pages/AiRealtimeVoicePage.jsx:78:    const interval = window.setInterval(() => loadWorkspace(), 10000);
+frontend/src/pages/AiRealtimeVoicePage.jsx:80:    // loadWorkspace is intentionally polled through the stable initial closure and activeSessionIdRef.
+frontend/src/pages/AiRealtimeVoicePage.jsx:93:      await loadWorkspace();
+frontend/src/pages/AiRealtimeVoicePage.jsx:174:            <button className="ghost-button compact" type="button" onClick={loadWorkspace} disabled={loading}>Refresh</button>
+frontend/src/pages/crm/CRMAnalyticsPanel.jsx:17:  onAnalyzeWorkspaceAi = null,
+frontend/src/pages/crm/CRMAnalyticsPanel.jsx:26:  void onAnalyzeWorkspaceAi;
+frontend/src/pages/AS6OnePage.jsx:36:        <div className="one-switch"><b>RU</b><span>EN</span></div><div className="one-select"><small>Рабочее пространство</small><b>AS6 Workspace⌄</b></div><div className="one-select"><small>Команда и тариф</small><b>Enterprise · PRO</b></div><div className="one-profile"><Avatar/><b>Владимир</b><span>Владелец</span><i>⌄</i></div>
+frontend/src/pages/PriorityInboxPage.jsx:8:  { key: "focus", label: "Focus" },
+frontend/src/pages/PriorityInboxPage.jsx:22:  return ({ urgentLeads: "Urgent Leads", focusLeads: "Focus Leads", atRiskDeals: "At-Risk Deals", meetingsToday: "Meetings Today", followUpsNeeded: "Follow-ups Needed" }[key] || key);
+frontend/src/pages/PriorityInboxPage.jsx:122:        eyebrow="AI Priority Inbox · Focus Mode v2"
+frontend/src/pages/PriorityInboxPage.jsx:123:        title="Focus Mode"
+frontend/src/pages/PriorityInboxPage.jsx:143:            <h3>Focused action queue</h3>
+frontend/src/pages/PriorityInboxPage.jsx:144:            <p>{loading ? "AI применяет Focus Mode…" : `${inbox.leads.length} из ${inbox.totalLeads || inbox.leads.length} активных лидов показаны в ${TABS.find((tab) => tab.key === mode)?.label || "Focus"}`}</p>
+frontend/src/pages/PriorityInboxPage.jsx:146:          <span className="priority-sorting-hint">Сортировка Focus: urgent → at-risk proposal/booked → meetings → priority</span>
+frontend/src/pages/PriorityInboxPage.jsx:156:        {loading && Array.from({ length: 4 }).map((_, index) => <Panel className="priority-lead-card priority-card-skeleton" key={index}>AI анализирует Focus Mode…</Panel>)}
+frontend/src/pages/CRMWorkspacePage.jsx:2:import AS6Workspace from "../components/as6/AS6Workspace";
+frontend/src/pages/CRMWorkspacePage.jsx:5:export default function CRMWorkspacePage() {
+frontend/src/pages/CRMWorkspacePage.jsx:7:    <AS6Workspace
+frontend/src/pages/CRMWorkspacePage.jsx:8:      title="AS6 CRM Workspace"
+frontend/src/pages/CRMWorkspacePage.jsx:12:          <strong>AS6 Assistant</strong>
+frontend/src/pages/CRMWorkspacePage.jsx:18:    </AS6Workspace>
+frontend/src/pages/AiLiveRealtimeVoicePage.jsx:21:  const [pilot, setPilot] = useState({ enabled: false, authorizedWorkspace: false, consent: false, state: 'pilot_disconnected', active: false, timer: 0, latency: 0, reason: 'pilot_disabled', maxSessionSeconds: 180 })
+frontend/src/pages/AiLiveRealtimeVoicePage.jsx:159:    setPilot((curr) => ({ ...curr, enabled: response?.reason !== 'pilot_disabled', authorizedWorkspace: response?.reason !== 'pilot_workspace_not_authorized', state: allowed ? 'pilot_connecting' : 'pilot_failed', active: allowed, reason: response?.reason || 'unknown', maxSessionSeconds: response?.maxSessionSeconds || 180, timer: 0 }))
+frontend/src/pages/AiLiveRealtimeVoicePage.jsx:223:        <p><b>Pilot Mode</b> · <b>Authorized Workspace Only</b> · <b>Disconnect Anytime</b> · <b>Auto Timeout Enabled</b> · <b>API Key Never Exposed</b></p>
+frontend/src/pages/AiLiveRealtimeVoicePage.jsx:224:        <p><b>Pilot enabled</b>: {pilot.enabled ? 'Yes' : 'No'} · <b>Workspace authorized</b>: {pilot.authorizedWorkspace ? 'Yes' : 'No'}</p>
+frontend/src/pages/CRMPage.jsx:1:import '../design-system/crm/as6CrmWorkspaceClientTraceAuto.js';
+frontend/src/pages/CRMPage.jsx:26:import { AS6AssistantShell, AS6AssistantHeader, AS6AssistantMessage, AS6AssistantAction, AS6AssistantStatus } from '../components/as6-workspace/AS6Assistant.jsx';
+frontend/src/pages/CRMPage.jsx:27:import { AS6FocusShell, AS6FocusHeader, AS6FocusStep, AS6FocusAction, AS6FocusSignal } from '../components/as6-workspace/AS6Focus.jsx';
+frontend/src/pages/CRMPage.jsx:28:import { AS6RightRailShell, AS6RightRailSection, AS6RightRailMetric } from '../components/as6-workspace/AS6RightRail.jsx';
+frontend/src/pages/CRMPage.jsx:949:  async function handleAnalyzeWorkspaceAi() {
+frontend/src/pages/CRMPage.jsx:1122:      <section className="as6-crm-workspace-client-surface" data-as6-crm-workspace-client="v231" aria-label="AS6 CRM Workspace client">
+frontend/src/pages/CRMPage.jsx:1125:          <AS6CorePromise>CRM стала первым клиентом AS6 Workspace.</AS6CorePromise>
+frontend/src/pages/CRMPage.jsx:1133:        <AS6FocusShell className="as6-crm-focus-client" priority={(stats?.aiMetrics?.leadsNeedingFollowUp || 0) > 0 ? "high" : "normal"}>
+frontend/src/pages/CRMPage.jsx:1134:          <AS6FocusHeader />
+frontend/src/pages/CRMPage.jsx:1135:          <AS6FocusStep number={1} title="Разобрать приоритетных лидов">
+frontend/src/pages/CRMPage.jsx:1137:          </AS6FocusStep>
+frontend/src/pages/CRMPage.jsx:1138:          <AS6FocusSignal label="Pipeline health" value={loading ? "…" : `${stats?.aiMetrics?.pipelineHealth || 0}%`} tone="crm" />
+frontend/src/pages/CRMPage.jsx:1139:          <AS6FocusAction onClick={handleQueueInactiveFollowUps} disabled={inactiveQueueBusy}>{inactiveQueueBusy ? "AI ставит в очередь…" : "Поставить follow-up"}</AS6FocusAction>
+frontend/src/pages/CRMPage.jsx:1140:        </AS6FocusShell>
+frontend/src/pages/CRMPage.jsx:1142:        <AS6AssistantShell className="as6-crm-assistant-client" status={aiAnalysisBusy ? "working" : "ready"}>
+frontend/src/pages/CRMPage.jsx:1143:          <AS6AssistantHeader subtitle="Помогает управлять CRM и следующим лучшим шагом." />
+frontend/src/pages/CRMPage.jsx:1144:          <AS6AssistantStatus label={aiAnalysisBusy ? "Scoring запущен" : "Готов помочь"} />
+frontend/src/pages/CRMPage.jsx:1145:          <AS6AssistantMessage>{error || "Выберите лид, запустите scoring или поставьте follow-up для неактивных клиентов."}</AS6AssistantMessage>
+frontend/src/pages/CRMPage.jsx:1146:          <AS6AssistantAction onClick={handleAnalyzeWorkspaceAi} disabled={aiAnalysisBusy}>{aiAnalysisBusy ? "Scoring запущен…" : "Спросить AS6"}</AS6AssistantAction>
+frontend/src/pages/CRMPage.jsx:1147:        </AS6AssistantShell>
+frontend/src/pages/CRMPage.jsx:1149:        <AS6RightRailShell className="as6-crm-right-rail-client">
+frontend/src/pages/CRMPage.jsx:1150:          <AS6RightRailSection title="CRM контроль">
+frontend/src/pages/CRMPage.jsx:1151:            <AS6RightRailMetric label="At-risk" value={loading ? "…" : String(stats?.aiMetrics?.atRiskDeals || 0)} hint="сделки с риском" />
+frontend/src/pages/CRMPage.jsx:1152:            <AS6RightRailMetric label="Hot leads" value={loading ? "…" : String(stats?.aiMetrics?.hotLeads || 0)} hint="горячие лиды" />
+frontend/src/pages/CRMPage.jsx:1153:            <AS6RightRailMetric label="Forecast" value={loading ? "…" : formatCurrency(stats?.aiMetrics?.aiForecastedRevenue || stats?.aiMetrics?.predictedRevenue || 0)} hint="weighted forecast" />
+frontend/src/pages/CRMPage.jsx:1154:          </AS6RightRailSection>
+frontend/src/pages/CRMPage.jsx:1155:        </AS6RightRailShell>
+frontend/src/pages/CRMPage.jsx:1186:<div className="ai-action-center-buttons"><button className="ghost-button" type="button" onClick={handleAnalyzeWorkspaceAi} disabled={aiAnalysisBusy}>{aiAnalysisBusy ? "Scoring запущен…" : "Запустить scoring"}</button><button className="btn primary compact" type="button" onClick={handleQueueInactiveFollowUps} disabled={inactiveQueueBusy}>{inactiveQueueBusy ? "AI ставит в очередь…" : "Поставить follow-up для неактивных"}</button></div>
+frontend/src/pages/CRMPage.jsx:1196:        onAnalyzeWorkspaceAi={handleAnalyzeWorkspaceAi}
+frontend/src/pages/CRMPage.jsx:1552:          <label className="crm-field"><span>Контактное имя *</span><input autoFocus id="crm-lead-name" value={leadForm.name} onChange={(event) => setLeadForm({ ...leadForm, name: event.target.value })} required /></label>
+frontend/src/pages/AiWorkersPage.jsx:8:import { approveAiApprovalQueueItem, downloadCrmMeetingIcs, executeAiApprovalQueueItem, fetchAiApprovalQueue, fetchAiCommandCenter, fetchAiWorkersFocusSummary, fetchCrmLeads, getActiveAiSequences, rejectAiApprovalQueueItem, runAiWorker, seedDemoSalesPipeline, startAiSequence, updateAiApprovalQueueItem, updateAiWorker } from "../services/api";
+frontend/src/pages/AiWorkersPage.jsx:14:  ai_crm_assistant: "AI CRM Assistant",
+frontend/src/pages/AiWorkersPage.jsx:15:  ai_email_assistant: "AI Email Assistant",
+frontend/src/pages/AiWorkersPage.jsx:16:  ai_telegram_assistant: "AI Telegram Assistant",
+frontend/src/pages/AiWorkersPage.jsx:327:            <textarea value={editText} onChange={(event) => onEditTextChange(event.target.value)} autoFocus />
+frontend/src/pages/AiWorkersPage.jsx:370:            <textarea value={editText} onChange={(event) => onEditTextChange(event.target.value)} autoFocus />
+frontend/src/pages/AiWorkersPage.jsx:532:  { id: "focus", label: "Focus" },
+frontend/src/pages/AiWorkersPage.jsx:620:    { section: "focus", label: "Focus Queue", items: safeArray(safeState.focusActions), collapsedSection: "" },
+frontend/src/pages/AiWorkersPage.jsx:783:function getFocusPriority(item, items, now = Date.now()) {
+frontend/src/pages/AiWorkersPage.jsx:797:function shouldHideFromFocus(item, items, now = Date.now()) {
+frontend/src/pages/AiWorkersPage.jsx:809:function buildFocusQueueState(items, now = Date.now()) {
+frontend/src/pages/AiWorkersPage.jsx:815:    .filter((item) => !shouldHideFromFocus(item, sorted, now))
+frontend/src/pages/AiWorkersPage.jsx:817:    .map((item) => ({ item, priority: getFocusPriority(item, sorted, now) }))
+frontend/src/pages/AiWorkersPage.jsx:886:  const [focusSummary, setFocusSummary] = useState(null);
+frontend/src/pages/AiWorkersPage.jsx:926:      const [response, approvalResponse, focusResponse, sequencesResponse, leadsResponse] = await Promise.all([fetchAiCommandCenter(), fetchAiApprovalQueue(queueParams), fetchAiWorkersFocusSummary(focusParams), getActiveAiSequences(), fetchCrmLeads()]);
+frontend/src/pages/AiWorkersPage.jsx:929:      setFocusSummary(focusResponse || null);
+frontend/src/pages/AiWorkersPage.jsx:1202:  const focusQueueState = useMemo(() => buildFocusQueueState(approvalItems), [approvalItems]);
+frontend/src/pages/AiWorkersPage.jsx:1472:          <p>Legacy queue preview скрыт по умолчанию, чтобы Focus Queue оставалась главным рабочим списком.</p>
+frontend/src/pages/AiWorkersPage.jsx:1575:        <StatCard label="История AI задач" value={loading ? "…" : "Журнал"} hint="Доступно в журнале без шума в Focus Queue" tone="violet" />
+frontend/src/pages/AiWorkersPage.jsx:1627:            <h3>Focus Queue</h3>
+frontend/src/pages/AiWorkersPage.jsx:1720:              <p>Защитные и тестовые события доступны в журнале, но не шумят в Focus Queue.</p>
+frontend/src/pages/CommandCenterPage.jsx:5:import { fetchAiCommandCenterActions, fetchAiCommandCenterBrief, fetchAiCommandCenterFocus, fetchAiCommandCenterInbox, fetchAiCommandCenterKpi, fetchAiCommandCenterOperations, fetchAiCommandCenterPlanningMonthly, fetchAiSystemHealth } from '../services/api'
+frontend/src/pages/AIEnterpriseCommandCenter.jsx:3:import { fetchAiCommandCenterBrief, fetchAiCommandCenterDailyReport, fetchAiCommandCenterFocus, fetchAiCommandCenterKpi, fetchAiCommandCenterOperations, fetchAiCommandCenterPlanning, fetchAiCommandCenterPlanningMonthly, fetchAiCommandCenterPlanningWeekly, fetchAiCommandCenterQuality, fetchAiCommandCenterReadiness, fetchAiCommandCenterReview, fetchAiCommandCenterStability, fetchAiCommandCenterWeeklyReport } from '../services/api'
+frontend/src/pages/AIEnterpriseCommandCenter.jsx:16:    Promise.all([fetchAiCommandCenterBrief(), fetchAiCommandCenterOperations(), fetchAiCommandCenterFocus(), fetchAiCommandCenterDailyReport(), fetchAiCommandCenterWeeklyReport(), fetchAiCommandCenterKpi(), fetchAiCommandCenterPlanning(), fetchAiCommandCenterPlanningWeekly(), fetchAiCommandCenterPlanningMonthly(), fetchAiCommandCenterReview(), fetchAiCommandCenterStability(), fetchAiCommandCenterReadiness(), fetchAiCommandCenterQuality()])
+frontend/src/as6-sales/AS6SalesShellAdapter.jsx:2:import CRMWorkspacePage from '../pages/CRMWorkspacePage';
+frontend/src/as6-sales/AS6SalesShellAdapter.jsx:16:      <CRMWorkspacePage />
+frontend/src/as6-sales/AS6SalesShellAdapter.contract.md:7:Current CRM source: frontend/src/pages/CRMWorkspacePage.jsx
+frontend/src/App.jsx:31:import CRMWorkspacePage from "./pages/CRMWorkspacePage";
+frontend/src/App.jsx:32:import AS6WorkspacePage from "./pages/AS6WorkspacePage";
+frontend/src/App.jsx:139:          <Route path="/crm-workspace" element={<CRMWorkspacePage />} />
+frontend/src/App.jsx:140:          <Route path="/as6-workspace" element={<AS6WorkspacePage />} />
+frontend/src/styles.css:164:/* Sidebar shell: fixed-height desktop card with internal scrolling regions. */
+frontend/src/as6/index.js:4:export { AS6Workspace } from "./workspace/AS6Workspace.jsx";
+frontend/src/as6/living-spaces/AS6DynamicIntelligenceRail.jsx:17:        ? "Workspace intelligence"
+frontend/src/as6/business-home/as6ExecutiveActions.js:18:  if (value.includes("workspace")) return resolveAS6ExecutiveRegisteredAction("openWorkspace").target;
+frontend/src/as6/business-home/as6ExecutiveActionRegistry.js:7:  openWorkspace: { actionId: "openWorkspace", type: "navigate", label: "Открыть Workspace", target: "/as6-workspace", safe: true },
+frontend/src/as6/business-home/as6ExecutiveWorkspaceProfiles.js:47:export function getAS6ExecutiveWorkspaceProfiles() {
+frontend/src/as6/business-home/as6ExecutiveWorkspaceProfiles.js:51:export function getAS6ExecutiveWorkspaceProfile(profileName = "Administrator") {
+frontend/src/as6/business-home/as6ExecutiveWorkspaceProfiles.js:55:export function applyAS6ExecutiveWorkspaceProfile(layout, profileName = "Administrator") {
+frontend/src/as6/business-home/as6ExecutiveWorkspaceProfiles.js:56:  const profileWidgets = getAS6ExecutiveWorkspaceProfile(profileName);
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:20:    title: "Workspace → Next Step",
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:21:    actionIds: ["openWorkspace", "showNextStep"],
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:23:  businessHomeInsights: {
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:24:    scenarioId: "businessHomeInsights",
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:50:export function createAS6ExecutiveAutomationPlan(scenarioId = "businessHomeInsights") {
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:64:export function executeAS6ExecutiveAutomationScenario(scenarioId = "businessHomeInsights") {
+frontend/src/as6/business-home/as6ExecutiveAutomationScenarios.js:65:  const governance = guardAS6ExecutiveAutomationScenario(scenarioId = "businessHomeInsights");
+frontend/src/as6/business-home/AS6BusinessHomeLiveData.js:2:import { getAS6BusinessWorkspaceState } from "../business-workspace";
+frontend/src/as6/business-home/AS6BusinessHomeLiveData.js:29:  const workspace = safeCall(() => getAS6BusinessWorkspaceState(), { modules: [], notifications: [], recentItems: [] });
+frontend/src/as6/business-home/AS6BusinessHomeLiveData.js:63:    summary: "Сводка собрана из Dashboard Live Data, Business Workspace, Universal Navigation и Marketplace GA.",
+frontend/src/as6/business-home/AS6BusinessHomeLiveData.js:73:    workspace.notifications?.length ? "Просмотреть новые уведомления рабочего пространства." : "Добавить реальные уведомления рабочего дня в Workspace Runtime.",
+frontend/src/as6/business-home/AS6BusinessHomeLiveData.js:79:    "Workspace modules: " + (workspace.modules?.length || 0),
+frontend/src/as6/business-home/AS6BusinessHome.jsx:10:import { getAS6ActiveWorkspaceSession, getAS6WorkspaceSessions, saveAS6WorkspaceSession, setAS6ActiveWorkspaceSession, validateAS6WorkspacePersistencePolicy } from "../workspace/as6WorkspaceStorage.js";
+frontend/src/as6/business-home/AS6BusinessHome.jsx:11:import { AS6Workspace, AS6Sidebar, AS6Header, AS6RightRail, AS6Assistant, AS6Focus } from "../../components/as6-workspace/AS6Workspace.jsx";
+frontend/src/as6/business-home/AS6BusinessHome.jsx:19:import { applyAS6ExecutiveWorkspaceProfile, createAS6ExecutiveProfileRecommendation, getAS6ExecutiveWorkspaceProfiles } from "./as6ExecutiveWorkspaceProfiles.js";
+frontend/src/as6/business-home/AS6BusinessHome.jsx:31:  { id: "workspace", title: "Workspaces", defaultPinned: false },
+frontend/src/as6/business-home/AS6BusinessHome.jsx:95:    suggestions.push({ id: "raise-workspace", title: "Поднять Workspaces выше", reason: "Workspace Runtime содержит активные модули.", action: { type: "move-first", widgetId: "workspace" } });
+frontend/src/as6/business-home/AS6BusinessHome.jsx:141:export function getAS6BusinessHomeWorkspaceState() {
+frontend/src/as6/business-home/AS6BusinessHome.jsx:142:  const activeWorkspace = getAS6ActiveWorkspaceSession() || null;
+frontend/src/as6/business-home/AS6BusinessHome.jsx:143:  const workspaceSessions = getAS6WorkspaceSessions();
+frontend/src/as6/business-home/AS6BusinessHome.jsx:144:  const policy = validateAS6WorkspacePersistencePolicy();
+frontend/src/as6/business-home/AS6BusinessHome.jsx:145:  const businessHomeLayout = normalizeAS6BusinessHomeLayout(activeWorkspace?.contextState?.businessHome);
+frontend/src/as6/business-home/AS6BusinessHome.jsx:146:  const businessHomeLayoutPolicy = validateAS6BusinessHomeLayout(activeWorkspace?.contextState?.businessHome);
+frontend/src/as6/business-home/AS6BusinessHome.jsx:147:  return { activeWorkspace, workspaceSessions, policy, businessHomeLayout, businessHomeLayoutPolicy };
+frontend/src/as6/business-home/AS6BusinessHome.jsx:155:    ...getAS6BusinessHomeWorkspaceState(),
+frontend/src/as6/business-home/AS6BusinessHome.jsx:160:  const [workspaceRevision, setWorkspaceRevision] = useState(0);
+frontend/src/as6/business-home/AS6BusinessHome.jsx:162:  const [layout, setLayout] = useState(state.businessHomeLayout);
+frontend/src/as6/business-home/AS6BusinessHome.jsx:174:    setLayout(state.businessHomeLayout);
+frontend/src/as6/business-home/AS6BusinessHome.jsx:175:  }, [state.activeWorkspace?.id, workspaceRevision]);
+frontend/src/as6/business-home/AS6BusinessHome.jsx:179:      saveAS6WorkspaceSession({
+frontend/src/as6/business-home/AS6BusinessHome.jsx:180:        id: state.activeWorkspace?.id || "business-home-default",
+frontend/src/as6/business-home/AS6BusinessHome.jsx:181:        title: state.activeWorkspace?.title || "Business Home",
+frontend/src/as6/business-home/AS6BusinessHome.jsx:185:          ...(state.activeWorkspace?.contextState || {}),
+frontend/src/as6/business-home/AS6BusinessHome.jsx:188:          businessHome: normalizeAS6BusinessHomeLayout(layout),
+frontend/src/as6/business-home/AS6BusinessHome.jsx:197:  function refreshWorkspaceState() {
+frontend/src/as6/business-home/AS6BusinessHome.jsx:198:    setWorkspaceRevision((value) => value + 1);
+frontend/src/as6/business-home/AS6BusinessHome.jsx:205:  function switchBusinessWorkspace(event) {
+frontend/src/as6/business-home/AS6BusinessHome.jsx:206:    setAS6ActiveWorkspaceSession(event.target.value);
+frontend/src/as6/business-home/AS6BusinessHome.jsx:207:    refreshWorkspaceState();
+frontend/src/as6/business-home/AS6BusinessHome.jsx:381:    updateBusinessHomeLayout((currentLayout) => applyAS6ExecutiveWorkspaceProfile(currentLayout, profileName));
+frontend/src/as6/business-home/AS6BusinessHome.jsx:424:      return <AS6ExperienceCard eyebrow="Workspaces" title="Быстрый переход" key={widgetId} data-widget-id={widgetId}><div className="as6-business-home__chips">{["CRM", "Documents", "Finance", "Communication", "Automation", "Marketplace"].map((item) => <span key={item}>{item}</span>)}</div></AS6ExperienceCard>;
+frontend/src/as6/business-home/AS6BusinessHome.jsx:440:      return <AS6DataSurface title="Platform Health" key={widgetId} data-widget-id={widgetId}><div className="as6-business-home__executive-grid"><AS6DataKPI label="Dashboard" value={state.platformStatus?.dashboard || "UNKNOWN"} detail={(state.platformStatus?.widgets || 0) + " widgets"} /><AS6DataKPI label="Marketplace" value={state.platformStatus?.marketplace || "UNKNOWN"} detail={(state.platformStatus?.packages || 0) + " packages"} /><AS6DataKPI label="Navigation" value={state.platformStatus?.navigationItems || 0} detail="items" /><AS6DataKPI label="Workspace" value={state.platformStatus?.workspaceModules || 0} detail="modules" /></div></AS6DataSurface>;
+frontend/src/as6/business-home/AS6BusinessHome.jsx:465:      <AS6Workspace className="as6-business-home-shell" dataRoute="business-home" mode="business-os">
+frontend/src/as6/business-home/AS6BusinessHome.jsx:466:        <AS6Sidebar className="as6-business-home-shell__sidebar">
+frontend/src/as6/business-home/AS6BusinessHome.jsx:475:        </AS6Sidebar>
+frontend/src/as6/business-home/AS6BusinessHome.jsx:479:              <span className="as6x-eyebrow">Unified Workspace</span>
+frontend/src/as6/business-home/AS6BusinessHome.jsx:484:              <select aria-label="Saved Business OS Workspace" value={state.activeWorkspace?.id || ""} onChange={switchBusinessWorkspace}>
+frontend/src/as6/business-home/AS6BusinessHome.jsx:485:                <option value="">Default Workspace</option>
+frontend/src/as6/business-home/AS6BusinessHome.jsx:504:            <section className="as6-business-home__executive-profiles" aria-label="Executive Workspace profiles">
+frontend/src/as6/business-home/AS6BusinessHome.jsx:507:                {getAS6ExecutiveWorkspaceProfiles().map((profileName) => (
+frontend/src/as6/business-home/AS6BusinessHome.jsx:530:        <AS6RightRail className="as6-business-home-shell__rail">
+frontend/src/as6/business-home/AS6BusinessHome.jsx:531:          <section className="as6-business-home-shell__persistence" aria-label="Workspace Persistence">
+frontend/src/as6/business-home/AS6BusinessHome.jsx:532:            <strong>Workspace Persistence</strong>
+frontend/src/as6/business-home/AS6BusinessHome.jsx:533:            <span>Active: {state.activeWorkspace?.title || "Default Workspace"}</span>
+frontend/src/as6/business-home/AS6BusinessHome.jsx:535:            <small>Layout: {state.businessHomeLayoutPolicy.ok ? "PASS" : state.businessHomeLayoutPolicy.failures.join(", ")}</small>
+frontend/src/as6/business-home/AS6BusinessHome.jsx:537:          <AS6Focus className="as6-business-home-shell__focus">
+frontend/src/as6/business-home/AS6BusinessHome.jsx:540:          </AS6Focus>
+frontend/src/as6/business-home/AS6BusinessHome.jsx:541:          <AS6Assistant className="as6-business-home-shell__assistant">
+frontend/src/as6/business-home/AS6BusinessHome.jsx:542:            <strong>AS6 Assistant</strong>
+frontend/src/as6/business-home/AS6BusinessHome.jsx:545:          </AS6Assistant>
+frontend/src/as6/business-home/AS6BusinessHome.jsx:546:        </AS6RightRail>
+frontend/src/as6/business-home/AS6BusinessHome.jsx:547:      </AS6Workspace>
+frontend/src/as6/workspace/as6WorkspaceStorage.js:16:export function createAS6WorkspaceSession(input = {}) {
+frontend/src/as6/workspace/as6WorkspaceStorage.js:21:    title: input.title || "AS6 Workspace",
+frontend/src/as6/workspace/as6WorkspaceStorage.js:35:export function createAS6WorkspaceStore(input = {}) {
+frontend/src/as6/workspace/as6WorkspaceStorage.js:38:    activeWorkspaceId: input.activeWorkspaceId || null,
+frontend/src/as6/workspace/as6WorkspaceStorage.js:44:export function readAS6WorkspaceStore() {
+frontend/src/as6/workspace/as6WorkspaceStorage.js:46:    return createAS6WorkspaceStore();
+frontend/src/as6/workspace/as6WorkspaceStorage.js:51:    return raw ? migrateAS6WorkspaceStore(JSON.parse(raw)) : createAS6WorkspaceStore();
+frontend/src/as6/workspace/as6WorkspaceStorage.js:53:    return createAS6WorkspaceStore();
+frontend/src/as6/workspace/as6WorkspaceStorage.js:57:export function writeAS6WorkspaceStore(store) {
+frontend/src/as6/workspace/as6WorkspaceStorage.js:58:  const normalized = migrateAS6WorkspaceStore({
+frontend/src/as6/workspace/as6WorkspaceStorage.js:70:export function migrateAS6WorkspaceStore(store) {
+frontend/src/as6/workspace/as6WorkspaceStorage.js:71:  const base = createAS6WorkspaceStore(store && typeof store === "object" ? store : {});
+frontend/src/as6/workspace/as6WorkspaceStorage.js:74:    createAS6WorkspaceSession({
+frontend/src/as6/workspace/as6WorkspaceStorage.js:85:    activeWorkspaceId:
+frontend/src/as6/workspace/as6WorkspaceStorage.js:86:      base.activeWorkspaceId && workspaces.some((workspace) => workspace.id === base.activeWorkspaceId)
+frontend/src/as6/workspace/as6WorkspaceStorage.js:87:        ? base.activeWorkspaceId
+frontend/src/as6/workspace/as6WorkspaceStorage.js:92:export function saveAS6WorkspaceSession(session) {
+frontend/src/as6/workspace/as6WorkspaceStorage.js:93:  const store = readAS6WorkspaceStore();
+frontend/src/as6/workspace/as6WorkspaceStorage.js:94:  const normalizedSession = createAS6WorkspaceSession(session);
+frontend/src/as6/workspace/as6WorkspaceStorage.js:102:  return writeAS6WorkspaceStore({
+frontend/src/as6/workspace/as6WorkspaceStorage.js:104:    activeWorkspaceId: normalizedSession.id,
+frontend/src/as6/workspace/as6WorkspaceStorage.js:109:export function getAS6WorkspaceSessions() {
+frontend/src/as6/workspace/as6WorkspaceStorage.js:110:  return readAS6WorkspaceStore().workspaces;
+frontend/src/as6/workspace/as6WorkspaceStorage.js:113:export function getAS6ActiveWorkspaceSession() {
+frontend/src/as6/workspace/as6WorkspaceStorage.js:114:  const store = readAS6WorkspaceStore();
+frontend/src/as6/workspace/as6WorkspaceStorage.js:115:  return store.workspaces.find((workspace) => workspace.id === store.activeWorkspaceId) || null;
+frontend/src/as6/workspace/as6WorkspaceStorage.js:118:export function setAS6ActiveWorkspaceSession(workspaceId) {
+frontend/src/as6/workspace/as6WorkspaceStorage.js:119:  const store = readAS6WorkspaceStore();
+frontend/src/as6/workspace/as6WorkspaceStorage.js:125:  return writeAS6WorkspaceStore({
+frontend/src/as6/workspace/as6WorkspaceStorage.js:127:    activeWorkspaceId: workspaceId,
+frontend/src/as6/workspace/as6WorkspaceStorage.js:131:export function renameAS6WorkspaceSession(workspaceId, title) {
+frontend/src/as6/workspace/as6WorkspaceStorage.js:132:  const store = readAS6WorkspaceStore();
+frontend/src/as6/workspace/as6WorkspaceStorage.js:134:  return writeAS6WorkspaceStore({
+frontend/src/as6/workspace/as6WorkspaceStorage.js:138:        ? createAS6WorkspaceSession({ ...workspace, title: title || workspace.title })
+frontend/src/as6/workspace/as6WorkspaceStorage.js:144:export function cloneAS6WorkspaceSession(workspaceId) {
+frontend/src/as6/workspace/as6WorkspaceStorage.js:145:  const store = readAS6WorkspaceStore();
+frontend/src/as6/workspace/as6WorkspaceStorage.js:152:  const clone = createAS6WorkspaceSession({
+frontend/src/as6/workspace/as6WorkspaceStorage.js:159:  return writeAS6WorkspaceStore({
+frontend/src/as6/workspace/as6WorkspaceStorage.js:161:    activeWorkspaceId: clone.id,
+frontend/src/as6/workspace/as6WorkspaceStorage.js:166:export function deleteAS6WorkspaceSession(workspaceId) {
+frontend/src/as6/workspace/as6WorkspaceStorage.js:167:  const store = readAS6WorkspaceStore();
+frontend/src/as6/workspace/as6WorkspaceStorage.js:170:  return writeAS6WorkspaceStore({
+frontend/src/as6/workspace/as6WorkspaceStorage.js:172:    activeWorkspaceId: store.activeWorkspaceId === workspaceId ? workspaces[0]?.id || null : store.activeWorkspaceId,
+frontend/src/as6/workspace/as6WorkspaceStorage.js:177:export function toggleAS6WorkspaceSessionPin(workspaceId) {
+frontend/src/as6/workspace/as6WorkspaceStorage.js:178:  const store = readAS6WorkspaceStore();
+frontend/src/as6/workspace/as6WorkspaceStorage.js:180:  return writeAS6WorkspaceStore({
+frontend/src/as6/workspace/as6WorkspaceStorage.js:184:        ? createAS6WorkspaceSession({ ...workspace, pinned: !workspace.pinned })
+frontend/src/as6/workspace/as6WorkspaceStorage.js:190:export function exportAS6WorkspaceStore() {
+frontend/src/as6/workspace/as6WorkspaceStorage.js:191:  return JSON.stringify(readAS6WorkspaceStore(), null, 2);
+frontend/src/as6/workspace/as6WorkspaceStorage.js:194:export function importAS6WorkspaceStore(jsonText) {
+frontend/src/as6/workspace/as6WorkspaceStorage.js:196:  return writeAS6WorkspaceStore(migrateAS6WorkspaceStore(parsed));
+frontend/src/as6/workspace/as6WorkspaceStorage.js:199:export function validateAS6WorkspacePersistencePolicy() {
+frontend/src/as6/workspace/as6WorkspaceStorage.js:200:  const store = readAS6WorkspaceStore();
+frontend/src/as6/workspace/AS6WorkspaceManager.contract.md:1:# AS6 Universal Workspace Manager Contract V98
+frontend/src/as6/workspace/AS6WorkspaceManager.contract.md:11:- createEmptyWorkspaceState()
+frontend/src/as6/workspace/AS6WorkspaceManager.contract.md:12:- getAS6WorkspaceState()
+frontend/src/as6/workspace/AS6WorkspaceManager.contract.md:13:- setAS6ActiveWorkspace(pathname)
+frontend/src/as6/workspace/AS6WorkspaceManager.contract.md:14:- getAS6ActiveWorkspace()
+frontend/src/as6/workspace/AS6WorkspaceManager.contract.md:15:- getAS6RecentWorkspaces()
+frontend/src/as6/workspace/AS6WorkspaceManager.contract.md:16:- getAS6PinnedWorkspaces()
+frontend/src/as6/workspace/AS6WorkspaceManager.contract.md:17:- toggleAS6PinnedWorkspace(route)
+frontend/src/as6/workspace/AS6WorkspaceManager.contract.md:18:- getAS6WorkspaceHistory()
+frontend/src/as6/workspace/AS6WorkspaceManager.contract.md:19:- restoreAS6Workspace()
+frontend/src/as6/workspace/AS6WorkspaceManager.contract.md:20:- validateAS6WorkspaceManagerPolicy()
+frontend/src/as6/workspace/AS6WorkspacePersistence.contract.md:1:# AS6 Workspace Persistence Contract V99
+frontend/src/as6/workspace/AS6WorkspacePersistence.contract.md:6:- Add versioned multi-session Workspace storage.
+frontend/src/as6/workspace/AS6WorkspacePersistence.contract.md:14:Workspace model:
+frontend/src/as6/workspace/as6WorkspaceManager.js:16:    return createEmptyWorkspaceState();
+frontend/src/as6/workspace/as6WorkspaceManager.js:21:    return raw ? { ...createEmptyWorkspaceState(), ...JSON.parse(raw) } : createEmptyWorkspaceState();
+frontend/src/as6/workspace/as6WorkspaceManager.js:23:    return createEmptyWorkspaceState();
+frontend/src/as6/workspace/as6WorkspaceManager.js:49:export function createEmptyWorkspaceState() {
+frontend/src/as6/workspace/as6WorkspaceManager.js:59:export function getAS6WorkspaceState() {
+frontend/src/as6/workspace/as6WorkspaceManager.js:63:export function setAS6ActiveWorkspace(pathname) {
+frontend/src/as6/workspace/as6WorkspaceManager.js:101:export function getAS6ActiveWorkspace() {
+frontend/src/as6/workspace/as6WorkspaceManager.js:106:export function getAS6RecentWorkspaces() {
+frontend/src/as6/workspace/as6WorkspaceManager.js:114:export function getAS6PinnedWorkspaces() {
+frontend/src/as6/workspace/as6WorkspaceManager.js:122:export function toggleAS6PinnedWorkspace(route) {
+frontend/src/as6/workspace/as6WorkspaceManager.js:138:export function getAS6WorkspaceHistory() {
+frontend/src/as6/workspace/as6WorkspaceManager.js:143:export function restoreAS6Workspace() {
+frontend/src/as6/workspace/as6WorkspaceManager.js:155:export function validateAS6WorkspaceManagerPolicy() {
+frontend/src/as6/workspace/AS6Workspace.jsx:3:export function AS6Workspace({ children }) {
+frontend/src/as6/tenant/AS6TenantPolicy.js:6:  canAccessAS6Workspace,
+frontend/src/as6/tenant/AS6TenantPolicy.js:22:  if (resource.workspaceId && !canAccessAS6Workspace(resource.workspaceId, tenant.id).ok) {
+frontend/src/as6/tenant/AS6OrganizationBoundary.js:24:export function canAccessAS6Workspace(workspaceId, tenantId) {
+frontend/src/as6/tenant/AS6TenantBoundary.contract.md:22:- canAccessAS6Workspace
+frontend/src/as6/capabilities/as6CapabilityRegistry.js:33:    title: "Workspace",
+frontend/src/as6/runtime/as6Runtime.js:7:  getAS6WorkspaceState,
+frontend/src/as6/runtime/as6Runtime.js:8:  setAS6ActiveWorkspace,
+frontend/src/as6/runtime/as6Runtime.js:9:  restoreAS6Workspace,
+frontend/src/as6/runtime/as6Runtime.js:10:} from "../workspace/as6WorkspaceManager";
+frontend/src/as6/runtime/as6Runtime.js:13:  getAS6ActiveWorkspaceSession,
+frontend/src/as6/runtime/as6Runtime.js:14:  getAS6WorkspaceSessions,
+frontend/src/as6/runtime/as6Runtime.js:15:  saveAS6WorkspaceSession,
+frontend/src/as6/runtime/as6Runtime.js:16:  exportAS6WorkspaceStore,
+frontend/src/as6/runtime/as6Runtime.js:17:  importAS6WorkspaceStore,
+frontend/src/as6/runtime/as6Runtime.js:18:} from "../workspace/as6WorkspaceStorage";
+frontend/src/as6/runtime/as6Runtime.js:27:  selectedWorkspace: null,
+frontend/src/as6/runtime/as6Runtime.js:49:  const workspaceState = getAS6WorkspaceState();
+frontend/src/as6/runtime/as6Runtime.js:50:  const activeWorkspaceSession = getAS6ActiveWorkspaceSession();
+frontend/src/as6/runtime/as6Runtime.js:56:    workspaceSessions: getAS6WorkspaceSessions(),
+frontend/src/as6/runtime/as6Runtime.js:57:    activeWorkspaceSession,
+frontend/src/as6/runtime/as6Runtime.js:70:        setAS6ActiveWorkspace(route);
+frontend/src/as6/runtime/as6Runtime.js:86:        selectedWorkspace: safeAction.workspace || null,
+frontend/src/as6/runtime/as6Runtime.js:91:        saveAS6WorkspaceSession(safeAction.workspace);
+frontend/src/as6/runtime/as6Runtime.js:121:      const restoredLivingSpace = restoreAS6Workspace();
+frontend/src/as6/runtime/as6Runtime.js:127:        selectedWorkspace: getAS6ActiveWorkspaceSession(),
+frontend/src/as6/runtime/as6Runtime.js:152:export function setAS6RuntimeWorkspace(workspace) {
+frontend/src/as6/runtime/as6Runtime.js:204:      workspaceStore: JSON.parse(exportAS6WorkspaceStore()),
+frontend/src/as6/runtime/as6Runtime.js:215:    importAS6WorkspaceStore(parsed.workspaceStore);
+frontend/src/as6/runtime/as6Runtime.js:223:      selectedWorkspace: parsed.runtime.selectedWorkspace || null,
+frontend/src/as6/runtime/AS6Runtime.contract.md:8:- Prevent duplicated state logic across Navigation, Context Bar, Intelligence Rail, Command Palette and Workspace modules.
+frontend/src/as6/runtime/AS6Runtime.contract.md:14:- setAS6RuntimeWorkspace(workspace)
+frontend/src/as6/services/AS6ServiceRegistry.contract.md:8:- Prevent duplicated service lists across Runtime, Navigation, Command Palette and Workspace.
+frontend/src/as6/services/as6ServiceEngine.js:8:  getAS6WorkspaceServices,
+frontend/src/as6/services/as6ServiceEngine.js:15:    workspaceServices: getAS6WorkspaceServices(),
+frontend/src/as6/services/as6ServiceRegistry.js:118:export function getAS6WorkspaceServices() {
+frontend/src/as6/workspaces/index.js:1:export * from "./AS6WorkspaceRuntime";
+frontend/src/as6/workspaces/index.js:2:export * from "./AS6WorkspaceBridge";
+frontend/src/as6/workspaces/AS6WorkspaceRuntime.js:9:export function registerAS6Workspace(workspace) {
+frontend/src/as6/workspaces/AS6WorkspaceRuntime.js:26:export function attachWidgetToWorkspace(workspaceId,widgetId,position={}){
+frontend/src/as6/workspaces/AS6WorkspaceRuntime.js:40:export function detachWidgetFromWorkspace(workspaceId,widgetId){
+frontend/src/as6/workspaces/AS6WorkspaceRuntime.js:52:export function saveWorkspaceLayout(workspaceId){
+frontend/src/as6/workspaces/AS6WorkspaceRuntime.js:68:export function loadWorkspaceLayout(snapshot){
+frontend/src/as6/workspaces/AS6WorkspaceRuntime.js:83:export function createWorkspaceFromCurrentWidgets(id,title){
+frontend/src/as6/workspaces/AS6WorkspaceRuntime.js:86:  registerAS6Workspace({id,title});
+frontend/src/as6/workspaces/AS6WorkspaceRuntime.js:89:    attachWidgetToWorkspace(id,w.id,{
+frontend/src/as6/workspaces/AS6WorkspaceRuntime.js:98:export function getAS6WorkspaceState(){
+frontend/src/as6/workspaces/AS6WorkspaceBridge.jsx:3:createWorkspaceFromCurrentWidgets,
+frontend/src/as6/workspaces/AS6WorkspaceBridge.jsx:4:getAS6WorkspaceState
+frontend/src/as6/workspaces/AS6WorkspaceBridge.jsx:5:} from "./AS6WorkspaceRuntime";
+frontend/src/as6/workspaces/AS6WorkspaceBridge.jsx:7:export function useAS6WorkspaceRuntime(){
+frontend/src/as6/workspaces/AS6WorkspaceBridge.jsx:9:const[state,setState]=useState(getAS6WorkspaceState());
+frontend/src/as6/workspaces/AS6WorkspaceBridge.jsx:13:createWorkspaceFromCurrentWidgets(
+frontend/src/as6/workspaces/AS6WorkspaceBridge.jsx:15:"Default Workspace"
+frontend/src/as6/workspaces/AS6WorkspaceBridge.jsx:18:setState(getAS6WorkspaceState());
+frontend/src/as6/business-navigation/AS6BusinessNavigationRuntime.js:2:  getAS6BusinessWorkspaceState,
+frontend/src/as6/business-navigation/AS6BusinessNavigationRuntime.js:5:  searchAS6BusinessWorkspace,
+frontend/src/as6/business-navigation/AS6BusinessNavigationRuntime.js:88:  const workspace = searchAS6BusinessWorkspace(query);
+frontend/src/as6/business-navigation/AS6BusinessNavigationRuntime.js:133:    workspace: getAS6BusinessWorkspaceState(),
+frontend/src/as6/business-navigation/AS6BusinessNavigation.contract.md:6:- Provide Universal Navigation above Business Workspace B1.
+frontend/src/as6/business-navigation/AS6BusinessNavigation.contract.md:7:- Avoid replacing existing Sidebar/AppShell during B2.
+frontend/src/as6/business-workspace/index.js:1:export * from "./AS6BusinessWorkspaceAPI";
+frontend/src/as6/business-workspace/index.js:2:export * from "./AS6BusinessWorkspaceRuntime";
+frontend/src/as6/business-workspace/AS6BusinessWorkspaceAPI.js:3:  bootstrapAS6BusinessWorkspace,
+frontend/src/as6/business-workspace/AS6BusinessWorkspaceAPI.js:5:  getAS6BusinessWorkspaceState,
+frontend/src/as6/business-workspace/AS6BusinessWorkspaceAPI.js:6:  notifyAS6BusinessWorkspace,
+frontend/src/as6/business-workspace/AS6BusinessWorkspaceAPI.js:12:  searchAS6BusinessWorkspace,
+frontend/src/as6/business-workspace/AS6BusinessWorkspaceAPI.js:13:  setAS6BusinessWorkspaceContext,
+frontend/src/as6/business-workspace/AS6BusinessWorkspaceAPI.js:14:} from "./AS6BusinessWorkspaceRuntime";
+frontend/src/as6/business-workspace/AS6BusinessWorkspaceRuntime.js:4:  activeWorkspaceId: "default",
+frontend/src/as6/business-workspace/AS6BusinessWorkspaceRuntime.js:27:export function getAS6BusinessWorkspaceState() {
+frontend/src/as6/business-workspace/AS6BusinessWorkspaceRuntime.js:30:    activeWorkspaceId: workspaceState.activeWorkspaceId,
+frontend/src/as6/business-workspace/AS6BusinessWorkspaceRuntime.js:43:export function setAS6BusinessWorkspaceContext(context = {}) {
+frontend/src/as6/business-workspace/AS6BusinessWorkspaceRuntime.js:48:  return getAS6BusinessWorkspaceState();
+frontend/src/as6/business-workspace/AS6BusinessWorkspaceRuntime.js:66:  return { ok: true, moduleId, state: getAS6BusinessWorkspaceState() };
+frontend/src/as6/business-workspace/AS6BusinessWorkspaceRuntime.js:81:  return { ok: true, tab, state: getAS6BusinessWorkspaceState() };
+frontend/src/as6/business-workspace/AS6BusinessWorkspaceRuntime.js:102:export function notifyAS6BusinessWorkspace(notification = {}) {
+frontend/src/as6/business-workspace/AS6BusinessWorkspaceRuntime.js:121:export function searchAS6BusinessWorkspace(query = "") {
+frontend/src/as6/business-workspace/AS6BusinessWorkspaceRuntime.js:133:export function bootstrapAS6BusinessWorkspace() {
+frontend/src/as6/business-workspace/AS6BusinessWorkspaceRuntime.js:140:  return getAS6BusinessWorkspaceState();
+frontend/src/as6/business-workspace/AS6BusinessWorkspace.contract.md:1:# AS6 Business Workspace Contract B1
+frontend/src/as6/business-workspace/AS6BusinessWorkspace.contract.md:7:- Avoid risky replacement of existing App/Shell/Workspace screens.
+frontend/src/as6/business-workspace/AS6BusinessWorkspace.contract.md:8:- Give CRM, AI, Documents and future modules one shared Workspace API.
+frontend/src/as6/business-workspace/AS6BusinessWorkspace.contract.md:11:- Workspace state
+frontend/src/as6/commands/AS6GlobalCommandPalette.jsx:99:              autoFocus
+frontend/src/as6/plugins/AS6DeveloperPortal.js:9:const developerWorkspace = new Map();
+frontend/src/as6/plugins/AS6DeveloperPortal.js:30:  developerWorkspace.set(plugin.id, {
+frontend/src/as6/plugins/AS6DeveloperPortal.js:40:  return developerWorkspace.get(pluginId) || null;
+frontend/src/as6/plugins/AS6DeveloperPortal.js:44:  return [...developerWorkspace.values()];
+frontend/src/as6/plugins/AS6DeveloperPortal.js:48:  const draft = developerWorkspace.get(pluginId);
+frontend/src/as6/plugins/AS6DeveloperPortal.js:62:  developerWorkspace.set(pluginId, {
+frontend/src/as6/plugins/AS6DeveloperPortal.js:80:  const draft = developerWorkspace.get(pluginId);
+frontend/src/as6/plugins/AS6DeveloperPortal.js:81:  developerWorkspace.set(pluginId, {
+frontend/src/as6/plugins/AS6DeveloperPortal.js:92:  const draft = developerWorkspace.get(pluginId);
+frontend/src/as6/plugins/AS6DeveloperPortal.js:98:  const draft = developerWorkspace.get(pluginId);
+frontend/src/as6/plugins/AS6DeveloperPortal.js:124:  developerWorkspace.set(pluginId, {
+frontend/src/as6/plugins/AS6DeveloperPortal.js:134:  const draft = developerWorkspace.get(pluginId);
+frontend/src/as6/plugins/AS6DeveloperPortal.js:146:  developerWorkspace.set(pluginId, {
+frontend/src/as6/plugins/AS6DeveloperPortal.js:165:    draftCount: developerWorkspace.size,
+frontend/src/components/as6-workspace/AS6Assistant.jsx:3:export const AS6_ASSISTANT_NAME = 'AS6 Assistant';
+frontend/src/components/as6-workspace/AS6Assistant.jsx:7:export function AS6AssistantShell({ children, className = '', status = 'ready' }) {
+frontend/src/components/as6-workspace/AS6Assistant.jsx:15:export function AS6AssistantHeader({ title = AS6_ASSISTANT_NAME, subtitle = AS6_ASSISTANT_PROMISE, className = '' }) {
+frontend/src/components/as6-workspace/AS6Assistant.jsx:24:export function AS6AssistantMessage({ children, role = 'assistant', className = '' }) {
+frontend/src/components/as6-workspace/AS6Assistant.jsx:32:export function AS6AssistantAction({ children = AS6_ASSISTANT_PRIMARY_ACTION, className = '', onClick, type = 'button' }) {
+frontend/src/components/as6-workspace/AS6Assistant.jsx:40:export function AS6AssistantStatus({ label = 'Готов помочь', className = '' }) {
+frontend/src/components/as6-workspace/AS6Assistant.jsx:44:export function AS6AssistantComposer({ placeholder = 'Спросить AS6...', value = '', onChange, onSubmit, className = '' }) {
+frontend/src/components/as6-workspace/AS6Assistant.jsx:48:      <AS6AssistantAction type="submit" />
+frontend/src/components/as6-workspace/AS6Assistant.jsx:53:export default AS6AssistantShell;
+frontend/src/components/as6-workspace/AS6RightRail.jsx:3:export function AS6RightRailShell({ children, className = '', hidden = false }) {
+frontend/src/components/as6-workspace/AS6RightRail.jsx:12:export function AS6RightRailSection({ title, children, className = '' }) {
+frontend/src/components/as6-workspace/AS6RightRail.jsx:21:export function AS6RightRailCard({ eyebrow, title, children, className = '' }) {
+frontend/src/components/as6-workspace/AS6RightRail.jsx:31:export function AS6RightRailMetric({ label, value, hint, className = '' }) {
+frontend/src/components/as6-workspace/AS6RightRail.jsx:41:export function AS6RightRailAction({ children, className = '', onClick, type = 'button' }) {
+frontend/src/components/as6-workspace/AS6RightRail.jsx:49:export default AS6RightRailShell;
+frontend/src/components/as6-workspace/AS6Sidebar.jsx:24:export function AS6SidebarShell({ children, className = '', command = false }) {
+frontend/src/components/as6-workspace/AS6Sidebar.jsx:32:export function AS6SidebarNav({ children, className = '', label = 'AS6 navigation' }) {
+frontend/src/components/as6-workspace/AS6Sidebar.jsx:40:export function AS6SidebarSection({ title, children, className = '' }) {
+frontend/src/components/as6-workspace/AS6Sidebar.jsx:49:export function AS6SidebarProfile({ children, className = '' }) {
+frontend/src/components/as6-workspace/AS6Sidebar.jsx:57:export function AS6SidebarAction({ children, className = '', onClick, type = 'button' }) {
+frontend/src/components/as6-workspace/AS6Sidebar.jsx:65:export default AS6SidebarShell;
+frontend/src/components/as6-workspace/AS6Header.jsx:29:export function AS6WorkspaceSelector({ workspaces = [], value = '', onChange, error = '', className = '' }) {
+frontend/src/components/as6-workspace/AS6Focus.jsx:6:export function AS6FocusShell({ children, className = '', priority = 'normal' }) {
+frontend/src/components/as6-workspace/AS6Focus.jsx:8:    <section className={className} data-as6-focus="v230" data-as6-focus-priority={priority} aria-label="AS6 Focus">
+frontend/src/components/as6-workspace/AS6Focus.jsx:14:export function AS6FocusHeader({ title = AS6_FOCUS_TITLE, subtitle = AS6_FOCUS_PROMISE, className = '' }) {
+frontend/src/components/as6-workspace/AS6Focus.jsx:23:export function AS6FocusStep({ number = 1, title, children, className = '' }) {
+frontend/src/components/as6-workspace/AS6Focus.jsx:35:export function AS6FocusAction({ children = 'Выполнить шаг', className = '', onClick, type = 'button' }) {
+frontend/src/components/as6-workspace/AS6Focus.jsx:43:export function AS6FocusSignal({ label, value, tone = 'neutral', className = '' }) {
+frontend/src/components/as6-workspace/AS6Focus.jsx:52:export function AS6FocusEmpty({ children = 'AS6 готов определить следующий лучший шаг.', className = '' }) {
+frontend/src/components/as6-workspace/AS6Focus.jsx:56:export default AS6FocusShell;
+frontend/src/components/as6-workspace/AS6Workspace.jsx:3:export function AS6Workspace({ children, className = '', dataRoute = 'app', mode = 'app' }) {
+frontend/src/components/as6-workspace/AS6Workspace.jsx:7:export function AS6Sidebar({ children, className = '' }) {
+frontend/src/components/as6-workspace/AS6Workspace.jsx:15:export function AS6RightRail({ children, className = '' }) {
+frontend/src/components/as6-workspace/AS6Workspace.jsx:23:export function AS6Assistant({ children, className = '' }) {
+frontend/src/components/as6-workspace/AS6Workspace.jsx:24:  return <section className={className} data-as6-assistant="v224" aria-label="AS6 Assistant">{children || 'Спросить AS6'}</section>;
+frontend/src/components/as6-workspace/AS6Workspace.jsx:27:export function AS6Focus({ children, className = '' }) {
+frontend/src/components/as6-workspace/AS6Workspace.jsx:28:  return <section className={className} data-as6-focus="v224" aria-label="AS6 Focus">{children}</section>;
+frontend/src/components/as6-workspace/AS6Workspace.jsx:31:export { AS6SidebarShell, AS6SidebarNav, AS6SidebarSection, AS6SidebarProfile, AS6SidebarAction, AS6_NAVIGATION_PRIMARY, AS6_NAVIGATION_FAVORITES } from './AS6Sidebar.jsx';
+frontend/src/components/as6-workspace/AS6Workspace.jsx:33:export { AS6HeaderShell, AS6HeaderTitle, AS6HeaderToolbar, AS6WorkspaceSelector, AS6ProfilePill, AS6HeaderAction } from './AS6Header.jsx';
+frontend/src/components/as6-workspace/AS6Workspace.jsx:35:export { AS6RightRailShell, AS6RightRailSection, AS6RightRailCard, AS6RightRailMetric, AS6RightRailAction } from './AS6RightRail.jsx';
+frontend/src/components/as6-workspace/AS6Workspace.jsx:39:export { AS6AssistantShell, AS6AssistantHeader, AS6AssistantMessage, AS6AssistantAction, AS6AssistantStatus, AS6AssistantComposer, AS6_ASSISTANT_NAME, AS6_ASSISTANT_PRIMARY_ACTION, AS6_ASSISTANT_PROMISE } from './AS6Assistant.jsx';
+frontend/src/components/as6-workspace/AS6Workspace.jsx:41:export { AS6FocusShell, AS6FocusHeader, AS6FocusStep, AS6FocusAction, AS6FocusSignal, AS6FocusEmpty, AS6_FOCUS_TITLE, AS6_FOCUS_PROMISE } from './AS6Focus.jsx';
+frontend/src/components/AppShell.jsx:2:import { AS6Workspace } from './as6-workspace/AS6Workspace.jsx'
+frontend/src/components/AppShell.jsx:3:import { AS6SidebarShell } from './as6-workspace/AS6Sidebar.jsx'
+frontend/src/components/AppShell.jsx:4:import { AS6HeaderShell, AS6HeaderTitle, AS6HeaderToolbar, AS6WorkspaceSelector, AS6ProfilePill, AS6HeaderAction } from './as6-workspace/AS6Header.jsx'
+frontend/src/components/AppShell.jsx:8:import { addWorkspaceMember, clearAuthSession, createWorkspace, fetchCurrentWorkspace, fetchProfile, fetchWorkspaces, getActiveWorkspaceId, getStoredUser, setActiveWorkspaceId, updateWorkspace } from "../services/api";
+frontend/src/components/AppShell.jsx:20:  const [workspaces, setWorkspaces] = useState([]);
+frontend/src/components/AppShell.jsx:21:  const [currentWorkspace, setCurrentWorkspace] = useState(null);
+frontend/src/components/AppShell.jsx:22:  const [workspaceError, setWorkspaceError] = useState("");
+frontend/src/components/AppShell.jsx:55:    async function loadWorkspaces() {
+frontend/src/components/AppShell.jsx:57:        const response = await fetchWorkspaces();
+frontend/src/components/AppShell.jsx:60:        setWorkspaces(items);
+frontend/src/components/AppShell.jsx:61:        const storedId = getActiveWorkspaceId();
+frontend/src/components/AppShell.jsx:64:          setActiveWorkspaceId(selected.id);
+frontend/src/components/AppShell.jsx:65:          const current = await fetchCurrentWorkspace();
+frontend/src/components/AppShell.jsx:66:          if (active) setCurrentWorkspace(current.workspace || selected);
+frontend/src/components/AppShell.jsx:69:        if (active) setWorkspaceError(error.message);
+frontend/src/components/AppShell.jsx:72:    loadWorkspaces();
+frontend/src/components/AppShell.jsx:74:    function handleWorkspaceUpdate() {
+frontend/src/components/AppShell.jsx:75:      loadWorkspaces();
+frontend/src/components/AppShell.jsx:78:    window.addEventListener("ai-platform-workspace-updated", handleWorkspaceUpdate);
+frontend/src/components/AppShell.jsx:81:      window.removeEventListener("ai-platform-workspace-updated", handleWorkspaceUpdate);
+frontend/src/components/AppShell.jsx:85:  async function handleWorkspaceChange(event) {
+frontend/src/components/AppShell.jsx:87:    setActiveWorkspaceId(workspaceId);
+frontend/src/components/AppShell.jsx:89:    setCurrentWorkspace(selected);
+frontend/src/components/AppShell.jsx:93:  async function refreshCurrentWorkspace() {
+frontend/src/components/AppShell.jsx:94:    const [listResponse, currentResponse] = await Promise.all([fetchWorkspaces(), fetchCurrentWorkspace()]);
+frontend/src/components/AppShell.jsx:95:    setWorkspaces(listResponse.workspaces || []);
+frontend/src/components/AppShell.jsx:96:    setCurrentWorkspace(currentResponse.workspace || null);
+frontend/src/components/AppShell.jsx:118:  const displayPlan = currentWorkspace?.plan || profile?.plan || userProfile.plan;
+frontend/src/components/AppShell.jsx:119:  const workspaceName = currentWorkspace?.name || "Моё пространство";
+frontend/src/components/AppShell.jsx:124:    <AS6Workspace className={`app-shell `} dataRoute={isCommandCenter ? "command-center" : "app"} mode={isCommandCenter ? "command-center" : "app"}>
+frontend/src/components/AppShell.jsx:125:      <AS6SidebarShell className={`sidebar shell-glow `} command={isCommandCenter} data-command-sidebar={isCommandCenter ? "premium" : undefined}>
+frontend/src/components/AppShell.jsx:191:            <CreditsMiniBlock credits={currentWorkspace?.creditsPool ?? profile?.credits} />
+frontend/src/components/AppShell.jsx:194:      </AS6SidebarShell>
+frontend/src/components/AppShell.jsx:204:              <select value={currentWorkspace?.id || ""} onChange={handleWorkspaceChange} aria-label="Выбор рабочего пространства">
+frontend/src/components/AppShell.jsx:212:              <span>{displayPlan} · {roleLabels[currentWorkspace?.role] || "участник"}</span>
+frontend/src/components/AppShell.jsx:218:        {settingsOpen && <WorkspaceSettings workspace={currentWorkspace} roleLabels={roleLabels} onClose={() => setSettingsOpen(false)} onRefresh={refreshCurrentWorkspace} />}
+frontend/src/components/AppShell.jsx:220:    </AS6Workspace>
+frontend/src/components/AppShell.jsx:263:function WorkspaceSettings({ workspace, roleLabels, onClose, onRefresh }) {
+frontend/src/components/AppShell.jsx:267:  const [newWorkspaceName, setNewWorkspaceName] = useState("");
+frontend/src/components/AppShell.jsx:273:  async function saveWorkspace(event) {
+frontend/src/components/AppShell.jsx:277:      await updateWorkspace(workspace.id, { name });
+frontend/src/components/AppShell.jsx:287:      await addWorkspaceMember(workspace.id, { email: memberEmail, role: memberRole });
+frontend/src/components/AppShell.jsx:294:  async function createNewWorkspace(event) {
+frontend/src/components/AppShell.jsx:297:      const response = await createWorkspace({ name: newWorkspaceName });
+frontend/src/components/AppShell.jsx:298:      if (response.workspace?.id) setActiveWorkspaceId(response.workspace.id);
+frontend/src/components/AppShell.jsx:299:      setNewWorkspaceName("");
+frontend/src/components/AppShell.jsx:312:          <form onSubmit={saveWorkspace} className="workspace-settings-card">
+frontend/src/components/AppShell.jsx:348:          <form onSubmit={createNewWorkspace} className="workspace-settings-card">
+frontend/src/components/AppShell.jsx:351:              <input value={newWorkspaceName} onChange={(event) => setNewWorkspaceName(event.target.value)} placeholder="AS6 Sales Team" />
+frontend/src/components/as6/AS6Workspace.jsx:4:export default function AS6Workspace({
+frontend/src/components/as6/AS6Workspace.jsx:5:  title = "AS6 Workspace",
+frontend/src/components/as6/AS6Workspace.jsx:32:          <strong>🎯 AS6 Focus</strong>
+frontend/src/components/as6/AS6Workspace.jsx:37:          {children || <div className="as6-placeholder">AS6 Workspace foundation готов к подключению модулей.</div>}
+frontend/src/components/as6/AS6Workspace.jsx:44:            <strong>AS6 Assistant</strong>
+frontend/src/components/as6-os/AS6CommandPalette.jsx:39:    group: "Assistant",
+frontend/src/components/as6-os/AS6CommandPalette.jsx:144:                autoFocus
+frontend/src/services/api.js:62:export function getActiveWorkspaceId() {
+frontend/src/services/api.js:67:export function setActiveWorkspaceId(workspaceId) {
+frontend/src/services/api.js:69:  const previousWorkspaceId = getActiveWorkspaceId()
+frontend/src/services/api.js:71:  if (previousWorkspaceId !== workspaceId) {
+frontend/src/services/api.js:147:    'Workspace name is required': 'Укажите название рабочего пространства',
+frontend/src/services/api.js:148:    'Workspace not found': 'Рабочее пространство не найдено',
+frontend/src/services/api.js:149:    'Workspace admin role is required': 'Нужна роль администратора пространства',
+frontend/src/services/api.js:150:    'Workspace team members limit reached': 'Достигнут лимит участников тарифа',
+frontend/src/services/api.js:184:  const workspaceId = options.workspaceId || getActiveWorkspaceId()
+frontend/src/services/api.js:185:  if (!options.skipWorkspace && workspaceId && !headers['X-Workspace-Id'] && !headers['x-workspace-id']) {
+frontend/src/services/api.js:186:    headers['X-Workspace-Id'] = workspaceId
+frontend/src/services/api.js:260:    skipWorkspace: true,
+frontend/src/services/api.js:364:export function analyzeCrmWorkspaceAi(payload = {}) {
+frontend/src/services/api.js:456:  const workspaceId = getActiveWorkspaceId()
+frontend/src/services/api.js:552:export function fetchAiWorkersFocusSummary(params = {}) {
+frontend/src/services/api.js:707:export function fetchWorkspaces() {
+frontend/src/services/api.js:711:export function createWorkspace(payload) {
+frontend/src/services/api.js:715:export function fetchCurrentWorkspace() {
+frontend/src/services/api.js:719:export function updateWorkspace(id, payload) {
+frontend/src/services/api.js:723:export function addWorkspaceMember(id, payload) {
+frontend/src/services/api.js:875:export function fetchAiCommandCenterFocus(){return request('/ai/command-center/focus')}
+frontend/src/services/api.js:895:export function fetchRevenueOverview(workspaceId = getActiveWorkspaceId()) {
+frontend/src/services/api.js:899:export function fetchRevenueFunnel(workspaceId = getActiveWorkspaceId()) {
+frontend/src/services/api.js:906:export function fetchPendingRevenueOrders(workspaceId = getActiveWorkspaceId()) {
+frontend/src/services/api.js:910:export function fetchRevenueOrders(workspaceId = getActiveWorkspaceId()) {
+frontend/src/services/api.js:916:export function fetchPaymentDashboard(workspaceId = getActiveWorkspaceId()) {
+frontend/src/services/api.js:921:export function fetchPaymentStatus(workspaceId = getActiveWorkspaceId()) {
+frontend/src/styles/as6-focus-v230.css:1:/* AS6 Focus Implementation V230 */
+frontend/src/styles/as6-os-assistant-command-layer.css:1:/* AS6 OS Assistant Command Layer — non-destructive UI layer
+frontend/src/styles/as6-os-assistant-command-layer.css:3:Where: bottom-right fixed command affordance + CRM Workspace top surface
+frontend/src/styles/as6-os-assistant-command-layer.css:70:  content: "AS6 Assistant ready";
+frontend/src/styles/as6-crm-workspace-client-polish-v243.css:1:/* AS6 V243 — CRM Workspace Client Polish */
+frontend/src/styles/as6-command-center-final-etalon-v149.css:174:/* Sidebar: убрать лишние внутренние линии */
+frontend/src/styles/as6-crm-workspace-client-v231.css:1:/* AS6 CRM Workspace Client Migration V231 */
+frontend/src/styles/as6-crm-workspace-client-v232.css:1:/* AS6 CRM Workspace Client Visual Refinement V232 */
+frontend/src/styles/as6-sidebar-v225.css:1:/* AS6 Sidebar Implementation V225 */
+frontend/src/styles/as6-mission-workspace.css:1:/* AS6 Mission Control Workspace V86 */
+frontend/src/styles/as6-mission-workspace.css:78:.as6-cockpit, .as6-right-rail, [class*="RightRail"], [class*="rightRail"], [class*="AsidePanel"] {
+frontend/src/styles/as6-mission-workspace.css:152:  .as6-cockpit, .as6-right-rail, [class*="RightRail"], [class*="rightRail"], [class*="AsidePanel"] { position: static; }
+frontend/src/styles/as6-workspace-v224.css:1:/* AS6 Workspace Implementation V224 */
+frontend/src/styles/as6-assistant-v229.css:1:/* AS6 Assistant Implementation V229 */
+frontend/src/styles/as6-crm-workspace-ui-review-v236.css:1:/* AS6 CRM Workspace Client UI Review V236 */
+frontend/src/styles/as6-full-mission-control-theme-rollout.css:102:.sidebar, .side-nav, .left-nav, aside, nav[class*="Sidebar"], div[class*="Sidebar"] {
+frontend/src/theme/as6Theme.css:792:/* AS6 V202 Command Center Sidebar Single Source of Truth */
+frontend/src/theme/as6Theme.css:941:/* AS6 V205 Compact Sidebar Exact Etalon */
+frontend/src/theme/as6Theme.css:1173:/* AS6 V206 Sidebar Annotated Etalon Fix */
+frontend/src/theme/as6Theme.css:1315:/* AS6 V207 Sidebar Final Alignment */
+frontend/src/design-system/crm/as6CrmWorkspaceClientTraceAuto.js:1:(function as6CrmWorkspaceClientTraceAuto() {
+frontend/src/design-system/crm/as6CrmWorkspaceClientTraceAuto.js:9:      crmWorkspaceClient: Boolean(surface),
+frontend/src/design-system/crm/as6CrmWorkspaceClientTraceAuto.js:11:      as6Assistant: Boolean(document.querySelector('[data-as6-assistant="v229"]')),
+frontend/src/design-system/crm/as6CrmWorkspaceClientTraceAuto.js:12:      as6Focus: Boolean(document.querySelector('[data-as6-focus="v230"]')),
+frontend/src/design-system/crm/as6CrmWorkspaceClientTraceAuto.js:13:      as6RightRail: Boolean(document.querySelector('[data-as6-right-rail="v227"]')),
+docs/AS6_OS_BRAND_SYSTEM_REFINEMENT_ROOT_CAUSE.md:3:- Root cause: CRM Workspace уже выглядит близко к AS6 OS, но часть визуального языка всё ещё воспринимается как CRM/SaaS, а не как AI Operating System.
+docs/AS6_PROJECT_STATUS.md:14:3. Unified AS6 Workspace.
+docs/AS6_PROJECT_STATUS.md:15:4. AS6 Sidebar, Header, Right Rail.
+docs/AS6_PROJECT_STATUS.md:16:5. AS6 Core, AS6 Assistant, AS6 Focus.
+docs/genesis/08_AS6_SHELL_FOUNDATION_ROOT_CAUSE.md:8:- The platform needs reusable Navigation, Context Bar, Workspace, Intelligence Rail and Pulse zones.
+docs/AS6_WORKSPACE_ROUTE_INTEGRATION_ROOT_CAUSE.md:1:# AS6 Workspace Route Integration Root Cause
+docs/AS6_WORKSPACE_ROUTE_INTEGRATION_ROOT_CAUSE.md:3:- Workspace foundation exists as component but is not yet reachable through application routing.
+docs/AS6_WORKSPACE_ROUTE_INTEGRATION_ROOT_CAUSE.md:4:- Risk: AS6 Workspace remains unused artifact instead of becoming the platform shell.
+docs/AS6_WORKSPACE_ROUTE_INTEGRATION_ROOT_CAUSE.md:5:- Resolution: add dedicated AS6 Workspace page and route as safe integration point before CRM migration.
+docs/platform-v2/sdk/sidebar-menu-visible-placement-p21.md:1:# AS6 Platform V2 — Sidebar Menu Visible Placement P21
+docs/diagnostics/as6-epic004-pr4-executive-automation-queue-scheduler.md:8:- Workspace Storage V99, contextState.businessHome, layout schema, localStorage and Live Data were not changed.
+docs/diagnostics/as6-epic002-pr2b-operational-health-components.md:8:- Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home were not changed.
+docs/diagnostics/as6-epic004-pr5-executive-automation-retry-recovery.md:8:- Workspace Storage V99, contextState.businessHome, layout schema, localStorage and Live Data were not changed.
+docs/diagnostics/as6-epic002-pr1-executive-widget-integration.md:5:- AS6_EXECUTIVE_WIDGET_LAYOUT_DRIFT: widgets reuse contextState.businessHome layout.
+docs/diagnostics/as6-epic002-pr2a-executive-live-data-components.md:7:- Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home were not changed.
+docs/diagnostics/as6-epic001-user-workspace-customization.md:9:- Layout is stored only in Workspace contextState.businessHome.
+docs/diagnostics/as6-epic003-pr3-executive-action-validation-ui-feedback.md:8:- Workspace Storage V99, contextState.businessHome and layout schema were not changed.
+docs/diagnostics/as6-epic001-pr8-drag-drop-layout.md:6:- contextState.businessHome schema is unchanged.
+docs/diagnostics/as6-epic001-pr8-drag-drop-layout.md:7:- Workspace Storage V99 and debounce autosave are reused.
+docs/diagnostics/as6-epic004-pr1-executive-automation-scenarios.md:8:- Workspace Storage V99, contextState.businessHome, layout schema, localStorage and Live Data were not changed.
+docs/diagnostics/as6-epic005-pr1-executive-automation-governance-safety.md:8:- Workspace Storage V99, contextState.businessHome, layout schema and localStorage were not changed.
+docs/diagnostics/as6-epic003-pr4-executive-action-history-audit-trail.md:6:- AS6_EXECUTIVE_ACTION_HISTORY_STORAGE_DRIFT: audit trail is runtime-only and does not change Workspace Storage V99, contextState.businessHome, localStorage or layout schema.
+docs/diagnostics/as6-epic001-business-os-shell-integration.md:3:- Business Home is wrapped by AS6Workspace.
+docs/diagnostics/as6-epic001-business-os-shell-integration.md:4:- AS6Sidebar is integrated as Business OS navigation.
+docs/diagnostics/as6-epic001-business-os-shell-integration.md:6:- AS6RightRail is integrated as intelligence rail.
+docs/diagnostics/as6-epic001-business-os-shell-integration.md:7:- AS6Assistant and AS6Focus are integrated as right-side operating panels.
+docs/diagnostics/as6-epic002-pr5-executive-insights-recommendations.md:6:- AS6_EXECUTIVE_INSIGHTS_STORAGE_DRIFT: no contextState.businessHome, Workspace Storage V99 or layout schema changes were introduced.
+docs/diagnostics/as6-epic001-pr9-ai-adaptive-home.md:7:- contextState.businessHome schema is unchanged.
+docs/diagnostics/as6-epic001-pr9-ai-adaptive-home.md:8:- Workspace Storage V99 and debounce autosave are reused.
+docs/diagnostics/as6-epic002-pr2c-executive-dashboard-components.md:8:- Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home were not changed.
+docs/diagnostics/as6-epic004-pr3-executive-automation-monitoring-control.md:8:- Workspace Storage V99, contextState.businessHome, layout schema, localStorage and Live Data were not changed.
+docs/diagnostics/as6-epic002-pr3-executive-workspace-integration.md:5:- AS6_EXECUTIVE_WORKSPACE_PERSISTENCE_DRIFT: widgets reuse contextState.businessHome and Workspace Storage V99.
+docs/diagnostics/as6-epic003-pr5-executive-action-analytics-metrics.md:7:- AS6_EXECUTIVE_ACTION_ANALYTICS_STORAGE_DRIFT: analytics are runtime-only and do not modify Workspace Storage V99, contextState.businessHome, localStorage or layout schema.
+docs/diagnostics/as6-epic003-pr2-executive-action-orchestration.md:9:- Workspace Storage V99, contextState.businessHome and layout schema were not changed.
+docs/diagnostics/as6-epic003-pr1-executive-automation-actions.md:7:- AS6_EXECUTIVE_AUTOMATION_STORAGE_DRIFT: Workspace Storage V99, contextState.businessHome and layout schema were not changed.
+docs/diagnostics/as6-epic001-business-home-workspace-persistence.md:3:- Business Home reads active Workspace session from existing V99 persistence.
+docs/diagnostics/as6-epic001-business-home-workspace-persistence.md:4:- Business Home lists saved Workspace sessions.
+docs/diagnostics/as6-epic001-business-home-workspace-persistence.md:5:- Business Home can switch active Workspace session.
+docs/diagnostics/as6-epic001-business-home-workspace-persistence.md:6:- Business Home can save current Business OS layout into existing Workspace Storage.
+docs/diagnostics/as6-epic001-business-home-workspace-persistence.md:7:- Workspace persistence policy validation is surfaced in Right Rail.
+docs/diagnostics/as6-epic002-pr4-executive-personalization.md:3:- AS6_EXECUTIVE_PERSONALIZATION_PROFILE_DRIFT: profiles are defined in as6ExecutiveWorkspaceProfiles.js.
+docs/diagnostics/as6-epic002-pr4-executive-personalization.md:9:- contextState.businessHome, Workspace Storage V99 and layout schema were not changed.
+docs/AS6_OS_FOUNDATION_V1_ROOT_CAUSE.md:3:- AS6 already has Workspace and CRM migration route, but OS-level reusable shell is not yet separated as a canonical platform layer.
+docs/AS6_V243_CRM_WORKSPACE_CLIENT_POLISH_FIX_ROOT_CAUSE.md:1:# AS6 V243 CRM Workspace Client Polish Fix Root Cause
+docs/AS6_PROJECT_STATE.md:2599:- Purpose: add compact, modern, cross-page AS6 Mission Control Workspace layer.
+docs/AS6_PROJECT_STATE.md:3536:## 20260622T154747Z AS6 V200 Command Center Sidebar Etalon
+docs/AS6_PROJECT_STATE.md:3542:## 20260622T210438Z AS6 V201 Command Center Sidebar Final Etalon
+docs/AS6_PROJECT_STATE.md:3548:## 20260622T222438Z AS6 V202 Command Center Sidebar Single Source of Truth
+docs/AS6_PROJECT_STATE.md:3558:## 20260622T224402Z AS6 V203 Real Sidebar Force Etalon
+docs/AS6_PROJECT_STATE.md:3565:## 20260622T232241Z AS6 V204 Final Real Sidebar Etalon
+docs/AS6_PROJECT_STATE.md:3571:## 20260622T235248Z AS6 V205 Compact Sidebar Exact Etalon
+docs/AS6_PROJECT_STATE.md:3577:## 20260623T003529Z AS6 V206 Sidebar Annotated Etalon Fix
+docs/AS6_PROJECT_STATE.md:3583:## 20260623T005837Z AS6 V207 Sidebar Final Alignment
+docs/AS6_PROJECT_STATE.md:4200:- Added execution gate before AS6 Workspace implementation.
+docs/AS6_PROJECT_STATE.md:4203:## AS6 Workspace Implementation V1
+docs/AS6_PROJECT_STATE.md:4205:- Added reusable AS6Workspace shell.
+docs/AS6_PROJECT_STATE.md:4206:- Added AS6 Sidebar, Header, Right Rail, Focus and Assistant placeholders.
+docs/AS6_PROJECT_STATE.md:4210:## AS6 Workspace Route Integration Safe Patch
+docs/AS6_PROJECT_STATE.md:4213:- Added exactly one AS6WorkspacePage import.
+docs/AS6_PROJECT_STATE.md:4218:## AS6 CRM Workspace Migration
+docs/AS6_PROJECT_STATE.md:4220:- Added CRMWorkspacePage.
+docs/AS6_PROJECT_STATE.md:4222:- CRM can now be tested inside AS6Workspace without replacing production /crm route.
+docs/AS6_PROJECT_STATE.md:4231:## AS6 V243 CRM Workspace Client Polish Fix
+docs/AS6_PROJECT_STATE.md:4235:- Added non-destructive CRM Workspace client polish layer.
+docs/AS6_PROJECT_STATE.md:4245:## AS6 OS Assistant Command Layer
+docs/AS6_PROJECT_STATE.md:4248:- Interface changed: Workspace header gets AS6 Assistant readiness marker.
+docs/AS6_PROJECT_STATE.md:4249:- Interface changed: AS6 Assistant and Focus blocks receive stronger command-layer emphasis.
+docs/AS6_PROJECT_STATE.md:4266:- Interface changed: Sidebar, Header, KPI, AI Action Center, Revenue Brain, Pipeline, Right Rail.
+docs/AS6_PROJECT_STATE.md:4295:- Added Navigation, Context Bar, Workspace, Intelligence Rail, Pulse and Status Bar foundation components.
+docs/AS6_PROJECT_STATE.md:4358:- CRM business logic: preserved in frontend/src/pages/CRMWorkspacePage.jsx.
+docs/AS6_PROJECT_STATE.md:4371:- CRM entry: /as6-sales -> AS6SalesShellAdapter -> CRMWorkspacePage -> CRMPage.
+docs/AS6_PROJECT_STATE.md:4483:- Universal Workspace Manager: enabled.
+docs/AS6_PROJECT_STATE.md:4490:- Workspace Persistence: enabled.
+docs/AS6_PROJECT_STATE.md:4682:- Next target: Workspace Layout Runtime.
+docs/AS6_PROJECT_STATE.md:4694:- Workspace/Widget/AI Context isolation: enabled.
+docs/AS6_PROJECT_STATE.md:4783:- Next target: Sidebar/Menu visible placement.
+docs/AS6_PROJECT_STATE.md:4789:- Marketplace Sidebar Menu: enabled.
+docs/AS6_PROJECT_STATE.md:4910:- Business Workspace Foundation: enabled.
+docs/AS6_PROJECT_STATE.md:4956:- Business Home now uses AS6Workspace shell composition.
+docs/AS6_PROJECT_STATE.md:4957:- Integrated AS6Sidebar, AS6Header, AS6RightRail, AS6Assistant and AS6Focus.
+docs/AS6_PROJECT_STATE.md:4962:## AS6 EPIC-001 PR-6 — Business Home Workspace Persistence
+docs/AS6_PROJECT_STATE.md:4965:- Business Home now uses existing Workspace Storage V99.
+docs/AS6_PROJECT_STATE.md:4966:- Added active Workspace selector.
+docs/AS6_PROJECT_STATE.md:4967:- Added save current Business OS Workspace action.
+docs/AS6_PROJECT_STATE.md:4972:## AS6 EPIC-001 PR-7 — User Workspace Customization
+docs/AS6_PROJECT_STATE.md:4975:- Business Home layout stored only in contextState.businessHome.
+docs/AS6_PROJECT_STATE.md:4980:- Added debounce autosave through Workspace Storage V99.
+docs/AS6_PROJECT_STATE.md:4989:- Reused existing contextState.businessHome layout model.
+docs/AS6_PROJECT_STATE.md:4990:- Reused existing debounce autosave and Workspace Storage V99.
+docs/AS6_PROJECT_STATE.md:5000:- Reused contextState.businessHome, debounce autosave and Workspace Storage V99.
+docs/AS6_PROJECT_STATE.md:5009:- Preserved contextState.businessHome, Workspace Storage V99, drag/drop and AI Adaptive Home.
+docs/AS6_PROJECT_STATE.md:5020:- Preserved Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home.
+docs/AS6_PROJECT_STATE.md:5030:- Preserved Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home.
+docs/AS6_PROJECT_STATE.md:5040:- Preserved Business Home layout, Workspace Storage V99, drag/drop and AI Adaptive Home.
+docs/AS6_PROJECT_STATE.md:5043:## AS6 EPIC-002 PR-3 — Executive Workspace Integration
+docs/AS6_PROJECT_STATE.md:5048:- Preserved contextState.businessHome, Workspace Storage V99, drag/drop and AI Adaptive Home.
+docs/AS6_PROJECT_STATE.md:5052:## AS6 EPIC-002 PR-4 — Executive Personalization & Adaptive Workspace
+docs/AS6_PROJECT_STATE.md:5055:- Added Executive Workspace role profiles: Administrator, Sales, Finance and Operations.
+docs/AS6_PROJECT_STATE.md:5058:- Preserved contextState.businessHome, Workspace Storage V99, drag/drop, AI Adaptive Home and layout schema.
+docs/AS6_PROJECT_STATE.md:5068:- Preserved contextState.businessHome, Workspace Storage V99, layout schema, drag/drop, Executive components and Live Data sources.
+docs/AS6_PROJECT_STATE.md:5078:- Preserved contextState.businessHome, Workspace Storage V99, layout schema, drag/drop, AI Adaptive Home, Executive Insights, Executive Components and Live Data.
+docs/AS6_PROJECT_STATE.md:5089:- Preserved contextState.businessHome, Workspace Storage V99, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5099:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5109:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5119:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5128:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5138:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5149:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5159:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/AS6_PROJECT_STATE.md:5171:- Preserved Workspace Storage V99, contextState.businessHome, layout schema, drag/drop, AI Adaptive Home, Executive Components, Live Data and localStorage.
+docs/business-os/universal-navigation-b2.md:3:B2 adds Universal Navigation above Business Workspace B1.
+docs/business-os/business-workspace-foundation-b1.md:1:# AS6 Business OS — Business Workspace Foundation B1
+docs/business-os/epic001-business-home-live-data.md:7:- Use Dashboard Live Data, Business Workspace, Universal Navigation and Marketplace GA.
+docs/business-os/epic001-business-home-foundation.md:11:- Workspaces section
+docs/architecture/unified_ai_control_gateway.md:47:- Uses existing `requireAuth` + `requireWorkspace` logic.
+docs/architecture/unified_ai_control_gateway.md:62:The gateway intentionally reuses existing auth primitives (`requireAuth`, `requireWorkspace`, and internal admin-key validator) to avoid behavior drift.
+docs/architecture/ai_worker_system.md:30:Все backend endpoints обязательно проходят через `requireAuth` и `requireWorkspace`, а SQL-запросы фильтруют данные по `workspace_id`.
+docs/architecture/ai_worker_system.md:92:- AI CRM Assistant создаёт next actions для открытых лидов.
+docs/architecture/ai_worker_system.md:93:- AI Email Assistant создаёт email draft recommendations для лидов с email.
+docs/architecture/ai_worker_system.md:94:- AI Telegram Assistant создаёт Telegram draft recommendations для лидов с Telegram.
+docs/architecture/ai_worker_system.md:125:1. Workspace-level policy: какие worker types могут действовать автономно.
+docs/architecture/ai_priority_inbox_v1.md:190:## Focus Mode v2
+docs/architecture/ai_priority_inbox_v1.md:192:Focus Mode v2 turns the overloaded Priority Inbox into the default executive sales cockpit. The default route still uses `/priority-inbox`, but the page now requests the focused API mode by default:
+docs/architecture/ai_priority_inbox_v1.md:207:### Default Focus rules
+docs/architecture/ai_priority_inbox_v1.md:215:Generic noisy leads such as `ai_priority='high'`, `ai_score < 70`, and low/no risk are intentionally excluded from Focus Mode. They remain visible only in **All Leads**.
+docs/architecture/ai_priority_inbox_v1.md:221:- **Focus** — default selected mode.
+docs/architecture/ai_priority_inbox_v1.md:233:- `focusLeads` — count of leads matching Focus rules; generic high leads are not counted.
+docs/architecture/ai_priority_inbox_v1.md:238:### Focus sorting
+docs/architecture/ai_priority_inbox_v1.md:240:Focus Mode sorts for attention rather than raw volume:
+docs/architecture/ai_sequence_orchestrator.md:148:The widget keeps the same approval model as the rest of AI Workers: sequence output is displayed as a draft, not as an autonomous send action. Managers must approve/execute draft queue items through the existing Focus Queue controls before any outbound message can be delivered.
+docs/architecture/ai_manager_dashboard_kpi_layer.md:17:- Workspace scope: every query is constrained by `req.workspace.id`; the endpoint is protected by `requireAuth` and `requireWorkspace`.
+docs/architecture/enterprise_ai_execution_platform.md:225:curl -fsS -H "Authorization: Bearer $TOKEN" -H "X-Workspace-Id: $WORKSPACE_ID" https://www.as6.ru/api/ai/tasks
+docs/architecture/enterprise_ai_execution_platform.md:226:curl -fsS -X POST -H "Authorization: Bearer $TOKEN" -H "X-Workspace-Id: $WORKSPACE_ID" -H 'Content-Type: application/json' \
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:621:                <button class="card" data-id="admin" data-phase="mvp" data-status="stub" data-layer="product" style="--accent:var(--product)"><div class="icon">ADM</div><div class="name">Admin / Superadmin Panel</div><div class="desc">Workspaces, users, RBAC, tariffs, subscriptions</div><div class="badges"><span class="badge stub">Stub Later</span><span class="badge">RBAC</span></div></button>
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:817:        responsibilities: [["Workspace management", "компании-клиенты"], ["User management", "owners, managers, operators"], ["RBAC", "permissions"], ["Tariffs", "subscription control"]],
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:865:        responsibilities: [["CRM entities", "leads/pipeline/notes"], ["Workspace data", "multi-tenant records"], ["Appointments", "booking"], ["Proposal metadata", "tracking"]],
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:945:        responsibilities: [["Workspace limits", "tariffs"], ["Provider protection", "AI/voice/email"], ["Abuse control", "public forms"], ["Fair usage", "multi-tenant"]],
+docs/architecture/crm_ai_phased_infrastructure_architecture.html:993:        responsibilities: [["Agent context", "personalization"], ["Conversation history", "continuity"], ["Workspace knowledge", "company context"], ["State", "long workflows"]],
+docs/architecture/ai_workforce_coordination.md:24:- Executive Assistant Worker
+docs/architecture/ai_deal_risk_forecast_engine.md:103:## Workspace safety
+docs/architecture/crm_ai_master_build_order.html:95:        <span class="filter-label">Focus</span>
+docs/architecture/crm_ai_engineering_implementation_backlog.html:562:        <span class="filter-label">Focus</span>
+docs/architecture/crm_ai_engineering_implementation_backlog.html:797:                <div class="mini"><b>Acceptance</b>Workspace and memberships persist.</div>
+docs/architecture/crm_ai_engineering_implementation_backlog.html:810:              <ul class="subtasks"><li>Workspace list</li><li>User invite form</li><li>Tariff selector</li></ul>
+docs/architecture/crm_ai_engineering_implementation_backlog.html:1863:              <ul class="subtasks"><li>Daily aggregates</li><li>Workspace filters</li><li>Date range queries</li></ul>
+docs/architecture/crm_ai_engineering_implementation_backlog.html:1968:              <ul class="subtasks"><li>Workspace filters</li><li>Top-k retrieval</li><li>Access checks</li></ul>
+docs/architecture/crm_ai_engineering_implementation_backlog.html:2358:              <p>Workspace, API, Telegram, voice and AI provider limits.</p>
+docs/architecture/crm_ai_engineering_implementation_backlog.html:2377:              <ul class="subtasks"><li>Workspace quotas</li><li>Provider quotas</li><li>Tariff mapping</li></ul>
+docs/architecture/crm_ai_engineering_implementation_backlog.html:3337:              task("Create workspace management model", 2, "Backend", ["Add workspace table", "Add membership table", "Add basic role enum"], "Workspace and memberships persist."),
+docs/architecture/crm_ai_engineering_implementation_backlog.html:3338:              task("Build minimal admin screens", 2, "Frontend", ["Workspace list", "User invite form", "Tariff selector"], "Superadmin can manage pilot customers."),
+docs/architecture/crm_ai_engineering_implementation_backlog.html:3503:              task("Create aggregation jobs", 3, "Backend", ["Daily aggregates", "Workspace filters", "Date range queries"], "Dashboards load without heavy live queries.")
+docs/architecture/crm_ai_engineering_implementation_backlog.html:3518:              task("Implement tenant-isolated retrieval", 4, "Backend", ["Workspace filters", "Top-k retrieval", "Access checks"], "Agent retrieval cannot cross tenants."),
+docs/architecture/crm_ai_engineering_implementation_backlog.html:3576:          feature("Rate Limiting", "Workspace, API, Telegram, voice and AI provider limits.", "growth", "build", "Backend", "Sprint 6", 3, true,
+docs/architecture/crm_ai_engineering_implementation_backlog.html:3580:              task("Implement quota model", 2, "Backend", ["Workspace quotas", "Provider quotas", "Tariff mapping"], "Limits can differ by workspace/tariff."),
+docs/architecture/ai_autonomous_followup_engine.md:81:## Workspace isolation and permissions
+docs/architecture/AI_ENTERPRISE_OS_V1_STABLE.md:21:curl -H "Authorization: Bearer <jwt>" -H "X-Workspace-Id: <workspace-id>" http://localhost:3000/api/health
+docs/architecture/AI_ENTERPRISE_OS_V1_STABLE.md:22:curl -H "Authorization: Bearer <jwt>" -H "X-Workspace-Id: <workspace-id>" http://localhost:3000/api/ai/executive-unified-dashboard/overview
+docs/architecture/AI_ENTERPRISE_OS_V1_STABLE.md:23:curl -H "Authorization: Bearer <jwt>" -H "X-Workspace-Id: <workspace-id>" http://localhost:3000/api/ai/system-health
+docs/architecture/AI_ENTERPRISE_OS_V1_STABLE.md:74:- Upgraded `/ai-enterprise-command-center` into Executive Operations Hub with five governance-safe sections: Daily Executive Brief, Operations Board, Executive Focus Queue, Decision Tracker, and interactive local Morning Checklist.
+docs/architecture/telegram_real_execution.md:59:## Workspace safety
+docs/architecture/telegram_real_execution.md:61:Telegram capture never creates orphan leads. The bot resolves a CRM user from `TELEGRAM_CRM_USER_EMAIL` / `CRM_DEFAULT_USER_EMAIL` when configured, otherwise uses the oldest user. Workspace assignment uses the existing workspace model fallback: an owner workspace is selected when present, and a default owner workspace is created only if the user has no workspace. This keeps every Telegram lead tied to both `user_id` and `workspace_id`.
+docs/architecture/crm_ai_development_execution_roadmap.html:528:          <div class="cell component"><div class="icon">ADM</div><div><strong>Admin / Superadmin Panel</strong><span>Workspace, users, RBAC, tariffs, subscriptions.</span></div></div>
+docs/architecture/crm_ai_development_execution_roadmap.html:558:        <div class="row item" data-phase="growth" data-status="build" data-layer="ops" style="--accent:var(--ops)"><div class="cell component"><div class="icon">LIM</div><div><strong>Rate Limiting</strong><span>Workspace, API, Telegram, voice and AI call limits.</span></div></div><div class="cell"><span class="tag build">Build Now</span></div><div class="cell">Ops</div><div class="cell">Per-workspace quotas, provider caps, public form abuse control, tariff-linked usage counters.</div><div class="cell mono">Gateway, Redis, tariffs</div><div class="cell">Excessive usage is throttled predictably and surfaced in admin/billing views.</div><div class="cell">Backend</div></div>
+docs/architecture/crm_ai_development_execution_roadmap.html:580:        <div class="row item" data-phase="scale" data-status="scale" data-layer="ai" style="--accent:var(--ai)"><div class="cell component"><div class="icon">MEM</div><div><strong>Agent Memory / Context Store</strong><span>Workspace context, history and long-running agent state.</span></div></div><div class="cell"><span class="tag scale">Scale Only</span></div><div class="cell">AI</div><div class="cell">Dedicated store for conversation context, workspace knowledge, user preferences and agent state.</div><div class="cell mono">Agent services, CRM history, privacy policy</div><div class="cell">Agents retrieve tenant-scoped context without overloading CRM transactional tables.</div><div class="cell">AI/Data</div></div>
+docs/architecture/s1_minimal_backend_api.md:19:* Workspace/multitenancy: not implemented in Sprint 1
+docs/architecture/ai_pipeline_copilot_v1.md:20:- Sidebar navigation label: `AI Pipeline Copilot`
+docs/architecture/ai_pipeline_copilot_v1.md:48:- Workspace audit/activity via `crm_activity`.
+docs/architecture/ai_pipeline_copilot_v1.md:62:- Focus Leads
+docs/architecture/ai_pipeline_copilot_v1.md:176:- Focus Leads only includes leads where:
+docs/architecture/ai_pipeline_copilot_v1.md:180:- Focus Leads excludes `ai_priority='high'` leads below score 70 when they do not have elevated risk.
+docs/architecture/ai_pipeline_copilot_v1.md:185:  - Focus Leads: 6 visible by default;
+docs/architecture/demo_sales_pipeline.md:14:- `requireWorkspace` — данные создаются только в активном workspace из `X-Workspace-Id`.
+docs/architecture/landing_lead_capture.md:39:## Workspace routing
+docs/architecture/ai_followup_and_scoring_system.md:94:- API routes используют `requireAuth` и `requireWorkspace`.
+docs/architecture/workspace_saas_foundation.md:1:# Workspace SaaS Foundation
+docs/architecture/workspace_saas_foundation.md:14:Workspace scope добавлен в существующие сущности без удаления данных:
+docs/architecture/workspace_saas_foundation.md:57:Активное пространство определяется через заголовок `X-Workspace-Id`. Если заголовок не передан, backend выбирает default workspace пользователя и проверяет membership.
+docs/architecture/ai_workers_focus_queue_v2.md:1:# AI Workers Focus Queue v2
+docs/architecture/ai_workers_focus_queue_v2.md:5:AI Workers Focus Queue v2 makes the Approval Center production-friendly for a sales manager. The default view no longer exposes every historical, legacy, or safety-test queue row as urgent work. Instead, it presents a short high-signal queue and moves noisy records into collapsed audit/history sections.
+docs/architecture/ai_workers_focus_queue_v2.md:9:- Title: **Focus Queue**
+docs/architecture/ai_workers_focus_queue_v2.md:12:## Default Focus behavior
+docs/architecture/ai_workers_focus_queue_v2.md:14:The default tab is **Focus** and it renders at most 10 active actionable tasks. The queue is deterministic: actions are sorted by focus priority and then by creation time descending.
+docs/architecture/ai_workers_focus_queue_v2.md:25:## Hidden from default Focus
+docs/architecture/ai_workers_focus_queue_v2.md:27:The default Focus queue hides these classes of records:
+docs/architecture/ai_workers_focus_queue_v2.md:41:- **Actionable now** — count shown in the Focus queue.
+docs/architecture/ai_workers_focus_queue_v2.md:44:- **Hidden legacy** — records intentionally outside the Focus queue.
+docs/architecture/ai_workers_focus_queue_v2.md:52:- **Focus** — default high-signal queue, capped at 10.
+docs/architecture/ai_workers_focus_queue_v2.md:82:Focus Queue v2 does not remove any sanitizer or copy-guard layer:
+docs/architecture/ai_workers_focus_queue_v2.md:93:- `/ai-workers` should show around 5–10 Focus items when enough recent actionable work exists.
+docs/architecture/ai_workers_focus_queue_v2.md:95:- Pipeline Copilot follow-up drafts should remain visible in Focus/Follow-ups when active.
+docs/architecture/ai_workers_focus_queue_v2.md:97:- Unsafe Copy Guard test rows should not appear in Focus.
+docs/architecture/ai_workers_focus_queue_v2.md:104:The AI Workers page now uses Focus Queue metrics as the primary top-card language instead of exposing raw historical queue totals as urgent work. The old primary cards `Очередь AI задач` and `Действия на одобрение` are replaced by:
+docs/architecture/ai_workers_focus_queue_v2.md:176:The cooldown does not block manual manager actions, meeting confirmations, non-follow-up recommendations, scoring updates, copy guard behavior, route highlighting, or Focus Queue rendering.
+docs/AS6_CRM_WORKSPACE_MIGRATION_ROOT_CAUSE.md:1:# AS6 CRM Workspace Migration Root Cause
+docs/AS6_CRM_WORKSPACE_MIGRATION_ROOT_CAUSE.md:5:- Resolution: add CRM Workspace route that renders CRM inside AS6Workspace before replacing the production CRM route.
+docs/coverage/as6-epic001-business-os-shell-integration-coverage.md:3:- AS6Workspace coverage: PASS
+docs/coverage/as6-epic001-business-os-shell-integration-coverage.md:4:- AS6Sidebar coverage: PASS
+docs/coverage/as6-epic001-business-os-shell-integration-coverage.md:6:- AS6RightRail coverage: PASS
+docs/coverage/as6-epic001-business-os-shell-integration-coverage.md:7:- AS6Assistant coverage: PASS
+docs/coverage/as6-epic001-business-os-shell-integration-coverage.md:8:- AS6Focus coverage: PASS
+docs/coverage/as6-epic001-business-home-workspace-persistence-coverage.md:3:- Active Workspace read coverage: PASS
+docs/coverage/as6-epic001-business-home-workspace-persistence-coverage.md:4:- Workspace session list coverage: PASS
+docs/coverage/as6-epic001-business-home-workspace-persistence-coverage.md:5:- Workspace switch coverage: PASS
+docs/coverage/as6-epic001-business-home-workspace-persistence-coverage.md:6:- Workspace save coverage: PASS
+docs/coverage/as6-epic002-pr3-executive-workspace-integration-coverage.md:9:- Workspace Storage V99 compatibility coverage: PASS
+docs/coverage/as6-epic002-pr1-executive-widget-integration-coverage.md:7:- Workspace layout compatibility coverage: PASS
+docs/AS6_OS_ASSISTANT_COMMAND_LAYER_ROOT_CAUSE.md:1:# AS6 OS Assistant Command Layer Root Cause
+docs/AS6_OS_ASSISTANT_COMMAND_LAYER_ROOT_CAUSE.md:4:- Interface gap: CRM has AS6 Assistant blocks, but no always-visible lightweight command layer.
+docs/AS6_OS_ASSISTANT_COMMAND_LAYER_ROOT_CAUSE.md:8:- UI location changed: bottom-right floating layer and CRM Workspace top surface.
+docs/AS6_WORKSPACE_V1_ROOT_CAUSE.md:1:# AS6 Workspace V1 Root Cause
+docs/AS6_WORKSPACE_V1_ROOT_CAUSE.md:3:- AS6 имеет каноническую архитектуру, но единый Workspace foundation ещё не закреплён как reusable UI layer.
+docs/AS6_WORKSPACE_V1_ROOT_CAUSE.md:5:- Решение: добавить первый reusable AS6 Workspace shell: Sidebar, Header, Right Rail, Core, Focus, Assistant.
+docs/governance/as6-epic004-pr5-executive-automation-retry-recovery-governance.md:12:CONTROL=Executive Automation retry and recovery must remain runtime-only, expose retry count and failure reason, and must not mutate Workspace Storage V99 or layout schema.
+docs/governance/as6-epic001-business-home-workspace-persistence-governance.md:5:ROOT_CAUSE=Business Home shell was integrated but not connected to existing Workspace Storage V99.
+docs/governance/as6-epic001-business-home-workspace-persistence-governance.md:6:CONTROL=Business Home must use as6WorkspaceStorage.js instead of creating a parallel localStorage key.
+docs/governance/as6-epic001-business-os-shell-integration-governance.md:5:ROOT_CAUSE=Business Home used ExperienceShell without the existing AS6 Workspace shell primitives.
+docs/governance/as6-epic001-business-os-shell-integration-governance.md:6:CONTROL=Business Home must reuse AS6Workspace, AS6Sidebar, AS6Header, AS6RightRail, AS6Assistant and AS6Focus instead of creating a parallel shell.
+docs/governance/as6-epic003-pr4-executive-action-history-audit-trail-governance.md:12:CONTROL=Executive Action history must remain runtime-only for PR-4 and must not mutate Workspace Storage V99, layout schema, contextState.businessHome or localStorage.
+docs/governance/as6-epic001-pr8-drag-drop-layout-governance.md:9:CONTROL=Drag and drop must update only widget order through updateBusinessHomeLayout and must not change Workspace Storage V99 schema.
+docs/governance/as6-epic002-pr3-executive-workspace-integration-governance.md:11:CONTROL=Executive Workspace must use existing implemented Executive components as Business Home widgets without changing storage schema.
+docs/05_AS6_MASTER_START_PROMPT.md:139:- AS6 Workspace
+docs/05_AS6_MASTER_START_PROMPT.md:140:- AS6 Sidebar
+docs/05_AS6_MASTER_START_PROMPT.md:144:- AS6 Assistant
+docs/05_AS6_MASTER_START_PROMPT.md:145:- 🎯 AS6 Focus
+docs/05_AS6_MASTER_START_PROMPT.md:159:AS6 Assistant
+docs/AS6_V243_CRM_WORKSPACE_CLIENT_POLISH_ROOT_CAUSE.md:1:# AS6 V243 CRM Workspace Client Polish Root Cause
+docs/AS6_V243_CRM_WORKSPACE_CLIENT_POLISH_ROOT_CAUSE.md:3:- Production confirms CRM Workspace block is visible.
+docs/AS6_V243_CRM_WORKSPACE_CLIENT_POLISH_ROOT_CAUSE.md:4:- Current risk: CRM Workspace may look visually close to OS direction but still needs client-facing polish for hierarchy, spacing, responsive behavior and premium brand consistency.
+docs/AS6_V243_CRM_WORKSPACE_CLIENT_POLISH_ROOT_CAUSE.md:5:- Root cause: Workspace components were integrated before a dedicated client polish layer was finalized.
+docs/AS6_V243_CRM_WORKSPACE_CLIENT_POLISH_ROOT_CAUSE.md:6:- Resolution: add non-destructive V243 CSS polish layer for CRM Workspace client surface.
+docs/AS6_UI_ETALONS.md:15:## Sidebar Rules
