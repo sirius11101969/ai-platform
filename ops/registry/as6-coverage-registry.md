@@ -3348,3 +3348,14 @@ Permission Validation
 - ops/governance/as6-engineering-meta-architecture-root-cause.md
 - ops/governance/as6-engineering-meta-architecture-aec.md
 - runtime/as6-engineering-meta-architecture-canon/20260702T133426Z/runtime-trace.txt
+
+## AS6_REFERENCE_META_MODEL_CANON
+
+- docs/standards/as6-reference-meta-model.md
+- docs/standards/as6-engineering-meta-architecture.md
+- docs/adr/as6-adr-reference-meta-model-canon.md
+- ops/bin/as6-diagnose-reference-meta-model
+- ops/bin/as6-control-reference-meta-model
+- ops/governance/as6-reference-meta-model-root-cause.md
+- ops/governance/as6-reference-meta-model-aec.md
+- runtime/as6-reference-meta-model-canon/20260702T135858Z/runtime-trace.txt

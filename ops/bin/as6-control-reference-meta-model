@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-reference-meta-model
+grep -q AS6_REFERENCE_META_MODEL_MISSING ops/governance/as6-reference-meta-model-root-cause.md
+grep -q AS6_AEC_REFERENCE_META_MODEL_REQUIRED ops/governance/as6-reference-meta-model-aec.md
+grep -q AS6_AEC_SYNTAX_INDEPENDENCE_REQUIRED ops/governance/as6-reference-meta-model-aec.md
+grep -q AS6_AEC_REFERENCE_META_MODEL_NOT_SUPERSTANDARD ops/governance/as6-reference-meta-model-aec.md
+grep -q AS6_AEC_SEMANTIC_EXPRESSIVENESS_REQUIRED ops/governance/as6-reference-meta-model-aec.md
+echo AS6_REFERENCE_META_MODEL_CONTROL=PASS

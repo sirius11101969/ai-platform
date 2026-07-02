@@ -1523,3 +1523,20 @@ ops/bin/as6-control-permission-engine-v114
 - Failure class: AS6_AUTHORITY_TRACEABILITY_OVERLAP
 - Failure class: AS6_META_ARCHITECTURE_SUPERSTANDARD_RISK
 - Failure class: AS6_META_ARCHITECTURE_MINIMALITY_GAP
+
+## AS6_REFERENCE_META_MODEL_CANON
+
+- Diagnostic: ops/bin/as6-diagnose-reference-meta-model
+- Control: ops/bin/as6-control-reference-meta-model
+- Reference Meta-Model: docs/standards/as6-reference-meta-model.md
+- Engineering Meta-Architecture alignment: docs/standards/as6-engineering-meta-architecture.md
+- ADR: docs/adr/as6-adr-reference-meta-model-canon.md
+- Root cause: ops/governance/as6-reference-meta-model-root-cause.md
+- AEC: ops/governance/as6-reference-meta-model-aec.md
+- Runtime artifacts: runtime/as6-reference-meta-model-canon/20260702T135858Z
+- Failure class: AS6_REFERENCE_META_MODEL_MISSING
+- Failure class: AS6_DESCRIPTIVE_VOCABULARY_GAP
+- Failure class: AS6_SEMANTIC_RELATION_GAP
+- Failure class: AS6_SYNTAX_DEPENDENCY_RISK
+- Failure class: AS6_META_MODEL_SUPERSTANDARD_RISK
+- Failure class: AS6_EXPRESSIVENESS_STABILITY_GAP

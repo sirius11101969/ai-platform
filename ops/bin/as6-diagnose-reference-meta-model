@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f docs/standards/as6-reference-meta-model.md
+test -f docs/standards/as6-engineering-meta-architecture.md
+test -f docs/adr/as6-adr-reference-meta-model-canon.md
+grep -q 'DOCUMENT_TYPE=REFERENCE_META_MODEL' docs/standards/as6-reference-meta-model.md
+grep -q 'descriptive semantic framework' docs/standards/as6-reference-meta-model.md
+grep -q 'descriptive vocabulary and semantic relations' docs/standards/as6-reference-meta-model.md
+grep -q 'does not prescribe engineering practice' docs/standards/as6-reference-meta-model.md
+grep -q 'does not define documentation syntax' docs/standards/as6-reference-meta-model.md
+grep -q 'is not a superstandard' docs/standards/as6-reference-meta-model.md
+grep -q 'Constraint Space' docs/standards/as6-reference-meta-model.md
+grep -q 'Invariant Mapping' docs/standards/as6-reference-meta-model.md
+grep -q 'Context' docs/standards/as6-reference-meta-model.md
+grep -q 'Conformance Relation' docs/standards/as6-reference-meta-model.md
+grep -q 'Syntax Independence' docs/standards/as6-reference-meta-model.md
+grep -q 'Observed Evidence ⊨ Expected Evidence' docs/standards/as6-reference-meta-model.md
+grep -q 'Semantic Expressiveness' docs/standards/as6-reference-meta-model.md
+grep -q 'Structural Stability' docs/standards/as6-reference-meta-model.md
+grep -q 'ADR_ID=AS6_ADR_REFERENCE_META_MODEL_CANON' docs/adr/as6-adr-reference-meta-model-canon.md
+grep -q 'Reference Meta-Model Alignment' docs/standards/as6-engineering-meta-architecture.md
+echo AS6_REFERENCE_META_MODEL=PASS
+echo AS6_DESCRIPTIVE_VOCABULARY=PASS
+echo AS6_SEMANTIC_RELATIONS=PASS
+echo AS6_SYNTAX_INDEPENDENCE=PASS
+echo AS6_REFERENCE_META_MODEL_ADR=PASS
