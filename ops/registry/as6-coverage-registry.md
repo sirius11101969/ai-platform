@@ -3280,3 +3280,12 @@ Permission Validation
 - ops/bin/as6-control-executive-audit-trail-pr5
 - ops/governance/as6-executive-audit-trail-root-cause-pr5.md
 - ops/governance/as6-executive-audit-trail-aec-pr5.md
+
+## AS6_EPIC008_PR6_EXECUTIVE_FEEDBACK_LOOP
+
+- frontend/src/lib/as6ExecutiveFeedbackLoop.js
+- frontend/src/components/as6/AS6ExecutiveFeedbackLoopPanel.jsx
+- ops/bin/as6-diagnose-executive-feedback-loop-pr6
+- ops/bin/as6-control-executive-feedback-loop-pr6
+- ops/governance/as6-executive-feedback-loop-root-cause-pr6.md
+- ops/governance/as6-executive-feedback-loop-aec-pr6.md

@@ -1436,3 +1436,15 @@ ops/bin/as6-control-permission-engine-v114
 - Failure class: AS6_PREDICTION_EXECUTION_LINK_GAP
 - Failure class: AS6_DECISION_ID_TRACE_GAP
 - Root cause: Predictive and execution decisions exist without explainable decision history.
+
+## AS6_EPIC008_PR6_EXECUTIVE_FEEDBACK_LOOP
+
+- Diagnostic: ops/bin/as6-diagnose-executive-feedback-loop-pr6
+- Control: ops/bin/as6-control-executive-feedback-loop-pr6
+- Runtime artifacts: runtime/as6-epic008-pr6-executive-feedback-loop/20260702T112643Z
+- Failure class: AS6_EXECUTIVE_FEEDBACK_LOOP_MISSING
+- Failure class: AS6_DECISION_OUTCOME_TRACE_GAP
+- Failure class: AS6_RECOMMENDATION_FEEDBACK_BINDING_GAP
+- Failure class: AS6_SCENARIO_FEEDBACK_BINDING_GAP
+- Failure class: AS6_PREDICTION_ACCURACY_GAP
+- Root cause: Executive Audit Trail explains decisions, but AS6 does not yet convert outcomes into analytical feedback.

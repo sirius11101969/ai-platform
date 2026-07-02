@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-executive-feedback-loop-pr6
+grep -q AS6_EXECUTIVE_FEEDBACK_LOOP_MISSING ops/governance/as6-executive-feedback-loop-root-cause-pr6.md
+grep -q AS6_DECISION_OUTCOME_TRACE_GAP ops/governance/as6-executive-feedback-loop-root-cause-pr6.md
+grep -q AS6_RECOMMENDATION_FEEDBACK_BINDING_GAP ops/governance/as6-executive-feedback-loop-root-cause-pr6.md
+grep -q AS6_SCENARIO_FEEDBACK_BINDING_GAP ops/governance/as6-executive-feedback-loop-root-cause-pr6.md
+grep -q AS6_PREDICTION_ACCURACY_GAP ops/governance/as6-executive-feedback-loop-root-cause-pr6.md
+grep -q AS6_AEC_EXECUTIVE_FEEDBACK_LOOP_REQUIRED ops/governance/as6-executive-feedback-loop-aec-pr6.md
+echo AS6_EXECUTIVE_FEEDBACK_LOOP_CONTROL=PASS

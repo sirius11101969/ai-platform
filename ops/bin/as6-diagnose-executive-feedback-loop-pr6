@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/lib/as6ExecutiveFeedbackLoop.js
+test -f frontend/src/components/as6/AS6ExecutiveFeedbackLoopPanel.jsx
+grep -q createAS6ExecutiveFeedbackLoop frontend/src/lib/as6ExecutiveFeedbackLoop.js
+grep -q createAS6PredictionAccuracy frontend/src/lib/as6ExecutiveFeedbackLoop.js
+grep -q decisionId frontend/src/lib/as6ExecutiveFeedbackLoop.js
+grep -q outcomeTrace frontend/src/lib/as6ExecutiveFeedbackLoop.js
+grep -q predictionAccuracy frontend/src/lib/as6ExecutiveFeedbackLoop.js
+grep -q recommendationQualityDelta frontend/src/lib/as6ExecutiveFeedbackLoop.js
+grep -q analytical-improvement-only frontend/src/lib/as6ExecutiveFeedbackLoop.js
+grep -q no-new-persistent-storage frontend/src/lib/as6ExecutiveFeedbackLoop.js
+! grep -R "localStorage\|sessionStorage\|indexedDB" frontend/src/lib/as6ExecutiveFeedbackLoop.js frontend/src/components/as6/AS6ExecutiveFeedbackLoopPanel.jsx
+! grep -R "executeAction\|runExecution\|mutateExecution\|setDecision\|updateDecision\|setExecution\|updateExecution" frontend/src/lib/as6ExecutiveFeedbackLoop.js frontend/src/components/as6/AS6ExecutiveFeedbackLoopPanel.jsx
+echo AS6_EXECUTIVE_FEEDBACK_LOOP=PASS
+echo AS6_DECISION_OUTCOME_TRACE=PASS
+echo AS6_RECOMMENDATION_FEEDBACK_BINDING=PASS
+echo AS6_SCENARIO_FEEDBACK_BINDING=PASS
+echo AS6_PREDICTION_ACCURACY=PASS

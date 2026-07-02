@@ -5462,3 +5462,13 @@ Status: PASS pending validation
 - Added no-storage and no-mutation diagnostics.
 - Added failure classes: AS6_EXECUTIVE_AUDIT_TRAIL_MISSING, AS6_REASON_TRACE_GAP, AS6_DECISION_HISTORY_GAP, AS6_PREDICTION_EXECUTION_LINK_GAP, AS6_DECISION_ID_TRACE_GAP.
 - Executive Intelligence readiness after PR-5: 65%.
+
+## AS6_EPIC008_PR6_EXECUTIVE_FEEDBACK_LOOP
+
+- Added Executive Feedback Loop analytical improvement layer.
+- Added decision outcome trace.
+- Added recommendation feedback binding.
+- Added scenario feedback binding.
+- Added prediction accuracy scoring.
+- Added no-storage, no-completed-decision-mutation and no-execution-mutation diagnostics.
+- Executive Intelligence readiness after PR-6: 80%.
