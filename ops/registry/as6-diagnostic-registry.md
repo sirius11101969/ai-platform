@@ -1362,3 +1362,13 @@ ops/bin/as6-control-permission-engine-v114
 - Control: ops/bin/as6-control-business-home-live-data
 - Aggregator: frontend/src/as6/business-home/AS6BusinessHomeLiveData.js
 - Added failure class: AS6_BUSINESS_HOME_STATIC_DATA_DRIFT.
+
+## EPIC-007 PR4 — Workspace Personalization Diagnostics
+
+- AS6_WORKSPACE_PROFILE_GAP.
+- AS6_WORKSPACE_ROLE_BINDING_GAP.
+- AS6_WORKSPACE_PREFERENCES_GAP.
+- AS6_ROLE_BASED_WORKSPACE_GAP.
+- AS6_PERSONALIZED_AI_CONTEXT_GAP.
+- AS6_WORKSPACE_PERSONALIZATION_STORAGE_DRIFT.
+- AS6_SINGLE_AI_WORKSPACE_INVARIANT_GAP.

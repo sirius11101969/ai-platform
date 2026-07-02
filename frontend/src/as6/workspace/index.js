@@ -29,3 +29,18 @@ export {
   AS6AIRuntimePanel,
   AS6_AI_WORKSPACE_VERSION,
 } from './AS6AIWorkspace.jsx';
+
+export {
+  default as AS6WorkspacePersonalization,
+  AS6WorkspaceProfileCard,
+  AS6WorkspacePreferencesCard,
+  AS6RoleBasedWorkspaceCard,
+  AS6PersonalizedAIWorkspaceCard,
+  AS6WorkspacePersonalizationTracer,
+  createAS6PersonalizedWorkspace,
+  getAS6WorkspaceRole,
+  AS6_WORKSPACE_PERSONALIZATION_VERSION,
+  AS6_WORKSPACE_ROLES,
+  AS6_WORKSPACE_PROFILE,
+  AS6_WORKSPACE_PREFERENCES,
+} from './AS6WorkspacePersonalization.jsx';

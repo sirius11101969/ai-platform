@@ -3211,3 +3211,11 @@ Permission Validation
 - Covers Universal Navigation integration.
 - Covers Marketplace GA integration.
 - Covers safe fallback behavior.
+
+## EPIC-007 PR4 — Workspace Personalization Coverage
+
+- Workspace Profile coverage.
+- Role Binding coverage.
+- Workspace Preferences coverage.
+- Personalized AI Context coverage.
+- INV-009 Single AI Workspace coverage.

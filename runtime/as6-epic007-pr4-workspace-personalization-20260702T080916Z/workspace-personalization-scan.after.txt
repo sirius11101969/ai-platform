@@ -1,0 +1,26 @@
+frontend/src/as6/workspace/index.js:34:  default as AS6WorkspacePersonalization,
+frontend/src/as6/workspace/index.js:39:  AS6WorkspacePersonalizationTracer,
+frontend/src/as6/workspace/index.js:43:  AS6_WORKSPACE_ROLES,
+frontend/src/as6/workspace/index.js:44:  AS6_WORKSPACE_PROFILE,
+frontend/src/as6/workspace/index.js:45:  AS6_WORKSPACE_PREFERENCES,
+frontend/src/as6/workspace/index.js:46:} from './AS6WorkspacePersonalization.jsx';
+frontend/src/as6/workspace/AS6WorkspacePersonalization.jsx:2:import './AS6WorkspacePersonalization.css';
+frontend/src/as6/workspace/AS6WorkspacePersonalization.jsx:7:export const AS6_WORKSPACE_ROLES = [
+frontend/src/as6/workspace/AS6WorkspacePersonalization.jsx:15:export const AS6_WORKSPACE_PROFILE = {
+frontend/src/as6/workspace/AS6WorkspacePersonalization.jsx:24:export const AS6_WORKSPACE_PREFERENCES = {
+frontend/src/as6/workspace/AS6WorkspacePersonalization.jsx:32:export function getAS6WorkspaceRole(roleId = AS6_WORKSPACE_PROFILE.roleId) {
+frontend/src/as6/workspace/AS6WorkspacePersonalization.jsx:33:  return AS6_WORKSPACE_ROLES.find((role) => role.id === roleId) || AS6_WORKSPACE_ROLES[0];
+frontend/src/as6/workspace/AS6WorkspacePersonalization.jsx:36:export function createAS6PersonalizedWorkspace(profile = AS6_WORKSPACE_PROFILE, preferences = AS6_WORKSPACE_PREFERENCES, state) {
+frontend/src/as6/workspace/AS6WorkspacePersonalization.jsx:47:    aiReason: 'Personalized AI использует Workspace Profile, User Role, Active Module и Focus Context.',
+frontend/src/as6/workspace/AS6WorkspacePersonalization.jsx:53:  const model = useMemo(() => createAS6PersonalizedWorkspace(AS6_WORKSPACE_PROFILE, AS6_WORKSPACE_PREFERENCES, state), [state]);
+frontend/src/as6/workspace/AS6WorkspacePersonalization.jsx:67:  const model = useMemo(() => createAS6PersonalizedWorkspace(AS6_WORKSPACE_PROFILE, AS6_WORKSPACE_PREFERENCES, state), [state]);
+frontend/src/as6/workspace/AS6WorkspacePersonalization.jsx:86:  const model = useMemo(() => createAS6PersonalizedWorkspace(AS6_WORKSPACE_PROFILE, AS6_WORKSPACE_PREFERENCES, state), [state]);
+frontend/src/as6/workspace/AS6WorkspacePersonalization.jsx:104:  const model = useMemo(() => createAS6PersonalizedWorkspace(AS6_WORKSPACE_PROFILE, AS6_WORKSPACE_PREFERENCES, state), [state]);
+frontend/src/as6/workspace/AS6WorkspacePersonalization.jsx:107:      <span>Personalized AI</span>
+frontend/src/as6/workspace/AS6WorkspacePersonalization.jsx:110:      <button type="button" onClick={() => registerWorkspaceAction({ id: 'personalized-ai.next-step', label: model.recommendation, source: 'personalized-ai:' + model.role.id })}>Register Personalized AI Action</button>
+frontend/src/as6/workspace/AS6WorkspacePersonalization.jsx:115:export function AS6WorkspacePersonalizationTracer() {
+frontend/src/as6/workspace/AS6WorkspacePersonalization.jsx:117:  const model = useMemo(() => createAS6PersonalizedWorkspace(AS6_WORKSPACE_PROFILE, AS6_WORKSPACE_PREFERENCES, state), [state]);
+frontend/src/as6/workspace/AS6WorkspacePersonalization.jsx:127:export default function AS6WorkspacePersonalization() {
+frontend/src/as6/workspace/AS6WorkspacePersonalization.jsx:133:        <p>Профиль, роль, настройки интерфейса и Personalized AI используют Workspace Context без нового storage.</p>
+frontend/src/as6/workspace/AS6WorkspacePersonalization.jsx:141:      <AS6WorkspacePersonalizationTracer />
+docs/architecture/AS6_ARCHITECTURE_CHARTER.md:64:- INV-009 Single AI Workspace.

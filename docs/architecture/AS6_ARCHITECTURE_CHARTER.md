@@ -58,3 +58,9 @@ PRIMARY_ARCHITECTURE_RISK=WORKSPACE_FRAGMENTATION
 - QGT-007 Context Awareness.
 
 Rule: AI features must use Workspace Context before introducing local AI state.
+
+## EPIC-007 PR4 Architecture Invariant Addition
+
+- INV-009 Single AI Workspace.
+
+Rule: all intelligent platform features must work through the unified AI Workspace and Workspace Context.

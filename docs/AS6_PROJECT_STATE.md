@@ -5363,3 +5363,15 @@ Status: PASS pending validation
 - Execution Layer unchanged.
 - Workspace readiness: 45%.
 - Execution layer readiness: 100%.
+
+## EPIC-007 PR4 — Workspace Personalization
+
+- Added Workspace Personalization as runtime-only Workspace layer.
+- Added Workspace Profiles, Roles, Preferences, Role-based Workspace and Personalized AI.
+- Added Workspace Personalization Runtime Tracer.
+- Added INV-009 Single AI Workspace.
+- Workspace Context reused.
+- No new role system, no new layout schema, no persistent storage and no localStorage added.
+- Execution Layer unchanged.
+- Workspace readiness: 65%.
+- Execution layer readiness: 100%.
