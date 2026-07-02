@@ -1,0 +1,16 @@
+ M docs/AS6_PROJECT_STATE.md
+?? docs/aec/as6-epic006-pr3-execution-orchestrator-aec.md
+?? docs/aec/as6-epic007-pr0-architecture-governance-framework-aec.md
+?? docs/architecture/AS6_ARCHITECTURE_CHARTER.md
+?? docs/architecture/AS6_ARCHITECTURE_DECISIONS.md
+?? docs/architecture/AS6_ARCHITECTURE_DRIFT.md
+?? docs/architecture/AS6_ARCHITECTURE_REGISTRY.md
+?? docs/architecture/AS6_WORKSPACE_GUIDELINES.md
+?? docs/coverage/as6-epic006-pr3-execution-orchestrator-coverage.md
+?? docs/coverage/as6-epic007-pr0-architecture-governance-framework-coverage.md
+?? docs/diagnostics/as6-epic006-pr3-execution-orchestrator.md
+?? docs/diagnostics/as6-epic007-pr0-architecture-governance-framework.md
+?? docs/governance/as6-epic006-pr3-execution-orchestrator-governance.md
+?? docs/governance/as6-epic007-pr0-architecture-governance-framework-governance.md
+?? frontend/src/as6/business-home/AS6ExecutionOrchestratorPanel.css
+?? frontend/src/as6/business-home/AS6ExecutionOrchestratorPanel.jsx
