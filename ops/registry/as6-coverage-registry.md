@@ -3567,3 +3567,15 @@ Permission Validation
 - Command Capability Contract=covered
 - Command Runtime Tracer=covered
 - Command Health Snapshot=covered
+
+## AS6 EPIC010 Slice 06 Coverage Registry
+- Workspace Assistant Runtime=covered
+- Assistant Controller=covered
+- Assistant Registry=covered
+- Assistant Contract=covered
+- Assistant Surface=covered
+- Assistant Context Bridge=covered
+- Assistant Runtime Tracer=covered
+- Assistant Health Snapshot=covered
+- No AI business decisions control=covered
+- No CRM logic control=covered

@@ -2158,3 +2158,8 @@ Governed and registered.
 - AS6_COMMAND_CONTRACT_MISSING: Command Palette has no stable contract for groups, commands or capabilities.
 - AS6_COMMAND_RESOLVER_DRIFT: Command Resolver output drifts from registry declarations.
 - AS6_COMMAND_NOT_FOUND: requested command is not registered.
+
+## AS6 EPIC010 Slice 06 Failure Classes
+- AS6_ASSISTANT_CONTRACT_MISSING: Assistant Surface registered without stable interaction contract.
+- AS6_ASSISTANT_CONTEXT_DRIFT: Assistant Context Bridge diverges from Workspace Runtime context.
+- AS6_ASSISTANT_SURFACE_RESOLUTION_FAILURE: Assistant Surface cannot resolve registered infrastructure capabilities.

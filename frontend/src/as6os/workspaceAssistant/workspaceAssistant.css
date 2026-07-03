@@ -1,0 +1,8 @@
+.as6-workspace-assistant{display:grid;gap:16px;border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:18px;background:rgba(255,255,255,.04);color:#f8fafc}
+.as6-workspace-assistant__header{display:grid;gap:6px}
+.as6-workspace-assistant__header span{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#94a3b8}
+.as6-workspace-assistant__header strong{font-size:18px}
+.as6-workspace-assistant__surfaces{display:grid;gap:8px}
+.as6-workspace-assistant__surfaces button{border:0;border-radius:14px;padding:10px 12px;text-align:left;background:rgba(255,255,255,.045);color:#cbd5e1;cursor:pointer}
+.as6-workspace-assistant__surfaces button.is-active{background:rgba(255,255,255,.14);color:#f8fafc}
+.as6-workspace-assistant__note{margin:0;color:#94a3b8}

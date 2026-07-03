@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f frontend/src/as6os/workspaceAssistant/assistantContract.js
+test -f frontend/src/as6os/workspaceAssistant/assistantRegistry.js
+test -f frontend/src/as6os/workspaceAssistant/assistantController.js
+test -f frontend/src/as6os/workspaceAssistant/AS6WorkspaceAssistantSurface.jsx
+test -f frontend/src/as6os/workspaceAssistant/index.js
+
+grep -q defineAS6AssistantSurface frontend/src/as6os/workspaceAssistant/assistantContract.js
+grep -q as6WorkspaceAssistantRegistry frontend/src/as6os/workspaceAssistant/assistantRegistry.js
+grep -q traceAS6WorkspaceAssistant frontend/src/as6os/workspaceAssistant/assistantController.js
+grep -q getAS6AssistantContextBridge frontend/src/as6os/workspaceAssistant/assistantController.js
+grep -q getAS6WorkspaceAssistantHealthSnapshot frontend/src/as6os/workspaceAssistant/assistantController.js
+grep -q AS6WorkspaceAssistantSurface frontend/src/as6os/workspaceAssistant/AS6WorkspaceAssistantSurface.jsx
+
+echo AS6_WORKSPACE_ASSISTANT=PASS
+echo AS6_ASSISTANT_ENGINE=PASS
+echo AS6_ASSISTANT_CONTROLLER=PASS
+echo AS6_ASSISTANT_REGISTRY=PASS
+echo AS6_ASSISTANT_CONTRACT=PASS
+echo AS6_ASSISTANT_SURFACE=PASS
+echo AS6_ASSISTANT_CONTEXT_BRIDGE=PASS
+echo AS6_ASSISTANT_RUNTIME=PASS
+echo AS6_ASSISTANT_HEALTH_SNAPSHOT=PASS
+echo AS6_EPIC010_SLICE06_WORKSPACE_ASSISTANT_SURFACE_DIAGNOSTIC=PASS

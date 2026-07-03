@@ -46,3 +46,4 @@ export * from './workspaceLayout/index.js';
 export * from './workspaceNavigation/index.js';
 export * from './workspacePanels/index.js';
 export * from './commandPalette/index.js';
+export * from './workspaceAssistant/index.js';

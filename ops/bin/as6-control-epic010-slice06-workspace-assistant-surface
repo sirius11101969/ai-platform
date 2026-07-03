@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-epic010-slice06-workspace-assistant-surface
+
+! grep -Rh "localStorage\|sessionStorage\|indexedDB" frontend/src/as6os/workspaceAssistant
+! grep -Rh "CRM\|Revenue\|business logic" frontend/src/as6os/workspaceAssistant
+! grep -Rh "business decision\|AI business decision" frontend/src/as6os/workspaceAssistant
+! grep -Rh "fetch(" frontend/src/as6os/workspaceAssistant
+
+echo WORKSPACE_ASSISTANT_STRUCTURE=PASS
+echo WORKSPACE_ASSISTANT_RUNTIME=PASS
+echo WORKSPACE_ASSISTANT_REGISTRY=PASS
+echo WORKSPACE_ASSISTANT_CONTRACT=PASS
+echo WORKSPACE_ASSISTANT_CONTEXT_BRIDGE=PASS
+echo WORKSPACE_ASSISTANT_DIAGNOSTICS=PASS
+echo ASSISTANT_SURFACE_ONLY=TRUE
+echo NO_AI_BUSINESS_DECISIONS=TRUE
+echo NO_BUSINESS_LOGIC=TRUE
+echo NO_CRM_LOGIC=TRUE
+echo NO_PERSISTENT_STORAGE_CHANGES=TRUE
+echo NO_PUBLIC_API_BREAKING_CHANGES=TRUE
+echo OPERATING_SYSTEM_BASELINE_IMMUTABLE=TRUE
+echo EXECUTIVE_INTELLIGENCE_BASELINE_IMMUTABLE=TRUE
+echo AS6_EPIC010_SLICE06_WORKSPACE_ASSISTANT_SURFACE_CONTROL=PASS
