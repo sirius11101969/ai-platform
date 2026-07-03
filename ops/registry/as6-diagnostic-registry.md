@@ -1694,3 +1694,13 @@ ops/bin/as6-control-permission-engine-v114
 - Failure Class: AS6_PANEL_CONTRACT_MISSING
 - Failure Class: AS6_PANEL_RESOLVER_DRIFT
 - Failure Class: AS6_PANEL_SLOT_COLLISION
+
+## AS6 EPIC010 Slice 05 Diagnostic Registry
+- STAGE=AS6_EPIC010_SLICE05_COMMAND_PALETTE
+- DIAGNOSTIC=ops/bin/as6-diagnose-epic010-slice05-command-palette
+- CONTROL=ops/bin/as6-control-epic010-slice05-command-palette
+- RUNTIME_TRACER=traceAS6CommandPalette
+- HEALTH_SNAPSHOT=getAS6CommandPaletteHealthSnapshot
+- FAILURE_CLASS=AS6_COMMAND_CONTRACT_MISSING
+- FAILURE_CLASS=AS6_COMMAND_RESOLVER_DRIFT
+- FAILURE_CLASS=AS6_COMMAND_NOT_FOUND

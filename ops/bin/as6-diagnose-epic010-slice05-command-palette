@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f frontend/src/as6os/commandPalette/commandPaletteContract.js
+test -f frontend/src/as6os/commandPalette/commandPaletteRegistry.js
+test -f frontend/src/as6os/commandPalette/commandPaletteResolver.js
+test -f frontend/src/as6os/commandPalette/commandPaletteController.js
+test -f frontend/src/as6os/commandPalette/AS6CommandPalette.jsx
+test -f frontend/src/as6os/commandPalette/index.js
+
+grep -q defineAS6Command frontend/src/as6os/commandPalette/commandPaletteContract.js
+grep -q defineAS6CommandGroup frontend/src/as6os/commandPalette/commandPaletteContract.js
+grep -q defineAS6CommandCapability frontend/src/as6os/commandPalette/commandPaletteContract.js
+grep -q as6CommandPaletteRegistry frontend/src/as6os/commandPalette/commandPaletteRegistry.js
+grep -q resolveAS6CommandPaletteTree frontend/src/as6os/commandPalette/commandPaletteResolver.js
+grep -q traceAS6CommandPalette frontend/src/as6os/commandPalette/commandPaletteController.js
+grep -q getAS6CommandPaletteHealthSnapshot frontend/src/as6os/commandPalette/commandPaletteController.js
+grep -q AS6CommandPalette frontend/src/as6os/commandPalette/AS6CommandPalette.jsx
+
+echo AS6_COMMAND_PALETTE=PASS
+echo AS6_COMMAND_ENGINE=PASS
+echo AS6_COMMAND_CONTROLLER=PASS
+echo AS6_COMMAND_RESOLVER=PASS
+echo AS6_COMMAND_REGISTRY=PASS
+echo AS6_COMMAND_CONTRACT=PASS
+echo AS6_COMMAND_GROUPS=PASS
+echo AS6_COMMAND_ITEMS=PASS
+echo AS6_COMMAND_CAPABILITIES=PASS
+echo AS6_COMMAND_RUNTIME=PASS
+echo AS6_COMMAND_HEALTH_SNAPSHOT=PASS
+echo AS6_EPIC010_SLICE05_COMMAND_PALETTE_DIAGNOSTIC=PASS

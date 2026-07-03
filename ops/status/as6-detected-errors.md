@@ -2153,3 +2153,8 @@ Governed and registered.
 - FAILURE_CLASS=AS6_PANEL_RESOLVER_DRIFT
 - FAILURE_CLASS=AS6_PANEL_SLOT_COLLISION
 - ROOT_CAUSE=Workspace Foundation, Layout and Navigation require declarative Panels infrastructure.
+
+## AS6 EPIC010 Slice 05 Failure Classes
+- AS6_COMMAND_CONTRACT_MISSING: Command Palette has no stable contract for groups, commands or capabilities.
+- AS6_COMMAND_RESOLVER_DRIFT: Command Resolver output drifts from registry declarations.
+- AS6_COMMAND_NOT_FOUND: requested command is not registered.

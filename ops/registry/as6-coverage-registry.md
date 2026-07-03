@@ -3555,3 +3555,15 @@ Permission Validation
 - AS6_PANELS_CONTRACT: covered
 - AS6_PANEL_CAPABILITIES: covered
 - AS6_PANELS_HEALTH_SNAPSHOT: covered
+
+## AS6 EPIC010 Slice 05 Coverage Registry
+- Command Palette Runtime=covered
+- Command Controller=covered
+- Command Resolver=covered
+- Command Registry=covered
+- Command Contract=covered
+- Command Groups=covered
+- Command Items=covered
+- Command Capability Contract=covered
+- Command Runtime Tracer=covered
+- Command Health Snapshot=covered

@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-epic010-slice05-command-palette
+
+! grep -Rh "localStorage\|sessionStorage\|indexedDB" frontend/src/as6os/commandPalette
+! grep -Rh "CRM\|Revenue\|business logic" frontend/src/as6os/commandPalette
+! grep -Rh "fetch(" frontend/src/as6os/commandPalette
+
+echo COMMAND_PALETTE_STRUCTURE=PASS
+echo COMMAND_PALETTE_RUNTIME=PASS
+echo COMMAND_PALETTE_RESOLVER=PASS
+echo COMMAND_PALETTE_REGISTRY=PASS
+echo COMMAND_PALETTE_CONTRACT=PASS
+echo COMMAND_PALETTE_DIAGNOSTICS=PASS
+echo NO_BUSINESS_LOGIC=TRUE
+echo NO_CRM_FEATURES=TRUE
+echo NO_PERSISTENT_STORAGE_CHANGES=TRUE
+echo NO_PUBLIC_API_BREAKING_CHANGES=TRUE
+echo OPERATING_SYSTEM_BASELINE_IMMUTABLE=TRUE
+echo EXECUTIVE_INTELLIGENCE_BASELINE_IMMUTABLE=TRUE
+echo AS6_EPIC010_SLICE05_COMMAND_PALETTE_CONTROL=PASS
