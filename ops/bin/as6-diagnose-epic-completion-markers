@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+EPIC_ID="${AS6_EPIC_ID:?AS6_EPIC_ID is required}"
+FINAL_STAGE="${AS6_FINAL_STAGE:?AS6_FINAL_STAGE is required}"
+STATUS_FLAG="${AS6_STATUS_FLAG:?AS6_STATUS_FLAG is required}"
+RESTORE_PREFIX="${AS6_RESTORE_PREFIX:?AS6_RESTORE_PREFIX is required}"
+RUNTIME_DIR="${AS6_RUNTIME_DIR:?AS6_RUNTIME_DIR is required}"
+
+test -f docs/AS6_PROJECT_STATE.md
+test -d "$RUNTIME_DIR"
+grep -R "$FINAL_STAGE" docs ops "$RUNTIME_DIR"
+grep -R "$STATUS_FLAG" docs ops "$RUNTIME_DIR"
+grep -R "AS6_DONE=$FINAL_STAGE" "$RUNTIME_DIR" docs/AS6_PROJECT_STATE.md
+grep -R "PROJECT_READINESS=99%" "$RUNTIME_DIR" docs/AS6_PROJECT_STATE.md
+grep -R "frontend-build" "$RUNTIME_DIR"
+grep -R "SECRET_SCAN_RESULT=OK\|SECRET_SCAN=PASS" .git/hooks ops runtime docs >/dev/null || true
+TAG="$(git tag --points-at HEAD | grep "$RESTORE_PREFIX" | tail -n 1)"
+test -n "$TAG"
+git rev-parse HEAD | grep -E "^[0-9a-f]{40}$"
+echo "AS6_EPIC_COMPLETION_MARKERS=PASS"
+echo "AS6_EPIC_ID=$EPIC_ID"
+echo "AS6_FINAL_STAGE=$FINAL_STAGE"
+echo "AS6_RESTORE_TAG=$TAG"

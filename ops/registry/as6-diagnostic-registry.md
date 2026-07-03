@@ -2020,3 +2020,10 @@ ops/bin/as6-control-permission-engine-v114
 - AEC rules: ops/aec/as6-epic013-crm-companies-final-validation-aec.md
 - Added checks: full diagnostic chain, registry coverage, governance coverage, live mount, production polish, runtime tracer, health snapshot, no forbidden runtime usage, no heavy dependency, frontend build.
 - Failure classes: CRM_COMPANIES_FINAL_VALIDATION_GAP, CRM_COMPANIES_FINAL_VALIDATION_DRIFT, CRM_COMPANIES_REGISTRY_COVERAGE_DRIFT, CRM_COMPANIES_LIVE_MOUNT_REGRESSION, CRM_COMPANIES_PRODUCTION_POLISH_REGRESSION.
+
+## AS6_EPIC_COMPLETION_MARKER_GUARD
+- Diagnostic: ops/bin/as6-diagnose-epic-completion-markers
+- Control: ops/bin/as6-control-epic-completion-marker-guard
+- AEC rules: ops/aec/as6-epic-completion-marker-guard-aec.md
+- Added checks: AS6_DONE, production status flag, restore tag at HEAD, runtime evidence, project state evidence.
+- Failure classes: EPIC_COMPLETION_MARKER_GAP, EPIC_RESTORE_TAG_GAP, EPIC_STATUS_FLAG_GAP, EPIC_RUNTIME_EVIDENCE_GAP, TRUNCATED_FINAL_LOG_GAP.

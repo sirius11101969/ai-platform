@@ -3888,3 +3888,8 @@ Permission Validation
 - Covers Planning and Slice 01 through Slice 07 diagnostic/control chain.
 - Covers live CRM layout mount, production polish, accessibility, performance constraints and registry completeness.
 - Marks CRM Companies / Accounts as production-validated for EPIC013.
+
+## AS6_EPIC_COMPLETION_MARKER_GUARD
+- Covers reusable final epic completion marker validation.
+- Covers truncated log prevention.
+- Covers AS6_DONE, status flag, restore tag, runtime evidence and project state evidence.

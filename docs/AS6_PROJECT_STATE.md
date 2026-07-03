@@ -6280,3 +6280,13 @@ Status: PASS pending validation
 - Project readiness: 99%.
 - EPIC013 CRM Companies status: PRODUCTION_VALIDATED.
 - Next stage: AS6_EPIC014_CRM_NEXT_MODULE_SELECTION.
+
+## AS6_EPIC_COMPLETION_MARKER_GUARD
+- Added reusable epic completion marker guard.
+- Added diagnostic: ops/bin/as6-diagnose-epic-completion-markers.
+- Added control: ops/bin/as6-control-epic-completion-marker-guard.
+- Added AEC rules: ops/aec/as6-epic-completion-marker-guard-aec.md.
+- Added governance: ops/governance/as6-epic-completion-marker-guard-governance.md.
+- Added failure classes: EPIC_COMPLETION_MARKER_GAP, EPIC_RESTORE_TAG_GAP, EPIC_STATUS_FLAG_GAP, EPIC_RUNTIME_EVIDENCE_GAP, TRUNCATED_FINAL_LOG_GAP.
+- Project readiness: 99%.
+- Apply this guard to final epic validation stages before declaring an epic closed.

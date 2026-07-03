@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -x ops/bin/as6-diagnose-epic-completion-markers
+grep -R "AS6_EPIC_ID" ops/bin/as6-diagnose-epic-completion-markers
+grep -R "AS6_FINAL_STAGE" ops/bin/as6-diagnose-epic-completion-markers
+grep -R "AS6_STATUS_FLAG" ops/bin/as6-diagnose-epic-completion-markers
+grep -R "AS6_RESTORE_PREFIX" ops/bin/as6-diagnose-epic-completion-markers
+grep -R "AS6_RUNTIME_DIR" ops/bin/as6-diagnose-epic-completion-markers
+grep -R "AS6_EPIC_COMPLETION_MARKERS=PASS" ops/bin/as6-diagnose-epic-completion-markers
+echo "AS6_CONTROL_EPIC_COMPLETION_MARKER_GUARD=PASS"

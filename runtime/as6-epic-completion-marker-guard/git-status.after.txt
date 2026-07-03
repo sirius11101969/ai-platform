@@ -1,0 +1,8 @@
+ M docs/AS6_PROJECT_STATE.md
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? ops/aec/as6-epic-completion-marker-guard-aec.md
+?? ops/bin/as6-control-epic-completion-marker-guard
+?? ops/bin/as6-diagnose-epic-completion-markers
+?? ops/governance/as6-epic-completion-marker-guard-governance.md

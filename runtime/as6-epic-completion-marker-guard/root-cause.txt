@@ -1,0 +1,4 @@
+ROOT_CAUSE=FINAL_EPIC_LOG_CAN_BE_TRUNCATED_OR_INCOMPLETE
+FAILURE_CLASS=EPIC_COMPLETION_MARKER_GAP
+VALIDATION_GAP=No reusable guard existed to verify AS6_DONE/CURRENT_COMMIT/RESTORE_TAG/build/secret/push/production flag together
+PREVENTION=Add reusable epic completion marker guard and register it in diagnostics/coverage/governance/state
