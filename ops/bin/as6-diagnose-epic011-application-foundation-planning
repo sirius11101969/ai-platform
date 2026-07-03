@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f docs/epic011/as6-epic011-application-foundation-charter.md
+test -f docs/adr/as6-adr-epic011-application-foundation.md
+test -f docs/epic011/as6-epic011-application-foundation-diagnostics-plan.md
+test -f docs/epic011/as6-epic011-application-foundation-validation-plan.md
+test -f docs/epic011/as6-epic011-application-foundation-definition-of-done.md
+test -f docs/epic011/as6-epic011-application-foundation-rollback-strategy.md
+test -f docs/epic011/as6-epic011-application-foundation-baseline-compatibility.md
+test -f docs/epic011/as6-epic011-application-foundation-observability-requirements.md
+test -f docs/epic011/as6-epic011-implementation-authorization.md
+
+grep -q "^EPIC_CHARTER=APPROVED$" docs/epic011/as6-epic011-application-foundation-charter.md
+grep -q "^ADR_STATUS=APPROVED$" docs/adr/as6-adr-epic011-application-foundation.md
+grep -q "^DIAGNOSTICS_PLAN=APPROVED$" docs/epic011/as6-epic011-application-foundation-diagnostics-plan.md
+grep -q "^VALIDATION_PLAN=APPROVED$" docs/epic011/as6-epic011-application-foundation-validation-plan.md
+grep -q "^DEFINITION_OF_DONE=APPROVED$" docs/epic011/as6-epic011-application-foundation-definition-of-done.md
+grep -q "^ROLLBACK_STRATEGY=APPROVED$" docs/epic011/as6-epic011-application-foundation-rollback-strategy.md
+grep -q "^BASELINE_COMPATIBILITY=CONFIRMED$" docs/epic011/as6-epic011-application-foundation-baseline-compatibility.md
+grep -q "^OBSERVABILITY_REQUIREMENTS=APPROVED$" docs/epic011/as6-epic011-application-foundation-observability-requirements.md
+grep -q "^IMPLEMENTATION_AUTHORIZED=TRUE$" docs/epic011/as6-epic011-implementation-authorization.md
+
+echo AS6_EPIC011_APPLICATION_FOUNDATION_PLANNING_DIAGNOSTIC=PASS

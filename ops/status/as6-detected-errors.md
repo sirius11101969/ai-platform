@@ -2184,3 +2184,8 @@ Governed and registered.
 ## AS6 Next Major EPIC Selection After EPIC010 Failure Classes
 - AS6_EPIC_SELECTION_WITHOUT_BASELINE: next major EPIC selected without confirmed owning baseline.
 - AS6_IMPLEMENTATION_STARTED_BEFORE_PLANNING: implementation attempted before Charter, ADR, Diagnostics Plan, Validation Plan and DoD approval.
+
+## AS6 EPIC011 Application Foundation Planning Failure Classes
+- AS6_APPLICATION_PLANNING_INCOMPLETE: EPIC011 Planning is missing one or more required approval artifacts.
+- AS6_APPLICATION_BASELINE_COMPATIBILITY_MISSING: Application Foundation compatibility with Operating System V1 and Workspace Experience V1 is not confirmed.
+- AS6_APPLICATION_IMPLEMENTATION_WITHOUT_AUTHORIZATION: implementation attempted before EPIC011 Planning approval.

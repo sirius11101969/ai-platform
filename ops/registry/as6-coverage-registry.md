@@ -3624,3 +3624,14 @@ Permission Validation
 - Portfolio Decision Record=covered
 - EPIC011 Planning Entry=covered
 - Implementation Authorization Control=covered
+
+## AS6 EPIC011 Application Foundation Planning Coverage Registry
+- EPIC Charter=covered
+- ADR=covered
+- Diagnostics Plan=covered
+- Validation Plan=covered
+- Definition of Done=covered
+- Rollback Strategy=covered
+- Baseline Compatibility=covered
+- Observability Requirements=covered
+- Implementation Authorization=covered
