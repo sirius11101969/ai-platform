@@ -3801,3 +3801,8 @@ Permission Validation
 - Covers contact contract, descriptor, registry, resolver, runtime, capabilities, manifest, navigation, panels, diagnostics, tracer, health snapshot.
 - Covers foundation-only invariants.
 - Covers preflight diagnostic order drift repair.
+
+## AS6_EPIC012_SLICE05_CRM_CONTACTS_UI_FOUNDATION
+- Covers CRM Contacts UI foundation.
+- Covers contact list, contact row/card, empty state and diagnostic panel.
+- Covers UI no-storage and no-api invariants.

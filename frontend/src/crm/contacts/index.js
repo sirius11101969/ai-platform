@@ -10,3 +10,5 @@ export { crmContactPanels } from "./crmContactPanels";
 export { diagnoseCrmContactFoundation } from "./crmContactDiagnostics";
 export { traceCrmContactFoundation } from "./crmContactTracer";
 export { getCrmContactHealthSnapshot } from "./crmContactHealthSnapshot";
+
+export { CrmContactsUiFoundation, CrmContactRow, CrmContactsEmptyState } from "./ui";

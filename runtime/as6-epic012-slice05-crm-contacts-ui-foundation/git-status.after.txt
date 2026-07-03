@@ -1,0 +1,9 @@
+ M docs/AS6_PROJECT_STATE.md
+ M frontend/src/crm/contacts/index.js
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? frontend/src/crm/contacts/ui/
+?? ops/bin/as6-control-crm-contacts-ui-foundation
+?? ops/bin/as6-diagnose-crm-contacts-ui-foundation
+?? ops/governance/as6-crm-contacts-ui-foundation-governance.md

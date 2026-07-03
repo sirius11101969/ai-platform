@@ -1,0 +1,10 @@
+    storageEnabled: false,
+    apiEnabled: false,
+    workflowEnabled: false,
+AS6_CRM_CONTACTS_FOUNDATION=PASS
+    <section className="as6-crm-contacts-ui" data-as6-contacts-ui="foundation">
+        <main className="as6-crm-contacts-ui__list" data-as6-contacts-list="true">
+    <section className="as6-crm-contacts-empty" data-as6-contacts-empty="true">
+    <article className="as6-crm-contact-row" data-as6-contact-row="true">
+AS6_CRM_CONTACTS_UI_FOUNDATION=PASS
+AS6_CONTROL_CRM_CONTACTS_UI_FOUNDATION=PASS

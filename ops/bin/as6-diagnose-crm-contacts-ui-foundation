@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx
+test -f frontend/src/crm/contacts/ui/crmContactsUiFoundation.css
+test -f frontend/src/crm/contacts/ui/index.js
+grep -R "data-as6-contacts-ui=\"foundation\"" frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx
+grep -R "data-as6-contacts-list=\"true\"" frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx
+grep -R "data-as6-contacts-empty=\"true\"" frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx
+grep -R "data-as6-contact-row=\"true\"" frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx
+echo "AS6_CRM_CONTACTS_UI_FOUNDATION=PASS"

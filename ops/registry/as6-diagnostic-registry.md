@@ -1913,3 +1913,9 @@ ops/bin/as6-control-permission-engine-v114
 - Control: ops/bin/as6-control-crm-contacts-foundation
 - Added checks: 12 Contacts Foundation files, no storage, no API calls, no workflow, no platform mutation.
 - Failure classes: DIAGNOSTIC_ORDER_DRIFT, CRM_CONTACTS_STORAGE_DRIFT, CRM_CONTACTS_API_DRIFT, CRM_CONTACTS_WORKFLOW_DRIFT, CRM_CONTACTS_PLATFORM_MUTATION_DRIFT.
+
+## AS6_EPIC012_SLICE05_CRM_CONTACTS_UI_FOUNDATION
+- Diagnostic: ops/bin/as6-diagnose-crm-contacts-ui-foundation
+- Control: ops/bin/as6-control-crm-contacts-ui-foundation
+- Added checks: UI shell, list, row/card, empty state, diagnostic panel, no storage, no API calls.
+- Failure classes: CRM_CONTACTS_UI_STRUCTURE_DRIFT, CRM_CONTACTS_UI_STORAGE_DRIFT, CRM_CONTACTS_UI_API_DRIFT.

@@ -6098,3 +6098,12 @@ Status: PASS pending validation
 - Added failure classes: DIAGNOSTIC_ORDER_DRIFT, CRM_CONTACTS_STORAGE_DRIFT, CRM_CONTACTS_API_DRIFT, CRM_CONTACTS_WORKFLOW_DRIFT, CRM_CONTACTS_PLATFORM_MUTATION_DRIFT.
 - Project readiness: 99%.
 - Next stage: AS6_EPIC012_SLICE05_CRM_CONTACTS_UI_FOUNDATION.
+
+## AS6_EPIC012_SLICE05_CRM_CONTACTS_UI_FOUNDATION
+- Added CRM Contacts UI foundation.
+- Added list, row/card, empty state and diagnostic panel.
+- Added diagnostics: ops/bin/as6-diagnose-crm-contacts-ui-foundation.
+- Added controls: ops/bin/as6-control-crm-contacts-ui-foundation.
+- Added failure classes: CRM_CONTACTS_UI_STRUCTURE_DRIFT, CRM_CONTACTS_UI_STORAGE_DRIFT, CRM_CONTACTS_UI_API_DRIFT.
+- Project readiness: 99%.
+- Next stage: AS6_EPIC012_SLICE06_CRM_CONTACTS_WORKSPACE_INTEGRATION.
