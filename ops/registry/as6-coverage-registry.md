@@ -3871,3 +3871,9 @@ Permission Validation
 - Covers breadcrumbs, active section, unified layout state and layout health snapshot.
 - Covers safe grep helper for runtime/dist/node_modules exclusion.
 - Covers no-parallel-layout, no-own-router, no-own-store, no-storage, no-api and no-business-workflow invariants.
+
+## AS6_EPIC013_SLICE06_CRM_COMPANIES_LIVE_LAYOUT_MOUNT
+- Covers live mount of Companies into frontend/src/pages/CRMPage.jsx.
+- Covers reuse of existing crm-layout production-crm-layout.
+- Covers layout snapshot connection and Companies UI Foundation mount.
+- Covers no parallel shell/router/store, no-storage, no-api and no-business-workflow invariants.

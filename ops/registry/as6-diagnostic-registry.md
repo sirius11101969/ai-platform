@@ -1996,3 +1996,12 @@ ops/bin/as6-control-permission-engine-v114
 - AEC rules: ops/aec/as6-epic013-crm-companies-crm-layout-bridge-aec.md
 - Added checks: CRM Layout Bridge, existing Workspace, Header, Sidebar, breadcrumbs, active section, unified states, no parallel layout/shell, no own router/store, health snapshot, no storage, no API, no workflow.
 - Failure classes: CRM_COMPANIES_LAYOUT_BRIDGE_GAP, CRM_COMPANIES_LAYOUT_DRIFT, CRM_COMPANIES_BREADCRUMB_DRIFT, CRM_COMPANIES_ACTIVE_SECTION_DRIFT, CRM_COMPANIES_PARALLEL_LAYOUT_DRIFT, CRM_COMPANIES_OWN_ROUTER_DRIFT, CRM_COMPANIES_OWN_STORE_DRIFT.
+
+## AS6_EPIC013_SLICE06_CRM_COMPANIES_LIVE_LAYOUT_MOUNT
+- Diagnostic: ops/bin/as6-diagnose-epic013-crm-companies-live-layout-mount
+- Control: ops/bin/as6-control-epic013-crm-companies-live-layout-mount
+- Live mount: frontend/src/crm/companies/live/CrmCompaniesLiveLayoutMount.jsx
+- CRMPage evidence: runtime/as6-epic013-slice06-crm-companies-live-layout-mount/CRMPage.diff.txt
+- AEC rules: ops/aec/as6-epic013-crm-companies-live-layout-mount-aec.md
+- Added checks: live CRMPage mount, production CRM layout reuse, layout snapshot connection, Companies UI mount, no storage, no API, no workflow, no heavy dependency.
+- Failure classes: CRM_COMPANIES_LIVE_MOUNT_GAP, CRM_COMPANIES_LIVE_MOUNT_DRIFT, CRM_COMPANIES_PRODUCTION_LAYOUT_MOUNT_DRIFT, CRM_COMPANIES_PARALLEL_SHELL_DRIFT, CRM_COMPANIES_LIVE_SNAPSHOT_DRIFT.

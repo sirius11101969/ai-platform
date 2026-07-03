@@ -1,0 +1,39 @@
+frontend/src/pages/CRMPage.jsx:import { CrmContactsLiveLayoutMount } from "../crm/contacts";
+frontend/src/pages/CRMPage.jsx:        <CrmContactsLiveLayoutMount crmLayoutMountMode="live" data-as6-crm-contacts-mounted-in-production-layout="true" />
+frontend/src/crm/contacts/live/index.js:export { CrmContactsLiveLayoutMount } from "./CrmContactsLiveLayoutMount";
+frontend/src/crm/contacts/live/CrmContactsLiveLayoutMount.jsx:export function CrmContactsLiveLayoutMount({ crmLayoutMountMode = "live" }) {
+frontend/src/crm/contacts/index.js:export { CrmContactsLiveLayoutMount } from "./live";
+frontend/src/crm/companies/workspace/crmCompaniesWorkspacePanel.js:import { CompaniesUiFoundation } from "../ui";
+frontend/src/crm/companies/workspace/crmCompaniesWorkspacePanel.js:  component: CompaniesUiFoundation,
+frontend/src/crm/companies/ui/index.js:export { CompaniesUiFoundation } from "./CompaniesUiFoundation";
+frontend/src/crm/companies/ui/index.js:export { diagnoseCrmCompaniesUiFoundation } from "./CompaniesUiDiagnostics";
+frontend/src/crm/companies/ui/CompaniesUiHealthSnapshot.js:import { diagnoseCrmCompaniesUiFoundation } from "./CompaniesUiDiagnostics";
+frontend/src/crm/companies/ui/CompaniesUiHealthSnapshot.js:    diagnostic: diagnoseCrmCompaniesUiFoundation(),
+frontend/src/crm/companies/ui/CompaniesUiDiagnostics.js:export function diagnoseCrmCompaniesUiFoundation() {
+frontend/src/crm/companies/ui/CompaniesUiFoundation.jsx:export function CompaniesUiFoundation({ companies = SAMPLE_COMPANIES, loading = false, error = null }) {
+frontend/src/crm/companies/layout/index.js:export { crmCompaniesCrmLayoutBridge } from "./crmCompaniesCrmLayoutBridge";
+frontend/src/crm/companies/layout/crmCompaniesLayoutDiagnostics.js:import { crmCompaniesCrmLayoutBridge } from "./crmCompaniesCrmLayoutBridge";
+frontend/src/crm/companies/layout/crmCompaniesLayoutDiagnostics.js:    ["CRM_LAYOUT_BRIDGE_REGISTERED", crmCompaniesCrmLayoutBridge.id === "crm.companies.crm-layout.bridge"],
+frontend/src/crm/companies/layout/crmCompaniesLayoutDiagnostics.js:    ["USE_EXISTING_WORKSPACE_PANEL", crmCompaniesCrmLayoutBridge.panel.id === "crm.companies.workspace.panel"],
+frontend/src/crm/companies/layout/crmCompaniesLayoutDiagnostics.js:    ["USE_EXISTING_NAVIGATION", crmCompaniesCrmLayoutBridge.navigation.route === "/crm/companies"],
+frontend/src/crm/companies/layout/crmCompaniesLayoutDiagnostics.js:    ["USE_EXISTING_CRM_LAYOUT", crmCompaniesCrmLayoutBridge.useExistingCrmLayout === true],
+frontend/src/crm/companies/layout/crmCompaniesLayoutDiagnostics.js:    ["USE_EXISTING_CRM_WORKSPACE", crmCompaniesCrmLayoutBridge.useExistingCrmWorkspace === true],
+frontend/src/crm/companies/layout/crmCompaniesLayoutDiagnostics.js:    ["USE_EXISTING_HEADER", crmCompaniesCrmLayoutBridge.useExistingHeader === true],
+frontend/src/crm/companies/layout/crmCompaniesLayoutDiagnostics.js:    ["USE_EXISTING_SIDEBAR", crmCompaniesCrmLayoutBridge.useExistingSidebar === true],
+frontend/src/crm/companies/layout/crmCompaniesLayoutDiagnostics.js:    ["NO_PARALLEL_LAYOUT", crmCompaniesCrmLayoutBridge.noParallelLayout === true],
+frontend/src/crm/companies/layout/crmCompaniesLayoutDiagnostics.js:    ["NO_PARALLEL_SHELL", crmCompaniesCrmLayoutBridge.noParallelShell === true],
+frontend/src/crm/companies/layout/crmCompaniesLayoutDiagnostics.js:    ["NO_OWN_ROUTER", crmCompaniesCrmLayoutBridge.ownRouter === false],
+frontend/src/crm/companies/layout/crmCompaniesLayoutDiagnostics.js:    ["NO_OWN_STORE", crmCompaniesCrmLayoutBridge.ownStore === false],
+frontend/src/crm/companies/layout/crmCompaniesLayoutDiagnostics.js:    ["NO_STORAGE", crmCompaniesCrmLayoutBridge.storageEnabled === false],
+frontend/src/crm/companies/layout/crmCompaniesLayoutDiagnostics.js:    ["NO_API_CALLS", crmCompaniesCrmLayoutBridge.apiEnabled === false],
+frontend/src/crm/companies/layout/crmCompaniesLayoutDiagnostics.js:    ["NO_BUSINESS_WORKFLOW", crmCompaniesCrmLayoutBridge.workflowEnabled === false],
+frontend/src/crm/companies/layout/crmCompaniesLayoutDiagnostics.js:    ["PLATFORM_MUTATION_FALSE", crmCompaniesCrmLayoutBridge.platformMutation === false],
+frontend/src/crm/companies/layout/crmCompaniesCrmLayoutBridge.js:export const crmCompaniesCrmLayoutBridge = Object.freeze({
+frontend/src/crm/companies/layout/crmCompaniesLayoutModel.js:import { crmCompaniesCrmLayoutBridge } from "./crmCompaniesCrmLayoutBridge";
+frontend/src/crm/companies/layout/crmCompaniesLayoutModel.js:  const integration = crmCompaniesCrmLayoutBridge.integration();
+frontend/src/crm/companies/layout/crmCompaniesLayoutModel.js:    bridgeId: crmCompaniesCrmLayoutBridge.id,
+frontend/src/crm/companies/layout/crmCompaniesLayoutModel.js:    title: crmCompaniesCrmLayoutBridge.panel.title,
+frontend/src/crm/companies/layout/crmCompaniesLayoutModel.js:    route: crmCompaniesCrmLayoutBridge.navigation.route,
+frontend/src/crm/companies/layout/crmCompaniesLayoutModel.js:    breadcrumbs: crmCompaniesCrmLayoutBridge.breadcrumbs,
+frontend/src/crm/companies/layout/crmCompaniesLayoutModel.js:    activeSection: crmCompaniesCrmLayoutBridge.activeSection,
+frontend/src/crm/companies/layout/crmCompaniesLayoutModel.js:    component: crmCompaniesCrmLayoutBridge.panel.component,

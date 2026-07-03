@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f frontend/src/crm/companies/live/CrmCompaniesLiveLayoutMount.jsx
+test -f frontend/src/crm/companies/live/index.js
+test -f frontend/src/pages/CRMPage.jsx
+test -x ops/bin/as6-grep-safe
+
+ops/bin/as6-grep-safe -R "CrmCompaniesLiveLayoutMount" frontend/src/pages/CRMPage.jsx
+ops/bin/as6-grep-safe -R "data-as6-crm-companies-mounted-in-production-layout" frontend/src/pages/CRMPage.jsx
+ops/bin/as6-grep-safe -R "crm-layout production-crm-layout" frontend/src/pages/CRMPage.jsx
+ops/bin/as6-grep-safe -R "CompaniesUiFoundation" frontend/src/crm/companies/live/CrmCompaniesLiveLayoutMount.jsx
+ops/bin/as6-grep-safe -R "createCrmCompaniesLayoutSnapshot" frontend/src/crm/companies/live/CrmCompaniesLiveLayoutMount.jsx
+ops/bin/as6-grep-safe -R "data-as6-companies-live-layout-mount" frontend/src/crm/companies/live/CrmCompaniesLiveLayoutMount.jsx
+ops/bin/as6-grep-safe -R "data-as6-companies-layout-state" frontend/src/crm/companies/live/CrmCompaniesLiveLayoutMount.jsx
+ops/bin/as6-grep-safe -R "data-as6-companies-active-section" frontend/src/crm/companies/live/CrmCompaniesLiveLayoutMount.jsx
+ops/bin/as6-grep-safe -R "export .*CrmCompaniesLiveLayoutMount" frontend/src/crm/companies
+
+echo "AS6_EPIC013_CRM_COMPANIES_LIVE_LAYOUT_MOUNT=PASS"

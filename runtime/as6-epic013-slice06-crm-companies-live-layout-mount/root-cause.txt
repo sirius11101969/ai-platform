@@ -1,0 +1,5 @@
+ROOT_CAUSE=CRM_COMPANIES_LIVE_LAYOUT_MOUNT_MISSING_AFTER_LAYOUT_BRIDGE
+FAILURE_CLASS=CRM_COMPANIES_LIVE_MOUNT_GAP
+ARCHITECTURE_DRIFT=Companies CRM Layout Bridge exists but is not mounted in the live CRMPage production layout
+VALIDATION_GAP=No live Companies mount marker, live mount component or CRMPage diff evidence existed before Slice 06
+PREVENTION=Add live mount component, mount it in existing CRMPage production layout, register diagnostics/controls/AEC/governance/state

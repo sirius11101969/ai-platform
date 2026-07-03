@@ -1,0 +1,14 @@
+import { CrmCompaniesLiveLayoutMount } from "../crm/companies";
+        <CrmCompaniesLiveLayoutMount crmLayoutMountMode="live" data-as6-crm-companies-mounted-in-production-layout="true" />
+        <CrmCompaniesLiveLayoutMount crmLayoutMountMode="live" data-as6-crm-companies-mounted-in-production-layout="true" />
+      <section className="crm-layout production-crm-layout">
+import { CompaniesUiFoundation, createCrmCompaniesLayoutSnapshot } from "../index";
+      <CompaniesUiFoundation />
+import { CompaniesUiFoundation, createCrmCompaniesLayoutSnapshot } from "../index";
+  const snapshot = createCrmCompaniesLayoutSnapshot();
+      data-as6-companies-live-layout-mount={crmLayoutMountMode}
+      data-as6-companies-layout-state={snapshot.state}
+      data-as6-companies-active-section={snapshot.activeSection}
+frontend/src/crm/companies/live/index.js:export { CrmCompaniesLiveLayoutMount } from "./CrmCompaniesLiveLayoutMount";
+frontend/src/crm/companies/live/CrmCompaniesLiveLayoutMount.jsx:export function CrmCompaniesLiveLayoutMount({ crmLayoutMountMode = "live" }) {
+AS6_EPIC013_CRM_COMPANIES_LIVE_LAYOUT_MOUNT=PASS

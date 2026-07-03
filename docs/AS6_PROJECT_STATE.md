@@ -6239,3 +6239,16 @@ Status: PASS pending validation
 - Added failure classes: CRM_COMPANIES_LAYOUT_BRIDGE_GAP, CRM_COMPANIES_LAYOUT_DRIFT, CRM_COMPANIES_BREADCRUMB_DRIFT, CRM_COMPANIES_ACTIVE_SECTION_DRIFT, CRM_COMPANIES_PARALLEL_LAYOUT_DRIFT, CRM_COMPANIES_OWN_ROUTER_DRIFT, CRM_COMPANIES_OWN_STORE_DRIFT.
 - Project readiness: 99%.
 - Next stage: AS6_EPIC013_SLICE06_CRM_COMPANIES_LIVE_LAYOUT_MOUNT.
+
+## AS6_EPIC013_SLICE06_CRM_COMPANIES_LIVE_LAYOUT_MOUNT
+- Mounted CRM Companies into live CRMPage production layout.
+- Added live mount component: frontend/src/crm/companies/live/CrmCompaniesLiveLayoutMount.jsx.
+- Reused existing crm-layout production-crm-layout.
+- Connected layout snapshot and Companies UI Foundation.
+- Added diagnostics: ops/bin/as6-diagnose-epic013-crm-companies-live-layout-mount.
+- Added controls: ops/bin/as6-control-epic013-crm-companies-live-layout-mount.
+- Added AEC rules: ops/aec/as6-epic013-crm-companies-live-layout-mount-aec.md.
+- Added governance: ops/governance/as6-epic013-crm-companies-live-layout-mount-governance.md.
+- Added failure classes: CRM_COMPANIES_LIVE_MOUNT_GAP, CRM_COMPANIES_LIVE_MOUNT_DRIFT, CRM_COMPANIES_PRODUCTION_LAYOUT_MOUNT_DRIFT, CRM_COMPANIES_PARALLEL_SHELL_DRIFT, CRM_COMPANIES_LIVE_SNAPSHOT_DRIFT.
+- Project readiness: 99%.
+- Next stage: AS6_EPIC013_SLICE07_CRM_COMPANIES_PRODUCTION_POLISH.
