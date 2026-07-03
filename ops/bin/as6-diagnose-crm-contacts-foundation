@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+for f in crmContactContract crmContactDescriptor crmContactRegistry crmContactResolver crmContactRuntime crmContactCapabilities crmContactManifest crmContactNavigation crmContactPanels crmContactDiagnostics crmContactTracer crmContactHealthSnapshot; do test -f frontend/src/crm/contacts/${f}.js; done
+grep -R "storageEnabled: false" frontend/src/crm/contacts/crmContactRuntime.js
+grep -R "apiEnabled: false" frontend/src/crm/contacts/crmContactRuntime.js
+grep -R "workflowEnabled: false" frontend/src/crm/contacts/crmContactRuntime.js
+echo "AS6_CRM_CONTACTS_FOUNDATION=PASS"

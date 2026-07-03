@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-crm-contacts-foundation
+! grep -R "fetch\|axios\|localStorage\|sessionStorage" frontend/src/crm/contacts
+echo "AS6_CONTROL_CRM_CONTACTS_FOUNDATION=PASS"

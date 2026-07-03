@@ -1,0 +1,5 @@
+    storageEnabled: false,
+    apiEnabled: false,
+    workflowEnabled: false,
+AS6_CRM_CONTACTS_FOUNDATION=PASS
+AS6_CONTROL_CRM_CONTACTS_FOUNDATION=PASS

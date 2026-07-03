@@ -2279,3 +2279,10 @@ Governed and registered.
 - AS6_CRM_DOMAIN_MANIFEST_DRIFT: CRM domain manifest diverges from domain registry.
 - AS6_CRM_AGGREGATE_CONTRACT_MISSING: CRM aggregate registered without required aggregate contract.
 - AS6_CRM_RELATIONSHIP_CONTRACT_MISSING: CRM relationship registered without required relationship contract.
+
+## AS6_EPIC012_SLICE04_CRM_CONTACTS_FOUNDATION
+- Registered: DIAGNOSTIC_ORDER_DRIFT.
+- Registered: CRM_CONTACTS_STORAGE_DRIFT.
+- Registered: CRM_CONTACTS_API_DRIFT.
+- Registered: CRM_CONTACTS_WORKFLOW_DRIFT.
+- Registered: CRM_CONTACTS_PLATFORM_MUTATION_DRIFT.

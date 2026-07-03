@@ -3796,3 +3796,8 @@ Permission Validation
 - CRM Domain Diagnostics=covered
 - CRM Domain Tracer=covered
 - CRM Domain Health Snapshot=covered
+
+## AS6_EPIC012_SLICE04_CRM_CONTACTS_FOUNDATION
+- Covers contact contract, descriptor, registry, resolver, runtime, capabilities, manifest, navigation, panels, diagnostics, tracer, health snapshot.
+- Covers foundation-only invariants.
+- Covers preflight diagnostic order drift repair.

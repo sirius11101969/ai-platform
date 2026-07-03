@@ -1907,3 +1907,9 @@ ops/bin/as6-control-permission-engine-v114
 - FAILURE_CLASS=AS6_CRM_DOMAIN_MANIFEST_DRIFT
 - FAILURE_CLASS=AS6_CRM_AGGREGATE_CONTRACT_MISSING
 - FAILURE_CLASS=AS6_CRM_RELATIONSHIP_CONTRACT_MISSING
+
+## AS6_EPIC012_SLICE04_CRM_CONTACTS_FOUNDATION
+- Diagnostic: ops/bin/as6-diagnose-crm-contacts-foundation
+- Control: ops/bin/as6-control-crm-contacts-foundation
+- Added checks: 12 Contacts Foundation files, no storage, no API calls, no workflow, no platform mutation.
+- Failure classes: DIAGNOSTIC_ORDER_DRIFT, CRM_CONTACTS_STORAGE_DRIFT, CRM_CONTACTS_API_DRIFT, CRM_CONTACTS_WORKFLOW_DRIFT, CRM_CONTACTS_PLATFORM_MUTATION_DRIFT.

@@ -6088,3 +6088,13 @@ Status: PASS pending validation
 - Added CRM Domain Health Snapshot.
 - PROJECT_READINESS=99%.
 - NEXT_STAGE=AS6_EPIC012_SLICE04_CRM_CONTACTS_FOUNDATION.
+
+## AS6_EPIC012_SLICE04_CRM_CONTACTS_FOUNDATION
+- Added declarative CRM Contacts Foundation.
+- Added contact contract, descriptor, registry, resolver, runtime, capabilities, manifest, navigation, panels, diagnostics, tracer and health snapshot.
+- Added diagnostics: ops/bin/as6-diagnose-crm-contacts-foundation.
+- Added controls: ops/bin/as6-control-crm-contacts-foundation.
+- Added diagnostic artifact: runtime/as6-epic012-slice04-crm-contacts-foundation/preflight-root-cause.txt.
+- Added failure classes: DIAGNOSTIC_ORDER_DRIFT, CRM_CONTACTS_STORAGE_DRIFT, CRM_CONTACTS_API_DRIFT, CRM_CONTACTS_WORKFLOW_DRIFT, CRM_CONTACTS_PLATFORM_MUTATION_DRIFT.
+- Project readiness: 99%.
+- Next stage: AS6_EPIC012_SLICE05_CRM_CONTACTS_UI_FOUNDATION.
