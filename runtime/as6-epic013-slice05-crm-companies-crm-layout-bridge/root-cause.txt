@@ -1,0 +1,5 @@
+ROOT_CAUSE=CRM_COMPANIES_CRM_LAYOUT_BRIDGE_MISSING_AFTER_WORKSPACE_INTEGRATION
+FAILURE_CLASS=CRM_COMPANIES_LAYOUT_BRIDGE_GAP
+ARCHITECTURE_DRIFT=Companies workspace integration exists but is not bridged to unified CRM Layout
+VALIDATION_GAP=No Companies CRM Layout bridge, breadcrumbs, active section, layout snapshot or layout diagnostics existed before Slice 05
+PREVENTION=Add CRM Layout Bridge, safe grep helper, layout tracer, diagnostics, controls, AEC rules, registry and coverage evidence

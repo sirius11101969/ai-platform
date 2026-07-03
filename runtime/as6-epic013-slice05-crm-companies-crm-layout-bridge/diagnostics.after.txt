@@ -1,0 +1,29 @@
+frontend/src/crm/companies/layout/crmCompaniesLayoutDiagnostics.js:    ["CRM_LAYOUT_BRIDGE_REGISTERED", crmCompaniesCrmLayoutBridge.id === "crm.companies.crm-layout.bridge"],
+frontend/src/crm/companies/layout/crmCompaniesCrmLayoutBridge.js:  id: "crm.companies.crm-layout.bridge",
+frontend/src/crm/companies/layout/crmCompaniesCrmLayoutBridge.js:  layoutScope: "crm.unified.layout",
+frontend/src/crm/companies/layout/crmCompaniesCrmLayoutBridge.js:  breadcrumbs: Object.freeze(["CRM", "Companies"]),
+frontend/src/crm/companies/layout/crmCompaniesCrmLayoutBridge.js:  activeSection: "companies",
+frontend/src/crm/companies/layout/crmCompaniesLayoutDiagnostics.js:    ["UNIFIED_STATE_READY", ["loading", "empty", "ready", "error"].includes(snapshot.state)],
+frontend/src/crm/companies/layout/crmCompaniesCrmLayoutBridge.js:  states: Object.freeze(["loading", "empty", "ready", "error"]),
+frontend/src/crm/companies/layout/crmCompaniesCrmLayoutBridge.js:  useExistingCrmLayout: true,
+frontend/src/crm/companies/layout/crmCompaniesCrmLayoutBridge.js:  useExistingCrmWorkspace: true,
+frontend/src/crm/companies/layout/crmCompaniesCrmLayoutBridge.js:  useExistingHeader: true,
+frontend/src/crm/companies/layout/crmCompaniesCrmLayoutBridge.js:  useExistingSidebar: true,
+frontend/src/crm/companies/layout/crmCompaniesCrmLayoutBridge.js:  noParallelLayout: true,
+frontend/src/crm/companies/layout/crmCompaniesCrmLayoutBridge.js:  noParallelShell: true,
+frontend/src/crm/companies/layout/crmCompaniesCrmLayoutBridge.js:  ownRouter: false,
+frontend/src/crm/companies/layout/crmCompaniesCrmLayoutBridge.js:  ownStore: false,
+frontend/src/crm/companies/layout/index.js:export { traceCrmCompaniesLayout } from "./crmCompaniesLayoutTracer";
+frontend/src/crm/companies/layout/crmCompaniesLayoutDiagnostics.js:import { traceCrmCompaniesLayout } from "./crmCompaniesLayoutTracer";
+frontend/src/crm/companies/layout/crmCompaniesLayoutDiagnostics.js:    trace: traceCrmCompaniesLayout(),
+frontend/src/crm/companies/layout/crmCompaniesLayoutHealthSnapshot.js:import { traceCrmCompaniesLayout } from "./crmCompaniesLayoutTracer";
+frontend/src/crm/companies/layout/crmCompaniesLayoutHealthSnapshot.js:    trace: traceCrmCompaniesLayout(),
+frontend/src/crm/companies/layout/crmCompaniesLayoutTracer.js:export function traceCrmCompaniesLayout(event = "CRM_COMPANIES_LAYOUT_BRIDGE_TRACE") {
+frontend/src/crm/companies/layout/crmCompaniesLayoutModel.js:import { traceCrmCompaniesLayout } from "./crmCompaniesLayoutTracer";
+frontend/src/crm/companies/layout/crmCompaniesLayoutModel.js:    trace: traceCrmCompaniesLayout(),
+frontend/src/crm/companies/layout/index.js:export { getCrmCompaniesLayoutHealthSnapshot } from "./crmCompaniesLayoutHealthSnapshot";
+frontend/src/crm/companies/layout/crmCompaniesLayoutHealthSnapshot.js:export function getCrmCompaniesLayoutHealthSnapshot() {
+frontend/src/crm/companies/layout/crmCompaniesCrmLayoutBridge.js:  storageEnabled: false,
+frontend/src/crm/companies/layout/crmCompaniesCrmLayoutBridge.js:  apiEnabled: false,
+frontend/src/crm/companies/layout/crmCompaniesCrmLayoutBridge.js:  workflowEnabled: false,
+AS6_EPIC013_CRM_COMPANIES_CRM_LAYOUT_BRIDGE=PASS

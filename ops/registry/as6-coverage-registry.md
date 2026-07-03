@@ -3864,3 +3864,10 @@ Permission Validation
 - Covers workspace panel, navigation, state resolver, snapshots and workspace tracer.
 - Covers shared CRM workspace module pattern marker.
 - Covers no-parallel-shell, no-storage, no-api, no-business-workflow and no-heavy-dependency invariants.
+
+## AS6_EPIC013_SLICE05_CRM_COMPANIES_CRM_LAYOUT_BRIDGE
+- Covers CRM Companies CRM Layout Bridge.
+- Covers existing CRM Layout, Workspace, Header and Sidebar reuse.
+- Covers breadcrumbs, active section, unified layout state and layout health snapshot.
+- Covers safe grep helper for runtime/dist/node_modules exclusion.
+- Covers no-parallel-layout, no-own-router, no-own-store, no-storage, no-api and no-business-workflow invariants.

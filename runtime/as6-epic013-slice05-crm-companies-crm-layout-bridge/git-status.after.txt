@@ -1,0 +1,11 @@
+ M docs/AS6_PROJECT_STATE.md
+ M frontend/src/crm/companies/index.js
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? frontend/src/crm/companies/layout/
+?? ops/aec/as6-epic013-crm-companies-crm-layout-bridge-aec.md
+?? ops/bin/as6-control-epic013-crm-companies-crm-layout-bridge
+?? ops/bin/as6-diagnose-epic013-crm-companies-crm-layout-bridge
+?? ops/bin/as6-grep-safe
+?? ops/governance/as6-epic013-crm-companies-crm-layout-bridge-governance.md

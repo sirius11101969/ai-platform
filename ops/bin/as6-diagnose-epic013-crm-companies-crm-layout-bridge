@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+for f in \
+  crmCompaniesCrmLayoutBridge \
+  crmCompaniesLayoutTracer \
+  crmCompaniesLayoutModel \
+  crmCompaniesLayoutState \
+  crmCompaniesLayoutDiagnostics \
+  crmCompaniesLayoutHealthSnapshot
+do
+  test -f "frontend/src/crm/companies/layout/${f}.js"
+done
+
+test -x ops/bin/as6-grep-safe
+
+ops/bin/as6-grep-safe -R "crm.companies.crm-layout.bridge" frontend/src/crm/companies/layout
+ops/bin/as6-grep-safe -R "layoutScope: \"crm.unified.layout\"" frontend/src/crm/companies/layout
+ops/bin/as6-grep-safe -R "breadcrumbs: Object.freeze" frontend/src/crm/companies/layout
+ops/bin/as6-grep-safe -R "activeSection: \"companies\"" frontend/src/crm/companies/layout
+ops/bin/as6-grep-safe -R "loading.*empty.*ready.*error" frontend/src/crm/companies/layout
+ops/bin/as6-grep-safe -R "useExistingCrmLayout: true" frontend/src/crm/companies/layout
+ops/bin/as6-grep-safe -R "useExistingCrmWorkspace: true" frontend/src/crm/companies/layout
+ops/bin/as6-grep-safe -R "useExistingHeader: true" frontend/src/crm/companies/layout
+ops/bin/as6-grep-safe -R "useExistingSidebar: true" frontend/src/crm/companies/layout
+ops/bin/as6-grep-safe -R "noParallelLayout: true" frontend/src/crm/companies/layout
+ops/bin/as6-grep-safe -R "noParallelShell: true" frontend/src/crm/companies/layout
+ops/bin/as6-grep-safe -R "ownRouter: false" frontend/src/crm/companies/layout
+ops/bin/as6-grep-safe -R "ownStore: false" frontend/src/crm/companies/layout
+ops/bin/as6-grep-safe -R "traceCrmCompaniesLayout" frontend/src/crm/companies/layout
+ops/bin/as6-grep-safe -R "getCrmCompaniesLayoutHealthSnapshot" frontend/src/crm/companies/layout
+ops/bin/as6-grep-safe -R "storageEnabled: false" frontend/src/crm/companies/layout
+ops/bin/as6-grep-safe -R "apiEnabled: false" frontend/src/crm/companies/layout
+ops/bin/as6-grep-safe -R "workflowEnabled: false" frontend/src/crm/companies/layout
+
+echo "AS6_EPIC013_CRM_COMPANIES_CRM_LAYOUT_BRIDGE=PASS"

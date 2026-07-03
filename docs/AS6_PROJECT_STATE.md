@@ -6224,3 +6224,18 @@ Status: PASS pending validation
 - Added failure classes: CRM_COMPANIES_WORKSPACE_INTEGRATION_GAP, CRM_COMPANIES_WORKSPACE_PANEL_DRIFT, CRM_COMPANIES_WORKSPACE_NAVIGATION_DRIFT, CRM_COMPANIES_WORKSPACE_STATE_DRIFT, CRM_COMPANIES_PARALLEL_SHELL_DRIFT.
 - Project readiness: 99%.
 - Next stage: AS6_EPIC013_SLICE05_CRM_COMPANIES_CRM_LAYOUT_BRIDGE.
+
+## AS6_EPIC013_SLICE05_CRM_COMPANIES_CRM_LAYOUT_BRIDGE
+- Added CRM Companies CRM Layout Bridge.
+- Added layout bridge, layout model, layout state snapshot, layout tracer, layout diagnostics and layout health snapshot.
+- Added safe grep helper: ops/bin/as6-grep-safe.
+- Reused existing Companies Workspace Panel and Workspace Navigation.
+- Added breadcrumbs sync and active section sync.
+- Added no parallel layout, no own router and no own store controls.
+- Added diagnostics: ops/bin/as6-diagnose-epic013-crm-companies-crm-layout-bridge.
+- Added controls: ops/bin/as6-control-epic013-crm-companies-crm-layout-bridge.
+- Added AEC rules: ops/aec/as6-epic013-crm-companies-crm-layout-bridge-aec.md.
+- Added governance: ops/governance/as6-epic013-crm-companies-crm-layout-bridge-governance.md.
+- Added failure classes: CRM_COMPANIES_LAYOUT_BRIDGE_GAP, CRM_COMPANIES_LAYOUT_DRIFT, CRM_COMPANIES_BREADCRUMB_DRIFT, CRM_COMPANIES_ACTIVE_SECTION_DRIFT, CRM_COMPANIES_PARALLEL_LAYOUT_DRIFT, CRM_COMPANIES_OWN_ROUTER_DRIFT, CRM_COMPANIES_OWN_STORE_DRIFT.
+- Project readiness: 99%.
+- Next stage: AS6_EPIC013_SLICE06_CRM_COMPANIES_LIVE_LAYOUT_MOUNT.

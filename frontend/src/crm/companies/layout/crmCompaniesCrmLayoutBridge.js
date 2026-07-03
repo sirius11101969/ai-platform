@@ -1,0 +1,26 @@
+import { crmCompaniesWorkspacePanel, crmCompaniesWorkspaceNavigation, createCrmCompaniesWorkspaceIntegration } from "../workspace";
+
+export const crmCompaniesCrmLayoutBridge = Object.freeze({
+  id: "crm.companies.crm-layout.bridge",
+  stage: "AS6_EPIC013_SLICE05_CRM_COMPANIES_CRM_LAYOUT_BRIDGE",
+  layoutScope: "crm.unified.layout",
+  module: "CRM_COMPANIES_ACCOUNTS",
+  panel: crmCompaniesWorkspacePanel,
+  navigation: crmCompaniesWorkspaceNavigation,
+  integration: createCrmCompaniesWorkspaceIntegration,
+  breadcrumbs: Object.freeze(["CRM", "Companies"]),
+  activeSection: "companies",
+  states: Object.freeze(["loading", "empty", "ready", "error"]),
+  useExistingCrmLayout: true,
+  useExistingCrmWorkspace: true,
+  useExistingHeader: true,
+  useExistingSidebar: true,
+  noParallelLayout: true,
+  noParallelShell: true,
+  ownRouter: false,
+  ownStore: false,
+  storageEnabled: false,
+  apiEnabled: false,
+  workflowEnabled: false,
+  platformMutation: false,
+});

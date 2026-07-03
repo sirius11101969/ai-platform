@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+set -euo pipefail
+grep --exclude-dir=.git --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=runtime "$@"

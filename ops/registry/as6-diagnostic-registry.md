@@ -1987,3 +1987,12 @@ ops/bin/as6-control-permission-engine-v114
 - AEC rules: ops/aec/as6-epic013-crm-companies-workspace-integration-aec.md
 - Added checks: workspace panel, workspace navigation, workspace state resolver, foundation snapshot, UI snapshot, workspace tracer, shared CRM workspace pattern, no parallel shell, no storage, no API, no workflow.
 - Failure classes: CRM_COMPANIES_WORKSPACE_INTEGRATION_GAP, CRM_COMPANIES_WORKSPACE_PANEL_DRIFT, CRM_COMPANIES_WORKSPACE_NAVIGATION_DRIFT, CRM_COMPANIES_WORKSPACE_STATE_DRIFT, CRM_COMPANIES_PARALLEL_SHELL_DRIFT.
+
+## AS6_EPIC013_SLICE05_CRM_COMPANIES_CRM_LAYOUT_BRIDGE
+- Diagnostic: ops/bin/as6-diagnose-epic013-crm-companies-crm-layout-bridge
+- Control: ops/bin/as6-control-epic013-crm-companies-crm-layout-bridge
+- Runtime tracer: frontend/src/crm/companies/layout/crmCompaniesLayoutTracer.js
+- Safe grep helper: ops/bin/as6-grep-safe
+- AEC rules: ops/aec/as6-epic013-crm-companies-crm-layout-bridge-aec.md
+- Added checks: CRM Layout Bridge, existing Workspace, Header, Sidebar, breadcrumbs, active section, unified states, no parallel layout/shell, no own router/store, health snapshot, no storage, no API, no workflow.
+- Failure classes: CRM_COMPANIES_LAYOUT_BRIDGE_GAP, CRM_COMPANIES_LAYOUT_DRIFT, CRM_COMPANIES_BREADCRUMB_DRIFT, CRM_COMPANIES_ACTIVE_SECTION_DRIFT, CRM_COMPANIES_PARALLEL_LAYOUT_DRIFT, CRM_COMPANIES_OWN_ROUTER_DRIFT, CRM_COMPANIES_OWN_STORE_DRIFT.
