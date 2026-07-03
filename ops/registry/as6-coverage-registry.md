@@ -3546,3 +3546,12 @@ Permission Validation
 - Navigation Health Snapshot=covered
 - No business logic control=covered
 - No CRM features control=covered
+
+## AS6_EPIC010_SLICE04_WORKSPACE_PANELS
+- AS6_WORKSPACE_PANELS: covered
+- AS6_PANELS_CONTROLLER: covered
+- AS6_PANELS_RESOLVER: covered
+- AS6_PANELS_REGISTRY: covered
+- AS6_PANELS_CONTRACT: covered
+- AS6_PANEL_CAPABILITIES: covered
+- AS6_PANELS_HEALTH_SNAPSHOT: covered

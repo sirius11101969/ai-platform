@@ -1686,3 +1686,11 @@ ops/bin/as6-control-permission-engine-v114
 - FAILURE_CLASS=AS6_NAVIGATION_CONTRACT_MISSING
 - FAILURE_CLASS=AS6_NAVIGATION_RESOLVER_DRIFT
 - FAILURE_CLASS=AS6_NAVIGATION_ITEM_NOT_FOUND
+
+## AS6_EPIC010_SLICE04_WORKSPACE_PANELS
+- Diagnostic: ops/bin/as6-diagnose-epic010-slice04-workspace-panels
+- Control: ops/bin/as6-control-epic010-slice04-workspace-panels
+- Failure Class: AS6_WORKSPACE_PANELS_MISSING
+- Failure Class: AS6_PANEL_CONTRACT_MISSING
+- Failure Class: AS6_PANEL_RESOLVER_DRIFT
+- Failure Class: AS6_PANEL_SLOT_COLLISION

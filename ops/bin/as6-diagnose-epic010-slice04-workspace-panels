@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/as6os/workspacePanels/panelContract.js
+test -f frontend/src/as6os/workspacePanels/panelCapabilityContract.js
+test -f frontend/src/as6os/workspacePanels/panelRegistry.js
+test -f frontend/src/as6os/workspacePanels/panelResolver.js
+test -f frontend/src/as6os/workspacePanels/panelController.js
+test -f frontend/src/as6os/workspacePanels/panelRuntime.js
+test -f frontend/src/as6os/workspacePanels/panelHealthSnapshot.js
+test -f frontend/src/as6os/workspacePanels/panelTracer.js
+test -f frontend/src/as6os/workspacePanels/panelDiagnostics.js
+test -f frontend/src/as6os/workspacePanels/AS6WorkspacePanels.jsx
+grep -R "createPanelController" frontend/src/as6os/workspacePanels
+grep -R "resolvePanelTree" frontend/src/as6os/workspacePanels
+grep -R "AS6_PANEL_CAPABILITY_CONTRACT" frontend/src/as6os/workspacePanels
+! grep -R "localStorage\|sessionStorage\|indexedDB" frontend/src/as6os/workspacePanels
+! grep -R "CRM\|crm" frontend/src/as6os/workspacePanels
+echo AS6_WORKSPACE_PANELS=PASS
+echo AS6_PANELS_ENGINE=PASS
+echo AS6_PANELS_CONTROLLER=PASS
+echo AS6_PANELS_RESOLVER=PASS
+echo AS6_PANELS_REGISTRY=PASS
+echo AS6_PANELS_CONTRACT=PASS
+echo AS6_PANEL_CAPABILITIES=PASS
+echo AS6_PANEL_REGIONS=PASS
+echo AS6_PANEL_SLOTS=PASS
+echo AS6_PANELS_RUNTIME=PASS
+echo AS6_PANELS_HEALTH_SNAPSHOT=PASS

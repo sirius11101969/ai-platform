@@ -2146,3 +2146,10 @@ Governed and registered.
 - AS6_NAVIGATION_CONTRACT_MISSING: Workspace Navigation has no stable contract for groups, items or capabilities.
 - AS6_NAVIGATION_RESOLVER_DRIFT: Navigation Resolver output drifts from registry declarations.
 - AS6_NAVIGATION_ITEM_NOT_FOUND: requested navigation item is not registered.
+
+## AS6_EPIC010_SLICE04_WORKSPACE_PANELS
+- FAILURE_CLASS=AS6_WORKSPACE_PANELS_MISSING
+- FAILURE_CLASS=AS6_PANEL_CONTRACT_MISSING
+- FAILURE_CLASS=AS6_PANEL_RESOLVER_DRIFT
+- FAILURE_CLASS=AS6_PANEL_SLOT_COLLISION
+- ROOT_CAUSE=Workspace Foundation, Layout and Navigation require declarative Panels infrastructure.
