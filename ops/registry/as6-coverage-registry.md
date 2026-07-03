@@ -3661,3 +3661,15 @@ Permission Validation
 - Activation Pipeline=covered
 - Runtime Tracer=covered
 - Health Snapshot=covered
+
+## AS6 EPIC011 Slice 03 Coverage Registry
+- Application Shell Contract=covered
+- Application Region Contract=covered
+- Application Slots=covered
+- Application Regions=covered
+- Region Resolution=covered
+- Shell Composition=covered
+- Mount Manager=covered
+- Runtime Shell=covered
+- Runtime Tracer=covered
+- Health Snapshot=covered

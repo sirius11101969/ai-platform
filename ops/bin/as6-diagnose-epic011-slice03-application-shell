@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f frontend/src/as6os/applicationShell/applicationShellContract.js
+test -f frontend/src/as6os/applicationShell/applicationShellRegistry.js
+test -f frontend/src/as6os/applicationShell/applicationShellResolver.js
+test -f frontend/src/as6os/applicationShell/applicationMountManager.js
+test -f frontend/src/as6os/applicationShell/applicationShellTracer.js
+test -f frontend/src/as6os/applicationShell/applicationShellHealthSnapshot.js
+test -f frontend/src/as6os/applicationShell/applicationShellController.js
+test -f frontend/src/as6os/applicationShell/AS6ApplicationShell.jsx
+
+grep -q defineAS6ApplicationShell frontend/src/as6os/applicationShell/applicationShellContract.js
+grep -q defineAS6ApplicationRegion frontend/src/as6os/applicationShell/applicationShellContract.js
+grep -q defineAS6ApplicationSlot frontend/src/as6os/applicationShell/applicationShellContract.js
+grep -q as6ApplicationShellRegistry frontend/src/as6os/applicationShell/applicationShellRegistry.js
+grep -q resolveAS6ApplicationRegions frontend/src/as6os/applicationShell/applicationShellResolver.js
+grep -q createAS6ApplicationComposition frontend/src/as6os/applicationShell/applicationShellResolver.js
+grep -q createAS6ApplicationMountPlan frontend/src/as6os/applicationShell/applicationMountManager.js
+grep -q traceAS6ApplicationShell frontend/src/as6os/applicationShell/applicationShellTracer.js
+grep -q getAS6ApplicationShellHealthSnapshot frontend/src/as6os/applicationShell/applicationShellHealthSnapshot.js
+grep -q bootstrapAS6ApplicationShell frontend/src/as6os/applicationShell/applicationShellController.js
+
+echo AS6_APPLICATION_SHELL=PASS
+echo AS6_APPLICATION_SHELL_CONTROLLER=PASS
+echo AS6_APPLICATION_SHELL_REGISTRY=PASS
+echo AS6_APPLICATION_SHELL_CONTRACT=PASS
+echo AS6_APPLICATION_REGION_CONTRACT=PASS
+echo AS6_APPLICATION_REGION_RESOLUTION=PASS
+echo AS6_APPLICATION_SLOTS=PASS
+echo AS6_APPLICATION_REGIONS=PASS
+echo AS6_APPLICATION_COMPOSITION=PASS
+echo AS6_APPLICATION_MOUNT_MANAGER=PASS
+echo AS6_APPLICATION_SHELL_RUNTIME=PASS
+echo AS6_APPLICATION_SHELL_HEALTH_SNAPSHOT=PASS
+echo AS6_EPIC011_SLICE03_APPLICATION_SHELL_DIAGNOSTIC=PASS

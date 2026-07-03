@@ -2201,3 +2201,10 @@ Governed and registered.
 - AS6_APPLICATION_DEPENDENCY_CYCLE: circular dependency detected between registered applications.
 - AS6_APPLICATION_RUNTIME_MANIFEST_INVALID: generated runtime manifest does not satisfy the application host contract.
 - AS6_APPLICATION_CAPABILITY_RESOLUTION_FAILURE: capability resolver failed to produce a consistent runtime capability graph.
+
+## AS6 EPIC011 Slice 03 Failure Classes
+- AS6_APPLICATION_MOUNT_CONFLICT: multiple applications attempt to mount into the same shell region.
+- AS6_APPLICATION_SLOT_CONTRACT_VIOLATION: application exposes shell slots incompatible with declared shell contract.
+- AS6_APPLICATION_COMPOSITION_DRIFT: runtime composition diverges from declarative application shell model.
+- AS6_APPLICATION_REGION_RESOLUTION_FAILURE: application regions cannot be resolved into a valid shell layout.
+- AS6_APPLICATION_REGION_CAPABILITY_MISMATCH: application requests a shell region that does not satisfy its declared capabilities.
