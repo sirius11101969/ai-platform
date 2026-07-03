@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -x ops/bin/as6-grep-safe
+
+for f in \
+  crmDealCapabilities \
+  crmDealManifest \
+  crmDealRegistry \
+  crmDealResolver \
+  crmDealRuntime \
+  crmDealNavigation \
+  crmDealPanels \
+  crmDealFoundationTracer \
+  crmDealFoundationDiagnostics \
+  crmDealHealthSnapshot \
+  crmDealFoundationDescriptor
+do
+  test -f "frontend/src/crm/deals/foundation/${f}.js"
+done
+
+test -f frontend/src/crm/deals/foundation/index.js
+
+ops/bin/as6-grep-safe -R "CRM_DEALS_FOUNDATION_ONLY" frontend/src/crm/deals/foundation
+ops/bin/as6-grep-safe -R "CRM_DEALS_OPPORTUNITIES" frontend/src/crm/deals/foundation
+ops/bin/as6-grep-safe -R "crm.deals" frontend/src/crm/deals/foundation
+ops/bin/as6-grep-safe -R "declarative-foundation-only" frontend/src/crm/deals/foundation
+ops/bin/as6-grep-safe -R "declarative-preview-only" frontend/src/crm/deals/foundation
+ops/bin/as6-grep-safe -R "/crm/deals" frontend/src/crm/deals/foundation
+ops/bin/as6-grep-safe -R "REUSE_CONTACTS_FOUNDATION" frontend/src/crm/deals/foundation
+ops/bin/as6-grep-safe -R "REUSE_COMPANIES_FOUNDATION" frontend/src/crm/deals/foundation
+ops/bin/as6-grep-safe -R "USE_EXISTING_CRM_WORKSPACE" frontend/src/crm/deals/foundation
+ops/bin/as6-grep-safe -R "USE_EXISTING_CRM_LAYOUT" frontend/src/crm/deals/foundation
+ops/bin/as6-grep-safe -R "NO_PARALLEL_SHELL" frontend/src/crm/deals/foundation
+ops/bin/as6-grep-safe -R "traceCrmDealFoundation" frontend/src/crm/deals/foundation
+ops/bin/as6-grep-safe -R "getCrmDealHealthSnapshot" frontend/src/crm/deals/foundation
+ops/bin/as6-grep-safe -R "storageEnabled: false" frontend/src/crm/deals/foundation
+ops/bin/as6-grep-safe -R "apiEnabled: false" frontend/src/crm/deals/foundation
+ops/bin/as6-grep-safe -R "workflowEnabled: false" frontend/src/crm/deals/foundation
+ops/bin/as6-grep-safe -R "ownRouter: false" frontend/src/crm/deals/foundation
+ops/bin/as6-grep-safe -R "ownStore: false" frontend/src/crm/deals/foundation
+
+echo "AS6_EPIC014_CRM_DEALS_FOUNDATION=PASS"

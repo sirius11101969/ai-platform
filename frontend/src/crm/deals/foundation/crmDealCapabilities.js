@@ -1,0 +1,18 @@
+export const crmDealCapabilities = Object.freeze({
+  list: true,
+  preview: true,
+  diagnose: true,
+  trace: true,
+  pipelinePreview: true,
+  stagePreview: true,
+  linkCompany: "declarative-only",
+  linkContact: "declarative-only",
+  create: false,
+  update: false,
+  delete: false,
+  moveStage: false,
+  closeWon: false,
+  closeLost: false,
+  import: false,
+  export: false,
+});

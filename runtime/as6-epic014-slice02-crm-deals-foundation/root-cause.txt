@@ -1,0 +1,5 @@
+ROOT_CAUSE=CRM_DEALS_FOUNDATION_LAYER_MISSING_AFTER_DOMAIN_MODEL
+FAILURE_CLASS=CRM_DEALS_FOUNDATION_GAP
+ARCHITECTURE_DRIFT=Deals domain model exists but lacks declarative foundation registry/runtime/manifest/navigation/panels/health snapshot
+VALIDATION_GAP=No Deals Foundation diagnostics, runtime tracer, health snapshot or registry coverage existed before Slice 02
+PREVENTION=Add Deals Foundation layer with diagnostics, controls, runtime tracer, AEC rules, registry and coverage evidence

@@ -1,0 +1,13 @@
+frontend/src/crm/deals/domain/crmDealCompanyLink.js
+frontend/src/crm/deals/domain/crmDealContactLink.js
+frontend/src/crm/deals/domain/crmDealContract.js
+frontend/src/crm/deals/domain/crmDealDescriptor.js
+frontend/src/crm/deals/domain/crmDealDiagnostics.js
+frontend/src/crm/deals/domain/crmDealIdentity.js
+frontend/src/crm/deals/domain/crmDealLifecycle.js
+frontend/src/crm/deals/domain/crmDealPipeline.js
+frontend/src/crm/deals/domain/crmDealRuntimeTracer.js
+frontend/src/crm/deals/domain/crmDealStage.js
+frontend/src/crm/deals/domain/crmDealStatus.js
+frontend/src/crm/deals/domain/index.js
+frontend/src/crm/deals/index.js

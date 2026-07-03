@@ -1,0 +1,45 @@
+frontend/src/crm/deals/foundation/crmDealFoundationDiagnostics.js:    ["CRM_DEALS_FOUNDATION_ONLY", crmDealManifest.invariants.CRM_DEALS_FOUNDATION_ONLY === true],
+frontend/src/crm/deals/foundation/crmDealManifest.js:    CRM_DEALS_FOUNDATION_ONLY: true,
+frontend/src/crm/deals/foundation/crmDealFoundationDiagnostics.js:    ["MANIFEST_PRESENT", crmDealManifest.module === "CRM_DEALS_OPPORTUNITIES"],
+frontend/src/crm/deals/foundation/crmDealManifest.js:  module: "CRM_DEALS_OPPORTUNITIES",
+frontend/src/crm/deals/foundation/crmDealFoundationTracer.js:    module: "CRM_DEALS_OPPORTUNITIES",
+frontend/src/crm/deals/foundation/crmDealHealthSnapshot.js:    module: "CRM_DEALS_OPPORTUNITIES",
+frontend/src/crm/deals/foundation/crmDealFoundationDescriptor.js:  id: "crm.deals.foundation",
+frontend/src/crm/deals/foundation/crmDealNavigation.js:  route: "/crm/deals",
+frontend/src/crm/deals/foundation/crmDealFoundationDiagnostics.js:    ["REGISTRY_PRESENT", crmDealRegistry.key === "crm.deals"],
+frontend/src/crm/deals/foundation/crmDealFoundationDiagnostics.js:    ["NAVIGATION_PRESENT", crmDealNavigation.route === "/crm/deals"],
+frontend/src/crm/deals/foundation/crmDealFoundationTracer.js:    registry: "crm.deals",
+frontend/src/crm/deals/foundation/crmDealRegistry.js:  key: "crm.deals",
+frontend/src/crm/deals/foundation/crmDealRuntime.js:    mode: "declarative-foundation-only",
+frontend/src/crm/deals/foundation/crmDealFoundationDiagnostics.js:    ["RUNTIME_DECLARATIVE_ONLY", runtime.mode === "declarative-foundation-only"],
+frontend/src/crm/deals/foundation/crmDealRuntime.js:    pipelineMode: "declarative-preview-only",
+frontend/src/crm/deals/foundation/crmDealFoundationDiagnostics.js:    ["PIPELINE_PREVIEW_ONLY", runtime.pipelineMode === "declarative-preview-only"],
+frontend/src/crm/deals/foundation/crmDealFoundationTracer.js:    pipeline: "declarative-preview-only",
+frontend/src/crm/deals/foundation/crmDealNavigation.js:  route: "/crm/deals",
+frontend/src/crm/deals/foundation/crmDealFoundationDiagnostics.js:    ["NAVIGATION_PRESENT", crmDealNavigation.route === "/crm/deals"],
+frontend/src/crm/deals/foundation/crmDealFoundationDiagnostics.js:    ["REUSE_CONTACTS_FOUNDATION", crmDealManifest.invariants.REUSE_CONTACTS_FOUNDATION === true],
+frontend/src/crm/deals/foundation/crmDealManifest.js:    REUSE_CONTACTS_FOUNDATION: true,
+frontend/src/crm/deals/foundation/crmDealFoundationDiagnostics.js:    ["REUSE_COMPANIES_FOUNDATION", crmDealManifest.invariants.REUSE_COMPANIES_FOUNDATION === true],
+frontend/src/crm/deals/foundation/crmDealManifest.js:    REUSE_COMPANIES_FOUNDATION: true,
+frontend/src/crm/deals/foundation/crmDealFoundationDiagnostics.js:    ["USE_EXISTING_CRM_WORKSPACE", crmDealManifest.invariants.USE_EXISTING_CRM_WORKSPACE === true],
+frontend/src/crm/deals/foundation/crmDealManifest.js:    USE_EXISTING_CRM_WORKSPACE: true,
+frontend/src/crm/deals/foundation/crmDealFoundationDiagnostics.js:    ["USE_EXISTING_CRM_LAYOUT", crmDealManifest.invariants.USE_EXISTING_CRM_LAYOUT === true],
+frontend/src/crm/deals/foundation/crmDealManifest.js:    USE_EXISTING_CRM_LAYOUT: true,
+frontend/src/crm/deals/foundation/crmDealFoundationDiagnostics.js:    ["NO_PARALLEL_SHELL", crmDealManifest.invariants.NO_PARALLEL_SHELL === true],
+frontend/src/crm/deals/foundation/crmDealManifest.js:    NO_PARALLEL_SHELL: true,
+frontend/src/crm/deals/foundation/index.js:export { traceCrmDealFoundation } from "./crmDealFoundationTracer";
+frontend/src/crm/deals/foundation/crmDealFoundationDiagnostics.js:import { traceCrmDealFoundation } from "./crmDealFoundationTracer";
+frontend/src/crm/deals/foundation/crmDealFoundationDiagnostics.js:    trace: traceCrmDealFoundation(),
+frontend/src/crm/deals/foundation/crmDealFoundationTracer.js:export function traceCrmDealFoundation(event = "CRM_DEAL_FOUNDATION_TRACE") {
+frontend/src/crm/deals/foundation/crmDealHealthSnapshot.js:import { traceCrmDealFoundation } from "./crmDealFoundationTracer";
+frontend/src/crm/deals/foundation/crmDealHealthSnapshot.js:    trace: traceCrmDealFoundation(),
+frontend/src/crm/deals/foundation/index.js:export { getCrmDealHealthSnapshot } from "./crmDealHealthSnapshot";
+frontend/src/crm/deals/foundation/crmDealFoundationDescriptor.js:import { getCrmDealHealthSnapshot } from "./crmDealHealthSnapshot";
+frontend/src/crm/deals/foundation/crmDealFoundationDescriptor.js:  health: getCrmDealHealthSnapshot,
+frontend/src/crm/deals/foundation/crmDealHealthSnapshot.js:export function getCrmDealHealthSnapshot() {
+frontend/src/crm/deals/foundation/crmDealRuntime.js:    storageEnabled: false,
+frontend/src/crm/deals/foundation/crmDealRuntime.js:    apiEnabled: false,
+frontend/src/crm/deals/foundation/crmDealRuntime.js:    workflowEnabled: false,
+frontend/src/crm/deals/foundation/crmDealRuntime.js:    ownRouter: false,
+frontend/src/crm/deals/foundation/crmDealRuntime.js:    ownStore: false,
+AS6_EPIC014_CRM_DEALS_FOUNDATION=PASS

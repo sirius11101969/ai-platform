@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-epic014-crm-next-module-selection
+ops/bin/as6-diagnose-epic014-crm-deals-domain-model
+ops/bin/as6-diagnose-epic014-crm-deals-foundation
+
+! ops/bin/as6-grep-safe -R "fetch\|axios\|localStorage\|sessionStorage" frontend/src/crm/deals
+! ops/bin/as6-grep-safe -R "createDeal\|updateDeal\|deleteDeal\|saveDeal\|moveDeal\|closeDeal" frontend/src/crm/deals
+! ops/bin/as6-grep-safe -R "from .*[lL]odash\|from .*[mM]oment\|from .*[cC]hart" frontend/src/crm/deals
+
+echo "AS6_CONTROL_EPIC014_CRM_DEALS_FOUNDATION=PASS"

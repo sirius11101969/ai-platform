@@ -3905,3 +3905,10 @@ Permission Validation
 - Covers identity, status, pipeline, stage, lifecycle, company link, contact link, domain contract, descriptor, runtime tracer and diagnostics.
 - Covers reuse of Contacts and Companies foundations.
 - Covers no-storage, no-api, no-business-workflow and no-heavy-dependency invariants.
+
+## AS6_EPIC014_SLICE02_CRM_DEALS_FOUNDATION
+- Covers CRM Deals / Opportunities declarative foundation.
+- Covers registry, manifest, capabilities, runtime, resolver, navigation, panels, diagnostics and health snapshot.
+- Covers runtime tracer and diagnostic/control scripts.
+- Covers reuse of Contacts and Companies foundations.
+- Covers no-storage, no-api, no-business-workflow and no-platform-mutation invariants.
