@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f docs/portfolio/as6-platform-application-epic-governance.md
+test -f docs/portfolio/as6-portfolio-registry.md
+test -f docs/portfolio/as6-next-major-epic-selection-after-epic011.md
+test -f docs/portfolio/as6-candidate-epic-evaluation-after-epic011.md
+test -f docs/epic012/as6-epic012-crm-foundation-planning-entry.md
+
+grep -q "STATUS=STABLE_PLATFORM" docs/portfolio/as6-platform-application-epic-governance.md
+grep -q "EPIC_TYPE=APPLICATION" docs/portfolio/as6-portfolio-registry.md
+grep -q "NEXT_MAJOR_EPIC=AS6_EPIC012_CRM_FOUNDATION" docs/portfolio/as6-next-major-epic-selection-after-epic011.md
+grep -q "PLATFORM_MUTATION=FALSE" docs/portfolio/as6-portfolio-registry.md
+grep -q "IMPLEMENTATION_AUTHORIZED=FALSE" docs/epic012/as6-epic012-crm-foundation-planning-entry.md
+
+echo STABLE_PLATFORM=PASS
+echo EPIC_TYPE_GOVERNANCE=PASS
+echo APPLICATION_EPIC_SELECTED=PASS
+echo PLATFORM_MUTATION_FALSE=PASS
+echo PORTFOLIO_DECISION_RECORD=APPROVED
+echo NEXT_MAJOR_EPIC=AS6_EPIC012_CRM_FOUNDATION
+echo IMPLEMENTATION_AUTHORIZED=FALSE
+echo AS6_NEXT_MAJOR_EPIC_SELECTION_DIAGNOSTIC=PASS

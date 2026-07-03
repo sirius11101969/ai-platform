@@ -1,0 +1,54 @@
+# AS6 Candidate EPIC Evaluation After EPIC011
+
+## Candidate 1
+
+EPIC_ID=AS6_EPIC012_CRM_FOUNDATION
+EPIC_TYPE=APPLICATION
+VALUE=HIGH
+ARCHITECTURE_RISK=LOW
+PLATFORM_MUTATION=FALSE
+BASELINE_COMPATIBILITY=HIGH
+SELECTED=YES
+
+Reason:
+CRM is the first practical application domain that can validate Operating System V1, Workspace Experience V1 and Application Foundation V1 without changing platform baselines.
+
+## Candidate 2
+
+EPIC_ID=AS6_EPIC013_DOCUMENTS
+EPIC_TYPE=APPLICATION
+VALUE=MEDIUM
+ARCHITECTURE_RISK=LOW
+PLATFORM_MUTATION=FALSE
+SELECTED=NO
+
+Reason:
+Useful after CRM establishes the first application model.
+
+## Candidate 3
+
+EPIC_ID=AS6_EPIC014_KNOWLEDGE
+EPIC_TYPE=APPLICATION
+VALUE=MEDIUM
+ARCHITECTURE_RISK=MEDIUM
+PLATFORM_MUTATION=FALSE
+SELECTED=NO
+
+Reason:
+Better after CRM and Documents provide real data and application context.
+
+## Candidate 4
+
+EPIC_ID=AS6_EPIC015_FINANCE
+EPIC_TYPE=APPLICATION
+VALUE=MEDIUM
+ARCHITECTURE_RISK=MEDIUM
+PLATFORM_MUTATION=FALSE
+SELECTED=NO
+
+Reason:
+Should follow CRM and document foundations.
+
+## Decision
+
+SELECTED_EPIC=AS6_EPIC012_CRM_FOUNDATION

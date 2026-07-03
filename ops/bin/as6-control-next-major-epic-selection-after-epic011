@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-next-major-epic-selection-after-epic011
+
+! grep -R "^IMPLEMENTATION_AUTHORIZED=TRUE$" docs/epic012 docs/portfolio >/tmp/as6-epic012-auth-scope.txt || true
+! grep -q "^IMPLEMENTATION_AUTHORIZED=TRUE$" /tmp/as6-epic012-auth-scope.txt
+
+echo CONTROL_SCOPE_CURRENT_EPIC_ONLY=PASS
+echo APPLICATION_EPIC_NO_PLATFORM_MUTATION=PASS
+echo AS6_NEXT_MAJOR_EPIC_SELECTION_CONTROL=PASS

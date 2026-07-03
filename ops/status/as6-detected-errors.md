@@ -2243,3 +2243,8 @@ Governed and registered.
 - AS6_SUBSYSTEM_REGISTRY_DRIFT: subsystem registry differs from runtime registration state.
 - AS6_UNIFIED_HEALTH_INCOMPLETE: Unified Health Snapshot omits registered infrastructure components.
 - AS6_INTEGRATION_DEPENDENCY_CYCLE: Integration dependency graph contains a cyclic dependency.
+
+## AS6 Next Major EPIC Selection After EPIC011 Failure Classes
+- AS6_APPLICATION_EPIC_PLATFORM_MUTATION_ATTEMPT: application EPIC attempts to mutate stable platform baseline.
+- AS6_EPIC_TYPE_MISSING: EPIC does not declare PLATFORM or APPLICATION type.
+- AS6_PORTFOLIO_DECISION_MISSING: EPIC starts without approved portfolio decision.

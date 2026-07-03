@@ -3726,3 +3726,11 @@ Permission Validation
 - Unified Runtime=covered
 - Integration Tracer=covered
 - Integration Health Snapshot=covered
+
+## AS6 Next Major EPIC Selection After EPIC011 Coverage
+- Platform/Application EPIC Governance=covered
+- Portfolio Registry Required Fields=covered
+- Candidate EPIC Evaluation=covered
+- EPIC012 Selection=covered
+- Application EPIC Platform Mutation Guard=covered
+- Implementation Authorization Guard=covered
