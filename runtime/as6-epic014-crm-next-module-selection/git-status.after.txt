@@ -1,0 +1,9 @@
+ M docs/AS6_PROJECT_STATE.md
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? docs/epic014/
+?? ops/aec/as6-epic014-crm-next-module-selection-aec.md
+?? ops/bin/as6-control-epic014-crm-next-module-selection
+?? ops/bin/as6-diagnose-epic014-crm-next-module-selection
+?? ops/governance/as6-epic014-crm-next-module-selection-governance.md

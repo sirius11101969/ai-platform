@@ -1,0 +1,281 @@
+docs/epic013/AS6_EPIC013_CRM_COMPANIES_FINAL_VALIDATION.md:# AS6 EPIC013 CRM Companies Final Validation
+docs/epic013/AS6_EPIC013_CRM_COMPANIES_FINAL_VALIDATION.md:2. CRM Companies Domain Model
+docs/epic013/AS6_EPIC013_CRM_COMPANIES_FINAL_VALIDATION.md:3. CRM Companies Foundation
+docs/epic013/AS6_EPIC013_CRM_COMPANIES_FINAL_VALIDATION.md:4. CRM Companies UI Foundation
+docs/epic013/AS6_EPIC013_CRM_COMPANIES_FINAL_VALIDATION.md:5. CRM Companies Workspace Integration
+docs/epic013/AS6_EPIC013_CRM_COMPANIES_FINAL_VALIDATION.md:6. CRM Companies CRM Layout Bridge
+docs/epic013/AS6_EPIC013_CRM_COMPANIES_FINAL_VALIDATION.md:7. CRM Companies Live Layout Mount
+docs/epic013/AS6_EPIC013_CRM_COMPANIES_FINAL_VALIDATION.md:8. CRM Companies Production Polish
+docs/epic013/AS6_EPIC013_CRM_COMPANIES_FINAL_VALIDATION.md:9. CRM Companies Final Validation
+docs/epic013/AS6_EPIC013_CRM_NEXT_MODULE_PLANNING.md:- EPIC012 CRM Contacts is production validated.
+docs/epic013/AS6_EPIC013_CRM_NEXT_MODULE_PLANNING.md:Recommended next module: CRM Companies / Accounts Foundation.
+docs/epic013/AS6_EPIC013_CRM_NEXT_MODULE_PLANNING.md:- Deals, tasks and automation become cleaner when Contacts are linked to Companies.
+docs/presentation/AS6_AI_CRM_Platform_Deck.html:                  <strong>Pipeline revenue</strong><p>8,4 млн ₽ активная воронка</p>
+docs/presentation/AS6_AI_CRM_Platform_Deck.html:            <div class="card"><strong>CRM Pipeline</strong><p>Этапы new → qualified → proposal → booked → won/lost.</p></div>
+docs/presentation/AS6_AI_CRM_Platform_Deck.html:            <span class="kicker">Pipeline</span>
+docs/presentation/AS6_AI_CRM_Platform_Deck.md:**Позиционирование:** AS6 — AI CRM-платформа для команд продаж, которая объединяет Telegram AI Sales Bot, CRM Pipeline, AI Tasks, AI Credits, Email Actions, AI Follow-up и PostgreSQL-память в едином production-ready контуре на Docker.
+docs/presentation/AS6_AI_CRM_Platform_Deck.md:2. Создаёт карточку в CRM Pipeline.
+docs/presentation/AS6_AI_CRM_Platform_Deck.md:| CRM Pipeline | Воронка с этапами new → qualified → proposal → booked → won/lost |
+docs/presentation/AS6_AI_CRM_Platform_Deck.md:CRM Pipeline — это визуальная доска продаж с этапами, стоимостью сделок и AI-контекстом по каждому лиду.
+docs/AS6_REAL_REVENUE_CRM_FUSION_V107.md:- CRM Pipeline -> Revenue Forecast
+docs/AS6_REAL_REVENUE_CRM_FUSION_V107.md:- CRM Deals -> Revenue Projection
+docs/diagnostics/as6-epic004-pr2-executive-automation-execution-pipeline.md:- Pipeline stops on unsafe action and reports stop reason.
+docs/AS6_START_CONTEXT.md:- Change Pipeline Controller
+docs/AS6_START_CONTEXT.md:→ Change Pipeline
+docs/AS6_PAGE_SHELL_MIGRATION_MAP_V98.md:- Pipeline: pipeline-page
+docs/AS6_PROJECT_STATE.md:- Change Pipeline Controller
+docs/AS6_PROJECT_STATE.md:→ Change Pipeline
+docs/AS6_PROJECT_STATE.md:## AS6 V6/V7 Pipeline Diagnostic Compatibility
+docs/AS6_PROJECT_STATE.md:## 20260622T031753Z AS6 V159 Pipeline Card Strip Fix
+docs/AS6_PROJECT_STATE.md:## V223_00 CRM Pipeline Compact Design System
+docs/AS6_PROJECT_STATE.md:- Interface changed: Sidebar, Header, KPI, AI Action Center, Revenue Brain, Pipeline, Right Rail.
+docs/AS6_PROJECT_STATE.md:## AS6 EPIC-004 PR-2 — Executive Automation Execution Pipeline
+docs/AS6_PROJECT_STATE.md:- Added Activation Pipeline.
+docs/AS6_PROJECT_STATE.md:- Added declarative CRM Contacts Foundation.
+docs/AS6_PROJECT_STATE.md:- Added CRM Contacts UI foundation.
+docs/AS6_PROJECT_STATE.md:- Added CRM Contacts Workspace Integration.
+docs/AS6_PROJECT_STATE.md:- Added CRM Contacts CRM Layout Bridge.
+docs/AS6_PROJECT_STATE.md:- Mounted CRM Contacts into live CRMPage production layout.
+docs/AS6_PROJECT_STATE.md:- Added CRM Contacts production polish.
+docs/AS6_PROJECT_STATE.md:- Final validation completed for CRM Contacts EPIC012.
+docs/AS6_PROJECT_STATE.md:- EPIC012 CRM Contacts status: PRODUCTION_VALIDATED.
+docs/AS6_PROJECT_STATE.md:- Started EPIC013 after EPIC012 CRM Contacts final validation.
+docs/AS6_PROJECT_STATE.md:- Selected next module: CRM Companies / Accounts Foundation.
+docs/AS6_PROJECT_STATE.md:- Added CRM Companies / Accounts declarative domain model.
+docs/AS6_PROJECT_STATE.md:- Added CRM Companies / Accounts declarative foundation.
+docs/AS6_PROJECT_STATE.md:- Added CRM Companies UI Foundation.
+docs/AS6_PROJECT_STATE.md:- Added CRM Companies Workspace Integration.
+docs/AS6_PROJECT_STATE.md:- Added CRM Companies CRM Layout Bridge.
+docs/AS6_PROJECT_STATE.md:- Mounted CRM Companies into live CRMPage production layout.
+docs/AS6_PROJECT_STATE.md:- Added CRM Companies Production Polish.
+docs/AS6_PROJECT_STATE.md:- Final validation completed for CRM Companies / Accounts EPIC013.
+docs/AS6_PROJECT_STATE.md:- EPIC013 CRM Companies status: PRODUCTION_VALIDATED.
+docs/architecture/ai_revenue_intelligence.md:   - Pipeline Health;
+docs/architecture/ai_revenue_intelligence.md:- Pipeline Health;
+docs/architecture/browser_microphone_capture_foundation.md:## Future WebRTC Audio Pipeline
+docs/architecture/ai_priority_inbox_v1.md:  - At-Risk Deals
+docs/architecture/ai_priority_inbox_v1.md:    "atRiskDeals": 0,
+docs/architecture/ai_priority_inbox_v1.md:- `atRiskDeals` — medium/high risk deals and risk action recommendations.
+docs/architecture/ai_lead_qualification_pipeline.md:# Automatic AI Lead Qualification Pipeline
+docs/architecture/ai_manager_dashboard_kpi_layer.md:### D. Pipeline Health
+docs/architecture/ai_safety_copy_guard.md:The sanitizer is applied across CRM cards/details, CRM execution queues, Telegram/email draft previews, AI Workers approval/history/queue views, Pipeline Copilot, Priority Inbox, and Follow-ups surfaces.
+docs/architecture/ai_deal_risk_forecast_engine.md:- High Probability Deals
+docs/architecture/ai_deal_risk_forecast_engine.md:- Stalled Opportunities
+docs/architecture/ai_deal_risk_forecast_engine.md:- Pipeline Health
+docs/architecture/ai_deal_risk_forecast_engine.md:7. Confirm CRM dashboard metrics update: Forecast Revenue, Revenue At Risk, High Probability Deals, Stalled Opportunities, Pipeline Health, Forecast Distribution.
+docs/architecture/ai_deal_risk_forecast_engine.md:- High Probability Deals
+docs/architecture/ai_deal_risk_forecast_engine.md:- At-risk Deals
+docs/architecture/ai_deal_risk_forecast_engine.md:- Pipeline Health
+docs/architecture/ai_deal_risk_forecast_engine.md:Pipeline health is workspace-scoped and excludes `won` / `lost` from active-pipeline calculations. The status is intentionally simple and explainable:
+docs/architecture/ai_outreach_engine.md:Pipeline:
+docs/architecture/crm_ai_engineering_implementation_backlog.html:              <div class="mini"><b>Feature Acceptance</b>Lead appears in CRM; Manager can move lead between stages; Pipeline stages are visible</div>
+docs/architecture/crm_ai_engineering_implementation_backlog.html:            ["Lead appears in CRM", "Manager can move lead between stages", "Pipeline stages are visible"],
+docs/architecture/ai_lead_scoring_engine_v1.md:Priority Leads count only active leads whose latest `crm_leads.ai_priority` is `priority` or `urgent`; won/lost leads are excluded. At-risk Deals count both `medium` and `high` risk levels. This keeps won/lost deals and merely warm leads out of the priority dashboard while still surfacing stalled deals that need operational follow-up.
+docs/architecture/ai_lead_scoring_engine_v1.md:- At-risk Deals;
+docs/architecture/ai_pipeline_copilot_v1.md:# AI Pipeline Copilot v1
+docs/architecture/ai_pipeline_copilot_v1.md:AI Pipeline Copilot v1 is the AS6 AI Revenue OS daily sales cockpit. It gives a manager one compact page for:
+docs/architecture/ai_pipeline_copilot_v1.md:- Sidebar navigation label: `AI Pipeline Copilot`
+docs/architecture/ai_pipeline_copilot_v1.md:  "riskDeals": [],
+docs/architecture/ai_pipeline_copilot_v1.md:- Risk Deals
+docs/architecture/ai_pipeline_copilot_v1.md:Pipeline Copilot v1 never executes customer-facing sends. It only links the manager to existing pages:
+docs/architecture/ai_pipeline_copilot_v1.md:Draft/customer copy bodies are not surfaced in the Pipeline Copilot API response. The page displays action titles, internal recommendations, reasons, status, and routing context only.
+docs/architecture/ai_pipeline_copilot_v1.md:- `title = AI Pipeline Copilot viewed`
+docs/architecture/ai_pipeline_copilot_v1.md:Pipeline Copilot v2 keeps the same route (`/pipeline-copilot`) and API shape, but tightens the cockpit for manager-facing daily execution:
+docs/architecture/ai_pipeline_copilot_v1.md:- Backend responses use `sanitizeManagerReason(text)` before a reason, title, error, recommendation, meeting title, or lead summary can reach Pipeline Copilot sections.
+docs/architecture/ai_pipeline_copilot_v1.md:AI Pipeline Copilot CTA buttons are manager workflow routers, not customer-send controls.
+docs/architecture/ai_pipeline_copilot_v1.md:Pipeline Copilot never sends Telegram/email or performs customer-facing execution. It only creates pending approval actions that must be reviewed in AI Workers.
+docs/architecture/ai_sales_pipeline_automation.md:# AI Sales Pipeline Automation
+docs/architecture/ai_sales_pipeline_automation.md:The lead detail modal displays an AI Pipeline Automation card when a pending stage recommendation exists:
+docs/architecture/ai_sales_pipeline_automation.md:- Deals at risk.
+docs/architecture/ai_sales_pipeline_automation.md:- Pipeline health percentage.
+docs/architecture/demo_sales_pipeline.md:# Demo Sales Pipeline
+docs/architecture/ai_workers_focus_queue_v2.md:- Pipeline Copilot follow-up drafts should remain visible in Focus/Follow-ups when active.
+docs/architecture/ai_workers_focus_queue_v2.md:- Pipeline Copilot follow-up draft generation.
+docs/architecture/ai_workers_focus_queue_v2.md:A manager-safe UI reason is used anywhere the lead/action still appears in Pipeline Copilot or Priority Inbox:
+docs/epic011/as6-epic011-slice02-application-host.md:- Activation Pipeline
+docs/AS6_FRONTEND_ARCHITECTURE_MAP_V87.md:- frontend/src/pages/crm/CRMPipelinePanel.jsx
+docs/AS6_FRONTEND_ARCHITECTURE_MAP_V87.md:- frontend/src/pages/PipelineCopilotPage.jsx
+docs/AS6_FRONTEND_ARCHITECTURE_MAP_V87.md:- frontend/src/pages/crm/CRMPipelinePanel.jsx
+ops/aec/as6-epic013-crm-companies-domain-model-aec.md:# AS6 AEC — EPIC013 CRM Companies Domain Model
+ops/aec/as6-epic013-crm-companies-foundation-aec.md:# AS6 AEC — EPIC013 CRM Companies Foundation
+ops/aec/as6-epic013-crm-companies-ui-foundation-aec.md:# AS6 AEC — EPIC013 CRM Companies UI Foundation
+ops/aec/as6-epic013-crm-companies-live-layout-mount-aec.md:# AS6 AEC — EPIC013 CRM Companies Live Layout Mount
+ops/aec/as6-epic013-crm-companies-production-polish-aec.md:# AS6 AEC — EPIC013 CRM Companies Production Polish
+ops/aec/as6-epic013-crm-companies-workspace-integration-aec.md:# AS6 AEC — EPIC013 CRM Companies Workspace Integration
+ops/aec/as6-epic013-crm-companies-final-validation-aec.md:# AS6 AEC — EPIC013 CRM Companies Final Validation
+ops/aec/as6-epic013-crm-companies-crm-layout-bridge-aec.md:# AS6 AEC — EPIC013 CRM Companies CRM Layout Bridge
+ops/governance/as6-crm-contacts-live-layout-mount-governance.md:# AS6 CRM Contacts Live Layout Mount Governance
+ops/governance/as6-crm-pipeline-compact-v223-00.md:# AS6 V223_00 Governance — CRM Pipeline Compact Design System
+ops/governance/as6-crm-contacts-ui-foundation-governance.md:# AS6 CRM Contacts UI Foundation Governance
+ops/governance/as6-crm-contacts-foundation-governance.md:# AS6 CRM Contacts Foundation Governance
+ops/governance/as6-epic013-crm-companies-crm-layout-bridge-governance.md:# AS6 Governance — EPIC013 CRM Companies CRM Layout Bridge
+ops/governance/as6-change-pipeline-controller.md:# AS6 Change Pipeline Controller
+ops/governance/as6-epic013-crm-next-module-planning-governance.md:- Next module selected: CRM Companies / Accounts Foundation.
+ops/governance/as6-epic013-crm-companies-foundation-governance.md:# AS6 Governance — EPIC013 CRM Companies Foundation
+ops/governance/as6-epic012-slice03-crm-domain-model-root-cause.md:CRM Entity Runtime existed, but CRM needed a declarative domain model layer before domain modules such as Contacts, Companies, Deals and Tasks could be introduced.
+ops/governance/as6-real-page-shell-migration-aec-v98.md:Dashboard, CRM, Revenue, Workforce, Approval, Execution, Services, Pipeline, Analytics and Executive page families must remain aligned with Command Center shell style.
+ops/governance/as6-crm-contacts-workspace-integration-governance.md:# AS6 CRM Contacts Workspace Integration Governance
+ops/governance/as6-epic013-crm-companies-ui-foundation-governance.md:# AS6 Governance — EPIC013 CRM Companies UI Foundation
+ops/governance/as6-epic013-crm-companies-final-validation-governance.md:# AS6 Governance — EPIC013 CRM Companies Final Validation
+ops/governance/as6-epic013-crm-companies-final-validation-governance.md:- EPIC013 CRM Companies / Accounts is production-validated only after all planning and Slice 01-07 diagnostics and controls pass.
+ops/governance/as6-epic013-crm-companies-workspace-integration-governance.md:# AS6 Governance — EPIC013 CRM Companies Workspace Integration
+ops/governance/as6-crm-contacts-final-validation-governance.md:# AS6 CRM Contacts Final Validation Governance
+ops/governance/as6-epic013-crm-companies-live-layout-mount-governance.md:# AS6 Governance — EPIC013 CRM Companies Live Layout Mount
+ops/governance/as6-crm-contacts-production-polish-governance.md:# AS6 CRM Contacts Production Polish Governance
+ops/governance/as6-crm-contacts-crm-layout-bridge-governance.md:# AS6 CRM Contacts CRM Layout Bridge Governance
+ops/governance/as6-epic013-crm-companies-production-polish-governance.md:# AS6 Governance — EPIC013 CRM Companies Production Polish
+ops/governance/as6-epic013-crm-companies-domain-model-governance.md:# AS6 Governance — EPIC013 CRM Companies Domain Model
+ops/registry/as6-diagnostic-registry.md:## V223_00 CRM Pipeline Compact Design System
+ops/registry/as6-diagnostic-registry.md:- Control: all CRM Contacts diagnostics and controls from Slice 04 through Slice 09 passed.
+ops/registry/as6-coverage-registry.md:Coverage: CRM, AI Workers, Dashboard, Command Center, Revenue Dashboard, Pipeline Copilot, AI Manager route chunks, build validation, production health validation
+ops/registry/as6-coverage-registry.md:## V223_00 Coverage — CRM Pipeline Compact Design System
+ops/registry/as6-coverage-registry.md:- Activation Pipeline=covered
+ops/registry/as6-coverage-registry.md:- Covers CRM Contacts UI foundation.
+ops/registry/as6-coverage-registry.md:- Covers CRM Contacts Workspace Integration.
+ops/registry/as6-coverage-registry.md:- Covers CRM Contacts CRM Layout Bridge.
+ops/registry/as6-coverage-registry.md:- Covers CRM Contacts production polish.
+ops/registry/as6-coverage-registry.md:- Covers final validation for EPIC012 CRM Contacts.
+ops/registry/as6-coverage-registry.md:- Marks CRM Contacts as production-validated for EPIC012.
+ops/registry/as6-coverage-registry.md:- Covers selection of CRM Companies / Accounts as next module.
+ops/registry/as6-coverage-registry.md:- Covers CRM Companies / Accounts declarative domain model.
+ops/registry/as6-coverage-registry.md:- Covers CRM Companies declarative foundation.
+ops/registry/as6-coverage-registry.md:- Covers CRM Companies UI Foundation.
+ops/registry/as6-coverage-registry.md:- Covers CRM Companies Workspace Integration.
+ops/registry/as6-coverage-registry.md:- Covers CRM Companies CRM Layout Bridge.
+ops/registry/as6-coverage-registry.md:- Covers CRM Companies Production Polish.
+ops/registry/as6-coverage-registry.md:- Covers final validation for EPIC013 CRM Companies / Accounts.
+ops/registry/as6-coverage-registry.md:- Marks CRM Companies / Accounts as production-validated for EPIC013.
+ops/bin/as6-diagnose-change-pipeline-controller:echo "=== AS6 Change Pipeline Controller Diagnostics ==="
+ops/bin/as6-diagnose-crm-decomposition-execution-guard-v69:printf "%s\n" "TARGET_1:CRMAnalyticsPanel:pure_presentational_first" "TARGET_2:CRMFiltersPanel:pure_presentational_second" "TARGET_3:CRMActionsPanel:requires_handlers_as_props" "TARGET_4:CRMPipelinePanel:requires_drag_drop_contract" "TARGET_5:CRMKanbanPanel:requires_stage_mutation_contract" | tee "$OUT_DIR/crm-extraction-sequence.out"
+ops/bin/as6-diagnose-frontend-route-splitting-v63:check pipeline_copilot_lazy_import grep -q 'lazy(() => import("./pages/PipelineCopilotPage"))' "$APP"
+ops/bin/as6-diagnose-ai-context-engine-p4:grep -q "getCurrentPipeline" "$ENGINE" || { echo "AS6_PLATFORM_V2_AI_CONTEXT_ENGINE_P4=FAIL current_pipeline_missing"; exit 1; }
+ops/bin/as6-diagnose-crm-final-density-v223-02:grep -q 'stage-column::before' frontend/src/design-system/crm/as6CrmPipelineCompact.css
+ops/bin/as6-diagnose-crm-final-density-v223-02:grep -q 'display: none !important' frontend/src/design-system/crm/as6CrmPipelineCompact.css
+ops/bin/as6-diagnose-crm-final-density-v223-02:grep -q 'flex: 0 0 340px !important' frontend/src/design-system/crm/as6CrmPipelineCompact.css
+ops/bin/as6-update-handoff:- Finish Pipeline: PASS
+ops/bin/as6-diagnose-crm-panel-extraction-scaffold-v70:check crm_pipeline_panel_exists test -f frontend/src/pages/crm/CRMPipelinePanel.jsx
+ops/bin/as6-diagnose-crm-panel-extraction-scaffold-v70:echo "CRM_PANEL_TARGETS=CRMAnalyticsPanel,CRMFiltersPanel,CRMActionsPanel,CRMPipelinePanel,CRMKanbanPanel"
+ops/bin/as6-diagnose-crm-pipeline-compact-v223-00:test -f frontend/src/design-system/crm/as6CrmPipelineCompact.css
+ops/bin/as6-diagnose-crm-pipeline-compact-v223-00:test -f frontend/src/design-system/crm/as6CrmPipelineCompactTraceAuto.js
+ops/bin/as6-diagnose-crm-pipeline-compact-v223-00:grep -q 'as6CrmPipelineCompact.css' frontend/src/pages/CRMPage.jsx
+ops/bin/as6-diagnose-crm-pipeline-compact-v223-00:grep -q 'height: auto !important' frontend/src/design-system/crm/as6CrmPipelineCompact.css
+ops/bin/as6-diagnose-crm-pipeline-compact-v223-00:grep -q 'min-height: 0 !important' frontend/src/design-system/crm/as6CrmPipelineCompact.css
+ops/bin/as6-diagnose-crm-pipeline-compact-v223-00:grep -q "stage: 'V223_00'" frontend/src/design-system/crm/as6CrmPipelineCompactTraceAuto.js
+ops/bin/as6-diagnose-ai-action-engine-p5:grep -q "crm.analyzePipeline" "$CRM" || { echo "AS6_PLATFORM_V2_AI_ACTION_ENGINE_P5=FAIL crm_pipeline_missing"; exit 1; }
+ops/bin/as6-diagnose-real-revenue-crm-fusion-v107:for item in "AS6_REVENUE_CRM_FUSION_V107" "createAS6RevenueCrmFusionSnapshot" "getAS6RevenueCrmFusionStatus" "crmPipeline" "crmDeals" "crmConversion" "revenueForecast" "revenueProjection" "executiveRevenuePulse"; do
+ops/bin/as6-diagnose-command-center:check_pattern "$PAGE" 'data-pipeline-funnel|Pipeline Overview|funnelStages|Сумма в процессе|В выигрыше' 'COMMAND_CENTER_FUNNEL'
+ops/bin/as6-diagnose-crm-page-decomposition-v68:grep -n "pipeline\|Pipeline\|kanban\|Kanban\|filter\|Filter\|analytics\|Analytics\|action\|Action\|table\|Table\|lead\|Lead\|deal\|Deal" "$CRM" | head -160 | tee "$OUT_DIR/crm-decomposition-candidates.map" || true
+ops/bin/as6-diagnose-crm-page-decomposition-v68:echo "CRM_DECOMPOSITION_TARGET:frontend/src/pages/crm/CRMPipelinePanel.jsx"
+ops/bin/as6-diagnose-crm-contacts-production-polish:grep -R "aria-label=\"CRM Contacts production section\"" frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx
+ops/bin/as6-diagnose-crm-contacts-production-polish:grep -R "aria-label=\"CRM Contacts list\"" frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx
+ops/bin/as6-diagnose-crm-board-layout-v223-01:test -f frontend/src/design-system/crm/as6CrmPipelineCompact.css
+ops/bin/as6-diagnose-crm-board-layout-v223-01:grep -q 'overflow-x: hidden !important' frontend/src/design-system/crm/as6CrmPipelineCompact.css
+ops/bin/as6-diagnose-crm-board-layout-v223-01:grep -q 'flex: 0 0 360px !important' frontend/src/design-system/crm/as6CrmPipelineCompact.css
+ops/bin/as6-diagnose-crm-board-layout-v223-01:grep -q 'overflow-x: auto !important' frontend/src/design-system/crm/as6CrmPipelineCompact.css
+ops/bin/as6-diagnose-crm-visual-polish-v223-03:grep -q "stage-column::before" frontend/src/design-system/crm/as6CrmPipelineCompact.css
+ops/bin/as6-diagnose-crm-visual-polish-v223-03:grep -q "flex: 0 0 332px !important" frontend/src/design-system/crm/as6CrmPipelineCompact.css
+ops/bin/as6-diagnose-crm-visual-polish-v223-03:grep -q "margin: 12px 0 !important" frontend/src/design-system/crm/as6CrmPipelineCompact.css
+ops/bin/as6-diagnose-crm-browser-visual-v223-04:test -f frontend/src/design-system/crm/as6CrmPipelineCompact.css
+ops/bin/as6-diagnose-crm-browser-visual-v223-04:grep -q "overflow-x: hidden !important" frontend/src/design-system/crm/as6CrmPipelineCompact.css
+ops/bin/as6-diagnose-crm-browser-visual-v223-04:grep -q "stage-column::before" frontend/src/design-system/crm/as6CrmPipelineCompact.css
+ops/bin/as6-diagnose-crm-browser-visual-v223-04:grep -q "display: none !important" frontend/src/design-system/crm/as6CrmPipelineCompact.css
+ops/bin/as6-diagnose-epic013-crm-next-module-planning:grep -R "Recommended next module: CRM Companies / Accounts Foundation" docs/epic013/AS6_EPIC013_CRM_NEXT_MODULE_PLANNING.md
+frontend/src/crm/contacts/live/CrmContactsLiveLayoutMount.jsx:    <section className="as6-crm-contacts-live-layout-mount" data-as6-contacts-live-layout-mount={crmLayoutMountMode} data-as6-contacts-layout-state={snapshot.state} aria-label="CRM Contacts Live Layout Mount">
+frontend/src/crm/contacts/workspace/crmContactsWorkspacePanel.js:  title: "CRM Contacts",
+frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx:    <section className="as6-crm-contacts-ui as6-crm-contacts-ui--production" data-as6-contacts-ui="foundation" aria-label="CRM Contacts production section">
+frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx:      <header className="as6-crm-contacts-ui__header" aria-label="CRM Contacts header">
+frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx:          <p>CRM Contacts</p>
+frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx:        <main className="as6-crm-contacts-ui__list" data-as6-contacts-list="true" aria-label="CRM Contacts list">
+frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx:        <aside className="as6-crm-contacts-ui__panel" data-as6-contacts-panel="true" aria-label="CRM Contacts diagnostics panel">
+frontend/src/crm/contacts/crmContactDescriptor.js:  title: "CRM Contacts Foundation",
+frontend/src/crm/companies/live/CrmCompaniesLiveLayoutMount.jsx:      aria-label="CRM Companies Live Layout Mount"
+frontend/src/crm/companies/live/CrmCompaniesLiveLayoutMount.jsx:      <header className="as6-crm-companies-live-layout-mount__header" aria-label="CRM Companies live mount header">
+frontend/src/crm/companies/workspace/crmCompaniesWorkspacePanel.js:  title: "CRM Companies",
+frontend/src/crm/companies/ui/CompaniesEmptyState.jsx:    <section className="as6-crm-companies-state" data-as6-companies-empty="true" aria-label="CRM Companies empty state">
+frontend/src/crm/companies/ui/CompaniesActions.jsx:    <section className="as6-crm-companies-ui__actions" data-as6-companies-actions="placeholder" aria-label="CRM Companies actions placeholder">
+frontend/src/crm/companies/ui/CompaniesLoadingState.jsx:    <section className="as6-crm-companies-state" data-as6-companies-loading="true" aria-label="CRM Companies loading state">
+frontend/src/crm/companies/ui/CompaniesErrorState.jsx:    <section className="as6-crm-companies-state as6-crm-companies-state--error" data-as6-companies-error="true" aria-label="CRM Companies error state">
+frontend/src/crm/companies/ui/CompaniesDiagnosticsPanel.jsx:    <aside className="as6-crm-companies-ui__diagnostics" data-as6-companies-diagnostics-panel="true" aria-label="CRM Companies diagnostics panel">
+frontend/src/crm/companies/ui/CompaniesList.jsx:    <main className="as6-crm-companies-ui__list" data-as6-companies-list="true" aria-label="CRM Companies list">
+frontend/src/crm/companies/ui/CompaniesUiFoundation.jsx:    <section className="as6-crm-companies-ui as6-crm-companies-ui--production" data-as6-companies-ui="foundation" data-as6-companies-production-polish="true" data-as6-companies-ui-state={state} aria-label="CRM Companies production UI foundation">
+frontend/src/crm/companies/ui/CompaniesUiFoundation.jsx:        <section className="as6-crm-companies-ui__main" aria-label="CRM Companies production main area" data-as6-companies-production-main="true">
+frontend/src/crm/companies/ui/CompaniesHeader.jsx:    <header className="as6-crm-companies-ui__header" aria-label="CRM Companies header" data-as6-companies-header="true">
+frontend/src/crm/companies/ui/CompaniesHeader.jsx:        <p>CRM Companies</p>
+frontend/src/crm/companies/foundation/crmCompanyRegistry.js:  title: "CRM Companies / Accounts",
+frontend/src/crm/companies/foundation/crmCompanyFoundationDescriptor.js:  title: "CRM Companies Foundation",
+frontend/src/crm/companies/domain/crmCompanyDescriptor.js:  title: "CRM Companies / Accounts Domain Model",
+frontend/src/pages/PipelineCopilotPage.jsx:import { createPipelineCopilotFollowupAction, createPipelineCopilotMeetingAction, fetchAiPipelineCopilot } from "../services/api";
+frontend/src/pages/PipelineCopilotPage.jsx:  riskDeals: "Risk Deals",
+frontend/src/pages/PipelineCopilotPage.jsx:export default function PipelineCopilotPage() {
+frontend/src/pages/PipelineCopilotPage.jsx:      const response = await fetchAiPipelineCopilot();
+frontend/src/pages/PipelineCopilotPage.jsx:      setError(requestError.message || "Не удалось загрузить AI Pipeline Copilot");
+frontend/src/pages/PipelineCopilotPage.jsx:  const metrics = useMemo(() => ["actionsToday", "focusLeads", "riskDeals", "meetingsNext24h", "pendingApprovals", "failedActions"], []);
+frontend/src/pages/PipelineCopilotPage.jsx:  async function handleCreatePipelineAction(item, actionKind) {
+frontend/src/pages/PipelineCopilotPage.jsx:      const request = actionKind === "followup" ? createPipelineCopilotFollowupAction : createPipelineCopilotMeetingAction;
+frontend/src/pages/PipelineCopilotPage.jsx:        eyebrow="AI Pipeline Copilot · AS6 AI Revenue OS"
+frontend/src/pages/PipelineCopilotPage.jsx:        title="AI Pipeline Copilot"
+frontend/src/pages/PipelineCopilotPage.jsx:              <ActionButtons item={action} ctas={action.ctas} navigate={navigate} onCreateAction={handleCreatePipelineAction} busyActionKey={busyActionKey} />
+frontend/src/pages/PipelineCopilotPage.jsx:                <ActionButtons item={lead} ctas={lead.ctas} navigate={navigate} onCreateAction={handleCreatePipelineAction} busyActionKey={busyActionKey} />
+frontend/src/pages/PipelineCopilotPage.jsx:          <SectionHeader title="Deals at Risk" hint="High/medium risk deals requiring intervention today." action={showAllButton("riskDeals", cockpit?.riskDeals || [], 6)} />
+frontend/src/pages/PipelineCopilotPage.jsx:            {!loading && (cockpit?.riskDeals || []).length === 0 && <EmptyState />}
+frontend/src/pages/PipelineCopilotPage.jsx:            {visibleItems("riskDeals", cockpit?.riskDeals || [], 6).map((lead) => (
+frontend/src/pages/PipelineCopilotPage.jsx:                <ActionButtons item={lead} ctas={lead.ctas} navigate={navigate} onCreateAction={handleCreatePipelineAction} busyActionKey={busyActionKey} />
+frontend/src/pages/PipelineCopilotPage.jsx:                <ActionButtons item={meeting} ctas={meeting.ctas} navigate={navigate} onCreateAction={handleCreatePipelineAction} busyActionKey={busyActionKey} />
+frontend/src/pages/PipelineCopilotPage.jsx:                <ActionButtons item={item} ctas={item.ctas} navigate={navigate} onCreateAction={handleCreatePipelineAction} busyActionKey={busyActionKey} />
+frontend/src/pages/PipelineCopilotPage.jsx:                <ActionButtons item={item} ctas={item.ctas} navigate={navigate} onCreateAction={handleCreatePipelineAction} busyActionKey={busyActionKey} />
+frontend/src/pages/PipelineCopilotPage.jsx:        <SectionHeader title="Revenue Snapshot" hint="Pipeline value, weighted value, and value exposed to risk." />
+frontend/src/pages/PipelineCopilotPage.jsx:          <Panel><span>Open Pipeline</span><strong>{formatMoney(revenue.openPipelineValue)}</strong><p>{revenue.activeDeals || 0} active deals</p></Panel>
+frontend/src/pages/PipelineCopilotPage.jsx:          <Panel><span>Weighted Pipeline</span><strong>{formatMoney(revenue.weightedPipelineValue)}</strong><p>Probability-weighted view</p></Panel>
+frontend/src/pages/PipelineCopilotPage.jsx:          <Panel><span>Risk Pipeline</span><strong>{formatMoney(revenue.riskPipelineValue)}</strong><p>Elevated risk exposure</p></Panel>
+frontend/src/pages/PipelineCopilotPage.jsx:          <Panel><span>Focus Pipeline</span><strong>{formatMoney(revenue.focusPipelineValue)}</strong><p>Value in today’s focus set</p></Panel>
+frontend/src/pages/AiRevenueEnginePage.jsx:      <Panel><h3>Pipeline Forecast</h3><p>{JSON.stringify(snapshot?.snapshot_payload?.forecast || {})}</p></Panel>
+frontend/src/pages/AiManagerDashboardPage.jsx:            <MetricPanel eyebrow="D. Pipeline Health" title="Здоровье pipeline">
+frontend/src/pages/AiManagerDashboardPage.jsx:              <MiniMetric label="Pipeline under AI monitoring" value={formatMoney(revenueAttribution.total_pipeline_value_under_ai_monitoring)} />
+frontend/src/pages/CRMBrandV2Page.jsx:  ["Risk Deals", "8", "+7%"],
+frontend/src/pages/CRMBrandV2Page.jsx:  ["Pipeline Health", "92%", "+10%"],
+frontend/src/pages/CRMBrandV2Page.jsx:          {["Command Center", "Dashboard", "CRM-воронка", "AI сотрудники", "AI Revenue Intelligence", "Revenue Dashboard", "AI Pipeline Copilot", "AI Follow-ups", "AI Priority Inbox"].map((item) => (
+frontend/src/pages/CRMBrandV2Page.jsx:          <h2>CRM Pipeline</h2>
+frontend/src/pages/crm/CRMPipelinePanel.jsx:export default function CRMPipelinePanel() { return null }
+frontend/src/pages/AiCompanySimulationPage.jsx:export default function AiCompanySimulationPage(){const [runs,setRuns]=useState([]);const [scenarios,setScenarios]=useState([]);const [results,setResults]=useState([]);const [risks,setRisks]=useState([]);const load=async()=>{const [a,b,c,d]=await Promise.all([fetchAiCompanySimulationRuns(),fetchAiCompanySimulationScenarios(),fetchAiCompanySimulationResults(),fetchAiCompanySimulationRisks()]);setRuns(a.runs||[]);setScenarios(b.scenarios||[]);setResults(c.results||[]);setRisks(d.risks||[])};useEffect(()=>{load().catch(()=>{})},[]);return <div className='workforce-center'><PageHeading eyebrow='AI Strategic Operating Simulator' title='AI Company Simulation (Recommendation-Only)' copy='Simulation-only strategic operating layer for growth, bottlenecks, revenue expansion, and workforce planning.' action={<button className='btn primary compact' onClick={()=>runAiCompanySimulation({baseline:{}}).then(load)}>Run simulation</button>} /><Panel><strong>Governance labels:</strong><div className='safety-pills'>{labels.map((l)=><span key={l}>{l}</span>)}</div></Panel><section className='workforce-grid'><Panel><h3>Strategic Simulation Dashboard</h3><p>Total runs: {runs.length}</p><p>Latest projected revenue delta: {results[0]?.result_payload?.projectedRevenueDelta||0}</p></Panel><Panel><h3>Growth Scenarios</h3>{scenarios.filter(x=>String(x.scenario_type).includes('growth')).map((x)=><p key={x.id}>{x.scenario_type}</p>)}</Panel><Panel><h3>Revenue Expansion Scenarios</h3>{scenarios.filter(x=>String(x.scenario_type).includes('revenue')).map((x)=><p key={x.id}>{x.scenario_type}</p>)}</Panel><Panel><h3>Workforce Load Simulation</h3>{scenarios.filter(x=>String(x.scenario_type).includes('workforce')).map((x)=><p key={x.id}>{x.scenario_type}</p>)}</Panel><Panel><h3>Bottleneck Forecast</h3>{scenarios.filter(x=>String(x.scenario_type).includes('bottleneck')).map((x)=><p key={x.id}>{x.scenario_type}</p>)}</Panel><Panel><h3>Department Stress Map</h3>{scenarios.filter(x=>String(x.scenario_type).includes('department')).map((x)=><p key={x.id}>{x.scenario_type}</p>)}</Panel><Panel><h3>Pipeline Collapse Risk</h3>{risks.filter(x=>String(x.risk_type).includes('pipeline')).map((x)=><p key={x.id}>{x.risk_type} · {x.severity}</p>)}</Panel><Panel><h3>Churn Risk Simulation</h3>{risks.filter(x=>String(x.risk_type).includes('churn')).map((x)=><p key={x.id}>{x.risk_type} · {x.severity}</p>)}</Panel><Panel><h3>Strategic What-If Simulator</h3>{scenarios.filter(x=>String(x.scenario_type).includes('what_if')).map((x)=><p key={x.id}>{x.scenario_type}</p>)}</Panel><Panel><h3>Simulation Memory</h3><p>Strategic simulation memory is retained for future scenario continuity.</p></Panel></section><section className='workforce-grid'><Panel><h3>Scenario Cards</h3>{scenarios.slice(0,12).map((s)=><p key={s.id}>{s.scenario_type} · impact:{s.scenario_payload?.projectedImpact} · confidence:{s.scenario_payload?.confidenceScore} · risk:{s.scenario_payload?.riskLevel} · action:{s.scenario_payload?.recommendedHumanAction} · horizon:{s.scenario_payload?.simulationHorizon}</p>)}</Panel></section></div>}
+frontend/src/pages/PriorityInboxPage.jsx:  return ({ urgentLeads: "Urgent Leads", focusLeads: "Focus Leads", atRiskDeals: "At-Risk Deals", meetingsToday: "Meetings Today", followUpsNeeded: "Follow-ups Needed" }[key] || key);
+frontend/src/pages/PriorityInboxPage.jsx:        {["urgentLeads", "focusLeads", "atRiskDeals", "meetingsToday", "followUpsNeeded"].map((key) => (
+frontend/src/pages/CRMPage.jsx:import '../design-system/crm/as6CrmPipelineCompactTraceAuto.js';
+frontend/src/pages/CRMPage.jsx:import '../design-system/crm/as6CrmPipelineCompact.css';
+frontend/src/pages/CRMPage.jsx:            <AS6CoreSignal label="Pipeline" value={loading ? "…" : formatCurrency(stats?.pipelineValue)} tone="revenue" />
+frontend/src/pages/CRMPage.jsx:          <AS6FocusSignal label="Pipeline health" value={loading ? "…" : `${stats?.aiMetrics?.pipelineHealth || 0}%`} tone="crm" />
+frontend/src/pages/CRMPage.jsx:            <AS6RightRailMetric label="At-risk" value={loading ? "…" : String(stats?.aiMetrics?.atRiskDeals || 0)} hint="сделки с риском" />
+frontend/src/pages/CRMPage.jsx:        <StatCard label="Успешно" value={loading ? "…" : String(stats?.wonDeals || 0)} hint={`${formatCurrency(stats?.wonValue)} выиграно`} tone="pink" />
+frontend/src/pages/CRMPage.jsx:        <StatCard label="Потеряно" value={loading ? "…" : String(stats?.lostDeals || 0)} hint={`${formatCurrency(stats?.lostValue)} потеряно`} />
+frontend/src/pages/CRMPage.jsx:        <StatCard label="AI эффективность" value={loading ? "…" : `${stats?.aiMetrics?.efficiency || 0}%`} hint={`${stats?.aiMetrics?.assistedDeals || 0} AI‑сделок`} />
+frontend/src/pages/CRMPage.jsx:        <StatCard label="At-risk Deals" value={loading ? "…" : String(stats?.aiMetrics?.atRiskDeals || 0)} hint="ghosting / stalled / inactive risk" tone="violet" />
+frontend/src/pages/CRMPage.jsx:        <StatCard label="Revenue At Risk" value={loading ? "…" : formatCurrency(stats?.aiMetrics?.revenueAtRisk || 0)} hint={`${stats?.aiMetrics?.atRiskDeals || 0} at-risk deals`} tone="pink" />
+frontend/src/pages/CRMPage.jsx:        <StatCard label="High Probability Deals" value={loading ? "…" : String(stats?.aiMetrics?.highProbabilityDeals || 0)} hint="probability ≥ 70%" />
+frontend/src/pages/CRMPage.jsx:        <StatCard label="Stalled Opportunities" value={loading ? "…" : String(stats?.aiMetrics?.stalledOpportunities || stats?.aiMetrics?.inactiveOpportunities || 0)} hint="нет активности более 7 дней" tone="pink" />
+frontend/src/pages/CRMPage.jsx:        <StatCard label="Pipeline Health" value={loading ? "…" : `${stats?.aiMetrics?.pipelineHealth || 0}%`} hint="risk + activity forecast index" tone="violet" />
+frontend/src/pages/CRMPage.jsx:    ['Pipeline Health', score.pipelineHealth, '/100', 'health'],
+frontend/src/pages/CRMPage.jsx:          <p>Active pipeline {formatCurrency(forecast.activePipelineValue)} · generated {formatDate(forecast.generatedAt)}</p>
+frontend/src/pages/CRMPage.jsx:                    <span className="eyebrow">AI Pipeline Automation</span>
+frontend/src/pages/CRMPage.jsx:                  <div><span>Pipeline health</span><strong>{lead.aiRevenueScore.pipelineHealth}/100</strong></div>
+frontend/src/pages/AiRevenueIntelligencePage.jsx:  const health = Number(intelligence?.widgets?.aiPipelineHealth || 0);
+frontend/src/pages/AiRevenueIntelligencePage.jsx:              <p>Active pipeline {formatCurrency(forecastWidget.activePipelineValue)} · hot {forecastWidget.hotLeadsCount} · stalled {forecastWidget.stalledLeadsCount}</p>
+frontend/src/pages/AiRevenueIntelligencePage.jsx:              <div><span>Pipeline Health</span><b>{health}/100</b></div>
+frontend/src/pages/AiRevenueIntelligencePage.jsx:        <LeadScoreList title="Stalled Leads" eyebrow="Pipeline risk" leads={intelligence.stalledLeads || []} emptyText="No stalled leads detected." scoreKey="churnRisk" />
+frontend/src/pages/AiWorkersPage.jsx:import { approveAiApprovalQueueItem, downloadCrmMeetingIcs, executeAiApprovalQueueItem, fetchAiApprovalQueue, fetchAiCommandCenter, fetchAiWorkersFocusSummary, fetchCrmLeads, getActiveAiSequences, rejectAiApprovalQueueItem, runAiWorker, seedDemoSalesPipeline, startAiSequence, updateAiApprovalQueueItem, updateAiWorker } from "../services/api";
+frontend/src/pages/AiWorkersPage.jsx:  async function handleSeedDemoPipeline() {
+frontend/src/pages/AiWorkersPage.jsx:      const response = await seedDemoSalesPipeline();
+frontend/src/pages/AiWorkersPage.jsx:        <button className="btn primary compact demo-pipeline-button" type="button" onClick={handleSeedDemoPipeline} disabled={demoBusy}>
+frontend/src/pages/CommandCenterPage.jsx:  const [pipelinePeriod, setPipelinePeriod] = useState('day')
+frontend/src/pages/CommandCenterPage.jsx:      { title: 'Проверить риск сделки', meta: 'Pipeline · требуется внимание', value: 'Risk' },
+frontend/src/pages/CommandCenterPage.jsx:              <div className="command-card-head"><h2>Pipeline Overview</h2><select className="command-filter-select" value={pipelinePeriod} onChange={(event) => setPipelinePeriod(event.target.value)} aria-label="Pipeline period"><option value="day">День</option><option value="week">Неделя</option><option value="month">Месяц</option><option value="quarter">Квартал</option><option value="year">Год</option></select></div>
+frontend/src/pages/DashboardPage.jsx:        <StatCard label="Воронка CRM" value={loading ? "…" : new Intl.NumberFormat("ru-RU", { style: "currency", currency: "RUB", maximumFractionDigits: 0 }).format(Number(crmStats?.pipelineValue || 0))} hint={`${crmStats?.wonDeals || 0} успешно · ${crmStats?.lostDeals || 0} потеряно`} />
+frontend/src/pages/DashboardPage.jsx:        <StatCard label="AI‑сделки" value={loading ? "…" : String(crmStats?.aiMetrics?.assistedDeals || 0)} hint={`конверсия ${crmStats?.aiMetrics?.conversionRate || 0}%`} tone="pink" />
+frontend/src/pages/DashboardPage.jsx:        <StatCard label="At-risk Deals" value={loading ? "…" : String(crmStats?.aiMetrics?.dealsAtRisk || crmStats?.aiMetrics?.atRiskDeals || 0)} hint="ghosting / stalled / inactive risk" tone="violet" />
+frontend/src/pages/DashboardPage.jsx:        <StatCard label="High Probability Deals" value={loading ? "…" : String(crmStats?.aiMetrics?.highProbabilityDeals || 0)} hint="probability ≥ 70%" tone="violet" />
+frontend/src/pages/DashboardPage.jsx:        <StatCard label="Stalled Opportunities" value={loading ? "…" : String(crmStats?.aiMetrics?.stalledOpportunities || crmStats?.aiMetrics?.inactiveOpportunities || 0)} hint="нет активности более 7 дней" tone="pink" />
+frontend/src/pages/DashboardPage.jsx:        <StatCard label="At-risk Deals" value={loading ? "…" : String(crmStats?.aiMetrics?.dealsAtRisk || crmStats?.aiMetrics?.atRiskDeals || 0)} hint="stalled / no engagement / weak qualification" tone="violet" />
+frontend/src/pages/DashboardPage.jsx:        <StatCard label="Inactive opportunities" value={loading ? "…" : String(crmStats?.aiMetrics?.inactiveOpportunities || 0)} hint="нет активности более 3 дней" tone="pink" />
+frontend/src/pages/DashboardPage.jsx:        <StatCard label="Pipeline Health" value={loading ? "…" : pipelineHealthLabel(crmStats?.aiMetrics?.pipelineHealthStatus)} hint={`risk revenue ${crmStats?.aiMetrics?.riskRevenueRatio || 0}% · score ${crmStats?.aiMetrics?.pipelineHealth || 0}%`} />
+frontend/src/pages/DashboardPage.jsx:        <StatCard label="Revenue Brain health" value={loading ? "…" : `${revenueIntelligence?.widgets?.aiPipelineHealth || 0}/100`} hint={`engagement ${revenueIntelligence?.widgets?.engagementTrend || 0}/100`} />
+frontend/src/pages/DashboardPage.jsx:              <p>Active pipeline {formatCurrency(forecastWidget.activePipelineValue)} · hot {forecastWidget.hotLeadsCount} · stalled {forecastWidget.stalledLeadsCount}</p>
+frontend/src/pages/DashboardPage.jsx:          <h3>AI Pipeline Health by category</h3>
+frontend/src/pages/AiExecutiveBrainPage.jsx:export default function AiExecutiveBrainPage(){const [snapshot,setSnapshot]=useState(null);const [recommendations,setRecommendations]=useState([]);const [risks,setRisks]=useState([]);const [health,setHealth]=useState(null);const load=async()=>{const [s,r,k,h]=await Promise.all([fetchAiExecutiveSnapshot(),fetchAiExecutiveRecommendations(),fetchAiExecutiveRisks(),fetchAiExecutiveOrganizationalHealth()]);setSnapshot(s.snapshot);setRecommendations(r.recommendations||[]);setRisks(k.risks||[]);setHealth(h.organizationalHealth)};useEffect(()=>{load().catch(()=>{})},[]);return <div className='workforce-center'><PageHeading eyebrow='AI Executive Brain' title='AI Executive Brain (Recommendation-Only)' copy='Executive strategic intelligence for the full AI operating system.' action={<button className='btn primary compact' onClick={()=>runAiExecutiveAnalysis().then(load)}>Run analysis</button>} /><Panel><strong>Safety Labels:</strong><div className='safety-pills'>{safetyLabels.map((l)=><span key={l}>{l}</span>)}</div></Panel><section className='workforce-grid'><Panel><h3>Executive Snapshot</h3><p>Org health score: {health?.health_score || snapshot?.snapshot_payload?.snapshot?.organizationalHealthScore || 0}</p><p>Revenue expansion opportunity: {snapshot?.snapshot_payload?.forecast?.projectedRevenueExpansion || 0}</p><p>Enterprise opportunity count: {snapshot?.snapshot_payload?.snapshot?.enterpriseOpportunityCount || 0}</p><p>Workforce utilization: {snapshot?.snapshot_payload?.snapshot?.workforceUtilization || 0}%</p><p>Strategic bottlenecks: {snapshot?.snapshot_payload?.snapshot?.approvalBottlenecks || 0}</p><p>Execution pressure: {snapshot?.snapshot_payload?.snapshot?.executionPressure || 0}</p><p>Executive risk level: {risks[0]?.severity || 'low'}</p><p>Conversion trend: {snapshot?.snapshot_payload?.forecast?.conversionTrend || 0}</p><p>Scaling readiness score: {snapshot?.snapshot_payload?.forecast?.scalingReadinessScore || 0}</p></Panel><Panel><h3>Strategic Recommendations</h3>{recommendations.map((x)=><p key={x.id}>{x.recommendation_type}</p>)}</Panel><Panel><h3>Organizational Health</h3><p>{JSON.stringify(health?.health_payload||{})}</p></Panel><Panel><h3>Revenue Forecast</h3><p>{JSON.stringify(snapshot?.snapshot_payload?.forecast||{})}</p></Panel><Panel><h3>Strategic Risks</h3>{risks.map((x)=><p key={x.id}>{x.risk_type} · {x.severity}</p>)}</Panel><Panel><h3>Workforce Coordination</h3><p>Human-approved workforce coordination only.</p></Panel><Panel><h3>Department Coordination</h3><p>{JSON.stringify(snapshot?.snapshot_payload?.coordination||[])}</p></Panel><Panel><h3>Pipeline Intelligence</h3><p>Pipeline value: {snapshot?.snapshot_payload?.snapshot?.pipelineValue || 0}</p></Panel><Panel><h3>Scaling Opportunities</h3><p>Enterprise opportunities: {snapshot?.snapshot_payload?.snapshot?.enterpriseOpportunityCount || 0}</p></Panel><Panel><h3>AI Executive Memory</h3><p>Memory persisted for executive strategic continuity.</p></Panel></section></div>}

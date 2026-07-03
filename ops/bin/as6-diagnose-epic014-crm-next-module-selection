@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f docs/epic014/AS6_EPIC014_CRM_NEXT_MODULE_SELECTION.md
+test -x ops/bin/as6-grep-safe
+test -x ops/bin/as6-diagnose-epic-completion-markers
+
+ops/bin/as6-grep-safe -R "CRM_DEALS_OPPORTUNITIES" docs/epic014 ops docs
+ops/bin/as6-grep-safe -R "AS6_EPIC014_SLICE01_CRM_DEALS_DOMAIN_MODEL" docs/epic014 ops docs
+ops/bin/as6-grep-safe -R "REUSE_CONTACTS_FOUNDATION=TRUE" docs/epic014
+ops/bin/as6-grep-safe -R "REUSE_COMPANIES_FOUNDATION=TRUE" docs/epic014
+ops/bin/as6-grep-safe -R "USE_EXISTING_CRM_WORKSPACE=TRUE" docs/epic014
+ops/bin/as6-grep-safe -R "USE_EXISTING_CRM_LAYOUT=TRUE" docs/epic014
+ops/bin/as6-grep-safe -R "USE_AS6_GREP_SAFE=TRUE" docs/epic014
+ops/bin/as6-grep-safe -R "USE_EPIC_COMPLETION_MARKER_GUARD=TRUE" docs/epic014
+ops/bin/as6-grep-safe -R "NO_PARALLEL_SHELL=TRUE" docs/epic014
+ops/bin/as6-grep-safe -R "NO_OWN_ROUTER=TRUE" docs/epic014
+ops/bin/as6-grep-safe -R "NO_OWN_STORE=TRUE" docs/epic014
+
+echo "AS6_EPIC014_CRM_NEXT_MODULE_SELECTION=PASS"
+echo "AS6_EPIC014_NEXT_MODULE=CRM_DEALS_OPPORTUNITIES"

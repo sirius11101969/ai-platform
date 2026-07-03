@@ -3893,3 +3893,9 @@ Permission Validation
 - Covers reusable final epic completion marker validation.
 - Covers truncated log prevention.
 - Covers AS6_DONE, status flag, restore tag, runtime evidence and project state evidence.
+
+## AS6_EPIC014_CRM_NEXT_MODULE_SELECTION
+- Covers EPIC014 next module selection.
+- Covers CRM Deals / Opportunities roadmap.
+- Covers reuse of Contacts and Companies foundations.
+- Covers mandatory use of existing CRM Workspace/Layout, as6-grep-safe and Epic Completion Marker Guard.

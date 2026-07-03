@@ -2027,3 +2027,10 @@ ops/bin/as6-control-permission-engine-v114
 - AEC rules: ops/aec/as6-epic-completion-marker-guard-aec.md
 - Added checks: AS6_DONE, production status flag, restore tag at HEAD, runtime evidence, project state evidence.
 - Failure classes: EPIC_COMPLETION_MARKER_GAP, EPIC_RESTORE_TAG_GAP, EPIC_STATUS_FLAG_GAP, EPIC_RUNTIME_EVIDENCE_GAP, TRUNCATED_FINAL_LOG_GAP.
+
+## AS6_EPIC014_CRM_NEXT_MODULE_SELECTION
+- Diagnostic: ops/bin/as6-diagnose-epic014-crm-next-module-selection
+- Control: ops/bin/as6-control-epic014-crm-next-module-selection
+- AEC rules: ops/aec/as6-epic014-crm-next-module-selection-aec.md
+- Added checks: Deals / Opportunities selection, Contacts foundation reuse, Companies foundation reuse, existing CRM Workspace/Layout, as6-grep-safe, Epic Completion Marker Guard, no parallel shell/router/store.
+- Failure classes: CRM_EPIC014_NEXT_MODULE_SELECTION_GAP, CRM_DEALS_SELECTION_DRIFT, CRM_DEALS_CONTACTS_REUSE_GAP, CRM_DEALS_COMPANIES_REUSE_GAP, CRM_DEALS_PARALLEL_SHELL_DRIFT.

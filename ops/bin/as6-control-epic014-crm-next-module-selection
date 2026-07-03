@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-epic014-crm-next-module-selection
+
+ops/bin/as6-grep-safe -R "AS6_EPIC013_CRM_COMPANIES=PRODUCTION_VALIDATED" docs ops runtime
+ops/bin/as6-grep-safe -R "AS6_EPIC012_CRM_CONTACTS=PRODUCTION_VALIDATED" docs ops runtime
+ops/bin/as6-grep-safe -R "AS6_EPIC_COMPLETION_MARKER_GUARD" docs ops runtime
+
+echo "AS6_CONTROL_EPIC014_CRM_NEXT_MODULE_SELECTION=PASS"

@@ -6290,3 +6290,15 @@ Status: PASS pending validation
 - Added failure classes: EPIC_COMPLETION_MARKER_GAP, EPIC_RESTORE_TAG_GAP, EPIC_STATUS_FLAG_GAP, EPIC_RUNTIME_EVIDENCE_GAP, TRUNCATED_FINAL_LOG_GAP.
 - Project readiness: 99%.
 - Apply this guard to final epic validation stages before declaring an epic closed.
+
+## AS6_EPIC014_CRM_NEXT_MODULE_SELECTION
+- Selected EPIC014 module: CRM Deals / Opportunities.
+- Confirmed previous production foundations: CRM Contacts and CRM Companies / Accounts.
+- Added EPIC014 roadmap from Domain Model through Final Validation.
+- Added diagnostics: ops/bin/as6-diagnose-epic014-crm-next-module-selection.
+- Added controls: ops/bin/as6-control-epic014-crm-next-module-selection.
+- Added AEC rules: ops/aec/as6-epic014-crm-next-module-selection-aec.md.
+- Added governance: ops/governance/as6-epic014-crm-next-module-selection-governance.md.
+- Added failure classes: CRM_EPIC014_NEXT_MODULE_SELECTION_GAP, CRM_DEALS_SELECTION_DRIFT, CRM_DEALS_CONTACTS_REUSE_GAP, CRM_DEALS_COMPANIES_REUSE_GAP, CRM_DEALS_PARALLEL_SHELL_DRIFT.
+- Project readiness: 99%.
+- Next stage: AS6_EPIC014_SLICE01_CRM_DEALS_DOMAIN_MODEL.

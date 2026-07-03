@@ -1,0 +1,5 @@
+ROOT_CAUSE=CRM_NEXT_MODULE_SELECTION_REQUIRED_AFTER_CONTACTS_AND_COMPANIES
+FAILURE_CLASS=CRM_NEXT_MODULE_SELECTION_GAP
+ARCHITECTURE_DRIFT=CRM Contacts and Companies are production-validated but next CRM module was not yet fixed after EPIC013
+VALIDATION_GAP=No EPIC014 module decision, roadmap, diagnostics, governance or AEC rules existed before this stage
+PREVENTION=Select CRM Deals / Opportunities, register roadmap, diagnostics, governance, coverage, AEC and state before Slice 01
