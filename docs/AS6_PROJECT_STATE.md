@@ -6164,3 +6164,13 @@ Status: PASS pending validation
 - Project readiness: 99%.
 - EPIC012 CRM Contacts status: PRODUCTION_VALIDATED.
 - Next stage: AS6_EPIC013_CRM_NEXT_MODULE_PLANNING.
+
+## AS6_EPIC013_CRM_NEXT_MODULE_PLANNING
+- Started EPIC013 after EPIC012 CRM Contacts final validation.
+- Selected next module: CRM Companies / Accounts Foundation.
+- Added planning doc: docs/epic013/AS6_EPIC013_CRM_NEXT_MODULE_PLANNING.md.
+- Added diagnostics: ops/bin/as6-diagnose-epic013-crm-next-module-planning.
+- Added controls: ops/bin/as6-control-epic013-crm-next-module-planning.
+- Added governance: ops/governance/as6-epic013-crm-next-module-planning-governance.md.
+- Project readiness: 99%.
+- Next stage: AS6_EPIC013_SLICE01_CRM_COMPANIES_DOMAIN_MODEL.

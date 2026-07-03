@@ -1949,3 +1949,9 @@ ops/bin/as6-control-permission-engine-v114
 - Control: all CRM Contacts diagnostics and controls from Slice 04 through Slice 09 passed.
 - Added checks: live mount, production layout marker, accessibility labels, reduced motion, registry coverage, no forbidden runtime usage, no heavy dependency, frontend build.
 - Failure classes covered: CRM_CONTACTS_FINAL_VALIDATION_DRIFT, CRM_CONTACTS_REGISTRY_COVERAGE_DRIFT, CRM_CONTACTS_LIVE_MOUNT_REGRESSION, CRM_CONTACTS_PRODUCTION_ACCESSIBILITY_REGRESSION.
+
+## AS6_EPIC013_CRM_NEXT_MODULE_PLANNING
+- Diagnostic: ops/bin/as6-diagnose-epic013-crm-next-module-planning
+- Control: ops/bin/as6-control-epic013-crm-next-module-planning
+- Added checks: EPIC013 planning doc, selected next module, slice chain, invariants, EPIC012 production validation dependency.
+- Failure classes: CRM_NEXT_MODULE_SELECTION_DRIFT, EPIC012_DEPENDENCY_EVIDENCE_DRIFT, CRM_MODULE_SEQUENCE_DRIFT.

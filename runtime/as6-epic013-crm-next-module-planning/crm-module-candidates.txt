@@ -1,0 +1,299 @@
+frontend/src/pages/PipelineCopilotPage.jsx:5:import { createPipelineCopilotFollowupAction, createPipelineCopilotMeetingAction, fetchAiPipelineCopilot } from "../services/api";
+frontend/src/pages/PipelineCopilotPage.jsx:9:  focusLeads: "Focus Leads",
+frontend/src/pages/PipelineCopilotPage.jsx:10:  riskDeals: "Risk Deals",
+frontend/src/pages/PipelineCopilotPage.jsx:92:export default function PipelineCopilotPage() {
+frontend/src/pages/PipelineCopilotPage.jsx:106:      const response = await fetchAiPipelineCopilot();
+frontend/src/pages/PipelineCopilotPage.jsx:109:      setError(requestError.message || "Не удалось загрузить AI Pipeline Copilot");
+frontend/src/pages/PipelineCopilotPage.jsx:121:  const metrics = useMemo(() => ["actionsToday", "focusLeads", "riskDeals", "meetingsNext24h", "pendingApprovals", "failedActions"], []);
+frontend/src/pages/PipelineCopilotPage.jsx:124:  async function handleCreatePipelineAction(item, actionKind) {
+frontend/src/pages/PipelineCopilotPage.jsx:132:      const request = actionKind === "followup" ? createPipelineCopilotFollowupAction : createPipelineCopilotMeetingAction;
+frontend/src/pages/PipelineCopilotPage.jsx:165:        eyebrow="AI Pipeline Copilot · AS6 AI Revenue OS"
+frontend/src/pages/PipelineCopilotPage.jsx:166:        title="AI Pipeline Copilot"
+frontend/src/pages/PipelineCopilotPage.jsx:218:              <ActionButtons item={action} ctas={action.ctas} navigate={navigate} onCreateAction={handleCreatePipelineAction} busyActionKey={busyActionKey} />
+frontend/src/pages/PipelineCopilotPage.jsx:226:          <SectionHeader title="Focus Leads" hint="Only leads that need manager attention now: elevated risk, booked/proposal stage, or clear buying intent." action={showAllButton("focusLeads", cockpit?.focusLeads || [], 6)} />
+frontend/src/pages/PipelineCopilotPage.jsx:228:            {!loading && (cockpit?.focusLeads || []).length === 0 && <EmptyState />}
+frontend/src/pages/PipelineCopilotPage.jsx:229:            {visibleItems("focusLeads", cockpit?.focusLeads || [], 6).map((lead) => (
+frontend/src/pages/PipelineCopilotPage.jsx:239:                <ActionButtons item={lead} ctas={lead.ctas} navigate={navigate} onCreateAction={handleCreatePipelineAction} busyActionKey={busyActionKey} />
+frontend/src/pages/PipelineCopilotPage.jsx:246:          <SectionHeader title="Deals at Risk" hint="High/medium risk deals requiring intervention today." action={showAllButton("riskDeals", cockpit?.riskDeals || [], 6)} />
+frontend/src/pages/PipelineCopilotPage.jsx:248:            {!loading && (cockpit?.riskDeals || []).length === 0 && <EmptyState />}
+frontend/src/pages/PipelineCopilotPage.jsx:249:            {visibleItems("riskDeals", cockpit?.riskDeals || [], 6).map((lead) => (
+frontend/src/pages/PipelineCopilotPage.jsx:259:                <ActionButtons item={lead} ctas={lead.ctas} navigate={navigate} onCreateAction={handleCreatePipelineAction} busyActionKey={busyActionKey} />
+frontend/src/pages/PipelineCopilotPage.jsx:278:                <ActionButtons item={meeting} ctas={meeting.ctas} navigate={navigate} onCreateAction={handleCreatePipelineAction} busyActionKey={busyActionKey} />
+frontend/src/pages/PipelineCopilotPage.jsx:295:                <ActionButtons item={item} ctas={item.ctas} navigate={navigate} onCreateAction={handleCreatePipelineAction} busyActionKey={busyActionKey} />
+frontend/src/pages/PipelineCopilotPage.jsx:312:                <ActionButtons item={item} ctas={item.ctas} navigate={navigate} onCreateAction={handleCreatePipelineAction} busyActionKey={busyActionKey} />
+frontend/src/pages/PipelineCopilotPage.jsx:320:        <SectionHeader title="Revenue Snapshot" hint="Pipeline value, weighted value, and value exposed to risk." />
+frontend/src/pages/PipelineCopilotPage.jsx:322:          <Panel><span>Open Pipeline</span><strong>{formatMoney(revenue.openPipelineValue)}</strong><p>{revenue.activeDeals || 0} active deals</p></Panel>
+frontend/src/pages/PipelineCopilotPage.jsx:323:          <Panel><span>Weighted Pipeline</span><strong>{formatMoney(revenue.weightedPipelineValue)}</strong><p>Probability-weighted view</p></Panel>
+frontend/src/pages/PipelineCopilotPage.jsx:324:          <Panel><span>Risk Pipeline</span><strong>{formatMoney(revenue.riskPipelineValue)}</strong><p>Elevated risk exposure</p></Panel>
+frontend/src/pages/PipelineCopilotPage.jsx:325:          <Panel><span>Focus Pipeline</span><strong>{formatMoney(revenue.focusPipelineValue)}</strong><p>Value in today’s focus set</p></Panel>
+frontend/src/pages/AiVoiceOutreachPage.jsx:3:import { createAiVoiceCall, fetchAiVoiceCall, fetchAiVoiceCalls, fetchCrmLeads } from "../services/api";
+frontend/src/pages/AiVoiceOutreachPage.jsx:41:  const [leads, setLeads] = useState([]);
+frontend/src/pages/AiVoiceOutreachPage.jsx:55:      const [callsResponse, leadsResponse] = await Promise.all([fetchAiVoiceCalls(), fetchCrmLeads()]);
+frontend/src/pages/AiVoiceOutreachPage.jsx:57:      const nextLeads = leadsResponse.leads || [];
+frontend/src/pages/AiVoiceOutreachPage.jsx:58:      setLeads(nextLeads);
+frontend/src/pages/AiVoiceOutreachPage.jsx:59:      setSelectedLeadId((current) => current || nextLeads.find((lead) => lead.phone)?.id || nextLeads[0]?.id || "");
+frontend/src/pages/FollowupsPage.jsx:5:import { approveAiFollowup, fetchAiFollowups, rejectAiFollowup, runAiFollowupScan, sendAiFollowup, updateAiFollowup } from "../services/api";
+frontend/src/pages/FollowupsPage.jsx:85:export default function FollowupsPage() {
+frontend/src/pages/FollowupsPage.jsx:99:      const response = await fetchAiFollowups();
+frontend/src/pages/AiRevenueEnginePage.jsx:22:      <Panel><h3>Pipeline Forecast</h3><p>{JSON.stringify(snapshot?.snapshot_payload?.forecast || {})}</p></Panel>
+frontend/src/pages/AiWorkforceCenterPage.jsx:6:import { fetchAiWorkforceActivityStream, fetchAiWorkforceAgents, fetchAiWorkforceAssignments, fetchAiWorkforceCommandGraph, fetchAiWorkforceEvents, fetchAiWorkforceExecutionPlans, fetchAiWorkforceMetrics, fetchAiWorkforceRealtimeMetrics, fetchAiWorkforceRealtimeMetricsHistory, fetchAiWorkforceTasks } from '../services/api'
+frontend/src/pages/AiWorkforceCenterPage.jsx:15:    Promise.all([fetchAiWorkforceAgents(), fetchAiWorkforceTasks(), fetchAiWorkforceAssignments(), fetchAiWorkforceExecutionPlans(), fetchAiWorkforceMetrics(), fetchAiWorkforceEvents(), fetchAiWorkforceActivityStream(), fetchAiWorkforceRealtimeMetrics(), fetchAiWorkforceRealtimeMetricsHistory({ limit: 50 }), fetchAiWorkforceCommandGraph()])
+frontend/src/pages/AiManagerDashboardPage.jsx:198:              <MiniMetric label="Followups sent" value={formatNumber(communicationOutcomes.followups_sent)} />
+frontend/src/pages/AiManagerDashboardPage.jsx:213:            <MetricPanel eyebrow="D. Pipeline Health" title="Здоровье pipeline">
+frontend/src/pages/AiManagerDashboardPage.jsx:226:              <MiniMetric label="Pipeline under AI monitoring" value={formatMoney(revenueAttribution.total_pipeline_value_under_ai_monitoring)} />
+frontend/src/pages/CRMBrandV2Page.jsx:15:  ["Hot Leads", "18", "+12%"],
+frontend/src/pages/CRMBrandV2Page.jsx:16:  ["Risk Deals", "8", "+7%"],
+frontend/src/pages/CRMBrandV2Page.jsx:18:  ["Pipeline Health", "92%", "+10%"],
+frontend/src/pages/CRMBrandV2Page.jsx:36:          {["Command Center", "Dashboard", "CRM-воронка", "AI сотрудники", "AI Revenue Intelligence", "Revenue Dashboard", "AI Pipeline Copilot", "AI Follow-ups", "AI Priority Inbox"].map((item) => (
+frontend/src/pages/CRMBrandV2Page.jsx:75:          <h2>CRM Pipeline</h2>
+frontend/src/pages/AiRealtimeVoicePage.jsx:3:import { createRealtimeVoiceSession, fetchCrmLeads, fetchRealtimeVoiceSession, fetchRealtimeVoiceSessions } from "../services/api";
+frontend/src/pages/AiRealtimeVoicePage.jsx:40:  const [leads, setLeads] = useState([]);
+frontend/src/pages/AiRealtimeVoicePage.jsx:57:      const [sessionResponse, leadsResponse] = await Promise.all([fetchRealtimeVoiceSessions(), fetchCrmLeads()]);
+frontend/src/pages/AiRealtimeVoicePage.jsx:59:      const nextLeads = leadsResponse.leads || [];
+frontend/src/pages/AiRealtimeVoicePage.jsx:61:      setLeads(nextLeads);
+frontend/src/pages/AiRealtimeVoicePage.jsx:62:      setSelectedLeadId((current) => current || nextLeads[0]?.id || "");
+frontend/src/pages/crm/CRMPipelinePanel.jsx:4:export default function CRMPipelinePanel() { return null }
+frontend/src/pages/crm/CRMAnalyticsPanel.jsx:13:  visibleLeads = [],
+frontend/src/pages/crm/CRMAnalyticsPanel.jsx:23:  void visibleLeads;
+frontend/src/pages/crm/CRMAnalyticsPanel.jsx:76:  const leads = intelligence?.topLeads || intelligence?.priorityLeads || [];
+frontend/src/pages/AiCompanySimulationPage.jsx:5:export default function AiCompanySimulationPage(){const [runs,setRuns]=useState([]);const [scenarios,setScenarios]=useState([]);const [results,setResults]=useState([]);const [risks,setRisks]=useState([]);const load=async()=>{const [a,b,c,d]=await Promise.all([fetchAiCompanySimulationRuns(),fetchAiCompanySimulationScenarios(),fetchAiCompanySimulationResults(),fetchAiCompanySimulationRisks()]);setRuns(a.runs||[]);setScenarios(b.scenarios||[]);setResults(c.results||[]);setRisks(d.risks||[])};useEffect(()=>{load().catch(()=>{})},[]);return <div className='workforce-center'><PageHeading eyebrow='AI Strategic Operating Simulator' title='AI Company Simulation (Recommendation-Only)' copy='Simulation-only strategic operating layer for growth, bottlenecks, revenue expansion, and workforce planning.' action={<button className='btn primary compact' onClick={()=>runAiCompanySimulation({baseline:{}}).then(load)}>Run simulation</button>} /><Panel><strong>Governance labels:</strong><div className='safety-pills'>{labels.map((l)=><span key={l}>{l}</span>)}</div></Panel><section className='workforce-grid'><Panel><h3>Strategic Simulation Dashboard</h3><p>Total runs: {runs.length}</p><p>Latest projected revenue delta: {results[0]?.result_payload?.projectedRevenueDelta||0}</p></Panel><Panel><h3>Growth Scenarios</h3>{scenarios.filter(x=>String(x.scenario_type).includes('growth')).map((x)=><p key={x.id}>{x.scenario_type}</p>)}</Panel><Panel><h3>Revenue Expansion Scenarios</h3>{scenarios.filter(x=>String(x.scenario_type).includes('revenue')).map((x)=><p key={x.id}>{x.scenario_type}</p>)}</Panel><Panel><h3>Workforce Load Simulation</h3>{scenarios.filter(x=>String(x.scenario_type).includes('workforce')).map((x)=><p key={x.id}>{x.scenario_type}</p>)}</Panel><Panel><h3>Bottleneck Forecast</h3>{scenarios.filter(x=>String(x.scenario_type).includes('bottleneck')).map((x)=><p key={x.id}>{x.scenario_type}</p>)}</Panel><Panel><h3>Department Stress Map</h3>{scenarios.filter(x=>String(x.scenario_type).includes('department')).map((x)=><p key={x.id}>{x.scenario_type}</p>)}</Panel><Panel><h3>Pipeline Collapse Risk</h3>{risks.filter(x=>String(x.risk_type).includes('pipeline')).map((x)=><p key={x.id}>{x.risk_type} · {x.severity}</p>)}</Panel><Panel><h3>Churn Risk Simulation</h3>{risks.filter(x=>String(x.risk_type).includes('churn')).map((x)=><p key={x.id}>{x.risk_type} · {x.severity}</p>)}</Panel><Panel><h3>Strategic What-If Simulator</h3>{scenarios.filter(x=>String(x.scenario_type).includes('what_if')).map((x)=><p key={x.id}>{x.scenario_type}</p>)}</Panel><Panel><h3>Simulation Memory</h3><p>Strategic simulation memory is retained for future scenario continuity.</p></Panel></section><section className='workforce-grid'><Panel><h3>Scenario Cards</h3>{scenarios.slice(0,12).map((s)=><p key={s.id}>{s.scenario_type} · impact:{s.scenario_payload?.projectedImpact} · confidence:{s.scenario_payload?.confidenceScore} · risk:{s.scenario_payload?.riskLevel} · action:{s.scenario_payload?.recommendedHumanAction} · horizon:{s.scenario_payload?.simulationHorizon}</p>)}</Panel></section></div>}
+frontend/src/pages/PriorityInboxPage.jsx:13:  { key: "all", label: "All Leads" },
+frontend/src/pages/PriorityInboxPage.jsx:22:  return ({ urgentLeads: "Urgent Leads", focusLeads: "Focus Leads", atRiskDeals: "At-Risk Deals", meetingsToday: "Meetings Today", followUpsNeeded: "Follow-ups Needed" }[key] || key);
+frontend/src/pages/PriorityInboxPage.jsx:39:  const [inbox, setInbox] = useState({ leads: [], metrics: {}, totalLeads: 0, mode: "focus" });
+frontend/src/pages/PriorityInboxPage.jsx:59:        totalLeads: response.totalLeads || response.leads?.length || 0,
+frontend/src/pages/PriorityInboxPage.jsx:132:        {["urgentLeads", "focusLeads", "atRiskDeals", "meetingsToday", "followUpsNeeded"].map((key) => (
+frontend/src/pages/PriorityInboxPage.jsx:144:            <p>{loading ? "AI применяет Focus Mode…" : `${inbox.leads.length} из ${inbox.totalLeads || inbox.leads.length} активных лидов показаны в ${TABS.find((tab) => tab.key === mode)?.label || "Focus"}`}</p>
+frontend/src/pages/PriorityInboxPage.jsx:157:        {!loading && inbox.leads.length === 0 && <Panel className="empty-priority-inbox">Нет лидов в этом режиме. Generic high лиды доступны во вкладке All Leads.</Panel>}
+frontend/src/pages/CRMPage.jsx:5:import '../design-system/crm/as6CrmPipelineCompactTraceAuto.js';
+frontend/src/pages/CRMPage.jsx:6:import '../design-system/crm/as6CrmPipelineCompact.css';
+frontend/src/pages/CRMPage.jsx:20:import { CrmContactsLiveLayoutMount } from "../crm/contacts";
+frontend/src/pages/CRMPage.jsx:24:import { REVENUE_LEAD_FILTERS, REVENUE_SORT_OPTIONS, buildRecommendationQueue, filterAndSortRevenueLeads, getForecastWidget, getRevenueCards } from "../utils/revenueIntelligence";
+frontend/src/pages/CRMPage.jsx:38:  fetchCrmLeads,
+frontend/src/pages/CRMPage.jsx:381:  const [leads, setLeads] = useState([]);
+frontend/src/pages/CRMPage.jsx:451:        fetchCrmLeads(),
+frontend/src/pages/CRMPage.jsx:460:      setLeads(leadsResponse.leads || []);
+frontend/src/pages/CRMPage.jsx:753:  const visibleLeads = useMemo(() => filterAndSortRevenueLeads(leads, leadScoreFilter, leadScoreSort), [leads, leadScoreFilter, leadScoreSort]);
+frontend/src/pages/CRMPage.jsx:756:    acc[stage.status] = visibleLeads.filter((lead) => lead.status === stage.status);
+frontend/src/pages/CRMPage.jsx:758:  }, {}), [visibleLeads, stages]);
+frontend/src/pages/CRMPage.jsx:779:        setLeads((current) => current.map((lead) => (lead.id === selectedLead.id ? response.lead : lead)));
+frontend/src/pages/CRMPage.jsx:784:        setLeads((current) => [response.lead, ...current]);
+frontend/src/pages/CRMPage.jsx:799:    const previousLeads = leads;
+frontend/src/pages/CRMPage.jsx:800:    setLeads((current) => current.map((item) => (item.id === lead.id ? { ...item, status, statusLabel: stageMap[status] || status } : item)));
+frontend/src/pages/CRMPage.jsx:803:      setLeads((current) => current.map((item) => (item.id === lead.id ? { ...response.lead, notes: item.notes, followUps: item.followUps } : item)));
+frontend/src/pages/CRMPage.jsx:806:      setLeads(previousLeads);
+frontend/src/pages/CRMPage.jsx:827:        setLeads((current) =>
+frontend/src/pages/CRMPage.jsx:865:      setLeads((current) => current.filter((item) => item.id !== lead.id));
+frontend/src/pages/CRMPage.jsx:880:      setLeads((current) => current.map((item) => item.id === lead.id ? { ...item, notes: [response.note, ...(item.notes || [])], notesText: [item.notesText, body].filter(Boolean).join("\n"), updatedAt: new Date().toISOString() } : item));
+frontend/src/pages/CRMPage.jsx:894:      setLeads((current) => current.map((item) => item.id === lead.id ? {
+frontend/src/pages/CRMPage.jsx:1101:        setLeads((current) => current.map((item) => (item.id === lead.id ? { ...item, ...response.lead } : item)));
+frontend/src/pages/CRMPage.jsx:1128:            <AS6CoreSignal label="Лидов" value={loading ? "…" : String(stats?.totalLeads || 0)} tone="crm" />
+frontend/src/pages/CRMPage.jsx:1129:            <AS6CoreSignal label="Pipeline" value={loading ? "…" : formatCurrency(stats?.pipelineValue)} tone="revenue" />
+frontend/src/pages/CRMPage.jsx:1137:            <p>{loading ? "AS6 анализирует CRM…" : `${stats?.aiMetrics?.priorityLeads || 0} priority leads · ${stats?.aiMetrics?.leadsNeedingFollowUp || 0} требуют follow-up`}</p>
+frontend/src/pages/CRMPage.jsx:1139:          <AS6FocusSignal label="Pipeline health" value={loading ? "…" : `${stats?.aiMetrics?.pipelineHealth || 0}%`} tone="crm" />
+frontend/src/pages/CRMPage.jsx:1152:            <AS6RightRailMetric label="At-risk" value={loading ? "…" : String(stats?.aiMetrics?.atRiskDeals || 0)} hint="сделки с риском" />
+frontend/src/pages/CRMPage.jsx:1153:            <AS6RightRailMetric label="Hot leads" value={loading ? "…" : String(stats?.aiMetrics?.hotLeads || 0)} hint="горячие лиды" />
+frontend/src/pages/CRMPage.jsx:1162:        <StatCard label="Лидов" value={loading ? "…" : String(stats?.totalLeads || 0)} hint="в вашей базе" />
+frontend/src/pages/CRMPage.jsx:1164:        <StatCard label="Успешно" value={loading ? "…" : String(stats?.wonDeals || 0)} hint={`${formatCurrency(stats?.wonValue)} выиграно`} tone="pink" />
+frontend/src/pages/CRMPage.jsx:1165:        <StatCard label="Потеряно" value={loading ? "…" : String(stats?.lostDeals || 0)} hint={`${formatCurrency(stats?.lostValue)} потеряно`} />
+frontend/src/pages/CRMPage.jsx:1169:        <StatCard label="AI эффективность" value={loading ? "…" : `${stats?.aiMetrics?.efficiency || 0}%`} hint={`${stats?.aiMetrics?.assistedDeals || 0} AI‑сделок`} />
+frontend/src/pages/CRMPage.jsx:1170:        <StatCard label="Priority Leads" value={loading ? "…" : String(stats?.aiMetrics?.priorityLeads || 0)} hint="AI score 76+ или priority badge" tone="pink" />
+frontend/src/pages/CRMPage.jsx:1171:        <StatCard label="At-risk Deals" value={loading ? "…" : String(stats?.aiMetrics?.atRiskDeals || 0)} hint="ghosting / stalled / inactive risk" tone="violet" />
+frontend/src/pages/CRMPage.jsx:1172:        <StatCard label="Hot Leads" value={loading ? "…" : String(stats?.aiMetrics?.hotLeads || 0)} hint={`средний score ${stats?.aiMetrics?.averageLeadScore || 0}/100`} tone="pink" />
+frontend/src/pages/CRMPage.jsx:1173:        <StatCard label="Leads needing follow-up" value={loading ? "…" : String(stats?.aiMetrics?.leadsNeedingFollowUp || stats?.aiMetrics?.followUpsPending || 0)} hint="риск или нет свежего касания" />
+frontend/src/pages/CRMPage.jsx:1175:        <StatCard label="Revenue At Risk" value={loading ? "…" : formatCurrency(stats?.aiMetrics?.revenueAtRisk || 0)} hint={`${stats?.aiMetrics?.atRiskDeals || 0} at-risk deals`} tone="pink" />
+frontend/src/pages/CRMPage.jsx:1176:        <StatCard label="High Probability Deals" value={loading ? "…" : String(stats?.aiMetrics?.highProbabilityDeals || 0)} hint="probability ≥ 70%" />
+frontend/src/pages/CRMPage.jsx:1178:        <StatCard label="Pipeline Health" value={loading ? "…" : `${stats?.aiMetrics?.pipelineHealth || 0}%`} hint="risk + activity forecast index" tone="violet" />
+frontend/src/pages/CRMPage.jsx:1193:        visibleLeads={visibleLeads}
+frontend/src/pages/CRMPage.jsx:1222:        <CrmContactsLiveLayoutMount crmLayoutMountMode="live" data-as6-crm-contacts-mounted-in-production-layout="true" />
+frontend/src/pages/CRMPage.jsx:1225:            const stageLeads = leadsByStage[stage.status] || [];
+frontend/src/pages/CRMPage.jsx:1226:            const stageTotal = stageLeads.reduce((total, lead) => total + Number(lead.value || 0), 0);
+frontend/src/pages/CRMPage.jsx:1249:                    <span>{stageLeads.length} · {formatCurrency(stageTotal)}</span>
+frontend/src/pages/CRMPage.jsx:1251:                  <b>{stageLeads.length}</b>
+frontend/src/pages/CRMPage.jsx:1254:                  {stageLeads.length === 0 && <p className="empty-state">Перетащите лид на этот этап</p>}
+frontend/src/pages/CRMPage.jsx:1255:                  {stageLeads.map((lead) => (
+frontend/src/pages/CRMPage.jsx:1403:    ['Pipeline Health', score.pipelineHealth, '/100', 'health'],
+frontend/src/pages/CRMPage.jsx:1438:  const hotLeads = intelligence?.hotLeads || [];
+frontend/src/pages/CRMPage.jsx:1439:  const stalledLeads = intelligence?.stalledLeads || [];
+frontend/src/pages/CRMPage.jsx:1455:        {cards.map((card) => <StatCard key={card.key} label={card.label} value={card.kind === 'money' ? formatCurrency(card.value) : card.kind === 'score' ? `${card.value}/100` : String(card.value)} hint={card.hint} tone={card.key === 'highChurnRisk' || card.key === 'stalledLeads' ? 'pink' : 'violet'} />)}
+frontend/src/pages/CRMPage.jsx:1461:          <p>Active pipeline {formatCurrency(forecast.activePipelineValue)} · generated {formatDate(forecast.generatedAt)}</p>
+frontend/src/pages/CRMPage.jsx:1465:          <span style={{ height: `${Math.max(0, Math.min(100, Number(Math.max(10, forecast.hotLeadsCount * 12) || 0)))}%` }} />
+frontend/src/pages/CRMPage.jsx:1466:          <span style={{ height: `${Math.max(0, Math.min(100, Number(Math.max(10, forecast.stalledLeadsCount * 12) || 0)))}%` }} />
+frontend/src/pages/CRMPage.jsx:1471:        <RevenueList title="Hot leads" items={hotLeads} empty="No hot leads scored yet." />
+frontend/src/pages/CRMPage.jsx:1473:        <RevenueList title="Stalled leads" items={stalledLeads} empty="No stalled leads detected." field="churnRisk" suffix=" risk" />
+frontend/src/pages/CRMPage.jsx:1628:                    <span className="eyebrow">AI Pipeline Automation</span>
+frontend/src/pages/CRMPage.jsx:1663:                  <div><span>Pipeline health</span><strong>{lead.aiRevenueScore.pipelineHealth}/100</strong></div>
+frontend/src/pages/AiRevenueIntelligencePage.jsx:88:  const health = Number(intelligence?.widgets?.aiPipelineHealth || 0);
+frontend/src/pages/AiRevenueIntelligencePage.jsx:120:        {revenueCards.map((card) => <StatCard key={card.key} label={card.label} value={loading ? "…" : formatCardValue(card)} hint={card.hint} tone={card.key === "stalledLeads" || card.key === "highChurnRisk" ? "pink" : "violet"} />)}
+frontend/src/pages/AiRevenueIntelligencePage.jsx:129:              <p>Active pipeline {formatCurrency(forecastWidget.activePipelineValue)} · hot {forecastWidget.hotLeadsCount} · stalled {forecastWidget.stalledLeadsCount}</p>
+frontend/src/pages/AiRevenueIntelligencePage.jsx:133:              <span style={{ height: `${Math.max(10, forecastWidget.hotLeadsCount * 12)}%` }} />
+frontend/src/pages/AiRevenueIntelligencePage.jsx:134:              <span style={{ height: `${Math.max(10, forecastWidget.stalledLeadsCount * 12)}%` }} />
+frontend/src/pages/AiRevenueIntelligencePage.jsx:140:              <div><span>Pipeline Health</span><b>{health}/100</b></div>
+frontend/src/pages/AiRevenueIntelligencePage.jsx:158:        <LeadScoreList title="Hot Leads" eyebrow="Priority" leads={intelligence.hotLeads || []} emptyText="No hot leads in the current Revenue Brain snapshot." />
+frontend/src/pages/AiRevenueIntelligencePage.jsx:159:        <LeadScoreList title="Stalled Leads" eyebrow="Pipeline risk" leads={intelligence.stalledLeads || []} emptyText="No stalled leads detected." scoreKey="churnRisk" />
+frontend/src/pages/AiWorkersPage.jsx:8:import { approveAiApprovalQueueItem, downloadCrmMeetingIcs, executeAiApprovalQueueItem, fetchAiApprovalQueue, fetchAiCommandCenter, fetchAiWorkersFocusSummary, fetchCrmLeads, getActiveAiSequences, rejectAiApprovalQueueItem, runAiWorker, seedDemoSalesPipeline, startAiSequence, updateAiApprovalQueueItem, updateAiWorker } from "../services/api";
+frontend/src/pages/AiWorkersPage.jsx:888:  const [crmLeads, setCrmLeads] = useState([]);
+frontend/src/pages/AiWorkersPage.jsx:926:      const [response, approvalResponse, focusResponse, sequencesResponse, leadsResponse] = await Promise.all([fetchAiCommandCenter(), fetchAiApprovalQueue(queueParams), fetchAiWorkersFocusSummary(focusParams), getActiveAiSequences(), fetchCrmLeads()]);
+frontend/src/pages/AiWorkersPage.jsx:931:      const nextLeads = safeArray(leadsResponse.leads);
+frontend/src/pages/AiWorkersPage.jsx:932:      setCrmLeads(nextLeads);
+frontend/src/pages/AiWorkersPage.jsx:933:      setSequenceLeadId((current) => current || [...nextLeads].sort((a, b) => getLeadPriorityValue(b) - getLeadPriorityValue(a))[0]?.id || "");
+frontend/src/pages/AiWorkersPage.jsx:969:  async function handleSeedDemoPipeline() {
+frontend/src/pages/AiWorkersPage.jsx:974:      const response = await seedDemoSalesPipeline();
+frontend/src/pages/AiWorkersPage.jsx:991:        ? `${worker.name}: scoring завершён для ${safeArray(response.scoredLeads).filter((item) => !item.error).length || 0} лидов.`
+frontend/src/pages/AiWorkersPage.jsx:1233:  const selectableSequenceLeads = useMemo(() => [...safeArray(crmLeads)].sort((a, b) => getLeadPriorityValue(b) - getLeadPriorityValue(a)).slice(0, 25), [crmLeads]);
+frontend/src/pages/AiWorkersPage.jsx:1565:        <button className="btn primary compact demo-pipeline-button" type="button" onClick={handleSeedDemoPipeline} disabled={demoBusy}>
+frontend/src/pages/AiWorkersPage.jsx:1604:            <label className="crm-field"><span>High-priority lead</span><select value={sequenceLeadId} onChange={(event) => setSequenceLeadId(event.target.value)}><option value="">Select lead</option>{selectableSequenceLeads.map((lead) => <option key={lead.id} value={lead.id}>{lead.name} · {lead.company || stageLabel(lead.status)} · score {lead.aiScore?.score || lead.aiPriority || "—"}</option>)}</select></label>
+frontend/src/pages/CommandCenterPage.jsx:111:  const [pipelinePeriod, setPipelinePeriod] = useState('day')
+frontend/src/pages/CommandCenterPage.jsx:146:        leads: operations.completedToday || apiKpis.newLeads,
+frontend/src/pages/CommandCenterPage.jsx:192:      { title: 'Проверить риск сделки', meta: 'Pipeline · требуется внимание', value: 'Risk' },
+frontend/src/pages/CommandCenterPage.jsx:295:              <div className="command-card-head"><h2>Pipeline Overview</h2><select className="command-filter-select" value={pipelinePeriod} onChange={(event) => setPipelinePeriod(event.target.value)} aria-label="Pipeline period"><option value="day">День</option><option value="week">Неделя</option><option value="month">Месяц</option><option value="quarter">Квартал</option><option value="year">Год</option></select></div>
+frontend/src/pages/DashboardPage.jsx:7:import { createAiTask, fetchAiApprovalQueue, fetchAiCommandCenter, fetchAiTask, fetchAiTasks, fetchCrmStats, fetchProfile, fetchPaymentStatus, getRevenueIntelligence, startRevenueCheckout, triggerRevenueAnalysis, updateStoredUser } from "../services/api";
+frontend/src/pages/DashboardPage.jsx:127:  const [tasks, setTasks] = useState([]);
+frontend/src/pages/DashboardPage.jsx:151:      const [profileResponse, tasksResponse, crmResponse, commandResponse, approvalResponse, revenueResponse] = await Promise.all([fetchProfile(), fetchAiTasks(), fetchCrmStats(), fetchAiCommandCenter(), fetchAiApprovalQueue(), getRevenueIntelligence()]);
+frontend/src/pages/DashboardPage.jsx:153:      setTasks(tasksResponse.tasks || []);
+frontend/src/pages/DashboardPage.jsx:232:    const activeTasks = tasks.filter((task) => ["pending", "processing"].includes(task.status));
+frontend/src/pages/DashboardPage.jsx:233:    if (activeTasks.length === 0) return undefined;
+frontend/src/pages/DashboardPage.jsx:237:        const updates = await Promise.all(activeTasks.map((task) => fetchAiTask(task.id)));
+frontend/src/pages/DashboardPage.jsx:238:        setTasks((currentTasks) => currentTasks.map((task) => {
+frontend/src/pages/DashboardPage.jsx:250:  const completedTasks = tasks.filter((task) => task.status === "completed").length;
+frontend/src/pages/DashboardPage.jsx:251:  const activeTasks = tasks.filter((task) => ["pending", "processing"].includes(task.status)).length;
+frontend/src/pages/DashboardPage.jsx:256:  const sortedTasks = useMemo(() => tasks.slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at)), [tasks]);
+frontend/src/pages/DashboardPage.jsx:257:  const recentTasks = sortedTasks.slice(0, 5);
+frontend/src/pages/DashboardPage.jsx:258:  const activityFeed = useMemo(() => buildActivityFeed(sortedTasks), [sortedTasks]);
+frontend/src/pages/DashboardPage.jsx:288:      setTasks((currentTasks) => [response.task, ...currentTasks]);
+frontend/src/pages/DashboardPage.jsx:321:        <StatCard label="AI‑задачи" value={loading ? "…" : String(tasks.length)} hint={`${activeTasks} активных · ${completedTasks} завершено`} tone="violet" />
+frontend/src/pages/DashboardPage.jsx:322:        <StatCard label="Лидов в CRM" value={loading ? "…" : String(crmStats?.totalLeads || 0)} hint={`Новые ${crmStats?.newLeadsCount || 0} · конверсия ${crmStats?.conversionRate || 0}%`} tone="pink" />
+frontend/src/pages/DashboardPage.jsx:323:        <StatCard label="Лиды с лендинга сегодня" value={loading ? "…" : String(crmStats?.landingLeadsToday || 0)} hint="Публичные формы → CRM → AI SDR" tone="violet" />
+frontend/src/pages/DashboardPage.jsx:324:        <StatCard label="Горячие лиды с лендинга" value={loading ? "…" : String(crmStats?.hotLandingLeads || 0)} hint="AI score 75+ или hot temperature" tone="pink" />
+frontend/src/pages/DashboardPage.jsx:325:        <StatCard label="Заявки с сайта в ожидании" value={loading ? "…" : String(crmStats?.pendingWebsiteLeads || 0)} hint="Новые landing leads ждут обработки" tone="violet" />
+frontend/src/pages/DashboardPage.jsx:326:        <StatCard label="Воронка CRM" value={loading ? "…" : new Intl.NumberFormat("ru-RU", { style: "currency", currency: "RUB", maximumFractionDigits: 0 }).format(Number(crmStats?.pipelineValue || 0))} hint={`${crmStats?.wonDeals || 0} успешно · ${crmStats?.lostDeals || 0} потеряно`} />
+frontend/src/pages/DashboardPage.jsx:328:        <StatCard label="AI‑сделки" value={loading ? "…" : String(crmStats?.aiMetrics?.assistedDeals || 0)} hint={`конверсия ${crmStats?.aiMetrics?.conversionRate || 0}%`} tone="pink" />
+frontend/src/pages/DashboardPage.jsx:329:        <StatCard label="Priority Leads" value={loading ? "…" : String(crmStats?.aiMetrics?.priorityLeads || 0)} hint="AI score 76+ или priority badge" tone="pink" />
+frontend/src/pages/DashboardPage.jsx:330:        <StatCard label="At-risk Deals" value={loading ? "…" : String(crmStats?.aiMetrics?.dealsAtRisk || crmStats?.aiMetrics?.atRiskDeals || 0)} hint="ghosting / stalled / inactive risk" tone="violet" />
+frontend/src/pages/DashboardPage.jsx:331:        <StatCard label="Hot Leads" value={loading ? "…" : String(crmStats?.aiMetrics?.hotLeads || 0)} hint={`средний AI score ${crmStats?.aiMetrics?.averageLeadScore || 0}/100`} tone="pink" />
+frontend/src/pages/DashboardPage.jsx:332:        <StatCard label="Leads needing follow-up" value={loading ? "…" : String(crmStats?.aiMetrics?.leadsNeedingFollowUp || crmStats?.aiMetrics?.followUpsPending || 0)} hint="риск или нет свежего касания" />
+frontend/src/pages/DashboardPage.jsx:333:        <StatCard label="Тёплые лиды" value={loading ? "…" : String(crmStats?.aiMetrics?.warmLeads || 0)} hint={`conversion probability ${crmStats?.aiMetrics?.conversionProbability || crmStats?.aiMetrics?.conversionForecast || 0}%`} tone="violet" />
+frontend/src/pages/DashboardPage.jsx:347:        <StatCard label="High Probability Deals" value={loading ? "…" : String(crmStats?.aiMetrics?.highProbabilityDeals || 0)} hint="probability ≥ 70%" tone="violet" />
+frontend/src/pages/DashboardPage.jsx:349:        <StatCard label="At-risk Deals" value={loading ? "…" : String(crmStats?.aiMetrics?.dealsAtRisk || crmStats?.aiMetrics?.atRiskDeals || 0)} hint="stalled / no engagement / weak qualification" tone="violet" />
+frontend/src/pages/DashboardPage.jsx:352:        <StatCard label="Pipeline Health" value={loading ? "…" : pipelineHealthLabel(crmStats?.aiMetrics?.pipelineHealthStatus)} hint={`risk revenue ${crmStats?.aiMetrics?.riskRevenueRatio || 0}% · score ${crmStats?.aiMetrics?.pipelineHealth || 0}%`} />
+frontend/src/pages/DashboardPage.jsx:357:        <StatCard label="Hot leads without contact" value={loading ? "…" : String(crmStats?.aiMetrics?.hotLeadsWithoutContact || 0)} hint="горячие лиды без свежего касания" tone="violet" />
+frontend/src/pages/DashboardPage.jsx:365:        <StatCard label="Revenue Brain hot leads" value={loading ? "…" : String(revenueIntelligence?.widgets?.hotLeadsCount || 0)} hint="AI Revenue Intelligence priority queue" tone="pink" />
+frontend/src/pages/DashboardPage.jsx:366:        <StatCard label="Revenue Brain health" value={loading ? "…" : `${revenueIntelligence?.widgets?.aiPipelineHealth || 0}/100`} hint={`engagement ${revenueIntelligence?.widgets?.engagementTrend || 0}/100`} />
+frontend/src/pages/DashboardPage.jsx:385:          {revenueCards.map((card) => <StatCard key={card.key} label={card.label} value={card.kind === 'money' ? formatCurrency(card.value) : card.kind === 'score' ? `${card.value}/100` : String(card.value)} hint={card.hint} tone={card.key === 'stalledLeads' || card.key === 'highChurnRisk' ? 'pink' : 'violet'} />)}
+frontend/src/pages/DashboardPage.jsx:392:              <p>Active pipeline {formatCurrency(forecastWidget.activePipelineValue)} · hot {forecastWidget.hotLeadsCount} · stalled {forecastWidget.stalledLeadsCount}</p>
+frontend/src/pages/DashboardPage.jsx:396:              <span style={{ height: `${Math.max(10, forecastWidget.hotLeadsCount * 12)}%` }} />
+frontend/src/pages/DashboardPage.jsx:397:              <span style={{ height: `${Math.max(10, forecastWidget.stalledLeadsCount * 12)}%` }} />
+frontend/src/pages/DashboardPage.jsx:412:          <h3>AI Pipeline Health by category</h3>
+frontend/src/pages/DashboardPage.jsx:447:          <p>{activeTasks > 0 ? `${activeTasks} AI‑задач выполняется сейчас` : "Баланс готов к следующей AI‑задаче"}</p>
+frontend/src/pages/DashboardPage.jsx:464:            {!loading && recentTasks.length === 0 && <p className="empty-state">AI‑задач пока нет. Запустите первую задачу из модального окна.</p>}
+frontend/src/pages/DashboardPage.jsx:465:            {recentTasks.map((task) => (
+frontend/src/pages/AiExecutiveBrainPage.jsx:7:export default function AiExecutiveBrainPage(){const [snapshot,setSnapshot]=useState(null);const [recommendations,setRecommendations]=useState([]);const [risks,setRisks]=useState([]);const [health,setHealth]=useState(null);const load=async()=>{const [s,r,k,h]=await Promise.all([fetchAiExecutiveSnapshot(),fetchAiExecutiveRecommendations(),fetchAiExecutiveRisks(),fetchAiExecutiveOrganizationalHealth()]);setSnapshot(s.snapshot);setRecommendations(r.recommendations||[]);setRisks(k.risks||[]);setHealth(h.organizationalHealth)};useEffect(()=>{load().catch(()=>{})},[]);return <div className='workforce-center'><PageHeading eyebrow='AI Executive Brain' title='AI Executive Brain (Recommendation-Only)' copy='Executive strategic intelligence for the full AI operating system.' action={<button className='btn primary compact' onClick={()=>runAiExecutiveAnalysis().then(load)}>Run analysis</button>} /><Panel><strong>Safety Labels:</strong><div className='safety-pills'>{safetyLabels.map((l)=><span key={l}>{l}</span>)}</div></Panel><section className='workforce-grid'><Panel><h3>Executive Snapshot</h3><p>Org health score: {health?.health_score || snapshot?.snapshot_payload?.snapshot?.organizationalHealthScore || 0}</p><p>Revenue expansion opportunity: {snapshot?.snapshot_payload?.forecast?.projectedRevenueExpansion || 0}</p><p>Enterprise opportunity count: {snapshot?.snapshot_payload?.snapshot?.enterpriseOpportunityCount || 0}</p><p>Workforce utilization: {snapshot?.snapshot_payload?.snapshot?.workforceUtilization || 0}%</p><p>Strategic bottlenecks: {snapshot?.snapshot_payload?.snapshot?.approvalBottlenecks || 0}</p><p>Execution pressure: {snapshot?.snapshot_payload?.snapshot?.executionPressure || 0}</p><p>Executive risk level: {risks[0]?.severity || 'low'}</p><p>Conversion trend: {snapshot?.snapshot_payload?.forecast?.conversionTrend || 0}</p><p>Scaling readiness score: {snapshot?.snapshot_payload?.forecast?.scalingReadinessScore || 0}</p></Panel><Panel><h3>Strategic Recommendations</h3>{recommendations.map((x)=><p key={x.id}>{x.recommendation_type}</p>)}</Panel><Panel><h3>Organizational Health</h3><p>{JSON.stringify(health?.health_payload||{})}</p></Panel><Panel><h3>Revenue Forecast</h3><p>{JSON.stringify(snapshot?.snapshot_payload?.forecast||{})}</p></Panel><Panel><h3>Strategic Risks</h3>{risks.map((x)=><p key={x.id}>{x.risk_type} · {x.severity}</p>)}</Panel><Panel><h3>Workforce Coordination</h3><p>Human-approved workforce coordination only.</p></Panel><Panel><h3>Department Coordination</h3><p>{JSON.stringify(snapshot?.snapshot_payload?.coordination||[])}</p></Panel><Panel><h3>Pipeline Intelligence</h3><p>Pipeline value: {snapshot?.snapshot_payload?.snapshot?.pipelineValue || 0}</p></Panel><Panel><h3>Scaling Opportunities</h3><p>Enterprise opportunities: {snapshot?.snapshot_payload?.snapshot?.enterpriseOpportunityCount || 0}</p></Panel><Panel><h3>AI Executive Memory</h3><p>Memory persisted for executive strategic continuity.</p></Panel></section></div>}
+frontend/src/pages/AIEnterpriseCommandCenter.jsx:114:        {(planning?.all?.decisionFollowups || []).map((d) => <p key={d.actionId}>{d.status} | {d.actionType} | required: {d.requiredDecision}</p>)}
+frontend/src/pages/AIEnterpriseCommandCenter.jsx:127:        <Panel><h3>Review Dashboard</h3><p>Unresolved Followups: {review?.review?.unresolvedFollowups || 0}</p></Panel>
+frontend/src/crm/contacts/live/index.js:1:export { CrmContactsLiveLayoutMount } from "./CrmContactsLiveLayoutMount";
+frontend/src/crm/contacts/live/CrmContactsLiveLayoutMount.jsx:2:import { CrmContactsUiFoundation, createCrmContactsLayoutSnapshot } from "../index";
+frontend/src/crm/contacts/live/CrmContactsLiveLayoutMount.jsx:4:export function CrmContactsLiveLayoutMount({ crmLayoutMountMode = "live" }) {
+frontend/src/crm/contacts/live/CrmContactsLiveLayoutMount.jsx:5:  const snapshot = createCrmContactsLayoutSnapshot();
+frontend/src/crm/contacts/live/CrmContactsLiveLayoutMount.jsx:7:    <section className="as6-crm-contacts-live-layout-mount" data-as6-contacts-live-layout-mount={crmLayoutMountMode} data-as6-contacts-layout-state={snapshot.state} aria-label="CRM Contacts Live Layout Mount">
+frontend/src/crm/contacts/live/CrmContactsLiveLayoutMount.jsx:12:      <CrmContactsUiFoundation />
+frontend/src/crm/contacts/index.js:14:export { CrmContactsUiFoundation, CrmContactRow, CrmContactsEmptyState } from "./ui";
+frontend/src/crm/contacts/index.js:16:export { crmContactsWorkspacePanel, crmContactsWorkspaceNavigation, resolveCrmContactsWorkspaceState, createCrmContactsWorkspaceIntegration, diagnoseCrmContactsWorkspaceIntegration } from "./workspace";
+frontend/src/crm/contacts/index.js:18:export { crmContactsCrmLayoutBridge, createCrmContactsLayoutModel, resolveCrmContactsLayoutState, createCrmContactsLayoutSnapshot, diagnoseCrmContactsCrmLayoutBridge } from "./layout";
+frontend/src/crm/contacts/index.js:20:export { CrmContactsLiveLayoutMount } from "./live";
+frontend/src/crm/contacts/index.js:22:export { crmContactsProductionPolish, diagnoseCrmContactsProductionPolish } from "./production";
+frontend/src/crm/contacts/workspace/index.js:1:export { crmContactsWorkspacePanel } from "./crmContactsWorkspacePanel";
+frontend/src/crm/contacts/workspace/index.js:2:export { crmContactsWorkspaceNavigation } from "./crmContactsWorkspaceNavigation";
+frontend/src/crm/contacts/workspace/index.js:3:export { resolveCrmContactsWorkspaceState } from "./crmContactsWorkspaceState";
+frontend/src/crm/contacts/workspace/index.js:4:export { createCrmContactsWorkspaceIntegration } from "./crmContactsWorkspaceIntegration";
+frontend/src/crm/contacts/workspace/index.js:5:export { diagnoseCrmContactsWorkspaceIntegration } from "./crmContactsWorkspaceDiagnostics";
+frontend/src/crm/contacts/workspace/crmContactsWorkspaceIntegration.js:2:import { crmContactsWorkspacePanel } from "./crmContactsWorkspacePanel";
+frontend/src/crm/contacts/workspace/crmContactsWorkspaceIntegration.js:3:import { crmContactsWorkspaceNavigation } from "./crmContactsWorkspaceNavigation";
+frontend/src/crm/contacts/workspace/crmContactsWorkspaceIntegration.js:4:import { resolveCrmContactsWorkspaceState } from "./crmContactsWorkspaceState";
+frontend/src/crm/contacts/workspace/crmContactsWorkspaceIntegration.js:6:export function createCrmContactsWorkspaceIntegration() {
+frontend/src/crm/contacts/workspace/crmContactsWorkspaceIntegration.js:11:    panel: crmContactsWorkspacePanel,
+frontend/src/crm/contacts/workspace/crmContactsWorkspaceIntegration.js:12:    navigation: crmContactsWorkspaceNavigation,
+frontend/src/crm/contacts/workspace/crmContactsWorkspaceIntegration.js:14:    state: resolveCrmContactsWorkspaceState(snapshot),
+frontend/src/crm/contacts/workspace/crmContactsWorkspaceState.js:1:export function resolveCrmContactsWorkspaceState(snapshot) {
+frontend/src/crm/contacts/workspace/crmContactsWorkspaceDiagnostics.js:1:import { createCrmContactsWorkspaceIntegration } from "./crmContactsWorkspaceIntegration";
+frontend/src/crm/contacts/workspace/crmContactsWorkspaceDiagnostics.js:3:export function diagnoseCrmContactsWorkspaceIntegration() {
+frontend/src/crm/contacts/workspace/crmContactsWorkspaceDiagnostics.js:4:  const integration = createCrmContactsWorkspaceIntegration();
+frontend/src/crm/contacts/workspace/crmContactsWorkspacePanel.js:1:import { CrmContactsUiFoundation } from "../ui";
+frontend/src/crm/contacts/workspace/crmContactsWorkspacePanel.js:5:export const crmContactsWorkspacePanel = Object.freeze({
+frontend/src/crm/contacts/workspace/crmContactsWorkspacePanel.js:7:  title: "CRM Contacts",
+frontend/src/crm/contacts/workspace/crmContactsWorkspacePanel.js:9:  component: CrmContactsUiFoundation,
+frontend/src/crm/contacts/workspace/crmContactsWorkspaceNavigation.js:1:import { crmContactsWorkspacePanel } from "./crmContactsWorkspacePanel";
+frontend/src/crm/contacts/workspace/crmContactsWorkspaceNavigation.js:3:export const crmContactsWorkspaceNavigation = Object.freeze({
+frontend/src/crm/contacts/workspace/crmContactsWorkspaceNavigation.js:6:  label: "Contacts",
+frontend/src/crm/contacts/workspace/crmContactsWorkspaceNavigation.js:7:  route: crmContactsWorkspacePanel.route,
+frontend/src/crm/contacts/workspace/crmContactsWorkspaceNavigation.js:8:  panelId: crmContactsWorkspacePanel.id,
+frontend/src/crm/contacts/ui/index.js:1:export { CrmContactsUiFoundation, CrmContactRow, CrmContactsEmptyState } from "./CrmContactsUiFoundation";
+frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx:4:import "./crmContactsUiFoundation.css";
+frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx:27:export function CrmContactsEmptyState() {
+frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx:36:export function CrmContactsUiFoundation({ contacts = SAMPLE_CONTACTS }) {
+frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx:38:  const hasContacts = contacts.length > 0;
+frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx:40:    <section className="as6-crm-contacts-ui as6-crm-contacts-ui--production" data-as6-contacts-ui="foundation" aria-label="CRM Contacts production section">
+frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx:41:      <header className="as6-crm-contacts-ui__header" aria-label="CRM Contacts header">
+frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx:43:          <p>CRM Contacts</p>
+frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx:49:        <main className="as6-crm-contacts-ui__list" data-as6-contacts-list="true" aria-label="CRM Contacts list">
+frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx:50:          {hasContacts ? contacts.map((contact) => <CrmContactRow key={contact.id} contact={contact} />) : <CrmContactsEmptyState />}
+frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx:52:        <aside className="as6-crm-contacts-ui__panel" data-as6-contacts-panel="true" aria-label="CRM Contacts diagnostics panel">
+frontend/src/crm/contacts/crmContactNavigation.js:3:  item: "Contacts",
+frontend/src/crm/contacts/layout/index.js:1:export { crmContactsCrmLayoutBridge } from "./crmContactsCrmLayoutBridge";
+frontend/src/crm/contacts/layout/index.js:2:export { createCrmContactsLayoutModel } from "./crmContactsLayoutModel";
+frontend/src/crm/contacts/layout/index.js:3:export { resolveCrmContactsLayoutState, createCrmContactsLayoutSnapshot } from "./crmContactsLayoutState";
+frontend/src/crm/contacts/layout/index.js:4:export { diagnoseCrmContactsCrmLayoutBridge } from "./crmContactsCrmLayoutDiagnostics";
+frontend/src/crm/contacts/layout/crmContactsLayoutModel.js:1:import { crmContactsCrmLayoutBridge } from "./crmContactsCrmLayoutBridge";
+frontend/src/crm/contacts/layout/crmContactsLayoutModel.js:3:export function createCrmContactsLayoutModel() {
+frontend/src/crm/contacts/layout/crmContactsLayoutModel.js:4:  const integration = crmContactsCrmLayoutBridge.integration();
+frontend/src/crm/contacts/layout/crmContactsLayoutModel.js:7:    bridgeId: crmContactsCrmLayoutBridge.id,
+frontend/src/crm/contacts/layout/crmContactsLayoutModel.js:8:    title: crmContactsCrmLayoutBridge.panel.title,
+frontend/src/crm/contacts/layout/crmContactsLayoutModel.js:9:    route: crmContactsCrmLayoutBridge.navigation.route,
+frontend/src/crm/contacts/layout/crmContactsLayoutModel.js:10:    breadcrumbs: crmContactsCrmLayoutBridge.breadcrumbs,
+frontend/src/crm/contacts/layout/crmContactsLayoutModel.js:11:    activeSection: crmContactsCrmLayoutBridge.activeSection,
+frontend/src/crm/contacts/layout/crmContactsLayoutModel.js:13:    component: crmContactsCrmLayoutBridge.panel.component,
+frontend/src/crm/contacts/layout/crmContactsCrmLayoutDiagnostics.js:1:import { crmContactsCrmLayoutBridge } from "./crmContactsCrmLayoutBridge";
+frontend/src/crm/contacts/layout/crmContactsCrmLayoutDiagnostics.js:2:import { createCrmContactsLayoutModel } from "./crmContactsLayoutModel";
+frontend/src/crm/contacts/layout/crmContactsCrmLayoutDiagnostics.js:3:import { createCrmContactsLayoutSnapshot } from "./crmContactsLayoutState";
+frontend/src/crm/contacts/layout/crmContactsCrmLayoutDiagnostics.js:5:export function diagnoseCrmContactsCrmLayoutBridge() {
+frontend/src/crm/contacts/layout/crmContactsCrmLayoutDiagnostics.js:6:  const model = createCrmContactsLayoutModel();
+frontend/src/crm/contacts/layout/crmContactsCrmLayoutDiagnostics.js:7:  const snapshot = createCrmContactsLayoutSnapshot();
+frontend/src/crm/contacts/layout/crmContactsCrmLayoutDiagnostics.js:9:    ["CRM_LAYOUT_BRIDGE_REGISTERED", crmContactsCrmLayoutBridge.id === "crm.contacts.crm-layout.bridge"],
+frontend/src/crm/contacts/layout/crmContactsCrmLayoutDiagnostics.js:10:    ["USE_EXISTING_WORKSPACE_PANEL", crmContactsCrmLayoutBridge.panel.id === "crm.contacts.workspace.panel"],
+frontend/src/crm/contacts/layout/crmContactsCrmLayoutDiagnostics.js:11:    ["USE_EXISTING_NAVIGATION", crmContactsCrmLayoutBridge.navigation.route === "/crm/contacts"],
+frontend/src/crm/contacts/layout/crmContactsCrmLayoutDiagnostics.js:12:    ["BREADCRUMBS_SYNCED", snapshot.breadcrumbs.join("/") === "CRM/Contacts"],
+frontend/src/crm/contacts/layout/crmContactsCrmLayoutDiagnostics.js:15:    ["NO_ISOLATED_CONTAINER", crmContactsCrmLayoutBridge.isolatedContainer === false],
+frontend/src/crm/contacts/layout/crmContactsCrmLayoutDiagnostics.js:16:    ["NO_STORAGE", crmContactsCrmLayoutBridge.storageEnabled === false],
+frontend/src/crm/contacts/layout/crmContactsCrmLayoutDiagnostics.js:17:    ["NO_API_CALLS", crmContactsCrmLayoutBridge.apiEnabled === false],
+frontend/src/crm/contacts/layout/crmContactsCrmLayoutDiagnostics.js:18:    ["NO_BUSINESS_WORKFLOW", crmContactsCrmLayoutBridge.workflowEnabled === false],
+frontend/src/crm/contacts/layout/crmContactsCrmLayoutDiagnostics.js:19:    ["PLATFORM_MUTATION_FALSE", crmContactsCrmLayoutBridge.platformMutation === false],
+frontend/src/crm/contacts/layout/crmContactsCrmLayoutBridge.js:1:import { crmContactsWorkspacePanel, crmContactsWorkspaceNavigation, createCrmContactsWorkspaceIntegration } from "../workspace";
+frontend/src/crm/contacts/layout/crmContactsCrmLayoutBridge.js:3:export const crmContactsCrmLayoutBridge = Object.freeze({
+frontend/src/crm/contacts/layout/crmContactsCrmLayoutBridge.js:7:  panel: crmContactsWorkspacePanel,
+frontend/src/crm/contacts/layout/crmContactsCrmLayoutBridge.js:8:  navigation: crmContactsWorkspaceNavigation,
+frontend/src/crm/contacts/layout/crmContactsCrmLayoutBridge.js:9:  integration: createCrmContactsWorkspaceIntegration,
+frontend/src/crm/contacts/layout/crmContactsCrmLayoutBridge.js:10:  breadcrumbs: Object.freeze(["CRM", "Contacts"]),
+frontend/src/crm/contacts/layout/crmContactsLayoutState.js:1:import { createCrmContactsLayoutModel } from "./crmContactsLayoutModel";
+frontend/src/crm/contacts/layout/crmContactsLayoutState.js:3:export function resolveCrmContactsLayoutState(snapshotStatus = "PASS") {
+frontend/src/crm/contacts/layout/crmContactsLayoutState.js:10:export function createCrmContactsLayoutSnapshot() {
+frontend/src/crm/contacts/layout/crmContactsLayoutState.js:11:  const model = createCrmContactsLayoutModel();
+frontend/src/crm/contacts/layout/crmContactsLayoutState.js:17:    state: resolveCrmContactsLayoutState(model.diagnostics.diagnostic.status),
+frontend/src/crm/contacts/crmContactPanels.js:2:  Object.freeze({ id: "contacts-overview", title: "Contacts Overview", foundationOnly: true }),
+frontend/src/crm/contacts/crmContactPanels.js:3:  Object.freeze({ id: "contacts-health", title: "Contacts Health", foundationOnly: true }),
+frontend/src/crm/contacts/crmContactPanels.js:4:  Object.freeze({ id: "contacts-trace", title: "Contacts Trace", foundationOnly: true }),
+frontend/src/crm/contacts/production/index.js:1:export { crmContactsProductionPolish } from "./crmContactsProductionPolish";
+frontend/src/crm/contacts/production/index.js:2:export { diagnoseCrmContactsProductionPolish } from "./crmContactsProductionDiagnostics";
+frontend/src/crm/contacts/production/crmContactsProductionDiagnostics.js:1:import { crmContactsProductionPolish } from "./crmContactsProductionPolish";
+frontend/src/crm/contacts/production/crmContactsProductionDiagnostics.js:3:export function diagnoseCrmContactsProductionPolish() {
+frontend/src/crm/contacts/production/crmContactsProductionDiagnostics.js:5:    ["ACCESSIBILITY_REGION_LABEL", crmContactsProductionPolish.accessibility.regionLabel === true],
+frontend/src/crm/contacts/production/crmContactsProductionDiagnostics.js:6:    ["ACCESSIBILITY_LIST_LABEL", crmContactsProductionPolish.accessibility.listLabel === true],
+frontend/src/crm/contacts/production/crmContactsProductionDiagnostics.js:7:    ["ACCESSIBILITY_ROW_LABEL", crmContactsProductionPolish.accessibility.rowLabel === true],
+frontend/src/crm/contacts/production/crmContactsProductionDiagnostics.js:8:    ["ACCESSIBILITY_STATUS_LABEL", crmContactsProductionPolish.accessibility.statusLabel === true],
+frontend/src/crm/contacts/production/crmContactsProductionDiagnostics.js:9:    ["STABLE_STATES", crmContactsProductionPolish.states.join("/") === "loading/empty/ready/error"],
+frontend/src/crm/contacts/production/crmContactsProductionDiagnostics.js:10:    ["PERFORMANCE_NO_RUNTIME_FETCH", crmContactsProductionPolish.performance.noRuntimeFetch === true],
+frontend/src/crm/contacts/production/crmContactsProductionDiagnostics.js:11:    ["PERFORMANCE_NO_RUNTIME_STORAGE", crmContactsProductionPolish.performance.noRuntimeStorage === true],
+frontend/src/crm/contacts/production/crmContactsProductionDiagnostics.js:12:    ["PERFORMANCE_NO_HEAVY_DEPENDENCY", crmContactsProductionPolish.performance.noHeavyDependency === true],
+frontend/src/crm/contacts/production/crmContactsProductionDiagnostics.js:13:    ["NO_STORAGE", crmContactsProductionPolish.storageEnabled === false],
+frontend/src/crm/contacts/production/crmContactsProductionDiagnostics.js:14:    ["NO_API_CALLS", crmContactsProductionPolish.apiEnabled === false],
+frontend/src/crm/contacts/production/crmContactsProductionDiagnostics.js:15:    ["NO_BUSINESS_WORKFLOW", crmContactsProductionPolish.workflowEnabled === false],
+frontend/src/crm/contacts/production/crmContactsProductionDiagnostics.js:16:    ["PLATFORM_MUTATION_FALSE", crmContactsProductionPolish.platformMutation === false],
+frontend/src/crm/contacts/production/crmContactsProductionPolish.js:1:export const crmContactsProductionPolish = Object.freeze({
+frontend/src/crm/contacts/crmContactDescriptor.js:5:  title: "CRM Contacts Foundation",

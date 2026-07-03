@@ -1,0 +1,8 @@
+ M docs/AS6_PROJECT_STATE.md
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? docs/epic013/
+?? ops/bin/as6-control-epic013-crm-next-module-planning
+?? ops/bin/as6-diagnose-epic013-crm-next-module-planning
+?? ops/governance/as6-epic013-crm-next-module-planning-governance.md

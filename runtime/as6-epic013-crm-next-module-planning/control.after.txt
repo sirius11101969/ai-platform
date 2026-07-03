@@ -1,0 +1,7 @@
+Recommended next module: CRM Companies / Accounts Foundation.
+1. AS6_EPIC013_SLICE01_CRM_COMPANIES_DOMAIN_MODEL
+- NO_STORAGE=TRUE for initial foundation slices.
+- USE_EXISTING_CRM_LAYOUT=TRUE.
+AS6_EPIC013_CRM_NEXT_MODULE_PLANNING=PASS
+runtime/as6-epic012-slice10-crm-contacts-final-validation/final-validation.status.txt:AS6_EPIC012_CRM_CONTACTS=PRODUCTION_VALIDATED
+AS6_CONTROL_EPIC013_CRM_NEXT_MODULE_PLANNING=PASS

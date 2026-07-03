@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-epic013-crm-next-module-planning
+grep -R "AS6_EPIC012_CRM_CONTACTS=PRODUCTION_VALIDATED" docs/AS6_PROJECT_STATE.md runtime/as6-epic012-slice10-crm-contacts-final-validation/final-validation.status.txt
+echo "AS6_CONTROL_EPIC013_CRM_NEXT_MODULE_PLANNING=PASS"

@@ -1,0 +1,286 @@
+docs/epic012/as6-epic012-crm-foundation-planning-entry.md:3:EPIC_ID=AS6_EPIC012_CRM_FOUNDATION
+docs/epic012/as6-epic012-crm-foundation-planning-entry.md:37:NEXT_STAGE=AS6_EPIC012_CRM_FOUNDATION_PLANNING
+docs/epic012/as6-epic012-implementation-authorization.md:3:EPIC_ID=AS6_EPIC012_CRM_FOUNDATION
+docs/epic012/as6-epic012-implementation-authorization.md:15:NEXT_STAGE=AS6_EPIC012_SLICE01_CRM_FOUNDATION
+docs/epic012/as6-epic012-crm-foundation-charter.md:3:EPIC_ID=AS6_EPIC012_CRM_FOUNDATION
+docs/epic012/as6-epic012-crm-foundation-definition-of-done.md:21:NEXT_STAGE=AS6_EPIC012_SLICE01_CRM_FOUNDATION
+docs/adr/as6-adr-epic012-crm-foundation.md:6:AS6_EPIC012_CRM_FOUNDATION is an APPLICATION EPIC.
+docs/portfolio/as6-next-major-epic-selection-after-epic011.md:18:NEXT_MAJOR_EPIC=AS6_EPIC012_CRM_FOUNDATION
+docs/portfolio/as6-next-major-epic-selection-after-epic011.md:29:AS6_EPIC012_CRM_FOUNDATION creates the CRM application foundation over the existing platform.
+docs/portfolio/as6-next-major-epic-selection-after-epic011.md:38:NEXT_STAGE=AS6_EPIC012_CRM_FOUNDATION_PLANNING
+docs/portfolio/as6-candidate-epic-evaluation-after-epic011.md:5:EPIC_ID=AS6_EPIC012_CRM_FOUNDATION
+docs/portfolio/as6-candidate-epic-evaluation-after-epic011.md:54:SELECTED_EPIC=AS6_EPIC012_CRM_FOUNDATION
+docs/portfolio/as6-portfolio-registry.md:35:EPIC_ID=AS6_EPIC012_CRM_FOUNDATION
+docs/AS6_PROJECT_STATE.md:6008:- Selected AS6_EPIC012_CRM_FOUNDATION.
+docs/AS6_PROJECT_STATE.md:6013:- NEXT_STAGE=AS6_EPIC012_CRM_FOUNDATION_PLANNING.
+docs/AS6_PROJECT_STATE.md:6015:## AS6_DONE=AS6_EPIC012_CRM_FOUNDATION_PLANNING
+docs/AS6_PROJECT_STATE.md:6029:- NEXT_STAGE=AS6_EPIC012_SLICE01_CRM_FOUNDATION.
+docs/AS6_PROJECT_STATE.md:6031:## AS6_DONE=AS6_EPIC012_SLICE01_CRM_FOUNDATION
+docs/AS6_PROJECT_STATE.md:6051:- NEXT_STAGE=AS6_EPIC012_SLICE02_CRM_ENTITY_RUNTIME.
+docs/AS6_PROJECT_STATE.md:6061:## AS6_DONE=AS6_EPIC012_SLICE02_CRM_ENTITY_RUNTIME
+docs/AS6_PROJECT_STATE.md:6074:- NEXT_STAGE=AS6_EPIC012_SLICE03_CRM_DOMAIN_MODEL.
+docs/AS6_PROJECT_STATE.md:6076:## AS6_DONE=AS6_EPIC012_SLICE03_CRM_DOMAIN_MODEL
+docs/AS6_PROJECT_STATE.md:6090:- NEXT_STAGE=AS6_EPIC012_SLICE04_CRM_CONTACTS_FOUNDATION.
+docs/AS6_PROJECT_STATE.md:6092:## AS6_EPIC012_SLICE04_CRM_CONTACTS_FOUNDATION
+docs/AS6_PROJECT_STATE.md:6093:- Added declarative CRM Contacts Foundation.
+docs/AS6_PROJECT_STATE.md:6100:- Next stage: AS6_EPIC012_SLICE05_CRM_CONTACTS_UI_FOUNDATION.
+docs/AS6_PROJECT_STATE.md:6102:## AS6_EPIC012_SLICE05_CRM_CONTACTS_UI_FOUNDATION
+docs/AS6_PROJECT_STATE.md:6103:- Added CRM Contacts UI foundation.
+docs/AS6_PROJECT_STATE.md:6109:- Next stage: AS6_EPIC012_SLICE06_CRM_CONTACTS_WORKSPACE_INTEGRATION.
+docs/AS6_PROJECT_STATE.md:6111:## AS6_EPIC012_SLICE06_CRM_CONTACTS_WORKSPACE_INTEGRATION
+docs/AS6_PROJECT_STATE.md:6112:- Added CRM Contacts Workspace Integration.
+docs/AS6_PROJECT_STATE.md:6121:- Next stage: AS6_EPIC012_SLICE07_CRM_CONTACTS_CRM_LAYOUT_BRIDGE.
+docs/AS6_PROJECT_STATE.md:6123:## AS6_EPIC012_SLICE07_CRM_CONTACTS_CRM_LAYOUT_BRIDGE
+docs/AS6_PROJECT_STATE.md:6124:- Added CRM Contacts CRM Layout Bridge.
+docs/AS6_PROJECT_STATE.md:6132:- Next stage: AS6_EPIC012_SLICE08_CRM_CONTACTS_LIVE_LAYOUT_MOUNT.
+docs/AS6_PROJECT_STATE.md:6134:## AS6_EPIC012_SLICE08_CRM_CONTACTS_LIVE_LAYOUT_MOUNT
+docs/AS6_PROJECT_STATE.md:6135:- Mounted CRM Contacts into live CRMPage production layout.
+docs/AS6_PROJECT_STATE.md:6143:- Next stage: AS6_EPIC012_SLICE09_CRM_CONTACTS_PRODUCTION_POLISH.
+docs/AS6_PROJECT_STATE.md:6145:## AS6_EPIC012_SLICE09_CRM_CONTACTS_PRODUCTION_POLISH
+docs/AS6_PROJECT_STATE.md:6146:- Added CRM Contacts production polish.
+docs/AS6_PROJECT_STATE.md:6155:- Next stage: AS6_EPIC012_SLICE10_CRM_CONTACTS_FINAL_VALIDATION.
+docs/AS6_PROJECT_STATE.md:6157:## AS6_EPIC012_SLICE10_CRM_CONTACTS_FINAL_VALIDATION
+docs/AS6_PROJECT_STATE.md:6158:- Final validation completed for CRM Contacts EPIC012.
+docs/AS6_PROJECT_STATE.md:6165:- EPIC012 CRM Contacts status: PRODUCTION_VALIDATED.
+docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md:40:AS6_PRODUCTION_VALIDATED=PASS
+ops/status/as6-detected-errors.md:2283:## AS6_EPIC012_SLICE04_CRM_CONTACTS_FOUNDATION
+ops/status/as6-detected-errors.md:2290:## AS6_EPIC012_SLICE05_CRM_CONTACTS_UI_FOUNDATION
+ops/status/as6-detected-errors.md:2295:## AS6_EPIC012_SLICE06_CRM_CONTACTS_WORKSPACE_INTEGRATION
+ops/status/as6-detected-errors.md:2301:## AS6_EPIC012_SLICE07_CRM_CONTACTS_CRM_LAYOUT_BRIDGE
+ops/status/as6-detected-errors.md:2308:## AS6_EPIC012_SLICE08_CRM_CONTACTS_LIVE_LAYOUT_MOUNT
+ops/status/as6-detected-errors.md:2314:## AS6_EPIC012_SLICE09_CRM_CONTACTS_PRODUCTION_POLISH
+ops/status/as6-detected-errors.md:2321:## AS6_EPIC012_SLICE10_CRM_CONTACTS_FINAL_VALIDATION
+ops/governance/as6-crm-contacts-live-layout-mount-governance.md:1:# AS6 CRM Contacts Live Layout Mount Governance
+ops/governance/as6-crm-contacts-live-layout-mount-governance.md:3:Stage: AS6_EPIC012_SLICE08_CRM_CONTACTS_LIVE_LAYOUT_MOUNT
+ops/governance/as6-crm-contacts-ui-foundation-governance.md:1:# AS6 CRM Contacts UI Foundation Governance
+ops/governance/as6-crm-contacts-ui-foundation-governance.md:3:Stage: AS6_EPIC012_SLICE05_CRM_CONTACTS_UI_FOUNDATION
+ops/governance/as6-crm-contacts-foundation-governance.md:1:# AS6 CRM Contacts Foundation Governance
+ops/governance/as6-crm-contacts-foundation-governance.md:3:Stage: AS6_EPIC012_SLICE04_CRM_CONTACTS_FOUNDATION
+ops/governance/as6-crm-contacts-workspace-integration-governance.md:1:# AS6 CRM Contacts Workspace Integration Governance
+ops/governance/as6-crm-contacts-workspace-integration-governance.md:3:Stage: AS6_EPIC012_SLICE06_CRM_CONTACTS_WORKSPACE_INTEGRATION
+ops/governance/as6-engineering-standard.md:40:AS6_PRODUCTION_VALIDATED=PASS
+ops/governance/as6-crm-contacts-final-validation-governance.md:1:# AS6 CRM Contacts Final Validation Governance
+ops/governance/as6-crm-contacts-final-validation-governance.md:3:Stage: AS6_EPIC012_SLICE10_CRM_CONTACTS_FINAL_VALIDATION
+ops/governance/as6-crm-contacts-production-polish-governance.md:1:# AS6 CRM Contacts Production Polish Governance
+ops/governance/as6-crm-contacts-production-polish-governance.md:3:Stage: AS6_EPIC012_SLICE09_CRM_CONTACTS_PRODUCTION_POLISH
+ops/governance/as6-next-major-epic-selection-after-epic011-root-cause.md:7:Selected AS6_EPIC012_CRM_FOUNDATION as the next application EPIC and registered EPIC_TYPE=APPLICATION with PLATFORM_MUTATION=FALSE and IMPLEMENTATION_AUTHORIZED=FALSE.
+ops/governance/as6-crm-contacts-crm-layout-bridge-governance.md:1:# AS6 CRM Contacts CRM Layout Bridge Governance
+ops/governance/as6-crm-contacts-crm-layout-bridge-governance.md:3:Stage: AS6_EPIC012_SLICE07_CRM_CONTACTS_CRM_LAYOUT_BRIDGE
+ops/registry/as6-diagnostic-registry.md:1849:- SELECTED_EPIC=AS6_EPIC012_CRM_FOUNDATION
+ops/registry/as6-diagnostic-registry.md:1858:- STAGE=AS6_EPIC012_CRM_FOUNDATION_PLANNING
+ops/registry/as6-diagnostic-registry.md:1867:- STAGE=AS6_EPIC012_SLICE01_CRM_FOUNDATION
+ops/registry/as6-diagnostic-registry.md:1888:- STAGE=AS6_EPIC012_SLICE02_CRM_ENTITY_RUNTIME
+ops/registry/as6-diagnostic-registry.md:1899:- STAGE=AS6_EPIC012_SLICE03_CRM_DOMAIN_MODEL
+ops/registry/as6-diagnostic-registry.md:1911:## AS6_EPIC012_SLICE04_CRM_CONTACTS_FOUNDATION
+ops/registry/as6-diagnostic-registry.md:1917:## AS6_EPIC012_SLICE05_CRM_CONTACTS_UI_FOUNDATION
+ops/registry/as6-diagnostic-registry.md:1923:## AS6_EPIC012_SLICE06_CRM_CONTACTS_WORKSPACE_INTEGRATION
+ops/registry/as6-diagnostic-registry.md:1929:## AS6_EPIC012_SLICE07_CRM_CONTACTS_CRM_LAYOUT_BRIDGE
+ops/registry/as6-diagnostic-registry.md:1935:## AS6_EPIC012_SLICE08_CRM_CONTACTS_LIVE_LAYOUT_MOUNT
+ops/registry/as6-diagnostic-registry.md:1941:## AS6_EPIC012_SLICE09_CRM_CONTACTS_PRODUCTION_POLISH
+ops/registry/as6-diagnostic-registry.md:1947:## AS6_EPIC012_SLICE10_CRM_CONTACTS_FINAL_VALIDATION
+ops/registry/as6-diagnostic-registry.md:1949:- Control: all CRM Contacts diagnostics and controls from Slice 04 through Slice 09 passed.
+ops/registry/as6-coverage-registry.md:3800:## AS6_EPIC012_SLICE04_CRM_CONTACTS_FOUNDATION
+ops/registry/as6-coverage-registry.md:3805:## AS6_EPIC012_SLICE05_CRM_CONTACTS_UI_FOUNDATION
+ops/registry/as6-coverage-registry.md:3806:- Covers CRM Contacts UI foundation.
+ops/registry/as6-coverage-registry.md:3810:## AS6_EPIC012_SLICE06_CRM_CONTACTS_WORKSPACE_INTEGRATION
+ops/registry/as6-coverage-registry.md:3811:- Covers CRM Contacts Workspace Integration.
+ops/registry/as6-coverage-registry.md:3815:## AS6_EPIC012_SLICE07_CRM_CONTACTS_CRM_LAYOUT_BRIDGE
+ops/registry/as6-coverage-registry.md:3816:- Covers CRM Contacts CRM Layout Bridge.
+ops/registry/as6-coverage-registry.md:3821:## AS6_EPIC012_SLICE08_CRM_CONTACTS_LIVE_LAYOUT_MOUNT
+ops/registry/as6-coverage-registry.md:3827:## AS6_EPIC012_SLICE09_CRM_CONTACTS_PRODUCTION_POLISH
+ops/registry/as6-coverage-registry.md:3828:- Covers CRM Contacts production polish.
+ops/registry/as6-coverage-registry.md:3833:## AS6_EPIC012_SLICE10_CRM_CONTACTS_FINAL_VALIDATION
+ops/registry/as6-coverage-registry.md:3834:- Covers final validation for EPIC012 CRM Contacts.
+ops/registry/as6-coverage-registry.md:3837:- Marks CRM Contacts as production-validated for EPIC012.
+ops/bin/as6-diagnose-epic012-slice01-crm-foundation:44:echo AS6_EPIC012_SLICE01_CRM_FOUNDATION_DIAGNOSTIC=PASS
+ops/bin/as6-diagnose-constitution:17:for gate in AS6_PRE_INSPECTION AS6_DIAGNOSTICS AS6_FACT_CONFIRMATION AS6_ROOT_CAUSE_CONFIRMED AS6_ROLLBACK_READY AS6_ARCHITECTURE_VALIDATED AS6_POST_FIX_DIAGNOSTICS AS6_PRODUCTION_VALIDATED AS6_FIX_CONFIRMED AS6_COVERAGE_UPDATED AS6_REGISTRY_UPDATED AS6_ERROR_ADDED_TO_DIAGNOSTICS AS6_AUTO_DETECTION_ENABLED AS6_ARTIFACTS_CAPTURED AS6_GIT_CLEAN AS6_PR_ALLOWED AS6_CODEX_REVIEW AS6_GUARDIAN_REVIEW AS6_MERGE_ALLOWED AS6_POST_MERGE_VALIDATED AS6_HEREDOC_SAFETY; do
+ops/bin/as6-control-epic012-slice02-crm-entity-runtime:18:echo AS6_EPIC012_SLICE02_CRM_ENTITY_RUNTIME_CONTROL=PASS
+ops/bin/as6-control-epic012-crm-foundation-planning:22:echo AS6_EPIC012_CRM_FOUNDATION_PLANNING_CONTROL=PASS
+ops/bin/as6-diagnose-next-major-epic-selection-after-epic011:12:grep -q "NEXT_MAJOR_EPIC=AS6_EPIC012_CRM_FOUNDATION" docs/portfolio/as6-next-major-epic-selection-after-epic011.md
+ops/bin/as6-diagnose-next-major-epic-selection-after-epic011:21:echo NEXT_MAJOR_EPIC=AS6_EPIC012_CRM_FOUNDATION
+ops/bin/as6-diagnose-epic012-slice02-crm-entity-runtime:35:echo AS6_EPIC012_SLICE02_CRM_ENTITY_RUNTIME_DIAGNOSTIC=PASS
+ops/bin/as6-diagnose-epic012-crm-foundation-planning:24:echo AS6_EPIC012_CRM_FOUNDATION_PLANNING_DIAGNOSTIC=PASS
+ops/bin/as6-diagnose-crm-contacts-production-polish:6:grep -R "aria-label=\"CRM Contacts production section\"" frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx
+ops/bin/as6-diagnose-crm-contacts-production-polish:7:grep -R "aria-label=\"CRM Contacts list\"" frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx
+ops/bin/as6-diagnose-epic012-slice03-crm-domain-model:38:echo AS6_EPIC012_SLICE03_CRM_DOMAIN_MODEL_DIAGNOSTIC=PASS
+ops/bin/as6-control-epic012-slice01-crm-foundation:19:echo AS6_EPIC012_SLICE01_CRM_FOUNDATION_CONTROL=PASS
+ops/bin/as6-control-epic012-slice03-crm-domain-model:19:echo AS6_EPIC012_SLICE03_CRM_DOMAIN_MODEL_CONTROL=PASS
+runtime/diagnostic-backups/diagnose-all-20260614-070144.log:285:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/governance/as6-engineering-standard.md.scope-v1.20260611-234345:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/governance/as6-engineering-standard.md.dcl-v1.20260611-080644:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/governance/standard.ssh-heredoc.20260613-084715:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/governance/as6-engineering-standard.md.gpy-contracts-tracking.20260612-161325:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/governance/as6-engineering-standard.md.rcgl-v1.20260611-070409:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/governance/as6-engineering-standard.md.compile-target.20260612-123516:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/governance/as6-engineering-standard.md.diagnostic-registration.20260611-154420:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/governance/as6-engineering-standard.md.gpy-runtime-contract.20260612-102525:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/governance/as6-engineering-standard.md.backup-scope.20260612-012041:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/governance/as6-engineering-standard.md.rckb-reference-false-positive.20260611-061705:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/governance/as6-engineering-standard.md.self-import.20260612-111010:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/governance/as6-engineering-standard.md.rckb-v1.20260611-060215:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/governance/as6-engineering-standard.md.except-handler.20260612-000728:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/governance/as6-engineering-standard.md.tracking-drift.20260612-133054:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/governance/as6-engineering-standard.md.gprg-v2.20260611-231550:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/governance/as6-engineering-standard.md.generated-python-contracts.20260612-143613:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/governance/as6-engineering-standard.md.pycache-drift.20260612-115242:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/governance/as6-engineering-standard.md.gpy-contract-coverage.20260612-224658:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/governance/as6-engineering-standard.md.dcl-v2.20260611-103308:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/governance/standard.env-contract.20260614-022340:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/governance/as6-engineering-standard.md.py-artifact-hygiene.20260612-004305:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/governance/as6-engineering-standard.md.rcrv-v1.20260611-114010:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/governance/standard.ssh-heredoc.20260613-083040:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/governance/as6-engineering-standard.md.import-guard.20260612-154648:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/AEC.ssh-heredoc.20260613-084715:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md.aec-rules.20260611-023506:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/as6-engineering-standard.md.safe-codegen.20260611-042111:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md.diagnostic-registration.20260611-154420:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md.py-artifact-hygiene.20260612-004305:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md.self-import.20260612-111010:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md.pycache-drift.20260612-115242:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/as6-engineering-standard.md.aec-rules.20260611-023506:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md.rcrv-v1.20260611-114010:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md.gpy-runtime-contract.20260612-102525:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md.dcl-v1.20260611-080644:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md.import-guard.20260612-154648:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md.compile-target.20260612-123516:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md.patch-mode-v1.20260611-050548:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/AEC.ssh-heredoc.20260613-083040:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md.gpy-contracts-tracking.20260612-161325:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md.gpy-contract-coverage.20260612-224658:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md.heredoc-safety.20260611-011521:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md.dcl-v2.20260611-103308:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/AEC.env-contract.20260614-022340:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md.scope-v1.20260611-234345:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md.safe-codegen.20260611-042111:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/as6-engineering-standard.md.patch-mode-v1.20260611-050548:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md.tracking-drift.20260612-133054:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md.except-handler.20260612-000728:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md.backup-scope.20260612-012041:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md.rcgl-v1.20260611-070409:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md.rckb-v1.20260611-060215:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md.gprg-v2.20260611-231550:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md.rckb-reference-false-positive.20260611-061705:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/docs/AS6_AUTONOMOUS_ENGINEERING_CONSTITUTION.md.generated-python-contracts.20260612-143613:40:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-backups/bin/as6-diagnose-constitution.dcl-v1.20260611-080644:17:for gate in AS6_PRE_INSPECTION AS6_DIAGNOSTICS AS6_FACT_CONFIRMATION AS6_ROOT_CAUSE_CONFIRMED AS6_ROLLBACK_READY AS6_ARCHITECTURE_VALIDATED AS6_POST_FIX_DIAGNOSTICS AS6_PRODUCTION_VALIDATED AS6_FIX_CONFIRMED AS6_COVERAGE_UPDATED AS6_REGISTRY_UPDATED AS6_ERROR_ADDED_TO_DIAGNOSTICS AS6_AUTO_DETECTION_ENABLED AS6_ARTIFACTS_CAPTURED AS6_GIT_CLEAN AS6_PR_ALLOWED AS6_CODEX_REVIEW AS6_GUARDIAN_REVIEW AS6_MERGE_ALLOWED AS6_POST_MERGE_VALIDATED AS6_HEREDOC_SAFETY; do
+runtime/diagnostic-backups/bin/as6-diagnose-constitution.patch-mode-v1.20260611-050548:17:for gate in AS6_PRE_INSPECTION AS6_DIAGNOSTICS AS6_FACT_CONFIRMATION AS6_ROOT_CAUSE_CONFIRMED AS6_ROLLBACK_READY AS6_ARCHITECTURE_VALIDATED AS6_POST_FIX_DIAGNOSTICS AS6_PRODUCTION_VALIDATED AS6_FIX_CONFIRMED AS6_COVERAGE_UPDATED AS6_REGISTRY_UPDATED AS6_ERROR_ADDED_TO_DIAGNOSTICS AS6_AUTO_DETECTION_ENABLED AS6_ARTIFACTS_CAPTURED AS6_GIT_CLEAN AS6_PR_ALLOWED AS6_CODEX_REVIEW AS6_GUARDIAN_REVIEW AS6_MERGE_ALLOWED AS6_POST_MERGE_VALIDATED AS6_HEREDOC_SAFETY; do
+runtime/diagnostic-backups/bin/as6-diagnose-constitution.rckb-v1.20260611-060215:17:for gate in AS6_PRE_INSPECTION AS6_DIAGNOSTICS AS6_FACT_CONFIRMATION AS6_ROOT_CAUSE_CONFIRMED AS6_ROLLBACK_READY AS6_ARCHITECTURE_VALIDATED AS6_POST_FIX_DIAGNOSTICS AS6_PRODUCTION_VALIDATED AS6_FIX_CONFIRMED AS6_COVERAGE_UPDATED AS6_REGISTRY_UPDATED AS6_ERROR_ADDED_TO_DIAGNOSTICS AS6_AUTO_DETECTION_ENABLED AS6_ARTIFACTS_CAPTURED AS6_GIT_CLEAN AS6_PR_ALLOWED AS6_CODEX_REVIEW AS6_GUARDIAN_REVIEW AS6_MERGE_ALLOWED AS6_POST_MERGE_VALIDATED AS6_HEREDOC_SAFETY; do
+runtime/diagnostic-backups/bin/as6-diagnose-constitution.aec-rules.20260611-023506:17:for gate in AS6_PRE_INSPECTION AS6_DIAGNOSTICS AS6_FACT_CONFIRMATION AS6_ROOT_CAUSE_CONFIRMED AS6_ROLLBACK_READY AS6_ARCHITECTURE_VALIDATED AS6_POST_FIX_DIAGNOSTICS AS6_PRODUCTION_VALIDATED AS6_FIX_CONFIRMED AS6_COVERAGE_UPDATED AS6_REGISTRY_UPDATED AS6_ERROR_ADDED_TO_DIAGNOSTICS AS6_AUTO_DETECTION_ENABLED AS6_ARTIFACTS_CAPTURED AS6_GIT_CLEAN AS6_PR_ALLOWED AS6_CODEX_REVIEW AS6_GUARDIAN_REVIEW AS6_MERGE_ALLOWED AS6_POST_MERGE_VALIDATED AS6_HEREDOC_SAFETY; do
+runtime/diagnostic-backups/bin/as6-diagnose-constitution.py-artifact-hygiene.20260612-004305:17:for gate in AS6_PRE_INSPECTION AS6_DIAGNOSTICS AS6_FACT_CONFIRMATION AS6_ROOT_CAUSE_CONFIRMED AS6_ROLLBACK_READY AS6_ARCHITECTURE_VALIDATED AS6_POST_FIX_DIAGNOSTICS AS6_PRODUCTION_VALIDATED AS6_FIX_CONFIRMED AS6_COVERAGE_UPDATED AS6_REGISTRY_UPDATED AS6_ERROR_ADDED_TO_DIAGNOSTICS AS6_AUTO_DETECTION_ENABLED AS6_ARTIFACTS_CAPTURED AS6_GIT_CLEAN AS6_PR_ALLOWED AS6_CODEX_REVIEW AS6_GUARDIAN_REVIEW AS6_MERGE_ALLOWED AS6_POST_MERGE_VALIDATED AS6_HEREDOC_SAFETY; do
+runtime/diagnostic-backups/bin/as6-diagnose-constitution.pycache-drift.20260612-115242:17:for gate in AS6_PRE_INSPECTION AS6_DIAGNOSTICS AS6_FACT_CONFIRMATION AS6_ROOT_CAUSE_CONFIRMED AS6_ROLLBACK_READY AS6_ARCHITECTURE_VALIDATED AS6_POST_FIX_DIAGNOSTICS AS6_PRODUCTION_VALIDATED AS6_FIX_CONFIRMED AS6_COVERAGE_UPDATED AS6_REGISTRY_UPDATED AS6_ERROR_ADDED_TO_DIAGNOSTICS AS6_AUTO_DETECTION_ENABLED AS6_ARTIFACTS_CAPTURED AS6_GIT_CLEAN AS6_PR_ALLOWED AS6_CODEX_REVIEW AS6_GUARDIAN_REVIEW AS6_MERGE_ALLOWED AS6_POST_MERGE_VALIDATED AS6_HEREDOC_SAFETY; do
+runtime/diagnostic-backups/bin/as6-diagnose-constitution.diagnostic-registration.20260611-154420:17:for gate in AS6_PRE_INSPECTION AS6_DIAGNOSTICS AS6_FACT_CONFIRMATION AS6_ROOT_CAUSE_CONFIRMED AS6_ROLLBACK_READY AS6_ARCHITECTURE_VALIDATED AS6_POST_FIX_DIAGNOSTICS AS6_PRODUCTION_VALIDATED AS6_FIX_CONFIRMED AS6_COVERAGE_UPDATED AS6_REGISTRY_UPDATED AS6_ERROR_ADDED_TO_DIAGNOSTICS AS6_AUTO_DETECTION_ENABLED AS6_ARTIFACTS_CAPTURED AS6_GIT_CLEAN AS6_PR_ALLOWED AS6_CODEX_REVIEW AS6_GUARDIAN_REVIEW AS6_MERGE_ALLOWED AS6_POST_MERGE_VALIDATED AS6_HEREDOC_SAFETY; do
+runtime/diagnostic-backups/bin/as6-diagnose-constitution.gprg-v2.20260611-231550:17:for gate in AS6_PRE_INSPECTION AS6_DIAGNOSTICS AS6_FACT_CONFIRMATION AS6_ROOT_CAUSE_CONFIRMED AS6_ROLLBACK_READY AS6_ARCHITECTURE_VALIDATED AS6_POST_FIX_DIAGNOSTICS AS6_PRODUCTION_VALIDATED AS6_FIX_CONFIRMED AS6_COVERAGE_UPDATED AS6_REGISTRY_UPDATED AS6_ERROR_ADDED_TO_DIAGNOSTICS AS6_AUTO_DETECTION_ENABLED AS6_ARTIFACTS_CAPTURED AS6_GIT_CLEAN AS6_PR_ALLOWED AS6_CODEX_REVIEW AS6_GUARDIAN_REVIEW AS6_MERGE_ALLOWED AS6_POST_MERGE_VALIDATED AS6_HEREDOC_SAFETY; do
+runtime/diagnostic-backups/bin/as6-diagnose-constitution.gpy-contract-coverage.20260612-224658:17:for gate in AS6_PRE_INSPECTION AS6_DIAGNOSTICS AS6_FACT_CONFIRMATION AS6_ROOT_CAUSE_CONFIRMED AS6_ROLLBACK_READY AS6_ARCHITECTURE_VALIDATED AS6_POST_FIX_DIAGNOSTICS AS6_PRODUCTION_VALIDATED AS6_FIX_CONFIRMED AS6_COVERAGE_UPDATED AS6_REGISTRY_UPDATED AS6_ERROR_ADDED_TO_DIAGNOSTICS AS6_AUTO_DETECTION_ENABLED AS6_ARTIFACTS_CAPTURED AS6_GIT_CLEAN AS6_PR_ALLOWED AS6_CODEX_REVIEW AS6_GUARDIAN_REVIEW AS6_MERGE_ALLOWED AS6_POST_MERGE_VALIDATED AS6_HEREDOC_SAFETY; do
+runtime/diagnostic-backups/bin/as6-diagnose-constitution.generated-python-contracts.20260612-143613:17:for gate in AS6_PRE_INSPECTION AS6_DIAGNOSTICS AS6_FACT_CONFIRMATION AS6_ROOT_CAUSE_CONFIRMED AS6_ROLLBACK_READY AS6_ARCHITECTURE_VALIDATED AS6_POST_FIX_DIAGNOSTICS AS6_PRODUCTION_VALIDATED AS6_FIX_CONFIRMED AS6_COVERAGE_UPDATED AS6_REGISTRY_UPDATED AS6_ERROR_ADDED_TO_DIAGNOSTICS AS6_AUTO_DETECTION_ENABLED AS6_ARTIFACTS_CAPTURED AS6_GIT_CLEAN AS6_PR_ALLOWED AS6_CODEX_REVIEW AS6_GUARDIAN_REVIEW AS6_MERGE_ALLOWED AS6_POST_MERGE_VALIDATED AS6_HEREDOC_SAFETY; do
+runtime/diagnostic-backups/bin/as6-diagnose-constitution.rcgl-v1.20260611-070409:17:for gate in AS6_PRE_INSPECTION AS6_DIAGNOSTICS AS6_FACT_CONFIRMATION AS6_ROOT_CAUSE_CONFIRMED AS6_ROLLBACK_READY AS6_ARCHITECTURE_VALIDATED AS6_POST_FIX_DIAGNOSTICS AS6_PRODUCTION_VALIDATED AS6_FIX_CONFIRMED AS6_COVERAGE_UPDATED AS6_REGISTRY_UPDATED AS6_ERROR_ADDED_TO_DIAGNOSTICS AS6_AUTO_DETECTION_ENABLED AS6_ARTIFACTS_CAPTURED AS6_GIT_CLEAN AS6_PR_ALLOWED AS6_CODEX_REVIEW AS6_GUARDIAN_REVIEW AS6_MERGE_ALLOWED AS6_POST_MERGE_VALIDATED AS6_HEREDOC_SAFETY; do
+runtime/diagnostic-backups/bin/as6-diagnose-constitution.self-import.20260612-111010:17:for gate in AS6_PRE_INSPECTION AS6_DIAGNOSTICS AS6_FACT_CONFIRMATION AS6_ROOT_CAUSE_CONFIRMED AS6_ROLLBACK_READY AS6_ARCHITECTURE_VALIDATED AS6_POST_FIX_DIAGNOSTICS AS6_PRODUCTION_VALIDATED AS6_FIX_CONFIRMED AS6_COVERAGE_UPDATED AS6_REGISTRY_UPDATED AS6_ERROR_ADDED_TO_DIAGNOSTICS AS6_AUTO_DETECTION_ENABLED AS6_ARTIFACTS_CAPTURED AS6_GIT_CLEAN AS6_PR_ALLOWED AS6_CODEX_REVIEW AS6_GUARDIAN_REVIEW AS6_MERGE_ALLOWED AS6_POST_MERGE_VALIDATED AS6_HEREDOC_SAFETY; do
+runtime/diagnostic-backups/bin/as6-diagnose-constitution.tracking-drift.20260612-133054:17:for gate in AS6_PRE_INSPECTION AS6_DIAGNOSTICS AS6_FACT_CONFIRMATION AS6_ROOT_CAUSE_CONFIRMED AS6_ROLLBACK_READY AS6_ARCHITECTURE_VALIDATED AS6_POST_FIX_DIAGNOSTICS AS6_PRODUCTION_VALIDATED AS6_FIX_CONFIRMED AS6_COVERAGE_UPDATED AS6_REGISTRY_UPDATED AS6_ERROR_ADDED_TO_DIAGNOSTICS AS6_AUTO_DETECTION_ENABLED AS6_ARTIFACTS_CAPTURED AS6_GIT_CLEAN AS6_PR_ALLOWED AS6_CODEX_REVIEW AS6_GUARDIAN_REVIEW AS6_MERGE_ALLOWED AS6_POST_MERGE_VALIDATED AS6_HEREDOC_SAFETY; do
+runtime/diagnostic-backups/bin/as6-diagnose-constitution.compile-target.20260612-123516:17:for gate in AS6_PRE_INSPECTION AS6_DIAGNOSTICS AS6_FACT_CONFIRMATION AS6_ROOT_CAUSE_CONFIRMED AS6_ROLLBACK_READY AS6_ARCHITECTURE_VALIDATED AS6_POST_FIX_DIAGNOSTICS AS6_PRODUCTION_VALIDATED AS6_FIX_CONFIRMED AS6_COVERAGE_UPDATED AS6_REGISTRY_UPDATED AS6_ERROR_ADDED_TO_DIAGNOSTICS AS6_AUTO_DETECTION_ENABLED AS6_ARTIFACTS_CAPTURED AS6_GIT_CLEAN AS6_PR_ALLOWED AS6_CODEX_REVIEW AS6_GUARDIAN_REVIEW AS6_MERGE_ALLOWED AS6_POST_MERGE_VALIDATED AS6_HEREDOC_SAFETY; do
+runtime/diagnostic-backups/bin/as6-diagnose-constitution.gpy-runtime-contract.20260612-102525:17:for gate in AS6_PRE_INSPECTION AS6_DIAGNOSTICS AS6_FACT_CONFIRMATION AS6_ROOT_CAUSE_CONFIRMED AS6_ROLLBACK_READY AS6_ARCHITECTURE_VALIDATED AS6_POST_FIX_DIAGNOSTICS AS6_PRODUCTION_VALIDATED AS6_FIX_CONFIRMED AS6_COVERAGE_UPDATED AS6_REGISTRY_UPDATED AS6_ERROR_ADDED_TO_DIAGNOSTICS AS6_AUTO_DETECTION_ENABLED AS6_ARTIFACTS_CAPTURED AS6_GIT_CLEAN AS6_PR_ALLOWED AS6_CODEX_REVIEW AS6_GUARDIAN_REVIEW AS6_MERGE_ALLOWED AS6_POST_MERGE_VALIDATED AS6_HEREDOC_SAFETY; do
+runtime/diagnostic-backups/bin/as6-diagnose-constitution.env-contract.20260614-022340:17:for gate in AS6_PRE_INSPECTION AS6_DIAGNOSTICS AS6_FACT_CONFIRMATION AS6_ROOT_CAUSE_CONFIRMED AS6_ROLLBACK_READY AS6_ARCHITECTURE_VALIDATED AS6_POST_FIX_DIAGNOSTICS AS6_PRODUCTION_VALIDATED AS6_FIX_CONFIRMED AS6_COVERAGE_UPDATED AS6_REGISTRY_UPDATED AS6_ERROR_ADDED_TO_DIAGNOSTICS AS6_AUTO_DETECTION_ENABLED AS6_ARTIFACTS_CAPTURED AS6_GIT_CLEAN AS6_PR_ALLOWED AS6_CODEX_REVIEW AS6_GUARDIAN_REVIEW AS6_MERGE_ALLOWED AS6_POST_MERGE_VALIDATED AS6_HEREDOC_SAFETY; do
+runtime/diagnostic-backups/bin/as6-diagnose-constitution.backup-scope.20260612-012041:17:for gate in AS6_PRE_INSPECTION AS6_DIAGNOSTICS AS6_FACT_CONFIRMATION AS6_ROOT_CAUSE_CONFIRMED AS6_ROLLBACK_READY AS6_ARCHITECTURE_VALIDATED AS6_POST_FIX_DIAGNOSTICS AS6_PRODUCTION_VALIDATED AS6_FIX_CONFIRMED AS6_COVERAGE_UPDATED AS6_REGISTRY_UPDATED AS6_ERROR_ADDED_TO_DIAGNOSTICS AS6_AUTO_DETECTION_ENABLED AS6_ARTIFACTS_CAPTURED AS6_GIT_CLEAN AS6_PR_ALLOWED AS6_CODEX_REVIEW AS6_GUARDIAN_REVIEW AS6_MERGE_ALLOWED AS6_POST_MERGE_VALIDATED AS6_HEREDOC_SAFETY; do
+runtime/diagnostic-backups/bin/as6-diagnose-constitution.import-guard.20260612-154648:17:for gate in AS6_PRE_INSPECTION AS6_DIAGNOSTICS AS6_FACT_CONFIRMATION AS6_ROOT_CAUSE_CONFIRMED AS6_ROLLBACK_READY AS6_ARCHITECTURE_VALIDATED AS6_POST_FIX_DIAGNOSTICS AS6_PRODUCTION_VALIDATED AS6_FIX_CONFIRMED AS6_COVERAGE_UPDATED AS6_REGISTRY_UPDATED AS6_ERROR_ADDED_TO_DIAGNOSTICS AS6_AUTO_DETECTION_ENABLED AS6_ARTIFACTS_CAPTURED AS6_GIT_CLEAN AS6_PR_ALLOWED AS6_CODEX_REVIEW AS6_GUARDIAN_REVIEW AS6_MERGE_ALLOWED AS6_POST_MERGE_VALIDATED AS6_HEREDOC_SAFETY; do
+runtime/diagnostic-backups/bin/as6-diagnose-constitution.heredoc-safety.20260611-011521:17:for gate in AS6_PRE_INSPECTION AS6_DIAGNOSTICS AS6_FACT_CONFIRMATION AS6_ROOT_CAUSE_CONFIRMED AS6_ROLLBACK_READY AS6_ARCHITECTURE_VALIDATED AS6_POST_FIX_DIAGNOSTICS AS6_PRODUCTION_VALIDATED AS6_FIX_CONFIRMED AS6_COVERAGE_UPDATED AS6_REGISTRY_UPDATED AS6_ERROR_ADDED_TO_DIAGNOSTICS AS6_AUTO_DETECTION_ENABLED AS6_ARTIFACTS_CAPTURED AS6_GIT_CLEAN AS6_PR_ALLOWED AS6_CODEX_REVIEW AS6_GUARDIAN_REVIEW AS6_MERGE_ALLOWED AS6_POST_MERGE_VALIDATED AS6_HEREDOC_SAFETY; do
+runtime/diagnostic-backups/bin/as6-diagnose-constitution.safe-codegen.20260611-042111:17:for gate in AS6_PRE_INSPECTION AS6_DIAGNOSTICS AS6_FACT_CONFIRMATION AS6_ROOT_CAUSE_CONFIRMED AS6_ROLLBACK_READY AS6_ARCHITECTURE_VALIDATED AS6_POST_FIX_DIAGNOSTICS AS6_PRODUCTION_VALIDATED AS6_FIX_CONFIRMED AS6_COVERAGE_UPDATED AS6_REGISTRY_UPDATED AS6_ERROR_ADDED_TO_DIAGNOSTICS AS6_AUTO_DETECTION_ENABLED AS6_ARTIFACTS_CAPTURED AS6_GIT_CLEAN AS6_PR_ALLOWED AS6_CODEX_REVIEW AS6_GUARDIAN_REVIEW AS6_MERGE_ALLOWED AS6_POST_MERGE_VALIDATED AS6_HEREDOC_SAFETY; do
+runtime/root-cause-governance-final-reconciliation/pre-diagnose-all.out:299:AS6_PRODUCTION_VALIDATED=PASS
+runtime/root-cause-governance-final-reconciliation/post-diagnose-all.out:299:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-status-registry-rebuild/pre-diagnose-all.out:299:AS6_PRODUCTION_VALIDATED=PASS
+runtime/diagnostic-status-registry-rebuild/post-diagnose-all.out:299:AS6_PRODUCTION_VALIDATED=PASS
+runtime/root-cause-registry-auto-sync/pre-diagnose-all.out:299:AS6_PRODUCTION_VALIDATED=PASS
+runtime/root-cause-registry-auto-sync/post-diagnose-all.out:299:AS6_PRODUCTION_VALIDATED=PASS
+runtime/root-cause-governance-completion/pre-diagnose-all.out:299:AS6_PRODUCTION_VALIDATED=PASS
+runtime/root-cause-governance-completion/post-diagnose-all.out:299:AS6_PRODUCTION_VALIDATED=PASS
+runtime/root-cause-governance-aggregator-consistency/pre-diagnose-all.out:299:AS6_PRODUCTION_VALIDATED=PASS
+runtime/root-cause-governance-aggregator-consistency/post-diagnose-all.out:299:AS6_PRODUCTION_VALIDATED=PASS
+runtime/root-cause-governance-bulk/pre-diagnose-all.out:299:AS6_PRODUCTION_VALIDATED=PASS
+runtime/root-cause-governance-bulk/post-diagnose-all.out:299:AS6_PRODUCTION_VALIDATED=PASS
+runtime/as6-epic012-next-major-selection/diagnostic.after.txt:6:NEXT_MAJOR_EPIC=AS6_EPIC012_CRM_FOUNDATION
+runtime/as6-epic012-next-major-selection/control.after.txt:6:NEXT_MAJOR_EPIC=AS6_EPIC012_CRM_FOUNDATION
+runtime/as6-epic012-slice02-crm-entity-runtime/diagnostic.after.txt:11:AS6_EPIC012_SLICE02_CRM_ENTITY_RUNTIME_DIAGNOSTIC=PASS
+runtime/as6-epic012-slice02-crm-entity-runtime/control.after.txt:11:AS6_EPIC012_SLICE02_CRM_ENTITY_RUNTIME_DIAGNOSTIC=PASS
+runtime/as6-epic012-slice02-crm-entity-runtime/control.after.txt:19:AS6_EPIC012_SLICE02_CRM_ENTITY_RUNTIME_CONTROL=PASS
+runtime/as6-epic012-slice03-crm-domain-model/diagnostic.after.txt:13:AS6_EPIC012_SLICE03_CRM_DOMAIN_MODEL_DIAGNOSTIC=PASS
+runtime/as6-epic012-slice03-crm-domain-model/control.after.txt:13:AS6_EPIC012_SLICE03_CRM_DOMAIN_MODEL_DIAGNOSTIC=PASS
+runtime/as6-epic012-slice03-crm-domain-model/control.after.txt:21:AS6_EPIC012_SLICE03_CRM_DOMAIN_MODEL_CONTROL=PASS
+runtime/root-cause-deduplication/root-cause-map.tsv:972:AS6_PRODUCTION_VALIDATED	PRODUCTION_VALIDATED	ops/governance/as6-engineering-standard.md
+runtime/as6-epic012-slice09-crm-contacts-production-polish/CrmContactsLiveLayoutMount.before.jsx:7:    <section className="as6-crm-contacts-live-layout-mount" data-as6-contacts-live-layout-mount={crmLayoutMountMode} data-as6-contacts-layout-state={snapshot.state} aria-label="CRM Contacts Live Layout Mount">
+runtime/as6-epic012-slice09-crm-contacts-production-polish/CrmContactsUiFoundation.before.jsx:43:          <p>CRM Contacts</p>
+runtime/as6-epic012-slice09-crm-contacts-production-polish/diagnostics.after.txt:1:    <section className="as6-crm-contacts-ui as6-crm-contacts-ui--production" data-as6-contacts-ui="foundation" aria-label="CRM Contacts production section">
+runtime/as6-epic012-slice09-crm-contacts-production-polish/diagnostics.after.txt:2:        <main className="as6-crm-contacts-ui__list" data-as6-contacts-list="true" aria-label="CRM Contacts list">
+runtime/as6-epic012-slice09-crm-contacts-production-polish/diagnostics.after.txt:7:frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx:    <section className="as6-crm-contacts-ui as6-crm-contacts-ui--production" data-as6-contacts-ui="foundation" aria-label="CRM Contacts production section">
+runtime/as6-epic012-slice09-crm-contacts-production-polish/control.after.txt:5:    <section className="as6-crm-contacts-ui as6-crm-contacts-ui--production" data-as6-contacts-ui="foundation" aria-label="CRM Contacts production section">
+runtime/as6-epic012-slice09-crm-contacts-production-polish/control.after.txt:6:        <main className="as6-crm-contacts-ui__list" data-as6-contacts-list="true" aria-label="CRM Contacts list">
+runtime/as6-epic012-slice09-crm-contacts-production-polish/control.after.txt:44:    <section className="as6-crm-contacts-ui as6-crm-contacts-ui--production" data-as6-contacts-ui="foundation" aria-label="CRM Contacts production section">
+runtime/as6-epic012-slice09-crm-contacts-production-polish/control.after.txt:45:        <main className="as6-crm-contacts-ui__list" data-as6-contacts-list="true" aria-label="CRM Contacts list">
+runtime/as6-epic012-slice09-crm-contacts-production-polish/control.after.txt:50:frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx:    <section className="as6-crm-contacts-ui as6-crm-contacts-ui--production" data-as6-contacts-ui="foundation" aria-label="CRM Contacts production section">
+runtime/as6-epic012-slice09-crm-contacts-production-polish/CrmContactsUiFoundation.diff.txt:29:+    <section className="as6-crm-contacts-ui as6-crm-contacts-ui--production" data-as6-contacts-ui="foundation" aria-label="CRM Contacts production section">
+runtime/as6-epic012-slice09-crm-contacts-production-polish/CrmContactsUiFoundation.diff.txt:30:+      <header className="as6-crm-contacts-ui__header" aria-label="CRM Contacts header">
+runtime/as6-epic012-slice09-crm-contacts-production-polish/CrmContactsUiFoundation.diff.txt:32:           <p>CRM Contacts</p>
+runtime/as6-epic012-slice09-crm-contacts-production-polish/CrmContactsUiFoundation.diff.txt:39:+        <main className="as6-crm-contacts-ui__list" data-as6-contacts-list="true" aria-label="CRM Contacts list">
+runtime/as6-epic012-slice09-crm-contacts-production-polish/CrmContactsUiFoundation.diff.txt:43:+        <aside className="as6-crm-contacts-ui__panel" data-as6-contacts-panel="true" aria-label="CRM Contacts diagnostics panel">
+runtime/as6-epic012-crm-foundation-planning/diagnostic.after.txt:1:AS6_EPIC012_CRM_FOUNDATION_PLANNING_DIAGNOSTIC=PASS
+runtime/as6-epic012-crm-foundation-planning/control.after.txt:1:AS6_EPIC012_CRM_FOUNDATION_PLANNING_DIAGNOSTIC=PASS
+runtime/as6-epic012-crm-foundation-planning/control.after.txt:12:AS6_EPIC012_CRM_FOUNDATION_PLANNING_CONTROL=PASS
+runtime/as6-epic012-slice10-crm-contacts-final-validation/registry-slice04.check.txt:1:ops/registry/as6-diagnostic-registry.md:## AS6_EPIC012_SLICE04_CRM_CONTACTS_FOUNDATION
+runtime/as6-epic012-slice10-crm-contacts-final-validation/registry-slice04.check.txt:2:ops/registry/as6-coverage-registry.md:## AS6_EPIC012_SLICE04_CRM_CONTACTS_FOUNDATION
+runtime/as6-epic012-slice10-crm-contacts-final-validation/registry-slice04.check.txt:3:docs/AS6_PROJECT_STATE.md:- NEXT_STAGE=AS6_EPIC012_SLICE04_CRM_CONTACTS_FOUNDATION.
+runtime/as6-epic012-slice10-crm-contacts-final-validation/registry-slice04.check.txt:4:docs/AS6_PROJECT_STATE.md:## AS6_EPIC012_SLICE04_CRM_CONTACTS_FOUNDATION
+runtime/as6-epic012-slice10-crm-contacts-final-validation/accessibility-list.check.txt:1:        <main className="as6-crm-contacts-ui__list" data-as6-contacts-list="true" aria-label="CRM Contacts list">
+runtime/as6-epic012-slice10-crm-contacts-final-validation/final-validation.status.txt:2:AS6_EPIC012_CRM_CONTACTS=PRODUCTION_VALIDATED
+runtime/as6-epic012-slice10-crm-contacts-final-validation/accessibility-section.check.txt:1:    <section className="as6-crm-contacts-ui as6-crm-contacts-ui--production" data-as6-contacts-ui="foundation" aria-label="CRM Contacts production section">
+runtime/as6-epic012-slice10-crm-contacts-final-validation/registry-slice06.check.txt:1:ops/registry/as6-diagnostic-registry.md:## AS6_EPIC012_SLICE06_CRM_CONTACTS_WORKSPACE_INTEGRATION
+runtime/as6-epic012-slice10-crm-contacts-final-validation/registry-slice06.check.txt:2:ops/registry/as6-coverage-registry.md:## AS6_EPIC012_SLICE06_CRM_CONTACTS_WORKSPACE_INTEGRATION
+runtime/as6-epic012-slice10-crm-contacts-final-validation/registry-slice06.check.txt:3:docs/AS6_PROJECT_STATE.md:- Next stage: AS6_EPIC012_SLICE06_CRM_CONTACTS_WORKSPACE_INTEGRATION.
+runtime/as6-epic012-slice10-crm-contacts-final-validation/registry-slice06.check.txt:4:docs/AS6_PROJECT_STATE.md:## AS6_EPIC012_SLICE06_CRM_CONTACTS_WORKSPACE_INTEGRATION
+runtime/as6-epic012-slice10-crm-contacts-final-validation/registry-slice07.check.txt:1:ops/registry/as6-diagnostic-registry.md:## AS6_EPIC012_SLICE07_CRM_CONTACTS_CRM_LAYOUT_BRIDGE
+runtime/as6-epic012-slice10-crm-contacts-final-validation/registry-slice07.check.txt:2:ops/registry/as6-coverage-registry.md:## AS6_EPIC012_SLICE07_CRM_CONTACTS_CRM_LAYOUT_BRIDGE
+runtime/as6-epic012-slice10-crm-contacts-final-validation/registry-slice07.check.txt:3:docs/AS6_PROJECT_STATE.md:- Next stage: AS6_EPIC012_SLICE07_CRM_CONTACTS_CRM_LAYOUT_BRIDGE.
+runtime/as6-epic012-slice10-crm-contacts-final-validation/registry-slice07.check.txt:4:docs/AS6_PROJECT_STATE.md:## AS6_EPIC012_SLICE07_CRM_CONTACTS_CRM_LAYOUT_BRIDGE
+runtime/as6-epic012-slice10-crm-contacts-final-validation/registry-slice08.check.txt:1:ops/registry/as6-diagnostic-registry.md:## AS6_EPIC012_SLICE08_CRM_CONTACTS_LIVE_LAYOUT_MOUNT
+runtime/as6-epic012-slice10-crm-contacts-final-validation/registry-slice08.check.txt:2:ops/registry/as6-coverage-registry.md:## AS6_EPIC012_SLICE08_CRM_CONTACTS_LIVE_LAYOUT_MOUNT
+runtime/as6-epic012-slice10-crm-contacts-final-validation/registry-slice08.check.txt:3:docs/AS6_PROJECT_STATE.md:- Next stage: AS6_EPIC012_SLICE08_CRM_CONTACTS_LIVE_LAYOUT_MOUNT.
+runtime/as6-epic012-slice10-crm-contacts-final-validation/registry-slice08.check.txt:4:docs/AS6_PROJECT_STATE.md:## AS6_EPIC012_SLICE08_CRM_CONTACTS_LIVE_LAYOUT_MOUNT
+runtime/as6-epic012-slice10-crm-contacts-final-validation/final-validation-report.txt:8:    <section className="as6-crm-contacts-ui as6-crm-contacts-ui--production" data-as6-contacts-ui="foundation" aria-label="CRM Contacts production section">
+runtime/as6-epic012-slice10-crm-contacts-final-validation/final-validation-report.txt:9:        <main className="as6-crm-contacts-ui__list" data-as6-contacts-list="true" aria-label="CRM Contacts list">
+runtime/as6-epic012-slice10-crm-contacts-final-validation/final-validation-report.txt:51:    <section className="as6-crm-contacts-ui as6-crm-contacts-ui--production" data-as6-contacts-ui="foundation" aria-label="CRM Contacts production section">
+runtime/as6-epic012-slice10-crm-contacts-final-validation/final-validation-report.txt:52:        <main className="as6-crm-contacts-ui__list" data-as6-contacts-list="true" aria-label="CRM Contacts list">
+runtime/as6-epic012-slice10-crm-contacts-final-validation/final-validation-report.txt:57:frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx:    <section className="as6-crm-contacts-ui as6-crm-contacts-ui--production" data-as6-contacts-ui="foundation" aria-label="CRM Contacts production section">
+runtime/as6-epic012-slice10-crm-contacts-final-validation/final-validation-report.txt:75:    <section className="as6-crm-contacts-ui as6-crm-contacts-ui--production" data-as6-contacts-ui="foundation" aria-label="CRM Contacts production section">
+runtime/as6-epic012-slice10-crm-contacts-final-validation/final-validation-report.txt:76:        <main className="as6-crm-contacts-ui__list" data-as6-contacts-list="true" aria-label="CRM Contacts list">
+runtime/as6-epic012-slice10-crm-contacts-final-validation/final-validation-report.txt:86:    <section className="as6-crm-contacts-ui as6-crm-contacts-ui--production" data-as6-contacts-ui="foundation" aria-label="CRM Contacts production section">
+runtime/as6-epic012-slice10-crm-contacts-final-validation/final-validation-report.txt:87:        <main className="as6-crm-contacts-ui__list" data-as6-contacts-list="true" aria-label="CRM Contacts list">
+runtime/as6-epic012-slice10-crm-contacts-final-validation/final-validation-report.txt:105:    <section className="as6-crm-contacts-ui as6-crm-contacts-ui--production" data-as6-contacts-ui="foundation" aria-label="CRM Contacts production section">
+runtime/as6-epic012-slice10-crm-contacts-final-validation/final-validation-report.txt:106:        <main className="as6-crm-contacts-ui__list" data-as6-contacts-list="true" aria-label="CRM Contacts list">
+runtime/as6-epic012-slice10-crm-contacts-final-validation/final-validation-report.txt:141:    <section className="as6-crm-contacts-ui as6-crm-contacts-ui--production" data-as6-contacts-ui="foundation" aria-label="CRM Contacts production section">
+runtime/as6-epic012-slice10-crm-contacts-final-validation/final-validation-report.txt:142:        <main className="as6-crm-contacts-ui__list" data-as6-contacts-list="true" aria-label="CRM Contacts list">
+runtime/as6-epic012-slice10-crm-contacts-final-validation/final-validation-report.txt:186:    <section className="as6-crm-contacts-ui as6-crm-contacts-ui--production" data-as6-contacts-ui="foundation" aria-label="CRM Contacts production section">
+runtime/as6-epic012-slice10-crm-contacts-final-validation/final-validation-report.txt:187:        <main className="as6-crm-contacts-ui__list" data-as6-contacts-list="true" aria-label="CRM Contacts list">
+runtime/as6-epic012-slice10-crm-contacts-final-validation/final-validation-report.txt:225:    <section className="as6-crm-contacts-ui as6-crm-contacts-ui--production" data-as6-contacts-ui="foundation" aria-label="CRM Contacts production section">
+runtime/as6-epic012-slice10-crm-contacts-final-validation/final-validation-report.txt:226:        <main className="as6-crm-contacts-ui__list" data-as6-contacts-list="true" aria-label="CRM Contacts list">
+runtime/as6-epic012-slice10-crm-contacts-final-validation/final-validation-report.txt:231:frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx:    <section className="as6-crm-contacts-ui as6-crm-contacts-ui--production" data-as6-contacts-ui="foundation" aria-label="CRM Contacts production section">
+runtime/as6-epic012-slice10-crm-contacts-final-validation/registry-slice09.check.txt:1:ops/registry/as6-diagnostic-registry.md:## AS6_EPIC012_SLICE09_CRM_CONTACTS_PRODUCTION_POLISH
+runtime/as6-epic012-slice10-crm-contacts-final-validation/registry-slice09.check.txt:2:ops/registry/as6-coverage-registry.md:## AS6_EPIC012_SLICE09_CRM_CONTACTS_PRODUCTION_POLISH
+runtime/as6-epic012-slice10-crm-contacts-final-validation/registry-slice09.check.txt:3:docs/AS6_PROJECT_STATE.md:- Next stage: AS6_EPIC012_SLICE09_CRM_CONTACTS_PRODUCTION_POLISH.
+runtime/as6-epic012-slice10-crm-contacts-final-validation/registry-slice09.check.txt:4:docs/AS6_PROJECT_STATE.md:## AS6_EPIC012_SLICE09_CRM_CONTACTS_PRODUCTION_POLISH
+runtime/as6-epic012-slice10-crm-contacts-final-validation/registry-slice05.check.txt:1:ops/registry/as6-diagnostic-registry.md:## AS6_EPIC012_SLICE05_CRM_CONTACTS_UI_FOUNDATION
+runtime/as6-epic012-slice10-crm-contacts-final-validation/registry-slice05.check.txt:2:ops/registry/as6-coverage-registry.md:## AS6_EPIC012_SLICE05_CRM_CONTACTS_UI_FOUNDATION
+runtime/as6-epic012-slice10-crm-contacts-final-validation/registry-slice05.check.txt:3:docs/AS6_PROJECT_STATE.md:- Next stage: AS6_EPIC012_SLICE05_CRM_CONTACTS_UI_FOUNDATION.
+runtime/as6-epic012-slice10-crm-contacts-final-validation/registry-slice05.check.txt:4:docs/AS6_PROJECT_STATE.md:## AS6_EPIC012_SLICE05_CRM_CONTACTS_UI_FOUNDATION
+runtime/root-cause-governance-auto-sync/pre-diagnose-all.out:299:AS6_PRODUCTION_VALIDATED=PASS
+runtime/root-cause-governance-auto-sync/post-diagnose-all.out:299:AS6_PRODUCTION_VALIDATED=PASS
+runtime/root-cause-governance-sync-authority/pre-diagnose-all.out:299:AS6_PRODUCTION_VALIDATED=PASS
+runtime/root-cause-governance-sync-authority/post-diagnose-all.out:299:AS6_PRODUCTION_VALIDATED=PASS
+runtime/as6-epic012-slice08-live-layout-mount-diagnostics/summary.md:3:Stage: AS6_EPIC012_SLICE08_CRM_CONTACTS_LIVE_LAYOUT_MOUNT_DIAGNOSTICS
+runtime/as6-epic013-crm-next-module-planning/crm-module-candidates.txt:196:frontend/src/crm/contacts/live/CrmContactsLiveLayoutMount.jsx:7:    <section className="as6-crm-contacts-live-layout-mount" data-as6-contacts-live-layout-mount={crmLayoutMountMode} data-as6-contacts-layout-state={snapshot.state} aria-label="CRM Contacts Live Layout Mount">
+runtime/as6-epic013-crm-next-module-planning/crm-module-candidates.txt:221:frontend/src/crm/contacts/workspace/crmContactsWorkspacePanel.js:7:  title: "CRM Contacts",
+runtime/as6-epic013-crm-next-module-planning/crm-module-candidates.txt:233:frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx:40:    <section className="as6-crm-contacts-ui as6-crm-contacts-ui--production" data-as6-contacts-ui="foundation" aria-label="CRM Contacts production section">
+runtime/as6-epic013-crm-next-module-planning/crm-module-candidates.txt:234:frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx:41:      <header className="as6-crm-contacts-ui__header" aria-label="CRM Contacts header">
+runtime/as6-epic013-crm-next-module-planning/crm-module-candidates.txt:235:frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx:43:          <p>CRM Contacts</p>
+runtime/as6-epic013-crm-next-module-planning/crm-module-candidates.txt:236:frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx:49:        <main className="as6-crm-contacts-ui__list" data-as6-contacts-list="true" aria-label="CRM Contacts list">
+runtime/as6-epic013-crm-next-module-planning/crm-module-candidates.txt:238:frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx:52:        <aside className="as6-crm-contacts-ui__panel" data-as6-contacts-panel="true" aria-label="CRM Contacts diagnostics panel">
+runtime/as6-epic013-crm-next-module-planning/crm-module-candidates.txt:299:frontend/src/crm/contacts/crmContactDescriptor.js:5:  title: "CRM Contacts Foundation",
+runtime/as6-guardian-external-infra-repair/crm-control.after-repair.txt:17:AS6_EPIC012_SLICE01_CRM_FOUNDATION_DIAGNOSTIC=PASS
+runtime/as6-guardian-external-infra-repair/crm-control.after-repair.txt:26:AS6_EPIC012_SLICE01_CRM_FOUNDATION_CONTROL=PASS
+runtime/as6-guardian-external-infra-repair/crm-diagnostic.after-repair.txt:17:AS6_EPIC012_SLICE01_CRM_FOUNDATION_DIAGNOSTIC=PASS
+runtime/as6-epic012-slice01-crm-foundation/diagnostic.after.txt:17:AS6_EPIC012_SLICE01_CRM_FOUNDATION_DIAGNOSTIC=PASS
+runtime/as6-epic012-slice01-crm-foundation/control.after.txt:17:AS6_EPIC012_SLICE01_CRM_FOUNDATION_DIAGNOSTIC=PASS
+runtime/as6-epic012-slice01-crm-foundation/control.after.txt:26:AS6_EPIC012_SLICE01_CRM_FOUNDATION_CONTROL=PASS

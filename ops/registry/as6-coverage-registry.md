@@ -3835,3 +3835,8 @@ Permission Validation
 - Covers Slice 04 through Slice 09 diagnostic/control chain.
 - Covers live CRM layout mount, production polish, accessibility, performance constraints and registry completeness.
 - Marks CRM Contacts as production-validated for EPIC012.
+
+## AS6_EPIC013_CRM_NEXT_MODULE_PLANNING
+- Covers EPIC013 next module planning.
+- Covers selection of CRM Companies / Accounts as next module.
+- Covers EPIC012 dependency evidence and initial no-storage/no-api/no-workflow invariants.
