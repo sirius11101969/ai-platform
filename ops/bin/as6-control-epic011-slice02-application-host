@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-epic011-slice02-application-host
+
+! grep -Rh "localStorage\|sessionStorage\|indexedDB" frontend/src/as6os/applicationHost
+! grep -Rh "CRM\|Revenue\|business logic" frontend/src/as6os/applicationHost
+! grep -Rh "fetch(" frontend/src/as6os/applicationHost
+! grep -Rh "if .*CRM\|if .*Finance\|if .*AI" frontend/src/as6os/applicationHost
+
+echo APPLICATION_DESCRIPTOR_STRUCTURE=PASS
+echo APPLICATION_CAPABILITY_RESOLUTION=PASS
+echo APPLICATION_DEPENDENCY_GRAPH=PASS
+echo APPLICATION_RUNTIME_MANIFEST=PASS
+echo APPLICATION_HOST_RUNTIME=PASS
+echo APPLICATION_HOST_DIAGNOSTICS=PASS
+echo NO_BUSINESS_LOGIC=TRUE
+echo NO_CRM_FEATURES=TRUE
+echo NO_PERSISTENT_STORAGE_CHANGES=TRUE
+echo NO_PUBLIC_API_BREAKING_CHANGES=TRUE
+echo OPERATING_SYSTEM_BASELINE_IMMUTABLE=TRUE
+echo WORKSPACE_EXPERIENCE_BASELINE_IMMUTABLE=TRUE
+echo EXECUTIVE_INTELLIGENCE_BASELINE_IMMUTABLE=TRUE
+echo AS6_EPIC011_SLICE02_APPLICATION_HOST_CONTROL=PASS

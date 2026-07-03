@@ -2194,3 +2194,10 @@ Governed and registered.
 - AS6_APPLICATION_CONTRACT_MISSING: Application registered without a stable application contract.
 - AS6_APPLICATION_CONTEXT_DRIFT: Application runtime context diverges from declared application context contract.
 - AS6_APPLICATION_REGISTRY_COLLISION: Multiple applications registered with conflicting identifiers or capabilities.
+
+## AS6 EPIC011 Slice 02 Failure Classes
+- AS6_APPLICATION_DESCRIPTOR_INVALID: Application descriptor violates the application host contract.
+- AS6_APPLICATION_CAPABILITY_CONFLICT: Multiple applications expose incompatible capability definitions.
+- AS6_APPLICATION_DEPENDENCY_CYCLE: circular dependency detected between registered applications.
+- AS6_APPLICATION_RUNTIME_MANIFEST_INVALID: generated runtime manifest does not satisfy the application host contract.
+- AS6_APPLICATION_CAPABILITY_RESOLUTION_FAILURE: capability resolver failed to produce a consistent runtime capability graph.

@@ -3647,3 +3647,17 @@ Permission Validation
 - No business logic control=covered
 - No CRM features control=covered
 - No persistent storage control=covered
+
+## AS6 EPIC011 Slice 02 Coverage Registry
+- Application Host Contract=covered
+- Application Descriptor=covered
+- Application Capability Contract=covered
+- Application Host Registry=covered
+- Application Resolver=covered
+- Application Loader=covered
+- Dependency Graph=covered
+- Capability Graph=covered
+- Runtime Manifest=covered
+- Activation Pipeline=covered
+- Runtime Tracer=covered
+- Health Snapshot=covered

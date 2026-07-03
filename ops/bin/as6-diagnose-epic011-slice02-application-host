@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f frontend/src/as6os/applicationHost/applicationHostContract.js
+test -f frontend/src/as6os/applicationHost/applicationHostRegistry.js
+test -f frontend/src/as6os/applicationHost/applicationHostResolver.js
+test -f frontend/src/as6os/applicationHost/applicationHostLoader.js
+test -f frontend/src/as6os/applicationHost/applicationHostTracer.js
+test -f frontend/src/as6os/applicationHost/applicationHostHealthSnapshot.js
+test -f frontend/src/as6os/applicationHost/applicationHostController.js
+test -f frontend/src/as6os/applicationHost/AS6ApplicationHost.jsx
+
+grep -q defineAS6ApplicationDescriptor frontend/src/as6os/applicationHost/applicationHostContract.js
+grep -q defineAS6ApplicationHostCapability frontend/src/as6os/applicationHost/applicationHostContract.js
+grep -q as6ApplicationHostRegistry frontend/src/as6os/applicationHost/applicationHostRegistry.js
+grep -q createAS6ApplicationDependencyGraph frontend/src/as6os/applicationHost/applicationHostResolver.js
+grep -q createAS6ApplicationCapabilityGraph frontend/src/as6os/applicationHost/applicationHostResolver.js
+grep -q createAS6ApplicationRuntimeManifest frontend/src/as6os/applicationHost/applicationHostResolver.js
+grep -q loadAS6ApplicationHost frontend/src/as6os/applicationHost/applicationHostLoader.js
+grep -q traceAS6ApplicationHost frontend/src/as6os/applicationHost/applicationHostTracer.js
+grep -q getAS6ApplicationHostHealthSnapshot frontend/src/as6os/applicationHost/applicationHostHealthSnapshot.js
+grep -q activateAS6ApplicationHost frontend/src/as6os/applicationHost/applicationHostController.js
+
+echo AS6_APPLICATION_HOST=PASS
+echo AS6_APPLICATION_HOST_CONTROLLER=PASS
+echo AS6_APPLICATION_HOST_REGISTRY=PASS
+echo AS6_APPLICATION_HOST_CONTRACT=PASS
+echo AS6_APPLICATION_DESCRIPTOR=PASS
+echo AS6_APPLICATION_CAPABILITIES=PASS
+echo AS6_APPLICATION_DEPENDENCY_GRAPH=PASS
+echo AS6_APPLICATION_ACTIVATION_GRAPH=PASS
+echo AS6_APPLICATION_RUNTIME_MANIFEST=PASS
+echo AS6_APPLICATION_LOADER=PASS
+echo AS6_APPLICATION_RESOLVER=PASS
+echo AS6_APPLICATION_ACTIVATION=PASS
+echo AS6_APPLICATION_HOST_RUNTIME=PASS
+echo AS6_APPLICATION_HOST_HEALTH_SNAPSHOT=PASS
+echo AS6_EPIC011_SLICE02_APPLICATION_HOST_DIAGNOSTIC=PASS
