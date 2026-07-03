@@ -3745,3 +3745,27 @@ Permission Validation
 - Baseline Compatibility Review=covered
 - Observability Requirements=covered
 - Implementation Authorization=covered
+
+## AS6 EPIC012 Slice 01 CRM Foundation Coverage
+- CRM Descriptor=covered
+- CRM Manifest=covered
+- CRM Contract=covered
+- CRM Capability Manifest=covered
+- CRM Registry=covered
+- CRM Entity Model=covered
+- CRM Context=covered
+- CRM Runtime=covered
+- CRM Navigation Registration=covered
+- CRM Panel Registration=covered
+- CRM Command Registration=covered
+- CRM Public API=covered
+- CRM Tracer=covered
+- CRM Health Contract=covered
+- CRM Health Snapshot=covered
+- CRM Diagnostics=covered
+
+## AS6 Guardian External Infrastructure Failure Repair Coverage
+- Guardian failure classification=covered
+- External registry failure classification=covered
+- Recovered registry failure handling=covered
+- BUILD_RESULT and MERGE_DECISION separation=covered

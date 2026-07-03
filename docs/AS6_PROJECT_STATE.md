@@ -6027,3 +6027,33 @@ Status: PASS pending validation
 - IMPLEMENTATION_AUTHORIZED=TRUE.
 - PROJECT_READINESS=99%.
 - NEXT_STAGE=AS6_EPIC012_SLICE01_CRM_FOUNDATION.
+
+## AS6_DONE=AS6_EPIC012_SLICE01_CRM_FOUNDATION
+- Added CRM Descriptor.
+- Added CRM Manifest.
+- Added CRM Contract.
+- Added CRM Capability Manifest.
+- Added CRM Registry.
+- Added CRM Entity Model.
+- Added CRM Context.
+- Added CRM Runtime.
+- Added CRM Navigation Registration.
+- Added CRM Panel Registration.
+- Added CRM Command Registration.
+- Added CRM Public API.
+- Added CRM Tracer.
+- Added CRM Health Contract.
+- Added CRM Health Snapshot.
+- Added CRM Diagnostics.
+- EPIC_TYPE=APPLICATION.
+- PLATFORM_MUTATION=FALSE.
+- PROJECT_READINESS=99%.
+- NEXT_STAGE=AS6_EPIC012_SLICE02_CRM_ENTITY_RUNTIME.
+
+## AS6_DONE=AS6_GUARDIAN_EXTERNAL_INFRASTRUCTURE_FAILURE_REPAIR
+- Added Guardian external infrastructure failure classification.
+- Added recovered Docker Registry failure handling.
+- Added BUILD_RESULT and MERGE_DECISION separation.
+- Added diagnostic and control for Guardian external infrastructure repair.
+- Preserved CRM Foundation implementation without rollback.
+- PROJECT_READINESS=99%.

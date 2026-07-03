@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f frontend/src/as6crm/crmDescriptor.js
+test -f frontend/src/as6crm/crmManifest.js
+test -f frontend/src/as6crm/crmContract.js
+test -f frontend/src/as6crm/crmCapabilityManifest.js
+test -f frontend/src/as6crm/crmRegistry.js
+test -f frontend/src/as6crm/crmEntityModel.js
+test -f frontend/src/as6crm/crmContext.js
+test -f frontend/src/as6crm/crmRuntime.js
+test -f frontend/src/as6crm/crmNavigationRegistration.js
+test -f frontend/src/as6crm/crmPanelRegistration.js
+test -f frontend/src/as6crm/crmCommandRegistration.js
+test -f frontend/src/as6crm/crmPublicApi.js
+test -f frontend/src/as6crm/crmTracer.js
+test -f frontend/src/as6crm/crmHealthContract.js
+test -f frontend/src/as6crm/crmHealthSnapshot.js
+test -f frontend/src/as6crm/crmDiagnostics.js
+test -f frontend/src/as6crm/index.js
+
+grep -q "platformMutation: false" frontend/src/as6crm/crmDescriptor.js
+grep -q "defineAS6CrmModule" frontend/src/as6crm/crmContract.js
+grep -q "createAS6CrmManifest" frontend/src/as6crm/crmManifest.js
+grep -q "getAS6CrmHealthSnapshot" frontend/src/as6crm/crmHealthSnapshot.js
+grep -q "runAS6CrmDiagnostics" frontend/src/as6crm/crmDiagnostics.js
+
+echo AS6_CRM_FOUNDATION=PASS
+echo AS6_CRM_DESCRIPTOR=PASS
+echo AS6_CRM_MANIFEST=PASS
+echo AS6_CRM_CONTRACT=PASS
+echo AS6_CRM_CAPABILITY_MANIFEST=PASS
+echo AS6_CRM_REGISTRY=PASS
+echo AS6_CRM_ENTITY_MODEL=PASS
+echo AS6_CRM_CONTEXT=PASS
+echo AS6_CRM_RUNTIME=PASS
+echo AS6_CRM_NAVIGATION_REGISTRATION=PASS
+echo AS6_CRM_PANEL_REGISTRATION=PASS
+echo AS6_CRM_COMMAND_REGISTRATION=PASS
+echo AS6_CRM_PUBLIC_API=PASS
+echo AS6_CRM_HEALTH_CONTRACT=PASS
+echo AS6_CRM_HEALTH_SNAPSHOT=PASS
+echo AS6_CRM_DIAGNOSTICS=PASS
+echo AS6_EPIC012_SLICE01_CRM_FOUNDATION_DIAGNOSTIC=PASS

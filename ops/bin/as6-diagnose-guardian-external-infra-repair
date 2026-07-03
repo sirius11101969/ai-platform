@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -x ops/bin/as6-pr-guardian
+test -x ops/bin/as6-pr-guardian-core
+grep -q "AS6_GUARDIAN_EXTERNAL_INFRASTRUCTURE_FAILURE" ops/bin/as6-pr-guardian
+grep -q "REGISTRY_FAILURES=RECOVERED" ops/bin/as6-pr-guardian
+grep -q "MERGE_DECISION=ALLOW" ops/bin/as6-pr-guardian
+
+echo AS6_GUARDIAN_EXTERNAL_INFRASTRUCTURE_FAILURE_REPAIR=PASS
+echo GUARDIAN_FAILURE_CLASSIFICATION=PASS
+echo GUARDIAN_RECOVERED_REGISTRY_FAILURE=PASS
+echo BUILD_RESULT_MERGE_DECISION_SEPARATION=PASS

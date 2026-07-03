@@ -1862,3 +1862,24 @@ ops/bin/as6-control-permission-engine-v114
 - FAILURE_CLASS=AS6_CRM_FOUNDATION_PLANNING_GAP
 - FAILURE_CLASS=AS6_APPLICATION_EPIC_PLATFORM_MUTATION_ATTEMPT
 - FAILURE_CLASS=AS6_CRM_BASELINE_COMPATIBILITY_GAP
+
+## AS6 EPIC012 Slice 01 CRM Foundation
+- STAGE=AS6_EPIC012_SLICE01_CRM_FOUNDATION
+- DIAGNOSTIC=ops/bin/as6-diagnose-epic012-slice01-crm-foundation
+- CONTROL=ops/bin/as6-control-epic012-slice01-crm-foundation
+- RUNTIME_TRACER=traceAS6Crm
+- HEALTH_SNAPSHOT=getAS6CrmHealthSnapshot
+- FAILURE_CLASS=AS6_CRM_CONTRACT_MISSING
+- FAILURE_CLASS=AS6_CRM_ENTITY_MODEL_DRIFT
+- FAILURE_CLASS=AS6_CRM_CAPABILITY_CONFLICT
+- FAILURE_CLASS=AS6_APPLICATION_DESCRIPTOR_VERSION_DRIFT
+- FAILURE_CLASS=AS6_APPLICATION_MANIFEST_INCOMPLETE
+- FAILURE_CLASS=AS6_PUBLIC_API_SURFACE_DRIFT
+- FAILURE_CLASS=AS6_HEALTH_CONTRACT_INCOMPLETE
+
+## AS6 Guardian External Infrastructure Failure Repair
+- FAILURE_CLASS=AS6_GUARDIAN_EXTERNAL_INFRASTRUCTURE_FAILURE
+- ROOT_CAUSE=Guardian treated transient external Docker Registry failure as project failure.
+- DIAGNOSTIC=ops/bin/as6-diagnose-guardian-external-infra-repair
+- CONTROL=ops/bin/as6-control-guardian-external-infra-repair
+- PREVENTION=classify external registry failures and allow recovered same-run retry result.

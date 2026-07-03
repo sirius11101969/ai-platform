@@ -2253,3 +2253,15 @@ Governed and registered.
 - AS6_CRM_FOUNDATION_PLANNING_GAP: CRM Foundation implementation starts without full planning approval.
 - AS6_APPLICATION_EPIC_PLATFORM_MUTATION_ATTEMPT: application EPIC attempts to mutate stable platform baseline.
 - AS6_CRM_BASELINE_COMPATIBILITY_GAP: CRM Foundation does not declare compatibility with required platform baselines.
+
+## AS6 EPIC012 Slice 01 CRM Foundation Failure Classes
+- AS6_CRM_CONTRACT_MISSING: CRM module registered without CRM contract.
+- AS6_CRM_ENTITY_MODEL_DRIFT: CRM entity model diverges from declared CRM contract.
+- AS6_CRM_CAPABILITY_CONFLICT: CRM capabilities violate Application Foundation capability contract.
+- AS6_APPLICATION_DESCRIPTOR_VERSION_DRIFT: Descriptor version is incompatible with the published application contract.
+- AS6_APPLICATION_MANIFEST_INCOMPLETE: Application Manifest does not declare all required infrastructure components.
+- AS6_PUBLIC_API_SURFACE_DRIFT: Public API exports differ from the approved application contract.
+- AS6_HEALTH_CONTRACT_INCOMPLETE: Health Contract does not expose all mandatory diagnostics.
+
+## AS6 Guardian External Infrastructure Failure Repair
+- AS6_GUARDIAN_EXTERNAL_INFRASTRUCTURE_FAILURE: transient external Docker Registry failure was treated as project failure after same-run recovery.
