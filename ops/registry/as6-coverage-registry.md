@@ -3685,3 +3685,16 @@ Permission Validation
 - Runtime Context Bridge=covered
 - Runtime Tracer=covered
 - Health Snapshot=covered
+
+## AS6 EPIC011 Slice 05 Coverage Registry
+- Extension Point Contract=covered
+- Extension Registry=covered
+- Extension Policy=covered
+- Extension Resolver=covered
+- Extension Capability Contract=covered
+- Extension Compatibility=covered
+- Extension Lifecycle Policy=covered
+- Extension Composition=covered
+- Extension Runtime=covered
+- Extension Tracer=covered
+- Extension Health Snapshot=covered

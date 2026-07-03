@@ -2215,3 +2215,11 @@ Governed and registered.
 - AS6_RUNTIME_EVENT_ROUTING_FAILURE: runtime event cannot be routed through declared Event Bus.
 - AS6_RUNTIME_SERVICE_CAPABILITY_CONFLICT: two runtime services expose incompatible capability definitions.
 - AS6_RUNTIME_CONTEXT_BRIDGE_FAILURE: runtime context cannot be propagated between dependent runtime services.
+
+## AS6 EPIC011 Slice 05 Failure Classes
+- AS6_EXTENSION_POINT_CONTRACT_MISMATCH: extension implementation violates declared extension contract.
+- AS6_EXTENSION_CAPABILITY_CONFLICT: multiple extensions expose incompatible capabilities.
+- AS6_EXTENSION_RESOLUTION_FAILURE: extension resolver cannot produce a valid composition graph.
+- AS6_EXTENSION_POLICY_VIOLATION: extension violates declared platform extension policy.
+- AS6_EXTENSION_VERSION_INCOMPATIBILITY: extension version is incompatible with active platform baseline.
+- AS6_EXTENSION_LIFECYCLE_CONFLICT: extension lifecycle cannot be coordinated with runtime lifecycle.

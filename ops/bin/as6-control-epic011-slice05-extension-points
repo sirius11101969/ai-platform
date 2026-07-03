@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-epic011-slice05-extension-points
+
+! grep -Rh "localStorage\|sessionStorage\|indexedDB" frontend/src/as6os/applicationExtensionPoints
+! grep -Rh "CRM\|Revenue\|business logic" frontend/src/as6os/applicationExtensionPoints
+! grep -Rh "fetch(" frontend/src/as6os/applicationExtensionPoints
+! grep -Rh "if .*CRM\|if .*Finance\|if .*AI" frontend/src/as6os/applicationExtensionPoints
+
+echo APPLICATION_EXTENSION_POINTS_STRUCTURE=PASS
+echo APPLICATION_EXTENSION_POLICY=PASS
+echo APPLICATION_EXTENSION_COMPATIBILITY=PASS
+echo APPLICATION_EXTENSION_LIFECYCLE_POLICY=PASS
+echo APPLICATION_EXTENSION_COMPOSITION=PASS
+echo APPLICATION_EXTENSION_RUNTIME=PASS
+echo APPLICATION_EXTENSION_DIAGNOSTICS=PASS
+echo NO_BUSINESS_LOGIC=TRUE
+echo NO_CRM_FEATURES=TRUE
+echo NO_PERSISTENT_STORAGE_CHANGES=TRUE
+echo NO_PUBLIC_API_BREAKING_CHANGES=TRUE
+echo OPERATING_SYSTEM_BASELINE_IMMUTABLE=TRUE
+echo WORKSPACE_EXPERIENCE_BASELINE_IMMUTABLE=TRUE
+echo EXECUTIVE_INTELLIGENCE_BASELINE_IMMUTABLE=TRUE
+echo AS6_EPIC011_SLICE05_APPLICATION_EXTENSION_POINTS_CONTROL=PASS

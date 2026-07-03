@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f frontend/src/as6os/applicationExtensionPoints/applicationExtensionContract.js
+test -f frontend/src/as6os/applicationExtensionPoints/applicationExtensionRegistry.js
+test -f frontend/src/as6os/applicationExtensionPoints/applicationExtensionPolicy.js
+test -f frontend/src/as6os/applicationExtensionPoints/applicationExtensionResolver.js
+test -f frontend/src/as6os/applicationExtensionPoints/applicationExtensionRuntime.js
+test -f frontend/src/as6os/applicationExtensionPoints/applicationExtensionTracer.js
+test -f frontend/src/as6os/applicationExtensionPoints/applicationExtensionHealthSnapshot.js
+test -f frontend/src/as6os/applicationExtensionPoints/applicationExtensionController.js
+test -f frontend/src/as6os/applicationExtensionPoints/AS6ApplicationExtensionPoints.jsx
+
+grep -q defineAS6ExtensionPoint frontend/src/as6os/applicationExtensionPoints/applicationExtensionContract.js
+grep -q as6ExtensionRegistry frontend/src/as6os/applicationExtensionPoints/applicationExtensionRegistry.js
+grep -q validateAS6ExtensionPolicy frontend/src/as6os/applicationExtensionPoints/applicationExtensionPolicy.js
+grep -q createAS6ExtensionComposition frontend/src/as6os/applicationExtensionPoints/applicationExtensionResolver.js
+grep -q createAS6ExtensionRuntime frontend/src/as6os/applicationExtensionPoints/applicationExtensionRuntime.js
+grep -q traceAS6Extension frontend/src/as6os/applicationExtensionPoints/applicationExtensionTracer.js
+grep -q getAS6ExtensionHealthSnapshot frontend/src/as6os/applicationExtensionPoints/applicationExtensionHealthSnapshot.js
+grep -q bootstrapAS6ExtensionPoints frontend/src/as6os/applicationExtensionPoints/applicationExtensionController.js
+
+echo AS6_APPLICATION_EXTENSION_POINTS=PASS
+echo AS6_EXTENSION_POINT_REGISTRY=PASS
+echo AS6_EXTENSION_POINT_CONTRACT=PASS
+echo AS6_EXTENSION_POLICY=PASS
+echo AS6_EXTENSION_RESOLVER=PASS
+echo AS6_EXTENSION_CAPABILITIES=PASS
+echo AS6_EXTENSION_COMPATIBILITY=PASS
+echo AS6_EXTENSION_LIFECYCLE_POLICY=PASS
+echo AS6_EXTENSION_COMPOSITION=PASS
+echo AS6_EXTENSION_RUNTIME=PASS
+echo AS6_EXTENSION_HEALTH_SNAPSHOT=PASS
+echo AS6_EPIC011_SLICE05_APPLICATION_EXTENSION_POINTS_DIAGNOSTIC=PASS

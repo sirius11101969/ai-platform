@@ -1,0 +1,6 @@
+.as6-application-extension-points{display:grid;gap:16px;border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:18px;background:rgba(255,255,255,.04);color:#f8fafc}
+.as6-application-extension-points__header{display:grid;gap:6px}
+.as6-application-extension-points__header span{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:#94a3b8}
+.as6-application-extension-points__header strong{font-size:18px}
+.as6-application-extension-points button{border:0;border-radius:14px;padding:12px;text-align:left;background:rgba(255,255,255,.08);color:#f8fafc;cursor:pointer}
+.as6-application-extension-points pre{margin:0;border-radius:14px;padding:14px;background:rgba(0,0,0,.18);color:#cbd5e1;overflow:auto}
