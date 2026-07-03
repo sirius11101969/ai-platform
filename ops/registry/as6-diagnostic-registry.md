@@ -2034,3 +2034,11 @@ ops/bin/as6-control-permission-engine-v114
 - AEC rules: ops/aec/as6-epic014-crm-next-module-selection-aec.md
 - Added checks: Deals / Opportunities selection, Contacts foundation reuse, Companies foundation reuse, existing CRM Workspace/Layout, as6-grep-safe, Epic Completion Marker Guard, no parallel shell/router/store.
 - Failure classes: CRM_EPIC014_NEXT_MODULE_SELECTION_GAP, CRM_DEALS_SELECTION_DRIFT, CRM_DEALS_CONTACTS_REUSE_GAP, CRM_DEALS_COMPANIES_REUSE_GAP, CRM_DEALS_PARALLEL_SHELL_DRIFT.
+
+## AS6_EPIC014_SLICE01_CRM_DEALS_DOMAIN_MODEL
+- Diagnostic: ops/bin/as6-diagnose-epic014-crm-deals-domain-model
+- Control: ops/bin/as6-control-epic014-crm-deals-domain-model
+- Runtime tracer: frontend/src/crm/deals/domain/crmDealRuntimeTracer.js
+- AEC rules: ops/aec/as6-epic014-crm-deals-domain-model-aec.md
+- Added checks: identity, status, pipeline, stage, lifecycle, company link, contact link, domain contract, descriptor, runtime tracer, no storage, no API, no workflow, no heavy dependency.
+- Failure classes: CRM_DEALS_DOMAIN_MODEL_GAP, CRM_DEALS_IDENTITY_DRIFT, CRM_DEALS_STATUS_DRIFT, CRM_DEALS_PIPELINE_DRIFT, CRM_DEALS_STAGE_DRIFT, CRM_DEALS_LIFECYCLE_DRIFT, CRM_DEALS_LINKAGE_DRIFT.

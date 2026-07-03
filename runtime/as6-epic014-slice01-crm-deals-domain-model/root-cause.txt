@@ -1,0 +1,5 @@
+ROOT_CAUSE=CRM_DEALS_DOMAIN_MODEL_MISSING_AFTER_EPIC014_SELECTION
+FAILURE_CLASS=CRM_DEALS_DOMAIN_MODEL_GAP
+ARCHITECTURE_DRIFT=EPIC014 selected CRM Deals / Opportunities but no declarative Deals domain model existed
+VALIDATION_GAP=No Deals identity/status/pipeline/stage/lifecycle/contact-link/company-link/domain-contract diagnostics existed before Slice 01
+PREVENTION=Add Deals domain model, runtime tracer, diagnostics, control, AEC rules, governance, registry and coverage evidence before foundation slice

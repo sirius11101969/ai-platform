@@ -1,0 +1,38 @@
+frontend/src/crm/deals/domain/crmDealDiagnostics.js:    ["CRM_DEALS_DOMAIN_MODEL_ONLY", CRM_DEAL_CONTRACT.invariants.CRM_DEALS_DOMAIN_MODEL_ONLY === true],
+frontend/src/crm/deals/domain/crmDealContract.js:    CRM_DEALS_DOMAIN_MODEL_ONLY: true,
+frontend/src/crm/deals/domain/crmDealContract.js:  module: "CRM_DEALS_OPPORTUNITIES",
+frontend/src/crm/deals/domain/crmDealRuntimeTracer.js:    module: "CRM_DEALS_OPPORTUNITIES",
+frontend/src/crm/deals/domain/crmDealDiagnostics.js:    ["IDENTITY_MODEL", CRM_DEAL_CONTRACT.identity.entity === "crm.deal"],
+frontend/src/crm/deals/domain/crmDealContactLink.js:  relation: "crm.deal.contact",
+frontend/src/crm/deals/domain/crmDealIdentity.js:  entity: "crm.deal",
+frontend/src/crm/deals/domain/crmDealIdentity.js:  canonicalKey: "crm.deals.opportunities",
+frontend/src/crm/deals/domain/crmDealCompanyLink.js:  relation: "crm.deal.company",
+frontend/src/crm/deals/domain/crmDealDescriptor.js:  id: "crm.deals.domain",
+frontend/src/crm/deals/domain/crmDealRuntimeTracer.js:    entity: "crm.deal",
+frontend/src/crm/deals/domain/crmDealPipeline.js:  id: "crm.deals.pipeline.default",
+frontend/src/crm/deals/domain/crmDealCompanyLink.js:  relation: "crm.deal.company",
+frontend/src/crm/deals/domain/crmDealContactLink.js:  relation: "crm.deal.contact",
+frontend/src/crm/deals/domain/crmDealDiagnostics.js:    ["COMPANY_LINK_DECLARATIVE_ONLY", CRM_DEAL_CONTRACT.links.company.mode === "declarative-only" && CRM_DEAL_CONTRACT.links.company.hardCoupling === false],
+frontend/src/crm/deals/domain/crmDealDiagnostics.js:    ["CONTACT_LINK_DECLARATIVE_ONLY", CRM_DEAL_CONTRACT.links.contact.mode === "declarative-only" && CRM_DEAL_CONTRACT.links.contact.hardCoupling === false],
+frontend/src/crm/deals/domain/crmDealContactLink.js:  mode: "declarative-only",
+frontend/src/crm/deals/domain/crmDealCompanyLink.js:  mode: "declarative-only",
+frontend/src/crm/deals/domain/crmDealRuntimeTracer.js:    pipeline: "declarative-only",
+frontend/src/crm/deals/domain/crmDealRuntimeTracer.js:    companyLink: "declarative-only",
+frontend/src/crm/deals/domain/crmDealRuntimeTracer.js:    contactLink: "declarative-only",
+frontend/src/crm/deals/domain/crmDealDiagnostics.js:    ["REUSE_CONTACTS_FOUNDATION", CRM_DEAL_CONTRACT.invariants.REUSE_CONTACTS_FOUNDATION === true],
+frontend/src/crm/deals/domain/crmDealContract.js:    REUSE_CONTACTS_FOUNDATION: true,
+frontend/src/crm/deals/domain/crmDealDiagnostics.js:    ["REUSE_COMPANIES_FOUNDATION", CRM_DEAL_CONTRACT.invariants.REUSE_COMPANIES_FOUNDATION === true],
+frontend/src/crm/deals/domain/crmDealContract.js:    REUSE_COMPANIES_FOUNDATION: true,
+frontend/src/crm/deals/domain/crmDealDiagnostics.js:    ["NO_STORAGE", CRM_DEAL_CONTRACT.invariants.NO_STORAGE === true],
+frontend/src/crm/deals/domain/crmDealContract.js:    NO_STORAGE: true,
+frontend/src/crm/deals/domain/crmDealDiagnostics.js:    ["NO_API_CALLS", CRM_DEAL_CONTRACT.invariants.NO_API_CALLS === true],
+frontend/src/crm/deals/domain/crmDealContract.js:    NO_API_CALLS: true,
+frontend/src/crm/deals/domain/crmDealDiagnostics.js:    ["NO_BUSINESS_WORKFLOW", CRM_DEAL_CONTRACT.invariants.NO_BUSINESS_WORKFLOW === true],
+frontend/src/crm/deals/domain/crmDealContract.js:    NO_BUSINESS_WORKFLOW: true,
+frontend/src/crm/deals/domain/index.js:export { traceCrmDealDomain } from "./crmDealRuntimeTracer";
+frontend/src/crm/deals/domain/crmDealDiagnostics.js:import { traceCrmDealDomain } from "./crmDealRuntimeTracer";
+frontend/src/crm/deals/domain/crmDealDiagnostics.js:    trace: traceCrmDealDomain(),
+frontend/src/crm/deals/domain/crmDealRuntimeTracer.js:export function traceCrmDealDomain(event = "CRM_DEAL_DOMAIN_TRACE") {
+frontend/src/crm/deals/domain/index.js:export { diagnoseCrmDealDomainModel } from "./crmDealDiagnostics";
+frontend/src/crm/deals/domain/crmDealDiagnostics.js:export function diagnoseCrmDealDomainModel() {
+AS6_EPIC014_CRM_DEALS_DOMAIN_MODEL=PASS

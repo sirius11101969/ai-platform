@@ -3899,3 +3899,9 @@ Permission Validation
 - Covers CRM Deals / Opportunities roadmap.
 - Covers reuse of Contacts and Companies foundations.
 - Covers mandatory use of existing CRM Workspace/Layout, as6-grep-safe and Epic Completion Marker Guard.
+
+## AS6_EPIC014_SLICE01_CRM_DEALS_DOMAIN_MODEL
+- Covers CRM Deals / Opportunities domain model.
+- Covers identity, status, pipeline, stage, lifecycle, company link, contact link, domain contract, descriptor, runtime tracer and diagnostics.
+- Covers reuse of Contacts and Companies foundations.
+- Covers no-storage, no-api, no-business-workflow and no-heavy-dependency invariants.

@@ -6302,3 +6302,15 @@ Status: PASS pending validation
 - Added failure classes: CRM_EPIC014_NEXT_MODULE_SELECTION_GAP, CRM_DEALS_SELECTION_DRIFT, CRM_DEALS_CONTACTS_REUSE_GAP, CRM_DEALS_COMPANIES_REUSE_GAP, CRM_DEALS_PARALLEL_SHELL_DRIFT.
 - Project readiness: 99%.
 - Next stage: AS6_EPIC014_SLICE01_CRM_DEALS_DOMAIN_MODEL.
+
+## AS6_EPIC014_SLICE01_CRM_DEALS_DOMAIN_MODEL
+- Added CRM Deals / Opportunities domain model.
+- Added identity, status, pipeline, stage, lifecycle, company link, contact link, domain contract and descriptor.
+- Added runtime tracer: frontend/src/crm/deals/domain/crmDealRuntimeTracer.js.
+- Added diagnostics: ops/bin/as6-diagnose-epic014-crm-deals-domain-model.
+- Added controls: ops/bin/as6-control-epic014-crm-deals-domain-model.
+- Added AEC rules: ops/aec/as6-epic014-crm-deals-domain-model-aec.md.
+- Added governance: ops/governance/as6-epic014-crm-deals-domain-model-governance.md.
+- Added failure classes: CRM_DEALS_DOMAIN_MODEL_GAP, CRM_DEALS_IDENTITY_DRIFT, CRM_DEALS_STATUS_DRIFT, CRM_DEALS_PIPELINE_DRIFT, CRM_DEALS_STAGE_DRIFT, CRM_DEALS_LIFECYCLE_DRIFT, CRM_DEALS_LINKAGE_DRIFT.
+- Project readiness: 99%.
+- Next stage: AS6_EPIC014_SLICE02_CRM_DEALS_FOUNDATION.

@@ -1,0 +1,11 @@
+export { CRM_DEAL_IDENTITY } from "./crmDealIdentity";
+export { CRM_DEAL_STATUS, CRM_DEAL_TERMINAL_STATUSES } from "./crmDealStatus";
+export { CRM_DEAL_PIPELINE } from "./crmDealPipeline";
+export { CRM_DEAL_STAGE } from "./crmDealStage";
+export { CRM_DEAL_LIFECYCLE } from "./crmDealLifecycle";
+export { CRM_DEAL_COMPANY_LINK } from "./crmDealCompanyLink";
+export { CRM_DEAL_CONTACT_LINK } from "./crmDealContactLink";
+export { CRM_DEAL_CONTRACT } from "./crmDealContract";
+export { crmDealDescriptor } from "./crmDealDescriptor";
+export { traceCrmDealDomain } from "./crmDealRuntimeTracer";
+export { diagnoseCrmDealDomainModel } from "./crmDealDiagnostics";

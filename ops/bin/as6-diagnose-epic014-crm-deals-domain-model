@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -x ops/bin/as6-grep-safe
+
+for f in \
+  crmDealIdentity \
+  crmDealStatus \
+  crmDealPipeline \
+  crmDealStage \
+  crmDealLifecycle \
+  crmDealCompanyLink \
+  crmDealContactLink \
+  crmDealContract \
+  crmDealDescriptor \
+  crmDealRuntimeTracer \
+  crmDealDiagnostics
+do
+  test -f "frontend/src/crm/deals/domain/${f}.js"
+done
+
+test -f frontend/src/crm/deals/domain/index.js
+test -f frontend/src/crm/deals/index.js
+
+ops/bin/as6-grep-safe -R "CRM_DEALS_DOMAIN_MODEL_ONLY" frontend/src/crm/deals/domain
+ops/bin/as6-grep-safe -R "CRM_DEALS_OPPORTUNITIES" frontend/src/crm/deals/domain
+ops/bin/as6-grep-safe -R "crm.deal" frontend/src/crm/deals/domain
+ops/bin/as6-grep-safe -R "crm.deal.company" frontend/src/crm/deals/domain
+ops/bin/as6-grep-safe -R "crm.deal.contact" frontend/src/crm/deals/domain
+ops/bin/as6-grep-safe -R "declarative-only" frontend/src/crm/deals/domain
+ops/bin/as6-grep-safe -R "REUSE_CONTACTS_FOUNDATION" frontend/src/crm/deals/domain
+ops/bin/as6-grep-safe -R "REUSE_COMPANIES_FOUNDATION" frontend/src/crm/deals/domain
+ops/bin/as6-grep-safe -R "NO_STORAGE" frontend/src/crm/deals/domain
+ops/bin/as6-grep-safe -R "NO_API_CALLS" frontend/src/crm/deals/domain
+ops/bin/as6-grep-safe -R "NO_BUSINESS_WORKFLOW" frontend/src/crm/deals/domain
+ops/bin/as6-grep-safe -R "traceCrmDealDomain" frontend/src/crm/deals/domain
+ops/bin/as6-grep-safe -R "diagnoseCrmDealDomainModel" frontend/src/crm/deals/domain
+
+echo "AS6_EPIC014_CRM_DEALS_DOMAIN_MODEL=PASS"
