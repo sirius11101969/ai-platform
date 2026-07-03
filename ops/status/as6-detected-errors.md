@@ -2169,3 +2169,10 @@ Governed and registered.
 - FAILURE_CLASS=AS6_INTEGRATION_CONTRACT_MISSING
 - FAILURE_CLASS=AS6_INTEGRATION_HEALTH_GAP
 - ROOT_CAUSE=Workspace layers require unified integration runtime.
+
+## AS6 EPIC010 PRR Failure Classes
+- AS6_PRR_BASELINE_SIDE_EFFECT_FORBIDDEN: PRR attempted to create baseline artifacts or close EPIC010.
+- AS6_WORKSPACE_PRR_READINESS_GATE_FAILED: one or more Workspace Experience readiness criteria failed.
+- AS6_BASELINE_COMMIT_MISMATCH: baseline attempted against a commit different from the PRR-approved commit.
+
+- AS6_DIAGNOSTIC_CONTRACT_DRIFT: PRR diagnostic validated an obsolete implementation contract instead of the current exported Panels health contract.

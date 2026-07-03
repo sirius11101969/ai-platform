@@ -3586,3 +3586,27 @@ Permission Validation
 - AS6_INTEGRATION_REGISTRY: covered
 - AS6_INTEGRATION_CONTRACT: covered
 - AS6_UNIFIED_WORKSPACE_HEALTH: covered
+
+## AS6 EPIC010 PRR Coverage Registry
+- Workspace Architecture Review=covered
+- Workspace Layer Dependency Review=covered
+- Workspace API Surface Review=covered
+- Workspace Contract Compatibility=covered
+- Workspace Integration Consistency=covered
+- Workspace Runtime Review=covered
+- Workspace Bootstrap Idempotency=covered
+- Workspace Startup Sequence=covered
+- Workspace Shutdown Sequence=covered
+- Workspace Runtime Trace Completeness=covered
+- Workspace Health Snapshot=covered
+- Workspace Foundation Review=covered
+- Workspace Layout Review=covered
+- Workspace Navigation Review=covered
+- Workspace Panels Review=covered
+- Workspace Command Palette Review=covered
+- Workspace Assistant Surface Review=covered
+- Workspace Integration Review=covered
+- Governance Review=covered
+- PRR side-effect-free policy=covered
+- Baseline commit match policy=covered
+- Diagnostic contract drift prevention=covered
