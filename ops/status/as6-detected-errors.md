@@ -2271,3 +2271,11 @@ Governed and registered.
 - AS6_CRM_ENTITY_FIELD_CONTRACT_MISSING: CRM entity field registered without required contract.
 - AS6_CRM_ENTITY_FIELD_RESOLUTION_FAILURE: CRM entity references an unresolved field.
 - AS6_CRM_ENTITY_RUNTIME_STORAGE_DRIFT: CRM entity runtime introduces storage before storage slice authorization.
+
+## AS6 EPIC012 Slice 03 CRM Domain Model Failure Classes
+- AS6_CRM_DOMAIN_CONTRACT_MISSING: CRM domain model registered without required domain contract.
+- AS6_CRM_RELATIONSHIP_CONFLICT: CRM relationship violates approved relationship contract.
+- AS6_CRM_DOMAIN_DESCRIPTOR_INVALID: CRM domain descriptor violates required descriptor shape.
+- AS6_CRM_DOMAIN_MANIFEST_DRIFT: CRM domain manifest diverges from domain registry.
+- AS6_CRM_AGGREGATE_CONTRACT_MISSING: CRM aggregate registered without required aggregate contract.
+- AS6_CRM_RELATIONSHIP_CONTRACT_MISSING: CRM relationship registered without required relationship contract.

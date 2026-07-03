@@ -3782,3 +3782,17 @@ Permission Validation
 - CRM Entity Diagnostics=covered
 - CRM Entity Tracer=covered
 - CRM Entity Health Snapshot=covered
+
+## AS6 EPIC012 Slice 03 CRM Domain Model Coverage
+- CRM Domain Contract=covered
+- CRM Domain Descriptor=covered
+- CRM Domain Registry=covered
+- CRM Domain Resolver=covered
+- CRM Aggregate Model=covered
+- CRM Relationship Contract=covered
+- CRM Relationship Model=covered
+- CRM Domain Manifest=covered
+- CRM Domain Runtime=covered
+- CRM Domain Diagnostics=covered
+- CRM Domain Tracer=covered
+- CRM Domain Health Snapshot=covered

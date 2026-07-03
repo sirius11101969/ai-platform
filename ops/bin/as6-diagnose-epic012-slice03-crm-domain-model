@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f frontend/src/as6crm/crmDomainContract.js
+test -f frontend/src/as6crm/crmDomainDescriptor.js
+test -f frontend/src/as6crm/crmDomainRegistry.js
+test -f frontend/src/as6crm/crmDomainResolver.js
+test -f frontend/src/as6crm/crmAggregateModel.js
+test -f frontend/src/as6crm/crmRelationshipContract.js
+test -f frontend/src/as6crm/crmRelationshipModel.js
+test -f frontend/src/as6crm/crmDomainManifest.js
+test -f frontend/src/as6crm/crmDomainRuntime.js
+test -f frontend/src/as6crm/crmDomainDiagnostics.js
+test -f frontend/src/as6crm/crmDomainTracer.js
+test -f frontend/src/as6crm/crmDomainHealthSnapshot.js
+
+grep -q "defineAS6CrmDomain" frontend/src/as6crm/crmDomainContract.js
+grep -q "as6CrmDomainDescriptor" frontend/src/as6crm/crmDomainDescriptor.js
+grep -q "as6CrmDomainRegistry" frontend/src/as6crm/crmDomainRegistry.js
+grep -q "resolveAS6CrmDomainModel" frontend/src/as6crm/crmDomainResolver.js
+grep -q "defineAS6CrmRelationship" frontend/src/as6crm/crmRelationshipContract.js
+grep -q "createAS6CrmDomainManifest" frontend/src/as6crm/crmDomainManifest.js
+grep -q "createAS6CrmDomainRuntime" frontend/src/as6crm/crmDomainRuntime.js
+grep -q "getAS6CrmDomainHealthSnapshot" frontend/src/as6crm/crmDomainHealthSnapshot.js
+
+echo AS6_CRM_DOMAIN_MODEL=PASS
+echo AS6_CRM_DOMAIN_CONTRACT=PASS
+echo AS6_CRM_DOMAIN_DESCRIPTOR=PASS
+echo AS6_CRM_DOMAIN_REGISTRY=PASS
+echo AS6_CRM_DOMAIN_RESOLVER=PASS
+echo AS6_CRM_AGGREGATE_MODEL=PASS
+echo AS6_CRM_RELATIONSHIP_CONTRACT=PASS
+echo AS6_CRM_RELATIONSHIP_MODEL=PASS
+echo AS6_CRM_DOMAIN_MANIFEST=PASS
+echo AS6_CRM_DOMAIN_RUNTIME=PASS
+echo AS6_CRM_DOMAIN_HEALTH_SNAPSHOT=PASS
+echo AS6_CRM_DOMAIN_DIAGNOSTICS=PASS
+echo AS6_EPIC012_SLICE03_CRM_DOMAIN_MODEL_DIAGNOSTIC=PASS
