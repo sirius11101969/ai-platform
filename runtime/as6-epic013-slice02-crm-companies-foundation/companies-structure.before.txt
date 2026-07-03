@@ -1,0 +1,11 @@
+frontend/src/crm/companies/domain/crmCompanyCategory.js
+frontend/src/crm/companies/domain/crmCompanyContactLink.js
+frontend/src/crm/companies/domain/crmCompanyContract.js
+frontend/src/crm/companies/domain/crmCompanyDescriptor.js
+frontend/src/crm/companies/domain/crmCompanyDiagnostics.js
+frontend/src/crm/companies/domain/crmCompanyIdentity.js
+frontend/src/crm/companies/domain/crmCompanyLifecycle.js
+frontend/src/crm/companies/domain/crmCompanyRuntimeTracer.js
+frontend/src/crm/companies/domain/crmCompanyStatus.js
+frontend/src/crm/companies/domain/index.js
+frontend/src/crm/companies/index.js

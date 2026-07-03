@@ -1,0 +1,4 @@
+ROOT_CAUSE=CRM_COMPANIES_FOUNDATION_LAYER_MISSING_AFTER_DOMAIN_MODEL
+FAILURE_CLASS=CRM_COMPANIES_FOUNDATION_GAP
+ARCHITECTURE_DRIFT=Companies domain model exists but lacks declarative foundation registry/runtime/manifest/navigation/panels/health snapshot
+PREVENTION=Add Companies Foundation layer with diagnostics, controls, runtime tracer, AEC rules, registry and coverage evidence

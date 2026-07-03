@@ -3846,3 +3846,9 @@ Permission Validation
 - Covers identity, statuses, categories, lifecycle and Contacts declarative link.
 - Covers runtime tracer and diagnostic/control scripts.
 - Covers no-storage, no-api, no-business-workflow and no-platform-mutation invariants.
+
+## AS6_EPIC013_SLICE02_CRM_COMPANIES_FOUNDATION
+- Covers CRM Companies declarative foundation.
+- Covers registry, manifest, capabilities, runtime, resolver, navigation, panels, diagnostics and health snapshot.
+- Covers runtime tracer and diagnostic/control scripts.
+- Covers no-storage, no-api, no-business-workflow and no-platform-mutation invariants.

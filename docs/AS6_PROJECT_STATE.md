@@ -6186,3 +6186,15 @@ Status: PASS pending validation
 - Added failure classes: CRM_COMPANIES_DOMAIN_MODEL_GAP, CRM_COMPANIES_STORAGE_DRIFT, CRM_COMPANIES_API_DRIFT, CRM_COMPANIES_WORKFLOW_DRIFT, CRM_COMPANIES_CONTACT_LINK_COUPLING_DRIFT, CRM_COMPANIES_RUNTIME_TRACER_GAP.
 - Project readiness: 99%.
 - Next stage: AS6_EPIC013_SLICE02_CRM_COMPANIES_FOUNDATION.
+
+## AS6_EPIC013_SLICE02_CRM_COMPANIES_FOUNDATION
+- Added CRM Companies / Accounts declarative foundation.
+- Added registry, manifest, capabilities, runtime, resolver, navigation, panels, diagnostics and health snapshot.
+- Added runtime tracer: frontend/src/crm/companies/foundation/crmCompanyFoundationTracer.js.
+- Added diagnostics: ops/bin/as6-diagnose-epic013-crm-companies-foundation.
+- Added controls: ops/bin/as6-control-epic013-crm-companies-foundation.
+- Added AEC rules: ops/aec/as6-epic013-crm-companies-foundation-aec.md.
+- Added governance: ops/governance/as6-epic013-crm-companies-foundation-governance.md.
+- Added failure classes: CRM_COMPANIES_FOUNDATION_GAP, CRM_COMPANIES_REGISTRY_DRIFT, CRM_COMPANIES_MANIFEST_DRIFT, CRM_COMPANIES_RUNTIME_DRIFT, CRM_COMPANIES_RESOLVER_DRIFT, CRM_COMPANIES_NAVIGATION_DRIFT, CRM_COMPANIES_PANEL_DRIFT, CRM_COMPANIES_HEALTH_SNAPSHOT_DRIFT.
+- Project readiness: 99%.
+- Next stage: AS6_EPIC013_SLICE03_CRM_COMPANIES_UI_FOUNDATION.

@@ -1963,3 +1963,11 @@ ops/bin/as6-control-permission-engine-v114
 - AEC rules: ops/aec/as6-epic013-crm-companies-domain-model-aec.md
 - Added checks: identity, statuses, categories, lifecycle, declarative contact link, no storage, no API, no workflow, no heavy dependency.
 - Failure classes: CRM_COMPANIES_DOMAIN_MODEL_GAP, CRM_COMPANIES_STORAGE_DRIFT, CRM_COMPANIES_API_DRIFT, CRM_COMPANIES_WORKFLOW_DRIFT, CRM_COMPANIES_CONTACT_LINK_COUPLING_DRIFT, CRM_COMPANIES_RUNTIME_TRACER_GAP.
+
+## AS6_EPIC013_SLICE02_CRM_COMPANIES_FOUNDATION
+- Diagnostic: ops/bin/as6-diagnose-epic013-crm-companies-foundation
+- Control: ops/bin/as6-control-epic013-crm-companies-foundation
+- Runtime tracer: frontend/src/crm/companies/foundation/crmCompanyFoundationTracer.js
+- AEC rules: ops/aec/as6-epic013-crm-companies-foundation-aec.md
+- Added checks: registry, manifest, capabilities, runtime, resolver, navigation, panels, diagnostics, health snapshot, no storage, no API, no workflow, no heavy dependency.
+- Failure classes: CRM_COMPANIES_FOUNDATION_GAP, CRM_COMPANIES_REGISTRY_DRIFT, CRM_COMPANIES_MANIFEST_DRIFT, CRM_COMPANIES_RUNTIME_DRIFT, CRM_COMPANIES_RESOLVER_DRIFT, CRM_COMPANIES_NAVIGATION_DRIFT, CRM_COMPANIES_PANEL_DRIFT, CRM_COMPANIES_HEALTH_SNAPSHOT_DRIFT.
