@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-epic013-crm-companies-domain-model
+ops/bin/as6-diagnose-epic013-crm-companies-foundation
+ops/bin/as6-diagnose-epic013-crm-companies-ui-foundation
+ops/bin/as6-diagnose-epic013-crm-companies-workspace-integration
+ops/bin/as6-diagnose-epic013-crm-companies-crm-layout-bridge
+ops/bin/as6-diagnose-epic013-crm-companies-live-layout-mount
+ops/bin/as6-diagnose-epic013-crm-companies-production-polish
+
+! ops/bin/as6-grep-safe -R "fetch\|axios\|localStorage\|sessionStorage" frontend/src/crm/companies frontend/src/crm/shared/workspace
+! ops/bin/as6-grep-safe -R "createCompany\|updateCompany\|deleteCompany\|saveCompany" frontend/src/crm/companies
+! ops/bin/as6-grep-safe -R "from .*[lL]odash\|from .*[mM]oment\|from .*[cC]hart" frontend/src/crm/companies frontend/src/crm/shared/workspace
+
+echo "AS6_CONTROL_EPIC013_CRM_COMPANIES_PRODUCTION_POLISH=PASS"

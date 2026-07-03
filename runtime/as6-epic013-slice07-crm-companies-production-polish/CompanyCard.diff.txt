@@ -1,0 +1,13 @@
+diff --git a/frontend/src/crm/companies/ui/CompanyCard.jsx b/frontend/src/crm/companies/ui/CompanyCard.jsx
+index c93d2ff5..538f1dfb 100644
+--- a/frontend/src/crm/companies/ui/CompanyCard.jsx
++++ b/frontend/src/crm/companies/ui/CompanyCard.jsx
+@@ -2,7 +2,7 @@ import React from "react";
+ 
+ export function CompanyCard({ company }) {
+   return (
+-    <article className="as6-crm-company-card" data-as6-company-card="true" aria-label={`CRM company ${company.name}`}>
++    <article className="as6-crm-company-card as6-crm-company-card--production" data-as6-company-card="true" data-as6-company-card-production="true" aria-label={`CRM company ${company.name}`}>
+       <div>
+         <strong>{company.name}</strong>
+         <span>{company.category}</span>

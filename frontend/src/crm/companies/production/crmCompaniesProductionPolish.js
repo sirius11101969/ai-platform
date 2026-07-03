@@ -1,0 +1,31 @@
+export const crmCompaniesProductionPolish = Object.freeze({
+  id: "crm.companies.production.polish",
+  stage: "AS6_EPIC013_SLICE07_CRM_COMPANIES_PRODUCTION_POLISH",
+  module: "CRM_COMPANIES_ACCOUNTS",
+  accessibility: Object.freeze({
+    regionLabel: true,
+    listLabel: true,
+    cardLabel: true,
+    statusLabel: true,
+    actionsLabel: true,
+    diagnosticsLabel: true,
+  }),
+  states: Object.freeze(["loading", "empty", "ready", "error"]),
+  performance: Object.freeze({
+    noRuntimeFetch: true,
+    noRuntimeStorage: true,
+    noHeavyDependency: true,
+    noBackendDependency: true,
+    cssOnlyMotion: true,
+  }),
+  designSystem: Object.freeze({
+    productionScope: "as6-crm-companies-ui--production",
+    noParallelShell: true,
+    noDuplicateLayout: true,
+    reducedMotion: true,
+  }),
+  storageEnabled: false,
+  apiEnabled: false,
+  workflowEnabled: false,
+  platformMutation: false,
+});

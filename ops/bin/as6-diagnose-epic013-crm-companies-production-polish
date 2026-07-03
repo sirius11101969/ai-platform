@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+for f in \
+  crmCompaniesProductionPolish \
+  crmCompaniesProductionTracer \
+  crmCompaniesProductionDiagnostics \
+  crmCompaniesProductionHealthSnapshot
+do
+  test -f "frontend/src/crm/companies/production/${f}.js"
+done
+
+test -f frontend/src/crm/companies/production/index.js
+test -x ops/bin/as6-grep-safe
+
+ops/bin/as6-grep-safe -R "as6-crm-companies-ui--production" frontend/src/crm/companies
+ops/bin/as6-grep-safe -R "data-as6-companies-production-polish=\"true\"" frontend/src/crm/companies/ui/CompaniesUiFoundation.jsx
+ops/bin/as6-grep-safe -R "data-as6-companies-production-main=\"true\"" frontend/src/crm/companies/ui/CompaniesUiFoundation.jsx
+ops/bin/as6-grep-safe -R "data-as6-company-card-production=\"true\"" frontend/src/crm/companies/ui/CompanyCard.jsx
+ops/bin/as6-grep-safe -R "prefers-reduced-motion" frontend/src/crm/companies/ui/companiesUiFoundation.css
+ops/bin/as6-grep-safe -R "noRuntimeFetch: true" frontend/src/crm/companies/production
+ops/bin/as6-grep-safe -R "noRuntimeStorage: true" frontend/src/crm/companies/production
+ops/bin/as6-grep-safe -R "noHeavyDependency: true" frontend/src/crm/companies/production
+ops/bin/as6-grep-safe -R "traceCrmCompaniesProductionPolish" frontend/src/crm/companies/production
+ops/bin/as6-grep-safe -R "getCrmCompaniesProductionHealthSnapshot" frontend/src/crm/companies/production
+ops/bin/as6-grep-safe -R "storageEnabled: false" frontend/src/crm/companies/production
+ops/bin/as6-grep-safe -R "apiEnabled: false" frontend/src/crm/companies/production
+ops/bin/as6-grep-safe -R "workflowEnabled: false" frontend/src/crm/companies/production
+
+echo "AS6_EPIC013_CRM_COMPANIES_PRODUCTION_POLISH=PASS"

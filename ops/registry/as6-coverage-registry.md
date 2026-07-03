@@ -3877,3 +3877,8 @@ Permission Validation
 - Covers reuse of existing crm-layout production-crm-layout.
 - Covers layout snapshot connection and Companies UI Foundation mount.
 - Covers no parallel shell/router/store, no-storage, no-api and no-business-workflow invariants.
+
+## AS6_EPIC013_SLICE07_CRM_COMPANIES_PRODUCTION_POLISH
+- Covers CRM Companies Production Polish.
+- Covers accessibility labels, production style scope, reduced motion and production health snapshot.
+- Covers no-runtime-fetch, no-runtime-storage, no-heavy-dependency, no-storage, no-api and no-business-workflow invariants.

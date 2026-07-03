@@ -1,0 +1,5 @@
+ROOT_CAUSE=CRM_COMPANIES_PRODUCTION_POLISH_MISSING_AFTER_LIVE_LAYOUT_MOUNT
+FAILURE_CLASS=CRM_COMPANIES_PRODUCTION_POLISH_GAP
+ARCHITECTURE_DRIFT=Companies module is mounted live but lacks final production polish contract and production diagnostics
+VALIDATION_GAP=No Companies production accessibility/performance/design consistency diagnostics existed before Slice 07
+PREVENTION=Add production polish contract, diagnostics, accessibility markers, reduced motion, performance checks, AEC rules, registry and coverage evidence

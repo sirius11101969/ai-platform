@@ -6252,3 +6252,17 @@ Status: PASS pending validation
 - Added failure classes: CRM_COMPANIES_LIVE_MOUNT_GAP, CRM_COMPANIES_LIVE_MOUNT_DRIFT, CRM_COMPANIES_PRODUCTION_LAYOUT_MOUNT_DRIFT, CRM_COMPANIES_PARALLEL_SHELL_DRIFT, CRM_COMPANIES_LIVE_SNAPSHOT_DRIFT.
 - Project readiness: 99%.
 - Next stage: AS6_EPIC013_SLICE07_CRM_COMPANIES_PRODUCTION_POLISH.
+
+## AS6_EPIC013_SLICE07_CRM_COMPANIES_PRODUCTION_POLISH
+- Added CRM Companies Production Polish.
+- Added production polish contract, production diagnostics, production tracer and production health snapshot.
+- Added production UI scope and production diagnostic selectors.
+- Added reduced motion support.
+- Added performance checks: no runtime fetch, no runtime storage, no heavy dependencies.
+- Added diagnostics: ops/bin/as6-diagnose-epic013-crm-companies-production-polish.
+- Added controls: ops/bin/as6-control-epic013-crm-companies-production-polish.
+- Added AEC rules: ops/aec/as6-epic013-crm-companies-production-polish-aec.md.
+- Added governance: ops/governance/as6-epic013-crm-companies-production-polish-governance.md.
+- Added failure classes: CRM_COMPANIES_PRODUCTION_POLISH_GAP, CRM_COMPANIES_ACCESSIBILITY_DRIFT, CRM_COMPANIES_PRODUCTION_STYLE_DRIFT, CRM_COMPANIES_STATE_RESILIENCE_DRIFT, CRM_COMPANIES_PERFORMANCE_BUDGET_DRIFT, CRM_COMPANIES_HEAVY_DEPENDENCY_DRIFT.
+- Project readiness: 99%.
+- Next stage: AS6_EPIC013_SLICE08_CRM_COMPANIES_FINAL_VALIDATION.

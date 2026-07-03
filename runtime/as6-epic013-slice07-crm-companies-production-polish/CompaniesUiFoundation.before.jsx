@@ -20,10 +20,10 @@ export function CompaniesUiFoundation({ companies = SAMPLE_COMPANIES, loading = 
   const state = resolveCrmCompaniesUiState({ loading, error, companies });
 
   return (
-    <section className="as6-crm-companies-ui as6-crm-companies-ui--production" data-as6-companies-ui="foundation" data-as6-companies-production-polish="true" data-as6-companies-ui-state={state} aria-label="CRM Companies production UI foundation">
+    <section className="as6-crm-companies-ui" data-as6-companies-ui="foundation" data-as6-companies-ui-state={state} aria-label="CRM Companies UI foundation">
       <CompaniesHeader status={health.diagnostic.status} />
       <div className="as6-crm-companies-ui__grid">
-        <section className="as6-crm-companies-ui__main" aria-label="CRM Companies production main area" data-as6-companies-production-main="true">
+        <section className="as6-crm-companies-ui__main" aria-label="CRM Companies main area">
           <CompaniesActions />
           {state === "loading" && <CompaniesLoadingState />}
           {state === "error" && <CompaniesErrorState message={error?.message} />}

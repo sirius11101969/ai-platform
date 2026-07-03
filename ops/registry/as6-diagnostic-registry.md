@@ -2005,3 +2005,11 @@ ops/bin/as6-control-permission-engine-v114
 - AEC rules: ops/aec/as6-epic013-crm-companies-live-layout-mount-aec.md
 - Added checks: live CRMPage mount, production CRM layout reuse, layout snapshot connection, Companies UI mount, no storage, no API, no workflow, no heavy dependency.
 - Failure classes: CRM_COMPANIES_LIVE_MOUNT_GAP, CRM_COMPANIES_LIVE_MOUNT_DRIFT, CRM_COMPANIES_PRODUCTION_LAYOUT_MOUNT_DRIFT, CRM_COMPANIES_PARALLEL_SHELL_DRIFT, CRM_COMPANIES_LIVE_SNAPSHOT_DRIFT.
+
+## AS6_EPIC013_SLICE07_CRM_COMPANIES_PRODUCTION_POLISH
+- Diagnostic: ops/bin/as6-diagnose-epic013-crm-companies-production-polish
+- Control: ops/bin/as6-control-epic013-crm-companies-production-polish
+- Production tracer: frontend/src/crm/companies/production/crmCompaniesProductionTracer.js
+- AEC rules: ops/aec/as6-epic013-crm-companies-production-polish-aec.md
+- Added checks: accessibility labels, production style scope, reduced motion, production health snapshot, no runtime fetch, no runtime storage, no heavy dependency, no storage, no API, no workflow.
+- Failure classes: CRM_COMPANIES_PRODUCTION_POLISH_GAP, CRM_COMPANIES_ACCESSIBILITY_DRIFT, CRM_COMPANIES_PRODUCTION_STYLE_DRIFT, CRM_COMPANIES_STATE_RESILIENCE_DRIFT, CRM_COMPANIES_PERFORMANCE_BUDGET_DRIFT, CRM_COMPANIES_HEAVY_DEPENDENCY_DRIFT.

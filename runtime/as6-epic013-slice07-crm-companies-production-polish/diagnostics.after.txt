@@ -1,0 +1,24 @@
+frontend/src/crm/companies/ui/CompaniesUiFoundation.jsx:    <section className="as6-crm-companies-ui as6-crm-companies-ui--production" data-as6-companies-ui="foundation" data-as6-companies-production-polish="true" data-as6-companies-ui-state={state} aria-label="CRM Companies production UI foundation">
+frontend/src/crm/companies/ui/companiesUiFoundation.css:.as6-crm-companies-ui--production {
+frontend/src/crm/companies/ui/companiesUiFoundation.css:  .as6-crm-companies-ui--production *,
+frontend/src/crm/companies/production/crmCompaniesProductionDiagnostics.js:    ["DESIGN_SYSTEM_PRODUCTION_SCOPE", crmCompaniesProductionPolish.designSystem.productionScope === "as6-crm-companies-ui--production"],
+frontend/src/crm/companies/production/crmCompaniesProductionPolish.js:    productionScope: "as6-crm-companies-ui--production",
+    <section className="as6-crm-companies-ui as6-crm-companies-ui--production" data-as6-companies-ui="foundation" data-as6-companies-production-polish="true" data-as6-companies-ui-state={state} aria-label="CRM Companies production UI foundation">
+        <section className="as6-crm-companies-ui__main" aria-label="CRM Companies production main area" data-as6-companies-production-main="true">
+    <article className="as6-crm-company-card as6-crm-company-card--production" data-as6-company-card="true" data-as6-company-card-production="true" aria-label={`CRM company ${company.name}`}>
+@media (prefers-reduced-motion: reduce) {
+frontend/src/crm/companies/production/crmCompaniesProductionPolish.js:    noRuntimeFetch: true,
+frontend/src/crm/companies/production/crmCompaniesProductionPolish.js:    noRuntimeStorage: true,
+frontend/src/crm/companies/production/crmCompaniesProductionPolish.js:    noHeavyDependency: true,
+frontend/src/crm/companies/production/index.js:export { traceCrmCompaniesProductionPolish } from "./crmCompaniesProductionTracer";
+frontend/src/crm/companies/production/crmCompaniesProductionTracer.js:export function traceCrmCompaniesProductionPolish(event = "CRM_COMPANIES_PRODUCTION_POLISH_TRACE") {
+frontend/src/crm/companies/production/crmCompaniesProductionDiagnostics.js:import { traceCrmCompaniesProductionPolish } from "./crmCompaniesProductionTracer";
+frontend/src/crm/companies/production/crmCompaniesProductionDiagnostics.js:    trace: traceCrmCompaniesProductionPolish(),
+frontend/src/crm/companies/production/crmCompaniesProductionHealthSnapshot.js:import { traceCrmCompaniesProductionPolish } from "./crmCompaniesProductionTracer";
+frontend/src/crm/companies/production/crmCompaniesProductionHealthSnapshot.js:    trace: traceCrmCompaniesProductionPolish(),
+frontend/src/crm/companies/production/index.js:export { getCrmCompaniesProductionHealthSnapshot } from "./crmCompaniesProductionHealthSnapshot";
+frontend/src/crm/companies/production/crmCompaniesProductionHealthSnapshot.js:export function getCrmCompaniesProductionHealthSnapshot() {
+frontend/src/crm/companies/production/crmCompaniesProductionPolish.js:  storageEnabled: false,
+frontend/src/crm/companies/production/crmCompaniesProductionPolish.js:  apiEnabled: false,
+frontend/src/crm/companies/production/crmCompaniesProductionPolish.js:  workflowEnabled: false,
+AS6_EPIC013_CRM_COMPANIES_PRODUCTION_POLISH=PASS
