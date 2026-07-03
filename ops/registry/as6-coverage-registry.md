@@ -3734,3 +3734,14 @@ Permission Validation
 - EPIC012 Selection=covered
 - Application EPIC Platform Mutation Guard=covered
 - Implementation Authorization Guard=covered
+
+## AS6 EPIC012 CRM Foundation Planning Coverage
+- EPIC Charter=covered
+- ADR=covered
+- Diagnostics Plan=covered
+- Validation Plan=covered
+- Definition of Done=covered
+- Rollback Strategy=covered
+- Baseline Compatibility Review=covered
+- Observability Requirements=covered
+- Implementation Authorization=covered

@@ -2248,3 +2248,8 @@ Governed and registered.
 - AS6_APPLICATION_EPIC_PLATFORM_MUTATION_ATTEMPT: application EPIC attempts to mutate stable platform baseline.
 - AS6_EPIC_TYPE_MISSING: EPIC does not declare PLATFORM or APPLICATION type.
 - AS6_PORTFOLIO_DECISION_MISSING: EPIC starts without approved portfolio decision.
+
+## AS6 EPIC012 CRM Foundation Planning Failure Classes
+- AS6_CRM_FOUNDATION_PLANNING_GAP: CRM Foundation implementation starts without full planning approval.
+- AS6_APPLICATION_EPIC_PLATFORM_MUTATION_ATTEMPT: application EPIC attempts to mutate stable platform baseline.
+- AS6_CRM_BASELINE_COMPATIBILITY_GAP: CRM Foundation does not declare compatibility with required platform baselines.

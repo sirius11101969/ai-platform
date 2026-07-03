@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-epic012-crm-foundation-planning
+
+grep -Rh "^PLATFORM_MUTATION=FALSE$" docs/epic012 >/tmp/as6-epic012-platform-mutation.txt
+grep -q "^PLATFORM_MUTATION=FALSE$" /tmp/as6-epic012-platform-mutation.txt
+
+grep -Rh "^IMPLEMENTATION_AUTHORIZED=TRUE$" docs/epic012 >/tmp/as6-epic012-implementation-auth.txt
+grep -q "^IMPLEMENTATION_AUTHORIZED=TRUE$" /tmp/as6-epic012-implementation-auth.txt
+
+echo EPIC_CHARTER=APPROVED
+echo ADR_STATUS=APPROVED
+echo DIAGNOSTICS_PLAN=APPROVED
+echo VALIDATION_PLAN=APPROVED
+echo DEFINITION_OF_DONE=APPROVED
+echo ROLLBACK_STRATEGY=APPROVED
+echo BASELINE_COMPATIBILITY=CONFIRMED
+echo OBSERVABILITY_REQUIREMENTS=APPROVED
+echo PLATFORM_MUTATION=FALSE
+echo IMPLEMENTATION_AUTHORIZED=TRUE
+echo AS6_EPIC012_CRM_FOUNDATION_PLANNING_CONTROL=PASS

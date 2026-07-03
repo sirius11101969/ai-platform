@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f docs/epic012/as6-epic012-crm-foundation-charter.md
+test -f docs/adr/as6-adr-epic012-crm-foundation.md
+test -f docs/epic012/as6-epic012-crm-foundation-diagnostics-plan.md
+test -f docs/epic012/as6-epic012-crm-foundation-validation-plan.md
+test -f docs/epic012/as6-epic012-crm-foundation-definition-of-done.md
+test -f docs/epic012/as6-epic012-crm-foundation-rollback-strategy.md
+test -f docs/epic012/as6-epic012-crm-foundation-baseline-compatibility.md
+test -f docs/epic012/as6-epic012-crm-foundation-observability-requirements.md
+test -f docs/epic012/as6-epic012-implementation-authorization.md
+
+grep -q "EPIC_TYPE=APPLICATION" docs/epic012/as6-epic012-crm-foundation-charter.md
+grep -q "ADR_STATUS=APPROVED" docs/adr/as6-adr-epic012-crm-foundation.md
+grep -q "DIAGNOSTICS_PLAN=APPROVED" docs/epic012/as6-epic012-crm-foundation-diagnostics-plan.md
+grep -q "VALIDATION_PLAN=APPROVED" docs/epic012/as6-epic012-crm-foundation-validation-plan.md
+grep -q "DEFINITION_OF_DONE=APPROVED" docs/epic012/as6-epic012-crm-foundation-definition-of-done.md
+grep -q "ROLLBACK_STRATEGY=APPROVED" docs/epic012/as6-epic012-crm-foundation-rollback-strategy.md
+grep -q "BASELINE_COMPATIBILITY=CONFIRMED" docs/epic012/as6-epic012-crm-foundation-baseline-compatibility.md
+grep -q "OBSERVABILITY_REQUIREMENTS=APPROVED" docs/epic012/as6-epic012-crm-foundation-observability-requirements.md
+grep -q "IMPLEMENTATION_AUTHORIZED=TRUE" docs/epic012/as6-epic012-implementation-authorization.md
+
+echo AS6_EPIC012_CRM_FOUNDATION_PLANNING_DIAGNOSTIC=PASS
