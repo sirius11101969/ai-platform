@@ -3806,3 +3806,8 @@ Permission Validation
 - Covers CRM Contacts UI foundation.
 - Covers contact list, contact row/card, empty state and diagnostic panel.
 - Covers UI no-storage and no-api invariants.
+
+## AS6_EPIC012_SLICE06_CRM_CONTACTS_WORKSPACE_INTEGRATION
+- Covers CRM Contacts Workspace Integration.
+- Covers workspace panel registration, navigation registration, state resolver and diagnostic snapshot integration.
+- Covers no-storage, no-api, no-business-workflow and no-platform-mutation invariants.

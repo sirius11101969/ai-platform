@@ -1,0 +1,18 @@
+    storageEnabled: false,
+    apiEnabled: false,
+    workflowEnabled: false,
+AS6_CRM_CONTACTS_FOUNDATION=PASS
+    <section className="as6-crm-contacts-ui" data-as6-contacts-ui="foundation">
+        <main className="as6-crm-contacts-ui__list" data-as6-contacts-list="true">
+    <section className="as6-crm-contacts-empty" data-as6-contacts-empty="true">
+    <article className="as6-crm-contact-row" data-as6-contact-row="true">
+AS6_CRM_CONTACTS_UI_FOUNDATION=PASS
+frontend/src/crm/contacts/workspace/crmContactsWorkspaceDiagnostics.js:    ["REGISTER_WORKSPACE_PANEL", integration.panel.id === "crm.contacts.workspace.panel"],
+frontend/src/crm/contacts/workspace/crmContactsWorkspacePanel.js:  id: "crm.contacts.workspace.panel",
+frontend/src/crm/contacts/workspace/crmContactsWorkspaceNavigation.js:  id: "crm.contacts.workspace.navigation",
+  states: Object.freeze(["loading", "empty", "ready", "error"]),
+    storageEnabled: false,
+    apiEnabled: false,
+    workflowEnabled: false,
+AS6_CRM_CONTACTS_WORKSPACE_INTEGRATION=PASS
+AS6_CONTROL_CRM_CONTACTS_WORKSPACE_INTEGRATION=PASS

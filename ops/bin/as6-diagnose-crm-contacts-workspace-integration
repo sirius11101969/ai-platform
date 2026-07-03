@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/crm/contacts/workspace/crmContactsWorkspacePanel.js
+test -f frontend/src/crm/contacts/workspace/crmContactsWorkspaceNavigation.js
+test -f frontend/src/crm/contacts/workspace/crmContactsWorkspaceState.js
+test -f frontend/src/crm/contacts/workspace/crmContactsWorkspaceIntegration.js
+test -f frontend/src/crm/contacts/workspace/crmContactsWorkspaceDiagnostics.js
+grep -R "crm.contacts.workspace.panel" frontend/src/crm/contacts/workspace
+grep -R "crm.contacts.workspace.navigation" frontend/src/crm/contacts/workspace
+grep -R "loading.*empty.*ready.*error" frontend/src/crm/contacts/workspace/crmContactsWorkspacePanel.js
+grep -R "storageEnabled: false" frontend/src/crm/contacts/workspace/crmContactsWorkspaceIntegration.js
+grep -R "apiEnabled: false" frontend/src/crm/contacts/workspace/crmContactsWorkspaceIntegration.js
+grep -R "workflowEnabled: false" frontend/src/crm/contacts/workspace/crmContactsWorkspaceIntegration.js
+echo "AS6_CRM_CONTACTS_WORKSPACE_INTEGRATION=PASS"

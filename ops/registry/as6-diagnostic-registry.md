@@ -1919,3 +1919,9 @@ ops/bin/as6-control-permission-engine-v114
 - Control: ops/bin/as6-control-crm-contacts-ui-foundation
 - Added checks: UI shell, list, row/card, empty state, diagnostic panel, no storage, no API calls.
 - Failure classes: CRM_CONTACTS_UI_STRUCTURE_DRIFT, CRM_CONTACTS_UI_STORAGE_DRIFT, CRM_CONTACTS_UI_API_DRIFT.
+
+## AS6_EPIC012_SLICE06_CRM_CONTACTS_WORKSPACE_INTEGRATION
+- Diagnostic: ops/bin/as6-diagnose-crm-contacts-workspace-integration
+- Control: ops/bin/as6-control-crm-contacts-workspace-integration
+- Added checks: workspace panel, navigation, state resolver, health snapshot, no storage, no API, no workflow.
+- Failure classes: CRM_CONTACTS_WORKSPACE_PANEL_DRIFT, CRM_CONTACTS_WORKSPACE_NAVIGATION_DRIFT, CRM_CONTACTS_WORKSPACE_STATE_DRIFT, CRM_CONTACTS_WORKSPACE_DIAGNOSTIC_DRIFT.

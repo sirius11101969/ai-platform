@@ -12,3 +12,5 @@ export { traceCrmContactFoundation } from "./crmContactTracer";
 export { getCrmContactHealthSnapshot } from "./crmContactHealthSnapshot";
 
 export { CrmContactsUiFoundation, CrmContactRow, CrmContactsEmptyState } from "./ui";
+
+export { crmContactsWorkspacePanel, crmContactsWorkspaceNavigation, resolveCrmContactsWorkspaceState, createCrmContactsWorkspaceIntegration, diagnoseCrmContactsWorkspaceIntegration } from "./workspace";

@@ -1,0 +1,8 @@
+frontend/src/crm/contacts/workspace/crmContactsWorkspaceDiagnostics.js:    ["REGISTER_WORKSPACE_PANEL", integration.panel.id === "crm.contacts.workspace.panel"],
+frontend/src/crm/contacts/workspace/crmContactsWorkspacePanel.js:  id: "crm.contacts.workspace.panel",
+frontend/src/crm/contacts/workspace/crmContactsWorkspaceNavigation.js:  id: "crm.contacts.workspace.navigation",
+  states: Object.freeze(["loading", "empty", "ready", "error"]),
+    storageEnabled: false,
+    apiEnabled: false,
+    workflowEnabled: false,
+AS6_CRM_CONTACTS_WORKSPACE_INTEGRATION=PASS

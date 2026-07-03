@@ -6107,3 +6107,15 @@ Status: PASS pending validation
 - Added failure classes: CRM_CONTACTS_UI_STRUCTURE_DRIFT, CRM_CONTACTS_UI_STORAGE_DRIFT, CRM_CONTACTS_UI_API_DRIFT.
 - Project readiness: 99%.
 - Next stage: AS6_EPIC012_SLICE06_CRM_CONTACTS_WORKSPACE_INTEGRATION.
+
+## AS6_EPIC012_SLICE06_CRM_CONTACTS_WORKSPACE_INTEGRATION
+- Added CRM Contacts Workspace Integration.
+- Added workspace panel registration.
+- Added workspace navigation registration.
+- Added workspace state resolver: loading, empty, ready, error.
+- Added diagnostic snapshot integration.
+- Added diagnostics: ops/bin/as6-diagnose-crm-contacts-workspace-integration.
+- Added controls: ops/bin/as6-control-crm-contacts-workspace-integration.
+- Added failure classes: CRM_CONTACTS_WORKSPACE_PANEL_DRIFT, CRM_CONTACTS_WORKSPACE_NAVIGATION_DRIFT, CRM_CONTACTS_WORKSPACE_STATE_DRIFT, CRM_CONTACTS_WORKSPACE_DIAGNOSTIC_DRIFT.
+- Project readiness: 99%.
+- Next stage: AS6_EPIC012_SLICE07_CRM_CONTACTS_CRM_LAYOUT_BRIDGE.
