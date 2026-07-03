@@ -3610,3 +3610,10 @@ Permission Validation
 - PRR side-effect-free policy=covered
 - Baseline commit match policy=covered
 - Diagnostic contract drift prevention=covered
+
+## AS6 EPIC010 Workspace Experience V1 Baseline Coverage Registry
+- Workspace Experience V1 Baseline Manifest=covered
+- Workspace Experience V1 Compatibility Matrix=covered
+- Baseline Restore Tag=covered
+- EPIC010 Closure=covered
+- PRR commit match=covered

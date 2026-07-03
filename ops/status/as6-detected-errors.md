@@ -2176,3 +2176,7 @@ Governed and registered.
 - AS6_BASELINE_COMMIT_MISMATCH: baseline attempted against a commit different from the PRR-approved commit.
 
 - AS6_DIAGNOSTIC_CONTRACT_DRIFT: PRR diagnostic validated an obsolete implementation contract instead of the current exported Panels health contract.
+
+## AS6 EPIC010 Baseline Failure Classes
+- AS6_BASELINE_WITHOUT_PRR_APPROVAL: baseline attempted without PRODUCTION_READINESS_APPROVED=YES.
+- AS6_BASELINE_COMMIT_MISMATCH: baseline source commit differs from PRR-approved commit.
