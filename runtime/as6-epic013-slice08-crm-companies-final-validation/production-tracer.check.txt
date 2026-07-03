@@ -1,0 +1,6 @@
+frontend/src/crm/companies/production/index.js:export { traceCrmCompaniesProductionPolish } from "./crmCompaniesProductionTracer";
+frontend/src/crm/companies/production/crmCompaniesProductionTracer.js:export function traceCrmCompaniesProductionPolish(event = "CRM_COMPANIES_PRODUCTION_POLISH_TRACE") {
+frontend/src/crm/companies/production/crmCompaniesProductionDiagnostics.js:import { traceCrmCompaniesProductionPolish } from "./crmCompaniesProductionTracer";
+frontend/src/crm/companies/production/crmCompaniesProductionDiagnostics.js:    trace: traceCrmCompaniesProductionPolish(),
+frontend/src/crm/companies/production/crmCompaniesProductionHealthSnapshot.js:import { traceCrmCompaniesProductionPolish } from "./crmCompaniesProductionTracer";
+frontend/src/crm/companies/production/crmCompaniesProductionHealthSnapshot.js:    trace: traceCrmCompaniesProductionPolish(),

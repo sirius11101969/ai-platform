@@ -1,0 +1,1 @@
+frontend/src/crm/companies/ui/companiesUiFoundation.css:@media (prefers-reduced-motion: reduce) {

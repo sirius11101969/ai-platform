@@ -6266,3 +6266,17 @@ Status: PASS pending validation
 - Added failure classes: CRM_COMPANIES_PRODUCTION_POLISH_GAP, CRM_COMPANIES_ACCESSIBILITY_DRIFT, CRM_COMPANIES_PRODUCTION_STYLE_DRIFT, CRM_COMPANIES_STATE_RESILIENCE_DRIFT, CRM_COMPANIES_PERFORMANCE_BUDGET_DRIFT, CRM_COMPANIES_HEAVY_DEPENDENCY_DRIFT.
 - Project readiness: 99%.
 - Next stage: AS6_EPIC013_SLICE08_CRM_COMPANIES_FINAL_VALIDATION.
+
+## AS6_EPIC013_SLICE08_CRM_COMPANIES_FINAL_VALIDATION
+- Final validation completed for CRM Companies / Accounts EPIC013.
+- Validated Planning and Slice 01 through Slice 07 diagnostics and controls.
+- Validated live mount in CRMPage production layout.
+- Validated production polish, accessibility selectors, reduced motion support and production style scope.
+- Validated no forbidden runtime fetch/storage, no backend coupling, no business workflow and no heavy dependencies.
+- Added AEC rules: ops/aec/as6-epic013-crm-companies-final-validation-aec.md.
+- Added governance: ops/governance/as6-epic013-crm-companies-final-validation-governance.md.
+- Added final validation doc: docs/epic013/AS6_EPIC013_CRM_COMPANIES_FINAL_VALIDATION.md.
+- Added failure classes: CRM_COMPANIES_FINAL_VALIDATION_GAP, CRM_COMPANIES_FINAL_VALIDATION_DRIFT, CRM_COMPANIES_REGISTRY_COVERAGE_DRIFT, CRM_COMPANIES_LIVE_MOUNT_REGRESSION, CRM_COMPANIES_PRODUCTION_POLISH_REGRESSION.
+- Project readiness: 99%.
+- EPIC013 CRM Companies status: PRODUCTION_VALIDATED.
+- Next stage: AS6_EPIC014_CRM_NEXT_MODULE_SELECTION.

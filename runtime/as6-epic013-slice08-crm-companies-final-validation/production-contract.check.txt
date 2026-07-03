@@ -1,0 +1,19 @@
+frontend/src/crm/companies/production/index.js:export { crmCompaniesProductionPolish } from "./crmCompaniesProductionPolish";
+frontend/src/crm/companies/production/crmCompaniesProductionDiagnostics.js:import { crmCompaniesProductionPolish } from "./crmCompaniesProductionPolish";
+frontend/src/crm/companies/production/crmCompaniesProductionDiagnostics.js:    ["ACCESSIBILITY_REGION_LABEL", crmCompaniesProductionPolish.accessibility.regionLabel === true],
+frontend/src/crm/companies/production/crmCompaniesProductionDiagnostics.js:    ["ACCESSIBILITY_LIST_LABEL", crmCompaniesProductionPolish.accessibility.listLabel === true],
+frontend/src/crm/companies/production/crmCompaniesProductionDiagnostics.js:    ["ACCESSIBILITY_CARD_LABEL", crmCompaniesProductionPolish.accessibility.cardLabel === true],
+frontend/src/crm/companies/production/crmCompaniesProductionDiagnostics.js:    ["ACCESSIBILITY_STATUS_LABEL", crmCompaniesProductionPolish.accessibility.statusLabel === true],
+frontend/src/crm/companies/production/crmCompaniesProductionDiagnostics.js:    ["ACCESSIBILITY_ACTIONS_LABEL", crmCompaniesProductionPolish.accessibility.actionsLabel === true],
+frontend/src/crm/companies/production/crmCompaniesProductionDiagnostics.js:    ["ACCESSIBILITY_DIAGNOSTICS_LABEL", crmCompaniesProductionPolish.accessibility.diagnosticsLabel === true],
+frontend/src/crm/companies/production/crmCompaniesProductionDiagnostics.js:    ["STABLE_STATES", crmCompaniesProductionPolish.states.join("/") === "loading/empty/ready/error"],
+frontend/src/crm/companies/production/crmCompaniesProductionDiagnostics.js:    ["PERFORMANCE_NO_RUNTIME_FETCH", crmCompaniesProductionPolish.performance.noRuntimeFetch === true],
+frontend/src/crm/companies/production/crmCompaniesProductionDiagnostics.js:    ["PERFORMANCE_NO_RUNTIME_STORAGE", crmCompaniesProductionPolish.performance.noRuntimeStorage === true],
+frontend/src/crm/companies/production/crmCompaniesProductionDiagnostics.js:    ["PERFORMANCE_NO_HEAVY_DEPENDENCY", crmCompaniesProductionPolish.performance.noHeavyDependency === true],
+frontend/src/crm/companies/production/crmCompaniesProductionDiagnostics.js:    ["DESIGN_SYSTEM_PRODUCTION_SCOPE", crmCompaniesProductionPolish.designSystem.productionScope === "as6-crm-companies-ui--production"],
+frontend/src/crm/companies/production/crmCompaniesProductionDiagnostics.js:    ["DESIGN_SYSTEM_REDUCED_MOTION", crmCompaniesProductionPolish.designSystem.reducedMotion === true],
+frontend/src/crm/companies/production/crmCompaniesProductionDiagnostics.js:    ["NO_STORAGE", crmCompaniesProductionPolish.storageEnabled === false],
+frontend/src/crm/companies/production/crmCompaniesProductionDiagnostics.js:    ["NO_API_CALLS", crmCompaniesProductionPolish.apiEnabled === false],
+frontend/src/crm/companies/production/crmCompaniesProductionDiagnostics.js:    ["NO_BUSINESS_WORKFLOW", crmCompaniesProductionPolish.workflowEnabled === false],
+frontend/src/crm/companies/production/crmCompaniesProductionDiagnostics.js:    ["PLATFORM_MUTATION_FALSE", crmCompaniesProductionPolish.platformMutation === false],
+frontend/src/crm/companies/production/crmCompaniesProductionPolish.js:export const crmCompaniesProductionPolish = Object.freeze({

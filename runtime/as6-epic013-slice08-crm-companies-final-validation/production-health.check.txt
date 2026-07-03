@@ -1,0 +1,2 @@
+frontend/src/crm/companies/production/index.js:export { getCrmCompaniesProductionHealthSnapshot } from "./crmCompaniesProductionHealthSnapshot";
+frontend/src/crm/companies/production/crmCompaniesProductionHealthSnapshot.js:export function getCrmCompaniesProductionHealthSnapshot() {

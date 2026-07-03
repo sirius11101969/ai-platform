@@ -1,0 +1,5 @@
+ROOT_CAUSE=CRM_COMPANIES_FINAL_VALIDATION_REQUIRED_AFTER_PRODUCTION_POLISH
+FAILURE_CLASS=CRM_COMPANIES_FINAL_VALIDATION_GAP
+ARCHITECTURE_DRIFT=Companies module has completed production polish but EPIC013 final validation was not yet fixed as production evidence
+VALIDATION_GAP=No final EPIC013 Companies production-validated status existed before Slice 08
+PREVENTION=Run full EPIC013 diagnostic/control chain, verify registries/governance/state/build/secret scan, register final validation evidence

@@ -1,0 +1,2 @@
+import { CrmCompaniesLiveLayoutMount } from "../crm/companies";
+        <CrmCompaniesLiveLayoutMount crmLayoutMountMode="live" data-as6-crm-companies-mounted-in-production-layout="true" />

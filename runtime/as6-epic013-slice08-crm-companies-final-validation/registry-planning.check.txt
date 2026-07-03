@@ -1,0 +1,14 @@
+docs/epic013/AS6_EPIC013_CRM_NEXT_MODULE_PLANNING.md:Stage: AS6_EPIC013_CRM_NEXT_MODULE_PLANNING
+docs/AS6_PROJECT_STATE.md:- Next stage: AS6_EPIC013_CRM_NEXT_MODULE_PLANNING.
+docs/AS6_PROJECT_STATE.md:## AS6_EPIC013_CRM_NEXT_MODULE_PLANNING
+docs/AS6_PROJECT_STATE.md:- Added planning doc: docs/epic013/AS6_EPIC013_CRM_NEXT_MODULE_PLANNING.md.
+ops/status/as6-detected-errors.md:## AS6_EPIC013_CRM_NEXT_MODULE_PLANNING
+ops/governance/as6-epic013-crm-next-module-planning-governance.md:Stage: AS6_EPIC013_CRM_NEXT_MODULE_PLANNING
+ops/registry/as6-diagnostic-registry.md:## AS6_EPIC013_CRM_NEXT_MODULE_PLANNING
+ops/registry/as6-coverage-registry.md:## AS6_EPIC013_CRM_NEXT_MODULE_PLANNING
+ops/bin/as6-diagnose-epic013-crm-next-module-planning:test -f docs/epic013/AS6_EPIC013_CRM_NEXT_MODULE_PLANNING.md
+ops/bin/as6-diagnose-epic013-crm-next-module-planning:grep -R "Recommended next module: CRM Companies / Accounts Foundation" docs/epic013/AS6_EPIC013_CRM_NEXT_MODULE_PLANNING.md
+ops/bin/as6-diagnose-epic013-crm-next-module-planning:grep -R "AS6_EPIC013_SLICE01_CRM_COMPANIES_DOMAIN_MODEL" docs/epic013/AS6_EPIC013_CRM_NEXT_MODULE_PLANNING.md
+ops/bin/as6-diagnose-epic013-crm-next-module-planning:grep -R "NO_STORAGE=TRUE" docs/epic013/AS6_EPIC013_CRM_NEXT_MODULE_PLANNING.md
+ops/bin/as6-diagnose-epic013-crm-next-module-planning:grep -R "USE_EXISTING_CRM_LAYOUT=TRUE" docs/epic013/AS6_EPIC013_CRM_NEXT_MODULE_PLANNING.md
+ops/bin/as6-diagnose-epic013-crm-next-module-planning:echo "AS6_EPIC013_CRM_NEXT_MODULE_PLANNING=PASS"

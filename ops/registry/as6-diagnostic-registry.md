@@ -2013,3 +2013,10 @@ ops/bin/as6-control-permission-engine-v114
 - AEC rules: ops/aec/as6-epic013-crm-companies-production-polish-aec.md
 - Added checks: accessibility labels, production style scope, reduced motion, production health snapshot, no runtime fetch, no runtime storage, no heavy dependency, no storage, no API, no workflow.
 - Failure classes: CRM_COMPANIES_PRODUCTION_POLISH_GAP, CRM_COMPANIES_ACCESSIBILITY_DRIFT, CRM_COMPANIES_PRODUCTION_STYLE_DRIFT, CRM_COMPANIES_STATE_RESILIENCE_DRIFT, CRM_COMPANIES_PERFORMANCE_BUDGET_DRIFT, CRM_COMPANIES_HEAVY_DEPENDENCY_DRIFT.
+
+## AS6_EPIC013_SLICE08_CRM_COMPANIES_FINAL_VALIDATION
+- Diagnostic: runtime/as6-epic013-slice08-crm-companies-final-validation/final-validation-report.txt
+- Control: all EPIC013 Companies diagnostics and controls from Planning through Slice 07 passed.
+- AEC rules: ops/aec/as6-epic013-crm-companies-final-validation-aec.md
+- Added checks: full diagnostic chain, registry coverage, governance coverage, live mount, production polish, runtime tracer, health snapshot, no forbidden runtime usage, no heavy dependency, frontend build.
+- Failure classes: CRM_COMPANIES_FINAL_VALIDATION_GAP, CRM_COMPANIES_FINAL_VALIDATION_DRIFT, CRM_COMPANIES_REGISTRY_COVERAGE_DRIFT, CRM_COMPANIES_LIVE_MOUNT_REGRESSION, CRM_COMPANIES_PRODUCTION_POLISH_REGRESSION.

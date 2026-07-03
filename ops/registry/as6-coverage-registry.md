@@ -3882,3 +3882,9 @@ Permission Validation
 - Covers CRM Companies Production Polish.
 - Covers accessibility labels, production style scope, reduced motion and production health snapshot.
 - Covers no-runtime-fetch, no-runtime-storage, no-heavy-dependency, no-storage, no-api and no-business-workflow invariants.
+
+## AS6_EPIC013_SLICE08_CRM_COMPANIES_FINAL_VALIDATION
+- Covers final validation for EPIC013 CRM Companies / Accounts.
+- Covers Planning and Slice 01 through Slice 07 diagnostic/control chain.
+- Covers live CRM layout mount, production polish, accessibility, performance constraints and registry completeness.
+- Marks CRM Companies / Accounts as production-validated for EPIC013.
