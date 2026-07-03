@@ -1955,3 +1955,11 @@ ops/bin/as6-control-permission-engine-v114
 - Control: ops/bin/as6-control-epic013-crm-next-module-planning
 - Added checks: EPIC013 planning doc, selected next module, slice chain, invariants, EPIC012 production validation dependency.
 - Failure classes: CRM_NEXT_MODULE_SELECTION_DRIFT, EPIC012_DEPENDENCY_EVIDENCE_DRIFT, CRM_MODULE_SEQUENCE_DRIFT.
+
+## AS6_EPIC013_SLICE01_CRM_COMPANIES_DOMAIN_MODEL
+- Diagnostic: ops/bin/as6-diagnose-epic013-crm-companies-domain-model
+- Control: ops/bin/as6-control-epic013-crm-companies-domain-model
+- Runtime tracer: frontend/src/crm/companies/domain/crmCompanyRuntimeTracer.js
+- AEC rules: ops/aec/as6-epic013-crm-companies-domain-model-aec.md
+- Added checks: identity, statuses, categories, lifecycle, declarative contact link, no storage, no API, no workflow, no heavy dependency.
+- Failure classes: CRM_COMPANIES_DOMAIN_MODEL_GAP, CRM_COMPANIES_STORAGE_DRIFT, CRM_COMPANIES_API_DRIFT, CRM_COMPANIES_WORKFLOW_DRIFT, CRM_COMPANIES_CONTACT_LINK_COUPLING_DRIFT, CRM_COMPANIES_RUNTIME_TRACER_GAP.

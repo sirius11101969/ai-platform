@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+for f in \
+  crmCompanyIdentity \
+  crmCompanyStatus \
+  crmCompanyCategory \
+  crmCompanyLifecycle \
+  crmCompanyContactLink \
+  crmCompanyContract \
+  crmCompanyDescriptor \
+  crmCompanyRuntimeTracer \
+  crmCompanyDiagnostics
+do
+  test -f "frontend/src/crm/companies/domain/${f}.js"
+done
+
+grep -R "CRM_COMPANIES_DOMAIN_MODEL_ONLY" frontend/src/crm/companies/domain
+grep -R "NO_STORAGE" frontend/src/crm/companies/domain
+grep -R "NO_API_CALLS" frontend/src/crm/companies/domain
+grep -R "NO_BUSINESS_WORKFLOW" frontend/src/crm/companies/domain
+grep -R "CONTACTS_LINK_DECLARATIVE_ONLY" frontend/src/crm/companies/domain
+grep -R "traceCrmCompanyDomain" frontend/src/crm/companies/domain
+grep -R "hardCoupling: false" frontend/src/crm/companies/domain/crmCompanyContactLink.js
+
+echo "AS6_EPIC013_CRM_COMPANIES_DOMAIN_MODEL=PASS"

@@ -1,0 +1,17 @@
+frontend/src/crm/companies/domain/crmCompanyDiagnostics.js:    ["CRM_COMPANIES_DOMAIN_MODEL_ONLY", CRM_COMPANY_CONTRACT.invariants.CRM_COMPANIES_DOMAIN_MODEL_ONLY === true],
+frontend/src/crm/companies/domain/crmCompanyContract.js:    CRM_COMPANIES_DOMAIN_MODEL_ONLY: true,
+frontend/src/crm/companies/domain/crmCompanyDiagnostics.js:    ["NO_STORAGE", CRM_COMPANY_CONTRACT.invariants.NO_STORAGE === true],
+frontend/src/crm/companies/domain/crmCompanyContract.js:    NO_STORAGE: true,
+frontend/src/crm/companies/domain/crmCompanyDiagnostics.js:    ["NO_API_CALLS", CRM_COMPANY_CONTRACT.invariants.NO_API_CALLS === true],
+frontend/src/crm/companies/domain/crmCompanyContract.js:    NO_API_CALLS: true,
+frontend/src/crm/companies/domain/crmCompanyDiagnostics.js:    ["NO_BUSINESS_WORKFLOW", CRM_COMPANY_CONTRACT.invariants.NO_BUSINESS_WORKFLOW === true],
+frontend/src/crm/companies/domain/crmCompanyContract.js:    NO_BUSINESS_WORKFLOW: true,
+frontend/src/crm/companies/domain/crmCompanyDiagnostics.js:    ["CONTACTS_LINK_DECLARATIVE_ONLY", CRM_COMPANY_CONTRACT.invariants.CONTACTS_LINK_DECLARATIVE_ONLY === true],
+frontend/src/crm/companies/domain/crmCompanyContract.js:    CONTACTS_LINK_DECLARATIVE_ONLY: true,
+frontend/src/crm/companies/domain/index.js:export { traceCrmCompanyDomain } from "./crmCompanyRuntimeTracer";
+frontend/src/crm/companies/domain/crmCompanyDiagnostics.js:import { traceCrmCompanyDomain } from "./crmCompanyRuntimeTracer";
+frontend/src/crm/companies/domain/crmCompanyDiagnostics.js:    trace: traceCrmCompanyDomain(),
+frontend/src/crm/companies/domain/crmCompanyRuntimeTracer.js:export function traceCrmCompanyDomain(event = "CRM_COMPANY_DOMAIN_TRACE") {
+  hardCoupling: false,
+AS6_EPIC013_CRM_COMPANIES_DOMAIN_MODEL=PASS
+AS6_CONTROL_EPIC013_CRM_COMPANIES_DOMAIN_MODEL=PASS

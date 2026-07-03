@@ -6174,3 +6174,15 @@ Status: PASS pending validation
 - Added governance: ops/governance/as6-epic013-crm-next-module-planning-governance.md.
 - Project readiness: 99%.
 - Next stage: AS6_EPIC013_SLICE01_CRM_COMPANIES_DOMAIN_MODEL.
+
+## AS6_EPIC013_SLICE01_CRM_COMPANIES_DOMAIN_MODEL
+- Added CRM Companies / Accounts declarative domain model.
+- Added identity, statuses, categories, lifecycle and declarative contact link.
+- Added runtime tracer: frontend/src/crm/companies/domain/crmCompanyRuntimeTracer.js.
+- Added diagnostics: ops/bin/as6-diagnose-epic013-crm-companies-domain-model.
+- Added controls: ops/bin/as6-control-epic013-crm-companies-domain-model.
+- Added AEC rules: ops/aec/as6-epic013-crm-companies-domain-model-aec.md.
+- Added governance: ops/governance/as6-epic013-crm-companies-domain-model-governance.md.
+- Added failure classes: CRM_COMPANIES_DOMAIN_MODEL_GAP, CRM_COMPANIES_STORAGE_DRIFT, CRM_COMPANIES_API_DRIFT, CRM_COMPANIES_WORKFLOW_DRIFT, CRM_COMPANIES_CONTACT_LINK_COUPLING_DRIFT, CRM_COMPANIES_RUNTIME_TRACER_GAP.
+- Project readiness: 99%.
+- Next stage: AS6_EPIC013_SLICE02_CRM_COMPANIES_FOUNDATION.

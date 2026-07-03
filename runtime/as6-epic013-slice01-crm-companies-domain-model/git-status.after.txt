@@ -1,0 +1,9 @@
+ M docs/AS6_PROJECT_STATE.md
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? frontend/src/crm/companies/
+?? ops/aec/
+?? ops/bin/as6-control-epic013-crm-companies-domain-model
+?? ops/bin/as6-diagnose-epic013-crm-companies-domain-model
+?? ops/governance/as6-epic013-crm-companies-domain-model-governance.md

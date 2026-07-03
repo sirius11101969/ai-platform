@@ -1,0 +1,5 @@
+ROOT_CAUSE=CRM_COMPANIES_DOMAIN_MODEL_MISSING_AFTER_CONTACTS_EPIC
+FAILURE_CLASS=CRM_COMPANIES_DOMAIN_MODEL_GAP
+ARCHITECTURE_DRIFT=Companies/Accounts module not yet represented as a declarative CRM domain
+VALIDATION_GAP=No company identity/status/category/lifecycle/contact-link diagnostics existed before Slice 01
+PREVENTION=Add declarative domain model, runtime tracer, diagnostics, controls, AEC rules, registry and coverage evidence

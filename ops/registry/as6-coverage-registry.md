@@ -3840,3 +3840,9 @@ Permission Validation
 - Covers EPIC013 next module planning.
 - Covers selection of CRM Companies / Accounts as next module.
 - Covers EPIC012 dependency evidence and initial no-storage/no-api/no-workflow invariants.
+
+## AS6_EPIC013_SLICE01_CRM_COMPANIES_DOMAIN_MODEL
+- Covers CRM Companies / Accounts declarative domain model.
+- Covers identity, statuses, categories, lifecycle and Contacts declarative link.
+- Covers runtime tracer and diagnostic/control scripts.
+- Covers no-storage, no-api, no-business-workflow and no-platform-mutation invariants.
