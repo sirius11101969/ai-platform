@@ -1,0 +1,1 @@
+        <CrmContactsLiveLayoutMount crmLayoutMountMode="live" data-as6-crm-contacts-mounted-in-production-layout="true" />

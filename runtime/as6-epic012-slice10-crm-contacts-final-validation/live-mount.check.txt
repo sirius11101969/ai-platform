@@ -1,0 +1,2 @@
+import { CrmContactsLiveLayoutMount } from "../crm/contacts";
+        <CrmContactsLiveLayoutMount crmLayoutMountMode="live" data-as6-crm-contacts-mounted-in-production-layout="true" />

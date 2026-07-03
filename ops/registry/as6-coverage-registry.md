@@ -3829,3 +3829,9 @@ Permission Validation
 - Covers accessibility labels, production style scope and reduced motion support.
 - Covers stable states and performance budget checks.
 - Covers no-storage, no-api and no-business-workflow invariants.
+
+## AS6_EPIC012_SLICE10_CRM_CONTACTS_FINAL_VALIDATION
+- Covers final validation for EPIC012 CRM Contacts.
+- Covers Slice 04 through Slice 09 diagnostic/control chain.
+- Covers live CRM layout mount, production polish, accessibility, performance constraints and registry completeness.
+- Marks CRM Contacts as production-validated for EPIC012.

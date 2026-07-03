@@ -1,0 +1,5 @@
+ M docs/AS6_PROJECT_STATE.md
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? ops/governance/as6-crm-contacts-final-validation-governance.md

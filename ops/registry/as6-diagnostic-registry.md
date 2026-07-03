@@ -1943,3 +1943,9 @@ ops/bin/as6-control-permission-engine-v114
 - Control: ops/bin/as6-control-crm-contacts-production-polish
 - Added checks: accessibility labels, stable states, reduced motion support, production style scope, no runtime fetch, no runtime storage, no heavy dependency, no storage, no API, no workflow.
 - Failure classes: CRM_CONTACTS_ACCESSIBILITY_DRIFT, CRM_CONTACTS_PRODUCTION_STYLE_DRIFT, CRM_CONTACTS_STATE_RESILIENCE_DRIFT, CRM_CONTACTS_PERFORMANCE_BUDGET_DRIFT, CRM_CONTACTS_HEAVY_DEPENDENCY_DRIFT.
+
+## AS6_EPIC012_SLICE10_CRM_CONTACTS_FINAL_VALIDATION
+- Diagnostic: runtime/as6-epic012-slice10-crm-contacts-final-validation/final-validation-report.txt
+- Control: all CRM Contacts diagnostics and controls from Slice 04 through Slice 09 passed.
+- Added checks: live mount, production layout marker, accessibility labels, reduced motion, registry coverage, no forbidden runtime usage, no heavy dependency, frontend build.
+- Failure classes covered: CRM_CONTACTS_FINAL_VALIDATION_DRIFT, CRM_CONTACTS_REGISTRY_COVERAGE_DRIFT, CRM_CONTACTS_LIVE_MOUNT_REGRESSION, CRM_CONTACTS_PRODUCTION_ACCESSIBILITY_REGRESSION.
