@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-crm-contacts-foundation
+ops/bin/as6-diagnose-crm-contacts-ui-foundation
+ops/bin/as6-diagnose-crm-contacts-workspace-integration
+ops/bin/as6-diagnose-crm-contacts-crm-layout-bridge
+! grep -R "fetch\|axios\|localStorage\|sessionStorage" frontend/src/crm/contacts/layout
+echo "AS6_CONTROL_CRM_CONTACTS_CRM_LAYOUT_BRIDGE=PASS"

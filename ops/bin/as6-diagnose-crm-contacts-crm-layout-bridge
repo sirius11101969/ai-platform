@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/crm/contacts/layout/crmContactsCrmLayoutBridge.js
+test -f frontend/src/crm/contacts/layout/crmContactsLayoutModel.js
+test -f frontend/src/crm/contacts/layout/crmContactsLayoutState.js
+test -f frontend/src/crm/contacts/layout/crmContactsCrmLayoutDiagnostics.js
+grep -R "crm.contacts.crm-layout.bridge" frontend/src/crm/contacts/layout
+grep -R "layoutScope: \"crm.unified.layout\"" frontend/src/crm/contacts/layout/crmContactsCrmLayoutBridge.js
+grep -R "isolatedContainer: false" frontend/src/crm/contacts/layout/crmContactsCrmLayoutBridge.js
+grep -R "breadcrumbs" frontend/src/crm/contacts/layout
+grep -R "activeSection" frontend/src/crm/contacts/layout
+grep -R "loading.*empty.*ready.*error" frontend/src/crm/contacts/layout/crmContactsCrmLayoutBridge.js
+grep -R "storageEnabled: false" frontend/src/crm/contacts/layout/crmContactsCrmLayoutBridge.js
+grep -R "apiEnabled: false" frontend/src/crm/contacts/layout/crmContactsCrmLayoutBridge.js
+grep -R "workflowEnabled: false" frontend/src/crm/contacts/layout/crmContactsCrmLayoutBridge.js
+echo "AS6_CRM_CONTACTS_CRM_LAYOUT_BRIDGE=PASS"

@@ -1925,3 +1925,9 @@ ops/bin/as6-control-permission-engine-v114
 - Control: ops/bin/as6-control-crm-contacts-workspace-integration
 - Added checks: workspace panel, navigation, state resolver, health snapshot, no storage, no API, no workflow.
 - Failure classes: CRM_CONTACTS_WORKSPACE_PANEL_DRIFT, CRM_CONTACTS_WORKSPACE_NAVIGATION_DRIFT, CRM_CONTACTS_WORKSPACE_STATE_DRIFT, CRM_CONTACTS_WORKSPACE_DIAGNOSTIC_DRIFT.
+
+## AS6_EPIC012_SLICE07_CRM_CONTACTS_CRM_LAYOUT_BRIDGE
+- Diagnostic: ops/bin/as6-diagnose-crm-contacts-crm-layout-bridge
+- Control: ops/bin/as6-control-crm-contacts-crm-layout-bridge
+- Added checks: CRM layout bridge, existing workspace panel reuse, navigation reuse, breadcrumbs, active section, unified states, no isolated container, no storage, no API, no workflow.
+- Failure classes: CRM_CONTACTS_LAYOUT_BRIDGE_DRIFT, CRM_CONTACTS_ISOLATED_CONTAINER_DRIFT, CRM_CONTACTS_BREADCRUMB_DRIFT, CRM_CONTACTS_ACTIVE_SECTION_DRIFT, CRM_CONTACTS_LAYOUT_STATE_DRIFT.

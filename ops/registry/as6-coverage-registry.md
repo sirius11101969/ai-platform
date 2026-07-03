@@ -3811,3 +3811,9 @@ Permission Validation
 - Covers CRM Contacts Workspace Integration.
 - Covers workspace panel registration, navigation registration, state resolver and diagnostic snapshot integration.
 - Covers no-storage, no-api, no-business-workflow and no-platform-mutation invariants.
+
+## AS6_EPIC012_SLICE07_CRM_CONTACTS_CRM_LAYOUT_BRIDGE
+- Covers CRM Contacts CRM Layout Bridge.
+- Covers reuse of workspace panel and navigation.
+- Covers breadcrumbs, active section and unified layout state.
+- Covers no isolated container, no-storage, no-api and no-business-workflow invariants.

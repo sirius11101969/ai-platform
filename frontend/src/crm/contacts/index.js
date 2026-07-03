@@ -14,3 +14,5 @@ export { getCrmContactHealthSnapshot } from "./crmContactHealthSnapshot";
 export { CrmContactsUiFoundation, CrmContactRow, CrmContactsEmptyState } from "./ui";
 
 export { crmContactsWorkspacePanel, crmContactsWorkspaceNavigation, resolveCrmContactsWorkspaceState, createCrmContactsWorkspaceIntegration, diagnoseCrmContactsWorkspaceIntegration } from "./workspace";
+
+export { crmContactsCrmLayoutBridge, createCrmContactsLayoutModel, resolveCrmContactsLayoutState, createCrmContactsLayoutSnapshot, diagnoseCrmContactsCrmLayoutBridge } from "./layout";

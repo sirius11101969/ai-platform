@@ -6119,3 +6119,14 @@ Status: PASS pending validation
 - Added failure classes: CRM_CONTACTS_WORKSPACE_PANEL_DRIFT, CRM_CONTACTS_WORKSPACE_NAVIGATION_DRIFT, CRM_CONTACTS_WORKSPACE_STATE_DRIFT, CRM_CONTACTS_WORKSPACE_DIAGNOSTIC_DRIFT.
 - Project readiness: 99%.
 - Next stage: AS6_EPIC012_SLICE07_CRM_CONTACTS_CRM_LAYOUT_BRIDGE.
+
+## AS6_EPIC012_SLICE07_CRM_CONTACTS_CRM_LAYOUT_BRIDGE
+- Added CRM Contacts CRM Layout Bridge.
+- Added layout bridge, layout model, layout state snapshot and layout diagnostics.
+- Reused existing Contacts Workspace Panel and Workspace Navigation.
+- Added breadcrumbs sync and active section sync.
+- Added diagnostics: ops/bin/as6-diagnose-crm-contacts-crm-layout-bridge.
+- Added controls: ops/bin/as6-control-crm-contacts-crm-layout-bridge.
+- Added failure classes: CRM_CONTACTS_LAYOUT_BRIDGE_DRIFT, CRM_CONTACTS_ISOLATED_CONTAINER_DRIFT, CRM_CONTACTS_BREADCRUMB_DRIFT, CRM_CONTACTS_ACTIVE_SECTION_DRIFT, CRM_CONTACTS_LAYOUT_STATE_DRIFT.
+- Project readiness: 99%.
+- Next stage: AS6_EPIC012_SLICE08_CRM_CONTACTS_LIVE_LAYOUT_MOUNT.
