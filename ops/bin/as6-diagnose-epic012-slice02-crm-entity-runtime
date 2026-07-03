@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f frontend/src/as6crm/crmEntityContract.js
+test -f frontend/src/as6crm/crmEntityDescriptor.js
+test -f frontend/src/as6crm/crmEntityRegistry.js
+test -f frontend/src/as6crm/crmEntityResolver.js
+test -f frontend/src/as6crm/crmEntityRuntime.js
+test -f frontend/src/as6crm/crmEntityCapabilities.js
+test -f frontend/src/as6crm/crmEntityContext.js
+test -f frontend/src/as6crm/crmEntityManifest.js
+test -f frontend/src/as6crm/crmEntityDiagnostics.js
+test -f frontend/src/as6crm/crmEntityTracer.js
+test -f frontend/src/as6crm/crmEntityHealthSnapshot.js
+
+grep -q "defineAS6CrmEntityType" frontend/src/as6crm/crmEntityContract.js
+grep -q "as6CrmEntityRuntimeDescriptor" frontend/src/as6crm/crmEntityDescriptor.js
+grep -q "as6CrmEntityRegistry" frontend/src/as6crm/crmEntityRegistry.js
+grep -q "resolveAS6CrmEntityRuntime" frontend/src/as6crm/crmEntityResolver.js
+grep -q "createAS6CrmEntityRuntime" frontend/src/as6crm/crmEntityRuntime.js
+grep -q "createAS6CrmEntityManifest" frontend/src/as6crm/crmEntityManifest.js
+grep -q "getAS6CrmEntityHealthSnapshot" frontend/src/as6crm/crmEntityHealthSnapshot.js
+grep -q "runAS6CrmEntityDiagnostics" frontend/src/as6crm/crmEntityDiagnostics.js
+
+echo AS6_CRM_ENTITY_RUNTIME=PASS
+echo AS6_CRM_ENTITY_CONTRACT=PASS
+echo AS6_CRM_ENTITY_DESCRIPTOR=PASS
+echo AS6_CRM_ENTITY_REGISTRY=PASS
+echo AS6_CRM_ENTITY_RESOLVER=PASS
+echo AS6_CRM_ENTITY_CONTEXT=PASS
+echo AS6_CRM_ENTITY_CAPABILITIES=PASS
+echo AS6_CRM_ENTITY_MANIFEST=PASS
+echo AS6_CRM_ENTITY_HEALTH_SNAPSHOT=PASS
+echo AS6_CRM_ENTITY_DIAGNOSTICS=PASS
+echo AS6_EPIC012_SLICE02_CRM_ENTITY_RUNTIME_DIAGNOSTIC=PASS

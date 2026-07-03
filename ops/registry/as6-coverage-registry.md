@@ -3769,3 +3769,16 @@ Permission Validation
 - External registry failure classification=covered
 - Recovered registry failure handling=covered
 - BUILD_RESULT and MERGE_DECISION separation=covered
+
+## AS6 EPIC012 Slice 02 CRM Entity Runtime Coverage
+- CRM Entity Contract=covered
+- CRM Entity Descriptor=covered
+- CRM Entity Registry=covered
+- CRM Entity Resolver=covered
+- CRM Entity Runtime=covered
+- CRM Entity Capabilities=covered
+- CRM Entity Context=covered
+- CRM Entity Manifest=covered
+- CRM Entity Diagnostics=covered
+- CRM Entity Tracer=covered
+- CRM Entity Health Snapshot=covered

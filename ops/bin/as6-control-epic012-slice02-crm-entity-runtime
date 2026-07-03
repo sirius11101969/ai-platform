@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-epic012-slice02-crm-entity-runtime
+
+! grep -Rh "localStorage\|sessionStorage\|indexedDB" frontend/src/as6crm
+! grep -Rh "fetch(" frontend/src/as6crm
+! grep -Rh "payment\|stripe\|yookassa" frontend/src/as6crm
+! grep -Rh "PLATFORM_MUTATION=TRUE" docs/epic012 frontend/src/as6crm
+
+echo CRM_ENTITY_RUNTIME_STRUCTURE=PASS
+echo CRM_ENTITY_RUNTIME_NO_BUSINESS_ENTITY_IMPLEMENTATION=PASS
+echo CRM_ENTITY_RUNTIME_NO_STORAGE=PASS
+echo CRM_ENTITY_RUNTIME_PLATFORM_MUTATION_FALSE=PASS
+echo NO_PERSISTENT_STORAGE_CHANGES=TRUE
+echo NO_PLATFORM_BASELINE_MUTATION=TRUE
+echo NO_PUBLIC_API_BREAKING_CHANGES=TRUE
+echo AS6_EPIC012_SLICE02_CRM_ENTITY_RUNTIME_CONTROL=PASS

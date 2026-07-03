@@ -2265,3 +2265,9 @@ Governed and registered.
 
 ## AS6 Guardian External Infrastructure Failure Repair
 - AS6_GUARDIAN_EXTERNAL_INFRASTRUCTURE_FAILURE: transient external Docker Registry failure was treated as project failure after same-run recovery.
+
+## AS6 EPIC012 Slice 02 CRM Entity Runtime Failure Classes
+- AS6_CRM_ENTITY_CONTRACT_MISSING: CRM entity runtime registered without required contract.
+- AS6_CRM_ENTITY_FIELD_CONTRACT_MISSING: CRM entity field registered without required contract.
+- AS6_CRM_ENTITY_FIELD_RESOLUTION_FAILURE: CRM entity references an unresolved field.
+- AS6_CRM_ENTITY_RUNTIME_STORAGE_DRIFT: CRM entity runtime introduces storage before storage slice authorization.

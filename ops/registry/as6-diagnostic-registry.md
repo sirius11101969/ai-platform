@@ -1883,3 +1883,14 @@ ops/bin/as6-control-permission-engine-v114
 - DIAGNOSTIC=ops/bin/as6-diagnose-guardian-external-infra-repair
 - CONTROL=ops/bin/as6-control-guardian-external-infra-repair
 - PREVENTION=classify external registry failures and allow recovered same-run retry result.
+
+## AS6 EPIC012 Slice 02 CRM Entity Runtime
+- STAGE=AS6_EPIC012_SLICE02_CRM_ENTITY_RUNTIME
+- DIAGNOSTIC=ops/bin/as6-diagnose-epic012-slice02-crm-entity-runtime
+- CONTROL=ops/bin/as6-control-epic012-slice02-crm-entity-runtime
+- RUNTIME_TRACER=traceAS6CrmEntity
+- HEALTH_SNAPSHOT=getAS6CrmEntityHealthSnapshot
+- FAILURE_CLASS=AS6_CRM_ENTITY_CONTRACT_MISSING
+- FAILURE_CLASS=AS6_CRM_ENTITY_FIELD_CONTRACT_MISSING
+- FAILURE_CLASS=AS6_CRM_ENTITY_FIELD_RESOLUTION_FAILURE
+- FAILURE_CLASS=AS6_CRM_ENTITY_RUNTIME_STORAGE_DRIFT
