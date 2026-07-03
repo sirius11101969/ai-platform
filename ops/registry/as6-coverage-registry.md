@@ -3852,3 +3852,9 @@ Permission Validation
 - Covers registry, manifest, capabilities, runtime, resolver, navigation, panels, diagnostics and health snapshot.
 - Covers runtime tracer and diagnostic/control scripts.
 - Covers no-storage, no-api, no-business-workflow and no-platform-mutation invariants.
+
+## AS6_EPIC013_SLICE03_CRM_COMPANIES_UI_FOUNDATION
+- Covers CRM Companies UI Foundation.
+- Covers header, action placeholder, list, card, empty/loading/error/ready states and diagnostics panel.
+- Covers UI runtime tracer and UI health snapshot.
+- Covers no-storage, no-api, no-business-workflow and no-heavy-dependency invariants.

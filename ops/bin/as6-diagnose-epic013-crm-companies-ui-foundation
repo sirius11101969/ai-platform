@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+for f in \
+  CompaniesUiFoundation \
+  CompaniesHeader \
+  CompaniesActions \
+  CompaniesList \
+  CompanyCard \
+  CompaniesEmptyState \
+  CompaniesLoadingState \
+  CompaniesErrorState \
+  CompaniesDiagnosticsPanel
+do
+  test -f "frontend/src/crm/companies/ui/${f}.jsx"
+done
+
+for f in \
+  CompaniesUiStates \
+  CompaniesUiRuntimeTracer \
+  CompaniesUiDiagnostics \
+  CompaniesUiHealthSnapshot
+do
+  test -f "frontend/src/crm/companies/ui/${f}.js"
+done
+
+test -f frontend/src/crm/companies/ui/companiesUiFoundation.css
+test -f frontend/src/crm/companies/ui/index.js
+
+grep -R "data-as6-companies-ui=\"foundation\"" frontend/src/crm/companies/ui
+grep -R "data-as6-companies-list=\"true\"" frontend/src/crm/companies/ui
+grep -R "data-as6-company-card=\"true\"" frontend/src/crm/companies/ui
+grep -R "data-as6-companies-empty=\"true\"" frontend/src/crm/companies/ui
+grep -R "data-as6-companies-loading=\"true\"" frontend/src/crm/companies/ui
+grep -R "data-as6-companies-error=\"true\"" frontend/src/crm/companies/ui
+grep -R "data-as6-companies-diagnostics-panel=\"true\"" frontend/src/crm/companies/ui
+grep -R "traceCrmCompaniesUi" frontend/src/crm/companies/ui
+grep -R "getCrmCompaniesUiHealthSnapshot" frontend/src/crm/companies/ui
+grep -R "loading.*empty.*ready.*error" frontend/src/crm/companies/ui
+
+echo "AS6_EPIC013_CRM_COMPANIES_UI_FOUNDATION=PASS"

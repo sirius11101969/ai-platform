@@ -1,0 +1,87 @@
+.as6-crm-companies-ui {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+  padding: 20px;
+  border-radius: 24px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.as6-crm-companies-ui__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.as6-crm-companies-ui__header p {
+  margin: 0;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.as6-crm-companies-ui__header h2 {
+  margin: 4px 0 0;
+}
+
+.as6-crm-companies-ui__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 16px;
+  min-width: 0;
+}
+
+.as6-crm-companies-ui__main,
+.as6-crm-companies-ui__list,
+.as6-crm-companies-ui__diagnostics,
+.as6-crm-companies-ui__actions {
+  display: grid;
+  gap: 12px;
+}
+
+.as6-crm-company-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.as6-crm-company-card div {
+  display: grid;
+  gap: 4px;
+}
+
+.as6-crm-company-card span,
+.as6-crm-companies-state p,
+.as6-crm-companies-ui__actions p {
+  opacity: 0.72;
+}
+
+.as6-crm-company-card mark {
+  border-radius: 999px;
+  padding: 6px 10px;
+}
+
+.as6-crm-companies-state,
+.as6-crm-companies-ui__actions,
+.as6-crm-companies-ui__diagnostics {
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px dashed rgba(15, 23, 42, 0.16);
+}
+
+.as6-crm-companies-state--error {
+  border-style: solid;
+}
+
+@media (max-width: 900px) {
+  .as6-crm-companies-ui__grid,
+  .as6-crm-company-card {
+    grid-template-columns: 1fr;
+  }
+}

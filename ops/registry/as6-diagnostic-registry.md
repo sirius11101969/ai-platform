@@ -1971,3 +1971,11 @@ ops/bin/as6-control-permission-engine-v114
 - AEC rules: ops/aec/as6-epic013-crm-companies-foundation-aec.md
 - Added checks: registry, manifest, capabilities, runtime, resolver, navigation, panels, diagnostics, health snapshot, no storage, no API, no workflow, no heavy dependency.
 - Failure classes: CRM_COMPANIES_FOUNDATION_GAP, CRM_COMPANIES_REGISTRY_DRIFT, CRM_COMPANIES_MANIFEST_DRIFT, CRM_COMPANIES_RUNTIME_DRIFT, CRM_COMPANIES_RESOLVER_DRIFT, CRM_COMPANIES_NAVIGATION_DRIFT, CRM_COMPANIES_PANEL_DRIFT, CRM_COMPANIES_HEALTH_SNAPSHOT_DRIFT.
+
+## AS6_EPIC013_SLICE03_CRM_COMPANIES_UI_FOUNDATION
+- Diagnostic: ops/bin/as6-diagnose-epic013-crm-companies-ui-foundation
+- Control: ops/bin/as6-control-epic013-crm-companies-ui-foundation
+- Runtime tracer: frontend/src/crm/companies/ui/CompaniesUiRuntimeTracer.js
+- AEC rules: ops/aec/as6-epic013-crm-companies-ui-foundation-aec.md
+- Added checks: UI foundation, header, actions placeholder, list, card, empty/loading/ready/error states, diagnostics panel, UI tracer, UI health snapshot, no storage, no API, no workflow, no heavy dependency.
+- Failure classes: CRM_COMPANIES_UI_COMPONENT_MISSING, CRM_COMPANIES_UI_STATE_DRIFT, CRM_COMPANIES_UI_HEALTH_DRIFT, CRM_COMPANIES_UI_RUNTIME_TRACER_GAP, CRM_COMPANIES_DESIGN_SYSTEM_DRIFT.

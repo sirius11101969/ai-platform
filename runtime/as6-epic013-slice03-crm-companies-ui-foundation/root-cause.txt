@@ -1,0 +1,5 @@
+ROOT_CAUSE=CRM_COMPANIES_UI_FOUNDATION_MISSING_AFTER_FOUNDATION_LAYER
+FAILURE_CLASS=CRM_COMPANIES_UI_COMPONENT_MISSING
+ARCHITECTURE_DRIFT=Companies Foundation exists but has no reusable UI foundation components or UI diagnostics
+VALIDATION_GAP=No Companies UI state validation, UI health snapshot or UI runtime tracer existed before Slice 03
+PREVENTION=Add Companies UI Foundation, UI tracer, UI diagnostics, health snapshot, controls, AEC rules, registry and coverage evidence

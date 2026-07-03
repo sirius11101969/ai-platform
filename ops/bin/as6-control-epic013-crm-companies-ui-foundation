@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-epic013-crm-companies-domain-model
+ops/bin/as6-diagnose-epic013-crm-companies-foundation
+ops/bin/as6-diagnose-epic013-crm-companies-ui-foundation
+
+! grep -R "fetch\|axios\|localStorage\|sessionStorage" frontend/src/crm/companies
+! grep -R "createCompany\|updateCompany\|deleteCompany\|saveCompany" frontend/src/crm/companies
+! grep -R "from .*[lL]odash\|from .*[mM]oment\|from .*[cC]hart" frontend/src/crm/companies
+
+echo "AS6_CONTROL_EPIC013_CRM_COMPANIES_UI_FOUNDATION=PASS"
