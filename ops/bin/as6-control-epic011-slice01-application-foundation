@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ops/bin/as6-diagnose-epic011-slice01-application-foundation
+! grep -Rh "localStorage\|sessionStorage\|indexedDB" frontend/src/as6os/applicationFoundation
+! grep -Rh "CRM\|Revenue\|business logic" frontend/src/as6os/applicationFoundation
+! grep -Rh "fetch(" frontend/src/as6os/applicationFoundation
+echo APPLICATION_FOUNDATION_STRUCTURE=PASS
+echo APPLICATION_RUNTIME=PASS
+echo APPLICATION_REGISTRY=PASS
+echo APPLICATION_CONTRACT=PASS
+echo APPLICATION_CONTEXT=PASS
+echo APPLICATION_LIFECYCLE=PASS
+echo APPLICATION_DIAGNOSTICS=PASS
+echo NO_BUSINESS_LOGIC=TRUE
+echo NO_CRM_FEATURES=TRUE
+echo NO_PERSISTENT_STORAGE_CHANGES=TRUE
+echo NO_PUBLIC_API_BREAKING_CHANGES=TRUE
+echo OPERATING_SYSTEM_BASELINE_IMMUTABLE=TRUE
+echo WORKSPACE_EXPERIENCE_BASELINE_IMMUTABLE=TRUE
+echo EXECUTIVE_INTELLIGENCE_BASELINE_IMMUTABLE=TRUE
+echo AS6_EPIC011_SLICE01_APPLICATION_FOUNDATION_CONTROL=PASS

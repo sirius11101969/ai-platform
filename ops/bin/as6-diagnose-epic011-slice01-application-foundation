@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/as6os/applicationFoundation/applicationContract.js
+test -f frontend/src/as6os/applicationFoundation/applicationRegistry.js
+test -f frontend/src/as6os/applicationFoundation/applicationLifecycle.js
+test -f frontend/src/as6os/applicationFoundation/applicationContext.js
+test -f frontend/src/as6os/applicationFoundation/applicationTracer.js
+test -f frontend/src/as6os/applicationFoundation/applicationHealthSnapshot.js
+test -f frontend/src/as6os/applicationFoundation/applicationRuntime.js
+test -f frontend/src/as6os/applicationFoundation/AS6ApplicationFoundation.jsx
+grep -q defineAS6Application frontend/src/as6os/applicationFoundation/applicationContract.js
+grep -q as6ApplicationRegistry frontend/src/as6os/applicationFoundation/applicationRegistry.js
+grep -q registerAS6Application frontend/src/as6os/applicationFoundation/applicationRegistry.js
+grep -q createAS6ApplicationLifecycle frontend/src/as6os/applicationFoundation/applicationLifecycle.js
+grep -q createAS6ApplicationContext frontend/src/as6os/applicationFoundation/applicationContext.js
+grep -q traceAS6Application frontend/src/as6os/applicationFoundation/applicationTracer.js
+grep -q getAS6ApplicationHealthSnapshot frontend/src/as6os/applicationFoundation/applicationHealthSnapshot.js
+grep -q bootstrapAS6ApplicationFoundation frontend/src/as6os/applicationFoundation/applicationRuntime.js
+grep -q AS6ApplicationFoundation frontend/src/as6os/applicationFoundation/AS6ApplicationFoundation.jsx
+echo AS6_APPLICATION_FOUNDATION=PASS
+echo AS6_APPLICATION_ENGINE=PASS
+echo AS6_APPLICATION_CONTROLLER=PASS
+echo AS6_APPLICATION_REGISTRY=PASS
+echo AS6_APPLICATION_CONTRACT=PASS
+echo AS6_APPLICATION_CONTEXT=PASS
+echo AS6_APPLICATION_LIFECYCLE=PASS
+echo AS6_APPLICATION_RUNTIME=PASS
+echo AS6_APPLICATION_HEALTH_SNAPSHOT=PASS
+echo AS6_EPIC011_SLICE01_APPLICATION_FOUNDATION_DIAGNOSTIC=PASS

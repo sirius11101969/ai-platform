@@ -2189,3 +2189,8 @@ Governed and registered.
 - AS6_APPLICATION_PLANNING_INCOMPLETE: EPIC011 Planning is missing one or more required approval artifacts.
 - AS6_APPLICATION_BASELINE_COMPATIBILITY_MISSING: Application Foundation compatibility with Operating System V1 and Workspace Experience V1 is not confirmed.
 - AS6_APPLICATION_IMPLEMENTATION_WITHOUT_AUTHORIZATION: implementation attempted before EPIC011 Planning approval.
+
+## AS6 EPIC011 Slice 01 Failure Classes
+- AS6_APPLICATION_CONTRACT_MISSING: Application registered without a stable application contract.
+- AS6_APPLICATION_CONTEXT_DRIFT: Application runtime context diverges from declared application context contract.
+- AS6_APPLICATION_REGISTRY_COLLISION: Multiple applications registered with conflicting identifiers or capabilities.

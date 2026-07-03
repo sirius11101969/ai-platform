@@ -48,3 +48,4 @@ export * from './workspacePanels/index.js';
 export * from './commandPalette/index.js';
 export * from './workspaceAssistant/index.js';
 export * from './workspaceIntegration/index.js';
+export * from './applicationFoundation/index.js';

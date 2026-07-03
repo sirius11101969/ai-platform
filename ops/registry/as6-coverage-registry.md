@@ -3635,3 +3635,15 @@ Permission Validation
 - Baseline Compatibility=covered
 - Observability Requirements=covered
 - Implementation Authorization=covered
+
+## AS6 EPIC011 Slice 01 Coverage Registry
+- Application Contract=covered
+- Application Registry=covered
+- Application Runtime=covered
+- Application Context=covered
+- Application Lifecycle=covered
+- Application Runtime Tracer=covered
+- Application Health Snapshot=covered
+- No business logic control=covered
+- No CRM features control=covered
+- No persistent storage control=covered
