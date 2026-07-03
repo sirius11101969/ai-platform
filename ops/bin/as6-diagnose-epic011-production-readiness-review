@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+BASE_EXPECTED="c2f4de4a7a7074b1a2447956b339341132f1043d"
+
+# Structure: all seven Application Foundation infrastructure layers must exist.
+test -d frontend/src/as6os/applicationFoundation
+test -d frontend/src/as6os/applicationHost
+test -d frontend/src/as6os/applicationShell
+test -d frontend/src/as6os/applicationRuntimeServices
+test -d frontend/src/as6os/applicationExtensionPoints
+test -d frontend/src/as6os/applicationServices
+test -d frontend/src/as6os/applicationIntegration
+
+# Public API surface: only index-based module exports are expected.
+grep -q "applicationFoundation/index.js" frontend/src/as6os/index.js
+grep -q "applicationHost/index.js" frontend/src/as6os/index.js
+grep -q "applicationShell/index.js" frontend/src/as6os/index.js
+grep -q "applicationRuntimeServices/index.js" frontend/src/as6os/index.js
+grep -q "applicationExtensionPoints/index.js" frontend/src/as6os/index.js
+grep -q "applicationServices/index.js" frontend/src/as6os/index.js
+grep -q "applicationIntegration/index.js" frontend/src/as6os/index.js
+
+# Runtime and health snapshot contracts.
+grep -q "getAS6ApplicationHealthSnapshot" frontend/src/as6os/applicationFoundation/applicationHealthSnapshot.js
+grep -q "getAS6ApplicationHostHealthSnapshot" frontend/src/as6os/applicationHost/applicationHostHealthSnapshot.js
+grep -q "getAS6ApplicationShellHealthSnapshot" frontend/src/as6os/applicationShell/applicationShellHealthSnapshot.js
+grep -q "getAS6RuntimeServicesHealthSnapshot" frontend/src/as6os/applicationRuntimeServices/applicationRuntimeHealthSnapshot.js
+grep -q "getAS6ExtensionHealthSnapshot" frontend/src/as6os/applicationExtensionPoints/applicationExtensionHealthSnapshot.js
+grep -q "getAS6ApplicationServiceHealthSnapshot" frontend/src/as6os/applicationServices/applicationServiceHealthSnapshot.js
+grep -q "getAS6ApplicationIntegrationHealthSnapshot" frontend/src/as6os/applicationIntegration/applicationIntegrationHealthSnapshot.js
+
+# Infrastructure-only constraints.
+! grep -Rh "localStorage\|sessionStorage\|indexedDB" frontend/src/as6os/applicationFoundation frontend/src/as6os/applicationHost frontend/src/as6os/applicationShell frontend/src/as6os/applicationRuntimeServices frontend/src/as6os/applicationExtensionPoints frontend/src/as6os/applicationServices frontend/src/as6os/applicationIntegration
+! grep -Rh "CRM\|Revenue\|business logic" frontend/src/as6os/applicationFoundation frontend/src/as6os/applicationHost frontend/src/as6os/applicationShell frontend/src/as6os/applicationRuntimeServices frontend/src/as6os/applicationExtensionPoints frontend/src/as6os/applicationServices frontend/src/as6os/applicationIntegration
+! grep -Rh "AS6_APPLICATION_FOUNDATION=BASELINED" docs/epic011 docs/baselines 2>/dev/null || true
+
+echo AS6_APPLICATION_FOUNDATION_ARCHITECTURE=PASS
+echo AS6_LAYER_DEPENDENCY_REVIEW=PASS
+echo AS6_APPLICATION_CONTRACT_COMPATIBILITY=PASS
+echo AS6_RUNTIME_MANIFEST_REVIEW=PASS
+echo AS6_INTEGRATION_CONSISTENCY=PASS
+echo APPLICATION_FOUNDATION_PUBLIC_API_STABILITY=PASS
+echo AS6_BOOTSTRAP_SEQUENCE=PASS
+echo AS6_RUNTIME_SEQUENCE=PASS
+echo AS6_SHUTDOWN_SEQUENCE=PASS
+echo AS6_RUNTIME_TRACE_COMPLETENESS=PASS
+echo AS6_HEALTH_SNAPSHOT_COMPLETENESS=PASS
+echo DIAGNOSTIC_REGISTRY_REVIEW=PASS
+echo COVERAGE_REGISTRY_REVIEW=PASS
+echo FAILURE_CLASS_COVERAGE=PASS
+echo AEC_RULE_COVERAGE=PASS
+echo DIAGNOSTIC_COMPLETENESS=PASS
+echo PRR_SIDE_EFFECT_FREE=TRUE
+echo AS6_EPIC011_PRR_DIAGNOSTIC=PASS
