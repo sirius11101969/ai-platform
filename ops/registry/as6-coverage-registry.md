@@ -3817,3 +3817,9 @@ Permission Validation
 - Covers reuse of workspace panel and navigation.
 - Covers breadcrumbs, active section and unified layout state.
 - Covers no isolated container, no-storage, no-api and no-business-workflow invariants.
+
+## AS6_EPIC012_SLICE08_CRM_CONTACTS_LIVE_LAYOUT_MOUNT
+- Covers live mount of Contacts into frontend/src/pages/CRMPage.jsx.
+- Covers reuse of existing crm-layout production-crm-layout.
+- Covers layout snapshot connection and Contacts UI mount.
+- Covers no parallel shell, no-storage, no-api and no-business-workflow invariants.

@@ -1931,3 +1931,9 @@ ops/bin/as6-control-permission-engine-v114
 - Control: ops/bin/as6-control-crm-contacts-crm-layout-bridge
 - Added checks: CRM layout bridge, existing workspace panel reuse, navigation reuse, breadcrumbs, active section, unified states, no isolated container, no storage, no API, no workflow.
 - Failure classes: CRM_CONTACTS_LAYOUT_BRIDGE_DRIFT, CRM_CONTACTS_ISOLATED_CONTAINER_DRIFT, CRM_CONTACTS_BREADCRUMB_DRIFT, CRM_CONTACTS_ACTIVE_SECTION_DRIFT, CRM_CONTACTS_LAYOUT_STATE_DRIFT.
+
+## AS6_EPIC012_SLICE08_CRM_CONTACTS_LIVE_LAYOUT_MOUNT
+- Diagnostic: ops/bin/as6-diagnose-crm-contacts-live-layout-mount
+- Control: ops/bin/as6-control-crm-contacts-live-layout-mount
+- Added checks: live CRMPage mount, production CRM layout reuse, layout snapshot connection, Contacts UI mount, no storage, no API, no workflow.
+- Failure classes: CRM_CONTACTS_LIVE_MOUNT_DRIFT, CRM_CONTACTS_PRODUCTION_LAYOUT_MOUNT_DRIFT, CRM_CONTACTS_PARALLEL_SHELL_DRIFT, CRM_CONTACTS_LIVE_SNAPSHOT_DRIFT.

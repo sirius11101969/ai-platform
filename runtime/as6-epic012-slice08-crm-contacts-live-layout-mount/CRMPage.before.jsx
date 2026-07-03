@@ -17,7 +17,6 @@ import AS6CommandPalette from "../components/as6-os/AS6CommandPalette";
 /* AS6_DIRECT_PAGE_REWRITE_V100: governed by AS6UnifiedPageShell / AS6DirectPageRewriteFramework */
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import CRMAnalyticsPanel from "./crm/CRMAnalyticsPanel.jsx";
-import { CrmContactsLiveLayoutMount } from "../crm/contacts";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Panel, PageHeading, StatCard } from "../components/AppShell";
 import { sanitizeCustomerVisibleText, sanitizeVisibleAiText } from "../utils/uiSanitizer";
@@ -1219,7 +1218,6 @@ export default function CRMPage() {
       </section>
 
       <section className="crm-layout production-crm-layout">
-        <CrmContactsLiveLayoutMount crmLayoutMountMode="live" data-as6-crm-contacts-mounted-in-production-layout="true" />
         <div className="pipeline-board production-pipeline">
           {loading ? DEFAULT_CRM_STAGES.slice(0, 3).map((stage) => <Panel className="stage-column crm-skeleton" key={stage.status}>Загрузка: {stage.title}…</Panel>) : stages.map((stage) => {
             const stageLeads = leadsByStage[stage.status] || [];

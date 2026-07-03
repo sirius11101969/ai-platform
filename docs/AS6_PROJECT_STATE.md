@@ -6130,3 +6130,14 @@ Status: PASS pending validation
 - Added failure classes: CRM_CONTACTS_LAYOUT_BRIDGE_DRIFT, CRM_CONTACTS_ISOLATED_CONTAINER_DRIFT, CRM_CONTACTS_BREADCRUMB_DRIFT, CRM_CONTACTS_ACTIVE_SECTION_DRIFT, CRM_CONTACTS_LAYOUT_STATE_DRIFT.
 - Project readiness: 99%.
 - Next stage: AS6_EPIC012_SLICE08_CRM_CONTACTS_LIVE_LAYOUT_MOUNT.
+
+## AS6_EPIC012_SLICE08_CRM_CONTACTS_LIVE_LAYOUT_MOUNT
+- Mounted CRM Contacts into live CRMPage production layout.
+- Added live mount component: frontend/src/crm/contacts/live/CrmContactsLiveLayoutMount.jsx.
+- Reused existing crm-layout production-crm-layout.
+- Connected layout snapshot and Contacts UI Foundation.
+- Added diagnostics: ops/bin/as6-diagnose-crm-contacts-live-layout-mount.
+- Added controls: ops/bin/as6-control-crm-contacts-live-layout-mount.
+- Added failure classes: CRM_CONTACTS_LIVE_MOUNT_DRIFT, CRM_CONTACTS_PRODUCTION_LAYOUT_MOUNT_DRIFT, CRM_CONTACTS_PARALLEL_SHELL_DRIFT, CRM_CONTACTS_LIVE_SNAPSHOT_DRIFT.
+- Project readiness: 99%.
+- Next stage: AS6_EPIC012_SLICE09_CRM_CONTACTS_PRODUCTION_POLISH.

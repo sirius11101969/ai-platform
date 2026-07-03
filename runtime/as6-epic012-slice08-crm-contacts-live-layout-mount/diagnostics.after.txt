@@ -1,0 +1,9 @@
+import { CrmContactsLiveLayoutMount } from "../crm/contacts";
+        <CrmContactsLiveLayoutMount crmLayoutMountMode="live" data-as6-crm-contacts-mounted-in-production-layout="true" />
+      <section className="crm-layout production-crm-layout">
+        <CrmContactsLiveLayoutMount crmLayoutMountMode="live" data-as6-crm-contacts-mounted-in-production-layout="true" />
+import { CrmContactsUiFoundation, createCrmContactsLayoutSnapshot } from "../index";
+  const snapshot = createCrmContactsLayoutSnapshot();
+import { CrmContactsUiFoundation, createCrmContactsLayoutSnapshot } from "../index";
+      <CrmContactsUiFoundation />
+AS6_CRM_CONTACTS_LIVE_LAYOUT_MOUNT=PASS

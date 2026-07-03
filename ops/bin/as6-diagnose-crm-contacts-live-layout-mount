@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/crm/contacts/live/CrmContactsLiveLayoutMount.jsx
+test -f frontend/src/crm/contacts/live/index.js
+grep -R "CrmContactsLiveLayoutMount" frontend/src/pages/CRMPage.jsx
+grep -R "crm-layout production-crm-layout" frontend/src/pages/CRMPage.jsx
+grep -R "data-as6-crm-contacts-mounted-in-production-layout" frontend/src/pages/CRMPage.jsx
+grep -R "createCrmContactsLayoutSnapshot" frontend/src/crm/contacts/live/CrmContactsLiveLayoutMount.jsx
+grep -R "CrmContactsUiFoundation" frontend/src/crm/contacts/live/CrmContactsLiveLayoutMount.jsx
+echo "AS6_CRM_CONTACTS_LIVE_LAYOUT_MOUNT=PASS"

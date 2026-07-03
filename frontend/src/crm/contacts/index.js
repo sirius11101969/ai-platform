@@ -16,3 +16,5 @@ export { CrmContactsUiFoundation, CrmContactRow, CrmContactsEmptyState } from ".
 export { crmContactsWorkspacePanel, crmContactsWorkspaceNavigation, resolveCrmContactsWorkspaceState, createCrmContactsWorkspaceIntegration, diagnoseCrmContactsWorkspaceIntegration } from "./workspace";
 
 export { crmContactsCrmLayoutBridge, createCrmContactsLayoutModel, resolveCrmContactsLayoutState, createCrmContactsLayoutSnapshot, diagnoseCrmContactsCrmLayoutBridge } from "./layout";
+
+export { CrmContactsLiveLayoutMount } from "./live";
