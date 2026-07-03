@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f docs/portfolio/as6-portfolio-registry.md
+test -f docs/portfolio/as6-next-major-epic-selection-after-epic010.md
+test -f docs/portfolio/as6-candidate-epic-evaluation-after-epic010.md
+test -f docs/epic011/as6-epic011-application-foundation-planning-entry.md
+
+grep -q "^NEXT_MAJOR_EPIC=AS6_EPIC011_APPLICATION_FOUNDATION$" docs/portfolio/as6-next-major-epic-selection-after-epic010.md
+grep -q "^PORTFOLIO_DECISION_RECORD=APPROVED$" docs/portfolio/as6-next-major-epic-selection-after-epic010.md
+grep -q "^IMPLEMENTATION_AUTHORIZED=FALSE$" docs/portfolio/as6-next-major-epic-selection-after-epic010.md
+grep -q "^IMPLEMENTATION_AUTHORIZED=FALSE$" docs/epic011/as6-epic011-application-foundation-planning-entry.md
+grep -q "OWNING_BASELINE=AS6_WORKSPACE_EXPERIENCE_V1" docs/portfolio/as6-portfolio-registry.md
+grep -q "VALIDATED_BASELINES=AS6_OPERATING_SYSTEM_V1,AS6_WORKSPACE_EXPERIENCE_V1" docs/portfolio/as6-portfolio-registry.md
+
+echo AS6_NEXT_MAJOR_EPIC_SELECTION_DIAGNOSTIC=PASS

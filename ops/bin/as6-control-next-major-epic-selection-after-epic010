@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-next-major-epic-selection-after-epic010
+
+grep -Rh "^IMPLEMENTATION_AUTHORIZED=TRUE$" docs/epic011 docs/portfolio >/tmp/as6-epic011-auth-scope.txt || true
+! grep -q "^IMPLEMENTATION_AUTHORIZED=TRUE$" /tmp/as6-epic011-auth-scope.txt
+
+echo PORTFOLIO_DECISION_RECORD=APPROVED
+echo NEXT_MAJOR_EPIC=AS6_EPIC011_APPLICATION_FOUNDATION
+echo IMPLEMENTATION_AUTHORIZED=FALSE
+echo CONTROL_SCOPE_CURRENT_EPIC_ONLY=PASS
+echo AS6_NEXT_MAJOR_EPIC_SELECTION_CONTROL=PASS

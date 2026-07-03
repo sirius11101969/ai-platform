@@ -2180,3 +2180,7 @@ Governed and registered.
 ## AS6 EPIC010 Baseline Failure Classes
 - AS6_BASELINE_WITHOUT_PRR_APPROVAL: baseline attempted without PRODUCTION_READINESS_APPROVED=YES.
 - AS6_BASELINE_COMMIT_MISMATCH: baseline source commit differs from PRR-approved commit.
+
+## AS6 Next Major EPIC Selection After EPIC010 Failure Classes
+- AS6_EPIC_SELECTION_WITHOUT_BASELINE: next major EPIC selected without confirmed owning baseline.
+- AS6_IMPLEMENTATION_STARTED_BEFORE_PLANNING: implementation attempted before Charter, ADR, Diagnostics Plan, Validation Plan and DoD approval.

@@ -5872,3 +5872,13 @@ Status: PASS pending validation
 - Did not repeat PRR, Build, Docker Build, Secret Scan or Guardian.
 - PROJECT_READINESS=99%.
 - NEXT_STAGE=NEXT_MAJOR_EPIC_SELECTION.
+
+## AS6_DONE=NEXT_MAJOR_EPIC_SELECTION
+- Selected NEXT_MAJOR_EPIC=AS6_EPIC011_APPLICATION_FOUNDATION.
+- Added Portfolio Registry fields for application-era EPIC governance.
+- Added Candidate EPIC Evaluation.
+- Added Portfolio Decision Record.
+- Added EPIC011 Planning Entry.
+- IMPLEMENTATION_AUTHORIZED=FALSE.
+- PROJECT_READINESS=99%.
+- NEXT_STAGE=AS6_EPIC011_APPLICATION_FOUNDATION_PLANNING.

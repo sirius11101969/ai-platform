@@ -3617,3 +3617,10 @@ Permission Validation
 - Baseline Restore Tag=covered
 - EPIC010 Closure=covered
 - PRR commit match=covered
+
+## AS6 Next Major EPIC Selection After EPIC010 Coverage Registry
+- Portfolio Registry=covered
+- Candidate EPIC Evaluation=covered
+- Portfolio Decision Record=covered
+- EPIC011 Planning Entry=covered
+- Implementation Authorization Control=covered
