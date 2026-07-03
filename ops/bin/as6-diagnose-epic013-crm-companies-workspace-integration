@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+for f in \
+  crmCompaniesWorkspaceState \
+  crmCompaniesWorkspacePanel \
+  crmCompaniesWorkspaceNavigation \
+  crmCompaniesWorkspaceTracer \
+  crmCompaniesWorkspaceIntegration \
+  crmCompaniesWorkspaceDiagnostics \
+  crmCompaniesWorkspaceHealthSnapshot
+do
+  test -f "frontend/src/crm/companies/workspace/${f}.js"
+done
+
+test -f frontend/src/crm/shared/workspace/crmWorkspaceModulePattern.js
+test -f frontend/src/crm/shared/workspace/index.js
+
+grep -R "crm.companies.workspace.panel" frontend/src/crm/companies/workspace
+grep -R "crm.companies.workspace.navigation" frontend/src/crm/companies/workspace
+grep -R "/crm/companies" frontend/src/crm/companies/workspace
+grep -R "loading.*empty.*ready.*error" frontend/src/crm/companies/workspace
+grep -R "CompaniesUiFoundation" frontend/src/crm/companies/workspace
+grep -R "getCrmCompanyHealthSnapshot" frontend/src/crm/companies/workspace
+grep -R "getCrmCompaniesUiHealthSnapshot" frontend/src/crm/companies/workspace
+grep -R "traceCrmCompaniesWorkspace" frontend/src/crm/companies/workspace
+grep -R "useExistingCrmWorkspace: true" frontend/src/crm/companies/workspace
+grep -R "useExistingCrmLayout: true" frontend/src/crm/companies/workspace
+grep -R "noParallelShell: true" frontend/src/crm/companies/workspace
+grep -R "storageEnabled: false" frontend/src/crm/companies/workspace
+grep -R "apiEnabled: false" frontend/src/crm/companies/workspace
+grep -R "workflowEnabled: false" frontend/src/crm/companies/workspace
+
+echo "AS6_EPIC013_CRM_COMPANIES_WORKSPACE_INTEGRATION=PASS"

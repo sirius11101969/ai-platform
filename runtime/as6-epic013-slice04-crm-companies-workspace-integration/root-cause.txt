@@ -1,0 +1,5 @@
+ROOT_CAUSE=CRM_COMPANIES_WORKSPACE_INTEGRATION_MISSING_AFTER_UI_FOUNDATION
+FAILURE_CLASS=CRM_COMPANIES_WORKSPACE_INTEGRATION_GAP
+ARCHITECTURE_DRIFT=Companies UI Foundation exists but is not registered as a CRM Workspace panel/navigation/integration
+VALIDATION_GAP=No Companies workspace state, workspace diagnostics or workspace health evidence existed before Slice 04
+PREVENTION=Add workspace panel, navigation, state resolver, integration object, diagnostics, controls, AEC rules, registry and coverage evidence

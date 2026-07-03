@@ -1,0 +1,91 @@
+frontend/src/crm/companies/domain/crmCompanyDiagnostics.js:    ["CRM_COMPANIES_DOMAIN_MODEL_ONLY", CRM_COMPANY_CONTRACT.invariants.CRM_COMPANIES_DOMAIN_MODEL_ONLY === true],
+frontend/src/crm/companies/domain/crmCompanyContract.js:    CRM_COMPANIES_DOMAIN_MODEL_ONLY: true,
+frontend/src/crm/companies/domain/crmCompanyDiagnostics.js:    ["NO_STORAGE", CRM_COMPANY_CONTRACT.invariants.NO_STORAGE === true],
+frontend/src/crm/companies/domain/crmCompanyContract.js:    NO_STORAGE: true,
+frontend/src/crm/companies/domain/crmCompanyDiagnostics.js:    ["NO_API_CALLS", CRM_COMPANY_CONTRACT.invariants.NO_API_CALLS === true],
+frontend/src/crm/companies/domain/crmCompanyContract.js:    NO_API_CALLS: true,
+frontend/src/crm/companies/domain/crmCompanyDiagnostics.js:    ["NO_BUSINESS_WORKFLOW", CRM_COMPANY_CONTRACT.invariants.NO_BUSINESS_WORKFLOW === true],
+frontend/src/crm/companies/domain/crmCompanyContract.js:    NO_BUSINESS_WORKFLOW: true,
+frontend/src/crm/companies/domain/crmCompanyDiagnostics.js:    ["CONTACTS_LINK_DECLARATIVE_ONLY", CRM_COMPANY_CONTRACT.invariants.CONTACTS_LINK_DECLARATIVE_ONLY === true],
+frontend/src/crm/companies/domain/crmCompanyContract.js:    CONTACTS_LINK_DECLARATIVE_ONLY: true,
+frontend/src/crm/companies/domain/index.js:export { traceCrmCompanyDomain } from "./crmCompanyRuntimeTracer";
+frontend/src/crm/companies/domain/crmCompanyDiagnostics.js:import { traceCrmCompanyDomain } from "./crmCompanyRuntimeTracer";
+frontend/src/crm/companies/domain/crmCompanyDiagnostics.js:    trace: traceCrmCompanyDomain(),
+frontend/src/crm/companies/domain/crmCompanyRuntimeTracer.js:export function traceCrmCompanyDomain(event = "CRM_COMPANY_DOMAIN_TRACE") {
+  hardCoupling: false,
+AS6_EPIC013_CRM_COMPANIES_DOMAIN_MODEL=PASS
+frontend/src/crm/companies/foundation/crmCompanyManifest.js:    CRM_COMPANIES_FOUNDATION_ONLY: true,
+frontend/src/crm/companies/foundation/crmCompanyFoundationDiagnostics.js:    ["CRM_COMPANIES_FOUNDATION_ONLY", crmCompanyManifest.invariants.CRM_COMPANIES_FOUNDATION_ONLY === true],
+frontend/src/crm/companies/foundation/crmCompanyRegistry.js:  key: "crm.companies",
+frontend/src/crm/companies/foundation/crmCompanyFoundationDescriptor.js:  id: "crm.companies.foundation",
+frontend/src/crm/companies/foundation/crmCompanyFoundationDiagnostics.js:    ["REGISTRY_PRESENT", crmCompanyRegistry.key === "crm.companies"],
+frontend/src/crm/companies/foundation/crmCompanyFoundationDiagnostics.js:    ["NAVIGATION_PRESENT", crmCompanyNavigation.route === "/crm/companies"],
+frontend/src/crm/companies/foundation/crmCompanyFoundationTracer.js:    registry: "crm.companies",
+frontend/src/crm/companies/foundation/crmCompanyNavigation.js:  route: "/crm/companies",
+frontend/src/crm/companies/foundation/crmCompanyRuntime.js:    mode: "declarative-foundation-only",
+frontend/src/crm/companies/foundation/crmCompanyFoundationDiagnostics.js:    ["RUNTIME_DECLARATIVE_ONLY", runtime.mode === "declarative-foundation-only"],
+frontend/src/crm/companies/foundation/crmCompanyFoundationDiagnostics.js:    ["NAVIGATION_PRESENT", crmCompanyNavigation.route === "/crm/companies"],
+frontend/src/crm/companies/foundation/crmCompanyNavigation.js:  route: "/crm/companies",
+frontend/src/crm/companies/foundation/index.js:export { traceCrmCompanyFoundation } from "./crmCompanyFoundationTracer";
+frontend/src/crm/companies/foundation/crmCompanyHealthSnapshot.js:import { traceCrmCompanyFoundation } from "./crmCompanyFoundationTracer";
+frontend/src/crm/companies/foundation/crmCompanyHealthSnapshot.js:    trace: traceCrmCompanyFoundation(),
+frontend/src/crm/companies/foundation/crmCompanyFoundationDiagnostics.js:import { traceCrmCompanyFoundation } from "./crmCompanyFoundationTracer";
+frontend/src/crm/companies/foundation/crmCompanyFoundationDiagnostics.js:    trace: traceCrmCompanyFoundation(),
+frontend/src/crm/companies/foundation/crmCompanyFoundationTracer.js:export function traceCrmCompanyFoundation(event = "CRM_COMPANY_FOUNDATION_TRACE") {
+frontend/src/crm/companies/foundation/index.js:export { getCrmCompanyHealthSnapshot } from "./crmCompanyHealthSnapshot";
+frontend/src/crm/companies/foundation/crmCompanyHealthSnapshot.js:export function getCrmCompanyHealthSnapshot() {
+frontend/src/crm/companies/foundation/crmCompanyFoundationDescriptor.js:import { getCrmCompanyHealthSnapshot } from "./crmCompanyHealthSnapshot";
+frontend/src/crm/companies/foundation/crmCompanyFoundationDescriptor.js:  health: getCrmCompanyHealthSnapshot,
+    storageEnabled: false,
+    apiEnabled: false,
+    workflowEnabled: false,
+    platformMutation: false,
+AS6_EPIC013_CRM_COMPANIES_FOUNDATION=PASS
+frontend/src/crm/companies/ui/CompaniesUiFoundation.jsx:    <section className="as6-crm-companies-ui" data-as6-companies-ui="foundation" data-as6-companies-ui-state={state} aria-label="CRM Companies UI foundation">
+frontend/src/crm/companies/ui/CompaniesList.jsx:    <main className="as6-crm-companies-ui__list" data-as6-companies-list="true" aria-label="CRM Companies list">
+frontend/src/crm/companies/ui/CompanyCard.jsx:    <article className="as6-crm-company-card" data-as6-company-card="true" aria-label={`CRM company ${company.name}`}>
+frontend/src/crm/companies/ui/CompaniesEmptyState.jsx:    <section className="as6-crm-companies-state" data-as6-companies-empty="true" aria-label="CRM Companies empty state">
+frontend/src/crm/companies/ui/CompaniesLoadingState.jsx:    <section className="as6-crm-companies-state" data-as6-companies-loading="true" aria-label="CRM Companies loading state">
+frontend/src/crm/companies/ui/CompaniesErrorState.jsx:    <section className="as6-crm-companies-state as6-crm-companies-state--error" data-as6-companies-error="true" aria-label="CRM Companies error state">
+frontend/src/crm/companies/ui/CompaniesDiagnosticsPanel.jsx:    <aside className="as6-crm-companies-ui__diagnostics" data-as6-companies-diagnostics-panel="true" aria-label="CRM Companies diagnostics panel">
+frontend/src/crm/companies/ui/index.js:export { traceCrmCompaniesUi } from "./CompaniesUiRuntimeTracer";
+frontend/src/crm/companies/ui/CompaniesUiHealthSnapshot.js:import { traceCrmCompaniesUi } from "./CompaniesUiRuntimeTracer";
+frontend/src/crm/companies/ui/CompaniesUiHealthSnapshot.js:    trace: traceCrmCompaniesUi(),
+frontend/src/crm/companies/ui/CompaniesUiDiagnostics.js:import { traceCrmCompaniesUi } from "./CompaniesUiRuntimeTracer";
+frontend/src/crm/companies/ui/CompaniesUiDiagnostics.js:    trace: traceCrmCompaniesUi(),
+frontend/src/crm/companies/ui/CompaniesUiRuntimeTracer.js:export function traceCrmCompaniesUi(event = "CRM_COMPANIES_UI_TRACE") {
+frontend/src/crm/companies/ui/index.js:export { getCrmCompaniesUiHealthSnapshot } from "./CompaniesUiHealthSnapshot";
+frontend/src/crm/companies/ui/CompaniesUiHealthSnapshot.js:export function getCrmCompaniesUiHealthSnapshot() {
+frontend/src/crm/companies/ui/CompaniesUiDiagnostics.js:    ["UI_STATES_PRESENT", CRM_COMPANIES_UI_STATES.join("/") === "loading/empty/ready/error"],
+frontend/src/crm/companies/ui/CompaniesUiStates.js:export const CRM_COMPANIES_UI_STATES = Object.freeze(["loading", "empty", "ready", "error"]);
+AS6_EPIC013_CRM_COMPANIES_UI_FOUNDATION=PASS
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceDiagnostics.js:    ["WORKSPACE_PANEL_REGISTERED", integration.panel.id === "crm.companies.workspace.panel"],
+frontend/src/crm/companies/workspace/crmCompaniesWorkspacePanel.js:  id: "crm.companies.workspace.panel",
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceNavigation.js:  id: "crm.companies.workspace.navigation",
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceDiagnostics.js:    ["WORKSPACE_NAVIGATION_REGISTERED", integration.navigation.route === "/crm/companies"],
+frontend/src/crm/companies/workspace/crmCompaniesWorkspacePanel.js:  route: "/crm/companies",
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceDiagnostics.js:    ["WORKSPACE_STATES_PRESENT", CRM_COMPANIES_WORKSPACE_STATES.join("/") === "loading/empty/ready/error"],
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceState.js:export const CRM_COMPANIES_WORKSPACE_STATES = Object.freeze(["loading", "empty", "ready", "error"]);
+frontend/src/crm/companies/workspace/crmCompaniesWorkspacePanel.js:  states: Object.freeze(["loading", "empty", "ready", "error"]),
+frontend/src/crm/companies/workspace/crmCompaniesWorkspacePanel.js:import { CompaniesUiFoundation } from "../ui";
+frontend/src/crm/companies/workspace/crmCompaniesWorkspacePanel.js:  component: CompaniesUiFoundation,
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceIntegration.js:import { getCrmCompanyHealthSnapshot } from "../foundation";
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceIntegration.js:  const foundationSnapshot = getCrmCompanyHealthSnapshot();
+frontend/src/crm/companies/workspace/crmCompaniesWorkspacePanel.js:import { getCrmCompanyHealthSnapshot } from "../foundation";
+frontend/src/crm/companies/workspace/crmCompaniesWorkspacePanel.js:  diagnostics: getCrmCompanyHealthSnapshot,
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceIntegration.js:import { getCrmCompaniesUiHealthSnapshot } from "../ui";
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceIntegration.js:  const uiSnapshot = getCrmCompaniesUiHealthSnapshot();
+frontend/src/crm/companies/workspace/index.js:export { traceCrmCompaniesWorkspace } from "./crmCompaniesWorkspaceTracer";
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceTracer.js:export function traceCrmCompaniesWorkspace(event = "CRM_COMPANIES_WORKSPACE_TRACE") {
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceHealthSnapshot.js:import { traceCrmCompaniesWorkspace } from "./crmCompaniesWorkspaceTracer";
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceHealthSnapshot.js:    trace: traceCrmCompaniesWorkspace(),
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceIntegration.js:import { traceCrmCompaniesWorkspace } from "./crmCompaniesWorkspaceTracer";
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceIntegration.js:    trace: traceCrmCompaniesWorkspace(),
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceIntegration.js:    useExistingCrmWorkspace: true,
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceIntegration.js:    useExistingCrmLayout: true,
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceIntegration.js:    noParallelShell: true,
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceIntegration.js:    storageEnabled: false,
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceIntegration.js:    apiEnabled: false,
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceIntegration.js:    workflowEnabled: false,
+AS6_EPIC013_CRM_COMPANIES_WORKSPACE_INTEGRATION=PASS
+AS6_CONTROL_EPIC013_CRM_COMPANIES_WORKSPACE_INTEGRATION=PASS

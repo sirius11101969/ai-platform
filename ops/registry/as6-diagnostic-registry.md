@@ -1979,3 +1979,11 @@ ops/bin/as6-control-permission-engine-v114
 - AEC rules: ops/aec/as6-epic013-crm-companies-ui-foundation-aec.md
 - Added checks: UI foundation, header, actions placeholder, list, card, empty/loading/ready/error states, diagnostics panel, UI tracer, UI health snapshot, no storage, no API, no workflow, no heavy dependency.
 - Failure classes: CRM_COMPANIES_UI_COMPONENT_MISSING, CRM_COMPANIES_UI_STATE_DRIFT, CRM_COMPANIES_UI_HEALTH_DRIFT, CRM_COMPANIES_UI_RUNTIME_TRACER_GAP, CRM_COMPANIES_DESIGN_SYSTEM_DRIFT.
+
+## AS6_EPIC013_SLICE04_CRM_COMPANIES_WORKSPACE_INTEGRATION
+- Diagnostic: ops/bin/as6-diagnose-epic013-crm-companies-workspace-integration
+- Control: ops/bin/as6-control-epic013-crm-companies-workspace-integration
+- Runtime tracer: frontend/src/crm/companies/workspace/crmCompaniesWorkspaceTracer.js
+- AEC rules: ops/aec/as6-epic013-crm-companies-workspace-integration-aec.md
+- Added checks: workspace panel, workspace navigation, workspace state resolver, foundation snapshot, UI snapshot, workspace tracer, shared CRM workspace pattern, no parallel shell, no storage, no API, no workflow.
+- Failure classes: CRM_COMPANIES_WORKSPACE_INTEGRATION_GAP, CRM_COMPANIES_WORKSPACE_PANEL_DRIFT, CRM_COMPANIES_WORKSPACE_NAVIGATION_DRIFT, CRM_COMPANIES_WORKSPACE_STATE_DRIFT, CRM_COMPANIES_PARALLEL_SHELL_DRIFT.

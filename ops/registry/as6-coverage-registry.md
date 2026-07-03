@@ -3858,3 +3858,9 @@ Permission Validation
 - Covers header, action placeholder, list, card, empty/loading/error/ready states and diagnostics panel.
 - Covers UI runtime tracer and UI health snapshot.
 - Covers no-storage, no-api, no-business-workflow and no-heavy-dependency invariants.
+
+## AS6_EPIC013_SLICE04_CRM_COMPANIES_WORKSPACE_INTEGRATION
+- Covers CRM Companies Workspace Integration.
+- Covers workspace panel, navigation, state resolver, snapshots and workspace tracer.
+- Covers shared CRM workspace module pattern marker.
+- Covers no-parallel-shell, no-storage, no-api, no-business-workflow and no-heavy-dependency invariants.

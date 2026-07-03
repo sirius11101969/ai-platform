@@ -1,0 +1,29 @@
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceDiagnostics.js:    ["WORKSPACE_PANEL_REGISTERED", integration.panel.id === "crm.companies.workspace.panel"],
+frontend/src/crm/companies/workspace/crmCompaniesWorkspacePanel.js:  id: "crm.companies.workspace.panel",
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceNavigation.js:  id: "crm.companies.workspace.navigation",
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceDiagnostics.js:    ["WORKSPACE_NAVIGATION_REGISTERED", integration.navigation.route === "/crm/companies"],
+frontend/src/crm/companies/workspace/crmCompaniesWorkspacePanel.js:  route: "/crm/companies",
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceDiagnostics.js:    ["WORKSPACE_STATES_PRESENT", CRM_COMPANIES_WORKSPACE_STATES.join("/") === "loading/empty/ready/error"],
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceState.js:export const CRM_COMPANIES_WORKSPACE_STATES = Object.freeze(["loading", "empty", "ready", "error"]);
+frontend/src/crm/companies/workspace/crmCompaniesWorkspacePanel.js:  states: Object.freeze(["loading", "empty", "ready", "error"]),
+frontend/src/crm/companies/workspace/crmCompaniesWorkspacePanel.js:import { CompaniesUiFoundation } from "../ui";
+frontend/src/crm/companies/workspace/crmCompaniesWorkspacePanel.js:  component: CompaniesUiFoundation,
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceIntegration.js:import { getCrmCompanyHealthSnapshot } from "../foundation";
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceIntegration.js:  const foundationSnapshot = getCrmCompanyHealthSnapshot();
+frontend/src/crm/companies/workspace/crmCompaniesWorkspacePanel.js:import { getCrmCompanyHealthSnapshot } from "../foundation";
+frontend/src/crm/companies/workspace/crmCompaniesWorkspacePanel.js:  diagnostics: getCrmCompanyHealthSnapshot,
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceIntegration.js:import { getCrmCompaniesUiHealthSnapshot } from "../ui";
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceIntegration.js:  const uiSnapshot = getCrmCompaniesUiHealthSnapshot();
+frontend/src/crm/companies/workspace/index.js:export { traceCrmCompaniesWorkspace } from "./crmCompaniesWorkspaceTracer";
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceTracer.js:export function traceCrmCompaniesWorkspace(event = "CRM_COMPANIES_WORKSPACE_TRACE") {
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceHealthSnapshot.js:import { traceCrmCompaniesWorkspace } from "./crmCompaniesWorkspaceTracer";
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceHealthSnapshot.js:    trace: traceCrmCompaniesWorkspace(),
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceIntegration.js:import { traceCrmCompaniesWorkspace } from "./crmCompaniesWorkspaceTracer";
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceIntegration.js:    trace: traceCrmCompaniesWorkspace(),
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceIntegration.js:    useExistingCrmWorkspace: true,
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceIntegration.js:    useExistingCrmLayout: true,
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceIntegration.js:    noParallelShell: true,
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceIntegration.js:    storageEnabled: false,
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceIntegration.js:    apiEnabled: false,
+frontend/src/crm/companies/workspace/crmCompaniesWorkspaceIntegration.js:    workflowEnabled: false,
+AS6_EPIC013_CRM_COMPANIES_WORKSPACE_INTEGRATION=PASS
