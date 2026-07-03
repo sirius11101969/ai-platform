@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -x ops/bin/as6-grep-safe
+
+for f in \
+  DealsUiStates \
+  DealsUiRuntimeTracer \
+  DealsHeader \
+  DealsActions \
+  DealCard \
+  DealsList \
+  DealsEmptyState \
+  DealsLoadingState \
+  DealsErrorState \
+  DealsDiagnosticsPanel \
+  DealsUiDiagnostics \
+  DealsUiHealthSnapshot \
+  DealsUiFoundation
+do
+  if [ "$f" = "DealsUiFoundation" ] || [ "$f" = "DealsHeader" ] || [ "$f" = "DealsActions" ] || [ "$f" = "DealCard" ] || [ "$f" = "DealsList" ] || [ "$f" = "DealsEmptyState" ] || [ "$f" = "DealsLoadingState" ] || [ "$f" = "DealsErrorState" ] || [ "$f" = "DealsDiagnosticsPanel" ]; then
+    test -f "frontend/src/crm/deals/ui/${f}.jsx"
+  else
+    test -f "frontend/src/crm/deals/ui/${f}.js"
+  fi
+done
+
+test -f frontend/src/crm/deals/ui/dealsUiFoundation.css
+test -f frontend/src/crm/deals/ui/index.js
+
+ops/bin/as6-grep-safe -R "data-as6-deals-ui=\"foundation\"" frontend/src/crm/deals/ui
+ops/bin/as6-grep-safe -R "data-as6-deals-header=\"true\"" frontend/src/crm/deals/ui
+ops/bin/as6-grep-safe -R "data-as6-deals-actions=\"true\"" frontend/src/crm/deals/ui
+ops/bin/as6-grep-safe -R "data-as6-deals-list=\"true\"" frontend/src/crm/deals/ui
+ops/bin/as6-grep-safe -R "data-as6-deal-card=\"true\"" frontend/src/crm/deals/ui
+ops/bin/as6-grep-safe -R "data-as6-deals-empty=\"true\"" frontend/src/crm/deals/ui
+ops/bin/as6-grep-safe -R "data-as6-deals-loading=\"true\"" frontend/src/crm/deals/ui
+ops/bin/as6-grep-safe -R "data-as6-deals-error=\"true\"" frontend/src/crm/deals/ui
+ops/bin/as6-grep-safe -R "data-as6-deals-diagnostics-panel=\"true\"" frontend/src/crm/deals/ui
+ops/bin/as6-grep-safe -R "loading.*empty.*ready.*error" frontend/src/crm/deals/ui
+ops/bin/as6-grep-safe -R "traceCrmDealsUi" frontend/src/crm/deals/ui
+ops/bin/as6-grep-safe -R "getCrmDealsUiHealthSnapshot" frontend/src/crm/deals/ui
+ops/bin/as6-grep-safe -R "CRM_DEALS_OPPORTUNITIES" frontend/src/crm/deals/ui
+ops/bin/as6-grep-safe -R "storage: \"disabled\"" frontend/src/crm/deals/ui
+ops/bin/as6-grep-safe -R "apiCalls: \"disabled\"" frontend/src/crm/deals/ui
+ops/bin/as6-grep-safe -R "workflow: \"disabled\"" frontend/src/crm/deals/ui
+
+echo "AS6_EPIC014_CRM_DEALS_UI_FOUNDATION=PASS"

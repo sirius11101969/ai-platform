@@ -3912,3 +3912,8 @@ Permission Validation
 - Covers runtime tracer and diagnostic/control scripts.
 - Covers reuse of Contacts and Companies foundations.
 - Covers no-storage, no-api, no-business-workflow and no-platform-mutation invariants.
+
+## AS6_EPIC014_SLICE03_CRM_DEALS_UI_FOUNDATION
+- Covers CRM Deals / Opportunities UI Foundation.
+- Covers DealsHeader, DealsActions, DealsList, DealCard, Empty/Loading/Error/Ready states, Diagnostics Panel, UI Runtime Tracer and UI Health Snapshot.
+- Covers no-storage, no-api, no-business-workflow and no-heavy-dependency invariants.

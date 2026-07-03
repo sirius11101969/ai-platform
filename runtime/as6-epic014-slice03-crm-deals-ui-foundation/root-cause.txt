@@ -1,0 +1,5 @@
+ROOT_CAUSE=CRM_DEALS_UI_FOUNDATION_MISSING_AFTER_FOUNDATION_LAYER
+FAILURE_CLASS=CRM_DEALS_UI_FOUNDATION_GAP
+ARCHITECTURE_DRIFT=Deals foundation exists but no UI foundation components, states, UI diagnostics or UI health snapshot existed
+VALIDATION_GAP=No Deals UI state validation, design-system markers, UI runtime tracer or UI control existed before Slice 03
+PREVENTION=Add Deals UI Foundation, UI diagnostics, UI tracer, health snapshot, CSS foundation, AEC rules, registry and coverage evidence

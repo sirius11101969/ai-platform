@@ -1,0 +1,33 @@
+frontend/src/crm/deals/ui/DealsUiFoundation.jsx:    <section className="as6-crm-deals-ui" data-as6-deals-ui="foundation" data-as6-deals-ui-state={state} aria-label="CRM Deals UI foundation">
+frontend/src/crm/deals/ui/DealsHeader.jsx:    <header className="as6-crm-deals-ui__header" data-as6-deals-header="true" aria-label="CRM Deals header">
+frontend/src/crm/deals/ui/DealsActions.jsx:    <nav className="as6-crm-deals-ui__actions" data-as6-deals-actions="true" aria-label="CRM Deals foundation actions">
+frontend/src/crm/deals/ui/DealsList.jsx:    <main className="as6-crm-deals-ui__list" data-as6-deals-list="true" aria-label="CRM Deals list">
+frontend/src/crm/deals/ui/DealCard.jsx:    <article className="as6-crm-deal-card" data-as6-deal-card="true" aria-label={`CRM deal ${deal.title}`}>
+frontend/src/crm/deals/ui/DealsEmptyState.jsx:    <section className="as6-crm-deals-state" data-as6-deals-empty="true" aria-label="CRM Deals empty state">
+frontend/src/crm/deals/ui/DealsLoadingState.jsx:    <section className="as6-crm-deals-state" data-as6-deals-loading="true" aria-label="CRM Deals loading state">
+frontend/src/crm/deals/ui/DealsErrorState.jsx:    <section className="as6-crm-deals-state as6-crm-deals-state--error" data-as6-deals-error="true" aria-label="CRM Deals error state">
+frontend/src/crm/deals/ui/DealsDiagnosticsPanel.jsx:    <aside className="as6-crm-deals-ui__diagnostics" data-as6-deals-diagnostics-panel="true" aria-label="CRM Deals diagnostics panel">
+frontend/src/crm/deals/ui/DealsUiDiagnostics.js:    ["UI_STATES_PRESENT", CRM_DEALS_UI_STATES.join("/") === "loading/empty/ready/error"],
+frontend/src/crm/deals/ui/DealsUiStates.js:export const CRM_DEALS_UI_STATES = Object.freeze(["loading", "empty", "ready", "error"]);
+frontend/src/crm/deals/ui/DealsUiRuntimeTracer.js:    states: "loading/empty/ready/error",
+frontend/src/crm/deals/ui/index.js:export { traceCrmDealsUi } from "./DealsUiRuntimeTracer";
+frontend/src/crm/deals/ui/DealsUiFoundation.jsx:import { traceCrmDealsUi } from "./DealsUiRuntimeTracer";
+frontend/src/crm/deals/ui/DealsUiFoundation.jsx:  const trace = traceCrmDealsUi();
+frontend/src/crm/deals/ui/DealsUiHealthSnapshot.js:import { traceCrmDealsUi } from "./DealsUiRuntimeTracer";
+frontend/src/crm/deals/ui/DealsUiHealthSnapshot.js:    trace: traceCrmDealsUi(),
+frontend/src/crm/deals/ui/DealsUiDiagnostics.js:import { traceCrmDealsUi } from "./DealsUiRuntimeTracer";
+frontend/src/crm/deals/ui/DealsUiDiagnostics.js:    ["UI_RUNTIME_TRACER_PRESENT", traceCrmDealsUi().event === "CRM_DEALS_UI_TRACE"],
+frontend/src/crm/deals/ui/DealsUiDiagnostics.js:    ["DESIGN_SYSTEM_SCOPE", traceCrmDealsUi().designSystem === "crm-shared-foundation"],
+frontend/src/crm/deals/ui/DealsUiDiagnostics.js:    ["NO_STORAGE", traceCrmDealsUi().storage === "disabled"],
+frontend/src/crm/deals/ui/DealsUiDiagnostics.js:    ["NO_API_CALLS", traceCrmDealsUi().apiCalls === "disabled"],
+frontend/src/crm/deals/ui/DealsUiDiagnostics.js:    ["NO_BUSINESS_WORKFLOW", traceCrmDealsUi().workflow === "disabled"],
+frontend/src/crm/deals/ui/DealsUiDiagnostics.js:    trace: traceCrmDealsUi(),
+frontend/src/crm/deals/ui/DealsUiRuntimeTracer.js:export function traceCrmDealsUi(event = "CRM_DEALS_UI_TRACE") {
+frontend/src/crm/deals/ui/index.js:export { getCrmDealsUiHealthSnapshot } from "./DealsUiHealthSnapshot";
+frontend/src/crm/deals/ui/DealsUiHealthSnapshot.js:export function getCrmDealsUiHealthSnapshot() {
+frontend/src/crm/deals/ui/DealsUiHealthSnapshot.js:    module: "CRM_DEALS_OPPORTUNITIES",
+frontend/src/crm/deals/ui/DealsUiRuntimeTracer.js:    module: "CRM_DEALS_OPPORTUNITIES",
+frontend/src/crm/deals/ui/DealsUiRuntimeTracer.js:    storage: "disabled",
+frontend/src/crm/deals/ui/DealsUiRuntimeTracer.js:    apiCalls: "disabled",
+frontend/src/crm/deals/ui/DealsUiRuntimeTracer.js:    workflow: "disabled",
+AS6_EPIC014_CRM_DEALS_UI_FOUNDATION=PASS

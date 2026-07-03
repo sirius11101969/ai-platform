@@ -2050,3 +2050,11 @@ ops/bin/as6-control-permission-engine-v114
 - AEC rules: ops/aec/as6-epic014-crm-deals-foundation-aec.md
 - Added checks: registry, manifest, capabilities, runtime, resolver, navigation, panels, foundation descriptor, diagnostics, health snapshot, no storage, no API, no workflow, no heavy dependency.
 - Failure classes: CRM_DEALS_FOUNDATION_GAP, CRM_DEALS_REGISTRY_DRIFT, CRM_DEALS_MANIFEST_DRIFT, CRM_DEALS_RUNTIME_DRIFT, CRM_DEALS_RESOLVER_DRIFT, CRM_DEALS_NAVIGATION_DRIFT, CRM_DEALS_PANEL_DRIFT, CRM_DEALS_HEALTH_SNAPSHOT_DRIFT.
+
+## AS6_EPIC014_SLICE03_CRM_DEALS_UI_FOUNDATION
+- Diagnostic: ops/bin/as6-diagnose-epic014-crm-deals-ui-foundation
+- Control: ops/bin/as6-control-epic014-crm-deals-ui-foundation
+- Runtime tracer: frontend/src/crm/deals/ui/DealsUiRuntimeTracer.js
+- AEC rules: ops/aec/as6-epic014-crm-deals-ui-foundation-aec.md
+- Added checks: UI states, header, actions, list, card, empty/loading/error/ready states, diagnostics panel, UI health snapshot, design-system scope, no storage, no API, no workflow, no heavy dependency.
+- Failure classes: CRM_DEALS_UI_FOUNDATION_GAP, CRM_DEALS_UI_STATE_DRIFT, CRM_DEALS_UI_COMPONENT_DRIFT, CRM_DEALS_UI_HEALTH_SNAPSHOT_DRIFT, CRM_DEALS_UI_DESIGN_SYSTEM_DRIFT.

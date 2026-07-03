@@ -6326,3 +6326,15 @@ Status: PASS pending validation
 - Added failure classes: CRM_DEALS_FOUNDATION_GAP, CRM_DEALS_REGISTRY_DRIFT, CRM_DEALS_MANIFEST_DRIFT, CRM_DEALS_RUNTIME_DRIFT, CRM_DEALS_RESOLVER_DRIFT, CRM_DEALS_NAVIGATION_DRIFT, CRM_DEALS_PANEL_DRIFT, CRM_DEALS_HEALTH_SNAPSHOT_DRIFT.
 - Project readiness: 99%.
 - Next stage: AS6_EPIC014_SLICE03_CRM_DEALS_UI_FOUNDATION.
+
+## AS6_EPIC014_SLICE03_CRM_DEALS_UI_FOUNDATION
+- Added CRM Deals / Opportunities UI Foundation.
+- Added DealsHeader, DealsActions, DealsList, DealCard, Empty/Loading/Error/Ready states and Diagnostics Panel.
+- Added UI states, UI runtime tracer, UI diagnostics, UI health snapshot and CSS foundation.
+- Added diagnostics: ops/bin/as6-diagnose-epic014-crm-deals-ui-foundation.
+- Added controls: ops/bin/as6-control-epic014-crm-deals-ui-foundation.
+- Added AEC rules: ops/aec/as6-epic014-crm-deals-ui-foundation-aec.md.
+- Added governance: ops/governance/as6-epic014-crm-deals-ui-foundation-governance.md.
+- Added failure classes: CRM_DEALS_UI_FOUNDATION_GAP, CRM_DEALS_UI_STATE_DRIFT, CRM_DEALS_UI_COMPONENT_DRIFT, CRM_DEALS_UI_HEALTH_SNAPSHOT_DRIFT, CRM_DEALS_UI_DESIGN_SYSTEM_DRIFT.
+- Project readiness: 99%.
+- Next stage: AS6_EPIC014_SLICE04_CRM_DEALS_WORKSPACE_INTEGRATION.
