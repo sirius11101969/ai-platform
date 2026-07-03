@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f frontend/src/as6os/applicationRuntimeServices/applicationRuntimeServiceContract.js
+test -f frontend/src/as6os/applicationRuntimeServices/applicationRuntimeServiceRegistry.js
+test -f frontend/src/as6os/applicationRuntimeServices/applicationRuntimeDependencyResolver.js
+test -f frontend/src/as6os/applicationRuntimeServices/applicationRuntimeServiceResolver.js
+test -f frontend/src/as6os/applicationRuntimeServices/applicationRuntimeServiceContainer.js
+test -f frontend/src/as6os/applicationRuntimeServices/applicationRuntimeEventBus.js
+test -f frontend/src/as6os/applicationRuntimeServices/applicationRuntimeContextBridge.js
+test -f frontend/src/as6os/applicationRuntimeServices/applicationRuntimeLifecycle.js
+test -f frontend/src/as6os/applicationRuntimeServices/applicationRuntimeTracer.js
+test -f frontend/src/as6os/applicationRuntimeServices/applicationRuntimeHealthSnapshot.js
+
+grep -q defineAS6RuntimeService frontend/src/as6os/applicationRuntimeServices/applicationRuntimeServiceContract.js
+grep -q as6RuntimeServiceRegistry frontend/src/as6os/applicationRuntimeServices/applicationRuntimeServiceRegistry.js
+grep -q resolveAS6RuntimeServiceDependencies frontend/src/as6os/applicationRuntimeServices/applicationRuntimeDependencyResolver.js
+grep -q resolveAS6RuntimeServiceCapabilities frontend/src/as6os/applicationRuntimeServices/applicationRuntimeServiceResolver.js
+grep -q createAS6RuntimeServiceContainer frontend/src/as6os/applicationRuntimeServices/applicationRuntimeServiceContainer.js
+grep -q publishAS6RuntimeEvent frontend/src/as6os/applicationRuntimeServices/applicationRuntimeEventBus.js
+grep -q createAS6RuntimeContextBridge frontend/src/as6os/applicationRuntimeServices/applicationRuntimeContextBridge.js
+grep -q initializeAS6RuntimeService frontend/src/as6os/applicationRuntimeServices/applicationRuntimeLifecycle.js
+grep -q traceAS6RuntimeServices frontend/src/as6os/applicationRuntimeServices/applicationRuntimeTracer.js
+grep -q getAS6RuntimeServicesHealthSnapshot frontend/src/as6os/applicationRuntimeServices/applicationRuntimeHealthSnapshot.js
+
+echo AS6_APPLICATION_RUNTIME_SERVICES=PASS
+echo AS6_RUNTIME_SERVICE_REGISTRY=PASS
+echo AS6_RUNTIME_SERVICE_CONTRACT=PASS
+echo AS6_RUNTIME_SERVICE_RESOLVER=PASS
+echo AS6_RUNTIME_DEPENDENCY_RESOLVER=PASS
+echo AS6_RUNTIME_SERVICE_CONTAINER=PASS
+echo AS6_RUNTIME_EVENT_BUS=PASS
+echo AS6_RUNTIME_CONTEXT_BRIDGE=PASS
+echo AS6_RUNTIME_SERVICE_CAPABILITIES=PASS
+echo AS6_RUNTIME_SERVICE_DEPENDENCIES=PASS
+echo AS6_RUNTIME_SERVICE_LIFECYCLE=PASS
+echo AS6_RUNTIME_SERVICES_HEALTH_SNAPSHOT=PASS
+echo AS6_EPIC011_SLICE04_APPLICATION_RUNTIME_SERVICES_DIAGNOSTIC=PASS

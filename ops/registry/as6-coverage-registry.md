@@ -3673,3 +3673,15 @@ Permission Validation
 - Runtime Shell=covered
 - Runtime Tracer=covered
 - Health Snapshot=covered
+
+## AS6 EPIC011 Slice 04 Coverage Registry
+- Runtime Service Registry=covered
+- Runtime Service Contract=covered
+- Service Resolver=covered
+- Dependency Resolver=covered
+- Service Container=covered
+- Lifecycle Hooks=covered
+- Event Bus=covered
+- Runtime Context Bridge=covered
+- Runtime Tracer=covered
+- Health Snapshot=covered

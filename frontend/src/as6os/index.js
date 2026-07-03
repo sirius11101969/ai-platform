@@ -51,3 +51,4 @@ export * from './workspaceIntegration/index.js';
 export * from './applicationFoundation/index.js';
 export * from './applicationHost/index.js';
 export * from './applicationShell/index.js';
+export * from './applicationRuntimeServices/index.js';

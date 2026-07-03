@@ -2208,3 +2208,10 @@ Governed and registered.
 - AS6_APPLICATION_COMPOSITION_DRIFT: runtime composition diverges from declarative application shell model.
 - AS6_APPLICATION_REGION_RESOLUTION_FAILURE: application regions cannot be resolved into a valid shell layout.
 - AS6_APPLICATION_REGION_CAPABILITY_MISMATCH: application requests a shell region that does not satisfy its declared capabilities.
+
+## AS6 EPIC011 Slice 04 Failure Classes
+- AS6_RUNTIME_SERVICE_CONTRACT_MISMATCH: runtime service implementation violates declared service contract.
+- AS6_RUNTIME_DEPENDENCY_RESOLUTION_FAILURE: runtime service dependency graph cannot be resolved.
+- AS6_RUNTIME_EVENT_ROUTING_FAILURE: runtime event cannot be routed through declared Event Bus.
+- AS6_RUNTIME_SERVICE_CAPABILITY_CONFLICT: two runtime services expose incompatible capability definitions.
+- AS6_RUNTIME_CONTEXT_BRIDGE_FAILURE: runtime context cannot be propagated between dependent runtime services.
