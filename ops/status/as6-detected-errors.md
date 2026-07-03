@@ -2223,3 +2223,12 @@ Governed and registered.
 - AS6_EXTENSION_POLICY_VIOLATION: extension violates declared platform extension policy.
 - AS6_EXTENSION_VERSION_INCOMPATIBILITY: extension version is incompatible with active platform baseline.
 - AS6_EXTENSION_LIFECYCLE_CONFLICT: extension lifecycle cannot be coordinated with runtime lifecycle.
+
+## AS6 EPIC011 Slice 06 Failure Classes
+- AS6_SERVICE_CONTRACT_MISMATCH: service implementation violates declared service contract.
+- AS6_SERVICE_DEPENDENCY_CYCLE: cyclic dependency detected between runtime services.
+- AS6_SERVICE_CAPABILITY_CONFLICT: multiple services export incompatible capabilities.
+- AS6_SERVICE_CONTEXT_RESOLUTION_FAILURE: runtime context cannot satisfy service requirements.
+- AS6_SERVICE_INITIALIZATION_ORDER_FAILURE: service initialization order violates dependency graph.
+- AS6_SERVICE_SHUTDOWN_ORDER_FAILURE: runtime shutdown sequence violates lifecycle policy.
+- AS6_SERVICE_REGISTRATION_DUPLICATE: multiple services registered using the same service identifier.

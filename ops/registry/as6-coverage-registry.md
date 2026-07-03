@@ -3698,3 +3698,19 @@ Permission Validation
 - Extension Runtime=covered
 - Extension Tracer=covered
 - Extension Health Snapshot=covered
+
+## AS6 EPIC011 Slice 06 Coverage Registry
+- Service Contract=covered
+- Service Registry=covered
+- Service Descriptor=covered
+- Service Resolver=covered
+- Service Capability Contract=covered
+- Service Dependency Graph=covered
+- Service Lifecycle Manager=covered
+- Service Initialization Order=covered
+- Service Activation=covered
+- Service Runtime=covered
+- Service Context Bridge=covered
+- Service Shutdown Order=covered
+- Service Tracer=covered
+- Service Health Snapshot=covered

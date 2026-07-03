@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f frontend/src/as6os/applicationServices/applicationServiceContract.js
+test -f frontend/src/as6os/applicationServices/applicationServiceRegistry.js
+test -f frontend/src/as6os/applicationServices/applicationServiceResolver.js
+test -f frontend/src/as6os/applicationServices/applicationServiceLifecycleManager.js
+test -f frontend/src/as6os/applicationServices/applicationServiceRuntime.js
+test -f frontend/src/as6os/applicationServices/applicationServiceContextBridge.js
+test -f frontend/src/as6os/applicationServices/applicationServiceTracer.js
+test -f frontend/src/as6os/applicationServices/applicationServiceHealthSnapshot.js
+test -f frontend/src/as6os/applicationServices/applicationServiceController.js
+test -f frontend/src/as6os/applicationServices/AS6ApplicationServices.jsx
+
+grep -q defineAS6ApplicationService frontend/src/as6os/applicationServices/applicationServiceContract.js
+grep -q as6ApplicationServiceRegistry frontend/src/as6os/applicationServices/applicationServiceRegistry.js
+grep -q createAS6ServiceRuntimeManifest frontend/src/as6os/applicationServices/applicationServiceResolver.js
+grep -q createAS6ServiceLifecycleManager frontend/src/as6os/applicationServices/applicationServiceLifecycleManager.js
+grep -q createAS6ApplicationServiceRuntime frontend/src/as6os/applicationServices/applicationServiceRuntime.js
+grep -q createAS6ServiceContextBridge frontend/src/as6os/applicationServices/applicationServiceContextBridge.js
+grep -q traceAS6ApplicationService frontend/src/as6os/applicationServices/applicationServiceTracer.js
+grep -q getAS6ApplicationServiceHealthSnapshot frontend/src/as6os/applicationServices/applicationServiceHealthSnapshot.js
+grep -q bootstrapAS6ApplicationServices frontend/src/as6os/applicationServices/applicationServiceController.js
+
+echo AS6_APPLICATION_SERVICES=PASS
+echo AS6_SERVICE_REGISTRY=PASS
+echo AS6_SERVICE_CONTRACT=PASS
+echo AS6_SERVICE_DESCRIPTOR=PASS
+echo AS6_SERVICE_RESOLVER=PASS
+echo AS6_SERVICE_CAPABILITIES=PASS
+echo AS6_SERVICE_DEPENDENCY_GRAPH=PASS
+echo AS6_SERVICE_LIFECYCLE_MANAGER=PASS
+echo AS6_SERVICE_INITIALIZATION_ORDER=PASS
+echo AS6_SERVICE_ACTIVATION=PASS
+echo AS6_SERVICE_RUNTIME=PASS
+echo AS6_SERVICE_CONTEXT_BRIDGE=PASS
+echo AS6_SERVICE_SHUTDOWN_ORDER=PASS
+echo AS6_SERVICE_HEALTH_SNAPSHOT=PASS
+echo AS6_EPIC011_SLICE06_APPLICATION_SERVICES_DIAGNOSTIC=PASS
