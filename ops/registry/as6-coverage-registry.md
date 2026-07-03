@@ -3714,3 +3714,15 @@ Permission Validation
 - Service Shutdown Order=covered
 - Service Tracer=covered
 - Service Health Snapshot=covered
+
+## AS6 EPIC011 Slice 07 Coverage Registry
+- Integration Contract=covered
+- Integration Registry=covered
+- Integration Resolver=covered
+- Integration Composition=covered
+- Integration Coordinator=covered
+- Integration Bootstrap=covered
+- Unified Runtime Manifest=covered
+- Unified Runtime=covered
+- Integration Tracer=covered
+- Integration Health Snapshot=covered

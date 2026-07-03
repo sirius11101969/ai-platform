@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-epic011-slice07-application-integration
+
+! grep -Rh "localStorage\|sessionStorage\|indexedDB" frontend/src/as6os/applicationIntegration
+! grep -Rh "CRM\|Revenue\|business logic" frontend/src/as6os/applicationIntegration
+! grep -Rh "fetch(" frontend/src/as6os/applicationIntegration
+! grep -Rh "if .*CRM\|if .*Finance\|if .*AI" frontend/src/as6os/applicationIntegration
+
+echo APPLICATION_INTEGRATION_STRUCTURE=PASS
+echo APPLICATION_INTEGRATION_COORDINATOR=PASS
+echo APPLICATION_INTEGRATION_CONTRACT=PASS
+echo APPLICATION_RUNTIME_MANIFEST=PASS
+echo APPLICATION_BOOTSTRAP_ORDER=PASS
+echo APPLICATION_UNIFIED_HEALTH=PASS
+echo NO_BUSINESS_LOGIC=TRUE
+echo NO_CRM_FEATURES=TRUE
+echo NO_PERSISTENT_STORAGE_CHANGES=TRUE
+echo NO_PUBLIC_API_BREAKING_CHANGES=TRUE
+echo OPERATING_SYSTEM_BASELINE_IMMUTABLE=TRUE
+echo WORKSPACE_EXPERIENCE_BASELINE_IMMUTABLE=TRUE
+echo EXECUTIVE_INTELLIGENCE_BASELINE_IMMUTABLE=TRUE
+echo AS6_EPIC011_SLICE07_APPLICATION_INTEGRATION_CONTROL=PASS

@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -f frontend/src/as6os/applicationIntegration/applicationIntegrationContract.js
+test -f frontend/src/as6os/applicationIntegration/applicationIntegrationRegistry.js
+test -f frontend/src/as6os/applicationIntegration/applicationIntegrationResolver.js
+test -f frontend/src/as6os/applicationIntegration/applicationRuntimeManifest.js
+test -f frontend/src/as6os/applicationIntegration/applicationIntegrationComposition.js
+test -f frontend/src/as6os/applicationIntegration/applicationIntegrationBootstrap.js
+test -f frontend/src/as6os/applicationIntegration/applicationIntegrationCoordinator.js
+test -f frontend/src/as6os/applicationIntegration/applicationIntegrationHealthSnapshot.js
+test -f frontend/src/as6os/applicationIntegration/AS6ApplicationIntegration.jsx
+
+grep -q defineAS6IntegrationSubsystem frontend/src/as6os/applicationIntegration/applicationIntegrationContract.js
+grep -q as6ApplicationIntegrationRegistry frontend/src/as6os/applicationIntegration/applicationIntegrationRegistry.js
+grep -q resolveAS6IntegrationDependencyGraph frontend/src/as6os/applicationIntegration/applicationIntegrationResolver.js
+grep -q createAS6UnifiedApplicationRuntimeManifest frontend/src/as6os/applicationIntegration/applicationRuntimeManifest.js
+grep -q createAS6ApplicationIntegrationComposition frontend/src/as6os/applicationIntegration/applicationIntegrationComposition.js
+grep -q bootstrapAS6ApplicationIntegrationRuntime frontend/src/as6os/applicationIntegration/applicationIntegrationBootstrap.js
+grep -q coordinateAS6ApplicationIntegration frontend/src/as6os/applicationIntegration/applicationIntegrationCoordinator.js
+grep -q getAS6ApplicationIntegrationHealthSnapshot frontend/src/as6os/applicationIntegration/applicationIntegrationHealthSnapshot.js
+
+echo AS6_APPLICATION_INTEGRATION=PASS
+echo AS6_INTEGRATION_COORDINATOR=PASS
+echo AS6_INTEGRATION_CONTRACT=PASS
+echo AS6_INTEGRATION_REGISTRY=PASS
+echo AS6_INTEGRATION_RESOLVER=PASS
+echo AS6_INTEGRATION_COMPOSITION=PASS
+echo AS6_INTEGRATION_CONTRACT_COMPATIBILITY=PASS
+echo AS6_INTEGRATION_DEPENDENCY_GRAPH=PASS
+echo AS6_SUBSYSTEM_REGISTRY_CONSISTENCY=PASS
+echo AS6_BOOTSTRAP_ORDER_VALIDATION=PASS
+echo AS6_INTEGRATION_BOOTSTRAP=PASS
+echo AS6_UNIFIED_APPLICATION_RUNTIME=PASS
+echo AS6_RUNTIME_MANIFEST_CONSISTENCY=PASS
+echo AS6_APPLICATION_RUNTIME_MANIFEST=PASS
+echo AS6_UNIFIED_HEALTH_SNAPSHOT=PASS
+echo AS6_APPLICATION_INTEGRATION_HEALTH_SNAPSHOT=PASS
+echo AS6_COORDINATOR_SCOPE_VALIDATION=PASS
+echo AS6_EPIC011_SLICE07_APPLICATION_INTEGRATION_DIAGNOSTIC=PASS

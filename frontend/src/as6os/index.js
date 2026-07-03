@@ -54,3 +54,4 @@ export * from './applicationShell/index.js';
 export * from './applicationRuntimeServices/index.js';
 export * from './applicationExtensionPoints/index.js';
 export * from './applicationServices/index.js';
+export * from './applicationIntegration/index.js';

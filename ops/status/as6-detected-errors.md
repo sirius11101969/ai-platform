@@ -2232,3 +2232,14 @@ Governed and registered.
 - AS6_SERVICE_INITIALIZATION_ORDER_FAILURE: service initialization order violates dependency graph.
 - AS6_SERVICE_SHUTDOWN_ORDER_FAILURE: runtime shutdown sequence violates lifecycle policy.
 - AS6_SERVICE_REGISTRATION_DUPLICATE: multiple services registered using the same service identifier.
+
+## AS6 EPIC011 Slice 07 Failure Classes
+- AS6_APPLICATION_INTEGRATION_CONTRACT_MISMATCH: integrated subsystems expose incompatible contracts.
+- AS6_APPLICATION_BOOTSTRAP_SEQUENCE_FAILURE: bootstrap order violates declared subsystem dependencies.
+- AS6_APPLICATION_RUNTIME_MANIFEST_INCONSISTENT: unified runtime manifest contains conflicting subsystem definitions.
+- AS6_INTEGRATION_COORDINATOR_POLICY_VIOLATION: Integration Coordinator performs responsibilities outside declared integration scope.
+- AS6_RUNTIME_MANIFEST_DRIFT: Unified runtime manifest diverges from registered subsystem declarations.
+- AS6_SUBSYSTEM_BOOTSTRAP_ORDER_DRIFT: subsystem bootstrap sequence differs from declared dependency graph.
+- AS6_SUBSYSTEM_REGISTRY_DRIFT: subsystem registry differs from runtime registration state.
+- AS6_UNIFIED_HEALTH_INCOMPLETE: Unified Health Snapshot omits registered infrastructure components.
+- AS6_INTEGRATION_DEPENDENCY_CYCLE: Integration dependency graph contains a cyclic dependency.
