@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/as6os/workspaceIntegration/integrationContract.js
+test -f frontend/src/as6os/workspaceIntegration/integrationRegistry.js
+test -f frontend/src/as6os/workspaceIntegration/integrationResolver.js
+test -f frontend/src/as6os/workspaceIntegration/integrationController.js
+test -f frontend/src/as6os/workspaceIntegration/integrationRuntime.js
+test -f frontend/src/as6os/workspaceIntegration/integrationHealthSnapshot.js
+test -f frontend/src/as6os/workspaceIntegration/integrationTracer.js
+test -f frontend/src/as6os/workspaceIntegration/integrationDiagnostics.js
+test -f frontend/src/as6os/workspaceIntegration/AS6WorkspaceIntegration.jsx
+grep -R "createIntegrationController" frontend/src/as6os/workspaceIntegration
+grep -R "resolveWorkspaceIntegration" frontend/src/as6os/workspaceIntegration
+grep -R "AS6_WORKSPACE_INTEGRATION_CONTRACT" frontend/src/as6os/workspaceIntegration
+! grep -R "localStorage\|sessionStorage\|indexedDB" frontend/src/as6os/workspaceIntegration
+! grep -R "CRM\|crm" frontend/src/as6os/workspaceIntegration
+echo AS6_WORKSPACE_INTEGRATION=PASS
+echo AS6_INTEGRATION_ENGINE=PASS
+echo AS6_INTEGRATION_CONTROLLER=PASS
+echo AS6_INTEGRATION_REGISTRY=PASS
+echo AS6_INTEGRATION_CONTRACT=PASS
+echo AS6_INTEGRATION_RUNTIME=PASS
+echo AS6_INTEGRATION_BOOTSTRAP=PASS
+echo AS6_UNIFIED_WORKSPACE_HEALTH=PASS

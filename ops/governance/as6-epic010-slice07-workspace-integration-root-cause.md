@@ -1,0 +1,9 @@
+# Root Cause — AS6 EPIC010 Slice07 Workspace Integration
+
+FAILURE_CLASS=AS6_WORKSPACE_INTEGRATION_MISSING
+FAILURE_CLASS=AS6_INTEGRATION_CONTRACT_MISSING
+FAILURE_CLASS=AS6_INTEGRATION_HEALTH_GAP
+
+ROOT_CAUSE=Workspace Experience infrastructure layers exist but require a unified integration runtime before final validation.
+CHANGE_CLASS=IMPLEMENTATION
+SCOPE=WORKSPACE_INTEGRATION

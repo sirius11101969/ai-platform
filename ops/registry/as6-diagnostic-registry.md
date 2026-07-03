@@ -1714,3 +1714,10 @@ ops/bin/as6-control-permission-engine-v114
 - FAILURE_CLASS=AS6_ASSISTANT_CONTRACT_MISSING
 - FAILURE_CLASS=AS6_ASSISTANT_CONTEXT_DRIFT
 - FAILURE_CLASS=AS6_ASSISTANT_SURFACE_RESOLUTION_FAILURE
+
+## AS6_EPIC010_SLICE07_WORKSPACE_INTEGRATION
+- Diagnostic: ops/bin/as6-diagnose-epic010-slice07-workspace-integration
+- Control: ops/bin/as6-control-epic010-slice07-workspace-integration
+- Failure Class: AS6_WORKSPACE_INTEGRATION_MISSING
+- Failure Class: AS6_INTEGRATION_CONTRACT_MISSING
+- Failure Class: AS6_INTEGRATION_HEALTH_GAP

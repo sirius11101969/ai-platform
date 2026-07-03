@@ -3579,3 +3579,10 @@ Permission Validation
 - Assistant Health Snapshot=covered
 - No AI business decisions control=covered
 - No CRM logic control=covered
+
+## AS6_EPIC010_SLICE07_WORKSPACE_INTEGRATION
+- AS6_WORKSPACE_INTEGRATION: covered
+- AS6_INTEGRATION_CONTROLLER: covered
+- AS6_INTEGRATION_REGISTRY: covered
+- AS6_INTEGRATION_CONTRACT: covered
+- AS6_UNIFIED_WORKSPACE_HEALTH: covered

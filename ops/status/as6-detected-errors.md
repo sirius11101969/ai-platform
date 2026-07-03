@@ -2163,3 +2163,9 @@ Governed and registered.
 - AS6_ASSISTANT_CONTRACT_MISSING: Assistant Surface registered without stable interaction contract.
 - AS6_ASSISTANT_CONTEXT_DRIFT: Assistant Context Bridge diverges from Workspace Runtime context.
 - AS6_ASSISTANT_SURFACE_RESOLUTION_FAILURE: Assistant Surface cannot resolve registered infrastructure capabilities.
+
+## AS6_EPIC010_SLICE07_WORKSPACE_INTEGRATION
+- FAILURE_CLASS=AS6_WORKSPACE_INTEGRATION_MISSING
+- FAILURE_CLASS=AS6_INTEGRATION_CONTRACT_MISSING
+- FAILURE_CLASS=AS6_INTEGRATION_HEALTH_GAP
+- ROOT_CAUSE=Workspace layers require unified integration runtime.
