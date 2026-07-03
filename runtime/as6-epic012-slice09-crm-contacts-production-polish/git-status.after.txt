@@ -1,0 +1,11 @@
+ M docs/AS6_PROJECT_STATE.md
+ M frontend/src/crm/contacts/index.js
+ M frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx
+ M frontend/src/crm/contacts/ui/crmContactsUiFoundation.css
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? frontend/src/crm/contacts/production/
+?? ops/bin/as6-control-crm-contacts-production-polish
+?? ops/bin/as6-diagnose-crm-contacts-production-polish
+?? ops/governance/as6-crm-contacts-production-polish-governance.md

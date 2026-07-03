@@ -6141,3 +6141,15 @@ Status: PASS pending validation
 - Added failure classes: CRM_CONTACTS_LIVE_MOUNT_DRIFT, CRM_CONTACTS_PRODUCTION_LAYOUT_MOUNT_DRIFT, CRM_CONTACTS_PARALLEL_SHELL_DRIFT, CRM_CONTACTS_LIVE_SNAPSHOT_DRIFT.
 - Project readiness: 99%.
 - Next stage: AS6_EPIC012_SLICE09_CRM_CONTACTS_PRODUCTION_POLISH.
+
+## AS6_EPIC012_SLICE09_CRM_CONTACTS_PRODUCTION_POLISH
+- Added CRM Contacts production polish.
+- Added production polish contract and diagnostics.
+- Added accessibility labels for section, header, list, panel, row and status.
+- Added reduced motion support and production style scope.
+- Added performance checks: no runtime fetch, no runtime storage, no heavy dependencies.
+- Added diagnostics: ops/bin/as6-diagnose-crm-contacts-production-polish.
+- Added controls: ops/bin/as6-control-crm-contacts-production-polish.
+- Added failure classes: CRM_CONTACTS_ACCESSIBILITY_DRIFT, CRM_CONTACTS_PRODUCTION_STYLE_DRIFT, CRM_CONTACTS_STATE_RESILIENCE_DRIFT, CRM_CONTACTS_PERFORMANCE_BUDGET_DRIFT, CRM_CONTACTS_HEAVY_DEPENDENCY_DRIFT.
+- Project readiness: 99%.
+- Next stage: AS6_EPIC012_SLICE10_CRM_CONTACTS_FINAL_VALIDATION.

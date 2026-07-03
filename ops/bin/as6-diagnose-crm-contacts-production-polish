@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+test -f frontend/src/crm/contacts/production/crmContactsProductionPolish.js
+test -f frontend/src/crm/contacts/production/crmContactsProductionDiagnostics.js
+test -f frontend/src/crm/contacts/production/index.js
+grep -R "aria-label=\"CRM Contacts production section\"" frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx
+grep -R "aria-label=\"CRM Contacts list\"" frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx
+grep -R "aria-label={\`CRM contact" frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx
+grep -R "prefers-reduced-motion" frontend/src/crm/contacts/ui/crmContactsUiFoundation.css
+grep -R "as6-crm-contacts-ui--production" frontend/src/crm/contacts/ui
+grep -R "noRuntimeFetch: true" frontend/src/crm/contacts/production/crmContactsProductionPolish.js
+grep -R "noRuntimeStorage: true" frontend/src/crm/contacts/production/crmContactsProductionPolish.js
+grep -R "storageEnabled: false" frontend/src/crm/contacts/production/crmContactsProductionPolish.js
+grep -R "apiEnabled: false" frontend/src/crm/contacts/production/crmContactsProductionPolish.js
+grep -R "workflowEnabled: false" frontend/src/crm/contacts/production/crmContactsProductionPolish.js
+echo "AS6_CRM_CONTACTS_PRODUCTION_POLISH=PASS"

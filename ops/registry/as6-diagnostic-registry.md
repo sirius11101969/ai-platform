@@ -1937,3 +1937,9 @@ ops/bin/as6-control-permission-engine-v114
 - Control: ops/bin/as6-control-crm-contacts-live-layout-mount
 - Added checks: live CRMPage mount, production CRM layout reuse, layout snapshot connection, Contacts UI mount, no storage, no API, no workflow.
 - Failure classes: CRM_CONTACTS_LIVE_MOUNT_DRIFT, CRM_CONTACTS_PRODUCTION_LAYOUT_MOUNT_DRIFT, CRM_CONTACTS_PARALLEL_SHELL_DRIFT, CRM_CONTACTS_LIVE_SNAPSHOT_DRIFT.
+
+## AS6_EPIC012_SLICE09_CRM_CONTACTS_PRODUCTION_POLISH
+- Diagnostic: ops/bin/as6-diagnose-crm-contacts-production-polish
+- Control: ops/bin/as6-control-crm-contacts-production-polish
+- Added checks: accessibility labels, stable states, reduced motion support, production style scope, no runtime fetch, no runtime storage, no heavy dependency, no storage, no API, no workflow.
+- Failure classes: CRM_CONTACTS_ACCESSIBILITY_DRIFT, CRM_CONTACTS_PRODUCTION_STYLE_DRIFT, CRM_CONTACTS_STATE_RESILIENCE_DRIFT, CRM_CONTACTS_PERFORMANCE_BUDGET_DRIFT, CRM_CONTACTS_HEAVY_DEPENDENCY_DRIFT.

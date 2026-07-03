@@ -1,0 +1,13 @@
+    <section className="as6-crm-contacts-ui as6-crm-contacts-ui--production" data-as6-contacts-ui="foundation" aria-label="CRM Contacts production section">
+        <main className="as6-crm-contacts-ui__list" data-as6-contacts-list="true" aria-label="CRM Contacts list">
+    <article className="as6-crm-contact-row" data-as6-contact-row="true" aria-label={`CRM contact `}>
+@media (prefers-reduced-motion: reduce) {
+frontend/src/crm/contacts/ui/crmContactsUiFoundation.css:.as6-crm-contacts-ui--production {
+frontend/src/crm/contacts/ui/crmContactsUiFoundation.css:  .as6-crm-contacts-ui--production * {
+frontend/src/crm/contacts/ui/CrmContactsUiFoundation.jsx:    <section className="as6-crm-contacts-ui as6-crm-contacts-ui--production" data-as6-contacts-ui="foundation" aria-label="CRM Contacts production section">
+    noRuntimeFetch: true,
+    noRuntimeStorage: true,
+  storageEnabled: false,
+  apiEnabled: false,
+  workflowEnabled: false,
+AS6_CRM_CONTACTS_PRODUCTION_POLISH=PASS

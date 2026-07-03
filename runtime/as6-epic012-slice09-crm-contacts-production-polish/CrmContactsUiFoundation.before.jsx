@@ -10,7 +10,7 @@ const SAMPLE_CONTACTS = Object.freeze([
 
 export function CrmContactRow({ contact }) {
   return (
-    <article className="as6-crm-contact-row" data-as6-contact-row="true" aria-label={`CRM contact `}>
+    <article className="as6-crm-contact-row" data-as6-contact-row="true">
       <div>
         <strong>{contact.displayName}</strong>
         <span>{contact.company}</span>
@@ -19,7 +19,7 @@ export function CrmContactRow({ contact }) {
         <span>{contact.email}</span>
         <span>{contact.phone}</span>
       </div>
-      <mark aria-label={`Contact status `}>{contact.status}</mark>
+      <mark>{contact.status}</mark>
     </article>
   );
 }
@@ -37,8 +37,8 @@ export function CrmContactsUiFoundation({ contacts = SAMPLE_CONTACTS }) {
   const health = getCrmContactHealthSnapshot();
   const hasContacts = contacts.length > 0;
   return (
-    <section className="as6-crm-contacts-ui as6-crm-contacts-ui--production" data-as6-contacts-ui="foundation" aria-label="CRM Contacts production section">
-      <header className="as6-crm-contacts-ui__header" aria-label="CRM Contacts header">
+    <section className="as6-crm-contacts-ui" data-as6-contacts-ui="foundation">
+      <header className="as6-crm-contacts-ui__header">
         <div>
           <p>CRM Contacts</p>
           <h2>Фундамент интерфейса контактов</h2>
@@ -46,10 +46,10 @@ export function CrmContactsUiFoundation({ contacts = SAMPLE_CONTACTS }) {
         <span>{health.diagnostic.status}</span>
       </header>
       <div className="as6-crm-contacts-ui__grid">
-        <main className="as6-crm-contacts-ui__list" data-as6-contacts-list="true" aria-label="CRM Contacts list">
+        <main className="as6-crm-contacts-ui__list" data-as6-contacts-list="true">
           {hasContacts ? contacts.map((contact) => <CrmContactRow key={contact.id} contact={contact} />) : <CrmContactsEmptyState />}
         </main>
-        <aside className="as6-crm-contacts-ui__panel" data-as6-contacts-panel="true" aria-label="CRM Contacts diagnostics panel">
+        <aside className="as6-crm-contacts-ui__panel" data-as6-contacts-panel="true">
           <h3>UI Diagnostics</h3>
           {crmContactPanels.map((panel) => <span key={panel.id}>{panel.title}</span>)}
         </aside>

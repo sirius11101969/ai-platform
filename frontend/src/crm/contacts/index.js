@@ -18,3 +18,5 @@ export { crmContactsWorkspacePanel, crmContactsWorkspaceNavigation, resolveCrmCo
 export { crmContactsCrmLayoutBridge, createCrmContactsLayoutModel, resolveCrmContactsLayoutState, createCrmContactsLayoutSnapshot, diagnoseCrmContactsCrmLayoutBridge } from "./layout";
 
 export { CrmContactsLiveLayoutMount } from "./live";
+
+export { crmContactsProductionPolish, diagnoseCrmContactsProductionPolish } from "./production";

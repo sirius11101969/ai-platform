@@ -3823,3 +3823,9 @@ Permission Validation
 - Covers reuse of existing crm-layout production-crm-layout.
 - Covers layout snapshot connection and Contacts UI mount.
 - Covers no parallel shell, no-storage, no-api and no-business-workflow invariants.
+
+## AS6_EPIC012_SLICE09_CRM_CONTACTS_PRODUCTION_POLISH
+- Covers CRM Contacts production polish.
+- Covers accessibility labels, production style scope and reduced motion support.
+- Covers stable states and performance budget checks.
+- Covers no-storage, no-api and no-business-workflow invariants.

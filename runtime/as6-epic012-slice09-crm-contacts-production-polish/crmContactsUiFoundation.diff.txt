@@ -1,0 +1,42 @@
+diff --git a/frontend/src/crm/contacts/ui/crmContactsUiFoundation.css b/frontend/src/crm/contacts/ui/crmContactsUiFoundation.css
+index f6220108..edcea33b 100644
+--- a/frontend/src/crm/contacts/ui/crmContactsUiFoundation.css
++++ b/frontend/src/crm/contacts/ui/crmContactsUiFoundation.css
+@@ -63,3 +63,37 @@
+     grid-template-columns: 1fr;
+   }
+ }
++
++.as6-crm-contacts-ui--production {
++  min-width: 0;
++  box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
++}
++.as6-crm-contacts-live-layout-mount {
++  display: grid;
++  gap: 14px;
++  min-width: 0;
++}
++.as6-crm-contacts-live-layout-mount__header {
++  display: flex;
++  justify-content: space-between;
++  align-items: center;
++  gap: 12px;
++  padding: 10px 12px;
++  border-radius: 16px;
++  background: rgba(15, 23, 42, 0.04);
++}
++.as6-crm-contacts-ui__panel span {
++  display: inline-flex;
++  align-items: center;
++  min-height: 28px;
++}
++.as6-crm-contact-row:focus-within {
++  outline: 2px solid rgba(37, 99, 235, 0.4);
++  outline-offset: 2px;
++}
++@media (prefers-reduced-motion: reduce) {
++  .as6-crm-contacts-ui--production * {
++    transition: none !important;
++    animation: none !important;
++  }
++}
