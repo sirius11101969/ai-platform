@@ -4009,3 +4009,18 @@ Permission Validation
 - Covers all EPIC015 slices from Next Module Selection through Production Polish.
 - Covers completion marker guard.
 - Covers final Diagnostic Registry, Coverage Registry, Governance and Project State consistency.
+
+## AS6 EPIC016 CRM Next Module Selection
+- Coverage: docs/coverage/as6-epic016-crm-next-module-selection-coverage.md
+- Governance: docs/governance/as6-epic016-crm-next-module-selection-governance.md
+- AEC: docs/aec/as6-epic016-crm-next-module-selection-aec.md
+- Result: PASS
+
+## AS6 EPIC016 CRM Next Module Selection Repair
+- Coverage: docs/coverage/as6-epic016-crm-next-module-selection-coverage.md
+- Repair coverage: docs/coverage/as6-epic016-runtime-gitignore-repair-coverage.md
+- Governance: docs/governance/as6-epic016-crm-next-module-selection-governance.md
+- Repair governance: docs/governance/as6-epic016-runtime-gitignore-repair-governance.md
+- AEC: docs/aec/as6-epic016-crm-next-module-selection-aec.md
+- Repair AEC: docs/aec/as6-epic016-runtime-gitignore-repair-aec.md
+- Result: PASS

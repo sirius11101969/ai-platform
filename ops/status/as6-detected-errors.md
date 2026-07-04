@@ -2537,3 +2537,15 @@ Governed and registered.
 
 ## AS6_EPIC015_SLICE08_FINAL_VALIDATION_HEREDOC_INTERRUPT_REPAIR
 - Registered: CRM_ACTIVITIES_FINAL_VALIDATION_HEREDOC_INTERRUPT.
+
+## AS6 EPIC016 CRM Next Module Selection
+- New diagnostic deviation class registered: AS6_CRM_NEXT_MODULE_SELECTION_GAP.
+- Root cause: Followups exists as page-level surface but not as registered CRM domain module.
+- Status: controlled; implementation deferred to AS6_EPIC016_CRM_FOLLOWUPS_FOUNDATION.
+
+## AS6 EPIC016 CRM Next Module Selection Repair
+- Diagnostic deviation class registered: AS6_CRM_NEXT_MODULE_SELECTION_GAP.
+- Repair deviation class registered: AS6_RUNTIME_GITIGNORE_ARTIFACT_STAGING_GAP.
+- Root cause: Followups exists as page-level surface but not as registered CRM domain module.
+- Repair root cause: Initial EPIC016 selection cycle stopped after validation because runtime/ is ignored by gitignore and git add without -f failed under set -e.
+- Status: repaired and controlled.

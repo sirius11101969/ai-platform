@@ -6526,3 +6526,23 @@ Status: PASS pending validation
 - Repair for interrupted Slice 08 terminal heredoc execution.
 - Added failure class: CRM_ACTIVITIES_FINAL_VALIDATION_HEREDOC_INTERRUPT.
 - Re-runs final validation, completion marker guard, frontend build, secret scan, commit, push and restore tag.
+
+## AS6 EPIC016 CRM Next Module Selection
+- Stage: AS6_EPIC016_CRM_NEXT_MODULE_SELECTION.
+- Project readiness: 99%%.
+- Base commit verified: 0404bb02548ff10cfab7e4c826267b23249d8011.
+- Restore tag verified: AS6_RESTORE_EPIC015_SLICE08_CRM_ACTIVITIES_TASKS_FINAL_VALIDATION_20260704T141238Z.
+- Selected next module: CRM_FOLLOWUPS.
+- Next implementation stage: AS6_EPIC016_CRM_FOLLOWUPS_FOUNDATION.
+- Diagnostic additions: AS6_CRM_NEXT_MODULE_SELECTION_GAP, repository-based next-module selection control, AEC prevention rule.
+
+## AS6 EPIC016 CRM Next Module Selection Repair
+- Stage: AS6_EPIC016_CRM_NEXT_MODULE_SELECTION.
+- Repair: AS6_EPIC016_NEXT_MODULE_SELECTION_RUNTIME_GITIGNORE_REPAIR.
+- Project readiness: 99%.
+- Base commit verified: 0404bb02548ff10cfab7e4c826267b23249d8011.
+- Restore tag verified: AS6_RESTORE_EPIC015_SLICE08_CRM_ACTIVITIES_TASKS_FINAL_VALIDATION_20260704T141238Z.
+- Selected next module: CRM_FOLLOWUPS.
+- Next implementation stage: AS6_EPIC016_CRM_FOLLOWUPS_FOUNDATION.
+- Diagnostic additions: AS6_CRM_NEXT_MODULE_SELECTION_GAP and AS6_RUNTIME_GITIGNORE_ARTIFACT_STAGING_GAP.
+- Repair control: ignored runtime evidence is force-added only when intentionally preserved.

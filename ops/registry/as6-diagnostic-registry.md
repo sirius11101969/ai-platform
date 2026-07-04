@@ -2195,3 +2195,15 @@ ops/bin/as6-control-permission-engine-v114
 - Repair: AS6_EPIC015_SLICE08_FINAL_VALIDATION_HEREDOC_INTERRUPT_REPAIR
 - Failure class: CRM_ACTIVITIES_FINAL_VALIDATION_HEREDOC_INTERRUPT
 - Prevention: final validation repair reruns diagnostics, build, secret scan, commit, push and restore tag after terminal heredoc interruption.
+
+## AS6 EPIC016 CRM Next Module Selection
+- Diagnostic: docs/diagnostics/as6-epic016-crm-next-module-selection-diagnostics.md
+- Failure class: AS6_CRM_NEXT_MODULE_SELECTION_GAP
+- Result: PASS
+
+## AS6 EPIC016 CRM Next Module Selection Repair
+- Diagnostic: docs/diagnostics/as6-epic016-crm-next-module-selection-diagnostics.md
+- Repair diagnostic: docs/diagnostics/as6-epic016-runtime-gitignore-repair-diagnostics.md
+- Failure class: AS6_CRM_NEXT_MODULE_SELECTION_GAP
+- Repair failure class: AS6_RUNTIME_GITIGNORE_ARTIFACT_STAGING_GAP
+- Result: PASS

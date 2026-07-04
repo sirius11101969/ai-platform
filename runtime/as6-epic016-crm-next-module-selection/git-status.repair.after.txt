@@ -1,0 +1,14 @@
+ M docs/AS6_PROJECT_STATE.md
+ M docs/AS6_PROJECT_STATUS.md
+A  docs/aec/as6-epic016-crm-next-module-selection-aec.md
+AM docs/coverage/as6-epic016-crm-next-module-selection-coverage.md
+AM docs/diagnostics/as6-epic016-crm-next-module-selection-diagnostics.md
+AM docs/epic016/AS6_EPIC016_CRM_NEXT_MODULE_SELECTION.md
+AM docs/governance/as6-epic016-crm-next-module-selection-governance.md
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? docs/aec/as6-epic016-runtime-gitignore-repair-aec.md
+?? docs/coverage/as6-epic016-runtime-gitignore-repair-coverage.md
+?? docs/diagnostics/as6-epic016-runtime-gitignore-repair-diagnostics.md
+?? docs/governance/as6-epic016-runtime-gitignore-repair-governance.md
