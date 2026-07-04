@@ -2554,3 +2554,8 @@ Governed and registered.
 - Diagnostic deviation class registered: AS6_CRM_FOLLOWUPS_FOUNDATION_GAP.
 - Root cause: CRM_FOLLOWUPS was selected as the next module because FollowupsPage.jsx existed as a page-level surface while frontend/src/crm/followups did not exist as a registered CRM domain foundation.
 - Status: repaired by adding CRM Followups domain foundation.
+
+## AS6 EPIC016 CRM Followups Workspace Integration
+- Diagnostic deviation class registered: AS6_CRM_FOLLOWUPS_WORKSPACE_INTEGRATION_GAP.
+- Root cause: CRM Followups foundation existed after AS6_EPIC016_CRM_FOLLOWUPS_FOUNDATION, but it was not yet exposed as a reusable AS6 Workspace integration adapter.
+- Status: repaired by adding reusable Workspace integration adapter and runtime adapter.

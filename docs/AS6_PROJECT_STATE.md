@@ -6556,3 +6556,14 @@ Status: PASS pending validation
 - Added diagnostic class: AS6_CRM_FOLLOWUPS_FOUNDATION_GAP.
 - Added runtime tracer: crm.followups traceCrmFollowupRuntime.
 - Next stage: AS6_EPIC016_CRM_FOLLOWUPS_WORKSPACE_INTEGRATION.
+
+## AS6 EPIC016 CRM Followups Workspace Integration
+- Stage: AS6_EPIC016_CRM_FOLLOWUPS_WORKSPACE_INTEGRATION.
+- Project readiness: 99%.
+- Base commit verified: 0bfb584a8011c5f6c6621d2423eb7e5a9d665b64.
+- Restore tag verified: AS6_RESTORE_EPIC016_CRM_FOLLOWUPS_FOUNDATION_20260704T155139Z.
+- Added Followups Workspace integration adapter.
+- Added Followups Workspace runtime adapter.
+- Added diagnostic class: AS6_CRM_FOLLOWUPS_WORKSPACE_INTEGRATION_GAP.
+- Added runtime trace event: workspace.integration.created.
+- Next stage: AS6_EPIC016_CRM_FOLLOWUPS_UI_WIRING.

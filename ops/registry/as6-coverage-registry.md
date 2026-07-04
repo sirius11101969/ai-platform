@@ -4031,3 +4031,11 @@ Permission Validation
 - AEC: docs/aec/as6-epic016-crm-followups-foundation-aec.md
 - Runtime tracer: frontend/src/crm/followups/followupTracer.js
 - Result: PASS
+
+## AS6 EPIC016 CRM Followups Workspace Integration
+- Coverage: docs/coverage/as6-epic016-crm-followups-workspace-integration-coverage.md
+- Governance: docs/governance/as6-epic016-crm-followups-workspace-integration-governance.md
+- AEC: docs/aec/as6-epic016-crm-followups-workspace-integration-aec.md
+- Integration adapter: frontend/src/crm/followups/followupWorkspaceIntegration.js
+- Workspace runtime adapter: frontend/src/crm/followups/followupWorkspaceRuntime.js
+- Result: PASS

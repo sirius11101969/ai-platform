@@ -2213,3 +2213,9 @@ ops/bin/as6-control-permission-engine-v114
 - Failure class: AS6_CRM_FOLLOWUPS_FOUNDATION_GAP
 - Runtime diagnostic: AS6_CRM_FOLLOWUPS_FOUNDATION
 - Result: PASS
+
+## AS6 EPIC016 CRM Followups Workspace Integration
+- Diagnostic: docs/diagnostics/as6-epic016-crm-followups-workspace-integration-diagnostics.md
+- Failure class: AS6_CRM_FOLLOWUPS_WORKSPACE_INTEGRATION_GAP
+- Runtime trace: workspace.integration.created
+- Result: PASS

@@ -1,0 +1,13 @@
+ M docs/AS6_PROJECT_STATE.md
+ M docs/AS6_PROJECT_STATUS.md
+ M frontend/src/crm/followups/index.js
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? docs/aec/as6-epic016-crm-followups-workspace-integration-aec.md
+?? docs/coverage/as6-epic016-crm-followups-workspace-integration-coverage.md
+?? docs/diagnostics/as6-epic016-crm-followups-workspace-integration-diagnostics.md
+?? docs/epic016/AS6_EPIC016_CRM_FOLLOWUPS_WORKSPACE_INTEGRATION.md
+?? docs/governance/as6-epic016-crm-followups-workspace-integration-governance.md
+?? frontend/src/crm/followups/followupWorkspaceIntegration.js
+?? frontend/src/crm/followups/followupWorkspaceRuntime.js
