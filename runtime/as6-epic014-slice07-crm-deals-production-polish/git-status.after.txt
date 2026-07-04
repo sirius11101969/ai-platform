@@ -1,0 +1,12 @@
+ M docs/AS6_PROJECT_STATE.md
+ M frontend/src/crm/deals/index.js
+ M frontend/src/crm/deals/live/CrmDealsLiveLayoutMount.jsx
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? frontend/src/crm/deals/live/crmDealsProductionPolish.css
+?? frontend/src/crm/deals/production/
+?? ops/aec/as6-epic014-crm-deals-production-polish-aec.md
+?? ops/bin/as6-control-epic014-crm-deals-production-polish
+?? ops/bin/as6-diagnose-epic014-crm-deals-production-polish
+?? ops/governance/as6-epic014-crm-deals-production-polish-governance.md

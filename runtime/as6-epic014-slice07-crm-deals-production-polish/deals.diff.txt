@@ -1,0 +1,22 @@
+diff --git a/frontend/src/crm/deals/index.js b/frontend/src/crm/deals/index.js
+index 0645f6b8..96436e7e 100644
+--- a/frontend/src/crm/deals/index.js
++++ b/frontend/src/crm/deals/index.js
+@@ -9,3 +9,5 @@ export * from "./workspace";
+ export * from "./layout";
+ 
+ export * from "./live";
++
++export * from "./production";
+diff --git a/frontend/src/crm/deals/live/CrmDealsLiveLayoutMount.jsx b/frontend/src/crm/deals/live/CrmDealsLiveLayoutMount.jsx
+index 7b7a7f07..fe7ae0ff 100644
+--- a/frontend/src/crm/deals/live/CrmDealsLiveLayoutMount.jsx
++++ b/frontend/src/crm/deals/live/CrmDealsLiveLayoutMount.jsx
+@@ -2,6 +2,7 @@ import React from "react";
+ import { DealsUiFoundation } from "../ui";
+ import { createCrmDealsLayoutSnapshot, getCrmDealsLayoutHealthSnapshot } from "../layout";
+ import "./crmDealsLiveLayoutMount.css";
++import "./crmDealsProductionPolish.css";
+ 
+ export function CrmDealsLiveLayoutMount() {
+   const snapshot = createCrmDealsLayoutSnapshot();

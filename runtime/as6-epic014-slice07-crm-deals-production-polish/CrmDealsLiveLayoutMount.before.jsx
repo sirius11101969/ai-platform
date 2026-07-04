@@ -2,7 +2,6 @@ import React from "react";
 import { DealsUiFoundation } from "../ui";
 import { createCrmDealsLayoutSnapshot, getCrmDealsLayoutHealthSnapshot } from "../layout";
 import "./crmDealsLiveLayoutMount.css";
-import "./crmDealsProductionPolish.css";
 
 export function CrmDealsLiveLayoutMount() {
   const snapshot = createCrmDealsLayoutSnapshot();

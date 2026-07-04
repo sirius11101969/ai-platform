@@ -1,0 +1,37 @@
+export const crmDealsProductionContract = Object.freeze({
+  id: "crm.deals.production-polish.contract",
+  stage: "AS6_EPIC014_SLICE07_CRM_DEALS_PRODUCTION_POLISH",
+  module: "CRM_DEALS_OPPORTUNITIES",
+  productionReady: true,
+  accessibility: Object.freeze({
+    aria: true,
+    keyboardSafe: true,
+    visibleFocus: true,
+    semanticRegions: true,
+  }),
+  motion: Object.freeze({
+    prefersReducedMotion: true,
+    requiredAnimation: false,
+  }),
+  performance: Object.freeze({
+    runtimeFetch: false,
+    runtimeStorage: false,
+    heavyDependencies: false,
+    ownRouter: false,
+    ownStore: false,
+  }),
+  invariants: Object.freeze({
+    USE_EXISTING_CRM_LAYOUT: true,
+    USE_EXISTING_CRM_WORKSPACE: true,
+    USE_EXISTING_HEADER: true,
+    USE_EXISTING_SIDEBAR: true,
+    NO_PARALLEL_LAYOUT: true,
+    NO_PARALLEL_SHELL: true,
+    NO_OWN_ROUTER: true,
+    NO_OWN_STORE: true,
+    NO_STORAGE: true,
+    NO_API_CALLS: true,
+    NO_BUSINESS_WORKFLOW: true,
+    PLATFORM_MUTATION: false,
+  }),
+});

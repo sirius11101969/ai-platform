@@ -3943,3 +3943,9 @@ Permission Validation
 ## AS6_EPIC014_SLICE06_CRM_DEALS_LIVE_LAYOUT_MOUNT_REPAIR
 - Covers CRMPage import pattern repair for Deals Live Layout Mount.
 - Confirms CrmDealsLiveLayoutMount is mounted beside CrmCompaniesLiveLayoutMount.
+
+## AS6_EPIC014_SLICE07_CRM_DEALS_PRODUCTION_POLISH
+- Covers CRM Deals / Opportunities Production Polish.
+- Covers production contract, production tracer, production diagnostics and production health snapshot.
+- Covers visible focus, reduced motion, accessibility, CSS containment and performance guardrails.
+- Covers no-runtime-fetch, no-runtime-storage, no-heavy-dependency, no-own-router and no-own-store invariants.

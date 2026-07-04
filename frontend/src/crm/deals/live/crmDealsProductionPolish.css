@@ -1,0 +1,39 @@
+.as6-crm-deals-live-layout-mount :focus-visible,
+.as6-crm-deals-ui :focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.55);
+  outline-offset: 3px;
+}
+
+.as6-crm-deals-ui,
+.as6-crm-deals-live-layout-mount {
+  scroll-margin-top: 16px;
+}
+
+.as6-crm-deals-ui__actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.68;
+}
+
+.as6-crm-deal-card,
+.as6-crm-deals-state,
+.as6-crm-deals-ui__diagnostics,
+.as6-crm-deals-live-layout-mount__header {
+  contain: content;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .as6-crm-deals-ui *,
+  .as6-crm-deals-live-layout-mount * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+@media (max-width: 720px) {
+  .as6-crm-deals-live-layout-mount__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

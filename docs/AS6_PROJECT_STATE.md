@@ -6391,3 +6391,16 @@ Status: PASS pending validation
 - Root cause: CRMPage imports Companies live mount from ../crm/companies, not ../crm/companies/live.
 - Repaired by importing CrmDealsLiveLayoutMount from ../crm/deals and mounting it next to CrmCompaniesLiveLayoutMount.
 - Failure class: CRM_DEALS_LIVE_LAYOUT_MOUNT_IMPORT_PATTERN_DRIFT.
+
+## AS6_EPIC014_SLICE07_CRM_DEALS_PRODUCTION_POLISH
+- Added CRM Deals / Opportunities Production Polish.
+- Added production contract, production runtime tracer, production diagnostics and production health snapshot.
+- Added visible focus, reduced motion support and CSS containment guardrails.
+- Confirmed no runtime fetch, no runtime storage, no heavy dependencies, no own router and no own store.
+- Added diagnostics: ops/bin/as6-diagnose-epic014-crm-deals-production-polish.
+- Added controls: ops/bin/as6-control-epic014-crm-deals-production-polish.
+- Added AEC rules: ops/aec/as6-epic014-crm-deals-production-polish-aec.md.
+- Added governance: ops/governance/as6-epic014-crm-deals-production-polish-governance.md.
+- Added failure classes: CRM_DEALS_PRODUCTION_POLISH_GAP, CRM_DEALS_ACCESSIBILITY_DRIFT, CRM_DEALS_MOTION_DRIFT, CRM_DEALS_PERFORMANCE_DRIFT, CRM_DEALS_PRODUCTION_CONTRACT_DRIFT.
+- Project readiness: 99%.
+- Next stage: AS6_EPIC014_SLICE08_CRM_DEALS_FINAL_VALIDATION.

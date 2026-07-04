@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -x ops/bin/as6-grep-safe
+
+for f in \
+  crmDealsProductionContract \
+  crmDealsProductionTracer \
+  crmDealsProductionDiagnostics \
+  crmDealsProductionHealthSnapshot
+do
+  test -f "frontend/src/crm/deals/production/${f}.js"
+done
+
+test -f frontend/src/crm/deals/production/index.js
+test -f frontend/src/crm/deals/live/crmDealsProductionPolish.css
+
+ops/bin/as6-grep-safe -R "crm.deals.production-polish.contract" frontend/src/crm/deals/production
+ops/bin/as6-grep-safe -R "CRM_DEALS_PRODUCTION_POLISH_TRACE" frontend/src/crm/deals/production
+ops/bin/as6-grep-safe -R "diagnoseCrmDealsProductionPolish" frontend/src/crm/deals/production
+ops/bin/as6-grep-safe -R "getCrmDealsProductionHealthSnapshot" frontend/src/crm/deals/production
+ops/bin/as6-grep-safe -R "aria: true" frontend/src/crm/deals/production
+ops/bin/as6-grep-safe -R "keyboardSafe: true" frontend/src/crm/deals/production
+ops/bin/as6-grep-safe -R "visibleFocus: true" frontend/src/crm/deals/production
+ops/bin/as6-grep-safe -R "prefersReducedMotion: true" frontend/src/crm/deals/production
+ops/bin/as6-grep-safe -R "runtimeFetch: false" frontend/src/crm/deals/production
+ops/bin/as6-grep-safe -R "runtimeStorage: false" frontend/src/crm/deals/production
+ops/bin/as6-grep-safe -R "heavyDependencies: false" frontend/src/crm/deals/production
+ops/bin/as6-grep-safe -R "USE_EXISTING_CRM_LAYOUT: true" frontend/src/crm/deals/production
+ops/bin/as6-grep-safe -R "USE_EXISTING_CRM_WORKSPACE: true" frontend/src/crm/deals/production
+ops/bin/as6-grep-safe -R "NO_PARALLEL_LAYOUT: true" frontend/src/crm/deals/production
+ops/bin/as6-grep-safe -R "NO_PARALLEL_SHELL: true" frontend/src/crm/deals/production
+ops/bin/as6-grep-safe -R "NO_OWN_ROUTER: true" frontend/src/crm/deals/production
+ops/bin/as6-grep-safe -R "NO_OWN_STORE: true" frontend/src/crm/deals/production
+ops/bin/as6-grep-safe -R "NO_STORAGE: true" frontend/src/crm/deals/production
+ops/bin/as6-grep-safe -R "NO_API_CALLS: true" frontend/src/crm/deals/production
+ops/bin/as6-grep-safe -R "NO_BUSINESS_WORKFLOW: true" frontend/src/crm/deals/production
+ops/bin/as6-grep-safe -R "prefers-reduced-motion" frontend/src/crm/deals/live
+ops/bin/as6-grep-safe -R "focus-visible" frontend/src/crm/deals/live
+ops/bin/as6-grep-safe -R "contain: content" frontend/src/crm/deals/live
+ops/bin/as6-grep-safe -R "crmDealsProductionPolish.css" frontend/src/crm/deals/live/CrmDealsLiveLayoutMount.jsx
+
+echo "AS6_EPIC014_CRM_DEALS_PRODUCTION_POLISH=PASS"

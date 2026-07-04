@@ -1,0 +1,5 @@
+ROOT_CAUSE=CRM_DEALS_PRODUCTION_POLISH_REQUIRED_AFTER_LIVE_LAYOUT_MOUNT
+FAILURE_CLASS=CRM_DEALS_PRODUCTION_POLISH_GAP
+ARCHITECTURE_DRIFT=Deals is live-mounted but production accessibility/reduced-motion/performance contract was not yet registered
+VALIDATION_GAP=No Deals production contract, production diagnostics, production tracer or production health snapshot existed before Slice 07
+PREVENTION=Add production polish contract, diagnostics, reduced-motion CSS, accessibility markers, AEC, registry, coverage and state evidence

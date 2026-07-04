@@ -1,0 +1,31 @@
+frontend/src/crm/deals/production/crmDealsProductionContract.js:  id: "crm.deals.production-polish.contract",
+frontend/src/crm/deals/production/crmDealsProductionDiagnostics.js:    ["PRODUCTION_TRACER_PRESENT", traceCrmDealsProduction().event === "CRM_DEALS_PRODUCTION_POLISH_TRACE"],
+frontend/src/crm/deals/production/crmDealsProductionTracer.js:export function traceCrmDealsProduction(event = "CRM_DEALS_PRODUCTION_POLISH_TRACE") {
+frontend/src/crm/deals/production/index.js:export { diagnoseCrmDealsProductionPolish } from "./crmDealsProductionDiagnostics";
+frontend/src/crm/deals/production/crmDealsProductionDiagnostics.js:export function diagnoseCrmDealsProductionPolish() {
+frontend/src/crm/deals/production/crmDealsProductionHealthSnapshot.js:import { diagnoseCrmDealsProductionPolish } from "./crmDealsProductionDiagnostics";
+frontend/src/crm/deals/production/crmDealsProductionHealthSnapshot.js:    diagnostic: diagnoseCrmDealsProductionPolish(),
+frontend/src/crm/deals/production/index.js:export { getCrmDealsProductionHealthSnapshot } from "./crmDealsProductionHealthSnapshot";
+frontend/src/crm/deals/production/crmDealsProductionHealthSnapshot.js:export function getCrmDealsProductionHealthSnapshot() {
+frontend/src/crm/deals/production/crmDealsProductionContract.js:    aria: true,
+frontend/src/crm/deals/production/crmDealsProductionContract.js:    keyboardSafe: true,
+frontend/src/crm/deals/production/crmDealsProductionContract.js:    visibleFocus: true,
+frontend/src/crm/deals/production/crmDealsProductionContract.js:    prefersReducedMotion: true,
+frontend/src/crm/deals/production/crmDealsProductionContract.js:    runtimeFetch: false,
+frontend/src/crm/deals/production/crmDealsProductionContract.js:    runtimeStorage: false,
+frontend/src/crm/deals/production/crmDealsProductionContract.js:    heavyDependencies: false,
+frontend/src/crm/deals/production/crmDealsProductionContract.js:    USE_EXISTING_CRM_LAYOUT: true,
+frontend/src/crm/deals/production/crmDealsProductionContract.js:    USE_EXISTING_CRM_WORKSPACE: true,
+frontend/src/crm/deals/production/crmDealsProductionContract.js:    NO_PARALLEL_LAYOUT: true,
+frontend/src/crm/deals/production/crmDealsProductionContract.js:    NO_PARALLEL_SHELL: true,
+frontend/src/crm/deals/production/crmDealsProductionContract.js:    NO_OWN_ROUTER: true,
+frontend/src/crm/deals/production/crmDealsProductionContract.js:    NO_OWN_STORE: true,
+frontend/src/crm/deals/production/crmDealsProductionContract.js:    NO_STORAGE: true,
+frontend/src/crm/deals/production/crmDealsProductionContract.js:    NO_API_CALLS: true,
+frontend/src/crm/deals/production/crmDealsProductionContract.js:    NO_BUSINESS_WORKFLOW: true,
+frontend/src/crm/deals/live/crmDealsProductionPolish.css:@media (prefers-reduced-motion: reduce) {
+frontend/src/crm/deals/live/crmDealsProductionPolish.css:.as6-crm-deals-live-layout-mount :focus-visible,
+frontend/src/crm/deals/live/crmDealsProductionPolish.css:.as6-crm-deals-ui :focus-visible {
+frontend/src/crm/deals/live/crmDealsProductionPolish.css:  contain: content;
+import "./crmDealsProductionPolish.css";
+AS6_EPIC014_CRM_DEALS_PRODUCTION_POLISH=PASS

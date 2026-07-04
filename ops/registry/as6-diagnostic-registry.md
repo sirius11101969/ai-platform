@@ -2090,3 +2090,11 @@ ops/bin/as6-control-permission-engine-v114
 ## AS6_EPIC014_SLICE06_CRM_DEALS_LIVE_LAYOUT_MOUNT_REPAIR
 - Diagnostic repair: CRMPage live mount import pattern drift.
 - Added failure class: CRM_DEALS_LIVE_LAYOUT_MOUNT_IMPORT_PATTERN_DRIFT.
+
+## AS6_EPIC014_SLICE07_CRM_DEALS_PRODUCTION_POLISH
+- Diagnostic: ops/bin/as6-diagnose-epic014-crm-deals-production-polish
+- Control: ops/bin/as6-control-epic014-crm-deals-production-polish
+- Runtime tracer: frontend/src/crm/deals/production/crmDealsProductionTracer.js
+- AEC rules: ops/aec/as6-epic014-crm-deals-production-polish-aec.md
+- Added checks: production contract, production diagnostics, production health snapshot, visible focus, ARIA/accessibility contract, prefers-reduced-motion, no runtime fetch, no runtime storage, no heavy dependency, no own router/store.
+- Failure classes: CRM_DEALS_PRODUCTION_POLISH_GAP, CRM_DEALS_ACCESSIBILITY_DRIFT, CRM_DEALS_MOTION_DRIFT, CRM_DEALS_PERFORMANCE_DRIFT, CRM_DEALS_PRODUCTION_CONTRACT_DRIFT.
