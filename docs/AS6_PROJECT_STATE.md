@@ -6567,3 +6567,16 @@ Status: PASS pending validation
 - Added diagnostic class: AS6_CRM_FOLLOWUPS_WORKSPACE_INTEGRATION_GAP.
 - Added runtime trace event: workspace.integration.created.
 - Next stage: AS6_EPIC016_CRM_FOLLOWUPS_UI_WIRING.
+
+## AS6 EPIC016 CRM Followups UI Wiring
+- Stage: AS6_EPIC016_CRM_FOLLOWUPS_UI_WIRING.
+- Repair: AS6_EPIC016_CRM_FOLLOWUPS_UI_WIRING_JSX_NODE_CHECK_REPAIR.
+- Project readiness: 99%.
+- Base commit verified: ca91fc20f5e4fae83f7035a9118a944e52f0d11b.
+- Restore tag verified: AS6_RESTORE_EPIC016_CRM_FOLLOWUPS_WORKSPACE_INTEGRATION_20260704T161420Z.
+- Added Followups Workspace UI surface.
+- Preserved existing FollowupsPage as FollowupsLegacyPage.
+- Rewired FollowupsPage to render legacy content inside Workspace surface.
+- Added diagnostic class: AS6_CRM_FOLLOWUPS_UI_WIRING_GAP.
+- Added repair diagnostic class: AS6_JSX_NODE_CHECK_UNSUPPORTED_EXTENSION_GAP.
+- Next stage: AS6_EPIC016_CRM_FOLLOWUPS_FINAL_VALIDATION.

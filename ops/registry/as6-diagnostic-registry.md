@@ -2219,3 +2219,12 @@ ops/bin/as6-control-permission-engine-v114
 - Failure class: AS6_CRM_FOLLOWUPS_WORKSPACE_INTEGRATION_GAP
 - Runtime trace: workspace.integration.created
 - Result: PASS
+
+## AS6 EPIC016 CRM Followups UI Wiring
+- Diagnostic: docs/diagnostics/as6-epic016-crm-followups-ui-wiring-diagnostics.md
+- Repair diagnostic: docs/diagnostics/as6-epic016-jsx-node-check-repair-diagnostics.md
+- Failure class: AS6_CRM_FOLLOWUPS_UI_WIRING_GAP
+- Repair failure class: AS6_JSX_NODE_CHECK_UNSUPPORTED_EXTENSION_GAP
+- Route-level UI wiring: frontend/src/pages/FollowupsPage.jsx
+- Workspace surface: frontend/src/crm/followups/FollowupsWorkspaceSurface.jsx
+- Result: PASS

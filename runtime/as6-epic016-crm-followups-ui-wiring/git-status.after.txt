@@ -1,0 +1,18 @@
+ M docs/AS6_PROJECT_STATE.md
+ M docs/AS6_PROJECT_STATUS.md
+ M frontend/src/crm/followups/index.js
+ M frontend/src/pages/FollowupsPage.jsx
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? docs/aec/as6-epic016-crm-followups-ui-wiring-aec.md
+?? docs/aec/as6-epic016-jsx-node-check-repair-aec.md
+?? docs/coverage/as6-epic016-crm-followups-ui-wiring-coverage.md
+?? docs/coverage/as6-epic016-jsx-node-check-repair-coverage.md
+?? docs/diagnostics/as6-epic016-crm-followups-ui-wiring-diagnostics.md
+?? docs/diagnostics/as6-epic016-jsx-node-check-repair-diagnostics.md
+?? docs/epic016/AS6_EPIC016_CRM_FOLLOWUPS_UI_WIRING.md
+?? docs/governance/as6-epic016-crm-followups-ui-wiring-governance.md
+?? docs/governance/as6-epic016-jsx-node-check-repair-governance.md
+?? frontend/src/crm/followups/FollowupsWorkspaceSurface.jsx
+?? frontend/src/pages/FollowupsLegacyPage.jsx

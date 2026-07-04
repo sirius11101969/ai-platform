@@ -4039,3 +4039,14 @@ Permission Validation
 - Integration adapter: frontend/src/crm/followups/followupWorkspaceIntegration.js
 - Workspace runtime adapter: frontend/src/crm/followups/followupWorkspaceRuntime.js
 - Result: PASS
+
+## AS6 EPIC016 CRM Followups UI Wiring
+- Coverage: docs/coverage/as6-epic016-crm-followups-ui-wiring-coverage.md
+- Repair coverage: docs/coverage/as6-epic016-jsx-node-check-repair-coverage.md
+- Governance: docs/governance/as6-epic016-crm-followups-ui-wiring-governance.md
+- Repair governance: docs/governance/as6-epic016-jsx-node-check-repair-governance.md
+- AEC: docs/aec/as6-epic016-crm-followups-ui-wiring-aec.md
+- Repair AEC: docs/aec/as6-epic016-jsx-node-check-repair-aec.md
+- Workspace surface: frontend/src/crm/followups/FollowupsWorkspaceSurface.jsx
+- Legacy preservation: frontend/src/pages/FollowupsLegacyPage.jsx
+- Result: PASS
