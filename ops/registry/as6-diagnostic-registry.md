@@ -2171,3 +2171,12 @@ ops/bin/as6-control-permission-engine-v114
 - Governance: ops/governance/as6-epic015-crm-activities-tasks-live-layout-mount-governance.md
 - Added checks: Live Layout Mount, CRMPage integration, live contract, diagnostics, health snapshot, tracer, existing CRM Layout/Workspace/Header/Sidebar reuse.
 - Failure classes: CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT_GAP, CRM_ACTIVITIES_LIVE_MOUNT_IMPORT_DRIFT, CRM_ACTIVITIES_LIVE_MOUNT_HEALTH_DRIFT, CRM_ACTIVITIES_LIVE_MOUNT_TRACER_DRIFT, CRM_ACTIVITIES_CRM_PAGE_MOUNT_DRIFT.
+
+## AS6_EPIC015_SLICE07_CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH
+- Diagnostic: ops/bin/as6-diagnose-epic015-crm-activities-tasks-production-polish
+- Control: ops/bin/as6-control-epic015-crm-activities-tasks-production-polish
+- Runtime tracer: frontend/src/crm/activities/production/crmActivitiesProductionTracer.js
+- AEC rules: ops/aec/as6-epic015-crm-activities-tasks-production-polish-aec.md
+- Governance: ops/governance/as6-epic015-crm-activities-tasks-production-polish-governance.md
+- Added checks: production contract, production diagnostics, production health snapshot, production tracer, ARIA, visible focus, reduced motion, CSS containment, no runtime fetch/storage, no heavy dependencies.
+- Failure classes: CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH_GAP, CRM_ACTIVITIES_PRODUCTION_ACCESSIBILITY_DRIFT, CRM_ACTIVITIES_PRODUCTION_MOTION_DRIFT, CRM_ACTIVITIES_PRODUCTION_PERFORMANCE_DRIFT, CRM_ACTIVITIES_PRODUCTION_HEALTH_DRIFT.

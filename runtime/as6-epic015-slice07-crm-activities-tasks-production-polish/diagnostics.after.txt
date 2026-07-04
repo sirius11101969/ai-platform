@@ -1,0 +1,40 @@
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:  id: "crm.activities.tasks.production.contract",
+frontend/src/crm/activities/production/crmActivitiesProductionDiagnostics.js:    ["PRODUCTION_CONTRACT_PRESENT", crmActivitiesProductionContract.id === "crm.activities.tasks.production.contract"],
+frontend/src/crm/activities/production/crmActivitiesProductionTracer.js:export function traceCrmActivitiesProduction(event = "CRM_ACTIVITIES_TASKS_PRODUCTION_TRACE") {
+frontend/src/crm/activities/production/crmActivitiesProductionDiagnostics.js:    ["PRODUCTION_TRACER_PRESENT", traceCrmActivitiesProduction().event === "CRM_ACTIVITIES_TASKS_PRODUCTION_TRACE"],
+frontend/src/crm/activities/production/crmActivitiesProductionHealthSnapshot.js:import { diagnoseCrmActivitiesProductionPolish } from "./crmActivitiesProductionDiagnostics";
+frontend/src/crm/activities/production/crmActivitiesProductionHealthSnapshot.js:    diagnostic: diagnoseCrmActivitiesProductionPolish(),
+frontend/src/crm/activities/production/index.js:export { diagnoseCrmActivitiesProductionPolish } from "./crmActivitiesProductionDiagnostics";
+frontend/src/crm/activities/production/crmActivitiesProductionDiagnostics.js:export function diagnoseCrmActivitiesProductionPolish() {
+frontend/src/crm/activities/production/crmActivitiesProductionHealthSnapshot.js:export function getCrmActivitiesProductionHealthSnapshot() {
+frontend/src/crm/activities/production/index.js:export { getCrmActivitiesProductionHealthSnapshot } from "./crmActivitiesProductionHealthSnapshot";
+frontend/src/crm/activities/production/crmActivitiesProductionDescriptor.js:import { getCrmActivitiesProductionHealthSnapshot } from "./crmActivitiesProductionHealthSnapshot";
+frontend/src/crm/activities/production/crmActivitiesProductionDescriptor.js:  health: getCrmActivitiesProductionHealthSnapshot,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:  productionReady: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    aria: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    liveRegions: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    visibleFocus: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    semanticSections: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    prefersReducedMotion: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    heavyDependencies: false,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    runtimeFetch: false,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    runtimeStorage: false,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    businessWorkflow: false,
+frontend/src/crm/activities/production/crmActivitiesProductionPolish.css:  contain: layout paint;
+frontend/src/crm/activities/production/crmActivitiesProductionPolish.css:.as6-crm-activities-ui :focus-visible,
+frontend/src/crm/activities/production/crmActivitiesProductionPolish.css:.as6-crm-activities-live-layout-mount :focus-visible {
+frontend/src/crm/activities/production/crmActivitiesProductionPolish.css:.as6-crm-activities-actions button:focus-visible {
+frontend/src/crm/activities/production/crmActivitiesProductionTracer.js:    motion: "prefers-reduced-motion",
+frontend/src/crm/activities/production/crmActivitiesProductionPolish.css:@media (prefers-reduced-motion: reduce) {
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    USE_EXISTING_CRM_LAYOUT: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    USE_EXISTING_CRM_WORKSPACE: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    USE_EXISTING_HEADER: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    USE_EXISTING_SIDEBAR: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    NO_PARALLEL_LAYOUT: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    NO_PARALLEL_SHELL: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    NO_OWN_ROUTER: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    NO_OWN_STORE: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    NO_STORAGE: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    NO_API_CALLS: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    PLATFORM_MUTATION: false,
+AS6_EPIC015_CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH=PASS

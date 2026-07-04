@@ -6497,3 +6497,15 @@ Status: PASS pending validation
 - Added failure classes: CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT_GAP, CRM_ACTIVITIES_LIVE_MOUNT_IMPORT_DRIFT, CRM_ACTIVITIES_LIVE_MOUNT_HEALTH_DRIFT, CRM_ACTIVITIES_LIVE_MOUNT_TRACER_DRIFT, CRM_ACTIVITIES_CRM_PAGE_MOUNT_DRIFT.
 - Project readiness: 99%.
 - Next stage: AS6_EPIC015_SLICE07_CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH.
+
+## AS6_EPIC015_SLICE07_CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH
+- Added CRM Activities / Tasks Production Polish.
+- Added production contract, production diagnostics, production health snapshot, runtime tracer and production CSS.
+- Added ARIA, visible focus, prefers-reduced-motion and CSS containment checks.
+- Added diagnostics: ops/bin/as6-diagnose-epic015-crm-activities-tasks-production-polish.
+- Added controls: ops/bin/as6-control-epic015-crm-activities-tasks-production-polish.
+- Added AEC rules: ops/aec/as6-epic015-crm-activities-tasks-production-polish-aec.md.
+- Added governance: ops/governance/as6-epic015-crm-activities-tasks-production-polish-governance.md.
+- Added failure classes: CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH_GAP, CRM_ACTIVITIES_PRODUCTION_ACCESSIBILITY_DRIFT, CRM_ACTIVITIES_PRODUCTION_MOTION_DRIFT, CRM_ACTIVITIES_PRODUCTION_PERFORMANCE_DRIFT, CRM_ACTIVITIES_PRODUCTION_HEALTH_DRIFT.
+- Project readiness: 99%.
+- Next stage: AS6_EPIC015_SLICE08_CRM_ACTIVITIES_TASKS_FINAL_VALIDATION.

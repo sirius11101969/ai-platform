@@ -3996,3 +3996,9 @@ Permission Validation
 - Covers CRMPage live integration, live contract, diagnostics, health snapshot, runtime tracer and CSS.
 - Covers existing CRM Layout, Workspace, Header, Sidebar and router reuse.
 - Covers no-storage, no-api, no-business-workflow, no-own-router and no-own-store invariants.
+
+## AS6_EPIC015_SLICE07_CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH
+- Covers CRM Activities / Tasks Production Polish.
+- Covers production contract, production diagnostics, production health snapshot, runtime tracer and production CSS.
+- Covers ARIA, visible focus, prefers-reduced-motion, CSS containment, no runtime fetch, no runtime storage and no heavy dependencies.
+- Covers existing CRM Layout, Workspace, Header and Sidebar reuse.

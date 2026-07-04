@@ -1,0 +1,37 @@
+export const crmActivitiesProductionContract = Object.freeze({
+  id: "crm.activities.tasks.production.contract",
+  stage: "AS6_EPIC015_SLICE07_CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH",
+  module: "CRM_ACTIVITIES_TASKS",
+  productionReady: true,
+  accessibility: Object.freeze({
+    aria: true,
+    liveRegions: true,
+    visibleFocus: true,
+    semanticSections: true,
+  }),
+  motion: Object.freeze({
+    prefersReducedMotion: true,
+    nonEssentialAnimation: false,
+  }),
+  performance: Object.freeze({
+    cssContainment: true,
+    heavyDependencies: false,
+    runtimeFetch: false,
+    runtimeStorage: false,
+    businessWorkflow: false,
+  }),
+  invariants: Object.freeze({
+    USE_EXISTING_CRM_LAYOUT: true,
+    USE_EXISTING_CRM_WORKSPACE: true,
+    USE_EXISTING_HEADER: true,
+    USE_EXISTING_SIDEBAR: true,
+    NO_PARALLEL_LAYOUT: true,
+    NO_PARALLEL_SHELL: true,
+    NO_OWN_ROUTER: true,
+    NO_OWN_STORE: true,
+    NO_STORAGE: true,
+    NO_API_CALLS: true,
+    NO_BUSINESS_WORKFLOW: true,
+    PLATFORM_MUTATION: false,
+  }),
+});

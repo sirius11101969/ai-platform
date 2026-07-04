@@ -1,0 +1,5 @@
+ROOT_CAUSE=CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH_REQUIRED_AFTER_LIVE_LAYOUT_MOUNT
+FAILURE_CLASS=CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH_GAP
+ARCHITECTURE_DRIFT=Activities / Tasks Live Layout Mount exists but production polish contract, accessibility, reduced motion, performance and final runtime checks are not formalized
+VALIDATION_GAP=No production contract, production diagnostics, production runtime tracer, production health snapshot or production CSS polish existed before Slice 07
+PREVENTION=Add Activities / Tasks production polish layer with diagnostics, controls, AEC, registry, coverage, governance and state evidence

@@ -1,0 +1,29 @@
+.as6-crm-activities-live-layout-mount,
+.as6-crm-activities-ui {
+  contain: layout paint;
+}
+
+.as6-crm-activities-ui :focus-visible,
+.as6-crm-activities-live-layout-mount :focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.72);
+  outline-offset: 3px;
+}
+
+.as6-crm-activities-actions button:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.72);
+  outline-offset: 3px;
+}
+
+.as6-crm-activities-diagnostics {
+  min-height: 44px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .as6-crm-activities-live-layout-mount *,
+  .as6-crm-activities-ui * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}

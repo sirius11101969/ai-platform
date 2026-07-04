@@ -1,0 +1,524 @@
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:CRM_ACTIVITIES_TASKS
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:1. AS6_EPIC015_SLICE01_CRM_ACTIVITIES_TASKS_DOMAIN_MODEL
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:2. AS6_EPIC015_SLICE02_CRM_ACTIVITIES_TASKS_FOUNDATION
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:3. AS6_EPIC015_SLICE03_CRM_ACTIVITIES_TASKS_UI_FOUNDATION
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:4. AS6_EPIC015_SLICE04_CRM_ACTIVITIES_TASKS_WORKSPACE_INTEGRATION
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:5. AS6_EPIC015_SLICE05_CRM_ACTIVITIES_TASKS_CRM_LAYOUT_BRIDGE
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:6. AS6_EPIC015_SLICE06_CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:7. AS6_EPIC015_SLICE07_CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:8. AS6_EPIC015_SLICE08_CRM_ACTIVITIES_TASKS_FINAL_VALIDATION
+ops/status/as6-detected-errors.md:- Registered: CRM_ACTIVITIES_TASKS_SELECTION_GAP.
+ops/status/as6-detected-errors.md:- Registered: CRM_ACTIVITIES_TASKS_REUSE_FOUNDATION_GAP.
+ops/status/as6-detected-errors.md:## AS6_EPIC015_SLICE01_CRM_ACTIVITIES_TASKS_DOMAIN_MODEL
+ops/status/as6-detected-errors.md:- Registered: CRM_ACTIVITIES_TASKS_DOMAIN_MODEL_GAP.
+ops/status/as6-detected-errors.md:## AS6_EPIC015_SLICE02_CRM_ACTIVITIES_TASKS_FOUNDATION
+ops/status/as6-detected-errors.md:- Registered: CRM_ACTIVITIES_TASKS_FOUNDATION_GAP.
+ops/status/as6-detected-errors.md:## AS6_EPIC015_SLICE03_CRM_ACTIVITIES_TASKS_UI_FOUNDATION
+ops/status/as6-detected-errors.md:- Registered: CRM_ACTIVITIES_TASKS_UI_FOUNDATION_GAP.
+ops/status/as6-detected-errors.md:## AS6_EPIC015_SLICE04_CRM_ACTIVITIES_TASKS_WORKSPACE_INTEGRATION
+ops/status/as6-detected-errors.md:- Registered: CRM_ACTIVITIES_TASKS_WORKSPACE_INTEGRATION_GAP.
+ops/status/as6-detected-errors.md:## AS6_EPIC015_SLICE05_CRM_ACTIVITIES_TASKS_CRM_LAYOUT_BRIDGE
+ops/status/as6-detected-errors.md:- Registered: CRM_ACTIVITIES_TASKS_CRM_LAYOUT_BRIDGE_GAP.
+ops/status/as6-detected-errors.md:## AS6_EPIC015_SLICE06_CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT
+ops/status/as6-detected-errors.md:- Registered: CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT_GAP.
+ops/status/as6-detected-errors.md:## AS6_EPIC015_SLICE07_CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH
+ops/status/as6-detected-errors.md:- Registered: CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH_GAP.
+ops/aec/as6-epic015-crm-activities-tasks-production-polish-aec.md:Stage: AS6_EPIC015_SLICE07_CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH
+ops/aec/as6-epic015-crm-activities-tasks-domain-model-aec.md:Stage: AS6_EPIC015_SLICE01_CRM_ACTIVITIES_TASKS_DOMAIN_MODEL
+ops/aec/as6-epic015-crm-activities-tasks-domain-model-aec.md:- AEC_CRM_ACTIVITIES_TASKS_DOMAIN_MODEL_REQUIRED
+ops/aec/as6-epic015-crm-next-module-selection-aec.md:- AEC_EPIC015_CRM_ACTIVITIES_TASKS_SELECTED
+ops/aec/as6-epic015-crm-activities-tasks-workspace-integration-aec.md:Stage: AS6_EPIC015_SLICE04_CRM_ACTIVITIES_TASKS_WORKSPACE_INTEGRATION
+ops/aec/as6-epic015-crm-activities-tasks-live-layout-mount-aec.md:Stage: AS6_EPIC015_SLICE06_CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT
+ops/aec/as6-epic015-crm-activities-tasks-crm-layout-bridge-aec.md:Stage: AS6_EPIC015_SLICE05_CRM_ACTIVITIES_TASKS_CRM_LAYOUT_BRIDGE
+ops/aec/as6-epic015-crm-activities-tasks-foundation-aec.md:Stage: AS6_EPIC015_SLICE02_CRM_ACTIVITIES_TASKS_FOUNDATION
+ops/aec/as6-epic015-crm-activities-tasks-foundation-aec.md:- AEC_CRM_ACTIVITIES_TASKS_FOUNDATION_REQUIRED
+ops/aec/as6-epic015-crm-activities-tasks-ui-foundation-aec.md:Stage: AS6_EPIC015_SLICE03_CRM_ACTIVITIES_TASKS_UI_FOUNDATION
+ops/aec/as6-epic015-crm-activities-tasks-ui-foundation-aec.md:- AEC_CRM_ACTIVITIES_TASKS_UI_FOUNDATION_REQUIRED
+ops/governance/as6-epic015-crm-activities-tasks-domain-model-governance.md:Stage: AS6_EPIC015_SLICE01_CRM_ACTIVITIES_TASKS_DOMAIN_MODEL
+ops/governance/as6-epic015-crm-next-module-selection-governance.md:- EPIC015 selected module: CRM_ACTIVITIES_TASKS.
+ops/governance/as6-epic015-crm-activities-tasks-ui-foundation-governance.md:Stage: AS6_EPIC015_SLICE03_CRM_ACTIVITIES_TASKS_UI_FOUNDATION
+ops/governance/as6-epic015-crm-activities-tasks-live-layout-mount-governance.md:Stage: AS6_EPIC015_SLICE06_CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT
+ops/governance/as6-epic015-crm-activities-tasks-foundation-governance.md:Stage: AS6_EPIC015_SLICE02_CRM_ACTIVITIES_TASKS_FOUNDATION
+ops/governance/as6-epic015-crm-activities-tasks-crm-layout-bridge-governance.md:Stage: AS6_EPIC015_SLICE05_CRM_ACTIVITIES_TASKS_CRM_LAYOUT_BRIDGE
+ops/governance/as6-epic015-crm-activities-tasks-production-polish-governance.md:Stage: AS6_EPIC015_SLICE07_CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH
+ops/governance/as6-epic015-crm-activities-tasks-workspace-integration-governance.md:Stage: AS6_EPIC015_SLICE04_CRM_ACTIVITIES_TASKS_WORKSPACE_INTEGRATION
+ops/registry/as6-diagnostic-registry.md:- Selected module: CRM_ACTIVITIES_TASKS
+ops/registry/as6-diagnostic-registry.md:- Next stage: AS6_EPIC015_SLICE01_CRM_ACTIVITIES_TASKS_DOMAIN_MODEL
+ops/registry/as6-diagnostic-registry.md:- Failure classes: CRM_EPIC015_NEXT_MODULE_SELECTION_REQUIRED, CRM_ACTIVITIES_TASKS_SELECTION_GAP, CRM_ACTIVITIES_TASKS_REUSE_FOUNDATION_GAP.
+ops/registry/as6-diagnostic-registry.md:## AS6_EPIC015_SLICE01_CRM_ACTIVITIES_TASKS_DOMAIN_MODEL
+ops/registry/as6-diagnostic-registry.md:- Failure classes: CRM_ACTIVITIES_TASKS_DOMAIN_MODEL_GAP, CRM_ACTIVITY_IDENTITY_DRIFT, CRM_TASK_IDENTITY_DRIFT, CRM_ACTIVITY_LINK_DRIFT, CRM_ACTIVITY_DEADLINE_REMINDER_DRIFT.
+ops/registry/as6-diagnostic-registry.md:## AS6_EPIC015_SLICE02_CRM_ACTIVITIES_TASKS_FOUNDATION
+ops/registry/as6-diagnostic-registry.md:- Failure classes: CRM_ACTIVITIES_TASKS_FOUNDATION_GAP, CRM_ACTIVITIES_REGISTRY_DRIFT, CRM_ACTIVITIES_RUNTIME_DRIFT, CRM_ACTIVITIES_NAVIGATION_DRIFT, CRM_ACTIVITIES_FOUNDATION_HEALTH_DRIFT.
+ops/registry/as6-diagnostic-registry.md:## AS6_EPIC015_SLICE03_CRM_ACTIVITIES_TASKS_UI_FOUNDATION
+ops/registry/as6-diagnostic-registry.md:- Failure classes: CRM_ACTIVITIES_TASKS_UI_FOUNDATION_GAP, CRM_ACTIVITIES_UI_STATE_DRIFT, CRM_ACTIVITIES_UI_TRACER_DRIFT, CRM_ACTIVITIES_UI_HEALTH_DRIFT, CRM_ACTIVITIES_UI_CSS_DRIFT.
+ops/registry/as6-diagnostic-registry.md:## AS6_EPIC015_SLICE04_CRM_ACTIVITIES_TASKS_WORKSPACE_INTEGRATION
+ops/registry/as6-diagnostic-registry.md:- Failure classes: CRM_ACTIVITIES_TASKS_WORKSPACE_INTEGRATION_GAP, CRM_ACTIVITIES_WORKSPACE_PANEL_DRIFT, CRM_ACTIVITIES_WORKSPACE_NAVIGATION_DRIFT, CRM_ACTIVITIES_WORKSPACE_HEALTH_DRIFT, CRM_ACTIVITIES_WORKSPACE_TRACER_DRIFT.
+ops/registry/as6-diagnostic-registry.md:## AS6_EPIC015_SLICE05_CRM_ACTIVITIES_TASKS_CRM_LAYOUT_BRIDGE
+ops/registry/as6-diagnostic-registry.md:- Failure classes: CRM_ACTIVITIES_TASKS_CRM_LAYOUT_BRIDGE_GAP, CRM_ACTIVITIES_LAYOUT_MODEL_DRIFT, CRM_ACTIVITIES_LAYOUT_STATE_DRIFT, CRM_ACTIVITIES_BREADCRUMB_DRIFT, CRM_ACTIVITIES_LAYOUT_HEALTH_DRIFT.
+ops/registry/as6-diagnostic-registry.md:## AS6_EPIC015_SLICE06_CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT
+ops/registry/as6-diagnostic-registry.md:- Failure classes: CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT_GAP, CRM_ACTIVITIES_LIVE_MOUNT_IMPORT_DRIFT, CRM_ACTIVITIES_LIVE_MOUNT_HEALTH_DRIFT, CRM_ACTIVITIES_LIVE_MOUNT_TRACER_DRIFT, CRM_ACTIVITIES_CRM_PAGE_MOUNT_DRIFT.
+ops/registry/as6-diagnostic-registry.md:## AS6_EPIC015_SLICE07_CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH
+ops/registry/as6-diagnostic-registry.md:- Failure classes: CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH_GAP, CRM_ACTIVITIES_PRODUCTION_ACCESSIBILITY_DRIFT, CRM_ACTIVITIES_PRODUCTION_MOTION_DRIFT, CRM_ACTIVITIES_PRODUCTION_PERFORMANCE_DRIFT, CRM_ACTIVITIES_PRODUCTION_HEALTH_DRIFT.
+ops/registry/as6-coverage-registry.md:- Covers CRM_ACTIVITIES_TASKS as selected module.
+ops/registry/as6-coverage-registry.md:## AS6_EPIC015_SLICE01_CRM_ACTIVITIES_TASKS_DOMAIN_MODEL
+ops/registry/as6-coverage-registry.md:## AS6_EPIC015_SLICE02_CRM_ACTIVITIES_TASKS_FOUNDATION
+ops/registry/as6-coverage-registry.md:## AS6_EPIC015_SLICE03_CRM_ACTIVITIES_TASKS_UI_FOUNDATION
+ops/registry/as6-coverage-registry.md:## AS6_EPIC015_SLICE04_CRM_ACTIVITIES_TASKS_WORKSPACE_INTEGRATION
+ops/registry/as6-coverage-registry.md:## AS6_EPIC015_SLICE05_CRM_ACTIVITIES_TASKS_CRM_LAYOUT_BRIDGE
+ops/registry/as6-coverage-registry.md:## AS6_EPIC015_SLICE06_CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT
+ops/registry/as6-coverage-registry.md:## AS6_EPIC015_SLICE07_CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH
+ops/bin/as6-diagnose-epic015-crm-activities-tasks-ui-foundation:ops/bin/as6-grep-safe -R "CRM_ACTIVITIES_TASKS_UI_TRACE" frontend/src/crm/activities/ui
+ops/bin/as6-diagnose-epic015-crm-activities-tasks-ui-foundation:echo "AS6_EPIC015_CRM_ACTIVITIES_TASKS_UI_FOUNDATION=PASS"
+ops/bin/as6-diagnose-epic015-crm-activities-tasks-workspace-integration:ops/bin/as6-grep-safe -R "CRM_ACTIVITIES_TASKS_WORKSPACE_TRACE" frontend/src/crm/activities/workspace
+ops/bin/as6-diagnose-epic015-crm-activities-tasks-workspace-integration:echo "AS6_EPIC015_CRM_ACTIVITIES_TASKS_WORKSPACE_INTEGRATION=PASS"
+ops/bin/as6-diagnose-epic015-crm-next-module-selection:ops/bin/as6-grep-safe -R "CRM_ACTIVITIES_TASKS" docs/epic015 ops docs
+ops/bin/as6-diagnose-epic015-crm-next-module-selection:ops/bin/as6-grep-safe -R "AS6_EPIC015_SLICE01_CRM_ACTIVITIES_TASKS_DOMAIN_MODEL" docs/epic015
+ops/bin/as6-diagnose-epic015-crm-next-module-selection:echo "AS6_EPIC015_NEXT_MODULE=CRM_ACTIVITIES_TASKS"
+ops/bin/as6-control-epic015-crm-activities-tasks-domain-model:echo "AS6_CONTROL_EPIC015_CRM_ACTIVITIES_TASKS_DOMAIN_MODEL=PASS"
+ops/bin/as6-diagnose-epic015-crm-activities-tasks-domain-model:ops/bin/as6-grep-safe -R "CRM_ACTIVITIES_TASKS" frontend/src/crm/activities/domain
+ops/bin/as6-diagnose-epic015-crm-activities-tasks-domain-model:echo "AS6_EPIC015_CRM_ACTIVITIES_TASKS_DOMAIN_MODEL=PASS"
+ops/bin/as6-control-epic015-crm-activities-tasks-crm-layout-bridge:echo "AS6_CONTROL_EPIC015_CRM_ACTIVITIES_TASKS_CRM_LAYOUT_BRIDGE=PASS"
+ops/bin/as6-control-epic015-crm-activities-tasks-ui-foundation:echo "AS6_CONTROL_EPIC015_CRM_ACTIVITIES_TASKS_UI_FOUNDATION=PASS"
+ops/bin/as6-control-epic015-crm-activities-tasks-production-polish:echo "AS6_CONTROL_EPIC015_CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH=PASS"
+ops/bin/as6-control-epic015-crm-activities-tasks-live-layout-mount:echo "AS6_CONTROL_EPIC015_CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT=PASS"
+ops/bin/as6-diagnose-epic015-crm-activities-tasks-live-layout-mount:ops/bin/as6-grep-safe -R "CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT_TRACE" frontend/src/crm/activities/live
+ops/bin/as6-diagnose-epic015-crm-activities-tasks-live-layout-mount:echo "AS6_EPIC015_CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT=PASS"
+ops/bin/as6-control-epic015-crm-activities-tasks-foundation:echo "AS6_CONTROL_EPIC015_CRM_ACTIVITIES_TASKS_FOUNDATION=PASS"
+ops/bin/as6-diagnose-epic015-crm-activities-tasks-foundation:ops/bin/as6-grep-safe -R "CRM_ACTIVITIES_TASKS" frontend/src/crm/activities/foundation
+ops/bin/as6-diagnose-epic015-crm-activities-tasks-foundation:echo "AS6_EPIC015_CRM_ACTIVITIES_TASKS_FOUNDATION=PASS"
+ops/bin/as6-diagnose-epic015-crm-activities-tasks-crm-layout-bridge:ops/bin/as6-grep-safe -R "CRM_ACTIVITIES_TASKS_LAYOUT_TRACE" frontend/src/crm/activities/layout
+ops/bin/as6-diagnose-epic015-crm-activities-tasks-crm-layout-bridge:echo "AS6_EPIC015_CRM_ACTIVITIES_TASKS_CRM_LAYOUT_BRIDGE=PASS"
+ops/bin/as6-control-epic015-crm-activities-tasks-workspace-integration:echo "AS6_CONTROL_EPIC015_CRM_ACTIVITIES_TASKS_WORKSPACE_INTEGRATION=PASS"
+ops/bin/as6-diagnose-epic015-crm-activities-tasks-production-polish:ops/bin/as6-grep-safe -R "CRM_ACTIVITIES_TASKS_PRODUCTION_TRACE" frontend/src/crm/activities/production
+ops/bin/as6-diagnose-epic015-crm-activities-tasks-production-polish:echo "AS6_EPIC015_CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH=PASS"
+docs/AS6_PROJECT_STATE.md:- Selected next CRM module: CRM_ACTIVITIES_TASKS.
+docs/AS6_PROJECT_STATE.md:- Added failure classes: CRM_EPIC015_NEXT_MODULE_SELECTION_REQUIRED, CRM_ACTIVITIES_TASKS_SELECTION_GAP, CRM_ACTIVITIES_TASKS_REUSE_FOUNDATION_GAP.
+docs/AS6_PROJECT_STATE.md:- Next stage: AS6_EPIC015_SLICE01_CRM_ACTIVITIES_TASKS_DOMAIN_MODEL.
+docs/AS6_PROJECT_STATE.md:## AS6_EPIC015_SLICE01_CRM_ACTIVITIES_TASKS_DOMAIN_MODEL
+docs/AS6_PROJECT_STATE.md:- Added failure classes: CRM_ACTIVITIES_TASKS_DOMAIN_MODEL_GAP, CRM_ACTIVITY_IDENTITY_DRIFT, CRM_TASK_IDENTITY_DRIFT, CRM_ACTIVITY_LINK_DRIFT, CRM_ACTIVITY_DEADLINE_REMINDER_DRIFT.
+docs/AS6_PROJECT_STATE.md:- Next stage: AS6_EPIC015_SLICE02_CRM_ACTIVITIES_TASKS_FOUNDATION.
+docs/AS6_PROJECT_STATE.md:## AS6_EPIC015_SLICE02_CRM_ACTIVITIES_TASKS_FOUNDATION
+docs/AS6_PROJECT_STATE.md:- Added failure classes: CRM_ACTIVITIES_TASKS_FOUNDATION_GAP, CRM_ACTIVITIES_REGISTRY_DRIFT, CRM_ACTIVITIES_RUNTIME_DRIFT, CRM_ACTIVITIES_NAVIGATION_DRIFT, CRM_ACTIVITIES_FOUNDATION_HEALTH_DRIFT.
+docs/AS6_PROJECT_STATE.md:- Next stage: AS6_EPIC015_SLICE03_CRM_ACTIVITIES_TASKS_UI_FOUNDATION.
+docs/AS6_PROJECT_STATE.md:## AS6_EPIC015_SLICE03_CRM_ACTIVITIES_TASKS_UI_FOUNDATION
+docs/AS6_PROJECT_STATE.md:- Added failure classes: CRM_ACTIVITIES_TASKS_UI_FOUNDATION_GAP, CRM_ACTIVITIES_UI_STATE_DRIFT, CRM_ACTIVITIES_UI_TRACER_DRIFT, CRM_ACTIVITIES_UI_HEALTH_DRIFT, CRM_ACTIVITIES_UI_CSS_DRIFT.
+docs/AS6_PROJECT_STATE.md:- Next stage: AS6_EPIC015_SLICE04_CRM_ACTIVITIES_TASKS_WORKSPACE_INTEGRATION.
+docs/AS6_PROJECT_STATE.md:## AS6_EPIC015_SLICE04_CRM_ACTIVITIES_TASKS_WORKSPACE_INTEGRATION
+docs/AS6_PROJECT_STATE.md:- Added failure classes: CRM_ACTIVITIES_TASKS_WORKSPACE_INTEGRATION_GAP, CRM_ACTIVITIES_WORKSPACE_PANEL_DRIFT, CRM_ACTIVITIES_WORKSPACE_NAVIGATION_DRIFT, CRM_ACTIVITIES_WORKSPACE_HEALTH_DRIFT, CRM_ACTIVITIES_WORKSPACE_TRACER_DRIFT.
+docs/AS6_PROJECT_STATE.md:- Next stage: AS6_EPIC015_SLICE05_CRM_ACTIVITIES_TASKS_CRM_LAYOUT_BRIDGE.
+docs/AS6_PROJECT_STATE.md:## AS6_EPIC015_SLICE05_CRM_ACTIVITIES_TASKS_CRM_LAYOUT_BRIDGE
+docs/AS6_PROJECT_STATE.md:- Added failure classes: CRM_ACTIVITIES_TASKS_CRM_LAYOUT_BRIDGE_GAP, CRM_ACTIVITIES_LAYOUT_MODEL_DRIFT, CRM_ACTIVITIES_LAYOUT_STATE_DRIFT, CRM_ACTIVITIES_BREADCRUMB_DRIFT, CRM_ACTIVITIES_LAYOUT_HEALTH_DRIFT.
+docs/AS6_PROJECT_STATE.md:- Next stage: AS6_EPIC015_SLICE06_CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT.
+docs/AS6_PROJECT_STATE.md:## AS6_EPIC015_SLICE06_CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT
+docs/AS6_PROJECT_STATE.md:- Added failure classes: CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT_GAP, CRM_ACTIVITIES_LIVE_MOUNT_IMPORT_DRIFT, CRM_ACTIVITIES_LIVE_MOUNT_HEALTH_DRIFT, CRM_ACTIVITIES_LIVE_MOUNT_TRACER_DRIFT, CRM_ACTIVITIES_CRM_PAGE_MOUNT_DRIFT.
+docs/AS6_PROJECT_STATE.md:- Next stage: AS6_EPIC015_SLICE07_CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH.
+docs/AS6_PROJECT_STATE.md:## AS6_EPIC015_SLICE07_CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH
+docs/AS6_PROJECT_STATE.md:- Added failure classes: CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH_GAP, CRM_ACTIVITIES_PRODUCTION_ACCESSIBILITY_DRIFT, CRM_ACTIVITIES_PRODUCTION_MOTION_DRIFT, CRM_ACTIVITIES_PRODUCTION_PERFORMANCE_DRIFT, CRM_ACTIVITIES_PRODUCTION_HEALTH_DRIFT.
+docs/AS6_PROJECT_STATE.md:- Next stage: AS6_EPIC015_SLICE08_CRM_ACTIVITIES_TASKS_FINAL_VALIDATION.
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:CRM_ACTIVITIES_TASKS
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:1. AS6_EPIC015_SLICE01_CRM_ACTIVITIES_TASKS_DOMAIN_MODEL
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:2. AS6_EPIC015_SLICE02_CRM_ACTIVITIES_TASKS_FOUNDATION
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:3. AS6_EPIC015_SLICE03_CRM_ACTIVITIES_TASKS_UI_FOUNDATION
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:4. AS6_EPIC015_SLICE04_CRM_ACTIVITIES_TASKS_WORKSPACE_INTEGRATION
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:5. AS6_EPIC015_SLICE05_CRM_ACTIVITIES_TASKS_CRM_LAYOUT_BRIDGE
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:6. AS6_EPIC015_SLICE06_CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:7. AS6_EPIC015_SLICE07_CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:8. AS6_EPIC015_SLICE08_CRM_ACTIVITIES_TASKS_FINAL_VALIDATION
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:1. AS6_EPIC015_SLICE01_CRM_ACTIVITIES_TASKS_DOMAIN_MODEL
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:- REUSE_CONTACTS_FOUNDATION=TRUE
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:- REUSE_COMPANIES_FOUNDATION=TRUE
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:- REUSE_DEALS_FOUNDATION=TRUE
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:- USE_EXISTING_CRM_WORKSPACE=TRUE
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:- USE_EXISTING_CRM_LAYOUT=TRUE
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:- USE_AS6_GREP_SAFE=TRUE
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:- USE_EPIC_COMPLETION_MARKER_GUARD=TRUE
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:- NO_PARALLEL_SHELL=TRUE
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:- NO_OWN_ROUTER=TRUE
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:- NO_OWN_STORE=TRUE
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:- NO_STORAGE=TRUE for initial foundation slices
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:- NO_API_CALLS=TRUE for initial foundation slices
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:- NO_BUSINESS_WORKFLOW=TRUE for initial foundation slices
+docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md:- PLATFORM_MUTATION=FALSE
+ops/bin/as6-diagnose-epic015-crm-next-module-selection:ops/bin/as6-grep-safe -R "AS6_EPIC012_CRM_CONTACTS=PRODUCTION_VALIDATED" docs ops runtime
+ops/bin/as6-control-epic013-crm-next-module-planning:grep -R "AS6_EPIC012_CRM_CONTACTS=PRODUCTION_VALIDATED" docs/AS6_PROJECT_STATE.md runtime/as6-epic012-slice10-crm-contacts-final-validation/final-validation.status.txt
+ops/bin/as6-control-epic014-crm-next-module-selection:ops/bin/as6-grep-safe -R "AS6_EPIC012_CRM_CONTACTS=PRODUCTION_VALIDATED" docs ops runtime
+docs/epic013/AS6_EPIC013_CRM_COMPANIES_FINAL_VALIDATION.md:AS6_EPIC013_CRM_COMPANIES=PRODUCTION_VALIDATED
+ops/bin/as6-diagnose-epic015-crm-next-module-selection:ops/bin/as6-grep-safe -R "AS6_EPIC013_CRM_COMPANIES=PRODUCTION_VALIDATED" docs ops runtime
+ops/bin/as6-control-epic014-crm-next-module-selection:ops/bin/as6-grep-safe -R "AS6_EPIC013_CRM_COMPANIES=PRODUCTION_VALIDATED" docs ops runtime
+docs/epic014/AS6_EPIC014_CRM_DEALS_FINAL_VALIDATION.md:AS6_EPIC014_CRM_DEALS=PRODUCTION_VALIDATED
+docs/AS6_PROJECT_STATE.md:- Final marker: AS6_EPIC014_CRM_DEALS=PRODUCTION_VALIDATED.
+ops/governance/as6-epic014-crm-deals-final-validation-governance.md:- Final marker: AS6_EPIC014_CRM_DEALS=PRODUCTION_VALIDATED.
+ops/registry/as6-diagnostic-registry.md:- Final marker: AS6_EPIC014_CRM_DEALS=PRODUCTION_VALIDATED
+ops/registry/as6-coverage-registry.md:- Covers final marker AS6_EPIC014_CRM_DEALS=PRODUCTION_VALIDATED.
+ops/bin/as6-diagnose-epic015-crm-next-module-selection:ops/bin/as6-grep-safe -R "AS6_EPIC014_CRM_DEALS=PRODUCTION_VALIDATED" docs ops runtime
+ops/bin/as6-diagnose-epic014-crm-deals-final-validation:ops/bin/as6-grep-safe -R "AS6_EPIC014_CRM_DEALS=PRODUCTION_VALIDATED" docs ops runtime/as6-epic014-slice08-crm-deals-final-validation
+ops/bin/as6-diagnose-epic014-crm-deals-final-validation:  AS6_EPIC_ID="AS6_EPIC014" AS6_FINAL_STAGE="AS6_EPIC014_SLICE08_CRM_DEALS_FINAL_VALIDATION" AS6_STATUS_FLAG="AS6_EPIC014_CRM_DEALS=PRODUCTION_VALIDATED" AS6_RESTORE_PREFIX="AS6_RESTORE_EPIC014_SLICE08_CRM_DEALS_FINAL_VALIDATION" AS6_RUNTIME_DIR="runtime/as6-epic014-slice08-crm-deals-final-validation" ops/bin/as6-control-epic-completion-marker-guard
+ops/bin/as6-diagnose-epic014-crm-deals-final-validation:echo "AS6_EPIC014_CRM_DEALS=PRODUCTION_VALIDATED"
+AS6_EPIC015_CRM_NEXT_MODULE_SELECTION=PASS
+AS6_EPIC015_NEXT_MODULE=CRM_ACTIVITIES_TASKS
+frontend/src/crm/activities/domain/crmTaskIdentity.js:  module: "CRM_ACTIVITIES_TASKS",
+frontend/src/crm/activities/domain/crmActivityDescriptor.js:  module: "CRM_ACTIVITIES_TASKS",
+frontend/src/crm/activities/domain/crmActivityRuntimeTracer.js:    stage: "AS6_EPIC015_SLICE01_CRM_ACTIVITIES_TASKS_DOMAIN_MODEL",
+frontend/src/crm/activities/domain/crmActivityRuntimeTracer.js:    module: "CRM_ACTIVITIES_TASKS",
+frontend/src/crm/activities/domain/crmActivityDiagnostics.js:    ["CRM_ACTIVITIES_TASKS_DOMAIN_MODEL_ONLY", CRM_ACTIVITY_CONTRACT.invariants.CRM_ACTIVITIES_TASKS_DOMAIN_MODEL_ONLY === true],
+frontend/src/crm/activities/domain/crmActivityContract.js:  module: "CRM_ACTIVITIES_TASKS",
+frontend/src/crm/activities/domain/crmActivityContract.js:  stage: "AS6_EPIC015_SLICE01_CRM_ACTIVITIES_TASKS_DOMAIN_MODEL",
+frontend/src/crm/activities/domain/crmActivityContract.js:    CRM_ACTIVITIES_TASKS_DOMAIN_MODEL_ONLY: true,
+frontend/src/crm/activities/domain/crmActivityIdentity.js:  module: "CRM_ACTIVITIES_TASKS",
+frontend/src/crm/activities/domain/crmActivityCompanyLink.js:  relation: "crm.activity.company",
+frontend/src/crm/activities/domain/crmActivityContactLink.js:  relation: "crm.activity.contact",
+frontend/src/crm/activities/domain/crmActivityRuntimeTracer.js:    activityEntity: "crm.activity",
+frontend/src/crm/activities/domain/crmActivityDealLink.js:  relation: "crm.activity.deal",
+frontend/src/crm/activities/domain/crmActivityDiagnostics.js:    ["ACTIVITY_IDENTITY_MODEL", CRM_ACTIVITY_CONTRACT.identity.entity === "crm.activity"],
+frontend/src/crm/activities/domain/crmActivityIdentity.js:  entity: "crm.activity",
+frontend/src/crm/activities/domain/crmTaskIdentity.js:  entity: "crm.task",
+frontend/src/crm/activities/domain/crmActivityRuntimeTracer.js:    taskEntity: "crm.task",
+frontend/src/crm/activities/domain/crmActivityDiagnostics.js:    ["TASK_IDENTITY_MODEL", CRM_ACTIVITY_CONTRACT.taskIdentity.entity === "crm.task"],
+frontend/src/crm/activities/domain/crmTaskIdentity.js:  entity: "crm.task",
+frontend/src/crm/activities/domain/crmTaskIdentity.js:  canonicalKey: "crm.activities.tasks.task",
+frontend/src/crm/activities/domain/crmActivityDescriptor.js:  id: "crm.activities.tasks.domain",
+frontend/src/crm/activities/domain/crmActivityTypes.js:  "task",
+frontend/src/crm/activities/domain/crmActivityRuntimeTracer.js:    taskEntity: "crm.task",
+frontend/src/crm/activities/domain/crmActivityDiagnostics.js:    ["TASK_IDENTITY_MODEL", CRM_ACTIVITY_CONTRACT.taskIdentity.entity === "crm.task"],
+frontend/src/crm/activities/domain/crmActivityDiagnostics.js:    ["TYPE_MODEL", CRM_ACTIVITY_CONTRACT.types.includes("task") && CRM_ACTIVITY_CONTRACT.types.includes("meeting")],
+frontend/src/crm/activities/domain/crmActivityContract.js:  taskIdentity: CRM_TASK_IDENTITY,
+frontend/src/crm/activities/domain/crmActivityIdentity.js:  canonicalKey: "crm.activities.tasks",
+frontend/src/crm/activities/domain/crmActivityTypes.js:  "call",
+frontend/src/crm/activities/domain/crmActivityTypes.js:  "meeting",
+frontend/src/crm/activities/domain/crmActivityDiagnostics.js:    ["TYPE_MODEL", CRM_ACTIVITY_CONTRACT.types.includes("task") && CRM_ACTIVITY_CONTRACT.types.includes("meeting")],
+frontend/src/crm/activities/domain/crmActivityTypes.js:  "email",
+frontend/src/crm/activities/domain/crmActivityDeadlineReminder.js:    channels: Object.freeze(["in_app_placeholder", "email_placeholder"]),
+frontend/src/crm/activities/domain/crmActivityTypes.js:  "reminder",
+frontend/src/crm/activities/domain/crmActivityRuntimeTracer.js:    reminder: "declarative-only",
+frontend/src/crm/activities/domain/crmActivityDiagnostics.js:    ["REMINDER_MODEL", CRM_ACTIVITY_CONTRACT.deadlineReminder.reminder.mode === "declarative-only"],
+frontend/src/crm/activities/domain/crmActivityDeadlineReminder.js:  reminder: Object.freeze({
+frontend/src/crm/activities/domain/crmActivityDiagnostics.js:    ["STATUS_MODEL", CRM_ACTIVITY_CONTRACT.statuses.includes("planned") && CRM_ACTIVITY_CONTRACT.statuses.includes("completed")],
+frontend/src/crm/activities/domain/crmActivityDiagnostics.js:    ["LIFECYCLE_MODEL", CRM_ACTIVITY_CONTRACT.lifecycle.initial === "planned"],
+frontend/src/crm/activities/domain/crmActivityLifecycle.js:  initial: "planned",
+frontend/src/crm/activities/domain/crmActivityLifecycle.js:    planned: Object.freeze(["in_progress", "waiting", "cancelled", "completed"]),
+frontend/src/crm/activities/domain/crmActivityStatuses.js:  "planned",
+frontend/src/crm/activities/domain/crmActivityDiagnostics.js:    ["STATUS_MODEL", CRM_ACTIVITY_CONTRACT.statuses.includes("planned") && CRM_ACTIVITY_CONTRACT.statuses.includes("completed")],
+frontend/src/crm/activities/domain/crmActivityLifecycle.js:  terminal: Object.freeze(["completed", "cancelled"]),
+frontend/src/crm/activities/domain/crmActivityLifecycle.js:    planned: Object.freeze(["in_progress", "waiting", "cancelled", "completed"]),
+frontend/src/crm/activities/domain/crmActivityLifecycle.js:    in_progress: Object.freeze(["waiting", "completed", "cancelled", "overdue"]),
+frontend/src/crm/activities/domain/crmActivityLifecycle.js:    waiting: Object.freeze(["in_progress", "completed", "cancelled", "overdue"]),
+frontend/src/crm/activities/domain/crmActivityLifecycle.js:    overdue: Object.freeze(["in_progress", "completed", "cancelled"]),
+frontend/src/crm/activities/domain/crmActivityLifecycle.js:    completed: Object.freeze([]),
+frontend/src/crm/activities/domain/crmActivityStatuses.js:  "completed",
+frontend/src/crm/activities/domain/crmActivityDiagnostics.js:    ["PRIORITY_MODEL", CRM_ACTIVITY_CONTRACT.priorities.includes("normal") && CRM_ACTIVITY_CONTRACT.priorities.includes("urgent")],
+frontend/src/crm/activities/domain/crmActivityPriorities.js:  "urgent",
+frontend/src/crm/activities/domain/crmActivityCompanyLink.js:  relation: "crm.activity.company",
+frontend/src/crm/activities/domain/crmActivityContactLink.js:  relation: "crm.activity.contact",
+frontend/src/crm/activities/domain/crmActivityDealLink.js:  relation: "crm.activity.deal",
+frontend/src/crm/activities/domain/crmActivityCompanyLink.js:  mode: "declarative-only",
+frontend/src/crm/activities/domain/crmActivityContactLink.js:  mode: "declarative-only",
+frontend/src/crm/activities/domain/crmActivityRuntimeTracer.js:    companyLink: "declarative-only",
+frontend/src/crm/activities/domain/crmActivityRuntimeTracer.js:    contactLink: "declarative-only",
+frontend/src/crm/activities/domain/crmActivityRuntimeTracer.js:    dealLink: "declarative-only",
+frontend/src/crm/activities/domain/crmActivityRuntimeTracer.js:    deadline: "declarative-only",
+frontend/src/crm/activities/domain/crmActivityRuntimeTracer.js:    reminder: "declarative-only",
+frontend/src/crm/activities/domain/crmActivityDealLink.js:  mode: "declarative-only",
+frontend/src/crm/activities/domain/crmActivityDiagnostics.js:    ["DEADLINE_MODEL", CRM_ACTIVITY_CONTRACT.deadlineReminder.deadline.mode === "declarative-only"],
+frontend/src/crm/activities/domain/crmActivityDiagnostics.js:    ["REMINDER_MODEL", CRM_ACTIVITY_CONTRACT.deadlineReminder.reminder.mode === "declarative-only"],
+frontend/src/crm/activities/domain/crmActivityDiagnostics.js:    ["COMPANY_LINK_DECLARATIVE_ONLY", CRM_ACTIVITY_CONTRACT.links.company.mode === "declarative-only" && CRM_ACTIVITY_CONTRACT.links.company.hardCoupling === false],
+frontend/src/crm/activities/domain/crmActivityDiagnostics.js:    ["CONTACT_LINK_DECLARATIVE_ONLY", CRM_ACTIVITY_CONTRACT.links.contact.mode === "declarative-only" && CRM_ACTIVITY_CONTRACT.links.contact.hardCoupling === false],
+frontend/src/crm/activities/domain/crmActivityDiagnostics.js:    ["DEAL_LINK_DECLARATIVE_ONLY", CRM_ACTIVITY_CONTRACT.links.deal.mode === "declarative-only" && CRM_ACTIVITY_CONTRACT.links.deal.hardCoupling === false],
+frontend/src/crm/activities/domain/crmActivityDeadlineReminder.js:    mode: "declarative-only",
+frontend/src/crm/activities/domain/crmActivityDeadlineReminder.js:    mode: "declarative-only",
+frontend/src/crm/activities/domain/crmActivityRuntimeTracer.js:export function traceCrmActivityDomain(event = "CRM_ACTIVITY_DOMAIN_TRACE") {
+frontend/src/crm/activities/domain/crmActivityDiagnostics.js:    ["RUNTIME_TRACER_PRESENT", traceCrmActivityDomain().event === "CRM_ACTIVITY_DOMAIN_TRACE"],
+frontend/src/crm/activities/domain/crmActivityContract.js:    NO_STORAGE: true,
+frontend/src/crm/activities/domain/crmActivityContract.js:    NO_API_CALLS: true,
+frontend/src/crm/activities/domain/crmActivityContract.js:    NO_BUSINESS_WORKFLOW: true,
+frontend/src/crm/activities/domain/crmActivityContract.js:    PLATFORM_MUTATION: false,
+AS6_EPIC015_CRM_ACTIVITIES_TASKS_DOMAIN_MODEL=PASS
+frontend/src/crm/activities/foundation/crmActivityHealthSnapshot.js:    module: "CRM_ACTIVITIES_TASKS",
+frontend/src/crm/activities/foundation/crmActivityManifest.js:  module: "CRM_ACTIVITIES_TASKS",
+frontend/src/crm/activities/foundation/crmActivityManifest.js:  stage: "AS6_EPIC015_SLICE02_CRM_ACTIVITIES_TASKS_FOUNDATION",
+frontend/src/crm/activities/foundation/crmActivityManifest.js:    CRM_ACTIVITIES_TASKS_FOUNDATION_ONLY: true,
+frontend/src/crm/activities/foundation/crmActivityFoundationDiagnostics.js:    ["CRM_ACTIVITIES_TASKS_FOUNDATION_ONLY", crmActivityManifest.invariants.CRM_ACTIVITIES_TASKS_FOUNDATION_ONLY === true],
+frontend/src/crm/activities/foundation/crmActivityFoundationDiagnostics.js:    ["MANIFEST_PRESENT", crmActivityManifest.module === "CRM_ACTIVITIES_TASKS"],
+frontend/src/crm/activities/foundation/crmActivityFoundationTracer.js:    stage: "AS6_EPIC015_SLICE02_CRM_ACTIVITIES_TASKS_FOUNDATION",
+frontend/src/crm/activities/foundation/crmActivityFoundationTracer.js:    module: "CRM_ACTIVITIES_TASKS",
+frontend/src/crm/activities/foundation/crmActivityRuntime.js:    id: "crm.activities.tasks.runtime",
+frontend/src/crm/activities/foundation/crmActivityResolver.js:    id: "crm.activities.tasks.resolver",
+frontend/src/crm/activities/foundation/crmActivityPanels.js:    id: "crm.activities.tasks.timeline.panel",
+frontend/src/crm/activities/foundation/crmActivityPanels.js:    id: "crm.activities.tasks.tasks.panel",
+frontend/src/crm/activities/foundation/crmActivityPanels.js:    id: "crm.activities.tasks.reminders.panel",
+frontend/src/crm/activities/foundation/crmActivityRegistry.js:  key: "crm.activities.tasks",
+frontend/src/crm/activities/foundation/crmActivityNavigation.js:  id: "crm.activities.tasks.navigation",
+frontend/src/crm/activities/foundation/crmActivityFoundationDescriptor.js:  id: "crm.activities.tasks.foundation",
+frontend/src/crm/activities/foundation/crmActivityFoundationDiagnostics.js:    ["REGISTRY_PRESENT", crmActivityRegistry.key === "crm.activities.tasks"],
+frontend/src/crm/activities/foundation/crmActivityFoundationTracer.js:    registry: "crm.activities.tasks",
+frontend/src/crm/activities/foundation/crmActivityRuntime.js:    id: "crm.activities.tasks.runtime",
+frontend/src/crm/activities/foundation/crmActivityRuntime.js:    mode: "declarative-foundation-only",
+frontend/src/crm/activities/foundation/crmActivityResolver.js:    resolved: runtime.mode === "declarative-foundation-only",
+frontend/src/crm/activities/foundation/crmActivityFoundationDiagnostics.js:    ["RUNTIME_DECLARATIVE_ONLY", runtime.mode === "declarative-foundation-only"],
+frontend/src/crm/activities/foundation/crmActivityFoundationTracer.js:    runtime: "declarative-foundation-only",
+frontend/src/crm/activities/foundation/crmActivityRuntime.js:    timelineMode: "declarative-preview-only",
+frontend/src/crm/activities/foundation/crmActivityRuntime.js:    taskMode: "declarative-preview-only",
+frontend/src/crm/activities/foundation/crmActivityFoundationDiagnostics.js:    ["TIMELINE_PREVIEW_ONLY", runtime.timelineMode === "declarative-preview-only"],
+frontend/src/crm/activities/foundation/crmActivityFoundationDiagnostics.js:    ["TASK_PREVIEW_ONLY", runtime.taskMode === "declarative-preview-only"],
+frontend/src/crm/activities/foundation/crmActivityFoundationTracer.js:    timeline: "declarative-preview-only",
+frontend/src/crm/activities/foundation/crmActivityFoundationTracer.js:    tasks: "declarative-preview-only",
+frontend/src/crm/activities/foundation/crmActivityNavigation.js:  route: "/crm/activities",
+frontend/src/crm/activities/foundation/crmActivityFoundationDiagnostics.js:    ["NAVIGATION_PRESENT", crmActivityNavigation.route === "/crm/activities"],
+frontend/src/crm/activities/foundation/crmActivityPanels.js:    title: "Activity Timeline",
+frontend/src/crm/activities/foundation/crmActivityPanels.js:    title: "Tasks",
+frontend/src/crm/activities/foundation/crmActivityManifest.js:  title: "CRM Activities / Tasks",
+frontend/src/crm/activities/foundation/crmActivityPanels.js:    title: "Reminders",
+frontend/src/crm/activities/foundation/crmActivityFoundationDiagnostics.js:    ["FOUNDATION_TRACER_PRESENT", traceCrmActivityFoundation().event === "CRM_ACTIVITY_FOUNDATION_TRACE"],
+frontend/src/crm/activities/foundation/crmActivityFoundationTracer.js:export function traceCrmActivityFoundation(event = "CRM_ACTIVITY_FOUNDATION_TRACE") {
+frontend/src/crm/activities/foundation/index.js:export { getCrmActivityHealthSnapshot } from "./crmActivityHealthSnapshot";
+frontend/src/crm/activities/foundation/crmActivityHealthSnapshot.js:export function getCrmActivityHealthSnapshot() {
+frontend/src/crm/activities/foundation/crmActivityFoundationDescriptor.js:import { getCrmActivityHealthSnapshot } from "./crmActivityHealthSnapshot";
+frontend/src/crm/activities/foundation/crmActivityFoundationDescriptor.js:  health: getCrmActivityHealthSnapshot,
+frontend/src/crm/activities/foundation/crmActivityManifest.js:    REUSE_CONTACTS_FOUNDATION: true,
+frontend/src/crm/activities/foundation/crmActivityManifest.js:    REUSE_COMPANIES_FOUNDATION: true,
+frontend/src/crm/activities/foundation/crmActivityManifest.js:    REUSE_DEALS_FOUNDATION: true,
+frontend/src/crm/activities/foundation/crmActivityManifest.js:    USE_EXISTING_CRM_WORKSPACE: true,
+frontend/src/crm/activities/foundation/crmActivityManifest.js:    USE_EXISTING_CRM_LAYOUT: true,
+frontend/src/crm/activities/foundation/crmActivityManifest.js:    NO_PARALLEL_SHELL: true,
+frontend/src/crm/activities/foundation/crmActivityManifest.js:    NO_OWN_ROUTER: true,
+frontend/src/crm/activities/foundation/crmActivityManifest.js:    NO_OWN_STORE: true,
+frontend/src/crm/activities/foundation/crmActivityManifest.js:    NO_STORAGE: true,
+frontend/src/crm/activities/foundation/crmActivityManifest.js:    NO_API_CALLS: true,
+frontend/src/crm/activities/foundation/crmActivityManifest.js:    NO_BUSINESS_WORKFLOW: true,
+frontend/src/crm/activities/foundation/crmActivityManifest.js:    PLATFORM_MUTATION: false,
+AS6_EPIC015_CRM_ACTIVITIES_TASKS_FOUNDATION=PASS
+frontend/src/crm/activities/ui/index.js:export { ActivitiesUiFoundation } from "./ActivitiesUiFoundation";
+frontend/src/crm/activities/ui/index.js:export { diagnoseActivitiesUiFoundation } from "./ActivitiesUiDiagnostics";
+frontend/src/crm/activities/ui/ActivitiesUiFoundation.jsx:export function ActivitiesUiFoundation() {
+frontend/src/crm/activities/ui/ActivitiesUiDiagnostics.js:export function diagnoseActivitiesUiFoundation() {
+frontend/src/crm/activities/ui/ActivitiesUiHealthSnapshot.js:import { diagnoseActivitiesUiFoundation } from "./ActivitiesUiDiagnostics";
+frontend/src/crm/activities/ui/ActivitiesUiHealthSnapshot.js:    diagnostic: diagnoseActivitiesUiFoundation(),
+frontend/src/crm/activities/ui/index.js:export { ActivitiesHeader } from "./ActivitiesHeader";
+frontend/src/crm/activities/ui/ActivitiesHeader.jsx:export function ActivitiesHeader() {
+frontend/src/crm/activities/ui/ActivitiesUiFoundation.jsx:import { ActivitiesHeader } from "./ActivitiesHeader";
+frontend/src/crm/activities/ui/ActivitiesUiFoundation.jsx:      <ActivitiesHeader />
+frontend/src/crm/activities/ui/index.js:export { ActivitiesActions } from "./ActivitiesActions";
+frontend/src/crm/activities/ui/ActivitiesUiFoundation.jsx:import { ActivitiesActions } from "./ActivitiesActions";
+frontend/src/crm/activities/ui/ActivitiesUiFoundation.jsx:      <ActivitiesActions />
+frontend/src/crm/activities/ui/ActivitiesActions.jsx:export function ActivitiesActions() {
+frontend/src/crm/activities/ui/index.js:export { ActivitiesTimeline } from "./ActivitiesTimeline";
+frontend/src/crm/activities/ui/ActivitiesReadyState.jsx:import { ActivitiesTimeline } from "./ActivitiesTimeline";
+frontend/src/crm/activities/ui/ActivitiesReadyState.jsx:      <ActivitiesTimeline />
+frontend/src/crm/activities/ui/ActivitiesTimeline.jsx:export function ActivitiesTimeline() {
+frontend/src/crm/activities/ui/index.js:export { TasksList } from "./TasksList";
+frontend/src/crm/activities/ui/TasksList.jsx:export function TasksList() {
+frontend/src/crm/activities/ui/ActivitiesReadyState.jsx:import { TasksList } from "./TasksList";
+frontend/src/crm/activities/ui/ActivitiesReadyState.jsx:      <TasksList />
+frontend/src/crm/activities/ui/index.js:export { ActivityCard } from "./ActivityCard";
+frontend/src/crm/activities/ui/ActivitiesTimeline.jsx:import { ActivityCard } from "./ActivityCard";
+frontend/src/crm/activities/ui/ActivitiesTimeline.jsx:          <ActivityCard key={item.title} {...item} />
+frontend/src/crm/activities/ui/ActivityCard.jsx:export function ActivityCard({ title, type, status, priority }) {
+frontend/src/crm/activities/ui/index.js:export { TaskCard } from "./TaskCard";
+frontend/src/crm/activities/ui/TaskCard.jsx:export function TaskCard({ title, status, priority }) {
+frontend/src/crm/activities/ui/TasksList.jsx:import { TaskCard } from "./TaskCard";
+frontend/src/crm/activities/ui/TasksList.jsx:          <TaskCard key={task.title} {...task} />
+frontend/src/crm/activities/ui/index.js:export { ActivitiesEmptyState } from "./ActivitiesEmptyState";
+frontend/src/crm/activities/ui/ActivitiesEmptyState.jsx:export function ActivitiesEmptyState() {
+frontend/src/crm/activities/ui/index.js:export { ActivitiesLoadingState } from "./ActivitiesLoadingState";
+frontend/src/crm/activities/ui/ActivitiesLoadingState.jsx:export function ActivitiesLoadingState() {
+frontend/src/crm/activities/ui/index.js:export { ActivitiesErrorState } from "./ActivitiesErrorState";
+frontend/src/crm/activities/ui/ActivitiesErrorState.jsx:export function ActivitiesErrorState() {
+frontend/src/crm/activities/ui/index.js:export { ActivitiesReadyState } from "./ActivitiesReadyState";
+frontend/src/crm/activities/ui/ActivitiesUiFoundation.jsx:import { ActivitiesReadyState } from "./ActivitiesReadyState";
+frontend/src/crm/activities/ui/ActivitiesUiFoundation.jsx:      <ActivitiesReadyState />
+frontend/src/crm/activities/ui/ActivitiesReadyState.jsx:export function ActivitiesReadyState() {
+frontend/src/crm/activities/ui/index.js:export { ActivitiesDiagnosticsPanel } from "./ActivitiesDiagnosticsPanel";
+frontend/src/crm/activities/ui/ActivitiesUiFoundation.jsx:import { ActivitiesDiagnosticsPanel } from "./ActivitiesDiagnosticsPanel";
+frontend/src/crm/activities/ui/ActivitiesUiFoundation.jsx:      <ActivitiesDiagnosticsPanel />
+frontend/src/crm/activities/ui/ActivitiesDiagnosticsPanel.jsx:export function ActivitiesDiagnosticsPanel() {
+frontend/src/crm/activities/ui/ActivitiesUiDiagnostics.js:    ["RUNTIME_TRACER_PRESENT", traceActivitiesUi().event === "CRM_ACTIVITIES_TASKS_UI_TRACE"],
+frontend/src/crm/activities/ui/ActivitiesUiRuntimeTracer.js:export function traceActivitiesUi(event = "CRM_ACTIVITIES_TASKS_UI_TRACE") {
+frontend/src/crm/activities/ui/index.js:export { diagnoseActivitiesUiFoundation } from "./ActivitiesUiDiagnostics";
+frontend/src/crm/activities/ui/ActivitiesUiDiagnostics.js:export function diagnoseActivitiesUiFoundation() {
+frontend/src/crm/activities/ui/ActivitiesUiHealthSnapshot.js:import { diagnoseActivitiesUiFoundation } from "./ActivitiesUiDiagnostics";
+frontend/src/crm/activities/ui/ActivitiesUiHealthSnapshot.js:    diagnostic: diagnoseActivitiesUiFoundation(),
+frontend/src/crm/activities/ui/index.js:export { getActivitiesUiHealthSnapshot } from "./ActivitiesUiHealthSnapshot";
+frontend/src/crm/activities/ui/ActivitiesDiagnosticsPanel.jsx:import { getActivitiesUiHealthSnapshot } from "./ActivitiesUiHealthSnapshot";
+frontend/src/crm/activities/ui/ActivitiesDiagnosticsPanel.jsx:  const health = getActivitiesUiHealthSnapshot();
+frontend/src/crm/activities/ui/ActivitiesUiHealthSnapshot.js:export function getActivitiesUiHealthSnapshot() {
+frontend/src/crm/activities/ui/ActivitiesEmptyState.jsx:  return <section className="as6-crm-activities-state" aria-live="polite">No activities yet.</section>;
+frontend/src/crm/activities/ui/ActivitiesErrorState.jsx:  return <section className="as6-crm-activities-state as6-crm-activities-state--error" aria-live="assertive">Activities unavailable.</section>;
+frontend/src/crm/activities/ui/ActivitiesLoadingState.jsx:  return <section className="as6-crm-activities-state" aria-live="polite">Loading activities…</section>;
+frontend/src/crm/activities/ui/ActivitiesUiFoundation.jsx:    <section className="as6-crm-activities-ui" aria-label="CRM Activities UI Foundation" data-as6-crm-activities-ui-foundation="true">
+frontend/src/crm/activities/ui/ActivitiesUiFoundation.jsx:    <section className="as6-crm-activities-ui" aria-label="CRM Activities UI Foundation" data-as6-crm-activities-ui-foundation="true">
+frontend/src/crm/activities/ui/activitiesUiFoundation.css:.as6-crm-activities-ui {
+AS6_EPIC015_CRM_ACTIVITIES_TASKS_UI_FOUNDATION=PASS
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceDiagnostics.js:    ["WORKSPACE_INTEGRATION_PRESENT", integration.id === "crm.activities.tasks.workspace.integration"],
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceIntegration.js:    id: "crm.activities.tasks.workspace.integration",
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceTracer.js:    panel: "crm.activities.tasks.workspace.panel",
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceDiagnostics.js:    ["WORKSPACE_PANEL_PRESENT", integration.panel.id === "crm.activities.tasks.workspace.panel"],
+frontend/src/crm/activities/workspace/crmActivitiesWorkspacePanel.js:  id: "crm.activities.tasks.workspace.panel",
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceTracer.js:    navigation: "crm.activities.tasks.workspace.navigation",
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceNavigation.js:  id: "crm.activities.tasks.workspace.navigation",
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceState.js:    id: "crm.activities.tasks.workspace.state",
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceTracer.js:export function traceCrmActivitiesWorkspace(event = "CRM_ACTIVITIES_TASKS_WORKSPACE_TRACE") {
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceDiagnostics.js:    ["WORKSPACE_TRACER_PRESENT", traceCrmActivitiesWorkspace().event === "CRM_ACTIVITIES_TASKS_WORKSPACE_TRACE"],
+frontend/src/crm/activities/workspace/index.js:export { diagnoseCrmActivitiesWorkspaceIntegration } from "./crmActivitiesWorkspaceDiagnostics";
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceDiagnostics.js:export function diagnoseCrmActivitiesWorkspaceIntegration() {
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceHealthSnapshot.js:import { diagnoseCrmActivitiesWorkspaceIntegration } from "./crmActivitiesWorkspaceDiagnostics";
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceHealthSnapshot.js:    diagnostic: diagnoseCrmActivitiesWorkspaceIntegration(),
+frontend/src/crm/activities/workspace/index.js:export { getCrmActivitiesWorkspaceHealthSnapshot } from "./crmActivitiesWorkspaceHealthSnapshot";
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceDescriptor.js:import { getCrmActivitiesWorkspaceHealthSnapshot } from "./crmActivitiesWorkspaceHealthSnapshot";
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceDescriptor.js:  health: getCrmActivitiesWorkspaceHealthSnapshot,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceHealthSnapshot.js:export function getCrmActivitiesWorkspaceHealthSnapshot() {
+frontend/src/crm/activities/workspace/crmActivitiesWorkspacePanel.js:import { ActivitiesUiFoundation } from "../ui";
+frontend/src/crm/activities/workspace/crmActivitiesWorkspacePanel.js:  component: ActivitiesUiFoundation,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceIntegration.js:    useExistingCrmWorkspace: true,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceIntegration.js:    useExistingCrmLayout: true,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceIntegration.js:    noParallelShell: true,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceIntegration.js:    noParallelLayout: true,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceIntegration.js:    ownRouter: false,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceState.js:    ownRouter: false,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceIntegration.js:    ownStore: false,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceState.js:    ownStore: false,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceIntegration.js:    storageEnabled: false,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceState.js:    storageEnabled: false,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceIntegration.js:    apiEnabled: false,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceState.js:    apiEnabled: false,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceIntegration.js:    workflowEnabled: false,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceState.js:    workflowEnabled: false,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceIntegration.js:    platformMutation: false,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceState.js:    platformMutation: false,
+AS6_EPIC015_CRM_ACTIVITIES_TASKS_WORKSPACE_INTEGRATION=PASS
+frontend/src/crm/activities/layout/crmActivitiesCrmLayoutBridge.js:  id: "crm.activities.tasks.crm-layout.bridge",
+frontend/src/crm/activities/layout/crmActivitiesLayoutDiagnostics.js:    ["CRM_LAYOUT_BRIDGE_PRESENT", crmActivitiesCrmLayoutBridge.id === "crm.activities.tasks.crm-layout.bridge"],
+frontend/src/crm/activities/layout/crmActivitiesLayoutModel.js:  id: "crm.activities.tasks.layout.model",
+frontend/src/crm/activities/layout/crmActivitiesLayoutDiagnostics.js:    ["LAYOUT_MODEL_PRESENT", crmActivitiesLayoutModel.id === "crm.activities.tasks.layout.model"],
+frontend/src/crm/activities/layout/crmActivitiesLayoutStateResolver.js:    id: "crm.activities.tasks.layout.state",
+frontend/src/crm/activities/layout/crmActivitiesLayoutRuntimeTracer.js:export function traceCrmActivitiesLayout(event = "CRM_ACTIVITIES_TASKS_LAYOUT_TRACE") {
+frontend/src/crm/activities/layout/crmActivitiesLayoutDiagnostics.js:    ["LAYOUT_TRACER_PRESENT", traceCrmActivitiesLayout().event === "CRM_ACTIVITIES_TASKS_LAYOUT_TRACE"],
+frontend/src/crm/activities/layout/index.js:export { diagnoseCrmActivitiesLayoutBridge } from "./crmActivitiesLayoutDiagnostics";
+frontend/src/crm/activities/layout/crmActivitiesLayoutHealthSnapshot.js:import { diagnoseCrmActivitiesLayoutBridge } from "./crmActivitiesLayoutDiagnostics";
+frontend/src/crm/activities/layout/crmActivitiesLayoutHealthSnapshot.js:    diagnostic: diagnoseCrmActivitiesLayoutBridge(),
+frontend/src/crm/activities/layout/crmActivitiesLayoutDiagnostics.js:export function diagnoseCrmActivitiesLayoutBridge() {
+frontend/src/crm/activities/layout/index.js:export { getCrmActivitiesLayoutHealthSnapshot } from "./crmActivitiesLayoutHealthSnapshot";
+frontend/src/crm/activities/layout/crmActivitiesLayoutHealthSnapshot.js:export function getCrmActivitiesLayoutHealthSnapshot() {
+frontend/src/crm/activities/layout/crmActivitiesLayoutDescriptor.js:import { getCrmActivitiesLayoutHealthSnapshot } from "./crmActivitiesLayoutHealthSnapshot";
+frontend/src/crm/activities/layout/crmActivitiesLayoutDescriptor.js:  health: getCrmActivitiesLayoutHealthSnapshot,
+frontend/src/crm/activities/layout/crmActivitiesLayoutRuntimeTracer.js:    layout: "existing-crm-layout",
+frontend/src/crm/activities/layout/crmActivitiesLayoutModel.js:  layout: "existing-crm-layout",
+frontend/src/crm/activities/layout/crmActivitiesLayoutRuntimeTracer.js:    header: "existing-crm-header",
+frontend/src/crm/activities/layout/crmActivitiesLayoutModel.js:  header: "existing-crm-header",
+frontend/src/crm/activities/layout/crmActivitiesLayoutRuntimeTracer.js:    sidebar: "existing-crm-sidebar",
+frontend/src/crm/activities/layout/crmActivitiesLayoutModel.js:  sidebar: "existing-crm-sidebar",
+frontend/src/crm/activities/layout/crmActivitiesLayoutRuntimeTracer.js:    workspace: "existing-crm-workspace",
+frontend/src/crm/activities/layout/crmActivitiesLayoutModel.js:  workspace: "existing-crm-workspace",
+frontend/src/crm/activities/layout/crmActivitiesLayoutRuntimeTracer.js:    breadcrumbs: "CRM > Activities / Tasks",
+frontend/src/crm/activities/layout/crmActivitiesLayoutDescriptor.js:  title: "CRM Activities / Tasks Layout Bridge",
+frontend/src/crm/activities/layout/crmActivitiesLayoutModel.js:  breadcrumbs: Object.freeze(["CRM", "Activities / Tasks"]),
+frontend/src/crm/activities/layout/crmActivitiesLayoutDiagnostics.js:    ["BREADCRUMBS_SYNCED", crmActivitiesCrmLayoutBridge.breadcrumbs.includes("Activities / Tasks")],
+frontend/src/crm/activities/layout/crmActivitiesLayoutRuntimeTracer.js:    activeSection: "activities",
+frontend/src/crm/activities/layout/crmActivitiesCrmLayoutBridge.js:  activeSection: crmActivitiesLayoutModel.activeSection,
+frontend/src/crm/activities/layout/crmActivitiesLayoutModel.js:  activeSection: "activities",
+frontend/src/crm/activities/layout/crmActivitiesLayoutStateResolver.js:    activeSection: crmActivitiesCrmLayoutBridge.activeSection,
+frontend/src/crm/activities/layout/crmActivitiesLayoutDiagnostics.js:    ["ACTIVE_SECTION_SYNCED", crmActivitiesCrmLayoutBridge.activeSection === "activities"],
+frontend/src/crm/activities/layout/crmActivitiesCrmLayoutBridge.js:  useExistingCrmLayout: true,
+frontend/src/crm/activities/layout/crmActivitiesCrmLayoutBridge.js:  useExistingCrmWorkspace: true,
+frontend/src/crm/activities/layout/crmActivitiesCrmLayoutBridge.js:  useExistingHeader: true,
+frontend/src/crm/activities/layout/crmActivitiesCrmLayoutBridge.js:  useExistingSidebar: true,
+frontend/src/crm/activities/layout/crmActivitiesCrmLayoutBridge.js:  noParallelLayout: true,
+frontend/src/crm/activities/layout/crmActivitiesCrmLayoutBridge.js:  noParallelShell: true,
+frontend/src/crm/activities/layout/crmActivitiesCrmLayoutBridge.js:  ownRouter: false,
+frontend/src/crm/activities/layout/crmActivitiesLayoutStateResolver.js:    ownRouter: false,
+frontend/src/crm/activities/layout/crmActivitiesCrmLayoutBridge.js:  ownStore: false,
+frontend/src/crm/activities/layout/crmActivitiesLayoutStateResolver.js:    ownStore: false,
+frontend/src/crm/activities/layout/crmActivitiesCrmLayoutBridge.js:  storageEnabled: false,
+frontend/src/crm/activities/layout/crmActivitiesLayoutStateResolver.js:    storageEnabled: false,
+frontend/src/crm/activities/layout/crmActivitiesCrmLayoutBridge.js:  apiEnabled: false,
+frontend/src/crm/activities/layout/crmActivitiesLayoutStateResolver.js:    apiEnabled: false,
+frontend/src/crm/activities/layout/crmActivitiesCrmLayoutBridge.js:  workflowEnabled: false,
+frontend/src/crm/activities/layout/crmActivitiesLayoutStateResolver.js:    workflowEnabled: false,
+frontend/src/crm/activities/layout/crmActivitiesCrmLayoutBridge.js:  platformMutation: false,
+frontend/src/crm/activities/layout/crmActivitiesLayoutStateResolver.js:    platformMutation: false,
+AS6_EPIC015_CRM_ACTIVITIES_TASKS_CRM_LAYOUT_BRIDGE=PASS
+frontend/src/crm/activities/live/index.js:export { CrmActivitiesLiveLayoutMount } from "./CrmActivitiesLiveLayoutMount";
+frontend/src/crm/activities/live/index.js:export { traceCrmActivitiesLiveLayoutMount } from "./crmActivitiesLiveLayoutMountTracer";
+frontend/src/crm/activities/live/index.js:export { diagnoseCrmActivitiesLiveLayoutMount } from "./crmActivitiesLiveLayoutMountDiagnostics";
+frontend/src/crm/activities/live/index.js:export { getCrmActivitiesLiveLayoutMountHealthSnapshot } from "./crmActivitiesLiveLayoutMountHealthSnapshot";
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountTracer.js:export function traceCrmActivitiesLiveLayoutMount(event = "CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT_TRACE") {
+frontend/src/crm/activities/live/CrmActivitiesLiveLayoutMount.jsx:export function CrmActivitiesLiveLayoutMount() {
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountDiagnostics.js:import { traceCrmActivitiesLiveLayoutMount } from "./crmActivitiesLiveLayoutMountTracer";
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountDiagnostics.js:export function diagnoseCrmActivitiesLiveLayoutMount() {
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountDiagnostics.js:    ["LIVE_TRACER_PRESENT", traceCrmActivitiesLiveLayoutMount().event === "CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT_TRACE"],
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountDiagnostics.js:    trace: traceCrmActivitiesLiveLayoutMount(),
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountHealthSnapshot.js:import { diagnoseCrmActivitiesLiveLayoutMount } from "./crmActivitiesLiveLayoutMountDiagnostics";
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountHealthSnapshot.js:import { traceCrmActivitiesLiveLayoutMount } from "./crmActivitiesLiveLayoutMountTracer";
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountHealthSnapshot.js:export function getCrmActivitiesLiveLayoutMountHealthSnapshot() {
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountHealthSnapshot.js:    diagnostic: diagnoseCrmActivitiesLiveLayoutMount(),
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountHealthSnapshot.js:    trace: traceCrmActivitiesLiveLayoutMount(),
+frontend/src/pages/CRMPage.jsx:import { CrmActivitiesLiveLayoutMount } from "../crm/activities";
+frontend/src/pages/CRMPage.jsx:        <CrmActivitiesLiveLayoutMount />
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountTracer.js:    mount: "crm.activities.tasks.live-layout.mount",
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  id: "crm.activities.tasks.live-layout.mount",
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountDiagnostics.js:    ["LIVE_LAYOUT_MOUNT_CONTRACT", crmActivitiesLiveLayoutMountContract.id === "crm.activities.tasks.live-layout.mount"],
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountTracer.js:export function traceCrmActivitiesLiveLayoutMount(event = "CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT_TRACE") {
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountDiagnostics.js:    ["LIVE_TRACER_PRESENT", traceCrmActivitiesLiveLayoutMount().event === "CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT_TRACE"],
+frontend/src/crm/activities/live/index.js:export { diagnoseCrmActivitiesLiveLayoutMount } from "./crmActivitiesLiveLayoutMountDiagnostics";
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountDiagnostics.js:export function diagnoseCrmActivitiesLiveLayoutMount() {
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountHealthSnapshot.js:import { diagnoseCrmActivitiesLiveLayoutMount } from "./crmActivitiesLiveLayoutMountDiagnostics";
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountHealthSnapshot.js:    diagnostic: diagnoseCrmActivitiesLiveLayoutMount(),
+frontend/src/crm/activities/live/index.js:export { getCrmActivitiesLiveLayoutMountHealthSnapshot } from "./crmActivitiesLiveLayoutMountHealthSnapshot";
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountHealthSnapshot.js:export function getCrmActivitiesLiveLayoutMountHealthSnapshot() {
+frontend/src/crm/activities/live/CrmActivitiesLiveLayoutMount.jsx:      data-as6-crm-activities-live-layout-mount="true"
+frontend/src/crm/activities/live/CrmActivitiesLiveLayoutMount.jsx:      data-as6-crm-activities-mounted-in-production-layout="true"
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  mountedInProductionLayout: true,
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  useExistingCrmLayout: true,
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  useExistingCrmWorkspace: true,
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  useExistingHeader: true,
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  useExistingSidebar: true,
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  ownRouter: false,
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  ownStore: false,
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  duplicateRoute: false,
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  duplicatePanel: false,
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  noParallelLayout: true,
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  noParallelShell: true,
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  storageEnabled: false,
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  apiEnabled: false,
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  workflowEnabled: false,
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  platformMutation: false,
+AS6_EPIC015_CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT=PASS
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:  id: "crm.activities.tasks.production.contract",
+frontend/src/crm/activities/production/crmActivitiesProductionDiagnostics.js:    ["PRODUCTION_CONTRACT_PRESENT", crmActivitiesProductionContract.id === "crm.activities.tasks.production.contract"],
+frontend/src/crm/activities/production/crmActivitiesProductionTracer.js:export function traceCrmActivitiesProduction(event = "CRM_ACTIVITIES_TASKS_PRODUCTION_TRACE") {
+frontend/src/crm/activities/production/crmActivitiesProductionDiagnostics.js:    ["PRODUCTION_TRACER_PRESENT", traceCrmActivitiesProduction().event === "CRM_ACTIVITIES_TASKS_PRODUCTION_TRACE"],
+frontend/src/crm/activities/production/crmActivitiesProductionHealthSnapshot.js:import { diagnoseCrmActivitiesProductionPolish } from "./crmActivitiesProductionDiagnostics";
+frontend/src/crm/activities/production/crmActivitiesProductionHealthSnapshot.js:    diagnostic: diagnoseCrmActivitiesProductionPolish(),
+frontend/src/crm/activities/production/index.js:export { diagnoseCrmActivitiesProductionPolish } from "./crmActivitiesProductionDiagnostics";
+frontend/src/crm/activities/production/crmActivitiesProductionDiagnostics.js:export function diagnoseCrmActivitiesProductionPolish() {
+frontend/src/crm/activities/production/crmActivitiesProductionHealthSnapshot.js:export function getCrmActivitiesProductionHealthSnapshot() {
+frontend/src/crm/activities/production/index.js:export { getCrmActivitiesProductionHealthSnapshot } from "./crmActivitiesProductionHealthSnapshot";
+frontend/src/crm/activities/production/crmActivitiesProductionDescriptor.js:import { getCrmActivitiesProductionHealthSnapshot } from "./crmActivitiesProductionHealthSnapshot";
+frontend/src/crm/activities/production/crmActivitiesProductionDescriptor.js:  health: getCrmActivitiesProductionHealthSnapshot,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:  productionReady: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    aria: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    liveRegions: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    visibleFocus: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    semanticSections: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    prefersReducedMotion: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    heavyDependencies: false,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    runtimeFetch: false,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    runtimeStorage: false,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    businessWorkflow: false,
+frontend/src/crm/activities/production/crmActivitiesProductionPolish.css:  contain: layout paint;
+frontend/src/crm/activities/production/crmActivitiesProductionPolish.css:.as6-crm-activities-ui :focus-visible,
+frontend/src/crm/activities/production/crmActivitiesProductionPolish.css:.as6-crm-activities-live-layout-mount :focus-visible {
+frontend/src/crm/activities/production/crmActivitiesProductionPolish.css:.as6-crm-activities-actions button:focus-visible {
+frontend/src/crm/activities/production/crmActivitiesProductionTracer.js:    motion: "prefers-reduced-motion",
+frontend/src/crm/activities/production/crmActivitiesProductionPolish.css:@media (prefers-reduced-motion: reduce) {
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    USE_EXISTING_CRM_LAYOUT: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    USE_EXISTING_CRM_WORKSPACE: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    USE_EXISTING_HEADER: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    USE_EXISTING_SIDEBAR: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    NO_PARALLEL_LAYOUT: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    NO_PARALLEL_SHELL: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    NO_OWN_ROUTER: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    NO_OWN_STORE: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    NO_STORAGE: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    NO_API_CALLS: true,
+frontend/src/crm/activities/production/crmActivitiesProductionContract.js:    PLATFORM_MUTATION: false,
+AS6_EPIC015_CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH=PASS
+AS6_CONTROL_EPIC015_CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH=PASS
