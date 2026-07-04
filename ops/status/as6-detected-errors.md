@@ -2571,3 +2571,8 @@ Governed and registered.
 - Diagnostic deviation class registered: AS6_CRM_FOLLOWUPS_FINAL_VALIDATION_GAP.
 - Root cause: CRM Followups required final validation after selection, foundation, workspace integration and UI wiring to confirm production readiness without adding new functionality.
 - Status: controlled; Followups production validation completed.
+
+## AS6 EPIC017 CRM Next Module Selection
+- Diagnostic deviation class registered: AS6_CRM_EPIC017_NEXT_MODULE_SELECTION_GAP.
+- Root cause: CRM analytics exists as a UI panel surface at frontend/src/pages/crm/CRMAnalyticsPanel.jsx, but frontend/src/crm/analytics does not exist as a registered CRM domain foundation.
+- Status: controlled; implementation deferred to AS6_EPIC017_CRM_ANALYTICS_FOUNDATION.

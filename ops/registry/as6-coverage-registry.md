@@ -4057,3 +4057,10 @@ Permission Validation
 - AEC: docs/aec/as6-epic016-crm-followups-final-validation-aec.md
 - Production marker: AS6_EPIC016_CRM_FOLLOWUPS=PRODUCTION_VALIDATED
 - Result: PASS
+
+## AS6 EPIC017 CRM Next Module Selection
+- Coverage: docs/coverage/as6-epic017-crm-next-module-selection-coverage.md
+- Governance: docs/governance/as6-epic017-crm-next-module-selection-governance.md
+- AEC: docs/aec/as6-epic017-crm-next-module-selection-aec.md
+- Selected module: CRM_ANALYTICS
+- Result: PASS
