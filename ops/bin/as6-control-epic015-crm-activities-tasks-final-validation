@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-epic015-crm-activities-tasks-final-validation
+
+echo "AS6_CONTROL_EPIC015_CRM_ACTIVITIES_TASKS_FINAL_VALIDATION=PASS"

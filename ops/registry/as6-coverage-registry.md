@@ -4002,3 +4002,10 @@ Permission Validation
 - Covers production contract, production diagnostics, production health snapshot, runtime tracer and production CSS.
 - Covers ARIA, visible focus, prefers-reduced-motion, CSS containment, no runtime fetch, no runtime storage and no heavy dependencies.
 - Covers existing CRM Layout, Workspace, Header and Sidebar reuse.
+
+## AS6_EPIC015_SLICE08_CRM_ACTIVITIES_TASKS_FINAL_VALIDATION
+- Covers EPIC015 final validation.
+- Covers final marker AS6_EPIC015_CRM_ACTIVITIES_TASKS=PRODUCTION_VALIDATED.
+- Covers all EPIC015 slices from Next Module Selection through Production Polish.
+- Covers completion marker guard.
+- Covers final Diagnostic Registry, Coverage Registry, Governance and Project State consistency.

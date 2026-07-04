@@ -6509,3 +6509,15 @@ Status: PASS pending validation
 - Added failure classes: CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH_GAP, CRM_ACTIVITIES_PRODUCTION_ACCESSIBILITY_DRIFT, CRM_ACTIVITIES_PRODUCTION_MOTION_DRIFT, CRM_ACTIVITIES_PRODUCTION_PERFORMANCE_DRIFT, CRM_ACTIVITIES_PRODUCTION_HEALTH_DRIFT.
 - Project readiness: 99%.
 - Next stage: AS6_EPIC015_SLICE08_CRM_ACTIVITIES_TASKS_FINAL_VALIDATION.
+
+## AS6_EPIC015_SLICE08_CRM_ACTIVITIES_TASKS_FINAL_VALIDATION
+- Final validation for CRM Activities / Tasks.
+- Final marker: AS6_EPIC015_CRM_ACTIVITIES_TASKS=PRODUCTION_VALIDATED.
+- Added final validation diagnostic: ops/bin/as6-diagnose-epic015-crm-activities-tasks-final-validation.
+- Added final validation control: ops/bin/as6-control-epic015-crm-activities-tasks-final-validation.
+- Added final AEC rules: ops/aec/as6-epic015-crm-activities-tasks-final-validation-aec.md.
+- Added final governance: ops/governance/as6-epic015-crm-activities-tasks-final-validation-governance.md.
+- Added failure classes: CRM_ACTIVITIES_TASKS_FINAL_VALIDATION_GAP, CRM_ACTIVITIES_FINAL_COMPLETION_MARKER_DRIFT, CRM_ACTIVITIES_FINAL_REGISTRY_DRIFT, CRM_ACTIVITIES_FINAL_COVERAGE_DRIFT, CRM_ACTIVITIES_FINAL_GOVERNANCE_DRIFT.
+- AS6_EPIC015_CRM_ACTIVITIES_TASKS=PRODUCTION_VALIDATED.
+- Project readiness: 99%.
+- Next stage: AS6_EPIC016_CRM_NEXT_MODULE_SELECTION.

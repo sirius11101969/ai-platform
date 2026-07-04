@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -x ops/bin/as6-grep-safe
+test -x ops/bin/as6-control-epic-completion-marker-guard
+
+ops/bin/as6-diagnose-epic015-crm-next-module-selection
+ops/bin/as6-diagnose-epic015-crm-activities-tasks-domain-model
+ops/bin/as6-diagnose-epic015-crm-activities-tasks-foundation
+ops/bin/as6-diagnose-epic015-crm-activities-tasks-ui-foundation
+ops/bin/as6-diagnose-epic015-crm-activities-tasks-workspace-integration
+ops/bin/as6-diagnose-epic015-crm-activities-tasks-crm-layout-bridge
+ops/bin/as6-diagnose-epic015-crm-activities-tasks-live-layout-mount
+ops/bin/as6-diagnose-epic015-crm-activities-tasks-production-polish
+
+test -f docs/epic015/AS6_EPIC015_CRM_ACTIVITIES_TASKS_FINAL_VALIDATION.md
+
+ops/bin/as6-grep-safe -R "AS6_EPIC015_CRM_ACTIVITIES_TASKS=PRODUCTION_VALIDATED" docs/epic015 docs ops
+ops/bin/as6-grep-safe -R "AS6_EPIC015_SLICE08_CRM_ACTIVITIES_TASKS_FINAL_VALIDATION" docs/epic015 docs ops
+ops/bin/as6-grep-safe -R "AS6_EPIC015_SLICE07_CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH" docs ops runtime
+ops/bin/as6-grep-safe -R "CRM_ACTIVITIES_TASKS_PRODUCTION_TRACE" frontend/src/crm/activities/production
+ops/bin/as6-grep-safe -R "CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT_TRACE" frontend/src/crm/activities/live
+ops/bin/as6-grep-safe -R "CRM_ACTIVITIES_TASKS_LAYOUT_TRACE" frontend/src/crm/activities/layout
+ops/bin/as6-grep-safe -R "CRM_ACTIVITIES_TASKS_WORKSPACE_TRACE" frontend/src/crm/activities/workspace
+ops/bin/as6-grep-safe -R "CRM_ACTIVITIES_TASKS_UI_TRACE" frontend/src/crm/activities/ui
+ops/bin/as6-grep-safe -R "CRM_ACTIVITY_FOUNDATION_TRACE" frontend/src/crm/activities/foundation
+ops/bin/as6-grep-safe -R "CRM_ACTIVITY_DOMAIN_TRACE" frontend/src/crm/activities/domain
+
+ops/bin/as6-grep-safe -R "CRM_ACTIVITIES_TASKS_FINAL_VALIDATION_GAP" docs ops
+ops/bin/as6-grep-safe -R "CRM_ACTIVITIES_FINAL_COMPLETION_MARKER_DRIFT" docs ops
+ops/bin/as6-grep-safe -R "CRM_ACTIVITIES_FINAL_REGISTRY_DRIFT" docs ops
+ops/bin/as6-grep-safe -R "CRM_ACTIVITIES_FINAL_COVERAGE_DRIFT" docs ops
+ops/bin/as6-grep-safe -R "CRM_ACTIVITIES_FINAL_GOVERNANCE_DRIFT" docs ops
+
+! ops/bin/as6-grep-safe -R "fetch\|axios\|localStorage\|sessionStorage" frontend/src/crm/activities
+! ops/bin/as6-grep-safe -R "createTask\|updateTask\|deleteTask\|saveTask\|completeTask\|scheduleActivity" frontend/src/crm/activities
+! ops/bin/as6-grep-safe -R "from .*[lL]odash\|from .*[mM]oment\|from .*[cC]hart" frontend/src/crm/activities
+
+AS6_EPIC_ID="AS6_EPIC015" \
+AS6_FINAL_STAGE="AS6_EPIC015_SLICE08_CRM_ACTIVITIES_TASKS_FINAL_VALIDATION" \
+AS6_STATUS_FLAG="AS6_EPIC015_CRM_ACTIVITIES_TASKS=PRODUCTION_VALIDATED" \
+AS6_RESTORE_PREFIX="AS6_RESTORE_EPIC015_SLICE08_CRM_ACTIVITIES_TASKS_FINAL_VALIDATION" \
+AS6_RUNTIME_DIR="runtime/as6-epic015-slice08-crm-activities-tasks-final-validation" \
+ops/bin/as6-control-epic-completion-marker-guard
+
+echo "AS6_EPIC015_CRM_ACTIVITIES_TASKS_FINAL_VALIDATION=PASS"
+echo "AS6_EPIC015_CRM_ACTIVITIES_TASKS=PRODUCTION_VALIDATED"

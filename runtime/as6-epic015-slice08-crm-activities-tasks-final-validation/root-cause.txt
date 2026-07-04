@@ -1,0 +1,4 @@
+ROOT_CAUSE=CRM_ACTIVITIES_TASKS_FINAL_VALIDATION_REQUIRED_AFTER_PRODUCTION_POLISH
+FAILURE_CLASS=CRM_ACTIVITIES_TASKS_FINAL_VALIDATION_GAP
+VALIDATION_GAP=EPIC015 requires final end-to-end validation across module selection, Slice 01-07, registries, governance, state, completion markers, build, secret scan, commit, push and restore tag
+PREVENTION=Add final validation diagnostic/control, production validated marker, completion guard evidence and final runtime audit artifacts

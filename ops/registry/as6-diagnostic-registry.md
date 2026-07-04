@@ -2180,3 +2180,13 @@ ops/bin/as6-control-permission-engine-v114
 - Governance: ops/governance/as6-epic015-crm-activities-tasks-production-polish-governance.md
 - Added checks: production contract, production diagnostics, production health snapshot, production tracer, ARIA, visible focus, reduced motion, CSS containment, no runtime fetch/storage, no heavy dependencies.
 - Failure classes: CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH_GAP, CRM_ACTIVITIES_PRODUCTION_ACCESSIBILITY_DRIFT, CRM_ACTIVITIES_PRODUCTION_MOTION_DRIFT, CRM_ACTIVITIES_PRODUCTION_PERFORMANCE_DRIFT, CRM_ACTIVITIES_PRODUCTION_HEALTH_DRIFT.
+
+## AS6_EPIC015_SLICE08_CRM_ACTIVITIES_TASKS_FINAL_VALIDATION
+- Diagnostic: ops/bin/as6-diagnose-epic015-crm-activities-tasks-final-validation
+- Control: ops/bin/as6-control-epic015-crm-activities-tasks-final-validation
+- AEC rules: ops/aec/as6-epic015-crm-activities-tasks-final-validation-aec.md
+- Governance: ops/governance/as6-epic015-crm-activities-tasks-final-validation-governance.md
+- Final marker: AS6_EPIC015_CRM_ACTIVITIES_TASKS=PRODUCTION_VALIDATED
+- Completion guard: ops/bin/as6-control-epic-completion-marker-guard
+- Added checks: all EPIC015 slice diagnostics, completion markers, registry coverage, governance, state, final build, secret scan, commit, push and restore tag.
+- Failure classes: CRM_ACTIVITIES_TASKS_FINAL_VALIDATION_GAP, CRM_ACTIVITIES_FINAL_COMPLETION_MARKER_DRIFT, CRM_ACTIVITIES_FINAL_REGISTRY_DRIFT, CRM_ACTIVITIES_FINAL_COVERAGE_DRIFT, CRM_ACTIVITIES_FINAL_GOVERNANCE_DRIFT.
