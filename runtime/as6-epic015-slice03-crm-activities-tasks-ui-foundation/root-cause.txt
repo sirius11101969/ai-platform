@@ -1,0 +1,5 @@
+ROOT_CAUSE=CRM_ACTIVITIES_TASKS_UI_FOUNDATION_REQUIRED_AFTER_FOUNDATION
+FAILURE_CLASS=CRM_ACTIVITIES_TASKS_UI_FOUNDATION_GAP
+ARCHITECTURE_DRIFT=Activities / Tasks Foundation exists but no UI Foundation layer existed yet
+VALIDATION_GAP=No header, actions, timeline, tasks list, cards, states, diagnostics panel, UI tracer, UI health snapshot or CSS foundation existed before Slice 03
+PREVENTION=Add Activities / Tasks UI Foundation with diagnostics, controls, AEC, registry, coverage, governance and state evidence

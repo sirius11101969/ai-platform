@@ -3973,3 +3973,8 @@ Permission Validation
 - Covers registry, manifest, capabilities, runtime, resolver, navigation, panels, descriptor, health snapshot and runtime tracer.
 - Covers existing CRM Workspace/Layout reuse.
 - Covers no-storage, no-api, no-business-workflow, no-own-router and no-own-store invariants.
+
+## AS6_EPIC015_SLICE03_CRM_ACTIVITIES_TASKS_UI_FOUNDATION
+- Covers CRM Activities / Tasks UI Foundation.
+- Covers header, actions, timeline, tasks list, cards, states, diagnostics panel, UI tracer, UI health snapshot and CSS foundation.
+- Covers no-storage, no-api, no-business-workflow, no-own-router and no-own-store invariants.

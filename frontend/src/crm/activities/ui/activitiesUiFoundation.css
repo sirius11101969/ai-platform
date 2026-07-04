@@ -1,0 +1,96 @@
+.as6-crm-activities-ui {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.as6-crm-activities-header,
+.as6-crm-activities-actions,
+.as6-crm-activities-diagnostics,
+.as6-crm-activities-state,
+.as6-crm-activity-card,
+.as6-crm-task-card {
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+}
+
+.as6-crm-activities-header,
+.as6-crm-activity-card,
+.as6-crm-task-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+}
+
+.as6-crm-activities-header p,
+.as6-crm-activity-card p,
+.as6-crm-task-card p {
+  margin: 0;
+  color: #64748b;
+}
+
+.as6-crm-activities-header h2,
+.as6-crm-activities-timeline h3,
+.as6-crm-tasks-list h3 {
+  margin: 0;
+}
+
+.as6-crm-activities-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 12px;
+}
+
+.as6-crm-activities-actions button {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 14px;
+  background: rgba(15, 23, 42, 0.08);
+}
+
+.as6-crm-activities-ready {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+  gap: 16px;
+}
+
+.as6-crm-activities-timeline,
+.as6-crm-tasks-list {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.as6-crm-activities-timeline__list,
+.as6-crm-tasks-list__items {
+  display: grid;
+  gap: 10px;
+}
+
+.as6-crm-activity-card span,
+.as6-crm-task-card span {
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.1);
+  color: #1d4ed8;
+  padding: 6px 10px;
+}
+
+.as6-crm-activities-state,
+.as6-crm-activities-diagnostics {
+  padding: 12px 14px;
+}
+
+.as6-crm-activities-state--error {
+  border-color: rgba(220, 38, 38, 0.35);
+}
+
+@media (max-width: 820px) {
+  .as6-crm-activities-ready {
+    grid-template-columns: 1fr;
+  }
+}

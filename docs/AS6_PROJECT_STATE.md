@@ -6451,3 +6451,15 @@ Status: PASS pending validation
 - Added failure classes: CRM_ACTIVITIES_TASKS_FOUNDATION_GAP, CRM_ACTIVITIES_REGISTRY_DRIFT, CRM_ACTIVITIES_RUNTIME_DRIFT, CRM_ACTIVITIES_NAVIGATION_DRIFT, CRM_ACTIVITIES_FOUNDATION_HEALTH_DRIFT.
 - Project readiness: 99%.
 - Next stage: AS6_EPIC015_SLICE03_CRM_ACTIVITIES_TASKS_UI_FOUNDATION.
+
+## AS6_EPIC015_SLICE03_CRM_ACTIVITIES_TASKS_UI_FOUNDATION
+- Added CRM Activities / Tasks UI Foundation.
+- Added ActivitiesHeader, ActivitiesActions, ActivitiesTimeline, TasksList, ActivityCard, TaskCard, loading/empty/ready/error states, diagnostics panel and ActivitiesUiFoundation.
+- Added UI runtime tracer, UI diagnostics, UI health snapshot, CSS foundation and index exports.
+- Added diagnostics: ops/bin/as6-diagnose-epic015-crm-activities-tasks-ui-foundation.
+- Added controls: ops/bin/as6-control-epic015-crm-activities-tasks-ui-foundation.
+- Added AEC rules: ops/aec/as6-epic015-crm-activities-tasks-ui-foundation-aec.md.
+- Added governance: ops/governance/as6-epic015-crm-activities-tasks-ui-foundation-governance.md.
+- Added failure classes: CRM_ACTIVITIES_TASKS_UI_FOUNDATION_GAP, CRM_ACTIVITIES_UI_STATE_DRIFT, CRM_ACTIVITIES_UI_TRACER_DRIFT, CRM_ACTIVITIES_UI_HEALTH_DRIFT, CRM_ACTIVITIES_UI_CSS_DRIFT.
+- Project readiness: 99%.
+- Next stage: AS6_EPIC015_SLICE04_CRM_ACTIVITIES_TASKS_WORKSPACE_INTEGRATION.

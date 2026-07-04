@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-epic015-crm-next-module-selection
+ops/bin/as6-diagnose-epic015-crm-activities-tasks-domain-model
+ops/bin/as6-diagnose-epic015-crm-activities-tasks-foundation
+ops/bin/as6-diagnose-epic015-crm-activities-tasks-ui-foundation
+
+! ops/bin/as6-grep-safe -R "fetch\|axios\|localStorage\|sessionStorage" frontend/src/crm/activities
+! ops/bin/as6-grep-safe -R "createTask\|updateTask\|deleteTask\|saveTask\|completeTask\|scheduleActivity" frontend/src/crm/activities
+! ops/bin/as6-grep-safe -R "from .*[lL]odash\|from .*[mM]oment\|from .*[cC]hart" frontend/src/crm/activities
+
+echo "AS6_CONTROL_EPIC015_CRM_ACTIVITIES_TASKS_UI_FOUNDATION=PASS"

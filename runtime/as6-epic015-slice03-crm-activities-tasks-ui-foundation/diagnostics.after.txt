@@ -1,0 +1,61 @@
+frontend/src/crm/activities/ui/index.js:export { ActivitiesUiFoundation } from "./ActivitiesUiFoundation";
+frontend/src/crm/activities/ui/index.js:export { diagnoseActivitiesUiFoundation } from "./ActivitiesUiDiagnostics";
+frontend/src/crm/activities/ui/ActivitiesUiFoundation.jsx:export function ActivitiesUiFoundation() {
+frontend/src/crm/activities/ui/ActivitiesUiDiagnostics.js:export function diagnoseActivitiesUiFoundation() {
+frontend/src/crm/activities/ui/ActivitiesUiHealthSnapshot.js:import { diagnoseActivitiesUiFoundation } from "./ActivitiesUiDiagnostics";
+frontend/src/crm/activities/ui/ActivitiesUiHealthSnapshot.js:    diagnostic: diagnoseActivitiesUiFoundation(),
+frontend/src/crm/activities/ui/index.js:export { ActivitiesHeader } from "./ActivitiesHeader";
+frontend/src/crm/activities/ui/ActivitiesHeader.jsx:export function ActivitiesHeader() {
+frontend/src/crm/activities/ui/ActivitiesUiFoundation.jsx:import { ActivitiesHeader } from "./ActivitiesHeader";
+frontend/src/crm/activities/ui/ActivitiesUiFoundation.jsx:      <ActivitiesHeader />
+frontend/src/crm/activities/ui/index.js:export { ActivitiesActions } from "./ActivitiesActions";
+frontend/src/crm/activities/ui/ActivitiesUiFoundation.jsx:import { ActivitiesActions } from "./ActivitiesActions";
+frontend/src/crm/activities/ui/ActivitiesUiFoundation.jsx:      <ActivitiesActions />
+frontend/src/crm/activities/ui/ActivitiesActions.jsx:export function ActivitiesActions() {
+frontend/src/crm/activities/ui/index.js:export { ActivitiesTimeline } from "./ActivitiesTimeline";
+frontend/src/crm/activities/ui/ActivitiesReadyState.jsx:import { ActivitiesTimeline } from "./ActivitiesTimeline";
+frontend/src/crm/activities/ui/ActivitiesReadyState.jsx:      <ActivitiesTimeline />
+frontend/src/crm/activities/ui/ActivitiesTimeline.jsx:export function ActivitiesTimeline() {
+frontend/src/crm/activities/ui/index.js:export { TasksList } from "./TasksList";
+frontend/src/crm/activities/ui/TasksList.jsx:export function TasksList() {
+frontend/src/crm/activities/ui/ActivitiesReadyState.jsx:import { TasksList } from "./TasksList";
+frontend/src/crm/activities/ui/ActivitiesReadyState.jsx:      <TasksList />
+frontend/src/crm/activities/ui/index.js:export { ActivityCard } from "./ActivityCard";
+frontend/src/crm/activities/ui/ActivitiesTimeline.jsx:import { ActivityCard } from "./ActivityCard";
+frontend/src/crm/activities/ui/ActivitiesTimeline.jsx:          <ActivityCard key={item.title} {...item} />
+frontend/src/crm/activities/ui/ActivityCard.jsx:export function ActivityCard({ title, type, status, priority }) {
+frontend/src/crm/activities/ui/index.js:export { TaskCard } from "./TaskCard";
+frontend/src/crm/activities/ui/TaskCard.jsx:export function TaskCard({ title, status, priority }) {
+frontend/src/crm/activities/ui/TasksList.jsx:import { TaskCard } from "./TaskCard";
+frontend/src/crm/activities/ui/TasksList.jsx:          <TaskCard key={task.title} {...task} />
+frontend/src/crm/activities/ui/index.js:export { ActivitiesEmptyState } from "./ActivitiesEmptyState";
+frontend/src/crm/activities/ui/ActivitiesEmptyState.jsx:export function ActivitiesEmptyState() {
+frontend/src/crm/activities/ui/index.js:export { ActivitiesLoadingState } from "./ActivitiesLoadingState";
+frontend/src/crm/activities/ui/ActivitiesLoadingState.jsx:export function ActivitiesLoadingState() {
+frontend/src/crm/activities/ui/index.js:export { ActivitiesErrorState } from "./ActivitiesErrorState";
+frontend/src/crm/activities/ui/ActivitiesErrorState.jsx:export function ActivitiesErrorState() {
+frontend/src/crm/activities/ui/index.js:export { ActivitiesReadyState } from "./ActivitiesReadyState";
+frontend/src/crm/activities/ui/ActivitiesUiFoundation.jsx:import { ActivitiesReadyState } from "./ActivitiesReadyState";
+frontend/src/crm/activities/ui/ActivitiesUiFoundation.jsx:      <ActivitiesReadyState />
+frontend/src/crm/activities/ui/ActivitiesReadyState.jsx:export function ActivitiesReadyState() {
+frontend/src/crm/activities/ui/index.js:export { ActivitiesDiagnosticsPanel } from "./ActivitiesDiagnosticsPanel";
+frontend/src/crm/activities/ui/ActivitiesUiFoundation.jsx:import { ActivitiesDiagnosticsPanel } from "./ActivitiesDiagnosticsPanel";
+frontend/src/crm/activities/ui/ActivitiesUiFoundation.jsx:      <ActivitiesDiagnosticsPanel />
+frontend/src/crm/activities/ui/ActivitiesDiagnosticsPanel.jsx:export function ActivitiesDiagnosticsPanel() {
+frontend/src/crm/activities/ui/ActivitiesUiDiagnostics.js:    ["RUNTIME_TRACER_PRESENT", traceActivitiesUi().event === "CRM_ACTIVITIES_TASKS_UI_TRACE"],
+frontend/src/crm/activities/ui/ActivitiesUiRuntimeTracer.js:export function traceActivitiesUi(event = "CRM_ACTIVITIES_TASKS_UI_TRACE") {
+frontend/src/crm/activities/ui/index.js:export { diagnoseActivitiesUiFoundation } from "./ActivitiesUiDiagnostics";
+frontend/src/crm/activities/ui/ActivitiesUiDiagnostics.js:export function diagnoseActivitiesUiFoundation() {
+frontend/src/crm/activities/ui/ActivitiesUiHealthSnapshot.js:import { diagnoseActivitiesUiFoundation } from "./ActivitiesUiDiagnostics";
+frontend/src/crm/activities/ui/ActivitiesUiHealthSnapshot.js:    diagnostic: diagnoseActivitiesUiFoundation(),
+frontend/src/crm/activities/ui/index.js:export { getActivitiesUiHealthSnapshot } from "./ActivitiesUiHealthSnapshot";
+frontend/src/crm/activities/ui/ActivitiesDiagnosticsPanel.jsx:import { getActivitiesUiHealthSnapshot } from "./ActivitiesUiHealthSnapshot";
+frontend/src/crm/activities/ui/ActivitiesDiagnosticsPanel.jsx:  const health = getActivitiesUiHealthSnapshot();
+frontend/src/crm/activities/ui/ActivitiesUiHealthSnapshot.js:export function getActivitiesUiHealthSnapshot() {
+frontend/src/crm/activities/ui/ActivitiesEmptyState.jsx:  return <section className="as6-crm-activities-state" aria-live="polite">No activities yet.</section>;
+frontend/src/crm/activities/ui/ActivitiesErrorState.jsx:  return <section className="as6-crm-activities-state as6-crm-activities-state--error" aria-live="assertive">Activities unavailable.</section>;
+frontend/src/crm/activities/ui/ActivitiesLoadingState.jsx:  return <section className="as6-crm-activities-state" aria-live="polite">Loading activities…</section>;
+frontend/src/crm/activities/ui/ActivitiesUiFoundation.jsx:    <section className="as6-crm-activities-ui" aria-label="CRM Activities UI Foundation" data-as6-crm-activities-ui-foundation="true">
+frontend/src/crm/activities/ui/ActivitiesUiFoundation.jsx:    <section className="as6-crm-activities-ui" aria-label="CRM Activities UI Foundation" data-as6-crm-activities-ui-foundation="true">
+frontend/src/crm/activities/ui/activitiesUiFoundation.css:.as6-crm-activities-ui {
+AS6_EPIC015_CRM_ACTIVITIES_TASKS_UI_FOUNDATION=PASS

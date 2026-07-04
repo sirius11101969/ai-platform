@@ -1,0 +1,10 @@
+ M docs/AS6_PROJECT_STATE.md
+ M frontend/src/crm/activities/index.js
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? frontend/src/crm/activities/ui/
+?? ops/aec/as6-epic015-crm-activities-tasks-ui-foundation-aec.md
+?? ops/bin/as6-control-epic015-crm-activities-tasks-ui-foundation
+?? ops/bin/as6-diagnose-epic015-crm-activities-tasks-ui-foundation
+?? ops/governance/as6-epic015-crm-activities-tasks-ui-foundation-governance.md

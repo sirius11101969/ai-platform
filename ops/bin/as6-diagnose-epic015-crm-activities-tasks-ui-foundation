@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -x ops/bin/as6-grep-safe
+
+for f in \
+  ActivitiesHeader \
+  ActivitiesActions \
+  ActivitiesTimeline \
+  TasksList \
+  ActivityCard \
+  TaskCard \
+  ActivitiesEmptyState \
+  ActivitiesLoadingState \
+  ActivitiesErrorState \
+  ActivitiesReadyState \
+  ActivitiesDiagnosticsPanel \
+  ActivitiesUiFoundation
+do
+  test -f "frontend/src/crm/activities/ui/${f}.jsx"
+done
+
+for f in ActivitiesUiStates ActivitiesUiRuntimeTracer ActivitiesUiDiagnostics ActivitiesUiHealthSnapshot
+do
+  test -f "frontend/src/crm/activities/ui/${f}.js"
+done
+
+test -f frontend/src/crm/activities/ui/activitiesUiFoundation.css
+test -f frontend/src/crm/activities/ui/index.js
+
+ops/bin/as6-grep-safe -R "ActivitiesUiFoundation" frontend/src/crm/activities/ui
+ops/bin/as6-grep-safe -R "ActivitiesHeader" frontend/src/crm/activities/ui
+ops/bin/as6-grep-safe -R "ActivitiesActions" frontend/src/crm/activities/ui
+ops/bin/as6-grep-safe -R "ActivitiesTimeline" frontend/src/crm/activities/ui
+ops/bin/as6-grep-safe -R "TasksList" frontend/src/crm/activities/ui
+ops/bin/as6-grep-safe -R "ActivityCard" frontend/src/crm/activities/ui
+ops/bin/as6-grep-safe -R "TaskCard" frontend/src/crm/activities/ui
+ops/bin/as6-grep-safe -R "ActivitiesEmptyState" frontend/src/crm/activities/ui
+ops/bin/as6-grep-safe -R "ActivitiesLoadingState" frontend/src/crm/activities/ui
+ops/bin/as6-grep-safe -R "ActivitiesErrorState" frontend/src/crm/activities/ui
+ops/bin/as6-grep-safe -R "ActivitiesReadyState" frontend/src/crm/activities/ui
+ops/bin/as6-grep-safe -R "ActivitiesDiagnosticsPanel" frontend/src/crm/activities/ui
+ops/bin/as6-grep-safe -R "CRM_ACTIVITIES_TASKS_UI_TRACE" frontend/src/crm/activities/ui
+ops/bin/as6-grep-safe -R "diagnoseActivitiesUiFoundation" frontend/src/crm/activities/ui
+ops/bin/as6-grep-safe -R "getActivitiesUiHealthSnapshot" frontend/src/crm/activities/ui
+ops/bin/as6-grep-safe -R "aria-live" frontend/src/crm/activities/ui
+ops/bin/as6-grep-safe -R "data-as6-crm-activities-ui-foundation=\"true\"" frontend/src/crm/activities/ui
+ops/bin/as6-grep-safe -R "as6-crm-activities-ui" frontend/src/crm/activities/ui
+
+echo "AS6_EPIC015_CRM_ACTIVITIES_TASKS_UI_FOUNDATION=PASS"

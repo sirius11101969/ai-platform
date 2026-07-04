@@ -2135,3 +2135,12 @@ ops/bin/as6-control-permission-engine-v114
 - Governance: ops/governance/as6-epic015-crm-activities-tasks-foundation-governance.md
 - Added checks: capabilities, manifest, registry, runtime, resolver, navigation, panels, descriptor, health snapshot, runtime tracer, no storage, no API, no business workflow.
 - Failure classes: CRM_ACTIVITIES_TASKS_FOUNDATION_GAP, CRM_ACTIVITIES_REGISTRY_DRIFT, CRM_ACTIVITIES_RUNTIME_DRIFT, CRM_ACTIVITIES_NAVIGATION_DRIFT, CRM_ACTIVITIES_FOUNDATION_HEALTH_DRIFT.
+
+## AS6_EPIC015_SLICE03_CRM_ACTIVITIES_TASKS_UI_FOUNDATION
+- Diagnostic: ops/bin/as6-diagnose-epic015-crm-activities-tasks-ui-foundation
+- Control: ops/bin/as6-control-epic015-crm-activities-tasks-ui-foundation
+- Runtime tracer: frontend/src/crm/activities/ui/ActivitiesUiRuntimeTracer.js
+- AEC rules: ops/aec/as6-epic015-crm-activities-tasks-ui-foundation-aec.md
+- Governance: ops/governance/as6-epic015-crm-activities-tasks-ui-foundation-governance.md
+- Added checks: header, actions, timeline, tasks list, activity card, task card, loading/empty/ready/error states, diagnostics panel, UI tracer, UI health snapshot, CSS foundation.
+- Failure classes: CRM_ACTIVITIES_TASKS_UI_FOUNDATION_GAP, CRM_ACTIVITIES_UI_STATE_DRIFT, CRM_ACTIVITIES_UI_TRACER_DRIFT, CRM_ACTIVITIES_UI_HEALTH_DRIFT, CRM_ACTIVITIES_UI_CSS_DRIFT.
