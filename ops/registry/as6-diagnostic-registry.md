@@ -2265,3 +2265,9 @@ ops/bin/as6-control-permission-engine-v114
 - Failure class: AS6_CRM_EPIC018_NEXT_MODULE_SELECTION_GAP
 - Selected module: CRM_FILTERS
 - Result: PASS
+
+## AS6 EPIC018 CRM Filters Foundation
+- Diagnostic: docs/diagnostics/as6-epic018-crm-filters-foundation-diagnostics.md
+- Failure class: AS6_CRM_FILTERS_FOUNDATION_GAP
+- Runtime diagnostic: AS6_CRM_FILTERS_FOUNDATION
+- Result: PASS

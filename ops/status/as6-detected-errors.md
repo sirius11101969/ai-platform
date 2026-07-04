@@ -2596,3 +2596,8 @@ Governed and registered.
 - Diagnostic deviation class registered: AS6_CRM_EPIC018_NEXT_MODULE_SELECTION_GAP.
 - Root cause: CRM filters exists as a UI panel surface at frontend/src/pages/crm/CRMFiltersPanel.jsx, but frontend/src/crm/filters does not exist as a registered CRM domain foundation.
 - Status: controlled; implementation deferred to AS6_EPIC018_CRM_FILTERS_FOUNDATION.
+
+## AS6 EPIC018 CRM Filters Foundation
+- Diagnostic deviation class registered: AS6_CRM_FILTERS_FOUNDATION_GAP.
+- Root cause: CRM Filters was selected because CRMFiltersPanel.jsx exists as a UI panel surface while frontend/src/crm/filters did not exist as a registered CRM domain foundation.
+- Status: repaired by adding CRM Filters domain foundation.
