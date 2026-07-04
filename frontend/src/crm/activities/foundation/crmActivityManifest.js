@@ -1,0 +1,21 @@
+export const crmActivityManifest = Object.freeze({
+  module: "CRM_ACTIVITIES_TASKS",
+  stage: "AS6_EPIC015_SLICE02_CRM_ACTIVITIES_TASKS_FOUNDATION",
+  title: "CRM Activities / Tasks",
+  foundationOnly: true,
+  invariants: Object.freeze({
+    CRM_ACTIVITIES_TASKS_FOUNDATION_ONLY: true,
+    REUSE_CONTACTS_FOUNDATION: true,
+    REUSE_COMPANIES_FOUNDATION: true,
+    REUSE_DEALS_FOUNDATION: true,
+    USE_EXISTING_CRM_WORKSPACE: true,
+    USE_EXISTING_CRM_LAYOUT: true,
+    NO_PARALLEL_SHELL: true,
+    NO_OWN_ROUTER: true,
+    NO_OWN_STORE: true,
+    NO_STORAGE: true,
+    NO_API_CALLS: true,
+    NO_BUSINESS_WORKFLOW: true,
+    PLATFORM_MUTATION: false,
+  }),
+});

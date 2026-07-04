@@ -1,0 +1,5 @@
+ROOT_CAUSE=CRM_ACTIVITIES_TASKS_FOUNDATION_REQUIRED_AFTER_DOMAIN_MODEL
+FAILURE_CLASS=CRM_ACTIVITIES_TASKS_FOUNDATION_GAP
+ARCHITECTURE_DRIFT=Activities / Tasks domain model exists but no declarative foundation layer existed yet
+VALIDATION_GAP=No registry, manifest, capabilities, runtime, resolver, navigation, panels, health snapshot or foundation tracer existed before Slice 02
+PREVENTION=Add Activities / Tasks foundation layer with diagnostics, controls, AEC, registry, coverage, governance and state evidence

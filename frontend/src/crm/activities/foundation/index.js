@@ -1,0 +1,11 @@
+export { crmActivityCapabilities } from "./crmActivityCapabilities";
+export { crmActivityManifest } from "./crmActivityManifest";
+export { crmActivityRegistry } from "./crmActivityRegistry";
+export { createCrmActivityRuntime } from "./crmActivityRuntime";
+export { resolveCrmActivityFoundation } from "./crmActivityResolver";
+export { crmActivityNavigation } from "./crmActivityNavigation";
+export { crmActivityPanels } from "./crmActivityPanels";
+export { traceCrmActivityFoundation } from "./crmActivityFoundationTracer";
+export { diagnoseCrmActivityFoundation } from "./crmActivityFoundationDiagnostics";
+export { getCrmActivityHealthSnapshot } from "./crmActivityHealthSnapshot";
+export { crmActivityFoundationDescriptor } from "./crmActivityFoundationDescriptor";

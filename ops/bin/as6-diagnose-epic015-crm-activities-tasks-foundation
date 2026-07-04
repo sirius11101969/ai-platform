@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -x ops/bin/as6-grep-safe
+
+for f in \
+  crmActivityCapabilities \
+  crmActivityManifest \
+  crmActivityRegistry \
+  crmActivityRuntime \
+  crmActivityResolver \
+  crmActivityNavigation \
+  crmActivityPanels \
+  crmActivityFoundationTracer \
+  crmActivityFoundationDiagnostics \
+  crmActivityHealthSnapshot \
+  crmActivityFoundationDescriptor
+do
+  test -f "frontend/src/crm/activities/foundation/${f}.js"
+done
+
+test -f frontend/src/crm/activities/foundation/index.js
+
+ops/bin/as6-grep-safe -R "CRM_ACTIVITIES_TASKS" frontend/src/crm/activities/foundation
+ops/bin/as6-grep-safe -R "crm.activities.tasks" frontend/src/crm/activities/foundation
+ops/bin/as6-grep-safe -R "crm.activities.tasks.runtime" frontend/src/crm/activities/foundation
+ops/bin/as6-grep-safe -R "declarative-foundation-only" frontend/src/crm/activities/foundation
+ops/bin/as6-grep-safe -R "declarative-preview-only" frontend/src/crm/activities/foundation
+ops/bin/as6-grep-safe -R "/crm/activities" frontend/src/crm/activities/foundation
+ops/bin/as6-grep-safe -R "Activity Timeline" frontend/src/crm/activities/foundation
+ops/bin/as6-grep-safe -R "Tasks" frontend/src/crm/activities/foundation
+ops/bin/as6-grep-safe -R "Reminders" frontend/src/crm/activities/foundation
+ops/bin/as6-grep-safe -R "CRM_ACTIVITY_FOUNDATION_TRACE" frontend/src/crm/activities/foundation
+ops/bin/as6-grep-safe -R "getCrmActivityHealthSnapshot" frontend/src/crm/activities/foundation
+ops/bin/as6-grep-safe -R "REUSE_CONTACTS_FOUNDATION: true" frontend/src/crm/activities/foundation
+ops/bin/as6-grep-safe -R "REUSE_COMPANIES_FOUNDATION: true" frontend/src/crm/activities/foundation
+ops/bin/as6-grep-safe -R "REUSE_DEALS_FOUNDATION: true" frontend/src/crm/activities/foundation
+ops/bin/as6-grep-safe -R "USE_EXISTING_CRM_WORKSPACE: true" frontend/src/crm/activities/foundation
+ops/bin/as6-grep-safe -R "USE_EXISTING_CRM_LAYOUT: true" frontend/src/crm/activities/foundation
+ops/bin/as6-grep-safe -R "NO_PARALLEL_SHELL: true" frontend/src/crm/activities/foundation
+ops/bin/as6-grep-safe -R "NO_OWN_ROUTER: true" frontend/src/crm/activities/foundation
+ops/bin/as6-grep-safe -R "NO_OWN_STORE: true" frontend/src/crm/activities/foundation
+ops/bin/as6-grep-safe -R "NO_STORAGE: true" frontend/src/crm/activities/foundation
+ops/bin/as6-grep-safe -R "NO_API_CALLS: true" frontend/src/crm/activities/foundation
+ops/bin/as6-grep-safe -R "NO_BUSINESS_WORKFLOW: true" frontend/src/crm/activities/foundation
+ops/bin/as6-grep-safe -R "PLATFORM_MUTATION: false" frontend/src/crm/activities/foundation
+
+echo "AS6_EPIC015_CRM_ACTIVITIES_TASKS_FOUNDATION=PASS"

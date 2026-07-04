@@ -3967,3 +3967,9 @@ Permission Validation
 - Covers activity identity, task identity, types, statuses, priorities, lifecycle and deadline/reminder model.
 - Covers declarative links to Companies, Contacts and Deals.
 - Covers no-storage, no-api, no-business-workflow and platform-mutation=false invariants.
+
+## AS6_EPIC015_SLICE02_CRM_ACTIVITIES_TASKS_FOUNDATION
+- Covers CRM Activities / Tasks Foundation.
+- Covers registry, manifest, capabilities, runtime, resolver, navigation, panels, descriptor, health snapshot and runtime tracer.
+- Covers existing CRM Workspace/Layout reuse.
+- Covers no-storage, no-api, no-business-workflow, no-own-router and no-own-store invariants.

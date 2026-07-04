@@ -6440,3 +6440,14 @@ Status: PASS pending validation
 - Added failure classes: CRM_ACTIVITIES_TASKS_DOMAIN_MODEL_GAP, CRM_ACTIVITY_IDENTITY_DRIFT, CRM_TASK_IDENTITY_DRIFT, CRM_ACTIVITY_LINK_DRIFT, CRM_ACTIVITY_DEADLINE_REMINDER_DRIFT.
 - Project readiness: 99%.
 - Next stage: AS6_EPIC015_SLICE02_CRM_ACTIVITIES_TASKS_FOUNDATION.
+
+## AS6_EPIC015_SLICE02_CRM_ACTIVITIES_TASKS_FOUNDATION
+- Added CRM Activities / Tasks Foundation.
+- Added capabilities, manifest, registry, runtime, resolver, navigation, panels, foundation descriptor, foundation diagnostics, health snapshot and runtime tracer.
+- Added diagnostics: ops/bin/as6-diagnose-epic015-crm-activities-tasks-foundation.
+- Added controls: ops/bin/as6-control-epic015-crm-activities-tasks-foundation.
+- Added AEC rules: ops/aec/as6-epic015-crm-activities-tasks-foundation-aec.md.
+- Added governance: ops/governance/as6-epic015-crm-activities-tasks-foundation-governance.md.
+- Added failure classes: CRM_ACTIVITIES_TASKS_FOUNDATION_GAP, CRM_ACTIVITIES_REGISTRY_DRIFT, CRM_ACTIVITIES_RUNTIME_DRIFT, CRM_ACTIVITIES_NAVIGATION_DRIFT, CRM_ACTIVITIES_FOUNDATION_HEALTH_DRIFT.
+- Project readiness: 99%.
+- Next stage: AS6_EPIC015_SLICE03_CRM_ACTIVITIES_TASKS_UI_FOUNDATION.

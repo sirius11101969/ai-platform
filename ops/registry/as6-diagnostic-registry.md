@@ -2126,3 +2126,12 @@ ops/bin/as6-control-permission-engine-v114
 - Governance: ops/governance/as6-epic015-crm-activities-tasks-domain-model-governance.md
 - Added checks: activity identity, task identity, types, statuses, priorities, lifecycle, deadline/reminder, company/contact/deal links, no storage, no API, no business workflow.
 - Failure classes: CRM_ACTIVITIES_TASKS_DOMAIN_MODEL_GAP, CRM_ACTIVITY_IDENTITY_DRIFT, CRM_TASK_IDENTITY_DRIFT, CRM_ACTIVITY_LINK_DRIFT, CRM_ACTIVITY_DEADLINE_REMINDER_DRIFT.
+
+## AS6_EPIC015_SLICE02_CRM_ACTIVITIES_TASKS_FOUNDATION
+- Diagnostic: ops/bin/as6-diagnose-epic015-crm-activities-tasks-foundation
+- Control: ops/bin/as6-control-epic015-crm-activities-tasks-foundation
+- Runtime tracer: frontend/src/crm/activities/foundation/crmActivityFoundationTracer.js
+- AEC rules: ops/aec/as6-epic015-crm-activities-tasks-foundation-aec.md
+- Governance: ops/governance/as6-epic015-crm-activities-tasks-foundation-governance.md
+- Added checks: capabilities, manifest, registry, runtime, resolver, navigation, panels, descriptor, health snapshot, runtime tracer, no storage, no API, no business workflow.
+- Failure classes: CRM_ACTIVITIES_TASKS_FOUNDATION_GAP, CRM_ACTIVITIES_REGISTRY_DRIFT, CRM_ACTIVITIES_RUNTIME_DRIFT, CRM_ACTIVITIES_NAVIGATION_DRIFT, CRM_ACTIVITIES_FOUNDATION_HEALTH_DRIFT.

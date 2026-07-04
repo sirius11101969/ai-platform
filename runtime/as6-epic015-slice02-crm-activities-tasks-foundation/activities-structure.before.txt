@@ -1,0 +1,16 @@
+frontend/src/crm/activities/domain/crmActivityCompanyLink.js
+frontend/src/crm/activities/domain/crmActivityContactLink.js
+frontend/src/crm/activities/domain/crmActivityContract.js
+frontend/src/crm/activities/domain/crmActivityDeadlineReminder.js
+frontend/src/crm/activities/domain/crmActivityDealLink.js
+frontend/src/crm/activities/domain/crmActivityDescriptor.js
+frontend/src/crm/activities/domain/crmActivityDiagnostics.js
+frontend/src/crm/activities/domain/crmActivityIdentity.js
+frontend/src/crm/activities/domain/crmActivityLifecycle.js
+frontend/src/crm/activities/domain/crmActivityPriorities.js
+frontend/src/crm/activities/domain/crmActivityRuntimeTracer.js
+frontend/src/crm/activities/domain/crmActivityStatuses.js
+frontend/src/crm/activities/domain/crmActivityTypes.js
+frontend/src/crm/activities/domain/crmTaskIdentity.js
+frontend/src/crm/activities/domain/index.js
+frontend/src/crm/activities/index.js
