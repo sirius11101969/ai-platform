@@ -6521,3 +6521,8 @@ Status: PASS pending validation
 - AS6_EPIC015_CRM_ACTIVITIES_TASKS=PRODUCTION_VALIDATED.
 - Project readiness: 99%.
 - Next stage: AS6_EPIC016_CRM_NEXT_MODULE_SELECTION.
+
+## AS6_EPIC015_SLICE08_FINAL_VALIDATION_HEREDOC_INTERRUPT_REPAIR
+- Repair for interrupted Slice 08 terminal heredoc execution.
+- Added failure class: CRM_ACTIVITIES_FINAL_VALIDATION_HEREDOC_INTERRUPT.
+- Re-runs final validation, completion marker guard, frontend build, secret scan, commit, push and restore tag.

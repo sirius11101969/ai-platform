@@ -1,0 +1,4 @@
+ROOT_CAUSE=SLICE08_TERMINAL_HEREDOC_INTERRUPT
+FAILURE_CLASS=CRM_ACTIVITIES_FINAL_VALIDATION_HEREDOC_INTERRUPT
+VALIDATION_GAP=Previous Slice 08 command was interrupted during heredoc paste, so final build, secret scan, commit, push and restore tag were not documentarily confirmed
+PREVENTION=Run short repair script that reuses created artifacts, repairs missing registrations, runs full diagnostics/control/build/secret scan, commits, pushes and creates final restore tag

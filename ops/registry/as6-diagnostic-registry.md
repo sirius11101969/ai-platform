@@ -2190,3 +2190,8 @@ ops/bin/as6-control-permission-engine-v114
 - Completion guard: ops/bin/as6-control-epic-completion-marker-guard
 - Added checks: all EPIC015 slice diagnostics, completion markers, registry coverage, governance, state, final build, secret scan, commit, push and restore tag.
 - Failure classes: CRM_ACTIVITIES_TASKS_FINAL_VALIDATION_GAP, CRM_ACTIVITIES_FINAL_COMPLETION_MARKER_DRIFT, CRM_ACTIVITIES_FINAL_REGISTRY_DRIFT, CRM_ACTIVITIES_FINAL_COVERAGE_DRIFT, CRM_ACTIVITIES_FINAL_GOVERNANCE_DRIFT.
+
+## AS6_EPIC015_SLICE08_FINAL_VALIDATION_HEREDOC_INTERRUPT_REPAIR
+- Repair: AS6_EPIC015_SLICE08_FINAL_VALIDATION_HEREDOC_INTERRUPT_REPAIR
+- Failure class: CRM_ACTIVITIES_FINAL_VALIDATION_HEREDOC_INTERRUPT
+- Prevention: final validation repair reruns diagnostics, build, secret scan, commit, push and restore tag after terminal heredoc interruption.
