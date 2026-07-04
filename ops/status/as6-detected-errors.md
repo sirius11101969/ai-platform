@@ -2591,3 +2591,8 @@ Governed and registered.
 - Diagnostic deviation class registered: AS6_CRM_ANALYTICS_FINAL_VALIDATION_GAP.
 - Root cause: CRM Analytics required final validation after selection, foundation and UI wiring to confirm production readiness without adding new functionality.
 - Status: controlled; Analytics production validation completed.
+
+## AS6 EPIC018 CRM Next Module Selection
+- Diagnostic deviation class registered: AS6_CRM_EPIC018_NEXT_MODULE_SELECTION_GAP.
+- Root cause: CRM filters exists as a UI panel surface at frontend/src/pages/crm/CRMFiltersPanel.jsx, but frontend/src/crm/filters does not exist as a registered CRM domain foundation.
+- Status: controlled; implementation deferred to AS6_EPIC018_CRM_FILTERS_FOUNDATION.

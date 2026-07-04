@@ -1,0 +1,10 @@
+ M docs/AS6_PROJECT_STATE.md
+ M docs/AS6_PROJECT_STATUS.md
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? docs/aec/as6-epic018-crm-next-module-selection-aec.md
+?? docs/coverage/as6-epic018-crm-next-module-selection-coverage.md
+?? docs/diagnostics/as6-epic018-crm-next-module-selection-diagnostics.md
+?? docs/epic018/
+?? docs/governance/as6-epic018-crm-next-module-selection-governance.md

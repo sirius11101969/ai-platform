@@ -2259,3 +2259,9 @@ ops/bin/as6-control-permission-engine-v114
 - Failure class: AS6_CRM_ANALYTICS_FINAL_VALIDATION_GAP
 - Production marker: AS6_EPIC017_CRM_ANALYTICS=PRODUCTION_VALIDATED
 - Result: PASS
+
+## AS6 EPIC018 CRM Next Module Selection
+- Diagnostic: docs/diagnostics/as6-epic018-crm-next-module-selection-diagnostics.md
+- Failure class: AS6_CRM_EPIC018_NEXT_MODULE_SELECTION_GAP
+- Selected module: CRM_FILTERS
+- Result: PASS
