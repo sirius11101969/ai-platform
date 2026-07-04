@@ -1,0 +1,26 @@
+import { crmDealsWorkspacePanel, crmDealsWorkspaceNavigation, createCrmDealsWorkspaceIntegration } from "../workspace";
+
+export const crmDealsCrmLayoutBridge = Object.freeze({
+  id: "crm.deals.crm-layout.bridge",
+  stage: "AS6_EPIC014_SLICE05_CRM_DEALS_CRM_LAYOUT_BRIDGE",
+  module: "CRM_DEALS_OPPORTUNITIES",
+  layoutScope: "crm.unified.layout",
+  panel: crmDealsWorkspacePanel,
+  navigation: crmDealsWorkspaceNavigation,
+  integration: createCrmDealsWorkspaceIntegration,
+  breadcrumbs: Object.freeze(["CRM", "Deals"]),
+  activeSection: "deals",
+  states: Object.freeze(["loading", "empty", "ready", "error"]),
+  useExistingCrmLayout: true,
+  useExistingCrmWorkspace: true,
+  useExistingHeader: true,
+  useExistingSidebar: true,
+  noParallelLayout: true,
+  noParallelShell: true,
+  ownRouter: false,
+  ownStore: false,
+  storageEnabled: false,
+  apiEnabled: false,
+  workflowEnabled: false,
+  platformMutation: false,
+});

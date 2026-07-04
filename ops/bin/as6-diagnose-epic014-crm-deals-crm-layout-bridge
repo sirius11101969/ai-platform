@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -x ops/bin/as6-grep-safe
+
+for f in \
+  crmDealsCrmLayoutBridge \
+  crmDealsLayoutTracer \
+  crmDealsLayoutModel \
+  crmDealsLayoutState \
+  crmDealsLayoutDiagnostics \
+  crmDealsLayoutHealthSnapshot
+do
+  test -f "frontend/src/crm/deals/layout/${f}.js"
+done
+
+test -f frontend/src/crm/deals/layout/index.js
+
+ops/bin/as6-grep-safe -R "crm.deals.crm-layout.bridge" frontend/src/crm/deals/layout
+ops/bin/as6-grep-safe -R "layoutScope: \"crm.unified.layout\"" frontend/src/crm/deals/layout
+ops/bin/as6-grep-safe -R "crm.deals.workspace.panel" frontend/src/crm/deals/layout
+ops/bin/as6-grep-safe -R "crmDealsWorkspaceNavigation" frontend/src/crm/deals/layout
+ops/bin/as6-grep-safe -R "/crm/deals" frontend/src/crm/deals/layout
+ops/bin/as6-grep-safe -R "breadcrumbs: Object.freeze" frontend/src/crm/deals/layout
+ops/bin/as6-grep-safe -R "activeSection: \"deals\"" frontend/src/crm/deals/layout
+ops/bin/as6-grep-safe -R "loading.*empty.*ready.*error" frontend/src/crm/deals/layout
+ops/bin/as6-grep-safe -R "useExistingCrmLayout: true" frontend/src/crm/deals/layout
+ops/bin/as6-grep-safe -R "useExistingCrmWorkspace: true" frontend/src/crm/deals/layout
+ops/bin/as6-grep-safe -R "useExistingHeader: true" frontend/src/crm/deals/layout
+ops/bin/as6-grep-safe -R "useExistingSidebar: true" frontend/src/crm/deals/layout
+ops/bin/as6-grep-safe -R "noParallelLayout: true" frontend/src/crm/deals/layout
+ops/bin/as6-grep-safe -R "noParallelShell: true" frontend/src/crm/deals/layout
+ops/bin/as6-grep-safe -R "ownRouter: false" frontend/src/crm/deals/layout
+ops/bin/as6-grep-safe -R "ownStore: false" frontend/src/crm/deals/layout
+ops/bin/as6-grep-safe -R "storageEnabled: false" frontend/src/crm/deals/layout
+ops/bin/as6-grep-safe -R "apiEnabled: false" frontend/src/crm/deals/layout
+ops/bin/as6-grep-safe -R "workflowEnabled: false" frontend/src/crm/deals/layout
+ops/bin/as6-grep-safe -R "traceCrmDealsLayout" frontend/src/crm/deals/layout
+ops/bin/as6-grep-safe -R "getCrmDealsLayoutHealthSnapshot" frontend/src/crm/deals/layout
+
+echo "AS6_EPIC014_CRM_DEALS_CRM_LAYOUT_BRIDGE=PASS"

@@ -2066,3 +2066,15 @@ ops/bin/as6-control-permission-engine-v114
 - AEC rules: ops/aec/as6-epic014-crm-deals-workspace-integration-aec.md
 - Added checks: workspace panel, workspace navigation, workspace state resolver, UI foundation connection, foundation/UI health snapshot, workspace runtime tracer, no storage, no API, no workflow, no own router/store.
 - Failure classes: CRM_DEALS_WORKSPACE_INTEGRATION_GAP, CRM_DEALS_WORKSPACE_PANEL_DRIFT, CRM_DEALS_WORKSPACE_NAVIGATION_DRIFT, CRM_DEALS_WORKSPACE_STATE_DRIFT, CRM_DEALS_WORKSPACE_HEALTH_SNAPSHOT_DRIFT, CRM_DEALS_PARALLEL_SHELL_DRIFT.
+
+## AS6_EPIC014_SLICE05_CRM_DEALS_CRM_LAYOUT_BRIDGE
+- Diagnostic: ops/bin/as6-diagnose-epic014-crm-deals-crm-layout-bridge
+- Control: ops/bin/as6-control-epic014-crm-deals-crm-layout-bridge
+- Runtime tracer: frontend/src/crm/deals/layout/crmDealsLayoutTracer.js
+- AEC rules: ops/aec/as6-epic014-crm-deals-crm-layout-bridge-aec.md
+- Added checks: CRM Layout Bridge, layout model, layout state, breadcrumbs, active section, existing Workspace/Header/Sidebar reuse, layout health snapshot, no storage, no API, no workflow, no own router/store.
+- Failure classes: CRM_DEALS_CRM_LAYOUT_BRIDGE_GAP, CRM_DEALS_LAYOUT_MODEL_DRIFT, CRM_DEALS_LAYOUT_STATE_DRIFT, CRM_DEALS_BREADCRUMB_DRIFT, CRM_DEALS_ACTIVE_SECTION_DRIFT, CRM_DEALS_PARALLEL_LAYOUT_DRIFT.
+
+## AS6_EPIC014_SLICE05_CRM_DEALS_CRM_LAYOUT_BRIDGE_REPAIR
+- Diagnostic repair: ops/bin/as6-diagnose-epic014-crm-deals-crm-layout-bridge.
+- Added failure class: CRM_DEALS_LAYOUT_BRIDGE_DIAGNOSTIC_MARKER_DRIFT.

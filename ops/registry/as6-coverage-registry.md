@@ -3923,3 +3923,13 @@ Permission Validation
 - Covers workspace panel, workspace navigation, state resolver, runtime tracer and workspace health snapshot.
 - Covers reuse of Deals UI Foundation, Deals Foundation health snapshot and existing CRM Workspace/Layout.
 - Covers no-storage, no-api, no-business-workflow, no-own-router and no-own-store invariants.
+
+## AS6_EPIC014_SLICE05_CRM_DEALS_CRM_LAYOUT_BRIDGE
+- Covers CRM Deals / Opportunities CRM Layout Bridge.
+- Covers layout model, layout state, layout diagnostics, layout health snapshot and layout runtime tracer.
+- Covers breadcrumbs, active section, existing CRM Layout/Workspace/Header/Sidebar reuse.
+- Covers no-storage, no-api, no-business-workflow, no-own-router and no-own-store invariants.
+
+## AS6_EPIC014_SLICE05_CRM_DEALS_CRM_LAYOUT_BRIDGE_REPAIR
+- Covers diagnostic marker drift repair for Deals CRM Layout Bridge.
+- Confirms crmDealsWorkspaceNavigation source-symbol validation.

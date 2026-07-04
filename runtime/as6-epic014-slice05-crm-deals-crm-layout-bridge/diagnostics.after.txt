@@ -1,0 +1,4 @@
+frontend/src/crm/deals/layout/crmDealsCrmLayoutBridge.js:  id: "crm.deals.crm-layout.bridge",
+frontend/src/crm/deals/layout/crmDealsLayoutDiagnostics.js:    ["CRM_LAYOUT_BRIDGE_REGISTERED", crmDealsCrmLayoutBridge.id === "crm.deals.crm-layout.bridge"],
+frontend/src/crm/deals/layout/crmDealsCrmLayoutBridge.js:  layoutScope: "crm.unified.layout",
+frontend/src/crm/deals/layout/crmDealsLayoutDiagnostics.js:    ["USE_WORKSPACE_PANEL", crmDealsCrmLayoutBridge.panel.id === "crm.deals.workspace.panel"],

@@ -1,0 +1,35 @@
+frontend/src/crm/deals/layout/crmDealsCrmLayoutBridge.js:  id: "crm.deals.crm-layout.bridge",
+frontend/src/crm/deals/layout/crmDealsLayoutDiagnostics.js:    ["CRM_LAYOUT_BRIDGE_REGISTERED", crmDealsCrmLayoutBridge.id === "crm.deals.crm-layout.bridge"],
+frontend/src/crm/deals/layout/crmDealsCrmLayoutBridge.js:  layoutScope: "crm.unified.layout",
+frontend/src/crm/deals/layout/crmDealsLayoutDiagnostics.js:    ["USE_WORKSPACE_PANEL", crmDealsCrmLayoutBridge.panel.id === "crm.deals.workspace.panel"],
+frontend/src/crm/deals/layout/crmDealsCrmLayoutBridge.js:import { crmDealsWorkspacePanel, crmDealsWorkspaceNavigation, createCrmDealsWorkspaceIntegration } from "../workspace";
+frontend/src/crm/deals/layout/crmDealsCrmLayoutBridge.js:  navigation: crmDealsWorkspaceNavigation,
+frontend/src/crm/deals/layout/crmDealsLayoutDiagnostics.js:    ["USE_WORKSPACE_NAVIGATION", crmDealsCrmLayoutBridge.navigation.route === "/crm/deals"],
+frontend/src/crm/deals/layout/crmDealsCrmLayoutBridge.js:  breadcrumbs: Object.freeze(["CRM", "Deals"]),
+frontend/src/crm/deals/layout/crmDealsCrmLayoutBridge.js:  activeSection: "deals",
+frontend/src/crm/deals/layout/crmDealsLayoutTracer.js:    activeSection: "deals",
+frontend/src/crm/deals/layout/crmDealsCrmLayoutBridge.js:  states: Object.freeze(["loading", "empty", "ready", "error"]),
+frontend/src/crm/deals/layout/crmDealsLayoutDiagnostics.js:    ["UNIFIED_STATE_READY", ["loading", "empty", "ready", "error"].includes(snapshot.state)],
+frontend/src/crm/deals/layout/crmDealsCrmLayoutBridge.js:  useExistingCrmLayout: true,
+frontend/src/crm/deals/layout/crmDealsCrmLayoutBridge.js:  useExistingCrmWorkspace: true,
+frontend/src/crm/deals/layout/crmDealsCrmLayoutBridge.js:  useExistingHeader: true,
+frontend/src/crm/deals/layout/crmDealsCrmLayoutBridge.js:  useExistingSidebar: true,
+frontend/src/crm/deals/layout/crmDealsCrmLayoutBridge.js:  noParallelLayout: true,
+frontend/src/crm/deals/layout/crmDealsCrmLayoutBridge.js:  noParallelShell: true,
+frontend/src/crm/deals/layout/crmDealsCrmLayoutBridge.js:  ownRouter: false,
+frontend/src/crm/deals/layout/crmDealsCrmLayoutBridge.js:  ownStore: false,
+frontend/src/crm/deals/layout/crmDealsCrmLayoutBridge.js:  storageEnabled: false,
+frontend/src/crm/deals/layout/crmDealsCrmLayoutBridge.js:  apiEnabled: false,
+frontend/src/crm/deals/layout/crmDealsCrmLayoutBridge.js:  workflowEnabled: false,
+frontend/src/crm/deals/layout/index.js:export { traceCrmDealsLayout } from "./crmDealsLayoutTracer";
+frontend/src/crm/deals/layout/crmDealsLayoutModel.js:import { traceCrmDealsLayout } from "./crmDealsLayoutTracer";
+frontend/src/crm/deals/layout/crmDealsLayoutModel.js:    trace: traceCrmDealsLayout(),
+frontend/src/crm/deals/layout/crmDealsLayoutHealthSnapshot.js:import { traceCrmDealsLayout } from "./crmDealsLayoutTracer";
+frontend/src/crm/deals/layout/crmDealsLayoutHealthSnapshot.js:    trace: traceCrmDealsLayout(),
+frontend/src/crm/deals/layout/crmDealsLayoutTracer.js:export function traceCrmDealsLayout(event = "CRM_DEALS_LAYOUT_BRIDGE_TRACE") {
+frontend/src/crm/deals/layout/crmDealsLayoutDiagnostics.js:import { traceCrmDealsLayout } from "./crmDealsLayoutTracer";
+frontend/src/crm/deals/layout/crmDealsLayoutDiagnostics.js:    ["LAYOUT_TRACER_PRESENT", traceCrmDealsLayout().event === "CRM_DEALS_LAYOUT_BRIDGE_TRACE"],
+frontend/src/crm/deals/layout/crmDealsLayoutDiagnostics.js:    trace: traceCrmDealsLayout(),
+frontend/src/crm/deals/layout/index.js:export { getCrmDealsLayoutHealthSnapshot } from "./crmDealsLayoutHealthSnapshot";
+frontend/src/crm/deals/layout/crmDealsLayoutHealthSnapshot.js:export function getCrmDealsLayoutHealthSnapshot() {
+AS6_EPIC014_CRM_DEALS_CRM_LAYOUT_BRIDGE=PASS

@@ -1,0 +1,6 @@
+frontend/src/crm/deals/workspace/crmDealsWorkspaceIntegration.js:    id: "crm.deals.workspace.integration",
+frontend/src/crm/deals/workspace/crmDealsWorkspacePanel.js:  id: "crm.deals.workspace.panel",
+frontend/src/crm/deals/workspace/crmDealsWorkspaceDiagnostics.js:    ["WORKSPACE_INTEGRATION_PRESENT", integration.id === "crm.deals.workspace.integration"],
+frontend/src/crm/deals/workspace/crmDealsWorkspaceDiagnostics.js:    ["WORKSPACE_PANEL_REGISTERED", integration.panel.id === "crm.deals.workspace.panel"],
+frontend/src/crm/deals/workspace/crmDealsWorkspaceTracer.js:export function traceCrmDealsWorkspace(event = "CRM_DEALS_WORKSPACE_TRACE") {
+frontend/src/crm/deals/workspace/crmDealsWorkspaceTracer.js:    panel: "crm.deals.workspace.panel",

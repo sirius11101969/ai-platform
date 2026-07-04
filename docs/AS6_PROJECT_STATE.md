@@ -6351,3 +6351,23 @@ Status: PASS pending validation
 - Added failure classes: CRM_DEALS_WORKSPACE_INTEGRATION_GAP, CRM_DEALS_WORKSPACE_PANEL_DRIFT, CRM_DEALS_WORKSPACE_NAVIGATION_DRIFT, CRM_DEALS_WORKSPACE_STATE_DRIFT, CRM_DEALS_WORKSPACE_HEALTH_SNAPSHOT_DRIFT, CRM_DEALS_PARALLEL_SHELL_DRIFT.
 - Project readiness: 99%.
 - Next stage: AS6_EPIC014_SLICE05_CRM_DEALS_CRM_LAYOUT_BRIDGE.
+
+## AS6_EPIC014_SLICE05_CRM_DEALS_CRM_LAYOUT_BRIDGE
+- Added CRM Deals / Opportunities CRM Layout Bridge.
+- Added layout bridge, layout model, layout state resolver, layout runtime tracer, layout diagnostics and layout health snapshot.
+- Reused Deals Workspace Integration from Slice 04.
+- Added breadcrumbs sync and active section sync for Deals.
+- Reused existing CRM Layout, Workspace, Header and Sidebar.
+- Added diagnostics: ops/bin/as6-diagnose-epic014-crm-deals-crm-layout-bridge.
+- Added controls: ops/bin/as6-control-epic014-crm-deals-crm-layout-bridge.
+- Added AEC rules: ops/aec/as6-epic014-crm-deals-crm-layout-bridge-aec.md.
+- Added governance: ops/governance/as6-epic014-crm-deals-crm-layout-bridge-governance.md.
+- Added failure classes: CRM_DEALS_CRM_LAYOUT_BRIDGE_GAP, CRM_DEALS_LAYOUT_MODEL_DRIFT, CRM_DEALS_LAYOUT_STATE_DRIFT, CRM_DEALS_BREADCRUMB_DRIFT, CRM_DEALS_ACTIVE_SECTION_DRIFT, CRM_DEALS_PARALLEL_LAYOUT_DRIFT.
+- Project readiness: 99%.
+- Next stage: AS6_EPIC014_SLICE06_CRM_DEALS_LIVE_LAYOUT_MOUNT.
+
+## AS6_EPIC014_SLICE05_CRM_DEALS_CRM_LAYOUT_BRIDGE_REPAIR
+- Registered diagnostic marker drift repair.
+- Root cause: diagnostic expected literal workspace navigation id inside layout files, while implementation references crmDealsWorkspaceNavigation as imported source symbol.
+- Repaired diagnostic marker to validate crmDealsWorkspaceNavigation source integration.
+- Failure class: CRM_DEALS_LAYOUT_BRIDGE_DIAGNOSTIC_MARKER_DRIFT.

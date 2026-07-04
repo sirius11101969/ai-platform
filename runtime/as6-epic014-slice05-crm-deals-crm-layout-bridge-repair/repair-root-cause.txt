@@ -1,0 +1,4 @@
+ROOT_CAUSE=DIAGNOSTIC_MARKER_TOO_STRICT_FOR_WORKSPACE_NAVIGATION
+FAILURE_CLASS=CRM_DEALS_LAYOUT_BRIDGE_DIAGNOSTIC_MARKER_DRIFT
+INTERRUPT=as6-diagnose-epic014-crm-deals-crm-layout-bridge stopped before build/commit/push
+REPAIR=Use source-level crmDealsWorkspaceNavigation symbol marker instead of literal id marker inside layout files
