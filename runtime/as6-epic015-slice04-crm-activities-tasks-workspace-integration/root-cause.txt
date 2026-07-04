@@ -1,0 +1,5 @@
+ROOT_CAUSE=CRM_ACTIVITIES_TASKS_WORKSPACE_INTEGRATION_REQUIRED_AFTER_UI_FOUNDATION
+FAILURE_CLASS=CRM_ACTIVITIES_TASKS_WORKSPACE_INTEGRATION_GAP
+ARCHITECTURE_DRIFT=Activities / Tasks UI Foundation exists but is not integrated into existing CRM Workspace
+VALIDATION_GAP=No workspace integration, panel, navigation, state resolver, diagnostics, health snapshot or workspace tracer existed before Slice 04
+PREVENTION=Add Activities / Tasks Workspace Integration with diagnostics, controls, AEC, registry, coverage, governance and state evidence

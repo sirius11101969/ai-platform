@@ -2144,3 +2144,12 @@ ops/bin/as6-control-permission-engine-v114
 - Governance: ops/governance/as6-epic015-crm-activities-tasks-ui-foundation-governance.md
 - Added checks: header, actions, timeline, tasks list, activity card, task card, loading/empty/ready/error states, diagnostics panel, UI tracer, UI health snapshot, CSS foundation.
 - Failure classes: CRM_ACTIVITIES_TASKS_UI_FOUNDATION_GAP, CRM_ACTIVITIES_UI_STATE_DRIFT, CRM_ACTIVITIES_UI_TRACER_DRIFT, CRM_ACTIVITIES_UI_HEALTH_DRIFT, CRM_ACTIVITIES_UI_CSS_DRIFT.
+
+## AS6_EPIC015_SLICE04_CRM_ACTIVITIES_TASKS_WORKSPACE_INTEGRATION
+- Diagnostic: ops/bin/as6-diagnose-epic015-crm-activities-tasks-workspace-integration
+- Control: ops/bin/as6-control-epic015-crm-activities-tasks-workspace-integration
+- Runtime tracer: frontend/src/crm/activities/workspace/crmActivitiesWorkspaceTracer.js
+- AEC rules: ops/aec/as6-epic015-crm-activities-tasks-workspace-integration-aec.md
+- Governance: ops/governance/as6-epic015-crm-activities-tasks-workspace-integration-governance.md
+- Added checks: workspace integration, panel, navigation, state resolver, diagnostics, health snapshot, workspace tracer, existing CRM Workspace/Layout reuse.
+- Failure classes: CRM_ACTIVITIES_TASKS_WORKSPACE_INTEGRATION_GAP, CRM_ACTIVITIES_WORKSPACE_PANEL_DRIFT, CRM_ACTIVITIES_WORKSPACE_NAVIGATION_DRIFT, CRM_ACTIVITIES_WORKSPACE_HEALTH_DRIFT, CRM_ACTIVITIES_WORKSPACE_TRACER_DRIFT.

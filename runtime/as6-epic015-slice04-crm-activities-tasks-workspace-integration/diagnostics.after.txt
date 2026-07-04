@@ -1,0 +1,37 @@
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceDiagnostics.js:    ["WORKSPACE_INTEGRATION_PRESENT", integration.id === "crm.activities.tasks.workspace.integration"],
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceIntegration.js:    id: "crm.activities.tasks.workspace.integration",
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceTracer.js:    panel: "crm.activities.tasks.workspace.panel",
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceDiagnostics.js:    ["WORKSPACE_PANEL_PRESENT", integration.panel.id === "crm.activities.tasks.workspace.panel"],
+frontend/src/crm/activities/workspace/crmActivitiesWorkspacePanel.js:  id: "crm.activities.tasks.workspace.panel",
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceTracer.js:    navigation: "crm.activities.tasks.workspace.navigation",
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceNavigation.js:  id: "crm.activities.tasks.workspace.navigation",
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceState.js:    id: "crm.activities.tasks.workspace.state",
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceTracer.js:export function traceCrmActivitiesWorkspace(event = "CRM_ACTIVITIES_TASKS_WORKSPACE_TRACE") {
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceDiagnostics.js:    ["WORKSPACE_TRACER_PRESENT", traceCrmActivitiesWorkspace().event === "CRM_ACTIVITIES_TASKS_WORKSPACE_TRACE"],
+frontend/src/crm/activities/workspace/index.js:export { diagnoseCrmActivitiesWorkspaceIntegration } from "./crmActivitiesWorkspaceDiagnostics";
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceDiagnostics.js:export function diagnoseCrmActivitiesWorkspaceIntegration() {
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceHealthSnapshot.js:import { diagnoseCrmActivitiesWorkspaceIntegration } from "./crmActivitiesWorkspaceDiagnostics";
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceHealthSnapshot.js:    diagnostic: diagnoseCrmActivitiesWorkspaceIntegration(),
+frontend/src/crm/activities/workspace/index.js:export { getCrmActivitiesWorkspaceHealthSnapshot } from "./crmActivitiesWorkspaceHealthSnapshot";
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceDescriptor.js:import { getCrmActivitiesWorkspaceHealthSnapshot } from "./crmActivitiesWorkspaceHealthSnapshot";
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceDescriptor.js:  health: getCrmActivitiesWorkspaceHealthSnapshot,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceHealthSnapshot.js:export function getCrmActivitiesWorkspaceHealthSnapshot() {
+frontend/src/crm/activities/workspace/crmActivitiesWorkspacePanel.js:import { ActivitiesUiFoundation } from "../ui";
+frontend/src/crm/activities/workspace/crmActivitiesWorkspacePanel.js:  component: ActivitiesUiFoundation,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceIntegration.js:    useExistingCrmWorkspace: true,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceIntegration.js:    useExistingCrmLayout: true,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceIntegration.js:    noParallelShell: true,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceIntegration.js:    noParallelLayout: true,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceIntegration.js:    ownRouter: false,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceState.js:    ownRouter: false,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceIntegration.js:    ownStore: false,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceState.js:    ownStore: false,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceIntegration.js:    storageEnabled: false,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceState.js:    storageEnabled: false,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceIntegration.js:    apiEnabled: false,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceState.js:    apiEnabled: false,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceIntegration.js:    workflowEnabled: false,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceState.js:    workflowEnabled: false,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceIntegration.js:    platformMutation: false,
+frontend/src/crm/activities/workspace/crmActivitiesWorkspaceState.js:    platformMutation: false,
+AS6_EPIC015_CRM_ACTIVITIES_TASKS_WORKSPACE_INTEGRATION=PASS
