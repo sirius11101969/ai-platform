@@ -19,7 +19,6 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import CRMAnalyticsPanel from "./crm/CRMAnalyticsPanel.jsx";
 import { CrmContactsLiveLayoutMount } from "../crm/contacts";
 import { CrmCompaniesLiveLayoutMount } from "../crm/companies";
-import { CrmDealsLiveLayoutMount } from "../crm/deals";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Panel, PageHeading, StatCard } from "../components/AppShell";
 import { sanitizeCustomerVisibleText, sanitizeVisibleAiText } from "../utils/uiSanitizer";
@@ -1223,7 +1222,6 @@ export default function CRMPage() {
       <section className="crm-layout production-crm-layout">
         <CrmContactsLiveLayoutMount crmLayoutMountMode="live" data-as6-crm-contacts-mounted-in-production-layout="true" />
         <CrmCompaniesLiveLayoutMount crmLayoutMountMode="live" data-as6-crm-companies-mounted-in-production-layout="true" />
-        <CrmDealsLiveLayoutMount />
         <div className="pipeline-board production-pipeline">
           {loading ? DEFAULT_CRM_STAGES.slice(0, 3).map((stage) => <Panel className="stage-column crm-skeleton" key={stage.status}>Загрузка: {stage.title}…</Panel>) : stages.map((stage) => {
             const stageLeads = leadsByStage[stage.status] || [];

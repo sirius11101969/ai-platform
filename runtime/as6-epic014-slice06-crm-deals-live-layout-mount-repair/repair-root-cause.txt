@@ -1,0 +1,4 @@
+ROOT_CAUSE=CRM_PAGE_IMPORT_PATTERN_DRIFT
+FAILURE_CLASS=CRM_DEALS_LIVE_LAYOUT_MOUNT_IMPORT_PATTERN_DRIFT
+INTERRUPT=Live mount files were created but CRMPage mount insertion did not match existing Companies import pattern
+REPAIR=Add CrmDealsLiveLayoutMount import from ../crm/deals and mount it next to CrmCompaniesLiveLayoutMount in CRMPage

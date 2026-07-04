@@ -1,0 +1,33 @@
+
+> ai-bot-frontend@1.0.0 build
+> vite build
+
+vite v5.4.21 building for production...
+transforming...
+✓ 469 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                      0.73 kB │ gzip:  0.48 kB
+dist/assets/as6-robot-LgharqKn.png                  31.88 kB
+dist/assets/as6-copilot-asset-Tv9D6goR.png          43.70 kB
+dist/assets/as6-logo-CVJWh6mG.webp                  90.99 kB
+dist/assets/AS6SalesShellAdapter-0zTD85x2.css        0.27 kB │ gzip:  0.21 kB
+dist/assets/AS6Shell-CHirm43q.css                    6.10 kB │ gzip:  1.57 kB
+dist/assets/AS6OneShellAdapter-DQ7spHTC.css          8.79 kB │ gzip:  2.62 kB
+dist/assets/index-C6U74CNs.css                     335.62 kB │ gzip: 56.24 kB
+dist/assets/assets-CLXC_2t7.js                       0.14 kB │ gzip:  0.13 kB
+dist/assets/AS6Shell-B2tzF1Fk.js                     6.25 kB │ gzip:  1.91 kB
+dist/assets/RevenueDashboardPage-CpWb_m-Q.js         7.18 kB │ gzip:  2.58 kB
+dist/assets/AS6SalesShellAdapter-WKhU3nWm.js         7.22 kB │ gzip:  2.60 kB
+dist/assets/AS6OneShellAdapter-CqrDiIn8.js           8.89 kB │ gzip:  3.38 kB
+dist/assets/AIEnterpriseCommandCenter-CfiK1uO9.js    9.31 kB │ gzip:  2.64 kB
+dist/assets/AiManagerDashboardPage-XjVcvRjT.js      10.92 kB │ gzip:  4.06 kB
+dist/assets/PipelineCopilotPage-CqFXojQX.js         12.20 kB │ gzip:  3.92 kB
+dist/assets/AiLiveRealtimeVoicePage-AoPcWzWi.js     18.87 kB │ gzip:  5.35 kB
+dist/assets/CommandCenterPage-DRtMbM08.js           20.87 kB │ gzip:  7.27 kB
+dist/assets/DashboardPage-CsOYW9Aa.js               29.61 kB │ gzip:  9.97 kB
+dist/assets/services-Cw7__9RJ.js                    31.43 kB │ gzip:  9.57 kB
+dist/assets/AiWorkersPage-Dqk8LNu6.js               52.32 kB │ gzip: 16.32 kB
+dist/assets/vendor-D1LqeeMi.js                     144.92 kB │ gzip: 46.66 kB
+dist/assets/index-CES1Vd5T.js                      314.69 kB │ gzip: 82.46 kB
+✓ built in 5.16s

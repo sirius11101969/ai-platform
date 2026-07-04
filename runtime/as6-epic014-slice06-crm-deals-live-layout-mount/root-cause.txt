@@ -1,0 +1,5 @@
+ROOT_CAUSE=CRM_DEALS_LIVE_LAYOUT_MOUNT_MISSING_AFTER_LAYOUT_BRIDGE
+FAILURE_CLASS=CRM_DEALS_LIVE_LAYOUT_MOUNT_GAP
+ARCHITECTURE_DRIFT=Deals CRM Layout Bridge exists but is not mounted into live CRMPage production layout
+VALIDATION_GAP=No live Deals mount, live diagnostics, duplicate mount guard, live tracer or live health snapshot existed before Slice 06
+PREVENTION=Mount Deals through existing CRMPage production layout, add diagnostics, duplicate route/panel guard, AEC, registry, coverage and state evidence

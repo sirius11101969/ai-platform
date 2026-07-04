@@ -6371,3 +6371,23 @@ Status: PASS pending validation
 - Root cause: diagnostic expected literal workspace navigation id inside layout files, while implementation references crmDealsWorkspaceNavigation as imported source symbol.
 - Repaired diagnostic marker to validate crmDealsWorkspaceNavigation source integration.
 - Failure class: CRM_DEALS_LAYOUT_BRIDGE_DIAGNOSTIC_MARKER_DRIFT.
+
+## AS6_EPIC014_SLICE06_CRM_DEALS_LIVE_LAYOUT_MOUNT
+- Added CRM Deals / Opportunities Live Layout Mount.
+- Mounted Deals into existing CRMPage production layout.
+- Added live mount contract, live runtime tracer, live diagnostics and live health snapshot.
+- Added duplicate route and duplicate panel guard.
+- Reused existing CRM Layout and Workspace.
+- Added diagnostics: ops/bin/as6-diagnose-epic014-crm-deals-live-layout-mount.
+- Added controls: ops/bin/as6-control-epic014-crm-deals-live-layout-mount.
+- Added AEC rules: ops/aec/as6-epic014-crm-deals-live-layout-mount-aec.md.
+- Added governance: ops/governance/as6-epic014-crm-deals-live-layout-mount-governance.md.
+- Added failure classes: CRM_DEALS_LIVE_LAYOUT_MOUNT_GAP, CRM_DEALS_LIVE_MOUNT_REGRESSION, CRM_DEALS_DUPLICATE_ROUTE_DRIFT, CRM_DEALS_DUPLICATE_PANEL_DRIFT, CRM_DEALS_LIVE_LAYOUT_MARKER_DRIFT.
+- Project readiness: 99%.
+- Next stage: AS6_EPIC014_SLICE07_CRM_DEALS_PRODUCTION_POLISH.
+
+## AS6_EPIC014_SLICE06_CRM_DEALS_LIVE_LAYOUT_MOUNT_REPAIR
+- Registered CRMPage import pattern drift repair.
+- Root cause: CRMPage imports Companies live mount from ../crm/companies, not ../crm/companies/live.
+- Repaired by importing CrmDealsLiveLayoutMount from ../crm/deals and mounting it next to CrmCompaniesLiveLayoutMount.
+- Failure class: CRM_DEALS_LIVE_LAYOUT_MOUNT_IMPORT_PATTERN_DRIFT.

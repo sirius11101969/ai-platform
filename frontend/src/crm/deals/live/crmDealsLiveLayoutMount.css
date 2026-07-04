@@ -1,0 +1,24 @@
+.as6-crm-deals-live-layout-mount {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.as6-crm-deals-live-layout-mount__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: rgba(15, 23, 42, 0.04);
+}
+
+.as6-crm-deals-live-layout-mount__header p {
+  margin: 0;
+  color: #64748b;
+}
+
+.as6-crm-deals-live-layout-mount__header h2 {
+  margin: 2px 0 0;
+}

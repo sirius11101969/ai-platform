@@ -2078,3 +2078,15 @@ ops/bin/as6-control-permission-engine-v114
 ## AS6_EPIC014_SLICE05_CRM_DEALS_CRM_LAYOUT_BRIDGE_REPAIR
 - Diagnostic repair: ops/bin/as6-diagnose-epic014-crm-deals-crm-layout-bridge.
 - Added failure class: CRM_DEALS_LAYOUT_BRIDGE_DIAGNOSTIC_MARKER_DRIFT.
+
+## AS6_EPIC014_SLICE06_CRM_DEALS_LIVE_LAYOUT_MOUNT
+- Diagnostic: ops/bin/as6-diagnose-epic014-crm-deals-live-layout-mount
+- Control: ops/bin/as6-control-epic014-crm-deals-live-layout-mount
+- Runtime tracer: frontend/src/crm/deals/live/crmDealsLiveLayoutMountTracer.js
+- AEC rules: ops/aec/as6-epic014-crm-deals-live-layout-mount-aec.md
+- Added checks: live layout mount, CRMPage mount, production layout marker, live contract, no duplicate route, no duplicate panel, existing CRM Layout/Workspace reuse, no storage, no API, no workflow.
+- Failure classes: CRM_DEALS_LIVE_LAYOUT_MOUNT_GAP, CRM_DEALS_LIVE_MOUNT_REGRESSION, CRM_DEALS_DUPLICATE_ROUTE_DRIFT, CRM_DEALS_DUPLICATE_PANEL_DRIFT, CRM_DEALS_LIVE_LAYOUT_MARKER_DRIFT.
+
+## AS6_EPIC014_SLICE06_CRM_DEALS_LIVE_LAYOUT_MOUNT_REPAIR
+- Diagnostic repair: CRMPage live mount import pattern drift.
+- Added failure class: CRM_DEALS_LIVE_LAYOUT_MOUNT_IMPORT_PATTERN_DRIFT.

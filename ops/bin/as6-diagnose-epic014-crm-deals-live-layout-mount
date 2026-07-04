@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -x ops/bin/as6-grep-safe
+
+for f in \
+  CrmDealsLiveLayoutMount \
+  crmDealsLiveLayoutMountContract \
+  crmDealsLiveLayoutMountTracer \
+  crmDealsLiveLayoutMountDiagnostics \
+  crmDealsLiveLayoutMountHealthSnapshot
+do
+  if [ "$f" = "CrmDealsLiveLayoutMount" ]; then
+    test -f "frontend/src/crm/deals/live/${f}.jsx"
+  else
+    test -f "frontend/src/crm/deals/live/${f}.js"
+  fi
+done
+
+test -f frontend/src/crm/deals/live/crmDealsLiveLayoutMount.css
+test -f frontend/src/crm/deals/live/index.js
+
+ops/bin/as6-grep-safe -R "CrmDealsLiveLayoutMount" frontend/src/pages/CRMPage.jsx frontend/src/crm/deals/live
+ops/bin/as6-grep-safe -R "data-as6-crm-deals-live-layout-mount=\"true\"" frontend/src/crm/deals/live
+ops/bin/as6-grep-safe -R "data-as6-crm-deals-mounted-in-production-layout=\"true\"" frontend/src/crm/deals/live
+ops/bin/as6-grep-safe -R "crm.deals.live-layout.mount" frontend/src/crm/deals/live
+ops/bin/as6-grep-safe -R "mountedInProductionLayout: true" frontend/src/crm/deals/live
+ops/bin/as6-grep-safe -R "useExistingCrmLayout: true" frontend/src/crm/deals/live
+ops/bin/as6-grep-safe -R "useExistingCrmWorkspace: true" frontend/src/crm/deals/live
+ops/bin/as6-grep-safe -R "useExistingRouter: true" frontend/src/crm/deals/live
+ops/bin/as6-grep-safe -R "ownRouter: false" frontend/src/crm/deals/live
+ops/bin/as6-grep-safe -R "ownStore: false" frontend/src/crm/deals/live
+ops/bin/as6-grep-safe -R "duplicateRoute: false" frontend/src/crm/deals/live
+ops/bin/as6-grep-safe -R "duplicatePanel: false" frontend/src/crm/deals/live
+ops/bin/as6-grep-safe -R "noParallelLayout: true" frontend/src/crm/deals/live
+ops/bin/as6-grep-safe -R "noParallelShell: true" frontend/src/crm/deals/live
+ops/bin/as6-grep-safe -R "storageEnabled: false" frontend/src/crm/deals/live
+ops/bin/as6-grep-safe -R "apiEnabled: false" frontend/src/crm/deals/live
+ops/bin/as6-grep-safe -R "workflowEnabled: false" frontend/src/crm/deals/live
+ops/bin/as6-grep-safe -R "traceCrmDealsLiveLayoutMount" frontend/src/crm/deals/live
+ops/bin/as6-grep-safe -R "getCrmDealsLiveLayoutMountHealthSnapshot" frontend/src/crm/deals/live
+
+DEALS_MOUNT_COUNT="$(grep -R "CrmDealsLiveLayoutMount" frontend/src/pages/CRMPage.jsx | wc -l | tr -d " ")"
+test "$DEALS_MOUNT_COUNT" -le 2
+
+echo "AS6_EPIC014_CRM_DEALS_LIVE_LAYOUT_MOUNT=PASS"

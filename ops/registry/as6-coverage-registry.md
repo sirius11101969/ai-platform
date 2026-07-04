@@ -3933,3 +3933,13 @@ Permission Validation
 ## AS6_EPIC014_SLICE05_CRM_DEALS_CRM_LAYOUT_BRIDGE_REPAIR
 - Covers diagnostic marker drift repair for Deals CRM Layout Bridge.
 - Confirms crmDealsWorkspaceNavigation source-symbol validation.
+
+## AS6_EPIC014_SLICE06_CRM_DEALS_LIVE_LAYOUT_MOUNT
+- Covers CRM Deals / Opportunities Live Layout Mount.
+- Covers CRMPage production mount, live contract, live diagnostics, live health snapshot and live runtime tracer.
+- Covers duplicate route/panel prevention and existing CRM Layout/Workspace reuse.
+- Covers no-storage, no-api, no-business-workflow, no-own-router and no-own-store invariants.
+
+## AS6_EPIC014_SLICE06_CRM_DEALS_LIVE_LAYOUT_MOUNT_REPAIR
+- Covers CRMPage import pattern repair for Deals Live Layout Mount.
+- Confirms CrmDealsLiveLayoutMount is mounted beside CrmCompaniesLiveLayoutMount.

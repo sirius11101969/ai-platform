@@ -1,0 +1,48 @@
+frontend/src/crm/deals/live/index.js:export { CrmDealsLiveLayoutMount } from "./CrmDealsLiveLayoutMount";
+frontend/src/crm/deals/live/index.js:export { traceCrmDealsLiveLayoutMount } from "./crmDealsLiveLayoutMountTracer";
+frontend/src/crm/deals/live/index.js:export { diagnoseCrmDealsLiveLayoutMount } from "./crmDealsLiveLayoutMountDiagnostics";
+frontend/src/crm/deals/live/index.js:export { getCrmDealsLiveLayoutMountHealthSnapshot } from "./crmDealsLiveLayoutMountHealthSnapshot";
+frontend/src/crm/deals/live/CrmDealsLiveLayoutMount.jsx:export function CrmDealsLiveLayoutMount() {
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountDiagnostics.js:import { traceCrmDealsLiveLayoutMount } from "./crmDealsLiveLayoutMountTracer";
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountDiagnostics.js:export function diagnoseCrmDealsLiveLayoutMount() {
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountDiagnostics.js:    ["LIVE_TRACER_PRESENT", traceCrmDealsLiveLayoutMount().event === "CRM_DEALS_LIVE_LAYOUT_MOUNT_TRACE"],
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountDiagnostics.js:    trace: traceCrmDealsLiveLayoutMount(),
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountTracer.js:export function traceCrmDealsLiveLayoutMount(event = "CRM_DEALS_LIVE_LAYOUT_MOUNT_TRACE") {
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountHealthSnapshot.js:import { diagnoseCrmDealsLiveLayoutMount } from "./crmDealsLiveLayoutMountDiagnostics";
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountHealthSnapshot.js:import { traceCrmDealsLiveLayoutMount } from "./crmDealsLiveLayoutMountTracer";
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountHealthSnapshot.js:export function getCrmDealsLiveLayoutMountHealthSnapshot() {
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountHealthSnapshot.js:    diagnostic: diagnoseCrmDealsLiveLayoutMount(),
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountHealthSnapshot.js:    trace: traceCrmDealsLiveLayoutMount(),
+frontend/src/crm/deals/live/CrmDealsLiveLayoutMount.jsx:      data-as6-crm-deals-live-layout-mount="true"
+frontend/src/crm/deals/live/CrmDealsLiveLayoutMount.jsx:      data-as6-crm-deals-mounted-in-production-layout="true"
+frontend/src/crm/deals/live/CrmDealsLiveLayoutMount.jsx:      className="as6-crm-deals-live-layout-mount"
+frontend/src/crm/deals/live/CrmDealsLiveLayoutMount.jsx:      data-as6-crm-deals-live-layout-mount="true"
+frontend/src/crm/deals/live/CrmDealsLiveLayoutMount.jsx:      <header className="as6-crm-deals-live-layout-mount__header" aria-label="CRM Deals live mount header">
+frontend/src/crm/deals/live/crmDealsLiveLayoutMount.css:.as6-crm-deals-live-layout-mount {
+frontend/src/crm/deals/live/crmDealsLiveLayoutMount.css:.as6-crm-deals-live-layout-mount__header {
+frontend/src/crm/deals/live/crmDealsLiveLayoutMount.css:.as6-crm-deals-live-layout-mount__header p {
+frontend/src/crm/deals/live/crmDealsLiveLayoutMount.css:.as6-crm-deals-live-layout-mount__header h2 {
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountDiagnostics.js:    ["LIVE_LAYOUT_MOUNT_CONTRACT", crmDealsLiveLayoutMountContract.id === "crm.deals.live-layout.mount"],
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountContract.js:  id: "crm.deals.live-layout.mount",
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountContract.js:  mountedInProductionLayout: true,
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountContract.js:  useExistingCrmLayout: true,
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountContract.js:  useExistingCrmWorkspace: true,
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountContract.js:  useExistingRouter: true,
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountContract.js:  ownRouter: false,
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountContract.js:  ownStore: false,
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountContract.js:  duplicateRoute: false,
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountContract.js:  duplicatePanel: false,
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountContract.js:  noParallelLayout: true,
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountContract.js:  noParallelShell: true,
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountContract.js:  storageEnabled: false,
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountContract.js:  apiEnabled: false,
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountContract.js:  workflowEnabled: false,
+frontend/src/crm/deals/live/index.js:export { traceCrmDealsLiveLayoutMount } from "./crmDealsLiveLayoutMountTracer";
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountDiagnostics.js:import { traceCrmDealsLiveLayoutMount } from "./crmDealsLiveLayoutMountTracer";
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountDiagnostics.js:    ["LIVE_TRACER_PRESENT", traceCrmDealsLiveLayoutMount().event === "CRM_DEALS_LIVE_LAYOUT_MOUNT_TRACE"],
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountDiagnostics.js:    trace: traceCrmDealsLiveLayoutMount(),
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountTracer.js:export function traceCrmDealsLiveLayoutMount(event = "CRM_DEALS_LIVE_LAYOUT_MOUNT_TRACE") {
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountHealthSnapshot.js:import { traceCrmDealsLiveLayoutMount } from "./crmDealsLiveLayoutMountTracer";
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountHealthSnapshot.js:    trace: traceCrmDealsLiveLayoutMount(),
+frontend/src/crm/deals/live/index.js:export { getCrmDealsLiveLayoutMountHealthSnapshot } from "./crmDealsLiveLayoutMountHealthSnapshot";
+frontend/src/crm/deals/live/crmDealsLiveLayoutMountHealthSnapshot.js:export function getCrmDealsLiveLayoutMountHealthSnapshot() {
