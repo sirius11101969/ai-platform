@@ -6546,3 +6546,13 @@ Status: PASS pending validation
 - Next implementation stage: AS6_EPIC016_CRM_FOLLOWUPS_FOUNDATION.
 - Diagnostic additions: AS6_CRM_NEXT_MODULE_SELECTION_GAP and AS6_RUNTIME_GITIGNORE_ARTIFACT_STAGING_GAP.
 - Repair control: ignored runtime evidence is force-added only when intentionally preserved.
+
+## AS6 EPIC016 CRM Followups Foundation
+- Stage: AS6_EPIC016_CRM_FOLLOWUPS_FOUNDATION.
+- Project readiness: 99%.
+- Base commit verified: 5d098f9fedebbba18e5108635e4490e4a94248c0.
+- Restore tag verified: AS6_RESTORE_EPIC016_CRM_NEXT_MODULE_SELECTION_20260704T151404Z.
+- Added CRM Followups domain foundation.
+- Added diagnostic class: AS6_CRM_FOLLOWUPS_FOUNDATION_GAP.
+- Added runtime tracer: crm.followups traceCrmFollowupRuntime.
+- Next stage: AS6_EPIC016_CRM_FOLLOWUPS_WORKSPACE_INTEGRATION.

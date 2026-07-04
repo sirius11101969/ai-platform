@@ -4024,3 +4024,10 @@ Permission Validation
 - AEC: docs/aec/as6-epic016-crm-next-module-selection-aec.md
 - Repair AEC: docs/aec/as6-epic016-runtime-gitignore-repair-aec.md
 - Result: PASS
+
+## AS6 EPIC016 CRM Followups Foundation
+- Coverage: docs/coverage/as6-epic016-crm-followups-foundation-coverage.md
+- Governance: docs/governance/as6-epic016-crm-followups-foundation-governance.md
+- AEC: docs/aec/as6-epic016-crm-followups-foundation-aec.md
+- Runtime tracer: frontend/src/crm/followups/followupTracer.js
+- Result: PASS

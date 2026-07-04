@@ -1,0 +1,16 @@
+frontend/src/crm/activities/index.js
+frontend/src/crm/companies/index.js
+frontend/src/crm/contacts/crmContactCapabilities.js
+frontend/src/crm/contacts/crmContactContract.js
+frontend/src/crm/contacts/crmContactDescriptor.js
+frontend/src/crm/contacts/crmContactDiagnostics.js
+frontend/src/crm/contacts/crmContactHealthSnapshot.js
+frontend/src/crm/contacts/crmContactManifest.js
+frontend/src/crm/contacts/crmContactNavigation.js
+frontend/src/crm/contacts/crmContactPanels.js
+frontend/src/crm/contacts/crmContactRegistry.js
+frontend/src/crm/contacts/crmContactResolver.js
+frontend/src/crm/contacts/crmContactRuntime.js
+frontend/src/crm/contacts/crmContactTracer.js
+frontend/src/crm/contacts/index.js
+frontend/src/crm/deals/index.js

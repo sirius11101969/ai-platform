@@ -2207,3 +2207,9 @@ ops/bin/as6-control-permission-engine-v114
 - Failure class: AS6_CRM_NEXT_MODULE_SELECTION_GAP
 - Repair failure class: AS6_RUNTIME_GITIGNORE_ARTIFACT_STAGING_GAP
 - Result: PASS
+
+## AS6 EPIC016 CRM Followups Foundation
+- Diagnostic: docs/diagnostics/as6-epic016-crm-followups-foundation-diagnostics.md
+- Failure class: AS6_CRM_FOLLOWUPS_FOUNDATION_GAP
+- Runtime diagnostic: AS6_CRM_FOLLOWUPS_FOUNDATION
+- Result: PASS

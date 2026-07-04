@@ -2549,3 +2549,8 @@ Governed and registered.
 - Root cause: Followups exists as page-level surface but not as registered CRM domain module.
 - Repair root cause: Initial EPIC016 selection cycle stopped after validation because runtime/ is ignored by gitignore and git add without -f failed under set -e.
 - Status: repaired and controlled.
+
+## AS6 EPIC016 CRM Followups Foundation
+- Diagnostic deviation class registered: AS6_CRM_FOLLOWUPS_FOUNDATION_GAP.
+- Root cause: CRM_FOLLOWUPS was selected as the next module because FollowupsPage.jsx existed as a page-level surface while frontend/src/crm/followups did not exist as a registered CRM domain foundation.
+- Status: repaired by adding CRM Followups domain foundation.
