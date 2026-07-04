@@ -4064,3 +4064,10 @@ Permission Validation
 - AEC: docs/aec/as6-epic017-crm-next-module-selection-aec.md
 - Selected module: CRM_ANALYTICS
 - Result: PASS
+
+## AS6 EPIC017 CRM Analytics Foundation
+- Coverage: docs/coverage/as6-epic017-crm-analytics-foundation-coverage.md
+- Governance: docs/governance/as6-epic017-crm-analytics-foundation-governance.md
+- AEC: docs/aec/as6-epic017-crm-analytics-foundation-aec.md
+- Runtime tracer: frontend/src/crm/analytics/analyticsTracer.js
+- Result: PASS

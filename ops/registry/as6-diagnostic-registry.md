@@ -2240,3 +2240,9 @@ ops/bin/as6-control-permission-engine-v114
 - Failure class: AS6_CRM_EPIC017_NEXT_MODULE_SELECTION_GAP
 - Selected module: CRM_ANALYTICS
 - Result: PASS
+
+## AS6 EPIC017 CRM Analytics Foundation
+- Diagnostic: docs/diagnostics/as6-epic017-crm-analytics-foundation-diagnostics.md
+- Failure class: AS6_CRM_ANALYTICS_FOUNDATION_GAP
+- Runtime diagnostic: AS6_CRM_ANALYTICS_FOUNDATION
+- Result: PASS
