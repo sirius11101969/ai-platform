@@ -6338,3 +6338,16 @@ Status: PASS pending validation
 - Added failure classes: CRM_DEALS_UI_FOUNDATION_GAP, CRM_DEALS_UI_STATE_DRIFT, CRM_DEALS_UI_COMPONENT_DRIFT, CRM_DEALS_UI_HEALTH_SNAPSHOT_DRIFT, CRM_DEALS_UI_DESIGN_SYSTEM_DRIFT.
 - Project readiness: 99%.
 - Next stage: AS6_EPIC014_SLICE04_CRM_DEALS_WORKSPACE_INTEGRATION.
+
+## AS6_EPIC014_SLICE04_CRM_DEALS_WORKSPACE_INTEGRATION
+- Added CRM Deals / Opportunities Workspace Integration.
+- Added workspace panel, workspace navigation, workspace state resolver, workspace runtime tracer, workspace diagnostics and workspace health snapshot.
+- Connected DealsUiFoundation to the Deals Workspace Panel.
+- Reused existing CRM Workspace and CRM Layout.
+- Added diagnostics: ops/bin/as6-diagnose-epic014-crm-deals-workspace-integration.
+- Added controls: ops/bin/as6-control-epic014-crm-deals-workspace-integration.
+- Added AEC rules: ops/aec/as6-epic014-crm-deals-workspace-integration-aec.md.
+- Added governance: ops/governance/as6-epic014-crm-deals-workspace-integration-governance.md.
+- Added failure classes: CRM_DEALS_WORKSPACE_INTEGRATION_GAP, CRM_DEALS_WORKSPACE_PANEL_DRIFT, CRM_DEALS_WORKSPACE_NAVIGATION_DRIFT, CRM_DEALS_WORKSPACE_STATE_DRIFT, CRM_DEALS_WORKSPACE_HEALTH_SNAPSHOT_DRIFT, CRM_DEALS_PARALLEL_SHELL_DRIFT.
+- Project readiness: 99%.
+- Next stage: AS6_EPIC014_SLICE05_CRM_DEALS_CRM_LAYOUT_BRIDGE.

@@ -1,0 +1,10 @@
+ M docs/AS6_PROJECT_STATE.md
+ M frontend/src/crm/deals/index.js
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? frontend/src/crm/deals/workspace/
+?? ops/aec/as6-epic014-crm-deals-workspace-integration-aec.md
+?? ops/bin/as6-control-epic014-crm-deals-workspace-integration
+?? ops/bin/as6-diagnose-epic014-crm-deals-workspace-integration
+?? ops/governance/as6-epic014-crm-deals-workspace-integration-governance.md

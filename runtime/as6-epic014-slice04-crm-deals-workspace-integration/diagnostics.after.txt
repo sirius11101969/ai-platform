@@ -1,0 +1,43 @@
+frontend/src/crm/deals/workspace/crmDealsWorkspaceIntegration.js:    id: "crm.deals.workspace.integration",
+frontend/src/crm/deals/workspace/crmDealsWorkspaceDiagnostics.js:    ["WORKSPACE_INTEGRATION_PRESENT", integration.id === "crm.deals.workspace.integration"],
+frontend/src/crm/deals/workspace/crmDealsWorkspacePanel.js:  id: "crm.deals.workspace.panel",
+frontend/src/crm/deals/workspace/crmDealsWorkspaceDiagnostics.js:    ["WORKSPACE_PANEL_REGISTERED", integration.panel.id === "crm.deals.workspace.panel"],
+frontend/src/crm/deals/workspace/crmDealsWorkspaceTracer.js:    panel: "crm.deals.workspace.panel",
+frontend/src/crm/deals/workspace/crmDealsWorkspaceTracer.js:    navigation: "crm.deals.workspace.navigation",
+frontend/src/crm/deals/workspace/crmDealsWorkspaceNavigation.js:  id: "crm.deals.workspace.navigation",
+frontend/src/crm/deals/workspace/crmDealsWorkspacePanel.js:  route: "/crm/deals",
+frontend/src/crm/deals/workspace/crmDealsWorkspaceDiagnostics.js:    ["WORKSPACE_NAVIGATION_REGISTERED", integration.navigation.route === "/crm/deals"],
+frontend/src/crm/deals/workspace/crmDealsWorkspacePanel.js:import { DealsUiFoundation } from "../ui";
+frontend/src/crm/deals/workspace/crmDealsWorkspacePanel.js:  component: DealsUiFoundation,
+frontend/src/crm/deals/workspace/crmDealsWorkspaceIntegration.js:import { getCrmDealHealthSnapshot } from "../foundation";
+frontend/src/crm/deals/workspace/crmDealsWorkspaceIntegration.js:  const foundationSnapshot = getCrmDealHealthSnapshot();
+frontend/src/crm/deals/workspace/crmDealsWorkspacePanel.js:import { getCrmDealHealthSnapshot } from "../foundation";
+frontend/src/crm/deals/workspace/crmDealsWorkspacePanel.js:  diagnostics: getCrmDealHealthSnapshot,
+frontend/src/crm/deals/workspace/crmDealsWorkspaceIntegration.js:import { getCrmDealsUiHealthSnapshot } from "../ui";
+frontend/src/crm/deals/workspace/crmDealsWorkspaceIntegration.js:  const uiSnapshot = getCrmDealsUiHealthSnapshot();
+frontend/src/crm/deals/workspace/crmDealsWorkspaceState.js:export const CRM_DEALS_WORKSPACE_STATES = Object.freeze(["loading", "empty", "ready", "error"]);
+frontend/src/crm/deals/workspace/crmDealsWorkspacePanel.js:  states: Object.freeze(["loading", "empty", "ready", "error"]),
+frontend/src/crm/deals/workspace/crmDealsWorkspaceDiagnostics.js:    ["WORKSPACE_STATES_PRESENT", CRM_DEALS_WORKSPACE_STATES.join("/") === "loading/empty/ready/error"],
+frontend/src/crm/deals/workspace/crmDealsWorkspaceTracer.js:    states: "loading/empty/ready/error",
+frontend/src/crm/deals/workspace/index.js:export { traceCrmDealsWorkspace } from "./crmDealsWorkspaceTracer";
+frontend/src/crm/deals/workspace/crmDealsWorkspaceIntegration.js:import { traceCrmDealsWorkspace } from "./crmDealsWorkspaceTracer";
+frontend/src/crm/deals/workspace/crmDealsWorkspaceIntegration.js:    trace: traceCrmDealsWorkspace(),
+frontend/src/crm/deals/workspace/crmDealsWorkspaceHealthSnapshot.js:import { traceCrmDealsWorkspace } from "./crmDealsWorkspaceTracer";
+frontend/src/crm/deals/workspace/crmDealsWorkspaceHealthSnapshot.js:    trace: traceCrmDealsWorkspace(),
+frontend/src/crm/deals/workspace/crmDealsWorkspaceDiagnostics.js:import { traceCrmDealsWorkspace } from "./crmDealsWorkspaceTracer";
+frontend/src/crm/deals/workspace/crmDealsWorkspaceDiagnostics.js:    trace: traceCrmDealsWorkspace(),
+frontend/src/crm/deals/workspace/crmDealsWorkspaceTracer.js:export function traceCrmDealsWorkspace(event = "CRM_DEALS_WORKSPACE_TRACE") {
+frontend/src/crm/deals/workspace/index.js:export { getCrmDealsWorkspaceHealthSnapshot } from "./crmDealsWorkspaceHealthSnapshot";
+frontend/src/crm/deals/workspace/crmDealsWorkspaceHealthSnapshot.js:export function getCrmDealsWorkspaceHealthSnapshot() {
+frontend/src/crm/deals/workspace/crmDealsWorkspaceIntegration.js:    useExistingCrmWorkspace: true,
+frontend/src/crm/deals/workspace/crmDealsWorkspaceIntegration.js:    useExistingCrmLayout: true,
+frontend/src/crm/deals/workspace/crmDealsWorkspaceIntegration.js:    noParallelShell: true,
+frontend/src/crm/deals/workspace/crmDealsWorkspaceIntegration.js:    noParallelLayout: true,
+frontend/src/crm/deals/workspace/crmDealsWorkspaceIntegration.js:    ownRouter: false,
+frontend/src/crm/deals/workspace/crmDealsWorkspaceTracer.js:    ownRouter: false,
+frontend/src/crm/deals/workspace/crmDealsWorkspaceIntegration.js:    ownStore: false,
+frontend/src/crm/deals/workspace/crmDealsWorkspaceTracer.js:    ownStore: false,
+frontend/src/crm/deals/workspace/crmDealsWorkspaceIntegration.js:    storageEnabled: false,
+frontend/src/crm/deals/workspace/crmDealsWorkspaceIntegration.js:    apiEnabled: false,
+frontend/src/crm/deals/workspace/crmDealsWorkspaceIntegration.js:    workflowEnabled: false,
+AS6_EPIC014_CRM_DEALS_WORKSPACE_INTEGRATION=PASS

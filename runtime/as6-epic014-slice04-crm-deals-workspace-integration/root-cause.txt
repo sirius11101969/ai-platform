@@ -1,0 +1,5 @@
+ROOT_CAUSE=CRM_DEALS_WORKSPACE_INTEGRATION_MISSING_AFTER_UI_FOUNDATION
+FAILURE_CLASS=CRM_DEALS_WORKSPACE_INTEGRATION_GAP
+ARCHITECTURE_DRIFT=Deals UI Foundation exists but is not registered as a CRM Workspace panel/integration
+VALIDATION_GAP=No Deals Workspace panel, workspace navigation, state resolver, workspace tracer or workspace health snapshot existed before Slice 04
+PREVENTION=Add Deals Workspace Integration with diagnostics, controls, AEC rules, registry, coverage, governance and state evidence

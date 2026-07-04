@@ -3917,3 +3917,9 @@ Permission Validation
 - Covers CRM Deals / Opportunities UI Foundation.
 - Covers DealsHeader, DealsActions, DealsList, DealCard, Empty/Loading/Error/Ready states, Diagnostics Panel, UI Runtime Tracer and UI Health Snapshot.
 - Covers no-storage, no-api, no-business-workflow and no-heavy-dependency invariants.
+
+## AS6_EPIC014_SLICE04_CRM_DEALS_WORKSPACE_INTEGRATION
+- Covers CRM Deals / Opportunities workspace integration.
+- Covers workspace panel, workspace navigation, state resolver, runtime tracer and workspace health snapshot.
+- Covers reuse of Deals UI Foundation, Deals Foundation health snapshot and existing CRM Workspace/Layout.
+- Covers no-storage, no-api, no-business-workflow, no-own-router and no-own-store invariants.

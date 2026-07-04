@@ -2058,3 +2058,11 @@ ops/bin/as6-control-permission-engine-v114
 - AEC rules: ops/aec/as6-epic014-crm-deals-ui-foundation-aec.md
 - Added checks: UI states, header, actions, list, card, empty/loading/error/ready states, diagnostics panel, UI health snapshot, design-system scope, no storage, no API, no workflow, no heavy dependency.
 - Failure classes: CRM_DEALS_UI_FOUNDATION_GAP, CRM_DEALS_UI_STATE_DRIFT, CRM_DEALS_UI_COMPONENT_DRIFT, CRM_DEALS_UI_HEALTH_SNAPSHOT_DRIFT, CRM_DEALS_UI_DESIGN_SYSTEM_DRIFT.
+
+## AS6_EPIC014_SLICE04_CRM_DEALS_WORKSPACE_INTEGRATION
+- Diagnostic: ops/bin/as6-diagnose-epic014-crm-deals-workspace-integration
+- Control: ops/bin/as6-control-epic014-crm-deals-workspace-integration
+- Runtime tracer: frontend/src/crm/deals/workspace/crmDealsWorkspaceTracer.js
+- AEC rules: ops/aec/as6-epic014-crm-deals-workspace-integration-aec.md
+- Added checks: workspace panel, workspace navigation, workspace state resolver, UI foundation connection, foundation/UI health snapshot, workspace runtime tracer, no storage, no API, no workflow, no own router/store.
+- Failure classes: CRM_DEALS_WORKSPACE_INTEGRATION_GAP, CRM_DEALS_WORKSPACE_PANEL_DRIFT, CRM_DEALS_WORKSPACE_NAVIGATION_DRIFT, CRM_DEALS_WORKSPACE_STATE_DRIFT, CRM_DEALS_WORKSPACE_HEALTH_SNAPSHOT_DRIFT, CRM_DEALS_PARALLEL_SHELL_DRIFT.

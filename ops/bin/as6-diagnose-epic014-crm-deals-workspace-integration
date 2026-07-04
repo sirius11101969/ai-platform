@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -x ops/bin/as6-grep-safe
+
+for f in \
+  crmDealsWorkspaceState \
+  crmDealsWorkspacePanel \
+  crmDealsWorkspaceNavigation \
+  crmDealsWorkspaceTracer \
+  crmDealsWorkspaceIntegration \
+  crmDealsWorkspaceDiagnostics \
+  crmDealsWorkspaceHealthSnapshot
+do
+  test -f "frontend/src/crm/deals/workspace/${f}.js"
+done
+
+test -f frontend/src/crm/deals/workspace/index.js
+
+ops/bin/as6-grep-safe -R "crm.deals.workspace.integration" frontend/src/crm/deals/workspace
+ops/bin/as6-grep-safe -R "crm.deals.workspace.panel" frontend/src/crm/deals/workspace
+ops/bin/as6-grep-safe -R "crm.deals.workspace.navigation" frontend/src/crm/deals/workspace
+ops/bin/as6-grep-safe -R "/crm/deals" frontend/src/crm/deals/workspace
+ops/bin/as6-grep-safe -R "DealsUiFoundation" frontend/src/crm/deals/workspace
+ops/bin/as6-grep-safe -R "getCrmDealHealthSnapshot" frontend/src/crm/deals/workspace
+ops/bin/as6-grep-safe -R "getCrmDealsUiHealthSnapshot" frontend/src/crm/deals/workspace
+ops/bin/as6-grep-safe -R "loading.*empty.*ready.*error" frontend/src/crm/deals/workspace
+ops/bin/as6-grep-safe -R "traceCrmDealsWorkspace" frontend/src/crm/deals/workspace
+ops/bin/as6-grep-safe -R "getCrmDealsWorkspaceHealthSnapshot" frontend/src/crm/deals/workspace
+ops/bin/as6-grep-safe -R "useExistingCrmWorkspace: true" frontend/src/crm/deals/workspace
+ops/bin/as6-grep-safe -R "useExistingCrmLayout: true" frontend/src/crm/deals/workspace
+ops/bin/as6-grep-safe -R "noParallelShell: true" frontend/src/crm/deals/workspace
+ops/bin/as6-grep-safe -R "noParallelLayout: true" frontend/src/crm/deals/workspace
+ops/bin/as6-grep-safe -R "ownRouter: false" frontend/src/crm/deals/workspace
+ops/bin/as6-grep-safe -R "ownStore: false" frontend/src/crm/deals/workspace
+ops/bin/as6-grep-safe -R "storageEnabled: false" frontend/src/crm/deals/workspace
+ops/bin/as6-grep-safe -R "apiEnabled: false" frontend/src/crm/deals/workspace
+ops/bin/as6-grep-safe -R "workflowEnabled: false" frontend/src/crm/deals/workspace
+
+echo "AS6_EPIC014_CRM_DEALS_WORKSPACE_INTEGRATION=PASS"
