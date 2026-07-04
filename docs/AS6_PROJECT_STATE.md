@@ -6404,3 +6404,14 @@ Status: PASS pending validation
 - Added failure classes: CRM_DEALS_PRODUCTION_POLISH_GAP, CRM_DEALS_ACCESSIBILITY_DRIFT, CRM_DEALS_MOTION_DRIFT, CRM_DEALS_PERFORMANCE_DRIFT, CRM_DEALS_PRODUCTION_CONTRACT_DRIFT.
 - Project readiness: 99%.
 - Next stage: AS6_EPIC014_SLICE08_CRM_DEALS_FINAL_VALIDATION.
+
+## AS6_EPIC014_SLICE08_CRM_DEALS_FINAL_VALIDATION
+- Final validation completed for CRM Deals / Opportunities.
+- Final marker: AS6_EPIC014_CRM_DEALS=PRODUCTION_VALIDATED.
+- Added diagnostics: ops/bin/as6-diagnose-epic014-crm-deals-final-validation.
+- Added controls: ops/bin/as6-control-epic014-crm-deals-final-validation.
+- Added AEC rules: ops/aec/as6-epic014-crm-deals-final-validation-aec.md.
+- Added governance: ops/governance/as6-epic014-crm-deals-final-validation-governance.md.
+- Added failure classes: CRM_DEALS_FINAL_VALIDATION_GAP, CRM_DEALS_PRODUCTION_VALIDATION_MARKER_GAP, CRM_DEALS_FINAL_REGISTRY_DRIFT, CRM_DEALS_FINAL_COMPLETION_MARKER_GAP.
+- Project readiness: 99%.
+- Next stage: AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.

@@ -1,0 +1,9 @@
+ M docs/AS6_PROJECT_STATE.md
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? docs/epic014/AS6_EPIC014_CRM_DEALS_FINAL_VALIDATION.md
+?? ops/aec/as6-epic014-crm-deals-final-validation-aec.md
+?? ops/bin/as6-control-epic014-crm-deals-final-validation
+?? ops/bin/as6-diagnose-epic014-crm-deals-final-validation
+?? ops/governance/as6-epic014-crm-deals-final-validation-governance.md

@@ -1,0 +1,4 @@
+ROOT_CAUSE=EPIC014_FINAL_VALIDATION_REQUIRED_AFTER_PRODUCTION_POLISH
+FAILURE_CLASS=CRM_DEALS_FINAL_VALIDATION_GAP
+VALIDATION_GAP=CRM Deals completed Production Polish but EPIC014 was not yet final-validated as a complete production module
+PREVENTION=Run full EPIC014 diagnostic chain, completion marker guard, build, secret scan, commit, push and final restore tag

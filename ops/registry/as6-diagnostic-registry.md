@@ -2098,3 +2098,12 @@ ops/bin/as6-control-permission-engine-v114
 - AEC rules: ops/aec/as6-epic014-crm-deals-production-polish-aec.md
 - Added checks: production contract, production diagnostics, production health snapshot, visible focus, ARIA/accessibility contract, prefers-reduced-motion, no runtime fetch, no runtime storage, no heavy dependency, no own router/store.
 - Failure classes: CRM_DEALS_PRODUCTION_POLISH_GAP, CRM_DEALS_ACCESSIBILITY_DRIFT, CRM_DEALS_MOTION_DRIFT, CRM_DEALS_PERFORMANCE_DRIFT, CRM_DEALS_PRODUCTION_CONTRACT_DRIFT.
+
+## AS6_EPIC014_SLICE08_CRM_DEALS_FINAL_VALIDATION
+- Diagnostic: ops/bin/as6-diagnose-epic014-crm-deals-final-validation
+- Control: ops/bin/as6-control-epic014-crm-deals-final-validation
+- AEC rules: ops/aec/as6-epic014-crm-deals-final-validation-aec.md
+- Governance: ops/governance/as6-epic014-crm-deals-final-validation-governance.md
+- Final marker: AS6_EPIC014_CRM_DEALS=PRODUCTION_VALIDATED
+- Added checks: full EPIC014 diagnostic chain, production validation marker, completion marker guard, registry coverage, final invariants.
+- Failure classes: CRM_DEALS_FINAL_VALIDATION_GAP, CRM_DEALS_PRODUCTION_VALIDATION_MARKER_GAP, CRM_DEALS_FINAL_REGISTRY_DRIFT, CRM_DEALS_FINAL_COMPLETION_MARKER_GAP.

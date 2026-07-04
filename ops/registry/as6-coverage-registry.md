@@ -3949,3 +3949,9 @@ Permission Validation
 - Covers production contract, production tracer, production diagnostics and production health snapshot.
 - Covers visible focus, reduced motion, accessibility, CSS containment and performance guardrails.
 - Covers no-runtime-fetch, no-runtime-storage, no-heavy-dependency, no-own-router and no-own-store invariants.
+
+## AS6_EPIC014_SLICE08_CRM_DEALS_FINAL_VALIDATION
+- Covers final validation of EPIC014 CRM Deals / Opportunities.
+- Covers full chain from Next Module Selection through Production Polish.
+- Covers AS6_EPIC_COMPLETION_MARKER_GUARD execution.
+- Covers final marker AS6_EPIC014_CRM_DEALS=PRODUCTION_VALIDATED.

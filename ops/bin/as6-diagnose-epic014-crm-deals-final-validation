@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -x ops/bin/as6-grep-safe
+test -f docs/epic014/AS6_EPIC014_CRM_DEALS_FINAL_VALIDATION.md
+test -f runtime/as6-epic014-slice08-crm-deals-final-validation/final-validation.status.txt
+
+ops/bin/as6-diagnose-epic014-crm-next-module-selection
+ops/bin/as6-diagnose-epic014-crm-deals-domain-model
+ops/bin/as6-diagnose-epic014-crm-deals-foundation
+ops/bin/as6-diagnose-epic014-crm-deals-ui-foundation
+ops/bin/as6-diagnose-epic014-crm-deals-workspace-integration
+ops/bin/as6-diagnose-epic014-crm-deals-crm-layout-bridge
+ops/bin/as6-diagnose-epic014-crm-deals-live-layout-mount
+ops/bin/as6-diagnose-epic014-crm-deals-production-polish
+
+ops/bin/as6-grep-safe -R "AS6_EPIC014_CRM_DEALS=PRODUCTION_VALIDATED" docs ops runtime/as6-epic014-slice08-crm-deals-final-validation
+ops/bin/as6-grep-safe -R "AS6_EPIC014_SLICE08_CRM_DEALS_FINAL_VALIDATION" docs ops runtime/as6-epic014-slice08-crm-deals-final-validation
+ops/bin/as6-grep-safe -R "USE_EXISTING_CRM_LAYOUT=TRUE" docs/epic014/AS6_EPIC014_CRM_DEALS_FINAL_VALIDATION.md
+ops/bin/as6-grep-safe -R "NO_PARALLEL_LAYOUT=TRUE" docs/epic014/AS6_EPIC014_CRM_DEALS_FINAL_VALIDATION.md
+ops/bin/as6-grep-safe -R "NO_STORAGE=TRUE" docs/epic014/AS6_EPIC014_CRM_DEALS_FINAL_VALIDATION.md
+ops/bin/as6-grep-safe -R "runtimeFetch=false" docs/epic014/AS6_EPIC014_CRM_DEALS_FINAL_VALIDATION.md
+ops/bin/as6-grep-safe -R "heavyDependencies=false" docs/epic014/AS6_EPIC014_CRM_DEALS_FINAL_VALIDATION.md
+
+if test -x ops/bin/as6-control-epic-completion-marker-guard; then
+  AS6_EPIC_ID="AS6_EPIC014" AS6_FINAL_STAGE="AS6_EPIC014_SLICE08_CRM_DEALS_FINAL_VALIDATION" AS6_STATUS_FLAG="AS6_EPIC014_CRM_DEALS=PRODUCTION_VALIDATED" AS6_RESTORE_PREFIX="AS6_RESTORE_EPIC014_SLICE08_CRM_DEALS_FINAL_VALIDATION" AS6_RUNTIME_DIR="runtime/as6-epic014-slice08-crm-deals-final-validation" ops/bin/as6-control-epic-completion-marker-guard
+fi
+
+echo "AS6_EPIC014_CRM_DEALS_FINAL_VALIDATION=PASS"
+echo "AS6_EPIC014_CRM_DEALS=PRODUCTION_VALIDATED"
