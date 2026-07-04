@@ -2253,3 +2253,9 @@ ops/bin/as6-control-permission-engine-v114
 - Panel-level UI wiring: frontend/src/pages/crm/CRMAnalyticsPanel.jsx
 - Workspace surface: frontend/src/crm/analytics/CRMAnalyticsWorkspaceSurface.jsx
 - Result: PASS
+
+## AS6 EPIC017 CRM Analytics Final Validation
+- Diagnostic: docs/diagnostics/as6-epic017-crm-analytics-final-validation-diagnostics.md
+- Failure class: AS6_CRM_ANALYTICS_FINAL_VALIDATION_GAP
+- Production marker: AS6_EPIC017_CRM_ANALYTICS=PRODUCTION_VALIDATED
+- Result: PASS

@@ -4079,3 +4079,10 @@ Permission Validation
 - Workspace surface: frontend/src/crm/analytics/CRMAnalyticsWorkspaceSurface.jsx
 - Legacy preservation: frontend/src/pages/crm/CRMAnalyticsLegacyPanel.jsx
 - Result: PASS
+
+## AS6 EPIC017 CRM Analytics Final Validation
+- Coverage: docs/coverage/as6-epic017-crm-analytics-final-validation-coverage.md
+- Governance: docs/governance/as6-epic017-crm-analytics-final-validation-governance.md
+- AEC: docs/aec/as6-epic017-crm-analytics-final-validation-aec.md
+- Production marker: AS6_EPIC017_CRM_ANALYTICS=PRODUCTION_VALIDATED
+- Result: PASS
