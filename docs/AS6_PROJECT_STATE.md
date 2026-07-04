@@ -6427,3 +6427,16 @@ Status: PASS pending validation
 - Added failure classes: CRM_EPIC015_NEXT_MODULE_SELECTION_REQUIRED, CRM_ACTIVITIES_TASKS_SELECTION_GAP, CRM_ACTIVITIES_TASKS_REUSE_FOUNDATION_GAP.
 - Project readiness: 99%.
 - Next stage: AS6_EPIC015_SLICE01_CRM_ACTIVITIES_TASKS_DOMAIN_MODEL.
+
+## AS6_EPIC015_SLICE01_CRM_ACTIVITIES_TASKS_DOMAIN_MODEL
+- Added CRM Activities / Tasks Domain Model.
+- Added Activity Identity, Task Identity, types, statuses, priorities, lifecycle, deadline/reminder model and declarative entity links.
+- Added declarative links to Companies, Contacts and Deals.
+- Added domain contract, descriptor, runtime tracer, diagnostics and index exports.
+- Added diagnostics: ops/bin/as6-diagnose-epic015-crm-activities-tasks-domain-model.
+- Added controls: ops/bin/as6-control-epic015-crm-activities-tasks-domain-model.
+- Added AEC rules: ops/aec/as6-epic015-crm-activities-tasks-domain-model-aec.md.
+- Added governance: ops/governance/as6-epic015-crm-activities-tasks-domain-model-governance.md.
+- Added failure classes: CRM_ACTIVITIES_TASKS_DOMAIN_MODEL_GAP, CRM_ACTIVITY_IDENTITY_DRIFT, CRM_TASK_IDENTITY_DRIFT, CRM_ACTIVITY_LINK_DRIFT, CRM_ACTIVITY_DEADLINE_REMINDER_DRIFT.
+- Project readiness: 99%.
+- Next stage: AS6_EPIC015_SLICE02_CRM_ACTIVITIES_TASKS_FOUNDATION.

@@ -2117,3 +2117,12 @@ ops/bin/as6-control-permission-engine-v114
 - Next stage: AS6_EPIC015_SLICE01_CRM_ACTIVITIES_TASKS_DOMAIN_MODEL
 - Added checks: previous EPIC production evidence, selected module, reuse Contacts/Companies/Deals, existing CRM Workspace/Layout, as6-grep-safe, completion marker guard.
 - Failure classes: CRM_EPIC015_NEXT_MODULE_SELECTION_REQUIRED, CRM_ACTIVITIES_TASKS_SELECTION_GAP, CRM_ACTIVITIES_TASKS_REUSE_FOUNDATION_GAP.
+
+## AS6_EPIC015_SLICE01_CRM_ACTIVITIES_TASKS_DOMAIN_MODEL
+- Diagnostic: ops/bin/as6-diagnose-epic015-crm-activities-tasks-domain-model
+- Control: ops/bin/as6-control-epic015-crm-activities-tasks-domain-model
+- Runtime tracer: frontend/src/crm/activities/domain/crmActivityRuntimeTracer.js
+- AEC rules: ops/aec/as6-epic015-crm-activities-tasks-domain-model-aec.md
+- Governance: ops/governance/as6-epic015-crm-activities-tasks-domain-model-governance.md
+- Added checks: activity identity, task identity, types, statuses, priorities, lifecycle, deadline/reminder, company/contact/deal links, no storage, no API, no business workflow.
+- Failure classes: CRM_ACTIVITIES_TASKS_DOMAIN_MODEL_GAP, CRM_ACTIVITY_IDENTITY_DRIFT, CRM_TASK_IDENTITY_DRIFT, CRM_ACTIVITY_LINK_DRIFT, CRM_ACTIVITY_DEADLINE_REMINDER_DRIFT.

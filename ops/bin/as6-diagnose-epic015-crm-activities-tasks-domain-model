@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -x ops/bin/as6-grep-safe
+
+for f in \
+  crmActivityIdentity \
+  crmTaskIdentity \
+  crmActivityTypes \
+  crmActivityStatuses \
+  crmActivityPriorities \
+  crmActivityLifecycle \
+  crmActivityDeadlineReminder \
+  crmActivityCompanyLink \
+  crmActivityContactLink \
+  crmActivityDealLink \
+  crmActivityContract \
+  crmActivityRuntimeTracer \
+  crmActivityDiagnostics \
+  crmActivityDescriptor
+do
+  test -f "frontend/src/crm/activities/domain/${f}.js"
+done
+
+test -f frontend/src/crm/activities/domain/index.js
+test -f frontend/src/crm/activities/index.js
+
+ops/bin/as6-grep-safe -R "CRM_ACTIVITIES_TASKS" frontend/src/crm/activities/domain
+ops/bin/as6-grep-safe -R "crm.activity" frontend/src/crm/activities/domain
+ops/bin/as6-grep-safe -R "crm.task" frontend/src/crm/activities/domain
+ops/bin/as6-grep-safe -R "task" frontend/src/crm/activities/domain
+ops/bin/as6-grep-safe -R "call" frontend/src/crm/activities/domain
+ops/bin/as6-grep-safe -R "meeting" frontend/src/crm/activities/domain
+ops/bin/as6-grep-safe -R "email" frontend/src/crm/activities/domain
+ops/bin/as6-grep-safe -R "reminder" frontend/src/crm/activities/domain
+ops/bin/as6-grep-safe -R "planned" frontend/src/crm/activities/domain
+ops/bin/as6-grep-safe -R "completed" frontend/src/crm/activities/domain
+ops/bin/as6-grep-safe -R "urgent" frontend/src/crm/activities/domain
+ops/bin/as6-grep-safe -R "crm.activity.company" frontend/src/crm/activities/domain
+ops/bin/as6-grep-safe -R "crm.activity.contact" frontend/src/crm/activities/domain
+ops/bin/as6-grep-safe -R "crm.activity.deal" frontend/src/crm/activities/domain
+ops/bin/as6-grep-safe -R "declarative-only" frontend/src/crm/activities/domain
+ops/bin/as6-grep-safe -R "CRM_ACTIVITY_DOMAIN_TRACE" frontend/src/crm/activities/domain
+ops/bin/as6-grep-safe -R "NO_STORAGE: true" frontend/src/crm/activities/domain
+ops/bin/as6-grep-safe -R "NO_API_CALLS: true" frontend/src/crm/activities/domain
+ops/bin/as6-grep-safe -R "NO_BUSINESS_WORKFLOW: true" frontend/src/crm/activities/domain
+ops/bin/as6-grep-safe -R "PLATFORM_MUTATION: false" frontend/src/crm/activities/domain
+
+echo "AS6_EPIC015_CRM_ACTIVITIES_TASKS_DOMAIN_MODEL=PASS"

@@ -3961,3 +3961,9 @@ Permission Validation
 - Covers CRM_ACTIVITIES_TASKS as selected module.
 - Covers reuse of Contacts, Companies and Deals foundations.
 - Covers existing CRM Workspace/Layout reuse and AS6 diagnostics infrastructure.
+
+## AS6_EPIC015_SLICE01_CRM_ACTIVITIES_TASKS_DOMAIN_MODEL
+- Covers CRM Activities / Tasks Domain Model.
+- Covers activity identity, task identity, types, statuses, priorities, lifecycle and deadline/reminder model.
+- Covers declarative links to Companies, Contacts and Deals.
+- Covers no-storage, no-api, no-business-workflow and platform-mutation=false invariants.

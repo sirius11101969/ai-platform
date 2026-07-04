@@ -1,0 +1,5 @@
+ROOT_CAUSE=CRM_ACTIVITIES_TASKS_DOMAIN_MODEL_REQUIRED_AFTER_MODULE_SELECTION
+FAILURE_CLASS=CRM_ACTIVITIES_TASKS_DOMAIN_MODEL_GAP
+ARCHITECTURE_CONTEXT=EPIC015 selected CRM_ACTIVITIES_TASKS but no Activities / Tasks domain model existed yet
+VALIDATION_GAP=No activity identity, task identity, types, statuses, priority, lifecycle, deadline/reminder model or declarative entity links existed before Slice 01
+PREVENTION=Add domain model, contract, descriptor, runtime tracer, diagnostics, controls, AEC, registry, coverage, governance and state evidence
