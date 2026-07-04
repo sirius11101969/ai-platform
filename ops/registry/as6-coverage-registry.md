@@ -4050,3 +4050,10 @@ Permission Validation
 - Workspace surface: frontend/src/crm/followups/FollowupsWorkspaceSurface.jsx
 - Legacy preservation: frontend/src/pages/FollowupsLegacyPage.jsx
 - Result: PASS
+
+## AS6 EPIC016 CRM Followups Final Validation
+- Coverage: docs/coverage/as6-epic016-crm-followups-final-validation-coverage.md
+- Governance: docs/governance/as6-epic016-crm-followups-final-validation-governance.md
+- AEC: docs/aec/as6-epic016-crm-followups-final-validation-aec.md
+- Production marker: AS6_EPIC016_CRM_FOLLOWUPS=PRODUCTION_VALIDATED
+- Result: PASS

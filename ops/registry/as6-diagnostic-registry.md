@@ -2228,3 +2228,9 @@ ops/bin/as6-control-permission-engine-v114
 - Route-level UI wiring: frontend/src/pages/FollowupsPage.jsx
 - Workspace surface: frontend/src/crm/followups/FollowupsWorkspaceSurface.jsx
 - Result: PASS
+
+## AS6 EPIC016 CRM Followups Final Validation
+- Diagnostic: docs/diagnostics/as6-epic016-crm-followups-final-validation-diagnostics.md
+- Failure class: AS6_CRM_FOLLOWUPS_FINAL_VALIDATION_GAP
+- Production marker: AS6_EPIC016_CRM_FOLLOWUPS=PRODUCTION_VALIDATED
+- Result: PASS

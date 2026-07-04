@@ -1,0 +1,16 @@
+frontend/src/crm/followups/followupCapabilities.js
+frontend/src/crm/followups/followupContract.js
+frontend/src/crm/followups/followupDescriptor.js
+frontend/src/crm/followups/followupDiagnostics.js
+frontend/src/crm/followups/followupHealthSnapshot.js
+frontend/src/crm/followups/followupManifest.js
+frontend/src/crm/followups/followupNavigation.js
+frontend/src/crm/followups/followupPanels.js
+frontend/src/crm/followups/followupRegistry.js
+frontend/src/crm/followups/followupResolver.js
+frontend/src/crm/followups/followupRuntime.js
+frontend/src/crm/followups/FollowupsWorkspaceSurface.jsx
+frontend/src/crm/followups/followupTracer.js
+frontend/src/crm/followups/followupWorkspaceIntegration.js
+frontend/src/crm/followups/followupWorkspaceRuntime.js
+frontend/src/crm/followups/index.js

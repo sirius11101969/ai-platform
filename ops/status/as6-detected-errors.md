@@ -2566,3 +2566,8 @@ Governed and registered.
 - Root cause: CRM Followups was integrated with AS6 Workspace as a reusable adapter, but the existing route-level FollowupsPage still rendered as a page-level surface and was not yet wired through the Workspace UI surface.
 - Repair root cause: The first UI wiring cycle attempted node --check on a JSX file. Node.js in this environment does not accept .jsx as a direct syntax-check target, so JSX validation must be performed through the frontend build pipeline.
 - Status: repaired by wrapping Followups route content with the reusable Workspace surface and validating JSX through frontend build.
+
+## AS6 EPIC016 CRM Followups Final Validation
+- Diagnostic deviation class registered: AS6_CRM_FOLLOWUPS_FINAL_VALIDATION_GAP.
+- Root cause: CRM Followups required final validation after selection, foundation, workspace integration and UI wiring to confirm production readiness without adding new functionality.
+- Status: controlled; Followups production validation completed.
