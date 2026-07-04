@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -x ops/bin/as6-grep-safe
+
+for f in \
+  crmActivitiesLayoutModel \
+  crmActivitiesCrmLayoutBridge \
+  crmActivitiesLayoutStateResolver \
+  crmActivitiesLayoutRuntimeTracer \
+  crmActivitiesLayoutDiagnostics \
+  crmActivitiesLayoutHealthSnapshot \
+  crmActivitiesLayoutDescriptor
+do
+  test -f "frontend/src/crm/activities/layout/${f}.js"
+done
+
+test -f frontend/src/crm/activities/layout/index.js
+
+ops/bin/as6-grep-safe -R "crm.activities.tasks.crm-layout.bridge" frontend/src/crm/activities/layout
+ops/bin/as6-grep-safe -R "crm.activities.tasks.layout.model" frontend/src/crm/activities/layout
+ops/bin/as6-grep-safe -R "crm.activities.tasks.layout.state" frontend/src/crm/activities/layout
+ops/bin/as6-grep-safe -R "CRM_ACTIVITIES_TASKS_LAYOUT_TRACE" frontend/src/crm/activities/layout
+ops/bin/as6-grep-safe -R "diagnoseCrmActivitiesLayoutBridge" frontend/src/crm/activities/layout
+ops/bin/as6-grep-safe -R "getCrmActivitiesLayoutHealthSnapshot" frontend/src/crm/activities/layout
+ops/bin/as6-grep-safe -R "existing-crm-layout" frontend/src/crm/activities/layout
+ops/bin/as6-grep-safe -R "existing-crm-header" frontend/src/crm/activities/layout
+ops/bin/as6-grep-safe -R "existing-crm-sidebar" frontend/src/crm/activities/layout
+ops/bin/as6-grep-safe -R "existing-crm-workspace" frontend/src/crm/activities/layout
+ops/bin/as6-grep-safe -R "Activities / Tasks" frontend/src/crm/activities/layout
+ops/bin/as6-grep-safe -R "activeSection" frontend/src/crm/activities/layout
+ops/bin/as6-grep-safe -R "useExistingCrmLayout: true" frontend/src/crm/activities/layout
+ops/bin/as6-grep-safe -R "useExistingCrmWorkspace: true" frontend/src/crm/activities/layout
+ops/bin/as6-grep-safe -R "useExistingHeader: true" frontend/src/crm/activities/layout
+ops/bin/as6-grep-safe -R "useExistingSidebar: true" frontend/src/crm/activities/layout
+ops/bin/as6-grep-safe -R "noParallelLayout: true" frontend/src/crm/activities/layout
+ops/bin/as6-grep-safe -R "noParallelShell: true" frontend/src/crm/activities/layout
+ops/bin/as6-grep-safe -R "ownRouter: false" frontend/src/crm/activities/layout
+ops/bin/as6-grep-safe -R "ownStore: false" frontend/src/crm/activities/layout
+ops/bin/as6-grep-safe -R "storageEnabled: false" frontend/src/crm/activities/layout
+ops/bin/as6-grep-safe -R "apiEnabled: false" frontend/src/crm/activities/layout
+ops/bin/as6-grep-safe -R "workflowEnabled: false" frontend/src/crm/activities/layout
+ops/bin/as6-grep-safe -R "platformMutation: false" frontend/src/crm/activities/layout
+
+echo "AS6_EPIC015_CRM_ACTIVITIES_TASKS_CRM_LAYOUT_BRIDGE=PASS"

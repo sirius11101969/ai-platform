@@ -3984,3 +3984,9 @@ Permission Validation
 - Covers workspace panel, navigation, state resolver, descriptor, diagnostics, health snapshot and runtime tracer.
 - Covers existing CRM Workspace/Layout reuse.
 - Covers no-storage, no-api, no-business-workflow, no-own-router and no-own-store invariants.
+
+## AS6_EPIC015_SLICE05_CRM_ACTIVITIES_TASKS_CRM_LAYOUT_BRIDGE
+- Covers CRM Activities / Tasks CRM Layout Bridge.
+- Covers layout model, layout state resolver, breadcrumbs, active section, layout descriptor, diagnostics, health snapshot and runtime tracer.
+- Covers existing CRM Layout, Workspace, Header and Sidebar reuse.
+- Covers no-storage, no-api, no-business-workflow, no-own-router and no-own-store invariants.

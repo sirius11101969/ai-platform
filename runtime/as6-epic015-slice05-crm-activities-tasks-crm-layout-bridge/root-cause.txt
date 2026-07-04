@@ -1,0 +1,5 @@
+ROOT_CAUSE=CRM_ACTIVITIES_TASKS_CRM_LAYOUT_BRIDGE_REQUIRED_AFTER_WORKSPACE_INTEGRATION
+FAILURE_CLASS=CRM_ACTIVITIES_TASKS_CRM_LAYOUT_BRIDGE_GAP
+ARCHITECTURE_DRIFT=Activities / Tasks Workspace Integration exists but is not bridged to existing CRM Layout
+VALIDATION_GAP=No CRM Layout Bridge, layout model, layout state resolver, breadcrumbs, active section, layout diagnostics, health snapshot or layout tracer existed before Slice 05
+PREVENTION=Add Activities / Tasks CRM Layout Bridge with diagnostics, controls, AEC, registry, coverage, governance and state evidence

@@ -6474,3 +6474,14 @@ Status: PASS pending validation
 - Added failure classes: CRM_ACTIVITIES_TASKS_WORKSPACE_INTEGRATION_GAP, CRM_ACTIVITIES_WORKSPACE_PANEL_DRIFT, CRM_ACTIVITIES_WORKSPACE_NAVIGATION_DRIFT, CRM_ACTIVITIES_WORKSPACE_HEALTH_DRIFT, CRM_ACTIVITIES_WORKSPACE_TRACER_DRIFT.
 - Project readiness: 99%.
 - Next stage: AS6_EPIC015_SLICE05_CRM_ACTIVITIES_TASKS_CRM_LAYOUT_BRIDGE.
+
+## AS6_EPIC015_SLICE05_CRM_ACTIVITIES_TASKS_CRM_LAYOUT_BRIDGE
+- Added CRM Activities / Tasks CRM Layout Bridge.
+- Added layout model, layout state resolver, breadcrumbs, active section, layout descriptor, layout diagnostics, health snapshot and runtime tracer.
+- Added diagnostics: ops/bin/as6-diagnose-epic015-crm-activities-tasks-crm-layout-bridge.
+- Added controls: ops/bin/as6-control-epic015-crm-activities-tasks-crm-layout-bridge.
+- Added AEC rules: ops/aec/as6-epic015-crm-activities-tasks-crm-layout-bridge-aec.md.
+- Added governance: ops/governance/as6-epic015-crm-activities-tasks-crm-layout-bridge-governance.md.
+- Added failure classes: CRM_ACTIVITIES_TASKS_CRM_LAYOUT_BRIDGE_GAP, CRM_ACTIVITIES_LAYOUT_MODEL_DRIFT, CRM_ACTIVITIES_LAYOUT_STATE_DRIFT, CRM_ACTIVITIES_BREADCRUMB_DRIFT, CRM_ACTIVITIES_LAYOUT_HEALTH_DRIFT.
+- Project readiness: 99%.
+- Next stage: AS6_EPIC015_SLICE06_CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT.

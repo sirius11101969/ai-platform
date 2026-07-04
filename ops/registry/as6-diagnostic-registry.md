@@ -2153,3 +2153,12 @@ ops/bin/as6-control-permission-engine-v114
 - Governance: ops/governance/as6-epic015-crm-activities-tasks-workspace-integration-governance.md
 - Added checks: workspace integration, panel, navigation, state resolver, diagnostics, health snapshot, workspace tracer, existing CRM Workspace/Layout reuse.
 - Failure classes: CRM_ACTIVITIES_TASKS_WORKSPACE_INTEGRATION_GAP, CRM_ACTIVITIES_WORKSPACE_PANEL_DRIFT, CRM_ACTIVITIES_WORKSPACE_NAVIGATION_DRIFT, CRM_ACTIVITIES_WORKSPACE_HEALTH_DRIFT, CRM_ACTIVITIES_WORKSPACE_TRACER_DRIFT.
+
+## AS6_EPIC015_SLICE05_CRM_ACTIVITIES_TASKS_CRM_LAYOUT_BRIDGE
+- Diagnostic: ops/bin/as6-diagnose-epic015-crm-activities-tasks-crm-layout-bridge
+- Control: ops/bin/as6-control-epic015-crm-activities-tasks-crm-layout-bridge
+- Runtime tracer: frontend/src/crm/activities/layout/crmActivitiesLayoutRuntimeTracer.js
+- AEC rules: ops/aec/as6-epic015-crm-activities-tasks-crm-layout-bridge-aec.md
+- Governance: ops/governance/as6-epic015-crm-activities-tasks-crm-layout-bridge-governance.md
+- Added checks: CRM Layout Bridge, layout model, layout state resolver, breadcrumbs, active section, diagnostics, health snapshot, layout tracer, existing CRM Layout/Workspace/Header/Sidebar reuse.
+- Failure classes: CRM_ACTIVITIES_TASKS_CRM_LAYOUT_BRIDGE_GAP, CRM_ACTIVITIES_LAYOUT_MODEL_DRIFT, CRM_ACTIVITIES_LAYOUT_STATE_DRIFT, CRM_ACTIVITIES_BREADCRUMB_DRIFT, CRM_ACTIVITIES_LAYOUT_HEALTH_DRIFT.
