@@ -1,0 +1,5 @@
+ROOT_CAUSE=CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT_REQUIRED_AFTER_CRM_LAYOUT_BRIDGE
+FAILURE_CLASS=CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT_GAP
+ARCHITECTURE_DRIFT=Activities / Tasks CRM Layout Bridge exists but is not mounted into live CRMPage production layout
+VALIDATION_GAP=No live mount, live contract, live diagnostics, health snapshot, tracer or CRMPage integration existed before Slice 06
+PREVENTION=Add Activities / Tasks Live Layout Mount through existing CRMPage layout and register diagnostics, controls, AEC, governance, registry, coverage and state evidence

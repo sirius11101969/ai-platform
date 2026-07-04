@@ -6485,3 +6485,15 @@ Status: PASS pending validation
 - Added failure classes: CRM_ACTIVITIES_TASKS_CRM_LAYOUT_BRIDGE_GAP, CRM_ACTIVITIES_LAYOUT_MODEL_DRIFT, CRM_ACTIVITIES_LAYOUT_STATE_DRIFT, CRM_ACTIVITIES_BREADCRUMB_DRIFT, CRM_ACTIVITIES_LAYOUT_HEALTH_DRIFT.
 - Project readiness: 99%.
 - Next stage: AS6_EPIC015_SLICE06_CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT.
+
+## AS6_EPIC015_SLICE06_CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT
+- Added CRM Activities / Tasks Live Layout Mount.
+- Added CrmActivitiesLiveLayoutMount, live contract, live diagnostics, health snapshot, runtime tracer, CSS and live index exports.
+- Added CRMPage live mount registration.
+- Added diagnostics: ops/bin/as6-diagnose-epic015-crm-activities-tasks-live-layout-mount.
+- Added controls: ops/bin/as6-control-epic015-crm-activities-tasks-live-layout-mount.
+- Added AEC rules: ops/aec/as6-epic015-crm-activities-tasks-live-layout-mount-aec.md.
+- Added governance: ops/governance/as6-epic015-crm-activities-tasks-live-layout-mount-governance.md.
+- Added failure classes: CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT_GAP, CRM_ACTIVITIES_LIVE_MOUNT_IMPORT_DRIFT, CRM_ACTIVITIES_LIVE_MOUNT_HEALTH_DRIFT, CRM_ACTIVITIES_LIVE_MOUNT_TRACER_DRIFT, CRM_ACTIVITIES_CRM_PAGE_MOUNT_DRIFT.
+- Project readiness: 99%.
+- Next stage: AS6_EPIC015_SLICE07_CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH.

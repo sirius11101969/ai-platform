@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+test -x ops/bin/as6-grep-safe
+
+for f in \
+  CrmActivitiesLiveLayoutMount \
+  crmActivitiesLiveLayoutMountContract \
+  crmActivitiesLiveLayoutMountTracer \
+  crmActivitiesLiveLayoutMountDiagnostics \
+  crmActivitiesLiveLayoutMountHealthSnapshot
+do
+  if [ "$f" = "CrmActivitiesLiveLayoutMount" ]; then
+    test -f "frontend/src/crm/activities/live/${f}.jsx"
+  else
+    test -f "frontend/src/crm/activities/live/${f}.js"
+  fi
+done
+
+test -f frontend/src/crm/activities/live/crmActivitiesLiveLayoutMount.css
+test -f frontend/src/crm/activities/live/index.js
+
+ops/bin/as6-grep-safe -R "CrmActivitiesLiveLayoutMount" frontend/src/crm/activities/live frontend/src/pages/CRMPage.jsx
+ops/bin/as6-grep-safe -R "crm.activities.tasks.live-layout.mount" frontend/src/crm/activities/live
+ops/bin/as6-grep-safe -R "CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT_TRACE" frontend/src/crm/activities/live
+ops/bin/as6-grep-safe -R "diagnoseCrmActivitiesLiveLayoutMount" frontend/src/crm/activities/live
+ops/bin/as6-grep-safe -R "getCrmActivitiesLiveLayoutMountHealthSnapshot" frontend/src/crm/activities/live
+ops/bin/as6-grep-safe -R "data-as6-crm-activities-live-layout-mount=\"true\"" frontend/src/crm/activities/live
+ops/bin/as6-grep-safe -R "data-as6-crm-activities-mounted-in-production-layout=\"true\"" frontend/src/crm/activities/live
+ops/bin/as6-grep-safe -R "mountedInProductionLayout: true" frontend/src/crm/activities/live
+ops/bin/as6-grep-safe -R "useExistingCrmLayout: true" frontend/src/crm/activities/live
+ops/bin/as6-grep-safe -R "useExistingCrmWorkspace: true" frontend/src/crm/activities/live
+ops/bin/as6-grep-safe -R "useExistingHeader: true" frontend/src/crm/activities/live
+ops/bin/as6-grep-safe -R "useExistingSidebar: true" frontend/src/crm/activities/live
+ops/bin/as6-grep-safe -R "ownRouter: false" frontend/src/crm/activities/live
+ops/bin/as6-grep-safe -R "ownStore: false" frontend/src/crm/activities/live
+ops/bin/as6-grep-safe -R "duplicateRoute: false" frontend/src/crm/activities/live
+ops/bin/as6-grep-safe -R "duplicatePanel: false" frontend/src/crm/activities/live
+ops/bin/as6-grep-safe -R "noParallelLayout: true" frontend/src/crm/activities/live
+ops/bin/as6-grep-safe -R "noParallelShell: true" frontend/src/crm/activities/live
+ops/bin/as6-grep-safe -R "storageEnabled: false" frontend/src/crm/activities/live
+ops/bin/as6-grep-safe -R "apiEnabled: false" frontend/src/crm/activities/live
+ops/bin/as6-grep-safe -R "workflowEnabled: false" frontend/src/crm/activities/live
+ops/bin/as6-grep-safe -R "platformMutation: false" frontend/src/crm/activities/live
+
+echo "AS6_EPIC015_CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT=PASS"

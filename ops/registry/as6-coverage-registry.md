@@ -3990,3 +3990,9 @@ Permission Validation
 - Covers layout model, layout state resolver, breadcrumbs, active section, layout descriptor, diagnostics, health snapshot and runtime tracer.
 - Covers existing CRM Layout, Workspace, Header and Sidebar reuse.
 - Covers no-storage, no-api, no-business-workflow, no-own-router and no-own-store invariants.
+
+## AS6_EPIC015_SLICE06_CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT
+- Covers CRM Activities / Tasks Live Layout Mount.
+- Covers CRMPage live integration, live contract, diagnostics, health snapshot, runtime tracer and CSS.
+- Covers existing CRM Layout, Workspace, Header, Sidebar and router reuse.
+- Covers no-storage, no-api, no-business-workflow, no-own-router and no-own-store invariants.

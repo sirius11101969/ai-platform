@@ -1,0 +1,46 @@
+frontend/src/crm/activities/live/index.js:export { CrmActivitiesLiveLayoutMount } from "./CrmActivitiesLiveLayoutMount";
+frontend/src/crm/activities/live/index.js:export { traceCrmActivitiesLiveLayoutMount } from "./crmActivitiesLiveLayoutMountTracer";
+frontend/src/crm/activities/live/index.js:export { diagnoseCrmActivitiesLiveLayoutMount } from "./crmActivitiesLiveLayoutMountDiagnostics";
+frontend/src/crm/activities/live/index.js:export { getCrmActivitiesLiveLayoutMountHealthSnapshot } from "./crmActivitiesLiveLayoutMountHealthSnapshot";
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountTracer.js:export function traceCrmActivitiesLiveLayoutMount(event = "CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT_TRACE") {
+frontend/src/crm/activities/live/CrmActivitiesLiveLayoutMount.jsx:export function CrmActivitiesLiveLayoutMount() {
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountDiagnostics.js:import { traceCrmActivitiesLiveLayoutMount } from "./crmActivitiesLiveLayoutMountTracer";
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountDiagnostics.js:export function diagnoseCrmActivitiesLiveLayoutMount() {
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountDiagnostics.js:    ["LIVE_TRACER_PRESENT", traceCrmActivitiesLiveLayoutMount().event === "CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT_TRACE"],
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountDiagnostics.js:    trace: traceCrmActivitiesLiveLayoutMount(),
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountHealthSnapshot.js:import { diagnoseCrmActivitiesLiveLayoutMount } from "./crmActivitiesLiveLayoutMountDiagnostics";
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountHealthSnapshot.js:import { traceCrmActivitiesLiveLayoutMount } from "./crmActivitiesLiveLayoutMountTracer";
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountHealthSnapshot.js:export function getCrmActivitiesLiveLayoutMountHealthSnapshot() {
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountHealthSnapshot.js:    diagnostic: diagnoseCrmActivitiesLiveLayoutMount(),
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountHealthSnapshot.js:    trace: traceCrmActivitiesLiveLayoutMount(),
+frontend/src/pages/CRMPage.jsx:import { CrmActivitiesLiveLayoutMount } from "../crm/activities";
+frontend/src/pages/CRMPage.jsx:        <CrmActivitiesLiveLayoutMount />
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountTracer.js:    mount: "crm.activities.tasks.live-layout.mount",
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  id: "crm.activities.tasks.live-layout.mount",
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountDiagnostics.js:    ["LIVE_LAYOUT_MOUNT_CONTRACT", crmActivitiesLiveLayoutMountContract.id === "crm.activities.tasks.live-layout.mount"],
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountTracer.js:export function traceCrmActivitiesLiveLayoutMount(event = "CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT_TRACE") {
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountDiagnostics.js:    ["LIVE_TRACER_PRESENT", traceCrmActivitiesLiveLayoutMount().event === "CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT_TRACE"],
+frontend/src/crm/activities/live/index.js:export { diagnoseCrmActivitiesLiveLayoutMount } from "./crmActivitiesLiveLayoutMountDiagnostics";
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountDiagnostics.js:export function diagnoseCrmActivitiesLiveLayoutMount() {
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountHealthSnapshot.js:import { diagnoseCrmActivitiesLiveLayoutMount } from "./crmActivitiesLiveLayoutMountDiagnostics";
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountHealthSnapshot.js:    diagnostic: diagnoseCrmActivitiesLiveLayoutMount(),
+frontend/src/crm/activities/live/index.js:export { getCrmActivitiesLiveLayoutMountHealthSnapshot } from "./crmActivitiesLiveLayoutMountHealthSnapshot";
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountHealthSnapshot.js:export function getCrmActivitiesLiveLayoutMountHealthSnapshot() {
+frontend/src/crm/activities/live/CrmActivitiesLiveLayoutMount.jsx:      data-as6-crm-activities-live-layout-mount="true"
+frontend/src/crm/activities/live/CrmActivitiesLiveLayoutMount.jsx:      data-as6-crm-activities-mounted-in-production-layout="true"
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  mountedInProductionLayout: true,
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  useExistingCrmLayout: true,
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  useExistingCrmWorkspace: true,
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  useExistingHeader: true,
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  useExistingSidebar: true,
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  ownRouter: false,
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  ownStore: false,
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  duplicateRoute: false,
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  duplicatePanel: false,
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  noParallelLayout: true,
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  noParallelShell: true,
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  storageEnabled: false,
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  apiEnabled: false,
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  workflowEnabled: false,
+frontend/src/crm/activities/live/crmActivitiesLiveLayoutMountContract.js:  platformMutation: false,
+AS6_EPIC015_CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT=PASS
