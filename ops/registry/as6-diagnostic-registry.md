@@ -2246,3 +2246,10 @@ ops/bin/as6-control-permission-engine-v114
 - Failure class: AS6_CRM_ANALYTICS_FOUNDATION_GAP
 - Runtime diagnostic: AS6_CRM_ANALYTICS_FOUNDATION
 - Result: PASS
+
+## AS6 EPIC017 CRM Analytics UI Wiring
+- Diagnostic: docs/diagnostics/as6-epic017-crm-analytics-ui-wiring-diagnostics.md
+- Failure class: AS6_CRM_ANALYTICS_UI_WIRING_GAP
+- Panel-level UI wiring: frontend/src/pages/crm/CRMAnalyticsPanel.jsx
+- Workspace surface: frontend/src/crm/analytics/CRMAnalyticsWorkspaceSurface.jsx
+- Result: PASS

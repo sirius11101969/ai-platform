@@ -1,0 +1,14 @@
+ M docs/AS6_PROJECT_STATE.md
+ M docs/AS6_PROJECT_STATUS.md
+ M frontend/src/crm/analytics/index.js
+ M frontend/src/pages/crm/CRMAnalyticsPanel.jsx
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? docs/aec/as6-epic017-crm-analytics-ui-wiring-aec.md
+?? docs/coverage/as6-epic017-crm-analytics-ui-wiring-coverage.md
+?? docs/diagnostics/as6-epic017-crm-analytics-ui-wiring-diagnostics.md
+?? docs/epic017/AS6_EPIC017_CRM_ANALYTICS_UI_WIRING.md
+?? docs/governance/as6-epic017-crm-analytics-ui-wiring-governance.md
+?? frontend/src/crm/analytics/CRMAnalyticsWorkspaceSurface.jsx
+?? frontend/src/pages/crm/CRMAnalyticsLegacyPanel.jsx

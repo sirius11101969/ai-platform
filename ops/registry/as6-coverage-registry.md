@@ -4071,3 +4071,11 @@ Permission Validation
 - AEC: docs/aec/as6-epic017-crm-analytics-foundation-aec.md
 - Runtime tracer: frontend/src/crm/analytics/analyticsTracer.js
 - Result: PASS
+
+## AS6 EPIC017 CRM Analytics UI Wiring
+- Coverage: docs/coverage/as6-epic017-crm-analytics-ui-wiring-coverage.md
+- Governance: docs/governance/as6-epic017-crm-analytics-ui-wiring-governance.md
+- AEC: docs/aec/as6-epic017-crm-analytics-ui-wiring-aec.md
+- Workspace surface: frontend/src/crm/analytics/CRMAnalyticsWorkspaceSurface.jsx
+- Legacy preservation: frontend/src/pages/crm/CRMAnalyticsLegacyPanel.jsx
+- Result: PASS

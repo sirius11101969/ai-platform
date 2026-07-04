@@ -6609,3 +6609,14 @@ Status: PASS pending validation
 - Added diagnostic class: AS6_CRM_ANALYTICS_FOUNDATION_GAP.
 - Added runtime tracer: crm.analytics traceCrmAnalyticsRuntime.
 - Next stage: AS6_EPIC017_CRM_ANALYTICS_UI_WIRING.
+
+## AS6 EPIC017 CRM Analytics UI Wiring
+- Stage: AS6_EPIC017_CRM_ANALYTICS_UI_WIRING.
+- Project readiness: 99%.
+- Base commit verified: ddf5a784117719735d310b6089b04dcb071d4e3d.
+- Restore tag verified: AS6_RESTORE_EPIC017_CRM_ANALYTICS_FOUNDATION_20260704T182748Z.
+- Added CRM Analytics Workspace UI surface.
+- Preserved existing CRMAnalyticsPanel as CRMAnalyticsLegacyPanel.
+- Rewired CRMAnalyticsPanel to render legacy content inside Workspace surface.
+- Added diagnostic class: AS6_CRM_ANALYTICS_UI_WIRING_GAP.
+- Next stage: AS6_EPIC017_CRM_ANALYTICS_FINAL_VALIDATION.

@@ -2581,3 +2581,8 @@ Governed and registered.
 - Diagnostic deviation class registered: AS6_CRM_ANALYTICS_FOUNDATION_GAP.
 - Root cause: CRM Analytics was selected because CRMAnalyticsPanel.jsx exists as a UI panel surface while frontend/src/crm/analytics did not exist as a registered CRM domain foundation.
 - Status: repaired by adding CRM Analytics domain foundation.
+
+## AS6 EPIC017 CRM Analytics UI Wiring
+- Diagnostic deviation class registered: AS6_CRM_ANALYTICS_UI_WIRING_GAP.
+- Root cause: CRM Analytics domain foundation existed after AS6_EPIC017_CRM_ANALYTICS_FOUNDATION, but the existing CRMAnalyticsPanel still rendered as a panel-level surface and was not yet wired through the reusable Analytics Workspace UI surface.
+- Status: repaired by wrapping CRM Analytics panel content with the reusable Workspace surface.
