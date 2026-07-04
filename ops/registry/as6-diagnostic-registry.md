@@ -2107,3 +2107,13 @@ ops/bin/as6-control-permission-engine-v114
 - Final marker: AS6_EPIC014_CRM_DEALS=PRODUCTION_VALIDATED
 - Added checks: full EPIC014 diagnostic chain, production validation marker, completion marker guard, registry coverage, final invariants.
 - Failure classes: CRM_DEALS_FINAL_VALIDATION_GAP, CRM_DEALS_PRODUCTION_VALIDATION_MARKER_GAP, CRM_DEALS_FINAL_REGISTRY_DRIFT, CRM_DEALS_FINAL_COMPLETION_MARKER_GAP.
+
+## AS6_EPIC015_CRM_NEXT_MODULE_SELECTION
+- Diagnostic: ops/bin/as6-diagnose-epic015-crm-next-module-selection
+- Control: ops/bin/as6-control-epic015-crm-next-module-selection
+- AEC rules: ops/aec/as6-epic015-crm-next-module-selection-aec.md
+- Governance: ops/governance/as6-epic015-crm-next-module-selection-governance.md
+- Selected module: CRM_ACTIVITIES_TASKS
+- Next stage: AS6_EPIC015_SLICE01_CRM_ACTIVITIES_TASKS_DOMAIN_MODEL
+- Added checks: previous EPIC production evidence, selected module, reuse Contacts/Companies/Deals, existing CRM Workspace/Layout, as6-grep-safe, completion marker guard.
+- Failure classes: CRM_EPIC015_NEXT_MODULE_SELECTION_REQUIRED, CRM_ACTIVITIES_TASKS_SELECTION_GAP, CRM_ACTIVITIES_TASKS_REUSE_FOUNDATION_GAP.

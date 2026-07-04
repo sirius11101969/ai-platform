@@ -1,0 +1,5 @@
+ROOT_CAUSE=CRM_NEXT_OPERATIONAL_LAYER_REQUIRED_AFTER_CONTACTS_COMPANIES_DEALS
+FAILURE_CLASS=CRM_EPIC015_NEXT_MODULE_SELECTION_REQUIRED
+ARCHITECTURE_CONTEXT=Contacts, Companies and Deals are production validated; next CRM layer should connect operational work to existing entities
+SELECTION=CRM_ACTIVITIES_TASKS
+PREVENTION=Register EPIC015 planning, diagnostics, AEC, governance, coverage and project state before Slice 01

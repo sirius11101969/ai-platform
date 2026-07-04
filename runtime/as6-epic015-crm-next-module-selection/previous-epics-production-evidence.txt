@@ -1,0 +1,12 @@
+docs/epic013/AS6_EPIC013_CRM_COMPANIES_FINAL_VALIDATION.md:AS6_EPIC013_CRM_COMPANIES=PRODUCTION_VALIDATED
+docs/epic014/AS6_EPIC014_CRM_DEALS_FINAL_VALIDATION.md:AS6_EPIC014_CRM_DEALS=PRODUCTION_VALIDATED
+docs/AS6_PROJECT_STATE.md:- Final marker: AS6_EPIC014_CRM_DEALS=PRODUCTION_VALIDATED.
+ops/governance/as6-epic014-crm-deals-final-validation-governance.md:- Final marker: AS6_EPIC014_CRM_DEALS=PRODUCTION_VALIDATED.
+ops/registry/as6-diagnostic-registry.md:- Final marker: AS6_EPIC014_CRM_DEALS=PRODUCTION_VALIDATED
+ops/registry/as6-coverage-registry.md:- Covers final marker AS6_EPIC014_CRM_DEALS=PRODUCTION_VALIDATED.
+ops/bin/as6-control-epic013-crm-next-module-planning:grep -R "AS6_EPIC012_CRM_CONTACTS=PRODUCTION_VALIDATED" docs/AS6_PROJECT_STATE.md runtime/as6-epic012-slice10-crm-contacts-final-validation/final-validation.status.txt
+ops/bin/as6-control-epic014-crm-next-module-selection:ops/bin/as6-grep-safe -R "AS6_EPIC013_CRM_COMPANIES=PRODUCTION_VALIDATED" docs ops runtime
+ops/bin/as6-control-epic014-crm-next-module-selection:ops/bin/as6-grep-safe -R "AS6_EPIC012_CRM_CONTACTS=PRODUCTION_VALIDATED" docs ops runtime
+ops/bin/as6-diagnose-epic014-crm-deals-final-validation:ops/bin/as6-grep-safe -R "AS6_EPIC014_CRM_DEALS=PRODUCTION_VALIDATED" docs ops runtime/as6-epic014-slice08-crm-deals-final-validation
+ops/bin/as6-diagnose-epic014-crm-deals-final-validation:  AS6_EPIC_ID="AS6_EPIC014" AS6_FINAL_STAGE="AS6_EPIC014_SLICE08_CRM_DEALS_FINAL_VALIDATION" AS6_STATUS_FLAG="AS6_EPIC014_CRM_DEALS=PRODUCTION_VALIDATED" AS6_RESTORE_PREFIX="AS6_RESTORE_EPIC014_SLICE08_CRM_DEALS_FINAL_VALIDATION" AS6_RUNTIME_DIR="runtime/as6-epic014-slice08-crm-deals-final-validation" ops/bin/as6-control-epic-completion-marker-guard
+ops/bin/as6-diagnose-epic014-crm-deals-final-validation:echo "AS6_EPIC014_CRM_DEALS=PRODUCTION_VALIDATED"

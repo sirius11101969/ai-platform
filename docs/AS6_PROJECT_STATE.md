@@ -6415,3 +6415,15 @@ Status: PASS pending validation
 - Added failure classes: CRM_DEALS_FINAL_VALIDATION_GAP, CRM_DEALS_PRODUCTION_VALIDATION_MARKER_GAP, CRM_DEALS_FINAL_REGISTRY_DRIFT, CRM_DEALS_FINAL_COMPLETION_MARKER_GAP.
 - Project readiness: 99%.
 - Next stage: AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.
+
+## AS6_EPIC015_CRM_NEXT_MODULE_SELECTION
+- Selected next CRM module: CRM_ACTIVITIES_TASKS.
+- Confirmed previous production-validated CRM chain: Contacts, Companies / Accounts, Deals / Opportunities.
+- Added EPIC015 planning document: docs/epic015/AS6_EPIC015_CRM_NEXT_MODULE_SELECTION.md.
+- Added diagnostics: ops/bin/as6-diagnose-epic015-crm-next-module-selection.
+- Added controls: ops/bin/as6-control-epic015-crm-next-module-selection.
+- Added AEC rules: ops/aec/as6-epic015-crm-next-module-selection-aec.md.
+- Added governance: ops/governance/as6-epic015-crm-next-module-selection-governance.md.
+- Added failure classes: CRM_EPIC015_NEXT_MODULE_SELECTION_REQUIRED, CRM_ACTIVITIES_TASKS_SELECTION_GAP, CRM_ACTIVITIES_TASKS_REUSE_FOUNDATION_GAP.
+- Project readiness: 99%.
+- Next stage: AS6_EPIC015_SLICE01_CRM_ACTIVITIES_TASKS_DOMAIN_MODEL.

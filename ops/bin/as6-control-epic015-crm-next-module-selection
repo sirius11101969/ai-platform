@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-epic015-crm-next-module-selection
+
+test -f ops/bin/as6-control-epic-completion-marker-guard
+test -x ops/bin/as6-grep-safe
+
+echo "AS6_CONTROL_EPIC015_CRM_NEXT_MODULE_SELECTION=PASS"

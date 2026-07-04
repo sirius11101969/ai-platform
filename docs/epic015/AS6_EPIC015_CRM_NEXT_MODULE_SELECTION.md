@@ -1,0 +1,63 @@
+# AS6 EPIC015 CRM Next Module Selection
+
+Stage: AS6_EPIC015_CRM_NEXT_MODULE_SELECTION
+
+Base: 2705bc67cb4be6996000841d74537769e57e9f82
+
+Project readiness: 99%
+
+## Confirmed previous CRM foundation
+
+- EPIC012 CRM Contacts: Production Validated.
+- EPIC013 CRM Companies / Accounts: Production Validated.
+- EPIC014 CRM Deals / Opportunities: Production Validated.
+
+## Selected module
+
+CRM_ACTIVITIES_TASKS
+
+## Why Activities / Tasks next
+
+CRM now has the core business entities:
+
+Companies
+    ├── Contacts
+    └── Deals / Opportunities
+
+The next operational layer should connect user work to these entities:
+
+- Calls
+- Meetings
+- Emails
+- Reminders
+- Tasks
+- Timeline
+- Automation hooks
+
+## EPIC015 proposed slice chain
+
+1. AS6_EPIC015_SLICE01_CRM_ACTIVITIES_TASKS_DOMAIN_MODEL
+2. AS6_EPIC015_SLICE02_CRM_ACTIVITIES_TASKS_FOUNDATION
+3. AS6_EPIC015_SLICE03_CRM_ACTIVITIES_TASKS_UI_FOUNDATION
+4. AS6_EPIC015_SLICE04_CRM_ACTIVITIES_TASKS_WORKSPACE_INTEGRATION
+5. AS6_EPIC015_SLICE05_CRM_ACTIVITIES_TASKS_CRM_LAYOUT_BRIDGE
+6. AS6_EPIC015_SLICE06_CRM_ACTIVITIES_TASKS_LIVE_LAYOUT_MOUNT
+7. AS6_EPIC015_SLICE07_CRM_ACTIVITIES_TASKS_PRODUCTION_POLISH
+8. AS6_EPIC015_SLICE08_CRM_ACTIVITIES_TASKS_FINAL_VALIDATION
+
+## Invariants
+
+- REUSE_CONTACTS_FOUNDATION=TRUE
+- REUSE_COMPANIES_FOUNDATION=TRUE
+- REUSE_DEALS_FOUNDATION=TRUE
+- USE_EXISTING_CRM_WORKSPACE=TRUE
+- USE_EXISTING_CRM_LAYOUT=TRUE
+- USE_AS6_GREP_SAFE=TRUE
+- USE_EPIC_COMPLETION_MARKER_GUARD=TRUE
+- NO_PARALLEL_SHELL=TRUE
+- NO_OWN_ROUTER=TRUE
+- NO_OWN_STORE=TRUE
+- NO_STORAGE=TRUE for initial foundation slices
+- NO_API_CALLS=TRUE for initial foundation slices
+- NO_BUSINESS_WORKFLOW=TRUE for initial foundation slices
+- PLATFORM_MUTATION=FALSE

@@ -3955,3 +3955,9 @@ Permission Validation
 - Covers full chain from Next Module Selection through Production Polish.
 - Covers AS6_EPIC_COMPLETION_MARKER_GUARD execution.
 - Covers final marker AS6_EPIC014_CRM_DEALS=PRODUCTION_VALIDATED.
+
+## AS6_EPIC015_CRM_NEXT_MODULE_SELECTION
+- Covers EPIC015 next module selection.
+- Covers CRM_ACTIVITIES_TASKS as selected module.
+- Covers reuse of Contacts, Companies and Deals foundations.
+- Covers existing CRM Workspace/Layout reuse and AS6 diagnostics infrastructure.
