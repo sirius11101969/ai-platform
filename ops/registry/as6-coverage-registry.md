@@ -4144,3 +4144,9 @@ Permission Validation
 - AEC: docs/aec/as6-epic019-crm-kanban-final-validation-aec.md
 - Production marker: AS6_EPIC019_CRM_KANBAN=PRODUCTION_VALIDATED
 - Result: PASS
+
+## AS6 EPIC020 CRM Next Module Selection
+- Coverage: docs/coverage/as6-epic020-crm-next-module-selection-coverage.md
+- Governance: docs/governance/as6-epic020-crm-next-module-selection-governance.md
+- AEC: docs/aec/as6-epic020-crm-next-module-selection-aec.md
+- Result: PASS

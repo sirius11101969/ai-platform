@@ -2631,3 +2631,8 @@ Governed and registered.
 - Diagnostic deviation class registered: AS6_CRM_KANBAN_FINAL_VALIDATION_GAP.
 - Root cause: CRM Kanban required final validation after selection, foundation and UI wiring to confirm production readiness without adding new functionality.
 - Status: controlled; Kanban production validation completed.
+
+## AS6 EPIC020 CRM Next Module Selection
+- Diagnostic deviation class registered: AS6_CRM_EPIC020_NO_NEXT_PANEL_CANDIDATE_GAP.
+- Root cause: EPIC020 candidate scan found no remaining CRM panel surface without a matching domain foundation among the configured candidate set and current repository pages.
+- Status: repaired; implementation deferred to AS6_EPIC020_CRM_COVERAGE_RECONCILIATION.
