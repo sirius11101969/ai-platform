@@ -4137,3 +4137,10 @@ Permission Validation
 - Workspace surface: frontend/src/crm/kanban/CRMKanbanWorkspaceSurface.jsx
 - Legacy preservation: frontend/src/pages/crm/CRMKanbanLegacyPanel.jsx
 - Result: PASS
+
+## AS6 EPIC019 CRM Kanban Final Validation
+- Coverage: docs/coverage/as6-epic019-crm-kanban-final-validation-coverage.md
+- Governance: docs/governance/as6-epic019-crm-kanban-final-validation-governance.md
+- AEC: docs/aec/as6-epic019-crm-kanban-final-validation-aec.md
+- Production marker: AS6_EPIC019_CRM_KANBAN=PRODUCTION_VALIDATED
+- Result: PASS

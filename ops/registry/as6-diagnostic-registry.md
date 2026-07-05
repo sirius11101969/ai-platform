@@ -2303,3 +2303,9 @@ ops/bin/as6-control-permission-engine-v114
 - Panel-level UI wiring: frontend/src/pages/crm/CRMKanbanPanel.jsx
 - Workspace surface: frontend/src/crm/kanban/CRMKanbanWorkspaceSurface.jsx
 - Result: PASS
+
+## AS6 EPIC019 CRM Kanban Final Validation
+- Diagnostic: docs/diagnostics/as6-epic019-crm-kanban-final-validation-diagnostics.md
+- Failure class: AS6_CRM_KANBAN_FINAL_VALIDATION_GAP
+- Production marker: AS6_EPIC019_CRM_KANBAN=PRODUCTION_VALIDATED
+- Result: PASS
