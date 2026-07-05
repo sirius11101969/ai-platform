@@ -2290,3 +2290,9 @@ ops/bin/as6-control-permission-engine-v114
 - Failure class: AS6_CRM_EPIC019_NEXT_MODULE_SELECTION_GAP
 - Selected module: CRM_KANBAN
 - Result: PASS
+
+## AS6 EPIC019 CRM Kanban Foundation
+- Diagnostic: docs/diagnostics/as6-epic019-crm-kanban-foundation-diagnostics.md
+- Failure class: AS6_CRM_KANBAN_FOUNDATION_GAP
+- Runtime diagnostic: AS6_CRM_KANBAN_FOUNDATION
+- Result: PASS
