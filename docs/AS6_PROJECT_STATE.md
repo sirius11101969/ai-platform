@@ -6771,3 +6771,9 @@ Status: PASS pending validation
 - Added AS6Button, AS6Panel, AS6Toolbar, AS6KPI, AS6LoadingState, AS6ErrorState, AS6DataTable.
 - Updated design-system barrel exports.
 - Next stage: AS6_EPIC021_DESIGN_SYSTEM_CRM_ADOPTION_PLAN.
+
+## AS6 EPIC021 Design System CRM Adoption Plan
+- Stage: AS6_EPIC021_DESIGN_SYSTEM_CRM_ADOPTION_PLAN.
+- Project readiness: 99%.
+- Adoption order registered: Analytics, Filters, Kanban, Followups, Activities, Deals, Companies, Contacts.
+- Next stage: AS6_EPIC021_DESIGN_SYSTEM_ANALYTICS_ADOPTION.
