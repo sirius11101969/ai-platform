@@ -2611,3 +2611,8 @@ Governed and registered.
 - Diagnostic deviation class registered: AS6_CRM_FILTERS_FINAL_VALIDATION_GAP.
 - Root cause: CRM Filters required final validation after selection, foundation and UI wiring to confirm production readiness without adding new functionality.
 - Status: controlled; Filters production validation completed.
+
+## AS6 EPIC019 CRM Next Module Selection
+- Diagnostic deviation class registered: AS6_CRM_EPIC019_NEXT_MODULE_SELECTION_GAP.
+- Root cause: CRM kanban exists as a UI panel surface at frontend/src/pages/crm/CRMKanbanPanel.jsx, but frontend/src/crm/kanban does not exist as a registered CRM domain foundation.
+- Status: controlled; implementation deferred to AS6_EPIC019_CRM_KANBAN_FOUNDATION.
