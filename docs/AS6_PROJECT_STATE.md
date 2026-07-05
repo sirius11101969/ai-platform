@@ -6777,3 +6777,10 @@ Status: PASS pending validation
 - Project readiness: 99%.
 - Adoption order registered: Analytics, Filters, Kanban, Followups, Activities, Deals, Companies, Contacts.
 - Next stage: AS6_EPIC021_DESIGN_SYSTEM_ANALYTICS_ADOPTION.
+
+## AS6 EPIC021 Design System Analytics Adoption
+- Stage: AS6_EPIC021_DESIGN_SYSTEM_ANALYTICS_ADOPTION.
+- Project readiness: 99%.
+- Analytics visual adoption started.
+- Business logic migration: none.
+- Next stage: AS6_EPIC021_DESIGN_SYSTEM_ANALYTICS_ADOPTION_VALIDATION.
