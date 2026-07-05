@@ -2315,3 +2315,9 @@ ops/bin/as6-control-permission-engine-v114
 - Failure class: AS6_CRM_EPIC020_NO_NEXT_PANEL_CANDIDATE_GAP
 - Repair: AS6_EPIC020_NO_CRM_PANEL_CANDIDATE_REPAIR
 - Result: PASS
+
+## AS6 EPIC020 CRM Coverage Reconciliation
+- Diagnostic: docs/diagnostics/as6-epic020-crm-coverage-reconciliation-diagnostics.md
+- Failure class: AS6_CRM_COVERAGE_RECONCILIATION_GAP
+- Repair class: AS6_CRM_LEGACY_DOMAIN_FILENAME_ASSUMPTION_GAP
+- Result: PASS

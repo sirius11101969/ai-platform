@@ -4150,3 +4150,10 @@ Permission Validation
 - Governance: docs/governance/as6-epic020-crm-next-module-selection-governance.md
 - AEC: docs/aec/as6-epic020-crm-next-module-selection-aec.md
 - Result: PASS
+
+## AS6 EPIC020 CRM Coverage Reconciliation
+- Coverage: docs/coverage/as6-epic020-crm-coverage-reconciliation-coverage.md
+- Governance: docs/governance/as6-epic020-crm-coverage-reconciliation-governance.md
+- AEC: docs/aec/as6-epic020-crm-coverage-reconciliation-aec.md
+- Matrix: runtime/as6-epic020-crm-coverage-reconciliation/crm-coverage-matrix.md
+- Result: PASS

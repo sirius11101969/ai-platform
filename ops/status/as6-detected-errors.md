@@ -2636,3 +2636,9 @@ Governed and registered.
 - Diagnostic deviation class registered: AS6_CRM_EPIC020_NO_NEXT_PANEL_CANDIDATE_GAP.
 - Root cause: EPIC020 candidate scan found no remaining CRM panel surface without a matching domain foundation among the configured candidate set and current repository pages.
 - Status: repaired; implementation deferred to AS6_EPIC020_CRM_COVERAGE_RECONCILIATION.
+
+## AS6 EPIC020 CRM Coverage Reconciliation
+- Diagnostic deviation class registered: AS6_CRM_COVERAGE_RECONCILIATION_GAP.
+- Repair class registered: AS6_CRM_LEGACY_DOMAIN_FILENAME_ASSUMPTION_GAP.
+- Root cause: CRM coverage reconciliation initially assumed all historical CRM domains follow the newest file naming convention. Earlier domains may have valid legacy structure, so reconciliation must validate actual repository evidence instead of invented mandatory filenames.
+- Status: controlled; CRM coverage reconciliation completed.

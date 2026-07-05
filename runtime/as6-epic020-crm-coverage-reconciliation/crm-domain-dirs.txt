@@ -1,0 +1,9 @@
+frontend/src/crm/activities
+frontend/src/crm/analytics
+frontend/src/crm/companies
+frontend/src/crm/contacts
+frontend/src/crm/deals
+frontend/src/crm/filters
+frontend/src/crm/followups
+frontend/src/crm/kanban
+frontend/src/crm/shared
