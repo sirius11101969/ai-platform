@@ -6649,3 +6649,14 @@ Status: PASS pending validation
 - Added diagnostic class: AS6_CRM_FILTERS_FOUNDATION_GAP.
 - Added runtime tracer: crm.filters traceCrmFiltersRuntime.
 - Next stage: AS6_EPIC018_CRM_FILTERS_UI_WIRING.
+
+## AS6 EPIC018 CRM Filters UI Wiring
+- Stage: AS6_EPIC018_CRM_FILTERS_UI_WIRING.
+- Project readiness: 99%.
+- Base commit verified: 61431f9ba8a38a12379e6774c846d56c57af482b.
+- Restore tag verified: AS6_RESTORE_EPIC018_CRM_FILTERS_FOUNDATION_20260704T203747Z.
+- Added CRM Filters Workspace UI surface.
+- Preserved existing CRMFiltersPanel as CRMFiltersLegacyPanel.
+- Rewired CRMFiltersPanel to render legacy content inside Workspace surface.
+- Added diagnostic class: AS6_CRM_FILTERS_UI_WIRING_GAP.
+- Next stage: AS6_EPIC018_CRM_FILTERS_FINAL_VALIDATION.

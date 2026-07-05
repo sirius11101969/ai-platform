@@ -1,0 +1,15 @@
+frontend/src/crm/filters/filtersCapabilities.js
+frontend/src/crm/filters/filtersContract.js
+frontend/src/crm/filters/filtersDescriptor.js
+frontend/src/crm/filters/filtersDiagnostics.js
+frontend/src/crm/filters/filtersHealthSnapshot.js
+frontend/src/crm/filters/filtersManifest.js
+frontend/src/crm/filters/filtersNavigation.js
+frontend/src/crm/filters/filtersPanels.js
+frontend/src/crm/filters/filtersRegistry.js
+frontend/src/crm/filters/filtersResolver.js
+frontend/src/crm/filters/filtersRuntime.js
+frontend/src/crm/filters/filtersTracer.js
+frontend/src/crm/filters/filtersWorkspaceIntegration.js
+frontend/src/crm/filters/filtersWorkspaceRuntime.js
+frontend/src/crm/filters/index.js

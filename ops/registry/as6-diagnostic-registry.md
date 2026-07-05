@@ -2271,3 +2271,10 @@ ops/bin/as6-control-permission-engine-v114
 - Failure class: AS6_CRM_FILTERS_FOUNDATION_GAP
 - Runtime diagnostic: AS6_CRM_FILTERS_FOUNDATION
 - Result: PASS
+
+## AS6 EPIC018 CRM Filters UI Wiring
+- Diagnostic: docs/diagnostics/as6-epic018-crm-filters-ui-wiring-diagnostics.md
+- Failure class: AS6_CRM_FILTERS_UI_WIRING_GAP
+- Panel-level UI wiring: frontend/src/pages/crm/CRMFiltersPanel.jsx
+- Workspace surface: frontend/src/crm/filters/CRMFiltersWorkspaceSurface.jsx
+- Result: PASS

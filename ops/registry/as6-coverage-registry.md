@@ -4100,3 +4100,11 @@ Permission Validation
 - AEC: docs/aec/as6-epic018-crm-filters-foundation-aec.md
 - Runtime tracer: frontend/src/crm/filters/filtersTracer.js
 - Result: PASS
+
+## AS6 EPIC018 CRM Filters UI Wiring
+- Coverage: docs/coverage/as6-epic018-crm-filters-ui-wiring-coverage.md
+- Governance: docs/governance/as6-epic018-crm-filters-ui-wiring-governance.md
+- AEC: docs/aec/as6-epic018-crm-filters-ui-wiring-aec.md
+- Workspace surface: frontend/src/crm/filters/CRMFiltersWorkspaceSurface.jsx
+- Legacy preservation: frontend/src/pages/crm/CRMFiltersLegacyPanel.jsx
+- Result: PASS
