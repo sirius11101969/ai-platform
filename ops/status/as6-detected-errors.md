@@ -2606,3 +2606,8 @@ Governed and registered.
 - Diagnostic deviation class registered: AS6_CRM_FILTERS_UI_WIRING_GAP.
 - Root cause: CRM Filters domain foundation existed after AS6_EPIC018_CRM_FILTERS_FOUNDATION, but the existing CRMFiltersPanel still rendered as a panel-level surface and was not yet wired through the reusable Filters Workspace UI surface.
 - Status: repaired by wrapping CRM Filters panel content with the reusable Workspace surface.
+
+## AS6 EPIC018 CRM Filters Final Validation
+- Diagnostic deviation class registered: AS6_CRM_FILTERS_FINAL_VALIDATION_GAP.
+- Root cause: CRM Filters required final validation after selection, foundation and UI wiring to confirm production readiness without adding new functionality.
+- Status: controlled; Filters production validation completed.

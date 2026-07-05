@@ -4108,3 +4108,10 @@ Permission Validation
 - Workspace surface: frontend/src/crm/filters/CRMFiltersWorkspaceSurface.jsx
 - Legacy preservation: frontend/src/pages/crm/CRMFiltersLegacyPanel.jsx
 - Result: PASS
+
+## AS6 EPIC018 CRM Filters Final Validation
+- Coverage: docs/coverage/as6-epic018-crm-filters-final-validation-coverage.md
+- Governance: docs/governance/as6-epic018-crm-filters-final-validation-governance.md
+- AEC: docs/aec/as6-epic018-crm-filters-final-validation-aec.md
+- Production marker: AS6_EPIC018_CRM_FILTERS=PRODUCTION_VALIDATED
+- Result: PASS

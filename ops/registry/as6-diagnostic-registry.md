@@ -2278,3 +2278,9 @@ ops/bin/as6-control-permission-engine-v114
 - Panel-level UI wiring: frontend/src/pages/crm/CRMFiltersPanel.jsx
 - Workspace surface: frontend/src/crm/filters/CRMFiltersWorkspaceSurface.jsx
 - Result: PASS
+
+## AS6 EPIC018 CRM Filters Final Validation
+- Diagnostic: docs/diagnostics/as6-epic018-crm-filters-final-validation-diagnostics.md
+- Failure class: AS6_CRM_FILTERS_FINAL_VALIDATION_GAP
+- Production marker: AS6_EPIC018_CRM_FILTERS=PRODUCTION_VALIDATED
+- Result: PASS

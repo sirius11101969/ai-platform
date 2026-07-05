@@ -1,0 +1,10 @@
+ M docs/AS6_PROJECT_STATE.md
+ M docs/AS6_PROJECT_STATUS.md
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? docs/aec/as6-epic018-crm-filters-final-validation-aec.md
+?? docs/coverage/as6-epic018-crm-filters-final-validation-coverage.md
+?? docs/diagnostics/as6-epic018-crm-filters-final-validation-diagnostics.md
+?? docs/epic018/AS6_EPIC018_CRM_FILTERS_FINAL_VALIDATION.md
+?? docs/governance/as6-epic018-crm-filters-final-validation-governance.md
