@@ -2621,3 +2621,8 @@ Governed and registered.
 - Diagnostic deviation class registered: AS6_CRM_KANBAN_FOUNDATION_GAP.
 - Root cause: CRM Kanban was selected because CRMKanbanPanel.jsx exists as a UI panel surface while frontend/src/crm/kanban did not exist as a registered CRM domain foundation.
 - Status: repaired by adding CRM Kanban domain foundation.
+
+## AS6 EPIC019 CRM Kanban UI Wiring
+- Diagnostic deviation class registered: AS6_CRM_KANBAN_UI_WIRING_GAP.
+- Root cause: CRM Kanban domain foundation existed after AS6_EPIC019_CRM_KANBAN_FOUNDATION, but the existing CRMKanbanPanel still rendered as a panel-level surface and was not yet wired through the reusable Kanban Workspace UI surface.
+- Status: repaired by wrapping CRM Kanban panel content with the reusable Workspace surface.

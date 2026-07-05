@@ -2296,3 +2296,10 @@ ops/bin/as6-control-permission-engine-v114
 - Failure class: AS6_CRM_KANBAN_FOUNDATION_GAP
 - Runtime diagnostic: AS6_CRM_KANBAN_FOUNDATION
 - Result: PASS
+
+## AS6 EPIC019 CRM Kanban UI Wiring
+- Diagnostic: docs/diagnostics/as6-epic019-crm-kanban-ui-wiring-diagnostics.md
+- Failure class: AS6_CRM_KANBAN_UI_WIRING_GAP
+- Panel-level UI wiring: frontend/src/pages/crm/CRMKanbanPanel.jsx
+- Workspace surface: frontend/src/crm/kanban/CRMKanbanWorkspaceSurface.jsx
+- Result: PASS

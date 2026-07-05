@@ -4129,3 +4129,11 @@ Permission Validation
 - AEC: docs/aec/as6-epic019-crm-kanban-foundation-aec.md
 - Runtime tracer: frontend/src/crm/kanban/kanbanTracer.js
 - Result: PASS
+
+## AS6 EPIC019 CRM Kanban UI Wiring
+- Coverage: docs/coverage/as6-epic019-crm-kanban-ui-wiring-coverage.md
+- Governance: docs/governance/as6-epic019-crm-kanban-ui-wiring-governance.md
+- AEC: docs/aec/as6-epic019-crm-kanban-ui-wiring-aec.md
+- Workspace surface: frontend/src/crm/kanban/CRMKanbanWorkspaceSurface.jsx
+- Legacy preservation: frontend/src/pages/crm/CRMKanbanLegacyPanel.jsx
+- Result: PASS

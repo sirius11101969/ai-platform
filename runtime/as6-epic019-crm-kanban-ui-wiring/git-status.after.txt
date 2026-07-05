@@ -1,0 +1,14 @@
+ M docs/AS6_PROJECT_STATE.md
+ M docs/AS6_PROJECT_STATUS.md
+ M frontend/src/crm/kanban/index.js
+ M frontend/src/pages/crm/CRMKanbanPanel.jsx
+ M ops/registry/as6-coverage-registry.md
+ M ops/registry/as6-diagnostic-registry.md
+ M ops/status/as6-detected-errors.md
+?? docs/aec/as6-epic019-crm-kanban-ui-wiring-aec.md
+?? docs/coverage/as6-epic019-crm-kanban-ui-wiring-coverage.md
+?? docs/diagnostics/as6-epic019-crm-kanban-ui-wiring-diagnostics.md
+?? docs/epic019/AS6_EPIC019_CRM_KANBAN_UI_WIRING.md
+?? docs/governance/as6-epic019-crm-kanban-ui-wiring-governance.md
+?? frontend/src/crm/kanban/CRMKanbanWorkspaceSurface.jsx
+?? frontend/src/pages/crm/CRMKanbanLegacyPanel.jsx

@@ -1,0 +1,7 @@
+frontend/src/pages/crm/CRMActionsPanel.jsx
+frontend/src/pages/crm/CRMAnalyticsLegacyPanel.jsx
+frontend/src/pages/crm/CRMAnalyticsPanel.jsx
+frontend/src/pages/crm/CRMFiltersLegacyPanel.jsx
+frontend/src/pages/crm/CRMFiltersPanel.jsx
+frontend/src/pages/crm/CRMKanbanPanel.jsx
+frontend/src/pages/crm/CRMPipelinePanel.jsx

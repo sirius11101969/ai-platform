@@ -6689,3 +6689,14 @@ Status: PASS pending validation
 - Added diagnostic class: AS6_CRM_KANBAN_FOUNDATION_GAP.
 - Added runtime tracer: crm.kanban traceCrmKanbanRuntime.
 - Next stage: AS6_EPIC019_CRM_KANBAN_UI_WIRING.
+
+## AS6 EPIC019 CRM Kanban UI Wiring
+- Stage: AS6_EPIC019_CRM_KANBAN_UI_WIRING.
+- Project readiness: 99%.
+- Base commit verified: e4c324f5e961b043d953aeea220987971656c67f.
+- Restore tag verified: AS6_RESTORE_EPIC019_CRM_KANBAN_FOUNDATION_20260705T092218Z.
+- Added CRM Kanban Workspace UI surface.
+- Preserved existing CRMKanbanPanel as CRMKanbanLegacyPanel.
+- Rewired CRMKanbanPanel to render legacy content inside Workspace surface.
+- Added diagnostic class: AS6_CRM_KANBAN_UI_WIRING_GAP.
+- Next stage: AS6_EPIC019_CRM_KANBAN_FINAL_VALIDATION.

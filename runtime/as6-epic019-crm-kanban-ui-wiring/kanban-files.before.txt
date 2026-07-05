@@ -1,0 +1,15 @@
+frontend/src/crm/kanban/index.js
+frontend/src/crm/kanban/kanbanCapabilities.js
+frontend/src/crm/kanban/kanbanContract.js
+frontend/src/crm/kanban/kanbanDescriptor.js
+frontend/src/crm/kanban/kanbanDiagnostics.js
+frontend/src/crm/kanban/kanbanHealthSnapshot.js
+frontend/src/crm/kanban/kanbanManifest.js
+frontend/src/crm/kanban/kanbanNavigation.js
+frontend/src/crm/kanban/kanbanPanels.js
+frontend/src/crm/kanban/kanbanRegistry.js
+frontend/src/crm/kanban/kanbanResolver.js
+frontend/src/crm/kanban/kanbanRuntime.js
+frontend/src/crm/kanban/kanbanTracer.js
+frontend/src/crm/kanban/kanbanWorkspaceIntegration.js
+frontend/src/crm/kanban/kanbanWorkspaceRuntime.js
