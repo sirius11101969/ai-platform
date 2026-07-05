@@ -2642,3 +2642,8 @@ Governed and registered.
 - Repair class registered: AS6_CRM_LEGACY_DOMAIN_FILENAME_ASSUMPTION_GAP.
 - Root cause: CRM coverage reconciliation initially assumed all historical CRM domains follow the newest file naming convention. Earlier domains may have valid legacy structure, so reconciliation must validate actual repository evidence instead of invented mandatory filenames.
 - Status: controlled; CRM coverage reconciliation completed.
+
+## AS6 EPIC021 Project Direction Selection
+- Diagnostic deviation class registered: AS6_PROJECT_DIRECTION_SELECTION_GAP.
+- Root cause: CRM coverage is production validated and no repository-backed next CRM module candidate remains, so the next project direction must shift from CRM module expansion to platform-level Design System and Workspace completion.
+- Status: controlled; next stage is AS6_EPIC021_DESIGN_SYSTEM_V1_COMPLETION.

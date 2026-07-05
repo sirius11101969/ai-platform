@@ -4157,3 +4157,10 @@ Permission Validation
 - AEC: docs/aec/as6-epic020-crm-coverage-reconciliation-aec.md
 - Matrix: runtime/as6-epic020-crm-coverage-reconciliation/crm-coverage-matrix.md
 - Result: PASS
+
+## AS6 EPIC021 Project Direction Selection
+- Coverage: docs/coverage/as6-epic021-project-direction-selection-coverage.md
+- Governance: docs/governance/as6-epic021-project-direction-selection-governance.md
+- AEC: docs/aec/as6-epic021-project-direction-selection-aec.md
+- Selected direction: AS6_DESIGN_SYSTEM_V1_COMPLETION
+- Result: PASS

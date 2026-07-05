@@ -6746,3 +6746,13 @@ Status: PASS pending validation
 - Runtime policy: runtime/** is not committed.
 - Guard added: AS6_GIT_PATHSPEC_EXISTENCE_GUARD.
 - Next stage: AS6_EPIC021_PROJECT_DIRECTION_SELECTION.
+
+## AS6 EPIC021 Project Direction Selection
+- Stage: AS6_EPIC021_PROJECT_DIRECTION_SELECTION.
+- Project readiness: 99%.
+- Base commit verified: 87f338d0908894fdfd70cc20c75d256db4f5589f.
+- Restore tag verified: AS6_RESTORE_EPIC020_CRM_COVERAGE_FINAL_VALIDATION_20260705T160602Z.
+- Previous status verified: AS6_EPIC020_CRM_COVERAGE=PRODUCTION_VALIDATED.
+- Selected direction: AS6_DESIGN_SYSTEM_V1_COMPLETION.
+- Next stage: AS6_EPIC021_DESIGN_SYSTEM_V1_COMPLETION.
+- Added diagnostic class: AS6_PROJECT_DIRECTION_SELECTION_GAP.

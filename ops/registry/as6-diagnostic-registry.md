@@ -2321,3 +2321,9 @@ ops/bin/as6-control-permission-engine-v114
 - Failure class: AS6_CRM_COVERAGE_RECONCILIATION_GAP
 - Repair class: AS6_CRM_LEGACY_DOMAIN_FILENAME_ASSUMPTION_GAP
 - Result: PASS
+
+## AS6 EPIC021 Project Direction Selection
+- Diagnostic: docs/diagnostics/as6-epic021-project-direction-selection-diagnostics.md
+- Failure class: AS6_PROJECT_DIRECTION_SELECTION_GAP
+- Selected direction: AS6_DESIGN_SYSTEM_V1_COMPLETION
+- Result: PASS
