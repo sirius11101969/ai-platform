@@ -34,7 +34,6 @@ import { AS6BusinessHome } from "./as6/business-home";
 import "./styles.css";
 import "./theme/as6Theme.css";
 import { ProtectedLayout } from "./components/AppShell";
-import LandingPage from "./pages/LandingPage";
 import { LoginPage, SignupPage } from "./pages/AuthPages";
 import PaymentSuccessPage from "./pages/PaymentSuccessPage";
 import "./styles/as6-mission-control.css";
@@ -44,6 +43,9 @@ import FollowupsPage from "./pages/FollowupsPage";
 import PriorityInboxPage from "./pages/PriorityInboxPage";
 const PipelineCopilotPage = lazy(() => import("./pages/PipelineCopilotPage"));
 const AiManagerDashboardPage = lazy(() => import("./pages/AiManagerDashboardPage"));
+const AS6OneShellAdapter = lazy(() => import("./as6-one/AS6OneShellAdapter"));
+const AS6CrmShellAdapter = lazy(() => import("./as6-crm/AS6CrmShellAdapter"));
+const AS6SalesShellAdapter = lazy(() => import("./as6-sales/AS6SalesShellAdapter"));
 import AiVoiceOutreachPage from "./pages/AiVoiceOutreachPage";
 import AiRealtimeVoicePage from "./pages/AiRealtimeVoicePage";
 import AiRevenueIntelligencePage from "./pages/AiRevenueIntelligencePage";
@@ -120,11 +122,6 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-function RootEntryRoute() {
-  const { isAuthenticated } = useAuth();
-  return isAuthenticated ? <Navigate to="/business-home" replace /> : <LandingPage />;
-}
-
 export default function App() {
   if (typeof window !== "undefined" && window.location.pathname === "/marketplace") return <AS6RealAppWiring path="/marketplace" data-as6-direct-app-integration="AS6_DIRECT_APP_INTEGRATION_P20" />;
   return (
@@ -133,12 +130,16 @@ export default function App() {
         <Suspense fallback={window.location.pathname === "/command-center" ? null : <div className="as6-route-loading">Загрузка...</div>}>
           <Routes>
 
+          <Route path="/" element={<AS6OneShellAdapter />} />
+          <Route path="/as6-one" element={<AS6OneShellAdapter />} />
+          <Route path="/as6-crm" element={<AS6CrmShellAdapter />} />
+          <Route path="/crm" element={<AS6SalesShellAdapter />} />
+          <Route path="/as6-sales" element={<AS6SalesShellAdapter />} />
           <AS6LivingSpaceRoutes />
           <Route path="/crm-v2" element={<ProtectedRoute><CRMBrandV2Page /></ProtectedRoute>} />
           <Route path="/as6-os" element={<AS6OSPage />} />
           <Route path="/crm-workspace" element={<CRMWorkspacePage />} />
           <Route path="/as6-workspace" element={<AS6WorkspacePage />} />
-          <Route path="/" element={<RootEntryRoute />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/payment/success" element={<PaymentSuccessPage />} />

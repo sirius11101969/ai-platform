@@ -1,5 +1,16 @@
 # AS6 Diagnostic Registry
 
+## AS6 EPIC022 AS6 ONE Branded Landing and Route Repair
+- diagnostic: root route, CRM route, production bundle, and SPA fallback inspection
+- root_route: /
+- crm_route: /as6-crm
+- legacy_rollback: /as6-sales
+- legacy_alias: /crm
+- root_cause: AS6_ONE_BRANDED_ENTRYPOINT_NOT_CONNECTED
+- failure_classes: AS6_PRODUCTION_ROUTE_NOT_VISIBLE_GAP, AS6_LANDING_OLD_BRAND_DRIFT, AS6_CRM_ONE_ROUTE_DEPLOYMENT_GAP
+- result: AS6_ONE_BRANDED_ENTRYPOINT_CONNECTED
+- next_stage: AS6_EPIC022_AS6_ONE_PRODUCTION_VISUAL_VALIDATION
+
 ## AS6 EPIC022 CRM ONE Workspace Migration
 - diagnostic: frontend route and living-space registry inspection
 - route: /as6-crm

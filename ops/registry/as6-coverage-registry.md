@@ -4187,3 +4187,11 @@ Permission Validation
 - Workspace surface: frontend/src/crm/kanban/CRMKanbanWorkspaceSurface.jsx
 - Legacy preservation: frontend/src/pages/crm/CRMKanbanLegacyPanel.jsx
 - Result: PASS
+
+## AS6 EPIC022 AS6 ONE Branded Landing and Route Repair
+- Coverage: docs/governance/as6-epic022-as6-one-branded-entrypoint-repair-governance.md
+- Root entrypoint: frontend/src/App.jsx route `/` -> AS6OneShellAdapter
+- CRM route: frontend/src/App.jsx route `/as6-crm` -> AS6CrmShellAdapter
+- Legacy rollback: frontend/src/App.jsx routes `/crm` and `/as6-sales` -> AS6SalesShellAdapter
+- SPA fallback: nginx.conf and frontend/nginx.conf keep `try_files ... /index.html`
+- Result: PASS

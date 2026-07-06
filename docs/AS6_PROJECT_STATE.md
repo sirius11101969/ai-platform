@@ -65,7 +65,35 @@ Architecture rule:
 
 - AS6_CRM_MUST_USE_AS6_ONE_WORKSPACE
 
-NEXT_STAGE=AS6_EPIC022_AS6_CRM_ONE_WORKSPACE_VALIDATION
+## AS6 EPIC022 AS6 ONE Branded Landing and Route Repair
+
+Status:
+
+- AS6_EPIC022_AS6_ONE_BRANDED_LANDING_AND_ROUTE_REPAIR=IMPLEMENTED
+- PRIMARY_BRANDED_ENTRYPOINT=/
+- PRIMARY_CRM_ROUTE=/as6-crm
+- LEGACY_CRM_ROLLBACK_ROUTE=/as6-sales
+- LEGACY_CRM_ALIAS=/crm renders AS6 Sales rollback shell
+- AS6_ONE_ROOT_USES_EXISTING_SHELL=YES
+- SPA_FALLBACK=CONFIRMED
+
+Root cause:
+
+- AS6_ONE_BRANDED_ENTRYPOINT_NOT_CONNECTED
+
+Failure classes:
+
+- AS6_PRODUCTION_ROUTE_NOT_VISIBLE_GAP
+- AS6_LANDING_OLD_BRAND_DRIFT
+- AS6_CRM_ONE_ROUTE_DEPLOYMENT_GAP
+
+Deployment diagnosis:
+
+- Production deploy workflow tracks `main`.
+- Current repair branch is `preview/pr-359`.
+- Public production index responded with a June 28 bundle during diagnostics, while current AS6 ONE and CRM ONE changes were present only in the newer branch lineage.
+
+NEXT_STAGE=AS6_EPIC022_AS6_ONE_PRODUCTION_VISUAL_VALIDATION
 
 ## Implemented Governance / Automation Contours
 

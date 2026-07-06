@@ -2655,3 +2655,9 @@ Governed and registered.
 - Diagnostic deviation class registered: AS6_PROJECT_DIRECTION_SELECTION_GAP.
 - Root cause: CRM coverage is production validated and no repository-backed next CRM module candidate remains, so the next project direction must shift from CRM module expansion to platform-level Design System and Workspace completion.
 - Status: controlled; next stage is AS6_EPIC021_DESIGN_SYSTEM_V1_COMPLETION.
+
+## AS6 EPIC022 AS6 ONE Branded Landing and Route Repair
+- Root cause registered: AS6_ONE_BRANDED_ENTRYPOINT_NOT_CONNECTED.
+- Failure classes registered: AS6_PRODUCTION_ROUTE_NOT_VISIBLE_GAP, AS6_LANDING_OLD_BRAND_DRIFT, AS6_CRM_ONE_ROUTE_DEPLOYMENT_GAP.
+- Root cause: the AS6 ONE branded shell existed in the branch, but `/` still rendered the old landing/auth entrypoint and `/as6-crm` depended on generated living-space routing while production was still serving an older bundle.
+- Status: repaired in code; production visual confirmation moves to AS6_EPIC022_AS6_ONE_PRODUCTION_VISUAL_VALIDATION.
