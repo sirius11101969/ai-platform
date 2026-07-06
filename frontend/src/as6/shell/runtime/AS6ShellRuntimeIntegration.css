@@ -1,0 +1,11 @@
+.as6-shell-runtime-navigation {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.as6-shell-runtime-navigation a {
+  padding: 8px 10px;
+  border-radius: 10px;
+  text-decoration: none;
+}
