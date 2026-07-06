@@ -17,7 +17,16 @@ Created skills:
 Primary AS6 skill:
 - Use `.codex/skills/as6-autonomous-engineer.md` as the main skill for commands like `делай`, `продолжи`, and `следующий этап`.
 
+## Daily Workflow
+
+For daily development use:
+
+`.codex/prompts/continue.md`
+
+This is the default entry point for AS6 development.
+
 Created prompts:
+- `.codex/prompts/continue.md`
 - `.codex/prompts/continue-next-stage.md`
 - `.codex/prompts/repair-cycle.md`
 - `.codex/prompts/ui-migration.md`
