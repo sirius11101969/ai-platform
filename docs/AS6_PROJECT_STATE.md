@@ -6874,3 +6874,20 @@ Status: PASS pending validation
 - CRMKanbanPanel preserves CRMKanbanLegacyPanel.
 - Business logic migration: none.
 - Next stage: AS6_EPIC021_DESIGN_SYSTEM_KANBAN_ADOPTION_VALIDATION.
+
+## AS6 EPIC023 Architecture Reset Audit
+- Stage: AS6_EPIC023_ARCHITECTURE_RESET_AUDIT.
+- Project readiness: 99%.
+- Base commit verified: 937ab4c82a27dc10fa23d9d16c1bd24f2889a29c.
+- Restore tag verified: AS6_RESTORE_EPIC022_AS6_ONE_BRANDED_ENTRYPOINT_REPAIR_20260706T111831Z.
+- Current branch: preview/pr-359.
+- origin/main: 937ab4c82a27dc10fa23d9d16c1bd24f2889a29c.
+- preview/pr-359: 937ab4c82a27dc10fa23d9d16c1bd24f2889a29c.
+- Production deploy workflow tracks main.
+- Root cause registered: AS6_PARALLEL_UI_ARCHITECTURE_DRIFT.
+- Failure classes registered: AS6_MULTIPLE_PRIMARY_SHELLS_GAP, AS6_MULTIPLE_CRM_ENTRYPOINTS_GAP, AS6_PRODUCTION_VISUAL_VALIDATION_GAP, AS6_ROUTE_OWNERSHIP_DRIFT.
+- Architecture rules registered: AS6_SINGLE_PRIMARY_SHELL_RULE, AS6_SINGLE_PUBLIC_CRM_ENTRYPOINT_RULE, AS6_PRODUCTION_VISUAL_VALIDATION_REQUIRED_RULE, AS6_NO_NEW_SHELL_WITHOUT_ARCHITECTURE_APPROVAL_RULE.
+- Current reality: multiple public UI surfaces coexist; `/` and `/as6-crm` are target primary routes, while `/crm`, `/as6-sales`, `/crm-workspace`, `/crm-v2`, `/as6-workspace`, `/as6-os` remain legacy/duplicate public or protected surfaces.
+- Visual drift cause: public navigation and production visual validation were not governed together with route ownership; older deployed bundles can also keep users on old UI even after code routes exist.
+- UI code changed: NO.
+- Next stage: AS6_EPIC023_ARCHITECTURE_RESET_PLAN.

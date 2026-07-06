@@ -4195,3 +4195,14 @@ Permission Validation
 - Legacy rollback: frontend/src/App.jsx routes `/crm` and `/as6-sales` -> AS6SalesShellAdapter
 - SPA fallback: nginx.conf and frontend/nginx.conf keep `try_files ... /index.html`
 - Result: PASS
+
+## AS6 EPIC023 Architecture Reset Audit
+- Coverage: docs/coverage/as6-epic023-architecture-reset-audit-coverage.md
+- Governance: docs/governance/as6-epic023-architecture-reset-audit-governance.md
+- AEC: docs/aec/as6-epic023-architecture-reset-audit-aec.md
+- Audit: docs/epic023/AS6_EPIC023_ARCHITECTURE_RESET_AUDIT.md
+- Route map: PASS
+- Shell map: PASS
+- Workspace map: PASS
+- CRM map: PASS
+- Result: PASS

@@ -2367,3 +2367,11 @@ ops/bin/as6-control-permission-engine-v114
 - Real visual migration: AS6Panel, AS6Toolbar, AS6Card, AS6Badge, AS6Button, AS6EmptyState
 - Legacy preservation: CRMKanbanLegacyPanel
 - Result: PASS
+
+## AS6 EPIC023 Architecture Reset Audit
+- Diagnostic: docs/diagnostics/as6-epic023-architecture-reset-audit-diagnostics.md
+- Root cause registered: AS6_PARALLEL_UI_ARCHITECTURE_DRIFT.
+- Failure classes registered: AS6_MULTIPLE_PRIMARY_SHELLS_GAP, AS6_MULTIPLE_CRM_ENTRYPOINTS_GAP, AS6_PRODUCTION_VISUAL_VALIDATION_GAP, AS6_ROUTE_OWNERSHIP_DRIFT.
+- Current primary routes: `/`, `/as6-crm`.
+- Current legacy/duplicate routes: `/crm`, `/as6-sales`, `/as6-one`, `/crm-workspace`, `/crm-v2`, `/as6-workspace`, `/as6-os`.
+- Result: PASS

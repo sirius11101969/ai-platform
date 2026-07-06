@@ -2661,3 +2661,11 @@ Governed and registered.
 - Failure classes registered: AS6_PRODUCTION_ROUTE_NOT_VISIBLE_GAP, AS6_LANDING_OLD_BRAND_DRIFT, AS6_CRM_ONE_ROUTE_DEPLOYMENT_GAP.
 - Root cause: the AS6 ONE branded shell existed in the branch, but `/` still rendered the old landing/auth entrypoint and `/as6-crm` depended on generated living-space routing while production was still serving an older bundle.
 - Status: repaired in code; production visual confirmation moves to AS6_EPIC022_AS6_ONE_PRODUCTION_VISUAL_VALIDATION.
+
+## AS6 EPIC023 Architecture Reset Audit
+- Registered: AS6_PARALLEL_UI_ARCHITECTURE_DRIFT.
+- Registered: AS6_MULTIPLE_PRIMARY_SHELLS_GAP.
+- Registered: AS6_MULTIPLE_CRM_ENTRYPOINTS_GAP.
+- Registered: AS6_PRODUCTION_VISUAL_VALIDATION_GAP.
+- Registered: AS6_ROUTE_OWNERSHIP_DRIFT.
+- Status: controlled by audit; implementation deferred to AS6_EPIC023_ARCHITECTURE_RESET_PLAN.
