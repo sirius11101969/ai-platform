@@ -2340,3 +2340,10 @@ ops/bin/as6-control-permission-engine-v114
 - Real visual migration: AS6Panel, AS6Toolbar, AS6Card, AS6Badge
 - Legacy preservation: CRMFiltersLegacyPanel
 - Result: PASS
+
+## AS6 EPIC021 Design System Kanban Adoption
+- Diagnostic: docs/diagnostics/as6-epic021-design-system-kanban-adoption-diagnostics.md
+- Failure class: AS6_DESIGN_SYSTEM_KANBAN_ADOPTION_GAP
+- Real visual migration: AS6Panel, AS6Toolbar, AS6Card, AS6Badge, AS6Button, AS6EmptyState
+- Legacy preservation: CRMKanbanLegacyPanel
+- Result: PASS

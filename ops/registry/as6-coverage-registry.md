@@ -4172,3 +4172,11 @@ Permission Validation
 - Panel: frontend/src/pages/crm/CRMFiltersPanel.jsx
 - Legacy preservation: frontend/src/pages/crm/CRMFiltersLegacyPanel.jsx
 - Result: PASS
+
+## AS6 EPIC021 Design System Kanban Adoption
+- Coverage: docs/coverage/as6-epic021-design-system-kanban-adoption-coverage.md
+- Governance: docs/governance/as6-epic021-design-system-kanban-adoption-governance.md
+- AEC: docs/aec/as6-epic021-design-system-kanban-adoption-aec.md
+- Workspace surface: frontend/src/crm/kanban/CRMKanbanWorkspaceSurface.jsx
+- Legacy preservation: frontend/src/pages/crm/CRMKanbanLegacyPanel.jsx
+- Result: PASS

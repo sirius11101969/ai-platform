@@ -6814,3 +6814,11 @@ Status: PASS pending validation
 - CRMFiltersLegacyPanel preserved.
 - Business logic migration: none.
 - Next stage: AS6_EPIC021_DESIGN_SYSTEM_KANBAN_ADOPTION.
+
+## AS6 EPIC021 Design System Kanban Adoption
+- Stage: AS6_EPIC021_DESIGN_SYSTEM_KANBAN_ADOPTION.
+- Project readiness: 99%.
+- CRMKanbanWorkspaceSurface now uses AS6Panel, AS6Toolbar, AS6Card, AS6Badge, AS6Button, AS6EmptyState.
+- CRMKanbanPanel preserves CRMKanbanLegacyPanel.
+- Business logic migration: none.
+- Next stage: AS6_EPIC021_DESIGN_SYSTEM_KANBAN_ADOPTION_VALIDATION.

@@ -1,5 +1,21 @@
 import React, { useMemo } from 'react'
 import { createCrmKanbanWorkspaceRuntime } from './kanbanWorkspaceRuntime.js'
+import {
+  AS6Badge,
+  AS6Button,
+  AS6Card,
+  AS6EmptyState,
+  AS6Panel,
+  AS6Toolbar,
+} from '../../design-system/index.js'
+
+export const AS6_DESIGN_SYSTEM_KANBAN_ADOPTION_MARKER = {
+  stage: 'AS6_EPIC021_DESIGN_SYSTEM_KANBAN_ADOPTION',
+  mode: 'real-visual-wrapper',
+  components: ['AS6Panel', 'AS6Toolbar', 'AS6Card', 'AS6Badge', 'AS6Button', 'AS6EmptyState'],
+  policy: 'visual-adoption-only-no-business-logic-change',
+  legacyPanelPreserved: true,
+}
 
 export function CRMKanbanWorkspaceSurface({
   children,
@@ -11,47 +27,63 @@ export function CRMKanbanWorkspaceSurface({
   const panels = integration.panels || []
 
   return (
-    <section className="as6-crm-kanban-workspace-surface" data-as6-domain={integration.domain} data-as6-workspace={integration.workspace}>
-      <header className="as6-crm-kanban-workspace-surface__header">
-        <div>
-          <p className="as6-crm-kanban-workspace-surface__eyebrow">AS6 Workspace · CRM</p>
-          <h1>{title}</h1>
-          <p>{subtitle}</p>
-        </div>
-        <aside className="as6-crm-kanban-workspace-surface__status" aria-label="CRM Kanban workspace runtime status">
-          <span>Runtime</span>
-          <strong>{runtime.status}</strong>
-        </aside>
-      </header>
+    <AS6Panel
+      title={title}
+      subtitle={subtitle}
+      className="as6-crm-kanban-workspace-surface"
+      data-as6-domain={integration.domain}
+      data-as6-workspace={integration.workspace}
+    >
+      <AS6Toolbar
+        title="Kanban Workspace"
+        description="Отслеживайте движение клиентской работы, заблокированные элементы и следующий приоритет."
+        actions={<AS6Badge tone="success">Runtime: {runtime.status}</AS6Badge>}
+      />
+
       <div className="as6-crm-kanban-workspace-surface__context" aria-label="CRM Kanban workspace context">
-        <article>
-          <span>Navigation</span>
-          <strong>{integration.navigation.label}</strong>
-          <p>{integration.navigation.route}</p>
-        </article>
-        <article>
-          <span>Assistant</span>
-          <strong>{integration.assistantContext.title}</strong>
-          <p>{integration.assistantContext.nextBestAction}</p>
-        </article>
-        <article>
-          <span>Focus</span>
-          <strong>{integration.focusContext.title}</strong>
-          <p>{integration.focusContext.primaryMetric}</p>
-        </article>
+        <AS6Card
+          title="Navigation"
+          subtitle={integration.navigation.route}
+          actions={<AS6Badge tone="neutral">{integration.navigation.label}</AS6Badge>}
+        />
+        <AS6Card
+          title={integration.assistantContext.title}
+          subtitle={integration.assistantContext.nextBestAction}
+          actions={<AS6Badge tone="success">Assistant</AS6Badge>}
+        />
+        <AS6Card
+          title={integration.focusContext.title}
+          subtitle={integration.focusContext.primaryMetric}
+          actions={<AS6Badge tone="warning">Focus</AS6Badge>}
+        />
       </div>
+
       <div className="as6-crm-kanban-workspace-surface__body">
-        <main className="as6-crm-kanban-workspace-surface__core">{children}</main>
+        <main className="as6-crm-kanban-workspace-surface__core">
+          <AS6Card
+            title="Kanban board"
+            subtitle="Карточки и колонки будут отображаться в рабочей области Kanban."
+            actions={<AS6Button variant="secondary">Review board</AS6Button>}
+          >
+            {children}
+            <AS6EmptyState
+              title="No Kanban cards yet"
+              description="When CRM work enters the board, cards will appear here by priority and stage."
+            />
+          </AS6Card>
+        </main>
         <aside className="as6-crm-kanban-workspace-surface__rail" aria-label="CRM Kanban workspace panels">
           {panels.map((panel) => (
-            <article key={panel.id}>
-              <span>{panel.zone}</span>
-              <strong>{panel.title}</strong>
-            </article>
+            <AS6Card
+              key={panel.id}
+              title={panel.title}
+              subtitle={panel.zone}
+              actions={<AS6Badge tone="neutral">Panel</AS6Badge>}
+            />
           ))}
         </aside>
       </div>
-    </section>
+    </AS6Panel>
   )
 }
 
