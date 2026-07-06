@@ -1,0 +1,23 @@
+# AS6 Release
+
+After validation passes:
+- create commit;
+- create restore tag;
+- push commit;
+- push tag;
+- print final AS6 log.
+
+Final log format:
+PROJECT_READINESS=
+AS6_DONE=
+AS6_REPAIR= optional
+CURRENT_COMMIT=
+RESTORE_TAG=
+NEXT_STAGE=
+VALIDATION_GIT_HEAD=
+VALIDATION_RESTORE_TAG=
+VALIDATION_FRONTEND_BUILD=
+VALIDATION_GUARDIAN=
+VALIDATION_SECRET_SCAN=
+VALIDATION_COMMIT=
+VALIDATION_PUSH=

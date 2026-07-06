@@ -2327,3 +2327,9 @@ ops/bin/as6-control-permission-engine-v114
 - Failure class: AS6_PROJECT_DIRECTION_SELECTION_GAP
 - Selected direction: AS6_DESIGN_SYSTEM_V1_COMPLETION
 - Result: PASS
+
+## AS6 Codex Local Skills
+- Diagnostic: docs/diagnostics/as6-codex-local-skills-diagnostics.md
+- Failure class: AS6_CODEX_LOCAL_SKILLS_GOVERNANCE_GAP
+- Root cause: Local Codex skills/prompts were absent and AGENTS.md was missing at task start.
+- Result: PASS
