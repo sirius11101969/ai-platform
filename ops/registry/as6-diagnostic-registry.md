@@ -2333,3 +2333,10 @@ ops/bin/as6-control-permission-engine-v114
 - Failure class: AS6_CODEX_LOCAL_SKILLS_GOVERNANCE_GAP
 - Root cause: Local Codex skills/prompts were absent and AGENTS.md was missing at task start.
 - Result: PASS
+
+## AS6 EPIC021 Design System Filters Adoption Validation
+- Diagnostic: docs/diagnostics/as6-epic021-design-system-filters-adoption-validation-diagnostics.md
+- Failure class: AS6_DESIGN_SYSTEM_FILTERS_ADOPTION_VALIDATION_GAP
+- Real visual migration: AS6Panel, AS6Toolbar, AS6Card, AS6Badge
+- Legacy preservation: CRMFiltersLegacyPanel
+- Result: PASS
