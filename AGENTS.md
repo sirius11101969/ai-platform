@@ -12,6 +12,10 @@ Created skills:
 - `.codex/skills/as6-crm-module.md`
 - `.codex/skills/as6-validation.md`
 - `.codex/skills/as6-release.md`
+- `.codex/skills/as6-autonomous-engineer.md`
+
+Primary AS6 skill:
+- Use `.codex/skills/as6-autonomous-engineer.md` as the main skill for commands like `делай`, `продолжи`, and `следующий этап`.
 
 Created prompts:
 - `.codex/prompts/continue-next-stage.md`
