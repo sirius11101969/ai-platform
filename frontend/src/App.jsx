@@ -30,6 +30,7 @@ import CRMBrandV2Page from "./pages/CRMBrandV2Page";
 import AS6OSPage from "./pages/AS6OSPage";
 import CRMWorkspacePage from "./pages/CRMWorkspacePage";
 import AS6WorkspacePage from "./pages/AS6WorkspacePage";
+import { AS6BlogPage, AS6PublicHomePage, AS6PublicInfoPage } from "./pages/AS6PublicWebsite";
 import { AS6BusinessHome } from "./as6/business-home";
 import "./styles.css";
 import "./theme/as6Theme.css";
@@ -128,7 +129,14 @@ export default function App() {
         <Suspense fallback={window.location.pathname === "/command-center" ? null : <div className="as6-route-loading">Загрузка...</div>}>
           <Routes>
 
-          <Route path="/" element={<AS6OneShellAdapter />} />
+          <Route path="/" element={<AS6PublicHomePage />} />
+          <Route path="/blog" element={<AS6BlogPage />} />
+          <Route path="/blog/:slug" element={<AS6BlogPage />} />
+          <Route path="/docs" element={<AS6PublicInfoPage type="docs" />} />
+          <Route path="/pricing" element={<AS6PublicInfoPage type="pricing" />} />
+          <Route path="/about" element={<AS6PublicInfoPage type="about" />} />
+          <Route path="/contact" element={<AS6PublicInfoPage type="contact" />} />
+          <Route path="/app" element={<AS6OneShellAdapter />} />
           <Route path="/crm" element={<Navigate to="/as6-crm" replace />} />
           {createAS6LivingSpaceRouteElements()}
           <Route path="/crm-v2" element={<ProtectedRoute><CRMBrandV2Page /></ProtectedRoute>} />

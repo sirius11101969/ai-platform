@@ -17,8 +17,8 @@ export const as6LivingSpaces = [
     engineEnabled: true,
     status: "alias",
     authRequired: false,
-    redirectTo: "/",
-    architectureRule: "AS6_SINGLE_PRIMARY_SHELL_RULE",
+    redirectTo: "/app",
+    architectureRule: "AS6_APP_WORKSPACE_MUST_BE_UNDER_APP_ROUTE",
   },
   {
     id: "as6-crm",

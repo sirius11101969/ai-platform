@@ -2680,3 +2680,13 @@ Governed and registered.
 - Root cause: parallel AS6 UI shells and CRM public entrypoints drifted after staged migration, leaving `/crm`, `/as6-crm`, `/as6-one`, and living-space route declarations with ambiguous ownership.
 - Resolution: `/` remains AS6 ONE primary, `/as6-crm` is the single public CRM Workspace, `/crm` redirects to `/as6-crm`, `/as6-one` redirects to `/`, duplicate living-space rendering in App.jsx is replaced with one direct `createAS6LivingSpaceRouteElements()` route element set, and `/as6-sales` remains rollback.
 - Status: repaired in code; production visual validation is mandatory in AS6_EPIC023_PRODUCTION_VISUAL_VALIDATION.
+
+## AS6 EPIC024 Public Brand Website Foundation
+- Registered: AS6_PUBLIC_WEBSITE_ENTRYPOINT_MISSING.
+- Registered: AS6_LANDING_APP_MIXED_WITH_PUBLIC_SITE_GAP.
+- Registered: AS6_BLOG_CONTENT_ENGINE_MISSING_GAP.
+- Registered: AS6_PUBLIC_BRAND_NAVIGATION_GAP.
+- Architecture rules: AS6_ROOT_MUST_BE_PUBLIC_BRAND_WEBSITE, AS6_APP_WORKSPACE_MUST_BE_UNDER_APP_ROUTE, AS6_BLOG_MUST_SUPPORT_SEO_POST_STRUCTURE.
+- Root cause: the root route still acted as the AS6 ONE application workspace after EPIC023, so AS6 lacked a distinct public brand website and blog-ready content entrypoint.
+- Resolution: `/` now renders the public AS6 brand website, `/app` owns AS6 ONE workspace, `/as6-crm` remains CRM workspace, and `/blog`, `/blog/:slug`, `/docs`, `/pricing`, `/about`, and `/contact` are registered as public website routes.
+- Status: repaired in code; public website visual validation moves to AS6_EPIC024_PUBLIC_WEBSITE_VISUAL_VALIDATION.

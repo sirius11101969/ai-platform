@@ -1,5 +1,22 @@
 # AS6 Diagnostic Registry
 
+## AS6 EPIC024 Public Brand Website Foundation
+- diagnostic: public route ownership, app workspace route, blog slug structure, public navigation
+- public_home: /
+- public_blog: /blog
+- public_blog_slug: /blog/:slug
+- public_docs: /docs
+- public_pricing: /pricing
+- public_about: /about
+- public_contact: /contact
+- app_workspace: /app
+- crm_workspace: /as6-crm
+- root_cause: AS6_PUBLIC_WEBSITE_ENTRYPOINT_MISSING
+- failure_classes: AS6_LANDING_APP_MIXED_WITH_PUBLIC_SITE_GAP, AS6_BLOG_CONTENT_ENGINE_MISSING_GAP, AS6_PUBLIC_BRAND_NAVIGATION_GAP
+- architecture_rules: AS6_ROOT_MUST_BE_PUBLIC_BRAND_WEBSITE, AS6_APP_WORKSPACE_MUST_BE_UNDER_APP_ROUTE, AS6_BLOG_MUST_SUPPORT_SEO_POST_STRUCTURE
+- result: AS6_EPIC024_PUBLIC_BRAND_WEBSITE_FOUNDATION=REGISTERED
+- next_stage: AS6_EPIC024_PUBLIC_WEBSITE_VISUAL_VALIDATION
+
 ## AS6 EPIC023 Architecture Reset Implementation
 - diagnostic: frontend route ownership, CRM redirect, living-space dedupe, alias redirect, rollback preservation
 - root_route: /
