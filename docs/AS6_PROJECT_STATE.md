@@ -6798,3 +6798,10 @@ Status: PASS pending validation
 - Filters visual adoption started.
 - Business logic migration: none.
 - Next stage: AS6_EPIC021_DESIGN_SYSTEM_FILTERS_ADOPTION_VALIDATION.
+
+## AS6 EPIC021 Filters Visual Migration Repair
+- Repair: AS6_EPIC021_FILTERS_ADOPTION_VISUAL_MIGRATION_REPAIR.
+- Project readiness: 99%.
+- CRMFiltersPanel now uses AS6Panel, AS6Toolbar, AS6Card, AS6Badge.
+- CRMFiltersLegacyPanel preserved.
+- Added diagnostic class: AS6_FILTERS_ADOPTION_DOCUMENTATION_ONLY_GAP.

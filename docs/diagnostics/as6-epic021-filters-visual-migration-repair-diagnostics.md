@@ -1,0 +1,8 @@
+# AS6 EPIC021 Filters Visual Migration Repair Diagnostics
+
+RESULT=PASS
+
+Failure classes:
+
+- AS6_FILTERS_ADOPTION_DOCUMENTATION_ONLY_GAP
+- AS6_FILTERS_VISUAL_MIGRATION_REPAIR
