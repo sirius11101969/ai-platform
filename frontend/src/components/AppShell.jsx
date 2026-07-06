@@ -130,7 +130,7 @@ export function ProtectedLayout({ children }) {
               <nav className="side-nav command-side-nav" aria-label="Command Center navigation">
                 <NavLink to="/command-center" className={({ isActive }) => (isActive ? "active command-center-active" : "command-center-link")}>🚀 Command Center</NavLink>
                 <NavLink to="/dashboard">▦ Dashboard</NavLink>
-                <NavLink to="/crm">▧ CRM</NavLink>
+                <NavLink to="/as6-crm">▧ CRM</NavLink>
                 <NavLink to="/dashboard/revenue">↗ Revenue</NavLink>
                 <NavLink to="/ai-workforce-center">👥 AI сотрудники</NavLink>
                 <NavLink to="/followups">☑ AI задачи <span className="nav-badge">12</span></NavLink>
@@ -160,7 +160,7 @@ export function ProtectedLayout({ children }) {
             <div className="sidebar-scroll" role="presentation">
               <nav className="side-nav" aria-label="Основная навигация">
                 <NavLink to="/dashboard" className={({ isActive }) => (isActive ? "active" : "")}>Дашборд</NavLink>
-                <NavLink to="/crm" className={({ isActive }) => (isActive ? "active" : "")}>CRM‑воронка</NavLink>
+                <NavLink to="/as6-crm" className={({ isActive }) => (isActive ? "active" : "")}>CRM‑воронка</NavLink>
                 <NavLink to="/ai-workforce-center" className={({ isActive }) => (isActive ? "active" : "")}>AI сотрудники</NavLink>
                 <NavLink to="/ai-approval-center" className={({ isActive }) => (isActive ? "active" : "")}>AI SDR Approval Center</NavLink>
                 <NavLink to="/ai-execution-center" className={({ isActive }) => (isActive ? "active" : "")}>AI Execution Center</NavLink>

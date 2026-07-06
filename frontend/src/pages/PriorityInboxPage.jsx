@@ -83,7 +83,7 @@ export default function PriorityInboxPage() {
   }
 
   function openLead(lead, focus) {
-    const url = lead.actionUrls?.[focus] || lead.crmUrl || `/crm?leadId=${lead.leadId}`;
+    const url = lead.actionUrls?.[focus] || lead.crmUrl || `/as6-crm?leadId=${lead.leadId}`;
     navigate(url);
   }
 

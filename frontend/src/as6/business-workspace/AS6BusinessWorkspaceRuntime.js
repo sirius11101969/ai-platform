@@ -132,7 +132,7 @@ export function searchAS6BusinessWorkspace(query = "") {
 
 export function bootstrapAS6BusinessWorkspace() {
   registerAS6BusinessModule({ id: "dashboard", title: "Dashboard", path: "/dashboard", icon: "▦" });
-  registerAS6BusinessModule({ id: "crm", title: "CRM", path: "/crm", icon: "▧" });
+  registerAS6BusinessModule({ id: "crm", title: "CRM", path: "/as6-crm", icon: "▧" });
   registerAS6BusinessModule({ id: "marketplace", title: "Marketplace", path: "/marketplace", icon: "extensions" });
   registerAS6BusinessCommand({ id: "open-dashboard", title: "Open Dashboard", handler: () => openAS6BusinessModule("dashboard") });
   registerAS6BusinessCommand({ id: "open-crm", title: "Open CRM", handler: () => openAS6BusinessModule("crm") });

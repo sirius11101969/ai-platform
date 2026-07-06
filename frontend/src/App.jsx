@@ -44,8 +44,6 @@ import PriorityInboxPage from "./pages/PriorityInboxPage";
 const PipelineCopilotPage = lazy(() => import("./pages/PipelineCopilotPage"));
 const AiManagerDashboardPage = lazy(() => import("./pages/AiManagerDashboardPage"));
 const AS6OneShellAdapter = lazy(() => import("./as6-one/AS6OneShellAdapter"));
-const AS6CrmShellAdapter = lazy(() => import("./as6-crm/AS6CrmShellAdapter"));
-const AS6SalesShellAdapter = lazy(() => import("./as6-sales/AS6SalesShellAdapter"));
 import AiVoiceOutreachPage from "./pages/AiVoiceOutreachPage";
 import AiRealtimeVoicePage from "./pages/AiRealtimeVoicePage";
 import AiRevenueIntelligencePage from "./pages/AiRevenueIntelligencePage";
@@ -66,8 +64,8 @@ const CommandCenterPage = lazy(() => import("./pages/CommandCenterPage"));
 const RevenueDashboardPage = lazy(() => import("./pages/RevenueDashboardPage"));
 import { getAuthToken, getStoredUser } from "./services/api";
 
-import { AS6LivingSpaceRoutes, createAS6LivingSpaceRouteElements } from "./as6/living-spaces/AS6LivingSpaceRoutes";
-import { RequireAuth, ProtectedRoute } from "./as6/auth/AS6RouteAuth";
+import { createAS6LivingSpaceRouteElements } from "./as6/living-spaces/AS6LivingSpaceRoutes";
+import { ProtectedRoute } from "./as6/auth/AS6RouteAuth";
 const AuthContext = createContext({ token: null, user: null, isAuthenticated: false });
 
 function getAuthState() {
@@ -131,10 +129,8 @@ export default function App() {
           <Routes>
 
           <Route path="/" element={<AS6OneShellAdapter />} />
-          <Route path="/as6-crm" element={<AS6CrmShellAdapter />} />
-          <Route path="/crm" element={<AS6SalesShellAdapter />} />
+          <Route path="/crm" element={<Navigate to="/as6-crm" replace />} />
           {createAS6LivingSpaceRouteElements()}
-          <AS6LivingSpaceRoutes />
           <Route path="/crm-v2" element={<ProtectedRoute><CRMBrandV2Page /></ProtectedRoute>} />
           <Route path="/as6-os" element={<AS6OSPage />} />
           <Route path="/crm-workspace" element={<CRMWorkspacePage />} />

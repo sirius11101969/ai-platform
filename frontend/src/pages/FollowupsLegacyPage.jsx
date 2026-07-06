@@ -269,7 +269,7 @@ export default function FollowupsPage() {
                   </button>
                   {sendDisabledHint && <small className="followup-send-hint">{sendDisabledHint}</small>}
                 </div>
-                <Link className="ghost-button compact" to={`/crm?lead=${item.leadId}`}>CRM</Link>
+                <Link className="ghost-button compact" to={`/as6-crm?lead=${item.leadId}`}>CRM</Link>
               </div>
             </article>
             );

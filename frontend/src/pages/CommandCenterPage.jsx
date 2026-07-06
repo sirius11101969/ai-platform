@@ -87,8 +87,8 @@ const executiveModules = [
 ]
 
 const quickActionLinks = {
-  "Создать лид": "/crm?quick=create-lead",
-  "Создать сделку": "/crm?quick=create-deal",
+  "Создать лид": "/as6-crm?quick=create-lead",
+  "Создать сделку": "/as6-crm?quick=create-deal",
   "Добавить задачу": "/followups?quick=create-task",
   "Approval Queue": "/ai-approval-center",
   "AI аналитика": "/ai-revenue-intelligence",

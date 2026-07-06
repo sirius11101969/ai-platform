@@ -1,5 +1,18 @@
 # AS6 Diagnostic Registry
 
+## AS6 EPIC023 Architecture Reset Implementation
+- diagnostic: frontend route ownership, CRM redirect, living-space dedupe, alias redirect, rollback preservation
+- root_route: /
+- crm_route: /as6-crm
+- crm_redirect: /crm -> /as6-crm
+- as6_one_alias: /as6-one -> /
+- legacy_rollback: /as6-sales
+- root_cause: AS6_PARALLEL_UI_ARCHITECTURE_DRIFT
+- failure_classes: AS6_MULTIPLE_PRIMARY_SHELLS_GAP, AS6_MULTIPLE_CRM_ENTRYPOINTS_GAP, AS6_ROUTE_OWNERSHIP_DRIFT, AS6_PRODUCTION_VISUAL_VALIDATION_GAP
+- architecture_rules: AS6_SINGLE_PRIMARY_SHELL_RULE, AS6_SINGLE_PUBLIC_CRM_ENTRYPOINT_RULE, AS6_PRODUCTION_VISUAL_VALIDATION_REQUIRED_RULE, AS6_NO_NEW_SHELL_WITHOUT_ARCHITECTURE_APPROVAL_RULE
+- result: AS6_EPIC023_ARCHITECTURE_RESET_IMPLEMENTATION=REGISTERED
+- next_stage: AS6_EPIC023_PRODUCTION_VISUAL_VALIDATION
+
 ## AS6 EPIC022 AS6 ONE Branded Landing and Route Repair
 - diagnostic: root route, CRM route, production bundle, and SPA fallback inspection
 - root_route: /

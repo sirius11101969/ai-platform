@@ -25,7 +25,7 @@ export default function ProductRecommendationCard() {
         <b>Evidence</b>
       </section>
 
-      <a className="as6-v57-recommendation-card__button" href="/crm?filter=priority">
+      <a className="as6-v57-recommendation-card__button" href="/as6-crm?filter=priority">
         Открыть CRM
       </a>
     </article>

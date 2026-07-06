@@ -1,5 +1,5 @@
 import { lazy } from "react";
-import { Route } from "react-router-dom";
+import { Navigate, Route } from "react-router-dom";
 import { as6LivingSpaces } from "./as6LivingSpaceRegistry";
 
 import { RequireAuth } from "../auth/AS6RouteAuth";
@@ -29,6 +29,16 @@ export function createAS6LivingSpaceRouteElements() {
 
     if (!Adapter) {
       return null;
+    }
+
+    if (space.redirectTo) {
+      return (
+        <Route
+          key={space.id}
+          path={space.route}
+          element={<Navigate to={space.redirectTo} replace />}
+        />
+      );
     }
 
     return (

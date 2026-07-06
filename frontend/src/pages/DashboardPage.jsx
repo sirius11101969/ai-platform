@@ -509,7 +509,7 @@ window.location.search.includes("order=pending")
             <span className="eyebrow">Оплаты и быстрые действия</span>
             <h3>Оплаты, тариф и быстрые действия</h3>
           </div>
-          <Link className="ghost-button" to="/crm">Открыть CRM</Link>
+          <Link className="ghost-button" to="/as6-crm">Открыть CRM</Link>
         </div>
         <div className="order-list dashboard-orders">
           {orders.map((order) => (

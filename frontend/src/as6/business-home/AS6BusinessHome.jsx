@@ -468,7 +468,7 @@ export function AS6BusinessHome() {
           <span>Business OS</span>
           <nav aria-label="Business OS navigation">
             <a href="/business-home">Home</a>
-            <a href="/crm-workspace">CRM</a>
+            <a href="/as6-crm">CRM</a>
             <a href="/dashboard">Dashboard</a>
             <a href="/marketplace">Marketplace</a>
           </nav>

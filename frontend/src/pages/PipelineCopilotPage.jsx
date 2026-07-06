@@ -53,7 +53,7 @@ function ActionButtons({ item = {}, ctas = {}, navigate, onCreateAction, busyAct
   const actionId = item.actionId || item.queueId || (item.category === "approval" || item.actionType ? item.id : "");
   const aiWorkersRoute = actionId ? `/ai-workers?actionId=${encodeURIComponent(actionId)}` : leadId ? `/ai-workers?leadId=${encodeURIComponent(leadId)}` : (ctas.openAiWorkers || "/ai-workers");
   const buttons = [
-    { label: "Open Lead", route: ctas.openLead || (leadId ? `/crm?leadId=${encodeURIComponent(leadId)}` : "/crm"), log: "[pipeline-copilot] open lead requested" },
+    { label: "Open Lead", route: ctas.openLead || (leadId ? `/as6-crm?leadId=${encodeURIComponent(leadId)}` : "/as6-crm"), log: "[pipeline-copilot] open lead requested" },
     { label: "Open AI Workers", route: ctas.openAiWorkers || aiWorkersRoute },
     { label: "Open Priority Inbox", route: ctas.openPriorityInbox || (leadId ? `/priority-inbox?leadId=${encodeURIComponent(leadId)}` : "/priority-inbox") },
   ];

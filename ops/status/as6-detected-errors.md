@@ -2669,3 +2669,14 @@ Governed and registered.
 - Registered: AS6_PRODUCTION_VISUAL_VALIDATION_GAP.
 - Registered: AS6_ROUTE_OWNERSHIP_DRIFT.
 - Status: controlled by audit; implementation deferred to AS6_EPIC023_ARCHITECTURE_RESET_PLAN.
+
+## AS6 EPIC023 Architecture Reset Implementation
+- Registered: AS6_PARALLEL_UI_ARCHITECTURE_DRIFT.
+- Registered: AS6_MULTIPLE_PRIMARY_SHELLS_GAP.
+- Registered: AS6_MULTIPLE_CRM_ENTRYPOINTS_GAP.
+- Registered: AS6_ROUTE_OWNERSHIP_DRIFT.
+- Registered: AS6_PRODUCTION_VISUAL_VALIDATION_GAP.
+- Architecture rules: AS6_SINGLE_PRIMARY_SHELL_RULE, AS6_SINGLE_PUBLIC_CRM_ENTRYPOINT_RULE, AS6_PRODUCTION_VISUAL_VALIDATION_REQUIRED_RULE, AS6_NO_NEW_SHELL_WITHOUT_ARCHITECTURE_APPROVAL_RULE.
+- Root cause: parallel AS6 UI shells and CRM public entrypoints drifted after staged migration, leaving `/crm`, `/as6-crm`, `/as6-one`, and living-space route declarations with ambiguous ownership.
+- Resolution: `/` remains AS6 ONE primary, `/as6-crm` is the single public CRM Workspace, `/crm` redirects to `/as6-crm`, `/as6-one` redirects to `/`, duplicate living-space rendering in App.jsx is replaced with one direct `createAS6LivingSpaceRouteElements()` route element set, and `/as6-sales` remains rollback.
+- Status: repaired in code; production visual validation is mandatory in AS6_EPIC023_PRODUCTION_VISUAL_VALIDATION.

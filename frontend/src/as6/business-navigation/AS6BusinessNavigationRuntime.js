@@ -104,7 +104,7 @@ export function bootstrapAS6BusinessNavigation() {
   registerAS6BusinessNavigationSection({ id: "platform", title: "Platform", order: 90 });
 
   registerAS6BusinessNavigationItem({ id: "dashboard", title: "Dashboard", path: "/dashboard", icon: "▦", sectionId: "main", order: 10, moduleId: "dashboard" });
-  registerAS6BusinessNavigationItem({ id: "crm", title: "CRM", path: "/crm", icon: "▧", sectionId: "business", order: 20, moduleId: "crm" });
+  registerAS6BusinessNavigationItem({ id: "crm", title: "CRM", path: "/as6-crm", icon: "▧", sectionId: "business", order: 20, moduleId: "crm" });
   registerAS6BusinessNavigationItem({ id: "ai-workforce", title: "AI Workforce", path: "/ai-workforce-center", icon: "👥", sectionId: "business", order: 30, moduleId: "ai-workforce" });
 
   const marketplace = getAS6MarketplaceNavigationItem();
