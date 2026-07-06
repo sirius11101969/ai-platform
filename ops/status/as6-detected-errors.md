@@ -2690,3 +2690,13 @@ Governed and registered.
 - Root cause: the root route still acted as the AS6 ONE application workspace after EPIC023, so AS6 lacked a distinct public brand website and blog-ready content entrypoint.
 - Resolution: `/` now renders the public AS6 brand website, `/app` owns AS6 ONE workspace, `/as6-crm` remains CRM workspace, and `/blog`, `/blog/:slug`, `/docs`, `/pricing`, `/about`, and `/contact` are registered as public website routes.
 - Status: repaired in code; public website visual validation moves to AS6_EPIC024_PUBLIC_WEBSITE_VISUAL_VALIDATION.
+
+## AS6 EPIC025 Public Brand Experience
+- Registered: AS6_PUBLIC_BRAND_EXPERIENCE_WEAK.
+- Registered: AS6_PUBLIC_SITE_LOW_VISUAL_IMPACT_GAP.
+- Registered: AS6_BLOG_VISUAL_CONTENT_GAP.
+- Registered: AS6_PUBLIC_CTA_CLARITY_GAP.
+- Architecture rules: AS6_PUBLIC_HOME_MUST_BE_BRAND_WEBSITE, AS6_APP_MUST_STAY_UNDER_APP_ROUTE, AS6_BLOG_MUST_BE_VISUAL_AND_SEO_READY.
+- Root cause: EPIC024 established correct public website route ownership, but the brand experience still needed stronger visual impact, use-case storytelling, clearer CTA hierarchy, and richer blog cards.
+- Resolution: public home hero, product cards, advantages, use cases, blog cards, navigation affordances, and CTA band were visually upgraded with scoped public-site CSS.
+- Status: repaired in code; visual validation moves to AS6_EPIC025_PUBLIC_BRAND_VISUAL_VALIDATION.

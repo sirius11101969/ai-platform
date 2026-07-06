@@ -4,18 +4,25 @@ import as6Robot from "../assets/as6-robot.png";
 import "./AS6PublicWebsite.css";
 
 const products = [
-  ["CRM", "Pipeline, leads, follow-ups, and customer context inside one operating workspace."],
-  ["AI Assistant", "Executive assistant for next actions, task focus, and daily operating rhythm."],
-  ["Revenue", "Forecasting, deal risk, and revenue control for founders and sales teams."],
-  ["Analytics", "Business signals, operating health, and decision history in one view."],
-  ["Automation", "Human-approved automations for repetitive sales and operations work."],
-  ["Documents", "Commercial documents, proposals, and company memory connected to workflows."],
+  ["CRM", "Pipeline, leads, follow-ups, and customer context inside one operating workspace.", "Live pipeline", "01"],
+  ["AI Assistant", "Executive assistant for next actions, task focus, and daily operating rhythm.", "Decision copilot", "02"],
+  ["Revenue", "Forecasting, deal risk, and revenue control for founders and sales teams.", "Forecast control", "03"],
+  ["Analytics", "Business signals, operating health, and decision history in one view.", "Signal layer", "04"],
+  ["Automation", "Human-approved automations for repetitive sales and operations work.", "Approved execution", "05"],
+  ["Documents", "Commercial documents, proposals, and company memory connected to workflows.", "Company memory", "06"],
 ];
 
 const advantages = [
   ["One operating layer", "AS6 connects CRM, tasks, AI actions, revenue, and decisions without turning the public site into the app."],
   ["Built for business owners", "The product starts from clarity: what is happening, what matters, and what to do next."],
   ["Workspace-first architecture", "The application lives under /app, while CRM remains a dedicated workspace under /as6-crm."],
+];
+
+const useCases = [
+  ["Founder command", "See revenue risk, hot leads, team load, and next decisions from one operating view."],
+  ["Sales operating room", "Move from lead intake to follow-up, proposal, meeting, and forecast without context loss."],
+  ["AI-assisted back office", "Prepare documents, summarize decisions, and route approved actions into the workspace."],
+  ["Board-ready clarity", "Turn operational noise into narrative, metrics, and evidence for leadership updates."],
 ];
 
 export const as6BlogPosts = [
@@ -25,7 +32,7 @@ export const as6BlogPosts = [
     excerpt: "Why companies need an operating layer that combines CRM, decisions, revenue, and AI actions.",
     category: "Architecture",
     date: "2026-07-06",
-    image: "linear-gradient(135deg, rgba(36, 228, 255, .86), rgba(122, 92, 255, .72))",
+    image: "radial-gradient(circle at 22% 18%, rgba(255,255,255,.42), transparent 20%), linear-gradient(135deg, rgba(36, 228, 255, .86), rgba(122, 92, 255, .72))",
   },
   {
     slug: "crm-inside-as6-one",
@@ -33,7 +40,7 @@ export const as6BlogPosts = [
     excerpt: "How CRM becomes a workspace in a wider business operating system instead of a separate silo.",
     category: "CRM",
     date: "2026-07-06",
-    image: "linear-gradient(135deg, rgba(50, 245, 169, .8), rgba(37, 99, 235, .74))",
+    image: "radial-gradient(circle at 72% 18%, rgba(255,255,255,.35), transparent 18%), linear-gradient(135deg, rgba(50, 245, 169, .8), rgba(37, 99, 235, .74))",
   },
   {
     slug: "human-approved-automation",
@@ -41,7 +48,7 @@ export const as6BlogPosts = [
     excerpt: "Automation should recommend, prepare, and execute only through clear ownership and approval.",
     category: "Governance",
     date: "2026-07-06",
-    image: "linear-gradient(135deg, rgba(255, 159, 28, .82), rgba(255, 61, 143, .7))",
+    image: "radial-gradient(circle at 32% 24%, rgba(255,255,255,.34), transparent 18%), linear-gradient(135deg, rgba(255, 159, 28, .82), rgba(255, 61, 143, .7))",
   },
 ];
 
@@ -83,6 +90,7 @@ function BlogCard({ post }) {
     <Link className="as6-blog-card" to={`/blog/${post.slug}`}>
       <div className="as6-blog-card__image" style={{ background: post.image }}>
         <span>{post.category}</span>
+        <b>{post.title.split(" ").slice(0, 2).join(" ")}</b>
       </div>
       <div>
         <small>{post.date}</small>
@@ -109,20 +117,30 @@ export function AS6PublicHomePage() {
       <main>
         <section className="as6-public-hero">
           <div className="as6-public-hero__copy">
-            <span>AI Operating System for Business</span>
-            <h1>AS6 turns business operations into one intelligent workspace.</h1>
+            <span>AS6 AI Operating System for Business</span>
+            <h1>Run the company from one premium AI operating layer.</h1>
             <p>
-              A premium AI operating system for CRM, revenue, analytics, automation, documents,
-              and executive decisions.
+              AS6 brings CRM, revenue, analytics, automation, documents, and executive decisions
+              into a single branded workspace for teams that need clarity and speed.
             </p>
             <div className="as6-public-hero__actions">
               <Link className="as6-public-primary" to="/app">Open App</Link>
               <Link className="as6-public-secondary" to="/as6-crm">Open CRM</Link>
             </div>
+            <div className="as6-public-proof">
+              <strong>Public brand website</strong>
+              <strong>App under /app</strong>
+              <strong>CRM under /as6-crm</strong>
+            </div>
           </div>
           <div className="as6-public-orbit" aria-hidden="true">
             <img src={as6Robot} alt="" />
             <div><b>AS6 CORE</b><span>Business OS online</span></div>
+            <ul>
+              <li><span>Revenue</span><b>+18.6%</b></li>
+              <li><span>Hot leads</span><b>247</b></li>
+              <li><span>AI actions</span><b>28</b></li>
+            </ul>
           </div>
         </section>
 
@@ -132,9 +150,10 @@ export function AS6PublicHomePage() {
             <h2>One system for the company cockpit.</h2>
           </div>
           <div className="as6-product-grid">
-            {products.map(([title, copy]) => (
+            {products.map(([title, copy, meta, index]) => (
               <article key={title}>
-                <span>{title.slice(0, 2).toUpperCase()}</span>
+                <span>{index}</span>
+                <small>{meta}</small>
                 <h3>{title}</h3>
                 <p>{copy}</p>
               </article>
@@ -159,6 +178,22 @@ export function AS6PublicHomePage() {
 
         <section className="as6-public-section">
           <div className="as6-public-section__head">
+            <span>Use cases</span>
+            <h2>Operating scenarios for the modern company.</h2>
+          </div>
+          <div className="as6-usecase-grid">
+            {useCases.map(([title, copy], index) => (
+              <article key={title}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <h3>{title}</h3>
+                <p>{copy}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="as6-public-section">
+          <div className="as6-public-section__head">
             <span>Blog</span>
             <h2>Notes on building an AI business operating system.</h2>
             <Link to="/blog">View all posts</Link>
@@ -167,8 +202,9 @@ export function AS6PublicHomePage() {
         </section>
 
         <section className="as6-public-cta-band">
-          <h2>Run the company from AS6 ONE.</h2>
-          <p>Use the public website for discovery and the application workspace for operations.</p>
+          <span>Ready for the operating layer</span>
+          <h2>Move from fragmented tools to AS6 ONE.</h2>
+          <p>Discover AS6 on the public website. Operate the company from the application workspace.</p>
           <Link to="/app">Open App</Link>
         </section>
       </main>

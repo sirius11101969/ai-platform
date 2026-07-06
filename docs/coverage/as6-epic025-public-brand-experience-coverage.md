@@ -1,0 +1,33 @@
+# AS6 EPIC025 Public Brand Experience Coverage
+
+Stage: AS6_EPIC025_PUBLIC_BRAND_EXPERIENCE
+
+Coverage:
+
+- AS6_PUBLIC_HOME_BRAND_HERO_COVERAGE=REGISTERED
+- AS6_PUBLIC_PRODUCT_CARDS_COVERAGE=REGISTERED
+- AS6_PUBLIC_ADVANTAGES_COVERAGE=REGISTERED
+- AS6_PUBLIC_USE_CASES_COVERAGE=REGISTERED
+- AS6_PUBLIC_BLOG_VISUAL_CARDS_COVERAGE=REGISTERED
+- AS6_PUBLIC_CTA_CLARITY_COVERAGE=REGISTERED
+- AS6_PUBLIC_NAVIGATION_COVERAGE=REGISTERED
+- AS6_APP_ROUTE_PRESERVATION_COVERAGE=REGISTERED
+- AS6_CRM_ROUTE_PRESERVATION_COVERAGE=REGISTERED
+
+Validated code evidence:
+
+- `frontend/src/pages/AS6PublicWebsite.jsx`
+- `frontend/src/pages/AS6PublicWebsite.css`
+- `frontend/src/App.jsx`
+- `frontend/src/as6/living-spaces/as6LivingSpaceRegistry.js`
+
+Out of scope:
+
+- CRM business logic.
+- New shell creation.
+- New workspace creation.
+- Legacy route deletion.
+
+Result:
+
+- AS6_EPIC025_PUBLIC_BRAND_EXPERIENCE_COVERAGE=PASS

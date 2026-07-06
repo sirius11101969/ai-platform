@@ -1,5 +1,17 @@
 # AS6 Diagnostic Registry
 
+## AS6 EPIC025 Public Brand Experience
+- diagnostic: public home visual impact, blog visual content, CTA clarity, public route preservation
+- public_home: /
+- public_blog: /blog
+- app_workspace: /app
+- crm_workspace: /as6-crm
+- root_cause: AS6_PUBLIC_BRAND_EXPERIENCE_WEAK
+- failure_classes: AS6_PUBLIC_SITE_LOW_VISUAL_IMPACT_GAP, AS6_BLOG_VISUAL_CONTENT_GAP, AS6_PUBLIC_CTA_CLARITY_GAP
+- architecture_rules: AS6_PUBLIC_HOME_MUST_BE_BRAND_WEBSITE, AS6_APP_MUST_STAY_UNDER_APP_ROUTE, AS6_BLOG_MUST_BE_VISUAL_AND_SEO_READY
+- result: AS6_EPIC025_PUBLIC_BRAND_EXPERIENCE=REGISTERED
+- next_stage: AS6_EPIC025_PUBLIC_BRAND_VISUAL_VALIDATION
+
 ## AS6 EPIC024 Public Brand Website Foundation
 - diagnostic: public route ownership, app workspace route, blog slug structure, public navigation
 - public_home: /
