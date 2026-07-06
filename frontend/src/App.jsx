@@ -66,7 +66,7 @@ const CommandCenterPage = lazy(() => import("./pages/CommandCenterPage"));
 const RevenueDashboardPage = lazy(() => import("./pages/RevenueDashboardPage"));
 import { getAuthToken, getStoredUser } from "./services/api";
 
-import { AS6LivingSpaceRoutes } from "./as6/living-spaces/AS6LivingSpaceRoutes";
+import { AS6LivingSpaceRoutes, createAS6LivingSpaceRouteElements } from "./as6/living-spaces/AS6LivingSpaceRoutes";
 import { RequireAuth, ProtectedRoute } from "./as6/auth/AS6RouteAuth";
 const AuthContext = createContext({ token: null, user: null, isAuthenticated: false });
 
@@ -131,10 +131,9 @@ export default function App() {
           <Routes>
 
           <Route path="/" element={<AS6OneShellAdapter />} />
-          <Route path="/as6-one" element={<AS6OneShellAdapter />} />
           <Route path="/as6-crm" element={<AS6CrmShellAdapter />} />
           <Route path="/crm" element={<AS6SalesShellAdapter />} />
-          <Route path="/as6-sales" element={<AS6SalesShellAdapter />} />
+          {createAS6LivingSpaceRouteElements()}
           <AS6LivingSpaceRoutes />
           <Route path="/crm-v2" element={<ProtectedRoute><CRMBrandV2Page /></ProtectedRoute>} />
           <Route path="/as6-os" element={<AS6OSPage />} />

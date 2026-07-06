@@ -23,24 +23,24 @@ function renderLivingSpaceElement(space, Adapter) {
   return element;
 }
 
+export function createAS6LivingSpaceRouteElements() {
+  return as6LivingSpaces.map((space) => {
+    const Adapter = livingSpaceAdapterById[space.id];
+
+    if (!Adapter) {
+      return null;
+    }
+
+    return (
+      <Route
+        key={space.id}
+        path={space.route}
+        element={renderLivingSpaceElement(space, Adapter)}
+      />
+    );
+  });
+}
+
 export function AS6LivingSpaceRoutes() {
-  return (
-    <>
-      {as6LivingSpaces.map((space) => {
-        const Adapter = livingSpaceAdapterById[space.id];
-
-        if (!Adapter) {
-          return null;
-        }
-
-        return (
-          <Route
-            key={space.id}
-            path={space.route}
-            element={renderLivingSpaceElement(space, Adapter)}
-          />
-        );
-      })}
-    </>
-  );
+  return <>{createAS6LivingSpaceRouteElements()}</>;
 }
