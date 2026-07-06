@@ -11,7 +11,9 @@ export function AS6DynamicIntelligenceRail() {
   }
 
   const assistantMode =
-    activeSpace.id === "as6-sales"
+    activeSpace.id === "as6-crm"
+      ? "CRM ONE intelligence"
+      : activeSpace.id === "as6-sales"
       ? "Sales intelligence"
       : activeSpace.id === "as6-one"
         ? "Workspace intelligence"

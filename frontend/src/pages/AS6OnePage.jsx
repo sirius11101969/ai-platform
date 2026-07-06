@@ -2,7 +2,7 @@ import as6Logo from '../assets/as6-logo.webp'
 import as6Robot from '../assets/as6-robot.png'
 import './AS6OnePage.css'
 
-const nav = ['Главная','AS6 Генеральный директор','AI Действия','Продажи','Клиенты','Финансы','Маркетинг','Сотрудники','Производство','Документы','Аналитика','Автоматизация','Интеграции','Настройки']
+const nav = ['Главная','AS6 Генеральный директор','AI Действия','CRM','Клиенты','Финансы','Маркетинг','Сотрудники','Производство','Документы','Аналитика','Автоматизация','Интеграции','Настройки']
 const navIcons = ['▦','⚙','⌘','▽','♚','✈','◌','♧','▤','▣','☷','⚙','☷','☼']
 const kpis = [
   ['Выручка сегодня','1 248 890 ₽','↑ 18.6%','$','cyan'],['Новые лиды','247','↑ 32%','♟','pink'],['Сделки в работе','87','↑ 14%','▣','orange'],['AI сотрудники','28 / 28','Активны','◉','green'],['Конверсия','18.6%','↑ 4.2%','◎','cyan'],['Revenue at Risk','312 000 ₽','↑ 8.7%','△','red']
@@ -25,7 +25,7 @@ export default function AS6OnePage(){
   return <div className="as6-one-page">
     <aside className="one-sidebar">
       <div className="one-logo"><img src={as6Logo} alt="AS6 ONE"/><b>ONE</b></div><p>Центр управления компанией</p>
-      <nav>{nav.map((n,i)=><a key={n} className={i===0?'active':''}><span>{navIcons[i]}</span>{n}</a>)}</nav>
+      <nav>{nav.map((n,i)=><a key={n} href={n === 'CRM' ? '/as6-crm' : undefined} className={i===0?'active':''}><span>{navIcons[i]}</span>{n}</a>)}</nav>
       <div className="one-owner"><Avatar/><div><b>Владимир</b><span>Владелец, AS6</span><em>● Онлайн</em></div></div>
       <div className="one-core"><b>AS6 CORE</b><span>Ядро системы активно</span><img src={as6Robot} alt="AS6 Core"/></div>
     </aside>

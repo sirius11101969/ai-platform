@@ -1,5 +1,14 @@
 # AS6 Diagnostic Registry
 
+## AS6 EPIC022 CRM ONE Workspace Migration
+- diagnostic: frontend route and living-space registry inspection
+- route: /as6-crm
+- shell: AS6Shell
+- rollback: /as6-sales
+- result: AS6_CRM_ONE_WORKSPACE_ROUTE=REGISTERED
+- failure_class: AS6_CRM_OLD_SHELL_ADOPTION_DRIFT
+- architecture_rule: AS6_CRM_MUST_USE_AS6_ONE_WORKSPACE
+
 ## Autonomous Production Drift Controller
 - ops/bin/as6-autonomous-production-drift-controller
 - result: AS6_PRODUCTION_DRIFT_CONTROLLER_RESULT

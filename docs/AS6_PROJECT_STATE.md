@@ -43,6 +43,30 @@ ROOT_CAUSE=none
 
 SAFE_TO_CHANGE=YES
 
+## AS6 EPIC022 CRM ONE Workspace Migration
+
+Status:
+
+- AS6_EPIC022_AS6_CRM_ONE_WORKSPACE_MIGRATION=IMPLEMENTED
+- PRIMARY_CRM_ROUTE=/as6-crm
+- LEGACY_CRM_ROLLBACK_ROUTE=/as6-sales
+- AS6_CRM_ONE_WORKSPACE_USES_AS6_SHELL=YES
+- AS6_CRM_LEGACY_UI_PRIMARY_INTERFACE=NO
+
+Root cause:
+
+- The previous Design System Adoption line changed internal CRM panels, but did not move CRM into a new AS6 ONE workspace shell as the primary interface.
+
+Failure class:
+
+- AS6_CRM_OLD_SHELL_ADOPTION_DRIFT
+
+Architecture rule:
+
+- AS6_CRM_MUST_USE_AS6_ONE_WORKSPACE
+
+NEXT_STAGE=AS6_EPIC022_AS6_CRM_ONE_WORKSPACE_VALIDATION
+
 ## Implemented Governance / Automation Contours
 
 - Root Cause Governance

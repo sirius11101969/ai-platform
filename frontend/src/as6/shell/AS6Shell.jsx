@@ -6,6 +6,7 @@ import { AS6DynamicIntelligenceRail } from "../living-spaces/AS6DynamicIntellige
 import "./AS6Shell.css";
 import { AS6GlobalCommandPalette } from "../commands/AS6GlobalCommandPalette";
 export function AS6Shell({
+  children,
   navigation,
   contextBar,
   workspace,
@@ -28,7 +29,7 @@ export function AS6Shell({
               <aside className="as6-shell__navigation">{navigation}</aside>
               <main className="as6-shell__main">
                 <header className="as6-shell__context">{contextBar}</header>
-                <section className="as6-shell__workspace">{workspace}</section>
+                <section className="as6-shell__workspace">{workspace || children}</section>
                 <footer className="as6-shell__pulse">{pulse}</footer>
               </main>
               <aside className="as6-shell__intelligence">{intelligenceRail}</aside>

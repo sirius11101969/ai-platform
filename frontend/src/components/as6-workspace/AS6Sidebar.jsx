@@ -4,7 +4,7 @@ export const AS6_NAVIGATION_PRIMARY = [
   { to: '/command-center', label: 'Command Center', icon: '🚀', commandOnly: true },
   { to: '/dashboard', label: 'Dashboard', icon: '▦' },
   { to: '/marketplace', label: 'Marketplace', icon: '🧩', meta: 'P21', as6: 'AS6_MARKETPLACE_MENU_VISIBLE_P21' },
-  { to: '/crm', label: 'CRM', icon: '▧' },
+  { to: '/as6-crm', label: 'CRM', icon: '▧' },
   { to: '/dashboard/revenue', label: 'Revenue', icon: '↗' },
   { to: '/ai-workforce-center', label: 'AI сотрудники', icon: '👥' },
   { to: '/followups', label: 'AI задачи', icon: '☑', badge: '12' },
