@@ -1,5 +1,15 @@
 # AS6 Diagnostic Registry
 
+## AS6 V87 Visual Grammar
+- diagnostic: formal visual grammar registration, visual alphabet, emotional dictionary, state formulas, composition gates
+- artifact: docs/architecture/12_VISUAL_GRAMMAR.md
+- diagnostic_artifact: ops/diagnostics/as6-visual-grammar-v87.md
+- root_cause: AS6_VISUAL_GRAMMAR_NOT_REPOSITORY_REGISTERED
+- failure_classes: AS6_VISUAL_GRAMMAR_NOT_REGISTERED, AS6_VISUAL_PRIMITIVE_UNCONTROLLED_DRIFT, AS6_STATE_FORMULA_MISSING_GAP, AS6_EMOTIONAL_MEANING_MISSING_GAP, AS6_COMPOSITION_RULE_VIOLATION, AS6_STATE_GEOMETRY_DUPLICATION_DRIFT
+- architecture_rules: AS6_VISUAL_GRAMMAR_REQUIRED_RULE, AS6_APPROVED_VISUAL_PRIMITIVES_ONLY_RULE, AS6_STATE_FORMULA_REQUIRED_RULE, AS6_EMOTIONAL_MEANING_REQUIRED_RULE, AS6_ONE_CENTER_COMPOSITION_RULE, AS6_GEOMETRY_DUPLICATION_PREVENTION_RULE
+- result: AS6_VISUAL_GRAMMAR_V87=REGISTERED
+- next_stage: AS6_DESIGN_COMPILER_ADC_V88
+
 ## AS6 V86 Living Space Design System
 - diagnostic: Living Space design architecture repository registration, Master Screen 3 inheritance, unique geometry gate, motion continuity gate
 - artifacts: docs/architecture/08_LIVING_SPACE_GENOME.md, docs/architecture/09_GEOMETRY_ATLAS.md, docs/architecture/10_SPATIAL_COMPOSITION_SYSTEM.md, docs/architecture/11_MOTION_TRANSITION_SYSTEM.md
