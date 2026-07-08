@@ -1,0 +1,93 @@
+.living-space {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  color: rgba(255,255,255,0.94);
+  background:
+    radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--living-accent) 22%, transparent), transparent 32%),
+    radial-gradient(circle at 18% 14%, rgba(255,255,255,0.1), transparent 22%),
+    linear-gradient(135deg, #07111f 0%, #0d1f36 46%, #07111f 100%);
+}
+
+.living-space::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+  background-size: 84px 84px;
+  mask-image: radial-gradient(circle at 50% 45%, black, transparent 72%);
+  opacity: 0.45;
+}
+
+.living-space__brand {
+  position: absolute;
+  left: 34px;
+  top: 28px;
+  display: grid;
+  gap: 0.15rem;
+  z-index: 5;
+}
+
+.living-space__brand strong {
+  font-size: 1.55rem;
+  letter-spacing: -0.04em;
+}
+
+.living-space__brand span {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.58);
+}
+
+.living-space__capsule {
+  position: absolute;
+  top: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: grid;
+  gap: 0.12rem;
+  min-width: 190px;
+  padding: 0.74rem 1.25rem;
+  border-radius: 999px;
+  text-align: center;
+  background: rgba(255,255,255,0.09);
+  border: 1px solid rgba(255,255,255,0.14);
+  box-shadow: 0 16px 50px rgba(0,0,0,0.24), inset 0 0 18px rgba(255,255,255,0.04);
+  backdrop-filter: blur(18px);
+}
+
+.living-space__capsule strong {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.living-space__capsule span {
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.58);
+}
+
+.living-space__stage {
+  position: relative;
+  z-index: 2;
+  width: min(1180px, 94vw);
+  min-height: 780px;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+}
+
+.living-space__connections {
+  position: absolute;
+  inset: 18% 10%;
+  opacity: 0.66;
+  background:
+    radial-gradient(circle at 50% 50%, transparent 0 23%, rgba(255,255,255,0.14) 23.3%, transparent 23.8%),
+    linear-gradient(30deg, transparent 0 43%, rgba(255,255,255,0.14) 43.2% 43.8%, transparent 44%),
+    linear-gradient(150deg, transparent 0 42%, rgba(255,255,255,0.12) 42.2% 42.8%, transparent 43%),
+    linear-gradient(90deg, transparent 0 41%, rgba(255,255,255,0.1) 41.2% 41.7%, transparent 42%);
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--living-accent) 44%, transparent));
+}
+
+.living-space__node-slot {
+  position: absolute;
+}
