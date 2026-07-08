@@ -13,6 +13,7 @@
 - 09_GEOMETRY_ATLAS.md
 - 10_SPATIAL_COMPOSITION_SYSTEM.md
 - 11_MOTION_TRANSITION_SYSTEM.md
+- 12_VISUAL_GRAMMAR.md
 
 ## Living Space Design System V86
 
@@ -23,6 +24,17 @@ The current AS6 interface architecture is governed by the Living Space principle
 - Brand remains constant across all states.
 - Central geometry is unique per state.
 - Transitions are spatial transformations, not page switches.
+
+## Visual Grammar V87
+
+AS6 Visual Grammar defines the formal visual language for all future Living Space states:
+
+- approved visual primitives;
+- emotional meaning per primitive;
+- grammar operators;
+- state formulas;
+- one-center composition rules;
+- geometry duplication prevention.
 
 ## Files
 
