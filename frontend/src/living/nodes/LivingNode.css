@@ -1,0 +1,61 @@
+.living-node {
+  position: absolute;
+  width: 104px;
+  display: grid;
+  place-items: center;
+  gap: 0.5rem;
+  color: rgba(255,255,255,0.74);
+  font-size: 0.78rem;
+  text-align: center;
+  transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1), opacity 600ms ease;
+  opacity: 0.72;
+}
+
+.living-node--active {
+  opacity: 1;
+  transform: scale(1.08);
+}
+
+.living-node__shape {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle, rgba(255,255,255,0.26), rgba(255,255,255,0.05) 62%, rgba(255,255,255,0.02));
+  box-shadow: 0 0 24px rgba(255,255,255,0.12), inset 0 0 18px rgba(255,255,255,0.16);
+}
+
+.living-node__core,
+.living-node__detail {
+  position: absolute;
+  display: block;
+}
+
+.living-node__core {
+  width: 42%;
+  height: 42%;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.74);
+  filter: blur(0.3px);
+}
+
+.living-node__detail {
+  inset: 12%;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.24);
+}
+
+.living-node--finance .living-node__shape { background: radial-gradient(circle, rgba(255,222,142,0.8), rgba(255,255,255,0.08) 60%); }
+.living-node--crystal .living-node__shape { border-radius: 22px; transform: rotate(12deg); }
+.living-node--cluster .living-node__core { box-shadow: -12px -2px 0 rgba(255,255,255,0.46), 11px 5px 0 rgba(255,255,255,0.38); }
+.living-node--wave .living-node__detail { border-radius: 44% 56% 48% 52%; transform: rotate(18deg); }
+.living-node--spiral .living-node__detail { border-radius: 999px; border-style: dashed; }
+.living-node--orbit .living-node__detail { transform: rotate(24deg) scaleX(1.25); }
+
+.living-node__label {
+  max-width: 120px;
+  line-height: 1.15;
+  text-shadow: 0 2px 14px rgba(0,0,0,0.45);
+}
