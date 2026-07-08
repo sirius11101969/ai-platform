@@ -32,6 +32,7 @@ import CRMWorkspacePage from "./pages/CRMWorkspacePage";
 import AS6WorkspacePage from "./pages/AS6WorkspacePage";
 import { AS6BlogPage, AS6PublicHomePage, AS6PublicInfoPage } from "./pages/AS6PublicWebsite";
 import { AS6BusinessHome } from "./as6/business-home";
+import LivingSpacePreviewPage from "./living/preview/LivingSpacePreviewPage.jsx";
 import "./styles.css";
 import "./theme/as6Theme.css";
 import { ProtectedLayout } from "./components/AppShell";
@@ -139,6 +140,7 @@ export default function App() {
           <Route path="/app" element={<AS6OneShellAdapter />} />
           <Route path="/crm" element={<Navigate to="/as6-crm" replace />} />
           {createAS6LivingSpaceRouteElements()}
+          <Route path="/as6-living-preview" element={<LivingSpacePreviewPage />} />
           <Route path="/crm-v2" element={<ProtectedRoute><CRMBrandV2Page /></ProtectedRoute>} />
           <Route path="/as6-os" element={<AS6OSPage />} />
           <Route path="/crm-workspace" element={<CRMWorkspacePage />} />
