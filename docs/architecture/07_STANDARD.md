@@ -1,3 +1,7 @@
 # 07 - Interface Standard
 
-Calm interface standard.
+AS6 states must stay calm.
+
+Each state keeps continuity with the living space.
+
+The next step must be clear.
