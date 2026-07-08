@@ -1,0 +1,91 @@
+.as6-core {
+  position: relative;
+  width: min(34vw, 420px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+}
+
+.as6-core__aura {
+  position: absolute;
+  inset: -18%;
+  border-radius: 999px;
+  background: radial-gradient(circle, var(--as6-core-aura) 0%, rgba(255,255,255,0.12) 28%, transparent 68%);
+  filter: blur(24px);
+  opacity: 0.82;
+  animation: as6-core-breathe 8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+.as6-core__sphere {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  color: rgba(255,255,255,0.94);
+  background:
+    radial-gradient(circle at 38% 28%, rgba(255,255,255,0.9), transparent 19%),
+    radial-gradient(circle at 58% 62%, var(--as6-core-primary), transparent 34%),
+    radial-gradient(circle at 50% 50%, var(--as6-core-secondary), rgba(255,255,255,0.08) 58%, rgba(255,255,255,0.02) 100%);
+  box-shadow:
+    0 0 48px var(--as6-core-aura),
+    inset 0 0 42px rgba(255,255,255,0.36),
+    inset 0 -34px 80px rgba(0,0,0,0.22);
+}
+
+.as6-core__layer {
+  position: absolute;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.22);
+}
+
+.as6-core__layer--outer { inset: 9%; opacity: 0.5; }
+.as6-core__layer--middle { inset: 21%; opacity: 0.42; transform: rotate(18deg); }
+.as6-core__layer--inner { inset: 34%; opacity: 0.55; transform: rotate(-26deg); }
+
+.as6-core__energy {
+  position: absolute;
+  width: 72%;
+  height: 16%;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.22);
+  filter: blur(0.2px);
+}
+
+.as6-core__energy--one { transform: rotate(18deg); }
+.as6-core__energy--two { transform: rotate(-34deg); opacity: 0.68; }
+
+.as6-core__message {
+  position: relative;
+  z-index: 2;
+  width: 70%;
+  text-align: center;
+  display: grid;
+  gap: 0.45rem;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.32);
+}
+
+.as6-core__message strong {
+  font-size: clamp(1rem, 1.7vw, 1.65rem);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+}
+
+.as6-core__message span {
+  font-size: clamp(0.78rem, 1vw, 0.98rem);
+  color: rgba(255,255,255,0.82);
+}
+
+.as6-core__message em {
+  font-style: normal;
+  font-size: clamp(0.72rem, 0.95vw, 0.9rem);
+  color: rgba(255,255,255,0.72);
+}
+
+@keyframes as6-core-breathe {
+  0%, 100% { transform: scale(0.985); opacity: 0.72; }
+  50% { transform: scale(1.035); opacity: 0.96; }
+}
