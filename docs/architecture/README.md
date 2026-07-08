@@ -9,6 +9,20 @@
 - 05_CALM_GROWTH_DESIGN_SYSTEM.md
 - 06_AS6_DESIGN_LANGUAGE.md
 - 07_STANDARD.md
+- 08_LIVING_SPACE_GENOME.md
+- 09_GEOMETRY_ATLAS.md
+- 10_SPATIAL_COMPOSITION_SYSTEM.md
+- 11_MOTION_TRANSITION_SYSTEM.md
+
+## Living Space Design System V86
+
+The current AS6 interface architecture is governed by the Living Space principle:
+
+- AS6 is one Living Space, not a set of screens.
+- Master Screen 3 is the brand reference.
+- Brand remains constant across all states.
+- Central geometry is unique per state.
+- Transitions are spatial transformations, not page switches.
 
 ## Files
 
