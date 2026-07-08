@@ -1,4 +1,11 @@
 
+## 2026-07-08 AS6_VISUAL_GRAMMAR_NOT_REPOSITORY_REGISTERED
+Root Cause: AS6 had Living Space, geometry, spatial composition and motion standards, but did not yet have a formal visual grammar connecting primitives, emotion, composition and state formulas.
+Failure Classes: AS6_VISUAL_GRAMMAR_NOT_REGISTERED, AS6_VISUAL_PRIMITIVE_UNCONTROLLED_DRIFT, AS6_STATE_FORMULA_MISSING_GAP, AS6_EMOTIONAL_MEANING_MISSING_GAP, AS6_COMPOSITION_RULE_VIOLATION, AS6_STATE_GEOMETRY_DUPLICATION_DRIFT
+Diagnostic: ops/diagnostics/as6-visual-grammar-v87.md
+Governed Artifact: docs/architecture/12_VISUAL_GRAMMAR.md
+Status: REGISTERED_AND_REPAIRED
+
 ## 2026-07-08 AS6_LIVING_SPACE_DESIGN_SYSTEM_NOT_REPOSITORY_REGISTERED
 Root Cause: Living Space design principles were approved in design workflow but were not yet registered as repository-level governed architecture artifacts.
 Failure Classes: AS6_LIVING_SPACE_STANDARD_NOT_REGISTERED, AS6_GEOMETRY_STATE_DUPLICATION_RISK, AS6_PAGE_BASED_INTERFACE_DRIFT, AS6_MOTION_CONTINUITY_GAP, AS6_MASTER_SCREEN_INHERITANCE_GAP
