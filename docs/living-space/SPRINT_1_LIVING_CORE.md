@@ -2,7 +2,7 @@
 
 ## Status
 
-IMPLEMENTED FOUNDATION
+IMPLEMENTED FOUNDATION + PREVIEW ROUTE
 
 ## Goal
 
@@ -15,7 +15,8 @@ Sprint 1 creates the first reusable Living Product layer:
 - state model;
 - node component model;
 - color tokens;
-- motion tokens.
+- motion tokens;
+- preview route for browser validation.
 
 ## Implemented Files
 
@@ -28,6 +29,13 @@ Sprint 1 creates the first reusable Living Product layer:
 - frontend/src/living/states/livingStates.js
 - frontend/src/living/tokens/colors.js
 - frontend/src/living/tokens/motion.js
+- frontend/src/living/preview/LivingSpacePreviewPage.jsx
+- frontend/src/living/preview/LivingSpacePreviewPage.css
+- frontend/src/App.jsx
+
+## Preview Route
+
+- /as6-living-preview
 
 ## Architecture Rules Preserved
 
@@ -37,6 +45,7 @@ Sprint 1 creates the first reusable Living Product layer:
 - Central capsule uses state name as primary line and `Живое пространство` as secondary line.
 - Living Space is implemented as a state-driven scaffold, not separate screens.
 - Core size is designed to remain dominant and stable across states.
+- Preview route does not replace production routes.
 
 ## Initial Supported States
 
@@ -47,8 +56,8 @@ Sprint 1 creates the first reusable Living Product layer:
 
 ## Next Step
 
-Connect LivingSpace scaffold to an existing AS6 route or preview route after visual validation.
+Run visual validation in browser and then connect approved Living Space components to the production AS6 workspace.
 
 ## Readiness
 
-AS6_PROJECT_READINESS_AFTER_SPRINT_1_LIVING_CORE=99.8%
+AS6_PROJECT_READINESS_AFTER_SPRINT_1_LIVING_CORE_PREVIEW=99.85%
