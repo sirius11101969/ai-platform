@@ -14,6 +14,7 @@
 - 10_SPATIAL_COMPOSITION_SYSTEM.md
 - 11_MOTION_TRANSITION_SYSTEM.md
 - 12_VISUAL_GRAMMAR.md
+- 13_DESIGN_COMPILER.md
 
 ## Living Space Design System V86
 
@@ -35,6 +36,19 @@ AS6 Visual Grammar defines the formal visual language for all future Living Spac
 - state formulas;
 - one-center composition rules;
 - geometry duplication prevention.
+
+## Design Compiler V88
+
+AS6 Design Compiler defines the validation gate for all future Living Space states:
+
+- Genome Validator;
+- Grammar Validator;
+- Geometry Validator;
+- Composition Validator;
+- Motion Validator;
+- Brand Validator;
+- Emotion Validator;
+- ADC report approval threshold.
 
 ## Files
 
