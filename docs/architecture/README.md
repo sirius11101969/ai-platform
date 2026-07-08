@@ -15,6 +15,7 @@
 - 11_MOTION_TRANSITION_SYSTEM.md
 - 12_VISUAL_GRAMMAR.md
 - 13_DESIGN_COMPILER.md
+- 14_BRAND_INTERFACE_LANGUAGE_RULE.md
 
 ## Living Space Design System V86
 
@@ -49,6 +50,14 @@ AS6 Design Compiler defines the validation gate for all future Living Space stat
 - Brand Validator;
 - Emotion Validator;
 - ADC report approval threshold.
+
+## Brand / Interface Language Rule
+
+AS6 brand mark remains `AS6 / Calm Business`.
+
+Dynamic interface text is localized to the user's language.
+
+For Russian UI, the central state capsule uses the current state as the primary line and `Живое пространство` as the secondary line.
 
 ## Files
 
