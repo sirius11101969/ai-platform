@@ -1,5 +1,14 @@
 # Architecture Documentation
 
+## AS6 Architecture Standards
+
+- AS6_ARCHITECTURE_MANIFESTO.md
+- 02_PRODUCT_KNOWLEDGE_ARCHITECTURE.md
+- 03_KNOWLEDGE_LIFECYCLE_ARCHITECTURE.md
+- 04_LIVING_SPACE_ARCHITECTURE.md
+- 05_CALM_GROWTH_DESIGN_SYSTEM.md
+- 06_AS6_DESIGN_LANGUAGE.md
+
 ## Files
 
 ### crm_ai_phased_infrastructure_architecture.html
@@ -17,22 +26,3 @@ Engineering backlog dashboard with sprint/task decomposition.
 ## Update Policy
 
 Any major architectural or roadmap change must be reflected here before implementation.
-
-crm_ai_master_build_order.html
-================================================================
-crm_ai_sprint_delivery_dashboard.html
-
-Внутри:
-
-sprint planning board;
-current sprint goal;
-committed tasks;
-burn-up visualization;
-blockers section;
-milestone tracking;
-delivery health indicators;
-team workload by role;
-sprint overview;
-фильтр по Sprint 1–6 и All;
-single-file HTML без внешних зависимостей.
-====================================================================
