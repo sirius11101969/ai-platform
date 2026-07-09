@@ -1,0 +1,18 @@
+.as6-living-workspace {
+  position: relative;
+  min-height: 720px;
+  border-radius: 32px;
+  overflow: hidden;
+  background: rgba(7, 17, 31, 0.96);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.32);
+}
+
+.as6-living-workspace .living-space {
+  min-height: 720px;
+}
+
+.as6-living-workspace .living-space__stage {
+  min-height: 700px;
+  width: min(1040px, 100%);
+}
