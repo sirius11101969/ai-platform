@@ -16,3 +16,13 @@
   min-height: 700px;
   width: min(1040px, 100%);
 }
+
+.as6-living-workspace__switcher {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 20px;
+  z-index: 40;
+  display: flex;
+  justify-content: center;
+}
