@@ -10,8 +10,10 @@ Canonical visual artifact supplied and approved by the product owner:
 
 - source filename: `ЭКРАН 1 ПРОСТРАНСТВО КОНЦЕНТРАЦИИ(7).png`
 - intended repository artifact path: `docs/design/master-screen/as6-master-screen-focus-v1.png`
+- delivery task: GitHub issue `#363`
 - canvas: `1536 × 1024 px`
 - color mode: `RGBA`
+- file size: `2639642 bytes`
 - SHA-256: `5e393d23789e21e2f5773521c8e0f2212fa78155a227f063ea90b4f206e422bc`
 - approval state: `FINAL / IDEAL / LOCKED / MASTER SCREEN`
 - supersedes named attachment revision: `ЭКРАН 1 ПРОСТРАНСТВО КОНЦЕНТРАЦИИ(6).png`
