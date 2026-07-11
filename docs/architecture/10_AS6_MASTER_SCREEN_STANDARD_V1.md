@@ -8,13 +8,14 @@ The approved Screen 1 «Фокус — Пространство концентр
 
 Canonical visual artifact supplied and approved by the product owner:
 
-- source filename: `ЭКРАН 1 ПРОСТРАНСТВО КОНЦЕНТРАЦИИ(6).png`
+- source filename: `ЭКРАН 1 ПРОСТРАНСТВО КОНЦЕНТРАЦИИ(7).png`
 - intended repository artifact path: `docs/design/master-screen/as6-master-screen-focus-v1.png`
 - canvas: `1536 × 1024 px`
 - color mode: `RGBA`
 - SHA-256: `5e393d23789e21e2f5773521c8e0f2212fa78155a227f063ea90b4f206e422bc`
 - approval state: `FINAL / IDEAL / LOCKED / MASTER SCREEN`
-- supersedes canonical revision: `ЭКРАН 1 ПРОСТРАНСТВО КОНЦЕНТРАЦИИ(5).png`
+- supersedes named attachment revision: `ЭКРАН 1 ПРОСТРАНСТВО КОНЦЕНТРАЦИИ(6).png`
+- byte identity note: revision `(7)` has the same registered SHA-256 as revision `(6)`, therefore it is the same approved pixel artifact under the latest product-owner filename.
 
 The checksum identifies the exact approved visual revision. Any different rendering is not the canonical Master Screen unless a new architecture decision explicitly replaces this record.
 
