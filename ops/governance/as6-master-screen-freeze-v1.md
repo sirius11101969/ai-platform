@@ -4,21 +4,23 @@ Status: ACTIVE / APPROVED / ENFORCED / SOURCE OF TRUTH
 
 ## Diagnostic conclusion
 
-The previously recorded Master Screen revision was superseded by the final product-owner-approved Screen 1. The final revision removes the visible enclosing rectangular frame from the bottom AS6 communication line while preserving its placeholder, microphone, soft internal light, lower light line, geometry, and Living Sky integration.
+The previously recorded Master Screen revision was superseded by the final product-owner-approved Screen 1 attachment revision `(7)`. The final revision has no visible enclosing rectangular frame around the bottom AS6 communication line while preserving its placeholder, microphone, soft internal light, lower light line, geometry, and Living Sky integration.
 
 ## Root cause
 
-The earlier canonical record did not point to the latest approved visual revision. This created a canonical-artifact drift risk: future prompts and implementations could inherit an outdated input-line treatment.
+The earlier canonical record pointed to an older attachment filename. Although attachment revisions `(6)` and `(7)` are byte-identical, the canonical record must follow the latest explicitly approved product-owner filename to prevent source-reference drift.
 
 ## Canonical artifact
 
 - screen: `Фокус — Пространство концентрации`
-- canonical source filename: `ЭКРАН 1 ПРОСТРАНСТВО КОНЦЕНТРАЦИИ(6).png`
+- canonical source filename: `ЭКРАН 1 ПРОСТРАНСТВО КОНЦЕНТРАЦИИ(7).png`
 - intended repository artifact path: `docs/design/master-screen/as6-master-screen-focus-v1.png`
 - dimensions: `1536 × 1024 px`
+- color mode: `RGBA`
 - SHA-256: `5e393d23789e21e2f5773521c8e0f2212fa78155a227f063ea90b4f206e422bc`
 - canonical specification: `docs/architecture/10_AS6_MASTER_SCREEN_STANDARD_V1.md`
-- superseded revision SHA-256: `95b21330030a963f0a1886da2c7ddc008afd785f945569df29aadfaf86371693`
+- byte identity: attachment revisions `(6)` and `(7)` share the same SHA-256 and therefore represent the same canonical pixel artifact.
+- superseded pre-final revision SHA-256: `95b21330030a963f0a1886da2c7ddc008afd785f945569df29aadfaf86371693`
 
 ## Locked controls
 
@@ -32,11 +34,13 @@ The following controls are mandatory:
 6. The central living object remains the primary focus.
 7. Every new space must be visually compared against the canonical Master Screen before approval.
 8. Any replacement of the canonical artifact requires explicit product-owner approval and a new checksum.
+9. The repository binary must match the registered path, dimensions, mode, and checksum exactly.
 
 ## Failure classes
 
 - `AS6_MASTER_SCREEN_REFERENCE_AMBIGUITY`
 - `AS6_MASTER_SCREEN_CANONICAL_ARTIFACT_DRIFT`
+- `AS6_MASTER_SCREEN_SOURCE_FILENAME_DRIFT`
 - `AS6_SHARED_COMPONENT_REGENERATION_DRIFT`
 - `AS6_INPUT_LINE_FRAME_DRIFT`
 - `AS6_INPUT_LINE_GEOMETRY_DRIFT`
@@ -51,7 +55,8 @@ The following controls are mandatory:
 - Reject any input-line variant that changes geometry, padding, placeholder baseline, microphone size, or microphone position.
 - Reject a state metric that visually dominates the central object.
 - Reject typography whose hue, opacity, weight, or hierarchy differs from the Master Screen.
-- Reject any design or implementation referencing the superseded canonical checksum.
+- Reject references to a non-current canonical source filename.
+- Reject any repository artifact whose checksum, dimensions, or color mode differs from the canonical record.
 - Require a new checksum and explicit product-owner approval before replacing the canonical Master Screen.
 
 ## Coverage
@@ -68,19 +73,24 @@ Covered areas:
 - React shared components;
 - visual regression checks;
 - interface governance;
-- canonical artifact registry.
+- canonical artifact registry;
+- canonical source filename validation.
 
 ## Validation state
 
-- final canonical artifact identified: PASS
-- final dimensions registered: PASS
-- final checksum registered: PASS
-- superseded checksum recorded: PASS
+- final canonical attachment revision identified: PASS
+- final dimensions verified: PASS
+- final color mode verified: PASS
+- final checksum verified: PASS
+- byte identity with prior final attachment confirmed: PASS
 - locked communication-line policy registered: PASS
-- failure classes registered: PASS
+- source-filename drift failure class registered: PASS
 - AEC prevention rules registered: PASS
 - architecture freeze updated: PASS
+- repository binary upload: PENDING CODEX EXECUTION
 
 ## Readiness
 
-`AS6_MASTER_SCREEN_STANDARD_READINESS=100%`
+`AS6_MASTER_SCREEN_STANDARD_READINESS=95%`
+
+The remaining 5% is the physical addition of the exact PNG binary at the registered repository path and execution of checksum/dimensions validation.
