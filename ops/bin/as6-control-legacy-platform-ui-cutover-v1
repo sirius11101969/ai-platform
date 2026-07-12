@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+APP="frontend/src/App.jsx"
+INDEX="frontend/index.html"
+
+fail() { echo "AS6_LEGACY_PLATFORM_UI_CUTOVER=FAIL:$1"; exit 1; }
+
+[ -f "$APP" ] || fail "app-missing"
+[ -f "$INDEX" ] || fail "index-missing"
+
+for forbidden in \
+  'AS6OneShellAdapter' \
+  'createAS6LivingSpaceRouteElements' \
+  'ProtectedLayout' \
+  'CommandCenterPage' \
+  'DashboardPage' \
+  'CRMWorkspacePage' \
+  'AS6WorkspacePage' \
+  'as6-mission-control.css' \
+  'as6-unified-mission-control-ui.css' \
+  'as6-workspace-v224.css' \
+  'as6-sidebar-v225.css' \
+  'as6-header-v226.css' \
+  'as6-right-rail-v227.css'; do
+  grep -Fq "$forbidden" "$APP" && fail "forbidden-active-reference:$forbidden"
+done
+
+grep -Fq '<Route path="/app" element={<LivingProductPreviewPage />} />' "$APP" || fail "living-product-app-route-missing"
+grep -Fq '<Route path="/preview/living" element={<LivingProductPreviewPage />} />' "$APP" || fail "living-product-preview-route-missing"
+grep -Fq '<html lang="ru">' "$INDEX" || fail "russian-document-language-missing"
+
+if grep -RqsE 'AS6PublicWebsite|as6-public-site|as6-mission-control|AS6OneShellAdapter' frontend/src/App.jsx frontend/src/pages/AS6PublicLivingWebsite.jsx frontend/src/living/product-v1; then
+  fail "legacy-selector-or-owner-leak"
+fi
+
+echo "AS6_LEGACY_PLATFORM_ACTIVE_IMPORTS=0"
+echo "AS6_LEGACY_PLATFORM_ACTIVE_ROUTES=0"
+echo "AS6_LIVING_PRODUCT_APP_ROUTE=PASS"
+echo "AS6_LIVING_PRODUCT_PREVIEW_ROUTE=PASS"
+echo "AS6_LEGACY_PLATFORM_UI_CUTOVER=PASS"
