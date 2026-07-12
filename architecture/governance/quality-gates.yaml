@@ -1,0 +1,62 @@
+version: 1.0
+status: active
+gates:
+  - id: GATE-ARCHITECTURE
+    name: Architecture Gate
+    required: true
+    checks:
+      - canonical invariants exist
+      - no lower-level artifact overrides a canonical source
+      - affected registries are updated
+  - id: GATE-MASTER-SCREEN
+    name: Master Screen Gate
+    required: true
+    checks:
+      - locked components are reused
+      - state metric follows canonical hierarchy
+      - communication line has no visible enclosing frame
+      - typography and Living Sky remain inherited
+  - id: GATE-SPACE
+    name: Living Space Gate
+    required: true
+    checks:
+      - space is registered
+      - exactly one primary question exists
+      - structural DNA matches Living Space rules
+  - id: GATE-INTENT
+    name: Intent Gate
+    required: true
+    checks:
+      - user intent is identified
+      - active context is defined
+      - next action is explainable
+  - id: GATE-KNOWLEDGE
+    name: Knowledge Gate
+    required: true
+    checks:
+      - entities and relationships are traceable
+      - knowledge update behavior is defined
+      - confidence and provenance are available
+  - id: GATE-DOMAIN
+    name: Domain Gate
+    required: true
+    checks:
+      - owning domain is identified
+      - domain invariants are preserved
+      - cross-domain access uses contracts or events
+  - id: GATE-DIAGNOSTICS
+    name: Diagnostics First Gate
+    required: true
+    checks:
+      - diagnostics and root cause recorded
+      - structure checked before change
+      - re-diagnostics completed
+      - new failure classes and controls registered
+  - id: GATE-VALIDATION
+    name: Validation Gate
+    required: true
+    checks:
+      - architecture validator passes
+      - relevant tests pass
+      - secret scan passes
+      - readiness evidence is recorded
