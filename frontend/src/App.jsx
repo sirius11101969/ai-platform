@@ -33,6 +33,7 @@ import AS6WorkspacePage from "./pages/AS6WorkspacePage";
 import { AS6BlogPage, AS6PublicHomePage, AS6PublicInfoPage } from "./pages/AS6PublicWebsite";
 import { AS6BusinessHome } from "./as6/business-home";
 import LivingSpacePreviewPage from "./living/preview/LivingSpacePreviewPage.jsx";
+import LivingProductPreviewPage from "./living/product-v1/LivingProductPreviewPage.jsx";
 import "./styles.css";
 import "./theme/as6Theme.css";
 import { ProtectedLayout } from "./components/AppShell";
@@ -72,11 +73,7 @@ const AuthContext = createContext({ token: null, user: null, isAuthenticated: fa
 
 function getAuthState() {
   const token = getAuthToken();
-  return {
-    token,
-    user: getStoredUser(),
-    isAuthenticated: Boolean(token),
-  };
+  return { token, user: getStoredUser(), isAuthenticated: Boolean(token) };
 }
 
 function AuthProvider({ children }) {
@@ -87,26 +84,19 @@ function AuthProvider({ children }) {
 
     function syncAuthState(event) {
       if (event?.type === "ai-platform-auth-updated" && event.detail?.token) {
-        setAuthState({
-          token: event.detail.token,
-          user: event.detail.user || null,
-          isAuthenticated: true,
-        });
+        setAuthState({ token: event.detail.token, user: event.detail.user || null, isAuthenticated: true });
         return;
       }
-
       if (event?.type === "ai-platform-auth-cleared") {
         setAuthState({ token: null, user: null, isAuthenticated: false });
         return;
       }
-
       setAuthState(getAuthState());
     }
 
     window.addEventListener("ai-platform-auth-updated", syncAuthState);
     window.addEventListener("ai-platform-auth-cleared", syncAuthState);
     window.addEventListener("storage", syncAuthState);
-
     return () => {
       window.removeEventListener("ai-platform-auth-updated", syncAuthState);
       window.removeEventListener("ai-platform-auth-cleared", syncAuthState);
@@ -118,9 +108,7 @@ function AuthProvider({ children }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-export function useAuth() {
-  return useContext(AuthContext);
-}
+export function useAuth() { return useContext(AuthContext); }
 
 export default function App() {
   if (typeof window !== "undefined" && window.location.pathname === "/marketplace") return <AS6RealAppWiring path="/marketplace" data-as6-direct-app-integration="AS6_DIRECT_APP_INTEGRATION_P20" />;
@@ -129,59 +117,59 @@ export default function App() {
       <BrowserRouter>
         <Suspense fallback={window.location.pathname === "/command-center" ? null : <div className="as6-route-loading">Загрузка...</div>}>
           <Routes>
-
-          <Route path="/" element={<AS6PublicHomePage />} />
-          <Route path="/blog" element={<AS6BlogPage />} />
-          <Route path="/blog/:slug" element={<AS6BlogPage />} />
-          <Route path="/docs" element={<AS6PublicInfoPage type="docs" />} />
-          <Route path="/pricing" element={<AS6PublicInfoPage type="pricing" />} />
-          <Route path="/about" element={<AS6PublicInfoPage type="about" />} />
-          <Route path="/contact" element={<AS6PublicInfoPage type="contact" />} />
-          <Route path="/app" element={<AS6OneShellAdapter />} />
-          <Route path="/crm" element={<Navigate to="/as6-crm" replace />} />
-          {createAS6LivingSpaceRouteElements()}
-          <Route path="/as6-living-preview" element={<LivingSpacePreviewPage />} />
-          <Route path="/crm-v2" element={<ProtectedRoute><CRMBrandV2Page /></ProtectedRoute>} />
-          <Route path="/as6-os" element={<AS6OSPage />} />
-          <Route path="/crm-workspace" element={<CRMWorkspacePage />} />
-          <Route path="/as6-workspace" element={<AS6WorkspacePage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/payment/success" element={<PaymentSuccessPage />} />
-          <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-          <Route path="/ai-workers" element={<ProtectedRoute><AiWorkersPage /></ProtectedRoute>} />
-          <Route path="/followups" element={<ProtectedRoute><FollowupsPage /></ProtectedRoute>} />
-          <Route path="/priority-inbox" element={<ProtectedRoute><PriorityInboxPage /></ProtectedRoute>} />
-          <Route path="/pipeline-copilot" element={<ProtectedRoute><PipelineCopilotPage /></ProtectedRoute>} />
-          <Route path="/ai-manager-dashboard" element={<ProtectedRoute><AiManagerDashboardPage /></ProtectedRoute>} />
-          <Route path="/ai-voice-outreach" element={<ProtectedRoute><AiVoiceOutreachPage /></ProtectedRoute>} />
-          <Route path="/ai-realtime-voice" element={<ProtectedRoute><AiRealtimeVoicePage /></ProtectedRoute>} />
-          <Route path="/ai-live-streaming" element={<ProtectedRoute><AiLiveRealtimeVoicePage /></ProtectedRoute>} />
-          <Route path="/ai-revenue-intelligence" element={<ProtectedRoute><AiRevenueIntelligencePage /></ProtectedRoute>} />
-          <Route path="/ai-revenue-engine" element={<ProtectedRoute><AiRevenueEnginePage /></ProtectedRoute>} />
-          <Route path="/ai-approval-center" element={<ProtectedRoute><AiApprovalCenterPage /></ProtectedRoute>} />
-          <Route path="/ai-execution-center" element={<ProtectedRoute><AiExecutionCenterPage /></ProtectedRoute>} />
-          <Route path="/ai-workforce-center" element={<ProtectedRoute><AiWorkforceCenterPage /></ProtectedRoute>} />
-          <Route path="/ai-executive-brain" element={<ProtectedRoute><AiExecutiveBrainPage /></ProtectedRoute>} />
-          <Route path="/ai-executive-dashboard" element={<ProtectedRoute><AiExecutiveUnifiedDashboardPage /></ProtectedRoute>} />
-          <Route path="/ai-company-simulation" element={<ProtectedRoute><AiCompanySimulationPage /></ProtectedRoute>} />
-          <Route path="/ai-strategic-planning" element={<ProtectedRoute><AiStrategicPlanningPage /></ProtectedRoute>} />
-          <Route path="/ai/strategic-planning" element={<ProtectedRoute><AiStrategicPlanningPage /></ProtectedRoute>} />
-          <Route path="/ai-enterprise-coordination" element={<ProtectedRoute><AiEnterpriseCoordinationPage /></ProtectedRoute>} />
-          <Route path="/ai/enterprise-coordination" element={<ProtectedRoute><AiEnterpriseCoordinationPage /></ProtectedRoute>} />
-          <Route path="/ai-organizational-memory" element={<ProtectedRoute><AiOrganizationalMemoryPage /></ProtectedRoute>} />
-          <Route path="/ai/organizational-memory" element={<ProtectedRoute><AiOrganizationalMemoryPage /></ProtectedRoute>} />
-          <Route path="/ai-system-health-center" element={<ProtectedRoute><AiSystemHealthCenterPage /></ProtectedRoute>} />
-          <Route path="/ai/system-health" element={<ProtectedRoute><AiSystemHealthCenterPage /></ProtectedRoute>} />
-          <Route path="/ai/revenue-engine" element={<ProtectedRoute><AiRevenueEnginePage /></ProtectedRoute>} />
-          <Route path="/ai/workforce" element={<ProtectedRoute><AiWorkforceCenterPage /></ProtectedRoute>} />
-          <Route path="/ai/approval-center" element={<ProtectedRoute><AiApprovalCenterPage /></ProtectedRoute>} />
-          <Route path="/ai-enterprise-command-center" element={<ProtectedRoute><AIEnterpriseCommandCenter /></ProtectedRoute>} />
-          <Route path="/command-center" element={<ProtectedRoute><CommandCenterPage /></ProtectedRoute>} />
-          <Route path="/dashboard/revenue" element={<ProtectedRoute><RevenueDashboardPage /></ProtectedRoute>} />
-          <Route path="/business-home" element={<ProtectedRoute><AS6BusinessHome /></ProtectedRoute>} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+            <Route path="/" element={<AS6PublicHomePage />} />
+            <Route path="/blog" element={<AS6BlogPage />} />
+            <Route path="/blog/:slug" element={<AS6BlogPage />} />
+            <Route path="/docs" element={<AS6PublicInfoPage type="docs" />} />
+            <Route path="/pricing" element={<AS6PublicInfoPage type="pricing" />} />
+            <Route path="/about" element={<AS6PublicInfoPage type="about" />} />
+            <Route path="/contact" element={<AS6PublicInfoPage type="contact" />} />
+            <Route path="/app" element={<AS6OneShellAdapter />} />
+            <Route path="/crm" element={<Navigate to="/as6-crm" replace />} />
+            {createAS6LivingSpaceRouteElements()}
+            <Route path="/as6-living-preview" element={<LivingSpacePreviewPage />} />
+            <Route path="/preview/living" element={<LivingProductPreviewPage />} />
+            <Route path="/crm-v2" element={<ProtectedRoute><CRMBrandV2Page /></ProtectedRoute>} />
+            <Route path="/as6-os" element={<AS6OSPage />} />
+            <Route path="/crm-workspace" element={<CRMWorkspacePage />} />
+            <Route path="/as6-workspace" element={<AS6WorkspacePage />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/payment/success" element={<PaymentSuccessPage />} />
+            <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+            <Route path="/ai-workers" element={<ProtectedRoute><AiWorkersPage /></ProtectedRoute>} />
+            <Route path="/followups" element={<ProtectedRoute><FollowupsPage /></ProtectedRoute>} />
+            <Route path="/priority-inbox" element={<ProtectedRoute><PriorityInboxPage /></ProtectedRoute>} />
+            <Route path="/pipeline-copilot" element={<ProtectedRoute><PipelineCopilotPage /></ProtectedRoute>} />
+            <Route path="/ai-manager-dashboard" element={<ProtectedRoute><AiManagerDashboardPage /></ProtectedRoute>} />
+            <Route path="/ai-voice-outreach" element={<ProtectedRoute><AiVoiceOutreachPage /></ProtectedRoute>} />
+            <Route path="/ai-realtime-voice" element={<ProtectedRoute><AiRealtimeVoicePage /></ProtectedRoute>} />
+            <Route path="/ai-live-streaming" element={<ProtectedRoute><AiLiveRealtimeVoicePage /></ProtectedRoute>} />
+            <Route path="/ai-revenue-intelligence" element={<ProtectedRoute><AiRevenueIntelligencePage /></ProtectedRoute>} />
+            <Route path="/ai-revenue-engine" element={<ProtectedRoute><AiRevenueEnginePage /></ProtectedRoute>} />
+            <Route path="/ai-approval-center" element={<ProtectedRoute><AiApprovalCenterPage /></ProtectedRoute>} />
+            <Route path="/ai-execution-center" element={<ProtectedRoute><AiExecutionCenterPage /></ProtectedRoute>} />
+            <Route path="/ai-workforce-center" element={<ProtectedRoute><AiWorkforceCenterPage /></ProtectedRoute>} />
+            <Route path="/ai-executive-brain" element={<ProtectedRoute><AiExecutiveBrainPage /></ProtectedRoute>} />
+            <Route path="/ai-executive-dashboard" element={<ProtectedRoute><AiExecutiveUnifiedDashboardPage /></ProtectedRoute>} />
+            <Route path="/ai-company-simulation" element={<ProtectedRoute><AiCompanySimulationPage /></ProtectedRoute>} />
+            <Route path="/ai-strategic-planning" element={<ProtectedRoute><AiStrategicPlanningPage /></ProtectedRoute>} />
+            <Route path="/ai/strategic-planning" element={<ProtectedRoute><AiStrategicPlanningPage /></ProtectedRoute>} />
+            <Route path="/ai-enterprise-coordination" element={<ProtectedRoute><AiEnterpriseCoordinationPage /></ProtectedRoute>} />
+            <Route path="/ai/enterprise-coordination" element={<ProtectedRoute><AiEnterpriseCoordinationPage /></ProtectedRoute>} />
+            <Route path="/ai-organizational-memory" element={<ProtectedRoute><AiOrganizationalMemoryPage /></ProtectedRoute>} />
+            <Route path="/ai/organizational-memory" element={<ProtectedRoute><AiOrganizationalMemoryPage /></ProtectedRoute>} />
+            <Route path="/ai-system-health-center" element={<ProtectedRoute><AiSystemHealthCenterPage /></ProtectedRoute>} />
+            <Route path="/ai/system-health" element={<ProtectedRoute><AiSystemHealthCenterPage /></ProtectedRoute>} />
+            <Route path="/ai/revenue-engine" element={<ProtectedRoute><AiRevenueEnginePage /></ProtectedRoute>} />
+            <Route path="/ai/workforce" element={<ProtectedRoute><AiWorkforceCenterPage /></ProtectedRoute>} />
+            <Route path="/ai/approval-center" element={<ProtectedRoute><AiApprovalCenterPage /></ProtectedRoute>} />
+            <Route path="/ai-enterprise-command-center" element={<ProtectedRoute><AIEnterpriseCommandCenter /></ProtectedRoute>} />
+            <Route path="/command-center" element={<ProtectedRoute><CommandCenterPage /></ProtectedRoute>} />
+            <Route path="/dashboard/revenue" element={<ProtectedRoute><RevenueDashboardPage /></ProtectedRoute>} />
+            <Route path="/business-home" element={<ProtectedRoute><AS6BusinessHome /></ProtectedRoute>} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
         </Suspense>
       </BrowserRouter>
     </AuthProvider>
