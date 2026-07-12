@@ -1,0 +1,63 @@
+version: 1
+viewport: 1536x1024
+coordinate_system: css-pixel
+anchors:
+  shared:
+    brand:
+      zone: top-left
+      required: true
+    greeting:
+      zone: top-center-left
+      required: true
+    space_title:
+      zone: top-center
+      required: true
+    system_controls:
+      zone: top-right
+      required: true
+    central_geometry:
+      zone: center-left
+      required: true
+      unique_per_space: true
+    right_rail:
+      zone: right
+      required: true
+    reasoning_line:
+      zone: lower-center
+      required: true
+    recommendation:
+      zone: lower-left
+      required: true
+    action:
+      zone: lower-right
+      required: true
+    living_input:
+      zone: bottom
+      required: true
+      visible_enclosing_frame: false
+    state_metric:
+      zone: right-lower
+      required: true
+      visible_character_height_px: 18
+  per_space:
+    focus:
+      geometry: sphere
+      primary_meaning: concentration
+    crm:
+      geometry: relationship-network
+      primary_meaning: relationships
+    finance:
+      geometry: stability-crystal
+      primary_meaning: sustainability
+    documents:
+      geometry: knowledge-sphere
+      primary_meaning: knowledge
+forbidden:
+  - page-shell replacement
+  - dark-grid background
+  - glass title capsule
+  - card-based right rail
+  - material input
+  - visible input perimeter
+  - multiple primary focal objects
+  - duplicated geometry between spaces
