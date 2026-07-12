@@ -1,0 +1,23 @@
+# AS6 Architecture Repository Enforcement AEC Rules v1
+
+Status: ACTIVE / PREVENTIVE
+
+## Rules
+
+- `AS6_ARCHITECTURE_REPOSITORY_REQUIRED_RULE`
+- `AS6_ARCHITECTURE_VALIDATOR_REQUIRED_RULE`
+- `AS6_ARCHITECTURE_VALIDATION_MUST_RUN_IN_EXISTING_ENFORCEMENT_RULE`
+- `AS6_NO_PARALLEL_ARCHITECTURE_VALIDATION_FRAMEWORK_RULE`
+- `AS6_ARCHITECTURE_OBJECT_REGISTRATION_REQUIRED_RULE`
+- `AS6_LIVING_SPACE_REGISTRY_INTEGRITY_RULE`
+- `AS6_MASTER_SCREEN_LOCKED_COMPONENT_INTEGRITY_RULE`
+- `AS6_ARCHITECTURE_QUALITY_GATE_COMPLETENESS_RULE`
+- `AS6_ARCHITECTURE_ENFORCEMENT_BYPASS_REJECTION_RULE`
+
+## Automated enforcement condition
+
+A commit or push must fail when the architecture validator is absent, bypassed, or reports any missing canonical artifact, invariant, space registration, Master Screen lock, checksum, state metric rule, input-line rule, or quality gate.
+
+## Evidence
+
+`AS6_AEC_ARCHITECTURE_REPOSITORY_ENFORCEMENT_V1=REGISTERED`
