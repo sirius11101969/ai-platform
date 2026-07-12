@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "./AS6PublicLivingWebsite.css";
 
 const spaces = [
@@ -152,7 +152,7 @@ export function AS6PublicLivingHomePage() {
 }
 
 export function AS6PublicLivingBlogPage() {
-  const { slug } = useParams();
+  const slug = decodeURIComponent(window.location.pathname.split("/").filter(Boolean).pop() || "");
   const post = slug ? livingBlogPosts.find((item) => item.slug === slug) : null;
   return (
     <div className="living-public-site">
