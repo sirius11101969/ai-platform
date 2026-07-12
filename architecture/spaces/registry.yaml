@@ -1,0 +1,51 @@
+version: 1.0
+status: frozen
+spaces:
+  - id: SPACE-FOCUS
+    name: Фокус
+    role: Пространство концентрации
+    primary_question: Что сейчас самое важное?
+  - id: SPACE-CRM
+    name: CRM
+    role: Пространство отношений
+    primary_question: С кем сейчас нужно работать?
+  - id: SPACE-FINANCE
+    name: Финансы
+    role: Пространство устойчивости
+    primary_question: Насколько устойчив мой бизнес?
+  - id: SPACE-DOCUMENTS
+    name: Документы
+    role: Пространство знаний
+    primary_question: Что уже известно?
+  - id: SPACE-PROJECTS
+    name: Проекты
+    role: Пространство развития
+    primary_question: Куда развивается компания?
+  - id: SPACE-TEAM
+    name: Команда
+    role: Пространство взаимодействия
+    primary_question: Кто сейчас участвует?
+  - id: SPACE-DECISIONS
+    name: Решения
+    role: Пространство выбора
+    primary_question: Какое решение лучше?
+  - id: SPACE-AUTOMATION
+    name: Автоматизация
+    role: Пространство автономности
+    primary_question: Что система сделает сама?
+  - id: SPACE-PULSE
+    name: Пульс бизнеса
+    role: Пространство состояния
+    primary_question: Что происходит сейчас?
+  - id: SPACE-COLLABORATIVE-THINKING
+    name: Совместное мышление
+    role: Пространство синхронизации
+    primary_question: О чём мы думаем вместе?
+  - id: SPACE-PRESENCE
+    name: Присутствие
+    role: Пространство сопровождения
+    primary_question: Кто сейчас рядом?
+  - id: SPACE-KNOWLEDGE
+    name: Знания
+    role: Пространство памяти
+    primary_question: Что система уже знает?
