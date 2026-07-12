@@ -1,75 +1,63 @@
-import "./styles/as6-design-token-registry.css";
-import { AS6RealAppWiring } from "./as6/app";
-import "./styles/as6-design-system-foundation-v220.css";
-import "./styles/as6-real-component-consolidation.css";
-import "./styles/as6-physical-page-refactor-migration.css";
-import "./styles/as6-real-page-conversion-engine.css";
-import "./styles/as6-real-data-surface-migration.css";
-import "./styles/as6-unified-data-surface-system.css";
-import "./styles/as6-direct-page-rewrite-framework.css";
-import "./styles/as6-real-page-component-migration.css";
-import "./styles/as6-real-page-shell-migration.css";
-import "./styles/as6-unified-page-shell.css";
-import "./styles/as6-full-mission-control-theme-rollout.css";
-import "./styles/as6-unified-mission-control-ui.css";
-import "./styles/as6-mission-workspace.css";
-import "./styles/as6-workspace-v224.css";
-import "./styles/as6-sidebar-v225.css";
-import "./styles/as6-header-v226.css";
-import "./styles/as6-right-rail-v227.css";
-import "./styles/as6-core-v228.css";
-import "./styles/as6-assistant-v229.css";
-import "./styles/as6-focus-v230.css";
-import "./styles/as6-crm-workspace-client-v231.css";
-import "./styles/as6-crm-workspace-client-v232.css";
-import "./styles/as6-crm-workspace-ui-review-v236.css";
-import { markAs6DesignSystemReady } from "./utils/as6RuntimeTracer";
-import React, { createContext, useContext, useEffect, useMemo, useState, lazy, Suspense } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import CRMBrandV2Page from "./pages/CRMBrandV2Page";
-import AS6OSPage from "./pages/AS6OSPage";
-import CRMWorkspacePage from "./pages/CRMWorkspacePage";
-import AS6WorkspacePage from "./pages/AS6WorkspacePage";
-import { AS6PublicLivingBlogPage, AS6PublicLivingHomePage, AS6PublicLivingInfoPage } from "./pages/AS6PublicLivingWebsite.jsx";
-import { AS6BusinessHome } from "./as6/business-home";
+import { markAs6DesignSystemReady } from "./utils/as6RuntimeTracer";
+import { getAuthToken, getStoredUser } from "./services/api";
+import { LoginPage, SignupPage } from "./pages/AuthPages";
+import PaymentSuccessPage from "./pages/PaymentSuccessPage";
+import {
+  AS6PublicLivingBlogPage,
+  AS6PublicLivingHomePage,
+  AS6PublicLivingInfoPage,
+} from "./pages/AS6PublicLivingWebsite.jsx";
 import LivingSpacePreviewPage from "./living/preview/LivingSpacePreviewPage.jsx";
 import LivingProductPreviewPage from "./living/product-v1/LivingProductPreviewPage.jsx";
 import "./styles.css";
 import "./theme/as6Theme.css";
-import { ProtectedLayout } from "./components/AppShell";
-import { LoginPage, SignupPage } from "./pages/AuthPages";
-import PaymentSuccessPage from "./pages/PaymentSuccessPage";
-import "./styles/as6-mission-control.css";
-const DashboardPage = lazy(() => import("./pages/DashboardPage"));
-const AiWorkersPage = lazy(() => import("./pages/AiWorkersPage"));
-import FollowupsPage from "./pages/FollowupsPage";
-import PriorityInboxPage from "./pages/PriorityInboxPage";
-const PipelineCopilotPage = lazy(() => import("./pages/PipelineCopilotPage"));
-const AiManagerDashboardPage = lazy(() => import("./pages/AiManagerDashboardPage"));
-const AS6OneShellAdapter = lazy(() => import("./as6-one/AS6OneShellAdapter"));
-import AiVoiceOutreachPage from "./pages/AiVoiceOutreachPage";
-import AiRealtimeVoicePage from "./pages/AiRealtimeVoicePage";
-import AiRevenueIntelligencePage from "./pages/AiRevenueIntelligencePage";
-import AiRevenueEnginePage from "./pages/AiRevenueEnginePage";
-const AiLiveRealtimeVoicePage = lazy(() => import("./pages/AiLiveRealtimeVoicePage"));
-import AiApprovalCenterPage from "./pages/AiApprovalCenterPage";
-import AiExecutionCenterPage from "./pages/AiExecutionCenterPage";
-import AiWorkforceCenterPage from "./pages/AiWorkforceCenterPage";
-import AiExecutiveBrainPage from "./pages/AiExecutiveBrainPage";
-import AiExecutiveUnifiedDashboardPage from "./pages/AiExecutiveUnifiedDashboardPage";
-import AiCompanySimulationPage from "./pages/AiCompanySimulationPage";
-import AiStrategicPlanningPage from "./pages/AiStrategicPlanningPage";
-import AiEnterpriseCoordinationPage from "./pages/AiEnterpriseCoordinationPage";
-import AiOrganizationalMemoryPage from "./pages/AiOrganizationalMemoryPage";
-import AiSystemHealthCenterPage from "./pages/AiSystemHealthCenterPage";
-const AIEnterpriseCommandCenter = lazy(() => import("./pages/AIEnterpriseCommandCenter"));
-const CommandCenterPage = lazy(() => import("./pages/CommandCenterPage"));
-const RevenueDashboardPage = lazy(() => import("./pages/RevenueDashboardPage"));
-import { getAuthToken, getStoredUser } from "./services/api";
 
-import { createAS6LivingSpaceRouteElements } from "./as6/living-spaces/AS6LivingSpaceRoutes";
-import { ProtectedRoute } from "./as6/auth/AS6RouteAuth";
 const AuthContext = createContext({ token: null, user: null, isAuthenticated: false });
+
+const LEGACY_PLATFORM_ROUTES = [
+  "/marketplace",
+  "/crm",
+  "/as6-crm",
+  "/crm-v2",
+  "/as6-os",
+  "/crm-workspace",
+  "/as6-workspace",
+  "/dashboard",
+  "/dashboard/revenue",
+  "/business-home",
+  "/ai-workers",
+  "/followups",
+  "/priority-inbox",
+  "/pipeline-copilot",
+  "/ai-manager-dashboard",
+  "/ai-voice-outreach",
+  "/ai-realtime-voice",
+  "/ai-live-streaming",
+  "/ai-revenue-intelligence",
+  "/ai-revenue-engine",
+  "/ai-revenue-engine",
+  "/ai-approval-center",
+  "/ai-execution-center",
+  "/ai-workforce-center",
+  "/ai-executive-brain",
+  "/ai-executive-dashboard",
+  "/ai-company-simulation",
+  "/ai-strategic-planning",
+  "/ai/strategic-planning",
+  "/ai-enterprise-coordination",
+  "/ai/enterprise-coordination",
+  "/ai-organizational-memory",
+  "/ai/organizational-memory",
+  "/ai-system-health-center",
+  "/ai/system-health",
+  "/ai/revenue-engine",
+  "/ai/workforce",
+  "/ai/approval-center",
+  "/ai-enterprise-command-center",
+  "/command-center",
+];
 
 function getAuthState() {
   const token = getAuthToken();
@@ -108,69 +96,37 @@ function AuthProvider({ children }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-export function useAuth() { return useContext(AuthContext); }
+export function useAuth() {
+  return useContext(AuthContext);
+}
 
 export default function App() {
-  if (typeof window !== "undefined" && window.location.pathname === "/marketplace") return <AS6RealAppWiring path="/marketplace" data-as6-direct-app-integration="AS6_DIRECT_APP_INTEGRATION_P20" />;
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Suspense fallback={window.location.pathname === "/command-center" ? null : <div className="as6-route-loading">Загрузка...</div>}>
-          <Routes>
-            <Route path="/" element={<AS6PublicLivingHomePage />} />
-            <Route path="/blog" element={<AS6PublicLivingBlogPage />} />
-            <Route path="/blog/:slug" element={<AS6PublicLivingBlogPage />} />
-            <Route path="/docs" element={<AS6PublicLivingInfoPage type="docs" />} />
-            <Route path="/pricing" element={<AS6PublicLivingInfoPage type="pricing" />} />
-            <Route path="/about" element={<AS6PublicLivingInfoPage type="about" />} />
-            <Route path="/contact" element={<AS6PublicLivingInfoPage type="contact" />} />
-            <Route path="/app" element={<AS6OneShellAdapter />} />
-            <Route path="/crm" element={<Navigate to="/as6-crm" replace />} />
-            {createAS6LivingSpaceRouteElements()}
-            <Route path="/as6-living-preview" element={<LivingSpacePreviewPage />} />
-            <Route path="/preview/living" element={<LivingProductPreviewPage />} />
-            <Route path="/crm-v2" element={<ProtectedRoute><CRMBrandV2Page /></ProtectedRoute>} />
-            <Route path="/as6-os" element={<AS6OSPage />} />
-            <Route path="/crm-workspace" element={<CRMWorkspacePage />} />
-            <Route path="/as6-workspace" element={<AS6WorkspacePage />} />
-            <Route path="/signup" element={<SignupPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/payment/success" element={<PaymentSuccessPage />} />
-            <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-            <Route path="/ai-workers" element={<ProtectedRoute><AiWorkersPage /></ProtectedRoute>} />
-            <Route path="/followups" element={<ProtectedRoute><FollowupsPage /></ProtectedRoute>} />
-            <Route path="/priority-inbox" element={<ProtectedRoute><PriorityInboxPage /></ProtectedRoute>} />
-            <Route path="/pipeline-copilot" element={<ProtectedRoute><PipelineCopilotPage /></ProtectedRoute>} />
-            <Route path="/ai-manager-dashboard" element={<ProtectedRoute><AiManagerDashboardPage /></ProtectedRoute>} />
-            <Route path="/ai-voice-outreach" element={<ProtectedRoute><AiVoiceOutreachPage /></ProtectedRoute>} />
-            <Route path="/ai-realtime-voice" element={<ProtectedRoute><AiRealtimeVoicePage /></ProtectedRoute>} />
-            <Route path="/ai-live-streaming" element={<ProtectedRoute><AiLiveRealtimeVoicePage /></ProtectedRoute>} />
-            <Route path="/ai-revenue-intelligence" element={<ProtectedRoute><AiRevenueIntelligencePage /></ProtectedRoute>} />
-            <Route path="/ai-revenue-engine" element={<ProtectedRoute><AiRevenueEnginePage /></ProtectedRoute>} />
-            <Route path="/ai-approval-center" element={<ProtectedRoute><AiApprovalCenterPage /></ProtectedRoute>} />
-            <Route path="/ai-execution-center" element={<ProtectedRoute><AiExecutionCenterPage /></ProtectedRoute>} />
-            <Route path="/ai-workforce-center" element={<ProtectedRoute><AiWorkforceCenterPage /></ProtectedRoute>} />
-            <Route path="/ai-executive-brain" element={<ProtectedRoute><AiExecutiveBrainPage /></ProtectedRoute>} />
-            <Route path="/ai-executive-dashboard" element={<ProtectedRoute><AiExecutiveUnifiedDashboardPage /></ProtectedRoute>} />
-            <Route path="/ai-company-simulation" element={<ProtectedRoute><AiCompanySimulationPage /></ProtectedRoute>} />
-            <Route path="/ai-strategic-planning" element={<ProtectedRoute><AiStrategicPlanningPage /></ProtectedRoute>} />
-            <Route path="/ai/strategic-planning" element={<ProtectedRoute><AiStrategicPlanningPage /></ProtectedRoute>} />
-            <Route path="/ai-enterprise-coordination" element={<ProtectedRoute><AiEnterpriseCoordinationPage /></ProtectedRoute>} />
-            <Route path="/ai/enterprise-coordination" element={<ProtectedRoute><AiEnterpriseCoordinationPage /></ProtectedRoute>} />
-            <Route path="/ai-organizational-memory" element={<ProtectedRoute><AiOrganizationalMemoryPage /></ProtectedRoute>} />
-            <Route path="/ai/organizational-memory" element={<ProtectedRoute><AiOrganizationalMemoryPage /></ProtectedRoute>} />
-            <Route path="/ai-system-health-center" element={<ProtectedRoute><AiSystemHealthCenterPage /></ProtectedRoute>} />
-            <Route path="/ai/system-health" element={<ProtectedRoute><AiSystemHealthCenterPage /></ProtectedRoute>} />
-            <Route path="/ai/revenue-engine" element={<ProtectedRoute><AiRevenueEnginePage /></ProtectedRoute>} />
-            <Route path="/ai/workforce" element={<ProtectedRoute><AiWorkforceCenterPage /></ProtectedRoute>} />
-            <Route path="/ai/approval-center" element={<ProtectedRoute><AiApprovalCenterPage /></ProtectedRoute>} />
-            <Route path="/ai-enterprise-command-center" element={<ProtectedRoute><AIEnterpriseCommandCenter /></ProtectedRoute>} />
-            <Route path="/command-center" element={<ProtectedRoute><CommandCenterPage /></ProtectedRoute>} />
-            <Route path="/dashboard/revenue" element={<ProtectedRoute><RevenueDashboardPage /></ProtectedRoute>} />
-            <Route path="/business-home" element={<ProtectedRoute><AS6BusinessHome /></ProtectedRoute>} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </Suspense>
+        <Routes>
+          <Route path="/" element={<AS6PublicLivingHomePage />} />
+          <Route path="/blog" element={<AS6PublicLivingBlogPage />} />
+          <Route path="/blog/:slug" element={<AS6PublicLivingBlogPage />} />
+          <Route path="/docs" element={<AS6PublicLivingInfoPage type="docs" />} />
+          <Route path="/pricing" element={<AS6PublicLivingInfoPage type="pricing" />} />
+          <Route path="/about" element={<AS6PublicLivingInfoPage type="about" />} />
+          <Route path="/contact" element={<AS6PublicLivingInfoPage type="contact" />} />
+
+          <Route path="/app" element={<LivingProductPreviewPage />} />
+          <Route path="/preview/living" element={<LivingProductPreviewPage />} />
+          <Route path="/as6-living-preview" element={<LivingSpacePreviewPage />} />
+
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/payment/success" element={<PaymentSuccessPage />} />
+
+          {LEGACY_PLATFORM_ROUTES.map((path) => (
+            <Route key={path} path={path} element={<Navigate to="/app" replace />} />
+          ))}
+
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </BrowserRouter>
     </AuthProvider>
   );
