@@ -11,7 +11,7 @@ const spaces = [
 export const livingBlogPosts = [
   {
     slug: "living-space-business-interface",
-    category: "Living Space",
+    category: "Живое пространство",
     date: "12 июля 2026",
     title: "Почему бизнесу больше не нужны десятки разрозненных экранов",
     excerpt: "AS6 объединяет задачи, отношения, финансы и знания в одном непрерывном интеллектуальном пространстве.",
@@ -23,7 +23,7 @@ export const livingBlogPosts = [
   },
   {
     slug: "human-first-ai-governance",
-    category: "AI Governance",
+    category: "Управление ИИ",
     date: "10 июля 2026",
     title: "ИИ рекомендует, человек принимает решение",
     excerpt: "Как AS6 сочетает автоматизацию, объяснимость и контроль владельца бизнеса.",
@@ -35,13 +35,13 @@ export const livingBlogPosts = [
   },
   {
     slug: "knowledge-connected-business",
-    category: "Knowledge",
+    category: "Знания",
     date: "8 июля 2026",
     title: "Когда документы, клиенты и финансы становятся единым знанием",
     excerpt: "Почему общий контекст важнее набора отдельных модулей и интеграций.",
     body: [
       "Клиент существует одновременно в переписке, договорах, платежах, проектах и решениях команды.",
-      "Knowledge Core AS6 соединяет эти сведения и позволяет каждому пространству видеть одну согласованную картину.",
+      "Ядро знаний AS6 соединяет эти сведения и позволяет каждому пространству видеть одну согласованную картину.",
       "В результате пользователь получает не список записей, а объяснение ситуации и понятный путь к результату.",
     ],
   },
@@ -54,7 +54,7 @@ function LivingMark({ small = false }) {
 function PublicHeader() {
   return (
     <header className="living-public-header">
-      <Link to="/" className="living-public-brand"><LivingMark small /><span><strong>AS6</strong><small>Calm Business</small></span></Link>
+      <Link to="/" className="living-public-brand"><LivingMark small /><span><strong>AS6</strong><small>Спокойный бизнес</small></span></Link>
       <nav aria-label="Основная навигация">
         <a href="/#spaces">Пространства</a>
         <Link to="/blog">Блог</Link>
@@ -122,7 +122,7 @@ export function AS6PublicLivingHomePage() {
         <section className="living-public-section living-intro">
           <span className="living-eyebrow">Не ещё одна система</span>
           <h2>AS6 — не CRM, не чат и не набор модулей.</h2>
-          <p>Это единое Living Space, в котором интерфейс меняет состояние вокруг текущей задачи, а контекст не теряется между клиентами, финансами, документами и решениями.</p>
+          <p>Это единое живое пространство, в котором интерфейс меняет состояние вокруг текущей задачи, а контекст не теряется между клиентами, финансами, документами и решениями.</p>
         </section>
 
         <section className="living-public-section" id="spaces">
@@ -161,7 +161,7 @@ export function AS6PublicLivingBlogPage() {
         {post ? (
           <article className="living-blog-post"><Link to="/blog">← Все статьи</Link><span className="living-eyebrow">{post.category} · {post.date}</span><h1>{post.title}</h1><p className="living-blog-lead">{post.excerpt}</p>{post.body.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}<div className="living-blog-conclusion"><LivingMark small /><strong>Главная мысль</strong><p>Технология должна уменьшать сложность бизнеса, а не переносить её в новый интерфейс.</p></div></article>
         ) : (
-          <section><div className="living-page-heading"><span className="living-eyebrow">Блог AS6</span><h1>Мысли о спокойном, понятном и интеллектуальном бизнесе.</h1><p>Практические материалы о Living Space, знаниях, автоматизации и роли человека в работе с ИИ.</p></div><BlogPreview /></section>
+          <section><div className="living-page-heading"><span className="living-eyebrow">Блог AS6</span><h1>Мысли о спокойном, понятном и интеллектуальном бизнесе.</h1><p>Практические материалы о живом пространстве, знаниях, автоматизации и роли человека в работе с ИИ.</p></div><BlogPreview /></section>
         )}
       </main>
       <PublicFooter />
@@ -170,8 +170,8 @@ export function AS6PublicLivingBlogPage() {
 }
 
 const info = {
-  docs: ["Документы", "Архитектура и практические руководства AS6.", "Здесь появятся руководства по Living Space, сценариям работы и интеграциям."],
-  pricing: ["Тарифы", "Начните с ясности, масштабируйте по мере роста.", "Тарифная модель будет опубликована после завершения закрытого preview."],
+  docs: ["Документы", "Архитектура и практические руководства AS6.", "Здесь появятся руководства по живому пространству, сценариям работы и интеграциям."],
+  pricing: ["Тарифы", "Начните с ясности, масштабируйте по мере роста.", "Тарифная модель будет опубликована после завершения закрытого предварительного просмотра."],
   about: ["О продукте", "AS6 помогает человеку видеть бизнес целиком.", "Мы создаём единое интеллектуальное пространство, которое связывает знания, объясняет ситуацию и сохраняет право окончательного решения за человеком."],
   contact: ["Контакты", "Обсудим ваш бизнес и задачи.", "Свяжитесь с командой AS6 для демонстрации продукта, партнёрства или внедрения."],
 };
