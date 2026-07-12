@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+
+required=(
+  "frontend/src/living/framework/LivingFrame.jsx"
+  "frontend/src/living/framework/LivingInput.jsx"
+  "frontend/src/living/framework/LivingGeometry.jsx"
+  "frontend/src/living/framework/spaceRegistry.js"
+  "frontend/src/living/framework/tokens.js"
+  "frontend/src/living/framework/index.js"
+  "frontend/src/living/framework/livingFramework.css"
+  "frontend/src/living/preview/LivingSpacePreviewPage.jsx"
+)
+
+for rel in "${required[@]}"; do
+  test -f "$ROOT/$rel" || { echo "AS6_LIVING_SPACE_FRAMEWORK_MISSING=$rel"; exit 1; }
+done
+
+for id in focus crm finance documents; do
+  grep -q "id: \"$id\"" "$ROOT/frontend/src/living/framework/spaceRegistry.js" || {
+    echo "AS6_LIVING_SPACE_REGISTRY_MISSING=$id"; exit 1;
+  }
+done
+
+grep -q 'throw new Error(`AS6_LIVING_SPACE_UNKNOWN:' "$ROOT/frontend/src/living/framework/spaceRegistry.js" || {
+  echo "AS6_LIVING_SPACE_UNKNOWN_REJECTION=FAIL"; exit 1;
+}
+
+grep -q 'border: 0;' "$ROOT/frontend/src/living/framework/livingFramework.css" || {
+  echo "AS6_LIVING_INPUT_LOCK=FAIL:border"; exit 1;
+}
+
+grep -q 'visibleCharacterHeightPx: 18' "$ROOT/frontend/src/living/framework/tokens.js" || {
+  echo "AS6_STATE_METRIC_TOKEN_LOCK=FAIL"; exit 1;
+}
+
+grep -q '5e393d23789e21e2f5773521c8e0f2212fa78155a227f063ea90b4f206e422bc' "$ROOT/frontend/src/living/framework/tokens.js" || {
+  echo "AS6_MASTER_SCREEN_TOKEN_LOCK=FAIL"; exit 1;
+}
+
+grep -q 'LivingFrame, LivingGeometry, livingSpaceRegistry' "$ROOT/frontend/src/living/preview/LivingSpacePreviewPage.jsx" || {
+  echo "AS6_LIVING_FRAME_PREVIEW=FAIL"; exit 1;
+}
+
+grep -q 'export { LivingGeometry }' "$ROOT/frontend/src/living/framework/index.js" || {
+  echo "AS6_LIVING_FRAMEWORK_EXPORTS=FAIL"; exit 1;
+}
+
+echo "AS6_LIVING_SPACE_FRAMEWORK_STRUCTURE=PASS"
+echo "AS6_LIVING_SPACE_REGISTRY=PASS"
+echo "AS6_LIVING_INPUT_LOCK=PASS"
+echo "AS6_STATE_METRIC_TOKEN_LOCK=PASS"
+echo "AS6_MASTER_SCREEN_TOKEN_LOCK=PASS"
+echo "AS6_LIVING_FRAME_PREVIEW=PASS"
+echo "AS6_LIVING_SPACE_FRAMEWORK_READINESS=100%"
