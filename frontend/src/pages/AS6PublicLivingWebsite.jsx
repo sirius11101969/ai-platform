@@ -1,0 +1,182 @@
+import { Link, useParams } from "react-router-dom";
+import "./AS6PublicLivingWebsite.css";
+
+const spaces = [
+  { id: "focus", name: "Фокус", role: "Пространство концентрации", description: "Собирает главное и показывает следующий лучший шаг." },
+  { id: "crm", name: "CRM", role: "Пространство отношений", description: "Связывает клиентов, историю общения и возможности роста." },
+  { id: "finance", name: "Финансы", role: "Пространство устойчивости", description: "Объясняет денежные потоки, риски и сценарии развития." },
+  { id: "documents", name: "Документы", role: "Пространство знаний", description: "Превращает документы в понятный бизнес-контекст." },
+];
+
+export const livingBlogPosts = [
+  {
+    slug: "living-space-business-interface",
+    category: "Living Space",
+    date: "12 июля 2026",
+    title: "Почему бизнесу больше не нужны десятки разрозненных экранов",
+    excerpt: "AS6 объединяет задачи, отношения, финансы и знания в одном непрерывном интеллектуальном пространстве.",
+    body: [
+      "Обычные бизнес-системы заставляют человека искать нужный раздел, открывать таблицы и вручную собирать контекст.",
+      "AS6 меняет саму модель взаимодействия: пользователь формулирует намерение, а пространство перестраивается вокруг текущей задачи, сохраняя связи и историю.",
+      "Так интерфейс становится не набором страниц, а спокойным рабочим окружением, которое думает вместе с человеком.",
+    ],
+  },
+  {
+    slug: "human-first-ai-governance",
+    category: "AI Governance",
+    date: "10 июля 2026",
+    title: "ИИ рекомендует, человек принимает решение",
+    excerpt: "Как AS6 сочетает автоматизацию, объяснимость и контроль владельца бизнеса.",
+    body: [
+      "Автоматизация полезна только тогда, когда её действия понятны, ограничены и обратимы.",
+      "В AS6 каждая рекомендация содержит причину, используемый контекст, уровень уверенности и предлагаемый следующий шаг.",
+      "Права ИИ никогда не превышают права пользователя, от имени которого он работает.",
+    ],
+  },
+  {
+    slug: "knowledge-connected-business",
+    category: "Knowledge",
+    date: "8 июля 2026",
+    title: "Когда документы, клиенты и финансы становятся единым знанием",
+    excerpt: "Почему общий контекст важнее набора отдельных модулей и интеграций.",
+    body: [
+      "Клиент существует одновременно в переписке, договорах, платежах, проектах и решениях команды.",
+      "Knowledge Core AS6 соединяет эти сведения и позволяет каждому пространству видеть одну согласованную картину.",
+      "В результате пользователь получает не список записей, а объяснение ситуации и понятный путь к результату.",
+    ],
+  },
+];
+
+function LivingMark({ small = false }) {
+  return <span className={small ? "living-mark living-mark--small" : "living-mark"} aria-hidden="true"><i /><i /><i /></span>;
+}
+
+function PublicHeader() {
+  return (
+    <header className="living-public-header">
+      <Link to="/" className="living-public-brand"><LivingMark small /><span><strong>AS6</strong><small>Calm Business</small></span></Link>
+      <nav aria-label="Основная навигация">
+        <a href="/#spaces">Пространства</a>
+        <Link to="/blog">Блог</Link>
+        <Link to="/about">О продукте</Link>
+        <Link to="/contact">Контакты</Link>
+      </nav>
+      <div className="living-public-actions">
+        <Link to="/preview/living">Посмотреть AS6</Link>
+        <Link className="living-public-action" to="/signup">Начать работу</Link>
+      </div>
+    </header>
+  );
+}
+
+function PublicFooter() {
+  return (
+    <footer className="living-public-footer">
+      <Link to="/" className="living-public-brand"><LivingMark small /><span><strong>AS6</strong><small>Единое интеллектуальное пространство бизнеса</small></span></Link>
+      <nav><Link to="/blog">Блог</Link><Link to="/docs">Документы</Link><Link to="/about">О продукте</Link><Link to="/contact">Контакты</Link></nav>
+      <small>© 2026 AS6</small>
+    </footer>
+  );
+}
+
+function KnowledgeSphere() {
+  return (
+    <div className="living-hero-visual" aria-label="Живое пространство AS6">
+      <div className="living-orbit living-orbit--one" />
+      <div className="living-orbit living-orbit--two" />
+      <div className="living-core"><span>AS6</span><small>понимает контекст</small></div>
+      {spaces.map((space, index) => <span key={space.id} className={`living-node living-node--${index + 1}`}>{space.name}</span>)}
+    </div>
+  );
+}
+
+function BlogPreview() {
+  return (
+    <div className="living-article-list">
+      {livingBlogPosts.map((post, index) => (
+        <Link to={`/blog/${post.slug}`} className="living-article-link" key={post.slug}>
+          <span>{String(index + 1).padStart(2, "0")}</span>
+          <div><small>{post.category} · {post.date}</small><h3>{post.title}</h3><p>{post.excerpt}</p></div>
+          <b>Читать →</b>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+export function AS6PublicLivingHomePage() {
+  return (
+    <div className="living-public-site">
+      <PublicHeader />
+      <main>
+        <section className="living-public-hero">
+          <div className="living-public-hero__copy">
+            <span className="living-eyebrow">Интеллектуальная среда для бизнеса</span>
+            <h1>Весь бизнес.<br />В одном живом пространстве.</h1>
+            <p>AS6 понимает намерение, собирает контекст, связывает знания и спокойно показывает, что действительно важно сделать дальше.</p>
+            <div className="living-public-hero__actions"><Link className="living-primary" to="/preview/living">Посмотреть AS6</Link><Link className="living-secondary" to="/about">Как это работает</Link></div>
+          </div>
+          <KnowledgeSphere />
+        </section>
+
+        <section className="living-public-section living-intro">
+          <span className="living-eyebrow">Не ещё одна система</span>
+          <h2>AS6 — не CRM, не чат и не набор модулей.</h2>
+          <p>Это единое Living Space, в котором интерфейс меняет состояние вокруг текущей задачи, а контекст не теряется между клиентами, финансами, документами и решениями.</p>
+        </section>
+
+        <section className="living-public-section" id="spaces">
+          <div className="living-section-heading"><span className="living-eyebrow">Первые пространства</span><h2>Один мир. Четыре состояния.</h2></div>
+          <div className="living-space-list">
+            {spaces.map((space, index) => (
+              <article key={space.id}><span>{String(index + 1).padStart(2, "0")}</span><div><small>{space.role}</small><h3>{space.name}</h3><p>{space.description}</p></div><i aria-hidden="true" /></article>
+            ))}
+          </div>
+        </section>
+
+        <section className="living-public-section living-process">
+          <div className="living-section-heading"><span className="living-eyebrow">Как работает AS6</span><h2>От намерения к понятному результату.</h2></div>
+          <ol><li><span>01</span><strong>Понимает цель</strong><p>Определяет, чего человек хочет добиться.</p></li><li><span>02</span><strong>Собирает контекст</strong><p>Находит связанные данные, документы и события.</p></li><li><span>03</span><strong>Объясняет ситуацию</strong><p>Показывает причины, риски и возможные сценарии.</p></li><li><span>04</span><strong>Предлагает следующий шаг</strong><p>Оставляет окончательное решение человеку.</p></li></ol>
+        </section>
+
+        <section className="living-public-section">
+          <div className="living-section-heading living-section-heading--row"><div><span className="living-eyebrow">Блог AS6</span><h2>Знания, которые помогают видеть бизнес яснее.</h2></div><Link to="/blog">Все статьи →</Link></div>
+          <BlogPreview />
+        </section>
+
+        <section className="living-public-closing"><LivingMark /><span className="living-eyebrow">Начните с одного намерения</span><h2>Расскажите AS6, что хотите получить.</h2><p>Система соберёт нужный контекст и покажет следующий понятный шаг.</p><div><Link className="living-primary" to="/preview/living">Открыть пространство</Link><Link className="living-secondary" to="/signup">Создать аккаунт</Link></div></section>
+      </main>
+      <PublicFooter />
+    </div>
+  );
+}
+
+export function AS6PublicLivingBlogPage() {
+  const { slug } = useParams();
+  const post = slug ? livingBlogPosts.find((item) => item.slug === slug) : null;
+  return (
+    <div className="living-public-site">
+      <PublicHeader />
+      <main className="living-public-page">
+        {post ? (
+          <article className="living-blog-post"><Link to="/blog">← Все статьи</Link><span className="living-eyebrow">{post.category} · {post.date}</span><h1>{post.title}</h1><p className="living-blog-lead">{post.excerpt}</p>{post.body.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}<div className="living-blog-conclusion"><LivingMark small /><strong>Главная мысль</strong><p>Технология должна уменьшать сложность бизнеса, а не переносить её в новый интерфейс.</p></div></article>
+        ) : (
+          <section><div className="living-page-heading"><span className="living-eyebrow">Блог AS6</span><h1>Мысли о спокойном, понятном и интеллектуальном бизнесе.</h1><p>Практические материалы о Living Space, знаниях, автоматизации и роли человека в работе с ИИ.</p></div><BlogPreview /></section>
+        )}
+      </main>
+      <PublicFooter />
+    </div>
+  );
+}
+
+const info = {
+  docs: ["Документы", "Архитектура и практические руководства AS6.", "Здесь появятся руководства по Living Space, сценариям работы и интеграциям."],
+  pricing: ["Тарифы", "Начните с ясности, масштабируйте по мере роста.", "Тарифная модель будет опубликована после завершения закрытого preview."],
+  about: ["О продукте", "AS6 помогает человеку видеть бизнес целиком.", "Мы создаём единое интеллектуальное пространство, которое связывает знания, объясняет ситуацию и сохраняет право окончательного решения за человеком."],
+  contact: ["Контакты", "Обсудим ваш бизнес и задачи.", "Свяжитесь с командой AS6 для демонстрации продукта, партнёрства или внедрения."],
+};
+
+export function AS6PublicLivingInfoPage({ type }) {
+  const [title, heading, copy] = info[type] || info.about;
+  return <div className="living-public-site"><PublicHeader /><main className="living-public-page"><section className="living-page-heading"><span className="living-eyebrow">{title}</span><h1>{heading}</h1><p>{copy}</p><div className="living-public-hero__actions"><Link className="living-primary" to="/preview/living">Посмотреть AS6</Link><Link className="living-secondary" to="/contact">Связаться</Link></div></section></main><PublicFooter /></div>;
+}
