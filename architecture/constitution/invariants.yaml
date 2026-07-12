@@ -1,0 +1,51 @@
+version: 1.0
+status: active
+source_of_truth:
+  - docs/architecture/10_AS6_MASTER_SCREEN_STANDARD_V1.md
+  - docs/AS6_LIVING_SPACE_RULES.md
+  - docs/architecture/09_AS6_CORE_SPECIFICATION.md
+invariants:
+  - id: INV-001
+    name: one-living-space
+    rule: AS6 is one continuous Living Space; screens are states, not separate products or modules.
+    severity: critical
+  - id: INV-002
+    name: master-screen-authority
+    rule: Screen 1 Focus is the single visual authority for all current and future spaces.
+    severity: critical
+  - id: INV-003
+    name: locked-component-reuse
+    rule: Shared Master Screen components must be reused and must not be independently redrawn or restyled.
+    severity: critical
+  - id: INV-004
+    name: one-question-per-space
+    rule: Every Living Space answers exactly one primary user question.
+    severity: high
+  - id: INV-005
+    name: intent-first
+    rule: User intent is the primary navigation and orchestration unit.
+    severity: high
+  - id: INV-006
+    name: persistent-context
+    rule: Active business context persists across all relevant spaces without manual re-entry.
+    severity: high
+  - id: INV-007
+    name: knowledge-first
+    rule: Meaningful actions update shared organizational knowledge and memory.
+    severity: high
+  - id: INV-008
+    name: explainable-recommendations
+    rule: Every recommendation must expose reason, evidence, confidence, alternatives, and next action.
+    severity: high
+  - id: INV-009
+    name: human-final-authority
+    rule: Final business decisions remain with the user unless an explicit reversible automation policy exists.
+    severity: critical
+  - id: INV-010
+    name: evolutionary-change
+    rule: Changes polish and extend approved architecture; replacement requires explicit architecture approval.
+    severity: high
+  - id: INV-011
+    name: diagnostics-first
+    rule: Every change follows diagnostics, root cause, structure, change, re-diagnostics, controls, registries, validation, commit, and push.
+    severity: critical
