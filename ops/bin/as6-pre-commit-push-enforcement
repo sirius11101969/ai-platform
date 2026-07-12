@@ -7,6 +7,7 @@ ops/bin/as6-control-registry-reconciliation-enforcement-v82
 ops/bin/as6-control-autonomous-governance-enforcement-v84
 bash architecture/validation/validate-architecture-repository.sh
 bash ops/bin/as6-control-living-space-framework-v1
+bash ops/bin/as6-control-legacy-platform-ui-cutover-v1
 
 if [ "${AS6_ENFORCEMENT_MODE:-strict}" = "same-cycle" ]; then
   echo "AS6_READINESS_CONTROL=same-cycle-inline-readiness-evidence-alias"
@@ -23,6 +24,7 @@ if git grep -nE "(password|passwd|secret|token|api_key|apikey|private_key)[[:spa
 curl -kfsS https://www.as6.ru/api/health >/dev/null
 
 echo "AS6_ENFORCEMENT_SECRET_SCAN=PASS"
+echo "AS6_LEGACY_PLATFORM_UI_CUTOVER_ENFORCEMENT=PASS"
 echo "AS6_LIVING_SPACE_FRAMEWORK_ENFORCEMENT=PASS"
 echo "AS6_ARCHITECTURE_ENFORCEMENT=PASS"
 echo "AS6_ENFORCEMENT_WORKFLOW=PASS"
