@@ -1,0 +1,75 @@
+version: 1
+status: approved-source-manifest
+viewport:
+  width: 1536
+  height: 1024
+  device_scale_factor: 1
+master_screen: focus
+comparison:
+  pixel_diff_threshold: 0.015
+  layout_anchor_tolerance_px: 4
+  text_baseline_tolerance_px: 3
+  locked_component_tolerance_px: 2
+baselines:
+  - id: VISUAL-BASELINE-FOCUS-V1
+    space_id: focus
+    number: 1
+    title: Фокус
+    subtitle: Пространство концентрации
+    source_filename: ЭКРАН 1 ПРОСТРАНСТВО КОНЦЕНТРАЦИИ(8).png
+    repository_target: architecture/visual-baselines/images/focus-v1.png
+    width: 1536
+    height: 1024
+    byte_size: 2639642
+    sha256: 5e393d23789e21e2f5773521c8e0f2212fa78155a227f063ea90b4f206e422bc
+    geometry: sphere
+    status: master
+  - id: VISUAL-BASELINE-CRM-V1
+    space_id: crm
+    number: 2
+    title: CRM
+    subtitle: Пространство отношений
+    source_filename: ЭКРАН 2 ПРОСТРАНСТВО ОТНОШЕНИЙ(3).png
+    repository_target: architecture/visual-baselines/images/crm-v1.png
+    width: 1536
+    height: 1024
+    byte_size: 2549364
+    sha256: c61a4f82196e2c6b56a328d4b4742e1b6417587feaa19eaf9c86bf9e1c7473d9
+    geometry: relationship-network
+    status: approved
+  - id: VISUAL-BASELINE-FINANCE-V1
+    space_id: finance
+    number: 3
+    title: Финансы
+    subtitle: Пространство устойчивости
+    source_filename: ЭКРАН 3 ПРОСТРАНСТВО УСТОЙЧИВОСТИ(4).png
+    repository_target: architecture/visual-baselines/images/finance-v1.png
+    width: 1536
+    height: 1024
+    byte_size: 2602549
+    sha256: 96cf45c9061447312aa1d186974d881fc693446b725937e9f9e94a62a45e1b55
+    geometry: stability-crystal
+    status: approved
+  - id: VISUAL-BASELINE-DOCUMENTS-V1
+    space_id: documents
+    number: 4
+    title: Документы
+    subtitle: Пространство знаний
+    source_filename: ЭКРАН 4 ПРОСТРАНСТВО ЗНАНИЙ(1).png
+    repository_target: architecture/visual-baselines/images/documents-v1.png
+    width: 1536
+    height: 1024
+    byte_size: 2655625
+    sha256: 1ea1f8ecd7d72a9d56013445d7ffb88d5eb861ea7a5ccf777c610c91ae98e549
+    geometry: knowledge-sphere
+    status: approved
+locked_checks:
+  - master_screen_checksum
+  - common_header_geometry
+  - right_rail_width
+  - state_metric_visible_height_18px
+  - living_input_no_enclosing_frame
+  - living_input_microphone_position
+  - bottom_reasoning_line
+  - shared_typography
+  - shared_sky_light_atmosphere
