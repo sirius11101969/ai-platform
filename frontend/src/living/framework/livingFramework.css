@@ -1,0 +1,128 @@
+:root {
+  --as6-sky-top: #dcecf8;
+  --as6-sky-center: #c8dfef;
+  --as6-sky-edge: #eef6fb;
+  --as6-text-primary: #2f668f;
+  --as6-text-secondary: rgba(47, 102, 143, 0.72);
+  --as6-text-quiet: rgba(47, 102, 143, 0.52);
+  --as6-light-milk: rgba(255, 255, 255, 0.82);
+  --as6-light-warm: rgba(255, 244, 219, 0.38);
+  --as6-line: rgba(255, 255, 255, 0.42);
+}
+
+.as6-living-frame {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  padding: 28px 34px 24px;
+  color: var(--as6-text-primary);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(255,255,255,0.9), transparent 26%),
+    radial-gradient(circle at 50% 46%, var(--as6-sky-center), transparent 68%),
+    linear-gradient(180deg, var(--as6-sky-top), var(--as6-sky-edge));
+}
+
+.as6-living-frame::before,
+.as6-living-frame::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(34px);
+  opacity: 0.74;
+  background: rgba(255,255,255,0.62);
+}
+
+.as6-living-frame::before { width: 46vw; height: 16vw; left: -8vw; top: 16vh; }
+.as6-living-frame::after { width: 42vw; height: 18vw; right: -10vw; bottom: 18vh; }
+
+.as6-living-frame__header {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(120px, 0.7fr) minmax(210px, 1fr) minmax(280px, 1.5fr) minmax(180px, 0.8fr);
+  align-items: start;
+  gap: 24px;
+}
+
+.as6-living-frame__brand,
+.as6-living-frame__title { display: grid; gap: 2px; }
+.as6-living-frame__brand strong { font-size: 25px; letter-spacing: -0.04em; }
+.as6-living-frame__brand span,
+.as6-living-frame__greeting,
+.as6-living-frame__title p,
+.as6-living-frame__system { color: var(--as6-text-secondary); font-size: 13px; }
+.as6-living-frame__title { text-align: center; }
+.as6-living-frame__title h1 { margin: 0; font-size: 28px; font-weight: 400; }
+.as6-living-frame__title p { margin: 0; }
+.as6-living-frame__system { display: flex; justify-content: flex-end; gap: 16px; }
+
+.as6-living-frame__workspace {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: 36px;
+  min-height: 610px;
+  margin-top: 18px;
+}
+
+.as6-living-frame__stage { position: relative; min-height: 610px; }
+.as6-living-frame__right-rail { padding-top: 30px; color: var(--as6-text-secondary); }
+.as6-living-frame__reasoning,
+.as6-living-frame__recommendation { position: relative; z-index: 2; }
+.as6-living-frame__reasoning { min-height: 56px; }
+.as6-living-frame__recommendation { display: flex; justify-content: space-between; gap: 32px; min-height: 74px; }
+.as6-living-frame__action { white-space: nowrap; }
+
+.as6-living-input {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px;
+  align-items: center;
+  width: 100%;
+  min-height: 58px;
+  margin-top: 8px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.2));
+  border: 0;
+  border-radius: 0;
+  box-shadow: inset 0 -1px 0 rgba(255,255,255,0.72), inset 0 -10px 30px rgba(255,255,255,0.14);
+}
+
+.as6-living-input__field {
+  width: 100%;
+  min-width: 0;
+  padding: 0 18px;
+  color: var(--as6-text-primary);
+  font: inherit;
+  background: transparent;
+  border: 0;
+  outline: 0;
+}
+
+.as6-living-input__field::placeholder { color: var(--as6-text-quiet); }
+.as6-living-input__microphone {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  color: var(--as6-text-secondary);
+  background: transparent;
+  border: 0;
+}
+.as6-living-input__microphone svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+@media (max-width: 980px) {
+  .as6-living-frame { padding: 22px; }
+  .as6-living-frame__header { grid-template-columns: 1fr 1fr; }
+  .as6-living-frame__title { order: 3; grid-column: 1 / -1; }
+  .as6-living-frame__workspace { grid-template-columns: 1fr; }
+  .as6-living-frame__right-rail { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .as6-living-frame *, .as6-living-frame *::before, .as6-living-frame *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; }
+}
