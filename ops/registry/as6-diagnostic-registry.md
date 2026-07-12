@@ -1,5 +1,16 @@
 # AS6 Diagnostic Registry
 
+## AS6 Architecture Repository Enforcement v1
+- diagnostic: executable Architecture-as-Code repository structure and deterministic validation wired into the existing pre-commit/push enforcement path
+- artifact: architecture/validation/validate-architecture-repository.sh
+- enforcement: ops/bin/as6-pre-commit-push-enforcement
+- diagnostic_artifact: ops/diagnostics/as6-architecture-repository-v1.md
+- root_cause: AS6_ARCHITECTURE_VALIDATION_NOT_ENFORCED
+- failure_classes: AS6_ARCHITECTURE_REPOSITORY_MISSING, AS6_ARCHITECTURE_INVARIANT_DRIFT, AS6_ARCHITECTURE_OBJECT_UNREGISTERED, AS6_LIVING_SPACE_REGISTRY_DRIFT, AS6_MASTER_COMPONENT_REGISTRY_DRIFT, AS6_ARCHITECTURE_QUALITY_GATE_GAP, AS6_ARCHITECTURE_VALIDATION_GAP, AS6_ARCHITECTURE_ENFORCEMENT_BYPASS
+- architecture_rules: AS6_ARCHITECTURE_REPOSITORY_REQUIRED_RULE, AS6_ARCHITECTURE_VALIDATOR_REQUIRED_RULE, AS6_ARCHITECTURE_VALIDATION_MUST_RUN_IN_EXISTING_ENFORCEMENT_RULE, AS6_NO_PARALLEL_ARCHITECTURE_VALIDATION_FRAMEWORK_RULE
+- expected_results: AS6_ARCHITECTURE_REPOSITORY=PASS, AS6_ARCHITECTURE_INVARIANTS=PASS, AS6_LIVING_SPACE_REGISTRY=PASS, AS6_MASTER_SCREEN_LOCKED_COMPONENTS=PASS, AS6_ARCHITECTURE_QUALITY_GATES=PASS, AS6_ARCHITECTURE_REPOSITORY_READINESS=100%, AS6_ARCHITECTURE_ENFORCEMENT=PASS
+- result: AS6_ARCHITECTURE_REPOSITORY_ENFORCEMENT=REGISTERED
+
 ## AS6 V88 Design Compiler
 - diagnostic: compiler-style validation gate for all future Living Space states
 - artifact: docs/architecture/13_DESIGN_COMPILER.md
