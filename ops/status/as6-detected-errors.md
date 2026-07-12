@@ -1,3 +1,11 @@
+## 2026-07-12 AS6_ARCHITECTURE_VALIDATION_NOT_ENFORCED
+Root Cause: The executable `architecture/` repository and deterministic validator existed, but the validator was not yet invoked by the established pre-commit/push enforcement path.
+Failure Classes: AS6_ARCHITECTURE_REPOSITORY_MISSING, AS6_ARCHITECTURE_INVARIANT_DRIFT, AS6_ARCHITECTURE_OBJECT_UNREGISTERED, AS6_LIVING_SPACE_REGISTRY_DRIFT, AS6_MASTER_COMPONENT_REGISTRY_DRIFT, AS6_ARCHITECTURE_QUALITY_GATE_GAP, AS6_ARCHITECTURE_VALIDATION_GAP, AS6_ARCHITECTURE_ENFORCEMENT_BYPASS
+Diagnostic: ops/diagnostics/as6-architecture-repository-v1.md
+Validator: architecture/validation/validate-architecture-repository.sh
+Enforcement: ops/bin/as6-pre-commit-push-enforcement
+Prevention: The existing enforcement workflow now runs the architecture validator before secret scan, production health validation, commit, and push completion.
+Status: REGISTERED_AND_REPAIRED
 
 ## 2026-07-08 AS6_VISUAL_GRAMMAR_NOT_REPOSITORY_REGISTERED
 Root Cause: AS6 had Living Space, geometry, spatial composition and motion standards, but did not yet have a formal visual grammar connecting primitives, emotion, composition and state formulas.
