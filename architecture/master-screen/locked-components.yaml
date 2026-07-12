@@ -1,0 +1,62 @@
+version: 1.0
+status: locked
+canonical_specification: docs/architecture/10_AS6_MASTER_SCREEN_STANDARD_V1.md
+canonical_artifact:
+  path: docs/design/master-screen/as6-master-screen-focus-v1.png
+  canvas: 1536x1024
+  sha256: 5e393d23789e21e2f5773521c8e0f2212fa78155a227f063ea90b4f206e422bc
+components:
+  - id: MSC-001
+    name: header-pattern
+    mutable: false
+  - id: MSC-002
+    name: system-controls
+    mutable: false
+  - id: MSC-003
+    name: right-event-rail
+    mutable: false
+  - id: MSC-004
+    name: state-metric
+    mutable: false
+    constraints:
+      visible_character_height_px: 18
+      no_frame: true
+      no_decorative_dot: true
+      secondary_information: true
+  - id: MSC-005
+    name: lower-reasoning-path
+    mutable: false
+  - id: MSC-006
+    name: recommendation-region
+    mutable: false
+  - id: MSC-007
+    name: action-link
+    mutable: false
+    constraints:
+      rendered_as_button: false
+  - id: MSC-008
+    name: bottom-communication-line
+    mutable: false
+    mutable_fields:
+      - placeholder
+    constraints:
+      visible_enclosing_frame: false
+      border: false
+      outline: false
+      inset_border: false
+      perimeter_shadow: false
+      preserve_geometry: true
+      preserve_padding: true
+      preserve_microphone: true
+  - id: MSC-009
+    name: microphone-icon
+    mutable: false
+  - id: MSC-010
+    name: typography-system
+    mutable: false
+  - id: MSC-011
+    name: living-sky
+    mutable: false
+  - id: MSC-012
+    name: spacing-and-light-tokens
+    mutable: false
