@@ -1,0 +1,62 @@
+version: 1.0
+status: active
+objects:
+  - id: ARCH-001
+    type: canonical-specification
+    name: Master Screen Standard
+    source: docs/architecture/10_AS6_MASTER_SCREEN_STANDARD_V1.md
+    owner: product-architecture
+    status: locked
+    dependencies:
+      - ARCH-002
+      - ARCH-003
+  - id: ARCH-002
+    type: canonical-rules
+    name: Living Space Rules
+    source: docs/AS6_LIVING_SPACE_RULES.md
+    owner: product-architecture
+    status: approved
+  - id: ARCH-003
+    type: canonical-specification
+    name: Core Specification
+    source: docs/architecture/09_AS6_CORE_SPECIFICATION.md
+    owner: product-architecture
+    status: approved
+  - id: ARCH-004
+    type: invariant-registry
+    name: Architecture Invariants
+    source: architecture/constitution/invariants.yaml
+    owner: architecture-governance
+    status: active
+  - id: ARCH-005
+    type: component-registry
+    name: Locked Master Components
+    source: architecture/master-screen/locked-components.yaml
+    owner: design-governance
+    status: locked
+  - id: ARCH-006
+    type: space-registry
+    name: Living Spaces Registry
+    source: architecture/spaces/registry.yaml
+    owner: product-architecture
+    status: frozen
+  - id: ARCH-007
+    type: quality-gates
+    name: Architecture Quality Gates
+    source: architecture/governance/quality-gates.yaml
+    owner: architecture-governance
+    status: active
+  - id: ARCH-008
+    type: validation-control
+    name: Architecture Repository Validator
+    source: architecture/validation/validate-architecture-repository.sh
+    owner: engineering-governance
+    status: active
+traceability:
+  required_fields:
+    - id
+    - type
+    - source
+    - owner
+    - status
+  change_rule: Every changed architecture object must update its registry entry and validation coverage in the same cycle.
