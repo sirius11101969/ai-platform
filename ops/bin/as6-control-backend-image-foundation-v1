@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+DOCKERFILE="$ROOT/backend/Dockerfile"
+PACKAGE_JSON="$ROOT/backend/package.json"
+PACKAGE_LOCK="$ROOT/backend/package-lock.json"
+
+test -f "$DOCKERFILE"
+test -f "$PACKAGE_JSON"
+test -f "$PACKAGE_LOCK"
+
+grep -q '^FROM node:20-alpine$' "$DOCKERFILE"
+grep -q '^RUN npm ci --omit=dev --ignore-scripts' "$DOCKERFILE"
+grep -q '^USER node$' "$DOCKERFILE"
+grep -q '^CMD \["npm", "start"\]$' "$DOCKERFILE"
+
+! grep -Eq \
+  '^FROM (ai-platform-backend|.*backend:latest)' \
+  "$DOCKERFILE"
+
+node - "$PACKAGE_JSON" "$PACKAGE_LOCK" <<'NODE'
+const pkg = require(process.argv[2]);
+const lock = require(process.argv[3]);
+
+if (lock.lockfileVersion !== 3) process.exit(1);
+
+const declared = Object.keys(pkg.dependencies || {});
+const rootLocked = Object.keys(lock.packages?.[""]?.dependencies || {});
+const missing = declared.filter((name) => !rootLocked.includes(name));
+
+if (missing.length) {
+  console.error("Missing lock dependencies:", missing.join(", "));
+  process.exit(1);
+}
+
+for (const dependency of declared) {
+  if (!lock.packages?.[`node_modules/${dependency}`]) {
+    console.error("Missing lock package:", dependency);
+    process.exit(1);
+  }
+}
+NODE
+
+echo "AS6_BACKEND_SELF_REFERENTIAL_BASE_IMAGE=0"
+echo "AS6_BACKEND_REPRODUCIBLE_NPM_INSTALL=PASS"
+echo "AS6_BACKEND_PACKAGE_LOCK_SYNC=PASS"
+echo "AS6_BACKEND_NON_ROOT_RUNTIME=PASS"
+echo "AS6_BACKEND_IMAGE_FOUNDATION=PASS"
