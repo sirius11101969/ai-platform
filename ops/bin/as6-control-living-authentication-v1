@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+JSX="$ROOT/frontend/src/pages/AuthPages.jsx"
+CSS="$ROOT/frontend/src/pages/AuthPages.css"
+
+test -f "$JSX"
+test -f "$CSS"
+
+! grep -Eqi \
+  'JWT.?авторизация|AI.?пространство для продаж|премиальном тёмном|founder@company.ai|Анна Орлова|navigate\("/command-center"\)' \
+  "$JSX"
+
+grep -q 'navigate("/app")' "$JSX"
+grep -q 'living-auth-page' "$JSX"
+grep -q 'living-auth-page' "$CSS"
+grep -q 'prefers-reduced-motion' "$CSS"
+
+echo "AS6_LEGACY_AUTH_INTERFACE_REFERENCES=0"
+echo "AS6_AUTH_TEST_CREDENTIALS_REFERENCES=0"
+echo "AS6_AUTH_APP_REDIRECT=PASS"
+echo "AS6_AUTH_LIVING_SPACE_INHERITANCE=PASS"
+echo "AS6_LIVING_AUTHENTICATION=PASS"
