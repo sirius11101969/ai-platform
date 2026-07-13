@@ -6,7 +6,7 @@ services:
     build: ./backend
     restart: always
     environment:
-      AI_EXECUTION_ADMIN_KEY: ${AI_EXECUTION_ADMIN_KEY}
+      AI_EXECUTION_ADMIN_KEY: ${AI_EXECUTION_ADMIN_KEY:?AI_EXECUTION_ADMIN_KEY must be set in server .env}
       PAYMENT_WEBHOOK_SECRET: ${PAYMENT_WEBHOOK_SECRET:-}
       APP_URL: ${APP_URL:-https://www.as6.ru}
       PAYMENT_MODE: ${PAYMENT_MODE:-disabled}

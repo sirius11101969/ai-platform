@@ -17,7 +17,7 @@ function safeEquals(left, right) {
 
 function isInternalAdminKeyAccepted(req) {
   const configuredKey = process.env.AI_EXECUTION_ADMIN_KEY
-  const providedKey = req.get(INTERNAL_KEY_HEADER) || req.query?.key
+  const providedKey = req.get(INTERNAL_KEY_HEADER)
 
   return Boolean(configuredKey && providedKey && safeEquals(providedKey, configuredKey))
 }

@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+COMPOSE="$ROOT/docker-compose.yml"
+MIDDLEWARE="$ROOT/backend/src/middleware/aiExecutionRunnerAuthMiddleware.js"
+
+test -f "$COMPOSE"
+test -f "$MIDDLEWARE"
+
+grep -q 'AI_EXECUTION_ADMIN_KEY: ${AI_EXECUTION_ADMIN_KEY:?AI_EXECUTION_ADMIN_KEY must be set in server .env}' "$COMPOSE"
+grep -q 'const providedKey = req.get(INTERNAL_KEY_HEADER)' "$MIDDLEWARE"
+! grep -q 'req\.query.*key' "$MIDDLEWARE"
+grep -q "const INTERNAL_KEY_HEADER = 'x-ai-execution-key'" "$MIDDLEWARE"
+grep -q 'crypto.timingSafeEqual' "$MIDDLEWARE"
+
+echo "AS6_AI_ADMIN_KEY_COMPOSE_REQUIRED=PASS"
+echo "AS6_AI_ADMIN_KEY_HEADER_ONLY=PASS"
+echo "AS6_AI_ADMIN_KEY_TIMING_SAFE_COMPARE=PASS"
+echo "AS6_AI_EXECUTION_ADMIN_KEY_HARDENING=PASS"
