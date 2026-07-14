@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+SHELL_FILE="$ROOT/frontend/src/living/product-v2/LivingShellV2.jsx"
+CSS_FILE="$ROOT/frontend/src/living/product-v2/LivingShellV2.css"
+
+test -f "$SHELL_FILE"
+test -f "$CSS_FILE"
+
+iconv -f UTF-8 -t UTF-8 "$SHELL_FILE" >/dev/null
+iconv -f UTF-8 -t UTF-8 "$CSS_FILE" >/dev/null
+
+grep -Fq 'label: "Дом"' "$SHELL_FILE"
+grep -Fq 'label: "AI-дирижёр"' "$SHELL_FILE"
+grep -Fq 'Здравствуйте, Владимир' "$SHELL_FILE"
+grep -Fq 'Что должно измениться' "$SHELL_FILE"
+grep -Fq 'Живое пространство' "$SHELL_FILE"
+grep -Fq 'data-as6-product="living-space-v2"' "$SHELL_FILE"
+grep -Fq 'prefers-reduced-motion' "$CSS_FILE"
+
+if grep -Eq 'Ð|Ñ|â|Â' "$SHELL_FILE"; then
+  echo "ERROR: UTF-8 mojibake detected"
+  exit 1
+fi
+
+echo "AS6_LIVING_SHELL_UTF8_SOURCE=PASS"
+echo "AS6_RUSSIAN_INTERFACE_TEXT=PASS"
+echo "AS6_LIVING_SHELL_MOJIBAKE_REFERENCES=0"
+echo "AS6_LIVING_SHELL_UTF8_CONTROL=PASS"
