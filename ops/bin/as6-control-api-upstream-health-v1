@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+cd "$ROOT"
+
+test "$(docker inspect -f "{{.State.Status}}" ai-platform-backend-1)" = "running"
+test "$(docker inspect -f "{{.State.Status}}" ai-platform-nginx-1)" = "running"
+
+docker exec ai-platform-backend-1 sh -c "wget -qO- -T 10 http://127.0.0.1:3001/api/health" | grep -q "\"status\":\"OK\""
+docker exec ai-platform-nginx-1 sh -c "wget -qO- -T 10 http://backend:3001/api/health" | grep -q "\"status\":\"OK\""
+
+RESULT=FAIL
+for attempt in 1 2 3 4 5; do
+  code="$(curl -kLsS --max-time 15 -o /tmp/as6-public-health.json -w "%{http_code}" https://www.as6.ru/api/health || true)"
+  if [ "$code" = "200" ] && grep -q "\"status\":\"OK\"" /tmp/as6-public-health.json; then
+    RESULT=PASS
+    break
+  fi
+  sleep 2
+done
+
+test "$RESULT" = "PASS"
+
+echo "AS6_BACKEND_INTERNAL_HEALTH=PASS"
+echo "AS6_NGINX_BACKEND_UPSTREAM=PASS"
+echo "AS6_PUBLIC_API_HEALTH=PASS"
+echo "AS6_API_UPSTREAM_HEALTH_CONTROL=PASS"
