@@ -1,6 +1,6 @@
 import React from "react";
-import LivingProduct from "./LivingProduct.jsx";
+import LivingShellV2 from "../product-v2/LivingShellV2.jsx";
 
 export default function LivingProductPreviewPage() {
-  return <LivingProduct initialSpaceId="focus" greeting="Здравствуйте, Владимир." />;
+  return <LivingShellV2 />;
 }

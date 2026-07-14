@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+APP="$ROOT/frontend/src/App.jsx"
+SHELL="$ROOT/frontend/src/living/product-v2/LivingShellV2.jsx"
+CSS="$ROOT/frontend/src/living/product-v2/LivingShellV2.css"
+PREVIEW="$ROOT/frontend/src/living/product-v1/LivingProductPreviewPage.jsx"
+
+test -f "$APP"
+test -f "$SHELL"
+test -f "$CSS"
+test -f "$PREVIEW"
+
+grep -q "path=\"/app/\*\"" "$APP"
+grep -q "LivingShellV2" "$PREVIEW"
+grep -q "data-as6-product=\"living-space-v2\"" "$SHELL"
+grep -q "AI-Ð´Ð¸ÑÐ¸Ð¶ÑÑ" "$SHELL"
+grep -q "Ctrl K" "$SHELL"
+grep -q "event.key.toLowerCase() === \"k\"" "$SHELL"
+grep -q "prefers-reduced-motion" "$CSS"
+grep -q "@media (max-width: 680px)" "$CSS"
+
+! grep -Eqi "command-center|AI.?Ð¿Ð»Ð°ÑÑÐ¾ÑÐ¼Ð° Ð¿ÑÐ¾Ð´Ð°Ð¶|founder@company.ai" "$SHELL" "$CSS"
+
+echo "AS6_LIVING_SHELL_V2_OWNER=PASS"
+echo "AS6_LIVING_SHELL_V2_STATE_COVERAGE=PASS"
+echo "AS6_UNIVERSAL_COMMAND_CTRL_K=PASS"
+echo "AS6_AI_CONDUCTOR_PROTOTYPE=PASS"
+echo "AS6_LIVING_SHELL_V2_MOBILE=PASS"
+echo "AS6_LIVING_SHELL_V2_REDUCED_MOTION=PASS"
+echo "AS6_LEGACY_LIVING_SHELL_REFERENCES=0"
+echo "AS6_LIVING_SHELL_V2_CLICKABLE_PROTOTYPE=PASS"

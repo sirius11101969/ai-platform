@@ -113,7 +113,7 @@ export default function App() {
           <Route path="/about" element={<AS6PublicLivingInfoPage type="about" />} />
           <Route path="/contact" element={<AS6PublicLivingInfoPage type="contact" />} />
 
-          <Route path="/app" element={<LivingProductPreviewPage />} />
+          <Route path="/app/*" element={<LivingProductPreviewPage />} />
           <Route path="/preview/living" element={<LivingProductPreviewPage />} />
           <Route path="/as6-living-preview" element={<LivingSpacePreviewPage />} />
 
