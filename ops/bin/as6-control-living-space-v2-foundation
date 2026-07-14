@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+
+FILES=(
+  "$ROOT/docs/design/as6-living-space-v2-product-blueprint.md"
+  "$ROOT/docs/design/as6-living-space-design-system-v2.md"
+  "$ROOT/docs/design/as6-living-space-v2-state-map.md"
+  "$ROOT/docs/design/as6-living-space-v2-acceptance-standard.md"
+  "$ROOT/ops/diagnostics/as6-living-space-v2-foundation.md"
+)
+
+for file in "${FILES[@]}"; do
+  test -s "$file"
+done
+
+grep -q 'Master Screen' "${FILES[0]}"
+grep -q 'AI Conductor' "${FILES[0]}"
+grep -q 'Universal Command' "${FILES[0]}"
+grep -q 'LivingShell' "${FILES[1]}"
+grep -q 'prefers-reduced-motion' "${FILES[1]}"
+grep -q '/app/conductor' "${FILES[2]}"
+grep -q 'keyboard navigation' "${FILES[3]}"
+grep -q 'AS6_LIVING_SPACE_V2_CANON_MISSING' "${FILES[4]}"
+
+echo "AS6_LIVING_SPACE_V2_BLUEPRINT=PASS"
+echo "AS6_LIVING_SPACE_DESIGN_SYSTEM_V2=PASS"
+echo "AS6_LIVING_SPACE_STATE_MAP=PASS"
+echo "AS6_LIVING_SPACE_ACCEPTANCE_STANDARD=PASS"
+echo "AS6_LIVING_SPACE_V2_FOUNDATION=PASS"
