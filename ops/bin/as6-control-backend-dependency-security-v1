@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+PACKAGE_JSON="$ROOT/backend/package.json"
+PACKAGE_LOCK="$ROOT/backend/package-lock.json"
+
+test -f "$PACKAGE_JSON"
+test -f "$PACKAGE_LOCK"
+
+node -e "
+const pkg = require(process.argv[1]);
+const lock = require(process.argv[2]);
+
+if (lock.lockfileVersion !== 3) process.exit(1);
+
+const declared = Object.keys(pkg.dependencies || {});
+const locked = Object.keys(lock.packages?.[\"\" ]?.dependencies || {});
+const missing = declared.filter((name) => !locked.includes(name));
+
+if (missing.length) {
+  console.error(\"Missing lock root dependencies: \" + missing.join(\", \"));
+  process.exit(1);
+}
+
+for (const dependency of declared) {
+  if (!lock.packages?.[\"node_modules/\" + dependency]) {
+    console.error(\"Missing lock graph: \" + dependency);
+    process.exit(1);
+  }
+}
+
+if (lock.packages?.[\"node_modules/form-data\"]?.version !== \"4.0.6\") process.exit(1);
+if (lock.packages?.[\"node_modules/qs\"]?.version !== \"6.15.3\") process.exit(1);
+" "$PACKAGE_JSON" "$PACKAGE_LOCK"
+
+if [ "${AS6_RUN_NETWORK_AUDIT:-0}" = "1" ]; then
+  cd "$ROOT/backend"
+  npm audit --omit=dev --audit-level=low
+fi
+
+echo "AS6_BACKEND_PACKAGE_LOCK_SYNC=PASS"
+echo "AS6_FORM_DATA_SECURE_VERSION=PASS"
+echo "AS6_QS_SECURE_VERSION=PASS"
+echo "AS6_BACKEND_DEPENDENCY_SECURITY_CONTROL=PASS"
