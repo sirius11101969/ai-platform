@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily AS6 production backup timer
+
+[Timer]
+OnCalendar=*-*-* 03:30:00
+Persistent=true
+RandomizedDelaySec=300
+Unit=as6-production-backup.service
+
+[Install]
+WantedBy=timers.target

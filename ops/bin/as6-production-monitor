@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="/var/www/ai-platform"
+LOG_DIR="/var/log/as6"
+LOG_FILE="$LOG_DIR/production-monitor.log"
+STAMP="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+FAILURES=0
+
+mkdir -p "$LOG_DIR"
+chmod 750 "$LOG_DIR"
+cd "$ROOT"
+
+check_url() {
+  local name="$1"
+  local url="$2"
+  local expected="$3"
+  local code
+  code="$(curl -kLsS --max-time 20 -o /dev/null -w "%{http_code}" "$url" || true)"
+  if [ "$code" = "$expected" ]; then
+    printf "%s PASS url=%s code=%s\n" "$STAMP" "$name" "$code" >> "$LOG_FILE"
+  else
+    printf "%s FAIL url=%s code=%s expected=%s\n" "$STAMP" "$name" "$code" "$expected" >> "$LOG_FILE"
+    logger -p daemon.err -t as6-monitor "FAIL url=$name code=$code expected=$expected"
+    FAILURES=$((FAILURES + 1))
+  fi
+}
+
+check_container() {
+  local container="$1"
+  local state
+  state="$(docker inspect -f "{{.State.Status}}" "$container" 2>/dev/null || true)"
+  if [ "$state" = "running" ]; then
+    printf "%s PASS container=%s state=%s\n" "$STAMP" "$container" "$state" >> "$LOG_FILE"
+  else
+    printf "%s FAIL container=%s state=%s\n" "$STAMP" "$container" "${state:-missing}" >> "$LOG_FILE"
+    logger -p daemon.err -t as6-monitor "FAIL container=$container state=${state:-missing}"
+    FAILURES=$((FAILURES + 1))
+  fi
+}
+
+check_url home https://www.as6.ru/ 200
+check_url login https://www.as6.ru/login 200
+check_url signup https://www.as6.ru/signup 200
+check_url app https://www.as6.ru/app 200
+check_url health https://www.as6.ru/api/health 200
+
+check_container ai-platform-backend-1
+check_container ai-platform-nginx-1
+check_container ai-platform-db-1
+check_container ai-platform-redis-1
+
+HEALTH="$(curl -kfsS --max-time 20 https://www.as6.ru/api/health || true)"
+if ! printf "%s" "$HEALTH" | grep -q "\"status\":\"OK\""; then
+  printf "%s FAIL api_health_body=%s\n" "$STAMP" "$HEALTH" >> "$LOG_FILE"
+  logger -p daemon.err -t as6-monitor "FAIL API health body invalid"
+  FAILURES=$((FAILURES + 1))
+fi
+
+if [ "$FAILURES" -gt 0 ]; then
+  echo "AS6_PRODUCTION_MONITOR=FAIL failures=$FAILURES"
+  exit 1
+fi
+
+printf "%s PASS production_monitor\n" "$STAMP" >> "$LOG_FILE"
+echo "AS6_PRODUCTION_MONITOR=PASS"

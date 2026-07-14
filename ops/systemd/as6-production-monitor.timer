@@ -1,0 +1,12 @@
+[Unit]
+Description=AS6 production monitor timer
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+AccuracySec=30s
+Persistent=true
+Unit=as6-production-monitor.service
+
+[Install]
+WantedBy=timers.target

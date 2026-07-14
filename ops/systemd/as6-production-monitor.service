@@ -1,0 +1,11 @@
+[Unit]
+Description=AS6 production health monitor
+After=docker.service network-online.target
+Requires=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/var/www/ai-platform
+ExecStart=/var/www/ai-platform/ops/bin/as6-production-monitor
+User=root
+Group=root

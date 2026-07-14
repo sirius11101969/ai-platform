@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="/var/www/ai-platform"
+BACKUP_DIR="/var/backups/as6"
+RETENTION_DAYS="${AS6_BACKUP_RETENTION_DAYS:-7}"
+STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+BACKUP_FILE="$BACKUP_DIR/as6-postgres-${STAMP}.dump"
+CHECKSUM_FILE="${BACKUP_FILE}.sha256"
+TEMP_FILE="${BACKUP_FILE}.tmp"
+
+cd "$ROOT"
+mkdir -p "$BACKUP_DIR"
+chmod 700 "$BACKUP_DIR"
+
+DB_CONTAINER="$(docker compose ps -q db)"
+test -n "$DB_CONTAINER"
+docker exec "$DB_CONTAINER" pg_isready -U postgres -d aibot >/dev/null
+
+docker exec "$DB_CONTAINER" pg_dump -U postgres -d aibot -Fc > "$TEMP_FILE"
+test -s "$TEMP_FILE"
+
+docker exec -i "$DB_CONTAINER" pg_restore --list < "$TEMP_FILE" >/dev/null
+
+mv "$TEMP_FILE" "$BACKUP_FILE"
+chmod 600 "$BACKUP_FILE"
+sha256sum "$BACKUP_FILE" > "$CHECKSUM_FILE"
+chmod 600 "$CHECKSUM_FILE"
+
+find "$BACKUP_DIR" -maxdepth 1 -type f -name "as6-postgres-*.dump" -mtime "+$RETENTION_DAYS" -delete
+find "$BACKUP_DIR" -maxdepth 1 -type f -name "as6-postgres-*.dump.sha256" -mtime "+$RETENTION_DAYS" -delete
+
+echo "AS6_BACKUP_FILE=$BACKUP_FILE"
+echo "AS6_BACKUP_CHECKSUM=PASS"
+echo "AS6_BACKUP_RESTORE_STRUCTURE=PASS"
+echo "AS6_PRODUCTION_BACKUP=PASS"

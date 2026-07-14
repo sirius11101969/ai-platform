@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+BACKUP="$ROOT/ops/bin/as6-production-backup"
+MONITOR="$ROOT/ops/bin/as6-production-monitor"
+
+test -x "$BACKUP"
+test -x "$MONITOR"
+bash -n "$BACKUP"
+bash -n "$MONITOR"
+
+grep -q "pg_dump -U postgres -d aibot -Fc" "$BACKUP"
+grep -q "pg_restore --list" "$BACKUP"
+grep -q "sha256sum" "$BACKUP"
+grep -q "RETENTION_DAYS" "$BACKUP"
+grep -q "https://www.as6.ru/api/health" "$MONITOR"
+grep -q "ai-platform-backend-1" "$MONITOR"
+grep -q "logger -p daemon.err" "$MONITOR"
+
+echo "AS6_BACKUP_AUTOMATION_STRUCTURE=PASS"
+echo "AS6_BACKUP_RESTORE_VERIFICATION_STRUCTURE=PASS"
+echo "AS6_BACKUP_RETENTION_CONTROL=PASS"
+echo "AS6_PRODUCTION_MONITOR_STRUCTURE=PASS"
+echo "AS6_PRODUCTION_READINESS_CONTROL=PASS"
