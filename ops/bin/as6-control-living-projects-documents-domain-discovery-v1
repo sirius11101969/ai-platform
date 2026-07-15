@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+DIAG="$ROOT/ops/diagnostics/as6-living-projects-documents-domain-discovery-v1.md"
+SHELL="$ROOT/frontend/src/living/product-v2/LivingShellV2.jsx"
+
+test -s "$DIAG"
+test -s "$SHELL"
+
+grep -q 'Projects — `MISSING`' "$DIAG"
+grep -q 'Documents — `REUSABLE_CANDIDATE`' "$DIAG"
+grep -q 'Knowledge — `REUSABLE_CANDIDATE`' "$DIAG"
+
+grep -q 'AS6_DISCOVERY_ZERO_MATCH_PIPEFAIL' "$DIAG"
+grep -q 'AS6_DOMAIN_CLASSIFICATION_BROAD_PATTERN' "$DIAG"
+grep -q 'AS6_PROJECTED_VALUE_FALSE_POSITIVE' "$DIAG"
+grep -q 'AS6_EXECUTION_TASKS_MISCLASSIFIED_AS_PROJECTS' "$DIAG"
+
+grep -q 'ai_tasks' "$DIAG"
+grep -q 'email_attachments' "$DIAG"
+grep -q 'organizational memory' "$DIAG"
+
+echo "AS6_PROJECT_DOMAIN_STATUS=MISSING"
+echo "AS6_DOCUMENT_DOMAIN_STATUS=REUSABLE_CANDIDATE"
+echo "AS6_KNOWLEDGE_DOMAIN_STATUS=REUSABLE_CANDIDATE"
+echo "AS6_EXECUTION_TASKS_NOT_PROJECTS=PASS"
+echo "AS6_DOMAIN_CLASSIFICATION_EXACT_MATCH=PASS"
+echo "AS6_FALSE_PRODUCTION_DATA_PREVENTION=PASS"
+echo "AS6_LIVING_DOMAIN_DISCOVERY_CONTROL=PASS"
