@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+SHELL_FILE="$ROOT/frontend/src/living/product-v2/LivingShellV2.jsx"
+DATA_FILE="$ROOT/frontend/src/living/product-v2/livingReadOnlyData.js"
+API_FILE="$ROOT/frontend/src/services/api.js"
+ROUTES_FILE="$ROOT/backend/src/routes/crmRoutes.js"
+
+test -f "$SHELL_FILE"
+test -f "$DATA_FILE"
+test -f "$API_FILE"
+test -f "$ROUTES_FILE"
+
+grep -q "loadLivingReadOnlyData" "$SHELL_FILE"
+grep -q "function RelationsState({ livingData })" "$SHELL_FILE"
+grep -q "Living CRM · реальные данные" "$SHELL_FILE"
+grep -q "fetchCrmLeads" "$DATA_FILE"
+grep -q "Promise.allSettled" "$DATA_FILE"
+grep -q "readOnly: true" "$DATA_FILE"
+grep -q "export function fetchCrmLeads" "$API_FILE"
+grep -q "router.use(requireAuth)" "$ROUTES_FILE"
+grep -q "router.use(requireWorkspace)" "$ROUTES_FILE"
+grep -q "router.get('/leads', listLeads)" "$ROUTES_FILE"
+
+if grep -Eq "Северный ветер|Альфа Проект|Новая линия|const relationRows" "$SHELL_FILE"; then
+  echo "ERROR: демонстрационные CRM-данные обнаружены"
+  exit 1
+fi
+
+if grep -Eq "createLead|updateLead|deleteLead|method:[[:space:]]*['\"][[:space:]]*(POST|PATCH|PUT|DELETE)" "$DATA_FILE"; then
+  echo "ERROR: read-only adapter содержит mutating operation"
+  exit 1
+fi
+
+echo "AS6_LIVING_REAL_RELATIONS=PASS"
+echo "AS6_LIVING_DEMO_RELATIONS_REFERENCES=0"
+echo "AS6_LIVING_DEAD_DEMO_DATA_CONSTANTS=0"
+echo "AS6_LIVING_READ_ONLY_DATA_ADAPTER=PASS"
+echo "AS6_LIVING_READ_ONLY_MUTATIONS=0"
+echo "AS6_LIVING_DATA_AUTH_CONTRACT=PASS"
+echo "AS6_LIVING_DATA_WORKSPACE_ISOLATION=PASS"

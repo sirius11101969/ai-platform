@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./LivingShellV2.css";
+import { loadLivingReadOnlyData } from "./livingReadOnlyData.js";
 
 const spaces = [
   { id: "home", path: "/app", label: "Дом", short: "Главный фокус", symbol: "⌂" },
@@ -172,30 +173,102 @@ function ConductorState() {
   );
 }
 
-const relationRows = [
-  ["Северный ветер", "Нужен ответ", "2 дня", "Подготовить короткое продолжение"],
-  ["Альфа Проект", "Решение отложено", "5 дней", "Уточнить критерии выбора"],
-  ["Новая линия", "Хороший момент", "Сегодня", "Предложить следующий шаг"]
-];
+function RelationsState({ livingData }) {
+  const statusLabels = {
+    new: "Новый контакт",
+    qualified: "Квалифицирован",
+    proposal: "Предложение",
+    booked: "Встреча назначена",
+    won: "Успешно завершён",
+    lost: "Закрыт",
+  };
 
-function RelationsState() {
+  if (livingData.status === "loading") {
+    return (
+      <div className="as6-v2-state">
+        <section className="as6-v2-hero">
+          <span className="as6-v2-eyebrow">Living CRM</span>
+          <h1>Собираем отношения вашего пространства.</h1>
+          <p>AS6 безопасно читает данные активного рабочего пространства.</p>
+        </section>
+        <div className="as6-v2-data-state" role="status">
+          <span className="as6-v2-data-pulse" />
+          <strong>Загружаем клиентов…</strong>
+          <small>Изменения данных отключены.</small>
+        </div>
+      </div>
+    );
+  }
+
+  if (livingData.status === "error") {
+    return (
+      <div className="as6-v2-state">
+        <section className="as6-v2-hero">
+          <span className="as6-v2-eyebrow">Living CRM</span>
+          <h1>Не удалось открыть отношения.</h1>
+          <p>Данные не изменены. Проверьте авторизацию и активное пространство.</p>
+        </section>
+        <div className="as6-v2-data-state as6-v2-data-state--error" role="alert">
+          <strong>{livingData.error || "Ошибка чтения CRM"}</strong>
+          <small>Обновите страницу после проверки подключения.</small>
+        </div>
+      </div>
+    );
+  }
+
+  const relations = livingData.data?.relations || [];
+
   return (
     <div className="as6-v2-state">
       <section className="as6-v2-hero">
-        <span className="as6-v2-eyebrow">Living CRM</span>
+        <span className="as6-v2-eyebrow">Living CRM · реальные данные</span>
         <h1>Отношения, которым нужно внимание.</h1>
-        <p>Не таблица клиентов, а причины, риски и следующее понятное действие.</p>
+        <p>
+          Данные загружены только для чтения из активного пространства.
+          AI-дирижёр пока не может изменять клиентов.
+        </p>
       </section>
-      <div className="as6-v2-list">
-        {relationRows.map(([name, status, time, action]) => (
-          <article key={name}>
-            <span className="as6-v2-node"><i /></span>
-            <div><h3>{name}</h3><p>{status} · {time}</p></div>
-            <strong>{action}</strong>
-            <button type="button" aria-label={`Открыть ${name}`}>→</button>
-          </article>
-        ))}
-      </div>
+
+      {!relations.length ? (
+        <div className="as6-v2-data-state">
+          <strong>В пространстве пока нет клиентов.</strong>
+          <small>
+            Здесь появятся реальные отношения после добавления первого клиента.
+          </small>
+        </div>
+      ) : (
+        <div className="as6-v2-list">
+          {relations.map((lead) => (
+            <article key={lead.id || lead.name}>
+              <span className="as6-v2-node"><i /></span>
+
+              <div>
+                <h3>{lead.name}</h3>
+                <p>
+                  {lead.company || lead.email || lead.phone || "Контактные данные не указаны"}
+                </p>
+              </div>
+
+              <strong>
+                {statusLabels[lead.status] || lead.status || "Статус не определён"}
+              </strong>
+
+              <button
+                type="button"
+                aria-label={`Открыть клиента ${lead.name}`}
+                disabled
+                title="Детальная карточка будет подключена следующим этапом"
+              >
+                →
+              </button>
+            </article>
+          ))}
+        </div>
+      )}
+
+      <p className="as6-v2-readonly-note">
+        Только чтение · {relations.length} клиентов · активное workspace
+      </p>
     </div>
   );
 }
@@ -314,9 +387,9 @@ function SettingsState() {
   );
 }
 
-function ActiveState({ id, navigate }) {
+function ActiveState({ id, navigate, livingData }) {
   if (id === "conductor") return <ConductorState />;
-  if (id === "relations") return <RelationsState />;
+  if (id === "relations") return <RelationsState livingData={livingData} />;
   if (id === "projects") return <ProjectsState />;
   if (id === "documents" || id === "knowledge") return <LibraryState type={id} />;
   if (id === "blog") return <BlogState />;
@@ -328,6 +401,11 @@ export default function LivingShellV2() {
   const [activeId, setActiveId] = useState(() => resolveSpace(window.location.pathname));
   const [commandOpen, setCommandOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [livingData, setLivingData] = useState({
+    status: "loading",
+    data: null,
+    error: "",
+  });
   const commandInputRef = useRef(null);
 
   const activeSpace = useMemo(
@@ -351,6 +429,30 @@ export default function LivingShellV2() {
     setQuery("");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
+
+  useEffect(() => {
+    let cancelled = false;
+
+    loadLivingReadOnlyData()
+      .then((data) => {
+        if (!cancelled) {
+          setLivingData({ status: "ready", data, error: "" });
+        }
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          setLivingData({
+            status: "error",
+            data: null,
+            error: error?.message || "Не удалось загрузить данные пространства",
+          });
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     function onPopState() {
@@ -430,7 +532,7 @@ export default function LivingShellV2() {
         </header>
 
         <div className="as6-v2-canvas">
-          <ActiveState id={activeId} navigate={navigate} />
+          <ActiveState id={activeId} navigate={navigate} livingData={livingData} />
         </div>
       </main>
 
