@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+API="$ROOT/frontend/src/services/api.js"
+
+test -s "$API"
+
+FUNCTION_COUNT="$(grep -c "^export function fetchEmailAttachments" "$API")"
+test "$FUNCTION_COUNT" = "1"
+
+grep -q "/email/attachments" "$API"
+
+BLOCK="$(sed -n "/^export function fetchEmailAttachments/,/^export function /p" "$API" | head -n -1)"
+
+test -n "$BLOCK"
+
+if printf "%s\n" "$BLOCK" | grep -Eq "method:[[:space:]]*['\"](POST|PUT|PATCH|DELETE)"; then
+  echo "ERROR: fetchEmailAttachments содержит mutation"
+  exit 1
+fi
+
+echo "AS6_FRONTEND_ATTACHMENTS_READ_API=PASS"
+echo "AS6_DOCUMENT_READ_API_FUNCTION_COUNT=1"
+echo "AS6_DOCUMENT_READ_API_MUTATIONS=0"
+echo "AS6_DOCUMENTS_API_ANCHOR_CONTROL=PASS"

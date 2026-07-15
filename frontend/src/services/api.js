@@ -664,6 +664,22 @@ export function uploadEmailAttachment(payload) {
   })
 }
 
+
+export function fetchEmailAttachments(params = {}) {
+  const query = new URLSearchParams(
+    Object.entries(params).filter(
+      ([, value]) =>
+        value !== undefined &&
+        value !== null &&
+        value !== ""
+    )
+  ).toString();
+
+  return request(
+    `/email/attachments${query ? `?${query}` : ""}`
+  );
+}
+
 export function fetchLeadEmails(leadId) {
   return request(`/crm/leads/${leadId}/emails`)
 }
