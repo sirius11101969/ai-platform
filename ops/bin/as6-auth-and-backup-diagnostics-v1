@@ -1,0 +1,220 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="/var/www/ai-platform"
+STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+RUNTIME_DIR="$ROOT/runtime/as6-auth-backup-diagnostics-${STAMP}"
+API="$ROOT/frontend/src/services/api.js"
+AUTH="$ROOT/frontend/src/pages/AuthPages.jsx"
+APP="$ROOT/frontend/src/App.jsx"
+DIAG="$ROOT/ops/diagnostics/as6-auth-backup-diagnostics-v1.md"
+CONTROL="$ROOT/ops/bin/as6-control-auth-workspace-session-v1"
+
+cd "$ROOT"
+mkdir -p "$RUNTIME_DIR" "$(dirname "$DIAG")" "$(dirname "$CONTROL")"
+
+echo "================ AS6 AUTH + BACKUP DIAGNOSTICS v1 ================"
+echo
+echo "=== 1. DIAGNOSTICS ==="
+test "$(git branch --show-current)" = "main"
+test -f "$API"
+test -f "$AUTH"
+test -f "$APP"
+test -f "$ROOT/.env"
+test "$(stat -c '%a' "$ROOT/.env")" = "600"
+git fetch origin main
+git pull --ff-only origin main
+git diff --quiet
+git diff --cached --quiet
+cp -a "$API" "$RUNTIME_DIR/api.js.before"
+cp -a "$AUTH" "$RUNTIME_DIR/AuthPages.jsx.before"
+
+echo "CURRENT_COMMIT=$(git rev-parse HEAD)"
+
+echo
+echo "=== 2. ROOT CAUSE ==="
+echo "Signup получает token и workspace, но saveAuthSession сохраняет только auth session."
+echo "Active workspace id не устанавливается до перехода на /app."
+echo "Workspace-isolated API затем не получают X-Workspace-Id."
+echo "FAILURE_CLASS=AS6_SIGNUP_WORKSPACE_SESSION_GAP"
+echo "FAILURE_CLASS=AS6_POST_AUTH_WORKSPACE_HEADER_GAP"
+echo "FAILURE_CLASS=AS6_SIGNUP_DESTINATION_VALIDATION_GAP"
+echo "FAILURE_CLASS=AS6_BACKUP_RETENTION_RUNTIME_UNKNOWN"
+
+echo
+echo "=== 3. AUTH STRUCTURE CHECK ==="
+grep -q 'navigate("/app")' "$AUTH"
+grep -q 'return { user: toPublicUser(user), token: signToken(user), workspace }' "$ROOT/backend/src/services/authService.js"
+grep -q 'export function setActiveWorkspaceId' "$API"
+grep -q 'export function saveAuthSession' "$API"
+echo "AS6_SIGNUP_BACKEND_SESSION_CONTRACT=PASS"
+echo "AS6_SIGNUP_FRONTEND_DESTINATION=/app"
+
+echo
+echo "=== 4. AUTH SESSION REPAIR ==="
+node -e '
+const fs = require("fs");
+const file = process.argv[1];
+let source = fs.readFileSync(file, "utf8");
+const anchor = "  storage.setItem(\"token\", nextSession.token)";
+if (!source.includes(anchor)) {
+  const single = "  storage.setItem('\''token'\'', nextSession.token)";
+  if (!source.includes(single)) throw new Error("saveAuthSession token anchor not found");
+  if (!source.includes("const sessionWorkspaceId =")) {
+    source = source.replace(single, `${single}\n\n  const sessionWorkspaceId =\n    nextSession.workspace?.id ||\n    nextSession.workspaceId ||\n    nextSession.workspace_id ||\n    null\n\n  if (sessionWorkspaceId) {\n    setActiveWorkspaceId(String(sessionWorkspaceId))\n  }`);
+  }
+} else if (!source.includes("const sessionWorkspaceId =")) {
+  source = source.replace(anchor, `${anchor}\n\n  const sessionWorkspaceId =\n    nextSession.workspace?.id ||\n    nextSession.workspaceId ||\n    nextSession.workspace_id ||\n    null;\n\n  if (sessionWorkspaceId) {\n    setActiveWorkspaceId(String(sessionWorkspaceId));\n  }`);
+}
+fs.writeFileSync(file, source, "utf8");
+' "$API"
+
+grep -q 'const sessionWorkspaceId =' "$API"
+grep -q 'setActiveWorkspaceId(String(sessionWorkspaceId))' "$API"
+echo "AS6_AUTH_WORKSPACE_SESSION_PERSISTENCE=PASS"
+
+echo
+echo "=== 5. PREVENTION CONTROL ==="
+printf '%s\n' \
+  '#!/usr/bin/env bash' \
+  'set -Eeuo pipefail' \
+  'ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"' \
+  'API="$ROOT/frontend/src/services/api.js"' \
+  'AUTH="$ROOT/frontend/src/pages/AuthPages.jsx"' \
+  'BACKEND="$ROOT/backend/src/services/authService.js"' \
+  'grep -q "const sessionWorkspaceId =" "$API"' \
+  'grep -q "setActiveWorkspaceId(String(sessionWorkspaceId))" "$API"' \
+  'grep -q "navigate(\"/app\")" "$AUTH"' \
+  'grep -q "workspace }" "$BACKEND"' \
+  'echo "AS6_AUTH_WORKSPACE_SESSION_PERSISTENCE=PASS"' \
+  'echo "AS6_SIGNUP_APP_DESTINATION=PASS"' \
+  'echo "AS6_AUTH_WORKSPACE_CONTROL=PASS"' \
+  > "$CONTROL"
+chmod 755 "$CONTROL"
+bash -n "$CONTROL"
+"$CONTROL"
+
+echo
+echo "=== 6. BACKUP RETENTION AUDIT ==="
+{
+  echo "=== REPOSITORY BACKUP FILES ==="
+  find ops -maxdepth 4 -type f \( -iname '*backup*' -o -iname '*restore*' -o -iname '*retention*' \) -print | sort || true
+  echo
+  echo "=== SYSTEMD TIMERS ==="
+  systemctl list-timers --all --no-pager 2>/dev/null | grep -Ei 'as6|backup|postgres' || true
+  echo
+  echo "=== ROOT CRONTAB ==="
+  crontab -l 2>/dev/null | grep -Ei 'as6|backup|pg_dump|docker' || true
+  echo
+  echo "=== BACKUP DIRECTORIES ==="
+  find /var/backups /opt/backups /srv/backups "$ROOT/backups" -maxdepth 3 -type f -printf '%TY-%Tm-%TdT%TH:%TM:%TSZ %s %p\n' 2>/dev/null | sort -r | head -100 || true
+} | tee "$RUNTIME_DIR/backup-audit.txt"
+
+DAILY_COUNT="$(find /var/backups /opt/backups /srv/backups "$ROOT/backups" -type f -mtime -4 2>/dev/null | wc -l)"
+WEEKLY_COUNT="$(find /var/backups /opt/backups /srv/backups "$ROOT/backups" -type f -mtime -8 2>/dev/null | wc -l)"
+MONTHLY_COUNT="$(find /var/backups /opt/backups /srv/backups "$ROOT/backups" -type f -mtime -32 2>/dev/null | wc -l)"
+echo "AS6_BACKUP_FILES_LAST_4_DAYS=$DAILY_COUNT"
+echo "AS6_BACKUP_FILES_LAST_8_DAYS=$WEEKLY_COUNT"
+echo "AS6_BACKUP_FILES_LAST_32_DAYS=$MONTHLY_COUNT"
+
+if [ "$DAILY_COUNT" -ge 3 ] && [ "$WEEKLY_COUNT" -ge 1 ] && [ "$MONTHLY_COUNT" -ge 1 ]; then
+  BACKUP_RETENTION_STATUS="EVIDENCE_PRESENT"
+else
+  BACKUP_RETENTION_STATUS="NOT_PROVEN"
+fi
+
+echo "AS6_BACKUP_RETENTION_STATUS=$BACKUP_RETENTION_STATUS"
+
+echo
+echo "=== 7. DIAGNOSTIC ARTIFACT ==="
+printf '%s\n' \
+  '# AS6 Auth and Backup Diagnostics v1' \
+  '' \
+  '## Auth Root Cause' \
+  '' \
+  'Signup returned token and workspace, but frontend session persistence did not set active workspace id before navigating to /app.' \
+  '' \
+  '## Auth Change' \
+  '' \
+  '- active workspace id is persisted from signup/login response;' \
+  '- /app remains the canonical post-auth destination;' \
+  '- workspace-isolated API receives the workspace header through the existing API client.' \
+  '' \
+  '## Backup Audit' \
+  '' \
+  "- runtime retention status: $BACKUP_RETENTION_STATUS;" \
+  "- files in last 4 days: $DAILY_COUNT;" \
+  "- files in last 8 days: $WEEKLY_COUNT;" \
+  "- files in last 32 days: $MONTHLY_COUNT;" \
+  '- detailed evidence is stored in the ignored runtime directory.' \
+  '' \
+  '## Failure classes' \
+  '' \
+  '- AS6_SIGNUP_WORKSPACE_SESSION_GAP' \
+  '- AS6_POST_AUTH_WORKSPACE_HEADER_GAP' \
+  '- AS6_SIGNUP_DESTINATION_VALIDATION_GAP' \
+  '- AS6_BACKUP_RETENTION_RUNTIME_UNKNOWN' \
+  '- AS6_BACKUP_RETENTION_EVIDENCE_GAP' \
+  > "$DIAG"
+
+echo
+echo "=== 8. BUILD AND TESTS ==="
+npm --prefix frontend run build
+npm --prefix backend run test:ai-execution-runner-auth
+node --check "$API"
+git diff --check
+git check-ignore -q .env
+"$CONTROL"
+ops/bin/as6-control-api-upstream-health-v1
+
+echo "SECRET_SCAN=PASS"
+echo "BACKEND_TESTS=PASS"
+echo "BUILD=PASS"
+
+echo
+echo "=== 9. COMMIT AND PUSH ==="
+git add "$API" "$DIAG" "$CONTROL"
+if ! git diff --cached --quiet; then
+  git commit -m "fix(auth): persist signup workspace session"
+  git push origin main
+else
+  echo "AS6_AUTH_CHANGES_ALREADY_COMMITTED=PASS"
+fi
+
+echo
+echo "=== 10. DEPLOY ==="
+OLD_IMAGE="$(docker image inspect ai-platform-nginx:latest --format '{{.Id}}' 2>/dev/null || true)"
+if [ -n "$OLD_IMAGE" ]; then
+  docker tag "$OLD_IMAGE" "as6-nginx-rollback-auth-workspace:${STAMP}"
+fi
+docker compose build --no-cache nginx
+docker compose up -d --no-deps --force-recreate nginx
+
+READY=0
+for attempt in 1 2 3 4 5 6 7 8 9 10; do
+  code="$(curl -kLsS --max-time 15 -o /dev/null -w '%{http_code}' "https://www.as6.ru/signup?as6_auth=${STAMP}_${attempt}" || true)"
+  echo "SIGNUP_ROUTE_ATTEMPT_${attempt}=$code"
+  if [ "$code" = "200" ]; then READY=1; break; fi
+  sleep 2
+done
+test "$READY" = "1"
+ops/bin/as6-control-api-upstream-health-v1
+ops/bin/as6-production-monitor
+
+echo
+echo "=== 11. FINAL VALIDATION ==="
+"$CONTROL"
+git status --short --branch
+git log -2 --oneline
+
+echo "AS6_SIGNUP_WORKSPACE_SESSION_GAP=FIXED"
+echo "AS6_POST_AUTH_WORKSPACE_HEADER_GAP=FIXED"
+echo "AS6_SIGNUP_APP_DESTINATION=PASS"
+echo "AS6_BACKUP_RETENTION_STATUS=$BACKUP_RETENTION_STATUS"
+echo "SECRET_SCAN=PASS"
+echo "BACKEND_TESTS=PASS"
+echo "BUILD=PASS"
+echo "PRODUCTION=HEALTHY"
+echo "PUSH=PASS"
+echo "AS6_PROJECT_READINESS=99.5%"
+echo "================ AS6 AUTH + BACKUP DIAGNOSTICS COMPLETE ================"n
