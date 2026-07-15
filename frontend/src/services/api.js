@@ -83,6 +83,16 @@ export function saveAuthSession(session, { remember = true } = {}) {
   storage.setItem(AUTH_STORAGE_KEY, JSON.stringify(nextSession))
   storage.setItem('token', nextSession.token)
 
+  const sessionWorkspaceId =
+    nextSession.workspace?.id ||
+    nextSession.workspaceId ||
+    nextSession.workspace_id ||
+    null
+
+  if (sessionWorkspaceId) {
+    setActiveWorkspaceId(String(sessionWorkspaceId))
+  }
+
   const fallbackStorage = remember ? window.sessionStorage : window.localStorage
   fallbackStorage.removeItem(AUTH_STORAGE_KEY)
   fallbackStorage.removeItem('token')

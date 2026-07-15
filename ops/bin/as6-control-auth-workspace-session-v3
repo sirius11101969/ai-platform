@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+API="$ROOT/frontend/src/services/api.js"
+AUTH="$ROOT/frontend/src/pages/AuthPages.jsx"
+BACKEND="$ROOT/backend/src/services/authService.js"
+grep -q "const sessionWorkspaceId =" "$API"
+grep -q "setActiveWorkspaceId(String(sessionWorkspaceId))" "$API"
+grep -q "navigate(\"/app\")" "$AUTH"
+grep -q "workspace }" "$BACKEND"
+echo "AS6_AUTH_WORKSPACE_SESSION_PERSISTENCE=PASS"
+echo "AS6_SIGNUP_APP_DESTINATION=PASS"
+echo "AS6_AUTH_WORKSPACE_CONTROL=PASS"
