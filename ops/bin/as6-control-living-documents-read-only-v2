@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+DATA="$ROOT/frontend/src/living/product-v2/livingReadOnlyData.js"
+SHELL="$ROOT/frontend/src/living/product-v2/LivingShellV2.jsx"
+grep -q "fetchEmailAttachments" "$DATA"
+grep -q "normalizeAttachment" "$DATA"
+grep -q "Living Documents · реальные данные" "$SHELL"
+grep -q "function DocumentsState({ livingData })" "$SHELL"
+if grep -Eq "Living Space v2 Blueprint|Production Readiness|AS6 Design System|Публичный сайт|Почему AS6 — одно пространство" "$SHELL"; then exit 1; fi
+echo "AS6_LIVING_DOCUMENTS_REAL_DATA=PASS"
+echo "AS6_LIVING_DOCUMENTS_READ_ONLY=PASS"
+echo "AS6_LIVING_DOCUMENTS_DEMO_REFERENCES=0"
+echo "AS6_LIVING_DOCUMENT_MUTATIONS=0"

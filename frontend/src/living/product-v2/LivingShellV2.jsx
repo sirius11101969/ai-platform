@@ -273,67 +273,71 @@ function RelationsState({ livingData }) {
   );
 }
 
-function ProjectsState() {
+function UnavailableDomainState({ eyebrow, title, description, reason }) {
   return (
     <div className="as6-v2-state">
       <section className="as6-v2-hero">
-        <span className="as6-v2-eyebrow">Проекты</span>
-        <h1>Движение к результату.</h1>
-        <p>Каждый проект показывает этап, препятствие и ближайшее действие.</p>
+        <span className="as6-v2-eyebrow">{eyebrow}</span>
+        <h1>{title}</h1>
+        <p>{description}</p>
       </section>
-      <div className="as6-v2-card-grid">
-        {[
-          ["Living Space v2", "Прототип оболочки", "78%", "Утвердить главный экран"],
-          ["Публичный сайт", "Новый бренд опубликован", "92%", "Расширить Living Blog"],
-          ["AI-дирижёр", "Контракт взаимодействия", "46%", "Подключить безопасные действия"]
-        ].map(([title, stage, progress, next]) => (
-          <article className="as6-v2-project" key={title}>
-            <span className="as6-v2-eyebrow">{stage}</span>
-            <h2>{title}</h2>
-            <div className="as6-v2-progress"><i style={{ width: progress }} /></div>
-            <small>{progress} готово</small>
-            <p>Следующее: {next}</p>
-          </article>
-        ))}
+      <div className="as6-v2-data-state">
+        <strong>Источник данных ещё не подключён.</strong>
+        <small>{reason}</small>
       </div>
+      <p className="as6-v2-readonly-note">AS6 не показывает вымышленные production-данные</p>
     </div>
   );
 }
 
-function LibraryState({ type }) {
-  const content = type === "documents"
-    ? {
-        eyebrow: "Документы",
-        title: "Материалы в рабочем контексте.",
-        description: "Документ связан с проектом, клиентом, решением и историей.",
-        items: ["Living Space v2 Blueprint", "Production Readiness", "AS6 Design System"]
-      }
-    : {
-        eyebrow: "Знания",
-        title: "Память решений AS6.",
-        description: "Здесь собраны объяснения, стандарты и опыт, который помогает действовать.",
-        items: ["Почему AS6 — одно пространство", "Diagnostics First", "Принципы спокойного интерфейса"]
-      };
+function ProjectsState({ livingData }) {
+  return <UnavailableDomainState eyebrow="Проекты" title="Рабочие проекты появятся здесь." description="AS6 создаёт отдельную каноническую модель проектов с изоляцией по рабочему пространству." reason={livingData.data?.domainStatus?.projects?.reason || "Модель проектов ещё не создана"} />;
+}
 
+function formatDocumentSize(sizeBytes) {
+  const bytes = Number(sizeBytes || 0);
+  if (bytes < 1024) return `${bytes} Б`;
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} КБ`;
+  return `${(bytes / 1024 / 1024).toFixed(1)} МБ`;
+}
+
+function formatDocumentDate(value) {
+  if (!value) return "Дата не указана";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Дата не указана";
+  return new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "short", year: "numeric" }).format(date);
+}
+
+function getDocumentType(mimeType) {
+  const value = String(mimeType || "").toLowerCase();
+  if (value.includes("pdf")) return "PDF";
+  if (value.startsWith("image/")) return "Изображение";
+  if (value.includes("word")) return "Документ";
+  if (value.includes("sheet") || value.includes("excel")) return "Таблица";
+  if (value.includes("presentation") || value.includes("powerpoint")) return "Презентация";
+  return "Файл";
+}
+
+function DocumentsState({ livingData }) {
+  if (livingData.status === "loading") {
+    return <div className="as6-v2-state"><section className="as6-v2-hero"><span className="as6-v2-eyebrow">Материалы и вложения</span><h1>Собираем рабочие материалы.</h1><p>AS6 безопасно читает файлы активного рабочего пространства.</p></section><div className="as6-v2-data-state" role="status"><span className="as6-v2-data-pulse" /><strong>Загружаем материалы…</strong><small>Изменение и удаление файлов отключены.</small></div></div>;
+  }
+  const documentStatus = livingData.data?.domainStatus?.documents;
+  if (!documentStatus?.available) {
+    return <div className="as6-v2-state"><section className="as6-v2-hero"><span className="as6-v2-eyebrow">Материалы и вложения</span><h1>Не удалось открыть материалы.</h1><p>Данные не изменены. Проверьте авторизацию и активное пространство.</p></section><div className="as6-v2-data-state as6-v2-data-state--error" role="alert"><strong>{documentStatus?.error || "Ошибка чтения материалов"}</strong><small>После восстановления подключения обновите страницу.</small></div></div>;
+  }
+  const documents = livingData.data?.documents || [];
   return (
     <div className="as6-v2-state">
-      <section className="as6-v2-hero">
-        <span className="as6-v2-eyebrow">{content.eyebrow}</span>
-        <h1>{content.title}</h1>
-        <p>{content.description}</p>
-      </section>
-      <div className="as6-v2-library">
-        {content.items.map((item, index) => (
-          <button type="button" key={item}>
-            <span>{String(index + 1).padStart(2, "0")}</span>
-            <strong>{item}</strong>
-            <small>Открыть в пространстве</small>
-            <b>→</b>
-          </button>
-        ))}
-      </div>
+      <section className="as6-v2-hero"><span className="as6-v2-eyebrow">Living Documents · реальные данные</span><h1>Материалы в рабочем контексте.</h1><p>Здесь отображаются реальные вложения активного workspace. Загрузка, изменение и удаление файлов отключены.</p></section>
+      {!documents.length ? <div className="as6-v2-data-state"><strong>В пространстве пока нет материалов.</strong><small>Здесь появятся вложения после добавления первого файла к работе с клиентом.</small></div> : <div className="as6-v2-library">{documents.map((document, index) => <article className="as6-v2-document-row" key={document.id || `${document.fileName}-${index}`}><span>{String(index + 1).padStart(2, "0")}</span><div><strong>{document.fileName}</strong><small>{getDocumentType(document.mimeType)} · {formatDocumentSize(document.sizeBytes)}</small></div><small>{formatDocumentDate(document.createdAt)}</small><button type="button" disabled aria-label={`Открыть материал ${document.fileName}`} title="Безопасное открытие файла будет подключено отдельным этапом">→</button></article>)}</div>}
+      <p className="as6-v2-readonly-note">Только чтение · {documents.length} материалов · активное workspace</p>
     </div>
   );
+}
+
+function KnowledgeState({ livingData }) {
+  return <UnavailableDomainState eyebrow="Знания" title="Память решений появится здесь." description="Внутренние AI-структуры будут преобразованы в безопасные и понятные знания." reason={livingData.data?.domainStatus?.knowledge?.reason || "Адаптер знаний ещё не подключён"} />;
 }
 
 function BlogState() {
@@ -390,8 +394,9 @@ function SettingsState() {
 function ActiveState({ id, navigate, livingData }) {
   if (id === "conductor") return <ConductorState />;
   if (id === "relations") return <RelationsState livingData={livingData} />;
-  if (id === "projects") return <ProjectsState />;
-  if (id === "documents" || id === "knowledge") return <LibraryState type={id} />;
+  if (id === "projects") return <ProjectsState livingData={livingData} />;
+  if (id === "documents") return <DocumentsState livingData={livingData} />;
+  if (id === "knowledge") return <KnowledgeState livingData={livingData} />;
   if (id === "blog") return <BlogState />;
   if (id === "settings") return <SettingsState />;
   return <HomeState navigate={navigate} />;
