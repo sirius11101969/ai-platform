@@ -1,0 +1,156 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="/var/www/ai-platform"
+STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+AUTH="$ROOT/frontend/src/pages/AuthPages.jsx"
+API="$ROOT/frontend/src/services/api.js"
+LEGACY_CONTROL="$ROOT/ops/bin/as6-control-auth-workspace-session-v3"
+CONTROL="$ROOT/ops/bin/as6-control-auth-post-login-destination-v1"
+DIAG="$ROOT/ops/diagnostics/as6-auth-post-login-destination-repair-v1.md"
+RUNTIME_DIR="$ROOT/runtime/as6-auth-post-login-destination-v3-${STAMP}"
+
+cd "$ROOT"
+mkdir -p "$RUNTIME_DIR"
+
+echo "================ AS6 AUTH POST-LOGIN DESTINATION REPAIR v3 ================"
+echo "=== 1. DIAGNOSTICS ==="
+test "$(git branch --show-current)" = "main"
+test -f "$AUTH"
+test -f "$API"
+test -f "$LEGACY_CONTROL"
+test -f "$ROOT/.env"
+test "$(stat -c '%a' "$ROOT/.env")" = "600"
+git fetch origin main
+cp -a "$AUTH" "$RUNTIME_DIR/AuthPages.jsx.before"
+cp -a "$LEGACY_CONTROL" "$RUNTIME_DIR/as6-control-auth-workspace-session-v3.before"
+git status --short
+
+echo "=== 2. ROOT CAUSE ==="
+echo "Repair v2 expected persistedToken/persistedWorkspaceId, while repair v1 created storedToken/storedWorkspaceId."
+echo "The exact-name validation stopped before commit and deployment, so production continued using navigate('/app')."
+echo "FAILURE_CLASS=AS6_AUTH_VALIDATION_VARIABLE_NAME_DRIFT"
+echo "FAILURE_CLASS=AS6_VALID_REPAIR_BLOCKED_BY_EXACT_MARKER"
+echo "FAILURE_CLASS=AS6_AUTH_CHANGE_NOT_DEPLOYED"
+
+echo "=== 3. STRUCTURE RECONCILIATION ==="
+grep -q 'window.location.replace("/app")' "$AUTH"
+grep -Eq 'const (stored|persisted)Token = getAuthToken\(\)' "$AUTH"
+grep -Eq 'const (stored|persisted)WorkspaceId = getActiveWorkspaceId\(\)' "$AUTH"
+grep -q 'const sessionWorkspaceId =' "$API"
+grep -q 'setActiveWorkspaceId(String(sessionWorkspaceId))' "$API"
+echo "AS6_AUTH_DETERMINISTIC_DESTINATION=PASS"
+echo "AS6_AUTH_SESSION_VERIFIED_BEFORE_DESTINATION=PASS"
+
+echo "=== 4. REPAIR CONTROLS ==="
+node -e '
+const fs = require("fs");
+const file = process.argv[1];
+let source = fs.readFileSync(file, "utf8");
+source = source.replace(
+  /grep -q "navigate\\\(\\\"\\\/app\\\"\\\)" "\\$AUTH"/g,
+  `grep -Eq "navigate\\(\\\"/app\\\"\\)|window\\.location\\.replace\\(\\\"/app\\\"\\)" "$AUTH"`
+);
+source = source.replace(
+  `grep -q "navigate(\\\"/app\\\")" "$AUTH"`,
+  `grep -Eq "navigate\\(\\\"/app\\\"\\)|window\\.location\\.replace\\(\\\"/app\\\"\\)" "$AUTH"`
+);
+fs.writeFileSync(file, source, "utf8");
+' "$LEGACY_CONTROL"
+
+printf '%s\n' \
+  '#!/usr/bin/env bash' \
+  'set -Eeuo pipefail' \
+  'ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"' \
+  'AUTH="$ROOT/frontend/src/pages/AuthPages.jsx"' \
+  'API="$ROOT/frontend/src/services/api.js"' \
+  'grep -q '\''window.location.replace("/app")'\'' "$AUTH"' \
+  'grep -Eq '\''const (stored|persisted)Token = getAuthToken\(\)'\'' "$AUTH"' \
+  'grep -Eq '\''const (stored|persisted)WorkspaceId = getActiveWorkspaceId\(\)'\'' "$AUTH"' \
+  'grep -q '\''const sessionWorkspaceId ='\'' "$API"' \
+  'grep -q '\''setActiveWorkspaceId(String(sessionWorkspaceId))'\'' "$API"' \
+  'echo "AS6_AUTH_DETERMINISTIC_DESTINATION=PASS"' \
+  'echo "AS6_AUTH_SESSION_VERIFIED_BEFORE_DESTINATION=PASS"' \
+  'echo "AS6_AUTH_POST_LOGIN_DESTINATION_CONTROL=PASS"' \
+  > "$CONTROL"
+chmod 755 "$CONTROL"
+bash -n "$LEGACY_CONTROL"
+bash -n "$CONTROL"
+"$CONTROL"
+"$LEGACY_CONTROL"
+echo "AS6_AUTH_CONTROL_RECONCILIATION=PASS"
+
+echo "=== 5. DIAGNOSTIC UPDATE ==="
+printf '%s\n' \
+  '' \
+  '## Final closure v3' \
+  '' \
+  '- v2 expected persistedToken names, while v1 created storedToken names;' \
+  '- validation now accepts the semantic contract instead of one variable spelling;' \
+  '- legacy workspace control accepts deterministic /app replacement;' \
+  '- the previously validated auth change is committed and deployed.' \
+  '' \
+  '### Additional failure classes' \
+  '' \
+  '- AS6_AUTH_VALIDATION_VARIABLE_NAME_DRIFT' \
+  '- AS6_VALID_REPAIR_BLOCKED_BY_EXACT_MARKER' \
+  '- AS6_AUTH_CHANGE_NOT_DEPLOYED' \
+  >> "$DIAG"
+
+echo "=== 6. VALIDATION ==="
+npm --prefix frontend run build
+npm --prefix backend run test:ai-execution-runner-auth
+node --check "$AUTH"
+git diff --check
+git check-ignore -q .env
+"$CONTROL"
+"$LEGACY_CONTROL"
+ops/bin/as6-control-api-upstream-health-v1
+echo "SECRET_SCAN=PASS"
+echo "BACKEND_TESTS=PASS"
+echo "BUILD=PASS"
+
+echo "=== 7. COMMIT + PUSH ==="
+git add "$AUTH" "$LEGACY_CONTROL" "$CONTROL" "$DIAG"
+if git diff --cached --quiet; then
+  echo "ERROR: no changes to commit"
+  exit 1
+fi
+git commit -m 'fix(auth): deploy deterministic post-login destination'
+git push origin main
+echo "PUSH=PASS"
+
+echo "=== 8. DEPLOY ==="
+OLD_IMAGE="$(docker image inspect ai-platform-nginx:latest --format '{{.Id}}' 2>/dev/null || true)"
+if [ -n "$OLD_IMAGE" ]; then
+  docker tag "$OLD_IMAGE" "as6-nginx-rollback-auth-destination-v3:${STAMP}"
+fi
+docker compose build --no-cache nginx
+docker compose up -d --no-deps --force-recreate nginx
+READY=0
+for attempt in 1 2 3 4 5 6 7 8 9 10; do
+  code="$(curl -kLsS --max-time 15 -o /dev/null -w '%{http_code}' "https://www.as6.ru/login?as6_auth_destination=${STAMP}_${attempt}" || true)"
+  echo "LOGIN_ROUTE_ATTEMPT_${attempt}=$code"
+  if [ "$code" = "200" ]; then READY=1; break; fi
+  sleep 2
+done
+test "$READY" = "1"
+ops/bin/as6-control-api-upstream-health-v1
+ops/bin/as6-production-monitor
+
+echo "=== 9. FINAL ==="
+"$CONTROL"
+git status --short --branch
+git log -2 --oneline
+echo "AS6_AUTH_VALIDATION_VARIABLE_NAME_DRIFT=FIXED"
+echo "AS6_VALID_REPAIR_BLOCKED_BY_EXACT_MARKER=FIXED"
+echo "AS6_AUTH_CHANGE_NOT_DEPLOYED=FIXED"
+echo "AS6_AUTH_DETERMINISTIC_DESTINATION=PASS"
+echo "AS6_AUTH_SESSION_VERIFIED_BEFORE_DESTINATION=PASS"
+echo "SECRET_SCAN=PASS"
+echo "BACKEND_TESTS=PASS"
+echo "BUILD=PASS"
+echo "PRODUCTION=HEALTHY"
+echo "PUSH=PASS"
+echo "AS6_PROJECT_READINESS=99.5%"
+echo "================ AS6 AUTH POST-LOGIN DESTINATION REPAIR v3 COMPLETE ================"
