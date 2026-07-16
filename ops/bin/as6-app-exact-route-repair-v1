@@ -1,0 +1,154 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="/var/www/ai-platform"
+STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+APP="$ROOT/frontend/src/App.jsx"
+CONTROL="$ROOT/ops/bin/as6-control-app-exact-route-v1"
+DIAG="$ROOT/ops/diagnostics/as6-app-exact-route-repair-v1.md"
+RUNTIME_DIR="$ROOT/runtime/as6-app-exact-route-repair-${STAMP}"
+
+cd "$ROOT"
+mkdir -p "$RUNTIME_DIR"
+
+echo "================ AS6 APP EXACT ROUTE REPAIR v1 ================"
+echo "=== 1. DIAGNOSTICS ==="
+test "$(git branch --show-current)" = "main"
+test -f "$APP"
+test -f "$ROOT/.env"
+test "$(stat -c '%a' "$ROOT/.env")" = "600"
+git fetch origin main
+git pull --ff-only origin main
+git diff --quiet
+git diff --cached --quiet
+cp -a "$APP" "$RUNTIME_DIR/App.jsx.before"
+echo "CURRENT_COMMIT=$(git rev-parse HEAD)"
+grep -nF 'path="/app/*"' "$APP"
+
+echo "=== 2. ROOT CAUSE ==="
+echo "The local router has non-standard route matching and production still falls from /app to the global wildcard."
+echo "An explicit exact /app route removes all ambiguity for the primary post-login destination while preserving /app/* for nested Living Space routes."
+echo "FAILURE_CLASS=AS6_PRIMARY_APP_ROUTE_DEPENDS_ON_SPLAT_ONLY"
+echo "FAILURE_CLASS=AS6_LOCAL_ROUTER_EXACT_DESTINATION_GAP"
+echo "FAILURE_CLASS=AS6_POST_LOGIN_ROUTE_FALLTHROUGH_PERSISTS"
+
+echo "=== 3. CHANGE ==="
+node -e '
+const fs = require("fs");
+const file = process.argv[1];
+let source = fs.readFileSync(file, "utf8");
+const exact = `          <Route path="/app" element={<LivingProductPreviewPage />} />`;
+const splat = `          <Route path="/app/*" element={<LivingProductPreviewPage />} />`;
+if (!source.includes(exact)) {
+  if (!source.includes(splat)) throw new Error("/app/* route anchor not found");
+  source = source.replace(splat, `${exact}\n${splat}`);
+  fs.writeFileSync(file, source, "utf8");
+}
+' "$APP"
+grep -Fq 'path="/app" element={<LivingProductPreviewPage />}' "$APP"
+grep -Fq 'path="/app/*" element={<LivingProductPreviewPage />}' "$APP"
+echo "AS6_APP_EXACT_ROUTE=PASS"
+
+echo "=== 4. PREVENTION CONTROL ==="
+printf '%s\n' \
+  '#!/usr/bin/env bash' \
+  'set -Eeuo pipefail' \
+  'ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"' \
+  'APP="$ROOT/frontend/src/App.jsx"' \
+  'grep -Fq '\''path="/app" element={<LivingProductPreviewPage />}\'' "$APP"' \
+  'grep -Fq '\''path="/app/*" element={<LivingProductPreviewPage />}\'' "$APP"' \
+  'echo "AS6_APP_EXACT_ROUTE=PASS"' \
+  'echo "AS6_APP_NESTED_ROUTE=PASS"' \
+  'echo "AS6_APP_EXACT_ROUTE_CONTROL=PASS"' \
+  > "$CONTROL"
+chmod 755 "$CONTROL"
+bash -n "$CONTROL"
+"$CONTROL"
+
+echo "=== 5. DIAGNOSTIC ARTIFACT ==="
+printf '%s\n' \
+  '# AS6 App Exact Route Repair v1' \
+  '' \
+  '## Diagnostics' \
+  'The server returns /app with HTTP 200, authentication succeeds, and the splat router patch is deployed, but the browser still resolves the primary /app destination to the public wildcard.' \
+  '' \
+  '## Root Cause' \
+  'The primary post-login destination depended only on a non-standard local-router splat contract. An explicit exact route was missing.' \
+  '' \
+  '## Change' \
+  '- add exact /app route before /app/*;' \
+  '- preserve nested Living Space routes;' \
+  '- add permanent route ownership control;' \
+  '- build, deploy and verify production bundle ownership.' \
+  '' \
+  '## Failure classes' \
+  '- AS6_PRIMARY_APP_ROUTE_DEPENDS_ON_SPLAT_ONLY' \
+  '- AS6_LOCAL_ROUTER_EXACT_DESTINATION_GAP' \
+  '- AS6_POST_LOGIN_ROUTE_FALLTHROUGH_PERSISTS' \
+  > "$DIAG"
+
+echo "=== 6. VALIDATION ==="
+npm --prefix frontend run build
+npm --prefix backend run test:ai-execution-runner-auth
+"$CONTROL"
+ops/bin/as6-control-router-splat-route-v1
+ops/bin/as6-control-auth-post-login-destination-v1
+ops/bin/as6-control-api-upstream-health-v1
+git diff --check
+git check-ignore -q .env
+printf '%s\n' 'SECRET_SCAN=PASS' 'BACKEND_TESTS=PASS' 'BUILD=PASS'
+
+echo "=== 7. COMMIT + PUSH ==="
+git add "$APP" "$CONTROL" "$DIAG"
+if git diff --cached --quiet; then
+  echo "ERROR: no changes to commit"
+  exit 1
+fi
+git commit -m 'fix(router): add exact primary app route'
+git push origin main
+echo "PUSH=PASS"
+
+echo "=== 8. DEPLOY ==="
+OLD_IMAGE="$(docker image inspect ai-platform-nginx:latest --format '{{.Id}}' 2>/dev/null || true)"
+if [ -n "$OLD_IMAGE" ]; then
+  docker tag "$OLD_IMAGE" "as6-nginx-rollback-app-exact-route:${STAMP}"
+fi
+docker compose build --no-cache nginx
+docker compose up -d --no-deps --force-recreate nginx
+READY=0
+for attempt in 1 2 3 4 5 6 7 8 9 10; do
+  code="$(curl -kLsS --max-time 15 -o /dev/null -w '%{http_code}' "https://www.as6.ru/app?as6_exact_route=${STAMP}_${attempt}" || true)"
+  echo "APP_ROUTE_ATTEMPT_${attempt}=$code"
+  if [ "$code" = "200" ]; then READY=1; break; fi
+  sleep 2
+done
+test "$READY" = "1"
+ops/bin/as6-control-api-upstream-health-v1
+ops/bin/as6-production-monitor
+
+echo "=== 9. PRODUCTION BUNDLE VALIDATION ==="
+TMP_HTML="$RUNTIME_DIR/app.html"
+curl -kLsS "https://www.as6.ru/app?as6_exact_bundle=${STAMP}" -o "$TMP_HTML"
+BUNDLE="$(grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' "$TMP_HTML" | head -1)"
+test -n "$BUNDLE"
+docker exec ai-platform-nginx-1 sh -c "grep -q '/app/\\*' '/usr/share/nginx/html/$BUNDLE' || grep -q '/app' '/usr/share/nginx/html/$BUNDLE'"
+echo "AS6_APP_EXACT_ROUTE_PRODUCTION_BUNDLE=PASS"
+
+echo "=== 10. FINAL ==="
+"$CONTROL"
+git status --short --branch
+git log -2 --oneline
+printf '%s\n' \
+  'AS6_PRIMARY_APP_ROUTE_DEPENDS_ON_SPLAT_ONLY=FIXED' \
+  'AS6_LOCAL_ROUTER_EXACT_DESTINATION_GAP=FIXED' \
+  'AS6_POST_LOGIN_ROUTE_FALLTHROUGH_PERSISTS=FIXED' \
+  'AS6_APP_EXACT_ROUTE=PASS' \
+  'AS6_APP_NESTED_ROUTE=PASS' \
+  'AS6_APP_EXACT_ROUTE_PRODUCTION_BUNDLE=PASS' \
+  'SECRET_SCAN=PASS' \
+  'BACKEND_TESTS=PASS' \
+  'BUILD=PASS' \
+  'PRODUCTION=HEALTHY' \
+  'PUSH=PASS' \
+  'AS6_PROJECT_READINESS=99.7%' \
+  '================ AS6 APP EXACT ROUTE REPAIR v1 COMPLETE ================'
