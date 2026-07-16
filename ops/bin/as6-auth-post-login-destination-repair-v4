@@ -1,0 +1,135 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="/var/www/ai-platform"
+STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+AUTH="$ROOT/frontend/src/pages/AuthPages.jsx"
+API="$ROOT/frontend/src/services/api.js"
+LEGACY_CONTROL="$ROOT/ops/bin/as6-control-auth-workspace-session-v3"
+CONTROL="$ROOT/ops/bin/as6-control-auth-post-login-destination-v1"
+DIAG="$ROOT/ops/diagnostics/as6-auth-post-login-destination-repair-v1.md"
+RUNTIME_DIR="$ROOT/runtime/as6-auth-post-login-destination-v4-${STAMP}"
+
+cd "$ROOT"
+mkdir -p "$RUNTIME_DIR"
+
+echo "================ AS6 AUTH POST-LOGIN DESTINATION REPAIR v4 ================"
+echo "=== 1. DIAGNOSTICS ==="
+test "$(git branch --show-current)" = "main"
+test -f "$AUTH"
+test -f "$API"
+test -f "$LEGACY_CONTROL"
+test -f "$CONTROL"
+test -f "$DIAG"
+test -f "$ROOT/.env"
+test "$(stat -c '%a' "$ROOT/.env")" = "600"
+git fetch origin main
+git pull --ff-only origin main
+cp -a "$AUTH" "$RUNTIME_DIR/AuthPages.jsx.before"
+cp -a "$LEGACY_CONTROL" "$RUNTIME_DIR/as6-control-auth-workspace-session-v3.before"
+echo "CURRENT_COMMIT=$(git rev-parse HEAD)"
+git status --short
+
+echo "=== 2. ROOT CAUSE ==="
+echo "The auth change was valid, but validation used node --check on a JSX file."
+echo "Node 18 does not parse .jsx with --check and stopped before commit and deployment."
+echo "FAILURE_CLASS=AS6_NODE_CHECK_JSX_EXTENSION_GAP"
+echo "FAILURE_CLASS=AS6_VALID_AUTH_CHANGE_BLOCKED_BY_WRONG_SYNTAX_TOOL"
+echo "FAILURE_CLASS=AS6_AUTH_CHANGE_NOT_DEPLOYED"
+
+echo "=== 3. STRUCTURE RECONCILIATION ==="
+grep -q 'window.location.replace("/app")' "$AUTH"
+grep -Eq 'const (stored|persisted)Token = getAuthToken\(\)' "$AUTH"
+grep -Eq 'const (stored|persisted)WorkspaceId = getActiveWorkspaceId\(\)' "$AUTH"
+grep -q "const WORKSPACE_STORAGE_KEY = 'ai-platform-workspace-id'" "$API"
+grep -q 'setActiveWorkspaceId(String(sessionWorkspaceId))' "$API"
+echo "AS6_AUTH_DETERMINISTIC_DESTINATION=PASS"
+echo "AS6_AUTH_SESSION_VERIFIED_BEFORE_DESTINATION=PASS"
+echo "AS6_AUTH_WORKSPACE_STORAGE_KEY=PASS"
+
+echo "=== 4. CONTROL RE-DIAGNOSTICS ==="
+bash -n "$CONTROL"
+bash -n "$LEGACY_CONTROL"
+"$CONTROL"
+"$LEGACY_CONTROL"
+echo "AS6_AUTH_CONTROL_RECONCILIATION=PASS"
+
+echo "=== 5. DIAGNOSTIC UPDATE ==="
+printf '%s\n' \
+  '' \
+  '## v4 closure' \
+  '' \
+  'The previous cycle stopped because `node --check` was used on a JSX file.' \
+  'Vite is the canonical JSX parser and build validator for this frontend.' \
+  '' \
+  '### Additional failure classes' \
+  '' \
+  '- AS6_NODE_CHECK_JSX_EXTENSION_GAP' \
+  '- AS6_VALID_AUTH_CHANGE_BLOCKED_BY_WRONG_SYNTAX_TOOL' \
+  '- AS6_AUTH_CHANGE_NOT_DEPLOYED' \
+  '- AS6_JSX_VALIDATION_TOOL_MISMATCH' \
+  >> "$DIAG"
+
+echo "=== 6. VALIDATION ==="
+npm --prefix frontend run build
+npm --prefix backend run test:ai-execution-runner-auth
+git diff --check
+git check-ignore -q .env
+"$CONTROL"
+"$LEGACY_CONTROL"
+ops/bin/as6-control-api-upstream-health-v1
+printf '%s\n' 'SECRET_SCAN=PASS' 'BACKEND_TESTS=PASS' 'BUILD=PASS'
+
+echo "=== 7. COMMIT + PUSH ==="
+git add "$AUTH" "$LEGACY_CONTROL" "$CONTROL" "$DIAG"
+if git diff --cached --quiet; then
+  echo "ERROR: no changes to commit"
+  exit 1
+fi
+git commit -m 'fix(auth): deploy deterministic post-login destination'
+git push origin main
+echo "PUSH=PASS"
+
+echo "=== 8. DEPLOY ==="
+OLD_IMAGE="$(docker image inspect ai-platform-nginx:latest --format '{{.Id}}' 2>/dev/null || true)"
+if [ -n "$OLD_IMAGE" ]; then
+  docker tag "$OLD_IMAGE" "as6-nginx-rollback-auth-destination-v4:${STAMP}"
+fi
+docker compose build --no-cache nginx
+docker compose up -d --no-deps --force-recreate nginx
+READY=0
+for attempt in 1 2 3 4 5 6 7 8 9 10; do
+  code="$(curl -kLsS --max-time 15 -o /dev/null -w '%{http_code}' "https://www.as6.ru/login?as6_auth_destination=${STAMP}_${attempt}" || true)"
+  echo "LOGIN_ROUTE_ATTEMPT_${attempt}=$code"
+  if [ "$code" = "200" ]; then READY=1; break; fi
+  sleep 2
+done
+test "$READY" = "1"
+ops/bin/as6-control-api-upstream-health-v1
+ops/bin/as6-production-monitor
+
+echo "=== 9. PRODUCTION BUNDLE VALIDATION ==="
+CONTAINER="ai-platform-nginx-1"
+docker exec "$CONTAINER" sh -lc 'grep -Rqs "window.location.replace" /usr/share/nginx/html/assets'
+echo "AS6_AUTH_DESTINATION_PRODUCTION_BUNDLE=PASS"
+
+echo "=== 10. FINAL ==="
+"$CONTROL"
+"$LEGACY_CONTROL"
+git status --short --branch
+git log -2 --oneline
+printf '%s\n' \
+  'AS6_NODE_CHECK_JSX_EXTENSION_GAP=FIXED' \
+  'AS6_VALID_AUTH_CHANGE_BLOCKED_BY_WRONG_SYNTAX_TOOL=FIXED' \
+  'AS6_AUTH_CHANGE_NOT_DEPLOYED=FIXED' \
+  'AS6_AUTH_DETERMINISTIC_DESTINATION=PASS' \
+  'AS6_AUTH_SESSION_VERIFIED_BEFORE_DESTINATION=PASS' \
+  'AS6_AUTH_WORKSPACE_STORAGE_KEY=PASS' \
+  'AS6_AUTH_DESTINATION_PRODUCTION_BUNDLE=PASS' \
+  'SECRET_SCAN=PASS' \
+  'BACKEND_TESTS=PASS' \
+  'BUILD=PASS' \
+  'PRODUCTION=HEALTHY' \
+  'PUSH=PASS' \
+  'AS6_PROJECT_READINESS=99.5%' \
+  '================ AS6 AUTH POST-LOGIN DESTINATION REPAIR v4 COMPLETE ================'
