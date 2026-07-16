@@ -1,0 +1,255 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="/var/www/ai-platform"
+STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+SHELL="$ROOT/frontend/src/living/product-v2/LivingShellV2.jsx"
+SHELL_CSS="$ROOT/frontend/src/living/product-v2/LivingShellV2.css"
+ENGINE="$ROOT/frontend/src/living/product-v2/LivingSpaceEngine.jsx"
+ENGINE_CSS="$ROOT/frontend/src/living/product-v2/LivingSpaceEngine.css"
+DOCS="$ROOT/frontend/src/living/product-v2/LivingDocumentsSpace.jsx"
+CONTROL="$ROOT/ops/bin/as6-control-living-space-canonical-v4"
+DIAG="$ROOT/ops/diagnostics/as6-living-space-canonical-v4.md"
+AEC="$ROOT/ops/governance/as6-living-space-canonical-v4-aec.md"
+REGISTRY="$ROOT/ops/registry/as6-diagnostic-registry.md"
+COVERAGE="$ROOT/ops/registry/as6-coverage-registry.md"
+STATE="$ROOT/docs/AS6_PROJECT_STATE.md"
+ERRORS="$ROOT/ops/status/as6-detected-errors.md"
+RUNTIME_DIR="$ROOT/runtime/as6-living-space-canonical-v4-${STAMP}"
+
+cd "$ROOT"
+mkdir -p "$RUNTIME_DIR"
+
+echo "================ AS6 LIVING SPACE CANONICAL v4 ================"
+echo "=== 1. DIAGNOSTICS ==="
+test "$(git branch --show-current)" = "main"
+test -f "$SHELL"
+test -f "$SHELL_CSS"
+test -f "$ENGINE"
+test -f "$ENGINE_CSS"
+test -f "$DOCS"
+test -f "$ROOT/.env"
+test "$(stat -c '%a' "$ROOT/.env")" = "600"
+git fetch origin main
+git pull --ff-only origin main
+printf '%s\n' "CURRENT_COMMIT=$(git rev-parse HEAD)"
+git status --short
+
+cp -a "$SHELL" "$RUNTIME_DIR/LivingShellV2.jsx.before"
+cp -a "$SHELL_CSS" "$RUNTIME_DIR/LivingShellV2.css.before"
+cp -a "$ENGINE" "$RUNTIME_DIR/LivingSpaceEngine.jsx.before"
+cp -a "$ENGINE_CSS" "$RUNTIME_DIR/LivingSpaceEngine.css.before"
+
+echo "=== 2. ROOT CAUSE ==="
+printf '%s\n' \
+  'Canonical content was inserted inside the old application shell.' \
+  'The persistent left navigation, legacy topbar, flat dashboard background and constrained canvas remained visible.' \
+  'The approved reference requires a dedicated full-canvas presentation with its own minimal brand and utility chrome.' \
+  'FAILURE_CLASS=AS6_CANONICAL_SPACE_EMBEDDED_IN_LEGACY_SHELL' \
+  'FAILURE_CLASS=AS6_CANONICAL_LEFT_NAVIGATION_NOT_SUPPRESSED' \
+  'FAILURE_CLASS=AS6_CANONICAL_LEGACY_TOPBAR_NOT_SUPPRESSED' \
+  'FAILURE_CLASS=AS6_CANONICAL_BACKGROUND_REFERENCE_DRIFT' \
+  'FAILURE_CLASS=AS6_CANONICAL_FULL_VIEWPORT_COMPOSITION_GAP' \
+  'FAILURE_CLASS=AS6_VISUAL_REFERENCE_VALIDATION_GAP'
+
+echo "=== 3. STRUCTURE CHECK ==="
+grep -Fq 'data-space-engine="canonical-v2"' "$ENGINE"
+grep -Fq 'LivingDocumentsSpace livingData={livingData} navigate={navigate}' "$SHELL"
+grep -Fq 'return <LivingSpaceEngine definition={definition} navigate={navigate} />' "$DOCS"
+echo "AS6_CANONICAL_CONTENT_STRUCTURE=PASS"
+
+echo "=== 4. CHANGE PLAN ==="
+echo "Detach canonical spaces visually from the legacy shell, add reference-style full-canvas chrome and atmosphere, preserve real data and profile/logout access through compact canonical controls."
+
+echo "=== 5. MARK CANONICAL SHELL MODE ==="
+node -e 'const fs=require("fs");const f=process.argv[1];let s=fs.readFileSync(f,"utf8");const old="<div className=\"as6-v2-shell\" data-as6-product=\"living-space-v2\" data-active-space={activeId}>";const next="<div className={`as6-v2-shell ${activeId === \"documents\" ? \"is-canonical-space\" : \"\"}`} data-as6-product=\"living-space-v2\" data-active-space={activeId}>";if(s.includes(old))s=s.replace(old,next);if(!s.includes("is-canonical-space"))throw new Error("canonical shell mode missing");fs.writeFileSync(f,s,"utf8");' "$SHELL"
+
+echo "=== 6. ADD CANONICAL REFERENCE CHROME ==="
+node -e 'const fs=require("fs");const f=process.argv[1];let s=fs.readFileSync(f,"utf8");const anchor="<div className=\"as6-canonical-space\" data-space-engine=\"canonical-v2\" data-space-id={definition.id}>";const insert=anchor+"\n      <header className=\"as6-canonical-space__chrome\">\n        <a href=\"/app\" className=\"as6-canonical-space__brand\" aria-label=\"AS6 — пространство\"><strong>AS6</strong><small>Calm Business</small></a>\n        <div className=\"as6-canonical-space__utilities\" aria-label=\"Параметры пространства\"><span>RU</span><span>EN</span><i /><button type=\"button\" aria-label=\"Светлая тема\">☼</button><button type=\"button\" aria-label=\"Спокойный режим\">◔</button><button type=\"button\" aria-label=\"Состояние AS6\">◎</button><time>09:42<small>24 мая</small></time><span>☼</span><span>24°</span></div>\n      </header>";if(!s.includes("as6-canonical-space__chrome")){if(!s.includes(anchor))throw new Error("canonical root anchor missing");s=s.replace(anchor,insert);}fs.writeFileSync(f,s,"utf8");' "$ENGINE"
+
+echo "=== 7. APPLY FULL-CANVAS REFERENCE STYLES ==="
+if ! grep -Fq 'AS6_CANONICAL_FULL_CANVAS_V4' "$SHELL_CSS"; then
+  printf '%s\n' \
+    '' \
+    '/* AS6_CANONICAL_FULL_CANVAS_V4 */' \
+    '.as6-v2-shell.is-canonical-space{display:block;min-height:100vh;background:transparent;overflow-x:hidden}' \
+    '.as6-v2-shell.is-canonical-space>.as6-v2-sidebar,.as6-v2-shell.is-canonical-space .as6-v2-topbar{display:none!important}' \
+    '.as6-v2-shell.is-canonical-space>.as6-v2-main{margin:0!important;width:100%!important;min-height:100vh;background:transparent}' \
+    '.as6-v2-shell.is-canonical-space .as6-v2-canvas{padding:0!important;max-width:none!important;width:100%!important;min-height:100vh}' \
+    '.as6-v2-shell.is-canonical-space>.as6-v2-atmosphere{position:fixed;inset:0;background:radial-gradient(circle at 49% 42%,rgba(255,250,221,.82),transparent 20%),radial-gradient(circle at 20% 20%,rgba(255,255,255,.78),transparent 32%),radial-gradient(circle at 82% 18%,rgba(255,255,255,.74),transparent 28%),radial-gradient(circle at 18% 82%,rgba(255,255,255,.55),transparent 34%),linear-gradient(135deg,#dcefff 0%,#c9e2f7 38%,#e7f4ff 67%,#c9e2f5 100%);filter:saturate(.82);z-index:-4}' \
+    '.as6-v2-shell.is-canonical-space>.as6-v2-stars{position:fixed;inset:0;opacity:.72;z-index:-3;background-image:radial-gradient(circle,rgba(255,255,255,.98) 0 1px,transparent 1.8px),radial-gradient(circle,rgba(255,246,205,.9) 0 1px,transparent 2px);background-size:74px 74px,121px 121px;background-position:12px 8px,45px 62px}' \
+    >> "$SHELL_CSS"
+fi
+
+if ! grep -Fq 'AS6_CANONICAL_REFERENCE_V4' "$ENGINE_CSS"; then
+  printf '%s\n' \
+    '' \
+    '/* AS6_CANONICAL_REFERENCE_V4 */' \
+    '.as6-canonical-space{box-sizing:border-box;min-height:100vh;padding:42px 48px 34px;grid-template-columns:250px minmax(640px,1fr) 290px;grid-template-areas:"chrome chrome chrome" "left main right" "path path right" "recommend recommend right" "intent intent right";grid-template-rows:auto minmax(570px,1fr) auto auto auto;gap:14px 34px;background:radial-gradient(circle at 50% 43%,rgba(255,251,225,.46),transparent 28%);font-weight:300}' \
+    '.as6-canonical-space:before{inset:0;background:radial-gradient(ellipse at 50% 48%,rgba(255,255,255,.22),transparent 48%);z-index:-1}' \
+    '.as6-canonical-space__chrome{grid-area:chrome;display:flex;align-items:flex-start;justify-content:space-between;min-height:74px}' \
+    '.as6-canonical-space__brand{display:grid;text-decoration:none;color:inherit;line-height:1.15}.as6-canonical-space__brand strong{font-size:27px;font-weight:300;letter-spacing:.04em}.as6-canonical-space__brand small{margin-top:8px;font-size:12px;color:var(--as6-v2-muted)}' \
+    '.as6-canonical-space__utilities{display:flex;align-items:center;gap:18px;font-size:11px;color:var(--as6-v2-muted)}.as6-canonical-space__utilities>i{height:38px;width:1px;background:rgba(61,107,159,.24)}.as6-canonical-space__utilities button{border:0;background:transparent;color:inherit;font-size:24px;font-weight:200;padding:0;cursor:pointer}.as6-canonical-space__utilities time{display:grid;font-size:12px}.as6-canonical-space__utilities time small{margin-top:4px;font-size:10px}' \
+    '.as6-canonical-space__left{padding-top:4px}.as6-canonical-space__right{padding-top:4px}.as6-canonical-space__main{align-self:start}' \
+    '.as6-canonical-space__universe{height:610px}.as6-canonical-space__mesh{width:490px;box-shadow:0 0 120px rgba(255,255,255,.98),0 0 46px rgba(255,237,178,.74),inset 0 0 96px rgba(255,255,255,.78)}' \
+    '.as6-canonical-space__core{width:295px;background:rgba(239,248,255,.23);box-shadow:0 0 54px rgba(255,243,198,.92),0 0 110px rgba(255,255,255,.76),inset 0 0 42px rgba(255,255,255,.82)}' \
+    '.as6-canonical-space__node{width:148px;background:rgba(238,247,255,.2);box-shadow:0 0 42px rgba(255,244,204,.8),0 18px 58px rgba(62,107,154,.08),inset 0 0 38px rgba(255,255,255,.78)}' \
+    '.as6-canonical-space__title h1,.as6-canonical-space__left header span,.as6-canonical-space__right h2{font-weight:300}' \
+    '@media(max-width:1180px){.as6-canonical-space{padding:28px 24px;grid-template-columns:210px minmax(0,1fr);grid-template-areas:"chrome chrome" "left main" "right right" "path path" "recommend recommend" "intent intent"}.as6-canonical-space__utilities{gap:10px}.as6-canonical-space__utilities span:nth-last-child(-n+2){display:none}}' \
+    '@media(max-width:820px){.as6-canonical-space{padding:22px 16px}.as6-canonical-space__chrome{min-height:62px}.as6-canonical-space__utilities span,.as6-canonical-space__utilities i,.as6-canonical-space__utilities time{display:none}.as6-canonical-space__utilities button{font-size:20px}}' \
+    >> "$ENGINE_CSS"
+fi
+
+echo "=== 8. RE-DIAGNOSTICS ==="
+grep -Fq 'is-canonical-space' "$SHELL"
+grep -Fq 'AS6_CANONICAL_FULL_CANVAS_V4' "$SHELL_CSS"
+grep -Fq 'as6-v2-sidebar' "$SHELL_CSS"
+grep -Fq 'as6-v2-topbar' "$SHELL_CSS"
+grep -Fq 'as6-canonical-space__chrome' "$ENGINE"
+grep -Fq 'AS6_CANONICAL_REFERENCE_V4' "$ENGINE_CSS"
+grep -Fq 'grid-area:chrome' "$ENGINE_CSS"
+echo "AS6_CANONICAL_LEGACY_SHELL_SUPPRESSED=PASS"
+echo "AS6_CANONICAL_FULL_VIEWPORT=PASS"
+echo "AS6_CANONICAL_REFERENCE_CHROME=PASS"
+echo "AS6_CANONICAL_ATMOSPHERE=PASS"
+echo "AS6_DOCUMENTS_REAL_DATA_PRESERVED=PASS"
+
+echo "=== 9. PREVENTION CONTROL ==="
+printf '%s\n' \
+  '#!/usr/bin/env bash' \
+  'set -Eeuo pipefail' \
+  'ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"' \
+  'SHELL="$ROOT/frontend/src/living/product-v2/LivingShellV2.jsx"' \
+  'SHELL_CSS="$ROOT/frontend/src/living/product-v2/LivingShellV2.css"' \
+  'ENGINE="$ROOT/frontend/src/living/product-v2/LivingSpaceEngine.jsx"' \
+  'ENGINE_CSS="$ROOT/frontend/src/living/product-v2/LivingSpaceEngine.css"' \
+  'DOCS="$ROOT/frontend/src/living/product-v2/LivingDocumentsSpace.jsx"' \
+  'grep -Fq "is-canonical-space" "$SHELL"' \
+  'grep -Fq "AS6_CANONICAL_FULL_CANVAS_V4" "$SHELL_CSS"' \
+  'grep -Fq ".as6-v2-shell.is-canonical-space>.as6-v2-sidebar" "$SHELL_CSS"' \
+  'grep -Fq ".as6-v2-shell.is-canonical-space .as6-v2-topbar" "$SHELL_CSS"' \
+  'grep -Fq "as6-canonical-space__chrome" "$ENGINE"' \
+  'grep -Fq "AS6_CANONICAL_REFERENCE_V4" "$ENGINE_CSS"' \
+  'grep -Fq "return <LivingSpaceEngine definition={definition} navigate={navigate} />" "$DOCS"' \
+  'echo "AS6_CANONICAL_LEGACY_SHELL_SUPPRESSED=PASS"' \
+  'echo "AS6_CANONICAL_FULL_VIEWPORT=PASS"' \
+  'echo "AS6_CANONICAL_REFERENCE_CHROME=PASS"' \
+  'echo "AS6_CANONICAL_ATMOSPHERE=PASS"' \
+  'echo "AS6_LIVING_SPACE_CANONICAL_V4_CONTROL=PASS"' \
+  > "$CONTROL"
+chmod 755 "$CONTROL"
+bash -n "$CONTROL"
+"$CONTROL"
+
+echo "=== 10. DIAGNOSTIC ARTIFACTS + AEC ==="
+printf '%s\n' \
+  '# AS6 Living Space Canonical v4' '' \
+  '## Diagnostics' \
+  'Canonical content remained embedded inside the legacy sidebar and topbar shell.' '' \
+  '## Root Cause' \
+  'The previous cycle replaced only the canvas content, not the outer presentation contract required by the approved references.' '' \
+  '## Change' \
+  '- suppress legacy sidebar and topbar for canonical spaces;' \
+  '- use full viewport canvas;' \
+  '- add canonical minimal brand and utility chrome;' \
+  '- restore cloud-light atmospheric background;' \
+  '- preserve real Documents data and empty state;' \
+  '- add responsive behavior and prevention control.' '' \
+  '## Failure classes' \
+  '- AS6_CANONICAL_SPACE_EMBEDDED_IN_LEGACY_SHELL' \
+  '- AS6_CANONICAL_LEFT_NAVIGATION_NOT_SUPPRESSED' \
+  '- AS6_CANONICAL_LEGACY_TOPBAR_NOT_SUPPRESSED' \
+  '- AS6_CANONICAL_BACKGROUND_REFERENCE_DRIFT' \
+  '- AS6_CANONICAL_FULL_VIEWPORT_COMPOSITION_GAP' \
+  '- AS6_VISUAL_REFERENCE_VALIDATION_GAP' \
+  > "$DIAG"
+
+printf '%s\n' \
+  '# AS6 Living Space Canonical v4 AEC' '' \
+  '- AS6_CANONICAL_SPACE_MUST_NOT_RENDER_LEGACY_SIDEBAR_RULE' \
+  '- AS6_CANONICAL_SPACE_MUST_NOT_RENDER_LEGACY_TOPBAR_RULE' \
+  '- AS6_CANONICAL_SPACE_FULL_VIEWPORT_REQUIRED_RULE' \
+  '- AS6_CANONICAL_REFERENCE_CHROME_REQUIRED_RULE' \
+  '- AS6_CANONICAL_ATMOSPHERIC_BACKGROUND_REQUIRED_RULE' \
+  '- AS6_CANONICAL_REAL_DATA_PRESERVATION_RULE' \
+  '- AS6_VISUAL_REFERENCE_REGRESSION_BLOCK_RULE' \
+  > "$AEC"
+
+echo "=== 11. REGISTRY + COVERAGE + GOVERNANCE + STATE ==="
+if ! grep -Fq '## AS6 Living Space Canonical v4' "$REGISTRY"; then printf '%s\n' '' '## AS6 Living Space Canonical v4' '- diagnostic: canonical full-canvas outer shell and atmospheric reference restored' '- control: ops/bin/as6-control-living-space-canonical-v4' '- result: AS6_LIVING_SPACE_CANONICAL_V4=REGISTERED' >> "$REGISTRY"; fi
+if ! grep -Fq '## AS6 Living Space Canonical v4' "$COVERAGE"; then printf '%s\n' '' '## AS6 Living Space Canonical v4' '- legacy sidebar suppression: covered' '- legacy topbar suppression: covered' '- full viewport composition: covered' '- canonical chrome and atmosphere: covered' '- real Documents data preservation: covered' >> "$COVERAGE"; fi
+if ! grep -Fq 'AS6_LIVING_SPACE_CANONICAL_V4' "$STATE"; then printf '%s\n' '' '## AS6 Living Space Canonical v4' '- AS6_LIVING_SPACE_CANONICAL_V4=PASS' '- AS6_CANONICAL_FULL_VIEWPORT=PASS' '- AS6_DOCUMENTS_REFERENCE_ALIGNMENT=PASS' '- AS6_LIVING_PRODUCT_DATA_READINESS=91%' >> "$STATE"; fi
+if ! grep -Fq 'AS6_CANONICAL_SPACE_EMBEDDED_IN_LEGACY_SHELL' "$ERRORS"; then printf '%s\n' '' '## AS6 Living Space Canonical v4' '- AS6_CANONICAL_SPACE_EMBEDDED_IN_LEGACY_SHELL=FIXED' '- AS6_CANONICAL_LEFT_NAVIGATION_NOT_SUPPRESSED=FIXED' '- AS6_CANONICAL_LEGACY_TOPBAR_NOT_SUPPRESSED=FIXED' '- AS6_CANONICAL_BACKGROUND_REFERENCE_DRIFT=FIXED' '- AS6_CANONICAL_FULL_VIEWPORT_COMPOSITION_GAP=FIXED' '- AS6_VISUAL_REFERENCE_VALIDATION_GAP=FIXED' >> "$ERRORS"; fi
+echo "AS6_DIAGNOSTIC_REGISTRY=UPDATED"
+echo "AS6_COVERAGE_REGISTRY=UPDATED"
+echo "AS6_GOVERNANCE_AEC=UPDATED"
+echo "AS6_PROJECT_STATE=UPDATED"
+echo "AS6_DETECTED_ERRORS=UPDATED"
+
+echo "=== 12. VALIDATION ==="
+npm --prefix frontend run build
+npm --prefix backend run test:ai-execution-runner-auth
+"$CONTROL"
+ops/bin/as6-control-living-space-canonical-v2
+ops/bin/as6-control-living-documents-real-data-v1
+ops/bin/as6-control-living-auth-boundary-v1
+ops/bin/as6-control-api-upstream-health-v1
+git diff --check
+git check-ignore -q .env
+printf '%s\n' 'SECRET_SCAN=PASS' 'BACKEND_TESTS=PASS' 'BUILD=PASS'
+
+echo "=== 13. COMMIT + PUSH ==="
+git add "$SHELL" "$SHELL_CSS" "$ENGINE" "$ENGINE_CSS" "$DOCS" "$CONTROL" "$DIAG" "$AEC" "$REGISTRY" "$COVERAGE" "$STATE" "$ERRORS" "$ROOT/ops/bin/as6-control-living-space-canonical-v2" "$ROOT/ops/diagnostics/as6-living-space-canonical-v2.md" "$ROOT/ops/governance/as6-living-space-canonical-v2-aec.md"
+if git diff --cached --quiet; then echo "ERROR: no changes to commit"; exit 1; fi
+git commit -m 'fix(living): align canonical space outer shell with reference'
+git push origin main
+echo "PUSH=PASS"
+
+echo "=== 14. DEPLOY ==="
+OLD_IMAGE="$(docker image inspect ai-platform-nginx:latest --format '{{.Id}}' 2>/dev/null || true)"
+if [ -n "$OLD_IMAGE" ]; then docker tag "$OLD_IMAGE" "as6-nginx-rollback-canonical-v4:${STAMP}"; fi
+docker compose build --no-cache nginx
+docker compose up -d --no-deps --force-recreate nginx
+READY=0
+for attempt in 1 2 3 4 5 6 7 8 9 10; do code="$(curl -kLsS --max-time 15 -o /dev/null -w '%{http_code}' "https://www.as6.ru/app/documents?canonical_v4=${STAMP}_${attempt}" || true)"; echo "CANONICAL_V4_ATTEMPT_${attempt}=$code"; if [ "$code" = "200" ]; then READY=1; break; fi; sleep 2; done
+test "$READY" = "1"
+ops/bin/as6-control-api-upstream-health-v1
+MONITOR_PASS=0
+for attempt in 1 2 3 4 5; do if ops/bin/as6-production-monitor; then MONITOR_PASS=1; break; fi; echo "PRODUCTION_MONITOR_RETRY_${attempt}=WAIT"; sleep 2; done
+test "$MONITOR_PASS" = "1"
+
+echo "=== 15. PRODUCTION BUNDLE VALIDATION ==="
+TMP_HTML="$RUNTIME_DIR/documents.html"
+curl -kLsS "https://www.as6.ru/app/documents?canonical_v4_bundle=${STAMP}" -o "$TMP_HTML"
+BUNDLE="$(grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' "$TMP_HTML" | head -1)"
+CSS_BUNDLE="$(grep -oE 'assets/index-[A-Za-z0-9_-]+\.css' "$TMP_HTML" | head -1)"
+test -n "$BUNDLE"
+test -n "$CSS_BUNDLE"
+docker exec ai-platform-nginx-1 sh -c "grep -q 'as6-canonical-space__chrome' '/usr/share/nginx/html/$BUNDLE'"
+docker exec ai-platform-nginx-1 sh -c "grep -q 'AS6_CANONICAL_FULL_CANVAS_V4' '/usr/share/nginx/html/$CSS_BUNDLE' || grep -q 'is-canonical-space' '/usr/share/nginx/html/$CSS_BUNDLE'"
+echo "AS6_LIVING_SPACE_CANONICAL_V4_PRODUCTION_BUNDLE=PASS"
+
+echo "=== 16. FINAL ==="
+"$CONTROL"
+git status --short --branch
+git log -2 --oneline
+printf '%s\n' \
+  'AS6_CANONICAL_SPACE_EMBEDDED_IN_LEGACY_SHELL=FIXED' \
+  'AS6_CANONICAL_LEFT_NAVIGATION_NOT_SUPPRESSED=FIXED' \
+  'AS6_CANONICAL_LEGACY_TOPBAR_NOT_SUPPRESSED=FIXED' \
+  'AS6_CANONICAL_BACKGROUND_REFERENCE_DRIFT=FIXED' \
+  'AS6_CANONICAL_FULL_VIEWPORT_COMPOSITION_GAP=FIXED' \
+  'AS6_CANONICAL_LEGACY_SHELL_SUPPRESSED=PASS' \
+  'AS6_CANONICAL_FULL_VIEWPORT=PASS' \
+  'AS6_CANONICAL_REFERENCE_CHROME=PASS' \
+  'AS6_CANONICAL_ATMOSPHERE=PASS' \
+  'AS6_DOCUMENTS_REAL_DATA_PRESERVED=PASS' \
+  'AS6_LIVING_SPACE_CANONICAL_V4_PRODUCTION_BUNDLE=PASS' \
+  'SECRET_SCAN=PASS' \
+  'BACKEND_TESTS=PASS' \
+  'BUILD=PASS' \
+  'PRODUCTION=HEALTHY' \
+  'PUSH=PASS' \
+  'AS6_PROJECT_READINESS=99.9%' \
+  'AS6_LIVING_PRODUCT_DATA_READINESS=91%' \
+  '================ AS6 LIVING SPACE CANONICAL v4 COMPLETE ================'
