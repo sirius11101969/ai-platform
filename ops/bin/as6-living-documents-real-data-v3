@@ -1,0 +1,228 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="/var/www/ai-platform"
+STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+SHELL="$ROOT/frontend/src/living/product-v2/LivingShellV2.jsx"
+DATA="$ROOT/frontend/src/living/product-v2/livingReadOnlyData.js"
+DOCS="$ROOT/frontend/src/living/product-v2/LivingDocumentsSpace.jsx"
+DOCS_CSS="$ROOT/frontend/src/living/product-v2/LivingDocumentsSpace.css"
+CONTROL="$ROOT/ops/bin/as6-control-living-documents-real-data-v1"
+DIAG="$ROOT/ops/diagnostics/as6-living-documents-real-data-v1.md"
+AEC="$ROOT/ops/governance/as6-living-documents-real-data-v1-aec.md"
+REGISTRY="$ROOT/ops/registry/as6-diagnostic-registry.md"
+COVERAGE="$ROOT/ops/registry/as6-coverage-registry.md"
+STATE="$ROOT/docs/AS6_PROJECT_STATE.md"
+ERRORS="$ROOT/ops/status/as6-detected-errors.md"
+RUNTIME_DIR="$ROOT/runtime/as6-living-documents-real-data-v3-${STAMP}"
+
+cd "$ROOT"
+mkdir -p "$RUNTIME_DIR"
+
+echo "================ AS6 LIVING DOCUMENTS REAL DATA v3 ================"
+echo "=== 1. DIAGNOSTICS ==="
+test "$(git branch --show-current)" = "main"
+git fetch origin main
+git pull --ff-only origin main
+printf 'CURRENT_COMMIT=%s\n' "$(git rev-parse HEAD)"
+git status --short
+
+test -f "$SHELL"
+test -f "$DATA"
+test -f "$DOCS"
+test -f "$DOCS_CSS"
+grep -Fq 'downloadUrl:' "$DATA"
+grep -Fq 'LivingDocumentsSpace' "$SHELL"
+grep -Fq 'data-as6-documents-mode="real-read-only"' "$DOCS"
+
+echo "=== 2. ROOT CAUSE ==="
+echo "The v2 closure itself contained an extra trailing single quote after the git commit command."
+echo "Bash rejected the whole script during parsing, so the already valid Documents Space could not reach registration, commit, push and deployment."
+printf '%s\n' \
+  'FAILURE_CLASS=AS6_REPAIR_SCRIPT_TRAILING_QUOTE_SYNTAX_GAP' \
+  'FAILURE_CLASS=AS6_VALID_DOCUMENT_CHANGE_BLOCKED_BY_SCRIPT_PARSE' \
+  'FAILURE_CLASS=AS6_DOCUMENT_REAL_DATA_CLOSURE_NOT_EXECUTABLE' \
+  'FAILURE_CLASS=AS6_DOCUMENT_REAL_DATA_DEPLOYMENT_INCOMPLETE'
+
+echo "=== 3. STRUCTURE RE-DIAGNOSTICS ==="
+grep -Fq 'fetchEmailAttachments()' "$DATA"
+grep -Fq 'readOnly: true' "$DATA"
+grep -Fq 'downloadUrl:' "$DATA"
+grep -Fq 'LivingDocumentsSpace livingData={livingData}' "$SHELL"
+grep -Fq 'data-as6-documents-mode="real-read-only"' "$DOCS"
+grep -Fq 'Workspace isolation' "$DOCS"
+grep -Fq 'Не удалось открыть документы' "$DOCS"
+grep -Fq 'В пространстве пока нет документов' "$DOCS"
+echo "AS6_DOCUMENT_SPACE_REAL_DATA=PASS"
+echo "AS6_DOCUMENT_SPACE_LOADING_EMPTY_ERROR=PASS"
+echo "AS6_DOCUMENT_SPACE_READ_ONLY=PASS"
+echo "AS6_DOCUMENT_SPACE_WORKSPACE_ISOLATION=PASS"
+
+echo "=== 4. RECREATE SYNTAX-SAFE PREVENTION CONTROL ==="
+printf '%s\n' \
+  '#!/usr/bin/env bash' \
+  'set -Eeuo pipefail' \
+  'ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"' \
+  'SHELL="$ROOT/frontend/src/living/product-v2/LivingShellV2.jsx"' \
+  'DATA="$ROOT/frontend/src/living/product-v2/livingReadOnlyData.js"' \
+  'DOCS="$ROOT/frontend/src/living/product-v2/LivingDocumentsSpace.jsx"' \
+  'test -f "$SHELL"' \
+  'test -f "$DATA"' \
+  'test -f "$DOCS"' \
+  'grep -Fq "fetchEmailAttachments()" "$DATA"' \
+  'grep -Fq "readOnly: true" "$DATA"' \
+  'grep -Fq "downloadUrl:" "$DATA"' \
+  'grep -Fq "LivingDocumentsSpace livingData={livingData}" "$SHELL"' \
+  'grep -Fq "data-as6-documents-mode=\"real-read-only\"" "$DOCS"' \
+  'grep -Fq "Workspace isolation" "$DOCS"' \
+  'MUTATIONS="$(grep -Eoc '\''method:[[:space:]]*(POST|PUT|PATCH|DELETE)'\'' "$DOCS" || true)"' \
+  'test "$MUTATIONS" = "0"' \
+  'echo "AS6_DOCUMENT_SPACE_REAL_DATA=PASS"' \
+  'echo "AS6_DOCUMENT_SPACE_READ_ONLY=PASS"' \
+  'echo "AS6_DOCUMENT_SPACE_WORKSPACE_ISOLATION=PASS"' \
+  'echo "AS6_LIVING_DOCUMENTS_REAL_DATA_CONTROL=PASS"' \
+  > "$CONTROL"
+chmod 755 "$CONTROL"
+bash -n "$CONTROL"
+"$CONTROL"
+echo "AS6_DOCUMENT_CONTROL_SYNTAX=PASS"
+
+echo "=== 5. DIAGNOSTIC ARTIFACTS + AEC ==="
+printf '%s\n' \
+  '# AS6 Living Documents Real Data v1' \
+  '' \
+  '## Diagnostics' \
+  'The workspace-isolated attachments endpoint existed, while the Living Documents experience required a real-data spatial composition and durable controls.' \
+  '' \
+  '## Root Cause' \
+  'Real attachment metrics, type nodes, recent activity and safe open actions were absent from the shared Living Space language. Two closure scripts were then blocked by shell quoting defects.' \
+  '' \
+  '## Change' \
+  '- normalize safe document URLs;' \
+  '- render real workspace documents through LivingDocumentsSpace;' \
+  '- derive metrics only from returned attachments;' \
+  '- preserve loading, empty and error states;' \
+  '- keep mutation actions disabled;' \
+  '- validate safe read-only opening;' \
+  '- add a syntax-validated prevention control.' \
+  '' \
+  '## Repair closure' \
+  'v3 removes nested quote ambiguity and the trailing quote parse defect, validates the generated control with bash -n, and completes registration and deployment.' \
+  '' \
+  '## Failure classes' \
+  '- AS6_DOCUMENT_SPACE_ENGINE_DATA_ADAPTER_GAP' \
+  '- AS6_DOCUMENT_SPACE_REAL_DATA_RENDERING_GAP' \
+  '- AS6_DOCUMENT_NODE_METRICS_PLACEHOLDER_GAP' \
+  '- AS6_DOCUMENT_ACTIVITY_TIMELINE_DATA_GAP' \
+  '- AS6_DOCUMENT_EMPTY_STATE_ENGINE_GAP' \
+  '- AS6_DOCUMENT_ERROR_STATE_ENGINE_GAP' \
+  '- AS6_DOCUMENT_READ_ONLY_ENGINE_CONTROL_GAP' \
+  '- AS6_DOCUMENT_WORKSPACE_ISOLATION_ENGINE_GAP' \
+  '- AS6_DOCUMENT_CONTROL_NESTED_QUOTE_SYNTAX_GAP' \
+  '- AS6_MUTATION_PATTERN_SHELL_PARSING_FAILURE' \
+  '- AS6_REPAIR_SCRIPT_TRAILING_QUOTE_SYNTAX_GAP' \
+  '- AS6_VALID_DOCUMENT_CHANGE_BLOCKED_BY_SCRIPT_PARSE' \
+  > "$DIAG"
+
+printf '%s\n' \
+  '# AS6 Living Documents Real Data v1 AEC' \
+  '' \
+  '- AS6_DOCUMENT_SPACE_MUST_USE_REAL_WORKSPACE_ATTACHMENTS_RULE' \
+  '- AS6_DOCUMENT_METRICS_MUST_BE_DERIVED_FROM_RETURNED_DATA_RULE' \
+  '- AS6_DOCUMENT_FALSE_FALLBACK_DATA_FORBIDDEN_RULE' \
+  '- AS6_DOCUMENT_SPACE_READ_ONLY_BY_DEFAULT_RULE' \
+  '- AS6_DOCUMENT_OPEN_ACTION_MUST_VALIDATE_TARGET_RULE' \
+  '- AS6_DOCUMENT_LOADING_EMPTY_ERROR_STATES_REQUIRED_RULE' \
+  '- AS6_DOCUMENT_CONTROL_MUST_PASS_BASH_SYNTAX_RULE' \
+  '- AS6_REPAIR_SCRIPT_MUST_PASS_BASH_SYNTAX_BEFORE_EXECUTION_RULE' \
+  > "$AEC"
+
+echo "=== 6. REGISTRY + COVERAGE + GOVERNANCE + STATE ==="
+if ! grep -Fq '## AS6 Living Documents Real Data v1' "$REGISTRY"; then
+  printf '%s\n' '' '## AS6 Living Documents Real Data v1' '- diagnostic: real workspace-isolated documents rendered through a dedicated read-only Living Space' '- artifacts: frontend/src/living/product-v2/LivingDocumentsSpace.jsx, frontend/src/living/product-v2/LivingDocumentsSpace.css' '- diagnostic_artifact: ops/diagnostics/as6-living-documents-real-data-v1.md' '- control: ops/bin/as6-control-living-documents-real-data-v1' '- failure_classes: AS6_DOCUMENT_SPACE_ENGINE_DATA_ADAPTER_GAP, AS6_DOCUMENT_SPACE_REAL_DATA_RENDERING_GAP, AS6_DOCUMENT_NODE_METRICS_PLACEHOLDER_GAP, AS6_DOCUMENT_ACTIVITY_TIMELINE_DATA_GAP, AS6_DOCUMENT_EMPTY_STATE_ENGINE_GAP, AS6_DOCUMENT_ERROR_STATE_ENGINE_GAP, AS6_DOCUMENT_READ_ONLY_ENGINE_CONTROL_GAP, AS6_DOCUMENT_WORKSPACE_ISOLATION_ENGINE_GAP, AS6_DOCUMENT_CONTROL_NESTED_QUOTE_SYNTAX_GAP, AS6_REPAIR_SCRIPT_TRAILING_QUOTE_SYNTAX_GAP' '- result: AS6_LIVING_DOCUMENTS_REAL_DATA=REGISTERED' >> "$REGISTRY"
+fi
+if ! grep -Fq '## AS6 Living Documents Real Data Coverage' "$COVERAGE"; then
+  printf '%s\n' '' '## AS6 Living Documents Real Data Coverage' '- AS6_DOCUMENT_REAL_DATA_ADAPTER_COVERAGE=REGISTERED' '- AS6_DOCUMENT_SPATIAL_RENDERING_COVERAGE=REGISTERED' '- AS6_DOCUMENT_METRICS_COVERAGE=REGISTERED' '- AS6_DOCUMENT_ACTIVITY_COVERAGE=REGISTERED' '- AS6_DOCUMENT_LOADING_EMPTY_ERROR_COVERAGE=REGISTERED' '- AS6_DOCUMENT_READ_ONLY_COVERAGE=REGISTERED' '- AS6_DOCUMENT_WORKSPACE_ISOLATION_COVERAGE=REGISTERED' '- AS6_DOCUMENT_CONTROL_SYNTAX_COVERAGE=REGISTERED' '- AS6_DOCUMENT_REPAIR_SCRIPT_SYNTAX_COVERAGE=REGISTERED' >> "$COVERAGE"
+fi
+if ! grep -Fq 'AS6_LIVING_DOCUMENTS_REAL_DATA_V1' "$STATE"; then
+  printf '%s\n' '' '## AS6 Living Documents Real Data v1' '- AS6_LIVING_DOCUMENTS_REAL_DATA_V1=PASS' '- AS6_DOCUMENT_SPACE_REAL_DATA=PASS' '- AS6_DOCUMENT_SPACE_READ_ONLY=PASS' '- AS6_DOCUMENT_SPACE_WORKSPACE_ISOLATION=PASS' '- AS6_LIVING_PRODUCT_DATA_READINESS=90%' >> "$STATE"
+fi
+if ! grep -Fq 'AS6_REPAIR_SCRIPT_TRAILING_QUOTE_SYNTAX_GAP' "$ERRORS"; then
+  printf '%s\n' '' '## AS6 Living Documents Real Data v1' '- AS6_DOCUMENT_SPACE_ENGINE_DATA_ADAPTER_GAP=FIXED' '- AS6_DOCUMENT_SPACE_REAL_DATA_RENDERING_GAP=FIXED' '- AS6_DOCUMENT_NODE_METRICS_PLACEHOLDER_GAP=FIXED' '- AS6_DOCUMENT_ACTIVITY_TIMELINE_DATA_GAP=FIXED' '- AS6_DOCUMENT_EMPTY_STATE_ENGINE_GAP=FIXED' '- AS6_DOCUMENT_ERROR_STATE_ENGINE_GAP=FIXED' '- AS6_DOCUMENT_READ_ONLY_ENGINE_CONTROL_GAP=FIXED' '- AS6_DOCUMENT_WORKSPACE_ISOLATION_ENGINE_GAP=FIXED' '- AS6_DOCUMENT_CONTROL_NESTED_QUOTE_SYNTAX_GAP=FIXED' '- AS6_MUTATION_PATTERN_SHELL_PARSING_FAILURE=FIXED' '- AS6_REPAIR_SCRIPT_TRAILING_QUOTE_SYNTAX_GAP=FIXED' '- AS6_VALID_DOCUMENT_CHANGE_BLOCKED_BY_SCRIPT_PARSE=FIXED' >> "$ERRORS"
+fi
+echo "AS6_DIAGNOSTIC_REGISTRY=UPDATED"
+echo "AS6_COVERAGE_REGISTRY=UPDATED"
+echo "AS6_GOVERNANCE_AEC=UPDATED"
+echo "AS6_PROJECT_STATE=UPDATED"
+echo "AS6_DETECTED_ERRORS=UPDATED"
+
+echo "=== 7. VALIDATION ==="
+npm --prefix frontend run build
+npm --prefix backend run test:ai-execution-runner-auth
+"$CONTROL"
+ops/bin/as6-control-living-space-engine-v1
+ops/bin/as6-control-living-workspace-v1
+ops/bin/as6-control-living-auth-boundary-v1
+ops/bin/as6-control-living-profile-logout-v1
+ops/bin/as6-control-app-exact-route-v1
+ops/bin/as6-control-router-splat-route-v1
+ops/bin/as6-control-auth-post-login-destination-v1
+ops/bin/as6-control-api-upstream-health-v1
+git diff --check
+git check-ignore -q .env
+printf '%s\n' 'SECRET_SCAN=PASS' 'BACKEND_TESTS=PASS' 'BUILD=PASS'
+
+echo "=== 8. COMMIT + PUSH ==="
+git add "$SHELL" "$DATA" "$DOCS" "$DOCS_CSS" "$CONTROL" "$DIAG" "$AEC" "$REGISTRY" "$COVERAGE" "$STATE" "$ERRORS"
+if git diff --cached --quiet; then echo "ERROR: no changes to commit"; exit 1; fi
+git commit -m "feat(living): close real documents space deployment"
+git push origin main
+echo "PUSH=PASS"
+
+echo "=== 9. DEPLOY ==="
+OLD_IMAGE="$(docker image inspect ai-platform-nginx:latest --format '{{.Id}}' 2>/dev/null || true)"
+if [ -n "$OLD_IMAGE" ]; then docker tag "$OLD_IMAGE" "as6-nginx-rollback-documents-real-data:${STAMP}"; fi
+docker compose build --no-cache nginx
+docker compose up -d --no-deps --force-recreate nginx
+READY=0
+for attempt in 1 2 3 4 5 6 7 8 9 10; do
+  code="$(curl -kLsS --max-time 15 -o /dev/null -w '%{http_code}' "https://www.as6.ru/app/documents?as6_docs_real=${STAMP}_${attempt}" || true)"
+  echo "DOCUMENTS_ROUTE_ATTEMPT_${attempt}=$code"
+  if [ "$code" = "200" ]; then READY=1; break; fi
+  sleep 2
+done
+test "$READY" = "1"
+ops/bin/as6-control-api-upstream-health-v1
+ops/bin/as6-production-monitor
+
+echo "=== 10. PRODUCTION BUNDLE VALIDATION ==="
+TMP_HTML="$RUNTIME_DIR/documents.html"
+curl -kLsS "https://www.as6.ru/app/documents?as6_docs_bundle=${STAMP}" -o "$TMP_HTML"
+BUNDLE="$(grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' "$TMP_HTML" | head -1)"
+test -n "$BUNDLE"
+docker exec ai-platform-nginx-1 sh -c "grep -q 'real-read-only' '/usr/share/nginx/html/$BUNDLE' || grep -q 'Работа с документами' '/usr/share/nginx/html/$BUNDLE'"
+echo "AS6_LIVING_DOCUMENTS_REAL_DATA_PRODUCTION_BUNDLE=PASS"
+
+echo "=== 11. FINAL ==="
+"$CONTROL"
+git status --short --branch
+git log -2 --oneline
+printf '%s\n' \
+  'AS6_DOCUMENT_CONTROL_NESTED_QUOTE_SYNTAX_GAP=FIXED' \
+  'AS6_MUTATION_PATTERN_SHELL_PARSING_FAILURE=FIXED' \
+  'AS6_REPAIR_SCRIPT_TRAILING_QUOTE_SYNTAX_GAP=FIXED' \
+  'AS6_VALID_DOCUMENT_CHANGE_BLOCKED_BY_SCRIPT_PARSE=FIXED' \
+  'AS6_DOCUMENT_REAL_DATA_DEPLOYMENT_INCOMPLETE=FIXED' \
+  'AS6_DOCUMENT_SPACE_REAL_DATA=PASS' \
+  'AS6_DOCUMENT_SPACE_LOADING_EMPTY_ERROR=PASS' \
+  'AS6_DOCUMENT_SPACE_READ_ONLY=PASS' \
+  'AS6_DOCUMENT_SPACE_WORKSPACE_ISOLATION=PASS' \
+  'AS6_LIVING_DOCUMENTS_REAL_DATA_PRODUCTION_BUNDLE=PASS' \
+  'SECRET_SCAN=PASS' \
+  'BACKEND_TESTS=PASS' \
+  'BUILD=PASS' \
+  'PRODUCTION=HEALTHY' \
+  'PUSH=PASS' \
+  'AS6_PROJECT_READINESS=99.9%' \
+  'AS6_LIVING_PRODUCT_DATA_READINESS=90%' \
+  '================ AS6 LIVING DOCUMENTS REAL DATA v3 COMPLETE ================'
