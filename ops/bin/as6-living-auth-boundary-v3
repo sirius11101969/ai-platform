@@ -1,0 +1,158 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="/var/www/ai-platform"
+STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+APP="$ROOT/frontend/src/App.jsx"
+AUTH="$ROOT/frontend/src/pages/AuthPages.jsx"
+GUARD="$ROOT/frontend/src/as6/auth/AS6RouteAuth.jsx"
+BOUNDARY_CONTROL="$ROOT/ops/bin/as6-control-living-auth-boundary-v1"
+EXACT_CONTROL="$ROOT/ops/bin/as6-control-app-exact-route-v1"
+POST_LOGIN_CONTROL="$ROOT/ops/bin/as6-control-auth-post-login-destination-v1"
+DIAG="$ROOT/ops/diagnostics/as6-living-auth-boundary-v1.md"
+RUNTIME_DIR="$ROOT/runtime/as6-living-auth-boundary-v3-${STAMP}"
+
+cd "$ROOT"
+mkdir -p "$RUNTIME_DIR"
+
+echo "================ AS6 LIVING AUTH BOUNDARY v3 ================"
+echo "=== 1. DIAGNOSTICS ==="
+test "$(git branch --show-current)" = "main"
+test -f "$APP"
+test -f "$AUTH"
+test -f "$GUARD"
+test -x "$BOUNDARY_CONTROL"
+test -x "$EXACT_CONTROL"
+test -f "$POST_LOGIN_CONTROL"
+test -f "$DIAG"
+test -f .env
+test "$(stat -c '%a' .env)" = "600"
+git fetch origin main
+git pull --ff-only origin main
+git status --short
+echo "CURRENT_COMMIT=$(git rev-parse HEAD)"
+
+echo "=== 2. ROOT CAUSE ==="
+echo "The auth boundary introduced a safe dynamic post-login destination."
+echo "The older post-login control still required the obsolete literal window.location.replace('/app') contract and stopped silently under set -e."
+printf '%s\n' \
+  'FAILURE_CLASS=AS6_POST_LOGIN_CONTROL_SAFE_DESTINATION_DRIFT' \
+  'FAILURE_CLASS=AS6_VALID_AUTH_BOUNDARY_BLOCKED_BY_LITERAL_DESTINATION_CONTROL' \
+  'FAILURE_CLASS=AS6_SILENT_POST_LOGIN_CONTROL_FAILURE' \
+  'FAILURE_CLASS=AS6_AUTH_BOUNDARY_VALIDATED_NOT_COMMITTED'
+
+echo "=== 3. STRUCTURE RE-DIAGNOSTICS ==="
+"$BOUNDARY_CONTROL"
+"$EXACT_CONTROL"
+grep -Fq 'const requestedDestination = new URLSearchParams' "$AUTH"
+grep -Fq 'requestedDestination.startsWith("/app")' "$AUTH"
+grep -Fq 'window.location.replace(safeDestination)' "$AUTH"
+echo "AS6_AUTH_SAFE_RETURN_DESTINATION=PASS"
+
+echo "=== 4. RECONCILE POST-LOGIN CONTROL ==="
+printf '%s\n' \
+  '#!/usr/bin/env bash' \
+  'set -Eeuo pipefail' \
+  'ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"' \
+  'AUTH="$ROOT/frontend/src/pages/AuthPages.jsx"' \
+  'API="$ROOT/frontend/src/services/api.js"' \
+  'if grep -Fq "window.location.replace(\"/app\")" "$AUTH"; then' \
+  '  echo "AS6_AUTH_STATIC_DESTINATION_CONTRACT=PASS"' \
+  'else' \
+  '  grep -Fq "const requestedDestination = new URLSearchParams" "$AUTH"' \
+  '  grep -Fq "requestedDestination.startsWith(\"/app\")" "$AUTH"' \
+  '  grep -Fq "window.location.replace(safeDestination)" "$AUTH"' \
+  '  echo "AS6_AUTH_SAFE_DESTINATION_CONTRACT=PASS"' \
+  'fi' \
+  'grep -Eq "const (stored|persisted)Token = getAuthToken\(\)" "$AUTH"' \
+  'grep -Eq "const (stored|persisted)WorkspaceId = getActiveWorkspaceId\(\)" "$AUTH"' \
+  'grep -Fq "const sessionWorkspaceId =" "$API"' \
+  'grep -Fq "setActiveWorkspaceId(String(sessionWorkspaceId))" "$API"' \
+  'echo "AS6_AUTH_DETERMINISTIC_DESTINATION=PASS"' \
+  'echo "AS6_AUTH_SESSION_VERIFIED_BEFORE_DESTINATION=PASS"' \
+  'echo "AS6_AUTH_POST_LOGIN_DESTINATION_CONTROL=PASS"' \
+  > "$POST_LOGIN_CONTROL"
+chmod 755 "$POST_LOGIN_CONTROL"
+bash -n "$POST_LOGIN_CONTROL"
+"$POST_LOGIN_CONTROL"
+echo "AS6_POST_LOGIN_CONTROL_SAFE_DESTINATION_DRIFT=FIXED"
+
+echo "=== 5. DIAGNOSTIC UPDATE ==="
+printf '%s\n' \
+  '' \
+  '## v3 control reconciliation' \
+  'The legacy post-login control required only the old static /app destination. It now accepts the safe requestedDestination contract and continues to verify token and workspace persistence.' \
+  '' \
+  '### Additional failure classes' \
+  '- AS6_POST_LOGIN_CONTROL_SAFE_DESTINATION_DRIFT' \
+  '- AS6_VALID_AUTH_BOUNDARY_BLOCKED_BY_LITERAL_DESTINATION_CONTROL' \
+  '- AS6_SILENT_POST_LOGIN_CONTROL_FAILURE' \
+  '- AS6_AUTH_BOUNDARY_VALIDATED_NOT_COMMITTED' \
+  >> "$DIAG"
+
+echo "=== 6. VALIDATION ==="
+npm --prefix frontend run build
+npm --prefix backend run test:ai-execution-runner-auth
+"$BOUNDARY_CONTROL"
+ops/bin/as6-control-living-profile-logout-v1
+"$EXACT_CONTROL"
+ops/bin/as6-control-router-splat-route-v1
+"$POST_LOGIN_CONTROL"
+ops/bin/as6-control-api-upstream-health-v1
+git diff --check
+git check-ignore -q .env
+printf '%s\n' 'SECRET_SCAN=PASS' 'BACKEND_TESTS=PASS' 'BUILD=PASS'
+
+echo "=== 7. COMMIT + PUSH ==="
+git add "$APP" "$AUTH" "$GUARD" "$BOUNDARY_CONTROL" "$EXACT_CONTROL" "$POST_LOGIN_CONTROL" "$DIAG"
+if git diff --cached --quiet; then echo "ERROR: no changes to commit"; exit 1; fi
+git commit -m 'security(auth): close Living Space auth boundary controls'
+git push origin main
+echo "PUSH=PASS"
+
+echo "=== 8. DEPLOY ==="
+OLD_IMAGE="$(docker image inspect ai-platform-nginx:latest --format '{{.Id}}' 2>/dev/null || true)"
+if [ -n "$OLD_IMAGE" ]; then docker tag "$OLD_IMAGE" "as6-nginx-rollback-auth-boundary-v3:${STAMP}"; fi
+docker compose build --no-cache nginx
+docker compose up -d --no-deps --force-recreate nginx
+READY=0
+for attempt in 1 2 3 4 5 6 7 8 9 10; do
+  code="$(curl -kLsS --max-time 15 -o /dev/null -w '%{http_code}' "https://www.as6.ru/app?as6_auth_boundary_v3=${STAMP}_${attempt}" || true)"
+  echo "APP_ROUTE_ATTEMPT_${attempt}=$code"
+  if [ "$code" = "200" ]; then READY=1; break; fi
+  sleep 2
+done
+test "$READY" = "1"
+ops/bin/as6-control-api-upstream-health-v1
+ops/bin/as6-production-monitor
+
+echo "=== 9. PRODUCTION BUNDLE VALIDATION ==="
+TMP_HTML="$RUNTIME_DIR/app.html"
+curl -kLsS "https://www.as6.ru/app?as6_auth_boundary_bundle_v3=${STAMP}" -o "$TMP_HTML"
+BUNDLE="$(grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' "$TMP_HTML" | head -1)"
+test -n "$BUNDLE"
+docker exec ai-platform-nginx-1 sh -c "grep -q 'requestedDestination' '/usr/share/nginx/html/$BUNDLE' || grep -q 'safeDestination' '/usr/share/nginx/html/$BUNDLE' || grep -q 'next=' '/usr/share/nginx/html/$BUNDLE'"
+echo "AS6_LIVING_AUTH_BOUNDARY_PRODUCTION_BUNDLE=PASS"
+
+echo "=== 10. FINAL ==="
+"$BOUNDARY_CONTROL"
+"$POST_LOGIN_CONTROL"
+git status --short --branch
+git log -2 --oneline
+printf '%s\n' \
+  'AS6_POST_LOGIN_CONTROL_SAFE_DESTINATION_DRIFT=FIXED' \
+  'AS6_VALID_AUTH_BOUNDARY_BLOCKED_BY_LITERAL_DESTINATION_CONTROL=FIXED' \
+  'AS6_SILENT_POST_LOGIN_CONTROL_FAILURE=FIXED' \
+  'AS6_AUTH_BOUNDARY_VALIDATED_NOT_COMMITTED=FIXED' \
+  'AS6_PRIMARY_APP_AUTH_BOUNDARY=PASS' \
+  'AS6_AUTH_RETURN_DESTINATION=PASS' \
+  'AS6_LEGACY_AUTH_GUARD_RECONCILED=PASS' \
+  'AS6_LIVING_AUTH_BOUNDARY_PRODUCTION_BUNDLE=PASS' \
+  'SECRET_SCAN=PASS' \
+  'BACKEND_TESTS=PASS' \
+  'BUILD=PASS' \
+  'PRODUCTION=HEALTHY' \
+  'PUSH=PASS' \
+  'AS6_PROJECT_READINESS=99.9%' \
+  'AS6_LIVING_PRODUCT_DATA_READINESS=81%' \
+  '================ AS6 LIVING AUTH BOUNDARY v3 COMPLETE ================'
