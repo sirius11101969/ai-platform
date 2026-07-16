@@ -119,3 +119,6 @@
 
 ## AS6 Public Brand Master Screen v2
 - AS6_PUBLIC_BRAND_MASTER_SCREEN_V2=ops/diagnostics/as6-public-brand-master-screen-v2.md
+
+## AS6 Public Brand ONE v3
+- AS6_PUBLIC_BRAND_ONE_V3=ops/diagnostics/as6-public-brand-one-v3.md

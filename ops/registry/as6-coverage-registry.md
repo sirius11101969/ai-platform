@@ -124,3 +124,6 @@
 
 ## AS6 Public Brand Master Screen v2
 - AS6_PUBLIC_BRAND_MASTER_SCREEN_V2=ops/bin/as6-control-public-brand-master-screen-v2
+
+## AS6 Public Brand ONE v3
+- AS6_PUBLIC_BRAND_ONE_V3=ops/bin/as6-control-public-brand-one-v3
