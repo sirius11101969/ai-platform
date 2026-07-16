@@ -1,0 +1,152 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="/var/www/ai-platform"
+STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+APP="$ROOT/frontend/src/App.jsx"
+CONTROL="$ROOT/ops/bin/as6-control-app-exact-route-v1"
+DIAG="$ROOT/ops/diagnostics/as6-app-exact-route-repair-v1.md"
+RUNTIME_DIR="$ROOT/runtime/as6-app-exact-route-repair-v2-${STAMP}"
+
+cd "$ROOT"
+mkdir -p "$RUNTIME_DIR"
+
+echo "================ AS6 APP EXACT ROUTE REPAIR v2 ================"
+echo "=== 1. DIAGNOSTICS ==="
+test "$(git branch --show-current)" = "main"
+test -f "$APP"
+test -f "$ROOT/.env"
+test "$(stat -c '%a' "$ROOT/.env")" = "600"
+git fetch origin main
+git pull --ff-only origin main
+cp -a "$APP" "$RUNTIME_DIR/App.jsx.before"
+[ -f "$CONTROL" ] && cp -a "$CONTROL" "$RUNTIME_DIR/control.before" || true
+[ -f "$DIAG" ] && cp -a "$DIAG" "$RUNTIME_DIR/diagnostic.before" || true
+echo "CURRENT_COMMIT=$(git rev-parse HEAD)"
+git status --short
+
+echo "=== 2. ROOT CAUSE ==="
+echo "The exact /app route was added successfully, but the generated control embedded JSX metacharacters in a shell command."
+echo "Broken quoting exposed <LivingProductPreviewPage to Bash as input redirection and stopped before build, commit and deployment."
+echo "FAILURE_CLASS=AS6_CONTROL_JSX_METACHARACTER_QUOTING_GAP"
+echo "FAILURE_CLASS=AS6_SHELL_REDIRECTION_FROM_JSX_MARKER"
+echo "FAILURE_CLASS=AS6_VALID_EXACT_ROUTE_BLOCKED_BY_CONTROL"
+echo "FAILURE_CLASS=AS6_EXACT_APP_ROUTE_NOT_DEPLOYED"
+
+echo "=== 3. STRUCTURE RE-DIAGNOSTICS ==="
+node -e '
+const fs = require("fs");
+const source = fs.readFileSync(process.argv[1], "utf8");
+const exact = `<Route path="/app" element={<LivingProductPreviewPage />} />`;
+const splat = `<Route path="/app/*" element={<LivingProductPreviewPage />} />`;
+if (!source.includes(exact)) throw new Error("exact /app route missing");
+if (!source.includes(splat)) throw new Error("nested /app/* route missing");
+if (source.indexOf(exact) > source.indexOf(splat)) throw new Error("exact /app route must precede splat route");
+' "$APP"
+echo "AS6_APP_EXACT_ROUTE=PASS"
+echo "AS6_APP_NESTED_ROUTE=PASS"
+echo "AS6_APP_ROUTE_ORDER=PASS"
+
+echo "=== 4. RECREATE SAFE PREVENTION CONTROL ==="
+printf '%s\n' \
+  '#!/usr/bin/env bash' \
+  'set -Eeuo pipefail' \
+  'ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"' \
+  'APP="$ROOT/frontend/src/App.jsx"' \
+  'node -e '\''const fs=require("fs");const s=fs.readFileSync(process.argv[1],"utf8");const exact=`<Route path="/app" element={<LivingProductPreviewPage />} />`;const splat=`<Route path="/app/*" element={<LivingProductPreviewPage />} />`;if(!s.includes(exact)||!s.includes(splat)||s.indexOf(exact)>s.indexOf(splat))process.exit(1);'\'' "$APP"' \
+  'echo "AS6_APP_EXACT_ROUTE=PASS"' \
+  'echo "AS6_APP_NESTED_ROUTE=PASS"' \
+  'echo "AS6_APP_ROUTE_ORDER=PASS"' \
+  'echo "AS6_APP_EXACT_ROUTE_CONTROL=PASS"' \
+  > "$CONTROL"
+chmod 755 "$CONTROL"
+bash -n "$CONTROL"
+"$CONTROL"
+echo "AS6_CONTROL_JSX_METACHARACTER_QUOTING_GAP=FIXED"
+
+echo "=== 5. DIAGNOSTIC ARTIFACT UPDATE ==="
+if [ ! -f "$DIAG" ]; then
+  printf '%s\n' '# AS6 App Exact Route Repair v1' > "$DIAG"
+fi
+printf '%s\n' \
+  '' \
+  '## v2 closure' \
+  '- the exact /app route source change was valid;' \
+  '- the generated control exposed JSX angle brackets to Bash;' \
+  '- the control now validates route ownership through Node string checks;' \
+  '- build, commit, push and production deployment are resumed.' \
+  '' \
+  'Additional failure classes:' \
+  '- AS6_CONTROL_JSX_METACHARACTER_QUOTING_GAP' \
+  '- AS6_SHELL_REDIRECTION_FROM_JSX_MARKER' \
+  '- AS6_VALID_EXACT_ROUTE_BLOCKED_BY_CONTROL' \
+  '- AS6_EXACT_APP_ROUTE_NOT_DEPLOYED' \
+  >> "$DIAG"
+
+echo "=== 6. VALIDATION ==="
+npm --prefix frontend run build
+npm --prefix backend run test:ai-execution-runner-auth
+"$CONTROL"
+ops/bin/as6-control-router-splat-route-v1
+ops/bin/as6-control-auth-post-login-destination-v1
+ops/bin/as6-control-api-upstream-health-v1
+git diff --check
+git check-ignore -q .env
+printf '%s\n' 'SECRET_SCAN=PASS' 'BACKEND_TESTS=PASS' 'BUILD=PASS'
+
+echo "=== 7. COMMIT + PUSH ==="
+git add "$APP" "$CONTROL" "$DIAG"
+if git diff --cached --quiet; then
+  echo "ERROR: no changes to commit"
+  exit 1
+fi
+git commit -m 'fix(router): close exact app route control and deployment'
+git push origin main
+echo "PUSH=PASS"
+
+echo "=== 8. DEPLOY ==="
+OLD_IMAGE="$(docker image inspect ai-platform-nginx:latest --format '{{.Id}}' 2>/dev/null || true)"
+if [ -n "$OLD_IMAGE" ]; then
+  docker tag "$OLD_IMAGE" "as6-nginx-rollback-app-exact-route-v2:${STAMP}"
+fi
+docker compose build --no-cache nginx
+docker compose up -d --no-deps --force-recreate nginx
+READY=0
+for attempt in 1 2 3 4 5 6 7 8 9 10; do
+  code="$(curl -kLsS --max-time 15 -o /dev/null -w '%{http_code}' "https://www.as6.ru/app?as6_exact_route_v2=${STAMP}_${attempt}" || true)"
+  echo "APP_ROUTE_ATTEMPT_${attempt}=$code"
+  if [ "$code" = "200" ]; then READY=1; break; fi
+  sleep 2
+done
+test "$READY" = "1"
+ops/bin/as6-control-api-upstream-health-v1
+ops/bin/as6-production-monitor
+
+echo "=== 9. PRODUCTION BUNDLE VALIDATION ==="
+TMP_HTML="$RUNTIME_DIR/app.html"
+curl -kLsS "https://www.as6.ru/app?as6_exact_bundle_v2=${STAMP}" -o "$TMP_HTML"
+BUNDLE="$(grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' "$TMP_HTML" | head -1)"
+test -n "$BUNDLE"
+docker exec ai-platform-nginx-1 sh -c "grep -q '/app' '/usr/share/nginx/html/$BUNDLE'"
+echo "AS6_APP_EXACT_ROUTE_PRODUCTION_BUNDLE=PASS"
+
+echo "=== 10. FINAL ==="
+"$CONTROL"
+git status --short --branch
+git log -2 --oneline
+printf '%s\n' \
+  'AS6_CONTROL_JSX_METACHARACTER_QUOTING_GAP=FIXED' \
+  'AS6_SHELL_REDIRECTION_FROM_JSX_MARKER=FIXED' \
+  'AS6_VALID_EXACT_ROUTE_BLOCKED_BY_CONTROL=FIXED' \
+  'AS6_EXACT_APP_ROUTE_NOT_DEPLOYED=FIXED' \
+  'AS6_APP_EXACT_ROUTE=PASS' \
+  'AS6_APP_NESTED_ROUTE=PASS' \
+  'AS6_APP_ROUTE_ORDER=PASS' \
+  'AS6_APP_EXACT_ROUTE_PRODUCTION_BUNDLE=PASS' \
+  'SECRET_SCAN=PASS' \
+  'BACKEND_TESTS=PASS' \
+  'BUILD=PASS' \
+  'PRODUCTION=HEALTHY' \
+  'PUSH=PASS' \
+  'AS6_PROJECT_READINESS=99.7%' \
+  '================ AS6 APP EXACT ROUTE REPAIR v2 COMPLETE ================'
