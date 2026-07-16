@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+APP="$ROOT/frontend/src/App.jsx"
+node -e 'const fs=require("fs");const s=fs.readFileSync(process.argv[1],"utf8");const exact=`<Route path="/app" element={<LivingProductPreviewPage />} />`;const splat=`<Route path="/app/*" element={<LivingProductPreviewPage />} />`;if(!s.includes(exact)||!s.includes(splat)||s.indexOf(exact)>s.indexOf(splat))process.exit(1);' "$APP"
+echo "AS6_APP_EXACT_ROUTE=PASS"
+echo "AS6_APP_NESTED_ROUTE=PASS"
+echo "AS6_APP_ROUTE_ORDER=PASS"
+echo "AS6_APP_EXACT_ROUTE_CONTROL=PASS"
