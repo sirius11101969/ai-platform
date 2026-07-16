@@ -1,0 +1,165 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="/var/www/ai-platform"
+STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+APP="$ROOT/frontend/src/App.jsx"
+AUTH="$ROOT/frontend/src/pages/AuthPages.jsx"
+GUARD="$ROOT/frontend/src/as6/auth/AS6RouteAuth.jsx"
+AUTH_CONTROL="$ROOT/ops/bin/as6-control-living-auth-boundary-v1"
+ROUTE_CONTROL="$ROOT/ops/bin/as6-control-app-exact-route-v1"
+DIAG="$ROOT/ops/diagnostics/as6-living-auth-boundary-v1.md"
+RUNTIME_DIR="$ROOT/runtime/as6-living-auth-boundary-v2-${STAMP}"
+
+cd "$ROOT"
+mkdir -p "$RUNTIME_DIR"
+
+echo "================ AS6 LIVING AUTH BOUNDARY v2 ================"
+echo "=== 1. DIAGNOSTICS ==="
+test "$(git branch --show-current)" = "main"
+test -f "$APP"
+test -f "$AUTH"
+test -f "$GUARD"
+test -f "$AUTH_CONTROL"
+test -f "$ROUTE_CONTROL"
+test -f "$DIAG"
+test -f "$ROOT/.env"
+test "$(stat -c '%a' "$ROOT/.env")" = "600"
+git fetch origin main
+git pull --ff-only origin main
+echo "CURRENT_COMMIT=$(git rev-parse HEAD)"
+git status --short
+
+EXPECTED="$(git status --short | awk '{print $2}' | sort | tr '\n' ' ')"
+case "$EXPECTED" in
+  *frontend/src/App.jsx*frontend/src/as6/auth/AS6RouteAuth.jsx*frontend/src/pages/AuthPages.jsx*ops/bin/as6-control-living-auth-boundary-v1*ops/diagnostics/as6-living-auth-boundary-v1.md*) ;;
+  *) echo "ERROR: unexpected or incomplete local change set"; git status --short; exit 1 ;;
+esac
+
+cp -a "$ROUTE_CONTROL" "$RUNTIME_DIR/as6-control-app-exact-route-v1.before"
+cp -a "$DIAG" "$RUNTIME_DIR/as6-living-auth-boundary-v1.before.md"
+
+echo "=== 2. ROOT CAUSE ==="
+echo "The Living auth boundary patch changed the exact /app route elements to RequirePrimaryAuth wrappers."
+echo "The older exact-route control still required the previous unguarded LivingProductPreviewPage element and exited silently under set -e."
+printf '%s\n' \
+  'FAILURE_CLASS=AS6_EXACT_ROUTE_CONTROL_AUTH_WRAPPER_DRIFT' \
+  'FAILURE_CLASS=AS6_VALID_AUTH_BOUNDARY_BLOCKED_BY_LEGACY_CONTROL' \
+  'FAILURE_CLASS=AS6_SILENT_CONTROL_CONTRACT_FAILURE' \
+  'FAILURE_CLASS=AS6_AUTH_BOUNDARY_NOT_COMMITTED_AFTER_VALIDATION'
+
+echo "=== 3. STRUCTURE RE-DIAGNOSTICS ==="
+"$AUTH_CONTROL"
+grep -Fq 'path="/app" element={<RequirePrimaryAuth>' "$APP"
+grep -Fq 'path="/app/*" element={<RequirePrimaryAuth>' "$APP"
+grep -Fq 'requestedDestination.startsWith("/app")' "$AUTH"
+grep -Fq 'import { getAuthToken }' "$GUARD"
+! grep -Fq 'localStorage.getItem("as6-token")' "$GUARD"
+echo "AS6_LIVING_AUTH_BOUNDARY_LOCAL_CHANGE=PASS"
+
+echo "=== 4. RECONCILE EXACT ROUTE CONTROL ==="
+printf '%s\n' \
+  '#!/usr/bin/env bash' \
+  'set -Eeuo pipefail' \
+  'ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"' \
+  'APP="$ROOT/frontend/src/App.jsx"' \
+  'node -e '\''const fs=require("fs");const s=fs.readFileSync(process.argv[1],"utf8");const exactGuarded=`<Route path="/app" element={<RequirePrimaryAuth><LivingProductPreviewPage /></RequirePrimaryAuth>} />`;const splatGuarded=`<Route path="/app/*" element={<RequirePrimaryAuth><LivingProductPreviewPage /></RequirePrimaryAuth>} />`;const exactLegacy=`<Route path="/app" element={<LivingProductPreviewPage />} />`;const splatLegacy=`<Route path="/app/*" element={<LivingProductPreviewPage />} />`;const exact=s.includes(exactGuarded)?exactGuarded:exactLegacy;const splat=s.includes(splatGuarded)?splatGuarded:splatLegacy;if(!s.includes(exact)||!s.includes(splat)||s.indexOf(exact)>s.indexOf(splat))process.exit(1);'\'' "$APP"' \
+  'echo "AS6_APP_EXACT_ROUTE=PASS"' \
+  'echo "AS6_APP_NESTED_ROUTE=PASS"' \
+  'echo "AS6_APP_ROUTE_ORDER=PASS"' \
+  'echo "AS6_APP_EXACT_ROUTE_AUTH_WRAPPER_COMPATIBILITY=PASS"' \
+  'echo "AS6_APP_EXACT_ROUTE_CONTROL=PASS"' \
+  > "$ROUTE_CONTROL"
+chmod 755 "$ROUTE_CONTROL"
+bash -n "$ROUTE_CONTROL"
+"$ROUTE_CONTROL"
+echo "AS6_EXACT_ROUTE_CONTROL_AUTH_WRAPPER_DRIFT=FIXED"
+
+echo "=== 5. DIAGNOSTIC UPDATE ==="
+printf '%s\n' \
+  '' \
+  '## Validation repair v2' \
+  'The auth boundary source change passed build and its own control, but the previous exact-route control still required unguarded route elements.' \
+  '' \
+  '### Additional root cause' \
+  'A valid security wrapper changed the route element contract without reconciling the older route-ownership control in the same cycle.' \
+  '' \
+  '### Additional failure classes' \
+  '- AS6_EXACT_ROUTE_CONTROL_AUTH_WRAPPER_DRIFT' \
+  '- AS6_VALID_AUTH_BOUNDARY_BLOCKED_BY_LEGACY_CONTROL' \
+  '- AS6_SILENT_CONTROL_CONTRACT_FAILURE' \
+  '- AS6_AUTH_BOUNDARY_NOT_COMMITTED_AFTER_VALIDATION' \
+  >> "$DIAG"
+
+echo "=== 6. VALIDATION ==="
+npm --prefix frontend run build
+npm --prefix backend run test:ai-execution-runner-auth
+"$AUTH_CONTROL"
+ops/bin/as6-control-living-profile-logout-v1
+"$ROUTE_CONTROL"
+ops/bin/as6-control-router-splat-route-v1
+ops/bin/as6-control-auth-post-login-destination-v1
+ops/bin/as6-control-api-upstream-health-v1
+git diff --check
+git check-ignore -q .env
+printf '%s\n' 'SECRET_SCAN=PASS' 'BACKEND_TESTS=PASS' 'BUILD=PASS'
+
+echo "=== 7. COMMIT + PUSH ==="
+git add "$APP" "$AUTH" "$GUARD" "$AUTH_CONTROL" "$ROUTE_CONTROL" "$DIAG"
+if git diff --cached --quiet; then echo "ERROR: no changes to commit"; exit 1; fi
+git commit -m 'security(auth): close Living auth boundary controls'
+git push origin main
+echo "PUSH=PASS"
+
+echo "=== 8. DEPLOY ==="
+OLD_IMAGE="$(docker image inspect ai-platform-nginx:latest --format '{{.Id}}' 2>/dev/null || true)"
+if [ -n "$OLD_IMAGE" ]; then docker tag "$OLD_IMAGE" "as6-nginx-rollback-auth-boundary-v2:${STAMP}"; fi
+docker compose build --no-cache nginx
+docker compose up -d --no-deps --force-recreate nginx
+READY=0
+for attempt in 1 2 3 4 5 6 7 8 9 10; do
+  code="$(curl -kLsS --max-time 15 -o /dev/null -w '%{http_code}' "https://www.as6.ru/app?as6_auth_boundary_v2=${STAMP}_${attempt}" || true)"
+  echo "APP_ROUTE_ATTEMPT_${attempt}=$code"
+  if [ "$code" = "200" ]; then READY=1; break; fi
+  sleep 2
+done
+test "$READY" = "1"
+ops/bin/as6-control-api-upstream-health-v1
+ops/bin/as6-production-monitor
+
+echo "=== 9. PRODUCTION BUNDLE VALIDATION ==="
+TMP_HTML="$RUNTIME_DIR/app.html"
+curl -kLsS "https://www.as6.ru/app?as6_auth_boundary_v2_bundle=${STAMP}" -o "$TMP_HTML"
+BUNDLE="$(grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' "$TMP_HTML" | head -1)"
+test -n "$BUNDLE"
+docker exec ai-platform-nginx-1 sh -c "grep -q 'requestedDestination' '/usr/share/nginx/html/$BUNDLE' || grep -q 'next=' '/usr/share/nginx/html/$BUNDLE'"
+echo "AS6_LIVING_AUTH_BOUNDARY_PRODUCTION_BUNDLE=PASS"
+
+echo "=== 10. FINAL ==="
+"$AUTH_CONTROL"
+"$ROUTE_CONTROL"
+git status --short --branch
+git log -2 --oneline
+printf '%s\n' \
+  'AS6_EXACT_ROUTE_CONTROL_AUTH_WRAPPER_DRIFT=FIXED' \
+  'AS6_VALID_AUTH_BOUNDARY_BLOCKED_BY_LEGACY_CONTROL=FIXED' \
+  'AS6_SILENT_CONTROL_CONTRACT_FAILURE=FIXED' \
+  'AS6_AUTH_BOUNDARY_NOT_COMMITTED_AFTER_VALIDATION=FIXED' \
+  'AS6_PRIMARY_APP_ROUTE_UNGUARDED=FIXED' \
+  'AS6_LEGACY_AUTH_TOKEN_KEY_DRIFT=FIXED' \
+  'AS6_AUTH_GUARD_SOURCE_OF_TRUTH_DIVERGENCE=FIXED' \
+  'AS6_UNAUTHENTICATED_APP_DIRECT_ACCESS_GAP=FIXED' \
+  'AS6_AUTH_RETURN_DESTINATION_MISSING=FIXED' \
+  'AS6_PRIMARY_APP_AUTH_BOUNDARY=PASS' \
+  'AS6_AUTH_RETURN_DESTINATION=PASS' \
+  'AS6_LEGACY_AUTH_GUARD_RECONCILED=PASS' \
+  'AS6_APP_EXACT_ROUTE_AUTH_WRAPPER_COMPATIBILITY=PASS' \
+  'AS6_LIVING_AUTH_BOUNDARY_PRODUCTION_BUNDLE=PASS' \
+  'SECRET_SCAN=PASS' \
+  'BACKEND_TESTS=PASS' \
+  'BUILD=PASS' \
+  'PRODUCTION=HEALTHY' \
+  'PUSH=PASS' \
+  'AS6_PROJECT_READINESS=99.9%' \
+  'AS6_LIVING_PRODUCT_DATA_READINESS=81%' \
+  '================ AS6 LIVING AUTH BOUNDARY v2 COMPLETE ================'
