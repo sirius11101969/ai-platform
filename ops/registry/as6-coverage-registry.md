@@ -121,3 +121,6 @@
 
 ## AS6 Public Brand Foundation v1
 - AS6_PUBLIC_BRAND_FOUNDATION_V1=ops/bin/as6-control-public-brand-foundation-v1
+
+## AS6 Public Brand Master Screen v2
+- AS6_PUBLIC_BRAND_MASTER_SCREEN_V2=ops/bin/as6-control-public-brand-master-screen-v2

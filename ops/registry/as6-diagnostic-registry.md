@@ -116,3 +116,6 @@
 
 ## AS6 Public Brand Foundation v1
 - AS6_PUBLIC_BRAND_FOUNDATION_V1=ops/diagnostics/as6-public-brand-foundation-v1.md
+
+## AS6 Public Brand Master Screen v2
+- AS6_PUBLIC_BRAND_MASTER_SCREEN_V2=ops/diagnostics/as6-public-brand-master-screen-v2.md
