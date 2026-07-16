@@ -1,6 +1,6 @@
 import React from "react";
-import LivingShellV2 from "../product-v2/LivingShellV2.jsx";
+import LivingCanonicalApp from "../product-v2/LivingCanonicalApp.jsx";
 
 export default function LivingProductPreviewPage() {
-  return <LivingShellV2 />;
+  return <LivingCanonicalApp />;
 }

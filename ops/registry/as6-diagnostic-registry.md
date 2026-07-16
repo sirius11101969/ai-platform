@@ -100,3 +100,16 @@
 - control: ops/bin/as6-control-living-documents-real-data-v1
 - failure_classes: AS6_DOCUMENT_SPACE_ENGINE_DATA_ADAPTER_GAP, AS6_DOCUMENT_SPACE_REAL_DATA_RENDERING_GAP, AS6_DOCUMENT_NODE_METRICS_PLACEHOLDER_GAP, AS6_DOCUMENT_ACTIVITY_TIMELINE_DATA_GAP, AS6_DOCUMENT_EMPTY_STATE_ENGINE_GAP, AS6_DOCUMENT_ERROR_STATE_ENGINE_GAP, AS6_DOCUMENT_READ_ONLY_ENGINE_CONTROL_GAP, AS6_DOCUMENT_WORKSPACE_ISOLATION_ENGINE_GAP, AS6_DOCUMENT_CONTROL_NESTED_QUOTE_SYNTAX_GAP, AS6_REPAIR_SCRIPT_TRAILING_QUOTE_SYNTAX_GAP
 - result: AS6_LIVING_DOCUMENTS_REAL_DATA=REGISTERED
+
+## AS6 Living Space Canonical v2
+- diagnostic: canonical Master Screen inheritance restored across Living Space Engine and Documents real-data space
+- artifacts: frontend/src/living/product-v2/LivingSpaceEngine.jsx, frontend/src/living/product-v2/LivingSpaceEngine.css, frontend/src/living/product-v2/LivingDocumentsSpace.jsx
+- control: ops/bin/as6-control-living-space-canonical-v2
+- result: AS6_LIVING_SPACE_CANONICAL_V2=REGISTERED
+
+## AS6 Canonical Reference Reset v1
+- diagnostic: obsolete Living shell removed as runtime owner; canonical reference application established
+- artifacts: frontend/src/living/product-v2/LivingCanonicalApp.jsx, frontend/src/living/product-v2/LivingCanonicalApp.css
+- removed: frontend/src/living/product-v2/LivingShellV2.jsx, frontend/src/living/product-v2/LivingShellV2.css, frontend/src/living/product-v2/LivingDocumentsSpace.css
+- control: ops/bin/as6-control-canonical-reference-reset-v1
+- result: AS6_CANONICAL_REFERENCE_RESET_V1=REGISTERED

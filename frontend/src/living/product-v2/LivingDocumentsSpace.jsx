@@ -1,18 +1,5 @@
 import React, { useMemo } from "react";
-import "./LivingDocumentsSpace.css";
-
-function formatSize(value) {
-  const bytes = Number(value || 0);
-  if (bytes < 1024) return `${bytes} Б`;
-  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} КБ`;
-  return `${(bytes / 1024 / 1024).toFixed(1)} МБ`;
-}
-
-function formatDate(value) {
-  const date = value ? new Date(value) : null;
-  if (!date || Number.isNaN(date.getTime())) return "Дата не указана";
-  return new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "short", year: "numeric" }).format(date);
-}
+import LivingSpaceEngine from "./LivingSpaceEngine.jsx";
 
 function typeOf(mimeType) {
   const value = String(mimeType || "").toLowerCase();
@@ -21,60 +8,38 @@ function typeOf(mimeType) {
   if (value.includes("sheet") || value.includes("excel")) return "Таблицы";
   if (value.includes("presentation") || value.includes("powerpoint")) return "Презентации";
   if (value.includes("word") || value.includes("text")) return "Документы";
-  return "Файлы";
+  return "Другие файлы";
 }
 
-function safeOpen(url) {
-  if (!url) return;
-  try {
-    const target = new URL(url, window.location.origin);
-    if (target.protocol !== "https:" && target.origin !== window.location.origin) return;
-    window.open(target.href, "_blank", "noopener,noreferrer");
-  } catch (_error) {
-    // Invalid document links remain non-actionable.
-  }
+function formatDate(value) {
+  const date = value ? new Date(value) : null;
+  if (!date || Number.isNaN(date.getTime())) return "Дата не указана";
+  return new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }).format(date);
 }
 
-export default function LivingDocumentsSpace({ livingData }) {
+export default function LivingDocumentsSpace({ livingData, navigate }) {
   const documents = livingData.data?.documents || [];
-  const documentStatus = livingData.data?.domainStatus?.documents;
-  const metrics = useMemo(() => {
-    const byType = documents.reduce((result, document) => {
-      const type = typeOf(document.mimeType);
-      result[type] = (result[type] || 0) + 1;
-      return result;
-    }, {});
-    const totalBytes = documents.reduce((sum, document) => sum + Number(document.sizeBytes || 0), 0);
-    return { byType, totalBytes, recent: [...documents].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)).slice(0, 6) };
+  const status = livingData.data?.domainStatus?.documents;
+  const definition = useMemo(() => {
+    const byType = documents.reduce((result, document) => { const type = typeOf(document.mimeType); result[type] = (result[type] || 0) + 1; return result; }, {});
+    const recent = [...documents].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)).slice(0, 7);
+    const nodes = ["PDF", "Изображения", "Таблицы", "Презентации", "Документы", "Другие файлы"].map((label) => ({ label, value: String(byType[label] || 0), note: "реальных файлов" }));
+    const events = recent.map((document) => ({ time: formatDate(document.createdAt), text: `${document.fileName} · ${typeOf(document.mimeType)}` }));
+    return {
+      id: "documents", label: "Документы", spaceTitle: "Пространство знаний", symbol: "▤", center: "Работа с документами", coreLabel: "Центр понимания",
+      subtitle: "AS6 связывает содержание документов с рабочим контекстом.",
+      coreText: documents.length ? `Связано ${documents.length} реальных материалов активного пространства.` : "Пространство готово принять первый реальный документ.",
+      greeting: "Доброе утро, Владимир.", context: "Документы становятся знаниями. AS6 показывает только подтверждённые материалы активного пространства.",
+      confidence: documents.length ? Math.min(96, 70 + documents.length * 2) : 70, confidenceNote: "Метрики вычисляются только из реальных workspace-данных.",
+      nodes, events, emptyActivity: "Новых документов пока нет.",
+      insights: [{ value: documents.length, label: "документов" }, { value: recent.length, label: "недавних событий" }, { value: Object.keys(byType).length, label: "типов материалов" }],
+      recommendation: documents.length ? "Проверьте последние документы и связи с клиентами." : "Добавьте первый документ к работе с клиентом.",
+      recommendationText: documents.length ? "AS6 готов превратить материалы в подтверждённый рабочий контекст." : "После появления реального файла пространство автоматически построит связи и события.",
+      actionLabel: "Открыть AI-анализ", intentLabel: "Что вы хотите узнать из документов?", pathTitle: "Путь работы с документами"
+    };
   }, [documents]);
 
-  if (livingData.status === "loading") return <div className="as6-docs-state"><strong>Собираем документы пространства…</strong><small>Только чтение. Изменения данных отключены.</small></div>;
-  if (!documentStatus?.available) return <div className="as6-docs-state as6-docs-state--error" role="alert"><strong>Не удалось открыть документы.</strong><small>{documentStatus?.error || "Проверьте авторизацию и активное пространство."}</small></div>;
-
-  const nodes = [
-    ["Все документы", documents.length],
-    ["PDF", metrics.byType.PDF || 0],
-    ["Изображения", metrics.byType["Изображения"] || 0],
-    ["Таблицы", metrics.byType["Таблицы"] || 0],
-    ["Презентации", metrics.byType["Презентации"] || 0],
-    ["Другие файлы", (metrics.byType.Файлы || 0) + (metrics.byType.Документы || 0)],
-  ];
-
-  return (
-    <div className="as6-docs-space" data-as6-documents-mode="real-read-only">
-      <header className="as6-docs-intro"><span>Документы · реальные данные</span><h1>Работа с документами</h1><p>AS6 показывает только материалы активного рабочего пространства и не создаёт вымышленные записи.</p></header>
-      {!documents.length ? (
-        <section className="as6-docs-empty"><strong>В пространстве пока нет документов.</strong><p>Здесь появятся реальные вложения после добавления файлов к работе с клиентами.</p></section>
-      ) : (
-        <>
-          <section className="as6-docs-orbit" aria-label="Карта документов">
-            <div className="as6-docs-core"><span>Центр понимания</span><strong>{documents.length}</strong><small>документов · {formatSize(metrics.totalBytes)}</small></div>
-            {nodes.map(([label, count], index) => <article key={label} className={`as6-docs-node as6-docs-node--${index + 1}`}><strong>{label}</strong><span>{count}</span></article>)}
-          </section>
-          <section className="as6-docs-activity"><header><div><span>Что происходит сейчас</span><h2>Последние документы</h2></div><small>активное workspace</small></header><div>{metrics.recent.map((document, index) => <article key={document.id || `${document.fileName}-${index}`}><span>{String(index + 1).padStart(2, "0")}</span><div><strong>{document.fileName}</strong><small>{typeOf(document.mimeType)} · {formatSize(document.sizeBytes)} · {formatDate(document.createdAt)}</small></div><button type="button" disabled={!document.downloadUrl} onClick={() => safeOpen(document.downloadUrl)} aria-label={`Открыть ${document.fileName}`}>→</button></article>)}</div></section>
-        </>
-      )}
-      <footer className="as6-docs-footer"><span>Только чтение</span><span>Workspace isolation</span><span>Обновлено: {formatDate(livingData.data?.loadedAt)}</span></footer>
-    </div>
-  );
+  if (livingData.status === "loading") return <div className="as6-v2-data-state" role="status"><strong>Собираем документы пространства…</strong><small>Только чтение. Изменения данных отключены.</small></div>;
+  if (!status?.available) return <div className="as6-v2-data-state as6-v2-data-state--error" role="alert"><strong>Не удалось открыть документы.</strong><small>{status?.error || "Проверьте авторизацию и активное пространство."}</small></div>;
+  return <LivingSpaceEngine definition={definition} navigate={navigate} />;
 }

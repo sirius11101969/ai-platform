@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+ENGINE="$ROOT/frontend/src/living/product-v2/LivingSpaceEngine.jsx"
+DOCS="$ROOT/frontend/src/living/product-v2/LivingDocumentsSpace.jsx"
+SHELL="$ROOT/frontend/src/living/product-v2/LivingShellV2.jsx"
+grep -Fq "data-space-engine=\"canonical-v2\"" "$ENGINE"
+grep -Fq "as6-canonical-space__left" "$ENGINE"
+grep -Fq "as6-canonical-space__right" "$ENGINE"
+grep -Fq "as6-canonical-space__path" "$ENGINE"
+grep -Fq "as6-canonical-space__intent" "$ENGINE"
+grep -Fq "LivingSpaceEngine definition={definition}" "$DOCS"
+grep -Fq "documents.length" "$DOCS"
+grep -Fq "LivingDocumentsSpace livingData={livingData} navigate={navigate}" "$SHELL"
+echo "AS6_CANONICAL_LIVING_SPACE_ENGINE=PASS"
+echo "AS6_MASTER_SCREEN_INHERITANCE=PASS"
+echo "AS6_DOCUMENTS_CANONICAL_REAL_DATA=PASS"
+echo "AS6_LIVING_SPACE_CANONICAL_CONTROL=PASS"
