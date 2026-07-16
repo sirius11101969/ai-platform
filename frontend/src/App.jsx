@@ -100,6 +100,13 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
+function RequirePrimaryAuth({ children }) {
+  const { isAuthenticated } = useAuth();
+  if (isAuthenticated) return children;
+  const requestedPath = `${window.location.pathname}${window.location.search || ""}`;
+  return <Navigate to={`/login?next=${encodeURIComponent(requestedPath)}`} replace />;
+}
+
 export default function App() {
   return (
     <AuthProvider>
@@ -113,8 +120,8 @@ export default function App() {
           <Route path="/about" element={<AS6PublicLivingInfoPage type="about" />} />
           <Route path="/contact" element={<AS6PublicLivingInfoPage type="contact" />} />
 
-          <Route path="/app" element={<LivingProductPreviewPage />} />
-          <Route path="/app/*" element={<LivingProductPreviewPage />} />
+          <Route path="/app" element={<RequirePrimaryAuth><LivingProductPreviewPage /></RequirePrimaryAuth>} />
+          <Route path="/app/*" element={<RequirePrimaryAuth><LivingProductPreviewPage /></RequirePrimaryAuth>} />
           <Route path="/preview/living" element={<LivingProductPreviewPage />} />
           <Route path="/as6-living-preview" element={<LivingSpacePreviewPage />} />
 

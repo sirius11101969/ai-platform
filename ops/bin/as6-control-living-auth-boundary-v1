@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+APP="$ROOT/frontend/src/App.jsx"
+AUTH="$ROOT/frontend/src/pages/AuthPages.jsx"
+GUARD="$ROOT/frontend/src/as6/auth/AS6RouteAuth.jsx"
+grep -Fq "function RequirePrimaryAuth" "$APP"
+grep -Fq "path=\"/app\" element={<RequirePrimaryAuth>" "$APP"
+grep -Fq "path=\"/app/*\" element={<RequirePrimaryAuth>" "$APP"
+grep -Fq "requestedDestination.startsWith(\"/app\")" "$AUTH"
+grep -Fq "import { getAuthToken }" "$GUARD"
+! grep -Fq "localStorage.getItem(\"as6-token\")" "$GUARD"
+echo "AS6_PRIMARY_APP_AUTH_BOUNDARY=PASS"
+echo "AS6_AUTH_RETURN_DESTINATION=PASS"
+echo "AS6_LEGACY_AUTH_GUARD_RECONCILED=PASS"
+echo "AS6_LIVING_AUTH_BOUNDARY_CONTROL=PASS"

@@ -3,11 +3,18 @@ set -Eeuo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 AUTH="$ROOT/frontend/src/pages/AuthPages.jsx"
 API="$ROOT/frontend/src/services/api.js"
-grep -q 'window.location.replace("/app")' "$AUTH"
-grep -Eq 'const (stored|persisted)Token = getAuthToken\(\)' "$AUTH"
-grep -Eq 'const (stored|persisted)WorkspaceId = getActiveWorkspaceId\(\)' "$AUTH"
-grep -q 'const sessionWorkspaceId =' "$API"
-grep -q 'setActiveWorkspaceId(String(sessionWorkspaceId))' "$API"
+if grep -Fq "window.location.replace(\"/app\")" "$AUTH"; then
+  echo "AS6_AUTH_STATIC_DESTINATION_CONTRACT=PASS"
+else
+  grep -Fq "const requestedDestination = new URLSearchParams" "$AUTH"
+  grep -Fq "requestedDestination.startsWith(\"/app\")" "$AUTH"
+  grep -Fq "window.location.replace(safeDestination)" "$AUTH"
+  echo "AS6_AUTH_SAFE_DESTINATION_CONTRACT=PASS"
+fi
+grep -Eq "const (stored|persisted)Token = getAuthToken\(\)" "$AUTH"
+grep -Eq "const (stored|persisted)WorkspaceId = getActiveWorkspaceId\(\)" "$AUTH"
+grep -Fq "const sessionWorkspaceId =" "$API"
+grep -Fq "setActiveWorkspaceId(String(sessionWorkspaceId))" "$API"
 echo "AS6_AUTH_DETERMINISTIC_DESTINATION=PASS"
 echo "AS6_AUTH_SESSION_VERIFIED_BEFORE_DESTINATION=PASS"
 echo "AS6_AUTH_POST_LOGIN_DESTINATION_CONTROL=PASS"

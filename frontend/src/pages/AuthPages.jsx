@@ -44,7 +44,11 @@ function AuthCard({ mode }) {
         throw new Error("Не удалось активировать рабочее пространство.");
       }
 
-      window.location.replace("/app");
+      const requestedDestination = new URLSearchParams(window.location.search).get("next");
+      const safeDestination = requestedDestination && requestedDestination.startsWith("/app")
+        ? requestedDestination
+        : "/app";
+      window.location.replace(safeDestination);
     } catch (apiError) {
       setError(
         apiError?.status === 401

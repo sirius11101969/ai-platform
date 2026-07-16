@@ -1,10 +1,12 @@
 import { Navigate } from "react-router-dom";
+import { getAuthToken } from "../../services/api";
 
 export function RequireAuth({ children }) {
-  const token = localStorage.getItem("as6-token");
+  const token = getAuthToken();
 
   if (!token) {
-    return <Navigate to="/login" replace />;
+    const requestedPath = `${window.location.pathname}${window.location.search || ""}`;
+    return <Navigate to={`/login?next=${encodeURIComponent(requestedPath)}`} replace />;
   }
 
   return children;
