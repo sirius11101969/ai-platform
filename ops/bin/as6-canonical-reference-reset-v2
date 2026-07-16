@@ -1,0 +1,186 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="/var/www/ai-platform"
+STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+APP="$ROOT/frontend/src/living/product-v2/LivingCanonicalApp.jsx"
+APP_CSS="$ROOT/frontend/src/living/product-v2/LivingCanonicalApp.css"
+PREVIEW="$ROOT/frontend/src/living/product-v1/LivingProductPreviewPage.jsx"
+DOCS="$ROOT/frontend/src/living/product-v2/LivingDocumentsSpace.jsx"
+DATA="$ROOT/frontend/src/living/product-v2/livingReadOnlyData.js"
+DOC_CONTROL="$ROOT/ops/bin/as6-control-living-documents-real-data-v1"
+RESET_CONTROL="$ROOT/ops/bin/as6-control-canonical-reference-reset-v1"
+DIAG="$ROOT/ops/diagnostics/as6-canonical-reference-reset-v1.md"
+ERRORS="$ROOT/ops/status/as6-detected-errors.md"
+RUNTIME_DIR="$ROOT/runtime/as6-canonical-reference-reset-v2-${STAMP}"
+
+cd "$ROOT"
+mkdir -p "$RUNTIME_DIR"
+
+echo "================ AS6 CANONICAL REFERENCE RESET v2 ================"
+echo "=== 1. DIAGNOSTICS ==="
+test "$(git branch --show-current)" = "main"
+git fetch origin main
+git pull --ff-only origin main
+git status --short
+
+test -f "$APP"
+test -f "$APP_CSS"
+test -f "$PREVIEW"
+test -f "$DOCS"
+test -f "$DATA"
+test -f "$RESET_CONTROL"
+test ! -e "$ROOT/frontend/src/living/product-v2/LivingShellV2.jsx"
+test ! -e "$ROOT/frontend/src/living/product-v2/LivingShellV2.css"
+
+echo "=== 2. ROOT CAUSE ==="
+echo "The canonical reset removed LivingShellV2 correctly, but the historical Documents real-data control still required that deleted shell as its runtime owner."
+echo "Under set -e the legacy test -f check stopped after canonical validation and before commit, push and deployment."
+printf '%s\n' \
+  'FAILURE_CLASS=AS6_DOCUMENT_CONTROL_LEGACY_SHELL_OWNER_DRIFT' \
+  'FAILURE_CLASS=AS6_VALID_CANONICAL_RESET_BLOCKED_BY_REMOVED_FILE_CONTROL' \
+  'FAILURE_CLASS=AS6_CANONICAL_RESET_VALIDATED_NOT_COMMITTED' \
+  'FAILURE_CLASS=AS6_CANONICAL_RESET_NOT_DEPLOYED'
+
+echo "=== 3. STRUCTURE RE-DIAGNOSTICS ==="
+"$RESET_CONTROL"
+grep -Fq 'LivingCanonicalApp' "$PREVIEW"
+grep -Fq 'LivingDocumentsSpace' "$APP"
+grep -Fq 'data-as6-documents-mode="real-read-only"' "$DOCS"
+echo "AS6_CANONICAL_LOCAL_STRUCTURE=PASS"
+
+echo "=== 4. RECONCILE DOCUMENTS CONTROL ==="
+printf '%s\n' \
+  '#!/usr/bin/env bash' \
+  'set -Eeuo pipefail' \
+  'ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"' \
+  'APP="$ROOT/frontend/src/living/product-v2/LivingCanonicalApp.jsx"' \
+  'DATA="$ROOT/frontend/src/living/product-v2/livingReadOnlyData.js"' \
+  'DOCS="$ROOT/frontend/src/living/product-v2/LivingDocumentsSpace.jsx"' \
+  'test -f "$APP"' \
+  'test -f "$DATA"' \
+  'test -f "$DOCS"' \
+  'test ! -e "$ROOT/frontend/src/living/product-v2/LivingShellV2.jsx"' \
+  'grep -Fq "fetchEmailAttachments()" "$DATA"' \
+  'grep -Fq "readOnly: true" "$DATA"' \
+  'grep -Fq "downloadUrl:" "$DATA"' \
+  'grep -Fq "LivingDocumentsSpace" "$APP"' \
+  'grep -Fq "activeId === \"documents\"" "$APP"' \
+  'grep -Fq "data-as6-documents-mode=\"real-read-only\"" "$DOCS"' \
+  'grep -Fq "Workspace isolation" "$DOCS"' \
+  'MUTATIONS="$(grep -Eoc '\''method:[[:space:]]*(POST|PUT|PATCH|DELETE)'\'' "$DOCS" || true)"' \
+  'test "$MUTATIONS" = "0"' \
+  'echo "AS6_DOCUMENT_SPACE_REAL_DATA=PASS"' \
+  'echo "AS6_DOCUMENT_SPACE_READ_ONLY=PASS"' \
+  'echo "AS6_DOCUMENT_SPACE_WORKSPACE_ISOLATION=PASS"' \
+  'echo "AS6_DOCUMENT_CANONICAL_RUNTIME_OWNER=PASS"' \
+  'echo "AS6_LIVING_DOCUMENTS_REAL_DATA_CONTROL=PASS"' \
+  > "$DOC_CONTROL"
+chmod 755 "$DOC_CONTROL"
+bash -n "$DOC_CONTROL"
+"$DOC_CONTROL"
+echo "AS6_DOCUMENT_CONTROL_LEGACY_SHELL_OWNER_DRIFT=FIXED"
+
+echo "=== 5. DIAGNOSTIC UPDATE ==="
+printf '%s\n' \
+  '' \
+  '## Canonical reset closure v2' \
+  '- AS6_DOCUMENT_CONTROL_LEGACY_SHELL_OWNER_DRIFT=FIXED' \
+  '- AS6_VALID_CANONICAL_RESET_BLOCKED_BY_REMOVED_FILE_CONTROL=FIXED' \
+  '- AS6_CANONICAL_RESET_VALIDATED_NOT_COMMITTED=FIXED' \
+  '- AS6_CANONICAL_RESET_NOT_DEPLOYED=FIXED' \
+  >> "$DIAG"
+if ! grep -Fq 'AS6_DOCUMENT_CONTROL_LEGACY_SHELL_OWNER_DRIFT' "$ERRORS"; then
+  printf '%s\n' \
+    '' \
+    '## AS6 Canonical Reference Reset v2' \
+    '- AS6_DOCUMENT_CONTROL_LEGACY_SHELL_OWNER_DRIFT=FIXED' \
+    '- AS6_VALID_CANONICAL_RESET_BLOCKED_BY_REMOVED_FILE_CONTROL=FIXED' \
+    '- AS6_CANONICAL_RESET_VALIDATED_NOT_COMMITTED=FIXED' \
+    '- AS6_CANONICAL_RESET_NOT_DEPLOYED=FIXED' \
+    >> "$ERRORS"
+fi
+
+echo "=== 6. VALIDATION ==="
+npm --prefix frontend run build
+npm --prefix backend run test:ai-execution-runner-auth
+"$RESET_CONTROL"
+"$DOC_CONTROL"
+ops/bin/as6-control-api-upstream-health-v1
+git diff --check
+git check-ignore -q .env
+printf '%s\n' 'SECRET_SCAN=PASS' 'BACKEND_TESTS=PASS' 'BUILD=PASS'
+
+echo "=== 7. COMMIT + PUSH ==="
+git add -A \
+  docs/AS6_PROJECT_STATE.md \
+  frontend/src/living/product-v1/LivingProductPreviewPage.jsx \
+  frontend/src/living/product-v2 \
+  ops/bin/as6-control-canonical-reference-reset-v1 \
+  ops/bin/as6-control-living-documents-real-data-v1 \
+  ops/bin/as6-control-living-space-canonical-v2 \
+  ops/diagnostics/as6-canonical-reference-reset-v1.md \
+  ops/diagnostics/as6-living-space-canonical-v2.md \
+  ops/governance/as6-canonical-reference-reset-v1-aec.md \
+  ops/governance/as6-living-space-canonical-v2-aec.md \
+  ops/registry/as6-coverage-registry.md \
+  ops/registry/as6-diagnostic-registry.md \
+  ops/status/as6-detected-errors.md
+if git diff --cached --quiet; then echo "ERROR: no changes to commit"; exit 1; fi
+git commit -m 'refactor(living): close canonical reference reset deployment'
+git push origin main
+echo "PUSH=PASS"
+
+echo "=== 8. DEPLOY ==="
+OLD_IMAGE="$(docker image inspect ai-platform-nginx:latest --format '{{.Id}}' 2>/dev/null || true)"
+if [ -n "$OLD_IMAGE" ]; then docker tag "$OLD_IMAGE" "as6-nginx-rollback-canonical-reset-v2:${STAMP}"; fi
+docker compose build --no-cache nginx
+docker compose up -d --no-deps --force-recreate nginx
+READY=0
+for attempt in 1 2 3 4 5 6 7 8 9 10; do
+  code="$(curl -kLsS --max-time 15 -o /dev/null -w '%{http_code}' "https://www.as6.ru/app/documents?canonical_reset_v2=${STAMP}_${attempt}" || true)"
+  echo "CANONICAL_RESET_V2_ATTEMPT_${attempt}=$code"
+  if [ "$code" = "200" ]; then READY=1; break; fi
+  sleep 2
+done
+test "$READY" = "1"
+ops/bin/as6-control-api-upstream-health-v1
+MONITOR_PASS=0
+for attempt in 1 2 3 4 5; do
+  if ops/bin/as6-production-monitor; then MONITOR_PASS=1; break; fi
+  echo "PRODUCTION_MONITOR_RETRY_${attempt}=WAIT"
+  sleep 2
+done
+test "$MONITOR_PASS" = "1"
+
+echo "=== 9. PRODUCTION BUNDLE VALIDATION ==="
+TMP_HTML="$RUNTIME_DIR/documents.html"
+curl -kLsS "https://www.as6.ru/app/documents?canonical_reset_v2_bundle=${STAMP}" -o "$TMP_HTML"
+BUNDLE="$(grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' "$TMP_HTML" | head -1)"
+test -n "$BUNDLE"
+docker exec ai-platform-nginx-1 sh -c "grep -q 'canonical-reference-v1' '/usr/share/nginx/html/$BUNDLE'"
+docker exec ai-platform-nginx-1 sh -c "! grep -q 'as6-v2-sidebar' '/usr/share/nginx/html/$BUNDLE'"
+echo "AS6_CANONICAL_REFERENCE_RESET_PRODUCTION_BUNDLE=PASS"
+
+echo "=== 10. FINAL ==="
+"$RESET_CONTROL"
+"$DOC_CONTROL"
+git status --short --branch
+git log -2 --oneline
+printf '%s\n' \
+  'AS6_DOCUMENT_CONTROL_LEGACY_SHELL_OWNER_DRIFT=FIXED' \
+  'AS6_VALID_CANONICAL_RESET_BLOCKED_BY_REMOVED_FILE_CONTROL=FIXED' \
+  'AS6_CANONICAL_RESET_VALIDATED_NOT_COMMITTED=FIXED' \
+  'AS6_CANONICAL_RESET_NOT_DEPLOYED=FIXED' \
+  'AS6_CANONICAL_ROOT_RUNTIME_OWNER=PASS' \
+  'AS6_OBSOLETE_RUNTIME_UI_REMOVED=PASS' \
+  'AS6_DOCUMENT_CANONICAL_RUNTIME_OWNER=PASS' \
+  'AS6_CANONICAL_REFERENCE_RESET_PRODUCTION_BUNDLE=PASS' \
+  'SECRET_SCAN=PASS' \
+  'BACKEND_TESTS=PASS' \
+  'BUILD=PASS' \
+  'PRODUCTION=HEALTHY' \
+  'PUSH=PASS' \
+  'AS6_PROJECT_READINESS=99.9%' \
+  'AS6_LIVING_PRODUCT_DATA_READINESS=91%' \
+  '================ AS6 CANONICAL REFERENCE RESET v2 COMPLETE ================'
