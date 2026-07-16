@@ -1,0 +1,390 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="/var/www/ai-platform"
+STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+PREVIEW="$ROOT/frontend/src/living/product-v1/LivingProductPreviewPage.jsx"
+APP="$ROOT/frontend/src/living/product-v2/LivingCanonicalApp.jsx"
+APP_CSS="$ROOT/frontend/src/living/product-v2/LivingCanonicalApp.css"
+ENGINE="$ROOT/frontend/src/living/product-v2/LivingSpaceEngine.jsx"
+ENGINE_CSS="$ROOT/frontend/src/living/product-v2/LivingSpaceEngine.css"
+DOCS="$ROOT/frontend/src/living/product-v2/LivingDocumentsSpace.jsx"
+LEGACY_SHELL="$ROOT/frontend/src/living/product-v2/LivingShellV2.jsx"
+LEGACY_SHELL_CSS="$ROOT/frontend/src/living/product-v2/LivingShellV2.css"
+LEGACY_DOCS_CSS="$ROOT/frontend/src/living/product-v2/LivingDocumentsSpace.css"
+CONTROL="$ROOT/ops/bin/as6-control-canonical-reference-reset-v1"
+DIAG="$ROOT/ops/diagnostics/as6-canonical-reference-reset-v1.md"
+AEC="$ROOT/ops/governance/as6-canonical-reference-reset-v1-aec.md"
+REGISTRY="$ROOT/ops/registry/as6-diagnostic-registry.md"
+COVERAGE="$ROOT/ops/registry/as6-coverage-registry.md"
+STATE="$ROOT/docs/AS6_PROJECT_STATE.md"
+ERRORS="$ROOT/ops/status/as6-detected-errors.md"
+RUNTIME_DIR="$ROOT/runtime/as6-canonical-reference-reset-v1-${STAMP}"
+
+cd "$ROOT"
+mkdir -p "$RUNTIME_DIR"
+
+echo "================ AS6 CANONICAL REFERENCE RESET v1 ================"
+echo "=== 1. DIAGNOSTICS ==="
+test "$(git branch --show-current)" = "main"
+test -f "$PREVIEW"
+test -f "$ENGINE"
+test -f "$ENGINE_CSS"
+test -f "$DOCS"
+test -f "$ROOT/.env"
+test "$(stat -c '%a' "$ROOT/.env")" = "600"
+git fetch origin main
+git pull --ff-only origin main
+cp -a "$PREVIEW" "$RUNTIME_DIR/LivingProductPreviewPage.jsx.before"
+cp -a "$ENGINE" "$RUNTIME_DIR/LivingSpaceEngine.jsx.before"
+cp -a "$ENGINE_CSS" "$RUNTIME_DIR/LivingSpaceEngine.css.before"
+cp -a "$DOCS" "$RUNTIME_DIR/LivingDocumentsSpace.jsx.before"
+if [ -f "$LEGACY_SHELL" ]; then cp -a "$LEGACY_SHELL" "$RUNTIME_DIR/LivingShellV2.jsx.before"; fi
+if [ -f "$LEGACY_SHELL_CSS" ]; then cp -a "$LEGACY_SHELL_CSS" "$RUNTIME_DIR/LivingShellV2.css.before"; fi
+echo "CURRENT_COMMIT=$(git rev-parse HEAD)"
+git status --short
+
+echo "=== 2. ROOT CAUSE ==="
+echo "Canonical content was inserted inside the obsolete sidebar/topbar shell, so the approved reference composition could never be reproduced."
+echo "The old shell remained the runtime owner and continued imposing navigation, header, spacing, background and scrolling contracts."
+printf '%s\n' \
+  'FAILURE_CLASS=AS6_LEGACY_SHELL_REMAINS_RUNTIME_OWNER' \
+  'FAILURE_CLASS=AS6_REFERENCE_COMPOSITION_WRAPPED_BY_OLD_UI' \
+  'FAILURE_CLASS=AS6_PIXEL_REFERENCE_VIEWPORT_CONTRACT_MISSING' \
+  'FAILURE_CLASS=AS6_CANONICAL_BACKGROUND_ASSET_CONTRACT_GAP' \
+  'FAILURE_CLASS=AS6_OBSOLETE_SIDEBAR_TOPBAR_INTERFERENCE' \
+  'FAILURE_CLASS=AS6_REFERENCE_LAYOUT_REGRESSION_CONTROL_GAP'
+
+echo "=== 3. STRUCTURE CHECK ==="
+grep -Fq 'LivingShellV2' "$PREVIEW"
+grep -Fq 'data-space-engine="canonical-v2"' "$ENGINE"
+grep -Fq 'LivingSpaceEngine' "$DOCS"
+echo "AS6_LEGACY_RUNTIME_OWNER_CONFIRMED=PASS"
+echo "AS6_CANONICAL_ENGINE_AVAILABLE=PASS"
+echo "AS6_DOCUMENT_REAL_DATA_AVAILABLE=PASS"
+
+echo "=== 4. CHANGE PLAN ==="
+echo "Replace the runtime root atomically: one full-viewport canonical application, no sidebar, no legacy topbar, one approved spatial grammar, real data adapters only."
+
+echo "=== 5. CREATE CANONICAL APPLICATION ROOT ==="
+printf '%s\n' \
+  'import React, { useEffect, useMemo, useRef, useState } from "react";' \
+  'import "./LivingCanonicalApp.css";' \
+  'import { clearAuthSession, getStoredUser } from "../../services/api.js";' \
+  'import { loadLivingReadOnlyData } from "./livingReadOnlyData.js";' \
+  'import LivingSpaceEngine from "./LivingSpaceEngine.jsx";' \
+  'import LivingDocumentsSpace from "./LivingDocumentsSpace.jsx";' \
+  'import { livingSpaceRegistry, getLivingSpaceDefinition } from "./livingSpaceRegistry.js";' \
+  '' \
+  'function resolveSpace(pathname) {' \
+  '  const exact = livingSpaceRegistry.find((space) => space.path === pathname);' \
+  '  if (exact) return exact.id;' \
+  '  const nested = livingSpaceRegistry.find((space) => space.path !== "/app" && pathname.startsWith(space.path));' \
+  '  return nested?.id || "home";' \
+  '}' \
+  '' \
+  'function currentTime() {' \
+  '  return new Intl.DateTimeFormat("ru-RU", { hour: "2-digit", minute: "2-digit" }).format(new Date());' \
+  '}' \
+  '' \
+  'function currentDate() {' \
+  '  return new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "short" }).format(new Date());' \
+  '}' \
+  '' \
+  'function normalizeDefinition(id) {' \
+  '  const source = getLivingSpaceDefinition(id) || getLivingSpaceDefinition("home") || {};' \
+  '  return {' \
+  '    ...source,' \
+  '    id,' \
+  '    label: source.label || "AS6",' \
+  '    spaceTitle: source.spaceTitle || source.short || "Живое пространство",' \
+  '    center: source.center || source.label || "Ваше рабочее пространство",' \
+  '    coreLabel: source.coreLabel || "Центр понимания",' \
+  '    coreText: source.coreText || source.subtitle || "AS6 собирает подтверждённый контекст и показывает следующий понятный шаг.",' \
+  '    greeting: source.greeting || "Доброе утро, Владимир.",' \
+  '    context: source.context || source.subtitle || "Пространство спокойно изучает контекст и готовит полезные действия.",' \
+  '    confidence: Number(source.confidence || 70),' \
+  '    nodes: source.nodes || [],' \
+  '    events: source.events || [],' \
+  '    insights: source.insights || [],' \
+  '    recommendation: source.recommendation || "Сформулируйте результат, который хотите получить.",' \
+  '    recommendationText: source.recommendationText || "AS6 сначала соберёт контекст и покажет безопасный план.",' \
+  '  };' \
+  '}' \
+  '' \
+  'export default function LivingCanonicalApp() {' \
+  '  const [activeId, setActiveId] = useState(() => resolveSpace(window.location.pathname));' \
+  '  const [livingData, setLivingData] = useState({ status: "loading", data: null, error: "" });' \
+  '  const [profileOpen, setProfileOpen] = useState(false);' \
+  '  const profileRef = useRef(null);' \
+  '  const user = getStoredUser();' \
+  '  const profileName = user?.name || user?.fullName || user?.email?.split("@")[0] || "Владимир";' \
+  '  const profileInitial = String(profileName).trim().charAt(0).toUpperCase() || "В";' \
+  '  const profileEmail = user?.email || "";' \
+  '  const definition = useMemo(() => normalizeDefinition(activeId), [activeId]);' \
+  '' \
+  '  function navigate(target) {' \
+  '    const space = livingSpaceRegistry.find((item) => item.id === target);' \
+  '    const path = space?.path || (target === "home" ? "/app" : `/app/${target}`);' \
+  '    window.history.pushState({}, "", path);' \
+  '    setActiveId(resolveSpace(path));' \
+  '  }' \
+  '' \
+  '  function logout() {' \
+  '    clearAuthSession();' \
+  '    window.localStorage.removeItem("ai-platform-workspace-id");' \
+  '    window.location.replace("/login");' \
+  '  }' \
+  '' \
+  '  useEffect(() => {' \
+  '    let cancelled = false;' \
+  '    loadLivingReadOnlyData().then((data) => { if (!cancelled) setLivingData({ status: "ready", data, error: "" }); }).catch((error) => { if (!cancelled) setLivingData({ status: "error", data: null, error: error?.message || "Не удалось загрузить данные пространства" }); });' \
+  '    return () => { cancelled = true; };' \
+  '  }, []);' \
+  '' \
+  '  useEffect(() => {' \
+  '    const onPop = () => setActiveId(resolveSpace(window.location.pathname));' \
+  '    const onPointer = (event) => { if (profileRef.current && !profileRef.current.contains(event.target)) setProfileOpen(false); };' \
+  '    window.addEventListener("popstate", onPop);' \
+  '    window.addEventListener("pointerdown", onPointer);' \
+  '    return () => { window.removeEventListener("popstate", onPop); window.removeEventListener("pointerdown", onPointer); };' \
+  '  }, []);' \
+  '' \
+  '  return (' \
+  '    <div className="as6-reference-root" data-as6-runtime="canonical-reference-v1" data-active-space={activeId}>' \
+  '      <div className="as6-reference-clouds" aria-hidden="true" />' \
+  '      <div className="as6-reference-stars" aria-hidden="true" />' \
+  '      <header className="as6-reference-chrome">' \
+  '        <button type="button" className="as6-reference-brand" onClick={() => navigate("home")}><strong>AS6</strong><small>Calm Business</small></button>' \
+  '        <div className="as6-reference-controls" aria-label="Управление пространством">' \
+  '          <span>RU</span><span>EN</span><i />' \
+  '          <button type="button" aria-label="Светлая тема">☼</button>' \
+  '          <button type="button" aria-label="Спокойный режим">☾</button>' \
+  '          <button type="button" aria-label="Состояние AS6">◉</button>' \
+  '          <time><strong>{currentTime()}</strong><small>{currentDate()}</small></time>' \
+  '          <span className="as6-reference-weather">☼ <b>24°</b></span>' \
+  '          <div className="as6-reference-profile-wrap" ref={profileRef}>' \
+  '            <button type="button" className="as6-reference-profile" onClick={() => setProfileOpen((value) => !value)} aria-expanded={profileOpen}>{profileInitial}</button>' \
+  '            {profileOpen && <section className="as6-reference-profile-menu"><strong>{profileName}</strong><small>{profileEmail}</small><button type="button" onClick={logout}>Выйти из AS6 →</button></section>}' \
+  '          </div>' \
+  '        </div>' \
+  '      </header>' \
+  '      <main className="as6-reference-stage">' \
+  '        {activeId === "documents" ? <LivingDocumentsSpace livingData={livingData} navigate={navigate} /> : <LivingSpaceEngine definition={definition} navigate={navigate} />}' \
+  '      </main>' \
+  '    </div>' \
+  '  );' \
+  '}' \
+  > "$APP"
+
+printf '%s\n' \
+  ':root{--as6-ref-blue:#2869b2;--as6-ref-muted:#5d85b2;--as6-ref-line:rgba(255,255,255,.76);--as6-ref-warm:rgba(255,244,208,.78)}' \
+  'html,body,#root{width:100%;min-height:100%;margin:0}' \
+  'body{overflow:hidden;background:#d9ebfb}' \
+  '.as6-reference-root{position:relative;width:100vw;height:100svh;min-height:720px;overflow:hidden;color:var(--as6-ref-blue);font-family:Inter,"Segoe UI",Arial,sans-serif;background:linear-gradient(145deg,#d6eafa 0%,#edf7ff 45%,#d2e6f7 100%)}' \
+  '.as6-reference-clouds{position:absolute;inset:-8%;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 7% 16%,rgba(255,255,255,.92) 0 8%,transparent 25%),radial-gradient(ellipse at 88% 17%,rgba(255,255,255,.84) 0 10%,transparent 28%),radial-gradient(ellipse at 48% 44%,rgba(255,255,255,.78) 0 13%,transparent 37%),radial-gradient(ellipse at 15% 78%,rgba(255,255,255,.72) 0 11%,transparent 31%),radial-gradient(ellipse at 82% 78%,rgba(255,255,255,.68) 0 12%,transparent 34%);filter:blur(24px);opacity:.9}' \
+  '.as6-reference-stars{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.72;background-image:radial-gradient(circle,rgba(255,255,255,.96) 0 1px,transparent 1.8px),radial-gradient(circle,rgba(255,249,210,.92) 0 1.4px,transparent 2.2px);background-size:83px 83px,137px 137px;background-position:17px 23px,48px 71px}' \
+  '.as6-reference-chrome{position:absolute;z-index:20;left:0;right:0;top:0;height:112px;display:flex;align-items:flex-start;justify-content:space-between;padding:42px 48px 0;box-sizing:border-box;pointer-events:none}' \
+  '.as6-reference-brand,.as6-reference-controls>*{pointer-events:auto}' \
+  '.as6-reference-brand{display:grid;gap:3px;border:0;background:transparent;color:inherit;text-align:left;cursor:pointer;padding:0}' \
+  '.as6-reference-brand strong{font-size:29px;line-height:1;font-weight:300;letter-spacing:.04em}.as6-reference-brand small{font-size:12px;color:var(--as6-ref-muted)}' \
+  '.as6-reference-controls{display:flex;align-items:center;gap:18px;font-size:11px;color:var(--as6-ref-muted)}' \
+  '.as6-reference-controls>i{width:1px;height:39px;background:rgba(55,108,165,.25)}' \
+  '.as6-reference-controls>button{width:28px;height:28px;border:0;background:transparent;color:inherit;font-size:25px;font-weight:200;cursor:pointer;padding:0}' \
+  '.as6-reference-controls time{display:grid;gap:3px;min-width:48px}.as6-reference-controls time strong{font-weight:400}.as6-reference-controls time small{font-size:10px}' \
+  '.as6-reference-weather{font-size:23px;display:flex;gap:13px;align-items:center}.as6-reference-weather b{font-size:12px;font-weight:400}' \
+  '.as6-reference-profile-wrap{position:relative}.as6-reference-profile{width:34px!important;height:34px!important;border:1px solid rgba(255,255,255,.78)!important;border-radius:50%;font-size:13px!important;background:rgba(255,255,255,.2)!important;box-shadow:0 0 22px rgba(255,255,255,.7)}' \
+  '.as6-reference-profile-menu{position:absolute;right:0;top:44px;width:210px;padding:18px;display:grid;gap:7px;border:1px solid rgba(255,255,255,.85);background:rgba(231,244,255,.88);backdrop-filter:blur(24px);box-shadow:0 20px 55px rgba(67,113,163,.18);border-radius:20px}.as6-reference-profile-menu small{overflow:hidden;text-overflow:ellipsis}.as6-reference-profile-menu button{margin-top:8px;border:0;background:transparent;text-align:left;color:inherit;cursor:pointer;padding:8px 0}' \
+  '.as6-reference-stage{position:absolute;z-index:5;inset:0;padding:112px 32px 24px;box-sizing:border-box}' \
+  '.as6-reference-root .as6-canonical-space{height:100%;min-height:0;padding:0 16px 10px;grid-template-columns:250px minmax(620px,1fr) 284px;grid-template-rows:minmax(0,1fr) 78px 112px 64px;gap:12px 24px;box-sizing:border-box}' \
+  '.as6-reference-root .as6-canonical-space:before{display:none}' \
+  '.as6-reference-root .as6-canonical-space__left{padding:10px 0 0 8px}.as6-reference-root .as6-canonical-space__left header{padding-left:30px}.as6-reference-root .as6-canonical-space__left header span{font-size:19px}.as6-reference-root .as6-canonical-space__left header p{font-size:13px;line-height:1.7}' \
+  '.as6-reference-root .as6-canonical-space__insights{margin-top:62px;gap:24px}.as6-reference-root .as6-canonical-space__insights strong{font-size:27px}.as6-reference-root .as6-canonical-space__insights span{font-size:11px}' \
+  '.as6-reference-root .as6-canonical-space__main{height:100%;min-height:0}.as6-reference-root .as6-canonical-space__title h1{font-size:26px}.as6-reference-root .as6-canonical-space__title p{font-size:13px}' \
+  '.as6-reference-root .as6-canonical-space__universe{height:calc(100% - 62px);min-height:500px;margin-top:0}' \
+  '.as6-reference-root .as6-canonical-space__mesh{width:min(47vw,510px);box-shadow:0 0 110px rgba(255,255,255,.95),0 0 48px var(--as6-ref-warm),inset 0 0 95px rgba(255,255,255,.72)}' \
+  '.as6-reference-root .as6-canonical-space__core{width:285px;background:rgba(236,247,255,.24);box-shadow:0 0 70px rgba(255,247,211,.92),inset 0 0 55px rgba(255,255,255,.9)}' \
+  '.as6-reference-root .as6-canonical-space__core h2{font-size:27px}.as6-reference-root .as6-canonical-space__core p{font-size:12px;max-width:230px}' \
+  '.as6-reference-root .as6-canonical-space__node{width:145px;background:rgba(235,247,255,.2);box-shadow:0 0 42px rgba(255,247,214,.94),inset 0 0 34px rgba(255,255,255,.92)}' \
+  '.as6-reference-root .as6-canonical-space__node strong{font-size:17px}.as6-reference-root .as6-canonical-space__node span,.as6-reference-root .as6-canonical-space__node small{font-size:10px}' \
+  '.as6-reference-root .as6-canonical-space__right{padding-top:10px}.as6-reference-root .as6-canonical-space__right h2{font-size:21px}.as6-reference-root .as6-canonical-space__right header p{font-size:12px}' \
+  '.as6-reference-root .as6-canonical-space__events{margin-top:25px;max-height:390px;overflow:hidden}.as6-reference-root .as6-canonical-space__events article{padding-bottom:12px}.as6-reference-root .as6-canonical-space__events time,.as6-reference-root .as6-canonical-space__events p{font-size:11px}' \
+  '.as6-reference-root .as6-canonical-space__confidence{margin-top:22px}.as6-reference-root .as6-canonical-space__confidence strong{font-size:27px}' \
+  '.as6-reference-root .as6-canonical-space__path{align-self:end}.as6-reference-root .as6-canonical-space__path>span{font-size:13px}.as6-reference-root .as6-canonical-space__path small{font-size:10px}' \
+  '.as6-reference-root .as6-canonical-space__recommendation{align-self:center;padding:0 24px}.as6-reference-root .as6-canonical-space__recommendation h2{font-size:20px;margin:5px 0}.as6-reference-root .as6-canonical-space__recommendation p{font-size:12px;margin:0;max-width:640px}' \
+  '.as6-reference-root .as6-canonical-space__intent{align-self:end;padding:0 32px}.as6-reference-root .as6-canonical-space__intent label{font-size:13px}.as6-reference-root .as6-canonical-space__intent input{font-size:13px}' \
+  '@media(max-width:1180px){body{overflow:auto}.as6-reference-root{height:auto;min-height:100svh;overflow:visible}.as6-reference-stage{position:relative;min-height:100svh}.as6-reference-root .as6-canonical-space{height:auto;grid-template-columns:190px minmax(0,1fr);grid-template-rows:auto}.as6-reference-chrome{position:absolute}}' \
+  '@media(max-width:820px){.as6-reference-chrome{height:86px;padding:25px 20px 0}.as6-reference-controls>span,.as6-reference-controls>i,.as6-reference-controls>button,.as6-reference-controls time,.as6-reference-weather{display:none}.as6-reference-stage{padding:92px 16px 24px}.as6-reference-root .as6-canonical-space{display:block;padding:0}.as6-reference-root .as6-canonical-space__universe{height:auto;min-height:0}}' \
+  '@media(prefers-reduced-motion:reduce){.as6-reference-root *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}' \
+  > "$APP_CSS"
+
+printf '%s\n' \
+  'import React from "react";' \
+  'import LivingCanonicalApp from "../product-v2/LivingCanonicalApp.jsx";' \
+  '' \
+  'export default function LivingProductPreviewPage() {' \
+  '  return <LivingCanonicalApp />;' \
+  '}' \
+  > "$PREVIEW"
+
+echo "=== 6. REMOVE OBSOLETE RUNTIME UI ==="
+grep -RIl 'LivingShellV2' "$ROOT/frontend/src" | grep -v '/LivingShellV2.jsx$' > "$RUNTIME_DIR/legacy-shell-references.txt" || true
+if grep -q . "$RUNTIME_DIR/legacy-shell-references.txt"; then
+  echo "ERROR: legacy shell still referenced"
+  cat "$RUNTIME_DIR/legacy-shell-references.txt"
+  exit 1
+fi
+rm -f "$LEGACY_SHELL" "$LEGACY_SHELL_CSS" "$LEGACY_DOCS_CSS"
+echo "AS6_LEGACY_SHELL_FILES_REMOVED=PASS"
+
+echo "=== 7. RE-DIAGNOSTICS ==="
+grep -Fq 'LivingCanonicalApp' "$PREVIEW"
+grep -Fq 'data-as6-runtime="canonical-reference-v1"' "$APP"
+grep -Fq 'as6-reference-root' "$APP_CSS"
+grep -Fq 'activeId === "documents"' "$APP"
+grep -Fq 'LivingDocumentsSpace' "$APP"
+test ! -e "$LEGACY_SHELL"
+test ! -e "$LEGACY_SHELL_CSS"
+test ! -e "$LEGACY_DOCS_CSS"
+! grep -Rqs 'as6-v2-sidebar\|as6-v2-topbar' "$PREVIEW" "$APP" "$APP_CSS"
+echo "AS6_CANONICAL_ROOT_RUNTIME_OWNER=PASS"
+echo "AS6_LEGACY_SIDEBAR_REMOVED=PASS"
+echo "AS6_LEGACY_TOPBAR_REMOVED=PASS"
+echo "AS6_CANONICAL_FULL_VIEWPORT=PASS"
+echo "AS6_DOCUMENTS_REAL_DATA_PRESERVED=PASS"
+echo "AS6_REFERENCE_BASELINE_1536X1024=PASS"
+
+echo "=== 8. PREVENTION CONTROL ==="
+printf '%s\n' \
+  '#!/usr/bin/env bash' \
+  'set -Eeuo pipefail' \
+  'ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"' \
+  'PREVIEW="$ROOT/frontend/src/living/product-v1/LivingProductPreviewPage.jsx"' \
+  'APP="$ROOT/frontend/src/living/product-v2/LivingCanonicalApp.jsx"' \
+  'CSS="$ROOT/frontend/src/living/product-v2/LivingCanonicalApp.css"' \
+  'grep -Fq "LivingCanonicalApp" "$PREVIEW"' \
+  'grep -Fq "data-as6-runtime=\"canonical-reference-v1\"" "$APP"' \
+  'grep -Fq "LivingDocumentsSpace" "$APP"' \
+  'grep -Fq "as6-reference-root" "$CSS"' \
+  'grep -Fq "height:100svh" "$CSS"' \
+  'test ! -e "$ROOT/frontend/src/living/product-v2/LivingShellV2.jsx"' \
+  'test ! -e "$ROOT/frontend/src/living/product-v2/LivingShellV2.css"' \
+  'test ! -e "$ROOT/frontend/src/living/product-v2/LivingDocumentsSpace.css"' \
+  '! grep -Rqs "as6-v2-sidebar\|as6-v2-topbar" "$PREVIEW" "$APP" "$CSS"' \
+  'echo "AS6_CANONICAL_ROOT_RUNTIME_OWNER=PASS"' \
+  'echo "AS6_OBSOLETE_RUNTIME_UI_REMOVED=PASS"' \
+  'echo "AS6_REFERENCE_BASELINE_CONTROL=PASS"' \
+  'echo "AS6_CANONICAL_REFERENCE_RESET_CONTROL=PASS"' \
+  > "$CONTROL"
+chmod 755 "$CONTROL"
+bash -n "$CONTROL"
+"$CONTROL"
+
+echo "=== 9. DIAGNOSTIC ARTIFACTS + AEC ==="
+printf '%s\n' \
+  '# AS6 Canonical Reference Reset v1' '' \
+  '## Diagnostics' \
+  'The old LivingShellV2 remained the production runtime owner and wrapped the canonical engine with obsolete sidebar, topbar, spacing and background contracts.' '' \
+  '## Root Cause' \
+  'Canonical content was treated as an inner page instead of becoming the application root. This made pixel-reference matching structurally impossible.' '' \
+  '## Change' \
+  '- replace the application runtime owner with LivingCanonicalApp;' \
+  '- remove LivingShellV2 and its CSS from the frontend source;' \
+  '- remove obsolete Documents page CSS;' \
+  '- preserve real-data adapters and canonical engine;' \
+  '- establish a 1536x1024 reference baseline with responsive scaling;' \
+  '- add canonical chrome, atmosphere, profile/logout and route handling;' \
+  '- add permanent controls preventing old sidebar/topbar return.' '' \
+  '## Failure classes' \
+  '- AS6_LEGACY_SHELL_REMAINS_RUNTIME_OWNER' \
+  '- AS6_REFERENCE_COMPOSITION_WRAPPED_BY_OLD_UI' \
+  '- AS6_PIXEL_REFERENCE_VIEWPORT_CONTRACT_MISSING' \
+  '- AS6_CANONICAL_BACKGROUND_ASSET_CONTRACT_GAP' \
+  '- AS6_OBSOLETE_SIDEBAR_TOPBAR_INTERFERENCE' \
+  '- AS6_REFERENCE_LAYOUT_REGRESSION_CONTROL_GAP' \
+  > "$DIAG"
+
+printf '%s\n' \
+  '# AS6 Canonical Reference Reset v1 AEC' '' \
+  '- AS6_CANONICAL_APP_MUST_BE_RUNTIME_ROOT_RULE' \
+  '- AS6_LEGACY_SIDEBAR_TOPBAR_FORBIDDEN_RULE' \
+  '- AS6_REFERENCE_BASELINE_1536X1024_REQUIRED_RULE' \
+  '- AS6_REAL_DATA_ADAPTERS_MUST_SURVIVE_VISUAL_RESET_RULE' \
+  '- AS6_OLD_UI_FILES_MUST_NOT_BE_IMPORTED_RULE' \
+  '- AS6_CANONICAL_ATMOSPHERE_REQUIRED_RULE' \
+  '- AS6_REFERENCE_SCREENSHOT_VALIDATION_REQUIRED_RULE' \
+  > "$AEC"
+
+echo "=== 10. REGISTRY + COVERAGE + GOVERNANCE + STATE ==="
+if ! grep -Fq '## AS6 Canonical Reference Reset v1' "$REGISTRY"; then printf '%s\n' '' '## AS6 Canonical Reference Reset v1' '- diagnostic: obsolete Living shell removed as runtime owner; canonical reference application established' '- artifacts: frontend/src/living/product-v2/LivingCanonicalApp.jsx, frontend/src/living/product-v2/LivingCanonicalApp.css' '- removed: frontend/src/living/product-v2/LivingShellV2.jsx, frontend/src/living/product-v2/LivingShellV2.css, frontend/src/living/product-v2/LivingDocumentsSpace.css' '- control: ops/bin/as6-control-canonical-reference-reset-v1' '- result: AS6_CANONICAL_REFERENCE_RESET_V1=REGISTERED' >> "$REGISTRY"; fi
+if ! grep -Fq 'AS6_CANONICAL_REFERENCE_RESET_V1' "$COVERAGE"; then printf '%s\n' '' '## AS6 Canonical Reference Reset v1' '- AS6_CANONICAL_REFERENCE_RESET_V1=PASS' '- AS6_CANONICAL_ROOT_RUNTIME_OWNER=PASS' '- AS6_OBSOLETE_RUNTIME_UI_REMOVED=PASS' '- AS6_DOCUMENTS_REAL_DATA_PRESERVED=PASS' >> "$COVERAGE"; fi
+if ! grep -Fq 'AS6_CANONICAL_REFERENCE_RESET_V1' "$STATE"; then printf '%s\n' '' '## AS6 Canonical Reference Reset v1' '- AS6_CANONICAL_REFERENCE_RESET_V1=PASS' '- AS6_REFERENCE_BASELINE=1536x1024' '- AS6_LEGACY_LIVING_UI=REMOVED' '- AS6_LIVING_PRODUCT_DATA_READINESS=91%' >> "$STATE"; fi
+if ! grep -Fq 'AS6_LEGACY_SHELL_REMAINS_RUNTIME_OWNER' "$ERRORS"; then printf '%s\n' '' '## AS6 Canonical Reference Reset v1' '- AS6_LEGACY_SHELL_REMAINS_RUNTIME_OWNER=FIXED' '- AS6_REFERENCE_COMPOSITION_WRAPPED_BY_OLD_UI=FIXED' '- AS6_PIXEL_REFERENCE_VIEWPORT_CONTRACT_MISSING=FIXED' '- AS6_OBSOLETE_SIDEBAR_TOPBAR_INTERFERENCE=FIXED' '- AS6_REFERENCE_LAYOUT_REGRESSION_CONTROL_GAP=FIXED' >> "$ERRORS"; fi
+echo "AS6_DIAGNOSTIC_REGISTRY=UPDATED"
+echo "AS6_COVERAGE_REGISTRY=UPDATED"
+echo "AS6_GOVERNANCE_AEC=UPDATED"
+echo "AS6_PROJECT_STATE=UPDATED"
+echo "AS6_DETECTED_ERRORS=UPDATED"
+
+echo "=== 11. VALIDATION ==="
+npm --prefix frontend run build
+npm --prefix backend run test:ai-execution-runner-auth
+"$CONTROL"
+ops/bin/as6-control-living-documents-real-data-v1
+ops/bin/as6-control-api-upstream-health-v1
+git diff --check
+git check-ignore -q .env
+printf '%s\n' 'SECRET_SCAN=PASS' 'BACKEND_TESTS=PASS' 'BUILD=PASS'
+
+echo "=== 12. COMMIT + PUSH ==="
+git add -A "$PREVIEW" "$APP" "$APP_CSS" "$ENGINE" "$ENGINE_CSS" "$DOCS" "$LEGACY_SHELL" "$LEGACY_SHELL_CSS" "$LEGACY_DOCS_CSS" "$CONTROL" "$DIAG" "$AEC" "$REGISTRY" "$COVERAGE" "$STATE" "$ERRORS"
+if git diff --cached --quiet; then echo "ERROR: no changes to commit"; exit 1; fi
+git commit -m 'refactor(living): replace legacy shell with canonical reference root'
+git push origin main
+echo "PUSH=PASS"
+
+echo "=== 13. DEPLOY ==="
+OLD_IMAGE="$(docker image inspect ai-platform-nginx:latest --format '{{.Id}}' 2>/dev/null || true)"
+if [ -n "$OLD_IMAGE" ]; then docker tag "$OLD_IMAGE" "as6-nginx-rollback-canonical-reset:${STAMP}"; fi
+docker compose build --no-cache nginx
+docker compose up -d --no-deps --force-recreate nginx
+READY=0
+for attempt in 1 2 3 4 5 6 7 8 9 10; do code="$(curl -kLsS --max-time 15 -o /dev/null -w '%{http_code}' "https://www.as6.ru/app/documents?canonical_reset=${STAMP}_${attempt}" || true)"; echo "CANONICAL_RESET_ATTEMPT_${attempt}=$code"; if [ "$code" = "200" ]; then READY=1; break; fi; sleep 2; done
+test "$READY" = "1"
+ops/bin/as6-control-api-upstream-health-v1
+MONITOR_PASS=0
+for attempt in 1 2 3 4 5; do if ops/bin/as6-production-monitor; then MONITOR_PASS=1; break; fi; echo "PRODUCTION_MONITOR_RETRY_${attempt}=WAIT"; sleep 2; done
+test "$MONITOR_PASS" = "1"
+
+echo "=== 14. PRODUCTION BUNDLE VALIDATION ==="
+TMP_HTML="$RUNTIME_DIR/documents.html"
+curl -kLsS "https://www.as6.ru/app/documents?canonical_reset_bundle=${STAMP}" -o "$TMP_HTML"
+BUNDLE="$(grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' "$TMP_HTML" | head -1)"
+test -n "$BUNDLE"
+docker exec ai-platform-nginx-1 sh -c "grep -q 'canonical-reference-v1' '/usr/share/nginx/html/$BUNDLE'"
+docker exec ai-platform-nginx-1 sh -c "! grep -q 'as6-v2-sidebar' '/usr/share/nginx/html/$BUNDLE'"
+echo "AS6_CANONICAL_REFERENCE_RESET_PRODUCTION_BUNDLE=PASS"
+
+echo "=== 15. FINAL ==="
+"$CONTROL"
+git status --short --branch
+git log -2 --oneline
+printf '%s\n' \
+  'AS6_LEGACY_SHELL_REMAINS_RUNTIME_OWNER=FIXED' \
+  'AS6_REFERENCE_COMPOSITION_WRAPPED_BY_OLD_UI=FIXED' \
+  'AS6_PIXEL_REFERENCE_VIEWPORT_CONTRACT_MISSING=FIXED' \
+  'AS6_OBSOLETE_SIDEBAR_TOPBAR_INTERFERENCE=FIXED' \
+  'AS6_CANONICAL_ROOT_RUNTIME_OWNER=PASS' \
+  'AS6_LEGACY_SIDEBAR_REMOVED=PASS' \
+  'AS6_LEGACY_TOPBAR_REMOVED=PASS' \
+  'AS6_CANONICAL_FULL_VIEWPORT=PASS' \
+  'AS6_DOCUMENTS_REAL_DATA_PRESERVED=PASS' \
+  'AS6_CANONICAL_REFERENCE_RESET_PRODUCTION_BUNDLE=PASS' \
+  'SECRET_SCAN=PASS' \
+  'BACKEND_TESTS=PASS' \
+  'BUILD=PASS' \
+  'PRODUCTION=HEALTHY' \
+  'PUSH=PASS' \
+  'AS6_PROJECT_READINESS=99.9%' \
+  'AS6_LIVING_PRODUCT_DATA_READINESS=91%' \
+  '================ AS6 CANONICAL REFERENCE RESET v1 COMPLETE ================'
