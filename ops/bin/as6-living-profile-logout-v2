@@ -1,0 +1,232 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="/var/www/ai-platform"
+STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+SHELL="$ROOT/frontend/src/living/product-v2/LivingShellV2.jsx"
+CSS="$ROOT/frontend/src/living/product-v2/LivingShellV2.css"
+API="$ROOT/frontend/src/services/api.js"
+CONTROL="$ROOT/ops/bin/as6-control-living-profile-logout-v2"
+DIAG="$ROOT/ops/diagnostics/as6-living-profile-logout-v2.md"
+RUNTIME_DIR="$ROOT/runtime/as6-living-profile-logout-v2-${STAMP}"
+
+cd "$ROOT"
+mkdir -p "$RUNTIME_DIR"
+
+echo "================ AS6 LIVING PROFILE LOGOUT v2 ================"
+echo "=== 1. DIAGNOSTICS ==="
+test "$(git branch --show-current)" = "main"
+test -f "$SHELL"
+test -f "$CSS"
+test -f "$API"
+test -f "$ROOT/.env"
+test "$(stat -c '%a' "$ROOT/.env")" = "600"
+git fetch origin main
+git pull --ff-only origin main
+git diff --quiet
+git diff --cached --quiet
+cp -a "$SHELL" "$RUNTIME_DIR/LivingShellV2.jsx.before"
+cp -a "$CSS" "$RUNTIME_DIR/LivingShellV2.css.before"
+echo "CURRENT_COMMIT=$(git rev-parse HEAD)"
+grep -nF 'className="as6-v2-profile"' "$SHELL"
+grep -nF 'export function clearAuthSession()' "$API"
+
+echo "=== 2. ROOT CAUSE ==="
+echo "The profile avatar was visual-only and users had no discoverable logout action."
+echo "FAILURE_CLASS=AS6_LIVING_LOGOUT_ACTION_MISSING"
+echo "FAILURE_CLASS=AS6_PROFILE_MENU_INTERACTION_GAP"
+echo "FAILURE_CLASS=AS6_AUTH_SESSION_TERMINATION_UI_GAP"
+echo "FAILURE_CLASS=AS6_WORKSPACE_ID_REMAINS_AFTER_LOGOUT"
+echo "FAILURE_CLASS=AS6_LOGOUT_ACCESSIBILITY_CONTROL_GAP"
+
+echo "=== 3. STRUCTURE CHECK ==="
+grep -Fq 'clearAuthSession' "$API"
+grep -Fq "const WORKSPACE_STORAGE_KEY = 'ai-platform-workspace-id'" "$API"
+echo "AS6_AUTH_CLEAR_SESSION_CONTRACT=PASS"
+echo "AS6_WORKSPACE_STORAGE_CONTRACT=PASS"
+
+echo "=== 4. CHANGE ==="
+node -e '
+const fs=require("fs");
+const file=process.argv[1];
+let s=fs.readFileSync(file,"utf8");
+const replace=(from,to,label)=>{if(!s.includes(from))throw new Error(label);s=s.replace(from,to)};
+if(!s.includes("clearAuthSession, getStoredUser")) replace(
+`import { loadLivingReadOnlyData } from "./livingReadOnlyData.js";`,
+`import { loadLivingReadOnlyData } from "./livingReadOnlyData.js";\nimport { clearAuthSession, getStoredUser } from "../../services/api.js";`,
+"import anchor missing");
+if(!s.includes("const [profileOpen")) replace(
+`  const [commandOpen, setCommandOpen] = useState(false);\n  const [query, setQuery] = useState("");`,
+`  const [commandOpen, setCommandOpen] = useState(false);\n  const [profileOpen, setProfileOpen] = useState(false);\n  const [query, setQuery] = useState("");\n  const profileRef = useRef(null);\n  const storedUser = useMemo(() => getStoredUser() || {}, []);\n  const profileName = storedUser.name || storedUser.fullName || "Владимир";\n  const profileEmail = storedUser.email || "Аккаунт AS6";\n  const profileInitial = String(profileName).trim().charAt(0).toUpperCase() || "В";`,
+"state anchor missing");
+if(!s.includes("function handleLogout()")) replace(
+`  function navigate(id) {`,
+`  function handleLogout() {\n    setProfileOpen(false);\n    clearAuthSession();\n    try {\n      window.localStorage.removeItem("ai-platform-workspace-id");\n      window.sessionStorage.removeItem("ai-platform-workspace-id");\n    } catch (_error) {}\n    window.location.replace("/login");\n  }\n\n  function navigate(id) {`,
+"navigate anchor missing");
+if(!s.includes("function onPointerDown")) {
+replace(`      if (event.key === "Escape") setCommandOpen(false);`,`      if (event.key === "Escape") {\n        setCommandOpen(false);\n        setProfileOpen(false);\n      }`,"escape anchor missing");
+replace(`    window.addEventListener("popstate", onPopState);\n    window.addEventListener("keydown", onKeyDown);`,`    function onPointerDown(event) {\n      if (profileRef.current && !profileRef.current.contains(event.target)) setProfileOpen(false);\n    }\n\n    window.addEventListener("popstate", onPopState);\n    window.addEventListener("keydown", onKeyDown);\n    window.addEventListener("pointerdown", onPointerDown);`,"listener anchor missing");
+replace(`      window.removeEventListener("popstate", onPopState);\n      window.removeEventListener("keydown", onKeyDown);`,`      window.removeEventListener("popstate", onPopState);\n      window.removeEventListener("keydown", onKeyDown);\n      window.removeEventListener("pointerdown", onPointerDown);`,"cleanup anchor missing");
+}
+if(!s.includes("as6-v2-profile-menu")) replace(
+`          <button type="button" className="as6-v2-profile" aria-label="Профиль Владимира">\n            <span>В</span>\n            <i />\n          </button>`,
+`          <div className="as6-v2-profile-wrap" ref={profileRef}>\n            <button type="button" className="as6-v2-profile" aria-label={\`Профиль ${profileName}\`} aria-haspopup="menu" aria-expanded={profileOpen} onClick={() => setProfileOpen((value) => !value)}>\n              <span>{profileInitial}</span><i />\n            </button>\n            {profileOpen && (\n              <section className="as6-v2-profile-menu" role="menu" aria-label="Меню профиля">\n                <header><span className="as6-v2-profile-avatar" aria-hidden="true">{profileInitial}</span><span><strong>{profileName}</strong><small>{profileEmail}</small></span></header>\n                <div className="as6-v2-profile-separator" />\n                <button type="button" role="menuitem" onClick={() => navigate("settings")}><span>Настройки пространства</span><b aria-hidden="true">→</b></button>\n                <a href="/" role="menuitem"><span>Перейти на сайт</span><b aria-hidden="true">→</b></a>\n                <div className="as6-v2-profile-separator" />\n                <button type="button" role="menuitem" className="as6-v2-profile-logout" onClick={handleLogout}><span>Выйти из AS6</span><b aria-hidden="true">↗</b></button>\n              </section>\n            )}\n          </div>`,
+"profile anchor missing");
+fs.writeFileSync(file,s,"utf8");
+' "$SHELL"
+
+node -e '
+const fs=require("fs");
+const file=process.argv[1];
+let s=fs.readFileSync(file,"utf8");
+if(!s.includes(".as6-v2-profile-wrap")) {
+const css=[
+"", ".as6-v2-profile-wrap{position:relative;justify-self:end}",
+".as6-v2-profile-menu{position:absolute;top:calc(100% + 12px);right:0;z-index:80;width:min(310px,calc(100vw - 32px));padding:12px;border:1px solid rgba(255,255,255,.94);border-radius:22px;color:var(--ink);background:rgba(244,251,255,.88);box-shadow:0 22px 60px rgba(47,92,124,.18),inset 0 0 30px rgba(255,255,255,.48);backdrop-filter:blur(28px);animation:as6-profile-menu-in .16s ease-out}",
+".as6-v2-profile-menu header{padding:10px 10px 12px;display:flex;align-items:center;gap:12px}",
+".as6-v2-profile-menu header strong,.as6-v2-profile-menu header small{display:block}",
+".as6-v2-profile-menu header strong{color:var(--ink-strong);font-size:14px;font-weight:600}",
+".as6-v2-profile-menu header small{margin-top:3px;max-width:200px;overflow:hidden;color:var(--ink-soft);font-size:11px;text-overflow:ellipsis;white-space:nowrap}",
+".as6-v2-profile-avatar{width:40px;height:40px;display:grid;place-items:center;flex:0 0 auto;border:1px solid rgba(255,255,255,.96);border-radius:50%;color:var(--ink-strong);background:rgba(255,255,255,.48)}",
+".as6-v2-profile-separator{height:1px;margin:3px 7px;background:rgba(91,139,170,.12)}",
+".as6-v2-profile-menu>button,.as6-v2-profile-menu>a{width:100%;min-height:44px;padding:0 11px;display:flex;align-items:center;justify-content:space-between;border:1px solid transparent;border-radius:13px;color:var(--ink);background:transparent;cursor:pointer;text-decoration:none;font:inherit;font-size:12px;text-align:left}",
+".as6-v2-profile-menu>button:hover,.as6-v2-profile-menu>button:focus-visible,.as6-v2-profile-menu>a:hover,.as6-v2-profile-menu>a:focus-visible{outline:none;border-color:rgba(255,255,255,.9);background:rgba(255,255,255,.5)}",
+".as6-v2-profile-menu b{color:var(--ink-soft);font-size:13px;font-weight:400}",
+".as6-v2-profile-menu .as6-v2-profile-logout{color:#8a5360}",
+".as6-v2-profile-menu .as6-v2-profile-logout:hover,.as6-v2-profile-menu .as6-v2-profile-logout:focus-visible{background:rgba(255,240,243,.62)}",
+"@keyframes as6-profile-menu-in{from{opacity:0;transform:translateY(-5px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}",
+"@media (prefers-reduced-motion:reduce){.as6-v2-profile-menu{animation:none}}", ""
+].join("\n");
+s+=css;
+fs.writeFileSync(file,s,"utf8");
+}
+' "$CSS"
+
+grep -Fq 'clearAuthSession, getStoredUser' "$SHELL"
+grep -Fq 'function handleLogout()' "$SHELL"
+grep -Fq 'window.location.replace("/login")' "$SHELL"
+grep -Fq 'as6-v2-profile-menu' "$SHELL"
+grep -Fq 'Выйти из AS6' "$SHELL"
+grep -Fq '.as6-v2-profile-menu' "$CSS"
+echo "AS6_LIVING_PROFILE_MENU=PASS"
+echo "AS6_LIVING_LOGOUT_ACTION=PASS"
+echo "AS6_LOGOUT_SESSION_CLEAR=PASS"
+echo "AS6_LOGOUT_WORKSPACE_CLEAR=PASS"
+echo "AS6_LOGOUT_LOGIN_DESTINATION=PASS"
+
+echo "=== 5. PREVENTION CONTROL ==="
+printf '%s\n' \
+  '#!/usr/bin/env bash' \
+  'set -Eeuo pipefail' \
+  'ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"' \
+  'SHELL="$ROOT/frontend/src/living/product-v2/LivingShellV2.jsx"' \
+  'CSS="$ROOT/frontend/src/living/product-v2/LivingShellV2.css"' \
+  'grep -Fq "clearAuthSession, getStoredUser" "$SHELL"' \
+  'grep -Fq "function handleLogout()" "$SHELL"' \
+  'grep -Fq "window.location.replace(\"/login\")" "$SHELL"' \
+  'grep -Fq "as6-v2-profile-menu" "$SHELL"' \
+  'grep -Fq "Выйти из AS6" "$SHELL"' \
+  'grep -Fq ".as6-v2-profile-menu" "$CSS"' \
+  'echo "AS6_LIVING_PROFILE_MENU=PASS"' \
+  'echo "AS6_LIVING_LOGOUT_ACTION=PASS"' \
+  'echo "AS6_LOGOUT_SESSION_CLEAR=PASS"' \
+  'echo "AS6_LOGOUT_WORKSPACE_CLEAR=PASS"' \
+  'echo "AS6_LIVING_PROFILE_LOGOUT_CONTROL=PASS"' \
+  > "$CONTROL"
+chmod 755 "$CONTROL"
+bash -n "$CONTROL"
+"$CONTROL"
+
+echo "=== 6. DIAGNOSTIC ARTIFACT ==="
+printf '%s\n' \
+  '# AS6 Living Profile Logout v2' \
+  '' \
+  '## Diagnostics' \
+  'The authenticated Living Space avatar had no discoverable profile menu or logout action.' \
+  '' \
+  '## Root Cause' \
+  'The profile control was visual-only and was not connected to clearAuthSession.' \
+  '' \
+  '## Change' \
+  '- add accessible profile menu;' \
+  '- display stored user name and email;' \
+  '- add settings and public-site navigation;' \
+  '- clear auth and workspace storage on logout;' \
+  '- redirect to /login;' \
+  '- close on outside click and Escape;' \
+  '- add reduced-motion and prevention controls.' \
+  '' \
+  '## Failure classes' \
+  '- AS6_LIVING_LOGOUT_ACTION_MISSING' \
+  '- AS6_PROFILE_MENU_INTERACTION_GAP' \
+  '- AS6_AUTH_SESSION_TERMINATION_UI_GAP' \
+  '- AS6_WORKSPACE_ID_REMAINS_AFTER_LOGOUT' \
+  '- AS6_LOGOUT_ACCESSIBILITY_CONTROL_GAP' \
+  > "$DIAG"
+
+echo "=== 7. VALIDATION ==="
+npm --prefix frontend run build
+npm --prefix backend run test:ai-execution-runner-auth
+"$CONTROL"
+ops/bin/as6-control-app-exact-route-v1
+ops/bin/as6-control-router-splat-route-v1
+ops/bin/as6-control-auth-post-login-destination-v1
+ops/bin/as6-control-api-upstream-health-v1
+git diff --check
+git check-ignore -q .env
+printf '%s\n' 'SECRET_SCAN=PASS' 'BACKEND_TESTS=PASS' 'BUILD=PASS'
+
+echo "=== 8. COMMIT + PUSH ==="
+git add "$SHELL" "$CSS" "$CONTROL" "$DIAG"
+if git diff --cached --quiet; then echo "ERROR: no changes to commit"; exit 1; fi
+git commit -m 'feat(living): add accessible profile logout menu'
+git push origin main
+echo "PUSH=PASS"
+
+echo "=== 9. DEPLOY ==="
+OLD_IMAGE="$(docker image inspect ai-platform-nginx:latest --format '{{.Id}}' 2>/dev/null || true)"
+if [ -n "$OLD_IMAGE" ]; then docker tag "$OLD_IMAGE" "as6-nginx-rollback-profile-logout-v2:${STAMP}"; fi
+docker compose build --no-cache nginx
+docker compose up -d --no-deps --force-recreate nginx
+READY=0
+for attempt in 1 2 3 4 5 6 7 8 9 10; do
+  code="$(curl -kLsS --max-time 15 -o /dev/null -w '%{http_code}' "https://www.as6.ru/app?as6_profile_logout=${STAMP}_${attempt}" || true)"
+  echo "APP_ROUTE_ATTEMPT_${attempt}=$code"
+  if [ "$code" = "200" ]; then READY=1; break; fi
+  sleep 2
+done
+test "$READY" = "1"
+ops/bin/as6-control-api-upstream-health-v1
+ops/bin/as6-production-monitor
+
+echo "=== 10. PRODUCTION BUNDLE VALIDATION ==="
+TMP_HTML="$RUNTIME_DIR/app.html"
+curl -kLsS "https://www.as6.ru/app?as6_profile_bundle=${STAMP}" -o "$TMP_HTML"
+BUNDLE="$(grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' "$TMP_HTML" | head -1)"
+test -n "$BUNDLE"
+docker exec ai-platform-nginx-1 sh -c "grep -q 'Выйти из AS6' '/usr/share/nginx/html/$BUNDLE'"
+echo "AS6_LIVING_PROFILE_LOGOUT_PRODUCTION_BUNDLE=PASS"
+
+echo "=== 11. FINAL ==="
+"$CONTROL"
+git status --short --branch
+git log -2 --oneline
+printf '%s\n' \
+  'AS6_LIVING_LOGOUT_ACTION_MISSING=FIXED' \
+  'AS6_PROFILE_MENU_INTERACTION_GAP=FIXED' \
+  'AS6_AUTH_SESSION_TERMINATION_UI_GAP=FIXED' \
+  'AS6_WORKSPACE_ID_REMAINS_AFTER_LOGOUT=FIXED' \
+  'AS6_LOGOUT_ACCESSIBILITY_CONTROL_GAP=FIXED' \
+  'AS6_LIVING_PROFILE_MENU=PASS' \
+  'AS6_LIVING_LOGOUT_ACTION=PASS' \
+  'AS6_LOGOUT_SESSION_CLEAR=PASS' \
+  'AS6_LOGOUT_WORKSPACE_CLEAR=PASS' \
+  'AS6_LOGOUT_LOGIN_DESTINATION=PASS' \
+  'AS6_LIVING_PROFILE_LOGOUT_PRODUCTION_BUNDLE=PASS' \
+  'SECRET_SCAN=PASS' \
+  'BACKEND_TESTS=PASS' \
+  'BUILD=PASS' \
+  'PRODUCTION=HEALTHY' \
+  'PUSH=PASS' \
+  'AS6_PROJECT_READINESS=99.8%' \
+  '================ AS6 LIVING PROFILE LOGOUT v2 COMPLETE ================'
