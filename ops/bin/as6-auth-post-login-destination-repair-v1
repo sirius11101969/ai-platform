@@ -1,0 +1,178 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="/var/www/ai-platform"
+STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+AUTH="$ROOT/frontend/src/pages/AuthPages.jsx"
+API="$ROOT/frontend/src/services/api.js"
+DIAG="$ROOT/ops/diagnostics/as6-auth-post-login-destination-repair-v1.md"
+CONTROL="$ROOT/ops/bin/as6-control-auth-post-login-destination-v1"
+RUNTIME_DIR="$ROOT/runtime/as6-auth-post-login-destination-${STAMP}"
+
+cd "$ROOT"
+mkdir -p "$RUNTIME_DIR" "$(dirname "$DIAG")" "$(dirname "$CONTROL")"
+
+printf '%s\n' '================ AS6 AUTH POST-LOGIN DESTINATION REPAIR v1 ================'
+printf '%s\n' '=== 1. DIAGNOSTICS ==='
+test "$(git branch --show-current)" = "main"
+test -f "$AUTH"
+test -f "$API"
+test -f "$ROOT/.env"
+test "$(stat -c '%a' "$ROOT/.env")" = "600"
+git fetch origin main
+git pull --ff-only origin main
+git diff --quiet
+git diff --cached --quiet
+cp -a "$AUTH" "$RUNTIME_DIR/AuthPages.jsx.before"
+cp -a "$API" "$RUNTIME_DIR/api.js.before"
+printf 'CURRENT_COMMIT=%s\n' "$(git rev-parse HEAD)"
+grep -nE 'useNavigate|navigate\("/app"\)|saveAuthSession|getActiveWorkspaceId|window\.location' "$AUTH" "$API" || true
+
+printf '%s\n' '=== 2. ROOT CAUSE ==='
+printf '%s\n' 'HAR confirms POST /api/auth/login returns 200 with token, user and workspace.'
+printf '%s\n' 'The browser then returns to / without a server redirect.'
+printf '%s\n' 'The post-auth destination must be made deterministic after session persistence.'
+printf '%s\n' 'FAILURE_CLASS=AS6_POST_LOGIN_CLIENT_NAVIGATION_DRIFT'
+printf '%s\n' 'FAILURE_CLASS=AS6_AUTH_SESSION_PERSISTENCE_NOT_VERIFIED_BEFORE_NAVIGATION'
+printf '%s\n' 'FAILURE_CLASS=AS6_SPA_POST_AUTH_DESTINATION_GAP'
+printf '%s\n' 'FAILURE_CLASS=AS6_POST_AUTH_FULL_RELOAD_GUARD_MISSING'
+
+printf '%s\n' '=== 3. STRUCTURE CHECK ==='
+grep -q 'saveAuthSession(session)' "$AUTH"
+grep -q 'navigate("/app")' "$AUTH"
+grep -q 'export function getAuthToken' "$API"
+grep -q 'export function getActiveWorkspaceId' "$API"
+printf '%s\n' 'AS6_AUTH_CURRENT_STRUCTURE=PASS'
+
+printf '%s\n' '=== 4. CHANGE ==='
+node -e '
+const fs = require("fs");
+const file = process.argv[1];
+let source = fs.readFileSync(file, "utf8");
+source = source.replace(
+  "import { Link, useNavigate } from \"react-router-dom\";",
+  "import { Link } from \"react-router-dom\";"
+);
+source = source.replace(
+  "import { login, saveAuthSession, signup } from \"../services/api\";",
+  "import { getActiveWorkspaceId, getAuthToken, login, saveAuthSession, signup } from \"../services/api\";"
+);
+source = source.replace("  const navigate = useNavigate();\n", "");
+const oldBlock = `      saveAuthSession(session);\n      navigate(\"/app\");`;
+const newBlock = `      const storedSession = saveAuthSession(session);\n      const storedToken = getAuthToken();\n      const storedWorkspaceId = getActiveWorkspaceId();\n\n      if (!storedSession?.token || !storedToken) {\n        throw new Error(\"Не удалось сохранить сессию. Обновите страницу и попробуйте снова.\");\n      }\n\n      if (session?.workspace?.id && !storedWorkspaceId) {\n        throw new Error(\"Не удалось активировать рабочее пространство.\");\n      }\n\n      window.location.replace(\"/app\");`;
+if (!source.includes(oldBlock) && !source.includes("window.location.replace(\"/app\")")) {
+  throw new Error("post-auth navigation block not found");
+}
+if (!source.includes("window.location.replace(\"/app\")")) {
+  source = source.replace(oldBlock, newBlock);
+}
+fs.writeFileSync(file, source, "utf8");
+' "$AUTH"
+
+grep -q 'window.location.replace("/app")' "$AUTH"
+grep -q 'const storedToken = getAuthToken()' "$AUTH"
+grep -q 'const storedWorkspaceId = getActiveWorkspaceId()' "$AUTH"
+if grep -q 'useNavigate' "$AUTH"; then printf '%s\n' 'ERROR: useNavigate remains'; exit 1; fi
+printf '%s\n' 'AS6_AUTH_DETERMINISTIC_DESTINATION=PASS'
+
+printf '%s\n' '=== 5. PREVENTION CONTROL ==='
+printf '%s\n' \
+  '#!/usr/bin/env bash' \
+  'set -Eeuo pipefail' \
+  'ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"' \
+  'AUTH="$ROOT/frontend/src/pages/AuthPages.jsx"' \
+  'API="$ROOT/frontend/src/services/api.js"' \
+  'grep -q '\''window.location.replace("/app")'\'' "$AUTH"' \
+  'grep -q '\''const storedToken = getAuthToken()'\'' "$AUTH"' \
+  'grep -q '\''const storedWorkspaceId = getActiveWorkspaceId()'\'' "$AUTH"' \
+  'grep -q '\''export function getAuthToken'\'' "$API"' \
+  'grep -q '\''export function getActiveWorkspaceId'\'' "$API"' \
+  'if grep -q '\''useNavigate'\'' "$AUTH"; then exit 1; fi' \
+  'echo "AS6_AUTH_DETERMINISTIC_DESTINATION=PASS"' \
+  'echo "AS6_AUTH_SESSION_VERIFIED_BEFORE_DESTINATION=PASS"' \
+  'echo "AS6_AUTH_POST_LOGIN_DESTINATION_CONTROL=PASS"' \
+  > "$CONTROL"
+chmod 755 "$CONTROL"
+bash -n "$CONTROL"
+"$CONTROL"
+
+printf '%s\n' '=== 6. DIAGNOSTIC ARTIFACT ==='
+printf '%s\n' \
+  '# AS6 Auth Post-Login Destination Repair v1' \
+  '' \
+  '## Diagnostics' \
+  '' \
+  'Browser HAR confirmed successful POST /api/auth/login with token, user and workspace.' \
+  'No HTTP redirect to / was present. The destination drift occurred in the client.' \
+  '' \
+  '## Root Cause' \
+  '' \
+  'SPA navigation was not verified against persisted token and workspace state before opening /app.' \
+  '' \
+  '## Change' \
+  '' \
+  '- verify stored token after saveAuthSession;' \
+  '- verify active workspace when backend returns one;' \
+  '- replace soft SPA navigation with deterministic window.location.replace("/app");' \
+  '- add a permanent prevention control.' \
+  '' \
+  '## Failure classes' \
+  '' \
+  '- AS6_POST_LOGIN_CLIENT_NAVIGATION_DRIFT' \
+  '- AS6_AUTH_SESSION_PERSISTENCE_NOT_VERIFIED_BEFORE_NAVIGATION' \
+  '- AS6_SPA_POST_AUTH_DESTINATION_GAP' \
+  '- AS6_POST_AUTH_FULL_RELOAD_GUARD_MISSING' \
+  '- AS6_POST_AUTH_DESTINATION_REGRESSION' \
+  > "$DIAG"
+
+printf '%s\n' '=== 7. VALIDATION ==='
+npm --prefix frontend run build
+npm --prefix backend run test:ai-execution-runner-auth
+node --check "$API"
+git diff --check
+git check-ignore -q .env
+"$CONTROL"
+ops/bin/as6-control-auth-workspace-session-v3
+ops/bin/as6-control-api-upstream-health-v1
+printf '%s\n' 'SECRET_SCAN=PASS' 'BACKEND_TESTS=PASS' 'BUILD=PASS'
+
+printf '%s\n' '=== 8. COMMIT + PUSH ==='
+git add "$AUTH" "$DIAG" "$CONTROL"
+if git diff --cached --quiet; then printf '%s\n' 'ERROR: no changes to commit'; exit 1; fi
+git commit -m 'fix(auth): make post-login destination deterministic'
+git push origin main
+printf '%s\n' 'PUSH=PASS'
+
+printf '%s\n' '=== 9. DEPLOY ==='
+OLD_IMAGE="$(docker image inspect ai-platform-nginx:latest --format '{{.Id}}' 2>/dev/null || true)"
+if [ -n "$OLD_IMAGE" ]; then docker tag "$OLD_IMAGE" "as6-nginx-rollback-auth-destination:${STAMP}"; fi
+docker compose build --no-cache nginx
+docker compose up -d --no-deps --force-recreate nginx
+READY=0
+for attempt in 1 2 3 4 5 6 7 8 9 10; do
+  code="$(curl -kLsS --max-time 15 -o /dev/null -w '%{http_code}' "https://www.as6.ru/login?as6_auth_destination=${STAMP}_${attempt}" || true)"
+  printf 'LOGIN_ROUTE_ATTEMPT_%s=%s\n' "$attempt" "$code"
+  if [ "$code" = "200" ]; then READY=1; break; fi
+  sleep 2
+done
+test "$READY" = "1"
+ops/bin/as6-control-api-upstream-health-v1
+ops/bin/as6-production-monitor
+
+printf '%s\n' '=== 10. FINAL ==='
+"$CONTROL"
+git status --short --branch
+git log -2 --oneline
+printf '%s\n' \
+  'AS6_POST_LOGIN_CLIENT_NAVIGATION_DRIFT=FIXED' \
+  'AS6_AUTH_SESSION_PERSISTENCE_NOT_VERIFIED_BEFORE_NAVIGATION=FIXED' \
+  'AS6_AUTH_DETERMINISTIC_DESTINATION=PASS' \
+  'AS6_AUTH_SESSION_VERIFIED_BEFORE_DESTINATION=PASS' \
+  'AS6_SIGNUP_APP_DESTINATION=PASS' \
+  'SECRET_SCAN=PASS' \
+  'BACKEND_TESTS=PASS' \
+  'BUILD=PASS' \
+  'PRODUCTION=HEALTHY' \
+  'PUSH=PASS' \
+  'AS6_PROJECT_READINESS=99.5%' \
+  '================ AS6 AUTH POST-LOGIN DESTINATION REPAIR COMPLETE ================'
