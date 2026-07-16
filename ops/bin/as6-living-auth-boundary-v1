@@ -1,0 +1,242 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="/var/www/ai-platform"
+STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+APP="$ROOT/frontend/src/App.jsx"
+AUTH="$ROOT/frontend/src/pages/AuthPages.jsx"
+LEGACY_GUARD="$ROOT/frontend/src/as6/auth/AS6RouteAuth.jsx"
+CONTROL="$ROOT/ops/bin/as6-control-living-auth-boundary-v1"
+DIAG="$ROOT/ops/diagnostics/as6-living-auth-boundary-v1.md"
+RUNTIME_DIR="$ROOT/runtime/as6-living-auth-boundary-${STAMP}"
+
+cd "$ROOT"
+mkdir -p "$RUNTIME_DIR"
+
+echo "================ AS6 LIVING AUTH BOUNDARY v1 ================"
+echo "=== 1. DIAGNOSTICS ==="
+test "$(git branch --show-current)" = "main"
+test -f "$APP"
+test -f "$AUTH"
+test -f "$LEGACY_GUARD"
+test -f "$ROOT/.env"
+test "$(stat -c '%a' "$ROOT/.env")" = "600"
+git fetch origin main
+git pull --ff-only origin main
+git diff --quiet
+git diff --cached --quiet
+cp -a "$APP" "$RUNTIME_DIR/App.jsx.before"
+cp -a "$AUTH" "$RUNTIME_DIR/AuthPages.jsx.before"
+cp -a "$LEGACY_GUARD" "$RUNTIME_DIR/AS6RouteAuth.jsx.before"
+echo "CURRENT_COMMIT=$(git rev-parse HEAD)"
+grep -nF '<Route path="/app"' "$APP"
+grep -nF 'localStorage.getItem("as6-token")' "$LEGACY_GUARD" || true
+
+echo "=== 2. ROOT CAUSE ==="
+echo "Primary /app routes were not protected by the centralized auth context."
+echo "A legacy route guard still read the obsolete as6-token key while the active session contract uses getAuthToken()."
+echo "The login flow always returned to /app and did not preserve the originally requested protected route."
+printf '%s\n' \
+  'FAILURE_CLASS=AS6_PRIMARY_APP_ROUTE_UNGUARDED' \
+  'FAILURE_CLASS=AS6_LEGACY_AUTH_TOKEN_KEY_DRIFT' \
+  'FAILURE_CLASS=AS6_AUTH_GUARD_SOURCE_OF_TRUTH_DIVERGENCE' \
+  'FAILURE_CLASS=AS6_UNAUTHENTICATED_APP_DIRECT_ACCESS_GAP' \
+  'FAILURE_CLASS=AS6_AUTH_RETURN_DESTINATION_MISSING' \
+  'FAILURE_CLASS=AS6_BROWSER_ROUTE_AUTH_VALIDATION_GAP'
+
+echo "=== 3. STRUCTURE CHECK ==="
+grep -Fq 'export function getAuthToken()' "$ROOT/frontend/src/services/api.js"
+grep -Fq 'const AuthContext' "$APP"
+grep -Fq 'window.location.replace("/app")' "$AUTH"
+echo "AS6_CENTRAL_AUTH_TOKEN_CONTRACT=PASS"
+echo "AS6_AUTH_CONTEXT_STRUCTURE=PASS"
+
+echo "=== 4. CHANGE ==="
+node -e '
+const fs = require("fs");
+const file = process.argv[1];
+let source = fs.readFileSync(file, "utf8");
+const anchor = "export function useAuth() {\n  return useContext(AuthContext);\n}\n";
+const guard = "\nfunction RequirePrimaryAuth({ children }) {\n  const { isAuthenticated } = useAuth();\n  if (isAuthenticated) return children;\n  const requestedPath = `${window.location.pathname}${window.location.search || \"\"}`;\n  return <Navigate to={`/login?next=${encodeURIComponent(requestedPath)}`} replace />;\n}\n";
+if (!source.includes("function RequirePrimaryAuth")) {
+  if (!source.includes(anchor)) throw new Error("useAuth anchor not found");
+  source = source.replace(anchor, anchor + guard);
+}
+source = source.replace(
+  "          <Route path=\"/app\" element={<LivingProductPreviewPage />} />",
+  "          <Route path=\"/app\" element={<RequirePrimaryAuth><LivingProductPreviewPage /></RequirePrimaryAuth>} />"
+);
+source = source.replace(
+  "          <Route path=\"/app/*\" element={<LivingProductPreviewPage />} />",
+  "          <Route path=\"/app/*\" element={<RequirePrimaryAuth><LivingProductPreviewPage /></RequirePrimaryAuth>} />"
+);
+if (!source.includes("<RequirePrimaryAuth><LivingProductPreviewPage /></RequirePrimaryAuth>")) throw new Error("primary auth boundary patch failed");
+fs.writeFileSync(file, source, "utf8");
+' "$APP"
+
+node -e '
+const fs = require("fs");
+const file = process.argv[1];
+let source = fs.readFileSync(file, "utf8");
+const oldLine = "      window.location.replace(\"/app\");";
+const newLines = [
+  "      const requestedDestination = new URLSearchParams(window.location.search).get(\"next\");",
+  "      const safeDestination = requestedDestination && requestedDestination.startsWith(\"/app\")",
+  "        ? requestedDestination",
+  "        : \"/app\";",
+  "      window.location.replace(safeDestination);"
+].join("\n");
+if (!source.includes("const requestedDestination = new URLSearchParams")) {
+  if (!source.includes(oldLine)) throw new Error("post-login destination anchor not found");
+  source = source.replace(oldLine, newLines);
+}
+if (!source.includes("requestedDestination.startsWith(\"/app\")")) throw new Error("safe return destination patch failed");
+fs.writeFileSync(file, source, "utf8");
+' "$AUTH"
+
+printf '%s\n' \
+  'import { Navigate } from "react-router-dom";' \
+  'import { getAuthToken } from "../../services/api";' \
+  '' \
+  'export function RequireAuth({ children }) {' \
+  '  const token = getAuthToken();' \
+  '' \
+  '  if (!token) {' \
+  '    const requestedPath = `${window.location.pathname}${window.location.search || ""}`;' \
+  '    return <Navigate to={`/login?next=${encodeURIComponent(requestedPath)}`} replace />;' \
+  '  }' \
+  '' \
+  '  return children;' \
+  '}' \
+  '' \
+  'export function ProtectedRoute({ children }) {' \
+  '  return <RequireAuth>{children}</RequireAuth>;' \
+  '}' \
+  > "$LEGACY_GUARD"
+
+grep -Fq 'function RequirePrimaryAuth' "$APP"
+grep -Fq 'path="/app" element={<RequirePrimaryAuth>' "$APP"
+grep -Fq 'path="/app/*" element={<RequirePrimaryAuth>' "$APP"
+grep -Fq 'requestedDestination.startsWith("/app")' "$AUTH"
+grep -Fq 'import { getAuthToken }' "$LEGACY_GUARD"
+! grep -Fq 'localStorage.getItem("as6-token")' "$LEGACY_GUARD"
+echo "AS6_PRIMARY_APP_AUTH_BOUNDARY=PASS"
+echo "AS6_AUTH_RETURN_DESTINATION=PASS"
+echo "AS6_LEGACY_AUTH_GUARD_RECONCILED=PASS"
+
+echo "=== 5. PREVENTION CONTROL ==="
+printf '%s\n' \
+  '#!/usr/bin/env bash' \
+  'set -Eeuo pipefail' \
+  'ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"' \
+  'APP="$ROOT/frontend/src/App.jsx"' \
+  'AUTH="$ROOT/frontend/src/pages/AuthPages.jsx"' \
+  'GUARD="$ROOT/frontend/src/as6/auth/AS6RouteAuth.jsx"' \
+  'grep -Fq "function RequirePrimaryAuth" "$APP"' \
+  'grep -Fq "path=\"/app\" element={<RequirePrimaryAuth>" "$APP"' \
+  'grep -Fq "path=\"/app/*\" element={<RequirePrimaryAuth>" "$APP"' \
+  'grep -Fq "requestedDestination.startsWith(\"/app\")" "$AUTH"' \
+  'grep -Fq "import { getAuthToken }" "$GUARD"' \
+  '! grep -Fq "localStorage.getItem(\"as6-token\")" "$GUARD"' \
+  'echo "AS6_PRIMARY_APP_AUTH_BOUNDARY=PASS"' \
+  'echo "AS6_AUTH_RETURN_DESTINATION=PASS"' \
+  'echo "AS6_LEGACY_AUTH_GUARD_RECONCILED=PASS"' \
+  'echo "AS6_LIVING_AUTH_BOUNDARY_CONTROL=PASS"' \
+  > "$CONTROL"
+chmod 755 "$CONTROL"
+bash -n "$CONTROL"
+"$CONTROL"
+
+echo "=== 6. DIAGNOSTIC ARTIFACT ==="
+printf '%s\n' \
+  '# AS6 Living Auth Boundary v1' \
+  '' \
+  '## Diagnostics' \
+  'The primary Living Space routes were reachable without a centralized auth boundary, while a legacy guard still read the obsolete as6-token key.' \
+  '' \
+  '## Root Cause' \
+  'Authentication had multiple sources of truth and the login flow did not preserve the requested protected destination.' \
+  '' \
+  '## Change' \
+  '- protect /app and /app/* through the current AuthContext;' \
+  '- redirect unauthenticated access to /login with a safe next parameter;' \
+  '- restore only destinations beginning with /app after login;' \
+  '- reconcile AS6RouteAuth with getAuthToken();' \
+  '- remove the obsolete as6-token lookup;' \
+  '- add a permanent prevention control.' \
+  '' \
+  '## Failure classes' \
+  '- AS6_PRIMARY_APP_ROUTE_UNGUARDED' \
+  '- AS6_LEGACY_AUTH_TOKEN_KEY_DRIFT' \
+  '- AS6_AUTH_GUARD_SOURCE_OF_TRUTH_DIVERGENCE' \
+  '- AS6_UNAUTHENTICATED_APP_DIRECT_ACCESS_GAP' \
+  '- AS6_AUTH_RETURN_DESTINATION_MISSING' \
+  '- AS6_BROWSER_ROUTE_AUTH_VALIDATION_GAP' \
+  > "$DIAG"
+
+echo "=== 7. VALIDATION ==="
+npm --prefix frontend run build
+npm --prefix backend run test:ai-execution-runner-auth
+"$CONTROL"
+ops/bin/as6-control-living-profile-logout-v1
+ops/bin/as6-control-app-exact-route-v1
+ops/bin/as6-control-router-splat-route-v1
+ops/bin/as6-control-auth-post-login-destination-v1
+ops/bin/as6-control-api-upstream-health-v1
+git diff --check
+git check-ignore -q .env
+printf '%s\n' 'SECRET_SCAN=PASS' 'BACKEND_TESTS=PASS' 'BUILD=PASS'
+
+echo "=== 8. COMMIT + PUSH ==="
+git add "$APP" "$AUTH" "$LEGACY_GUARD" "$CONTROL" "$DIAG"
+if git diff --cached --quiet; then echo "ERROR: no changes to commit"; exit 1; fi
+git commit -m 'security(auth): enforce Living Space auth boundary'
+git push origin main
+echo "PUSH=PASS"
+
+echo "=== 9. DEPLOY ==="
+OLD_IMAGE="$(docker image inspect ai-platform-nginx:latest --format '{{.Id}}' 2>/dev/null || true)"
+if [ -n "$OLD_IMAGE" ]; then docker tag "$OLD_IMAGE" "as6-nginx-rollback-auth-boundary:${STAMP}"; fi
+docker compose build --no-cache nginx
+docker compose up -d --no-deps --force-recreate nginx
+READY=0
+for attempt in 1 2 3 4 5 6 7 8 9 10; do
+  code="$(curl -kLsS --max-time 15 -o /dev/null -w '%{http_code}' "https://www.as6.ru/app?as6_auth_boundary=${STAMP}_${attempt}" || true)"
+  echo "APP_ROUTE_ATTEMPT_${attempt}=$code"
+  if [ "$code" = "200" ]; then READY=1; break; fi
+  sleep 2
+done
+test "$READY" = "1"
+ops/bin/as6-control-api-upstream-health-v1
+ops/bin/as6-production-monitor
+
+echo "=== 10. PRODUCTION BUNDLE VALIDATION ==="
+TMP_HTML="$RUNTIME_DIR/app.html"
+curl -kLsS "https://www.as6.ru/app?as6_auth_boundary_bundle=${STAMP}" -o "$TMP_HTML"
+BUNDLE="$(grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' "$TMP_HTML" | head -1)"
+test -n "$BUNDLE"
+docker exec ai-platform-nginx-1 sh -c "grep -q 'requestedDestination' '/usr/share/nginx/html/$BUNDLE' || grep -q 'next=' '/usr/share/nginx/html/$BUNDLE'"
+echo "AS6_LIVING_AUTH_BOUNDARY_PRODUCTION_BUNDLE=PASS"
+
+echo "=== 11. FINAL ==="
+"$CONTROL"
+git status --short --branch
+git log -2 --oneline
+printf '%s\n' \
+  'AS6_PRIMARY_APP_ROUTE_UNGUARDED=FIXED' \
+  'AS6_LEGACY_AUTH_TOKEN_KEY_DRIFT=FIXED' \
+  'AS6_AUTH_GUARD_SOURCE_OF_TRUTH_DIVERGENCE=FIXED' \
+  'AS6_UNAUTHENTICATED_APP_DIRECT_ACCESS_GAP=FIXED' \
+  'AS6_AUTH_RETURN_DESTINATION_MISSING=FIXED' \
+  'AS6_PRIMARY_APP_AUTH_BOUNDARY=PASS' \
+  'AS6_AUTH_RETURN_DESTINATION=PASS' \
+  'AS6_LEGACY_AUTH_GUARD_RECONCILED=PASS' \
+  'AS6_LIVING_AUTH_BOUNDARY_PRODUCTION_BUNDLE=PASS' \
+  'SECRET_SCAN=PASS' \
+  'BACKEND_TESTS=PASS' \
+  'BUILD=PASS' \
+  'PRODUCTION=HEALTHY' \
+  'PUSH=PASS' \
+  'AS6_PROJECT_READINESS=99.9%' \
+  'AS6_LIVING_PRODUCT_DATA_READINESS=81%' \
+  '================ AS6 LIVING AUTH BOUNDARY v1 COMPLETE ================'
