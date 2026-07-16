@@ -113,3 +113,6 @@
 - removed: frontend/src/living/product-v2/LivingShellV2.jsx, frontend/src/living/product-v2/LivingShellV2.css, frontend/src/living/product-v2/LivingDocumentsSpace.css
 - control: ops/bin/as6-control-canonical-reference-reset-v1
 - result: AS6_CANONICAL_REFERENCE_RESET_V1=REGISTERED
+
+## AS6 Public Brand Foundation v1
+- AS6_PUBLIC_BRAND_FOUNDATION_V1=ops/diagnostics/as6-public-brand-foundation-v1.md
