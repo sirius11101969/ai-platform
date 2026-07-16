@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+SHELL="$ROOT/frontend/src/living/product-v2/LivingShellV2.jsx"
+REGISTRY="$ROOT/frontend/src/living/product-v2/livingSpaceRegistry.js"
+ENGINE="$ROOT/frontend/src/living/product-v2/LivingSpaceEngine.jsx"
+test -f "$REGISTRY"
+test -f "$ENGINE"
+grep -Fq "const spaces = livingSpaceRegistry;" "$SHELL"
+grep -Fq "engineDefinition?.engine" "$SHELL"
+test "$(grep -c "path: \"/app/" "$REGISTRY")" -ge 11
+grep -Fq "data-space-engine" "$ENGINE"
+grep -Fq "Рекомендация пространства" "$ENGINE"
+echo "AS6_LIVING_SPACE_ENGINE=PASS"
+echo "AS6_TWELVE_PRODUCT_SPACES=PASS"
+echo "AS6_SPACE_REGISTRY_CONTROL=PASS"

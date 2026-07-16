@@ -2,17 +2,10 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./LivingShellV2.css";
 import { loadLivingReadOnlyData } from "./livingReadOnlyData.js";
 import { clearAuthSession, getStoredUser } from "../../services/api.js";
+import LivingSpaceEngine from "./LivingSpaceEngine.jsx";
+import { livingSpaceRegistry, getLivingSpaceDefinition } from "./livingSpaceRegistry.js";
 
-const spaces = [
-  { id: "home", path: "/app", label: "Дом", short: "Главный фокус", symbol: "⌂" },
-  { id: "conductor", path: "/app/conductor", label: "AI-дирижёр", short: "Намерение и план", symbol: "✦" },
-  { id: "relations", path: "/app/relations", label: "Клиенты", short: "Отношения и внимание", symbol: "◌" },
-  { id: "projects", path: "/app/projects", label: "Проекты", short: "Результаты и движение", symbol: "◇" },
-  { id: "documents", path: "/app/documents", label: "Документы", short: "Контекст и материалы", symbol: "▤" },
-  { id: "knowledge", path: "/app/knowledge", label: "Знания", short: "Решения и память", symbol: "◎" },
-  { id: "blog", path: "/app/blog", label: "Блог", short: "Идеи в действии", symbol: "◫" },
-  { id: "settings", path: "/app/settings", label: "Настройки", short: "Ваше пространство", symbol: "⚙" }
-];
+const spaces = livingSpaceRegistry;
 
 const commandItems = [
   { title: "Открыть AI-дирижёра", hint: "Сформулировать намерение", target: "conductor" },
@@ -430,6 +423,8 @@ function ActiveState({ id, navigate, livingData }) {
   if (id === "projects") return <ProjectsState livingData={livingData} />;
   if (id === "documents") return <DocumentsState livingData={livingData} />;
   if (id === "knowledge") return <KnowledgeState livingData={livingData} />;
+  const engineDefinition = getLivingSpaceDefinition(id);
+  if (engineDefinition?.engine) return <LivingSpaceEngine definition={engineDefinition} navigate={navigate} />;
   if (id === "blog") return <BlogState />;
   if (id === "settings") return <SettingsState />;
   return <HomeState navigate={navigate} />;
@@ -560,7 +555,7 @@ export default function LivingShellV2() {
         </a>
 
         <nav aria-label="Состояния Living Space">
-          {spaces.map((space) => (
+          {spaces.filter((space) => space.kind !== "utility").map((space) => (
             <button
               type="button"
               key={space.id}
