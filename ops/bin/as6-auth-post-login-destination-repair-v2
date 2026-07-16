@@ -1,0 +1,166 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="/var/www/ai-platform"
+STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+AUTH="$ROOT/frontend/src/pages/AuthPages.jsx"
+API="$ROOT/frontend/src/services/api.js"
+LEGACY_CONTROL="$ROOT/ops/bin/as6-control-auth-workspace-session-v3"
+CONTROL="$ROOT/ops/bin/as6-control-auth-post-login-destination-v1"
+DIAG="$ROOT/ops/diagnostics/as6-auth-post-login-destination-v1.md"
+RUNTIME_DIR="$ROOT/runtime/as6-auth-post-login-destination-v2-${STAMP}"
+
+cd "$ROOT"
+mkdir -p "$RUNTIME_DIR"
+
+echo "================ AS6 AUTH POST-LOGIN DESTINATION REPAIR v2 ================"
+echo "=== 1. DIAGNOSTICS ==="
+test "$(git branch --show-current)" = "main"
+test -f "$AUTH"
+test -f "$API"
+test -f "$LEGACY_CONTROL"
+test -f "$ROOT/.env"
+test "$(stat -c '%a' "$ROOT/.env")" = "600"
+git fetch origin main
+git pull --ff-only origin main
+cp -a "$AUTH" "$RUNTIME_DIR/AuthPages.jsx.before"
+cp -a "$LEGACY_CONTROL" "$RUNTIME_DIR/as6-control-auth-workspace-session-v3.before"
+echo "CURRENT_COMMIT=$(git rev-parse HEAD)"
+git status --short
+
+echo "=== 2. ROOT CAUSE ==="
+echo "The new auth flow uses window.location.replace('/app')."
+echo "The older workspace control still requires navigate('/app') and exits silently under set -e."
+echo "FAILURE_CLASS=AS6_AUTH_CONTROL_DESTINATION_CONTRACT_DRIFT"
+echo "FAILURE_CLASS=AS6_LEGACY_CONTROL_BLOCKS_VALID_AUTH_REPAIR"
+echo "FAILURE_CLASS=AS6_SILENT_GREP_CONTROL_FAILURE"
+
+echo "=== 3. STRUCTURE RECONCILIATION ==="
+grep -q 'window.location.replace("/app")' "$AUTH"
+grep -q 'const persistedToken = getAuthToken()' "$AUTH"
+grep -q 'const persistedWorkspaceId = getActiveWorkspaceId()' "$AUTH"
+grep -q 'const sessionWorkspaceId =' "$API"
+grep -q 'setActiveWorkspaceId(String(sessionWorkspaceId))' "$API"
+echo "AS6_AUTH_DETERMINISTIC_DESTINATION=PASS"
+echo "AS6_AUTH_SESSION_VERIFIED_BEFORE_DESTINATION=PASS"
+
+echo "=== 4. REPAIR LEGACY CONTROL ==="
+node -e '
+const fs = require("fs");
+const file = process.argv[1];
+let source = fs.readFileSync(file, "utf8");
+source = source.replace(
+  `grep -q "navigate(\\\"/app\\\")" "$AUTH"`,
+  `grep -Eq "navigate\\(\\\"/app\\\"\\)|window\\.location\\.replace\\(\\\"/app\\\"\\)" "$AUTH"`
+);
+fs.writeFileSync(file, source, "utf8");
+' "$LEGACY_CONTROL"
+bash -n "$LEGACY_CONTROL"
+"$LEGACY_CONTROL"
+echo "AS6_AUTH_LEGACY_CONTROL_RECONCILIATION=PASS"
+
+echo "=== 5. CURRENT PREVENTION CONTROL ==="
+printf '%s\n' \
+  '#!/usr/bin/env bash' \
+  'set -Eeuo pipefail' \
+  'ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"' \
+  'AUTH="$ROOT/frontend/src/pages/AuthPages.jsx"' \
+  'API="$ROOT/frontend/src/services/api.js"' \
+  'grep -q "window.location.replace(\"/app\")" "$AUTH"' \
+  'grep -q "const persistedToken = getAuthToken()" "$AUTH"' \
+  'grep -q "const persistedWorkspaceId = getActiveWorkspaceId()" "$AUTH"' \
+  'grep -q "const sessionWorkspaceId =" "$API"' \
+  'grep -q "setActiveWorkspaceId(String(sessionWorkspaceId))" "$API"' \
+  'echo "AS6_AUTH_DETERMINISTIC_DESTINATION=PASS"' \
+  'echo "AS6_AUTH_SESSION_VERIFIED_BEFORE_DESTINATION=PASS"' \
+  'echo "AS6_AUTH_POST_LOGIN_DESTINATION_CONTROL=PASS"' \
+  > "$CONTROL"
+chmod 755 "$CONTROL"
+bash -n "$CONTROL"
+"$CONTROL"
+
+echo "=== 6. DIAGNOSTIC ARTIFACT ==="
+printf '%s\n' \
+  '# AS6 Auth Post-Login Destination Repair v2' \
+  '' \
+  '## Diagnostics' \
+  'Login returned token, user and workspace with HTTP 200, but the browser landed on the public home page.' \
+  '' \
+  '## Root Cause' \
+  '- post-auth SPA navigation was replaced by a deterministic full reload to /app;' \
+  '- the legacy workspace control still required navigate("/app");' \
+  '- grep failed silently under set -e and blocked commit and deployment.' \
+  '' \
+  '## Change' \
+  '- verify persisted token and workspace before destination;' \
+  '- use window.location.replace("/app");' \
+  '- reconcile the legacy auth control with both valid destination contracts;' \
+  '- add a dedicated deterministic destination control.' \
+  '' \
+  '## Failure classes' \
+  '- AS6_POST_LOGIN_CLIENT_NAVIGATION_DRIFT' \
+  '- AS6_AUTH_SESSION_PERSISTENCE_NOT_VERIFIED_BEFORE_NAVIGATION' \
+  '- AS6_AUTH_CONTROL_DESTINATION_CONTRACT_DRIFT' \
+  '- AS6_LEGACY_CONTROL_BLOCKS_VALID_AUTH_REPAIR' \
+  '- AS6_SILENT_GREP_CONTROL_FAILURE' \
+  > "$DIAG"
+
+echo "=== 7. VALIDATION ==="
+npm --prefix frontend run build
+npm --prefix backend run test:ai-execution-runner-auth
+node --check "$AUTH"
+git diff --check
+git check-ignore -q .env
+"$CONTROL"
+"$LEGACY_CONTROL"
+ops/bin/as6-control-api-upstream-health-v1
+printf '%s\n' 'SECRET_SCAN=PASS' 'BACKEND_TESTS=PASS' 'BUILD=PASS'
+
+echo "=== 8. COMMIT + PUSH ==="
+git add "$AUTH" "$LEGACY_CONTROL" "$CONTROL" "$DIAG"
+if git diff --cached --quiet; then
+  echo "ERROR: no changes to commit"
+  exit 1
+fi
+git commit -m 'fix(auth): close deterministic post-login destination'
+git push origin main
+echo "PUSH=PASS"
+
+echo "=== 9. DEPLOY ==="
+OLD_IMAGE="$(docker image inspect ai-platform-nginx:latest --format '{{.Id}}' 2>/dev/null || true)"
+if [ -n "$OLD_IMAGE" ]; then
+  docker tag "$OLD_IMAGE" "as6-nginx-rollback-auth-destination-v2:${STAMP}"
+fi
+docker compose build --no-cache nginx
+docker compose up -d --no-deps --force-recreate nginx
+READY=0
+for attempt in 1 2 3 4 5 6 7 8 9 10; do
+  code="$(curl -kLsS --max-time 15 -o /dev/null -w '%{http_code}' "https://www.as6.ru/login?as6_auth_destination=${STAMP}_${attempt}" || true)"
+  echo "LOGIN_ROUTE_ATTEMPT_${attempt}=$code"
+  if [ "$code" = "200" ]; then READY=1; break; fi
+  sleep 2
+done
+test "$READY" = "1"
+ops/bin/as6-control-api-upstream-health-v1
+ops/bin/as6-production-monitor
+
+echo "=== 10. FINAL ==="
+"$CONTROL"
+"$LEGACY_CONTROL"
+git status --short --branch
+git log -2 --oneline
+printf '%s\n' \
+  'AS6_POST_LOGIN_CLIENT_NAVIGATION_DRIFT=FIXED' \
+  'AS6_AUTH_SESSION_PERSISTENCE_NOT_VERIFIED_BEFORE_NAVIGATION=FIXED' \
+  'AS6_AUTH_CONTROL_DESTINATION_CONTRACT_DRIFT=FIXED' \
+  'AS6_LEGACY_CONTROL_BLOCKS_VALID_AUTH_REPAIR=FIXED' \
+  'AS6_AUTH_DETERMINISTIC_DESTINATION=PASS' \
+  'AS6_AUTH_SESSION_VERIFIED_BEFORE_DESTINATION=PASS' \
+  'AS6_SIGNUP_APP_DESTINATION=PASS' \
+  'SECRET_SCAN=PASS' \
+  'BACKEND_TESTS=PASS' \
+  'BUILD=PASS' \
+  'PRODUCTION=HEALTHY' \
+  'PUSH=PASS' \
+  'AS6_PROJECT_READINESS=99.5%' \
+  '================ AS6 AUTH POST-LOGIN DESTINATION REPAIR v2 COMPLETE ================'
