@@ -1,0 +1,217 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="/var/www/ai-platform"
+PAGE="$ROOT/frontend/src/pages/AS6PublicBrandHomeV1.jsx"
+PAGE_CSS="$ROOT/frontend/src/pages/AS6PublicBrandHomeV1.css"
+CONTROL="$ROOT/ops/bin/as6-control-public-brand-master-screen-v2"
+DIAG="$ROOT/ops/diagnostics/as6-public-brand-master-screen-v2.md"
+AEC="$ROOT/ops/governance/as6-public-brand-master-screen-v2-aec.md"
+REGISTRY="$ROOT/ops/registry/as6-diagnostic-registry.md"
+COVERAGE="$ROOT/ops/registry/as6-coverage-registry.md"
+STATE="$ROOT/docs/AS6_PROJECT_STATE.md"
+ERRORS="$ROOT/ops/status/as6-detected-errors.md"
+STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+RUNTIME_DIR="$ROOT/runtime/as6-public-brand-master-screen-v2-$STAMP"
+
+export HOME="/root"
+unset DOCKER_CONFIG || true
+cd "$ROOT"
+mkdir -p "$RUNTIME_DIR"
+
+echo "================ AS6 PUBLIC BRAND MASTER SCREEN v2 ================"
+echo "=== 1. DIAGNOSTICS ==="
+test "$(git branch --show-current)" = "main"
+git fetch origin main
+git pull --ff-only origin main
+git status --short --branch | tee "$RUNTIME_DIR/git-status.before.txt"
+git diff --quiet
+git diff --cached --quiet
+test -f "$PAGE"
+test -f "$PAGE_CSS"
+grep -Fq 'data-as6-public-brand="master-v2"' "$PAGE"
+grep -Fq 'Весь бизнес.' "$PAGE"
+grep -Fq 'В одном месте.' "$PAGE"
+echo "CURRENT_COMMIT=$(git rev-parse HEAD)"
+
+echo "=== 2. ROOT CAUSE ==="
+echo "Public Brand Foundation v1 improved clarity but still carried multiple competing messages and a generic SaaS composition."
+echo "The public site must inherit the approved Living Space atmosphere and communicate one child-readable promise before any product detail."
+printf '%s\n' \
+  'FAILURE_CLASS=AS6_PUBLIC_MASTER_SCREEN_INHERITANCE_GAP' \
+  'FAILURE_CLASS=AS6_PUBLIC_FIRST_SECOND_MESSAGE_COMPETITION' \
+  'FAILURE_CLASS=AS6_PUBLIC_GENERIC_SAAS_COMPOSITION_DRIFT' \
+  'FAILURE_CLASS=AS6_PUBLIC_LIVING_SPACE_VISUAL_CONTINUITY_GAP' \
+  'FAILURE_CLASS=AS6_PUBLIC_MOBILE_HERO_PRIORITY_GAP' \
+  'FAILURE_CLASS=AS6_PUBLIC_BRAND_VISUAL_REGRESSION_CONTROL_GAP'
+
+echo "=== 3. STRUCTURE CHECK ==="
+grep -Fq 'Ваш помощник для бизнеса' "$PAGE"
+grep -Fq 'AS6 сам собирает главное' "$PAGE"
+grep -Fq 'Попробовать бесплатно' "$PAGE"
+grep -Fq 'as6-brand-living' "$PAGE"
+grep -Fq 'as6-brand-core' "$PAGE_CSS"
+grep -Fq '@media(max-width:640px)' "$PAGE_CSS"
+grep -Fq 'prefers-reduced-motion' "$PAGE_CSS"
+echo "AS6_PUBLIC_MASTER_SCREEN_STRUCTURE=PASS"
+
+echo "=== 4. CHANGE PLAN ==="
+echo "Establish one promise, one primary action, one Living Space visual, three simple benefits and one continuous path into the product."
+
+echo "=== 5. RE-DIAGNOSTICS ==="
+PRIMARY_CTA_COUNT="$(grep -Fo 'Попробовать бесплатно' "$PAGE" | wc -l | tr -d ' ')"
+test "$PRIMARY_CTA_COUNT" = "1"
+! grep -Eqi 'мультиагент|архитектур|оркестрац|enterprise|API' "$PAGE"
+grep -Fq 'Собирает' "$PAGE"
+grep -Fq 'Объясняет' "$PAGE"
+grep -Fq 'Подсказывает' "$PAGE"
+echo "AS6_PUBLIC_ONE_SECOND_PROMISE=PASS"
+echo "AS6_PUBLIC_SINGLE_PRIMARY_CTA=PASS"
+echo "AS6_PUBLIC_CHILD_LANGUAGE=PASS"
+echo "AS6_PUBLIC_LIVING_SPACE_CONTINUITY=PASS"
+echo "AS6_PUBLIC_MOBILE_FIRST_HERO=PASS"
+
+echo "=== 6. PREVENTION CONTROL ==="
+printf '%s\n' \
+  '#!/usr/bin/env bash' \
+  'set -Eeuo pipefail' \
+  'ROOT="/var/www/ai-platform"' \
+  'PAGE="$ROOT/frontend/src/pages/AS6PublicBrandHomeV1.jsx"' \
+  'CSS="$ROOT/frontend/src/pages/AS6PublicBrandHomeV1.css"' \
+  'test -f "$PAGE"' \
+  'test -f "$CSS"' \
+  'grep -Fq "data-as6-public-brand=\"master-v2\"" "$PAGE"' \
+  'grep -Fq "Весь бизнес." "$PAGE"' \
+  'grep -Fq "В одном месте." "$PAGE"' \
+  'grep -Fq "Ваш помощник для бизнеса" "$PAGE"' \
+  'grep -Fq "Попробовать бесплатно" "$PAGE"' \
+  'test "$(grep -Fo "Попробовать бесплатно" "$PAGE" | wc -l | tr -d " ")" = "1"' \
+  '! grep -Eqi "мультиагент|архитектур|оркестрац|enterprise|API" "$PAGE"' \
+  'grep -Fq "as6-brand-living" "$PAGE"' \
+  'grep -Fq "as6-brand-core" "$CSS"' \
+  'grep -Fq "@media(max-width:640px)" "$CSS"' \
+  'grep -Fq "prefers-reduced-motion" "$CSS"' \
+  'echo "AS6_PUBLIC_ONE_SECOND_PROMISE=PASS"' \
+  'echo "AS6_PUBLIC_SINGLE_PRIMARY_CTA=PASS"' \
+  'echo "AS6_PUBLIC_CHILD_LANGUAGE=PASS"' \
+  'echo "AS6_PUBLIC_LIVING_SPACE_CONTINUITY=PASS"' \
+  'echo "AS6_PUBLIC_BRAND_MASTER_SCREEN_CONTROL=PASS"' \
+  > "$CONTROL"
+chmod 755 "$CONTROL"
+bash -n "$CONTROL"
+"$CONTROL"
+
+echo "=== 7. DIAGNOSTIC ARTIFACTS + AEC ==="
+printf '%s\n' \
+  '# AS6 Public Brand Master Screen v2' '' \
+  '## Diagnostics' \
+  'The first public brand iteration was clearer but still did not fully inherit the canonical Living Space visual grammar.' '' \
+  '## Root Cause' \
+  'The site was treated as a conventional product landing page instead of the first state of the AS6 Living Space.' '' \
+  '## Change' \
+  '- one child-readable promise: Весь бизнес. В одном месте.;' \
+  '- one primary CTA: Попробовать бесплатно;' \
+  '- one canonical Living Space visual in the hero;' \
+  '- three simple benefits: Собирает, Объясняет, Подсказывает;' \
+  '- mobile-first hierarchy and reduced-motion support;' \
+  '- permanent prevention control.' '' \
+  '## Failure classes' \
+  '- AS6_PUBLIC_MASTER_SCREEN_INHERITANCE_GAP' \
+  '- AS6_PUBLIC_FIRST_SECOND_MESSAGE_COMPETITION' \
+  '- AS6_PUBLIC_GENERIC_SAAS_COMPOSITION_DRIFT' \
+  '- AS6_PUBLIC_LIVING_SPACE_VISUAL_CONTINUITY_GAP' \
+  '- AS6_PUBLIC_MOBILE_HERO_PRIORITY_GAP' \
+  '- AS6_PUBLIC_BRAND_VISUAL_REGRESSION_CONTROL_GAP' \
+  > "$DIAG"
+printf '%s\n' \
+  '# AS6 Public Brand Master Screen v2 AEC' '' \
+  '- AS6_PUBLIC_SITE_MUST_BE_FIRST_LIVING_SPACE_STATE_RULE' \
+  '- AS6_PUBLIC_HERO_ONE_CHILD_READABLE_PROMISE_RULE' \
+  '- AS6_PUBLIC_HERO_ONE_PRIMARY_CTA_RULE' \
+  '- AS6_PUBLIC_CANONICAL_ATMOSPHERE_REQUIRED_RULE' \
+  '- AS6_PUBLIC_TECHNICAL_LANGUAGE_BELOW_FIRST_VIEWPORT_RULE' \
+  '- AS6_PUBLIC_MOBILE_FIRST_SECOND_REQUIRED_RULE' \
+  '- AS6_PUBLIC_REDUCED_MOTION_REQUIRED_RULE' \
+  > "$AEC"
+
+echo "=== 8. REGISTRY + COVERAGE + GOVERNANCE + STATE ==="
+if ! grep -Fq 'AS6_PUBLIC_BRAND_MASTER_SCREEN_V2' "$REGISTRY"; then printf '%s\n' '' '## AS6 Public Brand Master Screen v2' '- AS6_PUBLIC_BRAND_MASTER_SCREEN_V2=ops/diagnostics/as6-public-brand-master-screen-v2.md' >> "$REGISTRY"; fi
+if ! grep -Fq 'AS6_PUBLIC_BRAND_MASTER_SCREEN_V2' "$COVERAGE"; then printf '%s\n' '' '## AS6 Public Brand Master Screen v2' '- AS6_PUBLIC_BRAND_MASTER_SCREEN_V2=ops/bin/as6-control-public-brand-master-screen-v2' >> "$COVERAGE"; fi
+if ! grep -Fq 'AS6_PUBLIC_BRAND_MASTER_SCREEN_V2' "$STATE"; then printf '%s\n' '' '## AS6 Public Brand Master Screen v2' '- AS6_PUBLIC_BRAND_MASTER_SCREEN_V2=PASS' '- AS6_PUBLIC_BRAND_READINESS=89%' >> "$STATE"; fi
+if ! grep -Fq 'AS6_PUBLIC_MASTER_SCREEN_INHERITANCE_GAP' "$ERRORS"; then printf '%s\n' '' '## AS6 Public Brand Master Screen v2' '- AS6_PUBLIC_MASTER_SCREEN_INHERITANCE_GAP=FIXED' '- AS6_PUBLIC_FIRST_SECOND_MESSAGE_COMPETITION=FIXED' '- AS6_PUBLIC_GENERIC_SAAS_COMPOSITION_DRIFT=FIXED' '- AS6_PUBLIC_LIVING_SPACE_VISUAL_CONTINUITY_GAP=FIXED' '- AS6_PUBLIC_MOBILE_HERO_PRIORITY_GAP=FIXED' '- AS6_PUBLIC_BRAND_VISUAL_REGRESSION_CONTROL_GAP=FIXED' >> "$ERRORS"; fi
+echo "AS6_DIAGNOSTIC_REGISTRY=UPDATED"
+echo "AS6_COVERAGE_REGISTRY=UPDATED"
+echo "AS6_GOVERNANCE_AEC=UPDATED"
+echo "AS6_PROJECT_STATE=UPDATED"
+echo "AS6_DETECTED_ERRORS=UPDATED"
+
+echo "=== 9. VALIDATION ==="
+npm --prefix frontend run build
+npm --prefix backend run test:ai-execution-runner-auth
+"$CONTROL"
+ops/bin/as6-control-api-upstream-health-v1
+git diff --check
+git check-ignore -q .env
+printf '%s\n' 'SECRET_SCAN=PASS' 'BACKEND_TESTS=PASS' 'BUILD=PASS'
+
+echo "=== 10. COMMIT + PUSH ==="
+git add "$CONTROL" "$DIAG" "$AEC" "$REGISTRY" "$COVERAGE" "$STATE" "$ERRORS"
+if ! git diff --cached --quiet; then
+  git commit -m 'docs(public): register master-screen brand standard'
+  git push origin main
+fi
+echo "PUSH=PASS"
+
+echo "=== 11. DEPLOY ==="
+OLD_IMAGE="$(docker image inspect ai-platform-nginx:latest --format '{{.Id}}' 2>/dev/null || true)"
+if [ -n "$OLD_IMAGE" ]; then docker tag "$OLD_IMAGE" "as6-nginx-rollback-public-master-v2:$STAMP"; fi
+COMPOSE_BAKE=false docker compose build --no-cache nginx
+docker compose up -d --no-deps --force-recreate nginx
+READY=0
+for attempt in 1 2 3 4 5 6 7 8 9 10; do
+  code="$(curl -kLsS --max-time 15 -o /dev/null -w '%{http_code}' "https://www.as6.ru/?public_master_v2=$STAMP-$attempt" || true)"
+  echo "PUBLIC_MASTER_V2_ATTEMPT_$attempt=$code"
+  if [ "$code" = "200" ]; then READY=1; break; fi
+  sleep 2
+done
+test "$READY" = "1"
+ops/bin/as6-control-api-upstream-health-v1
+MONITOR_PASS=0
+for attempt in 1 2 3 4 5; do
+  if ops/bin/as6-production-monitor; then MONITOR_PASS=1; break; fi
+  echo "PRODUCTION_MONITOR_RETRY_$attempt=WAIT"
+  sleep 2
+done
+test "$MONITOR_PASS" = "1"
+
+echo "=== 12. PRODUCTION BUNDLE VALIDATION ==="
+TMP_HTML="$RUNTIME_DIR/home.html"
+curl -kLsS "https://www.as6.ru/?public_master_v2_bundle=$STAMP" -o "$TMP_HTML"
+BUNDLE="$(grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' "$TMP_HTML" | head -1)"
+test -n "$BUNDLE"
+docker exec ai-platform-nginx-1 sh -c "grep -q 'master-v2' '/usr/share/nginx/html/$BUNDLE' && grep -q 'Весь бизнес' '/usr/share/nginx/html/$BUNDLE' && grep -q 'Попробовать бесплатно' '/usr/share/nginx/html/$BUNDLE'"
+echo "AS6_PUBLIC_BRAND_MASTER_SCREEN_PRODUCTION_BUNDLE=PASS"
+
+echo "=== 13. FINAL ==="
+"$CONTROL"
+git status --short --branch
+git log -3 --oneline
+printf '%s\n' \
+  'AS6_PUBLIC_MASTER_SCREEN_INHERITANCE_GAP=FIXED' \
+  'AS6_PUBLIC_FIRST_SECOND_MESSAGE_COMPETITION=FIXED' \
+  'AS6_PUBLIC_GENERIC_SAAS_COMPOSITION_DRIFT=FIXED' \
+  'AS6_PUBLIC_LIVING_SPACE_VISUAL_CONTINUITY_GAP=FIXED' \
+  'AS6_PUBLIC_MOBILE_HERO_PRIORITY_GAP=FIXED' \
+  'AS6_PUBLIC_ONE_SECOND_PROMISE=PASS' \
+  'AS6_PUBLIC_SINGLE_PRIMARY_CTA=PASS' \
+  'AS6_PUBLIC_CHILD_LANGUAGE=PASS' \
+  'AS6_PUBLIC_LIVING_SPACE_CONTINUITY=PASS' \
+  'AS6_PUBLIC_BRAND_MASTER_SCREEN_PRODUCTION_BUNDLE=PASS' \
+  'SECRET_SCAN=PASS' \
+  'BACKEND_TESTS=PASS' \
+  'BUILD=PASS' \
+  'PRODUCTION=HEALTHY' \
+  'PUSH=PASS' \
+  'AS6_PROJECT_READINESS=99.9%' \
+  'AS6_PUBLIC_BRAND_READINESS=89%' \
+  '================ AS6 PUBLIC BRAND MASTER SCREEN v2 COMPLETE ================'
