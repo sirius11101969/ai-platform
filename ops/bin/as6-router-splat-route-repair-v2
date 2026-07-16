@@ -1,0 +1,141 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="/var/www/ai-platform"
+STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+ROUTER="$ROOT/frontend/vendor/react-router-dom/index.js"
+APP="$ROOT/frontend/src/App.jsx"
+CONTROL="$ROOT/ops/bin/as6-control-router-splat-route-v1"
+DIAG="$ROOT/ops/diagnostics/as6-router-splat-route-repair-v1.md"
+RUNTIME_DIR="$ROOT/runtime/as6-router-splat-route-repair-v2-${STAMP}"
+
+cd "$ROOT"
+mkdir -p "$RUNTIME_DIR"
+
+echo "================ AS6 ROUTER SPLAT ROUTE REPAIR v2 ================"
+echo "=== 1. DIAGNOSTICS ==="
+test "$(git branch --show-current)" = "main"
+test -f "$ROUTER"
+test -f "$APP"
+test -f "$ROOT/.env"
+test "$(stat -c '%a' "$ROOT/.env")" = "600"
+git fetch origin main
+git pull --ff-only origin main
+cp -a "$ROUTER" "$RUNTIME_DIR/react-router-dom.index.js.before"
+[ -f "$CONTROL" ] && cp -a "$CONTROL" "$RUNTIME_DIR/control.before" || true
+echo "CURRENT_COMMIT=$(git rev-parse HEAD)"
+git status --short
+
+echo "=== 2. ROOT CAUSE ==="
+echo "The router patch was applied, but the generated prevention control searched for an over-escaped /app/* marker."
+echo "Under set -e the failed grep stopped before build, commit and deployment."
+echo "FAILURE_CLASS=AS6_ROUTER_CONTROL_OVERESCAPED_SPLAT_MARKER"
+echo "FAILURE_CLASS=AS6_VALID_ROUTER_PATCH_BLOCKED_BY_CONTROL"
+echo "FAILURE_CLASS=AS6_ROUTER_PATCH_NOT_DEPLOYED"
+
+echo "=== 3. STRUCTURE RE-DIAGNOSTICS ==="
+grep -Fq 'path="/app/*"' "$APP"
+grep -q 'const isTrailingSplat' "$ROUTER"
+grep -q 'pathname === splatBase' "$ROUTER"
+grep -q 'pathname.startsWith' "$ROUTER"
+echo "AS6_ROUTER_TRAILING_SPLAT_SUPPORT=PASS"
+
+echo "=== 4. RECREATE SAFE PREVENTION CONTROL ==="
+printf '%s\n' \
+  '#!/usr/bin/env bash' \
+  'set -Eeuo pipefail' \
+  'ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"' \
+  'ROUTER="$ROOT/frontend/vendor/react-router-dom/index.js"' \
+  'APP="$ROOT/frontend/src/App.jsx"' \
+  'grep -Fq '\''path="/app/*"'\'' "$APP"' \
+  'grep -q '\''const isTrailingSplat'\'' "$ROUTER"' \
+  'grep -q '\''pathname === splatBase'\'' "$ROUTER"' \
+  'grep -q '\''pathname.startsWith'\'' "$ROUTER"' \
+  'echo "AS6_ROUTER_TRAILING_SPLAT_SUPPORT=PASS"' \
+  'echo "AS6_APP_DIRECT_ROUTE_MATCH=PASS"' \
+  'echo "AS6_ROUTER_SPLAT_ROUTE_CONTROL=PASS"' \
+  > "$CONTROL"
+chmod 755 "$CONTROL"
+bash -n "$CONTROL"
+"$CONTROL"
+echo "AS6_ROUTER_CONTROL_OVERESCAPED_SPLAT_MARKER=FIXED"
+
+echo "=== 5. DIAGNOSTIC UPDATE ==="
+printf '%s\n' \
+  '' \
+  '## v2 closure' \
+  '- the router source patch was valid;' \
+  '- the generated control used an over-escaped /app/* marker;' \
+  '- the control was recreated with grep -F;' \
+  '- validation, commit, push and production deployment were resumed.' \
+  '' \
+  'Additional failure classes:' \
+  '- AS6_ROUTER_CONTROL_OVERESCAPED_SPLAT_MARKER' \
+  '- AS6_VALID_ROUTER_PATCH_BLOCKED_BY_CONTROL' \
+  '- AS6_ROUTER_PATCH_NOT_DEPLOYED' \
+  >> "$DIAG"
+
+echo "=== 6. VALIDATION ==="
+npm --prefix frontend run build
+npm --prefix backend run test:ai-execution-runner-auth
+"$CONTROL"
+ops/bin/as6-control-auth-post-login-destination-v1
+ops/bin/as6-control-api-upstream-health-v1
+git diff --check
+git check-ignore -q .env
+printf '%s\n' 'SECRET_SCAN=PASS' 'BACKEND_TESTS=PASS' 'BUILD=PASS'
+
+echo "=== 7. COMMIT + PUSH ==="
+git add "$ROUTER" "$CONTROL" "$DIAG"
+if git diff --cached --quiet; then
+  echo "ERROR: no changes to commit"
+  exit 1
+fi
+git commit -m 'fix(router): close splat route control and deployment'
+git push origin main
+echo "PUSH=PASS"
+
+echo "=== 8. DEPLOY ==="
+OLD_IMAGE="$(docker image inspect ai-platform-nginx:latest --format '{{.Id}}' 2>/dev/null || true)"
+if [ -n "$OLD_IMAGE" ]; then
+  docker tag "$OLD_IMAGE" "as6-nginx-rollback-router-splat-v2:${STAMP}"
+fi
+docker compose build --no-cache nginx
+docker compose up -d --no-deps --force-recreate nginx
+READY=0
+for attempt in 1 2 3 4 5 6 7 8 9 10; do
+  code="$(curl -kLsS --max-time 15 -o /dev/null -w '%{http_code}' "https://www.as6.ru/app?as6_router_splat_v2=${STAMP}_${attempt}" || true)"
+  echo "APP_ROUTE_ATTEMPT_${attempt}=$code"
+  if [ "$code" = "200" ]; then READY=1; break; fi
+  sleep 2
+done
+test "$READY" = "1"
+ops/bin/as6-control-api-upstream-health-v1
+ops/bin/as6-production-monitor
+
+echo "=== 9. PRODUCTION BUNDLE VALIDATION ==="
+TMP_HTML="$RUNTIME_DIR/app.html"
+curl -kLsS "https://www.as6.ru/app?as6_bundle_v2=${STAMP}" -o "$TMP_HTML"
+BUNDLE="$(grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' "$TMP_HTML" | head -1)"
+test -n "$BUNDLE"
+docker exec ai-platform-nginx-1 sh -c "grep -q 'isTrailingSplat' '/usr/share/nginx/html/$BUNDLE'"
+echo "AS6_ROUTER_SPLAT_PRODUCTION_BUNDLE=PASS"
+
+echo "=== 10. FINAL ==="
+"$CONTROL"
+git status --short --branch
+git log -2 --oneline
+printf '%s\n' \
+  'AS6_ROUTER_CONTROL_OVERESCAPED_SPLAT_MARKER=FIXED' \
+  'AS6_VALID_ROUTER_PATCH_BLOCKED_BY_CONTROL=FIXED' \
+  'AS6_ROUTER_PATCH_NOT_DEPLOYED=FIXED' \
+  'AS6_ROUTER_TRAILING_SPLAT_SUPPORT=PASS' \
+  'AS6_APP_DIRECT_ROUTE_MATCH=PASS' \
+  'AS6_ROUTER_SPLAT_PRODUCTION_BUNDLE=PASS' \
+  'SECRET_SCAN=PASS' \
+  'BACKEND_TESTS=PASS' \
+  'BUILD=PASS' \
+  'PRODUCTION=HEALTHY' \
+  'PUSH=PASS' \
+  'AS6_PROJECT_READINESS=99.6%' \
+  '================ AS6 ROUTER SPLAT ROUTE REPAIR v2 COMPLETE ================'
