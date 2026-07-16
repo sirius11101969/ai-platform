@@ -3,6 +3,7 @@ import "./LivingShellV2.css";
 import { loadLivingReadOnlyData } from "./livingReadOnlyData.js";
 import { clearAuthSession, getStoredUser } from "../../services/api.js";
 import LivingSpaceEngine from "./LivingSpaceEngine.jsx";
+import LivingDocumentsSpace from "./LivingDocumentsSpace.jsx";
 import { livingSpaceRegistry, getLivingSpaceDefinition } from "./livingSpaceRegistry.js";
 
 const spaces = livingSpaceRegistry;
@@ -421,7 +422,7 @@ function ActiveState({ id, navigate, livingData }) {
   if (id === "conductor") return <ConductorState />;
   if (id === "relations") return <RelationsState livingData={livingData} />;
   if (id === "projects") return <ProjectsState livingData={livingData} />;
-  if (id === "documents") return <DocumentsState livingData={livingData} />;
+  if (id === "documents") return <LivingDocumentsSpace livingData={livingData} />;
   if (id === "knowledge") return <KnowledgeState livingData={livingData} />;
   const engineDefinition = getLivingSpaceDefinition(id);
   if (engineDefinition?.engine) return <LivingSpaceEngine definition={engineDefinition} navigate={navigate} />;

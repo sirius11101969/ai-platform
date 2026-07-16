@@ -24,6 +24,7 @@ function normalizeAttachment(attachment) {
     mimeType: String(attachment?.mimeType || attachment?.mime_type || "application/octet-stream"),
     sizeBytes: Number(attachment?.sizeBytes || attachment?.size_bytes || 0),
     createdAt: attachment?.createdAt || attachment?.created_at || null,
+    downloadUrl: String(attachment?.downloadUrl || attachment?.download_url || attachment?.url || attachment?.fileUrl || attachment?.file_url || ""),
   };
 }
 

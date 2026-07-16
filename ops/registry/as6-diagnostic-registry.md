@@ -92,3 +92,11 @@
 - registry: frontend/src/living/product-v2/livingSpaceRegistry.js
 - failure_classes: AS6_LIVING_SPACE_ENGINE_MISSING, AS6_SPACE_DEFINITION_HARDCODED_IN_SHELL, AS6_NEW_SPACE_LAYOUT_DUPLICATION_RISK, AS6_SPACE_VISUAL_GRAMMAR_REUSE_GAP, AS6_SPACE_REGISTRY_COVERAGE_GAP, AS6_TWELVE_SPACE_ROADMAP_NOT_EXECUTABLE
 - result: AS6_LIVING_SPACE_ENGINE_V1=REGISTERED
+
+## AS6 Living Documents Real Data v1
+- diagnostic: real workspace-isolated documents rendered through a dedicated read-only Living Space
+- artifacts: frontend/src/living/product-v2/LivingDocumentsSpace.jsx, frontend/src/living/product-v2/LivingDocumentsSpace.css
+- diagnostic_artifact: ops/diagnostics/as6-living-documents-real-data-v1.md
+- control: ops/bin/as6-control-living-documents-real-data-v1
+- failure_classes: AS6_DOCUMENT_SPACE_ENGINE_DATA_ADAPTER_GAP, AS6_DOCUMENT_SPACE_REAL_DATA_RENDERING_GAP, AS6_DOCUMENT_NODE_METRICS_PLACEHOLDER_GAP, AS6_DOCUMENT_ACTIVITY_TIMELINE_DATA_GAP, AS6_DOCUMENT_EMPTY_STATE_ENGINE_GAP, AS6_DOCUMENT_ERROR_STATE_ENGINE_GAP, AS6_DOCUMENT_READ_ONLY_ENGINE_CONTROL_GAP, AS6_DOCUMENT_WORKSPACE_ISOLATION_ENGINE_GAP, AS6_DOCUMENT_CONTROL_NESTED_QUOTE_SYNTAX_GAP, AS6_REPAIR_SCRIPT_TRAILING_QUOTE_SYNTAX_GAP
+- result: AS6_LIVING_DOCUMENTS_REAL_DATA=REGISTERED
