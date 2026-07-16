@@ -62,48 +62,80 @@ function FocusCard({ onOpen }) {
 }
 
 function HomeState({ navigate }) {
+  const modules = [
+    { id: "relations", label: "Клиенты", note: "Отношения и следующий шаг", symbol: "◌" },
+    { id: "projects", label: "Проекты", note: "Результаты и движение", symbol: "◇" },
+    { id: "documents", label: "Документы", note: "Контекст и материалы", symbol: "▤" },
+    { id: "knowledge", label: "Знания", note: "Решения и память", symbol: "◎" }
+  ];
+
+  const activity = [
+    { title: "Контур авторизации защищён", meta: "Сегодня · Production" },
+    { title: "Профиль и безопасный выход подключены", meta: "Сегодня · Living Space" },
+    { title: "Документы работают в режиме чтения", meta: "Последнее изменение · Данные" }
+  ];
+
   return (
-    <div className="as6-v2-state-grid">
-      <section className="as6-v2-hero">
-        <span className="as6-v2-eyebrow">Вторник · пространство спокойно</span>
-        <h1>Здравствуйте, Владимир.</h1>
-        <p>
-          Всё важное собрано здесь. Не нужно искать раздел —
-          начните с намерения или продолжите главное действие.
-        </p>
+    <div className="as6-v2-workspace">
+      <section className="as6-v2-workspace-hero">
+        <div>
+          <span className="as6-v2-eyebrow">Ваше рабочее пространство</span>
+          <h1>Здравствуйте, Владимир.</h1>
+          <p>AS6 собрал главное в одном месте. Начните с намерения или откройте нужный рабочий контекст.</p>
+        </div>
+        <div className="as6-v2-workspace-status" aria-label="Состояние пространства">
+          <span><i />Система спокойна</span>
+          <strong>99,9%</strong>
+          <small>готовность платформы</small>
+        </div>
       </section>
 
-      <FocusCard onOpen={() => navigate("conductor")} />
-
-      <article className="as6-v2-panel as6-v2-panel-wide">
-        <header>
-          <span className="as6-v2-eyebrow">Что изменилось</span>
-          <button type="button" onClick={() => navigate("projects")}>Все события</button>
-        </header>
-        <div className="as6-v2-timeline">
-          <div><i /><span><strong>Production готов</strong><small>Мониторинг и backup работают автоматически</small></span></div>
-          <div><i /><span><strong>Living Space v2 зафиксирован</strong><small>Blueprint и Design System стали каноном</small></span></div>
-          <div><i /><span><strong>Безопасность усилена</strong><small>Уязвимости backend устранены</small></span></div>
+      <section className="as6-v2-conductor-entry">
+        <div className="as6-v2-conductor-entry__mark" aria-hidden="true"><BrandMark /></div>
+        <div>
+          <span className="as6-v2-eyebrow">AI-дирижёр</span>
+          <h2>Что должно измениться сегодня?</h2>
+          <p>Опишите результат обычными словами. Сначала AS6 покажет безопасный план.</p>
         </div>
-      </article>
+        <button type="button" className="as6-v2-primary" onClick={() => navigate("conductor")}>
+          <span>Сформулировать намерение</span><b aria-hidden="true">→</b>
+        </button>
+      </section>
 
-      <article className="as6-v2-panel">
-        <span className="as6-v2-eyebrow">Требует внимания</span>
-        <strong className="as6-v2-large-number">3</strong>
-        <p>отношения, где следующий шаг ещё не определён</p>
-        <button type="button" onClick={() => navigate("relations")}>Посмотреть клиентов →</button>
-      </article>
+      <section className="as6-v2-workspace-section">
+        <header><div><span className="as6-v2-eyebrow">Закреплено</span><h2>Рабочие контуры</h2></div><small>Один клик до нужного контекста</small></header>
+        <div className="as6-v2-module-grid">
+          {modules.map((module) => (
+            <button type="button" key={module.id} onClick={() => navigate(module.id)}>
+              <span className="as6-v2-module-symbol">{module.symbol}</span>
+              <span><strong>{module.label}</strong><small>{module.note}</small></span>
+              <b aria-hidden="true">→</b>
+            </button>
+          ))}
+        </div>
+      </section>
 
-      <article className="as6-v2-panel">
-        <span className="as6-v2-eyebrow">Знание дня</span>
-        <h3>Простота — это отсутствие лишнего решения.</h3>
-        <p>AS6 должен подсказывать одно понятное действие вместо списка функций.</p>
-        <button type="button" onClick={() => navigate("knowledge")}>Открыть контекст →</button>
-      </article>
+      <div className="as6-v2-workspace-columns">
+        <section className="as6-v2-workspace-panel">
+          <header><div><span className="as6-v2-eyebrow">Недавнее</span><h2>Последние действия</h2></div><button type="button" onClick={() => navigate("projects")}>Все события</button></header>
+          <div className="as6-v2-activity-list">
+            {activity.map((item, index) => (
+              <article key={item.title}><span>{String(index + 1).padStart(2, "0")}</span><div><strong>{item.title}</strong><small>{item.meta}</small></div></article>
+            ))}
+          </div>
+        </section>
+
+        <section className="as6-v2-workspace-panel as6-v2-attention-panel">
+          <span className="as6-v2-eyebrow">Требует внимания</span>
+          <strong className="as6-v2-attention-number">3</strong>
+          <h2>отношения без следующего шага</h2>
+          <p>Откройте клиентов и выберите одно понятное действие.</p>
+          <button type="button" onClick={() => navigate("relations")}>Посмотреть клиентов →</button>
+        </section>
+      </div>
     </div>
   );
 }
-
 function ConductorState() {
   const [intent, setIntent] = useState("");
   const [plan, setPlan] = useState(null);

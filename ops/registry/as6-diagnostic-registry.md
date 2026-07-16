@@ -78,3 +78,10 @@
 - result: AS6_AUTONOMOUS_DEPLOYMENT_CONTROLLER_RESULT
 
 ## Autonomous Incident Commander
+## AS6 Living Workspace v1
+- diagnostic: authenticated Living home product dashboard
+- diagnostic_artifact: ops/diagnostics/as6-living-workspace-v1.md
+- control: ops/bin/as6-control-living-workspace-v1
+- aec: ops/governance/as6-living-workspace-v1-aec.md
+- failure_classes: AS6_LIVING_HOME_PRODUCT_DASHBOARD_GAP, AS6_WORKSPACE_MODULE_DISCOVERY_GAP, AS6_RECENT_ACTIVITY_VISIBILITY_GAP, AS6_AI_CONDUCTOR_PRIMARY_ENTRY_GAP, AS6_WORKSPACE_STATUS_SUMMARY_GAP, AS6_LIVING_HOME_RESPONSIVE_DENSITY_GAP
+- result: AS6_LIVING_WORKSPACE_V1=REGISTERED

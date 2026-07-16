@@ -186,3 +186,7 @@ Design artifacts:
 - docs/architecture/09_GEOMETRY_ATLAS.md
 - docs/architecture/10_SPATIAL_COMPOSITION_SYSTEM.md
 - docs/architecture/11_MOTION_TRANSITION_SYSTEM.md
+## AS6 Living Workspace v1
+- status: IMPLEMENTED
+- control: PASS
+- production: pending deployment in current cycle

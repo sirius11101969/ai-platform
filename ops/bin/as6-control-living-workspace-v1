@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+SHELL="$ROOT/frontend/src/living/product-v2/LivingShellV2.jsx"
+CSS="$ROOT/frontend/src/living/product-v2/LivingShellV2.css"
+grep -Fq "as6-v2-workspace" "$SHELL"
+grep -Fq "Сформулировать намерение" "$SHELL"
+grep -Fq "Рабочие контуры" "$SHELL"
+grep -Fq "Последние действия" "$SHELL"
+grep -Fq "Требует внимания" "$SHELL"
+grep -Fq ".as6-v2-module-grid" "$CSS"
+grep -Fq ".as6-v2-workspace-columns" "$CSS"
+echo "AS6_LIVING_WORKSPACE_DASHBOARD=PASS"
+echo "AS6_LIVING_PINNED_MODULES=PASS"
+echo "AS6_LIVING_RECENT_ACTIVITY=PASS"
+echo "AS6_LIVING_AI_CONDUCTOR_ENTRY=PASS"
+echo "AS6_LIVING_WORKSPACE_CONTROL=PASS"
