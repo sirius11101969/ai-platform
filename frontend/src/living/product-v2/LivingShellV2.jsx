@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./LivingShellV2.css";
 import { loadLivingReadOnlyData } from "./livingReadOnlyData.js";
+import { clearAuthSession, getStoredUser } from "../../services/api.js";
 
 const spaces = [
   { id: "home", path: "/app", label: "Дом", short: "Главный фокус", symbol: "⌂" },
@@ -405,7 +406,13 @@ function ActiveState({ id, navigate, livingData }) {
 export default function LivingShellV2() {
   const [activeId, setActiveId] = useState(() => resolveSpace(window.location.pathname));
   const [commandOpen, setCommandOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const profileRef = useRef(null);
+  const storedUser = useMemo(() => getStoredUser() || {}, []);
+  const profileName = storedUser.name || storedUser.fullName || "Владимир";
+  const profileEmail = storedUser.email || "Аккаунт AS6";
+  const profileInitial = String(profileName).trim().charAt(0).toUpperCase() || "В";
   const [livingData, setLivingData] = useState({
     status: "loading",
     data: null,
@@ -425,6 +432,18 @@ export default function LivingShellV2() {
       `${item.title} ${item.hint}`.toLowerCase().includes(normalized)
     );
   }, [query]);
+
+  function handleLogout() {
+    setProfileOpen(false);
+    clearAuthSession();
+    try {
+      window.localStorage.removeItem("ai-platform-workspace-id");
+      window.sessionStorage.removeItem("ai-platform-workspace-id");
+    } catch (_error) {
+      // Storage can be unavailable in restricted browser contexts.
+    }
+    window.location.replace("/login");
+  }
 
   function navigate(id) {
     const target = spaces.find((space) => space.id === id) || spaces[0];
@@ -470,15 +489,26 @@ export default function LivingShellV2() {
         event.preventDefault();
         setCommandOpen((value) => !value);
       }
-      if (event.key === "Escape") setCommandOpen(false);
+      if (event.key === "Escape") {
+        setCommandOpen(false);
+        setProfileOpen(false);
+      }
+    }
+
+    function onPointerDown(event) {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setProfileOpen(false);
+      }
     }
 
     window.addEventListener("popstate", onPopState);
     window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("pointerdown", onPointerDown);
 
     return () => {
       window.removeEventListener("popstate", onPopState);
       window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("pointerdown", onPointerDown);
     };
   }, []);
 
@@ -530,10 +560,39 @@ export default function LivingShellV2() {
             <kbd>Ctrl K</kbd>
           </button>
 
-          <button type="button" className="as6-v2-profile" aria-label="Профиль Владимира">
-            <span>В</span>
-            <i />
-          </button>
+          <div className="as6-v2-profile-wrap" ref={profileRef}>
+            <button
+              type="button"
+              className="as6-v2-profile"
+              aria-label={`Профиль ${profileName}`}
+              aria-haspopup="menu"
+              aria-expanded={profileOpen}
+              onClick={() => setProfileOpen((value) => !value)}
+            >
+              <span>{profileInitial}</span>
+              <i />
+            </button>
+
+            {profileOpen && (
+              <section className="as6-v2-profile-menu" role="menu" aria-label="Меню профиля">
+                <header>
+                  <span className="as6-v2-profile-avatar" aria-hidden="true">{profileInitial}</span>
+                  <span><strong>{profileName}</strong><small>{profileEmail}</small></span>
+                </header>
+                <div className="as6-v2-profile-separator" />
+                <button type="button" role="menuitem" onClick={() => navigate("settings")}>
+                  <span>Настройки пространства</span><b aria-hidden="true">→</b>
+                </button>
+                <a href="/" role="menuitem">
+                  <span>Перейти на сайт</span><b aria-hidden="true">→</b>
+                </a>
+                <div className="as6-v2-profile-separator" />
+                <button type="button" role="menuitem" className="as6-v2-profile-logout" onClick={handleLogout}>
+                  <span>Выйти из AS6</span><b aria-hidden="true">↗</b>
+                </button>
+              </section>
+            )}
+          </div>
         </header>
 
         <div className="as6-v2-canvas">

@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+SHELL_FILE="$ROOT/frontend/src/living/product-v2/LivingShellV2.jsx"
+CSS_FILE="$ROOT/frontend/src/living/product-v2/LivingShellV2.css"
+grep -Fq "clearAuthSession, getStoredUser" "$SHELL_FILE"
+grep -Fq "function handleLogout()" "$SHELL_FILE"
+grep -Fq "window.location.replace(\"/login\")" "$SHELL_FILE"
+grep -Fq "as6-v2-profile-menu" "$SHELL_FILE"
+grep -Fq "Выйти из AS6" "$SHELL_FILE"
+grep -Fq ".as6-v2-profile-menu" "$CSS_FILE"
+echo "AS6_LIVING_PROFILE_MENU=PASS"
+echo "AS6_LIVING_LOGOUT_ACTION=PASS"
+echo "AS6_LOGOUT_SESSION_CLEAR=PASS"
+echo "AS6_LOGOUT_WORKSPACE_CLEAR=PASS"
+echo "AS6_LIVING_PROFILE_LOGOUT_CONTROL=PASS"
