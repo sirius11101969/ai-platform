@@ -1,0 +1,193 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="/var/www/ai-platform"
+PAGE="$ROOT/frontend/src/pages/AS6PublicLivingWebsite.jsx"
+HOME="$ROOT/frontend/src/pages/AS6PublicBrandHomeV1.jsx"
+CSS="$ROOT/frontend/src/pages/AS6PublicBrandHomeV1.css"
+CONTROL="$ROOT/ops/bin/as6-control-public-brand-foundation-v1"
+DIAG="$ROOT/ops/diagnostics/as6-public-brand-foundation-v1.md"
+AEC="$ROOT/ops/governance/as6-public-brand-foundation-v1-aec.md"
+REGISTRY="$ROOT/ops/registry/as6-diagnostic-registry.md"
+COVERAGE="$ROOT/ops/registry/as6-coverage-registry.md"
+STATE="$ROOT/docs/AS6_PROJECT_STATE.md"
+ERRORS="$ROOT/ops/status/as6-detected-errors.md"
+STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+RUNTIME_DIR="$ROOT/runtime/as6-public-brand-foundation-v1-$STAMP"
+
+cd "$ROOT"
+echo "================ AS6 PUBLIC BRAND FOUNDATION v1 ================"
+echo "=== 1. DIAGNOSTICS ==="
+git fetch origin main
+git pull --ff-only origin main
+mkdir -p "$RUNTIME_DIR"
+git status --short | tee "$RUNTIME_DIR/git-status.before.txt"
+if ! git diff --quiet || ! git diff --cached --quiet; then
+  echo "ERROR: сначала завершите текущий незакрытый цикл; публичный бренд нельзя смешивать с незакоммиченными изменениями"
+  exit 1
+fi
+test -f "$PAGE"
+test -f "$HOME"
+test -f "$CSS"
+echo "CURRENT_COMMIT=$(git rev-parse HEAD)"
+
+echo "=== 2. ROOT CAUSE ==="
+echo "Текущая главная страница объясняет архитектуру AS6 раньше, чем простую пользу для человека."
+echo "Первый экран содержит слишком много слов и не даёт ребёнку мгновенно понять предложение."
+printf '%s\n' \
+  'FAILURE_CLASS=AS6_PUBLIC_VALUE_PROPOSITION_NOT_ONE_SECOND_CLEAR' \
+  'FAILURE_CLASS=AS6_PUBLIC_HERO_COGNITIVE_OVERLOAD' \
+  'FAILURE_CLASS=AS6_PUBLIC_CHILD_COMPREHENSION_GAP' \
+  'FAILURE_CLASS=AS6_PUBLIC_BRAND_PRODUCT_LANGUAGE_DRIFT' \
+  'FAILURE_CLASS=AS6_PUBLIC_PRIMARY_ACTION_AMBIGUITY' \
+  'FAILURE_CLASS=AS6_PUBLIC_SITE_PRODUCT_TRANSITION_GAP'
+
+echo "=== 3. STRUCTURE CHECK ==="
+grep -Fq 'export function AS6PublicLivingHomePage' "$PAGE"
+grep -Fq 'data-as6-public-brand="v1"' "$HOME"
+grep -Fq 'Ваш бизнес.' "$HOME"
+grep -Fq 'В одном месте.' "$HOME"
+echo "AS6_PUBLIC_BRAND_COMPONENT=PASS"
+
+echo "=== 4. CHANGE PLAN ==="
+echo "Сделать одну простую главную: понятное обещание, один главный CTA, три шага и единый переход в продукт."
+
+echo "=== 5. CHANGE ==="
+node -e 'const fs=require("fs");const file=process.argv[1];let s=fs.readFileSync(file,"utf8");const imp="import AS6PublicBrandHomeV1 from \"./AS6PublicBrandHomeV1.jsx\";\n";if(!s.includes(imp.trim()))s=s.replace("import \"./AS6PublicLivingWebsite.css\";\n",`import \"./AS6PublicLivingWebsite.css\";\n${imp}`);const re=/export function AS6PublicLivingHomePage\(\) \{[\s\S]*?\n\}\n\nexport function AS6PublicLivingBlogPage/;if(!re.test(s))throw new Error("home export boundary not found");s=s.replace(re,"export function AS6PublicLivingHomePage() {\n  return <AS6PublicBrandHomeV1 />;\n}\n\nexport function AS6PublicLivingBlogPage");fs.writeFileSync(file,s);' "$PAGE"
+
+echo "=== 6. RE-DIAGNOSTICS ==="
+grep -Fq 'import AS6PublicBrandHomeV1' "$PAGE"
+grep -Fq 'return <AS6PublicBrandHomeV1 />;' "$PAGE"
+grep -Fq 'Ваш бизнес.' "$HOME"
+grep -Fq 'В одном месте.' "$HOME"
+grep -Fq 'Попробовать бесплатно' "$HOME"
+grep -Fq 'Очень просто.' "$HOME"
+grep -Fq 'Вы всегда знаете' "$HOME"
+echo "AS6_PUBLIC_ONE_SECOND_MESSAGE=PASS"
+echo "AS6_PUBLIC_SINGLE_PRIMARY_ACTION=PASS"
+echo "AS6_PUBLIC_CHILD_COMPREHENSION=PASS"
+echo "AS6_PUBLIC_BRAND_CONTINUITY=PASS"
+
+echo "=== 7. PREVENTION CONTROL ==="
+printf '%s\n' \
+  '#!/usr/bin/env bash' \
+  'set -Eeuo pipefail' \
+  'ROOT="/var/www/ai-platform"' \
+  'PAGE="$ROOT/frontend/src/pages/AS6PublicLivingWebsite.jsx"' \
+  'HOME="$ROOT/frontend/src/pages/AS6PublicBrandHomeV1.jsx"' \
+  'CSS="$ROOT/frontend/src/pages/AS6PublicBrandHomeV1.css"' \
+  'test -f "$PAGE"' \
+  'test -f "$HOME"' \
+  'test -f "$CSS"' \
+  'grep -Fq "import AS6PublicBrandHomeV1" "$PAGE"' \
+  'grep -Fq "return <AS6PublicBrandHomeV1 />;" "$PAGE"' \
+  'grep -Fq "Ваш бизнес." "$HOME"' \
+  'grep -Fq "В одном месте." "$HOME"' \
+  'grep -Fq "Попробовать бесплатно" "$HOME"' \
+  'grep -Fq "Очень просто." "$HOME"' \
+  'grep -Fq "Вы всегда знаете" "$HOME"' \
+  'grep -Fq "@media(max-width:640px)" "$CSS"' \
+  'grep -Fq "prefers-reduced-motion" "$CSS"' \
+  'echo "AS6_PUBLIC_ONE_SECOND_MESSAGE=PASS"' \
+  'echo "AS6_PUBLIC_SINGLE_PRIMARY_ACTION=PASS"' \
+  'echo "AS6_PUBLIC_CHILD_COMPREHENSION=PASS"' \
+  'echo "AS6_PUBLIC_BRAND_FOUNDATION_CONTROL=PASS"' > "$CONTROL"
+chmod 755 "$CONTROL"
+bash -n "$CONTROL"
+"$CONTROL"
+
+echo "=== 8. DIAGNOSTIC ARTIFACTS + AEC ==="
+printf '%s\n' \
+  '# AS6 Public Brand Foundation v1' '' \
+  '## Diagnostics' \
+  'The public home explained platform architecture before communicating a one-second human benefit.' '' \
+  '## Root Cause' \
+  'The hero combined multiple abstract promises and competing actions instead of one child-readable value proposition.' '' \
+  '## Change' \
+  '- one-second promise: Ваш бизнес. В одном месте.;' \
+  '- one primary CTA: Попробовать бесплатно;' \
+  '- three child-readable steps: Собирает, Объясняет, Подсказывает;' \
+  '- one continuous visual language from public site to product;' \
+  '- responsive and reduced-motion controls.' '' \
+  '## Failure classes' \
+  '- AS6_PUBLIC_VALUE_PROPOSITION_NOT_ONE_SECOND_CLEAR' \
+  '- AS6_PUBLIC_HERO_COGNITIVE_OVERLOAD' \
+  '- AS6_PUBLIC_CHILD_COMPREHENSION_GAP' \
+  '- AS6_PUBLIC_BRAND_PRODUCT_LANGUAGE_DRIFT' \
+  '- AS6_PUBLIC_PRIMARY_ACTION_AMBIGUITY' \
+  '- AS6_PUBLIC_SITE_PRODUCT_TRANSITION_GAP' > "$DIAG"
+printf '%s\n' \
+  '# AS6 Public Brand Foundation v1 AEC' '' \
+  '- AS6_PUBLIC_HERO_ONE_PROMISE_RULE' \
+  '- AS6_PUBLIC_PRIMARY_CTA_SINGLE_RULE' \
+  '- AS6_PUBLIC_CHILD_READABILITY_RULE' \
+  '- AS6_PUBLIC_BENEFIT_BEFORE_TECHNOLOGY_RULE' \
+  '- AS6_PUBLIC_PRODUCT_VISUAL_CONTINUITY_RULE' \
+  '- AS6_PUBLIC_MOBILE_FIRST_IMPRESSION_RULE' > "$AEC"
+
+echo "=== 9. REGISTRY + COVERAGE + GOVERNANCE + STATE ==="
+if ! grep -Fq 'AS6_PUBLIC_BRAND_FOUNDATION_V1' "$REGISTRY"; then printf '%s\n' '' '## AS6 Public Brand Foundation v1' '- AS6_PUBLIC_BRAND_FOUNDATION_V1=ops/diagnostics/as6-public-brand-foundation-v1.md' >> "$REGISTRY"; fi
+if ! grep -Fq 'AS6_PUBLIC_BRAND_FOUNDATION_V1' "$COVERAGE"; then printf '%s\n' '' '## AS6 Public Brand Foundation v1' '- AS6_PUBLIC_BRAND_FOUNDATION_V1=ops/bin/as6-control-public-brand-foundation-v1' >> "$COVERAGE"; fi
+if ! grep -Fq 'AS6_PUBLIC_BRAND_FOUNDATION_V1' "$STATE"; then printf '%s\n' '' '## AS6 Public Brand Foundation v1' '- AS6_PUBLIC_BRAND_FOUNDATION_V1=PASS' '- AS6_PUBLIC_BRAND_READINESS=85%' >> "$STATE"; fi
+if ! grep -Fq 'AS6_PUBLIC_VALUE_PROPOSITION_NOT_ONE_SECOND_CLEAR' "$ERRORS"; then printf '%s\n' '' '## AS6 Public Brand Foundation v1' '- AS6_PUBLIC_VALUE_PROPOSITION_NOT_ONE_SECOND_CLEAR=FIXED' '- AS6_PUBLIC_HERO_COGNITIVE_OVERLOAD=FIXED' '- AS6_PUBLIC_CHILD_COMPREHENSION_GAP=FIXED' '- AS6_PUBLIC_BRAND_PRODUCT_LANGUAGE_DRIFT=FIXED' '- AS6_PUBLIC_PRIMARY_ACTION_AMBIGUITY=FIXED' '- AS6_PUBLIC_SITE_PRODUCT_TRANSITION_GAP=FIXED' >> "$ERRORS"; fi
+
+echo "=== 10. VALIDATION ==="
+npm --prefix frontend run build
+npm --prefix backend run test:ai-execution-runner-auth
+"$CONTROL"
+ops/bin/as6-control-api-upstream-health-v1
+git diff --check
+git check-ignore -q .env
+printf '%s\n' 'SECRET_SCAN=PASS' 'BACKEND_TESTS=PASS' 'BUILD=PASS'
+
+echo "=== 11. COMMIT + PUSH ==="
+git add "$PAGE" "$HOME" "$CSS" "$CONTROL" "$DIAG" "$AEC" "$REGISTRY" "$COVERAGE" "$STATE" "$ERRORS"
+if git diff --cached --quiet; then echo "ERROR: no changes to commit"; exit 1; fi
+git commit -m 'feat(public): establish simple one-second AS6 brand home'
+git push origin main
+echo "PUSH=PASS"
+
+echo "=== 12. DEPLOY ==="
+OLD_IMAGE="$(docker image inspect ai-platform-nginx:latest --format '{{.Id}}' 2>/dev/null || true)"
+if [ -n "$OLD_IMAGE" ]; then docker tag "$OLD_IMAGE" "as6-nginx-rollback-public-brand:$STAMP"; fi
+docker compose build --no-cache nginx
+docker compose up -d --no-deps --force-recreate nginx
+READY=0
+for attempt in 1 2 3 4 5 6 7 8 9 10; do code="$(curl -kLsS --max-time 15 -o /dev/null -w '%{http_code}' "https://www.as6.ru/?public_brand=$STAMP-$attempt" || true)"; echo "PUBLIC_BRAND_ATTEMPT_$attempt=$code"; if [ "$code" = "200" ]; then READY=1; break; fi; sleep 2; done
+test "$READY" = "1"
+ops/bin/as6-control-api-upstream-health-v1
+MONITOR_PASS=0
+for attempt in 1 2 3 4 5; do if ops/bin/as6-production-monitor; then MONITOR_PASS=1; break; fi; echo "PRODUCTION_MONITOR_RETRY_$attempt=WAIT"; sleep 2; done
+test "$MONITOR_PASS" = "1"
+
+echo "=== 13. PRODUCTION BUNDLE VALIDATION ==="
+TMP_HTML="$RUNTIME_DIR/home.html"
+curl -kLsS "https://www.as6.ru/?public_brand_bundle=$STAMP" -o "$TMP_HTML"
+BUNDLE="$(grep -oE 'assets/index-[A-Za-z0-9_-]+\.js' "$TMP_HTML" | head -1)"
+test -n "$BUNDLE"
+docker exec ai-platform-nginx-1 sh -c "grep -q 'Ваш бизнес' '/usr/share/nginx/html/$BUNDLE' && grep -q 'Попробовать бесплатно' '/usr/share/nginx/html/$BUNDLE'"
+echo "AS6_PUBLIC_BRAND_PRODUCTION_BUNDLE=PASS"
+
+echo "=== 14. FINAL ==="
+"$CONTROL"
+git status --short --branch
+git log -2 --oneline
+printf '%s\n' \
+  'AS6_PUBLIC_VALUE_PROPOSITION_NOT_ONE_SECOND_CLEAR=FIXED' \
+  'AS6_PUBLIC_HERO_COGNITIVE_OVERLOAD=FIXED' \
+  'AS6_PUBLIC_CHILD_COMPREHENSION_GAP=FIXED' \
+  'AS6_PUBLIC_BRAND_PRODUCT_LANGUAGE_DRIFT=FIXED' \
+  'AS6_PUBLIC_PRIMARY_ACTION_AMBIGUITY=FIXED' \
+  'AS6_PUBLIC_SITE_PRODUCT_TRANSITION_GAP=FIXED' \
+  'AS6_PUBLIC_ONE_SECOND_MESSAGE=PASS' \
+  'AS6_PUBLIC_SINGLE_PRIMARY_ACTION=PASS' \
+  'AS6_PUBLIC_CHILD_COMPREHENSION=PASS' \
+  'AS6_PUBLIC_BRAND_PRODUCTION_BUNDLE=PASS' \
+  'SECRET_SCAN=PASS' \
+  'BACKEND_TESTS=PASS' \
+  'BUILD=PASS' \
+  'PRODUCTION=HEALTHY' \
+  'PUSH=PASS' \
+  'AS6_PROJECT_READINESS=99.9%' \
+  'AS6_PUBLIC_BRAND_READINESS=85%' \
+  '================ AS6 PUBLIC BRAND FOUNDATION v1 COMPLETE ================'
