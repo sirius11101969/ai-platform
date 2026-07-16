@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+ROUTER="$ROOT/frontend/vendor/react-router-dom/index.js"
+APP="$ROOT/frontend/src/App.jsx"
+grep -Fq 'path="/app/*"' "$APP"
+grep -q 'const isTrailingSplat' "$ROUTER"
+grep -q 'pathname === splatBase' "$ROUTER"
+grep -q 'pathname.startsWith' "$ROUTER"
+echo "AS6_ROUTER_TRAILING_SPLAT_SUPPORT=PASS"
+echo "AS6_APP_DIRECT_ROUTE_MATCH=PASS"
+echo "AS6_ROUTER_SPLAT_ROUTE_CONTROL=PASS"

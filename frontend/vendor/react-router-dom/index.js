@@ -99,10 +99,17 @@ function renderMatch(routes, pathname, base = "") {
   for (const route of routes) {
     if (!React.isValidElement(route)) continue;
     const { path = "", element, children } = route.props;
+    const isTrailingSplat = path.endsWith("/*");
+    const splatBase = isTrailingSplat
+      ? joinPath(base || "/", path.slice(0, -2))
+      : null;
     const fullPath = path === "*" ? "*" : joinPath(base || "/", path);
     const childRoutes = flattenRoutes(children);
+    const trailingSplatMatch =
+      isTrailingSplat &&
+      (pathname === splatBase || pathname.startsWith(`${splatBase}/`));
 
-    if (path === "*" || pathname === fullPath) {
+    if (path === "*" || pathname === fullPath || trailingSplatMatch) {
       const outlet = childRoutes.length ? renderMatch(childRoutes, pathname, fullPath) : null;
       return React.createElement(OutletContext.Provider, { value: outlet }, element);
     }
