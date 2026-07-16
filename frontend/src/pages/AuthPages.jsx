@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { login, saveAuthSession, signup } from "../services/api";
+import { Link } from "react-router-dom";
+import { getActiveWorkspaceId, getAuthToken, login, saveAuthSession, signup } from "../services/api";
 import "./AuthPages.css";
 
 function LivingAuthMark() {
@@ -15,7 +15,6 @@ function LivingAuthMark() {
 
 function AuthCard({ mode }) {
   const isSignup = mode === "signup";
-  const navigate = useNavigate();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -33,8 +32,19 @@ function AuthCard({ mode }) {
         ? await signup({ name: name.trim(), email: email.trim(), password })
         : await login({ email: email.trim(), password });
 
-      saveAuthSession(session);
-      navigate("/app");
+      const storedSession = saveAuthSession(session);
+      const storedToken = getAuthToken();
+      const storedWorkspaceId = getActiveWorkspaceId();
+
+      if (!storedSession?.token || !storedToken) {
+        throw new Error("Не удалось сохранить сессию. Обновите страницу и попробуйте снова.");
+      }
+
+      if (session?.workspace?.id && !storedWorkspaceId) {
+        throw new Error("Не удалось активировать рабочее пространство.");
+      }
+
+      window.location.replace("/app");
     } catch (apiError) {
       setError(
         apiError?.status === 401
