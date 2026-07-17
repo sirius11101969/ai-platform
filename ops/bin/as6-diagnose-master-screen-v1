@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="${AS6_REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
+cd "$ROOT"
+
+APP="frontend/src/App.jsx"
+CANONICAL="frontend/src/living/product-v2/LivingCanonicalApp.jsx"
+MASTER="frontend/src/living/product-v2/AS6MasterScreen.jsx"
+MASTER_CSS="frontend/src/living/product-v2/AS6MasterScreen.css"
+
+failures=0
+check_file(){ [[ -f "$1" ]] && echo "OK:file:$1" || { echo "FAIL:file:$1"; failures=$((failures+1)); }; }
+check_pattern(){ grep -Eq "$2" "$1" && echo "$3=OK" || { echo "$3=FAIL"; failures=$((failures+1)); }; }
+
+check_file "$APP"
+check_file "$CANONICAL"
+check_file "$MASTER"
+check_file "$MASTER_CSS"
+
+check_pattern "$APP" 'path="/app".*LivingProductPreviewPage|path="/app/\\*".*LivingProductPreviewPage' 'AS6_PRIMARY_APP_ROUTE'
+check_pattern "$CANONICAL" 'AS6MasterScreen' 'AS6_MASTER_SCREEN_OWNER'
+check_pattern "$CANONICAL" 'activeId === "home"' 'AS6_MASTER_SCREEN_HOME_STATE'
+check_pattern "$MASTER" 'aria-label="AS6 — Сегодня"' 'AS6_MASTER_SCREEN_SEMANTICS'
+check_pattern "$MASTER" 'as6-master__graph' 'AS6_LIVING_GRAPH_PRESENT'
+check_pattern "$MASTER" 'as6-master__intent' 'AS6_INTENT_LINE_PRESENT'
+check_pattern "$MASTER_CSS" 'prefers-reduced-motion:reduce' 'AS6_REDUCED_MOTION_CONTROL'
+check_pattern "$MASTER_CSS" 'as6-master-flow|as6-master-node-float|as6-master-focus-aura' 'AS6_LIVING_MOTION_SYSTEM'
+
+if [[ "$failures" -eq 0 ]]; then
+  echo "AS6_MASTER_SCREEN_V1_DIAGNOSTIC=PASS"
+  echo "FAILURE_CLASS=AS6_STALE_LEGACY_UI_GATE_DRIFT"
+  echo "ROOT_CAUSE=Legacy Command Center checks were still enforced after canonical route ownership moved to Living Product v2."
+  exit 0
+fi
+
+echo "AS6_MASTER_SCREEN_V1_DIAGNOSTIC=FAIL"
+echo "AS6_MASTER_SCREEN_V1_FAILURES=$failures"
+exit 1

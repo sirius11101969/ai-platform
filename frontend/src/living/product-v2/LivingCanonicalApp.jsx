@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./LivingCanonicalApp.css";
 import { clearAuthSession, getStoredUser } from "../../services/api.js";
 import { loadLivingReadOnlyData } from "./livingReadOnlyData.js";
+import AS6MasterScreen from "./AS6MasterScreen.jsx";
 import LivingSpaceEngine from "./LivingSpaceEngine.jsx";
 import LivingDocumentsSpace from "./LivingDocumentsSpace.jsx";
 import { livingSpaceRegistry, getLivingSpaceDefinition } from "./livingSpaceRegistry.js";
@@ -79,6 +80,10 @@ export default function LivingCanonicalApp() {
     window.addEventListener("pointerdown", onPointer);
     return () => { window.removeEventListener("popstate", onPop); window.removeEventListener("pointerdown", onPointer); };
   }, []);
+
+  if (activeId === "home") {
+    return <AS6MasterScreen navigate={navigate} profileName={profileName} />;
+  }
 
   return (
     <div className="as6-reference-root" data-as6-runtime="canonical-reference-v1" data-active-space={activeId}>
