@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ops/bin/as6-diagnose-master-screen-v1
+bash ops/bin/as6-diagnose-master-screen-v1
 
 grep -Fq 'AS6MasterScreen' frontend/src/living/product-v2/LivingCanonicalApp.jsx
 grep -Fq 'if (activeId === "home")' frontend/src/living/product-v2/LivingCanonicalApp.jsx
