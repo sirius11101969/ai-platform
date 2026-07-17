@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ops/bin/as6-diagnose-master-screen-v1
+
+grep -Fq 'AS6MasterScreen' frontend/src/living/product-v2/LivingCanonicalApp.jsx
+grep -Fq 'data-as6-runtime="master-screen-v1"' frontend/src/living/product-v2/LivingCanonicalApp.jsx
+grep -Fq 'prefers-reduced-motion:reduce' frontend/src/living/product-v2/AS6MasterScreen.css
+
+echo "AS6_CONTROL_MASTER_SCREEN_V1=PASS"
