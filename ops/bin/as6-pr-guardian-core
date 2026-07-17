@@ -51,8 +51,8 @@ echo "==================================================" | tee -a "$LOG"
 run_check "toolchain" "TOOLCHAIN_RESULT=OK" ./ops/bin/as6-toolchain-check
 run_check "git diff check" "" git diff --check
 run_check "secret scan" "SECRET_SCAN_RESULT=OK" ./ops/bin/as6-pre-commit-secret-scan
-run_check "master screen diagnostic" "AS6_MASTER_SCREEN_V1_DIAGNOSTIC=PASS" ./ops/bin/as6-diagnose-master-screen-v1
-run_check "master screen control" "AS6_CONTROL_MASTER_SCREEN_V1=PASS" ./ops/bin/as6-control-master-screen-v1
+run_check "master screen diagnostic" "AS6_MASTER_SCREEN_V1_DIAGNOSTIC=PASS" bash ops/bin/as6-diagnose-master-screen-v1
+run_check "master screen control" "AS6_CONTROL_MASTER_SCREEN_V1=PASS" bash ops/bin/as6-control-master-screen-v1
 run_check "frontend docker build" "" docker compose build --no-cache nginx
 
 if [ "$failures" -eq 0 ]; then
