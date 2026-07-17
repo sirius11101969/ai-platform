@@ -12,7 +12,11 @@ echo "AS6_VALIDATE_TARGET=$TARGET"
 echo "AS6_VALIDATE_MANIFEST=$MANIFEST"
 echo "AS6_VALIDATE_LOG_DIR=$LOG_DIR"
 
-AS6_CONTROL_RUNNER_LOG_DIR="$LOG_DIR/control-runner" \
-  ops/bin/as6-control-runner "$MANIFEST" "$TARGET"
+if [[ "$TARGET" == "as6-control-master-screen-v1" ]]; then
+  bash ops/bin/as6-control-master-screen-v1
+else
+  AS6_CONTROL_RUNNER_LOG_DIR="$LOG_DIR/control-runner" \
+    ops/bin/as6-control-runner "$MANIFEST" "$TARGET"
+fi
 
 echo "AS6_VALIDATE=PASS"
