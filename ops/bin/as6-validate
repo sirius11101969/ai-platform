@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-TARGET="${1:-as6-control-event-bus-v101}"
+TARGET="${1:-as6-control-master-screen-v1}"
 MANIFEST="${AS6_CONTROL_MANIFEST:-ops/registry/as6-control-dependency-manifest.tsv}"
 LOG_DIR="${AS6_VALIDATE_LOG_DIR:-runtime/as6-validate}"
 
