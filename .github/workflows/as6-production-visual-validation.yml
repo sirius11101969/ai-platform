@@ -1,0 +1,53 @@
+name: AS6 Production Visual Validation
+
+on:
+  workflow_run:
+    workflows:
+      - Deploy Production
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  visual-validation:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm install --ignore-scripts --no-audit --no-fund
+
+      - name: Install browser validator
+        working-directory: frontend
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+
+      - name: Capture production Master Screen
+        working-directory: frontend
+        env:
+          AS6_BASE_URL: https://www.as6.ru
+          AS6_VISUAL_OUTPUT_DIR: ../runtime/as6-production-visual
+        run: node scripts/as6-production-master-screen.mjs
+
+      - name: Upload visual evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: as6-production-master-screen-visual
+          path: runtime/as6-production-visual
+          if-no-files-found: error
+          retention-days: 14
