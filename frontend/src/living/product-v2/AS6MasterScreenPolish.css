@@ -51,11 +51,132 @@
   transition: opacity .35s ease;
 }
 
+.as6-master__overnight {
+  max-width: 560px;
+  line-height: 1.55;
+}
+
+.as6-master__focus {
+  width: min(560px, 66%);
+}
+
+.as6-master__focus-kicker {
+  display: block;
+  margin-bottom: 14px;
+  color: rgba(79, 120, 157, .74);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.as6-master__focus h2 {
+  max-width: 540px;
+  margin-inline: auto;
+  font-size: clamp(27px, 2.35vw, 38px);
+  line-height: 1.14;
+}
+
+.as6-master__thinking {
+  display: inline-flex;
+  align-items: center;
+  gap: 13px;
+  margin-top: 25px;
+  padding: 10px 17px;
+  border: 1px solid rgba(255, 255, 255, .9);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .3);
+  box-shadow: 0 12px 36px rgba(66, 104, 139, .07);
+  text-align: left;
+  backdrop-filter: blur(16px);
+}
+
+.as6-master__thinking-dot {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #2a75ac;
+  box-shadow: 0 0 0 7px rgba(42, 117, 172, .08);
+  animation: as6-thinking-pulse 2.8s ease-in-out infinite;
+}
+
+.as6-master__thinking div {
+  display: grid;
+  gap: 2px;
+}
+
+.as6-master__thinking small {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.as6-master__thinking strong {
+  color: #47779f;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.as6-master__outcome {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  margin-top: 22px;
+}
+
+.as6-master__outcome span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.as6-master__outcome strong {
+  color: #236c9f;
+  font-size: 38px;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.as6-master__outcome small {
+  color: #169473;
+  font-size: 10px;
+}
+
+.as6-master__ready {
+  margin-top: 38px;
+}
+
+.as6-master__ready h2 {
+  margin-bottom: 22px;
+  font-size: 18px;
+}
+
+.as6-master__ready ul {
+  gap: 15px;
+}
+
+.as6-master__ready li {
+  align-items: flex-start;
+  line-height: 1.45;
+}
+
+.as6-master__guide section {
+  margin-bottom: 46px;
+}
+
+.as6-master__guide h2 {
+  margin-bottom: 18px;
+}
+
+.as6-master__guide p,
+.as6-master__guide article {
+  margin-bottom: 0;
+}
+
 .as6-master.is-calm .as6-master__ambient,
 .as6-master.is-calm .as6-master__graph path,
 .as6-master.is-calm .as6-master__node::before,
 .as6-master.is-calm .as6-master__focus::before,
-.as6-master.is-calm .as6-master__focus-check,
+.as6-master.is-calm .as6-master__thinking-dot,
 .as6-master.is-calm .as6-master__mic {
   animation-play-state: paused;
 }
@@ -74,6 +195,17 @@
   opacity: .28;
   cursor: default;
   transform: none;
+}
+
+@keyframes as6-thinking-pulse {
+  0%, 100% { opacity: .68; transform: scale(.92); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+
+@media (max-width: 1280px) {
+  .as6-master__focus h2 { font-size: 29px; }
+  .as6-master__thinking { margin-top: 20px; }
+  .as6-master__outcome { margin-top: 18px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
