@@ -34,7 +34,6 @@ node --check "$ROOT/backend/src/plans.js"
 node --check "$ROOT/backend/src/controllers/paymentController.js"
 node --check "$ROOT/backend/src/services/paymentService.js"
 node --check "$ROOT/backend/src/services/providers/yookassaProvider.js"
-node "$ROOT/backend/tests/paymentService.test.js"
 
 AS6_ROOT="$ROOT" "$ROOT/ops/bin/as6-control-screen1-interaction-multi-workspace-v1"
 

@@ -22,6 +22,7 @@ git diff --check
 
 docker compose build backend nginx
 docker compose run --rm --no-deps backend node -e "const mode=String(process.env.YOOKASSA_MODE||'').toLowerCase(); if(!['test','live','production','real','yookassa'].includes(mode)) throw new Error('YOOKASSA_MODE must be test or live'); if(!process.env.YOOKASSA_SHOP_ID||!process.env.YOOKASSA_SECRET_KEY) throw new Error('YOOKASSA credentials are required'); console.log('YOOKASSA_CONFIGURATION=PASS mode='+mode)"
+docker compose run --rm --no-deps -e RUN_MIGRATIONS=false backend node tests/paymentService.test.js
 docker compose run --rm --no-deps backend node -e "require('./src/db/schema').migrate().then(()=>process.exit(0)).catch((error)=>{console.error(error);process.exit(1)})"
 docker compose up -d --no-deps --force-recreate backend nginx
 
