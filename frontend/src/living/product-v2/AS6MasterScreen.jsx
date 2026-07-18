@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "./AS6MasterScreen.css";
 import "./AS6MasterScreenPolish.css";
+import "./AS6MasterScreenReference.css";
 
 const spaces = [
   { id: "sales", label: "Продажи", note: "Прогноз подтверждён", x: 20, y: 20 },
