@@ -22,6 +22,31 @@ function currentDate() {
   return new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "short" }).format(new Date());
 }
 
+function normalizeProfileName(value) {
+  const name = String(value || "").trim().replace(/\s+/g, " ");
+  if (!name || name.includes("@")) return "";
+  if (/^[a-z0-9._-]+$/.test(name)) return "";
+  return name;
+}
+
+function resolveProfileDisplayName(user) {
+  const fullNameFromParts = [
+    user?.firstName || user?.first_name,
+    user?.lastName || user?.last_name,
+  ].filter(Boolean).join(" ");
+
+  const candidates = [
+    user?.displayName,
+    user?.display_name,
+    user?.fullName,
+    user?.full_name,
+    fullNameFromParts,
+    user?.name,
+  ];
+
+  return candidates.map(normalizeProfileName).find(Boolean) || "Владимир";
+}
+
 function normalizeDefinition(id) {
   const source = getLivingSpaceDefinition(id) || getLivingSpaceDefinition("home") || {};
   return {
@@ -49,7 +74,7 @@ export default function LivingCanonicalApp() {
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef(null);
   const user = getStoredUser();
-  const profileName = user?.name || user?.fullName || user?.email?.split("@")[0] || "Владимир";
+  const profileName = resolveProfileDisplayName(user);
   const profileInitial = String(profileName).trim().charAt(0).toUpperCase() || "В";
   const profileEmail = user?.email || "";
   const definition = useMemo(() => normalizeDefinition(activeId), [activeId]);
