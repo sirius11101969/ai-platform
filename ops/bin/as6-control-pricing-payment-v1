@@ -28,6 +28,7 @@ grep -Fq 'UNIQUE(provider, external_payment_id)' "$ROOT/backend/src/db/schema.js
 grep -Fq "VALUES('yookassa', 'RUB', TRUE, 'mock')" "$ROOT/backend/src/db/schema.js"
 grep -Fq 'AS6PublicLivingPricingPage' "$ROOT/frontend/src/App.jsx"
 grep -Fq 'createPlanCheckout' "$ROOT/frontend/src/pages/AS6PublicLivingWebsite.jsx"
+grep -Fq 'setWorkspace(current?.workspace || current || null)' "$ROOT/frontend/src/pages/AS6PublicLivingWebsite.jsx"
 grep -Fq 'body:has(.as6-reference-root){overflow:hidden' "$ROOT/frontend/src/living/product-v2/LivingCanonicalApp.css"
 ! grep -Fq 'body{overflow:hidden;background:#d9ebfb}' "$ROOT/frontend/src/living/product-v2/LivingCanonicalApp.css"
 grep -Fq 'current?.status === "paid"' "$ROOT/frontend/src/pages/PaymentSuccessPage.jsx"

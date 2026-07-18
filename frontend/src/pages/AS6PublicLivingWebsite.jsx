@@ -179,7 +179,7 @@ export function AS6PublicLivingPricingPage({ isAuthenticated = false }) {
 
     if (isAuthenticated) {
       fetchCurrentWorkspace().then((current) => {
-        if (!cancelled) setWorkspace(current || null)
+        if (!cancelled) setWorkspace(current?.workspace || current || null)
       }).catch((requestError) => {
         if (!cancelled) setError(requestError?.message || 'Не удалось определить текущее пространство')
       })
