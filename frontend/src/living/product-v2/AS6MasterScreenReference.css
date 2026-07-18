@@ -21,7 +21,7 @@
   left: 244px;
   right: 248px;
   top: 108px;
-  bottom: 70px;
+  bottom: 82px;
 }
 
 .as6-master__intent {
@@ -33,34 +33,37 @@
   transform: none;
 }
 
+/* The network must remain visible without competing with the main goal. */
 .as6-master__graph-lines path {
-  stroke: rgba(210, 225, 238, .88);
-  stroke-width: .72;
+  stroke: rgba(185, 208, 226, .94);
+  stroke-width: .82;
   stroke-dasharray: none;
-  opacity: .86;
-  filter: drop-shadow(0 0 2px rgba(255,255,255,.92));
-  animation: as6-master-reference-breathe 12s ease-in-out infinite alternate;
+  opacity: .90;
+  filter: drop-shadow(0 0 2.5px rgba(255, 255, 255, .98));
+  animation: none;
 }
 
-.as6-master__graph-lines path:nth-child(2n) { opacity: .72; }
-.as6-master__graph-lines path:nth-child(3n) { opacity: .62; }
+.as6-master__graph-lines path:nth-child(2n) { opacity: .80; }
+.as6-master__graph-lines path:nth-child(3n) { opacity: .70; }
 
+/* Points are structural anchors, not decorative moving particles. */
 .as6-master__graph-points circle {
-  fill: rgba(255, 255, 255, .98);
-  stroke: rgba(159, 190, 215, .28);
-  stroke-width: .18;
-  filter: drop-shadow(0 0 3px rgba(255,255,255,.96));
-  opacity: .78;
+  fill: rgba(255, 255, 255, .99);
+  stroke: rgba(125, 166, 198, .38);
+  stroke-width: .22;
+  filter: drop-shadow(0 0 3.5px rgba(255, 255, 255, .98));
+  opacity: .86;
   transform-origin: center;
   animation: none;
 }
 
-.as6-master__graph-points circle:nth-child(4n) { opacity: .95; }
-.as6-master__graph-points circle:nth-child(7n) { opacity: .62; }
+.as6-master__graph-points circle:nth-child(4n) { opacity: .98; }
+.as6-master__graph-points circle:nth-child(7n) { opacity: .72; }
 
 .as6-master__node {
   width: 164px;
   gap: 7px;
+  align-content: start;
 }
 
 .as6-master__node::before {
@@ -73,23 +76,26 @@
   width: 72px;
   height: 72px;
   min-height: 72px;
-  margin: 0 auto 4px;
-  border: 1px solid rgba(181, 205, 224, .58);
+  margin: 0 auto 5px;
+  border: 1px solid rgba(151, 184, 209, .70);
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,.92), rgba(243,248,252,.46) 54%, rgba(255,255,255,.08) 74%);
-  box-shadow: 0 0 0 8px rgba(255,255,255,.16), 0 0 26px rgba(255,255,255,.98);
-  color: rgba(139, 176, 205, .96);
+  background: radial-gradient(circle, rgba(255,255,255,.96), rgba(236,245,251,.62) 54%, rgba(255,255,255,.14) 74%);
+  box-shadow: 0 0 0 8px rgba(255,255,255,.18), 0 0 28px rgba(255,255,255,.98);
+  color: rgba(92, 143, 183, .98);
 }
 
 .as6-master__node-mark svg {
-  width: 48px;
-  height: 48px;
+  display: block;
+  width: 46px;
+  height: 46px;
   overflow: visible;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.9;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
-  filter: drop-shadow(0 0 3px rgba(255,255,255,.96));
+  filter: drop-shadow(0 0 2px rgba(255,255,255,.98));
 }
 
 .as6-master__node--finance .as6-master__node-mark svg circle {
@@ -101,7 +107,9 @@
   width: 176px;
 }
 
-.as6-master__node--team .as6-master__node-mark {
+.as6-master__node--team .as6-master__node-mark,
+.as6-master__node--team strong,
+.as6-master__node--team small {
   margin-inline: auto;
 }
 
@@ -128,12 +136,13 @@
 }
 
 .as6-master__space-status {
-  bottom: 3.5%;
+  bottom: 4.5%;
 }
 
+/* Keep the voice control fully inside every supported viewport. */
 .as6-master__intent {
-  bottom: 28px;
-  min-height: 72px;
+  bottom: max(34px, calc(env(safe-area-inset-bottom) + 20px));
+  min-height: 76px;
   align-items: center;
 }
 
@@ -142,27 +151,40 @@
   z-index: 2;
   width: 72px;
   height: 72px;
+  flex: 0 0 72px;
   opacity: 1;
-  color: #2b6fa6;
-  background: rgba(255,255,255,.42);
-  border-color: rgba(255,255,255,.98);
-  box-shadow: 0 0 0 9px rgba(255,255,255,.16), 0 0 30px rgba(255,255,255,.94);
+  color: #236ea8;
+  background: rgba(255,255,255,.50);
+  border-color: rgba(255,255,255,.99);
+  box-shadow: 0 0 0 9px rgba(255,255,255,.18), 0 0 31px rgba(255,255,255,.96);
+  animation: none;
 }
 
-@keyframes as6-master-reference-breathe {
-  from { opacity: .70; }
-  to { opacity: .90; }
+@media (max-height: 780px) and (min-width: 981px) {
+  .as6-master__space { bottom: 94px; }
+  .as6-master__intent {
+    bottom: max(24px, calc(env(safe-area-inset-bottom) + 14px));
+  }
+  .as6-master__mic {
+    width: 64px;
+    height: 64px;
+    flex-basis: 64px;
+  }
 }
 
 @media (max-width: 1360px) {
   .as6-master__canvas { width: calc(100vw - 10px); }
   .as6-master__identity { left: 0; width: 205px; }
   .as6-master__guide { right: 0; width: 215px; }
-  .as6-master__space { left: 210px; right: 218px; }
+  .as6-master__space { left: 210px; right: 218px; bottom: 88px; }
   .as6-master__topbar { left: 198px; right: 0; }
-  .as6-master__intent { left: 180px; right: 220px; bottom: 24px; }
+  .as6-master__intent {
+    left: 180px;
+    right: 220px;
+    bottom: max(28px, calc(env(safe-area-inset-bottom) + 16px));
+  }
   .as6-master__node-mark { width: 62px; height: 62px; min-height: 62px; }
-  .as6-master__node-mark svg { width: 41px; height: 41px; }
+  .as6-master__node-mark svg { width: 40px; height: 40px; }
 }
 
 @media (max-width: 980px) {
@@ -171,7 +193,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .as6-master__graph-lines path,
-  .as6-master__graph-points circle {
+  .as6-master__graph-points circle,
+  .as6-master__mic {
     animation: none;
   }
 }
