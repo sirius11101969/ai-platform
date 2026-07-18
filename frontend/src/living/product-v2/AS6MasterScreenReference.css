@@ -37,6 +37,7 @@
 .as6-master__logo {
   align-self: center;
   width: 132px;
+  opacity: .56;
   justify-items: center;
   text-align: center;
 }
@@ -52,13 +53,13 @@
 .as6-master .as6-master__workspace {
   gap: 6px;
   margin-top: 24px;
-  font-size: 8px;
+  font-size: 10px;
   line-height: 1;
   letter-spacing: .02em;
 }
 
 .as6-master__workspace span {
-  font-size: 9.1px;
+  font-size: 12px;
 }
 
 /*
@@ -70,15 +71,15 @@
   stroke: rgba(255, 255, 255, 1);
   stroke-width: .78;
   stroke-dasharray: none;
-  opacity: .46;
-  filter: drop-shadow(0 0 1px rgba(104, 153, 190, .24)) drop-shadow(0 0 5px rgba(255, 255, 255, .98));
+  opacity: .53;
+  filter: drop-shadow(0 0 1px rgba(104, 153, 190, .28)) drop-shadow(0 0 5px rgba(255, 255, 255, .98));
   vector-effect: non-scaling-stroke;
   transition: opacity .35s ease, stroke-width .35s ease;
   animation: none;
 }
 
 .as6-master__graph-lines path.is-active {
-  opacity: .94;
+  opacity: 1;
   stroke-width: 1.02;
   filter: drop-shadow(0 0 1px rgba(73, 133, 178, .30)) drop-shadow(0 0 7px rgba(255, 255, 255, 1));
 }
@@ -89,7 +90,7 @@
 }
 
 .as6-master__graph-lines path.is-muted {
-  opacity: .13;
+  opacity: .15;
 }
 
 /* White anchors have no blue outline and remain static in the calm state. */
@@ -97,7 +98,7 @@
   fill: rgba(255, 255, 255, 1);
   stroke: none;
   filter: drop-shadow(0 0 4px rgba(255, 255, 255, 1));
-  opacity: .82;
+  opacity: .94;
   transform-origin: center;
   animation: none;
 }
@@ -127,7 +128,7 @@
   border-radius: 50%;
   background: radial-gradient(circle, rgba(255,255,255,.50), rgba(255,255,255,.14) 54%, transparent 76%);
   box-shadow: 0 0 0 8px rgba(255,255,255,.16), 0 0 30px rgba(255,255,255,1), 0 0 7px rgba(112,158,193,.18);
-  color: rgba(255,255,255,1);
+  color: rgba(74,126,165,.30);
 }
 
 .as6-master__node-mark svg {
@@ -141,7 +142,7 @@
   stroke-linecap: round;
   stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
-  filter: drop-shadow(0 0 1px rgba(94,146,186,.30)) drop-shadow(0 0 5px rgba(255,255,255,1));
+  filter: drop-shadow(0 0 1px rgba(74,126,165,.40)) drop-shadow(0 0 5px rgba(255,255,255,1));
 }
 
 .as6-master__node--finance .as6-master__node-mark svg circle {
@@ -167,6 +168,7 @@
 
 .as6-master__node small {
   width: 100%;
+  color: #6688aa;
   font-size: 10px;
   text-align: center;
 }
@@ -204,6 +206,10 @@
 }
 
 /* The timeline text stands alone; the decorative oval marker is removed. */
+.as6-master__guide {
+  color: #6688aa;
+}
+
 .as6-master__guide article {
   display: block;
   margin-bottom: 34px;
