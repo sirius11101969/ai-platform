@@ -12,29 +12,21 @@ const spaces = [
   { id: "team", label: "Команда", note: "Материалы согласованы", x: 83, y: 73 },
 ];
 
-const paths = [
-  "M20 20 C30 7 40 8 50 12 C61 6 70 13 77 25 C88 18 92 31 87 45 C84 56 83 64 83 73",
-  "M20 20 C10 29 11 46 16 58 C9 68 7 76 10 84 C20 91 31 89 40 82 C55 94 70 89 83 73",
-  "M20 20 C31 21 38 28 46 35 C56 45 66 33 77 25",
-  "M16 58 C29 48 36 61 42 73 C50 89 69 85 83 73",
-  "M10 84 C21 75 29 77 40 82",
-  "M20 20 C37 35 57 20 77 25",
-  "M16 58 C31 64 42 52 50 44 C59 35 70 42 83 73",
-  "M10 84 C28 88 41 65 55 59 C68 53 76 63 83 73",
-  "M14 43 C31 39 39 51 50 55 C62 59 72 45 88 47",
-  "M22 8 C33 14 44 6 50 12 C58 17 65 8 75 14",
-  "M7 66 C25 69 34 42 50 40 C66 38 75 56 91 58",
-  "M14 30 C30 27 38 68 52 73 C66 78 76 48 88 35",
-  "M25 88 C38 79 41 29 54 24 C67 18 73 77 90 83",
-  "M8 52 C25 50 33 18 47 17 C61 16 68 60 86 66",
+// Every connection represents a real business dependency. The active chain reflects
+// the work AS6 is doing now: Finance → Documents → Team.
+const connections = [
+  { id: "crm-sales", from: "relations", to: "sales", kind: "structural", d: "M50 12 C40 8 29 10 20 20" },
+  { id: "sales-finance", from: "sales", to: "finance", kind: "structural", d: "M20 20 C13 31 12 46 16 58" },
+  { id: "crm-marketing", from: "relations", to: "marketing", kind: "structural", d: "M50 12 C61 8 70 14 77 25" },
+  { id: "marketing-team", from: "marketing", to: "team", kind: "structural", d: "M77 25 C88 38 88 59 83 73" },
+  { id: "finance-documents", from: "finance", to: "documents", kind: "active", d: "M16 58 C11 66 9 76 10 84" },
+  { id: "documents-team", from: "documents", to: "team", kind: "active", d: "M10 84 C29 94 62 91 83 73" },
+  { id: "finance-team", from: "finance", to: "team", kind: "active", d: "M16 58 C35 48 58 82 83 73" },
 ];
 
 const graphPoints = [
-  [8, 52], [10, 84], [12, 67], [14, 30], [14, 43], [16, 58], [20, 20], [22, 8], [25, 88],
-  [28, 33], [31, 64], [34, 42], [37, 35], [40, 82], [42, 73], [46, 35], [47, 17],
-  [50, 12], [50, 40], [50, 55], [52, 73], [54, 24], [55, 59], [58, 17], [61, 16],
-  [62, 59], [66, 38], [66, 78], [68, 53], [70, 42], [73, 77], [75, 14], [76, 63],
-  [77, 25], [83, 73], [86, 66], [87, 45], [88, 35], [88, 47], [90, 83], [91, 58],
+  [20, 20], [50, 12], [77, 25], [16, 58], [10, 84], [83, 73],
+  [14, 40], [12, 70], [34, 89], [55, 87], [86, 48], [67, 17],
 ];
 
 function NodeGlyph({ type }) {
@@ -124,8 +116,14 @@ export default function AS6MasterScreen({ navigate, profileName = "Владим�
             <defs>
               <filter id="as6-soft-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="0.55" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
             </defs>
-            <g className="as6-master__graph-lines">{paths.map((path) => <path key={path} d={path} />)}</g>
-            <g className="as6-master__graph-points">{graphPoints.map(([cx, cy], index) => <circle key={`${cx}-${cy}-${index}`} cx={cx} cy={cy} r={index % 5 === 0 ? 0.52 : 0.34} />)}</g>
+            <g className="as6-master__graph-lines">
+              {connections.map((connection) => {
+                const related = activeSpace && (connection.from === activeSpace || connection.to === activeSpace);
+                const muted = activeSpace && !related;
+                return <path key={connection.id} className={`is-${connection.kind}${related ? " is-related" : ""}${muted ? " is-muted" : ""}`} d={connection.d} />;
+              })}
+            </g>
+            <g className="as6-master__graph-points">{graphPoints.map(([cx, cy], index) => <circle key={`${cx}-${cy}-${index}`} cx={cx} cy={cy} r={index < 6 ? 0.48 : 0.30} />)}</g>
           </svg>
 
           {spaces.map((space) => {

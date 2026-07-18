@@ -48,44 +48,63 @@
   text-align: center;
 }
 
-/* The workspace switcher is intentionally quieter than the brand mark. */
+/* The workspace switcher is deliberately tiny and subordinate to the brand. */
 .as6-master__workspace {
-  gap: 8px;
+  gap: 6px;
   margin-top: 24px;
-  font-size: 10px;
+  font-size: 8px;
   line-height: 1;
+  letter-spacing: .02em;
 }
 
 .as6-master__workspace span {
-  font-size: 9px;
+  font-size: 7px;
 }
 
-/* White network lines with a subtle cool edge remain visible on the pale canvas. */
+/*
+ * The graph is not a decorative mesh. Structural links show the stable business
+ * architecture; active links show the current Finance → Documents → Team flow.
+ */
 .as6-master__graph-lines path {
-  stroke: rgba(255, 255, 255, .98);
-  stroke-width: .92;
+  fill: none;
+  stroke: rgba(255, 255, 255, 1);
+  stroke-width: .78;
   stroke-dasharray: none;
-  opacity: .98;
-  filter: drop-shadow(0 0 1px rgba(104, 153, 190, .42)) drop-shadow(0 0 5px rgba(255, 255, 255, .98));
+  opacity: .46;
+  filter: drop-shadow(0 0 1px rgba(104, 153, 190, .24)) drop-shadow(0 0 5px rgba(255, 255, 255, .98));
+  vector-effect: non-scaling-stroke;
+  transition: opacity .35s ease, stroke-width .35s ease;
   animation: none;
 }
 
-.as6-master__graph-lines path:nth-child(2n) { opacity: .92; }
-.as6-master__graph-lines path:nth-child(3n) { opacity: .86; }
+.as6-master__graph-lines path.is-active {
+  opacity: .94;
+  stroke-width: 1.02;
+  filter: drop-shadow(0 0 1px rgba(73, 133, 178, .30)) drop-shadow(0 0 7px rgba(255, 255, 255, 1));
+}
 
-/* Points are structural anchors, not decorative moving particles. */
+.as6-master__graph-lines path.is-related {
+  opacity: 1;
+  stroke-width: 1.08;
+}
+
+.as6-master__graph-lines path.is-muted {
+  opacity: .13;
+}
+
+/* White anchors have no blue outline and remain static in the calm state. */
 .as6-master__graph-points circle {
   fill: rgba(255, 255, 255, 1);
-  stroke: rgba(124, 171, 206, .34);
-  stroke-width: .20;
+  stroke: none;
   filter: drop-shadow(0 0 4px rgba(255, 255, 255, 1));
-  opacity: .94;
+  opacity: .82;
   transform-origin: center;
   animation: none;
 }
 
-.as6-master__graph-points circle:nth-child(4n) { opacity: 1; }
-.as6-master__graph-points circle:nth-child(7n) { opacity: .86; }
+.as6-master__graph-points circle:nth-child(-n+6) {
+  opacity: 1;
+}
 
 .as6-master__node {
   width: 164px;
@@ -202,7 +221,13 @@
 .as6-master__intent {
   bottom: max(34px, calc(env(safe-area-inset-bottom) + 20px));
   min-height: 76px;
+  grid-template-columns: 82px minmax(360px, 610px) 34px;
+  justify-content: start;
   align-items: center;
+}
+
+.as6-master__intent input {
+  min-width: 0;
 }
 
 .as6-master__mic {
@@ -231,7 +256,10 @@
   stroke-linejoin: round;
 }
 
+/* The send arrow belongs to the intent text, not to the far-right edge. */
 .as6-master__send {
+  justify-self: start;
+  margin-left: 4px;
   color: #2f6f9f;
   font-size: 22px;
 }
@@ -258,6 +286,7 @@
     left: 180px;
     right: 220px;
     bottom: max(28px, calc(env(safe-area-inset-bottom) + 16px));
+    grid-template-columns: 74px minmax(300px, 520px) 32px;
   }
   .as6-master__logo { width: 118px; }
   .as6-master__node-mark { width: 62px; height: 62px; min-height: 62px; }
@@ -269,6 +298,9 @@
   .as6-master__logo { align-self: flex-start; text-align: left; }
   .as6-master__logo span,
   .as6-master__logo small { text-align: left; }
+  .as6-master__intent {
+    grid-template-columns: 74px minmax(0, 1fr) 34px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
