@@ -28,7 +28,7 @@ function LivingPreview() {
   );
 }
 
-export default function AS6PublicBrandHomeV1() {
+export default function AS6PublicBrandHomeV1({ isAuthenticated = false }) {
   return (
     <div className="as6-brand-site" data-as6-public-brand="one-v3">
       <header className="as6-brand-header">
@@ -41,8 +41,11 @@ export default function AS6PublicBrandHomeV1() {
           <a href="#inside">Что внутри</a>
         </nav>
         <div className="as6-brand-actions">
-          <Link to="/login">Войти</Link>
-          <Link className="as6-brand-small-cta" to="/signup">Начать</Link>
+          {isAuthenticated ? (
+            <Link className="as6-brand-small-cta" to="/app">Открыть пространство</Link>
+          ) : (
+            <><Link to="/login">Войти</Link><Link className="as6-brand-small-cta" to="/signup">Начать</Link></>
+          )}
         </div>
       </header>
 
@@ -53,7 +56,7 @@ export default function AS6PublicBrandHomeV1() {
             <h1 id="as6-brand-title">Вы видите главное.<br />AS6 делает остальное.</h1>
             <p className="as6-brand-lead">Клиенты, деньги, документы и задачи собираются вместе. AS6 показывает один следующий шаг.</p>
             <div className="as6-brand-hero-actions">
-              <Link className="as6-brand-primary" to="/signup">Попробовать бесплатно</Link>
+              <Link className="as6-brand-primary" to={isAuthenticated ? "/app" : "/signup"}>{isAuthenticated ? "Открыть моё пространство" : "Попробовать бесплатно"}</Link>
               <Link className="as6-brand-secondary" to="/preview/living">Посмотреть, как это выглядит</Link>
             </div>
             <small>Без карты. Настройка не нужна.</small>
@@ -90,7 +93,7 @@ export default function AS6PublicBrandHomeV1() {
         <section className="as6-brand-finale">
           <p>Ваш бизнес может быть спокойнее.</p>
           <h2>Начните с одного понятного пространства.</h2>
-          <Link className="as6-brand-primary" to="/signup">Начать бесплатно</Link>
+          <Link className="as6-brand-primary" to={isAuthenticated ? "/app" : "/signup"}>{isAuthenticated ? "Вернуться в пространство" : "Начать бесплатно"}</Link>
         </section>
       </main>
 

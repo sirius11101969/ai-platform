@@ -105,8 +105,8 @@ function BlogPreview() {
   );
 }
 
-export function AS6PublicLivingHomePage() {
-  return <AS6PublicBrandHomeV1 />;
+export function AS6PublicLivingHomePage({ isAuthenticated = false }) {
+  return <AS6PublicBrandHomeV1 isAuthenticated={isAuthenticated} />;
 }
 
 export function AS6PublicLivingBlogPage() {

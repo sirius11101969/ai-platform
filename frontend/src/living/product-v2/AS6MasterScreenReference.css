@@ -358,6 +358,9 @@
 
 /* Screen 1 interaction and multi-workspace foundation. */
 .as6-master__overnight { display:flex; align-items:center; justify-content:center; margin:18px auto 0; padding:0; border:0; background:transparent; color:var(--muted); font-size:12px; cursor:pointer; }
+.as6-master__today,
+.as6-master__overnight,
+.as6-master__space-status { pointer-events: auto; }
 .as6-master__overnight:hover { text-decoration:underline; text-underline-offset:4px; }
 .as6-master__utilities button.is-active { color:#1f659d; text-shadow:0 0 12px rgba(36,95,151,.24); }
 .as6-master__avatar { width:88px; height:88px; border:2px solid rgba(74,112,145,.30); background:rgba(255,255,255,.28); box-shadow:0 8px 28px rgba(48,80,109,.11),0 0 0 7px rgba(255,255,255,.38); }

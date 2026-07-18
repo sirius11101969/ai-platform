@@ -109,8 +109,7 @@ function RequirePrimaryAuth({ children }) {
 
 function RootLivingEntry() {
   const { isAuthenticated } = useAuth();
-  if (isAuthenticated) return <Navigate to="/app" replace />;
-  return <AS6PublicLivingHomePage />;
+  return <AS6PublicLivingHomePage isAuthenticated={isAuthenticated} />;
 }
 
 export default function App() {
