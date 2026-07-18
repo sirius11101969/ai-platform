@@ -52,13 +52,13 @@
 .as6-master__workspace {
   gap: 6px;
   margin-top: 24px;
-  font-size: 8px;
+  font-size: 4px;
   line-height: 1;
   letter-spacing: .02em;
 }
 
 .as6-master__workspace span {
-  font-size: 7px;
+  font-size: 9.1px;
 }
 
 /*
