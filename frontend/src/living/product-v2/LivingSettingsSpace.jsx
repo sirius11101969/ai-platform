@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { updateProfile, updateWorkspace } from "../../services/api.js";
 import "./LivingSettingsSpace.css";
+import "./LivingSettingsInteraction.css";
 
 const MAX_IMAGE_BYTES = 1024 * 1024;
 const IMAGE_TYPES = new Set(["image/png", "image/jpeg", "image/webp"]);
@@ -86,7 +87,7 @@ export default function LivingSettingsSpace({ snapshot, navigate, onSaved }) {
 
       <form onSubmit={submit}>
         <fieldset>
-          <legend>{t("displayName")}</legend>
+          <legend>{t("profileSettings")}</legend>
           <label>
             <span>{t("displayName")}</span>
             <input value={displayName} onChange={(event) => setDisplayName(event.target.value)} maxLength={120} required />
@@ -101,7 +102,7 @@ export default function LivingSettingsSpace({ snapshot, navigate, onSaved }) {
         </fieldset>
 
         <fieldset disabled={!identity.canManageBranding}>
-          <legend>{t("workspaceName")}</legend>
+          <legend>{t("companySettings")}</legend>
           <label>
             <span>{t("workspaceName")}</span>
             <input value={workspaceName} onChange={(event) => setWorkspaceName(event.target.value)} maxLength={120} required />

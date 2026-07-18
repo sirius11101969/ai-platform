@@ -5,6 +5,7 @@ import { getAuthToken, getStoredUser } from "./services/api";
 import { LoginPage, SignupPage } from "./pages/AuthPages";
 import PaymentSuccessPage from "./pages/PaymentSuccessPage";
 import {
+  AS6PublicLivingHomePage,
   AS6PublicLivingBlogPage,
   AS6PublicLivingInfoPage,
 } from "./pages/AS6PublicLivingWebsite.jsx";
@@ -109,7 +110,7 @@ function RequirePrimaryAuth({ children }) {
 function RootLivingEntry() {
   const { isAuthenticated } = useAuth();
   if (isAuthenticated) return <Navigate to="/app" replace />;
-  return <LivingProductPreviewPage />;
+  return <AS6PublicLivingHomePage />;
 }
 
 export default function App() {

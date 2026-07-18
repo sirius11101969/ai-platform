@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./LivingCanonicalApp.css";
-import { clearAuthSession, getStoredUser, setActiveWorkspaceId } from "../../services/api.js";
+import { clearAuthSession, createWorkspace, getStoredUser, setActiveWorkspaceId } from "../../services/api.js";
 import { loadLivingReadOnlyData } from "./livingReadOnlyData.js";
 import AS6MasterScreen from "./AS6MasterScreen.jsx";
 import LivingSpaceEngine from "./LivingSpaceEngine.jsx";
@@ -8,6 +8,7 @@ import LivingDocumentsSpace from "./LivingDocumentsSpace.jsx";
 import LivingSettingsSpace from "./LivingSettingsSpace.jsx";
 import { livingSpaceRegistry, getLivingSpaceDefinition } from "./livingSpaceRegistry.js";
 import { createLivingShellSnapshot } from "./livingShellFoundation.js";
+import { getStoredLivingTheme, persistLivingTheme } from "./livingTheme.js";
 import {
   createLivingTranslator,
   getStoredLivingLocale,
@@ -85,6 +86,8 @@ export default function LivingCanonicalApp() {
   const [online, setOnline] = useState(() => navigator.onLine);
   const [locale, setLocale] = useState(() => getStoredLivingLocale(storedUser?.locale));
   const [profileOpen, setProfileOpen] = useState(false);
+  const [theme, setTheme] = useState(() => getStoredLivingTheme());
+  const [selectedPriorityId, setSelectedPriorityId] = useState("");
   const profileRef = useRef(null);
   const user = livingData.data?.profile || storedUser;
   const profileName = locale === "ru" ? resolveProfileDisplayName(user) : resolveProfileDisplayName(user, locale);
@@ -95,9 +98,10 @@ export default function LivingCanonicalApp() {
     user,
     fallbackProfileName: profileName,
     livingData: livingData.data,
+    selectedPriorityId,
     dataStatus: online ? livingData.status : "offline",
     dataError: livingData.error,
-  }), [locale, user, profileName, livingData, online]);
+  }), [locale, user, profileName, livingData, online, selectedPriorityId]);
   const t = useMemo(() => createLivingTranslator(locale), [locale]);
 
   const refreshLivingData = useCallback(async () => {
@@ -131,7 +135,22 @@ export default function LivingCanonicalApp() {
 
   function changeWorkspace(workspaceId) {
     if (!workspaceId || workspaceId === snapshot.workspace?.id) return;
+    setSelectedPriorityId("");
     setActiveWorkspaceId(workspaceId);
+  }
+
+  function changeTheme(nextTheme) {
+    setTheme(persistLivingTheme(nextTheme));
+  }
+
+  async function handleCreateWorkspace(name) {
+    const response = await createWorkspace({ name });
+    const created = response?.workspace;
+    if (!created?.id) throw new Error(t("saveError"));
+    setActiveWorkspaceId(created.id);
+    setSelectedPriorityId("");
+    await refreshLivingData();
+    return created;
   }
 
   async function handleSettingsSaved(result = {}) {
@@ -182,6 +201,10 @@ export default function LivingCanonicalApp() {
         snapshot={snapshot}
         onLocaleChange={changeLocale}
         onWorkspaceChange={changeWorkspace}
+        onCreateWorkspace={handleCreateWorkspace}
+        onPriorityChange={setSelectedPriorityId}
+        theme={theme}
+        onThemeChange={changeTheme}
       />
     );
   }
@@ -192,6 +215,7 @@ export default function LivingCanonicalApp() {
       data-as6-runtime="living-shell-foundation-v1"
       data-active-space={activeId}
       data-data-state={livingData.status}
+      data-theme={theme}
     >
       <div className="as6-reference-clouds" aria-hidden="true" />
       <div className="as6-reference-stars" aria-hidden="true" />
@@ -214,8 +238,8 @@ export default function LivingCanonicalApp() {
             </button>
           ))}
           <i />
-          <button type="button" aria-label={t("lightTheme")}>☼</button>
-          <button type="button" aria-label={t("calmMode")}>☾</button>
+          <button type="button" className={theme === "light" ? "is-active" : ""} aria-label={t("lightTheme")} aria-pressed={theme === "light"} onClick={() => changeTheme("light")}>☼</button>
+          <button type="button" className={theme === "dark" ? "is-active" : ""} aria-label={t("darkTheme")} aria-pressed={theme === "dark"} onClick={() => changeTheme("dark")}>☾</button>
           <button type="button" aria-label={t("settings")} onClick={() => navigate("settings")}>◉</button>
           <time><strong>{currentTime(locale)}</strong><small>{currentDate(locale)}</small></time>
           <span className="as6-reference-weather">☼ <b>24°</b></span>

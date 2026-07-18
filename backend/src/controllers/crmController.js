@@ -197,8 +197,11 @@ async function createFollowUp(req, res, next) {
 
 async function activity(req, res, next) {
   try {
-    const events = await crmModel.listActivity(req.user.id, req.workspace.id)
-    res.json({ events })
+    const events = await crmModel.listActivity(req.user.id, req.workspace.id, {
+      from: req.query.from,
+      limit: req.query.limit,
+    })
+    res.json({ events, total: events.length, from: req.query.from || 'recent' })
   } catch (error) {
     next(error)
   }

@@ -144,7 +144,19 @@ async function getCurrentWorkspace(userId, workspaceId = null) {
 
 async function createWorkspace(userId, payload) {
   const name = normalizeName(payload.name)
-  const plan = normalizePlan(payload.plan || 'free')
+  const ownerResult = await pool.query('SELECT plan FROM users WHERE id = $1', [userId])
+  if (!ownerResult.rows[0]) throw Object.assign(new Error('User not found'), { statusCode: 401 })
+  const plan = normalizePlan(ownerResult.rows[0].plan || 'free')
+  const limits = getPlanLimits(plan)
+  const ownedCountResult = await pool.query('SELECT COUNT(*)::int AS count FROM workspaces WHERE owner_user_id = $1', [userId])
+  const ownedCount = Number(ownedCountResult.rows[0]?.count || 0)
+  if (ownedCount >= limits.workspacesLimit) {
+    throw Object.assign(new Error('Workspace limit reached for the current plan'), {
+      statusCode: 402,
+      code: 'WORKSPACE_LIMIT_REACHED',
+      details: { plan, limit: limits.workspacesLimit, current: ownedCount },
+    })
+  }
   const creditsPool = Math.max(0, Number(payload.creditsPool ?? getPlanLimits(plan).monthlyAiCredits) || 0)
   const client = await pool.connect()
   try {

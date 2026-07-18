@@ -226,6 +226,8 @@ async function request(path, options = {}) {
       const backendMessage = data.message || data.details || data.error
       const error = new Error(translateApiError(backendMessage || 'Не удалось выполнить запрос к API'))
       error.status = response.status
+      error.code = data.code || ''
+      error.details = data.details || null
       error.payload = data
       throw error
     }
@@ -483,8 +485,9 @@ export function createLiveStreamEventSource(sessionId) {
     })
 }
 
-export function fetchCrmActivity() {
-  return request('/crm/activity')
+export function fetchCrmActivity(params = {}) {
+  const query = new URLSearchParams(Object.entries(params).filter(([, value]) => value !== undefined && value !== null && value !== '')).toString()
+  return request(`/crm/activity${query ? `?${query}` : ''}`)
 }
 
 export function addCrmLeadNote(id, body) {

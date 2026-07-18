@@ -1,0 +1,39 @@
+.as6-living-settings label > span {
+  color: #547895;
+  font-weight: 600;
+}
+
+.as6-living-settings__image i {
+  aspect-ratio: 1;
+  border: 1px solid rgba(77, 122, 158, .22);
+}
+
+[data-theme="dark"] .as6-living-settings {
+  color: #b7d9f2;
+  background: rgba(12, 38, 57, .78);
+  border-color: rgba(150, 199, 231, .18);
+}
+
+[data-theme="dark"] .as6-living-settings fieldset {
+  background: rgba(67, 117, 153, .08);
+  border-color: rgba(150, 199, 231, .16);
+}
+
+[data-theme="dark"] .as6-living-settings legend,
+[data-theme="dark"] .as6-living-settings h1,
+[data-theme="dark"] .as6-living-settings label > span {
+  color: #b7d9f2;
+}
+
+[data-theme="dark"] .as6-living-settings header p,
+[data-theme="dark"] .as6-living-settings label,
+[data-theme="dark"] .as6-living-settings__back {
+  color: #86aac5;
+}
+
+[data-theme="dark"] .as6-living-settings input:not([type="file"]),
+[data-theme="dark"] .as6-living-settings select {
+  color: #d2e8f7;
+  background: rgba(5, 24, 38, .62);
+  border-color: rgba(150, 199, 231, .23);
+}

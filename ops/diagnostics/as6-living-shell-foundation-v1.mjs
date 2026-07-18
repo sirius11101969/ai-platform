@@ -41,6 +41,7 @@ const dynamic = createLivingShellSnapshot({
       metrics: { focusLeads: 1 },
       totalLeads: 1,
     },
+    activity: [{ id: "event-1", title: "Verified event" }],
     loadedAt: "dynamic",
   },
   dataStatus: "ready",
@@ -55,4 +56,3 @@ assert.equal(dynamic.locale, "en");
 console.log("AS6_LIVING_SHELL_MODEL=PASS");
 console.log("AS6_ATOMIC_PRIORITY_CONTEXT=PASS");
 console.log("AS6_IDENTITY_AND_LOCALE_CONTRACT=PASS");
-

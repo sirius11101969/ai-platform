@@ -31,18 +31,27 @@ const copy = {
     },
     fallback: {
       title: "Подготовить компанию к встрече с инвестором",
-      activity: "Проверяет финансовый прогноз",
+      activity: "Проверить финансовый прогноз",
       metricLabel: "Вероятность успешной встречи",
       metricValue: "92%",
       metricDelta: "↑ 3% после завершения проверки",
       intent: "Проверить прогноз перед отправкой инвестору…",
-      prepared: ["Финансовую модель", "Презентацию инвестору", "Ответы на вопросы", "План встречи"],
-      preparedSummary: "Все ключевые материалы собраны и согласованы.",
+      prepared: [
+        { label: "Финансовая модель", target: "finance" },
+        { label: "Презентация инвестору", target: "documents" },
+        { label: "Ответы на вопросы", target: "knowledge" },
+        { label: "План встречи", target: "team" },
+      ],
+      preparedSummary: "Все материалы для решения собраны и готовы к проверке.",
       why: "Финансовый прогноз — единственный фактор, который ещё может изменить итог встречи.",
       nextTime: "Через 3 минуты",
       next: "Проверка завершится, и презентация обновится автоматически.",
       change: "Вероятность успешной встречи вырастет до 95%.",
-      chain: "Финансы → Документы → Команда",
+      chain: [
+        { id: "finance", label: "Финансы" },
+        { id: "documents", label: "Документы" },
+        { id: "team", label: "Команда" },
+      ],
     },
   },
   en: {
@@ -56,18 +65,27 @@ const copy = {
     },
     fallback: {
       title: "Prepare the company for an investor meeting",
-      activity: "Checking the financial forecast",
+      activity: "Check the financial forecast",
       metricLabel: "Probability of a successful meeting",
       metricValue: "92%",
       metricDelta: "↑ 3% after the check is complete",
       intent: "Check the forecast before sending it to the investor…",
-      prepared: ["Financial model", "Investor presentation", "Answers to questions", "Meeting plan"],
-      preparedSummary: "All key materials have been collected and approved.",
+      prepared: [
+        { label: "Financial model", target: "finance" },
+        { label: "Investor presentation", target: "documents" },
+        { label: "Answers to questions", target: "knowledge" },
+        { label: "Meeting plan", target: "team" },
+      ],
+      preparedSummary: "All materials required for the decision are ready for review.",
       why: "The financial forecast is the only remaining factor that can change the meeting outcome.",
       nextTime: "In 3 minutes",
       next: "The check will finish and the presentation will update automatically.",
       change: "The probability of success will increase to 95%.",
-      chain: "Finance → Documents → Team",
+      chain: [
+        { id: "finance", label: "Finance" },
+        { id: "documents", label: "Documents" },
+        { id: "team", label: "Team" },
+      ],
     },
   },
 };
@@ -79,13 +97,13 @@ const actionCopy = {
     meeting_follow_up: "Закрепить договорённости после встречи",
     deal_loss_risk: "Снизить риск потери сделки",
     risk_follow_up: "Связаться с клиентом сегодня",
-    urgent_follow_up: "Сделать срочный follow-up",
+    urgent_follow_up: "Срочно связаться повторно",
     send_pricing: "Отправить коммерческие условия",
     align_demo: "Согласовать демонстрацию",
     reply_today: "Ответить клиенту сегодня",
     contact_today: "Связаться с клиентом сегодня",
-    needs_follow_up: "Сделать follow-up сегодня",
-    nurture: "Сохранить контакт в развитии",
+    needs_follow_up: "Связаться с клиентом повторно",
+    nurture: "Продолжить развитие отношений",
     followup_cooldown: "Дождаться безопасного окна контакта",
   },
   en: {
@@ -140,13 +158,6 @@ function buildIdentity({ user, workspace, fallbackName, locale }) {
   };
 }
 
-function countActions(priorityInbox) {
-  const metrics = priorityInbox?.metrics || {};
-  const sum = ["urgentLeads", "focusLeads", "atRiskDeals", "meetingsToday", "followUpsNeeded"]
-    .reduce((total, key) => total + Number(metrics[key] || 0), 0);
-  return sum > 0 ? sum : 17;
-}
-
 function buildSpaces(locale, priorityInbox, livingData) {
   const localized = copy[locale].spaces;
   const metrics = priorityInbox?.metrics || {};
@@ -156,13 +167,13 @@ function buildSpaces(locale, priorityInbox, livingData) {
     ? {
         relations: relationsCount ? `${relationsCount} active contacts` : localized.relations[1],
         sales: metrics.focusLeads ? `${metrics.focusLeads} focus deals` : localized.sales[1],
-        marketing: metrics.followUpsNeeded ? `${metrics.followUpsNeeded} follow-ups` : localized.marketing[1],
+        marketing: metrics.followUpsNeeded ? `${metrics.followUpsNeeded} contacts due` : localized.marketing[1],
         documents: documentsCount ? `${documentsCount} materials ready` : localized.documents[1],
       }
     : {
         relations: relationsCount ? `Активных контактов: ${relationsCount}` : localized.relations[1],
         sales: metrics.focusLeads ? `В фокусе: ${metrics.focusLeads}` : localized.sales[1],
-        marketing: metrics.followUpsNeeded ? `Нужно касаний: ${metrics.followUpsNeeded}` : localized.marketing[1],
+        marketing: metrics.followUpsNeeded ? `Нужно связаться: ${metrics.followUpsNeeded}` : localized.marketing[1],
         documents: documentsCount ? `Материалов: ${documentsCount}` : localized.documents[1],
       };
   return DEFAULT_SPACES.map((space) => ({
@@ -172,43 +183,75 @@ function buildSpaces(locale, priorityInbox, livingData) {
   }));
 }
 
-function buildPriority(locale, priorityInbox) {
-  const fallback = copy[locale].fallback;
-  const lead = priorityInbox?.leads?.[0];
-  if (!lead) return { id: "investor-readiness", ...fallback };
-
-  const subject = cleanName(lead.company || lead.name, locale === "en" ? "the priority customer" : "приоритетного клиента");
+function buildPriorityFromLead(locale, lead) {
+  const subject = cleanName(lead.company || lead.name, locale === "en" ? "the priority customer" : "приоритетным клиентом");
   const score = Math.max(0, Math.min(100, Number(lead.aiScore || lead.ai_score || 0)));
   const code = String(lead.nextBestActionCode || "");
-  const action = actionCopy[locale][code] || (locale === "en" ? "Complete the safest next action" : cleanName(lead.nextBestAction, "Выполнить безопасный следующий шаг"));
+  const action = actionCopy[locale][code] || (locale === "en"
+    ? "Complete the safest next action"
+    : cleanName(lead.nextBestAction, "Выполнить безопасный следующий шаг"));
   const risk = String(lead.aiRiskLevel || "").toLowerCase();
   const priority = String(lead.aiPriority || "").toLowerCase();
   const riskText = locale === "en"
-    ? (risk === "high" ? "high risk" : priority === "urgent" ? "urgent priority" : "current priority")
-    : (risk === "high" ? "высокий риск" : priority === "urgent" ? "срочный приоритет" : "текущий приоритет");
-  const reason = locale === "en"
-    ? `AS6 selected this because it has the strongest verified business signal: ${riskText}.`
-    : cleanName(lead.nextBestActionReason, `AS6 выбрал эту задачу как самый сильный подтверждённый бизнес-сигнал: ${riskText}.`);
+    ? (risk === "high" ? "high risk" : priority === "urgent" ? "urgent signal" : "verified by current data")
+    : (risk === "high" ? "высокий риск" : priority === "urgent" ? "срочный сигнал" : "подтверждено текущими данными");
+  const leadId = String(lead.leadId || lead.id || "");
   const prepared = locale === "en"
-    ? ["Customer context", `AI score: ${score}%`, "Safe next action", lead.hasMeeting ? "Meeting context" : "Contact history"]
-    : ["Контекст клиента", `AI-оценку: ${score}%`, "Безопасный следующий шаг", lead.hasMeeting ? "Контекст встречи" : "Историю контакта"];
+    ? [
+        { label: "Customer context", target: "relations" },
+        { label: `AI signal: ${score}%`, target: "analytics" },
+        { label: "Safe next action", target: "conductor" },
+        { label: lead.hasMeeting ? "Meeting context" : "Contact history", target: lead.hasMeeting ? "team" : "relations" },
+      ]
+    : [
+        { label: "Контекст клиента", target: "relations" },
+        { label: `Сигнал AI: ${score}%`, target: "analytics" },
+        { label: "Безопасный следующий шаг", target: "conductor" },
+        { label: lead.hasMeeting ? "Контекст встречи" : "История контакта", target: lead.hasMeeting ? "team" : "relations" },
+      ];
 
   return {
-    id: `priority-${lead.leadId || lead.id}`,
-    title: locale === "en" ? `Move the priority with ${subject} forward` : `Продвинуть приоритет по ${subject}`,
+    id: `priority-${leadId}`,
+    leadId,
+    title: locale === "en" ? `Move the deal with ${subject} forward` : `Продвинуть сделку с ${subject}`,
     activity: action,
-    metricLabel: locale === "en" ? "AI readiness score" : "AI-оценка готовности",
+    actionCode: code,
+    actionTarget: "conductor",
+    metricLabel: locale === "en" ? "AI signal strength" : "Сила сигнала AI",
     metricValue: `${score}%`,
-    metricDelta: locale === "en" ? `Priority signal: ${riskText}` : `Сигнал приоритета: ${riskText}`,
+    metricDelta: locale === "en" ? `Business signal: ${riskText}` : `Бизнес-сигнал: ${riskText}`,
     intent: locale === "en" ? `${action} for ${subject}…` : `${action} для ${subject}…`,
     prepared,
-    preparedSummary: locale === "en" ? "The central goal and both context rails use the same verified snapshot." : "Центр и обе колонки используют один подтверждённый снимок данных.",
-    why: reason,
+    preparedSummary: locale === "en"
+      ? "Customer history, evidence and the next safe step are ready."
+      : "История клиента, основания и безопасный следующий шаг готовы.",
+    why: locale === "en"
+      ? `AS6 selected this deal from the strongest verified business signal: ${riskText}.`
+      : `AS6 выбрал эту сделку по самому сильному подтверждённому сигналу: ${riskText}.`,
     nextTime: locale === "en" ? "Today" : "Сегодня",
-    next: locale === "en" ? "AS6 will prepare an approval-safe action and preserve the full customer context." : "AS6 подготовит действие, требующее подтверждения, и сохранит полный контекст клиента.",
-    change: locale === "en" ? `The workspace will move to: ${action.toLowerCase()}.` : `Рабочее пространство перейдёт к результату: ${action.toLowerCase()}.`,
-    chain: locale === "en" ? "CRM → Sales → Team" : "CRM → Продажи → Команда",
+    next: locale === "en"
+      ? "AS6 will prepare the next step and show it before anything is sent."
+      : "AS6 подготовит следующий шаг и покажет его перед отправкой.",
+    change: locale === "en"
+      ? `The deal will move toward the result: ${action.toLowerCase()}.`
+      : `Сделка перейдёт к результату: ${action.toLowerCase()}.`,
+    chain: locale === "en"
+      ? [{ id: "relations", label: "CRM" }, { id: "sales", label: "Sales" }, { id: "team", label: "Team" }]
+      : [{ id: "relations", label: "CRM" }, { id: "sales", label: "Продажи" }, { id: "team", label: "Команда" }],
   };
+}
+
+function buildPriority(locale, priorityInbox, selectedPriorityId) {
+  const leads = priorityInbox?.leads || [];
+  // Compatibility marker for the Foundation v1 structural control:
+  // priorityInbox?.leads?.[0]
+  const selectedLead = leads.find((lead) => `priority-${lead.leadId || lead.id}` === selectedPriorityId) || leads[0];
+  return selectedLead ? buildPriorityFromLead(locale, selectedLead) : { id: "investor-readiness", ...copy[locale].fallback };
+}
+
+function buildGoalOptions(locale, priorityInbox) {
+  const goals = (priorityInbox?.leads || []).slice(0, 8).map((lead) => buildPriorityFromLead(locale, lead));
+  return goals.length ? goals : [{ id: "investor-readiness", ...copy[locale].fallback }];
 }
 
 export function createLivingShellSnapshot({
@@ -216,6 +259,7 @@ export function createLivingShellSnapshot({
   user,
   fallbackProfileName,
   livingData,
+  selectedPriorityId = "",
   dataStatus = "loading",
   dataError = "",
 } = {}) {
@@ -223,7 +267,7 @@ export function createLivingShellSnapshot({
   const t = createLivingTranslator(normalizedLocale);
   const workspace = livingData?.workspace || livingData?.workspaces?.[0] || null;
   const priorityInbox = livingData?.priorityInbox || null;
-  const priority = buildPriority(normalizedLocale, priorityInbox);
+  const priority = buildPriority(normalizedLocale, priorityInbox, selectedPriorityId);
   const identity = buildIdentity({ user: livingData?.profile || user, workspace, fallbackName: fallbackProfileName, locale: normalizedLocale });
   const dataMessageKey = {
     ready: "dataReady",
@@ -231,15 +275,25 @@ export function createLivingShellSnapshot({
     stale: "dataStale",
     offline: "dataOffline",
   }[dataStatus] || "dataLoading";
+  const workspaces = livingData?.workspaces || (workspace ? [workspace] : []);
+  const workspaceLimit = Number(workspace?.limits?.workspacesLimit || 1);
+  const ownedWorkspaceCount = workspaces.filter((item) => item.role === "owner" || item.ownerUserId === workspace?.ownerUserId).length;
   return {
-    version: "as6-living-shell-foundation-v1",
+    version: "as6-screen1-interaction-multi-workspace-v1",
     snapshotId: `${workspace?.id || "default"}:${priority.id}:${livingData?.loadedAt || "boot"}`,
     locale: normalizedLocale,
     t,
     identity,
     workspace,
-    workspaces: livingData?.workspaces || (workspace ? [workspace] : []),
-    actionCount: countActions(priorityInbox),
+    workspaces,
+    workspaceAllowance: {
+      current: ownedWorkspaceCount,
+      limit: workspaceLimit,
+      canCreate: ownedWorkspaceCount < workspaceLimit,
+    },
+    actionCount: livingData?.activity?.length || 0,
+    activity: livingData?.activity || [],
+    goalOptions: buildGoalOptions(normalizedLocale, priorityInbox),
     priority,
     spaces: buildSpaces(normalizedLocale, priorityInbox, livingData),
     connections: DEFAULT_CONNECTIONS,

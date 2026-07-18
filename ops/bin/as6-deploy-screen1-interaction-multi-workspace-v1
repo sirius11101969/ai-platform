@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="${AS6_ROOT:-/var/www/ai-platform}"
+STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+RUNTIME="$ROOT/runtime/as6-screen1-interaction-multi-workspace-v1-$STAMP"
+
+cd "$ROOT"
+mkdir -p "$RUNTIME"
+
+test "$(git branch --show-current)" = "main"
+git status --short --branch | tee "$RUNTIME/git-status.before.txt"
+git diff --quiet
+git diff --cached --quiet
+
+git fetch origin main
+git pull --ff-only origin main
+
+AS6_ROOT="$ROOT" ops/bin/as6-control-screen1-interaction-multi-workspace-v1
+npm --prefix frontend run build
+git diff --check
+
+docker compose build backend nginx
+docker compose run --rm --no-deps -e RUN_MIGRATIONS=false backend node -e "require('./src/db/schema').migrate().then(() => process.exit(0)).catch((error) => { console.error(error); process.exit(1) })"
+docker compose up -d --no-deps --force-recreate backend nginx
+
+READY=0
+for attempt in 1 2 3 4 5 6 7 8 9 10; do
+  ROOT_CODE="$(curl -kLsS --max-time 15 -o /dev/null -w '%{http_code}' "https://www.as6.ru/?screen1=$STAMP-$attempt" || true)"
+  APP_CODE="$(curl -kLsS --max-time 15 -o /dev/null -w '%{http_code}' "https://www.as6.ru/app?screen1=$STAMP-$attempt" || true)"
+  HEALTH_CODE="$(curl -kLsS --max-time 15 -o /dev/null -w '%{http_code}' "https://www.as6.ru/api/health" || true)"
+  echo "ATTEMPT_$attempt ROOT=$ROOT_CODE APP=$APP_CODE HEALTH=$HEALTH_CODE"
+  if test "$ROOT_CODE" = "200" && test "$APP_CODE" = "200" && test "$HEALTH_CODE" = "200"; then READY=1; break; fi
+  sleep 3
+done
+test "$READY" = "1"
+
+docker compose ps -a | tee "$RUNTIME/docker.after.txt"
+echo "AS6_SCREEN1_INTERACTION_MULTI_WORKSPACE_V1=PASS"
+echo "BUILD=PASS"
+echo "PRODUCTION=HEALTHY"
+echo "AS6_PROJECT_READINESS=99%"

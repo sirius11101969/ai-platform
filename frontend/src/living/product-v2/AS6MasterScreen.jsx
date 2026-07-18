@@ -1,9 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import "./AS6MasterScreen.css";
 import "./AS6MasterScreenPolish.css";
 import "./AS6MasterScreenReference.css";
 import { createLivingShellSnapshot } from "./livingShellFoundation.js";
 import { livingIntlLocale } from "./livingLocalization.js";
+import { useLivingSpeechRecognition } from "./useLivingSpeechRecognition.js";
 
 const graphPoints = [
   [20, 20], [50, 12], [77, 25], [16, 58], [10, 84], [83, 73],
@@ -55,6 +56,10 @@ export default function AS6MasterScreen({
   snapshot,
   onLocaleChange,
   onWorkspaceChange,
+  onCreateWorkspace,
+  onPriorityChange,
+  theme = "light",
+  onThemeChange,
 }) {
   const shell = snapshot || createLivingShellSnapshot({
     locale: "ru",
@@ -63,21 +68,23 @@ export default function AS6MasterScreen({
     dataStatus: "ready",
   });
   const { t, identity, priority } = shell;
-  const [intent, setIntent] = useState(priority.intent);
+  const [intent, setIntent] = useState("");
   const [workspaceOpen, setWorkspaceOpen] = useState(false);
+  const [workspaceCreateOpen, setWorkspaceCreateOpen] = useState(false);
+  const [workspaceName, setWorkspaceName] = useState("");
+  const [workspaceStatus, setWorkspaceStatus] = useState({ busy: false, message: "", error: false });
   const [activeSpace, setActiveSpace] = useState(null);
-  const [calmMode, setCalmMode] = useState(false);
-  const [listening, setListening] = useState(false);
+  const [panel, setPanel] = useState("");
   const [now, setNow] = useState(() => new Date());
+  const acceptTranscript = useCallback((transcript) => setIntent(transcript), []);
+  const speech = useLivingSpeechRecognition({ locale: shell.locale, onTranscript: acceptTranscript });
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 30_000);
     return () => window.clearInterval(timer);
   }, []);
 
-  useEffect(() => {
-    setIntent(priority.intent);
-  }, [shell.snapshotId, priority.intent]);
+  useEffect(() => setIntent(""), [priority.id]);
 
   const time = useMemo(() => formatTime(now, shell.locale), [now, shell.locale]);
   const date = useMemo(() => formatDate(now, shell.locale), [now, shell.locale]);
@@ -94,13 +101,40 @@ export default function AS6MasterScreen({
     onWorkspaceChange?.(workspaceId);
   }
 
+  async function submitWorkspace(event) {
+    event.preventDefault();
+    const name = workspaceName.trim();
+    if (!name || workspaceStatus.busy) return;
+    setWorkspaceStatus({ busy: true, message: t("creatingWorkspace"), error: false });
+    try {
+      await onCreateWorkspace?.(name);
+      setWorkspaceName("");
+      setWorkspaceCreateOpen(false);
+      setWorkspaceOpen(false);
+      setWorkspaceStatus({ busy: false, message: t("workspaceCreated"), error: false });
+    } catch (error) {
+      const limitReached = error?.code === "WORKSPACE_LIMIT_REACHED" || error?.status === 402;
+      setWorkspaceStatus({ busy: false, message: limitReached ? t("workspaceLimitReached") : (error?.message || t("saveError")), error: true });
+    }
+  }
+
+  function navigateForPriority(target, extra = {}) {
+    navigate?.(target, { priorityId: priority.id, leadId: priority.leadId, ...extra });
+  }
+
+  function activityTime(value) {
+    if (!value) return "";
+    return new Intl.DateTimeFormat(livingIntlLocale(shell.locale), { hour: "2-digit", minute: "2-digit" }).format(new Date(value));
+  }
+
   return (
     <section
-      className={`as6-master${calmMode ? " is-calm" : ""}${listening ? " is-listening" : ""}`}
+      className={`as6-master${speech.listening ? " is-listening" : ""}`}
       aria-label={`AS6 — ${t("today")}`}
       data-shell-version={shell.version}
       data-shell-snapshot={shell.snapshotId}
       data-data-state={shell.dataState.status}
+      data-theme={theme}
     >
       <div className="as6-master__ambient" aria-hidden="true" />
       <p className="as6-master__sr-only" aria-live="polite">{shell.dataState.message}</p>
@@ -109,7 +143,7 @@ export default function AS6MasterScreen({
         <header className="as6-master__topbar">
           <div className="as6-master__today">
             <h1>{t("today")}</h1>
-            <p className="as6-master__overnight">{t("overnight", { count: shell.actionCount })}</p>
+            <button type="button" className="as6-master__overnight" onClick={() => setPanel("activity")}>{t("overnight", { count: shell.actionCount })}</button>
           </div>
           <div className="as6-master__utilities" aria-label={t("utilities")}>
             {["ru", "en"].map((locale) => (
@@ -124,8 +158,8 @@ export default function AS6MasterScreen({
                 {locale.toUpperCase()}
               </button>
             ))}
-            <button type="button" aria-label={t("lightTheme")}>☼</button>
-            <button type="button" aria-label={t("calmMode")} aria-pressed={calmMode} onClick={() => setCalmMode((value) => !value)}>☾</button>
+            <button type="button" className={theme === "light" ? "is-active" : ""} aria-label={t("lightTheme")} aria-pressed={theme === "light"} onClick={() => onThemeChange?.("light")}>☼</button>
+            <button type="button" className={theme === "dark" ? "is-active" : ""} aria-label={t("darkTheme")} aria-pressed={theme === "dark"} onClick={() => onThemeChange?.("dark")}>☾</button>
             <button type="button" aria-label={t("settings")} onClick={() => navigate?.("settings")}>⚙</button>
             <time dateTime={now.toISOString()}><strong>{time}</strong><small>{date}</small></time>
             <button type="button" aria-label={t("weather")}>☼</button><span>24°</span>
@@ -171,18 +205,22 @@ export default function AS6MasterScreen({
 
           <article className="as6-master__focus" key={priority.id}>
             <span className="as6-master__focus-kicker">{t("mainGoal")}</span>
-            <h2>{priority.title}</h2>
-            <div className="as6-master__thinking" aria-live="polite">
+            <button type="button" className="as6-master__goal-button" onClick={() => setPanel("goals")}><h2>{priority.title}</h2></button>
+            <button type="button" className="as6-master__thinking" aria-live="polite" onClick={() => navigateForPriority(priority.actionTarget || "conductor", { actionCode: priority.actionCode })}>
               <span className="as6-master__thinking-dot" aria-hidden="true" />
               <div><small>{t("as6Now")}</small><strong>{priority.activity}</strong></div>
-            </div>
-            <div className="as6-master__outcome">
+            </button>
+            <button type="button" className="as6-master__outcome" onClick={() => navigateForPriority("analytics")}>
               <span>{priority.metricLabel}</span>
               <strong>{priority.metricValue}</strong>
               <small>{priority.metricDelta}</small>
-            </div>
+            </button>
           </article>
-          <p className="as6-master__space-status" aria-live="polite">{activeSpaceData ? `${activeSpaceData.label}: ${activeSpaceData.note}` : priority.chain}</p>
+          <nav className="as6-master__space-status" aria-label={t("goalEvidence")}>
+            {activeSpaceData
+              ? <span aria-live="polite">{activeSpaceData.label}: {activeSpaceData.note}</span>
+              : priority.chain.map((item, index) => <React.Fragment key={item.id}>{index > 0 && <i aria-hidden="true">→</i>}<button type="button" onClick={() => navigateForPriority(item.id)}>{item.label}</button></React.Fragment>)}
+          </nav>
         </main>
 
         <aside className="as6-master__identity">
@@ -218,6 +256,16 @@ export default function AS6MasterScreen({
                   {workspace.name}
                 </button>
               ))}
+              <small>{t("workspaceLimit", shell.workspaceAllowance)}</small>
+              {workspaceCreateOpen && shell.workspaceAllowance.canCreate && (
+                <form className="as6-master__workspace-create" onSubmit={submitWorkspace}>
+                  <label htmlFor="as6-workspace-name">{t("createWorkspaceTitle")}</label>
+                  <input id="as6-workspace-name" value={workspaceName} onChange={(event) => setWorkspaceName(event.target.value)} placeholder={t("companyNamePlaceholder")} autoFocus />
+                  <button type="submit" disabled={!workspaceName.trim() || workspaceStatus.busy}>{workspaceStatus.busy ? t("creatingWorkspace") : t("createWorkspace")}</button>
+                </form>
+              )}
+              {!workspaceCreateOpen && <button type="button" className="as6-master__workspace-add" onClick={() => shell.workspaceAllowance.canCreate ? setWorkspaceCreateOpen(true) : window.location.assign("/pricing")}>{shell.workspaceAllowance.canCreate ? `+ ${t("createWorkspace")}` : t("upgradePlan")}</button>}
+              {workspaceStatus.message && <small className={workspaceStatus.error ? "is-error" : ""}>{workspaceStatus.message}</small>}
               <button type="button" className="as6-master__workspace-settings" onClick={() => navigate?.("settings")}>{t("settings")}</button>
             </div>
           )}
@@ -232,23 +280,42 @@ export default function AS6MasterScreen({
 
           <section className="as6-master__ready">
             <h2>{t("prepared")}</h2>
-            <ul>{priority.prepared.map((item) => <li key={item}><i>✓</i>{item}</li>)}</ul>
+            <ul>{priority.prepared.map((item) => <li key={item.label}><i>✓</i><button type="button" onClick={() => navigateForPriority(item.target)}>{item.label}</button></li>)}</ul>
             <p>{priority.preparedSummary}</p>
           </section>
         </aside>
 
         <aside className="as6-master__guide">
-          <section><h2>{t("whyNow")}</h2><p>{priority.why}</p></section>
-          <section><h2>{t("whatNext")}</h2><article><div><strong>{priority.nextTime}</strong><span>{priority.next}</span></div></article></section>
-          <section><h2>{t("whatChanges")}</h2><p>{priority.change}</p></section>
+          <section><h2>{t("whyNow")}</h2><button type="button" onClick={() => setPanel("goals")}>{priority.why}</button></section>
+          <section><h2>{t("whatNext")}</h2><button type="button" onClick={() => navigateForPriority(priority.actionTarget || "conductor")}><strong>{priority.nextTime}</strong><span>{priority.next}</span></button></section>
+          <section><h2>{t("whatChanges")}</h2><button type="button" onClick={() => navigateForPriority("analytics")}>{priority.change}</button></section>
         </aside>
 
         <form className="as6-master__intent" onSubmit={submitIntent}>
-          <button type="button" className="as6-master__mic" aria-label={listening ? t("voiceStop") : t("voiceStart")} aria-pressed={listening} onClick={() => setListening((value) => !value)}><MicrophoneGlyph listening={listening} /></button>
+          <button type="button" className="as6-master__mic" aria-label={speech.listening ? t("voiceStop") : t("voiceStart")} aria-pressed={speech.listening} onClick={speech.toggle}><MicrophoneGlyph listening={speech.listening} /></button>
           <label htmlFor="as6-master-intent">{t("intent")}</label>
-          <input id="as6-master-intent" value={intent} onChange={(event) => setIntent(event.target.value)} autoComplete="off" />
+          <input id="as6-master-intent" value={intent} onChange={(event) => setIntent(event.target.value)} placeholder={priority.intent} autoComplete="off" />
           <button type="submit" className="as6-master__send" aria-label={t("sendIntent")} disabled={!intent.trim()}>→</button>
+          <span className="as6-master__voice-status" aria-live="polite">{speech.listening ? t("voiceListening") : speech.error ? (speech.error === "unsupported" ? t("voiceUnsupported") : t("voiceError")) : ""}</span>
         </form>
+
+        {panel && (
+          <div className="as6-master__panel-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setPanel(""); }}>
+            <section className="as6-master__panel" role="dialog" aria-modal="true" aria-labelledby="as6-panel-title">
+              <header><h2 id="as6-panel-title">{panel === "activity" ? t("activityLog") : t("goals")}</h2><button type="button" onClick={() => setPanel("")} aria-label={t("close")}>×</button></header>
+              {panel === "activity" ? (
+                <div className="as6-master__activity-list">
+                  {shell.activity.length ? shell.activity.map((event) => <button type="button" key={event.id} onClick={() => { setPanel(""); navigate?.(event.leadId ? "relations" : "analytics", { leadId: event.leadId, activityId: event.id }); }}><time>{activityTime(event.createdAt)}</time><span><strong>{event.title}</strong>{event.body && <small>{event.body}</small>}</span><b>→</b></button>) : <p>{t("noActivity")}</p>}
+                  <article><small>{t("activityInsight")}</small><strong>{priority.why}</strong></article>
+                </div>
+              ) : (
+                <div className="as6-master__goal-list">
+                  {shell.goalOptions.map((goal) => <button type="button" key={goal.id} className={goal.id === priority.id ? "is-current" : ""} onClick={() => { onPriorityChange?.(goal.id); setPanel(""); }}><span><small>{goal.id === priority.id ? t("currentGoal") : t("chooseGoal")}</small><strong>{goal.title}</strong><em>{goal.activity}</em></span><b>→</b></button>)}
+                </div>
+              )}
+            </section>
+          </div>
+        )}
       </div>
     </section>
   );

@@ -11,6 +11,8 @@ function errorHandler(error, req, res, next) {
   }
 
   const payload = { error: message }
+  if (statusCode < 500 && error.code) payload.code = error.code
+  if (statusCode < 500 && error.details) payload.details = error.details
   if (statusCode >= 500 && process.env.NODE_ENV !== 'production' && error.message && error.message !== message) {
     payload.details = error.message
   }

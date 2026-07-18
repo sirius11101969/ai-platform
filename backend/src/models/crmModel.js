@@ -678,15 +678,18 @@ async function createFollowUp(userId, workspaceId, leadId) {
   }
 }
 
-async function listActivity(userId, workspaceId) {
+async function listActivity(userId, workspaceId, options = {}) {
+  const limit = Math.max(1, Math.min(200, Number(options.limit || 30) || 30))
+  const todayOnly = String(options.from || '').toLowerCase() === 'today'
   const result = await pool.query(
     `SELECT a.id, a.lead_id, a.user_id, a.type, a.title, a.body, a.metadata, a.created_at, l.name AS lead_name
        FROM crm_activity a
        LEFT JOIN crm_leads l ON l.id = a.lead_id AND l.user_id = a.user_id
       WHERE a.user_id = $1 AND a.workspace_id = $2
+        AND ($4::boolean = FALSE OR a.created_at >= CURRENT_DATE)
       ORDER BY a.created_at DESC
-      LIMIT 30`,
-    [userId, workspaceId]
+      LIMIT $3`,
+    [userId, workspaceId, limit, todayOnly]
   )
   return result.rows.map(normalizeActivity)
 }

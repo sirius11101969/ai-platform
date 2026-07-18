@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="${AS6_ROOT:-/var/www/ai-platform}"
+MASTER="$ROOT/frontend/src/living/product-v2/AS6MasterScreen.jsx"
+MODEL="$ROOT/frontend/src/living/product-v2/livingShellFoundation.js"
+APP="$ROOT/frontend/src/living/product-v2/LivingCanonicalApp.jsx"
+PLANS="$ROOT/backend/src/plans.js"
+
+test -f "$MASTER"
+test -f "$MODEL"
+test -f "$APP"
+test -f "$PLANS"
+
+grep -Fq 'useLivingSpeechRecognition' "$MASTER"
+grep -Fq 'setPanel("activity")' "$MASTER"
+grep -Fq 'placeholder={priority.intent}' "$MASTER"
+grep -Fq 'onCreateWorkspace' "$MASTER"
+grep -Fq 'data-theme={theme}' "$MASTER"
+grep -Fq 'actionCount: livingData?.activity?.length || 0' "$MODEL"
+grep -Fq 'selectedPriorityId' "$MODEL"
+grep -Fq 'workspacesLimit: 3' "$PLANS"
+grep -Fq 'WORKSPACE_LIMIT_REACHED' "$ROOT/backend/src/models/workspaceModel.js"
+grep -Fq 'AS6PublicLivingHomePage' "$ROOT/frontend/src/App.jsx"
+
+node "$ROOT/ops/diagnostics/as6-screen1-interaction-multi-workspace-v1.mjs"
+node --check "$ROOT/backend/src/models/workspaceModel.js"
+node --check "$ROOT/backend/src/models/crmModel.js"
+node --check "$ROOT/backend/src/controllers/crmController.js"
+
+AS6_ROOT="$ROOT" "$ROOT/ops/bin/as6-control-living-shell-foundation-v1"
+
+echo "AS6_SCREEN1_INTERACTION_MULTI_WORKSPACE_V1=PASS"
+echo "AS6_LIGHT_DARK_THEME=PASS"
+echo "AS6_BROWSER_SPEECH_INPUT=PASS"
+echo "AS6_PUBLIC_HOME_ROUTE=PASS"

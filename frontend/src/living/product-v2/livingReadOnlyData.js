@@ -1,5 +1,6 @@
 import {
   fetchAiPriorityInbox,
+  fetchCrmActivity,
   fetchCrmLeads,
   fetchCurrentWorkspace,
   fetchEmailAttachments,
@@ -31,14 +32,27 @@ function normalizeAttachment(attachment) {
   };
 }
 
+function normalizeActivity(event) {
+  return {
+    id: String(event?.id || ""),
+    leadId: String(event?.leadId || event?.lead_id || ""),
+    type: String(event?.type || "activity"),
+    title: String(event?.title || "Событие"),
+    body: String(event?.body || ""),
+    leadName: String(event?.leadName || event?.lead_name || ""),
+    createdAt: event?.createdAt || event?.created_at || null,
+  };
+}
+
 export async function loadLivingReadOnlyData() {
-  const [profileResult, leadsResult, attachmentsResult, workspaceResult, workspacesResult, priorityResult] = await Promise.allSettled([
+  const [profileResult, leadsResult, attachmentsResult, workspaceResult, workspacesResult, priorityResult, activityResult] = await Promise.allSettled([
     fetchProfile(),
     fetchCrmLeads(),
     fetchEmailAttachments(),
     fetchCurrentWorkspace(),
     fetchWorkspaces(),
     fetchAiPriorityInbox({ mode: "focus" }),
+    fetchCrmActivity({ from: "today", limit: 200 }),
   ]);
 
   if (leadsResult.status === "rejected") throw leadsResult.reason;
@@ -53,6 +67,9 @@ export async function loadLivingReadOnlyData() {
   const workspaces = workspacesResult.status === "fulfilled" && Array.isArray(workspacesResult.value?.workspaces)
     ? workspacesResult.value.workspaces
     : workspace ? [workspace] : [];
+  const rawActivity = activityResult.status === "fulfilled" && Array.isArray(activityResult.value?.events)
+    ? activityResult.value.events
+    : [];
 
   return {
     profile: profileResult.status === "fulfilled"
@@ -61,6 +78,7 @@ export async function loadLivingReadOnlyData() {
     workspace,
     workspaces,
     priorityInbox: priorityResult.status === "fulfilled" ? priorityResult.value : null,
+    activity: rawActivity.map(normalizeActivity),
     relations: rawLeads.map(normalizeLead),
     documents: rawAttachments.map(normalizeAttachment),
     domainStatus: {
@@ -77,6 +95,12 @@ export async function loadLivingReadOnlyData() {
           ? workspaceResult.reason?.message || "Не удалось загрузить рабочее пространство"
           : "",
       },
+      activity: {
+        available: activityResult.status === "fulfilled",
+        error: activityResult.status === "rejected"
+          ? activityResult.reason?.message || "Не удалось загрузить журнал событий"
+          : "",
+      },
       documents: {
         available: attachmentsResult.status === "fulfilled",
         error: attachmentsResult.status === "rejected"
@@ -90,6 +114,7 @@ export async function loadLivingReadOnlyData() {
       relations: true,
       priority: priorityResult.status === "fulfilled",
       workspace: workspaceResult.status === "fulfilled",
+      activity: activityResult.status === "fulfilled",
       projects: false,
       documents: attachmentsResult.status === "fulfilled",
       knowledge: false,
