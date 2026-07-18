@@ -49,10 +49,10 @@
 }
 
 /* The workspace switcher is deliberately tiny and subordinate to the brand. */
-.as6-master__workspace {
+.as6-master .as6-master__workspace {
   gap: 6px;
   margin-top: 24px;
-  font-size: 4px;
+  font-size: 8px;
   line-height: 1;
   letter-spacing: .02em;
 }
