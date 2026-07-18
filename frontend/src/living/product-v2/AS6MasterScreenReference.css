@@ -34,25 +34,29 @@
 }
 
 .as6-master__graph-lines path {
-  stroke: rgba(255, 255, 255, .96);
-  stroke-width: .48;
+  stroke: rgba(210, 225, 238, .88);
+  stroke-width: .72;
   stroke-dasharray: none;
-  opacity: .9;
-  filter: url(#as6-soft-glow);
-  animation: as6-master-reference-breathe 7s ease-in-out infinite alternate;
+  opacity: .86;
+  filter: drop-shadow(0 0 2px rgba(255,255,255,.92));
+  animation: as6-master-reference-breathe 12s ease-in-out infinite alternate;
 }
 
-.as6-master__graph-lines path:nth-child(2n) { opacity: .68; }
-.as6-master__graph-lines path:nth-child(3n) { opacity: .52; }
+.as6-master__graph-lines path:nth-child(2n) { opacity: .72; }
+.as6-master__graph-lines path:nth-child(3n) { opacity: .62; }
 
 .as6-master__graph-points circle {
-  fill: rgba(255, 255, 255, .96);
-  filter: url(#as6-soft-glow);
-  animation: as6-master-reference-point 5.5s ease-in-out infinite alternate;
+  fill: rgba(255, 255, 255, .98);
+  stroke: rgba(159, 190, 215, .28);
+  stroke-width: .18;
+  filter: drop-shadow(0 0 3px rgba(255,255,255,.96));
+  opacity: .78;
+  transform-origin: center;
+  animation: none;
 }
 
-.as6-master__graph-points circle:nth-child(3n) { animation-delay: -1.5s; }
-.as6-master__graph-points circle:nth-child(5n) { animation-delay: -3s; }
+.as6-master__graph-points circle:nth-child(4n) { opacity: .95; }
+.as6-master__graph-points circle:nth-child(7n) { opacity: .62; }
 
 .as6-master__node {
   width: 164px;
@@ -69,12 +73,12 @@
   width: 72px;
   height: 72px;
   min-height: 72px;
-  margin-bottom: 2px;
-  border: 1px solid rgba(255, 255, 255, .9);
+  margin: 0 auto 4px;
+  border: 1px solid rgba(181, 205, 224, .58);
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,.58), rgba(255,255,255,.16) 52%, transparent 74%);
-  box-shadow: 0 0 0 9px rgba(255,255,255,.08), 0 0 32px rgba(255,255,255,.96);
-  color: rgba(255,255,255,.98);
+  background: radial-gradient(circle, rgba(255,255,255,.92), rgba(243,248,252,.46) 54%, rgba(255,255,255,.08) 74%);
+  box-shadow: 0 0 0 8px rgba(255,255,255,.16), 0 0 26px rgba(255,255,255,.98);
+  color: rgba(139, 176, 205, .96);
 }
 
 .as6-master__node-mark svg {
@@ -83,9 +87,9 @@
   overflow: visible;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.6;
+  stroke-width: 1.9;
   vector-effect: non-scaling-stroke;
-  filter: drop-shadow(0 0 7px rgba(255,255,255,.94));
+  filter: drop-shadow(0 0 3px rgba(255,255,255,.96));
 }
 
 .as6-master__node--finance .as6-master__node-mark svg circle {
@@ -93,12 +97,24 @@
   stroke: none;
 }
 
+.as6-master__node--team {
+  width: 176px;
+}
+
+.as6-master__node--team .as6-master__node-mark {
+  margin-inline: auto;
+}
+
 .as6-master__node strong {
+  width: 100%;
   font-size: 18px;
+  text-align: center;
 }
 
 .as6-master__node small {
+  width: 100%;
   font-size: 10px;
+  text-align: center;
 }
 
 .as6-master__focus {
@@ -115,14 +131,27 @@
   bottom: 3.5%;
 }
 
-@keyframes as6-master-reference-breathe {
-  from { opacity: .48; }
-  to { opacity: .96; }
+.as6-master__intent {
+  bottom: 28px;
+  min-height: 72px;
+  align-items: center;
 }
 
-@keyframes as6-master-reference-point {
-  from { opacity: .52; transform: scale(.84); }
-  to { opacity: 1; transform: scale(1.18); }
+.as6-master__mic {
+  position: relative;
+  z-index: 2;
+  width: 72px;
+  height: 72px;
+  opacity: 1;
+  color: #2b6fa6;
+  background: rgba(255,255,255,.42);
+  border-color: rgba(255,255,255,.98);
+  box-shadow: 0 0 0 9px rgba(255,255,255,.16), 0 0 30px rgba(255,255,255,.94);
+}
+
+@keyframes as6-master-reference-breathe {
+  from { opacity: .70; }
+  to { opacity: .90; }
 }
 
 @media (max-width: 1360px) {
@@ -131,7 +160,7 @@
   .as6-master__guide { right: 0; width: 215px; }
   .as6-master__space { left: 210px; right: 218px; }
   .as6-master__topbar { left: 198px; right: 0; }
-  .as6-master__intent { left: 180px; right: 220px; }
+  .as6-master__intent { left: 180px; right: 220px; bottom: 24px; }
   .as6-master__node-mark { width: 62px; height: 62px; min-height: 62px; }
   .as6-master__node-mark svg { width: 41px; height: 41px; }
 }
