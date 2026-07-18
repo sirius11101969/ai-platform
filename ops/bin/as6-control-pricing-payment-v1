@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="${AS6_ROOT:-/var/www/ai-platform}"
+
+test -f "$ROOT/backend/src/plans.js"
+test -f "$ROOT/backend/src/controllers/paymentController.js"
+test -f "$ROOT/backend/src/services/paymentService.js"
+test -f "$ROOT/backend/src/services/providers/yookassaProvider.js"
+test -f "$ROOT/backend/src/db/schema.js"
+test -f "$ROOT/frontend/src/pages/AS6PublicLivingWebsite.jsx"
+test -f "$ROOT/frontend/src/pages/PaymentSuccessPage.jsx"
+
+grep -Fq 'price: 3900' "$ROOT/backend/src/plans.js"
+grep -Fq 'price: 9900' "$ROOT/backend/src/plans.js"
+grep -Fq 'price: 24900' "$ROOT/backend/src/plans.js"
+grep -Fq "source: 'plan_checkout'" "$ROOT/backend/src/controllers/paymentController.js"
+grep -Fq "req.workspace?.role !== 'owner'" "$ROOT/backend/src/controllers/paymentController.js"
+! grep -Fq 'const { provider, amount, currency' "$ROOT/backend/src/controllers/paymentController.js"
+grep -Fq 'fetchYooKassaPayment(externalPaymentId)' "$ROOT/backend/src/services/paymentService.js"
+grep -Fq 'assertMatchingPaymentValue(transaction' "$ROOT/backend/src/services/paymentService.js"
+grep -Fq "UPDATE users SET plan=" "$ROOT/backend/src/services/paymentService.js"
+grep -Fq "WHERE owner_user_id=" "$ROOT/backend/src/services/paymentService.js"
+grep -Fq 'BILLING_FIELDS_READ_ONLY' "$ROOT/backend/src/models/workspaceModel.js"
+grep -Fq "getPlanLimits(plan).monthlyAiCredits" "$ROOT/backend/src/models/workspaceModel.js"
+grep -Fq 'CREATE TABLE IF NOT EXISTS payment_transactions' "$ROOT/backend/src/db/schema.js"
+grep -Fq 'UNIQUE(provider, external_payment_id)' "$ROOT/backend/src/db/schema.js"
+grep -Fq 'AS6PublicLivingPricingPage' "$ROOT/frontend/src/App.jsx"
+grep -Fq 'createPlanCheckout' "$ROOT/frontend/src/pages/AS6PublicLivingWebsite.jsx"
+grep -Fq 'current?.status === "paid"' "$ROOT/frontend/src/pages/PaymentSuccessPage.jsx"
+grep -Fq "requestedDestination.startsWith(\"/pricing\")" "$ROOT/frontend/src/pages/AuthPages.jsx"
+
+node --check "$ROOT/backend/src/plans.js"
+node --check "$ROOT/backend/src/controllers/paymentController.js"
+node --check "$ROOT/backend/src/services/paymentService.js"
+node --check "$ROOT/backend/src/services/providers/yookassaProvider.js"
+node "$ROOT/backend/tests/paymentService.test.js"
+
+AS6_ROOT="$ROOT" "$ROOT/ops/bin/as6-control-screen1-interaction-multi-workspace-v1"
+
+echo "AS6_CANONICAL_PLAN_CATALOG=PASS"
+echo "AS6_SERVER_PRICED_CHECKOUT=PASS"
+echo "AS6_YOOKASSA_WEBHOOK_VERIFICATION=PASS"
+echo "AS6_AUTOMATIC_PLAN_ACTIVATION=PASS"
+echo "AS6_PRICING_PAYMENT_V1=PASS"

@@ -23,6 +23,7 @@ publicPaymentRoutes.post(
 )
 
 publicPaymentRoutes.post('/public/checkout', publicCheckout.createCheckout)
+publicPaymentRoutes.get('/public/plans', publicCheckout.listPlans)
 
 paymentRoutes.post('/payments/create', paymentsGateway, controller.create)
 paymentRoutes.get('/payments/status', paymentsGateway, controller.status)

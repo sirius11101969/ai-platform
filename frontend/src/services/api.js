@@ -961,6 +961,19 @@ export function fetchPaymentStatus(workspaceId = getActiveWorkspaceId()) {
   return request(`/payments/status${query}`, { workspaceId })
 }
 
+export function fetchPublicPlans() {
+  return publicRequest('/public/plans', { skipWorkspace: true })
+}
+
+export function createPlanCheckout(plan, workspaceId = getActiveWorkspaceId()) {
+  const query = workspaceId ? `?workspaceId=${encodeURIComponent(workspaceId)}` : ''
+  return request(`/payments/create${query}`, {
+    method: 'POST',
+    workspaceId,
+    body: JSON.stringify({ plan }),
+  })
+}
+
 export function fetchRevenueCommandCenter() {
   return request('/revenue/command-center')
 }

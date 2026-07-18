@@ -1,19 +1,32 @@
 const paymentService = require('../services/paymentService')
+const { assertPlanUpgrade } = require('../plans')
 
 async function create(req, res, next) {
   try {
-    const { provider, amount, currency, metadata, plan } = req.body || {}
-    const mergedMetadata = { ...(metadata || {}) }
-    if (plan) mergedMetadata.plan = String(plan).toLowerCase()
+    if (req.aiControl?.authMode !== 'jwt' || req.workspace?.role !== 'owner') {
+      return res.status(403).json({ error: 'Оплатить тариф может только владелец рабочего пространства' })
+    }
+
+    const targetPlan = assertPlanUpgrade(req.workspace.plan, req.body?.plan)
 
     const result = await paymentService.createPayment({
       workspaceId: req.workspace.id,
-      provider,
-      amount,
-      currency,
-      metadata: mergedMetadata,
+      provider: 'yookassa',
+      amount: targetPlan.price,
+      currency: targetPlan.currency,
+      metadata: {
+        source: 'plan_checkout',
+        plan: targetPlan.key,
+        currentPlan: req.workspace.plan || 'free',
+        customerEmail: req.user?.email || '',
+        userId: req.user?.id,
+        description: `AS6 — повышение тарифа до ${targetPlan.name}`,
+      },
     })
-    res.status(200).json(result)
+    res.status(201).json({
+      ...result,
+      plan: targetPlan,
+    })
   } catch (e) { next(e) }
 }
 
@@ -100,7 +113,8 @@ async function testMarkPaymentPaid(req, res, next) {
       status: 'paid',
       amount: Number(tx.amount || 0),
       currency: tx.currency,
-      metadata: tx.metadata || {}
+      metadata: tx.metadata || {},
+      allowMockVerification: true,
     })
 
     return res.json({

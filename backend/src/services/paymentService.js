@@ -2,12 +2,16 @@ const pool = require('../db/pool')
 const axios = require('axios')
 const revenueService = require('./revenueService')
 const { issuePaymentCredits } = require('./execution/creditLedgerService')
-const { createSandboxPayment, createMockPayment } = require('./providers/yookassaProvider')
+const { createSandboxPayment, createMockPayment, fetchYooKassaPayment } = require('./providers/yookassaProvider')
+const { getPlanLimits, getPurchasablePlan } = require('../plans')
 
 async function loadProvider(provider, client = pool) {
   const r = await client.query('SELECT * FROM payment_providers WHERE provider = $1 LIMIT 1', [provider])
   const row = r.rows[0]
   if (!row || !row.enabled) throw Object.assign(new Error('payment provider is not enabled'), { statusCode: 400 })
+  if (provider === 'yookassa') {
+    return { ...row, mode: String(process.env.YOOKASSA_MODE || row.mode || 'disabled').toLowerCase() }
+  }
   return row
 }
 
@@ -51,20 +55,78 @@ async function createPayment({ workspaceId, provider, amount, currency, metadata
   }
 }
 
-async function processWebhook({ workspaceId, provider, event, externalPaymentId, status, amount, currency, metadata = {} }) {
+function assertMatchingPaymentValue(transaction, amount, currency) {
+  const expectedAmount = Number(transaction.amount || 0)
+  const actualAmount = Number(amount || 0)
+  const expectedCurrency = String(transaction.currency || '').toUpperCase()
+  const actualCurrency = String(currency || '').toUpperCase()
+  if (Math.abs(expectedAmount - actualAmount) > 0.001 || expectedCurrency !== actualCurrency) {
+    throw Object.assign(new Error('Сумма или валюта платежа не совпадает с заказом'), {
+      statusCode: 409,
+      code: 'PAYMENT_VALUE_MISMATCH',
+    })
+  }
+}
+
+async function verifyYooKassaWebhook({ transaction, externalPaymentId, allowMockVerification }) {
+  const mode = String(process.env.YOOKASSA_MODE || 'mock').toLowerCase()
+  if (mode === 'mock') {
+    if (!allowMockVerification) {
+      throw Object.assign(new Error('Публичный webhook недоступен в mock-режиме'), { statusCode: 403 })
+    }
+    return null
+  }
+
+  const verified = await fetchYooKassaPayment(externalPaymentId)
+  if (String(verified.id || '') !== String(externalPaymentId || '') || verified.status !== 'succeeded' || verified.paid !== true) {
+    throw Object.assign(new Error('YooKassa не подтвердила успешную оплату'), {
+      statusCode: 409,
+      code: 'PAYMENT_NOT_CONFIRMED',
+    })
+  }
+  assertMatchingPaymentValue(transaction, verified.amount?.value, verified.amount?.currency)
+  return verified
+}
+
+async function processWebhook({ workspaceId, provider, event, externalPaymentId, status, amount, currency, metadata = {}, allowMockVerification = false }) {
   const paymentProvider = await loadProvider(provider)
-  const normalizedStatus = status || (event === 'payment.succeeded' ? 'paid' : status)
+  let normalizedStatus = status || (event === 'payment.succeeded' ? 'paid' : status)
+  let verifiedPayment = null
 
   if (paymentProvider.mode === 'mock' && provider === 'yookassa') {
     if (event !== 'payment.succeeded' || normalizedStatus !== 'paid' || !externalPaymentId) {
       throw Object.assign(new Error('invalid mock webhook payload'), { statusCode: 400 })
     }
   }
+
+  const known = await pool.query('SELECT * FROM payment_transactions WHERE provider=$1 AND external_payment_id=$2 LIMIT 1', [provider, externalPaymentId])
+  const knownTransaction = known.rows[0]
+  if (!knownTransaction) {
+    console.warn('webhook_payment_not_found', { workspaceId, provider, externalPaymentId })
+    return { ignored: true, reason: 'payment transaction not found', externalPaymentId }
+  }
+
+  if (knownTransaction.status === 'paid') return { deduped: true, transaction: knownTransaction }
+
+  if (provider === 'yookassa' && normalizedStatus === 'paid') {
+    verifiedPayment = await verifyYooKassaWebhook({
+      transaction: knownTransaction,
+      externalPaymentId,
+      allowMockVerification,
+    })
+    if (verifiedPayment) {
+      normalizedStatus = 'paid'
+      amount = Number(verifiedPayment.amount?.value)
+      currency = verifiedPayment.amount?.currency
+      metadata = { ...(metadata || {}), ...(verifiedPayment.metadata || {}) }
+    }
+  }
+
   const client = await pool.connect()
   try {
     await client.query('BEGIN')
     console.info('webhook_received', { workspaceId, provider, externalPaymentId, status: normalizedStatus, event })
-    const existing = await client.query('SELECT * FROM payment_transactions WHERE provider=$1 AND external_payment_id=$2 LIMIT 1', [provider, externalPaymentId])
+    const existing = await client.query('SELECT * FROM payment_transactions WHERE provider=$1 AND external_payment_id=$2 LIMIT 1 FOR UPDATE', [provider, externalPaymentId])
     const tx = existing.rows[0]
     if (!tx) {
       console.warn('webhook_payment_not_found', { workspaceId, provider, externalPaymentId })
@@ -89,23 +151,30 @@ async function processWebhook({ workspaceId, provider, event, externalPaymentId,
     )
 
     if (normalizedStatus === 'paid') {
-      const targetWorkspaceId = workspaceId || tx.workspace_id
+      const targetWorkspaceId = tx.workspace_id
+      const isPlanCheckout = tx.metadata?.source === 'plan_checkout'
+      const planDefinition = isPlanCheckout ? getPurchasablePlan(tx.metadata?.plan) : null
+      const plan = planDefinition?.key || String(tx.metadata?.plan || metadata?.plan || 'starter').toLowerCase()
 
-      const plan = String(
-        metadata.plan ||
-        tx.metadata?.plan ||
-        'starter'
-      ).toLowerCase()
-
-      const planCredits = {
-        starter: 60,
-        pro: 180,
-        business: 450
+      if (isPlanCheckout) {
+        assertMatchingPaymentValue(tx, planDefinition.price, planDefinition.currency)
       }
 
-      const credits =
-        planCredits[plan] ||
-        Math.max(1, Math.round(Number(amount || tx.amount || 0)))
+      const credits = isPlanCheckout
+        ? getPlanLimits(plan).monthlyAiCredits
+        : Math.max(1, Math.round(Number(amount || tx.amount || 0)))
+
+      let ownerUserId = null
+      if (isPlanCheckout) {
+        const owner = await client.query('SELECT owner_user_id FROM workspaces WHERE id=$1::uuid LIMIT 1', [targetWorkspaceId])
+        ownerUserId = owner.rows[0]?.owner_user_id
+        if (!ownerUserId || (tx.metadata?.userId && String(tx.metadata.userId) !== String(ownerUserId))) {
+          throw Object.assign(new Error('Владелец платежа не совпадает с владельцем пространства'), {
+            statusCode: 409,
+            code: 'PAYMENT_OWNER_MISMATCH',
+          })
+        }
+      }
 
       await revenueService.completePayment({ workspaceId: targetWorkspaceId, orderId: metadata.orderId }).catch(() => null)
 
@@ -117,15 +186,17 @@ async function processWebhook({ workspaceId, provider, event, externalPaymentId,
         currency: currency || tx.currency,
       }, client)
 
-      await client.query(
-        `UPDATE workspaces
-         SET plan=$1,
-             updated_at=NOW()
-         WHERE id=$2::uuid`,
-        [plan, targetWorkspaceId]
-      )
-
-      console.info('workspace_plan_updated', { workspaceId: targetWorkspaceId, plan })
+      if (isPlanCheckout) {
+        await client.query('UPDATE users SET plan=$1 WHERE id=$2::uuid', [plan, ownerUserId])
+        await client.query(
+          `UPDATE workspaces
+           SET plan=$1,
+               updated_at=NOW()
+           WHERE owner_user_id=$2::uuid`,
+          [plan, ownerUserId]
+        )
+        console.info('account_plan_updated', { ownerUserId, workspaceId: targetWorkspaceId, plan })
+      }
       console.info('payment_confirmed', { workspaceId: targetWorkspaceId, provider, externalPaymentId })
       console.info('credit_granted', { workspaceId: targetWorkspaceId, provider, externalPaymentId, credits })
 

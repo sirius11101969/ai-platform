@@ -70,6 +70,31 @@ async function createSandboxPayment({ amount, currency, metadata = {}, workspace
   }
 }
 
+async function fetchYooKassaPayment(paymentId) {
+  const shopId = ensureEnv('YOOKASSA_SHOP_ID')
+  const secretKey = ensureEnv('YOOKASSA_SECRET_KEY')
+  const normalizedPaymentId = String(paymentId || '').trim()
+  if (!normalizedPaymentId) throw Object.assign(new Error('YooKassa payment id is required'), { statusCode: 400 })
+
+  const response = await fetch(`https://api.yookassa.ru/v3/payments/${encodeURIComponent(normalizedPaymentId)}`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Basic ${Buffer.from(`${shopId}:${secretKey}`).toString('base64')}`,
+      'Content-Type': 'application/json',
+    },
+  })
+
+  if (!response.ok) {
+    const errorBody = await response.text()
+    throw Object.assign(new Error(`yookassa payment verification failed: ${response.status}`), {
+      statusCode: 502,
+      details: errorBody,
+    })
+  }
+
+  return response.json()
+}
+
 async function createMockPayment({ provider }) {
   const paymentId = `mock_${provider}_${Date.now()}`
   return {
@@ -80,4 +105,4 @@ async function createMockPayment({ provider }) {
   }
 }
 
-module.exports = { createSandboxPayment, createMockPayment }
+module.exports = { createSandboxPayment, createMockPayment, fetchYooKassaPayment }

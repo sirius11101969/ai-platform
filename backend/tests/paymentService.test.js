@@ -150,6 +150,58 @@ async function testWebhookIssuesGrantMetadata() {
   } finally { restore() }
 }
 
+async function testPlanCheckoutActivatesOwnerAccountAndCanonicalCredits() {
+  process.env.YOOKASSA_MODE = 'mock'
+  let txStatus = 'created'
+  const updates = []
+  const creditCalls = []
+  const transaction = {
+    id: '00000000-0000-0000-0000-000000000901',
+    status: txStatus,
+    amount: 9900,
+    currency: 'RUB',
+    workspace_id: '00000000-0000-0000-0000-000000000902',
+    metadata: {
+      source: 'plan_checkout',
+      plan: 'pro',
+      userId: '00000000-0000-0000-0000-000000000903',
+    },
+  }
+  const { service, restore } = loadWithMocks({
+    queryImpl: async (sql) => {
+      if (sql.includes('FROM payment_providers')) return { rows: [{ provider: 'yookassa', enabled: true, mode: 'mock', currency: 'RUB' }] }
+      if (sql.includes('FROM payment_transactions WHERE provider=')) return { rows: [{ ...transaction, status: txStatus }] }
+      if (sql.includes('UPDATE payment_transactions')) { txStatus = 'paid'; return { rows: [{ ...transaction, status: 'paid' }] } }
+      if (sql.includes('SELECT owner_user_id FROM workspaces')) return { rows: [{ owner_user_id: '00000000-0000-0000-0000-000000000903' }] }
+      if (sql.startsWith('UPDATE users SET plan=')) { updates.push('user'); return { rows: [] } }
+      if (sql.includes('UPDATE workspaces') && sql.includes('owner_user_id')) { updates.push('workspaces'); return { rows: [] } }
+      if (sql === 'BEGIN' || sql === 'COMMIT' || sql === 'ROLLBACK') return { rows: [] }
+      return { rows: [] }
+    },
+    issuePaymentCreditsImpl: async (payload) => { creditCalls.push(payload); return { duplicated: false } },
+  })
+
+  try {
+    const result = await service.processWebhook({
+      provider: 'yookassa',
+      event: 'payment.succeeded',
+      externalPaymentId: 'mock_yookassa_plan',
+      status: 'paid',
+      amount: 9900,
+      currency: 'RUB',
+      metadata: transaction.metadata,
+      allowMockVerification: true,
+    })
+    assert.strictEqual(result.transaction.status, 'paid')
+    assert.deepStrictEqual(updates, ['user', 'workspaces'])
+    assert.strictEqual(creditCalls.length, 1)
+    assert.strictEqual(creditCalls[0].amount, 5000)
+  } finally {
+    restore()
+    delete process.env.YOOKASSA_MODE
+  }
+}
+
 async function testIssuePaymentCreditsUsesGrantAndDedupes() {
   delete require.cache[creditLedgerServicePath]
   const originalPool = require.cache[poolPath]
@@ -218,6 +270,7 @@ Promise.resolve()
   .then(testDuplicateWebhook)
   .then(testLedgerConsistencySingleCreditGrant)
   .then(testWebhookIssuesGrantMetadata)
+  .then(testPlanCheckoutActivatesOwnerAccountAndCanonicalCredits)
   .then(testIssuePaymentCreditsUsesGrantAndDedupes)
   .then(testStatusReturnsLatestCreatedTransaction)
   .then(() => console.log('paymentService tests passed'))

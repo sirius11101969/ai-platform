@@ -162,22 +162,11 @@ app.post('/api/lead', requireAuth, requireWorkspace, async (req, res, next) => {
 
 app.post('/api/subscribe', requireAuth, async (req, res, next) => {
   try {
-    const { plan } = req.body
-
-    if (!plan) {
-      return res.status(400).json({ error: 'Plan is required' })
-    }
-
-    const paymentUrl = `https://yookassa.ru/pay/${req.user.id}-${plan}`
-
-    const result = await pool.query(
-      `INSERT INTO subscriptions(user_id, plan, payment_url)
-       VALUES($1, $2, $3)
-       RETURNING id, plan, status, payment_url, created_at`,
-      [req.user.id, plan, paymentUrl]
-    )
-
-    res.status(201).json({ success: true, subscription: result.rows[0], paymentUrl })
+    return res.status(410).json({
+      error: 'Используйте защищённую оплату на странице тарифов',
+      code: 'LEGACY_SUBSCRIPTION_CHECKOUT_DISABLED',
+      checkoutUrl: '/pricing',
+    })
   } catch (error) {
     next(error)
   }

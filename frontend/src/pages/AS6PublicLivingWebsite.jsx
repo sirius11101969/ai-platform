@@ -1,4 +1,6 @@
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { createPlanCheckout, fetchCurrentWorkspace, fetchPublicPlans } from "../services/api";
 import "./AS6PublicLivingWebsite.css";
 import AS6PublicBrandHomeV1 from "./AS6PublicBrandHomeV1.jsx";
 
@@ -52,19 +54,20 @@ function LivingMark({ small = false }) {
   return <span className={small ? "living-mark living-mark--small" : "living-mark"} aria-hidden="true"><i /><i /><i /></span>;
 }
 
-function PublicHeader() {
+function PublicHeader({ isAuthenticated = false }) {
   return (
     <header className="living-public-header">
       <Link to="/" className="living-public-brand"><LivingMark small /><span><strong>AS6</strong><small>Спокойный бизнес</small></span></Link>
       <nav aria-label="Основная навигация">
         <a href="/#spaces">Пространства</a>
         <Link to="/blog">Блог</Link>
+        <Link to="/pricing">Тарифы</Link>
         <Link to="/about">О продукте</Link>
         <Link to="/contact">Контакты</Link>
       </nav>
       <div className="living-public-actions">
         <Link to="/preview/living">Посмотреть AS6</Link>
-        <Link className="living-public-action" to="/signup">Начать работу</Link>
+        <Link className="living-public-action" to={isAuthenticated ? "/app" : "/signup"}>{isAuthenticated ? "Открыть пространство" : "Начать работу"}</Link>
       </div>
     </header>
   );
@@ -137,4 +140,127 @@ const info = {
 export function AS6PublicLivingInfoPage({ type }) {
   const [title, heading, copy] = info[type] || info.about;
   return <div className="living-public-site"><PublicHeader /><main className="living-public-page"><section className="living-page-heading"><span className="living-eyebrow">{title}</span><h1>{heading}</h1><p>{copy}</p><div className="living-public-hero__actions"><Link className="living-primary" to="/preview/living">Посмотреть AS6</Link><Link className="living-secondary" to="/contact">Связаться</Link></div></section></main><PublicFooter /></div>;
+}
+
+function formatPrice(value) {
+  if (value === null || value === undefined) return 'По запросу'
+  if (Number(value) === 0) return 'Бесплатно'
+  return `${new Intl.NumberFormat('ru-RU').format(Number(value))} ₽`
+}
+
+function planFeatures(plan) {
+  const limits = plan.limits || {}
+  return [
+    `${new Intl.NumberFormat('ru-RU').format(limits.monthlyAiCredits || 0)} AI-кредитов`,
+    `${new Intl.NumberFormat('ru-RU').format(limits.leadsLimit || 0)} клиентов в CRM`,
+    `${limits.teamMembersLimit || 1} ${limits.teamMembersLimit === 1 ? 'участник' : 'участников'}`,
+    `${limits.workspacesLimit || 1} ${limits.workspacesLimit === 1 ? 'пространство' : 'пространства'}`,
+    limits.telegramAutomation ? 'Telegram-автоматизация' : 'Базовая работа без автоматизации',
+  ]
+}
+
+export function AS6PublicLivingPricingPage({ isAuthenticated = false }) {
+  const [plans, setPlans] = useState([])
+  const [billing, setBilling] = useState(null)
+  const [workspace, setWorkspace] = useState(null)
+  const [loadingPlan, setLoadingPlan] = useState('')
+  const [error, setError] = useState('')
+  const selectedPlan = useMemo(() => new URLSearchParams(window.location.search).get('plan') || '', [])
+
+  useEffect(() => {
+    let cancelled = false
+    fetchPublicPlans().then((catalog) => {
+      if (cancelled) return
+      setPlans(catalog?.plans || [])
+      setBilling(catalog?.billing || null)
+    }).catch((requestError) => {
+      if (!cancelled) setError(requestError?.message || 'Не удалось загрузить тарифы')
+    })
+
+    if (isAuthenticated) {
+      fetchCurrentWorkspace().then((current) => {
+        if (!cancelled) setWorkspace(current || null)
+      }).catch((requestError) => {
+        if (!cancelled) setError(requestError?.message || 'Не удалось определить текущее пространство')
+      })
+    }
+    return () => { cancelled = true }
+  }, [isAuthenticated])
+
+  const currentRank = plans.find((plan) => plan.key === (workspace?.plan || 'free'))?.rank ?? 0
+
+  async function choosePlan(plan) {
+    setError('')
+    if (plan.key === 'enterprise') {
+      window.location.assign('/contact')
+      return
+    }
+    if (plan.key === 'free') {
+      window.location.assign(isAuthenticated ? '/app' : '/signup')
+      return
+    }
+    if (!isAuthenticated) {
+      const destination = `/pricing?plan=${encodeURIComponent(plan.key)}`
+      window.location.assign(`/login?next=${encodeURIComponent(destination)}`)
+      return
+    }
+    if (workspace?.role !== 'owner') {
+      setError('Повысить тариф может только владелец выбранного рабочего пространства.')
+      return
+    }
+
+    try {
+      setLoadingPlan(plan.key)
+      const checkout = await createPlanCheckout(plan.key, workspace.id)
+      if (!checkout?.confirmationUrl) throw new Error('Платёжная страница временно недоступна. Попробуйте немного позже.')
+      window.location.assign(checkout.confirmationUrl)
+    } catch (checkoutError) {
+      setError(checkoutError?.message || 'Не удалось перейти к оплате')
+      setLoadingPlan('')
+    }
+  }
+
+  return (
+    <div className="living-public-site">
+      <PublicHeader isAuthenticated={isAuthenticated} />
+      <main className="living-pricing-page">
+        <section className="living-pricing-heading">
+          <span className="living-eyebrow">Тарифы AS6</span>
+          <h1>Одно пространство для бизнеса любого масштаба.</h1>
+          <p>Начните бесплатно и повышайте тариф, когда потребуется больше компаний, участников, клиентов и действий AS6.</p>
+          {workspace && <div className="living-current-plan">Текущее пространство: <strong>{workspace.name}</strong> · тариф <strong>{plans.find((plan) => plan.key === workspace.plan)?.name || workspace.plan}</strong></div>}
+          {error && <div className="living-pricing-error" role="alert">{error}</div>}
+        </section>
+
+        <section className="living-pricing-grid" aria-label="Тарифные планы">
+          {plans.map((plan) => {
+            const isCurrent = workspace?.plan === plan.key
+            const unavailableDowngrade = isAuthenticated && plan.rank < currentRank
+            const disabled = Boolean(loadingPlan) || isCurrent || unavailableDowngrade
+            return (
+              <article key={plan.key} className={`living-price-card${plan.featured ? ' living-price-card--featured' : ''}${selectedPlan === plan.key ? ' living-price-card--selected' : ''}`}>
+                {plan.featured && <span className="living-price-badge">Оптимальный выбор</span>}
+                <div className="living-price-card__head">
+                  <span>{plan.name}</span>
+                  <h2>{formatPrice(plan.price)}</h2>
+                  {plan.price > 0 && <small>разовая активация</small>}
+                </div>
+                <p>{plan.description}</p>
+                <ul>{planFeatures(plan).map((feature) => <li key={feature}>✓ <span>{feature}</span></li>)}</ul>
+                <button type="button" disabled={disabled} onClick={() => choosePlan(plan)}>
+                  {loadingPlan === plan.key ? 'Открываем оплату…' : isCurrent ? 'Текущий тариф' : unavailableDowngrade ? 'Уже включено' : plan.key === 'enterprise' ? 'Обсудить внедрение' : plan.key === 'free' ? 'Начать бесплатно' : 'Выбрать тариф'}
+                </button>
+              </article>
+            )
+          })}
+        </section>
+
+        <section className="living-pricing-note">
+          <strong>Прозрачная активация</strong>
+          <p>{billing?.notice || 'После подтверждения оплаты тариф и лимиты рабочего пространства обновятся автоматически.'} Списание без отдельного решения владельца не выполняется.</p>
+        </section>
+      </main>
+      <PublicFooter />
+    </div>
+  )
 }

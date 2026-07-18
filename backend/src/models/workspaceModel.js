@@ -157,7 +157,7 @@ async function createWorkspace(userId, payload) {
       details: { plan, limit: limits.workspacesLimit, current: ownedCount },
     })
   }
-  const creditsPool = Math.max(0, Number(payload.creditsPool ?? getPlanLimits(plan).monthlyAiCredits) || 0)
+  const creditsPool = getPlanLimits(plan).monthlyAiCredits
   const client = await pool.connect()
   try {
     await client.query('BEGIN')
@@ -183,16 +183,16 @@ async function updateWorkspace(userId, workspaceId, payload) {
   const current = await getWorkspaceForUser(userId, workspaceId)
   if (!current) throw Object.assign(new Error('Workspace not found'), { statusCode: 404 })
   if (!WRITE_ROLES.includes(current.role)) throw Object.assign(new Error('Workspace admin role is required'), { statusCode: 403 })
+  if (Object.prototype.hasOwnProperty.call(payload, 'plan') || Object.prototype.hasOwnProperty.call(payload, 'creditsPool')) {
+    throw Object.assign(new Error('Тариф и кредитный баланс изменяются только защищённым платёжным контуром'), {
+      statusCode: 403,
+      code: 'BILLING_FIELDS_READ_ONLY',
+    })
+  }
   const updates = []
   const values = [workspaceId]
   if (Object.prototype.hasOwnProperty.call(payload, 'name')) {
     values.push(normalizeName(payload.name)); updates.push(`name = $${values.length}`)
-  }
-  if (Object.prototype.hasOwnProperty.call(payload, 'plan')) {
-    values.push(normalizePlan(payload.plan)); updates.push(`plan = $${values.length}`)
-  }
-  if (Object.prototype.hasOwnProperty.call(payload, 'creditsPool')) {
-    values.push(Math.max(0, Number(payload.creditsPool) || 0)); updates.push(`credits_pool = $${values.length}`)
   }
   if (Object.prototype.hasOwnProperty.call(payload, 'companyLogoUrl')) {
     values.push(normalizeCompanyLogoUrl(payload.companyLogoUrl)); updates.push(`company_logo_url = $${values.length}`)

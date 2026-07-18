@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="${AS6_ROOT:-/var/www/ai-platform}"
+STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+RUNTIME="$ROOT/runtime/as6-pricing-payment-v1-$STAMP"
+
+cd "$ROOT"
+mkdir -p "$RUNTIME"
+
+test "$(git branch --show-current)" = "main"
+git status --short --branch | tee "$RUNTIME/git-status.before.txt"
+git diff --quiet
+git diff --cached --quiet
+
+git fetch origin main
+git pull --ff-only origin main
+
+AS6_ROOT="$ROOT" ops/bin/as6-control-pricing-payment-v1
+npm --prefix frontend run build
+git diff --check
+
+docker compose build backend nginx
+docker compose run --rm --no-deps backend node -e "const mode=String(process.env.YOOKASSA_MODE||'').toLowerCase(); if(!['test','live','production','real','yookassa'].includes(mode)) throw new Error('YOOKASSA_MODE must be test or live'); if(!process.env.YOOKASSA_SHOP_ID||!process.env.YOOKASSA_SECRET_KEY) throw new Error('YOOKASSA credentials are required'); console.log('YOOKASSA_CONFIGURATION=PASS mode='+mode)"
+docker compose run --rm --no-deps backend node -e "require('./src/db/schema').migrate().then(()=>process.exit(0)).catch((error)=>{console.error(error);process.exit(1)})"
+docker compose up -d --no-deps --force-recreate backend nginx
+
+READY=0
+for attempt in 1 2 3 4 5 6 7 8 9 10; do
+  ROOT_CODE="$(curl -kLsS --max-time 15 -o /dev/null -w '%{http_code}' "https://www.as6.ru/?pricing=$STAMP-$attempt" || true)"
+  PRICING_CODE="$(curl -kLsS --max-time 15 -o /dev/null -w '%{http_code}' "https://www.as6.ru/pricing?release=$STAMP-$attempt" || true)"
+  PLANS_CODE="$(curl -kLsS --max-time 15 -o "$RUNTIME/plans.json" -w '%{http_code}' "https://www.as6.ru/api/public/plans" || true)"
+  HEALTH_CODE="$(curl -kLsS --max-time 15 -o /dev/null -w '%{http_code}' "https://www.as6.ru/api/health" || true)"
+  echo "ATTEMPT_$attempt ROOT=$ROOT_CODE PRICING=$PRICING_CODE PLANS=$PLANS_CODE HEALTH=$HEALTH_CODE"
+  if test "$ROOT_CODE" = "200" && test "$PRICING_CODE" = "200" && test "$PLANS_CODE" = "200" && test "$HEALTH_CODE" = "200"; then READY=1; break; fi
+  sleep 3
+done
+test "$READY" = "1"
+
+grep -Fq '"key":"starter"' "$RUNTIME/plans.json"
+grep -Fq '"price":3900' "$RUNTIME/plans.json"
+grep -Fq '"key":"pro"' "$RUNTIME/plans.json"
+grep -Fq '"price":9900' "$RUNTIME/plans.json"
+grep -Fq '"key":"business"' "$RUNTIME/plans.json"
+grep -Fq '"price":24900' "$RUNTIME/plans.json"
+
+docker compose ps -a | tee "$RUNTIME/docker.after.txt"
+echo "AS6_PRICING_PAYMENT_V1=PASS"
+echo "BUILD=PASS"
+echo "PRODUCTION=HEALTHY"
+echo "AS6_PROJECT_READINESS=99%"

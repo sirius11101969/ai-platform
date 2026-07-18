@@ -92,6 +92,36 @@ async function migrate() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    CREATE TABLE IF NOT EXISTS payment_providers (
+      provider TEXT PRIMARY KEY,
+      currency TEXT NOT NULL DEFAULT 'RUB',
+      enabled BOOLEAN NOT NULL DEFAULT FALSE,
+      mode TEXT NOT NULL DEFAULT 'disabled',
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    INSERT INTO payment_providers(provider, currency, enabled, mode)
+    VALUES('yookassa', 'RUB', TRUE, 'environment')
+    ON CONFLICT (provider) DO NOTHING;
+
+    CREATE TABLE IF NOT EXISTS payment_transactions (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+      provider TEXT NOT NULL,
+      external_payment_id TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'created',
+      amount NUMERIC(14,2) NOT NULL CHECK (amount >= 0),
+      currency TEXT NOT NULL,
+      metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+      provider_metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+      checkout_url TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      UNIQUE(provider, external_payment_id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_payment_transactions_workspace_created
+      ON payment_transactions(workspace_id, created_at DESC);
+
     CREATE TABLE IF NOT EXISTS credits_ledger (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,

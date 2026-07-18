@@ -8,6 +8,7 @@ import {
   AS6PublicLivingHomePage,
   AS6PublicLivingBlogPage,
   AS6PublicLivingInfoPage,
+  AS6PublicLivingPricingPage,
 } from "./pages/AS6PublicLivingWebsite.jsx";
 import LivingSpacePreviewPage from "./living/preview/LivingSpacePreviewPage.jsx";
 import LivingProductPreviewPage from "./living/product-v1/LivingProductPreviewPage.jsx";
@@ -112,6 +113,16 @@ function RootLivingEntry() {
   return <AS6PublicLivingHomePage isAuthenticated={isAuthenticated} />;
 }
 
+function PricingEntry() {
+  const { isAuthenticated } = useAuth();
+  return <AS6PublicLivingPricingPage isAuthenticated={isAuthenticated} />;
+}
+
+function PaymentSuccessEntry() {
+  const { isAuthenticated } = useAuth();
+  return <PaymentSuccessPage isAuthenticated={isAuthenticated} />;
+}
+
 export default function App() {
   return (
     <AuthProvider>
@@ -121,7 +132,7 @@ export default function App() {
           <Route path="/blog" element={<AS6PublicLivingBlogPage />} />
           <Route path="/blog/:slug" element={<AS6PublicLivingBlogPage />} />
           <Route path="/docs" element={<AS6PublicLivingInfoPage type="docs" />} />
-          <Route path="/pricing" element={<AS6PublicLivingInfoPage type="pricing" />} />
+          <Route path="/pricing" element={<PricingEntry />} />
           <Route path="/about" element={<AS6PublicLivingInfoPage type="about" />} />
           <Route path="/contact" element={<AS6PublicLivingInfoPage type="contact" />} />
 
@@ -132,7 +143,7 @@ export default function App() {
 
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/payment/success" element={<PaymentSuccessPage />} />
+          <Route path="/payment/success" element={<PaymentSuccessEntry />} />
 
           {LEGACY_PLATFORM_ROUTES.map((path) => (
             <Route key={path} path={path} element={<Navigate to="/app" replace />} />

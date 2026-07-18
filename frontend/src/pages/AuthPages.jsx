@@ -45,9 +45,12 @@ function AuthCard({ mode }) {
       }
 
       const requestedDestination = new URLSearchParams(window.location.search).get("next");
-      const safeDestination = requestedDestination && requestedDestination.startsWith("/app")
-        ? requestedDestination
-        : "/app";
+      const allowedDestination = requestedDestination && (
+        requestedDestination.startsWith("/app") ||
+        requestedDestination.startsWith("/pricing") ||
+        requestedDestination.startsWith("/payment/success")
+      );
+      const safeDestination = allowedDestination ? requestedDestination : "/app";
       window.location.replace(safeDestination);
     } catch (apiError) {
       setError(
