@@ -15,6 +15,10 @@ async function migrate() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS display_name TEXT;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS locale TEXT NOT NULL DEFAULT 'ru';
+
     CREATE TABLE IF NOT EXISTS workspaces (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       name TEXT NOT NULL,
@@ -25,11 +29,26 @@ async function migrate() {
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    ALTER TABLE workspaces ADD COLUMN IF NOT EXISTS company_logo_url TEXT;
+    ALTER TABLE workspaces ADD COLUMN IF NOT EXISTS branding_mode TEXT NOT NULL DEFAULT 'platform';
+
     DO $$
     BEGIN
       IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'workspaces_plan_valid') THEN
         ALTER TABLE workspaces ADD CONSTRAINT workspaces_plan_valid
           CHECK (plan IN ('free', 'starter', 'pro', 'business', 'enterprise'));
+      END IF;
+    END $$;
+
+    DO $$
+    BEGIN
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'users_locale_valid') THEN
+        ALTER TABLE users ADD CONSTRAINT users_locale_valid
+          CHECK (locale IN ('ru', 'en'));
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'workspaces_branding_mode_valid') THEN
+        ALTER TABLE workspaces ADD CONSTRAINT workspaces_branding_mode_valid
+          CHECK (branding_mode IN ('platform', 'co-branded', 'company'));
       END IF;
     END $$;
 

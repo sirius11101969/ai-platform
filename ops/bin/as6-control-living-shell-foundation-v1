@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="${AS6_ROOT:-/var/www/ai-platform}"
+SHELL_MODEL="$ROOT/frontend/src/living/product-v2/livingShellFoundation.js"
+LOCALE="$ROOT/frontend/src/living/product-v2/livingLocalization.js"
+MASTER="$ROOT/frontend/src/living/product-v2/AS6MasterScreen.jsx"
+SETTINGS="$ROOT/frontend/src/living/product-v2/LivingSettingsSpace.jsx"
+SCHEMA="$ROOT/backend/src/db/schema.js"
+
+test -f "$SHELL_MODEL"
+test -f "$LOCALE"
+test -f "$MASTER"
+test -f "$SETTINGS"
+test -f "$SCHEMA"
+
+grep -Fq 'AS6_LIVING_SHELL_FOUNDATION_V1' "$ROOT/frontend/src/living/product-v2/AS6MasterScreenReference.css"
+grep -Fq 'createLivingShellSnapshot' "$MASTER"
+grep -Fq 'priorityInbox?.leads?.[0]' "$SHELL_MODEL"
+grep -Fq 'brandingMode' "$SHELL_MODEL"
+grep -Fq 'companyLogoUrl' "$SHELL_MODEL"
+grep -Fq 'LIVING_LOCALES = ["ru", "en"]' "$LOCALE"
+grep -Fq 'dataOffline' "$LOCALE"
+grep -Fq 'status: current.data ? "stale" : "error"' "$ROOT/frontend/src/living/product-v2/LivingCanonicalApp.jsx"
+grep -Fq "router.patch('/profile'" "$ROOT/backend/src/routes/dashboardRoutes.js"
+grep -Fq 'company_logo_url' "$ROOT/backend/src/models/workspaceModel.js"
+grep -Fq 'users_locale_valid' "$SCHEMA"
+
+node "$ROOT/ops/diagnostics/as6-living-shell-foundation-v1.mjs"
+node --check "$ROOT/backend/src/db/schema.js"
+node --check "$ROOT/backend/src/models/userModel.js"
+node --check "$ROOT/backend/src/models/workspaceModel.js"
+node --check "$ROOT/backend/src/routes/dashboardRoutes.js"
+
+AS6_ROOT="$ROOT" "$ROOT/ops/bin/as6-control-master-screen-reference-baseline-v1"
+
+echo "AS6_LIVING_SHELL_FOUNDATION_V1=PASS"
+echo "AS6_SCREEN1_REFERENCE_COMPOSITION=UNCHANGED"
+echo "AS6_SCREEN2_FOUNDATION_ENTRY=PASS"

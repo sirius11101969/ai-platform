@@ -1,7 +1,10 @@
 import {
+  fetchAiPriorityInbox,
   fetchCrmLeads,
+  fetchCurrentWorkspace,
   fetchEmailAttachments,
   fetchProfile,
+  fetchWorkspaces,
 } from "../../services/api";
 
 function normalizeLead(lead) {
@@ -29,10 +32,13 @@ function normalizeAttachment(attachment) {
 }
 
 export async function loadLivingReadOnlyData() {
-  const [profileResult, leadsResult, attachmentsResult] = await Promise.allSettled([
+  const [profileResult, leadsResult, attachmentsResult, workspaceResult, workspacesResult, priorityResult] = await Promise.allSettled([
     fetchProfile(),
     fetchCrmLeads(),
     fetchEmailAttachments(),
+    fetchCurrentWorkspace(),
+    fetchWorkspaces(),
+    fetchAiPriorityInbox({ mode: "focus" }),
   ]);
 
   if (leadsResult.status === "rejected") throw leadsResult.reason;
@@ -41,15 +47,36 @@ export async function loadLivingReadOnlyData() {
   const rawAttachments = attachmentsResult.status === "fulfilled" && Array.isArray(attachmentsResult.value?.attachments)
     ? attachmentsResult.value.attachments
     : [];
+  const workspace = workspaceResult.status === "fulfilled"
+    ? workspaceResult.value?.workspace || null
+    : null;
+  const workspaces = workspacesResult.status === "fulfilled" && Array.isArray(workspacesResult.value?.workspaces)
+    ? workspacesResult.value.workspaces
+    : workspace ? [workspace] : [];
 
   return {
     profile: profileResult.status === "fulfilled"
       ? profileResult.value?.user || profileResult.value?.profile || null
       : null,
+    workspace,
+    workspaces,
+    priorityInbox: priorityResult.status === "fulfilled" ? priorityResult.value : null,
     relations: rawLeads.map(normalizeLead),
     documents: rawAttachments.map(normalizeAttachment),
     domainStatus: {
       relations: { available: true, error: "" },
+      priority: {
+        available: priorityResult.status === "fulfilled",
+        error: priorityResult.status === "rejected"
+          ? priorityResult.reason?.message || "Не удалось загрузить главный приоритет"
+          : "",
+      },
+      workspace: {
+        available: workspaceResult.status === "fulfilled",
+        error: workspaceResult.status === "rejected"
+          ? workspaceResult.reason?.message || "Не удалось загрузить рабочее пространство"
+          : "",
+      },
       documents: {
         available: attachmentsResult.status === "fulfilled",
         error: attachmentsResult.status === "rejected"
@@ -61,6 +88,8 @@ export async function loadLivingReadOnlyData() {
     },
     availability: {
       relations: true,
+      priority: priorityResult.status === "fulfilled",
+      workspace: workspaceResult.status === "fulfilled",
       projects: false,
       documents: attachmentsResult.status === "fulfilled",
       knowledge: false,

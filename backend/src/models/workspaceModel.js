@@ -11,6 +11,8 @@ function normalizeWorkspace(row) {
   return {
     id: row.id,
     name: row.name,
+    companyLogoUrl: row.company_logo_url || '',
+    brandingMode: row.branding_mode || 'platform',
     ownerUserId: row.owner_user_id,
     plan,
     creditsPool: Number(row.credits_pool || 0),
@@ -43,6 +45,26 @@ function normalizePlan(plan) {
   const value = String(plan || 'free').trim().toLowerCase()
   if (!PLAN_KEYS.includes(value)) throw Object.assign(new Error(`Plan must be one of: ${PLAN_KEYS.join(', ')}`), { statusCode: 400 })
   return value
+}
+
+function normalizeBrandingMode(mode) {
+  const value = String(mode || 'platform').trim().toLowerCase()
+  if (!['platform', 'co-branded', 'company'].includes(value)) {
+    throw Object.assign(new Error('Branding mode must be platform, co-branded or company'), { statusCode: 400 })
+  }
+  return value
+}
+
+function normalizeCompanyLogoUrl(value) {
+  const normalized = String(value || '').trim()
+  if (!normalized) return null
+  if (/^https:\/\/[^\s]{1,2040}$/i.test(normalized)) return normalized
+  const match = normalized.match(/^data:image\/(png|jpe?g|webp);base64,([a-z0-9+/=]+)$/i)
+  if (!match) throw Object.assign(new Error('Company logo must be an HTTPS URL or PNG, JPG, WebP data URL'), { statusCode: 400 })
+  if (Math.floor(match[2].length * 0.75) > 1024 * 1024) {
+    throw Object.assign(new Error('Company logo must be 1 MB or smaller'), { statusCode: 400 })
+  }
+  return normalized
 }
 
 async function ensureDefaultWorkspace(userId, client = pool) {
@@ -159,6 +181,12 @@ async function updateWorkspace(userId, workspaceId, payload) {
   }
   if (Object.prototype.hasOwnProperty.call(payload, 'creditsPool')) {
     values.push(Math.max(0, Number(payload.creditsPool) || 0)); updates.push(`credits_pool = $${values.length}`)
+  }
+  if (Object.prototype.hasOwnProperty.call(payload, 'companyLogoUrl')) {
+    values.push(normalizeCompanyLogoUrl(payload.companyLogoUrl)); updates.push(`company_logo_url = $${values.length}`)
+  }
+  if (Object.prototype.hasOwnProperty.call(payload, 'brandingMode')) {
+    values.push(normalizeBrandingMode(payload.brandingMode)); updates.push(`branding_mode = $${values.length}`)
   }
   if (!updates.length) return current
   updates.push('updated_at = NOW()')

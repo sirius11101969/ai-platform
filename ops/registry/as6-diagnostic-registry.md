@@ -128,3 +128,12 @@
 - AS6_MASTER_SCREEN_RUNTIME_OWNER=frontend/src/living/product-v2/AS6MasterScreen.jsx
 - AS6_MASTER_SCREEN_REFERENCE_STYLE=frontend/src/living/product-v2/AS6MasterScreenReference.css
 - AS6_PROFILE_DISPLAY_NAME_OWNER=frontend/src/living/product-v2/LivingCanonicalApp.jsx
+
+## AS6 Living Shell Foundation v1
+- AS6_LIVING_SHELL_FOUNDATION_V1=ops/diagnostics/as6-living-shell-foundation-v1.md
+- AS6_LIVING_SHELL_MODEL_OWNER=frontend/src/living/product-v2/livingShellFoundation.js
+- AS6_LIVING_LOCALE_OWNER=frontend/src/living/product-v2/livingLocalization.js
+- AS6_PROFILE_BRANDING_SETTINGS_OWNER=frontend/src/living/product-v2/LivingSettingsSpace.jsx
+- AS6_PROFILE_PERSISTENCE_OWNER=backend/src/models/userModel.js
+- AS6_WORKSPACE_BRANDING_PERSISTENCE_OWNER=backend/src/models/workspaceModel.js
+- AS6_LIVING_SHELL_ARCHITECTURE=ops/architecture/as6-living-shell-foundation-v1.md

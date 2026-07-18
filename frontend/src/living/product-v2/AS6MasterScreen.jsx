@@ -2,27 +2,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import "./AS6MasterScreen.css";
 import "./AS6MasterScreenPolish.css";
 import "./AS6MasterScreenReference.css";
-
-const spaces = [
-  { id: "sales", label: "Продажи", note: "Прогноз подтверждён", x: 20, y: 20 },
-  { id: "relations", label: "CRM", note: "Контакты проверены", x: 50, y: 12 },
-  { id: "marketing", label: "Маркетинг", note: "Ожидает решение", x: 77, y: 25 },
-  { id: "finance", label: "Финансы", note: "Проверяет риски", x: 16, y: 58 },
-  { id: "documents", label: "Документы", note: "Обновляют версию", x: 10, y: 84 },
-  { id: "team", label: "Команда", note: "Материалы согласованы", x: 83, y: 73 },
-];
-
-// Every connection represents a real business dependency. The active chain reflects
-// the work AS6 is doing now: Finance → Documents → Team.
-const connections = [
-  { id: "crm-sales", from: "relations", to: "sales", kind: "structural", d: "M50 12 C40 8 29 10 20 20" },
-  { id: "sales-finance", from: "sales", to: "finance", kind: "structural", d: "M20 20 C13 31 12 46 16 58" },
-  { id: "crm-marketing", from: "relations", to: "marketing", kind: "structural", d: "M50 12 C61 8 70 14 77 25" },
-  { id: "marketing-team", from: "marketing", to: "team", kind: "structural", d: "M77 25 C88 38 88 59 83 73" },
-  { id: "finance-documents", from: "finance", to: "documents", kind: "active", d: "M16 58 C11 66 9 76 10 84" },
-  { id: "documents-team", from: "documents", to: "team", kind: "active", d: "M10 84 C29 94 62 91 83 73" },
-  { id: "finance-team", from: "finance", to: "team", kind: "active", d: "M16 58 C35 48 58 82 83 73" },
-];
+import { createLivingShellSnapshot } from "./livingShellFoundation.js";
+import { livingIntlLocale } from "./livingLocalization.js";
 
 const graphPoints = [
   [20, 20], [50, 12], [77, 25], [16, 58], [10, 84], [83, 73],
@@ -60,16 +41,29 @@ function MicrophoneGlyph({ listening }) {
   );
 }
 
-function formatTime() {
-  return new Intl.DateTimeFormat("ru-RU", { hour: "2-digit", minute: "2-digit" }).format(new Date());
+function formatTime(now, locale) {
+  return new Intl.DateTimeFormat(livingIntlLocale(locale), { hour: "2-digit", minute: "2-digit" }).format(now);
 }
 
-function formatDate() {
-  return new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "short" }).format(new Date());
+function formatDate(now, locale) {
+  return new Intl.DateTimeFormat(livingIntlLocale(locale), { day: "numeric", month: "short" }).format(now);
 }
 
-export default function AS6MasterScreen({ navigate, profileName = "Владимир" }) {
-  const [intent, setIntent] = useState("Проверить прогноз перед отправкой инвестору…");
+export default function AS6MasterScreen({
+  navigate,
+  profileName = "Владимир",
+  snapshot,
+  onLocaleChange,
+  onWorkspaceChange,
+}) {
+  const shell = snapshot || createLivingShellSnapshot({
+    locale: "ru",
+    user: { displayName: profileName },
+    fallbackProfileName: profileName,
+    dataStatus: "ready",
+  });
+  const { t, identity, priority } = shell;
+  const [intent, setIntent] = useState(priority.intent);
   const [workspaceOpen, setWorkspaceOpen] = useState(false);
   const [activeSpace, setActiveSpace] = useState(null);
   const [calmMode, setCalmMode] = useState(false);
@@ -81,33 +75,60 @@ export default function AS6MasterScreen({ navigate, profileName = "Владим�
     return () => window.clearInterval(timer);
   }, []);
 
-  const time = useMemo(formatTime, [now]);
-  const date = useMemo(formatDate, [now]);
-  const activeSpaceData = spaces.find((space) => space.id === activeSpace);
+  useEffect(() => {
+    setIntent(priority.intent);
+  }, [shell.snapshotId, priority.intent]);
+
+  const time = useMemo(() => formatTime(now, shell.locale), [now, shell.locale]);
+  const date = useMemo(() => formatDate(now, shell.locale), [now, shell.locale]);
+  const activeSpaceData = shell.spaces.find((space) => space.id === activeSpace);
 
   function submitIntent(event) {
     event.preventDefault();
     if (!intent.trim()) return;
-    navigate?.("conductor");
+    navigate?.("conductor", { intent: intent.trim(), priorityId: priority.id });
+  }
+
+  function chooseWorkspace(workspaceId) {
+    setWorkspaceOpen(false);
+    onWorkspaceChange?.(workspaceId);
   }
 
   return (
-    <section className={`as6-master${calmMode ? " is-calm" : ""}${listening ? " is-listening" : ""}`} aria-label="AS6 — Сегодня">
+    <section
+      className={`as6-master${calmMode ? " is-calm" : ""}${listening ? " is-listening" : ""}`}
+      aria-label={`AS6 — ${t("today")}`}
+      data-shell-version={shell.version}
+      data-shell-snapshot={shell.snapshotId}
+      data-data-state={shell.dataState.status}
+    >
       <div className="as6-master__ambient" aria-hidden="true" />
+      <p className="as6-master__sr-only" aria-live="polite">{shell.dataState.message}</p>
 
       <div className="as6-master__canvas">
         <header className="as6-master__topbar">
           <div className="as6-master__today">
-            <h1>Сегодня</h1>
-            <p className="as6-master__overnight">AS6 самостоятельно выполнил 17 действий и нашёл способ повысить вероятность успеха встречи.</p>
+            <h1>{t("today")}</h1>
+            <p className="as6-master__overnight">{t("overnight", { count: shell.actionCount })}</p>
           </div>
-          <div className="as6-master__utilities" aria-label="Настройки рабочего пространства">
-            <span>RU</span><span>EN</span>
-            <button type="button" aria-label="Светлая тема">☼</button>
-            <button type="button" aria-label="Спокойный режим" aria-pressed={calmMode} onClick={() => setCalmMode((value) => !value)}>☾</button>
-            <button type="button" aria-label="Настройки">⚙</button>
+          <div className="as6-master__utilities" aria-label={t("utilities")}>
+            {["ru", "en"].map((locale) => (
+              <button
+                key={locale}
+                type="button"
+                className={`as6-master__locale${shell.locale === locale ? " is-active" : ""}`}
+                onClick={() => onLocaleChange?.(locale)}
+                aria-pressed={shell.locale === locale}
+                lang={locale}
+              >
+                {locale.toUpperCase()}
+              </button>
+            ))}
+            <button type="button" aria-label={t("lightTheme")}>☼</button>
+            <button type="button" aria-label={t("calmMode")} aria-pressed={calmMode} onClick={() => setCalmMode((value) => !value)}>☾</button>
+            <button type="button" aria-label={t("settings")} onClick={() => navigate?.("settings")}>⚙</button>
             <time dateTime={now.toISOString()}><strong>{time}</strong><small>{date}</small></time>
-            <button type="button" aria-label="Погода">☼</button><span>24°</span>
+            <button type="button" aria-label={t("weather")}>☼</button><span>24°</span>
           </div>
         </header>
 
@@ -117,7 +138,7 @@ export default function AS6MasterScreen({ navigate, profileName = "Владим�
               <filter id="as6-soft-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="0.55" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
             </defs>
             <g className="as6-master__graph-lines">
-              {connections.map((connection) => {
+              {shell.connections.map((connection) => {
                 const related = activeSpace && (connection.from === activeSpace || connection.to === activeSpace);
                 const muted = activeSpace && !related;
                 return <path key={connection.id} className={`is-${connection.kind}${related ? " is-related" : ""}${muted ? " is-muted" : ""}`} d={connection.d} />;
@@ -126,7 +147,7 @@ export default function AS6MasterScreen({ navigate, profileName = "Владим�
             <g className="as6-master__graph-points">{graphPoints.map(([cx, cy], index) => <circle key={`${cx}-${cy}-${index}`} cx={cx} cy={cy} r={index < 6 ? 0.48 : 0.30} />)}</g>
           </svg>
 
-          {spaces.map((space) => {
+          {shell.spaces.map((space) => {
             const isActive = activeSpace === space.id;
             const isMuted = activeSpace && !isActive;
             return (
@@ -148,58 +169,85 @@ export default function AS6MasterScreen({ navigate, profileName = "Владим�
             );
           })}
 
-          <article className="as6-master__focus">
-            <span className="as6-master__focus-kicker">Главная цель</span>
-            <h2>Подготовить компанию к встрече с инвестором</h2>
+          <article className="as6-master__focus" key={priority.id}>
+            <span className="as6-master__focus-kicker">{t("mainGoal")}</span>
+            <h2>{priority.title}</h2>
             <div className="as6-master__thinking" aria-live="polite">
               <span className="as6-master__thinking-dot" aria-hidden="true" />
-              <div><small>AS6 сейчас</small><strong>Проверяет финансовый прогноз</strong></div>
+              <div><small>{t("as6Now")}</small><strong>{priority.activity}</strong></div>
             </div>
             <div className="as6-master__outcome">
-              <span>Вероятность успешной встречи</span>
-              <strong>92%</strong>
-              <small>↑ 3% после завершения проверки</small>
+              <span>{priority.metricLabel}</span>
+              <strong>{priority.metricValue}</strong>
+              <small>{priority.metricDelta}</small>
             </div>
           </article>
-          <p className="as6-master__space-status" aria-live="polite">{activeSpaceData ? `${activeSpaceData.label}: ${activeSpaceData.note}` : "Финансы → Документы → Команда"}</p>
+          <p className="as6-master__space-status" aria-live="polite">{activeSpaceData ? `${activeSpaceData.label}: ${activeSpaceData.note}` : priority.chain}</p>
         </main>
 
         <aside className="as6-master__identity">
-          <button type="button" className="as6-master__logo" onClick={() => navigate?.("home")} aria-label="AS6">
-            <span>AS6</span><small>AI PLATFORM</small>
+          <button
+            type="button"
+            className={`as6-master__logo${identity.showCompanyLogo ? " is-company" : ""}`}
+            onClick={() => navigate?.("home")}
+            aria-label={identity.showCompanyLogo ? identity.workspaceName : t("platformBrand")}
+          >
+            {identity.showCompanyLogo
+              ? <img className="as6-master__logo-image" src={identity.companyLogoUrl} alt={identity.workspaceName} />
+              : <><span>AS6</span><small>AI PLATFORM</small></>}
           </button>
-          <button type="button" className="as6-master__workspace" onClick={() => setWorkspaceOpen((value) => !value)} aria-expanded={workspaceOpen}>AS6 <span>⌄</span></button>
-          {workspaceOpen && <div className="as6-master__workspace-menu"><button type="button">AS6</button><small>Переключение рабочих пространств будет доступно позже</small></div>}
+          <button
+            type="button"
+            className="as6-master__workspace"
+            onClick={() => setWorkspaceOpen((value) => !value)}
+            aria-expanded={workspaceOpen}
+            aria-label={t("switchWorkspace")}
+          >
+            <b>{identity.workspaceName}</b> <span>⌄</span>
+          </button>
+          {workspaceOpen && (
+            <div className="as6-master__workspace-menu">
+              {shell.workspaces.map((workspace) => (
+                <button
+                  type="button"
+                  key={workspace.id}
+                  className={workspace.id === shell.workspace?.id ? "is-current" : ""}
+                  onClick={() => chooseWorkspace(workspace.id)}
+                  disabled={workspace.id === shell.workspace?.id}
+                >
+                  {workspace.name}
+                </button>
+              ))}
+              <button type="button" className="as6-master__workspace-settings" onClick={() => navigate?.("settings")}>{t("settings")}</button>
+            </div>
+          )}
 
           <div className="as6-master__greeting">
-            <strong>Доброе утро, {profileName}.</strong>
-            <span>Рабочий день подготовлен.</span>
+            <strong>{t("greeting", { name: identity.displayName })}</strong>
+            <span>{t("dayReady")}</span>
           </div>
-          <div className="as6-master__avatar" aria-label={`Профиль: ${profileName}`}><span>В</span></div>
+          <div className="as6-master__avatar" aria-label={`Profile: ${identity.displayName}`}>
+            <span>{identity.avatarUrl ? <img src={identity.avatarUrl} alt="" /> : identity.initial}</span>
+          </div>
 
           <section className="as6-master__ready">
-            <h2>AS6 уже подготовил</h2>
-            <ul>
-              <li><i>✓</i>Финансовую модель</li>
-              <li><i>✓</i>Презентацию инвестору</li>
-              <li><i>✓</i>Ответы на вопросы</li>
-              <li><i>✓</i>План встречи</li>
-            </ul>
-            <p>Все ключевые материалы собраны и согласованы.</p>
+            <h2>{t("prepared")}</h2>
+            <ul>{priority.prepared.map((item) => <li key={item}><i>✓</i>{item}</li>)}</ul>
+            <p>{priority.preparedSummary}</p>
           </section>
         </aside>
 
         <aside className="as6-master__guide">
-          <section><h2>Почему именно сейчас</h2><p>Финансовый прогноз — единственный фактор, который ещё может изменить итог встречи.</p></section>
-          <section><h2>Что будет дальше</h2><article><div><strong>Через 3 минуты</strong><span>Проверка завершится, и презентация обновится автоматически.</span></div></article></section>
-          <section><h2>Что изменится</h2><p>Вероятность успешной встречи вырастет до 95%.</p></section>
+          <section><h2>{t("whyNow")}</h2><p>{priority.why}</p></section>
+          <section><h2>{t("whatNext")}</h2><article><div><strong>{priority.nextTime}</strong><span>{priority.next}</span></div></article></section>
+          <section><h2>{t("whatChanges")}</h2><p>{priority.change}</p></section>
         </aside>
 
         <form className="as6-master__intent" onSubmit={submitIntent}>
-          <button type="button" className="as6-master__mic" aria-label={listening ? "Остановить голосовой ввод" : "Голосовой ввод"} aria-pressed={listening} onClick={() => setListening((value) => !value)}><MicrophoneGlyph listening={listening} /></button>
-          <label htmlFor="as6-master-intent">Намерение</label>
+          <button type="button" className="as6-master__mic" aria-label={listening ? t("voiceStop") : t("voiceStart")} aria-pressed={listening} onClick={() => setListening((value) => !value)}><MicrophoneGlyph listening={listening} /></button>
+          <label htmlFor="as6-master-intent">{t("intent")}</label>
           <input id="as6-master-intent" value={intent} onChange={(event) => setIntent(event.target.value)} autoComplete="off" />
-          <button type="submit" className="as6-master__send" aria-label="Передать намерение" disabled={!intent.trim()}>→</button>
+          <button type="submit" className="as6-master__send" aria-label={t("sendIntent")} disabled={!intent.trim()}>→</button>
         </form>
       </div>
     </section>

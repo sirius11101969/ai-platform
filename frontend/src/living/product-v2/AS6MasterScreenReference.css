@@ -317,3 +317,102 @@
   }
 }
 /* AS6_MASTER_VISUAL_HIERARCHY_V1: workspace-label=10px; disclosure=12px; brand-opacity=.56; contrast=reinforced */
+
+/* AS6 Living Shell Foundation v1: behavior without moving the accepted reference composition. */
+.as6-master__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.as6-master__utilities .as6-master__locale {
+  width: auto;
+  height: auto;
+  padding: 0;
+  border-radius: 4px;
+  font-size: 11px;
+  line-height: 1;
+  opacity: .72;
+}
+
+.as6-master__utilities .as6-master__locale.is-active {
+  opacity: 1;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.as6-master__logo.is-company {
+  width: 118px;
+  min-height: 40px;
+  opacity: .82;
+}
+
+.as6-master__logo-image {
+  display: block;
+  width: 118px;
+  height: 42px;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.as6-master__workspace b {
+  display: block;
+  max-width: 142px;
+  overflow: hidden;
+  color: inherit;
+  font: inherit;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.as6-master__workspace-menu {
+  display: grid;
+  gap: 8px;
+}
+
+.as6-master__workspace-menu button {
+  width: 100%;
+  padding: 5px 0;
+  overflow: hidden;
+  color: inherit;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.as6-master__workspace-menu button.is-current {
+  opacity: .62;
+}
+
+.as6-master__workspace-menu .as6-master__workspace-settings {
+  margin-top: 5px;
+  padding-top: 11px;
+  border-top: 1px solid rgba(87,124,155,.16);
+  font-weight: 400;
+}
+
+.as6-master__avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+}
+
+@media (prefers-contrast: more) {
+  .as6-master__overnight,
+  .as6-master__node small,
+  .as6-master__guide p,
+  .as6-master__guide span {
+    color: #496f90;
+  }
+}
+
+/* AS6_LIVING_SHELL_FOUNDATION_V1: snapshot=center+left+right; locale=ru,en; identity=profile,workspace,white-label */

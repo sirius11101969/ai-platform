@@ -276,6 +276,15 @@ export function fetchProfile() {
   return request('/dashboard/profile')
 }
 
+export async function updateProfile(payload) {
+  const result = await request('/dashboard/profile', {
+    method: 'PATCH',
+    body: JSON.stringify(payload),
+  })
+  if (result?.user) updateStoredUser(result.user)
+  return result
+}
+
 export function fetchCrmLeads() {
   return request('/crm/leads')
 }
