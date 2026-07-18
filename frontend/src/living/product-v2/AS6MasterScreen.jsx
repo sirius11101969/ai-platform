@@ -256,6 +256,10 @@ export default function AS6MasterScreen({
                   {workspace.name}
                 </button>
               ))}
+              <button type="button" className="as6-master__plan-status" onClick={() => window.location.assign("/pricing")}>
+                <strong>{t("activePlan", { plan: shell.subscription.name })}</strong>
+                <span>{t("managePlan")}</span>
+              </button>
               <small>{t("workspaceLimit", shell.workspaceAllowance)}</small>
               {workspaceCreateOpen && shell.workspaceAllowance.canCreate && (
                 <form className="as6-master__workspace-create" onSubmit={submitWorkspace}>

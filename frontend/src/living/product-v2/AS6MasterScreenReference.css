@@ -496,6 +496,34 @@
   opacity: .62;
 }
 
+.as6-master__workspace-menu .as6-master__plan-status {
+  display: grid;
+  gap: 3px;
+  margin-top: 2px;
+  padding: 10px 11px;
+  border: 1px solid rgba(36,95,151,.13);
+  border-radius: 10px;
+  background: rgba(36,95,151,.055);
+  white-space: normal;
+}
+
+.as6-master__plan-status strong {
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.as6-master__plan-status span {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 400;
+}
+
+.as6-master[data-theme="dark"] .as6-master__plan-status {
+  border-color: rgba(151,199,232,.18);
+  background: rgba(151,199,232,.07);
+}
+
 .as6-master__workspace-menu .as6-master__workspace-settings {
   margin-top: 5px;
   padding-top: 11px;

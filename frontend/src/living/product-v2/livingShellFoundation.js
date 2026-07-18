@@ -132,6 +132,11 @@ function imageUrl(value) {
   return /^(https:\/\/|data:image\/(png|jpe?g|webp);base64,)/i.test(candidate) ? candidate : "";
 }
 
+const PLAN_NAMES = {
+  ru: { free: "Базовый", starter: "Старт", pro: "Про", business: "Бизнес", enterprise: "Корпоративный" },
+  en: { free: "Basic", starter: "Starter", pro: "Pro", business: "Business", enterprise: "Enterprise" },
+};
+
 function buildIdentity({ user, workspace, fallbackName, locale }) {
   const displayName = cleanName(
     user?.displayName || user?.display_name || user?.fullName || user?.full_name || user?.name,
@@ -278,6 +283,7 @@ export function createLivingShellSnapshot({
   const workspaces = livingData?.workspaces || (workspace ? [workspace] : []);
   const workspaceLimit = Number(workspace?.limits?.workspacesLimit || 1);
   const ownedWorkspaceCount = workspaces.filter((item) => item.role === "owner" || item.ownerUserId === workspace?.ownerUserId).length;
+  const planKey = String(workspace?.plan || "free").toLowerCase();
   return {
     version: "as6-screen1-interaction-multi-workspace-v1",
     snapshotId: `${workspace?.id || "default"}:${priority.id}:${livingData?.loadedAt || "boot"}`,
@@ -286,6 +292,11 @@ export function createLivingShellSnapshot({
     identity,
     workspace,
     workspaces,
+    subscription: {
+      key: planKey,
+      name: PLAN_NAMES[normalizedLocale][planKey] || planKey,
+      active: Boolean(workspace),
+    },
     workspaceAllowance: {
       current: ownedWorkspaceCount,
       limit: workspaceLimit,
