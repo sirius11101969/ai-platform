@@ -16,6 +16,9 @@ body:has(.as6-reference-root){overflow:hidden;background:#d9ebfb}
 .as6-reference-profile-wrap{position:relative}.as6-reference-profile{display:grid!important;place-items:center;flex:0 0 34px;width:34px!important;height:34px!important;aspect-ratio:1;padding:0!important;overflow:hidden;border:1px solid rgba(255,255,255,.78)!important;border-radius:50%!important;font-size:13px!important;line-height:1;background:rgba(255,255,255,.2)!important;box-shadow:0 0 22px rgba(255,255,255,.7)}
 .as6-reference-profile-menu{position:absolute;right:0;top:44px;width:210px;padding:18px;display:grid;gap:7px;border:1px solid rgba(255,255,255,.85);background:rgba(231,244,255,.88);backdrop-filter:blur(24px);box-shadow:0 20px 55px rgba(67,113,163,.18);border-radius:20px}.as6-reference-profile-menu small{overflow:hidden;text-overflow:ellipsis}.as6-reference-profile-menu button{margin-top:8px;border:0;background:transparent;text-align:left;color:inherit;cursor:pointer;padding:8px 0}
 .as6-reference-stage{position:absolute;z-index:5;inset:0;padding:112px 32px 24px;box-sizing:border-box}
+body:has(.as6-reference-root[data-active-space="settings"]){overflow-x:hidden;overflow-y:auto}
+.as6-reference-root[data-active-space="settings"]{height:auto;min-height:100svh;overflow:visible}
+.as6-reference-root[data-active-space="settings"] .as6-reference-stage{position:relative;min-height:100svh}
 .as6-reference-root .as6-canonical-space{height:100%;min-height:0;padding:0 16px 10px;grid-template-columns:250px minmax(620px,1fr) 284px;grid-template-rows:minmax(0,1fr) 78px 112px 64px;gap:12px 24px;box-sizing:border-box}
 .as6-reference-root .as6-canonical-space:before{display:none}
 .as6-reference-root .as6-canonical-space__left{padding:10px 0 0 8px}.as6-reference-root .as6-canonical-space__left header{padding-left:30px}.as6-reference-root .as6-canonical-space__left header span{font-size:19px}.as6-reference-root .as6-canonical-space__left header p{font-size:13px;line-height:1.7}
