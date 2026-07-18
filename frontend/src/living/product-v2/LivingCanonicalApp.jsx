@@ -261,7 +261,7 @@ export default function LivingCanonicalApp() {
       <p className="as6-master__sr-only" role="status">{snapshot.dataState.message}</p>
       <main className="as6-reference-stage">
         {activeId === "settings"
-          ? <LivingSettingsSpace snapshot={snapshot} navigate={navigate} onSaved={handleSettingsSaved} />
+          ? <LivingSettingsSpace snapshot={snapshot} navigate={navigate} onSaved={handleSettingsSaved} onWorkspaceChange={changeWorkspace} />
           : activeId === "documents"
             ? <LivingDocumentsSpace livingData={livingData} navigate={navigate} />
             : <LivingSpaceEngine definition={definition} navigate={navigate} />}

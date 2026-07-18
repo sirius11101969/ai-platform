@@ -18,7 +18,7 @@ function readImage(file) {
   });
 }
 
-export default function LivingSettingsSpace({ snapshot, navigate, onSaved }) {
+export default function LivingSettingsSpace({ snapshot, navigate, onSaved, onWorkspaceChange }) {
   const { t, identity, workspace, locale } = snapshot;
   const [displayName, setDisplayName] = useState(identity.displayName);
   const [avatarUrl, setAvatarUrl] = useState(identity.avatarUrl);
@@ -27,6 +27,13 @@ export default function LivingSettingsSpace({ snapshot, navigate, onSaved }) {
   const [brandingMode, setBrandingMode] = useState(identity.brandingMode);
   const [language, setLanguage] = useState(locale);
   const [status, setStatus] = useState({ kind: "idle", message: "" });
+  const companyLabel = workspaceName.trim() || identity.workspaceName;
+  const hasUnsavedChanges = displayName !== identity.displayName
+    || avatarUrl !== identity.avatarUrl
+    || workspaceName !== identity.workspaceEditableName
+    || companyLogoUrl !== identity.companyLogoUrl
+    || brandingMode !== identity.brandingMode
+    || language !== locale;
 
   useEffect(() => {
     setDisplayName(identity.displayName);
@@ -47,6 +54,14 @@ export default function LivingSettingsSpace({ snapshot, navigate, onSaved }) {
     } finally {
       event.target.value = "";
     }
+  }
+
+  function selectWorkspace(event) {
+    const nextWorkspaceId = event.target.value;
+    if (!nextWorkspaceId || nextWorkspaceId === workspace?.id) return;
+    if (hasUnsavedChanges && !window.confirm(t("discardCompanyChanges"))) return;
+    setStatus({ kind: "idle", message: "" });
+    onWorkspaceChange?.(nextWorkspaceId);
   }
 
   async function submit(event) {
@@ -85,6 +100,20 @@ export default function LivingSettingsSpace({ snapshot, navigate, onSaved }) {
         <p>{t("settingsSubtitle")}</p>
       </header>
 
+      <section className="as6-living-settings__workspace-context" aria-label={t("selectedCompany")}>
+        <label>
+          <span>{t("selectedCompany")}</span>
+          <select value={workspace?.id || ""} onChange={selectWorkspace}>
+            {snapshot.workspaces.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
+          </select>
+        </label>
+        <div>
+          <strong>{t("activePlan", { plan: snapshot.subscription.name })}</strong>
+          <button type="button" onClick={() => window.location.assign("/pricing")}>{t("managePlan")}</button>
+        </div>
+        <p>{t("selectedCompanyHint")}</p>
+      </section>
+
       <form onSubmit={submit}>
         <fieldset>
           <legend>{t("profileSettings")}</legend>
@@ -118,8 +147,8 @@ export default function LivingSettingsSpace({ snapshot, navigate, onSaved }) {
             <span>{t("brandMode")}</span>
             <select value={brandingMode} onChange={(event) => setBrandingMode(event.target.value)}>
               <option value="platform">{t("brandPlatform")}</option>
-              <option value="co-branded">{t("brandCoBranded")}</option>
-              <option value="company" disabled={!companyLogoUrl}>{t("brandCompany")}</option>
+              <option value="co-branded">{t("brandCoBranded", { company: companyLabel })}</option>
+              <option value="company" disabled={!companyLogoUrl}>{t("brandCompany", { company: companyLabel })}</option>
             </select>
           </label>
           {!identity.canManageBranding && <p className="as6-living-settings__notice">{t("ownerOnly")}</p>}
