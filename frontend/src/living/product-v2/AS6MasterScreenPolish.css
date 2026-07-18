@@ -1,0 +1,88 @@
+.as6-master__utilities button,
+.as6-master__workspace,
+.as6-master__logo,
+.as6-master__mic,
+.as6-master__send {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.as6-master__utilities button:focus-visible,
+.as6-master__workspace:focus-visible,
+.as6-master__logo:focus-visible,
+.as6-master__mic:focus-visible,
+.as6-master__send:focus-visible {
+  outline: 2px solid rgba(36, 95, 151, .34);
+  outline-offset: 4px;
+  border-radius: 999px;
+}
+
+.as6-master__node {
+  will-change: transform, opacity, filter;
+}
+
+.as6-master__node.is-active {
+  transform: translate(-50%, -50%) scale(1.065);
+  filter: saturate(1.08);
+}
+
+.as6-master__node.is-active::before {
+  opacity: 1;
+  box-shadow: 0 0 0 5px rgba(255, 255, 255, .42), 0 0 34px rgba(255, 255, 255, 1);
+}
+
+.as6-master__node.is-muted {
+  opacity: .52;
+  filter: blur(.15px) saturate(.78);
+}
+
+.as6-master__space-status {
+  position: absolute;
+  left: 50%;
+  bottom: 2%;
+  width: min(360px, 72%);
+  min-height: 18px;
+  margin: 0;
+  transform: translateX(-50%);
+  color: rgba(75, 112, 146, .72);
+  font-size: 11px;
+  letter-spacing: .01em;
+  text-align: center;
+  pointer-events: none;
+  transition: opacity .35s ease;
+}
+
+.as6-master.is-calm .as6-master__ambient,
+.as6-master.is-calm .as6-master__graph path,
+.as6-master.is-calm .as6-master__node::before,
+.as6-master.is-calm .as6-master__focus::before,
+.as6-master.is-calm .as6-master__focus-check,
+.as6-master.is-calm .as6-master__mic {
+  animation-play-state: paused;
+}
+
+.as6-master.is-calm .as6-master__ambient {
+  opacity: .72;
+}
+
+.as6-master.is-listening .as6-master__mic {
+  color: #0f8f70;
+  background: rgba(255, 255, 255, .48);
+  box-shadow: 0 0 0 12px rgba(18, 185, 140, .08), 0 0 38px rgba(18, 185, 140, .2);
+}
+
+.as6-master__send:disabled {
+  opacity: .28;
+  cursor: default;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .as6-master *,
+  .as6-master *::before,
+  .as6-master *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}

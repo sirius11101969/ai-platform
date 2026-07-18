@@ -1,5 +1,6 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "./AS6MasterScreen.css";
+import "./AS6MasterScreenPolish.css";
 
 const spaces = [
   { id: "sales", label: "Продажи", note: "Прогноз обновлён.", x: 26, y: 23, symbol: "✦" },
@@ -29,16 +30,28 @@ function formatDate() {
 export default function AS6MasterScreen({ navigate, profileName = "Владимир" }) {
   const [intent, setIntent] = useState("Проверить прогноз перед отправкой инвестору…");
   const [workspaceOpen, setWorkspaceOpen] = useState(false);
-  const time = useMemo(formatTime, []);
-  const date = useMemo(formatDate, []);
+  const [activeSpace, setActiveSpace] = useState(null);
+  const [calmMode, setCalmMode] = useState(false);
+  const [listening, setListening] = useState(false);
+  const [now, setNow] = useState(() => new Date());
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(new Date()), 30_000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const time = useMemo(formatTime, [now]);
+  const date = useMemo(formatDate, [now]);
+  const activeSpaceData = spaces.find((space) => space.id === activeSpace);
 
   function submitIntent(event) {
     event.preventDefault();
+    if (!intent.trim()) return;
     navigate?.("conductor");
   }
 
   return (
-    <section className="as6-master" aria-label="AS6 — Сегодня">
+    <section className={`as6-master${calmMode ? " is-calm" : ""}${listening ? " is-listening" : ""}`} aria-label="AS6 — Сегодня">
       <div className="as6-master__ambient" aria-hidden="true" />
 
       <header className="as6-master__topbar">
@@ -49,9 +62,9 @@ export default function AS6MasterScreen({ navigate, profileName = "Владим�
         <div className="as6-master__utilities" aria-label="Настройки рабочего пространства">
           <span>RU</span><span>EN</span>
           <button type="button" aria-label="Светлая тема">☼</button>
-          <button type="button" aria-label="Спокойный режим">☾</button>
+          <button type="button" aria-label="Спокойный режим" aria-pressed={calmMode} onClick={() => setCalmMode((value) => !value)}>☾</button>
           <button type="button" aria-label="Настройки">⚙</button>
-          <time><strong>{time}</strong><small>{date}</small></time>
+          <time dateTime={now.toISOString()}><strong>{time}</strong><small>{date}</small></time>
           <button type="button" aria-label="Погода">☼</button><span>24°</span>
         </div>
       </header>
@@ -88,12 +101,27 @@ export default function AS6MasterScreen({ navigate, profileName = "Владим�
           {paths.map((path) => <path key={path} d={path} />)}
         </svg>
 
-        {spaces.map((space) => (
-          <button key={space.id} type="button" className={`as6-master__node as6-master__node--${space.id}`} style={{ left: `${space.x}%`, top: `${space.y}%` }} onClick={() => navigate?.(space.id)}>
-            <span className="as6-master__node-mark" aria-hidden="true">{space.symbol || ""}</span>
-            <strong>{space.label}</strong><small>{space.note}</small>
-          </button>
-        ))}
+        {spaces.map((space) => {
+          const isActive = activeSpace === space.id;
+          const isMuted = activeSpace && !isActive;
+          return (
+            <button
+              key={space.id}
+              type="button"
+              className={`as6-master__node as6-master__node--${space.id}${isActive ? " is-active" : ""}${isMuted ? " is-muted" : ""}`}
+              style={{ left: `${space.x}%`, top: `${space.y}%` }}
+              onMouseEnter={() => setActiveSpace(space.id)}
+              onMouseLeave={() => setActiveSpace(null)}
+              onFocus={() => setActiveSpace(space.id)}
+              onBlur={() => setActiveSpace(null)}
+              onClick={() => navigate?.(space.id)}
+              aria-label={`${space.label}. ${space.note}`}
+            >
+              <span className="as6-master__node-mark" aria-hidden="true">{space.symbol || ""}</span>
+              <strong>{space.label}</strong><small>{space.note}</small>
+            </button>
+          );
+        })}
 
         <article className="as6-master__focus">
           <div className="as6-master__focus-check">✓</div>
@@ -104,6 +132,7 @@ export default function AS6MasterScreen({ navigate, profileName = "Владим�
             {["Подготовка", "Проверка", "Отправка", "Завершено"].map((step, index) => <div key={step} className={index < 2 ? "is-active" : ""}><span>{step}</span><i /></div>)}
           </div>
         </article>
+        <p className="as6-master__space-status" aria-live="polite">{activeSpaceData ? `${activeSpaceData.label}: ${activeSpaceData.note}` : ""}</p>
       </main>
 
       <aside className="as6-master__guide">
@@ -113,10 +142,10 @@ export default function AS6MasterScreen({ navigate, profileName = "Владим�
       </aside>
 
       <form className="as6-master__intent" onSubmit={submitIntent}>
-        <button type="button" className="as6-master__mic" aria-label="Голосовой ввод">♩</button>
+        <button type="button" className="as6-master__mic" aria-label={listening ? "Остановить голосовой ввод" : "Голосовой ввод"} aria-pressed={listening} onClick={() => setListening((value) => !value)}>{listening ? "●" : "♩"}</button>
         <label htmlFor="as6-master-intent">Намерение</label>
-        <input id="as6-master-intent" value={intent} onChange={(event) => setIntent(event.target.value)} />
-        <button type="submit" className="as6-master__send" aria-label="Передать намерение">→</button>
+        <input id="as6-master-intent" value={intent} onChange={(event) => setIntent(event.target.value)} autoComplete="off" />
+        <button type="submit" className="as6-master__send" aria-label="Передать намерение" disabled={!intent.trim()}>→</button>
       </form>
     </section>
   );
