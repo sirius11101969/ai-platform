@@ -6,7 +6,6 @@ import { LoginPage, SignupPage } from "./pages/AuthPages";
 import PaymentSuccessPage from "./pages/PaymentSuccessPage";
 import {
   AS6PublicLivingBlogPage,
-  AS6PublicLivingHomePage,
   AS6PublicLivingInfoPage,
 } from "./pages/AS6PublicLivingWebsite.jsx";
 import LivingSpacePreviewPage from "./living/preview/LivingSpacePreviewPage.jsx";
@@ -107,12 +106,18 @@ function RequirePrimaryAuth({ children }) {
   return <Navigate to={`/login?next=${encodeURIComponent(requestedPath)}`} replace />;
 }
 
+function RootLivingEntry() {
+  const { isAuthenticated } = useAuth();
+  if (isAuthenticated) return <Navigate to="/app" replace />;
+  return <LivingProductPreviewPage />;
+}
+
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<AS6PublicLivingHomePage />} />
+          <Route path="/" element={<RootLivingEntry />} />
           <Route path="/blog" element={<AS6PublicLivingBlogPage />} />
           <Route path="/blog/:slug" element={<AS6PublicLivingBlogPage />} />
           <Route path="/docs" element={<AS6PublicLivingInfoPage type="docs" />} />
