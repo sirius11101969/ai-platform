@@ -122,3 +122,9 @@
 
 ## AS6 Public Brand ONE v3
 - AS6_PUBLIC_BRAND_ONE_V3=ops/diagnostics/as6-public-brand-one-v3.md
+
+## AS6 Master Screen Reference Baseline v1
+- AS6_MASTER_SCREEN_REFERENCE_BASELINE_V1=ops/diagnostics/as6-master-screen-reference-baseline-v1.md
+- AS6_MASTER_SCREEN_RUNTIME_OWNER=frontend/src/living/product-v2/AS6MasterScreen.jsx
+- AS6_MASTER_SCREEN_REFERENCE_STYLE=frontend/src/living/product-v2/AS6MasterScreenReference.css
+- AS6_PROFILE_DISPLAY_NAME_OWNER=frontend/src/living/product-v2/LivingCanonicalApp.jsx

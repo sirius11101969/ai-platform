@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+ROOT="${AS6_ROOT:-/var/www/ai-platform}"
+STYLE="$ROOT/frontend/src/living/product-v2/AS6MasterScreenReference.css"
+APP="$ROOT/frontend/src/living/product-v2/LivingCanonicalApp.jsx"
+test -f "$STYLE"
+test -f "$APP"
+grep -Fq '.as6-master .as6-master__workspace' "$STYLE"
+grep -Fq 'font-size: 10px' "$STYLE"
+grep -Fq 'font-size: 12px' "$STYLE"
+grep -Fq 'opacity: .56' "$STYLE"
+grep -Fq 'color: #6688aa' "$STYLE"
+grep -Fq 'resolveProfileDisplayName(user)' "$APP"
+grep -Fq 'user?.displayName' "$APP"
+grep -Fq 'user?.fullName' "$APP"
+grep -Fq '|| "Владимир"' "$APP"
+echo "AS6_MASTER_SCREEN_REFERENCE_BASELINE_V1=PASS"
+echo "AS6_PROFILE_DISPLAY_NAME=PASS"
