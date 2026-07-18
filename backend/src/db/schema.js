@@ -101,7 +101,7 @@ async function migrate() {
     );
 
     INSERT INTO payment_providers(provider, currency, enabled, mode)
-    VALUES('yookassa', 'RUB', TRUE, 'environment')
+    VALUES('yookassa', 'RUB', TRUE, 'mock')
     ON CONFLICT (provider) DO NOTHING;
 
     CREATE TABLE IF NOT EXISTS payment_transactions (
