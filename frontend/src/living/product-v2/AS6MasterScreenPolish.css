@@ -197,15 +197,70 @@
   transform: none;
 }
 
+/* Canonical composition frame: full viewport background, bounded living space. */
+.as6-master {
+  --as6-frame-max: 1600px;
+  --as6-frame-gutter: max(34px, calc((100vw - var(--as6-frame-max)) / 2 + 44px));
+  box-sizing: border-box;
+  width: 100%;
+  height: 100svh;
+  min-height: 680px;
+}
+
+.as6-master__topbar {
+  left: calc(var(--as6-frame-gutter) + 238px);
+  right: var(--as6-frame-gutter);
+}
+
+.as6-master__identity {
+  left: var(--as6-frame-gutter);
+  width: 220px;
+}
+
+.as6-master__space {
+  left: calc(var(--as6-frame-gutter) + 238px);
+  right: calc(var(--as6-frame-gutter) + 278px);
+  top: 126px;
+  bottom: 92px;
+}
+
+.as6-master__guide {
+  right: var(--as6-frame-gutter);
+  width: 235px;
+}
+
+.as6-master__intent {
+  left: calc(var(--as6-frame-gutter) + 170px);
+  right: calc(var(--as6-frame-gutter) + 285px);
+}
+
+.as6-master__focus {
+  width: min(520px, 62%);
+}
+
+.as6-master__focus h2 {
+  font-size: clamp(29px, 2vw, 36px);
+}
+
 @keyframes as6-thinking-pulse {
   0%, 100% { opacity: .68; transform: scale(.92); }
   50% { opacity: 1; transform: scale(1.08); }
 }
 
 @media (max-width: 1280px) {
+  .as6-master {
+    --as6-frame-gutter: 25px;
+  }
   .as6-master__focus h2 { font-size: 29px; }
   .as6-master__thinking { margin-top: 20px; }
   .as6-master__outcome { margin-top: 18px; }
+}
+
+@media (max-width: 980px) {
+  .as6-master {
+    height: auto;
+    min-height: 1100px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
