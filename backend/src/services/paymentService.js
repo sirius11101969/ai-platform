@@ -542,6 +542,54 @@ async function getPaymentStatus({ workspaceId }) {
   return result.rows[0] || null
 }
 
+async function refreshPaymentStatus({ workspaceId }) {
+  const current = await getPaymentStatus({ workspaceId })
+  if (!current || current.provider !== 'yookassa' || ['paid', 'canceled', 'cancelled', 'failed'].includes(String(current.status || '').toLowerCase())) {
+    return current
+  }
+
+  try {
+    const verified = await fetchYooKassaPayment(current.external_payment_id)
+    const providerStatus = String(verified.status || '').toLowerCase()
+
+    if (providerStatus === 'succeeded' && verified.paid === true) {
+      await processWebhook({
+        workspaceId,
+        provider: 'yookassa',
+        event: 'payment.succeeded',
+        externalPaymentId: current.external_payment_id,
+        status: 'paid',
+        amount: Number(verified.amount?.value),
+        currency: verified.amount?.currency,
+        metadata: verified.metadata || {},
+      })
+      return getPaymentStatus({ workspaceId })
+    }
+
+    if (providerStatus === 'canceled') {
+      await processWebhook({
+        workspaceId,
+        provider: 'yookassa',
+        event: 'payment.canceled',
+        externalPaymentId: current.external_payment_id,
+        status: 'canceled',
+        amount: Number(verified.amount?.value),
+        currency: verified.amount?.currency,
+        metadata: verified.metadata || {},
+      })
+      return getPaymentStatus({ workspaceId })
+    }
+  } catch (error) {
+    console.warn('payment_status_reconciliation_failed', {
+      workspaceId,
+      externalPaymentId: current.external_payment_id,
+      message: error.message,
+    })
+  }
+
+  return current
+}
+
 async function getDashboard({ workspaceId }) {
   const [providers, transactions] = await Promise.all([
     pool.query('SELECT provider, currency, enabled, mode, created_at FROM payment_providers ORDER BY provider ASC'),
@@ -551,4 +599,4 @@ async function getDashboard({ workspaceId }) {
   return { providers: providers.rows, transactions: transactions.rows, health }
 }
 
-module.exports = { createProviderPayment, createPayment, processWebhook, getPaymentStatus, getDashboard }
+module.exports = { createProviderPayment, createPayment, processWebhook, getPaymentStatus, refreshPaymentStatus, getDashboard }

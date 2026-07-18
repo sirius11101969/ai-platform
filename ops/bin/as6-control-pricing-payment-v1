@@ -18,6 +18,8 @@ grep -Fq "source: 'plan_checkout'" "$ROOT/backend/src/controllers/paymentControl
 grep -Fq "req.workspace?.role !== 'owner'" "$ROOT/backend/src/controllers/paymentController.js"
 ! grep -Fq 'const { provider, amount, currency' "$ROOT/backend/src/controllers/paymentController.js"
 grep -Fq 'fetchYooKassaPayment(externalPaymentId)' "$ROOT/backend/src/services/paymentService.js"
+grep -Fq 'refreshPaymentStatus({ workspaceId })' "$ROOT/backend/src/services/paymentService.js"
+grep -Fq 'paymentService.refreshPaymentStatus' "$ROOT/backend/src/controllers/paymentController.js"
 grep -Fq 'assertMatchingPaymentValue(transaction' "$ROOT/backend/src/services/paymentService.js"
 grep -Fq "UPDATE users SET plan=" "$ROOT/backend/src/services/paymentService.js"
 grep -Fq "WHERE owner_user_id=" "$ROOT/backend/src/services/paymentService.js"

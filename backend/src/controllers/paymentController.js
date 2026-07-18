@@ -55,7 +55,7 @@ async function webhook(req, res, next) {
 
 async function status(req, res, next) {
   try {
-    const payment = await paymentService.getPaymentStatus({ workspaceId: req.workspace.id })
+    const payment = await paymentService.refreshPaymentStatus({ workspaceId: req.workspace.id })
     res.status(200).json({ payment })
   } catch (e) { next(e) }
 }

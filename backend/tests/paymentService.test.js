@@ -263,6 +263,60 @@ async function testStatusReturnsLatestCreatedTransaction() {
   try { const payment = await service.getPaymentStatus({ workspaceId: '00000000-0000-0000-0000-000000000123' }); assert.deepStrictEqual(payment, newest); assert.deepStrictEqual(capturedParams, ['00000000-0000-0000-0000-000000000123']); assert.ok(capturedSql.includes('WHERE workspace_id = $1::uuid')) } finally { restore() }
 }
 
+async function testStatusReconciliationActivatesSuccessfulYooKassaPlanPayment() {
+  process.env.YOOKASSA_MODE = 'test'
+  let txStatus = 'pending'
+  let providerFetches = 0
+  const updates = []
+  const creditCalls = []
+  const workspaceId = '00000000-0000-0000-0000-000000000912'
+  const ownerUserId = '00000000-0000-0000-0000-000000000913'
+  const transaction = {
+    id: '00000000-0000-0000-0000-000000000911',
+    provider: 'yookassa',
+    external_payment_id: '31ee0ac2-000f-5001-8000-133b1c84c465',
+    amount: 9900,
+    currency: 'RUB',
+    workspace_id: workspaceId,
+    metadata: { source: 'plan_checkout', plan: 'pro', userId: ownerUserId },
+  }
+
+  const { service, restore } = loadWithMocks({
+    queryImpl: async (sql, params = []) => {
+      if (sql.includes('FROM payment_providers')) return { rows: [{ provider: 'yookassa', enabled: true, mode: 'mock', currency: 'RUB' }] }
+      if (sql.includes('FROM payment_transactions') && sql.includes('ORDER BY created_at DESC') && sql.includes('LIMIT 1')) return { rows: [{ ...transaction, status: txStatus }] }
+      if (sql.includes('FROM payment_transactions WHERE provider=')) return { rows: [{ ...transaction, status: txStatus }] }
+      if (sql.includes('UPDATE payment_transactions')) { txStatus = params[0]; return { rows: [{ ...transaction, status: txStatus }] } }
+      if (sql.includes('SELECT owner_user_id FROM workspaces')) return { rows: [{ owner_user_id: ownerUserId }] }
+      if (sql.startsWith('UPDATE users SET plan=')) { updates.push('user'); return { rows: [] } }
+      if (sql.includes('UPDATE workspaces') && sql.includes('owner_user_id')) { updates.push('workspaces'); return { rows: [] } }
+      if (sql === 'BEGIN' || sql === 'COMMIT' || sql === 'ROLLBACK') return { rows: [] }
+      return { rows: [] }
+    },
+    issuePaymentCreditsImpl: async (payload) => { creditCalls.push(payload); return { duplicated: false } },
+    providerImpl: {
+      createMockPayment: async () => ({ paymentId: 'mock', status: 'created', confirmationUrl: null, providerMetadata: {} }),
+      createSandboxPayment: async () => ({ paymentId: 'sandbox', status: 'pending', confirmationUrl: 'https://sandbox.yookassa/confirm', providerMetadata: {} }),
+      fetchYooKassaPayment: async (paymentId) => {
+        providerFetches += 1
+        return { id: paymentId, status: 'succeeded', paid: true, amount: { value: '9900.00', currency: 'RUB' }, metadata: { workspaceId, plan: 'pro' } }
+      },
+    },
+  })
+
+  try {
+    const payment = await service.refreshPaymentStatus({ workspaceId })
+    assert.strictEqual(payment.status, 'paid')
+    assert.strictEqual(providerFetches, 2)
+    assert.deepStrictEqual(updates, ['user', 'workspaces'])
+    assert.strictEqual(creditCalls.length, 1)
+    assert.strictEqual(creditCalls[0].amount, 5000)
+  } finally {
+    restore()
+    delete process.env.YOOKASSA_MODE
+  }
+}
+
 Promise.resolve()
   .then(testProviderIsolation)
   .then(testCreatePaymentMockModeUnchanged)
@@ -273,4 +327,5 @@ Promise.resolve()
   .then(testPlanCheckoutActivatesOwnerAccountAndCanonicalCredits)
   .then(testIssuePaymentCreditsUsesGrantAndDedupes)
   .then(testStatusReturnsLatestCreatedTransaction)
+  .then(testStatusReconciliationActivatesSuccessfulYooKassaPlanPayment)
   .then(() => console.log('paymentService tests passed'))
