@@ -61,6 +61,7 @@ const appSource = fs.readFileSync(path.join(root, "frontend/src/living/product-v
 const masterSource = fs.readFileSync(path.join(root, "frontend/src/living/product-v2/AS6MasterScreen.jsx"), "utf8");
 const engineSource = fs.readFileSync(path.join(root, "frontend/src/living/product-v2/LivingSpaceEngine.jsx"), "utf8");
 const settingsSource = fs.readFileSync(path.join(root, "frontend/src/living/product-v2/LivingSettingsSpace.jsx"), "utf8");
+const localizationSource = fs.readFileSync(path.join(root, "frontend/src/living/product-v2/livingLocalization.js"), "utf8");
 const referenceCss = fs.readFileSync(path.join(root, "frontend/src/living/product-v2/AS6MasterScreenReference.css"), "utf8");
 const apiSource = fs.readFileSync(path.join(root, "frontend/src/services/api.js"), "utf8");
 
@@ -77,9 +78,13 @@ assert.match(masterSource, /const resolvedIntent = intent\.trim\(\) \|\| String\
 assert.match(masterSource, /disabled=\{!resolvedIntent\}/, "Intent action must only be disabled when neither typed nor suggested intent exists");
 assert.match(referenceCss, /AS6_SCREEN1_REFINEMENT_V3: brand=180x72; workspace=right-aligned; avatar-ring=thin; suggested-intent=actionable/, "Screen 1 refinement v3 marker missing");
 assert.match(referenceCss, /\.as6-master__logo,[\s\S]*?width: 180px;[\s\S]*?min-height: 72px;/, "Primary brand must use the accepted visual scale");
-assert.match(referenceCss, /\.as6-master \.as6-master__workspace \{[\s\S]*?align-self: flex-end;/, "Workspace switcher must be right aligned within the identity rail");
-assert.match(referenceCss, /\.as6-master__avatar \{[\s\S]*?border-width: 1px;/, "Profile frame must use the thin ring");
-assert.match(referenceCss, /\.as6-master__avatar \{[\s\S]*?background: transparent;/, "Profile frame must not retain the legacy radial ring");
+assert.match(referenceCss, /AS6_SCREEN1_REFINEMENT_V4: avatar-ring=uniform-inlay; workspace-control=centered-labeled/, "Screen 1 refinement v4 marker missing");
+assert.match(masterSource, /as6-master__workspace-label/, "Workspace switcher must expose a visible control label");
+assert.match(localizationSource, /companySwitcher: "Компания"/, "Russian workspace switcher label missing");
+assert.match(localizationSource, /companySwitcher: "Company"/, "English workspace switcher label missing");
+assert.match(referenceCss, /\.as6-master \.as6-master__workspace \{[\s\S]*?align-self: center;/, "Workspace switcher must be centered within the identity rail");
+assert.match(referenceCss, /\.as6-master__avatar \{[\s\S]*?padding: 2px;[\s\S]*?border: 0;[\s\S]*?background: rgba\(55,96,130,\.22\);/, "Profile frame must use a uniform inset ring");
+assert.match(referenceCss, /\.as6-master\[data-theme="dark"\] \.as6-master__avatar \{[\s\S]*?background: rgba\(255,255,255,\.24\);/, "Dark profile frame must use an even neutral ring");
 assert.match(masterSource, /contractVersion: "as6-conductor-context-v1"/, "Every Screen 1 route must use the conductor context contract");
 assert.match(masterSource, /workspaceId: shell\.workspace\?\.id/, "Conductor context must be scoped to a workspace");
 assert.match(masterSource, /snapshotId: shell\.snapshotId/, "Conductor context must identify its source snapshot");
@@ -106,6 +111,8 @@ console.log("AS6_INTENT_SINGLE_FOCUS_FRAME=PASS");
 console.log("AS6_SUGGESTED_INTENT_ACTION=PASS");
 console.log("AS6_BRAND_IDENTITY_REFINEMENT_V3=PASS");
 console.log("AS6_AVATAR_NEUTRAL_FRAME=PASS");
+console.log("AS6_AVATAR_UNIFORM_RING=PASS");
+console.log("AS6_WORKSPACE_CONTROL_LABEL=PASS");
 console.log("AS6_CONDUCTOR_CONTEXT_CONTRACT_V1=PASS");
 console.log("AS6_CONDUCTOR_RELOAD_RECOVERY=PASS");
 console.log("AS6_CONDUCTOR_WORKSPACE_GUARD=PASS");

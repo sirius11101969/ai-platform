@@ -263,7 +263,8 @@ export default function AS6MasterScreen({
             aria-expanded={workspaceOpen}
             aria-label={t("switchWorkspace")}
           >
-            <b>{identity.workspaceName}</b> <span>⌄</span>
+            <span className="as6-master__workspace-label">{t("companySwitcher")}</span>
+            <span className="as6-master__workspace-value"><b>{identity.workspaceName}</b><i aria-hidden="true">⌄</i></span>
           </button>
           {workspaceOpen && (
             <div className="as6-master__workspace-menu">
