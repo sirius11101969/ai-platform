@@ -4,6 +4,7 @@ import { clearAuthSession, createWorkspace, getStoredUser, setActiveWorkspaceId 
 import { loadLivingReadOnlyData } from "./livingReadOnlyData.js";
 import AS6MasterScreen from "./AS6MasterScreen.jsx";
 import LivingSpaceEngine from "./LivingSpaceEngine.jsx";
+import LivingConductorSpace from "./LivingConductorSpace.jsx";
 import LivingDocumentsSpace from "./LivingDocumentsSpace.jsx";
 import LivingSettingsSpace from "./LivingSettingsSpace.jsx";
 import { livingSpaceRegistry, getLivingSpaceDefinition } from "./livingSpaceRegistry.js";
@@ -16,11 +17,25 @@ import {
   persistLivingLocale,
 } from "./livingLocalization.js";
 
+const CONDUCTOR_CONTEXT_KEY = "as6-conductor-navigation-context-v1";
+
 function resolveSpace(pathname) {
   const exact = livingSpaceRegistry.find((space) => space.path === pathname);
   if (exact) return exact.id;
   const nested = livingSpaceRegistry.find((space) => space.path !== "/app" && pathname.startsWith(space.path));
   return nested?.id || "home";
+}
+
+function readNavigationContext() {
+  const state = window.history.state;
+  if (state && typeof state === "object" && !Array.isArray(state) && Object.keys(state).length) return state;
+  if (resolveSpace(window.location.pathname) !== "conductor") return {};
+  try {
+    const stored = JSON.parse(window.sessionStorage.getItem(CONDUCTOR_CONTEXT_KEY) || "{}");
+    return stored && stored.contractVersion === "as6-conductor-context-v1" ? stored : {};
+  } catch {
+    return {};
+  }
 }
 
 function currentTime(locale) {
@@ -82,12 +97,13 @@ function normalizeDefinition(id) {
 export default function LivingCanonicalApp() {
   const storedUser = getStoredUser();
   const [activeId, setActiveId] = useState(() => resolveSpace(window.location.pathname));
+  const [navigationContext, setNavigationContext] = useState(readNavigationContext);
   const [livingData, setLivingData] = useState({ status: "loading", data: null, error: "" });
   const [online, setOnline] = useState(() => navigator.onLine);
   const [locale, setLocale] = useState(() => getStoredLivingLocale(storedUser?.locale));
   const [profileOpen, setProfileOpen] = useState(false);
   const [theme, setTheme] = useState(() => getStoredLivingTheme());
-  const [selectedPriorityId, setSelectedPriorityId] = useState("");
+  const [selectedPriorityId, setSelectedPriorityId] = useState(() => String(readNavigationContext().priorityId || ""));
   const profileRef = useRef(null);
   const livingRequestIdRef = useRef(0);
   const user = livingData.data?.profile || storedUser;
@@ -127,7 +143,22 @@ export default function LivingCanonicalApp() {
   function navigate(target, navigationState = {}) {
     const space = livingSpaceRegistry.find((item) => item.id === target);
     const path = space?.path || (target === "home" ? "/app" : `/app/${target}`);
-    window.history.pushState(navigationState, "", path);
+    const nextContext = {
+      ...navigationState,
+      fromSpace: activeId,
+      workspaceId: snapshot.workspace?.id || navigationState.workspaceId || "",
+      locale,
+    };
+    window.history.pushState(nextContext, "", path);
+    if (target === "conductor" && nextContext.contractVersion === "as6-conductor-context-v1") {
+      try {
+        window.sessionStorage.setItem(CONDUCTOR_CONTEXT_KEY, JSON.stringify(nextContext));
+      } catch {
+        // History state remains the source of truth when session storage is unavailable.
+      }
+    }
+    setNavigationContext(nextContext);
+    if (nextContext.priorityId) setSelectedPriorityId(String(nextContext.priorityId));
     setActiveId(resolveSpace(path));
     setProfileOpen(false);
   }
@@ -185,7 +216,12 @@ export default function LivingCanonicalApp() {
   }, [locale, activeId, definition.label]);
 
   useEffect(() => {
-    const onPop = () => setActiveId(resolveSpace(window.location.pathname));
+    const onPop = () => {
+      const nextContext = readNavigationContext();
+      setNavigationContext(nextContext);
+      if (nextContext.priorityId) setSelectedPriorityId(String(nextContext.priorityId));
+      setActiveId(resolveSpace(window.location.pathname));
+    };
     const onPointer = (event) => { if (profileRef.current && !profileRef.current.contains(event.target)) setProfileOpen(false); };
     const onWorkspace = () => refreshLivingData();
     const onOnline = () => { setOnline(true); refreshLivingData(); };
@@ -275,7 +311,15 @@ export default function LivingCanonicalApp() {
           ? <LivingSettingsSpace snapshot={snapshot} navigate={navigate} onSaved={handleSettingsSaved} onWorkspaceChange={changeWorkspace} onLocaleChange={changeLocale} />
           : activeId === "documents"
             ? <LivingDocumentsSpace livingData={livingData} navigate={navigate} />
-            : <LivingSpaceEngine definition={definition} navigate={navigate} />}
+            : activeId === "conductor"
+              ? <LivingConductorSpace
+                  key={`${activeId}:${navigationContext.priorityId || "none"}:${navigationContext.intent || "none"}`}
+                  definition={definition}
+                  navigate={navigate}
+                  navigationContext={navigationContext}
+                  snapshot={snapshot}
+                />
+              : <LivingSpaceEngine definition={definition} navigate={navigate} snapshot={snapshot} />}
       </main>
     </div>
   );

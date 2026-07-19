@@ -586,13 +586,21 @@
 .as6-master__avatar {
   width: 76px;
   height: 76px;
+  border: 1px solid rgba(69,104,134,.18);
   border-width: 1px;
-  box-shadow: 0 7px 24px rgba(48,80,109,.10), 0 0 0 2px rgba(255,255,255,.28);
+  background: transparent;
+  box-shadow: 0 7px 22px rgba(48,80,109,.09);
 }
 
 .as6-master__avatar span {
-  width: 70px;
-  height: 70px;
+  width: 72px;
+  height: 72px;
+}
+
+.as6-master[data-theme="dark"] .as6-master__avatar {
+  border-color: rgba(255,255,255,.14);
+  background: transparent;
+  box-shadow: 0 7px 20px rgba(0,0,0,.32);
 }
 
 .as6-master__workspace-menu {

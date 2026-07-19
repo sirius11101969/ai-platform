@@ -76,7 +76,11 @@ export default function AS6MasterScreen({
   const [activeSpace, setActiveSpace] = useState(null);
   const [panel, setPanel] = useState("");
   const [now, setNow] = useState(() => new Date());
-  const acceptTranscript = useCallback((transcript) => setIntent(transcript), []);
+  const [intentSource, setIntentSource] = useState("suggested");
+  const acceptTranscript = useCallback((transcript) => {
+    setIntent(transcript);
+    setIntentSource("voice");
+  }, []);
   const speech = useLivingSpeechRecognition({ locale: shell.locale, onTranscript: acceptTranscript });
 
   useEffect(() => {
@@ -84,7 +88,10 @@ export default function AS6MasterScreen({
     return () => window.clearInterval(timer);
   }, []);
 
-  useEffect(() => setIntent(""), [priority.id]);
+  useEffect(() => {
+    setIntent("");
+    setIntentSource("suggested");
+  }, [priority.id]);
 
   const time = useMemo(() => formatTime(now, shell.locale), [now, shell.locale]);
   const date = useMemo(() => formatDate(now, shell.locale), [now, shell.locale]);
@@ -94,11 +101,9 @@ export default function AS6MasterScreen({
   function submitIntent(event) {
     event.preventDefault();
     if (!resolvedIntent) return;
-    navigate?.(priority.actionTarget || "conductor", {
+    navigateForPriority(priority.actionTarget || "conductor", {
       intent: resolvedIntent,
-      priorityId: priority.id,
-      leadId: priority.leadId,
-      actionCode: priority.actionCode,
+      intentSource: intent.trim() ? intentSource : "suggested",
     });
   }
 
@@ -125,7 +130,18 @@ export default function AS6MasterScreen({
   }
 
   function navigateForPriority(target, extra = {}) {
-    navigate?.(target, { priorityId: priority.id, leadId: priority.leadId, ...extra });
+    navigate?.(target, {
+      contractVersion: "as6-conductor-context-v1",
+      workspaceId: shell.workspace?.id || "",
+      snapshotId: shell.snapshotId,
+      priorityId: priority.id,
+      leadId: priority.leadId,
+      actionCode: priority.actionCode,
+      intent: priority.intent,
+      intentSource: "suggested",
+      locale: shell.locale,
+      ...extra,
+    });
   }
 
   function activityTime(value) {
@@ -200,7 +216,7 @@ export default function AS6MasterScreen({
                 onMouseLeave={() => setActiveSpace(null)}
                 onFocus={() => setActiveSpace(space.id)}
                 onBlur={() => setActiveSpace(null)}
-                onClick={() => navigate?.(space.id)}
+                onClick={() => navigateForPriority(space.id)}
                 aria-label={`${space.label}. ${space.note}`}
               >
                 <span className="as6-master__node-mark" aria-hidden="true"><NodeGlyph type={space.id} /></span>
@@ -304,7 +320,7 @@ export default function AS6MasterScreen({
         <form className="as6-master__intent" onSubmit={submitIntent}>
           <button type="button" className="as6-master__mic" aria-label={speech.listening ? t("voiceStop") : t("voiceStart")} aria-pressed={speech.listening} onClick={speech.toggle}><MicrophoneGlyph listening={speech.listening} /></button>
           <label htmlFor="as6-master-intent">{t("intent")}</label>
-          <input id="as6-master-intent" value={intent} onChange={(event) => setIntent(event.target.value)} placeholder={priority.intent} autoComplete="off" />
+          <input id="as6-master-intent" value={intent} onChange={(event) => { setIntent(event.target.value); setIntentSource("typed"); }} placeholder={priority.intent} autoComplete="off" />
           <button type="submit" className="as6-master__send" aria-label={t("sendIntent")} disabled={!resolvedIntent}>→</button>
           <span className="as6-master__voice-status" aria-live="polite">{speech.listening ? t("voiceListening") : speech.error ? (speech.error === "unsupported" ? t("voiceUnsupported") : t("voiceError")) : ""}</span>
         </form>
