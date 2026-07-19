@@ -16,7 +16,7 @@ const DEFAULT_CONNECTIONS = [
   { id: "marketing-team", from: "marketing", to: "team", kind: "structural", d: "M77 25 C88 38 88 59 83 73" },
   { id: "finance-documents", from: "finance", to: "documents", kind: "active", d: "M16 58 C11 66 9 76 10 84" },
   { id: "documents-team", from: "documents", to: "team", kind: "active", d: "M10 84 C29 94 62 91 83 73" },
-  { id: "finance-team", from: "finance", to: "team", kind: "active", d: "M16 58 C35 48 58 82 83 73" },
+  { id: "finance-team", from: "finance", to: "team", kind: "active", d: "M16 58 C36 76 61 80 83 73" },
 ];
 
 const copy = {

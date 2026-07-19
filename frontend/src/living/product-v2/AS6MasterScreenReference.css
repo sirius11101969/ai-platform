@@ -739,7 +739,7 @@
  * central aura cannot acquire a cream/yellow cast on bright displays.
  */
 .as6-master[data-theme="light"] {
-  background: #f3f8fc;
+  background: #ffffff;
 }
 
 .as6-master[data-theme="light"] .as6-master__ambient {
@@ -896,3 +896,4 @@
 /* AS6_IDENTITY_SPACING_V1: workspace-gap=follows-positive-logo-overflow; menu=follows-workspace */
 /* AS6_LIGHT_PALETTE_UNIFICATION_V1: temperature=cool-neutral; warm-cast=removed; dark=unchanged */
 /* AS6_LIGHT_PALETTE_UNIFICATION_V2: background=solid-cool; diffuse-glow=none; graph-glow=none */
+/* AS6_LIGHT_PALETTE_UNIFICATION_V3: background=pure-white; connections=7; finance-team=clear-of-metric */

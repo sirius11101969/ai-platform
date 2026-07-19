@@ -142,9 +142,12 @@ assert.match(engineSource, /navigationContext\.workspaceId !== snapshot\.workspa
 assert.match(engineSource, /snapshot\?\.locale === "en"/, "Screen 2 must follow the shell locale");
 assert.match(referenceCss, /AS6_LIGHT_PALETTE_UNIFICATION_V1: temperature=cool-neutral; warm-cast=removed; dark=unchanged/, "Screen 1 must record the cool-neutral light palette contract");
 assert.match(referenceCss, /AS6_LIGHT_PALETTE_UNIFICATION_V2: background=solid-cool; diffuse-glow=none; graph-glow=none/, "Screen 1 must record the strict no-warm-cast palette contract");
-assert.match(referenceCss, /\.as6-master\[data-theme="light"\] \{\s*background: #f3f8fc;/, "The light master background must be a uniform cool color");
+assert.match(referenceCss, /AS6_LIGHT_PALETTE_UNIFICATION_V3: background=pure-white; connections=7; finance-team=clear-of-metric/, "Screen 1 must record the pure-white and safe-connection-path contract");
+assert.match(referenceCss, /\.as6-master\[data-theme="light"\] \{\s*background: #ffffff;/, "The light master background must be pure white");
 assert.match(referenceCss, /\.as6-master\[data-theme="light"\] \.as6-master__ambient \{\s*display: none;/, "The diffuse ambient layer must not create tinted patches");
 assert.match(referenceCss, /\.as6-master\[data-theme="light"\] \.as6-master__graph-lines path \{[\s\S]*?rgba\(151,190,218,\.7\);[\s\S]*?filter: none;/, "Light graph lines must use a cold-blue color without glow");
+assert.match(shellSource, /const DEFAULT_CONNECTIONS = \[[\s\S]*?id: "finance-team"[\s\S]*?d: "M16 58 C36 76 61 80 83 73"/, "Finance to Team must pass below the central metric");
+assert.equal(initial.connections.length, 7, "The executive graph must retain its seven meaningful connections");
 
 console.log("AS6_SCREEN1_REAL_ACTIVITY=PASS");
 console.log("AS6_MULTI_WORKSPACE_ALLOWANCE=PASS");
@@ -168,6 +171,8 @@ console.log("AS6_PROFILE_PHOTO_SCALE_V1=PASS");
 console.log("AS6_IDENTITY_ADAPTIVE_SPACING=PASS");
 console.log("AS6_LIGHT_PALETTE_UNIFICATION=PASS");
 console.log("AS6_LIGHT_PALETTE_STRICT_NO_WARM_CAST=PASS");
+console.log("AS6_PURE_WHITE_BACKGROUND=PASS");
+console.log("AS6_CONNECTION_PATH_CLEARANCE=PASS");
 console.log("AS6_CONDUCTOR_CONTEXT_CONTRACT_V1=PASS");
 console.log("AS6_CONDUCTOR_RELOAD_RECOVERY=PASS");
 console.log("AS6_CONDUCTOR_WORKSPACE_GUARD=PASS");

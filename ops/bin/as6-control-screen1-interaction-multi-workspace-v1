@@ -40,6 +40,7 @@ grep -Fq 'AS6_IDENTITY_SCALE_V2: logo=70..150@workspace; avatar=70..150@profile;
 grep -Fq 'AS6_IDENTITY_SPACING_V1: workspace-gap=follows-positive-logo-overflow; menu=follows-workspace' "$ROOT/frontend/src/living/product-v2/AS6MasterScreenReference.css"
 grep -Fq 'AS6_LIGHT_PALETTE_UNIFICATION_V1: temperature=cool-neutral; warm-cast=removed; dark=unchanged' "$ROOT/frontend/src/living/product-v2/AS6MasterScreenReference.css"
 grep -Fq 'AS6_LIGHT_PALETTE_UNIFICATION_V2: background=solid-cool; diffuse-glow=none; graph-glow=none' "$ROOT/frontend/src/living/product-v2/AS6MasterScreenReference.css"
+grep -Fq 'AS6_LIGHT_PALETTE_UNIFICATION_V3: background=pure-white; connections=7; finance-team=clear-of-metric' "$ROOT/frontend/src/living/product-v2/AS6MasterScreenReference.css"
 grep -Fq 'companyLogoScale' "$ROOT/frontend/src/living/product-v2/LivingSettingsSpace.jsx"
 grep -Fq 'avatarScale' "$ROOT/frontend/src/living/product-v2/LivingSettingsSpace.jsx"
 grep -Fq 'company_logo_scale BETWEEN 70 AND 150' "$ROOT/backend/src/db/schema.js"
