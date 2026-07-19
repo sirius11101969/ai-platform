@@ -3,10 +3,12 @@ set -Eeuo pipefail
 
 ROOT="${AS6_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
 ENV_FILE="${AS6_STAGING_ENV_FILE:-$ROOT/.env.staging}"
+RELEASE_TAG="${AS6_RELEASE_TAG:?AS6_RELEASE_TAG is required}"
 cd "$ROOT"
 test -f "$ENV_FILE"
 
-PUBLISHED_ADDRESS="$(docker compose --env-file "$ENV_FILE" -p ai-platform-staging -f docker-compose.staging.yml port nginx 80)"
+PUBLISHED_ADDRESS="$(AS6_RELEASE_TAG="$RELEASE_TAG" docker compose --env-file "$ENV_FILE" \
+  -p ai-platform-staging -f docker-compose.staging.yml port nginx 80)"
 PORT="${PUBLISHED_ADDRESS##*:}"
 test -n "$PORT"
 BASE_URL="http://127.0.0.1:$PORT"
@@ -26,5 +28,6 @@ for attempt in 1 2 3 4 5 6 7 8 9 10; do
 done
 
 test "$READY" = "1"
-docker compose --env-file "$ENV_FILE" -p ai-platform-staging -f docker-compose.staging.yml ps
+AS6_RELEASE_TAG="$RELEASE_TAG" docker compose --env-file "$ENV_FILE" \
+  -p ai-platform-staging -f docker-compose.staging.yml ps
 echo "AS6_STAGING_SMOKE=PASS"

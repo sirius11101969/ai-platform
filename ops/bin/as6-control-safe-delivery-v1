@@ -23,6 +23,9 @@ grep -q '127.0.0.1:${AS6_STAGING_HTTP_PORT:-18080}:80' docker-compose.staging.ym
 grep -q 'AI_EXECUTION_ENABLE_BACKGROUND_LOOP: "false"' docker-compose.staging.yml
 grep -q 'YOOKASSA_MODE: ${YOOKASSA_MODE:-disabled}' docker-compose.staging.yml
 grep -q 'AS6_STAGING_RESULT=PASS' ops/bin/as6-staging-deploy-v1
+grep -q 'AS6_RELEASE_TAG="$RELEASE_TAG" AS6_STAGING_ENV_FILE="$ENV_FILE"' ops/bin/as6-staging-deploy-v1
+grep -q 'AS6_RELEASE_TAG:-control' ops/bin/as6-validate-staging-config-v1
+grep -q 'AS6_RELEASE_TAG:?AS6_RELEASE_TAG is required' ops/bin/as6-staging-smoke-v1
 grep -q 'ops/bin/as6-production-backup-full-v1' ops/bin/as6-promote-production-v1
 grep -q 'CONFIRM_AS6_PRODUCTION' ops/bin/as6-promote-production-v1
 grep -q 'AS6_PRODUCTION_BEFORE_' ops/bin/as6-promote-production-v1

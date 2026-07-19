@@ -12,7 +12,8 @@ BUILD_MANIFEST="$ROOT/runtime/as6-releases/$RELEASE_SHA/build.env"
 ATTESTATION="$ROOT/runtime/as6-releases/$RELEASE_SHA/staging-passed.env"
 
 test -f "$BUILD_MANIFEST"
-AS6_STAGING_ENV_FILE="$ENV_FILE" ops/bin/as6-validate-staging-config-v1
+AS6_RELEASE_TAG="$RELEASE_TAG" AS6_STAGING_ENV_FILE="$ENV_FILE" \
+  ops/bin/as6-validate-staging-config-v1
 
 test "$(docker image inspect "ai-platform-backend:$RELEASE_TAG" --format '{{ index .Config.Labels "org.opencontainers.image.revision" }}')" = "$RELEASE_SHA"
 test "$(docker image inspect "ai-platform-nginx:$RELEASE_TAG" --format '{{ index .Config.Labels "org.opencontainers.image.revision" }}')" = "$RELEASE_SHA"
@@ -20,7 +21,8 @@ test "$(docker image inspect "ai-platform-nginx:$RELEASE_TAG" --format '{{ index
 AS6_RELEASE_TAG="$RELEASE_TAG" docker compose --env-file "$ENV_FILE" \
   -p ai-platform-staging -f docker-compose.staging.yml up -d --no-build
 
-AS6_STAGING_ENV_FILE="$ENV_FILE" ops/bin/as6-staging-smoke-v1
+AS6_RELEASE_TAG="$RELEASE_TAG" AS6_STAGING_ENV_FILE="$ENV_FILE" \
+  ops/bin/as6-staging-smoke-v1
 
 cat > "$ATTESTATION" <<EOF
 AS6_RELEASE_SHA=$RELEASE_SHA

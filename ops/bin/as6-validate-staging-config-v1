@@ -3,6 +3,7 @@ set -Eeuo pipefail
 
 ROOT="${AS6_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
 ENV_FILE="${AS6_STAGING_ENV_FILE:-$ROOT/.env.staging}"
+RELEASE_TAG="${AS6_RELEASE_TAG:-control}"
 CONFIG_FILE="$(mktemp /tmp/as6-staging-config.XXXXXX.json)"
 trap 'rm -f "$CONFIG_FILE"' EXIT
 
@@ -10,7 +11,7 @@ cd "$ROOT"
 test -f "$ENV_FILE"
 test "$(stat -c '%a' "$ENV_FILE")" = "600"
 
-docker compose --env-file "$ENV_FILE" -p ai-platform-staging \
+AS6_RELEASE_TAG="$RELEASE_TAG" docker compose --env-file "$ENV_FILE" -p ai-platform-staging \
   -f docker-compose.staging.yml config --format json > "$CONFIG_FILE"
 chmod 600 "$CONFIG_FILE"
 
