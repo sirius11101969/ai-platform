@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="${AS6_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
+cd "$ROOT"
+
+for file in \
+  ops/bin/as6-backup-offsite-rclone-v1 \
+  ops/bin/as6-configure-google-drive-offsite-v1 \
+  ops/systemd/as6-production-backup.service; do
+  test -f "$file"
+done
+
+bash -n ops/bin/as6-backup-offsite-rclone-v1
+bash -n ops/bin/as6-configure-google-drive-offsite-v1
+grep -q 'REMOTE_TYPE.*crypt' ops/bin/as6-backup-offsite-rclone-v1
+grep -q 'cryptcheck.*--one-way' ops/bin/as6-backup-offsite-rclone-v1
+grep -q -- '--immutable' ops/bin/as6-backup-offsite-rclone-v1
+grep -q 'sha256sum -c checksums.sha256' ops/bin/as6-backup-offsite-rclone-v1
+grep -q 'AS6_BACKUP_OFFSITE_RCLONE=PASS' ops/bin/as6-backup-offsite-rclone-v1
+grep -q 'AS6_BACKUP_OFFSITE_RCLONE_REMOTE' ops/bin/as6-production-backup-full-v1
+grep -q 'ops/bin/as6-backup-offsite-rclone-v1' ops/bin/as6-production-backup-full-v1
+grep -q 'AS6_BACKUP_OFFSITE_ENV_FILE' ops/bin/as6-production-backup-full-v1
+grep -q 'EnvironmentFile=-/etc/as6/backup-offsite.env' ops/systemd/as6-production-backup.service
+! grep -Eq 'rclone[[:space:]]+(sync|delete|purge)' ops/bin/as6-backup-offsite-rclone-v1
+
+TEST_ROOT="$(mktemp -d)"
+trap 'rm -rf -- "$TEST_ROOT"' EXIT
+mkdir -p "$TEST_ROOT/bin" "$TEST_ROOT/backups/as6-full-control"
+printf 'database\n' > "$TEST_ROOT/backups/as6-full-control/postgres.dump"
+printf 'attachments\n' > "$TEST_ROOT/backups/as6-full-control/attachments.tar.gz"
+printf 'manifest\n' > "$TEST_ROOT/backups/as6-full-control/manifest.env"
+(
+  cd "$TEST_ROOT/backups/as6-full-control"
+  sha256sum postgres.dump attachments.tar.gz manifest.env > checksums.sha256
+)
+printf 'RCLONE_ENCRYPT_V0:\n' > "$TEST_ROOT/rclone.conf"
+printf 'control-pass\n' > "$TEST_ROOT/rclone-config-pass"
+chmod 600 "$TEST_ROOT/rclone.conf" "$TEST_ROOT/rclone-config-pass"
+cat > "$TEST_ROOT/bin/rclone" <<'EOF'
+#!/usr/bin/env bash
+set -Eeuo pipefail
+case " $* " in
+  *" config show "*) printf '[remote]\ntype = %s\n' "${AS6_FAKE_RCLONE_TYPE:-drive}" ;;
+  *" copy "*) exit 0 ;;
+  *" cryptcheck "*) exit 0 ;;
+  *) exit 1 ;;
+esac
+EOF
+chmod 700 "$TEST_ROOT/bin/rclone"
+
+if PATH="$TEST_ROOT/bin:$PATH" \
+  AS6_FAKE_RCLONE_TYPE=drive \
+  AS6_BACKUP_ROOT="$TEST_ROOT/backups" \
+  AS6_BACKUP_OFFSITE_RCLONE_REMOTE=encrypted:production \
+  RCLONE_CONFIG="$TEST_ROOT/rclone.conf" \
+  AS6_RCLONE_CONFIG_PASS_FILE="$TEST_ROOT/rclone-config-pass" \
+  ops/bin/as6-backup-offsite-rclone-v1 "$TEST_ROOT/backups/as6-full-control" >/dev/null 2>&1; then
+  echo "Unencrypted offsite remote was accepted" >&2
+  exit 1
+fi
+
+PATH="$TEST_ROOT/bin:$PATH" \
+  AS6_FAKE_RCLONE_TYPE=crypt \
+  AS6_BACKUP_ROOT="$TEST_ROOT/backups" \
+  AS6_BACKUP_OFFSITE_RCLONE_REMOTE=encrypted:production \
+  RCLONE_CONFIG="$TEST_ROOT/rclone.conf" \
+  AS6_RCLONE_CONFIG_PASS_FILE="$TEST_ROOT/rclone-config-pass" \
+  ops/bin/as6-backup-offsite-rclone-v1 "$TEST_ROOT/backups/as6-full-control" |
+    grep -q 'AS6_BACKUP_OFFSITE_INTEGRITY=PASS'
+
+echo "AS6_ENCRYPTED_OFFSITE_BACKUP_CONTRACT=PASS"

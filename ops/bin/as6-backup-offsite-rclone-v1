@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+BUNDLE="${1:-}"
+BACKUP_ROOT="${AS6_BACKUP_ROOT:-/var/backups/as6/full}"
+REMOTE_SPEC="${AS6_BACKUP_OFFSITE_RCLONE_REMOTE:-}"
+RCLONE_CONFIG="${RCLONE_CONFIG:-/etc/as6/rclone.conf}"
+CONFIG_PASS_FILE="${AS6_RCLONE_CONFIG_PASS_FILE:-/etc/as6/rclone-config-pass}"
+
+test -n "$BUNDLE"
+test -d "$BUNDLE"
+test -n "$REMOTE_SPEC"
+command -v rclone >/dev/null
+command -v realpath >/dev/null
+
+BACKUP_ROOT_REAL="$(realpath "$BACKUP_ROOT")"
+BUNDLE_REAL="$(realpath "$BUNDLE")"
+case "$BUNDLE_REAL" in
+  "$BACKUP_ROOT_REAL"/as6-full-*) ;;
+  *) echo "Backup bundle must be a completed AS6 bundle below AS6_BACKUP_ROOT" >&2; exit 1 ;;
+esac
+
+case "$REMOTE_SPEC" in
+  [A-Za-z0-9._-]*:*) ;;
+  *) echo "AS6_BACKUP_OFFSITE_RCLONE_REMOTE must be a named rclone remote with a dedicated path" >&2; exit 1 ;;
+esac
+REMOTE_NAME="${REMOTE_SPEC%%:*}"
+REMOTE_PATH="${REMOTE_SPEC#*:}"
+test -n "$REMOTE_NAME"
+test -n "$REMOTE_PATH"
+test "$REMOTE_PATH" != "/"
+case "$REMOTE_PATH" in
+  *..*) echo "The offsite remote path must not contain '..'" >&2; exit 1 ;;
+esac
+
+test -f "$RCLONE_CONFIG"
+test -f "$CONFIG_PASS_FILE"
+case "$(stat -c '%a' "$RCLONE_CONFIG")" in
+  400|600) ;;
+  *) echo "rclone config must be readable only by root (mode 400 or 600)" >&2; exit 1 ;;
+esac
+case "$(stat -c '%a' "$CONFIG_PASS_FILE")" in
+  400|600) ;;
+  *) echo "rclone config pass file must be readable only by root (mode 400 or 600)" >&2; exit 1 ;;
+esac
+
+RCLONE_CONFIG_PASS="$(tr -d '\r\n' < "$CONFIG_PASS_FILE")"
+test -n "$RCLONE_CONFIG_PASS"
+export RCLONE_CONFIG_PASS
+trap 'unset RCLONE_CONFIG_PASS' EXIT
+
+REMOTE_TYPE="$(
+  rclone --config "$RCLONE_CONFIG" config show "$REMOTE_NAME" |
+    awk -F= '$1 ~ /^[[:space:]]*type[[:space:]]*$/ {gsub(/[[:space:]]/, "", $2); print $2; exit}'
+)"
+if test "$REMOTE_TYPE" != "crypt"; then
+  echo "The offsite rclone remote must have type=crypt" >&2
+  exit 1
+fi
+
+(
+  cd "$BUNDLE_REAL"
+  sha256sum -c checksums.sha256 >/dev/null
+)
+
+DESTINATION="${REMOTE_SPEC%/}/$(basename "$BUNDLE_REAL")"
+rclone --config "$RCLONE_CONFIG" copy "$BUNDLE_REAL/" "$DESTINATION/" \
+  --immutable \
+  --create-empty-src-dirs \
+  --transfers 4 \
+  --checkers 8
+
+rclone --config "$RCLONE_CONFIG" cryptcheck "$BUNDLE_REAL/" "$DESTINATION/" --one-way
+
+echo "AS6_BACKUP_OFFSITE_RCLONE=PASS"
+echo "AS6_BACKUP_OFFSITE_ENCRYPTION=PASS"
+echo "AS6_BACKUP_OFFSITE_INTEGRITY=PASS"

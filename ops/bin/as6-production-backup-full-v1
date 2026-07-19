@@ -2,9 +2,22 @@
 set -Eeuo pipefail
 
 ROOT="${AS6_ROOT:-/var/www/ai-platform}"
+OFFSITE_ENV_FILE="${AS6_BACKUP_OFFSITE_ENV_FILE:-/etc/as6/backup-offsite.env}"
+if test -f "$OFFSITE_ENV_FILE"; then
+  test "$(stat -c '%u' "$OFFSITE_ENV_FILE")" = "0"
+  case "$(stat -c '%a' "$OFFSITE_ENV_FILE")" in
+    400|600) ;;
+    *) echo "Backup offsite environment file must be root-only (mode 400 or 600)" >&2; exit 1 ;;
+  esac
+  set -a
+  # shellcheck disable=SC1090
+  . "$OFFSITE_ENV_FILE"
+  set +a
+fi
 BACKUP_ROOT="${AS6_BACKUP_ROOT:-/var/backups/as6/full}"
 RETENTION_DAYS="${AS6_BACKUP_RETENTION_DAYS:-30}"
 OFFSITE_DIR="${AS6_BACKUP_OFFSITE_DIR:-}"
+OFFSITE_RCLONE_REMOTE="${AS6_BACKUP_OFFSITE_RCLONE_REMOTE:-}"
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 BUNDLE="$BACKUP_ROOT/as6-full-$STAMP"
 TEMP_BUNDLE="$BUNDLE.tmp"
@@ -59,6 +72,7 @@ chmod 600 "$TEMP_BUNDLE"/*
 mv "$TEMP_BUNDLE" "$BUNDLE"
 trap - EXIT
 
+OFFSITE_COPIES=0
 if test -n "$OFFSITE_DIR"; then
   case "$OFFSITE_DIR" in
     /*) ;;
@@ -73,6 +87,15 @@ if test -n "$OFFSITE_DIR"; then
   chmod 700 "$OFFSITE_DIR"
   cp -a "$BUNDLE" "$OFFSITE_DIR/"
   (cd "$OFFSITE_DIR/$(basename "$BUNDLE")" && sha256sum -c checksums.sha256 >/dev/null)
+  OFFSITE_COPIES=$((OFFSITE_COPIES + 1))
+fi
+
+if test -n "$OFFSITE_RCLONE_REMOTE"; then
+  ops/bin/as6-backup-offsite-rclone-v1 "$BUNDLE"
+  OFFSITE_COPIES=$((OFFSITE_COPIES + 1))
+fi
+
+if test "$OFFSITE_COPIES" -gt 0; then
   echo "AS6_BACKUP_OFFSITE_COPY=PASS"
 else
   echo "AS6_BACKUP_OFFSITE_COPY=NOT_CONFIGURED"

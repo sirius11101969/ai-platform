@@ -15,12 +15,16 @@ for file in \
   ops/bin/as6-staging-deploy-v1 \
   ops/bin/as6-staging-smoke-v1 \
   ops/bin/as6-production-backup-full-v1 \
+  ops/bin/as6-control-offsite-backup-v1 \
+  ops/bin/as6-backup-offsite-rclone-v1 \
+  ops/bin/as6-configure-google-drive-offsite-v1 \
   ops/bin/as6-restore-drill-v1 \
   ops/bin/as6-promote-production-v1; do
   test -f "$file"
 done
 
 ops/bin/as6-control-schema-bootstrap-v1
+ops/bin/as6-control-offsite-backup-v1
 
 grep -q '127.0.0.1:${AS6_STAGING_HTTP_PORT:-18080}:80' docker-compose.staging.yml
 grep -q 'AI_EXECUTION_ENABLE_BACKGROUND_LOOP: "false"' docker-compose.staging.yml

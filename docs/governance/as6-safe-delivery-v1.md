@@ -61,12 +61,26 @@ manager or encrypted offline recovery package.
 `AS6_BACKUP_OFFSITE_DIR` may point to a mounted off-host destination. A local
 backup on the production VPS is not sufficient for disaster recovery.
 
-Google Drive may be used as one encrypted off-host copy, but never as the only
-backup and never as live storage for PostgreSQL. Upload only completed,
-timestamped backup bundles after their checksums pass. Encrypt content and file
-names before upload, keep production credentials out of the repository, and
-retain an independent restore path outside the production VPS and Google
-account.
+Google Drive may be used as one encrypted off-host copy through a dedicated
+`rclone crypt` remote, but never as the only backup and never as live storage
+for PostgreSQL. `ops/bin/as6-backup-offsite-rclone-v1` accepts only completed,
+timestamped bundles below the configured backup root, verifies their local
+checksums, uploads with immutable semantics, and requires `rclone cryptcheck`
+to pass before reporting success. Content and file names are encrypted before
+leaving the VPS.
+
+The unattended configuration lives outside the repository in `/etc/as6` with
+root-only permissions. The rclone configuration itself must be encrypted. Its
+configuration password is kept in a separate root-only file and is injected
+only into the backup process. OAuth tokens, encryption passwords, `.env`
+contents, and rclone configuration must never be committed.
+
+Run `ops/bin/as6-configure-google-drive-offsite-v1` once on the production VPS
+to authorize Google Drive and establish the encrypted remote. Preserve an
+offline recovery copy of the rclone configuration plus both required
+passwords. Without the crypt password, encrypted backup data is unrecoverable.
+Retain an independent restore path outside both the production VPS and the
+Google account.
 
 ## Restore contract
 
@@ -96,10 +110,12 @@ the same service after DNS, TLS and access control are configured.
 - `AS6_CLEAN_DATABASE_BOOTSTRAP_ORDER_GAP`
 - `AS6_ATTACHMENT_BACKUP_GAP`
 - `AS6_RESTORE_DRILL_GAP`
+- `AS6_UNENCRYPTED_OFFSITE_BACKUP_GAP`
+- `AS6_OFFSITE_UPLOAD_WITHOUT_INTEGRITY_CHECK_GAP`
 
 ## Remaining operational requirements
 
-- configure an encrypted off-host backup destination;
+- complete one-time Google Drive OAuth authorization and verify the first encrypted upload;
 - verify the daily timer on production;
 - run and record restore drills regularly;
 - move staging to a separate VPS before production scale or compliance requires it;

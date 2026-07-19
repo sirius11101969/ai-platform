@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="${AS6_ROOT:-/var/www/ai-platform}"
+CONFIG_DIR="${AS6_RCLONE_CONFIG_DIR:-/etc/as6}"
+RCLONE_CONFIG="${RCLONE_CONFIG:-$CONFIG_DIR/rclone.conf}"
+CONFIG_PASS_FILE="${AS6_RCLONE_CONFIG_PASS_FILE:-$CONFIG_DIR/rclone-config-pass}"
+ENV_FILE="${AS6_BACKUP_OFFSITE_ENV_FILE:-$CONFIG_DIR/backup-offsite.env}"
+REMOTE_SPEC="${AS6_BACKUP_OFFSITE_RCLONE_REMOTE:-as6-gdrive-crypt:production}"
+
+if test "$(id -u)" -ne 0; then
+  echo "Run this command as root" >&2
+  exit 1
+fi
+command -v rclone >/dev/null || {
+  echo "rclone is required. Install the distribution package, then run this command again." >&2
+  exit 1
+}
+
+case "$REMOTE_SPEC" in
+  [A-Za-z0-9._-]*:*) ;;
+  *) echo "Invalid AS6_BACKUP_OFFSITE_RCLONE_REMOTE" >&2; exit 1 ;;
+esac
+REMOTE_NAME="${REMOTE_SPEC%%:*}"
+REMOTE_PATH="${REMOTE_SPEC#*:}"
+test -n "$REMOTE_PATH"
+
+umask 077
+install -d -m 0700 "$CONFIG_DIR"
+
+if ! test -f "$RCLONE_CONFIG"; then
+  cat <<'EOF'
+AS6 will now open the official interactive rclone configuration.
+
+Create two remotes:
+  1. as6-gdrive       — type Google Drive; complete browser authorization.
+  2. as6-gdrive-crypt — type crypt; remote as6-gdrive:AS6-Encrypted-Backups;
+                        encrypt file names and directory names; generate a
+                        strong password and salt.
+
+Before leaving rclone config, choose "Set configuration password" and encrypt
+the rclone configuration itself. Keep the crypt password and configuration
+password in a separate offline recovery record: without them the backup cannot
+be decrypted.
+EOF
+  rclone --config "$RCLONE_CONFIG" config
+fi
+
+test -f "$RCLONE_CONFIG"
+chmod 600 "$RCLONE_CONFIG"
+if ! head -n 1 "$RCLONE_CONFIG" | grep -q '^RCLONE_ENCRYPT_V'; then
+  echo "The rclone config is not encrypted. Run 'rclone --config $RCLONE_CONFIG config' and set a configuration password." >&2
+  exit 1
+fi
+
+read -r -s -p "rclone configuration password: " CONFIG_PASS < /dev/tty
+echo
+test -n "$CONFIG_PASS"
+printf '%s\n' "$CONFIG_PASS" > "$CONFIG_PASS_FILE"
+chmod 600 "$CONFIG_PASS_FILE"
+export RCLONE_CONFIG_PASS="$CONFIG_PASS"
+unset CONFIG_PASS
+trap 'unset RCLONE_CONFIG_PASS' EXIT
+
+rclone --config "$RCLONE_CONFIG" listremotes | grep -Fxq "$REMOTE_NAME:"
+REMOTE_TYPE="$(
+  rclone --config "$RCLONE_CONFIG" config show "$REMOTE_NAME" |
+    awk -F= '$1 ~ /^[[:space:]]*type[[:space:]]*$/ {gsub(/[[:space:]]/, "", $2); print $2; exit}'
+)"
+test "$REMOTE_TYPE" = "crypt"
+rclone --config "$RCLONE_CONFIG" lsd "$REMOTE_NAME:" >/dev/null
+
+cat > "$ENV_FILE" <<EOF
+AS6_BACKUP_OFFSITE_RCLONE_REMOTE=$REMOTE_SPEC
+RCLONE_CONFIG=$RCLONE_CONFIG
+AS6_RCLONE_CONFIG_PASS_FILE=$CONFIG_PASS_FILE
+EOF
+chmod 600 "$ENV_FILE"
+
+install -m 0644 "$ROOT/ops/systemd/as6-production-backup.service" /etc/systemd/system/as6-production-backup.service
+install -m 0644 "$ROOT/ops/systemd/as6-production-backup.timer" /etc/systemd/system/as6-production-backup.timer
+systemctl daemon-reload
+systemctl enable --now as6-production-backup.timer
+systemctl start as6-production-backup.service
+
+echo "AS6_GOOGLE_DRIVE_CRYPT_REMOTE=PASS"
+echo "AS6_RCLONE_CONFIG_ENCRYPTED=PASS"
+echo "AS6_FIRST_ENCRYPTED_BACKUP=PASS"
+echo "AS6_BACKUP_OFFSITE_ENV=$ENV_FILE"

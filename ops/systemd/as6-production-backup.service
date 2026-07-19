@@ -6,7 +6,9 @@ Requires=docker.service
 [Service]
 Type=oneshot
 WorkingDirectory=/var/www/ai-platform
+EnvironmentFile=-/etc/as6/backup-offsite.env
 ExecStart=/var/www/ai-platform/ops/bin/as6-production-backup-full-v1
 User=root
 Group=root
 Nice=10
+UMask=0077
