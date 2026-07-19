@@ -36,6 +36,11 @@ Pushes to `main` no longer deploy automatically. Production promotion is a
 manual GitHub Actions workflow requiring an exact 40-character SHA and the
 `PRODUCTION` confirmation.
 
+Operational fetches update `main` without fetching every remote tag. Restore
+tags are fetched individually only when the requested target is not already
+available locally. An unrelated conflicting local tag therefore cannot block
+staging installation or production promotion.
+
 ## Backup contract
 
 The daily backup contains:
@@ -51,6 +56,13 @@ manager or encrypted offline recovery package.
 
 `AS6_BACKUP_OFFSITE_DIR` may point to a mounted off-host destination. A local
 backup on the production VPS is not sufficient for disaster recovery.
+
+Google Drive may be used as one encrypted off-host copy, but never as the only
+backup and never as live storage for PostgreSQL. Upload only completed,
+timestamped backup bundles after their checksums pass. Encrypt content and file
+names before upload, keep production credentials out of the repository, and
+retain an independent restore path outside the production VPS and Google
+account.
 
 ## Restore contract
 

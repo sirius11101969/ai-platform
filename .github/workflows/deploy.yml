@@ -42,7 +42,7 @@ jobs:
           script: |
             set -Eeuo pipefail
             cd /var/www/ai-platform
-            git fetch origin main --tags
+            git fetch origin main
             test "$(git rev-parse origin/main)" = "$RELEASE_SHA"
             git checkout main
             git pull --ff-only origin main

@@ -4,7 +4,13 @@ TARGET="${1:-}"
 PUSH_MODE="${2:-}"
 if [ -z "$TARGET" ]; then echo "AS6_RESTORE_FAIL=missing-target-tag-or-commit"; exit 1; fi
 echo "AS6_RESTORE_TARGET=$TARGET"
-git fetch origin --tags
+git fetch origin main
+if ! git rev-parse --verify --quiet "${TARGET}^{commit}" >/dev/null; then
+  case "$TARGET" in
+    AS6_*) git fetch origin "refs/tags/${TARGET}:refs/tags/${TARGET}" ;;
+    *) echo "AS6_RESTORE_FAIL=target-not-available-locally-or-on-main"; exit 1 ;;
+  esac
+fi
 git checkout main
 git reset --hard "$TARGET"
 echo "AS6_RESTORE_LOCAL_DONE=PASS"

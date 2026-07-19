@@ -31,6 +31,9 @@ grep -q 'postgres.dump' ops/bin/as6-production-backup-full-v1
 grep -q 'ExecStart=/var/www/ai-platform/ops/bin/as6-production-backup-full-v1' ops/systemd/as6-production-backup.service
 grep -q 'workflow_dispatch:' .github/workflows/deploy.yml
 ! grep -q '^  push:' .github/workflows/deploy.yml
+! grep -q 'fetch origin main --tags' ops/bin/as6-deploy-safe-delivery-v1
+! grep -q 'fetch origin main --tags' ops/bin/as6-promote-production-v1
+! grep -q 'fetch origin main --tags' .github/workflows/deploy.yml
 
 AS6_RELEASE_TAG=control AS6_STAGING_DB_PASSWORD=control \
   docker compose --env-file .env.staging.example -p ai-platform-staging \

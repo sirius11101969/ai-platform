@@ -10,7 +10,7 @@ test "${CONFIRM_AS6_PRODUCTION:-NO}" = "YES"
 test "$(git branch --show-current)" = "main"
 git diff --quiet
 git diff --cached --quiet
-git fetch origin main --tags
+git fetch origin main
 
 RELEASE_SHA="$(git rev-parse "${REQUESTED_SHA}^{commit}")"
 test "$RELEASE_SHA" = "$(git rev-parse origin/main)"

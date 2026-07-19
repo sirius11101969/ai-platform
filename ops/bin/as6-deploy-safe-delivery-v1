@@ -7,7 +7,7 @@ cd "$ROOT"
 test "$(git branch --show-current)" = "main"
 git diff --quiet
 git diff --cached --quiet
-git fetch origin main --tags
+git fetch origin main
 git pull --ff-only origin main
 
 ops/bin/as6-control-safe-delivery-v1
