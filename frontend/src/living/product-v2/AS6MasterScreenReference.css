@@ -553,11 +553,12 @@
 /* AS6_SCREEN1_REFINEMENT_V2: final visual ownership after legacy reference overrides. */
 .as6-master__logo,
 .as6-master__logo.is-company {
+  align-self: center;
   width: 180px;
   min-height: 72px;
   opacity: .88;
   justify-items: center;
-  transform: translateX(-14px);
+  transform: translateX(-22px);
 }
 
 .as6-master__logo-image {
@@ -580,7 +581,7 @@
   line-height: 1.2;
   letter-spacing: .015em;
   opacity: .86;
-  transform: translateX(-14px);
+  transform: translateX(-22px);
 }
 
 .as6-master__workspace-label {
@@ -620,12 +621,14 @@
 }
 
 .as6-master__avatar {
+  align-self: center;
   width: 76px;
   height: 76px;
   padding: 2px;
   border: 0;
   background: rgba(55,96,130,.22);
   box-shadow: 0 0 0 4px rgba(55,96,130,.025), 0 7px 22px rgba(48,80,109,.09);
+  transform: translateX(-22px);
 }
 
 .as6-master__avatar span {
@@ -639,9 +642,10 @@
 }
 
 .as6-master__workspace-menu {
-  left: auto;
-  right: 14px;
+  left: 50%;
+  right: auto;
   top: 104px;
+  transform: translateX(calc(-50% - 22px));
 }
 
 .as6-master__focus,
@@ -823,8 +827,14 @@
     left: 50%;
     width: calc(100% - 36px);
   }
+
+  .as6-master__avatar {
+    align-self: auto;
+    transform: none;
+  }
 }
 
 /* AS6_SCREEN1_REFINEMENT_V3: brand=180x72; workspace=right-aligned; avatar-ring=thin; suggested-intent=actionable */
 /* AS6_SCREEN1_REFINEMENT_V4: avatar-ring=uniform-inlay; workspace-control=centered-labeled */
 /* AS6_SCREEN1_REFINEMENT_V5: identity-cluster=visual-left-14px; workspace-menu=aligned */
+/* AS6_SCREEN1_REFINEMENT_V6: identity-axis=logo+workspace+avatar; visual-left=22px */
