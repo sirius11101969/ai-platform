@@ -33,3 +33,6 @@ jobs:
 
       - name: Run AS6 DAG validation
         run: ops/bin/as6-validate
+
+      - name: Validate safe delivery contract
+        run: ops/bin/as6-control-safe-delivery-v1

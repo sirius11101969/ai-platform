@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="${AS6_ROOT:-/var/www/ai-platform}"
+cd "$ROOT"
+
+test "$(git branch --show-current)" = "main"
+git diff --quiet
+git diff --cached --quiet
+git fetch origin main --tags
+git pull --ff-only origin main
+
+ops/bin/as6-control-safe-delivery-v1
+ops/bin/as6-init-staging-v1
+
+install -m 0644 ops/systemd/as6-production-backup.service /etc/systemd/system/as6-production-backup.service
+install -m 0644 ops/systemd/as6-production-backup.timer /etc/systemd/system/as6-production-backup.timer
+systemctl daemon-reload
+systemctl enable --now as6-production-backup.timer
+
+RELEASE_SHA="$(git rev-parse HEAD)"
+ops/bin/as6-build-release-v1 "$RELEASE_SHA"
+ops/bin/as6-staging-deploy-v1 "$RELEASE_SHA"
+ops/bin/as6-production-backup-full-v1
+ops/bin/as6-restore-drill-v1
+
+systemctl is-enabled as6-production-backup.timer
+systemctl is-active as6-production-backup.timer
+
+echo "AS6_SAFE_DELIVERY_FOUNDATION=PASS"
+echo "AS6_STAGING=HEALTHY"
+echo "AS6_FULL_BACKUP=PASS"
+echo "AS6_RESTORE_DRILL=PASS"
+echo "AS6_PRODUCTION=UNCHANGED"

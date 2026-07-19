@@ -1,28 +1,52 @@
-name: Deploy Production
+name: Promote Tested Release to Production
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      release_sha:
+        description: Exact commit SHA from main to build, test on staging, and promote
+        required: true
+        type: string
+      confirmation:
+        description: Type PRODUCTION to confirm the release
+        required: true
+        type: string
+
+concurrency:
+  group: as6-production
+  cancel-in-progress: false
 
 jobs:
-  deploy:
+  promote:
+    if: ${{ inputs.confirmation == 'PRODUCTION' }}
     runs-on: ubuntu-latest
+    environment: production
 
     steps:
-      - name: SSH Deploy
+      - name: Validate requested commit
+        env:
+          RELEASE_SHA: ${{ inputs.release_sha }}
+        run: |
+          test "$(printf '%s' "$RELEASE_SHA" | wc -c)" = "40"
+          test -z "$(printf '%s' "$RELEASE_SHA" | tr -d '0-9a-f')"
+
+      - name: Build once, validate staging, then promote exact images
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          RELEASE_SHA: ${{ inputs.release_sha }}
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_KEY }}
+          envs: RELEASE_SHA
           script: |
+            set -Eeuo pipefail
             cd /var/www/ai-platform
-
-            git pull origin main
-
-            docker compose build nginx backend
-
-            docker compose up -d
-
-            docker image prune -f
+            git fetch origin main --tags
+            test "$(git rev-parse origin/main)" = "$RELEASE_SHA"
+            git checkout main
+            git pull --ff-only origin main
+            test "$(git rev-parse HEAD)" = "$RELEASE_SHA"
+            ops/bin/as6-build-release-v1 "$RELEASE_SHA"
+            ops/bin/as6-staging-deploy-v1 "$RELEASE_SHA"
+            CONFIRM_AS6_PRODUCTION=YES ops/bin/as6-promote-production-v1 "$RELEASE_SHA"

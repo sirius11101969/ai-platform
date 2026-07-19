@@ -1,9 +1,13 @@
 services:
   backend:
+    image: ai-platform-backend:${AS6_RELEASE_TAG:-latest}
     dns:
       - 1.1.1.1
       - 8.8.8.8
-    build: ./backend
+    build:
+      context: ./backend
+      args:
+        AS6_RELEASE_SHA: ${AS6_RELEASE_SHA:-development}
     restart: always
     environment:
       AI_EXECUTION_ADMIN_KEY: ${AI_EXECUTION_ADMIN_KEY:?AI_EXECUTION_ADMIN_KEY must be set in server .env}
@@ -72,7 +76,11 @@ services:
       nofile:
         soft: 65535
         hard: 65535
-    build: ./frontend
+    image: ai-platform-nginx:${AS6_RELEASE_TAG:-latest}
+    build:
+      context: ./frontend
+      args:
+        AS6_RELEASE_SHA: ${AS6_RELEASE_SHA:-development}
     restart: always
     ports:
       - "80:80"

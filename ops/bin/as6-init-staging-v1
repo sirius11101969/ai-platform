@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="${AS6_ROOT:-/var/www/ai-platform}"
+ENV_FILE="${AS6_STAGING_ENV_FILE:-$ROOT/.env.staging}"
+
+cd "$ROOT"
+test -f .env.staging.example
+
+if test -f "$ENV_FILE"; then
+  chmod 600 "$ENV_FILE"
+  echo "AS6_STAGING_ENV=EXISTING"
+  exit 0
+fi
+
+DB_PASSWORD="$(openssl rand -hex 32)"
+JWT_SECRET="$(openssl rand -hex 48)"
+ADMIN_KEY="$(openssl rand -hex 48)"
+
+umask 077
+cat > "$ENV_FILE" <<EOF
+AS6_ENVIRONMENT=staging
+AS6_STAGING_HTTP_PORT=18080
+AS6_STAGING_DB_PASSWORD=$DB_PASSWORD
+JWT_SECRET=$JWT_SECRET
+AI_EXECUTION_ADMIN_KEY=$ADMIN_KEY
+APP_URL=http://127.0.0.1:18080
+PAYMENT_MODE=disabled
+PAYMENT_WEBHOOK_SECRET=
+YOOKASSA_MODE=disabled
+YOOKASSA_SHOP_ID=
+YOOKASSA_SECRET_KEY=
+OPENAI_API_KEY=
+OPENAI_MODEL=gpt-4.1
+EOF
+chmod 600 "$ENV_FILE"
+
+echo "AS6_STAGING_ENV=CREATED"
+echo "AS6_STAGING_ENV_FILE=$ENV_FILE"

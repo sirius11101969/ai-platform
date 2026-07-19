@@ -1,0 +1,88 @@
+# AS6 Safe Delivery v1
+
+## Decision
+
+AS6 production is not a development or prototype environment. A commit may reach
+production only after the same immutable backend and frontend images pass the
+isolated staging environment.
+
+## Environments
+
+| Environment | Purpose | Data | External mutations |
+| --- | --- | --- | --- |
+| Preview/prototype | UX and visual experiments | fixtures only | forbidden |
+| Staging | production-equivalent validation | isolated or sanitized | test providers only |
+| Production | real users and business operations | real | explicitly configured |
+
+The initial staging stack may share the production VPS, but it uses a separate
+Compose project, PostgreSQL volume, Redis volume, attachment volume, secrets and
+loopback-only HTTP port. It must never share the production database or file
+volume. A separate VPS becomes mandatory when resource contention, availability,
+regulatory requirements, or the value of production data makes a shared host an
+unacceptable failure domain.
+
+## Release gates
+
+1. Build the requested Git commit once with `ops/bin/as6-build-release-v1`.
+2. Deploy those exact image IDs to staging.
+3. Require root, app, API health and the staging environment header.
+4. Store a staging attestation bound to commit SHA and image IDs.
+5. Create a full production backup of PostgreSQL and attachment storage.
+6. Create and push a pre-release Git restore tag.
+7. Promote the exact attested images without rebuilding.
+8. Run production smoke checks; automatically restore prior images on failure.
+
+Pushes to `main` no longer deploy automatically. Production promotion is a
+manual GitHub Actions workflow requiring an exact 40-character SHA and the
+`PRODUCTION` confirmation.
+
+## Backup contract
+
+The daily backup contains:
+
+- PostgreSQL custom-format dump;
+- attachment and AI artifact storage archive;
+- Git commit and running image identifiers;
+- checksum manifest.
+
+The populated `.env` file is never copied into the backup bundle. Only its
+checksum is recorded. Secrets must be kept in a separate encrypted secret
+manager or encrypted offline recovery package.
+
+`AS6_BACKUP_OFFSITE_DIR` may point to a mounted off-host destination. A local
+backup on the production VPS is not sufficient for disaster recovery.
+
+## Restore contract
+
+`ops/bin/as6-restore-drill-v1` verifies checksums, attachment archive integrity,
+and restores PostgreSQL into a temporary isolated container and volume. The
+temporary environment is removed after validation. Restoring over production is
+always a separate, explicitly approved incident operation.
+
+## Accessing initial staging
+
+The initial staging HTTP listener is bound to `127.0.0.1:18080`. Use an SSH
+tunnel rather than exposing it publicly:
+
+```bash
+ssh -L 18080:127.0.0.1:18080 root@production-host
+```
+
+Then open `http://127.0.0.1:18080`. A future `staging.as6.ru` edge may proxy to
+the same service after DNS, TLS and access control are configured.
+
+## Failure classes closed
+
+- `AS6_DIRECT_MAIN_TO_PRODUCTION_DEPLOYMENT`
+- `AS6_STAGING_DATA_ISOLATION_GAP`
+- `AS6_RELEASE_REBUILD_DRIFT`
+- `AS6_ATTACHMENT_BACKUP_GAP`
+- `AS6_RESTORE_DRILL_GAP`
+
+## Remaining operational requirements
+
+- configure an encrypted off-host backup destination;
+- verify the daily timer on production;
+- run and record restore drills regularly;
+- move staging to a separate VPS before production scale or compliance requires it;
+- use sanitized production-like fixtures, never an uncontrolled copy of personal data.

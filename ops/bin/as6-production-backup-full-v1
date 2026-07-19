@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="${AS6_ROOT:-/var/www/ai-platform}"
+BACKUP_ROOT="${AS6_BACKUP_ROOT:-/var/backups/as6/full}"
+RETENTION_DAYS="${AS6_BACKUP_RETENTION_DAYS:-30}"
+OFFSITE_DIR="${AS6_BACKUP_OFFSITE_DIR:-}"
+STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+BUNDLE="$BACKUP_ROOT/as6-full-$STAMP"
+TEMP_BUNDLE="$BUNDLE.tmp"
+
+cd "$ROOT"
+test -f docker-compose.yml
+case "$BACKUP_ROOT" in
+  /var/backups/as6|/var/backups/as6/*|/srv/backups/as6|/srv/backups/as6/*|/mnt/*) ;;
+  *) echo "AS6_BACKUP_ROOT must be a dedicated absolute backup path" >&2; exit 1 ;;
+esac
+test "$BACKUP_ROOT" != "/"
+mkdir -p "$BACKUP_ROOT"
+chmod 700 "$BACKUP_ROOT"
+mkdir "$TEMP_BUNDLE"
+chmod 700 "$TEMP_BUNDLE"
+trap 'rm -rf -- "$TEMP_BUNDLE"' EXIT
+
+DB_CONTAINER="$(docker compose ps -q db)"
+BACKEND_CONTAINER="$(docker compose ps -q backend)"
+test -n "$DB_CONTAINER"
+test -n "$BACKEND_CONTAINER"
+docker exec "$DB_CONTAINER" pg_isready -U postgres -d aibot >/dev/null
+
+docker exec "$DB_CONTAINER" pg_dump -U postgres -d aibot -Fc > "$TEMP_BUNDLE/postgres.dump"
+test -s "$TEMP_BUNDLE/postgres.dump"
+docker exec -i "$DB_CONTAINER" pg_restore --list < "$TEMP_BUNDLE/postgres.dump" >/dev/null
+
+docker exec "$BACKEND_CONTAINER" tar -C /app/storage -czf - . > "$TEMP_BUNDLE/attachments.tar.gz"
+test -s "$TEMP_BUNDLE/attachments.tar.gz"
+tar -tzf "$TEMP_BUNDLE/attachments.tar.gz" >/dev/null
+
+cat > "$TEMP_BUNDLE/manifest.env" <<EOF
+AS6_BACKUP_FORMAT=full-v1
+AS6_BACKUP_TIMESTAMP_UTC=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+AS6_GIT_COMMIT=$(git rev-parse HEAD)
+AS6_GIT_BRANCH=$(git branch --show-current)
+AS6_DB_IMAGE=$(docker inspect "$DB_CONTAINER" --format '{{.Config.Image}}')
+AS6_BACKEND_IMAGE_ID=$(docker inspect "$BACKEND_CONTAINER" --format '{{.Image}}')
+AS6_NGINX_IMAGE_ID=$(docker inspect "$(docker compose ps -q nginx)" --format '{{.Image}}')
+AS6_ENV_SHA256=$(test -f .env && sha256sum .env | awk '{print $1}' || printf 'not-present')
+AS6_DATABASE_BACKUP=postgres.dump
+AS6_ATTACHMENT_BACKUP=attachments.tar.gz
+EOF
+
+(
+  cd "$TEMP_BUNDLE"
+  sha256sum postgres.dump attachments.tar.gz manifest.env > checksums.sha256
+  sha256sum -c checksums.sha256 >/dev/null
+)
+chmod 600 "$TEMP_BUNDLE"/*
+
+mv "$TEMP_BUNDLE" "$BUNDLE"
+trap - EXIT
+
+if test -n "$OFFSITE_DIR"; then
+  case "$OFFSITE_DIR" in
+    /*) ;;
+    *) echo "AS6_BACKUP_OFFSITE_DIR must be an absolute mounted path" >&2; exit 1 ;;
+  esac
+  test "$OFFSITE_DIR" != "/"
+  test "$OFFSITE_DIR" != "/var"
+  test "$OFFSITE_DIR" != "/srv"
+  test "$OFFSITE_DIR" != "/mnt"
+  test "$OFFSITE_DIR" != "$BACKUP_ROOT"
+  mkdir -p "$OFFSITE_DIR"
+  chmod 700 "$OFFSITE_DIR"
+  cp -a "$BUNDLE" "$OFFSITE_DIR/"
+  (cd "$OFFSITE_DIR/$(basename "$BUNDLE")" && sha256sum -c checksums.sha256 >/dev/null)
+  echo "AS6_BACKUP_OFFSITE_COPY=PASS"
+else
+  echo "AS6_BACKUP_OFFSITE_COPY=NOT_CONFIGURED"
+fi
+
+find "$BACKUP_ROOT" -mindepth 1 -maxdepth 1 -type d -name 'as6-full-*' -mtime "+$RETENTION_DAYS" -exec rm -rf -- {} +
+
+echo "AS6_FULL_BACKUP_BUNDLE=$BUNDLE"
+echo "AS6_DATABASE_BACKUP=PASS"
+echo "AS6_ATTACHMENT_BACKUP=PASS"
+echo "AS6_BACKUP_CHECKSUM=PASS"
+echo "AS6_PRODUCTION_BACKUP_FULL_V1=PASS"

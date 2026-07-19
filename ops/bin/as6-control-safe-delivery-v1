@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="${AS6_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
+cd "$ROOT"
+
+for file in \
+  docker-compose.staging.yml \
+  .env.staging.example \
+  ops/staging/nginx.conf \
+  ops/bin/as6-build-release-v1 \
+  ops/bin/as6-init-staging-v1 \
+  ops/bin/as6-validate-staging-config-v1 \
+  ops/bin/as6-staging-deploy-v1 \
+  ops/bin/as6-staging-smoke-v1 \
+  ops/bin/as6-production-backup-full-v1 \
+  ops/bin/as6-restore-drill-v1 \
+  ops/bin/as6-promote-production-v1; do
+  test -f "$file"
+done
+
+grep -q '127.0.0.1:${AS6_STAGING_HTTP_PORT:-18080}:80' docker-compose.staging.yml
+grep -q 'AI_EXECUTION_ENABLE_BACKGROUND_LOOP: "false"' docker-compose.staging.yml
+grep -q 'YOOKASSA_MODE: ${YOOKASSA_MODE:-disabled}' docker-compose.staging.yml
+grep -q 'AS6_STAGING_RESULT=PASS' ops/bin/as6-staging-deploy-v1
+grep -q 'ops/bin/as6-production-backup-full-v1' ops/bin/as6-promote-production-v1
+grep -q 'CONFIRM_AS6_PRODUCTION' ops/bin/as6-promote-production-v1
+grep -q 'AS6_PRODUCTION_BEFORE_' ops/bin/as6-promote-production-v1
+grep -q 'attachments.tar.gz' ops/bin/as6-production-backup-full-v1
+grep -q 'postgres.dump' ops/bin/as6-production-backup-full-v1
+grep -q 'ExecStart=/var/www/ai-platform/ops/bin/as6-production-backup-full-v1' ops/systemd/as6-production-backup.service
+grep -q 'workflow_dispatch:' .github/workflows/deploy.yml
+! grep -q '^  push:' .github/workflows/deploy.yml
+
+AS6_RELEASE_TAG=control AS6_STAGING_DB_PASSWORD=control \
+  docker compose --env-file .env.staging.example -p ai-platform-staging \
+  -f docker-compose.staging.yml config >/dev/null
+
+echo "AS6_STAGING_NETWORK_ISOLATION=PASS"
+echo "AS6_STAGING_DATA_ISOLATION=PASS"
+echo "AS6_FULL_BACKUP_CONTRACT=PASS"
+echo "AS6_RESTORE_DRILL_CONTRACT=PASS"
+echo "AS6_IMMUTABLE_PROMOTION_CONTRACT=PASS"
+echo "AS6_SAFE_DELIVERY_V1=PASS"

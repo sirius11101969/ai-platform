@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+BACKUP_ROOT="${AS6_BACKUP_ROOT:-/var/backups/as6/full}"
+BUNDLE="${1:-}"
+
+if test -z "$BUNDLE"; then
+  BUNDLE="$(find "$BACKUP_ROOT" -mindepth 1 -maxdepth 1 -type d -name 'as6-full-*' | sort | tail -1)"
+fi
+
+test -n "$BUNDLE"
+test -d "$BUNDLE"
+test -f "$BUNDLE/postgres.dump"
+test -f "$BUNDLE/attachments.tar.gz"
+test -f "$BUNDLE/checksums.sha256"
+
+(
+  cd "$BUNDLE"
+  sha256sum -c checksums.sha256
+)
+tar -tzf "$BUNDLE/attachments.tar.gz" >/dev/null
+
+DRILL_ID="$(date -u +%Y%m%dT%H%M%SZ)-$$"
+CONTAINER="as6-restore-drill-$DRILL_ID"
+VOLUME="as6_restore_drill_$DRILL_ID"
+DRILL_AUTH="$(openssl rand -hex 24)"
+
+cleanup() {
+  docker rm -f "$CONTAINER" >/dev/null 2>&1 || true
+  docker volume rm "$VOLUME" >/dev/null 2>&1 || true
+}
+trap cleanup EXIT
+
+docker volume create "$VOLUME" >/dev/null
+docker run -d --name "$CONTAINER" \
+  -e POSTGRES_PASSWORD="$DRILL_AUTH" \
+  -e POSTGRES_DB=aibot \
+  -v "$VOLUME:/var/lib/postgresql/data" \
+  postgres:15 >/dev/null
+
+READY=0
+for attempt in 1 2 3 4 5 6 7 8 9 10 11 12; do
+  if docker exec "$CONTAINER" pg_isready -U postgres -d aibot >/dev/null 2>&1; then READY=1; break; fi
+  sleep 2
+done
+test "$READY" = "1"
+
+docker exec -i "$CONTAINER" pg_restore -U postgres -d aibot --no-owner --no-privileges < "$BUNDLE/postgres.dump"
+TABLE_COUNT="$(docker exec "$CONTAINER" psql -U postgres -d aibot -Atc "select count(*) from pg_tables where schemaname='public'")"
+test "${TABLE_COUNT:-0}" -gt 0
+
+echo "AS6_RESTORE_DRILL_TABLES=$TABLE_COUNT"
+echo "AS6_RESTORE_DRILL_DATABASE=PASS"
+echo "AS6_RESTORE_DRILL_ATTACHMENTS=PASS"
+
+cleanup
+trap - EXIT
+echo "AS6_RESTORE_DRILL_CLEANUP=PASS"
+echo "AS6_RESTORE_DRILL_V1=PASS"

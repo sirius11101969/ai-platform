@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="${AS6_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
+REQUESTED_SHA="${1:-HEAD}"
+
+cd "$ROOT"
+
+RELEASE_SHA="$(git rev-parse "${REQUESTED_SHA}^{commit}")"
+HEAD_SHA="$(git rev-parse HEAD)"
+test "$RELEASE_SHA" = "$HEAD_SHA"
+git diff --quiet
+git diff --cached --quiet
+
+RELEASE_TAG="$(printf '%s' "$RELEASE_SHA" | cut -c1-12)"
+RUNTIME_DIR="$ROOT/runtime/as6-releases/$RELEASE_SHA"
+mkdir -p "$RUNTIME_DIR"
+
+echo "AS6_RELEASE_BUILD_SHA=$RELEASE_SHA"
+echo "AS6_RELEASE_BUILD_TAG=$RELEASE_TAG"
+
+npm --prefix frontend run build
+git diff --check
+
+AS6_RELEASE_SHA="$RELEASE_SHA" AS6_RELEASE_TAG="$RELEASE_TAG" \
+  docker compose build backend nginx
+
+BACKEND_IMAGE="ai-platform-backend:$RELEASE_TAG"
+NGINX_IMAGE="ai-platform-nginx:$RELEASE_TAG"
+
+test "$(docker image inspect "$BACKEND_IMAGE" --format '{{ index .Config.Labels "org.opencontainers.image.revision" }}')" = "$RELEASE_SHA"
+test "$(docker image inspect "$NGINX_IMAGE" --format '{{ index .Config.Labels "org.opencontainers.image.revision" }}')" = "$RELEASE_SHA"
+
+cat > "$RUNTIME_DIR/build.env" <<EOF
+AS6_RELEASE_SHA=$RELEASE_SHA
+AS6_RELEASE_TAG=$RELEASE_TAG
+AS6_BACKEND_IMAGE_ID=$(docker image inspect "$BACKEND_IMAGE" --format '{{.Id}}')
+AS6_NGINX_IMAGE_ID=$(docker image inspect "$NGINX_IMAGE" --format '{{.Id}}')
+AS6_BUILD_TIMESTAMP_UTC=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+EOF
+chmod 600 "$RUNTIME_DIR/build.env"
+
+echo "AS6_IMMUTABLE_RELEASE_BUILD=PASS"
+echo "AS6_RELEASE_MANIFEST=$RUNTIME_DIR/build.env"

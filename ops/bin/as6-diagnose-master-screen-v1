@@ -21,7 +21,7 @@ check_file "$MASTER_CSS"
 check_pattern "$APP" 'path="/app".*LivingProductPreviewPage|path="/app/\\*".*LivingProductPreviewPage' 'AS6_PRIMARY_APP_ROUTE'
 check_pattern "$CANONICAL" 'AS6MasterScreen' 'AS6_MASTER_SCREEN_OWNER'
 check_pattern "$CANONICAL" 'activeId === "home"' 'AS6_MASTER_SCREEN_HOME_STATE'
-check_pattern "$MASTER" 'aria-label="AS6 — Сегодня"' 'AS6_MASTER_SCREEN_SEMANTICS'
+check_pattern "$MASTER" 'aria-label=\{.*AS6.*t\("today"\)' 'AS6_MASTER_SCREEN_SEMANTICS'
 check_pattern "$MASTER" 'as6-master__graph' 'AS6_LIVING_GRAPH_PRESENT'
 check_pattern "$MASTER" 'as6-master__intent' 'AS6_INTENT_LINE_PRESENT'
 check_pattern "$MASTER_CSS" 'prefers-reduced-motion:reduce' 'AS6_REDUCED_MOTION_CONTROL'

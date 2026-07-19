@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="${AS6_ROOT:-/var/www/ai-platform}"
+REQUESTED_SHA="${1:?release commit is required}"
+STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+
+cd "$ROOT"
+test "${CONFIRM_AS6_PRODUCTION:-NO}" = "YES"
+test "$(git branch --show-current)" = "main"
+git diff --quiet
+git diff --cached --quiet
+git fetch origin main --tags
+
+RELEASE_SHA="$(git rev-parse "${REQUESTED_SHA}^{commit}")"
+test "$RELEASE_SHA" = "$(git rev-parse origin/main)"
+test "$RELEASE_SHA" = "$(git rev-parse HEAD)"
+RELEASE_TAG="$(printf '%s' "$RELEASE_SHA" | cut -c1-12)"
+ATTESTATION="$ROOT/runtime/as6-releases/$RELEASE_SHA/staging-passed.env"
+test -f "$ATTESTATION"
+grep -qx "AS6_RELEASE_SHA=$RELEASE_SHA" "$ATTESTATION"
+grep -qx 'AS6_STAGING_RESULT=PASS' "$ATTESTATION"
+
+BACKEND_IMAGE="ai-platform-backend:$RELEASE_TAG"
+NGINX_IMAGE="ai-platform-nginx:$RELEASE_TAG"
+BACKEND_IMAGE_ID="$(docker image inspect "$BACKEND_IMAGE" --format '{{.Id}}')"
+NGINX_IMAGE_ID="$(docker image inspect "$NGINX_IMAGE" --format '{{.Id}}')"
+grep -qx "AS6_BACKEND_IMAGE_ID=$BACKEND_IMAGE_ID" "$ATTESTATION"
+grep -qx "AS6_NGINX_IMAGE_ID=$NGINX_IMAGE_ID" "$ATTESTATION"
+
+OLD_BACKEND_CONTAINER="$(docker compose ps -q backend)"
+OLD_NGINX_CONTAINER="$(docker compose ps -q nginx)"
+test -n "$OLD_BACKEND_CONTAINER"
+test -n "$OLD_NGINX_CONTAINER"
+OLD_BACKEND_IMAGE_ID="$(docker inspect "$OLD_BACKEND_CONTAINER" --format '{{.Image}}')"
+OLD_NGINX_IMAGE_ID="$(docker inspect "$OLD_NGINX_CONTAINER" --format '{{.Image}}')"
+ROLLBACK_TAG="rollback-$STAMP"
+docker image tag "$OLD_BACKEND_IMAGE_ID" "ai-platform-backend:$ROLLBACK_TAG"
+docker image tag "$OLD_NGINX_IMAGE_ID" "ai-platform-nginx:$ROLLBACK_TAG"
+
+PREVIOUS_SHA="$(docker image inspect "$OLD_BACKEND_IMAGE_ID" --format '{{ index .Config.Labels "org.opencontainers.image.revision" }}' 2>/dev/null || true)"
+if ! git cat-file -e "${PREVIOUS_SHA}^{commit}" 2>/dev/null; then
+  PREVIOUS_SHA="$(git rev-parse HEAD^)"
+fi
+RESTORE_TAG="AS6_PRODUCTION_BEFORE_${STAMP}_$(printf '%s' "$PREVIOUS_SHA" | cut -c1-12)"
+git tag -a "$RESTORE_TAG" "$PREVIOUS_SHA" -m "AS6 production state before release $RELEASE_SHA"
+git push origin "$RESTORE_TAG"
+
+ops/bin/as6-production-backup-full-v1
+
+rollback() {
+  echo "AS6_PRODUCTION_PROMOTION=FAILED_ROLLBACK_STARTED" >&2
+  AS6_RELEASE_TAG="$ROLLBACK_TAG" docker compose up -d --no-build --no-deps --force-recreate backend nginx || true
+}
+trap rollback ERR
+
+AS6_RELEASE_TAG="$RELEASE_TAG" AS6_RELEASE_SHA="$RELEASE_SHA" \
+  docker compose up -d --no-build --no-deps --force-recreate backend nginx
+
+READY=0
+for attempt in 1 2 3 4 5 6 7 8 9 10; do
+  ROOT_CODE="$(curl -kLsS --max-time 15 -o /dev/null -w '%{http_code}' "https://www.as6.ru/?release=$RELEASE_TAG-$attempt" || true)"
+  APP_CODE="$(curl -kLsS --max-time 15 -o /dev/null -w '%{http_code}' "https://www.as6.ru/app?release=$RELEASE_TAG-$attempt" || true)"
+  HEALTH_CODE="$(curl -kLsS --max-time 15 -o /dev/null -w '%{http_code}' 'https://www.as6.ru/api/health' || true)"
+  echo "PRODUCTION_ATTEMPT_$attempt ROOT=$ROOT_CODE APP=$APP_CODE HEALTH=$HEALTH_CODE"
+  if test "$ROOT_CODE" = "200" && test "$APP_CODE" = "200" && test "$HEALTH_CODE" = "200"; then READY=1; break; fi
+  sleep 3
+done
+test "$READY" = "1"
+trap - ERR
+
+RUNTIME_DIR="$ROOT/runtime/as6-releases/$RELEASE_SHA"
+cat > "$RUNTIME_DIR/production-passed.env" <<EOF
+AS6_RELEASE_SHA=$RELEASE_SHA
+AS6_RELEASE_TAG=$RELEASE_TAG
+AS6_BACKEND_IMAGE_ID=$BACKEND_IMAGE_ID
+AS6_NGINX_IMAGE_ID=$NGINX_IMAGE_ID
+AS6_PRODUCTION_RELEASED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+AS6_PRODUCTION_RESULT=PASS
+AS6_PRE_RELEASE_RESTORE_TAG=$RESTORE_TAG
+EOF
+chmod 600 "$RUNTIME_DIR/production-passed.env"
+
+echo "AS6_PRE_RELEASE_RESTORE_TAG=$RESTORE_TAG"
+echo "AS6_IMMUTABLE_IMAGE_PROMOTION=PASS"
+echo "AS6_PRODUCTION_PROMOTION=PASS"

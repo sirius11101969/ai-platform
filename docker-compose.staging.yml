@@ -1,0 +1,90 @@
+services:
+  backend:
+    image: ai-platform-backend:${AS6_RELEASE_TAG:?AS6_RELEASE_TAG is required}
+    restart: unless-stopped
+    environment:
+      AS6_ENVIRONMENT: staging
+      NODE_ENV: production
+      RUN_MIGRATIONS: "true"
+      PORT: "3001"
+      DATABASE_URL: postgres://postgres:${AS6_STAGING_DB_PASSWORD:?AS6_STAGING_DB_PASSWORD is required}@db:5432/aibot
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      AI_EXECUTION_ADMIN_KEY: ${AI_EXECUTION_ADMIN_KEY:?AI_EXECUTION_ADMIN_KEY is required}
+      APP_URL: ${APP_URL:?APP_URL is required}
+      APP_BASE_URL: ${APP_URL:?APP_URL is required}
+      PUBLIC_API_URL: ${APP_URL:?APP_URL is required}
+      CORS_ORIGIN: ${APP_URL:?APP_URL is required}
+      PAYMENT_MODE: ${PAYMENT_MODE:-disabled}
+      PAYMENT_WEBHOOK_SECRET: ${PAYMENT_WEBHOOK_SECRET:-}
+      YOOKASSA_MODE: ${YOOKASSA_MODE:-disabled}
+      YOOKASSA_SHOP_ID: ${YOOKASSA_SHOP_ID:-}
+      YOOKASSA_SECRET_KEY: ${YOOKASSA_SECRET_KEY:-}
+      STRIPE_MODE: disabled
+      STRIPE_SECRET_KEY: ""
+      STRIPE_WEBHOOK_SECRET: ""
+      BITRIX_WEBHOOK: ""
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4.1}
+      TELEGRAM_BOT_TOKEN: ""
+      TELEGRAM_WEBHOOK_SECRET: ""
+      TELEGRAM_MANAGER_CHAT_ID: ""
+      TELEGRAM_CRM_USER_EMAIL: ""
+      EMAIL_FROM: ""
+      SMTP_HOST: ""
+      SMTP_USER: ""
+      SMTP_PASS: ""
+      GMAIL_ACCESS_TOKEN: ""
+      GMAIL_FROM: ""
+      FILE_STORAGE_DIR: /app/storage/attachments
+      AI_ARTIFACT_STORAGE_ROOT: /app/storage/ai-artifacts
+      AI_EXECUTION_ENABLE_BACKGROUND_LOOP: "false"
+    volumes:
+      - staging_attachment_storage:/app/storage
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: aibot
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${AS6_STAGING_DB_PASSWORD:?AS6_STAGING_DB_PASSWORD is required}
+    volumes:
+      - staging_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d aibot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - staging_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  nginx:
+    image: ai-platform-nginx:${AS6_RELEASE_TAG:?AS6_RELEASE_TAG is required}
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${AS6_STAGING_HTTP_PORT:-18080}:80"
+    volumes:
+      - ./ops/staging/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+
+volumes:
+  staging_postgres_data:
+  staging_attachment_storage:
+  staging_redis_data:

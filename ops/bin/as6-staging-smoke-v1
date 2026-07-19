@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="${AS6_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
+ENV_FILE="${AS6_STAGING_ENV_FILE:-$ROOT/.env.staging}"
+cd "$ROOT"
+test -f "$ENV_FILE"
+
+PUBLISHED_ADDRESS="$(docker compose --env-file "$ENV_FILE" -p ai-platform-staging -f docker-compose.staging.yml port nginx 80)"
+PORT="${PUBLISHED_ADDRESS##*:}"
+test -n "$PORT"
+BASE_URL="http://127.0.0.1:$PORT"
+
+READY=0
+for attempt in 1 2 3 4 5 6 7 8 9 10; do
+  ROOT_CODE="$(curl -LsS --max-time 10 -o /dev/null -w '%{http_code}' "$BASE_URL/?staging_smoke=$attempt" || true)"
+  APP_CODE="$(curl -LsS --max-time 10 -o /dev/null -w '%{http_code}' "$BASE_URL/app?staging_smoke=$attempt" || true)"
+  HEALTH_CODE="$(curl -LsS --max-time 10 -o /dev/null -w '%{http_code}' "$BASE_URL/api/health" || true)"
+  ENV_HEADER="$(curl -LsSI --max-time 10 "$BASE_URL/" 2>/dev/null | tr -d '\r' | awk -F': ' 'tolower($1)=="x-as6-environment" {print tolower($2)}' | tail -1)"
+  echo "STAGING_ATTEMPT_$attempt ROOT=$ROOT_CODE APP=$APP_CODE HEALTH=$HEALTH_CODE ENVIRONMENT=$ENV_HEADER"
+  if test "$ROOT_CODE" = "200" && test "$APP_CODE" = "200" && test "$HEALTH_CODE" = "200" && test "$ENV_HEADER" = "staging"; then
+    READY=1
+    break
+  fi
+  sleep 2
+done
+
+test "$READY" = "1"
+docker compose --env-file "$ENV_FILE" -p ai-platform-staging -f docker-compose.staging.yml ps
+echo "AS6_STAGING_SMOKE=PASS"

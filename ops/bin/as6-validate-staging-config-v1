@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="${AS6_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
+ENV_FILE="${AS6_STAGING_ENV_FILE:-$ROOT/.env.staging}"
+CONFIG_FILE="$(mktemp /tmp/as6-staging-config.XXXXXX.json)"
+trap 'rm -f "$CONFIG_FILE"' EXIT
+
+cd "$ROOT"
+test -f "$ENV_FILE"
+test "$(stat -c '%a' "$ENV_FILE")" = "600"
+
+docker compose --env-file "$ENV_FILE" -p ai-platform-staging \
+  -f docker-compose.staging.yml config --format json > "$CONFIG_FILE"
+chmod 600 "$CONFIG_FILE"
+
+node - "$CONFIG_FILE" <<'NODE'
+const fs = require('fs')
+const config = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'))
+const env = config.services?.backend?.environment || {}
+const fail = (message) => { throw new Error(message) }
+const value = (name) => String(env[name] ?? '').trim()
+
+if (value('AS6_ENVIRONMENT') !== 'staging') fail('AS6_ENVIRONMENT must be staging')
+if (value('JWT_SECRET').length < 32 || value('JWT_SECRET').startsWith('SET_')) fail('Unique staging JWT_SECRET is required')
+if (value('AI_EXECUTION_ADMIN_KEY').length < 32 || value('AI_EXECUTION_ADMIN_KEY').startsWith('SET_')) fail('Unique staging AI_EXECUTION_ADMIN_KEY is required')
+const databaseUrl = new URL(value('DATABASE_URL'))
+if (databaseUrl.password.length < 24 || databaseUrl.password === 'password') fail('Unique staging database password is required')
+if (value('APP_URL') === 'https://www.as6.ru' || value('APP_URL') === 'https://as6.ru') fail('Staging must not use the production APP_URL')
+if (!['disabled', 'test'].includes(value('YOOKASSA_MODE').toLowerCase())) fail('Staging YooKassa mode must be disabled or test')
+if (!['disabled', 'test', 'mock'].includes(value('PAYMENT_MODE').toLowerCase())) fail('Staging payment mode must be disabled, test, or mock')
+if (value('STRIPE_MODE') !== 'disabled') fail('Stripe must be disabled in staging')
+if (value('BITRIX_WEBHOOK')) fail('Bitrix production integration must be empty in staging')
+if (value('TELEGRAM_BOT_TOKEN')) fail('Telegram production integration must be empty in staging')
+if (value('AI_EXECUTION_ENABLE_BACKGROUND_LOOP') !== 'false') fail('Autonomous background execution must be disabled in staging')
+console.log('AS6_STAGING_SECRET_ISOLATION=PASS')
+console.log('AS6_STAGING_PAYMENT_SAFETY=PASS')
+console.log('AS6_STAGING_EXTERNAL_MUTATIONS_BLOCKED=PASS')
+NODE
+
+echo "AS6_STAGING_CONFIG=PASS"

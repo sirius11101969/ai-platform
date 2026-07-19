@@ -1,12 +1,12 @@
 [Unit]
-Description=AS6 production PostgreSQL backup
+Description=AS6 production full backup (PostgreSQL and attachments)
 After=docker.service network-online.target
 Requires=docker.service
 
 [Service]
 Type=oneshot
 WorkingDirectory=/var/www/ai-platform
-ExecStart=/var/www/ai-platform/ops/bin/as6-production-backup
+ExecStart=/var/www/ai-platform/ops/bin/as6-production-backup-full-v1
 User=root
 Group=root
 Nice=10

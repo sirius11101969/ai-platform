@@ -3,6 +3,7 @@ dist/
 build/
 .env
 .env.*
+!.env.staging.example
 .DS_Store
 npm-debug.log*
 
