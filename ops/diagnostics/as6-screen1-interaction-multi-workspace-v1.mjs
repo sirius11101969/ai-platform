@@ -141,8 +141,10 @@ assert.match(engineSource, /data-context-ready=/, "Screen 2 must expose whether 
 assert.match(engineSource, /navigationContext\.workspaceId !== snapshot\.workspace\.id/, "Screen 2 must reject cross-workspace context");
 assert.match(engineSource, /snapshot\?\.locale === "en"/, "Screen 2 must follow the shell locale");
 assert.match(referenceCss, /AS6_LIGHT_PALETTE_UNIFICATION_V1: temperature=cool-neutral; warm-cast=removed; dark=unchanged/, "Screen 1 must record the cool-neutral light palette contract");
-assert.match(referenceCss, /\.as6-master\[data-theme="light"\] \{[\s\S]*?#ffffff 0 22%[\s\S]*?#eef3f7 100%/, "The light master background must stay neutral white and blue-grey");
-assert.match(referenceCss, /\.as6-master\[data-theme="light"\] \.as6-master__graph-lines path \{[\s\S]*?rgba\(252,254,255,\.98\)/, "Light graph lines must use the cold-white palette");
+assert.match(referenceCss, /AS6_LIGHT_PALETTE_UNIFICATION_V2: background=solid-cool; diffuse-glow=none; graph-glow=none/, "Screen 1 must record the strict no-warm-cast palette contract");
+assert.match(referenceCss, /\.as6-master\[data-theme="light"\] \{\s*background: #f3f8fc;/, "The light master background must be a uniform cool color");
+assert.match(referenceCss, /\.as6-master\[data-theme="light"\] \.as6-master__ambient \{\s*display: none;/, "The diffuse ambient layer must not create tinted patches");
+assert.match(referenceCss, /\.as6-master\[data-theme="light"\] \.as6-master__graph-lines path \{[\s\S]*?rgba\(151,190,218,\.7\);[\s\S]*?filter: none;/, "Light graph lines must use a cold-blue color without glow");
 
 console.log("AS6_SCREEN1_REAL_ACTIVITY=PASS");
 console.log("AS6_MULTI_WORKSPACE_ALLOWANCE=PASS");
@@ -165,6 +167,7 @@ console.log("AS6_WORKSPACE_LOGO_SCALE_V1=PASS");
 console.log("AS6_PROFILE_PHOTO_SCALE_V1=PASS");
 console.log("AS6_IDENTITY_ADAPTIVE_SPACING=PASS");
 console.log("AS6_LIGHT_PALETTE_UNIFICATION=PASS");
+console.log("AS6_LIGHT_PALETTE_STRICT_NO_WARM_CAST=PASS");
 console.log("AS6_CONDUCTOR_CONTEXT_CONTRACT_V1=PASS");
 console.log("AS6_CONDUCTOR_RELOAD_RECOVERY=PASS");
 console.log("AS6_CONDUCTOR_WORKSPACE_GUARD=PASS");
