@@ -245,7 +245,13 @@ export default function AS6MasterScreen({
           </nav>
         </main>
 
-        <aside className="as6-master__identity">
+        <aside
+          className="as6-master__identity"
+          style={{
+            "--as6-company-logo-scale": identity.companyLogoScale / 100,
+            "--as6-company-logo-overflow-y": `${Math.max(0, identity.companyLogoScale - 100) * 0.36}px`,
+          }}
+        >
           <button
             type="button"
             className={`as6-master__logo${identity.showCompanyLogo ? " is-company" : ""}`}
@@ -253,7 +259,7 @@ export default function AS6MasterScreen({
             aria-label={identity.showCompanyLogo ? identity.workspaceName : t("platformBrand")}
           >
             {identity.showCompanyLogo
-              ? <img className="as6-master__logo-image" src={identity.companyLogoUrl} alt={identity.workspaceName} style={{ "--as6-company-logo-scale": identity.companyLogoScale / 100 }} />
+              ? <img className="as6-master__logo-image" src={identity.companyLogoUrl} alt={identity.workspaceName} />
               : <><span>AS6</span><small>AI PLATFORM</small></>}
           </button>
           <button

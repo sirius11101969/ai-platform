@@ -96,6 +96,7 @@ assert.match(referenceCss, /AS6_SCREEN1_REFINEMENT_V4: avatar-ring=uniform-inlay
 assert.match(referenceCss, /AS6_SCREEN1_REFINEMENT_V5: identity-cluster=visual-left-14px; workspace-menu=aligned/, "Screen 1 refinement v5 marker missing");
 assert.match(referenceCss, /AS6_SCREEN1_REFINEMENT_V6: identity-axis=logo\+workspace\+avatar; visual-left=22px/, "Screen 1 refinement v6 marker missing");
 assert.match(referenceCss, /AS6_IDENTITY_SCALE_V2: logo=70\.\.150@workspace; avatar=70\.\.150@profile; screens=master,conductor/, "Identity scale v2 marker missing");
+assert.match(referenceCss, /AS6_IDENTITY_SPACING_V1: workspace-gap=follows-positive-logo-overflow; menu=follows-workspace/, "Adaptive identity spacing marker missing");
 assert.match(schemaSource, /company_logo_scale SMALLINT NOT NULL DEFAULT 100/, "Workspace logo scale persistence is missing");
 assert.match(schemaSource, /company_logo_scale BETWEEN 70 AND 150/, "Workspace logo scale database guard is missing");
 assert.match(schemaSource, /avatar_scale SMALLINT NOT NULL DEFAULT 100/, "Profile photo scale persistence is missing");
@@ -111,6 +112,7 @@ assert.match(settingsSource, /id="as6-avatar-scale"[\s\S]*?type="range"[\s\S]*?m
 assert.match(settingsSource, /companyLogoScale,\s*brandingMode:/, "Settings must persist logo scale with company branding");
 assert.match(settingsSource, /avatarUrl,\s*avatarScale,\s*locale:/, "Settings must persist photo scale with the user profile");
 assert.match(masterSource, /--as6-company-logo-scale/, "Screen 1 must apply company logo scale");
+assert.match(masterSource, /--as6-company-logo-overflow-y/, "Screen 1 must derive spacing from positive logo overflow");
 assert.match(appSource, /--as6-company-logo-scale/, "Screen 2 chrome must apply company logo scale");
 assert.match(masterSource, /--as6-avatar-scale/, "Screen 1 must apply profile photo scale");
 assert.match(appSource, /--as6-avatar-scale/, "Screen 2 chrome must apply profile photo scale");
@@ -118,6 +120,8 @@ assert.match(masterSource, /as6-master__workspace-label/, "Workspace switcher mu
 assert.match(localizationSource, /companySwitcher: "Компания"/, "Russian workspace switcher label missing");
 assert.match(localizationSource, /companySwitcher: "Company"/, "English workspace switcher label missing");
 assert.match(referenceCss, /\.as6-master \.as6-master__workspace \{[\s\S]*?align-self: center;/, "Workspace switcher must be centered within the identity rail");
+assert.match(referenceCss, /margin-top: calc\(4px \+ var\(--as6-company-logo-overflow-y, 0px\)\);/, "Workspace switcher must clear enlarged logos");
+assert.match(referenceCss, /top: calc\(104px \+ var\(--as6-company-logo-overflow-y, 0px\)\);/, "Workspace menu must follow the adaptive switcher position");
 assert.match(referenceCss, /\.as6-master__logo,[\s\S]*?align-self: center;[\s\S]*?transform: translateX\(-22px\);/, "Brand must follow the shared identity axis");
 assert.match(referenceCss, /\.as6-master \.as6-master__workspace \{[\s\S]*?transform: translateX\(-22px\);/, "Workspace switcher must follow the shared identity axis");
 assert.match(referenceCss, /\.as6-master__avatar \{[\s\S]*?align-self: center;[\s\S]*?transform: translateX\(-22px\) scale\(var\(--as6-avatar-scale, 1\)\);/, "Profile photo must follow the shared identity axis and scale contract");
@@ -156,6 +160,7 @@ console.log("AS6_IDENTITY_CLUSTER_VISUAL_ALIGNMENT=PASS");
 console.log("AS6_IDENTITY_SHARED_AXIS=PASS");
 console.log("AS6_WORKSPACE_LOGO_SCALE_V1=PASS");
 console.log("AS6_PROFILE_PHOTO_SCALE_V1=PASS");
+console.log("AS6_IDENTITY_ADAPTIVE_SPACING=PASS");
 console.log("AS6_CONDUCTOR_CONTEXT_CONTRACT_V1=PASS");
 console.log("AS6_CONDUCTOR_RELOAD_RECOVERY=PASS");
 console.log("AS6_CONDUCTOR_WORKSPACE_GUARD=PASS");

@@ -419,7 +419,9 @@
   .as6-master__graph-points circle,
   .as6-master__mic,
   .as6-master__logo-image,
-  .as6-master__avatar {
+  .as6-master__avatar,
+  .as6-master__workspace,
+  .as6-master__workspace-menu {
     animation: none;
     transition: none;
   }
@@ -578,7 +580,7 @@
   justify-items: center;
   gap: 2px;
   width: 180px;
-  margin-top: 4px;
+  margin-top: calc(4px + var(--as6-company-logo-overflow-y, 0px));
   margin-right: 0;
   color: var(--ink);
   font-size: 11px;
@@ -587,6 +589,7 @@
   letter-spacing: .015em;
   opacity: .86;
   transform: translateX(-22px);
+  transition: margin-top .18s ease;
 }
 
 .as6-master__workspace-label {
@@ -651,8 +654,9 @@
 .as6-master__workspace-menu {
   left: 50%;
   right: auto;
-  top: 104px;
+  top: calc(104px + var(--as6-company-logo-overflow-y, 0px));
   transform: translateX(calc(-50% - 22px));
+  transition: top .18s ease;
 }
 
 .as6-master__focus,
@@ -846,3 +850,4 @@
 /* AS6_SCREEN1_REFINEMENT_V5: identity-cluster=visual-left-14px; workspace-menu=aligned */
 /* AS6_SCREEN1_REFINEMENT_V6: identity-axis=logo+workspace+avatar; visual-left=22px */
 /* AS6_IDENTITY_SCALE_V2: logo=70..150@workspace; avatar=70..150@profile; screens=master,conductor */
+/* AS6_IDENTITY_SPACING_V1: workspace-gap=follows-positive-logo-overflow; menu=follows-workspace */
