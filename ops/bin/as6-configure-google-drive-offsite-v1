@@ -48,7 +48,7 @@ fi
 
 test -f "$RCLONE_CONFIG"
 chmod 600 "$RCLONE_CONFIG"
-if ! head -n 1 "$RCLONE_CONFIG" | grep -q '^RCLONE_ENCRYPT_V'; then
+if ! "$ROOT/ops/bin/as6-rclone-config-encrypted-v1" "$RCLONE_CONFIG" >/dev/null; then
   echo "The rclone config is not encrypted. Run 'rclone --config $RCLONE_CONFIG config' and set a configuration password." >&2
   exit 1
 fi
@@ -68,6 +68,7 @@ REMOTE_TYPE="$(
     awk -F= '$1 ~ /^[[:space:]]*type[[:space:]]*$/ {gsub(/[[:space:]]/, "", $2); print $2; exit}'
 )"
 test "$REMOTE_TYPE" = "crypt"
+rclone --config "$RCLONE_CONFIG" mkdir "$REMOTE_NAME:"
 rclone --config "$RCLONE_CONFIG" lsd "$REMOTE_NAME:" >/dev/null
 
 cat > "$ENV_FILE" <<EOF

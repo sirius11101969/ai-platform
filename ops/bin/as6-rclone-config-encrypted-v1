@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+RCLONE_CONFIG="${1:-${RCLONE_CONFIG:-/etc/as6/rclone.conf}}"
+
+test -f "$RCLONE_CONFIG"
+
+FIRST_DATA_LINE="$(
+  awk 'NF && $0 !~ /^[[:space:]]*#/ {print; exit}' "$RCLONE_CONFIG"
+)"
+
+if ! printf '%s\n' "$FIRST_DATA_LINE" | grep -Eq '^RCLONE_ENCRYPT_V[0-9]+:$'; then
+  echo "The rclone config is not encrypted." >&2
+  exit 1
+fi
+
+echo "AS6_RCLONE_CONFIG_ENCRYPTED=PASS"

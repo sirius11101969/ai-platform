@@ -7,18 +7,22 @@ cd "$ROOT"
 for file in \
   ops/bin/as6-backup-offsite-rclone-v1 \
   ops/bin/as6-configure-google-drive-offsite-v1 \
+  ops/bin/as6-rclone-config-encrypted-v1 \
   ops/systemd/as6-production-backup.service; do
   test -f "$file"
 done
 
 bash -n ops/bin/as6-backup-offsite-rclone-v1
 bash -n ops/bin/as6-configure-google-drive-offsite-v1
+bash -n ops/bin/as6-rclone-config-encrypted-v1
 grep -q 'REMOTE_TYPE.*crypt' ops/bin/as6-backup-offsite-rclone-v1
 grep -q 'cryptcheck.*--one-way' ops/bin/as6-backup-offsite-rclone-v1
 grep -q -- '--immutable' ops/bin/as6-backup-offsite-rclone-v1
 grep -q 'sha256sum -c checksums.sha256' ops/bin/as6-backup-offsite-rclone-v1
 grep -q 'AS6_BACKUP_OFFSITE_RCLONE=PASS' ops/bin/as6-backup-offsite-rclone-v1
 grep -q 'config < /dev/tty > /dev/tty' ops/bin/as6-configure-google-drive-offsite-v1
+grep -q 'mkdir "$REMOTE_NAME:"' ops/bin/as6-configure-google-drive-offsite-v1
+grep -q 'lsd "$REMOTE_NAME:"' ops/bin/as6-configure-google-drive-offsite-v1
 grep -q 'AS6_BACKUP_OFFSITE_RCLONE_REMOTE' ops/bin/as6-production-backup-full-v1
 grep -q 'ops/bin/as6-backup-offsite-rclone-v1' ops/bin/as6-production-backup-full-v1
 grep -q 'AS6_BACKUP_OFFSITE_ENV_FILE' ops/bin/as6-production-backup-full-v1
@@ -28,6 +32,15 @@ grep -q 'EnvironmentFile=-/etc/as6/backup-offsite.env' ops/systemd/as6-productio
 TEST_ROOT="$(mktemp -d)"
 trap 'rm -rf -- "$TEST_ROOT"' EXIT
 mkdir -p "$TEST_ROOT/bin" "$TEST_ROOT/backups/as6-full-control"
+printf '# Encrypted rclone configuration File\n\nRCLONE_ENCRYPT_V0:\nencrypted-payload\n' > "$TEST_ROOT/rclone-commented.conf"
+printf '[plain]\ntype = drive\n# RCLONE_ENCRYPT_V0:\n' > "$TEST_ROOT/rclone-plain.conf"
+ops/bin/as6-rclone-config-encrypted-v1 "$TEST_ROOT/rclone-commented.conf" |
+  grep -q 'AS6_RCLONE_CONFIG_ENCRYPTED=PASS'
+if ops/bin/as6-rclone-config-encrypted-v1 "$TEST_ROOT/rclone-plain.conf" >/dev/null 2>&1; then
+  echo "Plain rclone config with a later marker was accepted" >&2
+  exit 1
+fi
+echo "AS6_RCLONE_ENCRYPTED_HEADER_COMPAT=PASS"
 printf 'database\n' > "$TEST_ROOT/backups/as6-full-control/postgres.dump"
 printf 'attachments\n' > "$TEST_ROOT/backups/as6-full-control/attachments.tar.gz"
 printf 'manifest\n' > "$TEST_ROOT/backups/as6-full-control/manifest.env"
@@ -43,6 +56,7 @@ cat > "$TEST_ROOT/bin/rclone" <<'EOF'
 set -Eeuo pipefail
 case " $* " in
   *" config show "*) printf '[remote]\ntype = %s\n' "${AS6_FAKE_RCLONE_TYPE:-drive}" ;;
+  *" mkdir "*) exit 0 ;;
   *" copy "*) exit 0 ;;
   *" cryptcheck "*) exit 0 ;;
   *) exit 1 ;;

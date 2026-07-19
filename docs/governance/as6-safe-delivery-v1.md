@@ -71,6 +71,8 @@ leaving the VPS.
 
 The unattended configuration lives outside the repository in `/etc/as6` with
 root-only permissions. The rclone configuration itself must be encrypted. Its
+encryption marker is validated as the first non-empty, non-comment data line
+to remain compatible with rclone versions that prepend a descriptive comment.
 configuration password is kept in a separate root-only file and is injected
 only into the backup process. OAuth tokens, encryption passwords, `.env`
 contents, and rclone configuration must never be committed.

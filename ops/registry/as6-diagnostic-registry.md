@@ -145,3 +145,11 @@
 - control: ops/bin/as6-control-screen1-interaction-multi-workspace-v1
 - aec: ops/governance/as6-screen1-refinement-v2-aec.md
 - result: AS6_SCREEN1_REFINEMENT_V2=REGISTERED
+
+## AS6 rclone encrypted-header compatibility v1
+- diagnostic: encrypted rclone configs with a leading comment must be accepted without weakening plaintext rejection
+- diagnostic_artifact: ops/diagnostics/as6-rclone-encrypted-header-compat-v1.md
+- checker: ops/bin/as6-rclone-config-encrypted-v1
+- control: ops/bin/as6-control-offsite-backup-v1
+- failure_classes: AS6_RCLONE_ENCRYPTED_CONFIG_HEADER_POSITION_DRIFT, AS6_RCLONE_CRYPT_ROOT_BOOTSTRAP_ORDER_GAP
+- result: AS6_RCLONE_ENCRYPTED_HEADER_COMPAT=REGISTERED
