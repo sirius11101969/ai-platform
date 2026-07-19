@@ -557,6 +557,7 @@
   min-height: 72px;
   opacity: .88;
   justify-items: center;
+  transform: translateX(-14px);
 }
 
 .as6-master__logo-image {
@@ -579,6 +580,7 @@
   line-height: 1.2;
   letter-spacing: .015em;
   opacity: .86;
+  transform: translateX(-14px);
 }
 
 .as6-master__workspace-label {
@@ -638,7 +640,7 @@
 
 .as6-master__workspace-menu {
   left: auto;
-  right: 0;
+  right: 14px;
   top: 104px;
 }
 
@@ -825,3 +827,4 @@
 
 /* AS6_SCREEN1_REFINEMENT_V3: brand=180x72; workspace=right-aligned; avatar-ring=thin; suggested-intent=actionable */
 /* AS6_SCREEN1_REFINEMENT_V4: avatar-ring=uniform-inlay; workspace-control=centered-labeled */
+/* AS6_SCREEN1_REFINEMENT_V5: identity-cluster=visual-left-14px; workspace-menu=aligned */
