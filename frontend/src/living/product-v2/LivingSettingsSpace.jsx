@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { updateProfile, updateWorkspace } from "../../services/api.js";
 import "./LivingSettingsSpace.css";
 import "./LivingSettingsInteraction.css";
+import "./LivingLogoScale.css";
 
 const MAX_IMAGE_BYTES = 1024 * 1024;
 const IMAGE_TYPES = new Set(["image/png", "image/jpeg", "image/webp"]);
@@ -24,6 +25,7 @@ export default function LivingSettingsSpace({ snapshot, navigate, onSaved, onWor
   const [avatarUrl, setAvatarUrl] = useState(identity.avatarUrl);
   const [workspaceName, setWorkspaceName] = useState(identity.workspaceEditableName);
   const [companyLogoUrl, setCompanyLogoUrl] = useState(identity.companyLogoUrl);
+  const [companyLogoScale, setCompanyLogoScale] = useState(identity.companyLogoScale);
   const [brandingMode, setBrandingMode] = useState(identity.brandingMode);
   const [language, setLanguage] = useState(locale);
   const [status, setStatus] = useState({ kind: "idle", message: "" });
@@ -35,6 +37,7 @@ export default function LivingSettingsSpace({ snapshot, navigate, onSaved, onWor
     || avatarUrl !== identity.avatarUrl
     || workspaceName !== identity.workspaceEditableName
     || companyLogoUrl !== identity.companyLogoUrl
+    || companyLogoScale !== identity.companyLogoScale
     || effectiveBrandingMode !== identityBrandingMode
     || language !== locale;
 
@@ -43,6 +46,7 @@ export default function LivingSettingsSpace({ snapshot, navigate, onSaved, onWor
     setAvatarUrl(identity.avatarUrl);
     setWorkspaceName(identity.workspaceEditableName);
     setCompanyLogoUrl(identity.companyLogoUrl);
+    setCompanyLogoScale(identity.companyLogoScale);
     setBrandingMode(identity.brandingMode);
     setLanguage(locale);
   }, [snapshot.snapshotId]);
@@ -90,6 +94,7 @@ export default function LivingSettingsSpace({ snapshot, navigate, onSaved, onWor
         workspaceResult = await updateWorkspace(workspace.id, {
           name: workspaceName.trim(),
           companyLogoUrl,
+          companyLogoScale,
           brandingMode: effectiveBrandingMode,
         });
       }
@@ -150,11 +155,32 @@ export default function LivingSettingsSpace({ snapshot, navigate, onSaved, onWor
           </label>
           <label className="as6-living-settings__image">
             <span>{t("companyLogo")}</span>
-            <i className="is-logo">{companyLogoUrl ? <img src={companyLogoUrl} alt="" /> : "AS6"}</i>
+            <i className="is-logo">{companyLogoUrl ? <img src={companyLogoUrl} alt="" style={{ "--as6-logo-preview-scale": companyLogoScale / 100 }} /> : "AS6"}</i>
             <b>{t("chooseImage")}</b>
             <small>{t("imageHint")}</small>
             <input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => chooseImage(event, setCompanyLogoUrl)} />
           </label>
+          <div className="as6-living-settings__logo-scale">
+            <label htmlFor="as6-company-logo-scale">
+              <span>{t("companyLogoSize")}</span>
+              <output htmlFor="as6-company-logo-scale">{companyLogoScale}%</output>
+            </label>
+            <input
+              id="as6-company-logo-scale"
+              type="range"
+              min="70"
+              max="120"
+              step="1"
+              value={companyLogoScale}
+              onChange={(event) => setCompanyLogoScale(Number(event.target.value))}
+              disabled={!companyLogoUrl}
+              aria-valuetext={`${companyLogoScale}%`}
+            />
+            <div>
+              <small>{t("companyLogoSizeHint")}</small>
+              <button type="button" onClick={() => setCompanyLogoScale(100)} disabled={!companyLogoUrl || companyLogoScale === 100}>{t("resetLogoSize")}</button>
+            </div>
+          </div>
           <label>
             <span>{t("brandMode")}</span>
             <select value={effectiveBrandingMode} onChange={(event) => setBrandingMode(event.target.value)}>

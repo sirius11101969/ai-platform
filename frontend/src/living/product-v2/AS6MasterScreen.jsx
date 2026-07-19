@@ -253,7 +253,7 @@ export default function AS6MasterScreen({
             aria-label={identity.showCompanyLogo ? identity.workspaceName : t("platformBrand")}
           >
             {identity.showCompanyLogo
-              ? <img className="as6-master__logo-image" src={identity.companyLogoUrl} alt={identity.workspaceName} />
+              ? <img className="as6-master__logo-image" src={identity.companyLogoUrl} alt={identity.workspaceName} style={{ "--as6-company-logo-scale": identity.companyLogoScale / 100 }} />
               : <><span>AS6</span><small>AI PLATFORM</small></>}
           </button>
           <button

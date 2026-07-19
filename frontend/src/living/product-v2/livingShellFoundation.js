@@ -146,6 +146,10 @@ function buildIdentity({ user, workspace, fallbackName, locale }) {
     ? workspace.brandingMode
     : "platform";
   const companyLogoUrl = imageUrl(workspace?.companyLogoUrl || workspace?.company_logo_url);
+  const rawCompanyLogoScale = Number(workspace?.companyLogoScale ?? workspace?.company_logo_scale);
+  const companyLogoScale = Number.isFinite(rawCompanyLogoScale)
+    ? Math.min(120, Math.max(70, Math.round(rawCompanyLogoScale)))
+    : 100;
   const rawWorkspaceName = cleanName(workspace?.name, "AS6");
   const workspaceName = brandingMode === "platform" && / workspace$/i.test(rawWorkspaceName)
     ? "AS6"
@@ -158,6 +162,7 @@ function buildIdentity({ user, workspace, fallbackName, locale }) {
     workspaceEditableName: rawWorkspaceName,
     brandingMode: brandingMode === "company" && !companyLogoUrl ? "platform" : brandingMode,
     companyLogoUrl,
+    companyLogoScale,
     showCompanyLogo: brandingMode === "company" && Boolean(companyLogoUrl),
     canManageBranding: ["owner", "admin"].includes(workspace?.role),
   };

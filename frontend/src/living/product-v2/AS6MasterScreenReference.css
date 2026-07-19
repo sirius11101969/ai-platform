@@ -565,6 +565,8 @@
   width: 180px;
   height: 72px;
   object-position: center;
+  transform: scale(var(--as6-company-logo-scale, 1));
+  transition: transform .18s ease;
 }
 
 .as6-master .as6-master__workspace {
@@ -838,3 +840,4 @@
 /* AS6_SCREEN1_REFINEMENT_V4: avatar-ring=uniform-inlay; workspace-control=centered-labeled */
 /* AS6_SCREEN1_REFINEMENT_V5: identity-cluster=visual-left-14px; workspace-menu=aligned */
 /* AS6_SCREEN1_REFINEMENT_V6: identity-axis=logo+workspace+avatar; visual-left=22px */
+/* AS6_WORKSPACE_LOGO_SCALE_V1: range=70..120; persistence=workspace; screens=master,conductor */

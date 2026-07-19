@@ -12,6 +12,7 @@ function normalizeWorkspace(row) {
     id: row.id,
     name: row.name,
     companyLogoUrl: row.company_logo_url || '',
+    companyLogoScale: Number(row.company_logo_scale || 100),
     brandingMode: row.branding_mode || 'platform',
     ownerUserId: row.owner_user_id,
     plan,
@@ -63,6 +64,14 @@ function normalizeCompanyLogoUrl(value) {
   if (!match) throw Object.assign(new Error('Company logo must be an HTTPS URL or PNG, JPG, WebP data URL'), { statusCode: 400 })
   if (Math.floor(match[2].length * 0.75) > 1024 * 1024) {
     throw Object.assign(new Error('Company logo must be 1 MB or smaller'), { statusCode: 400 })
+  }
+  return normalized
+}
+
+function normalizeCompanyLogoScale(value) {
+  const normalized = Math.round(Number(value))
+  if (!Number.isFinite(normalized) || normalized < 70 || normalized > 120) {
+    throw Object.assign(new Error('Company logo scale must be between 70 and 120'), { statusCode: 400 })
   }
   return normalized
 }
@@ -196,6 +205,9 @@ async function updateWorkspace(userId, workspaceId, payload) {
   }
   if (Object.prototype.hasOwnProperty.call(payload, 'companyLogoUrl')) {
     values.push(normalizeCompanyLogoUrl(payload.companyLogoUrl)); updates.push(`company_logo_url = $${values.length}`)
+  }
+  if (Object.prototype.hasOwnProperty.call(payload, 'companyLogoScale')) {
+    values.push(normalizeCompanyLogoScale(payload.companyLogoScale)); updates.push(`company_logo_scale = $${values.length}`)
   }
   if (Object.prototype.hasOwnProperty.call(payload, 'brandingMode')) {
     values.push(normalizeBrandingMode(payload.brandingMode)); updates.push(`branding_mode = $${values.length}`)

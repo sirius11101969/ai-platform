@@ -1,0 +1,69 @@
+.as6-living-settings__image .is-logo img {
+  object-fit: contain;
+  transform: scale(var(--as6-logo-preview-scale, 1));
+  transition: transform .18s ease;
+}
+
+.as6-living-settings__logo-scale {
+  display: grid;
+  gap: 8px;
+}
+
+.as6-living-settings__logo-scale > label,
+.as6-living-settings__logo-scale > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.as6-living-settings__logo-scale output {
+  color: #2e668f;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.as6-living-settings__logo-scale input[type="range"] {
+  width: 100%;
+  min-height: 20px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  accent-color: #2f6f9f;
+  cursor: pointer;
+}
+
+.as6-living-settings__logo-scale input[type="range"]:disabled {
+  cursor: not-allowed;
+  opacity: .45;
+}
+
+.as6-living-settings__logo-scale small {
+  color: #7893aa;
+  line-height: 1.45;
+}
+
+.as6-living-settings__logo-scale button {
+  flex: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #6485a0;
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.as6-living-settings__logo-scale button:disabled {
+  cursor: default;
+  opacity: .42;
+  text-decoration: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .as6-living-settings__image .is-logo img {
+    transition: none;
+  }
+}

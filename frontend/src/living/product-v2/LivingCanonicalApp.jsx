@@ -269,7 +269,7 @@ export default function LivingCanonicalApp() {
       <header className="as6-reference-chrome">
         <button type="button" className={`as6-reference-brand${snapshot.identity.showCompanyLogo ? " is-company" : ""}`} onClick={() => navigate("home")}>
           {snapshot.identity.showCompanyLogo
-            ? <img src={snapshot.identity.companyLogoUrl} alt={snapshot.identity.workspaceName} />
+            ? <img src={snapshot.identity.companyLogoUrl} alt={snapshot.identity.workspaceName} style={{ "--as6-company-logo-scale": snapshot.identity.companyLogoScale / 100 }} />
             : <><strong>AS6</strong><small>{snapshot.identity.brandingMode === "co-branded" ? snapshot.identity.workspaceName : "Calm Business"}</small></>}
         </button>
         <div className="as6-reference-controls" aria-label={t("utilities")}>

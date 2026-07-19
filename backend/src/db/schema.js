@@ -30,6 +30,7 @@ async function migrate() {
     );
 
     ALTER TABLE workspaces ADD COLUMN IF NOT EXISTS company_logo_url TEXT;
+    ALTER TABLE workspaces ADD COLUMN IF NOT EXISTS company_logo_scale SMALLINT NOT NULL DEFAULT 100;
     ALTER TABLE workspaces ADD COLUMN IF NOT EXISTS branding_mode TEXT NOT NULL DEFAULT 'platform';
 
     DO $$
@@ -49,6 +50,10 @@ async function migrate() {
       IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'workspaces_branding_mode_valid') THEN
         ALTER TABLE workspaces ADD CONSTRAINT workspaces_branding_mode_valid
           CHECK (branding_mode IN ('platform', 'co-branded', 'company'));
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'workspaces_company_logo_scale_valid') THEN
+        ALTER TABLE workspaces ADD CONSTRAINT workspaces_company_logo_scale_valid
+          CHECK (company_logo_scale BETWEEN 70 AND 120);
       END IF;
     END $$;
 

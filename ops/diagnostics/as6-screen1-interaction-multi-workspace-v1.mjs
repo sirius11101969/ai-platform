@@ -11,6 +11,9 @@ const livingData = {
     ownerUserId: "user-1",
     role: "owner",
     name: "Northstar",
+    companyLogoUrl: "https://assets.example/northstar.png",
+    companyLogoScale: 86,
+    brandingMode: "company",
     plan: "pro",
     limits: { workspacesLimit: 3 },
   },
@@ -36,6 +39,7 @@ assert.equal(initial.version, "as6-screen1-interaction-multi-workspace-v1");
 assert.equal(initial.actionCount, 2, "Top summary must use real activity events");
 assert.deepEqual(initial.workspaceAllowance, { current: 2, limit: 3, canCreate: true });
 assert.deepEqual(initial.subscription, { key: "pro", name: "Про", active: true });
+assert.equal(initial.identity.companyLogoScale, 86, "Workspace logo scale must enter the shared identity contract");
 assert.equal(initial.t("brandCoBranded", { company: "ЭконоЭКО" }), "Совместный брендинг: AS6 + ЭконоЭКО");
 assert.equal(initial.t("brandCompany", { company: "ЭконоЭКО" }), "Только загруженный логотип: ЭконоЭКО");
 assert.equal(initial.t("managePlan"), "Тарифы и возможности");
@@ -62,7 +66,10 @@ const masterSource = fs.readFileSync(path.join(root, "frontend/src/living/produc
 const engineSource = fs.readFileSync(path.join(root, "frontend/src/living/product-v2/LivingSpaceEngine.jsx"), "utf8");
 const settingsSource = fs.readFileSync(path.join(root, "frontend/src/living/product-v2/LivingSettingsSpace.jsx"), "utf8");
 const localizationSource = fs.readFileSync(path.join(root, "frontend/src/living/product-v2/livingLocalization.js"), "utf8");
+const shellSource = fs.readFileSync(path.join(root, "frontend/src/living/product-v2/livingShellFoundation.js"), "utf8");
 const referenceCss = fs.readFileSync(path.join(root, "frontend/src/living/product-v2/AS6MasterScreenReference.css"), "utf8");
+const schemaSource = fs.readFileSync(path.join(root, "backend/src/db/schema.js"), "utf8");
+const workspaceModelSource = fs.readFileSync(path.join(root, "backend/src/models/workspaceModel.js"), "utf8");
 const apiSource = fs.readFileSync(path.join(root, "frontend/src/services/api.js"), "utf8");
 
 assert.match(appSource, /livingRequestIdRef/, "Workspace refreshes must reject stale responses");
@@ -81,6 +88,16 @@ assert.match(referenceCss, /\.as6-master__logo,[\s\S]*?width: 180px;[\s\S]*?min-
 assert.match(referenceCss, /AS6_SCREEN1_REFINEMENT_V4: avatar-ring=uniform-inlay; workspace-control=centered-labeled/, "Screen 1 refinement v4 marker missing");
 assert.match(referenceCss, /AS6_SCREEN1_REFINEMENT_V5: identity-cluster=visual-left-14px; workspace-menu=aligned/, "Screen 1 refinement v5 marker missing");
 assert.match(referenceCss, /AS6_SCREEN1_REFINEMENT_V6: identity-axis=logo\+workspace\+avatar; visual-left=22px/, "Screen 1 refinement v6 marker missing");
+assert.match(referenceCss, /AS6_WORKSPACE_LOGO_SCALE_V1: range=70\.\.120; persistence=workspace; screens=master,conductor/, "Workspace logo scale marker missing");
+assert.match(schemaSource, /company_logo_scale SMALLINT NOT NULL DEFAULT 100/, "Workspace logo scale persistence is missing");
+assert.match(schemaSource, /company_logo_scale BETWEEN 70 AND 120/, "Workspace logo scale database guard is missing");
+assert.match(workspaceModelSource, /companyLogoScale: Number\(row\.company_logo_scale \|\| 100\)/, "Workspace API must expose logo scale");
+assert.match(workspaceModelSource, /normalizeCompanyLogoScale\(payload\.companyLogoScale\)/, "Workspace API must validate logo scale updates");
+assert.match(shellSource, /companyLogoScale,/, "Living shell identity must expose logo scale");
+assert.match(settingsSource, /type="range"[\s\S]*?min="70"[\s\S]*?max="120"/, "Settings must provide the bounded logo scale control");
+assert.match(settingsSource, /companyLogoScale,\s*brandingMode:/, "Settings must persist logo scale with company branding");
+assert.match(masterSource, /--as6-company-logo-scale/, "Screen 1 must apply company logo scale");
+assert.match(appSource, /--as6-company-logo-scale/, "Screen 2 chrome must apply company logo scale");
 assert.match(masterSource, /as6-master__workspace-label/, "Workspace switcher must expose a visible control label");
 assert.match(localizationSource, /companySwitcher: "Компания"/, "Russian workspace switcher label missing");
 assert.match(localizationSource, /companySwitcher: "Company"/, "English workspace switcher label missing");
@@ -121,6 +138,7 @@ console.log("AS6_AVATAR_UNIFORM_RING=PASS");
 console.log("AS6_WORKSPACE_CONTROL_LABEL=PASS");
 console.log("AS6_IDENTITY_CLUSTER_VISUAL_ALIGNMENT=PASS");
 console.log("AS6_IDENTITY_SHARED_AXIS=PASS");
+console.log("AS6_WORKSPACE_LOGO_SCALE_V1=PASS");
 console.log("AS6_CONDUCTOR_CONTEXT_CONTRACT_V1=PASS");
 console.log("AS6_CONDUCTOR_RELOAD_RECOVERY=PASS");
 console.log("AS6_CONDUCTOR_WORKSPACE_GUARD=PASS");
