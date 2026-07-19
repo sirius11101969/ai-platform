@@ -58,6 +58,7 @@ assert.deepEqual(english.subscription, { key: "pro", name: "Pro", active: true }
 assert.equal(english.t("brandCompany", { company: "EconoECO" }), "Uploaded company logo only: EconoECO");
 
 const appSource = fs.readFileSync(path.join(root, "frontend/src/living/product-v2/LivingCanonicalApp.jsx"), "utf8");
+const masterSource = fs.readFileSync(path.join(root, "frontend/src/living/product-v2/AS6MasterScreen.jsx"), "utf8");
 const settingsSource = fs.readFileSync(path.join(root, "frontend/src/living/product-v2/LivingSettingsSpace.jsx"), "utf8");
 const referenceCss = fs.readFileSync(path.join(root, "frontend/src/living/product-v2/AS6MasterScreenReference.css"), "utf8");
 const apiSource = fs.readFileSync(path.join(root, "frontend/src/services/api.js"), "utf8");
@@ -66,11 +67,17 @@ assert.match(appSource, /livingRequestIdRef/, "Workspace refreshes must reject s
 assert.match(appSource, /data: \{ \.\.\.current\.data, workspace: nextWorkspace \}/, "Workspace selection must update optimistically");
 assert.match(settingsSource, /onLocaleChange\?\.\(nextLanguage\)/, "Settings locale must update immediately");
 assert.match(settingsSource, /!isAs6Company && <option value="co-branded">/, "AS6 must not display a redundant AS6 + AS6 mode");
-assert.match(referenceCss, /AS6_SCREEN1_REFINEMENT_V2: dark=neutral-black; intent-border=focus-only; workspace-switch=stale-safe/, "Screen 1 refinement control marker missing");
+assert.match(referenceCss, /AS6_SCREEN1_REFINEMENT_V2: final visual ownership after legacy reference overrides/, "Screen 1 final ownership layer missing");
 assert.match(referenceCss, /background: #08090b;/, "Dark theme must use the neutral black baseline");
 assert.match(referenceCss, /\.as6-master__intent:focus-within/, "Intent outline must be focus driven");
 assert.match(apiSource, /saveAuthSession\(nextSession, \{ syncWorkspace: false \}\)/, "Profile saves must preserve the active workspace");
 assert.match(referenceCss, /\.as6-master__intent input:focus,[\s\S]*?box-shadow: none;/, "Intent input must not render its own focus frame");
+assert.match(masterSource, /const resolvedIntent = intent\.trim\(\) \|\| String\(priority\.intent \|\| ""\)\.trim\(\)/, "Suggested intent must remain actionable when the input is empty");
+assert.match(masterSource, /disabled=\{!resolvedIntent\}/, "Intent action must only be disabled when neither typed nor suggested intent exists");
+assert.match(referenceCss, /AS6_SCREEN1_REFINEMENT_V3: brand=180x72; workspace=right-aligned; avatar-ring=thin; suggested-intent=actionable/, "Screen 1 refinement v3 marker missing");
+assert.match(referenceCss, /\.as6-master__logo,[\s\S]*?width: 180px;[\s\S]*?min-height: 72px;/, "Primary brand must use the accepted visual scale");
+assert.match(referenceCss, /\.as6-master \.as6-master__workspace \{[\s\S]*?align-self: flex-end;/, "Workspace switcher must be right aligned within the identity rail");
+assert.match(referenceCss, /\.as6-master__avatar \{[\s\S]*?border-width: 1px;/, "Profile frame must use the thin ring");
 
 console.log("AS6_SCREEN1_REAL_ACTIVITY=PASS");
 console.log("AS6_MULTI_WORKSPACE_ALLOWANCE=PASS");
@@ -82,3 +89,5 @@ console.log("AS6_NEUTRAL_BLACK_THEME=PASS");
 console.log("AS6_INTENT_FOCUS_ONLY_OUTLINE=PASS");
 console.log("AS6_PROFILE_SAVE_PRESERVES_WORKSPACE=PASS");
 console.log("AS6_INTENT_SINGLE_FOCUS_FRAME=PASS");
+console.log("AS6_SUGGESTED_INTENT_ACTION=PASS");
+console.log("AS6_BRAND_IDENTITY_REFINEMENT_V3=PASS");

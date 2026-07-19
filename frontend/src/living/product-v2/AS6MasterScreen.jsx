@@ -89,11 +89,17 @@ export default function AS6MasterScreen({
   const time = useMemo(() => formatTime(now, shell.locale), [now, shell.locale]);
   const date = useMemo(() => formatDate(now, shell.locale), [now, shell.locale]);
   const activeSpaceData = shell.spaces.find((space) => space.id === activeSpace);
+  const resolvedIntent = intent.trim() || String(priority.intent || "").trim();
 
   function submitIntent(event) {
     event.preventDefault();
-    if (!intent.trim()) return;
-    navigate?.("conductor", { intent: intent.trim(), priorityId: priority.id });
+    if (!resolvedIntent) return;
+    navigate?.(priority.actionTarget || "conductor", {
+      intent: resolvedIntent,
+      priorityId: priority.id,
+      leadId: priority.leadId,
+      actionCode: priority.actionCode,
+    });
   }
 
   function chooseWorkspace(workspaceId) {
@@ -299,7 +305,7 @@ export default function AS6MasterScreen({
           <button type="button" className="as6-master__mic" aria-label={speech.listening ? t("voiceStop") : t("voiceStart")} aria-pressed={speech.listening} onClick={speech.toggle}><MicrophoneGlyph listening={speech.listening} /></button>
           <label htmlFor="as6-master-intent">{t("intent")}</label>
           <input id="as6-master-intent" value={intent} onChange={(event) => setIntent(event.target.value)} placeholder={priority.intent} autoComplete="off" />
-          <button type="submit" className="as6-master__send" aria-label={t("sendIntent")} disabled={!intent.trim()}>→</button>
+          <button type="submit" className="as6-master__send" aria-label={t("sendIntent")} disabled={!resolvedIntent}>→</button>
           <span className="as6-master__voice-status" aria-live="polite">{speech.listening ? t("voiceListening") : speech.error ? (speech.error === "unsupported" ? t("voiceUnsupported") : t("voiceError")) : ""}</span>
         </form>
 

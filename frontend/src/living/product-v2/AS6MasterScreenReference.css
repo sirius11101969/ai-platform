@@ -553,21 +553,23 @@
 /* AS6_SCREEN1_REFINEMENT_V2: final visual ownership after legacy reference overrides. */
 .as6-master__logo,
 .as6-master__logo.is-company {
-  width: 150px;
-  min-height: 60px;
+  width: 180px;
+  min-height: 72px;
   opacity: .88;
   justify-items: center;
 }
 
 .as6-master__logo-image {
-  width: 150px;
-  height: 60px;
+  width: 180px;
+  height: 72px;
   object-position: center;
 }
 
 .as6-master .as6-master__workspace {
+  align-self: flex-end;
   gap: 5px;
-  margin-top: 17px;
+  margin-top: 10px;
+  margin-right: 8px;
   color: var(--ink);
   font-size: 12px;
   font-weight: 600;
@@ -584,13 +586,19 @@
 .as6-master__avatar {
   width: 76px;
   height: 76px;
-  border-width: 2px;
-  box-shadow: 0 7px 24px rgba(48,80,109,.10), 0 0 0 5px rgba(255,255,255,.32);
+  border-width: 1px;
+  box-shadow: 0 7px 24px rgba(48,80,109,.10), 0 0 0 2px rgba(255,255,255,.28);
 }
 
 .as6-master__avatar span {
-  width: 66px;
-  height: 66px;
+  width: 70px;
+  height: 70px;
+}
+
+.as6-master__workspace-menu {
+  left: auto;
+  right: 0;
+  top: 104px;
 }
 
 .as6-master__focus,
@@ -774,4 +782,4 @@
   }
 }
 
-/* AS6_SCREEN1_REFINEMENT_V2: dark=neutral-black; intent-border=focus-only; workspace-switch=stale-safe */
+/* AS6_SCREEN1_REFINEMENT_V3: brand=180x72; workspace=right-aligned; avatar-ring=thin; suggested-intent=actionable */
