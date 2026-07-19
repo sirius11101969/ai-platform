@@ -549,3 +549,214 @@
 }
 
 /* AS6_LIVING_SHELL_FOUNDATION_V1: snapshot=center+left+right; locale=ru,en; identity=profile,workspace,white-label */
+
+/* AS6_SCREEN1_REFINEMENT_V2: final visual ownership after legacy reference overrides. */
+.as6-master__logo,
+.as6-master__logo.is-company {
+  width: 150px;
+  min-height: 60px;
+  opacity: .88;
+  justify-items: center;
+}
+
+.as6-master__logo-image {
+  width: 150px;
+  height: 60px;
+  object-position: center;
+}
+
+.as6-master .as6-master__workspace {
+  gap: 5px;
+  margin-top: 17px;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: .015em;
+  opacity: .82;
+}
+
+.as6-master__workspace span {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.as6-master__avatar {
+  width: 76px;
+  height: 76px;
+  border-width: 2px;
+  box-shadow: 0 7px 24px rgba(48,80,109,.10), 0 0 0 5px rgba(255,255,255,.32);
+}
+
+.as6-master__avatar span {
+  width: 66px;
+  height: 66px;
+}
+
+.as6-master__focus,
+.as6-master__goal-button,
+.as6-master__outcome {
+  justify-self: center;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.as6-master__outcome {
+  width: 100%;
+}
+
+.as6-master__intent {
+  left: 50%;
+  right: auto;
+  bottom: max(24px, calc(env(safe-area-inset-bottom) + 16px));
+  width: min(1040px, calc(100% - 500px));
+  height: 56px;
+  min-height: 56px;
+  grid-template-columns: 64px minmax(0, 1fr) 34px;
+  transform: translateX(-50%);
+  padding: 0 12px 0 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: none;
+  transition: background-color .2s ease, box-shadow .2s ease;
+}
+
+.as6-master__intent:hover {
+  background: rgba(255,255,255,.10);
+}
+
+.as6-master__intent:focus-within {
+  background: rgba(255,255,255,.22);
+  box-shadow: 0 0 0 1px rgba(36,95,151,.34), 0 10px 34px rgba(48,80,109,.07);
+}
+
+.as6-master__mic {
+  width: 56px;
+  height: 56px;
+  flex-basis: 56px;
+  border-color: rgba(255,255,255,.72);
+  box-shadow: 0 0 18px rgba(255,255,255,.64);
+}
+
+.as6-master__mic svg {
+  width: 25px;
+  height: 25px;
+}
+
+.as6-master__intent input {
+  font-size: 20px;
+}
+
+.as6-master__voice-status {
+  left: 68px;
+}
+
+.as6-master[data-theme="dark"] {
+  --ink: #e7eaee;
+  --muted: #9aa1aa;
+  --soft: #686f78;
+  background: #08090b;
+}
+
+.as6-master[data-theme="dark"] .as6-master__ambient {
+  opacity: .22;
+  background: radial-gradient(circle at 50% 45%,rgba(255,255,255,.12),transparent 34%),radial-gradient(circle at 14% 16%,rgba(255,255,255,.05),transparent 25%),radial-gradient(circle at 88% 76%,rgba(255,255,255,.04),transparent 27%);
+  filter: blur(24px) grayscale(1);
+}
+
+.as6-master[data-theme="dark"] .as6-master__focus:before {
+  opacity: .42;
+  background: radial-gradient(circle,rgba(255,255,255,.10),rgba(255,255,255,.025) 48%,transparent 72%);
+  filter: blur(18px) grayscale(1);
+}
+
+.as6-master[data-theme="dark"] .as6-master__graph-lines path {
+  stroke: rgba(210,216,222,.28);
+  filter: drop-shadow(0 0 3px rgba(255,255,255,.08));
+}
+
+.as6-master[data-theme="dark"] .as6-master__node-mark {
+  color: rgba(207,214,221,.54);
+  border-color: rgba(222,227,232,.20);
+  background: radial-gradient(circle,rgba(255,255,255,.08),transparent 72%);
+  box-shadow: 0 0 22px rgba(255,255,255,.04);
+}
+
+.as6-master[data-theme="dark"] .as6-master__thinking strong,
+.as6-master[data-theme="dark"] .as6-master__outcome strong,
+.as6-master[data-theme="dark"] .as6-master__guide h2,
+.as6-master[data-theme="dark"] .as6-master__utilities,
+.as6-master[data-theme="dark"] .as6-master__workspace {
+  color: #e7eaee;
+}
+
+.as6-master[data-theme="dark"] .as6-master__thinking-dot {
+  background: #c8d0d7;
+  box-shadow: 0 0 0 6px rgba(255,255,255,.06);
+}
+
+.as6-master[data-theme="dark"] .as6-master__intent {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.as6-master[data-theme="dark"] .as6-master__intent:hover {
+  background: rgba(255,255,255,.025);
+}
+
+.as6-master[data-theme="dark"] .as6-master__intent:focus-within {
+  background: rgba(255,255,255,.035);
+  box-shadow: 0 0 0 1px rgba(225,229,234,.30), 0 12px 36px rgba(0,0,0,.30);
+}
+
+.as6-master[data-theme="dark"] .as6-master__intent input {
+  color: #e7eaee;
+  caret-color: #f5f7f9;
+}
+
+.as6-master[data-theme="dark"] .as6-master__mic {
+  color: #dce1e6;
+  border-color: rgba(255,255,255,.18);
+  background: rgba(255,255,255,.035);
+  box-shadow: 0 0 18px rgba(255,255,255,.035);
+}
+
+.as6-master[data-theme="dark"] .as6-master__workspace-menu,
+.as6-master[data-theme="dark"] .as6-master__panel {
+  border-color: rgba(255,255,255,.13);
+  background: rgba(15,16,19,.96);
+}
+
+.as6-master[data-theme="dark"] .as6-master__plan-status {
+  border-color: rgba(255,255,255,.12);
+  background: rgba(255,255,255,.045);
+}
+
+@media (max-width: 1360px) {
+  .as6-master__intent {
+    left: 50%;
+    right: auto;
+    width: min(840px, calc(100% - 420px));
+    grid-template-columns: 60px minmax(0, 1fr) 32px;
+  }
+}
+
+@media (max-width: 980px) {
+  .as6-master__intent {
+    left: 50%;
+    right: auto;
+    width: calc(100% - 250px);
+    grid-template-columns: 60px minmax(0, 1fr) 32px;
+  }
+}
+
+@media (max-width: 720px) {
+  .as6-master__intent {
+    left: 50%;
+    width: calc(100% - 36px);
+  }
+}
+
+/* AS6_SCREEN1_REFINEMENT_V2: dark=neutral-black; intent-border=focus-only; workspace-switch=stale-safe */

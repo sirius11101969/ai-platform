@@ -89,6 +89,7 @@ export default function LivingCanonicalApp() {
   const [theme, setTheme] = useState(() => getStoredLivingTheme());
   const [selectedPriorityId, setSelectedPriorityId] = useState("");
   const profileRef = useRef(null);
+  const livingRequestIdRef = useRef(0);
   const user = livingData.data?.profile || storedUser;
   const profileName = locale === "ru" ? resolveProfileDisplayName(user) : resolveProfileDisplayName(user, locale);
   const profileEmail = user?.email || "";
@@ -105,12 +106,15 @@ export default function LivingCanonicalApp() {
   const t = useMemo(() => createLivingTranslator(locale), [locale]);
 
   const refreshLivingData = useCallback(async () => {
+    const requestId = ++livingRequestIdRef.current;
     setLivingData((current) => ({ status: "loading", data: current.data, error: "" }));
     try {
       const data = await loadLivingReadOnlyData();
+      if (requestId !== livingRequestIdRef.current) return null;
       setLivingData({ status: "ready", data, error: "" });
       return data;
     } catch (error) {
+      if (requestId !== livingRequestIdRef.current) return null;
       setLivingData((current) => ({
         status: current.data ? "stale" : "error",
         data: current.data,
@@ -135,7 +139,14 @@ export default function LivingCanonicalApp() {
 
   function changeWorkspace(workspaceId) {
     if (!workspaceId || workspaceId === snapshot.workspace?.id) return;
+    const nextWorkspace = snapshot.workspaces.find((item) => item.id === workspaceId);
     setSelectedPriorityId("");
+    if (nextWorkspace) {
+      setLivingData((current) => current.data ? {
+        ...current,
+        data: { ...current.data, workspace: nextWorkspace },
+      } : current);
+    }
     setActiveWorkspaceId(workspaceId);
   }
 
@@ -261,7 +272,7 @@ export default function LivingCanonicalApp() {
       <p className="as6-master__sr-only" role="status">{snapshot.dataState.message}</p>
       <main className="as6-reference-stage">
         {activeId === "settings"
-          ? <LivingSettingsSpace snapshot={snapshot} navigate={navigate} onSaved={handleSettingsSaved} onWorkspaceChange={changeWorkspace} />
+          ? <LivingSettingsSpace snapshot={snapshot} navigate={navigate} onSaved={handleSettingsSaved} onWorkspaceChange={changeWorkspace} onLocaleChange={changeLocale} />
           : activeId === "documents"
             ? <LivingDocumentsSpace livingData={livingData} navigate={navigate} />
             : <LivingSpaceEngine definition={definition} navigate={navigate} />}

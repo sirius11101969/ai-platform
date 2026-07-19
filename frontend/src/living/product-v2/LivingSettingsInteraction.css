@@ -9,42 +9,42 @@
 }
 
 [data-theme="dark"] .as6-living-settings {
-  color: #b7d9f2;
-  background: rgba(12, 38, 57, .78);
-  border-color: rgba(150, 199, 231, .18);
+  color: #e7eaee;
+  background: rgba(15, 16, 19, .88);
+  border-color: rgba(255, 255, 255, .13);
 }
 
 [data-theme="dark"] .as6-living-settings fieldset {
-  background: rgba(67, 117, 153, .08);
-  border-color: rgba(150, 199, 231, .16);
+  background: rgba(255, 255, 255, .025);
+  border-color: rgba(255, 255, 255, .11);
 }
 
 [data-theme="dark"] .as6-living-settings__workspace-context {
-  background: rgba(67, 117, 153, .08);
-  border-color: rgba(150, 199, 231, .16);
+  background: rgba(255, 255, 255, .025);
+  border-color: rgba(255, 255, 255, .11);
 }
 
 [data-theme="dark"] .as6-living-settings__workspace-context select {
-  color: #d2e8f7;
-  background: rgba(5, 24, 38, .62);
-  border-color: rgba(150, 199, 231, .23);
+  color: #eceff2;
+  background: rgba(255, 255, 255, .035);
+  border-color: rgba(255, 255, 255, .15);
 }
 
 [data-theme="dark"] .as6-living-settings legend,
 [data-theme="dark"] .as6-living-settings h1,
 [data-theme="dark"] .as6-living-settings label > span {
-  color: #b7d9f2;
+  color: #e7eaee;
 }
 
 [data-theme="dark"] .as6-living-settings header p,
 [data-theme="dark"] .as6-living-settings label,
 [data-theme="dark"] .as6-living-settings__back {
-  color: #86aac5;
+  color: #969da6;
 }
 
 [data-theme="dark"] .as6-living-settings input:not([type="file"]),
 [data-theme="dark"] .as6-living-settings select {
-  color: #d2e8f7;
-  background: rgba(5, 24, 38, .62);
-  border-color: rgba(150, 199, 231, .23);
+  color: #eceff2;
+  background: rgba(255, 255, 255, .035);
+  border-color: rgba(255, 255, 255, .15);
 }

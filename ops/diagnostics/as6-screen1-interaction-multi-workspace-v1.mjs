@@ -1,5 +1,9 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
 import { createLivingShellSnapshot } from "../../frontend/src/living/product-v2/livingShellFoundation.js";
+
+const root = process.env.AS6_ROOT || process.cwd();
 
 const livingData = {
   workspace: {
@@ -32,8 +36,9 @@ assert.equal(initial.version, "as6-screen1-interaction-multi-workspace-v1");
 assert.equal(initial.actionCount, 2, "Top summary must use real activity events");
 assert.deepEqual(initial.workspaceAllowance, { current: 2, limit: 3, canCreate: true });
 assert.deepEqual(initial.subscription, { key: "pro", name: "Про", active: true });
-assert.equal(initial.t("brandCoBranded", { company: "ЭконоЭКО" }), "AS6 + ЭконоЭКО");
-assert.equal(initial.t("brandCompany", { company: "ЭконоЭКО" }), "Только ЭконоЭКО");
+assert.equal(initial.t("brandCoBranded", { company: "ЭконоЭКО" }), "Совместный брендинг: AS6 + ЭконоЭКО");
+assert.equal(initial.t("brandCompany", { company: "ЭконоЭКО" }), "Только загруженный логотип: ЭконоЭКО");
+assert.equal(initial.t("managePlan"), "Тарифы и возможности");
 assert.equal(initial.goalOptions.length, 2);
 assert.equal(initial.priority.leadId, "lead-1");
 assert.ok(initial.priority.prepared.every((item) => item.label && item.target));
@@ -50,8 +55,25 @@ assert.match(selected.priority.title, /Orion/);
 
 const english = createLivingShellSnapshot({ locale: "en", livingData, dataStatus: "ready" });
 assert.deepEqual(english.subscription, { key: "pro", name: "Pro", active: true });
-assert.equal(english.t("brandCompany", { company: "EconoECO" }), "EconoECO only");
+assert.equal(english.t("brandCompany", { company: "EconoECO" }), "Uploaded company logo only: EconoECO");
+
+const appSource = fs.readFileSync(path.join(root, "frontend/src/living/product-v2/LivingCanonicalApp.jsx"), "utf8");
+const settingsSource = fs.readFileSync(path.join(root, "frontend/src/living/product-v2/LivingSettingsSpace.jsx"), "utf8");
+const referenceCss = fs.readFileSync(path.join(root, "frontend/src/living/product-v2/AS6MasterScreenReference.css"), "utf8");
+
+assert.match(appSource, /livingRequestIdRef/, "Workspace refreshes must reject stale responses");
+assert.match(appSource, /data: \{ \.\.\.current\.data, workspace: nextWorkspace \}/, "Workspace selection must update optimistically");
+assert.match(settingsSource, /onLocaleChange\?\.\(nextLanguage\)/, "Settings locale must update immediately");
+assert.match(settingsSource, /!isAs6Company && <option value="co-branded">/, "AS6 must not display a redundant AS6 + AS6 mode");
+assert.match(referenceCss, /AS6_SCREEN1_REFINEMENT_V2: dark=neutral-black; intent-border=focus-only; workspace-switch=stale-safe/, "Screen 1 refinement control marker missing");
+assert.match(referenceCss, /background: #08090b;/, "Dark theme must use the neutral black baseline");
+assert.match(referenceCss, /\.as6-master__intent:focus-within/, "Intent outline must be focus driven");
 
 console.log("AS6_SCREEN1_REAL_ACTIVITY=PASS");
 console.log("AS6_MULTI_WORKSPACE_ALLOWANCE=PASS");
 console.log("AS6_DYNAMIC_GOAL_SELECTION=PASS");
+console.log("AS6_WORKSPACE_SWITCH_STALE_RESPONSE_GUARD=PASS");
+console.log("AS6_SETTINGS_IMMEDIATE_LOCALE=PASS");
+console.log("AS6_BRAND_MODE_DEDUPLICATION=PASS");
+console.log("AS6_NEUTRAL_BLACK_THEME=PASS");
+console.log("AS6_INTENT_FOCUS_ONLY_OUTLINE=PASS");

@@ -41,7 +41,9 @@ body:has(.as6-reference-root[data-active-space="settings"]){overflow-x:hidden;ov
 
 .as6-reference-controls>.as6-reference-locale{width:auto;height:auto;padding:0;font-size:11px;line-height:1;opacity:.68}.as6-reference-controls>.as6-reference-locale.is-active{opacity:1;text-decoration:underline;text-underline-offset:3px}.as6-reference-brand.is-company{width:126px;height:44px}.as6-reference-brand.is-company img{display:block;width:100%;height:100%;object-fit:contain;object-position:left center}.as6-reference-profile{overflow:hidden}.as6-reference-profile img{display:block;width:100%;height:100%;border-radius:inherit;object-fit:cover}
 .as6-reference-controls>button.is-active{color:#2869b2;text-shadow:0 0 10px rgba(40,105,178,.22)}
-.as6-reference-root[data-theme="dark"]{--as6-ref-blue:#b7d9f2;--as6-ref-muted:#83a7c2;background:linear-gradient(145deg,#091b2a,#102b40 48%,#071824)}
-.as6-reference-root[data-theme="dark"] .as6-reference-clouds{opacity:.12}.as6-reference-root[data-theme="dark"] .as6-reference-stars{opacity:.24}.as6-reference-root[data-theme="dark"] .as6-reference-profile-menu{background:rgba(10,35,53,.94);border-color:rgba(148,198,232,.2)}
+.as6-reference-root[data-theme="dark"]{--as6-ref-blue:#e7eaee;--as6-ref-muted:#969da6;--as6-ref-warm:rgba(255,255,255,.035);background:#08090b}
+.as6-reference-root[data-theme="dark"] .as6-reference-clouds{opacity:.05;filter:blur(30px) grayscale(1)}.as6-reference-root[data-theme="dark"] .as6-reference-stars{opacity:.14;filter:grayscale(1)}.as6-reference-root[data-theme="dark"] .as6-reference-profile-menu{background:rgba(15,16,19,.96);border-color:rgba(255,255,255,.13)}
+.as6-reference-root[data-theme="dark"] .as6-canonical-space__mesh{box-shadow:0 0 90px rgba(255,255,255,.055),inset 0 0 80px rgba(255,255,255,.04)}
+.as6-reference-root[data-theme="dark"] .as6-canonical-space__core,.as6-reference-root[data-theme="dark"] .as6-canonical-space__node{background:rgba(255,255,255,.025);box-shadow:0 0 38px rgba(255,255,255,.035),inset 0 0 34px rgba(255,255,255,.025)}
 @media(max-width:820px){.as6-reference-controls>.as6-reference-locale{display:block}}
 @media(prefers-reduced-motion:reduce){.as6-reference-root *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}

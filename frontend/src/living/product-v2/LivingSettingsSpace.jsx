@@ -18,7 +18,7 @@ function readImage(file) {
   });
 }
 
-export default function LivingSettingsSpace({ snapshot, navigate, onSaved, onWorkspaceChange }) {
+export default function LivingSettingsSpace({ snapshot, navigate, onSaved, onWorkspaceChange, onLocaleChange }) {
   const { t, identity, workspace, locale } = snapshot;
   const [displayName, setDisplayName] = useState(identity.displayName);
   const [avatarUrl, setAvatarUrl] = useState(identity.avatarUrl);
@@ -28,11 +28,14 @@ export default function LivingSettingsSpace({ snapshot, navigate, onSaved, onWor
   const [language, setLanguage] = useState(locale);
   const [status, setStatus] = useState({ kind: "idle", message: "" });
   const companyLabel = workspaceName.trim() || identity.workspaceName;
+  const isAs6Company = /^as6$/i.test(companyLabel.trim());
+  const effectiveBrandingMode = isAs6Company && brandingMode === "co-branded" ? "platform" : brandingMode;
+  const identityBrandingMode = isAs6Company && identity.brandingMode === "co-branded" ? "platform" : identity.brandingMode;
   const hasUnsavedChanges = displayName !== identity.displayName
     || avatarUrl !== identity.avatarUrl
     || workspaceName !== identity.workspaceEditableName
     || companyLogoUrl !== identity.companyLogoUrl
-    || brandingMode !== identity.brandingMode
+    || effectiveBrandingMode !== identityBrandingMode
     || language !== locale;
 
   useEffect(() => {
@@ -42,7 +45,11 @@ export default function LivingSettingsSpace({ snapshot, navigate, onSaved, onWor
     setCompanyLogoUrl(identity.companyLogoUrl);
     setBrandingMode(identity.brandingMode);
     setLanguage(locale);
-  }, [snapshot.snapshotId, identity, locale]);
+  }, [snapshot.snapshotId]);
+
+  useEffect(() => {
+    setLanguage(locale);
+  }, [locale]);
 
   async function chooseImage(event, setter) {
     try {
@@ -64,6 +71,11 @@ export default function LivingSettingsSpace({ snapshot, navigate, onSaved, onWor
     onWorkspaceChange?.(nextWorkspaceId);
   }
 
+  function selectLanguage(nextLanguage) {
+    setLanguage(nextLanguage);
+    onLocaleChange?.(nextLanguage);
+  }
+
   async function submit(event) {
     event.preventDefault();
     setStatus({ kind: "saving", message: t("saving") });
@@ -78,7 +90,7 @@ export default function LivingSettingsSpace({ snapshot, navigate, onSaved, onWor
         workspaceResult = await updateWorkspace(workspace.id, {
           name: workspaceName.trim(),
           companyLogoUrl,
-          brandingMode,
+          brandingMode: effectiveBrandingMode,
         });
       }
       setStatus({ kind: "success", message: t("saved") });
@@ -145,9 +157,9 @@ export default function LivingSettingsSpace({ snapshot, navigate, onSaved, onWor
           </label>
           <label>
             <span>{t("brandMode")}</span>
-            <select value={brandingMode} onChange={(event) => setBrandingMode(event.target.value)}>
+            <select value={effectiveBrandingMode} onChange={(event) => setBrandingMode(event.target.value)}>
               <option value="platform">{t("brandPlatform")}</option>
-              <option value="co-branded">{t("brandCoBranded", { company: companyLabel })}</option>
+              {!isAs6Company && <option value="co-branded">{t("brandCoBranded", { company: companyLabel })}</option>}
               <option value="company" disabled={!companyLogoUrl}>{t("brandCompany", { company: companyLabel })}</option>
             </select>
           </label>
@@ -158,7 +170,7 @@ export default function LivingSettingsSpace({ snapshot, navigate, onSaved, onWor
           <legend>{t("language")}</legend>
           <div className="as6-living-settings__languages">
             {["ru", "en"].map((item) => (
-              <button type="button" key={item} className={language === item ? "is-active" : ""} onClick={() => setLanguage(item)} aria-pressed={language === item}>
+              <button type="button" key={item} className={language === item ? "is-active" : ""} onClick={() => selectLanguage(item)} aria-pressed={language === item}>
                 {item.toUpperCase()}
               </button>
             ))}

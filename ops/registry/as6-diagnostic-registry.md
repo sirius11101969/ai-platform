@@ -137,3 +137,11 @@
 - AS6_PROFILE_PERSISTENCE_OWNER=backend/src/models/userModel.js
 - AS6_WORKSPACE_BRANDING_PERSISTENCE_OWNER=backend/src/models/workspaceModel.js
 - AS6_LIVING_SHELL_ARCHITECTURE=ops/architecture/as6-living-shell-foundation-v1.md
+
+## AS6 Screen 1 Refinement v2
+- diagnostic: neutral black theme, focus-only intent outline, stable workspace selection and unambiguous settings
+- runtime_owners: frontend/src/living/product-v2/AS6MasterScreenReference.css, frontend/src/living/product-v2/LivingCanonicalApp.jsx, frontend/src/living/product-v2/LivingSettingsSpace.jsx
+- diagnostic_artifacts: ops/diagnostics/as6-screen1-refinement-v2.md, ops/diagnostics/as6-screen1-interaction-multi-workspace-v1.mjs
+- control: ops/bin/as6-control-screen1-interaction-multi-workspace-v1
+- aec: ops/governance/as6-screen1-refinement-v2-aec.md
+- result: AS6_SCREEN1_REFINEMENT_V2=REGISTERED
