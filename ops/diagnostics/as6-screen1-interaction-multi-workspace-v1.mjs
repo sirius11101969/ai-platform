@@ -60,6 +60,7 @@ assert.equal(english.t("brandCompany", { company: "EconoECO" }), "Uploaded compa
 const appSource = fs.readFileSync(path.join(root, "frontend/src/living/product-v2/LivingCanonicalApp.jsx"), "utf8");
 const settingsSource = fs.readFileSync(path.join(root, "frontend/src/living/product-v2/LivingSettingsSpace.jsx"), "utf8");
 const referenceCss = fs.readFileSync(path.join(root, "frontend/src/living/product-v2/AS6MasterScreenReference.css"), "utf8");
+const apiSource = fs.readFileSync(path.join(root, "frontend/src/services/api.js"), "utf8");
 
 assert.match(appSource, /livingRequestIdRef/, "Workspace refreshes must reject stale responses");
 assert.match(appSource, /data: \{ \.\.\.current\.data, workspace: nextWorkspace \}/, "Workspace selection must update optimistically");
@@ -68,6 +69,8 @@ assert.match(settingsSource, /!isAs6Company && <option value="co-branded">/, "AS
 assert.match(referenceCss, /AS6_SCREEN1_REFINEMENT_V2: dark=neutral-black; intent-border=focus-only; workspace-switch=stale-safe/, "Screen 1 refinement control marker missing");
 assert.match(referenceCss, /background: #08090b;/, "Dark theme must use the neutral black baseline");
 assert.match(referenceCss, /\.as6-master__intent:focus-within/, "Intent outline must be focus driven");
+assert.match(apiSource, /saveAuthSession\(nextSession, \{ syncWorkspace: false \}\)/, "Profile saves must preserve the active workspace");
+assert.match(referenceCss, /\.as6-master__intent input:focus,[\s\S]*?box-shadow: none;/, "Intent input must not render its own focus frame");
 
 console.log("AS6_SCREEN1_REAL_ACTIVITY=PASS");
 console.log("AS6_MULTI_WORKSPACE_ALLOWANCE=PASS");
@@ -77,3 +80,5 @@ console.log("AS6_SETTINGS_IMMEDIATE_LOCALE=PASS");
 console.log("AS6_BRAND_MODE_DEDUPLICATION=PASS");
 console.log("AS6_NEUTRAL_BLACK_THEME=PASS");
 console.log("AS6_INTENT_FOCUS_ONLY_OUTLINE=PASS");
+console.log("AS6_PROFILE_SAVE_PRESERVES_WORKSPACE=PASS");
+console.log("AS6_INTENT_SINGLE_FOCUS_FRAME=PASS");

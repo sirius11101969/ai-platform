@@ -645,7 +645,22 @@
 }
 
 .as6-master__intent input {
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  outline: 0;
+  background: transparent;
+  box-shadow: none;
   font-size: 20px;
+}
+
+.as6-master__intent input:focus,
+.as6-master__intent input:focus-visible {
+  border: 0;
+  outline: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .as6-master__voice-status {

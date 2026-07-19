@@ -73,7 +73,7 @@ export function setActiveWorkspaceId(workspaceId) {
   }
 }
 
-export function saveAuthSession(session, { remember = true } = {}) {
+export function saveAuthSession(session, { remember = true, syncWorkspace = true } = {}) {
   if (!canUseWebStorage()) return null
 
   const nextSession = normalizeAuthSession(session)
@@ -89,7 +89,7 @@ export function saveAuthSession(session, { remember = true } = {}) {
     nextSession.workspace_id ||
     null
 
-  if (sessionWorkspaceId) {
+  if (syncWorkspace && sessionWorkspaceId) {
     setActiveWorkspaceId(String(sessionWorkspaceId))
   }
 
@@ -109,7 +109,9 @@ export function updateStoredUser(userPatch) {
     ...currentSession,
     user: { ...currentSession.user, ...userPatch },
   }
-  saveAuthSession(nextSession)
+  // Updating profile fields must not restore the workspace captured at sign-in.
+  // The active company is an independent, user-controlled piece of state.
+  saveAuthSession(nextSession, { syncWorkspace: false })
   window.dispatchEvent(new CustomEvent('ai-platform-profile-updated', { detail: nextSession.user }))
 }
 
