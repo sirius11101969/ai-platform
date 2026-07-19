@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="${AS6_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
+SCHEMA_FILE="$ROOT/backend/src/db/schema.js"
+
+test -f "$SCHEMA_FILE"
+
+node - "$SCHEMA_FILE" <<'NODE'
+const fs = require('fs')
+
+const file = process.argv[2]
+const source = fs.readFileSync(file, 'utf8')
+const tableCreates = new Map()
+
+for (const match of source.matchAll(/CREATE TABLE IF NOT EXISTS\s+([a-zA-Z0-9_]+)/g)) {
+  if (!tableCreates.has(match[1])) tableCreates.set(match[1], match.index)
+}
+
+const failures = []
+for (const match of source.matchAll(/REFERENCES\s+([a-zA-Z0-9_]+)\s*\(/g)) {
+  const table = match[1]
+  const createPosition = tableCreates.get(table)
+  if (createPosition === undefined) {
+    failures.push(`referenced table is not created by bootstrap schema: ${table}`)
+  } else if (createPosition > match.index) {
+    failures.push(`foreign key references ${table} before its CREATE TABLE statement`)
+  }
+}
+
+if (failures.length) {
+  console.error(failures.join('\n'))
+  process.exit(1)
+}
+NODE
+
+echo "AS6_SCHEMA_BOOTSTRAP_DEPENDENCY_ORDER=PASS"

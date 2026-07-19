@@ -21,6 +21,10 @@ volume. A separate VPS becomes mandatory when resource contention, availability,
 regulatory requirements, or the value of production data makes a shared host an
 unacceptable failure domain.
 
+A clean-database bootstrap check verifies that every foreign-key target is
+created before it is referenced. This exposes migration-order defects in
+staging that an existing production database can otherwise hide.
+
 ## Release gates
 
 1. Build the requested Git commit once with `ops/bin/as6-build-release-v1`.
@@ -89,6 +93,7 @@ the same service after DNS, TLS and access control are configured.
 - `AS6_STAGING_DATA_ISOLATION_GAP`
 - `AS6_RELEASE_REBUILD_DRIFT`
 - `AS6_STAGING_RELEASE_TAG_INTERPOLATION_GAP`
+- `AS6_CLEAN_DATABASE_BOOTSTRAP_ORDER_GAP`
 - `AS6_ATTACHMENT_BACKUP_GAP`
 - `AS6_RESTORE_DRILL_GAP`
 

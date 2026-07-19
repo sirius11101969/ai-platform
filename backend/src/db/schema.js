@@ -147,20 +147,6 @@ async function migrate() {
 
 
 
-    CREATE TABLE IF NOT EXISTS credit_ledger_entries (
-      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
-      user_id UUID REFERENCES users(id) ON DELETE SET NULL,
-      task_id UUID REFERENCES ai_tasks(id) ON DELETE SET NULL,
-      idempotency_key TEXT NOT NULL,
-      entry_type TEXT NOT NULL,
-      credits_delta INTEGER NOT NULL,
-      balance_after INTEGER NOT NULL,
-      metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
-      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-      UNIQUE(workspace_id, idempotency_key)
-    );
-
     CREATE TABLE IF NOT EXISTS ai_tasks (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -175,6 +161,20 @@ async function migrate() {
       error TEXT,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS credit_ledger_entries (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+      user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+      task_id UUID REFERENCES ai_tasks(id) ON DELETE SET NULL,
+      idempotency_key TEXT NOT NULL,
+      entry_type TEXT NOT NULL,
+      credits_delta INTEGER NOT NULL,
+      balance_after INTEGER NOT NULL,
+      metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      UNIQUE(workspace_id, idempotency_key)
     );
 
     ALTER TABLE ai_tasks ADD COLUMN IF NOT EXISTS workspace_id UUID REFERENCES workspaces(id) ON DELETE SET NULL;
