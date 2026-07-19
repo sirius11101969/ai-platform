@@ -18,6 +18,7 @@ grep -q 'cryptcheck.*--one-way' ops/bin/as6-backup-offsite-rclone-v1
 grep -q -- '--immutable' ops/bin/as6-backup-offsite-rclone-v1
 grep -q 'sha256sum -c checksums.sha256' ops/bin/as6-backup-offsite-rclone-v1
 grep -q 'AS6_BACKUP_OFFSITE_RCLONE=PASS' ops/bin/as6-backup-offsite-rclone-v1
+grep -q 'config < /dev/tty > /dev/tty' ops/bin/as6-configure-google-drive-offsite-v1
 grep -q 'AS6_BACKUP_OFFSITE_RCLONE_REMOTE' ops/bin/as6-production-backup-full-v1
 grep -q 'ops/bin/as6-backup-offsite-rclone-v1' ops/bin/as6-production-backup-full-v1
 grep -q 'AS6_BACKUP_OFFSITE_ENV_FILE' ops/bin/as6-production-backup-full-v1

@@ -43,7 +43,7 @@ the rclone configuration itself. Keep the crypt password and configuration
 password in a separate offline recovery record: without them the backup cannot
 be decrypted.
 EOF
-  rclone --config "$RCLONE_CONFIG" config
+  rclone --config "$RCLONE_CONFIG" config < /dev/tty > /dev/tty
 fi
 
 test -f "$RCLONE_CONFIG"
