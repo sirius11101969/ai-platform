@@ -301,7 +301,7 @@ export default function AS6MasterScreen({
             <strong>{t("greeting", { name: identity.displayName })}</strong>
             <span>{t("dayReady")}</span>
           </div>
-          <div className="as6-master__avatar" aria-label={`Profile: ${identity.displayName}`}>
+          <div className="as6-master__avatar" aria-label={`Profile: ${identity.displayName}`} style={{ "--as6-avatar-scale": identity.avatarScale / 100 }}>
             <span>{identity.avatarUrl ? <img src={identity.avatarUrl} alt="" /> : identity.initial}</span>
           </div>
 

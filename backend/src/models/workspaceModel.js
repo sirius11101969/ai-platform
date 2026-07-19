@@ -70,8 +70,8 @@ function normalizeCompanyLogoUrl(value) {
 
 function normalizeCompanyLogoScale(value) {
   const normalized = Math.round(Number(value))
-  if (!Number.isFinite(normalized) || normalized < 70 || normalized > 120) {
-    throw Object.assign(new Error('Company logo scale must be between 70 and 120'), { statusCode: 400 })
+  if (!Number.isFinite(normalized) || normalized < 70 || normalized > 150) {
+    throw Object.assign(new Error('Company logo scale must be between 70 and 150'), { statusCode: 400 })
   }
   return normalized
 }

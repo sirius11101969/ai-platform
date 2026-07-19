@@ -417,8 +417,11 @@
 @media (prefers-reduced-motion: reduce) {
   .as6-master__graph-lines path,
   .as6-master__graph-points circle,
-  .as6-master__mic {
+  .as6-master__mic,
+  .as6-master__logo-image,
+  .as6-master__avatar {
     animation: none;
+    transition: none;
   }
 }
 /* AS6_MASTER_VISUAL_HIERARCHY_V1: workspace-label=10px; disclosure=12px; brand-opacity=.56; contrast=reinforced */
@@ -630,7 +633,9 @@
   border: 0;
   background: rgba(55,96,130,.22);
   box-shadow: 0 0 0 4px rgba(55,96,130,.025), 0 7px 22px rgba(48,80,109,.09);
-  transform: translateX(-22px);
+  transform: translateX(-22px) scale(var(--as6-avatar-scale, 1));
+  transform-origin: center;
+  transition: transform .18s ease;
 }
 
 .as6-master__avatar span {
@@ -832,7 +837,7 @@
 
   .as6-master__avatar {
     align-self: auto;
-    transform: none;
+    transform: scale(var(--as6-avatar-scale, 1));
   }
 }
 
@@ -840,4 +845,4 @@
 /* AS6_SCREEN1_REFINEMENT_V4: avatar-ring=uniform-inlay; workspace-control=centered-labeled */
 /* AS6_SCREEN1_REFINEMENT_V5: identity-cluster=visual-left-14px; workspace-menu=aligned */
 /* AS6_SCREEN1_REFINEMENT_V6: identity-axis=logo+workspace+avatar; visual-left=22px */
-/* AS6_WORKSPACE_LOGO_SCALE_V1: range=70..120; persistence=workspace; screens=master,conductor */
+/* AS6_IDENTITY_SCALE_V2: logo=70..150@workspace; avatar=70..150@profile; screens=master,conductor */

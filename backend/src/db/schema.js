@@ -17,6 +17,7 @@ async function migrate() {
 
     ALTER TABLE users ADD COLUMN IF NOT EXISTS display_name TEXT;
     ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT;
+    ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_scale SMALLINT NOT NULL DEFAULT 100;
     ALTER TABLE users ADD COLUMN IF NOT EXISTS locale TEXT NOT NULL DEFAULT 'ru';
 
     CREATE TABLE IF NOT EXISTS workspaces (
@@ -47,13 +48,20 @@ async function migrate() {
         ALTER TABLE users ADD CONSTRAINT users_locale_valid
           CHECK (locale IN ('ru', 'en'));
       END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'users_avatar_scale_valid') THEN
+        ALTER TABLE users ADD CONSTRAINT users_avatar_scale_valid
+          CHECK (avatar_scale BETWEEN 70 AND 150);
+      END IF;
       IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'workspaces_branding_mode_valid') THEN
         ALTER TABLE workspaces ADD CONSTRAINT workspaces_branding_mode_valid
           CHECK (branding_mode IN ('platform', 'co-branded', 'company'));
       END IF;
-      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'workspaces_company_logo_scale_valid') THEN
-        ALTER TABLE workspaces ADD CONSTRAINT workspaces_company_logo_scale_valid
-          CHECK (company_logo_scale BETWEEN 70 AND 120);
+      IF EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'workspaces_company_logo_scale_valid') THEN
+        ALTER TABLE workspaces DROP CONSTRAINT workspaces_company_logo_scale_valid;
+      END IF;
+      IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'workspaces_company_logo_scale_valid_v2') THEN
+        ALTER TABLE workspaces ADD CONSTRAINT workspaces_company_logo_scale_valid_v2
+          CHECK (company_logo_scale BETWEEN 70 AND 150);
       END IF;
     END $$;
 

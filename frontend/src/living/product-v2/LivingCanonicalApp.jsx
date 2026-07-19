@@ -291,7 +291,7 @@ export default function LivingCanonicalApp() {
           <time><strong>{currentTime(locale)}</strong><small>{currentDate(locale)}</small></time>
           <span className="as6-reference-weather">☼ <b>24°</b></span>
           <div className="as6-reference-profile-wrap" ref={profileRef}>
-            <button type="button" className="as6-reference-profile" onClick={() => setProfileOpen((value) => !value)} aria-expanded={profileOpen}>
+            <button type="button" className="as6-reference-profile" style={{ "--as6-avatar-scale": snapshot.identity.avatarScale / 100 }} onClick={() => setProfileOpen((value) => !value)} aria-expanded={profileOpen}>
               {snapshot.identity.avatarUrl ? <img src={snapshot.identity.avatarUrl} alt="" /> : snapshot.identity.initial}
             </button>
             {profileOpen && (

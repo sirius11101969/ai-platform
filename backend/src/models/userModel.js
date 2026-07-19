@@ -7,6 +7,7 @@ function toPublicUser(row) {
     email: row.email,
     displayName: row.display_name || '',
     avatarUrl: row.avatar_url || '',
+    avatarScale: Number(row.avatar_scale || 100),
     locale: row.locale || 'ru',
     credits: row.credits,
     plan: row.plan,
@@ -20,7 +21,7 @@ async function findUserByEmail(email) {
 }
 
 async function findUserById(id) {
-  const result = await pool.query('SELECT id, email, display_name, avatar_url, locale, credits, plan, created_at FROM users WHERE id = $1', [id])
+  const result = await pool.query('SELECT id, email, display_name, avatar_url, avatar_scale, locale, credits, plan, created_at FROM users WHERE id = $1', [id])
   return result.rows[0] || null
 }
 
@@ -28,7 +29,7 @@ async function createUser({ email, passwordHash }) {
   const result = await pool.query(
     `INSERT INTO users(email, password_hash, credits, plan)
      VALUES($1, $2, 100, 'free')
-     RETURNING id, email, display_name, avatar_url, locale, credits, plan, created_at`,
+     RETURNING id, email, display_name, avatar_url, avatar_scale, locale, credits, plan, created_at`,
     [email, passwordHash]
   )
 
@@ -61,6 +62,14 @@ function normalizeImageUrl(value) {
   return normalized
 }
 
+function normalizeAvatarScale(value) {
+  const normalized = Math.round(Number(value))
+  if (!Number.isFinite(normalized) || normalized < 70 || normalized > 150) {
+    throw validationError('Profile photo scale must be between 70 and 150')
+  }
+  return normalized
+}
+
 async function updateUserProfile(userId, payload = {}) {
   const updates = []
   const values = [userId]
@@ -70,13 +79,16 @@ async function updateUserProfile(userId, payload = {}) {
   if (Object.prototype.hasOwnProperty.call(payload, 'avatarUrl')) {
     values.push(normalizeImageUrl(payload.avatarUrl)); updates.push(`avatar_url = $${values.length}`)
   }
+  if (Object.prototype.hasOwnProperty.call(payload, 'avatarScale')) {
+    values.push(normalizeAvatarScale(payload.avatarScale)); updates.push(`avatar_scale = $${values.length}`)
+  }
   if (Object.prototype.hasOwnProperty.call(payload, 'locale')) {
     values.push(normalizeLocale(payload.locale)); updates.push(`locale = $${values.length}`)
   }
   if (!updates.length) return toPublicUser(await findUserById(userId))
   const result = await pool.query(
     `UPDATE users SET ${updates.join(', ')} WHERE id = $1
-     RETURNING id, email, display_name, avatar_url, locale, credits, plan, created_at`,
+     RETURNING id, email, display_name, avatar_url, avatar_scale, locale, credits, plan, created_at`,
     values
   )
   return toPublicUser(result.rows[0])

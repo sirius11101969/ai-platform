@@ -6,6 +6,11 @@ import { createLivingShellSnapshot } from "../../frontend/src/living/product-v2/
 const root = process.env.AS6_ROOT || process.cwd();
 
 const livingData = {
+  profile: {
+    displayName: "Vladimir",
+    avatarUrl: "https://assets.example/vladimir.png",
+    avatarScale: 92,
+  },
   workspace: {
     id: "workspace-1",
     ownerUserId: "user-1",
@@ -40,6 +45,7 @@ assert.equal(initial.actionCount, 2, "Top summary must use real activity events"
 assert.deepEqual(initial.workspaceAllowance, { current: 2, limit: 3, canCreate: true });
 assert.deepEqual(initial.subscription, { key: "pro", name: "Про", active: true });
 assert.equal(initial.identity.companyLogoScale, 86, "Workspace logo scale must enter the shared identity contract");
+assert.equal(initial.identity.avatarScale, 92, "Profile photo scale must enter the shared identity contract");
 assert.equal(initial.t("brandCoBranded", { company: "ЭконоЭКО" }), "Совместный брендинг: AS6 + ЭконоЭКО");
 assert.equal(initial.t("brandCompany", { company: "ЭконоЭКО" }), "Только загруженный логотип: ЭконоЭКО");
 assert.equal(initial.t("managePlan"), "Тарифы и возможности");
@@ -70,6 +76,7 @@ const shellSource = fs.readFileSync(path.join(root, "frontend/src/living/product
 const referenceCss = fs.readFileSync(path.join(root, "frontend/src/living/product-v2/AS6MasterScreenReference.css"), "utf8");
 const schemaSource = fs.readFileSync(path.join(root, "backend/src/db/schema.js"), "utf8");
 const workspaceModelSource = fs.readFileSync(path.join(root, "backend/src/models/workspaceModel.js"), "utf8");
+const userModelSource = fs.readFileSync(path.join(root, "backend/src/models/userModel.js"), "utf8");
 const apiSource = fs.readFileSync(path.join(root, "frontend/src/services/api.js"), "utf8");
 
 assert.match(appSource, /livingRequestIdRef/, "Workspace refreshes must reject stale responses");
@@ -88,23 +95,32 @@ assert.match(referenceCss, /\.as6-master__logo,[\s\S]*?width: 180px;[\s\S]*?min-
 assert.match(referenceCss, /AS6_SCREEN1_REFINEMENT_V4: avatar-ring=uniform-inlay; workspace-control=centered-labeled/, "Screen 1 refinement v4 marker missing");
 assert.match(referenceCss, /AS6_SCREEN1_REFINEMENT_V5: identity-cluster=visual-left-14px; workspace-menu=aligned/, "Screen 1 refinement v5 marker missing");
 assert.match(referenceCss, /AS6_SCREEN1_REFINEMENT_V6: identity-axis=logo\+workspace\+avatar; visual-left=22px/, "Screen 1 refinement v6 marker missing");
-assert.match(referenceCss, /AS6_WORKSPACE_LOGO_SCALE_V1: range=70\.\.120; persistence=workspace; screens=master,conductor/, "Workspace logo scale marker missing");
+assert.match(referenceCss, /AS6_IDENTITY_SCALE_V2: logo=70\.\.150@workspace; avatar=70\.\.150@profile; screens=master,conductor/, "Identity scale v2 marker missing");
 assert.match(schemaSource, /company_logo_scale SMALLINT NOT NULL DEFAULT 100/, "Workspace logo scale persistence is missing");
-assert.match(schemaSource, /company_logo_scale BETWEEN 70 AND 120/, "Workspace logo scale database guard is missing");
+assert.match(schemaSource, /company_logo_scale BETWEEN 70 AND 150/, "Workspace logo scale database guard is missing");
+assert.match(schemaSource, /avatar_scale SMALLINT NOT NULL DEFAULT 100/, "Profile photo scale persistence is missing");
+assert.match(schemaSource, /avatar_scale BETWEEN 70 AND 150/, "Profile photo scale database guard is missing");
 assert.match(workspaceModelSource, /companyLogoScale: Number\(row\.company_logo_scale \|\| 100\)/, "Workspace API must expose logo scale");
 assert.match(workspaceModelSource, /normalizeCompanyLogoScale\(payload\.companyLogoScale\)/, "Workspace API must validate logo scale updates");
+assert.match(userModelSource, /avatarScale: Number\(row\.avatar_scale \|\| 100\)/, "Profile API must expose photo scale");
+assert.match(userModelSource, /normalizeAvatarScale\(payload\.avatarScale\)/, "Profile API must validate photo scale updates");
 assert.match(shellSource, /companyLogoScale,/, "Living shell identity must expose logo scale");
-assert.match(settingsSource, /type="range"[\s\S]*?min="70"[\s\S]*?max="120"/, "Settings must provide the bounded logo scale control");
+assert.match(shellSource, /avatarScale,/, "Living shell identity must expose photo scale");
+assert.match(settingsSource, /id="as6-company-logo-scale"[\s\S]*?type="range"[\s\S]*?min="70"[\s\S]*?max="150"/, "Settings must provide the bounded logo scale control");
+assert.match(settingsSource, /id="as6-avatar-scale"[\s\S]*?type="range"[\s\S]*?min="70"[\s\S]*?max="150"/, "Settings must provide the bounded photo scale control");
 assert.match(settingsSource, /companyLogoScale,\s*brandingMode:/, "Settings must persist logo scale with company branding");
+assert.match(settingsSource, /avatarUrl,\s*avatarScale,\s*locale:/, "Settings must persist photo scale with the user profile");
 assert.match(masterSource, /--as6-company-logo-scale/, "Screen 1 must apply company logo scale");
 assert.match(appSource, /--as6-company-logo-scale/, "Screen 2 chrome must apply company logo scale");
+assert.match(masterSource, /--as6-avatar-scale/, "Screen 1 must apply profile photo scale");
+assert.match(appSource, /--as6-avatar-scale/, "Screen 2 chrome must apply profile photo scale");
 assert.match(masterSource, /as6-master__workspace-label/, "Workspace switcher must expose a visible control label");
 assert.match(localizationSource, /companySwitcher: "Компания"/, "Russian workspace switcher label missing");
 assert.match(localizationSource, /companySwitcher: "Company"/, "English workspace switcher label missing");
 assert.match(referenceCss, /\.as6-master \.as6-master__workspace \{[\s\S]*?align-self: center;/, "Workspace switcher must be centered within the identity rail");
 assert.match(referenceCss, /\.as6-master__logo,[\s\S]*?align-self: center;[\s\S]*?transform: translateX\(-22px\);/, "Brand must follow the shared identity axis");
 assert.match(referenceCss, /\.as6-master \.as6-master__workspace \{[\s\S]*?transform: translateX\(-22px\);/, "Workspace switcher must follow the shared identity axis");
-assert.match(referenceCss, /\.as6-master__avatar \{[\s\S]*?align-self: center;[\s\S]*?transform: translateX\(-22px\);/, "Profile photo must follow the shared identity axis");
+assert.match(referenceCss, /\.as6-master__avatar \{[\s\S]*?align-self: center;[\s\S]*?transform: translateX\(-22px\) scale\(var\(--as6-avatar-scale, 1\)\);/, "Profile photo must follow the shared identity axis and scale contract");
 assert.match(referenceCss, /\.as6-master__workspace-menu \{[\s\S]*?left: 50%;[\s\S]*?transform: translateX\(calc\(-50% - 22px\)\);/, "Workspace menu must remain aligned below its switcher");
 assert.match(referenceCss, /\.as6-master__avatar \{[\s\S]*?padding: 2px;[\s\S]*?border: 0;[\s\S]*?background: rgba\(55,96,130,\.22\);/, "Profile frame must use a uniform inset ring");
 assert.match(referenceCss, /\.as6-master\[data-theme="dark"\] \.as6-master__avatar \{[\s\S]*?background: rgba\(255,255,255,\.24\);/, "Dark profile frame must use an even neutral ring");
@@ -139,6 +155,7 @@ console.log("AS6_WORKSPACE_CONTROL_LABEL=PASS");
 console.log("AS6_IDENTITY_CLUSTER_VISUAL_ALIGNMENT=PASS");
 console.log("AS6_IDENTITY_SHARED_AXIS=PASS");
 console.log("AS6_WORKSPACE_LOGO_SCALE_V1=PASS");
+console.log("AS6_PROFILE_PHOTO_SCALE_V1=PASS");
 console.log("AS6_CONDUCTOR_CONTEXT_CONTRACT_V1=PASS");
 console.log("AS6_CONDUCTOR_RELOAD_RECOVERY=PASS");
 console.log("AS6_CONDUCTOR_WORKSPACE_GUARD=PASS");

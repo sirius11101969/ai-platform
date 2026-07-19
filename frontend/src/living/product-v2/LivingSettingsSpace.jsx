@@ -23,6 +23,7 @@ export default function LivingSettingsSpace({ snapshot, navigate, onSaved, onWor
   const { t, identity, workspace, locale } = snapshot;
   const [displayName, setDisplayName] = useState(identity.displayName);
   const [avatarUrl, setAvatarUrl] = useState(identity.avatarUrl);
+  const [avatarScale, setAvatarScale] = useState(identity.avatarScale);
   const [workspaceName, setWorkspaceName] = useState(identity.workspaceEditableName);
   const [companyLogoUrl, setCompanyLogoUrl] = useState(identity.companyLogoUrl);
   const [companyLogoScale, setCompanyLogoScale] = useState(identity.companyLogoScale);
@@ -35,6 +36,7 @@ export default function LivingSettingsSpace({ snapshot, navigate, onSaved, onWor
   const identityBrandingMode = isAs6Company && identity.brandingMode === "co-branded" ? "platform" : identity.brandingMode;
   const hasUnsavedChanges = displayName !== identity.displayName
     || avatarUrl !== identity.avatarUrl
+    || avatarScale !== identity.avatarScale
     || workspaceName !== identity.workspaceEditableName
     || companyLogoUrl !== identity.companyLogoUrl
     || companyLogoScale !== identity.companyLogoScale
@@ -44,6 +46,7 @@ export default function LivingSettingsSpace({ snapshot, navigate, onSaved, onWor
   useEffect(() => {
     setDisplayName(identity.displayName);
     setAvatarUrl(identity.avatarUrl);
+    setAvatarScale(identity.avatarScale);
     setWorkspaceName(identity.workspaceEditableName);
     setCompanyLogoUrl(identity.companyLogoUrl);
     setCompanyLogoScale(identity.companyLogoScale);
@@ -87,6 +90,7 @@ export default function LivingSettingsSpace({ snapshot, navigate, onSaved, onWor
       const profileResult = await updateProfile({
         displayName: displayName.trim(),
         avatarUrl,
+        avatarScale,
         locale: language,
       });
       let workspaceResult = null;
@@ -140,11 +144,32 @@ export default function LivingSettingsSpace({ snapshot, navigate, onSaved, onWor
           </label>
           <label className="as6-living-settings__image">
             <span>{t("avatar")}</span>
-            <i>{avatarUrl ? <img src={avatarUrl} alt="" /> : identity.initial}</i>
+            <i style={{ "--as6-avatar-preview-scale": avatarScale / 100 }}>{avatarUrl ? <img src={avatarUrl} alt="" /> : identity.initial}</i>
             <b>{t("chooseImage")}</b>
             <small>{t("imageHint")}</small>
             <input type="file" accept="image/png,image/jpeg,image/webp" onChange={(event) => chooseImage(event, setAvatarUrl)} />
           </label>
+          <div className="as6-living-settings__logo-scale as6-living-settings__avatar-scale">
+            <label htmlFor="as6-avatar-scale">
+              <span>{t("avatarSize")}</span>
+              <output htmlFor="as6-avatar-scale">{avatarScale}%</output>
+            </label>
+            <input
+              id="as6-avatar-scale"
+              type="range"
+              min="70"
+              max="150"
+              step="1"
+              value={avatarScale}
+              onChange={(event) => setAvatarScale(Number(event.target.value))}
+              disabled={!avatarUrl}
+              aria-valuetext={`${avatarScale}%`}
+            />
+            <div>
+              <small>{t("avatarSizeHint")}</small>
+              <button type="button" onClick={() => setAvatarScale(100)} disabled={!avatarUrl || avatarScale === 100}>{t("resetAvatarSize")}</button>
+            </div>
+          </div>
         </fieldset>
 
         <fieldset disabled={!identity.canManageBranding}>
@@ -169,7 +194,7 @@ export default function LivingSettingsSpace({ snapshot, navigate, onSaved, onWor
               id="as6-company-logo-scale"
               type="range"
               min="70"
-              max="120"
+              max="150"
               step="1"
               value={companyLogoScale}
               onChange={(event) => setCompanyLogoScale(Number(event.target.value))}
