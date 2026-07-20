@@ -33,6 +33,76 @@
   transform: none;
 }
 
+.as6-master__layout-tools {
+  position: absolute;
+  z-index: 14;
+  left: 50%;
+  top: -4px;
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  transform: translateX(-50%);
+}
+
+.as6-master__layout-start,
+.as6-master__layout-toolbar button {
+  border: 1px solid rgba(66, 112, 151, .16);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .76);
+  color: #557b9c;
+  box-shadow: 0 8px 24px rgba(46, 83, 113, .06);
+  backdrop-filter: blur(14px);
+  cursor: pointer;
+}
+
+.as6-master__layout-start {
+  padding: 7px 13px;
+  font-size: 10px;
+  opacity: .72;
+}
+
+.as6-master__layout-start:hover,
+.as6-master__layout-start:focus-visible { opacity: 1; }
+
+.as6-master__layout-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px;
+  border: 1px solid rgba(73, 122, 162, .20);
+  border-radius: 18px;
+  background: rgba(247, 251, 254, .94);
+  box-shadow: 0 16px 42px rgba(44, 80, 110, .12);
+  backdrop-filter: blur(20px);
+}
+
+.as6-master__layout-toolbar > span { display: grid; gap: 2px; padding: 0 8px 0 5px; white-space: nowrap; }
+.as6-master__layout-toolbar strong { font-size: 11px; font-weight: 600; }
+.as6-master__layout-toolbar small { color: var(--muted); font-size: 8px; }
+.as6-master__layout-toolbar button { padding: 7px 11px; font-size: 10px; }
+.as6-master__layout-toolbar button.is-primary { border-color:#2f709f; background:#2f709f; color:#fff; }
+.as6-master__layout-status { color: #39816f; font-size: 9px; }
+
+.as6-master__space.is-layout-editing .as6-master__node,
+.as6-master__space.is-layout-editing .as6-master__focus {
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+}
+
+.as6-master__space.is-layout-editing .as6-master__node:active,
+.as6-master__space.is-layout-editing .as6-master__focus:active { cursor: grabbing; }
+.as6-master__space.is-layout-editing .as6-master__node-mark { outline: 1px dashed rgba(47, 112, 159, .55); outline-offset: 8px; }
+.as6-master__space.is-layout-editing .as6-master__focus { padding: 16px; border: 1px dashed rgba(47, 112, 159, .48); border-radius: 18px; background: rgba(255,255,255,.42); }
+.as6-master__space.is-layout-editing .as6-master__focus button { pointer-events: none; }
+.as6-master__space.is-layout-editing .as6-master__node:hover,
+.as6-master__space.is-layout-editing .as6-master__node:focus-visible { transform: translate(-50%,-50%) scale(1.02); }
+
+.as6-master[data-theme="dark"] .as6-master__layout-start,
+.as6-master[data-theme="dark"] .as6-master__layout-toolbar { border-color:rgba(255,255,255,.14); background:rgba(17,18,21,.92); color:#d4d7dc; }
+.as6-master[data-theme="dark"] .as6-master__layout-toolbar button { border-color:rgba(255,255,255,.16); background:rgba(255,255,255,.05); color:#d4d7dc; }
+.as6-master[data-theme="dark"] .as6-master__layout-toolbar button.is-primary { background:#d7d9dd; color:#111216; }
+
 /* The identity mark is centered inside the left column. */
 .as6-master__logo {
   align-self: center;
@@ -412,6 +482,8 @@
   .as6-master__intent {
     grid-template-columns: 74px minmax(0, 1fr) 34px;
   }
+  .as6-master__layout-tools { top: 4px; }
+  .as6-master__layout-toolbar > span { display:none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
