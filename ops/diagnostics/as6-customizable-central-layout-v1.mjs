@@ -1,0 +1,39 @@
+import {
+  centralConnectionPath,
+  createDefaultCentralLayout,
+  moveCentralLayoutItem,
+  normalizeCentralLayout,
+  persistCentralLayout,
+  readCentralLayout,
+} from "../../frontend/src/living/product-v2/centralWorkspaceLayout.js";
+
+const values = new Map();
+globalThis.window = {
+  localStorage: {
+    getItem: (key) => values.get(key) ?? null,
+    setItem: (key, value) => values.set(key, value),
+    removeItem: (key) => values.delete(key),
+  },
+};
+
+const defaults = createDefaultCentralLayout();
+if (Object.keys(defaults).length !== 7) throw new Error("Six business nodes and the central goal are required");
+
+const moved = moveCentralLayoutItem(defaults, "sales", 99, -10);
+if (moved.sales.x !== 94 || moved.sales.y !== 6) throw new Error("Canvas boundary guard failed");
+
+const normalized = normalizeCentralLayout({ finance: { x: 25.25, y: 61.66 } });
+if (normalized.finance.x !== 25.3 || normalized.finance.y !== 61.7) throw new Error("Coordinate normalization failed");
+
+persistCentralLayout("workspace-a", moved);
+persistCentralLayout("workspace-b", defaults);
+if (readCentralLayout("workspace-a").sales.x !== 94) throw new Error("Workspace A persistence failed");
+if (readCentralLayout("workspace-b").sales.x !== 20) throw new Error("Workspace isolation failed");
+
+const path = centralConnectionPath({ from: "sales", to: "finance" }, moved);
+if (!/^M94 6 C/.test(path)) throw new Error("Dynamic connection path failed");
+
+console.log("AS6_CENTRAL_LAYOUT_BOUNDARY_GUARD=PASS");
+console.log("AS6_CENTRAL_LAYOUT_WORKSPACE_ISOLATION=PASS");
+console.log("AS6_CENTRAL_LAYOUT_DYNAMIC_CONNECTIONS=PASS");
+console.log("AS6_CUSTOMIZABLE_CENTRAL_LAYOUT_V1=PASS");
