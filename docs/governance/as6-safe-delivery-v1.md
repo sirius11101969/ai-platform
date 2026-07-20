@@ -91,17 +91,34 @@ and restores PostgreSQL into a temporary isolated container and volume. The
 temporary environment is removed after validation. Restoring over production is
 always a separate, explicitly approved incident operation.
 
-## Accessing initial staging
+## Accessing staging
 
-The initial staging HTTP listener is bound to `127.0.0.1:18080`. Use an SSH
-tunnel rather than exposing it publicly:
+The staging HTTP listener remains bound to `127.0.0.1:18080`. Before the public
+edge is activated, use an SSH tunnel:
 
 ```bash
 ssh -L 18080:127.0.0.1:18080 root@production-host
 ```
 
-Then open `http://127.0.0.1:18080`. A future `staging.as6.ru` edge may proxy to
-the same service after DNS, TLS and access control are configured.
+Then open `http://127.0.0.1:18080`.
+
+The canonical browser-review entry is `https://staging.as6.ru`. It terminates
+TLS at the production Nginx edge, requires protected access, sends no-index and
+no-store headers, and reaches only the staging Nginx container through the
+dedicated `as6-staging-edge` bridge. Staging data services remain on their
+isolated network. The distinct hostname also provides a separate browser
+origin from production.
+
+Activate it once DNS points to the production edge:
+
+```bash
+ops/bin/as6-configure-secure-staging-access-v1
+```
+
+The command creates root-only access material, expands the existing certificate
+to the staging hostname, installs the certificate reload hook, and runs the
+public smoke contract. It stops before mutation when DNS is absent or points to
+another edge.
 
 ## Failure classes closed
 
@@ -114,11 +131,16 @@ the same service after DNS, TLS and access control are configured.
 - `AS6_RESTORE_DRILL_GAP`
 - `AS6_UNENCRYPTED_OFFSITE_BACKUP_GAP`
 - `AS6_OFFSITE_UPLOAD_WITHOUT_INTEGRITY_CHECK_GAP`
+- `AS6_STAGING_PUBLIC_REVIEW_ACCESS_GAP`
+- `AS6_STAGING_BASIC_AUTH_BEARER_COLLISION_RISK`
+- `AS6_STAGING_EDGE_NETWORK_OVEREXPOSURE_RISK`
+- `AS6_STAGING_SEARCH_INDEXING_RISK`
+- `AS6_STAGING_ORIGIN_CREDENTIAL_COLLISION_RISK`
 
 ## Remaining operational requirements
 
-- complete one-time Google Drive OAuth authorization and verify the first encrypted upload;
-- verify the daily timer on production;
+- preserve offline recovery material for the encrypted Google Drive copy;
+- activate and verify `staging.as6.ru` after its DNS A record is present;
 - run and record restore drills regularly;
 - move staging to a separate VPS before production scale or compliance requires it;
 - use sanitized production-like fixtures, never an uncontrolled copy of personal data.

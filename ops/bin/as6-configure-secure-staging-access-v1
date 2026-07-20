@@ -1,0 +1,186 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="${AS6_ROOT:-/var/www/ai-platform}"
+DOMAIN="${AS6_STAGING_DOMAIN:-staging.as6.ru}"
+ACCESS_DIR="${AS6_STAGING_ACCESS_DIR:-/etc/as6/staging-access}"
+ACCESS_ENV="${AS6_STAGING_ACCESS_ENV_FILE:-/etc/as6/staging-access.env}"
+HTPASSWD_FILE="$ACCESS_DIR/staging.htpasswd"
+CERTBOT_WEBROOT="${AS6_CERTBOT_WEBROOT:-/var/www/as6-certbot}"
+STAGING_ENV="${AS6_STAGING_ENV_FILE:-$ROOT/.env.staging}"
+
+fail() {
+  echo "$1" >&2
+  exit 1
+}
+
+for command in docker openssl certbot curl getent awk; do
+  command -v "$command" >/dev/null || fail "Required command is missing: $command"
+done
+
+test "$(id -u)" = "0" || fail "Run as root"
+test "$DOMAIN" = "staging.as6.ru" || fail "Canonical staging domain must be staging.as6.ru"
+
+cd "$ROOT"
+test -f docker-compose.yml
+test -f docker-compose.staging.yml
+test -f "$STAGING_ENV"
+
+STAGING_IPS="$(getent ahostsv4 "$DOMAIN" | awk '{print $1}' | sort -u || true)"
+PRODUCTION_IPS="$(getent ahostsv4 www.as6.ru | awk '{print $1}' | sort -u || true)"
+test -n "$STAGING_IPS" || fail "DNS is not ready: create an A record staging.as6.ru pointing to the production VPS"
+test -n "$PRODUCTION_IPS" || fail "Could not resolve www.as6.ru"
+
+DNS_MATCH=0
+while IFS= read -r address; do
+  if printf '%s\n' "$PRODUCTION_IPS" | grep -Fxq "$address"; then
+    DNS_MATCH=1
+    break
+  fi
+done <<< "$STAGING_IPS"
+test "$DNS_MATCH" = "1" || fail "staging.as6.ru and www.as6.ru must resolve to the same public edge"
+
+umask 077
+install -d -m 700 "$ACCESS_DIR"
+install -d -m 755 "$CERTBOT_WEBROOT/.well-known/acme-challenge"
+
+if test -f "$ACCESS_ENV"; then
+  test "$(stat -c '%a' "$ACCESS_ENV")" = "600"
+  set -a
+  . "$ACCESS_ENV"
+  set +a
+else
+  read -r -p "Staging login: " AS6_STAGING_BASIC_AUTH_USER < /dev/tty
+  read -r -s -p "Staging password: " AS6_STAGING_BASIC_AUTH_PASSWORD < /dev/tty
+  echo
+  read -r -s -p "Repeat staging password: " AS6_STAGING_BASIC_AUTH_PASSWORD_REPEAT < /dev/tty
+  echo
+  test "$AS6_STAGING_BASIC_AUTH_PASSWORD" = "$AS6_STAGING_BASIC_AUTH_PASSWORD_REPEAT" || fail "Passwords do not match"
+  unset AS6_STAGING_BASIC_AUTH_PASSWORD_REPEAT
+
+  printf 'AS6_STAGING_DOMAIN=%q\n' "$DOMAIN" > "$ACCESS_ENV"
+  printf 'AS6_STAGING_BASIC_AUTH_USER=%q\n' "$AS6_STAGING_BASIC_AUTH_USER" >> "$ACCESS_ENV"
+  printf 'AS6_STAGING_BASIC_AUTH_PASSWORD=%q\n' "$AS6_STAGING_BASIC_AUTH_PASSWORD" >> "$ACCESS_ENV"
+  chmod 600 "$ACCESS_ENV"
+fi
+
+test "${AS6_STAGING_DOMAIN:-}" = "$DOMAIN"
+printf '%s' "$AS6_STAGING_BASIC_AUTH_USER" | grep -Eq '^[A-Za-z0-9._-]{3,64}$' || fail "Staging login contains unsupported characters"
+printf '%s' "$AS6_STAGING_BASIC_AUTH_PASSWORD" | grep -Eq '^[A-Za-z0-9._@%+=:-]{16,128}$' || fail "Use a staging password of 16-128 safe characters"
+
+PASSWORD_HASH="$(printf '%s\n' "$AS6_STAGING_BASIC_AUTH_PASSWORD" | openssl passwd -apr1 -stdin)"
+printf '%s:%s\n' "$AS6_STAGING_BASIC_AUTH_USER" "$PASSWORD_HASH" > "$HTPASSWD_FILE"
+NGINX_GID="$(docker exec ai-platform-nginx-1 id -g nginx)"
+printf '%s' "$NGINX_GID" | grep -Eq '^[0-9]+$'
+chown root:"$NGINX_GID" "$ACCESS_DIR" "$HTPASSWD_FILE"
+chmod 750 "$ACCESS_DIR"
+chmod 640 "$HTPASSWD_FILE"
+
+update_env_value() {
+  local key="$1"
+  local value="$2"
+  local file="$3"
+  local temp
+  temp="$(mktemp "${file}.XXXXXX")"
+  awk -v key="$key" -v value="$value" '
+    BEGIN { found=0 }
+    $0 ~ "^" key "=" { print key "=" value; found=1; next }
+    { print }
+    END { if (!found) print key "=" value }
+  ' "$file" > "$temp"
+  chmod 600 "$temp"
+  mv "$temp" "$file"
+}
+
+update_env_value AS6_STAGING_DOMAIN "$DOMAIN" "$STAGING_ENV"
+update_env_value APP_URL "https://$DOMAIN" "$STAGING_ENV"
+
+ops/bin/as6-ensure-staging-edge-network-v1
+
+PRODUCTION_IMAGE="$(docker inspect ai-platform-nginx-1 --format '{{.Config.Image}}')"
+STAGING_IMAGE="$(docker inspect ai-platform-staging-nginx-1 --format '{{.Config.Image}}')"
+
+resolve_release_tag() {
+  local image="$1"
+  case "$image" in
+    ai-platform-nginx)
+      printf '%s\n' latest
+      ;;
+    ai-platform-nginx:*)
+      printf '%s\n' "${image##*:}"
+      ;;
+    *)
+      fail "Unexpected AS6 nginx image: $image"
+      ;;
+  esac
+}
+
+PRODUCTION_TAG="$(resolve_release_tag "$PRODUCTION_IMAGE")"
+STAGING_TAG="$(resolve_release_tag "$STAGING_IMAGE")"
+test -n "$PRODUCTION_TAG"
+test -n "$STAGING_TAG"
+
+AS6_RELEASE_TAG="$STAGING_TAG" docker compose --env-file "$STAGING_ENV" \
+  -p ai-platform-staging -f docker-compose.staging.yml up -d --no-build backend nginx
+
+AS6_RELEASE_TAG="$PRODUCTION_TAG" docker compose \
+  -p ai-platform -f docker-compose.yml up -d --no-build --no-deps nginx
+
+PROBE="as6-edge-$(date -u +%Y%m%dT%H%M%SZ)"
+PROBE_FILE="$CERTBOT_WEBROOT/.well-known/acme-challenge/$PROBE"
+printf '%s\n' "$PROBE" > "$PROBE_FILE"
+chmod 644 "$PROBE_FILE"
+trap 'rm -f "$PROBE_FILE"' EXIT
+
+ACME_PROBE_READY=0
+for attempt in {1..20}; do
+  if test "$(curl -fsS --noproxy '*' --max-time 5 --resolve "$DOMAIN:80:127.0.0.1" "http://$DOMAIN/.well-known/acme-challenge/$PROBE" 2>/dev/null || true)" = "$PROBE"; then
+    ACME_PROBE_READY=1
+    echo "AS6_STAGING_ACME_ATTEMPT_${attempt}=PASS"
+    break
+  fi
+  echo "AS6_STAGING_ACME_ATTEMPT_${attempt}=WAIT"
+  sleep 1
+done
+test "$ACME_PROBE_READY" = "1" || fail "Staging ACME edge did not become ready"
+
+(
+  umask 022
+  certbot certonly --webroot --webroot-path "$CERTBOT_WEBROOT" \
+    --cert-name as6.ru --expand --non-interactive --agree-tos \
+    -d as6.ru -d www.as6.ru -d "$DOMAIN"
+)
+
+install -d -m 700 /etc/letsencrypt/renewal-hooks/deploy
+cat > /etc/letsencrypt/renewal-hooks/deploy/as6-reload-nginx <<'HOOK'
+#!/usr/bin/env bash
+set -Eeuo pipefail
+docker exec ai-platform-nginx-1 nginx -t
+docker exec ai-platform-nginx-1 nginx -s reload
+HOOK
+chmod 700 /etc/letsencrypt/renewal-hooks/deploy/as6-reload-nginx
+
+docker exec ai-platform-nginx-1 nginx -t
+docker exec ai-platform-nginx-1 nginx -s reload
+
+TLS_READY=0
+for attempt in {1..20}; do
+  if curl -fsS --noproxy '*' --max-time 5 \
+    --resolve "$DOMAIN:443:127.0.0.1" \
+    "https://$DOMAIN/robots.txt" >/dev/null 2>&1; then
+    TLS_READY=1
+    echo "AS6_STAGING_TLS_ATTEMPT_${attempt}=PASS"
+    break
+  fi
+  echo "AS6_STAGING_TLS_ATTEMPT_${attempt}=WAIT"
+  sleep 1
+done
+test "$TLS_READY" = "1" || fail "Staging TLS certificate did not become ready"
+
+AS6_STAGING_ACCESS_ENV_FILE="$ACCESS_ENV" ops/bin/as6-secure-staging-smoke-v1
+
+echo "AS6_STAGING_HTPASSWD_PERMISSIONS=PASS"
+echo "AS6_STAGING_EDGE_NETWORK=PASS"
+echo "AS6_STAGING_CERTIFICATE=PASS"
+echo "AS6_STAGING_BASIC_AUTH=PASS"
+echo "AS6_SECURE_STAGING_ACCESS=PASS"

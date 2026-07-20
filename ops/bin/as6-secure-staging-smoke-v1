@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ACCESS_ENV="${AS6_STAGING_ACCESS_ENV_FILE:-/etc/as6/staging-access.env}"
+
+test -f "$ACCESS_ENV"
+test "$(stat -c '%a' "$ACCESS_ENV")" = "600"
+
+set -a
+. "$ACCESS_ENV"
+set +a
+
+: "${AS6_STAGING_DOMAIN:?AS6_STAGING_DOMAIN is required}"
+: "${AS6_STAGING_BASIC_AUTH_USER:?AS6_STAGING_BASIC_AUTH_USER is required}"
+: "${AS6_STAGING_BASIC_AUTH_PASSWORD:?AS6_STAGING_BASIC_AUTH_PASSWORD is required}"
+
+test "$AS6_STAGING_DOMAIN" = "staging.as6.ru"
+
+CURL_CONFIG="$(mktemp /tmp/as6-staging-curl.XXXXXX)"
+HEADERS="$(mktemp /tmp/as6-staging-headers.XXXXXX)"
+ROBOTS="$(mktemp /tmp/as6-staging-robots.XXXXXX)"
+trap 'rm -f "$CURL_CONFIG" "$HEADERS" "$ROBOTS"' EXIT
+chmod 600 "$CURL_CONFIG" "$HEADERS" "$ROBOTS"
+printf 'user = "%s:%s"\n' "$AS6_STAGING_BASIC_AUTH_USER" "$AS6_STAGING_BASIC_AUTH_PASSWORD" > "$CURL_CONFIG"
+
+BASE_URL="https://$AS6_STAGING_DOMAIN"
+UNAUTH_CODE="$(curl -sS --max-time 15 -o /dev/null -w '%{http_code}' "$BASE_URL/" || true)"
+test "$UNAUTH_CODE" = "401"
+BEARER_SHELL_CODE="$(curl -sS --max-time 15 -H 'Authorization: Bearer invalid-staging-probe' -o /dev/null -w '%{http_code}' "$BASE_URL/" || true)"
+test "$BEARER_SHELL_CODE" = "401"
+
+ROOT_CODE="$(curl -sS --max-time 20 --config "$CURL_CONFIG" -o /dev/null -w '%{http_code}' "$BASE_URL/")"
+APP_CODE="$(curl -sS --max-time 20 --config "$CURL_CONFIG" -o /dev/null -w '%{http_code}' "$BASE_URL/app")"
+HEALTH_CODE="$(curl -sS --max-time 20 --config "$CURL_CONFIG" -o /dev/null -w '%{http_code}' "$BASE_URL/api/health")"
+echo "AS6_STAGING_UNAUTH_CODE=$UNAUTH_CODE"
+echo "AS6_STAGING_BEARER_SHELL_CODE=$BEARER_SHELL_CODE"
+echo "AS6_STAGING_ROOT_CODE=$ROOT_CODE"
+echo "AS6_STAGING_APP_CODE=$APP_CODE"
+echo "AS6_STAGING_HEALTH_CODE=$HEALTH_CODE"
+test "$ROOT_CODE" = "200"
+test "$APP_CODE" = "200"
+test "$HEALTH_CODE" = "200"
+
+curl -sS --max-time 20 --config "$CURL_CONFIG" -D "$HEADERS" -o /dev/null "$BASE_URL/"
+tr -d '\r' < "$HEADERS" | grep -Eqi '^X-AS6-Environment:[[:space:]]*staging$'
+tr -d '\r' < "$HEADERS" | grep -Eqi '^X-Robots-Tag:[[:space:]]*noindex, nofollow, noarchive$'
+tr -d '\r' < "$HEADERS" | grep -Eqi '^Cache-Control:[[:space:]]*no-store, no-cache, must-revalidate$'
+! tr -d '\r' < "$HEADERS" | grep -Eqi '^Set-Cookie:.*Domain=\.?((www\.)?as6\.ru)(;|$)'
+
+curl -sS --max-time 20 "$BASE_URL/robots.txt" > "$ROBOTS"
+grep -Fxq 'User-agent: *' "$ROBOTS"
+grep -Fxq 'Disallow: /' "$ROBOTS"
+
+echo "AS6_STAGING_TLS=PASS"
+echo "AS6_STAGING_ACCESS_CONTROL=PASS"
+echo "AS6_STAGING_STATIC_BEARER_BYPASS_REJECTED=PASS"
+echo "AS6_STAGING_NOINDEX=PASS"
+echo "AS6_STAGING_ORIGIN_ISOLATION=PASS"
+echo "AS6_SECURE_STAGING_SMOKE=PASS"

@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+NETWORK_NAME="${AS6_STAGING_EDGE_NETWORK:-as6-staging-edge}"
+
+test "$NETWORK_NAME" = "as6-staging-edge"
+
+if ! docker network inspect "$NETWORK_NAME" >/dev/null 2>&1; then
+  docker network create \
+    --driver bridge \
+    --label com.as6.purpose=staging-edge \
+    "$NETWORK_NAME" >/dev/null
+fi
+
+test "$(docker network inspect "$NETWORK_NAME" --format '{{.Driver}}')" = "bridge"
+
+echo "AS6_STAGING_EDGE_NETWORK_READY=PASS"

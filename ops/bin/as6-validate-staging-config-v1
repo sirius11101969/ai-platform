@@ -28,6 +28,8 @@ if (value('AI_EXECUTION_ADMIN_KEY').length < 32 || value('AI_EXECUTION_ADMIN_KEY
 const databaseUrl = new URL(value('DATABASE_URL'))
 if (databaseUrl.password.length < 24 || databaseUrl.password === 'password') fail('Unique staging database password is required')
 if (value('APP_URL') === 'https://www.as6.ru' || value('APP_URL') === 'https://as6.ru') fail('Staging must not use the production APP_URL')
+const appUrl = new URL(value('APP_URL'))
+if (appUrl.protocol !== 'https:' || appUrl.hostname !== 'staging.as6.ru') fail('Staging APP_URL must be https://staging.as6.ru')
 if (!['disabled', 'test'].includes(value('YOOKASSA_MODE').toLowerCase())) fail('Staging YooKassa mode must be disabled or test')
 if (!['disabled', 'test', 'mock'].includes(value('PAYMENT_MODE').toLowerCase())) fail('Staging payment mode must be disabled, test, or mock')
 if (value('STRIPE_MODE') !== 'disabled') fail('Stripe must be disabled in staging')

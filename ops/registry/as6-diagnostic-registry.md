@@ -153,3 +153,12 @@
 - control: ops/bin/as6-control-offsite-backup-v1
 - failure_classes: AS6_RCLONE_ENCRYPTED_CONFIG_HEADER_POSITION_DRIFT, AS6_RCLONE_CRYPT_ROOT_BOOTSTRAP_ORDER_GAP
 - result: AS6_RCLONE_ENCRYPTED_HEADER_COMPAT=REGISTERED
+
+## AS6 Secure Staging Access v1
+- diagnostic: protected browser review must preserve staging isolation and application Bearer authorization
+- diagnostic_artifact: ops/diagnostics/as6-secure-staging-access-v1.md
+- control: ops/bin/as6-control-secure-staging-access-v1
+- runtime_smoke: ops/bin/as6-secure-staging-smoke-v1
+- aec: ops/governance/as6-secure-staging-access-v1-aec.md
+- failure_classes: AS6_STAGING_PUBLIC_REVIEW_ACCESS_GAP, AS6_STAGING_BASIC_AUTH_BEARER_COLLISION_RISK, AS6_STAGING_EDGE_NETWORK_OVEREXPOSURE_RISK, AS6_STAGING_SEARCH_INDEXING_RISK, AS6_STAGING_ORIGIN_CREDENTIAL_COLLISION_RISK
+- result: AS6_SECURE_STAGING_ACCESS_V1=REGISTERED

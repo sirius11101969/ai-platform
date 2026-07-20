@@ -28,6 +28,8 @@ NGINX_IMAGE_ID="$(docker image inspect "$NGINX_IMAGE" --format '{{.Id}}')"
 grep -qx "AS6_BACKEND_IMAGE_ID=$BACKEND_IMAGE_ID" "$ATTESTATION"
 grep -qx "AS6_NGINX_IMAGE_ID=$NGINX_IMAGE_ID" "$ATTESTATION"
 
+ops/bin/as6-ensure-staging-edge-network-v1
+
 OLD_BACKEND_CONTAINER="$(docker compose ps -q backend)"
 OLD_NGINX_CONTAINER="$(docker compose ps -q nginx)"
 test -n "$OLD_BACKEND_CONTAINER"

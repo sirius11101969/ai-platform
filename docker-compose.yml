@@ -86,12 +86,24 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /etc/as6/staging-access:/etc/nginx/as6:ro
+      - /var/www/as6-certbot:/var/www/certbot:ro
     depends_on:
       - backend
+    networks:
+      default:
+      as6_staging_edge:
+        aliases:
+          - as6-production-edge
 
 volumes:
   postgres_data:
   attachment_storage:
   redis_data:
+
+networks:
+  as6_staging_edge:
+    name: as6-staging-edge
+    external: true

@@ -14,6 +14,7 @@ ATTESTATION="$ROOT/runtime/as6-releases/$RELEASE_SHA/staging-passed.env"
 test -f "$BUILD_MANIFEST"
 AS6_RELEASE_TAG="$RELEASE_TAG" AS6_STAGING_ENV_FILE="$ENV_FILE" \
   ops/bin/as6-validate-staging-config-v1
+ops/bin/as6-ensure-staging-edge-network-v1
 
 test "$(docker image inspect "ai-platform-backend:$RELEASE_TAG" --format '{{ index .Config.Labels "org.opencontainers.image.revision" }}')" = "$RELEASE_SHA"
 test "$(docker image inspect "ai-platform-nginx:$RELEASE_TAG" --format '{{ index .Config.Labels "org.opencontainers.image.revision" }}')" = "$RELEASE_SHA"
@@ -24,6 +25,12 @@ AS6_RELEASE_TAG="$RELEASE_TAG" docker compose --env-file "$ENV_FILE" \
 AS6_RELEASE_TAG="$RELEASE_TAG" AS6_STAGING_ENV_FILE="$ENV_FILE" \
   ops/bin/as6-staging-smoke-v1
 
+PUBLIC_EDGE_RESULT="NOT_CONFIGURED"
+if test -f /etc/as6/staging-access.env; then
+  ops/bin/as6-secure-staging-smoke-v1
+  PUBLIC_EDGE_RESULT="PASS"
+fi
+
 cat > "$ATTESTATION" <<EOF
 AS6_RELEASE_SHA=$RELEASE_SHA
 AS6_RELEASE_TAG=$RELEASE_TAG
@@ -32,8 +39,10 @@ AS6_NGINX_IMAGE_ID=$(docker image inspect "ai-platform-nginx:$RELEASE_TAG" --for
 AS6_STAGING_ENV_SHA256=$(sha256sum "$ENV_FILE" | awk '{print $1}')
 AS6_STAGING_PASSED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 AS6_STAGING_RESULT=PASS
+AS6_STAGING_PUBLIC_EDGE_RESULT=$PUBLIC_EDGE_RESULT
 EOF
 chmod 600 "$ATTESTATION"
 
 echo "AS6_STAGING_DEPLOYMENT=PASS"
+echo "AS6_STAGING_PUBLIC_EDGE_RESULT=$PUBLIC_EDGE_RESULT"
 echo "AS6_STAGING_ATTESTATION=$ATTESTATION"

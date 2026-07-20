@@ -42,3 +42,8 @@
 | AUTONOMOUS_CONTROLLER_CLUSTER_CONTRACT_DRIFT | use-shared-fast-autonomous-controller-contract | ENABLED |
 | AUTONOMOUS_CONTROLLER_CLUSTER_STATUS_REGISTRY_DRIFT | require-controller-cluster-status-registry-entry | ENABLED |
 | FULL_DIAGNOSE_LONG_RUN_SSH_RESET_DRIFT | use-fast-final-green-proof-for-commit-gate | ENABLED |
+| AS6_STAGING_PUBLIC_REVIEW_ACCESS_GAP | require-protected-canonical-staging-host | ENABLED |
+| AS6_STAGING_BASIC_AUTH_BEARER_COLLISION_RISK | preserve-application-bearer-authorization-at-staging-edge | ENABLED |
+| AS6_STAGING_EDGE_NETWORK_OVEREXPOSURE_RISK | allow-only-nginx-containers-on-shared-staging-edge | ENABLED |
+| AS6_STAGING_SEARCH_INDEXING_RISK | require-noindex-robots-and-no-store-on-staging | ENABLED |
+| AS6_STAGING_ORIGIN_CREDENTIAL_COLLISION_RISK | keep-staging-on-distinct-origin-and-reject-production-domain-cookies | ENABLED |

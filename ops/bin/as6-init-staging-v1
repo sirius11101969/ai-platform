@@ -8,8 +8,24 @@ cd "$ROOT"
 test -f .env.staging.example
 
 if test -f "$ENV_FILE"; then
+  TEMP="$(mktemp "${ENV_FILE}.canonical.XXXXXX")"
+  trap 'rm -f "$TEMP"' EXIT
+  awk '
+    BEGIN { domain=0; app_url=0 }
+    /^AS6_STAGING_DOMAIN=/ { print "AS6_STAGING_DOMAIN=staging.as6.ru"; domain=1; next }
+    /^APP_URL=/ { print "APP_URL=https://staging.as6.ru"; app_url=1; next }
+    { print }
+    END {
+      if (!domain) print "AS6_STAGING_DOMAIN=staging.as6.ru"
+      if (!app_url) print "APP_URL=https://staging.as6.ru"
+    }
+  ' "$ENV_FILE" > "$TEMP"
+  chmod 600 "$TEMP"
+  mv "$TEMP" "$ENV_FILE"
+  trap - EXIT
   chmod 600 "$ENV_FILE"
   echo "AS6_STAGING_ENV=EXISTING"
+  echo "AS6_STAGING_CANONICAL_ORIGIN=PASS"
   exit 0
 fi
 
@@ -20,11 +36,12 @@ ADMIN_KEY="$(openssl rand -hex 48)"
 umask 077
 cat > "$ENV_FILE" <<EOF
 AS6_ENVIRONMENT=staging
+AS6_STAGING_DOMAIN=staging.as6.ru
 AS6_STAGING_HTTP_PORT=18080
 AS6_STAGING_DB_PASSWORD=$DB_PASSWORD
 JWT_SECRET=$JWT_SECRET
 AI_EXECUTION_ADMIN_KEY=$ADMIN_KEY
-APP_URL=http://127.0.0.1:18080
+APP_URL=https://staging.as6.ru
 PAYMENT_MODE=disabled
 PAYMENT_WEBHOOK_SECRET=
 YOOKASSA_MODE=disabled
