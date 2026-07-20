@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="${AS6_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
+MASTER="$ROOT/frontend/src/living/product-v2/AS6MasterScreen.jsx"
+LAYOUT="$ROOT/frontend/src/living/product-v2/centralWorkspaceLayout.js"
+STYLES="$ROOT/frontend/src/living/product-v2/AS6MasterScreenReference.css"
+
+test -f "$MASTER"
+test -f "$LAYOUT"
+test -f "$STYLES"
+
+grep -Fq 'readCentralLayout(workspaceId)' "$MASTER"
+grep -Fq 'persistCentralLayout(workspaceId' "$MASTER"
+grep -Fq 'centralConnectionPath(connection, layout)' "$MASTER"
+grep -Fq 'onPointerDown={(event) => startDrag(event, space.id)}' "$MASTER"
+grep -Fq 'onPointerDown={(event) => startDrag(event, "focus")}' "$MASTER"
+grep -Fq 'nudgeLayoutItem' "$MASTER"
+grep -Fq 'as6-master__layout-toolbar' "$STYLES"
+grep -Fq 'touch-action: none' "$STYLES"
+
+node "$ROOT/ops/diagnostics/as6-customizable-central-layout-v1.mjs"
+
+echo "AS6_CUSTOMIZABLE_CENTRAL_LAYOUT_V1=PASS"
