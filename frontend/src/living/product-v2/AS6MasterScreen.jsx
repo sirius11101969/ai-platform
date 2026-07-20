@@ -1,15 +1,19 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./AS6MasterScreen.css";
 import "./AS6MasterScreenPolish.css";
 import "./AS6MasterScreenReference.css";
 import { createLivingShellSnapshot } from "./livingShellFoundation.js";
 import { livingIntlLocale } from "./livingLocalization.js";
 import { useLivingSpeechRecognition } from "./useLivingSpeechRecognition.js";
+import {
+  centralConnectionPath,
+  createDefaultCentralLayout,
+  moveCentralLayoutItem,
+  persistCentralLayout,
+  readCentralLayout,
+} from "./centralWorkspaceLayout.js";
 
-const graphPoints = [
-  [20, 20], [50, 12], [77, 25], [16, 58], [10, 84], [83, 73],
-  [14, 40], [12, 70], [34, 89], [55, 87], [86, 48], [67, 17],
-];
+const decorativeGraphPoints = [[14, 40], [12, 70], [34, 89], [55, 87], [86, 48], [67, 17]];
 
 function NodeGlyph({ type }) {
   if (type === "sales") {
@@ -77,6 +81,14 @@ export default function AS6MasterScreen({
   const [panel, setPanel] = useState("");
   const [now, setNow] = useState(() => new Date());
   const [intentSource, setIntentSource] = useState("suggested");
+  const workspaceId = shell.workspace?.id || "default";
+  const [layout, setLayout] = useState(() => readCentralLayout(workspaceId));
+  const [layoutEditing, setLayoutEditing] = useState(false);
+  const [layoutStatus, setLayoutStatus] = useState("");
+  const layoutBeforeEditRef = useRef(layout);
+  const layoutRef = useRef(layout);
+  const spaceRef = useRef(null);
+  const dragRef = useRef(null);
   const acceptTranscript = useCallback((transcript) => {
     setIntent(transcript);
     setIntentSource("voice");
@@ -92,6 +104,48 @@ export default function AS6MasterScreen({
     setIntent("");
     setIntentSource("suggested");
   }, [priority.id]);
+
+  useEffect(() => {
+    const nextLayout = readCentralLayout(workspaceId);
+    setLayout(nextLayout);
+    layoutRef.current = nextLayout;
+    layoutBeforeEditRef.current = nextLayout;
+    dragRef.current = null;
+    setLayoutEditing(false);
+    setLayoutStatus("");
+  }, [workspaceId]);
+
+  useEffect(() => {
+    layoutRef.current = layout;
+  }, [layout]);
+
+  useEffect(() => {
+    function movePointer(event) {
+      const drag = dragRef.current;
+      const bounds = spaceRef.current?.getBoundingClientRect();
+      if (!drag || !bounds?.width || !bounds?.height) return;
+      const x = drag.origin.x + ((event.clientX - drag.pointer.x) / bounds.width) * 100;
+      const y = drag.origin.y + ((event.clientY - drag.pointer.y) / bounds.height) * 100;
+      setLayout((current) => {
+        const next = moveCentralLayoutItem(current, drag.id, x, y);
+        layoutRef.current = next;
+        return next;
+      });
+    }
+
+    function stopPointer() {
+      dragRef.current = null;
+    }
+
+    window.addEventListener("pointermove", movePointer);
+    window.addEventListener("pointerup", stopPointer);
+    window.addEventListener("pointercancel", stopPointer);
+    return () => {
+      window.removeEventListener("pointermove", movePointer);
+      window.removeEventListener("pointerup", stopPointer);
+      window.removeEventListener("pointercancel", stopPointer);
+    };
+  }, []);
 
   const time = useMemo(() => formatTime(now, shell.locale), [now, shell.locale]);
   const date = useMemo(() => formatDate(now, shell.locale), [now, shell.locale]);
@@ -149,6 +203,63 @@ export default function AS6MasterScreen({
     return new Intl.DateTimeFormat(livingIntlLocale(shell.locale), { hour: "2-digit", minute: "2-digit" }).format(new Date(value));
   }
 
+  function beginLayoutEdit() {
+    layoutBeforeEditRef.current = layoutRef.current;
+    setLayoutStatus("");
+    setActiveSpace(null);
+    setLayoutEditing(true);
+  }
+
+  function cancelLayoutEdit() {
+    layoutRef.current = layoutBeforeEditRef.current;
+    setLayout(layoutBeforeEditRef.current);
+    setLayoutStatus("");
+    setLayoutEditing(false);
+  }
+
+  function saveLayoutEdit() {
+    try {
+      const saved = persistCentralLayout(workspaceId, layoutRef.current);
+      layoutRef.current = saved;
+      setLayout(saved);
+      setLayoutStatus(t("layoutSaved"));
+      setLayoutEditing(false);
+    } catch {
+      setLayoutStatus(t("layoutSaveError"));
+    }
+  }
+
+  function resetLayoutEdit() {
+    const reset = createDefaultCentralLayout();
+    layoutRef.current = reset;
+    setLayout(reset);
+    setLayoutStatus(t("layoutResetReady"));
+  }
+
+  function startDrag(event, id) {
+    if (!layoutEditing || event.button !== 0) return;
+    event.preventDefault();
+    dragRef.current = {
+      id,
+      pointer: { x: event.clientX, y: event.clientY },
+      origin: layoutRef.current[id],
+    };
+  }
+
+  function nudgeLayoutItem(event, id) {
+    if (!layoutEditing || !["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) return;
+    event.preventDefault();
+    const step = event.shiftKey ? 2 : 0.5;
+    const point = layoutRef.current[id];
+    const x = point.x + (event.key === "ArrowLeft" ? -step : event.key === "ArrowRight" ? step : 0);
+    const y = point.y + (event.key === "ArrowUp" ? -step : event.key === "ArrowDown" ? step : 0);
+    setLayout((current) => {
+      const next = moveCentralLayoutItem(current, id, x, y);
+      layoutRef.current = next;
+      return next;
+    });
+  }
+
   return (
     <section
       className={`as6-master${speech.listening ? " is-listening" : ""}`}
@@ -188,7 +299,20 @@ export default function AS6MasterScreen({
           </div>
         </header>
 
-        <main className="as6-master__space">
+        <main className={`as6-master__space${layoutEditing ? " is-layout-editing" : ""}`} ref={spaceRef}>
+          <div className="as6-master__layout-tools" aria-live="polite">
+            {!layoutEditing ? (
+              <button type="button" className="as6-master__layout-start" onClick={beginLayoutEdit}>✦ {t("customizeSpace")}</button>
+            ) : (
+              <div className="as6-master__layout-toolbar" role="group" aria-label={t("layoutEditMode")}>
+                <span><strong>{t("layoutEditMode")}</strong><small>{t("layoutBrowserNote")}</small></span>
+                <button type="button" onClick={resetLayoutEdit}>{t("resetLayout")}</button>
+                <button type="button" onClick={cancelLayoutEdit}>{t("cancel")}</button>
+                <button type="button" className="is-primary" onClick={saveLayoutEdit}>{t("done")}</button>
+              </div>
+            )}
+            {layoutStatus && <small className="as6-master__layout-status">{layoutStatus}</small>}
+          </div>
           <svg className="as6-master__graph" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
             <defs>
               <filter id="as6-soft-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="0.55" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
@@ -197,10 +321,13 @@ export default function AS6MasterScreen({
               {shell.connections.map((connection) => {
                 const related = activeSpace && (connection.from === activeSpace || connection.to === activeSpace);
                 const muted = activeSpace && !related;
-                return <path key={connection.id} className={`is-${connection.kind}${related ? " is-related" : ""}${muted ? " is-muted" : ""}`} d={connection.d} />;
+                return <path key={connection.id} className={`is-${connection.kind}${related ? " is-related" : ""}${muted ? " is-muted" : ""}`} d={centralConnectionPath(connection, layout)} />;
               })}
             </g>
-            <g className="as6-master__graph-points">{graphPoints.map(([cx, cy], index) => <circle key={`${cx}-${cy}-${index}`} cx={cx} cy={cy} r={index < 6 ? 0.48 : 0.30} />)}</g>
+            <g className="as6-master__graph-points">
+              {shell.spaces.map((space) => <circle key={`anchor-${space.id}`} cx={layout[space.id]?.x ?? space.x} cy={layout[space.id]?.y ?? space.y} r={0.48} />)}
+              {decorativeGraphPoints.map(([cx, cy], index) => <circle key={`ambient-${cx}-${cy}-${index}`} cx={cx} cy={cy} r={0.30} />)}
+            </g>
           </svg>
 
           {shell.spaces.map((space) => {
@@ -211,12 +338,14 @@ export default function AS6MasterScreen({
                 key={space.id}
                 type="button"
                 className={`as6-master__node as6-master__node--${space.id}${isActive ? " is-active" : ""}${isMuted ? " is-muted" : ""}`}
-                style={{ left: `${space.x}%`, top: `${space.y}%` }}
+                style={{ left: `${layout[space.id]?.x ?? space.x}%`, top: `${layout[space.id]?.y ?? space.y}%` }}
+                onPointerDown={(event) => startDrag(event, space.id)}
+                onKeyDown={(event) => nudgeLayoutItem(event, space.id)}
                 onMouseEnter={() => setActiveSpace(space.id)}
                 onMouseLeave={() => setActiveSpace(null)}
                 onFocus={() => setActiveSpace(space.id)}
                 onBlur={() => setActiveSpace(null)}
-                onClick={() => navigateForPriority(space.id)}
+                onClick={() => { if (!layoutEditing) navigateForPriority(space.id); }}
                 aria-label={`${space.label}. ${space.note}`}
               >
                 <span className="as6-master__node-mark" aria-hidden="true"><NodeGlyph type={space.id} /></span>
@@ -225,14 +354,22 @@ export default function AS6MasterScreen({
             );
           })}
 
-          <article className="as6-master__focus" key={priority.id}>
+          <article
+            className="as6-master__focus"
+            key={priority.id}
+            style={{ left: `${layout.focus.x}%`, top: `${layout.focus.y}%` }}
+            onPointerDown={(event) => startDrag(event, "focus")}
+            onKeyDown={(event) => nudgeLayoutItem(event, "focus")}
+            tabIndex={layoutEditing ? 0 : undefined}
+            aria-label={layoutEditing ? t("moveMainGoal") : undefined}
+          >
             <span className="as6-master__focus-kicker">{t("mainGoal")}</span>
-            <button type="button" className="as6-master__goal-button" onClick={() => setPanel("goals")}><h2>{priority.title}</h2></button>
-            <button type="button" className="as6-master__thinking" aria-live="polite" onClick={() => navigateForPriority(priority.actionTarget || "conductor", { actionCode: priority.actionCode })}>
+            <button type="button" className="as6-master__goal-button" disabled={layoutEditing} onClick={() => setPanel("goals")}><h2>{priority.title}</h2></button>
+            <button type="button" className="as6-master__thinking" disabled={layoutEditing} aria-live="polite" onClick={() => navigateForPriority(priority.actionTarget || "conductor", { actionCode: priority.actionCode })}>
               <span className="as6-master__thinking-dot" aria-hidden="true" />
               <div><small>{t("as6Now")}</small><strong>{priority.activity}</strong></div>
             </button>
-            <button type="button" className="as6-master__outcome" onClick={() => navigateForPriority("analytics")}>
+            <button type="button" className="as6-master__outcome" disabled={layoutEditing} onClick={() => navigateForPriority("analytics")}>
               <span>{priority.metricLabel}</span>
               <strong>{priority.metricValue}</strong>
               <small>{priority.metricDelta}</small>
