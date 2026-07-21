@@ -137,6 +137,14 @@ const PLAN_NAMES = {
   en: { free: "Basic", starter: "Starter", pro: "Pro", business: "Business", enterprise: "Enterprise" },
 };
 
+const PLAN_WORKSPACE_LIMITS = {
+  free: 1,
+  starter: 1,
+  pro: 3,
+  business: 10,
+  enterprise: 1000,
+};
+
 function buildIdentity({ user, workspace, fallbackName, locale }) {
   const displayName = cleanName(
     user?.displayName || user?.display_name || user?.fullName || user?.full_name || user?.name,
@@ -291,9 +299,10 @@ export function createLivingShellSnapshot({
     offline: "dataOffline",
   }[dataStatus] || "dataLoading";
   const workspaces = livingData?.workspaces || (workspace ? [workspace] : []);
-  const workspaceLimit = Number(workspace?.limits?.workspacesLimit || 1);
+  const accountPlanKey = String(livingData?.profile?.plan || user?.plan || workspace?.plan || "free").toLowerCase();
+  const workspaceLimit = Number(PLAN_WORKSPACE_LIMITS[accountPlanKey] || workspace?.limits?.workspacesLimit || 1);
   const ownedWorkspaceCount = workspaces.filter((item) => item.role === "owner" || item.ownerUserId === workspace?.ownerUserId).length;
-  const planKey = String(workspace?.plan || "free").toLowerCase();
+  const planKey = accountPlanKey;
   return {
     version: "as6-screen1-interaction-multi-workspace-v1",
     snapshotId: `${workspace?.id || "default"}:${priority.id}:${livingData?.loadedAt || "boot"}`,
