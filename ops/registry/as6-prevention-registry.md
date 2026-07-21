@@ -47,3 +47,8 @@
 | AS6_STAGING_EDGE_NETWORK_OVEREXPOSURE_RISK | allow-only-nginx-containers-on-shared-staging-edge | ENABLED |
 | AS6_STAGING_SEARCH_INDEXING_RISK | require-noindex-robots-and-no-store-on-staging | ENABLED |
 | AS6_STAGING_ORIGIN_CREDENTIAL_COLLISION_RISK | keep-staging-on-distinct-origin-and-reject-production-domain-cookies | ENABLED |
+| AS6_STAGING_PRICING_PRODUCTION_CHECKOUT_COLLISION | route-staging-plan-change-through-server-gated-simulation | ENABLED |
+| AS6_STAGING_REAL_PAYMENT_MUTATION_RISK | block-provider-access-and-credentials-in-staging | ENABLED |
+| AS6_STAGING_TEST_ACTIVATION_FEEDBACK_GAP | label-staging-activation-as-test-only | ENABLED |
+| AS6_STAGING_PAYMENT_ENV_CANONICALIZATION_GAP | canonicalize-staging-payment-environment-before-deploy | ENABLED |
+| AS6_STAGING_PAYMENT_IMAGE_VALIDATION_GAP | run-payment-policy-tests-in-immutable-image-with-network-none | ENABLED |
