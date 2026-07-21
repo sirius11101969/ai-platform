@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./LivingCanonicalApp.css";
-import { clearAuthSession, createWorkspace, getStoredUser, setActiveWorkspaceId } from "../../services/api.js";
+import { clearAuthSession, createWorkspace, getStoredUser, isWorkspaceRefreshStorageEvent, setActiveWorkspaceId } from "../../services/api.js";
 import { loadLivingReadOnlyData } from "./livingReadOnlyData.js";
 import AS6MasterScreen from "./AS6MasterScreen.jsx";
 import LivingSpaceEngine from "./LivingSpaceEngine.jsx";
@@ -224,17 +224,29 @@ export default function LivingCanonicalApp() {
     };
     const onPointer = (event) => { if (profileRef.current && !profileRef.current.contains(event.target)) setProfileOpen(false); };
     const onWorkspace = () => refreshLivingData();
+    const onStorage = (event) => { if (isWorkspaceRefreshStorageEvent(event)) refreshLivingData(); };
+    const onPageShow = () => refreshLivingData();
+    const onFocus = () => refreshLivingData();
+    const onVisibility = () => { if (document.visibilityState === "visible") refreshLivingData(); };
     const onOnline = () => { setOnline(true); refreshLivingData(); };
     const onOffline = () => setOnline(false);
     window.addEventListener("popstate", onPop);
     window.addEventListener("pointerdown", onPointer);
     window.addEventListener("ai-platform-workspace-updated", onWorkspace);
+    window.addEventListener("storage", onStorage);
+    window.addEventListener("pageshow", onPageShow);
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onVisibility);
     window.addEventListener("online", onOnline);
     window.addEventListener("offline", onOffline);
     return () => {
       window.removeEventListener("popstate", onPop);
       window.removeEventListener("pointerdown", onPointer);
       window.removeEventListener("ai-platform-workspace-updated", onWorkspace);
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener("pageshow", onPageShow);
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("online", onOnline);
       window.removeEventListener("offline", onOffline);
     };
