@@ -19,6 +19,7 @@ incompatible.
 - `AS6_STAGING_TEST_ACTIVATION_FEEDBACK_GAP`
 - `AS6_STAGING_PAYMENT_ENV_CANONICALIZATION_GAP`
 - `AS6_STAGING_PAYMENT_IMAGE_VALIDATION_GAP`
+- `AS6_PLAN_ACTIVATION_STALE_SHELL_STATE`
 
 ## Repair
 
@@ -32,6 +33,8 @@ incompatible.
 - canonicalize the existing staging environment before deployment;
 - execute payment policy and service tests inside the immutable staging backend
   image with networking disabled.
+- publish a workspace refresh signal after activation and reload Living Shell
+  data on same-tab events, cross-tab storage changes, browser return, and focus.
 
 ## Safety result
 
