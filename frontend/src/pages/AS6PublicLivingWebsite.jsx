@@ -162,9 +162,11 @@ function planFeatures(plan) {
 export function AS6PublicLivingPricingPage({ isAuthenticated = false }) {
   const [plans, setPlans] = useState([])
   const [billing, setBilling] = useState(null)
+  const [checkout, setCheckout] = useState(null)
   const [workspace, setWorkspace] = useState(null)
   const [loadingPlan, setLoadingPlan] = useState('')
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
   const selectedPlan = useMemo(() => new URLSearchParams(window.location.search).get('plan') || '', [])
 
   useEffect(() => {
@@ -173,6 +175,7 @@ export function AS6PublicLivingPricingPage({ isAuthenticated = false }) {
       if (cancelled) return
       setPlans(catalog?.plans || [])
       setBilling(catalog?.billing || null)
+      setCheckout(catalog?.checkout || null)
     }).catch((requestError) => {
       if (!cancelled) setError(requestError?.message || 'Не удалось загрузить тарифы')
     })
@@ -191,6 +194,7 @@ export function AS6PublicLivingPricingPage({ isAuthenticated = false }) {
 
   async function choosePlan(plan) {
     setError('')
+    setSuccess('')
     if (plan.key === 'enterprise') {
       window.location.assign('/contact')
       return
@@ -211,9 +215,16 @@ export function AS6PublicLivingPricingPage({ isAuthenticated = false }) {
 
     try {
       setLoadingPlan(plan.key)
-      const checkout = await createPlanCheckout(plan.key, workspace.id)
-      if (!checkout?.confirmationUrl) throw new Error('Платёжная страница временно недоступна. Попробуйте немного позже.')
-      window.location.assign(checkout.confirmationUrl)
+      const checkoutResult = await createPlanCheckout(plan.key, workspace.id)
+      if (checkoutResult?.simulated && checkoutResult?.status === 'paid') {
+        const current = await fetchCurrentWorkspace()
+        setWorkspace(current?.workspace || current || { ...workspace, plan: plan.key })
+        setSuccess(`Тестовая активация завершена: тариф «${plan.name}» применён только в staging. Деньги не списывались.`)
+        setLoadingPlan('')
+        return
+      }
+      if (!checkoutResult?.confirmationUrl) throw new Error('Платёжная страница временно недоступна. Попробуйте немного позже.')
+      window.location.assign(checkoutResult.confirmationUrl)
     } catch (checkoutError) {
       setError(checkoutError?.message || 'Не удалось перейти к оплате')
       setLoadingPlan('')
@@ -229,6 +240,8 @@ export function AS6PublicLivingPricingPage({ isAuthenticated = false }) {
           <h1>Одно пространство для бизнеса любого масштаба.</h1>
           <p>Начните бесплатно и повышайте тариф, когда потребуется больше компаний, участников, клиентов и действий AS6.</p>
           {workspace && <div className="living-current-plan">Текущее пространство: <strong>{workspace.name}</strong> · тариф <strong>{plans.find((plan) => plan.key === workspace.plan)?.name || workspace.plan}</strong></div>}
+          {checkout?.simulationOnly && <div className="living-pricing-simulation" role="status"><strong>Тестовый режим staging</strong><span>Тариф активируется только в тестовой базе. ЮKassa не вызывается, деньги не списываются.</span></div>}
+          {success && <div className="living-pricing-success" role="status">{success}</div>}
           {error && <div className="living-pricing-error" role="alert">{error}</div>}
         </section>
 
@@ -248,7 +261,13 @@ export function AS6PublicLivingPricingPage({ isAuthenticated = false }) {
                 <p>{plan.description}</p>
                 <ul>{planFeatures(plan).map((feature) => <li key={feature}>✓ <span>{feature}</span></li>)}</ul>
                 <button type="button" disabled={disabled} onClick={() => choosePlan(plan)}>
-                  {loadingPlan === plan.key ? 'Открываем оплату…' : isCurrent ? 'Текущий тариф' : unavailableDowngrade ? 'Уже включено' : plan.key === 'enterprise' ? 'Обсудить внедрение' : plan.key === 'free' ? 'Начать бесплатно' : 'Выбрать тариф'}
+                  {loadingPlan === plan.key
+                    ? checkout?.simulationOnly ? 'Тестово активируем…' : 'Открываем оплату…'
+                    : isCurrent ? 'Текущий тариф'
+                      : unavailableDowngrade ? 'Уже включено'
+                        : plan.key === 'enterprise' ? 'Обсудить внедрение'
+                          : plan.key === 'free' ? 'Начать бесплатно'
+                            : checkout?.simulationOnly ? 'Тестово активировать' : 'Выбрать тариф'}
                 </button>
               </article>
             )
