@@ -19,6 +19,12 @@ ops/bin/as6-ensure-staging-edge-network-v1
 test "$(docker image inspect "ai-platform-backend:$RELEASE_TAG" --format '{{ index .Config.Labels "org.opencontainers.image.revision" }}')" = "$RELEASE_SHA"
 test "$(docker image inspect "ai-platform-nginx:$RELEASE_TAG" --format '{{ index .Config.Labels "org.opencontainers.image.revision" }}')" = "$RELEASE_SHA"
 
+docker run --rm --network none "ai-platform-backend:$RELEASE_TAG" \
+  node tests/stagingPaymentSimulationPolicy.test.js
+docker run --rm --network none "ai-platform-backend:$RELEASE_TAG" \
+  node tests/paymentService.test.js
+echo "AS6_STAGING_PLAN_SIMULATION_IMAGE_TESTS=PASS"
+
 AS6_RELEASE_TAG="$RELEASE_TAG" docker compose --env-file "$ENV_FILE" \
   -p ai-platform-staging -f docker-compose.staging.yml up -d --no-build
 
