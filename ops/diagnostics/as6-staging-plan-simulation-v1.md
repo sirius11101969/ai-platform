@@ -20,6 +20,7 @@ incompatible.
 - `AS6_STAGING_PAYMENT_ENV_CANONICALIZATION_GAP`
 - `AS6_STAGING_PAYMENT_IMAGE_VALIDATION_GAP`
 - `AS6_PLAN_ACTIVATION_STALE_SHELL_STATE`
+- `AS6_ACCOUNT_PLAN_WORKSPACE_FALLBACK_DRIFT`
 
 ## Repair
 
@@ -35,6 +36,8 @@ incompatible.
   image with networking disabled.
 - publish a workspace refresh signal after activation and reload Living Shell
   data on same-tab events, cross-tab storage changes, browser return, and focus.
+- use the authenticated account profile as the canonical subscription source,
+  with workspace plan data only as a compatibility fallback.
 
 ## Safety result
 
