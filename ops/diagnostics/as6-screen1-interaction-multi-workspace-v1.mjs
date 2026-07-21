@@ -54,6 +54,19 @@ const accountPlanFallback = createLivingShellSnapshot({
 assert.deepEqual(accountPlanFallback.subscription, { key: "starter", name: "Старт", active: false });
 assert.deepEqual(accountPlanFallback.workspaceAllowance, { current: 0, limit: 1, canCreate: true });
 console.log("AS6_ACCOUNT_PLAN_CANONICAL_SOURCE=PASS");
+
+const staleBrowserPlanFallback = createLivingShellSnapshot({
+  locale: "ru",
+  user: { plan: "free" },
+  livingData: {
+    profile: null,
+    workspace: { id: "workspace-starter", plan: "starter", role: "owner" },
+    workspaces: [{ id: "workspace-starter", plan: "starter", role: "owner" }],
+  },
+  dataStatus: "ready",
+});
+assert.deepEqual(staleBrowserPlanFallback.subscription, { key: "starter", name: "Старт", active: true });
+console.log("AS6_STALE_BROWSER_PLAN_CANNOT_OVERRIDE_WORKSPACE=PASS");
 assert.equal(initial.identity.companyLogoScale, 86, "Workspace logo scale must enter the shared identity contract");
 assert.equal(initial.identity.avatarScale, 92, "Profile photo scale must enter the shared identity contract");
 assert.equal(initial.t("brandCoBranded", { company: "ЭконоЭКО" }), "Совместный брендинг: AS6 + ЭконоЭКО");
