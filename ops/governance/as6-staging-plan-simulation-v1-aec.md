@@ -15,6 +15,9 @@
    tests with networking disabled before containers are replaced.
 7. A completed plan activation must invalidate Living Shell workspace state in
    the current tab, restored browser pages, and other open tabs.
+8. Living Shell subscription and company allowance must use the authenticated
+   account plan as the canonical source; company data must not silently reset it
+   to Basic during a partial workspace load.
 
 ## Prevention contract
 
