@@ -81,6 +81,58 @@ async function testCreatePaymentSandboxReturnsConfirmationUrlAndPersists() {
   } finally { restore(); delete process.env.YOOKASSA_MODE }
 }
 
+async function testCreateStagingSimulationNeverCallsYooKassa() {
+  process.env.AS6_ENVIRONMENT = 'staging'
+  process.env.AS6_STAGING_PAYMENT_SIMULATION = 'true'
+  process.env.YOOKASSA_MODE = 'disabled'
+  delete process.env.YOOKASSA_SHOP_ID
+  delete process.env.YOOKASSA_SECRET_KEY
+  let insertParams = null
+  let mockCalls = 0
+  let sandboxCalls = 0
+  const { service, restore } = loadWithMocks({
+    queryImpl: async (sql, params = []) => {
+      if (sql.includes('FROM payment_providers')) return { rows: [{ provider: 'yookassa', enabled: true, mode: 'mock', currency: 'RUB' }] }
+      if (sql.includes('INSERT INTO payment_transactions')) {
+        insertParams = params
+        return { rows: [{ id: 'tx-staging', external_payment_id: params[2], status: params[3], provider_metadata: JSON.parse(params[7]) }] }
+      }
+      return { rows: [] }
+    },
+    providerImpl: {
+      createMockPayment: async () => {
+        mockCalls += 1
+        return { paymentId: 'mock_yookassa_staging', status: 'created', confirmationUrl: null, providerMetadata: { mode: 'mock' } }
+      },
+      createSandboxPayment: async () => {
+        sandboxCalls += 1
+        throw new Error('YooKassa must not be called from staging simulation')
+      },
+    },
+  })
+  try {
+    const result = await service.createPayment({
+      workspaceId: '00000000-0000-0000-0000-000000000123',
+      provider: 'yookassa',
+      amount: 9900,
+      currency: 'RUB',
+      metadata: { source: 'plan_checkout', plan: 'pro' },
+      stagingSimulation: true,
+    })
+    assert.strictEqual(result.paymentId, 'mock_yookassa_staging')
+    assert.strictEqual(result.confirmationUrl, null)
+    assert.strictEqual(mockCalls, 1)
+    assert.strictEqual(sandboxCalls, 0)
+    assert.strictEqual(JSON.parse(insertParams[7]).simulationOnly, true)
+    assert.strictEqual(JSON.parse(insertParams[7]).externalMutation, false)
+  } finally {
+    restore()
+    delete process.env.AS6_ENVIRONMENT
+    delete process.env.AS6_STAGING_PAYMENT_SIMULATION
+    delete process.env.YOOKASSA_MODE
+  }
+}
+
 async function testProviderIsolation() { /* unchanged */
   const { service, restore } = loadWithMocks({ queryImpl: async (sql) => {
     if (sql.includes('FROM payment_providers')) return { rows: [] }
@@ -198,6 +250,68 @@ async function testPlanCheckoutActivatesOwnerAccountAndCanonicalCredits() {
     assert.strictEqual(creditCalls[0].amount, 5000)
   } finally {
     restore()
+    delete process.env.YOOKASSA_MODE
+  }
+}
+
+async function testDisabledStagingSimulationActivatesWithoutProviderFetch() {
+  process.env.AS6_ENVIRONMENT = 'staging'
+  process.env.AS6_STAGING_PAYMENT_SIMULATION = 'true'
+  process.env.YOOKASSA_MODE = 'disabled'
+  delete process.env.YOOKASSA_SHOP_ID
+  delete process.env.YOOKASSA_SECRET_KEY
+  let txStatus = 'created'
+  let providerFetches = 0
+  const updates = []
+  const creditCalls = []
+  const workspaceId = '00000000-0000-0000-0000-000000000922'
+  const ownerUserId = '00000000-0000-0000-0000-000000000923'
+  const transaction = {
+    id: '00000000-0000-0000-0000-000000000921',
+    status: txStatus,
+    amount: 9900,
+    currency: 'RUB',
+    workspace_id: workspaceId,
+    metadata: { source: 'plan_checkout', plan: 'pro', userId: ownerUserId },
+  }
+  const { service, restore } = loadWithMocks({
+    queryImpl: async (sql, params = []) => {
+      if (sql.includes('FROM payment_providers')) return { rows: [{ provider: 'yookassa', enabled: true, mode: 'mock', currency: 'RUB' }] }
+      if (sql.includes('FROM payment_transactions WHERE provider=')) return { rows: [{ ...transaction, status: txStatus }] }
+      if (sql.includes('UPDATE payment_transactions')) { txStatus = 'paid'; return { rows: [{ ...transaction, status: 'paid' }] } }
+      if (sql.includes('SELECT owner_user_id FROM workspaces')) return { rows: [{ owner_user_id: ownerUserId }] }
+      if (sql.startsWith('UPDATE users SET plan=')) { updates.push('user'); return { rows: [] } }
+      if (sql.includes('UPDATE workspaces') && sql.includes('owner_user_id')) { updates.push('workspaces'); return { rows: [] } }
+      if (sql === 'BEGIN' || sql === 'COMMIT' || sql === 'ROLLBACK') return { rows: [] }
+      return { rows: [] }
+    },
+    issuePaymentCreditsImpl: async (payload) => { creditCalls.push(payload); return { duplicated: false } },
+    providerImpl: {
+      createMockPayment: async () => ({ paymentId: 'mock', status: 'created', confirmationUrl: null, providerMetadata: {} }),
+      createSandboxPayment: async () => { throw new Error('sandbox provider must not be called') },
+      fetchYooKassaPayment: async () => { providerFetches += 1; throw new Error('provider verification must not be called') },
+    },
+  })
+  try {
+    const result = await service.processWebhook({
+      workspaceId,
+      provider: 'yookassa',
+      event: 'payment.succeeded',
+      externalPaymentId: 'mock_yookassa_staging_plan',
+      status: 'paid',
+      amount: 9900,
+      currency: 'RUB',
+      metadata: transaction.metadata,
+      allowMockVerification: true,
+    })
+    assert.strictEqual(result.transaction.status, 'paid')
+    assert.strictEqual(providerFetches, 0)
+    assert.deepStrictEqual(updates, ['user', 'workspaces'])
+    assert.strictEqual(creditCalls[0].amount, 5000)
+  } finally {
+    restore()
+    delete process.env.AS6_ENVIRONMENT
+    delete process.env.AS6_STAGING_PAYMENT_SIMULATION
     delete process.env.YOOKASSA_MODE
   }
 }
@@ -321,10 +435,12 @@ Promise.resolve()
   .then(testProviderIsolation)
   .then(testCreatePaymentMockModeUnchanged)
   .then(testCreatePaymentSandboxReturnsConfirmationUrlAndPersists)
+  .then(testCreateStagingSimulationNeverCallsYooKassa)
   .then(testDuplicateWebhook)
   .then(testLedgerConsistencySingleCreditGrant)
   .then(testWebhookIssuesGrantMetadata)
   .then(testPlanCheckoutActivatesOwnerAccountAndCanonicalCredits)
+  .then(testDisabledStagingSimulationActivatesWithoutProviderFetch)
   .then(testIssuePaymentCreditsUsesGrantAndDedupes)
   .then(testStatusReturnsLatestCreatedTransaction)
   .then(testStatusReconciliationActivatesSuccessfulYooKassaPlanPayment)
