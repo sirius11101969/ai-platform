@@ -28,6 +28,11 @@ grep -Fq 'externalMutation: false' backend/src/services/paymentService.js
 grep -Fq 'allowMockVerification: true' backend/src/controllers/paymentController.js
 grep -Fq 'checkoutResult?.simulated' frontend/src/pages/AS6PublicLivingWebsite.jsx
 grep -Fq 'ЮKassa не вызывается' frontend/src/pages/AS6PublicLivingWebsite.jsx
+grep -Fq "notifyWorkspaceUpdated({ workspaceId: workspace.id, plan: plan.key, reason: 'plan-activated' })" frontend/src/pages/AS6PublicLivingWebsite.jsx
+grep -Fq 'window.addEventListener("pageshow", onPageShow)' frontend/src/living/product-v2/LivingCanonicalApp.jsx
+grep -Fq 'window.addEventListener("focus", onFocus)' frontend/src/living/product-v2/LivingCanonicalApp.jsx
+grep -Fq 'window.addEventListener("storage", onStorage)' frontend/src/living/product-v2/LivingCanonicalApp.jsx
+grep -Fq 'AS6_PLAN_ACTIVATION_STALE_SHELL_STATE=FIXED' ops/status/as6-detected-errors.md
 grep -Fq 'AS6_STAGING_PLAN_SIMULATION_V1=REGISTERED' ops/registry/as6-diagnostic-registry.md
 grep -Fq 'AS6_STAGING_REAL_PROVIDER_BLOCK_COVERAGE=REGISTERED' ops/registry/as6-coverage-registry.md
 grep -Fq 'AS6_STAGING_PRICING_PRODUCTION_CHECKOUT_COLLISION=FIXED' ops/status/as6-detected-errors.md
