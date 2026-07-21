@@ -44,6 +44,16 @@ assert.equal(initial.version, "as6-screen1-interaction-multi-workspace-v1");
 assert.equal(initial.actionCount, 2, "Top summary must use real activity events");
 assert.deepEqual(initial.workspaceAllowance, { current: 2, limit: 3, canCreate: true });
 assert.deepEqual(initial.subscription, { key: "pro", name: "Про", active: true });
+
+const accountPlanFallback = createLivingShellSnapshot({
+  locale: "ru",
+  user: { plan: "starter" },
+  livingData: { profile: { plan: "starter" }, workspace: null, workspaces: [] },
+  dataStatus: "stale",
+});
+assert.deepEqual(accountPlanFallback.subscription, { key: "starter", name: "Старт", active: false });
+assert.deepEqual(accountPlanFallback.workspaceAllowance, { current: 0, limit: 1, canCreate: true });
+console.log("AS6_ACCOUNT_PLAN_CANONICAL_SOURCE=PASS");
 assert.equal(initial.identity.companyLogoScale, 86, "Workspace logo scale must enter the shared identity contract");
 assert.equal(initial.identity.avatarScale, 92, "Profile photo scale must enter the shared identity contract");
 assert.equal(initial.t("brandCoBranded", { company: "ЭконоЭКО" }), "Совместный брендинг: AS6 + ЭконоЭКО");
