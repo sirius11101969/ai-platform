@@ -144,3 +144,12 @@ another edge.
 - run and record restore drills regularly;
 - move staging to a separate VPS before production scale or compliance requires it;
 - use sanitized production-like fixtures, never an uncontrolled copy of personal data.
+
+## Staging plan simulation
+
+Pricing and plan transitions may be tested on staging only through the
+server-gated local simulation. The gate requires the staging environment, an
+explicit simulation flag, disabled YooKassa mode, and empty provider
+credentials. It must never contact YooKassa or accept a browser-controlled
+override. Immutable backend image tests run without networking before staging
+replacement. Production checkout remains unchanged.
