@@ -21,6 +21,7 @@ incompatible.
 - `AS6_STAGING_PAYMENT_IMAGE_VALIDATION_GAP`
 - `AS6_PLAN_ACTIVATION_STALE_SHELL_STATE`
 - `AS6_ACCOUNT_PLAN_WORKSPACE_FALLBACK_DRIFT`
+- `AS6_CRM_FAILURE_COLLAPSES_ACCOUNT_SNAPSHOT`
 
 ## Repair
 
@@ -38,6 +39,8 @@ incompatible.
   data on same-tab events, cross-tab storage changes, browser return, and focus.
 - use the authenticated account profile as the canonical subscription source,
   with workspace plan data only as a compatibility fallback.
+- isolate domain reads so a CRM failure cannot discard a successfully loaded
+  account profile or workspace subscription.
 
 ## Safety result
 
