@@ -291,3 +291,4 @@
 | AS6_STAGING_TEST_ACTIVATION_FEEDBACK_GAP | AEC_REQUIRE_EXPLICIT_STAGING_PAYMENT_FEEDBACK | staging-must-state-test-only-and-no-money-charged | ENABLED |
 | AS6_STAGING_PAYMENT_ENV_CANONICALIZATION_GAP | AEC_REQUIRE_CANONICAL_STAGING_PAYMENT_ENV | staging-must-disable-provider-and-clear-credentials | ENABLED |
 | AS6_STAGING_PAYMENT_IMAGE_VALIDATION_GAP | AEC_REQUIRE_NETWORKLESS_PAYMENT_IMAGE_TESTS | immutable-staging-image-must-run-payment-tests-without-network | ENABLED |
+| AS6_PLAN_ACTIVATION_STALE_SHELL_STATE | AEC_REQUIRE_PLAN_ACTIVATION_SHELL_INVALIDATION | plan-activation-must-refresh-current-restored-and-cross-tab-shells | ENABLED |
