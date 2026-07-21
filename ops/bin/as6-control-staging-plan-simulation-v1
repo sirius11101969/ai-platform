@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="${AS6_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
+cd "$ROOT"
+
+for file in \
+  backend/src/services/stagingPaymentSimulationPolicy.js \
+  backend/src/services/paymentService.js \
+  backend/src/controllers/paymentController.js \
+  backend/src/controllers/publicCheckoutController.js \
+  backend/tests/stagingPaymentSimulationPolicy.test.js \
+  backend/tests/paymentService.test.js \
+  frontend/src/pages/AS6PublicLivingWebsite.jsx \
+  docker-compose.staging.yml \
+  ops/bin/as6-validate-staging-config-v1 \
+  ops/diagnostics/as6-staging-plan-simulation-v1.md \
+  ops/governance/as6-staging-plan-simulation-v1-aec.md; do
+  test -f "$file"
+done
+
+grep -Fq 'AS6_STAGING_PAYMENT_SIMULATION: "true"' docker-compose.staging.yml
+grep -Fq "value('YOOKASSA_MODE').toLowerCase() !== 'disabled'" ops/bin/as6-validate-staging-config-v1
+grep -Fq "Staging YooKassa credentials must be empty" ops/bin/as6-validate-staging-config-v1
+grep -Fq "AS6_ENVIRONMENT) === 'staging'" backend/src/services/stagingPaymentSimulationPolicy.js
+grep -Fq "YOOKASSA_MODE) === 'disabled'" backend/src/services/stagingPaymentSimulationPolicy.js
+grep -Fq 'externalMutation: false' backend/src/services/paymentService.js
+grep -Fq 'allowMockVerification: true' backend/src/controllers/paymentController.js
+grep -Fq 'checkoutResult?.simulated' frontend/src/pages/AS6PublicLivingWebsite.jsx
+grep -Fq 'ЮKassa не вызывается' frontend/src/pages/AS6PublicLivingWebsite.jsx
+grep -Fq 'AS6_STAGING_PLAN_SIMULATION_V1=REGISTERED' ops/registry/as6-diagnostic-registry.md
+grep -Fq 'AS6_STAGING_REAL_PROVIDER_BLOCK_COVERAGE=REGISTERED' ops/registry/as6-coverage-registry.md
+grep -Fq 'AS6_STAGING_PRICING_PRODUCTION_CHECKOUT_COLLISION=FIXED' ops/status/as6-detected-errors.md
+grep -Fq 'AS6_STAGING_REAL_PAYMENT_MUTATION_RISK' ops/registry/as6-aec-registry.md
+grep -Fq 'AS6_STAGING_PAYMENT_IMAGE_VALIDATION_GAP' ops/registry/as6-prevention-registry.md
+
+node backend/tests/stagingPaymentSimulationPolicy.test.js
+
+echo "AS6_STAGING_REAL_PAYMENT_PROVIDER_BLOCKED=PASS"
+echo "AS6_STAGING_TEST_PLAN_ACTIVATION=PASS"
+echo "AS6_STAGING_PLAN_SIMULATION_V1=PASS"
