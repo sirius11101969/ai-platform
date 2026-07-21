@@ -162,3 +162,12 @@
 - aec: ops/governance/as6-secure-staging-access-v1-aec.md
 - failure_classes: AS6_STAGING_PUBLIC_REVIEW_ACCESS_GAP, AS6_STAGING_BASIC_AUTH_BEARER_COLLISION_RISK, AS6_STAGING_EDGE_NETWORK_OVEREXPOSURE_RISK, AS6_STAGING_SEARCH_INDEXING_RISK, AS6_STAGING_ORIGIN_CREDENTIAL_COLLISION_RISK
 - result: AS6_SECURE_STAGING_ACCESS_V1=REGISTERED
+
+## AS6 Staging Plan Simulation v1
+- diagnostic: staging plan changes must be testable without enabling or contacting YooKassa
+- diagnostic_artifact: ops/diagnostics/as6-staging-plan-simulation-v1.md
+- control: ops/bin/as6-control-staging-plan-simulation-v1
+- image_validation: backend policy and payment tests run with networking disabled
+- aec: ops/governance/as6-staging-plan-simulation-v1-aec.md
+- failure_classes: AS6_STAGING_PRICING_PRODUCTION_CHECKOUT_COLLISION, AS6_STAGING_REAL_PAYMENT_MUTATION_RISK, AS6_STAGING_TEST_ACTIVATION_FEEDBACK_GAP, AS6_STAGING_PAYMENT_ENV_CANONICALIZATION_GAP, AS6_STAGING_PAYMENT_IMAGE_VALIDATION_GAP
+- result: AS6_STAGING_PLAN_SIMULATION_V1=REGISTERED
