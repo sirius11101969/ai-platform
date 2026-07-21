@@ -4,6 +4,7 @@ services:
     restart: unless-stopped
     environment:
       AS6_ENVIRONMENT: staging
+      AS6_STAGING_PAYMENT_SIMULATION: "true"
       NODE_ENV: production
       RUN_MIGRATIONS: "true"
       PORT: "3001"
