@@ -299,7 +299,7 @@ export function createLivingShellSnapshot({
     offline: "dataOffline",
   }[dataStatus] || "dataLoading";
   const workspaces = livingData?.workspaces || (workspace ? [workspace] : []);
-  const accountPlanKey = String(livingData?.profile?.plan || user?.plan || workspace?.plan || "free").toLowerCase();
+  const accountPlanKey = String(livingData?.profile?.plan || workspace?.plan || user?.plan || "free").toLowerCase();
   const workspaceLimit = Number(PLAN_WORKSPACE_LIMITS[accountPlanKey] || workspace?.limits?.workspacesLimit || 1);
   const ownedWorkspaceCount = workspaces.filter((item) => item.role === "owner" || item.ownerUserId === workspace?.ownerUserId).length;
   const planKey = accountPlanKey;
