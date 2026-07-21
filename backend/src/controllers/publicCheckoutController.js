@@ -1,14 +1,19 @@
 const { getPublicPlanCatalog } = require('../plans')
+const { getStagingPaymentSimulationDescriptor } = require('../services/stagingPaymentSimulationPolicy')
 
 async function listPlans(_req, res, next) {
   try {
+    const checkout = getStagingPaymentSimulationDescriptor()
     return res.json({
       plans: getPublicPlanCatalog(),
       billing: {
         type: 'one_time_upgrade',
         autoRenewal: false,
-        notice: 'Разовая оплата за повышение тарифа. Автопродление не подключено.',
+        notice: checkout.simulationOnly
+          ? 'Тестовая активация в staging. Деньги не списываются и ЮKassa не вызывается.'
+          : 'Разовая оплата за повышение тарифа. Автопродление не подключено.',
       },
+      checkout,
     })
   } catch (error) {
     next(error)
