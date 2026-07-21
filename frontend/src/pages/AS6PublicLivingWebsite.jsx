@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { createPlanCheckout, fetchCurrentWorkspace, fetchPublicPlans } from "../services/api";
+import { createPlanCheckout, fetchCurrentWorkspace, fetchPublicPlans, notifyWorkspaceUpdated } from "../services/api";
 import "./AS6PublicLivingWebsite.css";
 import AS6PublicBrandHomeV1 from "./AS6PublicBrandHomeV1.jsx";
 
@@ -219,6 +219,7 @@ export function AS6PublicLivingPricingPage({ isAuthenticated = false }) {
       if (checkoutResult?.simulated && checkoutResult?.status === 'paid') {
         const current = await fetchCurrentWorkspace()
         setWorkspace(current?.workspace || current || { ...workspace, plan: plan.key })
+        notifyWorkspaceUpdated({ workspaceId: workspace.id, plan: plan.key, reason: 'plan-activated' })
         setSuccess(`Тестовая активация завершена: тариф «${plan.name}» применён только в staging. Деньги не списывались.`)
         setLoadingPlan('')
         return
