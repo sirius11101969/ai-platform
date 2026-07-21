@@ -13,6 +13,7 @@ for file in \
   backend/tests/paymentService.test.js \
   frontend/src/pages/AS6PublicLivingWebsite.jsx \
   frontend/src/living/product-v2/livingShellFoundation.js \
+  frontend/src/living/product-v2/livingReadOnlyData.js \
   docker-compose.staging.yml \
   ops/bin/as6-validate-staging-config-v1 \
   ops/diagnostics/as6-staging-plan-simulation-v1.md \
@@ -37,6 +38,8 @@ grep -Fq 'AS6_PLAN_ACTIVATION_STALE_SHELL_STATE=FIXED' ops/status/as6-detected-e
 grep -Fq 'livingData?.profile?.plan || workspace?.plan || user?.plan || "free"' frontend/src/living/product-v2/livingShellFoundation.js
 grep -Fq 'AS6_ACCOUNT_PLAN_CANONICAL_SOURCE=PASS' ops/diagnostics/as6-screen1-interaction-multi-workspace-v1.mjs
 grep -Fq 'AS6_STALE_BROWSER_PLAN_CANNOT_OVERRIDE_WORKSPACE=PASS' ops/diagnostics/as6-screen1-interaction-multi-workspace-v1.mjs
+! grep -Fq 'if (leadsResult.status === "rejected") throw leadsResult.reason' frontend/src/living/product-v2/livingReadOnlyData.js
+grep -Fq 'relations: leadsResult.status === "fulfilled"' frontend/src/living/product-v2/livingReadOnlyData.js
 grep -Fq 'AS6_ACCOUNT_PLAN_WORKSPACE_FALLBACK_DRIFT=FIXED' ops/status/as6-detected-errors.md
 grep -Fq 'AS6_STAGING_PLAN_SIMULATION_V1=REGISTERED' ops/registry/as6-diagnostic-registry.md
 grep -Fq 'AS6_STAGING_REAL_PROVIDER_BLOCK_COVERAGE=REGISTERED' ops/registry/as6-coverage-registry.md
