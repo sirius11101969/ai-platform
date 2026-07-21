@@ -55,9 +55,9 @@ export async function loadLivingReadOnlyData() {
     fetchCrmActivity({ from: "today", limit: 200 }),
   ]);
 
-  if (leadsResult.status === "rejected") throw leadsResult.reason;
-
-  const rawLeads = Array.isArray(leadsResult.value?.leads) ? leadsResult.value.leads : [];
+  const rawLeads = leadsResult.status === "fulfilled" && Array.isArray(leadsResult.value?.leads)
+    ? leadsResult.value.leads
+    : [];
   const rawAttachments = attachmentsResult.status === "fulfilled" && Array.isArray(attachmentsResult.value?.attachments)
     ? attachmentsResult.value.attachments
     : [];
@@ -82,7 +82,12 @@ export async function loadLivingReadOnlyData() {
     relations: rawLeads.map(normalizeLead),
     documents: rawAttachments.map(normalizeAttachment),
     domainStatus: {
-      relations: { available: true, error: "" },
+      relations: {
+        available: leadsResult.status === "fulfilled",
+        error: leadsResult.status === "rejected"
+          ? leadsResult.reason?.message || "Не удалось загрузить CRM"
+          : "",
+      },
       priority: {
         available: priorityResult.status === "fulfilled",
         error: priorityResult.status === "rejected"
@@ -111,7 +116,7 @@ export async function loadLivingReadOnlyData() {
       knowledge: { available: false, reason: "Безопасный адаптер знаний ещё не подключён" },
     },
     availability: {
-      relations: true,
+      relations: leadsResult.status === "fulfilled",
       priority: priorityResult.status === "fulfilled",
       workspace: workspaceResult.status === "fulfilled",
       activity: activityResult.status === "fulfilled",
