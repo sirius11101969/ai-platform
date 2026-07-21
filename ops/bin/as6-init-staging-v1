@@ -11,13 +11,23 @@ if test -f "$ENV_FILE"; then
   TEMP="$(mktemp "${ENV_FILE}.canonical.XXXXXX")"
   trap 'rm -f "$TEMP"' EXIT
   awk '
-    BEGIN { domain=0; app_url=0 }
+    BEGIN { domain=0; app_url=0; simulation=0; payment_mode=0; yookassa_mode=0; yookassa_shop=0; yookassa_secret=0 }
     /^AS6_STAGING_DOMAIN=/ { print "AS6_STAGING_DOMAIN=staging.as6.ru"; domain=1; next }
     /^APP_URL=/ { print "APP_URL=https://staging.as6.ru"; app_url=1; next }
+    /^AS6_STAGING_PAYMENT_SIMULATION=/ { print "AS6_STAGING_PAYMENT_SIMULATION=true"; simulation=1; next }
+    /^PAYMENT_MODE=/ { print "PAYMENT_MODE=disabled"; payment_mode=1; next }
+    /^YOOKASSA_MODE=/ { print "YOOKASSA_MODE=disabled"; yookassa_mode=1; next }
+    /^YOOKASSA_SHOP_ID=/ { print "YOOKASSA_SHOP_ID="; yookassa_shop=1; next }
+    /^YOOKASSA_SECRET_KEY=/ { print "YOOKASSA_SECRET_KEY="; yookassa_secret=1; next }
     { print }
     END {
       if (!domain) print "AS6_STAGING_DOMAIN=staging.as6.ru"
       if (!app_url) print "APP_URL=https://staging.as6.ru"
+      if (!simulation) print "AS6_STAGING_PAYMENT_SIMULATION=true"
+      if (!payment_mode) print "PAYMENT_MODE=disabled"
+      if (!yookassa_mode) print "YOOKASSA_MODE=disabled"
+      if (!yookassa_shop) print "YOOKASSA_SHOP_ID="
+      if (!yookassa_secret) print "YOOKASSA_SECRET_KEY="
     }
   ' "$ENV_FILE" > "$TEMP"
   chmod 600 "$TEMP"
@@ -37,6 +47,7 @@ umask 077
 cat > "$ENV_FILE" <<EOF
 AS6_ENVIRONMENT=staging
 AS6_STAGING_DOMAIN=staging.as6.ru
+AS6_STAGING_PAYMENT_SIMULATION=true
 AS6_STAGING_HTTP_PORT=18080
 AS6_STAGING_DB_PASSWORD=$DB_PASSWORD
 JWT_SECRET=$JWT_SECRET
