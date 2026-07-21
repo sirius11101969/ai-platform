@@ -1,5 +1,6 @@
 const paymentService = require('../services/paymentService')
 const { assertPlanUpgrade } = require('../plans')
+const { isStagingPaymentSimulationEnabled } = require('../services/stagingPaymentSimulationPolicy')
 
 async function create(req, res, next) {
   try {
@@ -9,22 +10,42 @@ async function create(req, res, next) {
 
     const targetPlan = assertPlanUpgrade(req.workspace.plan, req.body?.plan)
 
+    const metadata = {
+      source: 'plan_checkout',
+      plan: targetPlan.key,
+      currentPlan: req.workspace.plan || 'free',
+      customerEmail: req.user?.email || '',
+      userId: req.user?.id,
+      description: `AS6 — повышение тарифа до ${targetPlan.name}`,
+    }
+    const stagingSimulation = isStagingPaymentSimulationEnabled()
     const result = await paymentService.createPayment({
       workspaceId: req.workspace.id,
       provider: 'yookassa',
       amount: targetPlan.price,
       currency: targetPlan.currency,
-      metadata: {
-        source: 'plan_checkout',
-        plan: targetPlan.key,
-        currentPlan: req.workspace.plan || 'free',
-        customerEmail: req.user?.email || '',
-        userId: req.user?.id,
-        description: `AS6 — повышение тарифа до ${targetPlan.name}`,
-      },
+      metadata,
+      stagingSimulation,
     })
+    let activation = null
+    if (stagingSimulation) {
+      activation = await paymentService.processWebhook({
+        workspaceId: req.workspace.id,
+        provider: 'yookassa',
+        event: 'payment.succeeded',
+        externalPaymentId: result.paymentId,
+        status: 'paid',
+        amount: targetPlan.price,
+        currency: targetPlan.currency,
+        metadata,
+        allowMockVerification: true,
+      })
+    }
     res.status(201).json({
       ...result,
+      status: activation?.transaction?.status || result.status,
+      simulated: stagingSimulation,
+      activation,
       plan: targetPlan,
     })
   } catch (e) { next(e) }
