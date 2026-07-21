@@ -4,6 +4,10 @@ const revenueService = require('./revenueService')
 const { issuePaymentCredits } = require('./execution/creditLedgerService')
 const { createSandboxPayment, createMockPayment, fetchYooKassaPayment } = require('./providers/yookassaProvider')
 const { getPlanLimits, getPurchasablePlan } = require('../plans')
+const {
+  assertStagingPaymentSimulationEnabled,
+  isStagingPaymentSimulationEnabled,
+} = require('./stagingPaymentSimulationPolicy')
 
 async function loadProvider(provider, client = pool) {
   const r = await client.query('SELECT * FROM payment_providers WHERE provider = $1 LIMIT 1', [provider])
@@ -29,16 +33,32 @@ async function createProviderPayment({ provider, amount, currency, metadata = {}
   throw Object.assign(new Error(`unsupported YOOKASSA_MODE: ${mode}`), { statusCode: 400 })
 }
 
-async function createPayment({ workspaceId, provider, amount, currency, metadata = {} }) {
+async function createPayment({ workspaceId, provider, amount, currency, metadata = {}, stagingSimulation = false }) {
   const p = await loadProvider(provider)
   const normalizedCurrency = String(currency || p.currency).toUpperCase()
-  const providerPayment = await createProviderPayment({
-    provider,
-    amount,
-    currency: normalizedCurrency,
-    metadata,
-    workspaceId,
-  })
+  let providerPayment
+  if (stagingSimulation) {
+    assertStagingPaymentSimulationEnabled()
+    providerPayment = await createMockPayment({ provider, amount, currency: normalizedCurrency, metadata, workspaceId })
+    providerPayment = {
+      ...providerPayment,
+      confirmationUrl: null,
+      providerMetadata: {
+        ...(providerPayment.providerMetadata || {}),
+        mode: 'staging_simulation',
+        simulationOnly: true,
+        externalMutation: false,
+      },
+    }
+  } else {
+    providerPayment = await createProviderPayment({
+      provider,
+      amount,
+      currency: normalizedCurrency,
+      metadata,
+      workspaceId,
+    })
+  }
 
   const created = await pool.query(
     `INSERT INTO payment_transactions(workspace_id, provider, external_payment_id, status, amount, currency, metadata, provider_metadata, checkout_url)
@@ -70,6 +90,9 @@ function assertMatchingPaymentValue(transaction, amount, currency) {
 
 async function verifyYooKassaWebhook({ transaction, externalPaymentId, allowMockVerification }) {
   const mode = String(process.env.YOOKASSA_MODE || 'mock').toLowerCase()
+  if (allowMockVerification && isStagingPaymentSimulationEnabled() && String(externalPaymentId || '').startsWith('mock_')) {
+    return null
+  }
   if (mode === 'mock') {
     if (!allowMockVerification) {
       throw Object.assign(new Error('Публичный webhook недоступен в mock-режиме'), { statusCode: 403 })
