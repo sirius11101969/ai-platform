@@ -52,3 +52,4 @@
 | AS6_STAGING_TEST_ACTIVATION_FEEDBACK_GAP | label-staging-activation-as-test-only | ENABLED |
 | AS6_STAGING_PAYMENT_ENV_CANONICALIZATION_GAP | canonicalize-staging-payment-environment-before-deploy | ENABLED |
 | AS6_STAGING_PAYMENT_IMAGE_VALIDATION_GAP | run-payment-policy-tests-in-immutable-image-with-network-none | ENABLED |
+| AS6_PLAN_ACTIVATION_STALE_SHELL_STATE | invalidate-living-shell-on-plan-activation-focus-pageshow-and-storage | ENABLED |
