@@ -2,6 +2,7 @@ const API_BASE_URL = import.meta?.env?.VITE_API_BASE_URL || '/api'
 const AUTH_STORAGE_KEY = 'ai-platform-auth'
 const LEGACY_TOKEN_KEYS = ['token', 'jwt', 'accessToken', 'authToken']
 const WORKSPACE_STORAGE_KEY = 'ai-platform-workspace-id'
+const WORKSPACE_REFRESH_STORAGE_KEY = 'ai-platform-workspace-refresh-at'
 
 function canUseWebStorage() {
   return typeof window !== 'undefined'
@@ -69,8 +70,22 @@ export function setActiveWorkspaceId(workspaceId) {
   const previousWorkspaceId = getActiveWorkspaceId()
   window.localStorage.setItem(WORKSPACE_STORAGE_KEY, workspaceId)
   if (previousWorkspaceId !== workspaceId) {
-    window.dispatchEvent(new CustomEvent('ai-platform-workspace-updated', { detail: { workspaceId } }))
+    notifyWorkspaceUpdated({ workspaceId, reason: 'workspace-selected' })
   }
+}
+
+export function notifyWorkspaceUpdated(detail = {}) {
+  if (!canUseWebStorage()) return
+  try {
+    window.localStorage.setItem(WORKSPACE_REFRESH_STORAGE_KEY, String(Date.now()))
+  } catch (_error) {
+    // The same-tab event still refreshes the shell when storage is unavailable.
+  }
+  window.dispatchEvent(new CustomEvent('ai-platform-workspace-updated', { detail }))
+}
+
+export function isWorkspaceRefreshStorageEvent(event) {
+  return event?.key === WORKSPACE_REFRESH_STORAGE_KEY
 }
 
 export function saveAuthSession(session, { remember = true, syncWorkspace = true } = {}) {
