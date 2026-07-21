@@ -34,8 +34,9 @@ grep -Fq 'window.addEventListener("pageshow", onPageShow)' frontend/src/living/p
 grep -Fq 'window.addEventListener("focus", onFocus)' frontend/src/living/product-v2/LivingCanonicalApp.jsx
 grep -Fq 'window.addEventListener("storage", onStorage)' frontend/src/living/product-v2/LivingCanonicalApp.jsx
 grep -Fq 'AS6_PLAN_ACTIVATION_STALE_SHELL_STATE=FIXED' ops/status/as6-detected-errors.md
-grep -Fq 'livingData?.profile?.plan || user?.plan || workspace?.plan || "free"' frontend/src/living/product-v2/livingShellFoundation.js
+grep -Fq 'livingData?.profile?.plan || workspace?.plan || user?.plan || "free"' frontend/src/living/product-v2/livingShellFoundation.js
 grep -Fq 'AS6_ACCOUNT_PLAN_CANONICAL_SOURCE=PASS' ops/diagnostics/as6-screen1-interaction-multi-workspace-v1.mjs
+grep -Fq 'AS6_STALE_BROWSER_PLAN_CANNOT_OVERRIDE_WORKSPACE=PASS' ops/diagnostics/as6-screen1-interaction-multi-workspace-v1.mjs
 grep -Fq 'AS6_ACCOUNT_PLAN_WORKSPACE_FALLBACK_DRIFT=FIXED' ops/status/as6-detected-errors.md
 grep -Fq 'AS6_STAGING_PLAN_SIMULATION_V1=REGISTERED' ops/registry/as6-diagnostic-registry.md
 grep -Fq 'AS6_STAGING_REAL_PROVIDER_BLOCK_COVERAGE=REGISTERED' ops/registry/as6-coverage-registry.md
