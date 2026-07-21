@@ -13,6 +13,8 @@
    browser-controlled simulation switch.
 6. The immutable staging backend image must run the policy and payment service
    tests with networking disabled before containers are replaced.
+7. A completed plan activation must invalidate Living Shell workspace state in
+   the current tab, restored browser pages, and other open tabs.
 
 ## Prevention contract
 
