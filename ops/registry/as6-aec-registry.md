@@ -297,3 +297,7 @@
 | AS6_CONNECTION_NODE_OVERPAINT | AEC_REQUIRE_CONNECTION_ENDPOINT_CLEARANCE | connections-must-stop-before-node-centers-and-remain-below-objects | ENABLED |
 | AS6_LAYOUT_TOOLBAR_HEADER_COLLISION | AEC_REQUIRE_BOTTOM_LAYOUT_ACTION_SLOT | normal-and-editing-layout-actions-must-share-bottom-slot | ENABLED |
 | AS6_CENTRAL_ROUTE_BOTTOM_COLLISION | AEC_REQUIRE_UPPER_ROUTE_PLACEMENT | active-central-route-must-not-compete-with-bottom-actions | ENABLED |
+| AS6_CENTRAL_STYLE_GLOBAL_LEAK | AEC_REQUIRE_WORKSPACE_LOCAL_CENTRAL_STYLE | central-style-must-be-isolated-by-workspace-id | ENABLED |
+| AS6_CENTRAL_STYLE_UNBOUNDED_VALUES | AEC_REQUIRE_BOUNDED_CENTRAL_STYLE | central-style-values-must-be-clamped-and-whitelisted | ENABLED |
+| AS6_CENTRAL_STYLE_EDIT_MODE_CLUTTER | AEC_REQUIRE_SELECTED_NODE_STYLE_PANEL | style-controls-must-only-appear-for-selected-node-in-edit-mode | ENABLED |
+| AS6_CENTRAL_STYLE_CANCEL_PERSISTENCE_DRIFT | AEC_REQUIRE_SHARED_LAYOUT_STYLE_LIFECYCLE | style-cancel-reset-save-must-follow-layout-editor | ENABLED |
