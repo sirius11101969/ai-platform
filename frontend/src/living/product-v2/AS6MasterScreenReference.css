@@ -47,10 +47,10 @@
   transform: translateX(-50%);
 }
 
-/* Keep the editing actions visible above the movable canvas. */
+/* Editing replaces the normal bottom action instead of covering the header. */
 .as6-master__space.is-layout-editing .as6-master__layout-tools {
-  top: -4px;
-  bottom: auto;
+  top: auto;
+  bottom: 2px;
 }
 
 .as6-master__layout-start,
@@ -102,7 +102,7 @@
 .as6-master__space.is-layout-editing .as6-master__node:active,
 .as6-master__space.is-layout-editing .as6-master__focus:active { cursor: grabbing; }
 .as6-master__space.is-layout-editing .as6-master__node-mark { outline: 1px dashed rgba(47, 112, 159, .55); outline-offset: 8px; }
-.as6-master__space.is-layout-editing .as6-master__focus { padding: 16px; border: 1px dashed rgba(47, 112, 159, .48); border-radius: 18px; background: rgba(255,255,255,.42); }
+.as6-master__space.is-layout-editing .as6-master__focus { padding: 16px; border: 1px dashed rgba(47, 112, 159, .48); border-radius: 28px; background: transparent; }
 .as6-master__space.is-layout-editing .as6-master__focus button { pointer-events: none; }
 .as6-master__space.is-layout-editing .as6-master__node:hover,
 .as6-master__space.is-layout-editing .as6-master__node:focus-visible { transform: translate(-50%,-50%) scale(1.02); }
@@ -200,6 +200,7 @@
 }
 
 .as6-master__node {
+  z-index: 4;
   width: 164px;
   gap: 7px;
   align-content: start;
@@ -280,16 +281,11 @@
   content: "";
   position: absolute;
   z-index: -1;
-  inset: -28px -44px;
-  border-radius: 46%;
+  inset: -26px -40px;
+  border-radius: 32px;
   pointer-events: none;
-  background: radial-gradient(
-    ellipse at center,
-    #fff 0 68%,
-    rgba(255, 255, 255, .98) 78%,
-    rgba(255, 255, 255, .82) 89%,
-    rgba(255, 255, 255, 0) 100%
-  );
+  background: var(--as6-stage-surface, #fff);
+  box-shadow: 0 0 26px 18px var(--as6-stage-surface, #fff);
 }
 
 .as6-master__focus h2 {
@@ -342,11 +338,18 @@
 }
 
 .as6-master__space-status {
-  bottom: 4.5%;
+  z-index: 9;
+  top: -42px;
+  bottom: auto;
+  left: 0;
+  width: max-content;
+  max-width: 340px;
+  transform: none;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 5px;
+  text-align: left;
 }
 
 .as6-master__space-status i { color: var(--muted); font-style: normal; }
@@ -513,8 +516,9 @@
   .as6-master__intent {
     grid-template-columns: 74px minmax(0, 1fr) 34px;
   }
-  .as6-master__layout-tools { top: 4px; bottom: auto; }
+  .as6-master__layout-tools { top: auto; bottom: 4px; }
   .as6-master__layout-toolbar > span { display:none; }
+  .as6-master__space-status { top: 4px; left: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -842,6 +846,7 @@
  * central aura cannot acquire a cream/yellow cast on bright displays.
  */
 .as6-master[data-theme="light"] {
+  --as6-stage-surface: #ffffff;
   background: #ffffff;
 }
 
@@ -854,13 +859,8 @@
 }
 
 .as6-master[data-theme="light"] .as6-master__focus::after {
-  background: radial-gradient(
-    ellipse at center,
-    #fff 0 68%,
-    rgba(255, 255, 255, .98) 78%,
-    rgba(255, 255, 255, .82) 89%,
-    rgba(255, 255, 255, 0) 100%
-  );
+  background: var(--as6-stage-surface);
+  box-shadow: 0 0 26px 18px var(--as6-stage-surface);
 }
 
 .as6-master[data-theme="light"] .as6-master__graph-lines path {
@@ -881,7 +881,7 @@
 
 .as6-master[data-theme="light"] .as6-master__node-mark {
   border-color: rgba(137,180,210,.34);
-  background: rgba(232,241,248,.46);
+  background: radial-gradient(circle, rgba(232,241,248,.72), rgba(255,255,255,.96) 72%), var(--as6-stage-surface);
   box-shadow: 0 0 0 7px rgba(220,234,244,.2), 0 0 18px rgba(139,181,211,.12);
 }
 
@@ -890,6 +890,7 @@
 }
 
 .as6-master[data-theme="dark"] {
+  --as6-stage-surface: #08090b;
   --ink: #e7eaee;
   --muted: #9aa1aa;
   --soft: #686f78;
@@ -909,13 +910,8 @@
 }
 
 .as6-master[data-theme="dark"] .as6-master__focus::after {
-  background: radial-gradient(
-    ellipse at center,
-    #08090b 0 68%,
-    rgba(8, 9, 11, .98) 78%,
-    rgba(8, 9, 11, .84) 89%,
-    rgba(8, 9, 11, 0) 100%
-  );
+  background: var(--as6-stage-surface);
+  box-shadow: 0 0 26px 18px var(--as6-stage-surface);
 }
 
 .as6-master[data-theme="dark"] .as6-master__graph-lines path {
@@ -926,7 +922,7 @@
 .as6-master[data-theme="dark"] .as6-master__node-mark {
   color: rgba(207,214,221,.54);
   border-color: rgba(222,227,232,.20);
-  background: radial-gradient(circle,rgba(255,255,255,.08),transparent 72%);
+  background: radial-gradient(circle,rgba(255,255,255,.08),rgba(8,9,11,.98) 72%), var(--as6-stage-surface);
   box-shadow: 0 0 22px rgba(255,255,255,.04);
 }
 

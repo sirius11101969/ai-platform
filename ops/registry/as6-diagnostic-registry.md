@@ -171,3 +171,11 @@
 - aec: ops/governance/as6-staging-plan-simulation-v1-aec.md
 - failure_classes: AS6_STAGING_PRICING_PRODUCTION_CHECKOUT_COLLISION, AS6_STAGING_REAL_PAYMENT_MUTATION_RISK, AS6_STAGING_TEST_ACTIVATION_FEEDBACK_GAP, AS6_STAGING_PAYMENT_ENV_CANONICALIZATION_GAP, AS6_STAGING_PAYMENT_IMAGE_VALIDATION_GAP, AS6_PLAN_ACTIVATION_STALE_SHELL_STATE, AS6_ACCOUNT_PLAN_WORKSPACE_FALLBACK_DRIFT
 - result: AS6_STAGING_PLAN_SIMULATION_V1=REGISTERED
+
+## AS6 Central Layer Composition v2
+- diagnostic: central mask shape, connection endpoint clearance, foreground nodes, bottom editing actions and upper route placement
+- diagnostic_artifact: ops/diagnostics/as6-customizable-central-layout-v1.mjs
+- control: ops/bin/as6-control-customizable-central-layout-v1
+- aec: ops/governance/as6-central-layer-composition-v2-aec.md
+- failure_classes: AS6_CENTRAL_MASK_MIXED_SHAPE_ARTIFACT, AS6_CONNECTION_NODE_OVERPAINT, AS6_LAYOUT_TOOLBAR_HEADER_COLLISION, AS6_CENTRAL_ROUTE_BOTTOM_COLLISION
+- result: AS6_CENTRAL_LAYER_COMPOSITION_V2=REGISTERED

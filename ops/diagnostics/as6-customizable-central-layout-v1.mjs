@@ -31,9 +31,11 @@ if (readCentralLayout("workspace-a").sales.x !== 94) throw new Error("Workspace 
 if (readCentralLayout("workspace-b").sales.x !== 20) throw new Error("Workspace isolation failed");
 
 const path = centralConnectionPath({ from: "sales", to: "finance" }, moved);
-if (!/^M94 6 C/.test(path)) throw new Error("Dynamic connection path failed");
+if (!/^M9[01]\./.test(path)) throw new Error("Dynamic connection path failed");
+if (path.startsWith("M94 6 ") || path.endsWith(" 16 58")) throw new Error("Connection endpoints must stop before node centers");
 
 console.log("AS6_CENTRAL_LAYOUT_BOUNDARY_GUARD=PASS");
 console.log("AS6_CENTRAL_LAYOUT_WORKSPACE_ISOLATION=PASS");
 console.log("AS6_CENTRAL_LAYOUT_DYNAMIC_CONNECTIONS=PASS");
+console.log("AS6_CENTRAL_CONNECTION_ENDPOINT_CLEARANCE=PASS");
 console.log("AS6_CUSTOMIZABLE_CENTRAL_LAYOUT_V1=PASS");

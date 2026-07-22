@@ -293,3 +293,7 @@
 | AS6_STAGING_PAYMENT_IMAGE_VALIDATION_GAP | AEC_REQUIRE_NETWORKLESS_PAYMENT_IMAGE_TESTS | immutable-staging-image-must-run-payment-tests-without-network | ENABLED |
 | AS6_PLAN_ACTIVATION_STALE_SHELL_STATE | AEC_REQUIRE_PLAN_ACTIVATION_SHELL_INVALIDATION | plan-activation-must-refresh-current-restored-and-cross-tab-shells | ENABLED |
 | AS6_ACCOUNT_PLAN_WORKSPACE_FALLBACK_DRIFT | AEC_REQUIRE_ACCOUNT_PLAN_CANONICAL_SOURCE | account-plan-must-not-fall-back-to-basic-with-partial-workspace-data | ENABLED |
+| AS6_CENTRAL_MASK_MIXED_SHAPE_ARTIFACT | AEC_REQUIRE_SINGLE_THEME_MATCHED_CENTRAL_MASK | central-goal-mask-must-use-one-borderless-rounded-shape | ENABLED |
+| AS6_CONNECTION_NODE_OVERPAINT | AEC_REQUIRE_CONNECTION_ENDPOINT_CLEARANCE | connections-must-stop-before-node-centers-and-remain-below-objects | ENABLED |
+| AS6_LAYOUT_TOOLBAR_HEADER_COLLISION | AEC_REQUIRE_BOTTOM_LAYOUT_ACTION_SLOT | normal-and-editing-layout-actions-must-share-bottom-slot | ENABLED |
+| AS6_CENTRAL_ROUTE_BOTTOM_COLLISION | AEC_REQUIRE_UPPER_ROUTE_PLACEMENT | active-central-route-must-not-compete-with-bottom-actions | ENABLED |

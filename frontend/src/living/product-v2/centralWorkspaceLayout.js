@@ -66,12 +66,20 @@ export function centralConnectionPath(connection, layout) {
   const from = layout[connection.from] || CENTRAL_LAYOUT_DEFAULTS[connection.from];
   const to = layout[connection.to] || CENTRAL_LAYOUT_DEFAULTS[connection.to];
   if (!from || !to) return connection.d || "";
-  const dx = to.x - from.x;
-  const dy = to.y - from.y;
+  const sourceDx = to.x - from.x;
+  const sourceDy = to.y - from.y;
+  const distance = Math.hypot(sourceDx, sourceDy);
+  const inset = Math.min(4, distance / 3);
+  const unitX = distance ? sourceDx / distance : 0;
+  const unitY = distance ? sourceDy / distance : 0;
+  const start = { x: from.x + unitX * inset, y: from.y + unitY * inset };
+  const end = { x: to.x - unitX * inset, y: to.y - unitY * inset };
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
   const bend = Math.max(-8, Math.min(8, dx * 0.08));
-  const first = { x: from.x + dx * 0.36, y: from.y + dy * 0.22 - bend };
-  const second = { x: from.x + dx * 0.68, y: from.y + dy * 0.78 - bend };
-  return `M${from.x} ${from.y} C${first.x} ${first.y} ${second.x} ${second.y} ${to.x} ${to.y}`;
+  const first = { x: start.x + dx * 0.36, y: start.y + dy * 0.22 - bend };
+  const second = { x: start.x + dx * 0.68, y: start.y + dy * 0.78 - bend };
+  return `M${start.x} ${start.y} C${first.x} ${first.y} ${second.x} ${second.y} ${end.x} ${end.y}`;
 }
 
 export function moveCentralLayoutItem(layout, id, x, y) {
