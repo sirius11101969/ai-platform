@@ -13,7 +13,7 @@
 }
 
 .as6-master__topbar {
-  left: 204px;
+  left: 0;
   right: 0;
 }
 
@@ -30,18 +30,27 @@
 }
 
 .as6-master__graph {
+  z-index: 1;
   transform: none;
+  pointer-events: none;
 }
 
 .as6-master__layout-tools {
   position: absolute;
   z-index: 14;
   left: 50%;
-  top: -4px;
+  top: auto;
+  bottom: 2px;
   display: grid;
   justify-items: center;
   gap: 5px;
   transform: translateX(-50%);
+}
+
+/* Keep the editing actions visible above the movable canvas. */
+.as6-master__space.is-layout-editing .as6-master__layout-tools {
+  top: -4px;
+  bottom: auto;
 }
 
 .as6-master__layout-start,
@@ -257,8 +266,30 @@
 }
 
 .as6-master__focus {
+  z-index: 6;
+  isolation: isolate;
   top: 50%;
   width: min(620px, 57%);
+}
+
+/*
+ * The goal is the visual foreground. Connections stay live underneath it,
+ * while this theme-matched mask gives the text a quiet, borderless clearing.
+ */
+.as6-master__focus::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -28px -44px;
+  border-radius: 46%;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    #fff 0 68%,
+    rgba(255, 255, 255, .98) 78%,
+    rgba(255, 255, 255, .82) 89%,
+    rgba(255, 255, 255, 0) 100%
+  );
 }
 
 .as6-master__focus h2 {
@@ -414,7 +445,7 @@
   .as6-master__identity { left: 0; width: 205px; }
   .as6-master__guide { right: 0; width: 215px; }
   .as6-master__space { left: 210px; right: 218px; bottom: 88px; }
-  .as6-master__topbar { left: 198px; right: 0; }
+  .as6-master__topbar { left: 0; right: 0; }
   .as6-master__intent {
     left: 180px;
     right: 220px;
@@ -482,7 +513,7 @@
   .as6-master__intent {
     grid-template-columns: 74px minmax(0, 1fr) 34px;
   }
-  .as6-master__layout-tools { top: 4px; }
+  .as6-master__layout-tools { top: 4px; bottom: auto; }
   .as6-master__layout-toolbar > span { display:none; }
 }
 
@@ -822,6 +853,16 @@
   display: none;
 }
 
+.as6-master[data-theme="light"] .as6-master__focus::after {
+  background: radial-gradient(
+    ellipse at center,
+    #fff 0 68%,
+    rgba(255, 255, 255, .98) 78%,
+    rgba(255, 255, 255, .82) 89%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
 .as6-master[data-theme="light"] .as6-master__graph-lines path {
   stroke: rgba(151,190,218,.7);
   filter: none;
@@ -865,6 +906,16 @@
   opacity: .42;
   background: radial-gradient(circle,rgba(255,255,255,.10),rgba(255,255,255,.025) 48%,transparent 72%);
   filter: blur(18px) grayscale(1);
+}
+
+.as6-master[data-theme="dark"] .as6-master__focus::after {
+  background: radial-gradient(
+    ellipse at center,
+    #08090b 0 68%,
+    rgba(8, 9, 11, .98) 78%,
+    rgba(8, 9, 11, .84) 89%,
+    rgba(8, 9, 11, 0) 100%
+  );
 }
 
 .as6-master[data-theme="dark"] .as6-master__graph-lines path {
