@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="${AS6_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
+MASTER="$ROOT/frontend/src/living/product-v2/AS6MasterScreen.jsx"
+STYLE_MODEL="$ROOT/frontend/src/living/product-v2/centralWorkspaceStyle.js"
+STYLES="$ROOT/frontend/src/living/product-v2/AS6MasterScreenReference.css"
+
+test -f "$MASTER"
+test -f "$STYLE_MODEL"
+test -f "$STYLES"
+
+grep -Fq 'readCentralStyle(workspaceId)' "$MASTER"
+grep -Fq 'persistCentralStyle(workspaceId, styleRef.current)' "$MASTER"
+grep -Fq 'styleBeforeEditRef.current' "$MASTER"
+grep -Fq 'selectedStyleId' "$MASTER"
+grep -Fq 'as6-master__style-panel' "$MASTER"
+grep -Fq 'CENTRAL_STYLE_COLORS.map' "$MASTER"
+grep -Fq 'CENTRAL_STYLE_GLYPHS.map' "$MASTER"
+grep -Fq 'resetCentralStyleItem' "$MASTER"
+grep -Fq 'AS6_CUSTOMIZABLE_CENTRAL_STYLE_V1' "$STYLES"
+grep -Fq -- '--as6-node-icon-scale' "$STYLES"
+grep -Fq -- '--as6-node-label-scale' "$STYLES"
+grep -Fq -- '--as6-node-accent' "$STYLES"
+
+node "$ROOT/ops/diagnostics/as6-customizable-central-style-v1.mjs"
+
+echo "AS6_CENTRAL_STYLE_SELECTED_OBJECT_ONLY=PASS"
+echo "AS6_CENTRAL_STYLE_SHARED_EDIT_LIFECYCLE=PASS"
+echo "AS6_CUSTOMIZABLE_CENTRAL_STYLE_V1=PASS"
