@@ -54,3 +54,7 @@
 | AS6_STAGING_PAYMENT_IMAGE_VALIDATION_GAP | run-payment-policy-tests-in-immutable-image-with-network-none | ENABLED |
 | AS6_PLAN_ACTIVATION_STALE_SHELL_STATE | invalidate-living-shell-on-plan-activation-focus-pageshow-and-storage | ENABLED |
 | AS6_ACCOUNT_PLAN_WORKSPACE_FALLBACK_DRIFT | use-authenticated-account-plan-as-living-shell-subscription-source | ENABLED |
+| AS6_CENTRAL_STYLE_GLOBAL_LEAK | store-normalized-central-style-by-workspace-id | ENABLED |
+| AS6_CENTRAL_STYLE_UNBOUNDED_VALUES | clamp-scales-and-whitelist-colors-and-glyphs | ENABLED |
+| AS6_CENTRAL_STYLE_EDIT_MODE_CLUTTER | render-style-panel-only-for-selected-node-in-edit-mode | ENABLED |
+| AS6_CENTRAL_STYLE_CANCEL_PERSISTENCE_DRIFT | share-layout-editor-snapshot-cancel-reset-save-lifecycle | ENABLED |
