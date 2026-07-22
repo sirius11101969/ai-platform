@@ -12,10 +12,25 @@ import {
   persistCentralLayout,
   readCentralLayout,
 } from "./centralWorkspaceLayout.js";
+import {
+  CENTRAL_STYLE_COLORS,
+  CENTRAL_STYLE_GLYPHS,
+  createDefaultCentralStyle,
+  persistCentralStyle,
+  readCentralStyle,
+  resetCentralStyleItem,
+  updateCentralStyleItem,
+} from "./centralWorkspaceStyle.js";
 
 const decorativeGraphPoints = [[14, 40], [12, 70], [34, 89], [55, 87], [86, 48], [67, 17]];
 
-function NodeGlyph({ type }) {
+function NodeGlyph({ type, variant = "original" }) {
+  if (variant === "ring") {
+    return <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="10" /><circle cx="32" cy="32" r="22" /></svg>;
+  }
+  if (variant === "diamond") {
+    return <svg viewBox="0 0 64 64"><path d="M32 8l24 24-24 24L8 32z" /><path d="M32 18l14 14-14 14-14-14z" /></svg>;
+  }
   if (type === "sales") {
     return <svg viewBox="0 0 64 64"><path d="M32 11l5.7 14.7L53 32l-15.3 6.3L32 53l-5.7-14.7L11 32l15.3-6.3z" /></svg>;
   }
@@ -83,10 +98,14 @@ export default function AS6MasterScreen({
   const [intentSource, setIntentSource] = useState("suggested");
   const workspaceId = shell.workspace?.id || "default";
   const [layout, setLayout] = useState(() => readCentralLayout(workspaceId));
+  const [centralStyle, setCentralStyle] = useState(() => readCentralStyle(workspaceId));
+  const [selectedStyleId, setSelectedStyleId] = useState("");
   const [layoutEditing, setLayoutEditing] = useState(false);
   const [layoutStatus, setLayoutStatus] = useState("");
   const layoutBeforeEditRef = useRef(layout);
   const layoutRef = useRef(layout);
+  const styleBeforeEditRef = useRef(centralStyle);
+  const styleRef = useRef(centralStyle);
   const spaceRef = useRef(null);
   const dragRef = useRef(null);
   const acceptTranscript = useCallback((transcript) => {
@@ -107,10 +126,15 @@ export default function AS6MasterScreen({
 
   useEffect(() => {
     const nextLayout = readCentralLayout(workspaceId);
+    const nextStyle = readCentralStyle(workspaceId);
     setLayout(nextLayout);
+    setCentralStyle(nextStyle);
     layoutRef.current = nextLayout;
+    styleRef.current = nextStyle;
     layoutBeforeEditRef.current = nextLayout;
+    styleBeforeEditRef.current = nextStyle;
     dragRef.current = null;
+    setSelectedStyleId("");
     setLayoutEditing(false);
     setLayoutStatus("");
   }, [workspaceId]);
@@ -118,6 +142,10 @@ export default function AS6MasterScreen({
   useEffect(() => {
     layoutRef.current = layout;
   }, [layout]);
+
+  useEffect(() => {
+    styleRef.current = centralStyle;
+  }, [centralStyle]);
 
   useEffect(() => {
     function movePointer(event) {
@@ -150,6 +178,8 @@ export default function AS6MasterScreen({
   const time = useMemo(() => formatTime(now, shell.locale), [now, shell.locale]);
   const date = useMemo(() => formatDate(now, shell.locale), [now, shell.locale]);
   const activeSpaceData = shell.spaces.find((space) => space.id === activeSpace);
+  const selectedStyleSpace = shell.spaces.find((space) => space.id === selectedStyleId);
+  const selectedStyle = selectedStyleId ? centralStyle[selectedStyleId] : null;
   const resolvedIntent = intent.trim() || String(priority.intent || "").trim();
 
   function submitIntent(event) {
@@ -205,6 +235,8 @@ export default function AS6MasterScreen({
 
   function beginLayoutEdit() {
     layoutBeforeEditRef.current = layoutRef.current;
+    styleBeforeEditRef.current = styleRef.current;
+    setSelectedStyleId("");
     setLayoutStatus("");
     setActiveSpace(null);
     setLayoutEditing(true);
@@ -213,6 +245,9 @@ export default function AS6MasterScreen({
   function cancelLayoutEdit() {
     layoutRef.current = layoutBeforeEditRef.current;
     setLayout(layoutBeforeEditRef.current);
+    styleRef.current = styleBeforeEditRef.current;
+    setCentralStyle(styleBeforeEditRef.current);
+    setSelectedStyleId("");
     setLayoutStatus("");
     setLayoutEditing(false);
   }
@@ -220,8 +255,12 @@ export default function AS6MasterScreen({
   function saveLayoutEdit() {
     try {
       const saved = persistCentralLayout(workspaceId, layoutRef.current);
+      const savedStyle = persistCentralStyle(workspaceId, styleRef.current);
       layoutRef.current = saved;
       setLayout(saved);
+      styleRef.current = savedStyle;
+      setCentralStyle(savedStyle);
+      setSelectedStyleId("");
       setLayoutStatus(t("layoutSaved"));
       setLayoutEditing(false);
     } catch {
@@ -231,19 +270,42 @@ export default function AS6MasterScreen({
 
   function resetLayoutEdit() {
     const reset = createDefaultCentralLayout();
+    const resetStyle = createDefaultCentralStyle();
     layoutRef.current = reset;
     setLayout(reset);
+    styleRef.current = resetStyle;
+    setCentralStyle(resetStyle);
+    setSelectedStyleId("");
     setLayoutStatus(t("layoutResetReady"));
   }
 
   function startDrag(event, id) {
     if (!layoutEditing || event.button !== 0) return;
     event.preventDefault();
+    if (id !== "focus") setSelectedStyleId(id);
     dragRef.current = {
       id,
       pointer: { x: event.clientX, y: event.clientY },
       origin: layoutRef.current[id],
     };
+  }
+
+  function updateSelectedStyle(patch) {
+    if (!selectedStyleId) return;
+    setCentralStyle((current) => {
+      const next = updateCentralStyleItem(current, selectedStyleId, patch);
+      styleRef.current = next;
+      return next;
+    });
+  }
+
+  function resetSelectedStyle() {
+    if (!selectedStyleId) return;
+    setCentralStyle((current) => {
+      const next = resetCentralStyleItem(current, selectedStyleId);
+      styleRef.current = next;
+      return next;
+    });
   }
 
   function nudgeLayoutItem(event, id) {
@@ -330,25 +392,66 @@ export default function AS6MasterScreen({
             </g>
           </svg>
 
+          {layoutEditing && selectedStyleSpace && selectedStyle && (
+            <section
+              className="as6-master__style-panel"
+              aria-label={t("objectAppearance")}
+              onPointerDown={(event) => event.stopPropagation()}
+            >
+              <header>
+                <span><small>{t("objectAppearance")}</small><strong>{selectedStyleSpace.label}</strong></span>
+                <button type="button" onClick={() => setSelectedStyleId("")} aria-label={t("close")}>×</button>
+              </header>
+              <div className="as6-master__style-colors" role="group" aria-label={t("iconColor")}>
+                {CENTRAL_STYLE_COLORS.map((color) => (
+                  <button
+                    key={color}
+                    type="button"
+                    className={selectedStyle.color === color ? "is-active" : ""}
+                    style={{ "--as6-style-choice": color }}
+                    onClick={() => updateSelectedStyle({ color })}
+                    aria-label={`${t("iconColor")} ${color}`}
+                    aria-pressed={selectedStyle.color === color}
+                  />
+                ))}
+              </div>
+              <label>{t("iconSize")} <output>{Math.round(selectedStyle.iconScale * 100)}%</output><input type="range" min="80" max="140" step="5" value={Math.round(selectedStyle.iconScale * 100)} onChange={(event) => updateSelectedStyle({ iconScale: Number(event.target.value) / 100 })} /></label>
+              <label>{t("labelSize")} <output>{Math.round(selectedStyle.labelScale * 100)}%</output><input type="range" min="85" max="125" step="5" value={Math.round(selectedStyle.labelScale * 100)} onChange={(event) => updateSelectedStyle({ labelScale: Number(event.target.value) / 100 })} /></label>
+              <div className="as6-master__style-glyphs" role="group" aria-label={t("iconSymbol")}>
+                {CENTRAL_STYLE_GLYPHS.map((glyph) => (
+                  <button key={glyph} type="button" className={selectedStyle.glyph === glyph ? "is-active" : ""} onClick={() => updateSelectedStyle({ glyph })} aria-label={t(`iconSymbol_${glyph}`)} aria-pressed={selectedStyle.glyph === glyph}>{glyph === "original" ? "✦" : glyph === "ring" ? "◎" : "◇"}</button>
+                ))}
+              </div>
+              <button type="button" className="as6-master__style-reset" onClick={resetSelectedStyle}>{t("resetObjectStyle")}</button>
+            </section>
+          )}
+
           {shell.spaces.map((space) => {
             const isActive = activeSpace === space.id;
             const isMuted = activeSpace && !isActive;
+            const objectStyle = centralStyle[space.id];
             return (
               <button
                 key={space.id}
                 type="button"
-                className={`as6-master__node as6-master__node--${space.id}${isActive ? " is-active" : ""}${isMuted ? " is-muted" : ""}`}
-                style={{ left: `${layout[space.id]?.x ?? space.x}%`, top: `${layout[space.id]?.y ?? space.y}%` }}
+                className={`as6-master__node as6-master__node--${space.id}${isActive ? " is-active" : ""}${isMuted ? " is-muted" : ""}${selectedStyleId === space.id ? " is-style-selected" : ""}`}
+                style={{
+                  left: `${layout[space.id]?.x ?? space.x}%`,
+                  top: `${layout[space.id]?.y ?? space.y}%`,
+                  "--as6-node-accent": objectStyle.color,
+                  "--as6-node-icon-scale": objectStyle.iconScale,
+                  "--as6-node-label-scale": objectStyle.labelScale,
+                }}
                 onPointerDown={(event) => startDrag(event, space.id)}
                 onKeyDown={(event) => nudgeLayoutItem(event, space.id)}
                 onMouseEnter={() => setActiveSpace(space.id)}
                 onMouseLeave={() => setActiveSpace(null)}
                 onFocus={() => setActiveSpace(space.id)}
                 onBlur={() => setActiveSpace(null)}
-                onClick={() => { if (!layoutEditing) navigateForPriority(space.id); }}
+                onClick={() => { if (layoutEditing) setSelectedStyleId(space.id); else navigateForPriority(space.id); }}
                 aria-label={`${space.label}. ${space.note}`}
               >
-                <span className="as6-master__node-mark" aria-hidden="true"><NodeGlyph type={space.id} /></span>
+                <span className="as6-master__node-mark" aria-hidden="true"><NodeGlyph type={space.id} variant={objectStyle.glyph} /></span>
                 <strong>{space.label}</strong><small>{space.note}</small>
               </button>
             );
