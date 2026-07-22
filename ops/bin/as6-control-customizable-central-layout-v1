@@ -31,6 +31,7 @@ grep -Fq 'AS6_CENTRAL_CONNECTION_ENDPOINT_CLEARANCE=PASS' "$ROOT/ops/diagnostics
 grep -Fq 'top: -42px' "$STYLES"
 
 node "$ROOT/ops/diagnostics/as6-customizable-central-layout-v1.mjs"
+AS6_ROOT="$ROOT" bash "$ROOT/ops/bin/as6-control-customizable-central-style-v1"
 
 echo "AS6_CUSTOMIZABLE_CENTRAL_LAYOUT_V1=PASS"
 echo "AS6_CENTRAL_FOCUS_LAYER=PASS"
