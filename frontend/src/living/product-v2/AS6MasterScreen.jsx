@@ -14,7 +14,6 @@ import {
 } from "./centralWorkspaceLayout.js";
 import {
   CENTRAL_STYLE_COLORS,
-  CENTRAL_STYLE_GLYPHS,
   createDefaultCentralStyle,
   persistCentralStyle,
   readCentralStyle,
@@ -108,6 +107,8 @@ export default function AS6MasterScreen({
   const styleRef = useRef(centralStyle);
   const spaceRef = useRef(null);
   const dragRef = useRef(null);
+  const layoutEditingRef = useRef(false);
+  const suppressLayoutStartClickRef = useRef(false);
   const acceptTranscript = useCallback((transcript) => {
     setIntent(transcript);
     setIntentSource("voice");
@@ -144,6 +145,10 @@ export default function AS6MasterScreen({
   }, [layout]);
 
   useEffect(() => {
+    layoutEditingRef.current = layoutEditing;
+  }, [layoutEditing]);
+
+  useEffect(() => {
     styleRef.current = centralStyle;
   }, [centralStyle]);
 
@@ -154,6 +159,7 @@ export default function AS6MasterScreen({
       if (!drag || !bounds?.width || !bounds?.height) return;
       const x = drag.origin.x + ((event.clientX - drag.pointer.x) / bounds.width) * 100;
       const y = drag.origin.y + ((event.clientY - drag.pointer.y) / bounds.height) * 100;
+      if (Math.hypot(event.clientX - drag.pointer.x, event.clientY - drag.pointer.y) > 4) drag.moved = true;
       setLayout((current) => {
         const next = moveCentralLayoutItem(current, drag.id, x, y);
         layoutRef.current = next;
@@ -162,6 +168,21 @@ export default function AS6MasterScreen({
     }
 
     function stopPointer() {
+      const drag = dragRef.current;
+      if (drag?.id === "controls" && drag.moved) {
+        suppressLayoutStartClickRef.current = true;
+        if (!layoutEditingRef.current) {
+          try {
+            const saved = persistCentralLayout(workspaceId, layoutRef.current);
+            layoutRef.current = saved;
+            setLayout(saved);
+            setLayoutStatus(t("layoutSaved"));
+          } catch {
+            setLayoutStatus(t("layoutSaveError"));
+          }
+        }
+        window.setTimeout(() => { suppressLayoutStartClickRef.current = false; }, 0);
+      }
       dragRef.current = null;
     }
 
@@ -173,7 +194,7 @@ export default function AS6MasterScreen({
       window.removeEventListener("pointerup", stopPointer);
       window.removeEventListener("pointercancel", stopPointer);
     };
-  }, []);
+  }, [t, workspaceId]);
 
   const time = useMemo(() => formatTime(now, shell.locale), [now, shell.locale]);
   const date = useMemo(() => formatDate(now, shell.locale), [now, shell.locale]);
@@ -234,6 +255,7 @@ export default function AS6MasterScreen({
   }
 
   function beginLayoutEdit() {
+    if (suppressLayoutStartClickRef.current) return;
     layoutBeforeEditRef.current = layoutRef.current;
     styleBeforeEditRef.current = styleRef.current;
     setSelectedStyleId("");
@@ -280,13 +302,14 @@ export default function AS6MasterScreen({
   }
 
   function startDrag(event, id) {
-    if (!layoutEditing || event.button !== 0) return;
-    event.preventDefault();
-    if (id !== "focus") setSelectedStyleId(id);
+    if ((!layoutEditing && id !== "controls") || event.button !== 0) return;
+    if (id !== "controls") event.preventDefault();
+    if (id !== "focus" && id !== "controls") setSelectedStyleId(id);
     dragRef.current = {
       id,
       pointer: { x: event.clientX, y: event.clientY },
       origin: layoutRef.current[id],
+      moved: false,
     };
   }
 
@@ -362,18 +385,49 @@ export default function AS6MasterScreen({
         </header>
 
         <main className={`as6-master__space${layoutEditing ? " is-layout-editing" : ""}`} ref={spaceRef}>
-          <div className="as6-master__layout-tools" aria-live="polite">
-            {!layoutEditing ? (
-              <button type="button" className="as6-master__layout-start" onClick={beginLayoutEdit}>✦ {t("customizeSpace")}</button>
-            ) : (
-              <div className="as6-master__layout-toolbar" role="group" aria-label={t("layoutEditMode")}>
-                <span><strong>{t("layoutEditMode")}</strong><small>{t("layoutBrowserNote")}</small></span>
-                <button type="button" onClick={resetLayoutEdit}>{t("resetLayout")}</button>
-                <button type="button" onClick={cancelLayoutEdit}>{t("cancel")}</button>
-                <button type="button" className="is-primary" onClick={saveLayoutEdit}>{t("done")}</button>
-              </div>
+          <div
+            className="as6-master__layout-dock"
+            style={{ "--as6-layout-dock-x": `${layout.controls.x}%`, "--as6-layout-dock-y": `${layout.controls.y}%` }}
+          >
+            {layoutEditing && selectedStyleSpace && selectedStyle && (
+              <section className="as6-master__style-panel" aria-label={t("objectAppearance")}>
+                <header>
+                  <button type="button" className="as6-master__style-reset" onClick={resetSelectedStyle}>{t("resetObjectStyle")}</button>
+                  <span className="as6-master__style-drag" onPointerDown={(event) => startDrag(event, "controls")} title={t("moveSettingsPanel")}>
+                    <small>{t("objectAppearance")}</small><strong>{selectedStyleSpace.label}</strong>
+                  </span>
+                  <button type="button" className="as6-master__style-close" onClick={() => setSelectedStyleId("")} aria-label={t("close")}>×</button>
+                </header>
+                <div className="as6-master__style-colors" role="group" aria-label={t("iconColor")}>
+                  {CENTRAL_STYLE_COLORS.map((color) => (
+                    <button
+                      key={color}
+                      type="button"
+                      className={selectedStyle.color === color ? "is-active" : ""}
+                      style={{ "--as6-style-choice": color }}
+                      onClick={() => updateSelectedStyle({ color })}
+                      aria-label={`${t("iconColor")} ${color}`}
+                      aria-pressed={selectedStyle.color === color}
+                    />
+                  ))}
+                </div>
+                <label>{t("iconSize")} <output>{Math.round(selectedStyle.iconScale * 100)}%</output><input type="range" min="80" max="140" step="5" value={Math.round(selectedStyle.iconScale * 100)} onChange={(event) => updateSelectedStyle({ iconScale: Number(event.target.value) / 100 })} /></label>
+                <label>{t("labelSize")} <output>{Math.round(selectedStyle.labelScale * 100)}%</output><input type="range" min="85" max="125" step="5" value={Math.round(selectedStyle.labelScale * 100)} onChange={(event) => updateSelectedStyle({ labelScale: Number(event.target.value) / 100 })} /></label>
+              </section>
             )}
-            {layoutStatus && <small className="as6-master__layout-status">{layoutStatus}</small>}
+            <div className="as6-master__layout-tools" aria-live="polite">
+              {!layoutEditing ? (
+                <button type="button" className="as6-master__layout-start" onPointerDown={(event) => startDrag(event, "controls")} onClick={beginLayoutEdit}>✦ {t("customizeSpace")}</button>
+              ) : (
+                <div className="as6-master__layout-toolbar" role="group" aria-label={t("layoutEditMode")}>
+                  <span className="as6-master__layout-drag" onPointerDown={(event) => startDrag(event, "controls")} title={t("moveSettingsPanel")}><strong>{t("layoutEditMode")}</strong><small>{t("layoutBrowserNote")}</small></span>
+                  <button type="button" onClick={resetLayoutEdit}>{t("resetLayout")}</button>
+                  <button type="button" onClick={cancelLayoutEdit}>{t("cancel")}</button>
+                  <button type="button" className="is-primary" onClick={saveLayoutEdit}>{t("done")}</button>
+                </div>
+              )}
+              {layoutStatus && <small className="as6-master__layout-status">{layoutStatus}</small>}
+            </div>
           </div>
           <svg className="as6-master__graph" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
             <defs>
@@ -391,40 +445,6 @@ export default function AS6MasterScreen({
               {decorativeGraphPoints.map(([cx, cy], index) => <circle key={`ambient-${cx}-${cy}-${index}`} cx={cx} cy={cy} r={0.30} />)}
             </g>
           </svg>
-
-          {layoutEditing && selectedStyleSpace && selectedStyle && (
-            <section
-              className="as6-master__style-panel"
-              aria-label={t("objectAppearance")}
-              onPointerDown={(event) => event.stopPropagation()}
-            >
-              <header>
-                <span><small>{t("objectAppearance")}</small><strong>{selectedStyleSpace.label}</strong></span>
-                <button type="button" onClick={() => setSelectedStyleId("")} aria-label={t("close")}>×</button>
-              </header>
-              <div className="as6-master__style-colors" role="group" aria-label={t("iconColor")}>
-                {CENTRAL_STYLE_COLORS.map((color) => (
-                  <button
-                    key={color}
-                    type="button"
-                    className={selectedStyle.color === color ? "is-active" : ""}
-                    style={{ "--as6-style-choice": color }}
-                    onClick={() => updateSelectedStyle({ color })}
-                    aria-label={`${t("iconColor")} ${color}`}
-                    aria-pressed={selectedStyle.color === color}
-                  />
-                ))}
-              </div>
-              <label>{t("iconSize")} <output>{Math.round(selectedStyle.iconScale * 100)}%</output><input type="range" min="80" max="140" step="5" value={Math.round(selectedStyle.iconScale * 100)} onChange={(event) => updateSelectedStyle({ iconScale: Number(event.target.value) / 100 })} /></label>
-              <label>{t("labelSize")} <output>{Math.round(selectedStyle.labelScale * 100)}%</output><input type="range" min="85" max="125" step="5" value={Math.round(selectedStyle.labelScale * 100)} onChange={(event) => updateSelectedStyle({ labelScale: Number(event.target.value) / 100 })} /></label>
-              <div className="as6-master__style-glyphs" role="group" aria-label={t("iconSymbol")}>
-                {CENTRAL_STYLE_GLYPHS.map((glyph) => (
-                  <button key={glyph} type="button" className={selectedStyle.glyph === glyph ? "is-active" : ""} onClick={() => updateSelectedStyle({ glyph })} aria-label={t(`iconSymbol_${glyph}`)} aria-pressed={selectedStyle.glyph === glyph}>{glyph === "original" ? "✦" : glyph === "ring" ? "◎" : "◇"}</button>
-                ))}
-              </div>
-              <button type="button" className="as6-master__style-reset" onClick={resetSelectedStyle}>{t("resetObjectStyle")}</button>
-            </section>
-          )}
 
           {shell.spaces.map((space) => {
             const isActive = activeSpace === space.id;

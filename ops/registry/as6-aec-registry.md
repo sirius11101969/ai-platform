@@ -301,3 +301,8 @@
 | AS6_CENTRAL_STYLE_UNBOUNDED_VALUES | AEC_REQUIRE_BOUNDED_CENTRAL_STYLE | central-style-values-must-be-clamped-and-whitelisted | ENABLED |
 | AS6_CENTRAL_STYLE_EDIT_MODE_CLUTTER | AEC_REQUIRE_SELECTED_NODE_STYLE_PANEL | style-controls-must-only-appear-for-selected-node-in-edit-mode | ENABLED |
 | AS6_CENTRAL_STYLE_CANCEL_PERSISTENCE_DRIFT | AEC_REQUIRE_SHARED_LAYOUT_STYLE_LIFECYCLE | style-cancel-reset-save-must-follow-layout-editor | ENABLED |
+| AS6_FOCUS_HEADER_COLLISION | AEC_REQUIRE_CENTRAL_FOCUS_SAFE_AREA | main-goal-must-stay-clear-of-header-and-intent | ENABLED |
+| AS6_FOCUS_MASK_NODE_OCCLUSION | AEC_REQUIRE_NODE_SAFE_FOCUS_LAYER | business-nodes-must-render-above-goal-mask | ENABLED |
+| AS6_STYLE_PANEL_VERTICAL_OVERLOAD | AEC_REQUIRE_COMPACT_STYLE_DOCK | selected-object-controls-must-use-compact-shared-dock | ENABLED |
+| AS6_CONFIGURATION_CONTROL_FIXED_POSITION | AEC_REQUIRE_MOVABLE_WORKSPACE_DOCK | customization-dock-position-must-be-bounded-and-workspace-local | ENABLED |
+| AS6_DECORATIVE_GLYPH_CONTROL_NOISE | AEC_FORBID_LOW_VALUE_GLYPH_CONTROLS | legacy-glyphs-may-load-but-control-buttons-must-not-render | ENABLED |

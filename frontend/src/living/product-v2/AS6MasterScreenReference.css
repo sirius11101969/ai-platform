@@ -35,22 +35,24 @@
   pointer-events: none;
 }
 
-.as6-master__layout-tools {
+.as6-master__layout-dock {
   position: absolute;
-  z-index: 14;
-  left: 50%;
-  top: auto;
-  bottom: 2px;
+  z-index: 15;
+  left: clamp(190px, var(--as6-layout-dock-x, 50%), calc(100% - 190px));
+  top: clamp(120px, var(--as6-layout-dock-y, 92%), calc(100% - 4px));
   display: grid;
   justify-items: center;
-  gap: 5px;
-  transform: translateX(-50%);
+  gap: 6px;
+  width: min(620px, calc(100% - 16px));
+  transform: translate(-50%, -100%);
+  pointer-events: none;
 }
 
-/* Editing replaces the normal bottom action instead of covering the header. */
-.as6-master__space.is-layout-editing .as6-master__layout-tools {
-  top: auto;
-  bottom: 2px;
+.as6-master__layout-tools {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  pointer-events: auto;
 }
 
 .as6-master__layout-start,
@@ -68,10 +70,13 @@
   padding: 7px 13px;
   font-size: 10px;
   opacity: .72;
+  touch-action: none;
+  cursor: grab;
 }
 
 .as6-master__layout-start:hover,
 .as6-master__layout-start:focus-visible { opacity: 1; }
+.as6-master__layout-start:active { cursor: grabbing; }
 
 .as6-master__layout-toolbar {
   display: flex;
@@ -86,6 +91,8 @@
 }
 
 .as6-master__layout-toolbar > span { display: grid; gap: 2px; padding: 0 8px 0 5px; white-space: nowrap; }
+.as6-master__layout-drag { touch-action:none; cursor:grab; user-select:none; }
+.as6-master__layout-drag:active { cursor:grabbing; }
 .as6-master__layout-toolbar strong { font-size: 11px; font-weight: 600; }
 .as6-master__layout-toolbar small { color: var(--muted); font-size: 8px; }
 .as6-master__layout-toolbar button { padding: 7px 11px; font-size: 10px; }
@@ -112,41 +119,38 @@
 .as6-master[data-theme="dark"] .as6-master__layout-toolbar button { border-color:rgba(255,255,255,.16); background:rgba(255,255,255,.05); color:#d4d7dc; }
 .as6-master[data-theme="dark"] .as6-master__layout-toolbar button.is-primary { background:#d7d9dd; color:#111216; }
 
-/* Selected-object appearance stays compact and exists only while editing. */
+/* Selected-object controls share the movable dock with the edit action. */
 .as6-master__style-panel {
-  position: absolute;
-  z-index: 15;
-  left: 50%;
-  bottom: 58px;
   display: grid;
-  grid-template-columns: auto minmax(116px, 1fr) minmax(116px, 1fr) auto auto;
+  grid-template-columns: minmax(190px, 1.25fr) minmax(120px, 1fr) minmax(120px, 1fr);
   align-items: center;
-  gap: 9px 12px;
-  width: min(720px, calc(100% - 24px));
-  padding: 10px 12px;
-  transform: translateX(-50%);
+  gap: 6px 12px;
+  width: 100%;
+  min-height: 76px;
+  padding: 8px 10px;
   border: 1px solid rgba(73, 122, 162, .20);
-  border-radius: 20px;
+  border-radius: 16px;
   background: rgba(247, 251, 254, .96);
-  box-shadow: 0 18px 48px rgba(44, 80, 110, .14);
+  box-shadow: 0 14px 38px rgba(44, 80, 110, .13);
   backdrop-filter: blur(20px);
   color: #315f82;
+  pointer-events: auto;
 }
-.as6-master__style-panel header { display:flex; align-items:center; gap:9px; min-width:112px; }
+.as6-master__style-panel header { grid-column:1; grid-row:1 / span 2; display:grid; grid-template-columns:auto 1fr auto; align-items:start; gap:7px; min-width:190px; }
 .as6-master__style-panel header span { display:grid; gap:1px; }
 .as6-master__style-panel header small { color:var(--muted); font-size:8px; }
 .as6-master__style-panel header strong { font-size:12px; }
 .as6-master__style-panel button { border:1px solid rgba(73,122,162,.18); background:rgba(255,255,255,.72); color:inherit; cursor:pointer; }
-.as6-master__style-panel header button { width:24px; height:24px; padding:0; border-radius:50%; }
+.as6-master__style-close { width:22px; height:22px; padding:0; border-radius:50%; }
+.as6-master__style-drag { min-width:0; padding:2px 5px; border-radius:7px; touch-action:none; cursor:grab; user-select:none; }
+.as6-master__style-drag:active { cursor:grabbing; }
 .as6-master__style-panel label { display:grid; grid-template-columns:1fr auto; gap:2px 7px; color:var(--muted); font-size:9px; }
 .as6-master__style-panel label output { color:inherit; }
-.as6-master__style-panel input[type="range"] { grid-column:1 / -1; width:100%; accent-color:#2f709f; }
-.as6-master__style-colors,.as6-master__style-glyphs { display:flex; align-items:center; gap:5px; }
+.as6-master__style-panel input[type="range"] { grid-column:1 / -1; width:100%; height:12px; accent-color:#2f709f; }
+.as6-master__style-colors { grid-column:2; grid-row:2; display:flex; align-items:center; gap:5px; }
 .as6-master__style-colors button { width:18px; height:18px; padding:0; border:3px solid rgba(255,255,255,.92); border-radius:50%; background:var(--as6-style-choice); box-shadow:0 0 0 1px rgba(45,80,108,.16); }
 .as6-master__style-colors button.is-active { box-shadow:0 0 0 2px #2f709f; }
-.as6-master__style-glyphs button { width:28px; height:28px; padding:0; border-radius:9px; }
-.as6-master__style-glyphs button.is-active { border-color:#2f709f; background:rgba(47,112,159,.12); }
-.as6-master__style-reset { padding:7px 10px; border-radius:999px; white-space:nowrap; font-size:9px; }
+.as6-master__style-reset { padding:4px 7px; border-radius:8px; white-space:nowrap; font-size:8px; }
 .as6-master[data-theme="dark"] .as6-master__style-panel { border-color:rgba(255,255,255,.14); background:rgba(17,18,21,.96); color:#d4d7dc; }
 .as6-master[data-theme="dark"] .as6-master__style-panel button { border-color:rgba(255,255,255,.16); background:rgba(255,255,255,.05); }
 .as6-master[data-theme="dark"] .as6-master__style-colors button { border-color:#111216; }
@@ -166,8 +170,10 @@
 .as6-master[data-theme="dark"] .as6-master__node-mark { border-color:color-mix(in srgb, var(--as6-node-accent, #6b91ad) 45%, #111216); color:color-mix(in srgb, var(--as6-node-accent, #6b91ad) 78%, white); box-shadow:0 0 0 7px color-mix(in srgb, var(--as6-node-accent, #6b91ad) 8%, transparent),0 0 24px color-mix(in srgb, var(--as6-node-accent, #6b91ad) 17%, transparent); }
 
 @media (max-width: 980px) {
-  .as6-master__style-panel { grid-template-columns:1fr 1fr; width:min(520px, calc(100% - 16px)); }
-  .as6-master__style-panel header { grid-column:1 / -1; justify-content:space-between; }
+  .as6-master__layout-dock { left:clamp(160px,var(--as6-layout-dock-x,50%),calc(100% - 160px)); width:min(500px,calc(100% - 12px)); }
+  .as6-master__style-panel { grid-template-columns:1fr 1fr; }
+  .as6-master__style-panel header { grid-column:1 / -1; grid-row:auto; }
+  .as6-master__style-colors { grid-column:1 / -1; grid-row:auto; }
 }
 
 /* The identity mark is centered inside the left column. */
@@ -325,22 +331,22 @@
 }
 
 .as6-master__focus {
-  z-index: 6;
+  z-index: 3;
   isolation: isolate;
   top: 50%;
   width: min(620px, 57%);
 }
 
 /*
- * The goal is the visual foreground. Connections stay live underneath it,
- * while this theme-matched mask gives the text a quiet, borderless clearing.
+ * Connections stay beneath the goal, while business nodes stay above its
+ * theme-matched oval clearing so the mask can never cover a node circle.
  */
 .as6-master__focus::after {
   content: "";
   position: absolute;
   z-index: -1;
-  inset: -26px -40px;
-  border-radius: 32px;
+  inset: -22px -34px;
+  border-radius: 50% / 38%;
   pointer-events: none;
   background: var(--as6-stage-surface, #fff);
   box-shadow: 0 0 26px 18px var(--as6-stage-surface, #fff);
@@ -574,7 +580,6 @@
   .as6-master__intent {
     grid-template-columns: 74px minmax(0, 1fr) 34px;
   }
-  .as6-master__layout-tools { top: auto; bottom: 4px; }
   .as6-master__layout-toolbar > span { display:none; }
   .as6-master__space-status { top: 4px; left: 0; }
 }

@@ -8,9 +8,15 @@ export const CENTRAL_LAYOUT_DEFAULTS = Object.freeze({
   documents: Object.freeze({ x: 10, y: 84 }),
   team: Object.freeze({ x: 83, y: 73 }),
   focus: Object.freeze({ x: 50, y: 50 }),
+  controls: Object.freeze({ x: 50, y: 92 }),
 });
 
 const LAYOUT_IDS = Object.keys(CENTRAL_LAYOUT_DEFAULTS);
+export const CENTRAL_LAYOUT_BOUNDS = Object.freeze({
+  default: Object.freeze({ minX: 6, maxX: 94, minY: 6, maxY: 92 }),
+  focus: Object.freeze({ minX: 28, maxX: 72, minY: 26, maxY: 60 }),
+  controls: Object.freeze({ minX: 8, maxX: 92, minY: 24, maxY: 92 }),
+});
 
 function clamp(value, minimum, maximum) {
   return Math.min(maximum, Math.max(minimum, value));
@@ -32,9 +38,10 @@ export function normalizeCentralLayout(value) {
     const x = Number(value[id]?.x);
     const y = Number(value[id]?.y);
     if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+    const bounds = CENTRAL_LAYOUT_BOUNDS[id] || CENTRAL_LAYOUT_BOUNDS.default;
     defaults[id] = {
-      x: Math.round(clamp(x, 6, 94) * 10) / 10,
-      y: Math.round(clamp(y, 6, 92) * 10) / 10,
+      x: Math.round(clamp(x, bounds.minX, bounds.maxX) * 10) / 10,
+      y: Math.round(clamp(y, bounds.minY, bounds.maxY) * 10) / 10,
     };
   });
   return defaults;
@@ -52,7 +59,7 @@ export function readCentralLayout(workspaceId) {
 export function persistCentralLayout(workspaceId, layout) {
   const normalized = normalizeCentralLayout(layout);
   if (typeof window !== "undefined") {
-    window.localStorage.setItem(storageKey(workspaceId), JSON.stringify({ version: 1, ...normalized }));
+    window.localStorage.setItem(storageKey(workspaceId), JSON.stringify({ version: 2, ...normalized }));
   }
   return normalized;
 }

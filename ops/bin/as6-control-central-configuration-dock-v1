@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="${AS6_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
+MASTER="$ROOT/frontend/src/living/product-v2/AS6MasterScreen.jsx"
+LAYOUT="$ROOT/frontend/src/living/product-v2/centralWorkspaceLayout.js"
+STYLES="$ROOT/frontend/src/living/product-v2/AS6MasterScreenReference.css"
+
+test -f "$MASTER"
+test -f "$LAYOUT"
+test -f "$STYLES"
+
+grep -Fq 'controls: Object.freeze({ x: 50, y: 92 })' "$LAYOUT"
+grep -Fq 'focus: Object.freeze({ minX: 28, maxX: 72, minY: 26, maxY: 60 })' "$LAYOUT"
+grep -Fq 'controls: Object.freeze({ minX: 8, maxX: 92, minY: 24, maxY: 92 })' "$LAYOUT"
+grep -Fq 'className="as6-master__layout-dock"' "$MASTER"
+grep -Fq 'startDrag(event, "controls")' "$MASTER"
+grep -Fq 'suppressLayoutStartClickRef' "$MASTER"
+grep -Fq 'className="as6-master__style-reset"' "$MASTER"
+grep -Fq 'className="as6-master__style-drag"' "$MASTER"
+if grep -Fq 'CENTRAL_STYLE_GLYPHS.map' "$MASTER"; then
+  echo "AS6_DECORATIVE_GLYPH_CONTROL_NOISE=FAIL"
+  exit 1
+fi
+grep -Fq 'z-index: 4' "$STYLES"
+grep -Fq 'z-index: 3' "$STYLES"
+grep -Fq 'border-radius: 50% / 38%' "$STYLES"
+grep -Fq 'pointer-events: none' "$STYLES"
+
+node "$ROOT/ops/diagnostics/as6-central-configuration-dock-v1.mjs"
+
+echo "AS6_FOCUS_MASK_NODE_OCCLUSION=PASS"
+echo "AS6_STYLE_PANEL_VERTICAL_OVERLOAD=PASS"
+echo "AS6_CONFIGURATION_CONTROL_FIXED_POSITION=PASS"
+echo "AS6_DECORATIVE_GLYPH_CONTROL_NOISE=PASS"
+echo "AS6_CENTRAL_CONFIGURATION_DOCK_V1=PASS"

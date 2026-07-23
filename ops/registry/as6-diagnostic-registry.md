@@ -187,3 +187,11 @@
 - aec: ops/governance/as6-customizable-central-style-v1-aec.md
 - failure_classes: AS6_CENTRAL_STYLE_GLOBAL_LEAK, AS6_CENTRAL_STYLE_UNBOUNDED_VALUES, AS6_CENTRAL_STYLE_EDIT_MODE_CLUTTER, AS6_CENTRAL_STYLE_CANCEL_PERSISTENCE_DRIFT
 - result: AS6_CUSTOMIZABLE_CENTRAL_STYLE_V1=REGISTERED
+
+## AS6 Central Configuration Dock v1
+- diagnostic: movable workspace-local configuration dock, compact selected-object controls, focus safe area, and node-safe goal mask
+- diagnostic_artifact: ops/diagnostics/as6-central-configuration-dock-v1.mjs
+- control: ops/bin/as6-control-central-configuration-dock-v1
+- aec: ops/governance/as6-central-configuration-dock-v1-aec.md
+- failure_classes: AS6_FOCUS_HEADER_COLLISION, AS6_FOCUS_MASK_NODE_OCCLUSION, AS6_STYLE_PANEL_VERTICAL_OVERLOAD, AS6_CONFIGURATION_CONTROL_FIXED_POSITION, AS6_DECORATIVE_GLYPH_CONTROL_NOISE
+- result: AS6_CENTRAL_CONFIGURATION_DOCK_V1=REGISTERED

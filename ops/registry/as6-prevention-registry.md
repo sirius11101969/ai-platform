@@ -58,3 +58,8 @@
 | AS6_CENTRAL_STYLE_UNBOUNDED_VALUES | clamp-scales-and-whitelist-colors-and-glyphs | ENABLED |
 | AS6_CENTRAL_STYLE_EDIT_MODE_CLUTTER | render-style-panel-only-for-selected-node-in-edit-mode | ENABLED |
 | AS6_CENTRAL_STYLE_CANCEL_PERSISTENCE_DRIFT | share-layout-editor-snapshot-cancel-reset-save-lifecycle | ENABLED |
+| AS6_FOCUS_HEADER_COLLISION | clamp-main-goal-to-dedicated-central-safe-area | ENABLED |
+| AS6_FOCUS_MASK_NODE_OCCLUSION | keep-business-nodes-above-theme-matched-goal-mask | ENABLED |
+| AS6_STYLE_PANEL_VERTICAL_OVERLOAD | use-compact-shared-configuration-dock | ENABLED |
+| AS6_CONFIGURATION_CONTROL_FIXED_POSITION | persist-bounded-dock-position-by-workspace-id | ENABLED |
+| AS6_DECORATIVE_GLYPH_CONTROL_NOISE | hide-low-value-glyph-controls-and-preserve-legacy-read-compatibility | ENABLED |
