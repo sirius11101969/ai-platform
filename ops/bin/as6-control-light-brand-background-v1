@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="${AS6_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
+MASTER="$ROOT/frontend/src/living/product-v2/AS6MasterScreen.jsx"
+STYLES="$ROOT/frontend/src/living/product-v2/AS6MasterScreenReference.css"
+BACKGROUND="$ROOT/frontend/src/living/product-v2/livingBackground.js"
+LOCALIZATION="$ROOT/frontend/src/living/product-v2/livingLocalization.js"
+
+test -f "$MASTER"
+test -f "$STYLES"
+test -f "$BACKGROUND"
+test -f "$LOCALIZATION"
+
+grep -Fq 'data-light-background={lightBackground}' "$MASTER"
+grep -Fq 'className="as6-master__brand-background"' "$MASTER"
+grep -Fq 'theme === "light"' "$MASTER"
+grep -Fq 'persistLightBackground(workspaceId' "$MASTER"
+grep -Fq 'as6-light-background-v1' "$BACKGROUND"
+grep -Fq 'DEFAULT_LIGHT_BACKGROUND = "brand"' "$BACKGROUND"
+grep -Fq 'brandBackground: "Фирменный фон AS6"' "$LOCALIZATION"
+grep -Fq 'cleanBackground: "Чистый белый фон"' "$LOCALIZATION"
+grep -Fq '[data-theme="light"][data-light-background="brand"] .as6-master__brand-background' "$STYLES"
+grep -Fq '[data-theme="light"][data-light-background="clean"]' "$STYLES"
+grep -Fq 'pointer-events: none' "$STYLES"
+grep -Fq 'AS6_LIGHT_BRAND_BACKGROUND_V1' "$STYLES"
+
+node "$ROOT/ops/diagnostics/as6-light-brand-background-v1.mjs"
+
+echo "AS6_LIGHT_BRAND_BACKGROUND_V1=PASS"
+echo "AS6_LIGHT_BACKGROUND_TOGGLE=PASS"
+echo "AS6_DARK_THEME_VISUAL_CONTRACT=UNCHANGED"

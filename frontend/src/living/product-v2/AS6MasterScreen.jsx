@@ -20,6 +20,10 @@ import {
   resetCentralStyleItem,
   updateCentralStyleItem,
 } from "./centralWorkspaceStyle.js";
+import {
+  persistLightBackground,
+  readLightBackground,
+} from "./livingBackground.js";
 
 const decorativeGraphPoints = [[14, 40], [12, 70], [34, 89], [55, 87], [86, 48], [67, 17]];
 
@@ -98,6 +102,7 @@ export default function AS6MasterScreen({
   const workspaceId = shell.workspace?.id || "default";
   const [layout, setLayout] = useState(() => readCentralLayout(workspaceId));
   const [centralStyle, setCentralStyle] = useState(() => readCentralStyle(workspaceId));
+  const [lightBackground, setLightBackground] = useState(() => readLightBackground(workspaceId));
   const [selectedStyleId, setSelectedStyleId] = useState("");
   const [layoutEditing, setLayoutEditing] = useState(false);
   const [layoutStatus, setLayoutStatus] = useState("");
@@ -128,8 +133,10 @@ export default function AS6MasterScreen({
   useEffect(() => {
     const nextLayout = readCentralLayout(workspaceId);
     const nextStyle = readCentralStyle(workspaceId);
+    const nextBackground = readLightBackground(workspaceId);
     setLayout(nextLayout);
     setCentralStyle(nextStyle);
+    setLightBackground(nextBackground);
     layoutRef.current = nextLayout;
     styleRef.current = nextStyle;
     layoutBeforeEditRef.current = nextLayout;
@@ -331,6 +338,11 @@ export default function AS6MasterScreen({
     });
   }
 
+  function toggleLightBackground() {
+    const next = persistLightBackground(workspaceId, lightBackground === "brand" ? "clean" : "brand");
+    setLightBackground(next);
+  }
+
   function nudgeLayoutItem(event, id) {
     if (!layoutEditing || !["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) return;
     event.preventDefault();
@@ -353,8 +365,44 @@ export default function AS6MasterScreen({
       data-shell-snapshot={shell.snapshotId}
       data-data-state={shell.dataState.status}
       data-theme={theme}
+      data-light-background={lightBackground}
     >
       <div className="as6-master__ambient" aria-hidden="true" />
+      <div className="as6-master__brand-background" aria-hidden="true">
+        <svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+          <g className="as6-master__brand-coin">
+            <circle cx="800" cy="470" r="304" />
+            <circle cx="800" cy="470" r="286" />
+            <circle cx="800" cy="470" r="260" />
+            <circle cx="800" cy="470" r="218" />
+          </g>
+          <g className="as6-master__brand-circuits">
+            <path d="M800 166v72l-54 54v62" />
+            <path d="M744 184v54l-58 58v56" />
+            <path d="M856 184v54l58 58v56" />
+            <path d="M496 470h94l52-52h70" />
+            <path d="M1104 470h-94l-52-52h-70" />
+            <path d="M520 590h86l58-58h76" />
+            <path d="M1080 590h-86l-58-58h-76" />
+            <path d="M624 700v-60l48-48h58" />
+            <path d="M976 700v-60l-48-48h-58" />
+          </g>
+          <g className="as6-master__brand-pads">
+            <circle cx="800" cy="238" r="4" />
+            <circle cx="590" cy="470" r="4" />
+            <circle cx="1010" cy="470" r="4" />
+            <circle cx="606" cy="590" r="4" />
+            <circle cx="994" cy="590" r="4" />
+            <circle cx="624" cy="640" r="4" />
+            <circle cx="976" cy="640" r="4" />
+          </g>
+          <g className="as6-master__brand-glints">
+            <path d="M572 238v24M560 250h24" />
+            <path d="M1036 296v18M1027 305h18" />
+            <path d="M1112 622v22M1101 633h22" />
+          </g>
+        </svg>
+      </div>
       <p className="as6-master__sr-only" aria-live="polite">{shell.dataState.message}</p>
 
       <div className="as6-master__canvas">
@@ -378,6 +426,22 @@ export default function AS6MasterScreen({
             ))}
             <button type="button" className={theme === "light" ? "is-active" : ""} aria-label={t("lightTheme")} aria-pressed={theme === "light"} onClick={() => onThemeChange?.("light")}>☼</button>
             <button type="button" className={theme === "dark" ? "is-active" : ""} aria-label={t("darkTheme")} aria-pressed={theme === "dark"} onClick={() => onThemeChange?.("dark")}>☾</button>
+            {theme === "light" && (
+              <button
+                type="button"
+                className={`as6-master__background-toggle${lightBackground === "brand" ? " is-active" : ""}`}
+                aria-label={lightBackground === "brand" ? t("cleanBackground") : t("brandBackground")}
+                aria-pressed={lightBackground === "brand"}
+                title={lightBackground === "brand" ? t("cleanBackground") : t("brandBackground")}
+                onClick={toggleLightBackground}
+              >
+                <svg viewBox="0 0 28 28" aria-hidden="true">
+                  <circle cx="14" cy="14" r="8.5" />
+                  <circle cx="14" cy="14" r="5" />
+                  <path d="M14 2.5v3M14 22.5v3M2.5 14h3M22.5 14h3" />
+                </svg>
+              </button>
+            )}
             <button type="button" aria-label={t("settings")} onClick={() => navigate?.("settings")}>⚙</button>
             <time dateTime={now.toISOString()}><strong>{time}</strong><small>{date}</small></time>
             <button type="button" aria-label={t("weather")}>☼</button><span>24°</span>

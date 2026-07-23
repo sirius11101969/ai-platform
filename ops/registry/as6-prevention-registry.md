@@ -63,3 +63,8 @@
 | AS6_STYLE_PANEL_VERTICAL_OVERLOAD | use-compact-shared-configuration-dock | ENABLED |
 | AS6_CONFIGURATION_CONTROL_FIXED_POSITION | persist-bounded-dock-position-by-workspace-id | ENABLED |
 | AS6_DECORATIVE_GLYPH_CONTROL_NOISE | hide-low-value-glyph-controls-and-preserve-legacy-read-compatibility | ENABLED |
+| AS6_LIGHT_BRAND_BACKGROUND_DARK_THEME_LEAK | scope-brand-surface-to-light-brand-selector-only | ENABLED |
+| AS6_LIGHT_BRAND_BACKGROUND_CONTENT_OCCLUSION | keep-brand-art-below-canvas-and-pointer-transparent | ENABLED |
+| AS6_LIGHT_BRAND_BACKGROUND_WARM_CAST | allow-only-cool-white-and-blue-grey-brand-colours | ENABLED |
+| AS6_LIGHT_BACKGROUND_PREFERENCE_GLOBAL_LEAK | store-background-mode-by-workspace-id | ENABLED |
+| AS6_LIGHT_BACKGROUND_CLEAN_FALLBACK_GAP | preserve-pure-white-light-background-toggle | ENABLED |

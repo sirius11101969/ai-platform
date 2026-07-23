@@ -904,6 +904,82 @@
 }
 
 /*
+ * AS6 light brand background v1. The mark is expressed as cool ice-blue coin
+ * rings and circuit traces instead of a literal logo watermark. It lives below
+ * every business layer, stays pointer-transparent and has no warm colour.
+ */
+.as6-master__brand-background {
+  display: none;
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.as6-master[data-theme="light"][data-light-background="brand"] .as6-master__brand-background {
+  display: block;
+  background:
+    radial-gradient(circle at 50% 52%, rgba(220, 235, 247, .22), rgba(237, 245, 251, .08) 32%, transparent 61%),
+    linear-gradient(180deg, #ffffff 0%, rgba(248, 252, 255, .72) 48%, #ffffff 100%);
+}
+
+.as6-master__brand-background svg {
+  width: 100%;
+  height: 100%;
+  opacity: .34;
+}
+
+.as6-master__brand-coin {
+  fill: none;
+  stroke: rgba(113, 163, 201, .16);
+  stroke-width: 1.2;
+}
+
+.as6-master__brand-coin circle:nth-child(2) { stroke-opacity: .72; }
+.as6-master__brand-coin circle:nth-child(3) { stroke-opacity: .48; }
+.as6-master__brand-coin circle:nth-child(4) { stroke-opacity: .28; }
+
+.as6-master__brand-circuits {
+  fill: none;
+  stroke: rgba(103, 156, 196, .17);
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.as6-master__brand-pads {
+  fill: rgba(103, 156, 196, .22);
+  stroke: rgba(255, 255, 255, .84);
+  stroke-width: 1.5;
+}
+
+.as6-master__brand-glints {
+  fill: none;
+  stroke: rgba(119, 169, 207, .22);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+}
+
+.as6-master__utilities .as6-master__background-toggle {
+  display: grid;
+  place-items: center;
+  color: #7598b5;
+}
+
+.as6-master__utilities .as6-master__background-toggle svg {
+  width: 21px;
+  height: 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.25;
+}
+
+.as6-master[data-theme="light"][data-light-background="clean"] {
+  background: #ffffff;
+}
+
+/*
  * Keep the light master screen in one cool-neutral family. Pure white light is
  * mixed only with restrained blue-grey depth, so the long graph curves and
  * central aura cannot acquire a cream/yellow cast on bright displays.
@@ -951,6 +1027,15 @@
 .as6-master[data-theme="light"] .as6-master__node-mark svg {
   filter: drop-shadow(0 0 1px rgba(74,126,165,.28));
 }
+
+@media (max-width: 980px) {
+  .as6-master__brand-background svg {
+    min-width: 1180px;
+    transform: translateX(-12%);
+  }
+}
+
+/* AS6_LIGHT_BRAND_BACKGROUND_V1: light-only; default=brand; clean-fallback=pass; dark=unchanged; warm-cast=none */
 
 .as6-master[data-theme="dark"] {
   --as6-stage-surface: #08090b;

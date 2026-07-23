@@ -306,3 +306,8 @@
 | AS6_STYLE_PANEL_VERTICAL_OVERLOAD | AEC_REQUIRE_COMPACT_STYLE_DOCK | selected-object-controls-must-use-compact-shared-dock | ENABLED |
 | AS6_CONFIGURATION_CONTROL_FIXED_POSITION | AEC_REQUIRE_MOVABLE_WORKSPACE_DOCK | customization-dock-position-must-be-bounded-and-workspace-local | ENABLED |
 | AS6_DECORATIVE_GLYPH_CONTROL_NOISE | AEC_FORBID_LOW_VALUE_GLYPH_CONTROLS | legacy-glyphs-may-load-but-control-buttons-must-not-render | ENABLED |
+| AS6_LIGHT_BRAND_BACKGROUND_DARK_THEME_LEAK | AEC_REQUIRE_LIGHT_ONLY_BRAND_SURFACE | dark-theme-must-not-render-brand-background | ENABLED |
+| AS6_LIGHT_BRAND_BACKGROUND_CONTENT_OCCLUSION | AEC_REQUIRE_BACKGROUND_BELOW_PRODUCT_CANVAS | brand-art-must-be-pointer-transparent-and-below-content | ENABLED |
+| AS6_LIGHT_BRAND_BACKGROUND_WARM_CAST | AEC_FORBID_WARM_LIGHT_BRAND_COLOURS | light-brand-surface-must-use-cool-neutral-as6-palette | ENABLED |
+| AS6_LIGHT_BACKGROUND_PREFERENCE_GLOBAL_LEAK | AEC_REQUIRE_WORKSPACE_LOCAL_BACKGROUND_MODE | background-choice-must-be-isolated-by-workspace-id | ENABLED |
+| AS6_LIGHT_BACKGROUND_CLEAN_FALLBACK_GAP | AEC_REQUIRE_CLEAN_LIGHT_FALLBACK | pure-white-light-mode-must-remain-available | ENABLED |

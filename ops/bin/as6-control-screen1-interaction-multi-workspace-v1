@@ -58,6 +58,7 @@ node --check "$ROOT/backend/src/controllers/crmController.js"
 
 AS6_ROOT="$ROOT" "$ROOT/ops/bin/as6-control-living-shell-foundation-v1"
 AS6_ROOT="$ROOT" bash "$ROOT/ops/bin/as6-control-customizable-central-layout-v1"
+AS6_ROOT="$ROOT" bash "$ROOT/ops/bin/as6-control-light-brand-background-v1"
 
 echo "AS6_SCREEN1_INTERACTION_MULTI_WORKSPACE_V1=PASS"
 echo "AS6_LIGHT_DARK_THEME=PASS"
@@ -66,3 +67,4 @@ echo "AS6_PUBLIC_HOME_ROUTE=PASS"
 echo "AS6_AUTHENTICATED_PUBLIC_HOME=PASS"
 echo "AS6_CLICK_POINTER_ROUTING=PASS"
 echo "AS6_HTML_CACHE_ISOLATION=PASS"
+echo "AS6_LIGHT_BRAND_BACKGROUND_V1=PASS"

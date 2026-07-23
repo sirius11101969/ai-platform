@@ -195,3 +195,11 @@
 - aec: ops/governance/as6-central-configuration-dock-v1-aec.md
 - failure_classes: AS6_FOCUS_HEADER_COLLISION, AS6_FOCUS_MASK_NODE_OCCLUSION, AS6_STYLE_PANEL_VERTICAL_OVERLOAD, AS6_CONFIGURATION_CONTROL_FIXED_POSITION, AS6_DECORATIVE_GLYPH_CONTROL_NOISE
 - result: AS6_CENTRAL_CONFIGURATION_DOCK_V1=REGISTERED
+
+## AS6 Light Brand Background v1
+- diagnostic: light-only AS6 rings and circuit surface with workspace-local clean fallback
+- diagnostic_artifact: ops/diagnostics/as6-light-brand-background-v1.mjs
+- control: ops/bin/as6-control-light-brand-background-v1
+- aec: ops/governance/as6-light-brand-background-v1-aec.md
+- failure_classes: AS6_LIGHT_BRAND_BACKGROUND_DARK_THEME_LEAK, AS6_LIGHT_BRAND_BACKGROUND_CONTENT_OCCLUSION, AS6_LIGHT_BRAND_BACKGROUND_WARM_CAST, AS6_LIGHT_BACKGROUND_PREFERENCE_GLOBAL_LEAK, AS6_LIGHT_BACKGROUND_CLEAN_FALLBACK_GAP
+- result: AS6_LIGHT_BRAND_BACKGROUND_V1=REGISTERED
